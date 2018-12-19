@@ -388,19 +388,25 @@
       ~
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
-    =/  =cass  .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+    ::  germ: merge mode for sync merges
     ::
-    ::    If we will be syncing in remote changes, we need all our sync merges
-    ::    up to and including the first remote sync to use the %init germ.
-    ::    Otherwise we won't have a merge-base with our sponsor.
+    ::    Initial merges from any source must use the %init germ.
+    ::    Subsequent merges may use any germ, but if the source is
+    ::    a remote ship with which we have not yet merged, we won't
+    ::    share a merge-base commit and all germs but %that will fail.
     ::
-    =/  bar=@ud
-      ?:  ?|  ?=(?($czar $pawn) (clan:title our))
-              !?=(%home syd)
-          ==
-        2
-      3
-    =/  =germ  ?:((gte bar ud.cass) %init %mate)
+    ::    We want to always use %that for the first remote merge.
+    ::    But we also want local syncs (%base to %home or %kids)
+    ::    to succeed after that first remote sync. To accomplish both
+    ::    we simply use %that for the first three sync merges.
+    ::    (The first two are from the pill.)
+    ::
+    =/  =germ
+      =/  =cass
+        .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+      ?:  =(0 ud.cass)
+        %init
+      ?:((gth 3 ud.cass) %that %mate)
     =<  %-  spam
         ?:  =(our her)  ~
         [(render "beginning sync" sud her syd) ~]
