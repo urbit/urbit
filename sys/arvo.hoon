@@ -553,6 +553,8 @@
     ?~  mor
       [ova vanes]
     =^  nyx  vanes  (jack lac i.mor)
+    ::  we emit ova to unix in fifo order, but emit internal moves depth-first
+    ::
     $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
   --
 --
