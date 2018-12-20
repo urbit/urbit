@@ -1233,6 +1233,7 @@
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
         ((hard task:able) p.wrapped-task)
+      =.  any.ton.fox  eny
       =^  duy  ..knob  (knob hen task)
       [duy ..^$]
     ::
@@ -1258,6 +1259,7 @@
       ~/  %take
       |=  [tea=wire hen=duct hin=(hypo sign:able)]
       ^-  [(list move) _..^$]
+      =.  any.ton.fox  eny
       =^  duy  ..knap
         (knap tea hen q.hin)
       [duy ..^$]
