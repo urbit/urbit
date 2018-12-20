@@ -39,8 +39,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}              ::  acknowledgment
-              {$went ship cape:ames}                   ::  XX ignore
+          $%  {$woot p/ship q/coop}                     ::  acknowledgment
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake ~}                                ::  timer activate
@@ -840,10 +839,6 @@
         $well
       +>.$(wel (dank wel p.kyz q.kyz))
     ::
-        $went
-      ::  this won't happen until we send responses.
-      !!
-    ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
       ::  TODO: make +gram and %west play nicely together
@@ -943,11 +938,6 @@
     ::    (emule |.(~|(gall-dumb+tee !!)))
     ::
         $woot  +>.$
-        $went
-          :: XX eyre sends no wests, so should get no wents
-          ::~&  e+unexpected+sih
-          +>.$
-    ::
     ::
         $thou
       ?+    -.tee  !!
