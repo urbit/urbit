@@ -484,8 +484,7 @@
           {$sunk p=ship q=life}                         ::  report death
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
-          {$wegh ~}                                    ::  report memory
-          {$went wer/ship pax/path num/@ud ack/coop}    ::  response confirm
+          {$wegh ~}                                     ::  report memory
           {$west wer/ship pax/path res/*}               ::  network request
       ==                                                ::
     --  ::able
@@ -751,7 +750,6 @@
           [%thud ~]                                     ::  inbound cancel
           [%wegh ~]                                     ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          [%went p=ship q=path r=@ud s=coop]            ::  response confirm
           [%west p=ship q=[path *]]                     ::  network request
           [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
@@ -1677,9 +1675,8 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$sunk p=ship q/life}                         ::  report death
-          {$went p/ship q/path r/@ud s/coop}            ::  response confirm
           {$west p/ship q/path r/*}                     ::  network request
-          {$wegh ~}                                    ::  report memory
+          {$wegh ~}                                     ::  report memory
       ==                                                ::
     --  ::able
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs

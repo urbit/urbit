@@ -1069,8 +1069,6 @@
         (ap-lame %pour (ap-suck "pour: malformed card"))
       =^  cug  +>.$  (ap-find [-.q.vax pax])
       ?~  cug
-        ?:  =(-.q.vax %went)
-          +>.$
         (ap-lame -.q.vax (ap-suck "pour: no {(trip -.q.vax)}: {<pax>}"))
       =^  tel  vel  (~(slot wa vel) 3 vax)
       =^  cam  +>.$
@@ -1342,8 +1340,6 @@
       ==
     =/  =move  [hen %give %mass %gall %| [mass ~]]
     [[move ~] ..^$]
-  ::  
-      $went  !!   ::  XX fixme
   ==
 ::
 ++  load                                                ::  recreate vane

@@ -3901,10 +3901,6 @@
       (start-request:den for u.q.rif)
     [mos ..^$]
   ::
-      $went
-    ::  this won't happen until we send responses.
-    !!
-  ::
       $west
     =*  wer  wer.req
     =*  pax  pax.req
