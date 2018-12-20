@@ -36,27 +36,31 @@
 ::  helpers
 ::
 =>  |%
-::  +join: dedup with lib/pkcs (reversed)
+::  +join: join list of cords with separator
+::
+::    XX move to zuse?
+::    XX dedup with lib/pkcs
 ::
 ++  join
   |=  [sep=@t hot=(list @t)]
   ^-  @t
+  =|  out=(list @t)
   ?>  ?=(^ hot)
-  %+  rap  3
-  |-  ^-  (list @t)
-  ?~  t.hot  hot
-  [i.hot sep $(hot t.hot)]
-::  +name: fully-qualified domain name
+  |-  ^-  @t
+  ?~  t.hot
+    (rap 3 [i.hot out])
+  $(out [sep i.hot out], hot t.hot)
+::  +name: fully-qualified domain name for :ship
 ::
 ++  name
-  |=  [him=ship dom=turf]
-  (cat 3 (join '.' [(crip +:(scow %p him)) (flop dom)]) '.')
-::  +endpoint: append path to purl
+  |=  [=ship =turf]
+  (cat 3 (join '.' (weld turf /(crip +:(scow %p ship)))) '.')
+::  +endpoint: append :path to :purl
 ::
 ++  endpoint
-  |=  [bas=purl:eyre pat=path]
-  ^+  bas
-  bas(q.q (weld q.q.bas pat))
+  |=  [=purl:eyre =path]
+  ^+  purl
+  purl(q.q (weld q.q.purl path))
 --
 ::
 ::  service providers
@@ -75,17 +79,20 @@
   ++  record
     |=  [him=ship tar=target]
     ^-  json
-    ::  ?>  ?=([%gcloud *] pro.aut)
-    =+  ^-  [typ=cord dat=cord]
+    =/  type
+      ?:(?=(%direct -.tar) 'A' 'CNAME')
+    =/  data
       ?:  ?=(%direct -.tar)
-        ['A' (crip +:(scow %if p.tar))]
-      ['CNAME' (name p.tar dom.aut)]
-    :-  %o  %-  my  :~
-      name+s+(name him dom.aut)
-      type+s+typ
-      :: XX make configureable?
-      ttl+n+~.300
-      rrdatas+a+[s+dat ~]
+        [%s (crip +:(scow %if p.tar))]
+      [%s (name p.tar dom.aut)]
+    :-  %o
+    %-  ~(gas by *(map @t json))
+    :~  ['name' %s (name him dom.aut)]
+        ['type' %s type]
+        ::  XX make configureable?
+        ::
+        ['ttl' %n ~.300]
+        ['rrdatas' %a data ~]
     ==
   ::  +create: provider-specific record-creation request
   ::
@@ -93,7 +100,6 @@
     =,  eyre
     |=  [him=ship tar=target pre=(unit target)]
     ^-  hiss
-    ::  ?>  ?=([%gcloud *] pro.aut)
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/changes
@@ -102,10 +108,11 @@
     =/  bod=octs
       %-  as-octt:mimes:html
       %-  en-json:html
-      :-  %o  %-  my
-      :-  additions+a+[(record him tar) ~]
+      :-  %o
+      %-  ~(gas by *(map @t json))
+      :-  ['additions' %a (record him tar) ~]
       ?~  pre  ~
-      [deletions+a+[(record him u.pre) ~] ~]
+      [['deletions' %a (record him u.pre) ~] ~]
     [url %post hed `bod]
   ::  +list: list existing records stored by provider
   ::
@@ -113,7 +120,6 @@
     =,  eyre
     |=  page=(unit @t)
     ^-  hiss
-    ::  ?>  ?=([%gcloud *] pro.aut)
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/rrsets
@@ -405,7 +411,7 @@
     ::
     ?:  =(our.bow him.com)
       =/  msg=tape
-        "new dns binding established at {(trip (join '.' (flop dom.com)))}"
+        "new dns binding established at {(trip (join '.' dom.com))}"
       :_  this(dom (~(put in dom) dom.com))
       :~  [ost.bow %flog / %text msg]
           [ost.bow %rule /bound %turf %put dom.com]
@@ -471,7 +477,6 @@
   ::
   ++  init
     |=  aut=authority
-    :: ?>  ?=(%gcloud pro.aut)
     =/  wir=wire  /authority/confirm
     =/  url=purl:eyre
       %+  endpoint  base:gcloud
@@ -484,7 +489,7 @@
     |=  page=(unit @t)
     ^+  this
     (emit (request /authority/update (~(list gcloud aut.nam) page)))
-  ::  +restore: restore existing remove nameserver records
+  ::  +restore: restore existing remote nameserver records
   ::
   ++  restore
     |=  bod=octs
@@ -526,26 +531,23 @@
     =/  pre=(unit target)
       =/  bon=(unit bound)  (~(get by bon.nam) him)
       ?~(bon ~ `cur.u.bon)
-    :: ?>  ?=(%gcloud pro.aut.nam)
     =/  req=hiss:eyre
       (~(create gcloud aut.nam) him tar pre)
     ::  XX save :for relay state?
     ::
-    %-  emit(pen.nam (~(put by pen.nam) him tar))
-    (request wir req)
-  ::  +dependants: process stored dependant bindings
+    =.  pen.nam  (~(put by pen.nam) him tar)
+    (emit (request wir req))
+  ::  +dependants: process deferred dependant bindings
   ::
   ++  dependants
     |=  for=ship
     ^+  this
-    =/  dep  (~(get ja dep.nam) for)
-    =.  ..this
-      |-  ^+   ..this
-      ?~  dep  ..this
-      =*  him  p.i.dep
-      =*  tar  q.i.dep
-      $(dep t.dep, ..this (create for him tar))
-    this(dep.nam (~(del by dep.nam) for))
+    =/  dep=(list [him=ship tar=target])
+      (~(get ja dep.nam) for)
+    =.  dep.nam  (~(del by dep.nam) for)
+    |-  ^+  ..this
+    ?~  dep   this
+    $(dep t.dep, ..this (create for him.i.dep tar.i.dep))
   ::  +confirm: successfully bound
   ::
   ++  confirm
@@ -555,8 +557,9 @@
       (~(get by bon.nam) him)
     =/  nob=bound
       [now.bow tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
-    =.  pen.nam  (~(del by pen.nam) him)
-    =.  bon.nam  (~(put by bon.nam) him nob)
+    =:  pen.nam  (~(del by pen.nam) him)
+        bon.nam  (~(put by bon.nam) him nob)
+      ==
     (dependants:(bond for him) him)
   ::  +bond: send binding confirmation
   ::
@@ -603,7 +606,7 @@
       [%direct %if u.addr]
     ::  re-notify if binding already exists
     ::
-    ::    XX deduplicate with +confirm
+    ::    XX deduplicate with +bake:tell and +bond:bind
     ::
     ?:  ?&  ?=(^ rel)
             ?=(^ dom.u.rel)
@@ -710,7 +713,7 @@
     =/  com=command
       [%bond our.bow him dom]
     =/  msg=tape
-      "relaying new dns binding: {(trip (join '.' (flop dom)))}"
+      "relaying new dns binding: {(trip (join '.' dom))}"
     ::  XX save notification state?
     ::
     %-  emit:(emit %flog / %text msg)
