@@ -1233,6 +1233,7 @@
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
         ((hard task:able) p.wrapped-task)
+      =.  any.ton.fox  eny
       =^  duy  ..knob  (knob hen task)
       [duy ..^$]
     ::
@@ -1258,6 +1259,7 @@
       ~/  %take
       |=  [tea=wire hen=duct hin=(hypo sign:able)]
       ^-  [(list move) _..^$]
+      =.  any.ton.fox  eny
       =^  duy  ..knap
         (knap tea hen q.hin)
       [duy ..^$]
@@ -1447,12 +1449,6 @@
         ::
             %init
           :_  fox  [[%sake ~] [%brew ~] ~]
-        ::
-          ::  XX this is unused, but they only way to set
-          ::  entropy for symmetric keys. Review.
-          ::
-            %junk
-          [~ fox(any.ton (shax (mix any.ton.fox p.kyz)))]
         ::
             %kick
           =^  ban  fox  (~(kick am [our now fox(hop p.kyz) ski]) hen)
