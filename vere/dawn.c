@@ -357,7 +357,7 @@ u3_dawn_vent(u3_noun seed)
 
     fprintf(stderr, "boot: verifying keys\r\n");
 
-    //  (each sponsor=(unit ship) error=@tas)
+    //  (each sponsor=ship error=@tas)
     //
     u3_noun sas = u3dt("veri:dawn", u3k(seed), u3k(pot), u3k(liv));
 
@@ -367,7 +367,7 @@ u3_dawn_vent(u3_noun seed)
       return u3_none;
     }
 
-    //  (unit ship): sponsor
+    //  ship: sponsor
     //  produced by +veri:dawn to avoid coupling to +point structure
     //  XX reconsider
     //
