@@ -12,7 +12,7 @@
         188.597.545.066.664.466.963.044.328.182.155.965.137.512.758.548.384.
         637.214.562
         continuity-number=0
-        sponsor=[~ u=~zod]
+        sponsor=[& ~zod]
         escape=~
     ==
   [~ u=[spawn-proxy=0x0 spawned=~]]
@@ -209,7 +209,7 @@
 ++  test-veri-good
   =/  sed  [~zod 1 sec ~]
   %+  expect-eq
-    !>  [%& `~zod]
+    !>  [%& ~zod]
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-not-spawned
@@ -251,7 +251,7 @@
       (shaf %earl (sham who 1 pub:ex:cub))
     [who 1 sec:ex:cub `sig]
   %+  expect-eq
-    !>  [%& ~]
+    !>  [%& (^sein:title who)]
     !>  (veri:dawn sed pot ~)
 ::
 ++  test-veri-earl-missing-sig
@@ -327,7 +327,7 @@
   =/  who=ship  `@`fig:ex:cub
   =/  sed  [who 1 sec:ex:cub ~]
   %+  expect-eq
-    !>  [%& ~]
+    !>  [%& ~mittun]
     !>  (veri:dawn sed *point:azimuth-types ~)
 ::
 ++  test-veri-pawn-key-mismatch
