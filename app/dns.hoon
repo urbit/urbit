@@ -1,4 +1,4 @@
-/-  *dns
+/-  *dns, hall
 !:
 ::
 ::  moves and state
@@ -7,13 +7,10 @@
 +$  move  (pair bone card)
 +$  poke
   $%  [%dns-command command]
-      ::  XX find some other notification channel?
-      ::
-      [%helm-send-hi ship (unit tape)]
+      [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 +$  card
-  $%  [%flog wire flog:dill]
-      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
       [%poke wire dock poke]
       [%rule wire %turf %put turf]
       [%wait wire @da]
@@ -61,6 +58,11 @@
   |=  [=purl:eyre =path]
   ^+  purl
   purl(q.q (weld q.q.purl path))
+::  +print-path: serialize a +path to a +cord
+::
+++  print-path
+  |=  =path
+  (crip ~(ram re (sell !>(path))))
 --
 ::
 ::  service providers
@@ -222,6 +224,18 @@
   |=  [wir=wire req=hiss:eyre]
   ^-  card
   [%hiss wir [~ ~] %httr %hiss req]
+::  +notify: send :hall notification
+::
+++  notify
+  |=  [=ship =cord =tang]
+  ^-  card
+  =/  msg=speech:hall
+    :+  %app  dap.bow
+    =/  line  [%lin & cord]
+    ?~(tang line [%fat [%tank tang] line])
+  =/  act
+    [%phrase (sy [ship %inbox] ~) [msg ~]]
+  [%poke / [our.bow %hall] %hall-action act]
 ::  +poke-noun: debugging
 ::
 ++  poke-noun
@@ -314,38 +328,44 @@
 ++  sigh-tang
   |=  [wir=wire saw=tang]
   ^-  (quip move _this)
-  ~&  [%sigh-tang wir]
   ?+  wir
+        ~&  [%strange-sigh-tang wir]
         [((slog saw) ~) this]
   ::
       [%authority %confirm ~]
-    ~&  %authority-confirm-fail
-    [((slog saw) ~) this(nem ~)]
+    :_  this(nem ~)
+    [[ost.bow (notify our.bow 'authority confirmation failed' saw)] ~]
   ::
-      [%authority %create ~]
-    ~&  %authority-create-fail
+      [%authority %create *]
     ::  XX retry pending bindings
     ::
-    [((slog saw) ~) this]
+    =/  msg
+      (cat 3 'failed to create binding: ' (print-path t.t.wir))
+    :_  this
+    [[ost.bow (notify our.bow msg saw)] ~]
   ::
       [%authority %update ~]
-    ~&  %authority-update-fail
     ::  XX retry binding retrieval
     ::
-    [((slog saw) ~) this]
+    :_  this
+    [[ost.bow (notify our.bow 'failed to retrieve bindings' saw)] ~]
   ::
       [%check @ ~]
-    ~&  %direct-confirm-fail
+    ::  XX retry confirmation
+    ::
     =/  him=ship  (slav %p i.t.wir)
-    %-  (slog saw)
     abet:(fail:(tell him) %crash)
   ::
       [%check-bond @ ~]
-    ~&  check-bond-fail+wir
     ::  XX backoff, refactor
     ::
-    :_  this  :_  ~
-    [ost.bow %wait wir (add now.bow ~m10)]
+    =/  msg
+      %+  rap  3
+      ['failed to confirm binding ' (print-path t.wir) ', retrying in ~m10' ~]
+    :_  this
+    :~  [ost.bow (notify our.bow msg saw)]
+        [ost.bow %wait wir (add now.bow ~m10)]
+    ==
   ==
 ::  +wake: timer callback
 ::
@@ -377,7 +397,6 @@
       %authority
     ~|  %authority-reset-wat-do
     ?<  ?=(^ nem)
-    ~!  com
     abet:(init:bind aut.com)
   ::  create binding (if authority) and forward request
   ::
@@ -410,10 +429,10 @@
       abet:(check-bond:(tell him.com) dom.com)
     ::
     ?:  =(our.bow him.com)
-      =/  msg=tape
-        "new dns binding established at {(trip (join '.' dom.com))}"
+      =/  msg
+        (cat 3 'domain name established at ' (join '.' dom.com))
       :_  this(dom (~(put in dom) dom.com))
-      :~  [ost.bow %flog / %text msg]
+      :~  [ost.bow (notify our.bow msg ~)]
           [ost.bow %rule /bound %turf %put dom.com]
       ==
     ::
@@ -434,7 +453,7 @@
   ::
       %meet
     ?.  =(our.bow (sein:title our.bow now.bow him.com))
-      ~&  %dns-meet-not-sponsored
+      ~&  [%dns-meet-not-sponsored him.com]
       [~ this]
     abet:(hear:(tell him.com) ~)
   ==
@@ -646,24 +665,23 @@
     |=  err=@tas
     ^+  this
     ?>  ?=(^ rel)
-    ~&  [%fail err him tar.u.rel]
-    =/  wir=wire
-      /fail/(scot %p him)
     ::  XX add failure-specific messages
-    ::  XX use a better notification channel?
     ::
-    =/  msg=tape
+    =/  msg
       ?+  err
-          "dns binding failed"
+          'dns binding failed'
       ::
           %reserved-ip
         ?>  ?=(%direct -.tar.u.rel)
-        =/  addr=tape  (scow %if p.tar.u.rel)
-        "unable to create dns binding reserved address {addr}"
+        =/  addr  (scot %if p.tar.u.rel)
+        (cat 3 'unable to create dns binding for reserved ip address' addr)
       ==
     ::  XX save failure state?
     ::
-    (emit [%poke wir [our.bow %hood] %helm-send-hi him `msg])
+    %-  emit:(emit (notify him msg ~))
+    =/  msg
+      (rap 3 (scot %p him) ' fail: ' msg ~)
+    (notify our.bow msg ~)
   ::  +bind: request binding for target
   ::
   ::    Since we may be an authority, we poke ourselves.
@@ -712,11 +730,11 @@
     =*  dom  u.dom.u.rel
     =/  com=command
       [%bond our.bow him dom]
-    =/  msg=tape
-      "relaying new dns binding: {(trip (join '.' dom))}"
+    =/  msg
+      (cat 3 'relaying new dns binding: ' (join '.' dom))
     ::  XX save notification state?
     ::
-    %-  emit:(emit %flog / %text msg)
+    %-  emit:(emit (notify our.bow msg ~))
     [%poke wir [him dap.bow] %dns-command com]
   ::  +forward: sending binding request up the network
   ::
