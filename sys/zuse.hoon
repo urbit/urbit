@@ -8479,27 +8479,28 @@
       ::
       ?~  net.point
         [%| %not-keyed]
+      =*  net  u.net.point
       ::  boot keys must match the contract
       ::
-      ?.  =(pub:ex:cub pass.u.net.point)
+      ?.  =(pub:ex:cub pass.net)
         [%| %key-mismatch]
       ::  life must match the contract
       ::
-      ?.  =(lyf.seed life.u.net.point)
+      ?.  =(lyf.seed life.net)
         [%| %life-mismatch]
       ::  the boot life must be greater than and discontinuous with
       ::  the last seen life (per the sponsor)
       ::
       ?:  ?&  ?=(^ live)
               ?|  ?=(%| breach.u.live)
-                  (lte life.u.net.point life.u.live)
+                  (lte life.net life.u.live)
           ==  ==
         [%| %already-booted]
       ::  produce the sponsor for vere
       ::
-      ~?  !has.sponsor.u.net.point
-        [%no-sponsorship-guarantees-from who.sponsor.u.net.point]
-      [%& who.sponsor.u.net.point]
+      ~?  !has.sponsor.net
+        [%no-sponsorship-guarantees-from who.sponsor.net]
+      [%& who.sponsor.net]
     ==
   --
 --  ::
