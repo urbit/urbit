@@ -8447,7 +8447,7 @@
       ::
       ?.  ?=(%1 lyf.seed)
         [%| %invalid-life]
-      [%& ~marzod]  ::TODO  how to do comet sponsorship?
+      [%& (^sein:title who.seed)]
     ::
         %earl
       ::  a moon must be signed by the parent
