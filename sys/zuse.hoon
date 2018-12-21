@@ -7323,8 +7323,8 @@
       `[who %activated who]
     ::
     ?:  =(event.log spawned)
-      =/  pre=@  (decode-topics topics.log ~[%uint])
-      =/  who=@  (decode-results data.log ~[%uint])
+      =+  ^-  [pre=@ who=@]
+          (decode-topics topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
     ?:  =(event.log escape-requested)
@@ -7342,7 +7342,8 @@
       `[who %sponsor `wer]
     ::
     ?:  =(event.log lost-sponsor)
-      =/  who=@  (decode-topics topics.log ~[%uint])
+      =+  ^-  [who=@ pos=@]
+          (decode-topics topics.log ~[%uint %uint])
       `[who %sponsor ~]
     ::
     ?:  =(event.log changed-keys)
