@@ -69,7 +69,7 @@
 ++  note-jael                                           ::
   $%  $:  %dawn                                         ::  boot from keys
           =seed:able:jael                               ::    identity params
-          spon=(unit ship)                              ::    sponsor
+          spon=ship                                     ::    sponsor
           czar=(map ship [=life =pass])                 ::    galaxy table
           turf=(list turf)                              ::    domains
           bloq=@ud                                      ::    block number
