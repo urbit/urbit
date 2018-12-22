@@ -77,8 +77,8 @@ let
   tinytapi = native.make_derivation rec {
     name = "tinytapi";
     # tmphax until tinytapi is published on GitHub
-    src_h = ../../tinytapi/tapi.h;
-    src_cpp = ../../tinytapi/tapi.cpp;
+    src_h = ../../tinytapi/src/tapi.h;
+    src_cpp = ../../tinytapi/src/tapi.cpp;
     builder = ./tinytapi_builder.sh;
     libyaml = nixpkgs.libyaml;
     native_inputs = [ libyaml ];
