@@ -4,6 +4,7 @@
 # include <unistd.h>
 # define getentropy_impl getentropy
 #elif defined __APPLE__ && defined __MACH__
+# include <unistd.h>
 # include <sys/random.h>
 # define getentropy_impl getentropy
 #else
