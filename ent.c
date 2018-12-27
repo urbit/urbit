@@ -2,6 +2,8 @@
 
 #if defined(ENT_URANDOM)
 
+#warning "libent: using /dev/urandom..."
+
 #include <assert.h>
 #include <errno.h>
 #include <unistd.h>
