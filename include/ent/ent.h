@@ -1,9 +1,9 @@
 #ifndef _ENT_H
 #define _ENT_H
 
-#include <ent/config.h>
-
 #include <stddef.h>
+
+#include <ent/config.h>
 
 #if defined(ENT_GETENTROPY)
 # if defined(ENT_GE_SYSRANDOM)
@@ -30,6 +30,18 @@ ent_getentropy(void* buf, size_t buflen);
 
 #else
 # error "libent: platform not supported"
+#endif
+
+#ifdef ENT_GETENTROPY
+#undef ENT_GETENTROPY
+#endif
+
+#ifdef ENT_GE_SYSRANDOM
+#undef ENT_GE_SYSRANDOM
+#endif
+
+#ifdef ENT_GE_UNISTD
+#undef ENT_GE_UNISTD
 #endif
 
 #endif /* _ENT_H */
