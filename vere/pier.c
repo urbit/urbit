@@ -23,46 +23,56 @@
 #include "all.h"
 #include "vere/vere.h"
 
-  /*    event handling proceeds on two parallel paths.  on the first
-  **    path, the event is processed in the child worker process (serf).
-  **    state transitions are as follows:
+  /*    Event handling proceeds via a first step
   **
-  **        generated               (event numbered and queued)
-  **        dispatched              (sent to worker)
-  **        computed                (completed by worker)
-  **        released                (output actions allowed)
+  **        generated               (writ created, event numbered, writ queued)
+  ** 
+  **    at which point, the way forward splits into two parallel paths: computation and persistence.
+  ** 
+  **    On the first path, the event is processed in the child worker
+  **    process (serf).  State transitions are as follows:
   **
-  **    we dispatch one event at a time to the worker.  we don't do
-  **    anything in parallel.
+  **        compute requested       (sent to worker)
+  **        compute complete        (completed by worker)
   **
-  **    in parallel, we try to save the event.  it goes through phases:
+  **    In parallel, we try to persist the event.  It goes through phases:
   **      
-  **        generated
   **        commit requested
   **        commit complete
   **   
-  **    the sanity constraints that connect these two paths:
+  **    These state transitions are noted in the writ.
   **
-  **        - an event can't release effects until it, and all events
-  **          preceding it, are computed and committed.
+  **    Only when BOTH parallel actions have each reached completion
+  **    may the event's effects be released.  
   **
-  **    event numbers are uint64 (c3_d) which start with 1.  we order
+  **    Additionally, an event can't release effects until it, and all
+  **    events preceding it, are computed and committed.
+  **
+  **    We dispatch one event at a time to the worker.  The worker
+  **    will not received new work until it is done with previous
+  **    work.
+  **
+  **    Event numbers are uint64 (c3_d) which start with 1.  We order
   **    events as we receive them.
   **
-  **    events are executed in order by the working process, and
+  **    Events are executed in order by the working process, and
   **    committed in strict order.
   **
-  **    NOT TRUE RIGHT NOW : the result of computing an event can be completion (in which
-  **    case we go directly to commit) or replacement (in which we
-  **    replace the input event with a different event).  in case of
-  **    replacement, we delete the old precommit and write the new one.
+  **    NOT TRUE RIGHT NOW : the result of computing an event can be
+  **    completion (in which case we go directly to commit) or
+  **    replacement (in which we replace the input event with a
+  **    different event).  in case of replacement, we delete the old
+  **    precommit and write the new one.
   **
-  **    NOT TRUE RIGHT NOW : after crash recovery, events precommitted and computed, but
-  **    not yet committed, have at-least-once semantics in their
-  **    output effects.  (not the actual changes to the arvo state,
-  **    which are of course exactly-once.)  ideally all your outputs
-  **    are network packets or idempotent http requests!
+  **    NOT TRUE RIGHT NOW : after crash recovery, events precommitted
+  **    [ not a thing any more ] and computed, but not yet committed, have
+  **    at-least-once semantics in their output effects.  (not the
+  **    actual changes to the arvo state, which are of course
+  **    exactly-once.)  ideally all your outputs are network packets
+  **    or idempotent http requests!
   */
+
+#define VERBOSE 0
 
 /* input persistence pointers */
 typedef c3_o  (*abst_read_init_t)(u3_pier* pir_u, c3_c * pot_c);
@@ -101,14 +111,7 @@ _pier_init_read(u3_pier* pir_u, c3_c * pin_c)
     typ_c = strtok(tmp_c, ":");
   }
 
-  if (NULL == typ_c || 0 == strcmp(typ_c, "d") || 0 == strcmp(typ_c, "disk")){
-
-    _rein = u3_disk_read_init;
-    _rere = u3_disk_read_read;
-    _rede = u3_disk_read_done;
-    _resh = u3_disk_read_shut;
-
-  } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
+  if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "fond")){
 
     _rein = u3_fond_read_init;
     _rere = u3_fond_read_read;
@@ -129,7 +132,7 @@ _pier_init_read(u3_pier* pir_u, c3_c * pin_c)
     _rede = u3_rock_read_done;
     _resh = u3_rock_read_shut;    
 
-  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
+  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sqlt")){
 
     _rein = u3_sqlt_read_init;
     _rere = u3_sqlt_read_read;
@@ -164,13 +167,7 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
     typ_c = strtok(tmp_c, ":");
   }
 
-  if (NULL == typ_c || 0 == strcmp(typ_c, "d") || 0 == strcmp(typ_c, "disk")){
-    _wrin = u3_disk_write_init;
-    _wrze = u3_disk_frag_size;
-    _wric = u3_disk_write_write;
-    _wris = u3_disk_write_shut;
-
-  } else if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "found")){
+  if  (0 == strcmp(typ_c, "f") || 0 == strcmp(typ_c, "fond")){
 
     _wrin = u3_fond_write_init;
     _wrze = u3_fond_frag_size;
@@ -191,7 +188,7 @@ _pier_init_writ(u3_pier* pir_u, c3_c * pot_c)
     _wric = u3_rock_write_write;
     _wris = u3_rock_write_shut;    
 
-  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sql")){
+  } else if  (0 == strcmp(typ_c, "s") || 0 == strcmp(typ_c, "sqlt")){
 
     _wrin = u3_sqlt_write_init;
     _wrze = u3_sqlt_frag_size;
@@ -241,11 +238,7 @@ _pier_abstract_write(u3_writ* wit_u)
 static void
 _pier_abstract_shutdown(u3_pier* pir_u)
 {
-  fprintf(stderr,  "PIER-3: _pier_abstract_shutdown() A \n\r");
-
   _wris(pir_u);
-
-  fprintf(stderr,  "PIER-3: _pier_abstract_shutdown() B \n\r");
 }
 
 static void _pier_boot_complete(u3_pier*, c3_o);
@@ -283,6 +276,10 @@ _pier_insert(u3_pier* pir_u,
 
   wit_u->job = job;
 
+  #if VERBOSE
+    fprintf(stderr, "PIER INSERT: %lld\r\n", wit_u->evt_d);
+  #endif
+  
   /* state machine */
   wit_u->pes_o = c3n;  /* peristant store submited? */
   wit_u->ped_o = c3n;  /* peristant store done?     */
@@ -340,6 +337,10 @@ _pier_work_release(u3_writ* wit_u)
   /* advance release counter
   */
   {
+  #if VERBOSE
+    fprintf(stderr, "PIER RELEASE: %lld\r\n", wit_u->evt_d);
+  #endif
+    
     c3_assert(wit_u->evt_d == (1ULL + god_u->rel_d));
     god_u->rel_d += 1ULL;
   }
@@ -406,8 +407,9 @@ _pier_work_complete(u3_writ* wit_u,
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
-  god_u->dun_d += 1;
-  c3_assert(god_u->dun_d == wit_u->evt_d);
+  c3_assert( (0 == god_u->dun_d) || wit_u->evt_d == (god_u->dun_d + 1));
+  god_u->dun_d = wit_u->evt_d;
+
 
   god_u->mug_l = mug_l;
 
@@ -458,15 +460,21 @@ _pier_work_compute(u3_writ* wit_u)
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
-  //  fprintf(stderr, "pier: (%lld): compute: request\r\n", wit_u->evt_d);
-  c3_assert(wit_u->evt_d == (1 + god_u->sen_d));
+  /* either
+       sen_d (the highest event we've sent to the worker) is 0 
+       (because we're freshly booted and have sent NOTHING to the worker),
+     or
+       this current event is 1 more than the previous event we sent 
+       (because we're doing things in order, as we should 
+  */
+  c3_assert( (0 == god_u->sen_d) || wit_u->evt_d == (1 + god_u->sen_d));
 
   wit_u->mug_l = god_u->mug_l;
 
   _pier_work_build(wit_u);
   _pier_work_send(wit_u);
 
-  god_u->sen_d += 1;
+  god_u->sen_d = wit_u->evt_d;  /* evt_d is now the highest evt we've sent */
 }
 
 /* u3_pier_apply(): react to i/o, inbound or outbound.
@@ -474,8 +482,9 @@ _pier_work_compute(u3_writ* wit_u)
 void
 u3_pier_apply(u3_pier* pir_u)
 {
-  if (! pir_u->pot_u->log_u &&
-      ! pir_u->pot_u->sql_u &&
+  if (! pir_u->pot_u->sqlt_u &&
+      ! pir_u->pot_u->rock_u &&
+      ! pir_u->pot_u->lmdb_u &&
       ! pir_u->pot_u->fond_u){
     fprintf(stderr, "u3_pier_apply: no out log of any type\n");
     u3m_bail(c3__fail);
@@ -502,7 +511,9 @@ start:
     /* parallel task A:  submit to persistant store
     */
     if (c3n == wit_u->pes_o){
-      fprintf(stderr, "APPLY: save %ld\r\n", wit_u->evt_d);
+      #if VERBOSE
+         fprintf(stderr, "PIER APPLY: save %ld\r\n", wit_u->evt_d);
+      #endif
       _pier_abstract_write(wit_u);
       wit_u->pes_o = c3y;               /* update state */
       act_o = c3y;                      /* dirty bit: we took an action */
@@ -513,18 +524,43 @@ start:
 
     if ( c3n == wit_u->ces_o)
     {
-      fprintf(stderr, "APPLY: compute %ld\r\n", wit_u->evt_d);
+      #if VERBOSE
+          fprintf(stderr, "PIER APPLY: compute %ld\r\n", wit_u->evt_d);
+      #endif
       _pier_work_compute(wit_u);
       wit_u->ces_o = c3y;               /* update state */
       act_o = c3y;                      /* dirty bit: we took an action */
     }
 
-    /* if A & B are both done: emit effects & delete
+    /* if A is done &&
+          B is done &&
+          this is the next event we want to release
+       then
+          emit effects & delete
+
+       explanation: we inject events into the queue in order, and we
+       inject them into computation and into persistence in order, and
+       once upon a time this meant that there was no possible way that
+       things could get reordered: the invariants that hold at the
+       front of the queueu still hold at the end of the queue.
+
+       ...but then we switched from disk persistance to sqlt.c / fond.c / rock.c.
+
+       These databases make zero promises about operation ordering.
+
+       So event N and N+1 can both be injected into persistence, and
+       N+1 can complete first, and thus we might be tempted to emit
+       N+1 first.
+
+       Don't.
     */
     if (( c3y == wit_u->ped_o) &&
-        ( c3y == wit_u->ced_o))
+        ( c3y == wit_u->ced_o) &&
+        (wit_u->evt_d == (1ULL + pir_u->god_u->rel_d)))
     {
-      fprintf(stderr, "APPLY: effects %ld\r\n", wit_u->evt_d);
+      #if VERBOSE
+          fprintf(stderr, "PIER APPLY: effects %ld\r\n", wit_u->evt_d);
+      #endif
 
       /* apply effects */
       _pier_work_release(wit_u);
@@ -561,13 +597,15 @@ start:
 }
 
 /* _pier_disk_load_commit(): load all committed events >= evt_d
+
+   
 */
 static c3_o
 _pier_load_commit(u3_pier* pir_u,
-                  c3_d     evt_d,
-                  c3_d   * red_d)  /* OUT: highest event read */
+                  c3_d     evt_d,  /* IN:  the next item we'd like to read */ 
+                  c3_d   * red_d)  /* OUT: highest event actually read */
 {
-  * red_d = 0;
+
   pir_u->pin_u->pos_d = evt_d;  
 
   while ( 1 ) {
@@ -575,14 +613,15 @@ _pier_load_commit(u3_pier* pir_u,
     c3_y * buf_y;
     void * opaq_u = NULL;
     c3_o ret_o;
-
-    fprintf(stderr, "now reading: %ld\n\r", pir_u->pin_u->pos_d);
+    #if VERBOSE
+        fprintf(stderr, "PIER now reading: %ld\n\r", pir_u->pin_u->pos_d);
+    #endif
 
     c3_d pos_d = pir_u->pin_u->pos_d;
     ret_o = _rere(pir_u, &buf_y, &len_w, & opaq_u); /* do actual read */
 
     if (ret_o == c3n){
-      fprintf(stderr, "pier: load: reached end of data\r\n");
+      fprintf(stderr, "pier: load: reached end of data (...and that's OK)\r\n");
       _rede(opaq_u);     /* cleanup read handle */
       break;
     }
@@ -606,7 +645,7 @@ _pier_load_commit(u3_pier* pir_u,
     job = u3k(u3t(u3t(u3t(ovo))));
 
     c3_assert(pos_d == evt ); /* we tried to read event N ... did we ? (sanity check the persistence layer against perfidy */
-    
+
     u3z(ovo);
 
     /* do setup to process this event we just read */
@@ -617,8 +656,12 @@ _pier_load_commit(u3_pier* pir_u,
       
     wit_u->pir_u = pir_u;
     wit_u->evt_d = evt;
+    wit_u->nex_u = NULL;
     wit_u->job = job;
     wit_u->mat = mat;
+    wit_u->pes_o = wit_u->ped_o = c3y; /* we're reading it from persistent store, so OBVIOUSLY */
+    wit_u->ces_o = wit_u->ced_o = c3n; /* I ... I think this is right? */
+
 
     /* insert at queue entrance (we insert 1, then we insert 2 before 1, then we insert 3 before 2...)
        u3_pier_apply() will read from queue exit
@@ -627,8 +670,9 @@ _pier_load_commit(u3_pier* pir_u,
       pir_u->ent_u = pir_u->ext_u = wit_u;
     }
     else {
-      wit_u->nex_u = pir_u->ent_u;
+      pir_u->ent_u->nex_u = wit_u;
       pir_u->ent_u = wit_u;
+
     }
 
     /* how far did we read ? */
@@ -804,15 +848,18 @@ _pier_boot_vent(u3_pier* pir_u)
  */
 static c3_o
 _pier_load_log(u3_pier* pir_u,
-               c3_d     lav_d)
+               c3_d     lav_d)  /* first event to read */
 {
   /* populate timeline and event queue from persistant storage, starting w event lav_d
-     N.B. modifies lav_d; will be set to "next event to read"
+     N.B. modifies lav_d; will be set to "next event to read".
+
+     Perhaps there is no persistant storage (new boot)?  That's OK. We'll fall threw to reading pill.
    */
-  c3_d red_d;
+  c3_d red_d = lav_d - 1;
   if ( c3n == _pier_load_commit(pir_u, lav_d, & red_d) ) {
     return c3n;
   }
+  pir_u->gen_d = red_d;
 
   /* perhaps there was no TL from persistent storage?
    * then: load the pill, starting w event lav_d
@@ -848,7 +895,7 @@ _pier_load_log(u3_pier* pir_u,
 */
 static void
 _pier_play(u3_pier* pir_u,
-           c3_d     lav_d,
+           c3_d     lav_d,  /* the first event not in the snapshot ; where we should start reading from persistant store */ 
            c3_l     mug_l)
 {
   fprintf(stderr, "pier: (%lld): boot at mug %x\r\n", lav_d, mug_l);
@@ -857,6 +904,11 @@ _pier_play(u3_pier* pir_u,
 
   /* load all committed events
   */
+  u3_lord* god_u = pir_u->god_u;
+  god_u->sen_d = lav_d - 1;  /* the last event we sent for computation */
+  god_u->dun_d = lav_d - 1;  /* the last event we received back from computation */
+  god_u->rel_d = lav_d - 1;  /* the last event we released effects of */
+  
   _pier_load_log(pir_u, lav_d);
 }
      
@@ -1053,6 +1105,7 @@ u3_lord*
 _pier_work_create(u3_pier* pir_u)
 {
   u3_lord* god_u = c3_calloc(sizeof *god_u);
+  memset(god_u, 0, sizeof(*god_u));
 
   pir_u->god_u = god_u;
   god_u->pir_u = pir_u;

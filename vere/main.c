@@ -92,18 +92,6 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  #if 1
-  volatile int ii = 0;
-  fprintf(stderr, "about to sleep for gdb in main.c: - PID = %i\n\r", getpid());
-  while (ii != 1){
-    fprintf(stderr, "...\n\r");
-    sleep(1);
-  }
-  fprintf(ulog, "post sleep\n");
-  #else 
-  fprintf(ulog, "no attach\n");    
-  #endif
-
 
   fflush(ulog);
 
@@ -403,8 +391,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
-    "-o spec       Specify persistent storage (output). Valid specs are 'disk' (default) / 'sql' / 'found'\n",
-    "-i spec       Specify persistent storage (input).  Valid specs are 'disk' (default) / 'sql' / 'found'\n",
+    "-o spec       storage (output)  { 'f' | 'l' | 'r' | 's' | 'fond' | 'lmbd' | 'rock' | 'sqlt' } \n",
+    "-i spec       storage (input)   { 'f' | 'l' | 'r' | 's' | 'fond' | 'lmbd' | 'rock' | 'sqlt' } \n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -547,6 +535,19 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  #if 1
+  volatile int ii = 0;
+  fprintf(stderr, "****    GDB king: about to sleep in main.c: - PID = %i\n\r", getpid());
+  while (ii != 1){
+    fprintf(stderr, "...\n\r");
+    sleep(1);
+  }
+  fprintf(stderr, "***    GDB king: post sleep\n");
+  #else 
+  fprintf(stderr, "****    GDB king: no attach in main.c\n\r");    
+  #endif
+
+  
   char * logpath = malloc(1024);
   sprintf(logpath, "/tmp/urbit_log_%i", getpid());
   ulog = fopen(logpath, "w");

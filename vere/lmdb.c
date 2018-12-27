@@ -38,6 +38,12 @@
 **  21 Nov 2018 on Ubuntu 16.04: max noun size = 2^20 = 1,048,576 bytes.  2^21 = segv
 **  No need for fragmenting.
 **
+**  Bugs: 
+**     * in _lmdb_init_comn() we open the DB and store a handle to
+**       it...but then we ignore this and do the exact same thing
+**       every time we need to interact w the db.  This is necessary,
+**       bc experimentation proves that one stored handle is not
+**       workable...but we could at least tidy up the code.
 */
 
 
@@ -57,7 +63,11 @@
 #include "vere/vere.h"
 
 #define DATB_NAME  "lmdb_db"
-
+/* The size of the database / max size of a record.
+   Should be a multiple of the page size on the OS.
+   Page size on Ubuntu = 4096
+*/
+#define MAPSIZE (1024 * 1024 * 1024)
 
 c3_w u3_lmdb_frag_size()
 {
@@ -105,6 +115,26 @@ _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
     return(c3n);
   }
 
+#if 0  
+  /* adjust the map size (bc using defaults we blow up on item 20 in the pill, of size 322,149 bytes) */
+  MDB_envinfo inf_u;
+  ret_w =   mdb_env_info(pers_u->lmdb_u->env_u, & inf_u);
+  if (0 != ret_w){
+    fprintf(stderr, "mdb_env_info() fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail); 
+    return(c3n);
+  }
+  fprintf(stderr, "mdb_env_info() me_mapsize == %zu\n", inf_u.me_mapsize);
+#endif
+
+  
+  ret_w =   mdb_env_set_mapsize(pers_u->lmdb_u->env_u, MAPSIZE );
+  if (0 != ret_w){
+    fprintf(stderr, "mdb_set_mapsize() fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail); 
+    return(c3n);
+  }
+    
   ret_w = mdb_env_set_maxdbs(pers_u->lmdb_u->env_u, 16);
   if (0 != ret_w){
     fprintf(stderr, "mdb_env_set_maxdbs() fail: %s\n", mdb_strerror(ret_w));
@@ -204,6 +234,14 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
     u3m_bail(c3__fail); 
   }
 
+  ret_w =   mdb_env_set_mapsize(env_u, MAPSIZE );
+  if (0 != ret_w){
+    fprintf(stderr, "mdb_set_mapsize() fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail); 
+    return(c3n);
+  }
+
+  
   ret_w = mdb_env_set_maxdbs(env_u, 16);
   if (0 != ret_w){
     fprintf(stderr, "mdb_env_set_maxdbs() fail: %s\n", mdb_strerror(ret_w));
@@ -268,6 +306,7 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
   * dat_y = val_u->mv_data;
   * len_w = val_u->mv_size;
   * hand_u = val_u;
+  pir_u->pin_u->pos_d++;
   return(c3y);
 
   
@@ -327,6 +366,13 @@ _lmdb_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w)
 
     fprintf(stderr, "lmdb lmdb init fail: %s\n", mdb_strerror(ret_w));
     u3m_bail(c3__fail); 
+  }
+
+  ret_w =   mdb_env_set_mapsize(env_u, MAPSIZE );
+  if (0 != ret_w){
+    fprintf(stderr, "mdb_set_mapsize() fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail); 
+    return(c3n);
   }
 
   ret_w = mdb_env_set_maxdbs(env_u, 16);

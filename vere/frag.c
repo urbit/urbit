@@ -132,6 +132,11 @@ c3_w _frag_head_read(c3_y * buf_y, c3_w * dex_w, c3_w * tot_w)
   return (cnt_w);
 }
 
+/* read a fragmented record (one or more rows in underlying DB) 
+
+   returns: loob: "all parts of a fragment found?"
+
+*/
 c3_o u3_frag_read(_frag_read read_u,
                _frag_done done_u,
                c3_w max_w,
@@ -145,8 +150,6 @@ c3_o u3_frag_read(_frag_read read_u,
   (* mrh_u) ->han_u = NULL;
   (* mrh_u) ->dat_y = NULL;
 
-  //   fprintf(stderr, "frag_read(): read evnt %ld, frag 0 of ?\n\r", pers_u ->pos_d);
-
   /* read first fragment */
   c3_y *  dt1_y;
   c3_w    ln1_w;
@@ -159,12 +162,14 @@ c3_o u3_frag_read(_frag_read read_u,
                        & ln1_w,           /* OUT: set len of data */
                        & srh_u);          /* OUT: the single-read handle; need to clean it up later */
 
+  if (c3n == ret_o){
+    return(c3n);
+  }
+  
   /* read header from first fragment */
   c3_w frg_w;
   c3_w cnt_w;
   c3_w hed_w =  _frag_head_read(dt1_y, & frg_w, & cnt_w);
-
-  //  fprintf(stderr, "        ...  read evnt %ld, frag %i of %i\n\r", pers_u ->pos_d, frg_w, cnt_w);
 
 
   /* the first fragment is the ONLY fragment?
@@ -208,9 +213,6 @@ c3_o u3_frag_read(_frag_read read_u,
   for (fri_w = 1; fri_w < cnt_w; fri_w ++){
 
     /* read next fragment */
-    //   fprintf(stderr, "u3_frag_read(): read evnt %ld, frag %i of %i\n\r", pers_u ->pos_d, fri_w, cnt_w);
-
-
     ret_o = read_u( pers_u,         /* IN: persistence handle */
                     pers_u ->pos_d, /* IN: row id */
                     fri_w,          /* IN: fragment id */
@@ -298,9 +300,6 @@ void frag_writ(c3_w max_w,          /* IN: max fragment size (0 == infinite ) */
   }
 
   /* write first fragment right out of existing data buffer */
-
-  // fprintf(stderr, "frag_writ(): write evnt %ld, frag 0 of %i\n\r", pos_d, cnt_w);
-
   c3_w frg_len_w = ((max_w == 0 )  ? rem_w :  /* if no limit, write it in 1 fragment */
                     (( rem_w > max_w ) ?
                      max_w :                  /* if len > limit, write only as big as allowed */
@@ -341,9 +340,6 @@ void frag_writ(c3_w max_w,          /* IN: max fragment size (0 == infinite ) */
 
   for(frg_w = 1; frg_w < cnt_w; frg_w++){
 
-    // fprintf(stderr, "frag_writ(): write evnt %ld, frag %i of %i\n\r", pos_d, frg_w, cnt_w);
-
-    
     byt_y += frg_len_w;
 
     frg_len_w = ( rem_w > max_w ) ? max_w : rem_w;
@@ -400,8 +396,6 @@ c3_o u3_frag_write_done(c3_w frg_w,
                         u3_pers_frag * mwh_u)
 {
 
-  // fprintf(stderr, "frag_write_done: evt %ld, frag %i of %i\n\r", wit_u->evt_d, frg_w, cnt_w);
-  
   c3_o all_o = c3y;
 
   /* mutex protect */
@@ -433,9 +427,6 @@ c3_o u3_frag_write_done(c3_w frg_w,
     return(c3n);
   }
 
-  // fprintf(stderr, "frag_write_done: evt %ld, frag %i of %i ********** ALL DONE \n\r", wit_u->evt_d, frg_w, cnt_w);
-
-  
   /* 1: mark write as 100% complete */
   wit_u->ped_o = c3y; 
 

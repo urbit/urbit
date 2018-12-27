@@ -28,11 +28,11 @@ FILE * ulog;
 
 
     typedef struct _u3_serf {
-      c3_d    evt_d;                        //  last event processed
-      c3_l    mug_l;                        //  hash of state
-      c3_d    key_d[4];                     //  disk key
-      u3_moat inn_u;                        //  message input
-      u3_mojo out_u;                        //  message output
+      c3_d    evt_d;                        /*  last event processed */
+      c3_l    mug_l;                        /*  hash of state */
+      c3_d    key_d[4];                     /*  disk key */
+      u3_moat inn_u;                        /*  message input */
+      u3_mojo out_u;                        /*  message output */
     } u3_serf;
     static u3_serf u3V;
 
@@ -76,7 +76,6 @@ FILE * ulog;
 static void
 _serf_fail(void* vod_p, const c3_c* wut_c)
 {
-  // fprintf(stderr, "serf: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -141,9 +140,9 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 /* _serf_poke_live(): apply event.
 */
 static void
-_serf_poke_live(c3_d    evt_d,              //  event number
-                c3_l    mug_l,              //  mug of state
-                u3_noun job)                //  event date
+_serf_poke_live(c3_d    evt_d,              /*  event number */
+                c3_l    mug_l,              /*  mug of state */
+                u3_noun job)                /*  event date */
 {
   u3_noun now = u3k(u3h(job));
   u3_noun ovo = u3k(u3t(job));
@@ -270,7 +269,7 @@ _serf_poke_boot(c3_d    evt_d,
                 u3_noun job)
 {
   u3A->roe = u3nc(job, u3A->roe);
-
+  fprintf(stderr, "serf assert: %lld // %lld \r\n", evt_d, (u3V.evt_d + 1ULL));   // NOTFORCHECKIN
   c3_assert(evt_d == u3V.evt_d + 1ULL);
   u3V.evt_d = evt_d;
   fprintf(stderr, "serf: (%lld)| boot\r\n", evt_d);
@@ -307,6 +306,8 @@ _serf_poke_work(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  full event
 {
+  fprintf(stderr, "**** _serf_poke_work()  %lld %s\r\n", evt_d);
+
   if ( evt_d < 6 ) {
     _serf_poke_boot(evt_d, mug_l, job);
   }
@@ -420,6 +421,19 @@ u3_serf_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
+  #if 0
+  volatile int ii = 0;
+  fprintf(stderr, "****    GDB serf: about to sleep in serf.c: - PID = %i\n\r", getpid());
+  while (ii != 1){
+    fprintf(stderr, "...\n\r");
+    sleep(1);
+  }
+  fprintf(stderr, "****    GDB serf: post sleep\n");
+  #else 
+  fprintf(stderr, "****    GDB serf: no attach in serf.c\n");    
+  #endif
+
+
   char * logpath = malloc(1024);
   sprintf(logpath, "/tmp/urbit_log_%i", getpid());
   ulog = fopen(logpath, "w");

@@ -59,8 +59,8 @@ u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
   
   u3_pers *  pin_u = pir_u -> pin_u;
 
-  pin_u->sql_u = c3_malloc(sizeof (u3_sqlt));
-  memset( pin_u->sql_u, 0, sizeof (u3_sqlt));
+  pin_u->sqlt_u = c3_malloc(sizeof (u3_sqlt));
+  memset( pin_u->sqlt_u, 0, sizeof (u3_sqlt));
 
   /* set read head to 1 */
   pir_u->pin_u->pos_d = 1;
@@ -72,7 +72,7 @@ u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
   /* open the DB */
   
   uint32_t       ret_w;
-  if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pin_u->sql_u -> sql_u ))){
+  if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pin_u->sqlt_u -> sql_u ))){
     fprintf(stderr, "sqlt read init fail 1: %s\n", sqlite3_errstr(ret_w));
     u3m_bail(c3__fail); 
     return(c3n);
@@ -92,7 +92,7 @@ u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
   for (ii = 0; ii < len_u ; ii ++ ){
     printf("pragma == %s\n", pragmas[ii]);
     c3_y * err_y;
-    if (SQLITE_OK != (ret_w = sqlite3_exec(pin_u->sql_u -> sql_u, (const char * ) pragmas[ii], NULL, NULL, (char **) & err_y))){
+    if (SQLITE_OK != (ret_w = sqlite3_exec(pin_u->sqlt_u -> sql_u, (const char * ) pragmas[ii], NULL, NULL, (char **) & err_y))){
       fprintf(stderr, "sqlt read init configure 1 fail: %s\n", err_y);
       u3m_bail(c3__fail); 
       return(c3n);
@@ -165,7 +165,7 @@ _sqlt_read_fragment(sqlite3 * sql_u,  /* IN: SQLite3 handle */
 c3_o 
 u3_sqlt_read_read(u3_pier* pir_u, c3_y ** dat_y, c3_w *    len_w, void ** hand_u)
 {
-  c3_o ret_o = _sqlt_read_fragment(pir_u->pin_u->sql_u->sql_u,
+  c3_o ret_o = _sqlt_read_fragment(pir_u->pin_u->sqlt_u->sql_u,
                                pir_u->pin_u->pos_d,
                                dat_y,
                                len_w,
@@ -206,9 +206,9 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
   u3_pers *  pot_u = pir_u -> pot_u;
   
   /* share single SQL handle, if for both in and out */
-  if (pir_u->pin_u->sql_u){
+  if (pir_u->pin_u->sqlt_u){
     fprintf(stderr, "sqlt write init: sharing db handle with sqlt read\n\r");
-    pot_u->sql_u = pir_u->pin_u->sql_u;
+    pot_u->sqlt_u = pir_u->pin_u->sqlt_u;
   } else {
 
     uint32_t       ret_w;
@@ -223,7 +223,7 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
     fprintf(stderr, "sqlt write init: write db path = %s\n\r", path_c);
 
   
-    if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pot_u->sql_u -> sql_u ))){
+    if (SQLITE_OK != (ret_w = sqlite3_open( path_c, &  pot_u->sqlt_u -> sql_u ))){
       fprintf(stderr, "sqlt write init fail 2: %s\n", sqlite3_errstr(ret_w));
       u3m_bail(c3__fail); 
       return c3n;
@@ -235,7 +235,7 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
   c3_y * cbar_y = (c3_y *) "callback data - create table";
   c3_y * errm_y = NULL;
   uint32_t       ret_w;
-  if (SQLITE_OK != (ret_w = sqlite3_exec(pot_u->sql_u->sql_u,         /* db handle */                           
+  if (SQLITE_OK != (ret_w = sqlite3_exec(pot_u->sqlt_u->sql_u,         /* db handle */                           
                                 (char *) qury_y,        /* query */
                                 NULL,             /* callback */
                                 (void *) cbar_y,        /* 1st arg to callback */
@@ -257,7 +257,7 @@ _sqlt_write_fragment(u3_writ* wit_u, c3_y * buf_y,  c3_w len_w)
 
   c3_y * stat_y = (c3_y *) sqlite3_mprintf("INSERT INTO %s VALUES(?, ?)", TABL_NAME);
 
-  sqlite3 *      daba_u = wit_u->pir_u -> pot_u -> sql_u -> sql_u;
+  sqlite3 *      daba_u = wit_u->pir_u -> pot_u -> sqlt_u -> sql_u;
   sqlite3_stmt * stat_u = NULL;
   uint32_t       ret_w;
 
@@ -363,7 +363,7 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
                      )
 {
   pthread_t tid_u;
-  uint32_t       ret_w;
+  c3_w       ret_w;
 
   c3_w hed_w = u3_frag_head_size(len_w, 
                                  1, 
@@ -391,8 +391,9 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
 void
 u3_sqlt_write_shut(u3_pier* pir_u)
 {
-  if (SQLITE_OK != sqlite3_close( pir_u->pot_u->sql_u->sql_u)){
-    fprintf(stderr, "sqlt_write_shut fail\n");    
+  c3_w       ret_w;
+  if (SQLITE_OK != (ret_w = sqlite3_close( pir_u->pot_u->sqlt_u->sql_u))){
+    fprintf(stderr, "sqlt_write_shut() fail: sqlite3_close() == %i \n" , ret_w);    
   }
   return;
 

@@ -226,7 +226,6 @@ vere_lib_src = [
   'vere/time.c',
   'vere/unix.c',
   'vere/walk.c',
-  'vere/disk.c',
   'vere/fond.c',
   'vere/sqlt.c',
   'vere/rock.c',
