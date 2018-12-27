@@ -9,12 +9,12 @@ inc = include_directories('include')
 
 ent_sources = ['ent.c']
 
-ent_dep = declare_dependency(sources : ent_sources,
-                             compile_args : ['-Wall', '-pedantic'],
-                             include_directories : inc)
+libent_dep = declare_dependency(sources : ent_sources,
+                                compile_args : ['-Wall', '-pedantic'],
+                                include_directories : inc)
 
 libent = both_libraries('ent',
-                        dependencies : [ent_dep],
+                        dependencies : [libent_dep],
                         install : false)
 
 pkg_mod = import('pkgconfig')
@@ -26,4 +26,4 @@ pkg_mod.generate(libraries : libent,
 
 ent_sample = executable('sample',
                         ['sample.c'],
-                        dependencies : [ent_dep])
+                        dependencies : [libent_dep])
