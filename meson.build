@@ -17,13 +17,6 @@ libent = static_library('ent',
 
 libent_dep = declare_dependency(include_directories : inc, link_with : libent)
 
-pkg_mod = import('pkgconfig')
-pkg_mod.generate(libraries : libent,
-                 version : '0.0',
-                 name : 'libent',
-                 filebase : 'ent',
-                 description : 'A library to get entropy.')
-
 ent_sample = executable('sample',
                         ['sample.c'],
                         dependencies : [libent_dep])
