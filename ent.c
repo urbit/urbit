@@ -1,28 +1,14 @@
-#include <ent.h>
+#include <ent/ent.h>
 
-#include <assert.h>
-
-#include "config.h"
-
-#if defined(USE_GETENTROPY)
-# include <unistd.h>
-# if defined(__APPLE__) || defined(__linux__)
-#   include <sys/random.h>
-# endif
-# define getentropy_impl getentropy
-#elif defined(USE_URANDOM)
+#if defined(ENT_USE_URANDOM)
+# include <assert.h>
 # include <fcntl.h>
 # include <sys/types.h>
 # include <unistd.h>
-#else
-# error "port: getentropy"
-#endif
 
 
-#if defined(USE_URANDOM)
-
-static int
-getentropy_impl(void* buf, size_t buflen)
+int
+ent_getentropy(void* buf, size_t buflen)
 {
   int fd;
 
@@ -38,10 +24,4 @@ getentropy_impl(void* buf, size_t buflen)
   return 0;
 }
 
-#endif
-
-int
-ent_getentropy(void *buf, size_t buflen)
-{
-  return getentropy_impl(buf, buflen);
-}
+#endif /* ENT_USE_URANDOM */

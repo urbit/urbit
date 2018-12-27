@@ -9,10 +9,13 @@ inc = include_directories('include')
 
 ent_sources = ['ent.c']
 
+ent_dep = declare_dependency(sources : ent_sources,
+                             compile_args : ['-Wall', '-pedantic'],
+                             include_directories : inc)
+
 libent = both_libraries('ent',
-                        ent_sources,
-                        include_directories : inc,
-                        install : true)
+                        dependencies : [ent_dep],
+                        install : false)
 
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(libraries : libent,

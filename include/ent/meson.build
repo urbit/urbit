@@ -1,19 +1,29 @@
 conf_data = configuration_data()
 compiler = meson.get_compiler('c')
 
-code = '''#include <unistd.h>
+code = '''#include <stddef.h>
+#include <inttypes.h> /* OSX sys/random.h needs Availability.h from this */
 #include <sys/random.h>
 int main() { return getentropy((void*)0, 0); }
 '''
-have_getentropy = compiler.links(code, name : 'system getentropy')
-conf_data.set('ENT_USE_GETENTROPY', have_getentropy)
+sysrandom = compiler.links(code, name : 'getentropy in sys/random.h')
+conf_data.set('ENT_GE_SYSRANDOM', sysrandom)
+
+code = '''#include <unistd.h>
+int main() { return getentropy((void*)0, 0); }
+'''
+unistd = compiler.links(code, name : 'getentropy is in unistd.h')
+conf_data.set('ENT_GE_UNISTD', unistd)
+
+have_getentropy = sysrandom or unistd
+conf_data.set('ENT_GETENTROPY', have_getentropy)
 
 if not have_getentropy
   code = '''#include <fcntl.h>
   int main() { return -1 != open("/dev/urandom", O_RDONLY) ? 0 : 1; }
   '''
-  use_urandom = compiler.run(code, name : 'open /dev/urandom')
-  conf_data.set('ENT_USE_URANDOM', use_urandom.returncode() == 0)
+  use_urandom = compiler.run(code, name : 'can open /dev/urandom')
+  conf_data.set('ENT_URANDOM', use_urandom.returncode() == 0)
 endif
 
 configure_file(output : 'config.h',
