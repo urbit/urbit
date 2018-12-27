@@ -268,16 +268,18 @@ _sist_sing(u3_noun ovo)
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
-_sist_cask(c3_c* dir_c, u3_noun nun)
+_sist_cask(c3_c* dir_c)
 {
-  c3_c   paw_c[60];
   u3_noun key;
-  u3_utty* uty_u = calloc(1, sizeof(u3_utty));
+  c3_c    paw_c[60];
+
+  u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
   uty_u->fid_i = 0;
 
   uH;
 
-  // disable terminal echo when typing in passcode
+  //  disable terminal echo when typing in passcode
+  //
   if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
     c3_assert(!"init-tcgetattr");
   }
@@ -288,50 +290,59 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
   }
 
   while ( 1 ) {
-    printf("passcode for %s%s? ~", dir_c, (c3y == nun) ? " [none]" : "");
+    printf("passcode for %s? ~", dir_c);
 
     paw_c[0] = 0;
     c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
     printf("\n");
 
-    if ( '\n' == paw_c[0] ) {
-      if ( c3y == nun ) {
-        key = 0; break;
-      }
-      else {
-        continue;
-      }
+    //  exit on EOF (ie, ctrl-d)
+    //
+    if ( 0 == paw_c[0]) {
+      u3_lo_bail();
     }
-    else {
-      c3_c* say_c = c3_malloc(strlen(paw_c) + 2);
+
+    //  re-prompt on early return
+    //
+    if ( '\n' == paw_c[0] ) {
+      continue;
+    }
+
+    {
+      c3_c* say_c = c3_malloc(2 + strlen(paw_c));
       u3_noun say;
 
-      say_c[0] = '~';
-      say_c[1] = 0;
+      if ( '~' == paw_c[0] ) {
+        say_c[0] = 0;
+      }
+      else {
+        say_c[0] = '~';
+        say_c[1] = 0;
+      }
+
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3do("slay", u3i_string(say_c));
+      say = u3dc("slaw", 'p', u3i_string(say_c));
       free(say_c);
 
-      if ( (u3_nul == say) ||
-           (u3_blip != u3h(u3t(say))) ||
-           ('p' != u3h(u3t(u3t(say)))) )
-      {
+      if ( u3_nul == say ) {
         printf("invalid passcode\n");
         continue;
       }
-      key = u3k(u3t(u3t(u3t(say))));
+      key = u3k(u3t(say));
 
       u3z(say);
       break;
     }
   }
+
   if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
     c3_assert(!"init-tcsetattr");
   }
   free(uty_u);
   uL(0);
+
   return key;
 }
 
@@ -825,7 +836,7 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.dir_c, c3n);
+        pas = pas ? pas : _sist_cask(u3_Host.dir_c);
 
         key = _sist_fatt(sal_l, pas);
 
