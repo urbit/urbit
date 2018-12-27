@@ -23,3 +23,7 @@ pkg_mod.generate(libraries : libent,
                  name : 'libent',
                  filebase : 'ent',
                  description : 'A library to get entropy.')
+
+ent_sample = executable('sample',
+                        ['sample.c'],
+                        dependencies : [ent_dep])

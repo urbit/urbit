@@ -14,7 +14,7 @@ ent_getentropy(void* buf, size_t len)
 {
   int     fd;
   ssize_t ret;
-  char*   cuf;
+  char*   cuf = buf;
 
   assert(len <= 256);
   if (-1 == (fd = open("/dev/urandom", O_RDONLY))) {
