@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include <ent/config.h>
+
 /*
  * Fills buf with high-quality entropy.
  *
