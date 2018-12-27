@@ -3,9 +3,10 @@
 
 #include <ent/config.h>
 
+#include <stddef.h>
+
 #if defined(ENT_GETENTROPY)
 # if defined(ENT_GE_SYSRANDOM)
-#   include <stddef.h>
 #   include <inttypes.h>  /* OSX sys/random.h needs Availability.h from this */
 #   include <sys/random.h>
 # elif defined(ENT_GE_UNISTD)
