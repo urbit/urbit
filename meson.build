@@ -10,7 +10,7 @@ inc = include_directories('include')
 ent_sources = ['ent.c']
 
 libent_dep = declare_dependency(sources : ent_sources,
-                                compile_args : ['-Wall', '-pedantic'],
+                                compile_args : ['-Wall'],
                                 include_directories : inc)
 
 libent = both_libraries('ent',
