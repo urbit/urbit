@@ -19,8 +19,8 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef _ENT_H
-#define _ENT_H
+
+#pragma once
 
 #include <stddef.h>
 
@@ -63,5 +63,3 @@ ent_getentropy(void* buf, size_t buflen);
 #ifdef ENT_GE_UNISTD
 #undef ENT_GE_UNISTD
 #endif
-
-#endif /* _ENT_H */
