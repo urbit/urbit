@@ -8,14 +8,17 @@ int main() { return getentropy((void*)0, 0); }
 '''
 sysrandom = compiler.links(code, name : 'getentropy in sys/random.h')
 conf_data.set('ENT_GE_SYSRANDOM', sysrandom)
+have_getentropy = sysrandom
 
-code = '''#include <unistd.h>
-int main() { return getentropy((void*)0, 0); }
-'''
-unistd = compiler.links(code, name : 'getentropy is in unistd.h')
-conf_data.set('ENT_GE_UNISTD', unistd)
+if not have_getentropy
+  code = '''#include <unistd.h>
+  int main() { return getentropy((void*)0, 0); }
+  '''
+  unistd = compiler.links(code, name : 'getentropy is in unistd.h')
+  conf_data.set('ENT_GE_UNISTD', unistd)
+  have_getentropy = unistd
+endif
 
-have_getentropy = sysrandom or unistd
 conf_data.set('ENT_GETENTROPY', have_getentropy)
 
 if not have_getentropy
