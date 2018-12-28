@@ -30,7 +30,4 @@ if not have_getentropy
 endif
 
 configure_file(output : 'config.h',
-               configuration : conf_data,
-               install_dir : 'include/ent')
-
-install_headers('ent.h', subdir : 'ent')
+               configuration : conf_data)
