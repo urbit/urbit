@@ -25,3 +25,7 @@
 [submodule "subprojects/libsni"]
 	path = subprojects/libsni
 	url = https://github.com/urbit/sniproxy
+# TODO: fork and change this to urbit/libent
+[submodule "subprojects/libent"]
+	path = subprojects/libent
+	url = https://github.com/mrdomino/libent

@@ -186,10 +186,6 @@
 #        error "port: timeconvert"
 #      endif
 
-/* Entropy
- */
-#define c3_rand u3_sist_rand
-
 /* Static assertion
  */
 #define ASSERT_CONCAT_(a, b) a##b

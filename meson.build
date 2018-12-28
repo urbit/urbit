@@ -325,6 +325,7 @@ endif
 urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
+libent_dep = dependency('libent', version: '>=0.0.0', fallback: ['libent', 'libent_dep'])
 murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
@@ -336,6 +337,7 @@ libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libs
 
 deps = [openssl_dep,
         curl_dep,
+        libent_dep,
         libuv_dep,
         libh2o_dep,
         secp256k1_dep,

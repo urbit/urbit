@@ -55,6 +55,11 @@
       int
       c3_cooked();
 
+    /* Fill 16 words (64 bytes) with high-quality entropy.
+    */
+      void
+      c3_rand(c3_w* rad_w);
+
     /* Short integers.
     */
 #     define c3_s1(a)          ( (a) )
