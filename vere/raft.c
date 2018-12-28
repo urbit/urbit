@@ -75,7 +75,7 @@ _raft_rnam_free(u3_rnam* nam_u)
 static u3_rnam*
 _raft_readname(const c3_c* str_c, c3_w siz_w)
 {
-  u3_rnam* nam_u = calloc(1, sizeof(*nam_u));
+  u3_rnam* nam_u = c3_calloc(sizeof(*nam_u));
   c3_c*    col_c;
   c3_w     nam_w;
 
@@ -520,8 +520,8 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
     memcpy(&msg_u->rest.apen.ent_d, buf_u->buf_y + red_i, sizeof(c3_d));
     red_i += sizeof(c3_d);
 
-    msg_u->rest.apen.ent_u = calloc(
-        1, msg_u->rest.apen.ent_d * sizeof(u3_rent));
+    msg_u->rest.apen.ent_u = c3_calloc(
+        msg_u->rest.apen.ent_d * sizeof(u3_rent));
     {
       c3_d     i_d;
       u3_rent* ent_u = msg_u->rest.apen.ent_u;
@@ -1152,7 +1152,7 @@ _raft_write_rest(u3_rcon* ron_u, c3_d lai_d, c3_w lat_w, u3_rmsg* msg_u)
   msg_u->rest.lai_d = lai_d;
   msg_u->rest.lat_w = lat_w;
   msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
-  msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
+  msg_u->rest.nam_c = c3_calloc(4 * msg_u->rest.nam_w);
   strncpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w + 1);
   msg_u->len_d += 4 + msg_u->rest.nam_w;
 }
