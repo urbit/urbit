@@ -25,22 +25,22 @@ let
   clang = native.make_derivation rec {
     name = "clang";
 
-    version = "7.0.0";
+    version = "7.0.1";
 
     src = nixpkgs.fetchurl {
       url = "http://releases.llvm.org/${version}/cfe-${version}.src.tar.xz";
-      sha256 = "0mdsbgj3p7mayhzm8hclzl3i46r2lwa8fr1cz399f9km3iqi40jm";
+      sha256 = "067lwggnbg0w1dfrps790r5l6k8n5zwhlsw7zb6zvmfpwpfn4nx4";
     };
 
     llvm_src = nixpkgs.fetchurl {
       url = "http://releases.llvm.org/${version}/llvm-${version}.src.tar.xz";
-      sha256 = "08p27wv1pr9ql2zc3f3qkkymci46q7myvh8r5ijippnbwr2gihcb";
+      sha256 = "16s196wqzdw4pmri15hadzqgdi926zln3an2viwyq0kini6zr3d3";
     };
 
     # Note: We aren't actually using lld for anything yet.
     lld_src = nixpkgs.fetchurl {
       url = "http://releases.llvm.org/${version}/lld-${version}.src.tar.xz";
-      sha256 = "173z50vx5mlsaiqmbz7asxy2297z4xivrfxrdfncvx23wp2lgkzv";
+      sha256 = "0ca0qygrk87lhjk6cpv1wbmdfnficqqjsda3k7b013idvnralsc8";
     };
 
     patches = [ ./clang_megapatch.patch ];
@@ -53,7 +53,9 @@ let
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
-      "-DLLVM_ENABLE_RTTI=ON " +  # ld64 uses dynamic_cast, requiring rtti
+      # ld64 uses dynamic_cast, requiring rtti
+      # Can probably remove this option now that ld64 doesn't depend on clang.
+      "-DLLVM_ENABLE_RTTI=ON " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
