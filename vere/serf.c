@@ -269,7 +269,6 @@ _serf_poke_boot(c3_d    evt_d,
                 u3_noun job)
 {
   u3A->roe = u3nc(job, u3A->roe);
-  fprintf(stderr, "serf assert: %lld // %lld \r\n", evt_d, (u3V.evt_d + 1ULL));   // NOTFORCHECKIN
   c3_assert(evt_d == u3V.evt_d + 1ULL);
   u3V.evt_d = evt_d;
   fprintf(stderr, "serf: (%lld)| boot\r\n", evt_d);
