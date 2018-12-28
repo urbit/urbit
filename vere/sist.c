@@ -12,12 +12,6 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#if defined(U3_OS_linux)
-#define DEVRANDOM "/dev/urandom"
-#else
-#define DEVRANDOM "/dev/random"
-#endif
-
 /* u3_sist_pack(): write a blob to disk, transferring.
 */
 c3_d
@@ -400,23 +394,18 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 }
 #endif
 
-/* u3_sist_rand(): fill a 512-bit (16-word) buffer.
+/* c3_rand(): fill a 512-bit (16-word) buffer.
 */
 void
-u3_sist_rand(c3_w* rad_w)
+c3_rand(c3_w* rad_w)
 {
-#if defined(U3_OS_bsd) && defined(__OpenBSD__)
-  if (-1 == getentropy(rad_w, 64)) {
-    c3_assert(!"lo_rand");
-  }
-#else
-  c3_i fid_i = open(DEVRANDOM, O_RDONLY);
+  c3_i fid_i = open("/dev/urandom", O_RDONLY);
 
   if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
-    c3_assert(!"lo_rand");
+    uL(fprintf(uH, "c3_rand read: %s\n", strerror(errno)));
+    u3_lo_bail();
   }
   close(fid_i);
-#endif
 }
 
 /* _sist_fast(): offer to save passcode by mug in home directory.
