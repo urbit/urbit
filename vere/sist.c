@@ -40,18 +40,15 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
-    perror("lseek");
-    uL(fprintf(uH, "sist_pack: seek failed\n"));
+    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( sizeof(lar_u) != write(lug_u->fid_i, &lar_u, sizeof(lar_u)) ) {
-    perror("write");
-    uL(fprintf(uH, "sist_pack: write failed\n"));
+    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * lug_u->len_d, SEEK_SET) ) {
-    perror("lseek");
-    uL(fprintf(uH, "sist_pack: seek failed\n"));
+    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
 #if 0
@@ -63,8 +60,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
                  lar_u.mug_w));
 #endif
   if ( (4 * len_w) != write(lug_u->fid_i, bob_w, (4 * len_w)) ) {
-    perror("write");
-    uL(fprintf(uH, "sist_pack: write failed\n"));
+    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
@@ -100,20 +96,19 @@ u3_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i)
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
-    uL(fprintf(uH, "sist: could not put %s\n", key_c));
-    perror("open");
+    uL(fprintf(uH, "sist: could not put %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = write(fid_i, val_y, siz_i)) != siz_i ) {
     uL(fprintf(uH, "sist: could not write %s\n", key_c));
     if ( ret_i < 0 ) {
-      perror("write");
+      uL(fprintf(uH, "write: %s\n", strerror(errno)));
     }
     u3_lo_bail();
   }
   ret_i = c3_sync(fid_i);
   if ( ret_i < 0 ) {
-    perror("sync");
+    uL(fprintf(uH, "sync: %s\n", strerror(errno)));
   }
   ret_i = close(fid_i);
   c3_assert(0 == ret_i);
@@ -136,8 +131,7 @@ u3_sist_has(const c3_c* key_c)
       return -1;
     }
     else {
-      uL(fprintf(uH, "sist: could not stat %s\n", key_c));
-      perror("stat");
+      uL(fprintf(uH, "sist: could not stat %s: %s\n", key_c, strerror(errno)));
       u3_lo_bail();
     }
   }
@@ -161,19 +155,17 @@ u3_sist_get(const c3_c* key_c, c3_y* val_y)
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_RDONLY)) < 0 ) {
-    uL(fprintf(uH, "sist: could not get %s\n", key_c));
-    perror("open");
+    uL(fprintf(uH, "sist: could not get %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = fstat(fid_i, &sat_u)) < 0 ) {
-    uL(fprintf(uH, "sist: could not stat %s\n", key_c));
-    perror("fstat");
+    uL(fprintf(uH, "sist: could not stat %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = read(fid_i, val_y, sat_u.st_size)) != sat_u.st_size ) {
     uL(fprintf(uH, "sist: could not read %s\n", key_c));
     if ( ret_i < 0 ) {
-      perror("read");
+      uL(fprintf(uH, "read: %s\n", strerror(errno)));
     }
     u3_lo_bail();
   }
@@ -197,8 +189,8 @@ u3_sist_nil(const c3_c* key_c)
       return;
     }
     else {
-      uL(fprintf(uH, "sist: could not unlink %s\n", key_c));
-      perror("unlink");
+      uL(fprintf(uH, "sist: could not unlink %s: %s\n", key_c,
+                     strerror(errno)));
       u3_lo_bail();
     }
   }
@@ -620,8 +612,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-    uL(fprintf(uH, "rest_nuu failed (a)\n"));
-    perror("lseek64");
+    uL(fprintf(uH, "rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -634,13 +625,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     tar_d = (end_d - (c3_d)c3_wiseof(u3_olar));
 
     if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest_nuu failed (b)\n"));
-      perror("lseek64");
+      uL(fprintf(uH, "rest_nuu failed (b), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
     }
     if ( sizeof(u3_olar) != read(fid_i, &lar_u, sizeof(u3_olar)) ) {
-      uL(fprintf(uH, "rest_nuu failed (c)\n"));
-      perror("read");
+      uL(fprintf(uH, "rest_nuu failed (c), read: %s\n", strerror(errno)));
       u3_lo_bail();
     }
 
@@ -653,13 +642,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     end_d = (tar_d - (c3_d)lar_u.len_w);
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest_nuu failed (e)\n"));
-      perror("lseek64");
+      uL(fprintf(uH, "rest_nuu failed (e), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
     }
     if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
-      uL(fprintf(uH, "rest_nuu failed (f)\n"));
-      perror("read");
+      uL(fprintf(uH, "rest_nuu failed (f), read: %s\n", strerror(errno)));
       u3_lo_bail();
     }
 
@@ -675,8 +662,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   }
 
   if ( 0 != close(fid_i) ) {
-    uL(fprintf(uH, "rest: could not close\n"));
-    perror("close");
+    uL(fprintf(uH, "rest: could not close, close: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -684,15 +670,14 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(ret_i < 2048);
 
   if ( (fud_i = open(nuu_c, O_CREAT | O_TRUNC | O_RDWR, 0600)) < 0 ) {
-    uL(fprintf(uH, "rest: can't open record (%s)\n", nuu_c));
-    perror("open");
+    uL(fprintf(uH, "rest: can't open record (%s), open: %s\n", nuu_c,
+                   strerror(errno)));
     u3_lo_bail();
   }
 
   led_u.mag_l = u3r_mug('g');
   if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
-    uL(fprintf(uH, "rest: can't write header\n"));
-    perror("write");
+    uL(fprintf(uH, "rest: can't write header, write: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -722,13 +707,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3z(ovo);
 
       if ( (lar_u.len_w << 2) != write(fud_i, img_w, lar_u.len_w << 2) ) {
-        uL(fprintf(uH, "rest_nuu failed (h)\n"));
-        perror("write");
+        uL(fprintf(uH, "rest_nuu failed (h), write: %s\n", strerror(errno)));
         u3_lo_bail();
       }
       if ( sizeof(u3_ular) != write(fud_i, &lar_u, sizeof(u3_ular)) ) {
-        uL(fprintf(uH, "rest_nuu failed (i)\n"));
-        perror("write");
+        uL(fprintf(uH, "rest_nuu failed (i), write: %s\n", strerror(errno)));
         u3_lo_bail();
       }
 
@@ -738,13 +721,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     }
   }
   if ( 0 != rename(nuu_c, old_c) ) {
-    uL(fprintf(uH, "rest_nuu failed (k)\n"));
-    perror("rename");
+    uL(fprintf(uH, "rest_nuu failed (k), rename: %s\n", strerror(errno)));
     u3_lo_bail();
   }
   if ( -1 == lseek64(fud_i, sizeof(u3_uled), SEEK_SET) ) {
-    uL(fprintf(uH, "rest_nuu failed (l)\n"));
-    perror("lseek64");
+    uL(fprintf(uH, "rest_nuu failed (l), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
   lug_u->fid_i = fud_i;
@@ -880,8 +861,8 @@ _sist_rest()
     ent_d = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      fprintf(stderr, "end_d %" PRIu64 "\n", end_d);
-      perror("lseek");
+      uL(fprintf(uH, "end_d %" PRIu64 ", lseek64: %s\n", end_d,
+                     strerror(errno)));
       uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
       u3_lo_bail();
     }
