@@ -542,23 +542,15 @@ _sist_zest()
     u3Z->lug_u.fid_i = fid_i;
   }
 
-  //  Generate a 31-bit salt.
+  //  Generate a 31-bit salt and 64-bit passcode.
   //
   {
-    c3_w rad_w[16];
+    u3_noun pas;
+    c3_w    rad_w[16];
 
     c3_rand(rad_w);
     sal_l = (0x7fffffff & rad_w[0]);
-  }
-
-  //  Create and save a passcode.
-  //
-  {
-    c3_w rad_w[16];
-    u3_noun pas;
-
-    c3_rand(rad_w);
-    pas = u3i_words(2, rad_w);
+    pas = u3i_words(2, rad_w + 1);
 
     u3A->key = _sist_fatt(sal_l, u3k(pas));
     _sist_fast(pas, u3r_mug(u3A->key));
