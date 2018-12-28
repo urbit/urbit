@@ -54,7 +54,7 @@ _rock_init_comn(u3_pers * pers_u, c3_c * sto_c)
   */
   c3_y * cwd_c = (c3_y *) get_current_dir_name();
   
-  c3_y * path_y = (c3_y *) malloc(strlen( (char *) cwd_c) + strlen(u3C.dir_c) + strlen(DATB_NAME) + 3);
+  c3_y * path_y = (c3_y *) c3_malloc(strlen( (char *) cwd_c) + strlen(u3C.dir_c) + strlen(DATB_NAME) + 3);
   sprintf((char *) path_y, "%s/%s/%s", cwd_c, u3C.dir_c, DATB_NAME);
   /* fprintf(stderr, "rocks read init: write db path = %s\n\r", path_y); */
 
@@ -265,7 +265,7 @@ u3_rock_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  
   pthread_t tid_u;
   c3_w ret_w;
   
-  rock_write_cb_data * cbd_u = (rock_write_cb_data *) malloc(sizeof(rock_write_cb_data));
+  rock_write_cb_data * cbd_u = (rock_write_cb_data *) c3_malloc(sizeof(rock_write_cb_data));
   bzero(cbd_u, sizeof(rock_write_cb_data));
   cbd_u -> wit_u = wit_u;
   cbd_u -> buf_y = buf_y;

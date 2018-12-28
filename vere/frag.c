@@ -146,7 +146,7 @@ c3_o u3_frag_read(_frag_read read_u,
                mult_read_hand ** mrh_u)
 {
   /* set up multi read handle (good for a noun that spans 1 fragment, or many)  */
-  * mrh_u = (mult_read_hand *) malloc (sizeof (mult_read_hand));
+  * mrh_u = (mult_read_hand *) c3_malloc (sizeof (mult_read_hand));
   (* mrh_u) ->han_u = NULL;
   (* mrh_u) ->dat_y = NULL;
 
@@ -198,7 +198,7 @@ c3_o u3_frag_read(_frag_read read_u,
        - pass the malloced space back for later cleanup
   */
 
-  c3_y *  dta_y = (c3_y *) malloc(cnt_w * max_w);
+  c3_y *  dta_y = (c3_y *) c3_malloc(cnt_w * max_w);
   c3_y *  ndx_y = dta_y;
   c3_w    lna_w = 0;
 
@@ -290,8 +290,8 @@ void frag_writ(c3_w max_w,          /* IN: max fragment size (0 == infinite ) */
   c3_w cnt_w = len_w / max_w + (0 == (len_w % max_w) ? 0 : 1); /* how many fragments ? */
 
   /* setup fragment handle */
-  u3_pers_frag * mwh_u = (u3_pers_frag *) malloc(sizeof(u3_pers_frag));
-  mwh_u->don_o = (c3_o   *) malloc( sizeof(c3_o) * cnt_w);
+  u3_pers_frag * mwh_u = (u3_pers_frag *) c3_malloc(sizeof(u3_pers_frag));
+  mwh_u->don_o = (c3_o   *) c3_malloc( sizeof(c3_o) * cnt_w);
   memset(mwh_u->don_o, c3n, cnt_w);
   int ret = pthread_mutex_init(& mwh_u->mut_u, NULL);
   if (0 != ret){
@@ -350,7 +350,7 @@ void frag_writ(c3_w max_w,          /* IN: max fragment size (0 == infinite ) */
     hed_w = u3_frag_head_size(len_w,
                               frg_w,
                               max_w);
-    c3_y * frag_y = malloc(frg_len_w + hed_w);
+    c3_y * frag_y = c3_malloc(frg_len_w + hed_w);
     hd2_w = _frag_head_writ(frag_y, frg_w, cnt_w);
 
     memcpy(frag_y + hed_w, byt_y, frg_len_w);

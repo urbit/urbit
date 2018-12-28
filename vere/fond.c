@@ -507,13 +507,13 @@ _fond_write_frag(u3_writ* wit_u,      /* IN: writ */
 {
 
   /* transform args */
-  c3_y * ked_y = (c3_y * ) malloc(256);   /* transform event ID -> key */
+  c3_y * ked_y = (c3_y * ) c3_malloc(256);   /* transform event ID -> key */
   c3_ws kel_ws;
   _fond_sprintf_eventd(pos_d, frg_w, ked_y, & kel_ws);
 
   
   /* fond specific callback data that may need for retry on certain error codes */
-  fond_writ_calb * fwc_u = (fond_writ_calb *) malloc(sizeof(fond_writ_calb));
+  fond_writ_calb * fwc_u = (fond_writ_calb *) c3_malloc(sizeof(fond_writ_calb));
   bzero(fwc_u, sizeof(fond_writ_calb) );
   fwc_u-> ked_y = ked_y; /* key */
   fwc_u-> kel_ws = kel_ws;
@@ -522,7 +522,7 @@ _fond_write_frag(u3_writ* wit_u,      /* IN: writ */
   fwc_u-> try_w = 0;
   
   /* generic callback data */
-  u3_pers_writ_calb * pwc_u = (u3_pers_writ_calb *) malloc(sizeof (u3_pers_writ_calb));
+  u3_pers_writ_calb * pwc_u = (u3_pers_writ_calb *) c3_malloc(sizeof (u3_pers_writ_calb));
   bzero(pwc_u, sizeof(u3_pers_writ_calb) );
   pwc_u-> wit_u = wit_u;
   pwc_u-> cnt_w = cnt_w;

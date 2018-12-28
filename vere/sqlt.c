@@ -65,7 +65,7 @@ u3_sqlt_read_init(u3_pier* pir_u, c3_c * pot_c)
   /* set read head to 1 */
   pir_u->pin_u->pos_d = 1;
 
-  char * path_c = malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
+  char * path_c = c3_malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
   sprintf(path_c, "./%s/%s", u3C.dir_c, DATB_NAME);
   fprintf(stderr, "sqlt read init: read db path = %s\n\r", path_c);
 
@@ -218,7 +218,7 @@ u3_sqlt_write_init(u3_pier* pir_u, c3_c * pot_c)
     }
 
   
-    char * path_c = malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
+    char * path_c = c3_malloc(strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
     sprintf(path_c, "./%s/%s", u3C.dir_c, DATB_NAME);
     fprintf(stderr, "sqlt write init: write db path = %s\n\r", path_c);
 
@@ -370,7 +370,7 @@ u3_sqlt_write_write(u3_writ* wit_u,       /* IN: writ */
                                  u3_sqlt_frag_size());
   hed_w= 0;
   
-  sqlt_write_cb_data * cbd_u = (sqlt_write_cb_data *) malloc(sizeof(sqlt_write_cb_data));
+  sqlt_write_cb_data * cbd_u = (sqlt_write_cb_data *) c3_malloc(sizeof(sqlt_write_cb_data));
   cbd_u->wit_u = wit_u;
   cbd_u->buf_y = buf_y + hed_w;
   cbd_u->len_w = len_w - hed_w;

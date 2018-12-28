@@ -78,11 +78,11 @@ c3_w u3_lmdb_frag_size()
 c3_o
 _lmdb_init_comn(u3_pers * pers_u, c3_c * sto_c)
 {
-  pers_u->lmdb_u = malloc(sizeof (u3_lmdb));
+  pers_u->lmdb_u = c3_malloc(sizeof (u3_lmdb));
 
 
   
-  pers_u->lmdb_u->path_c = (c3_y *) malloc( strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
+  pers_u->lmdb_u->path_c = (c3_y *) c3_malloc( strlen(u3C.dir_c) + strlen(DATB_NAME) + 2);
   sprintf((char *) pers_u->lmdb_u->path_c, "./%s/%s", (char *) u3C.dir_c, (char *) DATB_NAME);
   fprintf(stderr, "lmdb init: db path = %s\n\r", (char *) pers_u->lmdb_u->path_c);
 
@@ -289,7 +289,7 @@ u3_lmdb_read_read(u3_pier* pir_u,  c3_y ** dat_y, c3_w * len_w, void ** hand_u)
   key_u.mv_data = (void *) & pir_u->pin_u->pos_d;
   key_u.mv_size = sizeof(pir_u->pin_u->pos_d);
 
-  MDB_val * val_u = (MDB_val *) malloc(sizeof(MDB_val));
+  MDB_val * val_u = (MDB_val *) c3_malloc(sizeof(MDB_val));
 
   
   ret_w =  mdb_get(txn_u,
@@ -513,7 +513,7 @@ _lmdb_write_cast(void *opq_u)
 void
 u3_lmdb_write_write(u3_writ* wit_u, c3_d pos_d, c3_y* buf_y, c3_y* byt_y, c3_w  len_w, writ_test_cb test_cb)
 {
-  write_cb_data * cbd_u = (write_cb_data *) malloc(sizeof(write_cb_data));
+  write_cb_data * cbd_u = (write_cb_data *) c3_malloc(sizeof(write_cb_data));
   cbd_u->wit_u = wit_u;
   cbd_u->buf_y = buf_y;
   cbd_u->len_w = len_w;
