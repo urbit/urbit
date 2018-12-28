@@ -1,15 +1,14 @@
 source $setup
 
-cp $src_h tapi.h
-cp $src_cpp tapi.cpp
-
-g++ -c -Wall -Wextra tapi.cpp $(pkg-config --cflags yaml-0.1) -o tapi.o
+CFLAGS="-g -O2 -std=c++14 -Wall -Wextra"
+CFLAGS="$CFLAGS -I$include_dir"
+g++ -c $CFLAGS $src_dir/tapi.cpp $(pkg-config --cflags yaml-0.1) -o tapi.o
 ar cr libtapi.a tapi.o
 
-mkdir -p $out/lib/pkgconfig $out/include/tapi
+mkdir -p $out/lib/pkgconfig
 
 cp libtapi.a $out/lib
-cp tapi.h $out/include/tapi
+cp -r $include_dir $out/include
 
 cat > $out/lib/pkgconfig/libtapi.pc <<EOF
 prefix=$out

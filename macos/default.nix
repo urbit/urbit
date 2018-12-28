@@ -57,28 +57,17 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
-  # Note: There is an alternative version we could use, but it
-  # has a copy of LLVM in it: https://github.com/tpoechtrager/apple-libtapi
+  # Previously we used a port of Apple's TAPI library from here:
+  #   https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz
+  # Another version of that libtrary is here:
+  #   https://github.com/tpoechtrager/apple-libtapi
+  # But those versions require LLVM and clang 5.0.0, so now we are using
+  # tinytapi instead.
   tapi = native.make_derivation rec {
-    name = "tapi";
-    version = "${version0}.${version1}.${version2}";
-    version0 = "2";
-    version1 = "0";
-    version2 = "0";
-    src = nixpkgs.fetchurl {
-      url = "https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz";
-      sha256 = "0jibz0fsyh47q8y3w6f0qspjh6fhs164rkhjg7x6k7qhlawcdy6g";
-    };
-    builder = ./tapi_builder.sh;
-    native_inputs = [ clang ];
-    inherit clang;
-  };
-
-  tinytapi = native.make_derivation rec {
     name = "tinytapi";
     # tmphax until tinytapi is published on GitHub
-    src_h = ../../tinytapi/src/tapi.h;
-    src_cpp = ../../tinytapi/src/tapi.cpp;
+    src_dir = ../../tinytapi/src;
+    include_dir = ../../tinytapi/include;
     builder = ./tinytapi_builder.sh;
     libyaml = nixpkgs.libyaml;
     native_inputs = [ libyaml ];
@@ -100,7 +89,7 @@ let
       ./cctools-ld64-registers.patch
     ];
     builder = ./ld_builder.sh;
-    native_inputs = [ tinytapi ];
+    native_inputs = [ tapi ];
     inherit host;
   };
 
@@ -194,7 +183,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang tapi tinytapi ld ranlib ar sdk toolchain;
+    inherit clang tapi ld ranlib ar sdk toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
