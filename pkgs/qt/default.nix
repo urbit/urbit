@@ -96,11 +96,11 @@ let
           "-device-option QMAKE_INCDIR_X11=${libxall}/include " +
           "-device-option QMAKE_LIBDIR_X11=${libxall}/lib"
         else if crossenv.os == "macos" then
-          "-device-option QMAKE_MAC_SDK.macosx.--show-sdk-path=" +
+          "-device-option QMAKE_MAC_SDK.macosx.Path=" +
             "${crossenv.sdk} " +
-          "-device-option QMAKE_MAC_SDK.macosx.--show-sdk-platform-path=" +
+          "-device-option QMAKE_MAC_SDK.macosx.PlatformPath=" +
             "${crossenv.sdk}/does-not-exist " +
-          "-device-option QMAKE_MAC_SDK.macosx.--show-sdk-version=" +
+          "-device-option QMAKE_MAC_SDK.macosx.SDKVersion=" +
             "${crossenv.macos_version_min} " +
           "-device-option QMAKE_XCODE_VERSION=7.0"
         else "" );
