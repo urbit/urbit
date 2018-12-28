@@ -93,25 +93,25 @@
 
 /* c3_malloc(): asserting malloc
  */
-#define c3_malloc(s) ({                         \
-      void* rut = malloc(s);                    \
-      if ( 0 == rut ) {                         \
-        c3_assert(!"memory lost");              \
-      }                                         \
-      rut;})
+#     define c3_malloc(s) ({          \
+        void* rut = malloc(s);        \
+        if ( 0 == rut ) {             \
+          c3_assert(!"memory lost");  \
+        }                             \
+        rut;})
 
 /* c3_calloc(): asserting calloc
  */
-#define c3_calloc(s) ({                         \
-      void* rut = c3_malloc(s);                 \
-      memset(rut, 0, s);                        \
-      rut;})
+#     define c3_calloc(s) ({          \
+        void* rut = c3_malloc(s);     \
+        memset(rut, 0, s);            \
+        rut;})
 
 /* c3_realloc(): asserting realloc
  */
-#define c3_realloc(a, b) ({                     \
-      void* rut = realloc(a, b);                \
-      if ( 0 == rut ) {                         \
-        c3_assert(!"memory lost");              \
-      }                                         \
-      rut;})
+#     define c3_realloc(a, b) ({      \
+        void* rut = realloc(a, b);    \
+        if ( 0 == rut ) {             \
+          c3_assert(!"memory lost");  \
+        }                             \
+        rut;})
