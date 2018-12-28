@@ -13,8 +13,6 @@
 #include "vere/vere.h"
 
 #if defined(U3_OS_linux)
-#include <stdio_ext.h>
-#define fpurge(fd) __fpurge(fd)
 #define DEVRANDOM "/dev/urandom"
 #else
 #define DEVRANDOM "/dev/random"
@@ -361,7 +359,7 @@ _sist_text(c3_c* pom_c)
     printf("%s: ", pom_c);
 
     paw_c[0] = 0;
-    fpurge(stdin);
+    c3_fpurge(stdin);
     fgets(paw_c, 179, stdin);
 
     if ( '\n' == paw_c[0] ) {
