@@ -1,6 +1,5 @@
-diff -ur qtbase-everywhere-src-5.11.2-orig/src/widgets/configure.json qtbase-everywhere-src-5.11.2/src/widgets/configure.json
---- qtbase-everywhere-src-5.11.2-orig/src/widgets/configure.json	2018-10-23 21:31:57.188242656 -0700
-+++ qtbase-everywhere-src-5.11.2/src/widgets/configure.json	2018-10-23 21:46:23.586209362 -0700
+--- qtbase-everywhere-src-5.12.0-orig/src/widgets/configure.json
++++ qtbase-everywhere-src-5.12.0/src/widgets/configure.json
 @@ -27,11 +27,6 @@
      },
  
@@ -17,8 +16,8 @@ diff -ur qtbase-everywhere-src-5.11.2-orig/src/widgets/configure.json qtbase-eve
          },
          "style-windowsvista": {
              "label": "WindowsVista",
--            "condition": "features.style-windows && config.win32 && !config.winrt && tests.uxtheme",
-+            "condition": "features.style-windows && config.win32 && !config.winrt",
+-            "condition": "features.style-windows && features.animation && config.win32 && !config.winrt && tests.uxtheme",
++            "condition": "features.style-windows && features.animation && config.win32 && !config.winrt",
              "output": [ "privateFeature", "styles" ]
          },
          "style-android": {
