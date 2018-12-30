@@ -3,6 +3,10 @@
 # binutils.  So clang and binutils recipes could be shared by the
 # different platforms we targets.
 
+# TODO: Make __builtin_available work
+# https://jonnyzzz.com/blog/2018/05/16/link-error/
+# https://compiler-rt.llvm.org/
+
 { native }:
 let
   nixpkgs = native.nixpkgs;
@@ -59,6 +63,21 @@ let
       # Can probably remove this option now that ld64 doesn't depend on clang.
       "-DLLVM_ENABLE_RTTI=ON " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
+  };
+
+  compiler_rt = native.make_derivation rec {
+    name = "compiler-rt-${version}";
+
+    version = clang.version;
+
+    src = nixpkgs.fetchurl {
+      url = "http://releases.llvm.org/7.0.1/compiler-rt-${version}.src.tar.xz";
+      sha256 = "065ybd8fsc4h2hikbdyricj6pyv4r7r7kpcikhb2y5zf370xybkq";
+    };
+
+    builder = ./compiler_rt_builder.sh;
+
+    native_inputs = [ clang nixpkgs.python2 ];
   };
 
   # Previously we used a port of Apple's TAPI library from here:
@@ -188,7 +207,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang tapi ld ranlib ar sdk toolchain;
+    inherit clang compiler_rt tapi ld ranlib ar sdk toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
