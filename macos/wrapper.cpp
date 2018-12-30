@@ -60,7 +60,7 @@ int compiler_main(int argc, char ** argv,
   {
     args.push_back("-stdlib=libc++");
     args.push_back("-cxx-isystem");
-    args.push_back(WRAPPER_SDK_PATH "/usr/include/c++/v1");
+    args.push_back(WRAPPER_SDK_PATH "/usr/include/c++");
   }
 
   for (int i = 1; i < argc; ++i)
