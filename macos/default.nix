@@ -12,7 +12,9 @@ let
   # was darwin15, changed to darwin so that lld guesses flavor=Darwin correctly
   darwin_name = "darwin15";
 
-  macos_version_min = "10.11";
+  # Qt 5.12 expects macOS 10.12 or later
+  # (see macx.conf and http://doc.qt.io/qt-5/macos.html).
+  macos_version_min = "10.12";
 
   host = "${arch}-apple-${darwin_name}";
 

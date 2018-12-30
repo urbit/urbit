@@ -100,7 +100,7 @@ let
             "${crossenv.sdk} " +
           "-device-option QMAKE_MAC_SDK.macosx.PlatformPath=" +
             "${crossenv.sdk}/does-not-exist " +
-          "-device-option QMAKE_MAC_SDK.macosx.SDKVersion=${crossenv.sdk.version}" +
+          "-device-option QMAKE_MAC_SDK.macosx.SDKVersion=${crossenv.sdk.version} " +
           "-device-option QMAKE_XCODE_VERSION=7.0"
         else "" );
 
