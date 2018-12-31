@@ -11,7 +11,7 @@
 
 #define ENT_DEFS (void)0
 #define ENT_INIT() (void)0
-#define ENT_READ(B, L) sysall(SYS_getrandom, B, L, 0)
+#define ENT_READ(B, L) syscall(SYS_getrandom, B, L, 0)
 #define ENT_FINI() (void)0
 
 #elif defined(ENT_URANDOM)
