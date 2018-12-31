@@ -65,21 +65,6 @@ let
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
-  compiler_rt = native.make_derivation rec {
-    name = "compiler-rt-${version}";
-
-    version = clang.version;
-
-    src = nixpkgs.fetchurl {
-      url = "http://releases.llvm.org/7.0.1/compiler-rt-${version}.src.tar.xz";
-      sha256 = "065ybd8fsc4h2hikbdyricj6pyv4r7r7kpcikhb2y5zf370xybkq";
-    };
-
-    builder = ./compiler_rt_builder.sh;
-
-    native_inputs = [ clang nixpkgs.python2 ];
-  };
-
   # Previously we used a port of Apple's TAPI library from here:
   #   https://github.com/DavidEGrayson/tapi/archive/f98d0c3.tar.gz
   # Another version of that libtrary is here:
@@ -158,6 +143,33 @@ let
     native_inputs = [ nixpkgs.ruby ];
   } // {
     version = builtins.readFile "${sdk}/version.txt";
+  };
+
+  compiler_rt = native.make_derivation rec {
+    name = "compiler-rt-${version}";
+
+    version = clang.version;
+
+    src = nixpkgs.fetchurl {
+      url = "http://releases.llvm.org/7.0.1/compiler-rt-${version}.src.tar.xz";
+      sha256 = "065ybd8fsc4h2hikbdyricj6pyv4r7r7kpcikhb2y5zf370xybkq";
+    };
+
+    builder = ./compiler_rt_builder.sh;
+
+    native_inputs = [ clang ld ar nixpkgs.python2 ];
+
+    CC = "clang";
+    CXX = "clang++";
+
+    cmake_flags =
+      "-DCMAKE_BUILD_TYPE=Release " +
+      "-DCMAKE_SYSTEM_NAME=Darwin " +
+      "-DCMAKE_OSX_SYSROOT=${sdk} " +
+      "-DCMAKE_AR=${ar}/bin/${host}-ar " +
+      "-DCOMPILER_RT_BUILD_XRAY=OFF";
+
+    inherit host sdk;
   };
 
   toolchain = native.make_derivation rec {
