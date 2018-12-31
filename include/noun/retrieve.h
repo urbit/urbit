@@ -431,3 +431,78 @@
       */
         c3_y*
         u3r_tape(u3_noun a);
+
+      //  XX temporary
+      //
+
+      /* u3r_mur():
+      **
+      **   Compute and/or recall the mug (31-bit hash) of (a).
+      */
+        c3_w
+        u3r_mur(u3_noun a);
+
+      /* u3r_mur_string():
+      **
+      **   Compute the mug of `a`, LSB first.
+      */
+        c3_w
+        u3r_mur_string(const c3_c *a_c);
+
+      /* u3r_mur_words():
+      **
+      **   Compute the mug of `buf`, `len`, LSW first.
+      */
+        c3_w
+        u3r_mur_words(const c3_w *buf_w,
+                      c3_w        len_w);
+
+      /* u3r_mur_d():
+      **
+      **   Compute the mug of `num`, LSW first.
+      */
+        c3_w
+        u3r_mur_d(c3_d num_d);
+
+      /* u3r_mur_bytes():
+      **
+      **   Compute the mug of `buf`, `len`, LSW first.
+      */
+      c3_w
+      u3r_mur_bytes(const c3_y *buf_w,
+                      c3_w        len_w);
+
+      /* u3r_mur_cell():
+      **
+      **   Compute the mug of `[a b]`.
+      */
+        c3_w
+        u3r_mur_cell(u3_noun a,
+                     u3_noun b);
+
+      /* u3r_mur_trel():
+      **
+      **   Compute the mug of `[a b c]`.
+      */
+        c3_w
+        u3r_mur_trel(u3_noun a,
+                     u3_noun b,
+                     u3_noun c);
+
+      /* u3r_mur_qual():
+      **
+      **   Compute the mug of `[a b c d]`.
+      */
+        c3_w
+        u3r_mur_qual(u3_noun a,
+                     u3_noun b,
+                     u3_noun c,
+                     u3_noun d);
+
+      /* u3r_mur_both():
+      **
+      **   Join two mugs.
+      */
+        c3_w
+        u3r_mur_both(c3_w a_w,
+                       c3_w b_w);
