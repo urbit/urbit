@@ -23,34 +23,34 @@
       !>  (muk 0xcafe.babe 16 (dec (bex 128)))
   ==
 ::
-++  test-mum
+++  test-mur
   ;:  weld
     %+  expect-eq
       !>  0x4d44.1035
-      !>  (mum 'Hello, world!')
+      !>  (mur 'Hello, world!')
     ::
     %+  expect-eq
       !>  0x79ff.04e8
-      !>  (mum 0)
+      !>  (mur 0)
     ::
     %+  expect-eq
       !>  0x64df.da5c
-      !>  (mum (crip (reap 28 'x')))
+      !>  (mur (crip (reap 28 'x')))
     ::
     %+  expect-eq
       !>  0x389c.a03a
-      !>  (mum [0 0])
+      !>  (mur [0 0])
     ::
     %+  expect-eq
       !>  0x389c.a03a
-      !>  (mum [1 1])
+      !>  (mur [1 1])
     ::
     %+  expect-eq
       !>  0x5258.a6c0
-      !>  (mum [0 (bex 32)])
+      !>  (mur [0 (bex 32)])
     ::
     %+  expect-eq
       !>  0x2ad3.9968
-      !>  (mum [(dec (bex 128)) 1])
+      !>  (mur [(dec (bex 128)) 1])
   ==
 --

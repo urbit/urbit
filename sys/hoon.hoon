@@ -1111,9 +1111,9 @@
     =.  h  (mix h (rsh 0 16 h))
     h
   --
-  ::
-  ++  mum                                                 ::  mug with murmur3
-  ~/  %mum
+::
+++  mur                                                 ::  mug with murmur3
+  ~/  %mur
   |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
   ++  trim                                              ::  31-bit nonzero
