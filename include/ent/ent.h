@@ -52,22 +52,8 @@ ent_getentropy(void* buf, size_t buflen);
 # error "libent: platform not supported"
 #endif
 
-#ifdef ENT_GETENTROPY
 #undef ENT_GETENTROPY
-#endif
-
-#ifdef ENT_GE_SYSRANDOM
 #undef ENT_GE_SYSRANDOM
-#endif
-
-#ifdef ENT_GE_UNISTD
 #undef ENT_GE_UNISTD
-#endif
-
-#ifdef ENT_GETRANDOM
 #undef ENT_GETRANDOM
-#endif
-
-#ifdef ENT_URANDOM
 #undef ENT_URANDOM
-#endif
