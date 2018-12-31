@@ -13,6 +13,8 @@
 
 #include <ent/ent.h>
 
+#if defined(_ENT_GETRANDOM) || defined(_ENT_URANDOM)
+
 #include <assert.h>
 #include <errno.h>
 #include <unistd.h>
@@ -69,3 +71,5 @@ ent_getentropy(void* buf, size_t len)
   }
   return ret < 0 ? ret : 0;
 }
+
+#endif /* _ENT_GETRANDOM || _ENT_URANDOM */
