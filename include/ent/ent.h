@@ -36,7 +36,7 @@
 #   error "libent: this shouldn't happen"
 # endif
 # define ent_getentropy getentropy
-#elif defined(ENT_URANDOM)
+#elif defined(ENT_GETRANDOM) || defined(ENT_URANDOM)
 
 /* Fills buf with high-quality entropy.
  *
@@ -62,4 +62,12 @@ ent_getentropy(void* buf, size_t buflen);
 
 #ifdef ENT_GE_UNISTD
 #undef ENT_GE_UNISTD
+#endif
+
+#ifdef ENT_GETRANDOM
+#undef ENT_GETRANDOM
+#endif
+
+#ifdef ENT_URANDOM
+#undef ENT_URANDOM
 #endif

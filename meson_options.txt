@@ -1,0 +1,2 @@
+option('support-older-oses', type : 'boolean', value : false,
+       description : 'Tries to work on older systems. Useful for binary releases. (Uses getrandom on Linux, /dev/urandom on other *nix.)')
