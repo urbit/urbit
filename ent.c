@@ -4,7 +4,7 @@
 
 #if defined(ENT_GETRANDOM)
 
-#define _ENT_IMPL
+#define ENT_IMPL
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -16,7 +16,7 @@
 
 #elif defined(ENT_URANDOM)
 
-#define _ENT_IMPL
+#define ENT_IMPL
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -35,7 +35,7 @@
 
 #include <ent/ent.h>
 
-#if defined(_ENT_IMPL)
+#if defined(ENT_IMPL)
 
 #include <assert.h>
 #include <errno.h>
@@ -69,4 +69,4 @@ ent_getentropy(void* buf, size_t len)
   return ret < 0 ? ret : 0;
 }
 
-#endif /* _ENT_IMPL */
+#endif /* ENT_IMPL */
