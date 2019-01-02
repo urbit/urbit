@@ -942,6 +942,8 @@ static u3j_harm _141_two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
 static c3_c* _141_two_mug_ha[] = {0};
 static u3j_harm _141_two_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
 static c3_c* _141_two_muk_ha[] = {0};
+static u3j_harm _141_two_mur_a[] = {{".2", u3wc_mur, c3y}, {}};
+static c3_c* _141_two_mur_ha[] = {0};
 static u3j_harm _141_two_peg_a[] = {{".2", u3wc_peg, c3y}, {}};
 static c3_c* _141_two_peg_ha[] = {0};
 static u3j_harm _141_two_pow_a[] = {{".2", u3wc_pow, c3y}, {}};
@@ -1184,6 +1186,7 @@ static u3j_core _141_two_d[] =
   { "mix", 7, _141_two_mix_a, 0, _141_two_mix_ha },
   { "mug", 7, _141_two_mug_a, 0, _141_two_mug_ha },
   { "muk", 59, _141_two_muk_a, 0, _141_two_muk_ha },
+  { "mur", 7, _141_two_mur_a, 0, _141_two_mur_ha },
   { "rap", 7, _141_two_rap_a, 0, _141_two_rap_ha },
   { "rep", 7, _141_two_rep_a, 0, _141_two_rep_ha },
   { "rev", 7, _141_two_rev_a, 0, _141_two_rev_ha },
