@@ -272,7 +272,7 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
 {
   c3_c   paw_c[60];
   u3_noun key;
-  u3_utty* uty_u = calloc(1, sizeof(u3_utty));
+  u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
   uty_u->fid_i = 0;
 
   uH;
