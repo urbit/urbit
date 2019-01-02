@@ -35,8 +35,8 @@ if not have_getentropy
   conf_data.set('ENT_GETRANDOM', getrandom)
 
   if not getrandom
-    code = '''#include <fcntl.h>
-    int main() { return open("/dev/urandom", O_RDONLY) >= 0 ? 0 : 1; }
+    code = '''#include <stdio.h>
+    int main() { return fopen("/dev/urandom", "r") ? 0 : 1; }
     '''
     urandom = compiler.run(code, name: 'can open /dev/urandom').returncode() == 0
     conf_data.set('ENT_URANDOM', urandom)
