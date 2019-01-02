@@ -17,7 +17,7 @@
     -8~kX.3ALiG.rQjOi.HZ9hj.84b6G.P5pCZ.UtNtt.Lh9TE.2DQJ2
   =/  url  (de-purl:html 'http://localhost:8545')
   =/  dan
-    [`seed:able:jael`[~nul 1 key ~] ~ ~ [/org/urbit ~] 0 url ~]
+    [`seed:able:jael`[~nul 1 key ~] ~nul ~ [/org/urbit ~] 0 url ~]
   ::
   =^  results1  jael-gate
     =/  hen=duct
@@ -56,9 +56,9 @@
   ::
   =^  results3  jael-gate
     =/  hiss-httr=hiss:eyre
-      %+  json-request:ethereum
+      %+  json-request:rpc:ethereum
         (need url)
-      %+  request-to-json:ethereum
+      %+  request-to-json:rpc:ethereum
         `'block number'
       [%eth-block-number ~]
     %-  jael-take-with-comparator  :*

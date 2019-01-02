@@ -395,11 +395,11 @@
       ::  ~&  [%swim-wyt `@ud`~(wyt in worm.vane)]
       =+  ^=  pru
           ?~  pux
-            ~|  [%swim-call-vane lal ({term $~} +.p.hil)]
+            ~|  [%swim-call-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
             =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %call])
             %^  slur-pro  lal  vax
             (slid [%& duc.vil hen] (slix hil))
-          ~|  [%swim-take-vane lal ({term $~} +.p.hil)]
+          ~|  [%swim-take-vane lal (symp ?@(+.p.hil +.p.hil +<.p.hil))]
           =^  vax  worm.vane  (~(slap wa worm.vane) rig [%limb %take])
           %^  slur-pro  lal   vax
           ;:  slid
@@ -552,9 +552,12 @@
     |=  {lac/? mor/(list muse)}
     =|  ova/(list ovum)
     |-  ^-  {p/(list ovum) q=(list [label=@tas =vane])}
-    ?~  mor  [(flop ova) vanes]
+    ?~  mor
+      [ova vanes]
     =^  nyx  vanes  (jack lac i.mor)
-    $(ova (weld p.nyx ova), mor (weld q.nyx t.mor))
+    ::  we emit ova to unix in fifo order, but emit internal moves depth-first
+    ::
+    $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
   --
 --
 =<  ::  Arvo larval stage

@@ -69,7 +69,7 @@
 ++  note-jael                                           ::
   $%  $:  %dawn                                         ::  boot from keys
           =seed:able:jael                               ::    identity params
-          spon=(unit ship)                              ::    sponsor
+          spon=ship                                     ::    sponsor
           czar=(map ship [=life =pass])                 ::    galaxy table
           turf=(list turf)                              ::    domains
           bloq=@ud                                      ::    block number
@@ -508,9 +508,9 @@
       [~ ..^$]
     ::  this lets lib/helm send %heft a la |mass
     ::
-    =/  not=note-dill
-      ?:(?=([%crud %hax-heft ~] p.task) [%heft ~] p.task)
-    [[u.hey.all %slip %d not]~ ..^$]
+    =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
+    ::
+    $(hen u.hey.all, wrapped-task p.task)
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
   ?:  ?=(%sunk -.task)

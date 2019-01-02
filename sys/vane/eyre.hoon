@@ -39,8 +39,7 @@
           ==  ==  ==                                    ::
 ++  sign                                                ::  in result $<-
           $%  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}              ::  acknowledgment
-              {$went ship cape:ames}                   ::  XX ignore
+          $%  {$woot p/ship q/coop}                     ::  acknowledgment
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
           $%  {$wake ~}                                ::  timer activate
@@ -758,11 +757,31 @@
         $them                                           ::  outbound request
       ?~  p.kyz
         =+  sud=(need (~(get by kes) hen))
-        %=  +>.$
-          mow    :_(mow [ged [%give %thus sud ~]])
-          q.ask  (~(del by q.ask) sud)
-          kes    (~(del by kes) hen)
-        ==
+        =.  +>.$
+          %_  +>.$
+            mow    :_(mow [ged [%give %thus sud ~]])
+            q.ask  (~(del by q.ask) sud)
+            kes    (~(del by kes) hen)
+          ==
+        ::
+        =/  driver=(unit [key=[user (list @t)] val=driv])
+          =/  drivers  ~(tap by sec)
+          |-  ^-  (unit [key=[user (list @t)] val=driv])
+          ?~  drivers  ~
+          ::
+          ?~  q=req.q.q.i.drivers
+            $(drivers t.drivers)
+          ::
+          ?~  tip=~(top to q)
+            $(drivers t.drivers)
+          ::
+          ?:  =(hen p.u.tip)
+            `i.drivers
+          $(drivers t.drivers)
+        ::
+        ?~  driver
+          +>.$
+        ~(cancel-request vi u.driver)
       ::  ~&  eyre-them+(en-purl p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
@@ -819,10 +838,6 @@
     ::
         $well
       +>.$(wel (dank wel p.kyz q.kyz))
-    ::
-        $went
-      ::  this won't happen until we send responses.
-      !!
     ::
         $west                                           ::  remote request
       =.  mow  :_(mow [hen %give %mack ~])
@@ -923,11 +938,6 @@
     ::    (emule |.(~|(gall-dumb+tee !!)))
     ::
         $woot  +>.$
-        $went
-          :: XX eyre sends no wests, so should get no wents
-          ::~&  e+unexpected+sih
-          +>.$
-    ::
     ::
         $thou
       ?+    -.tee  !!
@@ -2190,6 +2200,9 @@
       |=  res/vase
       =.  liv  |  :: block requests until a reponse is given
       (eyre-them wir (slam !>(|=({$send a/hiss} a)) res))
+    ::
+    ++  cancel-request  ~&  %cancel-request
+                        (dead-hiss(liv &) [leaf+"canceled"]~)
     ::
     ++  handle-moves
       |=  a/(list {p/term q/$-(vase _abet)})

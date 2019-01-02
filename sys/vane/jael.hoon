@@ -21,10 +21,9 @@
 =,  able:jael
 =,  crypto
 =,  jael
-=,  ethe
-=,  constitution:ethe
 =,  ethereum
-=,  constitution:ethereum
+=,  rpc
+=,  azimuth
 ::                                                      ::::
 ::::                    # models                        ::  data structures
   ::                                                    ::::
@@ -71,11 +70,11 @@
             kyz=(map ship public)                       ::  public key state
         ==                                              ::
       $=  eth                                           ::  ethereum (vent)
-        ::TODO  the subscribers here never hear dns or hul...
+        ::TODO  the subscribers here never hear dns or pos...
         $:  yen=(set duct)                              ::  trackers
             dns=dnses                                   ::  on-chain dns state
-            hul=(map ship hull)                         ::  on-chain ship state
-            ::TODO  do we want (map ship diff-hull) too?
+            pos=(map ship point)                        ::  on-chain ship state
+            ::TODO  do we want (map ship diff-point) too?
         ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
@@ -559,7 +558,7 @@
   ::  +order-events: sort changes by block and log numbers
   ::
   ++  order-events
-    |=  loz=(list (pair event-id diff-constitution))
+    |=  loz=(list (pair event-id diff-azimuth))
     ^+  loz
     %+  sort  loz
     ::  sort by block number, then by event log number,
@@ -635,14 +634,11 @@
     ^-  ship
     ::  XX save %dawn sponsor in .own.sub, check there
     ::
-    =/  hul  (~(get by hul.eth.sub) who)
-    ?:  ?&  ?=(^ hul)
-            ?=(^ net.u.hul)
-            ?=(^ sponsor.u.net.u.hul)
+    =/  pot  (~(get by pos.eth.sub) who)
+    ?:  ?&  ?=(^ pot)
+            ?=(^ net.u.pot)
         ==
-      u.sponsor.u.net.u.hul
-    ::  XX fall back to most recent sponsor instead?
-    ::
+      who.sponsor.u.net.u.pot
     (^sein:title who)
   ::                                                    ::  ++saxo:of
   ++  saxo                                              ::  sponsorship chain
@@ -671,7 +667,7 @@
     ::  boot from keys
     ::    $:  $dawn
     ::        =seed
-    ::        spon=(unit ship)
+    ::        spon=ship
     ::        czar=(map ship [=life =pass])
     ::        turf=(list turf)}
     ::        bloq=@ud
@@ -1101,7 +1097,7 @@
   ++  extract-snap                                    ::  extract rewind point
     ^-  snapshot
     :*  kyz.puk.sub
-        [dns hul]:eth.sub
+        [dns pos]:eth.sub
         heard.etn
         latest-block.etn
     ==
@@ -1329,7 +1325,7 @@
     =?  +>  new
       ::TODO  should we be mutating state here,
       ::      or better to move this into ++vent:feel?
-      +>(dns.eth *dnses, hul.eth ~, kyz.puk ~)
+      +>(dns.eth *dnses, pos.eth ~, kyz.puk ~)
     =?  +>  |(new !=(0 ~(wyt by evs)))
       %-  vent:feel
       :-  %chain
@@ -1371,7 +1367,7 @@
       (~(put by kyz) who -)
     ::
     ++  file-event
-      |=  [wer=event-id dif=diff-constitution]
+      |=  [wer=event-id dif=diff-azimuth]
       ^+  [kyz ..file]
       ?:  (~(has in heard) wer)
         ~&  %ignoring-already-heard-event
@@ -1386,16 +1382,16 @@
       ==
       =^  kyz  ..file
         ?-  -.dif
-          %hull   ~|(wer=wer (file-hull +.dif))
+          %point  ~|(wer=wer (file-point +.dif))
           %dns    [kyz (file-dns +.dif)]
         ==
       [kyz (file-snap wer)]
     ::
-    ++  file-hull
-      |=  [who=ship dif=diff-hull]
+    ++  file-point
+      |=  [who=ship dif=diff-point]
       ^+  [kyz ..file]
       =-  ::TODO  =; with just the type
-        =.  hul.eth  (~(put by hul.eth) who hel)
+        =.  pos.eth  (~(put by pos.eth) who pon)
         ::  new keys
         ::
         ?:  ?=(%& -.new)
@@ -1423,26 +1419,26 @@
                    [hen %slip %g %sunk who lyf]
                ==
         ==
-      ::  hel: updated hull
+      ::  pon: updated point
       ::  new: new keypair or "kept continuity?" (yes is no-op)
-      ^-  [hel=hull new=(each (pair life pass) ?)]
-      =+  hul=(fall (~(get by hul.eth) who) *hull)
+      ^-  [pon=point new=(each (pair life pass) ?)]
+      =+  pot=(fall (~(get by pos.eth) who) *point)
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
-      ~|  [%diff-order-insanity -.dif who (~(get by hul.eth) who)]
+      ~|  [%diff-order-insanity -.dif who (~(get by pos.eth) who)]
       ?>  ?+  -.dif  &
-            %spawned      ?>  ?=(^ kid.hul)
-                          !(~(has in spawned.u.kid.hul) who.dif)
-            %keys         ?>  ?=(^ net.hul)
-                          =(life.dif +(life.u.net.hul))
-            %continuity   ?>  ?=(^ net.hul)
-                          =(new.dif +(continuity-number.u.net.hul))
+            %spawned      ?>  ?=(^ kid.pot)
+                          !(~(has in spawned.u.kid.pot) who.dif)
+            %keys         ?>  ?=(^ net.pot)
+                          =(life.dif +(life.u.net.pot))
+            %continuity   ?>  ?=(^ net.pot)
+                          =(new.dif +(continuity-number.u.net.pot))
           ==
       ::
-      ::  apply hull changes, catch continuity and key changes
+      ::  apply point changes, catch continuity and key changes
       ::
-      :-  (apply-hull-diff hul dif)
+      :-  (apply-point-diff pot dif)
       =*  nop  |+&  ::  no-op
       ?+  -.dif  nop
         %continuity   |+|
@@ -1666,7 +1662,7 @@
   ::  +put-change: store change made by event
   ::
   ++  put-change
-    |=  [cause=event-id dif=diff-constitution]
+    |=  [cause=event-id dif=diff-azimuth]
     ?:  (~(has by changes) cause)  ::  one diff per event
       ~&  [%duplicate-cause cause]
       !!
@@ -1747,7 +1743,7 @@
     :*  %eth-get-logs
         `number+from-block
         `number+next-block
-        ~[ships:contracts]
+        ~[azimuth:contracts]
         ~
     ==
   ::
@@ -1755,7 +1751,7 @@
   ::
   ::  +new-filter: request a new polling filter
   ::
-  ::    Listens only to the Ships state contract, and only from
+  ::    Listens only to the Azimuth state contract, and only from
   ::    the last-heard block onward.
   ::
   ++  new-filter
@@ -1766,10 +1762,10 @@
         ::  XX We want to load from a snapshot at least 40 blocks behind, then
         ::  replay to the present
         ::  `[%number ?:((lte latest-block 40) 0 (sub.add latest-block 40))]
-        ::TODO  or Ships origin block when 0
+        ::TODO  or Azimuth origin block when 0
         ~  ::TODO  we should probably chunck these, maybe?
         ::  https://stackoverflow.com/q/49339489
-        ~[ships:contracts]
+        ~[azimuth:contracts]
         ~
     ==
   ::
@@ -1883,7 +1879,7 @@
   ::  +accept: process single event
   ::
   ++  accept
-    |=  [cause=event-id dif=diff-constitution]
+    |=  [cause=event-id dif=diff-azimuth]
     ^+  +>
     ?:  (~(has in heard) cause)
       ~&  %accept-ignoring-duplicate-event
@@ -2071,16 +2067,16 @@
       ==
     =+  cuz=[block-number.place log-index.place]
     ::
-    ?:  =(event.log changed-dns:ships-events)
+    ?:  =(event.log changed-dns:azimuth-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
         %+  decode-results  data.log
         ~[%string %string %string]
       %+  put-change  cuz
       [%dns (crip pri) (crip sec) (crip ter)]
     ::
-    =+  dif=(event-log-to-hull-diff log)
+    =+  dif=(event-log-to-point-diff log)
     ?~  dif  +>.$
-    (put-change cuz %hull u.dif)
+    (put-change cuz %point u.dif)
   ::                                                    ::  ++restore-block:et
   ++  restore-block                                     ::  rewind before block
     |=  block=@ud
@@ -2103,7 +2099,7 @@
       ?:  |(=(~ old-qeu) (lth block block-number:(need ~(top to old-qeu))))
         [snap.snap +>.^$]
       $
-    ~&  [%restoring-block block latest-block.snap ~(wyt by hul.eth.snap)]
+    ~&  [%restoring-block block latest-block.snap ~(wyt by pos.eth.snap)]
     (restore-snap snap &)
   ::                                                    ::  ++restore-snap:et
   ++  restore-snap                                      ::  restore snapshot
@@ -2129,7 +2125,7 @@
         latest-block.etn  latest-block.snap
         kyz.puk.sub       kyz.snap
         dns.eth.sub       dns.eth.snap
-        hul.eth.sub       hul.eth.snap
+        pos.eth.sub       pos.eth.snap
         sap               sap(last-block 0)
         moves
       ?.  look  moves
@@ -2299,12 +2295,15 @@
       [u.lyf pub:ex:cub sig.own.sub.lex]
     ::
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
-    ?~  pub  ~
-    :: XX check lyf
-    ::
+    ?~  pub
+      ~
+    ?:  (gth u.lyf life.u.pub)
+      ~
+    =/  pas  (~(get by pubs.u.pub) u.lyf)
+    ?~  pas
+      ~
     :^  ~  ~  %noun
-    !>  ^-  deed:ames
-    [life.u.pub (~(got by pubs.u.pub) life.u.pub) ~]
+    !>  `deed:ames`[u.lyf u.pas ~]
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]

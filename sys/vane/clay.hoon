@@ -1805,49 +1805,52 @@
         ==
     ^+  +>
     =<  wake
-    =+  ^-  nut/(map tako yaki)
-        %-  molt  ^-  (list (pair tako yaki))
-        %+  turn  ~(tap in lar)
-        |=  yak/yaki
-        [r.yak yak]
-    =+  ^-  nat/(map lobe blob)
-        %-  molt  ^-  (list (pair lobe blob))
-        %+  turn  ~(tap in bar)
-        |=  bol/blob
-        [p.bol bol]
-    ~|  :*  %bad-foreign-update
-            :*  gar=gar
-                let=let
-                nut=(~(run by nut) ,~)
-                nat=(~(run by nat) ,~)
+    ::  hit: updated commit-hashes by @ud case
+    ::
+    =/  hit  (~(uni by hit.dom) gar)
+    ::  nut: new commit-hash/commit pairs
+    ::
+    =/  nut
+      (turn ~(tap in lar) |=(=yaki [r.yaki yaki]))
+    ::  hut: updated commits by hash
+    ::
+    =/  hut  (~(gas by hut.ran) nut)
+    ::  nat: new blob-hash/blob pairs
+    ::
+    =/  nat
+      (turn ~(tap in bar) |=(=blob [p.blob blob]))
+    ::  lat: updated blobs by hash
+    ::
+    =/  lat  (~(gas by lat.ran) nat)
+    ::  traverse updated state and sanity check
+    ::
+    =+  ~|  :*  %bad-foreign-update
+                [gar=gar let=let nut=(turn nut head) nat=(turn nat head)]
+                [hitdom=hit.dom letdom=let.dom]
             ==
-            :*  hitdom=hit.dom
-                letdom=let.dom
-                hutran=(~(run by hut.ran) ,~)
-                latran=(~(run by lat.ran) ,~)
-            ==
-        ==
-    =+  hit=(~(uni by hit.dom) gar)
-    =+  let=let
-    =+  hut=(~(uni by hut.ran) nut)
-    =+  lat=(~(uni by lat.ran) nat)
-    =+  ?:  =(0 let)  ~
-        =+  yon=`aeon`1                                 ::  sanity check
-        |-
-        ~|  yon=yon
-        =+  tak=(~(got by hit) yon)
-        =+  yak=(~(got by hut) tak)
-        =+  %-  ~(urn by q.yak)
-            |=  {pax/path lob/lobe}
-            ~|  [pax=path lob=lobe]
-            (~(got by lat) lob)
-        ?:  =(let yon)
+      ?:  =(0 let)
+        ~
+      =/  =aeon  1
+      |-  ^-  ~
+      =/  =tako
+        ~|  [%missing-aeon aeon]  (~(got by hit) aeon)
+      =/  =yaki
+        ~|  [%missing-tako tako]  (~(got by hut) tako)
+      =+  %+  turn
+            ~(tap by q.yaki)
+          |=  [=path =lobe]
+          ~|  [%missing-blob path lobe]
+          ?>  (~(has by lat) lobe)
           ~
-        $(yon +(yon))
+      ?:  =(let aeon)
+        ~
+      $(aeon +(aeon))
+    ::  persist updated state
+    ::
     %=  +>.$
+      let.dom   (max let let.dom)
       lim       (max (fall lem lim) lim)
       hit.dom   hit
-      let.dom   (max let let.dom)
       hut.ran   hut
       lat.ran   lat
     ==
@@ -3897,10 +3900,6 @@
         cancel-request:den
       (start-request:den for u.q.rif)
     [mos ..^$]
-  ::
-      $went
-    ::  this won't happen until we send responses.
-    !!
   ::
       $west
     =*  wer  wer.req
