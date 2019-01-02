@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <ent/ent.h>
+#include <ent.h>
 
 
 int

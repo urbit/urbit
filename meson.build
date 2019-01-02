@@ -1,22 +1,10 @@
-project('libent', 'c',
-        default_options : ['c_std=c99', 'cpp_std=c++11'],
-        version : '0.0.1',
-        license : 'MIT')
-
-subdir('include/ent')
+project('libent', 'c', version: '0.1.0', license: 'MIT')
 
 inc = include_directories('include')
 
-ent_sources = ['ent.c']
-
-libent = static_library('ent',
-                        sources : ent_sources,
-                        include_directories : inc,
-                        c_args : ['-Wall', '-pedantic'],
-                        install : false)
-
-libent_dep = declare_dependency(include_directories : inc, link_with : libent)
+subdir('include')
+subdir('src')
 
 ent_sample = executable('sample',
                         ['sample.c'],
-                        dependencies : [libent_dep])
+                        dependencies: [libent_dep])

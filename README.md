@@ -1,8 +1,7 @@
 libent is a cross-platform wrapper around `getentropy(2)`. It exports
 one symbol, `ent_getentropy`. If `getentropy` is available, then it's
-just a macro that expands to that. Otherwise, it uses `getrandom(2)`
-(available since kernel 3.17) on Linux, or `/dev/urandom` on other
-\*nix.
+just a shim around that. Otherwise, it uses `getrandom(2)` (available
+since kernel 3.17) on Linux, or `/dev/urandom` on other \*nix.
 
 ### Building
 
@@ -12,9 +11,9 @@ It uses meson. `meson ./build && ninja -C build` should do the trick.
 
 It has one option, `support-older-oses`, which tells it to be
 conservative. On Linux, this means using `getrandom` directly; on other
-\*nix, it means opening `/dev/urandom`. This may make sense if you want
-your binaries to run on older versions of the same OS. If your program
-is mostly built from source, don't bother.
+\*nix, it means reading from `/dev/urandom`. This may make sense if you
+want your binaries to run on older versions of the same OS. If your
+program is mostly built from source, don't bother.
 
 ### Why?
 
@@ -31,10 +30,6 @@ s/ent\_//g on all the call sites and discard this shim.
 
 This project began because [Urbit](https://github.com/urbit/urbit)'s
 entropy-generation function was bothering me. Then it got out of hand.
-
-### What about Windows?
-
-I'm happy to receive donations or pull requests.
 
 ### References
 
