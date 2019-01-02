@@ -242,22 +242,16 @@ conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
-osdet = build_machine.system()
+osdet = host_machine.system()
 os_c_flags = ['-funsigned-char','-ffast-math']
-os_deps = []
+os_deps = [dependency('threads')]
 os_link_flags = []
 
 if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
 
-  if(legacy_meson)
-    pthread_dep = find_library('pthread')
-  else
-    pthread_dep = meson.get_compiler('c').find_library('pthread')
-  endif
-
   ncurses_dep = dependency('ncurses')
-  os_deps = os_deps + [pthread_dep, ncurses_dep]
+  os_deps = os_deps + [ncurses_dep]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
@@ -275,10 +269,9 @@ elif osdet == 'darwin'
 elif osdet == 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
-  pthread_dep = meson.get_compiler('c').find_library('pthread')
   kvm_dep = meson.get_compiler('c').find_library('kvm')
   ncurses_dep = dependency('ncurses')
-  os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
+  os_deps = os_deps + [kvm_dep, ncurses_dep]
 
 elif osdet == 'openbsd'
   conf_data.set('U3_OS_bsd', true)
@@ -290,7 +283,7 @@ else
   error('Unsupported OS detected:' + osdet)
 endif
 
-endian = build_machine.endian()
+endian = host_machine.endian()
 
 if endian == 'little'
   conf_data.set('U3_OS_ENDIAN_little', true)
