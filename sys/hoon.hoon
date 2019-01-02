@@ -1181,8 +1181,9 @@
   (lth a b)
 ::
 ++  gor                                                 ::  g-order
-  ~/  %gor
+  ~/  %stage-gor
   |=  {a/* b/*}
+  =+  %uniq
   ^-  ?
   =+  [c=(mug a) d=(mug b)]
   ?:  =(c d)
@@ -1190,8 +1191,9 @@
   (lth c d)
 ::
 ++  hor                                                 ::  h-order
-  ~/  %hor
+  ~/  %stage-hor
   |=  {a/* b/*}
+  =+  %uniq
   ^-  ?
   ?:  ?=(@ a)
     ?.  ?=(@ b)  &
@@ -1214,8 +1216,9 @@
   $(a -.a, b -.b)
 ::
 ++  vor                                                 ::  v-order
-  ~/  %vor
+  ~/  %stage-vor
   |=  {a/* b/*}
+  =+  %uniq
   ^-  ?
   =+  [c=(mug (mug a)) d=(mug (mug b))]
   ?:  =(c d)
@@ -1256,7 +1259,7 @@
   ::                                                    ::
   ::
 ++  in                                                  ::  set engine
-  ~/  %in
+  ~/  %stage-in
   =|  a/(tree)  :: (set)
   |@
   ++  all                                               ::  logical AND
@@ -1289,6 +1292,7 @@
     ~/  %bif
     |*  b/*
     ^+  [l=a r=a]
+    =+  %uniq
     =<  +
     |-  ^+  a
     ?~  a
@@ -1306,6 +1310,7 @@
   ++  del                                               ::  b without any a
     ~/  %del
     |*  b/*
+    =+  %uniq
     |-  ^+  a
     ?~  a
       ~
@@ -1326,6 +1331,7 @@
     |@
     ++  $
       |-  ^+  a
+      =+  %uniq
       ?~  b
         a
       =+  c=(bif n.b)
@@ -1353,6 +1359,7 @@
   ++  gas                                               ::  concatenate
     ~/  %gas
     |=  b/(list _?>(?=(^ a) n.a))
+    =+  %uniq
     |-  ^+  a
     ?~  b
       a
@@ -1361,6 +1368,7 @@
   ++  has                                               ::  b exists in a check
     ~/  %has
     |*  b/*
+    =+  %uniq
     |-  ^-  ?
     ?~  a
       |
@@ -1392,6 +1400,7 @@
   ++  put                                               ::  puts b in a, sorted
     ~/  %put
     |*  b/*
+    =+  %uniq
     |-  ^+  a
     ?~  a
       [b ~ ~]
@@ -1440,6 +1449,7 @@
     ++  $
       ?:  =(a b)  a
       |-  ^+  a
+      =+  %uniq
       ?~  b
         a
       ?~  a
@@ -1468,7 +1478,7 @@
   ::                                                    ::
   ::
 ++  by                                                  ::  map engine
-  ~/  %by
+  ~/  %stage-by
   =|  a/(tree (pair))  ::  (map)
   =*  node  ?>(?=(^ a) n.a)
   |@
@@ -1492,6 +1502,7 @@
     ~/  %bif
     |*  {b/* c/*}
     ^+  [l=a r=a]
+    =+  %uniq
     =<  +
     |-  ^+  a
     ?~  a
@@ -1511,6 +1522,7 @@
   ++  del                                               ::  delete at key b
     ~/  %del
     |*  b/*
+    =+  %uniq
     |-  ^+  a
     ?~  a
       ~
@@ -1530,6 +1542,7 @@
     =+  b=a
     |@
     ++  $
+      =+  %uniq
       |-  ^+  a
       ?~  b
         a
@@ -1547,6 +1560,7 @@
   ::
   ++  dig                                               ::  axis of b key
     |=  b/*
+    =+  %uniq
     =+  c=1
     |-  ^-  (unit @)
     ?~  a  ~
@@ -1569,6 +1583,7 @@
     ~/  %gas
     |*  b/(list {p/* q/*})
     =>  .(b `(list _?>(?=(^ a) n.a))`b)
+    =+  %uniq
     |-  ^+  a
     ?~  b
       a
@@ -1579,6 +1594,7 @@
     |=  b/*
     ^-  {$@(~ {~ u/_?>(?=(^ a) q.n.a)})}
     =+  42
+    =+  %uniq
     ?~  a
       ~
     ?:  =(b p.n.a)
@@ -1594,6 +1610,7 @@
   ++  has                                               ::  key existence check
     ~/  %has
     |*  b/*
+    =+  %uniq
     !=(~ (get b))
   ::
   ++  int                                               ::  intersection
@@ -1601,6 +1618,7 @@
     =+  b=a
     |@
     ++  $
+      =+  %uniq
       |-  ^+  a
       ?~  b
         ~
@@ -1623,6 +1641,7 @@
     ~/  %jab
     |*  [key=_?>(?=(^ a) p.n.a) fun=$-(_?>(?=(^ a) q.n.a) _?>(?=(^ a) q.n.a))]
     ^+  a
+    =+  %uniq
     ::
     ?~  a  !!
     ::
@@ -1643,6 +1662,7 @@
   ++  put                                               ::  adds key-value pair
     ~/  %put
     |*  {b/* c/*}
+    =+  %uniq
     |-  ^+  a
     ?~  a
       [[b c] ~ ~]
@@ -1695,6 +1715,7 @@
     ~/  %tap
     =+  b=`(list _?>(?=(^ a) n.a))`~
     |.  ^+  b
+    =+  %uniq
     ?~  a
       b
     $(a r.a, b [n.a $(a l.a)])
@@ -1704,6 +1725,7 @@
     =+  b=a
     |@
     ++  $
+      =+  %uniq
       |-  ^+  a
       ?~  b
         a
@@ -1727,6 +1749,7 @@
     |@
     ++  $
       |*  meg/$-({* * *} *)
+      =+  %uniq
       |-  ^+  a
       ?~  b
         a
@@ -7153,8 +7176,9 @@
   [%face giz der]
 ::
 ++  fork                                                ::  make %fork type
-  ~/  %fork
+  ~/  %stage-fork
   |=  yed/(list type)
+  =+  %uniq
   =|  lez/(set type)
   |-  ^-  type
   ?~  yed
@@ -7363,8 +7387,9 @@
   ==
 ::
 ++  look
-  ~/  %look
+  ~/  %stage-look
   |=  {cog/term dab/(map term hoon)}
+  =+  %uniq
   =+  axe=1
   |-  ^-  (unit {p/axis q/hoon})
   ?-  dab
@@ -7396,8 +7421,9 @@
   ==
 ::
 ++  loot
-  ~/  %loot
+  ~/  %stage-loot
   |=  {cog/term dom/(map term tome)}
+  =+  %uniq
   =+  axe=1
   |-  ^-  (unit {p/axis q/hoon})
   ?-  dom
@@ -9055,7 +9081,7 @@
 ::::  5c: compiler backend and prettyprinter
   ::
 ++  ut
-  ~%    %ut
+  ~%    %stage-ut
       +>+
     ==
       %ar     ar
@@ -9811,6 +9837,7 @@
   ++  fond
     ~/  %fond
     |=  {way/vial hyp/wing}
+    =+  %uniq
     =>  |%
         ++  pony                                        ::  raw match
                   $@  ~                                 ::  void
@@ -10000,6 +10027,7 @@
   ++  fire
     |=  hag/(list {p/type q/foot})
     ^-  type
+    =+  %uniq
     ?:  ?=({{* {$wet ~ $1}} ~} hag)
       p.i.hag
     %-  fork
@@ -10258,6 +10286,7 @@
     ::
     |=  [mel/vair nym/(unit term) hud/poly dom/(map term tome)]
     ^-  (pair type nock)
+    =+  %uniq
     =-  :_  [%1 dez]
         (core sut [nym hud mel] sut [[%full ~] dez] dom)
     ^=  dez
@@ -10455,6 +10484,7 @@
     ~/  %mull
     |=  {gol/type dox/type gen/hoon}
     |^  ^-  {p/type q/type}
+    =+  %uniq
     ?:  =(%void sut)
       ~>(%mean.[%leaf "mull-none"] !!)
     ?-    gen
