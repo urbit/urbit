@@ -14,7 +14,6 @@
   }
 
 #elif defined(ENT_IMPL)
-# include <assert.h>
 # include <errno.h>
 # if defined(ENT_GETRANDOM)
 #   define _GNU_SOURCE
@@ -35,19 +34,26 @@
 #   define ENT_FINI() (void) fclose(f)
 # endif
 
+  static int
+  _ent_fail()
+  {
+    errno = EIO;
+    return -1;
+  }
+
   int
   ent_getentropy(void* buf, size_t len)
   {
+    int r;
     ENT_DEFS;
 
-    assert(len <= 256);
+    if (len > 256)
+      return _ent_fail();
     ENT_INIT();
-    if (len != ENT_READ(buf, len)) {
-      ENT_FINI();
-      errno = EIO;
-      return -1;
-    }
+    r = ENT_READ(buf, len);
     ENT_FINI();
+    if (r != len)
+      return _ent_fail();
     return 0;
   }
 
