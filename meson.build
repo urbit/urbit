@@ -298,7 +298,8 @@ configure_file(input : 'include/config.h.in',
 # We expect these libs to supplied with the distribution
 curl_dep = dependency('libcurl', version: '>=7.19.0')
 
-if osdet == 'darwin' and not get_option('nix')
+if (osdet == 'darwin' and not get_option('nix') and
+    run_command('test', '-d', '/usr/local/opt/openssl/lib').returncode() == 0)
   libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
   libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
   openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
@@ -310,6 +311,8 @@ if(legacy_meson)
   gmp_dep = find_library('gmp')
   sigsegv_dep = find_library('sigsegv')
 elif osdet != 'openbsd'
+  # XX on OS X with MacPorts, set LIBRARY_PATH=/opt/local/lib to get meson to
+  # find these.
   gmp_dep = meson.get_compiler('c').find_library('gmp')
   sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
 endif
