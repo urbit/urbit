@@ -1,6 +1,7 @@
 conf_data = configuration_data()
 compiler = meson.get_compiler('c')
-compat = get_option('ent_compat')
+# OpenBSD has had getentropy since 5.6. It's fine.
+compat = get_option('ent_compat') and host_machine.system() != 'openbsd'
 
 if not compat
   code = '''#include <stddef.h>
