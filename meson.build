@@ -243,6 +243,7 @@ conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
 osdet = host_machine.system()
+cc = meson.get_compiler('c')
 os_c_flags = ['-funsigned-char','-ffast-math']
 os_deps = [dependency('threads')]
 os_link_flags = []
@@ -261,7 +262,7 @@ elif osdet == 'darwin'
   if(legacy_meson)
     ncurses_dep = find_library('ncurses')
   else
-    ncurses_dep = meson.get_compiler('c').find_library('ncurses')
+    ncurses_dep = cc.find_library('ncurses')
   endif
 
   os_deps = os_deps + [ncurses_dep]
@@ -269,7 +270,7 @@ elif osdet == 'darwin'
 elif osdet == 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
-  kvm_dep = meson.get_compiler('c').find_library('kvm')
+  kvm_dep = cc.find_library('kvm')
   ncurses_dep = dependency('ncurses')
   os_deps = os_deps + [kvm_dep, ncurses_dep]
 
@@ -300,8 +301,8 @@ curl_dep = dependency('libcurl', version: '>=7.19.0')
 
 if (osdet == 'darwin' and not get_option('nix') and
     run_command('test', '-d', '/usr/local/opt/openssl/lib').returncode() == 0)
-  libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
-  libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
+  libcrypto = cc.find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
+  libssl = cc.find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
   openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
 else
   openssl_dep = dependency('openssl', version: '>=1.0.0')
@@ -313,8 +314,8 @@ if(legacy_meson)
 elif osdet != 'openbsd'
   # XX on OS X with MacPorts, set LIBRARY_PATH=/opt/local/lib to get meson to
   # find these.
-  gmp_dep = meson.get_compiler('c').find_library('gmp')
-  sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
+  gmp_dep = cc.find_library('gmp')
+  sigsegv_dep = cc.find_library('sigsegv')
 endif
 
 # For these libs we provide fallback bundle
