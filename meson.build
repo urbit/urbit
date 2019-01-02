@@ -318,31 +318,29 @@ elif osdet != 'openbsd'
 endif
 
 # For these libs we provide fallback bundle
-urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
-
-ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
-murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
-softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
-libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
-libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
-secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
-
+ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
+libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+libscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
+murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
+secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
+softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 
-deps = [openssl_dep,
+deps = [argon2_dep,
         curl_dep,
-        libuv_dep,
-        libh2o_dep,
-        secp256k1_dep,
-        gmp_dep,
-        sigsegv_dep,
-        urbitscrypt_dep,
         ed25519_dep,
+        gmp_dep,
+        libh2o_dep,
+        libscrypt_dep,
+        libsni_dep,
+        libuv_dep,
         murmur3_dep,
-        argon2_dep,
-        softfloat3_dep,
-        libsni_dep]
+        openssl_dep,
+        secp256k1_dep,
+        sigsegv_dep,
+        softfloat3_dep]
 
 executable('urbit',
 sources : sources,
