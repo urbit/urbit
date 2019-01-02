@@ -1481,7 +1481,7 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 
 /* _raft_lame(): handle an application failure.
 */
-static u3_noun
+static u3_weak
 _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun bov, gon;
@@ -1548,7 +1548,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
         uL(fprintf(uH, "crude: punted\n"));
         // c3_assert(!"crud");
 
-        return u3_nul;
+        return u3_none;
       }
     }
   }
@@ -1556,7 +1556,7 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
 /* _raft_punk(): insert and apply an input ovum (unprotected).
 */
-static u3_noun
+static u3_weak
 _raft_punk(u3_noun ovo)
 {
 #ifdef U3_EVENT_TIME_DEBUG
