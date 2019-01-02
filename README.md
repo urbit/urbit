@@ -9,11 +9,11 @@ It uses meson. `meson ./build && ninja -C build` should do the trick.
 
 #### Build options
 
-It has one option, `support-older-oses`, which tells it to be
-conservative. On Linux, this means using `getrandom` directly; on other
-\*nix, it means reading from `/dev/urandom`. This may make sense if you
-want your binaries to run on older versions of the same OS. If your
-program is mostly built from source, don't bother.
+It has one option, `ent_compat`, which tells it to be conservative. On
+Linux, this means using `getrandom` directly; on other \*nix, it means
+reading from `/dev/urandom`. This may make sense if you want your
+binaries to run on older versions of the same OS. If your program is
+mostly built from source, don't bother.
 
 ### Why?
 
