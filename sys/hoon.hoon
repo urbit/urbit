@@ -14078,84 +14078,20 @@
 ::
 ::::  5f: molds and mold builders
   ::
-++  arch  {fil/(unit @uvI) dir/(map @ta ~)}            ::  fundamental node
-++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
-++  beak  {p/ship q/desk r/case}                        ::  path prefix
-++  beam  {{p/ship q/desk r/case} s/spur}               ::  global name
-++  bone  @ud                                           ::  opaque duct
-++  case                                                ::  version
-         $%  {$da p/@da}                               ::  date
-             {$tas p/@tas}                             ::  label
-             {$ud p/@ud}                               ::  sequence
-         ==                                            ::
-++  desk  @tas                                          ::  ship desk case spur
-++  cage  (cask vase)                                   ::  global metadata
-++  cask  |*(a/mold (pair mark a))                      ::  global data
-++  cuff                                                ::  permissions
-          $:  p/(unit (set monk))                       ::  can be read by
-              q/(set monk)                              ::  caused or created by
-          ==                                            ::
-++  curd  {p/@tas q/*}                                  ::  typeless card
-++  dock  (pair @p term)                                ::  message target
-++  duct  (list wire)                                   ::  causal history
-++  hypo  |*(a/mold (pair type a))                      ::  type associated
-++  hobo  |*  a/gate                                    ::  task wrapper
-          $?  $%  {$soft p/*}                           ::
-              ==                                        ::
-              a                                         ::
-          ==                                            ::
-++  kirk  (unit (set monk))                             ::  audience
-++  lens                                                ::  observation core
-  $_  ^?                                                ::
-  |%  ++  u  *(unit (unit ~))                          ::  existence
-      ++  v  *(unit (unit cage))                        ::  full history
-      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
-      ++  x  *(unit (unit cage))                        ::  data at path
-      ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit cage))                        ::  current subtree
-  --                                                    ::
 ++  mane  $@(@tas {@tas @tas})                          ::  XML name+space
 ++  manx  $~([[%$ ~] ~] {g/marx c/marl})                ::  dynamic XML node
-++  marc                                                ::  structured mark
-  $@  mark                                              ::  plain mark
-  $%  {$tabl p/(list (pair marc marc))}                 ::  map
-  ==                                                    ::
-++  mark  @tas                                          ::  content type
 ++  marl  (list manx)                                   ::  XML node list
 ++  mars  {t/{n/$$ a/{i/{n/$$ v/tape} t/~}} c/~}        ::  XML cdata
 ++  mart  (list {n/mane v/tape})                        ::  XML attributes
 ++  marx  $~([%$ ~] {n/mane a/mart})                    ::  dynamic XML tag
-++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  (pair cord (each noun (list mash)))           ::  memory usage
-++  mill  (each vase milt)                              ::  vase+metavase
-++  milt  {p/* q/*}                                     ::  metavase
 ++  mite  (list @ta)                                    ::  mime type
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
-++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
-++  move  {p/duct q/arvo}                               ::  arvo move
-++  ovum  {p/wire q/curd}                               ::  typeless ovum
-++  pane  (list {p/@tas q/vase})                        ::  kernel modules
 ++  pass  @                                             ::  public key
-++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 ++  ring  @                                             ::  private key
 ++  ship  @p                                            ::  network identity
 ++  shop  (each ship (list @ta))                        ::  urbit/dns identity
-++  sink  (trel bone ship path)                         ::  subscription
 ++  spur  path                                          ::  ship desk case spur
 ++  time  @da                                           ::  galactic time
-++  vile                                                ::  reflexive constants
-          $:  typ/type                                  ::  -:!>(*type)
-              duc/type                                  ::  -:!>(*duct)
-              pah/type                                  ::  -:!>(*path)
-              mev/type                                  ::  -:!>([%meta *vase])
-          ==                                            ::
-++  wind                                                ::  new kernel action
-          |*  {a/gate b/gate}                           ::  forward+reverse
-          $%  {$pass p/path q/a}                        ::  advance
-              {$slip p/a}                               ::  lateral
-              {$give p/b}                               ::  retreat
-          ==                                            ::
-++  wire  path                                          ::  event pretext
 ::
 ::::  5g: profiling support (XX move)
   ::
