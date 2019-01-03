@@ -242,22 +242,17 @@ conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
-osdet = build_machine.system()
+osdet = host_machine.system()
+cc = meson.get_compiler('c')
 os_c_flags = ['-funsigned-char','-ffast-math']
-os_deps = []
+os_deps = [dependency('threads')]
 os_link_flags = []
 
 if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
 
-  if(legacy_meson)
-    pthread_dep = find_library('pthread')
-  else
-    pthread_dep = meson.get_compiler('c').find_library('pthread')
-  endif
-
   ncurses_dep = dependency('ncurses')
-  os_deps = os_deps + [pthread_dep, ncurses_dep]
+  os_deps = os_deps + [ncurses_dep]
 
 elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
@@ -267,7 +262,7 @@ elif osdet == 'darwin'
   if(legacy_meson)
     ncurses_dep = find_library('ncurses')
   else
-    ncurses_dep = meson.get_compiler('c').find_library('ncurses')
+    ncurses_dep = cc.find_library('ncurses')
   endif
 
   os_deps = os_deps + [ncurses_dep]
@@ -275,10 +270,9 @@ elif osdet == 'darwin'
 elif osdet == 'bsd' or osdet == 'freebsd'
   conf_data.set('U3_OS_bsd', true)
 
-  pthread_dep = meson.get_compiler('c').find_library('pthread')
-  kvm_dep = meson.get_compiler('c').find_library('kvm')
+  kvm_dep = cc.find_library('kvm')
   ncurses_dep = dependency('ncurses')
-  os_deps = os_deps + [kvm_dep, pthread_dep, ncurses_dep]
+  os_deps = os_deps + [kvm_dep, ncurses_dep]
 
 elif osdet == 'openbsd'
   conf_data.set('U3_OS_bsd', true)
@@ -290,7 +284,7 @@ else
   error('Unsupported OS detected:' + osdet)
 endif
 
-endian = build_machine.endian()
+endian = host_machine.endian()
 
 if endian == 'little'
   conf_data.set('U3_OS_ENDIAN_little', true)
@@ -305,9 +299,10 @@ configure_file(input : 'include/config.h.in',
 # We expect these libs to supplied with the distribution
 curl_dep = dependency('libcurl', version: '>=7.19.0')
 
-if osdet == 'darwin' and not get_option('nix')
-  libcrypto = meson.get_compiler('c').find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
-  libssl = meson.get_compiler('c').find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
+if (osdet == 'darwin' and not get_option('nix') and
+    run_command('test', '-d', '/usr/local/opt/openssl/lib').returncode() == 0)
+  libcrypto = cc.find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
+  libssl = cc.find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
   openssl_dep = declare_dependency(dependencies: [libcrypto, libssl], include_directories: include_directories('/usr/local/opt/openssl/include'))
 else
   openssl_dep = dependency('openssl', version: '>=1.0.0')
@@ -317,36 +312,36 @@ if(legacy_meson)
   gmp_dep = find_library('gmp')
   sigsegv_dep = find_library('sigsegv')
 elif osdet != 'openbsd'
-  gmp_dep = meson.get_compiler('c').find_library('gmp')
-  sigsegv_dep = meson.get_compiler('c').find_library('sigsegv')
+  # XX on OS X with MacPorts, set LIBRARY_PATH=/opt/local/lib to get meson to
+  # find these.
+  gmp_dep = cc.find_library('gmp')
+  sigsegv_dep = cc.find_library('sigsegv')
 endif
 
 # For these libs we provide fallback bundle
-urbitscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
-
-ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
-murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
-softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
-libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
-libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
-secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
-
+ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
+libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+libscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
+libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
+murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
+secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
+softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 
-deps = [openssl_dep,
+deps = [argon2_dep,
         curl_dep,
-        libuv_dep,
-        libh2o_dep,
-        secp256k1_dep,
-        gmp_dep,
-        sigsegv_dep,
-        urbitscrypt_dep,
         ed25519_dep,
+        gmp_dep,
+        libh2o_dep,
+        libscrypt_dep,
+        libsni_dep,
+        libuv_dep,
         murmur3_dep,
-        argon2_dep,
-        softfloat3_dep,
-        libsni_dep]
+        openssl_dep,
+        secp256k1_dep,
+        sigsegv_dep,
+        softfloat3_dep]
 
 executable('urbit',
 sources : sources,
