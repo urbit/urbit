@@ -19,19 +19,8 @@
 #   define _GNU_SOURCE
 #   include <unistd.h>
 #   include <sys/syscall.h>
-#   define ENT_DEFS (void)0
-#   define ENT_INIT() (void)0
-#   define ENT_READ(B, L) syscall(SYS_getrandom, B, L, 0)
-#   define ENT_FINI() (void)0
 # elif defined(ENT_URANDOM)
 #   include <stdio.h>
-#   define ENT_DEFS FILE *f
-#   define ENT_INIT() do {                    \
-      if (!(f = fopen("/dev/urandom", "re"))) \
-        return -1;                            \
-    } while (0)
-#   define ENT_READ(B, L) fread(B, 1, L, f)
-#   define ENT_FINI() (void) fclose(f)
 # endif
 
   static int
@@ -45,13 +34,23 @@
   ent_getentropy(void* buf, size_t len)
   {
     int r;
-    ENT_DEFS;
 
     if (len > 256)
       return _ent_fail();
-    ENT_INIT();
-    r = ENT_READ(buf, len);
-    ENT_FINI();
+# if defined(ENT_GETRANDOM)
+    r = syscall(SYS_getrandom, buf, len, 0);
+    if (r < 0)
+      return r;
+# elif defined(ENT_URANDOM)
+    {
+      FILE *f;
+
+      if (!(f = fopen("/dev/urandom", "re")))
+        return -1;
+      r = fread(buf, 1, len, f);
+      (void) fclose(f);
+    }
+# endif
     if (r != len)
       return _ent_fail();
     return 0;
