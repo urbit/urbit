@@ -904,6 +904,7 @@ _me_wash_north(u3_noun dog)
     if ( dog_u->mug_w == 0 ) return;
 
     dog_u->mug_w = 0;    //  power wash
+    dog_u->gum_w = 0;
     // if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( _(u3a_is_pom(dog)) ) {
@@ -937,6 +938,7 @@ _me_wash_south(u3_noun dog)
     if ( dog_u->mug_w == 0 ) return;
 
     dog_u->mug_w = 0;    //  power wash
+    dog_u->gum_w = 0;
     //  if ( dog_u->mug_w >> 31 ) { dog_u->mug_w = 0; }
 
     if ( _(u3a_is_pom(dog)) ) {
@@ -1828,6 +1830,7 @@ u3a_slab(c3_w len_w)
   u3a_atom* pug_u = (void *)nov_w;
 
   pug_u->mug_w = 0;
+  pug_u->gum_w = 0;
   pug_u->len_w = len_w;
 
   /* Clear teh slab.
