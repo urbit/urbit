@@ -46,12 +46,7 @@ addons:
     - openssl
     - libssl-dev
     - libncurses5-dev
-    - automake
-    - autoconf
-    - make
-    - libtool
-    - g++
-    - re2c
+    - gcc
     - libcurl4-gnutls-dev
     - unzip
     - gdb
