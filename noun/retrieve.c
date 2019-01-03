@@ -1779,9 +1779,9 @@ u3r_mur(u3_noun veb)
 
     u3a_noun* veb_u = u3a_to_ptr(veb);
 
-    // if ( veb_u->mug_w ) {
-    //   return veb_u->mug_w;
-    // }
+    if ( veb_u->gum_w ) {
+      return veb_u->gum_w;
+    }
 
     if ( _(u3a_is_cell(veb)) ) {
       mur_w = u3r_mur_cell(u3h(veb), u3t(veb));
@@ -1793,7 +1793,7 @@ u3r_mur(u3_noun veb)
       mur_w = u3r_mur_bytes((c3_y*)vat_u->buf_w, len_w);
     }
 
-    // veb_u->mug_w = mur_w;
+    veb_u->gum_w = mur_w;
 
     return mur_w;
   }
