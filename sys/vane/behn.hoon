@@ -86,9 +86,9 @@
           :~  timers+[%& timers]
           ==
         ==
-      ::  reverse moves, since they were constructed backward, and return
+      ::  when we send moves, the unix even from set-wake must be first
       ::
-      [(flop moves) ..^^$]
+      [moves ..^^$]
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
   ++  set-timer
