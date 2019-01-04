@@ -53,17 +53,17 @@
       =<  ta-done
       (~(ta-hall-create-circle ta ~ bol) /c 'collections')
     ::
-      :*  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
+      :~  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
           [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]
           [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]
         ::
-          ?.  =(%duke (clan:title our.bol))
-            ~
-          :_  ~
-          :*  ost.bol  %poke  /client-action  [our.bol %hall]
-              %hall-action  %source  %inbox  &
-              (sy [[(^sein:title our.bol) %urbit-meta] ~]~)
-          ==
+      ::    ?.  =(%duke (clan:title our.bol))
+      ::      ~
+      ::    :_  ~
+      ::    :*  ost.bol  %poke  /client-action  [our.bol %hall]
+      ::        %hall-action  %source  %inbox  &
+      ::        (sy [[(^sein:title our.bol) %urbit-meta] ~]~)
+      ::    ==
       ==
     ==
   ?-    -.u.old
@@ -288,6 +288,11 @@
       %circles
     ~&  %circles
     ?>  ?=(%circles -.rum)
+    =?    dms.str.sta  
+        ?&  (is-dm-circle our.bol cir.rum)
+          !(~(has by dms.str.sta) cir.rum)
+        ==
+      (~(put by dms.str.sta) cir.rum our.bol ~)
     ?:  add.rum
       :_  this(our-circles.str.sta (~(put in our-circles.str.sta) cir.rum))
       [ost.bol %peer /our/[cir.rum] [our.bol %hall] /circle/[cir.rum]/config]~
@@ -315,6 +320,15 @@
       ~&  %inbox-gram
       ::  XX TODO: handle stack trace message when foreign circle is killed?
       ::
+      ?:  (is-dm-circle src.rum.rum)
+        =/  dms=[ini=ship env=(list envelope:hall)]
+          (~(got by dms.str.sta) nom.src.rum.rum) 
+        =.  env.dms  [nev.rum.rum env.dms]
+        :-  ~
+        %=  this
+          env.inbox.str.sta  [nev.rum.rum env.inbox.str.sta]
+          dms.str.sta        (~(put by dms.str.sta) nom.src.rum.rum dms)
+        ==
       :-  ~  ::(send-rumor [%new-msg %inbox nev.rum.rum])
       this(env.inbox.str.sta [nev.rum.rum env.inbox.str.sta])
     ::
@@ -405,7 +419,18 @@
     ~&  %invites
     ?>  ?=(%circle -.rum)
     ?>  ?=(%gram -.rum.rum)
-    :-  ~  ::(send-rumor [%new-msg %invites nev.rum.rum])
+    ?>  ?=(%inv -.sep.gam.nev.rum.rum)
+    =/  circ=circle:hall  cir.sep.gam.nev.rum.rum
+    ?:  (is-dm-circle circ)
+      =/  who=(set ship)  (sy (rash nom.circ (more dot fed:ag)))
+      =/  act=poke  [%hall-action %newdm who]
+      :-  [ost.bol %poke /join-dm [our.bol %hall] act]~
+      %=  this
+        invites.str.sta  [nev.rum.rum invites.str.sta]
+        dms.str.sta      (~(put by dms.str.sta) nom.circ hos.circ ~)
+      ==
+    =/  act=poke  [%hall-action %source %inbox & (sy [circ ~] ~)]
+    :-  [ost.bol %poke /join-chat [our.bol %hall] act]~
     this(invites.str.sta [nev.rum.rum invites.str.sta])
   ::
   ::  %our:
@@ -482,6 +507,12 @@
     ~&  str.sta
     [~ this]
   [~ this]
+::
+++  is-dm-circle
+  |=  circ=circle:hall
+  ^-  ?
+  ?=  ^
+  (rush nom.circ (more dot fed:ag))
 --
 
 

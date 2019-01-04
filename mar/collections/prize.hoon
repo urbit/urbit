@@ -33,6 +33,16 @@
         |=  nom=name:hall
         [%s nom]
       ::
+        :-  %dms 
+        %-  pairs
+        %+  turn  ~(tap by dms.piz)
+        |=  [nom=name:hall ini=@p env=(list envelope:hall)]
+        :-  nom
+        %-  pairs
+        :~  [%initiator (ship ini)]
+            [%messages %a (turn env enve:enjs:hall-json)]
+        ==
+      ::
         [%invites %a (turn invites.piz enve:enjs:hall-json)]
     ==
   --

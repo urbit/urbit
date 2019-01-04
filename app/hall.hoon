@@ -3324,5 +3324,11 @@
     ~&  shape:(~(got by stories) %inbox)
     [~ +>]
   ::
+  ?:  =(a 'print all')
+    ~&  %+  turn  ~(tap by stories)
+        |=  [n=name s=story]
+        [n shape:s]
+    [~ +>]
+  ::
   [~ +>]
 --

@@ -44,6 +44,9 @@
       ::  names of all circles we own
       ::
       our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)
@@ -59,6 +62,9 @@
       ::  names of all circles we own
       ::
       our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
       ::  all the DM invites we've received
       ::
       invites=(list envelope:hall)

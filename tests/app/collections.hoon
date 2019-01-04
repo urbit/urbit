@@ -83,10 +83,6 @@
                 /circle/i/grams
             ==
           ::
-            :*  prep-bone  %poke  /client-action  [our-ship %hall] 
-                %hall-action  %source  %inbox  &  
-                (sy [[(^sein:title our-ship) %urbit-meta] ~]~)
-            ==
         ==
     !>  (sort moves aor) 
   ==
