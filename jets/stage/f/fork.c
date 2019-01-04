@@ -7,7 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qf_forq(u3_noun hoz,
+  u3qf__stage_forq(u3_noun hoz,
             u3_noun bur)
   {
     if ( c3y == u3r_sing(hoz, bur) ) {
@@ -19,11 +19,11 @@
     else if ( c3__void == hoz ) {
       return u3k(bur);
     }
-    else return u3kf_fork(u3nt(u3k(hoz), u3k(bur), u3_nul));
+    else return u3kf__stage_fork(u3nt(u3k(hoz), u3k(bur), u3_nul));
   }
 
   u3_noun
-  u3qf_fork(u3_noun yed)
+  u3qf__stage_fork(u3_noun yed)
   {
     u3_noun lez = u3_nul;
 
@@ -32,10 +32,10 @@
 
       if ( c3__void != i_yed ) {
         if ( (c3y == u3du(i_yed)) && (c3__fork == u3h(i_yed)) ) {
-          lez = u3kdi_uni(lez, u3k(u3t(i_yed)));
+          lez = u3kdi__stage_uni(lez, u3k(u3t(i_yed)));
         } 
         else {
-          lez = u3kdi_put(lez, u3k(i_yed));
+          lez = u3kdi__stage_put(lez, u3k(i_yed));
         }
       }
       
@@ -57,21 +57,21 @@
   }
 
   u3_noun
-  u3wf_fork(u3_noun cor)
+  u3wf__stage_fork(u3_noun cor)
   {
     u3_noun yed;
 
     if ( c3n == u3r_mean(cor, u3x_sam, &yed, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3qf_fork(yed);
+      return u3qf__stage_fork(yed);
     }
   }
 
   u3_noun
-  u3kf_fork(u3_noun yed)
+  u3kf__stage_fork(u3_noun yed)
   {
-    u3_noun ret = u3qf_fork(yed);
+    u3_noun ret = u3qf__stage_fork(yed);
 
     u3z(yed);
     return ret;

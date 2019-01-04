@@ -77,6 +77,10 @@ jets_c_src = [
 'jets/c/swp.c',
 'jets/c/sqt.c',
 'jets/c/vor.c',
+
+'jets/stage/c/gor.c',
+'jets/stage/c/hor.c',
+'jets/stage/c/vor.c',
 ]
 
 jets_d_src = [
@@ -100,7 +104,25 @@ jets_d_src = [
 'jets/d/by_put.c',
 'jets/d/by_uni.c',
 'jets/d/by_bif.c',
-'jets/d/by_dif.c'
+'jets/d/by_dif.c',
+
+'jets/stage/d/in_bif.c',
+'jets/stage/d/in_del.c',
+'jets/stage/d/in_dif.c',
+'jets/stage/d/in_gas.c',
+'jets/stage/d/in_has.c',
+'jets/stage/d/in_mer.c',
+'jets/stage/d/in_put.c',
+'jets/stage/d/in_uni.c',
+
+'jets/stage/d/by_bif.c',
+'jets/stage/d/by_del.c',
+'jets/stage/d/by_dif.c',
+'jets/stage/d/by_gas.c',
+'jets/stage/d/by_get.c',
+'jets/stage/d/by_has.c',
+'jets/stage/d/by_jab.c',
+'jets/stage/d/by_put.c',
 ]
 
 jets_e_src = [
@@ -155,7 +177,11 @@ jets_f_src = [
 'jets/f/hint.c',
 'jets/f/hike.c',
 'jets/f/look.c',
-'jets/f/loot.c'
+'jets/f/loot.c',
+
+'jets/stage/f/fork.c',
+'jets/stage/f/look.c',
+'jets/stage/f/loot.c'
 ]
 
 jets_f_ut_src =  [
@@ -178,7 +204,28 @@ jets_f_ut_src =  [
 'jets/f/ut_rest.c',
 'jets/f/ut_tack.c',
 'jets/f/ut_toss.c',
-'jets/f/ut_wrap.c'
+'jets/f/ut_wrap.c',
+
+'jets/stage/f/ut.c',
+'jets/stage/f/ut_buss.c',
+'jets/stage/f/ut_crop.c',
+'jets/stage/f/ut_find.c',
+'jets/stage/f/ut_fire.c',
+'jets/stage/f/ut_fish.c',
+'jets/stage/f/ut_fuse.c',
+'jets/stage/f/ut_gain.c',
+'jets/stage/f/ut_lose.c',
+'jets/stage/f/ut_mint.c',
+'jets/stage/f/ut_mull.c',
+'jets/stage/f/ut_nest.c',
+'jets/stage/f/ut_peek.c',
+'jets/stage/f/ut_peel.c',
+'jets/stage/f/ut_play.c',
+'jets/stage/f/ut_repo.c',
+'jets/stage/f/ut_rest.c',
+'jets/stage/f/ut_tack.c',
+'jets/stage/f/ut_toss.c',
+'jets/stage/f/ut_wrap.c',
 ]
 
 jets_src = [

@@ -105,6 +105,9 @@
     u3_noun 
     u3kdi_uni(u3_noun a, u3_noun b);
 
+    u3_weak u3kdi__stage_put(u3_noun a, u3_noun b);
+    u3_noun u3kdi__stage_uni(u3_noun a, u3_noun b);
+
 #   define u3kdb_tap(a) u3kdi_tap(a)
 
 /* u3ke: tier 5 functions
@@ -128,6 +131,8 @@
   */
     u3_noun
     u3kf_fork(u3_noun yed);
+
+    u3_noun u3kf__stage_fork(u3_noun yed);
 
   /* u3kz_fork(): build %fork span.
   */

@@ -10,7 +10,7 @@
   _fire_vet(u3_noun van)
   {
     // u3_noun vet = u3j_hook(u3k(van), "vet");
-    u3_noun vet = u3r_at(u3qfu_van_vet, van);
+    u3_noun vet = u3r_at(u3qfu__stage_van_vet, van);
 
     switch ( vet ) {
       case c3n:
@@ -25,7 +25,7 @@
              u3_noun dox,
              u3_noun gen)
   {
-    u3_noun rib = u3r_at(u3qfu_van_rib, van);
+    u3_noun rib = u3r_at(u3qfu__stage_van_rib, van);
     u3_noun key = u3nt(u3k(sut),
                        u3k(dox),
                        u3k(gen));
@@ -34,16 +34,16 @@
     if ( c3n == _fire_vet(van) ) {
       ret = c3y;
     }
-    if ( c3y == u3qdi_has(rib, key) ) {
+    if ( c3y == u3qdi__stage_has(rib, key) ) {
       ret = c3y;
     }
     else {
-      u3_noun rob = u3qdi_put(rib, key);
+      u3_noun rob = u3qdi__stage_put(rib, key);
       u3_noun von = u3i_molt(u3k(van),
-                             u3qfu_van_rib,
+                             u3qfu__stage_van_rib,
                              u3k(rob),
                              0);
-      u3_noun mul = u3qfu_mull(von, sut, c3__noun, dox, gen);
+      u3_noun mul = u3qfu__stage_mull(von, sut, c3__noun, dox, gen);
 
       ret = c3y;
   
@@ -83,11 +83,11 @@
 
       if ( (c3__ash == u3h(gat)) || (c3__dry == u3h(gat)) ) {
         if ( (c3y == vet) &&
-             (c3n == u3qfu_nest(van, qq_typ, c3y, p_typ)) )
+             (c3n == u3qfu__stage_nest(van, qq_typ, c3y, p_typ)) )
         {
 #if 0
-          u3_noun dun = u3qfu_dunq(van, "need", qq_typ);
-          u3_noun niz = u3qfu_dunq(van, "have", p_typ);
+          u3_noun dun = u3qfu__stage_dunq(van, "need", qq_typ);
+          u3_noun niz = u3qfu__stage_dunq(van, "have", p_typ);
 
           u3t_push(u3nc(c3__mean, niz));
           u3t_push(u3nc(c3__mean, dun));
@@ -101,8 +101,8 @@
       else {
         c3_assert(c3__wet == u3h(gat));
 #if 0
-        u3_noun dun = u3qfu_dunq(van, "wild", typ);
-        u3_noun niz = u3qfu_dunq(van, "tame", dox);
+        u3_noun dun = u3qfu__stage_dunq(van, "wild", typ);
+        u3_noun niz = u3qfu__stage_dunq(van, "tame", dox);
 
         u3t_push(u3nc(c3__mean, dun));
         u3t_push(u3nc(c3__mean, niz));
@@ -151,7 +151,7 @@
              u3_noun sut,
              u3_noun hag)
   {
-    u3_noun vet = u3r_at(u3qfu_van_vet, van);
+    u3_noun vet = u3r_at(u3qfu__stage_van_vet, van);
 
     c3_assert(!"not live");
     {
@@ -178,7 +178,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_fire(u3_noun cor)
+  u3wfu__stage_fire(u3_noun cor)
   {
     u3_noun sut, hag, van;
 
@@ -192,7 +192,7 @@
   }
 
   u3_noun
-  u3qfu_fire(u3_noun van,
+  u3qfu__stage_fire(u3_noun van,
                         u3_noun sut,
                         u3_noun hag)
   {

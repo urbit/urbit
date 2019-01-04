@@ -13,7 +13,7 @@
              u3_noun gen)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_cook("_cqfu_buss-buss", von, "buss");
+    u3_noun gat = u3j_cook("_stage_cqfu_buss-buss", von, "buss");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam_2, 
@@ -29,7 +29,7 @@
              u3_noun gen)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
-    u3_noun gat = u3j_cook("_cqfu_busk-busk", von, "busk");
+    u3_noun gat = u3j_cook("_stage_cqfu_busk-busk", von, "busk");
 
     return u3n_kick_on(u3i_molt(gat, 
                                 u3x_sam,
@@ -40,7 +40,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_buss(u3_noun cor)
+  u3wfu__stage_buss(u3_noun cor)
   {
     u3_noun sut, cog, gen, van;
 
@@ -58,7 +58,7 @@
   }
 
   u3_noun
-  u3qfu_buss(u3_noun van,
+  u3qfu__stage_buss(u3_noun van,
              u3_noun sut,
              u3_noun cog,
              u3_noun gen)
@@ -68,7 +68,7 @@
 
 
   u3_noun
-  u3wfu_busk(u3_noun cor)
+  u3wfu__stage_busk(u3_noun cor)
   {
     u3_noun sut, gen, van;
 
@@ -84,7 +84,7 @@
   }
 
   u3_noun
-  u3qfu_busk(u3_noun van,
+  u3qfu__stage_busk(u3_noun van,
              u3_noun sut,
              u3_noun gen)
   {

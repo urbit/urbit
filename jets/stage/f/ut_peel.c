@@ -6,7 +6,7 @@
 
 /* logic
 */
-  u3_noun
+  static u3_noun
   _cqfu_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
@@ -28,7 +28,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_peel(u3_noun cor)
+  u3wfu__stage_peel(u3_noun cor)
   {
     u3_noun sut, way, met, van;
 
@@ -45,7 +45,7 @@
   }
 
   u3_noun
-  u3qfu_peel(u3_noun van,
+  u3qfu__stage_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
              u3_noun met)

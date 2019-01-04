@@ -14,7 +14,7 @@
              u3_noun ref,
              u3_noun bix)
   {
-    u3_noun rep = u3qfu_repo(van, sut);
+    u3_noun rep = u3qfu__stage_repo(van, sut);
     u3_noun ret = _fuse_in(van, rep, ref, bix);
 
     if ( c3y == u3r_sing(ret, rep) ) {
@@ -142,8 +142,8 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi_tap(p_sut);
-        u3_noun ret = u3kf_fork(_fuse_in_fork(van, yed, ref, bix));
+        u3_noun yed = u3qdi__stage_tap(p_sut);
+        u3_noun ret = u3kf__stage_fork(_fuse_in_fork(van, yed, ref, bix));
 
         u3z(yed);
         return ret;
@@ -152,16 +152,16 @@
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-        if ( c3y == u3qdi_has(bix, hud) ) {
-          //  u3_noun dun = u3qfu_dunq(van, "type", sut);
-          //  u3_noun niz = u3qfu_dunq(van, "over", ref);
+        if ( c3y == u3qdi__stage_has(bix, hud) ) {
+          //  u3_noun dun = u3qfu__stage_dunq(van, "type", sut);
+          //  u3_noun niz = u3qfu__stage_dunq(van, "over", ref);
 
           //  u3t_push(u3nc(c3__mean, dun));
           //  u3t_push(u3nc(c3__mean, niz));
 
           return u3m_error("fuse-loop");
         } else {
-          u3_noun bux = u3qdi_put(bix, hud);
+          u3_noun bux = u3qdi__stage_put(bix, hud);
           u3_noun ret = _fuse_repo(van, sut, ref, bux);
 
           u3z(hud);
@@ -183,7 +183,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_fuse(u3_noun cor)
+  u3wfu__stage_fuse(u3_noun cor)
   {
     u3_noun sut, ref, van;
 
@@ -197,11 +197,11 @@
   }
 
   u3_noun
-  u3qfu_fuse(u3_noun van,
+  u3qfu__stage_fuse(u3_noun van,
              u3_noun sut,
              u3_noun ref)
   {
-    c3_m    fun_m = 141 + c3__fuse + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 200 + c3__fuse + ((!!u3r_at(u3qfu__stage_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
     if ( u3_none != pro ) {

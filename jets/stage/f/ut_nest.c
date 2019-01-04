@@ -45,8 +45,8 @@
         return c3n;
       } 
       else {
-        u3_noun vis = u3qfu_play(van, sut, qn_dab);
-        u3_noun lon = u3qfu_play(van, ref, qn_hem);
+        u3_noun vis = u3qfu__stage_play(van, sut, qn_dab);
+        u3_noun lon = u3qfu__stage_play(van, ref, qn_hem);
 
         u3_noun ret = _nest_dext(van, vis, tel, lon, u3_nul, u3_nul, gil);
 
@@ -153,13 +153,13 @@
       else {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-        if ( (c3y == u3qdi_has(gil, hud)) ) {
+        if ( (c3y == u3qdi__stage_has(gil, hud)) ) {
           u3z(hud);
 
           return c3y;
         }
         else {
-          u3_noun zoc = u3qdi_put(gil, hud);
+          u3_noun zoc = u3qdi__stage_put(gil, hud);
           u3_noun tus = u3nt(c3__core,
                              u3k(qq_sut),
                              u3nc(u3nt(u3k(ppq_sut), u3k(qpq_sut), c3__gold),
@@ -189,8 +189,8 @@
                       _nest_dext(van, qq_ref, tel, qq_sut, u3_nul, u3_nul, gil));
               }
               case c3__iron: {
-                u3_noun s_sam = u3qfu_peek(van, qq_sut, c3__rite, 2);
-                u3_noun r_sam = u3qfu_peek(van, qq_ref, c3__rite, 2);
+                u3_noun s_sam = u3qfu__stage_peek(van, qq_sut, c3__rite, 2);
+                u3_noun r_sam = u3qfu__stage_peek(van, qq_ref, c3__rite, 2);
                 u3_noun ret = _nest_dext
                                 (van, r_sam, tel, s_sam, u3_nul, u3_nul, gil);
 
@@ -202,8 +202,8 @@
                 return c3y;
               }
               case c3__zinc: {
-                u3_noun s_pal = u3qfu_peek(van, qq_sut, c3__read, 2);
-                u3_noun r_pal = u3qfu_peek(van, qq_ref, c3__read, 2);
+                u3_noun s_pal = u3qfu__stage_peek(van, qq_sut, c3__read, 2);
+                u3_noun r_pal = u3qfu__stage_peek(van, qq_ref, c3__read, 2);
                 u3_noun ret = _nest_dext
                                 (van, s_pal, tel, r_pal, u3_nul, u3_nul, gil);
 
@@ -308,7 +308,7 @@
         }
 
         {
-          u3_noun dey = u3qdi_tap(p_sut);
+          u3_noun dey = u3qdi__stage_tap(p_sut);
           u3_noun yed = dey;
 
           while ( u3_nul != yed ) {
@@ -325,21 +325,21 @@
       }
       case c3__hold:
       {
-        if ( c3y == u3qdi_has(seg, sut) ) {
+        if ( c3y == u3qdi__stage_has(seg, sut) ) {
           return c3n;
         }
         else {
           u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-          if ( (c3y == u3qdi_has(gil, hud)) ) {
+          if ( (c3y == u3qdi__stage_has(gil, hud)) ) {
             u3z(hud);
 
             return c3y;
           } 
           else {
-            u3_noun gus = u3qdi_put(seg, sut);
-            u3_noun zoc = u3qdi_put(gil, hud);
-            u3_noun fop = u3qfu_repo(van, sut);
+            u3_noun gus = u3qdi__stage_put(seg, sut);
+            u3_noun zoc = u3qdi__stage_put(gil, hud);
+            u3_noun fop = u3qfu__stage_repo(van, sut);
             u3_noun hiv = _nest_dext(van, fop, tel, ref, gus, reg, zoc);
 
             u3z(hud);
@@ -369,8 +369,8 @@
       return tyn;
     } else {
 #if 0
-      u3_noun dun = u3qfu_dunq(van, "need", sut);
-      u3_noun niz = u3qfu_dunq(van, "have", ref);
+      u3_noun dun = u3qfu__stage_dunq(van, "need", sut);
+      u3_noun niz = u3qfu__stage_dunq(van, "have", ref);
 
       u3t_push(u3nc(c3__mean, dun));
       u3t_push(u3nc(c3__mean, niz));
@@ -394,7 +394,7 @@
     }
 
     {
-      c3_m    fun_m = 141 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+      c3_m    fun_m = 200 + c3__nest + ((!!u3r_at(u3qfu__stage_van_vet, van)) << 8);
       u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
       if ( u3_none != pro ) {
@@ -440,7 +440,7 @@
         case c3__atom: return c3n;
         case c3__cell: return c3n;
         case c3__core: {
-          u3_noun gam = u3qfu_repo(van, ref);
+          u3_noun gam = u3qfu__stage_repo(van, ref);
           u3_noun hiv = _nest_dext(van, sut, tel, gam, seg, reg, gil);
 
           u3z(gam);
@@ -456,7 +456,7 @@
         }
         case c3__fork: p_ref = u3t(ref);
         {
-          u3_noun dey = u3qdi_tap(p_ref);
+          u3_noun dey = u3qdi__stage_tap(p_ref);
           u3_noun yed = dey;
 
           while ( u3_nul != yed ) {
@@ -471,20 +471,20 @@
           return c3y;
         }
         case c3__hold: {
-          if ( c3y == u3qdi_has(reg, ref) ) {
+          if ( c3y == u3qdi__stage_has(reg, ref) ) {
             return c3y;
           }
           {
             u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-            if ( (c3y == u3qdi_has(gil, hud)) ) {
+            if ( (c3y == u3qdi__stage_has(gil, hud)) ) {
               u3z(hud);
 
               return c3y;
             } else {
-              u3_noun gur = u3qdi_put(reg, ref);
-              u3_noun zoc = u3qdi_put(gil, hud);
-              u3_noun gam = u3qfu_repo(van, ref);
+              u3_noun gur = u3qdi__stage_put(reg, ref);
+              u3_noun zoc = u3qdi__stage_put(gil, hud);
+              u3_noun gam = u3qfu__stage_repo(van, ref);
 
               {
                 u3_noun hiv = _nest_dext(van, sut, tel, gam, seg, gur, zoc);
@@ -515,7 +515,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_nest(u3_noun cor)
+  u3wfu__stage_nest(u3_noun cor)
   {
     u3_noun sut, tel, ref, van;
 
@@ -533,14 +533,14 @@
   }
 
   u3_noun
-  u3qfu_nest(u3_noun van,
+  u3qfu__stage_nest(u3_noun van,
              u3_noun sut,
              u3_noun tel,
              u3_noun ref)
   {
 #if 1
-    c3_m    fun_m = 141 + c3__nest;
-    u3_noun vrf   = u3r_at(u3qfu_van_vrf, van);
+    c3_m    fun_m = 200 + c3__nest;
+    u3_noun vrf   = u3r_at(u3qfu__stage_van_vrf, van);
     u3_noun pro   = u3z_find_4(fun_m, vrf, sut, tel, ref);
 
     if ( u3_none != pro ) {
