@@ -33,6 +33,7 @@
 #     include <setjmp.h>
 #     include <stdio.h>
 #     include <signal.h>
+#     include <sys/syscall.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
@@ -50,6 +51,7 @@
 #     include <machine/endian.h>
 #     include <machine/byte_order.h>
 #     include <stdio.h>
+#     include <sys/random.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
@@ -188,7 +190,14 @@
 
 /* Entropy
  */
-#define c3_rand u3_sist_rand
+#      if defined(U3_OS_linux)
+#        define c3_getentropy(B, L) \
+           ((L) == syscall(SYS_getrandom, B, L, 0) ? 0 : -1)
+#      elif defined(U3_OS_bsd) || defined(U3_OS_osx)
+#        define c3_getentropy getentropy
+#      else
+#        error "port: getentropy"
+#      endif
 
 /* Static assertion
  */
