@@ -138,6 +138,7 @@
 ++  peer
   |=  wir=wire
   ^-  (quip move _this)
+  ~&  peer-prize+str.sta
   :_  this
   [ost.bol %diff %collections-prize str.sta]~
 ::
@@ -384,6 +385,17 @@
         %=  this
           circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
+      ::
+      ::  %read: recieved a read reciept
+      ::
+          %read
+        ?.  =([our.bol %inbox] cir.rum.rum)
+          [~ this]
+        ?>  ?=(^ con.inbox.str.sta)
+        :-  ~
+        %=  this
+          red.u.con.inbox.str.sta  red.dif.rum.rum
+        ==
       ==
     ==
   ::
@@ -425,6 +437,16 @@
         ~&  %our-config-full
         =*  conf  cof.dif.rum.rum
         :-  ~  ::(send-rumor %config-change circ `conf)
+        %=  this
+          circles.str.sta  (~(put by circles.str.sta) circ `conf)
+        ==
+      ::
+      ::  %read: recieved a read reciept
+      ::
+          %read
+        =/  conf  (need (~(got by circles.str.sta) circ))
+        =.  red.conf  red.dif.rum.rum
+        :-  ~
         %=  this
           circles.str.sta  (~(put by circles.str.sta) circ `conf)
         ==
