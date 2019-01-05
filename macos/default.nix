@@ -157,16 +157,24 @@ let
 
     builder = ./compiler_rt_builder.sh;
 
+    patches = [ ./compiler_rt.patch ];
+
     native_inputs = [ clang ld ar nixpkgs.python2 ];
 
-    CC = "clang";
-    CXX = "clang++";
+    _cflags = "-target ${host} --sysroot ${sdk} " +
+      "-I${sdk}/usr/include -mlinker-version=${ld.apple_version}";
+    CC = "clang ${_cflags}";
+    CXX = "clang++ ${_cflags}";
 
     cmake_flags =
       "-DCMAKE_BUILD_TYPE=Release " +
       "-DCMAKE_SYSTEM_NAME=Darwin " +
       "-DCMAKE_OSX_SYSROOT=${sdk} " +
+      "-DDARWIN_osx_SYSROOT=${sdk} " +
+      "-DCOMPILER_RT_SUPPORTED_ARCH=${arch} " +
+      "-DCMAKE_LINKER=${ld}/bin/${host}-ld " +
       "-DCMAKE_AR=${ar}/bin/${host}-ar " +
+      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min}" +
       "-DCOMPILER_RT_BUILD_XRAY=OFF";
 
     inherit host sdk;

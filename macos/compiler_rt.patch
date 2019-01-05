@@ -1,0 +1,31 @@
+diff -ur compiler-rt-7.0.1.src-orig/cmake/base-config-ix.cmake compiler-rt-7.0.1.src/cmake/base-config-ix.cmake
+--- compiler-rt-7.0.1.src-orig/cmake/base-config-ix.cmake	2019-01-04 20:17:52.685000000 -0800
++++ compiler-rt-7.0.1.src/cmake/base-config-ix.cmake	2019-01-04 20:32:57.785000000 -0800
+@@ -89,16 +89,6 @@
+ endif()
+ 
+ if(APPLE)
+-  # On Darwin if /usr/include doesn't exist, the user probably has Xcode but not
+-  # the command line tools. If this is the case, we need to find the OS X
+-  # sysroot to pass to clang.
+-  if(NOT EXISTS /usr/include)
+-    execute_process(COMMAND xcodebuild -version -sdk macosx Path
+-       OUTPUT_VARIABLE OSX_SYSROOT
+-       ERROR_QUIET
+-       OUTPUT_STRIP_TRAILING_WHITESPACE)
+-    set(OSX_SYSROOT_FLAG "-isysroot${OSX_SYSROOT}")
+-  endif()
+ 
+   option(COMPILER_RT_ENABLE_IOS "Enable building for iOS" On)
+   option(COMPILER_RT_ENABLE_WATCHOS "Enable building for watchOS - Experimental" Off)
+diff -ur compiler-rt-7.0.1.src-orig/CMakeLists.txt compiler-rt-7.0.1.src/CMakeLists.txt
+--- compiler-rt-7.0.1.src-orig/CMakeLists.txt	2019-01-04 20:17:52.589000000 -0800
++++ compiler-rt-7.0.1.src/CMakeLists.txt	2019-01-04 20:39:00.145000000 -0800
+@@ -379,6 +379,7 @@
+                       ${LLVM_MAIN_SRC_DIR}/runtimes/libcxx
+                       ${LLVM_MAIN_SRC_DIR}/../libcxx
+                       ${LLVM_EXTERNAL_LIBCXX_SOURCE_DIR})
++  message (STATUS "tmphax ${path}")
+   if(IS_DIRECTORY ${path})
+     set(COMPILER_RT_LIBCXX_PATH ${path})
+     break()
