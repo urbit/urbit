@@ -125,6 +125,17 @@ let
     inherit host ranlib;
   };
 
+  lipo = native.make_derivation rec {
+    name = "cctools-lipo";
+    apple_version = cctools_apple_version;
+    src = cctools_port_src;
+    builder = ./lipo_builder.sh;
+    patches = [
+      ./cctools-format.patch
+    ];
+    inherit host;
+  };
+
   strip = native.make_derivation rec {
     name = "cctools-strip";
     apple_version = cctools_apple_version;
@@ -159,7 +170,7 @@ let
 
     patches = [ ./compiler_rt.patch ];
 
-    native_inputs = [ clang ld ar nixpkgs.python2 ];
+    native_inputs = [ clang ld ar lipo nixpkgs.python2 ];
 
     _cflags = "-target ${host} --sysroot ${sdk} " +
       "-I${sdk}/usr/include -mlinker-version=${ld.apple_version}";
@@ -171,11 +182,14 @@ let
       "-DCMAKE_SYSTEM_NAME=Darwin " +
       "-DCMAKE_OSX_SYSROOT=${sdk} " +
       "-DDARWIN_osx_SYSROOT=${sdk} " +
-      "-DCOMPILER_RT_SUPPORTED_ARCH=${arch} " +
       "-DCMAKE_LINKER=${ld}/bin/${host}-ld " +
       "-DCMAKE_AR=${ar}/bin/${host}-ar " +
-      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min} " +
-      "-DCOMPILER_RT_BUILD_XRAY=OFF";
+      "-DCOMPILER_RT_BUILD_XRAY=OFF " +
+      # TODO: The flags below were only added in an attempt to avoid the
+      # need for lipo.  Should remove them if we end up using lipo
+      # anyway.
+      "-DCOMPILER_RT_SUPPORTED_ARCH=${arch} " +
+      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min} ";
 
     inherit host sdk;
   };
@@ -184,7 +198,7 @@ let
     name = "macos-toolchain";
     builder = ./toolchain_builder.sh;
     src_file = ./wrapper.cpp;
-    inherit host clang ld ranlib ar strip sdk;
+    inherit host clang ld ranlib ar lipo strip sdk;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -227,7 +241,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang compiler_rt tapi ld ranlib ar sdk toolchain;
+    inherit clang compiler_rt tapi ld ranlib ar lipo sdk toolchain;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
