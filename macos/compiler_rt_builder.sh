@@ -14,5 +14,5 @@ mkdir build
 cd build
 cmake ../src -GNinja -DCMAKE_INSTALL_PREFIX=$out $cmake_flags
 
-ninja -j1 -v
+ninja -j1 -v  # TODO
 ninja install
