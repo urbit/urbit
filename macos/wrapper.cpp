@@ -48,7 +48,7 @@ int compiler_main(int argc, char ** argv,
   args.push_back("--sysroot");
   args.push_back(WRAPPER_SDK_PATH);
 
-  // Causes clang to pass -demangle,  -lto_library, -no_deduplicate, and other
+  // Causes clang to pass -demangle, -lto_library, -no_deduplicate, and other
   // options that could be useful.  Version 274.2 is the version number used here:
   // https://github.com/tpoechtrager/osxcross/blob/474f359/build.sh#L140
   if (WRAPPER_LINKER_VERSION[0])
