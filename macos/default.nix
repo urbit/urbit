@@ -174,7 +174,7 @@ let
       "-DCOMPILER_RT_SUPPORTED_ARCH=${arch} " +
       "-DCMAKE_LINKER=${ld}/bin/${host}-ld " +
       "-DCMAKE_AR=${ar}/bin/${host}-ar " +
-      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min}" +
+      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min} " +
       "-DCOMPILER_RT_BUILD_XRAY=OFF";
 
     inherit host sdk;
