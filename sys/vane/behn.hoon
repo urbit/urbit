@@ -140,9 +140,9 @@
   ::    handle this first because the moves %behn emits will get handled in
   ::    depth-first order. If we're handling a %wake which causes a move to a
   ::    different vane and a %doze event to send to unix, Arvo needs to process
-  ::    the %doze first because the move to the other vane may call back into
-  ::    %behn and emit a second %doze, which means the second %doze would be
-  ::    handled by unix first.
+  ::    the %doze first because otherwise if the move to the other vane calls
+  ::    back into %behn and emits a second %doze, the second %doze would be
+  ::    handled by unix first which is incorrect.
   ::
   ++  set-wake
     |=  moves=(list move)
