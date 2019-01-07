@@ -76,12 +76,7 @@
 ++  axle
   $:  ::  date: date at which light's state was updated to this data structure
       ::
-      date=%~2018.9.12
-      ::  ship: the ship name.
-      ::
-      ::    TODO: Remove when we single home.
-      ::
-      ship=(unit ship)
+      date=%~2019.1.7
       ::  client-state: state of outbound requests
       ::
       client-state=state:client
@@ -1446,8 +1441,6 @@
       ::  %init: tells us what our ship name is
       ::
       %init
-    ::
-    =.  ship.ax  [~ our.task]
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
@@ -1478,7 +1471,7 @@
         [closed-connections server-state.ax]
       ::
       =/  event-args
-        [[(need ship.ax) eny duct.i.connections now scry-gate] server-state.ax]
+        [[our eny duct.i.connections now scry-gate] server-state.ax]
       =/  cancel-request  cancel-request:(per-server-event event-args)
       =^  moves  server-state.ax  cancel-request
       ::
@@ -1507,8 +1500,7 @@
     ::
     ::  TODO: This is uncommit
     ::
-    ~|  [%ship ship.ax]
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  request  request:(per-server-event event-args)
     =^  moves  server-state.ax
       (request +.task)
@@ -1517,7 +1509,7 @@
       ::
       ::
       %cancel-inbound-request
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  cancel-request  cancel-request:(per-server-event event-args)
     =^  moves  server-state.ax  cancel-request
     [moves light-gate]
@@ -1526,7 +1518,7 @@
       ::
       %fetch
     ~&  %todo-fetch
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] client-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
     =/  fetch  fetch:(per-client-event event-args)
     =^  moves  client-state.ax  (fetch +.task)
     [moves light-gate]
@@ -1546,7 +1538,7 @@
       ::  %connect / %serve
       ::
       ?(%connect %serve)
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  add-binding  add-binding:(per-server-event event-args)
     =^  moves  server-state.ax
       %+  add-binding  binding.task
@@ -1559,7 +1551,7 @@
       ::  %disconnect
       ::
       %disconnect
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  remove-binding  remove-binding:(per-server-event event-args)
     =.  server-state.ax  (remove-binding binding.task)
     [~ light-gate]
@@ -1593,7 +1585,7 @@
       ::
       [~ light-gate]
     ::
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-response raw-http-response.p.sign)
     [moves light-gate]
@@ -1602,14 +1594,14 @@
     ::
     ?>  ?=([%f %made *] sign)
     ::
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-ford-response result.sign)
     [moves light-gate]
   ::
   ++  channel
     ::
-    =/  event-args  [[(need ship.ax) eny duct now scry-gate] server-state.ax]
+    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     ::  channel callback wires are triples.
     ::
     ?>  ?=([@ @ @t *] wire)
