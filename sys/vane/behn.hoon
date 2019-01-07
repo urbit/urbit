@@ -136,13 +136,13 @@
     ==
   ::  +set-wake: set or unset a unix timer to wake us when next timer expires
   ::
-  ::    We prepend the unix %doze event so that it is handled first. We must
-  ::    handle this first because the moves we emit will get handled in
+  ::    We prepend the unix %doze event so that it is handled first. Arvo must
+  ::    handle this first because the moves %behn emits will get handled in
   ::    depth-first order. If we're handling a %wake which causes a move to a
-  ::    different vane and another %doze event to send to unix, we need to
-  ::    process the %doze first because the move to the other vane may call
-  ::    back into %behn and emit a second %doze, which means the second %doze
-  ::    which be handled by unix first.
+  ::    different vane and a %doze event to send to unix, Arvo needs to process
+  ::    the %doze first because the move to the other vane may call back into
+  ::    %behn and emit a second %doze, which means the second %doze would be
+  ::    handled by unix first.
   ::
   ++  set-wake
     |=  moves=(list move)
