@@ -80,6 +80,9 @@
       [%new-msg nom=?(%inbox %invites) env=envelope:hall]
   ==
 ::
++$  command
+  $%  [%invite nom=name:hall who=(set ship)]
+  ==
 +$  collection  [meta=config data=(map nom=knot =item)]
 ::
 +$  item

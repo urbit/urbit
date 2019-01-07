@@ -133,12 +133,44 @@
     (~(ta-write ta ~ bol) /web/landscape/onboard/json [%json !>(jon)])
   [~ this]
 ::
+::  +poke-collections-command
+::
+++  poke-collections-command
+  |=  cod=command
+  ^-  (quip move _this)
+  ?-    -.cod
+      %invite
+    :_  this
+    :-  :*  ost.bol
+            %poke
+            /permit
+            [our.bol %hall]
+            %hall-action
+            %permit
+            nom.cod
+            %.y
+            who.cod
+        ==
+    %+  turn  ~(tap in who.cod)
+    |=  guy=@p
+    ^-  move
+    :*  ost.bol
+        %poke
+        /invite
+        [our.bol %hall]
+        %hall-action
+        %phrase
+        aud=(sy [guy %i] ~)
+        ses=[%inv & our.bol nom.cod]~
+    ==
+  ==
+::
 ::  +peer:
 ::
 ++  peer
   |=  wir=wire
   ^-  (quip move _this)
-  ~&  peer-prize+str.sta
+  ::~&  peer-prize+str.sta
   :_  this
   [ost.bol %diff %collections-prize str.sta]~
 ::
@@ -147,7 +179,7 @@
 ++  reap
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  ~&  reap+[wir =(~ err)]
+  ::~&  reap+[wir =(~ err)]
   ?~  err
     [~ this]
   ?~  wir
@@ -176,7 +208,7 @@
 ++  quit
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  ~&  quit+[wir =(~ err)]
+  ::~&  quit+[wir =(~ err)]
   ?~  err
     [~ this]
   ?~  wir
@@ -207,7 +239,7 @@
   ^-  (quip move _this)
   ::
   ::
-  ~&  prize+[wir piz]
+  ::~&  prize+[wir piz]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ?+  i.wir
@@ -271,7 +303,7 @@
 ++  diff-hall-rumor
   |=  [wir=wire rum=rumor:hall]
   ^-  (quip move _this)
-  ~&  rumor+[wir rum]
+  ::~&  rumor+[wir rum]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   =;  upd=[mow=(list move) sta=_this] 
@@ -286,7 +318,7 @@
   ::  %circles:
   ::
       %circles
-    ~&  %circles
+    ::~&  %circles
     ?>  ?=(%circles -.rum)
     =?    dms.str.sta  
         ?&  (is-dm-circle our.bol cir.rum)
@@ -304,20 +336,20 @@
       %inbox
     ?>  ?=(%circle -.rum)
     ?+  -.rum.rum
-      ~&  inbox-unprocessed-rumor+rum.rum
+      ::~&  inbox-unprocessed-rumor+rum.rum
       [~ this]
     ::
     ::  %remove:
     ::
         %remove
-      ~&  %inbox-remove
-        ~&  %removed-story
+      ::~&  %inbox-remove
+        ::~&  %removed-story
       [~ this]
     ::
     ::  %gram: inbox has recieved messages
     ::
         %gram
-      ~&  %inbox-gram
+      ::~&  %inbox-gram
       ::  XX TODO: handle stack trace message when foreign circle is killed?
       ::
       ?:  (is-dm-circle src.rum.rum)
@@ -337,13 +369,13 @@
         %config
       =*  circ  cir.rum.rum
       ?+  -.dif.rum.rum
-        ~&  inbox-unprocessed-config+dif.rum.rum
+        ::~&  inbox-unprocessed-config+dif.rum.rum
         [~ this]
       ::
       ::  %remove: circle has been erased
       ::
           %remove
-        ~&  %inbox-config-remove
+        ::~&  %inbox-config-remove
         :-  ~  ::(send-rumor %config-change cir.rum.rum ~)
         %=    this
             circles.str.sta
@@ -353,7 +385,7 @@
       ::  %source: the sources of our inbox have changed
       ::
           %source
-        ~&  %inbox-config-source
+        ::~&  %inbox-config-source
         ?.  =(circ [our.bol %inbox])
           [~ this]
         ::  we've added a source to our inbox  
@@ -379,7 +411,7 @@
           %=  u.con.inbox.str.sta
             src  (~(del in src.u.con.inbox.str.sta) src.dif.rum.rum)
           ==
-        ~&  inbox+conf
+        ::~&  inbox+conf
         :-  ~  ::(send-rumor %config-change [our.bol %inbox] `conf)
         %=    this
             con.inbox.str.sta  `conf
@@ -393,7 +425,7 @@
       ::  %full: recieved a full config update for one of our sources
       ::
           %full
-        ~&  %inbox-config-full
+        ::~&  %inbox-config-full
         =*  conf  cof.dif.rum.rum
         :-  ~  ::(send-rumor %config-change circ `conf)
         %=  this
@@ -416,7 +448,7 @@
   ::  %invites:
   ::
       %invites
-    ~&  %invites
+    ::~&  %invites
     ?>  ?=(%circle -.rum)
     ?>  ?=(%gram -.rum.rum)
     ?>  ?=(%inv -.sep.gam.nev.rum.rum)
@@ -438,13 +470,13 @@
       %our
     ?>  ?=(%circle -.rum)
     ?+  -.rum.rum
-      ~&  our-unprocessed-rumor+rum.rum
+      ::~&  our-unprocessed-rumor+rum.rum
       [~ this]
     ::
     ::  %remove:
     ::
         %remove
-        ~&  %our-remove
+        ::~&  %our-remove
       [~ this]
     ::
     ::  %config:
@@ -453,13 +485,13 @@
       =*  circ  cir.rum.rum
       =*  diff  dif.rum.rum
       ?+  -.diff
-        ~&  our-unprocessed-config+diff
+        ::~&  our-unprocessed-config+diff
         [~ this]
       ::
       ::  %full: recieved a full config update for one of our sources
       ::
           %full
-        ~&  %our-config-full
+        ::~&  %our-config-full
         =*  conf  cof.dif.rum.rum
         :-  ~  ::(send-rumor %config-change circ `conf)
         %=  this
@@ -483,7 +515,7 @@
 ::
 ++  send-rumor
   |=  rum=rumor
-  ~&  send-rumor+rum
+  ::~&  send-rumor+rum
   ^-  (list move)
   %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
@@ -514,25 +546,3 @@
   ?=  ^
   (rush nom.circ (more dot fed:ag))
 --
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
