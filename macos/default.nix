@@ -3,10 +3,6 @@
 # binutils.  So clang and binutils recipes could be shared by the
 # different platforms we targets.
 
-# TODO: Make __builtin_available work
-# https://jonnyzzz.com/blog/2018/05/16/link-error/
-# https://compiler-rt.llvm.org/
-
 { native }:
 let
   nixpkgs = native.nixpkgs;
@@ -170,7 +166,7 @@ let
 
     patches = [ ./compiler_rt.patch ];
 
-    native_inputs = [ clang ld ar lipo nixpkgs.python2 ];
+    native_inputs = [ clang ar ranlib lipo ld nixpkgs.python2 ];
 
     _cflags = "-target ${host} --sysroot ${sdk} " +
       "-I${sdk}/usr/include -mlinker-version=${ld.apple_version}";
@@ -184,6 +180,7 @@ let
       "-DDARWIN_osx_SYSROOT=${sdk} " +
       "-DCMAKE_LINKER=${ld}/bin/${host}-ld " +
       "-DCMAKE_AR=${ar}/bin/${host}-ar " +
+      "-DCMAKE_RANLIB=${ranlib}/bin/${host}-ranlib " +
       "-DCOMPILER_RT_BUILD_XRAY=OFF " +
       # TODO: The flags below were only added in an attempt to avoid the
       # need for lipo.  Should remove them if we end up using lipo
