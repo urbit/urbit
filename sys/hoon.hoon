@@ -1052,8 +1052,6 @@
 ::::  2e: insecure hashing                              ::
   ::                                                    ::
   ::
-++  fnv  |=(a/@ (end 5 1 (mul 16.777.619 a)))           ::  FNV scrambler
-::
 ++  muk                                                 ::  standard murmur3
   ~%  %muk  ..muk  ~
   =+  ~(. fe 5)
@@ -1112,8 +1110,8 @@
     h
   --
 ::
-++  mur                                                 ::  mug with murmur3
-  ~/  %mur
+++  mug                                                 ::  mug with murmur3
+  ~/  %mug
   |=  a/*
   |^  (trim ?@(a a (mix $(a -.a) (mix 0x7fff.ffff $(a +.a)))))
   ++  trim                                              ::  31-bit nonzero
@@ -1124,27 +1122,6 @@
     =+  ham=(mix (rsh 0 31 haz) (end 0 31 haz))
     ?.(=(0 ham) ham $(syd +(syd)))
   --
-::
-++  mug                                                 ::  31bit nonzero FNV1a
-  ~/  %mug
-  |=  a/*
-  ?^  a
-    =+  b=[p=$(a -.a) q=$(a +.a)]
-    |-  ^-  @
-    =+  c=(fnv (mix p.b (fnv q.b)))
-    =+  d=(mix (rsh 0 31 c) (end 0 31 c))
-    ?.  =(0 d)  d
-    $(q.b +(q.b))
-  =+  b=2.166.136.261
-  |-  ^-  @
-  =+  c=b
-  =+  [d=0 e=(met 3 a)]
-  |-  ^-  @
-  ?:  =(d e)
-    =+  f=(mix (rsh 0 31 c) (end 0 31 c))
-    ?.  =(0 f)  f
-    ^$(b +(b))
-  $(c (fnv (mix c (cut 3 [d 1] a))), d +(d))
 ::                                                      ::
 ::::  2f: noun ordering                                 ::
   ::                                                    ::
