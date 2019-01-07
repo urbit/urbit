@@ -1758,14 +1758,15 @@ c3_w
 u3r_mur_words(const c3_w* key_w, c3_w len_w)
 {
   c3_w syd_w = 0xcafebabe;
+  c3_w ham_w = 0;
 
-  while ( 1 ) {
+  while ( 0 == ham_w ) {
     c3_w haz_w = _mur_words(syd_w, key_w, len_w);
-    c3_w ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
-
-    if ( 0 != ham_w ) return ham_w;
-    else syd_w++;
+    ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
+    syd_w++;
   }
+
+  return ham_w;
 }
 
 /* u3r_mur_bytes():
@@ -1778,16 +1779,16 @@ u3r_mur_bytes(const c3_y *buf_y,
               c3_w        len_w)
 {
   c3_w syd_w = 0xcafebabe;
+  c3_w ham_w = 0;
 
-  while ( 1 ) {
-    c3_w haz_w, ham_w;
-
+  while ( 0 == ham_w ) {
+    c3_w haz_w;
     MurmurHash3_x86_32(buf_y, len_w, syd_w, &haz_w);
     ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
-
-    if ( 0 != ham_w ) return ham_w;
-    else syd_w++;
+    syd_w++;
   }
+
+  return ham_w;
 }
 
 /* u3r_mur_d():
