@@ -462,7 +462,7 @@
         dms.str.sta      (~(put by dms.str.sta) nom.circ hos.circ ~)
       ==
     =/  act=poke  [%hall-action %source %inbox & (sy [circ ~] ~)]
-    :-  [ost.bol %poke /join-chat [our.bol %hall] act]~
+    :-  ~
     this(invites.str.sta [nev.rum.rum invites.str.sta])
   ::
   ::  %our:
