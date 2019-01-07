@@ -32,12 +32,9 @@
               {$ud p/@ud}                               ::  sequence
           ==                                            ::
 ++  desk  @tas                                          ::  ship desk case spur
+++  dock  (pair @p term)                                ::  message target
 ++  cage  (cask vase)                                   ::  global metadata
 ++  cask  |*(a/mold (pair mark a))                      ::  global data
-++  cuff                                                ::  permissions
-          $:  p/(unit (set monk))                       ::  can be read by
-              q/(set monk)                              ::  caused or created by
-          ==                                            ::
 ++  curd  {p/@tas q/*}                                  ::  typeless card
 ++  duct  (list wire)                                   ::  causal history
 ++  hypo  |*(a/mold (pair type a))                      ::  type associated
@@ -46,20 +43,6 @@
               ==                                        ::
               a                                         ::
           ==                                            ::
-++  kirk  (unit (set monk))                             ::  audience
-++  lens                                                ::  observation core
-  $_  ^?                                                ::
-  |%  ++  u  *(unit (unit $~))                          ::  existence
-      ++  v  *(unit (unit cage))                        ::  full history
-      ++  w  *(unit (unit (unit cage)))                 ::  latest diff
-      ++  x  *(unit (unit cage))                        ::  data at path
-      ++  y  *(unit (unit arch))                        ::  directory
-      ++  z  *(unit (unit cage))                        ::  current subtree
-  --                                                    ::
-++  marc                                                ::  structured mark
-  $@  mark                                              ::  plain mark
-  $%  {$tabl p/(list (pair marc marc))}                 ::  map
-  ==                                                    ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
 ++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
