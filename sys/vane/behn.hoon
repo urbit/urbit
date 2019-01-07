@@ -86,7 +86,6 @@
           :~  timers+[%& timers]
           ==
         ==
-      ::  when we send moves, the unix even from set-wake must be first
       ::
       [moves ..^^$]
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
@@ -118,21 +117,32 @@
     [i.timers $(timers t.timers)]
   ::  +notify-clients: wake up vanes whose timers have expired
   ::
+  ::    When we return the list moves to clients, we flop them so they're in
+  ::    the same order as they were in :timers.
+  ::
   ++  notify-clients
     =|  moves=(list move)
     |-  ^+  [moves timers]
     ::
     ?~  timers
-      [moves timers]
+      [(flop moves) timers]
     ::
     ?:  (gth date.i.timers now)
-      [moves timers]
+      [(flop moves) timers]
     ::
     %_  $
       timers  t.timers
       moves  [[duct.i.timers %give %wake ~] moves]
     ==
   ::  +set-wake: set or unset a unix timer to wake us when next timer expires
+  ::
+  ::    We prepend the unix %doze event so that it is handled first. We must
+  ::    handle this first because the moves we emit will get handled in
+  ::    depth-first order. If we're handling a %wake which causes a move to a
+  ::    different vane and another %doze event to send to unix, we need to
+  ::    process the %doze first because the move to the other vane may call
+  ::    back into %behn and emit a second %doze, which means the second %doze
+  ::    which be handled by unix first.
   ::
   ++  set-wake
     |=  moves=(list move)
