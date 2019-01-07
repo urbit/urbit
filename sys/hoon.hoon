@@ -1185,7 +1185,7 @@
   |=  {a/* b/*}
   =+  %uniq
   ^-  ?
-  =+  [c=(mug a) d=(mug b)]
+  =+  [c=(mur a) d=(mur b)]
   ?:  =(c d)
     (dor a b)
   (lth c d)
@@ -1220,7 +1220,7 @@
   |=  {a/* b/*}
   =+  %uniq
   ^-  ?
-  =+  [c=(mug (mug a)) d=(mug (mug b))]
+  =+  [c=(mur (mur a)) d=(mur (mur b))]
   ?:  =(c d)
     (dor a b)
   (lth c d)
@@ -9993,6 +9993,7 @@
     ~/  %find
     |=  {way/vial hyp/wing}
     ^-  port
+    ~_  duck
     ~_  (show [%c %find] %l hyp)
     =-  ?@  -  !!
         ?-    -<
@@ -11613,7 +11614,7 @@
         |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(r.p.q.sut $gold '.', $iron '|', $lead '?', $zinc '&')
-      =+  gum=(mug q.r.q.sut)
+      =+  gum=(mur q.r.q.sut)
       %+  can  3
       :~  [1 (add 'a' (mod gum 26))]
           [1 (add 'a' (mod (div gum 26) 26))]
