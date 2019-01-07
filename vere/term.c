@@ -95,7 +95,7 @@ _term_close_cb(uv_handle_t* han_t)
 void
 u3_term_io_init()
 {
-  u3_utty* uty_u = calloc(1, sizeof(u3_utty));
+  u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
 
   if ( c3y == u3_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
