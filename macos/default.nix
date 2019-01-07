@@ -152,6 +152,10 @@ let
     version = builtins.readFile "${sdk}/version.txt";
   };
 
+  # Note: compiler-rt actually builds itself for three different architectures:
+  # i386, x86_64, x86_64h.  It uses lipo to create fat archives that hold
+  # binaries for all the different architectures.  We only want x86_64 but it's
+  # not obvious how to achieve that.
   compiler_rt = native.make_derivation rec {
     name = "compiler-rt-${version}";
 
@@ -181,12 +185,7 @@ let
       "-DCMAKE_LINKER=${ld}/bin/${host}-ld " +
       "-DCMAKE_AR=${ar}/bin/${host}-ar " +
       "-DCMAKE_RANLIB=${ranlib}/bin/${host}-ranlib " +
-      "-DCOMPILER_RT_BUILD_XRAY=OFF " +
-      # TODO: The flags below were only added in an attempt to avoid the
-      # need for lipo.  Should remove them if we end up using lipo
-      # anyway.
-      "-DCOMPILER_RT_SUPPORTED_ARCH=${arch} " +
-      "-DCMAKE_CXX_FLAGS=-mmacosx-version-min=${macos_version_min} ";
+      "-DCOMPILER_RT_BUILD_XRAY=OFF";
 
     inherit host sdk;
   };
