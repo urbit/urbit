@@ -1017,7 +1017,7 @@
       ==
   ^-  [tang _light-gate]
   ::
-  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  light-gate  (call:light-core call-args)
   ::
@@ -1037,7 +1037,7 @@
       ==
   ^-  [tang _light-gate]
   ::
-  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  light-gate  (call:light-core call-args)
   ::
@@ -1054,7 +1054,7 @@
       ==
   ^-  [tang _light-gate]
   ::
-  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  light-gate  (take:light-core take-args)
   ::
@@ -1074,7 +1074,7 @@
       ==
   ^-  [tang _light-gate]
   ::
-  =/  light-core  (light-gate now=now eny=0xdead.beef scry=scry)
+  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
   =^  moves  light-gate  (take:light-core take-args)
   ::
