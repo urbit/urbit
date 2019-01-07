@@ -86,9 +86,8 @@
           :~  timers+[%& timers]
           ==
         ==
-      ::  reverse moves, since they were constructed backward, and return
       ::
-      [(flop moves) ..^^$]
+      [moves ..^^$]
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
   ++  set-timer
@@ -118,21 +117,32 @@
     [i.timers $(timers t.timers)]
   ::  +notify-clients: wake up vanes whose timers have expired
   ::
+  ::    When we return the list moves to clients, we flop them so they're in
+  ::    the same order as they were in :timers.
+  ::
   ++  notify-clients
     =|  moves=(list move)
     |-  ^+  [moves timers]
     ::
     ?~  timers
-      [moves timers]
+      [(flop moves) timers]
     ::
     ?:  (gth date.i.timers now)
-      [moves timers]
+      [(flop moves) timers]
     ::
     %_  $
       timers  t.timers
       moves  [[duct.i.timers %give %wake ~] moves]
     ==
   ::  +set-wake: set or unset a unix timer to wake us when next timer expires
+  ::
+  ::    We prepend the unix %doze event so that it is handled first. Arvo must
+  ::    handle this first because the moves %behn emits will get handled in
+  ::    depth-first order. If we're handling a %wake which causes a move to a
+  ::    different vane and a %doze event to send to unix, Arvo needs to process
+  ::    the %doze first because otherwise if the move to the other vane calls
+  ::    back into %behn and emits a second %doze, the second %doze would be
+  ::    handled by unix first which is incorrect.
   ::
   ++  set-wake
     |=  moves=(list move)
