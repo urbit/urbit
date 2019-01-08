@@ -779,9 +779,9 @@
             `i.drivers
           $(drivers t.drivers)
         ::
-        ?~  driver
-          +>.$
-        ~(cancel-request vi u.driver)
+        ?^  driver
+          ~(cancel-request vi u.driver)
+        (give-sigh(hen (tail hen)) %| [leaf+"canceled on %born"]~)
       ::  ~&  eyre-them+(en-purl p.u.p.kyz)
       %=  +>.$
         mow    :_(mow [ged [%give %thus p.ask p.kyz]])
@@ -815,6 +815,7 @@
         ~&  dead-request+hen
         +>.$(ded (~(put in ded) hen))                   ::  uncaught requests
       =+  lid=(~(got by lyv) hen)
+      =.  lyv  (~(del by lyv) hen)
       :: ~&  did-thud+[-.lid hen]
       ?-  -.lid
           $exec
@@ -2038,7 +2039,14 @@
       (execute-turbo:abet se+[wir usr dom] live schematic)
     ++  dead-this  |=(a/tang (fail:abet 500 0v0 a))
     ++  dead-hiss  |=(a/tang pump(req ~(nap to req), ..vi (give-sigh %| a)))
-    ++  eyre-them  |=({a/whir-se b/vase} (eyre-them:abet se+[a usr dom] b))
+    ::
+    ++  eyre-them
+      |=  [a=whir-se b=vase]
+      ::  block requests until we get a response to this request
+      ::
+      =.  liv  |
+      (eyre-them:abet se+[a usr dom] b)
+    ::
     ++  pass-note  |=({a/whir-se b/note} (pass-note:abet se+[a usr dom] b))
     ::  XX block reqs until correct core checked in?
     ++  warn  |=(a/tang ((slog (flop a)) abet))
@@ -2105,7 +2113,7 @@
     ::
     ++  fin-httr
       |=  vax/vase
-      =^  ole  req  ~(get to req)
+      =^  ole  req  ~|  %eyre-no-queue  ~(get to req)
       =>  .(ole `{p/duct q/mark *}`ole)             :: XX types
       =.  ..vi  (cast-thou(hen p.ole) q.ole httr+vax)    :: error?
       pump
@@ -2196,7 +2204,6 @@
     ++  do-send
       |=  wir/whir-se  ^-  $-(vase _abet)
       |=  res/vase
-      =.  liv  |  :: block requests until a reponse is given
       (eyre-them wir (slam !>(|=({$send a/hiss} a)) res))
     ::
     ++  cancel-request  ~&  %cancel-request
