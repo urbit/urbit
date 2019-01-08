@@ -73,7 +73,7 @@
     u3_noun u3wc_vor(u3_noun);
 
     u3_noun u3wc__stage_gor(u3_noun);
-    u3_noun u3wc__stage_hor(u3_noun);
+#   define u3wc__stage_hor u3wc__stage_gor
     u3_noun u3wc__stage_vor(u3_noun);
 
     u3_noun u3wcp_ins(u3_noun);

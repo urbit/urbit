@@ -7,7 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qc__stage_hor(u3_noun a,
+  u3qc__disabled__stage_hor(u3_noun a,
            u3_noun b)
   {
     if ( c3y == u3ud(a) ) {
@@ -33,7 +33,7 @@
     }
   }
   u3_noun
-  u3wc__stage_hor(u3_noun cor)
+  u3wc__disabled__stage_hor(u3_noun cor)
   {
     u3_noun a, b;
 

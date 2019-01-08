@@ -72,7 +72,7 @@
     u3_noun u3qc_vor(u3_atom, u3_atom);
 
     u3_noun u3qc__stage_gor(u3_atom, u3_atom);
-    u3_noun u3qc__stage_hor(u3_atom, u3_atom);
+#   define u3qc__stage_hor u3qc__stage_gor
     u3_noun u3qc__stage_vor(u3_atom, u3_atom);
 
   /** Tier 4.
