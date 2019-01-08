@@ -1066,7 +1066,8 @@
   ::
   ++  ire-ix  |=(ire/ixor ~(. ix ire (~(got by wix) ire)))
   ++  dom-vi
-    |=  {usr/knot dom/path}  ^+  vi    :: XX default to initialized user?
+    |=  {usr/knot dom/path}
+    ::  ^+  vi    :: XX default to initialized user?
     ~(. vi [usr dom] (fall (~(get by sec) usr dom) *driv))
   ::
   ++  ses-authed
