@@ -1,4 +1,4 @@
-/* j/6/lort.c
+/* j/6/loot.c
 **
 */
 #include "all.h"
@@ -23,7 +23,7 @@
       }
       else {
         u3_noun qqn_dom = u3t(u3t(n_dom));
-        u3_noun yep = u3qf__stage_look(cog, qqn_dom);
+        u3_noun yep = u3qf_look(cog, qqn_dom);
 
         if ( (u3_nul == l_dom) && (u3_nul == r_dom) ) {
           if ( u3_nul == yep ) {
@@ -115,19 +115,19 @@
 /* functions
 */
   u3_noun
-  u3qf__stage_loot(u3_noun cog,
+  u3qf_loot(u3_noun cog,
             u3_noun dom)
   {
     return _loot_in(cog, dom, 1);
   }
   u3_noun
-  u3wf__stage_loot(u3_noun cor)
+  u3wf_loot(u3_noun cor)
   {
     u3_noun cog, dom;
 
     if ( c3n == u3r_mean(cor, u3x_sam_2, &cog, u3x_sam_3, &dom, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3qf__stage_loot(cog, dom);
+      return u3qf_loot(cog, dom);
     }
   }

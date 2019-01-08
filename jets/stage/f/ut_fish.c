@@ -102,7 +102,7 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi__stage_tap(p_sut);
+        u3_noun yed = u3qdi_tap(p_sut);
         u3_noun ret = _fish_fork(van, yed, axe, vit);
 
         u3z(yed);
@@ -111,9 +111,9 @@
       case c3__hold: {
         p_sut = u3t(sut);
         {
-          if ( (c3y == u3qdi__stage_has(vit, sut)) ) {
-            //  u3_noun dun = u3qfu__stage_dunq(van, "type", sut);
-            u3_noun niz = u3qfu__stage_shep
+          if ( (c3y == u3qdi_has(vit, sut)) ) {
+            //  u3_noun dun = u3qfu_dunq(van, "type", sut);
+            u3_noun niz = u3qfu_shep
               (van, "axis", 'd', u3k(axe));
 
             //  u3t_push(u3nc(c3__mean, dun));
@@ -121,8 +121,8 @@
 
             return u3m_error("fish-loop");
           } else {
-            u3_noun zoc = u3qdi__stage_put(vit, sut);
-            u3_noun fop = u3qfu__stage_repo(van, sut);
+            u3_noun zoc = u3qdi_put(vit, sut);
+            u3_noun fop = u3qfu_repo(van, sut);
             u3_noun pro = _fish_in(van, fop, axe, zoc);
 
             u3z(fop);
@@ -147,7 +147,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu__stage_fish(u3_noun cor)
+  u3wfu_fish(u3_noun cor)
   {
     u3_noun sut, axe, van;
 
@@ -162,11 +162,11 @@
   }
 
   u3_noun
-  u3qfu__stage_fish(u3_noun van,
+  u3qfu_fish(u3_noun van,
              u3_noun sut,
              u3_noun axe)
   {
-    c3_m    fun_m = 200 + c3__fish + ((!!u3r_at(u3qfu__stage_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__fish + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, axe);
 
     if ( u3_none != pro ) {

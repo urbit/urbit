@@ -16,7 +16,7 @@
              u3_noun ref,
              u3_noun bix)
   {
-    u3_noun rep = u3qfu__stage_repo(van, sut);
+    u3_noun rep = u3qfu_repo(van, sut);
     u3_noun ret = _crop_dext(van, rep, ref, bix);
 
     if ( c3y == u3r_sing(ret, rep) ) {
@@ -122,7 +122,7 @@
         else if ( c3__cell == u3h(ref) ) {
           u3x_cell(u3t(ref), &p_ref, &q_ref);
 
-          if ( c3y == u3qfu__stage_nest(van, p_ref, c3n, p_sut) )
+          if ( c3y == u3qfu_nest(van, p_ref, c3n, p_sut) )
           {
             u3_noun foz = _crop_dext(van, q_sut, q_ref, bix);
             u3_noun ret = u3qf_cell(p_sut, foz);
@@ -160,8 +160,8 @@
       }
       case c3__fork: p_sut = u3t(sut);
       {
-        u3_noun yed = u3qdi__stage_tap(p_sut);
-        u3_noun ret = u3kf__stage_fork(_crop_dext_fork(van, yed, ref, bix));
+        u3_noun yed = u3qdi_tap(p_sut);
+        u3_noun ret = u3kf_fork(_crop_dext_fork(van, yed, ref, bix));
 
         u3z(yed);
         return ret;
@@ -170,10 +170,10 @@
       {
         u3_noun hud = u3nc(u3k(sut), u3k(ref));
 
-        if ( c3y == u3qdi__stage_has(bix, hud) ) {
+        if ( c3y == u3qdi_has(bix, hud) ) {
 #         if 0
-            u3_noun dun = u3qfu__stage_dunq(van, "type", sut);
-            u3_noun niz = u3qfu__stage_dunq(van, "over", ref);
+            u3_noun dun = u3qfu_dunq(van, "type", sut);
+            u3_noun niz = u3qfu_dunq(van, "over", ref);
 
             u3t_push(u3nc(c3__mean, dun));
             u3t_push(u3nc(c3__mean, niz));
@@ -181,7 +181,7 @@
 
           return u3m_error("crop-loop");
         } else {
-          u3_noun bux = u3qdi__stage_put(bix, hud);
+          u3_noun bux = u3qdi_put(bix, hud);
           u3_noun ret = _crop_repo(van, sut, ref, bux);
 
           u3z(hud);
@@ -211,7 +211,7 @@
       }
       case c3__fork: p_ref = u3t(ref);
       {
-        u3_noun yed = u3qdi__stage_tap(p_ref);
+        u3_noun yed = u3qdi_tap(p_ref);
         u3_noun ret = _crop_sint_fork(van, sut, yed, bix);
 
         u3z(yed);
@@ -219,7 +219,7 @@
       }
       case c3__hold:
       {
-        u3_noun rep = u3qfu__stage_repo(van, ref);
+        u3_noun rep = u3qfu_repo(van, ref);
         u3_noun ret = _crop_dext(van, sut, rep, bix);
 
         u3z(rep);
@@ -239,7 +239,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu__stage_crop(u3_noun cor)
+  u3wfu_crop(u3_noun cor)
   {
     u3_noun sut, ref, van;
 
@@ -253,11 +253,11 @@
   }
 
   u3_noun
-  u3qfu__stage_crop(u3_noun van,
+  u3qfu_crop(u3_noun van,
              u3_noun sut,
              u3_noun ref)
   {
-    c3_m    fun_m = 200 + c3__crop + ((!!u3r_at(u3qfu__stage_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__crop + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_2(fun_m, sut, ref);
 
     if ( u3_none != pro ) {

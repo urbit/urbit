@@ -71,10 +71,6 @@
     u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
 
-    u3_noun u3wc__stage_gor(u3_noun);
-#   define u3wc__stage_hor u3wc__stage_gor
-    u3_noun u3wc__stage_vor(u3_noun);
-
     u3_noun u3wcp_ins(u3_noun);
     u3_noun u3wcp_ind(u3_noun);
     u3_noun u3wcp_tos(u3_noun);
@@ -94,16 +90,6 @@
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
 
-    u3_noun u3wdb__stage_bif(u3_noun);
-    u3_noun u3wdb__stage_del(u3_noun);
-    u3_noun u3wdb__stage_dif(u3_noun);
-    u3_noun u3wdb__stage_gas(u3_noun);
-    u3_noun u3wdb__stage_get(u3_noun);
-    u3_noun u3wdb__stage_has(u3_noun);
-    u3_noun u3wdb__stage_jab(u3_noun);
-    u3_noun u3wdb__stage_put(u3_noun);
-#   define u3wdb__stage_tap u3wdi_tap
-
     u3_noun u3wdi_bif(u3_noun);
     u3_noun u3wdi_del(u3_noun);
     u3_noun u3wdi_dif(u3_noun);
@@ -115,15 +101,6 @@
     u3_noun u3wdi_tap(u3_noun);
     u3_noun u3wdi_uni(u3_noun);
     u3_noun u3wdi_wyt(u3_noun);
-
-    u3_noun u3wdi__stage_bif(u3_noun);
-    u3_noun u3wdi__stage_del(u3_noun);
-    u3_noun u3wdi__stage_dif(u3_noun);
-    u3_noun u3wdi__stage_gas(u3_noun);
-    u3_noun u3wdi__stage_has(u3_noun);
-    u3_noun u3wdi__stage_mer(u3_noun);
-    u3_noun u3wdi__stage_put(u3_noun);
-    u3_noun u3wdi__stage_uni(u3_noun);
 
   /** Tier 5.
   **/
@@ -280,10 +257,6 @@
     u3_noun u3wf_look(u3_noun);
     u3_noun u3wf_loot(u3_noun);
 
-    u3_noun u3wf__stage_fork(u3_noun);
-    u3_noun u3wf__stage_look(u3_noun);
-    u3_noun u3wf__stage_loot(u3_noun);
-
     u3_noun u3wfl_bunt(u3_noun);
     u3_noun u3wfl_whip(u3_noun);
 
@@ -318,18 +291,3 @@
     u3_noun u3wfu_snub(u3_noun);
     u3_noun u3wfu_toss(u3_noun);
     u3_noun u3wfu_wrap(u3_noun);
-
-    u3_noun u3wfu__stage_crop(u3_noun);
-    u3_noun u3wfu__stage_find(u3_noun);
-    u3_noun u3wfu__stage_fire(u3_noun);
-    u3_noun u3wfu__stage_fish(u3_noun);
-    u3_noun u3wfu__stage_fond(u3_noun);
-    u3_noun u3wfu__stage_fuse(u3_noun);
-    u3_noun u3wfu__stage_mint(u3_noun);
-    u3_noun u3wfu__stage_mull(u3_noun);
-    u3_noun u3wfu__stage_nest(u3_noun);
-    u3_noun u3wfu__stage_peek(u3_noun);
-    u3_noun u3wfu__stage_play(u3_noun);
-    u3_noun u3wfu__stage_rest(u3_noun);
-    u3_noun u3wfu__stage_toss(u3_noun);
-    u3_noun u3wfu__stage_wrap(u3_noun);

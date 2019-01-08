@@ -21,7 +21,7 @@
       u3_noun pi_men = u3h(i_men);
       u3_noun qi_men = u3t(i_men);
       u3_noun t_men  = u3t(men);
-      u3_noun geq    = u3qfu__stage_tack(van, pi_men, peh, mur);
+      u3_noun geq    = u3qfu_tack(van, pi_men, peh, mur);
       u3_noun p_geq  = u3h(geq);
       u3_noun q_geq  = u3t(geq);
       u3_noun mox    = _toss_in(van, sut, peh, mur, t_men);
@@ -45,7 +45,7 @@
 
 /* functions
 */
-  static u3_noun
+  u3_noun
   _cqfu_toss(u3_noun van,
              u3_noun sut,
              u3_noun peh,
@@ -69,7 +69,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu__stage_toss(u3_noun cor)
+  u3wfu_toss(u3_noun cor)
   {
     u3_noun van, sut, peh, mur, men;
 
@@ -87,7 +87,7 @@
   }
 
   u3_noun
-  u3qfu__stage_toss(u3_noun van,
+  u3qfu_toss(u3_noun van,
              u3_noun sut,
              u3_noun peh,
              u3_noun mur,

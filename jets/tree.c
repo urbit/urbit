@@ -220,15 +220,6 @@ static c3_c* _141_pen_look_ha[] = {0};
 static u3j_harm _141_pen_loot_a[] = {{".2", u3wf_loot}, {}};
 static c3_c* _141_pen_loot_ha[] = {0};
 
-//  mug staging
-//
-static u3j_harm _141_pen_stage_fork_a[] = {{".2", u3wf__stage_fork}, {}};
-static c3_c* _141_pen_stage_fork_ha[] = {0};
-static u3j_harm _141_pen_stage_look_a[] = {{".2", u3wf__stage_look}, {}};
-static c3_c* _141_pen_stage_look_ha[] = {0};
-static u3j_harm _141_pen_stage_loot_a[] = {{".2", u3wf__stage_loot}, {}};
-static c3_c* _141_pen_stage_loot_ha[] = {0};
-
   static u3j_harm _141_pen__ut_crop_a[] = {{".2", u3wfu_crop}, {}};
   static c3_c* _141_pen__ut_crop_ha[] = {0};
   static u3j_harm _141_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
@@ -273,114 +264,14 @@ static u3j_core _141_pen__ut_d[] =
     { "wrap", 7, _141_pen__ut_wrap_a, 0, _141_pen__ut_wrap_ha },
     {}
   };
-
 static u3j_harm _141_pen__ut_a[] =
   { {"repo", u3wfu_repo},
     {}
   };
+
 static c3_c* _141_pen__ut_ha[] = {0};
 
 static u3j_hood _141_pen__ut_ho[] = {
-  // %ar     ar
-  { "fan",  28, c3n },
-  { "rib",  58, c3n },
-  { "vet", 118, c3n },
-  { "fab", 119, c3n },
-
-  { "blow",   49131 },
-  // %burp   burp
-  { "busk", 0x5ff57 },
-  { "buss",      94 },
-  { "crop",       4 },
-  { "duck",   48087 },
-  { "dune",    1524 },
-  { "dunk",     763 },
-  { "epla",   12283 },
-  { "emin",    5998 },
-  { "emul",      86 },
-  // %feel   feel
-  { "felt",   24046 },
-  { "fine",    3004 },
-  { "fire",     700 },
-  { "fish",    1498 },
-  { "fond",      92 },
-  { "fund",    1402 },
-  { "funk", 0x1757c, c3y, 31 },
-  { "fuse",    1534 },
-  { "gain",     748 },
-  { "lose",      22 },
-  // %mile   mile
-  // %mine   mine
-  { "mint", 0x17fd4 },
-  { "moot",    2807 },
-  { "mull",   11995 },
-  { "nest",     380 },
-  { "peel",    5999 },
-  { "play",   12022 },
-  { "peek",    5996 },
-  { "repo",    3050 },
-  { "rest",     382 },
-  { "tack",     351 },
-  { "toss",   24042 },
-  { "wrap",    6143 },
-  {},
-};
-
-//  mug staging
-//
-
-  static u3j_harm _141_pen__ut_stage_crop_a[] = {{".2", u3wfu__stage_crop}, {}};
-  static c3_c* _141_pen__ut_stage_crop_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_fire_a[] = {{".2", u3wfu__stage_fire}, {}};
-  static c3_c* _141_pen__ut_stage_fire_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_fish_a[] = {{".2", u3wfu__stage_fish}, {}};
-  static c3_c* _141_pen__ut_stage_fish_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_fond_a[] = {{".2", u3wfu__stage_fond}, {}};
-  static c3_c* _141_pen__ut_stage_fond_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_fuse_a[] = {{".2", u3wfu__stage_fuse}, {}};
-  static c3_c* _141_pen__ut_stage_fuse_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_mint_a[] = {{".2", u3wfu__stage_mint}, {}};
-  static c3_c* _141_pen__ut_stage_mint_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_mull_a[] = {{".2", u3wfu__stage_mull}, {}};
-  static c3_c* _141_pen__ut_stage_mull_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_nest_a[] = {{".2", u3wfu__stage_nest}, {}};
-  static c3_c* _141_pen__ut_stage_nest_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_peek_a[] = {{".2", u3wfu__stage_peek}, {}};
-  static c3_c* _141_pen__ut_stage_peek_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_play_a[] = {{".2", u3wfu__stage_play}, {}};
-  static c3_c* _141_pen__ut_stage_play_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_rest_a[] = {{".2", u3wfu__stage_rest}, {}};
-  static c3_c* _141_pen__ut_stage_rest_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_toss_a[] = {{".2", u3wfu__stage_toss}, {}};
-  static c3_c* _141_pen__ut_stage_toss_ha[] = {0};
-  static u3j_harm _141_pen__ut_stage_wrap_a[] = {{".2", u3wfu__stage_wrap}, {}};
-  static c3_c* _141_pen__ut_stage_wrap_ha[] = {0};
-
-static u3j_core _141_pen__stage_ut_d[] =
-  {
-    { "crop", 7, _141_pen__ut_stage_crop_a, 0, _141_pen__ut_stage_crop_ha },
-    { "fond", 7, _141_pen__ut_stage_fond_a, 0, _141_pen__ut_stage_fond_ha },
-    { "fire", 7, _141_pen__ut_stage_fire_a, 0, _141_pen__ut_stage_fire_ha },
-    { "fish", 7, _141_pen__ut_stage_fish_a, 0, _141_pen__ut_stage_fish_ha },
-    { "fuse", 7, _141_pen__ut_stage_fuse_a, 0, _141_pen__ut_stage_fuse_ha },
-    { "mint", 7, _141_pen__ut_stage_mint_a, 0, _141_pen__ut_stage_mint_ha },
-    { "mull", 7, _141_pen__ut_stage_mull_a, 0, _141_pen__ut_stage_mull_ha },
-    { "nest", 7, _141_pen__ut_stage_nest_a, 0, _141_pen__ut_stage_nest_ha },
-    { "peek", 7, _141_pen__ut_stage_peek_a, 0, _141_pen__ut_stage_peek_ha },
-    { "play", 7, _141_pen__ut_stage_play_a, 0, _141_pen__ut_stage_play_ha },
-    { "rest", 7, _141_pen__ut_stage_rest_a, 0, _141_pen__ut_stage_rest_ha },
-    { "toss", 7, _141_pen__ut_stage_toss_a, 0, _141_pen__ut_stage_toss_ha },
-    { "wrap", 7, _141_pen__ut_stage_wrap_a, 0, _141_pen__ut_stage_wrap_ha },
-    {}
-  };
-
-static u3j_harm _141_pen__stage_ut_a[] =
-  { {"repo", u3wfu_repo},
-    {}
-  };
-static c3_c* _141_pen__stage_ut_ha[] = {0};
-
-static u3j_hood _141_pen__stage_ut_ho[] = {
   // %ar     ar
   { "fan",  28, c3n },
   { "rib",  58, c3n },
@@ -456,17 +347,13 @@ static u3j_core _141_pen_d[] =
   { "flip", 7, _141_pen_flip_a, 0, _141_pen_flip_ha },
   { "flor", 7, _141_pen_flor_a, 0, _141_pen_flor_ha },
   { "fork", 7, _141_pen_fork_a, 0, _141_pen_fork_ha },
-  { "stage-fork", 7, _141_pen_stage_fork_a, 0, _141_pen_stage_fork_ha },
   // { "hike", 7, _141_pen_hike_a, 0, _141_pen_hike_ha },
   { "look", 7, _141_pen_look_a, 0, _141_pen_look_ha },
-  { "stage-look", 7, _141_pen_stage_look_a, 0, _141_pen_stage_look_ha },
   { "loot", 7, _141_pen_loot_a, 0, _141_pen_loot_ha },
-  { "stage-loot", 7, _141_pen_stage_loot_a, 0, _141_pen_stage_loot_ha },
 
   // { "ap", 7, _141_pen__ap_a, 0, _141_pen__ap_ha },
   // { "al", 7, _141_pen__al_a, 0, _141_pen__al_ha },
   { "ut", 15, _141_pen__ut_a, _141_pen__ut_d, _141_pen__ut_ha, _141_pen__ut_ho },
-  { "stage-ut", 15, _141_pen__stage_ut_a, _141_pen__stage_ut_d, _141_pen__stage_ut_ha, _141_pen__stage_ut_ho },
   {}
 };
 static c3_c* _141_pen_ha[] = {0};
@@ -965,15 +852,6 @@ static c3_c* _141_two_sqt_ha[] = {0};
 static u3j_harm _141_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
 static c3_c* _141_two_xeb_ha[] = {0};
 
-//  mug staging
-//
-static u3j_harm _141_two_stage_gor_a[] = {{".2", u3wc__stage_gor, c3y}, {}};
-static c3_c* _141_two_stage_gor_ha[] = {0};
-static u3j_harm _141_two_stage_hor_a[] = {{".2", u3wc__stage_hor, c3y}, {}};
-static c3_c* _141_two_stage_hor_ha[] = {0};
-static u3j_harm _141_two_stage_vor_a[] = {{".2", u3wc__stage_vor, c3y}, {}};
-static c3_c* _141_two_stage_vor_ha[] = {0};
-
   static u3j_harm _141_two__in_bif_a[] = {{".2", u3wdi_bif}, {}};
   static c3_c* _141_two__in_bif_ha[] = {0};
   static u3j_harm _141_two__in_del_a[] = {{".2", u3wdi_del}, {}};
@@ -1014,40 +892,6 @@ static u3j_core _141_two__in_d[] =
     {}
   };
 static c3_c* _141_two__in_ha[] = {0};
-
-//  mug staging
-//
-
-  static u3j_harm _141_two__stage_in_bif_a[] = {{".2", u3wdi__stage_bif}, {}};
-  static c3_c* _141_two__stage_in_bif_ha[] = {0};
-  static u3j_harm _141_two__stage_in_del_a[] = {{".2", u3wdi__stage_del}, {}};
-  static c3_c* _141_two__stage_in_del_ha[] = {0};
-  static u3j_harm _141_two__stage_in_dif_a[] = {{".2", u3wdi__stage_dif}, {}};
-  static c3_c* _141_two__stage_in_dif_ha[] = {0};
-  static u3j_harm _141_two__stage_in_gas_a[] = {{".2", u3wdi__stage_gas}, {}};
-  static c3_c* _141_two__stage_in_gas_ha[] = {0};
-  static u3j_harm _141_two__stage_in_has_a[] = {{".2", u3wdi__stage_has}, {}};
-  static c3_c* _141_two__stage_in_has_ha[] = {0};
-  static u3j_harm _141_two__stage_in_mer_a[] = {{".2", u3wdi__stage_mer}, {}};
-  static c3_c* _141_two__stage_in_mer_ha[] = {0};
-  static u3j_harm _141_two__stage_in_put_a[] = {{".2", u3wdi__stage_put}, {}};
-  static c3_c* _141_two__stage_in_put_ha[] = {0};
-  static u3j_harm _141_two__stage_in_uni_a[] = {{".2", u3wdi__stage_uni}, {}};
-  static c3_c* _141_two__stage_in_uni_ha[] = {0};
-static u3j_core _141_two__stage_in_d[] =
-  { { "bif", 7, _141_two__stage_in_bif_a, 0, _141_two__stage_in_bif_ha },
-    { "del", 7, _141_two__stage_in_del_a, 0, _141_two__stage_in_del_ha },
-    { "dif", 7, _141_two__stage_in_dif_a, 0, _141_two__stage_in_dif_ha },
-    { "gas", 7, _141_two__stage_in_gas_a, 0, _141_two__stage_in_gas_ha },
-    { "has", 7, _141_two__stage_in_has_a, 0, _141_two__stage_in_has_ha },
-    { "mer", 7, _141_two__stage_in_mer_a, 0, _141_two__stage_in_mer_ha },
-    { "put", 7, _141_two__stage_in_put_a, 0, _141_two__stage_in_put_ha },
-    { "tap", 7, _141_two__in_tap_a, 0, _141_two__in_tap_ha },
-    { "uni", 7, _141_two__stage_in_uni_a, 0, _141_two__stage_in_uni_ha },
-    { "wyt", 7, _141_two__in_wyt_a, 0, _141_two__in_wyt_ha },
-    {}
-  };
-static c3_c* _141_two__stage_in_ha[] = {0};
 
   static u3j_harm _141_two__by_bif_a[] = {{".2", u3wdb_bif, c3y}, {}};
   static c3_c* _141_two__by_bif_ha[] = {0};
@@ -1093,43 +937,6 @@ static u3j_core _141_two__by_d[] =
   };
 static c3_c* _141_two__by_ha[] = {0};
 
-//  mug staging
-//
-
-  static u3j_harm _141_two__stage_by_bif_a[] = {{".2", u3wdb__stage_bif, c3y}, {}};
-  static c3_c* _141_two__stage_by_bif_ha[] = {0};
-  static u3j_harm _141_two__stage_by_del_a[] = {{".2", u3wdb__stage_del, c3y}, {}};
-  static c3_c* _141_two__stage_by_del_ha[] = {0};
-  static u3j_harm _141_two__stage_by_dif_a[] = {{".2", u3wdb__stage_dif, c3y}, {}};
-  static c3_c* _141_two__stage_by_dif_ha[] = {0};
-  static u3j_harm _141_two__stage_by_gas_a[] = {{".2", u3wdb__stage_gas, c3y}, {}};
-  static c3_c* _141_two__stage_by_gas_ha[] = {0};
-  static u3j_harm _141_two__stage_by_get_a[] = {{".2", u3wdb__stage_get, c3y}, {}};
-  static c3_c* _141_two__stage_by_get_ha[] = {0};
-  static u3j_harm _141_two__stage_by_has_a[] = {{".2", u3wdb__stage_has, c3y}, {}};
-  static c3_c* _141_two__stage_by_has_ha[] = {0};
-
-  static u3j_harm _141_two__stage_by_jab_a[] = {{".2", u3wdb__stage_jab, c3y}, {}};
-  static c3_c* _141_two__stage_by_jab_ha[] = {0};
-  static u3j_harm _141_two__stage_by_put_a[] = {{".2", u3wdb__stage_put, c3y}, {}};
-  static c3_c* _141_two__stage_by_put_ha[] = {0};
-  static u3j_harm _141_two__stage_by_tap_a[] = {{".2", u3wdb__stage_tap, c3y}, {}};
-  static c3_c* _141_two__stage_by_tap_ha[] = {0};
-
-static u3j_core _141_two__stage_by_d[] =
-  { { "bif", 7, _141_two__stage_by_bif_a, 0, _141_two__stage_by_bif_ha },
-    { "del", 7, _141_two__stage_by_del_a, 0, _141_two__stage_by_del_ha },
-    { "dif", 7, _141_two__stage_by_dif_a, 0, _141_two__stage_by_dif_ha },
-    { "gas", 7, _141_two__stage_by_gas_a, 0, _141_two__stage_by_gas_ha },
-    { "get", 7, _141_two__stage_by_get_a, 0, _141_two__stage_by_get_ha },
-    { "has", 7, _141_two__stage_by_has_a, 0, _141_two__stage_by_has_ha },
-    { "jab", 7, _141_two__stage_by_jab_a, 0, _141_two__stage_by_jab_ha },
-    { "put", 7, _141_two__stage_by_put_a, 0, _141_two__stage_by_put_ha },
-    { "tap", 7, _141_two__stage_by_tap_a, 0, _141_two__stage_by_tap_ha },
-    {}
-  };
-static c3_c* _141_two__stage_by_ha[] = {0};
-
 static u3j_harm _141_two_cue_a[] = {{".2", u3we_cue}, {}};
 static c3_c* _141_two_cue_ha[] = {0};
 static u3j_harm _141_two_jam_a[] = {{".2", u3we_jam}, {}};
@@ -1173,9 +980,7 @@ static u3j_core _141_two_d[] =
   { "dvr", 7, _141_two_dvr_a, 0, _141_two_dvr_ha },
   { "end", 7, _141_two_end_a, 0, _141_two_end_ha },
   { "gor", 7, _141_two_gor_a, 0, _141_two_gor_ha },
-  { "stage-gor", 7, _141_two_stage_gor_a, 0, _141_two_stage_gor_ha },
   { "hor", 7, _141_two_hor_a, 0, _141_two_hor_ha },
-  { "stage-hor", 7, _141_two_stage_hor_a, 0, _141_two_stage_hor_ha },
   { "jam", 7, _141_two_jam_a, 0, _141_two_jam_ha },
   { "lsh", 7, _141_two_lsh_a, 0, _141_two_lsh_ha },
   { "mas", 7, _141_two_mas_a, 0, _141_two_mas_ha },
@@ -1198,13 +1003,10 @@ static u3j_core _141_two_d[] =
   //  temporary alias for staging +vor -> +mor
   //
   { "vor", 7, _141_two_mor_a, 0, _141_two_mor_ha },
-  { "stage-vor", 7, _141_two_stage_vor_a, 0, _141_two_stage_vor_ha },
   { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
 
   { "by",  7, 0, _141_two__by_d, _141_two__by_ha },
-  { "stage-by",  7, 0, _141_two__stage_by_d, _141_two__stage_by_ha },
   { "in",  7, 0, _141_two__in_d, _141_two__in_ha },
-  { "stage-in",  7, 0, _141_two__stage_in_d, _141_two__stage_in_ha },
   {}
 };
 static c3_c* _141_two_ha[] = {0};

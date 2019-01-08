@@ -25,7 +25,7 @@
         u3_noun c, n_c, l_c, r_c;
         u3_noun d;
 
-        if ( c3y == u3qc__stage_hor(b, n_a) ) {
+        if ( c3y == u3qc_hor(b, n_a) ) {
           c = _i_bif_putroot(l_a, b);
           u3r_trel(c, &n_c, &l_c, &r_c);
           d = u3nt(u3k(n_c),
@@ -48,17 +48,17 @@
 
 /* functions
 */
-  u3_noun u3wdi__stage_bif(u3_noun cor)
+  u3_noun u3wdi_bif(u3_noun cor)
   {
     u3_noun a, b;
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3qdi__stage_bif(a, b);
+      return u3qdi_bif(a, b);
     }
   }
 
-  u3_noun u3qdi__stage_bif(u3_noun a,
+  u3_noun u3qdi_bif(u3_noun a,
                     u3_noun b)
   {
     u3_noun c, n_c, l_c, r_c;
@@ -72,5 +72,5 @@
   }
 
   /*
-  u3_weak u3kdi__stage_bif(u3_noun a, u3_noun b);
+  u3_weak u3kdi_bif(u3_noun a, u3_noun b);
   */

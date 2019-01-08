@@ -1,4 +1,4 @@
-/* j/6/lork.c
+/* j/6/look.c
 **
 */
 #include "all.h"
@@ -46,7 +46,7 @@
                         u3k(qn_dab));
           }
           else {
-            if ( c3y == u3qc__stage_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               return u3_nul;
             }
             else {
@@ -67,7 +67,7 @@
                         u3k(qn_dab));
           }
           else {
-            if ( c3y == u3qc__stage_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
               axe = u3qc_peg(axe, 3);
@@ -88,7 +88,7 @@
                         u3k(qn_dab));
           }
           else {
-            if ( c3y == u3qc__stage_gor(cog, pn_dab) ) {
+            if ( c3y == u3qc_gor(cog, pn_dab) ) {
               u3_noun pro;
 
               axe = u3qc_peg(axe, 6);
@@ -116,19 +116,19 @@
 /* functions
 */
   u3_noun
-  u3qf__stage_look(u3_noun cog,
+  u3qf_look(u3_noun cog,
             u3_noun dab)
   {
     return _look_in(cog, dab, 1);
   }
   u3_noun
-  u3wf__stage_look(u3_noun cor)
+  u3wf_look(u3_noun cor)
   {
     u3_noun cog, dab;
 
     if ( c3n == u3r_mean(cor, u3x_sam_2, &cog, u3x_sam_3, &dab, 0) ) {
       return u3m_bail(c3__fail);
     } else {
-      return u3qf__stage_look(cog, dab);
+      return u3qf_look(cog, dab);
     }
   }

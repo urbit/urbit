@@ -32,19 +32,19 @@
         return ret;
       }
       case 2: {
-        u3_noun vet = u3r_at(u3qfu__stage_van_vet, van);
+        u3_noun vet = u3r_at(u3qfu_van_vet, van);
         u3_noun hed, tal, deh, lat, ret;
 
         if ( c3y == vet ) {
           u3_noun cel = u3nt(c3__cell, c3__noun, c3__noun);
 
-          if ( c3n == u3qfu__stage_nest(van, cel, c3y, sut) ) {
+          if ( c3n == u3qfu_nest(van, cel, c3y, sut) ) {
             return u3m_bail(c3__fail);
           }
           u3z(cel);
         }
-        hed = u3qfu__stage_peek(van, sut, c3__both, 2);
-        tal = u3qfu__stage_peek(van, sut, c3__both, 3);
+        hed = u3qfu_peek(van, sut, c3__both, 2);
+        tal = u3qfu_peek(van, sut, c3__both, 3);
         deh = _cqfu_conk(van, hed, u3h(u3t(got)));
         lat = _cqfu_conk(van, tal, u3t(u3t(got)));
 
@@ -63,7 +63,7 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu__stage_conk(u3_noun cor)
+  u3wfu_conk(u3_noun cor)
   {
     u3_noun sut, got, van;
 
@@ -79,7 +79,7 @@
   }
 
   u3_noun
-  u3qfu__stage_conk(u3_noun van,
+  u3qfu_conk(u3_noun van,
              u3_noun sut,
              u3_noun got)
   {

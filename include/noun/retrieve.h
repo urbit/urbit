@@ -32,8 +32,6 @@
         c3_o
         u3r_mean(u3_noun a, ...);
 
-#define u3r__stage_mug u3r_mug
-
       /* u3r_mug():
       **
       **   Compute and/or recall the mug (31-bit hash) of (a).

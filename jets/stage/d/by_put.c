@@ -7,7 +7,7 @@
 /* functions
 */
   u3_noun
-  u3qdb__stage_put(u3_noun a,
+  u3qdb_put(u3_noun a,
             u3_noun b,
             u3_noun c)
   {
@@ -38,10 +38,10 @@
         }
       }
       else {
-        if ( c3y == u3qc__stage_gor(b, pn_a) ) {
-          d = u3qdb__stage_put(l_a, b, c);
+        if ( c3y == u3qc_gor(b, pn_a) ) {
+          d = u3qdb_put(l_a, b, c);
 
-          if ( c3y == u3qc__stage_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3qc_vor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                                 d,
                                 u3k(r_a));
@@ -62,9 +62,9 @@
           }
         }
         else {
-          d = u3qdb__stage_put(r_a, b, c);
+          d = u3qdb_put(r_a, b, c);
 
-          if ( c3y == u3qc__stage_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3qc_vor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                         u3k(l_a),
                         d);
@@ -88,7 +88,7 @@
     }
   }
   u3_noun
-  u3wdb__stage_put(u3_noun cor)
+  u3wdb_put(u3_noun cor)
   {
     u3_noun a, b, c;
 
@@ -97,11 +97,11 @@
                               u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
     } else {
-      return u3qdb__stage_put(a, b, c);
+      return u3qdb_put(a, b, c);
     }
   }
   u3_weak
-  u3kdb__stage_put(u3_noun a,
+  u3kdb_put(u3_noun a,
             u3_noun b,
             u3_noun c)
   {
@@ -109,7 +109,7 @@
     //
     // (Mysterious comment in old glue code.)
     //
-    u3_noun pro = u3qdb__stage_put(a, b, c);
+    u3_noun pro = u3qdb_put(a, b, c);
 
     u3z(a); u3z(b); u3z(c);
     return pro;
