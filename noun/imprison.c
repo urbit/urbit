@@ -33,7 +33,6 @@ u3i_words(c3_w        a_w,
     u3a_atom* nov_u = (void*)nov_w;
 
     nov_u->mug_w = 0;
-    nov_u->gum_w = 0;
     nov_u->len_w = a_w;
 
     /* Fill the words.
@@ -112,7 +111,6 @@ u3i_bytes(c3_w        a_w,
     u3a_atom* nov_u = (void*)nov_w;
 
     nov_u->mug_w = 0;
-    nov_u->gum_w = 0;
     nov_u->len_w = len_w;
 
     /* Clear the words.
@@ -214,7 +212,6 @@ u3i_cell(u3_noun a, u3_noun b)
     u3_noun     pro;
 
     nov_u->mug_w = 0;
-    nov_u->gum_w = 0;
     nov_u->hed = a;
     nov_u->tel = b;
 
