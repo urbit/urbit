@@ -1711,68 +1711,17 @@ u3r_tape(u3_noun a)
   return a_y;
 }
 
-/* Finalization mix for better avalanching.
-*/
-static c3_w 
-_mur_fmix(c3_w h_w)
-{
-  h_w ^= h_w >> 16;
-  h_w *= 0x85ebca6b;
-  h_w ^= h_w >> 13;
-  h_w *= 0xc2b2ae35;
-  h_w ^= h_w >> 16;
-
-  return h_w;
-}
-
-/* _mur_words(): raw MurmurHash3 on raw words.
-*/
-static c3_w
-_mur_words(c3_w syd_w, const c3_w* key_w, c3_w len_w)
-{
-  c3_w goc_w = syd_w;
-  c3_w lig_w = 0xcc9e2d51;
-  c3_w duf_w = 0x1b873593;
-  c3_w i_w;
-
-  for ( i_w = 0; i_w < len_w; i_w++ ) {
-    c3_w kop_w = key_w[i_w];
-
-    kop_w *= lig_w;
-    kop_w = c3_rotw(15, kop_w);
-    kop_w *= duf_w;
-
-    goc_w ^= kop_w;
-    goc_w = c3_rotw(13, goc_w); 
-    goc_w = (goc_w * 5) + 0xe6546b64;
-  }
-  goc_w ^= len_w;
-  goc_w = _mur_fmix(goc_w);
-
-  return goc_w;
-}
-
 /* u3r_mur_words(): 31-bit nonzero MurmurHash3 on raw words.
 */
 c3_w
 u3r_mur_words(const c3_w* key_w, c3_w len_w)
 {
-  c3_w syd_w = 0xcafebabe;
-  c3_w ham_w = 0;
-
-  while ( 0 == ham_w ) {
-    c3_w haz_w = _mur_words(syd_w, key_w, len_w);
-    ham_w = (haz_w >> 31) ^ (haz_w & 0x7fffffff);
-    syd_w++;
-  }
-
-  return ham_w;
+  return u3r_mur_bytes((c3_y*)key_w, 4 * len_w);
 }
 
 /* u3r_mur_bytes():
 **
 **   Compute the mug of `buf`, `len`, LSW first.
-**   XX temporary, reconcile with u3r_mur_words
 */
 c3_w
 u3r_mur_bytes(const c3_y *buf_y,
@@ -1794,16 +1743,12 @@ u3r_mur_bytes(const c3_y *buf_y,
 /* u3r_mur_d():
 **
 **   Compute the mug of `num`, LSW first.
+**   XX rename to u3r_mur_chub
 */
 c3_w
 u3r_mur_d(c3_d num_d)
 {
-  c3_w buf_w[2];
-
-  buf_w[0] = (c3_w)(num_d & 0xffffffffULL);
-  buf_w[1] = (c3_w)(num_d >> 32ULL);
-
-  return u3r_mur_words(buf_w, 2);
+  return u3r_mur_bytes((c3_y*)&num_d, 8);
 }
 
 /* u3r_mur_both():
@@ -1826,28 +1771,26 @@ u3r_mur(u3_noun veb)
   c3_assert(u3_none != veb);
 
   if ( _(u3a_is_cat(veb)) ) {
-    return u3r_mur_words(&veb, (0 == veb) ? 0 : 1);
+    c3_w len_w = u3r_met(3, veb);
+    return u3r_mur_bytes((c3_y*)&veb, len_w);
   }
   else {
     c3_w mur_w;
 
-    // u3a_noun* veb_u = u3a_to_ptr(veb);
+    u3a_noun* veb_u = u3a_to_ptr(veb);
 
     // if ( veb_u->mug_w ) {
     //   return veb_u->mug_w;
     // }
 
     if ( _(u3a_is_cell(veb)) ) {
-      mur_w = u3r_mur_both(u3r_mur(u3h(veb)), u3r_mur(u3t(veb)));
+      mur_w = u3r_mur_cell(u3h(veb), u3t(veb));
     }
     else {
-      c3_w  len_w = u3r_met(5, veb);
-      c3_w* buf_w = malloc(4 * len_w);
+      u3a_atom* vat_u = (u3a_atom*)veb_u;
+      c3_w len_w      = u3r_met(3, veb);
 
-      u3r_words(0, len_w, buf_w, veb);
-      mur_w = u3r_mur_words(buf_w, len_w);
-
-      free(buf_w);
+      mur_w = u3r_mur_bytes((c3_y*)vat_u->buf_w, len_w);
     }
 
     // veb_u->mug_w = mur_w;
@@ -1863,20 +1806,7 @@ u3r_mur(u3_noun veb)
 c3_w
 u3r_mur_string(const c3_c *a_c)
 {
-  c3_w  len_w = strlen(a_c);
-  c3_w  wor_w = ((len_w + 3) >> 2);
-  c3_w* buf_w = alloca(4 * wor_w);
-  c3_w  i_w;
-
-  for ( i_w = 0; i_w < wor_w; i_w++ ) { buf_w[i_w] = 0; }
-
-  for ( i_w = 0; i_w < len_w; i_w++ ) {
-    c3_w inx_w = (i_w >> 2);
-    c3_w byt_w = (i_w & 3);
-
-    buf_w[inx_w] |= (a_c[i_w] << (8 * byt_w));
-  }
-  return u3r_mur_words(buf_w, wor_w);
+  return u3r_mur_bytes((c3_y*)a_c, strlen(a_c));
 }
 
 /* u3r_mur_cell():
