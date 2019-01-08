@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include "all.h"
 
-#define _CVX_WISH  4
-#define _CVX_POKE 10
-#define _CVX_PEEK 47
+#define _CVX_WISH 22
+#define _CVX_POKE 47
+#define _CVX_PEEK 46
 
 int WISH;
 /* _cv_nock_wish(): call wish through hardcoded interface.
