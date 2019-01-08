@@ -1190,18 +1190,6 @@
     (dor a b)
   (lth c d)
 ::
-++  lor                                                 ::  l-order
-  ~/  %lor
-  |=  {a/* b/*}
-  ^-  ?
-  ?:  =(a b)  &
-  ?@  a
-    ?^  b  &
-    (lth a b)
-  ?:  =(-.a -.b)
-    $(a +.a, b +.b)
-  $(a -.a, b -.b)
-::
 ++  vor                                                 ::  v-order
   ~/  %stage-vor
   |=  {a/* b/*}
