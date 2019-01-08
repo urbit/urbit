@@ -31,10 +31,10 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3r_mug_d(tar_d);
+  lar_u.syn_w = u3r_mug_chub(tar_d);
   lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
-                               u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                              u3r_mug(lar_u.typ_w)));
+                             u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                          u3r_mug_words(&lar_u.typ_w, 1)));
   lar_u.ent_d = u3A->ent_d;
   u3A->ent_d++;
   lar_u.len_w = len_w;
@@ -625,7 +625,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -690,9 +690,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3r_mug_both(u3r_mug(ovo),
-                                   u3r_mug_both(u3r_mug(0),
-                                                  u3r_mug(c3__ov)));
+      lar_u.mug_w = u3r_mug_trel(ovo, u3_nul, c3__ov);
 
       img_w = c3_malloc(lar_u.len_w << 2);
       u3r_words(0, lar_u.len_w, img_w, ovo);
@@ -876,12 +874,12 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+      if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
         if ( c3n == rup ) {
           uL(fprintf(uH, "corruption detected; attempting to fix\n"));
           rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_d(tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_chub(tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
@@ -936,8 +934,8 @@ _sist_rest()
 
       if ( lar_u.mug_w !=
             u3r_mug_both(u3r_mug(ron),
-                           u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                          u3r_mug(lar_u.typ_w))) )
+                         u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                      u3r_mug_words(&lar_u.typ_w, 1))) )
       {
         uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
