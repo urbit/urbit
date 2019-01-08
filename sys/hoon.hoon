@@ -1282,8 +1282,8 @@
     =|  {l/(unit) r/(unit)}
     |-  ^-  ?
     ?~  a   &
-    ?&  ?~(l & (hor n.a u.l))
-        ?~(r & (hor u.r n.a))
+    ?&  ?~(l & (gor n.a u.l))
+        ?~(r & (gor u.r n.a))
         ?~(l.a & ?&((vor n.a n.l.a) $(a l.a, l `n.a)))
         ?~(r.a & ?&((vor n.a n.r.a) $(a r.a, r `n.a)))
     ==
@@ -1299,7 +1299,7 @@
       [b ~ ~]
     ?:  =(b n.a)
       a
-    ?:  (hor b n.a)
+    ?:  (gor b n.a)
       =+  c=$(a l.a)
       ?>  ?=(^ c)
       [n.c l.c [n.a r.c r.a]]
@@ -1315,7 +1315,7 @@
     ?~  a
       ~
     ?.  =(b n.a)
-      ?:  (hor b n.a)
+      ?:  (gor b n.a)
         [n.a $(a l.a) r.a]
       [n.a l.a $(a r.a)]
     |-  ^-  {$?(~ _a)}
@@ -1352,7 +1352,7 @@
     |-  ^-  (unit @)
     ?~  a  ~
     ?:  =(b n.a)  [~ u=(peg c 2)]
-    ?:  (hor b n.a)
+    ?:  (gor b n.a)
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
   ::
@@ -1374,7 +1374,7 @@
       |
     ?:  =(b n.a)
       &
-    ?:  (hor b n.a)
+    ?:  (gor b n.a)
       $(a l.a)
     $(a r.a)
   ::
@@ -1392,7 +1392,7 @@
         $(a b, b a)
       ?:  =(n.b n.a)
         [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-      ?:  (hor n.b n.a)
+      ?:  (gor n.b n.a)
         %-  uni(a $(a l.a, b [n.b l.b ~]))  $(b r.b)
       %-  uni(a $(a r.a, b [n.b ~ r.b]))  $(b l.b)
     --
@@ -1406,7 +1406,7 @@
       [b ~ ~]
     ?:  =(b n.a)
       a
-    ?:  (hor b n.a)
+    ?:  (gor b n.a)
       =+  c=$(a l.a)
       ?>  ?=(^ c)
       ?:  (vor n.a n.c)
@@ -1457,12 +1457,12 @@
       ?:  (vor n.a n.b)
         ?:  =(n.b n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
-        ?:  (hor n.b n.a)
+        ?:  (gor n.b n.a)
           $(a [n.a $(a l.a, b [n.b l.b ~]) r.a], b r.b)
         $(a [n.a l.a $(a r.a, b [n.b ~ r.b])], b l.b)
       ?:  =(n.a n.b)
         [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
-      ?:  (hor n.a n.b)
+      ?:  (gor n.a n.b)
         $(b [n.b $(b l.b, a [n.a l.a ~]) r.b], a r.a)
       $(b [n.b l.b $(b r.b, a [n.a ~ r.a])], a l.a)
     --
