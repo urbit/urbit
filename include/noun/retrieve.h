@@ -32,7 +32,7 @@
         c3_o
         u3r_mean(u3_noun a, ...);
 
-#define u3r__stage_mug u3r_mug
+#define u3r__stage_mug u3r_mur
 
       /* u3r_mug():
       **
