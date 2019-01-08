@@ -66,7 +66,6 @@ jets_c_src = [
 'jets/c/mor.c',
 'jets/c/mug.c',
 'jets/c/muk.c',
-'jets/c/mur.c',
 'jets/c/peg.c',
 'jets/c/po.c',
 'jets/c/pow.c',
