@@ -1,4 +1,4 @@
-|=  inner=manx  
+|=  inner=manx
 ^-  manx
 ;html
 ::

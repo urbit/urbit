@@ -4,39 +4,100 @@
 /?  309
 /-  hall
 /+  cram, elem-to-react-json
-::
-::  
+:: ::  
 ~%  %collections-lib  ..is  ~
 |%
-+=  move  [bone card]
-+=  card
++$  move  [bone card]
+::
++$  card
   $%  [%info wire toro:clay]
       [%poke wire dock poke]
       [%perm wire desk path rite:clay]
+      [%peer wire dock path]
+      [%pull wire dock ~]
+      [%diff diff]
   ==
-+=  poke
+::
++$  diff
+  $%  [%collections-prize prize]
+      [%collections-rumor rumor]
+      [%hall-rumor rumor:hall]
+  ==
+::
++$  poke
   $%  [%hall-action action:hall]
       [%collections-action action]
       [%json json]
   ==
-+=  state
-  $%  [%0 col=collection]
+::
++$  state
+  $%  [%0 col=collection str=streams]
   ==
 ::
++$  streams
+  $:  ::  inbox config and messages
+      ::
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
+      ::  names and configs of all circles we know about
+      ::
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
+      ::
+      our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
 ::
-+=  collection  [meta=config data=(map nom=knot =item)]  
-+=  item
++$  prize
+  $:  ::  inbox config and messages
+      ::
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
+      ::  names and configs of all circles we know about
+      ::
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
+      ::
+      our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
+::
++$  rumor
+  $%  ::  if config is given, either add new circle or update existing one
+      ::  if config is nil then delete circle
+      ::
+      [%config-change cir=circle:hall con=(unit config:hall)]
+      ::  recieved a new inbox message or DM invite
+      ::
+      [%new-msg nom=?(%inbox %invites) env=envelope:hall]
+  ==
+::
++$  command
+  $%  [%invite nom=name:hall who=(set ship)]
+  ==
++$  collection  [meta=config data=(map nom=knot =item)]
+::
++$  item
   $~  [%error ~]
   $%  [%collection col=collection]
       [%raw raw=raw-item]
       [%both col=collection raw=raw-item]
       [%error ~]
   ==
-+=  raw-item
+::
++$  raw-item
   $%  [%udon meta=(map knot cord) data=@t]
   ==
 ::
-+=  config
++$  config
   $:  full-path=beam
       name=@t
       description=@t
@@ -53,12 +114,13 @@
     ::
   ==
 ::
-+=  action
++$  action
   $:  who=ship
       dek=desk
       acts=(list sub-action)
   ==
-+=  sub-action
+::
++$  sub-action
   $%  [%write pax=path for=form]
       [%delete pax=path]
       [%perms pax=path r=rule:clay w=rule:clay]
@@ -68,7 +130,7 @@
       [%comment pax=path content=@t]
   ==
 ::
-+=  form
++$  form
   $%  [%udon @t]
       [%collections-config config]
   ==
@@ -558,7 +620,7 @@
         %^  ta-hall-json  parent-path  'new collection' 
         (collection-notify pax meta.col.new)
       ::
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       |-
       ?~  items  ta-this
@@ -566,7 +628,7 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
@@ -585,7 +647,11 @@
       ?:  ?&  (~(has by meta.raw.new) %comments)
               =('.y' (~(got by meta.raw.new) %comments))
           ==
-        (ta-generate-comments pax)
+        =/  owner=(unit @ta)  (~(get by meta.raw.new) %owner)
+        =/  owner-p=@p
+          ?~  owner  our.bol
+          (fall (rush u.owner ;~(pfix sig fed:ag)) our.bol)
+        (ta-generate-comments pax owner-p)
       ta-this
     ::
     ==
@@ -722,8 +788,11 @@
       ?&  =('.y' (fall (~(get by meta.new) %comments) '.n'))
           =('.n' (fall (~(get by meta.old) %comments) '.n'))
       ==
-      ::  create comments
-      (ta-generate-comments pax)
+      =/  owner=(unit @ta)  (~(get by meta.new) %owner)
+      =/  owner-p=@p
+        ?~  owner  our.bol
+        (fall (rush u.owner ;~(pfix sig fed:ag)) our.bol)
+      (ta-generate-comments pax owner-p)
     ::
     =?  ta-this
       ?&  =('.n' (fall (~(get by meta.new) %comments) '.n'))
@@ -800,7 +869,7 @@
   ::
   ++  ta-generate-comments
     ~/  %coll-ta-generate-comments
-    |=  pax=path
+    |=  [pax=path owner=ship]
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
     =/  bek  byk.bol(r [%da now.bol])
@@ -810,7 +879,7 @@
       :*  [bek sup]
           'comments'
           'comments'
-          our.bol
+          owner
           dat
           dat
           %comments
@@ -880,7 +949,7 @@
   ::
   ++  ta-hall-create-circle
     ~/  %coll-ta-hall-create-circle
-    |=  [pax=path description=@t]
+    |=  [pax=path name=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
     =/  parent=circle:hall
@@ -888,7 +957,7 @@
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax) our.bol)
     %-  ta-hall-actions
-    :~  [%create nom.circ description %journal]  
+    :~  [%create nom.circ name %journal]  
         [%source nom.parent & (sy `source:hall`[circ ~] ~)]
     ==
   ::
