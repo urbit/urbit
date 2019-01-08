@@ -36,17 +36,33 @@
         ; Time is
         ;span#time;
       ==
-      ;script:'''
-              var evtSource = new EventSource("/~server/stream",
-                                              { withCredentials: true } );
-
-              evtSource.onmessage = function(e) {
-                var message = document.getElementById("time");
-                message.innerHTML = e.data;
-              }
-              '''
+      ;script(type "module", src "/~server/hello.js");
     ==
   ==
+::
+++  hello-js
+  ^-  octs
+  %-  as-octs:mimes:html
+  '''
+  import * as urb from '/~/channel/channel.js';
+
+  var c = urb.newChannel();
+  c.poke("zod", "server", "json", 5,
+         function() {
+           console.log("Poke worked");
+         },
+         function(err) {
+           console.log("Poke failed: " + err);
+         });
+
+  var evtSource = new EventSource("/~server/stream",
+                                  { withCredentials: true } );
+
+  evtSource.onmessage = function(e) {
+    var message = document.getElementById("time");
+    message.innerHTML = e.data;
+  }
+  '''
 ::  helper library that lets an app handle an EventSource.
 ::
 ::    TODO: This doesn't even attempt to deal with sequence numbers.
@@ -193,6 +209,15 @@
   ?:  =(name 'stream')
     (handle-start-stream inbound-request)
   ~&  [%name name]
+  ::
+  ?:  =(name 'hello')
+    :_  this
+    :~  ^-  move
+        :-  ost.bow
+        :*  %http-response
+            [%start 200 ['content-type' 'application/javascript']~ [~ hello-js] %.y]
+        ==
+    ==
   ::
   :_  this
   :~  ^-  move

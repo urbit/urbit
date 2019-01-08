@@ -415,6 +415,107 @@
           ~
     ==
   ==
+::  +channel-js: the urbit javascript interface
+::
+++  channel-js
+  ^-  octs
+  %-  as-octs:mimes:html
+  '''
+  class Channel {
+    constructor() {
+      //  unique identifier: current time and random number
+      //
+      this.uid =
+        new Date().getTime().toString() +
+        "-" +
+        Math.random().toString(16).slice(-6);
+
+      this.requestId = 1;
+      this.connection = null;
+
+      //  a registry of requestId to successFunc/failureFunc
+      //
+      //    These functions are registered during a +poke and are executed
+      //    in the onServerEvent()/onServerError() callbacks. Only one of
+      //    the functions will be called, and the outstanding poke will be
+      //    removed after calling the success or failure function.
+      //
+      this.outstandingPokes = new Map();
+
+      //  a registry of requestId to eventFunc/disconnectFunc
+      //
+      //    These functions are registered during a +subscribe and are
+      //    executed in the onServerEvent()/onServerError() callbacks. The
+      //    event function will be called whenever a new piece of data on this
+      //    subscription is available, which may be 0, 1, or many times. The
+      //    disconnect function may be called exactly once.
+      //
+      this.outstandingSubscriptions = new Map();
+    }
+
+    //  sends a poke to an app on an urbit ship
+    //
+    poke(ship, app, mark, json, successFunc, failureFunc) {
+      var id = this.nextId();
+      this.outstandingPokes.set(
+          id, {"success": successFunc, "fail": failureFunc});
+
+      var req = new XMLHttpRequest();
+      req.open("PUT", this.channelURL());
+      req.setRequestHeader("Content-Type", "application/json");
+
+      // TODO: Need to stuff an "ack" in here, too.
+      var x = JSON.stringify([{
+          "id": id,
+          "action": "poke",
+          "ship": ship,
+          "app": app,
+          "mark": mark,
+          "json": json
+        }]);
+      req.send(x);
+      this.connectIfDisconnected();
+    }
+
+    connectIfDisconnected() {
+      if (this.connection)
+        return;
+
+      this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
+      this.eventSource.onmessage = e => {
+        var obj = JSON.parse(e.data);
+        if (obj.response == "poke") {
+          var funcs = this.outstandingPokes.get(obj.id);
+          if (obj.hasOwnProperty("ok"))
+            funcs["success"]()
+          else
+            funcs["fail"](obj.err)
+          this.outstandingPokes.delete(obj.id);
+        } else {
+          console.log("Unrecognized response: ", e);
+        }
+      }
+
+      this.eventSource.onerror = e => {
+        //  TODO: The server broke the connection. Call every poke cancel and every
+        //  subscription disconnect.
+        console.log(e);
+      }
+    }
+
+    channelURL() {
+      return "/~/channel/" + this.uid;
+    }
+
+    nextId() {
+      return this.requestId++;
+    }
+  };
+
+  export function newChannel() {
+    return new Channel;
+  }
+  '''
 ::  +format-ud-as-integer: prints a number for consumption outside urbit
 ::
 ++  format-ud-as-integer
@@ -651,7 +752,6 @@
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.http-request)
-        ~&  [%something-other-than-get-post-on-login method.http-request]
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::  we are a post, and must process the body type as form data
       ::
@@ -690,7 +790,6 @@
         ?~  redirect=(get-header 'redirect' u.parsed)
           '/'
         u.redirect
-      ~&  [%minting http-request]
       ::
       :_  state
       :_  ~
@@ -770,6 +869,7 @@
       ::    page; issuing a redirect won't help.
       ::
       ?.  authenticated
+        ~&  %unauthenticated
         ::  TODO: Real 400 page.
         ::
         %^  return-static-data-on-duct  400  'text/html'
@@ -778,13 +878,21 @@
       ::
       =+  request-line=(parse-request-line url.http-request)
       ?.  ?=([@t @t @t ~] site.request-line)
-        ::  url is not of the form '/~/subscription/'
+        ~&  %bad-request-line
+        ::  url is not of the form '/~/channel/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error authenticated url.http-request ~)
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
+      ::
+      ?:  ?&  =('channel' channel-id)
+              =([~ ~.js] ext.request-line)
+          ==
+        ::  client is requesting the javascript shim
+        ::
+        (return-static-data-on-duct 200 'application/javascript' channel-js)
       ::
       ?:  =('PUT' method.http-request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
@@ -977,24 +1085,29 @@
     ++  on-put-request
       |=  [channel-id=@t =http-request]
       ^-  [(list move) server-state]
+      ~&  %on-put-request
       ::  error when there's no body
       ::
       ?~  body.http-request
+        ~&  %no-body
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  if the incoming body isn't json, this is a bad request, 400.
       ::
       ?~  maybe-json=(de-json:html q.u.body.http-request)
+        ~&  %no-json
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  parse the json into an array of +channel-request items
       ::
       ?~  maybe-requests=(parse-channel-request u.maybe-json)
+        ~&  %no-parse
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  while weird, the request list could be empty
       ::
       ?:  =(~ u.maybe-requests)
+        ~&  %empty-list
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  check for the existence of the channel-id
@@ -1411,7 +1524,7 @@
   ::
   ++  parse-request-line
     |=  url=@t
-    ^-  [[(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
+    ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
     (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
 --
 ::  end the =~
