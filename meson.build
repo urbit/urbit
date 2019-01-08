@@ -59,7 +59,6 @@ jets_c_src = [
 'jets/c/dis.c',
 'jets/c/end.c',
 'jets/c/gor.c',
-'jets/c/hor.c',
 'jets/c/lsh.c',
 'jets/c/mas.c',
 'jets/c/met.c',
