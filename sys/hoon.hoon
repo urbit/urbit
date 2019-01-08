@@ -1190,19 +1190,6 @@
     (dor a b)
   (lth c d)
 ::
-++  hor                                                 ::  h-order
-  ~/  %stage-hor
-  |=  {a/* b/*}
-  =+  %uniq
-  ^-  ?
-  ?:  ?=(@ a)
-    ?.  ?=(@ b)  &
-    (gor a b)
-  ?:  ?=(@ b)  |
-  ?:  =(-.a -.b)
-    (gor +.a +.b)
-  (gor -.a -.b)
-::
 ++  lor                                                 ::  l-order
   ~/  %lor
   |=  {a/* b/*}
