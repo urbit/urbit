@@ -32,10 +32,13 @@
       key_y = u3a_calloc(sizeof(c3_y), len_w);
     }
 
+    //  Efficiency: unnecessary copy.
+    //
+    //    We could calculate the hash directly against
+    //    the atom internals, a la u3r_mug
+    //
     u3r_bytes(0, len_w, key_y, key);
 
-    //  XX we could skip the copy and use _mur_words() instead
-    //
     MurmurHash3_x86_32(key_y, len_w, seed_w, &out_w);
 
     u3a_free(key_y);
