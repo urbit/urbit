@@ -51,7 +51,7 @@
 ++  test-give-bloq
   =/  oct
     %-  as-octs:mimes:html
-    '{"jsonrpc":"2.0","id":"0","method":"eth_blockNumber","params":[]}'
+    '{"params":[],"id":"0","jsonrpc":"2.0","method":"eth_blockNumber"}'
   %+  expect-eq
     !>  oct
     !>  bloq:give:dawn
@@ -68,10 +68,10 @@
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '{"jsonrpc":"2.0","id":"0","method":"eth_call","params":[{"data":"'
+    :~  '{"params":[{"to":"'  azimuth  '","data":"'
         '0x63fa9a87'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  azimuth  '"},"0x0"]}'
+        '"},"0x0"],"id":"0","jsonrpc":"2.0","method":"eth_call"}'
     ==
   %+  expect-eq
     !>  oct
@@ -81,18 +81,18 @@
   =/  oct
     %-  as-octs:mimes:html
     %+  rap  3
-    :~  '[{"jsonrpc":"2.0","id":"turf-0","method":"eth_call","params":[{"data":"'
+    :~  '[{"params":[{"to":"'  azimuth  '","data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000000'
-        '","to":"'  azimuth  '"},"0x0"]},'
-        '{"jsonrpc":"2.0","id":"turf-1","method":"eth_call","params":[{"data":"'
+        '"},"0x0"],"id":"turf-0","jsonrpc":"2.0","method":"eth_call"},'
+        '{"params":[{"to":"'  azimuth  '","data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000001'
-        '","to":"'  azimuth  '"},"0x0"]},'
-        '{"jsonrpc":"2.0","id":"turf-2","method":"eth_call","params":[{"data":"'
+        '"},"0x0"],"id":"turf-1","jsonrpc":"2.0","method":"eth_call"},'
+        '{"params":[{"to":"'  azimuth  '","data":"'
         '0xeccc8ff1'
         '0000000000000000000000000000000000000000000000000000000000000002'
-        '","to":"'  azimuth  '"},"0x0"]}]'
+        '"},"0x0"],"id":"turf-2","jsonrpc":"2.0","method":"eth_call"}]'
     ==
   %+  expect-eq
     !>  oct
