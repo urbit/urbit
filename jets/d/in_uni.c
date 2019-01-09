@@ -23,11 +23,11 @@ _in_uni(u3_noun a, u3_noun b)
   {
     return u3m_bail(c3__exit);
   }
-  else if ( c3n == u3qc_vor(n_a, n_b) ) {
+  else if ( c3n == u3qc_mor(n_a, n_b) ) {
     if ( c3y == u3r_sing(n_a, n_b) ) {
       return u3nt(u3k(n_b), _in_uni(l_a, l_b), _in_uni(r_a, r_b));
     }
-    else if ( c3y == u3qc_hor(n_a, n_b) ) {
+    else if ( c3y == u3qc_gor(n_a, n_b) ) {
       naw = u3nt(u3k(n_a), u3k(l_a), u3_nul);
       sub = _in_uni(naw, l_b);
       neb = u3nt(u3k(n_b), sub, u3k(r_b));
@@ -47,7 +47,7 @@ _in_uni(u3_noun a, u3_noun b)
   else if ( c3y == u3r_sing(n_b, n_a) ) {
     return u3nt(u3k(n_b), _in_uni(l_a, l_b), _in_uni(r_a, r_b));
   }
-  else if ( c3y == u3qc_hor(n_b, n_a) ) {
+  else if ( c3y == u3qc_gor(n_b, n_a) ) {
     neb = u3nt(u3k(n_b), u3k(l_b), u3_nul);
     sub = _in_uni(l_a, neb);
     naw = u3nt(u3k(n_a), sub, u3k(r_a));

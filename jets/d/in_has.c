@@ -24,7 +24,7 @@
           return c3y;
         }
         else {
-          if ( c3y == u3qc_hor(b, n_a) ) {
+          if ( c3y == u3qc_gor(b, n_a) ) {
             return u3qdi_has(l_a, b);
           }
           else return u3qdi_has(r_a, b);

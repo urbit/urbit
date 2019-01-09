@@ -59,11 +59,11 @@ jets_c_src = [
 'jets/c/dis.c',
 'jets/c/end.c',
 'jets/c/gor.c',
-'jets/c/hor.c',
 'jets/c/lsh.c',
 'jets/c/mas.c',
 'jets/c/met.c',
 'jets/c/mix.c',
+'jets/c/mor.c',
 'jets/c/mug.c',
 'jets/c/muk.c',
 'jets/c/peg.c',
@@ -75,8 +75,7 @@ jets_c_src = [
 'jets/c/rip.c',
 'jets/c/rsh.c',
 'jets/c/swp.c',
-'jets/c/sqt.c',
-'jets/c/vor.c',
+'jets/c/sqt.c'
 ]
 
 jets_d_src = [
@@ -364,8 +363,6 @@ install: false)
 
 test('test-hashtable', test_hashtable)
 
-test_mem_sources = noun_src + jets_all_src + vere_sans_main + ['tests/test.c']
-
 test_mem = executable('test-mem',
 sources : test_sources + ['tests/test.c'],
 include_directories : incdir,
@@ -375,3 +372,13 @@ dependencies: deps + os_deps,
 install: false)
 
 test('test-mem', test_mem, should_fail: true)
+
+test_hash = executable('test-hash',
+sources : test_sources + ['tests/hash_tests.c'],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: deps + os_deps,
+install: false)
+
+test('test_hash', test_hash)

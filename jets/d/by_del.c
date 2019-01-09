@@ -31,7 +31,7 @@
           return u3m_bail(c3__exit);
         }
         else {
-          if ( c3y == u3qc_vor(u3h(n_l_a), u3h(n_r_a)) ) {
+          if ( c3y == u3qc_mor(u3h(n_l_a), u3h(n_r_a)) ) {
             u3_noun new_right = u3nt(u3k(n_a),
                                      u3k(r_l_a),
                                      u3k(r_a));

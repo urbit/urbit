@@ -29,7 +29,7 @@
           return u3m_bail(c3__exit);
         }
         else {
-          if ( c3y == u3qc_vor(n_l_a, n_r_a) ) {
+          if ( c3y == u3qc_mor(n_l_a, n_r_a) ) {
             u3_noun new_right = u3nt(u3k(n_a),
                                      u3k(r_l_a),
                                      u3k(r_a));
@@ -72,7 +72,7 @@
         return u3m_bail(c3__exit);
       }
       else if ( c3n == u3r_sing(n_a, b) ) {
-        if ( c3y == u3qc_hor(b, n_a) ) {
+        if ( c3y == u3qc_gor(b, n_a) ) {
           return u3nt(u3k(n_a),
                       u3qdi_del(l_a, b),
                       u3k(r_a));
