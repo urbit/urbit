@@ -53,7 +53,6 @@
       ::  XX track bound state per domain
       ::
       dom=(unit turf)
-      try=@ud
       tar=target
   ==
 ::  +command: top-level app actions

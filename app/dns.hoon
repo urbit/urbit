@@ -706,7 +706,7 @@
       (emit [%poke wir [him dap.bow] %dns-command com])
     ::  check binding target validity, store and forward
     ::
-    =.  rel  `[wen=now.bow addr dom=~ try=0 tar]
+    =.  rel  `[wen=now.bow addr dom=~ tar]
     ?:  ?=(%indirect -.tar)
       bind
     (check-before 0)
@@ -719,11 +719,6 @@
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved:eyre p.tar.u.rel)
       (fail %reserved-ip)
-    ::  XX confirm max retries
-    ::
-    ?:  (gth try.u.rel 2)
-      (fail %unreachable)
-    =.  try.u.rel  +(try.u.rel)
     =/  =wire  (http-wire try %check-before)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
