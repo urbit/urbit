@@ -283,7 +283,7 @@
   ==
 ::  channel-timeout: the delay before a channel should be reaped
 ::
-++  channel-timeout  ~h12
+++  channel-timeout  ~s45
 --
 ::  utilities
 ::
@@ -417,6 +417,8 @@
   ==
 ::  +channel-js: the urbit javascript interface
 ::
+::    TODO: Must send 'acks' to the server.
+::
 ++  channel-js
   ^-  octs
   %-  as-octs:mimes:html
@@ -431,7 +433,14 @@
         Math.random().toString(16).slice(-6);
 
       this.requestId = 1;
-      this.connection = null;
+
+      //  the currently connected EventSource
+      //
+      this.eventSource = null;
+
+      //  the id of the last EventSource event we received
+      //
+      this.lastEventId = 0;
 
       //  a registry of requestId to successFunc/failureFunc
       //
@@ -442,7 +451,7 @@
       //
       this.outstandingPokes = new Map();
 
-      //  a registry of requestId to eventFunc/disconnectFunc
+      //  a registry of requestId to subscription functions.
       //
       //    These functions are registered during a +subscribe and are
       //    executed in the onServerEvent()/onServerError() callbacks. The
@@ -460,37 +469,91 @@
       this.outstandingPokes.set(
           id, {"success": successFunc, "fail": failureFunc});
 
-      var req = new XMLHttpRequest();
-      req.open("PUT", this.channelURL());
-      req.setRequestHeader("Content-Type", "application/json");
-
-      // TODO: Need to stuff an "ack" in here, too.
-      var x = JSON.stringify([{
+      this.sendJSONToChannel({
           "id": id,
           "action": "poke",
           "ship": ship,
           "app": app,
           "mark": mark,
           "json": json
-        }]);
+        });
+    }
+
+    //  subscribes to a path on an
+    //
+    subscribe(ship, app, path, connectionErrFunc, eventFunc, quitFunc) {
+      var id = this.nextId();
+      this.outstandingSubscriptions.set(
+          id, {"err": connectionErrFunc, "event": eventFunc, "quit": quitFunc});
+
+      this.sendJSONToChannel({
+          "id": id,
+          "action": "subscribe",
+          "ship": ship,
+          "app": app,
+          "path": path
+        });
+    }
+
+    //  sends a JSON command command to the server.
+    //
+    //    TODO: This should also bundle an acknowledgment of the last received
+    //    request id.
+    //
+    sendJSONToChannel(j) {
+      var req = new XMLHttpRequest();
+      req.open("PUT", this.channelURL());
+      req.setRequestHeader("Content-Type", "application/json");
+
+      // TODO: Need to stuff an "ack" in here, too.
+      var x = JSON.stringify([j]);
       req.send(x);
+
       this.connectIfDisconnected();
     }
 
+    //  connects to the EventSource if we are not currently connected
+    //
     connectIfDisconnected() {
-      if (this.connection)
+      if (this.eventSource)
         return;
 
       this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
       this.eventSource.onmessage = e => {
+        this.lastEventId = e.id;
+
         var obj = JSON.parse(e.data);
         if (obj.response == "poke") {
           var funcs = this.outstandingPokes.get(obj.id);
           if (obj.hasOwnProperty("ok"))
             funcs["success"]()
-          else
+          else if (obj.hasOwnProperty("err"))
             funcs["fail"](obj.err)
+          else
+            console.log("Invalid poke response: ", obj);
           this.outstandingPokes.delete(obj.id);
+
+        } else if (obj.response == "subscribe") {
+          //  on a response to a subscribe, we only notify the caller on err
+          //
+          var funcs = this.outstandingSubscriptions.get(obj.id);
+          if (obj.hasOwnProperty("err")) {
+            funcs["err"](obj.err);
+            this.outstandingSubscriptions.delete(obj.id);
+          } else {
+            console.log("Subscription establisthed");
+          }
+        } else if (obj.response == "diff") {
+          console.log("Diff: ", obj);
+
+          var funcs = this.outstandingSubscriptions.get(obj.id);
+          funcs["event"](obj.json);
+
+        } else if (obj.response == "quit") {
+          var funcs = this.outstandingSubscriptions.get(obj.id);
+          funcs["quit"](obj.err);
+          this.outstandingSubscriptions.delete(obj.id);
+
         } else {
           console.log("Unrecognized response: ", e);
         }
@@ -911,6 +974,8 @@
     ::
     ++  on-cancel-request
       ^-  [(list move) server-state]
+      ::
+      ~&  [%channel-on-cancel-request duct]
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
@@ -1211,6 +1276,16 @@
             :-  'json'
             ?>  =(%json p.p.cuft)
             ((hard json) q.q.p.cuft)
+          ==
+        ::
+        (emit-event channel-id [(en-json:html json)]~)
+      ::
+          %quit
+        =/  =json
+          =,  enjs:format
+          %-  pairs  :~
+            ['response' [%s 'quit']]
+            ['id' (numb request-id)]
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)

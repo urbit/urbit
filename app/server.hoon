@@ -8,6 +8,7 @@
   $%  [%connect wire [(unit @t) (list @t)] %server]
       [%wait wire @da]
       [%http-response =raw-http-response:light]
+      [%diff %json json]
   ==
 --
 ::  utilities:
@@ -34,8 +35,10 @@
       ;h1:"Hello, {(trip name)}"
       ;p
         ; Time is
-        ;span#time;
+        ;span#time:"?????"
       ==
+      ;button#start:"Start Timer"
+      ;button#poke:"Random Poke"
       ;script(type "module", src "/~server/hello.js");
     ==
   ==
@@ -47,76 +50,33 @@
   import * as urb from '/~/channel/channel.js';
 
   var c = urb.newChannel();
-  c.poke("zod", "server", "json", 5,
+
+  // The poke button just sends a poke
+  document.getElementById("poke").addEventListener("click", function(){
+    c.poke("zod", "server", "json", 5,
          function() {
            console.log("Poke worked");
          },
          function(err) {
            console.log("Poke failed: " + err);
          });
+  });
 
-  var evtSource = new EventSource("/~server/stream",
-                                  { withCredentials: true } );
-
-  evtSource.onmessage = function(e) {
-    var message = document.getElementById("time");
-    message.innerHTML = e.data;
-  }
+  // The subscription sends the time which makes the thing work.
+  //
+  c.subscribe("zod", "server", "/timer",
+              function(err) {
+                console.log("Failed initial connection: " + err);
+              },
+              function(json) {
+                console.log("Subscription update: ", json);
+                var message = document.getElementById("time");
+                message.innerHTML = json;
+              },
+              function() {
+                console.log("Subscription quit");
+              });
   '''
-::  helper library that lets an app handle an EventSource.
-::
-::    TODO: This doesn't even attempt to deal with sequence numbers.
-::
-++  event-source
-  |_  m=(map =bone last-id=@ud)
-  ++  abet  m
-  ::  +start-session: called by app to start a session and send first event
-  ::
-  ::    This creates a new session where we 
-  ::
-  ++  start-session
-    |=  [session=@ud =bone data=wall]
-    ^-  [(list move) _m]
-    ::
-    :-  :~  :*  bone  %http-response
-                %start  200
-                :~  ['content-type' 'text/event-stream']
-                    ['cache-control' 'no-cache']
-                ==
-                (wall-to-output data)
-                complete=%.n
-        ==  ==
-    (~(put by m) bone 0)
-  ::  +session-stopped: external notification that a session ended
-  ::
-  ++  session-stopped
-    |=  =bone
-    ^-  _m
-    ::
-    (~(del by m) bone)
-  ::  +send-message: sends a message based on the continuation
-  ::
-  ++  send-message
-    |=  [=bone data=wall]
-    ^-  [(list move) _m]
-    :-  [bone %http-response %continue (wall-to-output data) complete=%.n]~
-    (~(jab by m) bone |=(a=@ud +(a)))
-  ::  +wall-to-output: changes our raw text lines to a text/event-stream
-  ::
-  ++  wall-to-output
-    |=  =wall
-    ^-  (unit octs)
-    :-  ~
-    %-  as-octs:mimes:html
-    %-  crip
-    %-  zing
-    %+  weld
-      %+  turn  wall
-      |=  t=tape
-      "data: {t}\0a"
-    ::
-    [`tape`['\0a' ~] ~]
-  --
 ::  +require-authorization: redirect to the login page when unauthenticated
 ::
 ++  require-authorization
@@ -138,7 +98,7 @@
 |%
 ::
 +$  state
-  $:  events=(map =bone last-id=@ud)
+  $:  next-timer=(unit @da)
   ==
 --
 ::
@@ -161,37 +121,30 @@
   ~&  [%bound success]
   [~ this]
 ::
-++  handle-start-stream
-  |=  =inbound-request:light
-  ^-  (quip move _this)
-  ::  Start a session sending the current time
-  ::
-  =^  moves  events
-    (~(start-session event-source events) 0 ost.bow ["{<now.bow>}" ~])
-  ::
-  :_  this
-  :-  ^-  move
-      [ost.bow %wait /timer (add now.bow ~s1)]
-  ::
-  moves
 ::  +wake: responds to a %wait send from +handle-start-stream
 ::
 ++  wake
   |=  [wir=wire ~]
   ^-  (quip move _this)
-  ?.  (~(has by events) ost.bow)
-    ~&  [%closed wir now.bow]
-    [~ this]
   ::
   ~&  [%timer-tick wir now.bow]
   ::
-  =^  moves  events
-    (~(send-message event-source events) ost.bow ["{<now.bow>}" ~])
+  =/  moves=(list move)
+    %+  turn  (prey:pubsub:userlib /timer bow)
+    |=  [=bone ^]
+    [bone %diff %json %s (scot %da now.bow)]
+  ::  if we have outbound moves, say that we have another timer.
   ::
-  :_  this
-  :-  ^-  move
-      [ost.bow %wait /timer (add now.bow ~s1)]
-  moves
+  =.  next-timer
+    ?:  ?=(^ moves)
+      `(add now.bow ~s1)
+    ~
+  ::  if we have any subscribers, add another timer for the future
+  ::
+  =?  moves  ?=(^ moves)
+    [[ost.bow %wait /timer (add now.bow ~s1)] moves]
+  ::
+  [moves this]
 ::  +poke-handle-http-request: received on a new connection established
 ::
 ++  poke-handle-http-request
@@ -206,9 +159,6 @@
     ?~  back-path
       'World'
     i.back-path
-  ?:  =(name 'stream')
-    (handle-start-stream inbound-request)
-  ~&  [%name name]
   ::
   ?:  =(name 'hello')
     :_  this
@@ -233,8 +183,22 @@
   ^-  (quip move _this)
   ::  the only long lived connections we keep state about are the stream ones.
   ::
-  =.  events
-    (~(session-stopped event-source events) ost.bow)
-  ::
   [~ this]
+::
+++  poke-json
+  |=  =json
+  ^-  (quip move _this)
+  ~&  [%poke-json json]
+  [~ this]
+::
+++  peer-timer
+  |=  pax/path
+  ^-  (quip move _this)
+  ::  if we don't have a timer, set a timer.
+  ?:  ?=(^ next-timer)
+    ~&  [%already-have-a-timer next-timer]
+    [~ this]
+  ::
+  :-  [ost.bow %wait /timer (add now.bow ~s1)]~
+  this(next-timer `(unit @da)`[~ (add now.bow ~s1)])
 --
