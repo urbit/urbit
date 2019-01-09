@@ -221,9 +221,9 @@
 :: +request: generic http request
 ::
 ++  request
-  |=  [wir=wire req=hiss:eyre]
+  |=  [=wire =hiss:eyre]
   ^-  card
-  [%hiss wir [~ ~] %httr %hiss req]
+  [%hiss wire [~ ~] %httr %hiss hiss]
 ::  +notify: send :hall notification
 ::
 ++  notify
@@ -236,6 +236,21 @@
   =/  act
     [%phrase (sy [ship %inbox] ~) [msg ~]]
   [%poke / [our.bow %hall] %hall-action act]
+::  +wait: set a timer
+::
+++  wait
+  |=  [=wire lull=@dr]
+  ^-  card
+  [%wait wire (add now.bow lull)]
+::  +backoff: calculate exponential backoff
+::
+++  backoff
+  |=  try=@ud
+  ^-  @dr
+  ?:  =(0 try)  ~s0
+  %+  add
+    (mul ~s1 (bex (dec try)))
+  (mul ~s0..0001 (~(rad og eny.bow) 1.000))
 ::  +poke-noun: debugging
 ::
 ++  poke-noun
@@ -296,93 +311,57 @@
         [~ this]
       abet:(~(restore bind u.nem) u.r.rep)
     ==
-  ::  responses for a relay validating a binding target
+  ::  responses for a relay
   ::
-      %check
-    =/  him=ship  (slav %p i.t.wir)
-    ?:  =(200 p.rep)
-      abet:bind:(tell him)
-    ::  cttp timeout
-    ::  XX backoff, refactor
-    ::
-    ?:  =(504 p.rep)
-      :_  this  :_  ~
-      [ost.bow %wait wir (add now.bow ~m10)]
-    ::  XX specific messages per status code
-    ::
-    ~&  %direct-confirm-fail
-    abet:(fail:(tell him) %failed-request)
-  ::  responses for a relay validating an established binding
-  ::
-      %check-bond
-    =/  him=ship  (slav %p i.t.wir)
-    ?:  =(200 p.rep)
-      abet:bake:(tell him)
-    ::  XX backoff, refactor
-    ::
-    :_  this  :_  ~
-    [ost.bow %wait wir (add now.bow ~m5)]
+      %relay
+    ::  XX refactor
+    ?>  ?=([%relay %him @ *] wir)
+    =/  him=ship  (slav %p i.t.t.wir)
+    abet:(http-response:(tell him) t.t.t.wir rep)
   ==
 ::  +sigh-tang: failed to make http request
 ::
 ++  sigh-tang
-  |=  [wir=wire saw=tang]
+  |=  [=wire =tang]
   ^-  (quip move _this)
-  ?+  wir
-        ~&  [%strange-sigh-tang wir]
-        [((slog saw) ~) this]
+  ?+  wire
+        ~&  [%strange-sigh-tang wire]
+        [((slog tang) ~) this]
   ::
       [%authority %confirm ~]
     :_  this(nem ~)
-    [[ost.bow (notify our.bow 'authority confirmation failed' saw)] ~]
+    [[ost.bow (notify our.bow 'authority confirmation failed' tang)] ~]
   ::
       [%authority %create *]
     ::  XX retry pending bindings
     ::
     =/  msg
-      (cat 3 'failed to create binding: ' (print-path t.t.wir))
+      (cat 3 'failed to create binding: ' (print-path t.t.wire))
     :_  this
-    [[ost.bow (notify our.bow msg saw)] ~]
+    [[ost.bow (notify our.bow msg tang)] ~]
   ::
       [%authority %update ~]
     ::  XX retry binding retrieval
     ::
     :_  this
-    [[ost.bow (notify our.bow 'failed to retrieve bindings' saw)] ~]
+    [[ost.bow (notify our.bow 'failed to retrieve bindings' tang)] ~]
   ::
-      [%check @ ~]
-    ::  XX retry confirmation
-    ::
-    =/  him=ship  (slav %p i.t.wir)
-    abet:(fail:(tell him) %crash)
-  ::
-      [%check-bond @ ~]
-    ::  XX backoff, refactor
-    ::
-    =/  msg
-      %+  rap  3
-      ['failed to confirm binding ' (print-path t.wir) ', retrying in ~m10' ~]
-    :_  this
-    :~  [ost.bow (notify our.bow msg saw)]
-        [ost.bow %wait wir (add now.bow ~m10)]
-    ==
+      [%relay %him @ *]
+    =/  him=ship  (slav %p i.t.t.wire)
+    abet:(http-crash:(tell him) t.t.t.wire tang)
   ==
 ::  +wake: timer callback
 ::
 ++  wake
-  |=  [wir=wire ~]
+  |=  [=wire ~]
   ^-  (quip move _this)
-  ?+    wir
-      ~&  [%strange-wake wir]
+  ?+    wire
+      ~&  [%strange-wake wire]
       [~ this]
   ::
-      [%check @ ~]
-    =/  him=ship  (slav %p i.t.wir)
-    abet:check:(tell him)
-  ::
-      [%check-bond @ ~]
-    =/  him=ship  (slav %p i.t.wir)
-    abet:recheck-bond:(tell him)
+      [%relay %him @ *]
+    =/  him=ship  (slav %p i.t.t.wire)
+    abet:(retry:(tell him) t.t.t.wire)
   ==
 ::  +poke-dns-command: act on command
 ::
@@ -426,7 +405,7 @@
     ?:  ?&  =(our.bow for.com)
             !=(our.bow src.bow)
         ==
-      abet:(check-bond:(tell him.com) dom.com)
+      abet:(learn:(tell him.com) dom.com)
     ::
     ?:  =(our.bow him.com)
       =/  msg
@@ -460,9 +439,9 @@
 ::  +coup: general poke acknowledgement or error
 ::
 ++  coup
-  |=  [wir=wire saw=(unit tang)]
+  |=  [=wire saw=(unit tang)]
   ?~  saw  [~ this]
-  ~&  [%coup-fallthru wir]
+  ~&  [%coup-fallthru wire]
   [((slog u.saw) ~) this]
 ::  +prep: adapt state
 ::
@@ -614,6 +593,95 @@
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
+  ::  +http-wire: build a wire for a |tell request
+  ::
+  ++  http-wire
+    |=  [try=@ud act=@tas]
+    ^-  wire
+    /relay/him/(scot %p him)/try/(scot %ud try)/[act]
+  ::  +http-crash: handle failed http request
+  ::
+  ++  http-crash
+    |=  [=wire =tang]
+    ^+  this
+    ?>  ?=([%try @ @ ~] wire)
+    =/  try  (slav %ud i.t.wire)
+    =*  act  i.t.t.wire
+    ?+  act
+      ~&([%tell %unknown-crash act] this)
+    ::
+        %check-before
+      ::  XX confirm max retries
+      ::
+      ?:  (gth try 3)
+        (fail %crash)
+      =.  try  +(try)
+      (emit (wait (http-wire try %check-before) (backoff try)))
+    ::
+        %check-after
+      =/  msg
+        %+  rap  3
+        :~  'failed to confirm binding '
+            (print-path t.wire)
+            ', retrying in ~m10'
+        ==
+      %-  emit:(emit (notify our.bow msg tang))
+      ::  no max retries, the binding has been created
+      ::  XX notify after some number of failures
+      ::
+      =.  try  +(try)
+      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+    ==
+  ::  +http-response: handle http response
+  ::
+  ++  http-response
+    |=  [=wire rep=httr:eyre]
+    ^+  this
+    ?>  ?=([%try @ @ ~] wire)
+    =/  try  (slav %ud i.t.wire)
+    =*  act  i.t.t.wire
+    ?+  act
+      ~&([%tell %unknown-response act rep] this)
+    ::  validating a binding target
+    ::
+        %check-before
+      ?:  =(200 p.rep)
+        bind
+      ::  cttp timeout
+      ::
+      ?:  =(504 p.rep)
+        %-  emit
+        =.  try  +(try)
+        (wait (http-wire try %check-before) (max ~h1 (backoff try)))
+      ::  XX specific messages per status code
+      ::  XX above some threshold?
+      ::
+      (fail %failed-request)
+    ::  validating an established binding
+    ::
+        %check-after
+      ?:  =(200 p.rep)
+        bake
+      ::  no max retries, the binding has been created
+      ::  XX notify after some number of failures
+      ::
+      %-  emit
+      =.  try  +(try)
+      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+    ==
+  ::  +retry: re-attempt http request after timer
+  ::
+  ++  retry
+    |=  =wire
+    ^+  this
+    ?>  ?=([%try @ @ ~] wire)
+    =/  try  (slav %ud i.t.wire)
+    =*  act  i.t.t.wire
+    ?+    act
+        ~&([%tell %unknown-wake act] this)
+      %check-before  (check-before try)
+      %check-after   (check-after try)
+    ==
   ::  +hear: hear ip address, maybe emit binding request
   ::
   ++  hear
@@ -639,10 +707,13 @@
     ::  check binding target validity, store and forward
     ::
     =.  rel  `[wen=now.bow addr dom=~ try=0 tar]
-    ?:(?=(%indirect -.tar) bind check)
-  ::  +check: confirm %direct target is accessible
+    ?:  ?=(%indirect -.tar)
+      bind
+    (check-before 0)
+  ::  +check-before: confirm %direct target is accessible
   ::
-  ++  check
+  ++  check-before
+    |=  try=@ud
     ^+  this
     ?>  ?=(^ rel)
     ?>  ?=(%direct -.tar.u.rel)
@@ -653,12 +724,11 @@
     ?:  (gth try.u.rel 2)
       (fail %unreachable)
     =.  try.u.rel  +(try.u.rel)
-    =/  wir=wire
-      /check/(scot %p him)
+    =/  =wire  (http-wire try %check-before)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
       [[ext=`~.umd path=/static] query=~]
-    (emit (request wir url %get ~ ~))
+    (emit (request wire url %get ~ ~))
   ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
@@ -696,29 +766,29 @@
     =/  com=command
       [%bind our.bow him tar.u.rel]
     (emit [%poke wir [our.bow dap.bow] %dns-command com])
-  ::  +check-bond: confirm binding propagation
+  ::  +learn: of new binding
   ::
-  ++  check-bond
+  ++  learn
     |=  dom=turf
     ^+  this
     ?>  ?=(^ rel)
-    =/  wir=wire
-      /check-bond/(scot %p him)
-    =/  url=purl:eyre
-      :-  [sec=| por=~ host=[%& dom]]
-      [[ext=`~.umd path=/static] query=~]
     ::  XX track bound-state per-domain
     ::
-    %-  emit(dom.u.rel `dom)
-    (request wir url %get ~ ~)
-  ::  +recheck-bond: re-attempt to confirm binding propagation
+    (check-after(dom.u.rel `dom) 0)
+  ::  +check-after: confirm binding propagation
   ::
-  ++  recheck-bond
+  ++  check-after
+    |=  try=@ud
     ^+  this
     ?>  ?&  ?=(^ rel)
             ?=(^ dom.u.rel)
         ==
-    (check-bond u.dom.u.rel)
+    =*  dom  u.dom.u.rel
+    =/  =wire  (http-wire try %check-after)
+    =/  url=purl:eyre
+      :-  [sec=| por=~ host=[%& dom]]
+      [[ext=`~.umd path=/static] query=~]
+    (emit (request wire url %get ~ ~))
   ::  +bake: successfully bound
   ::
   ++  bake
