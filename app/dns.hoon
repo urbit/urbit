@@ -261,63 +261,21 @@
 ::  +sigh-httr: accept http response
 ::
 ++  sigh-httr
-  |=  [wir=wire rep=httr:eyre]
+  |=  [=wire rep=httr:eyre]
   ^-  (quip move _this)
-  ::  at least two segments in every wire
-  ::
-  ?.  ?=([@ @ *] wir)
-    ~&  [%strange-http-response wire=wir response=rep]
+  ?+  wire
+    ~&  [%strange-http-response wire rep]
     [~ this]
-  ?+  i.wir
-    ::  print and ignore unrecognized responses
-    ::
-    ~&  [%strange-http-response wire=wir response=rep]
-    [~ this]
-  ::  responses for a nameserver
   ::
-      %authority
+      [%authority *]
     ?~  nem
-      ~&  [%strange-authority wire=wir response=rep]
+      ~&  [%not-an-authority %http-response wire rep]
       [~ this]
-    ?+  i.t.wir
-      !!
-    ::  response confirming a valid nameserver config
-    :: 
-        %confirm
-      ?.  =(200 p.rep)
-        ~&  [%authority-confirm-fail rep]
-        [~ this(nem ~)]
-      abet:(~(update bind u.nem) ~)
-    ::  response to a binding creation request
-    ::
-        %create
-      ?>  ?=([@ %for @ ~] t.t.wir)
-      ?.  =(200 p.rep)
-        ::  XX set a retry timeout?
-        ::
-        ~&  [%authority-create-fail wire=wir response=rep]
-        [~ this]
-      =/  him=ship  (slav %p i.t.t.wir)
-      =/  for=ship  (slav %p i.t.t.t.t.wir)
-      abet:(~(confirm bind u.nem) for him)
-    ::  response to an existing-binding retrieval request
-    ::
-        %update
-      ?.  =(200 p.rep)
-        ::  XX retry
-        ::
-        [~ this]
-      ?~  r.rep
-        [~ this]
-      abet:(~(restore bind u.nem) u.r.rep)
-    ==
-  ::  responses for a relay
+    abet:(~(http-response bind u.nem) t.wire rep)
   ::
-      %relay
-    ::  XX refactor
-    ?>  ?=([%relay %him @ *] wir)
-    =/  him=ship  (slav %p i.t.t.wir)
-    abet:(http-response:(tell him) t.t.t.wir rep)
+      [%relay %him @ *]
+    =/  him=ship  (slav %p i.t.t.wire)
+    abet:(http-response:(tell him) t.t.t.wire rep)
   ==
 ::  +sigh-tang: failed to make http request
 ::
@@ -325,26 +283,14 @@
   |=  [=wire =tang]
   ^-  (quip move _this)
   ?+  wire
-        ~&  [%strange-sigh-tang wire]
-        [((slog tang) ~) this]
+    ~&  [%strange-sigh-tang wire]
+    [((slog tang) ~) this]
   ::
-      [%authority %confirm ~]
-    :_  this(nem ~)
-    [[ost.bow (notify our.bow 'authority confirmation failed' tang)] ~]
-  ::
-      [%authority %create *]
-    ::  XX retry pending bindings
-    ::
-    =/  msg
-      (cat 3 'failed to create binding: ' (print-path t.t.wire))
-    :_  this
-    [[ost.bow (notify our.bow msg tang)] ~]
-  ::
-      [%authority %update ~]
-    ::  XX retry binding retrieval
-    ::
-    :_  this
-    [[ost.bow (notify our.bow 'failed to retrieve bindings' tang)] ~]
+      [%authority *]
+    ?~  nem
+      ~&  [%not-an-authority %http-crash wire]
+      [((slog tang) ~) this]
+    abet:(~(http-crash bind u.nem) t.wire tang)
   ::
       [%relay %him @ *]
     =/  him=ship  (slav %p i.t.t.wire)
@@ -457,6 +403,7 @@
 ::  |bind: acting as zone authority
 ::
 ++  bind
+  =/  abort=?  |
   =|  moz=(list move)
   |_  nam=nameserver
   ++  this  .
@@ -464,29 +411,106 @@
   ::
   ++  abet
     ^-  (quip move _^this)
-    [(flop moz) ^this(nem `nam)]
+    :-  (flop moz)
+    ?:  abort
+      ~&  %clearing-authority
+      ^this(nem ~)
+    ^this(nem `nam)
   ::  +emit: emit a move
   ::
   ++  emit
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
+
+  ::  +http-wire: build a wire for a |tell request
+  ::
+  ++  http-wire
+    |=  [try=@ud =wire]
+    ^-  ^wire
+    (weld /authority/try/(scot %ud try) wire)
+  ::  +http-crash: handle failed http request
+  ::
+  ++  http-crash
+    |=  [=wire =tang]
+    ^+  this
+    ?>  ?=([%try @ @ *] wire)
+    =/  try  (slav %ud i.t.wire)
+    ?+  t.t.wire
+      ~&([%bind %unknown-crash wire] this)
+    ::
+        [%confirm ~]
+      %-  emit(abort &)
+      (notify our.bow 'authority confirmation failed' tang)
+    ::
+        [%create *]
+      ::  XX retry pending bindings
+      ::
+      =/  msg
+        (cat 3 'failed to create binding: ' (print-path t.t.wire))
+      (emit (notify our.bow msg tang))
+    ::
+        [%update ~]
+      ::  XX retry binding retrieval
+      ::
+      (emit (notify our.bow 'failed to retrieve bindings' tang))
+    ==
+  ::  +http-response: handle http response
+  ::
+  ++  http-response
+    |=  [=wire rep=httr:eyre]
+    ^+  this
+    ?>  ?=([%try @ @ *] wire)
+    =/  try  (slav %ud i.t.wire)
+    ?+  t.t.wire
+      ~&([%bind %unknown-response wire rep] this)
+    ::  response confirming a valid nameserver config
+    ::
+        [%confirm ~]
+      ?:  =(200 p.rep)
+        (update ~)
+      %-  emit(abort &)
+      ::  XX include response
+      ::
+      (notify our.bow 'authority confirmation failed' ~)
+    ::  response to a binding creation request
+    ::
+        [%create @ %for @ ~]
+      ?.  =(200 p.rep)
+        ::  XX set a retry timeout?
+        ::
+        ~&  [%authority-create-fail wire rep]
+        this
+      =/  him=ship  (slav %p i.t.t.t.wire)
+      =/  for=ship  (slav %p i.t.t.t.t.t.wire)
+      (confirm for him)
+    ::  response to an existing-binding retrieval request
+    ::
+        [%update ~]
+      ?.  =(200 p.rep)
+        ::  XX retry
+        ::
+        this
+      ?~  r.rep
+        this
+      (restore u.r.rep)
+    ==
   ::  +init: establish zone authority (request confirmation)
   ::
   ++  init
     |=  aut=authority
-    =/  wir=wire  /authority/confirm
+    =/  =wire  (http-wire 0 /confirm)
     =/  url=purl:eyre
       %+  endpoint  base:gcloud
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     %-  emit(nam [aut ~ ~ ~])
-    (request wir url %get ~ ~)
+    (request wire url %get ~ ~)
   ::  +update: retrieve existing remote nameserver records
   ::
   ++  update
     |=  page=(unit @t)
     ^+  this
-    (emit (request /authority/update (~(list gcloud aut.nam) page)))
+    (emit (request (http-wire 0 /update) (~(list gcloud aut.nam) page)))
   ::  +restore: restore existing remote nameserver records
   ::
   ++  restore
@@ -524,8 +548,8 @@
       (bond for him)
     ::  create new or replace existing binding
     ::
-    =/  wir=wire
-      /authority/create/(scot %p him)/for/(scot %p for)
+    =/  =wire
+      (http-wire 0 /create/(scot %p him)/for/(scot %p for))
     =/  pre=(unit target)
       =/  bon=(unit bound)  (~(get by bon.nam) him)
       ?~(bon ~ `cur.u.bon)
@@ -534,7 +558,7 @@
     ::  XX save :for relay state?
     ::
     =.  pen.nam  (~(put by pen.nam) him tar)
-    (emit (request wir req))
+    (emit (request wire req))
   ::  +dependants: process deferred dependant bindings
   ::
   ++  dependants
