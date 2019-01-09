@@ -68,6 +68,11 @@
 ::  service providers
 ::
 =>  |%
+::  +provider: initialize provider-specific core
+::
+++  provider
+  |=  aut=authority
+  ~(. gcloud aut)
 ::  |gcloud: provider-specific functions
 ::
 ++  gcloud
@@ -76,6 +81,12 @@
   ::
   ++  base
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
+  ::  +zone: provider-specific zone info request
+  ::
+  ++  zone
+    ^-  hiss:eyre
+    :-  (endpoint base /[project.pro.aut]/['managedZones']/[zone.pro.aut])
+    [%get ~ ~]
   ::  +record: JSON-formatted provider-specific dns record
   ::
   ++  record
@@ -116,9 +127,9 @@
       ?~  pre  ~
       [['deletions' %a (record him u.pre) ~] ~]
     [url %post hed `bod]
-  ::  +list: list existing records stored by provider
+  ::  +existing: list existing records stored by provider
   ::
-  ++  list
+  ++  existing
     =,  eyre
     |=  page=(unit @t)
     ^-  hiss
@@ -499,24 +510,20 @@
   ::
   ++  init
     |=  aut=authority
-    =/  =wire  (http-wire 0 /confirm)
-    =/  url=purl:eyre
-      %+  endpoint  base:gcloud
-      /[project.pro.aut]/['managedZones']/[zone.pro.aut]
     %-  emit(nam [aut ~ ~ ~])
-    (request wire url %get ~ ~)
+    (request (http-wire 0 /confirm) zone:(provider aut))
   ::  +update: retrieve existing remote nameserver records
   ::
   ++  update
     |=  page=(unit @t)
     ^+  this
-    (emit (request (http-wire 0 /update) (~(list gcloud aut.nam) page)))
+    (emit (request (http-wire 0 /update) (existing:(provider aut.nam) page)))
   ::  +restore: restore existing remote nameserver records
   ::
   ++  restore
     |=  bod=octs
     =+  ^-  [dat=(list (pair ship target)) page=(unit @t)]
-      (~(parse gcloud aut.nam) bod)
+      (parse:(provider aut.nam) bod)
     |-  ^+  this
     ?~  dat
       ?~(page this (update page))
@@ -554,7 +561,7 @@
       =/  bon=(unit bound)  (~(get by bon.nam) him)
       ?~(bon ~ `cur.u.bon)
     =/  req=hiss:eyre
-      (~(create gcloud aut.nam) him tar pre)
+      (create:(provider aut.nam) him tar pre)
     ::  XX save :for relay state?
     ::
     =.  pen.nam  (~(put by pen.nam) him tar)
