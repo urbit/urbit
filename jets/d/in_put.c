@@ -27,7 +27,7 @@
         return u3m_bail(c3__exit);
       }
       else {
-        if ( c3y == u3qc_hor(b, n_a) ) {
+        if ( c3y == u3qc_gor(b, n_a) ) {
           c = u3qdi_put(l_a, b);
 
           if ( c3y == u3qc_vor(n_a, u3h(c)) ) {

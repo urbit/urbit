@@ -44,7 +44,7 @@
                       u3qdi_int(l_a, l_b),
                       u3qdi_int(r_a, r_b));
         }
-        else if ( c3y == u3qc_hor(n_b, n_a) ) {
+        else if ( c3y == u3qc_gor(n_b, n_a) ) {
           return u3qdi_uni(u3qdi_int(l_a,
                                      u3nt(n_b,
                                           l_b,
