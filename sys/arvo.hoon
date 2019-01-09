@@ -573,12 +573,6 @@
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ^-  [(list ovum) *]
-              ~&  :*  [%wish !=(wish)]
-                      [%peek !=(peek)]
-                      [%poke !=(poke)]
-                      [%come !=(come)]
-                      [%load !=(load)]
-                  ==
               =.  +>.$
                 ?+  -.q.ovo
                   ::  ignore unrecognized
