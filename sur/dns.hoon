@@ -2,7 +2,8 @@
 ::  +provider: DNS service provider (gcloud only for now)
 ::
 +$  provider
-  $%  [%gcloud project=@ta zone=@ta]
+  $%  [%fcloud zone=@ta]
+      [%gcloud project=@ta zone=@ta]
   ==
 ::  +authority: responsibility for a DNS zone
 ::

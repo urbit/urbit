@@ -52,12 +52,23 @@
 ++  name
   |=  [=ship =turf]
   (cat 3 (join '.' (weld turf /(crip +:(scow %p ship)))) '.')
+::  +lame: domain name for :ship (without trailing '.')
+::
+++  lame
+  |=  [=ship =turf]
+  (join '.' (weld turf /(crip +:(scow %p ship))))
 ::  +endpoint: append :path to :purl
 ::
 ++  endpoint
   |=  [=purl:eyre =path]
   ^+  purl
   purl(q.q (weld q.q.purl path))
+::  +params: append :params to :purl
+::
+++  params
+  |=  [=purl:eyre =quay:eyre]
+  ^+  purl
+  purl(r (weld r.purl quay))
 ::  +print-path: serialize a +path to a +cord
 ::
 ++  print-path
@@ -72,19 +83,109 @@
 ::
 ++  provider
   |=  aut=authority
-  ~(. gcloud aut)
-::  |gcloud: provider-specific functions
+  ?-  -.pro.aut
+    %fcloud  ~(. fcloud aut)
+    %gcloud  ~(. gcloud aut)
+  ==
+::  |fcloud: Cloudflare provider
+::
+++  fcloud
+  =>  |%
+      ++  headers
+        |=  aut=authority
+        %-  ~(gas by *math:eyre)
+        :~  ['Content-Type' ['application/json' ~]]
+            ['X-Auth-Email' ['user@example.com' ~]]
+            ['X-Auth-Key' ['c2547eb745079dac9320b638f5e225cf483cc5cfdda41' ~]]
+        ==
+      --
+
+  |_  aut=authority
+  ::  +base: provider service endpoint
+  ::
+  ++  base
+    ^-  purl:eyre
+    (need (de-purl:html 'https://api.cloudflare.com/client/v4'))
+  ::  +zone: provider-specific zone info request
+  ::
+  ++  zone
+    ^-  hiss:eyre
+    ?>  ?=(%fcloud -.pro.aut)
+    [(endpoint base /zones/[zone.pro.aut]) %get (headers aut) ~]
+  ::  +record: JSON-formatted provider-specific dns record
+  ::
+  ++  record
+    |=  [him=ship tar=target]
+    ^-  json
+    ?>  ?=(%fcloud -.pro.aut)
+    =/  type
+      ?:(?=(%direct -.tar) 'A' 'CNAME')
+    =/  data
+      ?:  ?=(%direct -.tar)
+        (crip +:(scow %if p.tar))
+      (lame p.tar dom.aut)
+    :-  %o
+    %-  ~(gas by *(map @t json))
+    :~  ['name' %s (lame him dom.aut)]
+        ['type' %s type]
+        ['content' %s data]
+        ::  XX make configureable?
+        ::
+        ['ttl' %n ~.1]
+        ['proxied' %b %.n]
+    ==
+  ::  +create: provider-specific record-creation request
+  ::
+  ++  create
+    |=  [him=ship tar=target pre=(unit target)]
+    ^-  hiss:eyre
+    ?>  ?=(%fcloud -.pro.aut)
+    =/  bod=octs
+      %-  as-octt:mimes:html
+      %-  en-json:html
+      (record him tar)
+    ?~  pre
+      :-  (endpoint base /zones/[zone.pro.aut]/['dns_records'])
+      [%post (headers aut) `bod]
+    ::  XX need existing id to update record
+    ::
+    :-  (endpoint base /zones/[zone.pro.aut]/['dns_records']/['$ID'])
+    [%put (headers aut) `bod]
+  ::  +existing: list existing records stored by provider
+  ::
+  ++  existing
+    |=  page=(unit @t)
+    ^-  hiss:eyre
+    ?>  ?=(%fcloud -.pro.aut)
+    ::  XX more url params:
+    ::  ?type ?per-page ?order ?direction
+    ::
+    :-  %+  params
+          (endpoint base /zones/[zone.pro.aut]/['dns_records'])
+        ?~(page ~ ['page' u.page]~)
+    [%get (headers aut) ~]
+  ::  +parse existing records stored by provider
+  ::
+  ++  parse
+    |=  bod=octs
+    ^-  (pair (list (pair ship target)) (unit @t))
+    ?>  ?=(%fcloud -.pro.aut)
+    !!
+  --
+::  |gcloud: GCP provider
 ::
 ++  gcloud
   |_  aut=authority
   ::  +base: provider service endpoint
   ::
   ++  base
+    ^-  purl:eyre
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
   ::  +zone: provider-specific zone info request
   ::
   ++  zone
     ^-  hiss:eyre
+    ?>  ?=(%gcloud -.pro.aut)
     :-  (endpoint base /[project.pro.aut]/['managedZones']/[zone.pro.aut])
     [%get ~ ~]
   ::  +record: JSON-formatted provider-specific dns record
@@ -92,6 +193,7 @@
   ++  record
     |=  [him=ship tar=target]
     ^-  json
+    ?>  ?=(%gcloud -.pro.aut)
     =/  type
       ?:(?=(%direct -.tar) 'A' 'CNAME')
     =/  data
@@ -113,6 +215,7 @@
     =,  eyre
     |=  [him=ship tar=target pre=(unit target)]
     ^-  hiss
+    ?>  ?=(%gcloud -.pro.aut)
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/changes
@@ -133,6 +236,7 @@
     =,  eyre
     |=  page=(unit @t)
     ^-  hiss
+    ?>  ?=(%gcloud -.pro.aut)
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/rrsets
