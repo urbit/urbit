@@ -74,6 +74,35 @@
 ++  print-path
   |=  =path
   (crip ~(ram re (sell !>(path))))
+::  +json-octs: deserialize json and apply reparser
+::
+++  json-octs
+  |*  [bod=octs wit=fist:dejs:format]
+  =/  jon  (de-json:html q.bod)
+  ?~  jon  [~ ~]
+  (wit u.jon)
+::  +ship-turf: parse ship from first subdomain
+::
+++  ship-turf
+  |=  [nam=@t aut-dom=turf]
+  ^-  (unit ship)
+  =/  dom=(unit host:eyre)
+    (rush nam ;~(sfix thos:de-purl:html dot))
+  ?:  ?|  ?=(~ dom)
+          ?=(%| -.u.dom)
+          ?=(~ p.u.dom)
+      ==
+    ~
+  =/  who
+    (rush (head (flop p.u.dom)) fed:ag)
+  ?~  who  ~
+  ?.  =(aut-dom (flop (tail (flop p.u.dom))))
+    ~
+  ::  galaxies always excluded
+  ::
+  ?:  ?=(%czar (clan:title u.who))
+    ~
+  who
 --
 ::
 ::  service providers
@@ -164,11 +193,18 @@
           (endpoint base /zones/[zone.pro.aut]/['dns_records'])
         ?~(page ~ ['page' u.page]~)
     [%get (headers aut) ~]
-  ::  +parse existing records stored by provider
+  ::  +parse-list: existing records stored by provider
   ::
-  ++  parse
-    |=  bod=octs
-    ^-  (pair (list (pair ship target)) (unit @t))
+  ++  parse-list
+    ^-  $-  json
+        (pair (list (pair ship target)) (unit @t))
+    ?>  ?=(%fcloud -.pro.aut)
+    !!
+  ::  +parse-record: single record stored by provider
+  ::
+  ++  parse-record
+    ^-  $-  json
+        (unit (pair ship target))
     ?>  ?=(%fcloud -.pro.aut)
     !!
   --
@@ -244,86 +280,60 @@
       ?~  page  ~
       (~(put by *math) 'pageToken' [u.page]~)
     [url %get hed ~]
-  ::  +parse existing records stored by provider
+  ::  +parse-list: existing records stored by provider
   ::
-  ++  parse
-    =<  |=  bod=octs
-        =/  jon  (de-json:html q.bod)
-        ?~  jon  [~ ~]
-        (response u.jon)
-    ::
+  ++  parse-list
+    ^-  $-  json
+        (pair (list (pair ship target)) (unit @t))
+    ?>  ?=(%gcloud -.pro.aut)
     =,  dejs:format
-    |%
-    ++  response
-      ^-  $-  json
-          (pair (list (pair ship target)) (unit @t))
-      %-  ou  :~
-        ::  'kind'^(su (jest "dns#resourceRecordSetsListResponse'))
-        ::
-        'rrsets'^(uf ~ record-set)
-        'nextPageToken'^(uf ~ (mu so))
-      ==
-    ::
-    ++  record-set
-      %+  cu
-        |=  a=(list (unit (pair ship target)))
-        ?~  a  ~
-        ?:  ?|  ?=(~ i.a)
-                ?=(%czar (clan:title p.u.i.a))
-            ==
-          $(a t.a)
-        [u.i.a $(a t.a)]
-      (ar record)
-    ::
-    ++  record
-      %+  cu
-        |=  [typ=@t nam=@t dat=(list @t)]
-        ^-  (unit (pair ship target))
-        =/  him  (name nam)
-        ?:  ?|  ?=(~ him)
-                ?=(~ dat)
-                ?=(^ t.dat)
-            ==
-          ~
-        ?+  typ
-          ~
-        ::
-            %'A'
-          =/  adr  (rush i.dat lip:ag)
-          ?~  adr  ~
-          `[u.him %direct %if u.adr]
-        ::
-            %'CNAME'
-          =/  for  (name i.dat)
-          ?~  for  ~
-          `[u.him %indirect u.for]
-        ==
+    %-  ou  :~
+      ::  'kind'^(su (jest "dns#resourceRecordSetsListResponse'))
       ::
-      %-  ot  :~
-        ::  'kind'^(su (jest "dns#resourceRecordSet'))
-        ::
-        'type'^so
-        'name'^so
-        'rrdatas'^(ar so)
+      :-  'rrsets'
+      %+  uf  ~
+      %+  cu
+        |*(a=(list (unit)) (murn a same))
+      (ar parse-record)
+      ::  XX this would look better before the 'rrsets' rule
+      ::  but that nest-fails for some inexplicable reason
+      ::
+      'nextPageToken'^(uf ~ (mu so))
+    ==
+  ::  +parse-record: single record stored by provider
+  ::
+  ++  parse-record
+    ^-  $-  json
+        (unit (pair ship target))
+    ?>  ?=(%gcloud -.pro.aut)
+    =,  dejs:format
+    %+  cu
+      |=  [typ=@t nam=@t dat=(list @t)]
+      ^-  (unit (pair ship target))
+      =/  him  (ship-turf nam dom.aut)
+      ?:  |(?=(~ him) ?=(~ dat) ?=(^ t.dat))
+        ~
+      ?+  typ
+        ~
+      ::
+          %'A'
+        =/  adr  (rush i.dat lip:ag)
+        ?~  adr  ~
+        `[u.him %direct %if u.adr]
+      ::
+          %'CNAME'
+        =/  for  (ship-turf i.dat dom.aut)
+        ?~  for  ~
+        `[u.him %indirect u.for]
       ==
     ::
-    ++  name
-      |=  nam=@t
-      ^-  (unit ship)
-      =/  dom=(unit host:eyre)
-        (rush nam ;~(sfix thos:de-purl:html dot))
-      ?:  ?|  ?=(~ dom)
-              ?=(%| -.u.dom)
-              ?=(~ p.u.dom)
-          ==
-        ~
-      =/  who
-        (rush (head (flop p.u.dom)) fed:ag)
-      ?~  who  ~
-      ?.  =(dom.aut (flop (tail (flop p.u.dom))))
-        ~
-      `u.who
-    --
+    %-  ot  :~
+      ::  'kind'^(su (jest "dns#resourceRecordSet'))
+      ::
+      'type'^so
+      'name'^so
+      'rrdatas'^(ar so)
+    ==
   --
 --
 ::
@@ -627,7 +637,7 @@
   ++  restore
     |=  bod=octs
     =+  ^-  [dat=(list (pair ship target)) page=(unit @t)]
-      (parse:(provider aut.nam) bod)
+      (json-octs bod parse-list:(provider aut.nam))
     |-  ^+  this
     ?~  dat
       ?~(page this (update page))
