@@ -815,8 +815,6 @@ static u3j_harm _141_two_end_a[] = {{".2", u3wc_end, c3y}, {}};
 static c3_c* _141_two_end_ha[] = {0};
 static u3j_harm _141_two_gor_a[] = {{".2", u3wc_gor, c3y}, {}};
 static c3_c* _141_two_gor_ha[] = {0};
-static u3j_harm _141_two_hor_a[] = {{".2", u3wc_hor, c3y}, {}};
-static c3_c* _141_two_hor_ha[] = {0};
 static u3j_harm _141_two_lsh_a[] = {{".2", u3wc_lsh, c3y}, {}};
 static c3_c* _141_two_lsh_ha[] = {0};
 static u3j_harm _141_two_mas_a[] = {{".2", u3wc_mas, c3y}, {}};
@@ -980,7 +978,6 @@ static u3j_core _141_two_d[] =
   { "dvr", 7, _141_two_dvr_a, 0, _141_two_dvr_ha },
   { "end", 7, _141_two_end_a, 0, _141_two_end_ha },
   { "gor", 7, _141_two_gor_a, 0, _141_two_gor_ha },
-  { "hor", 7, _141_two_hor_a, 0, _141_two_hor_ha },
   { "jam", 7, _141_two_jam_a, 0, _141_two_jam_ha },
   { "lsh", 7, _141_two_lsh_a, 0, _141_two_lsh_ha },
   { "mas", 7, _141_two_mas_a, 0, _141_two_mas_ha },
@@ -1000,9 +997,6 @@ static u3j_core _141_two_d[] =
   { "peg", 7, _141_two_peg_a, 0, _141_two_peg_ha },
   { "pow", 7, _141_two_pow_a, 0, _141_two_pow_ha },
   { "sqt", 7, _141_two_sqt_a, 0, _141_two_sqt_ha },
-  //  temporary alias for staging +vor -> +mor
-  //
-  { "vor", 7, _141_two_mor_a, 0, _141_two_mor_ha },
   { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
 
   { "by",  7, 0, _141_two__by_d, _141_two__by_ha },

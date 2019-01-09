@@ -53,7 +53,6 @@
     u3_noun u3wc_dvr(u3_noun);
     u3_noun u3wc_end(u3_noun);
     u3_noun u3wc_gor(u3_noun);
-#   define u3wc_hor u3wc_gor
     u3_noun u3wc_lsh(u3_noun);
     u3_noun u3wc_mas(u3_noun);
     u3_noun u3wc_met(u3_noun);
