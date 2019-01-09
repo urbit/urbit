@@ -23,7 +23,7 @@ _in_uni(u3_noun a, u3_noun b)
   {
     return u3m_bail(c3__exit);
   }
-  else if ( c3n == u3qc_vor(n_a, n_b) ) {
+  else if ( c3n == u3qc_mor(n_a, n_b) ) {
     if ( c3y == u3r_sing(n_a, n_b) ) {
       return u3nt(u3k(n_b), _in_uni(l_a, l_b), _in_uni(r_a, r_b));
     }

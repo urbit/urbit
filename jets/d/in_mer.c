@@ -28,7 +28,7 @@
         return u3m_bail(c3__exit);
       }
       else {
-        if ( c3y == u3qc_vor(n_b, n_a) ) {
+        if ( c3y == u3qc_mor(n_b, n_a) ) {
           c = a;    a = b;       b = c;
           c = n_a;  n_a = n_b;   n_b = c;
           c = lr_a; lr_a = lr_b; lr_b = c;

@@ -25,7 +25,7 @@
            || c3n == u3r_cell(n_e, &p_n_e, &q_n_e) ) {
         return u3m_bail(c3__exit);
       } else {
-        if ( c3y == u3qc_vor(p_n_d, p_n_e) ) {
+        if ( c3y == u3qc_mor(p_n_d, p_n_e) ) {
           return u3nt(u3k(n_d),
                       u3k(l_d),
                       _b_dif_join(u3k(r_d), u3k(e)));

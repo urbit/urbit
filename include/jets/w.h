@@ -58,6 +58,7 @@
     u3_noun u3wc_mas(u3_noun);
     u3_noun u3wc_met(u3_noun);
     u3_noun u3wc_mix(u3_noun);
+    u3_noun u3wc_mor(u3_noun);
     u3_noun u3wc_mug(u3_noun);
     u3_noun u3wc_muk(u3_noun);
     u3_noun u3wc_mur(u3_noun);
@@ -70,7 +71,6 @@
     u3_noun u3wc_rsh(u3_noun);
     u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
-    u3_noun u3wc_vor(u3_noun);
 
     u3_noun u3wc__stage_gor(u3_noun);
 #   define u3wc__stage_hor u3wc__stage_gor

@@ -938,6 +938,8 @@ static u3j_harm _141_two_met_a[] = {{".2", u3wc_met, c3y}, {}};
 static c3_c* _141_two_met_ha[] = {0};
 static u3j_harm _141_two_mix_a[] = {{".2", u3wc_mix, c3y}, {}};
 static c3_c* _141_two_mix_ha[] = {0};
+static u3j_harm _141_two_mor_a[] = {{".2", u3wc_mor, c3y}, {}};
+static c3_c* _141_two_mor_ha[] = {0};
 static u3j_harm _141_two_mug_a[] = {{".2", u3wc_mug, c3y}, {}};
 static c3_c* _141_two_mug_ha[] = {0};
 static u3j_harm _141_two_muk_a[] = {{".2", u3wc_muk, c3y}, {}};
@@ -962,8 +964,6 @@ static u3j_harm _141_two_swp_a[] = {{".2", u3wc_swp, c3y}, {}};
 static c3_c* _141_two_swp_ha[] = {0};
 static u3j_harm _141_two_sqt_a[] = {{".2", u3wc_sqt, c3y}, {}};
 static c3_c* _141_two_sqt_ha[] = {0};
-static u3j_harm _141_two_vor_a[] = {{".2", u3wc_vor, c3y}, {}};
-static c3_c* _141_two_vor_ha[] = {0};
 static u3j_harm _141_two_xeb_a[] = {{".2", u3wc_xeb, c3y}, {}};
 static c3_c* _141_two_xeb_ha[] = {0};
 
@@ -1184,6 +1184,7 @@ static u3j_core _141_two_d[] =
   { "mat", 7, _141_two_mat_a, 0, _141_two_mat_ha },
   { "met", 7, _141_two_met_a, 0, _141_two_met_ha },
   { "mix", 7, _141_two_mix_a, 0, _141_two_mix_ha },
+  { "mor", 7, _141_two_mor_a, 0, _141_two_mor_ha },
   { "mug", 7, _141_two_mug_a, 0, _141_two_mug_ha },
   { "muk", 59, _141_two_muk_a, 0, _141_two_muk_ha },
   { "mur", 7, _141_two_mur_a, 0, _141_two_mur_ha },
@@ -1197,7 +1198,9 @@ static u3j_core _141_two_d[] =
   { "peg", 7, _141_two_peg_a, 0, _141_two_peg_ha },
   { "pow", 7, _141_two_pow_a, 0, _141_two_pow_ha },
   { "sqt", 7, _141_two_sqt_a, 0, _141_two_sqt_ha },
-  { "vor", 7, _141_two_vor_a, 0, _141_two_vor_ha },
+  //  temporary alias for staging +vor -> +mor
+  //
+  { "vor", 7, _141_two_mor_a, 0, _141_two_mor_ha },
   { "stage-vor", 7, _141_two_stage_vor_a, 0, _141_two_stage_vor_ha },
   { "xeb", 7, _141_two_xeb_a, 0, _141_two_xeb_ha },
 
