@@ -1125,9 +1125,13 @@
 ::                                                      ::
 ::::  2f: noun ordering                                 ::
   ::                                                    ::
-  ::    aor, dor, gor, hor, lor, vor                    ::
+  ::    aor, dor, gor, mor                              ::
   ::
-++  aor                                                 ::  a-order
+::  +aor: alphabetical order
+::
+::    Orders atoms before cells, and atoms in ascending LSB order.
+::
+++  aor
   ~/  %aor
   |=  {a/* b/*}
   ^-  ?
@@ -1143,8 +1147,11 @@
   ?:  =(c d)
     $(a (rsh 3 1 a), b (rsh 3 1 b))
   (lth c d)
+::  +dor: depth order
 ::
-++  dor                                                 ::  d-order
+::    Orders in ascending tree depth.
+::
+++  dor
   ~/  %dor
   |=  {a/* b/*}
   ^-  ?
@@ -1156,8 +1163,11 @@
     $(a -.a, b -.b)
   ?.  ?=(@ b)  &
   (lth a b)
+::  +gor: mug order
 ::
-++  gor                                                 ::  g-order
+::    Orders in ascending +mug hash order, collisions fall back to +dor.
+::
+++  gor
   ~/  %gor
   |=  {a/* b/*}
   ^-  ?
@@ -1165,9 +1175,12 @@
   ?:  =(c d)
     (dor a b)
   (lth c d)
+::  +mor: (more) mug order
 ::
-++  vor                                                 ::  v-order
-  ~/  %vor
+::    Orders in ascending double +mug hash order, collisions fall back to +dor.
+::
+++  mor
+  ~/  %mor
   |=  {a/* b/*}
   ^-  ?
   =+  [c=(mug (mug a)) d=(mug (mug b))]
@@ -1234,8 +1247,8 @@
     ?~  a   &
     ?&  ?~(l & (gor n.a u.l))
         ?~(r & (gor u.r n.a))
-        ?~(l.a & ?&((vor n.a n.l.a) $(a l.a, l `n.a)))
-        ?~(r.a & ?&((vor n.a n.r.a) $(a r.a, r `n.a)))
+        ?~(l.a & ?&((mor n.a n.l.a) $(a l.a, l `n.a)))
+        ?~(r.a & ?&((mor n.a n.r.a) $(a r.a, r `n.a)))
     ==
   ::
   ++  bif                                               ::  splits a by b
@@ -1269,7 +1282,7 @@
     |-  ^-  {$?(~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
-    ?:  (vor n.l.a n.r.a)
+    ?:  (mor n.l.a n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
@@ -1288,7 +1301,7 @@
       |-  ^-  {$?(~ _a)}
       ?~  d  e
       ?~  e  d
-      ?:  (vor n.d n.e)
+      ?:  (mor n.d n.e)
         [n.d l.d $(d r.d)]
       [n.e $(e l.e) r.e]
     --
@@ -1333,7 +1346,7 @@
         ~
       ?~  a
         ~
-      ?.  (vor n.a n.b)
+      ?.  (mor n.a n.b)
         $(a b, b a)
       ?:  =(n.b n.a)
         [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
@@ -1353,12 +1366,12 @@
     ?:  (gor b n.a)
       =+  c=$(a l.a)
       ?>  ?=(^ c)
-      ?:  (vor n.a n.c)
+      ?:  (mor n.a n.c)
         [n.a c r.a]
       [n.c l.c [n.a r.c r.a]]
     =+  c=$(a r.a)
     ?>  ?=(^ c)
-    ?:  (vor n.a n.c)
+    ?:  (mor n.a n.c)
       [n.a l.a c]
     [n.c [n.a l.a l.c] r.c]
   ::
@@ -1397,7 +1410,7 @@
         a
       ?~  a
         b
-      ?:  (vor n.a n.b)
+      ?:  (mor n.a n.b)
         ?:  =(n.b n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor n.b n.a)
@@ -1474,7 +1487,7 @@
     |-  ^-  {$?(~ _a)}
     ?~  l.a  r.a
     ?~  r.a  l.a
-    ?:  (vor p.n.l.a p.n.r.a)
+    ?:  (mor p.n.l.a p.n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
@@ -1493,7 +1506,7 @@
       |-  ^-  {$?(~ _a)}
       ?~  d  e
       ?~  e  d
-      ?:  (vor p.n.d p.n.e)
+      ?:  (mor p.n.d p.n.e)
         [n.d l.d $(d r.d)]
       [n.e $(e l.e) r.e]
     --
@@ -1514,8 +1527,8 @@
     ?~  a   &
     ?&  ?~(l & (gor p.n.a u.l))
         ?~(r & (gor u.r p.n.a))
-        ?~(l.a & ?&((vor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
-        ?~(r.a & ?&((vor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
+        ?~(l.a & ?&((mor p.n.a p.n.l.a) $(a l.a, l `p.n.a)))
+        ?~(r.a & ?&((mor p.n.a p.n.r.a) $(a r.a, r `p.n.a)))
     ==
   ::
   ++  gas                                               ::  concatenate
@@ -1559,7 +1572,7 @@
         ~
       ?~  a
         ~
-      ?:  (vor p.n.a p.n.b)
+      ?:  (mor p.n.a p.n.b)
         ?:  =(p.n.b p.n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor p.n.b p.n.a)
@@ -1606,12 +1619,12 @@
     ?:  (gor b p.n.a)
       =+  d=$(a l.a)
       ?>  ?=(^ d)
-      ?:  (vor p.n.a p.n.d)
+      ?:  (mor p.n.a p.n.d)
         [n.a d r.a]
       [n.d l.d [n.a r.d r.a]]
     =+  d=$(a r.a)
     ?>  ?=(^ d)
-    ?:  (vor p.n.a p.n.d)
+    ?:  (mor p.n.a p.n.d)
       [n.a l.a d]
     [n.d [n.a l.a l.d] r.d]
   ::
@@ -1662,7 +1675,7 @@
         a
       ?~  a
         b
-      ?:  (vor p.n.a p.n.b)
+      ?:  (mor p.n.a p.n.b)
         ?:  =(p.n.b p.n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor p.n.b p.n.a)
@@ -1685,7 +1698,7 @@
         a
       ?~  a
         b
-      ?:  (vor p.n.a p.n.b)
+      ?:  (mor p.n.a p.n.b)
         ?:  =(p.n.b p.n.a)
           [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
         ?:  (gor p.n.b p.n.a)
@@ -1786,9 +1799,9 @@
   ++  bal
     |-  ^+  a
     ?~  a  ~
-    ?.  |(?=(~ l.a) (vor n.a n.l.a))
+    ?.  |(?=(~ l.a) (mor n.a n.l.a))
       $(a [n.l.a l.l.a $(a [n.a r.l.a r.a])])
-    ?.  |(?=(~ r.a) (vor n.a n.r.a))
+    ?.  |(?=(~ r.a) (mor n.a n.r.a))
       $(a [n.r.a $(a [n.a l.a l.r.a]) r.r.a])
     a
   ::
@@ -1810,7 +1823,7 @@
       [n.a l.a]
     =+  b=$(a r.a)
     :-  p.b
-    ?:  |(?=(~ q.b) (vor n.a n.q.b))
+    ?:  |(?=(~ q.b) (mor n.a n.q.b))
       [n.a l.a q.b]
     [n.q.b [n.a l.a l.q.b] r.q.b]
   ::
@@ -1819,7 +1832,7 @@
     ?~  a  ~
     ?~  l.a  r.a
     ?~  r.a  l.a
-    ?:  (vor n.l.a n.r.a)
+    ?:  (mor n.l.a n.r.a)
       [n.l.a l.l.a $(l.a r.l.a)]
     [n.r.a $(r.a l.r.a) r.r.a]
   ::
@@ -5116,12 +5129,12 @@
       ?:  (wor p.i.leh p.n.yal)
         =+  nuc=$(yal l.yal)
         ?>  ?=(^ nuc)
-        ?:  (vor p.n.yal p.n.nuc)
+        ?:  (mor p.n.yal p.n.nuc)
           [n.yal nuc r.yal]
         [n.nuc l.nuc [n.yal r.nuc r.yal]]
       =+  nuc=$(yal r.yal)
       ?>  ?=(^ nuc)
-      ?:  (vor p.n.yal p.n.nuc)
+      ?:  (mor p.n.yal p.n.nuc)
         [n.yal l.yal nuc]
       [n.nuc [n.yal l.yal l.nuc] r.nuc]
   ~%  %fun  ..^$  ~
