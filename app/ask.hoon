@@ -42,7 +42,7 @@
   tan+(flop (turn a message))
 ::
 ++  adrs
-  =-  (sort - lor)
+  =-  (sort - |=([a=[=time *] b=[=time *]] (lth time.a time.b)))
   %+  turn  ~(tap by adr)
   |=({a/email b/time c/invited} [tym=b ask=a inv=c])
 ::

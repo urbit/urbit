@@ -157,10 +157,10 @@
         ?~(top & (lth +(q.n.a) u.top))
         ?~(bot & (gth p.n.a +(u.bot)))
     ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
+        ?~(l.a & (mor p.n.a p.n.l.a))
         $(a l.a, top `p.n.a)
     ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
+        ?~(l.a & (mor p.n.a p.n.l.a))
         $(a r.a, bot `q.n.a)
     ==
   ::                                                    ::  ++int:py
@@ -168,7 +168,7 @@
     |=  b/pile  ^-  pile
     ?~  a  ~
     ?~  b  ~
-    ?.  (vor p.n.a p.n.b)  $(a b, b a)
+    ?.  (mor p.n.a p.n.b)  $(a b, b a)
     ?:  (gth p.n.a q.n.b)
       (uni(a $(b r.b)) $(a l.a, r.b ~))
     ?:  (lth q.n.a p.n.b)
@@ -218,7 +218,7 @@
     ^-  pile
     ?~  b  a
     ?~  a  b
-    ?.  (vor p.n.a p.n.b)  $(a b, b a)
+    ?.  (mor p.n.a p.n.b)  $(a b, b a)
     ?:  (lth +(q.n.b) p.n.a)
       $(b r.b, l.a $(a l.a, r.b ~))
     ?:  (lth +(q.n.a) p.n.b)
@@ -402,7 +402,7 @@
   ::                                                    ::::
 ++  up
   ::  a set of rites is stored as a tree (++safe), sorted
-  ::  by ++gor on the stem, balanced by ++vor on the stem.
+  ::  by ++gor on the stem, balanced by ++mor on the stem.
   ::  (this is essentially a ++map with stem as key, but
   ::  ++map doesn't know how to link stem and bulb types.)
   ::  the goal of the design is to make it easy to add new
@@ -436,7 +436,7 @@
     |-  ^-  safe
     ?~  l.pig  r.pig
     ?~  r.pig  l.pig
-    ?:  (vor -.n.l.pig -.n.r.pig)
+    ?:  (mor -.n.l.pig -.n.r.pig)
       [n.l.pig l.l.pig $(l.pig r.l.pig)]
     [n.r.pig $(r.pig l.r.pig) r.r.pig]
   ::                                                    ::  ++differ:up
@@ -472,12 +472,12 @@
     ?:  (gor -.ryt -.n.pig)
       =.  l.pig  $(pig l.pig)
       ?>  ?=(^ l.pig)
-      ?:  (vor -.n.pig -.n.l.pig)
+      ?:  (mor -.n.pig -.n.l.pig)
         [n.pig l.pig r.pig]
       [n.l.pig l.l.pig [n.pig r.l.pig r.pig]]
     =.  r.pig  $(pig r.pig)
     ?>  ?=(^ r.pig)
-    ?:  (vor -.n.pig -.n.r.pig)
+    ?:  (mor -.n.pig -.n.r.pig)
       [n.pig l.pig r.pig]
     [n.r.pig [n.pig l.pig l.r.pig] r.r.pig]
   ::                                                    ::  ++intern:up
