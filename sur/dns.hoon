@@ -2,7 +2,7 @@
 ::  +provider: DNS service provider (gcloud only for now)
 ::
 +$  provider
-  $%  [%fcloud zone=@ta]
+  $%  [%fcloud zone=@ta auth=[email=@t key=@t]]
       [%gcloud project=@ta zone=@ta]
   ==
 ::  +authority: responsibility for a DNS zone
@@ -31,6 +31,9 @@
   $:  :: wen: established
       ::
       wen=@da
+      ::  id:  binding UUID (unused by gcloud)
+      ::
+      id=@ta
       :: cur: current target
       ::
       cur=target

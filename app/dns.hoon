@@ -79,7 +79,7 @@
 ++  json-octs
   |*  [bod=octs wit=fist:dejs:format]
   =/  jon  (de-json:html q.bod)
-  ?~  jon  [~ ~]
+  ?~  jon  ~
   (wit u.jon)
 ::  +ship-turf: parse ship from first subdomain
 ::
@@ -122,13 +122,14 @@
   =>  |%
       ++  headers
         |=  aut=authority
+        ?>  ?=(%fcloud -.pro.aut)
         %-  ~(gas by *math:eyre)
         :~  ['Content-Type' ['application/json' ~]]
-            ['X-Auth-Email' ['user@example.com' ~]]
-            ['X-Auth-Key' ['c2547eb745079dac9320b638f5e225cf483cc5cfdda41' ~]]
+            ['X-Auth-Email' [email.auth.pro.aut ~]]
+            ['X-Auth-Key' [key.auth.pro.aut ~]]
         ==
       --
-
+  ::
   |_  aut=authority
   ::  +base: provider service endpoint
   ::
@@ -166,7 +167,7 @@
   ::  +create: provider-specific record-creation request
   ::
   ++  create
-    |=  [him=ship tar=target pre=(unit target)]
+    |=  [him=ship tar=target pre=(unit [id=@ta tar=target])]
     ^-  hiss:eyre
     ?>  ?=(%fcloud -.pro.aut)
     =/  bod=octs
@@ -176,9 +177,7 @@
     ?~  pre
       :-  (endpoint base /zones/[zone.pro.aut]/['dns_records'])
       [%post (headers aut) `bod]
-    ::  XX need existing id to update record
-    ::
-    :-  (endpoint base /zones/[zone.pro.aut]/['dns_records']/['$ID'])
+    :-  (endpoint base /zones/[zone.pro.aut]/['dns_records']/[id.u.pre])
     [%put (headers aut) `bod]
   ::  +existing: list existing records stored by provider
   ::
@@ -197,14 +196,14 @@
   ::
   ++  parse-list
     ^-  $-  json
-        (pair (list (pair ship target)) (unit @t))
+        (pair (list [=ship id=@ta tar=target]) (unit @t))
     ?>  ?=(%fcloud -.pro.aut)
     !!
   ::  +parse-record: single record stored by provider
   ::
   ++  parse-record
     ^-  $-  json
-        (unit (pair ship target))
+        (unit [=ship id=@ta tar=target])
     ?>  ?=(%fcloud -.pro.aut)
     !!
   --
@@ -249,7 +248,7 @@
   ::
   ++  create
     =,  eyre
-    |=  [him=ship tar=target pre=(unit target)]
+    |=  [him=ship tar=target pre=(unit [id=@ta tar=target])]
     ^-  hiss
     ?>  ?=(%gcloud -.pro.aut)
     =/  url=purl
@@ -264,7 +263,7 @@
       %-  ~(gas by *(map @t json))
       :-  ['additions' %a (record him tar) ~]
       ?~  pre  ~
-      [['deletions' %a (record him u.pre) ~] ~]
+      [['deletions' %a (record him tar.u.pre) ~] ~]
     [url %post hed `bod]
   ::  +existing: list existing records stored by provider
   ::
@@ -284,32 +283,34 @@
   ::
   ++  parse-list
     ^-  $-  json
-        (pair (list (pair ship target)) (unit @t))
+        (pair (list [=ship id=@ta tar=target]) (unit @t))
     ?>  ?=(%gcloud -.pro.aut)
     =,  dejs:format
-    %-  ou  :~
-      ::  'kind'^(su (jest "dns#resourceRecordSetsListResponse'))
-      ::
-      :-  'rrsets'
-      %+  uf  ~
-      %+  cu
-        |*(a=(list (unit)) (murn a same))
-      (ar parse-record)
-      ::  XX this would look better before the 'rrsets' rule
-      ::  but that nest-fails for some inexplicable reason
-      ::
-      'nextPageToken'^(uf ~ (mu so))
-    ==
+    =>  |%
+        ++  page  (uf ~ (mu so))
+        ++  records
+          %+  uf  ~
+          %+  cu
+            |*(a=(list (unit)) (murn a same))
+          (ar parse-record)
+        --
+    ::  XX parse but don't produce
+    ::  'kind'^(su (jest "dns#resourceRecordSetsListResponse'))
+    ::
+    (ou 'rrsets'^records 'nextPageToken'^page ~)
   ::  +parse-record: single record stored by provider
   ::
   ++  parse-record
     ^-  $-  json
-        (unit (pair ship target))
+        (unit [=ship id=@ta tar=target])
     ?>  ?=(%gcloud -.pro.aut)
     =,  dejs:format
     %+  cu
       |=  [typ=@t nam=@t dat=(list @t)]
-      ^-  (unit (pair ship target))
+      ^-  (unit [=ship id=@ta tar=target])
+      ::  gcloud doesn't expose UUIDs for bindings
+      ::
+      =/  id  %$
       =/  him  (ship-turf nam dom.aut)
       ?:  |(?=(~ him) ?=(~ dat) ?=(^ t.dat))
         ~
@@ -319,12 +320,12 @@
           %'A'
         =/  adr  (rush i.dat lip:ag)
         ?~  adr  ~
-        `[u.him %direct %if u.adr]
+        `[u.him id %direct %if u.adr]
       ::
           %'CNAME'
         =/  for  (ship-turf i.dat dom.aut)
         ?~  for  ~
-        `[u.him %indirect u.for]
+        `[u.him id %indirect u.for]
       ==
     ::
     %-  ot  :~
@@ -608,7 +609,14 @@
         this
       =/  him=ship  (slav %p i.t.t.t.wire)
       =/  for=ship  (slav %p i.t.t.t.t.t.wire)
-      (confirm for him)
+      =/  id
+        ?.  ?=(%fcloud -.pro.aut.nam)  ~.
+        ~|  [%authority-create-confirm-id rep]
+        ?>  ?=(^ r.rep)
+        =/  dat=(unit [=ship id=@ta tar=target])
+          (json-octs u.r.rep parse-record:(provider aut.nam))
+        id:(need dat)
+      (confirm for him id)
     ::  response to an existing-binding retrieval request
     ::
         [%update ~]
@@ -636,13 +644,16 @@
   ::
   ++  restore
     |=  bod=octs
-    =+  ^-  [dat=(list (pair ship target)) page=(unit @t)]
+    =+  ^-  [dat=(list [=ship id=@ta tar=target]) page=(unit @t)]
+      ::  XX gross
+      ::
+      =-  ?~(- [~ ~] -)
       (json-octs bod parse-list:(provider aut.nam))
     |-  ^+  this
     ?~  dat
       ?~(page this (update page))
-    =/  nob=bound  [now.bow q.i.dat ~]
-    $(dat t.dat, bon.nam (~(put by bon.nam) p.i.dat nob))
+    =/  nob=bound  [now.bow id.i.dat tar.i.dat ~]
+    $(dat t.dat, bon.nam (~(put by bon.nam) ship.i.dat nob))
   ::  +create: bind :him, on behalf of :for
   ::
   ++  create
@@ -671,9 +682,9 @@
     ::
     =/  =wire
       (http-wire 0 /create/(scot %p him)/for/(scot %p for))
-    =/  pre=(unit target)
+    =/  pre=(unit [id=@ta tar=target])
       =/  bon=(unit bound)  (~(get by bon.nam) him)
-      ?~(bon ~ `cur.u.bon)
+      ?~(bon ~ `[id.u.bon cur.u.bon])
     =/  req=hiss:eyre
       (create:(provider aut.nam) him tar pre)
     ::  XX save :for relay state?
@@ -694,12 +705,12 @@
   ::  +confirm: successfully bound
   ::
   ++  confirm
-    |=  [for=ship him=ship]
+    |=  [for=ship him=ship id=@ta]
     =/  tar=target  (~(got by pen.nam) him)
     =/  bon=(unit bound)
       (~(get by bon.nam) him)
     =/  nob=bound
-      [now.bow tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
+      [now.bow id tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
     =:  pen.nam  (~(del by pen.nam) him)
         bon.nam  (~(put by bon.nam) him nob)
       ==
