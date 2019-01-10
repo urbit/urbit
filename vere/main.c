@@ -544,18 +544,31 @@ main(c3_i   argc,
   printf("~\n");
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
-  int mprint_i = 1000;
-  c3_c* abs_c = (c3_c *)malloc(mprint_i);
 
-  // allocates more memory as needed if the path is too large
+  // prints the absolute path of the pier
   //
-  while ( abs_c != getcwd(abs_c, mprint_i) ) {
+  c3_c* abs_c = realpath(u3_Host.dir_c, 0);
+
+  // if the ship is being booted, we use realpath(). Otherwise, we use getcwd()
+  // with a memory-allocation loop
+  //
+  if (abs_c == NULL) {
+    c3_i mprint_i = 1000;
+    abs_c = c3_malloc(mprint_i);
+
+    // allocates more memory as needed if the path is too large
+    //
+    while ( abs_c != getcwd(abs_c, mprint_i) ) {
+      free(abs_c);
+      mprint_i *= 2;
+      abs_c = c3_malloc(mprint_i);
+    }
+    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
     free(abs_c);
-    mprint_i *= 2;
-    abs_c = (c3_c *)malloc(mprint_i);
+  } else {
+    printf("boot: home is %s\n", abs_c);
+    free(abs_c);
   }
-  printf("boot: home is %s/%s\n", realpath(abs_c, NULL), u3_Host.dir_c);
-  free(abs_c);
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
