@@ -51,7 +51,7 @@ static c3_c hostbuf[2048];  // kill me
 
 /* _main_presig(): prefix optional sig.
 */
-c3_c* 
+c3_c*
 _main_presig(c3_c* txt_c)
 {
   c3_c* new_c = malloc(2 + strlen(txt_c));
@@ -554,7 +554,7 @@ main(c3_i   argc,
     mprint_i *= 2;
     abs_c = (c3_c *)malloc(mprint_i);
   }
-  printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
+  printf("boot: home is %s/%s\n", realpath(abs_c, NULL), u3_Host.dir_c);
   free(abs_c);
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
@@ -598,7 +598,7 @@ main(c3_i   argc,
       if ( _(u3_Host.ops_u.qui) ) {
         u3C.wag_w |= u3o_quiet;
       }
-      
+
       /*  Set dry-run flag.
       */
       if ( _(u3_Host.ops_u.dry) ) {
