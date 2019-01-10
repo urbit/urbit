@@ -500,6 +500,7 @@ u3m_mark(void)
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
   tot_w += u3a_mark_noun(u3R->pro.don);
+  tot_w += u3a_mark_noun(u3R->pro.trace);
   tot_w += u3a_mark_noun(u3R->pro.day);
   tot_w += u3h_mark(u3R->cax.har_p);
   return tot_w;
@@ -624,14 +625,15 @@ u3m_bail(u3_noun how)
     } 
     else {
       c3_assert(_(u3ud(u3h(how))));
-
       fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
-      u3m_p("bail", u3t(how));
     }
   }
 
   switch ( how ) {
-    case c3__fail:
+    case c3__fail: {
+      break;
+    }
+
     case c3__meme: {
       fprintf(stderr, "bailing out\r\n");
       abort();
@@ -830,8 +832,9 @@ u3m_love(u3_noun pro)
 
     pro = u3a_take(pro);
 
-    u3j_reap(cod_p, war_p, han_p, bas_p);
+    // call sites first: see u3j_reap().
     u3n_reap(byc_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;
@@ -1013,6 +1016,7 @@ u3m_soft_run(u3_noun gul,
   {
     u3R->ski.gul = u3nc(gul, u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
   u3t_on(coy_o);
@@ -1106,6 +1110,7 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   {
     u3R->ski.gul = u3t(u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
 
@@ -1706,11 +1711,17 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-
     printf("boot: loading %s\r\n", ful_c);
-    u3v_make(ful_c);
 
-    u3v_jack();
+    {
+      u3_noun sys = u3ke_cue(u3m_file(ful_c));
+      u3_noun bot;
+
+      u3x_trel(sys, &bot, 0, 0);
+      u3v_boot(u3k(bot));
+
+      u3z(sys);
+    }
   }
   else {
     u3v_hose();

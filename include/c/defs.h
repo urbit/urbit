@@ -17,8 +17,17 @@
   **/
     /* Assert.  Good to capture.
     */
-// #     define c3_assert(x)   assert(x)
-#     define c3_assert(x)  ( (x) ? 0 : c3_cooked(), assert(x) )
+#     define c3_assert(x)                       \
+        do {                                    \
+          if (!(x)) {                           \
+            fprintf(stderr,                     \
+                    "\rAssertion '%s' failed "  \
+                    "in %s:%d\n",               \
+                    #x, __FILE__, __LINE__);    \
+            c3_cooked();                        \
+            assert(x);                          \
+          }                                     \
+        } while(0)
 
     /* Stub.
     */
@@ -82,18 +91,23 @@
           cnt_w = (cnt_w + 1) % (n);  \
         } while (0)
 
-/* c3_malloc(): asserting malloc
- */
-#define c3_malloc(s) ({                         \
-      void* rut = malloc(s);                    \
-      if ( 0 == rut ) {                         \
-        c3_assert(!"memory lost");              \
-      }                                         \
-      rut;})
-
-/* c3_calloc(): asserting calloc
- */
-#define c3_calloc(s) ({                         \
-      void* rut = c3_malloc(s);                 \
-      memset(rut, 0, s);                        \
-      rut;})
+    /* Asserting allocators.
+    */
+#     define c3_malloc(s) ({          \
+        void* rut = malloc(s);        \
+        if ( 0 == rut ) {             \
+          c3_assert(!"memory lost");  \
+        }                             \
+        rut;})
+#     define c3_calloc(s) ({          \
+        void* rut = calloc(1,s);      \
+        if ( 0 == rut ) {             \
+          c3_assert(!"memory lost");  \
+        }                             \
+        rut;})
+#     define c3_realloc(a, b) ({      \
+        void* rut = realloc(a, b);    \
+        if ( 0 == rut ) {             \
+          c3_assert(!"memory lost");  \
+        }                             \
+        rut;})

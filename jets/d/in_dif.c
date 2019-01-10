@@ -21,7 +21,7 @@
            || c3n == u3r_trel(e, &n_e, &l_e, &r_e) ) {
         return u3m_bail(c3__exit);
       } else {
-        if ( c3y == u3qc_vor(n_d, n_e) ) {
+        if ( c3y == u3qc_mor(n_d, n_e) ) {
           return u3nt(u3k(n_d),
                       u3k(l_d),
                       _i_dif_join(u3k(r_d), u3k(e)));

@@ -12,5 +12,6 @@
 
 #mesondefine U3_MEMORY_DEBUG
 #mesondefine U3_CPU_DEBUG
+#mesondefine U3_EVENT_TIME_DEBUG
 
 #endif /*CONFIG_H*/

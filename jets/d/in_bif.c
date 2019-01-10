@@ -25,7 +25,7 @@
         u3_noun c, n_c, l_c, r_c;
         u3_noun d;
 
-        if ( c3y == u3qc_hor(b, n_a) ) {
+        if ( c3y == u3qc_gor(b, n_a) ) {
           c = _i_bif_putroot(l_a, b);
           u3r_trel(c, &n_c, &l_c, &r_c);
           d = u3nt(u3k(n_c),

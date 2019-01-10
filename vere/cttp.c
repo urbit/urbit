@@ -152,6 +152,11 @@ _cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
     }
   }
 
+  if ( 0 == len_w ) {
+    *tot_w = len_w;
+    return 0;
+  }
+
   vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
   len_w = 0;
 
@@ -974,13 +979,6 @@ u3_cttp_io_init()
   u3_Host.ctp_u.ctx_u = _cttp_init_h2o();
   u3_Host.ctp_u.ctx_u->ssl_ctx = u3_Host.ctp_u.tls_u;
   u3_Host.ctp_u.ceq_u = 0;
-}
-
-/* u3_cttp_io_poll(): poll kernel for cttp I/O.
-*/
-void
-u3_cttp_io_poll(void)
-{
 }
 
 /* u3_cttp_io_exit(): shut down cttp.

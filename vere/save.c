@@ -80,10 +80,3 @@ void
 u3_save_io_exit(void)
 {
 }
-
-/* u3_save_io_poll(): poll kernel for save I/O.
-*/
-void
-u3_save_io_poll(void)
-{
-}

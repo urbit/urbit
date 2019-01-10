@@ -253,7 +253,6 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
-        uv_timer_t    tim_u;                //  network timer
         c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_w          law_w;                //  last wakeup, unix time
@@ -434,7 +433,6 @@
     */
       typedef struct _u3_behn {
         uv_timer_t tim_u;                   //  behn timer
-        c3_w       run_w;                   //  run of consecutive alarms
         c3_o       alm;                     //  alarm
       } u3_behn;
 
@@ -580,39 +578,38 @@
     */
       typedef struct _u3_opts {
         c3_c*   arv_c;                      //  -A, initial sync from
-        c3_c*   dns_c;                      //  -H, ames bootstrap domain
-        c3_c*   gen_c;                      //  -G, czar generator
-        c3_c*   nam_c;                      //  -n, unix hostname
+        c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
-        c3_c*   raf_c;                      //  -r, raft flotilla
-        c3_c*   url_c;                      //  -u, pill url
-        c3_c*   who_c;                      //  -w, begin with ticket
-        c3_c*   key_c;                      //  -K, private key file
-        c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
-        c3_o    dem;                        //  -d, daemon
-        c3_o    dry;                        //  -D, dry compute  
-        c3_c*   eth_c;                      //  -e, ethereum node url
-        c3_o    etn;                        //  -t, use snapshot exclusively to boot
-        c3_c*   ets_c;                      //  -E, eth snapshot
-        c3_c*   fak_c;                      //  -F, fake ship
-        c3_o    fog;                        //  -X, skip last event
-        c3_o    gab;                        //  -g, run with garbage collector
-        c3_o    has;                        //  -S, Skip battery hashes
-        c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    mem;                        //  -M, memory madness
-        c3_o    net;                        //  -N, remote networking in -F mode
         c3_o    nuu;                        //  -c, new pier
+        c3_o    dry;                        //  -D, dry compute, no checkpoint
+        c3_o    dem;                        //  -d, daemon
+        c3_c*   ets_c;                      //  -E, eth snapshot
+        c3_c*   eth_c;                      //  -e, ethereum node url
+        c3_c*   fak_c;                      //  -F, fake ship
+        c3_w    fuz_w;                      //  -f, fuzz testing
+        c3_c*   gen_c;                      //  -G, czar generator
+        c3_o    gab;                        //  -g, test garbage collection
+        c3_c*   dns_c;                      //  -H, ames bootstrap domain
+        c3_c*   json_file_c;                //  -j, json trace
+        c3_w    kno_w;                      //  -K, kernel version
+        c3_c*   key_c;                      //  -k, private key file
+        c3_o    net;                        //  -L, local-only networking
+        c3_s    rop_s;                      //  -l, raft port
+        c3_c*   nam_c;                      //  -n, unix hostname
         c3_o    pro;                        //  -P, profile
+        c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
-        c3_o    tex;                        //  -x, exit after loading
-        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_o    has;                        //  -S, Skip battery hashes
+        c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    etn;                        //  -t, use snapshot exclusively to boot
+        c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
-        c3_s    por_s;                      //  -p, ames port
-        c3_s    rop_s;                      //  -l, raft port
-        c3_w    fuz_w;                      //  -f, fuzz testing
-        c3_w    kno_w;                      //  -k, kernel version
+        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_c*   who_c;                      //  -w, begin with ticket
+        c3_o    tex;                        //  -x, exit after loading
       } u3_opts;
 
     /* u3_host: entire host.
@@ -635,6 +632,7 @@
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
+        FILE*      trace_file_u;            //  trace file to write to
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
@@ -906,11 +904,6 @@
         void
         u3_term_io_exit(void);
 
-      /* u3_term_io_poll(): update terminal IO state.
-      */
-        void
-        u3_term_io_poll(void);
-
       /* u3_term_io_hija(): hijack console for cooked print.
       */
         FILE*
@@ -962,11 +955,6 @@
         void
         u3_ames_io_exit(void);
 
-      /* u3_ames_io_poll(): update ames IO state.
-      */
-        void
-        u3_ames_io_poll(void);
-
     /**  Autosave.
     **/
       /* u3_save_ef_chld(): report SIGCHLD.
@@ -983,11 +971,6 @@
       */
         void
         u3_save_io_exit(void);
-
-      /* u3_save_io_poll(): update autosave state.
-      */
-        void
-        u3_save_io_poll(void);
 
     /**  Storage, new school.
     **/
@@ -1041,29 +1024,27 @@
         void
         u3_unix_io_exit(void);
 
-      /* u3_unix_io_poll(): update storage state.
-      */
-        void
-        u3_unix_io_poll(void);
-
-
     /**  behn, just a timer.
     **/
-      /* u2_behn_io_init(): initialize behn timer.
+      /* u3_behn_io_init(): initialize behn timer.
       */
         void
-        u2_behn_io_init(void);
+        u3_behn_io_init(void);
 
       /* u2_behn_io_exit(): terminate timer.
       */
         void
-        u2_behn_io_exit(void);
+        u3_behn_io_exit(void);
 
-      /* u2_behn_io_poll(): update behn IO state.
+      /* u3_behn_ef_bake(): notify %behn that we're live
       */
         void
-        u2_behn_io_poll(void);
+        u3_behn_ef_bake(void);
 
+      /* u3_behn_ef_doze(): set or cancel timer
+      */
+        void
+        u3_behn_ef_doze(u3_noun wen);
 
     /**  HTTP server.
     **/
@@ -1111,11 +1092,6 @@
         void
         u3_http_io_exit(void);
 
-      /* u3_http_io_poll(): update http IO state.
-      */
-        void
-        u3_http_io_poll(void);
-
     /** Raft log syncing.
     **/
       /* u3_raft_readopt(): parse command line options.
@@ -1128,7 +1104,12 @@
         void
         u3_raft_init(void);
 
-      /* u3_raft_work(): poke, kick, and push pending events.
+      /* u3_raft_play(): synchronously poke, kick, and push pending events.
+      */
+        void
+        u3_raft_play(void);
+
+      /* u3_raft_work(): asynchronously poke, kick, and push pending events.
       */
         void
         u3_raft_work(void);
@@ -1204,24 +1185,6 @@
         void
         u3_sist_rand(c3_w* rad_w);
 
-    /**  New timer system.
-    **/
-      /* u3_behn_io_init(): initialize time timer.
-      */
-        void
-        u3_behn_io_init(void);
-
-      /* u3_behn_io_exit(): terminate timer.
-      */
-        void
-        u3_behn_io_exit(void);
-
-      /* u3_behn_io_poll(): update behn IO state.
-      */
-        void
-        u3_behn_io_poll(void);
-
-
     /**  HTTP client.
     **/
       /* u3_cttp_ef_thus(): send %thus effect to cttp.
@@ -1240,7 +1203,13 @@
         void
         u3_cttp_io_exit(void);
 
-      /* u3_cttp_io_poll(): update cttp IO state.
+
+      /* u3_dawn_come(): mine a comet under star (unit)
       */
-        void
-        u3_cttp_io_poll(void);
+        u3_noun
+        u3_dawn_come(u3_noun star);
+
+      /* u3_dawn_vent(): validatated boot event
+      */
+        u3_noun
+        u3_dawn_vent(u3_noun seed);

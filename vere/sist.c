@@ -7,20 +7,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <curl/curl.h>
 #include <uv.h>
 
 #include "all.h"
 #include "vere/vere.h"
 
 #if defined(U3_OS_linux)
-#include <stdio_ext.h>
-#define fpurge(fd) __fpurge(fd)
 #define DEVRANDOM "/dev/urandom"
 #else
 #define DEVRANDOM "/dev/random"
 #endif
-
 
 /* u3_sist_pack(): write a blob to disk, transferring.
 */
@@ -35,27 +31,24 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3r_mug_d(tar_d);
+  lar_u.syn_w = u3r_mug_chub(tar_d);
   lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
-                               u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                              u3r_mug(lar_u.typ_w)));
+                             u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                          u3r_mug_words(&lar_u.typ_w, 1)));
   lar_u.ent_d = u3A->ent_d;
   u3A->ent_d++;
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
-    perror("lseek");
-    uL(fprintf(uH, "sist: seek failed\n"));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( sizeof(lar_u) != write(lug_u->fid_i, &lar_u, sizeof(lar_u)) ) {
-    perror("write");
-    uL(fprintf(uH, "sist: write failed\n"));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * lug_u->len_d, SEEK_SET) ) {
-    perror("lseek");
-    uL(fprintf(uH, "sist: seek failed\n"));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
 #if 0
@@ -67,8 +60,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
                  lar_u.mug_w));
 #endif
   if ( (4 * len_w) != write(lug_u->fid_i, bob_w, (4 * len_w)) ) {
-    perror("write");
-    uL(fprintf(uH, "sist: write failed\n"));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
@@ -104,20 +96,19 @@ u3_sist_put(const c3_c* key_c, const c3_y* val_y, size_t siz_i)
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_CREAT | O_TRUNC | O_WRONLY, 0600)) < 0 ) {
-    uL(fprintf(uH, "sist: could not put %s\n", key_c));
-    perror("open");
+    uL(fprintf(uH, "sist: could not put %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = write(fid_i, val_y, siz_i)) != siz_i ) {
     uL(fprintf(uH, "sist: could not write %s\n", key_c));
     if ( ret_i < 0 ) {
-      perror("write");
+      uL(fprintf(uH, "write: %s\n", strerror(errno)));
     }
     u3_lo_bail();
   }
   ret_i = c3_sync(fid_i);
   if ( ret_i < 0 ) {
-    perror("sync");
+    uL(fprintf(uH, "sync: %s\n", strerror(errno)));
   }
   ret_i = close(fid_i);
   c3_assert(0 == ret_i);
@@ -140,8 +131,7 @@ u3_sist_has(const c3_c* key_c)
       return -1;
     }
     else {
-      uL(fprintf(uH, "sist: could not stat %s\n", key_c));
-      perror("stat");
+      uL(fprintf(uH, "sist: could not stat %s: %s\n", key_c, strerror(errno)));
       u3_lo_bail();
     }
   }
@@ -165,19 +155,17 @@ u3_sist_get(const c3_c* key_c, c3_y* val_y)
   c3_assert(ret_i < 2048);
 
   if ( (fid_i = open(ful_c, O_RDONLY)) < 0 ) {
-    uL(fprintf(uH, "sist: could not get %s\n", key_c));
-    perror("open");
+    uL(fprintf(uH, "sist: could not get %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = fstat(fid_i, &sat_u)) < 0 ) {
-    uL(fprintf(uH, "sist: could not stat %s\n", key_c));
-    perror("fstat");
+    uL(fprintf(uH, "sist: could not stat %s: %s\n", key_c, strerror(errno)));
     u3_lo_bail();
   }
   if ( (ret_i = read(fid_i, val_y, sat_u.st_size)) != sat_u.st_size ) {
     uL(fprintf(uH, "sist: could not read %s\n", key_c));
     if ( ret_i < 0 ) {
-      perror("read");
+      uL(fprintf(uH, "read: %s\n", strerror(errno)));
     }
     u3_lo_bail();
   }
@@ -201,8 +189,8 @@ u3_sist_nil(const c3_c* key_c)
       return;
     }
     else {
-      uL(fprintf(uH, "sist: could not unlink %s\n", key_c));
-      perror("unlink");
+      uL(fprintf(uH, "sist: could not unlink %s: %s\n", key_c,
+                     strerror(errno)));
       u3_lo_bail();
     }
   }
@@ -239,57 +227,59 @@ _sist_sing(u3_noun ovo)
 {
   u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
-  if ( u3_blip != u3h(gon) ) {
-    _sist_suck(ovo, gon);
-  }
-  else {
-    u3_noun vir = u3k(u3h(u3t(gon)));
-    u3_noun cor = u3k(u3t(u3t(gon)));
-    u3_noun nug;
+  {
+    u3_noun hed, tal;
+    u3x_cell(gon, &hed, &tal);
 
-    u3z(gon);
-    nug = u3v_nick(vir, cor);
-
-    if ( u3_blip != u3h(nug) ) {
-      _sist_suck(ovo, nug);
+    if ( u3_blip != hed ) {
+      _sist_suck(ovo, gon);
     }
     else {
-      vir = u3h(u3t(nug));
-      cor = u3k(u3t(u3t(nug)));
+      u3_noun vir, cor;
+      u3x_cell(tal, &vir, &cor);
 
-      while ( u3_nul != vir ) {
-        u3_noun fex = u3h(vir);
-        u3_noun fav = u3t(fex);
-
-        if ( c3__init == u3h(fav) ) {
-          u3A->own = u3k(u3t(fav));
-          // note: c3__boot == u3h(u3t(ovo))
-          u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
-        }
-
-        vir = u3t(vir);
-      }
-      u3z(nug);
       u3z(u3A->roc);
-      u3A->roc = cor;
+      u3A->roc = u3k(cor);
+
+      {
+        u3_noun tag, dat;
+        u3x_trel(ovo, 0, &tag, &dat);
+
+        if ( c3__boot == tag ) {
+          while ( u3_nul != vir ) {
+            u3_noun fav = u3t(u3h(vir));
+
+            if ( c3__init == u3h(fav) ) {
+              u3A->own = u3k(u3t(fav));
+              u3A->fak = ( c3__fake == u3h(tag) ) ? c3y : c3n;
+            }
+
+            vir = u3t(vir);
+          }
+        }
+      }
     }
-    u3z(ovo);
   }
+
+  u3z(gon);
+  u3z(ovo);
 }
 
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
-_sist_cask(c3_c* dir_c, u3_noun nun)
+_sist_cask(c3_c* dir_c)
 {
-  c3_c   paw_c[60];
   u3_noun key;
-  u3_utty* uty_u = calloc(1, sizeof(u3_utty));
+  c3_c    paw_c[60];
+
+  u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
   uty_u->fid_i = 0;
 
   uH;
 
-  // disable terminal echo when typing in passcode
+  //  disable terminal echo when typing in passcode
+  //
   if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
     c3_assert(!"init-tcgetattr");
   }
@@ -300,51 +290,65 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
   }
 
   while ( 1 ) {
-    printf("passcode for %s%s? ~", dir_c, (c3y == nun) ? " [none]" : "");
+    printf("passcode for %s? ~", dir_c);
 
     paw_c[0] = 0;
     c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
     printf("\n");
 
-    if ( '\n' == paw_c[0] ) {
-      if ( c3y == nun ) {
-        key = 0; break;
-      }
-      else {
-        continue;
-      }
+    //  exit on EOF (ie, ctrl-d)
+    //
+    if ( 0 == paw_c[0]) {
+      u3_lo_bail();
     }
-    else {
-      c3_c* say_c = c3_malloc(strlen(paw_c) + 2);
+
+    //  re-prompt on early return
+    //
+    if ( '\n' == paw_c[0] ) {
+      continue;
+    }
+
+    {
+      c3_c* say_c = c3_malloc(2 + strlen(paw_c));
       u3_noun say;
 
-      say_c[0] = '~';
-      say_c[1] = 0;
+      if ( '~' == paw_c[0] ) {
+        say_c[0] = 0;
+      }
+      else {
+        say_c[0] = '~';
+        say_c[1] = 0;
+      }
+
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3do("slay", u3i_string(say_c));
-      if ( (u3_nul == say) ||
-           (u3_blip != u3h(u3t(say))) ||
-           ('p' != u3h(u3t(u3t(say)))) )
-      {
+      say = u3dc("slaw", 'p', u3i_string(say_c));
+      free(say_c);
+
+      if ( u3_nul == say ) {
         printf("invalid passcode\n");
         continue;
       }
-      key = u3k(u3t(u3t(u3t(say))));
+      key = u3k(u3t(say));
 
       u3z(say);
       break;
     }
   }
+
   if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
     c3_assert(!"init-tcsetattr");
   }
   free(uty_u);
   uL(0);
+
   return key;
 }
 
+//  XX unused, but may be needed for brainwallet
+//
+#if 0
 /* _sist_text(): ask for a name string.
 */
 static u3_noun
@@ -358,7 +362,7 @@ _sist_text(c3_c* pom_c)
     printf("%s: ", pom_c);
 
     paw_c[0] = 0;
-    fpurge(stdin);
+    c3_fpurge(stdin);
     fgets(paw_c, 179, stdin);
 
     if ( '\n' == paw_c[0] ) {
@@ -378,7 +382,6 @@ _sist_text(c3_c* pom_c)
   return say;
 }
 
-#if 0
 /* _sist_bask(): ask a yes or no question.
 */
 static u3_noun
@@ -413,12 +416,18 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 void
 u3_sist_rand(c3_w* rad_w)
 {
+#if defined(U3_OS_bsd) && defined(__OpenBSD__)
+  if (-1 == getentropy(rad_w, 64)) {
+    c3_assert(!"lo_rand");
+  }
+#else
   c3_i fid_i = open(DEVRANDOM, O_RDONLY);
 
   if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
     c3_assert(!"lo_rand");
   }
   close(fid_i);
+#endif
 }
 
 /* _sist_fast(): offer to save passcode by mug in home directory.
@@ -544,23 +553,15 @@ _sist_zest()
     u3Z->lug_u.fid_i = fid_i;
   }
 
-  //  Generate a 31-bit salt.
+  //  Generate a 31-bit salt and 64-bit passcode.
   //
   {
-    c3_w rad_w[16];
+    u3_noun pas;
+    c3_w    rad_w[16];
 
     c3_rand(rad_w);
     sal_l = (0x7fffffff & rad_w[0]);
-  }
-
-  //  Create and save a passcode.
-  //
-  {
-    c3_w rad_w[16];
-    u3_noun pas;
-
-    c3_rand(rad_w);
-    pas = u3i_words(2, rad_w);
+    pas = u3i_words(2, rad_w + 1);
 
     u3A->key = _sist_fatt(sal_l, u3k(pas));
     _sist_fast(pas, u3r_mug(u3A->key));
@@ -593,7 +594,8 @@ _sist_zest()
   }
 
   //  Work through the boot events.
-  u3_raft_work();
+  //
+  u3_raft_play();
 }
 
 /* _sist_rest_nuu(): upgrade log from previous format.
@@ -613,8 +615,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-    uL(fprintf(uH, "rest: rest_nuu failed (a)\n"));
-    perror("lseek64");
+    uL(fprintf(uH, "rest: rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -627,17 +628,15 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     tar_d = (end_d - (c3_d)c3_wiseof(u3_olar));
 
     if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest_nuu failed (b)\n"));
-      perror("lseek64");
+      uL(fprintf(uH, "rest_nuu failed (b), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
     }
     if ( sizeof(u3_olar) != read(fid_i, &lar_u, sizeof(u3_olar)) ) {
-      uL(fprintf(uH, "rest_nuu failed (c)\n"));
-      perror("read");
+      uL(fprintf(uH, "rest_nuu failed (c), read: %s\n", strerror(errno)));
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -646,13 +645,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     end_d = (tar_d - (c3_d)lar_u.len_w);
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest_nuu failed (e)\n"));
-      perror("lseek64");
+      uL(fprintf(uH, "rest_nuu failed (e), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
     }
     if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
-      uL(fprintf(uH, "rest_nuu failed (f)\n"));
-      perror("read");
+      uL(fprintf(uH, "rest_nuu failed (f), read: %s\n", strerror(errno)));
       u3_lo_bail();
     }
 
@@ -668,8 +665,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   }
 
   if ( 0 != close(fid_i) ) {
-    uL(fprintf(uH, "rest: could not close\n"));
-    perror("close");
+    uL(fprintf(uH, "rest: could not close, close: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -677,15 +673,14 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(ret_i < 2048);
 
   if ( (fud_i = open(nuu_c, O_CREAT | O_TRUNC | O_RDWR, 0600)) < 0 ) {
-    uL(fprintf(uH, "rest: can't open record (%s)\n", nuu_c));
-    perror("open");
+    uL(fprintf(uH, "rest: can't open record (%s), open: %s\n", nuu_c,
+                   strerror(errno)));
     u3_lo_bail();
   }
 
   led_u.mag_l = u3r_mug('g');
   if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
-    uL(fprintf(uH, "rest: can't write header\n"));
-    perror("write");
+    uL(fprintf(uH, "rest: can't write header, write: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -706,22 +701,18 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3r_mug_both(u3r_mug(ovo),
-                                   u3r_mug_both(u3r_mug(0),
-                                                  u3r_mug(c3__ov)));
+      lar_u.mug_w = u3r_mug_trel(ovo, u3_nul, c3__ov);
 
       img_w = c3_malloc(lar_u.len_w << 2);
       u3r_words(0, lar_u.len_w, img_w, ovo);
       u3z(ovo);
 
       if ( (lar_u.len_w << 2) != write(fud_i, img_w, lar_u.len_w << 2) ) {
-        uL(fprintf(uH, "rest_nuu failed (h)\n"));
-        perror("write");
+        uL(fprintf(uH, "rest_nuu failed (h), write: %s\n", strerror(errno)));
         u3_lo_bail();
       }
       if ( sizeof(u3_ular) != write(fud_i, &lar_u, sizeof(u3_ular)) ) {
-        uL(fprintf(uH, "rest_nuu failed (i)\n"));
-        perror("write");
+        uL(fprintf(uH, "rest_nuu failed (i), write: %s\n", strerror(errno)));
         u3_lo_bail();
       }
 
@@ -731,13 +722,11 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     }
   }
   if ( 0 != rename(nuu_c, old_c) ) {
-    uL(fprintf(uH, "rest_nuu failed (k)\n"));
-    perror("rename");
+    uL(fprintf(uH, "rest_nuu failed (k), rename: %s\n", strerror(errno)));
     u3_lo_bail();
   }
   if ( -1 == lseek64(fud_i, sizeof(u3_uled), SEEK_SET) ) {
-    uL(fprintf(uH, "rest_nuu failed (l)\n"));
-    perror("lseek64");
+    uL(fprintf(uH, "rest_nuu failed (l), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
   lug_u->fid_i = fud_i;
@@ -845,7 +834,7 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.dir_c, c3n);
+        pas = pas ? pas : _sist_cask(u3_Host.dir_c);
 
         key = _sist_fatt(sal_l, pas);
 
@@ -873,8 +862,8 @@ _sist_rest()
     ent_d = 0;
 
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-      fprintf(stderr, "end_d %" PRIu64 "\n", end_d);
-      perror("lseek");
+      uL(fprintf(uH, "end_d %" PRIu64 ", lseek64: %s\n", end_d,
+                     strerror(errno)));
       uL(fprintf(uH, "rest: record (%s) is corrupt (c)\n", ful_c));
       u3_lo_bail();
     }
@@ -896,12 +885,12 @@ _sist_rest()
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+      if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
         if ( c3n == rup ) {
           uL(fprintf(uH, "rest: corruption detected; attempting to fix\n"));
           rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_d(tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_chub(tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
@@ -956,8 +945,8 @@ _sist_rest()
 
       if ( lar_u.mug_w !=
             u3r_mug_both(u3r_mug(ron),
-                           u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                          u3r_mug(lar_u.typ_w))) )
+                         u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                      u3r_mug_words(&lar_u.typ_w, 1))) )
       {
         uL(fprintf(uH, "rest: record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
@@ -968,13 +957,10 @@ _sist_rest()
         continue;
       }
 
-#if 0
-      // disable encryption for now
-      //
       if ( u3A->key ) {
         u3_noun dep;
 
-        dep = u3dc("de:crua", u3k(u3A->key), ron);
+        dep = u3dc("de:crub:crypto", u3k(u3A->key), ron);
         if ( c3n == u3du(dep) ) {
           uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
           u3_lo_bail();
@@ -984,7 +970,7 @@ _sist_rest()
           u3z(dep);
         }
       }
-#endif
+
       roe = u3nc(u3ke_cue(ron), roe);
     }
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
@@ -1025,10 +1011,6 @@ _sist_rest()
              (c3__vega == u3h(u3t(ovo)))) ) )
       {
         fprintf(stderr, "replay: skipped veer\n");
-      }
-      else if ( c3y == u3_Host.ops_u.fog &&
-                u3_nul == t_roe ) {
-        fprintf(stderr, "replay: -Xwtf, skipped last event\n");
       }
       else {
         _sist_sing(u3k(ovo));
@@ -1140,423 +1122,6 @@ _sist_rest()
   }
 }
 
-/* _sist_curl_alloc(): allocate a response buffer for curl
-*/
-static size_t
-_sist_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
-{
-  size_t siz_t = uni_t * mem_t;
-  buf_u->base = realloc(buf_u->base, 1 + siz_t + buf_u->len);
-
-  if ( 0 == buf_u->base ) {
-    fprintf(stderr, "out of memory\n");
-    u3_lo_bail();
-  }
-
-  memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
-  buf_u->len += siz_t;
-  buf_u->base[buf_u->len] = 0;
-
-  return siz_t;
-}
-
-/* _sist_post_json(): POST JSON to url_c
-*/
-static uv_buf_t
-_sist_post_json(c3_c* url_c, uv_buf_t lod_u)
-{
-  CURL *curl;
-  CURLcode result;
-  long cod_l;
-  struct curl_slist* hed_u = 0;
-
-  uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
-
-  if ( !(curl = curl_easy_init()) ) {
-    fprintf(stderr, "failed to initialize libcurl\n");
-    u3_lo_bail();
-  }
-
-  hed_u = curl_slist_append(hed_u, "Accept: application/json");
-  hed_u = curl_slist_append(hed_u, "Content-Type: application/json");
-  hed_u = curl_slist_append(hed_u, "charsets: utf-8");
-
-  // XX require TLS, pin default cert?
-
-  curl_easy_setopt(curl, CURLOPT_URL, url_c);
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _sist_curl_alloc);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
-  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, hed_u);
-
-  // note: must be terminated!
-  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, lod_u.base);
-
-  result = curl_easy_perform(curl);
-  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
-
-  // XX retry?
-  if ( CURLE_OK != result ) {
-    fprintf(stderr, "failed to fetch %s: %s\n",
-                    url_c, curl_easy_strerror(result));
-    u3_lo_bail();
-  }
-  if ( 300 <= cod_l ) {
-    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
-    u3_lo_bail();
-  }
-
-  curl_easy_cleanup(curl);
-  curl_slist_free_all(hed_u);
-
-  return buf_u;
-}
-
-/* _sist_oct_to_buf(): +octs to uv_buf_t
-*/
-static uv_buf_t
-_sist_oct_to_buf(u3_noun oct)
-{
-  if ( c3n == u3a_is_cat(u3h(oct)) ) {
-    u3_lo_bail();
-  }
-
-  c3_w len_w  = u3h(oct);
-  c3_y* buf_y = c3_malloc(1 + len_w);
-  buf_y[len_w] = 0;
-
-  u3r_bytes(0, len_w, buf_y, u3t(oct));
-
-  u3z(oct);
-  return uv_buf_init((void*)buf_y, len_w);
-}
-
-/* _sist_buf_to_oct(): uv_buf_t to +octs
-*/
-static u3_noun
-_sist_buf_to_oct(uv_buf_t buf_u)
-{
-  u3_noun len = u3i_words(1, (c3_w*)&buf_u.len);
-
-  if ( c3n == u3a_is_cat(len) ) {
-    u3_lo_bail();
-  }
-
-  return u3nc(len, u3i_bytes(buf_u.len, (const c3_y*)buf_u.base));
-}
-
-/* _sist_eth_rpc(): ethereum JSON RPC with request/response as +octs
-*/
-static u3_noun
-_sist_eth_rpc(c3_c* url_c, u3_noun oct)
-{
-  return _sist_buf_to_oct(_sist_post_json(url_c, _sist_oct_to_buf(oct)));
-}
-
-/* _sist_dawn_fail(): pre-boot validation failed
-*/
-static void
-_sist_dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
-{
-  u3_noun how = u3dc("scot", 'p', u3k(who));
-  c3_c* how_c = u3r_string(u3k(how));
-
-  c3_c* rac_c;
-
-  switch (rac) {
-    default: c3_assert(0);
-    case c3__czar: {
-      rac_c = "galaxy";
-      break;
-    }
-    case c3__king: {
-      rac_c = "star";
-      break;
-    }
-    case c3__duke: {
-      rac_c = "planet";
-      break;
-    }
-    case c3__earl: {
-      rac_c = "moon";
-      break;
-    }
-    case c3__pawn: {
-      rac_c = "comet";
-      break;
-    }
-  }
-
-  fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
-
-  // XX deconstruct sas, print helpful error messages
-  u3m_p("pre-boot error", u3t(sas));
-
-  u3z(how);
-  free(how_c);
-  u3_lo_bail();
-}
-
-/* _sist_dawn_turf(): override contract domains with -H
-*/
-static u3_noun
-_sist_dawn_turf(c3_c* dns_c)
-{
-  u3_noun tuf;
-
-  u3_noun par = u3v_wish("thos:de-purl:html");
-  u3_noun dns = u3i_string(dns_c);
-  u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
-
-  if ( (u3_nul == rul) || (c3n == u3h(u3t(rul))) ) {
-    fprintf(stderr, "boot: invalid domain specified with -H %s\r\n", dns_c);
-    // bails, won't return
-    u3_lo_bail();
-    return u3_none;
-  }
-  else {
-    fprintf(stderr, "boot: overriding network domains with %s\r\n", dns_c);
-    u3_noun dom = u3t(u3t(rul));
-    tuf = u3nc(u3k(dom), u3_nul);
-  }
-
-  u3z(par); u3z(dns); u3z(rul);
-
-  return tuf;
-}
-
-/* _sist_dawn(): produce %dawn boot card - validate keys and query contract
-*/
-static u3_noun
-_sist_dawn(u3_noun sed)
-{
-  u3_noun url, bok, pon, zar, tuf, sap;
-
-  u3_noun who = u3h(sed);
-  u3_noun rac = u3do("clan:title", u3k(who));
-
-  // load snapshot if exists
-  if ( 0 != u3_Host.ops_u.ets_c ) {
-    fprintf(stderr, "boot: loading ethereum snapshot\r\n");
-    u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
-    sap = u3nc(u3_nul, raw_snap);
-  }
-  else {
-    sap = u3_nul;
-  }
-
-  // ethereum gateway as (unit purl)
-  if ( 0 == u3_Host.ops_u.eth_c ) {
-    if ( c3__czar == rac ) {
-      fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
-      // bails, won't return
-      u3_lo_bail();
-      return u3_none;
-    }
-
-    url = u3_nul;
-  }
-  else {
-    u3_noun par = u3v_wish("auru:de-purl:html");
-    u3_noun lur = u3i_string(u3_Host.ops_u.eth_c);
-    u3_noun rul = u3dc("rush", u3k(lur), u3k(par));
-
-    if ( u3_nul == rul ) {
-      if ( c3__czar == rac ) {
-        fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
-        // bails, won't return
-        u3_lo_bail();
-        return u3_none;
-      }
-
-      url = u3_nul;
-    }
-    else {
-      // auru:de-purl:html parses to (pair user purl)
-      // we need (unit purl)
-      // (we're using it to avoid the +hoke weirdness)
-      // XX revisit upon merging with release-candidate
-      url = u3nc(u3_nul, u3k(u3t(u3t(rul))));
-    }
-
-    u3z(par); u3z(lur); u3z(rul);
-  }
-
-  // XX require https?
-  c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
-    u3_Host.ops_u.eth_c :
-    "https://ropsten.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
-
-  {
-    fprintf(stderr, "boot: retrieving latest block\r\n");
-
-    if ( c3y == u3_Host.ops_u.etn ) {
-      bok = u3do("bloq:snap:dawn", u3k(u3t(sap)));
-    }
-    else {
-      // @ud: block number
-      u3_noun oct = u3v_wish("bloq:give:dawn");
-      u3_noun kob = _sist_eth_rpc(url_c, u3k(oct));
-      bok = u3do("bloq:take:dawn", u3k(kob));
-
-      u3z(oct); u3z(kob);
-    }
-  }
-
-  {
-    // +hull:constitution:ethe: on-chain state
-    u3_noun hul;
-
-    if ( c3y == u3_Host.ops_u.etn ) {
-      hul = u3dc("hull:snap:dawn", u3k(who), u3k(u3t(sap)));
-    }
-    else {
-      if ( c3__pawn == rac ) {
-        // irrelevant, just bunt +hull
-        hul = u3v_wish("*hull:constitution:ethe");
-      }
-      else {
-        u3_noun oct;
-
-        if ( c3__earl == rac ) {
-          u3_noun seg = u3do("^sein:title", u3k(who));
-          u3_noun ges = u3dc("scot", 'p', u3k(seg));
-          c3_c* seg_c = u3r_string(ges);
-
-          fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
-                                              seg_c, u3_Host.ops_u.who_c);
-          oct = u3dc("hull:give:dawn", u3k(bok), u3k(seg));
-
-          free(seg_c);
-          u3z(seg); u3z(ges);
-        }
-        else {
-          fprintf(stderr, "boot: retrieving %s's public keys\r\n",
-                                             u3_Host.ops_u.who_c);
-          oct = u3dc("hull:give:dawn", u3k(bok), u3k(who));
-        }
-
-        u3_noun luh = _sist_eth_rpc(url_c, u3k(oct));
-        hul = u3dc("hull:take:dawn", u3k(who), u3k(luh));
-
-        u3z(oct); u3z(luh);
-      }
-    }
-
-    // +live:dawn: network state
-    // XX actually make request
-    // u3_noun liv = _sist_get_json(parent, /some/url)
-    u3_noun liv = u3_nul;
-
-    fprintf(stderr, "boot: verifying keys\r\n");
-
-    // (each sponsor=(unit ship) error=@tas)
-    u3_noun sas = u3dt("veri:dawn", u3k(sed), u3k(hul), u3k(liv));
-
-    if ( c3n == u3h(sas) ) {
-      // bails, won't return
-      _sist_dawn_fail(who, rac, sas);
-      return u3_none;
-    }
-
-    // (unit ship): sponsor
-    // produced by +veri:dawn to avoid coupling to +hull structure
-    pon = u3k(u3t(sas));
-
-    u3z(hul); u3z(liv); u3z(sas);
-  }
-
-  {
-    if ( c3y == u3_Host.ops_u.etn ) {
-      zar = u3do("czar:snap:dawn", u3k(u3t(sap)));
-
-      if ( 0 != u3_Host.ops_u.dns_c ) {
-        tuf = _sist_dawn_turf(u3_Host.ops_u.dns_c);
-      }
-      else {
-        tuf = u3do("turf:snap:dawn", u3k(u3t(sap)));
-      }
-    }
-    else {
-      {
-        fprintf(stderr, "boot: retrieving galaxy table\r\n");
-
-        // (map ship [=life =pass]): galaxy table
-        u3_noun oct = u3do("czar:give:dawn", u3k(bok));
-        u3_noun raz = _sist_eth_rpc(url_c, u3k(oct));
-        zar = u3do("czar:take:dawn", u3k(raz));
-
-        u3z(oct); u3z(raz);
-      }
-
-      if ( 0 != u3_Host.ops_u.dns_c ) {
-        tuf = _sist_dawn_turf(u3_Host.ops_u.dns_c);
-      }
-      else {
-        fprintf(stderr, "boot: retrieving network domains\r\n");
-
-        // (list turf): ames domains
-        u3_noun oct = u3do("turf:give:dawn", u3k(bok));
-        u3_noun fut = _sist_eth_rpc(url_c, u3k(oct));
-        tuf = u3do("turf:take:dawn", u3k(fut));
-
-        u3z(oct); u3z(fut);
-      }
-    }
-  }
-
-  u3z(rac);
-
-  // [%dawn seed sponsor galaxies domains block eth-url snap]
-  return u3nc(c3__dawn, u3nq(sed, pon, zar, u3nq(tuf, bok, url, sap)));
-}
-
-/* _sist_zen(): get OS entropy.
-*/
-static u3_noun
-_sist_zen(void)
-{
-  c3_w rad_w[16];
-
-  c3_rand(rad_w);
-  return u3i_words(16, rad_w);
-}
-
-/* _sist_come(): mine a comet.
-*/
-static u3_noun
-_sist_come(void)
-{
-  u3_noun tar, eny, sed;
-
-  // XX choose from list, at random, &c
-  tar = u3dc("slav", 'p', u3i_string("~marzod"));
-  eny = _sist_zen();
-
-  {
-    u3_noun sar = u3dc("scot", 'p', u3k(tar));
-    c3_c* tar_c = u3r_string(sar);
-
-    fprintf(stderr, "boot: mining a comet under %s\r\n", tar_c);
-    free(tar_c);
-    u3z(sar);
-  }
-
-  sed = u3dc("come:dawn", u3k(tar), u3k(eny));
-
-  {
-    u3_noun who = u3dc("scot", 'p', u3k(u3h(sed)));
-    c3_c* who_c = u3r_string(who);
-
-    fprintf(stderr, "boot: found comet %s\r\n", who_c);
-    free(who_c);
-    u3z(who);
-  }
-
-  u3z(tar); u3z(eny);
-
-  return sed;
-}
-
 /* sist_key(): parse a private key-file.
 */
 static u3_noun
@@ -1612,6 +1177,19 @@ sist_key(u3_noun des)
 void
 u3_sist_boot(void)
 {
+  //  iterate entropy
+  //
+  {
+    c3_w    eny_w[16];
+    u3_noun eny;
+
+    c3_rand(eny_w);
+    eny = u3i_words(16, eny_w);
+
+    u3v_plan(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__wack, u3k(eny)));
+    u3z(eny);
+  }
+
   if ( c3n == u3_Host.ops_u.nuu ) {
     _sist_rest();
 
@@ -1628,6 +1206,10 @@ u3_sist_boot(void)
       u3_Host.ops_u.has = c3y;
       u3C.wag_w |= u3o_hashless;
     }
+
+    //  process pending events
+    //
+    u3_raft_play();
   }
   else {
     u3_noun pig, who;
@@ -1670,17 +1252,21 @@ u3_sist_boot(void)
         sed = sist_key(des);
       }
       else {
-        sed = _sist_come();
+        sed = u3_dawn_come(u3_nul);
       }
 
       u3A->fak = c3n;
-      pig = _sist_dawn(u3k(sed));
+      pig = u3_dawn_vent(u3k(sed));
       who = u3k(u3h(u3h(u3t(pig))));
 
       u3z(sed);
     }
 
     u3A->own = who;
+
+    //  set single-home
+    //
+    u3v_plan(u3nt(u3_blip, c3__arvo, u3_nul), u3nc(c3__whom, u3k(who)));
 
     // initialize ames
     {
@@ -1691,18 +1277,33 @@ u3_sist_boot(void)
       u3_ames_ef_bake();
     }
 
+    // initialize %behn
+    u3_behn_ef_bake();
+
     // Authenticate and initialize terminal.
     u3_term_ef_bake(pig);
 
-    // queue initial galaxy sync
-    {
-      u3_noun rac = u3do("clan:title", u3k(u3A->own));
+    // queue initial filesystem sync
+    //
+    // from the Arvo directory if specified
+    if ( 0 != u3_Host.ops_u.arv_c ) {
+      u3_unix_ef_initial_into();
+    }
+    // otherwise from the pill
+    else {
+      c3_c ful_c[2048];
 
-      if ( c3__czar == rac ) {
-        u3_unix_ef_initial_into();
+      snprintf(ful_c, 2048, "%s/.urb/urbit.pill", u3_Host.dir_c);
+
+      {
+        u3_noun sys = u3ke_cue(u3m_file(ful_c));
+        u3_noun fil;
+
+        u3x_trel(sys, 0, 0, &fil);
+        u3v_plow(u3k(fil));
+
+        u3z(sys);
       }
-
-      u3z(rac);
     }
 
     // Create the event log

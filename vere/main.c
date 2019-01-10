@@ -78,12 +78,10 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.etn = c3n;
-  u3_Host.ops_u.fog = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
   u3_Host.ops_u.has = c3n;
-  u3_Host.ops_u.net = c3n;
-  u3_Host.ops_u.mem = c3n;
+  u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
@@ -92,12 +90,12 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:e:E:f:F:k:l:n:p:r:NabcdgqstvxMPDXRS")) != -1 ) {
+  u3_Host.ops_u.rop_s = 0;
+  u3_Host.ops_u.raf_c = 0;
+  u3_Host.ops_u.nam_c = 0;
+
+  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:j:e:E:f:F:k:p:LabcdgqstvxPDRS")) != -1 ) {
     switch ( ch_i ) {
-      case 'M': {
-        u3_Host.ops_u.mem = c3y;
-        break;
-      }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
@@ -135,12 +133,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.url_c = strdup(optarg);
         break;
       }
-      case 'x': {
-        u3_Host.ops_u.tex = c3y;
+      case 'j': {
+        u3_Host.ops_u.json_file_c = strdup(optarg);
         break;
       }
-      case 'X': {
-        u3_Host.ops_u.fog = c3y;
+      case 'x': {
+        u3_Host.ops_u.tex = c3y;
         break;
       }
       case 'f': {
@@ -159,31 +157,17 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
-      case 'l': {
-        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
-          return c3n;
-        } else u3_Host.ops_u.rop_s = arg_w;
-        break;
-      }
-      case 'n': {
-        u3_Host.ops_u.nam_c = strdup(optarg);
-        break;
-      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
         } else u3_Host.ops_u.por_s = arg_w;
         break;
       }
-      case 'r': {
-        u3_Host.ops_u.raf_c = strdup(optarg);
-        break;
-      }
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'N': { u3_Host.ops_u.net = c3y; break; }
+      case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -202,6 +186,13 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
+#if defined(U3_OS_bsd)
+  if (u3_Host.ops_u.pro == c3y) {
+    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
+    return c3n;
+  }
+#endif
+
   if ( 0 != u3_Host.ops_u.fak_c ) {
     if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
       fprintf(stderr, "fake comets are disallowed\r\n");
@@ -209,31 +200,12 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
 
     u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
+    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
+    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
+    u3_Host.ops_u.nuu = c3y;
   }
 
   c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
-
-  if ( (0 != u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.nuu) ) {
-    fprintf(stderr, "-F only makes sense on initial boot\n");
-    return c3n;
-  }
-
-  // XX revisit
-  if ( (0 == u3_Host.ops_u.fak_c) && (c3y == u3_Host.ops_u.net) ) {
-    // fprintf(stderr, "-N only makes sense with -F\n");
-    u3_Host.ops_u.net = c3n;
-  } else if ( (0 == u3_Host.ops_u.fak_c) && (c3n == u3_Host.ops_u.net) ) {
-    u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
-  }
-
-  if ( 0 != u3_Host.ops_u.fak_c ) {
-    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
-  }
-
-  if ( u3_Host.ops_u.arv_c != 0 && !imp_t ) {
-    fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
-    return c3n;
-  }
 
   if ( u3_Host.ops_u.ets_c == 0 && c3y == u3_Host.ops_u.etn ) {
     fprintf(stderr, "can't trust Ethereum snapshot without specifying "
@@ -247,19 +219,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.arv_c == 0 && imp_t ) {
-    fprintf(stderr, "can't create a new galaxy without specifying "
-                    "the initial sync path with -A\n");
-    return c3n;
-  }
-
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
-    fprintf(stderr, "The -r flag requires -l.\n");
     return c3n;
   }
 
@@ -365,33 +326,29 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
     "-A dir        Use dir for initial galaxy sync\n",
-    "-b            Batch create\n",
     "-B pill       Bootstrap from this pill\n",
+    "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
-    "-d            Daemon mode\n",
     "-D            Recompute from events\n",
+    "-d            Daemon mode\n",
     "-e url        Ethereum gateway\n",
     "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
+    "-j file       Create json trace file\n",
     "-K stage      Start at Hoon kernel version stage\n",
     "-k keys       Private key file\n",
-    "-l port       Initial peer port\n",
-    "-M            Memory madness\n",
-    "-n host       Set unix hostname\n",
-    "-N            Enable networking in fake mode (-F)\n",
-    "-p ames_port  Set the ames port to bind to\n",
+    "-L            local networking only\n",
     "-P            Profiling\n",
+    "-p ames_port  Set the ames port to bind to\n",
     "-q            Quiet\n",
-    "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
-    "-s            Pill URL from arvo git hash\n",
     "-S            Disable battery hashing\n",
+    "-s            Pill URL from arvo git hash\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
-    "-Xwtf         Skip last event\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -652,6 +609,13 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.has) ) {
         u3C.wag_w |= u3o_hashless;
+      }
+
+      /*  Set tracing flag
+      */
+      if ( u3_Host.ops_u.json_file_c ) {
+        u3C.wag_w |= u3o_trace;
+        u3t_trace_open(u3_Host.ops_u.json_file_c);
       }
     }
     u3m_boot(u3_Host.ops_u.nuu,
