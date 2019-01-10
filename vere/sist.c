@@ -40,15 +40,15 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
-    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( sizeof(lar_u) != write(lug_u->fid_i, &lar_u, sizeof(lar_u)) ) {
-    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * lug_u->len_d, SEEK_SET) ) {
-    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
 #if 0
@@ -60,7 +60,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
                  lar_u.mug_w));
 #endif
   if ( (4 * len_w) != write(lug_u->fid_i, bob_w, (4 * len_w)) ) {
-    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
@@ -442,8 +442,8 @@ _sist_fast(u3_noun pas, c3_l key_l)
   u3_noun yek   = u3dc("scot", 'p', pas);
   c3_c*   yek_c = u3r_string(yek);
 
-  printf("saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
-  printf("(for real security, write it down and delete the file...)\r\n");
+  printf("boot: saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
+  printf("boot: for more security, write it down and delete the file\r\n");
   {
     c3_i fid_i;
 
@@ -496,7 +496,7 @@ _sist_staf(c3_l key_l)
       u3z(say);
       return 0;
     }
-    uL(fprintf(uH, "loaded passcode from %s\n", ful_c));
+    uL(fprintf(uH, "boot: loaded passcode from %s\n", ful_c));
     pas = u3k(u3t(u3t(u3t(say))));
 
     u3z(say);
@@ -541,7 +541,7 @@ _sist_zest()
     if ( ((fid_i = open(ful_c, pig_i, 0600)) < 0) ||
          (fstat(fid_i, &buf_b) < 0) )
     {
-      uL(fprintf(uH, "can't create record (%s)\n", ful_c));
+      uL(fprintf(uH, "zest: can't create record (%s)\n", ful_c));
       u3_lo_bail();
     }
 #ifdef F_NOCACHE
@@ -615,7 +615,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-    uL(fprintf(uH, "rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
+    uL(fprintf(uH, "rest: rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -789,7 +789,7 @@ _sist_rest()
     u3_uled led_u;
 
     if ( sizeof(led_u) != read(fid_i, &led_u, sizeof(led_u)) ) {
-      uL(fprintf(uH, "record (%s) is corrupt (a)\n", ful_c));
+      uL(fprintf(uH, "rest: record (%s) is corrupt (a)\n", ful_c));
       u3_lo_bail();
     }
 
@@ -839,7 +839,7 @@ _sist_rest()
         key = _sist_fatt(sal_l, pas);
 
         if ( u3r_mug(key) != key_l ) {
-          uL(fprintf(uH, "incorrect passcode\n"));
+          uL(fprintf(uH, "rest: incorrect passcode\n"));
           u3z(key);
           pas = 0;
         }
@@ -864,7 +864,7 @@ _sist_rest()
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
       uL(fprintf(uH, "end_d %" PRIu64 ", lseek64: %s\n", end_d,
                      strerror(errno)));
-      uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
+      uL(fprintf(uH, "rest: record (%s) is corrupt (c)\n", ful_c));
       u3_lo_bail();
     }
 
@@ -877,17 +877,17 @@ _sist_rest()
       // uL(fprintf(uH, "rest: reading event at %" PRIx64 "\n", end_d));
 
       if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (d)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
         u3_lo_bail();
       }
       if ( sizeof(u3_ular) != read(fid_i, &lar_u, sizeof(u3_ular)) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (e)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
         u3_lo_bail();
       }
 
       if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
         if ( c3n == rup ) {
-          uL(fprintf(uH, "corruption detected; attempting to fix\n"));
+          uL(fprintf(uH, "rest: corruption detected; attempting to fix\n"));
           rup = c3y;
         }
         uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_chub(tar_d)));
@@ -895,7 +895,7 @@ _sist_rest()
         continue;
       }
       else if ( c3y == rup ) {
-        uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
+        uL(fprintf(uH, "rest: matched at %x\n", lar_u.syn_w));
         rup = c3n;
       }
 
@@ -916,8 +916,8 @@ _sist_rest()
       }
       else {
         if ( lar_u.ent_d != (ent_d - 1ULL) ) {
-          uL(fprintf(uH, "record (%s) is corrupt (g)\n", ful_c));
-          uL(fprintf(uH, "lar_u.ent_d %" PRIx64 ", ent_d %" PRIx64 "\n", lar_u.ent_d, ent_d));
+          uL(fprintf(uH, "rest: record (%s) is corrupt (g)\n", ful_c));
+          uL(fprintf(uH, "rest: lar_u.ent_d %" PRIx64 ", ent_d %" PRIx64 "\n", lar_u.ent_d, ent_d));
           u3_lo_bail();
         }
         ent_d -= 1ULL;
@@ -932,11 +932,11 @@ _sist_rest()
       img_w = c3_malloc(4 * lar_u.len_w);
 
       if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (h)\n", ful_c));
         u3_lo_bail();
       }
       if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (i)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (i)\n", ful_c));
         u3_lo_bail();
       }
 
@@ -948,7 +948,7 @@ _sist_rest()
                          u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
                                       u3r_mug_words(&lar_u.typ_w, 1))) )
       {
-        uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
       }
 

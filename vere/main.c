@@ -51,7 +51,7 @@ static c3_c hostbuf[2048];  // kill me
 
 /* _main_presig(): prefix optional sig.
 */
-c3_c* 
+c3_c*
 _main_presig(c3_c* txt_c)
 {
   c3_c* new_c = malloc(2 + strlen(txt_c));
@@ -547,11 +547,35 @@ main(c3_i   argc,
   printf("~\n");
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
-  printf("urbit: home is %s\n", u3_Host.dir_c);
+
+  // prints the absolute path of the pier
+  //
+  c3_c* abs_c = realpath(u3_Host.dir_c, 0);
+
+  // if the ship is being booted, we use realpath(). Otherwise, we use getcwd()
+  // with a memory-allocation loop
+  //
+  if (abs_c == NULL) {
+    c3_i mprint_i = 1000;
+    abs_c = c3_malloc(mprint_i);
+
+    // allocates more memory as needed if the path is too large
+    //
+    while ( abs_c != getcwd(abs_c, mprint_i) ) {
+      free(abs_c);
+      mprint_i *= 2;
+      abs_c = c3_malloc(mprint_i);
+    }
+    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
+    free(abs_c);
+  } else {
+    printf("boot: home is %s\n", abs_c);
+    free(abs_c);
+  }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
-    printf("urbit: running as daemon\n");
+    printf("boot: running as daemon\n");
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing.
@@ -590,7 +614,7 @@ main(c3_i   argc,
       if ( _(u3_Host.ops_u.qui) ) {
         u3C.wag_w |= u3o_quiet;
       }
-      
+
       /*  Set dry-run flag.
       */
       if ( _(u3_Host.ops_u.dry) ) {
