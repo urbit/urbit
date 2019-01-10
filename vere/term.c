@@ -721,8 +721,15 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
   u3_lo_open();
   {
     if ( siz_i == UV_EOF ) {
-      // nothing
-    } else   if ( siz_i < 0 ) {
+      //  We hear EOF (on the third read callback) if
+      //  2x the _term_alloc() buffer size is pasted.
+      //  The process hangs if we do nothing (and ctrl-z
+      //  then corrupts the event log), so we force shutdown.
+      //
+      fprintf(stderr, "term: hangup (EOF)\r\n");
+      u3_lo_bail();
+    }
+    else if ( siz_i < 0 ) {
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
     }
     else {
