@@ -50,10 +50,11 @@ _term_alloc(uv_handle_t* had_u,
             )
 {
   //  this read can range from a single byte to a paste buffer
-  //  32 bytes has been chosen heuristically
+  //  123 bytes has been chosen because its not a power of 2
+  //  this is probably still broken
   //
-  void* ptr_v = c3_malloc(32);
-  *buf = uv_buf_init(ptr_v, 32);
+  void* ptr_v = c3_malloc(123);
+  *buf = uv_buf_init(ptr_v, 123);
 }
 
 
