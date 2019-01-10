@@ -80,7 +80,10 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
-  u3_Host.ops_u.has = c3n;
+  //  always disable hashboard
+  //  XX temporary, remove once hashes are added
+  //
+  u3_Host.ops_u.has = c3y;
   u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
