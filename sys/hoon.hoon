@@ -1692,7 +1692,7 @@
     =+  b=a
     |@
     ++  $
-      |*  meg/$-({* * *} *)
+      |=  meg/$-({_p:node _q:node _q:node} _q:node)
       |-  ^+  a
       ?~  b
         a
