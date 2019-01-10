@@ -402,6 +402,16 @@
                   c3_w*   c_w,
                   u3_atom d);
 
+      /* u3r_chubs():
+      **
+      **  Copy double-words (a_w) through (a_w + b_w - 1) from (d) to (c).
+      */
+        void
+        u3r_chubs(c3_w    a_w,
+                  c3_w    b_w,
+                  c3_d*   c_d,
+                  u3_atom d);
+
       /* u3r_string(): `a`, a text atom, as malloced C string.
       */
         c3_c*
