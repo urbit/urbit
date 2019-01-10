@@ -53,6 +53,46 @@ _test_mug(void)
     fprintf(stderr, "fail (h)\r\n");
     exit(1);
   }
+
+  {
+    // stick some zero bytes in a string
+    u3_noun str = u3kc_lsh(3, 1,
+                           u3kc_mix(u3qc_bex(212),
+                           u3i_string("abcdefjhijklmnopqrstuvwxyz")));
+
+    c3_w  byt_w = u3r_met(3, str);
+    c3_w  wor_w = u3r_met(5, str);
+    c3_y* str_y = c3_malloc(byt_w);
+    c3_w* str_w = c3_malloc(wor_w);
+    c3_d  str_d = 0;
+
+    u3r_bytes(0, byt_w, str_y, str);
+    u3r_words(0, wor_w, str_w, str);
+
+    str_d |= str_w[0];
+    str_d |= ((c3_d)str_w[1] << 32ULL);
+
+    if ( 0x34d08717 != u3r_mug(str) ) {
+      fprintf(stderr, "fail (i) (1) \r\n");
+      exit(1);
+    }
+    if ( 0x34d08717 != u3r_mug_bytes(str_y, byt_w) ) {
+      fprintf(stderr, "fail (i) (2)\r\n");
+      exit(1);
+    }
+    if ( 0x34d08717 != u3r_mug_words(str_w, wor_w) ) {
+      fprintf(stderr, "fail (i) (3)\r\n");
+      exit(1);
+    }
+    if ( u3r_mug_words(str_w, 2) != u3r_mug_chub(str_d) ) {
+      fprintf(stderr, "fail (i) (4)\r\n");
+      exit(1);
+    }
+
+    free(str_w);
+    free(str_y);
+    u3z(str);
+  }
 }
 
 /* main(): run all test cases.
