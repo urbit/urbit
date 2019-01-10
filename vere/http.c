@@ -2863,37 +2863,39 @@ u3_http_ef_that(u3_noun tat)
        !( c3y == sec || c3n == sec ) ||
        ( c3n == u3ud(non) ) ) {
     uL(fprintf(uH, "http: that: invalid card\n"));
-    u3z(tat);
-    return;
   }
+  else {
+    u3_http* htp_u;
+    u3_warc* cli_u;
 
-  u3_http* htp_u;
-  u3_warc* cli_u;
+    for ( htp_u = u3_Host.htp_u; (0 != htp_u); htp_u = htp_u->nex_u ) {
+      if ( c3n == htp_u->lop && sec == htp_u->sec ) {
+        break;
+      }
+    }
 
-  for ( htp_u = u3_Host.htp_u; (0 != htp_u); htp_u = htp_u->nex_u ) {
-    if ( c3n == htp_u->lop && sec == htp_u->sec ) {
-      break;
+    //  XX we should inform our sponsor if we aren't running a server
+    //  so this situation can be avoided
+    //
+    if ( 0 == htp_u ) {
+      uL(fprintf(uH, "http: that: no %s server\n", (c3y == sec) ?
+                                                   "secure" : "insecure"));
+    }
+    else {
+      cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),
+                                                    (c3_s)por, (c3_o)sec);
+
+      //  resolve to loopback if networking is disabling
+      //
+      if ( c3n == u3_Host.ops_u.net ) {
+        cli_u->ipf_w = INADDR_LOOPBACK;
+        _proxy_ward_connect(cli_u);
+      }
+      else {
+        _proxy_ward_resolve(cli_u);
+      }
     }
   }
-
-  if ( 0 == htp_u ) {
-    uL(fprintf(uH, "http: that: no %s server\n", (c3y == sec) ?
-                                                 "secure" : "insecure"));
-    u3z(tat);
-    return;
-  }
-
-  cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),
-                                                (c3_s)por, (c3_o)sec);
-
-  if ( c3n == u3_Host.ops_u.net ) {
-    cli_u->ipf_w = INADDR_LOOPBACK;
-    _proxy_ward_connect(cli_u);
-    u3z(tat);
-    return;
-  }
-
-  _proxy_ward_resolve(cli_u);
 
   u3z(tat);
 }
