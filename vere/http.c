@@ -1652,21 +1652,31 @@ _proxy_warc_free(u3_warc* cli_u)
 /* _proxy_warc_new(): allocate ship-specific proxy client
 */
 static u3_warc*
-_proxy_warc_new(u3_http* htp_u, u3_atom sip, c3_s por_s, c3_o sec)
+_proxy_warc_new(u3_http* htp_u, u3_atom sip, u3_atom non, c3_s por_s, c3_o sec)
 {
-  u3_warc* cli_u = c3_malloc(sizeof(*cli_u));
+  u3_warc* cli_u = c3_calloc(sizeof(*cli_u));
   cli_u->htp_u = htp_u;
   cli_u->por_s = por_s;
-  // XX set here instead of u3_http_ef_that() ?
-  cli_u->non_u = uv_buf_init(0, 0);
-  cli_u->sip = sip;
   cli_u->sec = sec;
-  // XX set here instead of _proxy_ward_resolve() ?
-  cli_u->hot_c = 0;
-  cli_u->nex_u = 0;
-  cli_u->pre_u = 0;
 
+  u3r_chubs(0, 2, cli_u->who_d, sip);
   _proxy_warc_link(cli_u);
+
+  {
+    c3_w len_w = u3r_met(3, non);
+
+    c3_assert( 256 > len_w );
+
+    c3_y* non_y = c3_malloc(1 + len_w);
+    non_y[0] = (c3_y)len_w;
+
+    u3r_bytes(0, len_w, non_y + 1, non);
+
+    cli_u->non_u = uv_buf_init((c3_c*)non_y, 1 + len_w);
+  }
+
+  u3z(non);
+  u3z(sip);
 
   return cli_u;
 }
@@ -2133,7 +2143,6 @@ _proxy_ward_free(uv_handle_t* han_u)
 {
   u3_ward* rev_u = han_u->data;
 
-  u3z(rev_u->sip);
   free(rev_u->non_u.base);
   free(rev_u);
 }
@@ -2168,17 +2177,15 @@ _proxy_ward_close(u3_ward* rev_u)
 static u3_ward*
 _proxy_ward_new(u3_pcon* con_u, u3_atom sip)
 {
-  u3_ward* rev_u = c3_malloc(sizeof(*rev_u));
+  u3_ward* rev_u = c3_calloc(sizeof(*rev_u));
   rev_u->tcp_u.data = rev_u;
   rev_u->tim_u.data = rev_u;
   rev_u->con_u = con_u;
-  rev_u->sip = sip;
-  rev_u->por_s = 0; // set after opened
-  rev_u->won_u = 0;
-  rev_u->nex_u = 0;
-  rev_u->pre_u = 0;
 
+  u3r_chubs(0, 2, rev_u->who_d, sip);
   _proxy_ward_link(con_u, rev_u);
+
+  u3z(sip);
 
   return rev_u;
 }
@@ -2293,7 +2300,7 @@ _proxy_ward_plan(u3_ward* rev_u)
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
                      u3nc(u3k(u3A->sen), u3_nul));
 
-  u3_noun wis = u3nc(c3__wise, u3nq(u3k(rev_u->sip),
+  u3_noun wis = u3nc(c3__wise, u3nq(u3i_chubs(2, rev_u->who_d),
                                     rev_u->por_s,
                                     u3k(rev_u->con_u->sec),
                                     u3i_words(16, (c3_w*)rev_u->non_u.base)));
@@ -2305,7 +2312,7 @@ _proxy_ward_plan(u3_ward* rev_u)
 static void
 _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
 {
-  u3_ward* rev_u = _proxy_ward_new(con_u, sip);
+  u3_ward* rev_u = _proxy_ward_new(con_u, u3k(sip));
 
   uv_tcp_init(u3L, &rev_u->tcp_u);
 
@@ -2355,6 +2362,8 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
 
     // XX u3_lo_shut(c3y);
   }
+
+  u3z(sip);
 }
 
 /* _proxy_ward_connect_cb(): ward connection callback
@@ -2455,7 +2464,7 @@ _proxy_ward_resolve(u3_warc* cli_u)
     // XX revisit
     c3_assert( 0 != u3_Host.sam_u.dns_c );
 
-    u3_noun sip = u3dc("scot", 'p', u3k(cli_u->sip));
+    u3_noun sip = u3dc("scot", 'p', u3i_chubs(2, cli_u->who_d));
     c3_c* sip_c = u3r_string(sip);
     c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.sam_u.dns_c);
     cli_u->hot_c = c3_malloc(len_w);
@@ -2613,7 +2622,6 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
     else {
       // XX check if (sein:title sip) == our
       // XX check will
-      // XX extract bytes from hip, this could leak
       _proxy_ward_start(con_u, u3k(hip));
     }
   }
@@ -2875,21 +2883,8 @@ u3_http_ef_that(u3_noun tat)
     return;
   }
 
-  // XX extract bytes from sip, this could leak
-  cli_u = _proxy_warc_new(htp_u, (u3_atom)sip, (c3_s)por, (c3_o)sec);
-
-  // XX add to constructor
-  c3_w len_w = u3r_met(3, non);
-
-  c3_assert( 256 > len_w );
-
-  c3_y* non_y = c3_malloc(1 + len_w);
-  non_y[0] = (c3_y)len_w;
-
-  u3r_bytes(0, len_w, non_y + 1, non);
-
-  cli_u->non_u = uv_buf_init((c3_c*)non_y, 1 + len_w);
-
+  cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),
+                                                (c3_s)por, (c3_o)sec);
 
   if ( c3n == u3_Host.ops_u.net ) {
     cli_u->ipf_w = INADDR_LOOPBACK;

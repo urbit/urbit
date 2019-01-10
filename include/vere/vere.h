@@ -133,7 +133,7 @@
         c3_w             ipf_w;             //  ward ip
         c3_s             por_s;             //  ward port
         c3_o             sec;               //  secure connection
-        u3_atom          sip;               //  ward ship
+        c3_d             who_d[2];          //  ward ship
         c3_c*            hot_c;             //  ward hostname
         uv_buf_t         non_u;             //  nonce
         struct _u3_http* htp_u;             //  local server backlink
@@ -154,7 +154,7 @@
       typedef struct _u3_ward {
         uv_tcp_t         tcp_u;             //  listener handle
         uv_timer_t       tim_u;             //  expiration timer
-        u3_atom          sip;               //  reverse proxy for ship
+        c3_d             who_d[2];          //  reverse proxy for ship
         c3_s             por_s;             //  listening on port
         uv_buf_t         non_u;             //  nonce
         struct _u3_wcon* won_u;             //  candidate upstream connections
