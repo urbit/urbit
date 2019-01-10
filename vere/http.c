@@ -2566,45 +2566,52 @@ _proxy_parse_sni(const uv_buf_t* buf_u, c3_c** hot_c)
   return u3_pars_good;
 }
 
-/* _proxy_parse_ship(): determine destination for proxied request
+/* _proxy_parse_ship(): determine destination (unit ship) for proxied request
 */
 static u3_noun
 _proxy_parse_ship(c3_c* hot_c)
 {
-  u3_noun sip = u3_nul;
-  c3_c* dom_c;
-
   if ( 0 == hot_c ) {
-    return sip;
+    return u3_nul;
   }
+  else {
+    c3_c* dom_c = strchr(hot_c, '.');
 
-  dom_c = strchr(hot_c, '.');
+    if ( 0 == dom_c ) {
+      return u3_nul;
+    }
+    else {
+      //  length of the first subdomain
+      //
+      c3_w dif_w = dom_c - hot_c;
+      c3_w dns_w = strlen(PROXY_DOMAIN);
 
-  if ( 0 == dom_c ) {
-    return sip;
-  }
+      //  validate that everything after the first subdomain
+      //  matches the proxy domain
+      //  (skipped if networking is disabled)
+      //
+      if ( (c3y == u3_Host.ops_u.net) &&
+           ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
+             (0 != strncmp(dom_c + 1, PROXY_DOMAIN, dns_w)) ) )
+      {
+        return u3_nul;
+      }
+      else {
+        //  attempt to parse the first subdomain as a @p
+        //
+        u3_noun sip;
+        c3_c* sip_c = c3_malloc(2 + dif_w);
 
-  // XX revisit
-  c3_assert( 0 != u3_Host.sam_u.dns_c );
+        strncpy(sip_c + 1, hot_c, dif_w);
+        sip_c[0] = '~';
+        sip_c[1 + dif_w] = 0;
 
-  c3_w dif_w = dom_c - hot_c;
-  c3_w dns_w = strlen(u3_Host.sam_u.dns_c);
+        sip = u3dc("slaw", 'p', u3i_string(sip_c));
+        free(sip_c);
 
-  if ( (dns_w != strlen(hot_c) - (dif_w + 1)) ||
-       (0 != strncmp(dom_c + 1, u3_Host.sam_u.dns_c, dns_w)) ) {
-    return sip;
-  }
-
-  {
-    c3_c* sip_c = c3_malloc(2 + dif_w);
-    strncpy(sip_c + 1, hot_c, dif_w);
-    sip_c[0] = '~';
-    sip_c[1 + dif_w] = 0;
-
-    sip = u3dc("slaw", 'p', u3i_string(sip_c));
-    free(sip_c);
-
-    return sip;
+        return sip;
+      }
+    }
   }
 }
 
@@ -2623,8 +2630,9 @@ _proxy_dest(u3_pcon* con_u, u3_noun sip)
       _proxy_loop_connect(con_u);
     }
     else {
-      // XX check if (sein:title sip) == our
-      // XX check will
+      //  XX we should u3v_peek %j /=sein= to confirm
+      //  that we're sponsoring this ship
+      //
       _proxy_ward_start(con_u, u3k(hip));
     }
   }
