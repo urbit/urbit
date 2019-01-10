@@ -41,6 +41,10 @@ static void _http_form_free(void);
 
 static const c3_i TCP_BACKLOG = 16;
 
+//  XX temporary, add to u3_http_ef_form
+//
+#define PROXY_DOMAIN "arvo.network"
+
 /* _http_vec_to_meth(): convert h2o_iovec_t to meth
 */
 static u3_weak
@@ -2460,16 +2464,15 @@ _proxy_ward_resolve(u3_warc* cli_u)
   hin_u.ai_socktype = SOCK_STREAM;
   hin_u.ai_protocol = IPPROTO_TCP;
 
+  //  XX why the conditional?
+  //
   if ( 0 == cli_u->hot_c ) {
-    // XX revisit
-    c3_assert( 0 != u3_Host.sam_u.dns_c );
-
     u3_noun sip = u3dc("scot", 'p', u3i_chubs(2, cli_u->who_d));
     c3_c* sip_c = u3r_string(sip);
-    c3_w len_w = 1 + strlen(sip_c) + strlen(u3_Host.sam_u.dns_c);
+    c3_w len_w = 1 + strlen(sip_c) + strlen(PROXY_DOMAIN);
     cli_u->hot_c = c3_malloc(len_w);
     // incremented to skip '~'
-    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, u3_Host.sam_u.dns_c);
+    snprintf(cli_u->hot_c, len_w, "%s.%s", sip_c + 1, PROXY_DOMAIN);
 
     free(sip_c);
     u3z(sip);
