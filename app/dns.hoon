@@ -128,6 +128,43 @@
             ['X-Auth-Email' [email.auth.pro.aut ~]]
             ['X-Auth-Key' [key.auth.pro.aut ~]]
         ==
+      ::
+      ++  parse-raw-record
+        |=  aut-dom=turf
+        ^-  $-  json
+            (unit [=ship id=@ta tar=target])
+        =,  dejs:format
+        %+  cu
+          |=  [id=@t typ=@t nam=@t dat=@t]
+          ^-  (unit [=ship id=@ta tar=target])
+          ::  XX fix this
+          ::
+          =/  him  (ship-turf (cat 3 nam '.') aut-dom)
+          ?:  ?=(~ him)
+            ~
+          ?+  typ
+            ~
+          ::
+              %'A'
+            =/  adr  (rush dat lip:ag)
+            ?~  adr  ~
+            `[u.him `@ta`id %direct %if u.adr]
+          ::
+              %'CNAME'
+            ::  XX fix this
+            ::
+            =/  for  (ship-turf (cat 3 dat '.') aut-dom)
+            ?~  for  ~
+            `[u.him `@ta`id %indirect u.for]
+          ==
+        ::  XX parse dates, proxied, ttl?
+        ::
+        %-  ot  :~
+          'id'^so
+          'type'^so
+          'name'^so
+          'content'^so
+        ==
       --
   ::
   |_  aut=authority
@@ -198,14 +235,49 @@
     ^-  $-  json
         (pair (list [=ship id=@ta tar=target]) (unit @t))
     ?>  ?=(%fcloud -.pro.aut)
-    !!
+    =,  dejs:format
+    %+  cu
+      |=  $:  success=?
+              response=(list (unit [=ship id=@ta tar=target]))
+              paginate=[page=@ud per-page=@ud count=@ud total-count=@ud]
+          ==
+      ^-  (pair (list [=ship id=@ta tar=target]) (unit @t))
+      ?.  success  [~ ~]
+      :-  (murn response same)
+      ::  XX calculate next page number if applicable
+      ::
+      ~
+    ::  XX parse errors and messages?
+    ::
+    %-  ot  :~
+      'success'^bo
+      'result'^(ar (parse-raw-record dom.aut))
+      :-  'result_info'
+      %-  ot  :~
+        'page'^ni
+        'per_page'^ni
+        'count'^ni
+        'total_count'^ni
+      ==
+    ==
   ::  +parse-record: single record stored by provider
   ::
   ++  parse-record
     ^-  $-  json
         (unit [=ship id=@ta tar=target])
     ?>  ?=(%fcloud -.pro.aut)
-    !!
+    =,  dejs:format
+    %+  cu
+      |=  [success=? response=(unit [=ship id=@ta tar=target])]
+      ^-  (unit [=ship id=@ta tar=target])
+      ?.  success  ~
+      response
+    ::  XX parse errors and messages?
+    ::
+    %-  ot  :~
+      'success'^bo
+      'result'^(parse-raw-record dom.aut)
+    ==
   --
 ::  |gcloud: GCP provider
 ::
