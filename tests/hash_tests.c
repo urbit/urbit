@@ -15,42 +15,42 @@ static void
 _test_mug(void)
 {
   if ( 0x4d441035 != u3r_mug_string("Hello, world!") ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (a)\r\n");
     exit(1);
   }
 
   if ( 0x4d441035 != u3r_mug(u3i_string("Hello, world!")) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (b)\r\n");
     exit(1);
   }
 
   if ( 0x79ff04e8 != u3r_mug_bytes(0, 0) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (c)\r\n");
     exit(1);
   }
 
   if ( 0x64dfda5c != u3r_mug(u3i_string("xxxxxxxxxxxxxxxxxxxxxxxxxxxx")) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (d)\r\n");
     exit(1);
   }
 
   if ( 0x389ca03a != u3r_mug_cell(0, 0) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (e)\r\n");
     exit(1);
   }
 
   if ( 0x389ca03a != u3r_mug_cell(1, 1) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (f)\r\n");
     exit(1);
   }
 
   if ( 0x5258a6c0 != u3r_mug_cell(0, u3qc_bex(32)) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (g)\r\n");
     exit(1);
   }
 
   if ( 0x2ad39968 != u3r_mug_cell(u3qa_dec(u3qc_bex(128)), 1) ) {
-    fprintf(stderr, "fail\r\n");
+    fprintf(stderr, "fail (h)\r\n");
     exit(1);
   }
 }
