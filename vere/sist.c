@@ -443,7 +443,7 @@ _sist_fast(u3_noun pas, c3_l key_l)
   c3_c*   yek_c = u3r_string(yek);
 
   printf("boot: saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
-  printf("boot: for real security, write it down and delete the file\r\n");
+  printf("boot: for more security, write it down and delete the file\r\n");
   {
     c3_i fid_i;
 
