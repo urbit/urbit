@@ -103,7 +103,20 @@
   |%
   ++  rpc
     |%
+    ::  The json-rpc-response mark doesn't parse the json for `res`
+    ::  so that we can efficiently ++hard the value in %jael.  It's
+    ::  much slower to ++hard json than to simply re-parse it.
+    ::
+    ++  raw-response
+      $~  [%fail *httr:eyre]
+      $%  [%result id=@t res=@t]
+          [%error id=@t code=@t message=@t]  ::TODO  data?
+          [%fail hit=httr:eyre]
+          [%batch bas=(list response)]
+      ==
+    ::
     ++  response  ::TODO  id should be optional
+      $~  [%fail *httr:eyre]
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
           [%fail hit=httr:eyre]
@@ -7174,11 +7187,12 @@
         |%
         ::  azimuth: data contract
         ::
-        ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
+        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  4.601.630
+        ++  launch  6.784.800
         --
       ::
       ::  hashes of ship event signatures
@@ -8483,6 +8497,7 @@
       ::  boot keys must match the contract
       ::
       ?.  =(pub:ex:cub pass.net)
+        ~&  [%key-mismatch pub:ex:cub pass.net]
         [%| %key-mismatch]
       ::  life must match the contract
       ::

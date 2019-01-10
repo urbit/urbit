@@ -1906,7 +1906,16 @@
       ~&  [%yikes cuz]
       +>.$
     ?>  ?=(%json-rpc-response mar)
-    =+  rep=~|(res ((hard response:rpc:jstd) q.res))
+    =+  raw-rep=~|(res ((hard raw-response:rpc:jstd) q.res))
+    =/  rep=response:rpc:jstd
+      ?-    -.raw-rep
+          %error   raw-rep
+          %fail    raw-rep
+          %batch   raw-rep
+          %result
+        ~|  raw-rep
+        [%result id.raw-rep (need (de-json:html res.raw-rep))]
+      ==
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
         ~&  'HTTP 405 error (expected if using infura)'
