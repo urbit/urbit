@@ -69,14 +69,6 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  json                                                ::  normal json value
-  $@  ~                                                 ::  null
-  $%  {$a p/(list json)}                                ::  array
-      {$b p/?}                                          ::  boolean
-      {$o p/(map @t json)}                              ::  object
-      {$n p/@ta}                                        ::  number
-      {$s p/@t}                                         ::  string
-  ==                                                    ::
 ++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream

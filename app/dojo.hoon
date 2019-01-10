@@ -52,7 +52,7 @@
               r/purl:eyre
           ==
           {$poke p/goal}                                ::  poke app
-          {$show p/?($0 $1 $2 $3)}                      ::  print val+type+hoon
+          {$show p/?($0 $1 $2 $3 $4 $5)}                ::  val/type/hoon/xray
           {$verb p/term}                                ::  store variable
           {$help p/(list term)}                         ::  look up help
       ==                                                ::
@@ -225,7 +225,7 @@
         ;~(plug (cold %pill dot) (most net sym))
         ;~(plug (cold %http lus) (stag %post dp-iden-url))
         ;~(plug (cold %http hep) (stag %put dp-iden-url))
-        (stag %show (cook $?($1 $2 $3) (cook lent (stun [1 3] wut))))
+        (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
       ==
     ::
     ++  parse-cables
@@ -590,7 +590,7 @@
         ==
       ::
           $flat
-        ?^  q.q.cay 
+        ?^  q.q.cay
           (dy-rash %tan [%leaf "not an atom"]~)
         (dy-rash %sav p.p.mad q.q.cay)
       ::
@@ -604,17 +604,46 @@
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
       ::
           $show
-        %+  dy-print  cay
-        =+  mar=|.(?:(=(%noun p.cay) ~ [%rose [~ "    " ~] >p.cay< ~]~))
-        ?-  p.p.mad
-          $0  ~
-          $1  [[%rose [~ "  " ~] (skol p.q.cay) ~] (mar)]
-          $2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] (mar)]
-          $3  ~
-        ==
+        |^  (prnt cay note)
+        ++  prnt  ?:  (gte p.p.mad 4)
+                    dy-xprint
+                  dy-print
+        ++  note  ^-  tang
+                  ?-  p.p.mad
+                    %0  ~
+                    %1  [[%rose [~ "  " ~] (skol p.q.cay) ~] maar]
+                    %2  [[%rose [~ "  " ~] (dy-show-type-noun p.q.cay) ~] maar]
+                    %3  ~
+                    %4  ~
+                    %5  [[%rose [~ "  " ~] (xskol p.q.cay) ~] maar]
+                  ==
+        ++  maar  ?:  =(%noun p.cay)  ~
+                  [[%rose [~ "    " ~] >p.cay< ~] ~]
+        --
       ==
     ::
     ++  dy-show  |=(cay/cage (dy-print cay ~))
+    ::
+    ::  Print a value (given as a cage) and a note (given as a tang).
+    ::
+    ++  dy-xprint
+      |=  {cay/cage tan/tang}
+      %+  dy-rash  %tan
+      %-  welp  :_  tan
+      ?+  p.cay  [(xsell q.cay)]~
+        $tang  ;;(tang q.q.cay)
+        $httr
+          =+  hit=;;(httr:eyre q.q.cay)
+          =-  (flop (turn `wall`- |=(a/tape leaf+(dash:us a '' ~))))
+          :-  "HTTP {<p.hit>}"
+          %+  weld
+            (turn q.hit |=({a/@t b/@t} "{(trip a)}: {(trip b)}"))
+          :-  i=""
+          t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
+      ==
+    ::
+    ::  Print a value (given as a cage) and a note (given as a tang).
+    ::
     ++  dy-print
       |=  {cay/cage tan/tang}
       %+  dy-rash  %tan
