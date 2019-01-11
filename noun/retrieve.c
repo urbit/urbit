@@ -1506,14 +1506,12 @@ u3r_mug_string(const c3_c *a_c)
 c3_w
 u3r_mug_words(const c3_w* key_w, c3_w len_w)
 {
-  c3_w siz_w = 0;
   c3_w byt_w = 0;
   c3_w wor_w;
 
-  while ( siz_w < len_w ) {
-    wor_w  = key_w[siz_w];
+  while ( 0 < len_w ) {
+    wor_w  = key_w[--len_w];
     byt_w += _(u3a_is_cat(wor_w)) ? u3r_met(3, wor_w) : 4;
-    siz_w++;
   }
 
   return u3r_mug_bytes((c3_y*)key_w, byt_w);
