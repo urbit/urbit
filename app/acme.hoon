@@ -309,9 +309,9 @@
       ::  rod: active, in-progress order
       ::
       rod=(unit order)
-      ::  pen: pending domains for next order
+      ::  next-order: queued domains for validation
       ::
-      pen=(unit (set turf))
+      next-order=(unit (map turf [idx=@ud valid=? try=@ud]))
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -428,20 +428,21 @@
     ~|  %renew-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ liv)      ~|(%no-live-config !!)
-    new-order:effect(pen `dom.u.liv)
+    =<  new-order:effect
+    (queue-next-order & dom.u.liv)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
     ^+  this
     ~|  %new-order-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=([~ ^] pen)  ~|(%no-domains !!)
+    ?.  ?=([~ ^] next-order)  ~|(%no-domains !!)
     =/  =json
       :-  %o  %-  my  :~
         :-  %identifiers
         :-  %a
         %+  turn
-          ~(tap in `(set turf)`u.pen)
+          ~(tap in ~(key by `(map turf *)`u.next-order))
         |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
       ==
     (stateful-request %new-order /(scot %da now.bow) new-order.dir json)
@@ -451,14 +452,14 @@
     ^+  this
     ~|  %cancel-order-effect-fail
     ?>  ?=(^ rod)
-    ::  save failed order for future autopsy
+    ::  XX get failure reason
+    ::  domains might already be validated
     ::
-    =.  fal.hit  [u.rod fal.hit]
-    ::  copy order domain(s), clear order, try again soon
-    ::
+    =>  (queue-next-order & dom.u.rod)
+    =>  cancel-current-order
     ::  XX backoff, count retries, how long, etc.
     ::
-    (retry:effect(rod ~, pen `dom.u.rod) /new-order ~m10)
+    (retry:effect /new-order ~m10)
   ::  +finalize-order: finalize completed order
   ::
   ++  finalize-order
@@ -673,7 +674,7 @@
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
-    ?~(pen this new-order:effect)
+    ?~(next-order this new-order:effect)
   ::  XX rekey
   ::
   ::  +new-order: order created, begin processing authorizations
@@ -698,7 +699,7 @@
       this
     ::  XX delete order if not?
     ::
-    ?>  ?=(^ pen)
+    ?>  ?=(^ next-order)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     =/  ego=purl  (need (de-purl:html loc))
@@ -707,12 +708,13 @@
     ::
     =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
+    =/  dom=(set turf)  ~(key by u.next-order)
     ::  XX maybe generate key here?
     ::
-    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in u.pen))
+    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom))
     =/  dor=order
-      [dom=u.pen sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
-    get-authz:effect(rod `dor, pen ~)
+      [dom sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
+    get-authz:effect(rod `dor, next-order ~)
   ::  +finalize-order: order finalized, poll for certificate
   ::
   ++  finalize-order
@@ -1187,6 +1189,31 @@
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
   ==
+::  +queue-next-order: enqueue domains for validation
+::
+++  queue-next-order
+  |=  [valid=? dom=(set turf)]
+  ^+  this
+  %=  this  next-order
+    :-  ~
+    %+  roll
+      ~(tap in dom)
+    |=  [=turf state=(map turf [idx=@ud valid=? try=@ud])]
+    (~(put by state) turf [~(wyt by state) valid try=0])
+  ==
+::  +cancel-current-order: and archive failure for future autopsy
+::
+::    XX we may have pending moves out for this order
+::    put dates in wires, check against order creation date?
+::    or re-use order-id?
+::
+++  cancel-current-order
+  ^+  this
+  ?~  rod  this
+  %=  this
+    rod      ~
+    fal.hit  [u.rod fal.hit]
+  ==
 ::  +add-order: add new certificate order
 ::
 ++  add-order
@@ -1196,18 +1223,8 @@
     ~|(%acme-empty-certificate-order !!)
   ?:  ?=(?(%earl %pawn) (clan:title our.bow))
     this
-  ::  set pending order
-  ::
-  =.  pen  `dom
-  ::  archive active order if exists
-  ::
-  ::    XX we may have pending moves out for this order
-  ::    put dates in wires, check against order creation date?
-  ::    or re-use order-id?
-  ::
-  =?  fal.hit  ?=(^ rod)  [u.rod fal.hit]
-  =.  rod  ~
-  ::
+  =.  ..this  (queue-next-order | dom)
+  =.  ..this  cancel-current-order
   =/  msg=tape
     =-  "requesting an https certificate for {(trip -)}"
     (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
