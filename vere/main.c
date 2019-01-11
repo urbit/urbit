@@ -75,6 +75,7 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
+  u3_Host.ops_u.can = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.etn = c3n;
@@ -97,7 +98,9 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.raf_c = 0;
   u3_Host.ops_u.nam_c = 0;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:K:A:H:w:u:j:e:E:f:F:k:p:LabcdgqstvxPDRS")) != -1 ) {
+  while ( -1 != (ch_i=getopt(argc, argv,
+                 "G:B:K:A:H:w:u:j:e:E:f:F:k:m:p:LabcCdgqstvxPDRS")) ) {
+
     switch ( ch_i ) {
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
@@ -160,6 +163,10 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
+      case 'm': {
+        u3_Host.ops_u.sap_c = strdup(optarg);
+        break;
+      }
       case 'p': {
         if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
           return c3n;
@@ -174,6 +181,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
+      case 'C': { u3_Host.ops_u.can = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
@@ -250,12 +258,47 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.fak_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -F cannot be used together\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.ets_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -E cannot be used together\n");
+    return c3n;
+  }
+  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -C cannot be used together\n");
+    return c3n;
+  }
+  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.ets_c != 0 ) {
+    fprintf(stderr, "-C and -E cannot be used together\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.sap_c == 0 && u3_Host.ops_u.can == c3n ) {
+
+    u3_Host.ops_u.sap_c =
+        "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
+  }
+
+  if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
+    fprintf(stderr, "-B and -u cannot be used together\n");
+    return c3n;
 
   } else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
 
-    u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+    u3_Host.ops_u.url_c =
+      "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
 
   } else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0

@@ -581,6 +581,7 @@
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
+        c3_o    can;                        //  -C, chain-only, no eth snapshot
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -596,6 +597,7 @@
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
         c3_s    rop_s;                      //  -l, raft port
+        c3_c*   sap_c;                      //  -m, eth snapshot url
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_o    pro;                        //  -P, profile
         c3_s    por_s;                      //  -p, ames port

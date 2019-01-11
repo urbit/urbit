@@ -259,14 +259,66 @@ u3_dawn_vent(u3_noun seed)
   u3_noun ship = u3h(seed);
   u3_noun rank = u3do("clan:title", u3k(ship));
 
-  //  load snapshot if exists
+  //  load snapshot from file
   //
   if ( 0 != u3_Host.ops_u.ets_c ) {
     fprintf(stderr, "boot: loading ethereum snapshot\r\n");
     u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
     sap = u3nc(u3_nul, raw_snap);
   }
+  //  load snapshot from HTTP URL
+  //
+  //    note: some duplicate code with _boot_home() in noun/manage.c
+  //
+  else if ( 0 != u3_Host.ops_u.sap_c ) {
+    c3_c ful_c[2048];
+    CURL *curl;
+    CURLcode result;
+    FILE *file;
+    long cod_l;
+
+    snprintf(ful_c, 2048, "%s/.urb/ethereum.snap", u3_Host.dir_c);
+    printf("dawn: downloading ethereum snapshot: fetching %s to %s\r\n",
+           u3_Host.ops_u.sap_c, ful_c);
+    fflush(stdout);
+
+    if ( !(curl = curl_easy_init()) ) {
+      fprintf(stderr, "failed to initialize libcurl\n");
+      fflush(stderr);
+      exit(1);
+    }
+    if ( !(file = fopen(ful_c, "w")) ) {
+      fprintf(stderr, "failed to open %s\n", ful_c);
+      fflush(stderr);
+      exit(1);
+    }
+    curl_easy_setopt(curl, CURLOPT_URL, u3_Host.ops_u.sap_c);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+    result = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+    fclose(file);
+    if ( CURLE_OK != result ) {
+      fprintf(stderr, "failed to fetch %s: %s\n",
+                      u3_Host.ops_u.sap_c, curl_easy_strerror(result));
+      fprintf(stderr,
+              "please fetch it manually and specify the location with -E\n");
+      exit(1);
+    }
+    if ( 300 <= cod_l ) {
+      fprintf(stderr, "error fetching %s: HTTP %ld\n", u3_Host.ops_u.sap_c, cod_l);
+      fprintf(stderr,
+              "please fetch it manually and specify the location with -E\n");
+      exit(1);
+    }
+    curl_easy_cleanup(curl);
+
+    u3_noun raw_snap = u3ke_cue(u3m_file(ful_c));
+    sap = u3nc(u3_nul, raw_snap);
+  }
+  //  no snapshot
+  //
   else {
+    printf("dawn: no ethereum snapshot specified\n");
     sap = u3_nul;
   }
 
