@@ -523,6 +523,19 @@
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
       [[151 %noun] %j our %deed da+now pur]
+    ::  +life-scry: for a +life
+    ::
+    ++  life-scry
+      ~/  %life-scry
+      |=  who=ship
+      ^-  (unit life)
+      =;  lyf
+        ?~(lyf ~ u.lyf)
+      ;;  (unit (unit life))
+      %-  (sloy-light ski)
+      =/  pur=spur
+        /(scot %p who)
+      [[151 %noun] %j our %life da+now pur]
     ::  +sein-scry: for sponsor
     ::
     ++  sein-scry
@@ -827,11 +840,8 @@
               ::  (to avoid dropping the packet, if possible).
               ::
               =?  lew.wod.dur.diz  ?=(~ lew.wod.dur.diz)
-                ::  we could get the life from the packet if %open
-                ::  for now, we guess 1 for the life
-                ::  XX revise
-                ::
-                (deed-scry her 1)
+                =/  life  (life-scry her)
+                ?~(life ~ (deed-scry her u.life))
               ::  if we have a deed, proceed
               ::
               ?^  lew.wod.dur.diz
@@ -1102,11 +1112,18 @@
           =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
           ::  if we don't have a public key for :her,
-          ::  request keys and proceed (skin will be %open)
+          ::  subscribe to %jael for keys and proceed
           ::
           ::    XX update state so we only ask once?
           ::
           =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer her])
+          ::  if we don't have a public key for :her,
+          ::  scry into %jael for them.
+          ::  (skin will only be %open if the scry is ~)
+          ::
+          =?  lew.wod.dur.diz  =(~ lew.wod.dur.diz)
+              =/  life  (life-scry her)
+              ?~(life ~ (deed-scry her u.life))
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
               %=  rol
