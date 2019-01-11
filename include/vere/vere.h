@@ -606,7 +606,7 @@
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    etn;                        //  -t, use snapshot exclusively to boot
+        c3_o    etn;                        //  -t, trust snapshot for pre-boot
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
         c3_o    veb;                        //  -v, verbose (inverse of -q)
