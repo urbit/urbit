@@ -1685,7 +1685,7 @@
     ^-  move
     %+  wrap-note  wir
     :^  %e  %hiss  ~
-    :+  %json-rpc-response  %hiss
+    :+  %httr  %hiss
     ?>  ?=(%| -.source)
     !>  (json-request node.p.source jon)
   ::
@@ -1905,17 +1905,9 @@
       ~_  q.res
       ~&  [%yikes cuz]
       +>.$
-    ?>  ?=(%json-rpc-response mar)
-    =+  raw-rep=~|(res ((hard raw-response:rpc:jstd) q.res))
-    =/  rep=response:rpc:jstd
-      ?-    -.raw-rep
-          %error   raw-rep
-          %fail    raw-rep
-          %batch   raw-rep
-          %result
-        ~|  raw-rep
-        [%result id.raw-rep (need (de-json:html res.raw-rep))]
-      ==
+    ?>  ?=(%httr mar)
+    =+  raw-rep=~|(res ((hard httr:eyre) q.res))
+    =+  rep=(httr-to-rpc-response raw-rep)
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
         ~&  'HTTP 405 error (expected if using infura)'
@@ -1945,6 +1937,31 @@
       =/  next-block  (slav %ud `@ta`i.t.t.t.cuz)
       (take-catch-up-step rep from-block next-block)
     ==
+  ::
+  ::  httr-to-rpc-response
+  ::
+  ++  httr-to-rpc-response
+    |=  hit/httr:eyre
+    ^-  response:rpc:jstd
+    ~|  hit
+    ?.  ?=($2 (div p.hit 100))
+      fail+hit
+    =/  a=json  (need (de-json:html q:(need r.hit)))
+    =,  dejs-soft:format
+    ^-  response:rpc:jstd
+    =;  dere
+      =+  res=((ar dere) a)
+      ?~  res  (need (dere a))
+      [%batch u.res]
+    |=  a=json
+    ^-  (unit response:rpc:jstd)
+    =/  res=(unit [@t json])
+      ::TODO  breaks when no id present
+      ((ot id+so result+some ~) a)
+    ?^  res  `[%result u.res]
+    ~|  a
+    :+  ~  %error  %-  need
+    ((ot id+so error+(ot code+no message+so ~) ~) a)
   ::
   ::  +take-new-filter: store filter-id and read it
   ::

@@ -103,18 +103,6 @@
   |%
   ++  rpc
     |%
-    ::  The json-rpc-response mark doesn't parse the json for `res`
-    ::  so that we can efficiently ++hard the value in %jael.  It's
-    ::  much slower to ++hard json than to simply re-parse it.
-    ::
-    ++  raw-response
-      $~  [%fail *httr:eyre]
-      $%  [%result id=@t res=@t]
-          [%error id=@t code=@t message=@t]  ::TODO  data?
-          [%fail hit=httr:eyre]
-          [%batch bas=(list response)]
-      ==
-    ::
     ++  response  ::TODO  id should be optional
       $~  [%fail *httr:eyre]
       $%  [%result id=@t res=json]
