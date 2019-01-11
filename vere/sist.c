@@ -943,6 +943,12 @@ _sist_rest()
       ron = u3i_words(lar_u.len_w, img_w);
       free(img_w);
 
+      //  this validation is disabled, as it broke when mug
+      //  was switched from FNV to Murmur3
+      //  event-log encryption is enabled, so any actual corruption
+      //  that this check would've caught will still be caught below
+      //
+#if 0
       if ( lar_u.mug_w !=
             u3r_mug_both(u3r_mug(ron),
                          u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
@@ -951,6 +957,7 @@ _sist_rest()
         uL(fprintf(uH, "rest: record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
       }
+#endif
 
       if ( c3__ov != lar_u.typ_w ) {
         u3z(ron);
