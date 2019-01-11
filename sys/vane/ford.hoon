@@ -4344,10 +4344,10 @@
           |=  [=truss sub-crane=^crane]
           ^-  compose-cranes
           ::
-          =/  =beam
-            =,  source-rail.scaffold
-            [[ship.disc desk.disc [%ud 0]] spur]
-          =/  hoon-parser  (vang & (en-beam beam))
+          =/  beam-to-render=beam
+            [[ship.disc desk.disc %ud 0] spur]:path-to-render
+          ::
+          =/  hoon-parser  (vang & (en-beam beam-to-render))
           ::
           =+  tuz=(posh:hoon-parser truss)
           ?~  tuz
