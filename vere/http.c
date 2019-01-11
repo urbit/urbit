@@ -2689,7 +2689,7 @@ _proxy_peek(u3_pcon* con_u)
     }
   }
 
-  if ( 0 !=  hot_c ) {
+  if ( 0 != hot_c ) {
     free(hot_c);
   }
 }
@@ -2909,7 +2909,7 @@ u3_http_ef_that(u3_noun tat)
       cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),
                                                     (c3_s)por, (c3_o)sec);
 
-      //  resolve to loopback if networking is disabling
+      //  resolve to loopback if networking is disabled
       //
       if ( c3n == u3_Host.ops_u.net ) {
         cli_u->ipf_w = INADDR_LOOPBACK;
