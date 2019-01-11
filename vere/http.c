@@ -2299,6 +2299,23 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
 static void
 _proxy_ward_plan(u3_ward* rev_u)
 {
+  u3_noun non;
+
+  {
+    c3_w* non_w = c3_malloc(64);
+    c3_w  len_w;
+
+    c3_rand(non_w);
+
+    non = u3i_words(16, non_w);
+    len_w = u3r_met(3, non);
+
+    //  the nonce is saved to authenticate u3_wcon
+    //  and will be freed with u3_ward
+    //
+    rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
+  }
+
   // XX confirm duct
   u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
                      u3nc(u3k(u3A->sen), u3_nul));
@@ -2306,7 +2323,7 @@ _proxy_ward_plan(u3_ward* rev_u)
   u3_noun wis = u3nc(c3__wise, u3nq(u3i_chubs(2, rev_u->who_d),
                                     rev_u->por_s,
                                     u3k(rev_u->con_u->sec),
-                                    u3i_words(16, (c3_w*)rev_u->non_u.base)));
+                                    non));
   u3v_plan(pax, wis);
 }
 
@@ -2353,24 +2370,11 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     }
 #endif
 
-    {
-      c3_w* non_w = c3_malloc(64);
-
-      c3_rand(non_w);
-
-      u3_noun non = u3i_words(16, non_w);
-      c3_w len_w = u3r_met(3, non);
-
-      rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
-
-      u3z(non);
-    }
-
     _proxy_ward_plan(rev_u);
 
+    //  XX how long?
+    //
     uv_timer_init(u3L, &rev_u->tim_u);
-
-    // XX how long?
     uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 300 * 1000, 0);
 
     // XX u3_lo_shut(c3y);
