@@ -950,7 +950,7 @@
     =/  =wire  (http-wire try %check-before)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
-      [[ext=`~.umd path=/static] query=~]
+      [[ext=`~.udon path=/static] query=~]
     (emit (request wire url %get ~ ~))
   ::  +fail: %direct target is invalid or inaccessible
   ::
@@ -1010,7 +1010,7 @@
     =/  =wire  (http-wire try %check-after)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%& dom]]
-      [[ext=`~.umd path=/static] query=~]
+      [[ext=`~.udon path=/static] query=~]
     (emit (request wire url %get ~ ~))
   ::  +bake: successfully bound
   ::
