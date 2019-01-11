@@ -1485,7 +1485,12 @@ u3r_mug_bytes(const c3_y *buf_y,
 c3_w
 u3r_mug_chub(c3_d num_d)
 {
-  return u3r_mug_bytes((c3_y*)&num_d, 8);
+  c3_w buf_w[2];
+
+  buf_w[0] = (c3_w)(num_d & 0xffffffffULL);
+  buf_w[1] = (c3_w)(num_d >> 32ULL);
+
+  return u3r_mug_words(buf_w, 2);
 }
 
 /* u3r_mug_string(): Compute the mug of `a`, LSB first.
@@ -1501,7 +1506,15 @@ u3r_mug_string(const c3_c *a_c)
 c3_w
 u3r_mug_words(const c3_w* key_w, c3_w len_w)
 {
-  return u3r_mug_bytes((c3_y*)key_w, 4 * len_w);
+  c3_w byt_w = 0;
+  c3_w wor_w;
+
+  while ( 0 < len_w ) {
+    wor_w  = key_w[--len_w];
+    byt_w += _(u3a_is_cat(wor_w)) ? u3r_met(3, wor_w) : 4;
+  }
+
+  return u3r_mug_bytes((c3_y*)key_w, byt_w);
 }
 
 /* u3r_mug_both(): Join two mugs.
