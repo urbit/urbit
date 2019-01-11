@@ -2215,11 +2215,10 @@ _proxy_wcon_peek_read_cb(uv_stream_t* upt_u,
 
     c3_w len_w = rev_u->non_u.len;
 
-    // XX await further reads if siz_w < len_w ?
     if ( ((len_w + 1) != siz_w) ||
          (len_w != buf_u->base[0]) ||
          (0 != memcmp(rev_u->non_u.base, buf_u->base + 1, len_w)) ) {
-      uL(fprintf(uH, "proxy: ward auth fail\n"));
+      // uL(fprintf(uH, "proxy: ward auth fail\n"));
       _proxy_wcon_unlink(won_u);
       _proxy_wcon_close(won_u);
     }
@@ -2343,6 +2342,16 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     // XX u3_lo_open();
 
     rev_u->por_s = ntohs(add_u.sin_port);
+
+#if 0
+    {
+      u3_noun who = u3dc("scot", 'p', u3k(sip));
+      c3_c* who_c = u3r_string(who);
+      fprintf(stderr, "\r\nward for %s started on %u\r\n", who_c, rev_u->por_s);
+      free(who_c);
+      u3z(who);
+    }
+#endif
 
     {
       c3_w* non_w = c3_malloc(64);
