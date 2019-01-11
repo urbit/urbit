@@ -62,20 +62,31 @@
          });
   });
 
-  // The subscription sends the time which makes the thing work.
-  //
-  c.subscribe("zod", "server", "/timer",
-              function(err) {
-                console.log("Failed initial connection: " + err);
-              },
-              function(json) {
-                console.log("Subscription update: ", json);
-                var message = document.getElementById("time");
-                message.innerHTML = json;
-              },
-              function() {
-                console.log("Subscription quit");
-              });
+  function doSubs() {
+    // The subscription sends the time which makes the thing work.
+    //
+    c.subscribe("zod", "server", "/timer",
+                function(err) {
+                  console.log("Failed initial connection: " + err);
+                },
+                function(json) {
+                  console.log("Subscription update: ", json);
+                  var message = document.getElementById("time");
+                  message.innerHTML = json;
+                },
+                function() {
+                  console.log("Subscription quit");
+
+                  //  resubscribe because Gall is broken
+                  //
+                  //    Galls queuing mechanism is broken and will
+                  //    break subscriptions whenever 20 messages have
+                  //    been sent.
+                  //
+                  doSubs();
+                });
+  }
+  doSubs();
   '''
 ::  +require-authorization: redirect to the login page when unauthenticated
 ::
@@ -196,7 +207,6 @@
   ^-  (quip move _this)
   ::  if we don't have a timer, set a timer.
   ?:  ?=(^ next-timer)
-    ~&  [%already-have-a-timer next-timer]
     [~ this]
   ::
   :-  [ost.bow %wait /timer (add now.bow ~s1)]~

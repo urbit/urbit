@@ -179,6 +179,9 @@
       ::  gall channel system
       ::
       [%channel ~]
+      ::  respond with the default file not found page
+      ::
+      [%four-oh-four ~]
   ==
 ::  +authentication-state: state used in the login system
 ::
@@ -283,7 +286,7 @@
   ==
 ::  channel-timeout: the delay before a channel should be reaped
 ::
-++  channel-timeout  ~s45
+++  channel-timeout  ~h12
 --
 ::  utilities
 ::
@@ -515,8 +518,9 @@
     //  connects to the EventSource if we are not currently connected
     //
     connectIfDisconnected() {
-      if (this.eventSource)
+      if (this.eventSource) {
         return;
+      }
 
       this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
       this.eventSource.onmessage = e => {
@@ -677,41 +681,37 @@
     ::
     =+  host=(get-header 'host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
-    ::  if no action matches, send the built in 404 page.
-    ::
-    ?~  action
-      %^  return-static-data-on-duct  404  'text/html'
-      (file-not-found-page url.http-request)
+    ~&  [%inbound-request-on duct method.http-request url.http-request]
     ::
     =/  authenticated  (request-is-logged-in:authentication http-request)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [u.action [authenticated secure address http-request] ~ ~ 0]
+      [action [authenticated secure address http-request] ~ ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::
-    ?-    -.u.action
+    ?-    -.action
     ::
         %gen
       ::
       =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
       ::
-      =-  [%cast [our desk.generator.u.action] %mime -]
+      =-  [%cast [our desk.generator.action] %mime -]
       ::
       :+  %call
         :+  %call
-          [%core [[our desk.generator.u.action] (flop path.generator.u.action)]]
+          [%core [[our desk.generator.action] (flop path.generator.action)]]
         ::  TODO: Figure out what goes in generators. We need to slop the
         ::  prelude with the arguments passed in.
         ::
-        [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.u.action [%da now]]] ~ ~])]
+        [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.action [%da now]]] ~ ~])]
       [%$ %noun !>([authenticated http-request])]
     ::
         %app
       :_  state
       :_  ~
-      :^  duct  %pass  /run-app/[app.u.action]
+      :^  duct  %pass  /run-app/[app.action]
       ^-  note
       :^  %g  %deal  [our our]
       ::  todo: i don't entirely understand gall; there's a way to make a gall
@@ -719,7 +719,7 @@
       ::  %handle-http-request type.
       ::
       ^-  cush:gall
-      :*  app.u.action
+      :*  app.action
           %poke
           %handle-http-request
           !>(inbound-request.connection)
@@ -730,6 +730,10 @@
     ::
         %channel
       (handle-request:by-channel secure authenticated address http-request)
+    ::
+        %four-oh-four
+      %^  return-static-data-on-duct  404  'text/html'
+      (file-not-found-page url.http-request)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -771,6 +775,11 @@
     ::
         %channel
       on-cancel-request:by-channel
+    ::
+        %four-oh-four
+      ::  it should be impossible for a 404 page to be asynchronous
+      ::
+      !!
     ==
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
@@ -778,10 +787,8 @@
     |=  [code=@ content-type=@t data=octs]
     ^-  [(list move) server-state]
     ::
-    :_  state
-    :_  ~
-    :+  duct  %give
-    :*  %http-response  %start
+    %-  handle-response
+    :*  %start
         status-code=code
         ^=  headers
           :~  ['content-type' content-type]
@@ -854,10 +861,8 @@
           '/'
         u.redirect
       ::
-      :_  state
-      :_  ~
-      :+  duct  %give
-      :*  %http-response  %start
+      %-  handle-response
+      :*  %start
           status-code=307
           ^=  headers
             :~  ['location' new-location]
@@ -974,13 +979,13 @@
     ::
     ++  on-cancel-request
       ^-  [(list move) server-state]
-      ::
-      ~&  [%channel-on-cancel-request duct]
       ::  lookup the session id by duct
       ::
       ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
         ~&  [%canceling-nonexistant-channel duct]
         [~ state]
+      ::
+      ~&  [%canceling-cancel duct]
       ::
       =/  expiration-time=@da  (add now channel-timeout)
       ::
@@ -1098,10 +1103,9 @@
         $(events [lines.p.head events])
       ::  send the start event to the client
       ::
-      =.  moves
-        :_  moves
-        :+  duct  %give
-        :*  %http-response  %start  200
+      =^  http-moves  state
+        %-  handle-response
+        :*  %start  200
             :~  ['content-type' 'text/event-stream']
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
@@ -1120,7 +1124,7 @@
         |=  =channel
         channel(events ~, state [%| duct])
       ::
-      [moves state]
+      [(weld http-moves moves) state]
     ::  +acknowledge-events: removes events before :last-event-id on :channel-id
     ::
     ++  acknowledge-events
@@ -1196,18 +1200,16 @@
       ?~  requests
         ::  this is a PUT request; we must mark it as complete
         ::
-        =.  moves
-          :_  moves
-          ^-  move
-          :+  duct  %give
-          :*  %http-response  %start
+        =^  http-moves  state
+          %-  handle-response
+          :*  %start
               status-code=200
               headers=~
               data=~
               complete=%.y
           ==
         ::
-        [(weld (flop gall-moves) moves) state]
+        [:(weld (flop gall-moves) http-moves moves) state]
       ::
       ?-    -.i.requests
           %ack
@@ -1281,6 +1283,7 @@
         (emit-event channel-id [(en-json:html json)]~)
       ::
           %quit
+        ~&  [%recieved-quit-from-gall channel-id]
         =/  =json
           =,  enjs:format
           %-  pairs  :~
@@ -1541,7 +1544,7 @@
   ::
   ++  get-action-for-binding
     |=  [raw-host=(unit @t) url=@t]
-    ^-  (unit action)
+    ^-  action
     ::  process :raw-host
     ::
     ::    If we are missing a 'Host:' header, if that header is a raw IP
@@ -1588,10 +1591,10 @@
     |-
     ::
     ?~  bindings
-      ~
+      [%four-oh-four ~]
     ::
     ?:  (path-matches path.binding.i.bindings parsed-url)
-      `action.i.bindings
+      action.i.bindings
     ::
     $(bindings t.bindings)
   --
@@ -1812,6 +1815,7 @@
       ?>  ?=([@ @ @t @ *] wire)
       =/  on-gall-response
         on-gall-response:by-channel:(per-server-event event-args)
+      ::  ~&  [%gall-response sign]
       =^  moves  server-state.ax
         (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
       [moves light-gate]
