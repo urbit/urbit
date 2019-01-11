@@ -510,31 +510,31 @@
   ++  am                                                ::    am
     ~%  %ames-am  ..is  ~
     |_  [our=ship now=@da fox=fort ski=sley]            ::  protocol engine
-    ::  +deed: scry for our deed
+    ::  +deed-scry: for a +deed at a +life
     ::
-    ++  deed
-      ~/  %deed
+    ++  deed-scry
+      ~/  %deed-scry
       |=  [who=ship lyf=life]
-      ^-  (unit ^deed)
+      ^-  (unit deed)
       =;  ded
         ?~(ded ~ u.ded)
-      ;;  (unit (unit ^deed))
+      ;;  (unit (unit deed))
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
       [[151 %noun] %j our %deed da+now pur]
-    ::  +sein: scry for sponsor
+    ::  +sein-scry: for sponsor
     ::
-    ++  sein
+    ++  sein-scry
       ~/  %sein
       |=  who=ship
       ;;  ship
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %sein da+now /(scot %p who)]
-    ::  +saxo: scry for sponsorship chain
+    ::  +saxo-scry: for sponsorship chain
     ::
-    ++  saxo
+    ++  saxo-scry
       ~/  %saxo
       |=  who=ship
       ;;  (list ship)
@@ -566,7 +566,7 @@
           law.ton
         ::  save our deed (for comet/moon communication)
         ::
-        (need (deed our life))
+        (need (deed-scry our life))
       ::
           val.ton
         ::  save our secrets, ready for action
@@ -741,13 +741,13 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =/  seg  (sein her)
+          =/  seg  (sein-scry her)
           =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong roc)
         ::  XX move this logic into %zuse, namespaced under %jael?
         ::
         ++  deng                                        ::    deng:ho:um:am
-          |=  law=(unit ^deed)                          ::  accept inline deed
+          |=  law=(unit deed)                           ::  accept inline deed
           ^+  diz
           ?:  |(=(~ law) =(lew.wod.dur.diz law))
             diz
@@ -787,7 +787,7 @@
                 ::  our sponsor
                 ::
                 ?&  !?=(%czar (clan:title our))
-                    =(her (sein our))
+                    =(her (sein-scry our))
                 ==
               ==
           diz(lew.wod.dur law)
@@ -831,7 +831,7 @@
                 ::  for now, we guess 1 for the life
                 ::  XX revise
                 ::
-                (deed her 1)
+                (deed-scry her 1)
               ::  if we have a deed, proceed
               ::
               ?^  lew.wod.dur.diz
@@ -841,14 +841,14 @@
               ::    XX TOFU is unnecessary if we include keys
               ::    for the full sponsorship chain in the boot event
               ::
-              ?:  =(her (sein our))
+              ?:  =(her (sein-scry our))
                 apse
               ::  if :her is a comet, or a moon of a known ship, proceed
               ::
               =/  =rank:title  (clan:title her)
               ?:  ?|  ?=(%pawn rank)
                       ?&  ?=(%earl rank)
-                          !=(~ lew.wod.dur:(myx:gus (sein her)))
+                          !=(~ lew.wod.dur:(myx:gus (sein-scry her)))
                   ==  ==
                 apse
               ::  otherwise, drop the packet
@@ -938,7 +938,7 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =/  seg  (sein her)
+            =/  seg  (sein-scry her)
             =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
             +>(+> (busk(diz (wast:diz ryn)) xong pax))
           ::
@@ -1090,7 +1090,7 @@
           |=  [gom=soup ham=meal]
           ::  ~&  [%wind her gom]
           ^+  +>
-          =/  seg  (sein her)
+          =/  seg  (sein-scry her)
           =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
           (busk xong feh)
@@ -1166,8 +1166,8 @@
         ::
         ++  xong                                        ::    xong:ho:um:am
           ^-  (list ship)                               ::  route unto
-          =/  fro  (saxo our)
-          =/  too  (saxo her)
+          =/  fro  (saxo-scry our)
+          =/  too  (saxo-scry her)
           =+  ^=  oot  ^-  (list ship)
               =|  oot=(list ship)
               |-  ^+  oot
@@ -1181,7 +1181,7 @@
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
         ^+  +>
-        =/  hoy  (tail (saxo our))
+        =/  hoy  (tail (saxo-scry our))
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
@@ -1318,7 +1318,7 @@
       ::
       =?  moz  ?&  ?=(%duke (clan:title her))
                    ?=(%king (clan:title our))
-                   =(our (~(sein am [our now fox ski]) her))
+                   =(our (~(sein-scry am [our now fox ski]) her))
                ==
         =/  cmd  [%meet her]
         =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]
