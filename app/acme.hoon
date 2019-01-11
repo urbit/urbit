@@ -272,21 +272,21 @@
 ::  +directory: ACME v2 service directory
 ::
 +=  directory
-  $:  ::  reg: registration url (newAccount)
+  $:  ::  register: registration url (newAccount)
       ::
-      reg=purl
-      ::  non: nonce creation url (newNonce)
+      register=purl
+      ::  nonce: nonce creation url (newNonce)
       ::
-      non=purl
-      ::  der: order creation url (newOrder)
+      nonce=purl
+      ::  new-order: order creation url (newOrder)
       ::
-      der=purl
-      ::  rev: certificate revocation url (revokeCert)
+      new-order=purl
+      ::  revoke: certificate revocation url (revokeCert)
       ::
-      rev=purl
-      ::  rek: account key revocation url (keyChange)
+      revoke=purl
+      ::  rekey: account key revocation url (keyChange)
       ::
-      rek=purl
+      rekey=purl
   ==
 ::  +acme: complete app state
 ::
@@ -399,7 +399,7 @@
     ^+  this
     ::  XX now?
     ::
-    (emit (request /acme/nonce/next/[nex] non.dir %get ~ ~))
+    (emit (request /acme/nonce/next/[nex] nonce.dir %get ~ ~))
   ::  +register: create ACME service account
   ::
   ::    Note: accepts services ToS.
@@ -414,7 +414,7 @@
       ::  XX now?
       ::
       /acme/register/(scot %p our.bow)
-    %^  signed-request  reg.dir  i.nonces
+    %^  signed-request  register.dir  i.nonces
     [%o (my [['termsOfServiceAgreed' b+&] ~])]
   ::  +renew: renew certificate
   ::
@@ -436,7 +436,7 @@
     %-  emit(nonces t.nonces)
     %+  request
       /acme/new-order/(scot %da now.bow)
-    %^  signed-request  der.dir  i.nonces
+    %^  signed-request  new-order.dir  i.nonces
     :-  %o  %-  my  :~
       :-  %identifiers
       :-  %a
@@ -870,7 +870,7 @@
   ::
   ::  +test-trial: accept response from challenge test
   ::
-  ::    Note that +save-trail:effect has no corresponding event.
+  ::    Note that +save-trial:effect has no corresponding event.
   ::
   ++  test-trial
     |=  [wir=wire rep=httr]
