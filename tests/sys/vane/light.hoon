@@ -1008,6 +1008,19 @@
     results2
   ==
 ::
+::
+++  test-prune-events
+  =/  q=(qeu [id=@ud lines=wall])  ~
+  =.  q  (~(put to q) [0 ~])
+  =.  q  (~(put to q) [1 ~])
+  =.  q  (~(put to q) [2 ~])
+  =.  q  (~(put to q) [3 ~])
+  =.  q  (~(put to q) [4 ~])
+  ::
+  =.  q  (prune-events:light-gate q 3)
+  ::
+  (expect-eq !>([~ [4 ~]]) !>(~(top to q)))
+::
 ++  light-call
   |=  $:  light-gate=_light-gate
           now=@da

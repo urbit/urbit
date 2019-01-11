@@ -291,6 +291,27 @@
 ::  utilities
 ::
 |%
+::  +prune-events: removes all items from the front of the queue up to :id
+::
+++  prune-events
+  |=  [q=(qeu [id=@ud lines=wall]) id=@ud]
+  ^+  q
+  ::  if the queue is now empty, that's fine
+  ::
+  ?~  q
+    ~
+  ::  todo: for some reason ~(nap to q) does not return +:split; silent corruption
+  ::
+  =+  split=~(get to q)
+  =/  head=[id=@ud lines=wall]  -:split
+  ::  if the head of the queue is newer than the acknowledged id, we're done
+  ::
+  ?:  (gte id.head id)
+    +:split
+  ::  otherwise, throw away the head now that it has been acknowledged
+  ::
+  $(q +:split)
+
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
@@ -681,7 +702,6 @@
     ::
     =+  host=(get-header 'host' header-list.http-request)
     =+  action=(get-action-for-binding host url.http-request)
-    ~&  [%inbound-request-on duct method.http-request url.http-request]
     ::
     =/  authenticated  (request-is-logged-in:authentication http-request)
     ::  record that we started an asynchronous response
@@ -1135,16 +1155,7 @@
         %+  ~(jab by session.channel-state.state)  channel-id
         |=  =channel
         ^+  channel
-        ::  if the queue is empty, don't do anything else
-        ::
-        ?~  maybe-top=~(top to events.channel)
-          channel
-        ::  if the oldest event is older than the event queue, pop it
-        ::
-        ?:  (gte last-event-id id.u.maybe-top)
-          $(events.channel ~(nap to events.channel))
-        ::
-        channel
+        channel(events (prune-events events.channel last-event-id))
       ==
     ::  +on-put-request: handles a PUT request
     ::
@@ -1213,7 +1224,12 @@
       ::
       ?-    -.i.requests
           %ack
-        !!
+        ::  client acknowledges that they have received up to event-id
+        ::
+        %_  $
+          state     (acknowledge-events channel-id event-id.i.requests)
+          requests  t.requests
+        ==
       ::
           %poke
         ::
@@ -1416,6 +1432,11 @@
         complete=%.y
     ==
   ::  +handle-response: check a response for correctness and send to earth
+  ::
+  ::    All outbound responses including %light generated responses need to go
+  ::    through this interface because we want to have one centralized place
+  ::    where we perform logging and state cleanup for connections that we're
+  ::    done with.
   ::
   ++  handle-response
     |=  =raw-http-response
