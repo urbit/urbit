@@ -984,9 +984,8 @@
               +>(..la (tock p.fud q.fud r.fud))
             ::
                 %bond
-              ::  ~&  [%bond q.fud r.fud]
-              ?>  =(lyf:sen:gus p.fud)
-              (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
+              ::  ~&  [%bond p.fud q.fud]
+              (deer p.fud q.fud ?-(kay %dead ~, %good [~ r.fud]))
             ::
                 %carp
               ::  =+  zol=(~(get by olz.weg) s.fud)
@@ -1115,7 +1114,7 @@
                 san  (~(put by san.rol) sex hen)
               ==
           %+  wind  [cha sex]
-          [%bond clon:diz cha sex val]
+          [%bond cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
