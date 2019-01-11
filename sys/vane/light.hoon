@@ -298,20 +298,17 @@
   ^+  q
   ::  if the queue is now empty, that's fine
   ::
-  ?~  q
+  ?:  =(~ q)
     ~
-  ::  todo: for some reason ~(nap to q) does not return +:split; silent corruption
   ::
-  =+  split=~(get to q)
-  =/  head=[id=@ud lines=wall]  -:split
+  =^  head=[id=@ud lines=wall]  q  ~(get to q)
   ::  if the head of the queue is newer than the acknowledged id, we're done
   ::
   ?:  (gte id.head id)
-    +:split
-  ::  otherwise, throw away the head now that it has been acknowledged
+    q
+  ::  otherwise, check next item
   ::
-  $(q +:split)
-
+  $
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
@@ -466,6 +463,10 @@
       //
       this.lastEventId = 0;
 
+      //  this last event id acknowledgment sent to the server
+      //
+      this.lastAcknowledgedEventId = 0;
+
       //  a registry of requestId to successFunc/failureFunc
       //
       //    These functions are registered during a +poke and are executed
@@ -521,17 +522,27 @@
 
     //  sends a JSON command command to the server.
     //
-    //    TODO: This should also bundle an acknowledgment of the last received
-    //    request id.
-    //
     sendJSONToChannel(j) {
       var req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
 
-      // TODO: Need to stuff an "ack" in here, too.
-      var x = JSON.stringify([j]);
-      req.send(x);
+      if (this.lastEventId == this.lastAcknowledgedEventId) {
+        var x = JSON.stringify([j]);
+        req.send(x);
+      } else {
+        //  we add an acknowledgment to clear the server side queue
+        //
+        //    The server side puts messages it sends us in a queue until we
+        //    acknowledge that we received it.
+        //
+        var x = JSON.stringify(
+          [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
+        console.log(x, this.lastEventId);
+        req.send(x);
+
+        this.lastEventId = this.lastAcknowledgedEventId;
+      }
 
       this.connectIfDisconnected();
     }
@@ -545,7 +556,7 @@
 
       this.eventSource = new EventSource(this.channelURL(), {withCredentials:true});
       this.eventSource.onmessage = e => {
-        this.lastEventId = e.id;
+        this.lastEventId = e.lastEventId;
 
         var obj = JSON.parse(e.data);
         if (obj.response == "poke") {
@@ -1181,7 +1192,7 @@
       ::  parse the json into an array of +channel-request items
       ::
       ?~  maybe-requests=(parse-channel-request u.maybe-json)
-        ~&  %no-parse
+        ~&  [%no-parse u.maybe-json]
         %^  return-static-data-on-duct  400  'text/html'
         (internal-server-error %.y url.http-request ~)
       ::  while weird, the request list could be empty
