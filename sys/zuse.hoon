@@ -338,7 +338,7 @@
     ==                                                  ::
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
-        {$bond p/life q/path r/@ud s/*}                 ::  message
+        {$bond p/path q/@ud r/*}                        ::  message
         {$carp p/@ q/@ud r/@ud s/flap t/@}              ::  skin+inx+cnt+hash
         {$fore p/ship q/(unit lane) r/@}                ::  forwarded packet
     ==                                                  ::
