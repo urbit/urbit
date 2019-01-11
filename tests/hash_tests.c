@@ -88,10 +88,6 @@ _test_mug(void)
       fprintf(stderr, "fail (i) (4)\r\n");
       exit(1);
     }
-
-    free(str_w);
-    free(str_y);
-    u3z(str);
   }
 }
 
