@@ -328,7 +328,7 @@ u3_dawn_vent(u3_noun seed)
   //
   c3_c* url_c = ( 0 != u3_Host.ops_u.eth_c ) ?
     u3_Host.ops_u.eth_c :
-    "https://ropsten.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
+    "https://mainnet.infura.io/v3/196a7f37c7d54211b4a07904ec73ad87";
 
   //  pin block number
   //
