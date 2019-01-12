@@ -1245,7 +1245,7 @@ u3_sist_boot(void)
         sed = sist_key(des);
       }
       else {
-        sed = u3_dawn_come(u3_nul);
+        sed = u3_dawn_come();
       }
 
       u3A->fak = c3n;

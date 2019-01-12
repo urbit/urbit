@@ -297,7 +297,7 @@ _dawn_turf(c3_c* dns_c)
   return tuf;
 }
 
-/* u3_dawn_vent(): validatated boot event
+/* u3_dawn_vent(): validated boot event
 */
 u3_noun
 u3_dawn_vent(u3_noun seed)
