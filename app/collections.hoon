@@ -8,11 +8,11 @@
 ::  cols:
 ::
 ::    run collections-item renderer on children of /web/collections
-::    combine with a bunted config in a +collection structure defined in 
+::    combine with a bunted config in a +collection structure defined in
 ::    /lib/collections because the top level collection has no config file
 ::
 ::    whenever any of the clay files that compose this renderer change, this app
-::    will recompile and the +prep arm will fire. we then check which files 
+::    will recompile and the +prep arm will fire. we then check which files
 ::    changed and notify the corresponding hall circle of that change
 ::
 /=  cols
@@ -24,8 +24,8 @@
 =,  collections
 =,  space:userlib
 ::
-::  state: 
-::    
+::  state:
+::
 ::    stores the collection built by above by :cols so that we can compare old
 ::    and new versions whenever the rendered data changes
 ::
@@ -77,7 +77,7 @@
     ==
   ==
 ::
-::  +mack: 
+::  +mack:
 ::
 ::    recieve acknowledgement for permissions changes, print error if it failed
 ::
@@ -113,8 +113,8 @@
   ::
   :_  this
   :_  ~
-  :*  ost.bol  %poke  
-      /forward-collections-action  
+  :*  ost.bol  %poke
+      /forward-collections-action
       [who.act %collections]
       %collections-action  act
   ==
@@ -203,7 +203,7 @@
     [~ this]
   ==
 ::
-::  +quit: 
+::  +quit:
 ::
 ++  quit
   |=  [wir=wire err=(unit tang)]
@@ -248,14 +248,14 @@
   ::  %circles: subscribe to the configuration of each of our circles
   ::
       %circles
-    ?>  ?=(%circles -.piz) 
+    ?>  ?=(%circles -.piz)
     =/  noms=(set name:hall)  (~(dif in cis.piz) (sy ~[%inbox %i %public]))
     :_  this(our-circles.str.sta (~(uni in our-circles.str.sta) noms))
     ^-  (list move)
     %+  turn  ~(tap in noms)
     |=  nom=name:hall
     ^-  move
-    [ost.bol %peer /our/[nom] [our.bol %hall] /circle/[nom]/config] 
+    [ost.bol %peer /our/[nom] [our.bol %hall] /circle/[nom]/config]
   ::
   ::  %inbox: fill inbox config, messages and remote configs with prize data
   ::
@@ -291,7 +291,7 @@
     ::
     :-  ~
     %=    this
-        circles.str.sta  
+        circles.str.sta
       (~(put by circles.str.sta) [our.bol nom] `loc.cos.piz)
     ::
       our-circles.str.sta  (~(put in our-circles.str.sta) nom)
@@ -306,7 +306,7 @@
   ::~&  rumor+[wir rum]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
-  =;  upd=[mow=(list move) sta=_this] 
+  =;  upd=[mow=(list move) sta=_this]
     :_  sta.upd
     %+  welp  mow.upd
     %+  turn  (prey:pubsub:userlib /primary bol)
@@ -320,7 +320,7 @@
       %circles
     ::~&  %circles
     ?>  ?=(%circles -.rum)
-    =?    dms.str.sta  
+    =?    dms.str.sta
         ?&  (is-dm-circle our.bol cir.rum)
           !(~(has by dms.str.sta) cir.rum)
         ==
@@ -354,7 +354,7 @@
       ::
       ?:  (is-dm-circle src.rum.rum)
         =/  dms=[ini=ship env=(list envelope:hall)]
-          (~(got by dms.str.sta) nom.src.rum.rum) 
+          (~(got by dms.str.sta) nom.src.rum.rum)
         =.  env.dms  [nev.rum.rum env.dms]
         :-  ~
         %=  this
@@ -388,7 +388,7 @@
         ::~&  %inbox-config-source
         ?.  =(circ [our.bol %inbox])
           [~ this]
-        ::  we've added a source to our inbox  
+        ::  we've added a source to our inbox
         ::
         ?>  ?=(^ con.inbox.str.sta)
         ?:  add.dif.rum.rum
@@ -400,12 +400,12 @@
           %=    this
               con.inbox.str.sta  `conf
           ::
-              circles.str.sta 
+              circles.str.sta
             ?:  (~(has by circles.str.sta) cir.src.dif.rum.rum)
               circles.str.sta
             (~(put by circles.str.sta) cir.src.dif.rum.rum ~)
           ==
-        ::  we've removed a source from our inbox  
+        ::  we've removed a source from our inbox
         ::
         =/  conf=config:hall
           %=  u.con.inbox.str.sta
@@ -416,7 +416,7 @@
         %=    this
             con.inbox.str.sta  `conf
         ::
-            circles.str.sta 
+            circles.str.sta
           ?:  =(our.bol hos.cir.src.dif.rum.rum)
             circles.str.sta
           (~(del by circles.str.sta) cir.src.dif.rum.rum)
@@ -451,19 +451,23 @@
     ::~&  %invites
     ?>  ?=(%circle -.rum)
     ?>  ?=(%gram -.rum.rum)
-    ?>  ?=(%inv -.sep.gam.nev.rum.rum)
-    =/  circ=circle:hall  cir.sep.gam.nev.rum.rum
-    ?:  (is-dm-circle circ)
-      =/  who=(set ship)  (sy (rash nom.circ (more dot fed:ag)))
-      =/  act=poke  [%hall-action %newdm who]
-      :-  [ost.bol %poke /join-dm [our.bol %hall] act]~
-      %=  this
-        invites.str.sta  [nev.rum.rum invites.str.sta]
-        dms.str.sta      (~(put by dms.str.sta) nom.circ hos.circ ~)
-      ==
-    =/  act=poke  [%hall-action %source %inbox & (sy [circ ~] ~)]
-    :-  ~
-    this(invites.str.sta [nev.rum.rum invites.str.sta])
+    ?+  -.sep.gam.nev.rum.rum
+      [~ this(invites.str.sta [nev.rum.rum invites.str.sta])]
+    ::
+        %inv
+      =/  circ=circle:hall  cir.sep.gam.nev.rum.rum
+      ?:  (is-dm-circle circ)
+        =/  who=(set ship)  (sy (rash nom.circ (more dot fed:ag)))
+        =/  act=poke  [%hall-action %newdm who]
+        :-  [ost.bol %poke /join-dm [our.bol %hall] act]~
+        %=  this
+          invites.str.sta  [nev.rum.rum invites.str.sta]
+          dms.str.sta      (~(put by dms.str.sta) nom.circ hos.circ ~)
+        ==
+      =/  act=poke  [%hall-action %source %inbox & (sy [circ ~] ~)]
+      :-  ~
+      this(invites.str.sta [nev.rum.rum invites.str.sta])
+    ==
   ::
   ::  %our:
   ::
