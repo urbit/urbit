@@ -8,6 +8,40 @@
 #include "all.h"
 #include "vere/vere.h"
 
+/* _dawn_oct_to_buf(): +octs to uv_buf_t
+*/
+static uv_buf_t
+_dawn_oct_to_buf(u3_noun oct)
+{
+  if ( c3n == u3a_is_cat(u3h(oct)) ) {
+    u3_lo_bail();
+  }
+
+  c3_w len_w  = u3h(oct);
+  c3_y* buf_y = c3_malloc(1 + len_w);
+  buf_y[len_w] = 0;
+
+  u3r_bytes(0, len_w, buf_y, u3t(oct));
+
+  u3z(oct);
+  return uv_buf_init((void*)buf_y, len_w);
+}
+
+/* _dawn_buf_to_oct(): uv_buf_t to +octs
+*/
+static u3_noun
+_dawn_buf_to_oct(uv_buf_t buf_u)
+{
+  u3_noun len = u3i_words(1, (c3_w*)&buf_u.len);
+
+  if ( c3n == u3a_is_cat(len) ) {
+    u3_lo_bail();
+  }
+
+  return u3nc(len, u3i_bytes(buf_u.len, (const c3_y*)buf_u.base));
+}
+
+
 /* _dawn_curl_alloc(): allocate a response buffer for curl
 */
 static size_t
@@ -74,37 +108,51 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
   return buf_u;
 }
 
-/* _dawn_oct_to_buf(): +octs to uv_buf_t
-*/
-static uv_buf_t
-_dawn_oct_to_buf(u3_noun oct)
-{
-  if ( c3n == u3a_is_cat(u3h(oct)) ) {
-    u3_lo_bail();
-  }
-
-  c3_w len_w  = u3h(oct);
-  c3_y* buf_y = c3_malloc(1 + len_w);
-  buf_y[len_w] = 0;
-
-  u3r_bytes(0, len_w, buf_y, u3t(oct));
-
-  u3z(oct);
-  return uv_buf_init((void*)buf_y, len_w);
-}
-
-/* _dawn_buf_to_oct(): uv_buf_t to +octs
+/* _dawn_get_jam(): GET a jammed noun from url_c
 */
 static u3_noun
-_dawn_buf_to_oct(uv_buf_t buf_u)
+_dawn_get_jam(c3_c* url_c)
 {
-  u3_noun len = u3i_words(1, (c3_w*)&buf_u.len);
+  CURL *curl;
+  CURLcode result;
+  long cod_l;
 
-  if ( c3n == u3a_is_cat(len) ) {
+  uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
+
+  if ( !(curl = curl_easy_init()) ) {
+    fprintf(stderr, "failed to initialize libcurl\n");
     u3_lo_bail();
   }
 
-  return u3nc(len, u3i_bytes(buf_u.len, (const c3_y*)buf_u.base));
+  // XX require TLS, pin default cert?
+
+  curl_easy_setopt(curl, CURLOPT_URL, url_c);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _dawn_curl_alloc);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+
+  result = curl_easy_perform(curl);
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+
+  // XX retry?
+  if ( CURLE_OK != result ) {
+    fprintf(stderr, "failed to fetch %s: %s\n",
+                    url_c, curl_easy_strerror(result));
+    u3_lo_bail();
+  }
+  if ( 300 <= cod_l ) {
+    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3_lo_bail();
+  }
+
+  curl_easy_cleanup(curl);
+
+  //  throw away the length from the octs
+  //
+  u3_noun octs = _dawn_buf_to_oct(buf_u);
+  u3_noun jammed = u3k(u3t(octs));
+  u3z(octs);
+
+  return u3ke_cue(jammed);
 }
 
 /* _dawn_eth_rpc(): ethereum JSON RPC with request/response as +octs
@@ -268,51 +316,8 @@ u3_dawn_vent(u3_noun seed)
   }
   //  load snapshot from HTTP URL
   //
-  //    note: some duplicate code with _boot_home() in noun/manage.c
-  //
   else if ( 0 != u3_Host.ops_u.sap_c ) {
-    c3_c ful_c[2048];
-    CURL *curl;
-    CURLcode result;
-    FILE *file;
-    long cod_l;
-
-    snprintf(ful_c, 2048, "%s/.urb/ethereum.snap", u3_Host.dir_c);
-    printf("dawn: downloading ethereum snapshot: fetching %s to %s\r\n",
-           u3_Host.ops_u.sap_c, ful_c);
-    fflush(stdout);
-
-    if ( !(curl = curl_easy_init()) ) {
-      fprintf(stderr, "failed to initialize libcurl\n");
-      fflush(stderr);
-      exit(1);
-    }
-    if ( !(file = fopen(ful_c, "w")) ) {
-      fprintf(stderr, "failed to open %s\n", ful_c);
-      fflush(stderr);
-      exit(1);
-    }
-    curl_easy_setopt(curl, CURLOPT_URL, u3_Host.ops_u.sap_c);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-    result = curl_easy_perform(curl);
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
-    fclose(file);
-    if ( CURLE_OK != result ) {
-      fprintf(stderr, "failed to fetch %s: %s\n",
-                      u3_Host.ops_u.sap_c, curl_easy_strerror(result));
-      fprintf(stderr,
-              "please fetch it manually and specify the location with -E\n");
-      exit(1);
-    }
-    if ( 300 <= cod_l ) {
-      fprintf(stderr, "error fetching %s: HTTP %ld\n", u3_Host.ops_u.sap_c, cod_l);
-      fprintf(stderr,
-              "please fetch it manually and specify the location with -E\n");
-      exit(1);
-    }
-    curl_easy_cleanup(curl);
-
-    u3_noun raw_snap = u3ke_cue(u3m_file(ful_c));
+    u3_noun raw_snap = _dawn_get_jam(u3_Host.ops_u.sap_c);
     sap = u3nc(u3_nul, raw_snap);
   }
   //  no snapshot
@@ -351,7 +356,7 @@ u3_dawn_vent(u3_noun seed)
   }
 
   {
-    //  +point:constitution:ethe: on-chain state
+    //  +point:azimuth: on-chain state
     //
     u3_noun pot;
 
@@ -365,7 +370,7 @@ u3_dawn_vent(u3_noun seed)
     else if ( c3__pawn == rank ) {
       //  irrelevant, just bunt +point
       //
-      pot = u3v_wish("*point:constitution:ethe");
+      pot = u3v_wish("*point:azimuth");
     }
     else {
       u3_noun who;
@@ -478,36 +483,12 @@ u3_dawn_vent(u3_noun seed)
   return u3nc(c3__dawn, u3nq(seed, pon, zar, u3nq(tuf, bok, url, sap)));
 }
 
-/* u3_dawn_come(): mine a comet under star (unit)
+/* _dawn_come(): mine a comet under a list of stars
 */
-u3_noun
-u3_dawn_come(u3_noun star)
+static u3_noun
+_dawn_come(u3_noun stars)
 {
   u3_noun seed;
-
-  if ( u3_nul == star ) {
-    //  XX ~marzod hardcoded
-    //  choose from list, at random, &c
-    //
-    star = 256;
-  }
-  else {
-    //  XX parse and validate
-    //
-    u3_noun tar = u3k(u3t(star));
-    u3z(star);
-    star = tar;
-  }
-
-  {
-    u3_noun sar = u3dc("scot", 'p', u3k(star));
-    c3_c* tar_c = u3r_string(sar);
-
-    fprintf(stderr, "boot: mining a comet under %s\r\n", tar_c);
-    free(tar_c);
-    u3z(sar);
-  }
-
   {
     c3_w    eny_w[16];
     u3_noun eny;
@@ -515,7 +496,9 @@ u3_dawn_come(u3_noun star)
     c3_rand(eny_w);
     eny = u3i_words(16, eny_w);
 
-    seed = u3dc("come:dawn", u3k(star), u3k(eny));
+    fprintf(stderr, "boot: mining a comet\r\n");
+
+    seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
   }
 
@@ -528,7 +511,16 @@ u3_dawn_come(u3_noun star)
     u3z(who);
   }
 
-  u3z(star);
+  u3z(stars);
 
   return seed;
+}
+
+/* u3_dawn_come(): mine a comet under a list of stars we download
+*/
+u3_noun
+u3_dawn_come()
+{
+  return _dawn_come(
+      _dawn_get_jam("https://bootstrap.urbit.org/comet-stars.jam"));
 }
