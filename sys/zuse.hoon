@@ -8175,14 +8175,26 @@
   |%
   :: +come:dawn: mine a comet under a star
   ::
+  ::    Randomly generates comet addresses until we find one whose parent is
+  ::    in the list of supplied stars. Errors if any supplied ship
+  ::    is not a star.
+  ::
   ++  come
-    |=  [tar=ship eny=@uvJ]
-    ~|  [%come-not-king tar]
-    ?>  ?=(%king (clan:title tar))
+    |=  [tar=(list ship) eny=@uvJ]
+    ::
+    =|  stars=(set ship)
+    =.  stars
+      |-  ^+  stars
+      ?~  tar  stars
+      ::
+      ~|  [%come-not-king i.tar]
+      ?>  ?=(%king (clan:title i.tar))
+      $(tar t.tar, stars (~(put in stars) i.tar))
+    ::
     |-  ^-  seed:able:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
-    ?:  =(tar (^sein:title who))
+    ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
     $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
