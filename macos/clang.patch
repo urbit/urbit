@@ -1,0 +1,107 @@
+diff -ur cfe-7.0.1.src-orig/lib/Driver/ToolChains/Darwin.cpp cfe-7.0.1.src/lib/Driver/ToolChains/Darwin.cpp
+--- cfe-7.0.1.src-orig/lib/Driver/ToolChains/Darwin.cpp	2018-12-29 19:48:00.045000000 -0800
++++ cfe-7.0.1.src/lib/Driver/ToolChains/Darwin.cpp	2019-01-11 19:46:30.318000999 -0800
+@@ -21,6 +21,7 @@
+ #include "llvm/ADT/StringSwitch.h"
+ #include "llvm/Option/ArgList.h"
+ #include "llvm/Support/Path.h"
++#include "llvm/Support/Process.h"
+ #include "llvm/Support/ScopedPrinter.h"
+ #include "llvm/Support/TargetParser.h"
+ #include <cstdlib> // ::getenv
+@@ -237,23 +238,6 @@
+     }
+   }
+ 
+-  // Use -lto_library option to specify the libLTO.dylib path. Try to find
+-  // it in clang installed libraries. ld64 will only look at this argument
+-  // when it actually uses LTO, so libLTO.dylib only needs to exist at link
+-  // time if ld64 decides that it needs to use LTO.
+-  // Since this is passed unconditionally, ld64 will never look for libLTO.dylib
+-  // next to it. That's ok since ld64 using a libLTO.dylib not matching the
+-  // clang version won't work anyways.
+-  if (Version[0] >= 133) {
+-    // Search for libLTO in <InstalledDir>/../lib/libLTO.dylib
+-    StringRef P = llvm::sys::path::parent_path(D.Dir);
+-    SmallString<128> LibLTOPath(P);
+-    llvm::sys::path::append(LibLTOPath, "lib");
+-    llvm::sys::path::append(LibLTOPath, "libLTO.dylib");
+-    CmdArgs.push_back("-lto_library");
+-    CmdArgs.push_back(C.getArgs().MakeArgString(LibLTOPath));
+-  }
+-
+   // ld64 version 262 and above run the deduplicate pass by default.
+   if (Version[0] >= 262 && shouldLinkerNotDedup(C.getJobs().empty(), Args))
+     CmdArgs.push_back("-no_deduplicate");
+@@ -919,7 +903,17 @@
+ void MachO::AddLinkRuntimeLib(const ArgList &Args, ArgStringList &CmdArgs,
+                               StringRef DarwinLibName,
+                               RuntimeLinkOptions Opts) const {
+-  SmallString<128> Dir(getDriver().ResourceDir);
++  std::string rtPath;
++  if (Optional<std::string> rtPathValue =
++    llvm::sys::Process::GetEnv("COMPILER_RT_PATH")) {
++    rtPath = *rtPathValue;
++  }
++  else {
++    rtPath = getDriver().ResourceDir;
++  }
++
++  SmallString<128> Dir(rtPath);
++
+   llvm::sys::path::append(
+       Dir, "lib", (Opts & RLO_IsEmbedded) ? "macho_embedded" : "darwin");
+ 
+diff -ur cfe-7.0.1.src-orig/lib/Driver/ToolChains/Gnu.cpp cfe-7.0.1.src/lib/Driver/ToolChains/Gnu.cpp
+--- cfe-7.0.1.src-orig/lib/Driver/ToolChains/Gnu.cpp	2018-12-29 19:48:00.045000000 -0800
++++ cfe-7.0.1.src/lib/Driver/ToolChains/Gnu.cpp	2019-01-11 18:17:51.586000999 -0800
+@@ -382,10 +382,6 @@
+       CmdArgs.push_back("-export-dynamic");
+ 
+     if (!Args.hasArg(options::OPT_shared)) {
+-      const std::string Loader =
+-          D.DyldPrefix + ToolChain.getDynamicLinker(Args);
+-      CmdArgs.push_back("-dynamic-linker");
+-      CmdArgs.push_back(Args.MakeArgString(Loader));
+     }
+   }
+ 
+diff -ur cfe-7.0.1.src-orig/lib/Driver/ToolChains/Linux.cpp cfe-7.0.1.src/lib/Driver/ToolChains/Linux.cpp
+--- cfe-7.0.1.src-orig/lib/Driver/ToolChains/Linux.cpp	2018-12-29 19:48:00.045000000 -0800
++++ cfe-7.0.1.src/lib/Driver/ToolChains/Linux.cpp	2019-01-11 18:17:51.586000999 -0800
+@@ -213,18 +213,7 @@
+   llvm::Triple::ArchType Arch = Triple.getArch();
+   std::string SysRoot = computeSysRoot();
+ 
+-  // Cross-compiling binutils and GCC installations (vanilla and openSUSE at
+-  // least) put various tools in a triple-prefixed directory off of the parent
+-  // of the GCC installation. We use the GCC triple here to ensure that we end
+-  // up with tools that support the same amount of cross compiling as the
+-  // detected GCC installation. For example, if we find a GCC installation
+-  // targeting x86_64, but it is a bi-arch GCC installation, it can also be
+-  // used to target i386.
+-  // FIXME: This seems unlikely to be Linux-specific.
+-  ToolChain::path_list &PPaths = getProgramPaths();
+-  PPaths.push_back(Twine(GCCInstallation.getParentLibPath() + "/../" +
+-                         GCCInstallation.getTriple().str() + "/bin")
+-                       .str());
++  // Removed some code here that found programs like ld in "/..//bin"
+ 
+   Distro Distro(D.getVFS());
+ 
+@@ -238,15 +227,6 @@
+     ExtraOpts.push_back("relro");
+   }
+ 
+-  if (GCCInstallation.getParentLibPath().find("opt/rh/devtoolset") !=
+-      StringRef::npos)
+-    // With devtoolset on RHEL, we want to add a bin directory that is relative
+-    // to the detected gcc install, because if we are using devtoolset gcc then
+-    // we want to use other tools from devtoolset (e.g. ld) instead of the
+-    // standard system tools.
+-    PPaths.push_back(Twine(GCCInstallation.getParentLibPath() +
+-                     "/../bin").str());
+-
+   if (Arch == llvm::Triple::arm || Arch == llvm::Triple::thumb)
+     ExtraOpts.push_back("-X");
+ 

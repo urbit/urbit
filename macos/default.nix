@@ -25,7 +25,7 @@ let
   exe_suffix = "";
 
   clang = native.make_derivation rec {
-    name = "clang";
+    name = "clang-${version}";
 
     version = "7.0.1";
 
@@ -45,7 +45,7 @@ let
       sha256 = "0ca0qygrk87lhjk6cpv1wbmdfnficqqjsda3k7b013idvnralsc8";
     };
 
-    patches = [ ./clang_megapatch.patch ];
+    patches = [ ./clang.patch ];
 
     builder = ./clang_builder.sh;
 
@@ -55,9 +55,6 @@ let
       "-DCMAKE_BUILD_TYPE=Release " +
       # "-DCMAKE_BUILD_TYPE=Debug " +
       "-DLLVM_TARGETS_TO_BUILD=X86\;ARM " +
-      # ld64 uses dynamic_cast, requiring rtti
-      # Can probably remove this option now that ld64 doesn't depend on clang.
-      "-DLLVM_ENABLE_RTTI=ON " +
       "-DLLVM_ENABLE_ASSERTIONS=OFF";
   };
 
@@ -194,7 +191,7 @@ let
     name = "macos-toolchain";
     builder = ./toolchain_builder.sh;
     src_file = ./wrapper.cpp;
-    inherit host clang ld ranlib ar lipo strip sdk;
+    inherit host clang ld ranlib ar lipo strip sdk compiler_rt;
 
     CXXFLAGS =
       "-std=c++11 " +
