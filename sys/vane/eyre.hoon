@@ -1168,8 +1168,6 @@
   ++  render-tang                                         ::  tanks to manx
     ~/  %render-tang
     |=  {dep/@uvH tan/tang}
-    ~&  [%render-tang dep]
-    %-  (slog tan)
     ;html
       ;head
         ;link(rel "stylesheet", href "/lib/base.css");
