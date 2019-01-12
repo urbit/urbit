@@ -496,7 +496,8 @@ _dawn_come(u3_noun stars)
     c3_rand(eny_w);
     eny = u3i_words(16, eny_w);
 
-    fprintf(stderr, "boot: mining a comet. May take up to 30 minutes.\r\n");
+    fprintf(stderr, "boot: mining a comet. May take up to an hour.\r\n");
+    fprintf(stderr, "If you want to boot faster, get an Azimuth point.\r\n");
 
     seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
