@@ -1314,8 +1314,13 @@
           $red
         =+  url=(en-purl hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect+[p.pok url] !!)
+            ::  ignore css
+            ::
+            {~ $css}  !!
+        ::
             {~ $js}
           $(pez [%js auth-redir:js])
+        ::
             {~ $json}
           =/  red
             (pairs:enjs ok+b+| red+(tape:enjs url) ~)
