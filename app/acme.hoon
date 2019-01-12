@@ -458,7 +458,7 @@
     ::
     ::  XX backoff, count retries, how long, etc.
     ::
-    (retry:effect(rod ~, pen `dom.u.rod) /new-order (add now.bow ~m10))
+    (retry:effect(rod ~, pen `dom.u.rod) /new-order ~m10)
   ::  +finalize-order: finalize completed order
   ::
   ++  finalize-order
@@ -583,10 +583,10 @@
   ::  +retry: retry effect after timeout
   ::
   ++  retry
-    |=  [wir=wire wen=@da]
-    ::  XX validate wire and date
+    |=  [=wire lull=@dr]
+    ::  XX validate wire
     ::
-    (emit %wait [%acme wir] wen)
+    (emit %wait [%acme wire] (add now.bow lull))
   --
 ::  |event: accept event, emit next effect(s)
 ::
@@ -606,7 +606,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /directory (add now.bow ~s10))
+        (retry:effect /directory ~s10)
       ::  XX never happened yet, wat do?
       ::
       this
@@ -657,7 +657,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /register (add now.bow ~s10))
+        (retry:effect /register ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -692,7 +692,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /new-order (add now.bow ~s10))
+        (retry:effect /new-order ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -726,7 +726,7 @@
       ::
       ~&  [%finalize-order-fail wir rep]
       ~&  %retrying
-      (retry:effect /finalize-order (add now.bow ~s10))
+      (retry:effect /finalize-order ~s10)
     ::  check-order regardless of status code
     ::
     check-order:effect
@@ -742,7 +742,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /check-order (add now.bow ~s10))
+        (retry:effect /check-order ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -797,7 +797,7 @@
         ~&  %retrying
         ::  will re-attempt certificate download per order status
         ::
-        (retry:effect /check-order (add now.bow ~s10))
+        (retry:effect /check-order ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -819,7 +819,7 @@
     ::  set live config, install certificate, set renewal timer
     ::
     =<  install:effect
-    (retry:effect(liv `fig, rod ~) /renew (add now.bow ~d60))
+    (retry:effect(liv `fig, rod ~) /renew ~d60)
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -832,7 +832,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /get-authz (add now.bow ~s10))
+        (retry:effect /get-authz ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -874,7 +874,7 @@
         ::  retry timeouts
         ::  XX count retries, backoff
         ::
-        (retry:effect /test-trial (add now.bow ~s10))
+        (retry:effect /test-trial ~s10)
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
@@ -907,7 +907,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %finalize-trial-retrying
-        (retry:effect /finalize-trial (add now.bow ~s10))
+        (retry:effect /finalize-trial ~s10)
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
@@ -1182,7 +1182,7 @@
 ::    but we're preserving the pattern for future flexibility.
 ::
 ++  init
-  =<  (retry:effect /directory +(now.bow))
+  =<  (retry:effect /directory `@dr`1)
   %=  this
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
