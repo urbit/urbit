@@ -191,7 +191,7 @@ let
     name = "macos-toolchain";
     builder = ./toolchain_builder.sh;
     src_file = ./wrapper.cpp;
-    inherit host clang ld ranlib ar lipo strip sdk compiler_rt;
+    inherit host clang ld ranlib ar lipo strip;
 
     CXXFLAGS =
       "-std=c++11 " +
@@ -202,6 +202,7 @@ let
       "-DWRAPPER_HOST=\\\"${host}\\\" " +
       "-DWRAPPER_ARCH=\\\"${arch}\\\" " +
       "-DWRAPPER_SDK_PATH=\\\"${sdk}\\\" " +
+      "-DWRAPPER_COMPILER_RT_PATH=\\\"${compiler_rt}\\\" " +
       "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\"";
   };
 

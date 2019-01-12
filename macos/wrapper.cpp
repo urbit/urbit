@@ -123,6 +123,13 @@ int main(int argc, char ** argv)
     return 1;
   }
 
+  result = setenv("COMPILER_RT_PATH", WRAPPER_COMPILER_RT_PATH, 1);
+  if (result)
+  {
+    std::cerr << "wrapper failed to set COMPILER_RT_PATH" << std::endl;
+    return 1;
+  }
+
   std::string program_name = get_program_name(argv[0]);
 
   for (auto * p = prgms; p->name; p++)
