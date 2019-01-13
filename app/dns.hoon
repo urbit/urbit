@@ -651,9 +651,9 @@
       =.  try  +(try)
       (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
     ::
-        [%update ~]
+        [%update @ ~]
       =.  try  +(try)
-      (emit (wait (http-wire try /update) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -697,13 +697,13 @@
       (confirm for him id)
     ::  response to an existing-binding retrieval request
     ::
-        [%update ~]
+        [%update @ ~]
       ?.  =(200 p.rep)
         ?.  (gth try 5)
           =/  =tang  [(sell !>(rep)) ~]
           (emit (notify our.bow 'failed to retrieve bindings' tang))
         =.  try  +(try)
-        (emit (wait (http-wire try /update) (max ~h1 (backoff try))))
+        (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
       ?~  r.rep
         this
       (restore u.r.rep)
@@ -726,8 +726,9 @@
       =/  for=ship  (slav %p i.t.t.t.t.t.wire)
       (do-create him for try)
     ::
-        [%update ~]
-      (update ~ try)
+        [%update @ ~]
+      =*  page  i.t.t.t.wire
+      (update ?~(page ~ `page) try)
     ==
   ::  +init: establish zone authority (request confirmation)
   ::
@@ -740,7 +741,11 @@
   ++  update
     |=  [page=(unit @t) try=@ud]
     ^+  this
-    (emit (request (http-wire try /update) (existing:(provider aut.nam) page)))
+    =/  =hiss:eyre
+      (existing:(provider aut.nam) page)
+    =/  =wire
+      (http-wire try /update/[?~(page %$ u.page)])
+    (emit (request wire hiss))
   ::  +restore: restore existing remote nameserver records
   ::
   ++  restore
