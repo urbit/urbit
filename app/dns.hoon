@@ -645,15 +645,15 @@
     ::
         [%confirm ~]
       =.  try  +(try)
-      (emit (wait (http-wire try /confirm) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try /confirm) (min ~h1 (backoff try))))
     ::
         [%create @ %for @ ~]
       =.  try  +(try)
-      (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try t.t.wire) (min ~h1 (backoff try))))
     ::
         [%update @ ~]
       =.  try  +(try)
-      (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try t.t.wire) (min ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -703,7 +703,7 @@
           =/  =tang  [(sell !>(rep)) ~]
           (emit (notify our.bow 'failed to retrieve bindings' tang))
         =.  try  +(try)
-        (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
+        (emit (wait (http-wire try t.t.wire) (min ~h1 (backoff try))))
       ?~  r.rep
         this
       (restore u.r.rep)
@@ -879,11 +879,11 @@
     ::
         %check-before
       =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try %check-before) (min ~h1 (backoff try))))
     ::
         %check-after
       =.  try  +(try)
-      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try %check-after) (min ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -903,7 +903,7 @@
       ?:  (gth try 10)
         (fail %check-before [(sell !>(rep)) ~])
       =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try %check-before) (min ~h1 (backoff try))))
     ::  validating an established binding
     ::
         %check-after
@@ -913,7 +913,7 @@
       ::  XX notify after some number of failures
       ::
       =.  try  +(try)
-      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
+      (emit (wait (http-wire try %check-after) (min ~h1 (backoff try))))
     ==
   ::  +retry: re-attempt http request after timer
   ::
