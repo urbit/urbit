@@ -956,10 +956,14 @@
       ?:  =(nom.circ %c)
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax) our.bol)
-    %-  ta-hall-actions
-    :~  [%create nom.circ name %journal]  
-        [%source nom.parent & (sy `source:hall`[circ ~] ~)]
+    =/  acts=(list action:hall)
+    :~  [%source nom.parent & (sy `source:hall`[circ ~] ~)]
+        [%create nom.circ name %journal]  
     ==
+    ::  XX should we also source comment circles?
+    =?  acts  =(nom.parent %c)
+      [[%source %inbox & (sy `source:hall`[circ ~] ~)] acts]
+    (ta-hall-actions (flop acts))
   ::
   ++  ta-hall-lin
     ~/  %coll-ta-hall-lin
