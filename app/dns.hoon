@@ -878,26 +878,12 @@
       ~&([%tell %unknown-crash act] this)
     ::
         %check-before
-      ::  XX confirm max retries
-      ::
-      ?:  (gth try 3)
-        (fail %crash)
       =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (backoff try)))
+      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
     ::
         %check-after
-      =/  msg
-        %+  rap  3
-        :~  'failed to confirm binding '
-            (print-path t.wire)
-            ', retrying in ~m10'
-        ==
-      %-  emit:(emit (notify our.bow msg tang))
-      ::  no max retries, the binding has been created
-      ::  XX notify after some number of failures
-      ::
       =.  try  +(try)
-      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -914,16 +900,10 @@
         %check-before
       ?:  =(200 p.rep)
         bind
-      ::  cttp timeout
-      ::
-      ?:  =(504 p.rep)
-        %-  emit
-        =.  try  +(try)
-        (wait (http-wire try %check-before) (max ~h1 (backoff try)))
-      ::  XX specific messages per status code
-      ::  XX above some threshold?
-      ::
-      (fail %failed-request)
+      ?:  (gth try 10)
+        (fail %check-before [(sell !>(rep)) ~])
+      =.  try  +(try)
+      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
     ::  validating an established binding
     ::
         %check-after
@@ -932,9 +912,8 @@
       ::  no max retries, the binding has been created
       ::  XX notify after some number of failures
       ::
-      %-  emit
       =.  try  +(try)
-      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
     ==
   ::  +retry: re-attempt http request after timer
   ::
@@ -985,7 +964,7 @@
     ?>  ?=(^ rel)
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved:eyre p.tar.u.rel)
-      (fail %reserved-ip)
+      (fail %reserved-ip ~)
     =/  =wire  (http-wire try %check-before)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
@@ -994,7 +973,7 @@
   ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
-    |=  err=@tas
+    |=  [err=@tas =tang]
     ^+  this
     ?>  ?=(^ rel)
     ::  XX add failure-specific messages
@@ -1003,17 +982,26 @@
       ?+  err
           'dns binding failed'
       ::
+          %check-before
+        ?>  ?=(%direct -.tar.u.rel)
+        =/  addr  (scot %if p.tar.u.rel)
+        %+  rap  3
+        :~  'dns binding failed: '
+            'unable to reach you at '  addr  ' on port 80, '
+            'please confirm or correct your ipv4 address '
+            'and re-enter it with :dns|ip'
+        ==
+      ::
           %reserved-ip
         ?>  ?=(%direct -.tar.u.rel)
         =/  addr  (scot %if p.tar.u.rel)
         (cat 3 'unable to create dns binding for reserved ip address' addr)
       ==
-    ::  XX save failure state?
+    ::  XX save failed bindings somewhere?
     ::
-    %-  emit:(emit (notify him msg ~))
-    =/  msg
-      (rap 3 (scot %p him) ' fail: ' msg ~)
-    (notify our.bow msg ~)
+    %-  =<  emit(rel ~)
+        (emit (notify him msg ~))
+    (notify our.bow (rap 3 (scot %p him) ' fail: ' err ~) tang)
   ::  +bind: request binding for target
   ::
   ::    Since we may be an authority, we poke ourselves.
