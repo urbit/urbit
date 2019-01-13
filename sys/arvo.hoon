@@ -152,7 +152,7 @@
     ^+  +>
     =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
-    =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
+    =+  arg=[who ~2000.1.1 0 =>(~ |~(* ~))]
     =+  rig=(slym vase.vane arg)
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
