@@ -57,6 +57,8 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
++$  vane-sample
+  [our=ship now=@da eny=@uvJ ski=slyd]
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -152,7 +154,10 @@
     ^+  +>
     =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
-    =+  arg=[who ~2000.1.1 0 =>(~ |~(* ~))]
+    ::  XX should use real entropy and the real date
+    ::
+    =/  arg=vane-sample
+      [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
     =+  rig=(slym vase.vane arg)
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
@@ -183,7 +188,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *[@p @da @ slyd])
+        (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
       =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
@@ -196,7 +201,7 @@
     |=  {now/@da eny/@ ski/slyd}
     =^  rig  worm.vane
       ~|  [%failed-vane-activation-for lal]
-      (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
+      (~(slym wa worm.vane) vase.vane `vane-sample`[who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -362,7 +367,8 @@
       ^-  vase
       ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
         vase.vane                                           ::  unchanged, use old
-      sev(+<.q [*@p *@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
+      =|  sam=vane-sample
+      sev(+<.q sam(ski =>(~ |~(* ~))))                      ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
