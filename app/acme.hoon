@@ -364,6 +364,16 @@
       kid+s+kid.u.reg.act
     jwk+(pass:en:jwk key.act)
   ==
+::  +stateful-request: emit signed, nonce'd request
+::
+++  stateful-request
+  |=  [act=@tas =wire =purl =json]
+  ^+  this
+  ?~  nonces
+    (nonce:effect act)
+  %-  emit(nonces t.nonces)
+  %+  request  [%acme act wire]
+  (signed-request purl i.nonces json)
 ::  +bad-nonce: check if an http response is a badNonce error
 ::
 ++  bad-nonce
@@ -407,15 +417,10 @@
   ::
   ++  register
     ^+  this
-    ?~  nonces
-      (nonce %register)
-    %-  emit(nonces t.nonces, reg.act ~)
-    %+  request
-      ::  XX now?
-      ::
-      /acme/register/(scot %p our.bow)
-    %^  signed-request  register.dir  i.nonces
-    [%o (my [['termsOfServiceAgreed' b+&] ~])]
+    =/  =json  [%o (my [['termsOfServiceAgreed' b+&] ~])]
+    ::  XX date in wire?
+    ::
+    (stateful-request %register /(scot %p our.bow) register.dir json)
   ::  +renew: renew certificate
   ::
   ++  renew
@@ -431,19 +436,15 @@
     ~|  %new-order-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=([~ ^] pen)  ~|(%no-domains !!)
-    ?~  nonces
-      (nonce %new-order)
-    %-  emit(nonces t.nonces)
-    %+  request
-      /acme/new-order/(scot %da now.bow)
-    %^  signed-request  new-order.dir  i.nonces
-    :-  %o  %-  my  :~
-      :-  %identifiers
-      :-  %a
-      %+  turn
-        ~(tap in `(set turf)`u.pen)
-      |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
-    ==
+    =/  =json
+      :-  %o  %-  my  :~
+        :-  %identifiers
+        :-  %a
+        %+  turn
+          ~(tap in `(set turf)`u.pen)
+        |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
+      ==
+    (stateful-request %new-order /(scot %da now.bow) new-order.dir json)
   ::  +cancel-order: cancel failed order, set retry timer
   ::
   ++  cancel-order
@@ -470,13 +471,9 @@
     ::  XX revisit wrt rate limits
     ::
     ?>  ?=(%wake sas.u.rod)
-    ?~  nonces
-      (nonce %finalize-order)
-    %-  emit(nonces t.nonces)
-    %+  request
-      /acme/finalize-order/(scot %da now.bow)
-    %^  signed-request  fin.u.rod  i.nonces
-    [%o (my csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
+    =/  =json
+      [%o (my csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
+    (stateful-request %finalize-order /(scot %da now.bow) fin.u.rod json)
   ::  +check-order: check completed order for certificate availability
   ::
   ++  check-order
@@ -577,16 +574,10 @@
     ::
     ?>  ?=(%wake sas.u.rod)
     =*  aut  u.active.aut.u.rod
-    ?~  nonces
-      (nonce %finalize-trial)
-    %-  emit(nonces t.nonces)
-    %+  request
-      ::  XX idx in wire?
-      ::
-      /acme/finalize-trial/(scot %da now.bow)
     ::  empty object included for signature
+    ::  XX include index in wire?
     ::
-    (signed-request ego.cal.aut i.nonces [%o ~])
+    (stateful-request %finalize-trial /(scot %da now.bow) ego.cal.aut [%o ~])
   ::  XX delete-trial?
   ::
   ::  +retry: retry effect after timeout
