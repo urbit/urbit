@@ -503,6 +503,12 @@
       ~&  [%strange-wake wire]
       [~ this]
   ::
+      [%authority *]
+    ?~  nem
+      ~&  [%not-an-authority %wake wire]
+      [~ this]
+    abet:(~(retry bind u.nem) t.wire)
+  ::
       [%relay %him @ *]
     =/  him=ship  (slav %p i.t.t.wire)
     abet:(retry:(tell him) t.t.t.wire)
@@ -520,7 +526,7 @@
       %authority
     ~|  %authority-reset-wat-do
     ?<  ?=(^ nem)
-    abet:(init:bind aut.com)
+    abet:(init:bind aut.com 1)
   ::  create binding (if authority) and forward request
   ::
   ::    [%bind for=ship him=ship target]
@@ -638,20 +644,16 @@
       ~&([%bind %unknown-crash wire] this)
     ::
         [%confirm ~]
-      %-  emit(abort &)
-      (notify our.bow 'authority confirmation failed' tang)
+      =.  try  +(try)
+      (emit (wait (http-wire try /confirm) (max ~h1 (backoff try))))
     ::
-        [%create *]
-      ::  XX retry pending bindings
-      ::
-      =/  msg
-        (cat 3 'failed to create binding: ' (print-path t.t.wire))
-      (emit (notify our.bow msg tang))
+        [%create @ %for @ ~]
+      =.  try  +(try)
+      (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
     ::
-        [%update ~]
-      ::  XX retry binding retrieval
-      ::
-      (emit (notify our.bow 'failed to retrieve bindings' tang))
+        [%update @ ~]
+      =.  try  +(try)
+      (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -666,19 +668,23 @@
     ::
         [%confirm ~]
       ?:  =(200 p.rep)
-        (update ~)
+        (update ~ 1)
       %-  emit(abort &)
       ::  XX include response
       ::
-      (notify our.bow 'authority confirmation failed' ~)
+      =/  =tang  [(sell !>(rep)) ~]
+      (notify our.bow 'authority confirmation failed' tang)
     ::  response to a binding creation request
     ::
         [%create @ %for @ ~]
       ?.  =(200 p.rep)
-        ::  XX set a retry timeout?
+        ::  XX any retry-able errors?
         ::
-        ~&  [%authority-create-fail wire rep]
-        this
+        =/  msg
+          (cat 3 'failed to create binding: ' (print-path t.t.wire))
+        =/  =tang  [(sell !>(rep)) ~]
+        (emit (notify our.bow msg tang))
+      ::
       =/  him=ship  (slav %p i.t.t.t.wire)
       =/  for=ship  (slav %p i.t.t.t.t.t.wire)
       =/  id
@@ -691,27 +697,55 @@
       (confirm for him id)
     ::  response to an existing-binding retrieval request
     ::
-        [%update ~]
+        [%update @ ~]
       ?.  =(200 p.rep)
-        ::  XX retry
-        ::
-        this
+        ?.  (gth try 5)
+          =/  =tang  [(sell !>(rep)) ~]
+          (emit (notify our.bow 'failed to retrieve bindings' tang))
+        =.  try  +(try)
+        (emit (wait (http-wire try t.t.wire) (max ~h1 (backoff try))))
       ?~  r.rep
         this
       (restore u.r.rep)
     ==
+  ::  +retry: re-attempt http request after timer
+  ::
+  ++  retry
+    |=  =wire
+    ^+  this
+    ?>  ?=([%try @ @ *] wire)
+    =/  try  (slav %ud i.t.wire)
+    ?+  t.t.wire
+      ~&([%bind %unknown-retry wire] this)
+    ::
+        [%confirm ~]
+      (init aut.nam try)
+    ::
+        [%create @ %for @ ~]
+      =/  him=ship  (slav %p i.t.t.t.wire)
+      =/  for=ship  (slav %p i.t.t.t.t.t.wire)
+      (do-create him for try)
+    ::
+        [%update @ ~]
+      =*  page  i.t.t.t.wire
+      (update ?~(page ~ `page) try)
+    ==
   ::  +init: establish zone authority (request confirmation)
   ::
   ++  init
-    |=  aut=authority
+    |=  [aut=authority try=@ud]
     %-  emit(nam [aut ~ ~ ~])
-    (request (http-wire 0 /confirm) zone:(provider aut))
+    (request (http-wire try /confirm) zone:(provider aut))
   ::  +update: retrieve existing remote nameserver records
   ::
   ++  update
-    |=  page=(unit @t)
+    |=  [page=(unit @t) try=@ud]
     ^+  this
-    (emit (request (http-wire 0 /update) (existing:(provider aut.nam) page)))
+    =/  =hiss:eyre
+      (existing:(provider aut.nam) page)
+    =/  =wire
+      (http-wire try /update/[?~(page %$ u.page)])
+    (emit (request wire hiss))
   ::  +restore: restore existing remote nameserver records
   ::
   ++  restore
@@ -723,7 +757,7 @@
       (json-octs bod parse-list:(provider aut.nam))
     |-  ^+  this
     ?~  dat
-      ?~(page this (update page))
+      ?~(page this (update page 1))
     =/  nob=bound  [now.bow id.i.dat tar.i.dat ~]
     $(dat t.dat, bon.nam (~(put by bon.nam) ship.i.dat nob))
   ::  +create: bind :him, on behalf of :for
@@ -750,18 +784,23 @@
             =(tar cur.u.existing)
       ==
       (bond for him)
-    ::  create new or replace existing binding
+    ::  XX save :for relay state?
     ::
+    =.  pen.nam  (~(put by pen.nam) him tar)
+    (do-create him for 1)
+  ::  +do-create: create new or replace existing binding
+  ::
+  ++  do-create
+    |=  [him=ship for=ship try=@ud]
+    ^+  this
+    =/  tar  (~(got by pen.nam) him)
     =/  =wire
-      (http-wire 0 /create/(scot %p him)/for/(scot %p for))
+      (http-wire try /create/(scot %p him)/for/(scot %p for))
     =/  pre=(unit [id=@ta tar=target])
       =/  bon=(unit bound)  (~(get by bon.nam) him)
       ?~(bon ~ `[id.u.bon cur.u.bon])
     =/  req=hiss:eyre
       (create:(provider aut.nam) him tar pre)
-    ::  XX save :for relay state?
-    ::
-    =.  pen.nam  (~(put by pen.nam) him tar)
     (emit (request wire req))
   ::  +dependants: process deferred dependant bindings
   ::
@@ -839,26 +878,12 @@
       ~&([%tell %unknown-crash act] this)
     ::
         %check-before
-      ::  XX confirm max retries
-      ::
-      ?:  (gth try 3)
-        (fail %crash)
       =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (backoff try)))
+      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
     ::
         %check-after
-      =/  msg
-        %+  rap  3
-        :~  'failed to confirm binding '
-            (print-path t.wire)
-            ', retrying in ~m10'
-        ==
-      %-  emit:(emit (notify our.bow msg tang))
-      ::  no max retries, the binding has been created
-      ::  XX notify after some number of failures
-      ::
       =.  try  +(try)
-      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
     ==
   ::  +http-response: handle http response
   ::
@@ -875,16 +900,10 @@
         %check-before
       ?:  =(200 p.rep)
         bind
-      ::  cttp timeout
-      ::
-      ?:  =(504 p.rep)
-        %-  emit
-        =.  try  +(try)
-        (wait (http-wire try %check-before) (max ~h1 (backoff try)))
-      ::  XX specific messages per status code
-      ::  XX above some threshold?
-      ::
-      (fail %failed-request)
+      ?:  (gth try 10)
+        (fail %check-before [(sell !>(rep)) ~])
+      =.  try  +(try)
+      (emit (wait (http-wire try %check-before) (max ~h1 (backoff try))))
     ::  validating an established binding
     ::
         %check-after
@@ -893,9 +912,8 @@
       ::  no max retries, the binding has been created
       ::  XX notify after some number of failures
       ::
-      %-  emit
       =.  try  +(try)
-      (wait (http-wire try %check-after) (max ~h1 (backoff try)))
+      (emit (wait (http-wire try %check-after) (max ~h1 (backoff try))))
     ==
   ::  +retry: re-attempt http request after timer
   ::
@@ -937,7 +955,7 @@
     =.  rel  `[wen=now.bow addr dom=~ tar]
     ?:  ?=(%indirect -.tar)
       bind
-    (check-before 0)
+    (check-before 1)
   ::  +check-before: confirm %direct target is accessible
   ::
   ++  check-before
@@ -946,7 +964,7 @@
     ?>  ?=(^ rel)
     ?>  ?=(%direct -.tar.u.rel)
     ?:  (reserved:eyre p.tar.u.rel)
-      (fail %reserved-ip)
+      (fail %reserved-ip ~)
     =/  =wire  (http-wire try %check-before)
     =/  url=purl:eyre
       :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
@@ -955,7 +973,7 @@
   ::  +fail: %direct target is invalid or inaccessible
   ::
   ++  fail
-    |=  err=@tas
+    |=  [err=@tas =tang]
     ^+  this
     ?>  ?=(^ rel)
     ::  XX add failure-specific messages
@@ -964,17 +982,26 @@
       ?+  err
           'dns binding failed'
       ::
+          %check-before
+        ?>  ?=(%direct -.tar.u.rel)
+        =/  addr  (scot %if p.tar.u.rel)
+        %+  rap  3
+        :~  'dns binding failed: '
+            'unable to reach you at '  addr  ' on port 80, '
+            'please confirm or correct your ipv4 address '
+            'and re-enter it with :dns|ip'
+        ==
+      ::
           %reserved-ip
         ?>  ?=(%direct -.tar.u.rel)
         =/  addr  (scot %if p.tar.u.rel)
         (cat 3 'unable to create dns binding for reserved ip address' addr)
       ==
-    ::  XX save failure state?
+    ::  XX save failed bindings somewhere?
     ::
-    %-  emit:(emit (notify him msg ~))
-    =/  msg
-      (rap 3 (scot %p him) ' fail: ' msg ~)
-    (notify our.bow msg ~)
+    %-  =<  emit(rel ~)
+        (emit (notify him msg ~))
+    (notify our.bow (rap 3 (scot %p him) ' fail: ' err ~) tang)
   ::  +bind: request binding for target
   ::
   ::    Since we may be an authority, we poke ourselves.
@@ -997,7 +1024,7 @@
     ?>  ?=(^ rel)
     ::  XX track bound-state per-domain
     ::
-    (check-after(dom.u.rel `dom) 0)
+    (check-after(dom.u.rel `dom) 1)
   ::  +check-after: confirm binding propagation
   ::
   ++  check-after
