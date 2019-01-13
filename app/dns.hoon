@@ -526,7 +526,7 @@
       %authority
     ~|  %authority-reset-wat-do
     ?<  ?=(^ nem)
-    abet:(init:bind aut.com 0)
+    abet:(init:bind aut.com 1)
   ::  create binding (if authority) and forward request
   ::
   ::    [%bind for=ship him=ship target]
@@ -668,7 +668,7 @@
     ::
         [%confirm ~]
       ?:  =(200 p.rep)
-        (update ~ 0)
+        (update ~ 1)
       %-  emit(abort &)
       ::  XX include response
       ::
@@ -757,7 +757,7 @@
       (json-octs bod parse-list:(provider aut.nam))
     |-  ^+  this
     ?~  dat
-      ?~(page this (update page 0))
+      ?~(page this (update page 1))
     =/  nob=bound  [now.bow id.i.dat tar.i.dat ~]
     $(dat t.dat, bon.nam (~(put by bon.nam) ship.i.dat nob))
   ::  +create: bind :him, on behalf of :for
@@ -787,7 +787,7 @@
     ::  XX save :for relay state?
     ::
     =.  pen.nam  (~(put by pen.nam) him tar)
-    (do-create him for 0)
+    (do-create him for 1)
   ::  +do-create: create new or replace existing binding
   ::
   ++  do-create
@@ -955,7 +955,7 @@
     =.  rel  `[wen=now.bow addr dom=~ tar]
     ?:  ?=(%indirect -.tar)
       bind
-    (check-before 0)
+    (check-before 1)
   ::  +check-before: confirm %direct target is accessible
   ::
   ++  check-before
@@ -1024,7 +1024,7 @@
     ?>  ?=(^ rel)
     ::  XX track bound-state per-domain
     ::
-    (check-after(dom.u.rel `dom) 0)
+    (check-after(dom.u.rel `dom) 1)
   ::  +check-after: confirm binding propagation
   ::
   ++  check-after
