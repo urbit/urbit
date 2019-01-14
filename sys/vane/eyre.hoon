@@ -756,11 +756,12 @@
     ::
         $them                                           ::  outbound request
       ?~  p.kyz
-        =+  sud=(need (~(get by kes) hen))
+        ?~  sud=(~(get by kes) hen)
+          +>.$
         =.  +>.$
           %_  +>.$
-            mow    :_(mow [ged [%give %thus sud ~]])
-            q.ask  (~(del by q.ask) sud)
+            mow    :_(mow [ged [%give %thus u.sud ~]])
+            q.ask  (~(del by q.ask) u.sud)
             kes    (~(del by kes) hen)
           ==
         ::
