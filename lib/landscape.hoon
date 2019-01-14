@@ -15,7 +15,7 @@
     ;div#root
       ;+  inner
     ==
-    ;script@"/~~/landscape/js/index-min.js";
+    ;script@"/~~/landscape/js/index.js";
   ==
 ::
 ==
