@@ -1,20 +1,10 @@
-/* v/unix.c
+/* vere/unix.c
 **
-**  This file is in the public domain.
 */
-
-#include "all.h"
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
 #include <dirent.h>
-#include <stdint.h>
 #include <uv.h>
 #include <termios.h>
 #include <term.h>
@@ -22,6 +12,7 @@
 #include <libgen.h>
 #include <ftw.h>
 
+#include "all.h"
 #include "vere/vere.h"
 
 /* _unix_down(): descend path.

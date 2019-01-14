@@ -1,16 +1,9 @@
-/* v/main.c
+/* vere/main.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
@@ -20,8 +13,7 @@
 #include <dirent.h>
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
-
-#include "h2o.h"
+#include <h2o.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
