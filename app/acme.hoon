@@ -140,7 +140,7 @@
 ::
 +=  card
   $%  [%flog wire flog:dill]
-      [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+      [%hiss wire ~ %httr %hiss hiss:eyre]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
       [%well wire path (unit mime)]
@@ -340,12 +340,12 @@
 ++  abet
   ^-  (quip move _this)
   [(flop mov) this(mov ~)]
-::  +request: generic http request
+::  +request: unauthenticated http request
 ::
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%hiss wir [~ ~] %httr %hiss req]
+  [%hiss wir ~ %httr %hiss req]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -1228,4 +1228,3 @@
   ::
   ?.(=(act *acct) this init)
 --
-
