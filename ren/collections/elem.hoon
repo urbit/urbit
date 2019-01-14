@@ -152,7 +152,7 @@
                 =urb-suffix     "true";
               ;div
                 ;a.vanilla.text-mono.text-small.text-700.mr-4
-                  =href  "/~~/landscape/profile"
+                  =href  "/~~/{(trip owner)}/==/web/landscape/profile"
                   ; {(trip owner)}
                 ==
               ==
