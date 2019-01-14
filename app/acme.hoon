@@ -1,4 +1,4 @@
-/-  asn1
+/-  asn1, hall
 /+  base64, der, primitive-rsa, *pkcs, *jose
 =,  eyre
 =*  rsa  primitive-rsa
@@ -139,11 +139,16 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%flog wire flog:dill]
-      [%hiss wire ~ %httr %hiss hiss:eyre]
+  $%  [%hiss wire ~ %httr %hiss hiss:eyre]
+      [%poke wire dock poke]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
       [%well wire path (unit mime)]
+  ==
+::  +poke: outgoing app pokes
+::
++$  poke
+  $%  [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 ::  +nonce-next: next effect to emit upon receiving nonce
 ::
@@ -349,6 +354,18 @@
   %+  add
     (mul ~s1 (bex (dec try)))
   (mul ~s0..0001 (~(rad og eny.bow) 1.000))
+::  +notify: send :hall notification
+::
+++  notify
+  |=  [=cord =tang]
+  ^-  card
+  =/  msg=speech:hall
+    :+  %app  dap.bow
+    =/  line  [%lin & cord]
+    ?~(tang line [%fat [%tank tang] line])
+  =/  act
+    [%phrase (sy [our.bow %inbox] ~) [msg ~]]
+  [%poke / [our.bow %hall] %hall-action act]
 ::  +request: unauthenticated http request
 ::
 ++  request
@@ -653,9 +670,12 @@
       ::  XX remove next-order, cancel pending requests
       ::  XX more detailed error message
       ::
-      =/  msg=tape
-        "unable to reach {(trip (join '.' turf.i.item))}"
-      (emit [%flog / %text msg])
+      =/  msg=cord
+        %+  rap  3
+        :~  'unable to reach '  (scot %p our.bow)
+            ' via http at '  (join '.' turf.i.item)  ':80'
+        ==
+      (emit (notify msg ~))
     ?:  ?=(~ (skip ~(tap by u.next-order) |=([* * valid=? *] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
@@ -878,16 +898,22 @@
     ::  archive live config
     ::
     =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    ::  save new live config, clear active order
     ::
-    =/  msg=tape
-      =-  "received https certificate for {(trip -)}"
-      (join ', ' (turn ~(tap in dom.u.rod) |=(a=turf (join '.' a))))
-    %.  [%flog / %text msg]
-    =<  emit
-    ::  set live config, install certificate, set renewal timer
+    =>  .(liv (some fig), rod ~)
+    ?>  ?=(^ liv)
+    ::  notify :hall
+    ::
+    =>  =/  msg=cord
+          %+  rap  3
+          :~  'received https certificate for '
+              (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+          ==
+        (emit (notify msg ~))
+    ::  set renewal timer, install certificate in %eyre
     ::
     =<  install:effect
-    (retry:effect(liv `fig, rod ~) /renew ~d60)
+    (retry:effect /renew ~d60)
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -1296,11 +1322,15 @@
     this
   =.  ..this  (queue-next-order | dom)
   =.  ..this  cancel-current-order
-  =/  msg=tape
-    =-  "requesting an https certificate for {(trip -)}"
-    (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
-  %.  [%flog / %text msg]
-  =<  emit
+  ::  notify :hall
+  ::
+  =.  ..this
+    =/  msg=cord
+      %+  rap  3
+      :~  'requesting an https certificate for '
+          (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
+      ==
+    (emit (notify msg ~))
   ::  if registered, create order
   ::
   ?^  reg.act
