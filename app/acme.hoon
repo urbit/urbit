@@ -1192,6 +1192,8 @@
 ++  add-order
   |=  dom=(set turf)
   ^+  this
+  ?:  =(~ dom)
+    ~|(%acme-empty-certificate-order !!)
   ?:  ?=(?(%earl %pawn) (clan:title our.bow))
     this
   ::  set pending order
