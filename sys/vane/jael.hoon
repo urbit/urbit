@@ -889,8 +889,14 @@
     ::    {$west p/ship q/path r/*}
     ::
         $west
+      ?>  ?=(^ r.tac) 
+      ~?  ?=(%vent-result -.r.tac)
+        ?>  ?=(^ +.r.tac)
+        [%jael-west +<.r.tac]
+       
       =*  her  p.tac
-      =/  mes  ((hard message) r.tac)
+      =/  mes  (message r.tac)
+      ~&  %jael-west-done
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -2217,7 +2223,8 @@
   =/  =task:able
     ?.  ?=($soft -.q.hic)
       q.hic
-    ((hard task:able) p.q.hic)
+    ~&  %jael-call-clam
+    (task:able p.q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
   [did ..^$]
