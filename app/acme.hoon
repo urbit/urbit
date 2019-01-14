@@ -316,7 +316,7 @@
       rod=(unit order)
       ::  next-order: queued domains for validation
       ::
-      next-order=(unit (map turf [idx=@ud valid=? try=@ud]))
+      next-order=(unit (map turf [idx=@ud valid=?]))
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -433,12 +433,12 @@
     ~|  %validate-domain-effect-fail
     ?.  ?=(^ next-order)  ~|(%no-next-order !!)
     =/  pending
-      (skip ~(tap by u.next-order) |=([* * valid=? *] valid))
+      (skip ~(tap by u.next-order) |=([turf @ud valid=?] valid))
     ?:  =(~ pending)
       new-order:effect
-    =/  next=[=turf idx=@ud valid=? try=@ud]
+    =/  next=[=turf idx=@ud valid=?]
       ~|  [%no-next-domain idx=idx]
-      (head (skim pending |=([* idx=@ud * *] =(idx ^idx))))
+      (head (skim pending |=([turf idx=@ud ?] =(idx ^idx))))
     ::  XX should confirm that :turf points to us
     ::  confirms that domain exists (and an urbit is on :80)
     ::
@@ -446,9 +446,7 @@
         :-  [sec=| por=~ host=[%& turf.next]]
         [[ext=`~.udon path=/static] query=~]
     =/  =wire
-      ::  XX use :try instead
-      ::
-      (acme-wire try.next %validate-domain /idx/(scot %ud idx.next))
+      (acme-wire try %validate-domain /idx/(scot %ud idx.next))
     (emit (request wire purl %get ~ ~))
   ::  +directory: get ACME service directory
   ::
@@ -681,18 +679,16 @@
       this
     =/  idx  (slav %ud i.t.wire)
     =/  valid  =(200 p.rep)
-    =/  item=(list [=turf idx=@ud valid=? try=@ud])
-      (skim ~(tap by u.next-order) |=([* idx=@ud *] =(^idx idx)))
+    =/  item=(list [=turf idx=@ud valid=?])
+      (skim ~(tap by u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
     ?.  ?&  ?=([^ ~] item)
             !valid.i.item
         ==
       this
     =.  u.next-order
-      (~(put by u.next-order) turf.i.item [idx valid +(try)])
+      (~(put by u.next-order) turf.i.item [idx valid])
     ?.  valid
       ?:  (lth try 8)
-        ::  XX use ^try
-        ::
         (retry:effect try %validate-domain /idx/(scot %ud idx) (min ~h1 (backoff try)))
       ::  XX remove next-order, cancel pending requests
       ::  XX more detailed error message
@@ -703,7 +699,7 @@
             ' via http at '  (join '.' turf.i.item)  ':80'
         ==
       (emit (notify msg ~))
-    ?:  ?=(~ (skip ~(tap by u.next-order) |=([* * valid=? *] valid)))
+    ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
   ::  +directory: accept ACME service directory, trigger registration
@@ -1330,8 +1326,8 @@
     :-  ~
     %+  roll
       ~(tap in dom)
-    |=  [=turf state=(map turf [idx=@ud valid=? try=@ud])]
-    (~(put by state) turf [~(wyt by state) valid try=0])
+    |=  [=turf state=(map turf [idx=@ud valid=?])]
+    (~(put by state) turf [~(wyt by state) valid])
   ==
 ::  +cancel-current-order: and archive failure for future autopsy
 ::
