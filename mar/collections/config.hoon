@@ -37,6 +37,8 @@
   ++  txt
     |=  txs=(pole @t)
     ^-  config:collections
+    ::  TODO: putting ~ instead of * breaks this but shouldn't
+    ::
     ?>  ?=  $:  full-path=@t
                 name=@t
                 desc=@t
@@ -47,11 +49,10 @@
                 com=@t
                 sk=@t
                 vis=@t
-                ~
+                *
              ==
            txs
     ::
-    %-  (hard config:collections)
     :*  %-  need 
         %+  rash  full-path.txs 
           ;~  pfix  (jest 'full-path: ') 
@@ -59,25 +60,33 @@
             ;~(pfix fas (more fas urs:ab)) 
           ==
     :: 
-       (rash name.txs ;~(pfix (jest 'name: ') (cook crip (star next)))) 
+      (rash name.txs ;~(pfix (jest 'name: ') (cook crip (star next)))) 
     ::
-       (rash desc.txs ;~(pfix (jest 'description: ') (cook crip (star next)))) 
+      (rash desc.txs ;~(pfix (jest 'description: ') (cook crip (star next)))) 
     ::
-       (rash owner.txs ;~(pfix (jest 'owner: ~') fed:ag))
+      (rash owner.txs ;~(pfix (jest 'owner: ~') fed:ag))
     ::
-       (rash dc.txs ;~(pfix (jest 'date-created: ~') (cook |=(a=^ +.a) crub:so)))
+      %+  rash  dc.txs 
+      ;~  pfix 
+        (jest 'date-created: ~') 
+        (cook year when:so)
+      ==
     ::
-       (rash lm.txs ;~(pfix (jest 'last-modified: ~') (cook |=(a=^ +.a) crub:so)))
+      %+  rash  lm.txs
+      ;~  pfix 
+        (jest 'last-modified: ~') 
+        (cook year when:so)
+      ==
     ::
-       (rash type.txs ;~(pfix (jest 'type: ') (cook crip (star next)))) 
+      (rash type.txs ;~(pfix (jest 'type: ') (cook crip (star next)))) 
     ::
-       (rash com.txs ;~(pfix (jest 'comments: ') (fuss %y %n)))
+      (rash com.txs ;~(pfix (jest 'comments: ') (fuss %y %n)))
     ::
-       (rush sk.txs ;~(pfix (jest 'sort-key: ') dem:ag))
+      (rush sk.txs ;~(pfix (jest 'sort-key: ') dem:ag))
     ::
-       (rash vis.txs ;~(pfix (jest 'visible: ') (fuss %y %n)))
+      (rash vis.txs ;~(pfix (jest 'visible: ') (fuss %y %n)))
     ==
   ++  noun  config:collections
   --
-++  grad  %txt
+++  grad  %mime
 --
