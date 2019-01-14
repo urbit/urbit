@@ -890,7 +890,7 @@
     ::
         $west
       =*  her  p.tac
-      =/  mes  ((hard message) r.tac)
+      =/  mes  (message r.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -1460,13 +1460,13 @@
           %+  sub.add
             (div block.wer interval.sap)
           (div last-block.sap interval.sap)
-        ~&  :*  %snap
-                count=count.sap
-                max-count=max-count.sap
-                last-block=last-block.sap
-                interval=interval.sap
-                lent=(lent ~(tap to snaps.sap))
-            ==
+        :: ~&  :*  %snap
+        ::         count=count.sap
+        ::         max-count=max-count.sap
+        ::         last-block=last-block.sap
+        ::         interval=interval.sap
+        ::         lent=(lent ~(tap to snaps.sap))
+        ::     ==
         %=  sap
           snaps       (~(put to snaps.sap) block.wer extract-snap)
           count       +(count.sap)
@@ -1991,7 +1991,7 @@
           ==
         ~&  [%unhandled-filter-error +.rep]
         +>
-      ~&  [%filter-timed-out--recreating block=latest-block +.rep]
+      ::~&  [%filter-timed-out--recreating block=latest-block +.rep]
       ::  arguably should rewind 40 blocks on the off chance the chain reorganized
       ::  when we blinked.  this will also restart the filter.
       ::
@@ -2217,7 +2217,7 @@
   =/  =task:able
     ?.  ?=($soft -.q.hic)
       q.hic
-    ((hard task:able) p.q.hic)
+    (task:able p.q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
   [did ..^$]
