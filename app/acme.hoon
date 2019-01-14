@@ -135,10 +135,10 @@
 |%
 ::  +move: output effect
 ::
-+=  move  [bone card]
++$  move  [bone card]
 ::  +card: output effect payload
 ::
-+=  card
++$  card
   $%  [%flog wire flog:dill]
       [%hiss wire ~ %httr %hiss hiss:eyre]
       [%rule wire %cert (unit [wain wain])]
@@ -147,7 +147,7 @@
   ==
 ::  +nonce-next: next effect to emit upon receiving nonce
 ::
-+=  nonce-next
++$  nonce-next
   $?  %register
       %new-order
       %finalize-order
@@ -155,7 +155,7 @@
   ==
 ::  +acct: an ACME service account
 ::
-+=  acct
++$  acct
   $:  ::  key: account keypair
       ::
       key=key:rsa
@@ -167,7 +167,7 @@
   ==
 ::  +config: finalized configuration
 ::
-+=  config
++$  config
   $:  ::  dom: domains
       ::
       dom=(set turf)
@@ -186,7 +186,7 @@
   ==
 ::  +trial: domain validation challenge
 ::
-+=  trial
++$  trial
   $%  ::  %http only for now
       ::
       $:  %http
@@ -202,7 +202,7 @@
   ==  ==
 ::  +auth: domain authorization
 ::
-+=  auth
++$  auth
   $:  ::  ego: ACME service authorization url
       ::
       ego=purl
@@ -215,7 +215,7 @@
   ==
 ::  +order-auth: domain authorization state for order processing
 ::
-+=  order-auth
++$  order-auth
   $:  ::  pending: remote authorization urls
       ::
       pending=(list purl)
@@ -228,7 +228,7 @@
   ==
 ::  +order: ACME certificate order
 ::
-+=  order
++$  order
   $:  ::  dom: domains
       ::
       dom=(set turf)
@@ -258,7 +258,7 @@
   ==
 ::  +history: archive of past ACME service interactions
 ::
-+=  history
++$  history
   $:  ::  act: list of revoked account keypairs
       ::
       act=(list acct)
@@ -271,7 +271,7 @@
   ==
 ::  +directory: ACME v2 service directory
 ::
-+=  directory
++$  directory
   $:  ::  register: registration url (newAccount)
       ::
       register=purl
@@ -290,7 +290,7 @@
   ==
 ::  +acme: complete app state
 ::
-+=  acme
++$  acme
   $:  ::  dir: ACME service directory
       ::
       dir=directory
