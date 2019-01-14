@@ -661,7 +661,7 @@
       ::  kill active outgoing requests
       ::
       =.  +>.$
-        =/  fok=(list duct)  ~(tap in ~(key by kes))
+        =/  fok=(list duct)  (turn ~(val by q.ask) head)
         |-  ^+   +>.^$
         ?~  fok  +>.^$
         %=  $
