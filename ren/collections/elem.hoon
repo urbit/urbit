@@ -142,6 +142,7 @@
           ^-  manx
           ?>  ?=(%raw -.ite)
           =/  owner  (fall (~(get by meta.raw.ite) %owner) 'anonymous')
+          =/  host  (fall (~(get by meta.raw.ite) %host) 'anonymous')
           =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
           ;li.mb-6
             ;div.flex.align-center
@@ -152,7 +153,7 @@
                 =urb-suffix     "true";
               ;div
                 ;a.vanilla.text-mono.text-small.text-700.mr-4
-                  =href  "/~~/{(trip owner)}/==/web/landscape/profile"
+                  =href  "/~~/{(trip host)}/==/web/landscape/profile"
                   ; {(trip owner)}
                 ==
               ==
@@ -291,6 +292,7 @@
     =*  met  meta.col.itm
     :~  [%urb-name (trip name.met)]
         [%urb-owner (scow %p owner.met)]
+        [%urb-host (scow %p p.full-path.met)]
         [%urb-date-created (scow %da date-created.met)]
         [%urb-last-modified (scow %da last-modified.met)]
         [%urb-content-type (trip type.met)]
@@ -300,6 +302,7 @@
     =/  met  ~(got by meta.raw.itm)
     :~  [%urb-name (trip (met %name))]
         [%urb-owner (trip (met %owner))]
+        [%urb-host (trip (met %host))]
         [%urb-date-created (trip (met %date-created))]
         [%urb-last-modified (trip (met %last-modified))]
         [%urb-content-type (trip (met %type))]
@@ -309,6 +312,7 @@
     =/  met  ~(got by meta.raw.itm)
     :~  [%urb-name (trip (met %name))]
         [%urb-owner (trip (met %owner))]
+        [%urb-host (trip (met %host))]
         [%urb-date-created (trip (met %date-created))]
         [%urb-last-modified (trip (met %last-modified))]
         [%urb-content-type (trip (met %type))]

@@ -548,6 +548,7 @@
         :~  [%name name.a]
             [%comments ?:(comments.a ~..y ~..n)]
             [%owner (scot %p src.bol)]
+            [%host (scot %p our.bol)]
             [%date-created (snag 0 (flop pax.a))]
             [%last-modified dat]
             [%type type.a]
@@ -575,6 +576,7 @@
       =/  front=(map knot cord)
         %-  my
         :~  [%owner (scot %p src.bol)]
+            [%host (scot %p our.bol)]
             [%date-created dat]
             [%last-modified dat]
             [%type %comments]
