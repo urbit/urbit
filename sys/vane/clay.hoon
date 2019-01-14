@@ -631,6 +631,7 @@
     ::  translate other cases to dates
     ::
     =/  aey  (case-to-aeon:ze case)
+    ::  ~&  [%case-to-date aey let.dom our her syd case]
     ?~  aey  `@da`0
     ?:  =(0 u.aey)  `@da`0
     t:(aeon-to-yaki:ze u.aey)
@@ -3170,7 +3171,9 @@
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %build  live=%.n  %pin  (case-to-date r.oth)  %list
+            %f  %build  live=%.n  %pin
+            (case-to-date:((de our now hen ruf) p.oth q.oth) r.oth)
+            %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by q.bas.dat)
             |=  {pax/path lob/lobe}
