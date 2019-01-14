@@ -340,6 +340,15 @@
 ++  abet
   ^-  (quip move _this)
   [(flop mov) this(mov ~)]
+::  +backoff: calculate exponential backoff
+::
+++  backoff
+  |=  try=@ud
+  ^-  @dr
+  ?:  =(0 try)  ~s0
+  %+  add
+    (mul ~s1 (bex (dec try)))
+  (mul ~s0..0001 (~(rad og eny.bow) 1.000))
 ::  +request: unauthenticated http request
 ::
 ++  request
@@ -390,6 +399,29 @@
 ::
 ++  effect
   |%
+  ::  +validate-domain: confirm that a pending domain resolves to us
+  ::
+  ++  validate-domain
+    |=  idx=@ud
+    ^+  this
+    ~|  %validate-domain-effect-fail
+    ?.  ?=(^ next-order)  ~|(%no-next-order !!)
+    =/  pending
+      (skip ~(tap by u.next-order) |=([* * valid=? *] valid))
+    ?:  =(~ pending)
+      new-order:effect
+    =/  next=[=turf idx=@ud valid=? try=@ud]
+      ~|  [%no-next-domain idx=idx]
+      (head (skim pending |=([* idx=@ud * *] =(idx ^idx))))
+    ::  XX should confirm that :turf points to us
+    ::  confirms that domain exists (and an urbit is on :80)
+    ::
+    =/  =purl
+        :-  [sec=| por=~ host=[%& turf.next]]
+        [[ext=`~.udon path=/static] query=~]
+    =/  =wire
+      /acme/validate-domain/idx/(scot %ud idx.next)/try/(scot %ud try.next)
+    (emit (request wire purl %get ~ ~))
   ::  +directory: get ACME service directory
   ::
   ++  directory
@@ -595,6 +627,38 @@
 ::
 ++  event
   |%
+  ::  +validate-domain: accept a pending domain confirmation response
+  ::
+  ++  validate-domain
+    |=  [=wire rep=httr]
+    ^+  this
+    ?>  ?=([%validate-domain %idx @ %try @ *] wire)
+    ?.  ?=(^ next-order)
+      this
+    =/  idx  (slav %ud i.t.t.wire)
+    =/  try  (slav %ud i.t.t.t.t.wire)
+    =/  valid  =(200 p.rep)
+    =/  item=(list [=turf idx=@ud valid=? try=@ud])
+      (skim ~(tap by u.next-order) |=([* idx=@ud *] =(^idx idx)))
+    ?.  ?&  ?=([^ ~] item)
+            !valid.i.item
+        ==
+      this
+    =.  u.next-order
+      (~(put by u.next-order) turf.i.item [idx valid +(try)])
+    ?.  valid
+      ?:  (lth try 8)
+        =/  wire  /validate-domain/idx/(scot %ud idx)
+        (retry:effect wire (min ~h1 (backoff try)))
+      ::  XX remove next-order, cancel pending requests
+      ::  XX more detailed error message
+      ::
+      =/  msg=tape
+        "unable to reach {(trip (join '.' turf.i.item))}"
+      (emit [%flog / %text msg])
+    ?:  ?=(~ (skip ~(tap by u.next-order) |=([* * valid=? *] valid)))
+      new-order:effect
+    (validate-domain:effect +(idx))
   ::  +directory: accept ACME service directory, trigger registration
   ::
   ++  directory
@@ -674,7 +738,9 @@
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
-    ?~(next-order this new-order:effect)
+    ?:  =(~ next-order)
+      this
+    (validate-domain:effect 0)
   ::  XX rekey
   ::
   ::  +new-order: order created, begin processing authorizations
@@ -942,6 +1008,9 @@
     ?>  ?=(^ wir)
     ?+  i.wir
         ~&(unknown-retry+wir this)
+      %validate-domain
+                       ?>  ?=([%validate-domain %idx @ ~] wir)
+                       (validate-domain:effect (slav %ud i.t.t.wir))
       %directory       directory:effect
       %register        register:effect
       %renew           renew:effect
@@ -986,6 +1055,8 @@
   %.  [t.wir rep]
   ?+  i.t.wir
       ~&([%unknown-wire i.t.wir] !!)
+    %validate-domain
+                     validate-domain:event
     %directory       directory:event
     %nonce           nonce:event
     %register        register:event
@@ -1233,7 +1304,7 @@
   ::  if registered, create order
   ::
   ?^  reg.act
-    new-order:effect
+    (validate-domain:effect 0)
   ::  if initialized, defer
   ::
   ?.(=(act *acct) this init)
