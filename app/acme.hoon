@@ -532,11 +532,11 @@
     ~|  %cancel-order-effect-fail
     :: ?>  ?=(^ rod)
     ::  XX get failure reason
-    ::  XX print a message, shorter timer
-    ::  XX backoff, count retries statefully in order, how long, etc.
     ::
     =/  try=@ud  ?~(rod 1 try.u.rod)
-    =/  lul=@dr  (max ~h1 (backoff try))
+    ::  backoff faster than usual
+    ::
+    =/  lul=@dr  (max ~h1 (backoff (add 4 try)))
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
     =.  ..this  (emit (notify msg ~))
