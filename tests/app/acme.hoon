@@ -44,6 +44,6 @@
     =-  (need (de-purl:html -))
     'https://acme-staging-v02.api.letsencrypt.org/directory'
   %+  expect-eq
-      !>  ~[[ost.bow.app [%hiss /acme/directory/~zod [~ ~] %httr %hiss url %get ~ ~]]]
+      !>  ~[[ost.bow.app [%hiss /acme/directory/~zod ~ %httr %hiss url %get ~ ~]]]
       !>  moves
 --

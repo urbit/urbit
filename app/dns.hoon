@@ -10,7 +10,7 @@
       [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 +$  card
-  $%  [%hiss wire [~ ~] %httr %hiss hiss:eyre]
+  $%  [%hiss wire (unit ~) %httr %hiss hiss:eyre]
       [%poke wire dock poke]
       [%rule wire %turf %put turf]
       [%wait wire @da]
@@ -416,12 +416,6 @@
 ::  +this: is sparta
 ::
 ++  this  .
-:: +request: generic http request
-::
-++  request
-  |=  [=wire =hiss:eyre]
-  ^-  card
-  [%hiss wire [~ ~] %httr %hiss hiss]
 ::  +notify: send :hall notification
 ::
 ++  notify
@@ -626,7 +620,12 @@
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
-
+  :: +request: authenticated http request
+  ::
+  ++  request
+    |=  [=wire =hiss:eyre]
+    ^-  card
+    [%hiss wire [~ ~] %httr %hiss hiss]
   ::  +http-wire: build a wire for a |tell request
   ::
   ++  http-wire
@@ -860,6 +859,12 @@
     |=  car=card
     ^+  this
     this(moz [[ost.bow car] moz])
+  :: +request: unauthenticated http request
+  ::
+  ++  request
+    |=  [=wire =hiss:eyre]
+    ^-  card
+    [%hiss wire ~ %httr %hiss hiss]
   ::  +http-wire: build a wire for a |tell request
   ::
   ++  http-wire
