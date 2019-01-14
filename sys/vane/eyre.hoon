@@ -1168,8 +1168,6 @@
   ++  render-tang                                         ::  tanks to manx
     ~/  %render-tang
     |=  {dep/@uvH tan/tang}
-    ~&  [%render-tang dep]
-    %-  (slog tan)
     ;html
       ;head
         ;link(rel "stylesheet", href "/lib/base.css");
@@ -1316,8 +1314,13 @@
           $red
         =+  url=(en-purl hat pok(p [~ %html]) quy)
         ?+    p.pok  ~|(bad-redirect+[p.pok url] !!)
+            ::  ignore css
+            ::
+            {~ $css}  !!
+        ::
             {~ $js}
           $(pez [%js auth-redir:js])
+        ::
             {~ $json}
           =/  red
             (pairs:enjs ok+b+| red+(tape:enjs url) ~)
