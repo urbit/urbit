@@ -757,7 +757,19 @@
         $them                                           ::  outbound request
       ?~  p.kyz
         ?~  sud=(~(get by kes) hen)
+          ::  delete an element from q.ask by traversing to prevent leakage
+          ::
+          =.  q.ask
+            =/  qas  ~(tap by q.ask)
+            |-  ^+  q.ask
+            ?~  qas
+              q.ask
+            ?:  =(hen p.q.i.qas)
+              (~(del by q.ask) p.i.qas)
+            $(qas t.qas)
+          ::
           +>.$
+        ::
         =.  +>.$
           %_  +>.$
             mow    :_(mow [ged [%give %thus u.sud ~]])
