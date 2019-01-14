@@ -2,9 +2,9 @@
 **
 ** ethereum-integrated pre-boot validation
 */
-#include <unistd.h>
 #include <curl/curl.h>
 #include <uv.h>
+
 #include "all.h"
 #include "vere/vere.h"
 
