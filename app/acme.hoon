@@ -325,6 +325,11 @@
 ::
 ::::  acme app
 ::
+::  directory-base: LetsEncrypt service directory url
+::
+=/  directory-base=purl
+  =-  (need (de-purl:html -))
+  'https://acme-staging-v02.api.letsencrypt.org/directory'
 ::  mov: list of outgoing moves for the current transaction
 ::
 =|  mov=(list move)
@@ -418,6 +423,16 @@
   =/  jon=(unit json)  (de-json:html q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
+::  +failure-message: generic http failure message
+::
+++  failure-message
+  |=  =purl
+  ^-  cord
+  %+  rap  3
+  :~  'unable to reach '
+      (crip (en-purl:html purl))  '. '
+      'please confirm your urbit has network connectivity.'
+  ==
 ::  |effect: send moves to advance
 ::
 ++  effect
@@ -452,12 +467,9 @@
   ::
   ++  directory
     ^+  this
-    =/  url
-      =-  (need (de-purl:html -))
-      'https://acme-staging-v02.api.letsencrypt.org/directory'
     ::  XX now in wire?
     ::
-    (emit (request (acme-wire try %directory /) url %get ~ ~))
+    (emit (request (acme-wire try %directory /) directory-base %get ~ ~))
   ::  +nonce: get a new nonce for the next request
   ::
   ++  nonce
@@ -688,17 +700,18 @@
     =.  u.next-order
       (~(put by u.next-order) turf.i.item [idx valid])
     ?.  valid
-      ?:  (lth try 8)
-        (retry:effect try %validate-domain /idx/(scot %ud idx) (min ~h1 (backoff try)))
+      ?:  (lth try 10)
+        =/  lul=@dr  (min ~h1 (backoff try))
+        (retry:effect try %validate-domain /idx/(scot %ud idx) lul)
       ::  XX remove next-order, cancel pending requests
-      ::  XX more detailed error message
+      ::  XX include suggestion to fix
       ::
       =/  msg=cord
         %+  rap  3
         :~  'unable to reach '  (scot %p our.bow)
             ' via http at '  (join '.' turf.i.item)  ':80'
         ==
-      (emit (notify msg ~))
+      (emit (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
@@ -708,16 +721,9 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?.  =(200 p.rep)
-      ~&  [%directory-fail rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect try %directory / ~s10)
-      ::  XX never happened yet, wat do?
-      ::
-      this
+      ?:  (lth try 10)
+        (retry:effect try %directory / (min ~m30 (backoff try)))
+      (emit (notify (failure-message directory-base) [(sell !>(rep)) ~]))
     =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
@@ -734,15 +740,9 @@
     ~|  [%unknown-nonce-next nex]
     ?>  ?=(nonce-next nex)
     ?.  =(204 p.rep)
-      ~&  [%nonce-fail wire rep]
-      ::  cttp i/o timeout, always retry
-      ::  XX set timer? count retries? backoff?
-      ::
-      ?:  =(504 p.rep)
-        (retry:effect try %nonce t.wire ~s10)
-      ::  XX never happened yet, retry nonce anyway?
-      ::
-      this
+      ?:  (lth try 10)
+        (retry:effect try %nonce t.wire (min ~m30 (backoff try)))
+      (emit (notify (failure-message nonce.dir) [(sell !>(rep)) ~]))
     ?-  nex
       %register        register:effect
       %new-order       new-order:effect
@@ -757,16 +757,9 @@
     ?.  |(=(200 p.rep) =(201 p.rep))
       ::  XX possible 204?
       ::
-      ~&  [%register-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect try %register / ~s10)
-      ::  XX retry service failures?
-      ::
-      this
+      ?:  (lth try 10)
+        (retry:effect try %register / (min ~h1 (backoff try)))
+      (emit (notify (failure-message register.dir) [(sell !>(rep)) ~]))
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     ::  XX @da once parser is fixed
@@ -792,18 +785,11 @@
     ?.  =(201 p.rep)
       ::  XX possible 204?
       ::
-      ~&  [%new-order-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect try %new-order / ~s10)
-      ::  XX retry service failures?
+      ?:  (lth try 10)
+        (retry:effect try %new-order / (min ~h1 (backoff try)))
+      ::  XX next steps, retrying in ??
       ::
-      this
-    ::  XX delete order if not?
-    ::
+      (emit (notify (failure-message register.dir) [(sell !>(rep)) ~]))
     ?>  ?=(^ next-order)
     =/  loc=@t
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
@@ -826,12 +812,9 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ?:  =(504 p.rep)
-      ::  retry timeouts
-      ::  XX count retries? backoff?
+      ::  retry timeouts frequently
       ::
-      ~&  [%finalize-order-fail wir rep]
-      ~&  %retrying
-      (retry:effect try %finalize-order / ~s10)
+      (retry:effect try %finalize-order / (min ~m10 (backoff try)))
     ::  check-order regardless of status code
     ::
     check-order:effect
@@ -840,18 +823,14 @@
   ++  check-order
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(200 p.rep)
-      ~&  [%check-order-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect try %check-order / ~s10)
-      ::  XX retry service failures?
-      ::
-      this
+    ~|  [%strange-check-order wir]
     ?>  ?=(^ rod)
+    ?.  =(200 p.rep)
+      ?:  (lth try 10)
+        (retry:effect try %check-order / (min ~m10 (backoff try)))
+      ::  XX next steps, retrying in, delete order ??
+      ::
+      (emit (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
     ?+  sas.bod
@@ -863,9 +842,9 @@
       ~&  [%check-order-fail %invalid wir rep]
       ::  XX check authz, get the failure reason
       ::  XX possible to retry any reasons?
-      ::  XX send notification somehow?
       ::
-      cancel-order:effect
+      =<  cancel-order:effect
+      (emit (notify 'certificate order failed' [(sell !>(rep)) ~]))
     ::  initial order state
     ::
         %pending
@@ -893,20 +872,21 @@
   ++  certificate
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(200 p.rep)
-      ~&  [%certificate-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        ::  will re-attempt certificate download per order status
-        ::
-        (retry:effect try %check-order / ~s10)
-      ::  XX retry service failures?
-      ::
-      this
+    ~|  [%strange-certificate-response wir]
     ?>  ?=(^ rod)
+    ?.  =(200 p.rep)
+      ::  will re-attempt certificate download per order status
+      ::
+      ?:  (lth try 10)
+        (retry:effect try %check-order / (min ~m10 (backoff try)))
+      ::  XX next steps, retrying in, get url somehow ??
+      ::
+      =/  msg=cord
+        %+  rap  3
+        :~  'unable to download certificate. '
+            'please confirm that your urbit has network connectivity.'
+        ==
+      (emit (notify msg [(sell !>(rep)) ~]))
     =/  cer=wain  (to-wain:format q:(need r.rep))
     =/  fig=config
       ::  XX expiration date
@@ -936,19 +916,15 @@
   ++  get-authz
     |=  [wir=wire rep=httr]
     ^+  this
-    ?.  =(200 p.rep)
-      ~&  [%get-authz-fail wir rep]
-      ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
-        ::
-        ~&  %retrying
-        (retry:effect try %get-authz / ~s10)
-      ::  XX retry service failures?
-      ::
-      this
+    ~|  [%strange-authorization wir]
     ?>  ?=(^ rod)
     ?>  ?=(^ pending.aut.u.rod)
+    ?.  =(200 p.rep)
+      ?:  (lth try 10)
+        (retry:effect try %get-authz / (min ~m10 (backoff try)))
+      ::  XX next steps, retrying in ??
+      ::
+      (emit (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
       (auth:grab (need (de-json:html q:(need r.rep))))
     =/  cal=trial
@@ -976,58 +952,71 @@
   ::
   ++  test-trial
     |=  [wir=wire rep=httr]
-    ^+  this
-    ?.  =(200 p.rep)
-      ~&  [%test-trial-fail wir rep]
-      ::  XX this condition will need to change if vere/cttp timeouts change
-      ::
-      ?:  &(=(504 p.rep) ?=(~ r.rep))
-        ::  retry timeouts
-        ::  XX count retries, backoff
-        ::
-        (retry:effect try %test-trial / ~s10)
-      this
+    ~|  [%strange-test-trial wir]
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
     =*  aut  u.active.aut.u.rod
+    ^+  this
+    ?.  =(200 p.rep)
+      ?:  (lth try 10)
+        (retry:effect try %test-trial / (min ~m10 (backoff try)))
+      ::  XX next steps, check connectivity, etc. ??
+      ::
+      =/  msg=cord
+        %+  rap  3
+        :~  'unable to retrieve self-hosted domain validation token '
+            'via '  (join '.' dom.aut)  '. '
+            'please confirm your urbit has network connectivity.'
+        ==
+      (emit (notify msg [(sell !>(rep)) ~]))
     =/  bod
       %-  as-octs:mimes:html
       (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
     ?.  ?&  ?=(^ r.rep)
             =(bod u.r.rep)
         ==
-      ::  XX save-trail again?
+      ::  XX save-trial again?
       ::  XX probably a DNS misconfiguration
       ::
-      ~&  [%test-trial-mismatch expected=bod got=[wir rep]]
-      this
+      =/  =tang
+        :~  ?~(r.rep leaf+"~" (sell !>(u.r.rep)))
+            leaf+"actual:"
+            (sell !>((some bod)))
+            leaf+"expected:"
+        ==
+      (emit (notify 'domain validation value is wrong' tang))
     finalize-trial:effect
   ::  +finalize-trial:
   ::
   ++  finalize-trial
     |=  [wir=wire rep=httr]
     ^+  this
+    ~|  [%strange-finalize-trial wir]
+    ?>  ?=(^ rod)
+    ?>  ?=(^ active.aut.u.rod)
+    =*  aut  u.active.aut.u.rod
     ?.  =(200 p.rep)
       ::  XX possible 204? assume pending?
       ::  XX handle "challenge is not pending"
       ::
       ?:  =(504 p.rep)
-        ::  retry timeouts
-        ::  XX count retries? backoff?
+        ::  retry timeouts frequently
         ::
-        ~&  %finalize-trial-retrying
-        (retry:effect try %finalize-trial / ~s10)
+        ?:  (lth try 10)
+          (retry:effect try %finalize-trial / (min ~m10 (backoff try)))
+        ::  XX next steps, check connectivity, etc. ??
+        ::
+        (emit (notify (failure-message ego.cal.aut) [(sell !>(rep)) ~]))
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
       ::    (error:grab (need (de-json:html q:(need r.rep))))
       ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
       ::
-      ~&  [%finalize-trial-fail wir rep]
-      cancel-order:effect
-    ?>  ?=(^ rod)
-    ?>  ?=(^ active.aut.u.rod)
-    =*  aut  u.active.aut.u.rod
+      =<  cancel-order:effect
+      =/  msg=cord
+       'unable to finalize domain validation challenge'
+      (emit (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
       (challenge:grab (need (de-json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
@@ -1072,7 +1061,6 @@
 ++  sigh-tang
   |=  [=wire =tang]
   ^-  (quip move _this)
-  ~&  [%sigh-tang wire]
   ?>  ?=([%acme ^] wire)
   ::  XX log crashes above some threshold?
   ::
@@ -1108,7 +1096,7 @@
     (nonce:effect spur)
   ::  XX replace with :hall notification
   ::
-  ~|  [%sigh-fail wire rep]
+  ~|  [%sigh-fail wire]
   %.  [spur rep]
   ?+  act
       ~&([%unknown-http-response act] !!)
@@ -1136,14 +1124,12 @@
 ++  wake
   |=  [wir=wire ~]
   ^-  (quip move _this)
-  ~&  [%wake wir]
   ?>  ?=([%acme *] wir)
   abet:(retry:event t.wir)
 ::  +poke-acme-order: create new order for a set of domains
 ::
 ++  poke-acme-order
   |=  a=(set turf)
-  ~&  [%poke-acme a]
   abet:(add-order a)
 ::  +poke-noun: for debugging
 ::
