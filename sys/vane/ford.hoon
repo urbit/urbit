@@ -13,7 +13,7 @@
 ::
 ::    We call the date in the definition of a build the "formal date" to
 ::    distinguish it from the time at which the build was performed.
-
+::
 ::    Each build is referentially transparent with respect to its formal date:
 ::    ask to run that function on the namespace and a particular formal date,
 ::    and Ford will always produce the same result.
