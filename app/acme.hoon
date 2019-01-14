@@ -237,6 +237,9 @@
   $:  ::  dom: domains
       ::
       dom=(set turf)
+      ::  try: attempt number
+      ::
+      try=@ud
       ::  sas: order state
       ::
       sas=$@(%wake [%rest wen=@da])
@@ -532,7 +535,12 @@
     ::  XX print a message, shorter timer
     ::  XX backoff, count retries statefully in order, how long, etc.
     ::
-    =.  ..this  (retry:effect try %new-order / ~m10)
+    =/  try=@ud  ?~(rod 1 try.u.rod)
+    =/  lul=@dr  (max ~h1 (backoff try))
+    =/  msg=cord
+      (cat 3 'retrying certificate request in ' (scot %dr lul))
+    =.  ..this  (emit (notify msg ~))
+    =.  ..this  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
     =.  ..this  (queue-next-order & ?>(?=(^ rod) dom.u.rod))
@@ -804,7 +812,7 @@
     ::
     =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom))
     =/  dor=order
-      [dom sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
+      [dom try=1 sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
     get-authz:effect(rod `dor, next-order ~)
   ::  +finalize-order: order finalized, poll for certificate
   ::
@@ -962,6 +970,7 @@
         (retry:effect try %test-trial / (min ~m10 (backoff try)))
       ::  XX next steps, check connectivity, etc. ??
       ::
+      =<  cancel-order:effect
       =/  msg=cord
         %+  rap  3
         :~  'unable to retrieve self-hosted domain validation token '
