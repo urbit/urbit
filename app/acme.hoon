@@ -354,6 +354,12 @@
   %+  add
     (mul ~s1 (bex (dec try)))
   (mul ~s0..0001 (~(rad og eny.bow) 1.000))
+::  +acme-wire: create :acme http-request wire
+::
+++  acme-wire
+  |=  [try=@ud act=@tas =wire]
+  ^-  ^wire
+  (weld /acme/try/(scot %ud try)/[act] wire)
 ::  +notify: send :hall notification
 ::
 ++  notify
@@ -393,12 +399,12 @@
 ::  +stateful-request: emit signed, nonce'd request
 ::
 ++  stateful-request
-  |=  [act=@tas =wire =purl =json]
+  |=  [[try=@ud act=@tas =wire] =purl =json]
   ^+  this
   ?~  nonces
-    (nonce:effect act)
+    (nonce:effect [act wire])
   %-  emit(nonces t.nonces)
-  %+  request  [%acme act wire]
+  %+  request  (acme-wire try act wire)
   (signed-request purl i.nonces json)
 ::  +bad-nonce: check if an http response is a badNonce error
 ::
@@ -415,7 +421,10 @@
 ::  |effect: send moves to advance
 ::
 ++  effect
-  |%
+  |_  try-count=(unit @ud)
+  ::  +try: this effect attempt number
+  ::
+  ++  try  (fall try-count 1)
   ::  +validate-domain: confirm that a pending domain resolves to us
   ::
   ++  validate-domain
@@ -437,7 +446,9 @@
         :-  [sec=| por=~ host=[%& turf.next]]
         [[ext=`~.udon path=/static] query=~]
     =/  =wire
-      /acme/validate-domain/idx/(scot %ud idx.next)/try/(scot %ud try.next)
+      ::  XX use :try instead
+      ::
+      (acme-wire try.next %validate-domain /idx/(scot %ud idx.next))
     (emit (request wire purl %get ~ ~))
   ::  +directory: get ACME service directory
   ::
@@ -448,17 +459,21 @@
       'https://acme-staging-v02.api.letsencrypt.org/directory'
     ::  XX now in wire?
     ::
-    (emit (request /acme/directory/(scot %p our.bow) url %get ~ ~))
+    (emit (request (acme-wire try %directory /) url %get ~ ~))
   ::  +nonce: get a new nonce for the next request
   ::
   ++  nonce
-    |=  nex=@tas
+    |=  nex=wire
     ~|  [%bad-nonce-next nex]
-    ?>  ?=(nonce-next nex)
+    ?>  ?&  ?=(^ nex)
+            ?=(nonce-next i.nex)
+        ==
     ^+  this
-    ::  XX now?
+    ::  XX now in wire?
     ::
-    (emit (request /acme/nonce/next/[nex] nonce.dir %get ~ ~))
+    =/  =wire
+       (acme-wire try %nonce [%next nex])
+    (emit (request wire nonce.dir %get ~ ~))
   ::  +register: create ACME service account
   ::
   ::    Note: accepts services ToS.
@@ -469,7 +484,8 @@
     =/  =json  [%o (my [['termsOfServiceAgreed' b+&] ~])]
     ::  XX date in wire?
     ::
-    (stateful-request %register /(scot %p our.bow) register.dir json)
+    =/  wire-params  [try %register /]
+    (stateful-request wire-params register.dir json)
   ::  +renew: renew certificate
   ::
   ++  renew
@@ -494,21 +510,23 @@
           ~(tap in ~(key by `(map turf *)`u.next-order))
         |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
       ==
-    (stateful-request %new-order /(scot %da now.bow) new-order.dir json)
+    =/  wire-params  [try %new-order /(scot %da now.bow)]
+    (stateful-request wire-params new-order.dir json)
   ::  +cancel-order: cancel failed order, set retry timer
   ::
   ++  cancel-order
     ^+  this
     ~|  %cancel-order-effect-fail
-    ?>  ?=(^ rod)
+    :: ?>  ?=(^ rod)
     ::  XX get failure reason
+    ::  XX print a message, shorter timer
+    ::  XX backoff, count retries statefully in order, how long, etc.
+    ::
+    =.  ..this  (retry:effect try %new-order / ~m10)
     ::  domains might already be validated
     ::
-    =>  (queue-next-order & dom.u.rod)
-    =>  cancel-current-order
-    ::  XX backoff, count retries, how long, etc.
-    ::
-    (retry:effect /new-order ~m10)
+    =.  ..this  (queue-next-order & ?>(?=(^ rod) dom.u.rod))
+    cancel-current-order
   ::  +finalize-order: finalize completed order
   ::
   ++  finalize-order
@@ -523,7 +541,8 @@
     ?>  ?=(%wake sas.u.rod)
     =/  =json
       [%o (my csr+s+(en-base64url (met 3 csr.u.rod) `@`csr.u.rod) ~)]
-    (stateful-request %finalize-order /(scot %da now.bow) fin.u.rod json)
+    =/  wire-params  [try %finalize-order /(scot %da now.bow)]
+    (stateful-request wire-params fin.u.rod json)
   ::  +check-order: check completed order for certificate availability
   ::
   ++  check-order
@@ -536,7 +555,9 @@
     ::  XX revisit wrt rate limits
     ::
     ?>  ?=(%wake sas.u.rod)
-    (emit (request /acme/check-order/(scot %da now.bow) ego.u.rod %get ~ ~))
+    =/  =wire
+       (acme-wire try %check-order /(scot %da now.bow))
+    (emit (request wire ego.u.rod %get ~ ~))
   ::  +certificate: download PEM-encoded certificate
   ::
   ++  certificate
@@ -546,7 +567,9 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ rod)      ~|(%no-active-order !!)
     =/  hed  (my accept+['applicate/x-pem-file' ~] ~)
-    (emit (request /acme/certificate/(scot %da now.bow) url %get hed ~))
+    =/  =wire
+       (acme-wire try %certificate /(scot %da now.bow))
+    (emit (request wire url %get hed ~))
   ::  +install: tell %eyre about our certificate
   ::
   ++  install
@@ -566,8 +589,9 @@
     ::  XX revisit wrt rate limits
     ::
     ?>  ?=(%wake sas.u.rod)
-    %-  emit
-    (request /acme/get-authz/(scot %da now.bow) i.pending.aut.u.rod %get ~ ~)
+    =/  =wire
+      (acme-wire try %get-authz /(scot %da now.bow))
+    (emit (request wire i.pending.aut.u.rod %get ~ ~))
   ::  XX check/finalize-authz ??
   ::
   ::  +save-trial: save ACME domain validation challenge to /.well-known/
@@ -611,7 +635,9 @@
     ::  =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
     ::  XX idx in wire?
     ::
-    (emit (request /acme/test-trial/(scot %da now.bow) url %get ~ ~))
+    =/  =wire
+      (acme-wire try %test-trial /(scot %da now.bow))
+    (emit (request wire url %get ~ ~))
   ::  +finalize-trial: notify ACME service that challenge is ready
   ::
   ++  finalize-trial
@@ -627,33 +653,33 @@
     ::  empty object included for signature
     ::  XX include index in wire?
     ::
-    (stateful-request %finalize-trial /(scot %da now.bow) ego.cal.aut [%o ~])
+    =/  wire-params  [try %finalize-trial /(scot %da now.bow)]
+    (stateful-request wire-params ego.cal.aut [%o ~])
   ::  XX delete-trial?
   ::
   ::  +retry: retry effect after timeout
   ::
   ++  retry
-    |=  [=wire lull=@dr]
+    |=  [try=@ud act=@tas =wire lull=@dr]
     ::  XX validate wire
     ::
-    (emit %wait [%acme wire] (add now.bow lull))
+    (emit %wait (acme-wire +(try) act wire) (add now.bow lull))
   --
 ::  |event: accept event, emit next effect(s)
 ::
 ::    XX should these next effects be triggered at call sites instead?
 ::
 ++  event
-  |%
+  |_  try=@ud
   ::  +validate-domain: accept a pending domain confirmation response
   ::
   ++  validate-domain
     |=  [=wire rep=httr]
     ^+  this
-    ?>  ?=([%validate-domain %idx @ %try @ *] wire)
+    ?>  ?=([%idx @ *] wire)
     ?.  ?=(^ next-order)
       this
-    =/  idx  (slav %ud i.t.t.wire)
-    =/  try  (slav %ud i.t.t.t.t.wire)
+    =/  idx  (slav %ud i.t.wire)
     =/  valid  =(200 p.rep)
     =/  item=(list [=turf idx=@ud valid=? try=@ud])
       (skim ~(tap by u.next-order) |=([* idx=@ud *] =(^idx idx)))
@@ -665,8 +691,9 @@
       (~(put by u.next-order) turf.i.item [idx valid +(try)])
     ?.  valid
       ?:  (lth try 8)
-        =/  wire  /validate-domain/idx/(scot %ud idx)
-        (retry:effect wire (min ~h1 (backoff try)))
+        ::  XX use ^try
+        ::
+        (retry:effect try %validate-domain /idx/(scot %ud idx) (min ~h1 (backoff try)))
       ::  XX remove next-order, cancel pending requests
       ::  XX more detailed error message
       ::
@@ -691,7 +718,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /directory ~s10)
+        (retry:effect try %directory / ~s10)
       ::  XX never happened yet, wat do?
       ::
       this
@@ -703,20 +730,20 @@
   ::    is specified in the wire.
   ::
   ++  nonce
-    |=  [wir=wire rep=httr]
+    |=  [=wire rep=httr]
     ^+  this
-    ~|  [%unrecognized-nonce-wire wir]
-    ?>  &(?=(^ wir) ?=([%next ^] t.wir))
-    =*  nex  i.t.t.wir
+    ~|  [%unrecognized-nonce-wire wire]
+    ?>  &(?=(^ wire) ?=([%next ^] wire))
+    =*  nex  i.t.wire
     ~|  [%unknown-nonce-next nex]
     ?>  ?=(nonce-next nex)
     ?.  =(204 p.rep)
-      ~&  [%nonce-fail wir rep]
+      ~&  [%nonce-fail wire rep]
       ::  cttp i/o timeout, always retry
       ::  XX set timer? count retries? backoff?
       ::
       ?:  =(504 p.rep)
-        (nonce:effect nex)
+        (retry:effect try %nonce t.wire ~s10)
       ::  XX never happened yet, retry nonce anyway?
       ::
       this
@@ -734,15 +761,13 @@
     ?.  |(=(200 p.rep) =(201 p.rep))
       ::  XX possible 204?
       ::
-      ?:  (bad-nonce rep)
-        (nonce:effect %register)
       ~&  [%register-fail wir rep]
       ?:  =(504 p.rep)
         ::  retry timeouts
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /register ~s10)
+        (retry:effect try %register / ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -771,15 +796,13 @@
     ?.  =(201 p.rep)
       ::  XX possible 204?
       ::
-      ?:  (bad-nonce rep)
-        (nonce:effect %new-order)
       ~&  [%new-order-fail wir rep]
       ?:  =(504 p.rep)
         ::  retry timeouts
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /new-order ~s10)
+        (retry:effect try %new-order / ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -806,15 +829,13 @@
   ++  finalize-order
     |=  [wir=wire rep=httr]
     ^+  this
-    ?:  (bad-nonce rep)
-      (nonce:effect %finalize-order)
     ?:  =(504 p.rep)
       ::  retry timeouts
       ::  XX count retries? backoff?
       ::
       ~&  [%finalize-order-fail wir rep]
       ~&  %retrying
-      (retry:effect /finalize-order ~s10)
+      (retry:effect try %finalize-order / ~s10)
     ::  check-order regardless of status code
     ::
     check-order:effect
@@ -830,7 +851,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /check-order ~s10)
+        (retry:effect try %check-order / ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -885,7 +906,7 @@
         ~&  %retrying
         ::  will re-attempt certificate download per order status
         ::
-        (retry:effect /check-order ~s10)
+        (retry:effect try %check-order / ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -913,7 +934,7 @@
     ::  set renewal timer, install certificate in %eyre
     ::
     =<  install:effect
-    (retry:effect /renew ~d60)
+    (retry:effect 0 %renew / ~d60)
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -926,7 +947,7 @@
         ::  XX count retries? backoff?
         ::
         ~&  %retrying
-        (retry:effect /get-authz ~s10)
+        (retry:effect try %get-authz / ~s10)
       ::  XX retry service failures?
       ::
       this
@@ -968,7 +989,7 @@
         ::  retry timeouts
         ::  XX count retries, backoff
         ::
-        (retry:effect /test-trial ~s10)
+        (retry:effect try %test-trial / ~s10)
       this
     ?>  ?=(^ rod)
     ?>  ?=(^ active.aut.u.rod)
@@ -994,14 +1015,12 @@
       ::  XX possible 204? assume pending?
       ::  XX handle "challenge is not pending"
       ::
-      ?:  (bad-nonce rep)
-        (nonce:effect %finalize-trial)
       ?:  =(504 p.rep)
         ::  retry timeouts
         ::  XX count retries? backoff?
         ::
         ~&  %finalize-trial-retrying
-        (retry:effect /finalize-trial ~s10)
+        (retry:effect try %finalize-trial / ~s10)
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
@@ -1029,74 +1048,90 @@
   ::  +retry: retry effect after timeout
   ::
   ++  retry
-    |=  wir=wire
+    |=  =wire
     ^+  this
-    ?>  ?=(^ wir)
-    ?+  i.wir
-        ~&(unknown-retry+wir this)
+    ?>  ?=([%try @ @tas *] wire)
+    =/  try  (slav %ud i.t.wire)
+    =*  fec  ~(. effect (some +(try)))
+    =*  act  i.t.t.wire
+    =*  spur  t.t.t.wire
+    ?+  act
+        ~&([%unknown-retry act] this)
       %validate-domain
-                       ?>  ?=([%validate-domain %idx @ ~] wir)
-                       (validate-domain:effect (slav %ud i.t.t.wir))
-      %directory       directory:effect
-      %register        register:effect
-      %renew           renew:effect
-      %new-order       new-order:effect
-      %finalize-order  finalize-order:effect
-      %check-order     check-order:effect
-      %get-authz       get-authz:effect
-      %test-trial      test-trial:effect
-      %finalize-trial  finalize-trial:effect
+                       ?>  ?=([%idx @ ~] spur)
+                       (validate-domain:fec (slav %ud i.t.spur))
+      %directory       directory:fec
+      %register        register:fec
+      %renew           renew:fec
+      %new-order       new-order:fec
+      %finalize-order  finalize-order:fec
+      %check-order     check-order:fec
+      %get-authz       get-authz:fec
+      %test-trial      test-trial:fec
+      %finalize-trial  finalize-trial:fec
     ==
   --
 ::  +sigh-tang: handle http request failure
 ::
 ++  sigh-tang
-  |=  [wir=wire saw=tang]
+  |=  [=wire =tang]
   ^-  (quip move _this)
-  ~&  [%sigh-tang wir]
-  ::  XX take evasive action
+  ~&  [%sigh-tang wire]
+  ?>  ?=([%acme ^] wire)
+  ::  XX log crashes above some threshold?
   ::
-  [((slog saw) ~) this]
+  abet:(retry:event t.wire)
 ::  +sigh-recoverable-error: handle http rate-limit response
 ::
 ++  sigh-recoverable-error
-  |=  [wir=wire %429 %rate-limit lim=(unit @da)]
+  |=  [=wire %429 %rate-limit lim=(unit @da)]
   ^-  (quip move _this)
-  ~&  [%sigh-recoverable wir lim]
-  ::  XX retry
-  ::
-  [~ this]
+  ~&  [%sigh-recoverable wire lim]
+  ?>  ?=([%acme ^] wire)
+  abet:(retry:event t.wire)
 ::  +sigh-httr: accept http response
 ::
 ++  sigh-httr
-  |=  [wir=wire rep=httr]
+  |=  [=wire rep=httr]
   ^-  (quip move _this)
-  ?>  ?=([%acme ^] wir)
+  ?>  ?=([%acme ^] wire)
+  =<  abet
   ::  add nonce to pool, if present
   ::
   =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
   =?  nonces  ?=(^ nonhed)  [q.i.nonhed nonces]
-  =<  abet
-  ~|  [%sigh-fail wir rep]
-  %.  [t.wir rep]
-  ?+  i.t.wir
-      ~&([%unknown-wire i.t.wir] !!)
+  ::
+  ?>  ?=([%try @ @tas *] t.wire)
+  =/  try  (slav %ud i.t.t.wire)
+  =*  ven  ~(. event try)
+  =*  act  i.t.t.t.wire
+  =*  spur  t.t.t.t.wire
+  ::  request nonce if expired-invalid
+  ::
+  ?:  (bad-nonce rep)
+    (nonce:effect spur)
+  ::  XX replace with :hall notification
+  ::
+  ~|  [%sigh-fail wire rep]
+  %.  [spur rep]
+  ?+  act
+      ~&([%unknown-http-response act] !!)
     %validate-domain
-                     validate-domain:event
-    %directory       directory:event
-    %nonce           nonce:event
-    %register        register:event
+                     validate-domain:ven
+    %directory       directory:ven
+    %nonce           nonce:ven
+    %register        register:ven
     ::  XX rekey
     ::
-    %new-order       new-order:event
-    %finalize-order  finalize-order:event
-    %check-order     check-order:event
-    %certificate     certificate:event
-    %get-authz       get-authz:event
+    %new-order       new-order:ven
+    %finalize-order  finalize-order:ven
+    %check-order     check-order:ven
+    %certificate     certificate:ven
+    %get-authz       get-authz:ven
     ::  XX check/finalize-authz ??
     ::
-    %test-trial      test-trial:event
-    %finalize-trial  finalize-trial:event
+    %test-trial      test-trial:ven
+    %finalize-trial  finalize-trial:ven
     ::  XX delete-trial?
     ::
   ==
@@ -1281,7 +1316,7 @@
 ::    but we're preserving the pattern for future flexibility.
 ::
 ++  init
-  =<  (retry:effect /directory `@dr`1)
+  =<  (retry:effect 0 %directory / `@dr`1)
   %=  this
     act  [(rekey eny.bow) ~]
     cey  (rekey (mix eny.bow (shaz now.bow)))
