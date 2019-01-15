@@ -42,10 +42,7 @@
 ::
 ++  test-first-order-wake
   =^  moves  app  (~(wake app *bowl:gall *acme:app) /acme/try/1/directory ~)
-  =/  url
-    =-  (need (de-purl:html -))
-    'https://acme-staging-v02.api.letsencrypt.org/directory'
   %+  expect-eq
-      !>  ~[[ost.bow.app [%hiss /acme/try/2/directory ~ %httr %hiss url %get ~ ~]]]
+      !>  ~[[ost.bow.app [%hiss /acme/try/2/directory ~ %httr %hiss directory-base:app %get ~ ~]]]
       !>  moves
 --
