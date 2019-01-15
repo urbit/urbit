@@ -692,7 +692,7 @@
       =.  +>.$
         ?~  snap.tac  +>.$
         (restore-snap hen u.snap.tac |)
-      ::  our initial public key
+      ::  load our initial public key, overriding snapshot
       ::
       =.  kyz.puk.sub
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
