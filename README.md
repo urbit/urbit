@@ -1,7 +1,9 @@
+> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Sometime in the next few days, owners of Azimuth points will be able to boot Arvo, the Urbit OS, from their Azimuth point and request access to one of our ‘cities’: private communities for chat and discussion. These new cities use Landscape, a brand new UI for using Urbit in the browser.
+
 # Install instructions
 
 To install and run Urbit please follow the instructions at
-[urbit.org/docs/using/install](http://urbit.org/docs/using/install).  Packages
+[urbit.org/docs/getting-started/installation](http://urbit.org/docs/getting-started/installation).  Packages
 and source tarballs are available there. You'll be on the live network in a few
 minutes.
 
