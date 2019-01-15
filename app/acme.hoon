@@ -1055,11 +1055,14 @@
                        ?>  ?=([%idx @ ~] spur)
                        (validate-domain:fec (slav %ud i.t.spur))
       %directory       directory:fec
+      %nonce           ?>  ?=(^ spur)
+                       (nonce:fec t.spur)
       %register        register:fec
       %renew           renew:fec
       %new-order       new-order:fec
       %finalize-order  finalize-order:fec
       %check-order     check-order:fec
+      %certificate     check-order:fec :: intentional
       %get-authz       get-authz:fec
       %test-trial      test-trial:fec
       %finalize-trial  finalize-trial:fec
