@@ -536,7 +536,7 @@
     =/  try=@ud  ?~(rod 1 try.u.rod)
     ::  backoff faster than usual
     ::
-    =/  lul=@dr  (max ~h1 (backoff (add 4 try)))
+    =/  lul=@dr  (min ~h1 (backoff (add 4 try)))
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
     =.  ..this  (emit (notify msg ~))
