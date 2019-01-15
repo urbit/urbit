@@ -1071,9 +1071,12 @@
   |=  [=wire =tang]
   ^-  (quip move _this)
   ?>  ?=([%acme ^] wire)
-  ::  XX log crashes above some threshold?
+  ::  XX may God forgive me for this
   ::
-  abet:(retry:event t.wire)
+  =<  abet
+  =-  ?:(?=(%& -.-) p.- this)
+  %-  mule  |.
+  (retry:event t.wire)
 ::  +sigh-recoverable-error: handle http rate-limit response
 ::
 ++  sigh-recoverable-error
