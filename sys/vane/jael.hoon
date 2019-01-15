@@ -687,6 +687,11 @@
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.sub  sig.seed.tac
+      ::  if we're given a snapshot, restore it
+      ::
+      =.  +>.$
+        ?~  snap.tac  +>.$
+        (restore-snap hen u.snap.tac |)
       ::  our initial public key
       ::
       =.  kyz.puk.sub
@@ -711,11 +716,6 @@
       ::  set initial domains
       ::
       =.  tuf.own.sub  turf.tac
-      ::  if we're given a snapshot, restore it
-      ::
-      =.  +>.$
-        ?~  snap.tac  +>.$
-        (restore-snap hen u.snap.tac |)
       ::
       =.  moz
         %+  weld  moz
