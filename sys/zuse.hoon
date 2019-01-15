@@ -7256,10 +7256,11 @@
   |%
   ++  pass-from-eth
     |=  [enc=octs aut=octs sut=@ud]
-    ^-  (unit pass)
+    ^-  pass
+    %^  cat  3  'b'
     ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
-      ~
-    `(cat 3 'b' (cat 8 q.aut q.enc))
+      (cat 8 0 0)
+    (cat 8 q.aut q.enc)
   ::
   ++  point-from-eth
     |=  [who=@p point:eth-noun deed:eth-noun]
@@ -7279,7 +7280,6 @@
       :-  ~
       :*  key-revision
         ::
-          =-  (fall - *pass)
           (pass-from-eth encryption-key authentication-key crypto-suite)
         ::
           continuity-number
@@ -7344,7 +7344,7 @@
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-      `[who %keys rev (need (pass-from-eth enc aut sut))]
+      `[who %keys rev (pass-from-eth enc aut sut)]
     ::
     ?:  =(event.log broke-continuity)
       =/  who=@  (decode-topics topics.log ~[%uint])
@@ -8314,10 +8314,9 @@
               kyz=(map ship [=life =pass])
           ==
       ^+  kyz
-      =/  pub=(unit pass)
+      =/  pub=pass
         (pass-from-eth enc aut sut)
-      ?~  pub  kyz
-      (~(put by kyz) who [rev u.pub])
+      (~(put by kyz) who [rev pub])
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point
