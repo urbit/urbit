@@ -1153,139 +1153,38 @@
   ^-  (quip move _this)
   =<  abet
   ?+  a
-      ~&(+<+.this this)
-    %dbug  ~&  [%private (ring:en:pem:pkcs1 key.act)]
-           ~&  [%public (pass:en:pem:pkcs1 key.act)]
-           this
-    %init   init
-    %reg    register:effect
-    %order  new-order:effect
-    %auth   get-authz:effect
-    %trial  test-trial:effect
-    %final  finalize-order:effect
-    %poll   check-order:effect
-    %our    (add-order (sy /org/urbit/(crip +:(scow %p our.bow)) ~))
-    %rule   install:effect
-    %fake   fake
-    %none   none
+    this
+  ::
+      %dbug-account
+    ~&  [%private (ring:en:pem:pkcs1 key.act)]
+    ~&  [%public (pass:en:pem:pkcs1 key.act)]
+    ~&  registered=reg.act
+    this
+  ::
+      %dbug-certificate
+    ?~  liv  ~&(~ this)
+    ~&  [%key (ring:en:pem:pkcs8 key.u.liv)]
+    ~&  [%cert `wain`cer.u.liv]
+    this
+  ::
+      %init
+    init
+  ::
+      %register
+    register:effect
+  ::
+      %poll
+    check-order:effect
+  ::
+      %retry
+    (add-order (sy /network/arvo/(crip +:(scow %p our.bow)) ~))
   ==
-::  +none: uninstall cert for testing
-::
-::    XX remove
-::
-++  none
-  ^+  this
-  (emit %rule /uninstall %cert ~)
-::  +fake: install fake cert for testing
-::
-::    XX remove
-::
-++  fake
-  ^+  this
-  =/  key=wain
-    :~  '-----BEGIN RSA PRIVATE KEY-----'
-        'MIIEpAIBAAKCAQEAisQPzzmGWNZSNNAwY59XrqK/bU0NKNZS2ETOiJeSpzPAHYl+'
-        'c39V96/QUR0tra2zQI4QD6kpMYX/7R5nwuvsA4o7ypfYupNrlzLPThCKEHpZomDD'
-        '0Bb3T8u7YGrMjEX5cOmZIU2T/iy4GK/wWuBIy2TEp/0J+RoSCIr8Df/A7GIM8bwn'
-        'v23Vq0kE2xBqqaT5LjvuQoXfiLJ42F33DDno9lVikKEyt55D/08rH41KpXvn3tWZ'
-        '46tZK6Ds7Zr1hEV1LbDx1CXDzQ6gKObBe54DWDV3h7TJhr0BSW68dFJhro7Y60Ns'
-        'zTcFqY1RC9F0ePtsnKGFzMOe/U+fPvsGe2oWvwIDAQABAoIBACCf19ewfpWETe98'
-        'wuOpIsQ8HyVjaCShvvh5tNUITcJhuFk5ajFdTqjc/O0VHxgmLm6O99e2vaiXCISH'
-        'EX4SWXq7lTMcYCf9YN47Y+HGoa8eFNTIS0ExJRPtojAY695O1UZmpUnfI1wux1mG'
-        'g8vZz0OCfXnBVAbsyjCX/IqOBp2MVzfMyMuaF/oQ2xiX4AZ1hDIMDpUTGw7OKX15'
-        'JAUlTZUhzifmijPg1gViD8Lf5w42nlwYPC5j6wWKpJSx76CNUxLdJAaaZb3QYE96'
-        'zu/jOCdy25sPHIux3XTdV6fqZ2iTvt31+bcnSAvmbDpmcujsZPVRXRu5OO/0xBh6'
-        'GGlTLAECgYEAwSyNkbNk0mBRxet68IW02wXYaxIEVUWqhSeE2MGaXg4h9VSgh83q'
-        '7wly0ujy9Sj79aF2frkpMbIoeeGIOTIYI4RCYuBKx+/NNWFoggu4UK5xOMr0dfQK'
-        '2Ggr2agUH3KExvOpAW3rvWzepLl8ppySLNipLcFQHOJ0kxwPd2ig3Z8CgYEAt+WM'
-        'JoW9dLxUu/zTih5Dacubl+fnnm8BsypKmv88mzcqEVwXOo6Z6bmlw0NeWxmlwHu7'
-        'vs+XQ8MDUDvQvIul8sFagZk7RvWcXTlaHtPQ1D8/ztrg5d58TwxpwXshBytfR6NA'
-        'tIZa+tNvzQF5AKVlB+lZEWF6E6FoI5NmGDAZ8uECgYB4FV4cCMzQCphK1Muj4TpA'
-        'PS3/wT94Usph4+Mta4yuk1KA047HXTaCSflbKvx9cnDOjQTAWhJFll6bBZxNEdr3'
-        'mSw7kvppt6R1Xow861Q0s3wmteOpv39Ob9Nyho2bzvDDTIzvGonFQ3xUIgpe+E3W'
-        'GwlwLA/FJPEa0gK7VAtMOQKBgQCgcPtX2LM0l+Ntp+V/yWuTb/quC7w+tCbNhAZX'
-        'OHxOB1ECmFAD3MpX6oq+05YM8VF1n/5rOX6Ftiy74ZP6C/Sa2Sr3ixL2k+76PsFr'
-        'x+2YYB5xgPFaXEQkS3YxQhXMxYB5ZetcFSRnVfVi7Pf/Ik4FGweEbIEvg1DySPV4'
-        'AO+CwQKBgQCFnjHsFeNZVvtiL2wONT6osjRCpMvaUiVecMW9oUBtjpLHI2gQr7+4'
-        'dvCm2Sj7uq9OWO0rBz1px/kI+ONjhwsFPLK5v8hyVDoIE791Qg3qAY1a6JOXRl9P'
-        '6TBc3dQ2qUVqt8gi9RLCDFJU18Td6La4mkJSP5YrioGtwUJow0F07Q=='
-        '-----END RSA PRIVATE KEY-----'
-    ==
-
-  =/  cert=wain
-    :~  '-----BEGIN CERTIFICATE-----'
-        'MIIF8jCCBNqgAwIBAgITAPrPc8Udwmv5dJ+hx2Uh+gZF1TANBgkqhkiG9w0BAQsF'
-        'ADAiMSAwHgYDVQQDDBdGYWtlIExFIEludGVybWVkaWF0ZSBYMTAeFw0xODA3MDMx'
-        'ODAyMTZaFw0xODEwMDExODAyMTZaMB8xHTAbBgNVBAMTFHpvZC5keW5kbnMudXJi'
-        'aXQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAisQPzzmGWNZS'
-        'NNAwY59XrqK/bU0NKNZS2ETOiJeSpzPAHYl+c39V96/QUR0tra2zQI4QD6kpMYX/'
-        '7R5nwuvsA4o7ypfYupNrlzLPThCKEHpZomDD0Bb3T8u7YGrMjEX5cOmZIU2T/iy4'
-        'GK/wWuBIy2TEp/0J+RoSCIr8Df/A7GIM8bwnv23Vq0kE2xBqqaT5LjvuQoXfiLJ4'
-        '2F33DDno9lVikKEyt55D/08rH41KpXvn3tWZ46tZK6Ds7Zr1hEV1LbDx1CXDzQ6g'
-        'KObBe54DWDV3h7TJhr0BSW68dFJhro7Y60NszTcFqY1RC9F0ePtsnKGFzMOe/U+f'
-        'PvsGe2oWvwIDAQABo4IDIjCCAx4wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQG'
-        'CCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBTokXAU'
-        'vPwcrbkLxcVBCNNQ588pfjAfBgNVHSMEGDAWgBTAzANGuVggzFxycPPhLssgpvVo'
-        'OjB3BggrBgEFBQcBAQRrMGkwMgYIKwYBBQUHMAGGJmh0dHA6Ly9vY3NwLnN0Zy1p'
-        'bnQteDEubGV0c2VuY3J5cHQub3JnMDMGCCsGAQUFBzAChidodHRwOi8vY2VydC5z'
-        'dGctaW50LXgxLmxldHNlbmNyeXB0Lm9yZy8wHwYDVR0RBBgwFoIUem9kLmR5bmRu'
-        'cy51cmJpdC5vcmcwgf4GA1UdIASB9jCB8zAIBgZngQwBAgEwgeYGCysGAQQBgt8T'
-        'AQEBMIHWMCYGCCsGAQUFBwIBFhpodHRwOi8vY3BzLmxldHNlbmNyeXB0Lm9yZzCB'
-        'qwYIKwYBBQUHAgIwgZ4MgZtUaGlzIENlcnRpZmljYXRlIG1heSBvbmx5IGJlIHJl'
-        'bGllZCB1cG9uIGJ5IFJlbHlpbmcgUGFydGllcyBhbmQgb25seSBpbiBhY2NvcmRh'
-        'bmNlIHdpdGggdGhlIENlcnRpZmljYXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczov'
-        'L2xldHNlbmNyeXB0Lm9yZy9yZXBvc2l0b3J5LzCCAQIGCisGAQQB1nkCBAIEgfME'
-        'gfAA7gB1ALDMg+Wl+X1rr3wJzChJBIcqx+iLEyxjULfG/SbhbGx3AAABZGGGG6QA'
-        'AAQDAEYwRAIgJHrIawVea5/++wteocdbt1QUBxysW7uJqYgvnOWOQMgCIGRlioyE'
-        'vzunUm/HZre3fF2jBsJr45C1tz5FTe/cYQwmAHUA3Zk0/KXnJIDJVmh9gTSZCEmy'
-        'Sfe1adjHvKs/XMHzbmQAAAFkYYYjLQAABAMARjBEAiAWovIKERYeNbJlAKvNorwn'
-        'RnSFP0lJ9sguwcpbcsYJ1gIgRJxTolkMOr0Fwq62q4UYnpREY8zu4hiL90Mhntky'
-        'EwYwDQYJKoZIhvcNAQELBQADggEBAMYxvA+p4Qj0U23AHAe61W3+M6T1M0BfrGE2'
-        'jJCaq4c3d7b9NEN1qFJHl8t/+Z/7RHUIzbm4CIOZynSM8mBxg2NgXymvXQkRrrBo'
-        'fhO9u8Yxizx4+KOtiigt9JBVlpyCm6I9uifM+7rZYh45s2IkfDBPKd+M1tfIUOne'
-        'YgUt1YguEkM2xqRG16JyHA0Xwn6mn+4pWiTdfNzlqol6vyGT7WfIvmV7cdGoYKjB'
-        'wOt/g1wWMTwhSWBCVqCyn+f2rl8u3wbXrIUeRng2ryNVXO03nukTp7OLN3HUO6PR'
-        'hC4NdS4o2geBNZr8RJiORtCelDaJprY7lhh2MFzVpsodc2eB5sQ='
-        '-----END CERTIFICATE-----'
-        ''
-        '-----BEGIN CERTIFICATE-----'
-        'MIIEqzCCApOgAwIBAgIRAIvhKg5ZRO08VGQx8JdhT+UwDQYJKoZIhvcNAQELBQAw'
-        'GjEYMBYGA1UEAwwPRmFrZSBMRSBSb290IFgxMB4XDTE2MDUyMzIyMDc1OVoXDTM2'
-        'MDUyMzIyMDc1OVowIjEgMB4GA1UEAwwXRmFrZSBMRSBJbnRlcm1lZGlhdGUgWDEw'
-        'ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtWKySDn7rWZc5ggjz3ZB0'
-        '8jO4xti3uzINfD5sQ7Lj7hzetUT+wQob+iXSZkhnvx+IvdbXF5/yt8aWPpUKnPym'
-        'oLxsYiI5gQBLxNDzIec0OIaflWqAr29m7J8+NNtApEN8nZFnf3bhehZW7AxmS1m0'
-        'ZnSsdHw0Fw+bgixPg2MQ9k9oefFeqa+7Kqdlz5bbrUYV2volxhDFtnI4Mh8BiWCN'
-        'xDH1Hizq+GKCcHsinDZWurCqder/afJBnQs+SBSL6MVApHt+d35zjBD92fO2Je56'
-        'dhMfzCgOKXeJ340WhW3TjD1zqLZXeaCyUNRnfOmWZV8nEhtHOFbUCU7r/KkjMZO9'
-        'AgMBAAGjgeMwgeAwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw'
-        'HQYDVR0OBBYEFMDMA0a5WCDMXHJw8+EuyyCm9Wg6MHoGCCsGAQUFBwEBBG4wbDA0'
-        'BggrBgEFBQcwAYYoaHR0cDovL29jc3Auc3RnLXJvb3QteDEubGV0c2VuY3J5cHQu'
-        'b3JnLzA0BggrBgEFBQcwAoYoaHR0cDovL2NlcnQuc3RnLXJvb3QteDEubGV0c2Vu'
-        'Y3J5cHQub3JnLzAfBgNVHSMEGDAWgBTBJnSkikSg5vogKNhcI5pFiBh54DANBgkq'
-        'hkiG9w0BAQsFAAOCAgEABYSu4Il+fI0MYU42OTmEj+1HqQ5DvyAeyCA6sGuZdwjF'
-        'UGeVOv3NnLyfofuUOjEbY5irFCDtnv+0ckukUZN9lz4Q2YjWGUpW4TTu3ieTsaC9'
-        'AFvCSgNHJyWSVtWvB5XDxsqawl1KzHzzwr132bF2rtGtazSqVqK9E07sGHMCf+zp'
-        'DQVDVVGtqZPHwX3KqUtefE621b8RI6VCl4oD30Olf8pjuzG4JKBFRFclzLRjo/h7'
-        'IkkfjZ8wDa7faOjVXx6n+eUQ29cIMCzr8/rNWHS9pYGGQKJiY2xmVC9h12H99Xyf'
-        'zWE9vb5zKP3MVG6neX1hSdo7PEAb9fqRhHkqVsqUvJlIRmvXvVKTwNCP3eCjRCCI'
-        'PTAvjV+4ni786iXwwFYNz8l3PmPLCyQXWGohnJ8iBm+5nk7O2ynaPVW0U2W+pt2w'
-        'SVuvdDM5zGv2f9ltNWUiYZHJ1mmO97jSY/6YfdOUH66iRtQtDkHBRdkNBsMbD+Em'
-        '2TgBldtHNSJBfB3pm9FblgOcJ0FSWcUDWJ7vO0+NTXlgrRofRT6pVywzxVo6dND0'
-        'WzYlTWeUVsO40xJqhgUQRER9YLOLxJ0O6C8i0xFxAMKOtSdodMB3RIwt7RFQ0uyt'
-        'n5Z5MqkYhlMI3J1tPRTp1nEt9fyGspBOO05gi148Qasp+3N+svqKomoQglNoAxU='
-        '-----END CERTIFICATE-----'
-    ==
-  =/  k=key:rsa  (need (ring:de:pem:pkcs1 key))
-  =/  k8=wain  (ring:en:pem:pkcs8 k)
-  (emit %rule /install %cert `[k8 cert])
 ::  +poke-path: for debugging
 ::
 ++  poke-path
   |=(a=path abet:(add-order (sy a ~)))
 ::  +prep: initialize and adapt state
 ::
-::  ++  prep  _[~ this]
 ++  prep
   |=  old=(unit acme)
   ^-  (quip move _this)
