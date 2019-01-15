@@ -661,7 +661,7 @@
       ::  kill active outgoing requests
       ::
       =.  +>.$
-        =/  fok=(list duct)  ~(tap in ~(key by kes))
+        =/  fok=(list duct)  (turn ~(val by q.ask) head)
         |-  ^+   +>.^$
         ?~  fok  +>.^$
         %=  $
@@ -756,11 +756,24 @@
     ::
         $them                                           ::  outbound request
       ?~  p.kyz
-        =+  sud=(need (~(get by kes) hen))
+        ?~  sud=(~(get by kes) hen)
+          ::  delete an element from q.ask by traversing to prevent leakage
+          ::
+          =.  q.ask
+            =/  qas  ~(tap by q.ask)
+            |-  ^+  q.ask
+            ?~  qas
+              q.ask
+            ?:  =(hen p.q.i.qas)
+              (~(del by q.ask) p.i.qas)
+            $(qas t.qas)
+          ::
+          +>.$
+        ::
         =.  +>.$
           %_  +>.$
-            mow    :_(mow [ged [%give %thus sud ~]])
-            q.ask  (~(del by q.ask) sud)
+            mow    :_(mow [ged [%give %thus u.sud ~]])
+            q.ask  (~(del by q.ask) u.sud)
             kes    (~(del by kes) hen)
           ==
         ::
