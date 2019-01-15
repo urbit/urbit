@@ -3,15 +3,15 @@
 # Install instructions
 
 To install and run Urbit please follow the instructions at
-[urbit.org/docs/getting-started/installation](http://urbit.org/docs/getting-started/installation).  Packages
-and source tarballs are available there. You'll be on the live network in a few
-minutes.
+[urbit.org/docs/getting-started/](https://urbit.org/docs/getting-started/).
+Packages and source tarballs are available there. You'll be on the live network
+in a few minutes.
 
 If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=maint-0.4)](https://travis-ci.org/urbit/urbit)
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
 
 ## External dependencies
 
@@ -100,7 +100,6 @@ following steps:
 If you have any questions, problems, patches, or proposals for patches, please
 feel free to get in touch in whatever way is most convenient:
 
-- Post to `/urbit-meta` on Urbit `:talk`.  (You can do this via
-[urbit.org/stream](https://urbit.org/stream) without a running Urbit).
+- Post to `/urbit-meta` on Urbit [`:talk`](https://urbit.org/docs/learn/arvo/arvo-internals/messaging/).
 - Post to [urbit.org/fora](https://urbit.org/fora/).
-- Email us directly [questions@urbit.org](mailto:questions@urbit.org).  
+- Email us directly [questions@urbit.org](mailto:questions@urbit.org).
