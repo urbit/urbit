@@ -355,7 +355,7 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "where ship_name is a @p phonetic representation of an urbit address\n",
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
-    "-A dir        Use dir for initial galaxy sync\n",
+    "-A dir        Use dir for initial arvo sync\n",
     "-B pill       Bootstrap from this pill\n",
     "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
@@ -388,8 +388,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
     "\n",
     "Simple Usage: \n",
-    "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
-    "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
+    "   %s -c <my-comet> to create a comet (anonymous urbit)\n",
+    "   %s -w <my-planet> -k <my-key-file> if you own a planet\n",
     "   %s <myplanet or mycomet> to restart an existing urbit\n",
     0
   };
