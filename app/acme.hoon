@@ -719,7 +719,7 @@
         :~  'unable to reach '  (scot %p our.bow)
             ' via http at '  (join '.' turf.i.item)  ':80'
         ==
-      (emit (notify msg [(sell !>(rep)) ~]))
+      (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
