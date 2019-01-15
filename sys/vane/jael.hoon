@@ -2378,6 +2378,12 @@
     !>  ^-  (list ship)
     (~(saxo of [our now eny] lex) u.who)
   ::
+      %eth-status
+    ?.  ?=(~ tyl)  [~ ~]
+    :^  ~  ~  %noun  !>
+    ^-  [latest-block=@ud source=(each ship node-src)]
+    [latest-block.etn.lex source.etn.lex]
+  ::
       %snap
     ?.  ?=(~ tyl)  [~ ~]
     ?:  =(~ snaps.sap.lex)
