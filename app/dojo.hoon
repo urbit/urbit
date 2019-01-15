@@ -1484,10 +1484,8 @@
       |=  nex/@ud
       ^+  +>+>
       ?>  ?=(~ cud)
-      ?:  ?=({$show $3} -.mad)
-        he-easter:dy-over
       ?:  =(nex num)
-        he-easter:dy-over
+        dy-over
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
@@ -1511,16 +1509,6 @@
       %|  [%| q.p.foy]
       %&  [%& p.foy]
     ==
-  ::
-  ++  he-easter                                         ::  hint messages
-    ^+  .
-    =.  egg  +(egg)
-    =-  ?~(msg ..he-diff (he-diff %tan leaf+u.msg ~))
-    ^-  msg/(unit tape)
-    ?+  (clan:title our.hid)  ~
-      $pawn  ?+  egg  ~
-                $5  `":: To request a planet, run  |ask 'your@email.co'"
-    ==       ==  
   ::
   ++  he-abet                                           ::  resolve
     [(flop moz) %_(+> hoc (~(put by hoc) ost.hid +<+))]
