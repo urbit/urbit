@@ -1,7 +1,7 @@
 # Install instructions
 
 To install and run Urbit please follow the instructions at
-[urbit.org/docs/using/install](http://urbit.org/docs/using/install).  Packages
+[urbit.org/docs/getting-started/](urbit.org/docs/getting-started).  Packages
 and source tarballs are available there. You'll be on the live network in a few
 minutes.
 
