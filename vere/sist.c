@@ -683,7 +683,10 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3r_mug_trel(ovo, u3_nul, c3__ov);
+
+      u3_noun moo = u3nt(u3k(ovo), u3_nul, c3__ov);
+      lar_u.mug_w = u3r_mug(moo);
+      u3z(moo);
 
       img_w = c3_malloc(lar_u.len_w << 2);
       u3r_words(0, lar_u.len_w, img_w, ovo);

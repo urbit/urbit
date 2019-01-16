@@ -381,4 +381,4 @@ link_args: os_link_flags,
 dependencies: deps + os_deps,
 install: false)
 
-test('test_hash', test_hash)
+test('test-hash', test_hash)

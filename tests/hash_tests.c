@@ -54,8 +54,9 @@ _test_mug(void)
     exit(1);
   }
 
-  {
-    // stick some zero bytes in a string
+  { 
+    //  stick some zero bytes in a string
+    //
     u3_noun str = u3kc_lsh(3, 1,
                            u3kc_mix(u3qc_bex(212),
                            u3i_string("abcdefjhijklmnopqrstuvwxyz")));

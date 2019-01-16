@@ -1554,59 +1554,176 @@ u3r_mug_cell(u3_noun hed,
   return u3r_mug_both(lus_w, biq_w);
 }
 
-/* u3r_mug_trel(): Compute the mug of `[a b c]`.
-*/
-c3_w
-u3r_mug_trel(u3_noun a,
-             u3_noun b,
-             u3_noun c)
+//  mugframe: head and tail mugs of veb, 0 if uncalculated
+//
+typedef struct mugframe
 {
-  return u3r_mug_both(u3r_mug(a), u3r_mug_cell(b, c));
+  u3_noun veb;
+  c3_w a; 
+  c3_w b; 
+} mugframe;
+
+static inline mugframe*
+_mug_push(c3_ys mov, c3_ys off, u3_noun veb)
+{
+  u3R->cap_p += mov;
+
+  //  ensure we haven't overflowed the stack
+  //  (off==0 means we're on a north road)
+  //
+  if ( 0 == off ) {
+    c3_assert(u3R->cap_p > u3R->hat_p);
+  }
+  else {
+    c3_assert(u3R->cap_p < u3R->hat_p);
+  }
+
+  mugframe* cur = u3to(mugframe, u3R->cap_p + off);
+  cur->veb   = veb;
+  cur->a     = 0;
+  cur->b     = 0;
+  return cur;
 }
 
-/* u3r_mug_qual(): Compute the mug of `[a b c d]`.
-*/
-c3_w
-u3r_mug_qual(u3_noun a,
-             u3_noun b,
-             u3_noun c,
-             u3_noun d)
+static inline mugframe*
+_mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
 {
-  return u3r_mug_both(u3r_mug(a), u3r_mug_trel(b, c, d));
+  u3R->cap_p -= mov;
+  mugframe* fam = u3to(mugframe, u3R->cap_p + off);
+
+  //  the bottom of the stack
+  //
+  if ( u3_none == fam->veb ) {
+    return fam;
+  }
+
+  //  place return value in head of previous frame if not already calculated
+  //
+  if ( 0 == fam->a ) {
+    fam->a = mug_w;
+  }
+  //  otherwise, place the return value in the tail
+  //
+  else if ( 0 == fam->b ) {
+    fam->b = mug_w;
+  }
+  //  shouldn't reach
+  //
+  else {
+    c3_assert(0); 
+  }
+  return fam;
 }
 
-/* u3r_mug(): MurmurHash3 on a noun.
+//  _mug_cat(): return the mug of a direct atom
+//
+static c3_w
+_mug_cat(u3_atom veb)
+{
+  c3_w len_w = u3r_met(3, veb);
+  return u3r_mug_bytes((c3_y*)&veb, len_w);
+}
+
+/* _mug_pug(): statefully mug an indirect atom
 */
+static c3_w
+_mug_pug(u3_atom veb)
+{
+  u3a_atom* vat_u = (u3a_atom*)(u3a_to_ptr(veb));
+  c3_w len_w      = u3r_met(3, veb);
+
+  c3_w mug_w = u3r_mug_bytes((c3_y*)vat_u->buf_w, len_w);
+  vat_u->mug_w = mug_w;
+  return mug_w;
+}
+
+/* _mug_atom(): mug an atom, either direct or indirect
+*/
+static c3_w
+_mug_atom(u3_atom veb)
+{
+  if ( _(u3a_is_cat(veb)) ) {
+    return _mug_cat(veb);
+  }
+  else {
+    return _mug_pug(veb);
+  }
+}
+
+//  u3r_mug(): statefully mug a noun using a 31-bit MurmurHash3
+//
 c3_w
 u3r_mug(u3_noun veb)
 {
-  c3_assert(u3_none != veb);
-
-  if ( _(u3a_is_cat(veb)) ) {
-    c3_w len_w = u3r_met(3, veb);
-    return u3r_mug_bytes((c3_y*)&veb, len_w);
+  c3_assert( u3_none != veb );
+  
+  if ( _(u3a_is_atom(veb)) ) {
+    return _mug_atom(veb);
   }
-  else {
-    c3_w mug_w;
 
-    u3a_noun* veb_u = u3a_to_ptr(veb);
+  c3_y  wis_y  = c3_wiseof(mugframe);
+  c3_o  nor_o  = u3a_is_north(u3R);
+  c3_ys mov    = ( c3y == nor_o ? -wis_y : wis_y );
+  c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
 
+  //  stash the current stack pointer
+  //
+  u3p(mugframe) empty = u3R->cap_p;
+  //  set the bottom of our stack
+  //
+  mugframe* don = _mug_push(mov, off, u3_none);
+  mugframe* fam = _mug_push(mov, off, veb);
+
+  c3_w mug_w;
+  c3_w a;
+  c3_w b;
+  u3a_noun* veb_u;
+  u3_noun hed, tal;
+
+  while ( don != fam ) {
+    a     = fam->a;
+    b     = fam->b;
+    veb   = fam->veb;
+    veb_u = u3a_to_ptr(veb);
+    c3_assert(_(u3a_is_cell(veb)));
+
+    //  already mugged; pop stack
+    //
     if ( veb_u->mug_w ) {
-      return veb_u->mug_w;
+      mug_w = veb_u->mug_w;
+      fam = _mug_pop(mov, off, mug_w);
     }
-
-    if ( _(u3a_is_cell(veb)) ) {
-      mug_w = u3r_mug_cell(u3h(veb), u3t(veb));
+    //  neither head nor tail are mugged; start with head
+    //
+    else if ( 0 == a ) {
+      hed = u3h(veb);
+      if ( _(u3a_is_atom(hed)) ) {
+        fam->a = _mug_atom(hed);
+      }
+      else {
+        fam = _mug_push(mov, off, hed);
+      }
     }
+    //  head is mugged, but not tail; mug tail or push tail onto stack
+    //
+    else if ( 0 == b ) {
+      tal = u3t(veb);
+      if ( _(u3a_is_atom(tal)) ) {
+        fam->b = _mug_atom(tal);
+      }
+      else {
+        fam = _mug_push(mov, off, tal);
+      }
+    }
+    //  both head and tail are mugged; combine them and pop stack
+    //
     else {
-      u3a_atom* vat_u = (u3a_atom*)veb_u;
-      c3_w len_w      = u3r_met(3, veb);
-
-      mug_w = u3r_mug_bytes((c3_y*)vat_u->buf_w, len_w);
+      mug_w = u3r_mug_both(a, b);
+      veb_u->mug_w = mug_w;
+      fam = _mug_pop(mov, off, mug_w);
     }
-
-    veb_u->mug_w = mug_w;
-
-    return mug_w;
   }
+
+  u3R->cap_p = empty;
+  return mug_w;
 }
