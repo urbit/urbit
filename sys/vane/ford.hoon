@@ -4699,7 +4699,7 @@
         %-  mule  |.
         (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
       ?:  ?=(%| -.hoon-hoon)
-        (return-error leaf+"ford: %reef failed to compile" p.hoon-hoon)
+        (return-error leaf+"ford: %reef failed to compile hoon" p.hoon-hoon)
       ::
       =/  arvo-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/arvo/sys
@@ -4707,7 +4707,7 @@
         %-  mule  |.
         (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
       ?:  ?=(%| -.arvo-hoon)
-        (return-error leaf+"ford: %reef failed to compile" p.arvo-hoon)
+        (return-error leaf+"ford: %reef failed to compile arvo" p.arvo-hoon)
       ::
       =/  zuse-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/zuse/sys
@@ -4715,7 +4715,7 @@
         %-  mule  |.
         (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
       ?:  ?=(%| -.zuse-hoon)
-        (return-error leaf+"ford: %reef failed to compile" p.zuse-hoon)
+        (return-error leaf+"ford: %reef failed to compile zuse" p.zuse-hoon)
       ::
       =/  zuse-build=^build
         :*  date.build
