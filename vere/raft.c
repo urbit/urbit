@@ -1480,74 +1480,92 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 static u3_weak
 _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 {
-  u3_noun bov, gon;
-  u3_noun ret;
+  u3_noun bov, gon, ret;
+
+  u3_noun wir, tag, cad;
+  u3x_trel(ovo, &wir, &tag, &cad);
 
 #if 0
   {
-    c3_c* oik_c = u3r_string(u3h(u3t(ovo)));
-
-    // uL(fprintf(uH, "lame: %s\n", oik_c));
-    free(oik_c);
+    c3_c* tag_c = u3r_string(tag);
+    uL(fprintf(uH, "lame: %s\n", tag_c));
+    u3_lo_show("data", u3k(u3t(u3t(ovo))));
+    free(tag_c);
   }
 #endif
 
-  //  Formal error in a network packet generates a hole card.
+  //  Formal error in a network packet generates a %hole card.
   //
-  //  There should be a separate path for crypto failures,
-  //  to prevent timing attacks, but isn't right now.  To deal
-  //  with a crypto failure, just drop the packet.
+  //    There should be a separate path for crypto failures,
+  //    to prevent timing attacks, but isn't right now.  To deal
+  //    with a crypto failure, just drop the packet.
   //
-  if ( (c3__exit == why) && (c3__hear == u3h(u3t(ovo))) ) {
-    u3_lo_punt(2, u3kb_flop(u3k(tan)));
-
-    bov = u3nc(u3k(u3h(ovo)), u3nc(c3__hole, u3k(u3t(u3t(ovo)))));
-    u3z(why);
+  if ( (c3__exit == why) && (c3__hear == tag) ) {
+    bov = u3nt(u3k(wir), c3__hole, u3k(cad));
   }
+  //  All other errors are replaced with [%crud why trace]
+  //
   else {
-    bov = u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, u3k(tan)));
+    bov = u3nq(u3k(wir), c3__crud, u3k(why), u3k(tan));
   }
-  // u3_lo_show("data", u3k(u3t(u3t(ovo))));
 
-  u3z(ovo);
-
+  //  poke with replacement event, on the same wire
+  //
   gon = u3m_soft(0, u3v_poke, u3k(bov));
 
   if ( u3_blip == u3h(gon) ) {
-    ret = _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
+    u3_noun hed, tal;
+    u3x_trel(gon, 0, &hed, &tal);
 
-    u3z(tan);
-    u3z(gon);
+    ret = _raft_sure(u3k(bov), u3k(hed), u3k(tal));
+  }
+  //  a failed %hole card is re-replayed as %crud
+  //
+  else if ( (c3__exit == why) && (c3__hear == tag) ) {
+    u3_noun hed, tal;
+    u3x_cell(gon, &hed, &tal);
 
-    return ret;
+    ret = _raft_lame(u3k(bov), u3k(hed), u3k(tal));
   }
   else {
-    u3z(gon);
-    {
-      u3_noun vab = u3nc(u3k(u3h(bov)),
-                         u3nc(c3__warn, u3i_tape("crude crash!")));
-      u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
+    //  XX this will always fail, nothing in arvo handles %warn
+    //
+#if 0
+    u3_noun vab = u3nt(u3k(u3h(bov)), c3__warn,
+                       u3i_tape("crude crash!"));
+    u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
 
-      if ( u3_blip == u3h(nog) ) {
-        ret = _raft_sure(vab, u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
-        u3z(tan);
-        u3z(nog);
-
-        return ret;
-      }
-      else {
-        u3z(nog);
-        u3z(vab);
-
-        uL(fprintf(uH, "crude: all delivery failed!\n"));
-        u3_lo_punt(2, u3kb_flop(u3k(tan)));
-        uL(fprintf(uH, "crude: punted\n"));
-        // c3_assert(!"crud");
-
-        return u3_none;
-      }
+    if ( u3_blip == u3h(nog) ) {
+      ret = _raft_sure(u3k(vab), u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
     }
+    else {
+#endif
+
+      ret = u3_none;
+
+      uL(fprintf(uH, "crude: all delivery failed!\n"));
+
+      {
+        c3_c* tag_c = u3r_string(tag);
+        uL(fprintf(uH, "event: %s\n", tag_c));
+        u3_lo_punt(2, u3kb_flop(u3k(tan)));
+        free(tag_c);
+      }
+
+      uL(fprintf(uH, "crude: punted\n"));
+      // c3_assert(!"crud");
+
+#if 0
+    }
+
+    u3z(vab); u3z(nog);
+#endif
   }
+
+  u3z(ovo); u3z(why); u3z(tan);
+  u3z(bov); u3z(gon);
+
+  return ret;
 }
 
 /* _raft_punk(): insert and apply an input ovum (unprotected).
