@@ -57,6 +57,8 @@
 ++  pone  (list {p/@tas q/vise})                        ::  kernel modules old
 +$  scry-sample
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
++$  vane-sample
+  [our=ship now=@da eny=@uvJ ski=slyd]
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -152,7 +154,10 @@
     ^+  +>
     =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
     ^=  res  %-  mule  |.
-    =+  arg=[~2000.1.1 0 =>(~ |~(* ~))]
+    ::  XX should use real entropy and the real date
+    ::
+    =/  arg=vane-sample
+      [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
     =+  rig=(slym vase.vane arg)
     =+  gen=(rain pax txt)
     =+  rev=(slym (slap bud gen) bud)
@@ -183,7 +188,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *[@p @da @ slyd])
+        (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
       =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
@@ -196,7 +201,7 @@
     |=  {now/@da eny/@ ski/slyd}
     =^  rig  worm.vane
       ~|  [%failed-vane-activation-for lal]
-      (~(slym wa worm.vane) vase.vane [who +<])  ::  activate vane
+      (~(slym wa worm.vane) vase.vane `vane-sample`[who +<])  ::  activate vane
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -364,7 +369,8 @@
       ^-  vase
       ?:  &(=(-.q.vase.vane -.q.sev) =(+>.q.vase.vane +>.q.sev))
         vase.vane                                           ::  unchanged, use old
-      sev(+<.q [*@p *@da *@ =>(~ |~(* ~))])                 ::  clear to stop leak
+      =|  sam=vane-sample
+      sev(+<.q sam(ski =>(~ |~(* ~))))                      ::  clear to stop leak
     ::
     ++  swim
       ~/  %swim
@@ -567,11 +573,11 @@
     ::  larval Arvo structural interface
     ::
     |%
-    ++  come  ^come                                     ::  22
-    ++  load  ^load                                     ::  46
-    ++  peek  |=(* ~)                                   ::  47
+    ++  come  ^come                                     ::   4
+    ++  load  ^load                                     ::  10
+    ++  peek  |=(* ~)                                   ::  46
     ::
-    ++  poke  |=  *                                     ::  10
+    ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               ^-  [(list ovum) *]
@@ -616,7 +622,7 @@
                 (turn vanes.^poke |=([label=@tas =vane] [label vase.vane]))
               (load u.who now u.eny ova=~ u.bod nyf)
     ::
-    ++  wish  |=  txt=*                                 ::  4
+    ++  wish  |=  txt=*                                 ::  22
               ?>  ?=(@ txt)
               q:(slap ?~(bod pit u.bod) (ream txt))
     --
@@ -634,21 +640,21 @@
 =<  ::  Arvo structural interface
     ::
     |%
-    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::  22
+    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::   4
               ^-  {(list ovum) _+>}
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ::
-    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  46
+    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  10
               ^-  {(list ovum) _+>}
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  47
+    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  46
     ::
-    ++  poke  |=  *                                     ::  10
+    ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               =^  ova  +>+.$  (^poke now ovo)
@@ -670,7 +676,7 @@
               =/  avo  $(ova t.ova)
               [[+.vov -.avo] +.avo]
     ::
-    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  4
+    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
     --
 ::  Arvo implementation core
 ::

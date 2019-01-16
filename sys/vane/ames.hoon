@@ -5,7 +5,8 @@
 ::  structures
 =,  ames
 ::  this number needs to be below 8
-=+  protocol-version=0
+::
+=+  protocol-version=4
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
@@ -510,31 +511,44 @@
   ++  am                                                ::    am
     ~%  %ames-am  ..is  ~
     |_  [our=ship now=@da fox=fort ski=sley]            ::  protocol engine
-    ::  +deed: scry for our deed
+    ::  +deed-scry: for a +deed at a +life
     ::
-    ++  deed
-      ~/  %deed
+    ++  deed-scry
+      ~/  %deed-scry
       |=  [who=ship lyf=life]
-      ^-  (unit ^deed)
+      ^-  (unit deed)
       =;  ded
         ?~(ded ~ u.ded)
-      ;;  (unit (unit ^deed))
+      ;;  (unit (unit deed))
       %-  (sloy-light ski)
       =/  pur=spur
         /(scot %ud lyf)/(scot %p who)
       [[151 %noun] %j our %deed da+now pur]
-    ::  +sein: scry for sponsor
+    ::  +life-scry: for a +life
     ::
-    ++  sein
+    ++  life-scry
+      ~/  %life-scry
+      |=  who=ship
+      ^-  (unit life)
+      =;  lyf
+        ?~(lyf ~ u.lyf)
+      ;;  (unit (unit life))
+      %-  (sloy-light ski)
+      =/  pur=spur
+        /(scot %p who)
+      [[151 %noun] %j our %life da+now pur]
+    ::  +sein-scry: for sponsor
+    ::
+    ++  sein-scry
       ~/  %sein
       |=  who=ship
       ;;  ship
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %sein da+now /(scot %p who)]
-    ::  +saxo: scry for sponsorship chain
+    ::  +saxo-scry: for sponsorship chain
     ::
-    ++  saxo
+    ++  saxo-scry
       ~/  %saxo
       |=  who=ship
       ;;  (list ship)
@@ -566,7 +580,7 @@
           law.ton
         ::  save our deed (for comet/moon communication)
         ::
-        (need (deed our life))
+        (need (deed-scry our life))
       ::
           val.ton
         ::  save our secrets, ready for action
@@ -741,13 +755,13 @@
             ?^  ram  raz.bah
             %+  ~(put by raz.bah)  cha
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
-          =/  seg  (sein her)
+          =/  seg  (sein-scry her)
           =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
           (busk(diz (wast:diz ryn)) xong roc)
         ::  XX move this logic into %zuse, namespaced under %jael?
         ::
         ++  deng                                        ::    deng:ho:um:am
-          |=  law=(unit ^deed)                          ::  accept inline deed
+          |=  law=(unit deed)                           ::  accept inline deed
           ^+  diz
           ?:  |(=(~ law) =(lew.wod.dur.diz law))
             diz
@@ -787,7 +801,7 @@
                 ::  our sponsor
                 ::
                 ?&  !?=(%czar (clan:title our))
-                    =(her (sein our))
+                    =(her (sein-scry our))
                 ==
               ==
           diz(lew.wod.dur law)
@@ -827,11 +841,8 @@
               ::  (to avoid dropping the packet, if possible).
               ::
               =?  lew.wod.dur.diz  ?=(~ lew.wod.dur.diz)
-                ::  we could get the life from the packet if %open
-                ::  for now, we guess 1 for the life
-                ::  XX revise
-                ::
-                (deed her 1)
+                =/  life  (life-scry her)
+                ?~(life ~ (deed-scry her u.life))
               ::  if we have a deed, proceed
               ::
               ?^  lew.wod.dur.diz
@@ -841,14 +852,14 @@
               ::    XX TOFU is unnecessary if we include keys
               ::    for the full sponsorship chain in the boot event
               ::
-              ?:  =(her (sein our))
+              ?:  =(her (sein-scry our))
                 apse
               ::  if :her is a comet, or a moon of a known ship, proceed
               ::
               =/  =rank:title  (clan:title her)
               ?:  ?|  ?=(%pawn rank)
                       ?&  ?=(%earl rank)
-                          !=(~ lew.wod.dur:(myx:gus (sein her)))
+                          !=(~ lew.wod.dur:(myx:gus (sein-scry her)))
                   ==  ==
                 apse
               ::  otherwise, drop the packet
@@ -938,7 +949,7 @@
             ^+  .                                       ::  send new ack
             ::  ~&  [%back kay dam]
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
-            =/  seg  (sein her)
+            =/  seg  (sein-scry her)
             =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
             +>(+> (busk(diz (wast:diz ryn)) xong pax))
           ::
@@ -984,9 +995,8 @@
               +>(..la (tock p.fud q.fud r.fud))
             ::
                 %bond
-              ::  ~&  [%bond q.fud r.fud]
-              ?>  =(lyf:sen:gus p.fud)
-              (deer q.fud r.fud ?-(kay %dead ~, %good [~ s.fud]))
+              ::  ~&  [%bond p.fud q.fud]
+              (deer p.fud q.fud ?-(kay %dead ~, %good [~ r.fud]))
             ::
                 %carp
               ::  =+  zol=(~(get by olz.weg) s.fud)
@@ -1091,7 +1101,7 @@
           |=  [gom=soup ham=meal]
           ::  ~&  [%wind her gom]
           ^+  +>
-          =/  seg  (sein her)
+          =/  seg  (sein-scry her)
           =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
           (busk xong feh)
@@ -1103,11 +1113,18 @@
           =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
           ::  if we don't have a public key for :her,
-          ::  request keys and proceed (skin will be %open)
+          ::  subscribe to %jael for keys and proceed
           ::
           ::    XX update state so we only ask once?
           ::
           =?  bin  =(~ lew.wod.dur.diz)  :_(bin [%beer her])
+          ::  if we don't have a public key for :her,
+          ::  scry into %jael for them.
+          ::  (skin will only be %open if the scry is ~)
+          ::
+          =?  lew.wod.dur.diz  =(~ lew.wod.dur.diz)
+              =/  life  (life-scry her)
+              ?~(life ~ (deed-scry her u.life))
           =.  ryl.bah
               %+  ~(put by ryl.bah)  cha
               %=  rol
@@ -1115,7 +1132,7 @@
                 san  (~(put by san.rol) sex hen)
               ==
           %+  wind  [cha sex]
-          [%bond clon:diz cha sex val]
+          [%bond cha sex val]
         ::
         ++  zest                                        ::    zest:ho:um:am
           :~  :~  :*  [%rtt rtt.sop.bah]
@@ -1167,8 +1184,8 @@
         ::
         ++  xong                                        ::    xong:ho:um:am
           ^-  (list ship)                               ::  route unto
-          =/  fro  (saxo our)
-          =/  too  (saxo her)
+          =/  fro  (saxo-scry our)
+          =/  too  (saxo-scry her)
           =+  ^=  oot  ^-  (list ship)
               =|  oot=(list ship)
               |-  ^+  oot
@@ -1182,7 +1199,7 @@
       ++  kick                                          ::    kick:um:am
         |=  hen=duct                                    ::  test connection
         ^+  +>
-        =/  hoy  (tail (saxo our))
+        =/  hoy  (tail (saxo-scry our))
         |-  ^+  +>.^$
         ?~  hoy
           +>.^$
@@ -1319,7 +1336,7 @@
       ::
       =?  moz  ?&  ?=(%duke (clan:title her))
                    ?=(%king (clan:title our))
-                   =(our (~(sein am [our now fox ski]) her))
+                   =(our (~(sein-scry am [our now fox ski]) her))
                ==
         =/  cmd  [%meet her]
         =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]

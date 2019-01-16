@@ -99,9 +99,8 @@
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
 ::
 ++  poke-send-ask
-  |=  mel/cord  =<  abet
-  %^  emit  %poke  /helm/ask/(scot %p ~socden-malzod)
-  [[~socden-malzod %ask] %ask-mail mel]
+  |=  mel/cord
+  abet
 ::
 ++  poke-hi
   |=  mes/@t

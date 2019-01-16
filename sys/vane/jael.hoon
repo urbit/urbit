@@ -157,10 +157,10 @@
         ?~(top & (lth +(q.n.a) u.top))
         ?~(bot & (gth p.n.a +(u.bot)))
     ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
+        ?~(l.a & (mor p.n.a p.n.l.a))
         $(a l.a, top `p.n.a)
     ::
-        ?~(l.a & (vor p.n.a p.n.l.a))
+        ?~(l.a & (mor p.n.a p.n.l.a))
         $(a r.a, bot `q.n.a)
     ==
   ::                                                    ::  ++int:py
@@ -168,7 +168,7 @@
     |=  b/pile  ^-  pile
     ?~  a  ~
     ?~  b  ~
-    ?.  (vor p.n.a p.n.b)  $(a b, b a)
+    ?.  (mor p.n.a p.n.b)  $(a b, b a)
     ?:  (gth p.n.a q.n.b)
       (uni(a $(b r.b)) $(a l.a, r.b ~))
     ?:  (lth q.n.a p.n.b)
@@ -218,7 +218,7 @@
     ^-  pile
     ?~  b  a
     ?~  a  b
-    ?.  (vor p.n.a p.n.b)  $(a b, b a)
+    ?.  (mor p.n.a p.n.b)  $(a b, b a)
     ?:  (lth +(q.n.b) p.n.a)
       $(b r.b, l.a $(a l.a, r.b ~))
     ?:  (lth +(q.n.a) p.n.b)
@@ -402,7 +402,7 @@
   ::                                                    ::::
 ++  up
   ::  a set of rites is stored as a tree (++safe), sorted
-  ::  by ++gor on the stem, balanced by ++vor on the stem.
+  ::  by ++gor on the stem, balanced by ++mor on the stem.
   ::  (this is essentially a ++map with stem as key, but
   ::  ++map doesn't know how to link stem and bulb types.)
   ::  the goal of the design is to make it easy to add new
@@ -436,7 +436,7 @@
     |-  ^-  safe
     ?~  l.pig  r.pig
     ?~  r.pig  l.pig
-    ?:  (vor -.n.l.pig -.n.r.pig)
+    ?:  (mor -.n.l.pig -.n.r.pig)
       [n.l.pig l.l.pig $(l.pig r.l.pig)]
     [n.r.pig $(r.pig l.r.pig) r.r.pig]
   ::                                                    ::  ++differ:up
@@ -472,12 +472,12 @@
     ?:  (gor -.ryt -.n.pig)
       =.  l.pig  $(pig l.pig)
       ?>  ?=(^ l.pig)
-      ?:  (vor -.n.pig -.n.l.pig)
+      ?:  (mor -.n.pig -.n.l.pig)
         [n.pig l.pig r.pig]
       [n.l.pig l.l.pig [n.pig r.l.pig r.pig]]
     =.  r.pig  $(pig r.pig)
     ?>  ?=(^ r.pig)
-    ?:  (vor -.n.pig -.n.r.pig)
+    ?:  (mor -.n.pig -.n.r.pig)
       [n.pig l.pig r.pig]
     [n.r.pig [n.pig l.pig l.r.pig] r.r.pig]
   ::                                                    ::  ++intern:up
@@ -687,7 +687,12 @@
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.sub  sig.seed.tac
-      ::  our initial public key
+      ::  if we're given a snapshot, restore it
+      ::
+      =.  +>.$
+        ?~  snap.tac  +>.$
+        (restore-snap hen u.snap.tac |)
+      ::  load our initial public key, overriding snapshot
       ::
       =.  kyz.puk.sub
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
@@ -711,11 +716,6 @@
       ::  set initial domains
       ::
       =.  tuf.own.sub  turf.tac
-      ::  if we're given a snapshot, restore it
-      ::
-      =.  +>.$
-        ?~  snap.tac  +>.$
-        (restore-snap hen u.snap.tac |)
       ::
       =.  moz
         %+  weld  moz
@@ -848,6 +848,11 @@
       %+  cure  hen
       [[%meet ship.tac life.tac pass.tac]~ urb]
     ::
+    ::  restore snapshot
+    ::    [%snap snap=snapshot kick=?]
+        %snap
+      (restore-snap hen snap.tac kick.tac)
+    ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
     ::  request domains
@@ -890,7 +895,7 @@
     ::
         $west
       =*  her  p.tac
-      =/  mes  ((hard message) r.tac)
+      =/  mes  (message r.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -1460,13 +1465,13 @@
           %+  sub.add
             (div block.wer interval.sap)
           (div last-block.sap interval.sap)
-        ~&  :*  %snap
-                count=count.sap
-                max-count=max-count.sap
-                last-block=last-block.sap
-                interval=interval.sap
-                lent=(lent ~(tap to snaps.sap))
-            ==
+        :: ~&  :*  %snap
+        ::         count=count.sap
+        ::         max-count=max-count.sap
+        ::         last-block=last-block.sap
+        ::         interval=interval.sap
+        ::         lent=(lent ~(tap to snaps.sap))
+        ::     ==
         %=  sap
           snaps       (~(put to snaps.sap) block.wer extract-snap)
           count       +(count.sap)
@@ -1685,7 +1690,7 @@
     ^-  move
     %+  wrap-note  wir
     :^  %e  %hiss  ~
-    :+  %json-rpc-response  %hiss
+    :+  %httr  %hiss
     ?>  ?=(%| -.source)
     !>  (json-request node.p.source jon)
   ::
@@ -1905,8 +1910,9 @@
       ~_  q.res
       ~&  [%yikes cuz]
       +>.$
-    ?>  ?=(%json-rpc-response mar)
-    =+  rep=~|(res ((hard response:rpc:jstd) q.res))
+    ?>  ?=(%httr mar)
+    =+  raw-rep=~|(res ((hard httr:eyre) q.res))
+    =+  rep=(httr-to-rpc-response raw-rep)
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
         ~&  'HTTP 405 error (expected if using infura)'
@@ -1937,6 +1943,31 @@
       (take-catch-up-step rep from-block next-block)
     ==
   ::
+  ::  httr-to-rpc-response
+  ::
+  ++  httr-to-rpc-response
+    |=  hit/httr:eyre
+    ^-  response:rpc:jstd
+    ~|  hit
+    ?.  ?=($2 (div p.hit 100))
+      fail+hit
+    =/  a=json  (need (de-json:html q:(need r.hit)))
+    =,  dejs-soft:format
+    ^-  response:rpc:jstd
+    =;  dere
+      =+  res=((ar dere) a)
+      ?~  res  (need (dere a))
+      [%batch u.res]
+    |=  a=json
+    ^-  (unit response:rpc:jstd)
+    =/  res=(unit [@t json])
+      ::TODO  breaks when no id present
+      ((ot id+so result+some ~) a)
+    ?^  res  `[%result u.res]
+    ~|  a
+    :+  ~  %error  %-  need
+    ((ot id+so error+(ot code+no message+so ~) ~) a)
+  ::
   ::  +take-new-filter: store filter-id and read it
   ::
   ++  take-new-filter
@@ -1965,7 +1996,7 @@
           ==
         ~&  [%unhandled-filter-error +.rep]
         +>
-      ~&  [%filter-timed-out--recreating block=latest-block +.rep]
+      ::~&  [%filter-timed-out--recreating block=latest-block +.rep]
       ::  arguably should rewind 40 blocks on the off chance the chain reorganized
       ::  when we blinked.  this will also restart the filter.
       ::
@@ -2191,7 +2222,7 @@
   =/  =task:able
     ?.  ?=($soft -.q.hic)
       q.hic
-    ((hard task:able) p.q.hic)
+    (task:able p.q.hic)
   =^  did  lex
     abet:(~(call of [our now eny] lex) hen task)
   [did ..^$]
@@ -2351,6 +2382,12 @@
     :^  ~  ~  %noun
     !>  ^-  (list ship)
     (~(saxo of [our now eny] lex) u.who)
+  ::
+      %eth-status
+    ?.  ?=(~ tyl)  [~ ~]
+    :^  ~  ~  %noun  !>
+    ^-  [latest-block=@ud source=(each ship node-src)]
+    [latest-block.etn.lex source.etn.lex]
   ::
       %snap
     ?.  ?=(~ tyl)  [~ ~]

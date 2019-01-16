@@ -69,14 +69,6 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  json                                                ::  normal json value
-  $@  ~                                                 ::  null
-  $%  {$a p/(list json)}                                ::  array
-      {$b p/?}                                          ::  boolean
-      {$o p/(map @t json)}                              ::  object
-      {$n p/@ta}                                        ::  number
-      {$s p/@t}                                         ::  string
-  ==                                                    ::
 ++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
@@ -104,6 +96,7 @@
   ++  rpc
     |%
     ++  response  ::TODO  id should be optional
+      $~  [%fail *httr:eyre]
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
           [%fail hit=httr:eyre]
@@ -345,7 +338,7 @@
     ==                                                  ::
   ++  meal                                              ::  payload
     $%  {$back p/coop q/flap r/@dr}                     ::  ack
-        {$bond p/life q/path r/@ud s/*}                 ::  message
+        {$bond p/path q/@ud r/*}                        ::  message
         {$carp p/@ q/@ud r/@ud s/flap t/@}              ::  skin+inx+cnt+hash
         {$fore p/ship q/(unit lane) r/@}                ::  forwarded packet
     ==                                                  ::
@@ -1864,6 +1857,7 @@
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs =ship]                                 ::  view public keys
           [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
@@ -7471,11 +7465,12 @@
         |%
         ::  azimuth: data contract
         ::
-        ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579
+        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
+        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  4.601.630
+        ++  launch  6.784.800
         --
       ::
       ::  hashes of ship event signatures
@@ -7559,10 +7554,11 @@
   |%
   ++  pass-from-eth
     |=  [enc=octs aut=octs sut=@ud]
-    ^-  (unit pass)
+    ^-  pass
+    %^  cat  3  'b'
     ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
-      ~
-    `(cat 3 'b' (cat 8 q.aut q.enc))
+      (cat 8 0 0)
+    (cat 8 q.aut q.enc)
   ::
   ++  point-from-eth
     |=  [who=@p point:eth-noun deed:eth-noun]
@@ -7582,7 +7578,6 @@
       :-  ~
       :*  key-revision
         ::
-          =-  (fall - *pass)
           (pass-from-eth encryption-key authentication-key crypto-suite)
         ::
           continuity-number
@@ -7647,7 +7642,7 @@
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-      `[who %keys rev (need (pass-from-eth enc aut sut))]
+      `[who %keys rev (pass-from-eth enc aut sut)]
     ::
     ?:  =(event.log broke-continuity)
       =/  who=@  (decode-topics topics.log ~[%uint])
@@ -8478,14 +8473,26 @@
   |%
   :: +come:dawn: mine a comet under a star
   ::
+  ::    Randomly generates comet addresses until we find one whose parent is
+  ::    in the list of supplied stars. Errors if any supplied ship
+  ::    is not a star.
+  ::
   ++  come
-    |=  [tar=ship eny=@uvJ]
-    ~|  [%come-not-king tar]
-    ?>  ?=(%king (clan:title tar))
+    |=  [tar=(list ship) eny=@uvJ]
+    ::
+    =|  stars=(set ship)
+    =.  stars
+      |-  ^+  stars
+      ?~  tar  stars
+      ::
+      ~|  [%come-not-king i.tar]
+      ?>  ?=(%king (clan:title i.tar))
+      $(tar t.tar, stars (~(put in stars) i.tar))
+    ::
     |-  ^-  seed:able:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
-    ?:  =(tar (^sein:title who))
+    ?:  (~(has in stars) (^sein:title who))
       [who 1 sec:ex:cub ~]
     $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
@@ -8605,10 +8612,9 @@
               kyz=(map ship [=life =pass])
           ==
       ^+  kyz
-      =/  pub=(unit pass)
+      =/  pub=pass
         (pass-from-eth enc aut sut)
-      ?~  pub  kyz
-      (~(put by kyz) who [rev u.pub])
+      (~(put by kyz) who [rev pub])
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point
@@ -8780,6 +8786,7 @@
       ::  boot keys must match the contract
       ::
       ?.  =(pub:ex:cub pass.net)
+        ~&  [%key-mismatch pub:ex:cub pass.net]
         [%| %key-mismatch]
       ::  life must match the contract
       ::

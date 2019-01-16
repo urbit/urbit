@@ -7,7 +7,10 @@
   /^  manx
   /|  
     /,  /web/collections  /;  landscape  /collections-elem/
-        /web/pages        /!hymn/
+        /web/landscape    /;  landscape  /!hymn/
+        /web/pages        /|  /!hymn/
+                              /hymn/
+                          ==
         /                 /;  landscape  /!hymn/ 
     ==
     ::

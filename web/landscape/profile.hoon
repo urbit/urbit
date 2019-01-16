@@ -20,7 +20,7 @@
       ==
     ==
     ;div.row.mt-9
-      ;div.flex-offset-special.flex-col-x
+      ;div.flex-offset-2.flex-col-x
         ;h2.text-500: Meta
       ==
     ==

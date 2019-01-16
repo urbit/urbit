@@ -1,4 +1,4 @@
-|=  inner=manx  
+|=  inner=manx
 ^-  manx
 ;html
 ::
@@ -15,7 +15,7 @@
     ;div#root
       ;+  inner
     ==
-    ;script@"/~~/landscape/js/index.js";
+    ;script@"/~~/landscape/js/index-min.js";
   ==
 ::
 ==

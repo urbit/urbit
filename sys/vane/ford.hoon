@@ -13,7 +13,7 @@
 ::
 ::    We call the date in the definition of a build the "formal date" to
 ::    distinguish it from the time at which the build was performed.
-
+::
 ::    Each build is referentially transparent with respect to its formal date:
 ::    ask to run that function on the namespace and a particular formal date,
 ::    and Ford will always produce the same result.
@@ -4344,10 +4344,10 @@
           |=  [=truss sub-crane=^crane]
           ^-  compose-cranes
           ::
-          =/  =beam
-            =,  source-rail.scaffold
-            [[ship.disc desk.disc [%ud 0]] spur]
-          =/  hoon-parser  (vang & (en-beam beam))
+          =/  beam-to-render=beam
+            [[ship.disc desk.disc %ud 0] spur]:path-to-render
+          ::
+          =/  hoon-parser  (vang & (en-beam beam-to-render))
           ::
           =+  tuz=(posh:hoon-parser truss)
           ?~  tuz

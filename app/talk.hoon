@@ -1263,7 +1263,7 @@
         =-  (sh-act %phrase - [%inv inv [self nom]]~)
         %-  ~(rep in sis)
         |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
+        (~(put in a) [s %i])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}

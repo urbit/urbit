@@ -764,10 +764,10 @@
         ==
       ::
       ^=  moves
-        :~  :*  duct=~[/one]  %give  %made  ~1234.5.6  %complete  %success
+        :~  :*  duct=~[/two]  %give  %made  ~1234.5.7  %complete  %success
                 [%scry %noun !>(42)]
             ==
-            :*  duct=~[/two]  %give  %made  ~1234.5.7  %complete  %success
+            :*  duct=~[/one]  %give  %made  ~1234.5.6  %complete  %success
                 [%scry %noun !>(42)]
     ==  ==  ==
   ::
