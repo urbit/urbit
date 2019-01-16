@@ -887,13 +887,13 @@
                 %-  as-octs:mimes:html
                 '''
                 id: 0
-                data: {"ok":"ok","response":"poke","id":0}
+                data: {"ok":"ok","id":0,"response":"poke"}
 
                 id: 1
-                data: {"ok":"ok","response":"subscribe","id":1}
+                data: {"ok":"ok","id":1,"response":"subscribe"}
 
                 id: 2
-                data: {"response":"diff","id":1,"json":[1,2]}
+                data: {"json":[1,2],"id":1,"response":"diff"}
 
 
                 '''
