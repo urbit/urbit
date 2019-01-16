@@ -1,3 +1,8 @@
+::  usage:
+::    :eth-manage %look
+::      kick polling from eth mainnet node
+::    :eth-manage [%wind 1.000.000]
+::      rewind to block 1.000.000
 =>  $~  |%
     ++  move  (pair bone card)
     ++  card
@@ -17,20 +22,16 @@
 ++  poke
   |=  [mar=@tas val=*]
   ^-  (quip move _+>)
-  ~&  %ouch
   :_  +>.$
-  ?+  val
-        ~&(%oops ~)
-    %turf  [ost.hid %turf /hi ~]~                       ::  +
-    %vein  [ost.hid %vein /hi]~                 ::  +
-    %look  :_  ~                                        ::  +
-           =/  pul  |+(need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
-           [ost.hid %look /hi pul]
-    %wind  :_  ~                                        ::  -
-           :*  ost.hid  %wind  /hi
-               ::  0
-               4.280.000
-           ==
+  ?+  val  ~&(%oops ~)
+      %turf         [ost.hid %turf /hi ~]~
+      %vein         [ost.hid %vein /hi]~
+      [%wind @ud]   [ost.hid %wind /hi +.val]~
+      %look
+    :_  ~
+    =/  pul
+      (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+    [ost.hid %look /hi |+pul]
   ==
 ::
 ++  vein
