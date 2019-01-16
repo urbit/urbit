@@ -140,7 +140,7 @@
   %+  expect-eq
     !>  :-  ~
         %-  ~(gas by *(map ship [=life =pass]))
-        [[~zod 1 zod.kyz] [~nec 1 nec.kyz] ~]
+        [[~zod 1 zod.kyz] [~nec 1 nec.kyz] [~bud 0 'b'] ~]
     !>  (czar:take:dawn oct)
 ::
 ++  test-take-point
