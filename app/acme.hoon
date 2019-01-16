@@ -494,6 +494,10 @@
   ::
   ++  register
     ^+  this
+    ?.  =(~ reg.act)
+      ?:  =(~ next-order)
+        this
+      (validate-domain:effect 0)
     =/  =json  [%o (my [['termsOfServiceAgreed' b+&] ~])]
     ::  XX date in wire?
     ::
