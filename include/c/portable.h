@@ -185,17 +185,6 @@
 #       error "port: timeconvert"
 #     endif
 
-    /* Entropy.
-    */
-#     if defined(U3_OS_linux)
-#       define c3_getentropy(B, L) \
-          ((L) == syscall(SYS_getrandom, B, L, 0) ? 0 : -1)
-#     elif defined(U3_OS_bsd) || defined(U3_OS_osx)
-#       define c3_getentropy getentropy
-#     else
-#       error "port: getentropy"
-#     endif
-
     /* Static assertion.
     */
 #     define ASSERT_CONCAT_(a, b) a##b
