@@ -1603,6 +1603,17 @@ static inline mugframe*
 _mug_push(c3_ys mov, c3_ys off, u3_noun veb)
 {
   u3R->cap_p += mov;
+
+  //  ensure we haven't overflowed the stack
+  //  (off==0 means we're on a north road)
+  //
+  if ( 0 == off ) {
+    c3_assert(u3R->cap_p > u3R->hat_p);
+  }
+  else {
+    c3_assert(u3R->cap_p < u3R->hat_p);
+  }
+
   mugframe* cur = u3to(mugframe, u3R->cap_p + off);
   cur->veb   = veb;
   cur->a     = 0;
