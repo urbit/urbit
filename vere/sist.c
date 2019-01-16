@@ -401,7 +401,7 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 }
 #endif
 
-/* u3_getentropy_urandom(): Implementation of BSD's `getentropy`.
+/* c3_getentropy_urandom(): Implementation of BSD's `getentropy`.
 */
 int
 c3_getentropy_urandom(void* buf, unsigned int nbytes)

@@ -1182,11 +1182,13 @@
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
 
-    /* u3_getentropy_urandom(): Implementation of BSD's `getentropy`.
-    **/
+      /* c3_getentropy_urandom(): Implementation of BSD's `getentropy`.
+      **/
         int
         c3_getentropy_urandom(void* buffer, unsigned int numBytes);
 
+      /* c3_rand():
+      **/
         void
         c3_rand(c3_w* rad_w);
 
