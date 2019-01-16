@@ -1554,42 +1554,6 @@ u3r_mug_cell(u3_noun hed,
   return u3r_mug_both(lus_w, biq_w);
 }
 
-/* u3r_mug(): MurmurHash3 on a noun.
-*/
-c3_w
-u3r_mug_old(u3_noun veb)
-{
-  c3_assert(u3_none != veb);
-
-  if ( _(u3a_is_cat(veb)) ) {
-    c3_w len_w = u3r_met(3, veb);
-    return u3r_mug_bytes((c3_y*)&veb, len_w);
-  }
-  else {
-    c3_w mug_w;
-
-    u3a_noun* veb_u = u3a_to_ptr(veb);
-
-    if ( veb_u->mug_w ) {
-      return veb_u->mug_w;
-    }
-
-    if ( _(u3a_is_cell(veb)) ) {
-      mug_w = u3r_mug_cell(u3h(veb), u3t(veb));
-    }
-    else {
-      u3a_atom* vat_u = (u3a_atom*)veb_u;
-      c3_w len_w      = u3r_met(3, veb);
-
-      mug_w = u3r_mug_bytes((c3_y*)vat_u->buf_w, len_w);
-    }
-
-    veb_u->mug_w = mug_w;
-
-    return mug_w;
-  }
-}
-
 //  mugframe: head and tail mugs of veb, 0 if uncalculated
 //
 typedef struct mugframe
@@ -1686,7 +1650,7 @@ _mug_atom(u3_atom veb)
   }
 }
 
-//  u3r_mug(): statefully mug a noun
+//  u3r_mug(): statefully mug a noun using a 31-bit MurmurHash3
 //
 c3_w
 u3r_mug(u3_noun veb)
