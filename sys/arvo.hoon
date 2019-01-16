@@ -577,7 +577,11 @@
     ::
     ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
+              ~&  =+  a=+<
+                  =+  (met 3 (jam a))
+                  [%larval-poking ?:((gth - 10.000) - `a)]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              ~&  [%larval-harded now p.ovo p.q.ovo]
               ^-  [(list ovum) *]
               =.  +>.$
                 ?+  -.q.ovo
@@ -613,6 +617,7 @@
                 ==
               ::  upgrade once we've accumulated identity, entropy, and %zuse
               ::
+              ~&  [%upgrading ?=(^ who) ?=(^ eny) ?=(^ bod)]
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]
