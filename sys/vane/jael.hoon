@@ -848,6 +848,11 @@
       %+  cure  hen
       [[%meet ship.tac life.tac pass.tac]~ urb]
     ::
+    ::  restore snapshot
+    ::    [%snap snap=snapshot kick=?]
+        %snap
+      (restore-snap hen snap.tac kick.tac)
+    ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
     ::  request domains
@@ -2377,6 +2382,12 @@
     :^  ~  ~  %noun
     !>  ^-  (list ship)
     (~(saxo of [our now eny] lex) u.who)
+  ::
+      %eth-status
+    ?.  ?=(~ tyl)  [~ ~]
+    :^  ~  ~  %noun  !>
+    ^-  [latest-block=@ud source=(each ship node-src)]
+    [latest-block.etn.lex source.etn.lex]
   ::
       %snap
     ?.  ?=(~ tyl)  [~ ~]

@@ -1281,6 +1281,7 @@
         $perm  `%c
         $rule  `%e
         $serv  `%e
+        $snap  `%j
         $them  `%e
         $wait  `%b
         $want  `%a
