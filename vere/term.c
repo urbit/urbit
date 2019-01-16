@@ -1,15 +1,9 @@
-/* v/term.c
+/* vere/term.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <uv.h>
@@ -17,6 +11,7 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
+
 #include "all.h"
 #include "vere/vere.h"
 
@@ -50,10 +45,11 @@ _term_alloc(uv_handle_t* had_u,
             )
 {
   //  this read can range from a single byte to a paste buffer
-  //  32 bytes has been chosen heuristically
+  //  123 bytes has been chosen because its not a power of 2
+  //  this is probably still broken
   //
-  void* ptr_v = c3_malloc(32);
-  *buf = uv_buf_init(ptr_v, 32);
+  void* ptr_v = c3_malloc(123);
+  *buf = uv_buf_init(ptr_v, 123);
 }
 
 
@@ -721,8 +717,15 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
   u3_lo_open();
   {
     if ( siz_i == UV_EOF ) {
-      // nothing
-    } else   if ( siz_i < 0 ) {
+      //  We hear EOF (on the third read callback) if
+      //  2x the _term_alloc() buffer size is pasted.
+      //  The process hangs if we do nothing (and ctrl-z
+      //  then corrupts the event log), so we force shutdown.
+      //
+      fprintf(stderr, "term: hangup (EOF)\r\n");
+      u3_lo_bail();
+    }
+    else if ( siz_i < 0 ) {
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
     }
     else {

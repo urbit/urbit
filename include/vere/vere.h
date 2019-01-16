@@ -134,7 +134,7 @@
         c3_w             ipf_w;             //  ward ip
         c3_s             por_s;             //  ward port
         c3_o             sec;               //  secure connection
-        u3_atom          sip;               //  ward ship
+        c3_d             who_d[2];          //  ward ship
         c3_c*            hot_c;             //  ward hostname
         uv_buf_t         non_u;             //  nonce
         struct _u3_http* htp_u;             //  local server backlink
@@ -155,7 +155,7 @@
       typedef struct _u3_ward {
         uv_tcp_t         tcp_u;             //  listener handle
         uv_timer_t       tim_u;             //  expiration timer
-        u3_atom          sip;               //  reverse proxy for ship
+        c3_d             who_d[2];          //  reverse proxy for ship
         c3_s             por_s;             //  listening on port
         uv_buf_t         non_u;             //  nonce
         struct _u3_wcon* won_u;             //  candidate upstream connections
@@ -582,6 +582,7 @@
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
+        c3_o    can;                        //  -C, chain-only, no eth snapshot
         c3_o    nuu;                        //  -c, new pier
         c3_o    dry;                        //  -D, dry compute, no checkpoint
         c3_o    dem;                        //  -d, daemon
@@ -597,6 +598,7 @@
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
         c3_s    rop_s;                      //  -l, raft port
+        c3_c*   sap_c;                      //  -m, eth snapshot url
         c3_c*   nam_c;                      //  -n, unix hostname
         c3_o    pro;                        //  -P, profile
         c3_s    por_s;                      //  -p, ames port
@@ -605,7 +607,7 @@
         c3_c*   raf_c;                      //  -r, raft flotilla
         c3_o    has;                        //  -S, Skip battery hashes
         c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    etn;                        //  -t, use snapshot exclusively to boot
+        c3_o    etn;                        //  -t, trust snapshot for pre-boot
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
         c3_o    veb;                        //  -v, verbose (inverse of -q)
@@ -1189,11 +1191,6 @@
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
 
-      /* u3_sist_rand(): fill 8 words (32 bytes) with high-quality entropy.
-      */
-        void
-        u3_sist_rand(c3_w* rad_w);
-
     /**  HTTP client.
     **/
       /* u3_cttp_ef_thus(): send %thus effect to cttp.
@@ -1213,12 +1210,12 @@
         u3_cttp_io_exit(void);
 
 
-      /* u3_dawn_come(): mine a comet under star (unit)
+      /* u3_dawn_come(): mine a comet
       */
         u3_noun
-        u3_dawn_come(u3_noun star);
+        u3_dawn_come(void);
 
-      /* u3_dawn_vent(): validatated boot event
+      /* u3_dawn_vent(): validated boot event
       */
         u3_noun
         u3_dawn_vent(u3_noun seed);

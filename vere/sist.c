@@ -1,22 +1,12 @@
-/* v/sist.c
+/* vere/sist.c
 **
 */
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <uv.h>
 
 #include "all.h"
 #include "vere/vere.h"
-
-#if defined(U3_OS_linux)
-#define DEVRANDOM "/dev/urandom"
-#else
-#define DEVRANDOM "/dev/random"
-#endif
 
 /* u3_sist_pack(): write a blob to disk, transferring.
 */
@@ -31,24 +21,24 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
 
   lar_u.tem_w = tem_w;
   lar_u.typ_w = typ_w;
-  lar_u.syn_w = u3r_mug_d(tar_d);
+  lar_u.syn_w = u3r_mug_chub(tar_d);
   lar_u.mug_w = u3r_mug_both(u3r_mug_words(bob_w, len_w),
-                               u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                              u3r_mug(lar_u.typ_w)));
+                             u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                          u3r_mug_words(&lar_u.typ_w, 1)));
   lar_u.ent_d = u3A->ent_d;
   u3A->ent_d++;
   lar_u.len_w = len_w;
 
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * tar_d, SEEK_SET) ) {
-    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( sizeof(lar_u) != write(lug_u->fid_i, &lar_u, sizeof(lar_u)) ) {
-    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   if ( -1 == lseek64(lug_u->fid_i, 4ULL * lug_u->len_d, SEEK_SET) ) {
-    uL(fprintf(uH, "sist_pack: seek failed, lseek: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: seek failed, lseek: %s\n", strerror(errno)));
     c3_assert(0);
   }
 #if 0
@@ -60,7 +50,7 @@ u3_sist_pack(c3_w tem_w, c3_w typ_w, c3_w* bob_w, c3_w len_w)
                  lar_u.mug_w));
 #endif
   if ( (4 * len_w) != write(lug_u->fid_i, bob_w, (4 * len_w)) ) {
-    uL(fprintf(uH, "sist_pack: write failed, write: %s\n", strerror(errno)));
+    uL(fprintf(uH, "sist: write failed, write: %s\n", strerror(errno)));
     c3_assert(0);
   }
   lug_u->len_d += (c3_d)(lar_u.len_w + c3_wiseof(lar_u));
@@ -268,16 +258,18 @@ _sist_sing(u3_noun ovo)
 /* _sist_cask(): ask for a passcode.
 */
 static u3_noun
-_sist_cask(c3_c* dir_c, u3_noun nun)
+_sist_cask(c3_c* dir_c)
 {
-  c3_c   paw_c[60];
   u3_noun key;
+  c3_c    paw_c[60];
+
   u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
   uty_u->fid_i = 0;
 
   uH;
 
-  // disable terminal echo when typing in passcode
+  //  disable terminal echo when typing in passcode
+  //
   if ( 0 != tcgetattr(uty_u->fid_i, &uty_u->bak_u) ) {
     c3_assert(!"init-tcgetattr");
   }
@@ -288,50 +280,59 @@ _sist_cask(c3_c* dir_c, u3_noun nun)
   }
 
   while ( 1 ) {
-    printf("passcode for %s%s? ~", dir_c, (c3y == nun) ? " [none]" : "");
+    printf("passcode for %s? ~", dir_c);
 
     paw_c[0] = 0;
     c3_fpurge(stdin);
     fgets(paw_c, 59, stdin);
     printf("\n");
 
-    if ( '\n' == paw_c[0] ) {
-      if ( c3y == nun ) {
-        key = 0; break;
-      }
-      else {
-        continue;
-      }
+    //  exit on EOF (ie, ctrl-d)
+    //
+    if ( 0 == paw_c[0]) {
+      u3_lo_bail();
     }
-    else {
-      c3_c* say_c = c3_malloc(strlen(paw_c) + 2);
+
+    //  re-prompt on early return
+    //
+    if ( '\n' == paw_c[0] ) {
+      continue;
+    }
+
+    {
+      c3_c* say_c = c3_malloc(2 + strlen(paw_c));
       u3_noun say;
 
-      say_c[0] = '~';
-      say_c[1] = 0;
+      if ( '~' == paw_c[0] ) {
+        say_c[0] = 0;
+      }
+      else {
+        say_c[0] = '~';
+        say_c[1] = 0;
+      }
+
       strncat(say_c, paw_c, strlen(paw_c) - 1);
 
-      say = u3do("slay", u3i_string(say_c));
+      say = u3dc("slaw", 'p', u3i_string(say_c));
       free(say_c);
 
-      if ( (u3_nul == say) ||
-           (u3_blip != u3h(u3t(say))) ||
-           ('p' != u3h(u3t(u3t(say)))) )
-      {
+      if ( u3_nul == say ) {
         printf("invalid passcode\n");
         continue;
       }
-      key = u3k(u3t(u3t(u3t(say))));
+      key = u3k(u3t(say));
 
       u3z(say);
       break;
     }
   }
+
   if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
     c3_assert(!"init-tcsetattr");
   }
   free(uty_u);
   uL(0);
+
   return key;
 }
 
@@ -400,23 +401,15 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 }
 #endif
 
-/* u3_sist_rand(): fill a 512-bit (16-word) buffer.
+/* c3_rand(): fill a 512-bit (16-word) buffer.
 */
 void
-u3_sist_rand(c3_w* rad_w)
+c3_rand(c3_w* rad_w)
 {
-#if defined(U3_OS_bsd) && defined(__OpenBSD__)
-  if (-1 == getentropy(rad_w, 64)) {
-    c3_assert(!"lo_rand");
+  if ( 0 != c3_getentropy(rad_w, 64) ) {
+    uL(fprintf(uH, "c3_rand getentropy: %s\n", strerror(errno)));
+    u3_lo_bail();
   }
-#else
-  c3_i fid_i = open(DEVRANDOM, O_RDONLY);
-
-  if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
-    c3_assert(!"lo_rand");
-  }
-  close(fid_i);
-#endif
 }
 
 /* _sist_fast(): offer to save passcode by mug in home directory.
@@ -431,8 +424,8 @@ _sist_fast(u3_noun pas, c3_l key_l)
   u3_noun yek   = u3dc("scot", 'p', pas);
   c3_c*   yek_c = u3r_string(yek);
 
-  printf("saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
-  printf("(for real security, write it down and delete the file...)\r\n");
+  printf("boot: saving passcode in %s/.urb/code.%s\r\n", hom_c, gum_c);
+  printf("boot: for more security, write it down and delete the file\r\n");
   {
     c3_i fid_i;
 
@@ -485,7 +478,7 @@ _sist_staf(c3_l key_l)
       u3z(say);
       return 0;
     }
-    uL(fprintf(uH, "loaded passcode from %s\n", ful_c));
+    uL(fprintf(uH, "boot: loaded passcode from %s\n", ful_c));
     pas = u3k(u3t(u3t(u3t(say))));
 
     u3z(say);
@@ -530,7 +523,7 @@ _sist_zest()
     if ( ((fid_i = open(ful_c, pig_i, 0600)) < 0) ||
          (fstat(fid_i, &buf_b) < 0) )
     {
-      uL(fprintf(uH, "can't create record (%s)\n", ful_c));
+      uL(fprintf(uH, "zest: can't create record (%s)\n", ful_c));
       u3_lo_bail();
     }
 #ifdef F_NOCACHE
@@ -604,7 +597,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   c3_assert(led_u.mag_l == u3r_mug('f'));
 
   if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-    uL(fprintf(uH, "rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
+    uL(fprintf(uH, "rest: rest_nuu failed (a), lseek64: %s\n", strerror(errno)));
     u3_lo_bail();
   }
 
@@ -625,7 +618,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       u3_lo_bail();
     }
 
-    if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+    if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
       uL(fprintf(uH, "rest_nuu failed (d)\n"));
       u3_lo_bail();
     }
@@ -690,9 +683,10 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
       lar_u.ent_d = ent_d;
       lar_u.tem_w = 0;
       lar_u.typ_w = c3__ov;
-      lar_u.mug_w = u3r_mug_both(u3r_mug(ovo),
-                                   u3r_mug_both(u3r_mug(0),
-                                                  u3r_mug(c3__ov)));
+
+      u3_noun moo = u3nt(u3k(ovo), u3_nul, c3__ov);
+      lar_u.mug_w = u3r_mug(moo);
+      u3z(moo);
 
       img_w = c3_malloc(lar_u.len_w << 2);
       u3r_words(0, lar_u.len_w, img_w, ovo);
@@ -780,7 +774,7 @@ _sist_rest()
     u3_uled led_u;
 
     if ( sizeof(led_u) != read(fid_i, &led_u, sizeof(led_u)) ) {
-      uL(fprintf(uH, "record (%s) is corrupt (a)\n", ful_c));
+      uL(fprintf(uH, "rest: record (%s) is corrupt (a)\n", ful_c));
       u3_lo_bail();
     }
 
@@ -825,12 +819,12 @@ _sist_rest()
       u3_noun key;
 
       while ( 1 ) {
-        pas = pas ? pas : _sist_cask(u3_Host.dir_c, c3n);
+        pas = pas ? pas : _sist_cask(u3_Host.dir_c);
 
         key = _sist_fatt(sal_l, pas);
 
         if ( u3r_mug(key) != key_l ) {
-          uL(fprintf(uH, "incorrect passcode\n"));
+          uL(fprintf(uH, "rest: incorrect passcode\n"));
           u3z(key);
           pas = 0;
         }
@@ -855,7 +849,7 @@ _sist_rest()
     if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
       uL(fprintf(uH, "end_d %" PRIu64 ", lseek64: %s\n", end_d,
                      strerror(errno)));
-      uL(fprintf(uH, "record (%s) is corrupt (c)\n", ful_c));
+      uL(fprintf(uH, "rest: record (%s) is corrupt (c)\n", ful_c));
       u3_lo_bail();
     }
 
@@ -868,25 +862,25 @@ _sist_rest()
       // uL(fprintf(uH, "rest: reading event at %" PRIx64 "\n", end_d));
 
       if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (d)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
         u3_lo_bail();
       }
       if ( sizeof(u3_ular) != read(fid_i, &lar_u, sizeof(u3_ular)) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (e)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
         u3_lo_bail();
       }
 
-      if ( lar_u.syn_w != u3r_mug_d(tar_d) ) {
+      if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
         if ( c3n == rup ) {
-          uL(fprintf(uH, "corruption detected; attempting to fix\n"));
+          uL(fprintf(uH, "rest: corruption detected; attempting to fix\n"));
           rup = c3y;
         }
-        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_d(tar_d)));
+        uL(fprintf(uH, "lar:%x mug:%x\n", lar_u.syn_w, u3r_mug_chub(tar_d)));
         end_d--; u3Z->lug_u.len_d--;
         continue;
       }
       else if ( c3y == rup ) {
-        uL(fprintf(uH, "matched at %x\n", lar_u.syn_w));
+        uL(fprintf(uH, "rest: matched at %x\n", lar_u.syn_w));
         rup = c3n;
       }
 
@@ -907,8 +901,8 @@ _sist_rest()
       }
       else {
         if ( lar_u.ent_d != (ent_d - 1ULL) ) {
-          uL(fprintf(uH, "record (%s) is corrupt (g)\n", ful_c));
-          uL(fprintf(uH, "lar_u.ent_d %" PRIx64 ", ent_d %" PRIx64 "\n", lar_u.ent_d, ent_d));
+          uL(fprintf(uH, "rest: record (%s) is corrupt (g)\n", ful_c));
+          uL(fprintf(uH, "rest: lar_u.ent_d %" PRIx64 ", ent_d %" PRIx64 "\n", lar_u.ent_d, ent_d));
           u3_lo_bail();
         }
         ent_d -= 1ULL;
@@ -923,25 +917,32 @@ _sist_rest()
       img_w = c3_malloc(4 * lar_u.len_w);
 
       if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (h)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (h)\n", ful_c));
         u3_lo_bail();
       }
       if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (i)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (i)\n", ful_c));
         u3_lo_bail();
       }
 
       ron = u3i_words(lar_u.len_w, img_w);
       free(img_w);
 
+      //  this validation is disabled, as it broke when mug
+      //  was switched from FNV to Murmur3
+      //  event-log encryption is enabled, so any actual corruption
+      //  that this check would've caught will still be caught below
+      //
+#if 0
       if ( lar_u.mug_w !=
             u3r_mug_both(u3r_mug(ron),
-                           u3r_mug_both(u3r_mug(lar_u.tem_w),
-                                          u3r_mug(lar_u.typ_w))) )
+                         u3r_mug_both(u3r_mug_words(&lar_u.tem_w, 1),
+                                      u3r_mug_words(&lar_u.typ_w, 1))) )
       {
-        uL(fprintf(uH, "record (%s) is corrupt (j)\n", ful_c));
+        uL(fprintf(uH, "rest: record (%s) is corrupt (j)\n", ful_c));
         u3_lo_bail();
       }
+#endif
 
       if ( c3__ov != lar_u.typ_w ) {
         u3z(ron);
@@ -1243,7 +1244,7 @@ u3_sist_boot(void)
         sed = sist_key(des);
       }
       else {
-        sed = u3_dawn_come(u3_nul);
+        sed = u3_dawn_come();
       }
 
       u3A->fak = c3n;

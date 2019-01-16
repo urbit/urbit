@@ -1,15 +1,17 @@
+> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Sometime in the next few days, owners of Azimuth points will be able to boot Arvo, the Urbit OS, from their Azimuth point and request access to one of our ‘cities’: private communities for chat and discussion. These new cities use Landscape, a brand new UI for using Urbit in the browser.
+
 # Install instructions
 
 To install and run Urbit please follow the instructions at
-[urbit.org/docs/using/install](http://urbit.org/docs/using/install).  Packages
-and source tarballs are available there. You'll be on the live network in a few
-minutes.
+[urbit.org/docs/getting-started/](https://urbit.org/docs/getting-started/).
+Packages and source tarballs are available there. You'll be on the live network
+in a few minutes.
 
 If you're doing development on Urbit, keep reading.
 
 # Build instructions
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=maint-0.4)](https://travis-ci.org/urbit/urbit)
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
 
 ## External dependencies
 
@@ -23,24 +25,22 @@ If you're doing development on Urbit, keep reading.
 - [libcurl](https://curl.haxx.se/libcurl/)
 - [libuv](http://libuv.org)
 - curses implementation (ncurses on Linux distributions, OS curses otherwise)
-- [re2c](http://re2c.org)
 
 Most of these dependencies are unfortunate; we aim to drastically shrink the
 list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, libcurl, and
-libsigsegv. The multiple build tools are a result of bundled libraries, slated
-for future unbundling or removal wherever possible.
+libsigsegv.
 
 ## Building
 
 Urbit uses Meson build system.
 
 Some libraries which are not found in major distributions:
+
 - ed25519
-- http-parser legacy version 0.1.0
+- libh2o
 - murmur3
 - softfloat3
-- urbit-scrypt
-- commonmark legacy version 0.12.0
+- scrypt
 
 are included as git submodules. To build urbit from source, perform the following steps:
 
@@ -63,6 +63,7 @@ To set a prefix for installation use
 ## Configuration & compilation for legacy meson
 
 The syntax for legacy meson (Version `0.29`) is a bit different.
+
 1. Manually create `build` directory and invoke meson as `meson . ./build`
 2. If you want to set options, this is done in one step.
    Use `meson -D [options] . ./build` to prepare customized build.
@@ -71,34 +72,11 @@ Once the project is configured, use `ninja` to build it.
 To install it into the default prefix, use `ninja install`.
 If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
 
-## Building the Debian Package
-
-To build a .deb file for installation on Debian platforms, perform the
-following steps:
-+ Run `sudo apt install devscripts` to install the `debuild` utility.
-+ Update the `debian/changelog` to reflect the changes in this release.
-+ If necessary, update the year of the copyright in `debian/copyright`.
-+ Clean any build artifacts: Run `make clean` and delete the `bin` directory,
-if it exists.
-+ Run `tar -xcvf ../urbit-x.y.z.orig.tar.gz .` from the top-level folder in
-the repo.  This command will create an archive in the directory above the
-current directory, which will be used in packaging.
-+ Run `debuild -us -uc`, also from the top-level folder in the repo. This
-creates a .deb file in the folder above the current directory.
-
-The resulting .deb file should now exist in the folder above the current
-directory. To test that the .deb file works properly, you can perform the
-following steps:
-+ Uninstall urbit: `sudo apt remove urbit`.
-+ Run `sudo dpkg -i ../urbit-x.y.z_amd64.deb` to install the new version.
-+ Boot up a ship using the `urbit` command.
-
 ## Contact
 
 If you have any questions, problems, patches, or proposals for patches, please
 feel free to get in touch in whatever way is most convenient:
 
-- Post to `/urbit-meta` on Urbit `:talk`.  (You can do this via
-[urbit.org/stream](https://urbit.org/stream) without a running Urbit).
+- Post to `/urbit-meta` on Urbit [`:talk`](https://urbit.org/docs/learn/arvo/arvo-internals/messaging/).
 - Post to [urbit.org/fora](https://urbit.org/fora/).
-- Email us directly [questions@urbit.org](mailto:questions@urbit.org).  
+- Email us directly [questions@urbit.org](mailto:questions@urbit.org).

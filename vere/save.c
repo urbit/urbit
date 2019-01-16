@@ -1,16 +1,10 @@
-/* v/save.c
+/* vere/save.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <termios.h>
 #include <uv.h>
 

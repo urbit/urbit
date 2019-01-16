@@ -28,7 +28,7 @@
         return u3m_bail(c3__exit);
       }
       else {
-        if ( c3y == u3qc_vor(n_b, n_a) ) {
+        if ( c3y == u3qc_mor(n_b, n_a) ) {
           c = a;    a = b;       b = c;
           c = n_a;  n_a = n_b;   n_b = c;
           c = lr_a; lr_a = lr_b; lr_b = c;
@@ -44,7 +44,7 @@
                               u3qdi_mer(l_a, l_b),
                               u3qdi_mer(r_a, r_b));
         }
-        else if ( c3y == u3qc_hor(n_b, n_a) ) {
+        else if ( c3y == u3qc_gor(n_b, n_a) ) {
           return u3qdi_mer(u3nt(n_a,
                                 u3qdi_mer(l_a,
                                           u3nt(n_b,
