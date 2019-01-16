@@ -1,6 +1,7 @@
 /* vere/sist.c
 **
 */
+#include <ent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <uv.h>
@@ -406,7 +407,7 @@ _sist_bask(c3_c* pop_c, u3_noun may)
 void
 c3_rand(c3_w* rad_w)
 {
-  if ( 0 != c3_getentropy(rad_w, 64) ) {
+  if ( 0 != ent_getentropy(rad_w, 64) ) {
     uL(fprintf(uH, "c3_rand getentropy: %s\n", strerror(errno)));
     u3_lo_bail();
   }
