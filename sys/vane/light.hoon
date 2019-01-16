@@ -619,9 +619,8 @@
 ::
 ++  format-ud-as-integer
   |=  a=@ud
-  ^-  @t
-  ?:  =(0 a)  '0'
-  %-  crip
+  ^-  tape
+  ?:  =(0 a)  ['0' ~]
   %-  flop
   |-  ^-  tape
   ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
@@ -823,7 +822,7 @@
         status-code=code
         ^=  headers
           :~  ['content-type' content-type]
-              ['content-length' (format-ud-as-integer p.data)]
+              ['content-length' (crip (format-ud-as-integer p.data))]
           ==
         data=[~ data]
         complete=%.y
@@ -1354,7 +1353,7 @@
       ::
       =/  event-stream-lines=wall
         %-  weld  :_  [""]~
-        :-  "id: {<event-id>}"
+        :-  (weld "id: " (format-ud-as-integer event-id))
         %+  turn  json-text
         |=  =tape
         (weld "data: " tape)
@@ -1436,7 +1435,7 @@
         200
         ^-  header-list
         :~  ['content-type' (en-mite:mimes:html p.result)]
-            ['content-length' (format-ud-as-integer p.q.result)]
+            ['content-length' (crip (format-ud-as-integer p.q.result))]
         ==
         `(unit octs)`[~ q.result]
         complete=%.y
