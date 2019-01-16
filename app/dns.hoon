@@ -792,7 +792,10 @@
   ++  do-create
     |=  [him=ship for=ship try=@ud]
     ^+  this
-    =/  tar  (~(got by pen.nam) him)
+    =/  pending  (~(get by pen.nam) him)
+    ?~  pending
+      this
+    =*  tar  u.pending
     =/  =wire
       (http-wire try /create/(scot %p him)/for/(scot %p for))
     =/  pre=(unit [id=@ta tar=target])
