@@ -31,7 +31,6 @@
 #     include <setjmp.h>
 #     include <stdio.h>
 #     include <signal.h>
-#     include <sys/syscall.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
@@ -49,7 +48,6 @@
 #     include <machine/endian.h>
 #     include <machine/byte_order.h>
 #     include <stdio.h>
-#     include <sys/random.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
