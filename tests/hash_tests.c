@@ -72,7 +72,7 @@ _test_mug(void)
   
   u3_noun set = u3_nul;
   c3_w  len_w = 0;
-  while ( 0xf > len_w ) {
+  while ( 0x1 > len_w ) {
     set = u3qdi_put(set, len_w++);
   }
   u3r_mug(set);
