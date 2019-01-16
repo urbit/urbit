@@ -1615,6 +1615,13 @@ _mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
 {
   u3R->cap_p -= mov;
   mugframe* fam = u3to(mugframe, u3R->cap_p + off);
+
+  //  the bottom of the stack
+  //
+  if ( u3_none == fam->veb ) {
+    return fam;
+  }
+
   //  place return value in head of previous frame if not already calculated
   //
   if ( 0 == fam->a ) {
@@ -1626,10 +1633,8 @@ _mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
     fam->b = mug_w;
   }
   //  shouldn't reach
+  //
   else {
-    fprintf(stderr, "oh no\r\n");
-    u3m_p("dying", fam->veb);
-    fflush(stderr);
     c3_assert(0); 
   }
   return fam;
@@ -1686,8 +1691,12 @@ u3r_mug(u3_noun veb)
   c3_ys mov    = ( c3y == nor_o ? -wis_y : wis_y );
   c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
 
+  //  stash the current stack pointer
+  //
   u3p(mugframe) empty = u3R->cap_p;
-  mugframe* don = u3to(mugframe, empty + off);
+  //  set the bottom of our stack
+  //
+  mugframe* don = _mug_push(mov, off, u3_none);
   mugframe* fam = _mug_push(mov, off, veb);
 
   c3_w mug_w;
@@ -1701,13 +1710,11 @@ u3r_mug(u3_noun veb)
     b     = fam->b;
     veb   = fam->veb;
     veb_u = u3a_to_ptr(veb);
-    //u3m_p("veb", veb);
     c3_assert(_(u3a_is_cell(veb)));
 
     //  already mugged; pop stack
     //
     if ( veb_u->mug_w ) {
-      //fprintf(stderr, "already mugged\r\n");
       mug_w = veb_u->mug_w;
       fam = _mug_pop(mov, off, mug_w);
     }
@@ -1736,12 +1743,12 @@ u3r_mug(u3_noun veb)
     //  both head and tail are mugged; combine them and pop stack
     //
     else {
-      //fprintf(stderr, "combining head and tail mugs\r\n");
       mug_w = u3r_mug_both(a, b);
       veb_u->mug_w = mug_w;
       fam = _mug_pop(mov, off, mug_w);
     }
   }
+
   u3R->cap_p = empty;
   return mug_w;
 }
