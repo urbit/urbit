@@ -46,8 +46,11 @@ if not have_getentropy
 endif
 
 
-config_file = configure_file(output: 'config.h',
-                             configuration: conf_data)
+config_file = configure_file(
+  output: 'config.h',
+  input: 'config.h.in',
+  configuration: conf_data,
+)
 
 ent_sources = ['ent.c', config_file]
 
