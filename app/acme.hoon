@@ -1160,15 +1160,25 @@
     this
   ::
       %dbug-account
-    ~&  [%private (ring:en:pem:pkcs1 key.act)]
-    ~&  [%public (pass:en:pem:pkcs1 key.act)]
     ~&  registered=reg.act
+    ~&  [%public (pass:en:pem:pkcs1 key.act)]
+    ~?  !=(~ sek.key.act)
+      [%private (ring:en:pem:pkcs1 key.act)]
     this
   ::
       %dbug-certificate
     ?~  liv  ~&(~ this)
     ~&  [%key (ring:en:pem:pkcs8 key.u.liv)]
     ~&  [%cert `wain`cer.u.liv]
+    ~&  [%expires exp.u.liv]
+    ~&  :-  %domains
+        (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+    this
+  ::
+      %dbug-history
+    ~&  [%account-history act.hit]
+    ~&  [%config-history fig.hit]
+    ~&  [%failed-order-history fal.hit]
     this
   ::
       %init
