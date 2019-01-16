@@ -1694,57 +1694,52 @@ u3r_mug(u3_noun veb)
   c3_w a;
   c3_w b;
   u3a_noun* veb_u;
+  u3_noun hed, tal;
 
   while ( don != fam ) {
     a     = fam->a;
     b     = fam->b;
     veb   = fam->veb;
     veb_u = u3a_to_ptr(veb);
+    //u3m_p("veb", veb);
+    c3_assert(_(u3a_is_cell(veb)));
 
+    //  already mugged; pop stack
+    //
+    if ( veb_u->mug_w ) {
+      //fprintf(stderr, "already mugged\r\n");
+      mug_w = veb_u->mug_w;
+      fam = _mug_pop(mov, off, mug_w);
+    }
+    //  neither head nor tail are mugged; start with head
+    //
+    else if ( 0 == a ) {
+      hed = u3h(veb);
+      if ( _(u3a_is_atom(hed)) ) {
+        fam->a = _mug_atom(hed);
+      }
+      else {
+        fam = _mug_push(mov, off, hed);
+      }
+    }
+    //  head is mugged, but not tail; mug tail or push tail onto stack
+    //
+    else if ( 0 == b ) {
+      tal = u3t(veb);
+      if ( _(u3a_is_atom(tal)) ) {
+        fam->b = _mug_atom(tal);
+      }
+      else {
+        fam = _mug_push(mov, off, tal);
+      }
+    }
     //  both head and tail are mugged; combine them and pop stack
     //
-    if ( (0 != a) && (0 != b) ) {
-      fprintf(stderr, "combining head and tail mugs\r\n");
+    else {
+      //fprintf(stderr, "combining head and tail mugs\r\n");
       mug_w = u3r_mug_both(a, b);
       veb_u->mug_w = mug_w;
       fam = _mug_pop(mov, off, mug_w);
-    }
-    //  head is mugged, but not tail; push tail onto stack
-    //
-    else if ( (0 != a) && (0 == b) ) {
-      if ( _(u3a_is_atom(u3t(veb))) ) {
-        fprintf(stderr, "tail is atom\r\n");
-        mug_w = _mug_atom(u3t(veb));
-        fam->b = mug_w;
-      }
-      else {
-        fprintf(stderr, "pushing tail\r\n");
-        fam = _mug_push(mov, off, u3t(veb));
-      }
-    }
-    //  cell, and neither head nor tail is mugged; push head onto stack
-    //
-    else {
-      fprintf(stderr, "asserting cell\r\n");
-      c3_assert(_(u3a_is_cell(veb)));
-      //  already mugged; pop stack
-      //
-      if ( veb_u->mug_w ) {
-        fprintf(stderr, "already mugged\r\n");
-        mug_w = veb_u->mug_w;
-        fam = _mug_pop(mov, off, mug_w);
-      }
-      else {
-        if ( _(u3a_is_atom(u3h(veb))) ) {
-          fprintf(stderr, "head is atom\r\n");
-          mug_w = _mug_atom(u3h(veb));
-          fam->a = mug_w;
-        }
-        else {
-          fprintf(stderr, "pushing head\r\n");
-          fam = _mug_push(mov, off, u3h(veb));
-        }
-      }
     }
   }
   u3R->cap_p = empty;
