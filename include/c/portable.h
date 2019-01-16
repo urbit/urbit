@@ -31,6 +31,7 @@
 #     include <setjmp.h>
 #     include <stdio.h>
 #     include <signal.h>
+#     include <sys/syscall.h>
 #     include <sys/time.h>
 #     include <sys/resource.h>
 #     include <sys/mman.h>
@@ -181,6 +182,19 @@
 #       define lseek64 lseek
 #     else
 #       error "port: timeconvert"
+#     endif
+
+    /* Entropy.
+    */
+#     if defined(U3_OS_linux)
+#       define c3_getentropy(B, L) \
+          ((L) == syscall(SYS_getrandom, B, L, 0) ? 0 : -1)
+#     elif defined(U3_OS_osx)
+#       define c3_getentropy c3_getentropy_urandom
+#     elif defined(U3_OS_bsd)
+#       define c3_getentropy getentropy
+#     else
+#       error "port: getentropy"
 #     endif
 
     /* Static assertion.
