@@ -301,14 +301,14 @@
   ?:  =(~ q)
     ~
   ::
-  =^  head=[id=@ud lines=wall]  q  ~(get to q)
+  =/  next=[item=[id=@ud lines=wall] _q]  ~(get to q)
   ::  if the head of the queue is newer than the acknowledged id, we're done
   ::
-  ?:  (gte id.head id)
+  ?:  (gth id.item.next id)
     q
   ::  otherwise, check next item
   ::
-  $
+  $(q +:next)
 ::  +parse-channel-request: parses a list of channel-requests
 ::
 ::    Parses a json array into a list of +channel-request. If any of the items
@@ -1176,7 +1176,6 @@
     ++  on-put-request
       |=  [channel-id=@t =http-request]
       ^-  [(list move) server-state]
-      ~&  %on-put-request
       ::  error when there's no body
       ::
       ?~  body.http-request
