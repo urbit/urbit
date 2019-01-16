@@ -65,6 +65,19 @@ _test_mug(void)
   u3z(b);
   fprintf(stderr, "mug_w2 %08x\r\n", mug_w);
 
+  u3_noun c = u3nc(u3_nul, u3nc(u3nt(u3nc(107, 141), u3nc(1, u3_nul), u3_nul), u3_nul));
+  mug_w = u3r_mug(c);
+  u3z(c);
+  fprintf(stderr, "mug_w3 %08x\r\n", mug_w);
+  
+  u3_noun set = u3_nul;
+  c3_w  len_w = 0;
+  while ( 0xf > len_w ) {
+    set = u3qdi_put(set, len_w++);
+  }
+  u3r_mug(set);
+  u3z(set);
+
   { 
     // stick some zero bytes in a string
     u3_noun str = u3kc_lsh(3, 1,

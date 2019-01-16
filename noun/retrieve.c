@@ -1628,6 +1628,7 @@ _mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
   //  shouldn't reach
   else {
     fprintf(stderr, "oh no\r\n");
+    u3m_p("dying", fam->veb);
     fflush(stderr);
     c3_assert(0); 
   }
@@ -1656,35 +1657,28 @@ _mug_pug(u3_atom veb)
   return mug_w;
 }
 
+/* _mug_atom(): mug an atom, either direct or indirect
+*/
+static c3_w
+_mug_atom(u3_atom veb)
+{
+  if ( _(u3a_is_cat(veb)) ) {
+    return _mug_cat(veb);
+  }
+  else {
+    return _mug_pug(veb);
+  }
+}
+
 //  u3r_mug(): statefully mug a noun
 //
 c3_w
 u3r_mug(u3_noun veb)
 {
-  u3a_noun* veb_u;
-
   c3_assert( u3_none != veb );
   
-  //  direct atom
-  //
-  if ( _(u3a_is_cat(veb)) ) {
-    return _mug_cat(veb);
-  }
-
-  //  indirect atom
-  //
-  if ( _(u3a_is_pug(veb)) ) {
-    return _mug_pug(veb);
-  }
-
-  //  cell; dive into it depth-first
-  //
-  veb_u = u3a_to_ptr(veb);
-
-  //  already has mug
-  //
-  if ( veb_u->mug_w ) {
-    return veb_u->mug_w;
+  if ( _(u3a_is_atom(veb)) ) {
+    return _mug_atom(veb);
   }
 
   c3_y  wis_y  = c3_wiseof(mugframe);
@@ -1699,25 +1693,22 @@ u3r_mug(u3_noun veb)
   c3_w mug_w;
   c3_w a;
   c3_w b;
+  u3a_noun* veb_u;
 
   while ( don != fam ) {
     a     = fam->a;
     b     = fam->b;
     veb   = fam->veb;
     veb_u = u3a_to_ptr(veb);
-    fprintf(stderr, "ran ptr\r\n");
-    
-    //  already mugged; pop stack
-    //
-    if ( veb_u->mug_w ) {
-      fprintf(stderr, "already mugged\r\n");
-      mug_w = veb_u->mug_w;
+
+    if ( _(u3a_is_atom(veb)) ) {
+      mug_w = _mug_atom(veb);
       fam = _mug_pop(mov, off, mug_w);
     }
     //  both head and tail are mugged; combine them and pop stack
     //
     else if ( (0 != a) && (0 != b) ) {
-      fprintf(stderr, "combining head and tail mugs\r\n");
+      //fprintf(stderr, "combining head and tail mugs\r\n");
       mug_w = u3r_mug_both(a, b);
       veb_u->mug_w = mug_w;
       fam = _mug_pop(mov, off, mug_w);
@@ -1725,31 +1716,25 @@ u3r_mug(u3_noun veb)
     //  head is mugged, but not tail; push tail onto stack
     //
     else if ( (0 != a) && (0 == b) ) {
-      fprintf(stderr, "pushing tail\r\n");
+      //fprintf(stderr, "pushing tail\r\n");
       fam = _mug_push(mov, off, u3t(veb));
-    }
-    //  direct atom; calculate and pop stack
-    //
-    else if ( _(u3a_is_cat(veb)) ) {
-      fprintf(stderr, "mugging cat\r\n");
-      mug_w = _mug_cat(veb);
-      fam = _mug_pop(mov, off, mug_w);
-    }
-    //  indirect atom; calculate and pop stack
-    //
-    else if ( _(u3a_is_pug(veb)) ) {
-      fprintf(stderr, "mugging pug\r\n");
-      mug_w = _mug_pug(veb);
-      fam = _mug_pop(mov, off, mug_w);
     }
     //  cell, and neither head nor tail is mugged; push head onto stack
     //
     else {
-      fprintf(stderr, "asserting cell\r\n");
+      //fprintf(stderr, "asserting cell\r\n");
       c3_assert(_(u3a_is_cell(veb)));
-      fprintf(stderr, "pushing head\r\n");
-      fam = _mug_push(mov, off, u3h(veb));
-      fprintf(stderr, "pushed head\r\n");
+      //  already mugged; pop stack
+      //
+      if ( veb_u->mug_w ) {
+        //fprintf(stderr, "already mugged\r\n");
+        mug_w = veb_u->mug_w;
+        fam = _mug_pop(mov, off, mug_w);
+      }
+      else {
+        //fprintf(stderr, "pushing head\r\n");
+        fam = _mug_push(mov, off, u3h(veb));
+      }
     }
   }
   u3R->cap_p = empty;
