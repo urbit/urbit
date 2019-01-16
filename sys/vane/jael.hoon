@@ -848,6 +848,11 @@
       %+  cure  hen
       [[%meet ship.tac life.tac pass.tac]~ urb]
     ::
+    ::  restore snapshot
+    ::    [%snap snap=snapshot kick=?]
+        %snap
+      (restore-snap hen snap.tac kick.tac)
+    ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
     ::  request domains

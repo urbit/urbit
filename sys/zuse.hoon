@@ -1856,6 +1856,7 @@
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs =ship]                                 ::  view public keys
           [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
