@@ -54,7 +54,18 @@ _test_mug(void)
     exit(1);
   }
 
-  {
+  c3_w mug_w;
+//  u3_noun a = u3qb_reap(0x7FFFFF, 0);
+//  mug_w = u3r_mug(a);
+//  u3z(a);
+//  fprintf(stderr, "mug_w1 %08x\r\n", mug_w);
+
+  u3_noun b = u3nc(u3nc(c3__doze, c3__doze), c3__doze);
+  mug_w = u3r_mug(b);
+  u3z(b);
+  fprintf(stderr, "mug_w2 %08x\r\n", mug_w);
+
+  { 
     // stick some zero bytes in a string
     u3_noun str = u3kc_lsh(3, 1,
                            u3kc_mix(u3qc_bex(212),

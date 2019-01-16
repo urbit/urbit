@@ -1627,7 +1627,9 @@ _mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
   }
   //  shouldn't reach
   else {
-    c3_assert(0);
+    fprintf(stderr, "oh no\r\n");
+    fflush(stderr);
+    c3_assert(0); 
   }
   return fam;
 }
@@ -1691,8 +1693,8 @@ u3r_mug(u3_noun veb)
   c3_ys off    = ( c3y == nor_o ? 0 : -wis_y );
 
   u3p(mugframe) empty = u3R->cap_p;
-  mugframe* fam = _mug_push(mov, off, veb);
   mugframe* don = u3to(mugframe, empty + off);
+  mugframe* fam = _mug_push(mov, off, veb);
 
   c3_w mug_w;
   c3_w a;
@@ -1703,16 +1705,19 @@ u3r_mug(u3_noun veb)
     b     = fam->b;
     veb   = fam->veb;
     veb_u = u3a_to_ptr(veb);
+    fprintf(stderr, "ran ptr\r\n");
     
     //  already mugged; pop stack
     //
     if ( veb_u->mug_w ) {
+      fprintf(stderr, "already mugged\r\n");
       mug_w = veb_u->mug_w;
       fam = _mug_pop(mov, off, mug_w);
     }
     //  both head and tail are mugged; combine them and pop stack
     //
     else if ( (0 != a) && (0 != b) ) {
+      fprintf(stderr, "combining head and tail mugs\r\n");
       mug_w = u3r_mug_both(a, b);
       veb_u->mug_w = mug_w;
       fam = _mug_pop(mov, off, mug_w);
@@ -1720,25 +1725,31 @@ u3r_mug(u3_noun veb)
     //  head is mugged, but not tail; push tail onto stack
     //
     else if ( (0 != a) && (0 == b) ) {
+      fprintf(stderr, "pushing tail\r\n");
       fam = _mug_push(mov, off, u3t(veb));
     }
     //  direct atom; calculate and pop stack
     //
     else if ( _(u3a_is_cat(veb)) ) {
+      fprintf(stderr, "mugging cat\r\n");
       mug_w = _mug_cat(veb);
       fam = _mug_pop(mov, off, mug_w);
     }
     //  indirect atom; calculate and pop stack
     //
     else if ( _(u3a_is_pug(veb)) ) {
+      fprintf(stderr, "mugging pug\r\n");
       mug_w = _mug_pug(veb);
       fam = _mug_pop(mov, off, mug_w);
     }
     //  cell, and neither head nor tail is mugged; push head onto stack
     //
     else {
+      fprintf(stderr, "asserting cell\r\n");
       c3_assert(_(u3a_is_cell(veb)));
+      fprintf(stderr, "pushing head\r\n");
       fam = _mug_push(mov, off, u3h(veb));
+      fprintf(stderr, "pushed head\r\n");
     }
   }
   u3R->cap_p = empty;
