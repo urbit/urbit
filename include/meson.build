@@ -1,1 +1,3 @@
-#install_headers('ent.h')   # XX uncomment to install locally
+if get_option('ent_install')
+  install_headers('ent.h')
+endif
