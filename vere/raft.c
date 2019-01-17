@@ -1519,14 +1519,6 @@ _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 
     ret = _raft_sure(u3k(bov), u3k(hed), u3k(tal));
   }
-  //  a failed %hole card is re-replayed as %crud
-  //
-  else if ( (c3__exit == why) && (c3__hear == tag) ) {
-    u3_noun hed, tal;
-    u3x_cell(gon, &hed, &tal);
-
-    ret = _raft_lame(u3k(bov), u3k(hed), u3k(tal));
-  }
   else {
     //  XX this will always fail, nothing in arvo handles %warn
     //
