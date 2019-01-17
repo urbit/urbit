@@ -1,4 +1,9 @@
 /=  gas  /$  fuel:html
+/=  error  /:  /===/web/404  /!hymn/
+::  only authenticated user should be allowed to see this
+::
+?.  (~(has in (~(got by aut.ced.gas) %$)) (scot %p p.bem.gas))
+  error
 =/  cod=tape
   %+  slag  1
   %+  scow  %p
