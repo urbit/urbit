@@ -139,7 +139,7 @@
   |=  cod=command
   ^-  (quip move _this)
   ?-    -.cod
-      %invite
+      %chat-invite
     :_  this
     :-  :*  ost.bol
             %poke
@@ -162,6 +162,31 @@
         %phrase
         aud=(sy [guy %i] ~)
         ses=[%inv & our.bol nom.cod]~
+    ==
+    ::  
+      %collection-invite
+    :_  this
+    :-  :*  ost.bol
+            %poke
+            /permit
+            [our.bol %hall]
+            %hall-action
+            %permit
+            nom.cod
+            %.y
+            who.cod
+        ==
+    %+  turn  ~(tap in who.cod)
+    |=  guy=@p
+    ^-  move
+    :*  ost.bol
+        %poke
+        /invite
+        [our.bol %hall]
+        %hall-action
+        %phrase
+        aud=(sy [guy %i] ~)
+        ses=[%app col.cod [%inv & our.bol nom.cod]]~
     ==
   ==
 ::
@@ -206,11 +231,8 @@
 ::  +quit:
 ::
 ++  quit
-  |=  [wir=wire err=(unit tang)]
+  |=  wir=wire
   ^-  (quip move _this)
-  ::~&  quit+[wir =(~ err)]
-  ?~  err
-    [~ this]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ?+  i.wir

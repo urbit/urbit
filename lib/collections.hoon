@@ -81,7 +81,8 @@
   ==
 ::
 +$  command
-  $%  [%invite nom=name:hall who=(set ship)]
+  $%  [%chat-invite nom=name:hall who=(set ship)]
+      [%collection-invite nom=name:hall col=term who=(set ship)]
   ==
 +$  collection  [meta=config data=(map nom=knot =item)]
 ::
