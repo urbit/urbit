@@ -983,8 +983,21 @@
         (emit (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
     ::
+    ::    Certificates expire after ~d90. We want time for retries and
+    ::    to work around rate limits, so our renewal timer is for ~d60.
+    ::    Renewals count towards weekly rate limits, but are allowed to
+    ::    continue past rate limits, so fudge the timer towards the end
+    ::    of the week nearest ~d60.
+    ::
     =<  install:effect
-    (retry:effect 0 %renew / ~d60)
+    =;  lul=@dr
+      (retry:effect 0 %renew / lul)
+    %+  add
+      (mul ~m1 (~(rad og eny.bow) (bex 8)))
+    =/  weekday  (daws:chrono:userlib (yore now.bow))
+    ?:  (gth weekday 4)
+      (sub ~d60 (mul ~d1 (sub weekday 4)))
+    (add ~d60 (mul ~d1 (sub 4 weekday)))
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
