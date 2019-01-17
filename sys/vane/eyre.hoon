@@ -990,7 +990,7 @@
           (back-turbo tee %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
-          $quit  ~&(quit+tee (get-quit:(ire-ix p.tee) q.tee))
+          $quit  (get-quit:(ire-ix p.tee) q.tee)
       ==
     ::
         $wake
