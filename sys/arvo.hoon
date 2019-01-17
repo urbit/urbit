@@ -191,10 +191,7 @@
         (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
-      =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
-      ::  cache the call to +mint that the +slym in +scry will do
-      ::
-      +:(~(mint wa worm.vane) p.fun [%limb %$])
+      +:(~(slap wa worm.vane) rig [%limb %scry])
     ==
   ::
   ++  wink                                              ::  deploy
@@ -356,11 +353,9 @@
         ==
       ^-  (unit (unit (cask)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
-      =+  pro=-:(~(slym wa worm.vane) fun old)
-      ?~  q.pro  ~
-      ?~  +.q.pro  [~ ~]
-      =/  dat  +>.q.pro
-      [~ ~ (mark -.dat) +.dat]
+      ::
+      %-  (unit (unit (cask)))
+      (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
