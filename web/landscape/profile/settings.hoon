@@ -10,7 +10,7 @@
   .^(@p %j /(scot %p p.bem.gas)/code/(scot r.bem.gas)/(scot %p p.bem.gas))
 ^-  manx
 ;div
-  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-owner "{(scow %p p.bem.gas)}");
+  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-author "{(scow %p p.bem.gas)}");
   ;div.container(urb-devices "")
     ;div.row.mt-4
       ;div.flex-col-2;
