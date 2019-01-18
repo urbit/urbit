@@ -29,9 +29,9 @@ if not have_getentropy
   #include <asm/unistd.h>
   #include <unistd.h>
   #include <sys/syscall.h>
-  int main() { return !syscall(SYS_getrandom, (void*)0, 0, 0); }
+  int main() { return !(syscall(SYS_getrandom, (void*)0, 0, 0) >= 0); }
   '''
-  getrandom = cc.links(code, name: 'getrandom syscall available')
+  getrandom = cc.run(code, name: 'getrandom syscall available').returncode() == 0
   conf_data.set('ENT_GETRANDOM', getrandom)
 
   if not getrandom
