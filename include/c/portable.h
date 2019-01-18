@@ -2,17 +2,15 @@
 **
 ** This file is in the public domain.
 */
-  /** Must be compiled on gcc with C99 support.
-  **/
 
 #include "config.h"
 
-#    ifndef __GNUC__
-#      error "port me"
-#    endif
-#    ifndef _GNU_SOURCE
-#    define _GNU_SOURCE
-#    endif
+#   ifndef __GNUC__
+#     error "port me"
+#   endif
+#   ifndef _GNU_SOURCE
+#   define _GNU_SOURCE
+#   endif
 
 
   /** System include files.
@@ -77,26 +75,26 @@
 
   /** Address space layout.
   **/
-# if defined(U3_OS_linux)
-#   define U3_OS_LoomBase 0x36000000
-#   define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-# elif defined(U3_OS_osx)
-#   ifdef __LP64__
-#     define U3_OS_LoomBase 0x200000000
+#   if defined(U3_OS_linux)
+#     define U3_OS_LoomBase 0x36000000
+#     define U3_OS_LoomBits 29              //  ie, 2^29 words == 2GB
+#   elif defined(U3_OS_osx)
+#     ifdef __LP64__
+#       define U3_OS_LoomBase 0x200000000
+#     else
+#       define U3_OS_LoomBase 0x4000000
+#     endif
+#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
+#   elif defined(U3_OS_bsd)
+#     ifdef __LP64__
+#       define U3_OS_LoomBase 0x200000000
+#     else
+#       define U3_OS_LoomBase 0x4000000
+#     endif
+#       define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
 #   else
-#     define U3_OS_LoomBase 0x4000000
+#     error "port: LoomBase"
 #   endif
-#     define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-# elif defined(U3_OS_bsd)
-#   ifdef __LP64__
-#     define U3_OS_LoomBase 0x200000000
-#   else
-#     define U3_OS_LoomBase 0x4000000
-#   endif
-#     define U3_OS_LoomBits 29            //  ie, 2^29 words == 2GB
-# else
-#   error "port: LoomBase"
-# endif
 
   /** Global variable control.
   ***
@@ -112,7 +110,7 @@
     /* The GMP (GNU arbitrary-precision arithmetic) library.
     ** (Tested with version 4.0.1.)
     */
-#      include <gmp.h>
+#     include <gmp.h>
 
 
   /** Private C "extensions."
@@ -136,69 +134,58 @@
 
     /* Byte swapping.
     */
-#      if defined(U3_OS_linux) || defined(U3_OS_bsd)
-#        define c3_bswap_16(x)  bswap_16(x)
-#        define c3_bswap_32(x)  bswap_32(x)
-#        define c3_bswap_64(x)  bswap_64(x)
+#     if defined(U3_OS_linux) || defined(U3_OS_bsd)
+#       define c3_bswap_16(x)  bswap_16(x)
+#       define c3_bswap_32(x)  bswap_32(x)
+#       define c3_bswap_64(x)  bswap_64(x)
+#     elif defined(U3_OS_osx)
+#       define c3_bswap_16(x)  NXSwapShort(x)
+#       define c3_bswap_32(x)  NXSwapInt(x)
+#       define c3_bswap_64(x)  NXSwapLongLong(x)
+#     else
+#       error "port: byte swap"
+#     endif
 
-#      elif defined(U3_OS_osx)
-#        define c3_bswap_16(x)  NXSwapShort(x)
-#        define c3_bswap_32(x)  NXSwapInt(x)
-#        define c3_bswap_64(x)  NXSwapLongLong(x)
-#      else
-#        error "port: byte swap"
-#      endif
+    /* Sync.
+    */
+#     if defined(U3_OS_linux)
+#       define c3_sync(fd) (fdatasync(fd))
+#     elif defined(U3_OS_osx)
+#       define c3_sync(fd) (fcntl(fd, F_FULLFSYNC, 0))
+#     elif defined(U3_OS_bsd)
+#       define c3_sync(fd) (fsync(fd))
+#     else
+#       error "port: sync"
+#     endif
 
-/* Sync
- */
-#      if defined(U3_OS_linux)
-#        define c3_sync(fd) (fdatasync(fd))
-#      elif defined(U3_OS_osx)
-#        define c3_sync(fd) (fcntl(fd, F_FULLFSYNC, 0))
-#      elif defined(U3_OS_bsd)
-#        define c3_sync(fd) (fsync(fd))
-#      else
-#        error "port: sync"
-#      endif
+    /* Purge.
+    */
+#     if defined(U3_OS_linux)
+#       include <stdio_ext.h>
+#       define c3_fpurge __fpurge
+#     elif defined(U3_OS_bsd) || defined(U3_OS_osx)
+#       define c3_fpurge fpurge
+#     else
+#       error "port: fpurge"
+#     endif
 
-/* Purge
- */
-#      if defined(U3_OS_linux)
-#        include <stdio_ext.h>
-#        define c3_fpurge __fpurge
-#      elif defined(U3_OS_bsd) || defined(U3_OS_osx)
-#        define c3_fpurge fpurge
-#      else
-#        error "port: fpurge"
-#      endif
+    /* Stat.
+    */
+#     if defined(U3_OS_linux)
+#       define c3_stat_mtime(dp) (u3_time_t_in_ts((dp)->st_mtime))
+#     elif defined(U3_OS_osx)
+#       define c3_stat_mtime(dp) (u3_time_in_ts(&((dp)->st_mtimespec)))
+#       define lseek64 lseek
+#     elif defined(U3_OS_bsd)
+#       define c3_stat_mtime(dp) (u3_time_in_ts(&((dp)->st_mtim)))
+#       define lseek64 lseek
+#     else
+#       error "port: timeconvert"
+#     endif
 
-/* Stat struct
- */
-#      if defined(U3_OS_linux)
-#        define c3_stat_mtime(dp) (u3_time_t_in_ts((dp)->st_mtime))
-#      elif defined(U3_OS_osx)
-#        define c3_stat_mtime(dp) (u3_time_in_ts(&((dp)->st_mtimespec)))
-#        define lseek64 lseek
-#      elif defined(U3_OS_bsd)
-#        define c3_stat_mtime(dp) (u3_time_in_ts(&((dp)->st_mtim)))
-#        define lseek64 lseek
-#      else
-#        error "port: timeconvert"
-#      endif
-
-/* Entropy
- */
-#      define c3_rand u3_pier_rand
-
-#      if defined(U3_OS_linux)
-#        define DEVRANDOM "/dev/urandom"
-#      else
-#        define DEVRANDOM "/dev/random"
-#      endif
-
-/* Static assertion
- */
-#define ASSERT_CONCAT_(a, b) a##b
-#define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
-#define STATIC_ASSERT(e,m) \
+    /* Static assertion.
+    */
+#     define ASSERT_CONCAT_(a, b) a##b
+#     define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
+#     define STATIC_ASSERT(e,m) \
         ;enum { ASSERT_CONCAT(assert_line_, __LINE__) = 1/(int)(!!(e)) }

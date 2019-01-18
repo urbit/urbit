@@ -1,5 +1,6 @@
 /* vere/pier.c
 */
+#include <ent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -1617,23 +1618,17 @@ u3_pier_plan(u3_noun pax, u3_noun fav)
   u3_pier_work(u3_pier_stub(), pax, fav);
 }
 
-/* u3_pier_rand(): fill a 512-bit (16-word) buffer.
+/* c3_rand(): fill a 512-bit (16-word) buffer.
 */
 void
-u3_pier_rand(c3_w* rad_w)
+c3_rand(c3_w* rad_w)
 {
-#if defined(U3_OS_bsd) && defined(__OpenBSD__)
-  if (-1 == getentropy(rad_w, 64)) {
-    c3_assert(!"lo_rand");
+  if ( 0 != ent_getentropy(rad_w, 64) ) {
+    uL(fprintf(uH, "c3_rand getentropy: %s\n", strerror(errno)));
+    //  XX review
+    //
+    u3_pier_exit();
   }
-#else
-  c3_i fid_i = open(DEVRANDOM, O_RDONLY);
-
-  if ( 64 != read(fid_i, (c3_y*) rad_w, 64) ) {
-    c3_assert(!"u3_pier_rand");
-  }
-  close(fid_i);
-#endif
 }
 
 #if 0

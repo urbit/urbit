@@ -840,16 +840,16 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       /* Load any patch files; apply them to images.
       */
       if ( 0 != (pat_u = _ce_patch_open()) ) {
-        printf("_ce_patch_apply\r\n");
+        printf("boot: _ce_patch_apply\r\n");
         _ce_patch_apply(pat_u);
 
-        printf("_ce_image_sync\r\n");
+        printf("boot: _ce_image_sync\r\n");
         _ce_image_sync(&u3P.nor_u);
         _ce_image_sync(&u3P.sou_u);
 
-        printf("_ce_patch_delete\r\n");
+        printf("boot: _ce_patch_delete\r\n");
         _ce_patch_delete();
-        printf("_ce_patch_free\r\n");
+        printf("boot: _ce_patch_free\r\n");
         _ce_patch_free(pat_u);
       }
 
@@ -868,7 +868,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
           perror("protect");
           c3_assert(0);
         }
-        printf("protected loom\r\n");
+        printf("boot: protected loom\r\n");
       }
 
       /* If the images were empty, we are logically booting.

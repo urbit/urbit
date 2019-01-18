@@ -41,7 +41,7 @@
         if ( c3y == u3qc_gor(b, pn_a) ) {
           d = u3qdb_put(l_a, b, c);
 
-          if ( c3y == u3qc_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3qc_mor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                                 d,
                                 u3k(r_a));
@@ -64,7 +64,7 @@
         else {
           d = u3qdb_put(r_a, b, c);
 
-          if ( c3y == u3qc_vor(pn_a, u3h(u3h(d))) ) {
+          if ( c3y == u3qc_mor(pn_a, u3h(u3h(d))) ) {
             return u3nt(u3k(n_a),
                         u3k(l_a),
                         d);
