@@ -123,7 +123,7 @@
         ::
         ::  switch to the second-generation compiler.  we want to be
         ::  able to generate matching reflection nouns even if the
-        ::  language changes -- the first-generation formula will 
+        ::  language changes -- the first-generation formula will
         ::  generate last-generation spans for `!>`, etc.
         ::
         ~>  %slog.[0 leaf+"1-d"]

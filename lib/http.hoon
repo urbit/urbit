@@ -9,9 +9,9 @@
 =,  html
 |%
 ++  request
-  $:  domain/(list cord)  
+  $:  domain/(list cord)
       end-point/path
-      req-type/$?($get {$post p/json})  
+      req-type/$?($get {$post p/json})
       headers/math:eyre
       queries/quay:eyre
   ==

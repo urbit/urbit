@@ -466,7 +466,7 @@
       ::
       ::  Store a delta about a story.
       ::
-      ~/  %hall-impact 
+      ~/  %hall-impact
       |=  {nom/name det/delta-story}
       (ta-delta %story nom det)
     ::

@@ -19,7 +19,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  
+=>
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -45,7 +45,7 @@
           ==                                            ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage
           (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
@@ -288,7 +288,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind  
+      %+  bind
         =-  ?-  -.har
               %|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               %&  (some p.har)
@@ -770,7 +770,7 @@
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
   ==
-::                                                
+::
 ++  vega                                                ::  reboot kernel
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot
