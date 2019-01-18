@@ -19,7 +19,8 @@ want to build with `-Dent_compat=true`. This tells libent not to try to
 use getentropy, which might result in a program that can run against
 an older libc version on some platforms. (`ent_compat` does nothing on
 OpenBSD; we claim that 5.6 is old enough for anyone's purposes who wants
-to use this library.)
+to use this library. If you want it to work on older systems, compile it
+against them.)
 
 ### Why?
 
