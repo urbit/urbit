@@ -163,7 +163,7 @@
         aud=(sy [guy %i] ~)
         ses=[%inv & our.bol nom.cod]~
     ==
-    ::  
+    ::
       %collection-invite
     :_  this
     :-  :*  ost.bol

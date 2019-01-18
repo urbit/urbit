@@ -58,7 +58,7 @@ function rePill(urb) {
           })
 
           return read.pipe(write)
-        })  
+        })
         .catch(function(err){
           return reject(err)
         });

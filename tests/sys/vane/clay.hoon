@@ -350,7 +350,7 @@
       scry=*sley
       ^=  take-args
         :*  wire=/queued-request
-            duct=~[/info2] 
+            duct=~[/info2]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
             [%b %wake ~]

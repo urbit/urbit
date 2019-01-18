@@ -6,7 +6,7 @@
   /^  manx
   /,  /web/collections
     /collections-elem/
-      /  
+      /
     /!hymn/
   ==
 page

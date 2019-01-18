@@ -838,7 +838,7 @@
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     ::  XX @da once parser is fixed
     ::
-    =/  wen=@t              
+    =/  wen=@t
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body

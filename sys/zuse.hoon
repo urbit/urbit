@@ -2292,7 +2292,7 @@
   ::                                                    ::
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
-  ++  aes    !.                                         
+  ++  aes    !.
     ~%  %aes  ..is  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
@@ -2377,7 +2377,7 @@
           --
         ::                                              ::  ++mcol:ahem:aes:
         ++  mcol                                        ::
-          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  
+          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}
           ^-  (list @)
           =+  c=[p=*@ q=*@ r=*@ s=*@]
           |-  ^-  (list @)
@@ -2426,7 +2426,7 @@
                 (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
               ::                                        ::  ++sark:be:ahem:aes:
               ++  sark                                  ::
-                |=  {c/(list @) d/(list @)}  
+                |=  {c/(list @) d/(list @)}
                 ^-  (list @)
                 ?~  c  ~
                 ?~  d  !!
@@ -5050,7 +5050,7 @@
   ++  drop-pole                                         ::  unit tuple
     |*  but/(pole (unit))
     ?~  but  !!
-    ?~  +.but  
+    ?~  +.but
       u:->.but
     [u:->.but (drop-pole +.but)]
   --
@@ -5058,7 +5058,7 @@
 ::::                      ++format                      ::  (2d) common formats
   ::                                                    ::::
 ++  format  ^?
-  |%               
+  |%
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
@@ -5139,7 +5139,7 @@
     ++  ship                                            ::  string from ship
       |=  a/^ship
       ^-  json
-      (tape (slag 1 (scow %p a))) 
+      (tape (slag 1 (scow %p a)))
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a/@u
@@ -5341,7 +5341,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -5368,7 +5368,7 @@
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
       %-  zl
-      |-  
+      |-
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
     ::
@@ -5424,7 +5424,7 @@
       !!
     ::
     ++  ni                                              ::  number as integer
-      |=  jon/json 
+      |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
     ::
@@ -5439,7 +5439,7 @@
       ?.  ?=({$o {@ *} ~ ~} jon)  ~
       |-
       ?~  wer  ~
-      ?:  =(-.-.wer p.n.p.jon)  
+      ?:  =(-.-.wer p.n.p.jon)
         ((pe -.-.wer +.-.wer) q.n.p.jon)
       ((of +.wer) jon)
     ::
@@ -5465,7 +5465,7 @@
     ::
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      %+  cu  
+      %+  cu
         |=  a/(list (pair _(wonk *fel) _(need *wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
@@ -5474,7 +5474,7 @@
       %-  zl
       %+  turn  ~(tap by a)
       |=  {a/cord b/_(need *wit)}
-      =+  nit=(rush a fel) 
+      =+  nit=(rush a fel)
       ?~  nit  ~
       (some [u.nit b])
     ::
@@ -5516,7 +5516,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -6491,7 +6491,7 @@
     ?:  (gth wen now)
       (cat 3 (scot %ud (msec (sub wen now))) %ms)
     (cat 3 '-' $(now wen, wen now))
-  ::  
+  ::
   ++  about                                             ::  ++about:milly
     |=  wun/(unit @da)                                  ::  unit relative msec
     ^-  @tas
@@ -7043,7 +7043,7 @@
       task:able:jael
   ==
 ++  note-arvo                                           ::  out request $->
-  $~  [%a %wake ~] 
+  $~  [%a %wake ~]
   $%  {$a task:able:ames}
       {$b task:able:behn}
       {$c task:able:clay}
