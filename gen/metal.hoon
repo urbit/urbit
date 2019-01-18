@@ -2,14 +2,12 @@
 ::::  /hoon/metal/gen
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 ::
 ::::
   !:
 :-  %say
 |=  $:  {now/@da * bec/beak}
-        {{who/@p $~} try/_| $~}
+        {{who/@p ~} try/_| ~}
     ==
 ::
 ::  we're creating an event series E whose lifecycle can be computed
@@ -75,7 +73,7 @@
               state-gate
             %=  $
               main-sequence  +.main-sequence
-              state-gate     .*(state-gate(+< -.main-sequence) -.state-gate)
+              state-gate  .*(state-gate [%9 2 %10 [6 %1 -.main-sequence] %0 1])
             ==
 ::
 ::  boot-two: startup formula
@@ -120,11 +118,11 @@
         ::
         ~>  %slog.[0 leaf+"1-c"]
         =+  ^=  compiler-tool
-            .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [%noun compiler-source]] %0 1])
         ::
         ::  switch to the second-generation compiler.  we want to be
         ::  able to generate matching reflection nouns even if the
-        ::  language changes -- the first-generation formula will 
+        ::  language changes -- the first-generation formula will
         ::  generate last-generation spans for `!>`, etc.
         ::
         ~>  %slog.[0 leaf+"1-d"]
@@ -138,13 +136,13 @@
         ::
         ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-span
-            -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
+            -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
         ::
         ::  compile the arvo source against the kernel core.
         ::
         ~>  %slog.[0 leaf+"1-f"]
         =+  ^=  kernel-tool
-            .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo-source]] %0 1])
         ::
         ::  create the arvo kernel, whose subject is the kernel core.
         ::
@@ -237,15 +235,15 @@
             ::
             (user /app /gen /lib /mar /ren /sec /sur /sys /web ~)
         ==
-    ::                                                  ::  
+    ::                                                  ::
     ++  user                                            ::  userspace loading
       |=  ::  sal: all spurs to load from
           ::
           sal/(list spur)
       ^-  ovum
       ::
-      ::  hav: all user files 
-      ::  
+      ::  hav: all user files
+      ::
       =;  hav  ~&  user-files+(lent hav)
                [[%$ %sync ~] [%into %$ & hav]]
       =|  hav/mode:clay
@@ -253,7 +251,7 @@
       ?~  sal  ~
       =.  hav  $(sal t.sal)
       ::
-      ::  tyl: spur 
+      ::  tyl: spur
       ::
       =/  tyl  i.sal
       |-  ^+  hav
@@ -263,7 +261,7 @@
       ::
       =/  pax  (en-beam:format bec tyl)
       =/  lon  .^(arch %cy pax)
-      =?  hav  ?=(^ fil.lon)  
+      =?  hav  ?=(^ fil.lon)
           ?.  ?=({$hoon *} tyl)
             ::
             ::  install only hoon files for now
@@ -274,7 +272,7 @@
           ::
           =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
           ^-  octs
-          ?-    tyl  
+          ?-    tyl
               {$hoon *}
             =/  dat  .^(@t %cx pax)
             [(met 3 dat) dat]

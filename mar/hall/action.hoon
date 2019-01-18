@@ -6,11 +6,11 @@
 ::
 |_  act/action:hall
 ::
-++  grab                                                ::>  convert from
+++  grab                                                :::  convert from
   |%
-  ++  noun  action:hall                                 ::<  from %noun
-  ++  json                                              ::>  from %json
-    =>  [. dejs:hall-json]  ::TODO  =,
+  ++  noun  action:hall                                 :::  from %noun
+  ++  json                                              :::  from %json
+    =,  dejs:hall-json
     =,  dejs-soft:format
     |=  a/json
     ^-  action:hall
@@ -22,7 +22,9 @@
         filter+(ot nom+so fit+filt ~)
         permit+(ot nom+so inv+bo sis+(as (su fed:ag)) ~)
         source+(ot nom+so sub+bo srs+(as sorc) ~)
+        read+(ot nom+so red+ni ~)
         usage+(ot nom+so add+bo tas+(as so) ~)
+        newdm+(ot sis+(as (su fed:ag)) ~)
         ::
         convey+(ar thot)
         phrase+(ot aud+audi ses+(ar spec:dejs:hall-json) ~)
@@ -37,13 +39,13 @@
     ==
   --
 ::
-++  grow                                                ::>  convert to
+++  grow                                                :::  convert to
   |%
-  ++  json                                              ::>  to %json
-    =>  [. enjs:hall-json]  ::TODO  =,
+  ++  json                                              :::  to %json
+    =,  enjs:hall-json
     =,  enjs:format
     %+  frond  -.act
-    ::>  only %convey has just a single piece of data.
+    :::  only %convey has just a single piece of data.
     ?:  ?=($convey -.act)  a+(turn tos.act thot)
     %-  pairs
     ?-  -.act
@@ -54,7 +56,9 @@
       $filter  ~[nom+s+nom.act fit+(filt fit.act)]
       $permit  ~[nom+s+nom.act inv+b+inv.act sis+(sa sis.act ship)]
       $source  ~[nom+s+nom.act sub+b+sub.act srs+(sa srs.act sorc)]
+      $read    ~[nom+s+nom.act red+(numb red.act)]
       $usage   ~[nom+s+nom.act add+b+add.act tas+(sa tas.act cord:enjs)]
+      $newdm   ~[sis+(sa sis.act ship)]
       ::
       $phrase  ~[aud+(audi aud.act) ses+a+(turn ses.act spec:enjs)]
       ::

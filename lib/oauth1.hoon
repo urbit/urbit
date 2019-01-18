@@ -8,7 +8,7 @@
 |%
 ++  keys  cord:{key/@t sec/@t}                          ::  app key pair
 ++  token                                               ::  user keys
-  $@  $~                                                ::  none
+  $@  ~                                                ::  none
   $%  {$request-token oauth-token/@t token-secret/@t}   ::  intermediate
       {$access-token oauth-token/@t token-secret/@t}    ::  full
   ==
@@ -49,7 +49,7 @@
   |=  bod/(unit octs)  ^-  quay-enc
   ~|  %parsing-body
   ?~  bod  ~
-  (rash q.u.bod (more pam (plus ;~(less pam prn))))
+  (rash q.u.bod (more pad (plus ;~(less pad prn))))
 ::
 ++  post-quay
   |=  {a/purl b/quay}  ^-  hiss
@@ -83,10 +83,10 @@
 ++  consumer-key     key:decode-keys
 ++  consumer-secret  sec:decode-keys
 ++  decode-keys                       :: XX from bale w/ typed %jael
-  ^-  {key/@t sec/@t $~}
+  ^-  {key/@t sec/@t ~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {key/@t sec/@t $~}) (to-wain:format key))
+    ((hard {key/@t sec/@t ~}) (to-wain:format key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}
@@ -102,7 +102,7 @@
   |=  a/$@(@t purl)  ^-  hiss
   (post-quay (parse-url a) oauth-callback+oauth-callback ~)
 ::
-++  our-host  .^(hart %e /(scot %p our)/host/fake)
+++  our-host  .^(hart %e /(scot %p our)/host/real)
 ++  oauth-callback
   ~&  [%oauth-warning "Make sure this urbit ".
                       "is running on {(en-purl:html our-host `~ ~)}"]
@@ -138,13 +138,13 @@
   ?:  =(usr nam)  &
   =<  |
   %-  %*(. slog pri 1)
-  ::  XX cgyarvin should figure out why we need to cast to $~
-  (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] `$~`!!))))
+  ::  XX cgyarvin should figure out why we need to cast to ~
+  (flop p:(mule |.(~|(wrong-user+[req=usr got=nam] `~`!!))))
 ::
 ++  check-token-quay
   |=  a/quay  ^+  %&
   =.  a  (sort a aor)
-  ?.  ?=({{$'oauth_token' oauth-token/@t} {$'oauth_verifier' @t} $~} a)
+  ?.  ?=({{$'oauth_token' oauth-token/@t} {$'oauth_verifier' @t} ~} a)
     ~|(no-token+a !!)
   ?~  tok
     %+  mean-wall  %no-secret-for-token
@@ -189,7 +189,9 @@
     ==
   ++  sign
     |=  {key/cord bay/tape}  ^-  tape
-    (en-base64:mimes:html (swp 3 (hmac:crypto key (crip bay))))
+    %-  en-base64:mimes:html
+    %+  swp  3
+    (hmac-sha1t:hmac:crypto key (crip bay))
   ::
   ++  signing-key
     %-  crip
@@ -223,7 +225,7 @@
     ::
     |=  a/hiss  ^-  $%({$send hiss} {$show purl})
     ?-    tok
-        $~
+        ~
       [%send (add-auth-header ~ (request-token request-url))]
     ::
         {$access-token ^}
@@ -312,7 +314,7 @@
 ::  ::
 ::  ++  res  :: handle request token
 ::    =+  aut
-::    |=  res/httr  ^-  $%({{$redo $~} _..res} {$give httr})
+::    |=  res/httr  ^-  $%({{$redo ~} _..res} {$give httr})
 ::    ?^  tok  [%give a]
 ::    ?>  =(%true (grab r.res 'oauth_callback_confirmed'))
 ::    =.  tok  [%request-token (grab-token-response res)]
@@ -327,7 +329,7 @@
 ::  ::
 ::  ++  bak  ::  save token
 ::    =+  aut
-::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    |=  bak/httr  ^-  $%({{$redo ~} _..bak} {$give httr})
 ::    ?:  (bad-response bak)  [%give bak]
 ::    =.  tok  [%access-token (grab-token-response res)]
 ::    [[%redo ~] ..bak]

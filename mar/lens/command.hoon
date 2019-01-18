@@ -1,7 +1,4 @@
 /-  lens
-/+    old-zuse
-::
-=,  old-zuse
 |_  com/command:lens
 ++  grab
   |%
@@ -12,50 +9,51 @@
     ~|  jon=jon
     %-  need
     %.  jon
-    =>  [. jo]
     =<  %-  ot  :~
           source+source
           sink+sink
         ==
+    =,  dejs-soft:format
     |%
     ++  source
-      ^-  $-(^json (unit source:lens))
-      |=  jon/^json
+      ^-  $-(^^json (unit source:lens))
+      |=  jon/^^json
       =+  tuple=%.(jon (ar source))
       ?^  tuple
         `[%tuple u.tuple]
       %.  jon
       %-  of  :~
-        data+so:jo
-        dojo+so:jo
-        clay+so:jo
-        url+(su auri:urlp)
+        data+so
+        dojo+so
+        clay+so
+        url+(su auri:de-purl:html)
         api+(su ;~(plug sym ;~(pfix col prn)))
         :-  %get-api
         %-  su
         ;~  plug
             sym
-            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
+            ;~(pfix col (more net (cook crip (star ;~(less net prn)))))
         ==
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
         as+(ot mark+(su sym) next+source ~)
-        hoon+(ot code+so:jo next+source ~)
+        hoon+(ot code+so next+source ~)
       ==
+    ++  none  |=(^^json (some ~))
     ++  sink
-      ^-  $-(^json (unit sink:lens))
+      ^-  $-(^^json (unit sink:lens))
       %-  of  :~
-        stdout+|=(^json (some ~))
-        output-file+so:jo
+        stdout+none
+        output-file+so
         output-clay+(su (easy /sentinel/path))
-        url+(su auri:urlp)
+        url+(su auri:de-purl:html)
         to-api+(su ;~(plug sym ;~(pfix col prn)))
         :-  %send-api
         %-  su
         ;~  plug
             sym
-            ;~(pfix col (more fas (cook crip (star ;~(less fas prn)))))
+            ;~(pfix col (more net (cook crip (star ;~(less net prn)))))
         ==
-        command+so:jo
+        command+so
         app+(su sym)
       ==
     --

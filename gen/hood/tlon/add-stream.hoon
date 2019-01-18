@@ -6,6 +6,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{web/ship $~} $~}
+        {{web/ship ~} ~}
     ==
 [%helm-tlon-add-stream web]

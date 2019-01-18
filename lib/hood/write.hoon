@@ -8,16 +8,16 @@
 =*  as-octs  as-octs:mimes:html
 =,  space:userlib
 |%
-++  part  {$write $0 pith}           :: no state
-++  pith  $~
++$  part  {$write $0 pith}           :: no state
++$  pith  ~
 --
 ::
 ::::
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$exec wire @p $~ {beak silk:ford}}
-              {$info wire @p toro:clay}
+++  card  $%  {$build wire ? schematic:ford}
+              {$info wire toro:clay}
           ==
 --
 ::
@@ -34,7 +34,7 @@
   =+  ext=%md
   ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
-  =-  abet:(emit %info write+~ our -)
+  =-  abet:(emit %info write+~ -)
   (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
@@ -57,7 +57,7 @@
     =+  .^(path %e /(scot %p our)/serv/(scot %da now))
     ?>(?=({@tas @tas *} -) -)
   =;  sob/soba:clay
-    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[i.t.sev %& sob]))
+    ?~(sob abet abet:(emit %info write+~ `toro:clay`[i.t.sev %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
@@ -114,14 +114,14 @@
 ::
 ++  ames-secret
   ^-  @t
-  =-  (crip +:<.^(@p %a pax)>)
+  =-  (crip +:<.^(@p %j pax)>)
   pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
 ::
 ++  poke-sec-atom
   |=  {hot/host:eyre dat/@}
-  ?>  ?=($& -.hot)
+  ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crua:crypto ames-secret dat))
+  =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
   (poke--data [`%atom [%sec p.hot]] %mime / (as-octs dat))
 ::
 ++  poke--data
@@ -129,18 +129,34 @@
   ?~  ext  $(ext [~ -.dat])
   =+  cay=?-(-.dat $json [-.dat !>(+.dat)], $mime [-.dat !>(+.dat)])
   ?:  =(u.ext -.dat)
-    (made pax ~ &+cay)
+    (made pax now [%complete %success %$ cay])
   =<  abet
-  %^  emit  %exec  write+pax                ::  XX defer %nice
-  [our ~ beak-now %cast u.ext $+cay]
+  %-  emit  :*
+    %build
+    write+pax
+    live=%.n                ::  XX defer %nice
+    ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
+    =/  =beak  beak-now
+    [%cast [p q]:beak u.ext [%$ cay]]
+  ==
 ::
 ++  made
-  |=  {pax/wire @ res/gage:ford}  ^+  abet
+  |=  [pax=wire date=@da result=made-result:ford]
+  ^+  abet
+  ::  |=  {pax/wire @ res/gage:ford}  ^+  abet
   :: ?.  =(our src)
   ::   ~|(foreign-write/[our=our src=src] !!)
-  ?+  -.res  ~|(gage+-.res !!)
-    $|  (mean p.res)
-    $&  =-  abet:(emit %info write+~ our -)
-        (foal :(welp (en-beam beak-now ~) pax /[-.p.res]) p.res)
-  ==
+  ?:  ?=(%incomplete -.result)
+    (mean tang.result)
+  ::
+  =/  build-result  build-result.result
+  ::
+  ?:  ?=([%error *] build-result)
+    (mean message.build-result)
+  ::
+  =/  =cage  (result-to-cage:ford build-result)
+  ::
+  =-  abet:(emit %info write+~ -)
+  ::
+  (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
 --

@@ -21,9 +21,73 @@
 /-  rfc, gmail-label, gmail-message
 /+  http
 ::::
-/=  rfctext  /:  /%/rfc  /txt/
 ::
-//  /%/split
+|%
+::  Splits a path into the endpoint prefix and the remainder,
+::  which is assumed to be a path within the JSON object.  We
+::  choose the longest legal endpoint prefix.
+::
+++  split
+  |=  pax/path
+  ::  =-  ~&  [%pax pax - (valid-endpoint pax)]  -
+  =+  l=(lent pax)
+  |-  ^-  {path path}
+  ?:  ?=(valid-get-endpoint (scag l pax))
+    [(scag l pax) (slag l pax)]
+  ?~  l
+    ~&  %bad-endpoint
+    ~|(%bad-endpoint !!)
+  $(l (dec l))
+::
+::  These are all the github GET endpoints, sorted with
+::  `env LC_ALL=C sort`
+::
+::  end-points include required query parameters
+++  valid-get-endpoint
+  $?  {$drafts id/@t $~}
+      {$drafts $~}
+      {$history $~}
+      {$labels id/@t $~}
+      {$labels $~}
+      {$messages id/@t $attachments id/@t $~}
+      {$messages id/@t $~}
+      {$messages $~}
+      {$profile $~}
+      {$threads id/@t $~}
+      {$threads $~}
+  ==
+
+++  vaild-post-endpoint
+  $?  {$drafts $send $~}
+      {$drafts $~}
+      {$messages id/@t $modify $~}
+      {$messages id/@t $trash $~}
+      {$messages id/@t $untrash $~}
+      {$messages $import $~}
+      {$messages $send $~}
+      {$messages $~}
+      {$labels $~}
+      {$threads id/@t $trash $~}
+      {$threads id/@t $untrash $~}
+      {$threads id/@t $modify}
+      {$stop $~}
+      {$watch $~}
+  ==
+
+++  valid-delete-endpoint
+  $?  {$drafts id/@t $~}
+      {$labels id/@t $~}
+      {$messages id/@t $~}
+      {$thread id/@t $~}
+  ==
+++  valid-put-endpoint
+  $?  {$drafts id/@t $~}
+      {$labels id/@t $~}
+  ==
+++  valid-patch-endpoint
+  $?  {$labels id/@t $~}
+  ==
+--
 ::/-  gmail
 ::  /ape/gh/split.hoon defines ++split, which splits a request
 ::  at the end of the longest possible endpoint.
@@ -35,13 +99,13 @@
     ++  subscription-result
       $%  {$arch arch}
           {$json json}
-          {$null $~}
+          {$null ~}
           {$inbox (list {message-id/@t thread-id/@t})}
           {$message from/@t subject/@t}
       ==
     ++  card
       $%  {$diff subscription-result}
-          {$hiss wire {$~ $~} $httr {$hiss hiss:eyre}}
+          {$hiss wire {~ ~} $httr {$hiss hiss:eyre}}
       ==
     ++  easy-ot
       =,  dejs-soft:format
@@ -93,7 +157,7 @@
     ['urbit' 'urbit.org'] :: [(crip "urbit+{<our.hid>}") 'urbit.org']
   ::
     =-  (rash adr -)
-    [;~((glue pat) . .)]:(cook crip (plus ;~(less pat next)))  :: /[^@]+@[^@]+/
+    [;~((glue vat) . .)]:(cook crip (plus ;~(less vat next)))  :: /[^@]+@[^@]+/
   ::
     (crip tyl)
     (of-wain:format (turn mez crip))
@@ -157,18 +221,18 @@
   ?~  arg
     =+  switch=t.t.t.t.wir
     ?+  switch  [%json `json`u.jon]
-      {$messages $~}
+      {$messages ~}
     =/  new-mezes
       ((ot messages+(ar (ot id+so 'threadId'^so ~)) ~):dejs-soft:format u.jon)
     ::%+  turn  new-mezes
     ::|=  id
-    ::?<  ?=($~ new-mezes)
+    ::?<  ?=(~ new-mezes)
     ::=.  received-ids  [new-mezes received-ids]
     ::~&  received-ids
     ::=.  received
     [%inbox (need new-mezes)]
       ::
-      {$messages @t $~}
+      {$messages @t ~}
       ::
     :: =+  body-parser==+(jo (ot body+(ot data+(cu ofis-google so) ~) ~)) :: (ok /body/data so):jo
     :: ~&  %.(u.jon (om (om |=(a/json (some -.a))):jo))
@@ -226,7 +290,7 @@
     ?~  dir
       [%arch `(shax (jam u.jon)) ~]
     ?~  arg
-      [%arch `(shax (jam u.jon)) (~(run by u.dir) $~)]
+      [%arch `(shax (jam u.jon)) (~(run by u.dir) ,~)]
     =+  new-jon=(~(get by u.dir) i.arg)
     $(arg t.arg, u.jon ?~(new-jon ~ u.new-jon))
   ==

@@ -6,11 +6,11 @@
 ::
 |_  piz/prize:hall
 ::
-++  grab                                                ::>  convert from
+++  grab                                                :::  convert from
   |%
-  ++  noun  prize:hall                                  ::<  from %noun
-  ++  json                                              ::>  from %json
-    =>  [. dejs:hall-json]  ::TODO  =,
+  ++  noun  prize:hall                                  :::  from %noun
+  ++  json                                              :::  from %json
+    =,  dejs:hall-json
     =,  dejs-soft:format
     |=  a/json
     ^-  prize:hall
@@ -24,10 +24,10 @@
     ==
   --
 ::
-++  grow                                                ::>  convert to
+++  grow                                                :::  convert to
   |%
-  ++  json                                              ::>  to %json
-    =>  [. enjs:hall-json]  ::TODO  =,
+  ++  json                                              :::  to %json
+    =,  enjs:hall-json
     =,  enjs:format
     %+  frond  -.piz
     ?+  -.piz  !!

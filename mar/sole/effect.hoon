@@ -3,16 +3,13 @@
   ::
 /?    310
 /-    sole
-/+    old-zuse
 ::
 ::::
   ::
 =,  sole
 =,  format
-=,  old-zuse
 |%
 ++  mar-sole-change                       ::  XX  dependency
-  =,  old-zuse
   |_  cha/sole-change
   ++  grow
     |%  ++  json
@@ -28,7 +25,7 @@
         $set  (frond %set (tape (tufa p.det)))
         $ins  (frond %ins (pairs at+(numb p.det) cha+s+(tuft q.det) ~))
       ==
-    --  
+    --
   --
 ++  wush
   |=  {wid/@u tan/tang}
@@ -52,16 +49,16 @@
   =,  enjs
   |%
   ++  lens-json                       :: json for cli client
-    ^-  ?($~ ^json)                   :: null = ignore
+    ^-  ?(~ ^json)                   :: null = ignore
     ?+    -.sef  ~
         $tan  (wall (turn (flop p.sef) |=(a/tank ~(ram re a))))
         $txt  s+(crip p.sef)
         $sav
-      (pairs file+s+(crip <`path`p.sef>) data+s+(crip (sifo q.sef)) ~)
+      (pairs file+s+(crip <`path`p.sef>) data+s+(crip (en-base64:mimes:html q.sef)) ~)
     ::
         $mor
       =+  all=(turn p.sef |=(a/sole-effect lens-json(sef a)))
-      =.  all  (skip all |=(a/^json ?=($~ a)))
+      =.  all  (skip all |=(a/^json ?=(~ a)))
       ?~  all  ~
       ?~  t.all  i.all
       ~|(multiple-effects+`(list ^json)`all !!)
@@ -69,7 +66,7 @@
   ::
   ++  json
     ^-  ^json
-    ?+    -.sef  
+    ?+    -.sef
               ~|(unsupported-effect+-.sef !!)
         $mor  [%a (turn p.sef |=(a/sole-effect json(sef a)))]
         $err  (frond %hop (numb p.sef))

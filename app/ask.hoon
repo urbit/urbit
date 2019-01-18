@@ -2,12 +2,11 @@
 ::::  /hoon/ask/app
   ::
 /?    310
-/+    sole, hood-womb, prey
-[. sole]
+/+    sole, prey
+=,    sole
 |%
   ++  card
     $%  {$diff $sole-effect sole-effect}
-        {$poke wire {ship $hood} $womb-invite ,=,(hood-womb {cord reference invite})}
     ==
   ++  invited  ?($new $sent $ignored)
   ++  email  @t
@@ -43,7 +42,7 @@
   tan+(flop (turn a message))
 ::
 ++  adrs
-  =-  (sort - lor)
+  =-  (sort - |=([a=[=time *] b=[=time *]] (lth time.a time.b)))
   %+  turn  ~(tap by adr)
   |=({a/email b/time c/invited} [tym=b ask=a inv=c])
 ::
@@ -89,7 +88,7 @@
     ?^  wom  [[(effect mor+help)]~ +>.$]    :: show help
     ?:  =(~ buf.som)  [[(effect txt+"Please enter womb ship")]~ +>.$]
     =/  try  (rose (tufa buf.som) fed:ag)
-    ?.  ?=({$& ^} try)
+    ?.  ?=({%& ^} try)
       [[(effect bel+~)]~ +>.$]
     =>  .(wom p.try)  :: XX TMI
     (transmit set+~ pro+prompt ~)   :: XX handle multiple links?
@@ -150,12 +149,6 @@
 ::
 ++  invite
   |=  ask/email
-  :-  ost.bow
-  ^-  card
-  :^  %poke  /invite/(scot %t ask)  [(need wom) %hood]  
-  :-  %womb-invite
-  =,  hood-womb
-  ^-  [cord reference invite]
-  =+  inv=(scot %uv (end 7 1 eny.bow))
-  [inv ~ [ask 1 0 "You have been invited to Urbit: {(trip inv)}" ""]]
+  ~|  %ask-stub-invite
+  !!
 --

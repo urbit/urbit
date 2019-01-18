@@ -1,3 +1,4 @@
+^?
 |%
 ++  command
   $:  source/source
@@ -16,7 +17,7 @@
       {$listen-api api/term event/term}
   ==
 ++  sink
-  $%  {$stdout $~}
+  $%  {$stdout ~}
       {$output-file pax/@t}
       {$output-clay pax/path}
       {$url url/purl:eyre}

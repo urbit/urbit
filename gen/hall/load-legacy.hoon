@@ -8,6 +8,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ byk/beak}
-        {{man/knot $~} $~}
+        {{man/knot ~} ~}
     ==
 [%load-legacy man]

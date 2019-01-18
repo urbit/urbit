@@ -3,13 +3,11 @@
   ::
 /?    310
 /-    kyev, sole
-/+    old-zuse
 ::
 ::::
   ::
 =,  sole
-=,  old-zuse
-|_  dill-belt
+|_  dill-belt:dill
 ::
 ++  grab                                                ::  convert from
   |%
@@ -28,7 +26,7 @@
 ::            %up    %down   %left  %right
 ::    ==  ==
   ++  kyev
-    |=  kev/^kyev  ^-  dill-belt
+    |=  kev/^kyev  ^-  dill-belt:dill
     ~|  dill-belt-incomplete+kev
     ?:  ?=({$act ?($ctrl $shift $alt $meta)} q.kev)
       [%txt ~]                        ::  ignore
@@ -40,10 +38,10 @@
           q.kev
         (con 96 q.kev)                ::  ctrl key decoding
       =+  cha=(tuba (trip q.kev))
-      ?>  ?=({@ $~} cha)               ::  of a single character
+      ?>  ?=({@ ~} cha)               ::  of a single character
       ?+  mod  !!                     ::  modified by one buckykey
-        {$ctrl $~ $~}  [%ctl i.cha]
-        {$alt $~ $~}   [%met i.cha]
+        {$ctrl ~ ~}  [%ctl i.cha]
+        {$alt ~ ~}   [%met i.cha]
       ==
     ?@  q.kev
       [%txt (tuba (trip q.kev))]
@@ -57,6 +55,6 @@
       $right  [%aro %r]
     ==  ::  %yow, %rez?
   ::
-  ++  noun  dill-belt                                   ::  clam from %noun
+  ++  noun  dill-belt:dill            ::  clam from %noun
   --
 --

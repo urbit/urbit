@@ -10,7 +10,6 @@
 ++  all-axle  ?(axle)                                   ::
 ++  axle                                                ::
   $:  $0                                                ::
-      ore/(unit ship)                                   ::  identity once set
       hey/(unit duct)                                   ::  default duct
       dug/(map duct axon)                               ::  conversations
       $=  hef                                           ::  other weights
@@ -36,13 +35,16 @@
   ==                                                    ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note-ames                                           ::  weird ames move
-  $%  {$make p/(unit @t) q/@ud r/@ s/?}                 ::
-      {$sith p/@p q/@uw r/?}                          ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-behn                                           ::
+  $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-clay                                           ::
-  $%  {$merg p/@p q/@tas r/@p s/@tas t/case u/germ:clay}::  merge desks
-      {$warp p/sock q/riff:clay}                        ::  wait for clay hack
-      {$perm p/ship q/desk r/path s/rite:clay}          ::  change permissions
+  $%  {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
+      {$warp p/ship q/riff:clay}                        ::  wait for clay hack
+      {$wegh $~}                                        ::
+      {$perm p/desk q/path r/rite:clay}                 ::  change permissions
   ==                                                    ::
 ++  note-dill                                           ::  note to self, odd
   $%  {$crud p/@tas q/(list tank)}                      ::
@@ -50,55 +52,93 @@
       {$init p/ship}                                    ::
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/path q/path}                             ::  reboot by path
-      {$velo p/@t q/@t}                                 ::  reboot by path
+      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
+  ==                                                    ::
+++  note-eyre                                           ::
+  $%  {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-ford                                           ::
+  $%  {$wegh $~}                                        ::
   ==                                                    ::
 ++  note-gall                                           ::
   $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush:gall}                       ::
+      {$deal p/sock q/cush:gall}                        ::
+      {$wegh $~}                                        ::
+  ==                                                    ::
+++  note-jael                                           ::
+  $%  $:  %dawn                                         ::  boot from keys
+          =seed:able:jael                               ::    identity params
+          spon=ship                                     ::    sponsor
+          czar=(map ship [=life =pass])                 ::    galaxy table
+          turf=(list turf)                              ::    domains
+          bloq=@ud                                      ::    block number
+          node=(unit purl:eyre)                         ::    gateway url
+          snap=(unit snapshot:jael)                     ::    head start
+      ==                                                ::
+      [%fake our=ship]                                  ::  boot fake
+      :: XX wegh                                        ::
   ==                                                    ::
 ++  note                                                ::  out request $->
-  $?  {?($a $b $c $e $f $g) $wegh $~}                   ::
   $%  {$a note-ames}                                    ::
+      {$b note-behn}                                    ::
       {$c note-clay}                                    ::
       {$d note-dill}                                    ::
+      {$e note-eyre}                                    ::
+      {$f note-ford}                                    ::
       {$g note-gall}                                    ::
-  ==  ==                                                ::
+      {$j note-jael}                                    ::
+  ==                                                    ::
 ++  sign-ames                                           ::
   $%  {$nice $~}                                        ::
       {$send p/lane:ames q/@}                           ::
-      {$init p/ship}                                    ::
+      {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-behn                                           ::
+  $%  {$mass p/mass}                                    ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
       {$note p/@tD q/tank}                              ::
       {$writ p/riot:clay}                               ::
+      {$mass p/mass}                                    ::
       {$mack p/(unit tang)}                             ::
   ==                                                    ::
 ++  sign-dill                                           ::
   $%  {$blit p/(list blit)}                             ::
   ==                                                    ::
+++  sign-eyre                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-ford                                           ::
+  $%  {$mass p/mass}                                    ::
+  ==                                                    ::
 ++  sign-gall                                           ::
   $%  {$onto p/(each suss:gall tang)}                   ::
       {$unto p/cuft:gall}                               ::
+      {$mass p/mass}                                    ::
+  ==                                                    ::
+++  sign-jael                                           ::
+  $%  [%init p=ship]                                    ::
   ==                                                    ::
 ++  sign                                                ::  in result $<-
-  $?  {?($a $b $c $e $f $g) $mass p/mass}               ::
   $%  {$a sign-ames}                                    ::
+      {$b sign-behn}                                    ::
       {$c sign-clay}                                    ::
       {$d sign-dill}                                    ::
+      {$e sign-eyre}                                    ::
+      {$f sign-ford}                                    ::
       {$g sign-gall}                                    ::
-  ==  ==                                                ::
+      {%j sign-jael}                                    ::
+  ==
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
+|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
 =>  |%
     ++  as                                              ::  per cause
-      |_  $:  {moz/(list move) hen/duct our/ship}
-              axon
-          ==
+      =|  moz/(list move)
+      |_  [hen=duct axon]
       ++  abet                                          ::  resolve
         ^-  {(list move) axle}
         [(flop moz) all(dug (~(put by dug.all) hen +<+))]
@@ -116,27 +156,8 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
-          $tick  =+  ^=  ges  ^-  gens:ames
-                     :-  %en
-                     =+  can=(clan:title p.kyz)
-                     ?-  can
-                       $czar  [%czar ~]
-                       $duke  [%duke %anon ~]
-                       $earl  [%earl (scot %p p.kyz)]
-                       $king  [%king (scot %p p.kyz)]
-                       $pawn  [%pawn ~]
-                     ==
-                 =+  yen=(scot %p (shax :(mix %ticket eny now)))
-                 =+  ^=  beg  ^-  {his/@p tic/@p yen/@t ges/gens:ames}
-                     [p.kyz q.kyz yen ges]
-                 =+  cmd=[%hood %poke `cage`[%helm-begin !>(beg)]]
-                 %=    +>.$
-                     moz
-                   :_(moz [hen %pass ~ %g %deal [our our] cmd])
-                 ==
           $veer  (dump kyz)
           $vega  (dump kyz)
-          $velo  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
@@ -219,7 +240,7 @@
           =>((tint a) [+(p) q])                         ::  (add 10 fg)
         ::
         ++  scap                                        ::  ANSI escape seq
-          |=  a/$^((pair @ @) @)
+          |=  a/$@(@ (pair @ @))
           %-  (list @c)
           :+  27  '['                                   ::  "\033[{a}m"
           ?@(a :~(a 'm') :~(p.a q.a 'm'))
@@ -227,7 +248,7 @@
         ++  deco                                        ::  ANSI effects
           |=  a/^deco  ^-  @
           ?-  a
-            $~   '0'
+            ~   '0'
             $br  '1'
             $un  '4'
             $bl  '5'
@@ -246,7 +267,7 @@
             $m  '5'
             $c  '6'
             $w  '7'
-            $~  '9'
+            ~  '9'
           ==
         --
       ::
@@ -262,21 +283,29 @@
               moz
           ==
         ==
+      ::  XX move
+      ::
+      ++  sein
+        |=  who=ship
+        ;;  ship
+        %-  need  %-  need
+        %-  (sloy-light ski)
+        [[151 %noun] %j our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
-        =+  myt=(flop (need tem))
-        =+  can=(clan:title our)
+        ^+  .
+        =/  myt  (flop (need tem))
+        =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %merg our %home our %base da+now %init])
+        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
+        =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
-                (sync %base (sein:title our) %kids)
-        =.  +>  ?:  ?=(?($czar $pawn) can)
-                  (sync %home our %base)
-                (init-sync %home our %base)
+                (sync %base (sein our) %kids)
         =.  +>  ?.  ?=(?($duke $king $czar) can)  +>
                 ::  make kids desk publicly readable, so syncs work.
+                ::
                 (show %kids):(sync %kids our %base)
         =.  +>  autoload
         =.  +>  peer
@@ -290,12 +319,7 @@
             tem  `(turn gyl |=(a/gill [%yow a]))
             moz
           :_  moz
-          :*  hen
-              %pass
-              /
-              %c
-              [%warp [our our] %base `[%sing %y [%ud 1] /]]
-          ==
+          [hen %pass / %c %warp our %base `[%sing %y [%ud 1] /]]
         ==
       ::
       ++  send                                          ::  send action
@@ -318,9 +342,7 @@
         %_    +>.$
             moz
           :_  moz
-          :*  hen  %pass  /show  %c  %perm  our
-              des  /  r+`[%black ~]
-          ==
+          [hen %pass /show %c %perm des / r+`[%black ~]]
         ==
       ::
       ++  sync
@@ -330,16 +352,6 @@
           :_  moz
           :*  hen  %pass  /sync  %g  %deal  [our our]
               ram  %poke  %hood-sync  -:!>(syn)  syn
-          ==
-        ==
-      ::
-      ++  init-sync
-        |=  syn/{desk ship desk}
-        %_    +>.$
-            moz
-          :_  moz
-          :*  hen  %pass  /init-sync  %g  %deal  [our our]
-              ram  %poke  %hood-init-sync  -:!>(syn)  syn
           ==
         ==
       ::
@@ -369,22 +381,24 @@
           ::  ~&  [%take-nice-ames sih]
           +>
         ::
-            {$a $init *}
+            [%j %init *]
+          ::  pass thru to unix
+          ::
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$c $mere *}
-          ?:  ?=($& -.p.sih)
+          ?:  ?=(%& -.p.sih)
             +>.$
           (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
-            $|  (crud %onto p.p.+>.sih)
-            $&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
+            %|  (crud %onto p.p.+>.sih)
+            %&  (done %blit [%lin (tuba "{<p.p.sih>}")]~)
           ==
         ::
             {$g $unto *}
@@ -416,7 +430,7 @@
         ^-  mass
         :-  %dill
         :-  %|
-        :~  all+[%& [ore hey dug]:all]
+        :~  all+[%& [hey dug]:all]
         ==
       ::
       ++  wegt
@@ -446,82 +460,81 @@
       --
     ::
     ++  ax                                              ::  make ++as
-      |=  {hen/duct kyz/task:able}                           ::
-      ?~  ore.all  ~
-      =+  nux=(~(get by dug.all) hen)
-      ?^  nux
-        (some ~(. as [~ hen u.ore.all] u.nux))
-      ?.  ?=($flow -.kyz)  ~
-      %-  some
-      %.  q.kyz
-      %~  into  as
-      :-  [~ hen u.ore.all]
-      :*  p.kyz
-          [~ ~]
-          80
-          0
-          (tuba "<awaiting {(trip p.kyz)}, this may take a few minutes>")
-      ==
+      |=  hen/duct
+      ^-  (unit _as)
+      =/  nux  (~(get by dug.all) hen)
+      ?~  nux  ~
+      (some ~(. as hen u.nux))
     --
 |%                                                      ::  poke+peek pattern
 ++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  ^+  [p=*(list move) q=..^$]
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ::  ~&  [%dill-call-soft (@tas `*`-.p.q.hic)]
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%dill-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
-  ?:  ?=($boot -.q.hic)
-    :_(..^$ [hen %pass ~ (note %a p.q.hic)]~)
-  ?:  ?=($flog -.q.hic)
-    ::  ~&  [%dill-flog +.q.hic]
-    ?:  ?=({$crud $hax-init {$leaf *} $~} p.q.hic)
-      =+  him=(slav %p (crip p.i.q.p.q.hic))
-      :_(..^$ ?~(hey.all ~ [u.hey.all %give %init him]~))
-    ?:  ?=({$crud $hax-heft $~} p.q.hic)
-      :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d %heft ~]~))
-    :_(..^$ ?~(hey.all ~ [u.hey.all %slip %d p.q.hic]~))
-  =.  hey.all  ?^(hey.all hey.all `hen)
-  ?:  ?=($init -.q.hic)
-    ::  ~&  [%cnhp-init hen]
-    ?:  =(ore.all `p.q.hic)
-      [[hen %give q.hic]~ ..^$]
-    =:  ore.all  `p.q.hic
-        dug.all   ~
-      ==
-    =^  moz  all  abet:(need (ax (need hey.all) [%flow %hood ~]))
-    ?:  |((lth p.q.hic 256) (gte p.q.hic (bex 64)))  [moz ..^$] ::  XX HORRIBLE
-    [:_(moz [(need hey.all) %give %init p.q.hic]) ..^$]
-  =+  nus=(ax hen q.hic)
-  ?~  nus
-    ~&  [%dill-no-flow q.hic]
+  ^+  [*(list move) ..^$]
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::  the boot event passes thru %dill for initial duct distribution
+  ::
+  ?:  ?=(%boot -.task)
+    ?>  ?=(?(%dawn %fake) -.p.task)
+    ?>  =(~ hey.all)
+    =.  hey.all  `hen
+    =/  boot  ((soft note-jael) p.task)
+    ?~  boot
+      ~|  invalid-boot-event+hen  !!
+    :_(..^$ [hen %pass / %j u.boot]~)
+  ::  we are subsequently initialized. single-home
+  ::
+  ?:  ?=(%init -.task)
+    ?>  =(~ dug.all)
+    ::  configure new terminal, setup :hood and %clay
+    ::
+    =*  duc  (need hey.all)
+    =/  app  %hood
+    =/  see  (tuba "<awaiting {(trip app)}, this may take a minute>")
+    =/  zon=axon  [app input=[~ ~] width=80 cursor=0 see]
+    ::
+    =^  moz  all  abet:(~(into as duc zon) ~)
+    [moz ..^$]
+  ::  %flog tasks are unwrapped and sent back to us on our default duct
+  ::
+  ?:  ?=(%flog -.task)
+    ?~  hey.all
+      [~ ..^$]
+    ::  this lets lib/helm send %heft a la |mass
+    ::
+    =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
+    ::
+    $(hen u.hey.all, wrapped-task p.task)
+  ::  a %sunk notification from %jail comes in on an unfamiliar duct
+  ::
+  ?:  ?=(%sunk -.task)
     [~ ..^$]
-  =^  moz  all  abet:(call:u.nus q.hic)
+  ::
+  =/  nus  (ax hen)
+  ?~  nus
+    ::  :hen is an unrecognized duct
+    ::  could be before %boot (or %boot failed)
+    ::
+    ~&  [%dill-call-no-flow hen -.task]
+    =/  tan  ?:(?=(%crud -.task) q.task ~)
+    [((slog (flop tan)) ~) ..^$]
+  ::
+  =^  moz  all  abet:(call:u.nus task)
   [moz ..^$]
-::
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
 ::
 ++  load                                                ::  trivial
   |=  old/all-axle
   ..^$(all old)
-  ::  |=  old=*   ::  diable
-  ::  ..^$(ore.all `~zod)
 ::
 ++  scry
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
   ^-  (unit (unit cage))
-  ?.  ?=($& -.why)  ~
+  ?.  ?=(%& -.why)  ~
   =*  his  p.why
   [~ ~]
 ::
@@ -529,21 +542,14 @@
 ::
 ++  take                                                ::  process move
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
-  ?:  =(~ ore.all)
-    ?:  ?=({$a $init *} q.hin)
-      ::  ~&  [%take-init hen]
-      =.  hey.all  ?^(hey.all hey.all `hen)
-      [[[hen %give +.q.hin] ~] ..^$]
-      ::  [~ ..^$]
-    ~&  [%take-back q.hin]
+  ^+  [*(list move) ..^$]
+  =/  nus  (ax hen)
+  ?~  nus
+    ::  :hen is an unrecognized duct
+    ::  could be before %boot (or %boot failed)
+    ::
+    ~&  [%dill-take-no-flow hen -.q.hin +<.q.hin]
     [~ ..^$]
-  ?.  (~(has by dug.all) hen)
-    ~&  [%take-weird-sign q.hin]
-    ~&  [%take-weird-hen hen]
-    [~ ..^$]
-  =+  our=?>(?=(^ ore.all) u.ore.all)
-  =^  moz  all
-    abet:(~(take as [~ hen our] (~(got by dug.all) hen)) q.hin)
+  =^  moz  all  abet:(take:u.nus q.hin)
   [moz ..^$]
 --

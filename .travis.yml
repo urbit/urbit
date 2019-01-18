@@ -1,12 +1,39 @@
 language: node_js
 node_js:
 - 4
+
 before_install:
+# building vere directly in lieu of a working debian package script
+# pwd: ~/urbit/arvo
+- cd ../
+- wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+- unzip ninja-linux.zip
+- sudo mv ninja /usr/bin/
+
+install:
+# pwd: ~/urbit
+- pip3 install --user -I meson==0.44.1
+- git clone https://github.com/urbit/urbit
+- cd ./urbit
+# pwd: ~/urbit/urbit
+- git checkout $(cat ../arvo/.travis/pin-vere-commit.txt)
+- ./scripts/bootstrap
+- ./scripts/build
+- sudo ninja -C build install
+- cd ../arvo
+# pwd: ~/urbit/arvo
+
+before_script:
 - cd .travis
-- wget -i pin-urbit-release.url -O ./urbit.deb
-- sudo apt install ./urbit.deb
-before_script: bash get-or-build-pill.sh
+# pwd: ~/urbit/arvo/.travis
+- npm install
+- bash get-or-build-pill.sh
 # https://github.com/travis-ci/travis-ci/issues/2570
+
+script:
+- ulimit -c unlimited -S
+- npm run -s test; bash print-core-backtrace.sh $?
+
 before_deploy: "[ -d piers ] || { mkdir piers && tar cvzSf piers/zod-$TRAVIS_COMMIT.tgz zod/; }"
 
 addons:
@@ -19,16 +46,10 @@ addons:
     - openssl
     - libssl-dev
     - libncurses5-dev
-    - automake
-    - autoconf
-    - make
-    - libtool
-    - g++
-    - re2c
+    - gcc
     - libcurl4-gnutls-dev
     - unzip
     - gdb
-
 
 deploy:
   - skip_cleanup: true

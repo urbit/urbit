@@ -6,6 +6,6 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{for/ship $~} $~}
+        {{for/ship ~} ~}
     ==
 [%helm-tlon-add-fora for]

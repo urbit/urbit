@@ -3,11 +3,9 @@
 ::::  /hoon/url/curl/gen
   ::
 /?    310
-/+  old-zuse
-=,  old-zuse
 ::
 :::::
   ::
 :-  %say
-|=  {^ {arg/tape $~} $~}
-purl+(scan arg auri:urlp)
+|=  {^ {arg/tape ~} ~}
+purl+(scan arg auri:de-purl:html)

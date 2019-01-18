@@ -1,8 +1,7 @@
 ::
 /?    310
 /-  hall
-/+  old-zuse
-[old-zuse .]
+=,  eyre
 =>
 |%
 ++  audience  (map partner (pair envelope delivery))    ::  destination+state
@@ -23,7 +22,7 @@
 ++  speech                                              ::  narrative action
   $%  {$lan p/knot q/@t}                                ::  local announce
       {$exp p/@t}                                       ::  hoon line
-      {$non $~}                                         ::  no content (yo)
+      {$non ~}                                         ::  no content (yo)
       {$ext p/@tas q/*}                                 ::  extended action
       {$fat p/torso q/speech}                           ::  attachment
       {$url p/purf}                                     ::  parsed url
@@ -55,8 +54,8 @@
 --
 |%
 ++  from-json
-  =>  [jo ..telegram]
-  |=  a/^json  ^-  (list telegram:hall)
+  =,  dejs-soft:format
+  |:  $:{a/^json}  ^-  (list telegram:hall)
   =-  %-  zing
       %+  turn
         (need ((ar (ot ship+(su fed:ag) thought+thot ~)) a))
@@ -65,7 +64,7 @@
   ++  of
     |*  a/(pole {@tas fist})
     |=  b/^json
-    %.  ((of:jo a) b)
+    %.  ((of:dejs-soft:format a) b)
     %-  slog
     ?+  b  ~
         {$o *}
@@ -122,16 +121,16 @@
   ++  parn
     ^-  $-(nail (like partner))
     %+  pick
-      ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+      ;~((glue net) ;~(pfix sig fed:ag) urs:ab)
     %+  sear  (soft passport)
-    ;~((glue fas) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
+    ;~((glue net) sym urs:ab)                         ::  XX  [a-z0-9_]{1,15}
   ::
   ++  stam  (ot date+di bouquet+(as (ar so)) speech+spec ~)
   ++  spec
     %+  ke  *speech  |.  ~+
     %-  of  :~
       lin+(ot say+bo txt+so ~)
-      url+(ot txt+(su aurf:urlp) ~)
+      url+(ot txt+(su aurf:de-purl:html) ~)
       exp+(ot txt+so ~)
       app+(ot txt+so src+so ~)
       fat+(ot tor+tors taf+spec ~)
@@ -148,7 +147,7 @@
       tank+(ot dat+(cu (hard (list tank)) blob) ~)
     ==
   ::
-  ++  blob  (cu cue (su fel:ofis))
+  ++  blob  (cu cue (su fel:de-base64:mimes:html))
   ::
   ::
   ++  convert-telegram
@@ -168,14 +167,14 @@
     |=  p/partner
     ^-  (unit circle:hall)
     ?-  -.p
-      $&  :+  ~  p.p.p
+      %&  :+  ~  p.p.p
           ?:  ?|  =(q.p.p 'porch')
                   =(q.p.p 'court')
                   =(q.p.p 'floor')
               ==
             %inbox
           q.p.p
-      $|  ~
+      %|  ~
     ==
   ::
   ++  convert-speech

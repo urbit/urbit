@@ -1,14 +1,8 @@
-::  Womb: cycle private key XX unimplemented
+::  Helm: rotate private keys
 ::
 ::::  /hoon/rekey/hood/gen
   ::
 /?    310
-::
-::::
-  ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {$~ $~}
-    ==
-:-  %womb-rekey
-~
+|=  [^ [sed=@t ~] ~]
+[%helm-rekey sed]

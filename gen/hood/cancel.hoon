@@ -8,7 +8,7 @@
   ::
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {{syd/@tas $~} $~}
+        {{syd/@tas ~} ~}
     ==
 :-  %kiln-cancel
 syd

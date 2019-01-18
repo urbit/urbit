@@ -6,11 +6,11 @@
 ::
 |_  rum/rumor:hall
 ::
-++  grab                                                ::>  convert from
+++  grab                                                :::  convert from
   |%
-  ++  noun  rumor:hall                                  ::<  from %noun
-  ++  json                                              ::>  from %json
-    =>  [. dejs:hall-json]  ::TODO  =,
+  ++  noun  rumor:hall                                  :::  from %noun
+  ++  json                                              :::  from %json
+    =,  dejs:hall-json
     =,  dejs-soft:format
     |=  a/json
     ^-  rumor:hall
@@ -23,10 +23,10 @@
     ==
   --
 ::
-++  grow                                                ::>  convert to
+++  grow                                                :::  convert to
   |%
-  ++  json                                              ::>  to %json
-    =>  [. enjs:hall-json]  ::TODO  =,
+  ++  json                                              :::  to %json
+    =,  enjs:hall-json
     =,  enjs:format
     %+  frond  -.rum
     ?+  -.rum  !!

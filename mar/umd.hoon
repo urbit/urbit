@@ -1,7 +1,6 @@
 ::
 ::::  /hoon/umd/mar
   ::
-/?    310
 /+    cram
 ::
 |_  mud/@t
@@ -12,9 +11,10 @@
     (to-wain:format mud)
   ++  elem
     ^-  manx
-    elm:(static:cram (ream mud))
+    =,  cram
+    elm:(static (ream mud))
   ++  front  :: XX performance, types
-    ^-  (map term knot)  
+    ^-  (map term knot)
     %-  ~(run by inf:(static:cram (ream mud)))
     |=  a=dime  ^-  cord
     ?+  (end 3 1 p.a)  (scot a)

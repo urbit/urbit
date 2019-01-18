@@ -4,14 +4,14 @@
   ::
 /?    310
 /-  sole
-/+  old-zuse
-=,  old-zuse
-=,  sole
-:-  %get  |=  {^ {a/hiss $~} usr/iden}
-^-  (sole-request (cask httr))
+/+  generators
+=,  generators
+=,  eyre
+:-  %get  |=  {^ {a/hiss ~} usr/user}
+^-  (sole-request:sole (cask httr))
 ?.  ?=($get p.q.a)
   ~|  %only-get-requests-supported-in-generators  :: XX enforced?
   !!
 :-  *tang
 :^  %|  `usr  `hiss`a
-|=(hit/httr (sole-so %httr hit))
+|=(hit/httr (produce %httr hit))

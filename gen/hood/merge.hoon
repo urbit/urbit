@@ -3,12 +3,11 @@
 ::::  /hoon/merge/hood/gen
   ::
 /?    310
-/+  *old-zuse
-=,  old-zuse
+=,  clay
 ::
 |%
-++  beaky  {knot knot knot $~}
-++  sorc  ?({bek/beaky $~} {her/@p sud/@tas $~})
+++  beaky  {knot knot knot ~}
+++  sorc  ?({bek/beaky ~} {her/@p sud/@tas ~})
 --
 ::
 ::::
@@ -21,23 +20,23 @@
 |^  :-  %kiln-merge
     ^-  {syd/desk her/ship sud/desk cas/case gem/?(germ $auto)}
     ?-  arg
-      {@ @ $~}
-        =+(arg [sud ?.(=(our her) her (sein her)) sud (opt-case da+now) gem])
+      {@ @ ~}
+        =+(arg [sud ?.(=(our her) her (sein:title p.bek now her)) sud (opt-case da+now) gem])
     ::
-      {^ $~}
+      {^ ~}
         =+  (pars bek.arg)
-        [dez ?.(=(our who) who (sein who)) dez (opt-case caz) gem]
+        [dez ?.(=(our who) who (sein:title p.bek now who)) dez (opt-case caz) gem]
     ::
-      {* @ @ $~}
+      {* @ @ ~}
         :-  (pars-src syd.arg)
         =+(arg [her sud (opt-case da+now) gem])
     ::
-      {* ^ $~}
+      {* ^ ~}
         :-  (pars-src syd.arg)
         =+((pars bek.arg) [who dez (opt-case caz) gem])
     ==
 ++  opt-case  |=(a/case ?:(=(*case cas) a cas))  :: override
-++  pars  |=(a/beaky `{{who/ship dez/desk caz/case} *}`(need (tome a)))
+++  pars  |=(a/beaky `{{who/ship dez/desk caz/case} *}`(need (de-beam:format a)))
 ++  pars-src
   |=  syd/$@(desk beaky)
   ?@  syd  syd

@@ -3,32 +3,22 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole, hall
-[. sole]
+/+    pill
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |%                                                      ::  ::
 ++  part  {$helm $0 pith}                               ::  helm state
 ++  pith                                                ::  helm content
-  $:  bur/(unit (pair ship mace:ames))                  ::  requesting ticket
-      hoc/(map bone session)                            ::  consoles
+  $:  hoc/(map bone session)                            ::  consoles
   ==                                                    ::
 ++  session                                             ::
-  $:  say/sole-share                                    ::  console state
-      mud/(unit (sole-dialog @ud))                      ::  console dialog
+  $:  say/sole-share:sole                               ::  console state
+      mud/(unit (sole-dialog:sole @ud))                 ::  console dialog
   ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-++  hood-begin                                          ::  begin command
-  $:  his/@p                                            ::  identity
-      tic/@p                                            ::  ticket
-      eny/@t                                            ::  entropy
-      ges/gens:ames                                    ::  description
-  ==                                                    ::
-++  hood-init                                           ::  report init
-  $:  him/ship                                          ::
-  ==                                                    ::
 ++  hood-nuke                                           ::  block/unblock
   $:  him/ship                                          ::
   ==                                                    ::
@@ -42,18 +32,16 @@
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
-|=  {bowl:gall part}                                   ::  main helm work
-=+  sez=(fall (~(get by hoc) ost) *session)
+|:  $:{bowl:gall part}                                  ::  main helm work
+=+  sez=(fall (~(get by hoc) ost) $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$cash wire p/@p q/buck:ames}                 ::
-          {$conf wire dock $load ship term}             ::
+      $%  {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          {$funk wire @p @p @}                          ::
+          [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
-          {$want wire sock path *}                      ::  send message
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -64,7 +52,8 @@
           {$hall-action action:hall}                    ::
       ==                                                ::
     --
-|_  moz/(list move)
+=+  moz=((list move))
+|%
 ++  abet                                              ::  resolve
   [(flop moz) %_(+<+.$ hoc (~(put by hoc) ost sez))]
 ::
@@ -74,30 +63,34 @@
   ^+  +>
   ?~(+< +> $(+< t.+<, +> (emit i.+<)))
 ::
-++  poke-begin                                        ::  make/send keypair
-  |=  hood-begin  =<  abet
-  ?>  ?=($~ bur)
-  ~&  [%poke-begin our his]
-  =+  buz=(shaz :(mix (jam ges) eny))
-  =+  loy=(pit:nu:crub:crypto 512 buz)
-  %-  emit(bur `[his [0 sec:ex:loy]~])
-  [%want /helm/ticket [our (sein:title his)] /a/ta his tic ges pub:ex:loy]
-::
-++  poke-spawn
-  |=  {him/ship key/@pG}  =<  abet
-  %-  emit
-  [%funk ~ our him (shax key)]
-::
-++  poke-init                                         ::  initialize
-  |=  him/ship  =<  abet
-  (emit %flog /helm %crud %hax-init leaf+(scow %p him) ~)
+++  poke-rekey                                        ::  rotate private keys
+  |=  des=@t
+  =/  sed=(unit seed:able:jael)
+    %+  biff
+      (bind (slaw %uw des) cue)
+    (soft seed:able:jael)
+  =<  abet
+  ?~  sed
+    ~&  %invalid-private-key
+    +>.$
+  ?.  =(our who.u.sed)
+    ~&  [%wrong-private-key-ship who.u.sed]
+    +>.$
+  =/  lyf=life  .^(@ud j+/(scot %p our)/life/(scot %da now)/(scot %p our))
+  ?.  =(+(lyf) lyf.u.sed)
+    ~&  [%wrong-private-key-life expected=+(lyf) actual=lyf.u.sed]
+    +>.$
+  ::  our new private key, as a +tree of +rite
+  ::
+  =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
+  (emit %mint / our our rit)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
   (emit %nuke /helm him)
 ::
 ++  poke-mass
-  |=  $~  =<  abet
+  |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
 ::
 ++  poke-send-hi
@@ -106,9 +99,8 @@
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
 ::
 ++  poke-send-ask
-  |=  mel/cord  =<  abet
-  %^  emit  %poke  /helm/ask/(scot %p ~socden-malzod)
-  [[~socden-malzod %ask] %ask-mail mel]
+  |=  mel/cord
+  abet
 ::
 ++  poke-serve
   |=  top/?(desk beam)  =<  abet
@@ -131,111 +123,66 @@
 ::
 ++  coup-hi
   |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t $~} pax)
+  ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
 ::
 ++  coup-ask
   |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t $~} pax)
+  ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "ask {<src>} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
-  |=  {syd/desk all/(list term)}  =<  abet
+  |:  $:{syd/desk all/(list term)}  =<  abet
   %-  emil
   %-  flop
   %+  turn  all
   =+  top=`path`/(scot %p our)/[syd]/(scot %da now)
-  =/  van/(list {term $~})
+  =/  van/(list {term ~})
     :-  zus=[%zuse ~]
     ~(tap by dir:.^(arch %cy (welp top /sys/vane)))
   |=  nam/@tas
     =.  nam
     ?.  =(1 (met 3 nam))
       nam
-    =+  ^-  zaz/(list {p/knot $~})
-        (skim van |=({a/term $~} =(nam (end 3 1 a))))
-    ?>  ?=({{@ $~} $~} zaz)
+    =+  ^-  zaz/(list {p/knot ~})
+        (skim van |=({a/term ~} =(nam (end 3 1 a))))
+    ?>  ?=({{@ ~} ~} zaz)
     `term`p.i.zaz
   =+  tip=(end 3 1 nam)
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
+::  +poke-reset:  send %vega to reboot kernel
 ::
-++  poke-reset                                        ::  reset system
-  |=  hood-reset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card)
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
-  :-  [%flog /reset %vega (weld top /hoon) (weld top /arvo)]
-  %+  turn
-    ^-  (list {p/@tas q/path})
-    :~  [%$ /zuse]
-        [%a /vane/ames]
-        [%b /vane/behn]
-        [%c /vane/clay]
-        [%d /vane/dill]
-        [%e /vane/eyre]
-        [%f /vane/ford]
-        [%g /vane/gall]
-    ==
-  |=  {p/@tas q/path}
-  =+  way=`path`(welp top q)
-  =+  txt=.^(@ %cx (welp way /hoon))
-  [%flog /reset %veer p way txt]
+::    And reinstall %zuse and the vanes.
+::    Trigger with |reset.
 ::
-++  poke-meset                                        ::  reset system (new)
-  |=  hood-reset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card)
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
-  =+  hun=.^(@ %cx (welp top /hoon/hoon))
-  =+  arv=.^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%velo `@t`hun `@t`arv]]
-  :-  =+  way=(weld top `path`/zuse)
-      [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
-  %+  turn
-    ^-  (list {p/@tas q/@tas})
-    :~  [%a %ames]
-        [%b %behn]
-        [%c %clay]
-        [%d %dill]
-        [%e %eyre]
-        [%f %ford]
-        [%g %gall]
-        [%j %jael]
-    ==
-  |=  {p/@tas q/@tas}
-  =+  way=`path`(welp top /vane/[q])
-  =+  txt=.^(@ %cx (welp way /hoon))
-  [%flog /reset %veer p way txt]
-::
-++  poke-will                                         ::  hear certificate
-  |=  wil/(unit wyll:ames)
-  ?>  ?=(^ bur)
-  ?>  ?=(^ wil)
+++  poke-reset
+  |=  hood-reset
   =<  abet
-  %-  emil(bur ~)
-  :~  [%cash /helm p.u.bur q.u.bur u.wil]
-      [%poke /helm [our %hood] %hood-unsync %base (sein:title our) %kids]
-  ==
+  %-  emil  %-  flop
+  ^-  (list card)
+  =/  top=path  /(scot %p our)/home/(scot %da now)/sys
+  =/  hun  .^(@ %cx (welp top /hoon/hoon))
+  =/  arv  .^(@ %cx (welp top /arvo/hoon))
+  :-  [%flog /reset [%vega `@t`hun `@t`arv]]
+  %+  turn
+    (module-ova:pill top)
+  |=(a=[wire flog:dill] [%flog a])
 ::
 ++  poke-verb                                         ::  toggle verbose
-  |=  $~  =<  abet
+  |=  ~  =<  abet
   (emit %flog /helm %verb ~)
 ::
 ++  take-onto                                         ::  result of %conf
   |=  saw/(each suss:gall tang)  =<  abet
   %-  emit
   ?-   -.saw
-    $|  [%flog ~ %crud %onto `tang`p.saw]
-    $&  [%flog ~ %text "<{<p.saw>}>"]
+    %|  [%flog ~ %crud %onto `tang`p.saw]
+    %&  [%flog ~ %text "<{<p.saw>}>"]
   ==
-::
-++  take-note                                         ::  result of %init
-  |=  {way/wire chr/@tD tan/tank}  =<  abet
-  (emit %flog ~ %text chr ' ' ~(ram re tan))
 ::
 ++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet

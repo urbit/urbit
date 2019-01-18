@@ -2,8 +2,7 @@
 ::
 ::::  /hoon/oauth2/lib
   ::
-/+    hep-to-cab, interpolate, old-zuse
-=,  old-zuse
+/+    hep-to-cab, interpolate
 =,  eyre
 =,  mimes:html
 =,  html
@@ -59,7 +58,7 @@
 ::::
   ::
 |%
-++  token  ?($~ @t)
+++  token  ?(~ @t)
 ++  refresh  {tok/token expiry/@da pending/_`?`|}
 ++  both-tokens  {token refresh}
 ++  keys  cord:{cid/@t cis/@t}
@@ -72,10 +71,10 @@
 ++  client-id      cid:decode-keys
 ++  client-secret  cis:decode-keys
 ++  decode-keys                       :: XX from bale:eyre w/ typed %jael
-  ^-  {cid/@t cis/@t $~}
+  ^-  {cid/@t cis/@t ~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {cid/@t cis/@t $~}) (to-wain key))
+    ((hard {cid/@t cis/@t ~}) (to-wain key))
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth2 {<`path`dom>}
@@ -101,7 +100,7 @@
   %+  rap  3  :-  (wack a)
   (turn b |=(c/knot (cat 3 '_' (wack c))))
 ::
-++  our-host  .^(hart %e /(scot %p our)/host/fake)
+++  our-host  .^(hart %e /(scot %p our)/host/real)
 ++  redirect-uri
   %-    crip    %-  en-purl
   %^  into-url:interpolate  'https://our-host/~/ac/:domain/:user/in'
@@ -328,7 +327,7 @@
 ::  ::
 ::  ++  bak  ::  save token
 ::    =+  aut
-::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    |=  bak/httr  ^-  $%({{$redo ~} _..bak} {$give httr})
 ::    ?:  (bad-response bak)  [%give bak]
 ::    =.  tok  (grab-token bak)
 ::    [[%redo ~] ..bak]
@@ -389,7 +388,7 @@
 ::   ::
 ::  ++  res  :: save after refresh
 ::    =+  aut
-::    |=  a/httr  ^-  $^({{$redo $~} _..res} {$give httr})
+::    |=  a/httr  ^-  $^({{$redo ~} _..res} {$give httr})
 ::    ?.  pending.ref  [%give a]
 ::    =+  `{axs/token exp/@u}`(grab-expiring-token a)
 ::    [[%redo ~] ..out(axs axs, ref (~(update re ref) exp))]
@@ -402,7 +401,7 @@
 ::
 ::   ++  bak  :: save both tokens
 ::     =+  aut
-::     |=  a/httr  ^-  {{$redo $~} _..res}
+::     |=  a/httr  ^-  {{$redo ~} _..res}
 ::     =+  `{axs/token exp/@u ref-new/token}`(grab-both-tokens a)
 ::     =.  tok.ref  ref-new
 ::     [[%redo ~] ..bak(axs axs, ref (~(update re ref) exp))]
@@ -410,7 +409,7 @@
 ::  ::
 ::  ++  bak
 ::    =+  aut
-::    |=  bak/httr  ^-  $%({{$redo $~} _..bak} {$give httr})
+::    |=  bak/httr  ^-  $%({{$redo ~} _..bak} {$give httr})
 ::    ?:  (bad-response bak)  [%give bak]
 ::    =.  tok  (grab-token bak)
 ::    [[%redo ~] ..bak]

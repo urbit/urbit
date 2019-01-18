@@ -2,9 +2,7 @@
 ::::  /hoon/sole/lib
   ::
 /?    310
-/-    sole
-[. ^sole]
-::
+/-    *sole
 ::::
   ::
 |_  sole-share                                          ::  shared-state engine
@@ -83,7 +81,7 @@
 ++  inverse                                           ::  relative inverse
   |=  ted/sole-edit
   ^-  sole-edit
-  =.  ted  ?.(?=({$mor * $~} ted) ted i.p.ted)
+  =.  ted  ?.(?=({$mor * ~} ted) ted i.p.ted)
   ?-  -.ted
     $del  [%ins p.ted (snag p.ted buf)]
     $ins  [%del p.ted]

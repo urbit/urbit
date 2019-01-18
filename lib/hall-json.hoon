@@ -2,17 +2,16 @@
 ::::  /lib/hall-json/hoon
   ::
 /-    hall
-/+    old-zuse
 =,    hall
 ::
 |_  bol/bowl:gall
-++  en-tape                                             ::>  sur to tape
+++  en-tape                                             :::  sur to tape
   |%
-  ++  circ                                              ::>  circle
+  ++  circ                                              :::  circle
     |=  a/circle
     :(weld (scow %p hos.a) "/" (trip nom.a))
   ::
-  ++  rang                                              ::>  range
+  ++  rang                                              :::  range
     |=  a/range
     ?~  a  ~
     ;:  weld
@@ -21,24 +20,24 @@
       (scow u.tal.u.a)
     ==
   ::
-  ++  sorc                                              ::>  source
+  ++  sorc                                              :::  source
     |=  a/source
     (weld (circ cir.a) (rang ran.a))
   --
 ::
-++  de-tape                                             ::>  tape to sur (parse)
+++  de-tape                                             :::  tape to sur (parse)
   |%
-  ++  circ                                              ::>  circle
-    ;~((glue fas) ;~(pfix sig fed:ag) urs:ab)
+  ++  circ                                              :::  circle
+    ;~((glue net) ;~(pfix sig fed:ag) urs:ab)
   ::
   ++  pont
-    ;~  pfix  fas
+    ;~  pfix  net
       %+  sear
         |=  a/coin
         ^-  (unit place)
         ?+  a  ~
-          {$$ $da @da}  `p.a
-          {$$ $ud @ud}  `p.a
+          [%$ %da @da]  `p.a
+          [%$ %ud @ud]  `p.a
         ==
       nuck:so
     ==
@@ -47,30 +46,33 @@
     ;~(plug circ (punt ;~(plug pont (punt pont))))
   --
 ::
-++  enjs                                                ::>  sur to json
+++  enjs                                                :::  sur to json
   =,  enjs:format
   |%
   ::TODO  these first few should probably make their way
   ::      into the stdlib...
-  ++  sa                                                ::>  set as array
+  ++  sa                                                :::  set as array
     |*  {a/(set) b/$-(* json)}
     ^-  json
     [%a (turn ~(tap in a) b)]
   ::
-  ++  mo                                                ::>  map as object
+  ++  mo                                                :::  map as object
     |*  {a/(map) b/$-(* @t) c/$-(* json)}
     ^-  json
     =-  (pairs (turn ~(tap by a) -))
     |*  {k/* v/*}  [(b k) (c v)]
   ::
-  ++  lank                                              ::>  tank as string arr
+  ++  lank                                              :::  tank as string arr
     |=  a/tank
     ^-  json
     a+(turn (wash [0 1.024] a) tape)
   ::
-  ++  dank                                              ::>  tank
+  ++  dank                                              :::  tank
     |=  a/tank
     ?:  ?=($leaf -.a)  (frond %leaf (tape p.a))
+    ::  TODO: No idea what a plum is, but it was recently added
+    ::
+    ?:  ?=($plum -.a)  (frond %plum [%o ~])
     %+  frond  -.a
     %-  pairs
     ?-  -.a
@@ -95,22 +97,22 @@
       ~
     ==
   ::
-  ++  cord                                              ::>  string from cord
+  ++  cord                                              :::  string from cord
     |=  a/@t
     s+a
   ::
-  ++  mabe                                              ::>  null or value
+  ++  mabe                                              :::  null or value
     |*  {a/(unit) b/$-(* json)}
     ^-  json
     ?~(a ~ (b u.a))
   ::
-  ::>  ||
-  ::>  ||  %query-models
-  ::>  ||
-  ::>    models relating to queries, their results and updates.
+  :::  ||
+  :::  ||  %query-models
+  :::  ||
+  :::    models relating to queries, their results and updates.
   ::+|
   ::
-  ++  pici                                              ::>  prize-client
+  ++  pici                                              :::  prize-client
     |=  a/prize-client
     ^-  json
     %-  pairs  :~
@@ -121,7 +123,7 @@
       nis+(mo nis.a (cury scot %p) cord)
     ==
   ::
-  ++  ruci                                              ::>  rumor-client
+  ++  ruci                                              :::  rumor-client
     |=  a/rumor-client
     ^-  json
     %+  frond  -.a
@@ -130,7 +132,7 @@
       $nick   (dini +.a)
     ==
   ::
-  ++  pack                                              ::>  package
+  ++  pack                                              :::  package
     |=  a/package
     ^-  json
     %-  pairs  :~
@@ -139,7 +141,7 @@
       pes+(crow pes.a)
     ==
   ::
-  ++  digy                                              ::>  diff-glyph
+  ++  digy                                              :::  diff-glyph
     |=  a/diff-glyph
     ^-  json
     %-  pairs  :~
@@ -148,12 +150,12 @@
       aud+(audi aud.a)
     ==
   ::
-  ++  dini                                              ::>  diff-nick
+  ++  dini                                              :::  diff-nick
     |=  a/diff-nick
     ^-  json
     (pairs who+(ship who.a) nic+s+nic.a ~)
   ::
-  ++  ruso                                              ::>  rumor-story
+  ++  ruso                                              :::  rumor-story
     |=  a/rumor-story
     ^-  json
     %+  frond  -.a
@@ -170,7 +172,7 @@
       $gram     (enve nev.a)
     ==
   ::
-  ++  dico                                              ::>  diff-config
+  ++  dico                                              :::  diff-config
     |=  a/diff-config
     ^-  json
     %+  frond  -.a
@@ -183,9 +185,10 @@
       $secure   s+sec.a
       $permit   (pairs add+b+add.a sis+(sa sis.a ship) ~)
       $remove   b+&
+      $read     (numb red.a)
     ==
   ::
-  ++  disa                                              ::>  diff-status
+  ++  disa                                              :::  diff-status
     |=  a/diff-status
     ^-  json
     %+  frond  -.a
@@ -196,7 +199,7 @@
       $remove     b+&
     ==
   ::
-  ++  dihu                                              ::>  diff-human
+  ++  dihu                                              :::  diff-human
     |=  a/diff-human
     ^-  json
     %+  frond  -.a
@@ -206,25 +209,25 @@
       $true     (frond %tru (mabe tru.a trun))
     ==
   ::
-  ::>  ||
-  ::>  ||  %circles
-  ::>  ||
-  ::>    messaging targets and their metadata
+  :::  ||
+  :::  ||  %circles
+  :::  ||
+  :::    messaging targets and their metadata
   ::+|
   ::
-  ++  circ                                              ::>  circle
+  ++  circ                                              :::  circle
     |=  a/circle
     ^-  json
     s+(crip (circ:en-tape a))
   ::
-  ++  loby                                              ::>  lobby
+  ++  loby                                              :::  lobby
     |=  a/lobby
     %-  pairs  :~
       loc+(conf loc.a)
       rem+(mo rem.a (cork circ:en-tape crip) conf)
     ==
   ::
-  ++  conf                                              ::>  config
+  ++  conf                                              :::  config
     |=  a/config
     ^-  json
     %-  pairs  :~
@@ -233,24 +236,25 @@
       tag+(sa tag.a cord)
       fit+(filt fit.a)
       con+(cont con.a)
+      red+(numb red.a)
     ==
   ::
-  ++  sorc                                              ::>  source
+  ++  sorc                                              :::  source
     |=  a/source
     ^-  json
     s+(crip (sorc:en-tape a))
   ::
-  ++  filt                                              ::>  filter
+  ++  filt                                              :::  filter
     |=  a/filter
     ^-  json
     (pairs cas+b+cas.a utf+b+utf.a ~)
   ::
-  ++  cont                                              ::>  control
+  ++  cont                                              :::  control
     |=  a/control
     ^-  json
     (pairs sec+s+sec.a sis+(sa sis.a ship) ~)
   ::
-  ++  crow                                              ::>  crowd
+  ++  crow                                              :::  crowd
     |=  a/crowd
     ^-  json
     %-  pairs  :~
@@ -258,38 +262,38 @@
       rem+(mo rem.a (cork circ:en-tape crip) grop)
     ==
   ::
-  ++  grop                                              ::>  group
+  ++  grop                                              :::  group
     |=  a/group
     ^-  json
     (mo a (cury scot %p) stat)
   ::
-  ++  stat                                              ::>  status
+  ++  stat                                              :::  status
     |=  a/status
     ^-  json
     (pairs pec+s+pec.a man+(huma man.a) ~)
   ::
-  ++  huma                                              ::>  human
+  ++  huma                                              :::  human
     |=  a/human
     ^-  json
     (pairs han+(mabe han.a cord) tru+(mabe tru.a trun) ~)
   ::
-  ++  trun                                              ::>  truename
+  ++  trun                                              :::  truename
     |=  a/truename
     ^-  json
     (pairs fir+s+fir.a mid+(mabe mid.a cord) las+s+las.a ~)
   ::
-  ::>  ||
-  ::>  ||  %message-data
-  ::>  ||
-  ::>    structures for containing main message data
+  :::  ||
+  :::  ||  %message-data
+  :::  ||
+  :::    structures for containing main message data
   ::+|
   ::
-  ++  enve                                              ::>  envelope
+  ++  enve                                              :::  envelope
     |=  a/envelope
     ^-  json
     (pairs num+(numb num.a) gam+(gram gam.a) ~)
   ::
-  ++  gram                                              ::>  telegram
+  ++  gram                                              :::  telegram
     |=  a/telegram
     ^-  json
     %-  pairs  :~
@@ -301,7 +305,7 @@
       sep+(spec sep.a)
     ==
   ::
-  ++  thot                                              ::>  thought
+  ++  thot                                              :::  thought
     |=  a/thought
     ^-  json
     %-  pairs  :~
@@ -311,7 +315,7 @@
       sep+(spec sep.a)
     ==
   ::
-  ++  spec                                              ::>  speech
+  ++  spec                                              :::  speech
     |=  a/speech
     ^-  json
     ::  only %url has just a single piece of data.
@@ -328,7 +332,7 @@
       $app  ~[app+s+app.a sep+(spec sep.a)]
     ==
   ::
-  ++  atta                                              ::>  attache
+  ++  atta                                              :::  attache
     |=  a/attache
     ^-  json
     %+  frond  -.a
@@ -338,35 +342,35 @@
       $tank  a+(turn +.a lank)
     ==
   ::
-  ::>  ||
-  ::>  ||  %message-metadata
-  ::>  ||
-  ::>    structures for containing message metadata
+  :::  ||
+  :::  ||  %message-metadata
+  :::  ||
+  :::    structures for containing message metadata
   ::+|
   ::
-  ++  audi                                              ::>  audience
+  ++  audi                                              :::  audience
     |=  a/audience
     ^-  json
     (sa a circ)
   --
 ::
-++  dejs                                                ::>  json to sur
+++  dejs                                                :::  json to sur
   =,  dejs-soft:format
   |%
   ::TODO  these first few should maybe make their way
   ::      into the stdlib...
-  ++  re                                                ::>  recursive reparsers
+  ++  re                                                :::  recursive reparsers
     |*  {gar/* sef/_|.(fist)}
     |=  jon/json
     ^-  (unit _gar)
     =-  ~!  gar  ~!  (need -)  -
     ((sef) jon)
   ::
-  ++  as                                                ::>  array as set
+  ++  as                                                :::  array as set
     |*  a/fist
     (cu ~(gas in *(set _(need *a))) (ar a))
   ::
-  ++  dank                                              ::>  tank
+  ++  dank                                              :::  tank
     ^-  $-(json (unit tank))
     %+  re  *tank  |.  ~+
     %-  of  :~
@@ -375,27 +379,27 @@
       rose+(ot style+(ot mid+sa open+sa close+sa ~) lines+(ar dank) ~)
     ==
   ::
-  ::>  ||
-  ::>  ||  %query-models
-  ::>  ||
-  ::>    models relating to queries, their results and updates.
+  :::  ||
+  :::  ||  %query-models
+  :::  ||
+  :::    models relating to queries, their results and updates.
   ::+|
   ::
-  ++  pici                                              ::>  prize-client
+  ++  pici                                              :::  prize-client
     ^-  $-(json (unit prize-client))
     %-  ot  :~
       gys+(om (as (as circ)))
       nis+(op fed:ag so)
     ==
   ::
-  ++  ruci                                              ::>  rumor-client
+  ++  ruci                                              :::  rumor-client
     ^-  $-(json (unit rumor-client))
     %-  of  :~
       glyph+digy
       nick+dini
     ==
   ::
-  ++  pack                                              ::>  package
+  ++  pack                                              :::  package
     ^-  $-(json (unit package))
     %-  ot  :~
       nes+(ar enve)
@@ -403,15 +407,15 @@
       pes+crow
     ==
   ::
-  ++  digy                                              ::>  diff-glyph
+  ++  digy                                              :::  diff-glyph
     ^-  $-(json (unit diff-glyph))
     (ot bin+bo gyf+so aud+audi ~)
   ::
-  ++  dini                                              ::>  diff-nick
+  ++  dini                                              :::  diff-nick
     ^-  $-(json (unit diff-nick))
     (ot who+(su fed:ag) nic+so ~)
   ::
-  ++  ruso                                              ::>  rumor-story
+  ++  ruso                                              :::  rumor-story
     ^-  $-(json (unit rumor-story))
     %-  of  :~
       new+conf
@@ -422,7 +426,7 @@
       gram+(ot src+circ nev+enve ~)
     ==
   ::
-  ++  dico                                              ::>  diff-config
+  ++  dico                                              :::  diff-config
     ^-  $-(json (unit diff-config))
     %-  of  :~
       full+conf
@@ -435,7 +439,7 @@
       remove+ul
     ==
   ::
-  ++  disa                                              ::>  diff-status
+  ++  disa                                              :::  diff-status
     ^-  $-(json (unit diff-status))
     %-  of  :~
       full+(ot pec+pres man+huma ~)
@@ -444,7 +448,7 @@
       remove+ul
     ==
   ::
-  ++  dihu                                              ::>  diff-human
+  ++  dihu                                              :::  diff-human
     ^-  $-(json (unit diff-human))
     %-  of  :~
       full+huma
@@ -452,22 +456,22 @@
       true+(mu trun)
     ==
   ::
-  ::>  ||
-  ::>  ||  %circles
-  ::>  ||
-  ::>    messaging targets and their metadata.
+  :::  ||
+  :::  ||  %circles
+  :::  ||
+  :::    messaging targets and their metadata.
   ::+|
   ::
   ::TODO  maybe just an object?
-  ++  circ                                              ::>  circle
+  ++  circ                                              :::  circle
     ^-  $-(json (unit circle))
     (su circ:de-tape)
   ::
-  ++  loby                                              ::>  lobby
+  ++  loby                                              :::  lobby
     ^-  $-(json (unit lobby))
     (ot loc+conf rem+(op circ:de-tape conf) ~)
   ::
-  ++  conf                                              ::>  config
+  ++  conf                                              :::  config
     ^-  $-(json (unit config))
     %-  ot  :~
       src+(as sorc)
@@ -475,60 +479,61 @@
       tag+(as so)
       fit+filt
       con+cont
+      red+ni
     ==
   ::
   ::TODO  maybe just an object?
-  ++  sorc                                              ::>  source
+  ++  sorc                                              :::  source
     ^-  $-(json (unit source))
     (su sorc:de-tape)
   ::
-  ++  filt                                              ::>  filter
+  ++  filt                                              :::  filter
     ^-  $-(json (unit filter))
     (ot cas+bo utf+bo ~)
   ::
-  ++  cont                                              ::>  control
+  ++  cont                                              :::  control
     ^-  $-(json (unit control))
     (ot sec+secu sis+(as (su fed:ag)) ~)
   ::
-  ++  secu                                              ::>  security
+  ++  secu                                              :::  security
     ^-  $-(json (unit security))
-    (su (perk %channel %village %journal %mailbox ~))
+    (su (perk %channel %village %journal %mailbox %custom ~))
   ::
-  ++  crow                                              ::>  crowd
+  ++  crow                                              :::  crowd
     ^-  $-(json (unit crowd))
     (ot loc+grop rem+(op circ:de-tape grop) ~)
   ::
-  ++  grop                                              ::>  group
+  ++  grop                                              :::  group
     ^-  $-(json (unit group))
     (op fed:ag stat)
   ::
-  ++  stat                                              ::>  status
+  ++  stat                                              :::  status
     ^-  $-(json (unit status))
     (ot pec+pres man+huma ~)
   ::
-  ++  pres                                              ::>  presence
+  ++  pres                                              :::  presence
     ^-  $-(json (unit presence))
     (su (perk %gone %idle %hear %talk ~))
   ::
-  ++  huma                                              ::>  human
+  ++  huma                                              :::  human
     ^-  $-(json (unit human))
     (ot han+(mu so) tru+(mu trun) ~)
   ::
-  ++  trun                                              ::>  truename
+  ++  trun                                              :::  truename
     ^-  $-(json (unit truename))
     (ot fir+so mid+(mu so) las+so ~)
   ::
-  ::>  ||
-  ::>  ||  %message-data
-  ::>  ||
-  ::>    structures for containing main message data.
+  :::  ||
+  :::  ||  %message-data
+  :::  ||
+  :::    structures for containing main message data.
   ::+|
   ::
-  ++  enve                                              ::>  envelope
+  ++  enve                                              :::  envelope
     ^-  $-(json (unit envelope))
     (ot num+ni gam+gram ~)
   ::
-  ++  gram                                              ::>  telegram
+  ++  gram                                              :::  telegram
     ^-  $-(json (unit telegram))
     %-  ot  :~
       aut+(su fed:ag)
@@ -539,7 +544,7 @@
       sep+spec
     ==
   ::
-  ++  thot                                              ::>  thought
+  ++  thot                                              :::  thought
     ^-  $-(json (unit thought))
     %-  ot  :~
       uid+seri
@@ -548,7 +553,7 @@
       sep+spec
     ==
   ::
-  ++  spec                                              ::>  speech
+  ++  spec                                              :::  speech
     ^-  $-(json (unit speech))
     %+  re  *speech  |.  ~+
     %-  of  :~
@@ -561,9 +566,9 @@
       app+(ot app+so sep+spec ~)
     ==
   ::
-  ++  eval                                              ::>  %exp speech
-    ::>  extract contents of an %exp speech, evaluating
-    ::>  the {exp} if there is no {res} yet.
+  ++  eval                                              :::  %exp speech
+    :::  extract contents of an %exp speech, evaluating
+    :::  the {exp} if there is no {res} yet.
     ::
     |=  a/json
     ^-  (unit {cord (list tank)})
@@ -572,9 +577,9 @@
     :+  ~  u.exp
     =+  res=((ot res+(ar dank) ~) a)
     ?^  res  u.res
-    p:(mule |.([(sell (slap !>(..zuse:old-zuse) (ream u.exp)))]~))  ::TODO  oldz
+    p:(mule |.([(sell (slap !>(..zuse) (ream u.exp)))]~))  ::TODO  oldz
   ::
-  ++  atta                                              ::>  attache
+  ++  atta                                              :::  attache
     ^-  $-(json (unit attache))
     %+  re  *attache  |.  ~+
     %-  of  :~
@@ -583,17 +588,17 @@
       tank+(ar dank)
     ==
   ::
-  ::>  ||
-  ::>  ||  %message-metadata
-  ::>  ||
+  :::  ||
+  :::  ||  %message-metadata
+  :::  ||
   ::     structures for containing message metadata.
   ::+|
   ::
-  ++  seri                                              ::>  serial
+  ++  seri                                              :::  serial
     ^-  $-(json (unit serial))
     (ci (slat %uv) so)
   ::
-  ++  audi                                              ::>  audience
+  ++  audi                                              :::  audience
     ^-  $-(json (unit audience))
     (as circ)
   --

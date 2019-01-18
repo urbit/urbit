@@ -4,31 +4,32 @@
   ::
 /?  314
 /-  sole
+/+  generators
 ::
 ::::
   ::
-=,  sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {dom/path $~})}
-        $~
+        {arg/$@(~ {dom/path ~})}
+        ~
     ==
-^-  (sole-result {$write-sec-atom p/host:eyre q/@})
+^-  (sole-result:sole {$write-sec-atom p/host:eyre q/@})
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
-%+  sole-lo
+%+  prompt
   [%& %oauth-hostname "api hostname: https://"]
-%+  sole-go  thos:de-purl:html
+%+  parse  thos:de-purl:html
 |=  hot/host:eyre
-?:  ?=($| -.hot)
+?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
-%+  sole-lo
+%+  prompt
   [%& %auth-user "username: "]
-%+  sole-go  (boss 256 (star ;~(less col prn)))
+%+  parse  (boss 256 (star ;~(less col prn)))
 |=  usr/@t
-%+  sole-lo
+%+  prompt
   [%| %auth-passwd "password: "]
-%+  sole-go  (boss 256 (star prn))
+%+  parse  (boss 256 (star prn))
 |=  pas/@t
-%+  sole-so  %write-sec-atom    :: XX typed pair
+%+  produce  %write-sec-atom    :: XX typed pair
 [hot (crip (en-base64:mimes:html (rap 3 usr ':' pas ~)))]

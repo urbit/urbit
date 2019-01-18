@@ -168,9 +168,9 @@
           {$unassigned assignee/user}
           {$labeled label/label}
           {$unlabeled label/label}
-          {$opened $~}
-          {$closed $~}
-          {$reopened $~}
+          {$opened ~}
+          {$closed ~}
+          {$reopened ~}
       ==
       issue/issue
   ==

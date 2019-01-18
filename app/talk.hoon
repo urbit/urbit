@@ -1,4 +1,4 @@
-::                                                      ::  ::
+::                                                      ::  ::  
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
@@ -13,114 +13,113 @@
 ::  since that's the only thing the client ever
 ::  subscribes to.
 ::
-/-    hall, sole                                        ::  structures
-/+    hall, sole                                        ::  libraries
+/-    sole-sur=sole                                     ::  structures
+/+    *hall, sole-lib=sole                              ::  libraries
 /=    seed  /~  !>(.)
 ::
 ::::
   ::
-=,  hall
-=,  sole
-=>  :>  #
-    :>  #  %arch
-    :>  #
-    :>    data structures
+=>  ::  #
+    ::  #  %arch
+    ::  #
+    ::    data structures
     ::
     |%
-    ++  state                                           :>  application state
+    ++  state                                           ::  application state
       $:  ::  messaging state                           ::
-          grams/(list telegram)                         :<  all history
-          known/(map serial @ud)                        :<  messages heard
-          last/@ud                                      :<  last heard
-          count/@ud                                     :<  (lent grams)
-          sources/(set circle)                          :<  our subscriptions
+          grams/(list telegram)                         ::  all history
+          known/(map serial @ud)                        ::  messages heard
+          last/@ud                                      ::  last heard
+          count/@ud                                     ::  (lent grams)
+          sources/(set circle)                          ::  our subscriptions
           ::  circle details                            ::
-          remotes/(map circle group)                    :<  remote presences
-          mirrors/(map circle config)                   :<  remote configs
+          remotes/(map circle group)                    ::  remote presences
+          mirrors/(map circle config)                   ::  remote configs
           ::  ui state                                  ::
-          nicks/(map ship nick)                         :<  human identities
-          bound/(map audience char)                     :<  bound circle glyphs
-          binds/(jug char audience)                     :<  circle glyph lookup
-          cli/shell                                     :<  interaction state
+          nicks/(map ship nick)                         ::  human identities
+          bound/(map audience char)                     ::  bound circle glyphs
+          binds/(jug char audience)                     ::  circle glyph lookup
+          cli/shell                                     ::  interaction state
       ==                                                ::
-    ++  shell                                           :>  console session
-      $:  id/bone                                       :<  identifier
-          latest/@ud                                    :<  latest shown msg num
-          say/sole-share                                :<  console state
-          active/audience                               :<  active targets
-          settings/(set term)                           :<  frontend settings
-          width/@ud                                     :<  display width
-          timez/(pair ? @ud)                            :<  timezone adjustment
+    ++  shell                                           ::  console session
+      $:  id/bone                                       ::  identifier
+          latest/@ud                                    ::  latest shown msg num
+          say/sole-share:sole-sur                       ::  console state
+          active/audience                               ::  active targets
+          settings/(set term)                           ::  frontend settings
+          width/@ud                                     ::  display width
+          timez/(pair ? @ud)                            ::  timezone adjustment
       ==                                                ::
-    ++  move  (pair bone card)                          :<  all actions
-    ++  lime                                            :>  diff fruit
-      $%  {$sole-effect sole-effect}                    ::
+    ++  move  (pair bone card)                          ::  all actions
+    ++  lime                                            ::  diff fruit
+      $%  {$sole-effect sole-effect:sole-sur}           ::
       ==                                                ::
-    ++  pear                                            :>  poke fruit
+    ++  pear                                            ::  poke fruit
       $%  {$hall-command command}                       ::
           {$hall-action action}                         ::
       ==                                                ::
-    ++  card                                            :>  general card
+    ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
           {$poke wire dock pear}                        ::
           {$peer wire dock path}                        ::
-          {$pull wire dock $~}                          ::
+          {$pull wire dock ~}                          ::
       ==                                                ::
-    ++  work                                            :>  interface action
+    ++  work                                            ::  interface action
       $%  ::  circle management                         ::
-          {$join (map circle range)}                    :<  subscribe to
-          {$leave audience}                             :<  unsubscribe from
-          {$create security name cord}                  :<  create circle
-          {$delete name (unit cord)}                    :<  delete circle
-          {$depict name cord}                           :<  change description
-          {$filter name ? ?}                            :<  change message rules
-          {$invite name (set ship)}                     :<  give permission
-          {$banish name (set ship)}                     :<  deny permission
-          {$source name (map circle range)}             :<  add source
-          {$unsource name (map circle range)}           :<  remove source
+          {$join (map circle range)}                    ::  subscribe to
+          {$leave audience}                             ::  unsubscribe from
+          {$create security name cord}                  ::  create circle
+          {$delete name (unit cord)}                    ::  delete circle
+          {$depict name cord}                           ::  change description
+          {$filter name ? ?}                            ::  change message rules
+          {$invite name (set ship)}                     ::  give permission
+          {$banish name (set ship)}                     ::  deny permission
+          {$source name (map circle range)}             ::  add source
+          {$unsource name (map circle range)}           ::  remove source
+          {$read name @ud}                              ::  set read count
           ::  personal metadata                         ::
-          {$attend audience (unit presence)}            :<  set our presence
-          {$name audience human}                        :<  set our name
+          {$attend audience (unit presence)}            ::  set our presence
+          {$name audience human}                        ::  set our name
           ::  messaging                                 ::
-          {$say (list speech)}                          :<  send message
-          {$eval cord hoon}                             :<  send #-message
-          {$target p/audience q/(unit work)}            :<  set active targets
-          {$reply $@(@ud {@u @ud}) (list speech)}       :<  reply to
+          {$say (list speech)}                          ::  send message
+          {$eval cord hoon}                             ::  send #-message
+          {$target p/audience q/(unit work)}            ::  set active targets
+          {$reply $@(@ud {@u @ud}) (list speech)}       ::  reply to
           ::  displaying info                           ::
-          {$number $@(@ud {@u @ud})}                    :<  relative/absolute
-          {$who audience}                               :<  presence
-          {$what (unit $@(char audience))}              :<  show bound glyph
-          {$circles $~}                                 :<  show our circles
-          {$sources circle}                             :<  show active sources
+          {$number $@(@ud {@u @ud})}                    ::  relative/absolute
+          {$who audience}                               ::  presence
+          {$what (unit $@(char audience))}              ::  show bound glyph
+          {$circles ~}                                 ::  show our circles
+          {$sources circle}                             ::  show active sources
           ::  ui settings                               ::
-          {$bind char (unit audience)}                  :<  bind glyph
-          {$unbind char (unit audience)}                :<  unbind glyph
-          {$nick (unit ship) (unit cord)}               :<  un/set/show nick
-          {$set term}                                   :<  enable setting
-          {$unset term}                                 :<  disable setting
-          {$width @ud}                                  :<  change display width
-          {$timez ? @ud}                                :<  adjust shown times
+          {$bind char (unit audience)}                  ::  bind glyph
+          {$unbind char (unit audience)}                ::  unbind glyph
+          {$nick (unit ship) (unit cord)}               ::  un/set/show nick
+          {$set term}                                   ::  enable setting
+          {$unset term}                                 ::  disable setting
+          {$width @ud}                                  ::  change display width
+          {$timez ? @ud}                                ::  adjust shown times
           ::  miscellaneous                             ::
-          {$show circle}                                :<  show membership
-          {$hide circle}                                :<  hide membership
-          {$help $~}                                    :<  print usage info
+          {$show circle}                                ::  show membership
+          {$hide circle}                                ::  hide membership
+          {$help ~}                                    ::  print usage info
       ==                                                ::
-    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   :<  circle char pool '
+    ++  glyphs  `wall`~[">=+-" "}),." "\"'`^" "$%&@"]   ::  circle char pool '
     --
 ::
-:>  #
-:>  #  %work
-:>  #
-:>    functional cores and arms.
+::  #
+::  #  %work
+::  #
+::    functional cores and arms.
 ::
 |_  {bol/bowl:gall $1 state}
 ::
-:>  #  %transition
-:>    prep transition
-+|
+::  #  %transition
+::    prep transition
++|  %transition
 ::
 ++  prep
-  :>  adapts state
+  ::  adapts state
   ::
   =>  |%
       ++  states
@@ -161,10 +160,15 @@
     ++  prep-config
       |=  cof/config-0
       ^-  config
-      %=  cof
-          src
+      =.  src.cof
         %-  ~(gas in *(set source))
         (murn ~(tap in src.cof) prep-source)
+      :*  src.cof
+          cap.cof
+          tag.cof
+          fit.cof
+          con.cof
+          0
       ==
     ::
     ++  prep-source
@@ -191,37 +195,37 @@
     --
   ==
 ::
-:>  #
-:>  #  %utility
-:>  #
-:>    small utility functions.
-+|
+::  #
+::  #  %utility
+::  #
+::    small utility functions.
++|  %utility
 ::
 ++  self
-  (true-self our.bol)
+  (true-self [our now our]:bol)
 ::
 ++  server
-  :>  our hall instance
+  ::  our hall instance
   ^-  dock
   [self %hall]
 ::
 ++  inbox
-  :>    client's circle name
-  :>
-  :>  produces the name of the circle used by this
-  :>  client for all its operations
+  ::    client's circle name
+  ::
+  ::  produces the name of the circle used by this
+  ::  client for all its operations
   ^-  name
   %inbox
 ::
 ++  incir
-  :>    client's circle
-  :>
-  :>  ++inbox, except a full circle.
+  ::    client's circle
+  ::
+  ::  ++inbox, except a full circle.
   ^-  circle
   [self inbox]
 ::
 ++  renum
-  :>  find the grams list index for gram with serial.
+  ::  find the grams list index for gram with serial.
   |=  ser/serial
   ^-  (unit @ud)
   =+  num=(~(get by known) ser)
@@ -229,7 +233,7 @@
   `(sub count +(u.num))
 ::
 ++  recall
-  :>  find a known gram with serial {ser}.
+  ::  find a known gram with serial {ser}.
   |=  ser/serial
   ^-  (unit telegram)
   =+  num=(renum ser)
@@ -237,12 +241,12 @@
   `(snag u.num grams)
 ::
 ++  bound-from-binds
-  :>    bound from binds
-  :>
-  :>  using a mapping of character to audiences, create
-  :>  a mapping of audience to character.
+  ::    bound from binds
   ::
-  |=  bin/_binds
+  ::  using a mapping of character to audiences, create
+  ::  a mapping of audience to character.
+  ::
+  |:  bin=binds
   ^+  bound
   %-  ~(gas by *(map audience char))
   =-  (zing -)
@@ -251,7 +255,7 @@
   (turn ~(tap by b) |=(c/audience [c a]))
 ::
 ++  glyph
-  :>  finds a new glyph for assignment.
+  ::  finds a new glyph for assignment.
   ::
   |=  idx/@
   =<  cha
@@ -265,7 +269,7 @@
   [new num]
 ::
 ++  peer-client
-  :>  ui state peer move
+  ::  ui state peer move
   ^-  move
   :*  ost.bol
       %peer
@@ -284,46 +288,46 @@
       %+  welp  /circle/[inbox]/grams/config/group
       ?.  =(0 count)
         [(scot %ud last) ~]
-      =+  history-days=~d5
-      [(scot %da (sub now.bol history-days)) ~]
+      =+  history-msgs=200
+      [(cat 3 '-' (scot %ud history-msgs)) ~]
   ==
 ::
-:>  #
-:>  #  %engines
-:>  #
-:>    main cores.
-+|
+::  #
+::  #  %engines
+::  #
+::    main cores.
++|  %engines
 ::
 ++  ta
-  :>    per transaction
-  :>
-  :>  for every transaction/event (poke, peer etc.)
-  :>  talk receives, the ++ta transaction core is
-  :>  called.
-  :>  in processing transactions, ++ta may modify app
-  :>  state, or create moves. these moves get produced
-  :>  upon finalizing the core's with with ++ta-done.
-  :>  when making changes to the shell, the ++sh core is
-  :>  used.
+  ::    per transaction
   ::
-  |_  :>  moves:  moves created by core operations.
+  ::  for every transaction/event (poke, peer etc.)
+  ::  talk receives, the ++ta transaction core is
+  ::  called.
+  ::  in processing transactions, ++ta may modify app
+  ::  state, or create moves. these moves get produced
+  ::  upon finalizing the core's with with ++ta-done.
+  ::  when making changes to the shell, the ++sh core is
+  ::  used.
+  ::
+  |_  ::  moves:  moves created by core operations.
       ::
       moves/(list move)
   ::
-  :>  #  %resolve
-  +|
+  ::  #  %resolve
+  +|  %resolve
   ::
   ++  ta-done
-    :>    resolve core
-    :>
-    :>  produces the moves stored in ++ta's moves.
-    :>  %sole-effect moves get squashed into a %mor.
+    ::    resolve core
+    ::
+    ::  produces the moves stored in ++ta's moves.
+    ::  %sole-effect moves get squashed into a %mor.
     ::
     ^+  [*(list move) +>]
     :_  +>
     ::  seperate our sole-effects from other moves.
     =/  yop
-      |-  ^-  (pair (list move) (list sole-effect))
+      |-  ^-  (pair (list move) (list sole-effect:sole-sur))
       ?~  moves  [~ ~]
       =+  mor=$(moves t.moves)
       ?:  ?&  =(id.cli p.i.moves)
@@ -333,7 +337,7 @@
       [[i.moves p.mor] q.mor]
     ::  flop moves, flop and squash sole-effects into a %mor.
     =+  moz=(flop p.yop)
-    =/  foc/(unit sole-effect)
+    =/  foc/(unit sole-effect:sole-sur)
       ?~  q.yop  ~
       ?~  t.q.yop  `i.q.yop                             ::  single sole-effect
       `[%mor (flop q.yop)]                              ::  more sole-effects
@@ -342,42 +346,42 @@
     ?~  id.cli  ~&(%client-no-sole moz)
     [[id.cli %diff %sole-effect u.foc] moz]
   ::
-  :>  #
-  :>  #  %emitters
-  :>  #
-  :>    arms that create outward changes.
-  +|
+  ::  #
+  ::  #  %emitters
+  ::  #
+  ::    arms that create outward changes.
+  +|  %emitters
   ::
   ++  ta-emil
-    :>    emit move list
-    :>
-    :>  adds multiple moves to the core's list.
-    :>  flops to emulate ++ta-emit.
+    ::    emit move list
+    ::
+    ::  adds multiple moves to the core's list.
+    ::  flops to emulate ++ta-emit.
     ::
     |=  mol/(list move)
     %_(+> moves (welp (flop mol) moves))
   ::
   ++  ta-emit
-    :>  adds a move to the core's list.
+    ::  adds a move to the core's list.
     ::
     |=  mov/move
     %_(+> moves [mov moves])
   ::
-  :>  #
-  :>  #  %interaction-events
-  :>  #
-  :>    arms that apply events we received.
-  +|
+  ::  #
+  ::  #  %interaction-events
+  ::  #
+  ::    arms that apply events we received.
+  +|  %interaction-events
   ::
   ++  ta-init
-    :>  subscribes to our hall.
+    ::  subscribes to our hall.
     ::
     %-  ta-emil
     ^-  (list move)
     ~[peer-client peer-inbox]
   ::
   ++  ta-take
-    :>  accept prize
+    ::  accept prize
     ::
     |=  piz/prize
     ^+  +>
@@ -399,7 +403,7 @@
     ==
   ::
   ++  ta-hear
-    :>  apply change
+    ::  apply change
     ::
     |=  rum/rumor
     ^+  +>
@@ -418,7 +422,7 @@
     ==
   ::
   ++  ta-change-circle
-    :>  apply circle change
+    ::  apply circle change
     ::
     |=  rum/rumor-story
     ^+  +>
@@ -446,7 +450,7 @@
         =/  sho
           ::  only present if we're here indefinitely.
           =*  ran  ran.src.dif.rum
-          ?.  |(?=($~ ran) ?=($~ tal.u.ran))
+          ?.  |(?=(~ ran) ?=(~ tal.u.ran))
             ~(. sh cli)
           %-  ~(sh-act sh cli)
           [%notify [cir ~ ~] `%hear]
@@ -489,7 +493,7 @@
     ==
   ::
   ++  ta-change-glyph
-    :>  applies new set of glyph bindings.
+    ::  applies new set of glyph bindings.
     ::
     |=  {bin/? gyf/char aud/audience}
     ^+  +>
@@ -499,16 +503,16 @@
     =.  bound  (bound-from-binds nek)
     sh-done:~(sh-prod sh cli)
   ::
-  :>  #
-  :>  #  %messages
-  :>  #
-  :>    storing and updating messages.
-  +|
+  ::  #
+  ::  #  %messages
+  ::  #
+  ::    storing and updating messages.
+  +|  %messages
   ::
   ++  ta-unpack
-    :>    open envelopes
-    :>
-    :>  the client currently doesn't care about nums.
+    ::    open envelopes
+    ::
+    ::  the client currently doesn't care about nums.
     ::
     |=  nes/(list envelope)
     ^+  +>
@@ -516,7 +520,7 @@
     $(nes t.nes, +> (ta-open i.nes))
   ::
   ++  ta-open
-    :>  learn message from an envelope.
+    ::  learn message from an envelope.
     ::
     |=  nev/envelope
     ^+  +>
@@ -524,10 +528,10 @@
     (ta-learn gam.nev)
   ::
   ++  ta-learn
-    :>    save/update message
-    :>
-    :>  store an incoming telegram, updating if it
-    :>  already exists.
+    ::    save/update message
+    ::
+    ::  store an incoming telegram, updating if it
+    ::  already exists.
     ::
     |=  gam/telegram
     ^+  +>
@@ -537,7 +541,7 @@
     (ta-revise u.old gam)                            ::  modify
   ::
   ++  ta-append
-    :>  store a new telegram.
+    ::  store a new telegram.
     ::
     |=  gam/telegram
     ^+  +>
@@ -549,7 +553,7 @@
     (~(sh-gram sh cli) gam)
   ::
   ++  ta-revise
-    :>  modify a telegram we know.
+    ::  modify a telegram we know.
     ::
     |=  {num/@ud gam/telegram}
     =+  old=(snag num grams)
@@ -562,65 +566,69 @@
     =<  sh-done
     (~(sh-gram sh cli) gam)
   ::
-  :>  #
-  :>  #  %console
-  :>  #
-  :>    arms for shell functionality.
-  +|
+  ::  #
+  ::  #  %console
+  ::  #
+  ::    arms for shell functionality.
+  +|  %console
   ::
   ++  ta-console
-    :>  initialize the shell of this client.
+    ::  initialize the shell of this client.
     ::
     ^+  .
-    =/  she/shell
-      %*(. *shell id ost.bol, active (sy incir ~), width 80)
+    =|  she/shell
+    =.  id.she  ost.bol
+    ::  XXX: +sy should be smarter than this
+    =/  circle-list=(list circle)  [incir ~]
+    =.  active.she  (sy circle-list)
+    =.  width.she  80
     sh-done:~(sh-prod sh she)
   ::
   ++  ta-sole
-    :>  apply sole input
+    ::  apply sole input
     ::
-    |=  act/sole-action
+    |=  act/sole-action:sole-sur
     ^+  +>
     ?.  =(id.cli ost.bol)
       ~&(%strange-sole !!)
     sh-done:(~(sh-sole sh cli) act)
   ::
   ++  sh
-    :>    per console
-    :>
-    :>  shell core, responsible for handling user input
-    :>  and the related actions, and outputting changes
-    :>  to the cli.
+    ::    per console
     ::
-    |_  $:  :>  she: console state.
+    ::  shell core, responsible for handling user input
+    ::  and the related actions, and outputting changes
+    ::  to the cli.
+    ::
+    |_  $:  ::  she: console state.
             ::
             she/shell
         ==
     ::
-    :>  #  %resolve
-    +|
+    ::  #  %resolve
+    +|  %resolve
     ::
     ++  sh-done
-      :>  stores changes to the cli.
+      ::  stores changes to the cli.
       ::
       ^+  +>
       +>(cli she)
     ::
-    :>  #
-    :>  #  %emitters
-    :>  #
-    :>    arms that create outward changes.
-    +|
+    ::  #
+    ::  #  %emitters
+    ::  #
+    ::    arms that create outward changes.
+    +|  %emitters
     ::
     ++  sh-fact
-      :>  adds a console effect to ++ta's moves.
+      ::  adds a console effect to ++ta's moves.
       ::
-      |=  fec/sole-effect
+      |=  fec/sole-effect:sole-sur
       ^+  +>
       +>(moves [[id.she %diff %sole-effect fec] moves])
     ::
     ++  sh-act
-      :>  adds an action to ++ta's moves.
+      ::  adds an action to ++ta's moves.
       ::
       |=  act/action
       ^+  +>
@@ -635,16 +643,16 @@
         ==
       ==
     ::
-    :>  #
-    :>  #  %cli-interaction
-    :>  #
-    :>    processing user input as it happens.
-    +|
+    ::  #
+    ::  #  %cli-interaction
+    ::  #
+    ::    processing user input as it happens.
+    +|  %cli-interaction
     ::
     ++  sh-sole
-      :>  applies sole action.
+      ::  applies sole action.
       ::
-      |=  act/sole-action
+      |=  act/sole-action:sole-sur
       ^+  +>
       ?-  -.act
         $det  (sh-edit +.act)
@@ -653,14 +661,14 @@
       ==
     ::
     ++  sh-edit
-      :>    apply sole edit
-      :>
-      :>  called when typing into the cli prompt.
-      :>  applies the change and does sanitizing.
+      ::    apply sole edit
       ::
-      |=  cal/sole-change
+      ::  called when typing into the cli prompt.
+      ::  applies the change and does sanitizing.
+      ::
+      |=  cal/sole-change:sole-sur
       ^+  +>
-      =^  inv  say.she  (~(transceive sole say.she) cal)
+      =^  inv  say.she  (~(transceive sole-lib say.she) cal)
       =+  fix=(sh-sane inv buf.say.she)
       ?~  lit.fix
         +>.$
@@ -673,71 +681,71 @@
       (sh-slug fix)
     ::
     ++  sh-read
-      :>    command parser
-      :>
-      :>  parses the command line buffer. produces work
-      :>  items which can be executed by ++sh-work.
+      ::    command parser
+      ::
+      ::  parses the command line buffer. produces work
+      ::  items which can be executed by ++sh-work.
       ::
       =<  work
-      :>  #  %parsers
-      :>    various parsers for command line input.
+      ::  #  %parsers
+      ::    various parsers for command line input.
       |%
       ++  expr
-        :>  [cord hoon]
+        ::  [cord hoon]
         |=  tub/nail  %.  tub
         %+  stag  (crip q.tub)
         wide:(vang & [&1:% &2:% (scot %da now.bol) |3:%])
       ::
       ++  dare
-        :>  @dr
+        ::  @dr
         %+  sear
           |=  a/coin
           ?.  ?=({$$ $dr @} a)  ~
           (some `@dr`+>.a)
         nuck:so
       ::
-      ++  ship  ;~(pfix sig fed:ag)                     :<  ship
-      ++  shiz                                          :<  ship set
+      ++  ship  ;~(pfix sig fed:ag)                     ::  ship
+      ++  shiz                                          ::  ship set
         %+  cook
           |=(a/(list ^ship) (~(gas in *(set ^ship)) a))
         (most ;~(plug com (star ace)) ship)
       ::
-      ++  cire                                          :<  local circle
+      ++  cire                                          ::  local circle
         ;~(pfix cen urs:ab)
       ::
-      ++  circ                                          :<  circle
+      ++  circ                                          ::  circle
         ;~  pose
           (cold incir col)
           ;~(pfix cen (stag self urs:ab))
-          ;~(pfix fas (stag (sein:title self) urs:ab))
+          ;~(pfix net (stag (^sein:title self) urs:ab))
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
             [a ?^(b u.b %inbox)]
           ;~  plug
             ship
-            (punt ;~(pfix fas urs:ab))
+            (punt ;~(pfix net urs:ab))
           ==
         ==
       ::
-      ++  circles-flat                                  :<  collapse mixed list
+      ++  circles-flat                                  ::  collapse mixed list
         |=  a/(list (each circle (set circle)))
         ^-  (set circle)
         ?~  a  ~
         ?-  -.i.a
-          $&  (~(put in $(a t.a)) p.i.a)
-          $|  (~(uni in $(a t.a)) p.i.a)
+          %&  (~(put in $(a t.a)) p.i.a)
+          %|  (~(uni in $(a t.a)) p.i.a)
         ==
       ::
-      ++  cirs                                          :<  non-empty circles
+      ++  cirs                                          ::  non-empty circles
         %+  cook  circles-flat
         %+  most  ;~(plug com (star ace))
         (^pick circ (sear sh-glyf glyph))
       ::
       ++  drat
-        :>  @da or @dr
-        :>
-        :>  pas: whether @dr's are in the past or not.
+        ::  @da or @dr
+        ::
+        ::  pas: whether @dr's are in the past or not.
         |=  pas/?
         =-  ;~(pfix sig (sear - crub:so))
         |=  a/^dime
@@ -749,8 +757,8 @@
                 ?:(pas sub add)
         ==
       ::
-      ++  pont                                          :<  point for range
-        :>  hed: whether this is the head or tail point.
+      ++  pont                                          ::  point for range
+        ::  hed: whether this is the head or tail point.
         |=  hed/?
         ;~  pose
           (cold [%da now.bol] (jest 'now'))
@@ -758,24 +766,24 @@
           placer
         ==
       ::
-      ++  rang                                          :<  subscription range
+      ++  rang                                          ::  subscription range
         =+  ;~  pose
-              (cook some ;~(pfix fas (pont |)))
+              (cook some ;~(pfix net (pont |)))
               (easy ~)
             ==
         ;~  pose
-          (cook some ;~(plug ;~(pfix fas (pont &)) -))
+          (cook some ;~(plug ;~(pfix net (pont &)) -))
           (easy ~)
         ==
       ::
-      ++  sorz                                          :<  non-empty sources
+      ++  sorz                                          ::  non-empty sources
         %+  cook  ~(gas by *(map circle range))
         (most ;~(plug com (star ace)) ;~(plug circ rang))
       ::
-      ++  pick                                          :<  message reference
-        ;~(pose nump (cook lent (star sem)))
+      ++  pick                                          ::  message reference
+        ;~(pose nump (cook lent (star mic)))
       ::
-      ++  nump                                          :<  number reference
+      ++  nump                                          ::  number reference
         ;~  pose
           ;~(pfix hep dem:ag)
           ;~  plug
@@ -785,48 +793,50 @@
           (stag 0 dem:ag)
         ==
       ::
-      ++  pore                                          :<  security
+      ++  pore                                          ::  security
         (perk %channel %village %journal %mailbox ~)
       ::
-      ++  lobe                                          :<  y/n loob
+      ++  lobe                                          ::  y/n loob
         ;~  pose
           (cold %& ;~(pose (jest 'y') (jest '&') (just 'true')))
           (cold %| ;~(pose (jest 'n') (jest '|') (just 'false')))
         ==
       ::
-      ++  message                                       :<  exp, lin or url msg
+      ++  message                                       ::  exp, lin or url msg
         ;~  pose
           ;~(plug (cold %eval hax) expr)
           (stag %say speeches)
         ==
       ::
-      ++  speeches                                      :<  lin or url msgs
+      ++  speeches                                      ::  lin or url msgs
         %+  most  (jest '•')
         ;~  pose
           (stag %url aurf:de-purl:html)
-          :(stag %lin & ;~(pfix pat text))
-          :(stag %lin | ;~(less sem hax text))
+          :(stag %lin & ;~(pfix vat text))
+          :(stag %lin | ;~(less mic hax text))
         ==
       ::
-      ++  text                                          :<  msg without break
+      ++  text                                          ::  msg without break
         %+  cook  crip
         (plus ;~(less (jest '•') next))
       ::
-      ++  nick  (cook crip (plus next))                 :<  nickname
-      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      :<  circle postfix
-      ++  setting                                       :<  setting flag
+      ++  nick  (cook crip (plus next))                 ::  nickname
+      ++  glyph  (mask "/\\\{(<!?{(zing glyphs)}")      ::  circle postfix
+      ++  setting                                       ::  setting flag
         %-  perk  :~
           %nicks
           %quiet
           %notify
           %showtime
         ==
-      ++  work                                          :<  full input
+      ++  work                                          ::  full input
         %+  knee  *^work  |.  ~+
-        =-  ;~(pose ;~(pfix sem -) message)
+        =-  ;~(pose ;~(pfix mic -) message)
         ;~  pose
         ::
         ::  circle management
+        ::
+          ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
           ;~((glue ace) (perk %join ~) sorz)
         ::
@@ -973,19 +983,19 @@
       --
     ::
     ++  sh-sane
-      :>    sanitize input
-      :>
-      :>  parses cli prompt input using ++sh-read and
-      :>  sanitizes when invalid.
+      ::    sanitize input
       ::
-      |=  {inv/sole-edit buf/(list @c)}
-      ^-  {lit/(list sole-edit) err/(unit @u)}
+      ::  parses cli prompt input using ++sh-read and
+      ::  sanitizes when invalid.
+      ::
+      |=  {inv/sole-edit:sole-sur buf/(list @c)}
+      ^-  {lit/(list sole-edit:sole-sur) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-read)
-      ?:  ?=($| -.res)  [[inv]~ `p.res]
+      ?:  ?=(%| -.res)  [[inv]~ `p.res]
       :_  ~
       ?~  p.res  ~
       =+  wok=u.p.res
-      |-  ^-  (list sole-edit)
+      |-  ^-  (list sole-edit:sole-sur)
       ?+  -.wok
         ~
       ::
@@ -994,23 +1004,23 @@
       ==
     ::
     ++  sh-slug
-      :>  corrects invalid prompt input.
+      ::  corrects invalid prompt input.
       ::
-      |=  {lit/(list sole-edit) err/(unit @u)}
+      |=  {lit/(list sole-edit:sole-sur) err/(unit @u)}
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit sole say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit sole-lib say.she) `sole-edit:sole-sur`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
-      :>    apply result
-      :>
-      :>  called upon hitting return in the prompt. if
-      :>  input is invalid, ++sh-slug is called.
-      :>  otherwise, the appropriate work is done and
-      :>  the entered command (if any) gets displayed
-      :>  to the user.
+      ::    apply result
+      ::
+      ::  called upon hitting return in the prompt. if
+      ::  input is invalid, ++sh-slug is called.
+      ::  otherwise, the appropriate work is done and
+      ::  the entered command (if any) gets displayed
+      ::  to the user.
       ::
       =+  fix=(sh-sane [%nop ~] buf.say.she)
       ?^  lit.fix
@@ -1022,37 +1032,37 @@
       =+  buf=buf.say.she
       =?  ..sh-obey  &(?=({$';' *} buf) !?=($reply -.u.jub))
         (sh-note (tufa `(list @)`buf))
-      =^  cal  say.she  (~(transmit sole say.she) [%set ~])
+      =^  cal  say.she  (~(transmit sole-lib say.she) [%set ~])
       %+  sh-fact  %mor
       :~  [%nex ~]
           [%det cal]
       ==
     ::
-    :>  #
-    :>  #  %user-action
-    :>  #
-    :>    processing user actions.
-    +|
+    ::  #
+    ::  #  %user-action
+    ::  #
+    ::    processing user actions.
+    +|  %user-action
     ::
     ++  sh-work
-      :>    do work
-      :>
-      :>  implements worker arms for different talk
-      :>  commands.
-      :>  worker arms must produce updated state.
+      ::    do work
+      ::
+      ::  implements worker arms for different talk
+      ::  commands.
+      ::  worker arms must produce updated state.
       ::
       |=  job/work
       ^+  +>
       =<  work
       |%
       ::
-      :>  #
-      :>  #  %helpers
-      :>  #
-      +|
+      ::  #
+      ::  #  %helpers
+      ::  #
+      +|  %helpers
       ::
       ++  work
-        :>  call correct worker
+        ::  call correct worker
         ?-  -.job
           ::  circle management
           $join    (join +.job)
@@ -1065,6 +1075,7 @@
           $banish  (permit | +.job)
           $source  (source & +.job)
           $unsource  (source | +.job)
+          $read  (read +.job)
           ::  personal metadata
           $attend  (attend +.job)
           $name    (set-name +.job)
@@ -1094,7 +1105,7 @@
         ==
       ::
       ++  activate
-        :>  prints message details.
+        ::  prints message details.
         ::
         |=  gam/telegram
         ^+  ..sh-work
@@ -1103,7 +1114,7 @@
         sh-prod(active.she aud.gam)
       ::
       ++  deli
-        :>  gets absolute message number from relative.
+        ::  gets absolute message number from relative.
         ::
         |=  {max/@ud nul/@u fin/@ud}
         ^-  @ud
@@ -1113,10 +1124,10 @@
         (add fin (sub max (mod max dog)))
       ::
       ++  set-glyph
-        :>    new glyph binding
-        :>
-        :>  applies glyph binding to our state and sends
-        :>  an action.
+        ::    new glyph binding
+        ::
+        ::  applies glyph binding to our state and sends
+        ::  an action.
         ::
         |=  {cha/char aud/audience}
         =:  bound  (~(put by bound) aud cha)
@@ -1125,10 +1136,10 @@
         sh-prod:(sh-act %glyph cha aud &)
       ::
       ++  unset-glyph
-        :>    remote old glyph binding
-        :>
-        :>  removes either {aud} or all bindings on a
-        :>  glyph and sends an action.
+        ::    remote old glyph binding
+        ::
+        ::  removes either {aud} or all bindings on a
+        ::  glyph and sends an action.
         ::
         |=  {cha/char aud/(unit audience)}
         =/  ole/(set audience)
@@ -1145,7 +1156,7 @@
         ==
       ::
       ++  reverse-nicks
-        :>  finds all ships whose handle matches {nym}.
+        ::  finds all ships whose handle matches {nym}.
         ::
         |=  nym/^nick
         ^-  (list ship)
@@ -1155,25 +1166,25 @@
         [~ u=p]
       ::
       ++  hoon-head
-        :>    eval data
-        :>
-        :>  makes a vase of environment data to evaluate
-        :>  against (for #-messages).
+        ::    eval data
+        ::
+        ::  makes a vase of environment data to evaluate
+        ::  against (for #-messages).
         ::
         ^-  vase
         !>  ^-  {our/@p now/@da eny/@uvI}
         [self now.bol (shas %eny eny.bol)]
       ::
-      :>  #
-      :>  #  %circle-management
-      :>  #
-      +|
+      ::  #
+      ::  #  %circle-management
+      ::  #
+      +|  %circle-management
       ::
       ++  join
-        :>    %join
-        :>
-        :>  change local mailbox config to include
-        :>  subscriptions to {pas}.
+        ::    %join
+        ::
+        ::  change local mailbox config to include
+        ::  subscriptions to {pas}.
         ::
         |=  pos/(map circle range)
         ^+  ..sh-work
@@ -1188,10 +1199,10 @@
         (sh-act %source inbox & pos)
       ::
       ++  leave
-        :>    %leave
-        :>
-        :>  change local mailbox config to exclude
-        :>  subscriptions to {pas}.
+        ::    %leave
+        ::
+        ::  change local mailbox config to exclude
+        ::  subscriptions to {pas}.
         ::
         |=  pas/(set circle)
         ^+  ..sh-work
@@ -1211,9 +1222,9 @@
         (sh-act %notify pas ~)
       ::
       ++  create
-        :>    %create
-        :>
-        :>  creates circle {nom} with specified config.
+        ::    %create
+        ::
+        ::  creates circle {nom} with specified config.
         ::
         |=  {sec/security nom/name txt/cord}
         ^+  ..sh-work
@@ -1222,29 +1233,29 @@
         (join [[[self nom] ~] ~ ~])
       ::
       ++  delete
-        :>    %delete
-        :>
-        :>  deletes our circle {nom}, after optionally
-        :>  sending a last announce message {say}.
+        ::    %delete
+        ::
+        ::  deletes our circle {nom}, after optionally
+        ::  sending a last announce message {say}.
         ::
         |=  {nom/name say/(unit cord)}
         ^+  ..sh-work
         (sh-act %delete nom say)
       ::
       ++  depict
-        :>    %depict
-        :>
-        :>  changes the description of {nom} to {txt}.
+        ::    %depict
+        ::
+        ::  changes the description of {nom} to {txt}.
         ::
         |=  {nom/name txt/cord}
         ^+  ..sh-work
         (sh-act %depict nom txt)
       ::
       ++  permit
-        :>    %invite / %banish
-        :>
-        :>  invites or banishes {sis} to/from our
-        :>  circle {nom}.
+        ::    %invite / %banish
+        ::
+        ::  invites or banishes {sis} to/from our
+        ::  circle {nom}.
         ::
         |=  {inv/? nom/name sis/(set ship)}
         ^+  ..sh-work
@@ -1252,7 +1263,7 @@
         =-  (sh-act %phrase - [%inv inv [self nom]]~)
         %-  ~(rep in sis)
         |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
+        (~(put in a) [s %i])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}
@@ -1260,50 +1271,59 @@
         (sh-act %filter nom cus utf)
       ::
       ++  source
-        :>    %source
-        :>
-        :>  adds {pas} to {nom}'s src.
+        ::    %source
+        ::
+        ::  adds {pas} to {nom}'s src.
         ::
         |=  {sub/? nom/name pos/(map circle range)}
         ^+  ..sh-work
         (sh-act %source nom sub pos)
       ::
-      :>  #
-      :>  #  %personal-metadata
-      :>  #
-      +|
+      ++  read
+        ::    %read
+        ::
+        ::  set {red} for {nom}
+        ::
+        |=  {nom/name red/@ud}
+        ^+  ..sh-work
+        (sh-act %read nom red)
+      ::
+      ::  #
+      ::  #  %personal-metadata
+      ::  #
+      +|  %personal-metadata
       ::
       ++  attend
-        :>  sets our presence to {pec} for {aud}.
+        ::  sets our presence to {pec} for {aud}.
         ::
         |=  {aud/audience pec/(unit presence)}
         ^+  ..sh-work
         (sh-act %notify aud pec)
       ::
       ++  set-name
-        :>  sets our name to {man} for {aud}.
+        ::  sets our name to {man} for {aud}.
         ::
         |=  {aud/audience man/human}
         ^+  ..sh-work
         (sh-act %naming aud man)
       ::
-      :>  #
-      :>  #  %messaging
-      :>  #
-      +|
+      ::  #
+      ::  #  %messaging
+      ::  #
+      +|  %messaging
       ::
       ++  say
-        :>  sends message.
+        ::  sends message.
         ::
         |=  sep/(list speech)
         ^+  ..sh-work
         (sh-act %phrase active.she sep)
       ::
       ++  eval
-        :>    run
-        :>
-        :>  executes {exe} and sends both its code and
-        :>  result.
+        ::    run
+        ::
+        ::  executes {exe} and sends both its code and
+        ::  result.
         ::
         |=  {txt/cord exe/hoon}
         =>  |.([(sell (slap (slop hoon-head seed) exe))]~)
@@ -1311,9 +1331,9 @@
         (say [%exp txt tan] ~)
       ::
       ++  target
-        :>    %target
-        :>
-        :>  sets messaging target, then execute {woe}.
+        ::    %target
+        ::
+        ::  sets messaging target, then execute {woe}.
         ::
         |=  {aud/audience woe/(unit ^work)}
         ^+  ..sh-work
@@ -1321,9 +1341,9 @@
         ?~(woe ..sh-work work(job u.woe))
       ::
       ++  reply
-        :>    %reply
-        :>
-        :>  send a reply to the selected message.
+        ::    %reply
+        ::
+        ::  send a reply to the selected message.
         ::
         |=  {num/$@(@ud {p/@u q/@ud}) sep/(list speech)}
         ^+  ..sh-work
@@ -1339,19 +1359,19 @@
           uid:(snag (sub count +(msg)) grams)
         (say (turn sep |=(s/speech [%ire ser s])))
       ::
-      :>  #
-      :>  #  %displaying-info
-      :>  #
-      +|
+      ::  #
+      ::  #  %displaying-info
+      ::  #
+      +|  %displaying-info
       ::
       ++  who
-        :>    %who
-        :>
-        :>  prints presence lists for {cis} or all.
+        ::    %who
+        ::
+        ::  prints presence lists for {cis} or all.
         ::
         |=  cis/(set circle)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
-        |=  {cir/circle gop/group}  ^-  (unit sole-effect)
+        |=  {cir/circle gop/group}  ^-  (unit sole-effect:sole-sur)
         ?.  |(=(~ cis) (~(has in cis) cir))  ~
         ?:  =(%mailbox sec.con:(fall (~(get by mirrors) cir) *config))  ~
         ?.  (~(has in sources) cir)  ~
@@ -1367,9 +1387,9 @@
         ==
       ::
       ++  what
-        :>    %what
-        :>
-        :>  prints binding details. goes both ways.
+        ::    %what
+        ::
+        ::  prints binding details. goes both ways.
         ::
         |=  qur/(unit $@(char audience))
         ^+  ..sh-work
@@ -1384,20 +1404,20 @@
         %+  sh-fact  %mor
         %-  ~(rep by binds)
         |=  $:  {gyf/char aus/(set audience)}
-                lis/(list sole-effect)
+                lis/(list sole-effect:sole-sur)
             ==
         %+  weld  lis
-        ^-  (list sole-effect)
+        ^-  (list sole-effect:sole-sur)
         %-  ~(rep in aus)
-        |=  {a/audience l/(list sole-effect)}
+        |=  {a/audience l/(list sole-effect:sole-sur)}
         %+  weld  l
-        ^-  (list sole-effect)
+        ^-  (list sole-effect:sole-sur)
         [%txt [gyf ' ' ~(ar-phat ar a)]]~
       ::
       ++  number
-        :>    %number
-        :>
-        :>  finds selected message, expand it.
+        ::    %number
+        ::
+        ::  finds selected message, expand it.
         ::
         |=  num/$@(@ud {p/@u q/@ud})
         ^+  ..sh-work
@@ -1416,9 +1436,9 @@
         (sh-lame "…{(reap p.num '0')}{(scow %ud q.num)}: no such telegram")
       ::
       ++  circles
-        :>    %circles
-        :>
-        :>  list all local circles.
+        ::    %circles
+        ::
+        ::  list all local circles.
         ::
         ^+  ..sh-work
         =/  piz
@@ -1431,9 +1451,9 @@
         |=  a/name  [%txt "%{(trip a)}"]
       ::
       ++  list-sources
-        :>    %sources
-        :>
-        :>  display the active sources for our circle.
+        ::    %sources
+        ::
+        ::  display the active sources for our circle.
         ::
         |=  cir/circle
         ^+  ..sh-work
@@ -1443,22 +1463,22 @@
           =-  ~(tap in (~(del in src:-) [cir ~]))
           (fall (~(get by mirrors) cir) *config)
         |=  s/^source
-        ^-  sole-effect
+        ^-  sole-effect:sole-sur
         :-  %txt
         %+  weld  ~(cr-phat cr cir.s)
         %+  roll  (range-to-path ran.s)
         |=  {a/@ta b/tape}
         :(weld b "/" (trip a))
       ::
-      :>  #
-      :>  #  %ui-settings
-      :>  #
-      +|
+      ::  #
+      ::  #  %ui-settings
+      ::  #
+      +|  %ui-settings
       ::
       ++  bind
-        :>    %bind
-        :>
-        :>  binds targets {aud} to the glyph {cha}.
+        ::    %bind
+        ::
+        ::  binds targets {aud} to the glyph {cha}.
         ::
         |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
@@ -1469,29 +1489,29 @@
         sh-note:sh-prod:(set-glyph cha u.aud)
       ::
       ++  unbind
-        :>    %unbind
-        :>
-        :>  unbinds targets {aud} to glyph {cha}.
+        ::    %unbind
+        ::
+        ::  unbinds targets {aud} to glyph {cha}.
         ::
         |=  {cha/char aud/(unit audience)}
         ^+  ..sh-work
         ?.  ?|  &(?=(^ aud) (~(has by bound) u.aud))
-                &(?=($~ aud) (~(has by binds) cha))
+                &(?=(~ aud) (~(has by binds) cha))
             ==
           ..sh-work
         %.  "unbound {<cha>}"
         sh-note:sh-prod:(unset-glyph cha aud)
       ::
       ++  nick
-        :>    %nick
-        :>
-        :>  either shows, sets or unsets nicknames
-        :>  depending on arguments.
+        ::    %nick
+        ::
+        ::  either shows, sets or unsets nicknames
+        ::  depending on arguments.
         ::
         |=  {her/(unit ship) nym/(unit ^nick)}
         ^+  ..sh-work
         ::  no arguments, show all
-        ?:  ?=({$~ $~} +<)
+        ?:  ?=({~ ~} +<)
           %+  sh-fact  %mor
           %+  turn  ~(tap by nicks)
           |=  {p/ship q/^nick}
@@ -1521,9 +1541,9 @@
         ==
       ::
       ++  wo-set
-        :>    %set
-        :>
-        :>  enables ui setting flag.
+        ::    %set
+        ::
+        ::  enables ui setting flag.
         ::
         |=  seg/term
         ^+  ..sh-work
@@ -1537,9 +1557,9 @@
         ==
       ::
       ++  unset
-        :>    %unset
-        :>
-        :>  disables ui setting flag.
+        ::    %unset
+        ::
+        ::  disables ui setting flag.
         ::
         |=  neg/term
         ^+  ..sh-work
@@ -1548,50 +1568,50 @@
         ==
       ::
       ++  width
-        :>    ;set width
-        :>
-        :>  change the display width in cli.
+        ::    ;set width
+        ::
+        ::  change the display width in cli.
         ::
         |=  wid/@ud
         ^+  ..sh-work
         ..sh-work(width.she (max 30 wid))
       ::
       ++  timez
-        :>    ;set timezone
-        :>
-        :>  adjust the displayed timestamp.
+        ::    ;set timezone
+        ::
+        ::  adjust the displayed timestamp.
         ::
         |=  tim/(pair ? @ud)
         ^+  ..sh-work
         ..sh-work(timez.she tim)
       ::
-      :>  #
-      :>  #  %miscellaneous
-      :>  #
-      +|
+      ::  #
+      ::  #  %miscellaneous
+      ::  #
+      +|  %miscellaneous
       ::
       ++  public
-        :>    show/hide membership
-        :>
-        :>  adds or removes the circle from the public
-        :>  membership list.
+        ::    show/hide membership
+        ::
+        ::  adds or removes the circle from the public
+        ::  membership list.
         ::
         |=  {add/? cir/circle}
         (sh-act %public add cir)
       ::
       ++  help
-        :>    %help
-        :>
-        :>  prints help message
+        ::    %help
+        ::
+        ::  prints help message
         ::
         (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
       --
     ::
     ++  sh-pact
-      :>    update active aud
-      :>
-      :>  change currently selected audience to {aud}
-      :>  and update the prompt.
+      ::    update active aud
+      ::
+      ::  change currently selected audience to {aud}
+      ::  and update the prompt.
       ::
       |=  aud/audience
       ^+  +>
@@ -1601,23 +1621,23 @@
       sh-prod(active.she act)
     ::
     ++  sh-pare
-      :>    adjust target list
-      :>
-      :>  if the audience {aud} does not contain a
-      :>  circle we're subscribed to, add our mailbox
-      :>  to the audience (so that we can see our own
-      :>  message).
+      ::    adjust target list
+      ::
+      ::  if the audience {aud} does not contain a
+      ::  circle we're subscribed to, add our mailbox
+      ::  to the audience (so that we can see our own
+      ::  message).
       ::
       |=  aud/audience
       ?:  (sh-pear aud)  aud
       (~(put in aud) incir)
     ::
     ++  sh-pear
-      :>    hearback
-      :>
-      :>  produces true if any circle is included in
-      :>  our subscriptions, meaning, we hear messages
-      :>  sent to {aud}.
+      ::    hearback
+      ::
+      ::  produces true if any circle is included in
+      ::  our subscriptions, meaning, we hear messages
+      ::  sent to {aud}.
       ::
       |=  aud/audience
       ?~  aud  |
@@ -1627,16 +1647,16 @@
       ==
     ::
     ++  sh-glyf
-      :>    decode glyph
-      :>
-      :>  finds the circle(s) that match a glyph.
+      ::    decode glyph
+      ::
+      ::  finds the circle(s) that match a glyph.
       ::
       |=  cha/char  ^-  (unit audience)
       =+  lax=(~(get ju binds) cha)
       ::  no circle.
       ?:  =(~ lax)  ~
       ::  single circle.
-      ?:  ?=({* $~ $~} lax)  `n.lax
+      ?:  ?=({* ~ ~} lax)  `n.lax
       ::  in case of multiple audiences, pick the most recently active one.
       |-  ^-  (unit audience)
       ?~  grams  ~
@@ -1645,18 +1665,18 @@
       ?:  (~(has in lax) pan)  `pan
       $(grams t.grams)
     ::
-    :>  #
-    :>  #  %differs
-    :>  #
-    :>    arms that calculate differences between datasets.
-    +|
+    ::  #
+    ::  #  %differs
+    ::  #
+    ::    arms that calculate differences between datasets.
+    +|  %differs
     ::
     ++  sh-group-diff
-      :>    group diff parts
-      :>
-      :>  calculates the difference between two presence
-      :>  lists, producing lists of removed, added and
-      :>  changed presences.
+      ::    group diff parts
+      ::
+      ::  calculates the difference between two presence
+      ::  lists, producing lists of removed, added and
+      ::  changed presences.
       ::
       |=  {one/group two/group}
       =|  $=  ret
@@ -1692,11 +1712,11 @@
       ret
     ::
     ++  sh-rempe-diff
-      :>    remotes diff
-      :>
-      :>  calculates the difference between two remote
-      :>  presence maps, producing a list of removed,
-      :>  added and changed presences maps.
+      ::    remotes diff
+      ::
+      ::  calculates the difference between two remote
+      ::  presence maps, producing a list of removed,
+      ::  added and changed presences maps.
       ::
       |=  {one/(map circle group) two/(map circle group)}
       =|  $=  ret
@@ -1726,11 +1746,11 @@
       ret
     ::
     ++  sh-remco-diff
-      :>    config diff parts
-      :>
-      :>  calculates the difference between two config
-      :>  maps, producing lists of removed, added and
-      :>  changed configs.
+      ::    config diff parts
+      ::
+      ::  calculates the difference between two config
+      ::  maps, producing lists of removed, added and
+      ::  changed configs.
       ::
       |=  {one/(map circle config) two/(map circle config)}
       =|  $=  ret
@@ -1760,33 +1780,33 @@
       ret
     ::
     ++  sh-set-diff
-      :>    set diff
-      :>
-      :>  calculates the difference between two sets,
-      :>  procuding lists of removed and added items.
+      ::    set diff
+      ::
+      ::  calculates the difference between two sets,
+      ::  procuding lists of removed and added items.
       ::
       |*  {one/(set *) two/(set *)}
       :-  ^=  old  ~(tap in (~(dif in one) two))
           ^=  new  ~(tap in (~(dif in two) one))
     ::
-    :>  #
-    :>  #  %printers
-    :>  #
-    :>    arms for printing data to the cli.
-    +|
+    ::  #
+    ::  #  %printers
+    ::  #
+    ::    arms for printing data to the cli.
+    +|  %printers
     ::
     ++  sh-lame
-      :>    send error
-      :>
-      :>  just puts some text into the cli as-is.
+      ::    send error
+      ::
+      ::  just puts some text into the cli as-is.
       ::
       |=  txt/tape
       (sh-fact [%txt txt])
     ::
     ++  sh-note
-      :>    shell message
-      :>
-      :>  left-pads {txt} with heps and prints it.
+      ::    shell message
+      ::
+      ::  left-pads {txt} with heps and prints it.
       ::
       |=  txt/tape
       ^+  +>
@@ -1798,10 +1818,10 @@
       |=(a/tape txt+(runt [14 ' '] '|' ' ' a))
     ::
     ++  sh-prod
-      :>    show prompt
-      :>
-      :>  makes and stores a move to modify the cli
-      :>  prompt to display the current audience.
+      ::    show prompt
+      ::
+      ::  makes and stores a move to modify the cli
+      ::  prompt to display the current audience.
       ::
       ^+  .
       %+  sh-fact  %pro
@@ -1815,7 +1835,7 @@
       (weld `tape`[p.p.rew por] `tape`[q.p.rew ' ' ~])
     ::
     ++  sh-rend
-      :>  prints a telegram as rendered by ++tr-rend.
+      ::  prints a telegram as rendered by ++tr-rend.
       ::
       |=  gam/telegram
       ^+  +>
@@ -1832,7 +1852,7 @@
       [%mor [%txt t] [%bel ~] ~]
     ::
     ++  sh-numb
-      :>  prints a message number, left-padded by heps.
+      ::  prints a message number, left-padded by heps.
       ::
       |=  num/@ud
       ^+  +>
@@ -1841,23 +1861,23 @@
       (runt [(sub 13 (lent bun)) '-'] "[{bun}]")
     ::
     ++  sh-cure
-      :>  renders a security kind.
+      ::  renders a security kind.
       ::
       |=  a/security
       ^-  tape
       (scow %tas a)
     ::
     ++  sh-scis
-      :>    render status
-      :>
-      :>  gets the presence of {saz} as a tape.
+      ::    render status
+      ::
+      ::  gets the presence of {saz} as a tape.
       ::
       |=  sat/status
       ^-  tape
       ['%' (trip pec.sat)]
     ::
     ++  sh-show-status
-      :>  prints presence changes to the cli.
+      ::  prints presence changes to the cli.
       ::
       |=  {cir/circle who/ship cur/status dif/diff-status}
       ^+  +>
@@ -1888,7 +1908,7 @@
       ==
     ::
     ++  sh-show-config
-      :>  prints config changes to the cli.
+      ::  prints config changes to the cli.
       ::
       |=  {cir/circle cur/config dif/diff-config}
       ^+  +>
@@ -1911,6 +1931,9 @@
       ::
           $caption
         "cap: {(trip cap.dif)}"
+      ::
+          $read
+        "red: {(scow %ud red.dif)}"
       ::
           $filter
         ;:  weld
@@ -1937,10 +1960,10 @@
       ==
     ::
     ++  sh-gram
-      :>    show telegram
-      :>
-      :>  prints the telegram. every fifth message,
-      :>  print the message number also.
+      ::    show telegram
+      ::
+      ::  prints the telegram. every fifth message,
+      ::  print the message number also.
       ::
       |=  gam/telegram
       ^+  +>
@@ -1955,7 +1978,7 @@
       (sh-rend(latest.she num) gam)
     ::
     ++  sh-grams
-      :>  prints multiple telegrams.
+      ::  prints multiple telegrams.
       ::
       |=  gaz/(list telegram)
       ^+  +>
@@ -1964,26 +1987,26 @@
     --
   --
 ::
-:>  #
-:>  #  %renderers
-:>  #
-:>    rendering cores.
-+|
+::  #
+::  #  %renderers
+::  #
+::    rendering cores.
++|  %renderers
 ::
 ++  cr
-  :>    circle renderer
-  :>
-  :>  used in both circle and ship rendering.
+  ::    circle renderer
   ::
-  |_  :>  one: the circle.
+  ::  used in both circle and ship rendering.
+  ::
+  |_  ::  one: the circle.
       ::
       one/circle
   ::
   ++  cr-beat
-    :>    {one} more relevant?
-    :>
-    :>  returns true if one is better to show, false
-    :>  otherwise. prioritizes: our > main > size.
+    ::    {one} more relevant?
+    ::
+    ::  returns true if one is better to show, false
+    ::  otherwise. prioritizes: our > main > size.
     ::
     |=  two/circle
     ^-  ?
@@ -2005,16 +2028,16 @@
     (lth (xeb hos.one) (xeb hos.two))
   ::
   ++  cr-best
-    :>  returns the most relevant circle.
+    ::  returns the most relevant circle.
     ::
     |=  two/circle
     ?:((cr-beat two) one two)
   ::
   ++  cr-curt
-    :>    prints a ship name in 14 characters.
-    :>
-    :>  left-pads with spaces. {mup} signifies
-    :>  "are there other targets besides this one?"
+    ::    prints a ship name in 14 characters.
+    ::
+    ::  left-pads with spaces. {mup} signifies
+    ::  "are there other targets besides this one?"
     ::
     |=  mup/?
     ^-  tape
@@ -2022,9 +2045,9 @@
     (runt [(sub 14 (lent raw)) ' '] raw)
   ::
   ++  cr-nick
-    :>    get nick for ship, or shortname if no nick.
-    :>
-    :>  left-pads with spaces.
+    ::    get nick for ship, or shortname if no nick.
+    ::
+    ::  left-pads with spaces.
     ::
     |=  aud/audience
     ^-  tape
@@ -2045,12 +2068,12 @@
   ::  todo: figure out why enabling the doccord causes a nest fail, even when
   ::  attached to the arm instead of the product.
   ::
-  ++  cr-phat                                           ::<  render accurately
-    ::>  prints a circle fully, but still taking
-    ::>  "shortcuts" where possible:
-    ::>  ":" for local mailbox, "~ship" for foreign
-    ::>  mailbox, "%channel" for local circle,
-    ::>  "/channel" for parent circle.
+  ++  cr-phat                                           :::  render accurately
+    :::  prints a circle fully, but still taking
+    :::  "shortcuts" where possible:
+    :::  ":" for local mailbox, "~ship" for foreign
+    :::  mailbox, "%channel" for local circle,
+    :::  "/channel" for parent circle.
     ::
     ^-  tape
     ?:  =(hos.one self)
@@ -2060,16 +2083,16 @@
     =+  wun=(cite:title hos.one)
     ?:  =(nom.one %inbox)
       wun
-    ?:  =(hos.one (sein:title self))
+    ?:  =(hos.one (^sein:title self))
       ['/' (trip nom.one)]
     :(welp wun "/" (trip nom.one))
   ::
-  ++  cr-full  (cr-show ~)                              :<  render full width
+  ++  cr-full  (cr-show ~)                              ::  render full width
   ::
   ++  cr-show
-    :>  renders a circle as text.
-    :>
-    :>  moy:  multiple circles in audience?
+    ::  renders a circle as text.
+    ::
+    ::  moy:  multiple circles in audience?
     |=  moy/(unit ?)
     ^-  tape
     ::  render circle (as glyph if we can).
@@ -2081,17 +2104,17 @@
   --
 ::
 ++  ar
-  :>    audience renderer
-  :>
-  :>  used for representing audiences (sets of circles)
-  :>  as tapes.
+  ::    audience renderer
   ::
-  |_  :>  aud: members of the audience.
+  ::  used for representing audiences (sets of circles)
+  ::  as tapes.
+  ::
+  |_  ::  aud: members of the audience.
       ::
       aud/audience
   ::
   ++  ar-best
-    :>  find the most relevant circle in the set.
+    ::  find the most relevant circle in the set.
     ::
     ^-  (unit circle)
     ?~  aud  ~
@@ -2104,23 +2127,23 @@
     n.aud
   ::
   ++  ar-deaf
-    :>  remove ourselves from the audience.
+    ::  remove ourselves from the audience.
     ::
     ^+  .
     .(aud (~(del in aud) `circle`incir))
   ::
   ++  ar-maud
-    :>    multiple audience
-    :>
-    :>  checks if there's multiple circles in the
-    :>  audience via pattern matching.
+    ::    multiple audience
+    ::
+    ::  checks if there's multiple circles in the
+    ::  audience via pattern matching.
     ::
     ^-  ?
     =.  .  ar-deaf
-    !?=($@($~ {* $~ $~}) aud)
+    !?=($@(~ {* ~ ~}) aud)
   ::
   ++  ar-phat
-    :>  render all circles, no glyphs.
+    ::  render all circles, no glyphs.
     ::
     ^-  tape
     %-  ~(rep in aud)
@@ -2130,7 +2153,7 @@
     (weld t ~(cr-phat cr c))
   ::
   ++  ar-prom
-    :>  render all circles, ordered by relevance.
+    ::  render all circles, ordered by relevance.
     ::
     ^-  tape
     =.  .  ar-deaf
@@ -2148,12 +2171,12 @@
     ==
   ::
   ++  ar-whom
-    :>  render sender as the most relevant circle.
+    ::  render sender as the most relevant circle.
     ::
     (~(cr-show cr (need ar-best)) ~ ar-maud)
   ::
   ++  ar-dire
-    :>  returns true if circle is a mailbox of ours.
+    ::  returns true if circle is a mailbox of ours.
     ::
     |=  cir/circle  ^-  ?
     ?&  =(hos.cir self)
@@ -2164,35 +2187,35 @@
   ++  ar-glyf
     ::  todo: another place where doccords break things.
     ::
-    ::>    audience glyph
-    ::>
-    ::>  get the glyph that corresponds to the audience.
-    ::>  for mailbox messages and complex audiences, use
-    ::>  reserved "glyphs".
+    :::    audience glyph
+    :::
+    :::  get the glyph that corresponds to the audience.
+    :::  for mailbox messages and complex audiences, use
+    :::  reserved "glyphs".
     ::
     ^-  tape
     =+  cha=(~(get by bound) aud)
     ?^  cha  ~[u.cha]
     ?.  (lien ~(tap by aud) ar-dire)
       "*"
-    ?:  ?=({^ $~ $~} aud)
+    ?:  ?=({^ ~ ~} aud)
       ":"
     ";"
   --
 ::
 ++  tr
-  :>    telegram renderer
-  :>
-  :>  responsible for converting telegrams and
-  :>  everything relating to them to text to be
-  :>  displayed in the cli.
+  ::    telegram renderer
   ::
-  |_  $:  :>  sef: settings flags.
-          :>  who: author.
-          :>  sen: unique identifier.
-          :>  aud: audience.
-          :>  wen: timestamp.
-          :>  sep: message contents.
+  ::  responsible for converting telegrams and
+  ::  everything relating to them to text to be
+  ::  displayed in the cli.
+  ::
+  |_  $:  ::  sef: settings flags.
+          ::  who: author.
+          ::  sen: unique identifier.
+          ::  aud: audience.
+          ::  wen: timestamp.
+          ::  sep: message contents.
           ::
           sef/(set term)
           who/ship
@@ -2203,19 +2226,19 @@
       ==
   ::
   ++  tr-fact
-    :>    activate effect
-    :>
-    :>  produces sole-effect for printing message
-    :>  details.
+    ::    activate effect
     ::
-    ^-  sole-effect
+    ::  produces sole-effect for printing message
+    ::  details.
+    ::
+    ^-  sole-effect:sole-sur
     ~[%mor [%tan tr-meta] tr-body]
   ::
   ++  tr-rend
-    :>    renders a telegram
-    :>
-    :>  the first line will contain the author and
-    :>  optional timestamp.
+    ::    renders a telegram
+    ::
+    ::  the first line will contain the author and
+    ::  optional timestamp.
     ::
     ^-  (list tape)
     =/  wyd
@@ -2260,10 +2283,10 @@
     [(weld den t) l]
   ::
   ++  tr-meta
-    :>    metadata
-    :>
-    :>  builds string that display metadata, including
-    :>  message serial, timestamp, author and audience.
+    ::    metadata
+    ::
+    ::  builds string that display metadata, including
+    ::  message serial, timestamp, author and audience.
     ::
     ^-  tang
     =.  wen  (sub wen (mod wen (div wen ~s0..0001)))    :: round
@@ -2275,12 +2298,12 @@
     [%rose [" " ~ ~] [hed >who< [%rose [", " "to " ~] cis] ~]]~
   ::
   ++  tr-body
-    :>    message content
-    :>
-    :>  long-form display of message contents, specific
-    :>  to each speech type.
+    ::    message content
     ::
-    |-  ^-  sole-effect
+    ::  long-form display of message contents, specific
+    ::  to each speech type.
+    ::
+    |-  ^-  sole-effect:sole-sur
     ?-  -.sep
         $lin
       tan+~[leaf+"{?:(pat.sep "@ " "")}{(trip msg.sep)}"]
@@ -2321,22 +2344,22 @@
     ==
   ::
   ++  tr-tach
-    :>  renders an attachment.
+    ::  renders an attachment.
     ::
-    |=  a/attache
+    |=  att/attache
     ^-  tang
-    ?-  -.a
-      $name  (welp $(a tac.a) leaf+"= {(trip nom.a)}" ~)
-      $tank  +.a
-      $text  (turn (flop +.a) |=(b/cord leaf+(trip b)))
+    ?-  -.att
+      $name  (welp $(att tac.att) leaf+"= {(trip nom.att)}" ~)
+      $tank  +.att
+      $text  (turn (flop `(list cord)`+.att) |=(b/cord leaf+(trip b)))
     ==
   ::
   ++  tr-chow
-    :>    truncate
-    :>
-    :>  truncates the {txt} to be of max {len}
-    :>  characters. if it does truncate, indicates it
-    :>  did so by appending _ or ….
+    ::    truncate
+    ::
+    ::  truncates the {txt} to be of max {len}
+    ::  characters. if it does truncate, indicates it
+    ::  did so by appending _ or ….
     ::
     |=  {len/@u txt/tape}
     ^-  tape
@@ -2354,13 +2377,13 @@
     [i.txt $(txt t.txt)]
   ::
   ++  tr-text
-    :>    compact contents
-    :>
-    :>  renders just the most important data of the
-    :>  message. if possible, these stay within a single
-    :>  line.
-    :>
-    :>  pre:  replace/append line prefix
+    ::    compact contents
+    ::
+    ::  renders just the most important data of the
+    ::  message. if possible, these stay within a single
+    ::  line.
+    ::
+    ::  pre:  replace/append line prefix
     ::TODO  this should probably be redone someday.
     =|  pre/(unit (pair ? tape))
     |=  wyd/@ud
@@ -2398,7 +2421,7 @@
       =+  hok=r.p.p.url.sep
       =-  (swag [a=(sub (max wyd (lent -)) wyd) b=wyd] -)
       ^-  tape
-      =<  ?:  ?=($& -.hok)
+      =<  ?:  ?=(%& -.hok)
             (reel p.hok .)
           +:(scow %if p.hok)
       |=  {a/knot b/tape}
@@ -2438,10 +2461,10 @@
     ==
   --
 ::
-:>  #
-:>  #  %events
-:>  #
-+|
+::  #
+::  #  %events
+::  #
++|  %events
 ::
 ++  quit-server-client
   |=  wir/wire
@@ -2454,7 +2477,7 @@
   [[peer-inbox]~ +>]
 ::
 ++  peer
-  :>  incoming subscription on pax.
+  ::  incoming subscription on pax.
   ::
   |=  pax/path
   ^-  (quip move _+>)
@@ -2467,23 +2490,23 @@
   ta-done:ta-console:ta
 ::
 ++  diff-hall-prize
-  :>  accept query answer
+  ::  accept query answer
   ::
   |=  {way/wire piz/prize}
   ^-  (quip move _+>)
   ta-done:(ta-take:ta piz)
 ::
 ++  diff-hall-rumor
-  :>  accept query change
+  ::  accept query change
   ::
   |=  {way/wire rum/rumor}
   ^-  (quip move _+>)
   ta-done:(ta-hear:ta rum)
 ::
 ++  poke-sole-action
-  :>  incoming sole action. process it.
+  ::  incoming sole action. process it.
   ::
-  |=  act/sole-action
+  |=  act/sole-action:sole-sur
   ta-done:(ta-sole:ta act)
 ::
 ::TODO  for debug purposes. remove eventually.
@@ -2533,7 +2556,7 @@
   [~ +>]
 ::
 ++  coup-client-action
-  :>  accept n/ack
+  ::  accept n/ack
   ::
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)

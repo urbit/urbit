@@ -8,122 +8,122 @@
 ::      lists of moons (or just ships in general?) that we define as "standalone"
 ::      so that the "convert to true identity" doesn't happen for them.
 ::
-/-    hall                                              ::  structures
-/+    hall, hall-legacy                                 ::  libraries
+/-    hall-sur=hall                                     ::  structures
+/+    hall-lib=hall, hall-legacy                        ::  libraries
 /=    seed  /~  !>(.)
 /=    filter-gram
-      /^  $-({telegram:hall bowl:gall} telegram:hall)
+      /^  $-({telegram:hall-sur bowl:gall} telegram:hall-sur)
       /|  /:  /%/filter  /!noun/
-          /~  |=({t/telegram:hall bowl:gall} t)
+          /~  |=({t/telegram:hall-sur bowl:gall} t)
       ==
+/=    custom-rules
+      /^  (map knot $-({ship ?($r %w) bowl:gall} ?))
+      /:  /%/rules  /_  /!noun/
 ::
 ::::
-  ::
-=,  hall
-=>  :>  #
-    :>  #  %arch
-    :>  #
-    :>    data structures
+=,  hall-sur
+=>  ::  #
+    ::  #  %arch
+    ::  #
+    ::    data structures
     ::
     |%
-    :>  #  %state
-    :>    state data structures
-    +|
-    ++  state                                           :>  application state
-      $:  stories/(map name story)                      :<  conversations
-          outbox/(map serial tracking)                  :<  sent messages
-          log/(map name @ud)                            :<  logged to clay
-          nicks/(map ship nick)                         :<  local nicknames
-          binds/(jug char audience)                     :<  circle glyph lookup
-          public/(set circle)                           :<  publicly member of
-          rir/wire                                      :<  current rumor wire
+    ::  #  %state
+    ::    state data structures
+    ++  state                                           ::  application state
+      $:  stories/(map name story)                      ::  conversations
+          outbox/(map serial tracking)                  ::  sent messages
+          log/(map name @ud)                            ::  logged to clay
+          nicks/(map ship nick)                         ::  local nicknames
+          binds/(jug char audience)                     ::  circle glyph lookup
+          public/(set circle)                           ::  publicly member of
+          rir/wire                                      ::  current rumor wire
       ==                                                ::
-    ++  story                                           :>  wire content
-      $:  count/@ud                                     :<  (lent grams)
-          grams/(list telegram)                         :<  all messages
-          known/(map serial @ud)                        :<  messages heard
-          sourced/(map circle (list @ud))               :<  heard from
-          sequence/(map circle @ud)                     :<  last-heard p circle
-          locals/group                                  :<  local status
-          remotes/(map circle group)                    :<  remote status
-          shape/config                                  :<  configuration
-          mirrors/(map circle config)                   :<  remote config
-          peers/(jar ship query)                        :<  subscribers
-          inherited/_|                                  :<  from parent?
+    ++  story                                           ::  wire content
+      $:  count/@ud                                     ::  (lent grams)
+          grams/(list telegram)                         ::  all messages
+          known/(map serial @ud)                        ::  messages heard
+          sourced/(map circle (list @ud))               ::  heard from
+          sequence/(map circle @ud)                     ::  last-heard p circle
+          locals/group                                  ::  local status
+          remotes/(map circle group)                    ::  remote status
+          shape/config                                  ::  configuration
+          mirrors/(map circle config)                   ::  remote config
+          peers/(jar ship query)                        ::  subscribers
+          inherited/_|                                  ::  from parent?
       ==                                                ::
-    :>  #  %deltas
-    :>    changes to state
-    +|
+    ::  #  %deltas
+    ::    changes to state
     ++  delta                                           ::
       $%  ::  public state                              ::
-          {$public add/? cir/circle}                    :<  show/hide membership
+          {$public add/? cir/circle}                    ::  show/hide membership
           ::  messaging state                           ::
-          {$out cir/circle out/(list thought)}          :<  send msgs to circle
-          $:  $done                                     :>  set delivery state
+          {$out cir/circle out/(list thought)}          ::  send msgs to circle
+          $:  $done                                     ::  set delivery state
               cir/circle                                ::
               ses/(list serial)                         ::
               res/delivery                              ::
           ==                                            ::
           ::  shared ui state                           ::
-          {$glyph diff-glyph}                           :<  un/bound glyph
-          {$nick diff-nick}                             :<  changed nickname
+          {$glyph diff-glyph}                           ::  un/bound glyph
+          {$nick diff-nick}                             ::  changed nickname
           ::  story state                               ::
-          {$story nom/name det/delta-story}             :<  change to story
+          {$story nom/name det/delta-story}             ::  change to story
           ::  side-effects                              ::
-          {$init $~}                                    :<  initialize
-          {$observe who/ship}                           :<  watch burden bearer
-          $:  $present                                  :>  send %present cmd
+          {$init ~}                                    ::  initialize
+          {$observe who/ship}                           ::  watch burden bearer
+          $:  $present                                  ::  send %present cmd
               hos/ship                                  ::
               nos/(set name)                            ::
               dif/diff-status                           ::
           ==                                            ::
       ==                                                ::
-    ++  delta-story                                     :>  story delta
-      $?  diff-story                                    :<  both in & outward
-      $%  {$inherited ihr/?}                            :<  inherited flag
-          {$follow sub/? srs/(set source)}              :<  un/subscribe
-          {$sequent cir/circle num/@ud}                 :<  update last-heard
-          {$gram src/circle gam/telegram}               :<  new/changed msgs
-          {$sourced src/circle num/@ud}                 :<  new heard-from
-      ==  ==                                            ::
-    :>  #  %out
-    :>    outgoing data
-    +|
-    ++  move  (pair bone card)                          :<  all actions
-    ++  lime                                            :>  diff fruit
+    ++  delta-story                                     ::  story delta
+      $%  {$inherited ihr/?}                            ::  inherited flag
+          {$follow sub/? srs/(set source)}              ::  un/subscribe
+          {$sequent cir/circle num/@ud}                 ::  update last-heard
+          {$gram src/circle gam/telegram}               ::  new/changed msgs
+          {$sourced src/circle num/@ud}                 ::  new heard-from
+          diff-story                                    ::  both in & outward
+      ==                                                ::
+    ::  #  %out
+    ::    outgoing data
+    ++  move  (pair bone card)                          ::  all actions
+    ++  lime                                            ::  diff fruit
       $%  {$hall-prize prize}                           ::
           {$hall-rumor rumor}                           ::
       ==                                                ::
-    ++  pear                                            :>  poke fruit
+    ++  pear                                            ::  poke fruit
       $%  {$hall-command command}                       ::
           {$hall-action action}                         ::TODO  see ++gentle-quit
       ==                                                ::
-    ++  card                                            :>  general card
+    ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire ship term nori:clay}              ::
+          {$info wire term nori:clay}                   ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
-          {$pull wire dock $~}                          ::
-          {$quit $~}                                    ::
+          {$pull wire dock ~}                          ::
+          {$quit ~}                                    ::
       ==                                                ::
-    ++  weir                                            :>  parsed wire
-      $%  {$repeat cir/circle ses/(list serial)}        :<  messaging wire
-          {$circle nom/name src/source}                 :<  subscription wire
+    ++  weir                                            ::  parsed wire
+      $%  {$repeat cir/circle ses/(list serial)}        ::  messaging wire
+          {$circle nom/name src/source}                 ::  subscription wire
       ==                                                ::
     --
 ::
-:>  #
-:>  #  %work
-:>  #
-:>    functional cores and arms.
+::  #
+::  #  %work
+::  #
+::    functional cores and arms.
 ::
+~%  %hall-door  ..is  ~
 |_  {bol/bowl:gall $1 state}
 ::
-:>  #  %transition
-:>    prep transition
-+|
+::  #  %transition
+::    prep transition
+::
 ++  prep
-  :>  adapts state.
+  ::  adapts state.
   ::
   =>  |%
       ++  states
@@ -140,7 +140,7 @@
           peers     (~(run by peers.a) |=(a/(list query) (turn a query-0)))
         ==
       ++  query-0
-        $?  $:  $circle
+        $%  $:  $circle
                 nom/name
                 wer/(unit circle)
                 wat/(set circle-data)
@@ -190,11 +190,17 @@
     ++  prep-config
       |=  cof/config-0
       ^-  config
-      %=  cof
-          src
+      =.  src.cof
         %-  ~(gas in *(set source))
         (murn ~(tap in src.cof) prep-source)
+      :*  src.cof
+          cap.cof
+          tag.cof
+          fit.cof
+          con.cof
+          0
       ==
+
     ::
     ++  prep-source
       |=  src/source-0
@@ -230,97 +236,101 @@
     --
   ==
 ::
-:>  #  %engines
-:>    main cores.
-+|
+::  #  %engines
+::    main cores.
 ::
 ++  ta
-  :>  thinker core, used for processing pokes into deltas.
+  ::  thinker core, used for processing pokes into deltas.
   ::
-  |_  :>  deltas: deltas created by core operations.
+  ~/  %hall-ta
+  |_  ::  deltas: deltas created by core operations.
       ::
       deltas/(list delta)
-  :>  #  %resolve
-  +|
+  ::  #  %resolve
   ::
   ++  ta-done
-    :>    resolve core
-    :>
-    :>  produces the moves stored in ++ta's moves.
-    :>  they are produced in reverse order because
-    :>  ++ta-emil and ++ta-emit add them to the head of
-    :>  the {moves}.
-    :>
-    :>  we don't produce any new state, because ++ta
-    :>  doesn't make any changes to it itself.
+    ::    resolve core
+    ::
+    ::  produces the moves stored in ++ta's moves.
+    ::  they are produced in reverse order because
+    ::  ++ta-emil and ++ta-emit add them to the head of
+    ::  the {moves}.
+    ::
+    ::  we don't produce any new state, because ++ta
+    ::  doesn't make any changes to it itself.
     ::
     ^-  (list delta)
     (flop deltas)
   ::
-  :>  #
-  :>  #  %emitters
-  :>  #
-  :>    arms that create outward changes.
-  +|
+  ::  #
+  ::  #  %emitters
+  ::  #
+  ::    arms that create outward changes.
   ::
   ++  ta-delta
-    :>  adds a delta to the head of {deltas}.
+    ::  adds a delta to the head of {deltas}.
     ::
+    ~/  %hall-ta-delta
     |=  det/delta
     %_(+> deltas [det deltas])
   ::
   ++  ta-deltas
-    :>    adds multiple deltas to the head of {deltas}.
-    :>
-    :>  flops to stay consistent with ++ta-delta.
+    ::    adds multiple deltas to the head of {deltas}.
     ::
+    ::  flops to stay consistent with ++ta-delta.
+    ::
+    ~/  %hall-ta-deltas
     |=  des/(list delta)
     %_(+> deltas (welp (flop des) deltas))
   ::
   ++  ta-speak
-    :>  sends {sep} as an %app message to the user's inbox.
+    ::  sends {sep} as an %app message to the user's inbox.
     ::
+    ~/  %hall-ta-speak
     |=  sep/speech
     %+  ta-action  %phrase
     :-  [[our.bol %inbox] ~ ~]
     [%app dap.bol sep]~
   ::
   ++  ta-grieve
-    :>  sends a stack trace to the user's inbox.
+    ::  sends a stack trace to the user's inbox.
     ::
+    ~/  %hall-ta-grieve
     |=  {msg/tape fal/tang}
     %^  ta-speak  %fat
       [%name 'stack trace' %tank fal]
     [%lin | (crip msg)]
   ::
   ++  ta-note
-    :>  sends {msg} to the user's inbox.
+    ::  sends {msg} to the user's inbox.
     ::
+    ~/  %hall-ta-note
     |=  msg/tape
     (ta-speak %lin | (crip msg))
   ::
   ++  ta-evil
-    :>  tracing printf and crash.
+    ::  tracing printf and crash.
     ::
+    ~/  %hall-ta-evil
     |=  msg/cord
     ~|  [%hall-ta-evil msg]
     !!
   ::
-  :>  #
-  :>  #  %data
-  :>  #
-  :>    utility functions for data retrieval.
-  +|
+  ::  #
+  ::  #  %data
+  ::  #
+  ::    utility functions for data retrieval.
   ::
   ++  ta-know
-    :>    story monad
-    :>
-    :>  produces a gill that takes a gate. if the story
-    :>  {nom} exists, calls the gate with a story core.
-    :>  if it doesn't, does nothing.
+    ::    story monad
     ::
+    ::  produces a gill that takes a gate. if the story
+    ::  {nom} exists, calls the gate with a story core.
+    ::  if it doesn't, does nothing.
+    ::
+    ~/  %hall-ta-know
     |=  nom/name
-    |=  fun/$-(_so _ta)
+    |:  fun=^|(|:(so ta))
     ^+  +>+>
     =+  pur=(~(get by stories) nom)
     ?~  pur
@@ -328,28 +338,28 @@
       (crip "no story '{(trip nom)}'")
     (fun ~(. so nom ~ u.pur))
   ::
-  :>  #
-  :>  #  %interaction-events
-  :>  #
-  :>    arms that apply events we received.
-  +|
+  ::  #
+  ::  #  %interaction-events
+  ::  #
+  ::    arms that apply events we received.
   ::
   ++  ta-init
-    :>    initialize app
-    :>
-    :>  populate state on first boot. creates our default mailbox and journal.
+    ::    initialize app
+    ::
+    ::  populate state on first boot. creates our default mailbox and journal.
     ::
     ::  create default circles.
     =>  %+  roll
           ^-  (list {security name cord})
           :~  [%mailbox %inbox 'default home']
               [%journal %public 'visible activity']
+              [%mailbox %i 'dm invites']
           ==
-        |=  {{typ/security nom/name des/cord} _ta}
+        |:  [[typ=*security nom=*name des=*cord] ta]
         (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.
-    =+  sen=(above our.bol)
+    =+  sen=(above:hall-lib [our now our]:bol)
     ?:  ?|  !=(%czar (clan:title sen))
             =(sen our.bol)
             =(%pawn (clan:title our.bol))
@@ -358,8 +368,9 @@
     [%init ~]~
   ::
   ++  ta-apply
-    :>  applies the command sent by {src}.
+    ::  applies the command sent by {src}.
     ::
+    ~/  %hall-ta-apply
     |=  {src/ship cod/command}
     ^+  +>
     ?-  -.cod
@@ -376,11 +387,12 @@
     ==
   ::
   ++  ta-present
-    :>    update a status
-    :>
-    :>  sets status for the indicated stories,
-    :>  but only if they have write permission there.
+    ::    update a status
     ::
+    ::  sets status for the indicated stories,
+    ::  but only if they have write permission there.
+    ::
+    ~/  %hall-ta-present
     |=  {who/ship nos/(set name) dif/diff-status}
     ^+  +>
     =+  nol=~(tap in nos)
@@ -393,23 +405,24 @@
     $(nol t.nol)
   ::
   ++  ta-action
-    :>  performs action sent by a client.
+    ::  performs action sent by a client.
     ::
+    ~/  %hall-ta-action
     |=  act/action
     ^+  +>
     =<  work
-    :>  #
-    :>  #  %actions
-    :>  #
-    :>    action processing core
-    :>
-    :>  ++work calls the appropriate action processing
-    :>  arm. most use ++affect to retrieve the affected
-    :>  story, crashing if it doesn't exist.
+    ::  #
+    ::  #  %actions
+    ::  #
+    ::    action processing core
+    ::
+    ::  ++work calls the appropriate action processing
+    ::  arm. most use ++affect to retrieve the affected
+    ::  story, crashing if it doesn't exist.
+    ~%  %hall-ta-action-inner  +  ~
     |%
-    :>  #  %utility
-    +|
-    ++  work                                            :<  perform action
+    ::  #  %utility
+    ++  work                                            ::  perform action
       ^+  ..ta-action
       ?-  -.act
         ::  circle configuration
@@ -421,6 +434,8 @@
         $permit  (action-permit +.act)
         $delete  (action-delete +.act)
         $usage   (action-usage +.act)
+        $read    (action-read +.act)
+        $newdm   (action-newdm +.act)
         ::  messaging
         $convey  (action-convey +.act)
         $phrase  (action-phrase +.act)
@@ -435,27 +450,30 @@
       ==
     ::
     ++  affect
-      :>    delta to story
-      :>
-      :>  store a delta about a story. if the story
-      :>  does not exist, crash.
+      ::    delta to story
       ::
+      ::  store a delta about a story. if the story
+      ::  does not exist, crash.
+      ::
+      ~/  %hall-affect
       |=  {nom/name det/delta-story}
       ?:  (~(has by stories) nom)
         (impact nom det)
       (ta-evil (crip "no story {(trip nom)}"))
     ::
     ++  impact
-      :>    delta for story
-      :>
-      :>  Store a delta about a story.
+      ::    delta for story
       ::
+      ::  Store a delta about a story.
+      ::
+      ~/  %hall-impact 
       |=  {nom/name det/delta-story}
       (ta-delta %story nom det)
     ::
     ++  present
-      :>  send status update
+      ::  send status update
       ::
+      ~/  %hall-present
       |=  {aud/audience dif/diff-status}
       ^+  ..ta-action
       =/  cic
@@ -473,11 +491,11 @@
       :_  l
       [%present h s dif]
     ::
-    :>  #  %circle-configuration
-    +|
+    ::  #  %circle-configuration
     ++  action-create
-      :>  creates a story with the specified parameters.
+      ::  creates a story with the specified parameters.
       ::
+      ~/  %hall-action-create
       |=  {nom/name des/cord typ/security}
       ^+  ..ta-action
       ?.  (~(has in stories) nom)
@@ -489,23 +507,26 @@
             :-  typ
             ?.  ?=(?($village $journal) typ)  ~
             [our.bol ~ ~]
+            0
         ==
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-design
-      :>  creates a story with the specified config.
+      ::  creates a story with the specified config.
       ::
+      ~/  %hall-action-design
       |=  {nom/name cof/config}
       ?.  (~(has in stories) nom)
         (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
     ++  action-delete
-      :>    delete + announce
-      :>
-      :>  delete story {nom}, optionally announcing the
-      :>  event with message {mes}.
+      ::    delete + announce
       ::
+      ::  delete story {nom}, optionally announcing the
+      ::  event with message {mes}.
+      ::
+      ~/  %hall-action-delete
       |=  {nom/name mes/(unit cord)}
       ^+  ..ta-action
       =?  ..ta-action  ?=(^ mes)
@@ -515,23 +536,26 @@
       (affect nom %remove ~)
     ::
     ++  action-depict
-      :>  change description of story {nom} to {des}.
+      ::  change description of story {nom} to {des}.
       ::
+      ~/  %hall-depict
       |=  {nom/name cap/cord}
       (affect nom %config [our.bol nom] %caption cap)
     ::
     ++  action-filter
-      :>    change message rules
-      :>
-      :>  replaces the story's current filter with the
-      :>  specified one.
+      ::    change message rules
       ::
+      ::  replaces the story's current filter with the
+      ::  specified one.
+      ::
+      ~/  %hall-action-filter
       |=  {nom/name fit/filter}
       (affect nom %config [our.bol nom] %filter fit)
     ::
     ++  action-permit
-      :>  invite to/banish from story {nom} all {sis}.
+      ::  invite to/banish from story {nom} all {sis}.
       ::
+      ~/  %hall-action-permit
       |=  {nom/name inv/? sis/(set ship)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
@@ -539,8 +563,9 @@
       so-done:(~(so-permit so nom ~ u.soy) inv sis)
     ::
     ++  action-source
-      :>  add/remove {pos} as sources for story {nom}.
+      ::  add/remove {pos} as sources for story {nom}.
       ::
+      ~/  %hall-action-source
       |=  {nom/name sub/? srs/(set source)}
       =+  soy=(~(get by stories) nom)
       ?~  soy
@@ -548,112 +573,212 @@
       so-done:(~(so-sources so nom ~ u.soy) sub srs)
     ::
     ++  action-usage
-      :>  add or remove usage tags.
+      ::  add or remove usage tags.
       ::
+      ~/  %hall-action-usage
       |=  {nom/name add/? tas/tags}
       =+  soy=(~(get by stories) nom)
       ?~  soy
         (ta-evil (crip "no story {(trip nom)}"))
       so-done:(~(so-usage so nom ~ u.soy) add tas)
     ::
-    :>  #  %messaging
-    +|
-    ++  action-convey
-      :>    post exact
-      :>
-      :>  sends the messages provided in the action.
+    ++  action-read
+      ::  set the read message number
       ::
+      ~/  %hall-action-read
+      |=  {nom/name red/@ud}
+      =+  soy=(~(get by stories) nom)
+      ?~  soy
+        (ta-evil (crip "no story {(trip nom)}"))
+      so-done:(~(so-read so nom ~ u.soy) red)
+    ::
+    ++  action-newdm
+      ::  copy all behavior of create, permit, and source in that order
+      ::
+      ~/  %hall-action-newdm
+      |=  sis/(set ship)
+      ::  generate circle name from sis as a dot seperated list of ship names
+      ::  in alphabetical order
+      ::
+      =/  nom/name
+      %^  rsh  3  1
+      %+  roll
+        %+  sort  %+  turn  ~(tap in (~(put in sis) our.bol))
+        |=  p/ship
+        ^-  cord
+        (scot %p p)
+        aor
+      |=  {p/cord nam/name}
+      ^-  @tas
+      (crip "{(trip `@t`nam)}.{(slag 1 (trip p))}")
+      ::  if we've already created this circle, no-op
+      ::
+      ?:  (~(has in ~(key by stories)) nom)
+        (ta-deltas ~)
+      ::  check if we already have an invite to this dm group
+      ::  or if we are creating it
+      ::
+      =/  inv=(list telegram)
+      %+  skim  grams:(~(got by stories) %i)
+      |=  g=telegram
+      ^-  ?
+      ?.  ?=({$inv *} sep.g)     %.n
+      ?.  =(nom nom.cir.sep.g)   %.n
+      ?.  (~(has in sis) aut.g)  %.n
+      %.y
+      ::
+      =.  inv  %+  sort  inv
+        |=  {a/telegram b/telegram}
+        (lte wen.a wen.b)
+      ::  create our side of the dm and source it to our inbox
+      ::
+      =/  dels/(list delta)
+      :~  :*  %story
+              %inbox
+              %follow
+              &
+              [[[our.bol nom] ~] ~ ~]
+          ==
+          :*  %story
+              nom
+              %new
+              [[[our.bol nom] ~] ~ ~]
+              'dm'
+              ~
+              *filter
+              [%village (~(put in sis) our.bol)]
+              0
+          ==
+      ==
+      ::  if we did initiate the dm, send out invites
+      ::
+      ?:  ?=(~ inv)
+        =.  ..ta-action  (ta-deltas dels)
+        %-  action-convey
+        ^-  (list thought)
+        %+  turn  ~(tap in (~(del in sis) our.bol))
+        |=  a=ship
+        ^-  thought
+        :*  uid=(shaf a eny.bol)
+            aud=(sy [a %i] ~)
+            wen=now.bol
+            sep=[%inv & [our.bol nom]]
+        ==
+      ::  if we did not initiate the dm, source to the initiators copy
+      ::
+      =.  dels
+      :_  dels
+      :*  %story
+          nom
+          %follow
+          &
+          [[[aut.i.inv nom] ~] ~ ~]
+      ==
+      (ta-deltas dels)
+    ::
+    ::  #  %messaging
+    ++  action-convey
+      ::    post exact
+      ::
+      ::  sends the messages provided in the action.
+      ::
+      ~/  %hall-action-convey
       |=  tos/(list thought)
       (ta-think & our.bol tos)
     ::
     ++  action-phrase
-      :>    post easy
-      :>
-      :>  sends the message contents provided in the
-      :>  action generating a serial and setting a
-      :>  timestamp.
+      ::    post easy
       ::
+      ::  sends the message contents provided in the
+      ::  action generating a serial and setting a
+      ::  timestamp.
+      ::
+      ~/  %hall-action-phrase
       |=  {aud/audience ses/(list speech)}
       ^+  ..ta-action
       =-  (ta-think & our.bol tos)
       |-  ^-  tos/(list thought)
       ?~  ses  ~
-      =^  sir  eny.bol  ~(uniq hall bol)
+      =^  sir  eny.bol  ~(uniq hall-lib bol)
       :_  $(ses t.ses)
       [sir aud [now.bol i.ses]]
     ::
-    :>  #  %personal-metadata
-    +|
+    ::  #  %personal-metadata
     ::
     ++  action-notify
-      :>    our presence update
-      :>
-      :>  notify the audience of our new presence state,
-      :>  or tell them to remove us if {pes} is ~.
+      ::    our presence update
       ::
+      ::  notify the audience of our new presence state,
+      ::  or tell them to remove us if {pes} is ~.
+      ::
+      ~/  %hall-action-notify
       |=  {aud/audience pes/(unit presence)}
       ^+  ..ta-action
       ?~  pes  (present aud %remove ~)
       (present aud %presence u.pes)
     ::
     ++  action-naming
-      :>  our name update
+      ::  our name update
       ::
+      ~/  %hall-action-naming
       |=  {aud/audience man/human}
       ^+  ..ta-action
       (present aud %human %full man)
     ::
-    :>  #  %changing-shared-ui
-    +|
+    ::  #  %changing-shared-ui
     ++  action-nick
-      :>    new identity
-      :>
-      :>  assigns a new local identity ("nickname") to the
-      :>  target ship.
+      ::    new identity
       ::
+      ::  assigns a new local identity ("nickname") to the
+      ::  target ship.
+      ::
+      ~/  %hall-action-nick
       |=  {who/ship nic/nick}
       ^+  ..ta-action
       ?.  =((~(get by nicks) who) `nic)  ..ta-action    ::  no change
       (ta-delta %nick who nic)
     ::
     ++  action-glyph
-      :>  un/bind glyph {lif} to audience {aud}.
+      ::  un/bind glyph {lif} to audience {aud}.
       ::
+      ~/  %hall-action-glyph
       |=  {lif/char aud/audience bin/?}
       (ta-delta %glyph bin lif aud)
     ::
     ++  action-public
-      :>    show/hide membership
-      :>
-      :>  add or remove a circle from the public membership list.
+      ::    show/hide membership
       ::
+      ::  add or remove a circle from the public membership list.
+      ::
+      ~/  %hall-action-public
       |=  {add/? cir/circle}
       (ta-delta %public add cir)
     --
   ::
-  :>  #
-  :>  #  %subscription-events
-  :>  #
-  :>    arms that react to subscription events.
-  +|
+  ::  #
+  ::  #  %subscription-events
+  ::  #
+  ::    arms that react to subscription events.
   ::
   ++  ta-observe
-    :>    watch burden bearer
-    :>
-    :>  subscribe to a child who is bearing our burden.
+    ::    watch burden bearer
+    ::
+    ::  subscribe to a child who is bearing our burden.
     ::TODO  everyone should be able to bear if they so desire.
     ::
+    ~/  %hall-ta-observe
     |=  who/ship
     ^+  +>
-    ?.  =(our.bol (above who))
+    ?.  =(our.bol (above:hall-lib our.bol now.bol who))
       ~&([%not-our-bearer who] +>)
     (ta-delta %observe who)
   ::
   ++  ta-subscribe
-    :>    listen to
-    :>
-    :>  reaction to incoming subscriptions.
+    ::    listen to
     ::
+    ::  reaction to incoming subscriptions.
+    ::
+    ~/  %hall-ta-subscribe
     |=  {her/ship qer/query}
     ^+  +>
     ?+  -.qer  +>
@@ -663,31 +788,34 @@
     ==
   ::
   ++  ta-greet
-    :>    subscription success
-    :>
-    :>  store a started subscription as source.
+    ::    subscription success
     ::
+    ::  store a started subscription as source.
+    ::
+    ~/  %hall-ta-greet
     |=  {nom/name src/source}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-greet:sor src)
   ::
   ++  ta-leave
-    :>    subscription failed
-    :>
-    :>  removes {src} from story {nom}'s sources.
+    ::    subscription failed
     ::
+    ::  removes {src} from story {nom}'s sources.
+    ::
+    ~/  %hall-ta-leave
     |=  {nom/name src/source}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-leave:sor src)
   ::
   ++  ta-take
-    :>    apply prize
-    :>
-    :>  for a %burden prize, bear the burden in a new
-    :>  or existing story.
-    :>  for a %circle prize, use ++so to accept it.
-    :>  for a %report prize, silently ignore.
+    ::    apply prize
     ::
+    ::  for a %burden prize, bear the burden in a new
+    ::  or existing story.
+    ::  for a %circle prize, use ++so to accept it.
+    ::  for a %report prize, silently ignore.
+    ::
+    ~/  %hall-ta-take
     |=  {wir/wire piz/prize}
     ^+  +>
     ?+  -.piz  ~&([%ignoring-prize -.piz] +>)
@@ -721,13 +849,14 @@
     ==
   ::
   ++  ta-hear
-    :>    apply rumor
-    :>
-    :>  apply changes from a rumor to our state.
-    :>  for %burden, authoratively apply the story
-    :>  diff. if it's a new one, bear it.
-    :>  for %circle, apply the story diff normally.
+    ::    apply rumor
     ::
+    ::  apply changes from a rumor to our state.
+    ::  for %burden, authoratively apply the story
+    ::  diff. if it's a new one, bear it.
+    ::  for %circle, apply the story diff normally.
+    ::
+    ~/  %hall-ta-hear
     |=  {wir/wire rum/rumor}
     ^+  +>
     ?+  -.rum
@@ -763,11 +892,12 @@
     ==
   ::
   ++  ta-repeat
-    :>    message delivered
-    :>
-    :>  message got delivered. if an error was returned
-    :>  mark the message as rejected. if not, received.
+    ::    message delivered
     ::
+    ::  message got delivered. if an error was returned
+    ::  mark the message as rejected. if not, received.
+    ::
+    ~/  %hall-ta-repeat
     |=  {who/circle ses/(list serial) fal/(unit tang)}
     ^+  +>
     ?~  fal
@@ -778,37 +908,39 @@
     "rejected by {(scow %p hos.who)}/{(trip nom.who)}"
   ::
   ++  ta-resub
-    :>    subscription dropped
-    :>
-    :>  when a subscription gets dropped by gall, we
-    :>  resubscribe.
+    ::    subscription dropped
     ::
+    ::  when a subscription gets dropped by gall, we
+    ::  resubscribe.
+    ::
+    ~/  %hall-ta-resub
     |=  {nom/name src/source}
     ^+  +>
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-resub:sor src)
   ::
-  :>  #
-  :>  #  %messaging
-  :>  #
-  :>    arms for sending and processing messages.
-  +|
+  ::  #
+  ::  #  %messaging
+  ::  #
+  ::    arms for sending and processing messages.
   ::
   ++  ta-think
-    :>    publish or review
-    :>
-    :>  consumes each thought.
+    ::    publish or review
     ::
+    ::  consumes each thought.
+    ::
+    ~/  %hall-ta-think
     |=  {pub/? aut/ship tos/(list thought)}
     ^+  +>
     ?~  tos  +>
     $(tos t.tos, +> (ta-consume pub aut i.tos))
   ::
   ++  ta-consume
-    :>    to each audience
-    :>
-    :>  conducts thought {tot} to each circle in its audience.
+    ::    to each audience
     ::
+    ::  conducts thought {tot} to each circle in its audience.
+    ::
+    ~/  %hall-ta-consume
     |=  {pub/? aut/ship tot/thought}
     =+  aud=~(tap in aud.tot)
     |-  ^+  +>.^$
@@ -816,10 +948,11 @@
     $(aud t.aud, +>.^$ (ta-conduct pub aut i.aud tot))
   ::
   ++  ta-conduct
-    :>    thought to circle
-    :>
-    :>  either publishes or records a thought.
+    ::    thought to circle
     ::
+    ::  either publishes or records a thought.
+    ::
+    ~/  %hall-ta-conduct
     |=  {pub/? aut/ship cir/circle tot/thought}
     ^+  +>
     ?:  pub
@@ -836,32 +969,34 @@
     (ta-record nom.cir aut tot)
   ::
   ++  ta-record
-    :>    add to story
-    :>
-    :>  add or update telegram {gam} in story {nom}.
+    ::    add to story
     ::
+    ::  add or update telegram {gam} in story {nom}.
+    ::
+    ~/  %hall-ta-record
     |=  {nom/name gam/telegram}
     %-  (ta-know nom)  |=  sor/_so  =<  so-done
     (so-learn:sor [our.bol nom] gam)
   ::
   ++  ta-transmit
-    :>  sends thought {tot} to {cir}.
+    ::  sends thought {tot} to {cir}.
     ::
+    ~/  %hall-ta-transmit
     |=  {cir/circle tot/thought}
     ^+  +>
     (ta-delta %out cir tot ~)
   ::
-  :>  #
-  :>  #  %stories
-  :>  #
-  :>    arms for modifying stories.
-  +|
+  ::  #
+  ::  #  %stories
+  ::  #
+  ::    arms for modifying stories.
   ::
   ++  so
-    :>  story core, used for doing work on a story.
+    ::  story core, used for doing work on a story.
     ::
-    |_  :>  nom: story name in {stories}.
-        :>  acs: hall actions issued due to changes.
+    ~/  %hall-so
+    |_  ::  nom: story name in {stories}.
+        ::  acs: hall actions issued due to changes.
         ::  story is faceless to ease data access.
         ::
         $:  nom/name
@@ -869,10 +1004,9 @@
             story
         ==
     ::
-    :>  #  %resolve
-    +|
+    ::  #  %resolve
     ++  so-done
-      :>  apply actions generated by story operations.
+      ::  apply actions generated by story operations.
       ::TODO  maybe produce list of actions, apply in ++ta
       ::
       ^+  +>
@@ -882,22 +1016,23 @@
       =.  +>+  (ta-action i.acs)
       $(acs t.acs)
     ::
-    :>  #
-    :>  #  %emitters
-    :>  #
-    :>    arms that create outward changes.
-    +|
+    ::  #
+    ::  #  %emitters
+    ::  #
+    ::    arms that create outward changes.
     ::
     ++  so-act
-      :>  stores a hall action.
+      ::  stores a hall action.
       ::
+      ~/  %hall-so-act
       |=  act/action
       ^+  +>
       +>(acs [act acs])
     ::
     ++  so-note
-      :>  sends {msg} as an %app message to the user's inbox.
+      ::  sends {msg} as an %app message to the user's inbox.
       ::
+      ~/  %hall-so-note
       |=  msg/cord
       ^+  +>
       %+  so-act  %phrase
@@ -905,28 +1040,32 @@
       [%app dap.bol %lin | msg]~
     ::
     ++  so-delta
-      :>  store delta in ++ta core.
+      ::  store delta in ++ta core.
       ::
+      ~/  %hall-so-delta
       |=  det/delta
       ^+  +>
       +>(deltas [det deltas])
     ::
     ++  so-deltas
-      :>  store multiple deltas in ++ta core.
+      ::  store multiple deltas in ++ta core.
       ::
+      ~/  %hall-so-deltas
       |=  des/(list delta)
       %_(+> deltas (welp (flop des) deltas))
     ::
     ++  so-delta-our
-      :>  adds a delta about this story.
+      ::  adds a delta about this story.
       ::
+      ~/  %hall-so-delta-our
       |=  det/delta-story
       ^+  +>
       (so-delta %story nom det)
     ::
     ++  so-deltas-our
-      :>  adds multiple deltas about this story.
+      ::  adds multiple deltas about this story.
       ::
+      ~/  %hall-so-deltas-our
       |=  des/(list delta-story)
       ^+  +>
       %-  so-deltas
@@ -934,23 +1073,22 @@
       |=  d/delta-story
       [%story nom d]
     ::
-    :>  #
-    :>  #  %data
-    :>  #
-    :>    utility functions for data retrieval.
-    +|
+    ::  #
+    ::  #  %data
+    ::  #
+    ::    utility functions for data retrieval.
     ::
-    ++  so-cir  [our.bol nom]                           :<  us as circle
+    ++  so-cir  [our.bol nom]                           ::  us as circle
     ::
-    :>  #
-    :>  #  %interaction-events
-    :>  #
-    :>    arms that apply events we received.
-    +|
+    ::  #
+    ::  #  %interaction-events
+    ::  #
+    ::    arms that apply events we received.
     ::
     ++  so-take
-      :>  apply the prize as if it were rumors.
+      ::  apply the prize as if it were rumors.
       ::
+      ~/  %hall-so-take
       |=  {src/circle nes/(list envelope) cos/lobby pes/crowd}
       ^+  +>
       =.  +>.$
@@ -969,13 +1107,14 @@
       (so-unpack src nes)
     ::
     ++  so-hear
-      :>  apply changes from a rumor to this story.
+      ::  apply changes from a rumor to this story.
       ::
+      ~/  %hall-so-hear
       |=  {bur/? src/circle rum/rumor-story}
       ::TODO  tall-form gate comments like this for everything?
-      ::|=  $:  :>  bur: whether the story is inherited
-      ::        :>  src: story to change
-      ::        :>  rum: change to this story
+      ::|=  $:  ::  bur: whether the story is inherited
+      ::        ::  src: story to change
+      ::        ::  rum: change to this story
       ::        ::
       ::        bur/?
       ::        src/circle
@@ -1004,8 +1143,8 @@
           (~(get by mirrors) cir.rum)
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
-                ?=($~ old)
-                !=(u.old (change-config u.old dif.rum))
+                ?=(~ old)
+                !=(u.old (change-config:hall-lib u.old dif.rum))
             ==
           +>.$
         ::  full changes to us need to get split up.
@@ -1024,22 +1163,23 @@
           (fall (~(get by remotes) cir.rum) *group)
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
-                ?=($~ old)
-                !=(u.old (change-status u.old dif.rum))
+                ?=(~ old)
+                !=(u.old (change-status:hall-lib u.old dif.rum))
             ==
           +>.$
         (so-delta-our rum)
       ==
     ::
     ++  so-bear
-      :>    accept burden
-      :>
-      :>  add what was pushed down from above to our
-      :>  state. in case of conflict, existing data is
-      :>  overwritten.
+      ::    accept burden
+      ::
+      ::  add what was pushed down from above to our
+      ::  state. in case of conflict, existing data is
+      ::  overwritten.
       ::
       ::NOTE  we don't use ++roll here because of urbit/arvo#447.
       ::
+      ~/  %hall-so-bear
       |=  {gaz/(list telegram) cos/lobby pes/crowd}
       ^+  +>
       =*  self  +>
@@ -1110,7 +1250,7 @@
           ::  in audience, replace above with us.
           ::TODO  this really should be done by the sender.
           =.  aud.t
-            =+  dem=[(above our.bol) nom]
+            =+  dem=[(above:hall-lib [our now our]:bol) nom]
             ?.  (~(has in aud.t) dem)  aud.t
             =+  (~(del in aud.t) dem)
             (~(put in -) so-cir)
@@ -1118,21 +1258,21 @@
           ?:  &(?=(^ num) =(t (snag u.num grams)))  ~
           ::TODO  this really should have sent us the message
           ::      src as well but that's not an easy fix.
-          `[%story nom %gram [(above our.bol) nom] t]
+          `[%story nom %gram [(above:hall-lib [our now our]:bol) nom] t]
         ==
       ::  inherited flag
       %_(self deltas [[%story nom %inherited &] deltas])
       ::TODO  runtime error
       ::(so-delta-our %inherited &)
     ::
-    :>  #
-    :>  #  %changes
-    :>  #
-    :>    arms that make miscellaneous changes to this story.
-    +|
+    ::  #
+    ::  #  %changes
+    ::  #
+    ::    arms that make miscellaneous changes to this story.
     ::
     ++  so-present
-      :>  accept status diff
+      ::  accept status diff
+      ~/  %hall-so-present
       |=  {who/ship dif/diff-status}
       ^+  +>
       ::  only have presence if you have write permission.
@@ -1143,10 +1283,10 @@
           ?|  !(~(has by locals) who)
             ::
               =+  old=(~(got by locals) who)
-              =+  new=(change-status - dif)
+              =+  new=(change-status:hall-lib - dif)
               ?&  !=(old new)
                 ::
-                  ?=  $~
+                  ?=  ~
                   (rush (fall han.man.new '') ;~(pfix sig fed:ag))
                   ::TODO  calling with %+ gives syntax error
               ==
@@ -1155,11 +1295,12 @@
       (so-delta-our %status so-cir who dif)
     ::
     ++  so-config-full
-      :>    split full config
-      :>
-      :>  split a %full config delta up into multiple
-      :>  smaller ones, for easier application.
+      ::    split full config
       ::
+      ::  split a %full config delta up into multiple
+      ::  smaller ones, for easier application.
+      ::
+      ~/  %hall-so-config-full
       |=  {old/(unit config) cof/config}
       ^+  +>
       ~?  &(?=(^ old) !=(src.u.old src.cof))
@@ -1178,6 +1319,7 @@
             [%filter fit.cof]
             [%secure sec.con.cof]
             [%permit & sis.con.cof]
+            [%read red.cof]
         ==
       =-  (murn - same)
       ^-  (list (unit diff-config))
@@ -1210,11 +1352,12 @@
       ==
     ::
     ++  so-sources
-      :>    change source
-      :>
-      :>  adds or removes {srs} from our sources,
-      :>  skipping over ones we already (don't) have.
+      ::    change source
       ::
+      ::  adds or removes {srs} from our sources,
+      ::  skipping over ones we already (don't) have.
+      ::
+      ~/  %hall-so-sources
       |=  {add/? srs/(set source)}
       ^+  +>
       =/  sus/(set source)
@@ -1238,18 +1381,20 @@
       (so-delta-our %follow add sus)
     ::
     ++  so-depict
-      :>    change description
-      :>
-      :>  modifies our caption.
+      ::    change description
       ::
+      ::  modifies our caption.
+      ::
+      ~/  %hall-so-depict
       |=  cap/cord
       ^+  +>
       ?:  =(cap cap.shape)  +>
       (so-delta-our %config so-cir %caption cap)
     ::
     ++  so-usage
-      :>  add or remove usage tags.
+      ::  add or remove usage tags.
       ::
+      ~/  %hall-so-usage
       |=  {add/? tas/tags}
       ^+  +>
       =/  sas/tags
@@ -1258,57 +1403,68 @@
       ?~  sas  +>.$
       (so-delta-our %config so-cir %usage add sas)
     ::
+    ++  so-read
+      ::  set the read message number in circle config
+      ~/  %hall-so-read
+      |=  {red/@ud}
+      ^+  +>
+      ?:  =(red red.shape)  +>
+      (so-delta-our %config so-cir %read red)
+    ::
     ++  so-filter
-      :>    change message rules
-      :>
-      :>  modifies our filter.
+      ::    change message rules
       ::
+      ::  modifies our filter.
+      ::
+      ~/  %hall-so-filter
       |=  fit/filter
       ^+  +>
       ?:  =(fit fit.shape)  +>
       (so-delta-our %config so-cir %filter fit)
     ::
     ++  so-delete
-      :>    delete story
-      :>
-      :>  deletes this story. removes it from {stories}
-      :>  and unsubscribes from all src.
+      ::    delete story
+      ::
+      ::  deletes this story. removes it from {stories}
+      ::  and unsubscribes from all src.
       ::
       (so-delta-our %remove ~)
     ::
-    :>  #
-    :>  #  %subscriptions
-    :>  #
-    :>    arms for starting and ending subscriptions
-    +|
+    ::  #
+    ::  #  %subscriptions
+    ::  #
+    ::    arms for starting and ending subscriptions
     ::
     ++  so-greet
-      :>    subscription started
-      :>
-      :>  store a started subscription as source.
+      ::    subscription started
       ::
+      ::  store a started subscription as source.
+      ::
+      ~/  %hall-so-greet
       |=  src/source
       ^+  +>
       ?:  (~(has in src.shape) src)  +>
       (so-delta-our %config so-cir %source & src)
     ::
     ++  so-leave
-      :>    subscription ended
-      :>
-      :>  delete {src} from our sources.
+      ::    subscription ended
       ::
+      ::  delete {src} from our sources.
+      ::
+      ~/  %hall-so-leave
       |=  src/source
       ^+  +>
       ?.  (~(has in src.shape) src)  +>
       (so-delta-our %config so-cir %source | src)
     ::
     ++  so-resub
-      :>    subscription revived
-      :>
-      :>  re-subscribe to a dropped subscription.
-      :>  if it was already active, we continue where
-      :>  we left off.
+      ::    subscription revived
       ::
+      ::  re-subscribe to a dropped subscription.
+      ::  if it was already active, we continue where
+      ::  we left off.
+      ::
+      ~/  %hall-so-resub
       |=  src/source
       ^+  +>
       =+  seq=(~(get by sequence) cir.src)
@@ -1326,6 +1482,7 @@
               ?=(^ tal.u.ran.src)
             ::
               ?-  -.u.tal.u.ran.src
+                $sd   &
                 $da   (gte now.bol +.u.tal.u.ran.src)
                 $ud   ?&  ?=(^ seq)
                           (gte u.seq +.u.tal.u.ran.src)
@@ -1336,10 +1493,11 @@
       (so-delta-our %follow & [[cir.src -] ~ ~])
     ::
     ++  so-first-grams
-      :>    beginning of stream
-      :>
-      :>  find all grams that fall within the range.
+      ::    beginning of stream
       ::
+      ::  find all grams that fall within the range.
+      ::
+      ~/  %hall-so-first-grams
       |=  ran/range
       ^-  (list telegram)
       =+  [num=0 gaz=grams zeg=*(list telegram)]
@@ -1348,8 +1506,12 @@
       =.  ran
         ?~  ran  `[[%ud 0] `[%ud count]]
         =*  hed  hed.u.ran
+        =?  hed  ?=($sd -.hed)
+          [%ud (sub count (min count (abs:si +.hed)))]
         ?~  tal.u.ran  `[hed `[%ud count]]
         =*  tal  u.tal.u.ran
+        =?  tal  ?=($sd -.tal)
+          [%ud (sub count (min count (abs:si +.tal)))]
         ran
       ::  never fails, but compiler needs it.
       ?>  &(?=(^ ran) ?=(^ tal.u.ran))
@@ -1358,15 +1520,17 @@
       %-  flop
       |-  ^-  (list telegram)
       ?~  gaz  zeg
-      ?:  ?-  -.tal                                     ::  after the end
-            $ud  (lth +.tal num)
-            $da  (lth +.tal wen.i.gaz)
+      ?:  ?-  -.u.tal.u.ran                             ::  after the end
+            $ud  (lth +.u.tal.u.ran num)
+            $da  (lth +.u.tal.u.ran wen.i.gaz)
+            $sd  !!  ::  caught above
           ==
         ::  if past the range, we're done searching.
         zeg
-      ?:  ?-  -.hed                                     ::  before the start
-            $ud  (lth num +.hed)
-            $da  (lth wen.i.gaz +.hed)
+      ?:  ?-  -.hed.u.ran                               ::  before the start
+            $ud  (lth num +.hed.u.ran)
+            $da  (lth wen.i.gaz +.hed.u.ran)
+            $sd  !!  ::  caught above
           ==
         ::  if before the range, continue onward.
         $(num +(num), gaz t.gaz)
@@ -1374,41 +1538,42 @@
       $(num +(num), gaz t.gaz, zeg [i.gaz zeg])
     ::
     ++  so-in-range
-      :>    place in range?
-      :>
-      :>  produces two booleans: whether we're
-      :>  currently in the range, and whether the range
-      :>  has passed.
+      ::    place in range?
+      ::
+      ::  produces two booleans: whether we're
+      ::  currently in the range, and whether the range
+      ::  has passed.
       ::TODO  to deal with changed messages, we'll want
       ::      to be able to pass in a num.
       ::
+      ~/  %hall-so-in-range
       |=  ran/range
       ^-  {in/? done/?}
       ?~  ran  [& |]
       =/  min
-        =*  hed  hed.u.ran
-        ?-  -.hed
-          $ud  (gth count +.hed)
-          $da  (gth now.bol +.hed)
+        ?-  -.hed.u.ran
+          $sd  &  ::  relative is always in.
+          $ud  (gth count +.hed.u.ran)
+          $da  (gth now.bol +.hed.u.ran)
         ==
       ?~  tal.u.ran
         [min |]
       =-  [&(min -) !-]
-      =*  tal  u.tal.u.ran
-      ?-  -.tal
-        $ud  (gte +(+.tal) count)
-        $da  (gte +.tal now.bol)
+      ?-  -.u.tal.u.ran
+        $sd  |  ::  relative is always done.
+        $ud  (gte +(+.u.tal.u.ran) count)
+        $da  (gte +.u.tal.u.ran now.bol)
       ==
     ::
-    :>  #
-    :>  #  %messaging
-    :>  #
-    :>    arms for adding to this story's messages.
-    +|
+    ::  #
+    ::  #  %messaging
+    ::  #
+    ::    arms for adding to this story's messages.
     ::
     ++  so-sane
-      :>  sanitize %lin speech according to our settings.
+      ::  sanitize %lin speech according to our settings.
       ::
+      ~/  %hall-so-sane
       |=  sep/speech
       ^-  speech
       ?+  -.sep  sep
@@ -1439,11 +1604,12 @@
       ==
     ::
     ++  so-unpack
-      :>    process envelopes
-      :>
-      :>  learn telegrams from list of envelopes and
-      :>  update the sequence of the source if needed.
+      ::    process envelopes
       ::
+      ::  learn telegrams from list of envelopes and
+      ::  update the sequence of the source if needed.
+      ::
+      ~/  %hall-so-unpack
       |=  {src/circle nes/(list envelope)}
       ^+  +>
       =.  +>  (so-lesson src (turn nes tail))
@@ -1456,11 +1622,12 @@
       (so-delta-our %sequent src num)
     ::
     ++  so-open
-      :>    process envelope
-      :>
-      :>  learn telegram from envelope and update the
-      :>  sequence of the source if needed.
+      ::    process envelope
       ::
+      ::  learn telegram from envelope and update the
+      ::  sequence of the source if needed.
+      ::
+      ~/  %hall-so-open
       |=  {src/circle nev/envelope}
       ^+  +>
       =.  +>  (so-learn src gam.nev)
@@ -1469,19 +1636,21 @@
       (so-delta-our %sequent src num.nev)
     ::
     ++  so-lesson
-      :>  learn all telegrams in a list.
+      ::  learn all telegrams in a list.
       ::
+      ~/  %hall-so-lesson
       |=  {src/circle gaz/(list telegram)}
       ^+  +>
       ?~  gaz  +>
       $(gaz t.gaz, +> (so-learn src i.gaz))
     ::
     ++  so-learn
-      :>    save/update message
-      :>
-      :>  store an incoming telegram, updating if it
-      :>  already exists.
+      ::    save/update message
       ::
+      ::  store an incoming telegram, updating if it
+      ::  already exists.
+      ::
+      ~/  %hall-so-learn
       |=  {src/circle gam/telegram}
       ^+  +>
       ::  check for write permissions.
@@ -1494,31 +1663,32 @@
       ?.  (so-admire aut.gam)  +>
       ::  clean up the message to conform to our rules.
       =.  sep.gam  (so-sane sep.gam)
+      ::
       =.  gam  (filter-gram gam bol)
       ::  if we already have it, ignore.
       =+  old=(~(get by known) uid.gam)
       ?.  &(?=(^ old) =(gam (snag u.old grams)))
         (so-delta-our %gram src gam)
       =+  sed=(~(get by sourced) src)
-      ?:  |(?=($~ sed) ?=($~ (find [u.old]~ u.sed)))
+      ?:  |(?=(~ sed) ?=(~ (find [u.old]~ u.sed)))
         (so-delta-our %sourced src u.old)
       +>.$
     ::
-    :>  #
-    :>  #  %permissions
-    :>  #
-    :>    arms relating to story permissions.
-    +|
+    ::  #
+    ::  #  %permissions
+    ::  #
+    ::    arms relating to story permissions.
     ::
     ++  so-permit
-      :>    invite/banish
-      :>
-      :>  update config to dis/allow ships permission.
+      ::    invite/banish
       ::
+      ::  update config to dis/allow ships permission.
+      ::
+      ~/  %hall-so-permit
       |=  {inv/? sis/(set ship)}
       ^+  +>
-      :>  wyt:  whitelist?
-      :>  add:  add to list?
+      ::  wyt:  whitelist?
+      ::  add:  add to list?
       =/  wyt/?  ?=(?($village $journal) sec.con.shape)
       =/  add/?  =(inv wyt)
       =/  sus/(set ship)
@@ -1535,85 +1705,97 @@
       (so-delta-our %config so-cir %permit [add sus])
     ::
     ++  so-admire
-      :>    accept from
-      :>
-      :>  checks {her} write permissions.
+      ::    accept from
       ::
+      ::  checks {her} write permissions.
+      ::
+      ~/  %hall-so-admire
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $channel  !(~(has in sis.con.shape) her)        :<  blacklist
-        $village  (~(has in sis.con.shape) her)         :<  whitelist
-        $journal  (~(has in sis.con.shape) her)         :<  author whitelist
-        $mailbox  !(~(has in sis.con.shape) her)        :<  author blacklist
+        $channel  !(~(has in sis.con.shape) her)        ::  blacklist
+        $village  (~(has in sis.con.shape) her)         ::  whitelist
+        $journal  (~(has in sis.con.shape) her)         ::  author whitelist
+        $mailbox  !(~(has in sis.con.shape) her)        ::  author blacklist
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %w bol)
       ==
     ::
     ++  so-visible
-      :>  checks {her} read permissions.
+      ::  checks {her} read permissions.
       ::
+      ~/  %hall-so-visible
       |=  her/ship
       ^-  ?
       ?-  sec.con.shape
-        $channel  !(~(has in sis.con.shape) her)        :<  blacklist
-        $village  (~(has in sis.con.shape) her)         :<  whitelist
-        $journal  &                                     :<  all
-        $mailbox  (team:title our.bol her)              :<  our team
+        $channel  !(~(has in sis.con.shape) her)        ::  blacklist
+        $village  (~(has in sis.con.shape) her)         ::  whitelist
+        $journal  &                                     ::  all
+        $mailbox  (team:title our.bol her)              ::  our team
+        $custom                                         ::  custom rule
+          =/  rul/$-({ship ?($r $w) bowl:gall} ?)
+            (fall (~(get by custom-rules) nom) |=(* |))
+          (rul her %r bol)
       ==
     --
   --
 ::
 ++  da
-  :>    delta application
-  :>
-  :>  core for doing things, mostly applying deltas to
-  :>  application state, but also dealing with events
-  :>  that aren't pokes.
-  :>  where appropriate, creates moves. those get
-  :>  produced when finalizing with ++da-done.
+  ::    delta application
   ::
-  |_  :>  moves: moves created by core operations.
+  ::  core for doing things, mostly applying deltas to
+  ::  application state, but also dealing with events
+  ::  that aren't pokes.
+  ::  where appropriate, creates moves. those get
+  ::  produced when finalizing with ++da-done.
+  ::
+  ~/  %hall-da
+  |_  ::  moves: moves created by core operations.
       ::
       moves/(list move)
-  :>  #  %resolve
-  +|
+  ::  #  %resolve
   ::
   ++  da-done
-    :>    resolve core
-    :>
-    :>  produces the moves stored in ++da's moves.
-    :>  they are produced in reverse order because
-    :>  ++da-emil and ++da-emit add them to the head of
-    :>  the {moves}.
+    ::    resolve core
+    ::
+    ::  produces the moves stored in ++da's moves.
+    ::  they are produced in reverse order because
+    ::  ++da-emil and ++da-emit add them to the head of
+    ::  the {moves}.
     ::
     ^-  (quip move _+>)
     [(flop moves) +>]
   ::
-  :>  #
-  :>  #  %emitters
-  :>  #
-  :>    arms that create outward changes.
-  +|
+  ::  #
+  ::  #  %emitters
+  ::  #
+  ::    arms that create outward changes.
   ::
   ++  da-emil
-    :>    emit move list
-    :>
-    :>  adds multiple moves to the head of {moves}.
-    :>  flops to stay consistent with ++ta-emit.
+    ::    emit move list
     ::
+    ::  adds multiple moves to the head of {moves}.
+    ::  flops to stay consistent with ++ta-emit.
+    ::
+    ~/  %hall-da-emil
     |=  mol/(list move)
     %_(+> moves (welp (flop mol) moves))
   ::
   ++  da-emit
-    :>    emit a move
-    :>
-    :>  adds a move to the head of {moves}.
+    ::    emit a move
     ::
+    ::  adds a move to the head of {moves}.
+    ::
+    ~/  %hall-da-emit
     |=  mov/move
     %_(+> moves [mov moves])
   ::
   ++  da-present
-    :>  send %present cmd
+    ::  send %present cmd
     ::
+    ~/  %hall-da-present
     |=  {hos/ship nos/(set name) dif/diff-status}
     ^+  +>
     %-  da-emit
@@ -1624,18 +1806,18 @@
         [%hall-command %present nos dif]
     ==
   ::
-  :>  #
-  :>  #  %change-application
-  :>  #
-  :>    arms that change the application state.
-  +|
+  ::  #
+  ::  #  %change-application
+  ::  #
+  ::    arms that change the application state.
   ::
   ++  da-change
-    :>    apply delta
-    :>
-    :>  modifies application state according to the
-    :>  change specified in {dif}.
+    ::    apply delta
     ::
+    ::  modifies application state according to the
+    ::  change specified in {dif}.
+    ::
+    ~/  %hall-da-change
     |=  det/delta
     ^+  +>
     ?-  -.det
@@ -1651,28 +1833,30 @@
     ==
   ::
   ++  da-init
-    :>    startup side-effects
-    :>
-    :>  apply %init delta, querying the /burden of the
-    :>  ship above us.
+    ::    startup side-effects
+    ::
+    ::  apply %init delta, querying the /burden of the
+    ::  ship above us.
     ::
     (da-emit (wire-to-peer /burden))
   ::
   ++  da-observe
-    :>    watch burden bearer
-    :>
-    :>  apply %observe delta, querying the /report of
-    :>  {who} below us.
+    ::    watch burden bearer
     ::
+    ::  apply %observe delta, querying the /report of
+    ::  {who} below us.
+    ::
+    ~/  %hall-da-observe
     |=  who/ship
     (da-emit (wire-to-peer /report/(scot %p who)))
   ::
   ++  da-change-public
-    :>    show/hide membership
-    :>
-    :>  add/remove a circle to/from the public
-    :>  membership list.
+    ::    show/hide membership
     ::
+    ::  add/remove a circle to/from the public
+    ::  membership list.
+    ::
+    ~/  %hall-da-change-public
     |=  {add/? cir/circle}
     ^+  +>
     =-  +>.$(public -)
@@ -1680,10 +1864,11 @@
     (~(del in public) cir)
   ::
   ++  da-change-out
-    :>    outgoing messages
-    :>
-    :>  apply an %out delta, sending a message.
+    ::    outgoing messages
     ::
+    ::  apply an %out delta, sending a message.
+    ::
+    ~/  %hall-da-change-out
     |=  {cir/circle out/(list thought)}
     ^+  +>
     =+  ses=(turn out head)
@@ -1691,7 +1876,7 @@
       ::  for every serial, add %pending state.
       %+  roll  ses
       |=  {s/serial o/_outbox}
-      =?  o  ?=($~ o)  outbox
+      =?  o  ?=(~ o)  outbox
       =+  t=(fall (~(get by o) s) *tracking)
       %+  ~(put by o)  s
       (~(put by t) cir %pending)
@@ -1703,11 +1888,12 @@
     ==
   ::
   ++  da-change-done
-    :>    delivered messages
-    :>
-    :>  apply a %done delta, setting new delivery state
-    :>  for messages.
+    ::    delivered messages
     ::
+    ::  apply a %done delta, setting new delivery state
+    ::  for messages.
+    ::
+    ~/  %hall-da-change-done
     |=  {cir/circle ses/(list serial) res/delivery}
     ^+  +>
     %_  +>
@@ -1722,11 +1908,12 @@
     ==
   ::
   ++  da-change-glyph
-    :>    un/bound glyph
-    :>
-    :>  apply a %glyph delta, un/binding a glyph to/from
-    :>  an audience.
+    ::    un/bound glyph
     ::
+    ::  apply a %glyph delta, un/binding a glyph to/from
+    ::  an audience.
+    ::
+    ~/  %hall-da-change-glyph
     |=  {bin/? gyf/char aud/audience}
     ^+  +>
     ?:  bin
@@ -1744,29 +1931,30 @@
     ==
   ::
   ++  da-change-nick
-    :>    changed nickname
-    :>
-    :>  apply a %nick delta, setting a nickname for a
-    :>  ship.
+    ::    changed nickname
     ::
+    ::  apply a %nick delta, setting a nickname for a
+    ::  ship.
+    ::
+    ~/  %hall-da-change-nick
     |=  {who/ship nic/nick}
     ^+  +>
-    +>(nicks (change-nicks nicks who nic))
+    +>(nicks (change-nicks:hall-lib nicks who nic))
   ::
-  :>  #
-  :>  #  %stories
-  :>  #
-  :>    arms for modifying stories.
-  +|
+  ::  #
+  ::  #  %stories
+  ::  #
+  ::    arms for modifying stories.
   ::
   ++  da-change-story
-    :>    apply circle delta
-    :>
-    :>  apply a %story delta, redirecting the delta
-    :>  itself to ++sa-change.
-    :>  in case of a new or deleted story, specialized
-    :>  arms are called.
+    ::    apply circle delta
     ::
+    ::  apply a %story delta, redirecting the delta
+    ::  itself to ++sa-change.
+    ::  in case of a new or deleted story, specialized
+    ::  arms are called.
+    ::
+    ~/  %hall-da-change-story
     |=  {nom/name det/delta-story}
     ^+  +>
     ?+  -.det
@@ -1781,10 +1969,11 @@
     ==
   ::
   ++  da-create
-    :>    configure story
-    :>
-    :>  creates story {nom} with config {con}.
+    ::    configure story
     ::
+    ::  creates story {nom} with config {con}.
+    ::
+    ~/  %hall-da-create
     |=  {nom/name cof/config}
     ^+  +>
     =<  sa-done
@@ -1792,10 +1981,11 @@
     [%config [our.bol nom] %full cof]
   ::
   ++  da-delete
-    :>    delete story
-    :>
-    :>  calls the story core to delete story {nom}.
+    ::    delete story
     ::
+    ::  calls the story core to delete story {nom}.
+    ::
+    ~/  %hall-da-delete
     |=  nom/name
     ^+  +>
     =.  +>
@@ -1804,86 +1994,87 @@
     +>(stories (~(del by stories) nom))
   ::
   ++  sa
-    :>    story delta core
-    :>
-    :>  story core, used for doing work on a story.
+    ::    story delta core
     ::
-    |_  :>  nom: story name in {stories}.
+    ::  story core, used for doing work on a story.
+    ::
+    ~/  %hall-sa
+    |_  ::  nom: story name in {stories}.
         ::  story is faceless to ease data access.
         ::
         $:  nom/name
             story
         ==
-    :>  #  %resolve
-    +|
+    ::  #  %resolve
     ::
     ++  sa-done
-      :>    apply changes
-      :>
-      :>  put changed story back into the map.
+      ::    apply changes
+      ::
+      ::  put changed story back into the map.
       ::
       +>(stories (~(put by stories) nom +<+))
     ::
-    :>  #
-    :>  #  %emitters
-    :>  #
-    :>    arms that create outward changes.
-    +|
+    ::  #
+    ::  #  %emitters
+    ::  #
+    ::    arms that create outward changes.
     ::
     ++  sa-emil
-      :>    emit move list
-      :>
-      :>  adds multiple moves to the head of {moves}.
-      :>  flops to stay consistent with ++ta-emit.
+      ::    emit move list
       ::
+      ::  adds multiple moves to the head of {moves}.
+      ::  flops to stay consistent with ++ta-emit.
+      ::
+      ~/  %hall-sa-emil
       |=  mol/(list move)
       %_(+> moves (welp (flop mol) moves))
     ::
     ++  sa-emit
-      :>    emit a move
-      :>
-      :>  adds a move to the head of {moves}.
+      ::    emit a move
       ::
+      ::  adds a move to the head of {moves}.
+      ::
+      ~/  %hall-sa-emit
       |=  mov/move
       %_(+> moves [mov moves])
     ::
     ++  sa-sauce
-      :>  cards to moves.
+      ::  cards to moves.
       ::
+      ~/  %hall-sa-sauce
       |=  {ost/bone cub/(list card)}
       ^-  (list move)
       (flop (turn cub |=(a/card [ost a])))
     ::
-    :>  #
-    :>  #  %data
-    :>  #
-    :>    utility functions for data retrieval.
-    +|
+    ::  #
+    ::  #  %data
+    ::  #
+    ::    utility functions for data retrieval.
     ::
     ++  sa-cir  [our.bol nom]
     ::
-    :>  #
-    :>  #  %delta-application
-    :>  #
-    :>    arms for applying deltas.
-    +|
+    ::  #
+    ::  #  %delta-application
+    ::  #
+    ::    arms for applying deltas.
     ::
     ++  sa-delete
-      :>    deletion of story
-      :>
-      :>  apply a %remove story delta, unsubscribing
-      :>  this story from all its active sources.
+      ::    deletion of story
+      ::
+      ::  apply a %remove story delta, unsubscribing
+      ::  this story from all its active sources.
       ::
       %+  weld
         (sa-abjure src.shape)
       (sa-eject ~(key by peers))
     ::
     ++  sa-change
-      :>    apply circle delta
-      :>
-      :>  figure out whether to apply a %story delta to
-      :>  local or remote data.
+      ::    apply circle delta
       ::
+      ::  figure out whether to apply a %story delta to
+      ::  local or remote data.
+      ::
+      ~/  %hall-sa-change
       |=  det/delta-story
       ^+  +>
       %.  det
@@ -1894,10 +2085,11 @@
       sa-change-local
     ::
     ++  sa-change-local
-      :>    apply our delta
-      :>
-      :>  apply a %story delta to local data.
+      ::    apply our delta
       ::
+      ::  apply a %story delta to local data.
+      ::
+      ~/  %hall-sa-change-local
       |=  det/delta-story
       ^+  +>
       ?+  -.det
@@ -1933,7 +2125,7 @@
         =.  +>
           %-  sa-emil
           (sa-config-effects shape dif.det)
-        +>(shape (change-config shape dif.det))
+        +>(shape (change-config:hall-lib shape dif.det))
       ::
           $status
         %_  +>
@@ -1941,18 +2133,19 @@
           ?:  ?=($remove -.dif.det)
             (~(del by locals) who.det)
           %+  ~(put by locals)  who.det
-          %+  change-status
+          %+  change-status:hall-lib
             (fall (~(get by locals) who.det) *status)
           dif.det
         ==
       ==
     ::
     ++  sa-add-gram-source
-      :>    remember message source
-      :>
-      :>  if it's not already known, make note of the
-      :>  fact that message {num} was heard from {src}.
+      ::    remember message source
       ::
+      ::  if it's not already known, make note of the
+      ::  fact that message {num} was heard from {src}.
+      ::
+      ~/  %hall-sa-add-gram-source
       |=  {src/circle num/@ud}
       ^+  +>
       =-  +>.$(sourced -)
@@ -1961,11 +2154,12 @@
       (~(put by sourced) src [num sed])
     ::
     ++  sa-change-gram
-      :>    save/update message
-      :>
-      :>  apply a %gram delta, either appending or
-      :>  updating a message.
+      ::    save/update message
       ::
+      ::  apply a %gram delta, either appending or
+      ::  updating a message.
+      ::
+      ~/  %hall-sa-change-gram
       |=  {src/circle gam/telegram}
       ^+  +>
       ::TODO  move "known" logic up into ++so? that way,
@@ -1988,10 +2182,11 @@
       ==
     ::
     ++  sa-change-remote
-      :>    apply remote's delta
-      :>
-      :>  apply a story diff to remote data.
+      ::    apply remote's delta
       ::
+      ::  apply a story diff to remote data.
+      ::
+      ~/  %hall-sa-change-remote
       |=  det/delta-story
       ^+  +>
       ?+  -.det
@@ -2001,7 +2196,7 @@
         ?:  ?=($remove -.dif.det)
           +>(mirrors (~(del by mirrors) cir.det))
         =/  new/config
-          %+  change-config
+          %+  change-config:hall-lib
           (fall (~(get by mirrors) cir.det) *config)
           dif.det
         +>.$(mirrors (~(put by mirrors) cir.det new))
@@ -2013,13 +2208,14 @@
           =+  ole=(fall (~(get by remotes) cir.det) *group)
           ?:  ?=($remove -.dif.det)  (~(del by ole) who.det)
           =+  old=(fall (~(get by ole) who.det) *status)
-          (~(put by ole) who.det (change-status old dif.det))
+          (~(put by ole) who.det (change-status:hall-lib old dif.det))
         ==
       ==
     ::
     ++  sa-config-effects
-      :>  apply side-effects for a %config delta.
+      ::  apply side-effects for a %config delta.
       ::
+      ~/  %hall-sa-change-effects
       |=  {old/config dif/diff-config}
       ^-  (list move)
       ?+  -.dif  ~
@@ -2029,23 +2225,25 @@
       ==
     ::
     ++  sa-follow-effects
-      :>    un/subscribe
-      :>
-      :>  apply side-effects for a %follow delta,
-      :>  un/subscribing this story to/from {cos}.
+      ::    un/subscribe
       ::
+      ::  apply side-effects for a %follow delta,
+      ::  un/subscribing this story to/from {cos}.
+      ::
+      ~/  %hall-sa-follow-effects
       |=  {sub/? srs/(set source)}
       ^-  (list move)
       %.  srs
       ?:(sub sa-acquire sa-abjure)
     ::
     ++  sa-permit-effects
-      :>    notify permitted
-      :>
-      :>  apply side-effects for a %permit delta,
-      :>  kicking the subscriptions of {sis} if they
-      :>  are being banished.
+      ::    notify permitted
       ::
+      ::  apply side-effects for a %permit delta,
+      ::  kicking the subscriptions of {sis} if they
+      ::  are being banished.
+      ::
+      ~/  %hall-sa-permit-effects
       |=  {sec/security old/(set ship) add/? sis/(set ship)}
       ^-  (list move)
       =/  wyt  ?=(?($village $journal) sec)
@@ -2056,15 +2254,15 @@
         ?:(add ~(dif in sis) ~(int in sis))
       (sa-eject sus)
     ::
-    :>  #
-    :>  #  %subscriptions
-    :>  #
-    :>    arms for starting and ending subscriptions
-    +|
+    ::  #
+    ::  #  %subscriptions
+    ::  #
+    ::    arms for starting and ending subscriptions
     ::
     ++  sa-acquire
-      :>  subscribes this story to each circle.
+      ::  subscribes this story to each circle.
       ::
+      ~/  %hall-sa-aquire
       |=  srs/(set source)
       =-  (murn - same)
       %+  turn  ~(tap in srs)
@@ -2075,8 +2273,9 @@
       `(wire-to-peer (circle-wire nom wat cir ran))
     ::
     ++  sa-abjure
-      :>  unsubscribes this story from each circle.
+      ::  unsubscribes this story from each circle.
       ::
+      ~/  %hall-sa-abjure
       |=  srs/(set source)
       ^-  (list move)
       %+  turn  ~(tap in srs)
@@ -2089,8 +2288,9 @@
       [ost.bol %pull wir [hos.cir dap.bol] ~]
     ::
     ++  sa-eject
-      :>  removes ships {sis} from {followers}.
+      ::  removes ships {sis} from {followers}.
       ::
+      ~/  %hall-sa-eject
       |=  sis/(set ship)
       ^-  (list move)
       %-  zing
@@ -2105,11 +2305,12 @@
       (gentle-quit b s (path-to-query p))
     ::
     ++  sa-unearth
-      :>    ships' bones
-      :>
-      :>  find the bones in {sup.bol} that belong to
-      :>  a ship in {sis}.
+      ::    ships' bones
       ::
+      ::  find the bones in {sup.bol} that belong to
+      ::  a ship in {sis}.
+      ::
+      ~/  %hall-sa-unearth
       |=  sis/(set ship)
       ^-  (set bone)
       %-  ~(rep in sup.bol)
@@ -2124,41 +2325,43 @@
 --
 ::
 ::
-:>  #
-:>  #  %wire-utility
-:>  #
-+|
+::  #
+::  #  %wire-utility
+::  #
 ::
 ++  circle-wire
-  :>    /circle peer wire
-  :>
-  :>  constructs a /circle %peer path for subscribing
-  :>  {nom} to a source.
+  ::    /circle peer wire
   ::
+  ::  constructs a /circle %peer path for subscribing
+  ::  {nom} to a source.
+  ::
+  ~/  %hall-circle-wire
   |=  {nom/name wat/(list circle-data) source}
   ^-  wire
   ;:  weld
     /circle/[nom]/(scot %p hos.cir)/[nom.cir]
     (sort wat gth)  ::  consistence
-    (range-to-path ran)
+    (range-to-path:hall-lib ran)
   ==
 ::
 ++  wire-to-peer
-  :>    peer move from wire
-  :>
-  :>  builds the peer move associated with the wire.
+  ::    peer move from wire
   ::
+  ::  builds the peer move associated with the wire.
+  ::
+  ~/  %hall-wire-to-peer
   |=  wir/wire
   ^-  move
   =+  tar=(wire-to-target wir)
   [ost.bol %peer wir [p.tar dap.bol] q.tar]
 ::
 ++  wire-to-target
-  :>    ship+path from wire
-  :>
-  :>  parses {wir} to obtain the target ship and the
-  :>  query path.
+  ::    ship+path from wire
   ::
+  ::  parses {wir} to obtain the target ship and the
+  ::  query path.
+  ::
+  ~/  %hall-wire-to-target
   |=  wir/wire
   ^-  (pair ship path)
   ?+  wir  ~&(wir !!)
@@ -2167,7 +2370,7 @@
     (welp /circle t.t.t.wir)
   ::
       {$burden *}
-    :-  (above our.bol)
+    :-  (above:hall-lib [our now our]:bol)
     /burden/(scot %p our.bol)
   ::
       {$report @ *}
@@ -2176,12 +2379,13 @@
   ==
 ::
 ++  etch
-  :>    parse wire
-  :>
-  :>  parses {wir} to obtain either %circle with story
-  :>  and circle or %repeat with message number, source
-  :>  ship, story and serials.
+  ::    parse wire
   ::
+  ::  parses {wir} to obtain either %circle with story
+  ::  and circle or %repeat with message number, source
+  ::  ship, story and serials.
+  ::
+  ~/  %hall-etch
   |=  wir/wire
   ^-  weir
   ?+    wir  !!
@@ -2190,20 +2394,21 @@
     :^    %circle
         i.t.wir
       [(slav %p i.t.t.wir) i.t.t.t.wir]
-    (path-to-range t.t.t.t.wir)
+    (path-to-range:hall-lib t.t.t.t.wir)
   ::
-      {$repeat @ @ @ $~}
+      {$repeat @ @ @ ~}
     :+  %repeat
       [(slav %p i.t.wir) i.t.t.wir]
     ((list serial) (cue (slav %ud i.t.t.t.wir)))
   ==
 ::
 ++  etch-circle
-  :>    parse /circle wire
-  :>
-  :>  parses a /circle wire, call a gate with the
-  :>  result.
+  ::    parse /circle wire
   ::
+  ::  parses a /circle wire, call a gate with the
+  ::  result.
+  ::
+  ~/  %hall-etch-circle
   |=  $:  wir/wire
           $=  fun
           $-  {nom/name src/source}
@@ -2213,8 +2418,9 @@
   ?>(?=($circle -.wer) (fun nom.wer src.wer))
 ::
 ++  etch-repeat
-  :>  parses a /repeat wire, call gate with the result.
+  ::  parses a /repeat wire, call gate with the result.
   ::
+  ~/  %hall-etch-repeat
   |=  $:  wir/wire
           $=  fun
           $-  {cir/circle ses/(list serial)}
@@ -2224,20 +2430,21 @@
   ?>(?=($repeat -.wer) (fun cir.wer ses.wer))
 ::
 ++  gentle-quit
-  :>    quit other, pull us
-  :>
-  :>  we want to gently pull our own subscriptions,
-  :>  rather than quitting them, so that we may
-  :>  differentiate between a gall/ames quit and a
-  :>  foreign quit. but since wex.bol isn't filled,
-  :>  we'll have to just guess at what the correct wire
-  :>  wire is. this is truly terrible, but will have to
-  :>  do for now.
+  ::    quit other, pull us
+  ::
+  ::  we want to gently pull our own subscriptions,
+  ::  rather than quitting them, so that we may
+  ::  differentiate between a gall/ames quit and a
+  ::  foreign quit. but since wex.bol isn't filled,
+  ::  we'll have to just guess at what the correct wire
+  ::  wire is. this is truly terrible, but will have to
+  ::  do for now.
   ::TODO  get rid of this once gall improves.
   ::      it needs to tell us the difference between
   ::      an app-caused quit and a queue-caused one.
   ::      (aka connected/disconnected/rejected state)
   ::
+  ~/  %hall-gentle-quit
   |=  {bon/bone who/ship qer/query}
   ^-  (list move)
   ?.  ?=($circle -.qer)  ~
@@ -2257,23 +2464,24 @@
       [[our.bol dap.bol] ~]
   ==
 ::
-:>  #
-:>  #  %new-events
-:>  #
-+|
+::  #
+::  #  %new-events
+::  #
 ++  bake
-  :>    apply state delta
-  :>
-  :>  applies a change to the application state,
-  :>  producing side-effects.
+  ::    apply state delta
   ::
+  ::  applies a change to the application state,
+  ::  producing side-effects.
+  ::
+  ~/  %hall-bake
   |=  det/delta
   ^-  (quip move _+>)
   da-done:(da-change:da det)
 ::
 ++  pre-bake
-  :>  apply more deltas
+  ::  apply more deltas
   ::
+  ~/  %hall-pre-bake
   |=  des/(list delta)
   ^-  (quip move _+>)
   =|  moz/(list move)
@@ -2288,6 +2496,7 @@
   ::[:(welp m mos (affection d)) +>.^$]
 ::
 ++  peek
+  ~/  %hall-peek
   |=  pax/path
   ?>  ?=({$x *} pax)  ::  others unsupported.
   ^-  (unit (unit (pair mark prize)))
@@ -2297,10 +2506,11 @@
   ``[%hall-prize u.u.piz]
 ::
 ++  look
-  :>    query on state
-  :>
-  :>  find the result (if any) for a given query.
+  ::    query on state
   ::
+  ::  find the result (if any) for a given query.
+  ::
+  ~/  %hall-look
   |=  qer/query
   ^-  (unit (unit prize))
   ?-  -.qer
@@ -2354,13 +2564,13 @@
           =-  (~(so-first-grams so:ta nom.qer ~ -) ran.qer)
           ::TODO  this can be done more efficiently.
           ?~  wer.qer  u.soy
-          %_  u.soy
-              grams
-            ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
-            %+  turn  (~(got by sourced.u.soy) u.wer.qer)
-            |=  n/@ud
-            (snag n grams.u.soy)
-          ==
+          =-  u.soy(grams -, count (lent -))
+          ?.  (~(has by sourced.u.soy) u.wer.qer)  ~
+          %+  turn
+            %-  flop
+            (~(got by sourced.u.soy) u.wer.qer)
+          |=  n/@ud
+          (snag n grams.u.soy)
         (cury gram-to-envelope nom.qer)
       :-  shape.u.soy
       ?.  (~(has in wat.qer) %config-r)  ~
@@ -2371,11 +2581,12 @@
   ==
 ::
 ++  dedicate
-  :>    rumor-story to theirs
-  :>
-  :>  modify a %story diff to make it about their ship
-  :>  instead of ours.
+  ::    rumor-story to theirs
   ::
+  ::  modify a %story diff to make it about their ship
+  ::  instead of ours.
+  ::
+  ~/  %hall-dedicate
   |=  {who/ship nom/name det/delta-story}
   ^-  rumor-story
   ?+  -.det  det
@@ -2412,12 +2623,13 @@
   ==
 ::
 ++  gram-to-envelope
-  :>    wrap gram with nr
-  :>
-  :>  deduce the initial msg number from a telegram
-  :>  for a given story. assumes both story and
-  :>  telegram are known.
+  ::    wrap gram with nr
   ::
+  ::  deduce the initial msg number from a telegram
+  ::  for a given story. assumes both story and
+  ::  telegram are known.
+  ::
+  ~/  %hall-gram-to-envelope
   |=  {nom/name gam/telegram}
   ^-  envelope
   :_  gam
@@ -2426,6 +2638,7 @@
 ::
 ++  circle-feel-story
   ::
+  ~/  %hall-circle-feel-story
   |=  $:  wer/(unit circle)
           wat/(set circle-data)
           nom/name
@@ -2454,11 +2667,12 @@
   ==
 ::
 ++  feel
-  :>    delta to rumor
-  :>
-  :>  if the given delta changes the result of the given
-  :>  query, produce the relevant rumor.
+  ::    delta to rumor
   ::
+  ::  if the given delta changes the result of the given
+  ::  query, produce the relevant rumor.
+  ::
+  ~/  %hall-feel
   |=  {qer/query det/delta}
   ^-  (unit rumor)
   ?-  -.qer
@@ -2516,7 +2730,7 @@
   ::
       $report
     ::  only send changes we didn't get from above.
-    ?:  =(src.bol (above our.bol))  ~
+    ?:  =(src.bol (above:hall-lib [our now our]:bol))  ~
     ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
     ?.  ?=(?($gram $status) -.det.det)  ~
@@ -2525,7 +2739,7 @@
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape.soy)  ~
-    `[%burden nom.det (dedicate (above our.bol) nom.det det.det)]
+    `[%burden nom.det (dedicate (above:hall-lib [our now our]:bol) nom.det det.det)]
   ::
       $peers
     ?.  ?=($story -.det)      ~
@@ -2545,8 +2759,7 @@
             ~(so-in-range so:ta nom.qer ~ soy)
         ==
       ~
-    =+  out=?($gram $new $config $status $remove)
-    ?.  ?=(out -.det.det)   ~
+    ?.  ?=(?($gram $new $config $status $remove) -.det.det)   ~
     :+  ~  %circle
     ?+  det.det  det.det
         {$gram *}
@@ -2556,11 +2769,12 @@
   ==
 ::
 ++  affection
-  :>    rumors to interested
-  :>
-  :>  for a given delta, send rumors to all queries it
-  :>  affects.
+  ::    rumors to interested
   ::
+  ::  for a given delta, send rumors to all queries it
+  ::  affects.
+  ::
+  ~/  %hall-affection
   |=  det/delta
   ^-  (list move)
   ::  cache results for paths.
@@ -2588,11 +2802,12 @@
   (~(got by stories) nom.qer)
 ::
 ++  path-to-query
-  :>    path, coins, query
-  :>
-  :>  parse a path into a (list coin), then parse that
-  :>  into a query structure.
+  ::    path, coins, query
   ::
+  ::  parse a path into a (list coin), then parse that
+  ::  into a query structure.
+  ::
+  ~/  %hall-path-to-query
   |=  pax/path
   ?.  ?=({$circle @tas *} pax)
     (coins-to-query (path-to-coins pax))
@@ -2610,7 +2825,7 @@
   ?~  pax  qer
   ::TODO  can probably do this a bit better...
   ?+  i.pax
-    qer(ran (path-to-range pax))
+    qer(ran (path-to-range:hall-lib pax))
   ::
     circle-data   %_  $  pax  t.pax
                     wat.qer   (~(put in wat.qer) i.pax)
@@ -2618,20 +2833,23 @@
     $group        %_  $  pax  t.pax
                     wat.qer   %-  ~(uni in wat.qer)
                               ^+  wat.qer
-                              (sy %group-l %group-r ~)
+                              =/  dat=(list circle-data)  [%group-l %group-r ~]
+                              (sy dat)
                   ==
     $config       %_  $  pax  t.pax
                     wat.qer   %-  ~(uni in wat.qer)
                               ^+  wat.qer
-                              (sy %config-l %config-r ~)
+                              =/  dat=(list circle-data)  [%config-l %config-r ~]
+                              (sy dat)
                   ==
   ==
 ::
 ++  path-to-coins
-  :>    path to coin list
-  :>
-  :>  parse a path into a list of coins.
+  ::    path to coin list
   ::
+  ::  parse a path into a list of coins.
+  ::
+  ~/  %hall-path-to-coins
   |=  pax/path
   ^-  (list coin)
   %+  turn  `path`pax
@@ -2639,12 +2857,12 @@
   (need (slay a))
 ::
 ++  coins-to-query
-  :>    coin list to query
-  :>
-  :>  parse a list of coins into a query structure.
+  ::    coin list to query
+  ::
+  ::  parse a list of coins into a query structure.
   ::
   ^-  $-((list coin) query)
-  =>  depa
+  =>  depa:hall-lib
   |^  %-  af  :~
           [%client ul]
           [%circles (at /[%p])]
@@ -2658,11 +2876,12 @@
   --
 ::
 ++  leak
-  :>    visible to
-  :>
-  :>  determine if the given query is visible to the
-  :>  ship.
+  ::    visible to
   ::
+  ::  determine if the given query is visible to the
+  ::  ship.
+  ::
+  ~/  %hall-leak
   |=  {who/ship qer/query}
   ^-  ?
   ?-  -.qer
@@ -2670,10 +2889,10 @@
     $circles  =(who who.qer)
     $public   &
     $burden   ?&  =(who who.qer)
-                  =(our.bol (above who))
+                  =(our.bol (above:hall-lib our.bol now.bol who))
               ==
     $peers    =(who our.bol)  ::TODO  or so-visible?
-    $report   =(who (above our.bol))
+    $report   =(who (above:hall-lib [our now our]:bol))
   ::
       $circle
     ?.  (~(has by stories) nom.qer)  |
@@ -2681,16 +2900,16 @@
     ~(so-visible so:ta nom.qer ~ (~(got by stories) nom.qer))
   ==
 ::
-:>  #
-:>  #  %poke-events
-:>  #
-+|
+::  #
+::  #  %poke-events
+::  #
 ::
 ++  poke-hall-command
-  :>    accept command
-  :>
-  :>  incoming hall command. process it and update logs.
+  ::    accept command
   ::
+  ::  incoming hall command. process it and update logs.
+  ::
+  ~/  %hall-poke-hall-command
   |=  cod/command
   ^-  (quip move _+>)
   =^  mos  +>.$
@@ -2701,10 +2920,11 @@
   [(welp mos mow) +>.$]
 ::
 ++  poke-hall-action
-  :>    accept action
-  :>
-  :>  incoming hall action. process it.
+  ::    accept action
   ::
+  ::  incoming hall action. process it.
+  ::
+  ~/  %hall-poke-hall-action
   |=  act/action
   ^-  (quip move _+>)
   ?.  (team:title our.bol src.bol)
@@ -2719,16 +2939,16 @@
     log-all-to-file
   [(welp mos mow) +>.$]
 ::
-:>  #
-:>  #  %subscription-events
-:>  #
-+|
+::  #
+::  #  %subscription-events
+::  #
 ::
 ++  diff-hall-prize
-  :>    accept prize
-  :>
-  :>  accept a query result.
+  ::    accept prize
   ::
+  ::  accept a query result.
+  ::
+  ~/  %hall-diff-hall-prize
   |=  {wir/wire piz/prize}
   ^-  (quip move _+>)
   =^  mos  +>.$
@@ -2743,10 +2963,11 @@
   [(welp mos mow) +>.$]
 ::
 ++  diff-hall-rumor
-  :>    accept rumor
-  :>
-  :>  accept a query result change.
+  ::    accept rumor
   ::
+  ::  accept a query result change.
+  ::
+  ~/  %hall-diff-hall-rumor
   |=  {wir/wire rum/rumor}
   ^-  (quip move _+>)
   ::NOTE  to keep us from echoing changes back to their
@@ -2768,13 +2989,14 @@
   [(welp mos mow) +>.$]
 ::
 ++  peer
-  :>    accept subscription
-  :>
-  :>  incoming subscription on {pax}.
+  ::    accept subscription
   ::
+  ::  incoming subscription on {pax}.
+  ::
+  ~/  %hall-peer
   |=  pax/path
   ^-  (quip move _+>)
-  ?:  ?=({$sole *} pax)  ~&(%hall-no-sole !!)
+  ?:  ?=([%sole *] pax)  ~&(%hall-no-sole !!)
   =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
   =^  mos  +>.$
@@ -2788,15 +3010,17 @@
   [ost.bol %diff %hall-prize u.u.piz]
 ::
 ++  pull
-  :>  unsubscribes.
+  ::  unsubscribes.
   ::
+  ~/  %hall-pull
   |=  pax/path
   ^-  (quip move _+>)
   [~ +>]
 ::
 ++  pull-circle
-  :>  someone ends a /circle subscription.
+  ::  someone ends a /circle subscription.
   ::
+  ~/  %hall-pull-circle
   |=  pax/path
   ^-  (quip move _+>)
   %-  pre-bake
@@ -2806,10 +3030,11 @@
   [%story nom.qer %peer | src.bol qer]~
 ::
 ++  reap
-  :>    subscription n/ack
-  :>
-  :>  update state to reflect subscription success
+  ::    subscription n/ack
   ::
+  ::  update state to reflect subscription success
+  ::
+  ~/  %hall-reap
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
   %-  pre-bake
@@ -2831,19 +3056,21 @@
   :(weld b "/" (trip a))
 ::
 ++  quit
-  :>    dropped subscription
-  :>
-  :>  gall dropped out subscription. resubscribe.
+  ::    dropped subscription
   ::
+  ::  gall dropped out subscription. resubscribe.
+  ::
+  ~/  %hall-quit
   |=  wir/wire
   ^-  (quip move _+>)
   [[(wire-to-peer wir) ~] +>]
 ::
 ++  quit-circle
-  :>    dropped circle sub
-  :>
-  :>  gall dropped our subscription. resubscribe.
+  ::    dropped circle sub
   ::
+  ::  gall dropped our subscription. resubscribe.
+  ::
+  ~/  %hall-quit-circle
   |=  wir/wire
   ^-  (quip move _+>)
   %+  etch-circle  [%circle wir]
@@ -2852,11 +3079,12 @@
   ta-done:(ta-resub:ta nom src)
 ::
 ++  coup-repeat
-  :>    message n/ack
-  :>
-  :>  ack from ++ta-transmit. mark the message as
-  :>  received or rejected.
+  ::    message n/ack
   ::
+  ::  ack from ++ta-transmit. mark the message as
+  ::  received or rejected.
+  ::
+  ~/  %hall-coup-repeat
   |=  {wir/wire fal/(unit tang)}
   ^-  (quip move _+>)
   %+  etch-repeat  [%repeat wir]
@@ -2864,18 +3092,18 @@
   %-  pre-bake
   ta-done:(ta-repeat:ta cir ses fal)
 ::
-:>  #
-:>  #  %logging
-:>  #
-+|
+::  #
+::  #  %logging
+::  #
 ::
 ++  poke-hall-save
-  :>    save as log
-  :>
-  :>  stores the telegrams of story {nom} in a log file,
-  :>  to be re-loaded by ++poke-hall-load.
+  ::    save as log
+  ::
+  ::  stores the telegrams of story {nom} in a log file,
+  ::  to be re-loaded by ++poke-hall-load.
   ::TODO  maybe update to also store sourced list.
   ::
+  ~/  %hall-poke-hall-save
   |=  nom/name
   ^-  (quip move _+>)
   =/  paf/path
@@ -2886,13 +3114,13 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
 ++  poke-load-legacy
-  :>  loads legacy messages into the story {nom}.
+  ::  loads legacy messages into the story {nom}.
   ::
+  ~/  %hall-poke-hall-legacy
   |=  nom/name
   ^-  (quip move _+>)
   =/  jams/json
@@ -2908,11 +3136,12 @@
   [%story nom %gram [our.bol nom] t]
 ::
 ++  poke-hall-load
-  :>    load from log
-  :>
-  :>  loads the telegrams of story {nom} into our state,
-  :>  as saved in ++poke-hall-save.
+  ::    load from log
   ::
+  ::  loads the telegrams of story {nom} into our state,
+  ::  as saved in ++poke-hall-save.
+  ::
+  ~/  %hall-poke-hall-load
   |=  nom/name
   ^-  (quip move _+>)
   =/  grams
@@ -2926,8 +3155,9 @@
   [%story nom %gram [our.bol nom] t]
 ::
 ++  poke-hall-log
-  :>  starts logging story {nom}'s messages.
+  ::  starts logging story {nom}'s messages.
   ::
+  ~/  %hall-poke-hall-log
   |=  nom/name
   ^-  (quip move _+>)
   :-  [(log-to-file nom) ~]
@@ -2938,18 +3168,19 @@
   ==
 ::
 ++  poke-hall-unlog
-  :>  stops logging story {nom}'s messages.
+  ::  stops logging story {nom}'s messages.
   ::
+  ~/  %hall-poke-hall-unlog
   |=  nom/name
   ^-  (quip move _+>)
   :-  ~
   +>.$(log (~(del by log) nom))
 ::
 ++  log-all-to-file
-  :>    update stories logs
-  :>
-  :>  for every story we're logging, (over)writes all
-  :>  their grams to log files if new ones have arrived.
+  ::    update stories logs
+  ::
+  ::  for every story we're logging, (over)writes all
+  ::  their grams to log files if new ones have arrived.
   ::
   ^-  (quip move _.)
   :_  %_  .
@@ -2966,8 +3197,9 @@
   `(log-to-file nom)
 ::
 ++  log-to-file
-  :>  logs all grams of story {nom} to a file.
+  ::  logs all grams of story {nom} to a file.
   ::
+  ~/  %hall-log-all-to-file
   |=  nom/name
   ^-  move
   =+  ^-  paf/path
@@ -2978,15 +3210,23 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
 ::TODO  for debug purposes. remove eventually.
 ::  users beware, here be dragons.
 ++  poke-noun
-  |=  a/@t
+  ~/  %hall-poke-noun
+  |=  a/*
   ^-  (quip move _+>)
+  ?:  ?=([%kill ship] a)
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone c=(pair ship path)] out=(list move)]
+    ?:  =(+.a p.c)
+      [[b %quit ~] out]
+    out
+  ?>  ?=(@t a)
   ?:  =(a 'check')
     ~&  'verifying message reference integrity...'
     =-  ~&(- [~ +>.$])
@@ -3016,6 +3256,14 @@
         ?:  ?=({$circle *} p)  ~
         `[s p]
     [~ +>]
+  ?:  =(a 'check all subs')
+    ~&  'here are all incoming subs'
+    ~&  ^-  (list (pair ship path))
+        %+  turn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (pair ship path)
+        [s p]
+    [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
@@ -3034,7 +3282,7 @@
   ?:  =(a 'refederate')
     ~&  'refederating. may take a while...'
     :_  +>
-    =+  bov=(above our.bol)
+    =+  bov=(above:hall-lib [our now our]:bol)
     ?:  =(bov our.bol)  ~
     :~  [ost.bol %pull /burden [bov dap.bol] ~]
         (wire-to-peer /burden)
@@ -3056,5 +3304,31 @@
     :_  +>
     :_  ~
     (wire-to-peer /report/(crip (slag 10 (trip a))))
+  ::
+  ::
+  ?:  =(a 'kill-all-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone (pair ship path)] out=(list move)]
+    [[b %quit ~] out]
+  ::
+  ?:  =(a 'kill-our-subs')
+    :_  +>
+    %-  ~(rep by sup.bol)
+    |=  [[b=bone c=(pair ship path)] out=(list move)]
+    ?:  =(our.bol p.c)
+      [[b %quit ~] out]
+    out
+  ::
+  ?:  =(a 'print')
+    ~&  shape:(~(got by stories) %inbox)
+    [~ +>]
+  ::
+  ?:  =(a 'print all')
+    ~&  %+  turn  ~(tap by stories)
+        |=  [n=name s=story]
+        [n shape:s]
+    [~ +>]
+  ::
   [~ +>]
 --

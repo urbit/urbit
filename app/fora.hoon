@@ -12,7 +12,6 @@
 ++  move  (pair bone card)
 ++  card
   $%  {$poke wire dock poke}
-      {$exec wire @p $~ {beak silk:ford}}
       {$info wire @p toro:clay}
   ==
 ++  poke
@@ -22,10 +21,10 @@
   ==
 --
 ::
-|_  {bol/bowl:gall $~}
+|_  {bol/bowl:gall ~}
 ::
 ++  prep
-  |=  old/(unit $~)
+  |=  old/(unit ~)
   ^-  (quip move _..prep)
   ?^  old  [~ ..prep(+<+ u.old)]
   :_  ..prep

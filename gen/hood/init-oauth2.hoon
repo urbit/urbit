@@ -4,33 +4,32 @@
   ::
 /?  314
 /-  sole
-/+  old-zuse
-=,  old-zuse
+/+  generators
 ::
 ::::
   ::
-=,  sole
+=,  generators
 :-  %ask
 |=  $:  {now/@da eny/@uvJ bec/beak}
-        {arg/$@($~ {dom/path $~})}
-        $~
+        {arg/$@(~ {dom/path ~})}
+        ~
     ==
-^-  (sole-result {$write-sec-atom p/host:eyre q/@})
+^-  (sole-result:sole {$write-sec-atom p/host:eyre q/@})
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
-%+  sole-lo
+%+  prompt
   [%& %oauth-hostname "api hostname: https://"]
-%+  sole-go  thos:de-purl:html
+%+  parse  thos:de-purl:html
 |=  hot/host:eyre
-?:  ?=($| -.hot)
+?:  ?=(%| -.hot)
   ~|(%ips-unsupported !!)
-%+  sole-lo
+%+  prompt
   [%& %oauth-client "client id: "]
-%+  sole-go  (boss 256 (star prn))
+%+  parse  (boss 256 (star prn))
 |=  cid/@t
-%+  sole-lo  
+%+  prompt
   [%& %oauth-secret "client secret: "]
-%+  sole-go  (boss 256 (star prn))
+%+  parse  (boss 256 (star prn))
 |=  cis/@t
-%+  sole-so  %write-sec-atom    :: XX typed pair
+%+  produce  %write-sec-atom    :: XX typed pair
 [hot (of-wain:format cid cis ~)]

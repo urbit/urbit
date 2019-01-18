@@ -1,12 +1,13 @@
 ::
 ::::  /hoon/sole/sur
   ::
+^?
 |%
 ++  sole-action                                         ::  sole to app
   $%  ::  {$abo ~}                                      ::  reset interaction
       {$det sole-change}                                ::  command line edit
-      {$ret $~}                                         ::  submit and clear
-      {$clr $~}                                         ::  exit context
+      {$ret ~}                                         ::  submit and clear
+      {$clr ~}                                         ::  exit context
   ==                                                    :: 
 ++  sole-buffer  (list @c)                              ::  command state
 ++  sole-change                                         ::  network change
@@ -19,18 +20,18 @@
   $%  {$del p/@ud}                                      ::  delete one at
       {$ins p/@ud q/@c}                                 ::  insert at
       {$mor p/(list sole-edit)}                         ::  combination
-      {$nop $~}                                         ::  no-op
+      {$nop ~}                                         ::  no-op
       {$set p/sole-buffer}                              ::  discontinuity
   ==                                                    ::
 ++  sole-effect                                         ::  app to sole
-  $%  {$bel $~}                                         ::  beep
+  $%  {$bel ~}                                         ::  beep
       {$blk p/@ud q/@c}                                 ::  blink+match char at
-      {$clr $~}                                         ::  clear screen
+      {$clr ~}                                         ::  clear screen
       {$det sole-change}                                ::  edit command
       {$err p/@ud}                                      ::  error point
-      {$klr p/styx:dill}                               ::  styled text line
+      {$klr p/styx}                                     ::  styled text line
       {$mor p/(list sole-effect)}                       ::  multiple effects
-      {$nex $~}                                         ::  save clear command
+      {$nex ~}                                         ::  save clear command
       {$pro sole-prompt}                                ::  set prompt
       {$sag p/path q/*}                                 ::  save to jamfile
       {$sav p/path q/@}                                 ::  save to file
@@ -46,7 +47,7 @@
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
       tag/term                                          ::  history mode
-      cad/styx:dill                                    ::  caption
+      cad/styx                                          ::  caption
   ==                                                    ::
 ++  sole-share                                          ::  symmetric state
   $:  ven/sole-clock                                    ::  our vector clock
@@ -70,7 +71,7 @@
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
-++  sole-request                                        ::  scraper result
+++  sole-request                                         ::  scraper result
   |*  out/$-(* *)                                       ::  output structure
   %+  pair  (list tank)                                 ::  
   %+  each  (unit out)                                  ::  ~ is abort
@@ -78,7 +79,6 @@
       (unit knot)
     hiss:eyre
   $-(httr:eyre (sole-request out))
-  
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
@@ -90,33 +90,4 @@
   {{now/@da eny/@uvJ bek/beak} {,+<- ,+<+}}             ::
 ::                                                      ::
 ::                                                      ::
-++  sole-so                                             ::  construct result
-  |*  pro/*                                             ::
-  [p=*(list tank) q=[%& p=[~ u=pro]]]                   ::
-::                                                      ::
-++  sole-yo                                             ::  add output tank
-  |*  {tan/tank res/(sole-result)}                      ::
-  ?@  res  res                                          ::
-  [p=[i=tan t=p.res] q=q.res]                           ::
-::                                                      ::
-++  sole-lo                                             ::  construct prompt
-  |*  {pom/sole-prompt mor/(sole-dialog)}               ::
-  [p=*(list tank) q=[%| p=pom q=mor]]                   ::
-::                                                      ::
-++  sole-at                                             ::  fetch url
-  =|  usr/knot                                          ::
-  |*  {pul/_purl:eyre fun/$-(httr:eyre *)}            ::
-  :-  p=*(list tank)                                    ::
-  q=[%| p=`usr q=[pul %get ~ ~] r=fun]                  ::
-::                                                      ::
-++  sole-no                                             ::  empty result
-  [p=*(list tank) q=[%& ~]]                             ::
-::                                                      ::
-++  sole-go                                             ::  parse by rule
-  |*  {sef/rule fun/$-(* *)}                            ::
-  |=  txt/sole-input                                    ::
-  =+  vex=(sef [0 0] txt)                               ::
-  ?:  |(!=((lent txt) q.p.vex) ?=($~ q.vex))            ::
-    q.p.vex                                             ::
-  (fun p.u.q.vex)                                       ::
 --

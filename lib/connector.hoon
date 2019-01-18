@@ -2,7 +2,7 @@
 ::
 ::  The basic flow is as follows:
 ::  --  define a list of `++place`s, which specify the exported
-::      interface.  
+::      interface.
 ::  --  in `++peer-scry` in the connector app, call `++read` in
 ::      this library to match to the appropriate place and
 ::      produce a move (usually either an immediate response or
@@ -10,15 +10,12 @@
 ::  --  in `++sigh-httr` in the connector app, call `++sigh` in
 ::      this library to handle the response according to the
 ::      place.
-/+  old-zuse
-=,  old-zuse
-::
 |*  {move/mold sub-result/mold}
 =>  |%
     ::  A place consists of:
     ::  --  `guard`, the type of the paths we should match.  For
     ::      example, to match `/issues/<user>/<repo>` use
-    ::      `{$issues @t @t $~}`.
+    ::      `{$issues @t @t ~}`.
     ::  --  `read-x`, called when someone tries to read the
     ::      place with care `%x`.  Should produce a single move,
     ::      usually either a `%diff` response if we can
@@ -54,7 +51,7 @@
   |%
   ::  Produce null.  Used as `++read-x` in places which are pure
   ::  directories.  `++sigh-x` should be `++sigh-strange`.
-  ::  
+  ::
   ++  read-null  |=(pax/path [ost %diff %null ~])
   ::
   ::  Produce an arch with the given list of children.  Used as
@@ -90,7 +87,7 @@
   ::
   ++  endpoint-to-purl
     |=  endpoint/path
-    (scan (weld api-url <`path`endpoint>) auri:urlp)
+    (scan (weld api-url <`path`endpoint>) auri:de-purl:html)
   ::
   ::  Return error.  Used when no http response is expected.
   ::
@@ -101,7 +98,7 @@
 ::  either `read-x` or `read-y`, in `places`.
 ::
 ++  read
-  |=  {ost/bone places/(list place) ren/care pax/path}
+  |=  {ost/bone places/(list place) ren/care:clay pax/path}
   ^-  move
   ?~  places
     ~&  [%strange-path pax]
@@ -117,7 +114,7 @@
 ++  sigh
   =,  html
   =,  eyre
-  |=  {places/(list place) ren/care pax/path res/httr}
+  |=  {places/(list place) ren/care:clay pax/path res/httr:eyre}
   ^-  sub-result
   =<  ?+(ren ~|([%invalid-care ren] !!) $x sigh-x, $y sigh-y)
   |%
@@ -140,20 +137,20 @@
       $(places t.places)
     =+  (sigh-x.i.places u.jon)
     ?~  -
-      ~&  [err+s+%response-not-valid pax+pax code+(jone p.res) msg+u.jon]
+      ~&  [err+s+%response-not-valid pax+pax code+(numb:enjs:format p.res) msg+u.jon]
       (sub-result null+~)
     u.-
   ::
   ++  sigh-y
     ?~  r.res
-      ~&  [err+s+%empty-response code+(jone p.res)]
+      ~&  [err+s+%empty-response code+(numb:enjs:format p.res)]
       arch+*arch
     =+  jon=(rush q.u.r.res apex:de-json)
     ?~  jon
-      ~&  [err+s+%bad-json code+(jone p.res) body+s+q.u.r.res]
+      ~&  [err+s+%bad-json code+(numb:enjs:format p.res) body+s+q.u.r.res]
       arch+*arch
     ?.  =(2 (div p.res 100))
-      ~&  [err+s+%request-rejected code+(jone p.res) msg+u.jon]
+      ~&  [err+s+%request-rejected code+(numb:enjs:format p.res) msg+u.jon]
       arch+*arch
     %-  sub-result
     |-  ^-  {$arch arch}
@@ -164,7 +161,7 @@
       $(places t.places)
     =+  (sigh-y.i.places u.jon)
     ?~  -
-      ~&  [err+s+%response-not-valid pax+pax code+(jone p.res) msg+u.jon]
+      ~&  [err+s+%response-not-valid pax+pax code+(numb:enjs:format p.res) msg+u.jon]
       arch+*arch
     arch+u.-
   --
