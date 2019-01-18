@@ -1,15 +1,9 @@
-/* v/http.c
+/* vere/ames.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -30,8 +24,11 @@ _ames_alloc(uv_handle_t* had_u,
             uv_buf_t* buf
             )
 {
-  void* ptr_v = c3_malloc(len_i);
-  *buf = uv_buf_init(ptr_v, len_i);
+  //  we allocate 2K, which gives us plenty of space
+  //  for a single ames packet (max size 1060 bytes)
+  //
+  void* ptr_v = c3_malloc(2048);
+  *buf = uv_buf_init(ptr_v, 2048);
 }
 
 /* _ames_free(): contrasting free.
@@ -197,6 +194,8 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     return;
   }
 
+  c3_assert( 0 != bos_c );
+
   time_t now = time(0);
 
   // backoff
@@ -269,6 +268,8 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
   return c3n;
 }
 
+/* u3_ames_ef_bake(): notify %ames that we're live.
+*/
 void
 u3_ames_ef_bake(void)
 {
@@ -303,7 +304,7 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
     if ( (0 == (pac_u->pip_w >> 16)) && (1 == (pac_u->pip_w >> 8)) ) {
       pac_u->imp_y = (pac_u->pip_w & 0xff);
 
-      _ames_czar(pac_u, u3_Host.ops_u.dns_c);
+      _ames_czar(pac_u, u3_Host.sam_u.dns_c);
     }
     else if ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pac_u->pip_w) ) {
       _ames_send(pac_u);
@@ -318,23 +319,6 @@ u3_ames_ef_send(u3_noun lan, u3_noun pac)
   }
 
   u3z(lan); u3z(pac);
-}
-
-/* _ames_time_cb(): timer callback.
-*/
-static void
-_ames_time_cb(uv_timer_t* tim_uo)
-{
-  u3_ames* sam_u = &u3_Host.sam_u;
-  u3_lo_open();
-
-  sam_u->law_w = time(0);
-  {
-    u3v_plan
-      (u3nt(u3_blip, c3__ames, u3_nul),
-       u3nc(c3__wake, u3_nul));
-  }
-  u3_lo_shut(c3n);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -376,35 +360,31 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
 }
 
-/* u3_ames_io_init(): initialize ames I/O.
+/* _ames_io_start(): initialize ames I/O.
 */
-void
-u3_ames_io_init()
+static void
+_ames_io_start()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
-  c3_s por_s;
+  c3_s por_s     = u3_Host.ops_u.por_s;
+  u3_noun rac    = u3do("clan:title", u3k(u3A->own));
 
-  por_s = u3_Host.ops_u.por_s;
-  if ( 0 != u3_Host.ops_u.imp_c ) {
-    u3_noun imp   = u3i_string(u3_Host.ops_u.imp_c);
-    u3_noun num   = u3dc("slaw", 'p', imp);
-    c3_y    num_y;
+  if ( c3__czar == rac ) {
+    u3_noun imp = u3dc("scot", 'p', u3k(u3A->own));
+    c3_c* imp_c = u3r_string(imp);
+    c3_y  num_y = u3r_byte(0, u3A->own);
 
-    if ( c3n == u3du(num) ) {
-      uL(fprintf(uH, "malformed emperor: %s\n", u3_Host.ops_u.imp_c));
-      exit(1);
-    }
-    num_y = u3r_byte(0, u3t(num));
     por_s = _ames_czar_port(num_y);
 
     if ( c3y == u3_Host.ops_u.net ) {
-      uL(fprintf(uH, "ames: czar: %s on %d\n", u3_Host.ops_u.imp_c, por_s));
+      uL(fprintf(uH, "ames: czar: %s on %d\n", imp_c, por_s));
     }
     else {
-      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n",
-                     u3_Host.ops_u.imp_c, por_s));
+      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n", imp_c, por_s));
     }
-    u3z(num);
+
+    u3z(imp);
+    free(imp_c);
   }
 
   int ret;
@@ -434,7 +414,7 @@ u3_ames_io_init()
         uL(fprintf(uH, 
                     "    ...perhaps you've got two copies of vere running?\n"));
       }
-      exit(1);
+      u3_lo_bail();
     }
 
     uv_udp_getsockname(&sam_u->wax_u, (struct sockaddr *)&add_u, &add_i);
@@ -442,10 +422,102 @@ u3_ames_io_init()
 
     sam_u->por_s = ntohs(add_u.sin_port);
   }
-  //  Timer too.
-  {
-    uv_timer_init(u3L, &sam_u->tim_u);
+
+  // uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
+  uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
+
+  sam_u->liv = c3y;
+  u3z(rac);
+}
+
+/* _cttp_mcut_char(): measure/cut character.
+*/
+static c3_w
+_cttp_mcut_char(c3_c* buf_c, c3_w len_w, c3_c chr_c)
+{
+  if ( buf_c ) {
+    buf_c[len_w] = chr_c;
   }
+  return len_w + 1;
+}
+
+/* _cttp_mcut_cord(): measure/cut cord.
+*/
+static c3_w
+_cttp_mcut_cord(c3_c* buf_c, c3_w len_w, u3_noun san)
+{
+  c3_w ten_w = u3r_met(3, san);
+
+  if ( buf_c ) {
+    u3r_bytes(0, ten_w, (c3_y *)(buf_c + len_w), san);
+  }
+  u3z(san);
+  return (len_w + ten_w);
+}
+
+/* _cttp_mcut_path(): measure/cut cord list.
+*/
+static c3_w
+_cttp_mcut_path(c3_c* buf_c, c3_w len_w, c3_c sep_c, u3_noun pax)
+{
+  u3_noun axp = pax;
+
+  while ( u3_nul != axp ) {
+    u3_noun h_axp = u3h(axp);
+
+    len_w = _cttp_mcut_cord(buf_c, len_w, u3k(h_axp));
+    axp = u3t(axp);
+
+    if ( u3_nul != axp ) {
+      len_w = _cttp_mcut_char(buf_c, len_w, sep_c);
+    }
+  }
+  u3z(pax);
+  return len_w;
+}
+
+/* _cttp_mcut_host(): measure/cut host.
+*/
+static c3_w
+_cttp_mcut_host(c3_c* buf_c, c3_w len_w, u3_noun hot)
+{
+  len_w = _cttp_mcut_path(buf_c, len_w, '.', u3kb_flop(u3k(hot)));
+  u3z(hot);
+  return len_w;
+}
+
+/* u3_ames_ef_turf(): initialize ames I/O on domain(s).
+*/
+void
+u3_ames_ef_turf(u3_noun tuf)
+{
+  if ( u3_nul != tuf ) {
+    // XX save all for fallback, not just first
+    u3_noun hot = u3k(u3h(tuf));
+    c3_w  len_w = _cttp_mcut_host(0, 0, u3k(hot));
+
+    u3_Host.sam_u.dns_c = c3_malloc(1 + len_w);
+    _cttp_mcut_host(u3_Host.sam_u.dns_c, 0, hot);
+    u3_Host.sam_u.dns_c[len_w] = 0;
+
+    u3z(tuf);
+  }
+  else if ( (c3n == u3A->fak) && (0 == u3_Host.sam_u.dns_c) ) {
+    uL(fprintf(uH, "ames: turf: no domains\n"));
+  }
+
+  if ( c3n == u3_Host.sam_u.liv ) {
+    _ames_io_start();
+  }
+}
+
+/* u3_ames_io_init(): initialize ames I/O.
+*/
+void
+u3_ames_io_init()
+{
+  u3_ames* sam_u = &u3_Host.sam_u;
+  sam_u->liv = c3n;
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
@@ -453,10 +525,6 @@ u3_ames_io_init()
 void
 u3_ames_io_talk()
 {
-  u3_ames* sam_u = &u3_Host.sam_u;
-
-  uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
-  uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 }
 
 /* u3_ames_io_exit(): terminate ames I/O.
@@ -466,40 +534,8 @@ u3_ames_io_exit()
 {
   u3_ames* sam_u = &u3_Host.sam_u;
 
-  // XX close wax_u instead
-  uv_close(&sam_u->had_u, 0);
-}
-
-/* u3_ames_io_poll(): update ames IO state.
-*/
-void
-u3_ames_io_poll()
-{
-  u3_ames* sam_u = &u3_Host.sam_u;
-  u3_noun  wen = u3v_keep(u3nt(u3_blip, c3__ames, u3_nul));
-
-  if ( (u3_nul != wen) &&
-       (c3y == u3du(wen)) &&
-       (c3y == u3ud(u3t(wen))) )
-  {
-    c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
-    c3_w lem_w = (time(0) - sam_u->law_w);
-    c3_w lef_w = (lem_w > 32) ? 0 : (32 - lem_w);
-
-    gap_d = c3_min(gap_d, (c3_d)(1000 * lef_w));
-
-    if ( c3y == sam_u->alm ) {
-      uv_timer_stop(&sam_u->tim_u);
-    }
-    else sam_u->alm = c3y;
-
-    uv_timer_start(&sam_u->tim_u, _ames_time_cb, gap_d, 0);
+  if ( c3y == sam_u->liv ) {
+    // XX remove had_u/wax_u union, cast and close wax_u
+    uv_close(&sam_u->had_u, 0);
   }
-  else {
-    if ( c3y == sam_u->alm ) {
-      uv_timer_stop(&sam_u->tim_u);
-    }
-    sam_u->alm = c3n;
-  }
-  u3z(wen);
 }

@@ -1,17 +1,10 @@
-/* v/reck.c
+/* vere/reck.c
 **
-**  This file is in the public domain.
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
 #include <dirent.h>
-#include <stdint.h>
 #include <uv.h>
 #include <curses.h>
 #include <termios.h>
@@ -27,20 +20,18 @@ _reck_mole(u3_noun  fot,
            u3_noun  san,
            c3_d*    ato_d)
 {
-  u3_noun uco = u3do("slay", san);
-  u3_noun p_uco, q_uco, r_uco, s_uco;
+  u3_noun uco = u3dc("slaw", fot, san);
+  u3_noun p_uco, q_uco;
 
-  if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
-       (0 != p_uco) ||
-       (0 != q_uco) ||
-       (c3n == u3r_sing(fot, r_uco)) )
+  if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
+       (u3_nul != p_uco) )
   {
     uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
 
     u3z(fot); u3z(uco); return c3n;
   }
   else {
-    *ato_d = u3r_chub(0, s_uco);
+    *ato_d = u3r_chub(0, q_uco);
 
     u3z(fot); u3z(uco); return c3y;
   }
@@ -63,6 +54,27 @@ _reck_lily(u3_noun fot, u3_noun txt, c3_l* tid_l)
 
       return c3y;
     }
+  }
+}
+
+/*  _reck_orchid(): parses only a number as text
+ *
+ *    Parses a text string which contains a decimal number. In practice, this
+ *    number is always '1'.
+ */
+static u3_noun
+_reck_orchid(u3_noun fot, u3_noun txt, c3_l* tid_l)
+{
+  c3_c* str = u3r_string(txt);
+  c3_d ato_d = strtol(str, NULL, 10);
+  free(str);
+
+  if ( ato_d >= 0x80000000ULL ) {
+    return c3n;
+  } else {
+    *tid_l = (c3_l) ato_d;
+
+    return c3y;
   }
 }
 
@@ -100,13 +112,9 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__init: p_fav = u3t(fav);
     {
-      u3A->own = u3nc(u3k(p_fav), u3A->own);
+      c3_assert( c3y == u3r_sing(u3A->own, p_fav) );
 
-      u3_noun hox =  u3dc("scot", 'p', u3k(p_fav));
-      c3_c* nam_c = u3r_string(hox);
-      
-      // uL(fprintf(uH, "kick: init: %s\n", nam_c));
-      free(nam_c); u3z(pox); u3z(hox); u3z(fav); return c3y;
+      u3z(pox); u3z(fav); return c3y;
     } break;
 
     case c3__mass: p_fav = u3t(fav);
@@ -136,6 +144,22 @@ _reck_kick_http(u3_noun  pox,
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
 
+    case c3__form: p_fav = u3t(fav);
+    {
+      u3_http_ef_form(u3k(p_fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+
+    case c3__that: p_fav = u3t(fav);
+    {
+      u3_http_ef_that(u3k(p_fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+
     case c3__thus: p_fav = u3h(u3t(fav)); q_fav = u3t(u3t(fav));
     {
       u3_cttp_ef_thus(u3r_word(0, p_fav), u3k(q_fav));
@@ -152,6 +176,22 @@ _reck_kick_http(u3_noun  pox,
     } break;
   }
   c3_assert(!"not reached"); return c3n;
+}
+
+/* _reck_kick_behn(): apply packet network outputs.
+*/
+static u3_noun
+_reck_kick_behn(u3_noun pox, u3_noun fav)
+{
+  switch ( u3h(fav) ) {
+    default: break;
+
+    case c3__doze: {
+      u3_behn_ef_doze(u3k(u3t(fav)));
+      u3z(pox); u3z(fav); return c3y;
+    } break;
+  }
+  u3z(pox); u3z(fav); return c3n;
 }
 
 /* _reck_kick_sync(): apply sync outputs.
@@ -183,6 +223,8 @@ _reck_kick_sync(u3_noun pox, u3_noun fav)
   u3z(pox); u3z(fav); return c3n;
 }
 
+/* _reck_kick_newt(): apply packet network outputs.
+*/
 static u3_noun
 _reck_kick_newt(u3_noun pox, u3_noun fav)
 {
@@ -195,24 +237,9 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
       u3_ames_ef_send(lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
-  }
-  u3z(pox); u3z(fav); return c3n;
-}
 
-/* _reck_kick_ames(): apply packet network outputs.
-*/
-static u3_noun
-_reck_kick_ames(u3_noun pox, u3_noun fav)
-{
-  u3_noun p_fav;
-
-  switch ( u3h(fav) ) {
-    default: break;
-    case c3__init: p_fav = u3t(fav);
-    {
-      u3A->own = u3nc(u3k(p_fav), u3A->own);
-
-      // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+    case c3__turf: {
+      u3_ames_ef_turf(u3k(u3t(fav)));
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
@@ -225,7 +252,6 @@ static u3_noun
 _reck_kick_spec(u3_noun pox, u3_noun fav)
 {
   u3_noun i_pox, t_pox;
-  u3_noun p_fav;
 
   if ( (c3n == u3r_cell(pox, &i_pox, &t_pox)) ||
        ((i_pox != u3_blip) && 
@@ -278,6 +304,10 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         return _reck_kick_http(pox, sev_l, coq_l, seq_l, fav);
       } break;
 
+      case c3__behn: {
+        return _reck_kick_behn(pox, fav);
+      } break;
+
       case c3__clay:
       case c3__boat:
       case c3__sync: {
@@ -288,23 +318,6 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         return _reck_kick_newt(pox, fav);
       } break;
 
-      case c3__ames: {
-        if ( (u3_nul != tt_pox) ) {
-          u3z(pox); u3z(fav); return c3n;
-        }
-        else {
-          return _reck_kick_ames(pox, fav);
-        }
-      } break;
-
-      case c3__init: p_fav = u3t(fav);
-      {
-        u3A->own = u3nc(u3k(p_fav), u3A->own);
-
-        // uL(fprintf(uH, "kick: init: %d\n", p_fav));
-        u3z(pox); u3z(fav); return c3y;
-      } break;
-
       case c3__term: {
         u3_noun pud = tt_pox;
         u3_noun p_pud, q_pud;
@@ -312,7 +325,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
 
         if ( (c3n == u3r_cell(pud, &p_pud, &q_pud)) ||
              (u3_nul != q_pud) ||
-             (c3n == _reck_lily(c3__ud, u3k(p_pud), &tid_l)) )
+             (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
         {
           uL(fprintf(uH, "term: bad tire\n"));
           u3z(pox); u3z(fav); return c3n;
@@ -363,6 +376,7 @@ _reck_kick_norm(u3_noun pox, u3_noun fav)
 void
 u3_reck_kick(u3_noun ovo)
 {
+  u3t_event_trace("Effect", 'b');
   if ( (c3n == _reck_kick_spec(u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (c3n == _reck_kick_norm(u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
@@ -397,4 +411,5 @@ u3_reck_kick(u3_noun ovo)
 #endif
   }
   u3z(ovo);
+  u3t_event_trace("Effect", 'e');
 }

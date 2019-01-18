@@ -16,7 +16,6 @@
 
   /** Data types.
   **/
-    struct _u3_http;
 
     /* u3_hhed: http header.
     */
@@ -53,6 +52,7 @@
         uv_timer_t*      tim_u;             //  timeout
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
+        struct _u3_hreq* pre_u;             //  next in connection's list
       } u3_hreq;
 
     /* u3_hcon: incoming http connection.
@@ -67,25 +67,112 @@
         struct _u3_http* htp_u;             //  server backlink
         struct _u3_hreq* req_u;             //  request list
         struct _u3_hcon* nex_u;             //  next in server's list
+        struct _u3_hcon* pre_u;             //  next in server's list
       } u3_hcon;
 
     /* u3_http: http server.
     */
       typedef struct _u3_http {
         uv_tcp_t         wax_u;             //  server stream handler
-        h2o_globalconf_t* fig_u;            //  h2o global config
-        h2o_context_t*   ctx_u;             //  h2o ctx
-        h2o_accept_ctx_t* cep_u;            //  h2o accept ctx (wat for?)
-        h2o_hostconf_t*  hos_u;             //  h2o host config
-        h2o_handler_t*   han_u;             //  h2o request handler
+        void*            h2o_u;             //  libh2o configuration
+        struct _u3_prox* rox_u;             //  maybe proxied
         c3_w             sev_l;             //  server number
         c3_w             coq_l;             //  next connection number
-        c3_w             por_w;             //  running port
+        c3_s             por_s;             //  running port
         c3_o             sec;               //  logically secure
         c3_o             lop;               //  loopback-only
+        c3_o             liv;               //  c3n == shutdown
         struct _u3_hcon* hon_u;             //  connection list
         struct _u3_http* nex_u;             //  next in list
       } u3_http;
+
+    /* u3_form: http config from %eyre
+    */
+      typedef struct _u3_form {
+        c3_o             pro;               //  proxy
+        c3_o             log;               //  keep access log
+        c3_o             red;               //  redirect to HTTPS
+        uv_buf_t         key_u;             //  PEM RSA private key
+        uv_buf_t         cer_u;             //  PEM certificate chain
+      } u3_form;
+
+    /* u3_hfig: general http configuration
+    */
+      typedef struct _u3_hfig {
+        u3_form*         for_u;             //  config from %eyre
+        struct _u3_warc* cli_u;             //  rev proxy clients
+        struct _u3_pcon* con_u;             //  cli_u connections
+      } u3_hfig;
+
+    /* u3_proxy_type: proxy connection downstream type
+    */
+      typedef enum {
+        u3_ptyp_prox = 0,                   //  connected to us
+        u3_ptyp_ward = 1                    //  we connected back to
+      } u3_proxy_type;
+
+    /* u3_pcon: established proxy connection
+    */
+      typedef struct _u3_pcon {
+        uv_tcp_t         don_u;             //  downstream handle
+        uv_tcp_t*        upt_u;             //  upstream handle
+        uv_buf_t         buf_u;             //  pending buffer
+        c3_o             sec;               //  yes == https
+        u3_proxy_type    typ_e;             //  tagged
+        union {                             //  union
+          struct _u3_warc* cli_u;           //  typ_e == ward
+          struct _u3_prox* lis_u;           //  typ_e == prox
+        } src_u;                            //  connection source
+        struct _u3_pcon* nex_u;             //  next in list
+        struct _u3_pcon* pre_u;             //  previous in list
+      } u3_pcon;
+
+    /* u3_warc: server connecting back to u3_ward as client
+    */
+      typedef struct _u3_warc {
+        c3_w             ipf_w;             //  ward ip
+        c3_s             por_s;             //  ward port
+        c3_o             sec;               //  secure connection
+        c3_d             who_d[2];          //  ward ship
+        c3_c*            hot_c;             //  ward hostname
+        uv_buf_t         non_u;             //  nonce
+        struct _u3_http* htp_u;             //  local server backlink
+        struct _u3_warc* nex_u;             //  next in list
+        struct _u3_warc* pre_u;             //  previous in list
+      } u3_warc;
+
+    /* u3_wcon: candidate u3_ward upstream connection
+    */
+      typedef struct _u3_wcon {
+        uv_tcp_t         upt_u;             //  connection handle
+        struct _u3_ward* rev_u;             //  connecting to ward
+        struct _u3_wcon* nex_u;             //  next in list
+      } u3_wcon;
+
+    /* u3_ward: reverse, reverse TCP proxy (ship-specific listener)
+    */
+      typedef struct _u3_ward {
+        uv_tcp_t         tcp_u;             //  listener handle
+        uv_timer_t       tim_u;             //  expiration timer
+        c3_d             who_d[2];          //  reverse proxy for ship
+        c3_s             por_s;             //  listening on port
+        uv_buf_t         non_u;             //  nonce
+        struct _u3_wcon* won_u;             //  candidate upstream connections
+        struct _u3_pcon* con_u;             //  initiating connection
+        struct _u3_ward* nex_u;             //  next in list
+        struct _u3_ward* pre_u;             //  previous in list
+      } u3_ward;
+
+    /* u3_prox: reverse TCP proxy server
+    */
+      typedef struct _u3_prox {
+        uv_tcp_t         sev_u;             //  server handle
+        c3_s             por_s;             //  listening on port
+        c3_o             sec;               //  yes == https
+        struct _u3_http* htp_u;             //  local server backlink
+        struct _u3_pcon* con_u;             //  active connection list
+        struct _u3_ward* rev_u;             //  active reverse listeners
+      } u3_prox;
 
     /* u3_csat: client connection state.
     */
@@ -166,10 +253,11 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
-        uv_timer_t    tim_u;                //  network timer
+        c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_w          law_w;                //  last wakeup, unix time
         c3_s          por_s;                //  public IPv4 port
+        c3_c*         dns_c;                //  domain XX multiple/fallback
         c3_w          imp_w[256];           //  imperial IPs
         time_t        imp_t[256];           //  imperial IP timestamps
       } u3_ames;
@@ -345,7 +433,6 @@
     */
       typedef struct _u3_behn {
         uv_timer_t tim_u;                   //  behn timer
-        c3_w       run_w;                   //  run of consecutive alarms
         c3_o       alm;                     //  alarm
       } u3_behn;
 
@@ -491,36 +578,40 @@
     */
       typedef struct _u3_opts {
         c3_c*   arv_c;                      //  -A, initial sync from
-        c3_c*   dns_c;                      //  -H, ames bootstrap domain
-        c3_c*   gen_c;                      //  -G, czar generator
-        c3_c*   imp_c;                      //  -I, czar name
-        c3_c*   nam_c;                      //  -n, unix hostname
+        c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
-        c3_c*   raf_c;                      //  -r, raft flotilla
-        c3_c*   tic_c;                      //  -t, ticket value
-        c3_c*   url_c;                      //  -u, pill url
-        c3_c*   who_c;                      //  -w, begin with ticket
-        c3_o    abo;                        //  -a
         c3_o    bat;                        //  -b, batch create
-        c3_o    dem;                        //  -d, daemon
-        c3_o    dry;                        //  -D, dry compute  
-        c3_o    fak;                        //  -F, fake carrier
-        c3_o    fog;                        //  -X, skip last event
-        c3_o    gab;                        //  -g, run with garbage collector
-        c3_o    git;                        //  -s, pill url from arvo git hash
-        c3_o    mem;                        //  -M, memory madness
-        c3_o    net;                        //  -N, remote networking in -F mode
+        c3_o    can;                        //  -C, chain-only, no eth snapshot
         c3_o    nuu;                        //  -c, new pier
+        c3_o    dry;                        //  -D, dry compute, no checkpoint
+        c3_o    dem;                        //  -d, daemon
+        c3_c*   ets_c;                      //  -E, eth snapshot
+        c3_c*   eth_c;                      //  -e, ethereum node url
+        c3_c*   fak_c;                      //  -F, fake ship
+        c3_w    fuz_w;                      //  -f, fuzz testing
+        c3_c*   gen_c;                      //  -G, czar generator
+        c3_o    gab;                        //  -g, test garbage collection
+        c3_c*   dns_c;                      //  -H, ames bootstrap domain
+        c3_c*   json_file_c;                //  -j, json trace
+        c3_w    kno_w;                      //  -K, kernel version
+        c3_c*   key_c;                      //  -k, private key file
+        c3_o    net;                        //  -L, local-only networking
+        c3_s    rop_s;                      //  -l, raft port
+        c3_c*   sap_c;                      //  -m, eth snapshot url
+        c3_c*   nam_c;                      //  -n, unix hostname
         c3_o    pro;                        //  -P, profile
+        c3_s    por_s;                      //  -p, ames port
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
-        c3_o    tex;                        //  -x, exit after loading
-        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_c*   raf_c;                      //  -r, raft flotilla
+        c3_o    has;                        //  -S, Skip battery hashes
+        c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    etn;                        //  -t, trust snapshot for pre-boot
+        c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
-        c3_s    por_s;                      //  -p, ames port
-        c3_s    rop_s;                      //  -l, raft port
-        c3_w    fuz_w;                      //  -f, fuzz testing
-        c3_w    kno_w;                      //  -k, kernel version
+        c3_o    veb;                        //  -v, verbose (inverse of -q)
+        c3_c*   who_c;                      //  -w, begin with ticket
+        c3_o    tex;                        //  -x, exit after loading
       } u3_opts;
 
     /* u3_host: entire host.
@@ -530,6 +621,7 @@
         c3_c*      dir_c;                   //  pier path (no trailing /)
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
+        u3_hfig    fig_u;                   //  http configuration
         u3_http*   htp_u;                   //  http servers
         u3_cttp    ctp_u;                   //  http clients
         u3_utel    tel_u;                   //  telnet listener
@@ -542,6 +634,7 @@
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
+        FILE*      trace_file_u;            //  trace file to write to
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
@@ -772,11 +865,6 @@
         void
         u3_term_ef_boil();
 
-      /* u3_term_ef_ticket(): initial effects for new ticket.
-      */
-        void
-        u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c);
-
       /* u3_term_ef_verb(): initial effects for verbose events.
       */
         void
@@ -818,11 +906,6 @@
         void
         u3_term_io_exit(void);
 
-      /* u3_term_io_poll(): update terminal IO state.
-      */
-        void
-        u3_term_io_poll(void);
-
       /* u3_term_io_hija(): hijack console for cooked print.
       */
         FILE*
@@ -854,6 +937,11 @@
         u3_ames_ef_send(u3_noun lan,
                         u3_noun pac);
 
+      /* u3_ames_ef_turf(): initialize ames I/O on domain(s).
+      */
+        void
+        u3_ames_ef_turf(u3_noun tuf);
+
       /* u3_ames_io_init(): initialize ames I/O.
       */
         void
@@ -868,11 +956,6 @@
       */
         void
         u3_ames_io_exit(void);
-
-      /* u3_ames_io_poll(): update ames IO state.
-      */
-        void
-        u3_ames_io_poll(void);
 
     /**  Autosave.
     **/
@@ -890,11 +973,6 @@
       */
         void
         u3_save_io_exit(void);
-
-      /* u3_save_io_poll(): update autosave state.
-      */
-        void
-        u3_save_io_poll(void);
 
     /**  Storage, new school.
     **/
@@ -948,32 +1026,40 @@
         void
         u3_unix_io_exit(void);
 
-      /* u3_unix_io_poll(): update storage state.
-      */
-        void
-        u3_unix_io_poll(void);
-
-
     /**  behn, just a timer.
     **/
-      /* u2_behn_io_init(): initialize behn timer.
+      /* u3_behn_io_init(): initialize behn timer.
       */
         void
-        u2_behn_io_init(void);
+        u3_behn_io_init(void);
 
       /* u2_behn_io_exit(): terminate timer.
       */
         void
-        u2_behn_io_exit(void);
+        u3_behn_io_exit(void);
 
-      /* u2_behn_io_poll(): update behn IO state.
+      /* u3_behn_ef_bake(): notify %behn that we're live
       */
         void
-        u2_behn_io_poll(void);
+        u3_behn_ef_bake(void);
 
+      /* u3_behn_ef_doze(): set or cancel timer
+      */
+        void
+        u3_behn_ef_doze(u3_noun wen);
 
     /**  HTTP server.
     **/
+      /* u3_http_ef_form: send %from effect to http.
+      */
+        void
+        u3_http_ef_form(u3_noun fig);
+
+      /* u3_http_ef_that: send %that effect to http.
+      */
+        void
+        u3_http_ef_that(u3_noun tat);
+
       /* u3_http_ef_thou(): send %thou effect to http.
       */
         void
@@ -1008,11 +1094,6 @@
         void
         u3_http_io_exit(void);
 
-      /* u3_http_io_poll(): update http IO state.
-      */
-        void
-        u3_http_io_poll(void);
-
     /** Raft log syncing.
     **/
       /* u3_raft_readopt(): parse command line options.
@@ -1025,7 +1106,12 @@
         void
         u3_raft_init(void);
 
-      /* u3_raft_work(): poke, kick, and push pending events.
+      /* u3_raft_play(): synchronously poke, kick, and push pending events.
+      */
+        void
+        u3_raft_play(void);
+
+      /* u3_raft_work(): asynchronously poke, kick, and push pending events.
       */
         void
         u3_raft_work(void);
@@ -1096,29 +1182,6 @@
         void
         u3_sist_get(const c3_c* key_c, c3_y* val_y);
 
-      /* u3_sist_rand(): fill 8 words (32 bytes) with high-quality entropy.
-      */
-        void
-        u3_sist_rand(c3_w* rad_w);
-
-    /**  New timer system.
-    **/
-      /* u3_behn_io_init(): initialize time timer.
-      */
-        void
-        u3_behn_io_init(void);
-
-      /* u3_behn_io_exit(): terminate timer.
-      */
-        void
-        u3_behn_io_exit(void);
-
-      /* u3_behn_io_poll(): update behn IO state.
-      */
-        void
-        u3_behn_io_poll(void);
-
-
     /**  HTTP client.
     **/
       /* u3_cttp_ef_thus(): send %thus effect to cttp.
@@ -1137,7 +1200,13 @@
         void
         u3_cttp_io_exit(void);
 
-      /* u3_cttp_io_poll(): update cttp IO state.
+
+      /* u3_dawn_come(): mine a comet
       */
-        void
-        u3_cttp_io_poll(void);
+        u3_noun
+        u3_dawn_come(void);
+
+      /* u3_dawn_vent(): validated boot event
+      */
+        u3_noun
+        u3_dawn_vent(u3_noun seed);

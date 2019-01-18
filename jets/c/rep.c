@@ -84,4 +84,11 @@
       return pro;
     }
   }
-
+  u3_noun
+  u3kc_rep(u3_atom a,
+           u3_noun b)
+  {
+    u3_noun res = u3qc_rep(a, b);
+    u3z(a); u3z(b);
+    return res;
+  }

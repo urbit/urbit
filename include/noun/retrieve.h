@@ -32,63 +32,46 @@
         c3_o
         u3r_mean(u3_noun a, ...);
 
-      /* u3r_mug():
-      **
-      **   Compute and/or recall the mug (31-bit hash) of (a).
+      /* u3r_mug_bytes(): Compute the mug of `buf`, `len`, LSW first.
       */
         c3_w
-        u3r_mug(u3_noun a);
+        u3r_mug_bytes(const c3_y *buf_y,
+                      c3_w        len_w);
 
-      /* u3r_mug_string():
-      **
-      **   Compute the mug of `a`, LSB first.
+      /* u3r_mug_chub(): Compute the mug of `num`, LSW first.
+      */
+        c3_w
+        u3r_mug_chub(c3_d num_d);
+
+      /* u3r_mug_string(): Compute the mug of `a`, LSB first.
       */
         c3_w
         u3r_mug_string(const c3_c *a_c);
 
-      /* u3r_mug_words():
-      **
-      **   Compute the mug of `buf`, `len`, LSW first.
+      /* u3r_mug_words(): 31-bit nonzero MurmurHash3 on raw words.
       */
         c3_w
-        u3r_mug_words(const c3_w *buf_w,
-                      c3_w        len_w);
+        u3r_mug_words(const c3_w* key_w, c3_w len_w);
 
-      /* u3r_mug_d():
-      **
-      **   Compute the mug of `num`, LSW first.
+      /* u3r_mug_both(): Join two mugs.
       */
         c3_w
-        u3r_mug_d(c3_d num_d);
+        u3r_mug_both(c3_w lef_w, c3_w rit_w);
 
-      /* u3r_mug_bytes():
-      **
-      **   Compute the mug of `buf`, `len`, LSW first.
-      */
-      c3_w
-      u3r_mug_bytes(const c3_y *buf_w,
-                      c3_w        len_w);
-
-      /* u3r_mug_cell():
-      **
-      **   Compute the mug of `[a b]`.
+      /* u3r_mug_cell(): Compute the mug of the cell `[hed tel]`.
       */
         c3_w
-        u3r_mug_cell(u3_noun a,
-                     u3_noun b);
+        u3r_mug_cell(u3_noun hed,
+                     u3_noun tel);
 
-      /* u3r_mug_trel():
-      **
-      **   Compute the mug of `[a b c]`.
+      /* u3r_mug_trel(): Compute the mug of `[a b c]`.
       */
         c3_w
         u3r_mug_trel(u3_noun a,
                      u3_noun b,
                      u3_noun c);
 
-      /* u3r_mug_qual():
-      **
-      **   Compute the mug of `[a b c d]`.
+      /* u3r_mug_qual(): Compute the mug of `[a b c d]`.
       */
         c3_w
         u3r_mug_qual(u3_noun a,
@@ -96,13 +79,10 @@
                      u3_noun c,
                      u3_noun d);
 
-      /* u3r_mug_both():
-      **
-      **   Join two mugs.
+      /* u3r_mug(): MurmurHash3 on a noun.
       */
         c3_w
-        u3r_mug_both(c3_w a_w,
-                       c3_w b_w);
+        u3r_mug(u3_noun veb);
 
       /* u3r_fing():
       **
@@ -420,6 +400,16 @@
         u3r_words(c3_w    a_w,
                   c3_w    b_w,
                   c3_w*   c_w,
+                  u3_atom d);
+
+      /* u3r_chubs():
+      **
+      **  Copy double-words (a_w) through (a_w + b_w - 1) from (d) to (c).
+      */
+        void
+        u3r_chubs(c3_w    a_w,
+                  c3_w    b_w,
+                  c3_d*   c_d,
                   u3_atom d);
 
       /* u3r_string(): `a`, a text atom, as malloced C string.

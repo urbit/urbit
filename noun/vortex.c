@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "all.h"
 
+#define _CVX_WISH 22
+#define _CVX_POKE 47
+#define _CVX_PEEK 46
+
 int WISH;
 /* _cv_nock_wish(): call wish through hardcoded interface.
 */
@@ -13,36 +17,33 @@ _cv_nock_wish(u3_noun txt)
   u3_noun fun, pro;
 
   WISH = 1;
-  fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(20, u3A->roc)));
+  fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_WISH, u3A->roc)));
   pro = u3n_slam_on(fun, txt);
   WISH = 0;
 
   return pro;
 }
 
-/* u3v_make(): make a new pier and instantiate pill.
+/* u3v_boot(): evaluate boot sequence, making a kernel
 */
 void
-u3v_make(c3_c* pas_c)
+u3v_boot(u3_noun eve)
 {
-  u3_noun sys = u3ke_cue(u3m_file(pas_c));
+  //  ensure zero-initialized kernel
+  //
+  //    So that u3t_slog won't try to print tanks.
+  //
+  u3A->roc = 0;
 
-  u3A->ken = u3k(u3h(sys));
-  u3A->roc = u3k(u3t(sys));
+  //  lifecycle formula
+  //
+  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+  u3_noun cor = u3n_nock_on(eve, lyf);
 
-  u3z(sys);
-}
+  //  save the Arvo core (at +7 of the Arvo gate)
+  //
+  u3A->roc = u3k(u3x_at(7, cor));
 
-/* u3v_jack(): execute kernel formula to bind jets.
-*/
-void
-u3v_jack(void)
-{
-  u3_noun cor; 
-
-  fprintf(stderr, "jack: kernel %x\r\n", u3r_mug(u3A->ken));
-  cor = u3n_nock_on(0, u3k(u3A->ken));
-  fprintf(stderr, "jacked\r\n");
   u3z(cor);
 }
 
@@ -89,33 +90,25 @@ u3v_start(u3_noun now)
 u3_noun
 u3v_wish(const c3_c* str_c)
 {
-  u3_noun exp;
+  u3t_event_trace("u3v_wish", 'b');
+  u3_noun txt = u3i_string(str_c);
+  u3_weak exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
 
-  if ( u3R == &u3H->rod_u ) {
-    u3_noun txt = u3i_string(str_c);
-    
-    exp = u3kdb_get(u3k(u3A->yot), u3k(txt));
+  if ( u3_none == exp ) {
+    exp = _cv_nock_wish(u3k(txt));
 
-    if ( u3_none == exp ) {
-      exp = _cv_nock_wish(u3k(txt));
+    //  It's probably not a good idea to use u3v_wish() 
+    //  outside the top level... (as the result is uncached)
+    //
+    if ( u3R == &u3H->rod_u ) {
       u3A->yot = u3kdb_put(u3A->yot, u3k(txt), u3k(exp));
     }
-    u3z(txt);
-    return exp;
   }
-  else {
-    //  It's probably not a good idea to use u3v_wish() 
-    //  outside the top level...
-    //
-    u3_noun txt = u3i_string(str_c);
-    u3_noun exp = u3kdb_get(u3A->yot, u3k(txt));
-    
-    if ( u3_none != exp ) {
-      u3z(txt);
-      return exp;
-    }
-    else return _cv_nock_wish(u3i_string(str_c));
-  }
+
+  u3t_event_trace("u3v_wish", 'e');
+
+  u3z(txt);
+  return exp;
 }
 
 /* _cv_mung(): formula wrapper with gate and sample.
@@ -140,68 +133,10 @@ _cv_mung(c3_w sec_w, u3_noun gat, u3_noun sam)
 u3_noun
 u3v_pike(u3_noun ovo, u3_noun cor)
 {
-  u3_noun fun = u3n_nock_on(cor, u3k(u3x_at(42, cor)));
+  u3_noun fun = u3n_nock_on(cor, u3k(u3x_at(_CVX_POKE, cor)));
   u3_noun sam = u3nc(u3k(u3A->now), ovo);
 
   return _cv_mung(0, fun, sam);
-}
-
-/* u3v_nick(): transform enveloped packets, [vir cor].
-*/
-u3_noun
-u3v_nick(u3_noun vir, u3_noun cor)
-{
-  if ( u3_nul == vir ) {
-    return u3nt(u3_blip, vir, cor);
-  }
-  else {
-    u3_noun i_vir = u3h(vir);
-    u3_noun pi_vir, qi_vir;
-    u3_noun vix;
-
-    if ( (c3y == u3r_cell((i_vir=u3h(vir)), &pi_vir, &qi_vir)) &&
-         (c3y == u3du(qi_vir)) &&
-         (c3__hear == u3h(qi_vir)) )
-    {
-      u3_noun gon;
-
-      gon = u3v_pike(u3k(i_vir), cor);
-      if ( u3_blip != u3h(gon) ) {
-        u3z(vir);
-        return gon;
-      }
-      else {
-        u3_noun viz;
-
-        vix = u3k(u3h(u3t(gon)));
-        cor = u3k(u3t(u3t(gon)));
-        u3z(gon);
-
-        viz = u3kb_weld(vix, u3k(u3t(vir)));
-        u3z(vir);
-
-        return u3v_nick(viz, cor);
-      }
-    }
-    else {
-      u3_noun nez = u3v_nick(u3k(u3t(vir)), cor);
-
-      if ( u3_blip != u3h(nez) ) {
-        u3z(vir);
-        return nez;
-      } else {
-        u3_noun viz;
-
-        viz = u3nc(u3k(i_vir), u3k(u3h(u3t(nez))));
-        cor = u3k(u3t(u3t(nez)));
-
-        u3z(vir);
-        u3z(nez);
-
-        return u3nt(u3_blip, viz, cor);
-      }
-    }
-  }
 }
 
 /* _cv_nock_poke(): call poke through hardcoded interface.
@@ -209,7 +144,7 @@ u3v_nick(u3_noun vir, u3_noun cor)
 static u3_noun
 _cv_nock_poke(u3_noun ovo)
 {
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(42, u3A->roc)));
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_POKE, u3A->roc)));
   u3_noun sam, pro;
   u3_noun cod_w;
 
@@ -247,18 +182,7 @@ _cv_nock_poke(u3_noun ovo)
 static u3_noun
 _cv_nock_peek(u3_noun hap)
 {
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(87, u3A->roc)));
-  u3_noun sam = u3nc(u3k(u3A->now), hap);
-
-  return u3n_slam_on(fun, sam);
-}
-
-/* _cv_nock_keep(): call wait through hardcoded interface.
-*/
-static u3_noun
-_cv_nock_keep(u3_noun hap)
-{
-  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(4, u3A->roc)));
+  u3_noun fun = u3n_nock_on(u3k(u3A->roc), u3k(u3x_at(_CVX_PEEK, u3A->roc)));
   u3_noun sam = u3nc(u3k(u3A->now), hap);
 
   return u3n_slam_on(fun, sam);
@@ -336,14 +260,6 @@ u3v_peek(u3_noun hap)
   return u3m_soft_sure(_cv_nock_peek, hap);
 }
 
-/* u3v_keep(): measure timer.
-*/
-u3_noun
-u3v_keep(u3_noun hap)
-{
-  return u3m_soft_sure(_cv_nock_keep, hap);
-}
-
 #if 0
 /* _cv_mole(): parse simple atomic mole.
 */
@@ -398,15 +314,6 @@ u3_noun
 u3v_poke(u3_noun ovo)
 {
   return _cv_nock_poke(ovo);
-}
-
-/* u3v_http_request(): hear http request on channel (unprotected).
-*/
-void
-u3v_http_request(c3_o sec, u3_noun pox, u3_noun req)
-{
-  // uL(fprintf(uH, "http: request\n"));
-  u3v_plan(pox, u3nq(c3__this, sec, 0, req));
 }
 
 /* u3v_tank(): dump single tank.
@@ -476,22 +383,6 @@ u3v_plow(u3_noun ova)
   u3z(ova);
 }
 
-/* u3v_louse(): last-minute deviltry upon a bail.
-*/
-void
-u3v_louse(c3_m how_m)
-{
-#if 0
-  if ( c3__exit == how_m ) {
-    printf("louse: nocks: %d\n", NOX);
-    printf("louse: washing kernel %x %d\n", u3A->ken, u3a_is_dog(u3A->ken));
-    u3m_wash(u3A->ken); 
-
-    printf("kernel %x; washed mug %x\n", u3A->ken, u3r_mug(u3A->ken));
-  }
-#endif
-}
-
 /* _cv_mark_ova(): mark ova queue.
 */
 c3_w
@@ -529,7 +420,6 @@ u3v_mark(void)
   tot_w += u3a_mark_noun(arv_u->roe);
   tot_w += u3a_mark_noun(arv_u->key);
 
-  tot_w += u3a_mark_noun(arv_u->ken);
   tot_w += u3a_mark_noun(arv_u->roc);
 
   tot_w += _cv_mark_ova(arv_u->ova.egg_p);

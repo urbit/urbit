@@ -19,6 +19,8 @@
 #       define u3x_sam_7  27
 #       define u3x_sam_14 54
 #       define u3x_sam_15 55
+#       define u3x_sam_30 110
+#       define u3x_sam_31 111
 #     define u3x_con      7       //  context
 #     define u3x_con_2    14      //  context
 #     define u3x_con_3    15      //  context
@@ -36,12 +38,15 @@
 
       /* u3x_cap(): root axis, 2 or 3.
       */
-#       define u3x_cap(a_w)   (0x2 | (a_w >> (u3x_dep(a_w) - 1)))
+#       define u3x_cap(a_w) ({                        \
+          c3_assert( 1 < a_w );                       \
+          (0x2 | (a_w >> (u3x_dep(a_w) - 1))); })
 
       /* u3x_mas(): remainder after cap.
       */
-#       define u3x_mas(a_w) \
-          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) )
+#       define u3x_mas(a_w) ({                        \
+          c3_assert( 1 < a_w );                       \
+          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) ); })
 
       /* u3x_peg(): connect two axes.
       */

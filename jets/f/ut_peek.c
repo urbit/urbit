@@ -71,10 +71,12 @@
       }
       case c3__core: {
         u3_noun pq_sut, qq_sut, rq_sut;
+        u3_noun ppq_sut, qpq_sut, rpq_sut;
         u3_noun prq_sut, qrq_sut;
 
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ||
              (c3n == u3r_trel(q_sut, &pq_sut, &qq_sut, &rq_sut)) ||
+             (c3n == u3r_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut)) ||
              (c3n == u3r_cell(rq_sut, &prq_sut, &qrq_sut)) )
         {
           return u3m_bail(c3__fail);
@@ -83,14 +85,29 @@
           u3_atom lat = u3qc_mas(axe);
 
           if ( 3 == now ) {
-            u3_noun pec = u3qfu_peel(van, sut, way, pq_sut);
+            u3_noun pec = u3qfu_peel(van, sut, way, rpq_sut);
             u3_noun sam = u3h(pec);
             u3_noun con = u3t(pec);
+            u3_atom tow;
 
-            if ( c3y == c3a(sam, con) ) {
+            if ( 1 == lat ) {
+              tow = 1;
+            } else {
+              tow = u3qc_cap(lat);
+            }
+
+            if ( (c3y == c3a(sam, con)) ||
+                 ((c3y == sam) && (tow == 2)) ||
+                 ((c3y == con) && (tow == 3)) )
+            {
               pro = _cqfu_peek(van, p_sut, way, lat);
             }
             else {
+
+              if ( way != c3__read ) {
+               return u3m_error("payload-block"); 
+              }
+
               u3_noun typ;
 
               {
@@ -118,6 +135,7 @@
             }
 
             u3z(pec);
+            u3z(tow);
           }
           else {
             pro = c3__noun;
@@ -128,7 +146,7 @@
           return pro;
         }
       }
-      case c3__help:
+      case c3__hint:
       case c3__face: {
         if ( (c3n == u3r_trel(sut, 0, &p_sut, &q_sut)) ) {
           return u3m_bail(c3__fail);
@@ -200,7 +218,7 @@
              u3_noun way,
              u3_noun axe)
   {
-    c3_m    fun_m = 144 + c3__peek + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
+    c3_m    fun_m = 141 + c3__peek + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
     u3_noun pro   = u3z_find_3(fun_m, sut, way, axe);
 
     if ( u3_none != pro ) {

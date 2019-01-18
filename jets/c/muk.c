@@ -16,20 +16,30 @@
     c3_y *key_y;
     c3_w out_w;
 
-    c3_assert(u3r_met(5, seed) <= 1);
-    c3_assert(u3r_met(0, len)  <= 31);
-    c3_assert(u3r_met(3, key)  <= len);
+    c3_assert( u3r_met(5, seed) <= 1 );
+    c3_assert( u3r_met(0, len)  <= 31 );
+    c3_assert( u3r_met(3, key)  <= len );
 
     seed_w = u3r_word(0, seed);
     len_w  = u3r_word(0, len);
-    if (len_w > 0) { /* can't u3a_calloc 0 bytes */
-      key_y  = u3a_calloc(sizeof(c3_y), len);
-    } else {
+
+    //  can't u3a_calloc 0 bytes
+    //
+    if ( 0 == len_w ) {
       key_y = 0;
     }
-    u3r_bytes(0, len, key_y, key);
+    else {
+      key_y = u3a_calloc(sizeof(c3_y), len_w);
+    }
 
-    MurmurHash3_x86_32(key_y, len, seed_w, &out_w);
+    //  Efficiency: unnecessary copy.
+    //
+    //    We could calculate the hash directly against
+    //    the atom internals, a la u3r_mug
+    //
+    u3r_bytes(0, len_w, key_y, key);
+
+    MurmurHash3_x86_32(key_y, len_w, seed_w, &out_w);
 
     u3a_free(key_y);
     return u3i_words(1, &out_w);

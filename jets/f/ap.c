@@ -11,7 +11,7 @@
     u3_noun u3wfp_hack(u3_noun);
 
     static u3_noun
-    _ap_open_l(u3_noun, u3_noun);
+    _ap_open_l(u3_noun, u3_noun, u3_noun);
 
     // make sure these match the array below!
     //
@@ -511,6 +511,7 @@
                             u3qdb_put(q_gen, u3_blip, diz)),
                        u3nc(c3__cnzy, u3_blip));
 
+    c3_assert(0);
     u3z(diz);
     return ret;
   }
@@ -991,23 +992,56 @@
   _ap_core(u3_noun ter,
            u3_noun gen)
   {
-    u3_noun gat = u3j_hook(u3k(ter), "ap");
+    u3_noun gat = u3j_cook("_ap_core-ap", u3k(ter), "ap");
 
     return u3i_molt(gat, u3x_sam, u3k(gen), 0);
+  }
+
+  static u3_noun
+  _ar_core(u3_noun van,
+           u3_noun ref,
+           u3_noun syn)
+  {
+    u3_noun gat = u3j_hook(u3k(van), "ar");
+
+    return u3i_molt(gat, u3x_sam, u3nc(u3k(ref), u3k(syn)), 0);
+  }
+
+/* fish
+*/
+  u3_noun
+  u3qfr_fish(u3_noun van,
+             u3_noun ref,
+             u3_noun syn,
+             u3_noun axe)
+  {
+    u3_noun gat = u3j_soft(_ar_core(van, ref, syn), "fish");
+
+    return u3n_kick_on(u3i_molt(gat, 
+                                u3x_sam,
+                                u3k(axe),
+                                0));
   }
 
 /* open
 */
   static u3_noun
   _ap_open_n(u3_noun ter,
+             u3_noun fab,
              u3_noun gen)
   {
     u3_noun cor = _ap_core(ter, gen);
 
+#if 1
+    if ( c3n == fab ) {
+      cor = u3i_molt(cor, 14, c3n, 0);
+    }
+#endif
     return u3j_soft(cor, "open");
   }
   static u3_noun
   _ap_open_l(u3_noun ter,
+             u3_noun fab,
              u3_noun gen)
   {
 #if 0
@@ -1019,22 +1053,16 @@
       return _ap_open_n(ter, gen);
     }
 #else
-    return _ap_open_n(ter, gen);
+    return _ap_open_n(ter, fab, gen);
 #endif
   }
 
   u3_noun
   u3qfp_open(u3_noun ter,
+             u3_noun fab,
              u3_noun gen)
   {
-    return _ap_open_l(ter, gen);
-  }
-
-  u3_noun
-  u3qfp_nepo(u3_noun ter,
-             u3_noun gen)
-  {
-    return _ap_open_l(ter, gen);
+    return _ap_open_l(ter, fab, gen);
   }
 
   u3_noun
@@ -1047,7 +1075,7 @@
     } else {
       u3_noun ter = u3r_at(u3x_con, cor);
 
-      return u3qfp_open(ter, gen);
+      return u3qfp_open(ter, c3y, gen);
     }
   }
 

@@ -26,13 +26,13 @@
         u3_noun sev_l;                    //  instance number
         u3_noun sen;                      //  instance string
         u3_noun own;                      //  owner list
+        u3_noun fak;                      //  &=fake XX use c3_o?
 
         u3_noun sac;                      //  space profiling
 
         u3_noun roe;                      //  temporary unsaved events
         u3_noun key;                      //  log key, or 0
 
-        u3_noun ken;                      //  kernel formula
         u3_noun roc;                      //  kernel core
 
         struct {                          //  ova waiting to process
@@ -64,15 +64,10 @@
       u3_noun
       u3v_do(const c3_c* txt_c, u3_noun arg);
 
-    /* u3v_make(): make a new pier by loading a pill.
+    /* u3v_boot(): evaluate boot sequence, making a kernel
     */
       void
-      u3v_make(c3_c* pas_c);
-
-    /* u3v_jack(): execute kernel formula to bind jets.
-    */
-      void
-      u3v_jack(void);
+      u3v_boot(u3_noun eve);
 
     /* u3v_start(): start time.
     */
@@ -88,11 +83,6 @@
     */
       u3_noun
       u3v_pike(u3_noun ovo, u3_noun cor);
-
-    /* u3v_nick(): transform enveloped packets, [vir cor].
-    */
-      u3_noun
-      u3v_nick(u3_noun vir, u3_noun cor);
 
     /* u3v_do(): use a kernel function.
     */
@@ -119,20 +109,10 @@
       u3_noun
       u3v_peek(u3_noun hap);
 
-    /* u3v_keep(): measure timer.
-    */
-      u3_noun
-      u3v_keep(u3_noun hap);
-
     /* u3v_poke(): insert and apply an input ovum (protected).
     */
       u3_noun
       u3v_poke(u3_noun ovo);
-
-    /* u3v_http_request(): hear http request on channel (unprotected).
-    */
-      void
-      u3v_http_request(c3_o sec, u3_noun pox, u3_noun req);
 
     /* u3v_tank(): dump single tank.
     */
@@ -163,11 +143,6 @@
     */
       void
       u3v_hose(void);
-
-    /* u3v_louse(): last-minute deviltry upon a bail.
-    */
-      void
-      u3v_louse(c3_m how_m);
 
     /* u3v_mark(): mark arvo kernel.
     */

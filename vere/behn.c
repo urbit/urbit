@@ -1,17 +1,10 @@
-/* v/behn.c
+/* vere/behn.c
 **
-**  This file is in the public domain.
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
 #include <dirent.h>
-#include <stdint.h>
 #include <uv.h>
 #include <curses.h>
 #include <termios.h>
@@ -45,9 +38,7 @@ static void
 _behn_time_cb(uv_timer_t* tim_u)
 {
   u3_behn* teh_u = &u3_Host.teh_u;
-  if(teh_u->run_w < 1024) {
-    teh_u->run_w++;
-  }
+  teh_u->alm = c3n;
 
   u3_lo_open();
   {
@@ -58,38 +49,41 @@ _behn_time_cb(uv_timer_t* tim_u)
   u3_lo_shut(c3n);
 }
 
-/* u3_behn_io_poll(): update behn IO state.
+/* u3_behn_ef_doze(): set or cancel timer
 */
 void
-u3_behn_io_poll(void)
+u3_behn_ef_doze(u3_noun wen)
 {
   u3_behn* teh_u = &u3_Host.teh_u;
-  u3_noun  wen   = u3v_keep(u3nt(u3_blip, c3__behn, u3_nul));
+
+  if ( c3y == teh_u->alm ) {
+    uv_timer_stop(&teh_u->tim_u);
+    teh_u->alm = c3n;
+  }
 
   if ( (u3_nul != wen) &&
        (c3y == u3du(wen)) &&
        (c3y == u3ud(u3t(wen))) )
   {
-    c3_d gap_d = u3_time_gap_ms(u3k(u3A->now), u3k(u3t(wen)));
+    struct timeval tim_tv;
+    gettimeofday(&tim_tv, 0);
 
-#if 0
-    fprintf(stderr, "gap_d %llu, plus %llu\r\n", 
-        gap_d, gap_d + (c3_d)teh_u->run_w);
-#endif
-    gap_d += teh_u->run_w;
+    u3_noun now = u3_time_in_tv(&tim_tv);
+    c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
 
-    if ( c3y == teh_u->alm ) {
-      uv_timer_stop(&teh_u->tim_u);
-    }
-    else teh_u->alm = c3y;
-
+    teh_u->alm = c3y;
     uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
   }
-  else {
-    if ( c3y == teh_u->alm ) {
-      uv_timer_stop(&teh_u->tim_u);
-    }
-    teh_u->alm = c3n;
-  }
+
   u3z(wen);
+}
+
+/* u3_behn_ef_bake(): notify %behn that we're live
+*/
+void
+u3_behn_ef_bake(void)
+{
+  u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
+
+  u3v_plan(pax, u3nc(c3__born, u3_nul));
 }

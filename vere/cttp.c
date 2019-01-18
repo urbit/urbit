@@ -1,19 +1,16 @@
-/* v/cttp.c
+/* vere/cttp.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <uv.h>
 #include <errno.h>
 #include <openssl/ssl.h>
 #include <h2o.h>
+
 #include "all.h"
 #include "vere/vere.h"
 
@@ -150,6 +147,11 @@ _cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
       len_w++;
       bid_u = bid_u->nex_u;
     }
+  }
+
+  if ( 0 == len_w ) {
+    *tot_w = len_w;
+    return 0;
   }
 
   vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
@@ -482,6 +484,10 @@ static void
 _cttp_creq_link(u3_creq* ceq_u)
 {
   ceq_u->nex_u = u3_Host.ctp_u.ceq_u;
+
+  if ( 0 != ceq_u->nex_u ) {
+    ceq_u->nex_u->pre_u = ceq_u;
+  }
   u3_Host.ctp_u.ceq_u = ceq_u;
 }
 
@@ -492,9 +498,17 @@ _cttp_creq_unlink(u3_creq* ceq_u)
 {
   if ( ceq_u->pre_u ) {
     ceq_u->pre_u->nex_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = ceq_u->pre_u;
+    }
   }
   else {
     u3_Host.ctp_u.ceq_u = ceq_u->nex_u;
+
+    if ( 0 != ceq_u->nex_u ) {
+      ceq_u->nex_u->pre_u = 0;
+    }
   }
 }
 
@@ -922,8 +936,7 @@ _cttp_init_h2o()
 {
   h2o_timeout_t* tim_u = c3_malloc(sizeof(*tim_u));
 
-  // XX how long? 1 minute?
-  h2o_timeout_init(u3L, tim_u, 10000);
+  h2o_timeout_init(u3L, tim_u, 300 * 1000);
 
   h2o_http1client_ctx_t* ctx_u = c3_calloc(sizeof(*ctx_u));
   ctx_u->loop = u3L;
@@ -963,13 +976,6 @@ u3_cttp_io_init()
   u3_Host.ctp_u.ctx_u = _cttp_init_h2o();
   u3_Host.ctp_u.ctx_u->ssl_ctx = u3_Host.ctp_u.tls_u;
   u3_Host.ctp_u.ceq_u = 0;
-}
-
-/* u3_cttp_io_poll(): poll kernel for cttp I/O.
-*/
-void
-u3_cttp_io_poll(void)
-{
 }
 
 /* u3_cttp_io_exit(): shut down cttp.

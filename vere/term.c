@@ -1,15 +1,9 @@
-/* v/term.c
+/* vere/term.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <uv.h>
@@ -17,6 +11,7 @@
 #include <curses.h>
 #include <termios.h>
 #include <term.h>
+
 #include "all.h"
 #include "vere/vere.h"
 
@@ -41,17 +36,27 @@ _term_msc_out_host()
   return 1000000ULL * tim_tv.tv_sec + tim_tv.tv_usec;
 }
 
+/* _term_alloc(): libuv buffer allocator.
+*/
 static void
 _term_alloc(uv_handle_t* had_u,
             size_t len_i,
             uv_buf_t* buf
             )
 {
-  void* ptr_v = c3_malloc(len_i);
-  *buf = uv_buf_init(ptr_v, len_i);
+  //  this read can range from a single byte to a paste buffer
+  //  123 bytes has been chosen because its not a power of 2
+  //  this is probably still broken
+  //
+  void* ptr_v = c3_malloc(123);
+  *buf = uv_buf_init(ptr_v, 123);
 }
 
 
+//  XX unused, but %hook is in %zuse.
+//  implement or remove
+//
+#if 0
 /* _term_close_cb(): free terminal.
 */
 static void
@@ -79,13 +84,14 @@ _term_close_cb(uv_handle_t* han_t)
   }
   free(tty_u);
 }
+#endif
 
 /* u3_term_io_init(): initialize terminal.
 */
 void
 u3_term_io_init()
 {
-  u3_utty* uty_u = calloc(1, sizeof(u3_utty));
+  u3_utty* uty_u = c3_calloc(sizeof(u3_utty));
 
   if ( c3y == u3_Host.ops_u.dem ) {
     uty_u->fid_i = 1;
@@ -301,11 +307,6 @@ u3_term_io_exit(void)
 #endif
     }
   }
-}
-
-void
-u3_term_io_poll(void)
-{
 }
 
 /* _term_it_buf(): create a data buffer.
@@ -652,7 +653,7 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
 
       // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
       // uL(fprintf(uH, "muck-utf8 %x\n", huv));
-      wug = u3do("turf", huv);
+      wug = u3do("taft", huv);
       // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
@@ -716,8 +717,15 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
   u3_lo_open();
   {
     if ( siz_i == UV_EOF ) {
-      // nothing
-    } else   if ( siz_i < 0 ) {
+      //  We hear EOF (on the third read callback) if
+      //  2x the _term_alloc() buffer size is pasted.
+      //  The process hangs if we do nothing (and ctrl-z
+      //  then corrupts the event log), so we force shutdown.
+      //
+      fprintf(stderr, "term: hangup (EOF)\r\n");
+      u3_lo_bail();
+    }
+    else if ( siz_i < 0 ) {
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
     }
     else {
@@ -1032,32 +1040,6 @@ u3_term_ef_verb(void)
   u3v_plan(pax, u3nc(c3__verb, u3_nul));
 }
 
-/* u3_term_ef_ticket(): initial effects for new ticket.
-*/
-void
-u3_term_ef_ticket(c3_c* who_c, c3_c* tic_c)
-{
-  u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-  u3_noun who, tic;
-  u3_noun whu, tuc;
-
-  whu = u3dc("slaw", 'p', u3i_string(who_c));
-  if ( u3_nul == whu ) {
-    fprintf(stderr, "ticket: invalid planet '%s'\r\n", who_c);
-    exit(1);
-  }
-  else { who = u3k(u3t(whu)); u3z(whu); }
-
-  tuc = u3dc("slaw", 'p', u3i_string(tic_c));
-  if ( u3_nul == tuc ) {
-    fprintf(stderr, "ticket: invalid secret '%s'\r\n", tic_c);
-    exit(1);
-  }
-  else { tic = u3k(u3t(tuc)); u3z(tuc); }
-
-  u3v_plan(pax, u3nt(c3__tick, who, tic));
-}
-
 /* u3_term_ef_bake(): initial effects for new terminal.
 */
 void
@@ -1212,15 +1194,19 @@ u3_term_io_hija(void)
     else {
       if ( c3n == u3_Host.ops_u.dem ) {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"hija-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+          perror("hija-tcsetattr-0");
           c3_assert(!"hija-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->cug_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"hija-fcntl");
         }
         write(uty_u->fid_i, "\r", 1);
@@ -1253,15 +1239,19 @@ u3_term_io_loja(int x)
       }
       else {
         if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-1");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(1, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-1");
           c3_assert(!"loja-fcntl");
         }
         if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+          perror("loja-tcsetattr-0");
           c3_assert(!"loja-tcsetattr");
         }
         if ( -1 == fcntl(0, F_SETFL, uty_u->nob_i) ) {
+          perror("hija-fcntl-0");
           c3_assert(!"loja-fcntl");
         }
         _term_it_refresh_line(uty_u);

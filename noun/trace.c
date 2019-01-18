@@ -5,6 +5,8 @@
 #include "all.h"
 #include <pthread.h>
 
+static c3_o _ct_lop_o;
+
 /* u3t_push(): push on trace stack.
 */
 void
@@ -43,7 +45,7 @@ u3_lo_tank(c3_l tab_l, u3_noun tac);
 void
 u3t_slog(u3_noun hod)
 {
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   static int old;
   static struct timeval b4, f2, d0;
   c3_w ms_w;
@@ -64,7 +66,7 @@ u3t_slog(u3_noun hod)
   old = 1;
 
 #endif
-  if ( c3y == u3du(hod) ) {
+  if ( (0 != u3A->roc) && (c3y == u3du(hod)) ) {
     u3_noun pri = u3h(hod);
 
     switch ( pri ) {
@@ -82,6 +84,9 @@ u3t_slog(u3_noun hod)
 void
 u3t_heck(u3_atom cog)
 {
+#if 0
+  u3R->pro.cel_d++;
+#else
   c3_w len_w = u3r_met(3, cog);
   c3_c* str_c = alloca(1 + len_w);
 
@@ -104,26 +109,20 @@ u3t_heck(u3_atom cog)
     }
     u3R = rod_u;
   }
+#endif
 }
 
-/* _t_jet_label():
-*/
-u3_weak
-_t_jet_label(u3a_road* rod_u, u3_noun bat)
+#if 0
+static void
+_ct_sane(u3_noun lab)
 {
-  while ( 1 ) {
-    u3_weak cax = u3h_git(rod_u->jed.har_p, bat);
-
-    if ( u3_none != cax ) {
-      return u3h(u3t(u3t(u3h(cax))));
-    }
-
-    if ( rod_u->par_p ) {
-      rod_u = u3to(u3_road, rod_u->par_p);
-    }
-    else return u3_none;
+  if ( u3_nul != lab ) {
+    c3_assert(c3y == u3du(lab));
+    c3_assert(c3y == u3ud(u3h(lab)));
+    _ct_sane(u3t(lab));
   }
 }
+#endif
 
 #if 1
 /* _t_samp_process(): process raw sample data from live road.
@@ -141,22 +140,13 @@ _t_samp_process(u3_road* rod_u)
     u3_noun don = rod_u->pro.don;
 
     while ( u3_nul != don ) {
-      u3_noun bat = u3h(don);
-      u3_noun lab;
-
-      //  Find the label from this battery, surface allocated.
+      //  Get surface allocated label
       //
-      {
-        u3_noun laj = _t_jet_label(rod_u, bat);
-        
-        if ( u3_none == laj ) {
-          don = u3t(don);
-          continue;
-        }
+      //  u3_noun lab = u3nc(u3i_string("foobar"), 0);
+      u3_noun laj = u3h(don),
+              lab = u3a_take(laj);
+      u3a_wash(laj);
 
-        // lab = u3nc(u3i_string("foobar"), u3_nul);
-        lab = u3a_take(laj); u3a_wash(laj);
-      }
       //  Add the label to the traced label stack, trimming recursion.
       //  
       {
@@ -214,7 +204,16 @@ _t_samp_process(u3_road* rod_u)
 void
 u3t_samp(void)
 {
+  if ( c3y == _ct_lop_o ) {
+    // _ct_lop_o here is a mutex for modifying pro.don. we
+    // do not want to sample in the middle of doing that, as
+    // it can cause memory errors.
+    return;
+  }
+
+  c3_w old_wag = u3C.wag_w;
   u3C.wag_w &= ~u3o_debug_cpu;
+  u3C.wag_w &= ~u3o_trace;
 
   static int home = 0;
   static int away = 0;
@@ -257,7 +256,9 @@ u3t_samp(void)
 
       c3_assert(u3R == &u3H->rod_u);
       if ( 0 == u3R->pro.day ) { 
-        u3R->pro.day = u3v_do("doss", 0);
+        /* bunt a +doss
+        */
+        u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
       }
       u3R->pro.day = u3dt("pi-noon", mot_l, lab, u3R->pro.day);
     }
@@ -267,18 +268,21 @@ u3t_samp(void)
     away++;
     // fprintf(stderr,"home: %06d away: %06d\r\n", home, away);
   }
-  u3C.wag_w |= u3o_debug_cpu;
+  u3C.wag_w = old_wag;
 }
 
 /* u3t_come(): push on profile stack; return yes if active push.  RETAIN.
 */
 c3_o
-u3t_come(u3_noun bat)
+u3t_come(u3_noun lab)
 {
-  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(bat, u3h(u3R->pro.don))) ) {
-    u3R->pro.don = u3nc(u3k(bat), u3R->pro.don);
+  if ( (u3_nul == u3R->pro.don) || !_(u3r_sing(lab, u3h(u3R->pro.don))) ) {
+    u3a_gain(lab);
+    _ct_lop_o = c3y;
+    u3R->pro.don = u3nc(lab, u3R->pro.don);
+    _ct_lop_o = c3n;
     return c3y;
-  } 
+  }
   else return c3n;
 }
 
@@ -287,10 +291,197 @@ u3t_come(u3_noun bat)
 void
 u3t_flee(void)
 {
-  u3_noun t_don = u3k(u3t(u3R->pro.don));
+  _ct_lop_o = c3y;
+  u3_noun don  = u3R->pro.don;
+  u3R->pro.don = u3k(u3t(don));
+  _ct_lop_o = c3n;
+  u3z(don);
+}
 
-  u3z(u3R->pro.don);
-  u3R->pro.don = t_don;
+static FILE* trace_file_u = NULL;
+static int nock_pid_i = 0;
+
+/*  u3t_trace_open(): opens a trace file and writes the preamble.
+*/
+void
+u3t_trace_open(c3_c* trace_file_name)
+{
+  printf("trace: tracing to %s\n", trace_file_name);
+  trace_file_u = fopen(trace_file_name, "w");
+  nock_pid_i = (int)getpid();
+  fprintf(trace_file_u, "[ ");
+
+  // We have two "threads", the event processing and the nock stuff.
+  //   tid 1 = event processing
+  //   tid 2 = nock processing
+  fprintf(
+      trace_file_u,
+      "{\"name\": \"process_name\", \"ph\": \"M\", \"pid\": %d, \"args\": "
+      "{\"name\": \"urbit\"}},\n",
+      nock_pid_i);
+  fprintf(trace_file_u,
+          "{\"name\": \"thread_name\", \"ph\": \"M\", \"pid\": %d, \"tid\": 1, "
+          "\"args\": {\"name\": \"Event Processing\"}},\n",
+          nock_pid_i);
+  fprintf(trace_file_u,
+          "{\"name\": \"thread_sort_index\", \"ph\": \"M\", \"pid\": %d, "
+          "\"tid\": 1, \"args\": {\"sort_index\": 1}},\n",
+          nock_pid_i);
+  fprintf(trace_file_u,
+          "{\"name\": \"thread_name\", \"ph\": \"M\", \"pid\": %d, \"tid\": 2, "
+          "\"args\": {\"name\": \"Nock\"}},\n",
+          nock_pid_i);
+  fprintf(trace_file_u,
+          "{\"name\": \"thread_sort_index\", \"ph\": \"M\", \"pid\": %d, "
+          "\"tid\": 2, \"args\": {\"sort_index\": 2}},\n",
+          nock_pid_i);
+}
+
+/*  u3t_trace_close(): closes a trace file. optional.
+*/
+void
+u3t_trace_close()
+{
+  if (!trace_file_u)
+    return;
+
+  // We don't terminate the JSON because of the file format.
+  fclose(trace_file_u);
+}
+
+/*  u3t_trace_time(): microsecond clock
+*/
+c3_d u3t_trace_time()
+{
+  struct timeval tim_tv;
+  gettimeofday(&tim_tv, 0);
+  return 1000000ULL * tim_tv.tv_sec + tim_tv.tv_usec;
+}
+
+/* u3t_nock_trace_push(): push a trace onto the trace stack; returns yes if pushed.
+ *
+ * The trace stack is a stack of [path time-entered].
+ */
+c3_o
+u3t_nock_trace_push(u3_noun lab)
+{
+  if (!trace_file_u)
+    return c3n;
+
+  if ( (u3_nul == u3R->pro.trace) ||
+       !_(u3r_sing(lab, u3h(u3h(u3R->pro.trace)))) ) {
+    u3a_gain(lab);
+    c3_d time = u3t_trace_time();
+    u3R->pro.trace = u3nc(u3nc(lab, u3i_chubs(1, &time)), u3R->pro.trace);
+    return c3y;
+  }
+  else {
+    return c3n;
+  }
+}
+
+/*  _in_trace_pretty: measure/cut prettyprint.
+ *
+ *  Modeled after _cm_in_pretty(), the backend to u3m_p(), but with the
+ *  assumption that we're always displaying a path.
+ */
+static c3_w
+_in_trace_pretty(u3_noun som, c3_c* str_c)
+{
+  if ( _(u3du(som)) ) {
+    c3_w sel_w, one_w, two_w;
+    if ( str_c ) {
+      *(str_c++) = '/';
+    }
+    sel_w = 1;
+
+    one_w = _in_trace_pretty(u3h(som), str_c);
+    if ( str_c ) {
+      str_c += one_w;
+    }
+
+    two_w = _in_trace_pretty(u3t(som), str_c);
+    if ( str_c ) {
+      str_c += two_w;
+    }
+
+    return sel_w + one_w + two_w;
+  }
+  else {
+    c3_w len_w = u3r_met(3, som);
+    if ( str_c && len_w ) {
+      u3r_bytes(0, len_w, (c3_y *)str_c, som);
+      str_c += len_w;
+    }
+    return len_w;
+  }
+}
+
+static c3_c*
+trace_pretty(u3_noun som)
+{
+  c3_w len_w = _in_trace_pretty(som, NULL);
+  c3_c* pre_c = malloc(len_w + 1);
+
+  _in_trace_pretty(som, pre_c);
+  pre_c[len_w] = 0;
+  return pre_c;
+}
+
+/* u3t_nock_trace_pop(): pops a trace from the trace stack.
+ *
+ * When we remove the trace from the stack, we check to see if the sample is
+ * large enough to process, as we'll otherwise keep track of individual +add
+ * calls. If it is, we write it out to the tracefile.
+ */
+void
+u3t_nock_trace_pop()
+{
+  if (!trace_file_u)
+    return;
+
+  u3_noun trace  = u3R->pro.trace;
+  u3R->pro.trace = u3k(u3t(trace));
+
+  u3_noun item = u3h(trace);
+  u3_noun lab = u3h(item);
+  c3_d start_time = u3r_chub(0, u3t(item));
+
+  // 33microseconds (a 30th of a millisecond).
+  c3_d duration = u3t_trace_time() - start_time;
+  if (duration > 33) {
+    c3_c* name = trace_pretty(lab);
+
+    fprintf(trace_file_u,
+            "{\"cat\": \"nock\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "
+            "\"tid\": 2, \"ts\": %" PRIu64 ", \"dur\": %" PRIu64 "}, \n",
+            name,
+            'X',
+            nock_pid_i,
+            start_time,
+            duration);
+
+    free(name);
+  }
+
+  u3z(trace);
+}
+
+/* u3t_event_trace(): dumps a simple event from outside nock.
+*/
+void
+u3t_event_trace(const c3_c* name, c3_c type)
+{
+  if (!trace_file_u)
+    return;
+
+  fprintf(trace_file_u,
+          "{\"cat\": \"event\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "
+          "\"tid\": 1, \"ts\": %" PRIu64 ", \"id\": \"0x100\"}, \n",
+          name,
+          type,
+          nock_pid_i,
+          u3t_trace_time());
 }
 
 extern FILE*
@@ -340,13 +531,15 @@ u3t_print_steps(c3_c* cap_c, c3_d sep_d)
 void
 u3t_damp(void)
 {
-  fprintf(stderr, "\r\n");
-
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
+
+    fprintf(stderr, "\r\n");
     u3_term_wall(wol);
 
-    u3R->pro.day = u3v_do("doss", 0);
+    /* bunt a +doss
+    */
+    u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
   }
 
   u3t_print_steps("nocks", u3R->pro.nox_d);
@@ -383,58 +576,35 @@ void
 u3t_boot(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) { 
-#if defined(U3_OS_osx)
-#if 1
+    _ct_lop_o = c3n;
+#if defined(U3_OS_osx) || defined(U3_OS_linux)
+    // Register _ct_sigaction to be called on `SIGPROF`.
     {
-      struct itimerval itm_v;
-      struct sigaction sig_s;
-      sigset_t set;
-
-      sig_s.__sigaction_u.__sa_handler = _ct_sigaction;
-      sig_s.sa_mask = 0;
-      sig_s.sa_flags = 0;
-      sigaction(SIGPROF, &sig_s, 0);
-
-      sigemptyset(&set);
-      sigaddset(&set, SIGPROF);
-      if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
-        perror("pthread_sigmask");
-      }
-
-      itm_v.it_interval.tv_sec = 0;
-      itm_v.it_interval.tv_usec = 10000;
-      // itm_v.it_interval.tv_usec = 100000;
-      itm_v.it_value = itm_v.it_interval;
-
-      setitimer(ITIMER_PROF, &itm_v, 0);
-    }
-#endif
-#elif defined(U3_OS_linux)
-    {
-      struct itimerval itm_v;
-      struct sigaction sig_s;
-      sigset_t set;
-
+      struct sigaction sig_s = {{0}};
       sig_s.sa_handler = _ct_sigaction;
       sigemptyset(&(sig_s.sa_mask));
-      sig_s.sa_flags = 0;
       sigaction(SIGPROF, &sig_s, 0);
+    }
 
+    // Unblock `SIGPROF` for this thread (we will block it again when `u3t_boff` is called).
+    {
+      sigset_t set;
       sigemptyset(&set);
       sigaddset(&set, SIGPROF);
       if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
         perror("pthread_sigmask");
       }
+    }
 
-      itm_v.it_interval.tv_sec = 0;
+    // Ask for SIGPROF to be sent every 10ms.
+    {
+      struct itimerval itm_v = {{0}};
       itm_v.it_interval.tv_usec = 10000;
-      // itm_v.it_interval.tv_usec = 100000;
       itm_v.it_value = itm_v.it_interval;
-
       setitimer(ITIMER_PROF, &itm_v, 0);
     }
 #elif defined(U3_OS_bsd)
-    // TODO: support profiling on bsd
+    // XX  "Profiling isn't yet supported on BSD"
 #else
 #   error "port: profiling"
 #endif
@@ -447,28 +617,34 @@ void
 u3t_boff(void)
 {
   if ( u3C.wag_w & u3o_debug_cpu ) {
-#if defined(U3_OS_osx)
-    struct sigaction sig_s;
-    struct itimerval itm_v;
-    sigset_t set;
-
-    sigemptyset(&set);
-    sigaddset(&set, SIGPROF);
-    if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      perror("pthread_sigmask");
+#if defined(U3_OS_osx) || defined(U3_OS_linux)
+    // Mask SIGPROF signals in this thread (and this is the only
+    // thread that unblocked them).
+    {
+      sigset_t set;
+      sigemptyset(&set);
+      sigaddset(&set, SIGPROF);
+      if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
+        perror("pthread_sigmask");
+      }
     }
 
-    itm_v.it_interval.tv_sec = 0;
-    itm_v.it_interval.tv_usec = 0;
-    itm_v.it_value = itm_v.it_interval;
+    // Disable the SIGPROF timer.
+    {
+      struct itimerval itm_v = {{0}};
+      setitimer(ITIMER_PROF, &itm_v, 0);
+    }
 
-    setitimer(ITIMER_PROF, &itm_v, 0);
-    sigaction(SIGPROF, &sig_s, 0);
+    // Ignore SIGPROF signals.
+    {
+      struct sigaction sig_s = {{0}};
+      sigemptyset(&(sig_s.sa_mask));
+      sig_s.sa_handler = SIG_IGN;
+      sigaction(SIGPROF, &sig_s, 0);
+    }
 
-#elif defined(U3_OS_linux)
-    // TODO: support profiling on linux
 #elif defined(U3_OS_bsd)
-    // TODO: support profiling on bsd
+    // XX  "Profiling isn't yet supported on BSD"
 #else
 #   error "port: profiling"
 #endif

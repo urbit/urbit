@@ -1,16 +1,9 @@
-/* v/main.c
+/* vere/main.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <gmp.h>
-#include <stdint.h>
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
@@ -20,8 +13,7 @@
 #include <dirent.h>
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
-
-#include "h2o.h"
+#include <h2o.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -51,7 +43,7 @@ static c3_c hostbuf[2048];  // kill me
 
 /* _main_presig(): prefix optional sig.
 */
-c3_c* 
+c3_c*
 _main_presig(c3_c* txt_c)
 {
   c3_c* new_c = malloc(2 + strlen(txt_c));
@@ -75,14 +67,17 @@ _main_getopt(c3_i argc, c3_c** argv)
 
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
+  u3_Host.ops_u.can = c3n;
   u3_Host.ops_u.dem = c3n;
   u3_Host.ops_u.dry = c3n;
-  u3_Host.ops_u.fak = c3n;
-  u3_Host.ops_u.fog = c3n;
+  u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.gab = c3n;
   u3_Host.ops_u.git = c3n;
-  u3_Host.ops_u.net = c3n;
-  u3_Host.ops_u.mem = c3n;
+  //  always disable hashboard
+  //  XX temporary, remove once hashes are added
+  //
+  u3_Host.ops_u.has = c3y;
+  u3_Host.ops_u.net = c3y;
   u3_Host.ops_u.nuu = c3n;
   u3_Host.ops_u.pro = c3n;
   u3_Host.ops_u.qui = c3n;
@@ -91,12 +86,14 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  while ( (ch_i=getopt(argc, argv,"G:B:A:H:I:w:u:t:f:k:l:n:p:r:NabcdgqsvxFMPDXR")) != -1 ) {
+  u3_Host.ops_u.rop_s = 0;
+  u3_Host.ops_u.raf_c = 0;
+  u3_Host.ops_u.nam_c = 0;
+
+  while ( -1 != (ch_i=getopt(argc, argv,
+                 "G:B:K:A:H:w:u:j:e:E:f:F:k:m:p:LabcCdgqstvxPDRS")) ) {
+
     switch ( ch_i ) {
-      case 'M': {
-        u3_Host.ops_u.mem = c3y;
-        break;
-      }
       case 'B': {
         u3_Host.ops_u.pil_c = strdup(optarg);
         break;
@@ -113,8 +110,16 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.dns_c = strdup(optarg);
         break;
       }
-      case 'I': {
-        u3_Host.ops_u.imp_c = _main_presig(optarg);
+      case 'e': {
+        u3_Host.ops_u.eth_c = strdup(optarg);
+        break;
+      }
+      case 'E': {
+        u3_Host.ops_u.ets_c = strdup(optarg);
+        break;
+      }
+      case 'F': {
+        u3_Host.ops_u.fak_c = _main_presig(optarg);
         break;
       }
       case 'w': {
@@ -126,16 +131,12 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.url_c = strdup(optarg);
         break;
       }
-      case 't': {
-        u3_Host.ops_u.tic_c = _main_presig(optarg);
+      case 'j': {
+        u3_Host.ops_u.json_file_c = strdup(optarg);
         break;
       }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
-        break;
-      }
-      case 'X': {
-        u3_Host.ops_u.fog = c3y;
         break;
       }
       case 'f': {
@@ -144,20 +145,18 @@ _main_getopt(c3_i argc, c3_c** argv)
         }
         break;
       }
-      case 'k': {
+      case 'K': {
         if ( c3n == _main_readw(optarg, 256, &u3_Host.ops_u.kno_w) ) {
           return c3n;
         }
         break;
       }
-      case 'l': {
-        if ( c3n == _main_readw(optarg, 65536, &arg_w) ) {
-          return c3n;
-        } else u3_Host.ops_u.rop_s = arg_w;
+      case 'k': {
+        u3_Host.ops_u.key_c = strdup(optarg);
         break;
       }
-      case 'n': {
-        u3_Host.ops_u.nam_c = strdup(optarg);
+      case 'm': {
+        u3_Host.ops_u.sap_c = strdup(optarg);
         break;
       }
       case 'p': {
@@ -166,19 +165,15 @@ _main_getopt(c3_i argc, c3_c** argv)
         } else u3_Host.ops_u.por_s = arg_w;
         break;
       }
-      case 'r': {
-        u3_Host.ops_u.raf_c = strdup(optarg);
-        break;
-      }
       case 'R': {
         u3_Host.ops_u.rep = c3y;
         return c3y;
       }
-      case 'N': { u3_Host.ops_u.net = c3y; break; }
-      case 'F': { u3_Host.ops_u.fak = c3y; break; }
+      case 'L': { u3_Host.ops_u.net = c3n; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
+      case 'C': { u3_Host.ops_u.can = c3y; break; }
       case 'd': { u3_Host.ops_u.dem = c3y; break; }
       case 'g': { u3_Host.ops_u.gab = c3y; break; }
       case 'P': { u3_Host.ops_u.pro = c3y; break; }
@@ -186,55 +181,38 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
       case 's': { u3_Host.ops_u.git = c3y; break; }
+      case 'S': { u3_Host.ops_u.has = c3y; break; }
+      case 't': { u3_Host.ops_u.etn = c3y; break; }
       case '?': default: {
         return c3n;
       }
     }
   }
 
-  if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3y ) {
-    fprintf(stderr, "-N only makes sense with -F\n");
-    return c3n;
-  } else if ( u3_Host.ops_u.fak == c3n && u3_Host.ops_u.net == c3n ) {
-    u3_Host.ops_u.net = c3y;  /* remote networking is always on in real mode. */
-  }
-
-  if ( u3_Host.ops_u.arv_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-A only makes sense when creating a new galaxy\n");
+#if defined(U3_OS_bsd)
+  if (u3_Host.ops_u.pro == c3y) {
+    fprintf(stderr, "profiling isn't yet supported on BSD\r\n");
     return c3n;
   }
+#endif
 
-  if ( u3_Host.ops_u.imp_c != 0 &&
-       u3_Host.ops_u.arv_c == 0 &&
-       u3_Host.ops_u.nuu   == c3y ) {
-    fprintf(stderr, "can't create a new galaxy without specifying "
-                    "the initial sync path with -A\n");
-    return c3n;
+  if ( 0 != u3_Host.ops_u.fak_c ) {
+    if ( 28 < strlen(u3_Host.ops_u.fak_c) ) {
+      fprintf(stderr, "fake comets are disallowed\r\n");
+      return c3n;
+    }
+
+    u3_Host.ops_u.who_c = strdup(u3_Host.ops_u.fak_c);
+    u3_Host.ops_u.has = c3y;  /* no battery hashing on fake ships. */
+    u3_Host.ops_u.net = c3n;  /* no networking on fake ships. */
+    u3_Host.ops_u.nuu = c3y;
   }
 
-  if ( u3_Host.ops_u.gen_c != 0 && ( u3_Host.ops_u.imp_c == 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-G only makes sense when creating a new galaxy\n");
-    return c3n;
-  }
+  c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
 
-  if ( u3_Host.ops_u.tic_c != 0 && ( u3_Host.ops_u.imp_c != 0 ||
-                                     u3_Host.ops_u.nuu   == c3n ) ) {
-    fprintf(stderr, "-t only makes sense when creating a new non-galaxy\n");
+  if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
+    fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
     return c3n;
-  }
-
-  if ( u3_Host.ops_u.rop_s == 0 && u3_Host.ops_u.raf_c != 0 ) {
-    fprintf(stderr, "The -r flag requires -l.\n");
-    return c3n;
-  }
-
-  if ( u3_Host.ops_u.tic_c == 0 && u3_Host.ops_u.who_c != 0 ) {
-    c3_c tic_c[29];
-    printf("your ticket: ~");
-    scanf("%28s",tic_c);
-    u3_Host.ops_u.tic_c = _main_presig(tic_c);
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -242,20 +220,69 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.nuu = c3y;
   }
 
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.dns_c != 0) {
+    fprintf(stderr, "-H only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.pil_c != 0) {
     fprintf(stderr, "-B only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.key_c != 0) {
+    fprintf(stderr, "-k only makes sense when bootstrapping a new instance\n");
     return c3n;
   }
 
   if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.url_c != 0 ) {
     fprintf(stderr, "-u only makes sense when bootstrapping a new instance\n");
     return c3n;
+  }
+
+  if ( u3_Host.ops_u.nuu != c3y && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m only makes sense when bootstrapping a new instance\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.fak_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -F cannot be used together\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.ets_c != 0 && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -E cannot be used together\n");
+    return c3n;
+  }
+  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.sap_c != 0 ) {
+    fprintf(stderr, "-m and -C cannot be used together\n");
+    return c3n;
+  }
+  if ( u3_Host.ops_u.can == c3y && u3_Host.ops_u.ets_c != 0 ) {
+    fprintf(stderr, "-C and -E cannot be used together\n");
+    return c3n;
+  }
+
+  if ( u3_Host.ops_u.eth_c == 0 && imp_t ) {
+    u3_Host.ops_u.eth_c = "http://eth-mainnet.urbit.org:8545";
+  }
+
+  if ( u3_Host.ops_u.sap_c == 0 && u3_Host.ops_u.can == c3n ) {
+
+    u3_Host.ops_u.sap_c =
+        "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".snap";
+  }
+
+  if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
+    fprintf(stderr, "-B and -u cannot be used together\n");
+    return c3n;
 
   } else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
            && u3_Host.ops_u.git == c3n ) {
 
-    u3_Host.ops_u.url_c = "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
+    u3_Host.ops_u.url_c =
+      "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
 
   } else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0
@@ -265,14 +292,18 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
 
-  if ( u3_Host.ops_u.dns_c == 0 ) {
-    u3_Host.ops_u.dns_c = "urbit.org";
-  }
-
   if ( u3_Host.ops_u.pil_c != 0 ) {
     struct stat s;
     if ( stat(u3_Host.ops_u.pil_c, &s) != 0 ) {
       fprintf(stderr, "pill %s not found\n", u3_Host.ops_u.pil_c);
+      return c3n;
+    }
+  }
+
+  if ( u3_Host.ops_u.key_c != 0 ) {
+    struct stat s;
+    if ( stat(u3_Host.ops_u.key_c, &s) != 0 ) {
+      fprintf(stderr, "keyfile %s not found\n", u3_Host.ops_u.key_c);
       return c3n;
     }
   }
@@ -324,45 +355,41 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "where ship_name is a @p phonetic representation of an urbit address\n",
     "without the leading '~', and options is some subset of the following:\n",
     "\n",
-    "-A dir        Use dir for initial galaxy sync\n",
-    "-b            Batch create\n",
+    "-A dir        Use dir for initial arvo sync\n",
     "-B pill       Bootstrap from this pill\n",
+    "-b            Batch create\n",
     "-c pier       Create a new urbit in pier/\n",
-    "-d            Daemon mode\n",
     "-D            Recompute from events\n",
-    "-F            Fake keys; also disables networking\n",
+    "-d            Daemon mode\n",
+    "-e url        Ethereum gateway\n",
+    "-F ship       Fake keys; also disables networking\n",
     "-f            Fuzz testing\n",
     "-g            Set GC flag\n",
-    "-H domain     Set ames bootstrap domain (default urbit.org)\n",
-    "-I galaxy     Start as ~galaxy\n",
-    "-k stage      Start at Hoon kernel version stage\n",
-    "-l port       Initial peer port\n",
-    "-M            Memory madness\n",
-    "-n host       Set unix hostname\n",
-    "-N            Enable networking in fake mode (-F)\n",
-    "-p ames_port  Set the HTTP port to bind to\n",
+    "-j file       Create json trace file\n",
+    "-K stage      Start at Hoon kernel version stage\n",
+    "-k keys       Private key file\n",
+    "-L            local networking only\n",
     "-P            Profiling\n",
+    "-p ames_port  Set the ames port to bind to\n",
     "-q            Quiet\n",
-    "-r host       Initial peer address\n",
     "-R            Report urbit build info\n",
+    "-S            Disable battery hashing\n",
     "-s            Pill URL from arvo git hash\n",
-    "-t ticket     Use ~ticket automatically\n",
     "-u url        URL from which to download pill\n",
     "-v            Verbose\n",
-    "-w name       Immediately upgrade to ~name\n",
+    "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
-    "-Xwtf         Skip last event\n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
-    "   %s -FI zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
+    "   %s -F zod -A /path/to/arvo/folder -B /path/to/pill -c zod\n",
     "\n",
     "   For more information about developing on urbit, see:\n",
     "   https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md\n",
     "\n",
     "Simple Usage: \n",
-    "   %s -c <mycomet> to create a comet (anonymous urbit)\n",
-    "   %s -w <myplanet> -t <myticket> if you have a ticket\n",
+    "   %s -c <my-comet> to create a comet (anonymous urbit)\n",
+    "   %s -w <my-planet> -k <my-key-file> if you own a planet\n",
     "   %s <myplanet or mycomet> to restart an existing urbit\n",
     0
   };
@@ -547,11 +574,35 @@ main(c3_i   argc,
   printf("~\n");
   //  printf("welcome.\n");
   printf("urbit %s\n", URBIT_VERSION);
-  printf("urbit: home is %s\n", u3_Host.dir_c);
+
+  // prints the absolute path of the pier
+  //
+  c3_c* abs_c = realpath(u3_Host.dir_c, 0);
+
+  // if the ship is being booted, we use realpath(). Otherwise, we use getcwd()
+  // with a memory-allocation loop
+  //
+  if (abs_c == NULL) {
+    c3_i mprint_i = 1000;
+    abs_c = c3_malloc(mprint_i);
+
+    // allocates more memory as needed if the path is too large
+    //
+    while ( abs_c != getcwd(abs_c, mprint_i) ) {
+      free(abs_c);
+      mprint_i *= 2;
+      abs_c = c3_malloc(mprint_i);
+    }
+    printf("boot: home is %s/%s\n", abs_c, u3_Host.dir_c);
+    free(abs_c);
+  } else {
+    printf("boot: home is %s\n", abs_c);
+    free(abs_c);
+  }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
-    printf("urbit: running as daemon\n");
+    printf("boot: running as daemon\n");
   }
 
   //  Seed prng. Don't panic -- just for fuzz testing.
@@ -590,11 +641,24 @@ main(c3_i   argc,
       if ( _(u3_Host.ops_u.qui) ) {
         u3C.wag_w |= u3o_quiet;
       }
-      
+
       /*  Set dry-run flag.
       */
       if ( _(u3_Host.ops_u.dry) ) {
         u3C.wag_w |= u3o_dryrun;
+      }
+
+      /*  Set hashboard flag
+      */
+      if ( _(u3_Host.ops_u.has) ) {
+        u3C.wag_w |= u3o_hashless;
+      }
+
+      /*  Set tracing flag
+      */
+      if ( u3_Host.ops_u.json_file_c ) {
+        u3C.wag_w |= u3o_trace;
+        u3t_trace_open(u3_Host.ops_u.json_file_c);
       }
     }
     u3m_boot(u3_Host.ops_u.nuu,

@@ -2,12 +2,6 @@
 **
 ** This file is in the public domain.
 */
-  /**  Options.
-  **/
-    /* U3_MEMORY_DEBUG: add debugging information to heap.  Breaks image.
-    */
-#     undef U3_MEMORY_DEBUG
-
   /**  Constants.
   **/
     /* u3a_bits: number of bits in word-addressed pointer.  29 == 2GB.
@@ -128,9 +122,16 @@
         } all;
 
         struct {                              //  jet dashboard
-          u3p(u3h_root) har_p;                //  warm state
-          u3_noun       das;                  //  cold state
+          u3p(u3h_root) hot_p;                //  hot state (home road only)
+          u3p(u3h_root) war_p;                //  warm state
+          u3p(u3h_root) cod_p;                //  cold state
+          u3p(u3h_root) han_p;                //  hank cache
+          u3p(u3h_root) bas_p;                //  battery hashes
         } jed;
+
+        struct {                              // bytecode state
+          u3p(u3h_root) har_p;                // formula->post of bytecode
+        } byc;
 
         struct {                              //  namespace
           u3_noun gul;                        //  (list $+(* (unit (unit)))) now
@@ -145,6 +146,7 @@
           c3_d    nox_d;                      //  nock steps
           c3_d    cel_d;                      //  cell allocations
           u3_noun don;                        //  (list batt)
+          u3_noun trace;                      //  (list trace)
           u3_noun day;                        //  doss, only in u3H (moveme)
         } pro;
 
@@ -249,6 +251,15 @@
                          ?  u3a_north_is_senior(r, som) \
                          :  u3a_south_is_senior(r, som) )
 
+#     define  u3a_is_mutable(r, som) \
+                ( _(u3a_is_atom(som)) \
+                  ? c3n \
+                  : _(u3a_is_senior(r, som)) \
+                  ? c3n \
+                  : _(u3a_is_junior(r, som)) \
+                  ? c3n \
+                  : (u3a_botox(u3a_to_ptr(som))->use_w == 1) \
+                  ? c3y : c3n )
 
   /**  Globals.
   **/

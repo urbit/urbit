@@ -187,6 +187,7 @@ _cm_signal_reset(void)
   u3R->kid_p = 0;
 }
 
+#if 0
 /* _cm_stack_recover(): recover stack trace, with lacunae.
 */
 static u3_noun
@@ -226,6 +227,25 @@ _cm_stack_recover(u3a_road* rod_u)
       return u3kb_weld(beg, fin);
     }
   }
+}
+#endif
+
+/* _cm_stack_unwind(): unwind to the top level, preserving all frames.
+*/
+static u3_noun
+_cm_stack_unwind(void)
+{
+  u3_noun tax;
+
+  while ( u3R != &(u3H->rod_u) ) {
+    u3_noun yat = u3m_love(u3R->bug.tax);
+
+    u3R->bug.tax = u3kb_weld(yat, u3R->bug.tax);
+  }
+  tax = u3R->bug.tax;
+
+  u3R->bug.tax = 0;
+  return tax;
 }
 
 /* _cm_signal_recover(): recover from a deep signal, after longjmp.  Free arg.
@@ -268,6 +288,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
     //
     _cm_emergency("recover: dig", sig_l);
 
+#if 0
     //  Descend to the innermost trace, collecting stack.
     //
     {
@@ -285,7 +306,9 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
         rod_u = u3to(u3_road, rod_u->kid_p);
       }
     }
-
+#else
+    tax = _cm_stack_unwind();
+#endif
     pro = u3nt(3, sig_l, tax);
     _cm_signal_reset();
 
@@ -458,8 +481,11 @@ static void
 _pave_parts(void)
 {
   u3R->cax.har_p = u3h_new();
-  u3R->jed.har_p = u3h_new();
-  u3R->jed.das = u3_nul;
+  u3R->jed.war_p = u3h_new();
+  u3R->jed.cod_p = u3h_new();
+  u3R->jed.han_p = u3h_new();
+  u3R->jed.bas_p = u3h_new();
+  u3R->byc.har_p = u3h_new();
 }
 
 /* u3m_mark(): mark all nouns in the road.
@@ -468,12 +494,13 @@ c3_w
 u3m_mark(void)
 {
   c3_w tot_w = 0;
-  tot_w += u3h_mark(u3R->jed.har_p);
-  tot_w += u3a_mark_noun(u3R->jed.das);
+  tot_w += u3j_mark();
+  tot_w += u3n_mark();
   tot_w += u3a_mark_noun(u3R->ski.gul);
   tot_w += u3a_mark_noun(u3R->bug.tax);
   tot_w += u3a_mark_noun(u3R->bug.mer);
   tot_w += u3a_mark_noun(u3R->pro.don);
+  tot_w += u3a_mark_noun(u3R->pro.trace);
   tot_w += u3a_mark_noun(u3R->pro.day);
   tot_w += u3h_mark(u3R->cax.har_p);
   return tot_w;
@@ -507,8 +534,8 @@ void
 u3m_clear(void)
 {
   u3h_free(u3R->cax.har_p);
-  u3h_free(u3R->jed.har_p);
-  u3a_lose(u3R->jed.das);
+  u3j_free();
+  u3n_free();
 }
 
 void
@@ -598,14 +625,15 @@ u3m_bail(u3_noun how)
     } 
     else {
       c3_assert(_(u3ud(u3h(how))));
-
       fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
-      u3m_p("bail", u3t(how));
     }
   }
 
   switch ( how ) {
-    case c3__fail:
+    case c3__fail: {
+      break;
+    }
+
     case c3__meme: {
       fprintf(stderr, "bailing out\r\n");
       abort();
@@ -794,14 +822,19 @@ u3_noun
 u3m_love(u3_noun pro)
 {
   {
-    u3_noun das         = u3R->jed.das;
-    u3p(u3h_root) har_p = u3R->jed.har_p;
+    u3p(u3h_root) cod_p = u3R->jed.cod_p;
+    u3p(u3h_root) war_p = u3R->jed.war_p;
+    u3p(u3h_root) han_p = u3R->jed.han_p;
+    u3p(u3h_root) bas_p = u3R->jed.bas_p;
+    u3p(u3h_root) byc_p = u3R->byc.har_p;
 
     u3m_fall();
 
     pro = u3a_take(pro);
 
-    u3j_reap(das, har_p);
+    // call sites first: see u3j_reap().
+    u3n_reap(byc_p);
+    u3j_reap(cod_p, war_p, han_p, bas_p);
 
     u3R->cap_p = u3R->ear_p;
     u3R->ear_p = 0;
@@ -983,6 +1016,7 @@ u3m_soft_run(u3_noun gul,
   {
     u3R->ski.gul = u3nc(gul, u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
   u3t_on(coy_o);
@@ -1076,6 +1110,7 @@ u3m_soft_esc(u3_noun ref, u3_noun sam)
   {
     u3R->ski.gul = u3t(u3to(u3_road, u3R->par_p)->ski.gul);
     u3R->pro.don = u3to(u3_road, u3R->par_p)->pro.don;
+    u3R->pro.trace = u3to(u3_road, u3R->par_p)->pro.trace;
     u3R->bug.tax = 0;
   }
 
@@ -1666,7 +1701,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 
   /* Initialize the jet system.
   */
-  u3j_boot();
+  u3j_boot(nuu_o);
 
   /* Install or reactivate the kernel.
   */
@@ -1676,14 +1711,21 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-
     printf("boot: loading %s\r\n", ful_c);
-    u3v_make(ful_c);
 
-    u3v_jack();
+    {
+      u3_noun sys = u3ke_cue(u3m_file(ful_c));
+      u3_noun bot;
+
+      u3x_trel(sys, &bot, 0, 0);
+      u3v_boot(u3k(bot));
+
+      u3z(sys);
+    }
   }
   else {
     u3v_hose();
     u3j_ream();
+    u3n_ream();
   }
 }

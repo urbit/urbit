@@ -53,21 +53,22 @@
     u3_noun u3wc_dvr(u3_noun);
     u3_noun u3wc_end(u3_noun);
     u3_noun u3wc_gor(u3_noun);
-    u3_noun u3wc_hor(u3_noun);
     u3_noun u3wc_lsh(u3_noun);
     u3_noun u3wc_mas(u3_noun);
     u3_noun u3wc_met(u3_noun);
     u3_noun u3wc_mix(u3_noun);
+    u3_noun u3wc_mor(u3_noun);
     u3_noun u3wc_mug(u3_noun);
     u3_noun u3wc_muk(u3_noun);
     u3_noun u3wc_peg(u3_noun);
     u3_noun u3wc_pow(u3_noun);
     u3_noun u3wc_rap(u3_noun);
     u3_noun u3wc_rep(u3_noun);
+    u3_noun u3wc_rev(u3_noun);
     u3_noun u3wc_rip(u3_noun);
     u3_noun u3wc_rsh(u3_noun);
+    u3_noun u3wc_swp(u3_noun);
     u3_noun u3wc_sqt(u3_noun);
-    u3_noun u3wc_vor(u3_noun);
 
     u3_noun u3wcp_ins(u3_noun);
     u3_noun u3wcp_ind(u3_noun);
@@ -77,16 +78,19 @@
   /** Tier 4.
   **/
     u3_noun u3wdb_bif(u3_noun);
+    u3_noun u3wdb_del(u3_noun);
     u3_noun u3wdb_dif(u3_noun);
     u3_noun u3wdb_gas(u3_noun);
     u3_noun u3wdb_get(u3_noun);
     u3_noun u3wdb_has(u3_noun);
     u3_noun u3wdb_int(u3_noun);
+    u3_noun u3wdb_jab(u3_noun);
     u3_noun u3wdb_put(u3_noun);
 #   define u3wdb_tap u3wdi_tap
     u3_noun u3wdb_uni(u3_noun);
 
     u3_noun u3wdi_bif(u3_noun);
+    u3_noun u3wdi_del(u3_noun);
     u3_noun u3wdi_dif(u3_noun);
     u3_noun u3wdi_gas(u3_noun);
     u3_noun u3wdi_has(u3_noun);
@@ -143,6 +147,7 @@
     u3_noun u3we_shay(u3_noun);
     u3_noun u3we_shas(u3_noun);
     u3_noun u3we_shal(u3_noun);
+    u3_noun u3we_sha1(u3_noun);
 
     u3_noun u3weo_raw(u3_noun);
 
@@ -150,6 +155,19 @@
     u3_noun u3wee_sign(u3_noun);
     u3_noun u3wee_veri(u3_noun);
     u3_noun u3wee_shar(u3_noun);
+
+    u3_noun u3we_hmac(u3_noun);
+
+
+    u3_noun u3we_argon2(u3_noun);
+
+    u3_noun u3we_blake(u3_noun);
+
+    u3_noun u3we_ripe(u3_noun);
+
+    u3_noun u3we_make(u3_noun);
+    u3_noun u3we_sign(u3_noun);
+    u3_noun u3we_reco(u3_noun);
 
     u3_noun u3we_bend_fun(u3_noun);
     u3_noun u3we_cold_fun(u3_noun);
@@ -233,7 +251,7 @@
     u3_noun u3wf_flor(u3_noun);
     u3_noun u3wf_forq(u3_noun);
     u3_noun u3wf_fork(u3_noun);
-    u3_noun u3wf_help(u3_noun);
+    u3_noun u3wf_hint(u3_noun);
     u3_noun u3wf_hike(u3_noun);
     u3_noun u3wf_look(u3_noun);
     u3_noun u3wf_loot(u3_noun);
@@ -272,62 +290,3 @@
     u3_noun u3wfu_snub(u3_noun);
     u3_noun u3wfu_toss(u3_noun);
     u3_noun u3wfu_wrap(u3_noun);
-
-    u3_noun u3wz_bull(u3_noun);
-    u3_noun u3wz_cell(u3_noun);
-    u3_noun u3wz_comb(u3_noun);
-    u3_noun u3wz_cons(u3_noun);
-    u3_noun u3wz_core(u3_noun);
-    u3_noun u3wz_cube(u3_noun);
-    u3_noun u3wz_face(u3_noun);
-    u3_noun u3wz_fine(u3_noun);
-    u3_noun u3wz_fitz(u3_noun);
-    u3_noun u3wz_flan(u3_noun);
-    u3_noun u3wz_flay(u3_noun);
-    u3_noun u3wz_flip(u3_noun);
-    u3_noun u3wz_flor(u3_noun);
-    u3_noun u3wz_forq(u3_noun);
-    u3_noun u3wz_fork(u3_noun);
-    u3_noun u3wz_help(u3_noun);
-    u3_noun u3wz_hike(u3_noun);
-    u3_noun u3wz_look(u3_noun);
-    u3_noun u3wz_loot(u3_noun);
-
-    u3_noun u3wzl_bunt(u3_noun);
-    u3_noun u3wzl_whip(u3_noun);
-
-    u3_noun u3wzp_hack(u3_noun);
-    u3_noun u3wzp_late(u3_noun);
-    u3_noun u3wzp_open(u3_noun);
-    u3_noun u3wzp_rake(u3_noun);
-
-    u3_noun u3wzu_burn(u3_noun);
-    u3_noun u3wzu_busk(u3_noun);
-    u3_noun u3wzu_bust(u3_noun);
-    u3_noun u3wzu_conk(u3_noun);
-    u3_noun u3wzu_crop(u3_noun);
-    u3_noun u3wzu_cull(u3_noun);
-    u3_noun u3wzu_duck(u3_noun);
-    u3_noun u3wzu_find(u3_noun);
-    u3_noun u3wzu_fond(u3_noun);
-    u3_noun u3wzu_fink(u3_noun);
-    u3_noun u3wzu_fire(u3_noun);
-    u3_noun u3wzu_firm(u3_noun);
-    u3_noun u3wzu_fish(u3_noun);
-    u3_noun u3wzu_fuse(u3_noun);
-    u3_noun u3wzu_heal(u3_noun);
-    u3_noun u3wzu_mint(u3_noun);
-    u3_noun u3wzu_mull(u3_noun);
-    u3_noun u3wzu_nest(u3_noun);
-    u3_noun u3wzu_peek(u3_noun);
-    u3_noun u3wzu_peel(u3_noun);
-    u3_noun u3wzu_play(u3_noun);
-    u3_noun u3wzu_repo(u3_noun);
-    u3_noun u3wzu_rest(u3_noun);
-    u3_noun u3wzu_snub(u3_noun);
-    u3_noun u3wzu_toss(u3_noun);
-    u3_noun u3wzu_wrap(u3_noun);
-
-  /** Tier 7.
-  **/
-    u3_noun u3wg_down(u3_noun);

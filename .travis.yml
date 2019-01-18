@@ -1,5 +1,7 @@
-language: c
-script: meson build && cd ./build && ninja
+dist: xenial
+language: node_js
+node_js:
+- 4
 
 # Uncomment me if this gets annoying
 #
@@ -10,27 +12,38 @@ before_install:
   - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
   - unzip ninja-linux.zip
   - sudo mv ninja /usr/bin/
+
 install:
+  # pwd: ~/urbit
   - pip3 install --user -I meson==0.44.1
+
+script:
+  - meson . ./build --buildtype=debugoptimized -Dgc=true -Dprof=true
+  - cd ./build
+  - ninja
+  - ninja test
+  - sudo ninja install
+  - cd ../.travis
+  - npm install
+  - ulimit -c unlimited -S
+  - npm run -s test; bash print-core-backtrace.sh $?
 
 addons:
   apt:
     packages:
     - python3
     - python3-pip
+    - python3-setuptools
+    - python3-wheel
     - libgmp3-dev
     - libsigsegv-dev
     - openssl
     - libssl-dev
     - libncurses5-dev
-    - automake
-    - autoconf
-    - make
-    - libtool
-    - g++
-    - re2c
+    - gcc
     - libcurl4-gnutls-dev
     - unzip
+    - gdb
 # before_deploy: "make deb" # TODO
 deploy:
   skip_cleanup: true

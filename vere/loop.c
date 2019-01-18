@@ -1,17 +1,11 @@
-/* v/loop.c
+/* vere/loop.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
-#include <setjmp.h>
-#include <gmp.h>
 #include <sigsegv.h>
-#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <uv.h>
@@ -252,38 +246,11 @@ u3_lo_exit(void)
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_exit();
   u3a_lop(cod_l);
-}
 
-/* _lo_poll(): reset event flags across the process.
-*/
-static void
-_lo_poll(void)
-{
-  c3_l cod_l;
-
-  cod_l = u3a_lush(c3__ames);
-  u3_ames_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__save);
-  u3_save_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__unix);
-  u3_unix_io_poll();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__behn);
-  u3_behn_io_poll();
-  u3a_lop(cod_l);
+  if ( c3y == __(u3C.wag_w & u3o_trace) ) {
+    printf("saving trace file.\r\n");
+    u3t_trace_close();
+  }
 }
 
 #if 0
@@ -469,6 +436,7 @@ u3_lo_shut(c3_o inn)
   if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
+    u3_raft_play();
     // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
@@ -478,11 +446,6 @@ u3_lo_shut(c3_o inn)
     //  save a checkpoint before exiting
     u3e_save();
     exit(u3_Host.xit_i);
-  }
-  else {
-    //  poll arvo to generate any event binding changes
-    //
-    _lo_poll();
   }
 }
 
@@ -667,6 +630,11 @@ u3_lo_lead(void)
   //  Further server configuration.
   //
   {
+    if ( c3n == u3_Host.ops_u.nuu ) {
+      u3_ames_ef_bake();
+      u3_behn_ef_bake();
+    }
+
     u3_http_ef_bake();
   }
 
@@ -676,7 +644,6 @@ u3_lo_lead(void)
     u3v_plan(u3nt(u3_blip, c3__ames, u3_nul),
                u3nc(c3__kick, u3k(u3A->now)));
   }
-  _lo_poll();
 
 #if 0
   u3_loom_save(u3A->ent_d);
@@ -685,9 +652,6 @@ u3_lo_lead(void)
 #endif
 
   if ( c3y == u3_Host.ops_u.nuu ) {
-    if ( u3_Host.ops_u.who_c ) {
-      u3_term_ef_ticket(u3_Host.ops_u.who_c, u3_Host.ops_u.tic_c);
-    }
     u3_term_ef_boil(1);
   }
 

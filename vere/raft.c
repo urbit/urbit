@@ -1,10 +1,6 @@
-/* v/raft.c
+/* vere/raft.c
 **
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <uv.h>
 
 #include "all.h"
@@ -75,7 +71,7 @@ _raft_rnam_free(u3_rnam* nam_u)
 static u3_rnam*
 _raft_readname(const c3_c* str_c, c3_w siz_w)
 {
-  u3_rnam* nam_u = calloc(1, sizeof(*nam_u));
+  u3_rnam* nam_u = c3_calloc(sizeof(*nam_u));
   c3_c*    col_c;
   c3_w     nam_w;
 
@@ -179,6 +175,7 @@ _raft_promote(u3_raft* raf_u)
       u3_sist_boot();
       if ( c3n == u3_Host.ops_u.bat ) {
         u3_lo_lead();
+        u3_raft_work();
       }
     }
     else {
@@ -519,8 +516,8 @@ _raft_rmsg_read(const u3_rbuf* buf_u, u3_rmsg* msg_u)
     memcpy(&msg_u->rest.apen.ent_d, buf_u->buf_y + red_i, sizeof(c3_d));
     red_i += sizeof(c3_d);
 
-    msg_u->rest.apen.ent_u = calloc(
-        1, msg_u->rest.apen.ent_d * sizeof(u3_rent));
+    msg_u->rest.apen.ent_u = c3_calloc(
+        msg_u->rest.apen.ent_d * sizeof(u3_rent));
     {
       c3_d     i_d;
       u3_rent* ent_u = msg_u->rest.apen.ent_u;
@@ -1151,7 +1148,7 @@ _raft_write_rest(u3_rcon* ron_u, c3_d lai_d, c3_w lat_w, u3_rmsg* msg_u)
   msg_u->rest.lai_d = lai_d;
   msg_u->rest.lat_w = lat_w;
   msg_u->rest.nam_w = 1 + strlen(raf_u->str_c) / 4;
-  msg_u->rest.nam_c = calloc(1, 4 * msg_u->rest.nam_w);
+  msg_u->rest.nam_c = c3_calloc(4 * msg_u->rest.nam_w);
   strncpy(msg_u->rest.nam_c, raf_u->str_c, 4 * msg_u->rest.nam_w + 1);
   msg_u->len_d += 4 + msg_u->rest.nam_w;
 }
@@ -1445,17 +1442,22 @@ u3_raft_init()
 
 /* _raft_sure(): apply and save an input ovum and its result.
 */
-static void
+static u3_noun
 _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 {
   //  Whatever worked, save it.  (XX - should be concurrent with execute.)
   //  We'd like more events that don't change the state but need work here.
   {
+    u3_noun ret;
+
     u3r_mug(cor);
     u3r_mug(u3A->roc);
 
+    //  XX review this, and confirm it's actually an optimization
+    //  Seems like it could be very expensive in some cases
+    //
     if ( c3n == u3r_sing(cor, u3A->roc) ) {
-      u3A->roe = u3nc(u3nc(vir, ovo), u3A->roe);
+      ret = u3nc(vir, ovo);
 
       u3z(u3A->roc);
       u3A->roc = cor;
@@ -1463,88 +1465,107 @@ _raft_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     else {
       u3z(ovo);
 
-      // push a new event into queue
-      u3A->roe = u3nc(u3nc(vir, u3_nul), u3A->roe);
+      //  we return ~ in place of the event ovum to skip persistence
+      //
+      ret = u3nc(vir, u3_nul);
 
       u3z(cor);
     }
+    return ret;
   }
 }
 
 /* _raft_lame(): handle an application failure.
 */
-static void
+static u3_weak
 _raft_lame(u3_noun ovo, u3_noun why, u3_noun tan)
 {
-  u3_noun bov, gon;
+  u3_noun bov, gon, ret;
+
+  u3_noun wir, tag, cad;
+  u3x_trel(ovo, &wir, &tag, &cad);
 
 #if 0
   {
-    c3_c* oik_c = u3r_string(u3h(u3t(ovo)));
-
-    // uL(fprintf(uH, "lame: %s\n", oik_c));
-    free(oik_c);
+    c3_c* tag_c = u3r_string(tag);
+    uL(fprintf(uH, "lame: %s\n", tag_c));
+    u3_lo_show("data", u3k(u3t(u3t(ovo))));
+    free(tag_c);
   }
 #endif
 
-  //  Formal error in a network packet generates a hole card.
+  //  Formal error in a network packet generates a %hole card.
   //
-  //  There should be a separate path for crypto failures,
-  //  to prevent timing attacks, but isn't right now.  To deal
-  //  with a crypto failure, just drop the packet.
+  //    There should be a separate path for crypto failures,
+  //    to prevent timing attacks, but isn't right now.  To deal
+  //    with a crypto failure, just drop the packet.
   //
-  if ( (c3__exit == why) && (c3__hear == u3h(u3t(ovo))) ) {
-    u3_lo_punt(2, u3kb_flop(u3k(tan)));
-
-    bov = u3nc(u3k(u3h(ovo)), u3nc(c3__hole, u3k(u3t(u3t(ovo)))));
-    u3z(why);
+  if ( (c3__exit == why) && (c3__hear == tag) ) {
+    bov = u3nt(u3k(wir), c3__hole, u3k(cad));
   }
+  //  All other errors are replaced with [%crud why trace]
+  //
   else {
-    bov = u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, u3k(tan)));
+    bov = u3nq(u3k(wir), c3__crud, u3k(why), u3k(tan));
   }
-  // u3_lo_show("data", u3k(u3t(u3t(ovo))));
 
-  u3z(ovo);
-
+  //  poke with replacement event, on the same wire
+  //
   gon = u3m_soft(0, u3v_poke, u3k(bov));
 
   if ( u3_blip == u3h(gon) ) {
-    _raft_sure(bov, u3k(u3h(u3t(gon))), u3k(u3t(u3t(gon))));
+    u3_noun hed, tal;
+    u3x_trel(gon, 0, &hed, &tal);
 
-    u3z(tan);
-    u3z(gon);
+    ret = _raft_sure(u3k(bov), u3k(hed), u3k(tal));
   }
   else {
-    u3z(gon);
-    {
-      u3_noun vab = u3nc(u3k(u3h(bov)),
-                         u3nc(c3__warn, u3i_tape("crude crash!")));
-      u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
+    //  XX this will always fail, nothing in arvo handles %warn
+    //
+#if 0
+    u3_noun vab = u3nt(u3k(u3h(bov)), c3__warn,
+                       u3i_tape("crude crash!"));
+    u3_noun nog = u3m_soft(0, u3v_poke, u3k(vab));
 
-      if ( u3_blip == u3h(nog) ) {
-        _raft_sure(vab, u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
-        u3z(tan);
-        u3z(nog);
-      }
-      else {
-        u3z(nog);
-        u3z(vab);
-
-        uL(fprintf(uH, "crude: all delivery failed!\n"));
-        u3_lo_punt(2, u3kb_flop(u3k(tan)));
-        uL(fprintf(uH, "crude: punted\n"));
-        // c3_assert(!"crud");
-      }
+    if ( u3_blip == u3h(nog) ) {
+      ret = _raft_sure(u3k(vab), u3k(u3h(u3t(nog))), u3k(u3t(u3t(nog))));
     }
+    else {
+#endif
+
+      ret = u3_none;
+
+      uL(fprintf(uH, "crude: all delivery failed!\n"));
+
+      {
+        c3_c* tag_c = u3r_string(tag);
+        uL(fprintf(uH, "event: %s\n", tag_c));
+        u3_lo_punt(2, u3kb_flop(u3k(tan)));
+        free(tag_c);
+      }
+
+      uL(fprintf(uH, "crude: punted\n"));
+      // c3_assert(!"crud");
+
+#if 0
+    }
+
+    u3z(vab); u3z(nog);
+#endif
   }
+
+  u3z(ovo); u3z(why); u3z(tan);
+  u3z(bov); u3z(gon);
+
+  return ret;
 }
 
 /* _raft_punk(): insert and apply an input ovum (unprotected).
 */
-static void
+static u3_weak
 _raft_punk(u3_noun ovo)
 {
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 #endif
   c3_w sec_w;
@@ -1559,13 +1580,7 @@ _raft_punk(u3_noun ovo)
     sec_w = 0;
   } else sec_w = 600;
 
-  //  Control alarm loops.
-  //
-  if ( c3__wake != u3h(u3t(ovo)) ) {
-    u3_Host.teh_u.run_w = 0;
-  }
-
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   struct timeval b4, f2, d0;
   gettimeofday(&b4, 0);
   if( c3__belt != u3h(u3t(ovo)) ){
@@ -1573,9 +1588,12 @@ _raft_punk(u3_noun ovo)
   }
 #endif
 
+  // TODO: Embed event number here?
+  u3t_event_trace("Running", 'b');
   gon = u3m_soft(sec_w, u3v_poke, u3k(ovo));
+  u3t_event_trace("Running", 'e');
 
-#ifdef GHETTO
+#ifdef U3_EVENT_TIME_DEBUG
   c3_w ms_w;
   c3_w clr_w;
 
@@ -1590,70 +1608,30 @@ _raft_punk(u3_noun ovo)
   free(txt_c);
 #endif
 
-  if ( u3_blip != u3h(gon) ) {
-    u3_noun why = u3k(u3h(gon));
-    u3_noun tan = u3k(u3t(gon));
+  {
+    u3_noun hed, tal;
+    u3x_cell(gon, &hed, &tal);
 
+    u3k(hed); u3k(tal);
     u3z(gon);
-    _raft_lame(ovo, why, tan);
-  }
-  else {
-    u3_noun vir = u3k(u3h(u3t(gon)));
-    u3_noun cor = u3k(u3t(u3t(gon)));
-    u3_noun nug;
 
-    u3z(gon);
-    nug = u3v_nick(vir, cor);
-
-    if ( u3_blip != u3h(nug) ) {
-      u3_noun why = u3k(u3h(nug));
-      u3_noun tan = u3k(u3t(nug));
-
-      u3z(nug);
-      _raft_lame(ovo, why, tan);
+    if ( u3_blip != hed ) {
+      return _raft_lame(ovo, hed, tal);
     }
     else {
-      vir = u3k(u3h(u3t(nug)));
-      cor = u3k(u3t(u3t(nug)));
+      u3_noun vir, cor;
+      u3x_cell(tal, &vir, &cor);
 
-      u3z(nug);
-      _raft_sure(ovo, vir, cor);
+      u3k(vir); u3k(cor);
+      u3z(tal);
+
+      return _raft_sure(ovo, vir, cor);
     }
   }
-  //  uL(fprintf(uH, "punk oot %s\n", txt_c));
-  //  free(txt_c);
 }
 
-
-static void
-_raft_comm(c3_d bid_d)
-{
-  u3p(u3v_cart) egg_p;
-
-  u3_lo_open();
-
-  egg_p = u3A->ova.egg_p;
-  while ( egg_p ) {
-    u3v_cart* egg_u = u3to(u3v_cart, egg_p);
-
-    if ( egg_u->ent_d <= bid_d ) {
-      egg_u->cit = c3y;
-    } else break;
-
-    egg_p = egg_u->nex_p;
-  }
-  u3_lo_shut(c3y);
-}
-
-static void
-_raft_comm_cb(uv_timer_t* tim_u)
-{
-  u3_raft* raf_u = tim_u->data;
-
-  _raft_comm(raf_u->ent_d);
-}
-
-
+/* _raft_push(): save an event
+*/
 static c3_d
 _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 {
@@ -1662,11 +1640,22 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 
   if ( 1 == raf_u->pop_w ) {
     c3_assert(u3_raty_lead == raf_u->typ_e);
+    u3t_event_trace("Recording", 'b');
     raf_u->ent_d = u3_sist_pack(raf_u->tem_w, c3__ov, bob_w, len_w);
+    u3t_event_trace("Recording", 'e');
     raf_u->lat_w = raf_u->tem_w;  //  XX
 
-    if ( !uv_is_active((uv_handle_t*)&raf_u->tim_u) ) {
-      uv_timer_start(&raf_u->tim_u, _raft_comm_cb, 0, 0);
+    u3p(u3v_cart) egg_p;
+
+    egg_p = u3A->ova.egg_p;
+    while ( egg_p ) {
+      u3v_cart* egg_u = u3to(u3v_cart, egg_p);
+
+      if ( egg_u->ent_d <= raf_u->ent_d ) {
+        egg_u->cit = c3y;
+      } else break;
+
+      egg_p = egg_u->nex_p;
     }
 
     return raf_u->ent_d;
@@ -1679,10 +1668,10 @@ _raft_push(u3_raft* raf_u, c3_w* bob_w, c3_w len_w)
 }
 
 
-/* _raft_kick_all(): kick a list of events, transferring.
+/* _raft_kick(): kick a list of effects, transferring.
 */
 static void
-_raft_kick_all(u3_noun vir)
+_raft_kick(u3_noun vir)
 {
   while ( u3_nul != vir ) {
     u3_noun ovo = u3k(u3h(vir));
@@ -1880,11 +1869,11 @@ _raft_grab(u3_noun ova)
     fprintf(stderr, "arvo stuff: ");
     _raft_print_memory(utv_w);
 
-    har_w = u3h_mark(u3R->jed.har_p);
+    har_w = u3h_mark(u3R->jed.war_p);
     fprintf(stderr, "  warm jet state: ");
     _raft_print_memory(har_w);
 
-    das_w = u3a_mark_noun(u3R->jed.das);
+    das_w = u3h_mark(u3R->jed.cod_p);
     fprintf(stderr, "  cold jet state: ");
     _raft_print_memory(das_w);
 
@@ -1933,131 +1922,184 @@ _raft_grab(u3_noun ova)
 
 int FOO;
 
-/* u3_raft_work(): work.
+/* _raft_crop(): Delete finished events.
+*/
+static void
+_raft_crop(void)
+{
+  while ( u3A->ova.egg_p ) {
+    u3p(u3v_cart) egg_p = u3A->ova.egg_p;
+    u3v_cart*     egg_u = u3to(u3v_cart, u3A->ova.egg_p);
+
+    if ( c3y == egg_u->did ) {
+      if ( egg_p == u3A->ova.geg_p ) {
+        c3_assert(egg_u->nex_p == 0);
+        u3A->ova.geg_p = u3A->ova.egg_p = 0;
+      }
+      else {
+        c3_assert(egg_u->nex_p != 0);
+        u3A->ova.egg_p = egg_u->nex_p;
+      }
+      egg_u->cit = c3y;
+      u3a_free(egg_u);
+    }
+    else break;
+  }
+}
+
+/* _raft_pop_roe(): pop the next [~ event] off the queue.
+**
+**  effects are no longer stored on u3A->roe; the head of
+**  each pair is always null.
+*/
+static u3_weak
+_raft_pop_roe(void)
+{
+  if ( u3_nul == u3A->roe ) {
+    return u3_none;
+  }
+
+  u3_noun ovo;
+
+  {
+    u3_noun ova = u3kb_flop(u3A->roe);
+    u3A->roe    = u3qb_flop(u3t(ova));
+    ovo         = u3k(u3h(ova));
+    u3z(ova);
+  }
+
+  return ovo;
+}
+
+/* _raft_poke(): poke Arvo with the next queued event.
+*/
+static u3_weak
+_raft_poke(void)
+{
+  u3_weak rus;
+
+  //  defer event processing until storage is initialized
+  //
+  if ( 0 == u3Z->lug_u.len_d ) {
+    return u3_none;
+  }
+
+  if ( u3_none != (rus = _raft_pop_roe()) ) {
+    u3_noun ovo, vir;
+
+    u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(rus)), u3_nul));
+
+    u3x_cell(rus, &vir, &ovo);
+    c3_assert( u3_nul == vir );
+    u3k(ovo);
+    u3z(rus);
+
+    rus = _raft_punk(ovo);
+
+    u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3_nul), u3_nul));
+  }
+
+  return rus;
+}
+
+/* _raft_pump(): Cartify, jam, and save an ovum.
+*/
+static void
+_raft_pump(u3_noun ovo)
+{
+  u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
+  u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
+  u3_noun       ron;
+  c3_d          bid_d;
+  c3_w          len_w;
+  c3_w*         bob_w;
+
+  egg_u->nex_p = 0;
+  egg_u->cit = c3n;
+  egg_u->did = c3n;
+  egg_u->vir = 0;
+
+  ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
+  c3_assert(u3A->key);
+  ron = u3dc("en:crub:crypto", u3k(u3A->key), ron);
+
+  len_w = u3r_met(5, ron);
+  bob_w = c3_malloc(len_w * 4L);
+  u3r_words(0, len_w, bob_w, ron);
+  u3z(ron);
+
+  bid_d = _raft_push(u3Z, bob_w, len_w);
+  egg_u->ent_d = bid_d;
+
+  if ( 0 == u3A->ova.geg_p ) {
+    c3_assert(0 == u3A->ova.egg_p);
+    u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
+  }
+  else {
+    c3_assert(0 == u3to(u3v_cart, u3A->ova.geg_p)->nex_p);
+    u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
+    u3A->ova.geg_p = egg_p;
+  }
+
+  egg_u->did = c3y;
+}
+
+/* u3_raft_chip(): chip one event off for processing.
+*/
+void
+u3_raft_chip(void)
+{
+  u3_weak rus = _raft_poke();
+
+  _raft_crop();
+
+  if ( u3_none != rus ) {
+    u3_noun ovo, vir;
+    u3x_cell(rus, &vir, &ovo);
+
+    if ( u3_nul != ovo ) {
+      _raft_pump(u3k(ovo));
+    }
+
+    _raft_kick(u3k(vir));
+    _raft_grab(vir);
+
+    u3z(rus);
+  }
+}
+
+/* u3_raft_play(): synchronously process events.
+*/
+void
+u3_raft_play(void)
+{
+  c3_assert( u3Z->typ_e == u3_raty_lead );
+
+  u3_raft_chip();
+
+  if ( u3_nul != u3A->roe ) {
+    u3_raft_play();
+  }
+}
+
+/* _raft_work_cb(): callback to recurse into u3_raft_work().
+*/
+static void
+_raft_work_cb(uv_timer_t* tim_u)
+{
+  u3_raft_work();
+}
+
+/* u3_raft_work(): asynchronously process events.
 */
 void
 u3_raft_work(void)
 {
-  if ( u3Z->typ_e != u3_raty_lead ) {
-    c3_assert(u3A->ova.egg_p == 0);
-    if ( u3_nul != u3A->roe ) {
-      uL(fprintf(uH, "raft: dropping roe!!\n"));
-      u3z(u3A->roe);
-      u3A->roe = u3_nul;
-    }
-  }
-  else {
-    u3_noun  ova;
-    u3_noun  vir;
-    u3_noun  nex;
+  c3_assert( u3Z->typ_e == u3_raty_lead );
 
-    //  Delete finished events.
-    //
-    while ( u3A->ova.egg_p ) {
-      u3p(u3v_cart) egg_p = u3A->ova.egg_p;
-      u3v_cart*     egg_u = u3to(u3v_cart, u3A->ova.egg_p);
+  u3_raft_chip();
 
-      if ( c3y == egg_u->did ) {
-        vir = egg_u->vir;
-
-        if ( egg_p == u3A->ova.geg_p ) {
-          c3_assert(egg_u->nex_p == 0);
-          u3A->ova.geg_p = u3A->ova.egg_p = 0;
-        }
-        else {
-          c3_assert(egg_u->nex_p != 0);
-          u3A->ova.egg_p = egg_u->nex_p;
-        }
-        egg_u->cit = c3y;
-        u3a_free(egg_u);
-      }
-      else break;
-    }
-
-    //  Poke pending events, leaving the poked events and errors on u3A->roe.
-    //
-    {
-      if ( 0 == u3Z->lug_u.len_d ) {
-        return;
-      }
-      ova = u3kb_flop(u3A->roe);
-      u3A->roe = u3_nul;
-
-      u3_noun hed = (u3_nul == ova) ? u3_nul : u3h(ova);
-
-      if ( u3_nul != hed ) {
-        u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3k(hed)), u3_nul));
-      }
-
-      while ( u3_nul != ova ) {
-        _raft_punk(u3k(u3t(u3h(ova))));
-        c3_assert(u3_nul == u3h(u3h(ova)));
-
-        nex = u3k(u3t(ova));
-        u3z(ova); ova = nex;
-      }
-
-      if ( u3_nul != hed ) {
-        u3_term_ef_blit(0, u3nc(u3nc(c3__bee, u3_nul), u3_nul));
-      }
-    }
-
-    //  Cartify, jam, and encrypt this batch of events. Take a number, Raft will
-    //  be with you shortly.
-    {
-      c3_d    bid_d;
-      c3_w    len_w;
-      c3_w*   bob_w;
-      u3_noun ron;
-      u3_noun ovo;
-
-      ova = u3kb_flop(u3A->roe);
-      u3A->roe = u3_nul;
-
-      while ( u3_nul != ova ) {
-        ovo = u3k(u3t(u3h(ova)));
-        vir = u3k(u3h(u3h(ova)));
-        nex = u3k(u3t(ova));
-        u3z(ova); ova = nex;
-
-        if ( u3_nul != ovo ) {
-          u3v_cart*     egg_u = u3a_malloc(sizeof(*egg_u));
-          u3p(u3v_cart) egg_p = u3of(u3v_cart, egg_u);
-
-          egg_u->nex_p = 0;
-          egg_u->cit = c3n;
-          egg_u->did = c3n;
-          egg_u->vir = vir;
-
-          ron = u3ke_jam(u3nc(u3k(u3A->now), ovo));
-          c3_assert(u3A->key);
-          // don't encrypt for the moment, bootstrapping
-          // ron = u3dc("en:crua", u3k(u3A->key), ron);
-
-          len_w = u3r_met(5, ron);
-          bob_w = c3_malloc(len_w * 4L);
-          u3r_words(0, len_w, bob_w, ron);
-          u3z(ron);
-
-          bid_d = _raft_push(u3Z, bob_w, len_w);
-          egg_u->ent_d = bid_d;
-
-          if ( 0 == u3A->ova.geg_p ) {
-            c3_assert(0 == u3A->ova.egg_p);
-            u3A->ova.geg_p = u3A->ova.egg_p = egg_p;
-          }
-          else {
-            c3_assert(0 == u3to(u3v_cart, u3A->ova.geg_p)->nex_p);
-            u3to(u3v_cart, u3A->ova.geg_p)->nex_p = egg_p;
-            u3A->ova.geg_p = egg_p;
-          }
-          _raft_kick_all(vir);
-          egg_u->did = c3y;
-          egg_u->vir = 0;
-
-          _raft_grab(ova);
-        }
-      }
-    }
+  if ( u3_nul != u3A->roe ) {
+    uv_timer_start(&u3Z->tim_u, _raft_work_cb, 0, 0);
   }
 }

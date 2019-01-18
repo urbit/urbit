@@ -2,12 +2,6 @@
 **
 ** This file is in the public domain.
 */
-  /**  Options.
-  **/
-    /* U3_CPU_DEBUG: activate profiling.
-    */
-#     undef U3_CPU_DEBUG
-
   /** Data structures.
   **/
     /* u3t_trace: fast execution flags.
@@ -88,6 +82,32 @@
     */
       void
       u3t_flee(void);
+
+    /* u3t_trace_open(): opens the path for writing tracing information.
+    */
+      void
+      u3t_trace_open(c3_c*);
+
+    /* u3t_trace_close(): closes the trace file. optional.
+    */
+      void
+      u3t_trace_close();
+
+    /* u3t_nock_trace_push(): pushes a frame onto the trace stack;
+    *  return yes if active push.
+    */
+      c3_o
+      u3t_nock_trace_push(u3_noun lab);
+
+    /* u3t_nock_trace_pop(): pop off trace stack.
+    */
+      void
+      u3t_nock_trace_pop();
+
+    /* u3t_event_trace(): record a lifecycle event.
+    */
+      void
+      u3t_event_trace(const c3_c* name, c3_c type);
 
     /* u3t_damp(): print and clear profile data.
     */
