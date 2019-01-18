@@ -237,11 +237,13 @@ _king_fake(u3_noun ship, u3_noun pill, u3_noun path)
 }
 
 /* _king_come(): mine a comet under star (unit)
+**
+**   XX revise to exclude star argument
 */
 void
 _king_come(u3_noun star, u3_noun pill, u3_noun path)
 {
-  _king_dawn(u3_dawn_come(star), pill, path);
+  _king_dawn(u3_dawn_come(), pill, path);
 }
 
 /* _king_dawn(): boot from keys, validating

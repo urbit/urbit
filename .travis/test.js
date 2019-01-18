@@ -26,6 +26,16 @@ function exit() {
 }
 
 Promise.resolve(urbit)
+//  XX temporary
+//  send ctrl-x to select dojo
+//
+.then(function(){
+  return urbit.expect(/talk\[\] /)
+  .then(function() {
+    return urbit.pty.write("\x18")
+  })
+  .then(function() { return urbit })
+})
 .then(actions.safeBoot)
 .then(actions.test)
 .then(exit)

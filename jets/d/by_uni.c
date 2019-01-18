@@ -40,7 +40,7 @@
       else if ( c3n == u3r_cell(lr_b, &l_b, &r_b) ) {
         return u3m_bail(c3__exit);
       }
-      else if ( c3y == u3qc_vor(p_n_a, p_n_b) ) {
+      else if ( c3y == u3qc_mor(p_n_a, p_n_b) ) {
         if ( c3y == u3r_sing(p_n_a, p_n_b) ) {
           return u3nt(u3k(n_b),
                       u3qdb_uni(u3k(l_a),
