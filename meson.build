@@ -320,7 +320,7 @@ endif
 # For these libs we provide fallback bundle
 argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
 ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
-libent_dep = dependency('libent', version: '>=0.1.3', fallback: ['libent', 'libent_dep'])
+libent_dep = dependency('libent', version: '>=0.2.1', fallback: ['libent', 'libent_dep'])
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
 libscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
