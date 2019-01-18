@@ -194,7 +194,11 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     return;
   }
 
-  c3_assert( 0 != bos_c );
+  //  if we don't have a galaxy domain, no-op
+  //
+  if ( 0 == bos_c ) {
+    return;
+  }
 
   time_t now = time(0);
 
