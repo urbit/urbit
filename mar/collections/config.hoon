@@ -18,7 +18,7 @@
         (cat 3 'name: ' name.con)
         (cat 3 'description: ' description.con)
       ::
-        (cat 3 'owner: ' (scot %p owner.con))
+        (cat 3 'author: ' (scot %p author.con))
       ::
         (cat 3 'date-created: ' (scot %da date-created.con))
         (cat 3 'last-modified: ' (scot %da last-modified.con))
@@ -42,7 +42,7 @@
     ?>  ?=  $:  full-path=@t
                 name=@t
                 desc=@t
-                owner=@t
+                author=@t
                 dc=@t
                 lm=@t
                 type=@t
@@ -64,7 +64,7 @@
     ::
       (rash desc.txs ;~(pfix (jest 'description: ') (cook crip (star next))))
     ::
-      (rash owner.txs ;~(pfix (jest 'owner: ~') fed:ag))
+      (rash author.txs ;~(pfix (jest 'author: ~') fed:ag))
     ::
       %+  rash  dc.txs
       ;~  pfix
