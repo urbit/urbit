@@ -1,19 +1,26 @@
 libent is a cross-platform wrapper around `getentropy(2)`. It exports
-one symbol, `ent_getentropy`. If `getentropy` is available, then it's
-just a shim around that. Otherwise, it uses `getrandom(2)` (available
-since kernel 3.17) on Linux, or `/dev/urandom` on other \*nix.
+one symbol, `ent_getentropy`. If getentropy is available, then it's just
+a shim around that. Otherwise, it uses `getrandom(2)` (available since
+kernel 3.17) on Linux, or `/dev/urandom` on other \*nix.
 
 ### Building
 
 It uses meson. `meson ./build && ninja -C build` should do the trick.
 
-#### Build options
+The main intended way to use this library is to depend on it from
+another meson project, i.e., to pull `libent_dep` out from this library
+as a [subproject](https://mesonbuild.com/Subprojects.html). It's also
+possible to install it as a regular library if you want to for some
+reason — just run meson with `-Dent_install=true` and add on a `sudo
+ninja -C build install`.
 
-It has one option, `ent_compat`, which tells it to be conservative. On
-Linux, this means using `getrandom` directly; on other \*nix, it means
-reading from `/dev/urandom`. This may make sense if you want your
-binaries to run on older versions of the same OS. If your program is
-mostly built from source, don't bother.
+If you want to release a binary distribution of your program, you may
+want to build with `-Dent_compat=true`. This tells libent not to try to
+use getentropy, which might result in a program that can run against
+an older libc version on some platforms. (`ent_compat` does nothing on
+OpenBSD; we claim that 5.6 is old enough for anyone's purposes who wants
+to use this library. If you want it to work on older systems, compile it
+against them.)
 
 ### Why?
 

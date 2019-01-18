@@ -1,2 +1,4 @@
 option('ent_compat', type : 'boolean', value : false,
-       description : 'Tries to work on older systems. Useful for binary releases. (Uses getrandom on Linux, /dev/urandom on other *nix.)')
+       description : 'Don\'t rely on system getentropy')
+option('ent_install', type : 'boolean', value : false,
+       description : 'Install locally')

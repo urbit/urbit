@@ -13,13 +13,13 @@
     return getentropy(buf, len);
   }
 
-#elif defined(ENT_IMPL)
+#elif defined(ENT_GETRANDOM) || defined(ENT_URANDOM)
 # include <errno.h>
 # if defined(ENT_GETRANDOM)
 #   define _GNU_SOURCE
 #   include <unistd.h>
 #   include <sys/syscall.h>
-# elif defined(ENT_URANDOM)
+# else
 #   include <stdio.h>
 # endif
 
@@ -41,7 +41,7 @@
     r = syscall(SYS_getrandom, buf, len, 0);
     if (r < 0)
       return r;
-# elif defined(ENT_URANDOM)
+# else
     {
       FILE *f;
 
