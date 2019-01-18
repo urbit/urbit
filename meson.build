@@ -224,10 +224,17 @@ vere_lib_src = [
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c'
+  'vere/walk.c',
+  'vere/fond.c',
+  'vere/sqlt.c',
+  'vere/rock.c',
+  'vere/lmdb.c',
+  'vere/frag.c'
 ]
 
-incdir = include_directories('include/')
+#  XX revisit storage build
+#
+incdir = include_directories('include/', '/usr/include/foundationdb/', 'subprojects/rocksdb/include/rocksdb')
 
 conf_data = configuration_data()
 conf_data.set('URBIT_VERSION', '"0.7.0"')
@@ -237,12 +244,23 @@ conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
 
 osdet = host_machine.system()
 cc = meson.get_compiler('c')
-os_c_flags = ['-funsigned-char','-ffast-math']
+
+#  XX revisit storage build
+#
+os_c_flags = ['-funsigned-char','-ffast-math', '-fdump-rtl-expand', '-ggdb', '-Og']
 os_deps = [dependency('threads')]
 os_link_flags = []
 
 if osdet == 'linux'
   conf_data.set('U3_OS_linux', true)
+
+  #  XX revisit storage build
+  #
+  if(legacy_meson)
+    math_dep = find_library('m')
+  else
+    math_dep = meson.get_compiler('c').find_library('m')
+  endif
 
   ncurses_dep = dependency('ncurses')
   os_deps = os_deps + [ncurses_dep]
@@ -348,13 +366,28 @@ libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libs
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
 
+#  XX revisit storage build
+#
+fond_dep	= meson.get_compiler('c').find_library('libfdb_c', dirs:['/usr/lib/'])
+lmdb_dep    = meson.get_compiler('c').find_library('liblmdb', dirs:['/usr/lib/'])
+rocksdb_dep = dependency('rocksdb', version: '>=5.17.0', fallback:['rocksdb', 'rocksdb_dep'])
+sqlt_dep	= meson.get_compiler('c').find_library('libsqlite3', dirs:['/usr/lib/'])
+snappy_dep	= meson.get_compiler('c').find_library('snappy', dirs:['/usr/lib/'])
+bz2_dep		= meson.get_compiler('c').find_library('bz2', dirs:['/usr/lib/'])
+
 vere_deps = [curl_dep,
             libent_dep,
             libh2o_dep,
             libsni_dep,
             libuv_dep,
             libwhereami_dep,
-            openssl_dep]
+            openssl_dep,
+            fond_dep,
+            lmdb_dep,
+            rocksdb_dep,
+            sqlt_dep,
+            snappy_dep,
+            bz2_dep]
 
 executable('urbit',
 sources : vere_lib_src + [ 'vere/main.c' ],
@@ -373,6 +406,16 @@ link_args: os_link_flags,
 dependencies: vere_deps + os_deps,
 link_with: libnoun,
 install: true)
+
+executable('test-pers',
+sources : test_sources,
+sources : vere_lib_src + [ 'vere/test.c' ],
+include_directories : incdir,
+c_args : os_c_flags,
+link_args: os_link_flags,
+dependencies: vere_deps + os_deps,
+link_with: libnoun,
+install: false)
 
 test_hashtable = executable('test-hashtable',
 sources : vere_lib_src + ['tests/hashtable_tests.c'],

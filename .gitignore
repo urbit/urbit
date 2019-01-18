@@ -31,3 +31,6 @@ node_modules/
 cscope.*
 build/
 TAGS
+core
+data.db
+/~zod/

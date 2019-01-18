@@ -24,6 +24,8 @@
  */
 STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
 
+FILE * ulog;
+
 /* _main_readw(): parse a word from a string.
 */
 static u3_noun
@@ -63,6 +65,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   c3_i ch_i;
   c3_w arg_w;
 
+  u3_Host.ops_u.pot_c = NULL;
+
   u3_Host.ops_u.abo = c3n;
   u3_Host.ops_u.bat = c3n;
   u3_Host.ops_u.can = c3n;
@@ -89,12 +93,22 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
+  fflush(ulog);
+
   //  XX re-enable -s, -A
   //
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:H:w:u:j:e:E:f:F:k:m:p:LabcCdgqtvxPDRS")) )
+                 "G:J:B:K:H:w:u:j:e:E:f:F:k:o:i:m:p:LabcCdgqtvxPDRS")) )
   {
     switch ( ch_i ) {
+      case 'o': {
+        u3_Host.ops_u.pot_c = strdup(optarg);
+        break;
+      }
+      case 'i': {
+        u3_Host.ops_u.pin_c = strdup(optarg);
+        break;
+      }
       case 'J': {
         u3_Host.ops_u.lit_c = strdup(optarg);
         break;
@@ -399,6 +413,8 @@ u3_ve_usage(c3_i argc, c3_c** argv)
     "-v            Verbose\n",
     "-w name       Boot as ~name\n",
     "-x            Exit immediately\n",
+    "-o spec       storage (output)  { 'f' | 'l' | 'r' | 's' | 'fond' | 'lmbd' | 'rock' | 'sqlt' } \n",
+    "-i spec       storage (input)   { 'f' | 'l' | 'r' | 's' | 'fond' | 'lmbd' | 'rock' | 'sqlt' } \n",
     "\n",
     "Development Usage:\n",
     "   To create a development ship, use a fakezod:\n",
@@ -541,6 +557,25 @@ c3_i
 main(c3_i   argc,
      c3_c** argv)
 {
+  #if 1
+  volatile int ii = 0;
+  fprintf(stderr, "****    GDB king: about to sleep in main.c: - PID = %i\n\r", getpid());
+  while (ii != 1){
+    fprintf(stderr, "...\n\r");
+    sleep(1);
+  }
+  fprintf(stderr, "***    GDB king: post sleep\n");
+  #else 
+  fprintf(stderr, "****    GDB king: no attach in main.c\n\r");    
+  #endif
+
+  
+  char * logpath = malloc(1024);
+  sprintf(logpath, "/tmp/urbit_log_%i", getpid());
+  ulog = fopen(logpath, "w");
+  fprintf(ulog, "start\n");
+  fflush(ulog);
+
   //  Parse options.
   //
   if ( c3n == _main_getopt(argc, argv) ) {
