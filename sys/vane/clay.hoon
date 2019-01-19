@@ -4107,7 +4107,7 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
-    =^  queued  cue.ruf  ~(get to cue.ruf) 
+    =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued

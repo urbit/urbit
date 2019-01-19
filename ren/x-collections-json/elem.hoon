@@ -7,7 +7,7 @@
   /,  /web/collections
     /&  json
     /collections-json/
-      /  
+      /
     /!json/
   ==
 page

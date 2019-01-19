@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
@@ -1604,7 +1604,7 @@
         ::
         ::  prints help message
         ::
-        (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
+        (sh-fact %txt "see https://urbit.org/docs/learn/arvo/arvo-internals/messaging/")
       --
     ::
     ++  sh-pact
