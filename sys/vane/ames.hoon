@@ -656,7 +656,8 @@
         =^  ban  fox  (kick hen)
         [:(weld bin p.ban next) fox]
       =/  fro=(list ship)  (saxo-scry our)
-      =^  bun  fox  zork:zank:(thaw fro):(ho:um i.neb)
+      =/  hoz  (ho:um i.neb)
+      =^  bun  fox  zork:zank:(thaw:hoz fro)
       $(neb t.neb, bin (weld p.bun bin))
     ::
     ++  wise                                            ::    wise:am
@@ -953,7 +954,7 @@
             =/  seg  (sein-scry her)
             =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
             =/  fro=(list ship)  (saxo-scry our)
-            +>(+> (busk(diz (wast:diz ryn)) (xong fro) pax))
+            ..cock(+> (busk(diz (wast:diz ryn)) (xong fro) pax))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
