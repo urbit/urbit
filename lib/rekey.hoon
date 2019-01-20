@@ -10,7 +10,7 @@
 |*  typ=@tas
 |*  inp=(map knot *)  ^-  (map (odo:raid typ) _(~(got by inp)))
 =>  .(inp `(map knot _(~(got by inp)))`inp)
-%-  malt 
+%-  malt
 %+  murn  ~(tap by inp)
 |*  [a=knot b=*]  ^-  (unit [(odo:raid typ) _b])
 (both (slaw typ a) `b)

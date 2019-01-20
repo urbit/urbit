@@ -30,7 +30,7 @@
       loc+?~(loc ~ s+loc)
       acc+o+(~(run by acc) json-acct)
     ==
-  ++  json-acct                       ::  helper                     
+  ++  json-acct                       ::  helper
     |=  a/plan-acct  ^-  json
     =/  url  ?~(url.a ~ (tape:enjs (apix:en-purl u.url.a)))
     (pairs:enjs usr+s+usr.a url+url ~)
@@ -57,7 +57,7 @@
           ++  mime  |=({* a/octs} (txt (to-wain q.a)))     ::  XX mark translation
           --
 ++  grad
-  |%  
+  |%
   ++  form  %plan-diff
   ++  diff
     |=  neu/_all  ^-  plan-diff                        :: XXX map functions

@@ -9,6 +9,6 @@
   /,  /web/collections  /~  landscape
       /web/landscape    /~  landscape
       /web/pages        /~  |=(manx +<)
-      /                 /~  landscape 
+      /                 /~  landscape
   ==
 wrapped

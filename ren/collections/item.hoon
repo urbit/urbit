@@ -4,9 +4,9 @@
 /?  309
 /+  collections
 ::
-::  item: 
+::  item:
 ::
-::    render a collection-item at this path 
+::    render a collection-item at this path
 ::    outputs a +item defined in /lib/collections/hoon
 ::
 ::    recursive renderer, see its counterpart in /ren/collections/hoon

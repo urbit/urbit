@@ -461,7 +461,7 @@
       mount.outerHTML = "Redirecting to <a href=\""+url+"\">"+url+"</a>"
       document.location = url
     }
-    urb.redir = function(ship){ 
+    urb.redir = function(ship){
       if(ship){
         var location = new URL(document.location)
         location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
@@ -1477,7 +1477,7 @@
             $of
           :+  %view  ?>(?=({@ ~} but) i.but)
           ?>  ?=({{$poll @} ~} quy)
-::          :^  %view  
+::          :^  %view
 ::          ?>  ?=({@ ~} but)
 ::          i.but
 ::          ?>  ?=({{$poll @} *} quy)     ::  XX eventsource
@@ -1665,7 +1665,7 @@
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac  
+          =^  jon  ..ya  stat-json.yac
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::

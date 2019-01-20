@@ -21,7 +21,7 @@
 ++  test-prep
   =/  prep-bone  20
   =/  our-ship   ~marzod
-  =/  bol  
+  =/  bol
     %*  .  *bowl:gall
       our  our-ship
       ost  prep-bone
@@ -33,11 +33,11 @@
     !>  %-  sort
         :_  aor
         ^-  (list move:collections)
-        :~  :*  prep-bone  %poke  /col-hall-action  [our-ship %hall] 
+        :~  :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]
                 %hall-action  %create  %c  'collections'  %journal
             ==
           ::
-            :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]  
+            :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]
                 %hall-action  %source  %inbox  &  (sy [[our-ship %c] ~]~)
             ==
           ::
@@ -53,7 +53,7 @@
                 /circle/i/grams
             ==
         ==
-    !>  (sort moves aor) 
+    !>  (sort moves aor)
     ::
     =.  our-ship  ~davtyr-nimren
     =.  bol  bol(our our-ship)
@@ -63,11 +63,11 @@
     !>  %-  sort
         :_  aor
         ^-  (list move:collections)
-        :~  :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]  
+        :~  :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]
                 %hall-action  %create  %c  'collections'  %journal
             ==
           ::
-            :*  prep-bone  %poke  /col-hall-action  [our-ship %hall] 
+            :*  prep-bone  %poke  /col-hall-action  [our-ship %hall]
                 %hall-action  %source  %inbox  &  (sy [[our-ship %c] ~]~)
             ==
           ::
@@ -84,14 +84,14 @@
             ==
           ::
         ==
-    !>  (sort moves aor) 
+    !>  (sort moves aor)
   ==
 ::
 ::++  test-load-app
 ::  =/  gall-door  (gall-gate gall-args)
 ::  =/  init  (call:gall-door [/test]~ (hype %init ~marzod))
 ::  %+  expect-eq
-::  !>  
+::  !>
 ::  !>
 ::
 --
