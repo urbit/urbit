@@ -1,6 +1,7 @@
 /* vere/unix.c
 **
 */
+#define _XOPEN_SOURCE 700
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
