@@ -125,3 +125,8 @@
       */
         void
         u3m_wall(u3_noun wol);
+
+      /* u3m_reclaim: clear persistent caches to reclaim memory
+      */
+        void
+        u3m_reclaim(void);
