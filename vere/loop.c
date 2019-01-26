@@ -189,6 +189,10 @@ _lo_init()
   cod_l = u3a_lush(c3__behn);
   u3_behn_io_init();
   u3a_lop(cod_l);
+
+  cod_l = u3a_lush(c3__isle);
+  u3_isle_io_init();
+  u3a_lop(cod_l);
 }
 
 /* _lo_talk(): bring up listeners across the process.

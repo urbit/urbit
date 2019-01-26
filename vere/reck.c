@@ -246,6 +246,15 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
   u3z(pox); u3z(fav); return c3n;
 }
 
+/* _reck_kick_isle(): apply graphics outputs.
+*/
+static u3_noun
+_reck_kick_isle(u3_noun pox, u3_noun fav)
+{
+  u3_noun out;
+  return out;
+}
+
 /* _reck_kick_spec(): apply an effect, by path.
 */
 static u3_noun
@@ -332,6 +341,10 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
         } else {
           return _reck_kick_term(pox, tid_l, fav);
         }
+      } break;
+
+      case c3__isle: {
+        _reck_kick_isle(pox, fav);
       } break;
     }
   }

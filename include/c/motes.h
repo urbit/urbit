@@ -577,6 +577,7 @@
 #   define c3__inuk   c3_s4('i','n','u','k')
 #   define c3__iron   c3_s4('i','r','o','n')
 #   define c3__is     c3_s2('i','s')
+#   define c3__isle   c3_s4('i','s','l','e')
 #   define c3__item   c3_s4('i','t','e','m')
 #   define c3__ix     c3_s2('i','x')
 #   define c3__jack   c3_s4('j','a','c','k')

@@ -221,7 +221,8 @@ vere_sans_main = [
   'vere/term.c',
   'vere/time.c',
   'vere/unix.c',
-  'vere/walk.c'
+  'vere/walk.c',
+  'vere/isle.c'
 ]
 
 vere_src = vere_sans_main + [ 'vere/main.c' ]
@@ -257,7 +258,9 @@ elif osdet == 'darwin'
   conf_data.set('U3_OS_osx', true)
 
   #  os_c_flags = os_c_flags + ['-bind_at_load']
-  #  os_link_flags = ['-framework CoreServices', '-framework CoreFoundation']
+  # os_link_flags = ['-framework CoreServices', 
+  #                   '-framework CoreFoundation',
+  #                   '-framework SDL2']
   if(legacy_meson)
     ncurses_dep = find_library('ncurses')
   else
@@ -328,6 +331,8 @@ libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_de
 murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
+sdl_dep = dependency('SDL2')
+
 
 deps = [argon2_dep,
         curl_dep,
@@ -342,7 +347,9 @@ deps = [argon2_dep,
         openssl_dep,
         secp256k1_dep,
         sigsegv_dep,
-        softfloat3_dep]
+        softfloat3_dep,
+        sdl_dep,
+]
 
 executable('urbit',
 sources : sources,
