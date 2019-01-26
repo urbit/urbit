@@ -3,6 +3,10 @@
 
 # TODO: patch qt to not use /bin/pwd, test building it in a sandbox
 
+# TODO: Try to get 'Q_IMPORT_PLUGIN (QMacStylePlugin);' working.  I think the
+# plugin was not compiled at all.  Figure out why.  (Though at Pololu we
+# do not use this style, we use Fusion on macOS and Linux.)
+
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let

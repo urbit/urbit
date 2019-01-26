@@ -136,13 +136,17 @@ def make_dep_graph
     add_dep 'qcocoa.x', 'libqcocoa.a'
 
     add_dep 'libqcocoa.a', 'libcocoaprintersupport.a'
-    add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
     add_dep 'libqcocoa.a', 'libQt5AccessibilitySupport.a'
     add_dep 'libqcocoa.a', 'libQt5ClipboardSupport.a'
     add_dep 'libqcocoa.a', 'libQt5GraphicsSupport.a'
     add_dep 'libqcocoa.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libqcocoa.a', 'libQt5ThemeSupport.a'
     add_dep 'libqcocoa.a', 'libQt5PrintSupport.a'
+    add_dep 'libqcocoa.a', '-lcups'  # Also available: -lcups.2
+    add_dep 'libqcocoa.a', '-framework IOKit'
+    add_dep 'libqcocoa.a', '-framework CoreVideo'
+    add_dep 'libqcocoa.a', '-framework Metal'
+    add_dep 'libqcocoa.a', '-framework QuartzCore'
 
     add_dep 'libqtlibpng.a', '-lz'
 
