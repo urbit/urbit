@@ -50,53 +50,41 @@ SDL_Renderer * gRenderer = NULL;
 void
 u3_isle_io_init()
 {
-{
   printf("isle_io_init\n");
 
 	//Initialize SDL
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
-		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-    exit(1);
-	}
-	else
-	{
-		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN); 
-		if( gWindow == NULL )
-		{
-			printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-      exit(1);
-		}
-		else
-		{
-			//Get window surface
-			gScreenSurface = SDL_GetWindowSurface( gWindow );
+	SDL_Init( SDL_INIT_VIDEO );
 
-	    gHelloWorld = SDL_LoadBMP( "/Users/isaac/hello_world.bmp" );
-      if( gHelloWorld == NULL )
+  gWindow = SDL_CreateWindow( "Urbit",
+                              SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED,
+                              640, 480,
+                              SDL_WINDOW_SHOWN );
+
+  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+  bool quit = false;
+  SDL_Event e;
+  while (!quit)
+  {
+    while (SDL_PollEvent(&e) != 0)
+    {
+      if (e.type == SDL_QUIT)
       {
-        printf( "Unable to load image %s! SDL Error: %s\n", "hello_world.bmp", SDL_GetError() );
-        exit(1);
+        quit = true;
       }
-      else
-      {
-        //Apply the image
-        SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
-        
-        //Update the surface
-        SDL_UpdateWindowSurface( gWindow );
+    }
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(gRenderer);
+    SDL_RenderPresent(gRenderer);
 
-        //Wait two seconds
-      }
-		}
-	}
 
- 
 
 
   }
-  return;
+  SDL_DestroyWindow(gWindow);
+  SDL_DestroyRenderer(gRenderer);
+  SDL_Quit();
+
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
