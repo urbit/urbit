@@ -8,13 +8,14 @@ let
 in
 
 native.make_derivation rec {
-  name = "gcc-${gcc_version}-${host}";
+  name = "gcc-${version}-${host}";
 
-  gcc_version = "7.3.0";
-  gcc_src = fetchurl {
-    url = "mirror://gnu/gcc/gcc-${gcc_version}/gcc-${gcc_version}.tar.xz";
-    sha256 = "0p71bij6bfhzyrs8676a8jmpjsfz392s2rg862sdnsk30jpacb43";
+  version = "8.2.0";
+  src = fetchurl {
+    url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz";
+    sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
   };
+
 
   musl_version = "1.1.20";
   musl_src = nixpkgs.fetchurl {
@@ -26,13 +27,17 @@ native.make_derivation rec {
 
   builder = ./builder.sh;
 
-  gcc_patches = [
+  patches = [
     # This patch is from nixpkgs.
     ./libstdc++-target.patch
 
     # Without this, we cannot build a simple hello world program for ARM.
     # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=31798
     ./link_gcc_c_sequence_spec.patch
+
+    # Fix compilation errors about missing ISL function declarations.
+    # https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=05103aed1d34b5ca07c9a70c95a7cb1d47e22c47
+    ./isl-headers.patch
   ];
 
   native_inputs = [ binutils ];
