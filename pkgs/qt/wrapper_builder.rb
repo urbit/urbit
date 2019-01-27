@@ -40,8 +40,9 @@ end
 # purely transitive.
 def make_dep_graph
   # High-level dependencies.
-  add_dep 'Qt5Widgets.x', 'libQt5Widgets.a'
-  add_dep 'Qt5Widgets.x', 'Qt5Gui.x'
+  add_dep 'Qt5Widgets.x', 'Qt5WidgetsNoPlugins.x'
+  add_dep 'Qt5WidgetsNoPlugins.x', 'libQt5Widgets.a'
+  add_dep 'Qt5WidgetsNoPlugins.x', 'Qt5Gui.x'
   add_dep 'Qt5Gui.x', 'Qt5GuiNoPlugins.x'
   add_dep 'Qt5GuiNoPlugins.x', 'libQt5Gui.a'
   add_dep 'Qt5GuiNoPlugins.x', 'Qt5Core.x'
@@ -50,8 +51,8 @@ def make_dep_graph
   # Include directories.
   add_dep 'Qt5Core.x', '-I' + OutIncDir.to_s
   add_dep 'Qt5Core.x', '-I' + (OutIncDir + 'QtCore').to_s
-  add_dep 'Qt5Gui.x', '-I' + (OutIncDir + 'QtGui').to_s
-  add_dep 'Qt5Widgets.x', '-I' + (OutIncDir + 'QtWidgets').to_s
+  add_dep 'Qt5GuiNoPlugins.x', '-I' + (OutIncDir + 'QtGui').to_s
+  add_dep 'Qt5WidgetsNoPlugins.x', '-I' + (OutIncDir + 'QtWidgets').to_s
 
   # Libraries that Qt depends on.
   add_dep 'libQt5Widgets.a', 'libQt5Gui.a'
@@ -63,16 +64,24 @@ def make_dep_graph
 
   if Os == 'windows'
     add_dep 'Qt5Gui.x', 'qwindows.x'
+
     add_dep 'qwindows.x', 'libqwindows.a'
 
     add_dep 'libqwindows.a', '-ldwmapi'
     add_dep 'libqwindows.a', '-limm32'
     add_dep 'libqwindows.a', '-loleaut32'
+    add_dep 'libqwindows.a', '-lwtsapi32'
     add_dep 'libqwindows.a', 'libQt5Gui.a'
     add_dep 'libqwindows.a', 'libQt5EventDispatcherSupport.a'
     add_dep 'libqwindows.a', 'libQt5FontDatabaseSupport.a'
     add_dep 'libqwindows.a', 'libQt5ThemeSupport.a'
     add_dep 'libqwindows.a', 'libQt5WindowsUIAutomationSupport.a'
+
+    add_dep 'Qt5Widgets.x', 'qwindowsvistastyle.x'
+    add_dep 'qwindowsvistastyle.x', 'libqwindowsvistastyle.a'
+
+    add_dep 'libqwindowsvistastyle.a', '-luxtheme'
+    add_dep 'libqwindowsvistastyle.a', 'libQt5Widgets.a'
 
     add_dep 'libQt5Core.a', '-lnetapi32'
     add_dep 'libQt5Core.a', '-lole32'
@@ -83,8 +92,6 @@ def make_dep_graph
     add_dep 'libQt5Core.a', '-lws2_32'
 
     add_dep 'libQt5Gui.a', '-lopengl32'
-
-    add_dep 'libQt5Widgets.a', '-luxtheme'
   end
 
   if Os == 'linux'

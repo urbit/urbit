@@ -9,14 +9,17 @@ mkdir bin moc obj
 cat > obj/plugins.cpp <<EOF
 #include <QtPlugin>
 #ifdef _WIN32
-Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+Q_IMPORT_PLUGIN(QWindowsVistaStylePlugin)
+#endif
 #endif
 #ifdef __linux__
-Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
-Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
+Q_IMPORT_PLUGIN(QLinuxFbIntegrationPlugin)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 #ifdef __APPLE__
-Q_IMPORT_PLUGIN (QCocoaIntegrationPlugin);
+Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif
 EOF
 

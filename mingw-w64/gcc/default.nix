@@ -15,11 +15,11 @@ native.make_derivation rec {
 
   target = "${arch}-w64-mingw32";
 
-  version = "7.3.0";
+  version = "8.2.0";
 
   src = fetchurl {
     url = "mirror://gnu/gcc/gcc-${version}/gcc-${version}.tar.xz";
-    sha256 = "0p71bij6bfhzyrs8676a8jmpjsfz392s2rg862sdnsk30jpacb43";
+    sha256 = "10007smilswiiv2ymazr3b6x2i933c0ycxrr529zh4r6p823qv0r";
   };
 
   builder = ./builder.sh;
@@ -38,12 +38,16 @@ native.make_derivation rec {
     # Fix a bug in GCC that causes an internal compiler error when
     # compiling Qt's qrandom.cpp:
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58372#c14
-    # Patch is from comment #43 by Uros Bizjak.
-    # https://gcc.gnu.org/viewcvs/gcc/branches/gcc-7-branch/gcc/cfgexpand.c?view=patch&r1=266015&r2=266014&pathrev=266015
+    # Patch is from comment #42 by Uros Bizjak.
+    # https://gcc.gnu.org/viewcvs/gcc/branches/gcc-8-branch/gcc/cfgexpand.c?view=patch&r1=264557&r2=266014&pathrev=266014
     ./stack-alignment-58372.patch
 
     # This patch is from nixpkgs.
     ./libstdc++-target.patch
+
+    # Fix compilation errors about missing ISL function declarations.
+    # https://gcc.gnu.org/git/?p=gcc.git;a=patch;h=05103aed1d34b5ca07c9a70c95a7cb1d47e22c47
+    ./isl-headers.patch
   ];
 
   native_inputs = [
