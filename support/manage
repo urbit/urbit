@@ -491,7 +491,8 @@ def parse_args(argv)
            when 'results' then :results
            when 'build' then :build
            when 'plan' then :plan
-           when 'stats', nil then :stats
+           when 'stats' then :stats
+           when 'help', nil then :help
            else raise AnticipatedError, "Invalid action: #{argv.first.inspect}"
            end
 
@@ -503,13 +504,37 @@ begin
   args = parse_args(ARGV)
   action = args.fetch(:action)
 
-  settings = parse_derivation_list('support/derivations.txt')
+  if action == :help
+    puts <<END
+Usage: support/manage action
 
-  path_drv_map = instantiate_drvs(settings.fetch(:paths))
-  check_paths_are_unique!(path_drv_map)
+graph:
+  Generate a Graphviz graph of derivations of dependencies to paths.gv.
+results:
+  Update support/results/ directory with symlinks to built derivations.
+plan:
+  Show the derivation build plan as a series of 'nix-build' commands.
+build:
+  Try to build all derivations we care about.  Keeps going if a build fails.
+stats:
+  Print out statistics about the derivations we care about and how many are
+  already built.
+help:
+  Print this message.
 
-  drvs = path_drv_map.values.uniq
-  drv_built_map = get_build_status(drvs)
+The derivations we care about are defined in support/derivations.txt.
+END
+  end
+
+  if [:graph, :results, :build, :plan, :stats].include?(action)
+    settings = parse_derivation_list('support/derivations.txt')
+
+    path_drv_map = instantiate_drvs(settings.fetch(:paths))
+    check_paths_are_unique!(path_drv_map)
+
+    drvs = path_drv_map.values.uniq
+    drv_built_map = get_build_status(drvs)
+  end
 
   if [:graph, :build, :plan].include?(action)
     global_drv_graph = get_drv_graph
@@ -531,7 +556,6 @@ begin
   end
 
   if action == :plan
-    puts "Build plan:"
     build_plan.each do |path|
       puts "nix-build -A #{path}"
     end
