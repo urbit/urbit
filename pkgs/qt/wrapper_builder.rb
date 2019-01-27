@@ -134,6 +134,7 @@ def make_dep_graph
     add_dep 'libQt5XcbQpa.a', 'xcb-sync.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xfixes.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xinerama.pc'
+    add_dep 'libQt5XcbQpa.a', 'xcb-xinput.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
     add_dep 'libQt5XcbQpa.a', 'xi.pc'
   end
