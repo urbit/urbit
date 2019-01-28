@@ -5932,7 +5932,7 @@
       %+  welp  tam
       =-  ?~(att rez [' ' (attr att rez)])
       ^-  rez/tape
-      ?:  &(?=(~ c.mex) |(cot (clot man)))
+      ?:  &(?=(~ c.mex) |(cot ?^(man | (clot man))))
         [' ' '/' '>' rez]
       :-  '>'
       (many c.mex :(weld "</" tam ">" rez))
