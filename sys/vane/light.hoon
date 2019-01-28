@@ -683,7 +683,7 @@
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
       [duct [redirects retries ~ 0 ~]]
-    ::  start the download 
+    ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
     ::  %give on that duct. this seems like a weird inversion of
@@ -694,8 +694,55 @@
     ::  email discussions make it sound like fixing that might be hard, so
     ::  maybe i should just live with the way it is now?
     ::
-    ::  :-  [duct %pass /fetch 
-    [~ state]
+    :-  [duct %give %http-request id `http-request]~
+    state
+  ::  +receive: receives a response to an http-request we made
+  ::
+  ::    TODO: Right now, we are not following redirect and not handling retries
+  ::    correctly. We need to do this.
+  ::
+  ++  receive
+    |=  [id=@ud =raw-http-response]
+    ^-  [(list move) state:client]
+    ::  ensure that this is a valid receive
+    ::
+    ?~  connection=(~(get by connection-by-id.state) id)
+      ~&  [%eyre-unknown-receive id]
+      [~ state]
+    ::
+    ?-    -.raw-http-response
+        %start
+      ::  TODO: Handle redirects and retries here, before we start dispatching
+      ::  back to the application.
+      ::
+      ::  if this is a %start and is :complete, only send a single
+      ::  %http-finished back to 
+      ::
+      ?:  complete.raw-http-response
+        ::  TODO: the entire handling of mime types in this system is nuts and
+        ::  we should replace it with plain @t.
+        ::
+        =/  mime=@t
+          ?~  mime-type=(get-header 'content-type' headers.raw-http-response)
+            'application/octet-stream'
+          u.mime-type
+        ::  :-  :*  duct.u.connection
+        ::          %give
+        ::          %http-finished
+        ::          [status-code headers]:raw-http-response
+        ::          `[mime data:raw-http-response]
+        ::      ==
+        :-  ~
+        state(connection-by-id (~(del by connection-by-id.state) id))
+      [~ state]
+    ::
+        %continue
+      [~ state]
+    ::
+        %cancel
+      ~&  [%eyre-received-cancel id]
+      [~ state]
+    ==
   --
 ::  +per-server-event: per-event server core
 ::
