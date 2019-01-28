@@ -599,6 +599,151 @@ _sist_zest()
   u3_raft_play();
 }
 
+/* _sist_rest_nuu(): upgrade log from previous format.
+*/
+static void
+_sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
+{
+  c3_c    nuu_c[2048];
+  u3_noun roe = u3_nul;
+  c3_i    fid_i = lug_u->fid_i;
+  c3_i    fud_i;
+  c3_i    ret_i;
+  c3_d    end_d = lug_u->len_d;
+
+  uL(fprintf(uH, "rest: converting log from prior format\n"));
+
+  c3_assert(led_u.mag_l == u3r_mug('g'));
+
+  ret_i = snprintf(nuu_c, 2048, "%s/.urb/ham.hope", u3_Host.dir_c);
+  c3_assert(ret_i < 2048);
+
+  if ( (fud_i = open(nuu_c, O_CREAT | O_TRUNC | O_RDWR, 0600)) < 0 ) {
+    uL(fprintf(uH, "rest: can't open record (%s), open: %s\n", nuu_c,
+                   strerror(errno)));
+    u3_lo_bail();
+  }
+
+  led_u.mag_l = u3r_mug('h');
+  if ( (sizeof(led_u) != write(fud_i, &led_u, sizeof(led_u))) ) {
+    uL(fprintf(uH, "rest: can't write header, write: %s\n", strerror(errno)));
+    u3_lo_bail();
+  }
+
+  c3_o fir_o = c3y;
+  c3_d pos_d;
+
+  while ( end_d != c3_wiseof(u3_uled) ) {
+    c3_d    tar_d;
+    u3_ular lar_u;
+    c3_w*   img_w;
+    u3_noun ron;
+
+    //  read trailer
+    //
+    tar_d = (end_d - (c3_d)c3_wiseof(u3_ular));
+
+    if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (b), lseek64: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+    if ( sizeof(u3_ular) != read(fid_i, &lar_u, sizeof(u3_ular)) ) {
+      uL(fprintf(uH, "rest_nuu failed (c), read: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    if ( lar_u.syn_w != u3r_mug_chub(tar_d) ) {
+      uL(fprintf(uH, "rest_nuu failed (d)\n"));
+      u3_lo_bail();
+    }
+
+    //  calculate new log size
+    //
+    if (c3y == fir_o) {
+      pos_d = (end_d + lar_u.ent_d + 1);
+      fir_o = c3n;
+    }
+
+    //  read event
+    //
+    img_w = c3_malloc(4 * lar_u.len_w);
+    end_d = (tar_d - (c3_d)lar_u.len_w);
+
+    if ( -1 == lseek64(fid_i, 4ULL * end_d, SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (e), lseek64: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+    if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
+      uL(fprintf(uH, "rest_nuu failed (f), read: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    // write event trailer
+    //
+    pos_d -= (c3_d)c3_wiseof(lar_u);
+    lar_u.syn_w = u3r_mug_chub(pos_d);
+
+    if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (g), lseek64: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    if ( sizeof(u3_ular) != write(fud_i, &lar_u, sizeof(u3_ular)) ) {
+      uL(fprintf(uH, "rest_nuu failed (h), read: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    // write event
+    //
+    pos_d -= (c3_d)lar_u.len_w;
+
+    if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (i), lseek64: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    if ( (4 * lar_u.len_w) != write(fud_i, img_w, (4 * lar_u.len_w)) ) {
+      uL(fprintf(uH, "rest_nuu failed (j), read: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    // write event header
+    //
+    pos_d -= 1ULL;
+    if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
+      uL(fprintf(uH, "rest_nuu failed (k), lseek64: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    if ( 4ULL != write(fud_i, &lar_u.len_w, 4ULL) ) {
+      uL(fprintf(uH, "rest_nuu failed (l), read: %s\n", strerror(errno)));
+      u3_lo_bail();
+    }
+
+    free(img_w);
+
+    if ( lar_u.ent_d % 100000 == 0 ) {
+      printf("ent_d: %d\n", lar_u.ent_d);
+    }
+  }
+
+  if ( 0 != close(fid_i) ) {
+    uL(fprintf(uH, "rest: could not close, close: %s\n", strerror(errno)));
+    u3_lo_bail();
+  }
+
+  if ( 0 != rename(nuu_c, old_c) ) {
+    uL(fprintf(uH, "rest_nuu failed (k), rename: %s\n", strerror(errno)));
+    u3_lo_bail();
+  }
+  if ( -1 == lseek64(fud_i, sizeof(u3_uled), SEEK_SET) ) {
+    uL(fprintf(uH, "rest_nuu failed (l), lseek64: %s\n", strerror(errno)));
+    u3_lo_bail();
+  }
+  lug_u->fid_i = fud_i;
+  lug_u->len_d = end_d;
+}
+
 /* _sist_rest(): restore from record, or exit.
 */
 static void
@@ -660,7 +805,10 @@ _sist_rest()
       u3_lo_bail();
     }
 
-    if (u3r_mug('h') != led_u.mag_l ) {
+    if ( u3r_mug('g') == led_u.mag_l ) {
+      _sist_rest_nuu(&u3Z->lug_u, led_u, ful_c);
+      fid_i = u3Z->lug_u.fid_i;
+    } else if (u3r_mug('h') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u3_lo_bail();
     }
