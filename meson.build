@@ -317,17 +317,16 @@ elif osdet != 'openbsd'
   sigsegv_dep = cc.find_library('sigsegv')
 endif
 
-# For these libs we provide fallback bundle
-argon2_dep = dependency('argon2', version: '>=1', fallback: ['argon2', 'argon2_dep'])
-ed25519_dep = dependency('ed25519', version: '>=0.1.0', fallback: ['ed25519', 'ed25519_dep'])
-libent_dep = dependency('libent', version: '>=0.2.1', fallback: ['libent', 'libent_dep'])
-libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
-libscrypt_dep = dependency('libscrypt', version: '>=0.1.21', fallback: ['libscrypt', 'libscrypt_dep'])
-libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
-libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
-murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'murmur3_dep'])
-secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
-softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
+argon2_dep = cc.find_library('argon2')
+ed25519_dep = cc.find_library('ed25519')
+libent_dep = cc.find_library('ent')
+libh2o_dep = cc.find_library('h2o')
+libscrypt_dep = cc.find_library('scrypt')
+libsni_dep = cc.find_library('sni')
+libuv_dep = cc.find_library('uv')
+murmur3_dep = cc.find_library('murmur3')
+secp256k1_dep = cc.find_library('secp256k1')
+softfloat3_dep = cc.find_library('softfloat3')
 
 deps = [argon2_dep,
         curl_dep,

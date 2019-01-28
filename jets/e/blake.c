@@ -4,7 +4,7 @@
 #include "all.h"
 
 #include <argon2.h>
-#include "../src/blake2/blake2.h"
+#include <blake2.h>
 
 /* functions
 */
