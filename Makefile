@@ -19,7 +19,7 @@ install: all
 	cp "$b/urbit" ${outdir}/bin
 
 test:
-	meson . "$b" --buildtype=${mesonBuildType}
+	meson . "$b" --buildtype=${mesonBuildType} ${mesonFlags}
 	ninja -C "$b" test
 
 clean:
@@ -28,5 +28,5 @@ clean:
 ################################################################################
 
 $b/urbit:
-	meson . "$b" --buildtype=${mesonBuildType}
+	meson . "$b" --buildtype=${mesonBuildType} ${mesonFlags}
 	ninja -C "$b" urbit
