@@ -12130,7 +12130,7 @@
       |=  [acc=_map [ty=type k=xkey]]
       =/  dest  (~(get by refs.tbl) k)
       ?^  dest  (~(put by acc) ty u.dest)
-      ?.  (~(has in live.tbl))  acc
+      ?.  (~(has in live.tbl) k)  acc
       (~(put in acc) ty k)
     ::
     ::  Rebuild the `xrays` table.
