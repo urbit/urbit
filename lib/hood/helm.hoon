@@ -42,6 +42,7 @@
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
+          {$wait wire @da}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -92,6 +93,19 @@
 ++  poke-mass
   |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
+::
+++  poke-automass
+  |=  recur=@dr
+  abet:(emit %wait /helm/automass/(scot %dr recur) (add now recur))
+::
+++  take-wake-automass
+  |=  [way=wire ~]
+  ?>  ?=([@ ~] way)
+  =<  abet
+  %-  emil
+  :~  [%flog /heft %crud %hax-heft ~]
+      [%wait /helm/automass/[-.way] (add now (slav %dr -.way))]
+  ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
