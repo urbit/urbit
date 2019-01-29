@@ -498,7 +498,7 @@
       ~/  %hall-action-create
       |=  {nom/name des/cord typ/security}
       ^+  ..ta-action
-      ?.  (~(has in stories) nom)
+      ?.  (~(has by stories) nom)
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
             des
@@ -516,7 +516,7 @@
       ::
       ~/  %hall-action-design
       |=  {nom/name cof/config}
-      ?.  (~(has in stories) nom)
+      ?.  (~(has by stories) nom)
         (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
@@ -2654,15 +2654,16 @@
     ==
   ::
     ?:  =(wat ~)  &
-    %-  ~(has in wat)
-    ?+  -.det  %hasnot
-      $gram     %grams
-      $new      %config-l
-      $remove   %config-l
+    ?+  -.det   |
+      $gram     (~(has in wat) %grams)
+      $new      (~(has in wat) %config-l)
+      $remove   (~(has in wat) %config-l)
       $config   ?:  =(cir.det [our.bol nom])
-                %config-l  %config-r
+                  (~(has in wat) %config-l)
+                (~(has in wat) %config-r)
       $status   ?:  =(cir.det [our.bol nom])
-                %group-l  %group-r
+                  (~(has in wat) %group-l)
+                (~(has in wat) %group-r)
     ==
   ==
 ::
