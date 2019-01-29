@@ -326,15 +326,6 @@
         c3_l tno_l;                         //  terminal count in host
       } u3_uled;
 
-    /* u3_olar: event log trailer, old version.
-    */
-      typedef struct {
-        c3_w syn_w;                         //  must equal mug of address
-        c3_w ent_w;                         //  event sequence number
-        c3_w len_w;                         //  word length of this event
-        c3_w mug_w;                         //  mug of entry
-      } u3_olar;
-
     /* u3_ular: event log trailer.
     */
       typedef struct {

@@ -658,7 +658,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
     //  calculate new log size
     //
-    if (c3y == fir_o) {
+    if ( c3y == fir_o ) {
       pos_d = (end_d + lar_u.ent_d + 1);
       new_d = pos_d;
       fir_o = c3n;
@@ -805,7 +805,8 @@ _sist_rest()
     if ( u3r_mug('g') == led_u.mag_l ) {
       _sist_rest_nuu(&u3Z->lug_u, led_u, ful_c);
       fid_i = u3Z->lug_u.fid_i;
-    } else if (u3r_mug('h') != led_u.mag_l ) {
+    }
+    else if (u3r_mug('h') != led_u.mag_l ) {
       uL(fprintf(uH, "record (%s) is obsolete (or corrupt)\n", ful_c));
       u3_lo_bail();
     }
@@ -964,7 +965,8 @@ _sist_rest()
                      "and do not delete your pier!\n"));
       u3_lo_bail();
     }
-  } else {
+  }
+  else {
     //  Read and execute the fscking things. This is pretty much certain to crash.
     //
     uL(fprintf(uH, "rest: replaying through event %" PRIu64 "\n", las_d));
