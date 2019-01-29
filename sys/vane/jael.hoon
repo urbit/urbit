@@ -890,6 +890,22 @@
         $vine
       +>(yen (~(put in yen) hen))
     ::
+        %wegh
+      %_    +>
+          moz
+        :_  moz
+        ^-  move
+        :^  hen  %give  %mass
+        ^-  mass
+        :+  %jael  %|
+        :~  yen+&+yen
+            urb+&+urb
+            sub+&+sub
+            etn+&+etn
+            sap+&+sap
+        ==
+      ==
+    ::
     ::  authenticated remote request
     ::    {$west p/ship q/path r/*}
     ::
