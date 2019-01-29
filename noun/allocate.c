@@ -1670,53 +1670,87 @@ u3a_mark_road(c3_o pri_o)
   return   u3a_maid(pri_o, "total road stuff", tot_w);
 }
 
+/* _ca_print_box(): heuristically print the contents of an allocation box.
+*/
 static c3_c*
 _ca_print_box(u3a_box* box_u)
 {
-  if ( u3a_minimum < box_u->siz_w ) {
-    // fprintf(stderr, "print box 1\r\n");
-    return u3m_pretty(u3a_to_pug(u3a_outa(u3a_boxto(box_u))));
-  }
-  else {
-    // this might not be a cell, but we can use the struct to inspect further
-    //
-    u3a_cell* cel_u = (u3a_cell*)box_u;
+  //  the loom offset pointing to the contents of box_u
+  //
+  c3_w box_w = u3a_outa(u3a_boxto(box_u));
+  //  box_u might not be a cell, we use the struct to inspect further
+  //
+  u3a_cell* cel_u = (u3a_cell*)box_u;
 
-    // this condition potentially corresponds to an indirect atom of only one word
+  if (  //  a cell will never be bigger than the minimum allocation size
+        //
+        (u3a_minimum < box_u->siz_w) ||
+        //  this condition being true potentially corresponds to
+        //  box_u containing an indirect atom of only one word.
+        //  if the condition is false, we know box_u contains a cell.
+        //
+        ( (1 == (c3_w)cel_u->hed) &&
+          (0x80000000 & (c3_w)cel_u->tel) ) )
+  {
+    //  box_u might not be an indirect atom,
+    //  but it's always safe to print it as if it is one
     //
-    if ( (1 == (c3_w)cel_u->hed) &&
-         (0x80000000 & (c3_w)cel_u->tel) )
-    {
-      // this might not be right, but we know it's safe
-      //
-      // fprintf(stderr, "print box 2\r\n");
-      return u3m_pretty(u3a_to_pug(u3a_outa(u3a_boxto(box_u))));
+    u3a_atom* vat_u = (u3a_atom*)box_u;
+    u3_atom   veb   = u3a_to_pug(box_w);
+
+    //  skip atoms larger than 10 words
+    //  XX print mugs or something
+    //
+    if ( 10 > vat_u->len_w ) {
+#if 0
+      /*  For those times when you've really just got to crack open
+       *  the box and see what's inside
+      */
+      {
+        int i;
+        for ( i = 0; i < box_u->siz_w; i++ ) {
+          printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+        }
+        printf("\r\n");
+      }
+#endif
+      return 0;
     }
 
-    // fprintf(stderr, "print box 3 %x [%u %u]\r\n", u3a_to_pom(u3a_outa(u3a_boxto(box_u))), cel_u->hed, cel_u->tel);
-    return u3m_pretty(u3a_to_pom(u3a_outa(u3a_boxto(box_u))));
+    return u3m_pretty(veb);
+  }
+  else {
+    //  box_u is definitely a cell
+    //
+    return u3m_pretty(u3a_to_pom(box_w));
   }
 }
 
+/* _ca_print_leak(): print the details of a leaked allocation box.
+*/
 #ifdef U3_MEMORY_DEBUG
 
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 {
-  c3_c* dat_c = _ca_print_box(box_u);
-
   fprintf(stderr, "%s: %p mug=%x (marked=%u swept=%u)\r\n",
-    cap_c, box_u, ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
-    eus_w, use_w);
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  eus_w,
+                  use_w);
 
   if ( box_u->cod_w ) {
     u3m_p("    code", box_u->cod_w);
   }
 
   u3a_print_memory("    size", box_u->siz_w);
-  fprintf(stderr,  "    data: %s\r\n", dat_c);
 
-  free(dat_c);
+  {
+    c3_c* dat_c = _ca_print_box(box_u);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
+    free(dat_c);
+  }
 }
 
 #else
@@ -1724,28 +1758,19 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
 {
-  c3_c* dat_c = _ca_print_box(box_u);
-
   fprintf(stderr, "%s: %p mug=%x swept=%d\r\n",
-    cap_c, box_u, ((u3a_noun *)(u3a_boxto(box_u)))->mug_w, use_ws);
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  use_ws);
 
   u3a_print_memory("    size", box_u->siz_w);
-  fprintf(stderr,  "    data: %s\r\n", dat_c);
 
-#if 0
-        /*  For those times when you've really just got to crack open
-         *  the box and see what's inside
-        */
-        {
-          int i;
-          for ( i = 0; i < box_u->siz_w; i++ ) {
-            printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
-          }
-          printf("\r\n");
-        }
-#endif
-
-  free(dat_c);
+  {
+    c3_c* dat_c = _ca_print_box(box_u);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
+    free(dat_c);
+  }
 }
 
 #endif
