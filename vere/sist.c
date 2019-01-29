@@ -632,12 +632,12 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
   c3_o fir_o = c3y;
   c3_d pos_d;
+  c3_d new_d = c3_wiseof(u3_uled);
 
   while ( end_d != c3_wiseof(u3_uled) ) {
     c3_d    tar_d;
     u3_ular lar_u;
     c3_w*   img_w;
-    u3_noun ron;
 
     //  read trailer
     //
@@ -661,6 +661,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     //
     if (c3y == fir_o) {
       pos_d = (end_d + lar_u.ent_d + 1);
+      new_d = (end_d + lar_u.ent_d + 1);
       fir_o = c3n;
     }
 
@@ -681,6 +682,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     // write event trailer
     //
     pos_d -= (c3_d)c3_wiseof(lar_u);
+
     lar_u.syn_w = u3r_mug_chub(pos_d);
 
     if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
@@ -709,7 +711,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
     // write event header
     //
-    pos_d -= 1ULL;
+    pos_d -= (4ULL * c3_wiseof(c3_w));
     if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
       uL(fprintf(uH, "rest_nuu failed (k), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
@@ -721,10 +723,6 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     }
 
     free(img_w);
-
-    if ( lar_u.ent_d % 100000 == 0 ) {
-      printf("ent_d: %d\n", lar_u.ent_d);
-    }
   }
 
   if ( 0 != close(fid_i) ) {
@@ -741,7 +739,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     u3_lo_bail();
   }
   lug_u->fid_i = fud_i;
-  lug_u->len_d = end_d;
+  lug_u->len_d = new_d;
 }
 
 /* _sist_rest(): restore from record, or exit.
@@ -967,115 +965,114 @@ _sist_rest()
                      "and do not delete your pier!\n"));
       u3_lo_bail();
     }
-  }
-
-
-  //  Read and execute the fscking things. This is pretty much certain to crash.
-  //
-  uL(fprintf(uH, "rest: replaying through event %" PRIu64 "\n", las_d));
-  fprintf(uH, "---------------- playback starting----------------\n");
-
-  c3_w xno_w = 0;
-  while ( cur_d != u3Z->lug_u.len_d ) {
-    u3_noun ven;
-    u3_noun now, ovo;
-    c3_d tar_d;
-    c3_w* img_w;
-    c3_w len_w;
-
-    //  read the size
+  } else {
+    //  Read and execute the fscking things. This is pretty much certain to crash.
     //
-    if ( -1 == lseek64(fid_i, 4ULL * cur_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
-      u3_lo_bail();
-    }
-    if ( sizeof(len_w) != read(fid_i, &len_w, sizeof(len_w)) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
-      u3_lo_bail();
-    }
+    uL(fprintf(uH, "rest: replaying through event %" PRIu64 "\n", las_d));
+    fprintf(uH, "---------------- playback starting----------------\n");
 
-    tar_d = cur_d + c3_wiseof(len_w) + len_w;
+    c3_w xno_w = 0;
+    while ( cur_d != u3Z->lug_u.len_d ) {
+      u3_noun ven;
+      u3_noun now, ovo;
+      c3_d tar_d;
+      c3_w* img_w;
+      c3_w len_w;
 
-    //  read the trailer
-    //
-    if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
-      u3_lo_bail();
-    }
-    if ( sizeof(u3_ular) != read(fid_i, &lar_u, sizeof(u3_ular)) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
-      u3_lo_bail();
-    }
-
-    img_w = c3_malloc(4 * lar_u.len_w);
-
-    //  read the event
-    //
-    if ( -1 == lseek64(fid_i, 4ULL * (cur_d + c3_wiseof(c3_w)), SEEK_SET) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (h)\n", ful_c));
-      u3_lo_bail();
-    }
-    if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
-      uL(fprintf(uH, "rest: record (%s) is corrupt (i)\n", ful_c));
-      u3_lo_bail();
-    }
-
-    ven = u3i_words(lar_u.len_w, img_w);
-    free(img_w);
-
-    if ( c3__ov != lar_u.typ_w ) {
-      u3z(ven);
-      continue;
-    }
-
-    //  decrypt the event
-    //
-    if ( u3A->key ) {
-      u3_noun dep;
-
-      dep = u3dc("de:crub:crypto", u3k(u3A->key), ven);
-      if ( c3n == u3du(dep) ) {
-        uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
+      //  read the size
+      //
+      if ( -1 == lseek64(fid_i, 4ULL * cur_d, SEEK_SET) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
         u3_lo_bail();
       }
-      else {
-        ven = u3k(u3t(dep));
-        u3z(dep);
+      if ( sizeof(len_w) != read(fid_i, &len_w, sizeof(len_w)) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
+        u3_lo_bail();
       }
+
+      tar_d = cur_d + c3_wiseof(len_w) + len_w;
+
+      //  read the trailer
+      //
+      if ( -1 == lseek64(fid_i, 4ULL * tar_d, SEEK_SET) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (d)\n", ful_c));
+        u3_lo_bail();
+      }
+      if ( sizeof(u3_ular) != read(fid_i, &lar_u, sizeof(u3_ular)) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (e)\n", ful_c));
+        u3_lo_bail();
+      }
+
+      img_w = c3_malloc(4 * lar_u.len_w);
+
+      //  read the event
+      //
+      if ( -1 == lseek64(fid_i, 4ULL * (cur_d + c3_wiseof(c3_w)), SEEK_SET) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (h)\n", ful_c));
+        u3_lo_bail();
+      }
+      if ( (4 * lar_u.len_w) != read(fid_i, img_w, (4 * lar_u.len_w)) ) {
+        uL(fprintf(uH, "rest: record (%s) is corrupt (i)\n", ful_c));
+        u3_lo_bail();
+      }
+
+      ven = u3i_words(lar_u.len_w, img_w);
+      free(img_w);
+
+      if ( c3__ov != lar_u.typ_w ) {
+        u3z(ven);
+        continue;
+      }
+
+      //  decrypt the event
+      //
+      if ( u3A->key ) {
+        u3_noun dep;
+
+        dep = u3dc("de:crub:crypto", u3k(u3A->key), ven);
+        if ( c3n == u3du(dep) ) {
+          uL(fprintf(uH, "record (%s) is corrupt (k)\n", ful_c));
+          u3_lo_bail();
+        }
+        else {
+          ven = u3k(u3t(dep));
+          u3z(dep);
+        }
+      }
+
+      //  run the event
+      //
+      ven = u3ke_cue(ven);
+      now = u3h(ven);
+      ovo = u3t(ven);
+
+      u3v_time(u3k(now));
+
+      if ( (c3y == u3_Host.ops_u.vno) &&
+           ( (c3__veer == u3h(u3t(ovo)) ||
+             (c3__vega == u3h(u3t(ovo)))) ) )
+      {
+        fprintf(stderr, "replay: skipped veer\n");
+      }
+      else {
+        _sist_sing(u3k(ovo));
+        fputc('.', stderr);
+      }
+
+      // fprintf(stderr, "playback: sing: %d\n", xno_w));
+
+      xno_w++;
+
+      if ( 0 == (xno_w % 1000) ) {
+        uL(fprintf(uH, "{%d}\n", xno_w));
+        // u3_lo_grab("rest", rou, u3_none);
+      }
+
+      u3z(ven);
+      cur_d += c3_wiseof(len_w) + len_w + c3_wiseof(lar_u);
     }
-
-    //  run the event
-    //
-    ven = u3ke_cue(ven);
-    now = u3h(ven);
-    ovo = u3t(ven);
-
-    u3v_time(u3k(now));
-
-    if ( (c3y == u3_Host.ops_u.vno) &&
-         ( (c3__veer == u3h(u3t(ovo)) ||
-           (c3__vega == u3h(u3t(ovo)))) ) )
-    {
-      fprintf(stderr, "replay: skipped veer\n");
-    }
-    else {
-      _sist_sing(u3k(ovo));
-      fputc('.', stderr);
-    }
-
-    // fprintf(stderr, "playback: sing: %d\n", xno_w));
-
-    xno_w++;
-
-    if ( 0 == (xno_w % 1000) ) {
-      uL(fprintf(uH, "{%d}\n", xno_w));
-      // u3_lo_grab("rest", rou, u3_none);
-    }
-
-    u3z(ven);
-    cur_d += c3_wiseof(len_w) + len_w + c3_wiseof(lar_u);
+    uL(fprintf(stderr, "\n---------------- playback complete----------------\r\n"));
   }
-  uL(fprintf(stderr, "\n---------------- playback complete----------------\r\n"));
 
 #if 0
   //  If you see this error, your record is totally fscking broken!
