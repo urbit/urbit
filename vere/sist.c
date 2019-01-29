@@ -631,8 +631,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   }
 
   c3_o fir_o = c3y;
-  c3_d pos_d;
-  c3_d new_d = c3_wiseof(u3_uled);
+  c3_d pos_d, new_d;
 
   while ( end_d != c3_wiseof(u3_uled) ) {
     c3_d    tar_d;
@@ -661,7 +660,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
     //
     if (c3y == fir_o) {
       pos_d = (end_d + lar_u.ent_d + 1);
-      new_d = (end_d + lar_u.ent_d + 1);
+      new_d = pos_d;
       fir_o = c3n;
     }
 
@@ -711,7 +710,7 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 
     // write event header
     //
-    pos_d -= (4ULL * c3_wiseof(c3_w));
+    pos_d -= c3_wiseof(c3_w);
     if ( -1 == lseek64(fud_i, (4ULL * pos_d), SEEK_SET) ) {
       uL(fprintf(uH, "rest_nuu failed (k), lseek64: %s\n", strerror(errno)));
       u3_lo_bail();
