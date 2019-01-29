@@ -1690,7 +1690,9 @@ void _raft_spac(c3_w n)
     (fprintf(stderr," "));
 }
 
-/* _raft_print_memory: print memory amount. cf u3a_print_memory().
+/* _raft_print_memory: print memory amount.
+**
+**  Helper for _raft_prof(), just an un-captioned u3a_print_memory().
 */
 void
 _raft_print_memory(c3_w wor_w)
@@ -1843,84 +1845,38 @@ _raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
 /* _raft_grab(): garbage collect, checking for profiling. RETAIN.
 */
 static void
-_raft_grab(u3_noun ova)
+_raft_grab(u3_noun rus)
 {
   if ( u3_nul != u3A->sac ) {
-    c3_w usr_w = 0, ova_w = 0, sac_w = 0, utv_w = 0, utm_w = 0, wep_w = 0,
-         har_w = 0, das_w = 0, gul_w = 0, tax_w = 0, mer_w = 0, don_w = 0,
-         day_w = 0, car_w = 0;
+    c3_w usr_w = 0, man_w = 0, ova_w = 0, sac_w = 0;
 
     c3_assert( u3R == &(u3H->rod_u) );
 
     fprintf(stderr, "\r\n");
     usr_w = _raft_prof(u3_nul, 0, u3A->sac);
-    fprintf(stderr, "total userspace: ");
-    _raft_print_memory(usr_w);
+    u3a_print_memory("total userspace", usr_w);
 
-    ova_w = u3a_mark_noun(ova);
-    fprintf(stderr, "effects list: ");
-    _raft_print_memory(ova_w);
+    man_w = u3m_mark(c3y);
+
+    ova_w = u3a_mark_noun(rus);
+    u3a_print_memory("event & effects", ova_w);
 
     sac_w = u3a_mark_noun(u3A->sac);
-    fprintf(stderr, "space profile: ");
-    _raft_print_memory(sac_w);
+    u3a_print_memory("space profile", sac_w);
 
-    utv_w = u3v_mark(c3n);
-    fprintf(stderr, "arvo stuff: ");
-    _raft_print_memory(utv_w);
+    u3a_print_memory("total marked", usr_w + man_w + ova_w + sac_w);
 
-    har_w = u3h_mark(u3R->jed.war_p);
-    fprintf(stderr, "  warm jet state: ");
-    _raft_print_memory(har_w);
+    u3a_print_memory("sweep", u3a_sweep());
 
-    das_w = u3h_mark(u3R->jed.cod_p);
-    fprintf(stderr, "  cold jet state: ");
-    _raft_print_memory(das_w);
-
-    gul_w = u3a_mark_noun(u3R->ski.gul);
-    fprintf(stderr, "  namespace: ");
-    _raft_print_memory(gul_w);
-
-    tax_w = u3a_mark_noun(u3R->bug.tax);
-    fprintf(stderr, "  trace stack list: ");
-    _raft_print_memory(tax_w);
-     
-    mer_w = u3a_mark_noun(u3R->bug.mer);
-    fprintf(stderr, "  trace stack buffer: ");
-    _raft_print_memory(mer_w);
-     
-    don_w = u3a_mark_noun(u3R->pro.don);
-    fprintf(stderr, "  profile battery list: ");
-    _raft_print_memory(don_w);
-     
-    day_w = u3a_mark_noun(u3R->pro.day);
-    fprintf(stderr, "  profile doss: ");
-    _raft_print_memory(day_w);
-     
-    car_w = u3h_mark(u3R->cax.har_p);
-    fprintf(stderr, "  memoization: ");
-    _raft_print_memory(car_w);
-     
-    utm_w = har_w + das_w + gul_w + tax_w + mer_w + don_w + day_w + car_w;
-    fprintf(stderr, "total road stuff: ");
-    _raft_print_memory(utm_w);
-
-    fprintf(stderr, "total marked: ");
-    _raft_print_memory(usr_w + ova_w + sac_w + utv_w + utm_w);
-
-    wep_w = u3a_sweep();
-    fprintf(stderr, "sweep: ");
-    _raft_print_memory(wep_w);
-
-    u3h_free(u3R->cax.har_p);
-    u3R->cax.har_p = u3h_new();
+    // u3h_free(u3R->cax.har_p);
+    // u3R->cax.har_p = u3h_new();
 
     u3z(u3A->sac);
     u3A->sac = u3_nul;
+
+    uL(fprintf(uH, "\n"));
   }
 }
-
-int FOO;
 
 /* _raft_crop(): Delete finished events.
 */
@@ -2062,7 +2018,7 @@ u3_raft_chip(void)
     }
 
     _raft_kick(u3k(vir));
-    _raft_grab(vir);
+    _raft_grab(rus);
 
     u3z(rus);
   }
