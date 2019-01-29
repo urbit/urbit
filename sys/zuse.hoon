@@ -71,6 +71,12 @@
 ++  coop  (unit ares)                                   ::  possible error
 ++  life  @ud                                           ::  ship version
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
+::  
+::
+::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
+::
++$  mime-data
+  [type=@t data=octs]
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
@@ -2022,19 +2028,19 @@
               ::    final redirect.
               ::
               =http-response-header
-              ::  bytes-fetched: bytes fetched so far
+              ::  bytes-read: bytes fetched so far
               ::
-              bytes-fetched=@ud
-              ::  bytes-total: the total size if response had a content-length
+              bytes-read=@ud
+              ::  expected-size: the total size if response had a content-length
               ::
-              bytes-total=(unit @ud)
+              expected-size=(unit @ud)
               ::  incremental: data received since the last %http-progress
               ::
-              incremental=octs
+              incremental=(unit octs)
           ==
-          ::  final response of a download, parsed as mime if successful
+          ::  final response of a download, parsed as mime-data if successful
           ::
-          [%http-finished =http-response-header full-file=(unit mime)]
+          [%http-finished =http-response-header full-file=(unit mime-data)]
       ==
     ::
     ++  task
@@ -2063,7 +2069,7 @@
           [%cancel-fetch ~]
           ::  receives http data from outside
           ::
-          [%receive =http-request complete=?]
+          [%receive id=@ud =raw-http-response]
           ::  connects a binding to an app
           ::
           [%connect =binding app=term]
@@ -2201,7 +2207,7 @@
   ::    the entire body before we send a %progress to the caller.
   ::
   +$  http-response-header
-    $%  ::  status: http status code
+    $:  ::  status: http status code
         ::
         status-code=@ud
         ::  headers: http headers

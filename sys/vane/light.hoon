@@ -97,6 +97,9 @@
         ::  connection-by-id: open connections to the
         ::
         connection-by-id=(map @ud [=duct =in-progress-http-request])
+        ::  outbound-duct: the duct to send outbound requests on
+        ::
+        outbound-duct=duct
     ==
   ::  +in-progress-http-request: state around an outbound http
   ::
@@ -108,6 +111,9 @@
         ::
         remaining-retries=@ud
         ::  chunks: a list of partial results returned from unix
+        ::
+        ::    This list of octs must be flopped before it is composed as the
+        ::    final response, as we want to be able to quickly insert.
         ::
         chunks=(list octs)
         ::  bytes-read: the sum of the size of the :chunks
@@ -694,7 +700,7 @@
     ::  email discussions make it sound like fixing that might be hard, so
     ::  maybe i should just live with the way it is now?
     ::
-    :-  [duct %give %http-request id `http-request]~
+    :-  [outbound-duct.state %give %http-request id `http-request]~
     state
   ::  +receive: receives a response to an http-request we made
   ::
@@ -726,15 +732,51 @@
           ?~  mime-type=(get-header 'content-type' headers.raw-http-response)
             'application/octet-stream'
           u.mime-type
-        ::  :-  :*  duct.u.connection
-        ::          %give
-        ::          %http-finished
-        ::          [status-code headers]:raw-http-response
-        ::          `[mime data:raw-http-response]
-        ::      ==
-        :-  ~
+        :-  :~  ^-  move
+                :*  duct.u.connection
+                    %give
+                    %http-finished
+                    ^-  http-response-header
+                    [status-code headers]:raw-http-response
+                ::
+                    ?~  data.raw-http-response
+                      ~
+                    [~ `mime-data`[mime u.data.raw-http-response]]
+            ==  ==
         state(connection-by-id (~(del by connection-by-id.state) id))
-      [~ state]
+      ::  this is the initial packet of an incomplete request.
+      ::
+      =.  connection-by-id.state
+        %+  ~(jab by connection-by-id.state)  id
+        |=  [duct=^duct =in-progress-http-request:client]
+        ::  record the data chunk, if it exists
+        ::
+        =?    chunks.in-progress-http-request
+            ?=(^ data.raw-http-response)
+          [u.data.raw-http-response chunks.in-progress-http-request]
+        =?    bytes-read.in-progress-http-request
+            ?=(^ data.raw-http-response)
+          (add bytes-read.in-progress-http-request p.u.data.raw-http-response)
+        ::
+        =.  expected-size.in-progress-http-request
+          ?~  str=(get-header 'content-length' headers.raw-http-response)
+            ~
+          ::
+          (rush u.str dum:ag)
+        ::
+        [duct in-progress-http-request]
+      ::
+      =/  connection  (~(got by connection-by-id.state) id)
+      :_  state
+      :_  ~
+      :*  duct.connection
+          %give
+          %http-progress
+          [status-code headers]:raw-http-response
+          bytes-read.in-progress-http-request.connection
+          expected-size.in-progress-http-request.connection
+          data.raw-http-response
+      ==
     ::
         %continue
       [~ state]
@@ -1723,7 +1765,9 @@
     ~&  [%todo-handle-born p.task]
     ::  TODO: reset the next-id for client state here.
     ::
-
+    ::  send requests on the duct passed in with born.
+    ::
+    =.  outbound-duct.client-state.ax  duct
     ::  close previously open connections
     ::
     ::    When we have a new unix process, every outstanding open connection is
@@ -1785,7 +1829,6 @@
       ::  %fetch
       ::
       %fetch
-    ~&  %todo-fetch
     =/  event-args  [[our eny duct now scry-gate] client-state.ax]
     =/  fetch  fetch:(per-client-event event-args)
     =^  moves  client-state.ax  (fetch +.task)
@@ -1800,8 +1843,10 @@
       ::  %receive: receives http data from unix
       ::
       %receive
-    ~&  %todo-receive
-    [~ light-gate]
+    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
+    =/  receive  receive:(per-client-event event-args)
+    =^  moves  client-state.ax  (receive +.task)
+    [moves light-gate]
   ::
       ::  %connect / %serve
       ::
