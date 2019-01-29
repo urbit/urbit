@@ -38,6 +38,13 @@ Promise.resolve(urbit)
 })
 .then(actions.safeBoot)
 .then(actions.test)
+.then(function(){
+  return urbit.line("|mass")
+  .then(function(){
+    return urbit.expectEcho("%ran-mass")
+    .then(function(){ return urbit.resetListeners(); })
+  })
+})
 .then(exit)
 .catch(function(err){
   // we still exit 0, Arvo errors are not our fault ...
