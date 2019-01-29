@@ -1865,7 +1865,7 @@ _raft_grab(u3_noun ova)
     fprintf(stderr, "space profile: ");
     _raft_print_memory(sac_w);
 
-    utv_w = u3v_mark();
+    utv_w = u3v_mark(c3n);
     fprintf(stderr, "arvo stuff: ");
     _raft_print_memory(utv_w);
 

@@ -1614,12 +1614,12 @@ u3a_mark_noun(u3_noun som)
 }
 
 /* u3a_print_memory: print memory amount.
+**
+**  Must print to stderr -- not uH/uL (because loja allocates).
 */
 void
 u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 {
-  FILE *fil_f = u3_term_io_hija();
-
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
   c3_w mib_w = (byt_w % 1000000000) / 1000000;
@@ -1628,20 +1628,46 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
   if ( byt_w ) {
     if ( gib_w ) {
-      fprintf(fil_f, "%s: GB/%d.%03d.%03d.%03d\r\n", 
+      fprintf(stderr, "%s: GB/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(fil_f, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(stderr, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(fil_f, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(stderr, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(fil_f, "%s: B/%d\r\n", cap_c, bib_w);
+      fprintf(stderr, "%s: B/%d\r\n", cap_c, bib_w);
     }
   }
-  u3_term_io_loja(0);
+}
+
+/* u3a_maid(): maybe print memory.
+*/
+c3_w
+u3a_maid(c3_o pri_o, c3_c* cap_c, c3_w wor_w)
+{
+  if ( c3y == pri_o ) {
+    u3a_print_memory(cap_c, wor_w);
+  }
+  return wor_w;
+}
+
+/* u3a_mark_road(): mark ad-hoc persistent road structures.
+*/
+c3_w
+u3a_mark_road(c3_o pri_o)
+{
+  c3_w tot_w = 0;
+  tot_w += u3a_maid(pri_o, "  namespace", u3a_mark_noun(u3R->ski.gul));
+  tot_w += u3a_maid(pri_o, "  trace stack", u3a_mark_noun(u3R->bug.tax));
+  tot_w += u3a_maid(pri_o, "  trace buffer", u3a_mark_noun(u3R->bug.mer));
+  tot_w += u3a_maid(pri_o, "  profile batteries", u3a_mark_noun(u3R->pro.don));
+  tot_w += u3a_maid(pri_o, "  profile doss", u3a_mark_noun(u3R->pro.day));
+  tot_w += u3a_maid(pri_o, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
+  tot_w += u3a_maid(pri_o, "  memoization cache", u3h_mark(u3R->cax.har_p));
+  return   u3a_maid(pri_o, "total road stuff", tot_w);
 }
 
 /* u3a_sweep(): sweep a fully marked road.

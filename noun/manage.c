@@ -491,18 +491,13 @@ _pave_parts(void)
 /* u3m_mark(): mark all nouns in the road.
 */
 c3_w
-u3m_mark(void)
+u3m_mark(c3_o pri_o)
 {
   c3_w tot_w = 0;
-  tot_w += u3j_mark();
-  tot_w += u3n_mark();
-  tot_w += u3a_mark_noun(u3R->ski.gul);
-  tot_w += u3a_mark_noun(u3R->bug.tax);
-  tot_w += u3a_mark_noun(u3R->bug.mer);
-  tot_w += u3a_mark_noun(u3R->pro.don);
-  tot_w += u3a_mark_noun(u3R->pro.trace);
-  tot_w += u3a_mark_noun(u3R->pro.day);
-  tot_w += u3h_mark(u3R->cax.har_p);
+  tot_w += u3v_mark(pri_o);
+  tot_w += u3j_mark(pri_o);
+  tot_w += u3n_mark(pri_o);
+  tot_w += u3a_mark_road(pri_o);
   return tot_w;
 }
 
@@ -1151,8 +1146,7 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
   // u3h_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3h_new();
 
-  u3v_mark();
-  u3m_mark();
+  u3m_mark(c3n);
   {
     va_list vap;
     u3_noun tur;

@@ -402,6 +402,11 @@
           c3_w
           u3a_mark_noun(u3_noun som);
 
+        /* u3a_mark_road(): mark ad-hoc persistent road structures.
+        */
+          c3_w
+          u3a_mark_road(c3_o pri_o);
+
         /* u3a_sweep(): sweep a fully marked road.
         */
           c3_w
@@ -422,10 +427,15 @@
           void
           u3a_lop(c3_w lab_w);
 
-        /* u3a_print_memory: print memory amount.
+        /* u3a_print_memory(): print memory amount.
         */
           void
           u3a_print_memory(c3_c* cap_c, c3_w wor_w);
+
+        /* u3a_maid(): maybe print memory.
+        */
+          c3_w
+          u3a_maid(c3_o pri_o, c3_c* cap_c, c3_w wor_w);
 
         /* u3a_deadbeef(): write 0xdeadbeef from hat to cap.
         */
