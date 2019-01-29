@@ -25,6 +25,8 @@
 #     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
     /* u3a_minimum: minimum number of words in a box.
+    **
+    **  wiseof(u3a_cell) + wiseof(u3a_box) + 1 (trailing siz_w)
     */
 #ifdef U3_MEMORY_DEBUG
 #     define u3a_minimum   8
