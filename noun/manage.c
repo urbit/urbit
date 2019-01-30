@@ -1720,13 +1720,26 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     printf("boot: loading %s\r\n", ful_c);
 
     {
-      u3_noun sys = u3ke_cue(u3m_file(ful_c));
-      u3_noun bot;
+      u3_noun pil = u3m_file(ful_c);
+      u3_noun sys, bot;
+
+      {
+        u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil));
+
+        if ( 0 != u3h(pro) ) {
+          fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+          exit(1);
+        }
+
+        sys = u3k(u3t(pro));
+        u3z(pro);
+      }
 
       u3x_trel(sys, &bot, 0, 0);
       u3v_boot(u3k(bot));
 
       u3z(sys);
+      u3z(pil);
     }
   }
   else {
