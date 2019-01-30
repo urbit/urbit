@@ -380,12 +380,6 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
-    //
-    //  Assumption: there are no noun roots outside u3A.
-    //
-    u3m_grab(u3_none);
-  }
 #if 0
   if ( u3C.wag_w & u3o_debug_cpu ) {
     struct itimerval itm_u;
@@ -398,6 +392,7 @@ u3_lo_open(void)
                      itm_u.it_interval.tv_usec);
   }
 #endif
+
   _lo_time();
 }
 
@@ -406,8 +401,6 @@ u3_lo_open(void)
 void
 u3_lo_shut(c3_o inn)
 {
-  // u3m_grab(u3_none);
-
   //  process actions
   //
   u3_raft_work();

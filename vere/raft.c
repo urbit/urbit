@@ -1853,7 +1853,12 @@ _raft_prof(FILE* fil_u, c3_w den, u3_noun mas)
 static void
 _raft_grab(u3_noun rus)
 {
-  if ( u3_nul != u3A->sac ) {
+  if ( u3_nul == u3A->sac) {
+    if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
+      u3m_grab(rus, u3_none);
+    }
+  }
+  else {
     c3_w usr_w = 0, man_w = 0, ova_w = 0, sac_w = 0;
 
     FILE* fil_u;
