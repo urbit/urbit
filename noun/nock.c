@@ -2567,7 +2567,7 @@ u3n_mark(FILE* fil_u)
   return  u3a_maid(fil_u, "total nock stuff", bam_w + har_w);
 }
 
-/* _n_feb(): u3h_walk helper for u3n_bree
+/* _n_feb(): u3h_walk helper for u3n_free
  */
 static void
 _n_feb(u3_noun kev)
