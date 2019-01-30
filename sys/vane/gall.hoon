@@ -1278,6 +1278,7 @@
         $nuke  `%a
         $ogre  `%c
         $perm  `%c
+        $rest  `%b
         $rule  `%e
         $serv  `%e
         $snap  `%j
