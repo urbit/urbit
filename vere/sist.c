@@ -953,10 +953,12 @@ _sist_rest()
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
   }
 
-  if ( cur_d == u3Z->lug_u.len_d ) {
+  if ( u3A->ent_d == old_d ) {
     //  Nothing in the log that was not also in the checkpoint.
     //
-    c3_assert(u3A->ent_d == old_d);
+    //    XX: reinstate this assertion
+    //
+    //c3_assert ( cur_d == u3Z->lug_u.len_d );
     if ( las_d + 1 != old_d ) {
       uL(fprintf(uH, "checkpoint and log disagree! las:%" PRIu64 " old:%" PRIu64 "\n",
                      las_d + 1, old_d));
