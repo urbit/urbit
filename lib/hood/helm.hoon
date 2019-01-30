@@ -15,6 +15,7 @@
 ++  session                                             ::
   $:  say/sole-share:sole                               ::  console state
       mud/(unit (sole-dialog:sole @ud))                 ::  console dialog
+      mass-timer/{way/wire nex/@da tim/@dr}
   ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -42,6 +43,8 @@
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
+          {$rest wire @da}                              ::
+          {$wait wire @da}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -92,6 +95,25 @@
 ++  poke-mass
   |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
+::
+++  poke-automass
+  |=  recur=@dr
+  =.  mass-timer.sez
+    [/helm/automass (add now recur) recur]
+  abet:(emit %wait way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-cancel-automass
+  |=  ~
+  abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+::
+++  take-wake-automass
+  |=  [way=wire ~]
+  =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
+  =<  abet
+  %-  emil
+  :~  [%flog /heft %crud %hax-heft ~]
+      [%wait way.mass-timer.sez nex.mass-timer.sez]
+  ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
