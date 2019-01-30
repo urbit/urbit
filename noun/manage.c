@@ -491,13 +491,13 @@ _pave_parts(void)
 /* u3m_mark(): mark all nouns in the road.
 */
 c3_w
-u3m_mark(c3_o pri_o)
+u3m_mark(FILE* fil_u)
 {
   c3_w tot_w = 0;
-  tot_w += u3v_mark(pri_o);
-  tot_w += u3j_mark(pri_o);
-  tot_w += u3n_mark(pri_o);
-  tot_w += u3a_mark_road(pri_o);
+  tot_w += u3v_mark(fil_u);
+  tot_w += u3j_mark(fil_u);
+  tot_w += u3n_mark(fil_u);
+  tot_w += u3a_mark_road(fil_u);
   return tot_w;
 }
 
@@ -927,7 +927,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     if ( u3C.wag_w & u3o_debug_ram ) {
 #ifdef U3_CPU_DEBUG
       if ( u3R->all.max_w > 1000000 ) {
-        u3a_print_memory("execute: top", u3R->all.max_w);
+        u3a_print_memory(stderr, "execute: top", u3R->all.max_w);
       }
 #endif
       u3m_grab(pro, u3_none);
@@ -1024,7 +1024,7 @@ u3m_soft_run(u3_noun gul,
 
 #ifdef U3_CPU_DEBUG
     if ( u3R->all.max_w > 1000000 ) {
-      u3a_print_memory("execute: run", u3R->all.max_w);
+      u3a_print_memory(stderr, "execute: run", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
@@ -1146,7 +1146,7 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
   // u3h_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3h_new();
 
-  u3m_mark(c3n);
+  u3m_mark(0);
   {
     va_list vap;
     u3_noun tur;

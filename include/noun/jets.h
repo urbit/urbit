@@ -260,7 +260,7 @@
       /* u3j_mark(): mark jet state for gc.
       */
         c3_w
-        u3j_mark(c3_o pri_o);
+        u3j_mark(FILE* fil_u);
 
       /* u3j_free(): free jet state.
       */

@@ -147,4 +147,4 @@
     /* u3v_mark(): mark arvo kernel.
     */
       c3_w
-      u3v_mark(c3_o pri_o);
+      u3v_mark(FILE* fil_u);

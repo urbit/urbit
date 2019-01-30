@@ -1684,10 +1684,10 @@ _raft_kick(u3_noun vir)
 
 /* _raft_spac(): print n spaces.
 */
-void _raft_spac(c3_w n)
+void _raft_spac(FILE* fil_u,  c3_w n)
 {
   for (; n > 0; n--)
-    (fprintf(stderr," "));
+    (fprintf(fil_u," "));
 }
 
 /* _raft_print_memory: print memory amount.
@@ -1695,7 +1695,7 @@ void _raft_spac(c3_w n)
 **  Helper for _raft_prof(), just an un-captioned u3a_print_memory().
 */
 void
-_raft_print_memory(c3_w wor_w)
+_raft_print_memory(FILE* fil_u, c3_w wor_w)
 {
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
@@ -1704,17 +1704,17 @@ _raft_print_memory(c3_w wor_w)
   c3_w bib_w = (byt_w % 1000);
 
   if ( gib_w ) {
-    (fprintf(stderr, "GB/%d.%03d.%03d.%03d\r\n", 
+    (fprintf(fil_u, "GB/%d.%03d.%03d.%03d\r\n",
         gib_w, mib_w, kib_w, bib_w));
   }
   else if ( mib_w ) {
-    (fprintf(stderr, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
+    (fprintf(fil_u, "MB/%d.%03d.%03d\r\n", mib_w, kib_w, bib_w));
   }
   else if ( kib_w ) {
-    (fprintf(stderr, "KB/%d.%03d\r\n", kib_w, bib_w));
+    (fprintf(fil_u, "KB/%d.%03d\r\n", kib_w, bib_w));
   }
   else {
-    (fprintf(stderr, "B/%d\r\n", bib_w));
+    (fprintf(fil_u, "B/%d\r\n", bib_w));
   }
 }
 
@@ -1757,38 +1757,44 @@ _raft_prof_noun(u3p(u3h_root) hax, u3_noun non, c3_t dud)
 /* _raft_prof(): print memory profile. RETAIN.
 */
 c3_w
-_raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
+_raft_prof(FILE* fil_u, c3_w den, u3_noun mas)
 {
   c3_w tot_w = 0;
   u3_noun h_mas, t_mas;
 
   if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
-    _raft_spac(den);
-    (fprintf(stderr, "mistyped mass\r\n"));
+    _raft_spac(fil_u, den);
+    fprintf(fil_u, "mistyped mass\r\n");
     return tot_w;
   }
   else if ( _(u3du(h_mas)) ) {
-    _raft_spac(den);
-    (fprintf(stderr, "mistyped mass head\r\n"));
-    u3m_p("h_mas", h_mas);
+    _raft_spac(fil_u, den);
+    fprintf(fil_u, "mistyped mass head\r\n");
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "h_mas: %s", lab_c);
+      free(lab_c);
+    }
     return tot_w;
   }
   else {
-    _raft_spac(den);
+    _raft_spac(fil_u, den);
 
-    c3_c* lab_c = u3m_pretty(h_mas);
-    (fprintf(stderr, "%s: ", lab_c));
-    free(lab_c);
+    {
+      c3_c* lab_c = u3m_pretty(h_mas);
+      fprintf(fil_u, "%s: ", lab_c);
+      free(lab_c);
+    }
 
     u3_noun it_mas, tt_mas;
 
     if ( c3n == u3r_cell(t_mas, &it_mas, &tt_mas) ) {
-      (fprintf(stderr, "mistyped mass tail\r\n"));
+      fprintf(fil_u, "mistyped mass tail\r\n");
       return tot_w;
     }
     else if ( c3y == it_mas ) {
       tot_w += u3a_mark_noun(tt_mas);
-      _raft_print_memory(tot_w);
+      _raft_print_memory(fil_u, tot_w);
 
 #if 1
       /* The basic issue here is that tt_mas is included in
@@ -1820,23 +1826,23 @@ _raft_prof(u3p(u3h_root) hax, c3_w den, u3_noun mas)
       return tot_w;
     }
     else if ( c3n == it_mas ) {
-      (fprintf(stderr, "\r\n"));
+      fprintf(fil_u, "\r\n");
 
       while ( _(u3du(tt_mas)) ) {
-        tot_w += _raft_prof(hax, den+2, u3h(tt_mas));
+        tot_w += _raft_prof(fil_u, den+2, u3h(tt_mas));
         tt_mas = u3t(tt_mas);
       }
 
-      _raft_spac(den);
-      (fprintf(stderr, "--"));
-      _raft_print_memory(tot_w);
+      _raft_spac(fil_u, den);
+      fprintf(fil_u, "--");
+      _raft_print_memory(fil_u, tot_w);
 
       return tot_w;
 
     }
     else {
-      _raft_spac(den);
-      (fprintf(stderr, "mistyped (strange) mass tail\r\n"));
+      _raft_spac(fil_u, den);
+      fprintf(fil_u, "mistyped (strange) mass tail\r\n");
       return tot_w;
     }
   }
@@ -1850,23 +1856,25 @@ _raft_grab(u3_noun rus)
   if ( u3_nul != u3A->sac ) {
     c3_w usr_w = 0, man_w = 0, ova_w = 0, sac_w = 0;
 
+    FILE* fil_u = stderr;
+
     c3_assert( u3R == &(u3H->rod_u) );
 
-    fprintf(stderr, "\r\n");
-    usr_w = _raft_prof(u3_nul, 0, u3A->sac);
-    u3a_print_memory("total userspace", usr_w);
+    fprintf(fil_u, "\r\n");
+    usr_w = _raft_prof(fil_u, 0, u3A->sac);
+    u3a_print_memory(fil_u, "total userspace", usr_w);
 
-    man_w = u3m_mark(c3y);
+    man_w = u3m_mark(fil_u);
 
     ova_w = u3a_mark_noun(rus);
-    u3a_print_memory("event & effects", ova_w);
+    u3a_print_memory(fil_u, "event & effects", ova_w);
 
     sac_w = u3a_mark_noun(u3A->sac);
-    u3a_print_memory("space profile", sac_w);
+    u3a_print_memory(fil_u, "space profile", sac_w);
 
-    u3a_print_memory("total marked", usr_w + man_w + ova_w + sac_w);
+    u3a_print_memory(fil_u, "total marked", usr_w + man_w + ova_w + sac_w);
 
-    u3a_print_memory("sweep", u3a_sweep());
+    u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
     // u3h_free(u3R->cax.har_p);
     // u3R->cax.har_p = u3h_new();
@@ -1874,6 +1882,8 @@ _raft_grab(u3_noun rus)
     u3z(u3A->sac);
     u3A->sac = u3_nul;
 
+    //  restore prompt
+    //
     uL(fprintf(uH, "\n"));
   }
 }

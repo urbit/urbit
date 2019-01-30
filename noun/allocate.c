@@ -1614,12 +1614,12 @@ u3a_mark_noun(u3_noun som)
 }
 
 /* u3a_print_memory: print memory amount.
-**
-**  Must print to stderr -- not uH/uL (because loja allocates).
 */
 void
-u3a_print_memory(c3_c* cap_c, c3_w wor_w)
+u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
 {
+  c3_assert( 0 != fil_u );
+
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
   c3_w mib_w = (byt_w % 1000000000) / 1000000;
@@ -1628,17 +1628,17 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
   if ( byt_w ) {
     if ( gib_w ) {
-      fprintf(stderr, "%s: GB/%d.%03d.%03d.%03d\r\n",
+      fprintf(fil_u, "%s: GB/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(stderr, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(fil_u, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(stderr, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(fil_u, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(stderr, "%s: B/%d\r\n", cap_c, bib_w);
+      fprintf(fil_u, "%s: B/%d\r\n", cap_c, bib_w);
     }
   }
 }
@@ -1646,10 +1646,10 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 /* u3a_maid(): maybe print memory.
 */
 c3_w
-u3a_maid(c3_o pri_o, c3_c* cap_c, c3_w wor_w)
+u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
 {
-  if ( c3y == pri_o ) {
-    u3a_print_memory(cap_c, wor_w);
+  if ( 0 != fil_u ) {
+    u3a_print_memory(fil_u, cap_c, wor_w);
   }
   return wor_w;
 }
@@ -1657,17 +1657,17 @@ u3a_maid(c3_o pri_o, c3_c* cap_c, c3_w wor_w)
 /* u3a_mark_road(): mark ad-hoc persistent road structures.
 */
 c3_w
-u3a_mark_road(c3_o pri_o)
+u3a_mark_road(FILE* fil_u)
 {
   c3_w tot_w = 0;
-  tot_w += u3a_maid(pri_o, "  namespace", u3a_mark_noun(u3R->ski.gul));
-  tot_w += u3a_maid(pri_o, "  trace stack", u3a_mark_noun(u3R->bug.tax));
-  tot_w += u3a_maid(pri_o, "  trace buffer", u3a_mark_noun(u3R->bug.mer));
-  tot_w += u3a_maid(pri_o, "  profile batteries", u3a_mark_noun(u3R->pro.don));
-  tot_w += u3a_maid(pri_o, "  profile doss", u3a_mark_noun(u3R->pro.day));
-  tot_w += u3a_maid(pri_o, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
-  tot_w += u3a_maid(pri_o, "  memoization cache", u3h_mark(u3R->cax.har_p));
-  return   u3a_maid(pri_o, "total road stuff", tot_w);
+  tot_w += u3a_maid(fil_u, "  namespace", u3a_mark_noun(u3R->ski.gul));
+  tot_w += u3a_maid(fil_u, "  trace stack", u3a_mark_noun(u3R->bug.tax));
+  tot_w += u3a_maid(fil_u, "  trace buffer", u3a_mark_noun(u3R->bug.mer));
+  tot_w += u3a_maid(fil_u, "  profile batteries", u3a_mark_noun(u3R->pro.don));
+  tot_w += u3a_maid(fil_u, "  profile doss", u3a_mark_noun(u3R->pro.day));
+  tot_w += u3a_maid(fil_u, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
+  tot_w += u3a_maid(fil_u, "  memoization cache", u3h_mark(u3R->cax.har_p));
+  return   u3a_maid(fil_u, "total road stuff", tot_w);
 }
 
 /* _ca_print_box(): heuristically print the contents of an allocation box.
@@ -1744,7 +1744,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
     u3m_p("    code", box_u->cod_w);
   }
 
-  u3a_print_memory("    size", box_u->siz_w);
+  u3a_print_memory(stderr, "    size", box_u->siz_w);
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
@@ -1764,7 +1764,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
                   ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
                   use_ws);
 
-  u3a_print_memory("    size", box_u->siz_w);
+  u3a_print_memory(stderr, "    size", box_u->siz_w);
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
@@ -1894,22 +1894,22 @@ u3a_sweep(void)
 
 #ifdef U3_CPU_DEBUG
   if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
-    u3a_print_memory("available", (tot_w - pos_w));
-    u3a_print_memory("allocated", pos_w);
-    u3a_print_memory("volatile", caf_w);
+    u3a_print_memory(stderr, "available", (tot_w - pos_w));
+    u3a_print_memory(stderr, "allocated", pos_w);
+    u3a_print_memory(stderr, "volatile", caf_w);
 
-    u3a_print_memory("maximum", u3R->all.max_w);
+    u3a_print_memory(stderr, "maximum", u3R->all.max_w);
   }
 #else
 #if 0
-  u3a_print_memory("available", (tot_w - pos_w));
-  u3a_print_memory("allocated", pos_w);
-  u3a_print_memory("volatile", caf_w);
+  u3a_print_memory(stderr, "available", (tot_w - pos_w));
+  u3a_print_memory(stderr, "allocated", pos_w);
+  u3a_print_memory(stderr, "volatile", caf_w);
 #endif
 #endif
 #endif
-  u3a_print_memory("leaked", leq_w);
-  u3a_print_memory("weaked", weq_w);
+  u3a_print_memory(stderr, "leaked", leq_w);
+  u3a_print_memory(stderr, "weaked", weq_w);
 
   c3_assert((pos_w + leq_w + weq_w) == neg_w);
 

@@ -2250,26 +2250,26 @@ _cj_mark_hank(u3_noun kev, void* dat)
 /* u3j_mark(): mark jet state for gc.
 */
 c3_w
-u3j_mark(c3_o pri_o)
+u3j_mark(FILE* fil_u)
 {
   c3_w tot_w = 0;
 
-  tot_w += u3a_maid(pri_o, "  warm jet state", u3h_mark(u3R->jed.war_p));
-  tot_w += u3a_maid(pri_o, "  cold jet state", u3h_mark(u3R->jed.cod_p));
-  tot_w += u3a_maid(pri_o, "  hank cache", u3h_mark(u3R->jed.han_p));
-  tot_w += u3a_maid(pri_o, "  battery hash cache", u3h_mark(u3R->jed.bas_p));
+  tot_w += u3a_maid(fil_u, "  warm jet state", u3h_mark(u3R->jed.war_p));
+  tot_w += u3a_maid(fil_u, "  cold jet state", u3h_mark(u3R->jed.cod_p));
+  tot_w += u3a_maid(fil_u, "  hank cache", u3h_mark(u3R->jed.han_p));
+  tot_w += u3a_maid(fil_u, "  battery hash cache", u3h_mark(u3R->jed.bas_p));
 
   {
     c3_w han_w = 0;
     u3h_walk_with(u3R->jed.han_p, _cj_mark_hank, &han_w);
-    tot_w += u3a_maid(pri_o, "  call site cache", han_w);
+    tot_w += u3a_maid(fil_u, "  call site cache", han_w);
   }
 
   if ( u3R == &(u3H->rod_u) ) {
-    tot_w += u3a_maid(pri_o, "  hot jet state", u3h_mark(u3R->jed.hot_p));
+    tot_w += u3a_maid(fil_u, "  hot jet state", u3h_mark(u3R->jed.hot_p));
   }
 
-  return u3a_maid(pri_o, "total jet stuff", tot_w);
+  return u3a_maid(fil_u, "total jet stuff", tot_w);
 }
 
 /* _cj_free_hank(): free hank cache.
