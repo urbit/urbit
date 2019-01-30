@@ -1,7 +1,7 @@
 /* vere/unix.c
 **
 */
-#define _XOPEN_SOURCE 700
+#include "all.h"
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -13,7 +13,6 @@
 #include <libgen.h>
 #include <ftw.h>
 
-#include "all.h"
 #include "vere/vere.h"
 
 /* _unix_down(): descend path.
