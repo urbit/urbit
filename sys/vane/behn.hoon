@@ -81,9 +81,9 @@
             %wegh
           :_  state  :_  ~
           :^  hen  %give  %mass
-          :-  %behn
-          :-  %|
-          :~  timers+[%& timers]
+          :+  %behn  %|
+          :~  timers+&+timers
+              dot+&+state
           ==
         ==
       ::

@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit/vase
@@ -19,6 +19,7 @@
           e/(unit mass)                                 ::
           f/(unit mass)                                 ::
           g/(unit mass)                                 ::
+          j/(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::
 ++  axon                                                ::  dill per duct
@@ -77,7 +78,7 @@
           snap=(unit snapshot:jael)                     ::    head start
       ==                                                ::
       [%fake our=ship]                                  ::  boot fake
-      :: XX wegh                                        ::
+      [%wegh ~]
   ==                                                    ::
 ++  note                                                ::  out request $->
   $%  {$a note-ames}                                    ::
@@ -120,6 +121,7 @@
   ==                                                    ::
 ++  sign-jael                                           ::
   $%  [%init p=ship]                                    ::
+      [%mass p=mass]
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $%  {$a sign-ames}                                    ::
@@ -280,6 +282,7 @@
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/jael %j %wegh ~]
               moz
           ==
         ==
@@ -374,7 +377,7 @@
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g) $mass *}
+            {?($a $b $c $e $f $g $j) $mass *}
           (wegt -.sih p.sih)
         ::
             {$a $nice *}
@@ -428,13 +431,14 @@
       ::
       ++  wegh
         ^-  mass
-        :-  %dill
-        :-  %|
-        :~  all+[%& [hey dug]:all]
+        :+  %dill  %|
+        :~  hey+&+hey.all
+            dug+&+dug.all
+            dot+&+all
         ==
       ::
       ++  wegt
-        |=  {lal/?($a $b $c $e $f $g) mas/mass}
+        |=  {lal/?($a $b $c $e $f $g $j) mas/mass}
         ^+  +>
         =.  hef.all
           ?-  lal
@@ -444,6 +448,7 @@
             $e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             $f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             $g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            $j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==
         ?.  ?&  ?=(^ a.hef.all)
                 ?=(^ b.hef.all)
@@ -451,12 +456,13 @@
                 ?=(^ e.hef.all)
                 ?=(^ f.hef.all)
                 ?=(^ g.hef.all)
+                ?=(^ j.hef.all)
             ==
           +>.$
-        %+  done(hef.all [~ ~ ~ ~ ~ ~])
+        %+  done(hef.all [~ ~ ~ ~ ~ ~ ~])
           %mass
         =>  [hef.all d=wegh]
-        [%vanes %| ~[u.a u.c d u.e u.f u.g u.b]]
+        [%vanes %| ~[u.a u.b u.c d u.e u.g u.f u.j]]
       --
     ::
     ++  ax                                              ::  make ++as
