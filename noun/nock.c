@@ -2556,15 +2556,18 @@ _n_bam(u3_noun kev, void* dat)
 /* u3n_mark(): mark the bytecode cache for gc.
  */
 c3_w
-u3n_mark()
+u3n_mark(FILE* fil_u)
 {
-  c3_w bam_w = 0;
+  c3_w bam_w = 0, har_w = 0;
   u3p(u3h_root) har_p = u3R->byc.har_p;
   u3h_walk_with(har_p, _n_bam, &bam_w);
-  return bam_w + u3h_mark(har_p);
+
+  bam_w = u3a_maid(fil_u, "  bytecode programs", bam_w);
+  har_w = u3a_maid(fil_u, "  bytecode cache", u3h_mark(har_p));
+  return  u3a_maid(fil_u, "total nock stuff", bam_w + har_w);
 }
 
-/* _n_feb(): u3h_walk helper for u3n_bree
+/* _n_feb(): u3h_walk helper for u3n_free
  */
 static void
 _n_feb(u3_noun kev)

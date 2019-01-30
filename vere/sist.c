@@ -1256,6 +1256,12 @@ u3_sist_boot(void)
   }
 
   if ( c3n == u3_Host.ops_u.nuu ) {
+    //  reclaim memory from persistent caches
+    //
+    u3m_reclaim();
+
+    //  restore from event log, replaying if necessary
+    //
     _sist_rest();
 
     if ( c3y == u3A->fak ) {

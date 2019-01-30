@@ -1616,9 +1616,9 @@ u3a_mark_noun(u3_noun som)
 /* u3a_print_memory: print memory amount.
 */
 void
-u3a_print_memory(c3_c* cap_c, c3_w wor_w)
+u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
 {
-  FILE *fil_f = u3_term_io_hija();
+  c3_assert( 0 != fil_u );
 
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
@@ -1628,21 +1628,152 @@ u3a_print_memory(c3_c* cap_c, c3_w wor_w)
 
   if ( byt_w ) {
     if ( gib_w ) {
-      fprintf(fil_f, "%s: GB/%d.%03d.%03d.%03d\r\n", 
+      fprintf(fil_u, "%s: GB/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(fil_f, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(fil_u, "%s: MB/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(fil_f, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(fil_u, "%s: KB/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(fil_f, "%s: B/%d\r\n", cap_c, bib_w);
+      fprintf(fil_u, "%s: B/%d\r\n", cap_c, bib_w);
     }
   }
-  u3_term_io_loja(0);
 }
+
+/* u3a_maid(): maybe print memory.
+*/
+c3_w
+u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w)
+{
+  if ( 0 != fil_u ) {
+    u3a_print_memory(fil_u, cap_c, wor_w);
+  }
+  return wor_w;
+}
+
+/* u3a_mark_road(): mark ad-hoc persistent road structures.
+*/
+c3_w
+u3a_mark_road(FILE* fil_u)
+{
+  c3_w tot_w = 0;
+  tot_w += u3a_maid(fil_u, "  namespace", u3a_mark_noun(u3R->ski.gul));
+  tot_w += u3a_maid(fil_u, "  trace stack", u3a_mark_noun(u3R->bug.tax));
+  tot_w += u3a_maid(fil_u, "  trace buffer", u3a_mark_noun(u3R->bug.mer));
+  tot_w += u3a_maid(fil_u, "  profile batteries", u3a_mark_noun(u3R->pro.don));
+  tot_w += u3a_maid(fil_u, "  profile doss", u3a_mark_noun(u3R->pro.day));
+  tot_w += u3a_maid(fil_u, "  new profile trace", u3a_mark_noun(u3R->pro.trace));
+  tot_w += u3a_maid(fil_u, "  memoization cache", u3h_mark(u3R->cax.har_p));
+  return   u3a_maid(fil_u, "total road stuff", tot_w);
+}
+
+/* _ca_print_box(): heuristically print the contents of an allocation box.
+*/
+static c3_c*
+_ca_print_box(u3a_box* box_u)
+{
+  //  the loom offset pointing to the contents of box_u
+  //
+  c3_w box_w = u3a_outa(u3a_boxto(box_u));
+  //  box_u might not be a cell, we use the struct to inspect further
+  //
+  u3a_cell* cel_u = (u3a_cell*)box_u;
+
+  if (  //  a cell will never be bigger than the minimum allocation size
+        //
+        (u3a_minimum < box_u->siz_w) ||
+        //  this condition being true potentially corresponds to
+        //  box_u containing an indirect atom of only one word.
+        //  if the condition is false, we know box_u contains a cell.
+        //
+        ( (1 == (c3_w)cel_u->hed) &&
+          (0x80000000 & (c3_w)cel_u->tel) ) )
+  {
+    //  box_u might not be an indirect atom,
+    //  but it's always safe to print it as if it is one
+    //
+    u3a_atom* vat_u = (u3a_atom*)box_u;
+    u3_atom   veb   = u3a_to_pug(box_w);
+
+    //  skip atoms larger than 10 words
+    //  XX print mugs or something
+    //
+    if ( 10 > vat_u->len_w ) {
+#if 0
+      /*  For those times when you've really just got to crack open
+       *  the box and see what's inside
+      */
+      {
+        int i;
+        for ( i = 0; i < box_u->siz_w; i++ ) {
+          printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+        }
+        printf("\r\n");
+      }
+#endif
+      return 0;
+    }
+
+    return u3m_pretty(veb);
+  }
+  else {
+    //  box_u is definitely a cell
+    //
+    return u3m_pretty(u3a_to_pom(box_w));
+  }
+}
+
+/* _ca_print_leak(): print the details of a leaked allocation box.
+*/
+#ifdef U3_MEMORY_DEBUG
+
+static void
+_ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
+{
+  fprintf(stderr, "%s: %p mug=%x (marked=%u swept=%u)\r\n",
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  eus_w,
+                  use_w);
+
+  if ( box_u->cod_w ) {
+    u3m_p("    code", box_u->cod_w);
+  }
+
+  u3a_print_memory(stderr, "    size", box_u->siz_w);
+
+  {
+    c3_c* dat_c = _ca_print_box(box_u);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
+    free(dat_c);
+  }
+}
+
+#else
+
+static void
+_ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
+{
+  fprintf(stderr, "%s: %p mug=%x swept=%d\r\n",
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  use_ws);
+
+  u3a_print_memory(stderr, "    size", box_u->siz_w);
+
+  {
+    c3_c* dat_c = _ca_print_box(box_u);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
+    free(dat_c);
+  }
+}
+
+#endif
 
 /* u3a_sweep(): sweep a fully marked road.
 */
@@ -1700,7 +1831,7 @@ u3a_sweep(void)
       /* I suspect these printfs fail hilariously in the case
        * of non-direct atoms. We shouldn't unconditionally run
        * u3a_to_pom(). In general, the condition
-       * box_u->siz_w > u3a_mimimum is sufficient, but not necessary,
+       * box_u->siz_w > u3a_minimum is sufficient, but not necessary,
        * for the box to represent an atom.  The atoms between
        * 2^31 and 2^32 are the exceptions.
        *
@@ -1711,34 +1842,20 @@ u3a_sweep(void)
       if ( box_u->use_w != box_u->eus_w ) {
         if ( box_u->eus_w != 0 ) {
           if ( box_u->use_w == 0 ) {
-            printf("dank %p (%d, %d)\r\n", box_u, box_u->use_w, box_u->eus_w);
+            _ca_print_leak("dank", box_u, box_u->eus_w, box_u->use_w);
           }
           else {
-            printf("weak %p %x (cell) %x (%d, %d)\r\n", 
-                    box_u, 
-                    (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
-                    ((u3a_noun *)(u3a_boxto(box_w)))->mug_w,
-                    box_u->use_w, box_u->eus_w);
-            u3a_print_memory("weak (minimum)", box_u->siz_w);
-            // u3m_p("weak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+            _ca_print_leak("weak", box_u, box_u->eus_w, box_u->use_w);
           }
+
           weq_w += box_u->siz_w;
         }
         else {
-          printf("leak %p %x (cell)/%x (%d)\r\n", 
-                  box_u, 
-                  (u3_noun)u3a_to_pom(u3a_outa(u3a_boxto(box_w))),
-                  ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
-                    ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
-                    : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))),
-                  box_u->use_w);
-          u3a_print_memory("leak (minimum)", box_u->siz_w);
-          // u3m_p("leak", u3a_to_pom(u3a_outa(u3a_boxto(box_w))));
+          _ca_print_leak("weak", box_u, box_u->eus_w, box_u->use_w);
+
           leq_w += box_u->siz_w;
         }
-        if ( box_u->cod_w ) {
-          u3m_p("  code", box_u->cod_w);
-        }
+
         box_u->use_w = box_u->eus_w;
       }
       else {
@@ -1751,25 +1868,7 @@ u3a_sweep(void)
       c3_ws use_ws = (c3_ws)box_u->use_w;
 
       if ( use_ws > 0 ) {
-        printf("leak %p %x\r\n",
-                box_u,
-                ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
-                  ? ((u3a_noun *)(u3a_boxto(box_w)))->mug_w
-                  : u3r_mug(u3a_to_pom(u3a_outa(u3a_boxto(box_w)))));
-        // u3a_print_memory("leak (minimum)", box_u->siz_w);
-
-#if 0
-        /*  For those times when you've really just got to crack open
-         *  the box and see what's inside
-        */
-        {
-          int i;
-          for ( i = 0; i < box_u->siz_w; i++ ) {
-            printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
-          }
-          printf("\r\n");
-        }
-#endif
+        _ca_print_leak("leak", box_u, use_ws);
 
         leq_w += box_u->siz_w;
         box_u->use_w = 0;
@@ -1795,22 +1894,22 @@ u3a_sweep(void)
 
 #ifdef U3_CPU_DEBUG
   if ( (0 != u3R->par_p) && (u3R->all.max_w > 1000000) ) {
-    u3a_print_memory("available", (tot_w - pos_w));
-    u3a_print_memory("allocated", pos_w);
-    u3a_print_memory("volatile", caf_w);
+    u3a_print_memory(stderr, "available", (tot_w - pos_w));
+    u3a_print_memory(stderr, "allocated", pos_w);
+    u3a_print_memory(stderr, "volatile", caf_w);
 
-    u3a_print_memory("maximum", u3R->all.max_w);
+    u3a_print_memory(stderr, "maximum", u3R->all.max_w);
   }
 #else
 #if 0
-  u3a_print_memory("available", (tot_w - pos_w));
-  u3a_print_memory("allocated", pos_w);
-  u3a_print_memory("volatile", caf_w);
+  u3a_print_memory(stderr, "available", (tot_w - pos_w));
+  u3a_print_memory(stderr, "allocated", pos_w);
+  u3a_print_memory(stderr, "volatile", caf_w);
 #endif
 #endif
 #endif
-  u3a_print_memory("leaked", leq_w);
-  u3a_print_memory("weaked", weq_w);
+  u3a_print_memory(stderr, "leaked", leq_w);
+  u3a_print_memory(stderr, "weaked", weq_w);
 
   c3_assert((pos_w + leq_w + weq_w) == neg_w);
 

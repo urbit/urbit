@@ -775,7 +775,7 @@ u3e_save(void)
  
   //  Sync the patch files.
   //
-  // u3a_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
+  // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
@@ -896,7 +896,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         nuu_o = c3y;
       }
       else {
-        u3a_print_memory("live: loaded",
+        u3a_print_memory(stderr, "live: loaded",
                          (u3P.nor_u.pgs_w + u3P.sou_u.pgs_w) << u3a_page);
       }
     }

@@ -25,6 +25,8 @@
 #     define u3a_bytes  (c3_w)((1 << (2 + u3a_bits)))
 
     /* u3a_minimum: minimum number of words in a box.
+    **
+    **  wiseof(u3a_cell) + wiseof(u3a_box) + 1 (trailing siz_w)
     */
 #ifdef U3_MEMORY_DEBUG
 #     define u3a_minimum   8
@@ -402,6 +404,11 @@
           c3_w
           u3a_mark_noun(u3_noun som);
 
+        /* u3a_mark_road(): mark ad-hoc persistent road structures.
+        */
+          c3_w
+          u3a_mark_road(FILE* fil_u);
+
         /* u3a_sweep(): sweep a fully marked road.
         */
           c3_w
@@ -422,10 +429,15 @@
           void
           u3a_lop(c3_w lab_w);
 
-        /* u3a_print_memory: print memory amount.
+        /* u3a_print_memory(): print memory amount.
         */
           void
-          u3a_print_memory(c3_c* cap_c, c3_w wor_w);
+          u3a_print_memory(FILE* fil_u, c3_c* cap_c, c3_w wor_w);
+
+        /* u3a_maid(): maybe print memory.
+        */
+          c3_w
+          u3a_maid(FILE* fil_u, c3_c* cap_c, c3_w wor_w);
 
         /* u3a_deadbeef(): write 0xdeadbeef from hat to cap.
         */

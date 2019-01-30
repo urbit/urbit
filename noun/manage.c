@@ -491,18 +491,13 @@ _pave_parts(void)
 /* u3m_mark(): mark all nouns in the road.
 */
 c3_w
-u3m_mark(void)
+u3m_mark(FILE* fil_u)
 {
   c3_w tot_w = 0;
-  tot_w += u3j_mark();
-  tot_w += u3n_mark();
-  tot_w += u3a_mark_noun(u3R->ski.gul);
-  tot_w += u3a_mark_noun(u3R->bug.tax);
-  tot_w += u3a_mark_noun(u3R->bug.mer);
-  tot_w += u3a_mark_noun(u3R->pro.don);
-  tot_w += u3a_mark_noun(u3R->pro.trace);
-  tot_w += u3a_mark_noun(u3R->pro.day);
-  tot_w += u3h_mark(u3R->cax.har_p);
+  tot_w += u3v_mark(fil_u);
+  tot_w += u3j_mark(fil_u);
+  tot_w += u3n_mark(fil_u);
+  tot_w += u3a_mark_road(fil_u);
   return tot_w;
 }
 
@@ -932,7 +927,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     if ( u3C.wag_w & u3o_debug_ram ) {
 #ifdef U3_CPU_DEBUG
       if ( u3R->all.max_w > 1000000 ) {
-        u3a_print_memory("execute: top", u3R->all.max_w);
+        u3a_print_memory(stderr, "execute: top", u3R->all.max_w);
       }
 #endif
       u3m_grab(pro, u3_none);
@@ -1029,7 +1024,7 @@ u3m_soft_run(u3_noun gul,
 
 #ifdef U3_CPU_DEBUG
     if ( u3R->all.max_w > 1000000 ) {
-      u3a_print_memory("execute: run", u3R->all.max_w);
+      u3a_print_memory(stderr, "execute: run", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
@@ -1151,8 +1146,7 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
   // u3h_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3h_new();
 
-  u3v_mark();
-  u3m_mark();
+  u3m_mark(0);
   {
     va_list vap;
     u3_noun tur;
@@ -1728,4 +1722,45 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     u3j_ream();
     u3n_ream();
   }
+}
+
+/* u3m_reclaim: clear persistent caches to reclaim memory
+*/
+void
+u3m_reclaim(void)
+{
+  //  clear the u3v_wish cache
+  //
+  u3z(u3A->yot);
+  u3A->yot = u3_nul;
+
+  //  clear the memoization cache
+  //
+  u3h_free(u3R->cax.har_p);
+  u3R->cax.har_p = u3h_new();
+
+  //  clear the jet battery hash cache
+  //
+  u3h_free(u3R->jed.bas_p);
+  u3R->jed.bas_p = u3h_new();
+
+  //  XX we can't clear the warm jet state
+  //  -- _cj_nail expects it to be present ...
+  //
+  // u3h_free(u3R->jed.war_p);
+  // u3R->jed.war_p = u3h_new();
+
+  //  clear the jet hank cache
+  //
+  u3h_walk(u3R->jed.han_p, u3j_free_hank);
+  u3h_free(u3R->jed.han_p);
+  u3R->jed.han_p = u3h_new();
+
+  //  clear the bytecode cache
+  //
+  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
+  //    Note that this requires that the hank cache also be freed.
+  //
+  u3n_free();
+  u3R->byc.har_p = u3h_new();
 }
