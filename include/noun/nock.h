@@ -110,7 +110,7 @@
     /* u3n_mark(): mark bytecode cache.
      */
       c3_w
-      u3n_mark(void);
+      u3n_mark(FILE* fil_u);
 
     /* u3n_free(): free bytecode cache.
      */

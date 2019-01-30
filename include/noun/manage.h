@@ -94,7 +94,7 @@
       /* u3m_mark(): mark all nouns in the road.
       */
         c3_w
-        u3m_mark(void);
+        u3m_mark(FILE* fil_u);
 
       /* u3m_grab(): garbage-collect the world, plus extra roots.
       */
