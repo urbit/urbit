@@ -1180,28 +1180,40 @@ u3m_soft(c3_w    sec_w,
 
   if ( 0 == u3h(why) ) {
     return why;
-  } else {
-    u3_noun tax, cod, pro, mok;
+  }
+  else {
+    //  don't use .^ at the top level!
+    //
+    c3_assert(1 != u3h(why));
 
-    c3_assert(1 != u3h(why));  //  don't use .^ at the top level!
-    
-    if ( 2 == u3h(why) ) {
-      cod = c3__exit;
-      tax = u3k(u3t(why));
-    } 
-    else {
-      c3_assert(3 == u3h(why));
-
-      cod = u3k(u3h(u3t(why)));
-      tax = u3k(u3t(u3t(why)));
+    //  don't call +mook if we have no kernel
+    //
+    if ( 0 == u3A->roc ) {
+      u3z(why);
+      return u3nc(2, u3_nul);
     }
-    mok = u3dc("mook", 2, tax);
-    pro = u3nc(cod, u3k(u3t(mok)));
+    else {
+      u3_noun tax, cod, pro, mok;
 
-    u3z(mok);
-    u3z(why);
+      if ( 2 == u3h(why) ) {
+        cod = c3__exit;
+        tax = u3k(u3t(why));
+      }
+      else {
+        c3_assert(3 == u3h(why));
 
-    return pro;
+        cod = u3k(u3h(u3t(why)));
+        tax = u3k(u3t(u3t(why)));
+      }
+
+      mok = u3dc("mook", 2, tax);
+      pro = u3nc(cod, u3k(u3t(mok)));
+
+      u3z(mok);
+      u3z(why);
+
+      return pro;
+    }
   }
 }
 
