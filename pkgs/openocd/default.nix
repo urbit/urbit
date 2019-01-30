@@ -10,7 +10,7 @@ let
   src = nixpkgs.fetchgit {
     url = "git://repo.or.cz/openocd";  # official mirror
     rev = "b2d259f67cc3ee4b689e704228d97943bae94064";
-    sha256 = "0c5zpjplwp0ivl4mpiix628j0iad9gkmg9f7lidgqjr5a80cr6hg";
+    sha256 = "05pjrcss7m2l9hqcx8iim66qmvb4n4y1ibj9rfm11d59zxm38dyy";
     deepClone = true;
   };
 
@@ -31,6 +31,12 @@ let
 
     # Avoid a name conflict: get_home_dir is also defined in libudev.
     CFLAGS = "-Dget_home_dir=openocd_get_home_dir";
+
+    patches = [
+      # Make sure the linker arguments needed by our static build of libusb
+      # get used when compiling the openocd executable.
+      ./ldflags.patch
+    ];
 
     cross_inputs = [ libusb ];
   };

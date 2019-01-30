@@ -25,3 +25,6 @@ if [ -n "$libudev" ]; then
   ln -s $libudev/lib/pkgconfig/*.pc $out/lib/pkgconfig/
   echo "Requires: libudev" >> $out/lib/pkgconfig/libusb-1.0.pc
 fi
+
+# Make static linking work
+sed -i 's/Libs.private/Libs/' $out/lib/pkgconfig/*.pc
