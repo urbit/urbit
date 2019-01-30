@@ -1188,6 +1188,9 @@ u3m_soft(c3_w    sec_w,
 
     //  don't call +mook if we have no kernel
     //
+    //    This is required to soft the boot sequence.
+    //    XX produce specific error motes instead of %2?
+    //
     if ( 0 == u3A->roc ) {
       u3z(why);
       return u3nc(2, u3_nul);
