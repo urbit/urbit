@@ -1335,10 +1335,26 @@
     ?~  b
       a
     $(b t.b, a (put i.b))
+  ::  +has: does :b exist in :a?
   ::
-  ++  has                                               ::  b exists in a check
+  ++  has
     ~/  %has
-    |*  b/*
+    |*  b=*
+    ^-  ?
+    ::  wrap extracted item type in a unit because bunting fails
+    ::
+    ::    If we used the real item type of _?^(a n.a !!) as the sample type,
+    ::    then hoon would bunt it to create the default sample for the gate.
+    ::
+    ::    However, bunting that expression fails if :a is ~. If we wrap it
+    ::    in a unit, the bunted unit doesn't include the bunted item type.
+    ::
+    ::    This way we can ensure type safety of :b without needing to perform
+    ::    this failing bunt. It's a hack.
+    ::
+    %.  [~ b]
+    |=  b=(unit _?>(?=(^ a) n.a))
+    =>  .(b ?>(?=(^ b) u.b))
     |-  ^-  ?
     ?~  a
       |
@@ -12114,7 +12130,7 @@
       |=  [acc=_map [ty=type k=xkey]]
       =/  dest  (~(get by refs.tbl) k)
       ?^  dest  (~(put by acc) ty u.dest)
-      ?.  (~(has in live.tbl))  acc
+      ?.  (~(has in live.tbl) k)  acc
       (~(put in acc) ty k)
     ::
     ::  Rebuild the `xrays` table.
