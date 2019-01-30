@@ -1267,9 +1267,9 @@
     results8
     results9
   ==
-::  +test-basic-fetch: tests a single request, single reply style http request
+::  +test-fetch-basic: tests a single request, single reply style http request
 ::
-++  test-basic-fetch
+++  test-fetch-basic
   ::  send a %born event to use /initial-born-duct for requests
   ::
   =^  results1  light-gate
@@ -1325,7 +1325,7 @@
   =^  results3  light-gate
     %-  light-call  :*
       light-gate
-      now=(add ~1111.1.1 ~s1)
+      now=(add ~1111.1.1 ~s2)
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
@@ -1370,6 +1370,170 @@
     results1
     results2
     results3
+  ==
+::  +test-fetch-multiple-cards: tests when complete=%.n
+::
+++  test-fetch-multiple-cards
+  ::  send a %born event to use /initial-born-duct for requests
+  ::
+  =^  results1  light-gate
+    %-  light-call  :*
+      light-gate
+      now=~1111.1.1
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/initial-born-duct]  ~
+            %born
+            [[%.n .192.168.1.1] ~]
+        ==
+      ^=  expected-moves
+        :~  :*  duct=~[/initial-born-duct]
+                %give
+                %form
+                *http-config:light
+    ==  ==  ==
+  ::
+  =/  request=http-request:light
+    :*  %'GET'
+        'http://www.example.com'
+        ~
+        ~
+    ==
+  ::  opens the http channel
+  ::
+  =^  results2  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add ~1111.1.1 ~s1)
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-get-request]  ~
+            %fetch
+            request
+            *outbound-config:light
+        ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/initial-born-duct]
+                %give
+                %http-request
+                id=0
+                ~
+                method=%'GET'
+                url='http://www.example.com'
+                ~
+                ~
+    ==  ==  ==
+  ::  returns the first 1/3 of the payload in the first response
+  ::
+  =^  results3  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add ~1111.1.1 ~s2)
+      scry=*sley
+      ^=  call-args
+        :+  duct=~[/initial-born-duct]  ~
+        ^-  task:able:light
+        :*  %receive
+            id=0
+            ^-  raw-http-response:light
+            :*  %start
+                200
+                :~  ['content-type' 'text/html']
+                    ['content-length' '34']
+                ==
+                [~ (as-octs:mimes:html '<html><body>')]
+                complete=%.n
+        ==  ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-get-request]
+                %give
+                %http-progress
+            ::
+                :-  200
+                :~  ['content-type' 'text/html']
+                    ['content-length' '34']
+                ==
+            ::
+                bytes-read=12
+                expected-size=`34
+                [~ (as-octs:mimes:html '<html><body>')]
+    ==  ==  ==
+  ::  returns the second 1/3 of the payload
+  ::
+  =^  results4  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add ~1111.1.1 ~s3)
+      scry=*sley
+      ^=  call-args
+        :+  duct=~[/initial-born-duct]  ~
+        ^-  task:able:light
+        :*  %receive
+            id=0
+            ^-  raw-http-response:light
+            :*  %continue
+                [~ (as-octs:mimes:html 'Response')]
+                complete=%.n
+        ==  ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-get-request]
+                %give
+                %http-progress
+            ::
+                :-  200
+                :~  ['content-type' 'text/html']
+                    ['content-length' '34']
+                ==
+            ::
+                bytes-read=20
+                expected-size=`34
+                [~ (as-octs:mimes:html 'Response')]
+    ==  ==  ==
+  ::  returns the last part
+  ::
+  =^  results5  light-gate
+    %-  light-call  :*
+      light-gate
+      now=(add ~1111.1.1 ~s4)
+      scry=*sley
+      ^=  call-args
+        :+  duct=~[/initial-born-duct]  ~
+        ^-  task:able:light
+        :*  %receive
+            id=0
+            ^-  raw-http-response:light
+            :*  %continue
+                [~ (as-octs:mimes:html '</body></html>')]
+                complete=%.y
+        ==  ==
+      ^=  expected-moves
+        ^-  (list move:light-gate)
+        :~  :*  duct=~[/http-get-request]
+                %give
+                %http-finished
+            ::
+                :-  200
+                :~  ['content-type' 'text/html']
+                    ['content-length' '34']
+                ==
+            ::
+                :-  ~
+                :-  'text/html'
+                %-  as-octs:mimes:html
+                '''
+                <html><body>Response</body></html>
+                '''
+    ==  ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
   ==
 ::
 ++  light-call

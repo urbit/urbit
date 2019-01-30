@@ -110,6 +110,12 @@
         ::  remaining-retries: number of times to retry the request
         ::
         remaining-retries=@ud
+        ::  response-headers: the response headers from the %start packet
+        ::
+        ::    We send the response headers with each %http-progress, so we must
+        ::    save them.
+        ::
+        response-headers=(unit http-response-header)
         ::  chunks: a list of partial results returned from unix
         ::
         ::    This list of octs must be flopped before it is composed as the
@@ -297,6 +303,15 @@
 ::  utilities
 ::
 |%
+::  +combine-octs: combine multiple octs into one
+::
+++  combine-octs
+  |=  a=(list octs)
+  ^-  octs
+  :-  %+  roll  a
+      |=  [=octs sum=@ud]
+      (add sum p.octs)
+  (can 3 a)
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
 ++  prune-events
@@ -688,7 +703,7 @@
     =.  connection-by-id.state
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
-      [duct [redirects retries ~ 0 ~]]
+      [duct [redirects retries ~ ~ 0 ~]]
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -721,42 +736,11 @@
       ::  TODO: Handle redirects and retries here, before we start dispatching
       ::  back to the application.
       ::
-      ::  if this is a %start and is :complete, only send a single
-      ::  %http-finished back to 
-      ::
-      ?:  complete.raw-http-response
-        ::  TODO: the entire handling of mime types in this system is nuts and
-        ::  we should replace it with plain @t.
-        ::
-        =/  mime=@t
-          ?~  mime-type=(get-header 'content-type' headers.raw-http-response)
-            'application/octet-stream'
-          u.mime-type
-        :-  :~  ^-  move
-                :*  duct.u.connection
-                    %give
-                    %http-finished
-                    ^-  http-response-header
-                    [status-code headers]:raw-http-response
-                ::
-                    ?~  data.raw-http-response
-                      ~
-                    [~ `mime-data`[mime u.data.raw-http-response]]
-            ==  ==
-        state(connection-by-id (~(del by connection-by-id.state) id))
-      ::  this is the initial packet of an incomplete request.
+      ::  record data from the http response that only comes from %start
       ::
       =.  connection-by-id.state
         %+  ~(jab by connection-by-id.state)  id
         |=  [duct=^duct =in-progress-http-request:client]
-        ::  record the data chunk, if it exists
-        ::
-        =?    chunks.in-progress-http-request
-            ?=(^ data.raw-http-response)
-          [u.data.raw-http-response chunks.in-progress-http-request]
-        =?    bytes-read.in-progress-http-request
-            ?=(^ data.raw-http-response)
-          (add bytes-read.in-progress-http-request p.u.data.raw-http-response)
         ::
         =.  expected-size.in-progress-http-request
           ?~  str=(get-header 'content-length' headers.raw-http-response)
@@ -764,27 +748,89 @@
           ::
           (rush u.str dum:ag)
         ::
+        =.  response-headers.in-progress-http-request
+          `[status-code headers]:raw-http-response
+        ::
         [duct in-progress-http-request]
       ::
-      =/  connection  (~(got by connection-by-id.state) id)
-      :_  state
-      :_  ~
-      :*  duct.connection
-          %give
-          %http-progress
-          [status-code headers]:raw-http-response
-          bytes-read.in-progress-http-request.connection
-          expected-size.in-progress-http-request.connection
-          data.raw-http-response
-      ==
+      ?:  complete.raw-http-response
+        (send-finished id data.raw-http-response)
+      ::
+      (record-and-send-progress id data.raw-http-response)
     ::
         %continue
-      [~ state]
+      ?:  complete.raw-http-response
+        (send-finished id data.raw-http-response)
+      ::
+      (record-and-send-progress id data.raw-http-response)
     ::
         %cancel
       ~&  [%eyre-received-cancel id]
       [~ state]
     ==
+  ::  +record-and-send-progress: save incoming data and send progress report
+  ::
+  ++  record-and-send-progress
+    |=  [id=@ud data=(unit octs)]
+    ^-  [(list move) state:client]
+    ::
+    =.  connection-by-id.state
+      %+  ~(jab by connection-by-id.state)  id
+      |=  [duct=^duct =in-progress-http-request:client]
+      ::  record the data chunk and size, if it exists
+      ::
+      =?    chunks.in-progress-http-request
+          ?=(^ data)
+        [u.data chunks.in-progress-http-request]
+      =?    bytes-read.in-progress-http-request
+          ?=(^ data)
+        (add bytes-read.in-progress-http-request p.u.data)
+      ::
+      [duct in-progress-http-request]
+    ::
+    =/  connection  (~(got by connection-by-id.state) id)
+    :_  state
+    ^-  (list move)
+    :_  ~
+    :*  duct.connection
+        %give
+        %http-progress
+        (need response-headers.in-progress-http-request.connection)
+        bytes-read.in-progress-http-request.connection
+        expected-size.in-progress-http-request.connection
+        data
+    ==
+  ::  +send-finished: sends the %finished, cleans up the session state
+  ::
+  ++  send-finished
+    |=  [id=@ud data=(unit octs)]
+    ^-  [(list move) state:client]
+    ::
+    =/  connection  (~(got by connection-by-id.state) id)
+    ::  reassemble the octs that we've received into their final form
+    ::
+    =/  data=octs
+      %-  combine-octs
+      %-  flop
+      ::
+      ?~  data
+        chunks.in-progress-http-request.connection
+      [u.data chunks.in-progress-http-request.connection]
+    ::
+    =/  response-headers=http-response-header
+      (need response-headers.in-progress-http-request.connection)
+    ::
+    =/  mime=@t
+      ?~  mime-type=(get-header 'content-type' headers.response-headers)
+        'application/octet-stream'
+      u.mime-type
+    :-  :~  :*  duct.connection
+                %give
+                %http-finished
+                response-headers
+                ?:(=(0 p.data) ~ `[mime data])
+        ==  ==
+    state(connection-by-id (~(del by connection-by-id.state) id))
   --
 ::  +per-server-event: per-event server core
 ::
