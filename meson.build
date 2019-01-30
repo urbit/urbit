@@ -240,6 +240,7 @@ conf_data.set('URBIT_VERSION', '"0.7.0"')
 conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
+conf_data.set('U3_MEMORY_LOG', get_option('memory-log'))
 
 osdet = host_machine.system()
 cc = meson.get_compiler('c')

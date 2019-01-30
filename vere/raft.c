@@ -1856,7 +1856,25 @@ _raft_grab(u3_noun rus)
   if ( u3_nul != u3A->sac ) {
     c3_w usr_w = 0, man_w = 0, ova_w = 0, sac_w = 0;
 
-    FILE* fil_u = stderr;
+    FILE* fil_u;
+
+#ifdef U3_MEMORY_LOG
+    {
+      c3_c* wen_c = u3r_string(u3A->wen);
+
+      c3_c nam_c[2048];
+      snprintf(nam_c, 2048, "%s/.urb/put/%s-mass.txt", u3_Host.dir_c, wen_c);
+
+      fil_u = fopen(nam_c, "w");
+      fprintf(fil_u, "%s\r\n", wen_c);
+
+      free(wen_c);
+    }
+#else
+    {
+      fil_u = stderr;
+    }
+#endif
 
     c3_assert( u3R == &(u3H->rod_u) );
 
@@ -1875,6 +1893,12 @@ _raft_grab(u3_noun rus)
     u3a_print_memory(fil_u, "total marked", usr_w + man_w + ova_w + sac_w);
 
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
+
+#ifdef U3_MEMORY_LOG
+    {
+      fclose(fil_u);
+    }
+#endif
 
     // u3h_free(u3R->cax.har_p);
     // u3R->cax.har_p = u3h_new();
