@@ -1735,7 +1735,13 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
         u3z(pro);
       }
 
-      u3x_trel(sys, &bot, 0, 0);
+      //  XX confirm trel of lists?
+      //
+      if ( c3n == u3r_trel(sys, &bot, 0, 0) ) {
+        fprintf(stderr, "boot: failed: obsolete pill structure\r\n");
+        exit(1);
+      }
+
       u3v_boot(u3k(bot));
 
       u3z(sys);
