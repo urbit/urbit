@@ -29,16 +29,35 @@ _cv_nock_wish(u3_noun txt)
 void
 u3v_boot(u3_noun eve)
 {
+  u3_noun cor;
+
   //  ensure zero-initialized kernel
   //
   //    So that u3t_slog won't try to print tanks.
   //
   u3A->roc = 0;
 
-  //  lifecycle formula
-  //
-  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
-  u3_noun cor = u3n_nock_on(eve, lyf);
+  {
+    //  default namespace function: |=(a/{* *} ~)
+    //
+    u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);
+    //  lifecycle formula
+    //
+    u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+    //  evalute lifecycle formula against the boot sequence
+    //  in a virtualization context
+    //
+    u3_noun pro = u3m_soft_run(gul, u3n_nock_on, eve, lyf);
+
+    if ( 0 != u3h(pro) ) {
+      fprintf(stderr, "boot: failed: invalid boot sequence (from pill)\r\n");
+      u3z(pro);
+      return;
+    }
+
+    cor = u3k(u3t(pro));
+    u3z(pro);
+  }
 
   //  save the Arvo core (at +7 of the Arvo gate)
   //

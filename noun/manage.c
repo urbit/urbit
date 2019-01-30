@@ -1180,28 +1180,43 @@ u3m_soft(c3_w    sec_w,
 
   if ( 0 == u3h(why) ) {
     return why;
-  } else {
-    u3_noun tax, cod, pro, mok;
+  }
+  else {
+    //  don't use .^ at the top level!
+    //
+    c3_assert(1 != u3h(why));
 
-    c3_assert(1 != u3h(why));  //  don't use .^ at the top level!
-    
-    if ( 2 == u3h(why) ) {
-      cod = c3__exit;
-      tax = u3k(u3t(why));
-    } 
-    else {
-      c3_assert(3 == u3h(why));
-
-      cod = u3k(u3h(u3t(why)));
-      tax = u3k(u3t(u3t(why)));
+    //  don't call +mook if we have no kernel
+    //
+    //    This is required to soft the boot sequence.
+    //    XX produce specific error motes instead of %2?
+    //
+    if ( 0 == u3A->roc ) {
+      u3z(why);
+      return u3nc(2, u3_nul);
     }
-    mok = u3dc("mook", 2, tax);
-    pro = u3nc(cod, u3k(u3t(mok)));
+    else {
+      u3_noun tax, cod, pro, mok;
 
-    u3z(mok);
-    u3z(why);
+      if ( 2 == u3h(why) ) {
+        cod = c3__exit;
+        tax = u3k(u3t(why));
+      }
+      else {
+        c3_assert(3 == u3h(why));
 
-    return pro;
+        cod = u3k(u3h(u3t(why)));
+        tax = u3k(u3t(u3t(why)));
+      }
+
+      mok = u3dc("mook", 2, tax);
+      pro = u3nc(cod, u3k(u3t(mok)));
+
+      u3z(mok);
+      u3z(why);
+
+      return pro;
+    }
   }
 }
 
@@ -1708,13 +1723,32 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     printf("boot: loading %s\r\n", ful_c);
 
     {
-      u3_noun sys = u3ke_cue(u3m_file(ful_c));
-      u3_noun bot;
+      u3_noun pil = u3m_file(ful_c);
+      u3_noun sys, bot;
 
-      u3x_trel(sys, &bot, 0, 0);
+      {
+        u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil));
+
+        if ( 0 != u3h(pro) ) {
+          fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+          exit(1);
+        }
+
+        sys = u3k(u3t(pro));
+        u3z(pro);
+      }
+
+      //  XX confirm trel of lists?
+      //
+      if ( c3n == u3r_trel(sys, &bot, 0, 0) ) {
+        fprintf(stderr, "boot: failed: obsolete pill structure\r\n");
+        exit(1);
+      }
+
       u3v_boot(u3k(bot));
 
       u3z(sys);
+      u3z(pil);
     }
   }
   else {

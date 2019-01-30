@@ -578,6 +578,12 @@ u3t_boot(void)
   if ( u3C.wag_w & u3o_debug_cpu ) { 
     _ct_lop_o = c3n;
 #if defined(U3_OS_osx) || defined(U3_OS_linux)
+    //  skip profiling if we don't yet have an arvo kernel
+    //
+    if ( 0 == u3A->roc ) {
+      return;
+    }
+
     // Register _ct_sigaction to be called on `SIGPROF`.
     {
       struct sigaction sig_s = {{0}};
