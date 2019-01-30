@@ -1729,27 +1729,38 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 void
 u3m_reclaim(void)
 {
+  //  clear the u3v_wish cache
+  //
+  u3z(u3A->yot);
+  u3A->yot = u3_nul;
+
   //  clear the memoization cache
   //
   u3h_free(u3R->cax.har_p);
   u3R->cax.har_p = u3h_new();
-
-  //  clear the bytecode cache
-  //
-  u3h_free(u3R->byc.har_p);
-  u3R->byc.har_p = u3h_new();
 
   //  clear the jet battery hash cache
   //
   u3h_free(u3R->jed.bas_p);
   u3R->jed.bas_p = u3h_new();
 
+  //  XX we can't clear the warm jet state
+  //  -- _cj_nail expects it to be present ...
+  //
+  // u3h_free(u3R->jed.war_p);
+  // u3R->jed.war_p = u3h_new();
+
   //  clear the jet hank cache
   //
+  u3h_walk(u3R->jed.han_p, u3j_free_hank);
   u3h_free(u3R->jed.han_p);
   u3R->jed.han_p = u3h_new();
 
-  //  clear the u3v_wish cache
-  u3z(u3A->yot);
-  u3A->yot = u3_nul;
+  //  clear the bytecode cache
+  //
+  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
+  //    Note that this requires that the hank cache also be freed.
+  //
+  u3n_free();
+  u3R->byc.har_p = u3h_new();
 }

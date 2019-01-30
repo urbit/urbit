@@ -262,6 +262,11 @@
         c3_w
         u3j_mark(FILE* fil_u);
 
+      /* u3j_free_hank(): free an entry from the hank cache.
+      */
+        void
+        u3j_free_hank(u3_noun kev);
+
       /* u3j_free(): free jet state.
       */
         void

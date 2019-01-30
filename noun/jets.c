@@ -2272,10 +2272,10 @@ u3j_mark(FILE* fil_u)
   return u3a_maid(fil_u, "total jet stuff", tot_w);
 }
 
-/* _cj_free_hank(): free hank cache.
+/* u3j_free_hank(): free an entry from the hank cache.
 */
-static void
-_cj_free_hank(u3_noun kev)
+void
+u3j_free_hank(u3_noun kev)
 {
   _cj_hank* han_u = u3to(_cj_hank, u3t(kev));
   if ( u3_none != han_u->hax ) {
@@ -2290,7 +2290,7 @@ _cj_free_hank(u3_noun kev)
 void
 u3j_free(void)
 {
-  u3h_walk(u3R->jed.han_p, _cj_free_hank);
+  u3h_walk(u3R->jed.han_p, u3j_free_hank);
   u3h_free(u3R->jed.war_p);
   u3h_free(u3R->jed.cod_p);
   u3h_free(u3R->jed.han_p);
