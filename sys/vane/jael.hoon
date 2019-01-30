@@ -903,6 +903,7 @@
             sub+&+sub
             etn+&+etn
             sap+&+sap
+            dot+&+lex
         ==
       ==
     ::

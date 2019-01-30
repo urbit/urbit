@@ -1530,8 +1530,7 @@
   ::
   ++  wegh
     ^-  mass
-    :-  %ames
-    :-  %|
-    :~  fox+[%& fox]
+    :+  %ames  %|
+    :~  dot+&+fox
     ==
   --

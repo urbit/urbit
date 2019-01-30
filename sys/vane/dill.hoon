@@ -431,9 +431,10 @@
       ::
       ++  wegh
         ^-  mass
-        :-  %dill
-        :-  %|
-        :~  all+[%& [hey dug]:all]
+        :+  %dill  %|
+        :~  hey+&+hey.all
+            dug+&+dug.all
+            dot+&+all
         ==
       ::
       ++  wegt
