@@ -343,7 +343,9 @@
   ==  ==                                                ::
       $:  $f                                            ::
   $%  [%build live=? schematic=schematic:ford]          ::
-  ==  ==
+      [%keep compiler-cache=@ud build-cache=@ud]        ::
+      [%wipe percent-to-remove=@ud]                     ::
+  ==  ==                                                ::
       $:  $b                                            ::
   $%  {$wait p/@da}                                     ::
       {$rest p/@da}                                     ::
@@ -3884,7 +3886,41 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      $sunk  [~ ..^$]
+      $sunk
+    !:
+    ::  if we sunk, don't clear clay
+    ::
+    ?:  =(our p.req)
+      [~ ..^$]
+    ::  cancel subscriptions
+    ::
+    =/  foreign-desk=(map desk rede)
+      (fall (~(get by hoy.ruf) p.req) ~)
+    =/  cancel-ducts=(list duct)
+      %-  zing  ^-  (list (list duct))
+      %+  turn  ~(tap by foreign-desk)
+      |=  [=desk =rede]
+      %+  weld
+        ^-  (list duct)  %-  zing  ^-  (list (list duct))
+        %+  turn  ~(tap by qyx.rede)
+        |=  [=wove ducts=(set duct)]
+        ~(tap in ducts)
+      ?~  ref.rede
+        ~
+      (turn ~(tap by fod.u.ref.rede) head)
+    =/  cancel-moves=(list move)
+      %+  turn  cancel-ducts
+      |=  =duct
+      [duct %give %writ ~]
+    =/  clear-ford-cache-moves=(list move)
+      :~  [hen %pass /clear/keep %f %keep 0 1]
+          [hen %pass /clear/wipe %f %wipe 100]
+          [hen %pass /clear/kepe %f %keep 2.048 64]
+      ==
+    ::  delete local state of foreign desk
+    ::
+    =.  hoy.ruf  (~(del by hoy.ruf) p.req)
+    [(weld cancel-moves clear-ford-cache-moves) ..^$]
   ::
       ?($warp $werp)
     ::  capture whether this read is on behalf of another ship

@@ -382,10 +382,12 @@
   ++  writ
     |=  rot=riot
     ?~  rot
-      %^    spam
-          leaf+"bad %writ response"
-        (render "on sync" sud her syd)
-      ~
+      =.  +>.$
+        %^    spam
+            leaf+"sync cancelled, retrying"
+          (render "on sync" sud her syd)
+        ~
+      start-sync
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
