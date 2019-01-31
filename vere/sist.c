@@ -605,7 +605,6 @@ static void
 _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
 {
   c3_c    nuu_c[2048];
-  u3_noun roe = u3_nul;
   c3_i    fid_i = lug_u->fid_i;
   c3_i    fud_i;
   c3_i    ret_i;
@@ -741,6 +740,22 @@ _sist_rest_nuu(u3_ulog* lug_u, u3_uled led_u, c3_c* old_c)
   lug_u->len_d = new_d;
 }
 
+/* _sist_slog(): stringify an integer using a hoon atom aura
+*/
+static c3_c*
+_sist_scot(u3_noun aura, c3_d num_d)
+{
+  u3_noun num;
+  c3_c* num_c;
+
+  num = u3i_chubs(1, &num_d);
+  num = u3dc("scot", aura, num);
+  num_c = u3r_string(num);
+  u3z(num);
+
+  return num_c;
+}
+
 /* _sist_rest(): restore from record, or exit.
 */
 static void
@@ -757,15 +772,9 @@ _sist_rest()
   u3_ular     lar_u;
 
   if ( 0 != u3A->ent_d ) {
-    u3_noun ent;
-    c3_c*   ent_c;
-
-    ent = u3i_chubs(1, &u3A->ent_d);
-    ent = u3dc("scot", c3__ud, ent);
-    ent_c = u3r_string(ent);
-    uL(fprintf(uH, "rest: checkpoint to event %s\n", ent_c));
+    c3_c* ent_c = _sist_scot(c3__ud, u3A->ent_d - 1);
+    uL(fprintf(uH, "rest: checkpoint at event %s\n", ent_c));
     free(ent_c);
-    u3z(ent);
   }
 
   //  Open the fscking file.  Does it even exist?
@@ -953,10 +962,14 @@ _sist_rest()
     u3A->ent_d = c3_max(las_d + 1ULL, old_d);
   }
 
-  if ( cur_d == u3Z->lug_u.len_d ) {
+  fprintf(uH, "---------------- playback starting----------------\n");
+  if ( u3A->ent_d == old_d ) {
     //  Nothing in the log that was not also in the checkpoint.
     //
-    c3_assert(u3A->ent_d == old_d);
+    //    XX: reinstate this assertion
+    //
+    //c3_assert ( cur_d == u3Z->lug_u.len_d );
+
     if ( las_d + 1 != old_d ) {
       uL(fprintf(uH, "checkpoint and log disagree! las:%" PRIu64 " old:%" PRIu64 "\n",
                      las_d + 1, old_d));
@@ -965,12 +978,18 @@ _sist_rest()
                      "and do not delete your pier!\n"));
       u3_lo_bail();
     }
+    uL(fprintf(uH, "rest: checkpoint is up-to-date\n"));
   }
   else {
-    //  Read and execute the fscking things. This is pretty much certain to crash.
+    //  Execute the fscking things. This is pretty much certain to crash.
     //
-    uL(fprintf(uH, "rest: replaying through event %" PRIu64 "\n", las_d));
-    fprintf(uH, "---------------- playback starting----------------\n");
+    {
+      c3_c* old_c = _sist_scot(c3__ud, old_d);
+      c3_c* las_c = _sist_scot(c3__ud, las_d);
+      uL(fprintf(uH, "rest: replaying events %s through %s\n", old_c, las_c));
+      free(old_c);
+      free(las_c);
+    }
 
     c3_w xno_w = 0;
     while ( cur_d != u3Z->lug_u.len_d ) {
@@ -1072,8 +1091,10 @@ _sist_rest()
       u3z(ven);
       cur_d += c3_wiseof(len_w) + len_w + c3_wiseof(lar_u);
     }
-    uL(fprintf(stderr, "\n---------------- playback complete----------------\r\n"));
+    fputc('\r', stderr);
+    fputc('\n', stderr);
   }
+  uL(fprintf(stderr, "---------------- playback complete----------------\r\n"));
 
 #if 0
   //  If you see this error, your record is totally fscking broken!

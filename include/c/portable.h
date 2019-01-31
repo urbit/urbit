@@ -20,6 +20,9 @@
   *** C file.
   **/
 #   if defined(U3_OS_linux)
+#     ifndef _XOPEN_SOURCE
+#     define _XOPEN_SOURCE 700
+#     endif
 #     include <inttypes.h>
 #     include <stdlib.h>
 #     include <string.h>

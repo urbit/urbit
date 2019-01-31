@@ -380,12 +380,6 @@ _lo_time(void)
 void
 u3_lo_open(void)
 {
-  if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
-    //
-    //  Assumption: there are no noun roots outside u3A.
-    //
-    u3m_grab(u3_none);
-  }
 #if 0
   if ( u3C.wag_w & u3o_debug_cpu ) {
     struct itimerval itm_u;
@@ -398,6 +392,7 @@ u3_lo_open(void)
                      itm_u.it_interval.tv_usec);
   }
 #endif
+
   _lo_time();
 }
 
@@ -406,19 +401,13 @@ u3_lo_open(void)
 void
 u3_lo_shut(c3_o inn)
 {
-  // u3m_grab(u3_none);
-
   //  process actions
   //
   u3_raft_work();
 
-  // u3_lo_grab("lo_shut b", u3_none);
-
   //  update time
   //
   _lo_time();
-
-  // u3_lo_grab("lo_shut c", u3_none);
 
   //  for input operations, poll fs (XX not permanent)
   //  XX remove raty_lead guard
@@ -429,15 +418,12 @@ u3_lo_shut(c3_o inn)
     _lo_time();
   }
 
-  // u3_lo_grab("lo_shut d", u3_none);
-
   //  clean shutdown
   //
   if ( c3n == u3_Host.liv ) {
     //  direct save and die
     //
     u3_raft_play();
-    // u3_lo_grab("lo_exit", u3_none);
     // u3_loom_save(u3A->ent_d);
     // u3_loom_exit();
     u3t_damp();
@@ -663,129 +649,3 @@ u3_lo_lead(void)
   _lo_slow();
 #endif
 }
-
-#if 0
-/* _lo_mark_reck(): mark a reck.
-*/
-static c3_w
-_lo_mark_reck(u3_reck* rec_u)
-{
-  c3_w siz_w = 0;
-  c3_w egg_w;
-
-  siz_w += u3m_mark_noun(rec_u->ken);
-  siz_w += u3m_mark_noun(rec_u->roc);
-
-  siz_w += u3m_mark_noun(rec_u->yot);
-  siz_w += u3m_mark_noun(rec_u->now);
-  siz_w += u3m_mark_noun(rec_u->wen);
-  siz_w += u3m_mark_noun(rec_u->sen);
-  siz_w += u3m_mark_noun(rec_u->own);
-  siz_w += u3m_mark_noun(rec_u->roe);
-  siz_w += u3m_mark_noun(rec_u->key);
-
-  {
-    u3_cart* egg_u;
-
-    egg_w = 0;
-    for ( egg_u = rec_u->ova.egg_u; egg_u; egg_u = egg_u->nex_u ) {
-      egg_w += u3m_mark_noun(egg_u->vir);
-    }
-    siz_w += egg_w;
-  }
-#if 0
-  fprintf(stderr, "ken %d, roc %d, yot %d, roe %d, egg %d\r\n",
-                   ken_w, roc_w, yot_w, roe_w, egg_w);
-#endif
-  return siz_w;
-}
-
-/* _lo_mark(): mark the whole vere system.
-*/
-static c3_w
-_lo_mark()
-{
-  c3_w siz_w;
-
-  siz_w = u3m_mark_internal();
-  siz_w += _lo_mark_reck(u3_Host.arv_u);
-
-  return siz_w;
-}
-#endif
-
-#if 0
-/* _lo_word(): print a word to the passed stream.
-*/
-static void
-_lo_word(FILE* fil_u, c3_w wod_w)
-{
-  u3_noun top = c3y;
-
-  if ( wod_w / (1000 * 1000 * 1000) ) {
-    fprintf(fil_u, "%u.", wod_w / (1000 * 1000 * 1000));
-    wod_w %= (1000 * 1000 * 1000);
-    top = c3n;
-  }
-  if ( wod_w / (1000 * 1000) ) {
-    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."),
-                   wod_w / (1000 * 1000));
-    wod_w %= (1000 * 1000);
-    top = c3n;
-  }
-  if ( wod_w / 1000 ) {
-    fprintf(fil_u, ((top == c3y) ? "%u." : "%03u."), wod_w / 1000);
-    wod_w %= 1000;
-    top = c3n;
-  }
-  fprintf(fil_u, ((top == c3y) ? "%u" : "%03u"), wod_w);
-}
-
-/* u3_lo_grab(): garbage-collect the world, plus roots.
-*/
-void
-u3_lo_grab(c3_c* cap_c, u3_noun som, ...)
-{
-  c3_w siz_w, lec_w;
-
-  siz_w = _lo_mark();
-  {
-    va_list vap;
-    u3_noun tur;
-
-    va_start(vap, som);
-
-    if ( som != u3_none ) {
-      siz_w += u3m_mark_noun(som);
-
-      while ( u3_none != (tur = va_arg(vap, u3_noun)) ) {
-        siz_w += u3m_mark_noun(tur);
-      }
-    }
-    va_end(vap);
-  }
-  lec_w = u3m_sweep(siz_w);
-
-  // if ( lec_w || (c3y == u3_Flag_Verbose) )
-  if ( lec_w  || !strcmp("init", cap_c) ) {
-    FILE* fil_u = uH;
-    fprintf(fil_u, "%s: gc: ", cap_c);
-    if ( lec_w ) {
-      _lo_word(fil_u, 4 * lec_w);
-      fprintf(fil_u, " bytes shed; ");
-    }
-    _lo_word(fil_u, 4 * siz_w);
-    uL(fprintf(fil_u, " bytes live\n"));
-
-#if 0
-    if ( lec_w ) {
-      uL(fprintf(uH, "zero garbage tolerance!\n"));
-      u3_lo_exit();
-      c3_assert(0);
-      exit(1);
-    }
-#endif
-  }
-  u3_wire_lan(u3_Wire) = c3y;
-}
-#endif
