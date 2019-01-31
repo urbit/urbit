@@ -83,6 +83,13 @@ Promise.resolve(urbit)
 .then(actions.testCores)
 .then(actions.testRenderers)
 .then(function(){
+  return urbit.line("|mass")
+  .then(function(){
+    return urbit.expectEcho("%ran-mass")
+    .then(function(){ return urbit.resetListeners(); })
+  })
+})
+.then(function(){
   return rePill(urbit);
 })
 .then(function(){

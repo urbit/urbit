@@ -378,7 +378,7 @@
         ^+  +>
         ?-    sih
             {?($a $b $c $e $f $g $j) $mass *}
-          (wegt -.sih p.sih)
+          (wegh -.sih p.sih)
         ::
             {$a $nice *}
           ::  ~&  [%take-nice-ames sih]
@@ -428,18 +428,13 @@
             {$d $blit *}
           (done +.sih)
         ==
+      ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        ^-  mass
-        :+  %dill  %|
-        :~  hey+&+hey.all
-            dug+&+dug.all
-            dot+&+all
-        ==
-      ::
-      ++  wegt
         |=  {lal/?($a $b $c $e $f $g $j) mas/mass}
         ^+  +>
+        ::  update our listing of vane responses with this new one
+        ::
         =.  hef.all
           ?-  lal
             $a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
@@ -450,6 +445,8 @@
             $g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
             $j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==
+        ::  if not all vanes have responded yet, no-op
+        ::
         ?.  ?&  ?=(^ a.hef.all)
                 ?=(^ b.hef.all)
                 ?=(^ c.hef.all)
@@ -459,10 +456,24 @@
                 ?=(^ j.hef.all)
             ==
           +>.$
-        %+  done(hef.all [~ ~ ~ ~ ~ ~ ~])
-          %mass
-        =>  [hef.all d=wegh]
-        [%vanes %| ~[u.a u.b u.c d u.e u.g u.f u.j]]
+        ::  clear vane reports from our state before weighing ourself
+        ::
+        ::    Otherwise, the state of vanes printed after this one get absorbed
+        ::    into Dill's %dot catchall report.
+        ::
+        =/  ven=(list mass)  ~[u.a u.b u.c u.e u.g u.f u.j]:hef.all
+        =>  .(hef.all [~ ~ ~ ~ ~ ~ ~])
+        ::  wegh ourself now that our state doesn't include other masses
+        ::
+        =/  self=mass
+          :+  %dill  %|
+          :~  hey+&+hey.all
+              dug+&+dug.all
+              dot+&+all
+          ==
+        ::  produce the memory report for all vanes
+        ::
+        (done %mass %vanes %| [self ven])
       --
     ::
     ++  ax                                              ::  make ++as
