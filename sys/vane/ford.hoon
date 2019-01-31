@@ -6196,14 +6196,11 @@
     :_  ~
     :^  duct  %give  %mass
     ^-  mass
-    :-  %ford
-    :-  %|
-    :~  ^-  mass
-        :+  (scot %p our)  %|
-        ::
-        :~  [%builds [%& builds.state.ax]]
-            [%compiler-cache [%& compiler-cache.state.ax]]
-    ==  ==
+    :+  %ford  %|
+    :~  builds+&+builds.state.ax
+        compiler-cache+&+compiler-cache.state.ax
+        dot+&+ax
+    ==
   ==
 ::  +take: receive a response from another vane
 ::
