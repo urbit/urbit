@@ -25,8 +25,6 @@
   |%
   ::  %entry-points
   ::
-  ::+|
-  ::
   ::  +born: handle urbit restart
   ::
   ++  born
@@ -74,9 +72,9 @@
     ^+  [moves state]
     :_  state  :_  ~
     :^  duct  %give  %mass
-    :-  %behn
-    :-  %|
-    :~  timers+[%& timers.state]
+    :+  %behn  %|
+    :~  timers+&+timers.state
+        dot+&+state
     ==
   ::  %utilities
   ::
@@ -230,3 +228,4 @@
   ~|  %behn-take-not-implemented
   !!
 --
+

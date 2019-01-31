@@ -3928,14 +3928,14 @@
       $wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %clay
-    :-  %|
-    :~  domestic+[%& rom.ruf]
-        foreign+[%& hoy.ruf]
-        :-  %object-store  :-  %|
-        :~  commits+[%& hut.ran.ruf]
-            blobs+[%& lat.ran.ruf]
+    :+  %clay  %|
+    :~  domestic+&+rom.ruf
+        foreign+&+hoy.ruf
+        :+  %object-store  %|
+        :~  commits+&+hut.ran.ruf
+            blobs+&+lat.ran.ruf
         ==
+        dot+&+ruf
     ==
   ==
 ::

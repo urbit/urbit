@@ -1786,6 +1786,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
@@ -1862,6 +1863,7 @@
           [%vent ~]                                     ::  view ethereum events
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
+          [%wegh ~]                                     ::  memory usage request
           [%west p=ship q=path r=*]                     ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::

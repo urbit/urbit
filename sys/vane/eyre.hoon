@@ -2296,12 +2296,13 @@
   ?:  ?=($wegh -.task)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %eyre
-    :-  %|
-    :~  dependencies+[%& liz]  sessions+[%& wup]  views+[%& wix]
-        ducts+[%| ~[dead+[%& ded] proxy+[%& pox] outgoing+[%& ask]]]
-        hosts+[%& dop]
-        misc+[%& bol]
+    :+  %eyre  %|
+    :~  dependencies+&+liz
+        sessions+&+wup
+        views+&+wix
+        ducts+[%| ~[dead+&+ded proxy+&+pox outgoing+&+ask]]
+        hosts+&+dop
+        dot+&+bol
     ==
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))
