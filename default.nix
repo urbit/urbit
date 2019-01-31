@@ -18,7 +18,7 @@ let
       [ Cocoa CoreServices ]);
 
   deps = [ cmark curl gcc gmp libsigsegv meson ncurses ninja pkgconfig zlib
-           re2c openssl ];
+           openssl ];
 
   isGitDir = (path: type: type != "directory" || baseNameOf path != ".git");
 
