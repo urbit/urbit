@@ -298,7 +298,7 @@ configure_file(input : 'include/config.h.in',
 # We expect these libs to supplied with the distribution
 curl_dep = dependency('libcurl', version: '>=7.19.0')
 
-if (osdet == 'darwin' and not get_option('nix') and
+if (osdet == 'darwin' and
     run_command('test', '-d', '/usr/local/opt/openssl/lib').returncode() == 0)
   libcrypto = cc.find_library('crypto', dirs: [ '/usr/local/opt/openssl/lib/' ])
   libssl = cc.find_library('ssl', dirs: [ '/usr/local/opt/openssl/lib/' ])
