@@ -502,6 +502,9 @@ static u3j_hood _141_pen__ut_ho[] = {
   { "fish",    6006 },
   { "fond",   12283 },
   { "fund",    6014 },
+  //  XX +funk is not part of +ut, and this hook appears to be unused
+  //  remove from here and the +ut hint
+  //
   { "funk", 0xbefafa, c3y, 31 },
   { "fuse",   24021 },
   { "gain",     380 },
