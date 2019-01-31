@@ -978,7 +978,7 @@ _sist_rest()
                      "and do not delete your pier!\n"));
       u3_lo_bail();
     }
-    uL(fprintf(uH, "rest: checkpoint is up-to-date\n", ful_c));
+    uL(fprintf(uH, "rest: checkpoint is up-to-date\n"));
   }
   else {
     //  Execute the fscking things. This is pretty much certain to crash.
