@@ -102,6 +102,9 @@ u3v_start(u3_noun now)
     printf("arvo: time: %s\n", wen_c);
     free(wen_c);
   }
+
+  if ( u3C.wag_w & u3o_trace )
+    u3t_trace_open();
 }
 
 /* u3v_wish(): text expression with cache.

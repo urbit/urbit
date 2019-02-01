@@ -319,7 +319,10 @@ u3t_trace_open()
     mkdir(fil_c, 0700);
   }
 
-  snprintf(fil_c, 2048, "%s/%ld.json", fil_c, time(NULL));
+  c3_c * wen_c = u3r_string(u3A->wen);
+
+  snprintf(fil_c, 2048, "%s/%s.json", fil_c, wen_c);
+  free(wen_c);
 
   trace_file_u = fopen(fil_c, "w");
   nock_pid_i = (int)getpid();
@@ -496,6 +499,11 @@ u3t_event_trace(const c3_c* name, c3_c type)
 {
   if (!trace_file_u)
     return;
+
+  if ( trace_counter >= 100000 ) {
+    u3t_trace_close();
+    u3t_trace_open();
+  }
 
   fprintf(trace_file_u,
           "{\"cat\": \"event\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "

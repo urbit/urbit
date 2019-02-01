@@ -656,7 +656,6 @@ main(c3_i   argc,
       */
       if ( _(u3_Host.ops_u.tra) ) {
         u3C.wag_w |= u3o_trace;
-        u3t_trace_open();
       }
     }
     u3m_boot(u3_Host.ops_u.nuu,
