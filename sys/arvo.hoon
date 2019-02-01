@@ -667,9 +667,9 @@
               |-  ^-  [(list ovum) *]
               ?~  ova
                 [(flop out) +>.^$]
-              ::  upgrade the kernel -- %vega here is an effect from a vane
+              ::  upgrade the kernel
               ::
-              ?:  ?=(%vega -.q.i.ova)
+              ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
                   (vega now t.ova ({@ @} +.q.i.ova))
                 [~ +>.^$]

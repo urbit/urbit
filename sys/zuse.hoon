@@ -622,10 +622,10 @@
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
           {$logo ~}                                    ::  logout
+          {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/@t q/@t}                             ::  reboot
           {$verb ~}                                    ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
@@ -640,14 +640,13 @@
           {$hook ~}                                    ::  this term hung up
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
+          {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                    ::  no operation
           {$sunk p=ship q=life}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          ::  XX gross hack to trigger or report upgrade
-          ::
-          {$vega p/?(~ {p/@t q/@t})}                    ::  reboot
+          {$vega ~}                                     ::  report upgrade
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
     --  ::able
@@ -705,9 +704,9 @@
   ++  flog                                              ::  sent to %dill
     $%  {$crud p/@tas q/(list tank)}                    ::
         {$heft ~}                                      ::
+        {$lyra p/@t q/@t}                               ::  upgrade kernel
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/@t q/@t}                               ::  reboot
         {$verb ~}                                      ::  verbose mode
     ==                                                  ::
   --  ::dill

@@ -51,9 +51,9 @@
   $%  {$crud p/@tas q/(list tank)}                      ::
       {$heft $~}                                        ::
       {$init p/ship}                                    ::
+      {$lyra p/@t q/@t}                                 ::  upgrade kernel
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-eyre                                           ::
@@ -158,8 +158,8 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
+          $lyra  (dump kyz)
           $veer  (dump kyz)
-          $vega  ?>(?=(^ p.kyz) (dump kyz))
           $verb  (dump kyz)
         ==
       ::
@@ -533,11 +533,7 @@
     [~ ..^$]
   ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
   ::
-  ::    XX note that this is different from the %vega that triggers
-  ::    a kernel upgrade (from lib/hood/helm)
-  ::    XX do something about this naming collision
-  ::
-  ?:  ?=([%vega ~] task)
+  ?:  ?=(%vega -.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)
