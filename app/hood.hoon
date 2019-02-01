@@ -55,7 +55,7 @@
     ++  hood-make                                       ::
       =+  $:{our/@p hed/hood-head}                      ::
       |@  ++  $
-            ?-  hed 
+            ?-  hed
               $drum  (make:hood-drum our)
               $helm  *part:hood-helm
               $kiln  *part:hood-kiln

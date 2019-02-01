@@ -1,4 +1,4 @@
-::                                                      ::  /van/jael
+!:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
 ::
@@ -687,7 +687,12 @@
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.sub  sig.seed.tac
-      ::  our initial public key
+      ::  if we're given a snapshot, restore it
+      ::
+      =.  +>.$
+        ?~  snap.tac  +>.$
+        (restore-snap hen u.snap.tac |)
+      ::  load our initial public key, overriding snapshot
       ::
       =.  kyz.puk.sub
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
@@ -711,11 +716,6 @@
       ::  set initial domains
       ::
       =.  tuf.own.sub  turf.tac
-      ::  if we're given a snapshot, restore it
-      ::
-      =.  +>.$
-        ?~  snap.tac  +>.$
-        (restore-snap hen u.snap.tac |)
       ::
       =.  moz
         %+  weld  moz
@@ -1409,20 +1409,22 @@
         ::
         :-  (file-discontinuity who)
         %=  ..file
-          ::  these must be appended here; +abet flops them
-          ::
-          moz  =/  lyf=life
+          moz  =/  rit=rift
                  ~|  sunk-unknown+who
-                 life:(~(got by kyz.puk))
-               %+  weld  moz
-               ^-  (list move)
-               :~  [hen %slip %a %sunk who lyf]
-                   [hen %slip %c %sunk who lyf]
-                   [hen %slip %d %sunk who lyf]
-                   [hen %slip %e %sunk who lyf]
-                   [hen %slip %f %sunk who lyf]
-                   [hen %slip %g %sunk who lyf]
-               ==
+                 =<  continuity-number
+                 %+  fall
+                   net:(fall (~(get by pos.eth) who) *point)
+                 *[life pass continuity-number=@ud [? @p] (unit @p)]
+               %+  weld
+                 ^-  (list move)
+                 :~  [hen %slip %a %sunk who rit]
+                     [hen %slip %c %sunk who rit]
+                     [hen %slip %d %sunk who rit]
+                     [hen %slip %e %sunk who rit]
+                     [hen %slip %f %sunk who rit]
+                     [hen %slip %g %sunk who rit]
+                 ==
+               moz
         ==
       ::  pon: updated point
       ::  new: new keypair or "kept continuity?" (yes is no-op)
@@ -2289,6 +2291,23 @@
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
     ?~  pub  ~
     ``[%atom !>(life.u.pub)]
+  ::
+      %rift
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have rift=1
+    ::
+    ?:  fak.own.sub.lex
+      ``[%atom !>(1)]
+    =/  pos  (~(get by pos.eth.sub.lex) u.who)
+    ?~  pos  ~
+    ?~  net.u.pos  ~
+    ``[%atom !>(continuity-number.u.net.u.pos)]
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]

@@ -4695,25 +4695,37 @@
       ::
       =/  hoon-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/hoon/sys
-      =/  hoon-hoon=hoon  (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+      =/  hoon-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+      ?:  ?=(%| -.hoon-hoon)
+        (return-error leaf+"ford: %reef failed to compile hoon" p.hoon-hoon)
       ::
       =/  arvo-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/arvo/sys
-      =/  arvo-hoon=hoon  (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+      =/  arvo-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+      ?:  ?=(%| -.arvo-hoon)
+        (return-error leaf+"ford: %reef failed to compile arvo" p.arvo-hoon)
       ::
       =/  zuse-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/zuse/sys
-      =/  zuse-hoon=hoon  (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+      =/  zuse-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+      ?:  ?=(%| -.zuse-hoon)
+        (return-error leaf+"ford: %reef failed to compile zuse" p.zuse-hoon)
       ::
       =/  zuse-build=^build
         :*  date.build
-            %ride  zuse-hoon
+            %ride  p.zuse-hoon
             ::  hoon for `..is` to grab the :pit out of the arvo core
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
-            %ride  arvo-hoon
+            %ride  p.arvo-hoon
             %ride  [%$ 7]
-            %ride  hoon-hoon
+            %ride  p.hoon-hoon
             [%$ %noun !>(~)]
         ==
       ::

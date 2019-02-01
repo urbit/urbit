@@ -69,7 +69,8 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  life  @ud                                           ::  ship version
+++  life  @ud                                           ::  ship key revision
+++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -241,7 +242,7 @@
           [%init p=ship]                                ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/ship q/path r/*}                     ::  network request
@@ -474,7 +475,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
           {$wegh ~}                                     ::  report memory
@@ -638,7 +639,7 @@
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$noop ~}                                    ::  no operation
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -735,7 +736,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -976,7 +977,7 @@
           [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship =life]
+          [%sunk =ship =rift]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1667,7 +1668,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship q/life}                         ::  report death
+          {$sunk p=ship q/rift}                         ::  report death
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
       ==                                                ::
@@ -1813,7 +1814,7 @@
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
@@ -2292,7 +2293,7 @@
   ::                                                    ::
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
-  ++  aes    !.                                         
+  ++  aes    !.
     ~%  %aes  ..is  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
@@ -2377,7 +2378,7 @@
           --
         ::                                              ::  ++mcol:ahem:aes:
         ++  mcol                                        ::
-          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}  
+          |=  {a/(list @) b/{p/@ q/@ r/@ s/@}}
           ^-  (list @)
           =+  c=[p=*@ q=*@ r=*@ s=*@]
           |-  ^-  (list @)
@@ -2426,7 +2427,7 @@
                 (pode 5 nnb (cut 5 [(mul (ix.a b) nnb) nnb] c))
               ::                                        ::  ++sark:be:ahem:aes:
               ++  sark                                  ::
-                |=  {c/(list @) d/(list @)}  
+                |=  {c/(list @) d/(list @)}
                 ^-  (list @)
                 ?~  c  ~
                 ?~  d  !!
@@ -5050,7 +5051,7 @@
   ++  drop-pole                                         ::  unit tuple
     |*  but/(pole (unit))
     ?~  but  !!
-    ?~  +.but  
+    ?~  +.but
       u:->.but
     [u:->.but (drop-pole +.but)]
   --
@@ -5058,7 +5059,7 @@
 ::::                      ++format                      ::  (2d) common formats
   ::                                                    ::::
 ++  format  ^?
-  |%               
+  |%
   ::                                                    ::  ++to-wain:format
   ++  to-wain                                           ::  atom to line list
     ~%  %lore  ..is  ~
@@ -5139,7 +5140,7 @@
     ++  ship                                            ::  string from ship
       |=  a/^ship
       ^-  json
-      (tape (slag 1 (scow %p a))) 
+      (tape (slag 1 (scow %p a)))
     ::                                                  ::  ++numb:enjs:format
     ++  numb                                            ::  number from unsigned
       |=  a/@u
@@ -5341,7 +5342,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -5368,7 +5369,7 @@
       |=  jon/json
       ?.  ?=({$a *} jon)  ~
       %-  zl
-      |-  
+      |-
       ?~  p.jon  ~
       [i=(wit i.p.jon) t=$(p.jon t.p.jon)]
     ::
@@ -5424,7 +5425,7 @@
       !!
     ::
     ++  ni                                              ::  number as integer
-      |=  jon/json 
+      |=  jon/json
       ?.  ?=({$n *} jon)  ~
       (rush p.jon dem)
     ::
@@ -5439,7 +5440,7 @@
       ?.  ?=({$o {@ *} ~ ~} jon)  ~
       |-
       ?~  wer  ~
-      ?:  =(-.-.wer p.n.p.jon)  
+      ?:  =(-.-.wer p.n.p.jon)
         ((pe -.-.wer +.-.wer) q.n.p.jon)
       ((of +.wer) jon)
     ::
@@ -5465,7 +5466,7 @@
     ::
     ++  op                                              ::  parse keys of map
       |*  {fel/rule wit/fist}
-      %+  cu  
+      %+  cu
         |=  a/(list (pair _(wonk *fel) _(need *wit)))
         (my:nl a)
       %-  ci  :_  (om wit)
@@ -5474,7 +5475,7 @@
       %-  zl
       %+  turn  ~(tap by a)
       |=  {a/cord b/_(need *wit)}
-      =+  nit=(rush a fel) 
+      =+  nit=(rush a fel)
       ?~  nit  ~
       (some [u.nit b])
     ::
@@ -5516,7 +5517,7 @@
     ++  zp                                              ::  unit tuple
       |*  but/(pole (unit))
       ?~  but  !!
-      ?~  +.but  
+      ?~  +.but
         u:->.but
       [u:->.but (zp +.but)]
     ::
@@ -6491,7 +6492,7 @@
     ?:  (gth wen now)
       (cat 3 (scot %ud (msec (sub wen now))) %ms)
     (cat 3 '-' $(now wen, wen now))
-  ::  
+  ::
   ++  about                                             ::  ++about:milly
     |=  wun/(unit @da)                                  ::  unit relative msec
     ^-  @tas
@@ -7043,7 +7044,7 @@
       task:able:jael
   ==
 ++  note-arvo                                           ::  out request $->
-  $~  [%a %wake ~] 
+  $~  [%a %wake ~]
   $%  {$a task:able:ames}
       {$b task:able:behn}
       {$c task:able:clay}
@@ -7169,11 +7170,13 @@
         ::  azimuth: data contract
         ::
         ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
-        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ::  ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  6.784.800
+        ::  ++  launch  6.784.800  ::  mainnet
+        ++  launch  0  ::  local bridge
         --
       ::
       ::  hashes of ship event signatures
@@ -7257,10 +7260,11 @@
   |%
   ++  pass-from-eth
     |=  [enc=octs aut=octs sut=@ud]
-    ^-  (unit pass)
+    ^-  pass
+    %^  cat  3  'b'
     ?.  &(=(1 sut) =(p.enc 32) =(p.aut 32))
-      ~
-    `(cat 3 'b' (cat 8 q.aut q.enc))
+      (cat 8 0 0)
+    (cat 8 q.aut q.enc)
   ::
   ++  point-from-eth
     |=  [who=@p point:eth-noun deed:eth-noun]
@@ -7280,7 +7284,6 @@
       :-  ~
       :*  key-revision
         ::
-          =-  (fall - *pass)
           (pass-from-eth encryption-key authentication-key crypto-suite)
         ::
           continuity-number
@@ -7345,7 +7348,7 @@
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-      `[who %keys rev (need (pass-from-eth enc aut sut))]
+      `[who %keys rev (pass-from-eth enc aut sut)]
     ::
     ?:  =(event.log broke-continuity)
       =/  who=@  (decode-topics topics.log ~[%uint])
@@ -8315,10 +8318,9 @@
               kyz=(map ship [=life =pass])
           ==
       ^+  kyz
-      =/  pub=(unit pass)
+      =/  pub=pass
         (pass-from-eth enc aut sut)
-      ?~  pub  kyz
-      (~(put by kyz) who [rev u.pub])
+      (~(put by kyz) who [rev pub])
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point

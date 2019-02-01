@@ -426,6 +426,68 @@
   =/  jon=(unit json)  (de-json:html q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
+::  +rate-limited: handle Acme service rate-limits
+::
+++  rate-limited
+  |=  [try=@ud act=@tas spur=wire bod=(unit octs)]
+  ^+  this
+  =/  jon=(unit json)
+    ?~(bod ~ (de-json:html q.u.bod))
+  ?~  jon
+    ::  no details, back way off
+    ::  XX specifically based on wire
+    ::
+    (retry:effect try act spur (min ~d1 (backoff (add 10 try))))
+  =/  err  (error:grab u.jon)
+  ?.  =('params:acme:error:rateLimited' type.err)
+    ::  incorrect 429 status? backoff normally
+    ::
+    (retry:effect try act spur (min ~h1 (backoff try)))
+
+  =/  detail  (trip detail.err)
+  ::  too many certificates for these domains
+  ::
+  ?:  ?=(^ (find "already issued for exact" detail))
+    =.  ..this  (retry:effect try act spur ~d7)
+    =/  msg=cord
+      %+  rap  3
+      :~  'rate limit exceeded: '
+          ' too many certificates issued for '
+          ?~  rod
+            ::  XX shouldn't happen
+            ::
+            (join '.' /network/arvo/(crip +:(scow %p our.bow)))
+          (join ', ' (turn ~(tap in dom.u.rod) |=(a=turf (join '.' a))))
+          '. retrying in ~d7.'
+      ==
+    (emit (notify msg ~))
+  ::  too many certificates for top-level-domain
+  ::
+  ?:  ?=(^ (find "too many certificates already" detail))
+    =.  ..this  (retry:effect try act spur ~d7)
+    =/  lul=@dr
+      (add ~d7 (mul ~m1 (~(rad og eny.bow) (bex 10))))
+    =/  msg=cord
+      %+  rap  3
+      :~  'rate limit exceeded: '
+          ' too many certificates issued for '
+          ::  XX get from detail
+          ::
+          (join '.' /network/arvo)
+          '. retrying in '
+          (scot %dr lul)  '.'
+      ==
+    (emit (notify msg ~))
+  ::  XX match more rate-limit conditions
+  ::  or backoff by wire
+  ::
+  ::    - "too many registrations for this IP"
+  ::    - "too many registrations for this IP range"
+  ::    - "too many currently pending authorizations"
+  ::    - "too many failed authorizations recently"
+  ::    - "too many new orders recently"
+  ::
+  (retry:effect try act spur (min ~d1 (backoff (add 10 try))))
 ::  +failure-message: generic http failure message
 ::
 ++  failure-message
@@ -494,6 +556,10 @@
   ::
   ++  register
     ^+  this
+    ?.  =(~ reg.act)
+      ?:  =(~ next-order)
+        this
+      (validate-domain:effect 0)
     =/  =json  [%o (my [['termsOfServiceAgreed' b+&] ~])]
     ::  XX date in wire?
     ::
@@ -772,7 +838,7 @@
       q:(head (skim q.rep |=((pair @t @t) ?=(%location p))))
     ::  XX @da once parser is fixed
     ::
-    =/  wen=@t              
+    =/  wen=@t
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body
@@ -917,8 +983,21 @@
         (emit (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
     ::
+    ::    Certificates expire after ~d90. We want time for retries and
+    ::    to work around rate limits, so our renewal timer is for ~d60.
+    ::    Renewals count towards weekly rate limits, but are allowed to
+    ::    continue past rate limits, so fudge the timer towards the end
+    ::    of the week nearest ~d60.
+    ::
     =<  install:effect
-    (retry:effect 0 %renew / ~d60)
+    =;  lul=@dr
+      (retry:effect 0 %renew / lul)
+    %+  add
+      (mul ~m1 (~(rad og eny.bow) (bex 8)))
+    =/  weekday  (daws:chrono:userlib (yore now.bow))
+    ?:  (gth weekday 4)
+      (sub ~d60 (mul ~d1 (sub weekday 4)))
+    (add ~d60 (mul ~d1 (sub 4 weekday)))
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -1082,6 +1161,9 @@
   (retry:event t.wire)
 ::  +sigh-recoverable-error: handle http rate-limit response
 ::
+::    XX we won't receive this unless we request a
+::    mark conversion and it fails
+::
 ++  sigh-recoverable-error
   |=  [=wire %429 %rate-limit lim=(unit @da)]
   ^-  (quip move _this)
@@ -1105,6 +1187,10 @@
   =*  ven  ~(. event try)
   =*  act  i.t.t.t.wire
   =*  spur  t.t.t.t.wire
+  ::  backoff if rate-limited
+  ::
+  ?:  =(429 p.rep)
+    (rate-limited try act spur r.rep)
   ::  request nonce if expired-invalid
   ::
   ?:  (bad-nonce rep)
@@ -1156,15 +1242,25 @@
     this
   ::
       %dbug-account
-    ~&  [%private (ring:en:pem:pkcs1 key.act)]
-    ~&  [%public (pass:en:pem:pkcs1 key.act)]
     ~&  registered=reg.act
+    ~&  [%public (pass:en:pem:pkcs1 key.act)]
+    ~?  !=(~ sek.key.act)
+      [%private (ring:en:pem:pkcs1 key.act)]
     this
   ::
       %dbug-certificate
     ?~  liv  ~&(~ this)
     ~&  [%key (ring:en:pem:pkcs8 key.u.liv)]
     ~&  [%cert `wain`cer.u.liv]
+    ~&  [%expires exp.u.liv]
+    ~&  :-  %domains
+        (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+    this
+  ::
+      %dbug-history
+    ~&  [%account-history act.hit]
+    ~&  [%config-history fig.hit]
+    ~&  [%failed-order-history fal.hit]
     this
   ::
       %init

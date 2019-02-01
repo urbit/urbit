@@ -34,7 +34,7 @@ window.easy_form = {
       }
     }
     if(tag) req = {[tag]:req}
-    
+
     fetch("/~/auth.json", {credentials: "same-origin"})
     .then((res)=>res.json())
     .then(({oryx})=> fetch(`/~/to/${appl}/${mark}`,{

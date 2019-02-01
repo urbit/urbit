@@ -19,7 +19,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  
+=>
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -45,7 +45,7 @@
           ==                                            ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage
           (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
@@ -191,10 +191,7 @@
         (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
-      =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
-      ::  cache the call to +mint that the +slym in +scry will do
-      ::
-      +:(~(mint wa worm.vane) p.fun [%limb %$])
+      +:(~(slap wa worm.vane) rig [%limb %scry])
     ==
   ::
   ++  wink                                              ::  deploy
@@ -288,7 +285,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind  
+      %+  bind
         =-  ?-  -.har
               %|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               %&  (some p.har)
@@ -356,11 +353,9 @@
         ==
       ^-  (unit (unit (cask)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
-      =+  pro=-:(~(slym wa worm.vane) fun old)
-      ?~  q.pro  ~
-      ?~  +.q.pro  [~ ~]
-      =/  dat  +>.q.pro
-      [~ ~ (mark -.dat) +.dat]
+      ::
+      %-  (unit (unit (cask)))
+      (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
@@ -775,7 +770,7 @@
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
   ==
-::                                                
+::
 ++  vega                                                ::  reboot kernel
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot

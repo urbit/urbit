@@ -13,7 +13,7 @@
   ++  html  (crip (en-xml hymn))                        ::  convert to %html
   ++  hymn  max
   --
-++  grab  
+++  grab
   |%                                                    ::  convert from
   ++  noun  manx                                        ::  clam from %noun
   --

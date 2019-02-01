@@ -137,7 +137,7 @@
     """
     y - invite current ask
     n - ignore current ask
-    
+
     """
   """
   l - list new asks
