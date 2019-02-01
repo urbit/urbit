@@ -1833,9 +1833,26 @@
   (wrap he-lens):arm
 ::
 ++  poke-json
-  |=  jon/json
-  ^-  {(list move) _+>.$}
+  |=  jon=json
+  ^-  [(list move) _+>.$]
   ~&  jon=jon
+  [~ +>.$]
+::  +poke-wipe: clear all dojo sessions
+::
+++  poke-wipe
+  |=  *
+  ^-  [(list move) _+>.$]
+  ~&  %dojo-wipe
+  =.  hoc
+    %-  ~(run by hoc)
+    |=  =session
+    %_  session
+      sur  ~
+      lib  ~
+      var  ~
+      old  ~
+    ==
+  ::
   [~ +>.$]
 ::
 ++  made       (wrap he-made):arm
