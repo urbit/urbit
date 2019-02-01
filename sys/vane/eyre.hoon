@@ -1158,9 +1158,10 @@
   ++  execute-turbo
     ~/  %execute-turbo
     |=  [tea=whir live=? request=schematic:ford]
+    =/  tan=tank  [%leaf "eyre: execute {(spud tea)}"]
     %+  pass-note  tea
     :*  %f  %build  live
-        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+        [%dude =>(a=tan |.(a)) request]
     ==
   ::
   ++  add-links                                           :: x-urbit:// urls
