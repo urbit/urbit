@@ -96,6 +96,10 @@
     ::
     ?~  timers
       ~[t]
+    ::  ignore duplicates
+    ::
+    ?:  =(t i.timers)
+      timers
     ::  timers at the same date form a fifo queue
     ::
     ?:  (lth date.t date.i.timers)
