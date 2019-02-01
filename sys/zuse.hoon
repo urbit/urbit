@@ -242,6 +242,7 @@
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=life}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/ship q/path r/*}                     ::  network request
@@ -423,6 +424,7 @@
       $%  {$born ~}                                     ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$rest p/@da}                                 ::  cancel alarm
+          {$vega ~}                                     ::  report upgrade
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
           {$wegh ~}                                    ::  report memory
@@ -475,6 +477,7 @@
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$sunk p=ship q=life}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
           {$wegh ~}                                     ::  report memory
@@ -642,8 +645,10 @@
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/@t q/@t}                             ::  reboot
-          {$verb ~}                                    ::  verbose mode
+          ::  XX gross hack to trigger or report upgrade
+          ::
+          {$vega p/?(~ {p/@t q/@t})}                    ::  reboot
+          {$verb ~}                                     ::  verbose mode
       ==                                                ::
     --  ::able
   ::
@@ -741,6 +746,7 @@
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
           [%this p=? q=clip r=httq]                     ::  inbound request
           [%thud ~]                                     ::  inbound cancel
+          [%vega ~]                                     ::  report upgrade
           [%wegh ~]                                     ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
           [%west p=ship q=[path *]]                     ::  network request
@@ -977,6 +983,9 @@
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
           [%sunk =ship =life]
+          ::  %vega: report kernel upgrade
+          ::
+          [%vega ~]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1668,6 +1677,7 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$sunk p=ship q/life}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
       ==                                                ::
@@ -1859,6 +1869,7 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
+          [%vega ~]                                     ::  report upgrade
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
           [%vest ~]                                     ::  view public balance

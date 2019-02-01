@@ -159,7 +159,7 @@
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
           $veer  (dump kyz)
-          $vega  (dump kyz)
+          $vega  ?>(?=(^ p.kyz) (dump kyz))
           $verb  (dump kyz)
         ==
       ::
@@ -530,6 +530,14 @@
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
   ?:  ?=(%sunk -.task)
+    [~ ..^$]
+  ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
+  ::
+  ::    XX note that this is different from the %vega that triggers
+  ::    a kernel upgrade (from lib/hood/helm)
+  ::    XX do something about this naming collision
+  ::
+  ?:  ?=([%vega ~] task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)

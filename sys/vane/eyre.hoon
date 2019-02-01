@@ -729,6 +729,8 @@
     ::
         $sunk  +>
     ::
+        $vega  +>
+    ::
         ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit

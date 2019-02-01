@@ -59,6 +59,11 @@
           =.  timers  (unset-timer [p.task hen])
           (set-wake ~)
         ::
+            ::  %vega: learn of a kernel upgrade
+            ::
+            %vega
+          [~ state]
+        ::
             ::  %wait: set a new timer
             ::
             %wait
