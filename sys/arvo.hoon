@@ -663,9 +663,10 @@
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               =^  ova  +>+.$  (^poke now ovo)
+              =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
               ?~  ova
-                [~ +>.^$]
+                [(flop out) +>.^$]
               ::  upgrade the kernel -- %vega here is an effect from a vane
               ::
               ?:  ?=(%vega -.q.i.ova)
@@ -676,10 +677,8 @@
               ::  and passing the rest through as output
               ::
               =^  vov  +>+.^$  (feck now i.ova)
-              ?~  vov
-                $(ova t.ova)
-              =/  avo  $(ova t.ova)
-              [[+.vov -.avo] +.avo]
+              =?  out  ?=(^ vov)  [+.vov out]
+              $(ova t.ova)
     ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
     --
