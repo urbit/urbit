@@ -137,9 +137,208 @@
                   ::
                   [%incomplete =tang]
           ==  ==
-          {$unto p/cuft:gall}                          ::
-      ==                                                ::
-    --                                                  ::
+          {$unto p/cuft:gall}
+      ==
+    --
+=>
+|%
+::  |parser-at: parsers for dojo expressions using :dir as working directory
+::
+++  parser-at
+  |=  [our=ship dir=beam]
+  |%
+  ++  default-app         %hood
+  ++  hoon-parser         (vang | (en-beam:format dir))
+  ++  our                 p.dir
+  ::
+  ++  parse-command-line  ;~(sfix parse-command (star ace) (just '\0a'))
+  ::
+  ++  to-command
+    |=  [gol=goal mod=dojo-model]
+    ^-  dojo-command
+    [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
+  ::
+  ++  parse-variable
+    |*  [sym=rule src=rule]
+    %+  cook
+      |=  {a/term b/(unit dojo-source)}
+      ^-  dojo-command
+      ?~(b [%brev a] [[%verb a] u.b])
+    ;~(plug sym (punt src))
+  ::
+  ++  parse-command
+    :: =<  ;~(less |-(;~(pose (jest '|*') ;~(pfix next (knee ** |.(^$))))) .)
+    %+  knee  *dojo-command  |.  ~+
+    ;~  pose
+      ;~  pfix  bar
+        %+  cook  to-command
+        (stag `goal`[our default-app] parse-model)
+      ==
+    ::
+      ;~  pfix  col
+        %+  cook
+          |=  {a/goal b/$^(dojo-model dojo-source)}
+          ?@  -.b  [[%poke a] b]
+          (to-command a b)
+        ;~  plug
+          parse-goal
+          ;~  pose
+            ;~(pfix bar parse-model)
+            ;~(pfix ace parse-source)
+          ==
+        ==
+      ==
+    ::
+      ;~  pfix  tis
+        ;~  pose
+          (parse-variable (jest %dir) ;~(pfix ace :(stag 0 %ex parse-rood)))
+          (parse-variable sym ;~(pfix ace parse-source))
+        ==
+      ==
+    ::
+      ;~  pfix  net
+        ;~  pose
+          (parse-variable (cold %sur hep) ;~(pfix gap parse-cables))
+          (parse-variable (cold %lib lus) ;~(pfix gap parse-cables))
+        ==
+      ==
+    ::
+      ;~  pfix  hax
+        ;~  pose
+          ;~  pfix  ace
+            %+  cook
+              |=  a/(list term)
+              [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
+            (most col sym)
+          ==
+          (easy [[%help ~] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
+        ==
+      ==
+    ::
+      ;~((glue ace) parse-sink parse-source)
+      (stag [%show %0] parse-source)
+    ==
+  ::
+  ++  parse-sink
+    ;~  pose
+      ;~(plug (cold %file tar) parse-beam)
+      ;~(plug (cold %flat vat) (most net sym))
+      ;~(plug (cold %pill dot) (most net sym))
+      ;~(plug (cold %http lus) (stag %post parse-iden-url))
+      ;~(plug (cold %http hep) (stag %put parse-iden-url))
+      (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
+    ==
+  ::
+  ++  parse-cables
+    %+  cook
+      |=  cables=(list cable:ford)
+      :+  0  %ex
+      ^-  hoon
+      ::
+      :-  %clsg
+      %+  turn  cables
+      |=  cable=cable:ford
+      ^-  hoon
+      ::
+      :+  %clhp
+        ?~  face.cable
+          [%rock %n ~]
+        [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
+      [%sand %tas file-path.cable]
+    (most ;~(plug com gaw) parse-cable)
+  ::
+  ++  parse-cable
+    %+  cook  |=(a=cable:ford a)
+    ;~  pose
+      (stag ~ ;~(pfix tar sym))
+      (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
+      (cook |=(a=term [`a a]) sym)
+    ==
+  ++  parse-source  (stag 0 parse-build)
+  ++  parse-build
+      %+  knee  *dojo-build  |.  ~+
+      ;~  pose
+        ;~(plug (cold %ur lus) parse-iden-url)
+        ;~(plug (cold %ge lus) parse-model)
+        ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
+        ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
+        parse-value
+      ==
+  ::
+  ++  parse-goal
+    %+  cook  |=(a/goal a)
+    ;~  pose
+      ;~  plug
+        ;~(pfix sig fed:ag)
+        ;~(pose ;~(pfix net sym) (easy default-app))
+      ==
+      %+  stag  our
+      ;~(pose sym (easy default-app))
+    ==
+  ::
+  ++  parse-beam
+    %+  cook
+      |=  a=path
+      ::  hack: fixup paths that come out of the hoon parser
+      ::
+      ::    We currently invoke the hoon parser to read relative paths from
+      ::    the command line, and this parser will produce leading ~ path
+      ::    components with paths that start with a `/`.
+      ::
+      ::    This entire path is nuts and we shouldn't be representing paths
+      ::    as arbitrary hoons.
+      ::
+      =?  a  &(?=(^ a) =('' i.a))
+        t.a
+      (fall (de-beam:format a) [`beak`[p q r]:dir (flop a)])
+    =+  vez=hoon-parser
+    (sear plex:vez (stag %clsg poor:vez))
+  ::
+  ++  parse-iden-url
+    %+  cook
+      |=([a=(unit knot) b=purl:eyre] [`(fall a *knot) b])
+    auru:de-purl:html
+    ::
+  ++  parse-model   ;~(plug parse-server parse-config)
+  ++  parse-server  (stag 0 (most net sym))
+  ++  parse-hoon    tall:hoon-parser
+  ::
+  ++  parse-rood
+    ::  XX should this use +hoon-parser instead to normalize the case?
+    ::
+    =>  (vang | (en-beam:format dir))
+    ;~  pose
+      rood
+    ::
+      ::  XX refactor ++scat
+      ::
+      =-  ;~(pfix cen (stag %clsg -))
+      %+  sear  |=([a=@ud b=tyke] (posh ~ ~ a b))
+      ;~  pose
+        porc
+        (cook |=(a=(list) [(lent a) ~]) (star cen))
+      ==
+    ==
+  ++  parse-value
+    ;~  pose
+      (stag %sa ;~(pfix tar pad sym))
+      (stag %ex parse-hoon)
+      (stag %tu (ifix [lac rac] (most ace parse-source)))
+    ==
+  ::
+  ++  parse-config
+    ;~  plug
+      (star ;~(pfix ace (stag 0 parse-value)))
+      %+  cook
+        ~(gas by *(map term (unit dojo-source)))
+      %-  star
+      ;~  plug
+        ;~(pfix com ace tis sym)
+        (punt ;~(pfix ace (stag 0 parse-value)))
+      ==
+    ==
+  --
+--
 ::                                                      ::
 ::::                                                    ::
   ::                                                    ::
@@ -150,208 +349,17 @@
     ==                                                  ::
 ++  he                                                  ::  per session
   |_  {moz/(list move) session}                         ::
-  ++  dp                                                ::  dojo parser
-    |%
-    ++  dp-default-app  %hood
-    ++  dp-message                                      ::  %poke
-      |=  {gol/goal mod/dojo-model}  ^-  dojo-command
-      [[%poke gol] [0 [%ge mod(q.p [q.gol q.p.mod])]]]
-    ::
-    ++  dp-command-line  ;~(sfix dp-command (star ace) (just '\0a'))
-    ++  dp-variable                                     ::  %verb or %brev
-      |*  {sym/rule src/rule}
-      %+  cook
-        |=  {a/term b/(unit dojo-source)}
-        ^-  dojo-command
-        ?~(b [%brev a] [[%verb a] u.b])
-      ;~(plug sym (punt src))
-    ::
-    ++  dp-command                                      ::  ++dojo-command
-      :: =<  ;~(less |-(;~(pose (jest '|*') ;~(pfix next (knee ** |.(^$))))) .)
-      %+  knee  *dojo-command  |.  ~+
-      ;~  pose
-        ;~  pfix  bar
-          %+  cook  dp-message
-          (stag [our.hid dp-default-app] dp-model)
-        ==
-      ::
-        ;~  pfix  col
-          %+  cook
-            |=  {a/goal b/$^(dojo-model dojo-source)}
-            ?@  -.b  [[%poke a] b]
-            (dp-message a b)
-          ;~  plug
-            dp-goal
-            ;~  pose
-              ;~(pfix bar dp-model)
-              ;~(pfix ace dp-source)
-            ==
-          ==
-        ==
-      ::
-        ;~  pfix  tis
-          ;~  pose
-            (dp-variable (jest %dir) ;~(pfix ace :(stag 0 %ex dp-rood)))
-            (dp-variable sym ;~(pfix ace dp-source))
-          ==
-        ==
-      ::
-        ;~  pfix  net
-          ;~  pose
-            (dp-variable (cold %sur hep) ;~(pfix gap parse-cables))
-            (dp-variable (cold %lib lus) ;~(pfix gap parse-cables))
-          ==
-        ==
-      ::
-        ;~  pfix  hax
-          ;~  pose
-            ;~  pfix  ace
-              %+  cook
-                |=  a/(list term)
-                [[%help a] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
-              (most col sym)
-            ==
-            (easy [[%help ~] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
-          ==
-        ==
-      ::
-        ;~((glue ace) dp-sink dp-source)
-        (stag [%show %0] dp-source)
-      ==
-    ++  dp-sink
-      ;~  pose
-        ;~(plug (cold %file tar) dp-beam)
-        ;~(plug (cold %flat vat) (most net sym))
-        ;~(plug (cold %pill dot) (most net sym))
-        ;~(plug (cold %http lus) (stag %post dp-iden-url))
-        ;~(plug (cold %http hep) (stag %put dp-iden-url))
-        (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
-      ==
-    ::
-    ++  parse-cables
-      %+  cook
-        |=  cables=(list cable:ford)
-        :+  0  %ex
-        ^-  hoon
-        ::
-        :-  %clsg
-        %+  turn  cables
-        |=  cable=cable:ford
-        ^-  hoon
-        ::
-        :+  %clhp
-          ?~  face.cable
-            [%rock %n ~]
-          [%clhp [%rock %n ~] [%sand %tas u.face.cable]]
-        [%sand %tas file-path.cable]
-      (most ;~(plug com gaw) parse-cable)
-    ::  +cable: parses a +^cable, a reference to something on the filesystem
-    ::
-    ::    This parses:
-    ::
-    ::      `library`       ->  wraps `library` around the library `library`
-    ::      `face=library`  ->  wraps `face` around the library `library`
-    ::      `*library`      ->  exposes `library` directly to the subject
-    ::
-    ::    NOTE: This is a verbatim duplicate of Ford's cable parsing
-    ::
-    ++  parse-cable
-      %+  cook  |=(a=cable:ford a)
-      ;~  pose
-        (stag ~ ;~(pfix tar sym))
-        (cook |=([face=term tis=@ file=term] [`face file]) ;~(plug sym tis sym))
-        (cook |=(a=term [`a a]) sym)
-      ==
-    ::
-    ++  dp-hoon-punt                                   ::  hoon of unit
-      |*(a/rule ;~(pose (stag [%bust %null] a) (easy [%bust %null])))
-    ::
-    ++  dp-case-hoon
-      |=  a/coin  ^-  (unit hoon)
-      ?.  ?=({~ case} a)  ~
-      %+  some
-        [%rock %tas p.p.a]
-      [%sand p.a]
-    ::
-    ++  dp-source  (stag 0 dp-build)                    ::  ++dojo-source
-    ++  dp-build                                        ::  ++dojo-build
-      %+  knee  *dojo-build  |.  ~+
-      ;~  pose
-        ;~(plug (cold %ur lus) dp-iden-url)
-        ;~(plug (cold %ge lus) dp-model)
-        ;~(plug (cold %as pad) sym ;~(pfix ace dp-source))
-        ;~(plug (cold %do cab) dp-hoon ;~(pfix ace dp-source))
-        dp-value
-      ==
-    ::
-    ++  dp-goal                                          ::  ++goal
-      %+  cook  |=(a/goal a)
-      ;~  pose
-        ;~  plug
-          ;~(pfix sig fed:ag)
-          ;~(pose ;~(pfix net sym) (easy dp-default-app))
-        ==
-        %+  stag  our.hid
-        ;~(pose sym (easy dp-default-app))
-      ==
-    ++  dp-beam                                         ::  ++beam
-      %+  cook
-        |=  a/path
-        ::  hack: fixup paths that come out of the hoon parser
-        ::
-        ::    We currently invoke the hoon parser to read relative paths from
-        ::    the command line, and this parser will produce leading ~ path
-        ::    components with paths that start with a `/`.
-        ::
-        ::    This entire path is nuts and we shouldn't be representing paths
-        ::    as arbitrary hoons.
-        ::
-        =?  a  &(?=(^ a) =('' i.a))
-          t.a
-        =+((de-beam:format a) ?^(- u [he-beak (flop a)]))
-      =+  vez=(vang | dp-path)
-      (sear plex:vez (stag %clsg poor:vez))
-    ::
-    ++  dp-iden-url
-      %+  cook
-        |=({a/(unit knot) b/purl:eyre} [`(fall a *knot) b])
-      auru:de-purl:html
-    ::
-    ++  dp-model   ;~(plug dp-server dp-config)         ::  ++dojo-model
-    ++  dp-path    (en-beam:format he-beam)                       ::  ++path
-    ++  dp-server  (stag 0 (most net sym))              ::  ++dojo-server
-    ++  dp-hoon    tall:(vang | dp-path)                ::  ++hoon
-    ++  dp-rood                                         ::  'dir' hoon
-      =>  (vang | (en-beam:format dir))
-      ;~  pose
-        rood
-      ::
-        =-  ;~(pfix cen (stag %clsg -))                 ::  XX refactor ++scat
-        %+  sear  |=({a/@ud b/tyke} (posh ~ ~ a b))
-        ;~  pose
-          porc
-          (cook |=(a/(list) [(lent a) ~]) (star cen))
-        ==
-      ==
-    ++  dp-value                                        ::  ++dojo-source
-      ;~  pose
-        (stag %sa ;~(pfix tar pad sym))
-        (stag %ex dp-hoon)
-        (stag %tu (ifix [lac rac] (most ace dp-source)))
-      ==
-    ::
-    ++  dp-config                                       ::  ++dojo-config
-      ;~  plug
-        (star ;~(pfix ace (stag 0 dp-value)))
-        %+  cook
-          ~(gas by *(map term (unit dojo-source)))
-        %-  star
-        ;~  plug
-          ;~(pfix com ace tis sym)
-          (punt ;~(pfix ace (stag 0 dp-value)))
-        ==
-      ==
-    --
+  ::
+  ++  he-beam
+    ^-  beam
+    ?.  =([%ud 0] r.dir)
+      dir
+    dir(r [%da now.hid])
+  ::
+  ++  he-disc    `disc:ford`[p q]:he-beam
+  ++  he-beak    `beak`[p q r]:he-beam
+  ++  he-rail    `rail:ford`[[p q] s]:he-beam
+  ++  he-parser  (parser-at our.hid he-beam)
   ::
   ++  dy                                                ::  project work
     |_  dojo-project                                    ::
@@ -1489,12 +1497,12 @@
       dy-make(cud `[nex (~(got by job) nex)])
     --
   ::
-  ++  he-dope                                           ::  sole user of ++dp
+  ++  he-dope
     |=  txt/tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix+result
     =+  len=+((lent txt))                               ::  line length
     =.  txt  (weld buf `tape`(weld txt "\0a"))          ::
-    =+  vex=((full dp-command-line):dp [1 1] txt)       ::
+    =+  vex=((full parse-command-line:he-parser) [1 1] txt)
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a/@ =(10 a)))))) ::  parsed all lines
@@ -1516,14 +1524,6 @@
   ++  he-abut                                           ::  discard
     =>  he-stop
     [(flop moz) %_(+> hoc (~(del by hoc) ost.hid))]
-  ::
-  ++  he-disc  [p q]:he-beam
-  ++  he-beak  [p q r]:he-beam
-  ++  he-rail  [[p q] s]:he-beam
-  ++  he-beam                                           ::  logical beam
-    ^-  beam
-    ?.  =(ud+0 r.dir)  dir
-    dir(r [%da now.hid])
   ::
   ++  he-card                                           ::  emit gift
     |=  cad/card
@@ -1662,7 +1662,7 @@
             $data        [%ex %sand %t data.source.com]
             $dojo
           %+  rash  command.source.com
-          (ifix [(punt gap) (punt gap)] dp-build:dp)
+          (ifix [(punt gap) (punt gap)] parse-build:he-parser)
         ::
             $clay
           :-  %ex
@@ -1719,7 +1719,7 @@
           $url          [%http %post `~. url.sink.com]
           $to-api       !!
           $send-api     [%poke our.hid api.sink.com]
-          $command      (rash command.sink.com dp-sink:dp)
+          $command      (rash command.sink.com parse-sink:he-parser)
           $app          [%poke our.hid app.sink.com]
         ==
     (he-plan sink source)
