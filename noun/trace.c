@@ -3,7 +3,10 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include "vere/vere.h"
 #include <pthread.h>
+#include <time.h>
+#include <sys/stat.h>
 
 static c3_o _ct_lop_o;
 
@@ -300,14 +303,25 @@ u3t_flee(void)
 
 static FILE* trace_file_u = NULL;
 static int nock_pid_i = 0;
+static int trace_counter;
 
 /*  u3t_trace_open(): opens a trace file and writes the preamble.
 */
 void
-u3t_trace_open(c3_c* trace_file_name)
+u3t_trace_open()
 {
-  printf("trace: tracing to %s\n", trace_file_name);
-  trace_file_u = fopen(trace_file_name, "w");
+
+  c3_c fil_c[2048];
+  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3_Host.dir_c);
+
+  struct stat st;
+  if ( -1 == stat(fil_c, &st) ) {
+    mkdir(fil_c, 0700);
+  }
+
+  snprintf(fil_c, 2048, "%s/%ld.json", fil_c, time(NULL));
+
+  trace_file_u = fopen(fil_c, "w");
   nock_pid_i = (int)getpid();
   fprintf(trace_file_u, "[ ");
 
@@ -335,6 +349,7 @@ u3t_trace_open(c3_c* trace_file_name)
           "{\"name\": \"thread_sort_index\", \"ph\": \"M\", \"pid\": %d, "
           "\"tid\": 2, \"args\": {\"sort_index\": 2}},\n",
           nock_pid_i);
+  trace_counter = 5;
 }
 
 /*  u3t_trace_close(): closes a trace file. optional.
@@ -440,6 +455,12 @@ u3t_nock_trace_pop()
   if (!trace_file_u)
     return;
 
+  if ( trace_counter >= 100000 ) {
+    u3t_trace_close();
+    u3t_trace_open();
+  }
+
+
   u3_noun trace  = u3R->pro.trace;
   u3R->pro.trace = u3k(u3t(trace));
 
@@ -462,6 +483,7 @@ u3t_nock_trace_pop()
             duration);
 
     free(name);
+    trace_counter++;
   }
 
   u3z(trace);
@@ -482,6 +504,7 @@ u3t_event_trace(const c3_c* name, c3_c type)
           type,
           nock_pid_i,
           u3t_trace_time());
+  trace_counter++;
 }
 
 extern FILE*

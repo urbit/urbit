@@ -583,7 +583,7 @@
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
-        c3_c*   json_file_c;                //  -j, json trace
+        c3_o    tra;                        //  -j, json trace
         c3_w    kno_w;                      //  -K, kernel version
         c3_c*   key_c;                      //  -k, private key file
         c3_o    net;                        //  -L, local-only networking
