@@ -540,9 +540,9 @@
     ::  we emit ova to unix in fifo order, but emit internal moves depth-first
     ::
     $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
-  ::  +kick-all: kick every vane with :ovum
+  ::  +spam: kick every vane with :ovum
   ::
-  ++  kick-all
+  ++  spam
     |=  [lac=? ovo=ovum]
     ^-  [(list ovum) (list [label=@tas =vane])]
     =/  card
@@ -551,7 +551,7 @@
       [%soft q.ovo]
     %+  kick  lac
     %+  turn  vanes
-    |=([label=@tas *] [label ~ [%pass / label card]])
+    |=([label=@tas *] [label ~ [%pass p.ovo label card]])
   --
 --
 =<  ::  Arvo larval stage
@@ -715,7 +715,7 @@
   ::
   ?:  ?=(%vega -.q.i.ova)
     =^  zef  vanes
-      (~(kick-all (is our vil eny bud vanes) now) lac i.ova)
+      (~(spam (is our vil eny bud vanes) now) lac i.ova)
     $(out [i.ova out], ova (weld t.ova zef))
   ::
   =^  vov  +>.^$  (feck now i.ova)
