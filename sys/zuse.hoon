@@ -617,16 +617,16 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                    ::  reset prompt
+      $%  {$bbye ~}                                     ::  reset prompt
           {$blit p/(list blit)}                         ::  terminal output
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
-          {$logo ~}                                    ::  logout
+          {$logo ~}                                     ::  logout
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$verb ~}                                    ::  verbose mode
+          {$verb ~}                                     ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$belt p/belt}                                ::  terminal input
@@ -635,13 +635,13 @@
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
-          {$hail ~}                                    ::  terminal refresh
-          {$heft ~}                                    ::  memory report
-          {$hook ~}                                    ::  this term hung up
-          {$harm ~}                                    ::  all terms hung up
+          {$hail ~}                                     ::  terminal refresh
+          {$heft ~}                                     ::  memory report
+          {$hook ~}                                     ::  this term hung up
+          {$harm ~}                                     ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
-          {$noop ~}                                    ::  no operation
+          {$noop ~}                                     ::  no operation
           {$sunk p=ship q=life}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
@@ -656,46 +656,46 @@
   ++  blew  {p/@ud q/@ud}                               ::  columns rows
   ++  belt                                              ::  old belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                       ::  true backspace
+        {$bac ~}                                        ::  true backspace
         {$ctl p/@c}                                     ::  control-key
-        {$del ~}                                       ::  true delete
+        {$del ~}                                        ::  true delete
         {$met p/@c}                                     ::  meta-key
-        {$ret ~}                                       ::  return
+        {$ret ~}                                        ::  return
         {$txt p/(list @c)}                              ::  utf32 text
     ==                                                  ::
   ++  blit                                              ::  old blit
-    $%  {$bel ~}                                       ::  make a noise
-        {$clr ~}                                       ::  clear the screen
+    $%  {$bel ~}                                        ::  make a noise
+        {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
         {$lin p/(list @c)}                              ::  set current line
-        {$mor ~}                                       ::  newline
+        {$mor ~}                                        ::  newline
         {$sag p/path q/*}                               ::  save to jamfile
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?(~ $bl $br $un)                           ::  text decoration
+  ++  deco  ?(~ $bl $br $un)                            ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                       ::  true backspace
+        {$bac ~}                                        ::  true backspace
         {$cru p/@tas q/(list tank)}                     ::  echo error
         {$ctl p/@}                                      ::  control-key
-        {$del ~}                                       ::  true delete
-        {$hey ~}                                       ::  refresh
+        {$del ~}                                        ::  true delete
+        {$hey ~}                                        ::  refresh
         {$met p/@}                                      ::  meta-key
-        {$ret ~}                                       ::  return
+        {$ret ~}                                        ::  return
         {$rez p/@ud q/@ud}                              ::  resize, cols, rows
         {$txt p/(list @c)}                              ::  utf32 text
         {$yow p/gill:gall}                              ::  connect to app
     ==                                                  ::
   ++  dill-blit                                         ::  new blit
-    $%  {$bel ~}                                       ::  make a noise
-        {$clr ~}                                       ::  clear the screen
+    $%  {$bel ~}                                        ::  make a noise
+        {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
         {$klr p/stub}                                   ::  styled text
         {$mor p/(list dill-blit)}                       ::  multiple blits
         {$pom p/stub}                                   ::  styled prompt
         {$pro p/(list @c)}                              ::  show as cursor+line
-        {$qit ~}                                       ::  close console
+        {$qit ~}                                        ::  close console
         {$out p/(list @c)}                              ::  send output line
         {$sag p/path q/*}                               ::  save to jamfile
         {$sav p/path q/@}                               ::  save to file
@@ -703,11 +703,11 @@
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
     $%  {$crud p/@tas q/(list tank)}                    ::
-        {$heft ~}                                      ::
+        {$heft ~}                                       ::
         {$lyra p/@t q/@t}                               ::  upgrade kernel
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$verb ~}                                      ::  verbose mode
+        {$verb ~}                                       ::  verbose mode
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
