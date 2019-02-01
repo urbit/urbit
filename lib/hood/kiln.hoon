@@ -416,6 +416,13 @@
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
+    ?:  ?=([%| %ali-sunk *] mes)
+      =.  +>.$
+        %^    spam
+            leaf+"merge cancelled because sunk, restarting"
+          (render "on sync" sud her syd)
+        ~
+      start-sync:stop
     =.  let  +(let)
     =.  +>.$
       %-  spam

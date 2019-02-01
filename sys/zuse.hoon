@@ -69,7 +69,8 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  life  @ud                                           ::  ship version
+++  life  @ud                                           ::  ship key revision
+++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -241,7 +242,7 @@
           [%init p=ship]                                ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/ship q/path r/*}                     ::  network request
@@ -474,7 +475,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
           {$wegh ~}                                     ::  report memory
@@ -638,7 +639,7 @@
           {$harm ~}                                    ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$noop ~}                                    ::  no operation
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -735,7 +736,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -976,7 +977,7 @@
           [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship =life]
+          [%sunk =ship =rift]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1667,7 +1668,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship q/life}                         ::  report death
+          {$sunk p=ship q/rift}                         ::  report death
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
       ==                                                ::
@@ -1813,7 +1814,7 @@
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
