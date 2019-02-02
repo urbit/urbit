@@ -1,4 +1,0 @@
-option('ent_compat', type : 'boolean', value : false,
-       description : 'Don\'t rely on system getentropy')
-option('ent_install', type : 'boolean', value : false,
-       description : 'Install locally')

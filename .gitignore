@@ -1,1 +1,4 @@
-/build
+/*.a
+/*.o
+/out
+/test

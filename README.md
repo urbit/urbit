@@ -1,26 +1,41 @@
-libent is a cross-platform wrapper around `getentropy(2)`. It exports
+## `libent`
+
+`libent` is a cross-platform wrapper around `getentropy(2)`. It exports
 one symbol, `ent_getentropy`. If getentropy is available, then it's just
 a shim around that. Otherwise, it uses `getrandom(2)` (available since
 kernel 3.17) on Linux, or `/dev/urandom` on other \*nix.
 
-### Building
 
-It uses meson. `meson ./build && ninja -C build` should do the trick.
+### Building and Testing
 
-The main intended way to use this library is to depend on it from
-another meson project, i.e., to pull `libent_dep` out from this library
-as a [subproject](https://mesonbuild.com/Subprojects.html). It's also
-possible to install it as a regular library if you want to for some
-reason — just run meson with `-Dent_install=true` and add on a `sudo
-ninja -C build install`.
+To build, set the `IMPL` variable to one of the folling values, and run
+`make`.
 
-If you want to release a binary distribution of your program, you may
-want to build with `-Dent_compat=true`. This tells libent not to try to
-use getentropy, which might result in a program that can run against
-an older libc version on some platforms. (`ent_compat` does nothing on
-OpenBSD; we claim that 5.6 is old enough for anyone's purposes who wants
-to use this library. If you want it to work on older systems, compile it
-against them.)
+- `ENT_DEV_URANDOM`
+- `ENT_GETENTROPY_UNISTD`
+- `ENT_GETENTROPY_SYSRANDOM`
+- `ENT_GETRANDOM`
+
+For example:
+
+```bash
+export IMPL=ENT_GETENTROPY_SYSRANDOM
+make
+make test
+```
+
+
+### Installing
+
+To install, you'll need to set `PREFIX` to where you want this to be
+installed.
+
+```bash
+export PREFIX=/usr/local
+export IMPL=ENT_GETENTROPY_SYSRANDOM
+make install
+```
+
 
 ### Why?
 
@@ -37,6 +52,7 @@ s/ent\_//g on all the call sites and discard this shim.
 
 This project began because [Urbit](https://github.com/urbit/urbit)'s
 entropy-generation function was bothering me. Then it got out of hand.
+
 
 ### References
 
