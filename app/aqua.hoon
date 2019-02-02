@@ -1,11 +1,11 @@
 ::  usage:
 ::  /-  pill
 ::  =p .^(pill:pill %cx %/urbit/pill)
-::  |start %here
-::  :here &pill p
-::  :here %init
-::  :here [%dojo "+ls %"]
-::  :here [%dojo "our"]
+::  |start %aqua
+::  :aqua &pill p
+::  :aqua %init
+::  :aqua [%dojo "+ls %"]
+::  :aqua [%dojo "our"]
 ::
 ::  TODO:
 ::  - proper ames routing
@@ -15,17 +15,16 @@
 ::  - %init should cancel outstanding timers
 ::  - allow pausing timer
 ::  - all commands should allow multiple ships
+::  - shared command line across ships would be cool
+::
+::  We get ++unix-event and ++pill from /-pill
+::
 /-  pill
 =,  pill
 =>  $~  |%
     ++  move  (pair bone card)
     ++  card
-      $%  [%turf wire ~]
-          [%vein wire]
-          [%look wire src=(each ship purl:eyre)]
-          [%wind wire p=@ud]
-          [%snap wire snap=snapshot:jael kick=?]
-          [%wait wire p=@da]
+      $%  [%wait wire p=@da]
           [%rest wire p=@da]
       ==
     ++  unix-effect
@@ -35,7 +34,8 @@
           [%doze p=(unit @da)]
       ==
     ++  state
-      $:  pil=pill
+      $:  %0
+          pil=pill
           assembled=*
           fleet-snaps=(map term (map ship pier))
           piers=(map ship pier)
@@ -52,6 +52,9 @@
 |_  $:  hid/bowl
         state
     ==
+::
+::  Represents a single ship's state.
+::
 ++  pe
   |=  who=ship
   =+  (fall (~(get by piers) who) *pier)
@@ -64,6 +67,7 @@
     [(flop moves) this]
   ::
   ++  apex
+    =.  pier-data  *pier
     =.  snap  assembled
     ~&  r=(met 3 (jam snap))
     ..abet
@@ -78,6 +82,8 @@
     |=  ms=(list move)
     =.  moves  (weld ms moves)
     ..abet
+  ::
+  ::  Process the events in our queue.
   ::
   ++  plow
     |-  ^+  ..abet
@@ -95,9 +101,15 @@
     =.  ..abet  (handle-effects ((list ovum) -.res))
     $
   ::
+  ++  mox  |=(* (mock [snap +<] scry))
+  ::
+  ::  Start/stop processing events.  When stopped, events are added to
+  ::  our queue but not processed.
+  ::
   ++  start-processing-events  .(processing-events &)
   ++  stop-processing-events  .(processing-events |)
-  ++  mox  |=(* (mock [snap +<] scry))
+  ::
+  ::  Handle all the effects produced by a single event.
   ::
   ++  handle-effects
     |=  effects=(list ovum)
@@ -110,27 +122,46 @@
         ~&  [%unknown-effect i.effects]
         ..abet
       ?-    -.q.u.sof
-          %blit
-        =/  last-line
-          %+  roll  p.q.u.sof
-          |=  [b=blit:dill line=tape]
-          ?-    -.b
-              %lin  (tape p.b)
-              %mor  ~&  line  ""
-              %hop  line
-              %bel  line
-              %clr  ""
-              %sag  ~&  [%save-jamfile-to p.b]  line
-              %sav  ~&  [%save-file-to p.b]  line
-              %url  ~&  [%activate-url p.b]  line
-          ==
-        ~&  last-line
-        ..abet
-      ::
+          %blit  (handle-blit u.sof)
           %send  (handle-send u.sof)
           %doze  (handle-doze u.sof)
       ==
     $(effects t.effects)
+  ::
+  ::  Would love to see a proper stateful terminal handler.  Ideally,
+  ::  you'd be able to ^X into the virtual ship, like the old ^W.
+  ::
+  ::  However, that's porbably not the primary way of interacting with
+  ::  it.  In practice, most of the time you'll be running from a file
+  ::  (eg for automated testing) or fanning the same command to multiple
+  ::  ships or otherwise making use of the fact that we can
+  ::  programmatically send events.
+  ::
+  ++  handle-blit
+    |=  [way=wire %blit blits=(list blit:dill)]
+    ^+  ..abet
+    =/  last-line
+      %+  roll  blits
+      |=  [b=blit:dill line=tape]
+      ?-    -.b
+          %lin  (tape p.b)
+          %mor  ~&  "{<who>}: {line}"  ""
+          %hop  line
+          %bel  line
+          %clr  ""
+          %sag  ~&  [%save-jamfile-to p.b]  line
+          %sav  ~&  [%save-file-to p.b]  line
+          %url  ~&  [%activate-url p.b]  line
+      ==
+    ~&  last-line
+    ..abet
+  ::
+  ::  This needs a better SDN solution.  Every ship should have an IP
+  ::  address, and we should eventually test changing those IP
+  ::  addresses.
+  ::
+  ::  For now, we broadcast every packet to every ship and rely on them
+  ::  to drop them.
   ::
   ++  handle-send
     |=  [way=wire %send lan=lane:ames pac=@]
@@ -145,15 +176,23 @@
     ?~  dest-ip
       ~&  [%sending-no-destination who lan]
       ..abet
-    ?.  &(=(0 (rsh u.dest-ip 0 16)) =(1 (rsh u.dest-ip 0 8)))
+    ?.  &(=(0 (rsh 0 16 u.dest-ip)) =(1 (rsh 0 8 u.dest-ip)))
       ~&  [%havent-implemented-direct-lanes who lan]
       ..abet
-    =/  her=ship  (dis u.dest-ip 0xff)
-    =/  hear  [//newt/0v1n.2m9vh %hear lan pac]~
-    ~&  [%sending who=who her=her]
-    =^  ms  this
-      abet:(push-events:(pe her) hear)
-    (emit-moves ms)
+    ~&  [%blast-sending who=who]
+    =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
+    =.  this  (blast-event hear)
+    ::  =/  her  ?:(=(~dev who) ~bud ~dev) ::ship  (dis u.dest-ip 0xff)
+    ::  ?.  (~(has by piers) her)
+    ::    ~&  [%dropping who=who her=her]
+    ::    ..abet
+    ::  ~&  [%sending who=who her=her ip=`@ux`u.dest-ip]
+    ::  =^  ms  this
+    ::    abet:(push-events:(pe her) ~[hear])
+    ..abet
+  ::
+  ::  Would love to be able to control time more precisely, jumping
+  ::  forward and whatnot.
   ::
   ++  handle-doze
     |=  [way=wire %doze tim=(unit @da)]
@@ -177,7 +216,11 @@
     ~&  [%cancelling-timer who]
     (emit-moves [ost.hid %rest /(scot %p who) (need next-timer)]~)
   --
+::
 ++  this  .
+::
+::  Run all events on all ships until all queues are empty
+::
 ++  plow-all
   |-  ^-  (quip move _this)
   =/  who
@@ -188,7 +231,6 @@
     ?:  &(?=(^ next-events.q.i.pers) processing-events.q.i.pers)
       ~&  [%new-events p.i.pers]
       `p.i.pers
-    ~&  [%no-new-events p.i.pers]
     $(pers t.pers)
   ~&  plowing=who
   ?~  who
@@ -196,6 +238,9 @@
   =^  moves  this  abet:plow:(pe u.who)
   =/  nex  $
   nex(- (weld -.nex moves))
+::
+::  Load a pill and assemble arvo.  Doesn't send any of the initial
+::  events.
 ::
 ++  poke-pill
   |=  p=pill
@@ -220,52 +265,46 @@
     `this
   ==
 ::
+::  Handle commands
+::
+::    Should put some thought into arg structure, maybe make a mark.
+::
 ++  poke-noun
   |=  val=*
   ^-  (quip move _this)
+  ::  Could potentially factor out the three lines of turn-ships
+  ::  boilerplate
+  ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%init whos=*]
-    =/  whos  ((list ship) whos.val)
-    |-  ^-  (quip move _this)
-    ?~  whos
-      `this
-    ?~  userspace-ova.pil
-      ~&  %no-userspace
-      `this
-    =+  who=i.whos
+    %+  turn-ships  ((list ship) whos.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
     ~&  [%initting who]
-    =>  .(this ^+(this this))
-    =^  moves  this
-      =<  abet:plow
-      %-  push-events:apex:(pe who)
-      ^-  (list unix-event)
-      :~
-          `unix-event`[/ %wack 0]  ::  eny
-          `unix-event`[/ %whom who]  ::  eny
-          `unix-event`[//newt/0v1n.2m9vh %barn ~]
-          `unix-event`[//behn/0v1n.2m9vh %born ~]
-          `unix-event`[//term/1 %boot %fake who]
-          `unix-event`-.userspace-ova.pil
-          `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
-          `unix-event`[//term/1 %belt %ctl `@c`%x]
-      ==
-    =^  moves-all  this  plow-all
-    =/  nex  $(whos t.whos)
-    nex(- (weld -.nex (weld moves moves-all)))
+    %-  push-events:apex:(pe who)
+    ^-  (list unix-event)
+    :~  `unix-event`[/ %wack 0]  ::  eny
+        `unix-event`[/ %whom who]  ::  eny
+        `unix-event`[//newt/0v1n.2m9vh %barn ~]
+        `unix-event`[//behn/0v1n.2m9vh %born ~]
+        `unix-event`[//term/1 %boot %fake who]
+        `unix-event`-.userspace-ova.pil
+        `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
+        `unix-event`[//term/1 %belt %ctl `@c`%x]
+    ==
   ::
-      [%dojo who=@p p=*]
-    =^  moves  this
-      =<  abet:plow
-      %-  push-events:(pe who.val)
-      ^-  (list unix-event)
-      :~  
-          [//term/1 %belt %ctl `@c`%e]
-          [//term/1 %belt %ctl `@c`%u]
-          [//term/1 %belt %txt ((list @c) (tape p.val))]
-          [//term/1 %belt %ret ~]
-      ==
-    =^  moves-all  this  plow-all
-    [(weld moves moves-all) this]
+      [%dojo whos=* command=*]
+    %+  turn-ships  ((list ship) whos.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    %-  push-events:(pe who)
+    ^-  (list unix-event)
+    :~  
+        [//term/1 %belt %ctl `@c`%e]
+        [//term/1 %belt %ctl `@c`%u]
+        [//term/1 %belt %txt ((list @c) (tape command.val))]
+        [//term/1 %belt %ret ~]
+    ==
   ::
       [%snap-fleet lab=@tas]
     =.  fleet-snaps  (~(put by fleet-snaps) lab.val piers)
@@ -276,6 +315,7 @@
     `this
   ::
       [%peek who=@p p=*]
+    ::  should resurrect
     ::  =+  res=(mox +46.snap)
     ::  ?>  ?=(%0 -.res)
     ::  =+  peek=p.res
@@ -283,37 +323,69 @@
     `this
   ::
       [%wish who=@p p=@t]
+    ::  should resurrect
     ::  =+  res=(mox +22.snap)
     ::  ?>  ?=(%0 -.res)
     ::  =+  wish=p.res
     ::  ~&  (slum wish p.val)
     `this
   ::
-      %clear-next
-    ::  =.  next-events  ~
-    `this
-  ::
       [%unpause-events hers=*]
-    %+  execute-turn  ((list ship) hers.val)
-    |=  who=ship
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
     start-processing-events:(pe who)
   ::
       [%pause-events hers=*]
-    %+  execute-turn  ((list ship) hers.val)
-    |=  who=ship
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
     stop-processing-events:(pe who)
   ==
 ::
-++  execute-turn
-  |=  [hers=(list ship) fun=$-([ship] _(pe))]
+::  Run a callback function against a list of ships, aggregating state
+::  and plowing all ships at the end.
+::
+::    I think we should use patterns like this more often.  Because we
+::    don't, here's some points to be aware.
+::
+::    `fun` must take `this` as a parameter, since it needs to be
+::    downstream of previous state changes.  You could use `state` as
+::    the state variable, but it muddles the code and it's not clear
+::    whether it's better.  You could use the `_(pe)` core if you're
+::    sure you'll never need to refer to anything outside of your pier,
+::    but I don't think we can guarantee that.
+::
+::    The callback function must start with `=.  this  thus`, or else
+::    you don't get the new state.  Would be great if you could hot-swap
+::    that context in here, but we don't know where to put it unless we
+::    restrict the callbacks to always have `this` at a particular axis,
+::    and that doesn't feel right
+::
+++  turn-ships
+  |=  [hers=(list ship) fun=$-([ship _this] _(pe))]
   |-  ^-  (quip move _this)
   ?~  hers
     =^  moves  this  plow-all
     [moves this]
   =^  moves  this
-    abet:plow:(fun i.hers)
-  =/  nex  $(hers t.hers)
-  nex(- (weld moves -.nex))
+    abet:plow:(fun i.hers this)
+  =^  nex-moves  this  $(hers t.hers, this this)
+  [(weld moves nex-moves) this]
+::
+::  Send the same event to all ships
+::
+++  blast-event
+  |=  ovo=unix-event
+  =/  pers  ~(tap by piers)
+  |-  ^+  this
+  ?~  pers
+    this
+  =^  moves-dropped  this
+    abet:(push-events:(pe p.i.pers) ~[ovo])
+  $(pers t.pers)
+::
+::  Received timer wake
 ::
 ++  wake
   |=  [way=wire ~]
@@ -330,7 +402,11 @@
   =^  moves-all  this  plow-all
   [(weld moves moves-all) this]
 ::
+::  Trivial scry for mock
+::
 ++  scry  |=([* *] ~)
+::
+::  Throw away old state if it doesn't soft to new state.
 ::
 ++  prep
   |=  old/(unit noun)
