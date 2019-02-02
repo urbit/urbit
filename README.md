@@ -8,34 +8,12 @@ kernel 3.17) on Linux, or `/dev/urandom` on other \*nix.
 
 ### Building and Testing
 
-To build, set the `IMPL` variable to one of the folling values, and run
-`make`.
-
-- `ENT_DEV_URANDOM`
-- `ENT_GETENTROPY_UNISTD`
-- `ENT_GETENTROPY_SYSRANDOM`
-- `ENT_GETRANDOM`
-
-For example:
-
 ```bash
-export IMPL=ENT_GETENTROPY_SYSRANDOM
+./configure
 make
 make test
+PREFIX=/usr/local make install
 ```
-
-
-### Installing
-
-To install, you'll need to set `PREFIX` to where you want this to be
-installed.
-
-```bash
-export PREFIX=/usr/local
-export IMPL=ENT_GETENTROPY_SYSRANDOM
-make install
-```
-
 
 ### Why?
 
