@@ -124,8 +124,12 @@ rec {
     inherit crossenv;
   };
 
-  fixesproto = import ./pkgs/fixesproto {
+  fixesproto = import ./pkgs/fixesproto {  # TODO: remove
     inherit crossenv xorg-macros xextproto;
+  };
+
+  xorgproto = import ./pkgs/xorgproto {
+    inherit crossenv xorg-macros;
   };
 
   libx11 = import ./pkgs/libx11 {

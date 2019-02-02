@@ -13,6 +13,7 @@ omni.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
 omni.fixesproto
+omni.xorgproto
 {$windows}.gdb
 {$all}.hello
 {$all}.hello_cpp
