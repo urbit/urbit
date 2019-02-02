@@ -4,6 +4,10 @@ tar -xf $src
 mv pkgconf-* pkgconf
 
 cd pkgconf
+for patch in $patches; do
+  echo applying patch $patch
+  patch -p1 -i $patch
+done
 ./autogen.sh
 cd ..
 

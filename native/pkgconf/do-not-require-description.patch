@@ -1,0 +1,10 @@
+--- a/libpkgconf/pkg.c
++++ b/libpkgconf/pkg.c
+@@ -284,7 +284,6 @@ typedef struct {
+ 
+ static const pkgconf_pkg_validity_check_t pkgconf_pkg_validations[] = {
+ 	{"Name", offsetof(pkgconf_pkg_t, realname)},
+-	{"Description", offsetof(pkgconf_pkg_t, description)},
+ 	{"Version", offsetof(pkgconf_pkg_t, version)},
+ };
+ 
