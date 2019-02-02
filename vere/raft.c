@@ -2052,6 +2052,11 @@ _raft_pump(u3_noun ovo)
 void
 u3_raft_chip(void)
 {
+  if ( (u3C.wag_w & u3o_trace) && (u3_Host.tra_u.con_w >= 100000) ) {
+    u3t_trace_close();
+    u3t_trace_open();
+  }
+
   u3_weak rus = _raft_poke();
 
   _raft_crop();

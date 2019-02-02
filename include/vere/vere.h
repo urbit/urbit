@@ -565,6 +565,14 @@
         c3_o             vog;               //  did they vote for us?
       } u3_rnam;
 
+    /* u3_trac: tracing information.
+    */
+      typedef struct _u3_trac {
+        c3_w   nid_w;                       //  nock pid
+        FILE*  fil_u;                       //  trace file (json)
+        c3_w   con_w;                       //  trace counter
+      } u3_trac;
+
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
@@ -625,7 +633,7 @@
         c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
-        FILE*      trace_file_u;            //  trace file to write to
+        u3_trac    tra_u;                   //  tracing information
       } u3_host;                            //  host == computer == process
 
 #     define u3L  u3_Host.lup_u             //  global event loop
