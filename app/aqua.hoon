@@ -1,21 +1,16 @@
 ::  usage:
-::  /-  pill
-::  =p .^(pill:pill %cx %/urbit/pill)
 ::  |start %aqua
-::  :aqua &pill p
-::  :aqua %init
-::  :aqua [%dojo "+ls %"]
-::  :aqua [%dojo "our"]
+::  /-  pill
+::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
+::  :aqua [%init ~[~bud ~dev]]
+::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
+::  :aqua [%dojo ~[~bud] "|hi ~dev"]
+::  :aqua [%pause-events ~[~bud ~dev]]
 ::
 ::  TODO:
-::  - proper ames routing
-::  - save pier point by label
-::  - allow cancelling timer
 ::  - snapshot should keep track of outstanding timers
 ::  - %init should cancel outstanding timers
-::  - allow pausing timer
-::  - all commands should allow multiple ships
-::  - shared command line across ships would be cool
+::
 ::
 ::  We get ++unix-event and ++pill from /-pill
 ::
