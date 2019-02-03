@@ -1,8 +1,9 @@
 source $setup
 
 tar -xf $src
+mv expat-* expat
 
-cd expat-$version
+cd expat
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
@@ -12,7 +13,7 @@ cd ..
 mkdir build
 cd build
 
-../expat-$version/configure \
+../expat/configure \
   --prefix=$out --host=$host \
   --enable-static --disable-shared
 
@@ -20,7 +21,5 @@ make
 
 make install
 
-mv $out/bin/xmlwf $out/bin/xmlwf.exe
-
 mkdir $out/license
-cp ../expat-$version/COPYING $out/license/LICENSE
+cp ../expat/COPYING $out/license/LICENSE

@@ -10,7 +10,7 @@ let
   src = nixpkgs.fetchgit {
     url = "git://repo.or.cz/openocd";  # official mirror
     rev = "b2d259f67cc3ee4b689e704228d97943bae94064";
-    sha256 = "05pjrcss7m2l9hqcx8iim66qmvb4n4y1ibj9rfm11d59zxm38dyy";
+    sha256 = "05is3xr8wf3xhsyb263z35xhkdj3dfq5nk32wma0cp5c1wcpnzy8";
     deepClone = true;
   };
 
