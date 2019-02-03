@@ -1763,6 +1763,8 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 void
 u3m_reclaim(void)
 {
+  c3_w mem_w, han_w, byc_w;
+
   //  clear the u3v_wish cache
   //
   u3z(u3A->yot);
@@ -1770,6 +1772,7 @@ u3m_reclaim(void)
 
   //  clear the memoization cache
   //
+  mem_w = u3h_wyt(u3R->cax.har_p);
   u3h_free(u3R->cax.har_p);
   u3R->cax.har_p = u3h_new();
 
@@ -1786,6 +1789,7 @@ u3m_reclaim(void)
 
   //  clear the jet hank cache
   //
+  han_w = u3h_wyt(u3R->jed.han_p);
   u3h_walk(u3R->jed.han_p, u3j_free_hank);
   u3h_free(u3R->jed.han_p);
   u3R->jed.han_p = u3h_new();
@@ -1795,6 +1799,11 @@ u3m_reclaim(void)
   //    We can't just u3h_free() -- the value is a post to a u3n_prog.
   //    Note that this requires that the hank cache also be freed.
   //
+  byc_w = u3h_wyt(u3R->byc.har_p);
   u3n_free();
   u3R->byc.har_p = u3h_new();
+
+#if 1
+  fprintf(stderr, "reclaimed: m=%u h=%u b=%u\r\n", mem_w, han_w, byc_w);
+#endif
 }

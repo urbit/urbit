@@ -153,3 +153,8 @@
       */
         void
         u3h_walk(u3p(u3h_root) har_p, void (*fun_f)(u3_noun));
+
+      /* u3h_wyt(): return number of entries
+      */
+        c3_w
+        u3h_wyt(u3p(u3h_root) har_p);

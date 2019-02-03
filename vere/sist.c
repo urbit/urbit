@@ -1076,7 +1076,7 @@ _sist_rest()
       }
       else {
         _sist_sing(u3k(ovo));
-        fputc('.', stderr);
+        // fputc('.', stderr);
       }
 
       // fprintf(stderr, "playback: sing: %d\n", xno_w));
