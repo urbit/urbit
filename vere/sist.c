@@ -1090,6 +1090,10 @@ _sist_rest()
 
       u3z(ven);
       cur_d += c3_wiseof(len_w) + len_w + c3_wiseof(lar_u);
+
+      if ( 0 == (xno_w % 1000) ) {
+        u3m_reclaim();
+      }
     }
     fputc('\r', stderr);
     fputc('\n', stderr);
