@@ -349,10 +349,13 @@ def create_pc_file(name)
     end
   end
 
+  pkg_name = Pathname(name).sub_ext('').to_s
+
   r = ""
   r << "prefix=#{OutDir}\n"
   r << "libdir=${prefix}/lib\n"
   r << "includedir=${prefix}/include\n"
+  r << "Name: #{pkg_name}\n"
   r << "Version: #{QtVersionString}\n"
   if !libdirs.empty? || !ldflags.empty?
     r << "Libs: #{libdirs.reverse.uniq.join(' ')} #{ldflags.reverse.join(' ')}\n"
@@ -364,8 +367,8 @@ def create_pc_file(name)
     r << "Requires: #{requires.sort.join(' ')}\n"
   end
 
-  path = OutPcDir + Pathname(name).sub_ext(".pc")
-  File.open(path.to_s, 'w') do |f|
+  path = OutPcDir + (pkg_name + ".pc")
+  File.open(path, 'w') do |f|
     f.write r
   end
 end
