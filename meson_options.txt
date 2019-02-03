@@ -1,6 +1,0 @@
-option('gc', type : 'boolean', value : false,
-  description : 'Add debugging information to heap. Run with -g. Breaks image.')
-option('prof', type : 'boolean', value : false,
-  description : 'Activate profiling. Run with -P.')
-option('event-time', type : 'boolean', value : false,
-  description : 'Print timing information per event.')

@@ -1,32 +1,31 @@
-pkgname ?= urbit
-workdir ?= ../../../work
-outdir  ?= ../../../out
+jets     = $(wildcard jets/*/*.c)
+jets_all = jets/tree.c $(jets)
 
-b    := ${workdir}/${pkgname}
-hack := $(shell mkdir -p $b)
+noun     = $(wildcard noun/*.c)
 
-mesonFlags     ?= "-Dgc=false -Dprof=false -Deventtime=false"
-mesonBuildType ?= release
+vere     = $(wildcard vere/*.c)
+
+sources  = $(jets_all) $(noun) $(vere)
+
+headers  = $(shell find include -type f)
+
+objs     = $(shell echo $(sources) | sed 's/\.c/.o/g')
+
+CFLAGS ?= '-O3'
 
 ################################################################################
 
-.PHONY: all install test clean
-
-all: $b/urbit
-
-install: all
-	mkdir -p ${outdir}/bin
-	cp "$b/urbit" ${outdir}/bin
-
-test:
-	meson . "$b" --buildtype=${mesonBuildType} ${mesonFlags}
-	ninja -C "$b" test
+all: urbit
 
 clean:
-	rm -rf "$b"
+	rm -f $(objs) ./urbit
 
 ################################################################################
 
-$b/urbit:
-	meson . "$b" --buildtype=${mesonBuildType} ${mesonFlags}
-	ninja -C "$b" urbit
+urbit: $(objs)
+	@echo CC $^ -o urbit
+	@$(CC) $^ $(LDFLAGS) -o urbit
+
+%.o: %.c $(headers)
+	@echo CC -c $< -o $@
+	@$(CC) -I./include $(CFLAGS) -c $< -o $@

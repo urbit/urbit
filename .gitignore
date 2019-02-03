@@ -30,3 +30,4 @@ node_modules/
 cscope.*
 build/
 TAGS
+/include/config.h
