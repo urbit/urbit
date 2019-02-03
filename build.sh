@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -ex
-
 jets_a_src=" \
   jets/a/add.c \
   jets/a/dec.c \
@@ -280,15 +278,21 @@ rm -f include/config.h && touch include/config.h
 ## #define U3_CPU_DEBUG=0
 ## #define U3_EVENT_TIME_DEBUG=0
 
-LDFLAGS="$LDFLAGS -lcurl -lcrypto -lssl -lgmp -lsigsegv"
+LDFLAGS="$LDFLAGS -lcurl -lgmp -lsigsegv"
 LDFLAGS="$LDFLAGS -largon2 -led25519 -lent -lh2o -lscrypt -lsni -luv -lmurmur3"
-LDFLAGS="$LDFLAGS -lsecp256k1 -lsoftfloat3"
+LDFLAGS="$LDFLAGS -lsecp256k1 -lsoftfloat3 -lncurses -lssl -lcrypto -lz"
+
+echo "CFLAGS='$CFLAGS'"
+
+echo "LDFLAGS='$LDFLAGS'"
 
 for src in $sources
 do obj=$(sed 's/\.c/.o/g' <<<"$src")
+   echo CC -c $src -o $obj
    $CC -I./include $CFLAGS -c $src -o $obj
 done
 
 objs=$(sed 's/\.c/.o/g' <<<"$sources")
 
-$CC $LDFLAGS $objs -o urbit
+echo CC $objs -o urbit
+$CC $objs $LDFLAGS -o urbit
