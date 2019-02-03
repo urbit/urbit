@@ -707,10 +707,10 @@ _n_prog_dat(u3n_prog* pog_u)
   return ((void*) pog_u) + sizeof(u3n_prog);
 }
 
-/* _n_prog_new(): allocate and set up pointers for u3n_prog
+/* u3n_prog_new(): allocate and set up pointers for u3n_prog
  */
-static u3n_prog*
-_n_prog_new(c3_w byc_w, c3_w cal_w,
+u3n_prog*
+u3n_prog_new(c3_w byc_w, c3_w cal_w,
             c3_w reg_w, c3_w lit_w, c3_w mem_w)
 {
   c3_w cab_w = (sizeof(u3j_site) * cal_w),
@@ -739,7 +739,7 @@ _n_prog_new(c3_w byc_w, c3_w cal_w,
   return pog_u;
 }
 
-/* _n_prog_old(): as _n_prog_new(),
+/* _n_prog_old(): as u3n_prog_new(),
  *                but leech off senior program's data segment
  */
 static u3n_prog*
@@ -953,7 +953,7 @@ _n_prog_from_ops(u3_noun ops)
        mem_w = 0;
 
   sip   = _n_melt(ops, &byc_w, &cal_w, &reg_w, &lit_w, &mem_w);
-  pog_u = _n_prog_new(byc_w, cal_w, reg_w, lit_w, mem_w);
+  pog_u = u3n_prog_new(byc_w, cal_w, reg_w, lit_w, mem_w);
   _n_prog_asm(ops, pog_u, sip);
   return pog_u;
 }
@@ -2412,7 +2412,7 @@ _n_prog_take(u3n_prog* pog_u)
   u3n_prog* gop_u;
 
   if ( c3y == pog_u->byc_u.own_o ) {
-    gop_u = _n_prog_new(pog_u->byc_u.len_w,
+    gop_u = u3n_prog_new(pog_u->byc_u.len_w,
         pog_u->cal_u.len_w, pog_u->reg_u.len_w,
         pog_u->lit_u.len_w, pog_u->mem_u.len_w);
     memcpy(gop_u->byc_u.ops_y, pog_u->byc_u.ops_y, pog_u->byc_u.len_w);
@@ -2426,10 +2426,10 @@ _n_prog_take(u3n_prog* pog_u)
 }
 
 
-/* _n_prog_free(): free memory retained by program
+/* u3n_prog_free(): free memory retained by program
 */
-static void
-_n_prog_free(u3n_prog* pog_u)
+void
+u3n_prog_free(u3n_prog* pog_u)
 {
   c3_w i_w;
 
@@ -2572,7 +2572,7 @@ u3n_mark(FILE* fil_u)
 static void
 _n_feb(u3_noun kev)
 {
-  _n_prog_free(u3to(u3n_prog, u3t(kev)));
+  u3n_prog_free(u3to(u3n_prog, u3t(kev)));
 }
 
 /* u3n_free(): free bytecode cache

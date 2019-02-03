@@ -112,6 +112,17 @@
       c3_w
       u3n_mark(FILE* fil_u);
 
+    /* u3n_prog_new(): allocate and set up pointers for u3n_prog
+     */
+    u3n_prog*
+    u3n_prog_new(c3_w byc_w, c3_w cal_w,
+                c3_w reg_w, c3_w lit_w, c3_w mem_w);
+
+    /* u3n_prog_free(): free memory retained by program
+    */
+    void
+    u3n_prog_free(u3n_prog* pog_u);
+
     /* u3n_free(): free bytecode cache.
      */
       void

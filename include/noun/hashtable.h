@@ -49,6 +49,7 @@
             c3_o  buc_o;      // yes if in middle of hash bucket
           } arm_u;            // clock arm
           u3h_slot sot_w[64]; // slots
+          void (*freer)(c3_w);// optional function pointer to free values
         } u3h_root;
 
       /* u3h_buck: bottom bucket.

@@ -5,6 +5,7 @@ static void _test_cache_replace_value(void);
 static void _test_cache_trimming(void);
 static void _test_no_cache(void);
 static void _test_skip_slot(void);
+static void _test_cache_freer_trimming(void);
 
 /* main(): run all test cases.
 */
@@ -17,6 +18,7 @@ main(int argc, char* argv[])
   _test_skip_slot();
   _test_cache_trimming();
   _test_cache_replace_value();
+  _test_cache_freer_trimming();
 
   return 0;
 }
@@ -106,6 +108,38 @@ _test_cache_trimming(void)
   }
   if ( ( max_w / 10 ) != har_u->use_w ) {
     fprintf(stderr, "fail\r\n");
+    exit(1);
+  }
+  fprintf(stderr, "test_cache_trimming: ok\n");
+}
+
+static void
+_helper_test_freer(c3_w pog_p)
+{
+  u3n_prog* pog_u = u3to(u3n_prog, pog_p);
+  u3n_prog_free(pog_u);
+}
+
+/* _test_cache_freer_trimming(): ensure a caching hashtable removes stale items.
+*/
+static void
+_test_cache_freer_trimming(void)
+{
+  c3_w max_w = 620;
+  c3_w i_w;
+
+  u3p(u3h_root) har_p = u3h_new_cache_with_freer(max_w / 10, _helper_test_freer);
+  u3h_root*     har_u = u3to(u3h_root, har_p);
+
+  for ( i_w = 0; i_w < max_w; i_w++ ) {
+    u3n_prog* pog_u = u3n_prog_new(0, 0, 0, 0, 0);
+    u3h_put(har_p, i_w, u3of(u3n_prog, pog_u));
+  }
+
+  u3h_get(har_p, max_w - 1);
+
+  if ( ( max_w / 10 ) != har_u->use_w ) {
+    fprintf(stderr, "freer fail 2\r\n");
     exit(1);
   }
   fprintf(stderr, "test_cache_trimming: ok\n");

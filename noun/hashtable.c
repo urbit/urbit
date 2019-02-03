@@ -12,10 +12,10 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w);
 c3_w
 _ch_skip_slot(c3_w mug_w, c3_w lef_w);
 
-/* u3h_new_cache(): create hashtable with bounded size.
+/* u3h_new_cache_with_freer(): create hashtable with bounded size and a freer
 */
 u3p(u3h_root)
-u3h_new_cache(c3_w max_w)
+u3h_new_cache_with_freer(c3_w max_w, void (*freer)(c3_w))
 {
   u3h_root*     har_u = u3a_walloc(c3_wiseof(u3h_root));
   u3p(u3h_root) har_p = u3of(u3h_root, har_u);
@@ -30,7 +30,16 @@ u3h_new_cache(c3_w max_w)
   for ( i_w = 0; i_w < 64; i_w++ ) {
     har_u->sot_w[i_w] = 0;
   }
+  har_u->freer = freer;
   return har_p;
+}
+
+/* u3h_new_cache(): create hashtable with bounded size.
+*/
+u3p(u3h_root)
+u3h_new_cache(c3_w max_w)
+{
+  return u3h_new_cache_with_freer(max_w, 0);
 }
 
 /* u3h_new(): create hashtable.
@@ -353,7 +362,13 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
     u3_noun kev = u3h_slot_to_noun(*sot_w);
     *sot_w = 0;
     // uL(fprintf(uH, "trim: freeing %x, use count %d\r\n", kev, u3a_use(kev)));
-    u3z(kev);
+    if ( 0 != har_u->freer ) {
+      u3z(u3h(kev));
+      har_u->freer(u3t(kev));
+    }
+    else {
+      u3z(kev);
+    }
 
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3y;
