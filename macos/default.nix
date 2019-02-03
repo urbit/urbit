@@ -65,10 +65,15 @@ let
   # But those versions require LLVM and clang 5.0.0, so now we are using
   # tinytapi instead.
   tapi = native.make_derivation rec {
-    name = "tinytapi";
-    # tmphax until tinytapi is published on GitHub
-    src_dir = ../../tinytapi/src;
-    include_dir = ../../tinytapi/include;
+    name = "tinytapi-${version}";
+
+    version = "1.0.0";
+
+    src = nixpkgs.fetchurl {
+      url = "https://github.com/DavidEGrayson/tinytapi/archive/${version}.tar.gz";
+      sha256 = "1hipsnpnlmrg63q7c7mx07dgc7sn86agf3jh1gys1rri0cdn1w1b";
+    };
+
     builder = ./tinytapi_builder.sh;
     libyaml = nixpkgs.libyaml;
     native_inputs = [ libyaml ];
