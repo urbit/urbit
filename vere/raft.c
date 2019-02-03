@@ -2074,6 +2074,10 @@ u3_raft_chip(void)
 
     u3z(rus);
   }
+
+  if ( 0 == (u3A->ent_d % 1000ULL) ) {
+    u3m_reclaim();
+  }
 }
 
 /* u3_raft_play(): synchronously process events.
