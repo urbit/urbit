@@ -234,7 +234,9 @@ _sist_suck(u3_noun ovo, u3_noun gon)
 static void
 _sist_sing(u3_noun ovo)
 {
+  u3t_event_trace("Running", 'b');
   u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
+  u3t_event_trace("Running", 'e');
 
   {
     u3_noun hed, tal;
