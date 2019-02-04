@@ -150,13 +150,17 @@ rec {
     inherit libx11 libxext libxfixes;
   };
 
+  libxkbcommon = import ./pkgs/libxkbcommon {
+     inherit crossenv libxcb;
+  };
+
   libxall = import ./pkgs/libxall {
     inherit crossenv;
     libs = [
       xcb-proto xorg-macros xproto libxau libxcb
       xcb-util xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm
       xtrans xextproto inputproto kbproto fixesproto
-      libx11 libxext libxfixes libxi
+      libx11 libxext libxfixes libxi libxkbcommon
     ];
   };
 

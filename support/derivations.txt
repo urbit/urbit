@@ -29,6 +29,7 @@ omni.kbproto
 {$linux}.libxext
 {$linux}.libxfixes
 {$linux}.libxi
+{$all}.libxkbcommon
 {$all}.openocd
 {$all}.pavr2
 {$windows}.pdcurses{,.examples}
