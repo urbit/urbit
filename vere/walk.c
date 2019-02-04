@@ -6,9 +6,9 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <uv.h>
-#include <curses.h>
+#include <ncurses/curses.h>
 #include <termios.h>
-#include <term.h>
+#include <ncurses/term.h>
 #include <errno.h>
 
 #include "all.h"

@@ -31,3 +31,4 @@ cscope.*
 build/
 TAGS
 /include/config.h
+/config.mk

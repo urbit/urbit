@@ -1,3 +1,5 @@
+include config.mk
+
 jets     = $(wildcard jets/*/*.c)
 jets_all = jets/tree.c $(jets)
 
@@ -11,8 +13,6 @@ headers  = $(shell find include -type f)
 
 objs     = $(shell echo $(sources) | sed 's/\.c/.o/g')
 
-CFLAGS ?= '-O3'
-
 ################################################################################
 
 all: urbit
@@ -23,9 +23,9 @@ clean:
 ################################################################################
 
 urbit: $(objs)
-	@echo CC $^ -o urbit
+	@echo CC -o urbit
 	@$(CC) $^ $(LDFLAGS) -o urbit
 
 %.o: %.c $(headers)
-	@echo CC -c $< -o $@
+	@echo CC $<
 	@$(CC) -I./include $(CFLAGS) -c $< -o $@

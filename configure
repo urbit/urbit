@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -e
+
+URBIT_VERSION=0.7.0
+
+deps="                                                                    \
+  curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
+  softfloat3 ncurses ssl crypto z                                         \
+"
+
+echo '#pragma once' >include/config.h
+
+defmacro () {
+  echo "#define $1 $2" >>include/config.h
+}
+
+defmacro URBIT_VERSION '"0.7.0"'
+
+[ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
+[ -n "$CPU_DEBUG" ]        && defmacro U3_CPU_DEBUG 1
+[ -n "$EVENT_TIME_DEBUG" ] && defmacro U3_EVENT_TIME_DEBUG 1
+
+if [ -n "${HOST-}" ]
+then os=$(sed 's$^[^-]*-\([^-]*\)-.*$\1$' <<< "$HOST")
+     cpu=$(sed 's$-.*$$' <<< ${HOST})
+else os=$(uname -s)
+     cpu=$(uname -p)
+fi
+
+echo "os=$os"
+echo "cpu=$cpu"
+
+case $(tr A-Z a-z <<< $cpu) in
+  i686)
+     defmacro U3_OS_ENDIAN_little 1
+     ;;
+  x86_64)
+     defmacro U3_OS_ENDIAN_little 1
+     ;;
+  *)
+     echo "Unknown or unsupported CPU: '$cpu'" >&2
+     exit 1
+     ;;
+esac
+
+# TODO Determine if the target cpu is little or big endian.
+case $(tr A-Z a-z <<< $os) in
+  *linux*)
+     defmacro U3_OS_linux 1
+     ;;
+  *darwin*)
+     defmacro U3_OS_osx 1
+     ;;
+  *freebsd*)
+     defmacro U3_OS_bsd 1
+     osdeps="kvm"
+     ;;
+  *openbsd*)
+     defmacro U3_OS_bsd 1
+     ;;
+  *)
+     echo "Unknown or unsupported OS: '$os'" >&2
+     exit 1
+     ;;
+esac
+
+exit 1
+
+CFLAGS="${CFLAGS-} -funsigned-char -ffast-math"
+
+for dep in ${osdeps-} $deps
+do LDFLAGS="${LDFLAGS-} -l$dep"
+   ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+done
+
+cat >config.mk <<EOF
+CFLAGS  := $CFLAGS
+LDFLAGS := $LDFLAGS
+CC      := ${CC-cc}
+EOF
+
+echo == config.mk == >&2
+cat config.mk >&2
+
+echo == include/config.h == >&2
+cat include/config.h >&2

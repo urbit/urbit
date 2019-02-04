@@ -66,7 +66,7 @@ static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 /* _n_hint(): process hint.
 */
 static u3_noun
-_n_hint(u3_noun zep, 
+_n_hint(u3_noun zep,
         u3_noun hod,
         u3_noun bus,
         u3_noun nex)
@@ -1516,7 +1516,7 @@ _n_find(u3_noun pre, u3_noun fol)
       pog   = u3h_git(rod_u->byc.har_p, key);
       if ( u3_none != pog ) {
         c3_w i_w;
-        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog)); 
+        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog));
         for ( i_w = 0; i_w < old->reg_u.len_w; ++i_w ) {
           u3j_rite* rit_u = &(old->reg_u.rit_u[i_w]);
           rit_u->own_o = c3n;
