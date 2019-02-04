@@ -7,10 +7,6 @@
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
-::  TODO:
-::  - snapshot should keep track of outstanding timers
-::  - %init should cancel outstanding timers
-::
 ::
 ::  We get ++unix-event and ++pill from /-pill
 ::
@@ -21,12 +17,14 @@
     ++  card
       $%  [%wait wire p=@da]
           [%rest wire p=@da]
+          [%hiss wire p=(unit user:eyre) q=mark r=(cask hiss:eyre)]
       ==
     ++  unix-effect
       %+  pair  wire
       $%  [%blit p=(list blit:dill)]
           [%send p=lane:ames q=@]
           [%doze p=(unit @da)]
+          [%thus p=@ud q=(unit hiss:eyre)]
       ==
     ++  state
       $:  %0
@@ -41,6 +39,7 @@
           next-events=(qeu unix-event)
           processing-events=?
           next-timer=(unit @da)
+          http-requests=(set @ud)
       ==
     --
 =,  gall
@@ -96,6 +95,39 @@
     =.  ..abet  (handle-effects ((list ovum) -.res))
     $
   ::
+  ::  Restart outstanding requests
+  ::
+  ++  restore
+    ^+  ..abet
+    ::  Restore behn
+    ::
+    =.  ..abet
+      ?~  next-timer
+        ..abet
+      (set-timer u.next-timer)
+    ::  Restore eyre
+    ::
+    =.  http-requests  ~
+    =.  ..abet  (push-events [//http/0v1n.2m9vh %born ~]~)
+    ..abet
+  ::
+  ::  Cancel outstanding requests
+  ::
+  ++  sleep
+    ^+  ..abet
+    ::  Sleep behn
+    ::
+    =.  ..abet
+      ?~  next-timer
+        ..abet
+      cancel-timer
+    ::  Sleep eyre
+    ::
+    ::    Eyre doesn't support cancelling HTTP requests from userspace.
+    ::
+    =.  http-requests  ~
+    ..abet
+  ::
   ++  mox  |=(* (mock [snap +<] scry))
   ::
   ::  Start/stop processing events.  When stopped, events are added to
@@ -114,12 +146,13 @@
     =.  ..abet
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
-        ~&  [%unknown-effect i.effects]
+        ~&  [who=who %unknown-effect i.effects]
         ..abet
       ?-    -.q.u.sof
           %blit  (handle-blit u.sof)
           %send  (handle-send u.sof)
           %doze  (handle-doze u.sof)
+          %thus  (handle-thus u.sof)
       ==
     $(effects t.effects)
   ::
@@ -210,6 +243,64 @@
   ++  cancel-timer
     ~&  [%cancelling-timer who]
     (emit-moves [ost.hid %rest /(scot %p who) (need next-timer)]~)
+  ::
+  ++  take-wake
+    |=  [way=wire ~]
+    =.  next-timer  ~
+    %-  push-events:(pe who)
+    [//behn/0v1n.2m9vh %wake ~]~
+  ::
+  ::  Handle outgoing HTTP request
+  ::
+  ++  handle-thus
+    |=  [way=wire %thus num=@ud req=(unit hiss:eyre)]
+    ^+  ..abet
+    ?~  req
+      ?.  (~(has in http-requests) num)
+        ..abet
+      ::  Eyre doesn't support cancelling HTTP requests from userspace,
+      ::  so we remove it from our state so we won't pass along the
+      ::  response.
+      ::
+      ~&  [%cant-cancel-thus who=who num=num]
+      =.  http-requests  (~(del in http-requests) num)
+      ..abet
+    =.  http-requests  (~(put in http-requests) num)
+    %-  emit-moves  :_  ~
+    :*  ost.hid
+        %hiss
+        /(scot %p who)/(scot %ud num)
+        ~
+        %httr
+        [%hiss u.req]
+    ==
+  ::
+  ::  Pass HTTP response back to virtual ship
+  ::
+  ++  take-sigh-httr
+    |=  [way=wire res=httr:eyre]
+    ^+  ..abet
+    ?>  ?=([@ ~] way)
+    =/  num  (slav %ud i.way)
+    ?.  (~(has in http-requests) num)
+      ~&  [%ignoring-httr who=who num=num]
+      ..abet
+    =.  http-requests  (~(del in http-requests) num)
+    (push-events [//http/0v1n.2m9vh %they num res]~)
+  ::
+  ::  Got error in HTTP response
+  ::
+  ++  take-sigh-tang
+    |=  [way=wire tan=tang]
+    ^+  ..abet
+    ?>  ?=([@ ~] way)
+    =/  num  (slav %ud i.way)
+    ?.  (~(has in http-requests) num)
+      ~&  [%ignoring-httr who=who num=num]
+      ..abet
+    =.  http-requests  (~(del in http-requests) num)
+    %-  (slog tan)
+    ..abet
   --
 ::
 ++  this  .
@@ -271,8 +362,8 @@
   ::  boilerplate
   ::
   ?+  val  ~|(%bad-noun-arg !!)
-      [%init whos=*]
-    %+  turn-ships  ((list ship) whos.val)
+      [%init hers=*]
+    %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
     ~&  [%initting who]
@@ -284,12 +375,13 @@
         `unix-event`[//behn/0v1n.2m9vh %born ~]
         `unix-event`[//term/1 %boot %fake who]
         `unix-event`-.userspace-ova.pil
+        `unix-event`[//http/0v1n.2m9vh %born ~]
         `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
         `unix-event`[//term/1 %belt %ctl `@c`%x]
     ==
   ::
-      [%dojo whos=* command=*]
-    %+  turn-ships  ((list ship) whos.val)
+      [%dojo hers=* command=*]
+    %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
     %-  push-events:(pe who)
@@ -301,13 +393,33 @@
         [//term/1 %belt %ret ~]
     ==
   ::
+      [%raw-event hers=* ovo=*]
+    =/  ovo  ((soft unix-event) ovo.val)
+    ?~  ovo
+      ~&  %ovo-not-an-event
+      `this
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    (push-events:(pe who) ~[u.ovo])
+  ::
       [%snap-fleet lab=@tas]
     =.  fleet-snaps  (~(put by fleet-snaps) lab.val piers)
     `this
   ::
       [%restore-fleet lab=@tas]
+    =^  moves-1  this
+      %+  turn-ships  (turn ~(tap by piers) head)
+      |=  [who=ship thus=_this]
+      =.  this  thus
+      sleep:(pe who)
     =.  piers  (~(got by fleet-snaps) lab.val)
-    `this
+    =^  moves-2  this
+      %+  turn-ships  (turn ~(tap by piers) head)
+      |=  [who=ship thus=_this]
+      =.  this  thus
+      restore:(pe who)
+    [(weld moves-1 moves-2) this]
   ::
       [%peek who=@p p=*]
     ::  should resurrect
@@ -385,17 +497,39 @@
 ++  wake
   |=  [way=wire ~]
   ^-  (quip move _this)
-  ?>  ?=([@ ~] way)
+  ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%waking who]
-  =^  moves  this
-    =<  abet:plow
-    %-  push-events:(pe who)
-    ^-  (list unix-event)
-    :~  [//behn/0v1n.2m9vh %wake ~]
-    ==
-  =^  moves-all  this  plow-all
-  [(weld moves moves-all) this]
+  %+  turn-ships  ~[who]
+  |=  [who=ship thus=_this]
+  =.  this  thus
+  (take-wake:(pe who) t.way ~)
+::
+::  Received inbound HTTP response
+::
+++  sigh-httr
+  |=  [way=wire res=httr:eyre]
+  ^-  (quip move _this)
+  ?>  ?=([@ *] way)
+  =/  who  (,@p (slav %p i.way))
+  ~&  [%received-httr who]
+  %+  turn-ships  ~[who]
+  |=  [who=ship thus=_this]
+  =.  this  thus
+  (take-sigh-httr:(pe who) t.way res)
+::
+::  Received inbound HTTP response error
+::
+++  sigh-tang
+  |=  [way=wire tan=tang]
+  ^-  (quip move _this)
+  ?>  ?=([@ *] way)
+  =/  who  (,@p (slav %p i.way))
+  ~&  [%received-httr who]
+  %+  turn-ships  ~[who]
+  |=  [who=ship thus=_this]
+  =.  this  thus
+  (take-sigh-tang:(pe who) t.way tan)
 ::
 ::  Trivial scry for mock
 ::
