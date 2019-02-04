@@ -1495,10 +1495,10 @@ _cm_signals(void)
   }
 }
 
-/* u3m_init(): start the environment, with/without checkpointing.
+/* u3m_init(): start the environment.
 */
 void
-u3m_init(c3_o chk_o)
+u3m_init(void)
 {
   _cm_limits();
   _cm_signals();
@@ -1515,7 +1515,7 @@ u3m_init(c3_o chk_o)
 
     map_v = mmap((void *)u3_Loom,
                  len_w,
-                 _(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
+                 (PROT_READ | PROT_WRITE),
                  (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                  -1, 0);
 
@@ -1694,7 +1694,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 {
   /* Activate the loom.
   */
-  u3m_init(nuu_o);
+  u3m_init();
 
   /* Activate the storage system.
   */
