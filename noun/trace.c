@@ -316,11 +316,11 @@ u3t_trace_open()
   }
 
   c3_c * wen_c = u3r_string(u3A->wen);
-
-  snprintf(fil_c, 2048, "%s/%s.json", fil_c, wen_c);
+  c3_c lif_c[2048];
+  snprintf(lif_c, 2048, "%s/%s.json", fil_c, wen_c);
   free(wen_c);
 
-  u3_Host.tra_u.fil_u = fopen(fil_c, "w");
+  u3_Host.tra_u.fil_u = fopen(lif_c, "w");
   u3_Host.tra_u.nid_w = (int)getpid();
 
   fprintf(u3_Host.tra_u.fil_u, "[ ");
