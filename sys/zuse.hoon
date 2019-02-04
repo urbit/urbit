@@ -95,7 +95,17 @@
   |%
   ++  rpc
     |%
-    ++  response  ::TODO  id should be optional
+    +$  request
+      $:  id=@t
+          method=@t
+          params=request-params
+      ==
+    ::
+    +$  request-params
+      $%  [%list (list json)]
+          [%object (list (pair @t json))]
+      ==
+    +$  response
       $~  [%fail *httr:eyre]
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
@@ -7971,6 +7981,8 @@
       ^-  json
       %-  pairs
       =;  r=[met=@t pas=(list json)]
+        ::TODO  should use request-to-json:rpc:jstd,
+        ::      and probably (fall riq -.req)
         :*  jsonrpc+s+'2.0'
             method+s+met.r
             params+a+pas.r
@@ -8165,6 +8177,43 @@
   ++  hex-to-num
     |=  a=@t
     (rash (rsh 3 2 a) hex)
+  --
+::
+::  |jstd: json standard library
+::
+++  jstd
+  =,  ^jstd
+  |%
+  ++  rpc
+    =,  ^rpc
+    |%
+    ++  request-to-hiss
+      |=  [url=purl:eyre req=request]
+      ^-  hiss:eyre
+      :-  url
+      :+  %post
+        %-  ~(gas in *math:eyre)
+        ~['Content-Type'^['application/json']~]
+      %-  some
+      %-  as-octt:mimes:html
+      (en-json:html (request-to-json req))
+    ::
+    ++  request-to-json
+      |=  request
+      ^-  json
+      %-  pairs:enjs:format
+      :~  jsonrpc+s+'0.2'
+          id+s+id
+          method+s+method
+        ::
+          :-  %params
+          ^-  json
+          ?-  -.params
+            %list     [%a +.params]
+            %object   [%o (~(gas by *(map @t json)) +.params)]
+          ==
+      ==
+    --
   --
 ::
 ::  |dawn: pre-boot request/response de/serialization and validation
