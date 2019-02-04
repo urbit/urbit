@@ -6,6 +6,8 @@
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%pause-events ~[~bud ~dev]]
+::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
+::  :aqua [%peek ~[~bud] /cx/~bud/home/(scot %da now)/app/curl/hoon]
 ::
 ::
 ::  We get ++unix-event and ++pill from /-pill
@@ -88,12 +90,32 @@
     =^  ovo  next-events  ~(get to next-events)
     =/  res  (mox +47.snap)
     ?>  ?=(%0 -.res)
-    =+  poke=p.res
-    =+  res=(slum poke now.hid ovo)
+    =/  poke  p.res
+    =/  res  (slum poke now.hid ovo)
     =.  event-log  [ovo event-log]
     =.  snap  +3.res
     =.  ..abet  (handle-effects ((list ovum) -.res))
     $
+  ::
+  ::  Peek
+  ::
+  ++  peek
+    |=  p=*
+    =/  res  (mox +46.snap)
+    ?>  ?=(%0 -.res)
+    =/  peek  p.res
+    ~&  [who=who %peeked (slum peek [now.hid p])]
+    ..abet
+  ::
+  ::  Wish
+  ::
+  ++  wish
+    |=  txt=@t
+    =/  res  (mox +22.snap)
+    ?>  ?=(%0 -.res)
+    =/  wish  p.res
+    ~&  [who=who %wished (slum wish txt)]
+    ..abet
   ::
   ::  Restart outstanding requests
   ::
@@ -403,6 +425,30 @@
     =.  this  thus
     (push-events:(pe who) ~[u.ovo])
   ::
+      [%peek hers=* p=*]
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    (peek:(pe who) p.val)
+  ::
+      [%wish hers=* p=@t]
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    (wish:(pe who) p.val)
+  ::
+      [%unpause-events hers=*]
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    start-processing-events:(pe who)
+  ::
+      [%pause-events hers=*]
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    stop-processing-events:(pe who)
+  ::
       [%snap-fleet lab=@tas]
     =.  fleet-snaps  (~(put by fleet-snaps) lab.val piers)
     `this
@@ -420,34 +466,6 @@
       =.  this  thus
       restore:(pe who)
     [(weld moves-1 moves-2) this]
-  ::
-      [%peek who=@p p=*]
-    ::  should resurrect
-    ::  =+  res=(mox +46.snap)
-    ::  ?>  ?=(%0 -.res)
-    ::  =+  peek=p.res
-    ::  ~&  (slum peek p.val)
-    `this
-  ::
-      [%wish who=@p p=@t]
-    ::  should resurrect
-    ::  =+  res=(mox +22.snap)
-    ::  ?>  ?=(%0 -.res)
-    ::  =+  wish=p.res
-    ::  ~&  (slum wish p.val)
-    `this
-  ::
-      [%unpause-events hers=*]
-    %+  turn-ships  ((list ship) hers.val)
-    |=  [who=ship thus=_this]
-    =.  this  thus
-    start-processing-events:(pe who)
-  ::
-      [%pause-events hers=*]
-    %+  turn-ships  ((list ship) hers.val)
-    |=  [who=ship thus=_this]
-    =.  this  thus
-    stop-processing-events:(pe who)
   ==
 ::
 ::  Run a callback function against a list of ships, aggregating state
