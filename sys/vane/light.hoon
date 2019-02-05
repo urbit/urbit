@@ -692,7 +692,9 @@
 ++  per-client-event
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=state:client]
   |%
-  ++  fetch
+  ::  +request: makes an external web request
+  ::
+  ++  request
     |=  [=http-request =outbound-config]
     ^-  [(list move) state:client]
     ::  get the next id for this request
@@ -715,7 +717,7 @@
     ::  email discussions make it sound like fixing that might be hard, so
     ::  maybe i should just live with the way it is now?
     ::
-    :-  [outbound-duct.state %give %http-request id `http-request]~
+    :-  [outbound-duct.state %give %http-client %request id `http-request]~
     state
   ::  +receive: receives a response to an http-request we made
   ::
@@ -794,7 +796,8 @@
     :_  ~
     :*  duct.connection
         %give
-        %http-progress
+        %http-client
+        %progress
         (need response-headers.in-progress-http-request.connection)
         bytes-read.in-progress-http-request.connection
         expected-size.in-progress-http-request.connection
@@ -826,7 +829,8 @@
       u.mime-type
     :-  :~  :*  duct.connection
                 %give
-                %http-finished
+                %http-client
+                %finished
                 response-headers
                 ?:(=(0 p.data) ~ `[mime data])
         ==  ==
@@ -1496,8 +1500,8 @@
       ::
       =?  moves  ?=([%| *] state.channel)
         :_  moves
-        :+  p.state.channel  %give
-        :*  %http-response  %continue
+        :^  p.state.channel  %give  %http-server
+        :*  %response  %continue
         ::
             ^=  data
             :-  ~
@@ -1638,7 +1642,7 @@
     ::
     ++  pass-response
       ^-  [(list move) server-state]
-      [[duct %give %http-response raw-http-response]~ state]
+      [[duct %give %http-server %response raw-http-response]~ state]
     ::
     ++  log-complete-request
       ::  todo: log the complete request
@@ -1659,7 +1663,7 @@
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
-      [[duct %give %http-response %cancel ~]~ state]
+      [[duct %give %http-server %response %cancel ~]~ state]
     --
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
@@ -1672,7 +1676,7 @@
     |-
     ^-  [(list move) server-state]
     ?~  to-search
-      :-  [duct %give %bound %.y binding]~
+      :-  [duct %give %http-server %bound %.y binding]~
       =.  bindings.state
         ::  store in reverse alphabetical order so that longer paths are first
         ::
@@ -1688,7 +1692,7 @@
       state
     ::
     ?:  =(binding binding.i.to-search)
-      :-  [duct %give %bound %.n binding]~
+      :-  [duct %give %http-server %bound %.n binding]~
       state
     ::
     $(to-search t.to-search)
@@ -1839,81 +1843,71 @@
     ;:  weld
       ::  hand back default configuration for now
       ::
-      [duct %give %form *http-config]~
+      [duct %give %http-server %set-config *http-config]~
     ::
       closed-connections
     ==
   ::
-      ::  %live: no idea what this is for
       ::
-      %live
-    ::
-    ~&  [%todo-live p.task q.task]
-    ::
-    [~ light-gate]
-  ::
-      ::  %inbound-request: handles an inbound http request
       ::
-      %inbound-request
-    ::
-    ::  TODO: This is uncommit
-    ::
+      %http-server
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  request  request:(per-server-event event-args)
-    =^  moves  server-state.ax
-      (request +.task)
-    [moves light-gate]
+    =/  server  (per-server-event event-args)
+    ?-    -.server-task.task
+    ::
+        ::  %live: no idea what this is for
+        ::
+        %live
+      ::
+      ~!  task
+      ~&  [%todo-live server-task.task]
+      ::
+      [~ light-gate]
+    ::
+        %request
+      =^  moves  server-state.ax  (request:server +.server-task.task)
+      [moves light-gate]
+    ::
+        %cancel-request
+      =^  moves  server-state.ax  cancel-request:server
+      [moves light-gate]
+    ::
+        %connect
+      =^  moves  server-state.ax
+        %+  add-binding:server  binding.server-task.task
+        [%app app.server-task.task]
+      [moves light-gate]
+    ::
+        %serve
+      =^  moves  server-state.ax
+        %+  add-binding:server  binding.server-task.task
+        [%gen generator.server-task.task]
+      [moves light-gate]
+    ::
+        %disconnect
+      =.  server-state.ax  (remove-binding:server binding.server-task.task)
+      [~ light-gate]
+    ==
   ::
       ::
       ::
-      %cancel-inbound-request
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  cancel-request  cancel-request:(per-server-event event-args)
-    =^  moves  server-state.ax  cancel-request
-    [moves light-gate]
-  ::
-      ::  %fetch
-      ::
-      %fetch
+      %http-client
     =/  event-args  [[our eny duct now scry-gate] client-state.ax]
-    =/  fetch  fetch:(per-client-event event-args)
-    =^  moves  client-state.ax  (fetch +.task)
-    [moves light-gate]
-  ::
-      ::  %cancel-fetch
-      ::
-      %cancel-fetch
-    ~&  %todo-cancel-fetch
-    [~ light-gate]
-  ::
-      ::  %receive: receives http data from unix
-      ::
-      %receive
-    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
-    =/  receive  receive:(per-client-event event-args)
-    =^  moves  client-state.ax  (receive +.task)
-    [moves light-gate]
-  ::
-      ::  %connect / %serve
-      ::
-      ?(%connect %serve)
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  add-binding  add-binding:(per-server-event event-args)
-    =^  moves  server-state.ax
-      %+  add-binding  binding.task
-      ?-  -.task
-        %connect  [%app app.task]
-        %serve    [%gen generator.task]
-      ==
-    [moves light-gate]
-  ::
-      ::  %disconnect
-      ::
-      %disconnect
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  remove-binding  remove-binding:(per-server-event event-args)
-    =.  server-state.ax  (remove-binding binding.task)
-    [~ light-gate]
+    =/  client  (per-client-event event-args)
+    ?-    -.client-task.task
+    ::
+        %request
+      =^  moves  client-state.ax  (request:client +.client-task.task)
+      [moves light-gate]
+    ::
+        %cancel-request
+      ~&  %todo-cancel-request
+      [~ light-gate]
+    ::
+        %receive
+      =^  moves  client-state.ax  (receive:client +.client-task.task)
+      [moves light-gate]
+    ==
   ==
 ::
 ++  take

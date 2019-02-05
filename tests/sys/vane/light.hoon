@@ -37,8 +37,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  app2 tries to bind to the same path and fails
   ::
@@ -47,8 +47,8 @@
       light-gate
       now=~1111.1.3
       scry=*sley
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
+      call-args=[duct=~[/app2] ~ [%http-server %connect [~ /] %app2]]
+      expected-moves=[duct=~[/app2] %give %http-server %bound %.n [~ /]]~
     ==
   ::
   ;:  weld
@@ -74,8 +74,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  app1 unbinds
   ::
@@ -84,7 +84,7 @@
       light-gate
       now=~1111.1.3
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%disconnect [~ /]]]
+      call-args=[duct=~[/app1] ~ [%http-server %disconnect [~ /]]]
       expected-moves=~
     ==
   ::  app2 binds successfully
@@ -94,8 +94,8 @@
       light-gate
       now=~1111.1.4
       scry=*sley
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app2] ~ [%http-server %connect [~ /] %app2]]
+      expected-moves=[duct=~[/app2] %give %http-server %bound %.y [~ /]]~
     ==
   ::
   ;:  weld
@@ -122,8 +122,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  app2 tries to steal the binding by disconnecting the path
   ::
@@ -132,7 +132,7 @@
       light-gate
       now=~1111.1.3
       scry=*sley
-      call-args=[duct=~[/app2] ~ [%disconnect [~ /]]]
+      call-args=[duct=~[/app2] ~ [%http-server %disconnect [~ /]]]
       expected-moves=~
     ==
   ::  app2 doesn't bind successfully because it couldn't remove app1's binding
@@ -142,8 +142,8 @@
       light-gate
       now=~1111.1.4
       scry=*sley
-      call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
-      expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
+      call-args=[duct=~[/app2] ~ [%http-server %connect [~ /] %app2]]
+      expected-moves=[duct=~[/app2] %give %http-server %bound %.n [~ /]]~
     ==
   ::
   ;:  weld
@@ -173,7 +173,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/' ~ ~]
@@ -182,7 +183,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-blah]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 404
                 :~  ['content-type' 'text/html']
@@ -215,8 +217,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  outside requests a path that app1 has bound to
   ::
@@ -227,7 +229,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/' ~ ~]
@@ -266,12 +269,15 @@
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)
             :-  *type
-            :^  %g  %unto  %http-response
-            ^-  raw-http-response:light-gate
-            [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hiya!')] %.y]
+            :*  %g  %unto  %http-response
+                %start  200
+                ['content-type' 'text/html']~
+                [~ (as-octs:mimes:html 'Hiya!')]
+                %.y
+            ==
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %http-response
+        :~  :*  duct=~[/http-blah]  %give  %http-server  %response
                 [%start 200 ['content-type' 'text/html']~ `[5 'Hiya!'] %.y]
     ==  ==  ==
   ::
@@ -299,8 +305,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  outside requests a path that app1 has bound to
   ::
@@ -311,7 +317,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/' ~ ~]
@@ -349,12 +356,14 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :^  %g  %unto  %http-response
-            ^-  raw-http-response:light-gate
-            [%start 200 ['content-type' 'text/html']~ [~ (as-octs:mimes:html 'Hi')] %.n]
+            :*  %g  %unto  %http-response
+                %start  200  ['content-type' 'text/html']~
+                [~ (as-octs:mimes:html 'Hi')]
+                %.n
+            ==
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %http-response
+        :~  :*  duct=~[/http-blah]  %give  %http-server  %response
                 [%start 200 ['content-type' 'text/html']~ `[2 'Hi'] %.n]
     ==  ==  ==
   ::  theoretical outside response
@@ -367,12 +376,12 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :^  %g  %unto  %http-response
-            ^-  raw-http-response:light-gate
-            [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
+            :*  %g  %unto  %http-response
+                [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
+            ==
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %http-response
+        :~  :*  duct=~[/http-blah]  %give  %http-server  %response
                 [%continue `[3 'ya!'] %.y]
     ==  ==  ==
   ::
@@ -403,8 +412,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/app1] ~ [%connect [~ /'~landscape'] %app1]]
-      expected-moves=[duct=~[/app1] %give %bound %.y [~ /'~landscape']]~
+      call-args=[duct=~[/app1] ~ [%http-server %connect [~ /'~landscape'] %app1]]
+      expected-moves=[duct=~[/app1] %give %http-server %bound %.y [~ /'~landscape']]~
     ==
   ::  outside requests a path that app1 has bound to
   ::
@@ -415,7 +424,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/~landscape/inner-path' ~ ~]
@@ -453,12 +463,12 @@
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:light-gate)  :-  *type
-            :^  %g  %unto  %http-response
-            ^-  raw-http-response:light-gate
-            [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+            :*  %g  %unto  %http-response
+                [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
+            ==
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %http-response
+        :~  :*  duct=~[/http-blah]  %give  %http-server  %response
                 [%start 307 ['location' '/~/login?redirect=/~landscape/inner-path']~ ~ %.y]
     ==  ==  ==
   ::  the browser then fetches the login page
@@ -479,7 +489,8 @@
       ^=  call-args
         ^-  [=duct type=* wrapped-task=(hobo task:able:light-gate)]
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'GET'
@@ -546,8 +557,8 @@
       light-gate
       now=~1111.1.2
       scry=*sley
-      call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon ~]]]
-      expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
+      call-args=[duct=~[/gen1] ~ [%http-server %serve [~ /] [%home /gen/handler/hoon ~]]]
+      expected-moves=[duct=~[/gen1] %give %http-server %bound %.y [~ /]]~
     ==
   ::  outside requests a path that app1 has bound to
   ::
@@ -558,7 +569,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/' ~ ~]
@@ -614,7 +626,7 @@
             [%cast %mime !>([['text' 'plain' ~] (as-octs:mimes:html 'one two three')])]
          ==
       ^=  expected-move
-        :~  :*  duct=~[/http-blah]  %give  %http-response
+        :~  :*  duct=~[/http-blah]  %give  %http-server  %response
                 :*  %start
                     200
                     :~  ['content-type' 'text/plain']
@@ -740,7 +752,7 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server  %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'PUT' '/~/channel/1234567890abcdef' ~ ~]
@@ -749,7 +761,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-blah]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 400
                 :~  ['content-type' 'text/html']
@@ -863,7 +876,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'GET'
@@ -875,7 +889,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 200
                 :~  ['content-type' 'text/event-stream']
@@ -913,7 +928,7 @@
       light-gate
       now=(add ~1111.1.2 ~m4)
       scry=*sley
-      call-args=[duct=~[/http-get-open] ~ %cancel-inbound-request ~]
+      call-args=[duct=~[/http-get-open] ~ %http-server %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:light-gate)
         ::  closing the channel restarts the timeout timer
@@ -951,7 +966,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'PUT'
@@ -985,7 +1001,7 @@
             card.i.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %http-response %start 200 ~ ~ %.y]
+            !>  [~[/http-put-request] %give %http-server %response %start 200 ~ ~ %.y]
             !>  i.t.moves
         ::
           %+  expect-eq
@@ -1063,7 +1079,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'GET'
@@ -1075,7 +1092,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 200
                 :~  ['content-type' 'text/event-stream']
@@ -1120,7 +1138,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
-                %http-response
+                %http-server
+                %response
                 %continue
                 :-  ~
                 %-  as-octs:mimes:html
@@ -1143,7 +1162,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'PUT'
@@ -1166,7 +1186,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-eq
-          !>  [~[/http-put-request] %give %http-response %start 200 ~ ~ %.y]
+          !>  [~[/http-put-request] %give %http-server %response %start 200 ~ ~ %.y]
           !>  i.moves
     ==
   ::  the client connection is detected to be broken
@@ -1176,7 +1196,7 @@
       light-gate
       now=(add ~1111.1.2 ~m6)
       scry=*sley
-      call-args=[duct=~[/http-get-open] ~ %cancel-inbound-request ~]
+      call-args=[duct=~[/http-get-open] ~ %http-server %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:light-gate)
         ::  closing the channel restarts the timeout timer
@@ -1213,7 +1233,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'GET'
@@ -1225,7 +1246,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 200
                 :~  ['content-type' 'text/event-stream']
@@ -1267,9 +1289,9 @@
     results8
     results9
   ==
-::  +test-fetch-basic: tests a single request, single reply style http request
+::  +test-client-request-basic: tests a single request, single reply style http request
 ::
-++  test-fetch-basic
+++  test-client-request-basic
   ::  send a %born event to use /initial-born-duct for requests
   ::
   =^  results1  light-gate
@@ -1285,7 +1307,8 @@
       ^=  expected-moves
         :~  :*  duct=~[/initial-born-duct]
                 %give
-                %form
+                %http-server
+                %set-config
                 *http-config:light
     ==  ==  ==
   ::
@@ -1304,7 +1327,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
-            %fetch
+            %http-client
+            %request
             request
             *outbound-config:light
         ==
@@ -1312,7 +1336,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/initial-born-duct]
                 %give
-                %http-request
+                %http-client
+                %request
                 id=0
                 ~
                 method=%'GET'
@@ -1330,7 +1355,8 @@
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:light
-        :*  %receive
+        :*  %http-client
+            %receive
             id=0
             ^-  raw-http-response:light
             :*  %start
@@ -1351,7 +1377,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
-                %http-finished
+                %http-client
+                %finished
             ::
                 :-  200
                 :~  ['content-type' 'text/html']
@@ -1371,9 +1398,9 @@
     results2
     results3
   ==
-::  +test-fetch-multiple-cards: tests when complete=%.n
+::  +test-client-request-multiple-cards: tests when complete=%.n
 ::
-++  test-fetch-multiple-cards
+++  test-client-request-multiple-cards
   ::  send a %born event to use /initial-born-duct for requests
   ::
   =^  results1  light-gate
@@ -1389,7 +1416,8 @@
       ^=  expected-moves
         :~  :*  duct=~[/initial-born-duct]
                 %give
-                %form
+                %http-server
+                %set-config
                 *http-config:light
     ==  ==  ==
   ::
@@ -1408,7 +1436,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-get-request]  ~
-            %fetch
+            %http-client
+            %request
             request
             *outbound-config:light
         ==
@@ -1416,7 +1445,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/initial-born-duct]
                 %give
-                %http-request
+                %http-client
+                %request
                 id=0
                 ~
                 method=%'GET'
@@ -1434,7 +1464,8 @@
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:light
-        :*  %receive
+        :*  %http-client
+            %receive
             id=0
             ^-  raw-http-response:light
             :*  %start
@@ -1449,7 +1480,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
-                %http-progress
+                %http-client
+                %progress
             ::
                 :-  200
                 :~  ['content-type' 'text/html']
@@ -1470,7 +1502,8 @@
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:light
-        :*  %receive
+        :*  %http-client
+            %receive
             id=0
             ^-  raw-http-response:light
             :*  %continue
@@ -1481,7 +1514,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
-                %http-progress
+                %http-client
+                %progress
             ::
                 :-  200
                 :~  ['content-type' 'text/html']
@@ -1502,7 +1536,8 @@
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
         ^-  task:able:light
-        :*  %receive
+        :*  %http-client
+            %receive
             id=0
             ^-  raw-http-response:light
             :*  %continue
@@ -1513,7 +1548,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
-                %http-finished
+                %http-client
+                %finished
             ::
                 :-  200
                 :~  ['content-type' 'text/html']
@@ -1693,7 +1729,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
@@ -1702,7 +1739,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-blah]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 200
                 :~  ['content-type' 'text/html']
@@ -1721,7 +1759,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-blah]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'POST'
@@ -1735,7 +1774,8 @@
         ^-  (list move:light-gate)
         :~  :*  duct=~[/http-blah]
                 %give
-                %http-response
+                %http-server
+                %response
                 %start
                 307
                 :~  ['location' '/~landscape']
@@ -1782,7 +1822,8 @@
       scry=*sley
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
-            %inbound-request
+            %http-server
+            %request
             %.n
             [%ipv4 .192.168.1.1]
             %'PUT'
@@ -1829,7 +1870,7 @@
             card.i.t.moves
         ::
           %+  expect-eq
-            !>  [~[/http-put-request] %give %http-response %start 200 ~ ~ %.y]
+            !>  [~[/http-put-request] %give %http-server %response %start 200 ~ ~ %.y]
             !>  i.t.t.moves
         ::
           %+  expect-eq

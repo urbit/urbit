@@ -1994,34 +1994,45 @@
   +|  %vane-interface
   ++  able
     |%
+    ::  +gift: %light responses
+    ::
     ++  gift
-      $%  ::  form: configures the http server
+      $%  [%http-server server-gift]
+          [%http-client client-gift]
+      ==
+    ::  +server-gift: effects the server can emit
+    ::
+    ++  server-gift
+      $%  ::  set-config: configures the external http server
           ::
           ::    TODO: We need to actually return a (map (unit @t) http-config)
           ::    so we can apply configurations on a per-site basis
           ::
-          ::    TODO: %form is a terrible name, but it's what vere currently
-          ::    accepts. Rename it.
+          ::    TODO: THIS WAS %form. When done renaming, be done renaming.
           ::
-          [%form =http-config]
-          ::  http-response: response from urbit to earth
+          [%set-config =http-config]
+          ::  response: response to an event from earth
           ::
-          [%http-response =raw-http-response]
-          ::  %http-request: outbound http-request to earth
-          ::
-          ::    TODO: id is sort of wrong for this interface; the duct should
-          ::    be enough to identify which request we're talking about?
-          ::
-          [%http-request id=@ud request=(unit http-request)]
+          [%response =raw-http-response]
           ::  response to a %connect or %serve
           ::
           ::    :accepted is whether :binding was valid. Duplicate bindings are
           ::    not allowed.
           ::
           [%bound accepted=? =binding]
+      ==
+    ::  +client-gift: effects the client can emit
+    ::
+    ++  client-gift
+      $%  ::  %http-request: outbound http-request to earth
+          ::
+          ::    TODO: id is sort of wrong for this interface; the duct should
+          ::    be enough to identify which request we're talking about?
+          ::
+          [%request id=@ud request=(unit http-request)]
           ::  periodically sent as an update on the duct that sent %fetch
           ::
-          $:  %http-progress
+          $:  %progress
               ::  http-response-header: full transaction header
               ::
               ::    In case of a redirect chain, this is the target of the
@@ -2040,7 +2051,7 @@
           ==
           ::  final response of a download, parsed as mime-data if successful
           ::
-          [%http-finished =http-response-header full-file=(unit mime-data)]
+          [%finished =http-response-header full-file=(unit mime-data)]
       ==
     ::
     ++  task
@@ -2049,27 +2060,27 @@
           ::    TODO: Remove this once we single home.
           ::
           [%init our=@p]
-          ::  new unix process (?)
+          ::  new unix process
           ::
           [%born p=(list host)]
-          ::  set http ports (?)
+          ::  task for the http server
+          ::
+          [%http-server =server-task]
+          ::  task for the http client
+          ::
+          [%http-client =client-task]
+      ==
+    ::
+    ++  server-task
+      $%  ::  set http ports (?)
           ::
           [%live p=@ud q=(unit @ud)]
           ::  starts handling an inbound http request
           ::
-          [%inbound-request secure=? =address =http-request]
+          [%request secure=? =address =http-request]
           ::  cancels a previous request
           ::
-          [%cancel-inbound-request ~]
-          ::  fetches a remote resource
-          ::
-          [%fetch =http-request =outbound-config]
-          ::  cancels a previous fetch
-          ::
-          [%cancel-fetch ~]
-          ::  receives http data from outside
-          ::
-          [%receive id=@ud =raw-http-response]
+          [%cancel-request ~]
           ::  connects a binding to an app
           ::
           [%connect =binding app=term]
@@ -2082,6 +2093,18 @@
           ::    the first place.
           ::
           [%disconnect =binding]
+      ==
+    ::
+    ++  client-task
+      $%  ::  fetches a remote resource
+          ::
+          [%request =http-request =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-request ~]
+          ::  receives http data from outside
+          ::
+          [%receive id=@ud =raw-http-response]
       ==
     --
   ::
