@@ -5,9 +5,11 @@
 ::  :aqua [%init ~[~bud ~dev]]
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
-::  :aqua [%pause-events ~[~bud ~dev]]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
 ::  :aqua [%peek ~[~bud] /cx/~bud/home/(scot %da now)/app/curl/hoon]
+::  :aqua [%dojo ~[~bud ~dev] '|mount %']
+::  :aqua [%file ~[~bud ~dev] %/sys/vane]
+::  :aqua [%pause-events ~[~bud ~dev]]
 ::
 ::
 ::  We get ++unix-event and ++pill from /-pill
@@ -27,6 +29,7 @@
           [%send p=lane:ames q=@]
           [%doze p=(unit @da)]
           [%thus p=@ud q=(unit hiss:eyre)]
+          [%ergo p=@tas q=mode:clay]
       ==
     ++  state
       $:  %0
@@ -175,6 +178,7 @@
           %send  (handle-send u.sof)
           %doze  (handle-doze u.sof)
           %thus  (handle-thus u.sof)
+          %ergo  (handle-ergo u.sof)
       ==
     $(effects t.effects)
   ::
@@ -229,7 +233,7 @@
     ?.  &(=(0 (rsh 0 16 u.dest-ip)) =(1 (rsh 0 8 u.dest-ip)))
       ~&  [%havent-implemented-direct-lanes who lan]
       ..abet
-    ~&  [%blast-sending who=who]
+    ~&  [who=who %blast-sending]
     =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
     =.  this  (blast-event hear)
     ::  =/  her  ?:(=(~dev who) ~bud ~dev) ::ship  (dis u.dest-ip 0xff)
@@ -259,11 +263,9 @@
     |=  tim=@da
     =.  tim  +(tim)  ::  nobody's perfect
     =.  next-timer  `tim
-    ~&  [%sleeping-until who tim]
     (emit-moves [ost.hid %wait /(scot %p who) tim]~)
   ::
   ++  cancel-timer
-    ~&  [%cancelling-timer who]
     (emit-moves [ost.hid %rest /(scot %p who) (need next-timer)]~)
   ::
   ++  take-wake
@@ -284,7 +286,7 @@
       ::  so we remove it from our state so we won't pass along the
       ::  response.
       ::
-      ~&  [%cant-cancel-thus who=who num=num]
+      ~&  [who=who %cant-cancel-thus num=num]
       =.  http-requests  (~(del in http-requests) num)
       ..abet
     =.  http-requests  (~(put in http-requests) num)
@@ -305,7 +307,7 @@
     ?>  ?=([@ ~] way)
     =/  num  (slav %ud i.way)
     ?.  (~(has in http-requests) num)
-      ~&  [%ignoring-httr who=who num=num]
+      ~&  [who=who %ignoring-httr num=num]
       ..abet
     =.  http-requests  (~(del in http-requests) num)
     (push-events [//http/0v1n.2m9vh %they num res]~)
@@ -318,11 +320,22 @@
     ?>  ?=([@ ~] way)
     =/  num  (slav %ud i.way)
     ?.  (~(has in http-requests) num)
-      ~&  [%ignoring-httr who=who num=num]
+      ~&  [who=who %ignoring-httr num=num]
       ..abet
     =.  http-requests  (~(del in http-requests) num)
     %-  (slog tan)
     ..abet
+  ::
+  ::  We should mirror a mount point of child to a clay desk of host.
+  ::  For now, we just allow injecting a change to the child, so we
+  ::  throw away ergos.
+  ::
+  ++  handle-ergo
+    |=  [way=wire %ergo mount-point=@tas mod=mode:clay]
+    ^+  ..abet
+    ~&  [who=who %file-changes (turn mod head)]
+    ..abet
+  ::
   --
 ::
 ++  this  .
@@ -424,6 +437,16 @@
     |=  [who=ship thus=_this]
     =.  this  thus
     (push-events:(pe who) ~[u.ovo])
+  ::
+      [%file hers=* pax=*]
+    =/  pax  (path pax.val)
+    ?>  ?=([@ @ @ *] pax)
+    =/  file  [/text/plain (as-octs:mimes:html .^(@ %cx pax))]
+    %+  turn-ships  ((list ship) hers.val)
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    %-  push-events:(pe who)
+    [//sync/0v1n.2m9vh %into i.t.pax | [t.t.t.pax `file]~]~
   ::
       [%peek hers=* p=*]
     %+  turn-ships  ((list ship) hers.val)
