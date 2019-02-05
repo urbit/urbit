@@ -1771,8 +1771,7 @@
   ::    to wake us up immediately. This has the advantage that Ford stops hard
   ::    blocking the main Urbit event loop, letting other work be done.
   ::
-  ++  execute-loop
-    !.
+  ++  execute-loop  !.
     ~/  %execute-loop
     |=  builds=(set build)
     ^+  ..execute
@@ -1793,7 +1792,6 @@
   ::    +build-receipt algorithms to the ford state.
   ::
   ++  execute
-    !:
     ~/  %execute
     |=  builds=(set build)
     ^+  ..execute
@@ -1810,8 +1808,7 @@
   ::    should run the candidate build this cycle through the +execute loop, we
   ::    place it in :next-builds. +gather runs until it has no more candidates.
   ::
-  ++  gather
-    !.
+  ++  gather  !.
     ~/  %gather
     |=  [builds=(set build) force=?]
     ^+  ..execute
@@ -1837,7 +1834,6 @@
     ::    sub-builds to :candidate-builds.
     ::
     ++  gather-build
-      !:
       |=  =build
       ^+  ..execute
       ~|  [%duct duct]
@@ -2084,8 +2080,7 @@
   ::    +build-receipts. It is in +reduce where we take these +build-receipts
   ::    and apply them to ..execute.
   ::
-  ++  reduce
-    !.
+  ++  reduce  !.
     ~/  %reduce
     |=  build-receipts=(list build-receipt)
     ^+  ..execute
@@ -2113,7 +2108,6 @@
     ::  +apply-build-receipt: applies a single state diff to ..execute
     ::
     ++  apply-build-receipt
-      !:
       |=  made=build-receipt
       ^+  ..execute
       ::  process :sub-builds.made
