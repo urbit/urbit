@@ -18,12 +18,6 @@ let
 
   host = "${arch}-apple-${darwin_name}";
 
-  os = "macos";
-
-  compiler = "clang";
-
-  exe_suffix = "";
-
   clang = native.make_derivation rec {
     name = "clang-${version}";
 
@@ -211,36 +205,34 @@ let
       "-DWRAPPER_LINKER_VERSION=\\\"${ld.apple_version}\\\"";
   };
 
-  cmake_toolchain = import ../cmake_toolchain {
-    cmake_system_name = "Darwin";
-    inherit nixpkgs host;
-  };
-
-  crossenv = {
+  crossenv = rec {
     is_cross = true;
 
-    # Build tools available on the PATH for every derivation.
-    default_native_inputs = native.default_native_inputs
-      ++ [ clang toolchain native.wrappers ];
+    # Target info.
+    inherit host arch;
+    os = "macos";
+    inherit macos_version_min;
+    compiler = "clang";
+    exe_suffix = "";
+    cmake_system = "Darwin";
+    meson_system = "darwin";
+    meson_cpu_family = "x86_64";
+    meson_cpu = "x86_64";
 
-    # Target info environment variables.
-    inherit host arch os compiler exe_suffix macos_version_min;
-
-    # CMake toolchain file.
-    inherit cmake_toolchain;
-
-    # A wide variety of programs and build tools.
-    inherit nixpkgs;
-
-    # Some native build tools made by nixcrpkgs.
-    inherit native;
+    # Build tools.
+    inherit nixpkgs native;
+    wrappers = import ../wrappers crossenv;
 
     # License information that should be shipped with any software
     # compiled by this environment.
-    global_license_set = { };
+    global_license_set = { };  # TODO: compiler-rt
 
-    # Make it easy to build or refer to the build tools.
+    # Handy shortcuts.
     inherit clang compiler_rt tapi ld ranlib ar lipo sdk toolchain;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs
+      ++ [ clang toolchain wrappers ];
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

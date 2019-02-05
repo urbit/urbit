@@ -4,12 +4,6 @@ let
 
   host = "${arch}-linux-musleabi";
 
-  os = "linux";
-
-  compiler = "gcc";
-
-  exe_suffix = "";
-
   binutils = import ./binutils { inherit native host; };
 
   linux_arch =
@@ -41,36 +35,37 @@ let
 
   global_license_set = { _global = license; };
 
-  cmake_toolchain = import ../cmake_toolchain {
-    cmake_system_name = "Linux";
-    inherit nixpkgs host;
-  };
-
-  crossenv = {
+  crossenv = rec {
     is_cross = true;
 
-    # Build tools available on the PATH for every derivation.
-    default_native_inputs = native.default_native_inputs ++
-      [ gcc binutils native.pkgconf native.wrappers ];
+    # Target info.
+    inherit host arch;
+    compiler = "gcc";
+    exe_suffix = "";
+    os = "linux";
+    cmake_system = "Linux";
+    meson_system = "linux";
+    meson_cpu_family =
+      if arch == "i686" then "x86"
+      else if arch == "x86_64" then "x86_64"
+      else if arch == "armv6" || arch == "armv7" then "arm"
+      else throw "not sure what meson_cpu_family code to use";
+    meson_cpu = arch;
 
-    # Target info environment variables.
-    inherit host arch os compiler exe_suffix;
-
-    # CMake toolchain file.
-    inherit cmake_toolchain;
-
-    # A wide variety of programs and build tools.
-    inherit nixpkgs;
-
-    # Some native build tools made by nixcrpkgs.
-    inherit native;
+    # Build tools.
+    inherit nixpkgs native;
+    wrappers = import ../wrappers crossenv;
 
     # License information that should be shipped with any software
     # compiled by this environment.
     inherit global_license_set;
 
-    # Make it easy to refer to the build tools.
+    # Handy shortcuts.
     inherit headers gcc binutils;
+
+    # Build tools available on the PATH for every derivation.
+    default_native_inputs = native.default_native_inputs ++
+      [ gcc binutils wrappers ];
 
     make_derivation = import ../make_derivation.nix crossenv;
   };
