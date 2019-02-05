@@ -1160,7 +1160,7 @@
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  live
-        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+        [%dude [%leaf "eyre: execute {<tea>}"] request]
     ==
   ::
   ++  add-links                                           :: x-urbit:// urls
@@ -2075,7 +2075,6 @@
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
       %^  execute-turbo  %core  live=%.y
-      :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  schematic:ford
       :+  %mute
         ^-  schematic:ford

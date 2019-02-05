@@ -3131,7 +3131,7 @@
     ::
     ++  make-dude
       ~%  %make-dude  ..^^$  ~
-      |=  [error=(trap tank) attempt=schematic]
+      |=  [error=tank attempt=schematic]
       ^-  build-receipt
       ::
       =/  attempt-build=^build  [date.build attempt]
@@ -3143,7 +3143,7 @@
       ?.  ?=([%error *] u.attempt-result)
         (return-result u.attempt-result)
       ::
-      (return-error [$:error message.u.attempt-result])
+      (return-error [error message.u.attempt-result])
     ::
     ++  make-hood
       ~%  %make-hood  ..^^$  ~
