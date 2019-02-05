@@ -208,31 +208,57 @@ u3_sist_nil(const c3_c* key_c)
 /* _sist_suck(): past failure.
 */
 static void
-_sist_suck(u3_noun ovo, u3_noun gon)
+_sist_suck(c3_d evt_d, u3_noun ovo, u3_noun gon)
 {
-  uL(fprintf(uH, "sing: ovum failed!\n"));
+  fprintf(stderr, "sing: ovum failed!\r\n");
+
   {
     c3_c* hed_c = u3r_string(u3h(u3t(ovo)));
 
-    uL(fprintf(uH, "fail %s\n", hed_c));
+    fprintf(stderr, "sing: fail: %s event %lld mug %u\r\n",
+                    hed_c, evt_d, u3r_mug(ovo));
     free(hed_c);
   }
 
-  u3_lo_punt(2, u3kb_flop(u3k(u3t(gon))));
-  // u3_loom_exit();
-#if 1
-  u3_lo_exit();
+  {
+    u3_noun why;
+    u3x_cell(gon, &why, 0);
+    u3m_p("sist: why", why);
+  }
 
-  exit(1);
-#else
-  u3z(ovo); u3z(gon);
+  u3_lo_punt(2, u3kb_flop(u3k(u3t(gon))));
+
+#if 1
+  {
+    c3_c fil_c[2048];
+    snprintf(fil_c, 2048, "%s/.urb/put/failed-%lld.jam", u3_Host.dir_c, evt_d);
+
+    u3_noun pat = u3qe_jam(ovo);
+
+    fprintf(stderr, "sing: saving failed event\r\n");
+    u3_walk_save(fil_c, u3_nul, pat, 0, u3_nul);
+  }
+#endif
+
+#if 1
+  {
+    fprintf(stderr, "sing: saving checkpoint\r\n");
+    c3_d old_d = u3A->ent_d;
+    u3A->ent_d = evt_d - 1ULL;
+    u3e_save();
+    u3A->ent_d = old_d;
+  }
+#endif
+
+#if 1
+  u3_lo_bail();
 #endif
 }
 
 /* _sist_sing(): replay ovum from the past, time already set.
 */
 static void
-_sist_sing(u3_noun ovo)
+_sist_sing(c3_d evt_d, u3_noun ovo)
 {
   u3t_event_trace("Running", 'b');
   u3_noun gon = u3m_soft(0, u3v_poke, u3k(ovo));
@@ -243,7 +269,7 @@ _sist_sing(u3_noun ovo)
     u3x_cell(gon, &hed, &tal);
 
     if ( u3_blip != hed ) {
-      _sist_suck(ovo, gon);
+      _sist_suck(evt_d, ovo, gon);
     }
     else {
       u3_noun vir, cor;
@@ -1077,13 +1103,24 @@ _sist_rest()
         fprintf(stderr, "replay: skipped veer\n");
       }
       else {
-        _sist_sing(u3k(ovo));
+        _sist_sing(lar_u.ent_d, u3k(ovo));
         fputc('.', stderr);
       }
 
       // fprintf(stderr, "playback: sing: %d\n", xno_w));
 
       xno_w++;
+
+#if 1
+      //  save a checkpoint every 100K events
+      //
+      if ( 0 == (xno_w % 100000) ) {
+        c3_d old_d = u3A->ent_d;
+        u3A->ent_d = lar_u.ent_d;
+        u3e_save();
+        u3A->ent_d = old_d;
+      }
+#endif
 
       if ( 0 == (xno_w % 1000) ) {
         uL(fprintf(uH, "{%d}\n", xno_w));
