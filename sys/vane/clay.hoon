@@ -1770,7 +1770,7 @@
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
     ?.  ?=($hoon p.a)  [%vale [our %home] a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.

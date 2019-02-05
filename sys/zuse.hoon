@@ -1204,7 +1204,7 @@
         $:  %dude
             ::  error: a trap producing an error message to wrap the original
             ::
-            error=(trap tank)
+            error=tank
             ::  attempt: the schematic to try, whose error we wrap, if any
             ::
             attempt=schematic
