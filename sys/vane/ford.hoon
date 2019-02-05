@@ -3133,7 +3133,7 @@
       ~%  %make-dude  ..^^$  ~
       |=  [error=tank attempt=schematic]
       ^-  build-receipt
-      ::;
+      ::
       =/  attempt-build=^build  [date.build attempt]
       =^  attempt-result  out  (depend-on attempt-build)
       ?~  attempt-result
