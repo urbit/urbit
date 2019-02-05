@@ -1317,6 +1317,8 @@
   ::
       $sunk  [~ ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       $west
     ?>  ?=({?($ge $gh) @ ~} q.q.hic)
     =*  dap  i.t.q.q.hic

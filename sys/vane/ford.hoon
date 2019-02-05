@@ -6183,6 +6183,14 @@
     ::
     [~ ford-gate]
   ::
+      ::  %vega: learn of kernel upgrade
+      ::
+      ::    XX clear cache, rebuild live builds
+      ::
+      %vega
+    ::
+    [~ ford-gate]
+  ::
       ::  %wipe: wipe stored builds, clearing :percent-to-remove of the entries
       ::
       %wipe

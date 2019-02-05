@@ -865,6 +865,12 @@
       ?<  =(fak.own.sub ?=(^ tuf.own.sub))
       +>.$(moz [[hen %give %turf tuf.own.sub] moz])
     ::
+    ::  learn of kernel upgrade
+    ::    [%vega ~]
+    ::
+        %vega
+      +>.$
+    ::
     ::  watch private keys
     ::    {$vein $~}
     ::

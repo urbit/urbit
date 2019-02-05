@@ -540,6 +540,18 @@
     ::  we emit ova to unix in fifo order, but emit internal moves depth-first
     ::
     $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
+  ::  +spam: kick every vane with :ovum
+  ::
+  ++  spam
+    |=  [lac=? ovo=ovum]
+    ^-  [(list ovum) (list [label=@tas =vane])]
+    =/  card
+      :+  %&
+        [%cell [%atom %tas `%soft] %noun]
+      [%soft q.ovo]
+    %+  kick  lac
+    %+  turn  vanes
+    |=([label=@tas *] [label ~ [%pass p.ovo label card]])
   --
 --
 =<  ::  Arvo larval stage
@@ -651,12 +663,13 @@
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               =^  ova  +>+.$  (^poke now ovo)
+              =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
               ?~  ova
-                [~ +>.^$]
+                [(flop out) +>.^$]
               ::  upgrade the kernel
               ::
-              ?:  ?=(%vega -.q.i.ova)
+              ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
                   (vega now t.ova ({@ @} +.q.i.ova))
                 [~ +>.^$]
@@ -664,10 +677,8 @@
               ::  and passing the rest through as output
               ::
               =^  vov  +>+.^$  (feck now i.ova)
-              ?~  vov
-                $(ova t.ova)
-              =/  avo  $(ova t.ova)
-              [[+.vov -.avo] +.avo]
+              =?  out  ?=(^ vov)  [+.vov out]
+              $(ova t.ova)
     ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
     --
@@ -688,20 +699,28 @@
       bud  dub
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
+  =|  out=(list ovum)
   |-  ^-  [(list ovum) _+>.^$]
   ?~  ova
-    [~ +>.^$]
+    [(flop out) +>.^$]
   ::  iterate over effects, handling those on arvo proper
   ::  and passing the rest through as output
   ::
   ::    In practice, the pending effects after an upgrade
-  ::    are the %veer moves to install %zuse and the vanes.
+  ::    are the %veer moves to install %zuse and the vanes,
+  ::    plus a %vega notification that the upgrade is complete.
+  ::
+  ::    N.B. this implementation assumes that %vega will be
+  ::    at the end of :ova.
+  ::
+  ?:  ?=(%vega -.q.i.ova)
+    =^  zef  vanes
+      (~(spam (is our vil eny bud vanes) now) lac i.ova)
+    $(out [i.ova out], ova (weld t.ova zef))
   ::
   =^  vov  +>.^$  (feck now i.ova)
-  ?~  vov
-    $(ova t.ova)
-  =/  avo  $(ova t.ova)
-  [[+.vov -.avo] +.avo]
+  =?  out  ?=(^ vov)  [+.vov out]
+  $(ova t.ova)
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
@@ -840,16 +859,18 @@
     :*  our
         now
         eny
-        ova
+        ::  tack a notification onto the pending effects
+        ::
+        (weld ova [`ovum`[/ %vega ~] ~])
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
   ::  call into the new kernel
   ::
   =/  out  (slum gat sam)
-  ::  tack a reset notification onto the product
+  ::  add types to the product
   ::
-  [[[/ %vega ~] ((list ovum) -.out)] +.out]
+  [((list ovum) -.out) +.out]
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage
