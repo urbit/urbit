@@ -1507,6 +1507,9 @@
             ==
           [[%wine who " has sunk"]~ fox]
         ::
+            %vega
+          [~ fox]
+        ::
             %wake
           (~(wake am [our now fox ski]) hen)
         ::

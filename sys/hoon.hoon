@@ -7846,7 +7846,7 @@
                  ::
                  [%tsld [%$ 6] p.mod]
       {$bspd *}  $(mod p.mod)
-      {$bssg *}  p.mod
+      {$bssg *}  [%kthp q.mod p.mod]
       {$bsts *}  [%ktts p.mod $(mod q.mod)]
       {$bsvt *}  $(mod p.mod)
       {$bswt *}  ::  use last entry
@@ -7907,7 +7907,7 @@
     ::  process annotations outside construct, to catch default
     ::
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
-    ?:  ?=($bssg -.mod)  factory(mod q.mod, def `p.mod)
+    ?:  ?=($bssg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
     ^-  hoon
     ::  if we recognize an indirection
     ::
@@ -8228,7 +8228,7 @@
       ::  default
       ::
           {$bssg *}
-        relative(mod q.mod, def `p.mod)
+        relative(mod q.mod, def `[%kthp q.mod p.mod])
       ::
       ::  choice, $?
       ::

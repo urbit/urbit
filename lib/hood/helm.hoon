@@ -176,9 +176,9 @@
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
-::  +poke-reset:  send %vega to reboot kernel
+::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
-::    And reinstall %zuse and the vanes.
+::    And reinstall %zuse and the vanes with %veer.
 ::    Trigger with |reset.
 ::
 ++  poke-reset
@@ -189,7 +189,7 @@
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%vega `@t`hun `@t`arv]]
+  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
   %+  turn
     (module-ova:pill top)
   |=(a=[wire flog:dill] [%flog a])

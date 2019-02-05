@@ -50,6 +50,10 @@
     ::
     =.  timers.state  (unset-timer [date duct])
     set-wake
+  ::  +vega: learn of a kernel upgrade
+  ::
+  ++  vega
+    [moves state]
   ::  +wait: set a new timer at :date, resetting :next-wake if needed
   ::
   ++  wait
@@ -145,6 +149,10 @@
     ::
     ?~  timers
       ~[t]
+    ::  ignore duplicates
+    ::
+    ?:  =(t i.timers)
+      timers
     ::  timers at the same date form a fifo queue
     ::
     ?:  (lth date.t date.i.timers)
@@ -195,6 +203,7 @@
       %born  born:event-core
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
+      %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
       %wake  wake:event-core
       %wegh  wegh:event-core

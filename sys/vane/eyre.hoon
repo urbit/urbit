@@ -729,6 +729,8 @@
     ::
         $sunk  +>
     ::
+        $vega  +>
+    ::
         ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
@@ -1160,7 +1162,7 @@
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  live
-        [%dude [%leaf "eyre: execute {<tea>}"] request]
+        [%dude [%leaf "eyre: execute {(spud tea)}"] request]
     ==
   ::
   ++  add-links                                           :: x-urbit:// urls

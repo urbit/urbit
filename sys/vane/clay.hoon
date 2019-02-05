@@ -3886,6 +3886,8 @@
   ::
       $sunk  [~ ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       ?($warp $werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
