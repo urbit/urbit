@@ -1,5 +1,5 @@
 ::  ford: build system vane
-::
+!:
 ::    Ford is a functional reactive build system.
 ::
 ::    A Ford build is a function of the Urbit namespace and a date that
@@ -1772,6 +1772,7 @@
   ::    blocking the main Urbit event loop, letting other work be done.
   ::
   ++  execute-loop
+    !.
     ~/  %execute-loop
     |=  builds=(set build)
     ^+  ..execute
@@ -1792,6 +1793,7 @@
   ::    +build-receipt algorithms to the ford state.
   ::
   ++  execute
+    !:
     ~/  %execute
     |=  builds=(set build)
     ^+  ..execute
@@ -1809,6 +1811,7 @@
   ::    place it in :next-builds. +gather runs until it has no more candidates.
   ::
   ++  gather
+    !.
     ~/  %gather
     |=  [builds=(set build) force=?]
     ^+  ..execute
@@ -1834,6 +1837,7 @@
     ::    sub-builds to :candidate-builds.
     ::
     ++  gather-build
+      !:
       |=  =build
       ^+  ..execute
       ~|  [%duct duct]
@@ -2081,6 +2085,7 @@
   ::    and apply them to ..execute.
   ::
   ++  reduce
+    !.
     ~/  %reduce
     |=  build-receipts=(list build-receipt)
     ^+  ..execute
@@ -2108,6 +2113,7 @@
     ::  +apply-build-receipt: applies a single state diff to ..execute
     ::
     ++  apply-build-receipt
+      !:
       |=  made=build-receipt
       ^+  ..execute
       ::  process :sub-builds.made
