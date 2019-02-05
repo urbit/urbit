@@ -304,8 +304,9 @@ _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
 
-  u3_noun typ = u3i_string("cancel-inbound-request");
-  u3v_plan(pox, u3nc(typ, u3_nul));
+  u3v_plan(pox, u3nt(u3i_string("http-server"),
+                     u3i_string("cancel-request"),
+                     u3_nul));
 }
 
 typedef struct _u3_hgen {
@@ -381,15 +382,14 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   req_u->sat_e = u3_rsat_plan;
 
   u3_noun pox = _http_req_to_duct(req_u);
-  u3_noun typ = u3i_string("inbound-request");
-      //_(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
 
-  u3v_plan(pox, u3nq(typ,
-                     req_u->hon_u->htp_u->sec,
-                     u3nc(c3__ipv4, u3i_words(1, &req_u->hon_u->ipf_w)),
-                     req));
+  u3v_plan(pox, u3i_cell(u3i_string("http-server"),
+                         u3nq(u3i_string("request"),
+                              req_u->hon_u->htp_u->sec,
+                              u3nc(c3__ipv4,
+                                   u3i_words(1, &req_u->hon_u->ipf_w)),
+                              req)));
 }
-
 
 /* _http_hgen_dispose(): dispose response generator and buffers
 */
@@ -1553,7 +1553,7 @@ u3_http_ef_thou(c3_l     sev_l,
     }
   }
   else {
-    u3_noun p_rep, q_rep, r_rep;
+    /* u3_noun p_rep, q_rep, r_rep; */
 
     fprintf(stderr, "Old %%thou not used anymore\n");
 
@@ -1568,20 +1568,24 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-/*  responds to an incoming %http-response from %light
+/*  responds to an incoming %http-server card from %light
 */
 void
-u3_http_ef_http_response(c3_l    sev_l,
-                         c3_l    coq_l,
-                         c3_l    seq_l,
-                         u3_noun rep)
+u3_http_ef_http_server(c3_l    sev_l,
+                       c3_l    coq_l,
+                       c3_l    seq_l,
+                       u3_noun rep)
 {
   u3_http* htp_u;
   u3_hcon* hon_u;
   u3_hreq* req_u;
   c3_w bug_w = u3C.wag_w & u3o_verbose;
 
-  if ( !(htp_u = _http_serv_find(sev_l)) ) {
+  if (c3y == u3r_sing(u3i_string("set-config"), u3k(u3h(rep)))) {
+    // sets server configuration
+    u3_http_ef_form(u3k(u3t(rep)));
+  }
+  else if ( !(htp_u = _http_serv_find(sev_l)) ) {
     if ( bug_w ) {
       uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
     }
@@ -1597,29 +1601,34 @@ u3_http_ef_http_response(c3_l    sev_l,
                      sev_l, coq_l, seq_l));
     }
   }
-  else {
-    if (c3y == u3r_sing(u3i_string("start"), u3k(u3h(rep)))) {
+  else if (c3y == u3r_sing(u3i_string("response"), u3k(u3h(rep)))) {
+    // responds to data
+    u3_noun response = u3t(rep);
+
+    if (c3y == u3r_sing(u3i_string("start"), u3k(u3h(response)))) {
       // Separate the %start message into its components.
       u3_noun status, headers, data, complete;
-      if (c3y == u3r_qual(u3t(rep), &status, &headers, &data, &complete)) {
+      if (c3y == u3r_qual(u3t(response), &status, &headers, &data, &complete)) {
         _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
                             u3k(complete));
       } else {
         uL(fprintf(uH, "http: strange %%start response\n"));
       }
-    } else if (c3y == u3r_sing(u3i_string("continue"), u3k(u3h(rep)))) {
+    } else if (c3y == u3r_sing(u3i_string("continue"), u3k(u3h(response)))) {
       // Separate the %continue message into its components.
       u3_noun data, complete;
-      if (c3y == u3r_cell(u3t(rep), &data, &complete)) {
+      if (c3y == u3r_cell(u3t(response), &data, &complete)) {
         _http_continue_respond(req_u, u3k(data), u3k(complete));
       } else {
         uL(fprintf(uH, "http: strange %%continue response\n"));
       }
-    } else if (c3y == u3r_sing(u3i_string("cancel"), u3k(u3h(rep)))) {
-
+    } else if (c3y == u3r_sing(u3i_string("cancel"), u3k(u3h(response)))) {
+      uL(fprintf(uH, "http: %%cancel not handled yet\n"));
     } else {
       uL(fprintf(uH, "http: strange response\n"));
     }
+  } else {
+    uL(fprintf(uH, "http: strange response\n"));
   }
 
   u3z(rep);
@@ -1696,7 +1705,7 @@ _http_serv_start_all(void)
     c3_assert( u3_none != non );
 
     u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
-    u3v_plan(pax, u3nt(c3__live, non, sec));
+    u3v_plan(pax, u3nq(u3i_string("http-server"), c3__live, non, sec));
   }
 
   _http_write_ports_file(u3_Host.dir_c);
