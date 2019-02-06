@@ -71,7 +71,7 @@
     ['-' (need $(num rem))]
   ?:  =(tpl 2)  `(weld "twenty" sfx)
   ?:  =(tpl 3)  `(weld "thirty" sfx)
-  ?:  =(tpl 4)  `(weld "fourty" sfx)
+  ?:  =(tpl 4)  `(weld "forty" sfx)
   ?:  =(tpl 5)  `(weld "fifty" sfx)
   ?:  =(tpl 6)  `(weld "sixty" sfx)
   ?:  =(tpl 7)  `(weld "seventy" sfx)
