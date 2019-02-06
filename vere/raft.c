@@ -1876,9 +1876,10 @@ _raft_grab(u3_noun rus)
         mkdir(nam_c, 0700);
       }
 
-      snprintf(nam_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      c3_c man_c[2048];
+      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
 
-      fil_u = fopen(nam_c, "w");
+      fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
 
       free(wen_c);
