@@ -26,7 +26,7 @@ main(int argc, char* argv[])
 static void
 _setup(void)
 {
-  u3m_init(c3y);
+  u3m_init();
   u3m_pave(c3y, c3n);
 }
 

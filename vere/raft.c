@@ -2,6 +2,7 @@
 **
 */
 #include <uv.h>
+#include <sys/stat.h>
 
 #include "all.h"
 #include "vere/vere.h"
@@ -1868,7 +1869,14 @@ _raft_grab(u3_noun rus)
       c3_c* wen_c = u3r_string(u3A->wen);
 
       c3_c nam_c[2048];
-      snprintf(nam_c, 2048, "%s/.urb/put/%s-mass.txt", u3_Host.dir_c, wen_c);
+      snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_Host.dir_c);
+
+      struct stat st;
+      if ( -1 == stat(nam_c, &st) ) {
+        mkdir(nam_c, 0700);
+      }
+
+      snprintf(nam_c, 2048, "%s/%s.txt", nam_c, wen_c);
 
       fil_u = fopen(nam_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
@@ -2044,6 +2052,11 @@ _raft_pump(u3_noun ovo)
 void
 u3_raft_chip(void)
 {
+  if ( (u3C.wag_w & u3o_trace) && (u3_Host.tra_u.con_w >= 100000) ) {
+    u3t_trace_close();
+    u3t_trace_open();
+  }
+
   u3_weak rus = _raft_poke();
 
   _raft_crop();
@@ -2060,6 +2073,10 @@ u3_raft_chip(void)
     _raft_grab(rus);
 
     u3z(rus);
+  }
+
+  if ( 0 == (u3A->ent_d % 1000ULL) ) {
+    u3m_reclaim();
   }
 }
 

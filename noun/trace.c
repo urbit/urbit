@@ -3,7 +3,10 @@
 ** This file is in the public domain.
 */
 #include "all.h"
+#include "vere/vere.h"
 #include <pthread.h>
+#include <time.h>
+#include <sys/stat.h>
 
 static c3_o _ct_lop_o;
 
@@ -298,43 +301,54 @@ u3t_flee(void)
   u3z(don);
 }
 
-static FILE* trace_file_u = NULL;
-static int nock_pid_i = 0;
-
 /*  u3t_trace_open(): opens a trace file and writes the preamble.
 */
 void
-u3t_trace_open(c3_c* trace_file_name)
+u3t_trace_open()
 {
-  printf("trace: tracing to %s\n", trace_file_name);
-  trace_file_u = fopen(trace_file_name, "w");
-  nock_pid_i = (int)getpid();
-  fprintf(trace_file_u, "[ ");
+
+  c3_c fil_c[2048];
+  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3_Host.dir_c);
+
+  struct stat st;
+  if ( -1 == stat(fil_c, &st) ) {
+    mkdir(fil_c, 0700);
+  }
+
+  c3_c * wen_c = u3r_string(u3A->wen);
+  c3_c lif_c[2048];
+  snprintf(lif_c, 2048, "%s/%s.json", fil_c, wen_c);
+  free(wen_c);
+
+  u3_Host.tra_u.fil_u = fopen(lif_c, "w");
+  u3_Host.tra_u.nid_w = (int)getpid();
+
+  fprintf(u3_Host.tra_u.fil_u, "[ ");
 
   // We have two "threads", the event processing and the nock stuff.
   //   tid 1 = event processing
   //   tid 2 = nock processing
-  fprintf(
-      trace_file_u,
+  fprintf(u3_Host.tra_u.fil_u,
       "{\"name\": \"process_name\", \"ph\": \"M\", \"pid\": %d, \"args\": "
       "{\"name\": \"urbit\"}},\n",
-      nock_pid_i);
-  fprintf(trace_file_u,
+      u3_Host.tra_u.nid_w);
+  fprintf(u3_Host.tra_u.fil_u,
           "{\"name\": \"thread_name\", \"ph\": \"M\", \"pid\": %d, \"tid\": 1, "
           "\"args\": {\"name\": \"Event Processing\"}},\n",
-          nock_pid_i);
-  fprintf(trace_file_u,
+          u3_Host.tra_u.nid_w);
+  fprintf(u3_Host.tra_u.fil_u,
           "{\"name\": \"thread_sort_index\", \"ph\": \"M\", \"pid\": %d, "
           "\"tid\": 1, \"args\": {\"sort_index\": 1}},\n",
-          nock_pid_i);
-  fprintf(trace_file_u,
+          u3_Host.tra_u.nid_w);
+  fprintf(u3_Host.tra_u.fil_u,
           "{\"name\": \"thread_name\", \"ph\": \"M\", \"pid\": %d, \"tid\": 2, "
           "\"args\": {\"name\": \"Nock\"}},\n",
-          nock_pid_i);
-  fprintf(trace_file_u,
+          u3_Host.tra_u.nid_w);
+  fprintf(u3_Host.tra_u.fil_u,
           "{\"name\": \"thread_sort_index\", \"ph\": \"M\", \"pid\": %d, "
           "\"tid\": 2, \"args\": {\"sort_index\": 2}},\n",
-          nock_pid_i);
+          u3_Host.tra_u.nid_w);
+  u3_Host.tra_u.con_w = 5;
 }
 
 /*  u3t_trace_close(): closes a trace file. optional.
@@ -342,11 +356,12 @@ u3t_trace_open(c3_c* trace_file_name)
 void
 u3t_trace_close()
 {
-  if (!trace_file_u)
+  if (!u3_Host.tra_u.fil_u)
     return;
 
   // We don't terminate the JSON because of the file format.
-  fclose(trace_file_u);
+  fclose(u3_Host.tra_u.fil_u);
+  u3_Host.tra_u.con_w = 0;
 }
 
 /*  u3t_trace_time(): microsecond clock
@@ -365,7 +380,7 @@ c3_d u3t_trace_time()
 c3_o
 u3t_nock_trace_push(u3_noun lab)
 {
-  if (!trace_file_u)
+  if (!u3_Host.tra_u.fil_u)
     return c3n;
 
   if ( (u3_nul == u3R->pro.trace) ||
@@ -437,7 +452,7 @@ trace_pretty(u3_noun som)
 void
 u3t_nock_trace_pop()
 {
-  if (!trace_file_u)
+  if (!u3_Host.tra_u.fil_u)
     return;
 
   u3_noun trace  = u3R->pro.trace;
@@ -452,16 +467,17 @@ u3t_nock_trace_pop()
   if (duration > 33) {
     c3_c* name = trace_pretty(lab);
 
-    fprintf(trace_file_u,
+    fprintf(u3_Host.tra_u.fil_u,
             "{\"cat\": \"nock\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "
             "\"tid\": 2, \"ts\": %" PRIu64 ", \"dur\": %" PRIu64 "}, \n",
             name,
             'X',
-            nock_pid_i,
+            u3_Host.tra_u.nid_w,
             start_time,
             duration);
 
     free(name);
+    u3_Host.tra_u.con_w++;
   }
 
   u3z(trace);
@@ -472,16 +488,17 @@ u3t_nock_trace_pop()
 void
 u3t_event_trace(const c3_c* name, c3_c type)
 {
-  if (!trace_file_u)
+  if (!u3_Host.tra_u.fil_u)
     return;
 
-  fprintf(trace_file_u,
+  fprintf(u3_Host.tra_u.fil_u,
           "{\"cat\": \"event\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "
           "\"tid\": 1, \"ts\": %" PRIu64 ", \"id\": \"0x100\"}, \n",
           name,
           type,
-          nock_pid_i,
+          u3_Host.tra_u.nid_w,
           u3t_trace_time());
+  u3_Host.tra_u.con_w++;
 }
 
 extern FILE*

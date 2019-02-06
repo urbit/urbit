@@ -254,7 +254,7 @@ main(int argc, char *argv[])
   printf("hello, world: len %dMB\n", (1 << U3_OS_LoomBits) >> 18);
   // _test_words();
 
-  u3m_init(c3n);
+  u3m_init();
   u3m_pave(c3y, c3n);
   // u3j_boot();
 
