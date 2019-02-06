@@ -12,6 +12,12 @@ meson-cross . ../libxkbcommon \
   --default-library static \
   -Denable-wayland=false \
   -Denable-docs=false
+
 ninja
+
+# Static builds are broken, so we need to replace empty
+# static libraries with the real ones here.
+mv libxkbcommon-internal.a libxkbcommon.a
+mv libxkbcommon-x11-internal.a libxkbcommon-x11.a
 
 ninja install
