@@ -1,8 +1,8 @@
 ::
 ::::  /hoon/pill/mar
   ::
-/-  pill
-=,  pill
+/-  aquarium
+=,  aquarium
 =,  mimes:html
 |_  pil=pill
 ++  grow

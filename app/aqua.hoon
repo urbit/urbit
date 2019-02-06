@@ -1,7 +1,9 @@
+::  An aquarium of virtual ships.  Put in some fish and watch them!
+::
 ::  usage:
 ::  |start %aqua
-::  /-  pill
-::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
+::  /-  aquarium
+::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
 ::  :aqua [%init ~[~bud ~dev]]
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
@@ -12,24 +14,17 @@
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
 ::
-::  We get ++unix-event and ++pill from /-pill
+::  We get ++unix-event and ++pill from /-aquarium
 ::
-/-  pill
-=,  pill
+/-  aquarium
+=,  aquarium
 =>  $~  |%
     ++  move  (pair bone card)
     ++  card
       $%  [%wait wire p=@da]
           [%rest wire p=@da]
           [%hiss wire p=(unit user:eyre) q=mark r=(cask hiss:eyre)]
-      ==
-    ++  unix-effect
-      %+  pair  wire
-      $%  [%blit p=(list blit:dill)]
-          [%send p=lane:ames q=@]
-          [%doze p=(unit @da)]
-          [%thus p=@ud q=(unit hiss:eyre)]
-          [%ergo p=@tas q=mode:clay]
+          [%diff %aqua-effect aqua-effect]
       ==
     ++  state
       $:  %0
@@ -48,7 +43,7 @@
       ==
     --
 =,  gall
-|_  $:  hid/bowl
+|_  $:  hid=bowl
         state
     ==
 ::
@@ -173,13 +168,15 @@
       ?~  sof
         ~&  [who=who %unknown-effect i.effects]
         ..abet
-      ?-    -.q.u.sof
+      =.  ..abet
+        ?-    -.q.u.sof
           %blit  (handle-blit u.sof)
           %send  (handle-send u.sof)
           %doze  (handle-doze u.sof)
           %thus  (handle-thus u.sof)
           %ergo  (handle-ergo u.sof)
-      ==
+        ==
+      (publish-effect u.sof)
     $(effects t.effects)
   ::
   ::  Would love to see a proper stateful terminal handler.  Ideally,
@@ -336,6 +333,18 @@
     ~&  [who=who %file-changes (turn mod head)]
     ..abet
   ::
+  ::  Give effect to our subscribers
+  ::
+  ++  publish-effect
+    |=  ovo=unix-effect
+    ^+  ..abet
+    %-  emit-moves
+    %+  murn  ~(tap by sup.hid)
+    |=  [b=bone her=ship pax=path]
+    ^-  (unit move)
+    ?.  =(/effects/(scot %p who) pax)
+      ~
+    `[b %diff %aqua-effect who ovo]
   --
 ::
 ++  this  .
@@ -359,6 +368,19 @@
   =^  moves  this  abet:plow:(pe u.who)
   =/  nex  $
   nex(- (weld -.nex moves))
+::
+::  Subscribe to effects from a ship
+::
+++  peer-effects
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  ?=([@ ~] pax)
+    ~&  [%aqua-bad-peer-effects pax]
+    `this
+  ?~  (slaw %p i.pax)
+    ~&  [%aqua-bad-peer-effects-ship pax]
+    `this
+  `this
 ::
 ::  Load a pill and assemble arvo.  Doesn't send any of the initial
 ::  events.
@@ -386,9 +408,11 @@
     `this
   ==
 ::
-::  Handle commands
+::  Handle commands from CLI
 ::
 ::    Should put some thought into arg structure, maybe make a mark.
+::
+::    Should convert some of these to just rewrite into ++poke-events.
 ::
 ++  poke-noun
   |=  val=*
@@ -491,6 +515,33 @@
     [(weld moves-1 moves-2) this]
   ==
 ::
+::
+::
+++  poke-aqua-events
+  |=  events=(list aqua-event)
+  ^-  (quip move _this)
+  %+  turn-events  events
+  |=  [ovo=aqua-event thus=_this]
+  =.  this  thus
+  ?-  -.ovo
+      %init-ship
+    %-  push-events:apex:(pe who.ovo)
+    ^-  (list unix-event)
+    :~  [/ %wack 0]  ::  eny
+        [/ %whom who.ovo]  ::  eny
+        [//newt/0v1n.2m9vh %barn ~]
+        [//behn/0v1n.2m9vh %born ~]
+        [//term/1 %boot %fake who.ovo]
+        -.userspace-ova.pil
+        [//http/0v1n.2m9vh %born ~]
+        [//http/0v1n.2m9vh %live 8.080 `8.445]
+        [//term/1 %belt %ctl `@c`%x]
+    ==
+  ::
+      %event
+    (push-events:(pe who.ovo) [ovo.ovo]~)
+  ==
+::
 ::  Run a callback function against a list of ships, aggregating state
 ::  and plowing all ships at the end.
 ::
@@ -510,8 +561,9 @@
 ::    restrict the callbacks to always have `this` at a particular axis,
 ::    and that doesn't feel right
 ::
-++  turn-ships
-  |=  [hers=(list ship) fun=$-([ship _this] _(pe))]
+++  turn-plow
+  |*  arg=mold
+  |=  [hers=(list arg) fun=$-([arg _this] _(pe))]
   |-  ^-  (quip move _this)
   ?~  hers
     =^  moves  this  plow-all
@@ -520,6 +572,9 @@
     abet:plow:(fun i.hers this)
   =^  nex-moves  this  $(hers t.hers, this this)
   [(weld moves nex-moves) this]
+::
+++  turn-ships   (turn-plow ship)
+++  turn-events  (turn-plow aqua-event)
 ::
 ::  Send the same event to all ships
 ::
@@ -540,7 +595,6 @@
   ^-  (quip move _this)
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
-  ~&  [%waking who]
   %+  turn-ships  ~[who]
   |=  [who=ship thus=_this]
   =.  this  thus
