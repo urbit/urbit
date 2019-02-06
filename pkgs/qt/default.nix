@@ -7,10 +7,13 @@
 # plugin was not compiled at all.  Figure out why.  (Though at Pololu we
 # do not use this style, we use Fusion on macOS and Linux.)
 
+# TODO: remove third-party X libraries from Qt sources to make sure they aren't
+# used, and don't include their licenses (e.g. xkbcommon).
+
 { crossenv, libudev, libxall, at-spi2-headers, dejavu-fonts }:
 
 let
-  version = "5.12.0";
+  version = "5.12.1";
 
   name = "qtbase-${version}";
 
@@ -28,7 +31,7 @@ let
 
   base_src = crossenv.nixpkgs.fetchurl {
     url = "https://download.qt.io/official_releases/qt/5.12/${version}/submodules/qtbase-everywhere-src-${version}.tar.xz";
-    sha256 = "1jzfx8c0hzch0kmz2m4vkn65s7ikiymnm29lsymil4hfg0fj40sy";
+    sha256 = "0jch3iqdbhab6sizvq43rx87k43r962b6k12drbqi2b70b77hc2k";
   };
 
   base_raw = crossenv.make_derivation {
@@ -46,9 +49,9 @@ let
       # -mmacosx-version-min).
       ./macos-config.patch
 
-      # libX11.a depends on libxcb.a.  This makes tests.xlib in
-      # src/gui/configure.json pass, enabling lots of X functionality in Qt.
-      ./find-x-libs.patch
+      # Qt uses X11/cursorfont.h, which is from libx11, but it does not
+      # search for it properly.
+      ./find-x11.patch
 
       # Fix the build error caused by https://bugreports.qt.io/browse/QTBUG-63637
       ./win32-link-object-max.patch
@@ -73,7 +76,7 @@ let
       # Look for fonts in the same directory as the application by default if
       # the QT_QPA_FONTDIR environment variable is not present.  Without this
       # patch, Qt tries to look for a font directory in the nix store that does
-      # not exists, and prints warnings.
+      # not exist, and prints warnings.
       # You must ship a .ttf, .ttc, .pfa, .pfb, or .otf font file
       # with your application (e.g. https://dejavu-fonts.github.io/ ).
       # That list of extensions comes from qbasicfontdatabase.cpp.
@@ -96,9 +99,7 @@ let
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
-          "-no-opengl " +
-          "-device-option QMAKE_INCDIR_X11=${libxall}/include " +
-          "-device-option QMAKE_LIBDIR_X11=${libxall}/lib"
+          "-no-opengl "
         else if crossenv.os == "macos" then
           "-device-option QMAKE_MAC_SDK.macosx.Path=" +
             "${crossenv.sdk} " +

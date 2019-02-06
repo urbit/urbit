@@ -137,6 +137,8 @@ def make_dep_graph
     add_dep 'libQt5XcbQpa.a', 'xcb-xinput.pc'
     add_dep 'libQt5XcbQpa.a', 'xcb-xkb.pc'
     add_dep 'libQt5XcbQpa.a', 'xi.pc'
+    add_dep 'libQt5XcbQpa.a', 'xkbcommon.pc'
+    add_dep 'libQt5XcbQpa.a', 'xkbcommon-x11.pc'
   end
 
   if Os == 'macos'
