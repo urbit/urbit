@@ -1508,7 +1508,14 @@
           [[%wine who " has sunk"]~ fox]
         ::
             %vega
-          [~ fox]
+          ::  re-initialize our cryptosuite B cores
+          ::
+          =/  =wund
+            %+  turn
+              val.ton.fox
+            |=  [=life =ring *]
+            [life ring (nol:nu:crub:crypto ring)]
+          [~ fox(val.ton wund)]
         ::
             %wake
           (~(wake am [our now fox ski]) hen)
@@ -1541,6 +1548,19 @@
   ++  wegh
     ^-  mass
     :+  %ames  %|
-    :~  dot+&+fox
+    :~  :+  %town  %|
+        =>  ton.fox
+        :~  wund+&+val
+            deed+&+law
+            fast+&+seh
+            them+&+hoc
+        ==
+        :+  %corn  %|
+        =>  zac.fox
+        :~  incoming+&+nys
+            complete+&+olz
+            neighbor+&+wab
+        ==
+        dot+&+fox
     ==
   --
