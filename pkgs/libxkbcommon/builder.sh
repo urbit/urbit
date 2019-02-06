@@ -7,7 +7,9 @@ mkdir build
 cd build
 
 meson-cross . ../libxkbcommon \
-  --buildtype release --prefix $out \
+  --prefix $out \
+  --buildtype release \
+  --default-library static \
   -Denable-wayland=false \
   -Denable-docs=false
 ninja
