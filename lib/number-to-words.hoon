@@ -85,60 +85,63 @@
     ::
     ::  min: minimum to qualify for this break
     ::  str: english word for this break
-    ::  sep: separator between this and the previous break
     ::
-    |=  [min=@u str=tape sep=tape]
+    |=  [min=@u str=tape]
     =/  rem  (mod num min)
     :-  ~
-    %+  weld
-      (weld (need ^$(num (div num min))) [' ' str])
-    ?:  =(rem 0)
-      ~
-    (weld sep (need ^$(num rem)))
+    ;:  weld
+      (need ^$(num (div num min)))
+      [' ' str]
+      ?:  =(rem 0)
+        ~
+      %+  weld
+        ?:((lth rem one-hundred) " and " ", ")
+      (need ^$(num rem))
+    ==
   ::
   ?:  (lth num one-thousand)
-    (num-break one-hundred "hundred" " and ")
+    (num-break one-hundred "hundred")
   ?:  (lth num one-million)
-    (num-break one-thousand "thousand" ", ")
+    (num-break one-thousand "thousand")
   ?:  (lth num one-billion)
-    (num-break one-million "million" ", ")
+    (num-break one-million "million")
   ?:  (lth num one-trillion)
-    (num-break one-billion "billion" ", ")
+    (num-break one-billion "billion")
   ?:  (lth num one-quadrillion)
-    (num-break one-trillion "trillion" ", ")
+    (num-break one-trillion "trillion")
   ?:  (lth num one-quintillion)
-    (num-break one-quadrillion "quadrillion" ", ")
+    (num-break one-quadrillion "quadrillion")
   ?:  (lth num one-sextillion)
-    (num-break one-quintillion "quintillion" ", ")
+    (num-break one-quintillion "quintillion")
   ?:  (lth num one-septillion)
-    (num-break one-sextillion "sextillion" ", ")
+    (num-break one-sextillion "sextillion")
   ?:  (lth num one-octillion)
-    (num-break one-septillion "septillion" ", ")
+    (num-break one-septillion "septillion")
   ?:  (lth num one-nonillion)
-    (num-break one-octillion "octillion" ", ")
+    (num-break one-octillion "octillion")
   ?:  (lth num one-decillion)
-    (num-break one-nonillion "nonillion" ", ")
+    (num-break one-nonillion "nonillion")
   ?:  (lth num one-undecillion)
-    (num-break one-decillion "decillion" ", ")
+    (num-break one-decillion "decillion")
   ?:  (lth num one-duodecillion)
-    (num-break one-undecillion "undecillion" ", ")
+    (num-break one-undecillion "undecillion")
   ?:  (lth num one-tredecillion)
-    (num-break one-duodecillion "duodecillion" ", ")
+    (num-break one-duodecillion "duodecillion")
   ?:  (lth num one-quattuordecillion)
-    (num-break one-tredecillion "tredecillion" ", ")
+    (num-break one-tredecillion "tredecillion")
   ?:  (lth num one-quindecillion)
-    (num-break one-quattuordecillion "quattuordecillion" ", ")
+    (num-break one-quattuordecillion "quattuordecillion")
   ?:  (lth num one-sexdecillion)
-    (num-break one-quindecillion "quindecillion" ", ")
+    (num-break one-quindecillion "quindecillion")
   ?:  (lth num one-septendecillion)
-    (num-break one-sexdecillion "sexdecillion" ", ")
+    (num-break one-sexdecillion "sexdecillion")
   ?:  (lth num one-octodecillion)
-    (num-break one-septendecillion "septendecillion" ", ")
+    (num-break one-septendecillion "septendecillion")
   ?:  (lth num one-novemdecillion)
-    (num-break one-octodecillion "octodecillion" ", ")
+    (num-break one-octodecillion "octodecillion")
   ?:  (lth num one-vigintillion)
-    (num-break one-novemdecillion "novemdecillion" ", ")
+    (num-break one-novemdecillion "novemdecillion")
   ?:  (lth num max)
-    (num-break one-vigintillion "vigintillion" ", ")
+    (num-break one-vigintillion "vigintillion")
   ~
 --
