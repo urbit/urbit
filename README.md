@@ -3,4 +3,7 @@ Unix control of Urbit
 
 # dependencies
 
-`sudo pip install requests fuse-python`
+```bash
+sudo apt install libfuse-dev python-pip
+sudo pip install requests fuse-python
+```
