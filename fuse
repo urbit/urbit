@@ -139,7 +139,7 @@ class FS(fuse.Fuse):
     def getattr(self, path):
         logging.debug('getattr %s' % path)
         path = self._path_to_path(path)
-        
+
         st = Stat()
         if self._is_dir(path):
             st.st_mode = stat.S_IFDIR | 0755
@@ -167,7 +167,7 @@ class FS(fuse.Fuse):
         logging.debug('read %s' % path)
         path = self._path_to_path(path)
         text = self._read_file(path)
-        
+
         # with open('/home/philip/urbit/urb/log', 'w') as f:
         #     f.write(str([text, len(text), "\\'dull the pain\\'", len("\\'dull the pain\\'")]))
         length = len(text)

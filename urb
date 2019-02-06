@@ -120,7 +120,7 @@ class transformerAction(argparse.Action):
 
     -- which='foo'.  Since all source flags use res.source, this specifies the
         key of the entry for this flag.
-    
+
     -- nesting='foo'.  The key for the argument is 'foo'.
     """
 
@@ -267,7 +267,7 @@ def get_args():
 
     parser.add_argument('alignments', help="The folder of alignments",
         action=FullPaths, type=is_dir)
-          
+
 parser = argparse.ArgumentParser(description='headless urbit')
 parser.add_argument('pier', nargs='?',
                     help='target urbit directory',
@@ -372,7 +372,7 @@ else:
         if not PORT:
             logging.error("Error reading port from .http.ports file")
             sys.exit(1)
-               
+
 url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
 if r.text[0] == '"':
