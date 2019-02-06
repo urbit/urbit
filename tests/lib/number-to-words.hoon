@@ -59,7 +59,7 @@
           "hundred and nine million, five hundred and fifty-one thousand, six "
           "hundred and sixteen"
         ==
-        !>  (eng:number-to-words 18.446.744.073.709.551.616)
+      !>  (eng:number-to-words 18.446.744.073.709.551.616)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one vigintillion"
