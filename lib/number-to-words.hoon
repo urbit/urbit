@@ -2,104 +2,143 @@
 ::
 ::  returns a unit because not all numbers can always be represented
 ::
-=/  ten                    10
-=/  one-hundred            100
-=/  one-thousand           1.000
-=/  one-million            1.000.000
-=/  one-billion            1.000.000.000
-=/  one-trillion           1.000.000.000.000
-=/  one-quadrillion        1.000.000.000.000.000
-=/  one-quintillion        1.000.000.000.000.000.000
-=/  one-sextillion         1.000.000.000.000.000.000.000
-=/  one-septillion         1.000.000.000.000.000.000.000.000
-=/  one-octillion          1.000.000.000.000.000.000.000.000.000
-=/  one-nonillion          1.000.000.000.000.000.000.000.000.000.000
-=/  one-decillion          1.000.000.000.000.000.000.000.000.000.000.000
-=/  one-undecillion        1.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-duodecillion       1.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-tredecillion       1.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-quattuordecillion  1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-quindecillion      1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-sexdecillion       1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-septendecillion    1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-octodecillion      1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-novemdecillion     1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  one-vigintillion       1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
-=/  max                    1.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000
 |%
+++  numbers
+  |%
+  ++  ten                    10
+  ++  one-hundred            100
+  ++  one-thousand           (pow 10 3)
+  ++  one-million            (pow 10 6)
+  ++  one-billion            (pow 10 9)
+  ++  one-trillion           (pow 10 12)
+  ++  one-quadrillion        (pow 10 15)
+  ++  one-quintillion        (pow 10 18)
+  ++  one-sextillion         (pow 10 21)
+  ++  one-septillion         (pow 10 24)
+  ++  one-octillion          (pow 10 27)
+  ++  one-nonillion          (pow 10 30)
+  ++  one-decillion          (pow 10 33)
+  ++  one-undecillion        (pow 10 36)
+  ++  one-duodecillion       (pow 10 39)
+  ++  one-tredecillion       (pow 10 42)
+  ++  one-quattuordecillion  (pow 10 45)
+  ++  one-quindecillion      (pow 10 48)
+  ++  one-sexdecillion       (pow 10 51)
+  ++  one-septendecillion    (pow 10 54)
+  ++  one-octodecillion      (pow 10 57)
+  ++  one-novemdecillion     (pow 10 60)
+  ++  one-vigintillion       (pow 10 63)
+  ++  max                    (pow 10 66)
+  --
 ::  +eng:number-to-words: convert @u to english
 ::
 ++  eng
   |=  num=@u
   ^-  (unit tape)
+  =+  numbers
   ::  0-19
-  ?:  =(num 0)   [~ "zero"]
-  ?:  =(num 1)   [~ "one"]
-  ?:  =(num 2)   [~ "two"]
-  ?:  =(num 3)   [~ "three"]
-  ?:  =(num 4)   [~ "four"]
-  ?:  =(num 5)   [~ "five"]
-  ?:  =(num 6)   [~ "six"]
-  ?:  =(num 7)   [~ "seven"]
-  ?:  =(num 8)   [~ "eight"]
-  ?:  =(num 9)   [~ "nine"]
-  ?:  =(num 10)  [~ "ten"]
-  ?:  =(num 11)  [~ "eleven"]
-  ?:  =(num 12)  [~ "twelve"]
-  ?:  =(num 13)  [~ "thirteen"]
-  ?:  =(num 14)  [~ "fourteen"]
-  ?:  =(num 15)  [~ "fifteen"]
-  ?:  =(num 16)  [~ "sixteen"]
-  ?:  =(num 17)  [~ "seventeen"]
-  ?:  =(num 18)  [~ "eighteen"]
-  ?:  =(num 19)  [~ "nineteen"]
+  ?:  =(num 0)   `"zero"
+  ?:  =(num 1)   `"one"
+  ?:  =(num 2)   `"two"
+  ?:  =(num 3)   `"three"
+  ?:  =(num 4)   `"four"
+  ?:  =(num 5)   `"five"
+  ?:  =(num 6)   `"six"
+  ?:  =(num 7)   `"seven"
+  ?:  =(num 8)   `"eight"
+  ?:  =(num 9)   `"nine"
+  ?:  =(num 10)  `"ten"
+  ?:  =(num 11)  `"eleven"
+  ?:  =(num 12)  `"twelve"
+  ?:  =(num 13)  `"thirteen"
+  ?:  =(num 14)  `"fourteen"
+  ?:  =(num 15)  `"fifteen"
+  ?:  =(num 16)  `"sixteen"
+  ?:  =(num 17)  `"seventeen"
+  ?:  =(num 18)  `"eighteen"
+  ?:  =(num 19)  `"nineteen"
   ::  20-99
-  =/  tpl  (div num ten)                                ::  tens place
-  =/  rem  (mod num ten)                                ::  ones place
-  =/  sfx                                               ::  suffix
+  ::
+  ::  tpl: tens place
+  ::  rem: ones place
+  ::  sfx: suffix
+  ::
+  =/  tpl  (div num ten)
+  =/  rem  (mod num ten)
+  =/  sfx
     ?:  |(=(rem 0) (gte tpl 10))
       ~
     ['-' (need $(num rem))]
-  ?:  =(tpl 2)  [~ (weld "twenty" sfx)]
-  ?:  =(tpl 3)  [~ (weld "thirty" sfx)]
-  ?:  =(tpl 4)  [~ (weld "fourty" sfx)]
-  ?:  =(tpl 5)  [~ (weld "fifty" sfx)]
-  ?:  =(tpl 6)  [~ (weld "sixty" sfx)]
-  ?:  =(tpl 7)  [~ (weld "seventy" sfx)]
-  ?:  =(tpl 8)  [~ (weld "eighty" sfx)]
-  ?:  =(tpl 9)  [~ (weld "ninety" sfx)]
+  ?:  =(tpl 2)  `(weld "twenty" sfx)
+  ?:  =(tpl 3)  `(weld "thirty" sfx)
+  ?:  =(tpl 4)  `(weld "fourty" sfx)
+  ?:  =(tpl 5)  `(weld "fifty" sfx)
+  ?:  =(tpl 6)  `(weld "sixty" sfx)
+  ?:  =(tpl 7)  `(weld "seventy" sfx)
+  ?:  =(tpl 8)  `(weld "eighty" sfx)
+  ?:  =(tpl 9)  `(weld "ninety" sfx)
   ::  100-max
-  =/  num-break                                         ::  repeated pattern
+  ::
+  ::  num-break: repeated pattern from 100 on
+  ::
+  =/  num-break
+    ::
     ::  min: minimum to qualify for this break
     ::  str: english word for this break
     ::  sep: separator between this and the previous break
+    ::
     |=  [min=@u str=tape sep=tape]
     =/  rem  (mod num min)
     :-  ~
     %+  weld
       (weld (need ^$(num (div num min))) [' ' str])
-    ?:(=(rem 0) ~ (weld sep (need ^$(num rem))))
-  ?:  (lth num one-thousand)  (num-break one-hundred "hundred" " and ")
-  ?:  (lth num one-million)  (num-break one-thousand "thousand" ", ")
-  ?:  (lth num one-billion)  (num-break one-million "million" ", ")
-  ?:  (lth num one-trillion)  (num-break one-billion "billion" ", ")
-  ?:  (lth num one-quadrillion)  (num-break one-trillion "trillion" ", ")
-  ?:  (lth num one-quintillion)  (num-break one-quadrillion "quadrillion" ", ")
-  ?:  (lth num one-sextillion)  (num-break one-quintillion "quintillion" ", ")
-  ?:  (lth num one-septillion)  (num-break one-sextillion "sextillion" ", ")
-  ?:  (lth num one-octillion)  (num-break one-septillion "septillion" ", ")
-  ?:  (lth num one-nonillion)  (num-break one-octillion "octillion" ", ")
-  ?:  (lth num one-decillion)  (num-break one-nonillion "nonillion" ", ")
-  ?:  (lth num one-undecillion)  (num-break one-decillion "decillion" ", ")
-  ?:  (lth num one-duodecillion)  (num-break one-undecillion "undecillion" ", ")
-  ?:  (lth num one-tredecillion)  (num-break one-duodecillion "duodecillion" ", ")
-  ?:  (lth num one-quattuordecillion)  (num-break one-tredecillion "tredecillion" ", ")
-  ?:  (lth num one-quindecillion)  (num-break one-quattuordecillion "quattuordecillion" ", ")
-  ?:  (lth num one-sexdecillion)  (num-break one-quindecillion "quindecillion" ", ")
-  ?:  (lth num one-septendecillion)  (num-break one-sexdecillion "sexdecillion" ", ")
-  ?:  (lth num one-octodecillion)  (num-break one-septendecillion "septendecillion" ", ")
-  ?:  (lth num one-novemdecillion)  (num-break one-octodecillion "octodecillion" ", ")
-  ?:  (lth num one-vigintillion)  (num-break one-novemdecillion "novemdecillion" ", ")
-  ?:  (lth num max)  (num-break one-vigintillion "vigintillion" ", ")
+    ?:  =(rem 0)
+      ~
+    (weld sep (need ^$(num rem)))
+  ::
+  ?:  (lth num one-thousand)
+    (num-break one-hundred "hundred" " and ")
+  ?:  (lth num one-million)
+    (num-break one-thousand "thousand" ", ")
+  ?:  (lth num one-billion)
+    (num-break one-million "million" ", ")
+  ?:  (lth num one-trillion)
+    (num-break one-billion "billion" ", ")
+  ?:  (lth num one-quadrillion)
+    (num-break one-trillion "trillion" ", ")
+  ?:  (lth num one-quintillion)
+    (num-break one-quadrillion "quadrillion" ", ")
+  ?:  (lth num one-sextillion)
+    (num-break one-quintillion "quintillion" ", ")
+  ?:  (lth num one-septillion)
+    (num-break one-sextillion "sextillion" ", ")
+  ?:  (lth num one-octillion)
+    (num-break one-septillion "septillion" ", ")
+  ?:  (lth num one-nonillion)
+    (num-break one-octillion "octillion" ", ")
+  ?:  (lth num one-decillion)
+    (num-break one-nonillion "nonillion" ", ")
+  ?:  (lth num one-undecillion)
+    (num-break one-decillion "decillion" ", ")
+  ?:  (lth num one-duodecillion)
+    (num-break one-undecillion "undecillion" ", ")
+  ?:  (lth num one-tredecillion)
+    (num-break one-duodecillion "duodecillion" ", ")
+  ?:  (lth num one-quattuordecillion)
+    (num-break one-tredecillion "tredecillion" ", ")
+  ?:  (lth num one-quindecillion)
+    (num-break one-quattuordecillion "quattuordecillion" ", ")
+  ?:  (lth num one-sexdecillion)
+    (num-break one-quindecillion "quindecillion" ", ")
+  ?:  (lth num one-septendecillion)
+    (num-break one-sexdecillion "sexdecillion" ", ")
+  ?:  (lth num one-octodecillion)
+    (num-break one-septendecillion "septendecillion" ", ")
+  ?:  (lth num one-novemdecillion)
+    (num-break one-octodecillion "octodecillion" ", ")
+  ?:  (lth num one-vigintillion)
+    (num-break one-novemdecillion "novemdecillion" ", ")
+  ?:  (lth num max)
+    (num-break one-vigintillion "vigintillion" ", ")
   ~
 --
