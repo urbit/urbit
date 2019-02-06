@@ -3,51 +3,52 @@
 /+  number-to-words, *test
 ::
 |%
-++  test-eng
+++  test-eng-us
+  =+  eng-us:number-to-words
   ;:  weld
     %+  expect-eq
       !>  `(unit tape)``"zero"
-      !>  (eng:number-to-words 0)
+      !>  (to-words 0)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one"
-      !>  (eng:number-to-words 1)
+      !>  (to-words 1)
   ::
     %+  expect-eq
       !>  `(unit tape)``"twelve"
-      !>  (eng:number-to-words 12)
+      !>  (to-words 12)
   ::
     %+  expect-eq
       !>  `(unit tape)``"twenty"
-      !>  (eng:number-to-words 20)
+      !>  (to-words 20)
   ::
     %+  expect-eq
       !>  `(unit tape)``"ninety-nine"
-      !>  (eng:number-to-words 99)
+      !>  (to-words 99)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one hundred"
-      !>  (eng:number-to-words 100)
+      !>  (to-words 100)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one hundred and eleven"
-      !>  (eng:number-to-words 111)
+      !>  (to-words 111)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one thousand"
-      !>  (eng:number-to-words 1.000)
+      !>  (to-words 1.000)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one thousand, one hundred and eleven"
-      !>  (eng:number-to-words 1.111)
+      !>  (to-words 1.111)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one million and one"
-      !>  (eng:number-to-words 1.000.001)
+      !>  (to-words 1.000.001)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one trillion"
-      !>  (eng:number-to-words (pow 10 12))
+      !>  (to-words (pow 10 12))
   ::
     %+  expect-eq
       !>
@@ -59,10 +60,10 @@
           "hundred and nine million, five hundred and fifty-one thousand, six "
           "hundred and sixteen"
         ==
-      !>  (eng:number-to-words 18.446.744.073.709.551.616)
+      !>  (to-words 18.446.744.073.709.551.616)
   ::
     %+  expect-eq
       !>  `(unit tape)``"one vigintillion"
-      !>  (eng:number-to-words (pow 10 63))
+      !>  (to-words (pow 10 63))
   ==
 --
