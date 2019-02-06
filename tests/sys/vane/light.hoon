@@ -1339,7 +1339,6 @@
                 %http-client
                 %request
                 id=0
-                ~
                 method=%'GET'
                 url='http://www.example.com'
                 ~
@@ -1448,7 +1447,6 @@
                 %http-client
                 %request
                 id=0
-                ~
                 method=%'GET'
                 url='http://www.example.com'
                 ~

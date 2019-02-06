@@ -717,7 +717,7 @@
     ::  email discussions make it sound like fixing that might be hard, so
     ::  maybe i should just live with the way it is now?
     ::
-    :-  [outbound-duct.state %give %http-client %request id `http-request]~
+    :-  [outbound-duct.state %give %http-client %request id http-request]~
     state
   ::  +receive: receives a response to an http-request we made
   ::

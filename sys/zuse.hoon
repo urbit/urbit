@@ -2008,8 +2008,6 @@
           ::    TODO: We need to actually return a (map (unit @t) http-config)
           ::    so we can apply configurations on a per-site basis
           ::
-          ::    TODO: THIS WAS %form. When done renaming, be done renaming.
-          ::
           [%set-config =http-config]
           ::  response: response to an event from earth
           ::
@@ -2024,12 +2022,15 @@
     ::  +client-gift: effects the client can emit
     ::
     ++  client-gift
-      $%  ::  %http-request: outbound http-request to earth
+      $%  ::  %request: outbound http-request to earth
           ::
           ::    TODO: id is sort of wrong for this interface; the duct should
           ::    be enough to identify which request we're talking about?
           ::
-          [%request id=@ud request=(unit http-request)]
+          [%request id=@ud request=http-request]
+          ::  %cancel-request: tell earth to cancel a previous %request
+          ::
+          [%cancel-request id=@ud]
           ::  periodically sent as an update on the duct that sent %fetch
           ::
           $:  %progress
