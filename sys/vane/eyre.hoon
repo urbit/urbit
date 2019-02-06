@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -729,6 +729,8 @@
     ::
         $sunk  +>
     ::
+        $vega  +>
+    ::
         ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
@@ -1160,7 +1162,7 @@
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  live
-        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+        [%dude [%leaf "eyre: execute {(spud tea)}"] request]
     ==
   ::
   ++  add-links                                           :: x-urbit:// urls
@@ -2075,7 +2077,6 @@
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
       %^  execute-turbo  %core  live=%.y
-      :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  schematic:ford
       :+  %mute
         ^-  schematic:ford

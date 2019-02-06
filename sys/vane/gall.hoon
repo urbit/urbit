@@ -1,4 +1,4 @@
-::  ::  %gall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 ::::
 |=  pit/vase
@@ -1316,6 +1316,8 @@
     [~ ..^$(sys.mast.all hen)]
   ::
       $sunk  [~ ..^$]
+  ::
+      $vega  [~ ..^$]
   ::
       $west
     ?>  ?=({?($ge $gh) @ ~} q.q.hic)

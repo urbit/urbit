@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit/vase
@@ -51,9 +51,9 @@
   $%  {$crud p/@tas q/(list tank)}                      ::
       {$heft $~}                                        ::
       {$init p/ship}                                    ::
+      {$lyra p/@t q/@t}                                 ::  upgrade kernel
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-eyre                                           ::
@@ -158,8 +158,8 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
+          $lyra  (dump kyz)
           $veer  (dump kyz)
-          $vega  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
@@ -530,6 +530,10 @@
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
   ?:  ?=(%sunk -.task)
+    [~ ..^$]
+  ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
+  ::
+  ?:  ?=(%vega -.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)

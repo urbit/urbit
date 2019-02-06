@@ -1,4 +1,4 @@
-::  ::  ames (4a), networking
+!:  ::  ames (4a), networking
 ::
   |=  pit=vase
   =>  =~
@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=7
+=+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
@@ -1506,6 +1506,9 @@
               wab.zac.fox  (~(del by wab.zac.fox) who)
             ==
           [[%wine who " has sunk"]~ fox]
+        ::
+            %vega
+          [~ fox]
         ::
             %wake
           (~(wake am [our now fox ski]) hen)
