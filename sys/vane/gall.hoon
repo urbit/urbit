@@ -819,6 +819,8 @@
         $poke  (ap-move-poke -.q.vax cav)
         $send  (ap-move-send -.q.vax cav)
         $quit  (ap-move-quit -.q.vax cav)
+      ::
+        $connect  (ap-move-connect -.q.vax cav)
         $http-response  (ap-move-http-response -.q.vax cav)
       ==
     ::
@@ -839,6 +841,20 @@
         :_(+>.$ [%| (ap-suck "diff: improper give")])
       =^  tel  vel  (~(slot wa vel) 3 pec)
       :_(+>.$ [%& sto %give %diff `cage`[-.q.pec tel]])
+    ::
+    ++  ap-move-connect
+      |=  {sto/bone vax/vase}
+      ^-  {(each cove tang) _+>}
+      =+  pux=((soft path) -.q.vax)
+      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        ~&  [%bad-path pux]
+        :_(+>.$ [%| (ap-suck "pass: malformed path")])
+      =^  tel  vel  (~(slot wa vel) 3 vax)
+      :_  +>.$
+      ~&  [%ap-move-connect sto]
+      :^  %&  sto  %pass
+      :-  [(scot %p q.q.pry) %inn u.pux]
+      [%meta %l (slop (ap-term %tas %http-server) (slop (ap-term %tas %connect) tel))]
     ::
     ++  ap-move-http-response
       |=  [sto=bone vax=vase]
@@ -895,6 +911,7 @@
         :_(+>.$ [%| (ap-suck "pass: malformed card")])
       =+  pux=((soft path) -.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        ~&  [%bad-path pux]
         :_(+>.$ [%| (ap-suck "pass: malformed path")])
       =+  huj=(ap-vain wut)
       ?~  huj  :_(+>.$ [%| (ap-suck "move: unknown note {(trip wut)}")])
@@ -1310,8 +1327,7 @@
         $well  `%e
         $wind  `%j
         $wipe  `%f
-        %connect  `%l
-        %serve  `%l
+        %http-server  `%l
       ==
     --
   --
