@@ -9,7 +9,7 @@ var actions = runner.actions
 var args  = ['-B', 'urbit.pill', '-A', '..', '-cSF', 'zod', 'zod'];
 var urbit = new Urbit(args);
 
-//  XX upstream the following into runner-js
+//  XX upstream this into runner-js
 //
 function rePill(urb) {
   return new Promise(function(resolve,reject){
@@ -59,11 +59,26 @@ function rePill(urb) {
 
           return read.pipe(write)
         })
+        //  XX find a better way to add this to the promise chain
+        //
+        .then(function(){
+          return barMass(urb);
+        })
         .catch(function(err){
           return reject(err)
         });
       })
     })
+  })
+}
+
+//  XX upstream this into runner-js
+//
+function barMass(urb) {
+  return urb.line("|mass")
+  .then(function(){
+    return urb.expectEcho("%ran-mass")
+    .then(function(){ return urb.resetListeners(); })
   })
 }
 
@@ -79,15 +94,14 @@ Promise.resolve(urbit)
   .then(function() { return urbit })
 })
 .then(actions.safeBoot)
+.then(function(){
+  return barMass(urbit);
+})
 .then(actions.test)
 .then(actions.testCores)
 .then(actions.testRenderers)
 .then(function(){
-  return urbit.line("|mass")
-  .then(function(){
-    return urbit.expectEcho("%ran-mass")
-    .then(function(){ return urbit.resetListeners(); })
-  })
+  return barMass(urbit);
 })
 .then(function(){
   return rePill(urbit);

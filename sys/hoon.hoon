@@ -17023,7 +17023,7 @@
 ::
 ::::  5e: caching compiler
   ::
-++  wa  !:                                              ::  cached compile
+++  wa                                                  ::  cached compile
   |_  worm
   ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut, cached
