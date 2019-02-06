@@ -1,5 +1,5 @@
 ::  clay (4c), revision control
-::
+!:
 ::  This is split in three top-level sections:  structure definitions, main
 ::  logic, and arvo interface.
 ::
@@ -1770,7 +1770,7 @@
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
     ?.  ?=($hoon p.a)  [%vale [our %home] a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
@@ -3885,6 +3885,8 @@
     [mos ..^$]
   ::
       $sunk  [~ ..^$]
+  ::
+      $vega  [~ ..^$]
   ::
       ?($warp $werp)
     ::  capture whether this read is on behalf of another ship
