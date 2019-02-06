@@ -36,27 +36,32 @@
   |=  num=@u
   ^-  (unit tape)
   =+  numbers
+  ?:  (gte num max)
+    ~
+  :-  ~
+  |-
+  ^-  tape
   ::  0-19
-  ?:  =(num 0)   `"zero"
-  ?:  =(num 1)   `"one"
-  ?:  =(num 2)   `"two"
-  ?:  =(num 3)   `"three"
-  ?:  =(num 4)   `"four"
-  ?:  =(num 5)   `"five"
-  ?:  =(num 6)   `"six"
-  ?:  =(num 7)   `"seven"
-  ?:  =(num 8)   `"eight"
-  ?:  =(num 9)   `"nine"
-  ?:  =(num 10)  `"ten"
-  ?:  =(num 11)  `"eleven"
-  ?:  =(num 12)  `"twelve"
-  ?:  =(num 13)  `"thirteen"
-  ?:  =(num 14)  `"fourteen"
-  ?:  =(num 15)  `"fifteen"
-  ?:  =(num 16)  `"sixteen"
-  ?:  =(num 17)  `"seventeen"
-  ?:  =(num 18)  `"eighteen"
-  ?:  =(num 19)  `"nineteen"
+  ?:  =(num 0)   "zero"
+  ?:  =(num 1)   "one"
+  ?:  =(num 2)   "two"
+  ?:  =(num 3)   "three"
+  ?:  =(num 4)   "four"
+  ?:  =(num 5)   "five"
+  ?:  =(num 6)   "six"
+  ?:  =(num 7)   "seven"
+  ?:  =(num 8)   "eight"
+  ?:  =(num 9)   "nine"
+  ?:  =(num 10)  "ten"
+  ?:  =(num 11)  "eleven"
+  ?:  =(num 12)  "twelve"
+  ?:  =(num 13)  "thirteen"
+  ?:  =(num 14)  "fourteen"
+  ?:  =(num 15)  "fifteen"
+  ?:  =(num 16)  "sixteen"
+  ?:  =(num 17)  "seventeen"
+  ?:  =(num 18)  "eighteen"
+  ?:  =(num 19)  "nineteen"
   ::  20-99
   ::
   ::  tpl: tens place
@@ -68,15 +73,15 @@
   =/  sfx
     ?:  |(=(rem 0) (gte tpl 10))
       ~
-    ['-' (need $(num rem))]
-  ?:  =(tpl 2)  `(weld "twenty" sfx)
-  ?:  =(tpl 3)  `(weld "thirty" sfx)
-  ?:  =(tpl 4)  `(weld "forty" sfx)
-  ?:  =(tpl 5)  `(weld "fifty" sfx)
-  ?:  =(tpl 6)  `(weld "sixty" sfx)
-  ?:  =(tpl 7)  `(weld "seventy" sfx)
-  ?:  =(tpl 8)  `(weld "eighty" sfx)
-  ?:  =(tpl 9)  `(weld "ninety" sfx)
+    ['-' $(num rem)]
+  ?:  =(tpl 2)  (weld "twenty" sfx)
+  ?:  =(tpl 3)  (weld "thirty" sfx)
+  ?:  =(tpl 4)  (weld "forty" sfx)
+  ?:  =(tpl 5)  (weld "fifty" sfx)
+  ?:  =(tpl 6)  (weld "sixty" sfx)
+  ?:  =(tpl 7)  (weld "seventy" sfx)
+  ?:  =(tpl 8)  (weld "eighty" sfx)
+  ?:  =(tpl 9)  (weld "ninety" sfx)
   ::  100-max
   ::
   ::  num-break: repeated pattern from 100 on
@@ -88,15 +93,14 @@
     ::
     |=  [min=@u str=tape]
     =/  rem  (mod num min)
-    :-  ~
     ;:  weld
-      (need ^$(num (div num min)))
+      ^$(num (div num min))
       [' ' str]
       ?:  =(rem 0)
         ~
       %+  weld
         ?:((lth rem one-hundred) " and " ", ")
-      (need ^$(num rem))
+      ^$(num rem)
     ==
   ::
   ?:  (lth num one-thousand)
@@ -141,7 +145,5 @@
     (num-break one-octodecillion "octodecillion")
   ?:  (lth num one-vigintillion)
     (num-break one-novemdecillion "novemdecillion")
-  ?:  (lth num max)
-    (num-break one-vigintillion "vigintillion")
-  ~
+  (num-break one-vigintillion "vigintillion")
 --
