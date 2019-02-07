@@ -1,3 +1,8 @@
+# We use pkgconf instead of pkg-config because pkg-config considers it to be
+# an error when there are two "Libs" fields in a .pc file.  Because we do
+# static linking, we often need to edit the pc files with sed to change
+# Libs.private into a second Libs field.
+
 { env }:
 
 env.make_derivation rec {
