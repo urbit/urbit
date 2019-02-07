@@ -324,6 +324,7 @@ softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfl
 #  XX temporary, should only be needed in vere
 #
 libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 
 
 noun_deps = [argon2_dep,
@@ -335,7 +336,8 @@ noun_deps = [argon2_dep,
             secp256k1_dep,
             sigsegv_dep,
             softfloat3_dep,
-            libh2o_dep]
+            libh2o_dep,
+            libuv_dep]
 
 libnoun = static_library('noun',
   sources: [noun_src, jets_all_src],
@@ -350,7 +352,6 @@ libnoun = static_library('noun',
 #
 libent_dep = dependency('libent', version: '>=0.2.1', fallback: ['libent', 'libent_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
-libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
 
 vere_deps = [curl_dep,
