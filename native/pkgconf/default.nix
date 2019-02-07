@@ -10,7 +10,15 @@ env.make_derivation rec {
     sha256 = "1j3700iyjvd4m4ahf827lzbzlji6q3higrnynqhdk2zklxq8shml";
   };
 
-  patches = [ ./do-not-require-description.patch ];
+  patches = [
+    # Fix a bug in pkgconf that causes it to ignore entries on its path
+    # that are symbolic links.
+    #./do-not-read-link.patch
+
+    # Fix a bug in pkgconf that causes it to silently skip .pc files
+    # missing the "Description" field.
+    ./do-not-require-description.patch
+  ];
 
   native_inputs = [
     env.nixpkgs.autoconf
