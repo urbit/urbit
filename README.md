@@ -35,7 +35,7 @@ Packages collection (Nixpkgs)][nixpkgs].
   - [GNU Bash](https://www.gnu.org/software/bash/)
   - [Ruby](https://www.ruby-lang.org/)
 - Notable supported libraries:
-  - [Qt](https://www.qt.io/) 5.12.0
+  - [Qt](https://www.qt.io/) 5.12.1
   - [libusb](https://libusb.info/)
   - [libusbp](https://github.com/pololu/libusbp)
   - [Windows API](https://en.wikipedia.org/wiki/Windows_API) (thanks to mingw-w64)
