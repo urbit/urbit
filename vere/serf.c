@@ -73,7 +73,7 @@
 static void
 _serf_fail(void* vod_p, const c3_c* wut_c)
 {
-  // fprintf(stderr, "serf: fail: %s\r\n", wut_c);
+  fprintf(stderr, "serf: fail: %s\r\n", wut_c);
   exit(1);
 }
 

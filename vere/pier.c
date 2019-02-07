@@ -107,6 +107,9 @@ _pier_disk_shutdown(u3_pier* pir_u)
 static void
 _pier_work_shutdown(u3_pier* pir_u)
 {
+  u3_lord* god_u = pir_u->god_u;
+
+  u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__exit, 0)), 0);
 }
 
 /* _pier_insert(): insert raw event.
@@ -1581,6 +1584,7 @@ u3_pier_exit(void)
 
     fprintf(stderr, "pier: exit\r\n");
     _pier_work_save(pir_u);
+    _pier_work_shutdown(pir_u);
     uv_stop(u3L);
   }
 }
