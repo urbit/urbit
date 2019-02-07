@@ -131,8 +131,8 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__mass: p_fav = u3t(fav);
     {
-      u3A->sac = u3k(p_fav);
-
+      //  XX GC the full king state
+      //
       u3z(pox); u3z(fav); return c3y;
     } break;
   }

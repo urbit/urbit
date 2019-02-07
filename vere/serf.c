@@ -366,23 +366,38 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   //
   {
     u3_noun riv = vir;
+    c3_w    i_w = 0;
 
     while ( u3_nul != riv ) {
       u3_noun fec = u3t(u3h(riv));
 
+      //  assumes a max of one %mass effect per event
+      //
       if ( c3__mass == u3h(fec) ) {
+        //  save a copy of the %mass data
+        //
         sac = u3k(u3t(fec));
+        //  replace the %mass data with ~
+        //
+        //    For efficient transmission to king.
+        //
+        riv = u3kb_weld(u3qb_scag(i_w, vir),
+                        u3nc(u3nt(u3k(u3h(u3h(riv))), c3__mass, u3_nul),
+                             u3qb_slag(1 + i_w, vir)));
+        u3z(vir);
+        vir = riv;
         break;
       }
 
       riv = u3t(riv);
+      i_w++;
     }
   }
 
-  _serf_send_complete(u3k(vir));
   _serf_grab(sac, ovo, vir);
+  _serf_send_complete(vir);
 
-  u3z(sac); u3z(ovo); u3z(vir);
+  u3z(sac); u3z(ovo);
 }
 
 /* _serf_poke_live(): apply event.
