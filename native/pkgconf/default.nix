@@ -18,7 +18,7 @@ env.make_derivation rec {
   patches = [
     # Fix a bug in pkgconf that causes it to ignore entries on its path
     # that are symbolic links.
-    #./do-not-read-link.patch
+    ./do-not-read-link.patch
 
     # Fix a bug in pkgconf that causes it to silently skip .pc files
     # missing the "Description" field.
