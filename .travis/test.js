@@ -6,10 +6,7 @@ var Urbit   = runner.Urbit;
 var ERROR   = runner.ERROR;
 var actions = runner.actions
 
-var hash  = fs.readFileSync('./pin-arvo-commit.txt', 'utf-8').slice(0, 10)
-var pill  = 'https://bootstrap.urbit.org/git-' + hash + '.pill'
-
-var args  = ['-u', pill, '-cgPSF', 'zod', 'zod'];
+var args  = ['-cgPSF', 'zod', '-B', 'brass.pill', 'zod'];
 var urbit = new Urbit(args);
 
 // vere hangs (always?) with run in travis-ci with -P
