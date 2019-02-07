@@ -132,6 +132,34 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   u3z(u3A->roc);
   u3A->roc = cor;
 
+  //  single-home
+  //
+  //    XX revise when real keys are supported
+  //    XX dispatch on evt_d, wire, or card tag?
+  //
+  if ( c3__boot == u3h(u3t(ovo)) ) {
+    //  ovo=[%boot *]
+    //  vir=[[wire %init @p] ~]
+    //  fec=[%init @p]
+    //
+    u3_noun fec = u3t(u3h(vir));
+
+    c3_assert( c3__init == u3h(fec) );
+    c3_assert( u3_none == u3A->our );
+
+    u3A->our = u3k(u3t(fec));
+    u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
+
+    {
+      u3_noun nam = u3dc("scot", 'p', u3k(u3A->our));
+      c3_c* nam_c = u3r_string(nam);
+      fprintf(stderr, "boot: ship: %s%s\r\n", nam_c,
+                                      (c3y == u3A->fak) ? " (fake)" : "");
+      free(nam_c);
+      u3z(nam);
+    }
+  }
+
   _serf_send_complete(vir);
 }
 
@@ -191,14 +219,12 @@ _serf_poke_live(c3_d    evt_d,              //  event number
 #endif
 
     if ( u3_blip != u3h(gon) ) {
-      //
       //  event rejected
-      //  
-      u3_noun why = u3k(u3h(gon));
-      u3_noun tan = u3k(u3t(gon));
+      //
+      u3_noun why, tan;
+      u3x_cell(gon, &why, &tan);
 
-      u3z(gon);
-      _serf_lame(evt_d, ovo, why, tan);
+      _serf_lame(evt_d, ovo, u3k(why), u3k(tan));
     }
     else {
       //  event accepted
@@ -208,40 +234,14 @@ _serf_poke_live(c3_d    evt_d,              //  event number
         //  vir/(list ovum)  list of effects
         //  cor/arvo         arvo core
         //
-        u3_noun vir = u3k(u3h(u3t(gon)));
-        u3_noun cor = u3k(u3t(u3t(gon)));
+        u3_noun vir, cor;
+        u3x_trel(gon, 0, &vir, &cor);
 
-        //  single-home
-        //
-        //    XX revise when real keys are supported
-        //    XX dispatch on evt_d, wire, or card tag?
-        //
-        if ( c3__boot == u3h(u3t(ovo)) ) {
-          //  ovo=[%boot *]
-          //  vir=[[wire %init @p] ~]
-          //  fec=[%init @p]
-          //
-          u3_noun fec = u3t(u3h(vir));
-
-          c3_assert( c3__init == u3h(fec) );
-          c3_assert( u3_none == u3A->our );
-
-          u3A->our = u3k(u3t(fec));
-          u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
-
-          {
-            u3_noun nam = u3dc("scot", 'p', u3k(u3A->our));
-            c3_c* nam_c = u3r_string(nam);
-            fprintf(stderr, "boot: ship: %s%s\r\n", nam_c,
-                                            (c3y == u3A->fak) ? " (fake)" : "");
-            free(nam_c);
-            u3z(nam);
-          }
-        }
-
-        _serf_sure(ovo, vir, cor);
+        _serf_sure(ovo, u3k(vir), u3k(cor));
       }
     }
+
+    u3z(gon);
   }
 }
 
