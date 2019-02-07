@@ -203,7 +203,17 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     return;
   }
 
-  c3_assert( 0 != bos_c );
+  //  if we don't have a galaxy domain, no-op
+  //
+  if ( 0 == bos_c ) {
+    u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
+    c3_c*  nam_c = u3r_string(nam);
+    fprintf(stderr, "ames: no galaxy domain for %s, no-op\r\n", nam_c);
+
+    free(nam_c);
+    u3z(nam);
+    return;
+  }
 
   time_t now = time(0);
 

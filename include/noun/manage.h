@@ -37,10 +37,10 @@
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
-      /* u3m_init(): start the environment, with/without checkpointing.
+      /* u3m_init(): start the environment.
       */
         void
-        u3m_init(c3_o chk_o);
+        u3m_init();
 
       /* u3m_pave(): instantiate or activate image.
       */
@@ -105,7 +105,7 @@
       /* u3m_mark(): mark all nouns in the road.
       */
         c3_w
-        u3m_mark(void);
+        u3m_mark(FILE* fil_u);
 
       /* u3m_grab(): garbage-collect the world, plus extra roots.
       */
@@ -136,3 +136,8 @@
       */
         void
         u3m_wall(u3_noun wol);
+
+      /* u3m_reclaim: clear persistent caches to reclaim memory
+      */
+        void
+        u3m_reclaim(void);

@@ -237,10 +237,11 @@ vere_lib_src = [
 incdir = include_directories('include/', '/usr/include/foundationdb/', 'subprojects/rocksdb/include/rocksdb')
 
 conf_data = configuration_data()
-conf_data.set('URBIT_VERSION', '"0.7.0"')
+conf_data.set('URBIT_VERSION', '"0.7.2"')
 conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
+conf_data.set('U3_MEMORY_LOG', get_option('memory-log'))
 
 osdet = host_machine.system()
 cc = meson.get_compiler('c')
@@ -338,6 +339,10 @@ murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'm
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 
+#  XX temporary, should only be needed in vere
+#
+libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+
 
 noun_deps = [argon2_dep,
             ed25519_dep,
@@ -347,7 +352,8 @@ noun_deps = [argon2_dep,
             openssl_dep,
             secp256k1_dep,
             sigsegv_dep,
-            softfloat3_dep]
+            softfloat3_dep,
+            libh2o_dep]
 
 libnoun = static_library('noun',
   sources: [noun_src, jets_all_src],
@@ -360,8 +366,7 @@ libnoun = static_library('noun',
 
 #  For these libs we provide fallback bundle
 #
-libent_dep = dependency('libent', version: '>=0.1.3', fallback: ['libent', 'libent_dep'])
-libh2o_dep = dependency('libh2o', version: '>=0.13.3', fallback: ['libh2o', 'libh2o_dep'])
+libent_dep = dependency('libent', version: '>=0.2.1', fallback: ['libent', 'libent_dep'])
 libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
 libuv_dep = dependency('libuv', version: '>=1.8.0', fallback:['libuv', 'libuv_dep'])
 libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])

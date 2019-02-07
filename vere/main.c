@@ -90,6 +90,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.qui = c3n;
   u3_Host.ops_u.rep = c3n;
   u3_Host.ops_u.tex = c3n;
+  u3_Host.ops_u.tra = c3n;
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
@@ -98,7 +99,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   //  XX re-enable -s, -A
   //
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:H:w:u:j:e:E:f:F:k:o:i:m:p:LabcCdgqtvxPDRS")) )
+                 "G:J:B:K:H:w:u:e:E:f:F:k:o:i:m:p:LJabcCdgqtvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'o': {
@@ -153,10 +154,6 @@ _main_getopt(c3_i argc, c3_c** argv)
         u3_Host.ops_u.url_c = strdup(optarg);
         break;
       }
-      case 'j': {
-        u3_Host.ops_u.json_file_c = strdup(optarg);
-        break;
-      }
       case 'x': {
         u3_Host.ops_u.tex = c3y;
         break;
@@ -192,6 +189,7 @@ _main_getopt(c3_i argc, c3_c** argv)
         return c3y;
       }
       case 'L': { u3_Host.ops_u.net = c3n; break; }
+      case 'j': { u3_Host.ops_u.tra = c3y; break; }
       case 'a': { u3_Host.ops_u.abo = c3y; break; }
       case 'b': { u3_Host.ops_u.bat = c3y; break; }
       case 'c': { u3_Host.ops_u.nuu = c3y; break; }
@@ -698,9 +696,11 @@ main(c3_i   argc,
 
       /*  Set tracing flag
       */
-      if ( u3_Host.ops_u.json_file_c ) {
+      if ( _(u3_Host.ops_u.tra) ) {
         u3C.wag_w |= u3o_trace;
-        u3t_trace_open(u3_Host.ops_u.json_file_c);
+        u3_Host.tra_u.nid_w = 0;
+        u3_Host.tra_u.fil_u = NULL;
+        u3_Host.tra_u.con_w = 0;
       }
     }
 
