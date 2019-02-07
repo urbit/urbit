@@ -12,13 +12,10 @@ omni.at-spi2-headers
 omni.dejavu-fonts
 {$windows}.devcon
 {$all}.expat
-omni.fixesproto
 omni.xorgproto
 {$windows}.gdb
 {$all}.hello
 {$all}.hello_cpp
-omni.inputproto
-omni.kbproto
 {$linux}.libudev
 {$all}.libusb
 {$all}.libusbp{,.examples}
@@ -45,9 +42,7 @@ omni.xcb-proto
 {$all}.xcb-util-keysyms
 {$all}.xcb-util-renderutil
 {$all}.xcb-util-wm
-omni.xextproto
 omni.xorg-macros
-{$all}.xproto
 omni.xtrans
 {$all}.zlib
 
