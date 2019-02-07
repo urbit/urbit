@@ -1,6 +1,5 @@
 # Amalgamates all of our X libraries into one derivation to make it easier to
-# build projects like Qt that expect them all to be installed in one place.
-# TODO: I think Qt 5.12.1 doesn't need this and we can get rid of it.
+# build projects that use a lot of them.
 
 { crossenv, libs }:
 
