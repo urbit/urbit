@@ -6,7 +6,7 @@ var Urbit   = runner.Urbit;
 var ERROR   = runner.ERROR;
 var actions = runner.actions
 
-var args  = ['-cgPSF', 'zod', '-B', 'brass.pill', 'zod'];
+var args  = ['-cgSF', 'zod', '-B', 'brass.pill', 'zod'];
 var urbit = new Urbit(args);
 
 // vere hangs (always?) with run in travis-ci with -P
