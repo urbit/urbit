@@ -22,7 +22,8 @@
 
 /* Require unsigned char
  */
-STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
+STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ),
+              "unsigned char required");
 
 /* _main_readw(): parse a word from a string.
 */
@@ -248,7 +249,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
+  c3_t imp_t = ((0 != u3_Host.ops_u.who_c) &&
+                (4 == strlen(u3_Host.ops_u.who_c)));
 
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
@@ -519,11 +521,16 @@ report(void)
 {
   printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
-  printf("sigsegv: %d.%d\n", (libsigsegv_version >> 8) & 0xff, libsigsegv_version & 0xff);
+  printf("sigsegv: %d.%d\n",
+         (libsigsegv_version >> 8) & 0xff,
+         libsigsegv_version & 0xff);
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
-  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
+  printf("libh2o: %d.%d.%d\n",
+         H2O_LIBRARY_VERSION_MAJOR,
+         H2O_LIBRARY_VERSION_MINOR,
+         H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
@@ -544,6 +551,66 @@ main(c3_i   argc,
   if ( c3n == _main_getopt(argc, argv) ) {
     u3_ve_usage(argc, argv);
     return 1;
+  }
+
+  /*
+    In daemon mode, run the application as a background process.
+
+    - First setup a pipe and `fork()` the process.
+    - In the parent, read one byte from the pipe and then exit.
+    - In the child, write one byte to the pipe and then continue as per usual.
+
+    First run `fork()`,
+
+    TODO Redirect output to a file.
+    TODO Don't exit from the parent until the boot sequence finishes.
+    TODO Exit with an error code if the child process failed to boot.
+  */
+  if ( c3y == u3_Host.ops_u.dem ) {
+    int pipefd[2];
+    char buf[2] = {0,0};
+
+    if (0 != pipe(pipefd)) {
+      return 1; // TODO
+    }
+
+    fprintf(stderr, "forking\n");
+    fflush(stderr);
+    pid_t pid = fork();
+
+    if (pid) {
+      close(pipefd[1]);
+      close(0);
+      close(1);
+
+      fprintf(stderr, "parent: waiting\n");
+      fflush(stderr);
+
+      if (read(pipefd[0], buf, 1)) {
+        fprintf(stderr, "parent: urbit booted, exiting\n");
+        fflush(stderr);
+        return 0;
+      }
+
+      fprintf(stderr, "parent: urbit failed to boot, exiting with error\n");
+      fflush(stderr);
+      return 1;
+    }
+
+    close(pipefd[0]);
+
+    fprintf(stderr, "child: informing parent that boot was a success\n");
+    fflush(stderr);
+
+    if (0 == write(pipefd[1], buf, 1)) {
+      fprintf(stderr, "child: Ahhhh!! Can't write to pipe. Why?\n");
+      fflush(stderr);
+      exit(1);
+    }
+
+    close(pipefd[1]);
+    fprintf(stderr, "child: done. parent should exit now.\n");
+    fflush(stderr);
   }
 
   if ( c3y == u3_Host.ops_u.rep ) {

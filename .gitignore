@@ -31,3 +31,5 @@ node_modules/
 cscope.*
 build/
 TAGS
+/fakezod
+/zod
