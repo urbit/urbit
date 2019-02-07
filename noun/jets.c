@@ -834,7 +834,7 @@ u3j_boot(c3_o nuu_o)
   }
   u3R->jed.hot_p = u3h_new();
   jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.dev_u[0].par_u, u3_nul, u3D.dev_u);
-  fprintf(stderr, "boot: installed %d jets\n", jax_l);
+  fprintf(stderr, "boot: installed %d jets\r\n", jax_l);
 }
 
 /* _cj_soft(): kick softly by arm axis.
