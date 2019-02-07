@@ -91,7 +91,7 @@
     /* u3t_trace_open(): opens the path for writing tracing information.
     */
       void
-      u3t_trace_open(c3_c*);
+      u3t_trace_open();
 
     /* u3t_trace_close(): closes the trace file. optional.
     */
