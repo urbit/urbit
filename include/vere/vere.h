@@ -4,6 +4,7 @@
 */
 
 #include "h2o.h"
+#include <curl/curl.h>
 
   /** Quasi-tunable parameters.
   **/
@@ -174,20 +175,11 @@
         struct _u3_ward* rev_u;             //  active reverse listeners
       } u3_prox;
 
-    /* u3_csat: client connection state.
-    */
-      typedef enum {
-        u3_csat_init = 0,                   //  initialized
-        u3_csat_addr = 1,                   //  address resolution begun
-        u3_csat_quit = 2,                   //  cancellation requested
-        u3_csat_ripe = 3                    //  passed to libh2o
-      } u3_csat;
-
     /* u3_cres: response to http client.
     */
       typedef struct _u3_cres {
         c3_w             sas_w;             //  status code
-        u3_noun          hed;               //  headers
+        u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  exit of body queue
         u3_hbod*         dob_u;             //  entry of body queue
       } u3_cres;
@@ -195,25 +187,24 @@
     /* u3_creq: outgoing http request.
     */
       typedef struct _u3_creq {             //  client request
-        c3_l             num_l;             //  request number
-        h2o_http1client_t* cli_u;           //  h2o client
-        u3_csat          sat_e;             //  connection state
-        c3_o             sec;               //  yes == https
-        c3_w             ipf_w;             //  IP
-        c3_c*            ipf_c;             //  IP (string)
-        c3_c*            hot_c;             //  host
-        c3_s             por_s;             //  port
-        c3_c*            por_c;             //  port (string)
-        c3_m             met_m;             //  method
-        c3_c*            url_c;             //  url
-        u3_hhed*         hed_u;             //  headers
-        u3_hbod*         bod_u;             //  body
-        u3_hbod*         rub_u;             //  exit of send queue
-        u3_hbod*         bur_u;             //  entry of send queue
-        h2o_iovec_t*     vec_u;             //  send-buffer array
-        u3_cres*         res_u;             //  nascent response
-        struct _u3_creq* nex_u;             //  next in list
-        struct _u3_creq* pre_u;             //  previous in list
+        c3_l               num_l;           //  request number
+        CURL*              cur_u;           //  curl handle
+        struct curl_slist* lis_u;           //  curl headers list pointer
+        c3_o               sec;             //  yes == https
+        c3_w               ipf_w;           //  IP
+        c3_c*              ipf_c;           //  IP (string)
+        c3_c*              hot_c;           //  host
+        c3_s               por_s;           //  port
+        c3_c*              por_c;           //  port (string)
+        c3_m               met_m;           //  method
+        c3_c*              url_c;           //  url
+        u3_hhed*           hed_u;           //  headers
+        u3_hbod*           bod_u;           //  body
+        c3_w               rem_w;           //  size of body remaining
+        c3_c*              err_c;           //  CURLOPT_ERRORBUFFER
+        u3_cres*           res_u;           //  nascent response
+        struct _u3_creq*   nex_u;           //  next in list
+        struct _u3_creq*   pre_u;           //  previous in list
       } u3_creq;
 
     /* u3_chot: foreign host (not yet used).
@@ -229,9 +220,9 @@
     */
       typedef struct _u3_cttp {
         u3_creq*         ceq_u;             //  request list
-        h2o_http1client_ctx_t*              //
-                         ctx_u;             //  h2o client ctx
-        void*            tls_u;             //  client SSL_CTX*
+        CURLM*           mul_u;             //  multiplex curl
+        int*             run_u;             //  number of running transfers
+        uv_timer_t       tim_u;             //  uv timer for curl
       } u3_cttp;
 
     /* u3_pact: ames packet, coming or going.
