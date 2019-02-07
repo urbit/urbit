@@ -99,7 +99,7 @@ let
         else if crossenv.os == "linux" then
           "-qpa xcb " +
           "-system-xcb " +
-          "-no-opengl "
+          "-no-opengl "       # TODO: support OpenGL in Linux
         else if crossenv.os == "macos" then
           "-device-option QMAKE_MAC_SDK.macosx.Path=" +
             "${crossenv.sdk} " +

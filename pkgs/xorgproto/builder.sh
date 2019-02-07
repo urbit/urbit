@@ -12,3 +12,6 @@ cd build
 ../src/configure --prefix=$out
 make
 make install
+
+mkdir $out/lib
+ln -s ../share/pkgconfig $out/lib/

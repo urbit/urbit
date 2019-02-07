@@ -1,5 +1,4 @@
-{ crossenv, xorg-macros, xproto, libxcb, xtrans,
-  xextproto, inputproto, kbproto }:
+{ crossenv, xorg-macros, xorgproto, libxcb, xtrans }:
 
 let
   version = "1.6.5";
@@ -24,15 +23,12 @@ let
 
     cross_inputs = [
       xorg-macros
-      xproto
+      xorgproto
       libxcb
       xtrans
-      xextproto
-      inputproto
-      kbproto
     ];
 
-    inherit kbproto xproto libxcb;
+    inherit xorgproto libxcb;
   };
 
   license = crossenv.native.make_derivation {
@@ -43,12 +39,9 @@ let
 
   license_set =
     xorg-macros.license_set //
-    xproto.license_set //
+    xorgproto.license_set //
     libxcb.license_set //
     xtrans.license_set //
-    xextproto.license_set //
-    inputproto.license_set //
-    kbproto.license_set //
     { "${name}" = license; };
 
 in

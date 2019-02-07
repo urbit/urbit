@@ -27,7 +27,7 @@ let
 
     ACLOCAL_PATH =
       "${nixpkgs.libtool}/share/aclocal:" +
-      "${crossenv.native.pkgconf}/share/aclocal";
+      "${nixpkgs.pkgconfig}/share/aclocal";
 
     # Avoid a name conflict: get_home_dir is also defined in libudev.
     CFLAGS = "-Dget_home_dir=openocd_get_home_dir";

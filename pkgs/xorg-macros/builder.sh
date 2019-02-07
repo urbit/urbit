@@ -19,4 +19,4 @@ ln -s share $out/lib
 
 # xorg-macros.m4 uses AC_REQUIRE to pull in PKG_PROG_PKG_CONFIG, so pkg.m4
 # needs to be on the ACLOCAL_PATH.
-ln -s $pkgconf/share/aclocal/* $out/share/aclocal/
+ln -s $pkgconfig/share/aclocal/* $out/share/aclocal/

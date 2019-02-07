@@ -9,6 +9,8 @@ for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
 done
+cd src/3rdparty
+rm -r angle xcb
 popd
 
 mkdir build
