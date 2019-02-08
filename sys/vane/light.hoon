@@ -115,7 +115,7 @@
         ::    We send the response headers with each %http-progress, so we must
         ::    save them.
         ::
-        response-headers=(unit http-response-header)
+        response-headers=(unit response-header:http)
         ::  chunks: a list of partial results returned from unix
         ::
         ::    This list of octs must be flopped before it is composed as the
@@ -166,12 +166,9 @@
       ::  inbound-request: the original request which caused this connection
       ::
       =inbound-request
-      ::  code: the status code, if sent
+      ::  response-header: set when we get our first %start
       ::
-      code=(unit @ud)
-      ::  headers: the headers, if sent
-      ::
-      headers=(unit header-list)
+      response-header=(unit response-header:http)
       ::  bytes-sent: the total bytes sent in response
       ::
       bytes-sent=@ud
@@ -657,19 +654,6 @@
   ?.  =(i.prefix i.full)
     %.n
   $(prefix t.prefix, full t.full)
-::  +get-header: returns the value for :header, if it exists in :header-list
-::
-++  get-header
-  |=  [header=@t =header-list]
-  ^-  (unit @t)
-  ::
-  ?~  header-list
-    ~
-  ::
-  ?:  =(key.i.header-list header)
-    `value.i.header-list
-  ::
-  $(header-list t.header-list)
 ::  +simplified-url-parser: returns [(each @if @t) (unit port=@ud)]
 ::
 ++  simplified-url-parser
@@ -687,155 +671,6 @@
       (easy ~)
     ==
   ==
-::  +per-client-event: per-event client core
-::
-++  per-client-event
-  |=  [[our=@p eny=@ =duct now=@da scry=sley] state=state:client]
-  |%
-  ::  +request: makes an external web request
-  ::
-  ++  request
-    |=  [=http-request =outbound-config]
-    ^-  [(list move) state:client]
-    ::  get the next id for this request
-    ::
-    =^  id  next-id.state  [next-id.state +(next-id.state)]
-    ::  add a new open session
-    ::
-    =.  connection-by-id.state
-      %+  ~(put by connection-by-id.state)  id
-      =,  outbound-config
-      [duct [redirects retries ~ ~ 0 ~]]
-    ::  start the download
-    ::
-    ::  the original eyre keeps track of the duct on %born and then sends a
-    ::  %give on that duct. this seems like a weird inversion of
-    ::  responsibility, where we should instead be doing a pass to unix. the
-    ::  reason we need to manually build ids is because we aren't using the
-    ::  built in duct system.
-    ::
-    ::  email discussions make it sound like fixing that might be hard, so
-    ::  maybe i should just live with the way it is now?
-    ::
-    :-  [outbound-duct.state %give %http-client %request id http-request]~
-    state
-  ::  +receive: receives a response to an http-request we made
-  ::
-  ::    TODO: Right now, we are not following redirect and not handling retries
-  ::    correctly. We need to do this.
-  ::
-  ++  receive
-    |=  [id=@ud =raw-http-response]
-    ^-  [(list move) state:client]
-    ::  ensure that this is a valid receive
-    ::
-    ?~  connection=(~(get by connection-by-id.state) id)
-      ~&  [%eyre-unknown-receive id]
-      [~ state]
-    ::
-    ?-    -.raw-http-response
-        %start
-      ::  TODO: Handle redirects and retries here, before we start dispatching
-      ::  back to the application.
-      ::
-      ::  record data from the http response that only comes from %start
-      ::
-      =.  connection-by-id.state
-        %+  ~(jab by connection-by-id.state)  id
-        |=  [duct=^duct =in-progress-http-request:client]
-        ::
-        =.  expected-size.in-progress-http-request
-          ?~  str=(get-header 'content-length' headers.raw-http-response)
-            ~
-          ::
-          (rush u.str dum:ag)
-        ::
-        =.  response-headers.in-progress-http-request
-          `[status-code headers]:raw-http-response
-        ::
-        [duct in-progress-http-request]
-      ::
-      ?:  complete.raw-http-response
-        (send-finished id data.raw-http-response)
-      ::
-      (record-and-send-progress id data.raw-http-response)
-    ::
-        %continue
-      ?:  complete.raw-http-response
-        (send-finished id data.raw-http-response)
-      ::
-      (record-and-send-progress id data.raw-http-response)
-    ::
-        %cancel
-      ~&  [%eyre-received-cancel id]
-      [~ state]
-    ==
-  ::  +record-and-send-progress: save incoming data and send progress report
-  ::
-  ++  record-and-send-progress
-    |=  [id=@ud data=(unit octs)]
-    ^-  [(list move) state:client]
-    ::
-    =.  connection-by-id.state
-      %+  ~(jab by connection-by-id.state)  id
-      |=  [duct=^duct =in-progress-http-request:client]
-      ::  record the data chunk and size, if it exists
-      ::
-      =?    chunks.in-progress-http-request
-          ?=(^ data)
-        [u.data chunks.in-progress-http-request]
-      =?    bytes-read.in-progress-http-request
-          ?=(^ data)
-        (add bytes-read.in-progress-http-request p.u.data)
-      ::
-      [duct in-progress-http-request]
-    ::
-    =/  connection  (~(got by connection-by-id.state) id)
-    :_  state
-    ^-  (list move)
-    :_  ~
-    :*  duct.connection
-        %give
-        %http-client
-        %progress
-        (need response-headers.in-progress-http-request.connection)
-        bytes-read.in-progress-http-request.connection
-        expected-size.in-progress-http-request.connection
-        data
-    ==
-  ::  +send-finished: sends the %finished, cleans up the session state
-  ::
-  ++  send-finished
-    |=  [id=@ud data=(unit octs)]
-    ^-  [(list move) state:client]
-    ::
-    =/  connection  (~(got by connection-by-id.state) id)
-    ::  reassemble the octs that we've received into their final form
-    ::
-    =/  data=octs
-      %-  combine-octs
-      %-  flop
-      ::
-      ?~  data
-        chunks.in-progress-http-request.connection
-      [u.data chunks.in-progress-http-request.connection]
-    ::
-    =/  response-headers=http-response-header
-      (need response-headers.in-progress-http-request.connection)
-    ::
-    =/  mime=@t
-      ?~  mime-type=(get-header 'content-type' headers.response-headers)
-        'application/octet-stream'
-      u.mime-type
-    :-  :~  :*  duct.connection
-                %give
-                %http-client
-                %finished
-                response-headers
-                ?:(=(0 p.data) ~ `[mime data])
-        ==  ==
-    state(connection-by-id (~(del by connection-by-id.state) id))
-  --
 ::  +per-server-event: per-event server core
 ::
 ++  per-server-event
@@ -846,17 +681,17 @@
   ::  +request: starts handling an inbound http request
   ::
   ++  request
-    |=  [secure=? =address =http-request]
+    |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
     ::
-    =+  host=(get-header 'host' header-list.http-request)
-    =+  action=(get-action-for-binding host url.http-request)
+    =+  host=(get-header:http 'host' header-list.request)
+    =+  action=(get-action-for-binding host url.request)
     ::
-    =/  authenticated  (request-is-logged-in:authentication http-request)
+    =/  authenticated  (request-is-logged-in:authentication request)
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [action [authenticated secure address http-request] ~ ~ 0]
+      [action [authenticated secure address request] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::
@@ -875,7 +710,7 @@
         ::  prelude with the arguments passed in.
         ::
         [%$ %noun !>([[now=now eny=eny bek=[our desk.generator.action [%da now]]] ~ ~])]
-      [%$ %noun !>([authenticated http-request])]
+      [%$ %noun !>([authenticated request])]
     ::
         %app
       :_  state
@@ -895,14 +730,14 @@
       ==
     ::
         %authentication
-      (handle-request:authentication secure address http-request)
+      (handle-request:authentication secure address request)
     ::
         %channel
-      (handle-request:by-channel secure authenticated address http-request)
+      (handle-request:by-channel secure authenticated address request)
     ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
-      (file-not-found-page url.http-request)
+      (file-not-found-page url.request)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -958,7 +793,7 @@
     ::
     %-  handle-response
     :*  %start
-        status-code=code
+        :-  status-code=code
         ^=  headers
           :~  ['content-type' content-type]
               ['content-length' (crip (format-ud-as-integer p.data))]
@@ -977,32 +812,32 @@
     ::  +handle-request: handles an http request for the 
     ::
     ++  handle-request
-      |=  [secure=? =address =http-request]
+      |=  [secure=? =address =request:http]
       ^-  [(list move) server-state]
       ::
       ::  if we received a simple get, just return the page
       ::
-      ?:  =('GET' method.http-request)
+      ?:  =('GET' method.request)
         ::  parse the arguments out of request uri
         ::
-        =+  request-line=(parse-request-line url.http-request)
+        =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header 'redirect' args.request-line))
+        (login-page (get-header:http 'redirect' args.request-line))
       ::  if we are not a post, return an error
       ::
-      ?.  =('POST' method.http-request)
+      ?.  =('POST' method.request)
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::  we are a post, and must process the body type as form data
       ::
-      ?~  body.http-request
+      ?~  body.request
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
-        (rush q.u.body.http-request yquy:de-purl:html)
+        (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::
-      ?~  password=(get-header 'password' u.parsed)
+      ?~  password=(get-header:http 'password' u.parsed)
         (return-static-data-on-duct 400 'text/html' (login-page ~))
       ::  check that the password is correct
       ::
@@ -1026,13 +861,13 @@
         "urbauth={<session>}; Path=/; Max-Age=86400"
       ::
       =/  new-location=@t
-        ?~  redirect=(get-header 'redirect' u.parsed)
+        ?~  redirect=(get-header:http 'redirect' u.parsed)
           '/'
         u.redirect
       ::
       %-  handle-response
       :*  %start
-          status-code=307
+          :-  status-code=307
           ^=  headers
             :~  ['location' new-location]
                 ['set-cookie' cookie-line]
@@ -1042,18 +877,18 @@
       ==
     ::  +request-is-logged-in: checks to see if the request is authenticated
     ::
-    ::    We are considered logged in if this http-request has an urbauth
+    ::    We are considered logged in if this request has an urbauth
     ::    Cookie which is not expired.
     ::
     ++  request-is-logged-in
-      |=  =http-request
+      |=  =request:http
       ^-  ?
       ::  are there cookies passed with this request?
       ::
       ::    TODO: In HTTP2, the client is allowed to put multiple 'Cookie'
       ::    headers.
       ::
-      ?~  cookie-header=(get-header 'cookie' header-list.http-request)
+      ?~  cookie-header=(get-header:http 'cookie' header-list.request)
         %.n
       ::  is the cookie line is valid?
       ::
@@ -1061,7 +896,7 @@
         %.n
       ::  is there an urbauth cookie?
       ::
-      ?~  urbauth=(get-header 'urbauth' u.cookies)
+      ?~  urbauth=(get-header:http 'urbauth' u.cookies)
         %.n
       ::  is this formatted like a valid session cookie?
       ::
@@ -1098,7 +933,7 @@
     ::  +handle-request: handles an http request for the subscription system
     ::
     ++  handle-request
-      |=  [secure=? authenticated=? =address =http-request]
+      |=  [secure=? authenticated=? =address =request:http]
       ^-  [(list move) server-state]
       ::  if we're not authenticated error, but don't redirect.
       ::
@@ -1110,16 +945,16 @@
         ::  TODO: Real 400 page.
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error authenticated url.http-request ~)
+        (internal-server-error authenticated url.request ~)
       ::  parse out the path key the subscription is on
       ::
-      =+  request-line=(parse-request-line url.http-request)
+      =+  request-line=(parse-request-line url.request)
       ?.  ?=([@t @t @t ~] site.request-line)
         ~&  %bad-request-line
         ::  url is not of the form '/~/channel/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error authenticated url.http-request ~)
+        (internal-server-error authenticated url.request ~)
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
@@ -1131,13 +966,13 @@
         ::
         (return-static-data-on-duct 200 'application/javascript' channel-js)
       ::
-      ?:  =('PUT' method.http-request)
+      ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request channel-id http-request)
+        (on-put-request channel-id request)
       ::
-      ?:  =('GET' method.http-request)
-        (on-get-request channel-id http-request)
+      ?:  =('GET' method.request)
+        (on-get-request channel-id request)
       ::
       ~&  %session-not-a-put
       [~ state]
@@ -1231,26 +1066,26 @@
     ::    client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t =http-request]
+      |=  [channel-id=@t =request:http]
       ^-  [(list move) server-state]
       ::  if there's no channel-id, we must 404
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  if there's already a duct listening to this channel, we must 400
       ::
       ?:  ?=([%| *] state.u.maybe-channel)
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  when opening an event-stream, we must cancel our timeout timer
       ::
       =.  moves
         [(cancel-timeout-move channel-id p.state.u.maybe-channel) moves]
-      ::  the http-request may include a 'Last-Event-Id' header
+      ::  the request may include a 'Last-Event-Id' header
       ::
       =/  maybe-last-event-id=(unit @ud)
-        ?~  maybe-raw-header=(get-header 'Last-Event-ID' header-list.http-request)
+        ?~  maybe-raw-header=(get-header:http 'Last-Event-ID' header-list.request)
           ~
         (rush u.maybe-raw-header dum:ag)
       ::  flush events older than the passed in 'Last-Event-ID'
@@ -1274,7 +1109,8 @@
       ::
       =^  http-moves  state
         %-  handle-response
-        :*  %start  200
+        :*  %start
+            :-  200
             :~  ['content-type' 'text/event-stream']
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
@@ -1312,32 +1148,32 @@
     ::    a set of commands in JSON format in the body of the message.
     ::
     ++  on-put-request
-      |=  [channel-id=@t =http-request]
+      |=  [channel-id=@t =request:http]
       ^-  [(list move) server-state]
       ::  error when there's no body
       ::
-      ?~  body.http-request
+      ?~  body.request
         ~&  %no-body
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  if the incoming body isn't json, this is a bad request, 400.
       ::
-      ?~  maybe-json=(de-json:html q.u.body.http-request)
+      ?~  maybe-json=(de-json:html q.u.body.request)
         ~&  %no-json
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  parse the json into an array of +channel-request items
       ::
       ?~  maybe-requests=(parse-channel-request u.maybe-json)
         ~&  [%no-parse u.maybe-json]
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  while weird, the request list could be empty
       ::
       ?:  =(~ u.maybe-requests)
         ~&  %empty-list
         %^  return-static-data-on-duct  400  'text/html'
-        (internal-server-error %.y url.http-request ~)
+        (internal-server-error %.y url.request ~)
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -1362,8 +1198,7 @@
         =^  http-moves  state
           %-  handle-response
           :*  %start
-              status-code=200
-              headers=~
+              [status-code=200 headers=~]
               data=~
               complete=%.y
           ==
@@ -1499,8 +1334,10 @@
       ::  if a client is connected, send this event to them.
       ::
       =?  moves  ?=([%| *] state.channel)
+        ^-  (list move)
         :_  moves
-        :^  p.state.channel  %give  %http-server
+        :+  p.state.channel  %give
+        ^-  gift:able:light
         :*  %response  %continue
         ::
             ^=  data
@@ -1569,10 +1406,10 @@
     %-  handle-response
     =/  result=mime  ((hard mime) q.q.cage)
     ::
-    ^-  raw-http-response
+    ^-  http-event:http
     :*  %start
-        200
-        ^-  header-list
+        :-  200
+        ^-  header-list:http
         :~  ['content-type' (en-mite:mimes:html p.result)]
             ['content-length' (crip (format-ud-as-integer p.q.result))]
         ==
@@ -1587,7 +1424,7 @@
   ::    done with.
   ::
   ++  handle-response
-    |=  =raw-http-response
+    |=  =http-event:http
     ^-  [(list move) server-state]
     ::  verify that this is a valid response on the duct
     ::
@@ -1597,10 +1434,10 @@
     ::
     |^  ^-  [(list move) server-state]
         ::
-        ?-    -.raw-http-response
+        ?-    -.http-event
         ::
             %start
-          ?^  code.u.connection-state
+          ?^  response-header.u.connection-state
             ~&  [%http-multiple-start duct]
             error-connection
           ::
@@ -1608,28 +1445,27 @@
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
             %_  connection
-              code        `status-code.raw-http-response
-              headers     `headers.raw-http-response
-              bytes-sent  ?~(data.raw-http-response 0 p.u.data.raw-http-response)
+              response-header  `response-header.http-event
+              bytes-sent  ?~(data.http-event 0 p.u.data.http-event)
             ==
           ::
-          =?  state  complete.raw-http-response
+          =?  state  complete.http-event
             log-complete-request
           ::
           pass-response
         ::
             %continue
-          ?~  code.u.connection-state
+          ?~  response-header.u.connection-state
             ~&  [%http-continue-without-start duct]
             error-connection
           ::
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  connection=outstanding-connection
-            =+  size=?~(data.raw-http-response 0 p.u.data.raw-http-response)
+            =+  size=?~(data.http-event 0 p.u.data.http-event)
             connection(bytes-sent (add bytes-sent.connection size))
           ::
-          =?  state  complete.raw-http-response
+          =?  state  complete.http-event
             log-complete-request
           ::
           pass-response
@@ -1642,7 +1478,7 @@
     ::
     ++  pass-response
       ^-  [(list move) server-state]
-      [[duct %give %http-server %response raw-http-response]~ state]
+      [[duct %give %response http-event]~ state]
     ::
     ++  log-complete-request
       ::  todo: log the complete request
@@ -1663,7 +1499,7 @@
       ::  respond to outside with %error
       ::
       ^-  [(list move) server-state]
-      [[duct %give %http-server %response %cancel ~]~ state]
+      [[duct %give %response %cancel ~]~ state]
     --
   ::  +add-binding: conditionally add a pairing between binding and action
   ::
@@ -1676,7 +1512,7 @@
     |-
     ^-  [(list move) server-state]
     ?~  to-search
-      :-  [duct %give %http-server %bound %.y binding]~
+      :-  [duct %give %bound %.y binding]~
       =.  bindings.state
         ::  store in reverse alphabetical order so that longer paths are first
         ::
@@ -1692,7 +1528,7 @@
       state
     ::
     ?:  =(binding binding.i.to-search)
-      :-  [duct %give %http-server %bound %.n binding]~
+      :-  [duct %give %bound %.n binding]~
       state
     ::
     $(to-search t.to-search)
@@ -1796,11 +1632,9 @@
       wrapped-task
     ~|  [%p-wrapped-task p.wrapped-task]
     ((hard task:able) p.wrapped-task)
+  ::  %init: tells us what our ship name is
   ::
-  ?-    -.task
-      ::  %init: tells us what our ship name is
-      ::
-      %init
+  ?:  ?=(%init -.task)
     ::  initial value for the login handler
     ::
     =.  bindings.server-state.ax
@@ -1808,9 +1642,8 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ light-gate]
-      ::  %born: new unix process
-      ::
-      %born
+  ::  %born: new unix process
+  ?:  ?=(%born -.task)
     ::
     ~&  [%todo-handle-born p.task]
     ::  TODO: reset the next-id for client state here.
@@ -1843,72 +1676,72 @@
     ;:  weld
       ::  hand back default configuration for now
       ::
-      [duct %give %http-server %set-config *http-config]~
+      [duct %give %set-config *http-config]~
     ::
       closed-connections
     ==
+  ::  all other commands operate on a per-server-event
   ::
-      ::
-      ::
-      %http-server
-    =/  event-args  [[our eny duct now scry-gate] server-state.ax]
-    =/  server  (per-server-event event-args)
-    ?-    -.server-task.task
-    ::
-        ::  %live: no idea what this is for
-        ::
-        %live
-      ::
-      ~!  task
-      ~&  [%todo-live server-task.task]
-      ::
-      [~ light-gate]
-    ::
-        %request
-      =^  moves  server-state.ax  (request:server +.server-task.task)
-      [moves light-gate]
-    ::
-        %cancel-request
-      =^  moves  server-state.ax  cancel-request:server
-      [moves light-gate]
-    ::
-        %connect
-      =^  moves  server-state.ax
-        %+  add-binding:server  binding.server-task.task
-        [%app app.server-task.task]
-      [moves light-gate]
-    ::
-        %serve
-      =^  moves  server-state.ax
-        %+  add-binding:server  binding.server-task.task
-        [%gen generator.server-task.task]
-      [moves light-gate]
-    ::
-        %disconnect
-      =.  server-state.ax  (remove-binding:server binding.server-task.task)
-      [~ light-gate]
-    ==
+  =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+  =/  server  (per-server-event event-args)
+  ?-    -.task
   ::
+      ::  %live: no idea what this is for
       ::
-      ::
-      %http-client
-    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
-    =/  client  (per-client-event event-args)
-    ?-    -.client-task.task
+      %live
     ::
-        %request
-      =^  moves  client-state.ax  (request:client +.client-task.task)
-      [moves light-gate]
+    ~&  [%todo-live task]
     ::
-        %cancel-request
-      ~&  %todo-cancel-request
-      [~ light-gate]
-    ::
-        %receive
-      =^  moves  client-state.ax  (receive:client +.client-task.task)
-      [moves light-gate]
-    ==
+    [~ light-gate]
+  ::
+      %request
+    =^  moves  server-state.ax  (request:server +.task)
+    [moves light-gate]
+  ::
+      %cancel-request
+    =^  moves  server-state.ax  cancel-request:server
+    [moves light-gate]
+  ::
+      %connect
+    =^  moves  server-state.ax
+      %+  add-binding:server  binding.task
+      [%app app.task]
+    [moves light-gate]
+  ::
+      %serve
+    =^  moves  server-state.ax
+      %+  add-binding:server  binding.task
+      [%gen generator.task]
+    [moves light-gate]
+  ::
+      %disconnect
+    =.  server-state.ax  (remove-binding:server binding.task)
+    [~ light-gate]
   ==
+  ::  ::
+  ::      ::
+  ::      ::
+  ::      %http-client
+  ::    ::  TODO: Move me.
+  ::    ::
+  ::    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
+  ::    [~ light-gate]
+    ::  =/  client  (per-client-event event-args)
+    ::  ?-    -.client-task.task
+    ::  ::
+    ::      %request
+    ::    =^  moves  client-state.ax  (request:client +.client-task.task)
+    ::    [moves light-gate]
+    ::  ::
+    ::      %cancel-request
+    ::    ~&  %todo-cancel-request
+    ::    [~ light-gate]
+    ::  ::
+    ::      %receive
+    ::    =^  moves  client-state.ax  (receive:client +.client-task.task)
+    ::    [moves light-gate]
+    ::  ==
+  ::==
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
@@ -1940,7 +1773,7 @@
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
-    =^  moves  server-state.ax  (handle-response raw-http-response.p.sign)
+    =^  moves  server-state.ax  (handle-response http-event.p.sign)
     [moves light-gate]
   ::
   ++  run-build

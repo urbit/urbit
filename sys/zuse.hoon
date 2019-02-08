@@ -75,8 +75,6 @@
 ::
 ::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
 ::
-+$  mime-data
-  [type=@t data=octs]
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
@@ -181,6 +179,113 @@
         [%spawn-proxy new=address]                  ::  ChangedSpawnProxy
         [%transfer-proxy new=address]               ::  ChangedTransferProxy
     ==
+  --
+::                                                      ::::
+::::                      ++http                        ::  
+  ::                                                    ::::
+::  http: shared representations of http concepts
+::
+++  http  ^?
+  |%
+  ::  +header-list: an ordered list of http headers
+  ::
+  +$  header-list
+    (list [key=@t value=@t])
+  ::  +method: exhaustive list of http verbs
+  ::
+  +$  method
+    $?  %'CONNECT'
+        %'DELETE'
+        %'GET'
+        %'HEAD'
+        %'OPTIONS'
+        %'POST'
+        %'PUT'
+        %'TRACE'
+    ==
+  ::  +request: a single http request
+  ::
+  +$  request
+    $:  ::  method: http method
+        ::
+        method=method
+        ::  url: the url requested
+        ::
+        ::    The url is not escaped. There is no escape.
+        ::
+        url=@t
+        ::  header-list: headers to pass with this request
+        ::
+        =header-list
+        ::  body: optionally, data to send with this request
+        ::
+        body=(unit octs)
+    ==
+  ::  +response-header: the status code and header list on an http request
+  ::
+  ::    We separate these away from the body data because we may not wait for
+  ::    the entire body before we send a %progress to the caller.
+  ::
+  +$  response-header
+    $:  ::  status: http status code
+        ::
+        status-code=@ud
+        ::  headers: http headers
+        ::
+        headers=header-list
+    ==
+  ::  +http-event: packetized http
+  ::
+  ::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends or
+  ::    receives one or more %http-events. The first of these will always be a
+  ::    %start or an %error, and the last will always be %cancel or will have
+  ::    :complete set to %.y to finish the connection.
+  ::
+  ::    Calculation of control headers such as 'Content-Length' or
+  ::    'Transfer-Encoding' should be performed at a higher level; this structure
+  ::    is merely for what gets sent to or received from Earth.
+  ::
+  +$  http-event
+    $%  ::  %start: the first packet in a response
+        ::
+        $:  %start
+            ::  response-header: first event information
+            ::
+            =response-header
+            ::  data: data to pass to the pipe
+            ::
+            data=(unit octs)
+            ::  whether this completes the request
+            ::
+            complete=?
+        ==
+        ::  %continue: every subsequent packet
+        ::
+        $:  %continue
+            ::  data: data to pass to the pipe
+            ::
+            data=(unit octs)
+            ::  complete: whether this completes the request
+            ::
+            complete=?
+        ==
+        ::  %cancel: represents unsuccessful termination
+        ::
+        [%cancel ~]
+    ==
+  ::  +get-header: returns the value for :header, if it exists in :header-list
+  ::
+  ++  get-header
+    |=  [header=@t =header-list]
+    ^-  (unit @t)
+    ::
+    ?~  header-list
+      ~
+    ::
+    ?:  =(key.i.header-list header)
+      `value.i.header-list
+    ::
+    $(header-list t.header-list)
   --
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
@@ -1711,7 +1816,7 @@
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
-        [%http-response =raw-http-response:light]       ::  serve http result
+        [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
   ++  culm                                              ::  config action
     $%  {$load p/scup}                                  ::  load+reload
@@ -1987,47 +2092,19 @@
     --  ::  rights
   --  ::  jael
 ::
-::::
-  ::
-++  light  ^?
+++  http-client  ^?
   |%
-  +|  %vane-interface
   ++  able
     |%
-    ::  +gift: %light responses
+    ::  +gift: effects the client can emit
     ::
     ++  gift
-      $%  [%http-server server-gift]
-          [%http-client client-gift]
-      ==
-    ::  +server-gift: effects the server can emit
-    ::
-    ++  server-gift
-      $%  ::  set-config: configures the external http server
-          ::
-          ::    TODO: We need to actually return a (map (unit @t) http-config)
-          ::    so we can apply configurations on a per-site basis
-          ::
-          [%set-config =http-config]
-          ::  response: response to an event from earth
-          ::
-          [%response =raw-http-response]
-          ::  response to a %connect or %serve
-          ::
-          ::    :accepted is whether :binding was valid. Duplicate bindings are
-          ::    not allowed.
-          ::
-          [%bound accepted=? =binding]
-      ==
-    ::  +client-gift: effects the client can emit
-    ::
-    ++  client-gift
       $%  ::  %request: outbound http-request to earth
           ::
           ::    TODO: id is sort of wrong for this interface; the duct should
           ::    be enough to identify which request we're talking about?
           ::
-          [%request id=@ud request=http-request]
+          [%request id=@ud request=request:http]
           ::  %cancel-request: tell earth to cancel a previous %request
           ::
           [%cancel-request id=@ud]
@@ -2039,7 +2116,7 @@
               ::    In case of a redirect chain, this is the target of the
               ::    final redirect.
               ::
-              =http-response-header
+              =response-header:http
               ::  bytes-read: bytes fetched so far
               ::
               bytes-read=@ud
@@ -2052,7 +2129,70 @@
           ==
           ::  final response of a download, parsed as mime-data if successful
           ::
-          [%finished =http-response-header full-file=(unit mime-data)]
+          [%finished =response-header:http full-file=(unit mime-data)]
+      ==
+    ::
+    ++  task
+      $%  ::  system started up; reset open connections
+          ::
+          [%born ~]
+          ::  fetches a remote resource
+          ::
+          [%request =request:http =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-request ~]
+          ::  receives http data from outside
+          ::
+          [%receive id=@ud =http-event:http]
+      ==
+    --
+  ::  mime-data: externally received but unvalidated mimed data
+  ::
+  +$  mime-data
+    [type=@t data=octs]
+  ::  +outbound-config: configuration for outbound http requests
+  ::
+  +$  outbound-config
+    $:  ::  number of times to follow a 300 redirect before erroring
+        ::
+        ::    Common values for this will be 3 (the limit most browsers use), 5
+        ::    (the limit recommended by the http standard), or 0 (let the
+        ::    requester deal with 300 redirects).
+        ::
+        redirects=_5
+        ::  number of times to retry before failing
+        ::
+        ::    When we retry, we'll automatically try to use the 'Range' header
+        ::    to resume the download where we left off if we have the
+        ::    'Accept-Range: bytes' in the original response.
+        ::
+        retries=_3
+    ==
+  --
+::
+::::
+  ::
+++  light  ^?
+  |%
+  ++  able
+    |%
+    ++  gift
+      $%  ::  set-config: configures the external http server
+          ::
+          ::    TODO: We need to actually return a (map (unit @t) http-config)
+          ::    so we can apply configurations on a per-site basis
+          ::
+          [%set-config =http-config]
+          ::  response: response to an event from earth
+          ::
+          [%response =http-event:http]
+          ::  response to a %connect or %serve
+          ::
+          ::    :accepted is whether :binding was valid. Duplicate bindings are
+          ::    not allowed.
+          ::
+          [%bound accepted=? =binding]
       ==
     ::
     ++  task
@@ -2064,21 +2204,12 @@
           ::  new unix process
           ::
           [%born p=(list host)]
-          ::  task for the http server
-          ::
-          [%http-server =server-task]
-          ::  task for the http client
-          ::
-          [%http-client =client-task]
-      ==
-    ::
-    ++  server-task
-      $%  ::  set http ports (?)
+          ::  set http ports (?)
           ::
           [%live p=@ud q=(unit @ud)]
           ::  starts handling an inbound http request
           ::
-          [%request secure=? =address =http-request]
+          [%request secure=? =address =request:http]
           ::  cancels a previous request
           ::
           [%cancel-request ~]
@@ -2096,20 +2227,7 @@
           [%disconnect =binding]
       ==
     ::
-    ++  client-task
-      $%  ::  fetches a remote resource
-          ::
-          [%request =http-request =outbound-config]
-          ::  cancels a previous fetch
-          ::
-          [%cancel-request ~]
-          ::  receives http data from outside
-          ::
-          [%receive id=@ud =raw-http-response]
-      ==
     --
-  ::
-  +|  %bindings
   ::  +binding: A rule to match a path.
   ::
   ::    A +binding is a system unique mapping for a path to match. A +binding
@@ -2146,9 +2264,6 @@
         ::
         args=*
     ==
-  ::  %config: http configuration
-  ::
-  +|  %config
   ::  +host: http host
   ::
   +$  host
@@ -2171,115 +2286,6 @@
         ::
         redirect=?
     ==
-  ::  +outbound-config: configuration for outbound http requests
-  ::
-  +$  outbound-config
-    $:  ::  number of times to follow a 300 redirect before erroring
-        ::
-        ::    Common values for this will be 3 (the limit most browsers use), 5
-        ::    (the limit recommended by the http standard), or 0 (let the
-        ::    requester deal with 300 redirects).
-        ::
-        redirects=_5
-        ::  number of times to retry before failing
-        ::
-        ::    When we retry, we'll automatically try to use the 'Range' header
-        ::    to resume the download where we left off if we have the
-        ::    'Accept-Range: bytes' in the original response.
-        ::
-        retries=_3
-    ==
-  ::
-  +|  %http
-  ::  +header-list: an ordered list of http headers
-  ::
-  +$  header-list
-    (list [key=@t value=@t])
-  ::  +http-method: exhaustive list of http verbs
-  ::
-  +$  http-method
-    $?  %'CONNECT'
-        %'DELETE'
-        %'GET'
-        %'HEAD'
-        %'OPTIONS'
-        %'POST'
-        %'PUT'
-        %'TRACE'
-    ==
-  ::  +http-request: a single http-request
-  ::
-  +$  http-request
-    $:  ::  http-method:
-        ::
-        method=http-method
-        ::  url: the url requested
-        ::
-        ::    The url is not escaped. There is no escape.
-        ::
-        url=@t
-        ::  header-list: headers to pass with this request
-        ::
-        =header-list
-        ::  body: optionally, data to send with this request
-        ::
-        body=(unit octs)
-    ==
-  ::  +http-response: the status code and header list on an http request
-  ::
-  ::    We separate these away from the body data because we may not wait for
-  ::    the entire body before we send a %progress to the caller.
-  ::
-  +$  http-response-header
-    $:  ::  status: http status code
-        ::
-        status-code=@ud
-        ::  headers: http headers
-        ::
-        headers=header-list
-    ==
-  ::  +raw-http-response: http-response to sent to earth
-  ::
-  ::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends one or
-  ::    more %http-response replies on the wire. The first of these will
-  ::    always be a %start or an %error, and the last will always be %error
-  ::    or will have :complete set to %.y to finish the connection.
-  ::
-  ::    Calculation of control headers such as 'Content-Length' or
-  ::    'Transfer-Encoding' should be performed at a higher level; this structure
-  ::    is merely for what gets sent to Earth.
-  ::
-  +$  raw-http-response
-    $%  ::  %start: the first packet in a response
-        ::
-        $:  %start
-            ::  status: http status code
-            ::
-            status-code=@ud
-            ::  headers: http headers
-            ::
-            headers=header-list
-            ::  data: data to pass to the pipe
-            ::
-            data=(unit octs)
-            ::  whether this completes the request
-            ::
-            complete=?
-        ==
-        ::  %continue: every subsequent packet
-        ::
-        $:  %continue
-            ::  data: data to pass to the pipe
-            ::
-            data=(unit octs)
-            ::  complete: whether this completes the request
-            ::
-            complete=?
-        ==
-        ::  %cancel: whether the connection should terminate unsuccessfully
-        ::
-        [%cancel ~]
-    ==
   ::  +address: client IP address
   ::
   +$  address
@@ -2299,9 +2305,9 @@
         ::  address: the source address of this request
         ::
         =address
-        ::  http-request: the http-request itself
+        ::  request: the http-request itself
         ::
-        =http-request
+        =request:http
     ==
   --
 ::                                                      ::::

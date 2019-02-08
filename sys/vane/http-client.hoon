@@ -1,0 +1,316 @@
+!:
+::  http-client
+::
+|=  pit=vase
+=,  http-client
+::
+::
+::  internal data structures
+::
+=>  =~
+::
+::  internal data structures that won't go in zuse
+::
+|%
++$  move
+  ::
+  $:  ::  duct: request identifier
+      ::
+      =duct
+      ::
+      ::
+      card=(wind note gift:able)
+  ==
+::  +note: private request from light to another vane
+::
++$  note  _~
+::
+::
+
+
+--
+::  more structures
+::
+|%
++$  axle
+  $:  ::  date: date at which light's state was updated to this data structure
+      ::
+      date=%~2019.2.8
+      ::
+      ::
+      =state
+  ==
+::  +state:client: state relating to open outbound HTTP connections
+::
++$  state
+  $:  ::  next-id: monotonically increasing id number for the next connection
+      ::
+      next-id=@ud
+      ::  connection-by-id: open connections to the
+      ::
+      connection-by-id=(map @ud [=duct =in-progress-http-request])
+      ::  outbound-duct: the duct to send outbound requests on
+      ::
+      outbound-duct=duct
+  ==
+::  +in-progress-http-request: state around an outbound http
+::
++$  in-progress-http-request
+  $:  ::  remaining-redirects: http limit of number of redirects before error
+      ::
+      remaining-redirects=@ud
+      ::  remaining-retries: number of times to retry the request
+      ::
+      remaining-retries=@ud
+      ::  response-header: the response headers from the %start packet
+      ::
+      ::    We send the response headers with each %http-progress, so we must
+      ::    save them.
+      ::
+      response-header=(unit response-header:http)
+      ::  chunks: a list of partial results returned from unix
+      ::
+      ::    This list of octs must be flopped before it is composed as the
+      ::    final response, as we want to be able to quickly insert.
+      ::
+      chunks=(list octs)
+      ::  bytes-read: the sum of the size of the :chunks
+      ::
+      bytes-read=@ud
+      ::  expected-size: the expected content-length of the http request
+      ::
+      expected-size=(unit @ud)
+  ==
+--
+::
+|%
+::  +combine-octs: combine multiple octs into one
+::
+++  combine-octs
+  |=  a=(list octs)
+  ^-  octs
+  :-  %+  roll  a
+      |=  [=octs sum=@ud]
+      (add sum p.octs)
+  (can 3 a)
+::  +per-client-event: per-event client core
+::
+++  per-client-event
+  |=  [[our=@p eny=@ =duct now=@da scry=sley] =state]
+  |%
+  ::  +request: makes an external web request
+  ::
+  ++  request
+    |=  [=request:http =outbound-config]
+    ^-  [(list move) ^state]
+    ::  get the next id for this request
+    ::
+    =^  id  next-id.state  [next-id.state +(next-id.state)]
+    ::  add a new open session
+    ::
+    =.  connection-by-id.state
+      %+  ~(put by connection-by-id.state)  id
+      =,  outbound-config
+      [duct [redirects retries ~ ~ 0 ~]]
+    ::  start the download
+    ::
+    ::  the original eyre keeps track of the duct on %born and then sends a
+    ::  %give on that duct. this seems like a weird inversion of
+    ::  responsibility, where we should instead be doing a pass to unix. the
+    ::  reason we need to manually build ids is because we aren't using the
+    ::  built in duct system.
+    ::
+    ::  email discussions make it sound like fixing that might be hard, so
+    ::  maybe i should just live with the way it is now?
+    ::
+    :-  [outbound-duct.state %give %request id request]~
+    state
+  ::  +receive: receives a response to an http-request we made
+  ::
+  ::    TODO: Right now, we are not following redirect and not handling retries
+  ::    correctly. We need to do this.
+  ::
+  ++  receive
+    |=  [id=@ud =http-event:http]
+    ^-  [(list move) ^state]
+    ::  ensure that this is a valid receive
+    ::
+    ?~  connection=(~(get by connection-by-id.state) id)
+      ~&  [%eyre-unknown-receive id]
+      [~ state]
+    ::
+    ?-    -.http-event
+        %start
+      ::  TODO: Handle redirects and retries here, before we start dispatching
+      ::  back to the application.
+      ::
+      ::  record data from the http response that only comes from %start
+      ::
+      =.  connection-by-id.state
+        %+  ~(jab by connection-by-id.state)  id
+        |=  [duct=^duct =in-progress-http-request]
+        ::
+        =.  expected-size.in-progress-http-request
+          ?~  str=(get-header:http 'content-length' headers.response-header.http-event)
+            ~
+          ::
+          (rush u.str dum:ag)
+        ::
+        =.  response-header.in-progress-http-request
+          `response-header:http-event
+        ::
+        [duct in-progress-http-request]
+      ::
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      ::
+      (record-and-send-progress id data.http-event)
+    ::
+        %continue
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      ::
+      (record-and-send-progress id data.http-event)
+    ::
+        %cancel
+      ~&  [%eyre-received-cancel id]
+      [~ state]
+    ==
+  ::  +record-and-send-progress: save incoming data and send progress report
+  ::
+  ++  record-and-send-progress
+    |=  [id=@ud data=(unit octs)]
+    ^-  [(list move) ^state]
+    ::
+    =.  connection-by-id.state
+      %+  ~(jab by connection-by-id.state)  id
+      |=  [duct=^duct =in-progress-http-request]
+      ::  record the data chunk and size, if it exists
+      ::
+      =?    chunks.in-progress-http-request
+          ?=(^ data)
+        [u.data chunks.in-progress-http-request]
+      =?    bytes-read.in-progress-http-request
+          ?=(^ data)
+        (add bytes-read.in-progress-http-request p.u.data)
+      ::
+      [duct in-progress-http-request]
+    ::
+    =/  connection  (~(got by connection-by-id.state) id)
+    :_  state
+    ^-  (list move)
+    :_  ~
+    :*  duct.connection
+        %give
+        %progress
+        (need response-header.in-progress-http-request.connection)
+        bytes-read.in-progress-http-request.connection
+        expected-size.in-progress-http-request.connection
+        data
+    ==
+  ::  +send-finished: sends the %finished, cleans up the session state
+  ::
+  ++  send-finished
+    |=  [id=@ud data=(unit octs)]
+    ^-  [(list move) ^state]
+    ::
+    =/  connection  (~(got by connection-by-id.state) id)
+    ::  reassemble the octs that we've received into their final form
+    ::
+    =/  data=octs
+      %-  combine-octs
+      %-  flop
+      ::
+      ?~  data
+        chunks.in-progress-http-request.connection
+      [u.data chunks.in-progress-http-request.connection]
+    ::
+    =/  response-header=response-header:http
+      (need response-header.in-progress-http-request.connection)
+    ::
+    =/  mime=@t
+      ?~  mime-type=(get-header:http 'content-type' headers.response-header)
+        'application/octet-stream'
+      u.mime-type
+    :-  :~  :*  duct.connection
+                %give
+                %finished
+                response-header
+                ?:(=(0 p.data) ~ `[mime data])
+        ==  ==
+    state(connection-by-id (~(del by connection-by-id.state) id))
+  --
+--
+::  end the =~
+::
+.  ==
+::  begin with a default +axle as a blank slate
+::
+=|  ax=axle
+::  a vane is activated with current date, entropy, and a namespace function
+::
+|=  [our=ship now=@da eny=@uvJ scry-gate=sley]
+::  allow jets to be registered within this core
+::
+~%  %http-client  ..is  ~
+|%
+++  call
+  |=  [=duct type=* wrapped-task=(hobo task:able)]
+  ^-  [(list move) _light-gate]
+  ::
+  =/  task=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ~|  [%p-wrapped-task p.wrapped-task]
+    ((hard task:able) p.wrapped-task)
+  ::
+  =/  event-args  [[our eny duct now scry-gate] state.ax]
+  =/  client  (per-client-event event-args)
+  ?-    -.task
+  ::
+      %born
+    ~&  %todo-http-client-born
+    ::  TODO: reset the next-id for client state here.
+    ::
+    ::  send requests on the duct passed in with born.
+    ::
+    =.  outbound-duct.state.ax  duct
+    [~ light-gate]
+  ::
+      %request
+    =^  moves  state.ax  (request:client +.task)
+    [moves light-gate]
+  ::
+      %cancel-request
+    ~&  %todo-cancel-request
+    [~ light-gate]
+  ::
+      %receive
+    =^  moves  state.ax  (receive:client +.task)
+    [moves light-gate]
+  ==
+::  http-client issues no requests to other vanes
+::
+++  take
+  |=  [=wire =duct wrapped-sign=*]
+  ^-  [(list move) _light-gate]
+  !!
+::
+++  light-gate  ..$
+::  +load: migrate old state to new state (called on vane reload)
+::
+++  load
+  |=  old=axle
+  ^+  ..^$
+  ::
+  ~!  %loading
+  ..^$(ax old)
+::  +stay: produce current state
+::
+++  stay  `axle`ax
+::  +scry: request a path in the urbit namespace
+::
+++  scry
+  |=  *
+  [~ ~]
+--
