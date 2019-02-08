@@ -22,7 +22,7 @@
 ++  test-core
   $_  ^?
   |%
-  ++  start  *(pair (list ship) (list ph-event))
+  ++  start  *(trel (list ship) (list ph-event) _^?(..start))
   ++  route  |~([ship unix-effect] *(list ph-event))
   --
 ::

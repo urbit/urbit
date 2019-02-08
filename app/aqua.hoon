@@ -586,6 +586,9 @@
       (~(got by piers) who.ovo)
     (pe who.ovo)
   ::
+      %pause-events
+    stop-processing-events:(pe who.ovo)
+  ::
       %event
     (push-events:(pe who.ovo) [ovo.ovo]~)
   ==

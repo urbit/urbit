@@ -14,15 +14,15 @@
 =>  $~  |%
     ++  move  (pair bone card)
     ++  card
-      $%  [%peer wire dock path]
-          [%poke wire dock %aqua-events (list aqua-event)]
+      $%  [%poke wire dock %aqua-events (list aqua-event)]
+          [%peer wire dock path]
+          [%pull wire dock ~]
       ==
-    ::
-    ++  test-map  (map term test-core)
     ::
     ++  state
       $:  %0
-          test-cores=test-map
+          raw-test-cores=(map term test-core)
+          test-cores=(map term [hers=(list ship) cor=test-core])
           other-state
       ==
     ++  other-state
@@ -35,66 +35,80 @@
 ++  this  .
 ++  install-tests
   ^+  this
-  =.  test-cores
+  =.  raw-test-cores
     %-  malt
     ^-  (list (pair term test-core))
     :~
-      :-  %test-add
+      :-  %add
+      =+  num=5
       |%
       ++  start
-        ^-  (pair (list ship) (list ph-event))
-        :-  ~[~bud]
-        %-  zing
-        :~  (init ~bud)
-            (dojo ~bud "[%test-result (add 2 3)]")
-        ==
+        ^-  (trel (list ship) (list ph-event) _..start)
+        =.  num  +(num)
+        :+  ~[~bud]
+          %-  zing
+          :~  (init ~bud)
+              (dojo ~bud "[%test-result (add 2 3)]")
+          ==
+        ..start
       ::
       ++  route
         |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
+        ~&  [%num num]
         (expect-dojo-output ~bud who ovo "[%test-result 5]")
         ::  XX  if it's been five minutes, we failed
       --
     ::
-      :-  %test-hi
+      :-  %hi
       |%
       ++  start
-        ^-  (pair (list ship) (list ph-event))
-        :-  ~[~bud ~dev]
-        %-  zing
-        :~  (init ~bud)
-            (init ~dev)
-            (dojo ~bud "|hi ~dev")
-        ==
+        ^-  (trel (list ship) (list ph-event) _..start)
+        :+  ~[~bud ~dev]
+          %-  zing
+          :~  (init ~bud)
+              (init ~dev)
+              (dojo ~bud "|hi ~dev")
+          ==
+        ..start
       ::
       ++  route
         |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
-        ::
-        ::  doesn't work because for some reason we lose the
-        ::  subscription immediately after opening it.  maybe
-        ::  because we receive so many events without immediate
-        ::  reap it triggers the backpressure mechanism in gall?
-        ::
         (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
+    ::
+      :-  %individual-breach
+      *test-core
+      ::
+      ::  (init ~zod)
+      ::  (init ~marzod)
+      ::  wait for sync to finish
+      ::  cycle ~zod keys
+      ::  verify it sunk
+      ::  kill ~zod
+      ::  (init ~zod) w/new keys
+      ::  change file on ~zod
+      ::  wait for sync to finish
+      ::  verify file has changed
+      ::
     ==
   this
 ::
 ++  prep
   |=  old=(unit [@ tests=* rest=*])
-  ^-  [(list move) _this]
+  ^-  (quip move _this)
   =.  this  install-tests
   ?~  old
     `this
   =/  new  ((soft other-state) rest.u.old)
   ?~  new
     `this
-  `this(+<+>+ u.new)
+  `this(+<+>+> u.new)
 ::
 ++  run-events
-  |=  what=(list ph-event)
-  ^-  [(list move) _this]
+  |=  [lab=term what=(list ph-event)]
+  ^-  (quip move _this)
   ?:  =(~ what)
     `this
   =/  res
@@ -109,8 +123,32 @@
       nex
     [%& `aqua-event`i.what p.nex]
   ?:  ?=(%| -.res)
-    `this
+    (cancel-test lab)
   [[ost.hid %poke /running [our.hid %aqua] %aqua-events p.res]~ this]
+::
+::  Cancel subscriptions to ships
+::
+++  cancel-test
+  |=  lab=term
+  ^-  (quip move _this)
+  =/  test  (~(get by test-cores) lab)
+  ?~  test
+    `this
+  =.  test-cores  (~(del by test-cores) lab)
+  :_  this
+  %-  zing
+  %+  turn  hers.u.test
+  |=  her=ship
+  ^-  (list move)
+  :~  [ost.hid %pull /[lab]/(scot %p her) [our.hid %aqua] ~]
+      :*  ost.hid
+          %poke
+          /cancelling
+          [our.hid %aqua]
+          %aqua-events
+          [%pause-events her]~
+      ==
+  ==
 ::
 ::  Should check whether we're already subscribed
 ::
@@ -133,10 +171,11 @@
   ^-  (quip move _this)
   ?+  arg  ~|(%bad-noun-arg !!)
       [%run-test lab=@tas]
-    =/  res=[hers=(list ship) events=(list ph-event)]
-      start:(~(got by test-cores) lab.arg)
+    =/  res=[hers=(list ship) events=(list ph-event) new-state=test-core]
+      start:(~(got by raw-test-cores) lab.arg)
+    =.  test-cores  (~(put by test-cores) lab.arg hers.res new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg hers.res)
-    =^  moves-2  this  (run-events events.res)
+    =^  moves-2  this  (run-events lab.arg events.res)
     [(weld moves-1 moves-2) this]
   ==
 ::
@@ -144,14 +183,14 @@
   |=  [way=wire ova=aqua-effects]
   ^-  (quip move _this)
   ::  ~&  [%diff-aqua-effect way who.ova]
-  ?>  ?=([@ @ ~] way)
+  ?>  ?=([@tas @ ~] way)
   =/  lab  i.way
-  %-  run-events
+  %+  run-events  lab
   |-  ^-  (list ph-event)
   ?~  ovo.ova
     ~
   ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
   %+  weld
-    (route:(~(got by test-cores) lab) who.ova i.ovo.ova)
+    (route:cor:(~(got by test-cores) lab) who.ova i.ovo.ova)
   $(ovo.ova t.ovo.ova)
 --

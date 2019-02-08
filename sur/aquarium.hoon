@@ -1,6 +1,7 @@
 |%
 ++  aqua-event
   $%  [%init-ship who=ship]
+      [%pause-events who=ship]
       [%event who=ship ovo=unix-event]
   ==
 ::
