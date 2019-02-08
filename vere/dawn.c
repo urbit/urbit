@@ -310,7 +310,7 @@ u3_dawn_vent(u3_noun seed)
   //  load snapshot from file
   //
   if ( 0 != u3_Host.ops_u.ets_c ) {
-    fprintf(stderr, "boot: loading ethereum snapshot\r\n");
+    fprintf(stderr, "boot: loading azimuth snapshot\r\n");
     u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
     sap = u3nc(u3_nul, raw_snap);
   }
@@ -325,7 +325,7 @@ u3_dawn_vent(u3_noun seed)
   //  no snapshot
   //
   else {
-    printf("dawn: no ethereum snapshot specified\n");
+    printf("dawn: no azimuth snapshot specified\n");
     sap = u3_nul;
   }
 
