@@ -362,7 +362,7 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 
   u3_noun sac = u3_nul;
 
-  //  intercept |mass
+  //  intercept |mass, observe |reset
   //
   {
     u3_noun riv = vir;
@@ -387,6 +387,12 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
         u3z(vir);
         vir = riv;
         break;
+      }
+
+      //  reclaim memory from persistent caches on |reset
+      //
+      if ( c3__vega == u3h(fec) ) {
+        u3m_reclaim();
       }
 
       riv = u3t(riv);
@@ -484,6 +490,12 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     u3z(gon); u3z(job);
 
     _serf_sure(ovo, vir, cor);
+
+    //  reclaim memory from persistent caches on |reset
+    //
+    if ( 0 == (u3A->ent_d % 1000ULL) ) {
+      u3m_reclaim();
+    }
   }
 }
 
