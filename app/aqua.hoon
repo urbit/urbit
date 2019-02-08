@@ -43,6 +43,10 @@
       ==
     --
 =,  gall
+::
+::  Hoist moves into state for cleaner state management
+::
+=|  moves=(list move)
 |_  $:  hid=bowl
         state
     ==
@@ -53,38 +57,37 @@
   |=  who=ship
   =+  (fall (~(get by piers) who) *pier)
   =*  pier-data  -
-  =|  moves=(list move)
   |%
-  ++  abet
-    ^-  (quip move _this)
+  ++  abet-pe
+    ^+  this
     =.  piers  (~(put by piers) who pier-data)
-    [(flop moves) this]
+    this
   ::
   ++  apex
     =.  pier-data  *pier
     =.  snap  assembled
     ~&  r=(met 3 (jam snap))
-    ..abet
+    ..abet-pe
   ::
   ++  push-events
     |=  ova=(list unix-event)
-    ^+  ..abet
+    ^+  ..abet-pe
     =.  next-events  (~(gas to next-events) ova)
-    ..abet
+    ..abet-pe
   ::
   ++  emit-moves
     |=  ms=(list move)
     =.  moves  (weld ms moves)
-    ..abet
+    ..abet-pe
   ::
   ::  Process the events in our queue.
   ::
   ++  plow
-    |-  ^+  ..abet
+    |-  ^+  ..abet-pe
     ?:  =(~ next-events)
-      ..abet
+      ..abet-pe
     ?.  processing-events
-      ..abet
+      ..abet-pe
     =^  ovo  next-events  ~(get to next-events)
     =/  res  (mox +47.snap)
     ?>  ?=(%0 -.res)
@@ -92,7 +95,7 @@
     =/  res  (slum poke now.hid ovo)
     =.  event-log  [ovo event-log]
     =.  snap  +3.res
-    =.  ..abet  (handle-effects ((list ovum) -.res))
+    =.  ..abet-pe  (handle-effects ((list ovum) -.res))
     $
   ::
   ::  Peek
@@ -103,7 +106,7 @@
     ?>  ?=(%0 -.res)
     =/  peek  p.res
     ~&  [who=who %peeked (slum peek [now.hid p])]
-    ..abet
+    ..abet-pe
   ::
   ::  Wish
   ::
@@ -113,40 +116,40 @@
     ?>  ?=(%0 -.res)
     =/  wish  p.res
     ~&  [who=who %wished (slum wish txt)]
-    ..abet
+    ..abet-pe
   ::
   ::  Restart outstanding requests
   ::
   ++  restore
-    ^+  ..abet
+    ^+  ..abet-pe
     ::  Restore behn
     ::
-    =.  ..abet
+    =.  ..abet-pe
       ?~  next-timer
-        ..abet
+        ..abet-pe
       (set-timer u.next-timer)
     ::  Restore eyre
     ::
     =.  http-requests  ~
-    =.  ..abet  (push-events [//http/0v1n.2m9vh %born ~]~)
-    ..abet
+    =.  ..abet-pe  (push-events [//http/0v1n.2m9vh %born ~]~)
+    ..abet-pe
   ::
   ::  Cancel outstanding requests
   ::
   ++  sleep
-    ^+  ..abet
+    ^+  ..abet-pe
     ::  Sleep behn
     ::
-    =.  ..abet
+    =.  ..abet-pe
       ?~  next-timer
-        ..abet
+        ..abet-pe
       cancel-timer
     ::  Sleep eyre
     ::
     ::    Eyre doesn't support cancelling HTTP requests from userspace.
     ::
     =.  http-requests  ~
-    ..abet
+    ..abet-pe
   ::
   ++  mox  |=(* (mock [snap +<] scry))
   ::
@@ -160,15 +163,15 @@
   ::
   ++  handle-effects
     |=  effects=(list ovum)
-    ^+  ..abet
+    ^+  ..abet-pe
     ?~  effects
-      ..abet
-    =.  ..abet
+      ..abet-pe
+    =.  ..abet-pe
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
         ~&  [who=who %unknown-effect i.effects]
-        ..abet
-      =.  ..abet
+        ..abet-pe
+      =.  ..abet-pe
         ?-    -.q.u.sof
           %blit  (handle-blit u.sof)
           %send  (handle-send u.sof)
@@ -190,7 +193,7 @@
   ::
   ++  handle-blit
     |=  [way=wire %blit blits=(list blit:dill)]
-    ^+  ..abet
+    ^+  ..abet-pe
     =/  last-line
       %+  roll  blits
       |=  [b=blit:dill line=tape]
@@ -205,7 +208,7 @@
           %url  ~&  [%activate-url p.b]  line
       ==
     ~&  last-line
-    ..abet
+    ..abet-pe
   ::
   ::  This needs a better SDN solution.  Every ship should have an IP
   ::  address, and we should eventually test changing those IP
@@ -216,7 +219,7 @@
   ::
   ++  handle-send
     |=  [way=wire %send lan=lane:ames pac=@]
-    ^+  ..abet
+    ^+  ..abet-pe
     =/  dest-ip
       |-  ^-  (unit @if)
       ?-  -.lan
@@ -226,31 +229,31 @@
       ==
     ?~  dest-ip
       ~&  [%sending-no-destination who lan]
-      ..abet
+      ..abet-pe
     ?.  &(=(0 (rsh 0 16 u.dest-ip)) =(1 (rsh 0 8 u.dest-ip)))
       ~&  [%havent-implemented-direct-lanes who lan]
-      ..abet
+      ..abet-pe
     ~&  [who=who %blast-sending]
     =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
     =.  this  (blast-event hear)
     ::  =/  her  ?:(=(~dev who) ~bud ~dev) ::ship  (dis u.dest-ip 0xff)
     ::  ?.  (~(has by piers) her)
     ::    ~&  [%dropping who=who her=her]
-    ::    ..abet
+    ::    ..abet-pe
     ::  ~&  [%sending who=who her=her ip=`@ux`u.dest-ip]
     ::  =^  ms  this
-    ::    abet:(push-events:(pe her) ~[hear])
-    ..abet
+    ::    abet-pe:(push-events:(pe her) ~[hear])
+    ..abet-pe
   ::
   ::  Would love to be able to control time more precisely, jumping
   ::  forward and whatnot.
   ::
   ++  handle-doze
     |=  [way=wire %doze tim=(unit @da)]
-    ^+  ..abet
+    ^+  ..abet-pe
     ?~  tim
       ?~  next-timer
-        ..abet
+        ..abet-pe
       cancel-timer
     ?~  next-timer
       (set-timer u.tim)
@@ -275,17 +278,17 @@
   ::
   ++  handle-thus
     |=  [way=wire %thus num=@ud req=(unit hiss:eyre)]
-    ^+  ..abet
+    ^+  ..abet-pe
     ?~  req
       ?.  (~(has in http-requests) num)
-        ..abet
+        ..abet-pe
       ::  Eyre doesn't support cancelling HTTP requests from userspace,
       ::  so we remove it from our state so we won't pass along the
       ::  response.
       ::
       ~&  [who=who %cant-cancel-thus num=num]
       =.  http-requests  (~(del in http-requests) num)
-      ..abet
+      ..abet-pe
     =.  http-requests  (~(put in http-requests) num)
     %-  emit-moves  :_  ~
     :*  ost.hid
@@ -300,12 +303,12 @@
   ::
   ++  take-sigh-httr
     |=  [way=wire res=httr:eyre]
-    ^+  ..abet
+    ^+  ..abet-pe
     ?>  ?=([@ ~] way)
     =/  num  (slav %ud i.way)
     ?.  (~(has in http-requests) num)
       ~&  [who=who %ignoring-httr num=num]
-      ..abet
+      ..abet-pe
     =.  http-requests  (~(del in http-requests) num)
     (push-events [//http/0v1n.2m9vh %they num res]~)
   ::
@@ -313,15 +316,15 @@
   ::
   ++  take-sigh-tang
     |=  [way=wire tan=tang]
-    ^+  ..abet
+    ^+  ..abet-pe
     ?>  ?=([@ ~] way)
     =/  num  (slav %ud i.way)
     ?.  (~(has in http-requests) num)
       ~&  [who=who %ignoring-httr num=num]
-      ..abet
+      ..abet-pe
     =.  http-requests  (~(del in http-requests) num)
     %-  (slog tan)
-    ..abet
+    ..abet-pe
   ::
   ::  We should mirror a mount point of child to a clay desk of host.
   ::  For now, we just allow injecting a change to the child, so we
@@ -329,15 +332,15 @@
   ::
   ++  handle-ergo
     |=  [way=wire %ergo mount-point=@tas mod=mode:clay]
-    ^+  ..abet
+    ^+  ..abet-pe
     ~&  [who=who %file-changes (turn mod head)]
-    ..abet
+    ..abet-pe
   ::
   ::  Give effect to our subscribers
   ::
   ++  publish-effect
     |=  ovo=unix-effect
-    ^+  ..abet
+    ^+  ..abet-pe
     %-  emit-moves
     %+  murn  ~(tap by sup.hid)
     |=  [b=bone her=ship pax=path]
@@ -348,11 +351,12 @@
   --
 ::
 ++  this  .
+++  abet-aqua  [(flop moves) this]
 ::
 ::  Run all events on all ships until all queues are empty
 ::
 ++  plow-all
-  |-  ^-  (quip move _this)
+  |-  ^+  this
   =/  who
     =/  pers  ~(tap by piers)
     |-  ^-  (unit ship)
@@ -364,10 +368,9 @@
     $(pers t.pers)
   ~&  plowing=who
   ?~  who
-    `this
-  =^  moves  this  abet:plow:(pe u.who)
-  =/  nex  $
-  nex(- (weld -.nex moves))
+    this
+  =.  this  abet-pe:plow:(pe u.who)
+  $
 ::
 ::  Subscribe to effects from a ship
 ::
@@ -388,6 +391,7 @@
 ++  poke-pill
   |=  p=pill
   ^-  (quip move _this)
+  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
   =/  res=toon :: (each * (list tank))
@@ -396,16 +400,16 @@
       %0
     ~&  %suc
     =.  assembled  +7.p.res
-    `this
+    this
   ::
       %1
     ~&  [%vere-blocked p.res]
-    `this
+    this
   ::
       %2
     ~&  %vere-fail
     %-  (slog p.res)
-    `this
+    this
   ==
 ::
 ::  Handle commands from CLI
@@ -417,6 +421,8 @@
 ++  poke-noun
   |=  val=*
   ^-  (quip move _this)
+  =<  abet-aqua
+  ^+  this
   ::  Could potentially factor out the three lines of turn-ships
   ::  boilerplate
   ::
@@ -456,7 +462,7 @@
     =/  ovo  ((soft unix-event) ovo.val)
     ?~  ovo
       ~&  %ovo-not-an-event
-      `this
+      this
     %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
@@ -498,28 +504,29 @@
   ::
       [%snap-fleet lab=@tas]
     =.  fleet-snaps  (~(put by fleet-snaps) lab.val piers)
-    `this
+    this
   ::
       [%restore-fleet lab=@tas]
-    =^  moves-1  this
+    =.  this
       %+  turn-ships  (turn ~(tap by piers) head)
       |=  [who=ship thus=_this]
       =.  this  thus
       sleep:(pe who)
     =.  piers  (~(got by fleet-snaps) lab.val)
-    =^  moves-2  this
+    =.  this
       %+  turn-ships  (turn ~(tap by piers) head)
       |=  [who=ship thus=_this]
       =.  this  thus
       restore:(pe who)
-    [(weld moves-1 moves-2) this]
+    this
   ==
 ::
-::
+::  Apply a list of events tagged by ship
 ::
 ++  poke-aqua-events
   |=  events=(list aqua-event)
   ^-  (quip move _this)
+  =<  abet-aqua
   %+  turn-events  events
   |=  [ovo=aqua-event thus=_this]
   =.  this  thus
@@ -564,14 +571,12 @@
 ++  turn-plow
   |*  arg=mold
   |=  [hers=(list arg) fun=$-([arg _this] _(pe))]
-  |-  ^-  (quip move _this)
+  |-  ^+  this
   ?~  hers
-    =^  moves  this  plow-all
-    [moves this]
-  =^  moves  this
-    abet:plow:(fun i.hers this)
-  =^  nex-moves  this  $(hers t.hers, this this)
-  [(weld moves nex-moves) this]
+    plow-all
+  =.  this
+    abet-pe:plow:(fun i.hers this)
+  $(hers t.hers, this this)
 ::
 ++  turn-ships   (turn-plow ship)
 ++  turn-events  (turn-plow aqua-event)
@@ -584,8 +589,8 @@
   |-  ^+  this
   ?~  pers
     this
-  =^  moves-dropped  this
-    abet:(push-events:(pe p.i.pers) ~[ovo])
+  =.  this
+    abet-pe:(push-events:(pe p.i.pers) ~[ovo])
   $(pers t.pers)
 ::
 ::  Received timer wake
@@ -593,6 +598,7 @@
 ++  wake
   |=  [way=wire ~]
   ^-  (quip move _this)
+  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   %+  turn-ships  ~[who]
@@ -605,6 +611,7 @@
 ++  sigh-httr
   |=  [way=wire res=httr:eyre]
   ^-  (quip move _this)
+  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
@@ -618,6 +625,7 @@
 ++  sigh-tang
   |=  [way=wire tan=tang]
   ^-  (quip move _this)
+  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
