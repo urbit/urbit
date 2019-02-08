@@ -197,7 +197,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
     }
   }
 
-  fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
+  fprintf(stderr, "boot: invalid keys for %s '%s'\r\n", rac_c, how_c);
 
   // XX deconstruct sas, print helpful error messages
   u3m_p("pre-boot error", u3t(sas));
@@ -325,7 +325,7 @@ u3_dawn_vent(u3_noun seed)
   //  no snapshot
   //
   else {
-    printf("dawn: no azimuth snapshot specified\n");
+    printf("boot: no azimuth snapshot specified\r\n");
     sap = u3_nul;
   }
 
