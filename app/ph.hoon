@@ -78,6 +78,33 @@
         (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
     ::
+      :-  %child-sync
+      |%
+      ++  start
+        ^-  (trel (list ship) (list ph-event) _..start)
+        :+  ~[~bud ~marbud]
+          %-  zing
+          :~  (init ~bud)
+              ::  (dojo ~bud "|mount %")
+              ::  %+  insert-file  ~bud
+              ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
+              (init ~marbud)
+              ::  (dojo ~marbud "|mount %")
+              ::  %+  insert-file  ~marbud
+              ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
+          ==
+        ..start
+      ++  route
+        |=  [who=ship ovo=unix-effect]
+        ^-  (list ph-event)
+        (expect-dojo-output ~marbud who ovo "hrm")
+      --
+      ::  (init ~zod)
+      ::  (init ~marzod)
+      ::  wait for initial sync
+      ::  change file on zod
+      ::  check on ~marzod
+    ::
       :-  %individual-breach
       *test-core
       ::
@@ -90,7 +117,7 @@
       ::  (init ~zod) w/new keys
       ::  change file on ~zod
       ::  wait for sync to finish
-      ::  verify file has changed
+      ::  verify file has changed on ~marzod
       ::
     ==
   this
@@ -189,7 +216,7 @@
   |-  ^-  (list ph-event)
   ?~  ovo.ova
     ~
-  ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
+  ::  ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
   %+  weld
     (route:cor:(~(got by test-cores) lab) who.ova i.ovo.ova)
   $(ovo.ova t.ovo.ova)

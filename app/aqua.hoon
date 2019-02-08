@@ -35,8 +35,9 @@
           piers=(map ship pier)
       ==
     ++  pier
-      $:  snap=*
-          event-log=(list unix-event)
+      $:  tym=@da
+          snap=*
+          event-log=(list [@da unix-event])
           next-events=(qeu unix-event)
           processing-events=?
           next-timer=(unit @da)
@@ -96,8 +97,9 @@
     =/  res  (mox +47.snap)
     ?>  ?=(%0 -.res)
     =/  poke  p.res
-    =/  res  (slum poke now.hid ovo)
-    =.  event-log  [ovo event-log]
+    =.  tym  (max +(tym) now.hid)
+    =/  res  (slum poke tym ovo)
+    =.  event-log  [[tym ovo] event-log]
     =.  snap  +3.res
     =.  ..abet-pe  (handle-effects ((list ovum) -.res))
     $
@@ -237,7 +239,7 @@
     ?.  &(=(0 (rsh 0 16 u.dest-ip)) =(1 (rsh 0 8 u.dest-ip)))
       ~&  [%havent-implemented-direct-lanes who lan]
       ..abet-pe
-    ~&  [who=who %blast-sending]
+    ::  ~&  [who=who %blast-sending]
     =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
     =.  this  (blast-event hear)
     ::  =/  her  ?:(=(~dev who) ~bud ~dev) ::ship  (dis u.dest-ip 0xff)
@@ -337,7 +339,7 @@
   ++  handle-ergo
     |=  [way=wire %ergo mount-point=@tas mod=mode:clay]
     ^+  ..abet-pe
-    ~&  [who=who %file-changes (turn mod head)]
+    ~&  [who=who %file-changes (lent mod)] :: (turn mod head)]
     ..abet-pe
   ::
   ::  Give effect to our subscribers
@@ -562,7 +564,7 @@
   ?-  -.ovo
       %init-ship
     =/  prev  (~(get by init-cache) who.ovo)
-    ?^  prev
+    ?:  &(?=(^ prev) !=(who.ovo ~marbud))
       ~&  [%loading-cached-ship who.ovo]
       =.  this  (restore-ships ~[who.ovo] init-cache)
       (pe who.ovo)
@@ -590,6 +592,7 @@
     stop-processing-events:(pe who.ovo)
   ::
       %event
+    ~&  ev=-.q.ovo.ovo
     (push-events:(pe who.ovo) [ovo.ovo]~)
   ==
 ::

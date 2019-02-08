@@ -57,6 +57,16 @@
     [//term/1 %belt %ret ~]
   ==
 ::
+++  insert-file
+  |=  [who=ship pax=path]
+  ^-  (list ph-event)
+  ?>  ?=([@ @ @ *] pax)
+  =/  file  [/text/plain (as-octs:mimes:html .^(@ %cx pax))]
+  %+  send-events-to  who
+  :~
+    [//sync/0v1n.2m9vh %into i.t.pax | [t.t.t.pax `file]~]
+  ==
+::
 ++  expect-dojo-output
   |=  [who=ship her=ship ovo=unix-effect what=tape]
   ^-  (list ph-event)
