@@ -40,7 +40,7 @@
           {$flog wire flog:dill}                        ::
           [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
-          [%serve wire binding:light generator:light]
+          [%serve wire binding:http-server generator:http-server]
           {$poke wire dock pear}                        ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
@@ -149,6 +149,7 @@
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
+  ~&  [%poke-reload-desk-nam way fil]
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::  +poke-reset:  send %vega to reboot kernel
 ::
@@ -185,11 +186,11 @@
   (emit %flog ~ %text "woot: {<[way cop]>}")
 ::
 ++  poke-serve
-  |=  [=binding:light =generator:light]  =<  abet
+  |=  [=binding:http-server =generator:http-server]  =<  abet
   (emit %serve /helm/serv binding generator)
 ::
 ++  take-bound
-  |=  [wir=wire success=? binding=binding:light]  =<  abet
+  |=  [wir=wire success=? binding=binding:http-server]  =<  abet
   (emit %flog ~ %text "bound: {<success>}")
 ::
 ++  poke-tlon-init-stream

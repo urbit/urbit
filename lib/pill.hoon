@@ -17,9 +17,9 @@
         ::  sys/vane/http-client: http client
         ::
         [%http-client /vane/http-client]
-        ::  sys/vane/light: new web
+        ::  sys/vane/http-server: http server
         ::
-        [%l /vane/light]
+        [%http-server /vane/http-server]
         ::  sys/vane/ames: network
         ::
         [%a /vane/ames]

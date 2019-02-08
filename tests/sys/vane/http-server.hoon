@@ -1,17 +1,17 @@
 /+  *test, *test-ford
 ::
-/=  light-raw  /:  /===/sys/vane/light  /!noun/
+/=  http-server-raw  /:  /===/sys/vane/http-server  /!noun/
 ::
 !:
 ::
 =/  test-pit=vase  !>(..zuse)
-=/  light-gate  (light-raw test-pit)
+=/  http-server-gate  (http-server-raw test-pit)
 ::
 |%
 ++  test-init
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -22,9 +22,9 @@
 ::
 ++  test-duplicate-bindings
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -32,9 +32,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
@@ -42,9 +42,9 @@
     ==
   ::  app2 tries to bind to the same path and fails
   ::
-  =^  results3  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
@@ -59,9 +59,9 @@
 ::
 ++  test-remove-binding
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -69,9 +69,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
@@ -79,9 +79,9 @@
     ==
   ::  app1 unbinds
   ::
-  =^  results3  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       call-args=[duct=~[/app1] ~ [%disconnect [~ /]]]
@@ -89,9 +89,9 @@
     ==
   ::  app2 binds successfully
   ::
-  =^  results4  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
@@ -107,9 +107,9 @@
 ::
 ++  test-cant-remove-other-ducts-binding
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -117,9 +117,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
@@ -127,9 +127,9 @@
     ==
   ::  app2 tries to steal the binding by disconnecting the path
   ::
-  =^  results3  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       call-args=[duct=~[/app2] ~ [%disconnect [~ /]]]
@@ -137,9 +137,9 @@
     ==
   ::  app2 doesn't bind successfully because it couldn't remove app1's binding
   ::
-  =^  results4  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
@@ -156,9 +156,9 @@
 ::
 ++  test-builtin-four-oh-four
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -166,9 +166,9 @@
     ==
   ::  when there's no configuration and nothing matches, expect 404
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       ^=  call-args
@@ -179,7 +179,7 @@
             [%'GET' '/' ~ ~]
         ==
       ^=  expectec-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-blah]
                 %give
                 %response
@@ -188,7 +188,7 @@
                 :~  ['content-type' 'text/html']
                     ['content-length' '153']
                 ==
-                [~ (file-not-found-page:light-gate '/')]
+                [~ (file-not-found-page:http-server-gate '/')]
                 complete=%.y
         ==  ==
     ==
@@ -200,9 +200,9 @@
 ::
 ++  test-basic-app-request
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -210,9 +210,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
@@ -220,9 +220,9 @@
     ==
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       ^=  call-args
@@ -233,16 +233,16 @@
             [%'GET' '/' ~ ~]
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:light-gate                              i.moves
+        =/  move=move:http-server-gate                              i.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
         ::
         %+  weld
           (expect-eq !>(~[/http-blah]) !>(duct))
@@ -257,14 +257,14 @@
     ==
   ::  theoretical outside response
   ::
-  =^  results4  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             :*  %g  %unto  %http-response
                 %start
@@ -287,9 +287,9 @@
 ::
 ++  test-multipart-app-request
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -297,9 +297,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
@@ -307,9 +307,9 @@
     ==
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       ^=  call-args
@@ -320,16 +320,16 @@
             [%'GET' '/' ~ ~]
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:light-gate                              i.moves
+        =/  move=move:http-server-gate                              i.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
         ::
         %+  weld
           (expect-eq !>(~[/http-blah]) !>(duct))
@@ -344,14 +344,14 @@
     ==
   ::  theoretical outside response
   ::
-  =^  results4  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)  :-  *type
+            ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 %start
                 [200 ['content-type' 'text/html']~]
@@ -365,14 +365,14 @@
     ==  ==  ==
   ::  theoretical outside response
   ::
-  =^  results5  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results5  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)  :-  *type
+            ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%continue [~ (as-octs:mimes:html 'ya!')] %.y]
             ==
@@ -394,9 +394,9 @@
 ::
 ++  test-login-handler-full-path
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -404,9 +404,9 @@
     ==
   ::  app1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/app1] ~ [%connect [~ /'~landscape'] %app1]]
@@ -414,9 +414,9 @@
     ==
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       ^=  call-args
@@ -427,16 +427,16 @@
             [%'GET' '/~landscape/inner-path' ~ ~]
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:light-gate                              i.moves
+        =/  move=move:http-server-gate                              i.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
         ::
         %+  weld
           (expect-eq !>(~[/http-blah]) !>(duct))
@@ -451,14 +451,14 @@
     ==
   ::  app then gives a redirect to Eyre
   ::
-  =^  results4  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=~1111.1.4
       scry=*sley
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)  :-  *type
+            ^-  (hypo sign:http-server-gate)  :-  *type
             :*  %g  %unto  %http-response
                 [%start [307 ['location' '/~/login?redirect=/~landscape/inner-path']~] ~ %.y]
             ==
@@ -469,21 +469,21 @@
     ==  ==  ==
   ::  the browser then fetches the login page
   ::
-  =^  results5  light-gate
+  =^  results5  http-server-gate
     %-  perform-authentication  :*
-      light-gate
+      http-server-gate
       now=~1111.1.5
       scry=*sley
     ==
   ::  going back to the original url will acknowledge the authentication cookie
   ::
-  =^  results6  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results6  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.5..1.0.0
       scry=*sley
       ^=  call-args
-        ^-  [=duct type=* wrapped-task=(hobo task:able:light-gate)]
+        ^-  [=duct type=* wrapped-task=(hobo task:able:http-server-gate)]
         :*  duct=~[/http-blah]  ~
             %request
             %.n
@@ -494,16 +494,16 @@
             ~
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:light-gate                              i.moves
+        =/  move=move:http-server-gate                              i.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
         ::
         %+  weld
           (expect-eq !>(~[/http-blah]) !>(duct))
@@ -537,9 +537,9 @@
 ::
 ++  test-generator
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -547,9 +547,9 @@
     ==
   ::  gen1 binds successfully
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon ~]]]
@@ -557,9 +557,9 @@
     ==
   ::  outside requests a path that app1 has bound to
   ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       ^=  call-args
@@ -570,16 +570,16 @@
             [%'GET' '/' ~ ~]
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([* ~] moves)
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ::
-        =/  move=move:light-gate                              i.moves
+        =/  move=move:http-server-gate                              i.moves
         =/  =duct                                             duct.move
-        =/  card=(wind note:light-gate gift:able:light-gate)  card.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
         ::
         ?.  ?=(%pass -.card)
           [%leaf "not a %pass"]~
@@ -603,14 +603,14 @@
     ==
   ::  ford response (time assumes nothing blocked)
   ::
-  =^  results4  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=~1111.1.3
       scry=*sley
       ^=  take-args
         :*  wire=/run-build  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             :^  %f  %made  ~1111.1.3
             ^-  made-result:ford
@@ -641,23 +641,23 @@
   ;:  weld
     %+  expect-eq
       !>  `[[%site 'localhost'] [~ 8.000]]
-      !>  (rush 'localhost:8000' simplified-url-parser:light-gate)
+      !>  (rush 'localhost:8000' simplified-url-parser:http-server-gate)
   ::
     %+  expect-eq
       !>  `[[%ip .192.168.1.1] ~]
-      !>  (rush '192.168.1.1' simplified-url-parser:light-gate)
+      !>  (rush '192.168.1.1' simplified-url-parser:http-server-gate)
   ==
 ::
 ++  test-parse-channel-request
   ;:  weld
     %+  expect-eq
       !>  `[%ack 5]~
-      !>  %-  parse-channel-request:light-gate
+      !>  %-  parse-channel-request:http-server-gate
           (need (de-json:html '[{"action": "ack", "event-id": 5}]'))
   ::
     %+  expect-eq
       !>  `[%poke 0 ~nec %app1 %app-type [%n '5']]~
-      !>  %-  parse-channel-request:light-gate
+      !>  %-  parse-channel-request:http-server-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "poke",
@@ -670,7 +670,7 @@
   ::
     %+  expect-eq
       !>  `[%subscribe 1 ~sampyl-sipnym %hall /this/path]~
-      !>  %-  parse-channel-request:light-gate
+      !>  %-  parse-channel-request:http-server-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "subscribe",
@@ -682,7 +682,7 @@
   ::
     %+  expect-eq
       !>  `[%unsubscribe 2 ~marlyt %thing /other]~
-      !>  %-  parse-channel-request:light-gate
+      !>  %-  parse-channel-request:http-server-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "unsubscribe",
@@ -694,19 +694,19 @@
   ::
       %+  expect-eq
         !>  ~
-        !>  %-  parse-channel-request:light-gate
+        !>  %-  parse-channel-request:http-server-gate
             %-  need  %-  de-json:html
             '[{"noaction": "noaction"}]'
   ::
       %+  expect-eq
         !>  ~
-        !>  %-  parse-channel-request:light-gate
+        !>  %-  parse-channel-request:http-server-gate
             %-  need  %-  de-json:html
             '[{"action": "bad-action"}]'
   ::
       %+  expect-eq
         !>  ~
-        !>  %-  parse-channel-request:light-gate
+        !>  %-  parse-channel-request:http-server-gate
             %-  need  %-  de-json:html
             '[{"action": "ack", "event-id": 5}, {"action": "bad-action"}]'
   ::
@@ -715,7 +715,7 @@
             :~  [%ack 9]
                 [%poke 3 ~bud %wut %wut-type [%a [%n '2'] [%n '1'] ~]]
             ==
-        !>  %-  parse-channel-request:light-gate
+        !>  %-  parse-channel-request:http-server-gate
             %-  need  %-  de-json:html
             '''
             [{"action": "ack", "event-id": 9},
@@ -730,18 +730,18 @@
 ::
 ++  test-channel-reject-unauthenticated
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       ^=  call-args
@@ -752,7 +752,7 @@
             [%'PUT' '/~/channel/1234567890abcdef' ~ ~]
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-blah]
                 %give
                 %response
@@ -763,7 +763,7 @@
                 ==
               ::
                 :-  ~
-                %^  internal-server-error:light-gate  %.n
+                %^  internal-server-error:http-server-gate  %.n
                 '/~/channel/1234567890abcdef'  ~
               ::
                 complete=%.y
@@ -776,22 +776,22 @@
   ==
 ::
 ++  test-channel-open-never-used-expire
-  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
   ::  the behn timer wakes us up; we cancel our subscription
   ::
-  =^  results2  light-gate
-    %-  light-take-with-comparator  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-take-with-comparator  :*
+      http-server-gate
       now=(add ~1111.1.2 ~h12)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%b %wake ~]
          ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([^ ~] moves)
@@ -812,17 +812,17 @@
 ++  test-channel-results-before-open
   ::  common initialization
   ::
-  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
   ::  poke gets a success message
   ::
-  =^  results2  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %coup ~]
          ==
@@ -830,14 +830,14 @@
     ==
   ::  subscription gets a success message
   ::
-  =^  results3  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %reap ~]
          ==
@@ -845,14 +845,14 @@
     ==
   ::  subscription gets a result
   ::
-  =^  results4  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m2)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
          ==
@@ -862,9 +862,9 @@
   ::
   ::  send the channel a poke and a subscription request
   ::
-  =^  results5  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results5  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m3)
       scry=*sley
       ^=  call-args
@@ -878,7 +878,7 @@
             ~
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
                 %response
@@ -914,14 +914,14 @@
     ==  ==  ==
   ::  we get a cancel when we notice the client has disconnected
   ::
-  =^  results6  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results6  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m4)
       scry=*sley
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         ::  closing the channel restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
@@ -943,16 +943,16 @@
 ++  test-channel-second-get-updates-timer
   ::  common initialization
   ::
-  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
   ::  perform another poke to a different app
   ::
   ::    Since we haven't connected with a GET, the old timer should be canceled
   ::    and a new one should be set.
   ::  send the channel a poke and a subscription request
   ::
-  =^  results2  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  call-args
@@ -976,7 +976,7 @@
             '''
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([^ ^ ^ ^ ~] moves)
@@ -1022,24 +1022,24 @@
   =.  q  (~(put to q) [3 ~])
   =.  q  (~(put to q) [4 ~])
   ::
-  =.  q  (prune-events:light-gate q 3)
+  =.  q  (prune-events:http-server-gate q 3)
   ::
   (expect-eq !>([~ [4 ~]]) !>(~(top to q)))
 ::
 ++  test-channel-sends-unacknowledged-events-on-reconnection
   ::  common initialization
   ::
-  =^  results1  light-gate  (perform-init-start-channel light-gate *sley)
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
   ::  poke gets a success message
   ::
-  =^  results2  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m1)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %coup ~]
          ==
@@ -1047,14 +1047,14 @@
     ==
   ::  subscription gets a success message
   ::
-  =^  results3  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m2)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %reap ~]
          ==
@@ -1062,9 +1062,9 @@
     ==
   ::  opens the http channel
   ::
-  =^  results4  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results4  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m3)
       scry=*sley
       ^=  call-args
@@ -1078,7 +1078,7 @@
             ~
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
                 %response
@@ -1111,19 +1111,19 @@
     ==  ==  ==
   ::  first subscription result gets sent to the user
   ::
-  =^  results5  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results5  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m4)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %diff %json !>(`json`[%a [%n '1'] ~])]
          ==
       ^=  moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
                 %response
@@ -1142,9 +1142,9 @@
   ::
   ::  send the channel a poke and a subscription request
   ::
-  =^  results6  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results6  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m5)
       scry=*sley
       ^=  call-args
@@ -1165,7 +1165,7 @@
             '''
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([^ ~] moves)
@@ -1177,14 +1177,14 @@
     ==
   ::  the client connection is detected to be broken
   ::
-  =^  results7  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results7  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m6)
       scry=*sley
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         ::  closing the channel restarts the timeout timer
         ::
         :~  :*  duct=~[/http-get-open]  %pass
@@ -1194,14 +1194,14 @@
     ==
   ::  another subscription result while the user is disconnected
   ::
-  =^  results8  light-gate
-    %-  light-take  :*
-      light-gate
+  =^  results8  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m7)
       scry=*sley
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
-            ^-  (hypo sign:light-gate)
+            ^-  (hypo sign:http-server-gate)
             :-  *type
             [%g %unto %diff %json !>(`json`[%a [%n '2'] ~])]
          ==
@@ -1212,9 +1212,9 @@
   ::    Because the client has acknowledged up to event 1, we should start the connection by
   ::    resending events 2 and 3.
   ::
-  =^  results9  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results9  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add ~1111.1.2 ~m8)
       scry=*sley
       ^=  call-args
@@ -1228,7 +1228,7 @@
             ~
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-get-open]
                 %give
                 %response
@@ -1274,83 +1274,83 @@
     results9
   ==
 ::
-++  light-call
-  |=  $:  light-gate=_light-gate
+++  http-server-call
+  |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          call-args=[=duct type=* wrapped-task=(hobo task:able:light-gate)]
-          expected-moves=(list move:light-gate)
+          call-args=[=duct type=* wrapped-task=(hobo task:able:http-server-gate)]
+          expected-moves=(list move:http-server-gate)
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::
-  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  light-gate  (call:light-core call-args)
+  =^  moves  http-server-gate  (call:http-server-core call-args)
   ::
   =/  output=tang
     %+  expect-eq
       !>  expected-moves
       !>  moves
   ::
-  [output light-gate]
+  [output http-server-gate]
 ::
-++  light-call-with-comparator
-  |=  $:  light-gate=_light-gate
+++  http-server-call-with-comparator
+  |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          call-args=[=duct type=* wrapped-task=(hobo task:able:light-gate)]
-          move-comparator=$-((list move:light-gate) tang)
+          call-args=[=duct type=* wrapped-task=(hobo task:able:http-server-gate)]
+          move-comparator=$-((list move:http-server-gate) tang)
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::
-  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  light-gate  (call:light-core call-args)
+  =^  moves  http-server-gate  (call:http-server-core call-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
-  [output light-gate]
+  [output http-server-gate]
 ::
-++  light-take
-  |=  $:  light-gate=_light-gate
+++  http-server-take
+  |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          take-args=[=wire =duct wrapped-task=(hypo sign:light-gate)]
-          expected-moves=(list move:light-gate)
+          take-args=[=wire =duct wrapped-task=(hypo sign:http-server-gate)]
+          expected-moves=(list move:http-server-gate)
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::
-  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  light-gate  (take:light-core take-args)
+  =^  moves  http-server-gate  (take:http-server-core take-args)
   ::
   =/  output=tang
     %+  expect-eq
       !>  expected-moves
       !>  moves
   ::
-  [output light-gate]
+  [output http-server-gate]
 ::
-++  light-take-with-comparator
-  |=  $:  light-gate=_light-gate
+++  http-server-take-with-comparator
+  |=  $:  http-server-gate=_http-server-gate
           now=@da
           scry=sley
-          take-args=[=wire =duct wrapped-task=(hypo sign:light-gate)]
-          move-comparator=$-((list move:light-gate) tang)
+          take-args=[=wire =duct wrapped-task=(hypo sign:http-server-gate)]
+          move-comparator=$-((list move:http-server-gate) tang)
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::
-  =/  light-core  (light-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
+  =/  http-server-core  (http-server-gate our=~nul now=now eny=`@uvJ`0xdead.beef scry=scry)
   ::
-  =^  moves  light-gate  (take:light-core take-args)
+  =^  moves  http-server-gate  (take:http-server-core take-args)
   ::
   =/  output=tang  (move-comparator moves)
   ::
-  [output light-gate]
+  [output http-server-gate]
 ::
 ++  expect-gall-deal
   |=  $:  expected=[wire=path id=sock data=cush:gall]
-          actual=(wind note:light-gate gift:able:light-gate)
+          actual=(wind note:http-server-gate gift:able:http-server-gate)
       ==
   ^-  tang
   ::
@@ -1360,7 +1360,7 @@
   %+  weld
     (expect-eq !>(wire.expected) !>(p.actual))
   ::
-  =/  note=note:light-gate  q.actual
+  =/  note=note:http-server-gate  q.actual
   ?.  ?=([%g %deal *] note)
     [%leaf "bad move, not a %deal: {<actual>}"]~
   ::
@@ -1417,16 +1417,16 @@
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication
-  |=  $:  light-gate=_light-gate
+  |=  $:  http-server-gate=_http-server-gate
           start-now=@da
           scry=sley
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::  the browser then fetches the login page
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=start-now
       scry=*sley
       ^=  call-args
@@ -1437,7 +1437,7 @@
             [%'GET' '/~/login?redirect=/~landscape/inner-path' ~ ~]
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-blah]
                 %give
                 %response
@@ -1446,15 +1446,15 @@
                 :~  ['content-type' 'text/html']
                     ['content-length' '348']
                 ==
-                [~ (login-page:light-gate `'/~landscape/inner-path')]
+                [~ (login-page:http-server-gate `'/~landscape/inner-path')]
                 complete=%.y
         ==  ==
     ==
   ::  a response post redirects back to the application, setting cookie
   ::
-  =^  results2  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=(add start-now ~m1)
       scry=*sley
       ^=  call-args
@@ -1470,7 +1470,7 @@
             'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
         ==
       ^=  expected-moves
-        ^-  (list move:light-gate)
+        ^-  (list move:http-server-gate)
         :~  :*  duct=~[/http-blah]
                 %give
                 %response
@@ -1485,19 +1485,19 @@
         ==  ==
     ==
   ::
-  :_  light-gate
+  :_  http-server-gate
   (weld results1 results2)
 ::  performs all initialization and an initial PUT.
 ::
 ++  perform-init-start-channel
-  |=  $:  light-gate=_light-gate
+  |=  $:  http-server-gate=_http-server-gate
           scry=sley
       ==
-  ^-  [tang _light-gate]
+  ^-  [tang _http-server-gate]
   ::
-  =^  results1  light-gate
-    %-  light-call  :*
-      light-gate
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
       now=~1111.1.1
       scry=*sley
       call-args=[duct=~[/init] ~ [%init ~nul]]
@@ -1505,17 +1505,17 @@
     ==
   ::  ensure there's an authenticated session
   ::
-  =^  results2  light-gate
+  =^  results2  http-server-gate
     %-  perform-authentication  :*
-      light-gate
+      http-server-gate
       now=~1111.1.2
       scry=*sley
     ==
   ::  send the channel a poke and a subscription request
   ::
-  =^  results3  light-gate
-    %-  light-call-with-comparator  :*
-      light-gate
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
       now=~1111.1.2
       scry=*sley
       ^=  call-args
@@ -1545,7 +1545,7 @@
             '''
         ==
       ^=  comparator
-        |=  moves=(list move:light-gate)
+        |=  moves=(list move:http-server-gate)
         ^-  tang
         ::
         ?.  ?=([^ ^ ^ ^ ~] moves)
@@ -1578,6 +1578,6 @@
             !>  i.t.t.t.moves
     ==  ==
   ::
-  :_  light-gate
+  :_  http-server-gate
   :(weld results1 results2 results3)
 --

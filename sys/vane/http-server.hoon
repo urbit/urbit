@@ -2,7 +2,7 @@
 ::  lighter than eyre
 ::
 |=  pit=vase
-=,  light
+=,  http-server
 ::  internal data structures
 ::
 =>  =~
@@ -19,7 +19,7 @@
       ::
       card=(wind note gift:able)
   ==
-::  +note: private request from light to another vane
+::  +note: private request from http-server to another vane
 ::
 +$  note
   $%  ::  %b: to behn
@@ -74,62 +74,13 @@
 ::
 |%
 ++  axle
-  $:  ::  date: date at which light's state was updated to this data structure
+  $:  ::  date: date at which http-server's state was updated to this data structure
       ::
       date=%~2019.1.7
-      ::  client-state: state of outbound requests
-      ::
-      client-state=state:client
       ::  server-state: state of inbound requests
       ::
       =server-state
   ==
-::  +client: light as an http client
-::
-++  client
-  |%
-  ::  +state:client: state relating to open outbound HTTP connections
-  ::
-  +$  state
-    $:  ::  next-id: monotonically increasing id number for the next connection
-        ::
-        next-id=@ud
-        ::  connection-by-id: open connections to the
-        ::
-        connection-by-id=(map @ud [=duct =in-progress-http-request])
-        ::  outbound-duct: the duct to send outbound requests on
-        ::
-        outbound-duct=duct
-    ==
-  ::  +in-progress-http-request: state around an outbound http
-  ::
-  +$  in-progress-http-request
-    $:  ::  remaining-redirects: http limit of number of redirects before error
-        ::
-        remaining-redirects=@ud
-        ::  remaining-retries: number of times to retry the request
-        ::
-        remaining-retries=@ud
-        ::  response-headers: the response headers from the %start packet
-        ::
-        ::    We send the response headers with each %http-progress, so we must
-        ::    save them.
-        ::
-        response-headers=(unit response-header:http)
-        ::  chunks: a list of partial results returned from unix
-        ::
-        ::    This list of octs must be flopped before it is composed as the
-        ::    final response, as we want to be able to quickly insert.
-        ::
-        chunks=(list octs)
-        ::  bytes-read: the sum of the size of the :chunks
-        ::
-        bytes-read=@ud
-        ::  expected-size: the expected content-length of the http request
-        ::
-        expected-size=(unit @ud)
-    ==
-  --
 ::  +server-state: state relating to open inbound HTTP connections
 ::
 +$  server-state
@@ -1337,7 +1288,7 @@
         ^-  (list move)
         :_  moves
         :+  p.state.channel  %give
-        ^-  gift:able:light
+        ^-  gift:able:http-server
         :*  %response  %continue
         ::
             ^=  data
@@ -1418,7 +1369,7 @@
     ==
   ::  +handle-response: check a response for correctness and send to earth
   ::
-  ::    All outbound responses including %light generated responses need to go
+  ::    All outbound responses including %http-server generated responses need to go
   ::    through this interface because we want to have one centralized place
   ::    where we perform logging and state cleanup for connections that we're
   ::    done with.
@@ -1621,11 +1572,11 @@
 |=  [our=ship now=@da eny=@uvJ scry-gate=sley]
 ::  allow jets to be registered within this core
 ::
-~%  %light  ..is  ~
+~%  %http-server  ..is  ~
 |%
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task:able)]
-  ^-  [(list move) _light-gate]
+  ^-  [(list move) _http-server-gate]
   ::
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
@@ -1641,16 +1592,11 @@
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/channel] duct [%channel ~]]
       ==
-    [~ light-gate]
+    [~ http-server-gate]
   ::  %born: new unix process
   ?:  ?=(%born -.task)
     ::
     ~&  [%todo-handle-born p.task]
-    ::  TODO: reset the next-id for client state here.
-    ::
-    ::  send requests on the duct passed in with born.
-    ::
-    =.  outbound-duct.client-state.ax  duct
     ::  close previously open connections
     ::
     ::    When we have a new unix process, every outstanding open connection is
@@ -1672,7 +1618,7 @@
       ::
       $(closed-connections (weld moves closed-connections), connections t.connections)
     ::
-    :_  light-gate
+    :_  http-server-gate
     ;:  weld
       ::  hand back default configuration for now
       ::
@@ -1692,60 +1638,36 @@
     ::
     ~&  [%todo-live task]
     ::
-    [~ light-gate]
+    [~ http-server-gate]
   ::
       %request
     =^  moves  server-state.ax  (request:server +.task)
-    [moves light-gate]
+    [moves http-server-gate]
   ::
       %cancel-request
     =^  moves  server-state.ax  cancel-request:server
-    [moves light-gate]
+    [moves http-server-gate]
   ::
       %connect
     =^  moves  server-state.ax
       %+  add-binding:server  binding.task
       [%app app.task]
-    [moves light-gate]
+    [moves http-server-gate]
   ::
       %serve
     =^  moves  server-state.ax
       %+  add-binding:server  binding.task
       [%gen generator.task]
-    [moves light-gate]
+    [moves http-server-gate]
   ::
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
-    [~ light-gate]
+    [~ http-server-gate]
   ==
-  ::  ::
-  ::      ::
-  ::      ::
-  ::      %http-client
-  ::    ::  TODO: Move me.
-  ::    ::
-  ::    =/  event-args  [[our eny duct now scry-gate] client-state.ax]
-  ::    [~ light-gate]
-    ::  =/  client  (per-client-event event-args)
-    ::  ?-    -.client-task.task
-    ::  ::
-    ::      %request
-    ::    =^  moves  client-state.ax  (request:client +.client-task.task)
-    ::    [moves light-gate]
-    ::  ::
-    ::      %cancel-request
-    ::    ~&  %todo-cancel-request
-    ::    [~ light-gate]
-    ::  ::
-    ::      %receive
-    ::    =^  moves  client-state.ax  (receive:client +.client-task.task)
-    ::    [moves light-gate]
-    ::  ==
-  ::==
 ::
 ++  take
   |=  [=wire =duct wrapped-sign=(hypo sign)]
-  ^-  [(list move) _light-gate]
+  ^-  [(list move) _http-server-gate]
   ::  unwrap :sign, ignoring unneeded +type in :p.wrapped-sign
   ::
   =/  =sign  q.wrapped-sign
@@ -1753,7 +1675,7 @@
   ::
   ?>  ?=([@ *] wire)
   ::
-  |^  ^-  [(list move) _light-gate]
+  |^  ^-  [(list move) _http-server-gate]
       ::
       ?+     i.wire
            ~|([%bad-take-wire wire] !!)
@@ -1769,12 +1691,12 @@
       ::  entirely normal to get things other than http-response calls, but we
       ::  don't care.
       ::
-      [~ light-gate]
+      [~ http-server-gate]
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-response http-event.p.sign)
-    [moves light-gate]
+    [moves http-server-gate]
   ::
   ++  run-build
     ::
@@ -1783,7 +1705,7 @@
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-ford-response  handle-ford-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-ford-response result.sign)
-    [moves light-gate]
+    [moves http-server-gate]
   ::
   ++  channel
     ::
@@ -1800,10 +1722,10 @@
         on-channel-timeout:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
         (on-channel-timeout i.t.t.wire)
-      [moves light-gate]
-    ::
+      [moves http-server-gate]
       ::    %wake
-      ::  [~ move
+      ::
+      ::  TODO: wake me up inside
     ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
@@ -1813,11 +1735,11 @@
       ::  ~&  [%gall-response sign]
       =^  moves  server-state.ax
         (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
-      [moves light-gate]
+      [moves http-server-gate]
     ==
   --
 ::
-++  light-gate  ..$
+++  http-server-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load

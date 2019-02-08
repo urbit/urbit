@@ -7,7 +7,7 @@
 +$  card
   $%  [%connect wire [(unit @t) (list @t)] %server]
       [%wait wire @da]
-      [%http-response =raw-http-response:light]
+      [%http-response =http-event:http]
       [%diff %json json]
   ==
 --
@@ -92,8 +92,8 @@
 ::
 ++  require-authorization
   |*  [=bone move=mold this=*]
-  |=  handler=$-(inbound-request:light (quip move _this))
-  |=  =inbound-request:light
+  |=  handler=$-(inbound-request:http-server (quip move _this))
+  |=  =inbound-request:http-server
   ^-  (quip move _this)
   ::
   ?:  authenticated.inbound-request
@@ -103,8 +103,8 @@
   ^-  (list move)
   =/  redirect=cord
     %-  crip
-    "/~/login?redirect={(trip url.http-request.inbound-request)}"
-  [bone [%http-response %start 307 ['location' redirect]~ ~ %.y]]~
+    "/~/login?redirect={(trip url.request.inbound-request)}"
+  [bone [%http-response %start [307 ['location' redirect]~] ~ %.y]]~
 --
 |%
 ::
@@ -128,7 +128,7 @@
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:light]
+  |=  [wir=wire success=? binding=binding:http-server]
   ~&  [%bound success]
   [~ this]
 ::
@@ -160,10 +160,10 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization ost.bow move this)
-  |=  =inbound-request:light
+  |=  =inbound-request:http-server
   ^-  (quip move _this)
   ::
-  =+  request-line=(parse-request-line url.http-request.inbound-request)
+  =+  request-line=(parse-request-line url.request.inbound-request)
   ~&  [%request-line request-line]
   =/  name=@t
     =+  back-path=(flop site.request-line)
@@ -176,7 +176,7 @@
     :~  ^-  move
         :-  ost.bow
         :*  %http-response
-            [%start 200 ['content-type' 'application/javascript']~ [~ hello-js] %.y]
+            [%start [200 ['content-type' 'application/javascript']~] [~ hello-js] %.y]
         ==
     ==
   ::
@@ -184,13 +184,13 @@
   :~  ^-  move
       :-  ost.bow
       :*  %http-response
-          [%start 200 ['content-type' 'text/html']~ [~ (hello name)] %.y]
+          [%start [200 ['content-type' 'text/html']~] [~ (hello name)] %.y]
       ==
   ==
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  =inbound-request:light
+  |=  =inbound-request:http-server
   ^-  (quip move _this)
   ::  the only long lived connections we keep state about are the stream ones.
   ::
