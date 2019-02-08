@@ -588,6 +588,8 @@ u3_king_commence()
     u3K.soc_c = strdup(buf_c);
   }
 
+  uv_timer_init(u3L, &u3K.tim_u);
+
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
   uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _king_socket_connect);
@@ -599,4 +601,27 @@ u3_king_commence()
 
   _king_loop_exit();
   exit(0);
+}
+
+/* u3_king_grab(): gc the kingdom
+*/
+void
+u3_king_grab(void* vod_p)
+{
+  //  XX fix leaks and enable
+  //
+#if 0
+  c3_w man_w = 0, pir_w = 0;
+  FILE* fil_u = stderr;
+
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(fil_u, "measuring king:\r\n");
+
+  man_w = u3m_mark(fil_u);
+  pir_w = u3_pier_mark(fil_u);
+
+  u3a_print_memory(fil_u, "total marked", man_w + pir_w);
+  u3a_print_memory(fil_u, "sweep", u3a_sweep());
+#endif
 }

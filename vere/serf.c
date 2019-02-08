@@ -394,6 +394,8 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     }
   }
 
+  //  XX this runs on replay too
+  //
   _serf_grab(sac, ovo, vir);
   _serf_send_complete(vir);
 

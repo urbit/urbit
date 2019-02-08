@@ -697,6 +697,7 @@
           u3_pier** tab_u;                      //  lord table
           uv_pipe_t cmd_u;                      //  command socket
           u3_moor*  cli_u;                      //  connected clients
+          uv_timer_t tim_u;                     //  gc timer
         } u3_king;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
@@ -1288,6 +1289,11 @@
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
 
+      /* u3_pier_mark(): gc the piers
+      */
+        c3_w
+        u3_pier_mark(FILE* fil_u);
+
       /* u3_dawn_come(): mine a comet
       */
         u3_noun
@@ -1302,3 +1308,8 @@
       */
         void
         u3_king_commence();
+
+      /* u3_king_grab(): gc the kingdom
+      */
+        void
+        u3_king_grab(void* vod_p);
