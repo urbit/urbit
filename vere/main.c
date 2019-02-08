@@ -544,8 +544,8 @@ _stop_exit(c3_i int_i)
 }
 
 /*
-  This is set the the write-end of a pipe in Urbit is started in daemon
-  mode. It's mean to be used as a signal to the parent process that the
+  This is set the the write-end of a pipe when Urbit is started in daemon
+  mode. It's meant to be used as a signal to the parent process that the
   child process has finished booting.
 */
 static int _child_process_booted_signal_fd = -1;
@@ -569,15 +569,9 @@ static void _on_boot_completed_cb() {
     return;
   }
 
-  fprintf(stderr, "child: informing parent that boot was a success\n");
-  fflush(stderr);
-
   if (0 == write(_child_process_booted_signal_fd, buf, 1)) {
     c3_assert(!"_on_boot_completed_cb: Can't write to parent FD");
   }
-
-  fprintf(stderr, "child: signal sent. parent should exit now.\n");
-  fflush(stderr);
 
   close(_child_process_booted_signal_fd);
   _child_process_booted_signal_fd = -1;
@@ -609,10 +603,10 @@ main(c3_i   argc,
     available.
 
     In both processes, we are good fork() citizens, and close all unused
-    file descriptors. Closing `pipefd[1]` is especially important, since
-    the pipe needs to be closed if the child process dies. When the pipe
-    is closed, the read fails, and that's how we know that something
-    went wrong.
+    file descriptors. Closing `pipefd[1]` in the parent process is
+    especially important, since the pipe needs to be closed if the child
+    process dies. When the pipe is closed, the read fails, and that's
+    how we know that something went wrong.
 
     There are some edge cases around `WEXITSTATUS` that are not handled
     here, but I don't think it matters.
@@ -633,7 +627,7 @@ main(c3_i   argc,
       close(2);
 
       char buf[2] = {0,0};
-      if (read(pipefd[0], buf, 1)) {
+      if (1 == read(pipefd[0], buf, 1)) {
         return 0;
       } else {
         int status;
