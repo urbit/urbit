@@ -561,8 +561,6 @@ u3_king_commence()
   //
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
-  u3C.wag_w &= ~u3o_debug_ram;
-  u3C.wag_w &= ~u3o_check_corrupt;
 
   u3m_boot_pier();
   {
