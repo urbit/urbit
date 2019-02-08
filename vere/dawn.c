@@ -317,6 +317,8 @@ u3_dawn_vent(u3_noun seed)
   //  load snapshot from HTTP URL
   //
   else if ( 0 != u3_Host.ops_u.sap_c ) {
+    printf("boot: downloading azimuth snapshot from %s\r\n",
+           u3_Host.ops_u.sap_c);
     u3_noun raw_snap = _dawn_get_jam(u3_Host.ops_u.sap_c);
     sap = u3nc(u3_nul, raw_snap);
   }
