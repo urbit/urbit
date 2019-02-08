@@ -30,6 +30,7 @@
       $:  %0
           pil=pill
           assembled=*
+          init-cache=(map ship pier)
           fleet-snaps=(map term (map ship pier))
           piers=(map ship pier)
       ==
@@ -560,18 +561,30 @@
   =.  this  thus
   ?-  -.ovo
       %init-ship
-    %-  push-events:apex:(pe who.ovo)
-    ^-  (list unix-event)
-    :~  [/ %wack 0]  ::  eny
-        [/ %whom who.ovo]  ::  eny
-        [//newt/0v1n.2m9vh %barn ~]
-        [//behn/0v1n.2m9vh %born ~]
-        [//term/1 %boot %fake who.ovo]
-        -.userspace-ova.pil
-        [//http/0v1n.2m9vh %born ~]
-        [//http/0v1n.2m9vh %live 8.080 `8.445]
-        [//term/1 %belt %ctl `@c`%x]
-    ==
+    =/  prev  (~(get by init-cache) who.ovo)
+    ?^  prev
+      ~&  [%loading-cached-ship who.ovo]
+      =.  this  (restore-ships ~[who.ovo] init-cache)
+      (pe who.ovo)
+    =/  initted
+      =<  plow
+      %-  push-events:apex:(pe who.ovo)
+      ^-  (list unix-event)
+      :~  [/ %wack 0]  ::  eny
+          [/ %whom who.ovo]  ::  eny
+          [//newt/0v1n.2m9vh %barn ~]
+          [//behn/0v1n.2m9vh %born ~]
+          [//term/1 %boot %fake who.ovo]
+          -.userspace-ova.pil
+          [//http/0v1n.2m9vh %born ~]
+          [//http/0v1n.2m9vh %live 8.080 `8.445]
+          [//term/1 %belt %ctl `@c`%x]
+      ==
+    =.  this  abet-pe:initted
+    =.  init-cache
+      %+  ~(put by init-cache)  who.ovo
+      (~(got by piers) who.ovo)
+    (pe who.ovo)
   ::
       %event
     (push-events:(pe who.ovo) [ovo.ovo]~)
@@ -620,6 +633,27 @@
   =.  this
     abet-pe:(push-events:(pe p.i.pers) ~[ovo])
   $(pers t.pers)
+::
+::  Restore ships
+::
+++  restore-ships
+  |=  [hers=(list ship) from=(map ship pier)]
+  =.  this
+    %+  turn-ships  hers
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    sleep:(pe who)
+  =.  piers
+    %-  ~(gas by piers)
+    %+  turn  hers
+    |=  her=ship
+    [her (~(got by from) her)]
+  =.  this
+    %+  turn-ships  hers
+    |=  [who=ship thus=_this]
+    =.  this  thus
+    restore:(pe who)
+  this
 ::
 ::  Received timer wake
 ::
