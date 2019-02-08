@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
@@ -542,6 +543,46 @@ _stop_exit(c3_i int_i)
   u3_pier_exit();
 }
 
+/*
+  This is set the the write-end of a pipe in Urbit is started in daemon
+  mode. It's mean to be used as a signal to the parent process that the
+  child process has finished booting.
+*/
+static int _child_process_booted_signal_fd = -1;
+
+/*
+  This should be called whenever the ship has been booted enough to
+  handle commands from automation code. Specifically, once the Eyre's
+  `chis` interface is up and running.
+
+  In daemon mode, this signals to the parent process that it can
+  exit. Otherwise, it does nothing.
+
+  Once we've sent a signal with `write`, we close the file descriptor
+  and overwrite the global to make it impossible to accidentally do
+  this twice.
+*/
+static void _on_boot_completed_cb() {
+  char buf[2] = {0,0};
+
+  if (-1 == _child_process_booted_signal_fd) {
+    return;
+  }
+
+  fprintf(stderr, "child: informing parent that boot was a success\n");
+  fflush(stderr);
+
+  if (0 == write(_child_process_booted_signal_fd, buf, 1)) {
+    c3_assert(!"_on_boot_completed_cb: Can't write to parent FD");
+  }
+
+  fprintf(stderr, "child: signal sent. parent should exit now.\n");
+  fflush(stderr);
+
+  close(_child_process_booted_signal_fd);
+  _child_process_booted_signal_fd = -1;
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -554,63 +595,56 @@ main(c3_i   argc,
   }
 
   /*
-    In daemon mode, run the application as a background process.
+    In daemon mode, run the urbit as a background process, but don't
+    exit from the parent process until the ship is finished booting.
 
-    - First setup a pipe and `fork()` the process.
-    - In the parent, read one byte from the pipe and then exit.
-    - In the child, write one byte to the pipe and then continue as per usual.
+    We use a pipe to communicate between the child and the parent. The
+    parent waits for the child to write something to the pipe and
+    then exits. If the pipe is closed with nothing written to it, get
+    the exit status from the child process and also exit with that status.
 
-    First run `fork()`,
+    We want the child to write to the pipe once it's booted, so we put
+    `_on_boot_completed_cb` into `u3_Host.onboot`, which is NULL in
+    non-daemon mode. That gets called once the `chis` service is
+    available.
 
-    TODO Redirect output to a file.
-    TODO Don't exit from the parent until the boot sequence finishes.
-    TODO Exit with an error code if the child process failed to boot.
+    In both processes, we are good fork() citizens, and close all unused
+    file descriptors. Closing `pipefd[1]` is especially important, since
+    the pipe needs to be closed if the child process dies. When the pipe
+    is closed, the read fails, and that's how we know that something
+    went wrong.
+
+    There are some edge cases around `WEXITSTATUS` that are not handled
+    here, but I don't think it matters.
   */
   if ( c3y == u3_Host.ops_u.dem ) {
     int pipefd[2];
-    char buf[2] = {0,0};
 
     if (0 != pipe(pipefd)) {
-      return 1; // TODO
+      c3_assert(!"Failed to create pipe");
     }
 
-    fprintf(stderr, "forking\n");
-    fflush(stderr);
-    pid_t pid = fork();
+    pid_t childpid = fork();
 
-    if (pid) {
+    if (childpid) {
       close(pipefd[1]);
       close(0);
       close(1);
+      close(2);
 
-      fprintf(stderr, "parent: waiting\n");
-      fflush(stderr);
-
+      char buf[2] = {0,0};
       if (read(pipefd[0], buf, 1)) {
-        fprintf(stderr, "parent: urbit booted, exiting\n");
-        fflush(stderr);
         return 0;
+      } else {
+        int status;
+        wait(&status);
+        return WEXITSTATUS(status);
       }
-
-      fprintf(stderr, "parent: urbit failed to boot, exiting with error\n");
-      fflush(stderr);
-      return 1;
+    } else {
+      close(pipefd[0]);
+      _child_process_booted_signal_fd = pipefd[1];
+      u3_Host.onboot = _on_boot_completed_cb;
     }
-
-    close(pipefd[0]);
-
-    fprintf(stderr, "child: informing parent that boot was a success\n");
-    fflush(stderr);
-
-    if (0 == write(pipefd[1], buf, 1)) {
-      fprintf(stderr, "child: Ahhhh!! Can't write to pipe. Why?\n");
-      fflush(stderr);
-      exit(1);
-    }
-
-    close(pipefd[1]);
-    fprintf(stderr, "child: done. parent should exit now.\n");
-    fflush(stderr);
   }
 
   if ( c3y == u3_Host.ops_u.rep ) {
