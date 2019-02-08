@@ -1,4 +1,4 @@
-::  ::  %gall, agent execution
+!:  ::  %gall, agent execution
 !?  163
 ::::
 |=  pit/vase
@@ -1258,6 +1258,7 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
+<<<<<<< HEAD
         %build  `%f
         %cash  `%a
         %conf  `%g
@@ -1317,6 +1318,8 @@
   ::
       $sunk  [~ ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       $west
     ?>  ?=({?($ge $gh) @ ~} q.q.hic)
     =*  dap  i.t.q.q.hic
@@ -1331,15 +1334,15 @@
   ::
       $wegh
     =/  =mass
-      =*  mas  mast.all
-      :+  (scot %p our)  %|
-      :~  [%foreign [%& sap.mast.all]]
+      :+  %gall  %|
+      :~  foreign+&+sap.mast.all
           :+  %blocked  %|
           (sort ~(tap by (~(run by wub.mast.all) |=(sofa [%& +<]))) aor)
           :+  %active   %|
           (sort ~(tap by (~(run by bum.mast.all) |=(seat [%& +<]))) aor)
+          dot+&+all
       ==
-    =/  =move  [hen %give %mass %gall %| [mass ~]]
+    =/  =move  [hen %give %mass mass]
     [[move ~] ..^$]
   ==
 ::

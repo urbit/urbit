@@ -1,6 +1,5 @@
 ::
-/-  json-rpc
-=,  json-rpc
+=,  rpc:jstd
 ::
 |_  res=response
 ::

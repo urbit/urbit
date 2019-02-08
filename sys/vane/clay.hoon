@@ -1811,7 +1811,7 @@
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
     ?.  ?=($hoon p.a)  [%vale [our %home] a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
@@ -3982,6 +3982,8 @@
     =.  hoy.ruf  (~(del by hoy.ruf) p.req)
     [(weld clear-ford-cache-moves cancel-moves) ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       ?($warp $werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
@@ -4024,14 +4026,14 @@
       $wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %clay
-    :-  %|
-    :~  domestic+[%& rom.ruf]
-        foreign+[%& hoy.ruf]
-        :-  %object-store  :-  %|
-        :~  commits+[%& hut.ran.ruf]
-            blobs+[%& lat.ran.ruf]
+    :+  %clay  %|
+    :~  domestic+&+rom.ruf
+        foreign+&+hoy.ruf
+        :+  %object-store  %|
+        :~  commits+&+hut.ran.ruf
+            blobs+&+lat.ran.ruf
         ==
+        dot+&+ruf
     ==
   ==
 ::

@@ -1335,10 +1335,26 @@
     ?~  b
       a
     $(b t.b, a (put i.b))
+  ::  +has: does :b exist in :a?
   ::
-  ++  has                                               ::  b exists in a check
+  ++  has
     ~/  %has
-    |*  b/*
+    |*  b=*
+    ^-  ?
+    ::  wrap extracted item type in a unit because bunting fails
+    ::
+    ::    If we used the real item type of _?^(a n.a !!) as the sample type,
+    ::    then hoon would bunt it to create the default sample for the gate.
+    ::
+    ::    However, bunting that expression fails if :a is ~. If we wrap it
+    ::    in a unit, the bunted unit doesn't include the bunted item type.
+    ::
+    ::    This way we can ensure type safety of :b without needing to perform
+    ::    this failing bunt. It's a hack.
+    ::
+    %.  [~ b]
+    |=  b=(unit _?>(?=(^ a) n.a))
+    =>  .(b ?>(?=(^ b) u.b))
     |-  ^-  ?
     ?~  a
       |
@@ -7830,7 +7846,7 @@
                  ::
                  [%tsld [%$ 6] p.mod]
       {$bspd *}  $(mod p.mod)
-      {$bssg *}  p.mod
+      {$bssg *}  [%kthp q.mod p.mod]
       {$bsts *}  [%ktts p.mod $(mod q.mod)]
       {$bsvt *}  $(mod p.mod)
       {$bswt *}  ::  use last entry
@@ -7891,7 +7907,7 @@
     ::  process annotations outside construct, to catch default
     ::
     ?:  ?=($dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
-    ?:  ?=($bssg -.mod)  factory(mod q.mod, def `p.mod)
+    ?:  ?=($bssg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
     ^-  hoon
     ::  if we recognize an indirection
     ::
@@ -8212,7 +8228,7 @@
       ::  default
       ::
           {$bssg *}
-        relative(mod q.mod, def `p.mod)
+        relative(mod q.mod, def `[%kthp q.mod p.mod])
       ::
       ::  choice, $?
       ::
@@ -12114,7 +12130,7 @@
       |=  [acc=_map [ty=type k=xkey]]
       =/  dest  (~(get by refs.tbl) k)
       ?^  dest  (~(put by acc) ty u.dest)
-      ?.  (~(has in live.tbl))  acc
+      ?.  (~(has in live.tbl) k)  acc
       (~(put in acc) ty k)
     ::
     ::  Rebuild the `xrays` table.
@@ -17007,7 +17023,7 @@
 ::
 ::::  5e: caching compiler
   ::
-++  wa  !:                                              ::  cached compile
+++  wa                                                  ::  cached compile
   |_  worm
   ++  nell  |=(ref/type (nest [%cell %noun %noun] ref)) ::  nest in cell
   ++  nest                                              ::  nest:ut, cached

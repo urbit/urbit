@@ -96,7 +96,17 @@
   |%
   ++  rpc
     |%
-    ++  response  ::TODO  id should be optional
+    +$  request
+      $:  id=@t
+          method=@t
+          params=request-params
+      ==
+    ::
+    +$  request-params
+      $%  [%list (list json)]
+          [%object (list (pair @t json))]
+      ==
+    +$  response
       $~  [%fail *httr:eyre]
       $%  [%result id=@t res=json]
           [%error id=@t code=@t message=@t]  ::TODO  data?
@@ -243,6 +253,7 @@
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
           {$sunk p=ship q=rift}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
           {$west p/ship q/path r/*}                     ::  network request
@@ -424,6 +435,7 @@
       $%  {$born ~}                                     ::  new unix process
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$rest p/@da}                                 ::  cancel alarm
+          {$vega ~}                                     ::  report upgrade
           {$wait p/@da}                                 ::  set alarm
           {$wake ~}                                    ::  timer activate
           {$wegh ~}                                    ::  report memory
@@ -476,6 +488,7 @@
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
           {$sunk p=ship q=rift}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
           {$wegh ~}                                     ::  report memory
@@ -615,16 +628,16 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$bbye ~}                                    ::  reset prompt
+      $%  {$bbye ~}                                     ::  reset prompt
           {$blit p/(list blit)}                         ::  terminal output
           {$burl p/@t}                                  ::  activate url
           {$init p/@p}                                  ::  set owner
-          {$logo ~}                                    ::  logout
+          {$logo ~}                                     ::  logout
+          {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$mass p/mass}                                ::  memory usage
           {$send p/lane:ames q/@}                       ::  transmit packet
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/@t q/@t}                             ::  reboot
-          {$verb ~}                                    ::  verbose mode
+          {$verb ~}                                     ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
       $%  {$belt p/belt}                                ::  terminal input
@@ -633,18 +646,19 @@
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
-          {$hail ~}                                    ::  terminal refresh
-          {$heft ~}                                    ::  memory report
-          {$hook ~}                                    ::  this term hung up
-          {$harm ~}                                    ::  all terms hung up
+          {$hail ~}                                     ::  terminal refresh
+          {$heft ~}                                     ::  memory report
+          {$hook ~}                                     ::  this term hung up
+          {$harm ~}                                     ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
+          {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                    ::  no operation
           {$sunk p=ship q=rift}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega p/@t q/@t}                             ::  reboot
-          {$verb ~}                                    ::  verbose mode
+          {$vega ~}                                     ::  report upgrade
+          {$verb ~}                                     ::  verbose mode
       ==                                                ::
     --  ::able
   ::
@@ -653,46 +667,46 @@
   ++  blew  {p/@ud q/@ud}                               ::  columns rows
   ++  belt                                              ::  old belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                       ::  true backspace
+        {$bac ~}                                        ::  true backspace
         {$ctl p/@c}                                     ::  control-key
-        {$del ~}                                       ::  true delete
+        {$del ~}                                        ::  true delete
         {$met p/@c}                                     ::  meta-key
-        {$ret ~}                                       ::  return
+        {$ret ~}                                        ::  return
         {$txt p/(list @c)}                              ::  utf32 text
     ==                                                  ::
   ++  blit                                              ::  old blit
-    $%  {$bel ~}                                       ::  make a noise
-        {$clr ~}                                       ::  clear the screen
+    $%  {$bel ~}                                        ::  make a noise
+        {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
         {$lin p/(list @c)}                              ::  set current line
-        {$mor ~}                                       ::  newline
+        {$mor ~}                                        ::  newline
         {$sag p/path q/*}                               ::  save to jamfile
         {$sav p/path q/@}                               ::  save to file
         {$url p/@t}                                     ::  activate url
     ==                                                  ::
-  ++  deco  ?(~ $bl $br $un)                           ::  text decoration
+  ++  deco  ?(~ $bl $br $un)                            ::  text decoration
   ++  dill-belt                                         ::  new belt
     $%  {$aro p/?($d $l $r $u)}                         ::  arrow key
-        {$bac ~}                                       ::  true backspace
+        {$bac ~}                                        ::  true backspace
         {$cru p/@tas q/(list tank)}                     ::  echo error
         {$ctl p/@}                                      ::  control-key
-        {$del ~}                                       ::  true delete
-        {$hey ~}                                       ::  refresh
+        {$del ~}                                        ::  true delete
+        {$hey ~}                                        ::  refresh
         {$met p/@}                                      ::  meta-key
-        {$ret ~}                                       ::  return
+        {$ret ~}                                        ::  return
         {$rez p/@ud q/@ud}                              ::  resize, cols, rows
         {$txt p/(list @c)}                              ::  utf32 text
         {$yow p/gill:gall}                              ::  connect to app
     ==                                                  ::
   ++  dill-blit                                         ::  new blit
-    $%  {$bel ~}                                       ::  make a noise
-        {$clr ~}                                       ::  clear the screen
+    $%  {$bel ~}                                        ::  make a noise
+        {$clr ~}                                        ::  clear the screen
         {$hop p/@ud}                                    ::  set cursor position
         {$klr p/stub}                                   ::  styled text
         {$mor p/(list dill-blit)}                       ::  multiple blits
         {$pom p/stub}                                   ::  styled prompt
         {$pro p/(list @c)}                              ::  show as cursor+line
-        {$qit ~}                                       ::  close console
+        {$qit ~}                                        ::  close console
         {$out p/(list @c)}                              ::  send output line
         {$sag p/path q/*}                               ::  save to jamfile
         {$sav p/path q/@}                               ::  save to file
@@ -700,11 +714,11 @@
     ==                                                  ::
   ++  flog                                              ::  sent to %dill
     $%  {$crud p/@tas q/(list tank)}                    ::
-        {$heft ~}                                      ::
+        {$heft ~}                                       ::
+        {$lyra p/@t q/@t}                               ::  upgrade kernel
         {$text p/tape}                                  ::
         {$veer p/@ta q/path r/@t}                       ::  install vane
-        {$vega p/@t q/@t}                               ::  reboot
-        {$verb ~}                                      ::  verbose mode
+        {$verb ~}                                       ::  verbose mode
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
@@ -742,6 +756,7 @@
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
           [%this p=? q=clip r=httq]                     ::  inbound request
           [%thud ~]                                     ::  inbound cancel
+          [%vega ~]                                     ::  report upgrade
           [%wegh ~]                                     ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
           [%west p=ship q=[path *]]                     ::  network request
@@ -978,6 +993,9 @@
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
           [%sunk =ship =rift]
+          ::  %vega: report kernel upgrade
+          ::
+          [%vega ~]
           ::  %wegh: produce memory usage information
           ::
           [%wegh ~]
@@ -1205,7 +1223,7 @@
         $:  %dude
             ::  error: a trap producing an error message to wrap the original
             ::
-            error=(trap tank)
+            error=tank
             ::  attempt: the schematic to try, whose error we wrap, if any
             ::
             attempt=schematic
@@ -1669,6 +1687,7 @@
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
           {$sunk p=ship q/rift}                         ::  report death
+          {$vega ~}                                     ::  report upgrade
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
       ==                                                ::
@@ -1787,6 +1806,7 @@
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
@@ -1859,10 +1879,12 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
+          [%vega ~]                                     ::  report upgrade
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
+          [%wegh ~]                                     ::  memory usage request
           [%west p=ship q=path r=*]                     ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
@@ -5933,7 +5955,7 @@
       %+  welp  tam
       =-  ?~(att rez [' ' (attr att rez)])
       ^-  rez/tape
-      ?:  &(?=(~ c.mex) |(cot (clot man)))
+      ?:  &(?=(~ c.mex) |(cot ?^(man | (clot man))))
         [' ' '/' '>' rez]
       :-  '>'
       (many c.mex :(weld "</" tam ">" rez))
@@ -7972,6 +7994,8 @@
       ^-  json
       %-  pairs
       =;  r=[met=@t pas=(list json)]
+        ::TODO  should use request-to-json:rpc:jstd,
+        ::      and probably (fall riq -.req)
         :*  jsonrpc+s+'2.0'
             method+s+met.r
             params+a+pas.r
@@ -8166,6 +8190,43 @@
   ++  hex-to-num
     |=  a=@t
     (rash (rsh 3 2 a) hex)
+  --
+::
+::  |jstd: json standard library
+::
+++  jstd
+  =,  ^jstd
+  |%
+  ++  rpc
+    =,  ^rpc
+    |%
+    ++  request-to-hiss
+      |=  [url=purl:eyre req=request]
+      ^-  hiss:eyre
+      :-  url
+      :+  %post
+        %-  ~(gas in *math:eyre)
+        ~['Content-Type'^['application/json']~]
+      %-  some
+      %-  as-octt:mimes:html
+      (en-json:html (request-to-json req))
+    ::
+    ++  request-to-json
+      |=  request
+      ^-  json
+      %-  pairs:enjs:format
+      :~  jsonrpc+s+'0.2'
+          id+s+id
+          method+s+method
+        ::
+          :-  %params
+          ^-  json
+          ?-  -.params
+            %list     [%a +.params]
+            %object   [%o (~(gas by *(map @t json)) +.params)]
+          ==
+      ==
+    --
   --
 ::
 ::  |dawn: pre-boot request/response de/serialization and validation

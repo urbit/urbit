@@ -1,5 +1,5 @@
 ::  %behn, just a timer
-::
+!:
 !?  164
 ::
 =,  behn
@@ -17,122 +17,94 @@
     +$  timer  [date=@da =duct]
     --
 ::
-=|  behn-state
-=*  state  -
-|=  [our=ship now=@da eny=@uvJ ski=sley]                ::  current invocation
-^?
-|%                                                      ::  poke+peek pattern
-++  call                                                ::  handle request
-  |=  $:  hen=duct
-          type=*
-          wrapped-task=(hobo task:able)
-      ==
-  ^-  [(list move) _..^$]
+=>  |%
+++  per-event
+  =|  moves=(list move)
+  |=  [[our=ship now=@da =duct] state=behn-state]
   ::
-  =/  =task:able
-    ?.  ?=(%soft -.wrapped-task)
-      wrapped-task
-    ((hard task:able) p.wrapped-task)
+  |%
+  ::  %entry-points
   ::
-  |^  =^  moves  state
-        ::
-        ?-    -.task
-            ::  %crud: error report; hand off to %dill to be printed
-            ::
-            %crud
-          [[hen %slip %d %flog task]~ state]
-        ::
-            ::  %born: handle urbit restart
-            ::
-            %born
-          ::  store this duct for setting unix wakeup timers
-          ::
-          =.  unix-duct  hen
-          ::  process any elapsed timers and clear and reset :next-wake
-          ::
-          =^  moves  timers  notify-clients
-          (set-wake(next-wake ~) moves)
-        ::
-            ::  %rest: cancel a timer, resetting :next-wake if needed
-            ::
-            %rest
-          =.  timers  (unset-timer [p.task hen])
-          (set-wake ~)
-        ::
-            ::  %wait: set a new timer
-            ::
-            %wait
-          ::  process elapsed timers first to maintain sort order
-          ::
-          =^  moves  timers  notify-clients
-          ::  set the timer, then adjust :next-wake if needed
-          ::
-          =.  timers  (set-timer [p.task hen])
-          (set-wake moves)
-        ::
-            ::  %wake: unix says wake up; notify clients and set next wakeup
-            ::
-            %wake
-          =^  moves  timers  notify-clients
-          (set-wake(next-wake ~) moves)
-        ::
-            ::  %wegh: produce memory usage report for |mass
-            ::
-            %wegh
-          :_  state  :_  ~
-          :^  hen  %give  %mass
-          :-  %behn
-          :-  %|
-          :~  timers+[%& timers]
-          ==
-        ==
-      ::
-      [moves ..^^$]
-  ::  +set-timer: set a timer, maintaining the sort order of the :timers list
+  ::  +born: handle urbit restart
   ::
-  ++  set-timer
-    |=  t=timer
-    ^+  timers
+  ++  born
+    ^+  [moves state]
+    ::  store this duct for setting unix wakeup timers
     ::
-    ?~  timers
-      ~[t]
-    ::  timers at the same date form a fifo queue
+    =.  unix-duct.state  duct
+    ::  process any elapsed timers and clear and reset :next-wake
     ::
-    ?:  (lth date.t date.i.timers)
-      [t timers]
-    ::
-    [i.timers $(timers t.timers)]
-  ::  +unset-timer: cancel a timer; if it already expired, no-op
+    =>  notify-clients
+    set-wake(next-wake.state ~)
+  ::  +crud: error report; hand off to %dill to be printed
   ::
-  ++  unset-timer
-    |=  [t=timer]
-    ^+  timers
-    ::  if we don't have this timer, no-op; for debugging, add a printf here
+  ++  crud
+    |=  [p=@tas q=tang]
+    ^+  [moves state]
+    [[duct %slip %d %flog %crud p q]~ state]
+  ::  +rest: cancel the timer at :date, resetting :next-wake if needed
+  ::
+  ++  rest
+    |=  date=@da
+    ^+  [moves state]
     ::
-    ?~  timers
-      ~
-    ?:  =(i.timers t)
-      t.timers
+    =.  timers.state  (unset-timer [date duct])
+    set-wake
+  ::  +vega: learn of a kernel upgrade
+  ::
+  ++  vega
+    [moves state]
+  ::  +wait: set a new timer at :date, resetting :next-wake if needed
+  ::
+  ++  wait
+    |=  date=@da
+    ^+  [moves state]
+    ::  process elapsed timers first to maintain sort order
     ::
-    [i.timers $(timers t.timers)]
+    =.  event-core    notify-clients
+    =.  timers.state  (set-timer [date duct])
+    set-wake
+  ::  +wake: unix says we should wake up; notify clients and set :next-wake
+  ::
+  ++  wake
+    ^+  [moves state]
+    =>  notify-clients
+    set-wake(next-wake.state ~)
+  ::  +wegh: produce memory usage report for |mass
+  ::
+  ++  wegh
+    ^+  [moves state]
+    :_  state  :_  ~
+    :^  duct  %give  %mass
+    :+  %behn  %|
+    :~  timers+&+timers.state
+        dot+&+state
+    ==
+  ::  %utilities
+  ::
+  ::+|
+  ::
+  ++  event-core  .
   ::  +notify-clients: wake up vanes whose timers have expired
   ::
   ::    When we return the list moves to clients, we flop them so they're in
   ::    the same order as they were in :timers.
   ::
   ++  notify-clients
-    =|  moves=(list move)
-    |-  ^+  [moves timers]
+    =*  timers  timers.state
+    |-  ^+  event-core
     ::
     ?~  timers
-      [(flop moves) timers]
+      =.  moves  (flop moves)
+      event-core
     ::
     ?:  (gth date.i.timers now)
-      [(flop moves) timers]
+      =.  moves  (flop moves)
+      event-core
     ::
     %_  $
       timers  t.timers
-      moves  [[duct.i.timers %give %wake ~] moves]
+      moves   [[duct.i.timers %give %wake ~] moves]
     ==
   ::  +set-wake: set or unset a unix timer to wake us when next timer expires
   ::
@@ -145,8 +117,11 @@
   ::    handled by unix first which is incorrect.
   ::
   ++  set-wake
-    |=  moves=(list move)
     ^+  [moves state]
+    ::
+    =*  next-wake  next-wake.state
+    =*  timers     timers.state
+    =*  unix-duct  unix-duct.state
     ::  if no timers, cancel existing wakeup timer or no-op
     ::
     ?~  timers
@@ -165,16 +140,83 @@
     ::
     :_  state(next-wake `date.i.timers)
     [[unix-duct %give %doze `date.i.timers] moves]
+  ::  +set-timer: set a timer, maintaining the sort order of the :timers list
+  ::
+  ++  set-timer
+    =*  timers  timers.state
+    |=  t=timer
+    ^+  timers
+    ::
+    ?~  timers
+      ~[t]
+    ::  ignore duplicates
+    ::
+    ?:  =(t i.timers)
+      timers
+    ::  timers at the same date form a fifo queue
+    ::
+    ?:  (lth date.t date.i.timers)
+      [t timers]
+    ::
+    [i.timers $(timers t.timers)]
+  ::  +unset-timer: cancel a timer; if it already expired, no-op
+  ::
+  ++  unset-timer
+    =*  timers  timers.state
+    |=  [t=timer]
+    ^+  timers
+    ::  if we don't have this timer, no-op; for debugging, add a printf here
+    ::
+    ?~  timers
+      ~
+    ?:  =(i.timers t)
+      t.timers
+    ::
+    [i.timers $(timers t.timers)]
   --
+--
+::
+=|  behn-state
+=*  state  -
+|=  [our=ship now=@da eny=@uvJ ski=sley]
+=*  behn-gate  .
+^?
+|%
+::  +call: handle a +task:able:behn request
+::
+++  call
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
+      ==
+  ^-  [(list move) _behn-gate]
+  ::
+  =/  =task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  =/  event-core  (per-event [our now hen] state)
+  ::
+  =^  moves  state
+    ?-  -.task
+      %born  born:event-core
+      %crud  (crud:event-core [p q]:task)
+      %rest  (rest:event-core date=p.task)
+      %vega  vega:event-core
+      %wait  (wait:event-core date=p.task)
+      %wake  wake:event-core
+      %wegh  wegh:event-core
+    ==
+  [moves behn-gate]
+::  +load: migrate an old state to a new behn version
 ::
 ++  load
   |=  old=*
-  ^+  ..^$
-  ?^  new=((soft behn-state) old)
-    ~&  %behn-load-new
-    ..^$(state u.new)
-  ~&  %behn-load-wipe
-  ..^$(state *behn-state)
+  ^+  behn-gate
+  ::
+  ~|  %behn-load-fail
+  behn-gate(state (behn-state old))
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
@@ -189,9 +231,10 @@
   [~ ~ %tank !>(>timers<)]
 ::
 ++  stay  state
-++  take                                                ::  process move
+++  take
   |=  [tea=wire hen=duct hin=(hypo sign)]
-  ^+  [*(list move) ..^$]
+  ^-  [(list move) _behn-gate]
   ~|  %behn-take-not-implemented
   !!
 --
+

@@ -31,11 +31,15 @@
       [%snap * ?]
     [ost.hid %snap /hi (snapshot:jael +<.val) +>.val]~
   ::
-      %look
+      %look-ethnode
     :_  ~
     =/  pul
       (need (de-purl:html 'http://localhost:8545'))
     [ost.hid %look /hi |+pul]
+  ::
+      [%look-kick who=@p]
+    :_  ~
+    [ost.hid %look /hi %& who.val]
   ==
 ::
 ++  vein

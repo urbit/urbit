@@ -105,7 +105,7 @@
       [%leaf "expected %dude, but got {<-.actual>}"]~
     ::
     %+  weld
-      (expect-eq !>((error.expected)) !>((error.actual)))
+      (expect-eq !>(error.expected) !>(error.actual))
     $(expected attempt.expected, actual attempt.actual)
   ::
       %hood

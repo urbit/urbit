@@ -1,4 +1,4 @@
-::
+!:
 ::  dill (4d), terminal handling
 ::
 |=  pit/vase
@@ -19,6 +19,7 @@
           e/(unit mass)                                 ::
           f/(unit mass)                                 ::
           g/(unit mass)                                 ::
+          j/(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::
 ++  axon                                                ::  dill per duct
@@ -50,9 +51,9 @@
   $%  {$crud p/@tas q/(list tank)}                      ::
       {$heft $~}                                        ::
       {$init p/ship}                                    ::
+      {$lyra p/@t q/@t}                                 ::  upgrade kernel
       {$text p/tape}                                    ::
       {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$vega p/@t q/@t}                                 ::  reboot by path
       {$verb $~}                                        ::  verbose mode
   ==                                                    ::
 ++  note-eyre                                           ::
@@ -77,7 +78,7 @@
           snap=(unit snapshot:jael)                     ::    head start
       ==                                                ::
       [%fake our=ship]                                  ::  boot fake
-      :: XX wegh                                        ::
+      [%wegh ~]
   ==                                                    ::
 ++  note                                                ::  out request $->
   $%  {$a note-ames}                                    ::
@@ -120,6 +121,7 @@
   ==                                                    ::
 ++  sign-jael                                           ::
   $%  [%init p=ship]                                    ::
+      [%mass p=mass]
   ==                                                    ::
 ++  sign                                                ::  in result $<-
   $%  {$a sign-ames}                                    ::
@@ -156,8 +158,8 @@
                  (crud p.kyz q.kyz)
           $blew  (send %rez p.p.kyz q.p.kyz)
           $heft  heft
+          $lyra  (dump kyz)
           $veer  (dump kyz)
-          $vega  (dump kyz)
           $verb  (dump kyz)
         ==
       ::
@@ -280,6 +282,7 @@
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/jael %j %wegh ~]
               moz
           ==
         ==
@@ -374,8 +377,8 @@
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g) $mass *}
-          (wegt -.sih p.sih)
+            {?($a $b $c $e $f $g $j) $mass *}
+          (wegh -.sih p.sih)
         ::
             {$a $nice *}
           ::  ~&  [%take-nice-ames sih]
@@ -425,17 +428,13 @@
             {$d $blit *}
           (done +.sih)
         ==
+      ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        ^-  mass
-        :-  %dill
-        :-  %|
-        :~  all+[%& [hey dug]:all]
-        ==
-      ::
-      ++  wegt
-        |=  {lal/?($a $b $c $e $f $g) mas/mass}
+        |=  {lal/?($a $b $c $e $f $g $j) mas/mass}
         ^+  +>
+        ::  update our listing of vane responses with this new one
+        ::
         =.  hef.all
           ?-  lal
             $a  ~?(?=(^ a.hef.all) %double-mass-a hef.all(a `mas))
@@ -444,19 +443,37 @@
             $e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             $f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             $g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            $j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==
+        ::  if not all vanes have responded yet, no-op
+        ::
         ?.  ?&  ?=(^ a.hef.all)
                 ?=(^ b.hef.all)
                 ?=(^ c.hef.all)
                 ?=(^ e.hef.all)
                 ?=(^ f.hef.all)
                 ?=(^ g.hef.all)
+                ?=(^ j.hef.all)
             ==
           +>.$
-        %+  done(hef.all [~ ~ ~ ~ ~ ~])
-          %mass
-        =>  [hef.all d=wegh]
-        [%vanes %| ~[u.a u.c d u.e u.f u.g u.b]]
+        ::  clear vane reports from our state before weighing ourself
+        ::
+        ::    Otherwise, the state of vanes printed after this one get absorbed
+        ::    into Dill's %dot catchall report.
+        ::
+        =/  ven=(list mass)  ~[u.a u.b u.c u.e u.g u.f u.j]:hef.all
+        =>  .(hef.all [~ ~ ~ ~ ~ ~ ~])
+        ::  wegh ourself now that our state doesn't include other masses
+        ::
+        =/  self=mass
+          :+  %dill  %|
+          :~  hey+&+hey.all
+              dug+&+dug.all
+              dot+&+all
+          ==
+        ::  produce the memory report for all vanes
+        ::
+        (done %mass %vanes %| [self ven])
       --
     ::
     ++  ax                                              ::  make ++as
@@ -513,6 +530,10 @@
   ::  a %sunk notification from %jail comes in on an unfamiliar duct
   ::
   ?:  ?=(%sunk -.task)
+    [~ ..^$]
+  ::  a %vega notification on kernel upgrade comes in on an unfamiliar duct
+  ::
+  ?:  ?=(%vega -.task)
     [~ ..^$]
   ::
   =/  nus  (ax hen)
