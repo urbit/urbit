@@ -408,14 +408,21 @@ _pier_work_send(u3_writ* wit_u)
   u3_newt_write(&god_u->inn_u, u3k(wit_u->mat), wit_u);
 }
 
-/* _pier_work_save(): tell worker to save checkpoint.
+/* u3_pier_work_save(): tell worker to save checkpoint.
 */
-static void
-_pier_work_save(u3_pier* pir_u)
+void
+u3_pier_work_save(u3_pier* pir_u)
 {
   u3_lord* god_u = pir_u->god_u;
+  u3_save* sav_u = pir_u->sav_u;
 
-  u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__save, 0)), 0);
+  if ( god_u->dun_d > sav_u->ent_d ) {
+    u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__save, 0)), 0);
+
+    //  XX report success first?
+    //
+    sav_u->ent_d = god_u->dun_d;
+  }
 }
 
 /* _pier_work_complete(): worker reported completion.
@@ -1206,7 +1213,7 @@ _pier_play(u3_pier* pir_u,
 {
   fprintf(stderr, "pier: (%lld): boot at mug %x\r\n", lav_d, mug_l);
 
-  _pier_work_save(pir_u);
+  u3_pier_work_save(pir_u);
 
   /* load all committed events
   */
@@ -1583,7 +1590,7 @@ u3_pier_exit(void)
     u3_pier* pir_u = u3K.tab_u[0];
 
     fprintf(stderr, "pier: exit\r\n");
-    _pier_work_save(pir_u);
+    u3_pier_work_save(pir_u);
     _pier_work_shutdown(pir_u);
     uv_stop(u3L);
   }
@@ -1874,7 +1881,7 @@ _pier_boot_complete(u3_pier* pir_u,
                    pir_u->god_u->dun_d,
                    (c3y == nuu_o ? "new" : "old"));
 
-  _pier_work_save(pir_u);
+  u3_pier_work_save(pir_u);
 
   /* the main course
   */

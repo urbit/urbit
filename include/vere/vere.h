@@ -1249,6 +1249,11 @@
         void
         u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
 
+      /* u3_pier_work_save(): tell worker to save checkpoint.
+      */
+        void
+        u3_pier_work_save(u3_pier* pir_u);
+
       /* u3_pier_stub(): get the One Pier for unreconstructed code.
       */
         u3_pier*
