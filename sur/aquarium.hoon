@@ -4,8 +4,8 @@
       [%event who=ship ovo=unix-event]
   ==
 ::
-++  aqua-effect
-  ,[who=ship ovo=unix-effect]
+++  aqua-effects
+  ,[who=ship ovo=(list unix-effect)]
 ::
 ++  unix-event
   %+  pair  wire

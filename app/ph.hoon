@@ -50,9 +50,9 @@
         ==
       ::
       ++  route
-        |=  ovo=aqua-effect
+        |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
-        (expect-dojo-output ~bud ovo "[%test-result 5]")
+        (expect-dojo-output ~bud who ovo "[%test-result 5]")
         ::  XX  if it's been five minutes, we failed
       --
     ::
@@ -68,7 +68,7 @@
         ==
       ::
       ++  route
-        |=  ovo=aqua-effect
+        |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
         ::
         ::  doesn't work because for some reason we lose the
@@ -76,7 +76,7 @@
         ::  because we receive so many events without immediate
         ::  reap it triggers the backpressure mechanism in gall?
         ::
-        (expect-dojo-output ~bud ovo "hi ~dev successful")
+        (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
     ==
   this
@@ -129,6 +129,7 @@
 ::
 ++  poke-noun
   |=  arg=*
+  ~&  %herm
   ^-  (quip move _this)
   ?+  arg  ~|(%bad-noun-arg !!)
       [%run-test lab=@tas]
@@ -139,11 +140,18 @@
     [(weld moves-1 moves-2) this]
   ==
 ::
-++  diff-aqua-effect
-  |=  [way=wire ovo=aqua-effect]
+++  diff-aqua-effects
+  |=  [way=wire ova=aqua-effects]
   ^-  (quip move _this)
-  ::  ~&  [%diff-aqua-effect way -.q.ovo.ovo]
+  ::  ~&  [%diff-aqua-effect way who.ova]
   ?>  ?=([@ @ ~] way)
   =/  lab  i.way
-  (run-events (route:(~(got by test-cores) lab) ovo))
+  %-  run-events
+  |-  ^-  (list ph-event)
+  ?~  ovo.ova
+    ~
+  ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
+  %+  weld
+    (route:(~(got by test-cores) lab) who.ova i.ovo.ova)
+  $(ovo.ova t.ovo.ova)
 --

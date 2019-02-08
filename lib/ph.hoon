@@ -23,7 +23,7 @@
   $_  ^?
   |%
   ++  start  *(pair (list ship) (list ph-event))
-  ++  route  |~(aqua-effect *(list ph-event))
+  ++  route  |~([ship unix-effect] *(list ph-event))
   --
 ::
 ++  ph-event
@@ -58,11 +58,13 @@
   ==
 ::
 ++  expect-dojo-output
-  |=  [who=ship ovo=aqua-effect what=tape]
+  |=  [who=ship her=ship ovo=unix-effect what=tape]
   ^-  (list ph-event)
-  ?.  ?=(%blit -.q.ovo.ovo)
+  ?.  =(who her)
     ~
-  ?.  %+  lien  p.q.ovo.ovo
+  ?.  ?=(%blit -.q.ovo)
+    ~
+  ?.  %+  lien  p.q.ovo
       |=  =blit:dill 
       ?.  ?=(%lin -.blit)
         |

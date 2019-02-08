@@ -24,7 +24,7 @@
       $%  [%wait wire p=@da]
           [%rest wire p=@da]
           [%hiss wire p=(unit user:eyre) q=mark r=(cask hiss:eyre)]
-          [%diff %aqua-effect aqua-effect]
+          [%diff %aqua-effects aqua-effects]
       ==
     ++  state
       $:  %0
@@ -44,8 +44,11 @@
     --
 =,  gall
 ::
-::  Hoist moves into state for cleaner state management
+::  aqua-effect-list: collect list of aqua effects to broadcast at once
+::                    to avoid gall backpressure
+::  moves: Hoist moves into state for cleaner state management
 ::
+=|  unix-effects=(jar ship unix-effect)
 =|  moves=(list move)
 |_  $:  hid=bowl
         state
@@ -77,7 +80,7 @@
   ::
   ++  emit-moves
     |=  ms=(list move)
-    =.  moves  (weld ms moves)
+    =.  this  (^emit-moves ms)
     ..abet-pe
   ::
   ::  Process the events in our queue.
@@ -341,17 +344,42 @@
   ++  publish-effect
     |=  ovo=unix-effect
     ^+  ..abet-pe
+    =.  unix-effects  (~(add ja unix-effects) who ovo)
+    ..abet-pe
+  --
+::
+++  this  .
+::
+::  ++apex-aqua and ++abet-aqua must bookend calls from gall
+::
+++  apex-aqua
+  ^+  this
+  =:  moves  ~
+      unix-effects  ~
+    ==
+  this
+::
+++  abet-aqua
+  ^-  (quip move _this)
+  =.  this
     %-  emit-moves
     %+  murn  ~(tap by sup.hid)
     |=  [b=bone her=ship pax=path]
     ^-  (unit move)
-    ?.  =(/effects/(scot %p who) pax)
+    ?.  ?=([%effects @ ~] pax)
       ~
-    `[b %diff %aqua-effect who ovo]
-  --
+    =/  who  (slav %p i.t.pax)
+    =/  fx  (~(get ja unix-effects) who)
+    ?~  fx
+      ~
+    `[b %diff %aqua-effects who fx]
+  [(flop moves) this]
 ::
-++  this  .
-++  abet-aqua  [(flop moves) this]
+++  emit-moves
+  |=  ms=(list move)
+  =.  moves  (weld ms moves)
+  this
+::
 ::
 ::  Run all events on all ships until all queues are empty
 ::
@@ -382,7 +410,7 @@
     `this
   ?~  (slaw %p i.pax)
     ~&  [%aqua-bad-peer-effects-ship pax]
-    `this
+    !!
   `this
 ::
 ::  Load a pill and assemble arvo.  Doesn't send any of the initial
@@ -391,7 +419,7 @@
 ++  poke-pill
   |=  p=pill
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
   =/  res=toon :: (each * (list tank))
@@ -421,7 +449,7 @@
 ++  poke-noun
   |=  val=*
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   ^+  this
   ::  Could potentially factor out the three lines of turn-ships
   ::  boilerplate
@@ -526,7 +554,7 @@
 ++  poke-aqua-events
   |=  events=(list aqua-event)
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   %+  turn-events  events
   |=  [ovo=aqua-event thus=_this]
   =.  this  thus
@@ -598,7 +626,7 @@
 ++  wake
   |=  [way=wire ~]
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   %+  turn-ships  ~[who]
@@ -611,7 +639,7 @@
 ++  sigh-httr
   |=  [way=wire res=httr:eyre]
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
@@ -625,7 +653,7 @@
 ++  sigh-tang
   |=  [way=wire tan=tang]
   ^-  (quip move _this)
-  =<  abet-aqua
+  =.  this  apex-aqua  =<  abet-aqua
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
