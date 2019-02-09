@@ -141,13 +141,6 @@ _reck_kick_http(u3_noun  pox,
   if ( c3n == u3du(fav) ) {
     u3z(pox); u3z(fav); return c3n;
   }
-  else if (c3y == u3r_sing(u3i_string("http-server"), u3k(u3h(fav)))) {
-    p_fav = u3t(fav);
-    u3_http_ef_http_server(sev_l, coq_l, seq_l, u3k(p_fav));
-
-    u3z(pox); u3z(fav);
-    return c3y;
-  }
   else switch ( u3h(fav) ) {
     default: u3z(pox); u3z(fav); return c3n;
 
@@ -273,43 +266,45 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
     if ( (c3n == u3r_cell(t_pox, &it_pox, &tt_pox)) ) {
       u3z(pox); u3z(fav); return c3n;
     }
-    else switch ( it_pox ) {
-      default: u3z(pox); u3z(fav); return c3n;
+    else if (c3y == u3r_sing(u3i_string("http-server"), u3k(it_pox))) {
+      u3_noun pud = tt_pox;
+      u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
+      c3_l    sev_l, coq_l, seq_l;
 
-      case c3__http: {
-        u3_noun pud = tt_pox;
-        u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
-        c3_l    sev_l, coq_l, seq_l;
+      if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
+           (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+      {
+        u3z(pox); u3z(fav); return c3n;
+      }
 
-        if ( (c3n == u3r_cell(pud, &p_pud, &t_pud)) ||
-             (c3n == _reck_lily(c3__uv, u3k(p_pud), &sev_l)) )
+      if ( u3_nul == t_pud ) {
+        coq_l = seq_l = 0;
+      }
+      else {
+        if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
+             (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
         {
           u3z(pox); u3z(fav); return c3n;
         }
 
-        if ( u3_nul == t_pud ) {
-          coq_l = seq_l = 0;
-        }
-        else {
-          if ( (c3n == u3r_cell(t_pud, &q_pud, &tt_pud)) ||
-               (c3n == _reck_lily(c3__ud, u3k(q_pud), &coq_l)) )
+        if ( u3_nul == tt_pud ) {
+          seq_l = 0;
+        } else {
+          if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
+               (u3_nul != s_pud) ||
+               (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
           {
             u3z(pox); u3z(fav); return c3n;
           }
-
-          if ( u3_nul == tt_pud ) {
-            seq_l = 0;
-          } else {
-            if ( (c3n == u3r_cell(tt_pud, &r_pud, &s_pud)) ||
-                 (u3_nul != s_pud) ||
-                 (c3n == _reck_lily(c3__ud, u3k(r_pud), &seq_l)) )
-            {
-              u3z(pox); u3z(fav); return c3n;
-            }
-          }
         }
-        return _reck_kick_http(pox, sev_l, coq_l, seq_l, fav);
-      } break;
+      }
+      u3_http_ef_http_server(sev_l, coq_l, seq_l, u3k(fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
+    else switch ( it_pox ) {
+      default: u3z(pox); u3z(fav); return c3n;
 
       case c3__behn: {
         return _reck_kick_behn(pox, fav);
