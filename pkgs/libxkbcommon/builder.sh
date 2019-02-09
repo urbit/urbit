@@ -15,9 +15,7 @@ meson-cross . ../libxkbcommon \
 
 ninja
 
-# Static builds are broken, so we need to replace empty
-# static libraries with the real ones here.
-mv libxkbcommon-internal.a libxkbcommon.a
+# Workaround for static builds being broken.
 mv libxkbcommon-x11-internal.a libxkbcommon-x11.a
 
 ninja install

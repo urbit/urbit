@@ -1,7 +1,7 @@
 { crossenv, libxcb }:
 
 let
-  version = "0.8.2";
+  version = "0.8.3";
 
   name = "libxkbcommon-${version}";
 
@@ -9,7 +9,7 @@ let
 
   src = nixpkgs.fetchurl {
     url = "https://github.com/xkbcommon/libxkbcommon/archive/xkbcommon-${version}.tar.gz";
-    sha256 = "08k30k9nx70swik2816rsxf40ll9xsmsfar9a6krvg5wxx58f6gx";
+    sha256 = "0schaliwd5garrq3w7c8bg2cpnyr0ijg7583m3q2517iyqis9zmf";
   };
 
   lib = crossenv.make_derivation rec {
