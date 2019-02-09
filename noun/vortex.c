@@ -29,16 +29,35 @@ _cv_nock_wish(u3_noun txt)
 void
 u3v_boot(u3_noun eve)
 {
+  u3_noun cor;
+
   //  ensure zero-initialized kernel
   //
   //    So that u3t_slog won't try to print tanks.
   //
   u3A->roc = 0;
 
-  //  lifecycle formula
-  //
-  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
-  u3_noun cor = u3n_nock_on(eve, lyf);
+  {
+    //  default namespace function: |=(a/{* *} ~)
+    //
+    u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);
+    //  lifecycle formula
+    //
+    u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+    //  evalute lifecycle formula against the boot sequence
+    //  in a virtualization context
+    //
+    u3_noun pro = u3m_soft_run(gul, u3n_nock_on, eve, lyf);
+
+    if ( 0 != u3h(pro) ) {
+      fprintf(stderr, "boot: failed: invalid boot sequence (from pill)\r\n");
+      u3z(pro);
+      return;
+    }
+
+    cor = u3k(u3t(pro));
+    u3z(pro);
+  }
 
   //  save the Arvo core (at +7 of the Arvo gate)
   //
@@ -83,6 +102,9 @@ u3v_start(u3_noun now)
     printf("arvo: time: %s\n", wen_c);
     free(wen_c);
   }
+
+  if ( u3C.wag_w & u3o_trace )
+    u3t_trace_open();
 }
 
 /* u3v_wish(): text expression with cache.
@@ -405,24 +427,19 @@ _cv_mark_ova(u3p(u3v_cart) egg_p)
 /* u3v_mark(): mark arvo kernel.
 */
 c3_w
-u3v_mark(void)
+u3v_mark(FILE* fil_u)
 {
+  u3v_arvo* arv_u = &(u3H->arv_u);
   c3_w tot_w = 0;
 
-  u3v_arvo* arv_u = &(u3H->arv_u);
-
-  tot_w += u3a_mark_noun(arv_u->yot);
-  tot_w += u3a_mark_noun(arv_u->now);
-  tot_w += u3a_mark_noun(arv_u->wen);
-  tot_w += u3a_mark_noun(arv_u->sen);
-  tot_w += u3a_mark_noun(arv_u->own);
-
-  tot_w += u3a_mark_noun(arv_u->roe);
-  tot_w += u3a_mark_noun(arv_u->key);
-
-  tot_w += u3a_mark_noun(arv_u->roc);
-
-  tot_w += _cv_mark_ova(arv_u->ova.egg_p);
-
-  return tot_w;
+  tot_w += u3a_maid(fil_u, "  wish cache", u3a_mark_noun(arv_u->yot));
+  tot_w += u3a_maid(fil_u, "  date", u3a_mark_noun(arv_u->now));
+  tot_w += u3a_maid(fil_u, "  formatted date", u3a_mark_noun(arv_u->wen));
+  tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
+  tot_w += u3a_maid(fil_u, "  identity", u3a_mark_noun(arv_u->own));
+  tot_w += u3a_maid(fil_u, "  pending events", u3a_mark_noun(arv_u->roe));
+  tot_w += u3a_maid(fil_u, "  event-log key", u3a_mark_noun(arv_u->key));
+  tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
+  tot_w += u3a_maid(fil_u, "  egg basket", _cv_mark_ova(arv_u->ova.egg_p));
+  return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }

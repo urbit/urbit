@@ -491,18 +491,13 @@ _pave_parts(void)
 /* u3m_mark(): mark all nouns in the road.
 */
 c3_w
-u3m_mark(void)
+u3m_mark(FILE* fil_u)
 {
   c3_w tot_w = 0;
-  tot_w += u3j_mark();
-  tot_w += u3n_mark();
-  tot_w += u3a_mark_noun(u3R->ski.gul);
-  tot_w += u3a_mark_noun(u3R->bug.tax);
-  tot_w += u3a_mark_noun(u3R->bug.mer);
-  tot_w += u3a_mark_noun(u3R->pro.don);
-  tot_w += u3a_mark_noun(u3R->pro.trace);
-  tot_w += u3a_mark_noun(u3R->pro.day);
-  tot_w += u3h_mark(u3R->cax.har_p);
+  tot_w += u3v_mark(fil_u);
+  tot_w += u3j_mark(fil_u);
+  tot_w += u3n_mark(fil_u);
+  tot_w += u3a_mark_road(fil_u);
   return tot_w;
 }
 
@@ -932,7 +927,7 @@ u3m_soft_top(c3_w    sec_w,                     //  timer seconds
     if ( u3C.wag_w & u3o_debug_ram ) {
 #ifdef U3_CPU_DEBUG
       if ( u3R->all.max_w > 1000000 ) {
-        u3a_print_memory("execute: top", u3R->all.max_w);
+        u3a_print_memory(stderr, "execute: top", u3R->all.max_w);
       }
 #endif
       u3m_grab(pro, u3_none);
@@ -1029,7 +1024,7 @@ u3m_soft_run(u3_noun gul,
 
 #ifdef U3_CPU_DEBUG
     if ( u3R->all.max_w > 1000000 ) {
-      u3a_print_memory("execute: run", u3R->all.max_w);
+      u3a_print_memory(stderr, "execute: run", u3R->all.max_w);
     }
 #endif
     /* Produce success, on the old road.
@@ -1151,8 +1146,7 @@ u3m_grab(u3_noun som, ...)   // terminate with u3_none
   // u3h_free(u3R->cax.har_p);
   // u3R->cax.har_p = u3h_new();
 
-  u3v_mark();
-  u3m_mark();
+  u3m_mark(0);
   {
     va_list vap;
     u3_noun tur;
@@ -1186,28 +1180,43 @@ u3m_soft(c3_w    sec_w,
 
   if ( 0 == u3h(why) ) {
     return why;
-  } else {
-    u3_noun tax, cod, pro, mok;
+  }
+  else {
+    //  don't use .^ at the top level!
+    //
+    c3_assert(1 != u3h(why));
 
-    c3_assert(1 != u3h(why));  //  don't use .^ at the top level!
-    
-    if ( 2 == u3h(why) ) {
-      cod = c3__exit;
-      tax = u3k(u3t(why));
-    } 
-    else {
-      c3_assert(3 == u3h(why));
-
-      cod = u3k(u3h(u3t(why)));
-      tax = u3k(u3t(u3t(why)));
+    //  don't call +mook if we have no kernel
+    //
+    //    This is required to soft the boot sequence.
+    //    XX produce specific error motes instead of %2?
+    //
+    if ( 0 == u3A->roc ) {
+      u3z(why);
+      return u3nc(2, u3_nul);
     }
-    mok = u3dc("mook", 2, tax);
-    pro = u3nc(cod, u3k(u3t(mok)));
+    else {
+      u3_noun tax, cod, pro, mok;
 
-    u3z(mok);
-    u3z(why);
+      if ( 2 == u3h(why) ) {
+        cod = c3__exit;
+        tax = u3k(u3t(why));
+      }
+      else {
+        c3_assert(3 == u3h(why));
 
-    return pro;
+        cod = u3k(u3h(u3t(why)));
+        tax = u3k(u3t(u3t(why)));
+      }
+
+      mok = u3dc("mook", 2, tax);
+      pro = u3nc(cod, u3k(u3t(mok)));
+
+      u3z(mok);
+      u3z(why);
+
+      return pro;
+    }
   }
 }
 
@@ -1486,10 +1495,10 @@ _cm_signals(void)
   }
 }
 
-/* u3m_init(): start the environment, with/without checkpointing.
+/* u3m_init(): start the environment.
 */
 void
-u3m_init(c3_o chk_o)
+u3m_init(void)
 {
   _cm_limits();
   _cm_signals();
@@ -1506,7 +1515,7 @@ u3m_init(c3_o chk_o)
 
     map_v = mmap((void *)u3_Loom,
                  len_w,
-                 _(chk_o) ? PROT_READ : (PROT_READ | PROT_WRITE),
+                 (PROT_READ | PROT_WRITE),
                  (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
                  -1, 0);
 
@@ -1518,7 +1527,7 @@ u3m_init(c3_o chk_o)
                          -1, 0);
 
       fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      fprintf(stderr, "see urbit.org/docs/using/install for adding swap space\r\n");
+      fprintf(stderr, "see urbit.org/docs/getting-started#swap for adding swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
         fprintf(stderr, 
                 "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
@@ -1685,7 +1694,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
 {
   /* Activate the loom.
   */
-  u3m_init(nuu_o);
+  u3m_init();
 
   /* Activate the storage system.
   */
@@ -1714,13 +1723,32 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     printf("boot: loading %s\r\n", ful_c);
 
     {
-      u3_noun sys = u3ke_cue(u3m_file(ful_c));
-      u3_noun bot;
+      u3_noun pil = u3m_file(ful_c);
+      u3_noun sys, bot;
 
-      u3x_trel(sys, &bot, 0, 0);
+      {
+        u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil));
+
+        if ( 0 != u3h(pro) ) {
+          fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+          exit(1);
+        }
+
+        sys = u3k(u3t(pro));
+        u3z(pro);
+      }
+
+      //  XX confirm trel of lists?
+      //
+      if ( c3n == u3r_trel(sys, &bot, 0, 0) ) {
+        fprintf(stderr, "boot: failed: obsolete pill structure\r\n");
+        exit(1);
+      }
+
       u3v_boot(u3k(bot));
 
       u3z(sys);
+      u3z(pil);
     }
   }
   else {
@@ -1728,4 +1756,45 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     u3j_ream();
     u3n_ream();
   }
+}
+
+/* u3m_reclaim: clear persistent caches to reclaim memory
+*/
+void
+u3m_reclaim(void)
+{
+  //  clear the u3v_wish cache
+  //
+  u3z(u3A->yot);
+  u3A->yot = u3_nul;
+
+  //  clear the memoization cache
+  //
+  u3h_free(u3R->cax.har_p);
+  u3R->cax.har_p = u3h_new();
+
+  //  clear the jet battery hash cache
+  //
+  u3h_free(u3R->jed.bas_p);
+  u3R->jed.bas_p = u3h_new();
+
+  //  XX we can't clear the warm jet state
+  //  -- _cj_nail expects it to be present ...
+  //
+  // u3h_free(u3R->jed.war_p);
+  // u3R->jed.war_p = u3h_new();
+
+  //  clear the jet hank cache
+  //
+  u3h_walk(u3R->jed.han_p, u3j_free_hank);
+  u3h_free(u3R->jed.han_p);
+  u3R->jed.han_p = u3h_new();
+
+  //  clear the bytecode cache
+  //
+  //    We can't just u3h_free() -- the value is a post to a u3n_prog.
+  //    Note that this requires that the hank cache also be freed.
+  //
+  u3n_free();
+  u3R->byc.har_p = u3h_new();
 }
