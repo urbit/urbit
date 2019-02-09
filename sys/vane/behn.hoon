@@ -59,9 +59,6 @@
   ++  wait
     |=  date=@da
     ^+  [moves state]
-    ::  process elapsed timers first to maintain sort order
-    ::
-    =.  event-core    notify-clients
     =.  timers.state  (set-timer [date duct])
     set-wake
   ::  +wake: unix says we should wake up; notify clients and set :next-wake
@@ -92,7 +89,7 @@
   ::
   ++  notify-clients
     =*  timers  timers.state
-    |-  ^+  event-core
+    ^+  event-core
     ::
     ?~  timers
       =.  moves  (flop moves)
@@ -102,10 +99,10 @@
       =.  moves  (flop moves)
       event-core
     ::
-    %_  $
-      timers  t.timers
-      moves   [[duct.i.timers %give %wake ~] moves]
-    ==
+    =.  moves  [[duct.i.timers %give %wake ~] moves]
+    =>  .(timers t.timers)
+    =.  moves  (flop moves)
+    event-core
   ::  +set-wake: set or unset a unix timer to wake us when next timer expires
   ::
   ::    We prepend the unix %doze event so that it is handled first. Arvo must
