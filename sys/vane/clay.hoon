@@ -2397,8 +2397,8 @@
       ^+  bar
       ?-    -.mys
           $ins                                          ::  insert if not exist
-        ?:  (~(has by bar) pax)  !!                     ::
-        ?:  (~(has by hat) pax)  !!                     ::
+        ?:  (~(has by bar) pax)  ~|([%ins-bar pax] !!)  ::
+        ?:  (~(has by hat) pax)  ~|([%ins-hat pax] !!)  ::
         %+  ~(put by bar)  pax
         %-  make-direct-blob
         ?:  &(?=($mime -.p.mys) =([%hoon ~] (slag (dec (lent pax)) pax)))
@@ -4231,6 +4231,10 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
+    ::  dear reader, if it crashes here, check the wire.  If it came
+    ::  from ++bait, then I don't think we have any handling for that
+    ::  sort of thing.
+    ::
     =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
     =/  queued-duct=duct       -.queued

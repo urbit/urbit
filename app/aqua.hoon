@@ -30,13 +30,13 @@
       $:  %0
           pil=pill
           assembled=*
+          tym=@da
           init-cache=(map ship pier)
           fleet-snaps=(map term (map ship pier))
           piers=(map ship pier)
       ==
     ++  pier
-      $:  tym=@da
-          snap=*
+      $:  snap=*
           event-log=(list [@da unix-event])
           next-events=(qeu unix-event)
           processing-events=?
@@ -268,14 +268,17 @@
   ++  set-timer
     |=  tim=@da
     =.  tim  +(tim)  ::  nobody's perfect
+    ~&  [who=who %setting-timer tim]
     =.  next-timer  `tim
     (emit-moves [ost.hid %wait /(scot %p who) tim]~)
   ::
   ++  cancel-timer
+    ~&  [who=who %cancell-timer (need next-timer)]
     (emit-moves [ost.hid %rest /(scot %p who) (need next-timer)]~)
   ::
   ++  take-wake
     |=  [way=wire ~]
+    ~&  [who=who %wakey now.hid]
     =.  next-timer  ~
     %-  push-events:(pe who)
     [//behn/0v1n.2m9vh %wake ~]~
@@ -459,22 +462,27 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%init hers=*]
-    %+  turn-ships  ((list ship) hers.val)
-    |=  [who=ship thus=_this]
-    =.  this  thus
-    ~&  [%initting who]
-    %-  push-events:apex:(pe who)
-    ^-  (list unix-event)
-    :~  `unix-event`[/ %wack 0]  ::  eny
-        `unix-event`[/ %whom who]  ::  eny
-        `unix-event`[//newt/0v1n.2m9vh %barn ~]
-        `unix-event`[//behn/0v1n.2m9vh %born ~]
-        `unix-event`[//term/1 %boot %fake who]
-        `unix-event`-.userspace-ova.pil
-        `unix-event`[//http/0v1n.2m9vh %born ~]
-        `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
-        `unix-event`[//term/1 %belt %ctl `@c`%x]
-    ==
+    =/  hers  ((list ship) hers.val)
+    ?~  hers
+      this
+    =^  ms  this  (poke-aqua-events [%init-ship i.hers]~)
+    (emit-moves ms)
+    ::  %+  turn-ships  ((list ship) hers.val)
+    ::  |=  [who=ship thus=_this]
+    ::  =.  this  thus
+    ::  ~&  [%initting who]
+    ::  %-  push-events:apex:(pe who)
+    ::  ^-  (list unix-event)
+    ::  :~  `unix-event`[/ %wack 0]  ::  eny
+    ::      `unix-event`[/ %whom who]  ::  eny
+    ::      `unix-event`[//newt/0v1n.2m9vh %barn ~]
+    ::      `unix-event`[//behn/0v1n.2m9vh %born ~]
+    ::      `unix-event`[//term/1 %boot %fake who]
+    ::      `unix-event`-.userspace-ova.pil
+    ::      `unix-event`[//http/0v1n.2m9vh %born ~]
+    ::      `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
+    ::      `unix-event`[//term/1 %belt %ctl `@c`%x]
+    ::  ==
   ::
       [%dojo hers=* command=*]
     %+  turn-ships  ((list ship) hers.val)
@@ -568,6 +576,7 @@
       ~&  [%loading-cached-ship who.ovo]
       =.  this  (restore-ships ~[who.ovo] init-cache)
       (pe who.ovo)
+    =.  this  abet-pe:sleep:(pe who.ovo)
     =/  initted
       =<  plow
       %-  push-events:apex:(pe who.ovo)

@@ -85,10 +85,11 @@
         :+  ~[~bud ~marbud]
           %-  zing
           :~  (init ~bud)
+              ::  (dojo ~bud "\"magic-go\":[.^(")
               ::  (dojo ~bud "|mount %")
               ::  %+  insert-file  ~bud
               ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
-              (init ~marbud)
+              ::  (init ~marbud)
               ::  (dojo ~marbud "|mount %")
               ::  %+  insert-file  ~marbud
               ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
@@ -97,7 +98,17 @@
       ++  route
         |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
-        (expect-dojo-output ~marbud who ovo "hrm")
+        ::
+        ::  This is actually super fragile.  If we start ~marbud any
+        ::  earlier in the process, we get a crash.  The crash may be
+        ::  harmless, not sure.
+        ::
+        %-  on-dojo-output
+        :^  ~bud  who  ovo
+        :-  "~zod not responding still trying"
+        ^-  $-($~ (list ph-event))
+        |=  ~
+        (init ~marbud)
       --
       ::  (init ~zod)
       ::  (init ~marzod)

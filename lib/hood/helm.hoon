@@ -189,7 +189,8 @@
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
+  :-  `card`[%flog /reset [%lyra `@t`hun `@t`arv]]
+  ^-  (list card)
   %+  turn
     (module-ova:pill top)
   |=(a=[wire flog:dill] [%flog a])

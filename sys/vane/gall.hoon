@@ -1258,7 +1258,6 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
-<<<<<<< HEAD
         %build  `%f
         %cash  `%a
         %conf  `%g

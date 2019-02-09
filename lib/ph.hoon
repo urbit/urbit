@@ -67,8 +67,8 @@
     [//sync/0v1n.2m9vh %into i.t.pax | [t.t.t.pax `file]~]
   ==
 ::
-++  expect-dojo-output
-  |=  [who=ship her=ship ovo=unix-effect what=tape]
+++  on-dojo-output
+  |=  [who=ship her=ship ovo=unix-effect what=tape fun=$-($~ (list ph-event))]
   ^-  (list ph-event)
   ?.  =(who her)
     ~
@@ -80,5 +80,14 @@
         |
       !=(~ (find what p.blit))
     ~
+  (fun)
+::
+++  expect-dojo-output
+  |=  [who=ship her=ship ovo=unix-effect what=tape]
+  ^-  (list ph-event)
+  %-  on-dojo-output
+  :^  who  her  ovo
+  :-  what
+  |=  ~
   [%test-done &]~
 --
