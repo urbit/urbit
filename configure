@@ -28,6 +28,7 @@ else os=$(uname -s)
      cpu=$(uname -p)
 fi
 
+echo "HOST=$HOST"
 echo "os=$os"
 echo "cpu=$cpu"
 
@@ -52,6 +53,9 @@ case $(tr A-Z a-z <<< $os) in
   *darwin*)
      defmacro U3_OS_osx 1
      ;;
+  *apple*)
+     defmacro U3_OS_osx 1
+     ;;
   *freebsd*)
      defmacro U3_OS_bsd 1
      osdeps="kvm"
@@ -65,15 +69,13 @@ case $(tr A-Z a-z <<< $os) in
      ;;
 esac
 
-CFLAGS="${CFLAGS-} -funsigned-char -ffast-math"
-
 for dep in ${osdeps-} $deps
 do LDFLAGS="${LDFLAGS-} -l$dep"
    ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
 done
 
 cat >config.mk <<EOF
-CFLAGS  := $CFLAGS
+CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math
 LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
 EOF
