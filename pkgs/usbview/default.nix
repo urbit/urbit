@@ -5,13 +5,13 @@ if crossenv.os != "windows" then "windows only" else
 crossenv.make_derivation rec {
   name = "usbview-${version}";
 
-  version = "2017-05-01";
+  version = "2019-01-24";
 
   src = crossenv.nixpkgs.fetchFromGitHub {
     owner = "Microsoft";
     repo = "Windows-driver-samples";
-    rev = "4c5c5e0297c7a61e151f92af702cdac650a14489";
-    sha256 = "1drq26bnad98xqn805qx0b6g4y65lmrdj7v40b3jhhzdsp8993pf";
+    rev = "39d39e7485faddf601d51c897863ff2f876e391e";
+    sha256 = "0nyw3wzlh68zxpb0ydzkgpf5c83scapfp6zsc5gahxlcgrhy3xwj";
   };
 
   patches = [ ./megapatch.patch ];
