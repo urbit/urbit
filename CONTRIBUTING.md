@@ -168,11 +168,5 @@ eager to have outside contributions on. Check here first!
 
 ## Staying in touch
 
-The urbit developers communicate on urbit itself. Joining the
-`urbit-meta` channel on
-[`:talk`](https://urbit.org/docs/learn/arvo/arvo-internals/messaging/)
-is highly recommended, as is reading the forums at
-[http://urbit.org/fora](http://urbit.org/fora).
-
 Questions or other communications about contributing to Urbit can go to
 [support@urbit.org](mailto:support@urbit.org).

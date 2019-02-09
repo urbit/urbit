@@ -74,9 +74,6 @@ If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
 
 ## Contact
 
-If you have any questions, problems, patches, or proposals for patches, please
-feel free to get in touch in whatever way is most convenient:
-
-- Post to `/urbit-meta` on Urbit [`:talk`](https://urbit.org/docs/learn/arvo/arvo-internals/messaging/).
-- Post to [urbit.org/fora](https://urbit.org/fora/).
-- Email us directly [questions@urbit.org](mailto:questions@urbit.org).
+We are using our new UI, Landscape to run a few experimental cities.
+If you have an Azimuth point, please send us your planet name at
+[support@urbit.org](mailto:support@urbit.org) to request access.

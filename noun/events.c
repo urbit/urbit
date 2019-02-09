@@ -165,9 +165,9 @@ u3e_fault(void* adr_v, c3_i ser_i)
 /* _ce_image_open(): open or create image.
 */
 static c3_o
-_ce_image_open(u3e_image* img_u, c3_o nuu_o)
+_ce_image_open(u3e_image* img_u)
 {
-  c3_i mod_i = _(nuu_o) ? (O_RDWR | O_CREAT) : O_RDWR;
+  c3_i mod_i = O_RDWR | O_CREAT;
   c3_c ful_c[8193];
 
   snprintf(ful_c, 8192, "%s", u3P.dir_c);
@@ -197,11 +197,7 @@ _ce_image_open(u3e_image* img_u, c3_o nuu_o)
       c3_d pgs_d = (siz_d + (c3_d)((1 << (u3a_page + 2)) - 1)) >> 
                    (c3_d)(u3a_page + 2);
 
-      if ( c3y == nuu_o ) {
-        if ( siz_d ) { 
-          c3_assert(0);
-          return c3n;
-        }
+      if ( !siz_d ) {
         return c3y;
       }
       else { 
@@ -775,7 +771,7 @@ u3e_save(void)
  
   //  Sync the patch files.
   //
-  // u3a_print_memory("sync: save", 4096 * pat_u->con_u->pgs_w);
+  // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
   //  Verify the patch - because why not?
@@ -817,7 +813,7 @@ u3e_save(void)
   _ce_patch_free(pat_u);
 }
 
-/* u3e_live(): start the persistence system.
+/* u3e_live(): start the checkpointing system.
 */
 c3_o
 u3e_live(c3_o nuu_o, c3_c* dir_c)
@@ -832,29 +828,17 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
   } else
 #endif
   {
-    /* Open and apply any patches.
-    */
-    if ( _(nuu_o) ) {
-      if ( (c3n == _ce_image_open(&u3P.nor_u, c3y)) ||
-           (c3n == _ce_image_open(&u3P.sou_u, c3y)) )
-      {
-        printf("boot: image failed\r\n");
-        exit(1);
-      }
+    //  Open image files.
+    //
+    if ( (c3n == _ce_image_open(&u3P.nor_u)) ||
+         (c3n == _ce_image_open(&u3P.sou_u)) )
+    {
+      printf("boot: image failed\r\n");
+      exit(1);
     }
     else {
       u3_ce_patch* pat_u;
 
-      /* Open image files.
-      */
-      {
-        if ( (c3n == _ce_image_open(&u3P.nor_u, c3n)) ||
-             (c3n == _ce_image_open(&u3P.sou_u, c3n)) ) 
-        {
-          fprintf(stderr, "boot: no image\r\n");
-          return u3e_live(c3y, dir_c);
-        }
-      }
       /* Load any patch files; apply them to images.
       */
       if ( 0 != (pat_u = _ce_patch_open()) ) {
@@ -896,7 +880,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
         nuu_o = c3y;
       }
       else {
-        u3a_print_memory("live: loaded",
+        u3a_print_memory(stderr, "live: loaded",
                          (u3P.nor_u.pgs_w + u3P.sou_u.pgs_w) << u3a_page);
       }
     }

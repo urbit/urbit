@@ -7,6 +7,9 @@
 [submodule "subprojects/h2o"]
 	path = subprojects/libh2o
 	url = https://github.com/urbit/h2o.git
+[submodule "subprojects/libent"]
+	path = subprojects/libent
+	url = https://github.com/urbit/libent.git
 [submodule "subprojects/libuv"]
 	path = subprojects/libuv
 	url = https://github.com/urbit/libuv.git
