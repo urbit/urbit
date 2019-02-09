@@ -1,8 +1,9 @@
 source $setup
 
 tar -xf $src
+mv gcc-* src
 
-cd gcc-$version
+cd src
 for patch in $patches; do
   echo applying patch $patch
   patch -p1 -i $patch
@@ -53,7 +54,7 @@ cd ../..
 mkdir build
 cd build
 
-../gcc-$version/configure --prefix=$out $configure_flags
+../src/configure --prefix=$out $configure_flags
 
 make $make_flags
 

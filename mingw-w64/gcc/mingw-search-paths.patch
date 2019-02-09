@@ -1,5 +1,3 @@
-Make it so GCC does not force us to have a "mingw" symlink.
-
 --- gcc-6.3.0-orig/gcc/config/i386/mingw32.h
 +++ gcc-6.3.0/gcc/config/i386/mingw32.h
 @@ -163,3 +163,3 @@

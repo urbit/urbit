@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
 
-# This part of hte code is under construction.  It will eventually be a script that
-# helps us check that the derivations we care about are all building,
-# and prints the status of those builds.
-
-
-# This requires Ruby 2.5.0 or later because it uses a new syntax for rescuing
-# exceptions in a block with needing to make an extra begin/end pair.
+# A script that helps us check that the derivations we care about can all be
+# built.
 
 require 'open3'
 require 'pathname'
@@ -16,6 +11,24 @@ require_relative 'graph'
 require_relative 'expand_brackets'
 
 ResultsDir = Pathname('support/results')
+
+# Backport Hash#transform_values if we aren't using a new-enough Ruby.
+class Hash
+  def transform_values(&block)
+    r = self.class.new
+    each do |key, value|
+      r[key] = yield value
+    end
+    r
+  end
+end unless Hash.instance_methods.include?(:transform_values)
+
+# Back port Array#sum if we aren't using a new-enough Ruby.
+class Array
+  def sum
+    inject(0, :+)
+  end
+end
 
 class AnticipatedError < RuntimeError
 end
@@ -42,60 +55,62 @@ def parse_derivation_list(filename)
   all_paths = Set.new
   all_attrs = {}
   File.foreach(filename).with_index do |line, line_index|
-    line.strip!
+    begin
+      line.strip!
 
-    # Handle empty lines and comments.
-    next if line.empty? || line.start_with?('#')
+      # Handle empty lines and comments.
+      next if line.empty? || line.start_with?('#')
 
-    # Handle variable definitions (e.g. "define windows = win32,win64").
-    if line.start_with?('define')
-      md = line.match(/^define\s+([\w-]+)\s*=\s*(.*)$/)
-      if !md
-        raise AnticipatedError, "Invalid definition syntax."
+      # Handle variable definitions (e.g. "define windows = win32,win64").
+      if line.start_with?('define')
+        md = line.match(/^define\s+([\w-]+)\s*=\s*(.*)$/)
+        if !md
+          raise AnticipatedError, "Invalid definition syntax."
+        end
+        name, value = md[1], md[2]
+        defs[name] = value
+        next
       end
-      name, value = md[1], md[2]
-      defs[name] = value
-      next
+
+      # Expand variable definitions (e.g. $windows expands to "win32,win64").
+      line = substitute_definitions(defs, line)
+
+      # Figure out which parts of the line are attribute paths with brackets and
+      # which are attributes.
+      items = line.split(' ')
+      attr_defs, path_items = items.partition { |p| p.include?('=') }
+
+      # Expand any brackets in the attribute paths to get the complete list of
+      # paths specified on this line.
+      paths = path_items.flat_map { |p| expand_brackets(p) }.map(&:to_sym)
+
+      # Process attribute definitions on the line, like "priority=1".
+      attrs = {}
+      attr_defs.each do |attr_def|
+        md = attr_def.match(/^(\w+)=(\d+)$/)
+        if !md
+          raise AnticipatedError, "Invalid attribute definition: #{attr_def.inspect}."
+        end
+        name, value = md[1], md[2]
+        case name
+        when 'priority', 'slow'
+          attrs[name.to_sym] = value.to_i
+        else
+          raise AnticipatedError, "Unrecognized attribute: #{name.inspect}."
+        end
+      end
+
+      # Record the paths for this line and the attributes for those paths,
+      # overriding previous attributes values if necessary.
+      all_paths += paths
+      if !attrs.empty?
+        paths.each do |path|
+          (all_attrs[path] ||= {}).merge!(attrs)
+        end
+      end
+    rescue AnticipatedError => e
+      raise AnticipatedError, "#{filename}:#{line_index + 1}: error: #{e}"
     end
-
-    # Expand variable definitions (e.g. $windows expands to "win32,win64").
-    line = substitute_definitions(defs, line)
-
-    # Figure out which parts of the line are attribute paths with brackets and
-    # which are attributes.
-    items = line.split(' ')
-    attr_defs, path_items = items.partition { |p| p.include?('=') }
-
-    # Expand any brackets in the attribute paths to get the complete list of
-    # paths specified on this line.
-    paths = path_items.flat_map { |p| expand_brackets(p) }.map(&:to_sym)
-
-    # Process attribute definitions on the line, like "priority=1".
-    attrs = {}
-    attr_defs.each do |attr_def|
-      md = attr_def.match(/^(\w+)=(\d+)$/)
-      if !md
-        raise AnticipatedError, "Invalid attribute definition: #{attr_def.inspect}."
-      end
-      name, value = md[1], md[2]
-      case name
-      when 'priority', 'slow'
-        attrs[name.to_sym] = value.to_i
-      else
-        raise AnticipatedError, "Unrecognized attribute: #{name.inspect}."
-      end
-    end
-
-    # Record the paths for this line and the attributes for those paths,
-    # overriding previous attributes values if necessary.
-    all_paths += paths
-    if !attrs.empty?
-      paths.each do |path|
-        (all_attrs[path] ||= {}).merge!(attrs)
-      end
-    end
-  rescue AnticipatedError => e
-    raise AnticipatedError, "#{filename}:#{line_index + 1}: error: #{e}"
   end
 
   if all_paths.empty?
@@ -103,7 +118,7 @@ def parse_derivation_list(filename)
   end
 
   all_paths.each do |path|
-    if !path.match?(/^[\w.-]+$/)
+    if !path.match(/^[\w.-]+$/)
       raise "Invalid characters in path name: #{path}"
     end
   end
@@ -265,7 +280,7 @@ def graph_unmap(graph, map)
   gu
 end
 
-def print_stats(built_map)
+def print_status(built_map)
   built_count = built_map.count { |drv, built| built }
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
@@ -360,10 +375,10 @@ def make_build_plan(path_state)
     built_paths << path if built
   end
 
-  # List of paths to build.  Each path should only be built once all the paths it
-  # depends on are built.  I know nix-build can take care of that for us, but it's
-  # nice to see the precise order of what is going to be built so we can tell when
-  # slow things will get built.
+  # List of paths to build.  Each path should only be built once all the paths
+  # it depends on are built.  I know nix-build can take care of that for us, but
+  # it's nice to see the precise order of what is going to be built so we can
+  # tell when slow things will get built.
   build_plan = []
 
   # Computes the time to build a path, taking into account what has already been
@@ -476,7 +491,8 @@ def parse_args(argv)
            when 'results' then :results
            when 'build' then :build
            when 'plan' then :plan
-           when 'stats', nil then :stats
+           when 'status' then :status
+           when 'help', nil then :help
            else raise AnticipatedError, "Invalid action: #{argv.first.inspect}"
            end
 
@@ -488,13 +504,37 @@ begin
   args = parse_args(ARGV)
   action = args.fetch(:action)
 
-  settings = parse_derivation_list('support/derivations.txt')
+  if action == :help
+    puts <<END
+Usage: support/manage action
 
-  path_drv_map = instantiate_drvs(settings.fetch(:paths))
-  check_paths_are_unique!(path_drv_map)
+graph:
+  Generate a Graphviz graph of derivations of dependencies to paths.gv.
+results:
+  Update support/results/ directory with symlinks to built derivations.
+plan:
+  Show the derivation build plan as a series of 'nix-build' commands.
+build:
+  Try to build all derivations we care about.  Keeps going if a build fails.
+status:
+  Print out statistics about the derivations we care about and how many are
+  already built.
+help:
+  Print this message.
 
-  drvs = path_drv_map.values.uniq
-  drv_built_map = get_build_status(drvs)
+The derivations we care about are defined in support/derivations.txt.
+END
+  end
+
+  if [:graph, :results, :build, :plan, :status].include?(action)
+    settings = parse_derivation_list('support/derivations.txt')
+
+    path_drv_map = instantiate_drvs(settings.fetch(:paths))
+    check_paths_are_unique!(path_drv_map)
+
+    drvs = path_drv_map.values.uniq
+    drv_built_map = get_build_status(drvs)
+  end
 
   if [:graph, :build, :plan].include?(action)
     global_drv_graph = get_drv_graph
@@ -516,7 +556,6 @@ begin
   end
 
   if action == :plan
-    puts "Build plan:"
     build_plan.each do |path|
       puts "nix-build -A #{path}"
     end
@@ -533,8 +572,8 @@ begin
     update_results_dir(path_valid_results_map)
   end
 
-  if action == :stats
-    print_stats(drv_built_map)
+  if action == :status
+    print_status(drv_built_map)
   end
 rescue AnticipatedError => e
   $stderr.puts e

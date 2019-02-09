@@ -1,4 +1,4 @@
-{ crossenv, xorg-macros, xproto }:
+{ crossenv, xorg-macros, xorgproto }:
 
 let
   version = "1.0.8";
@@ -20,9 +20,9 @@ let
       "--enable-static " +
       "--disable-shared";
 
-    cross_inputs = [ xorg-macros xproto ];
+    cross_inputs = [ xorg-macros xorgproto ];
 
-    inherit xproto;
+    inherit xorgproto;
   };
 
   license = crossenv.native.make_derivation {
@@ -33,7 +33,7 @@ let
 
   license_set =
     xorg-macros.license_set //
-    xproto.license_set //
+    xorgproto.license_set //
     { "${name}" = license; };
 
 in

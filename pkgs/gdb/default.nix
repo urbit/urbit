@@ -11,18 +11,14 @@
 crossenv.make_derivation rec {
   name = "gdb-${version}";
 
-  version = "7.12.1";
+  version = "8.2.1";
 
   src = crossenv.nixpkgs.fetchurl {
     url = "https://ftp.gnu.org/gnu/gdb/gdb-${version}.tar.xz";
-    sha256 = "11ii260h1sd7v0bs3cz6d5l8gqxxgldry0md60ncjgixjw5nh1s6";
+    sha256 = "00i27xqawjv282a07i73lp1l02n0a3ywzhykma75qg500wll6sha";
   };
 
-  patches = [
-    # Make GCC better at finding source files.
-    # https://sourceware.org/ml/gdb-patches/2017-02/msg00693.html
-    ./substitute-path-all-filenames.patch
-  ];
+  patches = [];
 
   native_inputs = [
     crossenv.nixpkgs.texinfo

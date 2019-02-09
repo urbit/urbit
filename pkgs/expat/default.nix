@@ -3,18 +3,16 @@
 crossenv.make_derivation rec {
   name = "expat-${version}";
 
-  version = "2.2.0";
+  version = "2.2.6";
 
   src = crossenv.nixpkgs.fetchurl {
-    # Sourceforge went down.  The original URL we used was:
+    # The original URL was:
     # mirror://sourceforge/expat/expat-${version}.tar.bz2
     url = "https://files.tmphax.com/repo1/expat-${version}.tar.bz2";
-    sha256 = "1zq4lnwjlw8s9mmachwfvfjf2x3lk24jm41746ykhdcvs7r0zrfr";
+    sha256 = "1wl1x93b5w457ddsdgj0lh7yjq4q6l7wfbgwhagkc8fm2qkkrd0p";
   };
 
-  patches = [
-    ./cve-2016-0718.patch
-  ];
+  patches = [];
 
   builder = ./builder.sh;
 }

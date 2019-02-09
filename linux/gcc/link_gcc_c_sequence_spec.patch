@@ -1,11 +1,12 @@
-diff -ur gcc-6.3.0-orig/gcc/config/gnu-user.h gcc-6.3.0/gcc/config/gnu-user.h
---- gcc-6.3.0-orig/gcc/config/gnu-user.h	2017-08-13 19:03:08.671572528 -0700
-+++ gcc-6.3.0/gcc/config/gnu-user.h	2017-08-13 19:15:00.768588499 -0700
-@@ -123,7 +123,7 @@
+diff -ur gcc-8.2.0-orig/gcc/config/gnu-user.h gcc-8.2.0/gcc/config/gnu-user.h
+--- gcc-8.2.0-orig/gcc/config/gnu-user.h	2019-01-26 19:25:21.590999999 -0800
++++ gcc-8.2.0/gcc/config/gnu-user.h	2019-01-26 19:26:05.910999999 -0800
+@@ -138,8 +138,7 @@
  
  #undef LINK_GCC_C_SEQUENCE_SPEC
  #define LINK_GCC_C_SEQUENCE_SPEC \
--  "%{static:--start-group} %G %L %{static:--end-group}%{!static:%G}"
+-  "%{static|static-pie:--start-group} %G %L \
+-   %{static|static-pie:--end-group}%{!static:%{!static-pie:%G}}"
 +  "--start-group %G %L --end-group"
  
  /* Use --as-needed -lgcc_s for eh support.  */

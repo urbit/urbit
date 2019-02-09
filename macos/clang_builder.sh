@@ -25,6 +25,3 @@ cmake ../llvm -GNinja -DDEFAULT_SYSROOT=$out -DCMAKE_INSTALL_PREFIX=$out $cmake_
 ninja
 
 ninja install
-
-# clang-tblgen is supposed to be an internal tool, but tapi needs it
-cp bin/clang-tblgen $out/bin

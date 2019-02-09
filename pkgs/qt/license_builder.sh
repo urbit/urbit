@@ -15,9 +15,6 @@ mv qtbase-* qtbase
 license_qt=$(cat qtbase/LICENSE.LGPLv3)
 cd qtbase/src/3rdparty
 license_android=$(cat android/LICENSE)
-license_angle1=$(cat angle/LICENSE)
-license_angle2=$(cat angle/TRACEEVENT_LICENSE)
-license_angle3=$(cat angle/SYSTEMINFO_LICENSE)
 license_dc=$(cat double-conversion/LICENSE)
 license_easing=$(cat easing/LICENSE)
 license_forkfd=$(cat forkfd/LICENSE)
@@ -34,8 +31,6 @@ license_pixman=$(cat pixman/LICENSE)
 license_rfc6234=$(cat rfc6234/LICENSE)
 license_sha3_1=$(cat sha3/BRG_ENDIAN_LICENSE)
 license_sha3_2=$(cat sha3/CC0_LICENSE)
-license_xcb=$(cat xcb/LICENSE)
-license_xkbcommon=$(cat xkbcommon/COPYING)
 license_zlib=$(cat zlib/LICENSE)
 
 cat > $out <<EOF

@@ -1,7 +1,7 @@
-diff -ur qtbase-opensource-src-5.9.6-orig/mkspecs/win32-g++/qmake.conf qtbase-opensource-src-5.9.6/mkspecs/win32-g++/qmake.conf
---- qtbase-opensource-src-5.9.6-orig/mkspecs/win32-g++/qmake.conf	2018-06-19 12:41:49.061465695 -0700
-+++ qtbase-opensource-src-5.9.6/mkspecs/win32-g++/qmake.conf	2018-06-19 12:42:15.406453120 -0700
-@@ -54,10 +54,8 @@
+diff -ur qtbase-everywhere-src-5.11.2-orig/mkspecs/common/g++-win32.conf qtbase-everywhere-src-5.11.2/mkspecs/common/g++-win32.conf
+--- qtbase-everywhere-src-5.11.2-orig/mkspecs/common/g++-win32.conf	2018-10-23 21:31:56.864905432 -0700
++++ qtbase-everywhere-src-5.11.2/mkspecs/common/g++-win32.conf	2018-10-23 21:43:31.797114564 -0700
+@@ -48,10 +48,8 @@
  QMAKE_LFLAGS_WINDOWS    = -Wl,-subsystem,windows
  QMAKE_LFLAGS_DLL        = -shared
  QMAKE_LFLAGS_GCSECTIONS = -Wl,--gc-sections

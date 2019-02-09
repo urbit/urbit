@@ -34,7 +34,10 @@ let
         "-DSIZEOF_INO_T=8 " +
         "-DSIZEOF_DEV_T=8";
 
-    CFLAGS = "-Werror -DHAVE_DECL_SETNS -D_GNU_SOURCE ${size_flags}";
+    CFLAGS = "-Werror -D_GNU_SOURCE " +
+      "-DHAVE_DECL_SETNS " +
+      "-DHAVE_DECL_MEMFD_CREATE " +
+      size_flags;
   };
 
   license = crossenv.native.make_derivation {
