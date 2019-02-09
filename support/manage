@@ -280,7 +280,7 @@ def graph_unmap(graph, map)
   gu
 end
 
-def print_stats(built_map)
+def print_status(built_map)
   built_count = built_map.count { |drv, built| built }
   puts "Derivations built: #{built_count} out of #{built_map.size}"
 end
@@ -491,7 +491,7 @@ def parse_args(argv)
            when 'results' then :results
            when 'build' then :build
            when 'plan' then :plan
-           when 'stats' then :stats
+           when 'status' then :status
            when 'help', nil then :help
            else raise AnticipatedError, "Invalid action: #{argv.first.inspect}"
            end
@@ -516,7 +516,7 @@ plan:
   Show the derivation build plan as a series of 'nix-build' commands.
 build:
   Try to build all derivations we care about.  Keeps going if a build fails.
-stats:
+status:
   Print out statistics about the derivations we care about and how many are
   already built.
 help:
@@ -526,7 +526,7 @@ The derivations we care about are defined in support/derivations.txt.
 END
   end
 
-  if [:graph, :results, :build, :plan, :stats].include?(action)
+  if [:graph, :results, :build, :plan, :status].include?(action)
     settings = parse_derivation_list('support/derivations.txt')
 
     path_drv_map = instantiate_drvs(settings.fetch(:paths))
@@ -572,8 +572,8 @@ END
     update_results_dir(path_valid_results_map)
   end
 
-  if action == :stats
-    print_stats(drv_built_map)
+  if action == :status
+    print_status(drv_built_map)
   end
 rescue AnticipatedError => e
   $stderr.puts e
