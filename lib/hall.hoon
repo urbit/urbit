@@ -250,7 +250,7 @@
     (^$(buk t-buk) wer)
   ::
   ++  or
-    =+  typ=$:|-($@(@tas {@tas $}))  
+    =+  typ=$:|-($@(@tas {@tas $}))
     |@  ++  $
           |=  con/coin
           ::^-  _(snag *@ (turn (limo typ) |*(a/@tas [a (odo:raid:wired a)])))

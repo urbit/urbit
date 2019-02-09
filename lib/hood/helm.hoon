@@ -15,6 +15,7 @@
 ++  session                                             ::
   $:  say/sole-share:sole                               ::  console state
       mud/(unit (sole-dialog:sole @ud))                 ::  console dialog
+      mass-timer/{way/wire nex/@da tim/@dr}
   ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -42,6 +43,8 @@
           {$nuke wire ship}                             ::
           [%serve wire binding:http-server generator:http-server]
           {$poke wire dock pear}                        ::
+          {$rest wire @da}                              ::
+          {$wait wire @da}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -92,6 +95,25 @@
 ++  poke-mass
   |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
+::
+++  poke-automass
+  |=  recur=@dr
+  =.  mass-timer.sez
+    [/helm/automass (add now recur) recur]
+  abet:(emit %wait way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-cancel-automass
+  |=  ~
+  abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+::
+++  take-wake-automass
+  |=  [way=wire ~]
+  =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
+  =<  abet
+  %-  emil
+  :~  [%flog /heft %crud %hax-heft ~]
+      [%wait way.mass-timer.sez nex.mass-timer.sez]
+  ==
 ::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
@@ -151,9 +173,9 @@
   =+  fil=.^(@ %cx (welp way /hoon))
   ~&  [%poke-reload-desk-nam way fil]
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
-::  +poke-reset:  send %vega to reboot kernel
+::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
-::    And reinstall %zuse and the vanes.
+::    And reinstall %zuse and the vanes with %veer.
 ::    Trigger with |reset.
 ::
 ++  poke-reset
@@ -164,7 +186,7 @@
   =/  top=path  /(scot %p our)/home/(scot %da now)/sys
   =/  hun  .^(@ %cx (welp top /hoon/hoon))
   =/  arv  .^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%vega `@t`hun `@t`arv]]
+  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
   %+  turn
     (module-ova:pill top)
   |=(a=[wire flog:dill] [%flog a])

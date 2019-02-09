@@ -1,5 +1,5 @@
 ::  clay (4c), revision control
-::
+!:
 ::  This is split in three top-level sections:  structure definitions, main
 ::  logic, and arvo interface.
 ::
@@ -838,7 +838,7 @@
         %+  turn  `(list path)`mus
         |=  a/path
         :-  [%$ %path !>(a)]
-        :^  %cast  [her syd]  %mime
+        :^  %cast  [our %home]  %mime
         =+  (need (need (read-x:ze cas a)))
         ?:  ?=(%& -<)
           [%$ p.-]
@@ -1211,7 +1211,7 @@
               ?>  ?=($ins -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  =>((flop pax) ?~(. %$ i))
-              [%cast [her syd] - [%$ p.mis]]
+              [%cast [our %home] - [%$ p.mis]]
           ==
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
@@ -1223,7 +1223,7 @@
               =+  (need (need (read-x:ze let.dom pax)))
               ?>  ?=(%& -<)
               :-  [%$ %path -:!>(*path) pax]
-              [%pact [her syd] [%$ p.-] [%$ p.mis]]
+              [%pact [our %home] [%$ p.-] [%$ p.mis]]
           ==
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
@@ -1235,7 +1235,7 @@
               ?>  ?=($mut -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-              [%cast [her syd] - [%$ p.mis]]
+              [%cast [our %home] - [%$ p.mis]]
           ==
       ==
     %_    +>.$
@@ -1404,7 +1404,7 @@
         |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
         =+  (lobe-to-schematic:ze [her syd] pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-        [%diff [her syd] - [%$ cay]]
+        [%diff [our %home] - [%$ cay]]
     ==
   ::
   ::  Handle result of diffing mutations.
@@ -1593,7 +1593,7 @@
           [%$ %null !>(~)]
         =+  (~(get by mim.dom) a)
         ?^  -  [%$ %mime !>(u.-)]
-        :^  %cast  [her syd]  %mime
+        :^  %cast  [our %home]  %mime
         =+  (need (need (read-x:ze let.dom a)))
         ?:  ?=(%& -<)
           [%$ p.-]
@@ -1769,8 +1769,8 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
-    ?.  ?=($hoon p.a)  [%vale disc a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
+    ?.  ?=($hoon p.a)  [%vale [our %home] a]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
@@ -2167,7 +2167,7 @@
       |=  [disc=disc:ford a=page]
       ^-  schematic:ford
       ::
-      ?.  ?=($hoon p.a)  [%volt disc a]
+      ?.  ?=($hoon p.a)  [%volt [our %home] a]
       ::  %hoon bootstrapping
       [%$ p.a [%atom %t ~] q.a]
     ::
@@ -2191,7 +2191,7 @@
       ?-  -.bol
         $direct     (page-to-schematic disc q.bol)
         $delta      ~|  delta+q.q.bol
-                    [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
+                    [%pact [our %home] $(lob q.q.bol) (page-to-schematic disc r.bol)]
       ==
     ::
     ::  Hashes a page to get a lobe.
@@ -3191,7 +3191,9 @@
             :-  ~
             =/  disc  [p.oth q.oth]
             :-  [%$ %path !>(pax)]
-            [%diff disc (lobe-to-schematic disc pax lob) (lobe-to-schematic disc pax u.a)]
+            :^  %diff  [our %home]
+              (lobe-to-schematic disc pax lob)
+            (lobe-to-schematic disc pax u.a)
         ==
       ::
       ::  Diff ali's commit against the mergebase.
@@ -3556,7 +3558,7 @@
             ?.  b
               [%$ %null !>(~)]
             =/  disc  [p q]:val
-            :^  %cast  disc  %mime
+            :^  %cast  [our %home]  %mime
             (lobe-to-schematic:zez disc a (~(got by q.new.dat) a))
         ==
       ::
@@ -3641,7 +3643,7 @@
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             $direct     (page-to-schematic disc q.bol)
-            $delta      [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
+            $delta      [%pact [our %home] $(lob q.q.bol) (page-to-schematic disc r.bol)]
           ==
         ::
         ::  Find the most recent common ancestor(s).
@@ -3884,6 +3886,8 @@
   ::
       $sunk  [~ ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       ?($warp $werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
@@ -3926,14 +3930,14 @@
       $wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %clay
-    :-  %|
-    :~  domestic+[%& rom.ruf]
-        foreign+[%& hoy.ruf]
-        :-  %object-store  :-  %|
-        :~  commits+[%& hut.ran.ruf]
-            blobs+[%& lat.ran.ruf]
+    :+  %clay  %|
+    :~  domestic+&+rom.ruf
+        foreign+&+hoy.ruf
+        :+  %object-store  %|
+        :~  commits+&+hut.ran.ruf
+            blobs+&+lat.ran.ruf
         ==
+        dot+&+ruf
     ==
   ==
 ::
@@ -4105,7 +4109,7 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
-    =^  queued  cue.ruf  ~(get to cue.ruf) 
+    =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued

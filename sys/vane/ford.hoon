@@ -1,5 +1,5 @@
 ::  ford: build system vane
-::
+!:
 ::    Ford is a functional reactive build system.
 ::
 ::    A Ford build is a function of the Urbit namespace and a date that
@@ -1771,7 +1771,7 @@
   ::    to wake us up immediately. This has the advantage that Ford stops hard
   ::    blocking the main Urbit event loop, letting other work be done.
   ::
-  ++  execute-loop
+  ++  execute-loop  !.
     ~/  %execute-loop
     |=  builds=(set build)
     ^+  ..execute
@@ -1808,7 +1808,7 @@
   ::    should run the candidate build this cycle through the +execute loop, we
   ::    place it in :next-builds. +gather runs until it has no more candidates.
   ::
-  ++  gather
+  ++  gather  !.
     ~/  %gather
     |=  [builds=(set build) force=?]
     ^+  ..execute
@@ -2080,7 +2080,7 @@
   ::    +build-receipts. It is in +reduce where we take these +build-receipts
   ::    and apply them to ..execute.
   ::
-  ++  reduce
+  ++  reduce  !.
     ~/  %reduce
     |=  build-receipts=(list build-receipt)
     ^+  ..execute
@@ -3131,7 +3131,7 @@
     ::
     ++  make-dude
       ~%  %make-dude  ..^^$  ~
-      |=  [error=(trap tank) attempt=schematic]
+      |=  [error=tank attempt=schematic]
       ^-  build-receipt
       ::
       =/  attempt-build=^build  [date.build attempt]
@@ -3143,7 +3143,7 @@
       ?.  ?=([%error *] u.attempt-result)
         (return-result u.attempt-result)
       ::
-      (return-error [$:error message.u.attempt-result])
+      (return-error [error message.u.attempt-result])
     ::
     ++  make-hood
       ~%  %make-hood  ..^^$  ~
@@ -4695,25 +4695,37 @@
       ::
       =/  hoon-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/hoon/sys
-      =/  hoon-hoon=hoon  (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+      =/  hoon-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain hoon-path ;;(@t q.q.cage.u.hoon-scry-result))
+      ?:  ?=(%| -.hoon-hoon)
+        (return-error leaf+"ford: %reef failed to compile hoon" p.hoon-hoon)
       ::
       =/  arvo-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/arvo/sys
-      =/  arvo-hoon=hoon  (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+      =/  arvo-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain arvo-path ;;(@t q.q.cage.u.arvo-scry-result))
+      ?:  ?=(%| -.arvo-hoon)
+        (return-error leaf+"ford: %reef failed to compile arvo" p.arvo-hoon)
       ::
       =/  zuse-path=path
         /(scot %p ship.disc)/(scot %tas desk.disc)/hoon/zuse/sys
-      =/  zuse-hoon=hoon  (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+      =/  zuse-hoon=(each hoon tang)
+        %-  mule  |.
+        (rain zuse-path ;;(@t q.q.cage.u.zuse-scry-result))
+      ?:  ?=(%| -.zuse-hoon)
+        (return-error leaf+"ford: %reef failed to compile zuse" p.zuse-hoon)
       ::
       =/  zuse-build=^build
         :*  date.build
-            %ride  zuse-hoon
+            %ride  p.zuse-hoon
             ::  hoon for `..is` to grab the :pit out of the arvo core
             ::
             %ride  [%cnts ~[[%& 1] %is] ~]
-            %ride  arvo-hoon
+            %ride  p.arvo-hoon
             %ride  [%$ 7]
-            %ride  hoon-hoon
+            %ride  p.hoon-hoon
             [%$ %noun !>(~)]
         ==
       ::
@@ -6171,6 +6183,14 @@
     ::
     [~ ford-gate]
   ::
+      ::  %vega: learn of kernel upgrade
+      ::
+      ::    XX clear cache, rebuild live builds
+      ::
+      %vega
+    ::
+    [~ ford-gate]
+  ::
       ::  %wipe: wipe stored builds, clearing :percent-to-remove of the entries
       ::
       %wipe
@@ -6184,14 +6204,11 @@
     :_  ~
     :^  duct  %give  %mass
     ^-  mass
-    :-  %ford
-    :-  %|
-    :~  ^-  mass
-        :+  (scot %p our)  %|
-        ::
-        :~  [%builds [%& builds.state.ax]]
-            [%compiler-cache [%& compiler-cache.state.ax]]
-    ==  ==
+    :+  %ford  %|
+    :~  builds+&+builds.state.ax
+        compiler-cache+&+compiler-cache.state.ax
+        dot+&+ax
+    ==
   ==
 ::  +take: receive a response from another vane
 ::

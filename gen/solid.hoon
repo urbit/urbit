@@ -1,5 +1,5 @@
 ::  Compile arvo as a pill noun, without compiler changes.
-::  usage 
+::  usage
 ::
 ::    .urbit/pill +solid
 ::

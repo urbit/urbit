@@ -1,4 +1,4 @@
-::  ::  %eyre, http servant
+!:  ::  %eyre, http servant
 !?  164
 ::::
 |=  pit/vase
@@ -461,7 +461,7 @@
       mount.outerHTML = "Redirecting to <a href=\""+url+"\">"+url+"</a>"
       document.location = url
     }
-    urb.redir = function(ship){ 
+    urb.redir = function(ship){
       if(ship){
         var location = new URL(document.location)
         location.pathname = location.pathname.replace(/^\/~~|\/~\/as\/any/,'/~/as/~'+ship)
@@ -729,6 +729,8 @@
     ::
         $sunk  +>
     ::
+        $vega  +>
+    ::
         ?($chis $this)                                  ::  inbound request
       %-  emule  |.  ^+  ..apex
       =*  sec  p.kyz    ::  ?                           ::  https bit
@@ -990,7 +992,7 @@
           (back-turbo tee %json p.cuf)
         (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
       ::
-          $quit  ~&(quit+tee (get-quit:(ire-ix p.tee) q.tee))
+          $quit  (get-quit:(ire-ix p.tee) q.tee)
           ::  ironically, old eyre will never get an http-response.
           $http-response  !!
       ==
@@ -1162,7 +1164,7 @@
     |=  [tea=whir live=? request=schematic:ford]
     %+  pass-note  tea
     :*  %f  %build  live
-        [%dude |.([%leaf "eyre: execute {<tea>}"]) request]
+        [%dude [%leaf "eyre: execute {(spud tea)}"] request]
     ==
   ::
   ++  add-links                                           :: x-urbit:// urls
@@ -1479,7 +1481,7 @@
             $of
           :+  %view  ?>(?=({@ ~} but) i.but)
           ?>  ?=({{$poll @} ~} quy)
-::          :^  %view  
+::          :^  %view
 ::          ?>  ?=({@ ~} but)
 ::          i.but
 ::          ?>  ?=({{$poll @} *} quy)     ::  XX eventsource
@@ -1667,7 +1669,7 @@
           [%| (resolve ~ p.pez(p [%at ses.yac p.p.pez]))]
         ::
             $js
-          =^  jon  ..ya  stat-json.yac  
+          =^  jon  ..ya  stat-json.yac
           [%| (resolve cug.yac p.pez(p (add-json jon p.p.pez)))]
         ==
       ::
@@ -2077,7 +2079,6 @@
     ++  has-arm  ~(has in (silt (sloe cor-type)))
     ++  build
       %^  execute-turbo  %core  live=%.y
-      :::+  %dude  [|.(+)]:>%mod-samp<
       ^-  schematic:ford
       :+  %mute
         ^-  schematic:ford
@@ -2298,12 +2299,13 @@
   ?:  ?=($wegh -.task)
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %eyre
-    :-  %|
-    :~  dependencies+[%& liz]  sessions+[%& wup]  views+[%& wix]
-        ducts+[%| ~[dead+[%& ded] proxy+[%& pox] outgoing+[%& ask]]]
-        hosts+[%& dop]
-        misc+[%& bol]
+    :+  %eyre  %|
+    :~  dependencies+&+liz
+        sessions+&+wup
+        views+&+wix
+        ducts+[%| ~[dead+&+ded proxy+&+pox outgoing+&+ask]]
+        hosts+&+dop
+        dot+&+bol
     ==
   =+  ska=(sloy ski)
   =+  sky=|=({* *} `(unit)`=+(a=(ska +<) ?~(a ~ ?~(u.a ~ [~ u.u.a]))))

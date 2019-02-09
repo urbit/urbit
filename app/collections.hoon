@@ -139,7 +139,7 @@
   |=  cod=command
   ^-  (quip move _this)
   ?-    -.cod
-      %invite
+      %chat-invite
     :_  this
     :-  :*  ost.bol
             %poke
@@ -163,6 +163,31 @@
         aud=(sy [guy %i] ~)
         ses=[%inv & our.bol nom.cod]~
     ==
+    ::
+      %collection-invite
+    :_  this
+    :-  :*  ost.bol
+            %poke
+            /permit
+            [our.bol %hall]
+            %hall-action
+            %permit
+            nom.cod
+            %.y
+            who.cod
+        ==
+    %+  turn  ~(tap in who.cod)
+    |=  guy=@p
+    ^-  move
+    :*  ost.bol
+        %poke
+        /invite
+        [our.bol %hall]
+        %hall-action
+        %phrase
+        aud=(sy [guy %i] ~)
+        ses=[%app col.cod [%inv & our.bol nom.cod]]~
+    ==
   ==
 ::
 ::  +peer:
@@ -181,6 +206,7 @@
   ^-  (quip move _this)
   ::~&  reap+[wir =(~ err)]
   ?~  err
+    ::  XX send message to users inbox
     [~ this]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
@@ -200,17 +226,16 @@
     [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]~
   ::
       %our
-    [~ this]
+    ?<  ?=(~ t.wir)
+    :_  this
+    [ost.bol %peer /our/[i.t.wir] [our.bol %hall] /circle/[i.t.wir]/config]~
   ==
 ::
 ::  +quit:
 ::
 ++  quit
-  |=  [wir=wire err=(unit tang)]
+  |=  wir=wire
   ^-  (quip move _this)
-  ::~&  quit+[wir =(~ err)]
-  ?~  err
-    [~ this]
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ?+  i.wir
@@ -229,7 +254,9 @@
     [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]~
   ::
       %our
-    [~ this]
+    ?<  ?=(~ t.wir)
+    :_  this
+    [ost.bol %peer /our/[i.t.wir] [our.bol %hall] /circle/[i.t.wir]/config]~
   ==
 ::
 ::  +diff-hall-prize:
@@ -528,9 +555,12 @@
 ::  +poke-noun: debugging stuff
 ::
 ++  poke-noun
-  |=  a=@t
+  |=  a=@tas
   ^-  (quip move _this)
-  ?:  =(a 'check all subs')
+  ?+    a
+    [~ this]
+  ::
+      %check-all-subs
     ~&  'here are all incoming subs'
     ~&  ^-  (list (pair ship path))
         %+  turn  ~(tap by sup.bol)
@@ -539,10 +569,17 @@
         [s p]
     [~ this]
   ::
-  ?:  =(a 'print state')
+      %print-state
     ~&  str.sta
     [~ this]
-  [~ this]
+  ::
+      %rebuild-subs
+    :_  this
+    :~  [ost.bol %peer /circles [our.bol %hall] /circles/[(scot %p our.bol)]]
+        [ost.bol %peer /inbox [our.bol %hall] /circle/inbox/config/grams]
+        [ost.bol %peer /invites [our.bol %hall] /circle/i/grams]
+    ==
+  ==
 ::
 ++  is-dm-circle
   |=  circ=circle:hall

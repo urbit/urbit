@@ -1,4 +1,4 @@
-::                                                      ::  /van/jael
+!:                                                      ::  /van/jael
 ::                                                      ::  %reference/0
 !?  150
 ::
@@ -865,6 +865,12 @@
       ?<  =(fak.own.sub ?=(^ tuf.own.sub))
       +>.$(moz [[hen %give %turf tuf.own.sub] moz])
     ::
+    ::  learn of kernel upgrade
+    ::    [%vega ~]
+    ::
+        %vega
+      +>.$
+    ::
     ::  watch private keys
     ::    {$vein $~}
     ::
@@ -889,6 +895,23 @@
     ::
         $vine
       +>(yen (~(put in yen) hen))
+    ::
+        %wegh
+      %_    +>
+          moz
+        :_  moz
+        ^-  move
+        :^  hen  %give  %mass
+        ^-  mass
+        :+  %jael  %|
+        :~  yen+&+yen
+            urb+&+urb
+            sub+&+sub
+            etn+&+etn
+            sap+&+sap
+            dot+&+lex
+        ==
+      ==
     ::
     ::  authenticated remote request
     ::    {$west p/ship q/path r/*}

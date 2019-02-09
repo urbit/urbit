@@ -1980,7 +1980,7 @@
 ++  test-dude  ^-  tang
   ::
   =/  schematic=schematic:ford-gate
-    :*  %dude  |.(>%test-no-error<)
+    :*  %dude  >%test-no-error<
         [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
     ==
   ::
@@ -2007,7 +2007,7 @@
 ++  test-dude-error  ^-  tang
   ::
   =/  schematic=schematic:ford-gate
-    :*  %dude  |.(>%in-the-error-message<)
+    :*  %dude  >%in-the-error-message<
         [%scry [%c care=%x bel=[[~nul %desk] /bar/foo]]]
     ==
   ::

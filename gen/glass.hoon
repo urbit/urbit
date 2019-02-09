@@ -13,7 +13,7 @@
 =>  |%
     ++  wasp                                            ::  arvo effect
       $%  {$wack p/@uvJ}                                ::  add entropy
-          {$what p/(list (pair path (pair term noun)))} ::  reset reptile 
+          {$what p/(list (pair path (pair term noun)))} ::  reset reptile
           {$whom p/@p}                                  ::  id and boot
       ==
     --
@@ -100,14 +100,14 @@
       sal/(list spur)
   ^-  (list (pair path (pair term noun)))
   ::
-  ::  hav: all user files 
-  ::  
+  ::  hav: all user files
+  ::
   =|  hav/(list (pair path (pair term noun)))
   |-  ^+  hav
   ?~  sal  ~
   =.  hav  $(sal t.sal)
   ::
-  ::  tyl: spur 
+  ::  tyl: spur
   ::
   =/  tyl  i.sal
   |-  ^+  hav
@@ -117,7 +117,7 @@
   ::
   =/  pax  (en-beam:format bec tyl)
   =/  lon  .^(arch %cy pax)
-  =?  hav  ?=(^ fil.lon)  
+  =?  hav  ?=(^ fil.lon)
       ::
       ::  install only hoon files for now
       ::

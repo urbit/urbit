@@ -1,4 +1,4 @@
-::  ::  ames (4a), networking
+!:  ::  ames (4a), networking
 ::
   |=  pit=vase
   =>  =~
@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=4
+=+  protocol-version=0
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
@@ -456,7 +456,6 @@
       ::  ~&  [%slow (div rto (div ~s1 1.000))]
       =.  +>  (wept 0 nus)
       ?>  =(0 nif)
-      =+  oub=(gte rto ~s16)
       =:  caw  2
           rto  ;:  min
                  (mul 2 rto)
@@ -656,7 +655,9 @@
       ?~  neb
         =^  ban  fox  (kick hen)
         [:(weld bin p.ban next) fox]
-      =^  bun  fox  zork:zank:thaw:(ho:um i.neb)
+      =/  fro=(list ship)  (saxo-scry our)
+      =/  hoz  (ho:um i.neb)
+      =^  bun  fox  zork:zank:(thaw:hoz fro)
       $(neb t.neb, bin (weld p.bun bin))
     ::
     ++  wise                                            ::    wise:am
@@ -757,7 +758,8 @@
             rum(dod &, bum ?~(cop bum.rum (~(put by bum.rum) did.rum u.cop)))
           =/  seg  (sein-scry her)
           =^  roc  diz  (zuul:diz now seg [%back cop dam ~s0])
-          (busk(diz (wast:diz ryn)) xong roc)
+          =/  fro=(list ship)  (saxo-scry our)
+          (busk(diz (wast:diz ryn)) (xong fro) roc)
         ::  XX move this logic into %zuse, namespaced under %jael?
         ::
         ++  deng                                        ::    deng:ho:um:am
@@ -951,7 +953,8 @@
             =*  cop  `coop`?:(=(%good kay) ~ ``[%dead-packet ~])
             =/  seg  (sein-scry her)
             =^  pax  diz  (zuul:diz now seg [%back cop dam ~s0])
-            +>(+> (busk(diz (wast:diz ryn)) xong pax))
+            =/  fro=(list ship)  (saxo-scry our)
+            ..cock(+> (busk(diz (wast:diz ryn)) (xong fro) pax))
           ::
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
@@ -1034,7 +1037,8 @@
                 (emit %mead lyn r.fud)
               =/  zid  (myx:gus p.fud)
               =/  zon  %*(xong ..xong her p.fud)
-              (emir (wist:zid now zon [~ lyn] r.fud))
+              =/  fro=(list ship)  (saxo-scry our)
+              (emir (wist:zid now (zon fro) [~ lyn] r.fud))
             ==
           ::
           ++  emir                                      ::    emir:la:ho:um:am
@@ -1071,7 +1075,8 @@
           (wool [/a/ping hen] /a/pi ~ |)
         ::
         ++  thaw                                        ::    thaw:ho:um:am
-          ^+  .                                         ::  wakeup bomb
+          |=  fro=(list ship)
+          ^+  +>                                        ::  wakeup bomb
           =+  oub=bust:puz
           =^  yem  puz  (wack:puz now)
           =+  bou=bust:puz
@@ -1079,7 +1084,7 @@
               ?.  &(bou !oub)  bin
               :_(bin [%wine her " not responding still trying"])
           =.  diz  ?:((boom:puz now) (pode:diz now) diz)
-          (busk xong yem)
+          (busk (xong fro) yem)
         ::
         ++  tock                                        ::    tock:ho:um:am
           |=  [cop=coop fap=flap cot=@dr]               ::  e2e ack by hash
@@ -1095,7 +1100,8 @@
               :_  bin
               `boon`[%cake her [[lyf:sen:gus clon:diz] u.p.yoh] cop u.hud]
             ==
-          (busk xong q.yoh)
+          =/  fro=(list ship)  (saxo-scry our)
+          (busk (xong fro) q.yoh)
         ::
         ++  wind                                        ::    wind:ho:um:am
           |=  [gom=soup ham=meal]
@@ -1104,7 +1110,8 @@
           =/  seg  (sein-scry her)
           =^  wyv  diz  (zuul:diz now seg ham)
           =^  feh  puz  (whap:puz now gom wyv)
-          (busk xong feh)
+          =/  fro=(list ship)  (saxo-scry our)
+          (busk (xong fro) feh)
         ::
         ++  wool                                        ::    wool:ho:um:am
           |=  [hen=duct cha=path val=*]                 ::  send a statement
@@ -1183,8 +1190,8 @@
           ==
         ::
         ++  xong                                        ::    xong:ho:um:am
+          |=  fro=(list ship)
           ^-  (list ship)                               ::  route unto
-          =/  fro  (saxo-scry our)
           =/  too  (saxo-scry her)
           =+  ^=  oot  ^-  (list ship)
               =|  oot=(list ship)
@@ -1500,6 +1507,9 @@
             ==
           [[%wine who " has sunk"]~ fox]
         ::
+            %vega
+          [~ fox]
+        ::
             %wake
           (~(wake am [our now fox ski]) hen)
         ::
@@ -1530,8 +1540,7 @@
   ::
   ++  wegh
     ^-  mass
-    :-  %ames
-    :-  %|
-    :~  fox+[%& fox]
+    :+  %ames  %|
+    :~  dot+&+fox
     ==
   --

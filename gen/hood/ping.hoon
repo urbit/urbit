@@ -4,7 +4,7 @@
   ::
 /?    310
 :-  %say
-|=  $:  {now/@da eny/@ bec/beak} 
+|=  $:  {now/@da eny/@ bec/beak}
         {{exp/@ud ~} ~}
     ==
 =+  rab=(~(raw og eny) (bex exp))

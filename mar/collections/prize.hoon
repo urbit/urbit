@@ -33,7 +33,7 @@
         |=  nom=name:hall
         [%s nom]
       ::
-        :-  %dms 
+        :-  %dms
         %-  pairs
         %+  turn  ~(tap by dms.piz)
         |=  [nom=name:hall ini=@p env=(list envelope:hall)]

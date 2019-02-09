@@ -20,7 +20,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    volume 3, Arvo models and skeleton    ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-=>  
+=>
 |%
 ++  arch  {fil/(unit @uvI) dir/(map @ta $~)}            ::  fundamental node
 ++  arvo  (wind {p/term q/mill} mill)                   ::  arvo card
@@ -46,7 +46,7 @@
           ==                                            ::
 ++  mark  @tas                                          ::  content type
 ++  mash  |=(* (mass +<))                               ::  producing mass
-++  mass  $~  [%$ [%& ~]]                               ::  memory usage  
+++  mass  $~  [%$ [%& ~]]                               ::  memory usage
           (pair cord (each noun (list mash)))           ::
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
@@ -192,10 +192,7 @@
         (~(slym wa *worm) vase.vane *vane-sample)
       ::  cache the access of the %scry arm
       ::
-      =^  fun  worm.vane  (~(slap wa worm.vane) rig [%limb %scry])
-      ::  cache the call to +mint that the +slym in +scry will do
-      ::
-      +:(~(mint wa worm.vane) p.fun [%limb %$])
+      +:(~(slap wa worm.vane) rig [%limb %scry])
     ==
   ::
   ++  wink                                              ::  deploy
@@ -298,7 +295,7 @@
       ^-  (unit (pair move worm))
       %+  biff  ((soft duct) -.q.wec)
       |=  a/duct
-      %+  bind  
+      %+  bind
         =-  ?-  -.har
               %|  ~&  [%dead-card p.har]  ~             ::  XX properly log?
               %&  (some p.har)
@@ -366,11 +363,9 @@
         ==
       ^-  (unit (unit (cask)))
       =+  fun=-:(~(slap wa worm.vane) rig [%limb %scry])
-      =+  pro=-:(~(slym wa worm.vane) fun old)
-      ?~  q.pro  ~
-      ?~  +.q.pro  [~ ~]
-      =/  dat  +>.q.pro
-      [~ ~ (mark -.dat) +.dat]
+      ::
+      %-  (unit (unit (cask)))
+      (slum q.fun old)
     ::
     ++  soar                                            ::  scrub vane
       |=  sev/vase
@@ -557,6 +552,18 @@
     ::  we emit ova to unix in fifo order, but emit internal moves depth-first
     ::
     $(ova (weld ova p.nyx), mor (weld q.nyx t.mor))
+  ::  +spam: kick every vane with :ovum
+  ::
+  ++  spam
+    |=  [lac=? ovo=ovum]
+    ^-  [(list ovum) (list [label=@tas =vane])]
+    =/  card
+      :+  %&
+        [%cell [%atom %tas `%soft] %noun]
+      [%soft q.ovo]
+    %+  kick  lac
+    %+  turn  vanes
+    |=([label=@tas *] [label ~ [%pass p.ovo label card]])
   --
 --
 =<  ::  Arvo larval stage
@@ -668,12 +675,13 @@
               ^-  [(list ovum) *]
               =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
               =^  ova  +>+.$  (^poke now ovo)
+              =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
               ?~  ova
-                [~ +>.^$]
+                [(flop out) +>.^$]
               ::  upgrade the kernel
               ::
-              ?:  ?=(%vega -.q.i.ova)
+              ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
                   (vega now t.ova ({@ @} +.q.i.ova))
                 [~ +>.^$]
@@ -681,10 +689,8 @@
               ::  and passing the rest through as output
               ::
               =^  vov  +>+.^$  (feck now i.ova)
-              ?~  vov
-                $(ova t.ova)
-              =/  avo  $(ova t.ova)
-              [[+.vov -.avo] +.avo]
+              =?  out  ?=(^ vov)  [+.vov out]
+              $(ova t.ova)
     ::
     ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
     --
@@ -705,20 +711,28 @@
       bud  dub
       vanes  (turn nyf |=({a/@tas b/vise} [a [b *worm]]))
     ==
+  =|  out=(list ovum)
   |-  ^-  [(list ovum) _+>.^$]
   ?~  ova
-    [~ +>.^$]
+    [(flop out) +>.^$]
   ::  iterate over effects, handling those on arvo proper
   ::  and passing the rest through as output
   ::
   ::    In practice, the pending effects after an upgrade
-  ::    are the %veer moves to install %zuse and the vanes.
+  ::    are the %veer moves to install %zuse and the vanes,
+  ::    plus a %vega notification that the upgrade is complete.
+  ::
+  ::    N.B. this implementation assumes that %vega will be
+  ::    at the end of :ova.
+  ::
+  ?:  ?=(%vega -.q.i.ova)
+    =^  zef  vanes
+      (~(spam (is our vil eny bud vanes) now) lac i.ova)
+    $(out [i.ova out], ova (weld t.ova zef))
   ::
   =^  vov  +>.^$  (feck now i.ova)
-  ?~  vov
-    $(ova t.ova)
-  =/  avo  $(ova t.ova)
-  [[+.vov -.avo] +.avo]
+  =?  out  ?=(^ vov)  [+.vov out]
+  $(ova t.ova)
 ::
 ++  peek                                                ::  external inspect
   |=  {now/@da hap/path}
@@ -782,7 +796,7 @@
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
   ==
-::                                                
+::
 ++  vega                                                ::  reboot kernel
   |=  $:  ::  now: current date
           ::  ova: actions to process after reboot
@@ -857,16 +871,18 @@
     :*  our
         now
         eny
-        ova
+        ::  tack a notification onto the pending effects
+        ::
+        (weld ova [`ovum`[/ %vega ~] ~])
         bud
         (turn vanes |=([label=@tas =vane] [label vase.vane]))
     ==
   ::  call into the new kernel
   ::
   =/  out  (slum gat sam)
-  ::  tack a reset notification onto the product
+  ::  add types to the product
   ::
-  [[[/ %vega ~] ((list ovum) -.out)] +.out]
+  [((list ovum) -.out) +.out]
 ::  +veer: install %zuse or a vane
 ::
 ::    Identity is in the sample so the larval stage

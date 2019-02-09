@@ -1,11 +1,16 @@
 /=  gas  /$  fuel:html
+/=  error  /:  /===/web/404  /!hymn/
+::  only authenticated user should be allowed to see this
+::
+?.  (~(has in (~(got by aut.ced.gas) %$)) (scot %p p.bem.gas))
+  error
 =/  cod=tape
   %+  slag  1
   %+  scow  %p
   .^(@p %j /(scot %p p.bem.gas)/code/(scot r.bem.gas)/(scot %p p.bem.gas))
 ^-  manx
 ;div
-  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-owner "{(scow %p p.bem.gas)}");
+  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-author "{(scow %p p.bem.gas)}");
   ;div.container(urb-devices "")
     ;div.row.mt-4
       ;div.flex-col-2;

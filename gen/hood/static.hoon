@@ -6,7 +6,7 @@
   /|  /;  |=(@t [%html +<])  /&html&/!hymn/
       /;  |=(@t [%html +<])  /&html&/&elem&/udon/
   ::    XX /lib/down-jet/parse is broken
-  ::    /;  |=(@t [%html +<])  /&html&/&hymn&/&down&/md/    
+  ::    /;  |=(@t [%html +<])  /&html&/&hymn&/&down&/md/
       /;  |=(@t [%raw +<])   /atom/
   ==
 ::
@@ -30,7 +30,7 @@
     link
   ^-  tape
   %+  welp
-  =<  + 
+  =<  +
   %^  spin  u.parsed  pre
   |=  [c=coin s=path]
   ^-  [* out=tape]

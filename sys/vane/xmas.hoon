@@ -1222,7 +1222,7 @@
               moz/(list move)
           ==
       |%
-      ++  call  
+      ++  call
         |=  tac/task:able
         ^+  +>
         =*  job  ^-  task:loft
@@ -1234,7 +1234,7 @@
         =^  fex  syl  abet:(apex:love job)
         +>.$(moz (weld (turn fex lung) moz))
       ::
-      ++  take  
+      ++  take
         |=  {tea/wire hin/sign:able}
         =*  job  ^-  task:loft
           ?+    -.tea  !!
@@ -1242,9 +1242,9 @@
             ?>  ?=({@ @ $~} +.tea)
             =+  [who kos]=[(slav %p i.t.tea) (slav %ud i.t.t.tea)]
             ?-  +<.hin
-                $rend  
+                $rend
               [%rend who kos p.+.hin q.+.hin]
-                $mack  
+                $mack
               [%done who kos ?~(p.+.hin ~ `coop`[~ `[%fail u.p.+.hin]])]
             ==
           ==
