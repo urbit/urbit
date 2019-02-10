@@ -17,20 +17,7 @@ static void
 _save_time_cb(uv_timer_t* tim_u)
 {
   u3_pier *pir_u = tim_u->data;
-  u3_save* sav_u = pir_u->sav_u;
-
-  if ( sav_u->pid_w ) {
-    return;
-  }
-
-  if ( u3A->ent_d > sav_u->ent_d ) {
-    // uL(fprintf(uH, "autosaving... ent_d %" PRIu64 "\n", u3A->ent_d));
-
-    // u3e_grab("save", u3_none);
-
-    u3e_save();
-    sav_u->ent_d = u3A->ent_d;
-  }
+  u3_pier_work_save(pir_u);
 }
 
 /* u3_save_ef_chld(): report save termination.

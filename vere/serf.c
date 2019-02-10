@@ -33,40 +33,68 @@
     } u3_serf;
     static u3_serf u3V;
 
-    /*  serf-lord protocol:
-    **
-    **  ++  plea                            ::  from serf to lord
-    **    $%  $:  $play                     ::  send events
-    **            $=  p                     ::
-    **            %-  unit                  ::  ~ if no snapshot
-    **            $:  p=@                   ::  first number expected
-    **                q=@                   ::  mug of state
-    **                r=[our=@p fak=?]      ::  [identity fake?]
-    **        ==  ==                        ::
-    **        $:  $done                     ::  event executed unchanged
-    **            p/@                       ::  number of this event
-    **            q/@                       ::  mug of state (or 0)
-    **            r/(list ovum)             ::  actions
-    **        ==                            ::
-    **        $:  $work                     ::  replace and retry
-    **            p/@                       ::  event number
-    **            q/@                       ::  mug of state (or 0)
-    **            r/(pair date ovum)        ::  event
-    **    ==  ==                            ::
-    **
-    **  ++  writ                            ::  from lord to serf
-    **    $%  $:  $exit                     ::  snapshot, then exit
-    **            p/@                       ::  exit code
-    **        ==                            ::
-    **        $:  $save                     ::  save snapshot to disk
-    **            p/@                       ::  number of old snaps to save
-    **        ==                            ::
-    **        $:  $work                     ::  execute event
-    **            p/@                       ::  event number
-    **            q/@                       ::  mug of state (or 0)
-    **            r/(pair date ovum)        ::  event
-    **    ==  ==                            ::
-    */
+/*
+::  serf-lord protocol:
+::
+|%
+::  +plea: from serf to lord
+::
++$  plea
+  $%  ::  status on startup
+      ::
+      $:  %play
+          $=  p
+          ::  ~ if no snapshot
+          ::
+          %-  unit
+          ::  p: event number expected
+          ::  q: mug of kernel
+          ::  r: identity, fake flag
+          ::
+          [p=@ q=@ r=[our=@p fak=?]]
+      ==
+      ::  event executed unchanged (in response to %work)
+      ::
+      $:  %done
+          ::  p: event number
+          ::  q: mug of state (or 0)
+          ::  r: effects
+          ::
+          [p=@ q=@ r=(list ovum)]
+      ==
+      ::  replace event and retry (in response to %work)
+      ::
+      $:  %work
+          ::  p: event number
+          ::  q: mug of state (or 0)
+          ::  r: replacement event (at date)
+          ::
+          [p=@ q=@ r=(pair date ovum)]
+  ==  ==
+::  +writ: from lord to serf
+::
++$  writ
+  $%  ::  exit immediately
+      ::
+      ::  p: exit code
+      ::
+      [%exit p=@]
+      ::  save snapshot to disk
+      ::
+      ::  p: number of old snaps to save (XX not respected)
+      ::
+      [%save p=@]
+      ::  execute event
+      ::
+      $:  %work
+          ::  p: event number
+          ::  q: mug of state (or 0)
+          ::  r: event (at date)
+          ::
+          [p=@ q=@ r=(pair date ovum)]
+  ==  ==
+--
+*/
 
 /* _serf_space(): print n spaces.
 */
@@ -362,7 +390,7 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 
   u3_noun sac = u3_nul;
 
-  //  intercept |mass
+  //  intercept |mass, observe |reset
   //
   {
     u3_noun riv = vir;
@@ -387,6 +415,12 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
         u3z(vir);
         vir = riv;
         break;
+      }
+
+      //  reclaim memory from persistent caches on |reset
+      //
+      if ( c3__vega == u3h(fec) ) {
+        u3m_reclaim();
       }
 
       riv = u3t(riv);
@@ -484,6 +518,12 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     u3z(gon); u3z(job);
 
     _serf_sure(ovo, vir, cor);
+
+    //  reclaim memory from persistent caches on |reset
+    //
+    if ( 0 == (u3A->ent_d % 1000ULL) ) {
+      u3m_reclaim();
+    }
   }
 }
 
