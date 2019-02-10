@@ -78,8 +78,6 @@ if [ $os != "linux" ]; then
   $LIBS -o bin/openglwindow$exe_suffix
 fi
 
-# TODO: try to compile some stuff with $qtbase/bin/qmake too, make sure that works
-
 mkdir -p $out/bin
 
 for prog in analogclock dynamiclayouts openglwindow rasterwindow; do
