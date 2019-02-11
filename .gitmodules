@@ -28,6 +28,3 @@
 [submodule "subprojects/softfloat3"]
 	path = subprojects/softfloat3
 	url = https://github.com/urbit/berkeley-softfloat-3.git
-[submodule "subprojects/whereami"]
-	path = subprojects/whereami
-	url = https://github.com/urbit/whereami

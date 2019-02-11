@@ -348,19 +348,28 @@ libnoun = static_library('noun',
   install: false
 )
 
-#  For these libs we provide fallback bundle
-#
-libent_dep = dependency('libent', version: '>=0.2.1', fallback: ['libent', 'libent_dep'])
-libsni_dep = dependency('libsni', version: '>=0.5.0', fallback: ['libsni', 'libsni_dep'])
-libwhereami_dep = dependency('libwhereami', version: '>=1.0.0', fallback: ['whereami', 'libwhereami_dep'])
+# For these two libs we provide fallback bundle
 
-vere_deps = [curl_dep,
-            libent_dep,
-            libh2o_dep,
-            libsni_dep,
-            libuv_dep,
-            libwhereami_dep,
-            openssl_dep]
+libent_dep = dependency(
+  'libent',
+  version: '>=0.2.1',
+  fallback: ['libent', 'libent_dep'],
+)
+
+libsni_dep = dependency(
+  'libsni',
+  version: '>=0.5.0',
+  fallback: ['libsni', 'libsni_dep'],
+)
+
+vere_deps = [
+  curl_dep,
+  libent_dep,
+  libh2o_dep,
+  libsni_dep,
+  libuv_dep,
+  openssl_dep,
+]
 
 executable('urbit',
 sources : vere_lib_src + [ 'vere/main.c' ],

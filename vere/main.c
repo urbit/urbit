@@ -644,6 +644,11 @@ main(c3_i   argc,
     return 1;
   }
 
+  //  Set `u3_Host.wrk_c` to the worker executable path.
+  c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
+  u3_Host.wrk_c = c3_malloc(worker_exe_len);
+  snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+
   if ( c3y == u3_Host.ops_u.dem ) {
     _fork_into_background_process();
   }

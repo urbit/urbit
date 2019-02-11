@@ -588,6 +588,7 @@
       typedef struct _u3_host {
         c3_w       kno_w;                   //  current executing stage
         c3_c*      dir_c;                   //  pier path (no trailing /)
+        c3_c*      wrk_c;                   //  worker executable path
         c3_d       now_d;                   //  event tick
         uv_loop_t* lup_u;                   //  libuv event loop
         u3_usig*   sig_u;                   //  signal list
@@ -600,7 +601,7 @@
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
         u3_trac    tra_u;                   //  tracing information
-        void     (*bot_f)();               //  call when chis is up
+        void     (*bot_f)();                //  call when chis is up
       } u3_host;                            //  host == computer == process
 
     /**  New pier system.
