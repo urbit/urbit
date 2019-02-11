@@ -1,4 +1,4 @@
-::  Test the pH of your aquarium.  See if it's safe to put real fish in.
+::  Test the pH of your aquarium.  See if it's safe to put in real fish.
 ::
 ::  usage:
 ::  :aqua [%run-test %test-add]
@@ -42,82 +42,64 @@
       :-  %add
       =+  num=5
       |%
+      ++  ships  ~[~bud]
       ++  start
-        ^-  (trel (list ship) (list ph-event) _..start)
+        ^-  (pair (list ph-event) _..start)
         =.  num  +(num)
-        :+  ~[~bud]
-          %-  zing
-          :~  (init ~bud)
-              (dojo ~bud "[%test-result (add 2 3)]")
-          ==
-        ..start
+        :_  ..start
+        %-  zing
+        :~  (init ~bud)
+            (dojo ~bud "[%test-result (add 2 3)]")
+        ==
       ::
       ++  route
         |=  [who=ship ovo=unix-effect]
-        ^-  (list ph-event)
+        ^-  (quip ph-event _..start)
         ~&  [%num num]
+        :_  ..start
         (expect-dojo-output ~bud who ovo "[%test-result 5]")
         ::  XX  if it's been five minutes, we failed
       --
     ::
       :-  %hi
       |%
+      ++  ships  ~[~bud ~marbud]
       ++  start
-        ^-  (trel (list ship) (list ph-event) _..start)
-        :+  ~[~bud ~dev]
-          %-  zing
-          :~  (init ~bud)
-              (init ~dev)
-              (dojo ~bud "|hi ~dev")
-          ==
-        ..start
+        ^-  (pair (list ph-event) _..start)
+        :_  ..start
+        %-  zing
+        :~  (init ~bud)
+            (init ~dev)
+            (dojo ~bud "|hi ~dev")
+        ==
       ::
       ++  route
         |=  [who=ship ovo=unix-effect]
-        ^-  (list ph-event)
+        ^-  (quip ph-event _..start)
+        :_  ..start
         (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
     ::
-      :-  %child-sync
+      [%headstart-marbud marbud:head-starts]
+    ::
+      :-  %composed-child-sync
+      %+  compose-tests  marbud:head-starts
+      ^-  test-core
       |%
+      ++  ships  ~[~bud ~marbud ~linnup-torsyx]
       ++  start
-        ^-  (trel (list ship) (list ph-event) _..start)
-        :+  ~[~bud ~marbud ~linnup-torsyx]
-          %-  zing
-          :~  (init ~bud)
-              ::  (dojo ~bud "\"magic-go\":[.^(")
-              ::  (dojo ~bud "|mount %")
-              ::  %+  insert-file  ~bud
-              ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
-              ::  (init ~marbud)
-              ::  (dojo ~marbud "|mount %")
-              ::  %+  insert-file  ~marbud
-              ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
-          ==
-        ..start
+        :_  ..start
+        (init ~linnup-torsyx)
+      ::
       ++  route
         |=  [who=ship ovo=unix-effect]
-        ^-  (list ph-event)
+        ^-  (quip ph-event _..start)
+        :_  ..start
         %-  zing
         :~
           %-  on-dojo-output
-          :^  ~bud  who  ovo
-          :-  "+ /~bud/base/2/web/testing/udon"
-          ^-  $-($~ (list ph-event))
-          |=  ~
-          (init ~marbud)
-        ::
-          %-  on-dojo-output
-          :^  ~marbud  who  ovo
-          :-  "; ~bud is your neighbor"
-          ^-  $-($~ (list ph-event))
-          |=  ~
-          (init ~linnup-torsyx)
-        ::
-          %-  on-dojo-output
           :^  ~linnup-torsyx  who  ovo
           :-  "; ~bud is your neighbor"
-          ^-  $-($~ (list ph-event))
           |=  ~
           (dojo ~linnup-torsyx "|hi ~bud")
         ::
@@ -125,11 +107,62 @@
           :^  ~linnup-torsyx  who  ovo
           :-  "hi ~bud successful"
           ::  :-  "; ~bud is your neighbor"
-          ^-  $-($~ (list ph-event))
           |=  ~
           [%test-done &]~
         ==
       --
+    ::
+      :-  %child-sync
+      |%
+      ++  ships  ~[~bud ~marbud ~linnup-torsyx]
+      ++  start
+        ^-  (pair (list ph-event) _..start)
+        :_  ..start
+        %-  zing
+        :~  (init ~bud)
+        ==
+      ::
+      ++  route
+        |=  [who=ship ovo=unix-effect]
+        ^-  (quip ph-event _..start)
+        :_  ..start
+        %-  zing
+        :~
+          %-  on-dojo-output
+          :^  ~bud  who  ovo
+          :-  "+ /~bud/base/2/web/testing/udon"
+          |=  ~
+          (init ~marbud)
+        ::
+          %-  on-dojo-output
+          :^  ~marbud  who  ovo
+          :-  "; ~bud is your neighbor"
+          |=  ~
+          (init ~linnup-torsyx)
+        ::
+          %-  on-dojo-output
+          :^  ~linnup-torsyx  who  ovo
+          :-  "; ~bud is your neighbor"
+          |=  ~
+          (dojo ~linnup-torsyx "|hi ~bud")
+        ::
+          %-  on-dojo-output
+          :^  ~linnup-torsyx  who  ovo
+          :-  "hi ~bud successful"
+          ::  :-  "; ~bud is your neighbor"
+          |=  ~
+          [%test-done &]~
+        ==
+      --
+      ::  (dojo ~bud "\"magic-go\":[.^(")
+      ::  (dojo ~bud "|mount %")
+      ::  %+  insert-file  ~bud
+      ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
+      ::  (init ~marbud)
+      ::  (dojo ~marbud "|mount %")
+      ::  %+  insert-file  ~marbud
+      ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
+      ::
       ::  (init ~zod)
       ::  (init ~marzod)
       ::  wait for initial sync
@@ -229,10 +262,10 @@
   ^-  (quip move _this)
   ?+  arg  ~|(%bad-noun-arg !!)
       [%run-test lab=@tas]
-    =/  res=[hers=(list ship) events=(list ph-event) new-state=test-core]
+    =/  res=[events=(list ph-event) new-state=test-core]
       start:(~(got by raw-test-cores) lab.arg)
-    =.  test-cores  (~(put by test-cores) lab.arg hers.res new-state.res)
-    =^  moves-1  this  (subscribe-to-effects lab.arg hers.res)
+    =.  test-cores  (~(put by test-cores) lab.arg [ships .]:new-state.res)
+    =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
     [(weld moves-1 moves-2) this]
   ==
@@ -247,12 +280,15 @@
   ?~  test-cor
     ~&  [%ph-dropping lab]
     `this
-  %+  run-events  lab
-  |-  ^-  (list ph-event)
-  ?~  ovo.ova
-    ~
-  ::  ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
-  %+  weld
-    (route:cor.u.test-cor who.ova i.ovo.ova)
-  $(ovo.ova t.ovo.ova)
+  =^  events  u.test-cor
+    |-  ^-  (quip ph-event _u.test-cor)
+    ?~  ovo.ova
+      [~ u.test-cor]
+    =^  events-1  cor.u.test-cor
+      (route:cor.u.test-cor who.ova i.ovo.ova)
+    =^  events-2  u.test-cor
+      $(ovo.ova t.ovo.ova)
+    [(weld events-1 events-2) u.test-cor]
+  =.  test-cores  (~(put by test-cores) lab u.test-cor)
+  (run-events lab events)
 --

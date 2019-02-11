@@ -22,8 +22,9 @@
 ++  test-core
   $_  ^?
   |%
-  ++  start  *(trel (list ship) (list ph-event) _^?(..start))
-  ++  route  |~([ship unix-effect] *(list ph-event))
+  ++  ships  *(list ship)
+  ++  start  *(quip ph-event _^?(..start))
+  ++  route  |~([ship unix-effect] *(quip ph-event _^?(..start)))
   --
 ::
 ++  ph-event
@@ -90,4 +91,82 @@
   :-  what
   |=  ~
   [%test-done &]~
+::
+++  compose-tests
+  |=  [a=test-core b=test-core]
+  ^-  test-core
+  =/  done-with-a  |
+  |%
+  ::  Union of ships in a and b
+  ::
+  ++  ships  ~(tap in (~(uni in (silt ships.a)) (silt ships.b)))
+  ::
+  ::  Start with start of a
+  ::
+  ++  start
+    ^-  (quip ph-event _..start)
+    =^  events  a  start:a
+    [events ..start]
+  ::
+  ::  Keep going on a until it's done.  If success, go to b.
+  ::
+  ::    In theory, we should be able to just swap out the whole core
+  ::    for b, but in practice the types are hard, and we generally
+  ::    try to avoid changing the structure of a core in the middle
+  ::    like that.
+  ::
+  ++  route
+    |=  [who=ship ovo=unix-effect]
+    ^-  (quip ph-event _..start)
+    ?:  done-with-a
+      =^  events  b  (route:b who ovo)
+      [events ..start]
+    =^  events  a  (route:a who ovo)
+    =+  ^-  [done=(list ph-event) other-events=(list ph-event)]
+      %+  skid  events
+      |=  e=ph-event
+      =(%test-done -.e)
+    ?~  done
+      [other-events ..start]
+    ?>  ?=(%test-done -.i.done)
+    ?.  p.i.done
+      [[%test-done |]~ ..start]
+    =.  done-with-a  &
+    =^  events-start  b  start:b
+    [(weld other-events events-start) ..start]
+  --
+::
+++  head-starts
+  |%
+  ++  marbud
+    ^-  test-core
+    |%
+    ++  ships  ~[~bud ~marbud]
+    ++  start
+      ^-  (quip ph-event _..start)
+      :_  ..start
+      %-  zing
+      :~  (init ~bud)
+      ==
+    ::
+    ++  route
+      |=  [who=ship ovo=unix-effect]
+      ^-  (quip ph-event _..start)
+      :_  ..start
+      %-  zing
+      :~
+        %-  on-dojo-output
+        :^  ~bud  who  ovo
+        :-  "+ /~bud/base/2/web/testing/udon"
+        |=  ~
+        (init ~marbud)
+      ::
+        %-  on-dojo-output
+        :^  ~marbud  who  ovo
+        :-  "; ~bud is your neighbor"
+        |=  ~
+        [%test-done &]~
+      ==
+    --
+  --
 --
