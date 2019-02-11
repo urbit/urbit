@@ -138,35 +138,67 @@
 ::
 ++  head-starts
   |%
-  ++  marbud
+  ::  Don't use directly, or else you might not have a parent.
+  ::
+  ::    Consider ++galaxy, ++star, ++planet, and ++ship-with-ancestors.
+  ::
+  ++  raw-ship
+    |=  her=ship
     ^-  test-core
     |%
-    ++  ships  ~[~bud ~marbud]
+    ++  ships  ~[her]
     ++  start
       ^-  (quip ph-event _..start)
-      :_  ..start
-      %-  zing
-      :~  (init ~bud)
-      ==
+      [(init her) ..start]
     ::
     ++  route
       |=  [who=ship ovo=unix-effect]
       ^-  (quip ph-event _..start)
       :_  ..start
       %-  zing
+      ::  This is a pretty bad heuristic, but in general galaxies will
+      ::  hit the first of these cases, and other ships will hit the
+      ::  second.
+      ::
       :~
         %-  on-dojo-output
-        :^  ~bud  who  ovo
-        :-  "+ /~bud/base/2/web/testing/udon"
+        :^  her  who  ovo
+        :-  "+ /{(scow %p her)}/base/2/web/testing/udon"
         |=  ~
-        (init ~marbud)
+        [%test-done &]~
       ::
         %-  on-dojo-output
-        :^  ~marbud  who  ovo
-        :-  "; ~bud is your neighbor"
+        :^  her  who  ovo
+        :-  "is your neighbor"
         |=  ~
         [%test-done &]~
       ==
     --
-  --
+  ++  galaxy
+    |=  her=ship
+    ?>  =(%czar (clan:title her))
+    (raw-ship her)
+  ::
+  ++  star
+    |=  her=ship
+    ?>  =(%king (clan:title her))
+    %+  compose-tests  (galaxy (^sein:title her))
+    (raw-ship her)
+  ::
+  ++  planet
+    |=  her=ship
+    ?>  =(%duke (clan:title her))
+    %+  compose-tests  (star (^sein:title her))
+    (raw-ship her)
+  ::
+  ++  ship-with-ancestors
+    |=  her=ship
+    %.  her
+    ?-  (clan:title her)
+      %czar  galaxy
+      %king  star
+      %duke  planet
+      %earl  ~|(%moon-not-implemented !!)
+      %pawn  ~|(%comet-not-implemented !!)
+    ==
 --

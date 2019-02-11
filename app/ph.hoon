@@ -63,7 +63,7 @@
     ::
       :-  %hi
       |%
-      ++  ships  ~[~bud ~marbud]
+      ++  ships  ~[~bud ~dev]
       ++  start
         ^-  (pair (list ph-event) _..start)
         :_  ..start
@@ -80,36 +80,25 @@
         (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
     ::
-      [%headstart-marbud marbud:head-starts]
+      [%headstart-bud (galaxy:head-starts ~bud)]
     ::
-      :-  %composed-child-sync
-      %+  compose-tests  marbud:head-starts
+      :-  %composed-child-boot
+      %+  compose-tests  (planet:head-starts ~linnup-torsyx)
       ^-  test-core
       |%
-      ++  ships  ~[~bud ~marbud ~linnup-torsyx]
+      ++  ships  ~
       ++  start
-        :_  ..start
-        (init ~linnup-torsyx)
+        [(dojo ~linnup-torsyx "|hi ~bud") ..start]
       ::
       ++  route
         |=  [who=ship ovo=unix-effect]
         ^-  (quip ph-event _..start)
         :_  ..start
-        %-  zing
-        :~
-          %-  on-dojo-output
-          :^  ~linnup-torsyx  who  ovo
-          :-  "; ~bud is your neighbor"
-          |=  ~
-          (dojo ~linnup-torsyx "|hi ~bud")
-        ::
-          %-  on-dojo-output
-          :^  ~linnup-torsyx  who  ovo
-          :-  "hi ~bud successful"
-          ::  :-  "; ~bud is your neighbor"
-          |=  ~
-          [%test-done &]~
-        ==
+        %-  on-dojo-output
+        :^  ~linnup-torsyx  who  ovo
+        :-  "hi ~bud successful"
+        |=  ~
+        [%test-done &]~
       --
     ::
       :-  %child-sync
