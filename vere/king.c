@@ -12,39 +12,110 @@
 static c3_c sag_w;
 
 /*
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::  wyrd: requires auth to a single relevant ship       ::
-::  doom: requires auth to the daemon itself            ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-|%                                                      ::
-+$  fate                                                ::  client to lord
-  $%  [%auth p=(unit ship) q=@]                         ::  authenticate client
-      [%wyrd p=ship q=wyrd]                             ::  ship action
-      [%doom p=doom]                                    ::  daemon command
-  ==                                                    ::
-+$  wyrd                                                ::  ship action
-  $%  [%susp ~]                                         ::  release this pier
-      [%vent p=ovum]                                    ::  generate event
-  ==                                                    ::
-+$  doom                                                ::  daemon command
-  $%  [%boot p=boot q=@pill r=@t]                       ::  boot (r=pier)
-      [%exit ~]                                         ::  end the daemon
-      [%pier p=(unit @t)]                               ::  acquire a pier
-      [%root p=ship q=wyrd]                             ::  admin ship actions
-  ==                                                    ::
-+$  boot                                                ::  boot procedures
-  $%  [%come p=(unit ship)]                             ::  mine a comet
-      [%dawn p=seed]                                    ::  real keys
-      [%fake p=who]                                     ::  fake keys
-  ==                                                    ::
-+$  pill                                                ::  boot sequence
-  (each path=@t pill=@)                                 ::
-+$  cede                                                ::  lord to client
-  $%  [%cede p=ship q[(list ovum)]                      ::  send cards
-      [%firm ~]                                         ::  accept command
-      [%deny p=@t]                                      ::  reject command
-  ==                                                    ::
---                                                      ::
+::  king/client protocol:
+::
+|%
+::  +fate: client to lord
+::
++$  fate
+  $%  ::  authenticate client
+      ::
+      [%auth p=(unit ship) q=@]
+      ::  ship action
+      ::
+      [%wyrd p=ship q=wyrd]
+      ::  daemon command
+      ::
+      [%doom p=doom]
+  ==
+::  +wyrd: ship action
+::
+::    Should require auth to a single relevant ship
+::
++$  wyrd
+  $%  :: release this pier
+      ::
+      ::    XX not implemented
+      ::
+      [%susp ~]
+      ::  generate event
+      ::
+      ::    XX partially implemented
+      ::
+      [%vent p=ovum]
+  ==
+::  +doom: daemon command
+::
+::    Should require auth to the daemon itself
+::
++$  doom
+  $%  ::  boot
+      ::
+      ::  p: boot procedure
+      ::  q: pill specifier
+      ::  r: path to pier
+      ::
+      [%boot p=boot q=@pill r=@t]
+      ::  end the daemon
+      ::
+      ::    XX not implemented
+      ::
+      [%exit ~]
+      ::  acquire a pier
+      ::
+      ::    XX used for restart, may not be right
+      ::
+      [%pier p=(unit @t)]
+      ::  admin ship actions
+      ::
+      ::    XX not implemented
+      ::
+      [%root p=ship q=wyrd]
+  ==
+::  +boot: boot procedures
+::
++$  boot
+  $%  ::  mine a comet
+      ::
+      ::  p: optionally under a specific star
+      ::
+      [%come p=(unit ship)]
+      ::  boot with real keys
+      ::
+      ::    And perform pre-boot validation, retrieve snapshot, etc.
+      ::
+      [%dawn p=seed]
+      ::  boot with fake keys
+      ::
+      ::  p: identity
+      ::
+      [%fake p=ship]
+  ==
+::  +pill: boot-sequence ingredients
+::
+::  %&: from filesystem path
+::  %|: from jammed pill
+::
++$  pill
+  (each path=@t pill=@)
+::  +cede: lord to client
+::
+::  XX not implemented
+::
++$  cede
+  $%  ::  send cards
+      ::
+      ::    XX presumably the effects of %vent in +wyrd
+      ::
+      [%cede p=ship q[(list ovum)]
+      ::  accept command
+      ::
+      [%firm ~]
+      ::  reject command
+      ::
+      [%deny p=@t]
+  ==
+--
 */
 
 void _king_auth(u3_noun auth);
