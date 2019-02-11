@@ -600,6 +600,7 @@
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
         u3_trac    tra_u;                   //  tracing information
+        void     (*bot_f)();               //  call when chis is up
       } u3_host;                            //  host == computer == process
 
     /**  New pier system.

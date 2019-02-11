@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
@@ -22,7 +23,8 @@
 
 /* Require unsigned char
  */
-STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ), "unsigned char required");
+STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ),
+              "unsigned char required");
 
 /* _main_readw(): parse a word from a string.
 */
@@ -248,7 +250,8 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
   }
 
-  c3_t imp_t = ( (0 != u3_Host.ops_u.who_c) && (4 == strlen(u3_Host.ops_u.who_c)) );
+  c3_t imp_t = ((0 != u3_Host.ops_u.who_c) &&
+                (4 == strlen(u3_Host.ops_u.who_c)));
 
   if ( u3_Host.ops_u.gen_c != 0 && u3_Host.ops_u.nuu == c3n ) {
     fprintf(stderr, "-G only makes sense when bootstrapping a new instance\n");
@@ -519,11 +522,16 @@ report(void)
 {
   printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
-  printf("sigsegv: %d.%d\n", (libsigsegv_version >> 8) & 0xff, libsigsegv_version & 0xff);
+  printf("sigsegv: %d.%d\n",
+         (libsigsegv_version >> 8) & 0xff,
+         libsigsegv_version & 0xff);
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
-  printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
+  printf("libh2o: %d.%d.%d\n",
+         H2O_LIBRARY_VERSION_MAJOR,
+         H2O_LIBRARY_VERSION_MINOR,
+         H2O_LIBRARY_VERSION_PATCH);
 }
 
 void
@@ -535,6 +543,96 @@ _stop_exit(c3_i int_i)
   u3_pier_exit();
 }
 
+/*
+  This is set to the the write-end of a pipe when Urbit is started in
+  daemon mode. It's meant to be used as a signal to the parent process
+  that the child process has finished booting.
+*/
+static c3_i _child_process_booted_signal_fd = -1;
+
+/*
+  This should be called whenever the ship has been booted enough to
+  handle commands from automation code. Specifically, once the Eyre's
+  `chis` interface is up and running.
+
+  In daemon mode, this signals to the parent process that it can
+  exit. Otherwise, it does nothing.
+
+  Once we've sent a signal with `write`, we close the file descriptor
+  and overwrite the global to make it impossible to accidentally do
+  this twice.
+*/
+static void _on_boot_completed_cb() {
+  c3_c buf[2] = {0,0};
+
+  if ( -1 == _child_process_booted_signal_fd ) {
+    return;
+  }
+
+  if ( 0 == write(_child_process_booted_signal_fd, buf, 1) ) {
+    c3_assert(!"_on_boot_completed_cb: Can't write to parent FD");
+  }
+
+  close(_child_process_booted_signal_fd);
+  _child_process_booted_signal_fd = -1;
+}
+
+/*
+  In daemon mode, run the urbit as a background process, but don't
+  exit from the parent process until the ship is finished booting.
+
+  We use a pipe to communicate between the child and the parent. The
+  parent waits for the child to write something to the pipe and
+  then exits. If the pipe is closed with nothing written to it, get
+  the exit status from the child process and also exit with that status.
+
+  We want the child to write to the pipe once it's booted, so we put
+  `_on_boot_completed_cb` into `u3_Host.bot_f`, which is NULL in
+  non-daemon mode. That gets called once the `chis` service is
+  available.
+
+  In both processes, we are good fork() citizens, and close all unused
+  file descriptors. Closing `pipefd[1]` in the parent process is
+  especially important, since the pipe needs to be closed if the child
+  process dies. When the pipe is closed, the read fails, and that's
+  how we know that something went wrong.
+
+  There are some edge cases around `WEXITSTATUS` that are not handled
+  here, but I don't think it matters.
+*/
+static void
+_fork_into_background_process()
+{
+  c3_i pipefd[2];
+
+  if ( 0 != pipe(pipefd) ) {
+    c3_assert(!"Failed to create pipe");
+  }
+
+  pid_t childpid = fork();
+
+  if ( 0 == childpid ) {
+    close(pipefd[0]);
+    _child_process_booted_signal_fd = pipefd[1];
+    u3_Host.bot_f = _on_boot_completed_cb;
+    return;
+  }
+
+  close(pipefd[1]);
+  close(0);
+  close(1);
+  close(2);
+
+  c3_c buf[2] = {0,0};
+  if ( 1 == read(pipefd[0], buf, 1) ) {
+    exit(0);
+  }
+
+  c3_i status;
+  wait(&status);
+  exit(WEXITSTATUS(status));
+}
+
 c3_i
 main(c3_i   argc,
      c3_c** argv)
@@ -544,6 +642,10 @@ main(c3_i   argc,
   if ( c3n == _main_getopt(argc, argv) ) {
     u3_ve_usage(argc, argv);
     return 1;
+  }
+
+  if ( c3y == u3_Host.ops_u.dem ) {
+    _fork_into_background_process();
   }
 
   if ( c3y == u3_Host.ops_u.rep ) {
