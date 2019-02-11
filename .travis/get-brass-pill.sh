@@ -2,6 +2,10 @@
 set -euo pipefail
 set -x
 
+if [ ! -f ./pin-arvo-commit.txt ]; then
+  exit 0
+fi
+
 if [ ! -f ./pin-brass-pill.txt ]; then
   echo "missing .travis/pin-brass-pill.txt"
   exit 1
