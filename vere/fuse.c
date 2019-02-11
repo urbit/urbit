@@ -465,7 +465,7 @@ _fuse_ll_readdir(fuse_req_t             req_u,
                  c3_f                   off_f,
                  struct fuse_file_info* ffi_u)
 {
-  uL(fprintf(uH, "ll_readdir %ld %ld %lld\n", ino_i, max_z, off_f));
+  uL(fprintf(uH, "ll_readdir %ld %ld %" PRIu64 "\n", ino_i, max_z, off_f));
   {
     u3_fnod* nod_u = _inode_get(ino_i);
 
@@ -577,7 +577,7 @@ _fuse_ll_read(fuse_req_t             req_u,
               c3_f                   off_f,
               struct fuse_file_info* ffi_u)
 {
-  uL(fprintf(uH, "ll_read %ld %ld %lld\n", ino_i, max_z, off_f));
+  uL(fprintf(uH, "ll_read %ld %ld %" PRIu64 "\n", ino_i, max_z, off_f));
   {
     u3_fnod* nod_u = _inode_get(ino_i);
 
