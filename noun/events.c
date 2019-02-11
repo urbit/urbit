@@ -753,24 +753,22 @@ _ce_image_fine(u3e_image* img_u,
 /*
   u3e_save(): save current changes.
 
-  First check that we are not in dry-run mode and that `_ce_patch_compose`
-  returns non-NULL. In either case, do nothing, otherwise update the
-  snapshot:
+  If we are in dry-run mode, do nothing.
 
+  First, call `_ce_patch_compose` to write all dirty pages to disk and
+  clear protection and dirty bits. If there were no dirty pages to write,
+  then we're done.
+
+  - Sync the patch files to disk.
+  - Verify the patch (because why not?)
+  - Write the patch data into the image file (This is idempotent.).
   - Sync the image file.
   - Delete the patchfile and free it.
-  - Write all dirty pages to disk; clear protection and dirty bits.
-  - Sync the patch files to disk
-  - Verify the patch - because why not?
-  - Write the patch data into the image file. (This is idempotent).
-  - Delete and free the patches.
 
-  XX What does this mean? "This has to block the main thread.
-  All further processing can happen in a separate thread, though we
-  can't save again till this completes."
-
-  XX: When does `_ce_patch_compose` return NULL? When there's no loom
-  changes?
+  Once we've written the dirty pages to disk (and have reset their dirty bits
+  and protection flags), we *could* handle the rest of the checkpointing
+  process in a separate thread, but we'd need to wait until that finishes
+  before we try to make another snapshot.
 */
 void
 u3e_save(void)

@@ -414,7 +414,8 @@ _pier_work_send(u3_writ* wit_u)
   If there are no unsnapshotted events, then do nothing, otherwise, send
   `[%save ~]` to the slave.
 
-  XX Should we report success before we update `pir_u->sav_u->ent_d`?
+  XX Should we wait on some report of success before we update
+  `pir_u->sav_u->ent_d`?
 */
 void
 u3_pier_work_save(u3_pier* pir_u)
