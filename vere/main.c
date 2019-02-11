@@ -233,7 +233,6 @@ _main_getopt(c3_i argc, c3_c** argv)
     }
 
     u3_Host.dir_c = strdup(argv[optind]);
-    return c3y;
   }
 
   if ( c3y == u3_Host.ops_u.bat ) {
@@ -324,15 +323,13 @@ _main_getopt(c3_i argc, c3_c** argv)
   if ( u3_Host.ops_u.url_c != 0 && u3_Host.ops_u.pil_c != 0 ) {
     fprintf(stderr, "-B and -u cannot be used together\n");
     return c3n;
-
-  } else if ( u3_Host.ops_u.nuu == c3y
+  }
+  else if ( u3_Host.ops_u.nuu == c3y
            && u3_Host.ops_u.url_c == 0 ) {
            // XX find a way to re-enable -s (auto-pill)
            // && u3_Host.ops_u.git == c3n ) {
-
     u3_Host.ops_u.url_c =
       "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
-
   }
   // XX find a way to re-enable -A (fastboot)
   // else if ( u3_Host.ops_u.nuu == c3y
@@ -358,6 +355,8 @@ _main_getopt(c3_i argc, c3_c** argv)
       return c3n;
     }
   }
+
+  return c3y;
 }
 
 /* u3_ve_usage(): print usage and exit.
