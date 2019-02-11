@@ -94,25 +94,20 @@ static c3_c sag_w;
 ::  +pill: boot-sequence ingredients
 ::
 +$  pill
-  $%  ::  %fast: fast-boot with %zuse and vanes pre-installed (+solid)
-      ::
-      ::  p: jammed pill
-      ::  q: optional %into ovum overriding that of .p
-      ::
-      [%fast p=@ q=(unit ovum)]
-      ::  %full: complete bootstrapping sequence (+brass)
-      ::
-      ::  p: jammed pill
-      ::
-      [%full p=@]
-      ::  %lite: lightweight boot sequence (+ivory)
-      ::
-      ::  p: jammed pill
-      ::  q: module ova
-      ::  r: userspace ova
-      ::
-      [%lite p=@ q=(list ovum) r=(list ovum)]
-  ==
+  %+  each
+    ::  %&: complete pill (either +brass or +solid)
+    ::
+    ::  p: jammed pill
+    ::  q: optional %into ovum overriding that of .p
+    ::
+    [p=@ q=(unit ovum)]
+  ::  %|: incomplete pill (+ivory)
+  ::
+  ::  p: jammed pill
+  ::  q: module ova
+  ::  r: userspace ova
+  ::
+  [p=@ q=(list ovum) r=(list ovum)]
 ::  +cede: lord to client
 ::
 ::  XX not implemented
@@ -432,7 +427,7 @@ _boothack_pill(void)
   //  XX stat first to print error on failure?
   //
 
-  return u3nc(c3__full, u3m_file(u3_Host.ops_u.pil_c));
+  return u3nt(c3y, u3m_file(u3_Host.ops_u.pil_c), u3_nul);
 }
 
 /* _boothack_key(): parse a private key file or value

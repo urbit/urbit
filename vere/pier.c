@@ -863,12 +863,19 @@ _pier_boot_vent(u3_pier* pir_u)
   //  extract boot formulas and module/userspace ova from pill
   //
   {
+    u3_noun pil_p, pil_q, pil_r;
     u3_noun pro;
 
     c3_assert( c3y == u3du(pir_u->pil) );
-    c3_assert( c3__full == u3h(pir_u->pil) );
 
-    pro = u3m_soft(0, u3ke_cue, u3k(u3t(pir_u->pil)));
+    if ( c3y == u3h(pir_u->pil) ) {
+      u3x_trel(pir_u->pil, 0, &pil_p, &pil_q);
+    }
+    else {
+      u3x_qual(pir_u->pil, 0, &pil_p, &pil_q, &pil_r);
+    }
+
+    pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
 
     if ( 0 != u3h(pro) ) {
       fprintf(stderr, "boot: failed: unable to parse pill\r\n");
@@ -877,8 +884,37 @@ _pier_boot_vent(u3_pier* pir_u)
 
     u3x_trel(u3t(pro), &bot, &mod, &use);
     u3k(bot); u3k(mod); u3k(use);
-    u3z(pro);
 
+    //  optionally replace filesystem in userspace
+    //
+    if ( c3y == u3h(pir_u->pil) ) {
+      if ( u3_nul != pil_q ) {
+        u3_noun new = u3nc(u3k(u3t(pil_q)), u3_nul);
+        u3_noun ova = use;
+        u3_noun ovo;
+
+        while ( u3_nul != ova ) {
+          ovo = u3h(ova);
+
+          if ( c3__into != u3h(u3t(ovo)) ) {
+            new = u3nc(u3k(ovo), new);
+          }
+
+          ova = u3t(ova);
+        }
+
+        u3z(use);
+        use = u3kb_flop(new);
+      }
+    }
+    //  prepend %lite module and userspace ova
+    //
+    else {
+      mod = u3kb_weld(u3k(pil_q), mod);
+      use = u3kb_weld(u3k(pil_r), use);
+    }
+
+    u3z(pro);
     u3z(pir_u->pil);
     pir_u->pil = u3_nul;
   }
