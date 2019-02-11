@@ -8,9 +8,9 @@
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
-#include <curses.h>
+#include <ncurses/curses.h>
 #include <termios.h>
-#include <term.h>
+#include <ncurses/term.h>
 #include <dirent.h>
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
