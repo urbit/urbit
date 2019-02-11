@@ -171,7 +171,6 @@
   =+  zus==('z' tip)
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
-  ~&  [%poke-reload-desk-nam way fil]
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
 ::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::

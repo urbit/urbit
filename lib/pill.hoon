@@ -14,12 +14,19 @@
     :~  ::  sys/zuse: standard library
         ::
         [%$ /zuse]
-        ::  sys/vane/http-client: http client
+        ::  TODO: I really want these to be named http-client and http-server,
+        ::  but this interacts badly with every piece of the system which
+        ::  assumes that vane names are one letter, and that one letter is the
+        ::  first letter of the file. This assumption is threaded through way
+        ::  too many places in the entire system to modify it while doing
+        ::  something else.
         ::
-        [%http-client /vane/http-client]
-        ::  sys/vane/http-server: http server
+        ::  sys/vane/lient: http client
         ::
-        [%http-server /vane/http-server]
+        [%l /vane/lient]
+        ::  sys/vane/rver: http server
+        ::
+        [%r /vane/rver]
         ::  sys/vane/ames: network
         ::
         [%a /vane/ames]

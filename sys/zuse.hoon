@@ -7405,7 +7405,7 @@
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
-      [%http-server task:able:http-server]
+      [%r task:able:http-server]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7417,7 +7417,7 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
-      [%http-server gift:able:http-server]
+      [%r gift:able:http-server]
   ==
 ::
 ++  unix-task                                           ::  input from unix

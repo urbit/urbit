@@ -243,12 +243,12 @@
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
     ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
-    ++  slur-http-server
-      ~/  %slur-http-server
-      |=({gat/vase hil/mill} =+(%http-server (slur gat hil)))
-    ++  slur-http-client
-      ~/  %slur-http-client
-      |=({gat/vase hil/mill} =+(%http-client (slur gat hil)))
+    ++  slur-r
+      ~/  %slur-r
+      |=({gat/vase hil/mill} =+(%r (slur gat hil)))
+    ++  slur-l
+      ~/  %slur-l
+      |=({gat/vase hil/mill} =+(%l (slur gat hil)))
     ::
     ++  slur-pro                                        ::  profiling slur
       ~/  %slur-pro
@@ -263,8 +263,8 @@
         $g  (slur-g gat hil)
         $j  (slur-j gat hil)
       ::
-        %http-client  (slur-http-client gat hil)
-        %http-server  (slur-http-server gat hil)
+        %l  (slur-l gat hil)
+        %r  (slur-r gat hil)
       ==
     ::
     ++  song                                            ::  reduce metacard
@@ -467,7 +467,7 @@
       {@ $sync *}  %c
       {@ $term *}  %d
       ::  TODO: %http-server in the interface.
-      {@ $http-server *}  %http-server
+      {@ $http-server *}  %r
       {@ $behn *}  %b
     ==
   ::

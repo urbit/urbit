@@ -1314,8 +1314,8 @@
         $well  `%e
         $wind  `%j
         $wipe  `%f
-        $serve    `%http-server
-        $connect  `%http-server
+        $serve    `%r
+        $connect  `%r
       ==
     --
   --

@@ -1,6 +1,6 @@
 /+  *test
 ::
-/=  http-client-raw  /:  /===/sys/vane/http-client  /!noun/
+/=  http-client-raw  /:  /===/sys/vane/lient  /!noun/
 ::
 !:
 ::
