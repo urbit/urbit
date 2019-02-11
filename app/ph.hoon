@@ -82,7 +82,7 @@
       |%
       ++  start
         ^-  (trel (list ship) (list ph-event) _..start)
-        :+  ~[~bud ~marbud]
+        :+  ~[~bud ~marbud ~linnup-torsyx]
           %-  zing
           :~  (init ~bud)
               ::  (dojo ~bud "\"magic-go\":[.^(")
@@ -98,17 +98,37 @@
       ++  route
         |=  [who=ship ovo=unix-effect]
         ^-  (list ph-event)
+        %-  zing
+        :~
+          %-  on-dojo-output
+          :^  ~bud  who  ovo
+          :-  "+ /~bud/base/2/web/testing/udon"
+          ^-  $-($~ (list ph-event))
+          |=  ~
+          (init ~marbud)
         ::
-        ::  This is actually super fragile.  If we start ~marbud any
-        ::  earlier in the process, we get a crash.  The crash may be
-        ::  harmless, not sure.
+          %-  on-dojo-output
+          :^  ~marbud  who  ovo
+          :-  "; ~bud is your neighbor"
+          ^-  $-($~ (list ph-event))
+          |=  ~
+          (init ~linnup-torsyx)
         ::
-        %-  on-dojo-output
-        :^  ~bud  who  ovo
-        :-  "~zod not responding still trying"
-        ^-  $-($~ (list ph-event))
-        |=  ~
-        (init ~marbud)
+          %-  on-dojo-output
+          :^  ~linnup-torsyx  who  ovo
+          :-  "; ~bud is your neighbor"
+          ^-  $-($~ (list ph-event))
+          |=  ~
+          (dojo ~linnup-torsyx "|hi ~bud")
+        ::
+          %-  on-dojo-output
+          :^  ~linnup-torsyx  who  ovo
+          :-  "hi ~bud successful"
+          ::  :-  "; ~bud is your neighbor"
+          ^-  $-($~ (list ph-event))
+          |=  ~
+          [%test-done &]~
+        ==
       --
       ::  (init ~zod)
       ::  (init ~marzod)
@@ -223,12 +243,16 @@
   ::  ~&  [%diff-aqua-effect way who.ova]
   ?>  ?=([@tas @ ~] way)
   =/  lab  i.way
+  =/  test-cor  (~(get by test-cores) lab)
+  ?~  test-cor
+    ~&  [%ph-dropping lab]
+    `this
   %+  run-events  lab
   |-  ^-  (list ph-event)
   ?~  ovo.ova
     ~
   ::  ~&  [%diff-aqua-effect-i way -.q.i.ovo.ova]
   %+  weld
-    (route:cor:(~(got by test-cores) lab) who.ova i.ovo.ova)
+    (route:cor.u.test-cor who.ova i.ovo.ova)
   $(ovo.ova t.ovo.ova)
 --

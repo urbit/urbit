@@ -572,7 +572,7 @@
   ?-  -.ovo
       %init-ship
     =/  prev  (~(get by init-cache) who.ovo)
-    ?:  &(?=(^ prev) !=(who.ovo ~marbud))
+    ?:  &(?=(^ prev) (lth who.ovo ~marzod))
       ~&  [%loading-cached-ship who.ovo]
       =.  this  (restore-ships ~[who.ovo] init-cache)
       (pe who.ovo)
