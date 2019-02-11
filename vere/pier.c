@@ -2125,7 +2125,7 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
   */
 }
 
-/* u3_pier_mark(): gc the piers
+/* u3_pier_mark(): mark all Loom allocations in all u3_pier structs.
 */
 c3_w
 u3_pier_mark(FILE* fil_u)

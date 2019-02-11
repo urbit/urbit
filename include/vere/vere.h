@@ -1289,7 +1289,7 @@
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
 
-      /* u3_pier_mark(): gc the piers
+      /* u3_pier_mark(): mark all Loom allocations in all u3_pier structs.
       */
         c3_w
         u3_pier_mark(FILE* fil_u);
