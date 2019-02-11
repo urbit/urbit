@@ -93,11 +93,26 @@ static c3_c sag_w;
   ==
 ::  +pill: boot-sequence ingredients
 ::
-::  %&: from filesystem path
-::  %|: from jammed pill
-::
 +$  pill
-  (each path=@t pill=@)
+  $%  ::  %fast: fast-boot with %zuse and vanes pre-installed (+solid)
+      ::
+      ::  p: jammed pill
+      ::  q: optional %into ovum overriding that of .p
+      ::
+      [%fast p=@ q=(unit ovum)]
+      ::  %full: complete bootstrapping sequence (+brass)
+      ::
+      ::  p: jammed pill
+      ::
+      [%full p=@]
+      ::  %lite: lightweight boot sequence (+ivory)
+      ::
+      ::  p: jammed pill
+      ::  q: module ova
+      ::  r: userspace ova
+      ::
+      [%lite p=@ q=(list ovum) r=(list ovum)]
+  ==
 ::  +cede: lord to client
 ::
 ::  XX not implemented
@@ -399,7 +414,7 @@ _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
-/* _boothack_pill(): parse CLI pill arguments into (each path pill)
+/* _boothack_pill(): parse CLI pill arguments into +pill specifier
 */
 static u3_noun
 _boothack_pill(void)
@@ -412,7 +427,12 @@ _boothack_pill(void)
     exit(1);
   }
 
-  return u3nc(c3y, u3i_string(u3_Host.ops_u.pil_c));
+  fprintf(stderr, "boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
+
+  //  XX stat first to print error on failure?
+  //
+
+  return u3nc(c3__full, u3m_file(u3_Host.ops_u.pil_c));
 }
 
 /* _boothack_key(): parse a private key file or value

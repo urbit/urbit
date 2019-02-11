@@ -666,7 +666,6 @@
       */
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
-          c3_c*            sys_c;               //  pill file
           c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
@@ -678,6 +677,7 @@
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
           u3_noun          bot;                 //  boot event XX review
+          u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
@@ -1226,7 +1226,7 @@
       /* u3_pier_create(): create a pier, loading existing.
       */
         u3_pier*
-        u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c);
+        u3_pier_create(c3_w wag_w, c3_c* pax_c);
 
       /* u3_pier_interrupt(): interrupt running process.
       */

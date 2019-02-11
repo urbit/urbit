@@ -846,160 +846,168 @@ _pier_disk_load_commit(u3_pier* pir_u,
 }
 
 /* _pier_boot_vent(): create and enqueue boot sequence
+**
+**  per cgy:
+**    this new boot sequence is almost, but not quite,
+**    the right thing.  see new arvo.
 */
 static void
 _pier_boot_vent(u3_pier* pir_u)
 {
-  c3_w inx_w = 1;
+  //  bot: boot formulas
+  //  mod: module ova
+  //  use: userpace ova
+  //
+  u3_noun bot, mod, use;
 
-  if ( !u3A->sys ) {
-    fprintf(stderr, "boot: loading pill %s\r\n", pir_u->sys_c);
-
-    u3A->sys = u3m_file(pir_u->sys_c);
-  }
-
+  //  extract boot formulas and module/userspace ova from pill
+  //
   {
-    u3_noun lal = u3ke_cue(u3k(u3A->sys));
+    u3_noun pro;
 
-    /* this new boot sequence is almost, but not quite,
-    ** the right thing.  see new arvo.
-    */
-    {
-      u3_noun who = u3i_chubs(2, pir_u->who_d);
-      u3_noun bot, mod, fil;
+    c3_assert( c3y == u3du(pir_u->pil) );
+    c3_assert( c3__full == u3h(pir_u->pil) );
 
-      u3r_trel(lal, &bot, &mod, &fil);
-      pir_u->but_d = 0;
+    pro = u3m_soft(0, u3ke_cue, u3k(u3t(pir_u->pil)));
 
-      /* insert boot sequence directly
-      */
-      {
-        u3_noun seq = u3k(bot);
-        {
-          u3_noun all = seq;
-
-          pir_u->but_d += u3kb_lent(u3k(all));
-          while ( all ) {
-            _pier_insert(pir_u, 0, u3k(u3h(all)));
-            inx_w++;
-            all = u3t(all);
-          }
-        }
-        u3z(seq);
-      }
-
-      /* insert module sequence, prepending first identity event
-      */
-      {
-        u3_noun seq = u3k(mod);
-
-        //  prepend initial entropy
-        //  XX u3_pier_rand or _pier_zen?
-        //  XX move to _pier_loop_wake?
-        //
-        {
-          c3_w    eny_w[16];
-          u3_noun eny;
-
-          c3_rand(eny_w);
-          eny = u3i_words(16, eny_w);
-
-          u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
-          u3_noun car = u3nc(c3__wack, eny);
-          u3_noun ovo = u3nc(wir, car);
-
-          seq = u3nc(ovo, seq);
-        }
-
-        //  prepend identity event to module sequence
-        //  to set single-home
-        //
-        {
-          u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
-          u3_noun car = u3nc(c3__whom, u3k(who));
-          u3_noun ovo = u3nc(wir, car);
-
-          seq = u3nc(ovo, seq);
-        }
-
-        /* insert with timestamp
-        */
-        {
-          u3_noun all = seq;
-
-          pir_u->but_d += u3kb_lent(u3k(all));
-
-          while ( all ) {
-            _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
-            inx_w++;
-            all = u3t(all);
-          }
-        }
-      }
-
-      /*  XX moar boot sequence woes
-      */
-      {
-        //  partially duplicates _pier_loop_wake()
-        //
-        c3_l cod_l;
-
-        cod_l = u3a_lush(c3__ames);
-        {
-          //  stash domain for fake effect
-          //  XX this is horrible
-          //
-          u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
-                        u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
-
-
-          //  send a fake effect to bring up listeners and configure domains
-          //  XX horrible hack
-          //
-          u3_ames_ef_turf(pir_u, u3k(tuf));
-        }
-
-        u3_ames_ef_bake(pir_u);
-        u3a_lop(cod_l);
-
-        cod_l = u3a_lush(c3__behn);
-        u3_behn_ef_bake(pir_u);
-        u3a_lop(cod_l);
-      }
-
-      /* insert legacy boot event
-      */
-      {
-        u3_noun ovo;
-
-        /* make legacy boot event
-        */
-        {
-          u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-
-          c3_assert( 0 != pir_u->bot);
-          ovo = u3nt(wir, c3__boot, pir_u->bot);
-          pir_u->bot = 0;
-        }
-        _pier_insert_ovum(pir_u, 0, ovo);
-      }
-
-      /* insert filesystem install events
-      */
-      {
-        u3_noun all = fil;
-
-        while ( all ) {
-          _pier_insert_ovum(pir_u, 0, u3k(u3h(all)));
-          all = u3t(all);
-        }
-      }
-
-      u3z(who);
+    if ( 0 != u3h(pro) ) {
+      fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+      exit(1);
     }
 
-    u3z(lal);
+    u3x_trel(u3t(pro), &bot, &mod, &use);
+    u3k(bot); u3k(mod); u3k(use);
+    u3z(pro);
+
+    u3z(pir_u->pil);
+    pir_u->pil = u3_nul;
   }
+
+  //  prepend entropy to the module sequence
+  //
+  //    XX also copy to _pier_loop_wake?
+  //
+  {
+    c3_w    eny_w[16];
+    c3_rand(eny_w);
+
+    u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    u3_noun car = u3nc(c3__wack, u3i_words(16, eny_w));
+
+    mod = u3nc(u3nc(wir, car), mod);
+  }
+
+  //  prepend identity to the module sequence, setting single-home
+  //
+  {
+    u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    u3_noun car = u3nc(c3__whom, u3i_chubs(2, pir_u->who_d));
+
+    mod = u3nc(u3nc(wir, car), mod);
+  }
+
+  //  insert boot sequence directly
+  //
+  //    Note that these are not ovum or (pair @da ovum) events,
+  //    but raw nock formulas to be directly evaluated as the
+  //    subject of the lifecycle formula [%2 [%0 3] %0 2].
+  //
+  {
+    u3_noun fol = bot;
+
+    //  initialize the boot barrier
+    //
+    //    XX need a separate barrier for just the lifecycle formula
+    //
+    pir_u->but_d = u3kb_lent(u3k(fol));
+
+    while ( u3_nul != fol ) {
+      _pier_insert(pir_u, 0, u3k(u3h(fol)));
+      fol = u3t(fol);
+    }
+  }
+
+  //  insert the module sequence as normally events
+  //
+  //    i.e., will be (pair @da ovum), as will all the following
+  //
+  {
+    u3_noun ova = mod;
+    //  add to the boot barrier
+    //
+    pir_u->but_d += u3kb_lent(u3k(ova));
+
+    while ( u3_nul != ova ) {
+      _pier_insert_ovum(pir_u, 0, u3k(u3h(ova)));
+      ova = u3t(ova);
+    }
+  }
+
+  //  XX moar boot sequence woes
+  //
+  //    some i/o must be initialized before legacy boot
+  //
+  {
+    //  partially duplicates _pier_loop_wake()
+    //
+    c3_l cod_l;
+
+    cod_l = u3a_lush(c3__ames);
+    {
+      //  stash domain for fake effect
+      //
+      //    XX this is horrible
+      //
+      u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
+                    u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
+
+
+      //  send a fake effect to bring up listeners and configure domains
+      //
+      //    XX horrible hack
+      //
+      u3_ames_ef_turf(pir_u, u3k(tuf));
+    }
+
+    u3_ames_ef_bake(pir_u);
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__behn);
+    u3_behn_ef_bake(pir_u);
+    u3a_lop(cod_l);
+  }
+
+  //  insert legacy boot event
+  //
+  {
+    //  XX do something about this wire
+    //  XX route directly to %jael?
+    //
+    c3_assert( c3y == u3du(pir_u->bot) );
+
+    u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
+    u3_noun car = u3nc(c3__boot, pir_u->bot);
+    u3_noun ovo = u3nc(wir, car);
+
+    _pier_insert_ovum(pir_u, 0, ovo);
+
+    pir_u->bot = u3_nul;
+  }
+
+  //  insert userspace events
+  //
+  //    Currently just the initial filesystem
+  //
+  {
+    u3_noun ova = use;
+
+    while ( u3_nul != ova ) {
+      _pier_insert_ovum(pir_u, 0, u3k(u3h(ova)));
+      ova = u3t(ova);
+    }
+  }
+
+  u3z(bot); u3z(mod); u3z(use);
 }
 
 /* _pier_disk_consolidate(): integrate loaded information.
@@ -1492,58 +1500,38 @@ _pier_work_create(u3_pier* pir_u)
 /* u3_pier_create(): create a pier, loading existing.
 */
 u3_pier*
-u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c)
+u3_pier_create(c3_w wag_w, c3_c* pax_c)
 {
-  u3_pier* pir_u;
- 
-  /* create pier
-  */
-  {
-    pir_u = c3_calloc(sizeof *pir_u);
+  //  create pier
+  //
+  u3_pier* pir_u = c3_calloc(sizeof *pir_u);
 
-    pir_u->pax_c = c3_malloc(1 + strlen(pax_c));
-    strcpy(pir_u->pax_c, pax_c);
+  pir_u->pax_c = pax_c;
+  pir_u->wag_w = wag_w;
 
-    if ( 0 != sys_c ) {
-      pir_u->sys_c = c3_malloc(1 + strlen(sys_c));
-      strcpy(pir_u->sys_c, sys_c);
-    }
+  pir_u->sam_u = c3_calloc(sizeof(u3_ames));
+  pir_u->teh_u = c3_calloc(sizeof(u3_behn));
+  pir_u->unx_u = c3_calloc(sizeof(u3_unix));
+  pir_u->sav_u = c3_calloc(sizeof(u3_save));
 
-    pir_u->wag_w = wag_w;
-    pir_u->gen_d = 0;
-    pir_u->key_d[0] = pir_u->key_d[1] = pir_u->key_d[2] = pir_u->key_d[3] = 0;
-
-    pir_u->ent_u = pir_u->ext_u = 0;
-    pir_u->log_u = 0;
-    pir_u->god_u = 0;
-
-    pir_u->sam_u = c3_calloc(sizeof(u3_ames));
-    pir_u->teh_u = c3_calloc(sizeof(u3_behn));
-    pir_u->unx_u = c3_calloc(sizeof(u3_unix));
-    pir_u->sav_u = c3_calloc(sizeof(u3_save));
+  //  start the serf process
+  //
+  if ( !(pir_u->god_u = _pier_work_create(pir_u)) ) {
+    return 0;
   }
 
-  /* start process
-  */
-  {
-    if ( !(pir_u->god_u = _pier_work_create(pir_u)) ) {
-      return 0;
-    }
+  //  install in the pier table
+  //
+  if ( 0 == u3K.all_w ) {
+    u3K.all_w = 16;
+    u3K.tab_u = c3_malloc(16 * sizeof(u3_pier*));
   }
+  if ( u3K.len_w == u3K.all_w ) {
+    u3K.all_w = 2 * u3K.all_w;
+    u3K.tab_u = c3_realloc(u3K.tab_u, u3K.all_w * sizeof(u3_pier*));
+  }
+  u3K.tab_u[u3K.len_w++] = pir_u;
 
-  /* install in pier table
-  */
-  {
-    if ( 0 == u3K.all_w ) {
-      u3K.all_w = 16;
-      u3K.tab_u = c3_malloc(16 * sizeof(u3_pier*));
-    }
-    if ( u3K.len_w == u3K.all_w ) {
-      u3K.all_w = 2 * u3K.all_w;
-      u3K.tab_u = c3_realloc(u3K.tab_u, u3K.all_w * sizeof(u3_pier*));
-    }
-    u3K.tab_u[u3K.len_w++] = pir_u;
-  }
   return pir_u;
 }
 
@@ -2013,85 +2001,57 @@ u3_pier_stub(void)
   }
 }
 
-/* _pier_boot_make(): create/load a pier.
-*/
-static u3_pier*
-_pier_boot_make(c3_w wag_w, u3_noun pax, u3_noun sys)
-{
-  c3_c*    pax_c = u3r_string(pax);
-  c3_c*    sys_c;
-  u3_pier* pir_u;
-
-  if ( u3_nul == sys ) {
-    sys_c = 0;
-  }
-  else {
-    c3_assert( c3y == u3h(sys) );
-    sys_c = u3r_string(u3t(sys));
-  }
-
-  pir_u = u3_pier_create(wag_w, pax_c, sys_c);
-
-  u3z(pax); free(pax_c);
-  u3z(sys); free(sys_c);
-
-  pir_u->por_s = 0;
-
-  return pir_u;
-}
-
 /* u3_pier_boot(): start the new pier system.
 */
 void
-u3_pier_boot(c3_w    wag_w,                 //  config flags
+u3_pier_boot(c3_w  wag_w,                   //  config flags
              u3_noun who,                   //  identity
              u3_noun ven,                   //  boot event
              u3_noun pil,                   //  type-of/path-to pill
              u3_noun pax)                   //  path to pier
 {
-  u3_pier* pir_u;
+  //  make/load pier
+  //
+  u3_pier* pir_u = u3_pier_create(wag_w, u3r_string(pax));
 
-  /* make/load pier
-  */
-  pir_u = _pier_boot_make(wag_w, pax, pil);
-
-  /* set boot params
-  */
+  //  set boot params
+  //
   {
     {
       u3_noun how = u3dc("scot", 'p', u3k(who));
 
       pir_u->who_c = u3r_string(how);
-      u3z(how);
       fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
+
+      u3z(how);
     }
 
     u3r_chubs(0, 2, pir_u->who_d, who);
-    // u3r_chubs(0, 1, pir_u->tic_d, tic);
-    // u3r_chubs(0, 1, pir_u->sec_d, sec);
 
-    pir_u->bot = ven;
-
-    u3z(who);
-    // u3z(tic);
-    // u3z(sec);
+    pir_u->bot = u3k(ven);
+    pir_u->pil = u3k(pil);
   }
 
-  /* initialize boot i/o
-  */
+  //  initialize boot i/o
+  //
   _pier_loop_init_pier(pir_u);
 
-  /* initialize polling handle
-  */
+  //  initialize polling handle
+  //
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
 
-  /* initialize loop - move to _pier_boot_make().
-  */
+  //  initialize loop
+  //
   _pier_loop_init();
 
-  /* XX: _pier_loop_exit() should be called somewhere, but is not.
-  */
+  //  XX: _pier_loop_exit() should be called somewhere, but is not.
+  //
+
+  u3z(who);
+  u3z(ven);
+  u3z(pil);
+  u3z(pax);
 }
 
 /* u3_pier_stay(): resume the new pier system.
@@ -2099,23 +2059,25 @@ u3_pier_boot(c3_w    wag_w,                 //  config flags
 void
 u3_pier_stay(c3_w wag_w, u3_noun pax)
 {
-  u3_pier* pir_u;
+  //  make/load pier
+  //
+  u3_pier* pir_u = u3_pier_create(wag_w, u3r_string(pax));
 
-  /* make/load pier
-  */
-  pir_u = _pier_boot_make(wag_w, pax, u3_nul);
+  //  initialize boot i/o
+  //
+  _pier_loop_init_pier(pir_u);
 
-  /* initialize polling handle
-  */
+  //  initialize polling handle
+  //
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
 
-  _pier_loop_init_pier(pir_u);
-
-  /* initialize loop - move to _pier_boot_make().
-  */
+  //  initialize loop
+  //
   _pier_loop_init();
 
-  /* XX: _pier_loop_exit() should be called somewhere, but is not.
-  */
+  //  XX: _pier_loop_exit() should be called somewhere, but is not.
+  //
+
+  u3z(pax);
 }
