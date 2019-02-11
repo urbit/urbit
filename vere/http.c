@@ -1608,7 +1608,7 @@ u3_http_ef_http_server(c3_l    sev_l,
       u3_noun response_header, data, complete;
       u3_noun status, headers;
       if (c3y == u3r_trel(u3t(response), &response_header, &data, &complete) &&
-          c3y == u3r_cell(u3t(response_header), &status, &headers)) {
+          c3y == u3r_cell(response_header, &status, &headers)) {
         _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
                             u3k(complete));
       } else {
