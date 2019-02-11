@@ -408,7 +408,14 @@ _pier_work_send(u3_writ* wit_u)
   u3_newt_write(&god_u->inn_u, u3k(wit_u->mat), wit_u);
 }
 
-/* u3_pier_work_save(): tell worker to save checkpoint.
+/*
+  u3_pier_work_save(): tell worker to save checkpoint.
+
+  If there are no unsnapshotted events, then do nothing, otherwise, send
+  `[%save ~]` to the slave.
+
+  XX Should we wait on some report of success before we update
+  `pir_u->sav_u->ent_d`?
 */
 void
 u3_pier_work_save(u3_pier* pir_u)
@@ -418,9 +425,6 @@ u3_pier_work_save(u3_pier* pir_u)
 
   if ( god_u->dun_d > sav_u->ent_d ) {
     u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__save, 0)), 0);
-
-    //  XX report success first?
-    //
     sav_u->ent_d = god_u->dun_d;
   }
 }

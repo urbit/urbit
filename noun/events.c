@@ -7,7 +7,7 @@
 
 #include "all.h"
 
-#if 0
+#ifdef U3_SNAPSHOT_VALIDATION
 /* Image check.
 */
 struct {
@@ -80,7 +80,7 @@ _ce_maplloc(c3_w len_w)
                (PROT_READ | PROT_WRITE),
                (MAP_ANON | MAP_PRIVATE),
                -1, 0);
-  
+
   if ( -1 == (c3_ps)map_v ) {
     c3_assert(0);
   }
@@ -97,10 +97,10 @@ _ce_maplloc(c3_w len_w)
 */
 static void
 _ce_mapfree(void* map_v)
-{ 
+{
   c3_w* map_w = map_v;
   c3_i res_i;
-  
+
   map_w -= 1;
   res_i = munmap(map_w, map_w[0]);
 
@@ -126,21 +126,22 @@ u3e_fault(void* adr_v, c3_i ser_i)
     c3_assert(0);
     return 0;
   }
-  else { 
+  else {
     c3_w off_w = (adr_w - u3_Loom);
     c3_w pag_w = off_w >> u3a_page;
     c3_w blk_w = (pag_w >> 5);
     c3_w bit_w = (pag_w & 31);
 
 #if 0
-    if ( pag_w == 131041 ) { 
-      printf("dirty page %d (at %p); unprotecting %p to %p\r\n", 
-              pag_w, 
-              adr_v, 
+    if ( pag_w == 131041 ) {
+      printf("dirty page %d (at %p); unprotecting %p to %p\r\n",
+              pag_w,
+              adr_v,
               (u3_Loom + (pag_w << u3a_page)),
               (u3_Loom + (pag_w << u3a_page) + (1 << u3a_page)));
     }
 #endif
+
     if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
       fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
                       pag_w, adr_w, off_w);
@@ -149,7 +150,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
 
     c3_assert(0 == (u3P.dit_w[blk_w] & (1 << bit_w)));
     u3P.dit_w[blk_w] |= (1 << bit_w);
-  
+
     if ( -1 == mprotect((void *)(u3_Loom + (pag_w << u3a_page)),
                         (1 << (u3a_page + 2)),
                         (PROT_READ | PROT_WRITE)) )
@@ -192,15 +193,15 @@ _ce_image_open(u3e_image* img_u)
       c3_assert(0);
       return c3n;
     }
-    else { 
+    else {
       c3_d siz_d = buf_u.st_size;
-      c3_d pgs_d = (siz_d + (c3_d)((1 << (u3a_page + 2)) - 1)) >> 
+      c3_d pgs_d = (siz_d + (c3_d)((1 << (u3a_page + 2)) - 1)) >>
                    (c3_d)(u3a_page + 2);
 
       if ( !siz_d ) {
         return c3y;
       }
-      else { 
+      else {
         if ( siz_d != (pgs_d << (c3_d)(u3a_page + 2)) ) {
           fprintf(stderr, "%s: corrupt size %" PRIx64 "\r\n", ful_c, siz_d);
           return c3n;
@@ -219,7 +220,7 @@ _ce_image_open(u3e_image* img_u)
 static void
 _ce_patch_write_control(u3_ce_patch* pat_u)
 {
-  c3_w len_w = sizeof(u3e_control) + 
+  c3_w len_w = sizeof(u3e_control) +
                (pat_u->con_u->pgs_w * sizeof(u3e_line));
 
   if ( len_w != write(pat_u->ctl_i, pat_u->con_u, len_w) ) {
@@ -323,7 +324,7 @@ _ce_patch_verify(u3_ce_patch* pat_u)
       c3_w nug_w = u3r_mug_words(mem_w, (1 << u3a_page));
 
       if ( mug_w != nug_w ) {
-        printf("_ce_patch_verify: mug mismatch %d/%d; (%x, %x)\r\n", 
+        printf("_ce_patch_verify: mug mismatch %d/%d; (%x, %x)\r\n",
             pag_w, i_w, mug_w, nug_w);
         c3_assert(0);
         return c3n;
@@ -400,14 +401,14 @@ _ce_patch_open(void)
 /* _ce_patch_write_page(): write a page of patch memory.
 */
 static void
-_ce_patch_write_page(u3_ce_patch* pat_u, 
+_ce_patch_write_page(u3_ce_patch* pat_u,
                      c3_w         pgc_w,
                      c3_w*        mem_w)
 {
   if ( -1 == lseek(pat_u->mem_i, (pgc_w << (u3a_page + 2)), SEEK_SET) ) {
     c3_assert(0);
   }
-  if ( (1 << (u3a_page + 2)) != 
+  if ( (1 << (u3a_page + 2)) !=
        write(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) )
   {
     c3_assert(0);
@@ -443,7 +444,7 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
     c3_w* mem_w = u3_Loom + (pag_w << u3a_page);
 
     pat_u->con_u->mem_u[pgc_w].pag_w = pag_w;
-    pat_u->con_u->mem_u[pgc_w].mug_w = u3r_mug_words(mem_w, 
+    pat_u->con_u->mem_u[pgc_w].mug_w = u3r_mug_words(mem_w,
                                                        (1 << u3a_page));
 
 #if 0
@@ -453,12 +454,12 @@ _ce_patch_save_page(u3_ce_patch* pat_u,
 
     if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
                         (1 << (u3a_page + 2)),
-                        PROT_READ) ) 
+                        PROT_READ) )
     {
       c3_assert(0);
     }
-            
-    u3P.dit_w[blk_w] &= ~(1 << bit_w); 
+
+    u3P.dit_w[blk_w] &= ~(1 << bit_w);
     pgc_w += 1;
   }
   return pgc_w;
@@ -476,11 +477,11 @@ _ce_patch_junk_page(u3_ce_patch* pat_u,
   // printf("protect b: page %d\r\n", pag_w);
   if ( -1 == mprotect(u3_Loom + (pag_w << u3a_page),
                       (1 << (u3a_page + 2)),
-                      PROT_READ) ) 
+                      PROT_READ) )
   {
     c3_assert(0);
   }
-  u3P.dit_w[blk_w] &= ~(1 << bit_w); 
+  u3P.dit_w[blk_w] &= ~(1 << bit_w);
 }
 
 /* u3e_dirty(): count dirty pages.
@@ -539,8 +540,11 @@ _ce_patch_compose(void)
     nor_w = (nwr_w + ((1 << u3a_page) - 1)) >> u3a_page;
     sou_w = (swu_w + ((1 << u3a_page) - 1)) >> u3a_page;
   }
-  //  u3K.nor_w = nor_w;
-  //  u3K.sou_w = sou_w;
+
+#ifdef U3_SNAPSHOT_VALIDATION
+  u3K.nor_w = nor_w;
+  u3K.sou_w = sou_w;
+#endif
 
   /* Count dirty pages.
   */
@@ -568,7 +572,7 @@ _ce_patch_compose(void)
 
     for ( i_w = 0; i_w < nor_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, i_w, pgc_w);
-    } 
+    }
     for ( i_w = 0; i_w < sou_w; i_w++ ) {
       pgc_w = _ce_patch_save_page(pat_u, (u3a_pages - (i_w + 1)), pgc_w);
     }
@@ -579,7 +583,7 @@ _ce_patch_compose(void)
     pat_u->con_u->nor_w = nor_w;
     pat_u->con_u->sou_w = sou_w;
     pat_u->con_u->pgs_w = pgc_w;
-  
+
     _ce_patch_write_control(pat_u);
     return pat_u;
   }
@@ -637,7 +641,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3a_page + 2));
   }
   u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
- 
+
   if ( (-1 == lseek(pat_u->mem_i, 0, SEEK_SET)) ||
        (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET)) ||
        (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
@@ -655,12 +659,12 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     if ( pag_w < pat_u->con_u->nor_w ) {
       fid_i = u3P.nor_u.fid_i;
       off_w = pag_w;
-    } 
+    }
     else {
       fid_i = u3P.sou_u.fid_i;
       off_w = (u3a_pages - (pag_w + 1));
     }
- 
+
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
       perror("apply: read");
       c3_assert(0);
@@ -701,7 +705,7 @@ _ce_image_blit(u3e_image* img_u,
       c3_w off_w = (ptr_w - u3_Loom);
       c3_w pag_w = (off_w >> u3a_page);
 
-      printf("blit: page %d, mug %x\r\n", pag_w, 
+      printf("blit: page %d, mug %x\r\n", pag_w,
           u3r_mug_words(ptr_w, (1 << u3a_page)));
     }
 #endif
@@ -709,7 +713,7 @@ _ce_image_blit(u3e_image* img_u,
   }
 }
 
-#if 0
+#ifdef U3_SNAPSHOT_VALIDATION
 /* _ce_image_fine(): compare image to memory.
 */
 static void
@@ -734,9 +738,9 @@ _ce_image_fine(u3e_image* img_u,
     if ( mem_w != fil_w ) {
       c3_w pag_w = (ptr_w - u3_Loom) >> u3a_page;
 
-      fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n", 
-                       pag_w, 
-                       mem_w, 
+      fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n",
+                       pag_w,
+                       mem_w,
                        fil_w,
                        u3K.mug_w[pag_w]);
       abort();
@@ -746,51 +750,55 @@ _ce_image_fine(u3e_image* img_u,
 }
 #endif
 
-/* u3e_save(): save current changes.
+/*
+  u3e_save(): save current changes.
+
+  If we are in dry-run mode, do nothing.
+
+  First, call `_ce_patch_compose` to write all dirty pages to disk and
+  clear protection and dirty bits. If there were no dirty pages to write,
+  then we're done.
+
+  - Sync the patch files to disk.
+  - Verify the patch (because why not?)
+  - Write the patch data into the image file (This is idempotent.).
+  - Sync the image file.
+  - Delete the patchfile and free it.
+
+  Once we've written the dirty pages to disk (and have reset their dirty bits
+  and protection flags), we *could* handle the rest of the checkpointing
+  process in a separate thread, but we'd need to wait until that finishes
+  before we try to make another snapshot.
 */
 void
 u3e_save(void)
 {
   u3_ce_patch* pat_u;
 
-  //  In dry-run mode, we never touch this stuff.
-  //
   if ( u3C.wag_w & u3o_dryrun ) {
     return;
   }
 
-  //  Write all dirty pages to disk; clear protection and dirty bits.
-  //
-  //  This has to block the main thread.  All further processing can happen
-  //  in a separate thread, though we can't save again till this completes.
-  //
-
   if ( !(pat_u = _ce_patch_compose()) ) {
     return;
   }
- 
-  //  Sync the patch files.
-  //
+
   // u3a_print_memory(stderr, "sync: save", 4096 * pat_u->con_u->pgs_w);
   _ce_patch_sync(pat_u);
 
-  //  Verify the patch - because why not?
-  //
   // printf("_ce_patch_verify\r\n");
   _ce_patch_verify(pat_u);
 
-  //  Write the patch data into the image file.  Idempotent.
-  //
   // printf("_ce_patch_apply\r\n");
   _ce_patch_apply(pat_u);
 
-#if 0
+#ifdef U3_SNAPSHOT_VALIDATION
   {
-    _ce_image_fine(&u3P.nor_u, 
-                   u3_Loom, 
+    _ce_image_fine(&u3P.nor_u,
+                   u3_Loom,
                    (1 << u3a_page));
 
-    _ce_image_fine(&u3P.sou_u, 
+    _ce_image_fine(&u3P.sou_u,
                    (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                    -(1 << u3a_page));
 
@@ -799,16 +807,13 @@ u3e_save(void)
   }
 #endif
 
-  //  Sync the image file.
-  //
   // printf("_ce_image_sync\r\n");
   _ce_image_sync(&u3P.nor_u);
   _ce_image_sync(&u3P.sou_u);
 
-  //  Delete the patchfile and free it.
-  //
   // printf("_ce_patch_delete\r\n");
   _ce_patch_delete();
+
   // printf("_ce_patch_free\r\n");
   _ce_patch_free(pat_u);
 }
@@ -858,11 +863,11 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
       /* Write image files to memory; reinstate protection.
       */
       {
-        _ce_image_blit(&u3P.nor_u, 
-                       u3_Loom, 
+        _ce_image_blit(&u3P.nor_u,
+                       u3_Loom,
                        (1 << u3a_page));
 
-        _ce_image_blit(&u3P.sou_u, 
+        _ce_image_blit(&u3P.sou_u,
                        (u3_Loom + (1 << u3a_bits) - (1 << u3a_page)),
                        -(1 << u3a_page));
 
