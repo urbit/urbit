@@ -25,6 +25,7 @@
 #include <vere/vere.h>
 
     typedef struct _u3_serf {
+      c3_w    len_w;                        //  boot sequence length
       c3_d    evt_d;                        //  last event processed
       c3_l    mug_l;                        //  hash of state
       c3_d    key_d[4];                     //  disk key
@@ -74,7 +75,14 @@
 ::  +writ: from lord to serf
 ::
 +$  writ
-  $%  ::  exit immediately
+  $%  ::  prepare to boot
+      ::
+      ::  p: identity
+      ::  q: fake?
+      ::  r: number of boot formulas
+      ::
+      [%boot p=@p q=? r=@]
+      ::  exit immediately
       ::
       ::  p: exit code
       ::
@@ -360,34 +368,6 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   u3z(u3A->roc);
   u3A->roc = cor;
 
-  //  single-home
-  //
-  //    XX revise when real keys are supported
-  //    XX dispatch on evt_d, wire, or card tag?
-  //
-  if ( c3__boot == u3h(u3t(ovo)) ) {
-    //  ovo=[%boot *]
-    //  vir=[[wire %init @p] ~]
-    //  fec=[%init @p]
-    //
-    u3_noun fec = u3t(u3h(vir));
-
-    c3_assert( c3__init == u3h(fec) );
-    c3_assert( u3_none == u3A->our );
-
-    u3A->our = u3k(u3t(fec));
-    u3A->fak = ( c3__fake == u3h(u3t(u3t(ovo))) ) ? c3y : c3n;
-
-    {
-      u3_noun nam = u3dc("scot", 'p', u3k(u3A->our));
-      c3_c* nam_c = u3r_string(nam);
-      fprintf(stderr, "boot: ship: %s%s\r\n", nam_c,
-                                      (c3y == u3A->fak) ? " (fake)" : "");
-      free(nam_c);
-      u3z(nam);
-    }
-  }
-
   u3_noun sac = u3_nul;
 
   //  intercept |mass, observe |reset
@@ -434,10 +414,10 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
   u3z(sac); u3z(ovo);
 }
 
-/* _serf_poke_live(): apply event.
+/* _serf_work_live(): apply event.
 */
 static void
-_serf_poke_live(c3_d    evt_d,              //  event number
+_serf_work_live(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  event date
 {
@@ -543,10 +523,10 @@ _serf_boot_fire(u3_noun eve)
   return pro;
 }
 
-/* _serf_poke_boot(): apply initial-stage event.
+/* _serf_work_boot(): apply initial-stage event.
 */
 static void
-_serf_poke_boot(c3_d    evt_d,
+_serf_work_boot(c3_d    evt_d,
                 c3_l    mug_l,
                 u3_noun job)
 {
@@ -557,7 +537,7 @@ _serf_poke_boot(c3_d    evt_d,
 
   fprintf(stderr, "serf: (%" PRIu64 ")| boot\r\n", evt_d);
 
-  if ( 5 == evt_d ) {
+  if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
 
     eve = u3kb_flop(u3A->roe);
@@ -594,11 +574,11 @@ _serf_poke_work(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  full event
 {
-  if ( evt_d < 6 ) {
-    _serf_poke_boot(evt_d, mug_l, job);
+  if ( evt_d <= u3V.len_w ) {
+    _serf_work_boot(evt_d, mug_l, job);
   }
   else {
-    _serf_poke_live(evt_d, mug_l, job);
+    _serf_work_live(evt_d, mug_l, job);
   }
 }
 
@@ -608,6 +588,18 @@ static void
 _serf_poke_exit(c3_w cod_w)                 //  exit code
 {
   exit(cod_w);
+}
+
+/* _serf_poke_boot(): prepare to boot.
+*/
+static void
+_serf_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
+{
+  c3_assert( u3_none == u3A->our );
+
+  u3A->our = who;
+  u3A->fak = fak;
+  u3V.len_w = len_w;
 }
 
 /* _serf_poke(): 
@@ -624,6 +616,29 @@ _serf_poke(void* vod_p, u3_noun mat)
     switch ( u3h(jar) ) {
       default: {
         goto error;
+      }
+
+      case c3__boot: {
+        u3_noun who, fak, len;
+        c3_w len_w;
+
+        if ( (c3n == u3r_qual(jar, 0, &who, &fak, &len)) ||
+             (c3n == u3ud(who)) ||
+             (1 < u3r_met(7, who)) ||
+             (c3n == u3ud(fak)) ||
+             (1 < u3r_met(0, fak)) ||
+             (c3n == u3ud(len)) ||
+             (1 < u3r_met(3, len)) )
+        {
+          goto error;
+        }
+
+        len_w = u3r_word(0, len);
+        u3k(who);
+        u3k(fak);
+        u3z(jar);
+
+        return _serf_poke_boot(who, fak, len_w);
       }
 
       case c3__work: {
@@ -702,11 +717,15 @@ u3_serf_boot(void)
                               0, // XX u3r_mug(u3A->roc),
                               u3nc(u3k(u3A->our), u3k(u3A->fak))));
 
-    /* disable hashboard for fake ships
-    */
+    //  disable hashboard for fake ships
+    //
     if ( c3y == u3A->fak ) {
       u3C.wag_w |= u3o_hashless;
     }
+
+    //  no boot sequence expected
+    //
+    u3V.len_w = 0;
   }
 
   fprintf(stderr, "serf: play %" PRIu64 "\r\n", nex_d);

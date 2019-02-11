@@ -93,6 +93,20 @@ _pier_work_bail(void*       vod_p,
 {
   fprintf(stderr, "pier: work error: %s\r\n", err_c);
 }
+
+/* _pier_work_boot(): prepare serf boot.
+*/
+static void
+_pier_work_boot(u3_pier* pir_u, c3_d len_d, c3_o fak_o)
+{
+  u3_lord* god_u = pir_u->god_u;
+
+  u3_noun who = u3i_chubs(2, pir_u->who_d);
+  u3_noun len = u3i_chubs(1, &len_d);
+  u3_noun msg = u3nq(c3__boot, who, fak_o, len);
+
+  u3_newt_write(&god_u->inn_u, u3ke_jam(msg), 0);
+}
               
 /* _pier_disk_shutdown(): close the log.
 */
@@ -961,6 +975,18 @@ _pier_boot_vent(u3_pier* pir_u)
       _pier_insert(pir_u, 0, u3k(u3h(fol)));
       fol = u3t(fol);
     }
+  }
+
+  //  prepare serf for boot sequence
+  //
+  {
+    c3_o fak_o = ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n;
+
+    _pier_work_boot(pir_u, pir_u->but_d, fak_o);
+
+    fprintf(stderr, "boot: ship: %s%s\r\n",
+                     pir_u->who_c,
+                     (c3y == u3A->fak) ? " (fake)" : "");
   }
 
   //  insert the module sequence as normally events
@@ -2057,8 +2083,6 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
       u3_noun how = u3dc("scot", 'p', u3k(who));
 
       pir_u->who_c = u3r_string(how);
-      fprintf(stderr, "boot: ship: %s\r\n", pir_u->who_c);
-
       u3z(how);
     }
 
