@@ -163,10 +163,10 @@ _reck_kick_http(u3_pier* pir_u,
 
       // The control server has now started.
       //
-      // If we're in daemon mode, we need to inform that parent process
+      // If we're in daemon mode, we need to inform the parent process
       // that we've finished booting.
-      if (u3_Host.onboot) {
-        u3_Host.onboot();
+      if (u3_Host.bot_f) {
+        u3_Host.bot_f();
       }
 
       u3z(pox); u3z(fav);
