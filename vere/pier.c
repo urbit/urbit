@@ -903,17 +903,21 @@ _pier_boot_vent(u3_pier* pir_u)
     //
     if ( c3y == u3h(pir_u->pil) ) {
       if ( u3_nul != pil_q ) {
-        u3_noun new = u3nc(u3k(u3t(pil_q)), u3_nul);
+        c3_w len_w = 0;
         u3_noun ova = use;
+        u3_noun new = u3_nul;
         u3_noun ovo;
 
         while ( u3_nul != ova ) {
           ovo = u3h(ova);
 
-          if ( c3__into != u3h(u3t(ovo)) ) {
-            new = u3nc(u3k(ovo), new);
+          if ( c3__into == u3h(u3t(ovo)) ) {
+            c3_assert( 0 == len_w );
+            len_w++;
+            ovo = u3k(u3t(pil_q));
           }
 
+          new = u3nc(u3k(ovo), new);
           ova = u3t(ova);
         }
 

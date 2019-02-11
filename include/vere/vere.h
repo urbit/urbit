@@ -1070,10 +1070,10 @@
         void
         u3_unix_ef_move(void);
 
-      /* u3_unix_initial_into(): intialize filesystem from urb/zod
+      /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
-        void
-        u3_unix_ef_initial_into(u3_pier *pir_u);
+        u3_noun
+        u3_unix_initial_into_card(c3_c* arv_c);
 
       /* u3_unix_ef_look(): update filesystem from unix
       */

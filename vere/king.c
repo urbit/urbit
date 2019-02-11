@@ -552,6 +552,12 @@ _boothack_pill(void)
     pil = _king_get_atom(url_c);
   }
 
+  if ( 0 != u3_Host.ops_u.arv_c ) {
+    fprintf(stderr, "boot: preparing filesystem from %s\r\n",
+                    u3_Host.ops_u.arv_c);
+    arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
+  }
+
   return u3nt(c3y, pil, arv);
 }
 
