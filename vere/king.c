@@ -104,6 +104,9 @@ static c3_c sag_w;
     [p=@ q=(unit ovum)]
   ::  %|: incomplete pill (+ivory)
   ::
+  ::    XX not implemented, needs generation of
+  ::    %veer ova for install %zuse and the vanes
+  ::
   ::  p: jammed pill
   ::  q: module ova
   ::  r: userspace ova
