@@ -546,8 +546,7 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        // XX find a way to re-enable -A (fastboot)
-        // c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
@@ -573,8 +572,7 @@
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_o    has;                        //  -S, Skip battery hashes
-        // XX find a way to re-enable -s (auto-pill)
-        // c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    git;                        //  -s, pill url from arvo git hash
         c3_o    etn;                        //  -t, trust snapshot for pre-boot
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots

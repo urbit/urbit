@@ -467,6 +467,62 @@ _king_get_atom(c3_c* url_c)
   return u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
 }
 
+/* _get_cmd_output(): Run a shell command and capture its output.
+   Exits with an error if the command fails or produces no output.
+   The 'out_c' parameter should be an array of sufficient length to hold
+   the command's output, up to a max of len_c characters.
+*/
+static void
+_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
+{
+  FILE *fp = popen(cmd_c, "r");
+  if ( NULL == fp ) {
+    fprintf(stderr, "'%s' failed\n", cmd_c);
+    exit(1);
+  }
+
+  if ( NULL == fgets(out_c, len_c, fp) ) {
+    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    exit(1);
+  }
+
+  pclose(fp);
+}
+
+/* _arvo_hash(): get a shortened hash of the last git commit
+   that modified the sys/ directory in arvo.
+   hax_c must be an array with length >= 11.
+*/
+static void
+_arvo_hash(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c cmd_c[2048];
+
+  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
+  _get_cmd_output(cmd_c, out_c, 11);
+
+  out_c[10] = 0;  //  end with null-byte
+}
+
+/* _git_pill_url(): produce a URL from which to download a pill
+   based on the location of an arvo git repository.
+*/
+static void
+_git_pill_url(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c hax_c[11];
+
+  assert(NULL != arv_c);
+
+  if ( 0 != system("which git >> /dev/null") ) {
+    fprintf(stderr, "boot: could not find git executable\r\n");
+    exit(1);
+  }
+
+  _arvo_hash(hax_c, arv_c);
+  sprintf(out_c, "https://bootstrap.urbit.org/git-%s.pill", hax_c);
+}
+
 /* _boothack_pill(): parse CLI pill arguments into +pill specifier
 */
 static u3_noun
@@ -480,11 +536,21 @@ _boothack_pill(void)
     pil = u3m_file(u3_Host.ops_u.pil_c);
   }
   else {
-    c3_assert( 0 != u3_Host.ops_u.url_c );
-    fprintf(stderr, "boot: downloading pill %s\r\n", u3_Host.ops_u.url_c);
-    pil = _king_get_atom(u3_Host.ops_u.url_c);
-  }
+    c3_c url_c[2048];
 
+    if ( (c3y == u3_Host.ops_u.git) &&
+       (0 != u3_Host.ops_u.arv_c) )
+    {
+      _git_pill_url(url_c, u3_Host.ops_u.arv_c);
+    }
+    else {
+      c3_assert( 0 != u3_Host.ops_u.url_c );
+      strcpy(url_c, u3_Host.ops_u.url_c);
+    }
+
+    fprintf(stderr, "boot: downloading pill %s\r\n", url_c);
+    pil = _king_get_atom(url_c);
+  }
 
   return u3nt(c3y, pil, arv);
 }
