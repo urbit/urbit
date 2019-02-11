@@ -290,14 +290,16 @@ _king_bail(u3_moor *vod_p, const c3_c *err_c)
 {
   u3_moor *free_p;
   fprintf(stderr, "_king_bail: %s\r\n", err_c);
+
   if ( vod_p == 0 ) {
     free_p = u3K.cli_u;
     u3K.cli_u = u3K.cli_u->nex_u;
-    u3a_free(free_p);
-  } else {
+    c3_free(free_p);
+  }
+  else {
     free_p = vod_p->nex_u;
     vod_p->nex_u = vod_p->nex_u->nex_u;
-    u3a_free(free_p);
+    c3_free(free_p);
   }
 }
 
@@ -307,14 +309,17 @@ void
 _king_socket_connect(uv_stream_t *sock, int status)
 {
   u3_moor *mor_u;
+
   if ( u3K.cli_u == 0 ) {
-    u3K.cli_u = u3a_malloc(sizeof(u3_moor));
+    u3K.cli_u = c3_malloc(sizeof(u3_moor));
     mor_u = u3K.cli_u;
     mor_u->vod_p = 0;
     mor_u->nex_u = 0;
-  } else {
+  }
+  else {
     for (mor_u = u3K.cli_u; mor_u->nex_u; mor_u = mor_u->nex_u);
-    mor_u->nex_u = u3a_malloc(sizeof(u3_moor));
+
+    mor_u->nex_u = c3_malloc(sizeof(u3_moor));
     mor_u->nex_u->vod_p = mor_u;
     mor_u = mor_u->nex_u;
     mor_u->nex_u = 0;
