@@ -1593,6 +1593,9 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
+  ::
+  ?:  ?=(%vega -.task)
+    [~ http-server-gate]
   ::  %born: new unix process
   ?:  ?=(%born -.task)
     ::

@@ -466,7 +466,7 @@
       {@ $newt *}  %a
       {@ $sync *}  %c
       {@ $term *}  %d
-      ::  TODO: %http-server in the interface.
+      {@ $http-client *}  %l
       {@ $http-server *}  %r
       {@ $behn *}  %b
     ==

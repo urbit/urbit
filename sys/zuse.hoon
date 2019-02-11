@@ -2158,6 +2158,9 @@
       $%  ::  system started up; reset open connections
           ::
           [%born ~]
+          ::  report upgrade
+          ::
+          [%vega ~]
           ::  fetches a remote resource
           ::
           [%request =request:http =outbound-config]
@@ -2226,6 +2229,9 @@
           ::  new unix process
           ::
           [%born p=(list host)]
+          ::  report upgrade
+          ::
+          [%vega ~]
           ::  set http ports (?)
           ::
           [%live p=@ud q=(unit @ud)]

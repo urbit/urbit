@@ -264,12 +264,15 @@
     ~|  [%p-wrapped-task p.wrapped-task]
     ((hard task:able) p.wrapped-task)
   ::
+  ?:  ?=(%vega -.task)
+    [~ light-gate]
+  ::
   =/  event-args  [[our eny duct now scry-gate] state.ax]
   =/  client  (per-client-event event-args)
   ?-    -.task
   ::
       %born
-    ~&  %todo-http-client-born
+    ~&  [%todo-http-client-born ~]
     ::  TODO: reset the next-id for client state here.
     ::
     ::  send requests on the duct passed in with born.

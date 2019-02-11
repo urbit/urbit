@@ -61,7 +61,7 @@
       ==                                                ::
     ++  dojo-build                                      ::  one arvo step
       $~  [%ex *hoon]
-      $%  {$ur p/(unit knot) q/purl:eyre}               ::  http GET request
+      $%  {$ur p/@t}                                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
@@ -113,6 +113,7 @@
               mark
               {$hiss hiss:eyre}
           ==
+          [%request wire request:http outbound-config:http-client]  ::  %l
           [%build wire ? schematic:ford]
           [%kill wire ~]
           {$deal wire sock term club}                   ::
@@ -245,7 +246,8 @@
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(plug (cold %ur lus) parse-iden-url)
+::        ;~(plug (cold %ur lus) parse-iden-url)
+        ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
@@ -285,7 +287,12 @@
     %+  cook
       |=([a=(unit knot) b=purl:eyre] [`(fall a *knot) b])
     auru:de-purl:html
-    ::
+  ::
+  ++  parse-url
+    %+  cook
+      |=(a=purl:eyre (crip (en-purl:html a)))
+    auri:de-purl:html
+  ::
   ++  parse-model   ;~(plug parse-server parse-config)
   ++  parse-server  (stag 0 (most net sym))
   ++  parse-hoon    tall:hoon-parser
@@ -365,6 +372,12 @@
       ^+  +>+>
       ?>  ?=(~ pux)
       (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
+    ::
+    ++  dy-request
+      |=  [way=wire =request:http]
+      ^+  +>+>
+      ?>  ?=(~ pux)
+      (he-card(poy `+>+<(pux `way)) %request way request *outbound-config:http-client)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -594,6 +607,7 @@
         =+  mim=;;(mime q.q.cay)
         =+  maf=(~(add ja *math:eyre) %content-type (en-mite:mimes:html p.mim))
         (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
+::        (dy-request /show [ ])
       ::
           $show
         |^  (prnt cay note)
@@ -800,7 +814,8 @@
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
-        (dy-eyre /hand p.bil [q.bil %get ~ ~])
+        ::(dy-eyre /hand p.bil [q.bil %get ~ ~])
+        (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
       %-  dy-ford
       ^-  [path schematic:ford]
       ?-  -.bil
@@ -1028,7 +1043,7 @@
           %+  rash  pax.source.com
           rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
         ::
-            $url         [%ur `~. url.source.com]
+            $url         [%ur (crip (en-purl:html url.source.com))]
             $api         !!
             $get-api
           :-  %ex

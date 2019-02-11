@@ -848,8 +848,23 @@
       ::
       ::  TODO: Magic vase validation. I have no idea how malformed checking works.
       ::
+      ::  This should be moved into +cote instead of the rest of 
+      ::
       :_  +>.$
       [%& sto %give %http-response ((hard http-event:http) q.vax)]
+    ::
+    ::  ++  ap-move-request
+    ::    |=  [sto=bone vax=vase]
+    ::    ^-  [(each cove tang) _+>]
+    ::    ::
+    ::    ::  TODO: Magic vase validation
+    ::    ::
+    ::    :_  +>.$
+    ::    :^  %&  sto  %pass
+    ::    :-  [(scot %p q.q.pry) %cay u.pux]
+    ::    ~!  *cote
+    ::    =-  ~!  -  `cote`-
+    ::    [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-hiss                                    ::  pass %hiss
       ~/  %hiss
@@ -1314,6 +1329,8 @@
         $well  `%e
         $wind  `%j
         $wipe  `%f
+      ::
+        $request  `%l
         $serve    `%r
         $connect  `%r
       ==
