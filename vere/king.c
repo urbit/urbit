@@ -2,6 +2,7 @@
 **
 ** the main loop of the daemon process
 */
+#include <curl/curl.h>
 #include <unistd.h>
 #include <uv.h>
 #include "all.h"
@@ -409,25 +410,83 @@ _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
+/* _king_curl_alloc(): allocate a response buffer for curl
+**  XX deduplicate with dawn.c
+*/
+static size_t
+_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+{
+  size_t siz_t = uni_t * mem_t;
+  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
+
+  memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
+  buf_u->len += siz_t;
+  buf_u->base[buf_u->len] = 0;
+
+  return siz_t;
+}
+
+/* _king_get_atom(): HTTP GET url_c, produce the response body as an atom.
+**  XX deduplicate with dawn.c
+*/
+static u3_noun
+_king_get_atom(c3_c* url_c)
+{
+  CURL *curl;
+  CURLcode result;
+  long cod_l;
+
+  uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
+
+  if ( !(curl = curl_easy_init()) ) {
+    fprintf(stderr, "failed to initialize libcurl\n");
+    exit(1);
+  }
+
+  curl_easy_setopt(curl, CURLOPT_URL, url_c);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+
+  result = curl_easy_perform(curl);
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+
+  //  XX retry?
+  //
+  if ( CURLE_OK != result ) {
+    fprintf(stderr, "failed to fetch %s: %s\n",
+                    url_c, curl_easy_strerror(result));
+    exit(1);
+  }
+  if ( 300 <= cod_l ) {
+    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    exit(1);
+  }
+
+  curl_easy_cleanup(curl);
+
+  return u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+}
+
 /* _boothack_pill(): parse CLI pill arguments into +pill specifier
 */
 static u3_noun
 _boothack_pill(void)
 {
-  if ( 0 == u3_Host.ops_u.pil_c ) {
-    //  XX download default pill
-    //  XX support -u
-    //
-    fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
-    exit(1);
+  u3_noun arv = u3_nul;
+  u3_noun pil;
+
+  if ( 0 != u3_Host.ops_u.pil_c ) {
+    fprintf(stderr, "boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
+    pil = u3m_file(u3_Host.ops_u.pil_c);
+  }
+  else {
+    c3_assert( 0 != u3_Host.ops_u.url_c );
+    fprintf(stderr, "boot: downloading pill %s\r\n", u3_Host.ops_u.url_c);
+    pil = _king_get_atom(u3_Host.ops_u.url_c);
   }
 
-  fprintf(stderr, "boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
 
-  //  XX stat first to print error on failure?
-  //
-
-  return u3nt(c3y, u3m_file(u3_Host.ops_u.pil_c), u3_nul);
+  return u3nt(c3y, pil, arv);
 }
 
 /* _boothack_key(): parse a private key file or value
