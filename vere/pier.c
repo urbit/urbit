@@ -2119,3 +2119,37 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
   /* XX: _pier_loop_exit() should be called somewhere, but is not.
   */
 }
+
+/* u3_pier_mark(): mark all Loom allocations in all u3_pier structs.
+*/
+c3_w
+u3_pier_mark(FILE* fil_u)
+{
+  c3_w len_w = u3K.len_w;
+  c3_w tot_w = 0;
+  u3_pier* pir_u;
+
+  while ( 0 < len_w ) {
+    pir_u = u3K.tab_u[--len_w];
+    fprintf(stderr, "pier: %u\r\n", len_w);
+
+    tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot));
+
+    {
+      u3_writ* wit_u = pir_u->ent_u;
+      c3_w wit_w = 0;
+
+      while ( 0 != wit_u ) {
+        wit_w += u3a_mark_noun(wit_u->job);
+        wit_w += u3a_mark_noun(wit_u->now);
+        wit_w += u3a_mark_noun(wit_u->mat);
+        wit_w += u3a_mark_noun(wit_u->act);
+        wit_u = wit_u->nex_u;
+      }
+
+      tot_w += u3a_maid(fil_u, "  writs", wit_w);
+    }
+  }
+
+  return tot_w;
+}

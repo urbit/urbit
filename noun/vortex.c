@@ -109,6 +109,7 @@ u3v_lite(u3_noun pil)
   pro = u3k(u3r_at(7, cor));
 
   u3z(cor);
+  u3z(arv);
   return pro;
 }
 

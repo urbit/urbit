@@ -131,9 +131,12 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__mass: p_fav = u3t(fav);
     {
-      //  XX GC the full king state
+      u3z(pox); u3z(fav);
+
+      //  gc the kingdom
       //
-      u3z(pox); u3z(fav); return c3y;
+      uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_king_grab, 0, 0);
+      return c3y;
     } break;
   }
   c3_assert(!"not reached"); return 0;
