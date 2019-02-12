@@ -597,7 +597,6 @@
         u3_cttp    ctp_u;                   //  http clients
         u3_utty*   uty_u;                   //  linked terminal list
         u3_opts    ops_u;                   //  commandline options
-        c3_o       liv;                     //  if u3_no, shut down
         c3_i       xit_i;                   //  exit code for shutdown
         void*      tls_u;                   //  server SSL_CTX*
         u3_trac    tra_u;                   //  tracing information
