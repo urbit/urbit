@@ -55,7 +55,8 @@ _newt_consume(u3_moat* mot_u)
 
 #if 0
           fprintf(stderr, 
-  "newt: %d: create: msg %p, new block %p, len %lld, has %lld, needs %lld\r\n",
+              "newt: %d: create: msg %p, new block %p, len %"
+              PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
               getpid(),
               mot_u->mes_u,
               met_u,
@@ -96,7 +97,7 @@ _newt_consume(u3_moat* mot_u)
           nel_d |= ((c3_d) mot_u->rag_y[6]) << 48ULL;
           nel_d |= ((c3_d) mot_u->rag_y[7]) << 56ULL;
 #if 0
-          fprintf(stderr, "newt: %d: parsed length %lld\r\n",
+          fprintf(stderr, "newt: %d: parsed length %" PRIu64 "\r\n",
                           getpid(),
                           nel_d);
 #endif

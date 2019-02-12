@@ -320,7 +320,7 @@ _serf_send(u3_noun job)
 static void
 _serf_send_replace(c3_d evt_d, u3_noun ovo)
 {
-  fprintf(stderr, "serf_send_replace %lld %s\r\n", 
+  fprintf(stderr, "serf_send_replace %" PRIu64 " %s\r\n",
                   evt_d,
                   u3r_string(u3h(u3t(ovo)))); 
 
@@ -428,6 +428,8 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
     }
   }
 
+  //  XX this runs on replay too
+  //
   _serf_grab(sac, ovo, vir);
   _serf_send_complete(vir);
 
@@ -465,7 +467,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     if ( c3__belt != u3h(u3t(ovo)) ) {
       c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      fprintf(stderr, "serf: %s (%lld) live\r\n", txt_c, evt_d);
+      fprintf(stderr, "serf: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
     }
   }
 #endif
@@ -483,7 +485,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
     if (c3__belt != u3h(u3t(ovo)) || clr_w != 2) {
-      uL(fprintf(uH, "\x1b[3%dm%%%s (%lld) %4d.%02dms\x1b[0m\n",
+      uL(fprintf(uH, "\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
                         clr_w, txt_c, evt_d, ms_w, 
                         (int) (d0.tv_usec % 1000) / 10));
     }
@@ -555,7 +557,7 @@ _serf_poke_boot(c3_d    evt_d,
 
   u3A->roe = u3nc(job, u3A->roe);
 
-  fprintf(stderr, "serf: (%lld)| boot\r\n", evt_d);
+  fprintf(stderr, "serf: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( 5 == evt_d ) {
     u3_noun eve, pru;
@@ -563,7 +565,7 @@ _serf_poke_boot(c3_d    evt_d,
     eve = u3kb_flop(u3A->roe);
     u3A->roe = 0;
 
-    fprintf(stderr, "serf: (5)| pill: %x\r\n", u3r_mug(eve));
+    fprintf(stderr, "serf: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
     pru = u3m_soft(0, _serf_boot_fire, eve);
 
@@ -572,12 +574,12 @@ _serf_poke_boot(c3_d    evt_d,
       exit(1);
     }
 
-    fprintf(stderr, "serf: (5)| core: %x\r\n", u3r_mug(u3t(pru)));
+    u3A->roc = u3k(u3t(pru));
+
+    fprintf(stderr, "serf: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
 
     //  XX set u3A->evt_d ?
     //
-
-    u3A->roc = u3k(u3t(pru));
     u3z(pru);
   }
 
@@ -709,7 +711,7 @@ u3_serf_boot(void)
     }
   }
 
-  fprintf(stderr, "serf: play %lld\r\n", nex_d);
+  fprintf(stderr, "serf: play %" PRIu64 "\r\n", nex_d);
 
   _serf_send(u3nc(c3__play, dat));
 }
@@ -729,10 +731,11 @@ main(c3_i argc, c3_c* argv[])
   /* load passkey
   */
   {
-    sscanf(key_c, "%llx:%llx:%llx:%llx", &u3V.key_d[0],
-                                         &u3V.key_d[1],
-                                         &u3V.key_d[2], 
-                                         &u3V.key_d[3]);
+    sscanf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
+                  &u3V.key_d[0],
+                  &u3V.key_d[1],
+                  &u3V.key_d[2],
+                  &u3V.key_d[3]);
   }
 
   /* load runtime config
