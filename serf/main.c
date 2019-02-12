@@ -597,7 +597,7 @@ _serf_poke_work(c3_d    evt_d,              //  event number
   if ( evt_d < 6 ) {
     _serf_poke_boot(evt_d, mug_l, job);
   }
-  else { 
+  else {
     _serf_poke_live(evt_d, mug_l, job);
   }
 }
