@@ -97,13 +97,13 @@ _pier_work_bail(void*       vod_p,
 /* _pier_work_boot(): prepare serf boot.
 */
 static void
-_pier_work_boot(u3_pier* pir_u, c3_d len_d, c3_o fak_o)
+_pier_work_boot(u3_pier* pir_u)
 {
   u3_lord* god_u = pir_u->god_u;
 
   u3_noun who = u3i_chubs(2, pir_u->who_d);
-  u3_noun len = u3i_chubs(1, &len_d);
-  u3_noun msg = u3nq(c3__boot, who, fak_o, len);
+  u3_noun len = u3i_chubs(1, &pir_u->lif_d);
+  u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
 
   u3_newt_write(&god_u->inn_u, u3ke_jam(msg), 0);
 }
@@ -971,9 +971,10 @@ _pier_boot_vent(u3_pier* pir_u)
 
     //  initialize the boot barrier
     //
-    //    XX need a separate barrier for just the lifecycle formula
+    //    And the initial lifecycle boot barrier.
     //
     pir_u->but_d = u3kb_lent(u3k(fol));
+    pir_u->lif_d = pir_u->but_d;
 
     while ( u3_nul != fol ) {
       _pier_insert(pir_u, 0, u3k(u3h(fol)));
@@ -984,13 +985,12 @@ _pier_boot_vent(u3_pier* pir_u)
   //  prepare serf for boot sequence
   //
   {
-    c3_o fak_o = ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n;
-
-    _pier_work_boot(pir_u, pir_u->but_d, fak_o);
-
+    pir_u->fak_o = ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n;
     fprintf(stderr, "boot: ship: %s%s\r\n",
                      pir_u->who_c,
-                     (c3y == u3A->fak) ? " (fake)" : "");
+                     (c3y == pir_u->fak_o) ? " (fake)" : "");
+
+    _pier_work_boot(pir_u);
   }
 
   //  insert the module sequence as normally events

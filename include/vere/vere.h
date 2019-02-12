@@ -667,6 +667,7 @@
           c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
+          c3_d             lif_d;               //  lifecycle boot barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
           c3_d             sec_d[1];            //  generator (unstretched)
           c3_d             key_d[4];            //  secret (stretched)
