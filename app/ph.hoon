@@ -111,7 +111,9 @@
       --
     ::
       :-  %composed-child-boot-2
-      %+  compose-tests  (planet ~haplun-todtus)
+      %+  compose-tests
+        %+  compose-tests  (planet ~mitnep-todsut)
+          (planet ~haplun-todtus)
       ^-  test-core
       |_  [our=@p now=@da]
       ++  label  %composed-child-boot-2

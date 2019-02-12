@@ -609,7 +609,7 @@
       |=  [who=ship thus=_this]
       =.  this  thus
       sleep:(pe who)
-    =.  piers  (~(got by fleet-snaps) lab.ovo)
+    =.  piers  (~(uni by piers) (~(got by fleet-snaps) lab.ovo))
     =.  this
       %+  turn-ships  (turn ~(tap by piers) head)
       |=  [who=ship thus=_this]

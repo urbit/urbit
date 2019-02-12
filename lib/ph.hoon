@@ -6,26 +6,28 @@
 |%
 ::  Defines a complete integration test.
 ::
-::    Perhaps route should take a unix-effect rather than a sign.
-::    Similarly, perhaps ++abet should produce a list of
-::    unix-events.  Also, perhaps we should support state.
-::
-::  Perhaps closer to this:
-::  ++  test-core
-::    $_  ^?
-::    |%
-::    ++  start  ^?(..abet)
-::    ++  route  |~([wire unix-effect] ^?(..abet))
-::    ++  abet   *(list unix-event)
-::    --
-::
 ++  test-core
   $_  ^?
   |%
+  ::
+  ::  Unique name, used as a cache label.
+  ::
   ++  label  *term
+  ::
+  ::  List of ships that are part of the test.
+  ::
+  ::    We'll only hear effects from these ships, and only these will
+  ::    be in the cache points.
+  ::
   ++  ships  *(list ship)
-  ++  start  |~(@da *(quip ph-event _^?(..start)))
-  ++  route  |~([@da [ship unix-effect]] *(quip ph-event _^?(..start)))
+  ::
+  ::  Called first to kick off the test.
+  ::
+  ++  start  |~(now=@da *(quip ph-event _^?(..start)))
+  ::
+  ::  Called on every effect from a ship.
+  ::
+  ++  route  |~([now=@da ship unix-effect] *(quip ph-event _^?(..start)))
   --
 ::
 ++  ph-event
@@ -103,7 +105,7 @@
     ::
     ::  Cache lookup label
     ::
-    ++  label  :((cury cat 3) label:a '--1-' label:b)
+    ++  label  :((cury cat 3) label:a '--' label:b)
     ::
     ::  Union of ships in a and b
     ::
@@ -168,7 +170,7 @@
     |=  her=ship
     ^-  test-core
     |%
-    ++  label  (cat 3 'iinit-' (scot %p her))
+    ++  label  (cat 3 'init-' (scot %p her))
     ++  ships  ~[her]
     ++  start
       |=  now=@da
@@ -198,6 +200,7 @@
         [%test-done &]~
       ==
     --
+  ::
   ++  galaxy
     |=  her=ship
     ?>  =(%czar (clan:title her))
