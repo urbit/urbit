@@ -244,7 +244,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   //
   if ( c3n == u3_Host.ops_u.nuu ) {
     struct stat s;
-    if ( 0 == stat(u3_Host.dir_c, &s) ) {
+    if ( 0 != stat(u3_Host.dir_c, &s) ) {
       u3_Host.ops_u.nuu = c3y;
     }
   }
