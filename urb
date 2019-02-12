@@ -12,9 +12,11 @@ import requests
 import argparse
 import base64
 
-logging.basicConfig(level=logging.WARNING,
-                    format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
-                    stream=sys.stderr)
+logging.basicConfig(
+  level=logging.WARNING,
+  format='%(levelname)s %(funcName)s %(lineno)s - %(message)s',
+  stream=sys.stderr,
+)
 
 logging.debug(['sys.argv', sys.argv])
 
@@ -41,7 +43,8 @@ def preprocess_args(old_args):
         return []
     if old_args[0][0] == '[':
         if len(old_args[0]) > 1:
-            return ['--open'] + preprocess_args([old_args[0][1:]] + old_args[1:])
+            r = preprocess_args([old_args[0][1:]] + old_args[1:])
+            return ['--open'] + r
         else:
             return ['--open'] + preprocess_args(old_args[1:])
     if old_args[0][-1] == ']':
@@ -87,7 +90,8 @@ class sourceAction(argparse.Action):
                 if not isinstance(source, list):
                     raise ValueError('Already specified one source')
                 elif level == 0:
-                    raise ValueError('Already specified a source %r %s' % (source, level))
+                    msg = 'Already specified a source %r %s' % (source, level)
+                    raise ValueError(msg)
                 elif level == 1:
                     return source + [self.construct_value(new_value)]
                 else:
@@ -143,7 +147,8 @@ class transformerAction(argparse.Action):
                 logging.debug('source %s' % source)
                 logging.debug('level %s' % level)
                 if level == 0 or level is None:
-                    return {self.which: {self.nesting: new_value, "next": source}}
+                    res = {self.nesting: new_value, "next": source}
+                    return {self.which: res}
                 elif not isinstance(source, list):
                     raise ValueError('Already specified one source')
                 else:
@@ -183,7 +188,8 @@ class openAction(argparse.Action):
                 rsource, rlevel = help(source[-1], level - 1)
                 return (source[:-1] + [rsource], rlevel + 1)
             else:
-                raise ValueError('opening strange level %r %s' % (source, level))
+                msg = 'opening strange level %r %s' % (source, level)
+                raise ValueError(msg)
 
         res.source, res.level = help(res.source, res.level)
 
@@ -213,7 +219,8 @@ class closeAction(argparse.Action):
             elif level > 1:
                 return help(source[-1], level - 1) + 1
             else:
-                raise ValueError('closing strange level %r %s' % (source, level))
+                msg = 'closing strange level %r %s' % (source, level)
+                raise ValueError(msg)
 
         res.level = help(res.source, res.level)
 
@@ -251,7 +258,8 @@ class FullPaths(argparse.Action):
     """Expand user- and relative-paths"""
     def __call__(self, parser, namespace, values, option_string=None):
         if values != None:
-          setattr(namespace, self.dest, os.path.abspath(os.path.expanduser(values)))
+          path = os.path.abspath(os.path.expanduser(values))
+          setattr(namespace, self.dest, path)
 
 def is_dir(dirname):
     """Checks if a path is an actual directory"""
