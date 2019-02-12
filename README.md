@@ -1,9 +1,17 @@
 # urb
+
 Unix control of Urbit
 
-# dependencies
+# Running and Installing
+
+To run without installing anything:
 
 ```bash
-sudo apt install libfuse-dev python-pip
-sudo pip install requests fuse-python
+nix-shell --pure --command 'python ./urb -d "(add 3 4)"'
+```
+
+To install `urb`:
+
+```bash
+nix-env -if .
 ```
