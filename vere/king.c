@@ -56,7 +56,7 @@ static c3_c sag_w;
       ::  q: pill specifier
       ::  r: path to pier
       ::
-      [%boot p=boot q=@pill r=@t]
+      [%boot p=boot q=pill r=@t]
       ::  end the daemon
       ::
       ::    XX not implemented
