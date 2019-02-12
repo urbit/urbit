@@ -33,17 +33,22 @@
         state
     ==
 ++  this  .
+++  test-lib  ~(. ^test-lib our.hid)
 ++  install-tests
   ^+  this
   =.  raw-test-cores
+    ~&  jael=.^(noun %j /(scot %p our.hid)/code/(scot %da now.hid)/(scot %p our.hid))
+    =,  test-lib
     %-  malt
     ^-  (list (pair term test-core))
     :~
       :-  %add
       =+  num=5
-      |%
+      |_  [our=@p now=@da]
+      ++  label  %add
       ++  ships  ~[~bud]
       ++  start
+        |=  now=@da
         ^-  (pair (list ph-event) _..start)
         =.  num  +(num)
         :_  ..start
@@ -53,7 +58,7 @@
         ==
       ::
       ++  route
-        |=  [who=ship ovo=unix-effect]
+        |=  [now=@da who=ship ovo=unix-effect]
         ^-  (quip ph-event _..start)
         ~&  [%num num]
         :_  ..start
@@ -62,9 +67,11 @@
       --
     ::
       :-  %hi
-      |%
+      |_  [our=@p now=@da]
+      ++  label  %hi
       ++  ships  ~[~bud ~dev]
       ++  start
+        |=  now=@da
         ^-  (pair (list ph-event) _..start)
         :_  ..start
         %-  zing
@@ -74,24 +81,26 @@
         ==
       ::
       ++  route
-        |=  [who=ship ovo=unix-effect]
+        |=  [now=@da who=ship ovo=unix-effect]
         ^-  (quip ph-event _..start)
         :_  ..start
         (expect-dojo-output ~bud who ovo "hi ~dev successful")
       --
     ::
-      [%headstart-bud (galaxy:head-starts ~bud)]
+      [%headstart-bud (galaxy ~bud)]
     ::
       :-  %composed-child-boot
-      %+  compose-tests  (planet:head-starts ~linnup-torsyx)
+      %+  compose-tests  (planet ~linnup-torsyx)
       ^-  test-core
-      |%
+      |_  [our=@p now=@da]
+      ++  label  %composed-child-boot
       ++  ships  ~
       ++  start
+        |=  now=@da
         [(dojo ~linnup-torsyx "|hi ~bud") ..start]
       ::
       ++  route
-        |=  [who=ship ovo=unix-effect]
+        |=  [now=@da who=ship ovo=unix-effect]
         ^-  (quip ph-event _..start)
         :_  ..start
         %-  on-dojo-output
@@ -101,10 +110,33 @@
         [%test-done &]~
       --
     ::
+      :-  %composed-child-boot-2
+      %+  compose-tests  (planet ~haplun-todtus)
+      ^-  test-core
+      |_  [our=@p now=@da]
+      ++  label  %composed-child-boot-2
+      ++  ships  ~
+      ++  start
+        |=  now=@da
+        [(dojo ~haplun-todtus "|hi ~bud") ..start]
+      ::
+      ++  route
+        |=  [now=@da who=ship ovo=unix-effect]
+        ^-  (quip ph-event _..start)
+        :_  ..start
+        %-  on-dojo-output
+        :^  ~haplun-todtus  who  ovo
+        :-  "hi ~bud successful"
+        |=  ~
+        [%test-done &]~
+      --
+    ::
       :-  %child-sync
-      |%
+      |_  [our=@p now=@da]
+      ++  label  %child-sync
       ++  ships  ~[~bud ~marbud ~linnup-torsyx]
       ++  start
+        |=  now=@da
         ^-  (pair (list ph-event) _..start)
         :_  ..start
         %-  zing
@@ -112,7 +144,7 @@
         ==
       ::
       ++  route
-        |=  [who=ship ovo=unix-effect]
+        |=  [now=@da who=ship ovo=unix-effect]
         ^-  (quip ph-event _..start)
         :_  ..start
         %-  zing
@@ -252,7 +284,7 @@
   ?+  arg  ~|(%bad-noun-arg !!)
       [%run-test lab=@tas]
     =/  res=[events=(list ph-event) new-state=test-core]
-      start:(~(got by raw-test-cores) lab.arg)
+      (start:(~(got by raw-test-cores) lab.arg) now.hid)
     =.  test-cores  (~(put by test-cores) lab.arg [ships .]:new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
@@ -274,7 +306,7 @@
     ?~  ovo.ova
       [~ u.test-cor]
     =^  events-1  cor.u.test-cor
-      (route:cor.u.test-cor who.ova i.ovo.ova)
+      (route:cor.u.test-cor now.hid who.ova i.ovo.ova)
     =^  events-2  u.test-cor
       $(ovo.ova t.ovo.ova)
     [(weld events-1 events-2) u.test-cor]

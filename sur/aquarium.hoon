@@ -2,6 +2,8 @@
 ++  aqua-event
   $%  [%init-ship who=ship]
       [%pause-events who=ship]
+      [%snap-ships lab=term hers=(list ship)]
+      [%restore-snap lab=term]
       [%event who=ship ovo=unix-event]
   ==
 ::

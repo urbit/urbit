@@ -546,18 +546,8 @@
     this
   ::
       [%restore-fleet lab=@tas]
-    =.  this
-      %+  turn-ships  (turn ~(tap by piers) head)
-      |=  [who=ship thus=_this]
-      =.  this  thus
-      sleep:(pe who)
-    =.  piers  (~(got by fleet-snaps) lab.val)
-    =.  this
-      %+  turn-ships  (turn ~(tap by piers) head)
-      |=  [who=ship thus=_this]
-      =.  this  thus
-      restore:(pe who)
-    this
+    =^  ms  this  (poke-aqua-events [%restore-snap lab.val]~)
+    (emit-moves ms)
   ==
 ::
 ::  Apply a list of events tagged by ship
@@ -599,6 +589,33 @@
   ::
       %pause-events
     stop-processing-events:(pe who.ovo)
+  ::
+      %snap-ships
+    =.  fleet-snaps
+      %+  ~(put by fleet-snaps)  lab.ovo
+      %-  malt
+      %+  murn  hers.ovo
+      |=  her=ship
+      ^-  (unit (pair ship pier))
+      =+  per=(~(get by piers) her)
+      ?~  per
+        ~
+      `[her u.per]
+    (pe -.hers.ovo)
+  ::
+      %restore-snap
+    =.  this
+      %+  turn-ships  (turn ~(tap by piers) head)
+      |=  [who=ship thus=_this]
+      =.  this  thus
+      sleep:(pe who)
+    =.  piers  (~(got by fleet-snaps) lab.ovo)
+    =.  this
+      %+  turn-ships  (turn ~(tap by piers) head)
+      |=  [who=ship thus=_this]
+      =.  this  thus
+      restore:(pe who)
+    (pe ~bud)  ::  XX why ~bud?  need an example
   ::
       %event
     ~&  ev=-.q.ovo.ovo
@@ -711,6 +728,17 @@
   =.  this  thus
   (take-sigh-tang:(pe who) t.way tan)
 ::
+::  Handle scry to aqua
+::
+++  peek-x-fleet-snap
+  |=  pax=path
+  ^-  (unit (unit [%noun noun]))
+  ~&  [%peeking pax]
+  ?.  ?=([@ ~] pax)
+    ~
+  :^  ~  ~  %noun
+  (~(has by fleet-snaps) i.pax)
+::
 ::  Trivial scry for mock
 ::
 ++  scry  |=([* *] ~)
@@ -720,6 +748,7 @@
 ++  prep
   |=  old/(unit noun)
   ^-  [(list move) _+>.$]
+  ~&  prep=%aqua
   ?~  old
     `+>.$
   =+  new=((soft state) u.old)
