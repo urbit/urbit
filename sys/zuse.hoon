@@ -7390,6 +7390,8 @@
       gift:able:ford
       gift:able:gall
       gift:able:jael
+      gift:able:http-client
+      gift:able:http-server
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
@@ -7400,6 +7402,8 @@
       task:able:ford
       task:able:gall
       task:able:jael
+      task:able:http-client
+      task:able:http-server
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%a %wake ~]
@@ -7411,6 +7415,7 @@
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
+      [%l task:able:http-client]
       [%r task:able:http-server]
       {@tas $meta vase}
   ==
@@ -7423,6 +7428,7 @@
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
+      [%l gift:able:http-client]
       [%r gift:able:http-server]
   ==
 ::
