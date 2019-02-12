@@ -94,18 +94,49 @@ _pier_work_bail(void*       vod_p,
   fprintf(stderr, "pier: work error: %s\r\n", err_c);
 }
 
+/* _pier_save_boot_complete(): commit complete.
+*/
+static void
+_pier_save_boot_complete(void* vod_p)
+{
+}
+
+/* _pier_save_boot(): save boot metadata.
+*/
+static void
+_pier_save_boot(u3_pier* pir_u, u3_atom mat)
+{
+  //  XX deduplicate with _pier_disk_commit_request
+  //
+  c3_d  len_d = u3r_met(6, mat);
+  c3_d* buf_d = c3_malloc(8 * len_d);
+
+  u3r_chubs(0, len_d, buf_d, mat);
+
+  u3_foil_append(_pier_save_boot_complete,
+                 (void*)0,
+                 pir_u->log_u->fol_u,
+                 buf_d,
+                 len_d);
+}
+
 /* _pier_work_boot(): prepare serf boot.
 */
 static void
-_pier_work_boot(u3_pier* pir_u)
+_pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 {
   u3_lord* god_u = pir_u->god_u;
 
   u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
+  u3_atom mat = u3ke_jam(msg);
 
-  u3_newt_write(&god_u->inn_u, u3ke_jam(msg), 0);
+  if ( c3y == sav_o ) {
+    _pier_save_boot(pir_u, u3k(mat));
+  }
+
+  u3_newt_write(&god_u->inn_u, mat, 0);
 }
               
 /* _pier_disk_shutdown(): close the log.
@@ -796,6 +827,33 @@ _pier_disk_load_commit(u3_pier* pir_u,
       c3_free(buf_d);
 
       ovo = u3ke_cue(u3k(mat));
+
+      //  single-home
+      //
+      if ( (0ULL == pos_d) &&
+           (1ULL == lav_d) )
+      {
+        u3_noun who, fak, len;
+
+        c3_assert( c3__boot == u3h(ovo) );
+        u3x_qual(ovo, 0, &who, &fak, &len);
+
+        c3_assert( c3y == u3ud(who) );
+        c3_assert( 1 >= u3r_met(7, who) );
+        c3_assert( c3y == u3ud(fak) );
+        c3_assert( 1 >= u3r_met(0, fak) );
+        c3_assert( c3y == u3ud(len) );
+        c3_assert( 1 >= u3r_met(3, len) );
+
+        pir_u->fak_o = (c3_o)fak;
+        pir_u->lif_d = u3r_word(0, len);
+        u3r_chubs(0, 2, pir_u->who_d, who);
+
+        u3z(mat);
+        u3z(ovo);
+        break;
+      }
+
       c3_assert(c3__work == u3h(ovo));
       evt = u3h(u3t(ovo));
       job = u3k(u3t(u3t(u3t(ovo))));
@@ -990,7 +1048,7 @@ _pier_boot_vent(u3_pier* pir_u)
                      pir_u->who_c,
                      (c3y == pir_u->fak_o) ? " (fake)" : "");
 
-    _pier_work_boot(pir_u);
+    _pier_work_boot(pir_u, c3y);
   }
 
   //  insert the module sequence as normally events
@@ -1923,14 +1981,23 @@ _pier_boot_complete(u3_pier* pir_u,
                    pir_u->god_u->dun_d,
                    (c3y == nuu_o ? "new" : "old"));
 
-  u3_pier_work_save(pir_u);
+  //  start event replay by preparing serf to %boot
+  //
+  if ( (0 == pir_u->god_u->dun_d) &&
+       (c3n == nuu_o) )
+  {
+    _pier_work_boot(pir_u, c3n);
+  }
+  else {
+    u3_pier_work_save(pir_u);
+  }
 
-  /* the main course
-  */
+  //  the main course
+  //
   _pier_loop_wake(pir_u);
 
-  /* where does this go, not sure?
-  */
+  //  XX where should this go?
+  //
   {
     if ( c3y == u3_Host.ops_u.veb ) {
       u3_term_ef_verb();
