@@ -303,6 +303,12 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       u3z(pox); u3z(fav);
       return c3y;
     }
+    else if (c3y == u3r_sing(u3i_string("http-client"), u3k(it_pox))) {
+      u3_cttp_ef_http_client(u3k(fav));
+
+      u3z(pox); u3z(fav);
+      return c3y;
+    }
     else switch ( it_pox ) {
       default: u3z(pox); u3z(fav); return c3n;
 

@@ -1082,6 +1082,11 @@
         u3_cttp_ef_thus(c3_l    num_l,
                         u3_noun req);
 
+      /* u3_cttp_ef_http_client(): send %http-client effect to cttp.
+      */
+        void
+        u3_cttp_ef_http_client(u3_noun fav);
+
       /* u3_http_ef_bake(): create new http server.
       */
         void
@@ -1197,6 +1202,11 @@
         void
         u3_cttp_ef_thus(c3_l    num_l,
                         u3_noun req);
+
+      /* u3_cttp_ef_back(): initialization event on restart.
+      */
+        void
+        u3_cttp_ef_bake();
 
       /* u3_cttp_io_init(): initialize cttp I/O.
       */

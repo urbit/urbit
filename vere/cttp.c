@@ -534,6 +534,71 @@ _cttp_creq_free(u3_creq* ceq_u)
   free(ceq_u);
 }
 
+/* _cttp_creq_new_from_request(): create a request from an +http-request 
+ *
+ *   If we were rewriting all of this from scratch, this isn't how we'd do it.
+ *
+ *   We start with the 
+ */
+static u3_creq*
+_cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
+{
+  u3_creq* ceq_u = c3_calloc(sizeof(*ceq_u));
+
+  u3_noun method, url, headers, body;
+  if (c3n == u3r_qual(hes, &method, &url, &headers, &body)) {
+    u3z(hes);
+    return 0;
+  }
+  u3m_p("method", method);
+  u3m_p("url", url);
+  u3m_p("headers", headers);
+  u3m_p("body", body);
+
+  // Parse the url out of the new style url passed to us.
+  u3m_p("url", url);
+  u3_noun pul = u3do("de-purl:html", url);
+  u3m_p("pul", pul);
+  u3_noun hat = u3h(pul);      // +hart
+  u3_noun sec = u3h(hat);  // <--- this is the line we're bailing on.
+  u3_noun por = u3h(u3t(hat));
+  u3_noun hot = u3t(u3t(hat)); // +host
+
+  ceq_u->sat_e = u3_csat_init;
+  ceq_u->num_l = num_l;
+  ceq_u->sec   = sec;
+
+  if ( c3y == u3h(hot) ) {
+    ceq_u->hot_c = _cttp_creq_host(u3k(u3t(hot)));
+  } else {
+    ceq_u->ipf_w = u3r_word(0, u3t(hot));
+    ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
+  }
+
+  if ( u3_nul != por ) {
+    ceq_u->por_s = u3t(por);
+    ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
+  }
+
+  // TODO: met_m is used for lowercase only. Here, we're using it in uppercase.
+  ceq_u->met_m = method;
+  ceq_u->url_c = _cttp_creq_url(u3k(pul));
+
+  // TODO: mah is a semiparsed header format, which is not what we were passed in.
+  /* ceq_u->hed_u = _cttp_heds_math(u3k(mah)); */
+
+  if ( u3_nul != body ) {
+    ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(body)));
+  }
+
+  _cttp_creq_link(ceq_u);
+
+  u3z(pul);
+  u3z(hes);
+
+  return ceq_u;
+}
+
 /* _cttp_creq_new(): create a request from a +hiss noun
 */
 static u3_creq*
@@ -621,8 +686,10 @@ _cttp_creq_fire_heds(u3_creq* ceq_u, u3_hhed* hed_u)
 static void
 _cttp_creq_fire(u3_creq* ceq_u)
 {
+  // TODO: This needs to be better. The met_m that we send now is uppercassed.
   switch ( ceq_u->met_m ) {
     default: c3_assert(0);
+    case c3_s3('G', 'E', 'T'):  _cttp_creq_fire_str(ceq_u, "GET ");      break;
     case c3__get:   _cttp_creq_fire_str(ceq_u, "GET ");      break;
     case c3__put:   _cttp_creq_fire_str(ceq_u, "PUT ");      break;
     case c3__post:  _cttp_creq_fire_str(ceq_u, "POST ");     break;
@@ -687,18 +754,36 @@ _cttp_creq_quit(u3_creq* ceq_u)
   _cttp_creq_free(ceq_u);
 }
 
-/* _cttp_httr(): dispatch http response to %eyre
-*/
+/* /\* _cttp_httr(): dispatch http response to %eyre */
+/* *\/ */
+/* static void */
+/* _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct) */
+/* { */
+/*   u3_noun htr = u3nt(sas_w, mes, uct); */
+/*   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul); */
+/*   // TODO: This is where we send a response back to %eyre; we need  */
+/*   // */
+/*   u3v_plan(pox, u3nt(c3__they, num_l, htr)); */
+/* } */
+
 static void
-_cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
+_cttp_http_client_receive(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
-  u3_noun htr = u3nt(sas_w, mes, uct);
+  // TODO: We want to eventually deal with partial responses, but I don't know
+  // how to get that working right now.
   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
 
-  u3v_plan(pox, u3nt(c3__they, num_l, htr));
+  u3v_plan(pox,
+           u3nq(u3i_string("http-client"),
+                u3i_string("receive"),
+                num_l,
+                u3nq(u3i_string("start"),
+                     sas_w,
+                     mes,
+                     u3nc(uct, c3y))));
 }
 
-/* _cttp_creq_quit(): dispatch error response
+/* _cttp_creq_fail(): dispatch error response
 */
 static void
 _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
@@ -709,18 +794,20 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   uL(fprintf(uH, "http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c));
 
   // XX include err_c as response body?
-  _cttp_httr(ceq_u->num_l, cod_w, u3_nul, u3_nul);
+  /* _cttp_httr(ceq_u->num_l, cod_w, u3_nul, u3_nul); */
+  _cttp_http_client_receive(ceq_u->num_l, cod_w, u3_nul, u3_nul);
   _cttp_creq_free(ceq_u);
 }
 
-/* _cttp_creq_quit(): dispatch response
+/* _cttp_creq_respond(): dispatch response
 */
 static void
 _cttp_creq_respond(u3_creq* ceq_u)
 {
   u3_cres* res_u = ceq_u->res_u;
 
-  _cttp_httr(ceq_u->num_l, res_u->sas_w, res_u->hed,
+  /* _cttp_httr(ceq_u->num_l, res_u->sas_w, res_u->hed, */
+  _cttp_http_client_receive(ceq_u->num_l, res_u->sas_w, res_u->hed,
              ( !res_u->bod_u ) ? u3_nul :
              u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)));
 
@@ -967,6 +1054,48 @@ u3_cttp_ef_thus(c3_l    num_l,
     _cttp_creq_start(ceq_u);
   }
   u3z(cuq);
+}
+
+/* u3_cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
+*/
+void
+u3_cttp_ef_http_client(u3_noun fav)
+{
+  u3_creq* ceq_u;
+
+  if (c3y == u3r_sing(u3i_string("request"), u3k(u3h(fav)))) {
+    u3_noun p_fav, q_fav;
+    if (c3y == u3r_cell(u3t(fav), &p_fav, &q_fav)) {
+      ceq_u = _cttp_creq_new_from_request(u3r_word(0, p_fav), u3k(q_fav));
+
+      if ( ceq_u ) {
+        _cttp_creq_start(ceq_u);
+      } else {
+        uL(fprintf(uH, "cttp: strange request (unparsable url)\n"));
+      }
+    } else {
+      uL(fprintf(uH, "cttp: strange request (unparsable request)\n"));
+    }
+  } else if (c3y == u3r_sing(u3i_string("cancel-request"), u3k(u3h(fav)))) {
+    ceq_u =_cttp_creq_find(u3r_word(0, u3t(fav)));
+
+    if ( ceq_u ) {
+      _cttp_creq_quit(ceq_u);
+    }
+  } else {
+    uL(fprintf(uH, "cttp: strange request (unknown type)\n"));
+  }
+
+  u3z(fav);
+}
+
+/* u3_cttp_ef_bake(): notify that we're live.
+*/
+void
+u3_cttp_ef_bake()
+{
+  u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3v_plan(pax, u3nc(c3__born, u3_nul));
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.

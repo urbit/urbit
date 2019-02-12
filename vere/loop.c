@@ -622,6 +622,7 @@ u3_lo_lead(void)
     }
 
     u3_http_ef_bake();
+    u3_cttp_ef_bake();
   }
 
   _lo_talk();
