@@ -550,17 +550,18 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
     u3z(hes);
     return 0;
   }
-  u3m_p("method", method);
-  u3m_p("url", url);
-  u3m_p("headers", headers);
-  u3m_p("body", body);
 
   // Parse the url out of the new style url passed to us.
-  u3m_p("url", url);
-  u3_noun pul = u3do("de-purl:html", url);
-  u3m_p("pul", pul);
+  u3_noun unit_pul = u3do("de-purl:html", u3k(url));
+  if (c3n == u3r_du(unit_pul)) {
+    uL(fprintf(uH, "cttp: url parsing failed\n"));
+    u3z(hes);
+    return 0;
+  }
+  u3_noun pul = u3t(unit_pul);
+
   u3_noun hat = u3h(pul);      // +hart
-  u3_noun sec = u3h(hat);  // <--- this is the line we're bailing on.
+  u3_noun sec = u3h(hat);
   u3_noun por = u3h(u3t(hat));
   u3_noun hot = u3t(u3t(hat)); // +host
 
@@ -593,7 +594,7 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
 
   _cttp_creq_link(ceq_u);
 
-  u3z(pul);
+  u3z(unit_pul);
   u3z(hes);
 
   return ceq_u;
@@ -761,8 +762,6 @@ _cttp_creq_quit(u3_creq* ceq_u)
 /* { */
 /*   u3_noun htr = u3nt(sas_w, mes, uct); */
 /*   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul); */
-/*   // TODO: This is where we send a response back to %eyre; we need  */
-/*   // */
 /*   u3v_plan(pox, u3nt(c3__they, num_l, htr)); */
 /* } */
 
@@ -771,16 +770,15 @@ _cttp_http_client_receive(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
   // TODO: We want to eventually deal with partial responses, but I don't know
   // how to get that working right now.
-  u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
+  u3_noun pox = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
 
   u3v_plan(pox,
-           u3nq(u3i_string("http-client"),
-                u3i_string("receive"),
+           u3nt(u3i_string("receive"),
                 num_l,
                 u3nq(u3i_string("start"),
-                     sas_w,
-                     mes,
-                     u3nc(uct, c3y))));
+                     u3nc(sas_w, mes),
+                     uct,
+                     c3y)));
 }
 
 /* _cttp_creq_fail(): dispatch error response
