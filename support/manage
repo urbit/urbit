@@ -459,8 +459,16 @@ def build_paths(path_graph, path_built_map, build_plan, keep_going: true)
   true
 end
 
+def update_gcroots
+  system("nix-instantiate -A gcroots --add-root #{Dir.pwd}/gcroots.drv --indirect > /dev/null")
+  if !$?.success?
+    raise AnticipatedError, "Failed to update GC roots."
+  end
+end
+
 def parse_args(argv)
   action = case argv.first
+           when 'gcroots' then :gcroots
            when 'graph' then :graph
            when 'build' then :build
            when 'plan' then :plan
@@ -481,6 +489,10 @@ begin
     puts <<END
 Usage: support/manage action
 
+gcroots:
+  Update gcroots.drv and add it as a garbage collector root so that you can
+  run 'nix-collect-garbage -d' without deleting useful items, assuming
+  the keep-outputs option is enabled in nix.conf.
 graph:
   Generate a Graphviz graph of derivations of dependencies to paths.gv.
 plan:
@@ -495,6 +507,10 @@ help:
 
 The derivations we care about are defined in support/derivations.txt.
 END
+  end
+
+  if action == :gcroots
+    update_gcroots
   end
 
   if [:graph, :build, :plan, :status].include?(action)

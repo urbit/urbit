@@ -1,3 +1,4 @@
 /nixpkgs
 /result*
-/support/results
+/gcroots
+/gcroots.drv
