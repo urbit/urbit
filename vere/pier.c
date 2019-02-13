@@ -985,6 +985,8 @@ _pier_boot_vent(u3_pier* pir_u)
           ova = u3t(ova);
         }
 
+        c3_assert( 1 == len_w );
+
         u3z(use);
         use = u3kb_flop(new);
       }
