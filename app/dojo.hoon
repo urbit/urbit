@@ -246,7 +246,6 @@
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-::        ;~(plug (cold %ur lus) parse-iden-url)
         ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
@@ -716,7 +715,6 @@
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
             $say  /gent
             $ask  /dial
-            $get  /scar
           ==
       =+  gat=(slot 3 q.cay)
       :+  %call  [%$ %noun gat]
@@ -769,37 +767,6 @@
         =+  pom=(sole-prompt +<.q.vax)
         [%pro pom(cad [':' ' ' cad.pom])]
       ==
-    ::
-    ++  dy-made-scar                                    ::  scraper product
-      |=  cag/cage
-      ^+  +>+>
-      ?.  ?=(^ q.q.cag)
-        (dy-errd ~ q.q.cag)
-      =+  tan=((list tank) +2.q.q.cag)
-      =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(sped (slot 3 q.cag))
-      ~_  (sell q.cag)
-      ?+    -.q.vax  !!
-          %&
-        ?~  +.q.vax
-          ~&  %dy-made-scar-abort
-          (dy-rash %bel ~)
-        (dy-meal (slot 7 vax))
-      ::
-          %|
-        =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working sped  #72
-        =+  typ={%| (unit knot) hiss:eyre *}
-        =+  [* usr hiz *]=((dy-cast typ !>($:typ)) vax)
-        =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
-      ==
-    ::
-    ++  dy-sigh-scar                                    ::  scraper result
-      |=  dat/cage
-      ?~  pro
-        ~&  %dy-no-scraper
-        (dy-show dat)
-      (dy-slam(pux ~) /scar u.pro q.dat)
     ::
     ++  dy-made-gent                                    ::  generator product
       |=  cag/cage
@@ -976,7 +943,6 @@
           {$dial ~}  dy-made-dial:dye
           {$gent ~}  dy-made-gent:dye
           {$noun ~}  dy-made-noun:dye
-          {$scar ~}  dy-made-scar:dye
           {$edit ~}  dy-made-edit:dye
         ==
       ::
@@ -994,7 +960,6 @@
     ?+  way  !!
       {$hand ~}  dy-hand:dye
       {$show ~}  dy-show:dye
-      {$scar ~}  dy-sigh-scar:dye
     ==
   ::
   ++  he-unto                                           ::  result from behn
@@ -1025,7 +990,6 @@
     ?+  way  !!
       {$hand ~}  dy-hand:dye
       {$show ~}  dy-show:dye
-      {$scar ~}  dy-sigh-scar:dye
     ==
   ::
   ++  he-lens
