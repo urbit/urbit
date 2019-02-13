@@ -24,10 +24,6 @@
 ::  +note: private request from light to another vane
 ::
 +$  note  _~
-::
-::
-
-
 --
 ::  more structures
 ::
@@ -272,7 +268,6 @@
   ?-    -.task
   ::
       %born
-    ~&  [%todo-http-client-born ~]
     ::  TODO: reset the next-id for client state here.
     ::
     ::  send requests on the duct passed in with born.
