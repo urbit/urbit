@@ -1031,6 +1031,7 @@ _pier_boot_vent(u3_pier* pir_u)
   //    Note that these are not ovum or (pair @da ovum) events,
   //    but raw nock formulas to be directly evaluated as the
   //    subject of the lifecycle formula [%2 [%0 3] %0 2].
+  //    All subsequent events will be (pair @da ovum).
   //
   {
     u3_noun fol = bot;
@@ -1059,9 +1060,7 @@ _pier_boot_vent(u3_pier* pir_u)
     _pier_work_boot(pir_u, c3y);
   }
 
-  //  insert the module sequence as normally events
-  //
-  //    i.e., will be (pair @da ovum), as will all the following
+  //  insert module events
   //
   {
     u3_noun ova = mod;
