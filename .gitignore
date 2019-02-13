@@ -33,3 +33,6 @@ build/
 TAGS
 /fakezod
 /zod
+/tags
+/config.mk
+include/config.h

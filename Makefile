@@ -14,13 +14,14 @@ king_objs   = $(shell echo $(king) | sed 's/\.c/.o/g')
 serf_objs   = $(shell echo $(serf) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(king_objs) $(serf_objs)
+all_srcs = $(common) $(king) $(serf)
 
 ################################################################################
 
 all: urbit
 
 clean:
-	rm -f $(objs) ./urbit ./urbit-worker
+	rm -f $(objs) ./urbit ./urbit-worker tags
 
 ################################################################################
 
@@ -35,3 +36,8 @@ urbit-worker: $(common_objs) $(serf_objs)
 %.o: %.c $(headers)
 	@echo CC $<
 	@$(CC) -I./include $(CFLAGS) -c $< -o $@
+
+################################################################################
+
+tags: $(all_srcs) $(headers)
+	ctags $^
