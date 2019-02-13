@@ -44,7 +44,7 @@
     :~
       :-  %add
       =+  num=5
-      |_  [our=@p now=@da]
+      |%
       ++  label  %add
       ++  ships  ~[~bud]
       ++  start
@@ -67,7 +67,7 @@
       --
     ::
       :-  %hi
-      |_  [our=@p now=@da]
+      |%
       ++  label  %hi
       ++  ships  ~[~bud ~dev]
       ++  start
@@ -92,7 +92,7 @@
       :-  %composed-child-boot
       %+  compose-tests  (planet ~linnup-torsyx)
       ^-  test-core
-      |_  [our=@p now=@da]
+      |%
       ++  label  %composed-child-boot
       ++  ships  ~
       ++  start
@@ -115,7 +115,7 @@
         %+  compose-tests  (planet ~mitnep-todsut)
           (planet ~haplun-todtus)
       ^-  test-core
-      |_  [our=@p now=@da]
+      |%
       ++  label  %composed-child-boot-2
       ++  ships  ~
       ++  start
@@ -134,7 +134,7 @@
       --
     ::
       :-  %child-sync
-      |_  [our=@p now=@da]
+      |%
       ++  label  %child-sync
       ++  ships  ~[~bud ~marbud ~linnup-torsyx]
       ++  start
