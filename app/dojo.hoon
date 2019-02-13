@@ -1006,6 +1006,27 @@
     ?~  p.cit
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
+  ::  +he-finished: result from http-client
+  ::
+  ++  he-finished
+    |=  [way=wire header=response-header:http full-file=(unit mime-data:http-client)]
+    ^+  +>
+    ~&  [%response header full-file]
+    ?>  ?=(^ poy)
+    =<  he-pine
+    ::  TODO: The following is a hacky munging between eyre's old data
+    ::  structures and the new data structures of %lient.
+    ::
+    =/  data=(unit octs)
+      ?~(full-file ~ `data.u.full-file)
+    ::
+    %.  [%httr !>([status-code.header headers.header data])]
+    =+  dye=~(. dy u.poy(pux ~))
+    ?+  way  !!
+      {$hand ~}  dy-hand:dye
+      {$show ~}  dy-show:dye
+      {$scar ~}  dy-sigh-scar:dye
+    ==
   ::
   ++  he-lens
     |=  com/command:lens
@@ -1227,6 +1248,7 @@
 ++  made       (wrap he-made):arm
 ++  sigh-httr  (wrap he-sigh):arm
 ++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  finished   (wrap he-finished):arm
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
 ++  pull
