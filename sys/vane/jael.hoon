@@ -971,9 +971,15 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%e %sigh *]
+        [%l %progress *]
+      ::  we don't care about interim progress reports
+      +>.$
+    ::
+        [%l %finished *]
       %+  cute  hen  =<  abet
-      (~(sigh et hen our now urb.lex sub.lex etn.lex sap.lex) wir p.hin)
+      %^  ~(finished et hen our now urb.lex sub.lex etn.lex sap.lex)  wir
+        response-header.hin
+      full-file.hin
     ::
         [%b %wake ~]
       %+  cute  hen
@@ -1706,16 +1712,17 @@
     :-  [/jael/eth-logic ~ ~]
     [%pass (weld /(scot %p our) wir) not]
   ::
+  ::
   ::  +rpc-hiss: make an http request to our ethereum rpc source
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
     ^-  move
     %+  wrap-note  wir
-    :^  %e  %hiss  ~
-    :+  %httr  %hiss
-    ?>  ?=(%| -.source)
-    !>  (json-request node.p.source jon)
+    :^  %l  %request
+      ?>  ?=(%| -.source)
+      (light-json-request node.p.source jon)
+    *outbound-config:http-client
   ::
   ::  +|  source-operations
   ::
@@ -1936,6 +1943,20 @@
     ?>  ?=(%httr mar)
     =+  raw-rep=~|(res ((hard httr:eyre) q.res))
     =+  rep=(httr-to-rpc-response raw-rep)
+    (complete-with-rpc-response cuz rep)
+  ::
+  ++  finished
+    |=  [cuz=wire =response-header:http full-file=(unit mime-data:http-client)]
+    ^+  +>
+    ?:  ?=(%& -.source)  +>
+    ::
+    =+  rep=(httr-to-rpc-response (to-httr:http-client response-header full-file))
+    (complete-with-rpc-response cuz rep)
+  ::
+  ++  complete-with-rpc-response
+    |=  [cuz=wire rep=response:rpc:jstd]
+    ^+  +>
+    ::
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
         ~&  'HTTP 405 error (expected if using infura)'
@@ -1944,7 +1965,7 @@
         ~&  [%http-error hit.rep]
         +>.$
       ?+  cuz
-        ~&  [%retrying-node ((soft tang) q.res)]
+        :: ~&  [%retrying-node ((soft tang) q.res)]
         wait-poll
           [%catch-up %step @ta @ta ~]
         ~&  %retrying-catch-up

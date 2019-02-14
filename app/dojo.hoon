@@ -979,13 +979,8 @@
     ~&  [%response header full-file]
     ?>  ?=(^ poy)
     =<  he-pine
-    ::  TODO: The following is a hacky munging between eyre's old data
-    ::  structures and the new data structures of %lient.
     ::
-    =/  data=(unit octs)
-      ?~(full-file ~ `data.u.full-file)
-    ::
-    %.  [%httr !>([status-code.header headers.header data])]
+    %.  [%httr !>((to-httr:http-client header full-file))]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
       {$hand ~}  dy-hand:dye

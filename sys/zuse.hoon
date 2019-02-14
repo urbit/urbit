@@ -1933,9 +1933,6 @@
       $%  [%rest p=@da]                                 ::  cancel timer
           [%wait p=@da]                                 ::  wait until
       ==  ==                                            ::
-          $:  %e                                        ::
-      $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-      ==  ==                                            ::
           $:  %a                                        ::
       $%  [%want p=ship q=path r=*]                     ::  send message
       ==  ==                                            ::
@@ -1943,6 +1940,9 @@
       $%  [%vent-result p=vent-result]                  ::  tmp workaround
           [%look src=(each ship purl:eyre)]             ::
       ==  ==                                            ::
+          $:  %l
+      $%  [%request =request:http =outbound-config:http-client]
+      ==  ==
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
           [%sunk p=ship q=life]                         ::  report death
@@ -1960,10 +1960,13 @@
     ::
     ++  sign                                            ::  in result $<-
       $%  {$b $wake ~}                                  ::  wakeup
-          [%e %sigh p=cage]                             ::  marked http response
           [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
-      ==                                                ::
+      ::
+          $:  %l
+      $%  [%progress *]
+          [%finished =response-header:http full-file=(unit mime-data:http-client)]
+      ==  ==  ==                                        ::
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
       action                                            ::  change
@@ -2194,6 +2197,16 @@
         ::
         retries=_3
     ==
+  ::  +to-httr: adapts to old eyre interface
+  ::
+  ++  to-httr
+    |=  [header=response-header:http full-file=(unit mime-data)]
+    ^-  httr:eyre
+    ::
+    =/  data=(unit octs)
+      ?~(full-file ~ `data.u.full-file)
+    ::
+    [status-code.header headers.header data]
   --
 ::
 ::::
@@ -8315,6 +8328,20 @@
         %-  ~(gas in *math)
         ~['Content-Type'^['application/json']~]
       (some (as-octt (en-json:html jon)))
+    ::  +light-json-request: like json-request, but for %l
+    ::
+    ::    TODO: Exorcising +purl from our system is a much longer term effort;
+    ::    get the current output types for now.
+    ::
+    ++  light-json-request
+      |=  [url=purl:eyre jon=json]
+      ^-  request:http
+      ::
+      :*  %'POST'
+          (crip (en-purl:html url))
+          ~[['content-type' 'application/json']]
+          (some (as-octt (en-json:html jon)))
+      ==
     ::
     ++  batch-read-request
       |=  req=(list proto-read-request)
