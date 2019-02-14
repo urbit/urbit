@@ -48,8 +48,7 @@
           {$file p/beam}                                ::  save to clay
           $:  $http                                     ::  http outbound
               p/?($post $put)
-              q/(unit knot)
-              r/purl:eyre
+              r/@t
           ==
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3 $4 $5)}                ::  val/type/hoon/xray
@@ -107,12 +106,6 @@
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
-          $:  $hiss
-              wire
-              (unit knot)
-              mark
-              {$hiss hiss:eyre}
-          ==
           [%request wire request:http outbound-config:http-client]  ::  %l
           [%build wire ? schematic:ford]
           [%kill wire ~]
@@ -212,8 +205,8 @@
       ;~(plug (cold %file tar) parse-beam)
       ;~(plug (cold %flat vat) (most net sym))
       ;~(plug (cold %pill dot) (most net sym))
-      ;~(plug (cold %http lus) (stag %post parse-iden-url))
-      ;~(plug (cold %http hep) (stag %put parse-iden-url))
+      ;~(plug (cold %http lus) (stag %post parse-url))
+      ;~(plug (cold %http hep) (stag %put parse-url))
       (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
     ==
   ::
@@ -365,12 +358,6 @@
       ::  pin all builds to :now.hid so they don't get cached forever
       ::
       (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
-    ::
-    ++  dy-eyre                                         ::  send work to eyre
-      |=  {way/wire usr/(unit knot) req/hiss:eyre}
-      ^+  +>+>
-      ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
     ::
     ++  dy-request
       |=  [way=wire =request:http]
@@ -604,9 +591,12 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math:eyre) %content-type (en-mite:mimes:html p.mim))
-        (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
-::        (dy-request /show [ ])
+        %+  dy-request  /show
+        :*  ?:(=(%put p.p.mad) %'PUT' %'POST')
+            r.p.mad
+            ~[['content-type' (en-mite:mimes:html p.mim)]]
+            `q.mim
+        ==
       ::
           $show
         |^  (prnt cay note)
@@ -781,7 +771,6 @@
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
-        ::(dy-eyre /hand p.bil [q.bil %get ~ ~])
         (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
       %-  dy-ford
       ^-  [path schematic:ford]
@@ -950,18 +939,6 @@
         (he-diff(poy ~) %tan message.build-result.result)
     ==  ==
   ::
-  ++  he-sigh                                           ::  result from eyre
-    |=  {way/wire hit/httr:eyre}
-    ^+  +>
-    ?>  ?=(^ poy)
-    =<  he-pine
-    %.  [%httr !>(hit)]
-    =+  dye=~(. dy u.poy(pux ~))
-    ?+  way  !!
-      {$hand ~}  dy-hand:dye
-      {$show ~}  dy-show:dye
-    ==
-  ::
   ++  he-unto                                           ::  result from behn
     |=  {way/wire cit/cuft:gall}
     ^+  +>
@@ -1065,7 +1042,7 @@
           $stdout       [%show %0]
           $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
           $output-clay  [%file (need (de-beam:format pax.sink.com))]
-          $url          [%http %post `~. url.sink.com]
+          $url          [%http %post (crip (en-purl:html url.sink.com))]
           $to-api       !!
           $send-api     [%poke our.hid api.sink.com]
           $command      (rash command.sink.com parse-sink:he-parser)
@@ -1205,8 +1182,6 @@
   [~ +>.$]
 ::
 ++  made       (wrap he-made):arm
-++  sigh-httr  (wrap he-sigh):arm
-++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
 ++  finished   (wrap he-finished):arm
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
