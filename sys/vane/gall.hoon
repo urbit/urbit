@@ -25,7 +25,7 @@
 ++  cote                                                ::  ++ap note
   $%  {$meta p/@tas q/vase}                             ::
       {$send p/ship q/cush}                             ::
-      {$hiss p/(unit knot) q/mark r/cage}               ::
+::      {$hiss p/(unit knot) q/mark r/cage}               ::
   ==                                                    ::
 ++  cove  (pair bone (wind cote cuft))                  ::  internal move
 ++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
@@ -443,11 +443,11 @@
     =+  vax=(slot 3 `vase`hin)
     ?-  i.t.t.pax
       $inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))
-      $cay  ?.  ?=({$e $sigh *} q.hin)
+      $cay  ::?.  ?=({$e $sigh *} q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
-            ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
+            ::ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
       $out  ?.  ?=({$g $unto *} q.hin)
               ~&  [%mo-cook-weird q.hin]
@@ -613,7 +613,7 @@
           $pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
-          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
+::          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
           $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
 ::          $response  `note-arvo`[%l %response raw-http-response.q.q.cov]
@@ -812,7 +812,7 @@
       ?+  +<.q.vax
                (ap-move-pass -.q.vax +<.q.vax cav)
         $diff  (ap-move-diff -.q.vax cav)
-        $hiss  (ap-move-hiss -.q.vax cav)
+        ::  $hiss  (ap-move-hiss -.q.vax cav)
         $peel  (ap-move-peel -.q.vax cav)
         $peer  (ap-move-peer -.q.vax cav)
         $pull  (ap-move-pull -.q.vax cav)
@@ -866,29 +866,29 @@
     ::    =-  ~!  -  `cote`-
     ::    [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
-    ++  ap-move-hiss                                    ::  pass %hiss
-      ~/  %hiss
-      |=  {sto/bone vax/vase}
-      ^-  {(each cove tang) _+>}
-      ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
-        =+  args="[%hiss wire (unit knot) mark cage]"
-        :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
-      =^  gaw  vel  (~(slot wa vel) 15 vax)
-      ?.  &(?=({p/@ *} q.gaw) ((sane %tas) p.q.gaw))
-        :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
-      =^  paw  vel  (~(stop wa vel) 3 gaw)
-      =+  usr=((soft (unit knot)) q.q.vax)
-      ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
-        :_(+>.$ [%| (ap-suck "hiss: malformed (unit knot)")])
-      =+  pux=((soft path) p.q.vax)
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        :_(+>.$ [%| (ap-suck "hiss: malformed path")])
-      :_  +>.$
-      :^  %&  sto  %pass
-      :-  [(scot %p q.q.pry) %cay u.pux]
-      ~!  *cote
-      =-  ~!  -  `cote`-
-      [%hiss u.usr r.q.vax [p.q.gaw paw]]
+    ::  ++  ap-move-hiss                                    ::  pass %hiss
+    ::    ~/  %hiss
+    ::    |=  {sto/bone vax/vase}
+    ::    ^-  {(each cove tang) _+>}
+    ::    ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
+    ::      =+  args="[%hiss wire (unit knot) mark cage]"
+    ::      :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
+    ::    =^  gaw  vel  (~(slot wa vel) 15 vax)
+    ::    ?.  &(?=({p/@ *} q.gaw) ((sane %tas) p.q.gaw))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
+    ::    =^  paw  vel  (~(stop wa vel) 3 gaw)
+    ::    =+  usr=((soft (unit knot)) q.q.vax)
+    ::    ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed (unit knot)")])
+    ::    =+  pux=((soft path) p.q.vax)
+    ::    ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed path")])
+    ::    :_  +>.$
+    ::    :^  %&  sto  %pass
+    ::    :-  [(scot %p q.q.pry) %cay u.pux]
+    ::    ~!  *cote
+    ::    =-  ~!  -  `cote`-
+    ::    [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       ~/  %mess

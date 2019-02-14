@@ -836,54 +836,6 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:eyre                     ::  (1e1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +=  gift                                            ::  out result <-$
-      $%  [%form p=http-config]                         ::  configuration
-          [%mass p=mass]                                ::  memory usage
-          [%mack p=(unit tang)]                         ::  message ack
-          [%sigh p=cage]                                ::  marked http response
-          [%that p=@p q=prox]                           ::  get proxied request
-          [%thou p=httr]                                ::  raw http response
-          [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
-          [%veer p=@ta q=path r=@t]                     ::  drop-through
-          [%vega p=@t q=@t]                             ::  drop-through
-      ==                                                ::
-    +=  task                                            ::  in request ->$
-      $%  [%born p=(list host)]                         ::  new unix process
-          [%crud p=@tas q=(list tank)]                  ::  XX rethink
-          [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-          [%init p=@p]                                  ::  report install
-          [%live p=@ud q=(unit @ud)]                    ::  http/s ports
-          [%rule p=http-rule]                           ::  update config
-          [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship q=life]                         ::  report death
-          [%them p=(unit hiss)]                         ::  outbound request
-          [%they p=@ud q=httr]                          ::  inbound response
-          [%chis p=? q=clip r=httq]                     ::  IPC inbound request
-          [%this p=? q=clip r=httq]                     ::  inbound request
-          [%thud ~]                                     ::  inbound cancel
-          [%vega ~]                                     ::  report upgrade
-          [%wegh ~]                                     ::  report memory
-          [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          [%west p=ship q=[path *]]                     ::  network request
-          [%wise p=ship q=prox]                         ::  proxy notification
-      ==                                                ::
-    --  ::able
-  ::
-  ::::                                                  ::  (1e2)
-    ::
-  ++  bale                                              ::  driver state
-    |*  a/_*                                            ::  %jael keys type
-    $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
-        {usr/user dom/(list @t)}                        ::  req user, domain
-        key/a                                           ::  secrets from %jael
-    ==                                                  ::
-  ::
-  ++  clip  (each @if @is)                              ::  client IP
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
         aut/(jug @tas @t)                               ::  client identities
@@ -897,25 +849,10 @@
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
     ==                                                  ::
-  ++  gram                                              ::  inter-ship message
-    $%  [%lon p=hole]                                   ::  login request
-        [%aut p=hole]                                   ::  login reply
-        [%hat p=hole q=hart]                            ::  login redirect
-        [%get p=@uvH q=[? clip httq]]                   ::  remote request
-        [%got p=@uvH q=httr]                            ::  remote response
-        [%gib p=@uvH]                                   ::  remote cancel
-      ::
-        [%get-inner p=@uvH q=mark r=coin s=beam]        ::TODO details?
-        [%got-inner p=@uvH q=(each (cask) tang)]        ::TODO details?
-      ::
-        [%not p=prox]                                   ::  proxy notification
-    ==                                                  ::
+    
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
-  ++  heir  {p/@ud q/mess r/(unit love)}                ::  status+headers+data
   ++  hiss  {p/purl q/moth}                             ::  outbound request
-  ++  hole  @t                                          ::  session identity
-  ++  hort  {p/(unit @ud) q/host}                       ::  http port+host
   ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
@@ -954,19 +891,6 @@
         s/(unit octs)                                   ::  body
     ==                                                  ::
   ++  httr  {p/@ud q/mess r/(unit octs)}                ::  raw http response
-  ++  httx                                              ::  encapsulated http
-    $:  p/?                                             ::  https?
-        q/clip                                          ::  source IP
-        r/httq                                          ::
-    ==                                                  ::
-  ++  user  knot                                        ::  username
-  ++  love                                              ::  http response
-    $%  {$ham p/manx}                                   ::  html node
-        {$mid p/mite q/octs}                            ::  mime-typed data
-        {$raw p/httr}                                   ::  raw http response
-        {$wan p/wain}                                   ::  text lines
-        {$zap p/@ud q/(list tank)}                      ::  status+error
-    ==                                                  ::
   ++  math  (map @t (list @t))                          ::  semiparsed headers
   ++  mess  (list {p/@t q/@t})                          ::  raw http headers
   ++  meth                                              ::  http methods
@@ -1066,6 +990,7 @@
         {$give p/httr}                                  ::  respond immediately
         {$redo ~}                                      ::  restart request qeu
     ==                                                  ::
+  ++  user  knot                                        ::  username
   --  ::eyre
 ::                                                      ::::
 ::::                    ++ford                            ::  (1f) build
@@ -1928,7 +1853,6 @@
       ==                                                ::
     ::                                                  ::
     ++  note                                            ::  out request $->
-      =,  eyre                                          ::
       $%  $:  %b                                        ::
       $%  [%rest p=@da]                                 ::  cancel timer
           [%wait p=@da]                                 ::  wait until
@@ -7399,7 +7323,6 @@
       gift:able:behn
       gift:able:clay
       gift:able:dill
-      gift:able:eyre
       gift:able:ford
       gift:able:gall
       gift:able:jael
@@ -7411,7 +7334,6 @@
       task:able:clay
       task:able:behn
       task:able:dill
-      task:able:eyre
       task:able:ford
       task:able:gall
       task:able:jael
@@ -7424,7 +7346,6 @@
       {$b task:able:behn}
       {$c task:able:clay}
       {$d task:able:dill}
-      {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
@@ -7437,7 +7358,6 @@
       {$b gift:able:behn}
       {$c gift:able:clay}
       {$d gift:able:dill}
-      {$e gift:able:eyre}
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
@@ -7454,9 +7374,6 @@
       {$hear p/lane:ames q/@}                           ::  ames: input packet
       {$hook ~}                                        ::  dill: hangup
       {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
-      {$they p/@ud q/httr:eyre}                         ::  eyre: in response
-      {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
-      {$thud ~}                                        ::  eyre: in cancel
       {$wake ~}                                        ::  behn: wakeup
   ==
 ::                                                      ::
