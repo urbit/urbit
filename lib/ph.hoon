@@ -231,6 +231,45 @@
       %pawn  ~|(%comet-not-implemented !!)
     ==
   ::
+  ::  Touches /sur/aquarium/hoon on the given ship.
+  ::
+  ::    You must have started the ship or this will fail.
+  ::
+  ++  touch-file
+    |=  her=ship
+    ^-  test-core
+    =|  warped=@t
+    |%
+    ++  label  %touch-file
+    ++  ships  ~
+    ++  start
+      |=  now=@da
+      ^-  (pair (list ph-event) _..start)
+      =/  pax
+        /(scot %p our)/home/(scot %da now)/sur/aquarium/hoon
+      =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
+      :_  ..start
+      %-  zing
+      :~  (dojo her "|mount %")
+          (insert-file her pax warped)
+      ==
+    ::
+    ++  route
+      |=  [now=@da who=ship ovo=unix-effect]
+      ^-  (quip ph-event _..start)
+      :_  ..start
+      %-  zing
+      :~  %-  on-ergo
+          :^  her  who  ovo
+          |=  $~
+          =/  pax  /i/[(scot %p her)]/home/(scot %da now)/sur/aquarium/hoon/noun
+          ?:  =(warped (need (scry-aqua (unit @) now pax)))
+            [%test-done &]~
+          ~&  %not-done-yet
+          ~
+      ==
+    --
+  ::
   ++  scry-aqua
     |*  [a=mold now=@da pax=path]
     .^  a

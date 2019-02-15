@@ -135,39 +135,7 @@
     ::
       :-  %change-file
       %+  compose-tests  (galaxy ~bud)
-      ^-  test-core
-      =|  warped=@t
-      |%
-      ++  label  %change-file
-      ++  ships  ~
-      ++  start
-        |=  now=@da
-        ^-  (pair (list ph-event) _..start)
-        =/  pax
-          /(scot %p our.hid)/home/(scot %da now.hid)/sur/aquarium/hoon
-        =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
-        :_  ..start
-        %-  zing
-        :~  (dojo ~bud "|mount %")
-            (insert-file ~bud pax warped)
-        ==
-      ::
-      ++  route
-        |=  [now=@da who=ship ovo=unix-effect]
-        ^-  (quip ph-event _..start)
-        :_  ..start
-        %-  zing
-        :~  %-  on-ergo
-            :^  ~bud  who  ovo
-            |=  $~
-            =/  pax  /i/~bud/home/(scot %da now)/sur/aquarium/hoon/noun
-            ~&  [%compare (met 3 warped) (met 3 (need (scry-aqua (unit @) now pax)))]
-            ?:  =(warped (need (scry-aqua (unit @) now pax)))
-              [%test-done &]~
-            ~&  %not-done-yet
-            ~
-        ==
-      --
+      (touch-file ~bud)
     ::
       :-  %individual-breach
       *test-core
