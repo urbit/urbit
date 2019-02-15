@@ -3,7 +3,6 @@ source $setup
 tar -xf $src
 mv avrdude-* avrdude
 
-ls -lad avrdude
 cd avrdude
 chmod -R u+w .
 cp $config_dot_sub config.sub
