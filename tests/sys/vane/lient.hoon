@@ -83,6 +83,7 @@
         ^-  (list move:http-client-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
+                %http-response
                 %finished
             ::
                 :-  200
@@ -172,6 +173,7 @@
         ^-  (list move:http-client-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
+                %http-response
                 %progress
             ::
                 :-  200
@@ -204,6 +206,7 @@
         ^-  (list move:http-client-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
+                %http-response
                 %progress
             ::
                 :-  200
@@ -236,6 +239,7 @@
         ^-  (list move:http-client-gate)
         :~  :*  duct=~[/http-get-request]
                 %give
+                %http-response
                 %finished
             ::
                 :-  200

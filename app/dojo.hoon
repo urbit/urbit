@@ -948,16 +948,19 @@
     ?~  p.cit
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
-  ::  +he-finished: result from http-client
+  ::  +he-http-response: result from http-client
   ::
-  ++  he-finished
-    |=  [way=wire header=response-header:http full-file=(unit mime-data:http-client)]
+  ++  he-http-response
+    |=  [way=wire response=client-response:http-client]
     ^+  +>
-    ~&  [%response header full-file]
     ?>  ?=(^ poy)
     =<  he-pine
+    ?.  ?=(%finished -.response)
+      ~&  %dojo-received-http-progress
+      +>
     ::
-    %.  [%httr !>((to-httr:http-client header full-file))]
+    ~!  response
+    %.  [%httr !>((to-httr:http-client response-header.response full-file.response))]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
       {$hand ~}  dy-hand:dye
@@ -1182,7 +1185,7 @@
   [~ +>.$]
 ::
 ++  made       (wrap he-made):arm
-++  finished   (wrap he-finished):arm
+++  http-response   (wrap he-http-response):arm
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
 ++  pull

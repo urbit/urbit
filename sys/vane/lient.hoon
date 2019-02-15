@@ -198,6 +198,7 @@
     :_  ~
     :*  duct.connection
         %give
+        %http-response
         %progress
         (need response-header.in-progress-http-request.connection)
         bytes-read.in-progress-http-request.connection
@@ -230,6 +231,7 @@
       u.mime-type
     :-  :~  :*  duct.connection
                 %give
+                %http-response
                 %finished
                 response-header
                 ?:(=(0 p.data) ~ `[mime data])
