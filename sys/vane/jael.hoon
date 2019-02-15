@@ -971,15 +971,14 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%l %progress *]
-      ::  we don't care about interim progress reports
-      +>.$
-    ::
-        [%l %finished *]
+        [%l %http-response *]
+      ?.  ?=(%finished -.client-response.hin)
+        +>.$
+      ~!  hin
       %+  cute  hen  =<  abet
       %^  ~(finished et hen our now urb.lex sub.lex etn.lex sap.lex)  wir
-        response-header.hin
-      full-file.hin
+        response-header.client-response.hin
+      full-file.client-response.hin
     ::
         [%b %wake ~]
       %+  cute  hen

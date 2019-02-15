@@ -1886,11 +1886,8 @@
       $%  {$b $wake ~}                                  ::  wakeup
           [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
-      ::
-          $:  %l
-      $%  [%progress *]
-          [%finished =response-header:http full-file=(unit mime-data:http-client)]
-      ==  ==  ==                                        ::
+          [%l %http-response =client-response:http-client]
+      ==
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
       action                                            ::  change
@@ -6633,6 +6630,34 @@
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
       [(malt qix) ((hard cred) ced) bem]
+  ::
+  ++  hiss-to-request
+    |=  =hiss
+    ^-  request:http
+    ::
+    :*  ?-  p.q.hiss
+          %conn  %'CONNECT'
+          %delt  %'DELETE'
+          %get   %'GET'
+          %head  %'HEAD'
+          %opts  %'OPTIONS'
+          %post  %'POST'
+          %put   %'PUT'
+          %trac  %'TRACE'
+        ==
+    ::
+      (crip (en-purl:html p.hiss))
+    ::
+      ^-  header-list:http
+      ~!  q.q.hiss
+      %+  turn  ~(tap by q.q.hiss)
+      |=  [a=@t b=(list @t)]
+      ^-  [@t @t]
+      ?>  ?=(^ b)
+      [a i.b]
+    ::
+      r.q.hiss
+    ==
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
