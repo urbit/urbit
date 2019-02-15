@@ -6,9 +6,8 @@
 require 'open3'
 require 'pathname'
 require 'set'
-require 'sqlite3'  # gem install sqlite3
-require_relative 'graph'
-require_relative 'expand_brackets'
+require_relative 'support/graph'
+require_relative 'support/expand_brackets'
 
 # Backport Hash#transform_values if we aren't using a new-enough Ruby.
 class Hash
@@ -37,8 +36,8 @@ end
 def check_directory!
   return if File.directory?('pretend_stdenv')
   $stderr.puts "You should run this script from the nixcrpkgs directory."
-  dir = Pathname(__FILE__).parent.parent
-  $stderr.puts "Try running these commands:\n  cd #{dir}\n  test/test.rb"
+  dir = Pathname(__FILE__).parent
+  $stderr.puts "Try running these commands:\n  cd #{dir}\n  ./manage"
   exit 1
 end
 
@@ -193,6 +192,7 @@ end
 
 def nix_db
   return $db if $db
+  require 'sqlite3'  # gem install sqlite3
   $db = SQLite3::Database.new '/nix/var/nix/db/db.sqlite', readonly: true
 end
 
@@ -564,4 +564,3 @@ END
 rescue AnticipatedError => e
   $stderr.puts e
 end
-
