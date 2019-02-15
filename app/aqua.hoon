@@ -111,8 +111,13 @@
     =/  res  (mox +46.snap)
     ?>  ?=(%0 -.res)
     =/  peek  p.res
-    ~&  [who=who %peeked (slum peek [now.hid p])]
-    ..abet-pe
+    =/  pax  (path p)
+    ~&  [who=who %peeking-in tym pax]
+    ?>  ?=([@ @ @ @ *] pax)
+    =.  i.t.t.t.pax  (scot %da tym)
+    =/  pek  (slum peek [tym pax])
+    ~&  [who=who %peeked]
+    pek
   ::
   ::  Wish
   ::
@@ -521,7 +526,8 @@
     %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
     =.  this  thus
-    (peek:(pe who) p.val)
+    ~&  [who=who %peek-result (peek:(pe who) p.val)]
+    (pe who)
   ::
       [%wish hers=* p=@t]
     %+  turn-ships  ((list ship) hers.val)
@@ -738,6 +744,21 @@
     ~
   :^  ~  ~  %noun
   (~(has by fleet-snaps) i.pax)
+::
+::
+::
+++  peek-x-i
+  |=  pax=path
+  ^-  (unit (unit [%noun noun]))
+  ~&  [%peeking-i pax]
+  ?.  ?=([@ @ @ *] pax)
+    ~
+  =/  who  (slav %p i.pax)
+  =/  pier  (~(get by piers) who)
+  ?~  pier
+    ~
+  :^  ~  ~  %noun
+  (peek:(pe who) [%cx pax])
 ::
 ::  Trivial scry for mock
 ::

@@ -62,10 +62,10 @@
   ==
 ::
 ++  insert-file
-  |=  [who=ship pax=path]
+  |=  [who=ship pax=path txt=@t]
   ^-  (list ph-event)
   ?>  ?=([@ @ @ *] pax)
-  =/  file  [/text/plain (as-octs:mimes:html .^(@ %cx pax))]
+  =/  file  [/text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
   :~
     [//sync/0v1n.2m9vh %into i.t.pax | [t.t.t.pax `file]~]
@@ -95,6 +95,14 @@
   |=  ~
   [%test-done &]~
 ::
+++  on-ergo
+  |=   [who=ship her=ship ovo=unix-effect fun=$-($~ (list ph-event))]
+  ?.  =(who her)
+    ~
+  ?.  ?=(%ergo -.q.ovo)
+    ~
+  (fun)
+::
 ++  test-lib
   |_  our=ship
   ++  compose-tests
@@ -117,13 +125,7 @@
       |=  now=@da
       ^-  (quip ph-event _..start)
       =/  have-cache 
-        .^  @f
-            %gx
-            (scot %p our)
-            %aqua
-            (scot %da now)
-            /fleet-snap/[label:a]/noun
-        ==
+        (scry-aqua ? now /fleet-snap/[label:a]/noun)
       ~&  [%have-cache label:a have-cache]
       ?:  have-cache
         =.  done-with-a  &
@@ -227,6 +229,16 @@
       %duke  planet
       %earl  ~|(%moon-not-implemented !!)
       %pawn  ~|(%comet-not-implemented !!)
+    ==
+  ::
+  ++  scry-aqua
+    |*  [a=mold now=@da pax=path]
+    .^  a
+        %gx
+        (scot %p our)
+        %aqua
+        (scot %da now)
+        pax
     ==
   --
 --

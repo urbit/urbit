@@ -133,16 +133,23 @@
         [%test-done &]~
       --
     ::
-      :-  %child-sync
+      :-  %change-file
+      %+  compose-tests  (galaxy ~bud)
+      ^-  test-core
+      =|  warped=@t
       |%
-      ++  label  %child-sync
-      ++  ships  ~[~bud ~marbud ~linnup-torsyx]
+      ++  label  %change-file
+      ++  ships  ~
       ++  start
         |=  now=@da
         ^-  (pair (list ph-event) _..start)
+        =/  pax
+          /(scot %p our.hid)/home/(scot %da now.hid)/sur/aquarium/hoon
+        =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
         :_  ..start
         %-  zing
-        :~  (init ~bud)
+        :~  (dojo ~bud "|mount %")
+            (insert-file ~bud pax warped)
         ==
       ::
       ++  route
@@ -150,47 +157,17 @@
         ^-  (quip ph-event _..start)
         :_  ..start
         %-  zing
-        :~
-          %-  on-dojo-output
-          :^  ~bud  who  ovo
-          :-  "+ /~bud/base/2/web/testing/udon"
-          |=  ~
-          (init ~marbud)
-        ::
-          %-  on-dojo-output
-          :^  ~marbud  who  ovo
-          :-  "; ~bud is your neighbor"
-          |=  ~
-          (init ~linnup-torsyx)
-        ::
-          %-  on-dojo-output
-          :^  ~linnup-torsyx  who  ovo
-          :-  "; ~bud is your neighbor"
-          |=  ~
-          (dojo ~linnup-torsyx "|hi ~bud")
-        ::
-          %-  on-dojo-output
-          :^  ~linnup-torsyx  who  ovo
-          :-  "hi ~bud successful"
-          ::  :-  "; ~bud is your neighbor"
-          |=  ~
-          [%test-done &]~
+        :~  %-  on-ergo
+            :^  ~bud  who  ovo
+            |=  $~
+            =/  pax  /i/~bud/home/(scot %da now)/sur/aquarium/hoon/noun
+            ~&  [%compare (met 3 warped) (met 3 (need (scry-aqua (unit @) now pax)))]
+            ?:  =(warped (need (scry-aqua (unit @) now pax)))
+              [%test-done &]~
+            ~&  %not-done-yet
+            ~
         ==
       --
-      ::  (dojo ~bud "\"magic-go\":[.^(")
-      ::  (dojo ~bud "|mount %")
-      ::  %+  insert-file  ~bud
-      ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
-      ::  (init ~marbud)
-      ::  (dojo ~marbud "|mount %")
-      ::  %+  insert-file  ~marbud
-      ::  /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/clay/hoon
-      ::
-      ::  (init ~zod)
-      ::  (init ~marzod)
-      ::  wait for initial sync
-      ::  change file on zod
-      ::  check on ~marzod
     ::
       :-  %individual-breach
       *test-core
