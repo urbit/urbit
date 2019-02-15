@@ -1,7 +1,7 @@
 { crossenv, libusb }:
 
 let
-  version = "2018-08-16";
+  version = "2018-09-19";
 
   name = "openocd-${version}";
 
@@ -10,8 +10,8 @@ let
   src = nixpkgs.fetchgit {
     url = "git://repo.or.cz/openocd";  # official mirror
     rev = "b2d259f67cc3ee4b689e704228d97943bae94064";
-    sha256 = "05is3xr8wf3xhsyb263z35xhkdj3dfq5nk32wma0cp5c1wcpnzy8";
-    deepClone = true;
+    sha256 = "126zcgq3dplhzmy28rqp0y0df92xgb2qkh9nfc70mka7jwj994yx";
+    fetchSubmodules = true;
   };
 
   drv = crossenv.make_derivation {
