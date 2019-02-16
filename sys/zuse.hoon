@@ -244,6 +244,7 @@
       ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
       $%  {$barn ~}                                    ::  new unix process
+          {$bonk ~}                                     ::  reset the timer
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
