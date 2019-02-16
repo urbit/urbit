@@ -2397,8 +2397,8 @@
       ^+  bar
       ?-    -.mys
           $ins                                          ::  insert if not exist
-        ?:  (~(has by bar) pax)  ~|([%ins-bar pax] !!)  ::
-        ?:  (~(has by hat) pax)  ~|([%ins-hat pax] !!)  ::
+        ?:  (~(has by bar) pax)  ~|([%ins-bar pax hen] !!)  ::
+        ?:  (~(has by hat) pax)  ~|([%ins-hat pax hen] !!)  ::
         %+  ~(put by bar)  pax
         %-  make-direct-blob
         ?:  &(?=($mime -.p.mys) =([%hoon ~] (slag (dec (lent pax)) pax)))
@@ -4231,6 +4231,9 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
+    ?:  ?=([%tyme ~] tea)
+      ~&  %out-of-tyme
+      `..^$
     ::  dear reader, if it crashes here, check the wire.  If it came
     ::  from ++bait, then I don't think we have any handling for that
     ::  sort of thing.

@@ -137,6 +137,13 @@
       %+  compose-tests  (galaxy ~bud)
       (touch-file ~bud)
     ::
+      :-  %child-sync
+      %+  compose-tests
+        %+  compose-tests
+          (star ~marbud)
+        (touch-file ~bud)
+      (check-file-touched ~marbud)
+    ::
       :-  %individual-breach
       *test-core
       ::

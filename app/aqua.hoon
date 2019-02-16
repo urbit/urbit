@@ -4,6 +4,10 @@
 ::  |start %aqua
 ::  /-  aquarium
 ::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
+::    OR
+::  :aqua &pill +solid
+::
+::  Then try stuff:
 ::  :aqua [%init ~[~bud ~dev]]
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
@@ -495,7 +499,7 @@
     =.  this  thus
     %-  push-events:(pe who)
     ^-  (list unix-event)
-    :~  
+    :~
         [//term/1 %belt %ctl `@c`%e]
         [//term/1 %belt %ctl `@c`%u]
         [//term/1 %belt %txt ((list @c) (tape command.val))]
@@ -554,6 +558,11 @@
       [%restore-fleet lab=@tas]
     =^  ms  this  (poke-aqua-events [%restore-snap lab.val]~)
     (emit-moves ms)
+  ::
+      [%clear-snap lab=@tas]
+    =.  fleet-snaps  ~  ::  (~(del by fleet-snaps) lab.val)
+    =.  init-cache  ~
+    this
   ==
 ::
 ::  Apply a list of events tagged by ship

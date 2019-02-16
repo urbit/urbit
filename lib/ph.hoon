@@ -79,7 +79,7 @@
   ?.  ?=(%blit -.q.ovo)
     ~
   ?.  %+  lien  p.q.ovo
-      |=  =blit:dill 
+      |=  =blit:dill
       ?.  ?=(%lin -.blit)
         |
       !=(~ (find what p.blit))
@@ -113,7 +113,7 @@
     ::
     ::  Cache lookup label
     ::
-    ++  label  :((cury cat 3) label:a '--' label:b)
+    ++  label  `@tas`:((cury cat 3) label:a '--' label:b)
     ::
     ::  Union of ships in a and b
     ::
@@ -124,10 +124,10 @@
     ++  start
       |=  now=@da
       ^-  (quip ph-event _..start)
-      =/  have-cache 
+      =/  have-cache
         (scry-aqua ? now /fleet-snap/[label:a]/noun)
-      ~&  [%have-cache label:a have-cache]
       ?:  have-cache
+        ~&  [%caching-in label:a label]
         =.  done-with-a  &
         =/  restore-event  [%restore-snap label:a]
         =^  events-start  b  (start:b now)
@@ -156,6 +156,7 @@
       ?~  done
         [other-events ..start]
       ?>  ?=(%test-done -.i.done)
+      ~&  [%transitioning label]
       ?.  p.i.done
         [[%test-done |]~ ..start]
       =.  done-with-a  &
@@ -233,14 +234,14 @@
   ::
   ::  Touches /sur/aquarium/hoon on the given ship.
   ::
-  ::    You must have started the ship or this will fail.
+  ::    Ship must have been started.
   ::
   ++  touch-file
     |=  her=ship
     ^-  test-core
     =|  warped=@t
     |%
-    ++  label  %touch-file
+    ++  label  (cat 3 'touch-file-' (scot %p her))
     ++  ships  ~
     ++  start
       |=  now=@da
@@ -270,6 +271,45 @@
       ==
     --
   ::
+  ::  Checks that /sur/aquarium/hoon has been touched, as by ++touch-file
+  ::
+  ::    Ship must have been started.
+  ::
+  ++  check-file-touched
+    |=  her=ship
+    ^-  test-core
+    |%
+    ++  label  (cat 3 'check-file-touched-' (scot %p her))
+    ++  ships  ~
+    ++  start
+      |=  now=@da
+      ::  mounting is not strictly necessary since we check via scry,
+      ::  but this way we don't have to check on every event, just
+      ::  ergos (and dojo because we can't guarantee an ergo if the desk
+      ::  is already mounted)
+      ::
+      ~&  %mounting
+      [(dojo her "|mount %") ..start]
+    ::
+    ++  route
+      |=  [now=@da who=ship ovo=unix-effect]
+      ^-  (quip ph-event _..start)
+      =/  cb
+        |=  $~
+        ~&  %cbing
+        =/  pax  /home/(scot %da now)/sur/aquarium/hoon
+        =/  warped  (cat 3 '=>  .  ' .^(@t %cx (weld /(scot %p our) pax)))
+        =/  aqua-pax  :(weld /i/(scot %p her) pax /noun)
+        ?:  =(warped (need (scry-aqua (unit @) now aqua-pax)))
+          [%test-done &]~
+        ~&  %not-done-yet
+        ~
+      :_  ..start
+      %-  zing
+      :~  (on-ergo her who ovo cb)
+          (on-dojo-output her who ovo ">=" cb)
+      ==
+    --
   ++  scry-aqua
     |*  [a=mold now=@da pax=path]
     .^  a
