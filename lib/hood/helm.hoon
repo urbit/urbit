@@ -37,7 +37,8 @@
 =+  sez=(fall (~(get by hoc) ost) $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$conf wire dock $load ship term}             ::
+      $%  [%bonk wire ~]                                ::
+          {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
           [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
@@ -105,6 +106,12 @@
 ++  poke-cancel-automass
   |=  ~
   abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-bonk
+  |=  ~
+  ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
+  %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
+  abet:(emit %bonk /bonk ~)
 ::
 ++  take-wake-automass
   |=  [way=wire ~]

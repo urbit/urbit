@@ -1331,6 +1331,8 @@
     ::
         %pito
       :_  fox(tim `p.bon)
+      %-  flop
+      ^-  (list move)
       :-  [gad.fox %pass /ames %b %wait p.bon]
       ?~  tim.fox  ~
       [gad.fox %pass /ames %b %rest u.tim.fox]~
@@ -1462,6 +1464,13 @@
           :_  fox(gad hen)
           [%bock ~]~
         ::
+            %bonk
+          :_  fox
+          ?~  tim.fox
+            ~&  %ames-bonk-e
+            ~
+          [%pito u.tim.fox]~
+        ::
             %hear
           (~(gnaw am [our now fox ski]) %good p.kyz q.kyz)
         ::
@@ -1543,6 +1552,10 @@
       ?.  =(our his)
         ~
       ``[%noun !>(pals:~(um am [our now fox ski]))]
+    ?:  ?=([%time ~] tyl)
+      ?.  =(our his)
+        ~
+      ``[%noun !>(tim.fox)]
     ~
   ::
   ++  wegh
