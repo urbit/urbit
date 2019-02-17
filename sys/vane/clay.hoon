@@ -1757,8 +1757,9 @@
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
         %f  %build  live=%.n  %pin
-        ::  XX perhaps should be now as in ++validate-plops
-        (case-to-date cas)
+        ::  See ++validate-plops to explain why it's not (case-to-date cas)
+        ::
+        now
         (vale-page [her syd] peg)
     ==
   ::
