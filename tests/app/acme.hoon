@@ -43,6 +43,11 @@
 ++  test-first-order-wake
   =^  moves  app  (~(wake app *bowl:gall *acme:app) /acme/try/1/directory ~)
   %+  expect-eq
-      !>  ~[[ost.bow.app [%hiss /acme/try/2/directory ~ %httr %hiss directory-base:app %get ~ ~]]]
+      !>  :~  :*  ost.bow.app
+                  %request
+                  /acme/try/2/directory
+                  [%'GET' (crip (en-purl:html directory-base:app)) ~ ~]
+                  *outbound-config:http-client
+          ==  ==
       !>  moves
 --

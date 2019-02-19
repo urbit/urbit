@@ -10,7 +10,7 @@
       [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 +$  card
-  $%  [%hiss wire (unit ~) %httr %hiss hiss:eyre]
+  $%  [%request wire request:http outbound-config:http-client]
       [%poke wire dock poke]
       [%rule wire %turf %put turf]
       [%wait wire @da]
@@ -450,43 +450,27 @@
   ^-  (quip move _this)
   ~&  +<+:this
   [~ this]
-::  +sigh-httr: accept http response
 ::
-++  sigh-httr
-  |=  [=wire rep=httr:eyre]
+++  http-response
+  |=  [=wire response=client-response:http-client]
   ^-  (quip move _this)
+  ?.  ?=(%finished -.response)
+    ::  progress report
+    [~ this]
+  ::
   ?+  wire
-    ~&  [%strange-http-response wire rep]
+    ~&  [%strange-http-response wire response]
     [~ this]
   ::
       [%authority *]
     ?~  nem
-      ~&  [%not-an-authority %http-response wire rep]
+      ~&  [%not-an-authority %http-response wire response]
       [~ this]
-    abet:(~(http-response bind u.nem) t.wire rep)
+    abet:(~(http-response bind u.nem) t.wire (to-httr:http-client +.response))
   ::
       [%relay %him @ *]
     =/  him=ship  (slav %p i.t.t.wire)
-    abet:(http-response:(tell him) t.t.t.wire rep)
-  ==
-::  +sigh-tang: failed to make http request
-::
-++  sigh-tang
-  |=  [=wire =tang]
-  ^-  (quip move _this)
-  ?+  wire
-    ~&  [%strange-sigh-tang wire]
-    [((slog tang) ~) this]
-  ::
-      [%authority *]
-    ?~  nem
-      ~&  [%not-an-authority %http-crash wire]
-      [((slog tang) ~) this]
-    abet:(~(http-crash bind u.nem) t.wire tang)
-  ::
-      [%relay %him @ *]
-    =/  him=ship  (slav %p i.t.t.wire)
-    abet:(http-crash:(tell him) t.t.t.wire tang)
+    abet:(http-response:(tell him) t.t.t.wire (to-httr:http-client +.response))
   ==
 ::  +wake: timer callback
 ::
@@ -625,7 +609,7 @@
   ++  request
     |=  [=wire =hiss:eyre]
     ^-  card
-    [%hiss wire [~ ~] %httr %hiss hiss]
+    [%request wire (hiss-to-request:html hiss) *outbound-config:http-client]
   ::  +http-wire: build a wire for a |tell request
   ::
   ++  http-wire
@@ -867,7 +851,7 @@
   ++  request
     |=  [=wire =hiss:eyre]
     ^-  card
-    [%hiss wire ~ %httr %hiss hiss]
+    [%request wire (hiss-to-request:html hiss) *outbound-config:http-client]
   ::  +http-wire: build a wire for a |tell request
   ::
   ++  http-wire

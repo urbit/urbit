@@ -139,7 +139,7 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%hiss wire ~ %httr %hiss hiss:eyre]
+  $%  [%request wire request:http outbound-config:http-client]
       [%poke wire dock poke]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
@@ -385,7 +385,7 @@
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%hiss wir ~ %httr %hiss req]
+  [%request wir (hiss-to-request:html req) *outbound-config:http-client]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -1147,29 +1147,15 @@
       %finalize-trial  finalize-trial:fec
     ==
   --
-::  +sigh-tang: handle http request failure
-::
-++  sigh-tang
-  |=  [=wire =tang]
+++  http-response
+  |=  [=wire response=client-response:http-client]
   ^-  (quip move _this)
-  ?>  ?=([%acme ^] wire)
-  ::  XX may God forgive me for this
   ::
-  =<  abet
-  =-  ?:(?=(%& -.-) p.- this)
-  %-  mule  |.
-  (retry:event t.wire)
-::  +sigh-recoverable-error: handle http rate-limit response
-::
-::    XX we won't receive this unless we request a
-::    mark conversion and it fails
-::
-++  sigh-recoverable-error
-  |=  [=wire %429 %rate-limit lim=(unit @da)]
-  ^-  (quip move _this)
-  ~&  [%sigh-recoverable wire lim]
-  ?>  ?=([%acme ^] wire)
-  abet:(retry:event t.wire)
+  ?.  ?=(%finished -.response)
+    ::  ignore progress reports
+    [~ this]
+  ::
+  (sigh-httr wire (to-httr:http-client +.response))
 ::  +sigh-httr: accept http response
 ::
 ++  sigh-httr
