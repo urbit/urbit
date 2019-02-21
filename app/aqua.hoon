@@ -406,7 +406,6 @@
     ?~  pers
       ~
     ?:  &(?=(^ next-events.q.i.pers) processing-events.q.i.pers)
-      ~&  [%new-events p.i.pers]
       `p.i.pers
     $(pers t.pers)
   ~&  plowing=who
@@ -439,6 +438,8 @@
   ~&  lent=(met 3 (jam boot-ova.pil))
   =/  res=toon :: (each * (list tank))
     (mock [boot-ova.pil [2 [0 3] [0 2]]] scry)
+  =.  fleet-snaps  ~
+  =.  init-cache  ~
   ?-  -.res
       %0
     ~&  %suc
@@ -470,6 +471,31 @@
   ::  boilerplate
   ::
   ?+  val  ~|(%bad-noun-arg !!)
+      [%swap-vanes vs=*]
+    ?>  ?=([[%7 * %1 installed=*] ~] boot-ova.pil)
+    =.  installed.boot-ova.pil
+      %+  roll  (,(list term) vs.val)
+      |=  [v=term _installed.boot-ova.pil]
+      %^  slum  installed.boot-ova.pil  now.hid
+      =/  vane
+        ?+  v  ~|([%unknown-vane v] !!)
+          %a  %ames
+          %b  %behn
+          %c  %clay
+          %d  %dill
+          %e  %eyre
+          %f  %ford
+          %g  %gall
+          %j  %ford
+        ==
+      =/  pax
+        /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
+      =/  txt  .^(@ %cx (weld pax /hoon))
+      [/vane/[vane] [%veer v pax txt]]
+    =>  .(this ^+(this this))
+    =^  ms  this  (poke-pill pil)
+    (emit-moves ms)
+  ::
       [%init hers=*]
     =/  hers  ((list ship) hers.val)
     ?~  hers
