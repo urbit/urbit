@@ -1171,6 +1171,7 @@
       ?~  hat
         +>.$
       wake:(print-changes:(checkout-ankh u.hat) wen lem)
+    ~&  [%edit our hen]
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     ::
@@ -2376,6 +2377,7 @@
     ++  apply-changes                                   ::   apply-changes:ze
       |=  lar/(list {p/path q/misu})                    ::  store changes
       ^-  (map path blob)
+      ~&  [%apply-changes our hen]
       =+  ^=  hat                                       ::  current state
           ?:  =(let.dom 0)                              ::  initial commit
             ~                                           ::  has nothing
@@ -3768,6 +3770,17 @@
       wrapped-task
     ((hard task:able) p.wrapped-task)
   ::
+  ::  only one of these should be going at once, so queue
+  ::
+  ?:  &(?=(?(%info %into %merg) -.req) |(=(now tip.ruf) ?=(^ cue.ruf)))
+    =.  cue.ruf  (~(put to cue.ruf) [hen req])
+    =/  wait=(list move)
+      ?~(cue.ruf ~ [hen %pass /queued-request %b %wait now]~)
+    [wait ..^$]
+  (handle-task hen req)
+::
+++  handle-task
+  |=  [hen=duct req=task:able]
   ^+  [*(list move) ..^$]
   ?-    -.req
       $boat
@@ -3823,19 +3836,13 @@
     [mos ..^$]
   ::
       $info
-    ::  second write at :now gets enqueued with a timer to be run in next event
-    ::
-    ?:  =(now tip.ruf)
-      =.  cue.ruf  (~(put to cue.ruf) [hen req])
-      =/  =move  [hen %pass /queued-request %b %wait now]
-      ::
-      [~[move] ..^$]
     ::  set the last date to now so we'll know to enqueue a second write
     ::
     =.  tip.ruf  now
     ::
     ?:  =(%$ des.req)
       [~ ..^$]
+    =>  .(ruf `raft`ruf)  ::  TMI
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(edit:den now dit.req)
@@ -3877,6 +3884,7 @@
       $merg                                               ::  direct state up
     ?:  =(%$ des.req)
       [~ ..^$]
+    =>  .(ruf `raft`ruf)  ::  TMI
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:abet:(start:(me:ze:den [her.req dem.req] ~ &) cas.req how.req)
@@ -4246,7 +4254,12 @@
     ~|  [%mismatched-ducts %queued queued-duct %timer hen]
     ?>  =(hen queued-duct)
     ::
-    (call hen [-:!>(*task:able) queued-task])
+    =/  wait
+      ?~  cue.ruf
+        ~
+      [hen %pass /queued-request %b %wait now]~
+    =^  moves  ..^$  (handle-task hen queued-task)
+    [(weld wait moves) ..^$]
     ::  =^  mos=(list move)  une
     ::    wake:(un our now hen ruf)
     ::  [mos ..^^$]

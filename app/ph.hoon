@@ -139,9 +139,13 @@
     ::
       :-  %child-sync
       %+  compose-tests
-        %+  compose-tests
-          (star ~marbud)
-        (touch-file ~bud)
+        ::  %+  compose-tests
+          ::  %+  compose-tests
+            %+  compose-tests
+              (galaxy ~bud)
+          ::    (reload-vane ~bud %clay)
+          (raw-ship ~marbud)
+        ::  (touch-file ~bud)
       (check-file-touched ~marbud)
     ::
       :-  %individual-breach

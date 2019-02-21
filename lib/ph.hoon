@@ -109,6 +109,25 @@
     |=  [a=test-core b=test-core]
     ^-  test-core
     =/  done-with-a  |
+    =>
+      |%
+      ++  filter-a
+        |=  [now=@da events=(list ph-event)]
+        ^-  (quip ph-event _..filter-a)
+        =+  ^-  [done=(list ph-event) other-events=(list ph-event)]
+          %+  skid  events
+          |=  e=ph-event
+          =(%test-done -.e)
+        ?~  done
+          [other-events ..filter-a]
+        ?>  ?=(%test-done -.i.done)
+        ?.  p.i.done
+          [[%test-done |]~ ..filter-a]
+        =.  done-with-a  &
+        =/  snap-event  [%snap-ships label:a ships:a]
+        =^  events-start  b  (start:b now)
+        [(welp other-events [snap-event events-start]) ..filter-a]
+      --
     |%
     ::
     ::  Cache lookup label
@@ -131,7 +150,8 @@
         =.  done-with-a  &
         =/  restore-event  [%restore-snap label:a]
         =^  events-start  b  (start:b now)
-        [[restore-event events-start] ..start]
+        =^  events  ..filter-a  (filter-a now restore-event events-start)
+        [events ..start]
       =^  events  a  (start:a now)
       [events ..start]
     ::
@@ -149,20 +169,8 @@
         =^  events  b  (route:b now who ovo)
         [events ..start]
       =^  events  a  (route:a now who ovo)
-      =+  ^-  [done=(list ph-event) other-events=(list ph-event)]
-        %+  skid  events
-        |=  e=ph-event
-        =(%test-done -.e)
-      ?~  done
-        [other-events ..start]
-      ?>  ?=(%test-done -.i.done)
-      ~&  [%transitioning label]
-      ?.  p.i.done
-        [[%test-done |]~ ..start]
-      =.  done-with-a  &
-      =/  snap-event  [%snap-ships label:a ships:a]
-      =^  events-start  b  (start:b now)
-      [(welp other-events [snap-event events-start]) ..start]
+      =^  events  ..filter-a  (filter-a now events)
+      [events ..start]
     --
   ::
   ::  Don't use directly, or else you might not have a parent.
@@ -310,6 +318,35 @@
           (on-dojo-output her who ovo ">=" cb)
       ==
     --
+  ::
+  ::  Reload vane from filesystem
+  ::
+  ::    Ship must have been started.
+  ::
+  ++  reload-vane
+    |=  [her=ship vane=term]
+    ^-  test-core
+    |%
+    ++  label  :((cury cat 3) 'reload-vane-' (scot %p her) '-' vane)
+    ++  ships  ~
+    ++  start
+      |=  now=@da
+      ^-  (pair (list ph-event) _..start)
+      =/  pax
+        /(scot %p our)/home/(scot %da now)/sys/vane/[vane]/hoon
+      :_  ..start
+      %-  zing
+      :~  (dojo her "|mount %")
+          (insert-file her pax .^(@t %cx pax))
+          [%test-done &]~
+      ==
+    ::
+    ++  route
+      |=  [now=@da who=ship ovo=unix-effect]
+      ^-  (quip ph-event _..start)
+      `..start
+    --
+  ::
   ++  scry-aqua
     |*  [a=mold now=@da pax=path]
     .^  a

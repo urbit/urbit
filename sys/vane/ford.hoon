@@ -5751,6 +5751,7 @@
       ::
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
+        ~&  [%x-live-15 our (build-to-tape build) (build-to-tape old-build)]
         ::
         (remove-anchor-from-root old-build [%duct duct])
       ::
