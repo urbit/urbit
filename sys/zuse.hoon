@@ -7884,14 +7884,14 @@
                   fro=(unit block)
                   tob=(unit block)
                   adr=(list address)
-                  top=(list octs)
+                  top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-logs fid=@ud]
               $:  %eth-get-logs
                   fro=(unit block)
                   tob=(unit block)
                   adr=(list address)
-                  top=(list octs)
+                  top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-changes fid=@ud]
               [%eth-send-raw-transaction dat=@ux]
@@ -8031,8 +8031,8 @@
             (turn adr.req (cork address-to-hex tape))
           ::
             ?~  top.req  ~
-            :^  ~  'topics'  %a
-            (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+            :+  ~  'topics'
+            (topics-to-json top.req)
         ==
       ::
           %eth-get-filter-logs
@@ -8058,8 +8058,8 @@
             (turn adr.req (cork address-to-hex tape))
           ::
             ?~  top.req  ~
-            :^  ~  'topics'  %a
-            (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+            :+  ~  'topics'
+            (topics-to-json top.req)
         ==
       ::
           %eth-get-filter-changes
@@ -8101,6 +8101,23 @@
         %number   s+(crip '0' 'x' ((x-co:co 1) n.dob))
         %label    s+l.dob
       ==
+    ::
+    ++  topics-to-json
+      |=  tos=(list ?(@ux (list @ux)))
+      ^-  json
+      :-  %a
+      =/  ttj
+        ;:  cork
+          (cury render-hex-bytes 32)
+          prefix-hex
+          tape:enjs:format
+        ==
+      %+  turn  tos
+      |=  t=?(@ (list @))
+      ?@  t
+        ?:  =(0 t)  ~
+        (ttj `@`t)
+      a+(turn t ttj)
     ::
     ::  parsing responses
     ::
