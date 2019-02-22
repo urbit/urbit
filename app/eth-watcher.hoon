@@ -47,26 +47,10 @@
   [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  [what=?(%debug %debug-init %save %load) =name]
+  |=  [what=?(%save %load) =name]
   ^-  (quip move _+>)
   =+  eye=(fall (~(get by eyes) name) *eye)
   ?-  what
-      %debug
-    ~&  [%log-lent (lent logs.eye)]
-    ~&  [%last-heard last-heard-block.eye]
-    [~ +>.$]
-  ::
-      %debug-init
-    =-  done:(init:watcher name -)
-    ^-  config
-    :*  (need (de-purl:html 'http://104.198.35.227:8545'))  ::  parity
-        ::(need (de-purl:html 'http://35.226.110.143:8545'))  ::  geth
-        7.100.000
-        ~
-        ~[azimuth:contracts:azimuth]
-        ~
-    ==
-  ::
       %save
     =/  pax=path
       /(scot %p our)/home/(scot %da now)/watcher/[name]/jam
