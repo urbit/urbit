@@ -3773,9 +3773,9 @@
   ::  only one of these should be going at once, so queue
   ::
   ?:  &(?=(?(%info %into %merg) -.req) |(=(now tip.ruf) ?=(^ cue.ruf)))
-    =.  cue.ruf  (~(put to cue.ruf) [hen req])
     =/  wait=(list move)
-      ?~(cue.ruf ~ [hen %pass /queued-request %b %wait now]~)
+      ?^(cue.ruf ~ [hen %pass /queued-request %b %wait now]~)
+    =.  cue.ruf  (~(put to cue.ruf) [hen req])
     [wait ..^$]
   (handle-task hen req)
 ::
@@ -4251,13 +4251,18 @@
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued
     ::
+    ~&  :*  %x-clay-waking
+            queued-duct
+            hen
+            ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
+        ==
     ~|  [%mismatched-ducts %queued queued-duct %timer hen]
     ?>  =(hen queued-duct)
     ::
     =/  wait
       ?~  cue.ruf
         ~
-      [hen %pass /queued-request %b %wait now]~
+      [-:(need ~(top to cue.ruf)) %pass /queued-request %b %wait now]~
     =^  moves  ..^$  (handle-task hen queued-task)
     [(weld wait moves) ..^$]
     ::  =^  mos=(list move)  une

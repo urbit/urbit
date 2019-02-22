@@ -298,7 +298,9 @@
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
         ^+  .
-        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
+        =.  moz
+          :_  moz
+          [hen %pass /merg/home %c %merg %home our %base da+now %init]
         .
       ::
       ++  mere                                          ::  continue init

@@ -62,13 +62,13 @@
   ==
 ::
 ++  insert-file
-  |=  [who=ship pax=path txt=@t]
+  |=  [who=ship des=desk pax=path txt=@t]
   ^-  (list ph-event)
   ?>  ?=([@ @ @ *] pax)
   =/  file  [/text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
   :~
-    [//sync/0v1n.2m9vh %into i.t.pax | [t.t.t.pax `file]~]
+    [//sync/0v1n.2m9vh %into des | [t.t.t.pax `file]~]
   ==
 ::
 ++  on-dojo-output
@@ -245,7 +245,7 @@
   ::    Ship must have been started.
   ::
   ++  touch-file
-    |=  her=ship
+    |=  [her=ship des=desk]
     ^-  test-core
     =|  warped=@t
     |%
@@ -259,8 +259,8 @@
       =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
       :_  ..start
       %-  zing
-      :~  (dojo her "|mount %")
-          (insert-file her pax warped)
+      :~  (dojo her "|mount /={(trip des)}=")
+          (insert-file her des pax warped)
       ==
     ::
     ++  route
@@ -271,7 +271,7 @@
       :~  %-  on-ergo
           :^  her  who  ovo
           |=  $~
-          =/  pax  /i/[(scot %p her)]/home/(scot %da now)/sur/aquarium/hoon/noun
+          =/  pax  /i/(scot %p her)/[des]/(scot %da now)/sur/aquarium/hoon/noun
           ?:  =(warped (need (scry-aqua (unit @) now pax)))
             [%test-done &]~
           ~&  %not-done-yet
@@ -284,7 +284,7 @@
   ::    Ship must have been started.
   ::
   ++  check-file-touched
-    |=  her=ship
+    |=  [her=ship des=desk]
     ^-  test-core
     |%
     ++  label  (cat 3 'check-file-touched-' (scot %p her))
@@ -297,7 +297,7 @@
       ::  is already mounted)
       ::
       ~&  %mounting
-      [(dojo her "|mount %") ..start]
+      [(dojo her "|mount /={(trip des)}=") ..start]
     ::
     ++  route
       |=  [now=@da who=ship ovo=unix-effect]
@@ -307,7 +307,12 @@
         ~&  %cbing
         =/  pax  /home/(scot %da now)/sur/aquarium/hoon
         =/  warped  (cat 3 '=>  .  ' .^(@t %cx (weld /(scot %p our) pax)))
-        =/  aqua-pax  :(weld /i/(scot %p her) pax /noun)
+        =/  aqua-pax
+          ;:  weld
+              /i/(scot %p her)
+              pax(- des)
+              /noun
+          ==
         ?:  =(warped (need (scry-aqua (unit @) now aqua-pax)))
           [%test-done &]~
         ~&  %not-done-yet
@@ -336,8 +341,8 @@
         /(scot %p our)/home/(scot %da now)/sys/vane/[vane]/hoon
       :_  ..start
       %-  zing
-      :~  (dojo her "|mount %")
-          (insert-file her pax .^(@t %cx pax))
+      :~  (dojo her "|mount /=home=")
+          (insert-file her %home pax .^(@t %cx pax))
           [%test-done &]~
       ==
     ::

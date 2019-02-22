@@ -135,18 +135,14 @@
     ::
       :-  %change-file
       %+  compose-tests  (galaxy ~bud)
-      (touch-file ~bud)
+      (touch-file ~bud %home)
     ::
       :-  %child-sync
       %+  compose-tests
-        ::  %+  compose-tests
-          ::  %+  compose-tests
-            %+  compose-tests
-              (galaxy ~bud)
-          ::    (reload-vane ~bud %clay)
-          (raw-ship ~marbud)
-        ::  (touch-file ~bud)
-      (check-file-touched ~marbud)
+        %+  compose-tests
+          (star ~marbud)
+        (touch-file ~bud %base)
+      (check-file-touched ~marbud %home)
     ::
       :-  %individual-breach
       *test-core
