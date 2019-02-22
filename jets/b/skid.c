@@ -18,7 +18,7 @@
 
       if ( c3y == hoz ) {
         nex = u3nc(u3nc(u3k(u3h(a)), u3k(u3h(acc))), u3k(u3t(acc)));
-      } 
+      }
       else {
         nex = u3nc(u3k(u3h(acc)), u3nc(u3k(u3h(a)), u3k(u3t(acc))));
       }

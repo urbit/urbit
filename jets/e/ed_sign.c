@@ -9,7 +9,7 @@
 /* functions
 */
   static u3_noun
-  _cqee_sign(u3_noun a, 
+  _cqee_sign(u3_noun a,
              u3_noun b)
   {
     c3_y sig_y[64];

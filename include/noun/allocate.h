@@ -55,7 +55,7 @@
 
       typedef struct {
         c3_w    mug_w;
-        u3_noun hed; 
+        u3_noun hed;
         u3_noun tel;
       } u3a_cell;
 
@@ -218,7 +218,7 @@
 #     define  u3a_north_is_senior(r, dog) \
                 __((u3a_to_off(dog) < r->rut_p) ||  \
                        (u3a_to_off(dog) >= r->mat_p))
-              
+
 #     define  u3a_north_is_junior(r, dog) \
                 __((u3a_to_off(dog) >= r->cap_p) && \
                        (u3a_to_off(dog) < r->mat_p))
@@ -421,7 +421,7 @@
 
         /* u3a_lush(): leak push.
         */
-          c3_w 
+          c3_w
           u3a_lush(c3_w lab_w);
 
         /* u3a_lop(): leak pop.

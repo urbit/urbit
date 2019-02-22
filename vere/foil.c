@@ -27,10 +27,10 @@
     /*  assumptions:
     **    all measurements are in chubs (double-words, c3_d, uint64_t).
     **    little-endian addressing is ASSUMED.
-    **    
+    **
     **  framing:
     **    the last two chubs of a frame:
-    **  
+    **
     **      {
     **        64-bit frame length
     **        {
@@ -78,7 +78,7 @@ _foil_close(uv_file fil_f)
 /* _foil_path(): allocate path.
 */
 static c3_c*
-_foil_path(u3_dire*    dir_u, 
+_foil_path(u3_dire*    dir_u,
            const c3_c* nam_c)
 {
   c3_w  len_w = strlen(dir_u->pax_c);
@@ -95,7 +95,7 @@ _foil_path(u3_dire*    dir_u,
 /* u3_foil_folder(): load directory, blockingly.  null if nonexistent.
 */
 u3_dire*
-u3_foil_folder(const c3_c* pax_c) 
+u3_foil_folder(const c3_c* pax_c)
 {
   u3_dire*    dir_u;
   uv_fs_t     ruq_u;
@@ -152,11 +152,11 @@ u3_foil_folder(const c3_c* pax_c)
   /* open directory file for reading, to fsync
   */
   {
-    if ( 0 > (err_i = uv_fs_open(u3L, 
-                                 &ruq_u, 
-                                 pax_c, 
+    if ( 0 > (err_i = uv_fs_open(u3L,
+                                 &ruq_u,
+                                 pax_c,
                                  O_RDONLY,
-                                 0600, 
+                                 0600,
                                  0)) )
     {
       _foil_fail("open directory", err_i);
@@ -185,13 +185,13 @@ u3_foil_folder(const c3_c* pax_c)
   {
     struct _foil_create_request* req_u = (void *)ruq_u;
     u3_foil*                     fol_u;
- 
+
     fol_u = c3_malloc(sizeof(*fol_u));
     fol_u->fil_u = ruq_u->result;
     fol_u->dir_u = req_u->dir_u;
     fol_u->nam_c = req_u->nam_c;
     fol_u->end_d = 0;
-  
+
     req_u->fun_f(req_u->vod_p, fol_u);
 
     c3_free(req_u->pax_c);
@@ -216,7 +216,7 @@ u3_foil_create(void      (*fun_f)(void*,    //  context pointer
   */
   {
     struct _foil_create_request* req_u;
-    
+
     req_u = c3_malloc(sizeof(*req_u));
 
     req_u->fun_f = fun_f;
@@ -226,9 +226,9 @@ u3_foil_create(void      (*fun_f)(void*,    //  context pointer
     strcpy(req_u->nam_c, nam_c);
     req_u->pax_c = pax_c;
 
-    if ( 0 != (err_i = uv_fs_open(u3L, 
-                                  &req_u->ruq_u, 
-                                  pax_c, 
+    if ( 0 != (err_i = uv_fs_open(u3L,
+                                  &req_u->ruq_u,
+                                  pax_c,
                                   O_CREAT | O_WRONLY,
                                   0600,
                                   _foil_create_cb)) )
@@ -253,11 +253,11 @@ u3_foil_absorb(u3_dire* dir_u,              //  directory
   {
     c3_c* pax_c = _foil_path(dir_u, nam_c);
 
-    if ( 0 > (err_i = uv_fs_open(u3L, 
-                                 &ruq_u, 
-                                 pax_c, 
-                                 O_RDWR | O_CREAT, 
-                                 0600, 
+    if ( 0 > (err_i = uv_fs_open(u3L,
+                                 &ruq_u,
+                                 pax_c,
+                                 O_RDWR | O_CREAT,
+                                 0600,
                                  0)) )
     {
       _foil_fail(pax_c, err_i);
@@ -312,7 +312,7 @@ u3_foil_absorb(u3_dire* dir_u,              //  directory
     if ( req_u->fun_f ) {
       req_u->fun_f(req_u->vod_p);
     }
- 
+
     c3_free(req_u->pax_c);
     c3_free(req_u->fol_u->nam_c);
     c3_free(req_u->fol_u);
@@ -336,7 +336,7 @@ u3_foil_delete(void   (*fun_f)(void*),      //  context pointer
   */
   {
     struct _foil_delete_request* req_u;
-    
+
     req_u = c3_malloc(sizeof(*req_u));
 
     req_u->fun_f = fun_f;
@@ -344,9 +344,9 @@ u3_foil_delete(void   (*fun_f)(void*),      //  context pointer
     req_u->fol_u = fol_u;
     req_u->pax_c = pax_c;
 
-    if ( 0 != (err_i = uv_fs_unlink(u3L, 
-                                    &req_u->ruq_u, 
-                                    pax_c, 
+    if ( 0 != (err_i = uv_fs_unlink(u3L,
+                                    &req_u->ruq_u,
+                                    pax_c,
                                     _foil_delete_cb)) )
     {
       _foil_fail("uv_fs_unlink", err_i);
@@ -381,7 +381,7 @@ u3_foil_delete(void   (*fun_f)(void*),      //  context pointer
     uv_fs_req_cleanup(ruq_u);
     c3_free(req_u->buf_d);
 
-    uv_fs_fsync(u3L, &req_u->ruq_u, 
+    uv_fs_fsync(u3L, &req_u->ruq_u,
                      req_u->fol_u->fil_u,
                      _foil_append_cb_2);
   }
@@ -413,7 +413,7 @@ u3_foil_append(void   (*fun_f)(void*),      //  context pointer
     c3_w top_w, bot_w;
 
     fol_u->end_d = pos_d + len_d + 2;
-    
+
     /*  XX: assumes "little-endian won", 32-bit frame length.
     */
     top_w = u3r_mug_words((c3_w *)(void *) buf_d, (2 * len_d));
@@ -432,7 +432,7 @@ u3_foil_append(void   (*fun_f)(void*),      //  context pointer
     buf_u[0] = uv_buf_init((void *)buf_d, (len_d * 8));
     buf_u[1] = uv_buf_init((void *)req_u->fam_d, 16);
 
-    if ( 0 != (err_i = uv_fs_write(u3L, 
+    if ( 0 != (err_i = uv_fs_write(u3L,
                                    &req_u->ruq_u,
                                    fol_u->fil_u,
                                    buf_u,
@@ -467,11 +467,11 @@ u3_foil_reveal(u3_foil* fol_u,              //  file from
     uv_buf_t buf_u = uv_buf_init((void *)fam_d, 16);
 
     fam_d[0] = fam_d[1] = 0;
-    if ( 0 > (err_i = uv_fs_read(u3L, 
-                                 &ruq_u, 
+    if ( 0 > (err_i = uv_fs_read(u3L,
+                                 &ruq_u,
                                  fol_u->fil_u,
-                                 &buf_u, 1, 
-                                 (8ULL * (pos_d - 2ULL)), 
+                                 &buf_u, 1,
+                                 (8ULL * (pos_d - 2ULL)),
                                  0)) )
     {
       _foil_fail("uv_fs_read", err_i);
@@ -510,11 +510,11 @@ u3_foil_reveal(u3_foil* fol_u,              //  file from
     uv_buf_t buf_u = uv_buf_init((void *)buf_d, 8 * *len_d);
     c3_l     gum_l;
 
-    if ( 0 > (err_i = uv_fs_read(u3L, 
-                                 &ruq_u, 
+    if ( 0 > (err_i = uv_fs_read(u3L,
+                                 &ruq_u,
                                  fol_u->fil_u,
-                                 &buf_u, 1, 
-                                 (8ULL * (pos_d - (*len_d + 2ULL))), 
+                                 &buf_u, 1,
+                                 (8ULL * (pos_d - (*len_d + 2ULL))),
                                  0) ) )
     {
       _foil_fail("uv_fs_read", err_i);
@@ -568,7 +568,7 @@ u3_foil_reveal(u3_foil* fol_u,              //  file from
       _foil_close(req_u->fol_u->fil_u);
 
       c3_free(req_u);
-    } 
+    }
     else {
       req_u->num_d++;
     }
@@ -593,8 +593,8 @@ u3_foil_reveal(u3_foil* fol_u,              //  file from
 
     /* fsync the parent directory, since we just created a file.
     */
-    uv_fs_fsync(u3L, &req_u->ruq_u, 
-                     req_u->fol_u->dir_u->fil_u, 
+    uv_fs_fsync(u3L, &req_u->ruq_u,
+                     req_u->fol_u->dir_u->fil_u,
                      _foil_invent_cb_2b);
 
     u3_foil_append(_foil_invent_cb_2a,

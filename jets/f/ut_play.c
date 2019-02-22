@@ -20,17 +20,17 @@
 
   static u3_noun
   _play_rock(u3_noun odo, u3_noun bob)
-  { 
+  {
     if ( c3y == u3ud(bob) ) {
       return u3nq(c3__atom, u3k(odo), u3_nul, u3k(bob));
     }
-    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)), 
+    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)),
                                _play_rock(odo, u3t(bob)));
   }
 
   static u3_noun
   _play_sand(u3_noun odo, u3_noun bob)
-  { 
+  {
     if ( c3y == u3ud(bob) ) {
       if ( 'n' == odo ) {
         if ( (bob != 0) ) {
@@ -48,7 +48,7 @@
       }
       return u3nt(c3__atom, u3k(odo), u3_nul);
     }
-    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)), 
+    else return u3nt(c3__cell, _play_rock(odo, u3h(bob)),
                                _play_rock(odo, u3t(bob)));
   }
 
@@ -87,14 +87,14 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "feel");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(rot), 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam,
+                                u3k(rot),
                                 0));
   }
 
 #if 0
-  static u3_noun 
+  static u3_noun
   _play_loc_term(u3_noun van,
                  u3_noun loc)
   {
@@ -123,10 +123,10 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("_play_cnts-epla", von, "epla");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam_2, 
-                                u3k(hyp), 
-                                u3x_sam_3, 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam_2,
+                                u3k(hyp),
+                                u3x_sam_3,
                                 u3k(rig),
                                 0));
   }
@@ -312,12 +312,12 @@
         return _play_bean();
       }
 
-      case c3__dtts: u3x_cell(u3t(gen), &p_gen, &q_gen); 
+      case c3__dtts: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _play_used();
       {
         return _play_bean();
       }
-      
+
       case c3__dtls: p_gen = u3t(gen);
       _play_used();
       {

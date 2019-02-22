@@ -56,9 +56,9 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "feel");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(rot), 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam,
+                                u3k(rot),
                                 0));
   }
 
@@ -73,9 +73,9 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "mine");
 
-    return u3n_kick_on(u3i_molt(gat, 
+    return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam_2,
-                                u3k(mel), 
+                                u3k(mel),
                                 u3x_sam_6,
                                 u3k(nym),
                                 u3x_sam_14,
@@ -732,7 +732,7 @@
             u3_noun pqp_fid = u3t(qp_fid);
             u3_noun axe     = _mint_tend(pp_fid);
             u3_noun ret;
-          
+
             ret = u3nc(_mint_nice(van, gol, _mint_bean()),
                        u3qfr_fish(van, pqp_fid, p_gen, axe));
 
@@ -762,16 +762,16 @@
           u3_noun gat = u3j_cook("_mint_in-blow", von, "blow");
           u3_noun pro;
 
-          pro = u3n_kick_on(u3i_molt(gat, 
-                            u3x_sam_2, 
-                            u3k(gol), 
-                            u3x_sam_3, 
+          pro = u3n_kick_on(u3i_molt(gat,
+                            u3x_sam_2,
+                            u3k(gol),
+                            u3x_sam_3,
                             u3k(p_gen),
                             0));
-        
+
           return u3z_save_4(fun_m, vrf, sut, gol, p_gen, pro);
         }
-      } 
+      }
 
       case c3__zpcm: u3x_cell(u3t(gen), &p_gen, &q_gen);
       _mint_used();

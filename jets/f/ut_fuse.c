@@ -36,7 +36,7 @@
   {
     if ( u3_nul == p_sut ) {
       return u3_nul;
-    } 
+    }
     else {
       return u3nc(_fuse_in(van, u3h(p_sut), ref, bix),
                   _fuse_in_fork(van, u3t(p_sut), ref, bix));
@@ -86,7 +86,7 @@
                   if ( c3y == u3r_sing(q_ref, q_sut) ) {
                     return u3nt(c3__atom, foc, u3k(q_sut));
                   }
-                  else { 
+                  else {
                     u3z(foc);
                     return c3__void;
                   }

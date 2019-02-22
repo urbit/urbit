@@ -3,7 +3,7 @@
 ** This file is in the public domain.
 */
   /**  Constants.
-  **/ 
+  **/
     /* u3_none - u3_noun which is not a noun.
     */
 #     define u3_none  (u3_noun)0xffffffff

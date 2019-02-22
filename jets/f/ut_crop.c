@@ -38,7 +38,7 @@
   {
     if ( u3_nul == p_sut ) {
       return u3_nul;
-    } 
+    }
     else {
       return u3nc(_crop_dext(van, u3h(p_sut), ref, bix),
                   _crop_dext_fork(van, u3t(p_sut), ref, bix));
@@ -49,7 +49,7 @@
   {
     if ( u3_nul == p_ref ) {
       return u3k(sut);
-    } 
+    }
     else {
       u3_noun tuz = _crop_dext(van, sut, u3h(p_ref), bix);
       u3_noun zat = _crop_sint_fork(van, tuz, u3t(p_ref), bix);
@@ -136,7 +136,7 @@
       }
       case c3__core:
       {
-        if ( (c3__atom == u3h(ref)) || 
+        if ( (c3__atom == u3h(ref)) ||
              (c3__cell == u3h(ref)) ) {
           return u3k(sut);
         }

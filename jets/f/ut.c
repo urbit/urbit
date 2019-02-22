@@ -64,7 +64,7 @@
     c3_c* pfix_c = u3r_string((c3y == u3du(typ)) ? u3h(typ) : typ);
     c3_c ugh_c[1024];
 
-    sprintf(ugh_c, "%s: %s: 0x%8x:", 
+    sprintf(ugh_c, "%s: %s: 0x%8x:",
             paz_c, pfix_c, u3r_mug(typ));
 #if 0
     u3_pier_tank(0, u3n_kick_on(u3qfu_dunq(van, ugh_c, typ)));

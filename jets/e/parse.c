@@ -455,7 +455,7 @@
          (c3n == u3r_mean(van, u3x_sam_2, &hez, u3x_sam_3, &sef, 0)) )
     {
       return u3m_bail(c3__fail);
-    } 
+    }
     else {
       return _cqe_here_fun(hez, sef, tub);
     }

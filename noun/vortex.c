@@ -101,7 +101,7 @@ u3v_lite(u3_noun pil)
   u3_noun bot, cor, pro;
 
   u3x_trel(arv, &bot, 0, 0);
-  
+
   fprintf(stderr, "lite: arvo formula %x\r\n", u3r_mug(arv));
   cor = u3n_nock_on(bot, lyf);
   fprintf(stderr, "lite: core %x\r\n", u3r_mug(cor));
@@ -125,7 +125,7 @@ u3v_boot(c3_c* pas_c)
   if ( !u3A->sys ) {
     u3A->sys = u3m_file(pas_c);
   }
-  
+
   pru = u3m_soft(0, u3v_load, u3k(u3A->sys));
 
   if ( u3h(pru) != 0 ) {
@@ -217,7 +217,7 @@ u3v_wish(const c3_c* str_c)
   if ( u3_none == exp ) {
     exp = _cv_nock_wish(u3k(txt));
 
-    //  It's probably not a good idea to use u3v_wish() 
+    //  It's probably not a good idea to use u3v_wish()
     //  outside the top level... (as the result is uncached)
     //
     if ( u3R == &u3H->rod_u ) {

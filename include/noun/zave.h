@@ -28,6 +28,6 @@
 
     /* u3z_uniq(): uniquify with memo cache.
     */
-      u3_noun 
+      u3_noun
       u3z_uniq(u3_noun som);
 

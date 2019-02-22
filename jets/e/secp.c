@@ -23,10 +23,10 @@ static void byte_reverse(c3_y *i_y,  /* in */
 
 /* Identical to u3r_bytes, but reverses bytes in place.
    could be cleaner if we modified u3r_bytes(), but not gonna do that.
-  
+
    This func exists bc Urbit code base is explicitly little-endian,
    and secp256k1 library is explicitly big-endian.
-  
+
    Several times below we do the pattern of (1) invoke u3r_bytes, (2) invert. Do it in a func.
 */
 
@@ -55,9 +55,9 @@ static void u3r_bytes_reverse(c3_w    a_w,
 u3_noun
 u3we_sign(u3_noun cor)
 {
-  
+
   u3_noun has, prv;
-  
+
   if ( (c3n == u3r_mean(cor,
                         u3x_sam_2,  &has,
                         u3x_sam_3,  &prv,
@@ -72,14 +72,14 @@ u3we_sign(u3_noun cor)
 }
 
 u3_noun
-u3qe_sign(u3_atom has,  
-          u3_atom prv)  
+u3qe_sign(u3_atom has,
+          u3_atom prv)
 {
   /* build library context object once (and only once) */
   static secp256k1_context * ctx_u = NULL;
   if (NULL == ctx_u) {
     ctx_u = secp256k1_context_create(SECP256K1_CONTEXT_SIGN);
-  } 
+  }
 
   /* parse arguments, convert endianness */
   c3_y has_y[32];   /* hash */
@@ -87,9 +87,9 @@ u3qe_sign(u3_atom has,
   u3r_bytes_reverse(0, 32, has_y, has);
   u3r_bytes_reverse(0, 32, prv_y, prv);
 
-  
+
   /* sign
-     N.B. if we want the 'v' field we can't use default secp256k1_ecdsa_sign(), 
+     N.B. if we want the 'v' field we can't use default secp256k1_ecdsa_sign(),
      but must use secp256k1_ecdsa_sign_recoverable() */
   c3_ws ret;
   secp256k1_ecdsa_recoverable_signature sig_u;
@@ -104,9 +104,9 @@ u3qe_sign(u3_atom has,
     return u3m_bail(c3__exit);
   }
 
-  /* convert opaque 65 byte signature into v + [r + s] 
+  /* convert opaque 65 byte signature into v + [r + s]
      convert endianness while we're at it */
-  c3_y rec_y[64];  
+  c3_y rec_y[64];
   c3_ws v = 0;
   ret = secp256k1_ecdsa_recoverable_signature_serialize_compact(ctx_u,
                                                                 rec_y,    /* OUT: 64 byte sig (r,s) */
@@ -129,7 +129,7 @@ u3qe_sign(u3_atom has,
 }
 
 
-/* recover pubkey from signature (which is how we verify signatures)  
+/* recover pubkey from signature (which is how we verify signatures)
 */
 
 u3_noun
@@ -137,7 +137,7 @@ u3we_reco(u3_noun cor)
 {
   u3_noun has,      /* hash */
     siv, sir, sis;  /* signature: v, r, s */
-  
+
   if ( (c3n == u3r_mean(cor,
                         u3x_sam_2,   &has,
                         u3x_sam_6,   &siv,
@@ -162,12 +162,12 @@ u3qe_reco(u3_atom has,
           u3_atom sir,  /* signature: r */
           u3_atom sis)  /* signature: s */
 {
-  
+
   /* build library context object once (and only once) */
   static secp256k1_context * ctx_u = NULL;
   if (NULL == ctx_u) {
     ctx_u = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY);
-  } 
+  }
 
   /* parse arguments, convert endianness */
   c3_y has_y[32];
@@ -203,7 +203,7 @@ u3qe_reco(u3_atom has,
 
   /* turn sign into puk_u */
   secp256k1_pubkey puk_u;
-  memset((void *) & puk_u, 0, sizeof(secp256k1_pubkey) );  
+  memset((void *) & puk_u, 0, sizeof(secp256k1_pubkey) );
   ret = secp256k1_ecdsa_recover(ctx_u,                      /* IN: context */
                                 & puk_u,                     /* OUT: pub key */
                                 & sig_u,                        /* IN: signature */
@@ -217,7 +217,7 @@ u3qe_reco(u3_atom has,
   /* convert puk_u  into serialized form that we can get x,y out of */
   c3_y puk_y[65];
   size_t outputlen = 65;
-  memset((void *) puk_y, 0, 65);  
+  memset((void *) puk_y, 0, 65);
 
   ret = secp256k1_ec_pubkey_serialize( ctx_u,                    /* IN:  */
                                       puk_y,                   /* OUT: */
@@ -238,9 +238,9 @@ u3qe_reco(u3_atom has,
      byte      0: signal bits (???)
      bytes  1-32: x
      bytes 33-64: y
-    
+
      convert endianness while we're at it   */
-                                           
+
   c3_y x_y[32];
   for (i_ws = 0; i_ws < 32; i_ws++) {
     x_y[i_ws] = puk_y[32 - i_ws];
@@ -252,7 +252,7 @@ u3qe_reco(u3_atom has,
     y_y[i_ws] = puk_y[64 - i_ws];
   }
   u3_noun y =  u3i_bytes(32, y_y);
-  
+
   /* returns x,y */
   return(u3nc(x, y));
 }
@@ -287,13 +287,13 @@ u3qe_make(u3_atom has,
   c3_y heb_y[32]; /* hash, big endian */
   u3r_bytes(0, 32, hel_y, has);
   byte_reverse(hel_y, heb_y, 32);
-  
+
   c3_y pel_y[32];  /* priv key, little endian */
   c3_y peb_y[32];  /* priv key, big endian */
   u3r_bytes(0, 32, pel_y, prv);
   byte_reverse(pel_y, peb_y, 32);
 
-  
+
   c3_ws ret_ws;
   c3_y  neb_y[32]; /* nonce */
   ret_ws = secp256k1_nonce_function_rfc6979(neb_y,                /* OUT: return arg for nonce */

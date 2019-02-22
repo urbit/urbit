@@ -125,7 +125,7 @@ _cj_bash(u3_noun bat)
       c3_w*   wor_w;
       c3_y*   fat_y;
       c3_y    dig_y[32];
-      
+
       wor_w = u3qe_jam_buf(bat, &bit_w);
       met_w = bit_w >> 3;
       if ( bit_w != met_w << 3 ) {
@@ -256,8 +256,8 @@ _cj_axis(u3_noun fol)
     if ( !_(u3r_cell(fol, &p_fol, &q_fol)) ||
          (0 != p_fol) ||
          (!_(u3a_is_cat(q_fol))) )
-    { 
-      fprintf(stderr, "axis: bad a\r\n"); 
+    {
+      fprintf(stderr, "axis: bad a\r\n");
       return 0;
     }
     return q_fol;
@@ -395,16 +395,16 @@ _cj_by_gut(u3_noun a, u3_noun b)
 
 /* _cj_chum(): decode chum as string.
 */
-static c3_c* 
+static c3_c*
 _cj_chum(u3_noun chu)
 {
   if ( _(u3ud(chu)) ) {
     return u3r_string(chu);
-  } 
+  }
   else {
     u3_noun h_chu = u3h(chu);
     u3_noun t_chu = u3t(chu);
-    
+
     if ( !_(u3a_is_cat(t_chu)) ) {
       return 0;
     } else {
@@ -802,8 +802,8 @@ _cj_hot_mean(c3_l par_l, u3_noun nam)
     while ( (cop_u = &dev_u[i_l])->cos_c ) {
       if ( _(u3r_sing_c(cop_u->cos_c, nam)) ) {
 #if 0
-        fprintf(stderr, "hot: bound jet %d/%s/%s/\r\n", 
-                        cop_u->jax_l, 
+        fprintf(stderr, "hot: bound jet %d/%s/%s/\r\n",
+                        cop_u->jax_l,
                         cop_u->cos_c,
                         par_u ? par_u->cos_c : "~");
 #endif
@@ -854,7 +854,7 @@ _cj_soft(u3_noun cor, u3_noun axe)
 
 /* _cj_kick_z(): try to kick by jet.  If no kick, produce u3_none.
 **
-** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.  
+** `cor` is RETAINED iff there is no kick, TRANSFERRED if one.
 ** `axe` is RETAINED.
 */
 static u3_weak
@@ -915,7 +915,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
         fprintf(stderr, "test: %s %s: mismatch: good %x, bad %x\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c,
-               u3r_mug(ame), 
+               u3r_mug(ame),
                u3r_mug(pro));
         ham_u->liv = c3n;
 
@@ -1034,7 +1034,7 @@ _cj_hook_in(u3_noun     cor,
 /* u3j_soft(): execute soft hook.
 */
 u3_noun
-u3j_soft(u3_noun cor, 
+u3j_soft(u3_noun cor,
          const c3_c* tam_c)
 {
   u3_noun pro;
@@ -1222,7 +1222,7 @@ _cj_sink(u3_noun cor, u3_noun axe)
 
 /* u3j_kick(): new kick.
 **
-** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
+** `axe` is RETAINED by the caller; `cor` is RETAINED iff there
 ** is no kick, TRANSFERRED if one.
 */
 u3_weak
@@ -1630,7 +1630,7 @@ u3j_cook(const c3_c* key_c,
     pro = _cj_burn(han_u->sit_u.pog_p, inn);
   }
   u3z(cor);
-  
+
   u3z(key);
   u3z(tam);
   u3t_off(glu_o);
@@ -1750,7 +1750,7 @@ _cj_minx(u3_noun cey, u3_noun cor)
     }
     pel = _cj_spot(par, NULL);
     if ( u3_none == pel ) {
-      fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n", 
+      fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n",
                       u3r_string(nam),
                       u3r_mug(u3h(par)),
                       axe);

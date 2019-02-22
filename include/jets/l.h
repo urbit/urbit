@@ -4,7 +4,7 @@
 */
   /** Tier 1.
   **/
-    u3_noun u3la_add(u3_noun a, u3_noun b); 
+    u3_noun u3la_add(u3_noun a, u3_noun b);
     u3_noun u3la_sub(u3_noun a, u3_noun b);
     u3_noun u3la_mul(u3_noun a, u3_noun b);
     u3_noun u3la_gth(u3_noun a, u3_noun b);
@@ -77,7 +77,7 @@
 
   /* u3ldi_uni(): set union.
   */
-    u3_noun 
+    u3_noun
     u3ldi_uni(u3_noun a, u3_noun b);
 
 #   define u3ldb_tap(a) u3ldi_tap(a)
@@ -109,7 +109,7 @@
     u3_noun
     u3kz_fork(u3_noun yed);
 
-  /* u3lfu_repo(): 
+  /* u3lfu_repo():
   */
-    u3_noun 
+    u3_noun
     u3lfu_repo(u3_noun, u3_noun);

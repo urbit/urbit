@@ -36,13 +36,13 @@
   **    anything in parallel.
   **
   **    in parallel, we try to save the event.  it goes through phases:
-  **      
+  **
   **        generated
   **        precommit requested
   **        precommit complete
   **        commit requested
   **        commit complete
-  **   
+  **
   **    the sanity constraints that connect these two paths:
   **
   **        - an event can't request a commit until it's computed.
@@ -53,7 +53,7 @@
   **    events as we receive them.
   **
   **    events are executed in order by the working process, and
-  **    (at present) precommitted and committed in strict order. 
+  **    (at present) precommitted and committed in strict order.
   **
   **    physically, precommits are saved to individual files, then
   **    appended to a single commit log once successfully computed.
@@ -93,7 +93,7 @@ _pier_work_bail(void*       vod_p,
 {
   fprintf(stderr, "pier: work error: %s\r\n", err_c);
 }
-              
+
 /* _pier_disk_shutdown(): close the log.
 */
 static void
@@ -178,7 +178,7 @@ _pier_disk_precommit_complete(void*    vod_p,
     //  fprintf(stderr, "pier: (%" PRIu64 "): precommit: replaced\r\n", wit_u->evt_d);
 
     u3_foil_delete(0, 0, fol_u);
-    wit_u->fol_u = 0; 
+    wit_u->fol_u = 0;
   }
   else {
     /* advance the precommit complete pointer.
@@ -249,7 +249,7 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
-  /* if the replaced event is already precommitted, 
+  /* if the replaced event is already precommitted,
   ** undo the precommit and delete the file.
   */
   if ( wit_u->evt_d <= log_u->pre_d ) {
@@ -263,7 +263,7 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     log_u->pre_d -= 1ULL;
 
     u3_foil_delete(0, wit_u, wit_u->fol_u);
-  } 
+  }
   else {
     /* otherwise, decrement the precommit request counter.
     ** the returning request will notice this and rerequest.
@@ -289,8 +289,8 @@ _pier_disk_commit_complete(void* vod_p)
   /* advance commit counter
   */
   {
-    c3_assert(wit_u->evt_d == log_u->moc_d); 
-    c3_assert(wit_u->evt_d == (1ULL + log_u->com_d)); 
+    c3_assert(wit_u->evt_d == log_u->moc_d);
+    c3_assert(wit_u->evt_d == (1ULL + log_u->com_d));
     log_u->com_d += 1ULL;
   }
 
@@ -312,12 +312,12 @@ _pier_disk_commit_request(u3_writ* wit_u)
   {
     c3_d  len_d = u3r_met(6, wit_u->mat);
     c3_d* buf_d = c3_malloc(8 * len_d);
- 
+
     u3r_chubs(0, len_d, buf_d, wit_u->mat);
     u3_foil_append(_pier_disk_commit_complete,
                    wit_u,
                    log_u->fol_u,
-                   buf_d, 
+                   buf_d,
                    len_d);
   }
 
@@ -387,7 +387,7 @@ _pier_work_build(u3_writ* wit_u)
   if ( 0 == wit_u->mat ) {
     c3_assert(0 != wit_u->job);
 
-    wit_u->mat = u3ke_jam(u3nq(c3__work, 
+    wit_u->mat = u3ke_jam(u3nq(c3__work,
                                u3i_chubs(1, &wit_u->evt_d),
                                wit_u->mug_l,
                                u3k(wit_u->job)));
@@ -471,7 +471,7 @@ _pier_work_replace(u3_writ* wit_u,
   /* move backward in work processing
   */
   {
-    u3z(wit_u->job); 
+    u3z(wit_u->job);
     wit_u->job = job;
 
     u3z(wit_u->mat);
@@ -561,7 +561,7 @@ start:
     */
     if ( (wit_u->evt_d <= god_u->rel_d) &&
          (wit_u->evt_d == (1 + log_u->moc_d)) &&
-         (wit_u->evt_d == (1 + log_u->com_d)) ) 
+         (wit_u->evt_d == (1 + log_u->com_d)) )
     {
       _pier_disk_commit_request(wit_u);
       act_o = c3y;
@@ -570,7 +570,7 @@ start:
     /* if writ is (a) committed and (b) computed, delete from queue
     */
     if ( (wit_u->evt_d <= log_u->com_d) &&
-         (wit_u->evt_d <= god_u->dun_d) ) 
+         (wit_u->evt_d <= god_u->dun_d) )
     {
       //  fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
 
@@ -590,7 +590,7 @@ start:
       wit_u = pir_u->ext_u;
       act_o = c3y;
     }
-    else {    
+    else {
       /* otherwise, continue backward
       */
       wit_u = wit_u->nex_u;
@@ -653,8 +653,8 @@ _pier_disk_load_precommit_file(u3_pier* pir_u,
     c3_free(wit_u);
     return 0;
   }
-  if ( 0 == (buf_d = u3_foil_reveal(wit_u->fol_u, 
-                                    &pos_d, 
+  if ( 0 == (buf_d = u3_foil_reveal(wit_u->fol_u,
+                                    &pos_d,
                                     &len_d)) )
   {
     //  fprintf(stderr, "pier: load: precommit: reveal failed: %s\r\n", nam_c);
@@ -710,7 +710,7 @@ _pier_compare(const void* vod_p, const void* dov_p)
 /* _pier_disk_load_precommit(): load all precommits.
 */
 static u3_writ**
-_pier_disk_load_precommit(u3_pier* pir_u, 
+_pier_disk_load_precommit(u3_pier* pir_u,
                           c3_d     lav_d)
 {
   u3_disk* log_u = pir_u->log_u;
@@ -719,8 +719,8 @@ _pier_disk_load_precommit(u3_pier* pir_u,
   c3_w     num_w = 0;
 
   while ( all_u ) {
-    u3_writ* wit_u = _pier_disk_load_precommit_file(pir_u, 
-                                                    lav_d, 
+    u3_writ* wit_u = _pier_disk_load_precommit_file(pir_u,
+                                                    lav_d,
                                                     all_u->nam_c);
 
     if ( wit_u ) {
@@ -734,7 +734,7 @@ _pier_disk_load_precommit(u3_pier* pir_u,
   {
     u3_writ** ray_u = c3_malloc((1 + num_w) * sizeof(u3_writ*));
     c3_w      i_w;
-   
+
     i_w = 0;
     while ( pre_u ) {
       ray_u[i_w++] = pre_u;
@@ -756,7 +756,7 @@ _pier_disk_load_commit(u3_pier* pir_u,
 {
   u3_disk* log_u = pir_u->log_u;
   c3_d     old_d = 0;
-  
+
   log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
 
   if ( !log_u->fol_u ) {
@@ -806,7 +806,7 @@ _pier_disk_load_commit(u3_pier* pir_u,
       }
 
       if ( evt_d < lav_d ) {
-        u3z(mat); 
+        u3z(mat);
         u3z(job);
 
         return c3y;
@@ -830,7 +830,7 @@ _pier_disk_load_commit(u3_pier* pir_u,
           if ( (1ULL + wit_u->evt_d) != pir_u->ext_u->evt_d ) {
             fprintf(stderr, "pier: load: commit: event gap: %" PRIx64 ", %"
                              PRIx64 "\r\n",
-                             wit_u->evt_d, 
+                             wit_u->evt_d,
                              pir_u->ext_u->evt_d);
             u3z(mat);
             u3z(job);
@@ -1019,7 +1019,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     */
     log_u->pre_d = log_u->rep_d = log_u->com_d;
 
-    /* in addition, what are these precommits?  in the current 
+    /* in addition, what are these precommits?  in the current
     ** overly strict implementation, there can be only one live
     ** precommit at a time.  however, this implementation supports
     ** multiple precommits.
@@ -1030,7 +1030,7 @@ _pier_disk_consolidate(u3_pier*  pir_u,
       while ( *rep_u ) {
         if ( pir_u->ent_u == 0 ) {
           pir_u->ent_u = pir_u->ext_u = *rep_u;
-        } 
+        }
         else {
           if ( (*rep_u)->evt_d <= log_u->com_d ) {
             fprintf(stderr, "pier: consolidate: stale precommit %" PRIu64 "\r\n",
@@ -1110,7 +1110,7 @@ _pier_disk_create(u3_pier* pir_u,
 {
   u3_disk*  log_u = c3_calloc(sizeof(*log_u));
   u3_writ** ray_u;
-  
+
   log_u->pir_u = pir_u;
   pir_u->log_u = log_u;
 
@@ -1223,10 +1223,10 @@ _pier_play(u3_pier* pir_u,
   */
   _pier_disk_create(pir_u, lav_d);
 }
-     
+
 /* _pier_work_exit(): handle subprocess exit.
 */
-static void 
+static void
 _pier_work_exit(uv_process_t* req_u,
                 c3_ds         sas_i,
                 c3_i          sig_i)
@@ -1343,7 +1343,7 @@ _pier_work_poke(void*   vod_p,
         default: goto error;
 
         case c3__work: {
-          if ( (c3n == u3r_qual(jar, 0, &p_jar, &q_jar, &r_jar)) || 
+          if ( (c3n == u3r_qual(jar, 0, &p_jar, &q_jar, &r_jar)) ||
                (c3n == u3ud(p_jar)) ||
                (u3r_met(6, p_jar) != 1) ||
                (c3n == u3ud(q_jar)) ||
@@ -1351,7 +1351,7 @@ _pier_work_poke(void*   vod_p,
           {
             goto error;
           }
-          else { 
+          else {
             c3_d     evt_d = u3r_chub(0, p_jar);
             c3_l     mug_l = u3r_word(0, q_jar);
             u3_writ* wit_u = _pier_work_writ(pir_u, evt_d);
@@ -1375,9 +1375,9 @@ _pier_work_poke(void*   vod_p,
             _pier_work_replace(wit_u, u3k(r_jar), mat);
           }
           break;
-        } 
+        }
         case c3__done: {
-          if ( (c3n == u3r_qual(jar, 0, &p_jar, &q_jar, &r_jar)) || 
+          if ( (c3n == u3r_qual(jar, 0, &p_jar, &q_jar, &r_jar)) ||
                (c3n == u3ud(p_jar)) ||
                (u3r_met(6, p_jar) != 1) ||
                (c3n == u3ud(q_jar)) ||
@@ -1385,7 +1385,7 @@ _pier_work_poke(void*   vod_p,
           {
             goto error;
           }
-          else { 
+          else {
             c3_d     evt_d = u3r_chub(0, p_jar);
             c3_l     mug_l = u3r_word(0, q_jar);
             u3_writ* wit_u = _pier_work_writ(pir_u, evt_d);
@@ -1396,9 +1396,9 @@ _pier_work_poke(void*   vod_p,
             }
             _pier_work_complete(wit_u, mug_l, u3k(r_jar));
           }
-          break; 
+          break;
         }
-      } 
+      }
     }
   }
   _pier_apply(pir_u);
@@ -1411,7 +1411,7 @@ _pier_work_poke(void*   vod_p,
   }
 }
 
-/* pier_work_create(): instantiate child process. 
+/* pier_work_create(): instantiate child process.
 */
 u3_lord*
 _pier_work_create(u3_pier* pir_u)
@@ -1435,9 +1435,9 @@ _pier_work_create(u3_pier* pir_u)
     strcpy(pax_c, pir_u->pax_c);
 
     sprintf(key_c, "%" PRIx64 ":%" PRIx64 ":%" PRIx64 ":%" PRIx64 "",
-                   pir_u->key_d[0], 
-                   pir_u->key_d[1], 
-                   pir_u->key_d[2], 
+                   pir_u->key_d[0],
+                   pir_u->key_d[1],
+                   pir_u->key_d[2],
                    pir_u->key_d[3]);
 
     sprintf(wag_c, "%u", pir_u->wag_w);
@@ -1462,7 +1462,7 @@ _pier_work_create(u3_pier* pir_u)
 
     god_u->ops_u.stdio = god_u->cod_u;
     god_u->ops_u.stdio_count = 3;
-   
+
     god_u->ops_u.exit_cb = _pier_work_exit;
     god_u->ops_u.file = arg_c[0];
     god_u->ops_u.args = arg_c;
@@ -1476,7 +1476,7 @@ _pier_work_create(u3_pier* pir_u)
   }
 
   /* start reading from proc
-  */ 
+  */
   {
     god_u->out_u.vod_p = pir_u;
     god_u->out_u.pok_f = _pier_work_poke;
@@ -1495,7 +1495,7 @@ u3_pier*
 u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c)
 {
   u3_pier* pir_u;
- 
+
   /* create pier
   */
   {
@@ -1573,7 +1573,7 @@ u3_pier_exit(void)
 {
   if ( 0 == u3K.len_w ) {
     c3_assert(!"plan: no pier");
-  } 
+  }
   else {
     u3_pier* pir_u = u3K.tab_u[0];
 
@@ -1729,7 +1729,7 @@ _pier_loop_wake(u3_pier* pir_u)
   u3_http_io_talk();
   u3_http_ef_bake();
   u3a_lop(cod_l);
- 
+
   cod_l = u3a_lush(c3__term);
   u3_term_io_talk();
   u3_term_ef_bake();
@@ -1752,7 +1752,7 @@ _pier_loop_exit(void)
   u3_ames_io_exit(u3_pier_stub());
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__term); 
+  cod_l = u3a_lush(c3__term);
   u3_term_io_exit();
   u3a_lop(cod_l);
 
@@ -1816,7 +1816,7 @@ _pier_boot_seed(u3_pier* pir_u)
 /* _pier_boot_legacy(): poorly organized legacy boot calls.
 */
 static void
-_pier_boot_legacy(u3_pier* pir_u, 
+_pier_boot_legacy(u3_pier* pir_u,
                   c3_o     nuu_o)
 {
   /* XX XX horrible backward compatibility hack - still used
@@ -1978,7 +1978,7 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
         u3_term_io_loja(0);
       }
     }
-    else {      
+    else {
       u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
 
       _pier_wall(wol);
@@ -2007,7 +2007,7 @@ u3_pier_stub(void)
 {
   if ( 0 == u3K.len_w ) {
     c3_assert(!"plan: no pier");
-  } 
+  }
   else {
     return u3K.tab_u[0];
   }
