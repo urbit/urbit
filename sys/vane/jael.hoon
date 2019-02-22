@@ -2121,7 +2121,7 @@
       ==
     =+  cuz=[block-number.place log-index.place]
     ::
-    ?:  =(event.log changed-dns:azimuth-events)
+    ?:  =(i.topics.log changed-dns:azimuth-events)
       =+  ^-  [pri=tape sec=tape ter=tape]
         %+  decode-results  data.log
         ~[%string %string %string]
