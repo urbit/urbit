@@ -298,10 +298,15 @@
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
         ^+  .
+        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
+        .
+      ::
+      ++  mere                                          ::  continue init
+        ~&  [%dill-mere our ram]
+        ^+  .
         =/  myt  (flop (need tem))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
@@ -392,11 +397,6 @@
             {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {$c $mere *}
-          ?:  ?=(%& -.p.sih)
-            +>.$
-          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
-        ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
@@ -420,6 +420,11 @@
         ::
             {$c $writ *}
           init
+        ::
+            {$c $mere *}
+          ?:  ?=(%& -.p.sih)
+            mere
+          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$c $mack *}
           ?~  p.sih  +>.$
