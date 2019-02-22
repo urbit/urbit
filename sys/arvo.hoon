@@ -50,7 +50,7 @@
 ++  mill  (each vase milt)                              ::  vase+metavase
 ++  milt  {p/* q/*}                                     ::  metavase
 ++  monk  (each ship {p/@tas q/@ta})                    ::  general identity
-++  muse  {p/@tas q/duct r/arvo}                        ::  sourced move
+++  muse  {p/@tas q/duct r/arvo s/@ud}                  ::  sourced move
 ++  move  {p/duct q/arvo}                               ::  arvo move
 ++  ovum  {p/wire q/curd}                               ::  typeless ovum
 ++  pane  (list {p/@tas q/vase})                        ::  kernel modules
@@ -462,7 +462,7 @@
   ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
-    ~?  &(!lac !=(%belt -.q.ovo))  [%unix -.q.ovo p.ovo]
+    ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
@@ -474,6 +474,7 @@
             :+  %&
               [%cell [%atom %tas `%soft] %noun]
             [%soft q.ovo]
+            0
         ==
     ==
   ::
@@ -486,7 +487,7 @@
     (swim:win org pux hen hil)
   ::
   ++  fire                                              ::  execute
-    |=  {org/term lal/term pux/(unit wire) hen/duct hil/mill}
+    |=  {org/term deh/@ud lal/term pux/(unit wire) hen/duct hil/mill}
     ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ?:  &(?=(^ pux) ?=($~ hen))
       [[[[lal u.pux] (curd +>.hil)]~ ~] vanes]
@@ -498,7 +499,8 @@
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
     ::
     =+  fiq=(race org lal pux hen hil vane.i.naf)
-    [[~ (turn p.fiq |=(a/move [lal a]))] [[label.i.naf q.fiq] t.naf]]
+    :-  [~ (turn p.fiq |=(a/move [lal p.a q.a +(deh)]))]
+    [[label.i.naf q.fiq] t.naf]
   ::
   ++  jack                                              ::  dispatch card
     |=  {lac/? gum/muse}
@@ -506,11 +508,13 @@
     ~|  %failed-jack
     ::  =.  lac  |(lac ?=(?(%g %f) p.gum))
     ::  =.  lac  &(lac !?=($b p.gum))
-    %+  fire
-      p.gum
+    %^    fire
+        p.gum
+      s.gum
     ?-    -.r.gum
         $pass
       ~?  &(!lac !=(%$ p.gum))
+        :-  (runt [s.gum '|'] "")
         :^  %pass  [p.gum p.q.r.gum]
           [(symp +>-.q.q.r.gum) p.r.gum]
         q.gum
@@ -522,11 +526,14 @@
         ~|  [%jack-bad-card p.gum (symp +>-.p.r.gum)]
         !!
       ~?  &(!lac |(!=(%blit +>-.p.r.gum) !=(%d p.gum)))
+        :-  (runt [s.gum '|'] "")
         [%give p.gum (symp +>-.p.r.gum) `duct`q.gum]
       [i.i.q.gum [~ t.i.q.gum] t.q.gum p.r.gum]
     ::
         $slip
-      ~?  !lac  [%slip p.gum (symp +>-.q.p.r.gum) q.gum]
+      ~?  !lac
+        :-  (runt [s.gum '|'] "")
+        [%slip p.gum (symp +>-.q.p.r.gum) q.gum]
       [p.p.r.gum ~ q.gum q.p.r.gum]
     ==
   ::
@@ -551,7 +558,7 @@
       [%soft q.ovo]
     %+  kick  lac
     %+  turn  vanes
-    |=([label=@tas *] [label ~ [%pass p.ovo label card]])
+    |=([label=@tas *] [label ~ [%pass p.ovo label card] 0])
   --
 --
 =<  ::  Arvo larval stage
