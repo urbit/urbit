@@ -620,7 +620,6 @@
           -.userspace-ova.pil
           [//http/0v1n.2m9vh %born ~]
           [//http/0v1n.2m9vh %live 8.080 `8.445]
-          [//term/1 %belt %ctl `@c`%x]
       ==
     =.  this  abet-pe:initted
     =.  init-cache

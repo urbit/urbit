@@ -245,6 +245,7 @@
       ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
       $%  {$barn ~}                                    ::  new unix process
+          {$bonk ~}                                     ::  reset the timer
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
@@ -7331,79 +7332,79 @@
     ^-  (unit (pair ship diff-point))
     ~?  ?=(~ mined.log)  %processing-unmined-event
     ::
-    ?:  =(event.log owner-changed)
+    ?:  =(i.topics.log owner-changed)
       =+  ^-  [who=@ wer=address]
           (decode-topics topics.log ~[%uint %address])
       `[who %owner wer]
     ::
-    ?:  =(event.log activated)
+    ?:  =(i.topics.log activated)
       =/  who=@
         (decode-topics topics.log ~[%uint])
       `[who %activated who]
     ::
-    ?:  =(event.log spawned)
+    ?:  =(i.topics.log spawned)
       =+  ^-  [pre=@ who=@]
           (decode-topics topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
-    ?:  =(event.log escape-requested)
+    ?:  =(i.topics.log escape-requested)
       =+  ^-  [who=@ wer=@]
           (decode-topics topics.log ~[%uint %uint])
       `[who %escape `wer]
     ::
-    ?:  =(event.log escape-canceled)
+    ?:  =(i.topics.log escape-canceled)
       =/  who=@  (decode-topics topics.log ~[%uint])
       `[who %escape ~]
     ::
-    ?:  =(event.log escape-accepted)
+    ?:  =(i.topics.log escape-accepted)
       =+  ^-  [who=@ wer=@]
           (decode-topics topics.log ~[%uint %uint])
       `[who %sponsor & wer]
     ::
-    ?:  =(event.log lost-sponsor)
+    ?:  =(i.topics.log lost-sponsor)
       =+  ^-  [who=@ pos=@]
           (decode-topics topics.log ~[%uint %uint])
       `[who %sponsor | pos]
     ::
-    ?:  =(event.log changed-keys)
+    ?:  =(i.topics.log changed-keys)
       =/  who=@  (decode-topics topics.log ~[%uint])
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
       `[who %keys rev (pass-from-eth enc aut sut)]
     ::
-    ?:  =(event.log broke-continuity)
+    ?:  =(i.topics.log broke-continuity)
       =/  who=@  (decode-topics topics.log ~[%uint])
       =/  num=@  (decode-results data.log ~[%uint])
       `[who %continuity num]
     ::
-    ?:  =(event.log changed-management-proxy)
+    ?:  =(i.topics.log changed-management-proxy)
       =+  ^-  [who=@ sox=address]
           (decode-topics topics.log ~[%uint %address])
       `[who %management-proxy sox]
     ::
-    ?:  =(event.log changed-voting-proxy)
+    ?:  =(i.topics.log changed-voting-proxy)
       =+  ^-  [who=@ tox=address]
           (decode-topics topics.log ~[%uint %address])
       `[who %voting-proxy tox]
     ::
-    ?:  =(event.log changed-spawn-proxy)
+    ?:  =(i.topics.log changed-spawn-proxy)
       =+  ^-  [who=@ sox=address]
           (decode-topics topics.log ~[%uint %address])
       `[who %spawn-proxy sox]
     ::
-    ?:  =(event.log changed-transfer-proxy)
+    ?:  =(i.topics.log changed-transfer-proxy)
       =+  ^-  [who=@ tox=address]
           (decode-topics topics.log ~[%uint %address])
       `[who %transfer-proxy tox]
     ::
     ::  warn about unimplemented events, but ignore
     ::  the ones we know are harmless.
-    ~?  ?!  .=  event.log
+    ~?  ?!  .=  i.topics.log
             ::  OwnershipTransferred(address,address)
             0x8be0.079c.5316.5914.1344.cd1f.d0a4.f284.
               1949.7f97.22a3.daaf.e3b4.186f.6b64.57e0
-      [%unimplemented-event event.log]
+      [%unimplemented-event i.topics.log]
     ~
   ::
   ++  apply-point-diff
@@ -7751,11 +7752,12 @@
     ::
     ++  decode-topics
       ::  tox:  list of hex words
-      |*  [tox=(list @t) tys=(list etyp)]
-      =-  (decode-arguments - tys)
-      %+  roll  tox
-      |=  [top=@t tos=@t]
-      (cat 3 tos (rsh 3 2 top))
+      |*  [tox=(lest @ux) tys=(list etyp)]
+      =-  (decode-arguments (crip -) tys)
+      %+  render-hex-bytes  (mul 32 (lent tox))
+      %+  roll  `(list @ux)`tox
+      |=  [top=@ux tos=@]
+      (cat 8 top tos)
     ::
     ++  decode-results
       ::  rex:  string of hex bytes with leading 0x.
@@ -7886,14 +7888,14 @@
                   fro=(unit block)
                   tob=(unit block)
                   adr=(list address)
-                  top=(list octs)
+                  top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-logs fid=@ud]
               $:  %eth-get-logs
                   fro=(unit block)
                   tob=(unit block)
                   adr=(list address)
-                  top=(list octs)
+                  top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-changes fid=@ud]
               [%eth-send-raw-transaction dat=@ux]
@@ -7922,8 +7924,16 @@
             ::
               address=@ux
               data=@t
-              event=@ux
-              topics=(list @t)
+              ::  event data
+              ::
+              ::    For standard events, the first topic is the event signature
+              ::    hash. For anonymous events, the first topic is the first
+              ::    indexed argument.
+              ::    Note that this does not support the "anonymous event with
+              ::    zero topics" case. This has dubious usability, and using
+              ::    +lest instead of +list saves a lot of ?~ checks.
+              ::
+              topics=(lest @ux)
           ==
         ::
         ::  data for eth_call.
@@ -8033,8 +8043,8 @@
             (turn adr.req (cork address-to-hex tape))
           ::
             ?~  top.req  ~
-            :^  ~  'topics'  %a
-            (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+            :+  ~  'topics'
+            (topics-to-json top.req)
         ==
       ::
           %eth-get-filter-logs
@@ -8060,8 +8070,8 @@
             (turn adr.req (cork address-to-hex tape))
           ::
             ?~  top.req  ~
-            :^  ~  'topics'  %a
-            (turn `(list octs)`top.req :(cork render-hex-bytes prefix-hex tape))
+            :+  ~  'topics'
+            (topics-to-json top.req)
         ==
       ::
           %eth-get-filter-changes
@@ -8104,6 +8114,23 @@
         %label    s+l.dob
       ==
     ::
+    ++  topics-to-json
+      |=  tos=(list ?(@ux (list @ux)))
+      ^-  json
+      :-  %a
+      =/  ttj
+        ;:  cork
+          (cury render-hex-bytes 32)
+          prefix-hex
+          tape:enjs:format
+        ==
+      %+  turn  tos
+      |=  t=?(@ (list @))
+      ?@  t
+        ?:  =(0 t)  ~
+        (ttj `@`t)
+      a+(turn t ttj)
+    ::
     ::  parsing responses
     ::
     ::TODO  ++  parse-response  |=  json  ^-  response
@@ -8143,11 +8170,12 @@
           address+(cu hex-to-num so)
           data+so
         ::
-          ::TODO  doesn't account for the anonymous event case, which has no hash.
           =-  topics+(cu - (ar so))
           |=  r=(list @t)
+          ^-  (lest @ux)
           ?>  ?=([@t *] r)
-          [(hex-to-num i.r) t.r]
+          :-  (hex-to-num i.r)
+          (turn t.r hex-to-num)
       ==
     --
   ::

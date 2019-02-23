@@ -778,11 +778,20 @@
     =.  q.q.ovo
       :-  %userspace
       :-  %|
-      :~  hoon+`pit
-          zuse+`bud
-          ::  hoon-cache+`p.niz
+      :~  hoon+&+pit
+          zuse+&+bud
+          :+  %caches  %|
+          %+  turn
+            %+  sort  vanes
+            |=([a=[lab=@tas *] b=[lab=@tas *]] (aor lab.a lab.b))
+          |=([label=@tas =vane] [(cat 3 %vane- label) %& worm.vane])
           q.q.ovo
-          dot+`.
+          :+  %vases  %|
+          %+  turn
+            %+  sort  vanes
+            |=([a=[lab=@tas *] b=[lab=@tas *]] (aor lab.a lab.b))
+          |=([label=@tas =vane] [(cat 3 %vane- label) %& vase.vane])
+          dot+&+.
       ==
     [[~ ovo] +>.$]
   ::  add entropy
@@ -916,4 +925,3 @@
   |=  txt/@
   q:(slap bud (ream txt))
 --
-

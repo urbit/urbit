@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=0
+=+  protocol-version=1
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
@@ -1331,6 +1331,8 @@
     ::
         %pito
       :_  fox(tim `p.bon)
+      %-  flop
+      ^-  (list move)
       :-  [gad.fox %pass /ames %b %wait p.bon]
       ?~  tim.fox  ~
       [gad.fox %pass /ames %b %rest u.tim.fox]~
@@ -1462,6 +1464,13 @@
           :_  fox(gad hen)
           [%bock ~]~
         ::
+            %bonk
+          :_  fox
+          ?~  tim.fox
+            ~&  %ames-bonk-e
+            ~
+          [%pito u.tim.fox]~
+        ::
             %hear
           (~(gnaw am [our now fox ski]) %good p.kyz q.kyz)
         ::
@@ -1508,7 +1517,14 @@
           [[%wine who " has sunk"]~ fox]
         ::
             %vega
-          [~ fox]
+          ::  re-initialize our cryptosuite B cores
+          ::
+          =/  =wund
+            %+  turn
+              val.ton.fox
+            |=  [=life =ring *]
+            [life ring (nol:nu:crub:crypto ring)]
+          [~ fox(val.ton wund)]
         ::
             %wake
           (~(wake am [our now fox ski]) hen)
@@ -1536,11 +1552,28 @@
       ?.  =(our his)
         ~
       ``[%noun !>(pals:~(um am [our now fox ski]))]
+    ?:  ?=([%time ~] tyl)
+      ?.  =(our his)
+        ~
+      ``[%noun !>(tim.fox)]
     ~
   ::
   ++  wegh
     ^-  mass
     :+  %ames  %|
-    :~  dot+&+fox
+    :~  :+  %town  %|
+        =>  ton.fox
+        :~  wund+&+val
+            deed+&+law
+            fast+&+seh
+            them+&+hoc
+        ==
+        :+  %corn  %|
+        =>  zac.fox
+        :~  incoming+&+nys
+            complete+&+olz
+            neighbor+&+wab
+        ==
+        dot+&+fox
     ==
   --
