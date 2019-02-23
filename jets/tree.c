@@ -1475,7 +1475,6 @@ static c3_c* _141_two_rip_ha[] = {
 };
 static u3j_harm _141_two_ripn_a[] = {{".2", u3wc_ripn, c3y}, {}};
 static c3_c* _141_two_ripn_ha[] = {
-  "0000000000000000000000000000000000000000000000000000000000000000",
   0
 };
 static u3j_harm _141_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
