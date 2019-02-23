@@ -1473,6 +1473,11 @@ static c3_c* _141_two_rip_ha[] = {
   "e8e0b834aded0d2738bcf38a93bf373d412a51e0cee7f274277a6393e634a65e",
   0
 };
+static u3j_harm _141_two_ripn_a[] = {{".2", u3wc_ripn, c3y}, {}};
+static c3_c* _141_two_ripn_ha[] = {
+  "0000000000000000000000000000000000000000000000000000000000000000",
+  0
+};
 static u3j_harm _141_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
 static c3_c* _141_two_rsh_ha[] = {
   "a401145b4c11ec8d17a729fe30f06c295865ffed1b970b0a788f0fec1ed0a703",
@@ -1710,6 +1715,7 @@ static u3j_core _141_two_d[] =
   { "rep", 7, _141_two_rep_a, 0, _141_two_rep_ha },
   { "rev", 7, _141_two_rev_a, 0, _141_two_rev_ha },
   { "rip", 7, _141_two_rip_a, 0, _141_two_rip_ha },
+  { "ripn", 7, _141_two_ripn_a, 0, _141_two_ripn_ha },
   { "rsh", 7, _141_two_rsh_a, 0, _141_two_rsh_ha },
   { "swp", 7, _141_two_swp_a, 0, _141_two_swp_ha },
   { "rub", 7, _141_two_rub_a, 0, _141_two_rub_ha },
