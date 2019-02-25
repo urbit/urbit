@@ -15,7 +15,7 @@
 
 /*  `u3qfu_felt_arm` is a helper function for
  *  u3qfu_felt.  It handles the case in which the
- *  opal is for an arm, by creating a list of 
+ *  opal is for an arm, by creating a list of
  *  parent core types.  These will be converted to
  *  a single `fork` type.
 */
@@ -45,12 +45,12 @@
     }
   }
 
-/*  `u3qfu_felt` takes an opal, lap, and converts 
- *  it to a type.  The opal comes from the last 
- *  limb of the wing processed by `+fond`. The 
- *  type is used in +fond as the subject type of 
+/*  `u3qfu_felt` takes an opal, lap, and converts
+ *  it to a type.  The opal comes from the last
+ *  limb of the wing processed by `+fond`. The
+ *  type is used in +fond as the subject type of
  *  the next limb in the wing.
-*/ 
+*/
   static u3_noun
   u3qfu_felt(u3_noun lap)
   {
@@ -77,17 +77,17 @@
   static u3_noun
   u3qfu_fund(u3_noun van,
              u3_noun sut,
-             u3_noun way, 
+             u3_noun way,
              u3_noun gen)
   {
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("u3qfu_fund-fund", von, "fund");
 
-    return u3n_kick_on(u3i_molt(gat, 
+    return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam_2,
-                                u3k(way), 
+                                u3k(way),
                                 u3x_sam_3,
-                                u3k(gen), 
+                                u3k(gen),
                                 0));
   }
 
@@ -99,9 +99,9 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("u3qfu_fine-fine", von, "fine");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(tor), 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam,
+                                u3k(tor),
                                 0));
   }
 
@@ -122,7 +122,7 @@
               u3nc(u3_nul, u3k(axe)),
               u3k(lon)),
          u3nc(c3y, u3k(sut)));
-    } 
+    }
     else {
       return u3nt
         (c3n, c3y, u3qa_dec(p_heg));
@@ -242,20 +242,20 @@
 #if 1
           if ( qpq_sut == c3__wet ) {
             zut = u3nc(c3__wet, u3k(qu_zem));
-          } 
+          }
           else if ( qpq_sut == c3__dry ) {
             zut = u3nc(c3__dry, u3k(qu_zem));
-          } 
+          }
           else u3m_bail(c3__fail);
 #endif
-          
+
           pro = u3nt
             (c3y,
              u3nc(u3nc(u3_nul, u3k(axe)), u3k(lon)),
              u3nt(c3n,
                   u3qc_peg(2, pu_zem),
                   u3nt(u3nc(u3k(sut), zut), u3_nul, u3_nul)));
-          
+
           u3z(zem);
           return pro;
         }
@@ -287,9 +287,9 @@
     }
   }
 
-  static u3_noun 
+  static u3_noun
   _find_twin(u3_noun van,
-             u3_noun hax, 
+             u3_noun hax,
              u3_noun yor)
   {
     if ( c3y == u3r_sing(hax, yor) ) {
@@ -342,7 +342,7 @@
         u3_noun pp_yor = u3h(p_yor);                //  vein
         u3_noun qp_hax = u3t(p_hax);                //  opal
         u3_noun qp_yor = u3t(p_yor);                //  opal
-     
+
         if ( c3n == u3r_sing(pp_hax, pp_yor) ) {
           return u3m_error("find-fork-e");
         }
@@ -354,7 +354,7 @@
               u3_noun pqp_hax = u3t(qp_hax);        //  type
               u3_noun pqp_yor = u3t(qp_yor);        //  type
 
-              return 
+              return
                 u3nt(c3y,
                      u3k(pp_hax),
                      u3nc(c3y, u3kf_fork
@@ -372,8 +372,8 @@
             if ( c3n == u3r_sing(pqp_hax, pqp_yor) ) {
               return u3m_error("find-fork-h");
             } else {
-              return 
-                u3nt(c3y, 
+              return
+                u3nt(c3y,
                      u3k(pp_hax),
                      u3nt(c3n, u3k(pqp_hax), u3qdi_uni(qqp_hax, qqp_yor)));
             }
@@ -389,7 +389,7 @@
   {
     if ( u3_nul == wiz ) {
       return u3_nul;
-    } 
+    }
     else if ( u3_nul == u3t(wiz) ) {
       return u3k(u3h(wiz));
     }
@@ -405,7 +405,7 @@
     }
   }
 
-  static u3_noun 
+  static u3_noun
   _find_buck_fork_turn(u3_noun van,
                        u3_noun yed,
                        u3_noun way,
@@ -417,7 +417,7 @@
   {
     if ( u3_nul == yed ) {
       return u3_nul;
-    } 
+    }
     else {
       u3_noun fid = _find_buck(van, u3h(yed), way, p_heg, q_heg, axe, lon, gil);
 
@@ -427,7 +427,7 @@
             (van, u3t(yed), way, p_heg, q_heg, axe, lon, gil));
     }
   }
-  
+
   static u3_noun
   _find_buck_fork(u3_noun van,
                   u3_noun sut,
@@ -445,10 +445,10 @@
 
     wiz = _find_buck_fork_turn(van, yed, way, p_heg, q_heg, axe, lon, gil);
     u3z(yed);
- 
+
     ret = _find_buck_fork_twin(van, wiz);
     u3z(wiz);
-   
+
     return ret;
   }
 
@@ -511,8 +511,8 @@
         u3z(tor);
 
         ret = u3nt
-          (c3n, 
-           c3n, 
+          (c3n,
+           c3n,
            u3nc(u3k(u3h(vat)), u3qf_comb(cob, u3t(vat))));
 
         u3z(vat);
@@ -548,7 +548,7 @@
       if ( c3y == u3ud(p_sut) ) {
         if ( c3y == u3r_sing(p_sut, uq_heg) ) {
           return _find_buck_here(van, q_sut, way, p_heg, q_heg, axe, lon, gil);
-        } 
+        }
         else {
           return _find_buck_lose(van, sut, way, p_heg, q_heg, axe, lon, gil);
         }
@@ -587,10 +587,10 @@
               u3_noun nol =                       //  vein
                 u3nt(u3_nul, u3nc(u3_nul, u3k(axe)), u3k(lon));
               u3_noun ret;
- 
+
               ret = u3nt(c3y, u3qb_weld(pp_tor, nol), u3k(qp_tor));
               u3z(nol);
-              u3z(tor); 
+              u3z(tor);
               u3z(tyr);
               return ret;
             }
@@ -601,11 +601,11 @@
               u3_noun dog = u3nc(0, u3k(axe));    //  nock
               u3_noun ret;
 
-              ret = u3nt(c3n, 
-                         c3n, 
+              ret = u3nt(c3n,
+                         c3n,
                          u3nc(u3k(pp_tor), u3qf_comb(dog, qp_tor)));
               u3z(dog);
-              u3z(tor); 
+              u3z(tor);
               u3z(tyr);
 
               return ret;
@@ -642,12 +642,12 @@
     else switch ( u3h(sut) ) {
       default: return u3m_bail(c3__fail);
 
-      case c3__atom: 
+      case c3__atom:
       {
         // fprintf(stderr, "atom\r\n");
         return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
-      case c3__cell: 
+      case c3__cell:
       {
         // fprintf(stderr, "cell\r\n");
         return _find_buck_cell(van, sut, way, p_heg, q_heg, axe, lon, gil);
@@ -711,7 +711,7 @@
                          ? u3k(i_hyp)
                          : u3nq(c3n, 0, u3_nul, u3k(i_hyp));
       u3_noun ret;
-      
+
       if ( c3y == u3h(heg) ) {
         u3_noun p_heg = u3t(heg);         //  axis
 
@@ -759,14 +759,14 @@
 
         if ( c3y == u3h(p_mor) ) {
           return mor;
-        } 
+        }
         else {
           u3_noun pp_mor = u3t(p_mor);      //  {span nock}
           u3_noun ppp_mor = u3h(pp_mor);    //  span
           u3_noun qpp_mor = u3t(pp_mor);    //  nock
           u3_noun gen = u3nt(c3__wing, u3k(i_hyp), u3_nul);
           u3_noun fex = u3qfu_mint(van, ppp_mor, c3__noun, gen);
-          u3_noun ret = u3nt(c3n, 
+          u3_noun ret = u3nt(c3n,
                              c3n,
                              u3nc(u3k(u3h(fex)),
                                   u3qf_comb(qpp_mor, u3t(fex))));
@@ -794,7 +794,7 @@
              u3_noun hyp)
   {
     u3_noun taf;
-   
+
     taf = _find_pony(van, sut, way, hyp);
 
     return taf;
@@ -814,7 +814,7 @@
     else {
       if ( c3y == u3h(taf) ) {
         u3_noun fat = u3nc(c3y, u3k(u3t(taf)));
- 
+
         u3z(taf);
         return fat;
       }
@@ -822,7 +822,7 @@
         if ( c3n == u3h(u3t(taf)) ) {
           u3_noun fat = u3nc(c3n, u3k(u3t(u3t(u3t(taf)))));
 
-          u3z(taf); 
+          u3z(taf);
           return fat;
         }
         else {

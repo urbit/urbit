@@ -31,7 +31,7 @@
                       u3nc(0,
                            u3qc_peg(p_mal, pq_buz)));
         }
-        else return u3nt(7, 
+        else return u3nt(7,
                          u3k(mal),
                          u3k(buz));
       }
@@ -42,7 +42,7 @@
                 (0 == u3h(q_mal)) &&
                 (1 == u3t(q_mal)) )
       {
-        return u3nt(8, 
+        return u3nt(8,
                     u3k(p_mal),
                     u3k(buz));
       }
@@ -52,7 +52,7 @@
       {
         return u3k(mal);
       }
-      else return u3nt(7, 
+      else return u3nt(7,
                        u3k(mal),
                        u3k(buz));
     }

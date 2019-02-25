@@ -15,10 +15,10 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("_cqfu_buss-buss", von, "buss");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam_2, 
-                                u3k(cog), 
-                                u3x_sam_3, 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam_2,
+                                u3k(cog),
+                                u3x_sam_3,
                                 u3k(gen),
                                 0));
   }
@@ -31,7 +31,7 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("_cqfu_busk-busk", von, "busk");
 
-    return u3n_kick_on(u3i_molt(gat, 
+    return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam,
                                 u3k(gen),
                                 0));

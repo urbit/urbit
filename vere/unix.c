@@ -413,7 +413,7 @@ _unix_free_node(u3_pier *pir_u, u3_unod* nod_u)
   u3_noun can;
   if ( nod_u->par_u ) {
     u3_unod* don_u = nod_u->par_u->kid_u;
-  
+
     if ( !don_u ) {
     }
     else if ( nod_u == don_u ) {
@@ -1207,7 +1207,7 @@ u3_unix_ef_look(u3_pier *pir_u, u3_noun all)
   if ( c3y == pir_u->unx_u->dyr ) {
     pir_u->unx_u->dyr = c3n;
     u3_umon* mon_u;
-  
+
     for ( mon_u = pir_u->unx_u->mon_u; mon_u; mon_u = mon_u->nex_u ) {
       _unix_update_mount(pir_u, mon_u, all);
     }

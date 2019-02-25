@@ -68,7 +68,7 @@ _in_uni(u3_noun a, u3_noun b)
 
 /* functions
 */
-  u3_noun 
+  u3_noun
   u3kdi_uni(u3_noun a,
             u3_noun b)
   {

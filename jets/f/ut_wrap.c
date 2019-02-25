@@ -10,7 +10,7 @@
   {
     if ( u3_nul == p_sut ) {
       return u3_nul;
-    } 
+    }
     else {
       return u3nc(_cqfu_wrap(van, u3h(p_sut), yoz),
                   _wrap_fork(van, u3t(p_sut), yoz));

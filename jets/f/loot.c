@@ -45,7 +45,7 @@
             pro = _loot_in(cog, r_dom, nax);
             u3z(nax);
             return pro;
-          } 
+          }
           else {
             u3_noun u_yep = u3t(yep);
             u3_noun nax   = u3qc_peg(axe, 2);
@@ -65,7 +65,7 @@
             pro = _loot_in(cog, l_dom, nax);
             u3z(nax);
             return pro;
-          } 
+          }
           else {
             u3_noun u_yep = u3t(yep);
             u3_noun nax   = u3qc_peg(axe, 2);
@@ -87,7 +87,7 @@
 
             if ( u3_nul != pey ) {
               return pey;
-            } 
+            }
             else {
               u3_noun nax = u3qc_peg(axe, 7);
               u3_noun pro;

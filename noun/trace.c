@@ -53,18 +53,18 @@ _t_slog_time(void)
   static struct timeval b4, f2, d0;
   static c3_d b4_d;
   c3_w ms_w;
-          
+
   if ( old ) {
-    gettimeofday(&f2, 0); 
+    gettimeofday(&f2, 0);
     timersub(&f2, &b4, &d0);
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     if (ms_w > 1) {
 #if 0
-      fprintf(stderr, "%6d.%02dms: %9d ", 
+      fprintf(stderr, "%6d.%02dms: %9d ",
               ms_w, (int) (d0.tv_usec % 1000) / 10,
               ((int) (u3R->pro.nox_d - b4_d)));
 #else
-      fprintf(stderr, "%6d.%02dms ", 
+      fprintf(stderr, "%6d.%02dms ",
               ms_w, (int) (d0.tv_usec % 1000) / 10);
 #endif
       gettimeofday(&b4, 0);
@@ -106,7 +106,7 @@ u3t_slog(u3_noun hod)
 
 /* u3t_shiv(): quick print.
 */
-void 
+void
 u3t_shiv(u3_noun hod)
 {
 #ifdef U3_EVENT_TIME_DEBUG
@@ -141,11 +141,11 @@ u3t_heck(u3_atom cog)
   //
   if ( &(u3H->rod_u) != u3R ) {
     u3a_road* rod_u;
- 
+
     rod_u = u3R;
     u3R = &(u3H->rod_u);
     {
-      if ( 0 == u3R->pro.day ) { 
+      if ( 0 == u3R->pro.day ) {
         u3R->pro.day = u3v_do("doss", 0);
       }
       u3R->pro.day = u3dc("pi-heck", u3i_string(str_c), u3R->pro.day);
@@ -191,7 +191,7 @@ _t_samp_process(u3_road* rod_u)
       u3a_wash(laj);
 
       //  Add the label to the traced label stack, trimming recursion.
-      //  
+      //
       {
         u3_noun old;
 
@@ -206,7 +206,7 @@ _t_samp_process(u3_road* rod_u)
           u3z(muf);
           while ( len_w > (old + 1) ) {
             u3_noun t_pef = u3k(u3t(pef));
- 
+
             len_w -= 1;
             u3z(pef);
             pef = t_pef;
@@ -220,7 +220,7 @@ _t_samp_process(u3_road* rod_u)
     rod_u = u3tn(u3_road, rod_u->par_p);
   }
   u3z(muf);
-  
+
   //  Lose the maps and save a pure label stack in original order.
   //
   {
@@ -268,7 +268,7 @@ u3t_samp(void)
     home++;
     c3_l      mot_l;
     u3a_road* rod_u;
-  
+
     if ( _(u3T.mal_o) ) {
       mot_l = c3_s3('m','a','l');
     }
@@ -298,7 +298,7 @@ u3t_samp(void)
       u3_noun lab = _t_samp_process(rod_u);
 
       c3_assert(u3R == &u3H->rod_u);
-      if ( 0 == u3R->pro.day ) { 
+      if ( 0 == u3R->pro.day ) {
         /* bunt a +doss
         */
         u3R->pro.day = u3nt(u3nq(0, 0, 0, u3nq(0, 0, 0, 0)), 0, 0);
@@ -567,7 +567,7 @@ u3t_print_steps(c3_c* cap_c, c3_d sep_d)
 
   if ( sep_d ) {
     if ( gib_w ) {
-      fprintf(fil_f, "%s: G/%d.%03d.%03d.%03d\r\n", 
+      fprintf(fil_f, "%s: G/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
@@ -608,8 +608,8 @@ u3t_damp(void)
 
 /* _ct_sigaction(): profile sigaction callback.
 */
-void _ct_sigaction(c3_i x_i) 
-{ 
+void _ct_sigaction(c3_i x_i)
+{
   // fprintf(stderr, "itimer!\r\n"); abort();
   u3t_samp();
 }
@@ -632,7 +632,7 @@ u3t_init(void)
 void
 u3t_boot(void)
 {
-  if ( u3C.wag_w & u3o_debug_cpu ) { 
+  if ( u3C.wag_w & u3o_debug_cpu ) {
     _ct_lop_o = c3n;
 #if defined(U3_OS_osx) || defined(U3_OS_linux)
     //  skip profiling if we don't yet have an arvo kernel

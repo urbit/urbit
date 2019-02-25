@@ -79,7 +79,7 @@
       return u3m_bail(c3__exit);
     } else {
       u3_noun pro;
- 
+
       pro = u3qc_rep(a, b);
       return pro;
     }

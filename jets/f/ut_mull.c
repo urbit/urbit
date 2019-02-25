@@ -38,9 +38,9 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_hook(von, "feel");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam, 
-                                u3k(rot), 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam,
+                                u3k(rot),
                                 0));
   }
 
@@ -67,7 +67,7 @@
   {
     if ( 0 == u3h(nug) ) {
       return u3k(u3t(nug));
-    } 
+    }
     else if ( 11 == u3h(nug) ) {
       return _mull_cove(u3t(u3t(nug)));
     }
@@ -89,11 +89,11 @@
     u3_noun gat = u3j_hook(von, "mile");
 
     // fprintf(stderr, "mile\r\n");
-    return u3n_kick_on(u3i_molt(gat, 
+    return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam_2,
                                 u3k(dox),
                                 u3x_sam_6,
-                                u3k(mel), 
+                                u3k(mel),
                                 u3x_sam_14,
                                 u3k(nym),
                                 u3x_sam_30,
@@ -178,10 +178,10 @@
     u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
     u3_noun gat = u3j_cook("_mull_cnts-emul", von, "emul");
 
-    return u3n_kick_on(u3i_molt(gat, 
-                                u3x_sam_2, 
-                                u3k(gol), 
-                                u3x_sam_6, 
+    return u3n_kick_on(u3i_molt(gat,
+                                u3x_sam_2,
+                                u3k(gol),
+                                u3x_sam_6,
                                 u3k(dox),
                                 u3x_sam_14,
                                 u3k(hyp),
@@ -369,7 +369,7 @@
           if ( c3y != u3h(fid) ) {
             return u3m_error("mull-bonk-x");
           }
-          else { 
+          else {
             u3_noun pp_fid = u3h(u3t(fid));
             u3_noun qp_fid = u3t(u3t(fid));
 
@@ -385,7 +385,7 @@
           if ( c3y != u3h(gax) ) {
             return u3m_error("mull-bonk-x");
           }
-          else { 
+          else {
             u3_noun pp_gax = u3h(u3t(gax));
             u3_noun qp_gax = u3t(u3t(gax));
 
@@ -405,7 +405,7 @@
 
         u3z(old_axis);
         u3z(new_axis);
-        u3z(gax); 
+        u3z(gax);
         u3z(fid);
 
         return _mull_both(van, gol, _mull_bean());
@@ -557,10 +557,10 @@
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
-        u3_noun pro = u3nc(u3qfu_wrap(van, 
+        u3_noun pro = u3nc(u3qfu_wrap(van,
                                       u3h(vat),
                                       c3__iron),
-                           u3qfu_wrap(van, 
+                           u3qfu_wrap(van,
                                       u3t(vat),
                                       c3__iron));
 
@@ -573,7 +573,7 @@
       _mull_used();
       {
         u3_noun vat = _mull_in(van, sut, gol, dox, p_gen);
-        u3_noun pro = u3nc(u3qfu_wrap(van, 
+        u3_noun pro = u3nc(u3qfu_wrap(van,
                                       u3h(vat),
                                       c3__zinc),
                            u3qfu_wrap(van,
@@ -617,7 +617,7 @@
       case c3__tune: p_gen = u3t(gen);
       _mull_used();
       {
-        return u3nc(u3qf_face(p_gen, sut), 
+        return u3nc(u3qf_face(p_gen, sut),
                     u3qf_face(p_gen, dox));
       }
 

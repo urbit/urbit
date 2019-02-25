@@ -33,7 +33,7 @@
       **    %meme               ::  out of memory
       **    %time               ::  timed out
       **    %oops               ::  assertion failure
-      */ 
+      */
         c3_i
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
@@ -76,22 +76,22 @@
 
       /* u3m_soft_slam: top-level call.
       */
-        u3_noun 
+        u3_noun
         u3m_soft_slam(u3_noun gat, u3_noun sam);
 
       /* u3m_soft_nock: top-level nock.
       */
-        u3_noun 
+        u3_noun
         u3m_soft_nock(u3_noun bus, u3_noun fol);
 
       /* u3m_soft_sure(): top-level call assumed correct.
       */
-        u3_noun 
+        u3_noun
         u3m_soft_sure(u3_funk fun_f, u3_noun arg);
 
       /* u3m_soft_run(): descend into virtualization context.
       */
-        u3_noun 
+        u3_noun
         u3m_soft_run(u3_noun gul,
                      u3_funq fun_f,
                      u3_noun aga,
@@ -119,7 +119,7 @@
 
       /* u3m_pretty(): dumb prettyprint to string.  RETAIN.
       */
-        c3_c* 
+        c3_c*
         u3m_pretty(u3_noun som);
 
       /* u3m_p(): dumb print with caption.  RETAIN.

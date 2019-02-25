@@ -135,11 +135,11 @@ u3_noun
   u3we_shay(u3_noun cor)
   {
     u3_noun a, b;
-    
+
 //     static int few = 0;
 //     if(few == 0) printf("foo\r\n");
 //     few++; few %= 1000;
-      
+
 
     if ( (u3_none == (a = u3r_at(u3x_sam_2, cor))) ||
          (u3_none == (b = u3r_at(u3x_sam_3, cor))) ||

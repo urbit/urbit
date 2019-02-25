@@ -203,11 +203,11 @@ _test_leap(void)
 #if 1
   // u3m_dump();
   {
-    u3_noun pil; 
+    u3_noun pil;
     u3_noun cue, jam;
     c3_w gof_w = u3m_golf();
 
-    pil = u3_walk_load("urb/urbit.pill"); 
+    pil = u3_walk_load("urb/urbit.pill");
     u3m_leap(0);
     printf("cueing pill - %d bytes\n", u3r_met(3, pil));
     cue = u3ke_cue(pil);
@@ -236,8 +236,8 @@ static void
 _test_test(void)
 {
   u3_noun fol = u3ke_cue(u3_walk_load("pill/west.pill"));
-  u3_noun val; 
- 
+  u3_noun val;
+
   printf("test_test: formula mug %x\n", u3r_mug(fol));
   val = u3n_nock_on(u3nc(42, 17), fol);
   printf("val %d\n", val);

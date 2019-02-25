@@ -5,7 +5,7 @@
 
 
   u3_noun
-  u3qfu_gain(u3_noun van, 
+  u3qfu_gain(u3_noun van,
              u3_noun sut,
              u3_noun gen)
   {

@@ -215,7 +215,7 @@ _sang_one(u3_noun* a, u3_noun* b)
 {
   if ( *a == *b ) {
     return;
-  } 
+  }
   else {
     c3_o asr_o = u3a_is_senior(u3R, *a);
     c3_o bsr_o = u3a_is_senior(u3R, *b);
@@ -229,32 +229,32 @@ _sang_one(u3_noun* a, u3_noun* b)
       return;
     }
     if ( _(asr_o) && !_(bsr_o) ){
-      // u3z(*b); 
+      // u3z(*b);
       *b = *a;
     }
     if ( _(bsr_o) && !_(asr_o) ) {
-      //  u3z(*a); 
+      //  u3z(*a);
       *a = *b;
     }
     if ( u3a_is_north(u3R) ) {
       if ( *a <= *b ) {
         u3k(*a);
-        //  u3z(*b); 
+        //  u3z(*b);
         *b = *a;
       } else {
         u3k(*b);
-        //  u3z(*a); 
+        //  u3z(*a);
         *a = *b;
       }
     }
     else {
       if ( *a >= *b ) {
         u3k(*a);
-        // u3z(*b); 
+        // u3z(*b);
         *b = *a;
       } else {
         u3k(*b);
-        // u3z(*a); 
+        // u3z(*a);
         *a = *b;
       }
     }
@@ -620,7 +620,7 @@ u3r_sing(u3_noun a, u3_noun b)
 #ifndef U3_MEMORY_DEBUG
   if ( u3R->par_p ) {
     return u3r_sang(a, b);
-  } 
+  }
 #endif
   {
     c3_o ret_o;
@@ -1228,7 +1228,7 @@ u3r_bytes(c3_w    a_w,
       memcpy(c_y, x_y, z_w);
       if ( b_w > n_w - a_w ) {
         memset(c_y + z_w, 0, b_w + a_w - n_w);
-      } 
+      }
     }
   }
 }
@@ -1341,13 +1341,13 @@ u3r_words(c3_w    a_w,
     if ( a_w >= d_u->len_w ) {
       memset((c3_y*)c_w, 0, b_w << 2);
     }
-    else {      
+    else {
       c3_w z_w = c3_min(b_w, d_u->len_w - a_w);
       c3_w* x_w = d_u->buf_w + a_w;
       memcpy((c3_y*)c_w, (c3_y*)x_w, z_w << 2);
       if ( b_w > d_u->len_w - a_w ) {
         memset((c3_y*)(c_w + z_w), 0, (b_w + a_w - d_u->len_w) << 2);
-      } 
+      }
     }
   }
 }
@@ -1384,7 +1384,7 @@ u3r_chop(c3_g    met_g,
   c3_w  i_w;
   c3_w  len_w;
   c3_w* buf_w;
-  
+
   c3_assert(u3_none != src);
   c3_assert(_(u3a_is_atom(src)));
 
@@ -1394,7 +1394,7 @@ u3r_chop(c3_g    met_g,
   }
   else {
     u3a_atom* src_u = u3a_to_ptr(src);
-   
+
     len_w = src_u->len_w;
     buf_w = src_u->buf_w;
   }
@@ -1559,8 +1559,8 @@ u3r_mug_cell(u3_noun hed,
 typedef struct mugframe
 {
   u3_noun veb;
-  c3_w a; 
-  c3_w b; 
+  c3_w a;
+  c3_w b;
 } mugframe;
 
 static inline mugframe*
@@ -1610,7 +1610,7 @@ _mug_pop(c3_ys mov, c3_ys off, c3_w mug_w)
   //  shouldn't reach
   //
   else {
-    c3_assert(0); 
+    c3_assert(0);
   }
   return fam;
 }
@@ -1656,7 +1656,7 @@ c3_w
 u3r_mug(u3_noun veb)
 {
   c3_assert( u3_none != veb );
-  
+
   if ( _(u3a_is_atom(veb)) ) {
     return _mug_atom(veb);
   }

@@ -322,7 +322,7 @@ _serf_send_replace(c3_d evt_d, u3_noun ovo)
 {
   fprintf(stderr, "serf_send_replace %" PRIu64 " %s\r\n",
                   evt_d,
-                  u3r_string(u3h(u3t(ovo)))); 
+                  u3r_string(u3h(u3t(ovo))));
 
   _serf_send(u3nq(c3__work,
                   u3i_chubs(1, &evt_d),
@@ -471,7 +471,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     }
   }
 #endif
-  
+
   gon = u3m_soft(0, u3v_poke, u3k(ovo));
 
 #ifdef U3_EVENT_TIME_DEBUG
@@ -486,7 +486,7 @@ _serf_poke_live(c3_d    evt_d,              //  event number
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
     if (c3__belt != u3h(u3t(ovo)) || clr_w != 2) {
       uL(fprintf(uH, "\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
-                        clr_w, txt_c, evt_d, ms_w, 
+                        clr_w, txt_c, evt_d, ms_w,
                         (int) (d0.tv_usec % 1000) / 10));
     }
     free(txt_c);
@@ -612,7 +612,7 @@ _serf_poke_exit(c3_w cod_w)                 //  exit code
   exit(cod_w);
 }
 
-/* _serf_poke(): 
+/* _serf_poke():
 */
 void
 _serf_poke(void* vod_p, u3_noun mat)
