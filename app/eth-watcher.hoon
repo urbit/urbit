@@ -14,7 +14,7 @@
   $:  config
       latest-block=@ud
       filter-id=@ud
-      poll-timer=@da
+      poll-timer=(unit @da)
       snapshot
       sap=history
   ==
@@ -330,15 +330,15 @@
   ::
   ++  wait-poll
     =+  wen=(add now ~m4)
-    %-  put-move(poll-timer.eye wen)
+    %-  put-move(poll-timer.eye `wen)
     [%wait name^/poll wen]
   ::
   ::  +cancel-wait-poll: remove poll reminder
   ::
   ++  cancel-wait-poll
-    ?:  =(*@da poll-timer.eye)  ..cancel-wait-poll
-    %-  put-move(poll-timer.eye *@da)
-    [%rest poll-timer.eye]
+    ?~  poll-timer.eye  ..cancel-wait-poll
+    %-  put-move(poll-timer.eye ~)
+    [%rest u.poll-timer.eye]
   ::
   ::  +|  filter-results
   ::
@@ -420,7 +420,7 @@
       ::
       new-filter
     ::  kick polling timer, only if it hasn't already been.
-    =?  +>  (gth now poll-timer.eye)
+    =?  +>  |(?=(~ poll-timer.eye) (gth now u.poll-timer.eye))
       wait-poll
     (take-events rep)
   ::
