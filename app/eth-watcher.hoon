@@ -141,18 +141,34 @@
           moves=(list move)
       ==
   ::
+  ::  +open: initialize core
+  ::
   ++  open
     |=  nom=^name
     ^+  +>
     +>.$(name nom, eye (~(got by eyes) nom))
   ::
+  ::  +init: set up eye and initialize core
+  ::
+  ++  init
+    |=  [nom=^name =config]
+    ^+  +>
+    =.  name  nom
+    =.  eye
+      %*(. *^eye - config, last-heard-block from-block.config)
+    get-latest-block
+  ::
   ::  +|  outward
+  ::
+  ::  +wipe: delete eye
   ::
   ++  wipe
     =>  cancel-wait-poll
     =>  cancel-subscribers
     :-  (flop moves)
     ..watcher(eyes (~(del by eyes) name))
+  ::
+  ::  +done: store changes, update subscribers
   ::
   ++  done
     ^-  [(list move) _..watcher]
@@ -239,18 +255,6 @@
     %-  put-moves
     %+  turn  get-subscribers
     |=(b=bone [b %quit ~])
-  ::
-  ::  +|  configuration
-  ::
-  ::  +init: set up eye
-  ::
-  ++  init
-    |=  [nom=^name =config]
-    ^+  +>
-    =.  name  nom
-    =.  eye
-      %*(. *^eye - config, last-heard-block from-block.config)
-    get-latest-block
   ::
   ::  +|  catch-up-operations
   ::
