@@ -11,7 +11,9 @@
 /*
   Divide, rounding up.
 */
-#define DIVCEIL(x,y)  1 + ((x - 1) / y);
+#define DIVCEIL(x,y) \
+  (x==0) ? 0 :       \
+  1 + ((x - 1) / y);
 
 /*
   `ripn` breaks `atom` into a list of blocks, of bit-width `bits`. The
