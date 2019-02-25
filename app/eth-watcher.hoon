@@ -82,6 +82,30 @@
     wipe:(open:watcher +.act)
   ==
 ::
+++  peek-x
+  |=  pax=path
+  ^-  (unit (unit [%noun *]))
+  ?.  ?=([@ *] pax)  ~
+  =+  eye=(~(get by eyes) i.pax)
+  ?~  eye  [~ ~]
+  ::  /name: all logs
+  ::
+  ?~  t.pax  ``[%noun logs.u.eye]
+  ::  /name/num: most recent num logs
+  ::
+  =+  num=(slaw %ud i.t.pax)
+  ?^  num  ``[%noun (scag u.num logs.u.eye)]
+  ::  /name/debug: debug information
+  ::
+  ?.  ?=(%debug i.t.pax)  ~
+  =-  ``[%noun -]
+  =,  u.eye
+  :*  node=(en-purl:html node)
+      last=last-heard-block
+      lent=(lent logs)
+      time=poll-timer
+  ==
+::
 ++  peer
   |=  pax=path
   ^-  (quip move _+>)
