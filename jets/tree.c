@@ -1,5 +1,18 @@
-/* j/tree.c
+/*
+  To generate the hashes, take the sha256 of the jammed battery. For example:
+
+  ```
+  > `@ux`(shax (jam -:ripn))
+  0x2759.a693.1e9e.f9a5.2c8e.ee43.1088.43d9.4d39.32a6.b04f.86cb.6ba1.5553.4329.3a28
+  ```
+
+  Becomes:
+
+  ```
+  2759a6931e9ef9a52c8eee43108843d94d3932a6b04f86cb6ba1555343293a28
+  ```
 */
+
 #include "all.h"
 
 static u3j_harm _141_hex_aes_ecba_en_a[] = {{".2", u3wea_ecba_en}, {}};
@@ -1473,6 +1486,11 @@ static c3_c* _141_two_rip_ha[] = {
   "e8e0b834aded0d2738bcf38a93bf373d412a51e0cee7f274277a6393e634a65e",
   0
 };
+static u3j_harm _141_two_ripn_a[] = {{".2", u3wc_ripn, c3y}, {}};
+static c3_c* _141_two_ripn_ha[] = {
+  "2759a6931e9ef9a52c8eee43108843d94d3932a6b04f86cb6ba1555343293a28",
+  0
+};
 static u3j_harm _141_two_rsh_a[] = {{".2", u3wc_rsh, c3y}, {}};
 static c3_c* _141_two_rsh_ha[] = {
   "a401145b4c11ec8d17a729fe30f06c295865ffed1b970b0a788f0fec1ed0a703",
@@ -1710,6 +1728,7 @@ static u3j_core _141_two_d[] =
   { "rep", 7, _141_two_rep_a, 0, _141_two_rep_ha },
   { "rev", 7, _141_two_rev_a, 0, _141_two_rev_ha },
   { "rip", 7, _141_two_rip_a, 0, _141_two_rip_ha },
+  { "ripn", 7, _141_two_ripn_a, 0, _141_two_ripn_ha },
   { "rsh", 7, _141_two_rsh_a, 0, _141_two_rsh_ha },
   { "swp", 7, _141_two_swp_a, 0, _141_two_swp_ha },
   { "rub", 7, _141_two_rub_a, 0, _141_two_rub_ha },
