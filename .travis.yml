@@ -9,9 +9,9 @@ node_js:
 #   email: false
 
 before_install:
-  #  try to get pill early, so configuration errors will be quickly caught
-  #
+  # try to get pill early, so configuration errors will be quickly caught
   - cd .travis
+  - bash check-trailing-whitespace.sh
   - bash get-brass-pill.sh
   - cd ..
   - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip

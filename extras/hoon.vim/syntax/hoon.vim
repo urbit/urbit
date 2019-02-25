@@ -6,7 +6,7 @@ if exists("b:current_syntax")
 endif
 
 set autoindent
-map g/ /++  
+map g/ /++
 nmap gs :let varname = '\<<C-R><C-W>\>'<CR>?++  <C-R>=varname<CR><CR>
 set tabstop=2
 " nmap gc :let &colorcolumn=join(range(81,999),",")<CR>
@@ -41,8 +41,8 @@ set tabstop=2
 syn case match
 
 " Declarations
-hi def link     hoonDeclaration   Define 
-hi def link     hoonSymbol        Constant 
+hi def link     hoonDeclaration   Define
+hi def link     hoonSymbol        Constant
 hi def link     hoonAtom          Identifier
 hi def link     hoonRune          Operator
 hi def link     hoonIdentifier    Identifier
@@ -54,7 +54,7 @@ hi def link     hoonComment       Comment
 hi def link     hoonTodo          Todo
 hi def link     hoonString        String
 
-syn match       hoonDeclaration   "+[+-]" nextgroup=hoonSymbolDec skipwhite 
+syn match       hoonDeclaration   "+[+-]" nextgroup=hoonSymbolDec skipwhite
 syn match       hoonSymbol        /%\%(\%(\%(\w\|-\)\+\)\|[|&$]\|\%(\.n\)\|\%(\.y\)\)/
 syn match       hoonAtom          /\%(@\w*\)\|\^/
 syn match       hoonName          "\w*" contained

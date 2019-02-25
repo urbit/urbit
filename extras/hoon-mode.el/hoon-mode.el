@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2014–2015 Urbit
 
-;; Author: 
+;; Author:
 ;;    * Adam Bliss     https://github.com/abliss          <abliss@gmail.com>
-;; Contributors: 
+;; Contributors:
 ;;    * N Gvrnd        https://github.com/ngvrnd
 ;;    * TJamesCorcoran https://github.com/TJamesCorcoran <jamescorcoran@gmail.com>
 ;;    * Rastus Vernon  https://github.com/rastus-vernon  <rastus.vernon@protonmail.ch>
@@ -133,7 +133,7 @@
 ;      translation: "do not sharpen chainsaw while it is running"
 ;   4) the commands that are executed when the DSL is interpreted are likewise written in C
 ;
-; The upshot is... 
+; The upshot is...
 ;
 ; WAIT. A better way exists. Instead of hacking the mode-line format,
 ; just invoke 'rename-buffer, which also lives down in the C
@@ -144,7 +144,7 @@
 
 (defun hoon-mode-hack-the-modeline ()
   ;; (setq mode-line-format
-  ;; 		'("%e" 
+  ;; 		'("%e"
   ;; 		  mode-line-front-space
   ;; 		  mode-line-mule-info
   ;; 		  mode-line-client
@@ -159,7 +159,7 @@
   ;; 		  mode-line-modes
   ;; 		  mode-line-misc-info
   ;; 		  mode-line-end-spaces))
-  ;; (setq hoon-buffer-string 
+  ;; (setq hoon-buffer-string
   ;; 		(concat
   ;; 		 (nth 1 (reverse (split-string (file-name-directory (buffer-file-name)) "/")))
   ;; 		 "/"

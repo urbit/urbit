@@ -4,7 +4,7 @@
 */
   /**  Data structures.
   **/
-    /**  Straightforward implementation of the classic Bagwell 
+    /**  Straightforward implementation of the classic Bagwell
     ***  HAMT (hash array mapped trie), using a mug hash.
     ***
     ***  Because a mug is 31 bits, the root table has 64 slots.
@@ -18,7 +18,7 @@
     ***  clock-algorithm reclamation policy, not yet implemented.
     ***  Search "clock algorithm" to figure it out.
     **/
-      /* u3h_slot: map slot. 
+      /* u3h_slot: map slot.
       **
       **   Either a key-value cell or a loom offset, decoded as a pointer
       **   to a u3h_node, or a u3h_buck at the bottom.  Matches the u3_noun

@@ -93,7 +93,7 @@ source files that are denoted by comments and are actually indented one
 level.
 
 Hoon will be a less familiar language to many contributors. More details
-are forthcoming; for now, the `%ford` vane (in 
+are forthcoming; for now, the `%ford` vane (in
 [`sys/vane/ford.hoon`](https://github.com/urbit/arvo/blob/master/sys/vane/ford.hoon))
 is the highest quality code in the kernel.
 

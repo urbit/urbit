@@ -54,7 +54,7 @@ _newt_consume(u3_moat* mot_u)
         memcpy(met_u->hun_y, mot_u->rag_y, mot_u->len_d);
 
 #if 0
-          fprintf(stderr, 
+          fprintf(stderr,
               "newt: %d: create: msg %p, new block %p, len %"
               PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
               getpid(),
@@ -82,7 +82,7 @@ _newt_consume(u3_moat* mot_u)
         mot_u->rag_y = 0;
       }
       else {
-        /* no message, but enough stray bytes to fill in 
+        /* no message, but enough stray bytes to fill in
         ** a length; collect them and create a message.
         */
         if ( mot_u->len_d >= 8ULL ) {
@@ -115,8 +115,8 @@ _newt_consume(u3_moat* mot_u)
           else {
             /* remove consumed length from stray bytes
             */
-            c3_y* buf_y = c3_malloc(mot_u->len_d); 
-            
+            c3_y* buf_y = c3_malloc(mot_u->len_d);
+
             memcpy(buf_y, mot_u->rag_y + 8, mot_u->len_d);
 
             c3_free(mot_u->rag_y);
@@ -205,7 +205,7 @@ _newt_consume(u3_moat* mot_u)
 /* _raft_alloc(): libuv-style allocator for raft.
 */
 static void
-_newt_alloc(uv_handle_t* had_u, 
+_newt_alloc(uv_handle_t* had_u,
             size_t len_i,
             uv_buf_t* buf_u)
 {

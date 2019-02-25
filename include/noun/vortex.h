@@ -42,7 +42,7 @@
         } ova;
       } u3v_arvo;
 
-    /* u3v_home: all internal (within image) state. 
+    /* u3v_home: all internal (within image) state.
     */
       typedef struct _u3v_home {
         u3a_road rod_u;                   //  storage state

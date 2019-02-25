@@ -41,7 +41,7 @@
         } else {
           c = _b_bif_putroot(r_a, b);
           u3r_trel(c, &n_c, &l_c, &r_c);
-          d = u3nt(u3k(n_c), 
+          d = u3nt(u3k(n_c),
                    u3nt(u3k(n_a), u3k(l_a), u3k(l_c)),
                    u3k(r_c)
                   );
@@ -64,7 +64,7 @@
     }
   }
 
-  u3_noun u3qdb_bif(u3_noun a, 
+  u3_noun u3qdb_bif(u3_noun a,
                     u3_noun b)
   {
     u3_noun c, n_c, l_c, r_c;

@@ -46,8 +46,8 @@
     memset(&sat_u, 0, sizeof(sat_u));
     sat_u.st_ino = ino_i;
 
-    fuse_add_direntry(req_u, 
-                      buf_u->buf_c + old_z, 
+    fuse_add_direntry(req_u,
+                      buf_u->buf_c + old_z,
                       buf_u->siz_z - old_z,
                       nam_c,
                       &sat_u,
@@ -55,7 +55,7 @@
   }
 
   static void
-  _fuse_buf_reply(fuse_req_t          req_u, 
+  _fuse_buf_reply(fuse_req_t          req_u,
                   c3_c*               buf_c,
                   c3_z                siz_z,
                   c3_f                off_f,
@@ -120,8 +120,8 @@ _inode_new(void)
 
   if ( fus_u->ion_u.len_w == fus_u->ion_u.ino_i ) {
     fus_u->ion_u.len_w *= 2;
-    fus_u->ion_u.nod_u = realloc(fus_u->ion_u.nod_u, 
-                                 (fus_u->ion_u.len_w * 
+    fus_u->ion_u.nod_u = realloc(fus_u->ion_u.nod_u,
+                                 (fus_u->ion_u.len_w *
                                   sizeof(struct fnod *)));
   }
   return nod_u;
@@ -178,11 +178,11 @@ static u3_noun
 _inode_path(u3_fnod* nod_u, u3_noun end)
 {
   if ( nod_u->par_u == 0 ) {
-    return end; 
+    return end;
   }
   else {
     end = u3nc(u3i_string(nod_u->nam_c), end);
- 
+
     return _inode_path(nod_u->par_u, end);
   }
 }
@@ -194,7 +194,7 @@ _inode_load_arch(u3_noun hap)
 {
   if ( u3_nul == u3A->own ) {
     return u3_none;
-  } 
+  }
   else {
     u3_noun our = u3dc("scot", 'p', u3k(u3h(u3A->own)));
     u3_noun pax = u3nc(c3__cy, u3nq(our, c3__home, u3k(u3A->wen), hap));
@@ -218,7 +218,7 @@ _inode_load_data(u3_noun hap)
 {
   if ( u3_nul == u3A->own ) {
     return u3_none;
-  } 
+  }
   else {
     u3_noun our = u3dc("scot", 'p', u3k(u3h(u3A->own)));
     u3_noun pax = u3nc(c3__cx, u3nq(our, c3__home, u3k(u3A->wen), hap));
@@ -258,7 +258,7 @@ _inode_fill_directory(u3_fnod* par_u, u3_noun kiz)
       u3_noun  ph_zik = u3h(u3h(zik));
       c3_c*    nam_c  = u3r_string(ph_zik);
       u3_fent* fen_u  = calloc(1, sizeof(u3_fent));
-      
+
       fen_u->nod_u = _inode_make(par_u, nam_c);
       fen_u->nex_u = dir_u->fen_u;
       dir_u->fen_u = fen_u;
@@ -294,11 +294,11 @@ _inode_load(u3_fnod* nod_u)
 {
   if ( u3_nul == u3A->own ) {
     return c3n;
-  } 
+  }
   else {
     if ( nod_u->typ_e != u3_fuse_type_unknown ) {
       return c3y;
-    } 
+    }
     else {
       u3_noun hap = _inode_path(nod_u, u3_nul);
       u3_weak ark = _inode_load_arch(u3k(hap));
@@ -359,9 +359,9 @@ _fuse_ll_init(void*                  usr_v,
    * @param parent inode number of the parent directory
    * @param name the name to look up
    */
-static void 
-_fuse_ll_lookup(fuse_req_t  req_u, 
-                fuse_ino_t  pno_i, 
+static void
+_fuse_ll_lookup(fuse_req_t  req_u,
+                fuse_ino_t  pno_i,
                 const c3_c* nam_c)
 {
   uL(fprintf(uH, "ll_lookup %ld %s\n", pno_i, nam_c));
@@ -381,7 +381,7 @@ _fuse_ll_lookup(fuse_req_t  req_u,
         nod_u = _inode_make(par_u, strdup(nam_c));
       }
     }
-  
+
     if ( c3n == _inode_load(nod_u) ) {
       fuse_reply_err(req_u, ENOENT);
     }
@@ -430,7 +430,7 @@ _fuse_ll_getattr(fuse_req_t             req_u,
 
       if ( c3n == _inode_stat(nod_u, &buf_u) ) {
         fuse_reply_err(req_u, ENOENT);
-      } 
+      }
       else {
         fuse_reply_attr(req_u, &buf_u, 1.0);
       }
@@ -480,16 +480,16 @@ _fuse_ll_readdir(fuse_req_t             req_u,
 
       memset(&buf_u, 0, sizeof(buf_u));
       _fusedr_buf_add(req_u, &buf_u, ".", ino_i);
-      _fusedr_buf_add(req_u, &buf_u, "..", nod_u->par_u 
+      _fusedr_buf_add(req_u, &buf_u, "..", nod_u->par_u
                                            ? nod_u->par_u->ino_i
                                            : ino_i);
       {
         u3_fent* fen_u;
 
         for ( fen_u = nod_u->dir_u->fen_u; fen_u; fen_u = fen_u->nex_u ) {
-          _fusedr_buf_add(req_u, 
-                          &buf_u, 
-                          fen_u->nod_u->nam_c, 
+          _fusedr_buf_add(req_u,
+                          &buf_u,
+                          fen_u->nod_u->nam_c,
                           fen_u->nod_u->ino_i);
         }
       }
@@ -584,10 +584,10 @@ _fuse_ll_read(fuse_req_t             req_u,
     if ( c3n == _inode_load(nod_u) ) {
       fuse_reply_err(req_u, ENOENT);
     } else {
-      _fuse_buf_reply(req_u, 
+      _fuse_buf_reply(req_u,
                       (c3_c*)(nod_u->val_u->buf_y),
                       nod_u->val_u->siz_z,
-                      off_f, 
+                      off_f,
                       max_z);
     }
   }
@@ -595,17 +595,17 @@ _fuse_ll_read(fuse_req_t             req_u,
 
 static struct fuse_lowlevel_ops fuse_api = {
   .init      = _fuse_ll_init,
-  .lookup    = _fuse_ll_lookup, 
+  .lookup    = _fuse_ll_lookup,
   .getattr   = _fuse_ll_getattr,
   .readdir   = _fuse_ll_readdir,
   .open	     = _fuse_ll_open,
   .read	     = _fuse_ll_read,
 };
 
-/* _fuse_poll_cb(): 
+/* _fuse_poll_cb():
 */
 static void
-_fuse_poll_cb(uv_poll_t* wax_u, 
+_fuse_poll_cb(uv_poll_t* wax_u,
               c3_i       sas_i,
               c3_i       evt_i)
 {

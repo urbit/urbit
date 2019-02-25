@@ -73,7 +73,7 @@
 
     if ( c3n == u3r_mean(cor, u3x_sam, &b, u3x_con_sam, &a, 0) ) {
       return u3m_bail(c3__exit);
-    } 
+    }
     else {
       return u3qdi_mer(a, b);
     }

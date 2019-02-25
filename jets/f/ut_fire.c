@@ -46,7 +46,7 @@
       u3_noun mul = u3qfu_mull(von, sut, c3__noun, dox, gen);
 
       ret = c3y;
-  
+
       u3z(mul);
       u3z(von);
       u3z(rob);

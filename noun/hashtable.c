@@ -176,7 +176,7 @@ _ch_some_add(void* han_v, c3_w lef_w, c3_w rem_w, u3_noun kev, c3_w *use_w)
   else return _ch_node_add((u3h_node*)han_v, lef_w, rem_w, kev, use_w);
 }
 
-/* _ch_slot_put(): store a key-value pair in a u3h_slot (root or node) 
+/* _ch_slot_put(): store a key-value pair in a u3h_slot (root or node)
 */
 static void
 _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w)
@@ -202,10 +202,10 @@ _ch_slot_put(u3h_slot* sot_w, u3_noun kev, c3_w lef_w, c3_w rem_w, c3_w* use_w)
     }
   }
   else {
-    void* hav_v = _ch_some_add(u3h_slot_to_node(*sot_w), 
-                               lef_w, 
-                               rem_w, 
-                               kev, 
+    void* hav_v = _ch_some_add(u3h_slot_to_node(*sot_w),
+                               lef_w,
+                               rem_w,
+                               kev,
                                use_w);
 
     c3_assert( c3y == u3h_slot_is_node(*sot_w) );
@@ -274,7 +274,7 @@ _ch_trim_buck(u3h_root* har_u, u3h_slot* sot_w)
   c3_w i_w, len_w;
   u3h_buck* hab_u = u3h_slot_to_node(*sot_w);
 
-  for ( har_u->arm_u.buc_o = c3y, len_w = hab_u->len_w; 
+  for ( har_u->arm_u.buc_o = c3y, len_w = hab_u->len_w;
         har_u->arm_u.inx_w < len_w;
         har_u->arm_u.inx_w += 1 )
   {
@@ -358,7 +358,7 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);
     return c3y;
   }
-} 
+}
 
 /* _ch_trim_slot(): trim one entry from a hashtable
 */
@@ -369,7 +369,7 @@ _ch_trim_root(u3h_root* har_u)
   c3_w      inx_w = mug_w >> 25; // 6 bits
   c3_w      rem_w = mug_w & ((1 << 25) - 1);
   u3h_slot* sot_w = &(har_u->sot_w[inx_w]);
-  
+
   return _ch_trim_slot(har_u, sot_w, 25, rem_w);
 }
 

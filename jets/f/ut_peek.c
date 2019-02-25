@@ -105,7 +105,7 @@
             else {
 
               if ( way != c3__read ) {
-               return u3m_error("payload-block"); 
+               return u3m_error("payload-block");
               }
 
               u3_noun typ;

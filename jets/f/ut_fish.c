@@ -16,7 +16,7 @@
   {
     if ( u3_nul == p_sut ) {
       return u3nc(1, 1);
-    } 
+    }
     else {
       u3_noun hed = _fish_in(van, u3h(p_sut), axe, vit);
       u3_noun tal = _fish_fork(van, u3t(p_sut), axe, vit);
