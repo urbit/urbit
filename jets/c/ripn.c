@@ -17,13 +17,13 @@
   `ripn` breaks `atom` into a list of blocks, of bit-width `bits`. The
   resulting list will be least-significant block first.
 
+  XX TODO This only handles cases where the bit-width is <= 32.
+
   For each block we produce, we need to grab the relevant words inside
   `atom`, so we first compute their indicies.
 
-  `ins_idx` is the number of full words remaining after our bits, and
-  is therefore the word-index of the least-significant word we care
-  about. `sig_idx` is the word after that, which is the
-  next-most-significant word.
+  `ins_idx` is the word-index of the least-significant word we
+  care about, and `sig_idx` is the word after that.
 
   Next we grab those words (`ins_word` and `sig_word`) from the atom
   using `u3r_word`. Note that `sig_idx` might be out-of-bounds for the
