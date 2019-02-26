@@ -251,6 +251,8 @@ class sinkAction(argparse.Action):
     def construct_value(self, new_value):
         if self.which == 'output-file':
             return {self.which: new_value[::-1].replace('.','/',1)[::-1]}
+        elif self.which == 'output-pill':
+            return {self.which: new_value[::-1].replace('.','/',1)[::-1]}
         else:
             return {self.which: new_value}
 
@@ -334,6 +336,9 @@ sinks.add_argument('-s', '--stdout', const={'stdout': None},
 sinks.add_argument('-f', '--output-file', which='output-file',
                    metavar='path',
                    action=sinkAction)
+sinks.add_argument('-P', '--output-pill', which='output-pill',
+                   metavar='path',
+                   action=sinkAction)
 sinks.add_argument('-C', '--output-clay', which='output-clay',
                    metavar='clay-path',
                    action=sinkAction)
@@ -382,7 +387,9 @@ else:
             sys.exit(1)
 
 url = "http://localhost:%s" % PORT
+
 r = requests.post(url, data=json.dumps(payload))
+
 if r.text[0] == '"':
     print r.text[1:-1].decode('string_escape')
 elif r.text[0] == '{':
