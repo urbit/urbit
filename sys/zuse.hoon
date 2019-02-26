@@ -7194,9 +7194,19 @@
         ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
         ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
         ::
+        ++  linear-star-release
+          0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
+        ::
+        ++  conditional-star-release
+          0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+        ::
         ::  launch: block number of azimuth deploy
         ::
         ++  launch  6.784.800
+        ::
+        ::  public: block number of azimuth becoming independent
+        ::
+        ++  public  7.033.765
         --
       ::
       ::  hashes of ship event signatures
