@@ -7331,68 +7331,68 @@
     ::
     ?:  =(i.topics.log owner-changed)
       =+  ^-  [who=@ wer=address]
-          (decode-topics topics.log ~[%uint %address])
+          (decode-topics t.topics.log ~[%uint %address])
       `[who %owner wer]
     ::
     ?:  =(i.topics.log activated)
       =/  who=@
-        (decode-topics topics.log ~[%uint])
+        (decode-topics t.topics.log ~[%uint])
       `[who %activated who]
     ::
     ?:  =(i.topics.log spawned)
       =+  ^-  [pre=@ who=@]
-          (decode-topics topics.log ~[%uint %uint])
+          (decode-topics t.topics.log ~[%uint %uint])
       `[pre %spawned who]
     ::
     ?:  =(i.topics.log escape-requested)
       =+  ^-  [who=@ wer=@]
-          (decode-topics topics.log ~[%uint %uint])
+          (decode-topics t.topics.log ~[%uint %uint])
       `[who %escape `wer]
     ::
     ?:  =(i.topics.log escape-canceled)
-      =/  who=@  (decode-topics topics.log ~[%uint])
+      =/  who=@  (decode-topics t.topics.log ~[%uint])
       `[who %escape ~]
     ::
     ?:  =(i.topics.log escape-accepted)
       =+  ^-  [who=@ wer=@]
-          (decode-topics topics.log ~[%uint %uint])
+          (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor & wer]
     ::
     ?:  =(i.topics.log lost-sponsor)
       =+  ^-  [who=@ pos=@]
-          (decode-topics topics.log ~[%uint %uint])
+          (decode-topics t.topics.log ~[%uint %uint])
       `[who %sponsor | pos]
     ::
     ?:  =(i.topics.log changed-keys)
-      =/  who=@  (decode-topics topics.log ~[%uint])
+      =/  who=@  (decode-topics t.topics.log ~[%uint])
       =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
           %+  decode-results  data.log
           ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
       `[who %keys rev (pass-from-eth enc aut sut)]
     ::
     ?:  =(i.topics.log broke-continuity)
-      =/  who=@  (decode-topics topics.log ~[%uint])
+      =/  who=@  (decode-topics t.topics.log ~[%uint])
       =/  num=@  (decode-results data.log ~[%uint])
       `[who %continuity num]
     ::
     ?:  =(i.topics.log changed-management-proxy)
       =+  ^-  [who=@ sox=address]
-          (decode-topics topics.log ~[%uint %address])
+          (decode-topics t.topics.log ~[%uint %address])
       `[who %management-proxy sox]
     ::
     ?:  =(i.topics.log changed-voting-proxy)
       =+  ^-  [who=@ tox=address]
-          (decode-topics topics.log ~[%uint %address])
+          (decode-topics t.topics.log ~[%uint %address])
       `[who %voting-proxy tox]
     ::
     ?:  =(i.topics.log changed-spawn-proxy)
       =+  ^-  [who=@ sox=address]
-          (decode-topics topics.log ~[%uint %address])
+          (decode-topics t.topics.log ~[%uint %address])
       `[who %spawn-proxy sox]
     ::
     ?:  =(i.topics.log changed-transfer-proxy)
       =+  ^-  [who=@ tox=address]
-          (decode-topics topics.log ~[%uint %address])
+          (decode-topics t.topics.log ~[%uint %address])
       `[who %transfer-proxy tox]
     ::
     ::  warn about unimplemented events, but ignore
