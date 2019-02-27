@@ -36,3 +36,5 @@ TAGS
 /tags
 /config.mk
 include/config.h
+/urbit
+/urbit-worker
