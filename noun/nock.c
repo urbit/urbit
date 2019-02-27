@@ -66,7 +66,7 @@ static u3_noun _n_nock_on(u3_noun bus, u3_noun fol);
 /* _n_hint(): process hint.
 */
 static u3_noun
-_n_hint(u3_noun zep, 
+_n_hint(u3_noun zep,
         u3_noun hod,
         u3_noun bus,
         u3_noun nex)
@@ -349,7 +349,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
         {
           u3_noun seb = _n_nock_on(bus, u3k(c_gal));
           u3_noun pro;
-         
+
           u3t_off(noc_o);
           pro = u3j_kick(seb, b_gal);
           u3t_on(noc_o);
@@ -416,7 +416,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
         if ( !_(u3du(val)) ) {
           u3m_bail(u3nt(1, gof, 0));
-        } 
+        }
         if ( !_(u3du(u3t(val))) ) {
           //
           //  replace with proper error stack push
@@ -434,7 +434,7 @@ _n_nock_on(u3_noun bus, u3_noun fol)
 
           return pro;
         }
-      }  
+      }
       c3_assert(!"not reached");
     }
   }
@@ -569,7 +569,7 @@ _n_arg(c3_y cod_y)
     case LILS: case LITS: case LISL: case LISK:
     case SAMS: case SANS: case SIPS: case SINS:
     case SLIS: case SKIS: case KICS: case TICS:
-    case SUSH: case SAST: case SALT: 
+    case SUSH: case SAST: case SALT:
     case MUTS: case KUTS: case MITS: case KITS:
       return sizeof(c3_s);
 
@@ -680,7 +680,7 @@ _n_melt(u3_noun ops, c3_w* byc_w, c3_w* cal_w,
             c3_assert(0);
           }
           break;
-        
+
         case BUSH: case FIBK: case FIBL:
         case SANB: case LIBL: case LIBK:
         case KITB: case MITB:
@@ -880,9 +880,9 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
 
         /* 8-bit direct args */
         case FABK: case FABL:
-        case LITB: case LILB: 
+        case LITB: case LILB:
         case MUTB: case KUTB:
-        case SAMB: 
+        case SAMB:
           buf_y[i_w--] = (c3_y) u3t(op);
           buf_y[i_w]   = (c3_y) cod;
           break;
@@ -911,7 +911,7 @@ _n_prog_asm(u3_noun ops, u3n_prog* pog_u, u3_noun sip)
         }
 
         /* literal index args */
-        case FIBK: case FIBL: 
+        case FIBK: case FIBL:
         case LIBK: case LIBL:
         case BUSH: case SANB:
         case KITB: case MITB:
@@ -1524,7 +1524,7 @@ _n_find(u3_noun pre, u3_noun fol)
       pog   = u3h_git(rod_u->byc.har_p, key);
       if ( u3_none != pog ) {
         c3_w i_w;
-        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog)); 
+        u3n_prog* old = _n_prog_old(u3to(u3n_prog, pog));
         for ( i_w = 0; i_w < old->reg_u.len_w; ++i_w ) {
           u3j_rite* rit_u = &(old->reg_u.rit_u[i_w]);
           rit_u->own_o = c3n;
@@ -1719,7 +1719,7 @@ _n_burn(u3n_prog* pog_u, u3_noun bus, c3_ys mov, c3_ys off)
       top  = _n_peek(off);
       *top = u3nc(*top, x);          // [pro]
       BURN();
-    
+
     do_snoc: // [hed tel]
       x    = _n_pep(mov, off);
       top  = _n_peek(off);

@@ -13,7 +13,7 @@
 /* functions
 */
   u3_noun
-  u3qea_en(u3_atom a, 
+  u3qea_en(u3_atom a,
            u3_atom b)
   {
     c3_y         a_y[32];

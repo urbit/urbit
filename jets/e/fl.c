@@ -232,7 +232,7 @@
           break;
       }
       goto end;
-    } 
+    }
     _xpd(&c, &d);
     switch ( i ) {
       c3_ws x;
@@ -369,7 +369,7 @@
     mpz_init_set(mp, mn);
     mpz_set_ui(i, 1);
     mpz_mul_2exp(i, i, d.precision - 1);
-    if ( (mpz_cmp(c.a, i) == 0) && 
+    if ( (mpz_cmp(c.a, i) == 0) &&
          ((mpz_cmp(c.e, d.minExp) != 0 ) ||
          (d.eMode == c3__i)) ) {
       mpz_mul_2exp(mp, mp, 1);

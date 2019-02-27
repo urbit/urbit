@@ -145,7 +145,7 @@
       **   within (a) or (b)!
       */
         c3_o
-        u3r_sung(u3_noun a, u3_noun b); 
+        u3r_sung(u3_noun a, u3_noun b);
 
       /* u3r_sing_c):
       **

@@ -204,7 +204,7 @@ u3i_cell(u3_noun a, u3_noun b)
 
 #ifdef U3_CPU_DEBUG
   u3R->pro.cel_d++;
-#endif  
+#endif
   {
     // c3_w*       nov_w = u3a_walloc(c3_wiseof(u3a_cell));
     c3_w*       nov_w = u3a_celloc();
@@ -495,7 +495,7 @@ u3i_list(u3_weak one, ...);
 
       if ( c3n == u3a_is_cell(som) ) {
         return u3m_bail(c3__exit);
-      } 
+      }
       else {
         return u3i_cell
            (_molt_apply(u3a_h(som), cut_w, pms_m),
@@ -505,7 +505,7 @@ u3i_list(u3_weak one, ...);
   }
 
 __attribute__((no_sanitize("address")))
-u3_noun 
+u3_noun
 u3i_molt(u3_noun som, ...)
 {
   va_list            ap;

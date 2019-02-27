@@ -68,7 +68,7 @@
         struct _u3j_core* dev_u;        //  blank-terminated static list
         c3_c**            bas_u;        //  blank-terminated static list
         struct _u3j_hood* huc_u;        //  blank-terminated static list
-        struct _u3j_core* par_u;        //  dynamic parent pointer 
+        struct _u3j_core* par_u;        //  dynamic parent pointer
         c3_l              jax_l;        //  index in global dashboard
       } u3j_core;
 
@@ -151,7 +151,7 @@
 
       /* u3j_hook():
       **
-      **   Execute hook from core. 
+      **   Execute hook from core.
       */
         u3_noun
         u3j_hook(u3_noun     cor,
@@ -167,7 +167,7 @@
 
       /* u3j_kick(): try to kick by jet.  If no kick, produce u3_none.
       **
-      ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there 
+      ** `axe` is RETAINED by the caller; `cor` is RETAINED iff there
       ** is no kick, TRANSFERRED if one.
       */
         u3_weak

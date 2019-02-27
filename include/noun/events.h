@@ -7,7 +7,7 @@
     /* u3e_line: control line.
     */
       typedef struct _u3e_line {
-        c3_w pag_w; 
+        c3_w pag_w;
         c3_w mug_w;
       } u3e_line;
 
@@ -23,7 +23,7 @@
 
     /* u3_cs_patch: memory change, top level.
     */
-      typedef struct _u3_cs_patch {         
+      typedef struct _u3_cs_patch {
         c3_i           ctl_i;
         c3_i           mem_i;
         u3e_control* con_u;
@@ -40,7 +40,7 @@
     /* u3e_pool: entire memory system.
     */
       typedef struct _u3e_pool {
-        c3_c*        dir_c;                     //  path to 
+        c3_c*        dir_c;                     //  path to
         c3_d         evt_d;                     //  last patch written at event
         c3_w         dit_w[u3a_pages >> 5];   //  touched since last save
         u3e_image  nor_u;                     //  north segment

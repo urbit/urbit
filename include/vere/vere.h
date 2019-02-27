@@ -262,7 +262,7 @@
     */
       typedef struct _u3_mess {
         c3_d             len_d;             //  blob length in bytes
-        c3_d             has_d;             //  currently held             
+        c3_d             has_d;             //  currently held
         struct _u3_meat* meq_u;             //  exit of message queue
         struct _u3_meat* qem_u;             //  entry of message queue
       } u3_mess;
@@ -327,7 +327,7 @@
       typedef struct _u3_dire {
         c3_c*    pax_c;                     //  path of directory
         uv_file  fil_u;                     //  file, opened read-only to fsync
-        u3_dent* all_u;                     //  file list 
+        u3_dent* all_u;                     //  file list
       } u3_dire;
 
     /* u3_ames: ames networking.
@@ -412,7 +412,7 @@
         struct _u3_udir*  par_u;            //  parent
         struct _u3_unod*  nex_u;            //  internal list
       } u3_unod;
-      
+
     /* u3_ufil: synchronized file.
     */
       typedef struct _u3_ufil {
@@ -424,7 +424,7 @@
         c3_w              mug_w;            //  mug of last %into
         c3_w              gum_w;            //  mug of last %ergo
       } u3_ufil;
-      
+
     /* u3_ufil: synchronized directory.
     */
       typedef struct _u3_udir {
@@ -640,7 +640,7 @@
       **    at present, all sets are ordered and can be defined by a
       **    simple counter.  any events <= the counter is in the set.
       */
-        typedef struct _u3_disk {               
+        typedef struct _u3_disk {
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
@@ -657,7 +657,7 @@
       /* u3_boot: startup controller.
       */
         typedef struct _u3_boot {
-          
+
         } u3_boot;
 
       /* u3_pier: ship controller.
@@ -697,6 +697,7 @@
           u3_pier** tab_u;                      //  lord table
           uv_pipe_t cmd_u;                      //  command socket
           u3_moor*  cli_u;                      //  connected clients
+          uv_timer_t tim_u;                     //  gc timer
         } u3_king;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
@@ -834,7 +835,7 @@
 
       /* u3_ve_save(): save internal file as atom.
       */
-        c3_o   
+        c3_o
         u3_ve_save(c3_c* ext_c, u3_noun tah, u3_noun dat);
 
       /* u3_ve_zeus(): prayer to internal file path.  Return unit.
@@ -1022,7 +1023,7 @@
 
       /* u3_ames_ef_bake(): send initial events.
       */
-        void 
+        void
         u3_ames_io_bake(u3_pier* pir_u);
 
       /* u3_ames_io_exit(): terminate ames I/O.
@@ -1056,7 +1057,7 @@
         void
         u3_unix_ef_hold(void);
 
-      /* u3_unix_ef_boot(): boot actions 
+      /* u3_unix_ef_boot(): boot actions
       */
         void
         u3_unix_ef_boot(u3_pier *pir_u);
@@ -1259,7 +1260,7 @@
         u3_pier*
         u3_pier_stub(void);
 
-      /* u3_pier_plan(): submit event; fake pier 
+      /* u3_pier_plan(): submit event; fake pier
       */
         void
         u3_pier_plan(u3_noun pax, u3_noun fav);
@@ -1293,6 +1294,11 @@
         void
         u3_pier_sway(c3_l tab_l, u3_noun tax);
 
+      /* u3_pier_mark(): mark all Loom allocations in all u3_pier structs.
+      */
+        c3_w
+        u3_pier_mark(FILE* fil_u);
+
       /* u3_dawn_come(): mine a comet
       */
         u3_noun
@@ -1307,3 +1313,8 @@
       */
         void
         u3_king_commence();
+
+      /* u3_king_grab(): gc the kingdom
+      */
+        void
+        u3_king_grab(void* vod_p);

@@ -375,14 +375,16 @@ _king_bail(u3_moor *vod_p, const c3_c *err_c)
 {
   u3_moor *free_p;
   fprintf(stderr, "_king_bail: %s\r\n", err_c);
+
   if ( vod_p == 0 ) {
     free_p = u3K.cli_u;
     u3K.cli_u = u3K.cli_u->nex_u;
-    u3a_free(free_p);
-  } else {
+    c3_free(free_p);
+  }
+  else {
     free_p = vod_p->nex_u;
     vod_p->nex_u = vod_p->nex_u->nex_u;
-    u3a_free(free_p);
+    c3_free(free_p);
   }
 }
 
@@ -392,14 +394,17 @@ void
 _king_socket_connect(uv_stream_t *sock, int status)
 {
   u3_moor *mor_u;
+
   if ( u3K.cli_u == 0 ) {
-    u3K.cli_u = u3a_malloc(sizeof(u3_moor));
+    u3K.cli_u = c3_malloc(sizeof(u3_moor));
     mor_u = u3K.cli_u;
     mor_u->vod_p = 0;
     mor_u->nex_u = 0;
-  } else {
+  }
+  else {
     for (mor_u = u3K.cli_u; mor_u->nex_u; mor_u = mor_u->nex_u);
-    mor_u->nex_u = u3a_malloc(sizeof(u3_moor));
+
+    mor_u->nex_u = c3_malloc(sizeof(u3_moor));
     mor_u->nex_u->vod_p = mor_u;
     mor_u = mor_u->nex_u;
     mor_u->nex_u = 0;
@@ -781,8 +786,6 @@ u3_king_commence()
   //
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
-  u3C.wag_w &= ~u3o_debug_ram;
-  u3C.wag_w &= ~u3o_check_corrupt;
 
   u3m_boot_pier();
   {
@@ -810,6 +813,8 @@ u3_king_commence()
     u3K.soc_c = strdup(buf_c);
   }
 
+  uv_timer_init(u3L, &u3K.tim_u);
+
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
   uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _king_socket_connect);
@@ -821,4 +826,27 @@ u3_king_commence()
 
   _king_loop_exit();
   exit(0);
+}
+
+/* u3_king_grab(): gc the kingdom
+*/
+void
+u3_king_grab(void* vod_p)
+{
+  //  XX fix leaks and enable
+  //
+#if 0
+  c3_w man_w = 0, pir_w = 0;
+  FILE* fil_u = stderr;
+
+  c3_assert( u3R == &(u3H->rod_u) );
+
+  fprintf(fil_u, "measuring king:\r\n");
+
+  man_w = u3m_mark(fil_u);
+  pir_w = u3_pier_mark(fil_u);
+
+  u3a_print_memory(fil_u, "total marked", man_w + pir_w);
+  u3a_print_memory(fil_u, "sweep", u3a_sweep());
+#endif
 }

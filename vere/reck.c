@@ -131,9 +131,12 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 
     case c3__mass: p_fav = u3t(fav);
     {
-      //  XX GC the full king state
+      u3z(pox); u3z(fav);
+
+      //  gc the kingdom
       //
-      u3z(pox); u3z(fav); return c3y;
+      uv_timer_start(&u3K.tim_u, (uv_timer_cb)u3_king_grab, 0, 0);
+      return c3y;
     } break;
   }
   c3_assert(!"not reached"); return 0;
@@ -142,7 +145,7 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
 /* _reck_kick_http(): apply http effects.
 */
 static u3_noun
-_reck_kick_http(u3_pier* pir_u, 
+_reck_kick_http(u3_pier* pir_u,
                 u3_noun  pox,
                 c3_l     sev_l,
                 c3_l     coq_l,
@@ -300,9 +303,9 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
   u3_noun i_pox, t_pox;
 
   if ( (c3n == u3r_cell(pox, &i_pox, &t_pox)) ||
-       ((i_pox != u3_blip) && 
-        (i_pox != c3__gold) && 
-        (i_pox != c3__iron) && 
+       ((i_pox != u3_blip) &&
+        (i_pox != c3__gold) &&
+        (i_pox != c3__iron) &&
         (i_pox != c3__lead)) )
   {
     u3z(pox); u3z(fav); return c3n;
@@ -458,7 +461,7 @@ u3_reck_kick(u3_pier* pir_u, u3_noun ovo)
          (c3__init == u3h(u3t(ovo))) )
 #endif
     {
-      u3_pier_work(pir_u, 
+      u3_pier_work(pir_u,
                    u3nt(u3_blip, c3__term, u3_nul),
                    u3nc(c3__flog, u3k(u3t(ovo))));
     }

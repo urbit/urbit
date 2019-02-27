@@ -54,7 +54,7 @@ _test_mug(void)
     exit(1);
   }
 
-  { 
+  {
     //  stick some zero bytes in a string
     //
     u3_noun str = u3kc_lsh(3, 1,

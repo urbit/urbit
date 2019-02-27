@@ -24,7 +24,7 @@ function! HoonIndent(lnum)
     return 0
   endif
   let prevl = substitute(getline(prevlnum),'::.*$','','')
-  
+
   let ind = indent(prevlnum)
   if prevl =~ '++\s*\w*\s*$'
     " luslus operator

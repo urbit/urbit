@@ -19,7 +19,7 @@
 /* _ames_alloc(): libuv buffer allocator.
 */
 static void
-_ames_alloc(uv_handle_t* had_u, 
+_ames_alloc(uv_handle_t* had_u,
             size_t len_i,
             uv_buf_t* buf
             )
@@ -426,12 +426,12 @@ _ames_io_start(u3_pier* pir_u)
     add_u.sin_port = htons(por_s);
 
     int ret;
-    if ( (ret = uv_udp_bind(&sam_u->wax_u, 
+    if ( (ret = uv_udp_bind(&sam_u->wax_u,
                             (const struct sockaddr*) & add_u, 0)) != 0 ) {
       uL(fprintf(uH, "ames: bind: %s\n",
                      uv_strerror(ret)));
       if (UV_EADDRINUSE == ret){
-        uL(fprintf(uH, 
+        uL(fprintf(uH,
                     "    ...perhaps you've got two copies of vere running?\n"));
       }
       u3_pier_exit();

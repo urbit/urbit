@@ -75,7 +75,7 @@
         **   Mutate `som` with a 0-terminated list of axis, noun pairs.
         **   Axes must be cats (31 bit).
         */
-          u3_noun 
+          u3_noun
           u3i_molt(u3_noun som, ...);
 
         /* u3i_chubs():

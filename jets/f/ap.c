@@ -556,7 +556,7 @@
   {
     return u3nt(c3__sggr,
                 u3nq(c3__live,
-                     c3__dtzz, 
+                     c3__dtzz,
                      u3_blip,
                      u3k(p_gen)),
                 u3k(q_gen));
@@ -1017,7 +1017,7 @@
   {
     u3_noun gat = u3j_soft(_ar_core(van, ref, syn), "fish");
 
-    return u3n_kick_on(u3i_molt(gat, 
+    return u3n_kick_on(u3i_molt(gat,
                                 u3x_sam,
                                 u3k(axe),
                                 0));
