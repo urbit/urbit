@@ -21,7 +21,7 @@ all_srcs = $(common) $(king) $(serf)
 all: urbit urbit-worker
 
 clean:
-	rm -f $(objs) ./urbit ./urbit-worker tags
+	rm -f $(all_objs) ./urbit ./urbit-worker ./tags
 
 ################################################################################
 
