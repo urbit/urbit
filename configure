@@ -32,6 +32,9 @@ case $(tr A-Z a-z <<< $cpu) in
   unknown)
      defmacro U3_OS_ENDIAN_little 1
      ;;
+  i386)
+     defmacro U3_OS_ENDIAN_little 1
+     ;;
   i686)
      defmacro U3_OS_ENDIAN_little 1
      ;;
