@@ -1,40 +1,25 @@
-# subrepositories, downloaded pills
-/arvo/
-*.pill
-# autoconf
-/.MAKEFILE-VERSION
-/make.conf
-/.make.conf
-# intermediate
-*.swo
-*.swp
-*.o
-/outside/**/*.a
-/outside/re2/obj
-# build
-/bin/
-/vere.pkg
-.tags
-.etags
-GPATH
-GTAGS
-GRTAGS
-# scratch
-/zod/
-# dependencies
-node_modules/
-.sass-cache
-# OS
-.DS_Store
-# ??
-/inst
-cscope.*
-build/
-TAGS
-/fakezod
-/zod
-/tags
+#
+# Configuration Result
+#
 /config.mk
 include/config.h
+#
+# Build Outputs
+#
+*.o
 /urbit
 /urbit-worker
+/tags
+#
+# Editor Bullshit
+#
+.tags
+TAGS
+cscope.*
+.DS_Store
+/.etags
+GPATH
+GRTAGS
+GTAGS
+*.swo
+*.swp

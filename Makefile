@@ -18,10 +18,17 @@ all_srcs = $(common) $(king) $(serf)
 
 ################################################################################
 
+.PHONY: all clean mkproper
+
+################################################################################
+
 all: urbit urbit-worker
 
 clean:
 	rm -f $(all_objs) ./urbit ./urbit-worker ./tags
+
+mrproper: clean
+	rm -f config.mk include/config.h
 
 ################################################################################
 
@@ -36,8 +43,6 @@ urbit-worker: $(common_objs) $(serf_objs)
 %.o: %.c $(headers)
 	@echo CC $<
 	@$(CC) -I./include $(CFLAGS) -c $< -o $@
-
-################################################################################
 
 tags: $(all_srcs) $(headers)
 	ctags $^
