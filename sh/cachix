@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+fail () {
+  echo "$@"
+  exit 1
+}
+
+if [ -z "$CACHIX_AUTH_TOKEN" ]
+then fail "The CACHIX_AUTH_TOKEN environment variable needs to be set."
+fi
+
+cleanup () {
+  rm -f .cache.list
+}
+
+trap cleanup EXIT
+
+cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
+cachix use urbit
+nix-build nix/dep-repos.nix > .cache.list
+nix-build default.nix >> .cache.list
+cachix push urbit < .cache.list

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+pkg=$(nix-build nix/ops -A test --no-out-link)
+
+find $pkg -type f
+
+for f in $(find $pkg -type f)
+do
+  echo ==== $(basename $f) ====
+  cat $f
+  echo
+done
