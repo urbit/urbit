@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
 
+set -e
+
 pkg=$(nix-build nix/ops -A test --no-out-link)
 
-find $pkg -type f
-
-for f in $(find $pkg -type f)
+for f in $(find "$pkg/" -type f)
 do
-  echo ==== $(basename $f) ====
-  cat $f
-  echo
+  # echo =====$(basename $f | sed 's/./=/g')=====
+  # echo ==== $(basename $f) ====
+  # echo =====$(basename $f | sed 's/./=/g')=====
+  # cat $f
+  echo -n
 done
+
+fail=0
+
+for f in $(find "$pkg/" -type f)
+do
+  if egrep "(ford|warn): " $f >/dev/null
+  then
+    echo "Test failure in $(basename $f)" >&2
+    ((fail++))
+  fi
+done
+
+exit "$fail"
