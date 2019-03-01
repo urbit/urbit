@@ -10,7 +10,6 @@ before_install:
 script:
   # cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   # cachix use urbit
-  - ./sh/bootstrap
-  - nix-build
+  - make
   # ./sh/cachix
-  - sh/test
+  - make test

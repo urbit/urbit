@@ -59,4 +59,7 @@ sed -i '0,/start-test-cores/d'  test-cores-output
 sed -i '/finish-test-cores/,$d' test-cores-output
 
 mkdir $out
-cp *-output $out/
+
+cp test-renders-output   $out/renders
+cp test-cores-output     $out/cores
+cp test-generator-output $out/generator
