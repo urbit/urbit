@@ -11,5 +11,6 @@ script:
   # cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   # cachix use urbit
   - make
-  # ./sh/cachix
   - make test
+  - sh/update-brass-pill # To verify that this works.
+  # ./sh/cachix

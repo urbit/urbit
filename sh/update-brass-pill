@@ -4,4 +4,4 @@ set -e
 
 pkg=$(nix-build nix/ops -A brass --no-out-link)
 
-cp $pkg bin/pill/brass.pill
+cp $pkg bin/brass.pill
