@@ -15378,6 +15378,7 @@
               {$code p/tape}                            ::  code literal
               {$text p/tape}                            ::  text symbol
               {$link p/(list graf) q/tape}              ::  URL
+              {$mage p/tape q/tape}                     ::  image
               {$expr p/tuna:hoot}                       ::  interpolated hoon
           ==
         --
@@ -15506,7 +15507,7 @@
           [[lin `~] +<.^$]
         [[lin ~] eat-newline]
       ::
-      ++  look                                          ::  inspedt line
+      ++  look                                          ::  inspect line
         ^-  (unit trig)
         %+  bind  (wonk (look:parse loc txt))
         |=  a/trig  ^+  a
@@ -15865,6 +15866,16 @@
             (ifix [lit rit] (cash rit))
           ==
         ::
+        ::  ![alt text](url)
+        ::
+          %+  stag  %mage
+          ;~  pfix  zap
+            ;~  (glue (punt whit))
+              (ifix [lac rac] (cash rac))
+              (ifix [lit rit] (cash rit))
+            ==
+          ==
+        ::
         ::  #hoon
         ::
           %+  stag  %list
@@ -15951,6 +15962,7 @@
                      `(list graf)`[%text (tufa ~-~201d. ~)]~
                    ==
             $link  [[%a [%href q.nex] ~] ^$(gaf p.nex)]~
+            $mage  [[%img [%src q.nex] ?~(p.nex ~ [%alt p.nex]~)] ~]~
           ==
         --
       ::
