@@ -14,6 +14,8 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 #include <h2o.h>
+#include <curl/curl.h>
+#include <argon2.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -497,13 +499,15 @@ interrupt_handler(int x)
 static void
 report(void)
 {
-  printf("---------\nLibraries\n---------\n");
+  printf("urbit %s\n", URBIT_VERSION);
   printf("gmp: %s\n", gmp_version);
   printf("sigsegv: %d.%d\n", (libsigsegv_version >> 8) & 0xff, libsigsegv_version & 0xff);
   printf("openssl: %s\n", SSLeay_version(SSLEAY_VERSION));
   printf("curses: %s\n", curses_version());
   printf("libuv: %s\n", uv_version_string());
   printf("libh2o: %d.%d.%d\n", H2O_LIBRARY_VERSION_MAJOR, H2O_LIBRARY_VERSION_MINOR, H2O_LIBRARY_VERSION_PATCH);
+  printf("curl: %d.%d.%d\n", LIBCURL_VERSION_MAJOR, LIBCURL_VERSION_MINOR, LIBCURL_VERSION_PATCH);
+  printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
 void
