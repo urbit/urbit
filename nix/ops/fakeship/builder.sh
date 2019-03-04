@@ -1,6 +1,6 @@
 source $stdenv/setup
 
-set -e
+set -ex
 
 urbit -d -F $SHIP -B "$PILL" $out
 
@@ -11,7 +11,7 @@ check () {
 if check
 then
     echo "Boot success." >&2
-    kill $(< $out/.vere.lock) || true
+    urb $out -p hood -d '+hood/exit' || true
 else
     echo "Boot failure." >&2
     kill $(< $out/.vere.lock) || true

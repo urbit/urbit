@@ -1,63 +1,79 @@
-# `rust-mixed-with-c`
+> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Sometime in the next few days, owners of Azimuth points will be able to boot Arvo, the Urbit OS, from their Azimuth point and request access to one of our ‘cities’: private communities for chat and discussion. These new cities use Landscape, a brand new UI for using Urbit in the browser.
 
-This was an experiment to see what it looks like to combine C and Rust
-in a single project, and then it turned into a full-blow nixification
-of the all Urbit code.
+# Install instructions
 
-Check out `.travis.yml` to see how this works in CI.
+To install and run Urbit please follow the instructions at
+[urbit.org/docs/getting-started/](https://urbit.org/docs/getting-started/).
+Packages and source tarballs are available there. You'll be on the live network
+in a few minutes.
 
-## Quick Start
+If you're doing development on Urbit, keep reading.
 
-```bash
-curl https://nixos.org/nix/install | sh
-  - nix-build
-  - ./sh/cachix
-  - nix-shell --pure --command ./sh/vere-tests
-```
+# Build instructions
 
-## Shared Build Caches
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
 
-First, get `CACHIX_AUTH_TOKEN` from another dev, and then run the
-following commands. You should only need to do this once.
+## External dependencies
 
-```bash
-nix-env -iA cachix -f https://cachix.org/api/v1/install
-cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
-cachix use urbit
-```
+`vere`, the Urbit virtual machine, depends on the following:
 
-In order to build everything an push results to the shared cache, run:
+- C compiler ([gcc](https://gcc.gnu.org) or [clang](http://clang.llvm.org))
+- [Meson](http://mesonbuild.com/)
+- [GMP](https://gmplib.org)
+- [OpenSSL](https://www.openssl.org)
+- [libsigsegv](https://www.gnu.org/software/libsigsegv/)
+- [libcurl](https://curl.haxx.se/libcurl/)
+- [libuv](http://libuv.org)
+- curses implementation (ncurses on Linux distributions, OS curses otherwise)
 
-```bash
-./sh/cachix
-```
+Most of these dependencies are unfortunate; we aim to drastically shrink the
+list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, libcurl, and
+libsigsegv.
 
-## Open Questions About Monorepo layout
+## Building
 
-- Should nix build scripts live *in* the packages
-  (i.e. `pkg/urbit/default.nix`) or outside of it
-  (nix/pkgs/urbit/default.nix)? What are the pros and cons of moving
-  them into the packages?
+Urbit uses Meson build system.
 
-  - PRO Setting up the `nix-shell` flow is slightly cleaner.
-  - PRO Everything in one place, less fragmentation.
-  - CON Nix build scripts become part of the build. Changes to the build
-        scripts trigger rebuilds (or you can filter them out, but that adds
-        a little bit of complexity to every build)
-  - CON Packages get messier. Five additional files in the root of
-        each package: `default.nix`, `release.nix`, `shell.nix`,
-        `builder.sh`, `release.sh`.
+Some libraries which are not found in major distributions:
 
-## Open Questions About the Bootstrapping Pills
+- ed25519
+- libh2o
+- murmur3
+- softfloat3
+- scrypt
 
-The pill that's used for bootstrapping in CI is stored in
-`bin/pill/*.pill`. This doesn't need to be updated constantly. In my
-mind, I'm imagining that it would get updated for each release, or
-updated whenever we make a breaking change to the kernel. This deserves
-further discussion.
+are included as git submodules. To build urbit from source, perform the following steps:
 
-## CI TODOs
+## Configuration & compilation
+(For instructions for legacy meson, also see below)
 
-- Save 14s by using the travis cache to cache the `cachix` install.
+1. Install all required dependencies.
+2. Run `./scripts/bootstrap`
+3. Run `./scripts/build`
+4. The executable should appear in `./build` directory.
 
-  https://github.com/travis-ci/travis-ci/issues/6604
+### Using meson & ninja
+
+To configure the project, enter the build directory and enter
+`meson configure -Dbuildtype=release`.  To compile a debug build of urbit, use
+`meson configure -Dbuildtype=debug`.
+To set a prefix for installation use
+`meson configure -Dprefix=/usr`.
+
+## Configuration & compilation for legacy meson
+
+The syntax for legacy meson (Version `0.29`) is a bit different.
+
+1. Manually create `build` directory and invoke meson as `meson . ./build`
+2. If you want to set options, this is done in one step.
+   Use `meson -D [options] . ./build` to prepare customized build.
+
+Once the project is configured, use `ninja` to build it.
+To install it into the default prefix, use `ninja install`.
+If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
+
+## Contact
+
+We are using our new UI, Landscape to run a few experimental cities.
+If you have an Azimuth point, please send us your planet name at
+[support@urbit.org](mailto:support@urbit.org) to request access.
