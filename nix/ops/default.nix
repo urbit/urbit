@@ -25,7 +25,7 @@ rec {
 
   test = import ./test {
     inherit pkgs tlon deps urbit arvo;
-    ship = bootbus;
+    ship = bootzod;
   };
 
   solid = import ./solid {
