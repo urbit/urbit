@@ -59,10 +59,10 @@
 ++  node-url  (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
 ::
 ++  prep
-  |=  old=(unit *) ::state)
-  :: ?~  old
+  |=  old=(unit state)
+  ?~  old
     [~ ..prep]
-  :: [~ ..prep(+<+ u.old)]
+  [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
   |=  a=?(%kick-watcher %regaze %debug)
@@ -119,9 +119,39 @@
   |=  pax=path
   ^-  (unit (unit [mark *]))
   ?~  pax  ~
-  ?.  =(%days i.pax)  ~
-  :^  ~  ~  %txt
-  export
+  ?:  =(%days i.pax)
+    :^  ~  ~  %txt
+    (export days)
+  ?:  =(%months i.pax)
+    :^  ~  ~  %txt
+    %-  export
+    ^+  days
+    %+  roll  (flop days)
+    |=  [[day=@da sat=stats] mos=(list [mod=@da sat=stats])]
+    ^+  mos
+    =/  mod=@da
+      %-  year
+      =+  (yore day)
+      -(d.t 1)
+    ?~  mos  [mod sat]~
+    ?:  !=(mod mod.i.mos)
+      [[mod sat] mos]
+    :_  t.mos
+    :-  mod
+    ::TODO  this is hideous. can we make a wet gate do this?
+    :*  (weld spawned.sat spawned.sat.i.mos)
+        (weld activated.sat activated.sat.i.mos)
+        (weld transfer-p.sat transfer-p.sat.i.mos)
+        (weld transferred.sat transferred.sat.i.mos)
+        (weld configured.sat configured.sat.i.mos)
+        (weld breached.sat breached.sat.i.mos)
+        (weld request.sat request.sat.i.mos)
+        (weld sponsor.sat sponsor.sat.i.mos)
+        (weld management-p.sat management-p.sat.i.mos)
+        (weld voting-p.sat voting-p.sat.i.mos)
+        (weld spawn-p.sat spawn-p.sat.i.mos)
+    ==
+  ~
 ::
 ::  +diff-eth-watcher-update: process new logs, clear state on rollback
 ::
@@ -314,6 +344,7 @@
 ::  +export: generate a csv of stats per day
 ::
 ++  export
+  |=  =_days
   :-  %-  crip
       ;:  weld
         "date,"
