@@ -990,7 +990,7 @@
         ?.  ?=($json p.p.cuf)
           :: ~>  %slog.`%*(. >[%backing p.p.cuf %q-p-cuf]< &3.+> (sell q.p.cuf))
           (back-turbo tee %json p.cuf)
-        (get-rush:(ire-ix p.tee) q.tee ((hard json) q.q.p.cuf))
+        (get-rush:(ire-ix p.tee) q.tee (,json q.q.p.cuf))
       ::
           $quit  (get-quit:(ire-ix p.tee) q.tee)
       ==
@@ -1066,7 +1066,7 @@
         =/  cay=cage  (result-to-cage:ford build-result.result.sih)
         %+  get-rush:(ire-ix p.tee)  q.tee
         ?>  ?=($json p.cay)                    ::  XX others
-        ((hard json) q.q.cay)
+        (,json q.q.cay)
       ==
     ==
   ::
