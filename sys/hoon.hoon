@@ -15975,9 +15975,13 @@
         ::
           (stag %code (ifix [tec tec] (calf tec)))
         ::
-        ::  ++arm
+        ::  ++arm, +-arm, +$arm, +*arm, ++arm:core, ...
         ::
-          (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
+          %+  stag  %code
+          ;~  plug
+            lus  ;~(pose lus hep bus tar)
+            low  (star ;~(pose nud low hep col))
+          ==
         ::
         ::  [arbitrary *content*](url)
         ::
