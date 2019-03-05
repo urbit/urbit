@@ -31,10 +31,17 @@
   ==
 ::
 ++  stats
-  $:  activated=(list @p)
-      spawned=(list @p)
+  $:  spawned=(list @p)
+      activated=(list @p)
+      transfer-p=(list @p)
       transferred=(list @p)
       configured=(list @p)
+      breached=(list @p)
+      request=(list @p)
+      sponsor=(list @p)
+      management-p=(list @p)
+      voting-p=(list @p)
+      spawn-p=(list @p)
   ==
 ::
 ::
@@ -52,7 +59,7 @@
 ++  node-url  (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
 ::
 ++  prep
-  |=  old=(unit state)
+  |=  old=(unit *) ::state)
   :: ?~  old
     [~ ..prep]
   :: [~ ..prep(+<+ u.old)]
@@ -108,6 +115,14 @@
     [~ +>.$]
   ==
 ::
+++  peek-x
+  |=  pax=path
+  ^-  (unit (unit [mark *]))
+  ?~  pax  ~
+  ?.  =(%days i.pax)  ~
+  :^  ~  ~  %txt
+  export
+::
 ::  +diff-eth-watcher-update: process new logs, clear state on rollback
 ::
 ++  diff-eth-watcher-update
@@ -122,9 +137,7 @@
     ==
   ?~  logs  [~ +>.$]
   =-  =^  moz  +>.$  (queue-logs mistime)
-      ~&  [%put-in-queue (lent qued)]
       =.  +>.$  (process-logs havtime)
-      ~&  [%put-in-queue2 (lent qued)]
       [moz +>.$]
   ^-  [havtime=loglist mistime=loglist]
   %+  skid  `loglist`logs
@@ -202,7 +215,7 @@
   =-  ~&  [%processed (lent -)]
       %_  +>.$
         seen  (weld (flop -) seen)
-        days  (count-events -)
+        days  (count-events (flop -))
       ==
   ~&  [%processing (lent logs)]
   %+  roll  logs
@@ -273,10 +286,20 @@
   ^-  stats
   ?>  ?=(%azimuth -.eve)
   ?+  -.dif.eve  sat
-    %activated  sat(activated [who.eve activated.sat])
-    %spawned    sat(spawned [who.dif.eve spawned.sat])
-    %owner      sat(transferred [who.eve transferred.sat])
-    %keys       sat(configured [who.eve configured.sat])
+    %spawned           sat(spawned [who.dif.eve spawned.sat])
+    %activated         sat(activated [who.eve activated.sat])
+    %transfer-proxy    ?:  =(0x0 new.dif.eve)  sat
+                       sat(transfer-p [who.eve transfer-p.sat])
+    %owner             sat(transferred [who.eve transferred.sat])
+    %keys              sat(configured [who.eve configured.sat])
+    %continuity        sat(breached [who.eve breached.sat])
+    %escape            ?~  new.dif.eve  sat
+                       sat(request [who.eve request.sat])
+    %sponsor           ?.  has.new.dif.eve  sat
+                       sat(sponsor [who.eve sponsor.sat])
+    %management-proxy  sat(management-p [who.eve management-p.sat])
+    %voting-proxy      sat(voting-p [who.eve voting-p.sat])
+    %spawn-proxy       sat(spawn-p [who.eve spawn-p.sat])
   ==
 ::
 ::  +find-lockups: search the seen event log for lockup events
@@ -288,8 +311,49 @@
 ++  find-lockups
   ~  ::TODO
 ::
-::  +export: generate a csv with per-period
+::  +export: generate a csv of stats per day
 ::
 ++  export
-  ~  ::TODO
+  :-  %-  crip
+      ;:  weld
+        "date,"
+        "spawned,"
+        "activated,"
+        "transfer proxy,"
+        "transferred,"
+        "transferred (unique),"
+        "configured,"
+        "configured (unique),"
+        "escape request,"
+        "sponsor change"
+      ==
+  |^  ^-  (list @t)
+      %+  turn  days
+      |=  [day=@da stats]
+      %-  crip
+      ;:  weld
+        (scow %da day)        ","
+        (count spawned)       ","
+        (count activated)     ","
+        (count transfer-p)    ","
+        (unique transferred)  ","
+        (unique configured)   ","
+        (count request)       ","
+        (count sponsor)
+      ==
+  ::
+  ++  count
+    |*  l=(list)
+    (num (lent l))
+  ::
+  ++  unique
+    |*  l=(list)
+    ;:  weld
+      (count l)
+      ","
+      (num ~(wyt in (~(gas in *(set)) l)))
+    ==
+  ::
+  ++  num  (d-co:co 1)
+  --
 --
