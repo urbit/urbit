@@ -2,7 +2,7 @@
 
 source $setup
 
-if [ "$version" != "5.9.6" ]; then
+if [ "$version" != "5.12.1" ]; then
   echo "You need to update the license fragment builder for Qt $version."
   exit 1
 fi
@@ -31,6 +31,7 @@ license_pixman=$(cat pixman/LICENSE)
 license_rfc6234=$(cat rfc6234/LICENSE)
 license_sha3_1=$(cat sha3/BRG_ENDIAN_LICENSE)
 license_sha3_2=$(cat sha3/CC0_LICENSE)
+license_tinycbor=$(cat tinycbor/LICENSE)
 license_zlib=$(cat zlib/LICENSE)
 
 cat > $out <<EOF
@@ -54,18 +55,6 @@ $license_qt
 
 <pre>
 $license_android
-</pre>
-
-<pre>
-$license_angle1
-</pre>
-
-<pre>
-$license_angle2
-</pre>
-
-<pre>
-$license_angle3
 </pre>
 
 <pre>
@@ -133,11 +122,7 @@ $license_sha3_2
 </pre>
 
 <pre>
-$license_xcb
-</pre>
-
-<pre>
-$license_xkbcommon
+$license_tinycbor
 </pre>
 
 <pre>
