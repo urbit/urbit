@@ -1274,6 +1274,107 @@
     results9
   ==
 ::
+++  test-born-sends-pending-cancels
+  ::
+  =^  results1  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
+      now=~1111.1.1
+      scry=*sley
+      call-args=[duct=~[/init] ~ [%init ~nul]]
+      expected-moves=~
+    ==
+  ::  app1 binds successfully
+  ::
+  =^  results2  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
+      now=~1111.1.2
+      scry=*sley
+      call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
+      expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
+    ==
+  ::  start a request to app1
+  ::
+  ::  outside requests a path that app1 has bound to
+  ::
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=~1111.1.3
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-blah]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            [%'GET' '/' ~ ~]
+        ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([* ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::
+        =/  move=move:http-server-gate                              i.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-request
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+              ==
+          card
+    ==
+  ::  but app1 doesn't respond before our urbit gets shut down. ensure we send
+  ::  cancels on open connections.
+  ::
+  =^  results4  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=~1111.1.4
+      scry=*sley
+      call-args=[duct=~[/born] ~ [%born ~]]
+      ^=  expected-moves
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ::  we don't care about the first one, which is just a static
+        ::  configuration move.
+        ::
+        =/  move=move:http-server-gate                              i.t.moves
+        =/  =duct                                             duct.move
+        =/  card=(wind note:http-server-gate gift:able:http-server-gate)  card.move
+        ::
+        %+  weld
+          (expect-eq !>(~[/http-blah]) !>(duct))
+        ::
+        %+  expect-gall-deal
+          :+  /run-app/app1  [~nul ~nul]
+              ^-  cush:gall
+              :*  %app1  %poke  %handle-http-cancel
+                  !>([%.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
+              ==
+          card
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+  ==
+::
 ++  http-server-call
   |=  $:  http-server-gate=_http-server-gate
           now=@da
