@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -e
+
+err () { echo "$@" >&2; exit 1; }
+
+[ $# = 2 ] || err "usage: $0 pkg host"
+
+traced () {
+  echo '$' "$@" >&2; "$@"
+}
+
+release () {
+  traced nix-build nix/release.nix --no-out-link -A "$1"
+}
+
+pkg="$1"
+env="$2"
+
+res=$(release "$env.$pkg")
+
+mkdir -p ./bin/$env
+traced cp -f $res/bin/$pkg ./bin/$env/$pkg
+traced cp -f $res/bin/$pkg-worker ./bin/$env/$pkg-worker

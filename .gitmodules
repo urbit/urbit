@@ -1,30 +1,12 @@
-[submodule "subprojects/argon2"]
-	path = subprojects/argon2
-	url = https://github.com/urbit/argon2.git
-[submodule "subprojects/ed25519"]
-	path = subprojects/ed25519
-	url = https://github.com/urbit/ed25519.git
-[submodule "subprojects/h2o"]
-	path = subprojects/libh2o
-	url = https://github.com/urbit/h2o.git
-[submodule "subprojects/libent"]
-	path = subprojects/libent
-	url = https://github.com/urbit/libent.git
-[submodule "subprojects/libuv"]
-	path = subprojects/libuv
-	url = https://github.com/urbit/libuv.git
-[submodule "subprojects/libscrypt"]
-	path = subprojects/libscrypt
-	url = https://github.com/urbit/libscrypt.git
-[submodule "subprojects/libsni"]
-	path = subprojects/libsni
-	url = https://github.com/urbit/sniproxy
-[submodule "subprojects/murmur3"]
-	path = subprojects/murmur3
-	url = https://github.com/urbit/murmur3.git
-[submodule "subprojects/secp256k1"]
-	path = subprojects/secp256k1
-	url = https://github.com/urbit/secp256k1.git
-[submodule "subprojects/softfloat3"]
-	path = subprojects/softfloat3
-	url = https://github.com/urbit/berkeley-softfloat-3.git
+[submodule "nix/nixcrpkgs"]
+	path = nix/nixcrpkgs
+	url = https://github.com/urbit/nixcrpkgs
+[submodule "pkg/urb"]
+	path = pkg/urb
+	url = https://github.com/urbit/urb.git
+[submodule "pkg/ent"]
+	path = pkg/ent
+	url = https://github.com/urbit/libent
+[submodule "pkg/arvo"]
+	path = pkg/arvo
+	url = https://github.com/urbit/arvo.git
