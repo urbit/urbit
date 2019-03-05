@@ -28,7 +28,8 @@ let
 
   license = native.make_derivation {
     name = "linux-license";
-    inherit (gcc) musl_src gcc_src;
+    musl_src = gcc.musl_src;
+    gcc_src = gcc.src;
     linux_src = headers.src;
     builder = ./license_builder.sh;
   };
