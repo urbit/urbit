@@ -45,6 +45,9 @@
       ::  connection-by-id: open connections to the
       ::
       connection-by-id=(map @ud [=duct =in-progress-http-request])
+      ::  connection-by-duct: used for cancellation
+      ::
+      connection-by-duct=(map duct @ud)
       ::  outbound-duct: the duct to send outbound requests on
       ::
       outbound-duct=duct
@@ -99,6 +102,11 @@
   ++  request
     |=  [=request:http =outbound-config]
     ^-  [(list move) ^state]
+    ::  if there's already a request on this duct, abort
+    ::
+    ?:  (~(has by connection-by-duct.state) duct)
+      ~&  %cant-send-second-http-client-request-on-same-duct
+      [~ state]
     ::  get the next id for this request
     ::
     =^  id  next-id.state  [next-id.state +(next-id.state)]
@@ -108,6 +116,10 @@
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
       [duct [redirects retries ~ ~ 0 ~]]
+    ::  keep track of the duct for cancellation
+    ::
+    =.  connection-by-duct.state
+      (~(put by connection-by-duct.state) duct id)
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -121,6 +133,17 @@
     ::
     :-  [outbound-duct.state %give %request id request]~
     state
+  ::  +cancel: client cancels an outstanding request
+  ::
+  ++  cancel
+    ^-  [(list move) ^state]
+    ::
+    ?~  cancel-id=(~(get by connection-by-duct.state) duct)
+      ~&  %invalid-lient-cancel
+      [~ state]
+    ::
+    :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
+    (cleanup-connection u.cancel-id)
   ::  +receive: receives a response to an http-request we made
   ::
   ::    TODO: Right now, we are not following redirect and not handling retries
@@ -169,8 +192,17 @@
       (record-and-send-progress id data.http-event)
     ::
         %cancel
-      ~&  [%eyre-received-cancel id]
-      [~ state]
+      ::  we have received a cancel from outside; pass it on to our requester
+      ::
+      :_  (cleanup-connection id)
+      ^-  (list move)
+      :_  ~
+      :*  duct.u.connection
+        %give
+        %http-response
+        %cancel
+        ~
+      ==
     ==
   ::  +record-and-send-progress: save incoming data and send progress report
   ::
@@ -229,14 +261,23 @@
       ?~  mime-type=(get-header:http 'content-type' headers.response-header)
         'application/octet-stream'
       u.mime-type
-    :-  :~  :*  duct.connection
-                %give
-                %http-response
-                %finished
-                response-header
-                ?:(=(0 p.data) ~ `[mime data])
-        ==  ==
-    state(connection-by-id (~(del by connection-by-id.state) id))
+    ::
+    :_  (cleanup-connection id)
+    :~  :*  duct.connection
+            %give
+            %http-response
+            %finished
+            response-header
+            ?:(=(0 p.data) ~ `[mime data])
+    ==  ==
+  ::
+  ++  cleanup-connection
+    |=  id=@ud
+    ^-  ^state
+    %_    state
+      connection-by-id    (~(del by connection-by-id.state) id)
+      connection-by-duct  (~(del by connection-by-duct.state) duct)
+    ==
   --
 --
 ::  end the =~
@@ -270,20 +311,33 @@
   ?-    -.task
   ::
       %born
-    ::  TODO: reset the next-id for client state here.
+    ::  create a cancel for each outstanding connection
     ::
-    ::  send requests on the duct passed in with born.
+    ::    TODO: We should gracefully retry on restart instead of just sending a
+    ::    cancel.
     ::
-    =.  outbound-duct.state.ax  duct
-    [~ light-gate]
+    =/  moves=(list move)
+      %+  turn  ~(tap by connection-by-duct.state.ax)
+      |=  [=^duct @ud]
+      ^-  move
+      [duct %give %http-response %cancel ~]
+    ::  reset all connection state on born
+    ::
+    =:  next-id.state.ax             0
+        connection-by-id.state.ax    ~
+        connection-by-duct.state.ax  ~
+        outbound-duct.state.ax       duct
+    ==
+    ::
+    [moves light-gate]
   ::
       %request
     =^  moves  state.ax  (request:client +.task)
     [moves light-gate]
   ::
       %cancel-request
-    ~&  %todo-cancel-request
-    [~ light-gate]
+    =^  moves  state.ax  cancel:client
+    [moves light-gate]
   ::
       %receive
     =^  moves  state.ax  (receive:client +.task)

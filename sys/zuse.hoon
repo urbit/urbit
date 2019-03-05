@@ -2102,6 +2102,9 @@
         ::  final response of a download, parsed as mime-data if successful
         ::
         [%finished =response-header:http full-file=(unit mime-data)]
+        ::  canceled by the runtime system
+        ::
+        [%cancel ~]
     ==
   ::  mime-data: externally received but unvalidated mimed data
   ::
