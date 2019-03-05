@@ -4,9 +4,6 @@
 [submodule "pkg/urb"]
 	path = pkg/urb
 	url = https://github.com/urbit/urb.git
-[submodule "pkg/ent"]
-	path = pkg/ent
-	url = https://github.com/urbit/libent
 [submodule "pkg/arvo"]
 	path = pkg/arvo
 	url = https://github.com/urbit/arvo.git
