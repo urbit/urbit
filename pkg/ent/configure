@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+log () {
+  echo "$@" >&2;
+}
+
+for impl in ENT_GETENTROPY_UNISTD \
+            ENT_GETENTROPY_SYSRANDOM \
+            ENT_GETRANDOM_SYSCALL \
+            ENT_DEV_URANDOM
+do
+    export IMPL=$impl
+
+    log "Trying IMPL=$IMPL"
+
+    if IMPL=$impl make >/dev/null 2>/dev/null
+    then sed -i 's|$(error IMPL must be set)|IMPL='"$impl"'|' Makefile
+         log "IMPL=$IMPL works"
+         exit 0
+    else log "IMPL=$IMPL failed"
+    fi
+done
+
+log "This shouldn't happen, something is broken."
+exit 1
