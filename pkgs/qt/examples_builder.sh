@@ -75,7 +75,7 @@ if [ $os != "linux" ]; then
     $examples/gui/openglwindow/openglwindow.cpp \
     moc/openglwindow.cpp \
     obj/plugins.o \
-  $LIBS -o bin/openglwindow$exe_suffix
+   $LIBS -o bin/openglwindow$exe_suffix
 fi
 
 mkdir -p $out/bin
