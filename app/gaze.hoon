@@ -13,19 +13,28 @@
 |%
 ++  state
   $:  ::  qued: event logs waiting on block timestamp, oldest first
-      ::TODO  do we actually gain anything by oldest first?
-      ::      it's baked into the logic now...
       ::  time: timstamps of block numbers
-      ::  seen: events sorted by timestamp
+      ::  seen: events sorted by timestamp, newest first
+      ::  days: stats by day, newest first
+      ::  lock: when ships got locked up
       ::
       qued=loglist
       time=(map @ud @da)
       seen=(list [wen=@da wat=event])
+      days=(list [day=@da sat=stats])
+      lock=(map @p @da)
   ==
 ::
 ++  event
   $%  [%azimuth who=ship dif=diff-point]
       ::TODO  [%invites *]
+  ==
+::
+++  stats
+  $:  activated=(list @p)
+      spawned=(list @p)
+      transferred=(list @p)
+      configured=(list @p)
   ==
 ::
 ::
@@ -44,12 +53,12 @@
 ::
 ++  prep
   |=  old=(unit state)
-  ?~  old
+  :: ?~  old
     [~ ..prep]
-  [~ ..prep(+<+ u.old)]
+  :: [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a=?(%kick-watcher %regaze %simple %debug)
+  |=  a=?(%kick-watcher %regaze %debug)
   ^-  (quip move _+>)
   ?-  a
       %kick-watcher
@@ -83,71 +92,20 @@
       ==
     ==
   ::
-      %simple
-    =/  loz=loglist
-      .^(loglist %gx /(scot %p our)/eth-watcher/(scot %da now)/[dap]/noun)
-    ::  lockup: ships that went into lockup
-    ::
-    =/  lockup=(set ship)
-      %-  ~(gas in *(set ship))
-      %+  murn  loz
-      |=  log=event-log:rpc
-      ^-  (unit ship)
-      =+  dif=(event-log-to-point-diff log)
-      ?~  dif  ~
-      =*  diz  q.u.dif
-      ?.  ?=(%owner -.diz)  ~
-      ?:  =(linear-star-release:contracts new.diz)  `p.u.dif
-      ?:  =(conditional-star-release:contracts new.diz)  `p.u.dif
-      ~
-    ::
-    =+  activated=(filter loz activated:azimuth-events lockup)
-    =+  spawned=(filter loz spawned:azimuth-events lockup)
-    =+  transfer=(filter loz owner-changed:azimuth-events lockup)
-    =+  transfer-u=(~(gas in *(set ship)) transfer)
-    =+  rekeyed=(filter loz changed-keys:azimuth-events lockup)
-    =+  rekeyed-u=(~(gas in *(set ship)) rekeyed)
-    ~&  ;:  weld
-          "Since launch, there have been: "
-          "- {<(lent activated)>} points activated "
-          "(out of {<(lent spawned)>} spawned), "
-          "- {<(sub (sub (lent transfer) (lent spawned)) (lent activated))>} point transfers "
-          "({<(sub ~(wyt in transfer-u) (lent spawned))>} unique), "
-          "- {<(lent rekeyed)>} key configurations "
-          "({<~(wyt in rekeyed-u)>} unique)."
-        ==
-    [~ +>.$]
-  ::
       %debug
     ~&  latest=(turn (scag 10 seen) head)
     ~&  oldest=(turn (slag (sub (lent seen) 10) seen) head)
+    ~&  :-  'order is'
+        =-  ?:(sane 'sane' 'insane')
+        %+  roll  seen
+        |=  [[this=@da *] last=@da sane=?]
+        :-  this
+        ?:  =(*@da last)  &
+        (lte this last)
     ~&  time=~(wyt by time)
     ~&  qued=(lent qued)
+    ~&  days=(scag 5 days)
     [~ +>.$]
-  ==
-::
-::  +filter: find ships that were the subject of some :event
-::
-++  filter
-  |=  [logs=loglist event=@ux exclude=(set ship)]
-  %+  murn  logs
-  |=  log=event-log:rpc
-  ^-  (unit ship)
-  ?.  =(event i.topics.log)  ~
-  =+  dif=(event-log-to-point-diff log)
-  ?~  dif  ~
-  =/  who
-    ?:  ?=(%spawned -.q.u.dif)  who.q.u.dif
-    p.u.dif
-  ?:  (~(has in exclude) who)  ~
-  `who
-::
-::  +locked: set of galaxies whose stars got locked up
-::
-++  locked
-  %-  ~(gas in *(set ship))
-  :~  ~sev
-      ~wes
   ==
 ::
 ::  +diff-eth-watcher-update: process new logs, clear state on rollback
@@ -164,7 +122,10 @@
     ==
   ?~  logs  [~ +>.$]
   =-  =^  moz  +>.$  (queue-logs mistime)
-      [moz (process-logs havtime)]
+      ~&  [%put-in-queue (lent qued)]
+      =.  +>.$  (process-logs havtime)
+      ~&  [%put-in-queue2 (lent qued)]
+      [moz +>.$]
   ^-  [havtime=loglist mistime=loglist]
   %+  skid  `loglist`logs
   |=  log=event-log:rpc
@@ -219,6 +180,8 @@
   %-  ~(gas by time)
   ::  for every result, get the block number and timestamp
   ::
+  ~&  [%got-times (lent bas.response)]
+  ~&  [%still-in-queue (lent qued)]
   %+  turn  bas.response
   |=  res=response:rpc:jstd
   ^-  (pair @ud @da)
@@ -236,17 +199,20 @@
 ++  process-logs
   |=  logs=loglist
   ^+  +>
-  =-  +>.$(qued (flop rest), seen (weld (flop logs) seen))
+  =-  ~&  [%processed (lent -)]
+      %_  +>.$
+        seen  (weld (flop -) seen)
+        days  (count-events -)
+      ==
+  ~&  [%processing (lent logs)]
   %+  roll  logs
-  |=  [log=event-log:rpc rest=loglist logs=(list [@da event])]
-  =/  tim=(unit @da)
-    %-  ~(get by time)
+  |=  [log=event-log:rpc logs=(list [wen=@da wat=event])]
+  =/  tim=@da
+    %-  ~(got by time)
     block-number:(need mined.log)
-  ?~  tim  [[log rest] logs]
-  :-  rest
   =+  ven=(event-log-to-event log)
   ?~  ven  logs
-  [[u.tim u.ven] logs]
+  [[tim u.ven] logs]
 ::
 ++  event-log-to-event
   |=  log=event-log:rpc
@@ -258,34 +224,72 @@
     ::
     ::TODO  do this filtering earlier, so we don't ask for unnecessary blocks
     =;  ignore=?  ?:(ignore ~ `azimuth+u)
-    =*  who=@p  p.u
-    =*  dif=diff-point  q.u  ::TODO  want to use below, but mint-cove
-    ::  ignore spawning of locked up stars
-    ::
-    ?|  ?&  (~(has in locked) who)
-            ?=(%spawned -.q.u)
-        ==
-      ::
-        ::  ignore spawn-transfer events of locked up stars
-        ::
-        ?&  (~(has in locked) (^sein:title who))
-          ::
-            ?|  ?=(%activated -.q.u)
-              ::
-                ?&  ?=(%owner -.q.u)
-                  ::
-                    ?|  =(new.q.u linear-star-release:contracts)
-                        =(new.q.u conditional-star-release:contracts)
-                    ==
-                ==
-            ==
-        ==
-    ==
+    ::TODO  check against lock map
+    |
   ::TODO  delegated sending support
   ~
+::
+::  +count-events: add events to the daily stats
+::
+++  count-events
+  |=  logs=_seen  ::  oldest first
+  ^+  days
+  =/  head=[day=@da sat=stats]
+    ?^  days  i.days
+    *[@da stats]
+  =+  tail=?~(days ~ t.days)
+  |-
+  ::  when done, store updated head, but only if it's set
+  ::
+  ?~  logs
+    ?:  =(*[@da stats] head)  tail
+    [head tail]
+  =*  log  i.logs
+  ::  calculate day for current event, set head if unset
+  ::
+  =/  day=@da
+    (sub wen.log (mod wen.log ~d1))
+  =?  day.head  =(*@da day.head)  day
+  ::  same day as head, so add to it
+  ::
+  ?:  =(day day.head)
+    %_  $
+      sat.head  (count-event wat.log sat.head)
+      logs      t.logs
+    ==
+  ~|  [%weird-new-day old=day.head new=day]
+  ?>  (gth day day.head)
+  ::  newer day than head of days, so start new head
+  ::
+  %_  $
+    tail  [head tail]
+    head  [day *stats]
+  ==
+::
+::  +count-event: add event to the stats, if it's relevant
+::
+++  count-event
+  |=  [eve=event sat=stats]
+  ^-  stats
+  ?>  ?=(%azimuth -.eve)
+  ?+  -.dif.eve  sat
+    %activated  sat(activated [who.eve activated.sat])
+    %spawned    sat(spawned [who.dif.eve spawned.sat])
+    %owner      sat(transferred [who.eve transferred.sat])
+    %keys       sat(configured [who.eve configured.sat])
+  ==
+::
+::  +find-lockups: search the seen event log for lockup events
+::
+::    lockup events are identified by a transfer to either the linear or
+::    conditional star release contract. a timestamp of the lockup transfer
+::    is saved so that we can discard all events prior to it.
+::
+++  find-lockups
+  ~  ::TODO
 ::
 ::  +export: generate a csv with per-period
 ::
 ++  export
-  ~
+  ~  ::TODO
 --
