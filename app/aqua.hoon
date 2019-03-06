@@ -44,7 +44,6 @@
           pil=pill
           assembled=*
           tym=@da
-          init-cache=(map [ship (unit dawn-event)] pier)
           fleet-snaps=(map term (map ship pier))
           piers=(map ship pier)
       ==
@@ -506,7 +505,6 @@
   =/  res=toon :: (each * (list tank))
     (mock [boot-ova.pil [2 [0 3] [0 2]]] scry)
   =.  fleet-snaps  ~
-  =.  init-cache  ~
   ?-  -.res
       %0
     ~&  %suc
@@ -638,7 +636,6 @@
   ::
       [%clear-snap lab=@tas]
     =.  fleet-snaps  ~  ::  (~(del by fleet-snaps) lab.val)
-    =.  init-cache  ~
     this
   ==
 ::
@@ -653,11 +650,6 @@
   =.  this  thus
   ?-  -.ovo
       %init-ship
-    ::  =/  prev  (~(get by init-cache) [who keys]:ovo)
-    ::  ?:  &(?=(^ prev) (lth who.ovo ~marzod))
-    ::    ~&  [%loading-cached-ship who.ovo]
-    ::    =.  this  (restore-ship who.ovo u.prev)
-    ::    (pe who.ovo)
     =.  this  abet-pe:sleep:(pe who.ovo)
     =/  initted
       =<  plow
@@ -676,9 +668,6 @@
           [//http/0v1n.2m9vh %live 8.080 `8.445]
       ==
     =.  this  abet-pe:initted
-    =.  init-cache
-      %+  ~(put by init-cache)  [who keys]:ovo
-      (~(got by piers) who.ovo)
     (pe who.ovo)
   ::
       %pause-events
