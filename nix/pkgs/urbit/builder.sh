@@ -4,7 +4,7 @@ cp -r $src ./src
 chmod -R u+w ./src
 cd src
 
-./configure
+bash ./configure
 
 make urbit urbit-worker -j8
 

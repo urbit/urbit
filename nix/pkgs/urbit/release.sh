@@ -12,7 +12,7 @@ done
 CC=$host-gcc                \
 PKG_CONFIG=pkg-config-cross \
 HOST=$host                  \
-./configure
+bash ./configure
 
 make urbit urbit-worker -j8
 
