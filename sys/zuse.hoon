@@ -7758,10 +7758,9 @@
       ::  tox:  list of hex words
       |*  [tox=(lest @ux) tys=(list etyp)]
       =-  (decode-arguments (crip -) tys)
-      %+  render-hex-bytes  (mul 32 (lent tox))
       %+  roll  `(list @ux)`tox
-      |=  [top=@ux tos=@]
-      (cat 8 top tos)
+      |=  [top=@ tos=tape]
+      (weld tos (render-hex-bytes 32 top))
     ::
     ++  decode-results
       ::  rex:  string of hex bytes with leading 0x.
