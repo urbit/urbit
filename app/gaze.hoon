@@ -166,11 +166,11 @@
              [loglist.update +>.$]
     ==
   ?~  logs  [~ +>.$]
-  =-  =^  moz  +>.$  (queue-logs mistime)
-      =.  +>.$  (process-logs havtime)
+  =-  =^  moz  +>.$  (queue-logs mistime)  ::  oldest first
+      =.  +>.$  (process-logs havtime)  ::  oldest first
       [moz +>.$]
   ^-  [havtime=loglist mistime=loglist]
-  %+  skid  `loglist`logs
+  %+  skid  (flop `loglist`logs)  ::  put oldest first
   |=  log=event-log:rpc
   %-  ~(has by time)
   block-number:(need mined.log)
@@ -178,11 +178,11 @@
 ::  +queue-logs: hold on to new logs, requesting timestamps for them
 ::
 ++  queue-logs
-  |=  logs=loglist
+  |=  logs=loglist  ::  oldest first
   ^-  (quip move _+>)
   ?~  logs  [~ +>]
   :-  [(request-timestamps logs) ~]
-  +>(qued (weld qued (flop logs)))
+  +>(qued (weld qued logs))
 ::
 ::  +request-timestamps: request block timestamps for the logs as necessary
 ::
@@ -221,10 +221,10 @@
   ?>  ?=(%batch -.response)
   =-  [~ (process-logs(time -, qued ~) qued)]
   %-  ~(gas by time)
+  =/  max=@ud
+    (roll ~(tap in ~(key by time)) max)
   ::  for every result, get the block number and timestamp
   ::
-  ~&  [%got-times (lent bas.response)]
-  ~&  [%still-in-queue (lent qued)]
   %+  turn  bas.response
   |=  res=response:rpc:jstd
   ^-  (pair @ud @da)
@@ -239,23 +239,32 @@
 ::
 ::  +process logs that are in the queue
 ::
+::
 ++  process-logs
-  |=  logs=loglist
+  |=  logs=loglist  ::  oldest first
   ^+  +>
-  =-  ~&  [%processed (lent -)]
+  ?~  logs  +>
+  =-  =<  .(seen remove-lockups)
       %_  +>.$
-        seen  (weld (flop -) seen)
-        days  (count-events (flop -))
+        qued  (flop rest)  ::  oldest first
+        seen  (weld logs seen)  ::  newest first
+        days  (count-events (flop logs))  ::  oldest first
+        lock  (find-lockups logs)
       ==
-  ~&  [%processing (lent logs)]
-  %+  roll  logs
-  |=  [log=event-log:rpc logs=(list [wen=@da wat=event])]
-  =/  tim=@da
-    %-  ~(got by time)
+  %+  roll  `loglist`logs
+  |=  [log=event-log:rpc rest=loglist logs=(list [wen=@da wat=event])]
+  ::  to ensure logs are processed in sane order,
+  ::  stop processing as soon as we skipped one
+  ::
+  ?^  rest  [[log rest] logs]
+  =/  tim=(unit @da)
+    %-  ~(get by time)
     block-number:(need mined.log)
+  ?~  tim  [[log rest] logs]
+  :-  rest
   =+  ven=(event-log-to-event log)
   ?~  ven  logs
-  [[tim u.ven] logs]
+  [[u.tim u.ven] logs]
 ::
 ++  event-log-to-event
   |=  log=event-log:rpc
@@ -339,7 +348,40 @@
 ::    is saved so that we can discard all events prior to it.
 ::
 ++  find-lockups
-  ~  ::TODO
+  |=  =_seen
+  ^+  lock
+  %-  ~(gas in lock)
+  %+  murn  seen
+  |=  [wen=@da wat=event]
+  ^-  (unit [@p @da])
+  ::  ?.  ?=(%azimuth -.wat)  ~
+  ?+  -.dif.wat  ~
+      %owner
+    ?.  ?|  =(linear-star-release:contracts new.dif.wat)
+            =(conditional-star-release:contracts new.dif.wat)
+        ==
+      ~
+    `[who.wat wen]
+  ==
+::
+++  remove-lockups
+  ^+  seen
+  ~&  [%removing ~(wyt by lock)]
+  %+  murn  seen
+  |=  ven=[wen=@da wat=event]
+  ^-  (unit _ven)
+  ::  ?.  ?=(%azimuth -.wat.ven)  `ven
+  =+  who=(who-from-event wat.ven)
+  =+  lok=(~(get by lock) who)
+  ?~  lok  `ven
+  ?:  (lte wen.ven u.lok)  ~
+  `ven
+::
+++  who-from-event
+  |=  eve=event
+  ?+  -.dif.eve  who.eve
+    %spawned  who.dif.eve
+  ==
 ::
 ::  +export: generate a csv of stats per day
 ::
