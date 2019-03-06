@@ -10,9 +10,9 @@
   --
 ::
 ++  grab                                                ::  convert from
-  |% 
+  |%
   ++  noun  mime                                  ::  clam from %noun
-  ++  tape  
+  ++  tape
     |=(a/_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
   --
 ++  grad

@@ -22,7 +22,7 @@
 ::  the label resource returned by gmail in response to your successful request
 ++  label  *
 
-++  label-req-to-json  !! 
+++  label-req-to-json  !!
 ::  XX belongs in a lib/
 ::   |=  label-req
 ::   %-  jobe  :^

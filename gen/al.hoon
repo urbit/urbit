@@ -15,8 +15,8 @@
   =+  :*  dom=`axis`1
           doc=*(list what)
       ==
-  |_  mod/tile   
-  ++  home  
+  |_  mod/tile
+  ++  home
     ::  express a hoon against the original subject
     ::
     |=(gen/hoon ^-(hoon ?:(=(1 dom) gen [%tsgr [%$ dom] gen])))
@@ -43,7 +43,7 @@
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       $(mod cys)
-    ::  
+    ::
         {$deet *}
       $(mod q.mod)
     ::
@@ -113,11 +113,11 @@
         $void
       ::  should not actually be a thing
       ::
-      [%zpzp ~] 
+      [%zpzp ~]
     ==
   ::
   ++  decorate
-    ::  document 
+    ::  document
     ::
     |=  gen/hoon
     ^-  hoon
@@ -148,7 +148,7 @@
       ?:  ?=($herb -.cys)
         (home [%tsgl [%limb %$] p.mod])
       ersatz(mod cys)
-    ::  
+    ::
         {$deet *}
       [%dbug p.mod ersatz(mod q.mod)]
     ::
@@ -191,7 +191,7 @@
             ::  top: topographic type of sample
             ::
             axe/axis
-            top/tope 
+            top/tope
         ==
     ++  basic
       |=  bas/base
@@ -297,7 +297,7 @@
       ^-  hoon
       ::  if no other choices, construct head
       ::
-      ?~  rep  construct(mod `tile`one) 
+      ?~  rep  construct(mod `tile`one)
       ::  fin: loop completion
       ::
       =/  fin/hoon  $(one i.rep, rep t.rep)
@@ -409,7 +409,7 @@
         construct(mod cys)
       ::
       ::  switch, $%
-      :: 
+      ::
           {$kelp *}
         ::  if atom or unknown, probe
         ::
@@ -445,7 +445,7 @@
         ?@  top  probe
         :^    %wtpt
             fetch-wing(axe (peg axe 2))
-          construct(mod q.mod) 
+          construct(mod q.mod)
         construct(mod p.mod)
       ::
       ::  weed, $_

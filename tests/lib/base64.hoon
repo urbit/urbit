@@ -14,6 +14,37 @@
 --
 ::
 |%
+++  test-explode-bytes
+  ;:  weld
+    %+  expect-eq
+      !>  ~
+      !>  (flop (explode-bytes:base64 [0 `@`0]))
+  ::
+    %+  expect-eq
+      !>  ~[0x0 0x0 0x0]
+      !>  (flop (explode-bytes:base64 [3 `@`0]))
+  ::
+    %+  expect-eq
+      !>  ~[0x1 0x1 0x1]
+      !>  (flop (explode-bytes:base64 [3 `@`0x1.0101]))
+  ==
+::
+++  test-explode-words
+  ;:  weld
+    %+  expect-eq
+      !>  ~
+      !>  (flop (explode-words:base64 1 [0 `@`0]))
+  ::
+    %+  expect-eq
+      !>  ~[0 0 0 0 0 0 0 1]
+      !>  (flop (explode-words:base64 3 [3 `@`1]))
+  ::
+    %+  expect-eq
+      !>  ~[0x0 0x12.3456 0x78.9abc 0xde.f012 0x34.5678]
+      !>  =/  inp  [15 `@`0x1234.5678.9abc.def0.1234.5678]
+          (flop (explode-words:base64 24 inp))
+  ==
+::
 ++  test-base64
   ;:  weld
     %+  expect-eq

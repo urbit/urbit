@@ -3,6 +3,7 @@
 ::    A minimal representation of some basic ASN.1 types,
 ::    created to support PKCS keys, digests, and cert requests.
 ::
+^?
 |%
 ::  +bespoke:asn1: context-specific, generic ASN.1 tag type
 ::
@@ -65,6 +66,7 @@
 ::  |obj:asn1: constant object ids, pre-encoded
 ::
 ++  obj
+  ^?
   |%                                                ::    rfc4055
   ++  sha-256      0x1.0204.0365.0148.8660          ::  2.16.840.1.101.3.4.2.1
   ++  rsa          0x1.0101.0df7.8648.862a          ::  1.2.840.113549.1.1.1

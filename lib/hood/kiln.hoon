@@ -61,19 +61,19 @@
 ?>  =(src our)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$build wire @p ? schematic:ford}             ::
-          {$drop wire @p @tas}                          ::
-          {$info wire @p @tas nori}                     ::
+      $%  {$build wire ? schematic:ford}                ::
+          {$drop wire @tas}                             ::
+          {$info wire @tas nori}                        ::
           {$mont wire @tas beam}                        ::
           {$dirk wire @tas}                             ::
           {$ogre wire $@(@tas beam)}                    ::
-          {$merg wire @p @tas @p @tas case germ}        ::
-          {$perm wire ship desk path rite}              ::
+          {$merg wire @tas @p @tas case germ}           ::
+          {$perm wire desk path rite}                   ::
           {$poke wire dock pear}                        ::
           {$wipe wire @ud}                              ::
           [%keep wire compiler-cache-size=@ud build-cache-size=@ud]
           {$wait wire @da}                              ::
-          {$warp wire sock riff}                        ::
+          {$warp wire ship riff}                        ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$hall-command command:hall}                  ::
@@ -130,7 +130,7 @@
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
     abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:(start-sync:(auto hos) |)
+  abet:abet:start-sync:(auto hos)
 ::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
@@ -139,12 +139,6 @@
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap in ~(key by syn))
   |=(a/kiln-sync (render "sync configured" [sud her syd]:a))
-::
-++  poke-init-sync
-  |=  hos/kiln-sync
-  ?:  (~(has by syn) hos)
-    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
-  abet:abet:(start-sync:(auto hos) &)
 ::
 ++  poke-unsync                                         ::
   |=  hus/kiln-unsync
@@ -160,13 +154,13 @@
 ::
 ++  poke-cancel
   |=  syd/desk
-  abet:(emit %drop /cancel our syd)
+  abet:(emit %drop /cancel syd)
 ::
 ++  poke-info
   |=  {mez/tape tor/(unit toro)}
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %info /kiln our u.tor)
+  abet:(emit:(spam leaf+mez ~) %info /kiln u.tor)
 ::
 ++  poke-rm
   |=  a/path
@@ -191,8 +185,8 @@
 ++  poke-permission
   |=  {syd/desk pax/path pub/?}
   =<  abet
-  %^  emit  %perm  /kiln/permission
-  [our syd pax %r ~ ?:(pub %black %white) ~]
+  %-  emit
+  [%perm /kiln/permission syd pax %r ~ ?:(pub %black %white) ~]
 ::
 ++  poke-autoload  |=(lod/(unit ?) abet:(poke:autoload lod))
 ++  poke-start-autoload  |=(~ abet:start:autoload)
@@ -231,9 +225,7 @@
   ++  subscribe-next
     %-  emit
     ^-  card
-    :*  %warp  /kiln/autoload  [our our]  %home  ~
-        %next  %z  da+now  /sys
-    ==
+    [%warp /kiln/autoload our %home `[%next %z da+now /sys]]
   ::
   ++  writ  =>(check-new subscribe-next)
   ++  check-new
@@ -326,7 +318,7 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(mere:(auto hos) .?(t.t.t.way) mes)
+  abet:abet:(mere:(auto hos) mes)
 ::
 ++  take-writ-sync                                    ::
   |=  {way/wire rot/riot}
@@ -336,7 +328,7 @@
           her=(slav %p i.t.way)
           sud=(slav %tas i.t.t.way)
       ==
-  abet:abet:(writ:(auto hos) .?(t.t.t.way) rot)
+  abet:abet:(writ:(auto hos) rot)
 ::
 ++  take-writ-autoload
   |=  {way/wire rot/riot}
@@ -372,49 +364,56 @@
   ++  spam  |*(* %_(+> ..auto (^spam +<)))
   ++  stop
     =>  (spam (render "ended autosync" sud her syd) ~)
-    %-  blab  :_  ~
-    :*  ust  %warp
-        /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~
-    ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ust %warp wire her sud ~] ~)
+  ::  XX duplicate of start-sync? see |track
   ::
   ++  start-track
     =>  (spam (render "activated track" sud her syd) ~)
     =.  let  1
-    %-  blab
-    :~  :*  ost  %warp
-            /kiln/sync/[syd]/(scot %p her)/[sud]
-            [our her]  sud  ~  %sing  %y  ud+let  /
-    ==  ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire her sud `[%sing %y ud+let /]] ~)
   ::
   ++  start-sync
-    |=  reset/?
-    =.  +>.$  (spam (render "activated sync" sud her syd) ~)
-    %-  blab
-    :~  :*  ost  %warp
-            [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-            [our her]  sud  ~  %sing  %w  [%da now]  /
-    ==  ==
+    =<  (spam (render "activated sync" sud her syd) ~)
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire her sud `[%sing %w [%da now] /]] ~)
   ::
   ++  writ
-    |=  {reset/? rot/riot}
+    |=  rot=riot
     ?~  rot
       %^    spam
           leaf+"bad %writ response"
         (render "on sync" sud her syd)
       ~
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
-    %-  blab  ^-  (list move)  :_  ~
-    :*  ost  %merg
-        [%kiln %sync syd (scot %p her) sud ?:(reset /reset /)]
-        our  syd  her  sud  ud+let
-        ?:  =(0 ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now)))
-          %init
-        %mate
-    ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    ::  germ: merge mode for sync merges
+    ::
+    ::    Initial merges from any source must use the %init germ.
+    ::    Subsequent merges may use any germ, but if the source is
+    ::    a remote ship with which we have not yet merged, we won't
+    ::    share a merge-base commit and all germs but %that will fail.
+    ::
+    ::    We want to always use %that for the first remote merge.
+    ::    But we also want local syncs (%base to %home or %kids)
+    ::    to succeed after that first remote sync. To accomplish both
+    ::    we simply use %that for the first three sync merges.
+    ::    (The first two are from the pill.)
+    ::
+    =/  =germ
+      =/  =cass
+        .^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+      ?:  =(0 ud.cass)
+        %init
+      ?:((gth 3 ud.cass) %that %mate)
+    =<  %-  spam
+        ?:  =(our her)  ~
+        [(render "beginning sync" sud her syd) ~]
+    (blab [ost %merg wire syd her sud ud+let germ] ~)
   ::
   ++  mere
-    |=  {reset/? mes/(each (set path) (pair term tang))}
+    |=  mes=(each (set path) (pair term tang))
     =.  let  +(let)
     =.  +>.$
       %-  spam
@@ -434,14 +433,8 @@
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
       ==
-    =.  +>.$
-      ?.  reset  +>.$
-      (blab [ost %poke /init-reset [our %hood] %helm-reset ~]~)
-    %-  blab  :_  ~
-    :*  ost  %warp
-        /kiln/sync/[syd]/(scot %p her)/[sud]
-        [our her]  sud  ~  %sing  %y  ud+let  /
-    ==
+    =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire her sud `[%sing %y ud+let /]] ~)
   --
 ::
 ++  work                                              ::  state machine
@@ -476,7 +469,7 @@
   ::
   ++  perform                                         ::
     ^+  .
-    (blab [ost %merg /kiln/[syd] our syd her sud cas gem] ~)
+    (blab [ost %merg /kiln/[syd] syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  {syd/desk her/@p sud/desk gem/?($auto germ)}
@@ -502,7 +495,7 @@
     ?~  saw
       =>  (spam leaf+"%melding %{(trip sud)} into scratch space" ~)
       %-  blab  :_  ~
-      [ost %merg /kiln/[syd] our (cat 3 syd '-scratch') her sud cas gem]
+      [ost %merg /kiln/[syd] (cat 3 syd '-scratch') her sud cas gem]
     =+  :-  "failed to set up conflict resolution scratch space"
         "I'm out of ideas"
     lose:(spam leaf+-< leaf+-> u.saw)
@@ -521,7 +514,7 @@
         =+  tic=(cat 3 syd '-scratch')
         %-  blab  :_  ~
         =,  ford
-        :*  ost  %build  /kiln/[syd]  our  live=%.n
+        :*  ost  %build  /kiln/[syd]  live=%.n
             ^-  schematic
             :-  %list
             ^-  (list schematic)
@@ -650,7 +643,7 @@
     =<  win
     %-  blab:(spam tan)
     :_  ~
-    :*  ost  %info  /kiln/[syd]  our
+    :*  ost  %info  /kiln/[syd]
         (cat 3 syd '-scratch')  %&
         %+  murn  can
         |=  {p/path q/(unit miso)}

@@ -16,7 +16,7 @@
     =,  dejs-soft:format
     |%
     ++  source
-      ^-  $-(^^json (unit source:^^lens))
+      ^-  $-(^^json (unit source:lens))
       |=  jon/^^json
       =+  tuple=%.(jon (ar source))
       ?^  tuple
@@ -40,10 +40,11 @@
       ==
     ++  none  |=(^^json (some ~))
     ++  sink
-      ^-  $-(^^json (unit sink:^^lens))
+      ^-  $-(^^json (unit sink:lens))
       %-  of  :~
         stdout+none
         output-file+so
+        output-pill+so
         output-clay+(su (easy /sentinel/path))
         url+(su auri:de-purl:html)
         to-api+(su ;~(plug sym ;~(pfix col prn)))

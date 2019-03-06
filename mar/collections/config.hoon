@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  mime
-    :-  /text/x-collection-config 
+    :-  /text/x-collection-config
     (as-octs:mimes:html (of-wain:format txt))
   ++  txt
     ^-  wain
@@ -18,7 +18,7 @@
         (cat 3 'name: ' name.con)
         (cat 3 'description: ' description.con)
       ::
-        (cat 3 'owner: ' (scot %p owner.con))
+        (cat 3 'author: ' (scot %p author.con))
       ::
         (cat 3 'date-created: ' (scot %da date-created.con))
         (cat 3 'last-modified: ' (scot %da last-modified.con))
@@ -37,47 +37,56 @@
   ++  txt
     |=  txs=(pole @t)
     ^-  config:collections
+    ::  TODO: putting ~ instead of * breaks this but shouldn't
+    ::
     ?>  ?=  $:  full-path=@t
                 name=@t
                 desc=@t
-                owner=@t
+                author=@t
                 dc=@t
                 lm=@t
                 type=@t
                 com=@t
                 sk=@t
                 vis=@t
-                ~
+                *
              ==
            txs
     ::
-    %-  (hard config:collections)
-    :*  %-  need 
-        %+  rash  full-path.txs 
-          ;~  pfix  (jest 'full-path: ') 
+    :*  %-  need
+        %+  rash  full-path.txs
+          ;~  pfix  (jest 'full-path: ')
             %+  cook  de-beam:format
-            ;~(pfix fas (more fas urs:ab)) 
+            ;~(pfix fas (more fas urs:ab))
           ==
-    :: 
-       (rash name.txs ;~(pfix (jest 'name: ') (cook crip (star next)))) 
     ::
-       (rash desc.txs ;~(pfix (jest 'description: ') (cook crip (star next)))) 
+      (rash name.txs ;~(pfix (jest 'name: ') (cook crip (star next))))
     ::
-       (rash owner.txs ;~(pfix (jest 'owner: ~') fed:ag))
+      (rash desc.txs ;~(pfix (jest 'description: ') (cook crip (star next))))
     ::
-       (rash dc.txs ;~(pfix (jest 'date-created: ~') (cook |=(a=^ +.a) crub:so)))
+      (rash author.txs ;~(pfix (jest 'author: ~') fed:ag))
     ::
-       (rash lm.txs ;~(pfix (jest 'last-modified: ~') (cook |=(a=^ +.a) crub:so)))
+      %+  rash  dc.txs
+      ;~  pfix
+        (jest 'date-created: ~')
+        (cook year when:so)
+      ==
     ::
-       (rash type.txs ;~(pfix (jest 'type: ') (cook crip (star next)))) 
+      %+  rash  lm.txs
+      ;~  pfix
+        (jest 'last-modified: ~')
+        (cook year when:so)
+      ==
     ::
-       (rash com.txs ;~(pfix (jest 'comments: ') (fuss %y %n)))
+      (rash type.txs ;~(pfix (jest 'type: ') (cook crip (star next))))
     ::
-       (rush sk.txs ;~(pfix (jest 'sort-key: ') dem:ag))
+      (rash com.txs ;~(pfix (jest 'comments: ') (fuss %y %n)))
     ::
-       (rash vis.txs ;~(pfix (jest 'visible: ') (fuss %y %n)))
+      (rush sk.txs ;~(pfix (jest 'sort-key: ') dem:ag))
+    ::
+      (rash vis.txs ;~(pfix (jest 'visible: ') (fuss %y %n)))
     ==
   ++  noun  config:collections
   --
-++  grad  %txt
+++  grad  %mime
 --

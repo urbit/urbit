@@ -16,17 +16,19 @@
 ++  test-first-order
   =/  dom=(set turf)  (sy /org/urbit/zod ~)
   =^  moves  app  (~(poke-acme-order app *bowl:gall *acme:app) dom)
-  =/  msg  "requesting an https certificate for zod.urbit.org"
+  =/  msg  'requesting an https certificate for zod.urbit.org'
   ;:  weld
     %+  expect-eq
-        !>  :~  [ost.bow.app %wait /acme/directory +(now.bow.app)]
-                [ost.bow.app %flog / %text msg]
+        !>  :~  =-  [ost.bow.app [%poke / -]]
+                =-  [[~zod %hall] %hall-action %phrase (sy [~zod %inbox] ~) -]
+                ~[[%app %$ [%lin & msg]]]
+                [ost.bow.app %wait /acme/try/1/directory +(now.bow.app)]
             ==
         !>  moves
   ::
     %+  expect-eq
         !>  [~ dom]
-        !>  pen.app
+        !>  (some ~(key by (fall next-order.app ~)))
   ::
     %+  expect-eq
         !>  &
@@ -39,11 +41,8 @@
 ::  tests that acme requests service directory on %wake
 ::
 ++  test-first-order-wake
-  =^  moves  app  (~(wake app *bowl:gall *acme:app) /acme/directory ~)
-  =/  url
-    =-  (need (de-purl:html -))
-    'https://acme-staging-v02.api.letsencrypt.org/directory'
+  =^  moves  app  (~(wake app *bowl:gall *acme:app) /acme/try/1/directory ~)
   %+  expect-eq
-      !>  ~[[ost.bow.app [%hiss /acme/directory/~zod [~ ~] %httr %hiss url %get ~ ~]]]
+      !>  ~[[ost.bow.app [%hiss /acme/try/2/directory ~ %httr %hiss directory-base:app %get ~ ~]]]
       !>  moves
 --

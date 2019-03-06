@@ -113,7 +113,7 @@
   =/  ht  (hedtal:collections +.elm)
   =/  title  (fall (~(get by meta.raw) %name) -.s.bem.gas)
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
-  =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
+  =/  author  (fall (~(get by meta.raw) %author) 'anonymous')
   ::
   ;div.mb-18.mt-4
     ;+  elm
@@ -141,19 +141,20 @@
           |=  [nom=knot ite=item:collections]
           ^-  manx
           ?>  ?=(%raw -.ite)
-          =/  owner  (fall (~(get by meta.raw.ite) %owner) 'anonymous')
+          =/  author  (fall (~(get by meta.raw.ite) %author) 'anonymous')
+          =/  host  (fall (~(get by meta.raw.ite) %host) 'anonymous')
           =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
           ;li.mb-6
             ;div.flex.align-center
               ;div.mr-2
                 =urb-component  "Sigil"
-                =urb-ship       "{(trip owner)}"
+                =urb-ship       "{(trip author)}"
                 =urb-size       "18"
                 =urb-suffix     "true";
               ;div
                 ;a.vanilla.text-mono.text-small.text-700.mr-4
-                  =href  "/~~/landscape/profile"
-                  ; {(trip owner)}
+                  =href  "/~~/{(trip host)}/==/web/landscape/profile"
+                  ; {(trip author)}
                 ==
               ==
               ;div.text-host-breadcrumb
@@ -209,7 +210,7 @@
     ;h2.mt-0.mb-0
       ;a(href lnk): {(trip name.meta.col)}
     ==
-    ;div.who.text-mono.text-600: {<owner.meta.col>}
+    ;div.who.text-mono.text-600: {<author.meta.col>}
     ;div.meta-cont
       ;div.com-count.ml-12
         ; {(trip (scot %ud ~(wyt by data.col)))} comments
@@ -226,7 +227,7 @@
     (scag 5 c.elm)
   =/  title  (fall (~(get by meta.raw) %name) nom)
   =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
-  =/  owner  (fall (~(get by meta.raw) %owner) 'anonymous')
+  =/  author  (fall (~(get by meta.raw) %author) 'anonymous')
   =/  lnk=tape
     "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
@@ -237,7 +238,7 @@
             ;a(href lnk): {(trip title)}
           ;a(href lnk): *{hed.ht}
     ==
-    ;div.who.text-mono.text-600: {(trip owner)}
+    ;div.who.text-mono.text-600: {(trip author)}
     ;div.snippet
       ;*  tal.ht
     ==
@@ -261,7 +262,7 @@
             ;a(href lnk): {(trip title)}
           ;a(href lnk): *{hed.ht}
     ==
-    ;div.text-mono.text-small.text-300.mt-1.mb-1: {<owner.meta.col>}
+    ;div.text-mono.text-small.text-300.mt-1.mb-1: {<author.meta.col>}
     ;div
       ;div.icon-label.justify-start
         ;div(urb-component "IconComment");
@@ -290,7 +291,8 @@
       %collection
     =*  met  meta.col.itm
     :~  [%urb-name (trip name.met)]
-        [%urb-owner (scow %p owner.met)]
+        [%urb-author (scow %p author.met)]
+        [%urb-host (scow %p p.full-path.met)]
         [%urb-date-created (scow %da date-created.met)]
         [%urb-last-modified (scow %da last-modified.met)]
         [%urb-content-type (trip type.met)]
@@ -299,7 +301,8 @@
       %raw
     =/  met  ~(got by meta.raw.itm)
     :~  [%urb-name (trip (met %name))]
-        [%urb-owner (trip (met %owner))]
+        [%urb-author (trip (met %author))]
+        [%urb-host (trip (met %host))]
         [%urb-date-created (trip (met %date-created))]
         [%urb-last-modified (trip (met %last-modified))]
         [%urb-content-type (trip (met %type))]
@@ -308,7 +311,8 @@
       %both
     =/  met  ~(got by meta.raw.itm)
     :~  [%urb-name (trip (met %name))]
-        [%urb-owner (trip (met %owner))]
+        [%urb-author (trip (met %author))]
+        [%urb-host (trip (met %host))]
         [%urb-date-created (trip (met %date-created))]
         [%urb-last-modified (trip (met %last-modified))]
         [%urb-content-type (trip (met %type))]

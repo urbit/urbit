@@ -5,7 +5,7 @@
 ::
 ++  test-static-args
   %+  expect-eq
-    !>  %-  encode-args:ethereum
+    !>  %-  encode-args:abi:ethereum
         :~  [%string "dave"]
             [%bool &]
             [%array [%uint 1] [%uint 2] [%uint 3] ~]
@@ -24,7 +24,7 @@
 ::
 ++  test-dynamic-args
   %+  expect-eq
-    !>  %-  encode-args:ethereum
+    !>  %-  encode-args:abi:ethereum
         :~  [%uint `@ud`0x123]
             [%array [%uint `@ud`0x456] [%uint `@ud`0x789] ~]
             [%bytes-n (as-octt:mimes:html (flop "1234567890"))]

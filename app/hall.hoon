@@ -22,7 +22,6 @@
 ::
 ::::
 =,  hall-sur
-=,  hall-lib
 =>  ::  #
     ::  #  %arch
     ::  #
@@ -100,7 +99,7 @@
       ==                                                ::
     ++  card                                            ::  general card
       $%  {$diff lime}                                  ::
-          {$info wire ship term nori:clay}              ::
+          {$info wire term nori:clay}                   ::
           {$peer wire dock path}                        ::
           {$poke wire dock pear}                        ::
           {$pull wire dock ~}                          ::
@@ -117,7 +116,7 @@
 ::  #
 ::    functional cores and arms.
 ::
-~%  %hall-door  ..^^^is  ~
+~%  %hall-door  ..is  ~
 |_  {bol/bowl:gall $1 state}
 ::
 ::  #  %transition
@@ -360,7 +359,7 @@
         (ta-action [%create nom des typ])
     %-  ta-deltas
     ::  if needed, subscribe to our parent's /burden.
-    =+  sen=(above [our now our]:bol)
+    =+  sen=(above:hall-lib [our now our]:bol)
     ?:  ?|  !=(%czar (clan:title sen))
             =(sen our.bol)
             =(%pawn (clan:title our.bol))
@@ -467,7 +466,7 @@
       ::
       ::  Store a delta about a story.
       ::
-      ~/  %hall-impact 
+      ~/  %hall-impact
       |=  {nom/name det/delta-story}
       (ta-delta %story nom det)
     ::
@@ -499,7 +498,7 @@
       ~/  %hall-action-create
       |=  {nom/name des/cord typ/security}
       ^+  ..ta-action
-      ?.  (~(has in stories) nom)
+      ?.  (~(has by stories) nom)
         %^  impact  nom  %new
         :*  [[[our.bol nom] ~] ~ ~]
             des
@@ -517,7 +516,7 @@
       ::
       ~/  %hall-action-design
       |=  {nom/name cof/config}
-      ?.  (~(has in stories) nom)
+      ?.  (~(has by stories) nom)
         (impact nom %new cof)
       (ta-evil (crip "{(trip nom)}: already exists"))
     ::
@@ -770,7 +769,7 @@
     ~/  %hall-ta-observe
     |=  who/ship
     ^+  +>
-    ?.  =(our.bol (above our.bol now.bol who))
+    ?.  =(our.bol (above:hall-lib our.bol now.bol who))
       ~&([%not-our-bearer who] +>)
     (ta-delta %observe who)
   ::
@@ -1145,7 +1144,7 @@
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
                 ?=(~ old)
-                !=(u.old (change-config u.old dif.rum))
+                !=(u.old (change-config:hall-lib u.old dif.rum))
             ==
           +>.$
         ::  full changes to us need to get split up.
@@ -1165,7 +1164,7 @@
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
                 ?=(~ old)
-                !=(u.old (change-status u.old dif.rum))
+                !=(u.old (change-status:hall-lib u.old dif.rum))
             ==
           +>.$
         (so-delta-our rum)
@@ -1251,7 +1250,7 @@
           ::  in audience, replace above with us.
           ::TODO  this really should be done by the sender.
           =.  aud.t
-            =+  dem=[(above [our now our]:bol) nom]
+            =+  dem=[(above:hall-lib [our now our]:bol) nom]
             ?.  (~(has in aud.t) dem)  aud.t
             =+  (~(del in aud.t) dem)
             (~(put in -) so-cir)
@@ -1259,7 +1258,7 @@
           ?:  &(?=(^ num) =(t (snag u.num grams)))  ~
           ::TODO  this really should have sent us the message
           ::      src as well but that's not an easy fix.
-          `[%story nom %gram [(above [our now our]:bol) nom] t]
+          `[%story nom %gram [(above:hall-lib [our now our]:bol) nom] t]
         ==
       ::  inherited flag
       %_(self deltas [[%story nom %inherited &] deltas])
@@ -1284,7 +1283,7 @@
           ?|  !(~(has by locals) who)
             ::
               =+  old=(~(got by locals) who)
-              =+  new=(change-status - dif)
+              =+  new=(change-status:hall-lib - dif)
               ?&  !=(old new)
                 ::
                   ?=  ~
@@ -1940,7 +1939,7 @@
     ~/  %hall-da-change-nick
     |=  {who/ship nic/nick}
     ^+  +>
-    +>(nicks (change-nicks nicks who nic))
+    +>(nicks (change-nicks:hall-lib nicks who nic))
   ::
   ::  #
   ::  #  %stories
@@ -2126,7 +2125,7 @@
         =.  +>
           %-  sa-emil
           (sa-config-effects shape dif.det)
-        +>(shape (change-config shape dif.det))
+        +>(shape (change-config:hall-lib shape dif.det))
       ::
           $status
         %_  +>
@@ -2134,7 +2133,7 @@
           ?:  ?=($remove -.dif.det)
             (~(del by locals) who.det)
           %+  ~(put by locals)  who.det
-          %+  change-status
+          %+  change-status:hall-lib
             (fall (~(get by locals) who.det) *status)
           dif.det
         ==
@@ -2197,7 +2196,7 @@
         ?:  ?=($remove -.dif.det)
           +>(mirrors (~(del by mirrors) cir.det))
         =/  new/config
-          %+  change-config
+          %+  change-config:hall-lib
           (fall (~(get by mirrors) cir.det) *config)
           dif.det
         +>.$(mirrors (~(put by mirrors) cir.det new))
@@ -2209,7 +2208,7 @@
           =+  ole=(fall (~(get by remotes) cir.det) *group)
           ?:  ?=($remove -.dif.det)  (~(del by ole) who.det)
           =+  old=(fall (~(get by ole) who.det) *status)
-          (~(put by ole) who.det (change-status old dif.det))
+          (~(put by ole) who.det (change-status:hall-lib old dif.det))
         ==
       ==
     ::
@@ -2342,7 +2341,7 @@
   ;:  weld
     /circle/[nom]/(scot %p hos.cir)/[nom.cir]
     (sort wat gth)  ::  consistence
-    (range-to-path ran)
+    (range-to-path:hall-lib ran)
   ==
 ::
 ++  wire-to-peer
@@ -2371,7 +2370,7 @@
     (welp /circle t.t.t.wir)
   ::
       {$burden *}
-    :-  (above [our now our]:bol)
+    :-  (above:hall-lib [our now our]:bol)
     /burden/(scot %p our.bol)
   ::
       {$report @ *}
@@ -2395,7 +2394,7 @@
     :^    %circle
         i.t.wir
       [(slav %p i.t.t.wir) i.t.t.t.wir]
-    (path-to-range t.t.t.t.wir)
+    (path-to-range:hall-lib t.t.t.t.wir)
   ::
       {$repeat @ @ @ ~}
     :+  %repeat
@@ -2655,15 +2654,16 @@
     ==
   ::
     ?:  =(wat ~)  &
-    %-  ~(has in wat)
-    ?+  -.det  %hasnot
-      $gram     %grams
-      $new      %config-l
-      $remove   %config-l
+    ?+  -.det   |
+      $gram     (~(has in wat) %grams)
+      $new      (~(has in wat) %config-l)
+      $remove   (~(has in wat) %config-l)
       $config   ?:  =(cir.det [our.bol nom])
-                %config-l  %config-r
+                  (~(has in wat) %config-l)
+                (~(has in wat) %config-r)
       $status   ?:  =(cir.det [our.bol nom])
-                %group-l  %group-r
+                  (~(has in wat) %group-l)
+                (~(has in wat) %group-r)
     ==
   ==
 ::
@@ -2731,7 +2731,7 @@
   ::
       $report
     ::  only send changes we didn't get from above.
-    ?:  =(src.bol (above [our now our]:bol))  ~
+    ?:  =(src.bol (above:hall-lib [our now our]:bol))  ~
     ::  only send story reports about grams and status.
     ?.  ?=($story -.det)  ~
     ?.  ?=(?($gram $status) -.det.det)  ~
@@ -2740,7 +2740,7 @@
     ?.  inherited.soy  ~
     ::  only burden channels for now.
     ?.  =(%channel sec.con.shape.soy)  ~
-    `[%burden nom.det (dedicate (above [our now our]:bol) nom.det det.det)]
+    `[%burden nom.det (dedicate (above:hall-lib [our now our]:bol) nom.det det.det)]
   ::
       $peers
     ?.  ?=($story -.det)      ~
@@ -2826,7 +2826,7 @@
   ?~  pax  qer
   ::TODO  can probably do this a bit better...
   ?+  i.pax
-    qer(ran (path-to-range pax))
+    qer(ran (path-to-range:hall-lib pax))
   ::
     circle-data   %_  $  pax  t.pax
                     wat.qer   (~(put in wat.qer) i.pax)
@@ -2863,7 +2863,7 @@
   ::  parse a list of coins into a query structure.
   ::
   ^-  $-((list coin) query)
-  =>  depa
+  =>  depa:hall-lib
   |^  %-  af  :~
           [%client ul]
           [%circles (at /[%p])]
@@ -2890,10 +2890,10 @@
     $circles  =(who who.qer)
     $public   &
     $burden   ?&  =(who who.qer)
-                  =(our.bol (above our.bol now.bol who))
+                  =(our.bol (above:hall-lib our.bol now.bol who))
               ==
     $peers    =(who our.bol)  ::TODO  or so-visible?
-    $report   =(who (above [our now our]:bol))
+    $report   =(who (above:hall-lib [our now our]:bol))
   ::
       $circle
     ?.  (~(has by stories) nom.qer)  |
@@ -3115,7 +3115,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
@@ -3212,7 +3211,6 @@
   :*  ost.bol
       %info
       /jamfile
-      our.bol
       (foal:space:userlib paf [%hall-telegrams !>(-)])
   ==
 ::
@@ -3259,6 +3257,14 @@
         ?:  ?=({$circle *} p)  ~
         `[s p]
     [~ +>]
+  ?:  =(a 'check all subs')
+    ~&  'here are all incoming subs'
+    ~&  ^-  (list (pair ship path))
+        %+  turn  ~(tap by sup.bol)
+        |=  {b/bone s/ship p/path}
+        ^-  (pair ship path)
+        [s p]
+    [~ +>]
   ?:  =(a 'rebuild')
     ~&  'rebuilding message references...'
     =-  [~ +>.$(stories -)]
@@ -3277,7 +3283,7 @@
   ?:  =(a 'refederate')
     ~&  'refederating. may take a while...'
     :_  +>
-    =+  bov=(above [our now our]:bol)
+    =+  bov=(above:hall-lib [our now our]:bol)
     ?:  =(bov our.bol)  ~
     :~  [ost.bol %pull /burden [bov dap.bol] ~]
         (wire-to-peer /burden)
@@ -3315,6 +3321,15 @@
       [[b %quit ~] out]
     out
   ::
+  ?:  =(a 'print')
+    ~&  shape:(~(got by stories) %inbox)
+    [~ +>]
+  ::
+  ?:  =(a 'print all')
+    ~&  %+  turn  ~(tap by stories)
+        |=  [n=name s=story]
+        [n shape:s]
+    [~ +>]
   ::
   [~ +>]
 --

@@ -4,44 +4,106 @@
 /?  309
 /-  hall
 /+  cram, elem-to-react-json
-::
-::  
+:: ::
 ~%  %collections-lib  ..is  ~
 |%
-+=  move  [bone card]
-+=  card
-  $%  [%info wire ship toro:clay]
++$  move  [bone card]
+::
++$  card
+  $%  [%info wire toro:clay]
       [%poke wire dock poke]
-      [%perm wire ship desk path rite:clay]
+      [%perm wire desk path rite:clay]
+      [%peer wire dock path]
+      [%pull wire dock ~]
+      [%diff diff]
   ==
-+=  poke
+::
++$  diff
+  $%  [%collections-prize prize]
+      [%collections-rumor rumor]
+      [%hall-rumor rumor:hall]
+  ==
+::
++$  poke
   $%  [%hall-action action:hall]
       [%collections-action action]
       [%json json]
   ==
-+=  state
-  $%  [%0 col=collection]
+::
++$  state
+  $%  [%0 col=collection str=streams]
   ==
 ::
++$  streams
+  $:  ::  inbox config and messages
+      ::
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
+      ::  names and configs of all circles we know about
+      ::
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
+      ::
+      our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
 ::
-+=  collection  [meta=config data=(map nom=knot =item)]  
-+=  item
++$  prize
+  $:  ::  inbox config and messages
+      ::
+      inbox=[con=(unit config:hall) env=(list envelope:hall)]
+      ::  names and configs of all circles we know about
+      ::
+      circles=(map circle:hall (unit config:hall))
+      ::  names of all circles we own
+      ::
+      our-circles=(set name:hall)
+      ::  list of messages in all our DM circles
+      ::
+      dms=(map name:hall [ini=ship env=(list envelope:hall)])
+      ::  all the DM invites we've received
+      ::
+      invites=(list envelope:hall)
+  ==
+::
++$  rumor
+  $%  ::  if config is given, either add new circle or update existing one
+      ::  if config is nil then delete circle
+      ::
+      [%config-change cir=circle:hall con=(unit config:hall)]
+      ::  recieved a new inbox message or DM invite
+      ::
+      [%new-msg nom=?(%inbox %invites) env=envelope:hall]
+  ==
+::
++$  command
+  $%  [%chat-invite nom=name:hall who=(set ship)]
+      [%collection-invite nom=name:hall col=term who=(set ship)]
+  ==
++$  collection  [meta=config data=(map nom=knot =item)]
+::
++$  item
   $~  [%error ~]
   $%  [%collection col=collection]
       [%raw raw=raw-item]
       [%both col=collection raw=raw-item]
       [%error ~]
   ==
-+=  raw-item
+::
++$  raw-item
   $%  [%udon meta=(map knot cord) data=@t]
   ==
 ::
-+=  config
++$  config
   $:  full-path=beam
       name=@t
       description=@t
     ::
-      owner=@p
+      author=@p
     ::
       date-created=@da
       last-modified=@da
@@ -53,12 +115,13 @@
     ::
   ==
 ::
-+=  action
++$  action
   $:  who=ship
       dek=desk
       acts=(list sub-action)
   ==
-+=  sub-action
+::
++$  sub-action
   $%  [%write pax=path for=form]
       [%delete pax=path]
       [%perms pax=path r=rule:clay w=rule:clay]
@@ -68,7 +131,7 @@
       [%comment pax=path content=@t]
   ==
 ::
-+=  form
++$  form
   $%  [%udon @t]
       [%collections-config config]
   ==
@@ -196,7 +259,7 @@
         [%s a]
       :-  %name           [%s name.con]
       :-  %desc           [%s description.con]
-      :-  %owner          (ship:enjs:format owner.con)
+      :-  %author          (ship:enjs:format author.con)
       :-  %date-created   (time:enjs:format date-created.con)
       :-  %last-modified  (time:enjs:format last-modified.con)
       :-  %type           [%s type.con]
@@ -276,7 +339,8 @@
   |=  [pax=path conf=config]
   ^-  json
   %-  pairs:enjs:format
-  :~  ['owner' [%s (crip (scow %p owner.conf))]]
+  :~  ['author' [%s (crip (scow %p author.conf))]]
+      ['host' [%s (crip (scow %p p.full-path.conf))]]
       ['path' [%a (turn pax |=(a=@ta `json`[%s a]))]]
       ['name' [%s name.conf]]
       ['date' [%s (crip (scow %da last-modified.conf))]]
@@ -289,7 +353,8 @@
   ~/  %coll-item-notify
   |=  [pax=path raw=raw-item now=@da byk=beak]
   ^-  json
-  =/  owner  (fall (~(get by meta.raw) %owner) ~.anon)
+  =/  author  (fall (~(get by meta.raw) %author) ~.anon)
+  =/  host  (fall (~(get by meta.raw) %host) ~.anon)
   =/  dat    (fall (~(get by meta.raw) %last-modified) (scot %da now))
   =/  nom    (fall (~(get by meta.raw) %name) ~.no-title)
   =/  typ    (fall (~(get by meta.raw) %type) ~.no-type)
@@ -297,8 +362,8 @@
   =/  elm=manx   elm:(static:cram (ream data.raw))
   =/  snip=marl  tal:(hedtal +.elm)
   =/  inner
-    ?~  snip 
-      (crip (en-xml:html elm)) 
+    ?~  snip
+      (crip (en-xml:html elm))
     (crip (en-xml:html i.snip))    :: inner html
   ::
   =/  parent-spur  (slag 1 (flop pax))
@@ -309,7 +374,7 @@
   =/  parent-conf=json
     ?:  (~(has in dir.parent-dir) ~.udon ~)
       %-  meta-to-json
-      %-  udon-to-front 
+      %-  udon-to-front
       .^(@t %cx (weld parent-path /udon))
     ?:  (~(has in dir.parent-dir) ~.collections-config ~)
       %-  config-to-json
@@ -317,7 +382,8 @@
     ~
   ::
   %-  pairs:enjs:format
-  :~  ['owner' [%s owner]]
+  :~  ['author' [%s author]]
+      ['host' [%s host]]
       ['path' [%a (turn pax |=(a=@ta `json`[%s a]))]]
       ['name' [%s nom]]
       ['date' [%s dat]]
@@ -373,8 +439,8 @@
   ::
   ++  ta-this  .
   ::
-  ::  +ta-done: 
-  ::    
+  ::  +ta-done:
+  ::
   ::    flop :moves for finalization, since moves are prepended to the list
   ::
   ++  ta-done  (flop moves)
@@ -430,7 +496,7 @@
       =/  perms  .^([dict:clay dict:clay] %cp sap)
       ?:  (allowed-by src.bol +.perms our.bol)
         (ta-remove pax.a)
-      ta-this 
+      ta-this
     ::
         %perms
       ?:  =(src.bol our.bol)  :: XX admin privileges for other users?
@@ -441,7 +507,7 @@
     ::  XX some of this is redunant
     ::
         %collection
-      =/  perms  
+      =/  perms
         .^([dict:clay dict:clay] %cp (weld sap /[dat]/collections-config))
       ?.  (allowed-by src.bol +.perms our.bol)
         ta-this
@@ -457,17 +523,17 @@
             ~
             visible.a
         ==
-      =.  ta-this  
-        %+  ta-write  (weld pax.a /[dat]/collections-config) 
+      =.  ta-this
+        %+  ta-write  (weld pax.a /[dat]/collections-config)
         [%collections-config !>(conf)]
       ::  restrict permissions on config file
-      =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]/collections-config) 
+      =.  ta-this
+        %^  ta-set-permissions  (weld pax.a /[dat]/collections-config)
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ::  open permissions on collection items
-      =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]) 
+      =.  ta-this
+        %^  ta-set-permissions  (weld pax.a /[dat])
         [%black ((set whom:clay) ~)]                   ::  read
         [%black ((set whom:clay) ~)]                   ::  write
       ta-this
@@ -485,22 +551,23 @@
         %-  my
         :~  [%name name.a]
             [%comments ?:(comments.a ~..y ~..n)]
-            [%owner (scot %p src.bol)]
+            [%author (scot %p src.bol)]
+            [%host (scot %p our.bol)]
             [%date-created (snag 0 (flop pax.a))]
             [%last-modified dat]
             [%type type.a]
         ==
-      =.  ta-this  
-        %+  ta-write  (weld pax.a /udon) 
+      =.  ta-this
+        %+  ta-write  (weld pax.a /udon)
         [%udon !>((update-udon-front front content.a))]
       ::  restrict permissions on udon file
-      =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /udon) 
+      =.  ta-this
+        %^  ta-set-permissions  (weld pax.a /udon)
         [%black ((set whom:clay) ~)]                   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ::  open permissions on comments
-      =.  ta-this  
-        %^  ta-set-permissions  pax.a 
+      =.  ta-this
+        %^  ta-set-permissions  pax.a
         [%black ((set whom:clay) ~)]                   ::  read
         [%black ((set whom:clay) ~)]                   ::  write
       ta-this
@@ -512,17 +579,18 @@
       =.  content.a  (crip (weld (trip content.a) "\0a"))
       =/  front=(map knot cord)
         %-  my
-        :~  [%owner (scot %p src.bol)]
+        :~  [%author (scot %p src.bol)]
+            [%host (scot %p our.bol)]
             [%date-created dat]
             [%last-modified dat]
             [%type %comments]
         ==
-      =.  ta-this  
-        %+  ta-write  (weld pax.a /[dat]/udon) 
+      =.  ta-this
+        %+  ta-write  (weld pax.a /[dat]/udon)
         [%udon !>((update-udon-front front content.a))]
       ::  restrict permissions on udon file
-      =.  ta-this  
-        %^  ta-set-permissions  (weld pax.a /[dat]/udon) 
+      =.  ta-this
+        %^  ta-set-permissions  (weld pax.a /[dat]/udon)
         [%black ((set whom:clay) ~)]                   ::  read
         [%white ((set whom:clay) [[& src.bol] ~ ~])]   ::  write
       ta-this
@@ -555,10 +623,10 @@
     ::
         %collection
       =.  ta-this
-        %^  ta-hall-json  parent-path  'new collection' 
+        %^  ta-hall-json  parent-path  'new collection'
         (collection-notify pax meta.col.new)
       ::
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       |-
       ?~  items  ta-this
@@ -566,7 +634,7 @@
       $(items t.items)
     ::
         %both
-      =.  ta-this  (ta-hall-create-circle pax description.meta.col.new)
+      =.  ta-this  (ta-hall-create-circle pax name.meta.col.new)
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.new)
       =.  ta-this
       |-
@@ -578,14 +646,18 @@
     ::
         %raw
       =.  ta-this
-        %^  ta-hall-json 
-          parent-path 
-          'new item' 
+        %^  ta-hall-json
+          parent-path
+          'new item'
           (item-notify pax raw.new now.bol byk.bol)
       ?:  ?&  (~(has by meta.raw.new) %comments)
               =('.y' (~(got by meta.raw.new) %comments))
           ==
-        (ta-generate-comments pax)
+        =/  author=(unit @ta)  (~(get by meta.raw.new) %author)
+        =/  author-p=@p
+          ?~  author  our.bol
+          (fall (rush u.author ;~(pfix sig fed:ag)) our.bol)
+        (ta-generate-comments pax author-p)
       ta-this
     ::
     ==
@@ -604,8 +676,8 @@
       (ta-hall-lin parent 'error')
     ::
         %collection
-      =.  ta-this  
-        %^  ta-hall-json  parent  'deleted collection' 
+      =.  ta-this
+        %^  ta-hall-json  parent  'deleted collection'
         (collection-notify pax meta.col.old)
       =.  ta-this  (ta-flush-permissions (weld pax /collections-config))
       =/  items=(list [nom=@ta =item])  ~(tap by data.col.old)
@@ -625,15 +697,15 @@
     ::
         %raw
       =.  ta-this  (ta-flush-permissions pax)
-      %^  ta-hall-json 
-        parent 
-        'deleted item' 
+      %^  ta-hall-json
+        parent
+        'deleted item'
         (item-notify pax raw.old now.bol byk.bol)
     ::
     ==
   ::
   ::
-  :: 
+  ::
   ++  ta-update-item
     ::  always make sure removals happen first and insertions happen last
     ::  because removals flush permissions and insertions set them
@@ -713,17 +785,20 @@
     ::
     =?  ta-this  !=(data.old data.new)
       =/  parent-path  (scag (dec (lent pax)) pax)
-      %^  ta-hall-json 
-        parent-path 
-        'edited item' 
+      %^  ta-hall-json
+        parent-path
+        'edited item'
         (item-notify pax new now.bol byk.bol)
     ::
     =?  ta-this
       ?&  =('.y' (fall (~(get by meta.new) %comments) '.n'))
           =('.n' (fall (~(get by meta.old) %comments) '.n'))
       ==
-      ::  create comments
-      (ta-generate-comments pax)
+      =/  author=(unit @ta)  (~(get by meta.new) %author)
+      =/  author-p=@p
+        ?~  author  our.bol
+        (fall (rush u.author ;~(pfix sig fed:ag)) our.bol)
+      (ta-generate-comments pax author-p)
     ::
     =?  ta-this
       ?&  =('.n' (fall (~(get by meta.new) %comments) '.n'))
@@ -800,7 +875,7 @@
   ::
   ++  ta-generate-comments
     ~/  %coll-ta-generate-comments
-    |=  pax=path
+    |=  [pax=path author=ship]
     ^+  ta-this
     =/  sup=path  [%collections-config (flop pax)]
     =/  bek  byk.bol(r [%da now.bol])
@@ -810,7 +885,7 @@
       :*  [bek sup]
           'comments'
           'comments'
-          our.bol
+          author
           dat
           dat
           %comments
@@ -830,7 +905,7 @@
     =/  bek  byk.bol(r [%da now.bol])
     =.  pax  (en-beam:format bek (flop pax))
     %+  ta-emit  ost.bol
-    [%info (weld /ta-write pax) our.bol (foal pax cay)]
+    [%info (weld /ta-write pax) (foal pax cay)]
   ::
   ++  ta-remove
     =,  space:userlib
@@ -840,7 +915,7 @@
     =.  pax  (en-beam:format bek (flop pax))
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%info (weld /ta-remove pax) our.bol (fray pax)]
+    [%info (weld /ta-remove pax) (fray pax)]
   ::
   ::  permissions
   ::
@@ -849,14 +924,14 @@
     |=  [pax=path r=rule:clay w=rule:clay]
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw `r `w]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw `r `w]]
   ::
   ++  ta-flush-permissions
     ~/  %coll-ta-flush-permissions
     |=  pax=path
     ^+  ta-this
     %+  ta-emit  ost.bol
-    [%perm (weld /perms pax) our.bol q.byk.bol pax [%rw ~ ~]]
+    [%perm (weld /perms pax) q.byk.bol pax [%rw ~ ~]]
   ::
   ::  hall
   ::
@@ -880,17 +955,21 @@
   ::
   ++  ta-hall-create-circle
     ~/  %coll-ta-hall-create-circle
-    |=  [pax=path description=@t]
+    |=  [pax=path name=@t]
     ^+  ta-this
     =/  circ=circle:hall  (path-to-circle pax our.bol)
     =/  parent=circle:hall
       ?:  =(nom.circ %c)
         [our.bol %inbox]
       (path-to-circle (scag (dec (lent pax)) pax) our.bol)
-    %-  ta-hall-actions
-    :~  [%create nom.circ description %journal]  
-        [%source nom.parent & (sy `source:hall`[circ ~] ~)]
+    =/  acts=(list action:hall)
+    :~  [%source nom.parent & (sy `source:hall`[circ ~] ~)]
+        [%create nom.circ name %journal]
     ==
+    ::  XX should we also source comment circles?
+    =?  acts  =(nom.parent %c)
+      [[%source %inbox & (sy `source:hall`[circ ~] ~)] acts]
+    (ta-hall-actions (flop acts))
   ::
   ++  ta-hall-lin
     ~/  %coll-ta-hall-lin

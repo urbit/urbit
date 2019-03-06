@@ -2,9 +2,8 @@
 ::::  /hoon/drum/hood/lib                               ::  ::
   ::                                                    ::  ::
 /?    310                                               ::  version
-/-    sole, hall
+/-    *sole, hall
 /+    sole
-=,    ^sole
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -100,12 +99,12 @@
   ^-  part
   :*  %drum
       %2
-      ~                                                 ::  sys
-      (deft-fish our)                                   ::  eel
-      (deft-apes our)                                   ::  ray
-      ~                                                 ::  fur
-      ~                                                 ::  bin
-  ==                                                    ::
+      sys=~
+      eel=(deft-fish our)
+      ray=(deft-apes our)
+      fur=~
+      bin=~
+  ==
 ::
 ::
 ++  en-gill                                           ::  gill to wire
@@ -246,7 +245,9 @@
 ::
 ++  se-adit                                           ::  update servers
   ^+  .
-  %+  roll  ~(tap in ray)
+  ::  ensure dojo connects after talk
+  =*  dojo-on-top  aor
+  %+  roll  (sort ~(tap in ray) dojo-on-top)
   =<  .(con +>)
   |:  $:{wel/well:gall con/_..se-adit}  ^+  con
   =.  +>.$  con

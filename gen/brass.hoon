@@ -2,6 +2,7 @@
 ::::  /hoon/brass/gen
   ::
 /?    310
+/+  pill
 ::
 ::::
   !:
@@ -73,7 +74,7 @@
               state-gate
             %=  $
               main-sequence  +.main-sequence
-              state-gate     .*(state-gate(+< -.main-sequence) -.state-gate)
+              state-gate  .*(state-gate [%9 2 %10 [6 %1 -.main-sequence] %0 1])
             ==
 ::
 ::  boot-two: startup formula
@@ -118,11 +119,11 @@
         ::
         ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
         =+  ^=  compiler-tool
-            .*(compiler-gate(+< [%noun compiler-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [%noun compiler-source]] %0 1])
         ::
         ::  switch to the second-generation compiler.  we want to be
         ::  able to generate matching reflection nouns even if the
-        ::  language changes -- the first-generation formula will 
+        ::  language changes -- the first-generation formula will
         ::  generate last-generation spans for `!>`, etc.
         ::
         ~>  %slog.[0 leaf+"1-d"]
@@ -136,13 +137,13 @@
         ::
         ~>  %slog.[0 leaf+"1-e"]
         =+  ^=  kernel-span
-            -:.*(compiler-gate(+< [-.compiler-tool '+>']) -.compiler-gate)
+            -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
         ::
         ::  compile the arvo source against the kernel core.
         ::
         ~>  %slog.[0 leaf+"1-f"]
         =+  ^=  kernel-tool
-            .*(compiler-gate(+< [kernel-span arvo-source]) -.compiler-gate)
+            .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo-source]] %0 1])
         ::
         ::  create the arvo kernel, whose subject is the kernel core.
         ::
@@ -159,15 +160,15 @@
 ::
 ::  compiler-twig: compiler as hoon expression
 ::
-~&  %metal-parsing
+~&  %brass-parsing
 =+  compiler-twig=(ream compiler-source)
-~&  %metal-parsed
+~&  %brass-parsed
 ::
 ::  compiler-formula: compiler as nock formula
 ::
-~&  %metal-compiling
+~&  %brass-compiling
 =+  compiler-formula=q:(~(mint ut %noun) %noun compiler-twig)
-~&  %metal-compiled
+~&  %brass-compiled
 ::
 ::  arvo-source: hoon source file producing arvo kernel, `sys/arvo`
 ::
@@ -182,113 +183,8 @@
         compiler-source
         arvo-source
     ==
+::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
 ::
-::  module-ova: vane load operations.
-::
-=+  ^=  module-ova  ^-  (list ovum)
-    |^  :~  ::
-            ::  sys/zuse: standard library
-            ::
-            (vent %$ /zuse)
-            ::
-            ::  sys/vane/ames: network
-            ::
-            (vent %a /vane/ames)
-            ::
-            ::  sys/vane/behn: timer
-            ::
-            (vent %b /vane/behn)
-            ::
-            ::  sys/vane/clay: revision control
-            ::
-            (vent %c /vane/clay)
-            ::
-            ::  sys/vane/dill: console
-            ::
-            (vent %d /vane/dill)
-            ::
-            ::  sys/vane/eyre: web
-            ::
-            (vent %e /vane/eyre)
-            ::
-            ::  sys/vane/ford: build
-            ::
-            (vent %f /vane/ford)
-            ::
-            ::  sys/vane/gall: applications
-            ::
-            (vent %g /vane/gall)
-            ::
-            ::  sys/vane/jael: security
-            ::
-            (vent %j /vane/jael)
-        ==
-    ::
-    ++  vent
-      |=  {abr/term den/path}
-      =+  pax=(weld sys den)
-      =+  txt=.^(@ %cx (welp pax /hoon))
-      `ovum`[[%vane den] [%veer abr pax txt]]
-    --
-::
-::  file-ovum: userspace filesystem load
-::
-=+  ^=  file-ovum  ^-  ovum
-    ::
-    ::    /app    %gall applications
-    ::    /gen    :dojo generators
-    ::    /lib    %ford libraries
-    ::    /mar    %ford marks
-    ::    /sur    %ford structures
-    ::    /ren    %ford renderers
-    ::    /web    %eyre web content
-    ::    /sys    system files
-    ::    /neo    new system files
-    ::
-    %.  [/app /gen /lib /mar /neo /ren /sec /sur /sys /web ~]
-    |=  ::  sal: all spurs to load from
-        ::
-        sal/(list spur)
-    ^-  ovum
-    ::
-    ::  hav: all user files 
-    ::  
-    =;  hav  ~&  user-files+(lent hav)
-             [[%$ %sync ~] [%into %$ & hav]]
-    =|  hav/mode:clay
-    |-  ^+  hav
-    ?~  sal  ~
-    =.  hav  $(sal t.sal)
-    ::
-    ::  tyl: spur 
-    ::
-    =/  tyl  i.sal
-    |-  ^+  hav
-    ::
-    ::  pax: full path at `tyl`
-    ::  lon: directory at `tyl`
-    ::
-    =/  pax  (en-beam:format bec tyl)
-    =/  lon  .^(arch %cy pax)
-    =?  hav  ?=(^ fil.lon)  
-        ?.  ?=({$hoon *} tyl)
-          ::
-          ::  install only hoon files for now
-          ::
-          hav
-        ::
-        ::  cot: file as plain-text octet-stream
-        ::
-        =;  cot  [[(flop `path`tyl) `[/text/plain cot]] hav]
-        ^-  octs
-        ?-    tyl  
-            {$hoon *}
-          =/  dat  .^(@t %cx pax)
-          [(met 3 dat) dat]
-        ==
-    =/  all  ~(tap by dir.lon)
-    |-  ^-  mode:clay
-    ?~  all  hav
-    $(all t.all, hav ^$(tyl [p.i.all tyl]))
-::
-[boot-ova module-ova file-ovum]
+:+  boot-ova
+  (module-ova:pill sys)
+[(file-ovum:pill (en-beam:format bec /)) ~]

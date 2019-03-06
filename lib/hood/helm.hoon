@@ -3,7 +3,7 @@
   ::                                                    ::  ::
 /?    310                                               ::  version
 /-    sole, hall
-[. sole]
+/+    pill
 ::                                                      ::  ::
 ::::                                                    ::  ::
   ::                                                    ::  ::
@@ -13,8 +13,9 @@
   $:  hoc/(map bone session)                            ::  consoles
   ==                                                    ::
 ++  session                                             ::
-  $:  say/sole-share                                    ::  console state
-      mud/(unit (sole-dialog @ud))                      ::  console dialog
+  $:  say/sole-share:sole                               ::  console state
+      mud/(unit (sole-dialog:sole @ud))                 ::  console dialog
+      mass-timer/{way/wire nex/@da tim/@dr}
   ==                                                    ::
 ::                                                      ::  ::
 ::::                                                    ::  ::
@@ -36,12 +37,15 @@
 =+  sez=(fall (~(get by hoc) ost) $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
-      $%  {$conf wire dock $load ship term}             ::
+      $%  [%bonk wire ~]                                ::
+          {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
           [%mint wire our=ship p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
+          {$rest wire @da}                              ::
+          {$wait wire @da}                              ::
       ==                                                ::
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
@@ -93,15 +97,39 @@
   |=  ~  =<  abet
   (emit %flog /heft %crud %hax-heft ~)
 ::
+++  poke-automass
+  |=  recur=@dr
+  =.  mass-timer.sez
+    [/helm/automass (add now recur) recur]
+  abet:(emit %wait way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-cancel-automass
+  |=  ~
+  abet:(emit %rest way.mass-timer.sez nex.mass-timer.sez)
+::
+++  poke-bonk
+  |=  ~
+  ~&  .^((unit @da) %a /(scot %p our)/time/(scot %da now)/(scot %p our))
+  %-  %-  slog  :_  ~  .^(tank %b /(scot %p our)/timers/(scot %da now))
+  abet:(emit %bonk /bonk ~)
+::
+++  take-wake-automass
+  |=  [way=wire ~]
+  =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
+  =<  abet
+  %-  emil
+  :~  [%flog /heft %crud %hax-heft ~]
+      [%wait way.mass-timer.sez nex.mass-timer.sez]
+  ==
+::
 ++  poke-send-hi
   |=  {her/ship mes/(unit tape)}  =<  abet
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
 ::
 ++  poke-send-ask
-  |=  mel/cord  =<  abet
-  %^  emit  %poke  /helm/ask/(scot %p ~socden-malzod)
-  [[~socden-malzod %ask] %ask-mail mel]
+  |=  mel/cord
+  abet
 ::
 ++  poke-serve
   |=  top/?(desk beam)  =<  abet
@@ -155,55 +183,23 @@
   =+  way=?:(zus (welp top /sys/[nam]) (welp top /sys/vane/[nam]))
   =+  fil=.^(@ %cx (welp way /hoon))
   [%flog /reload [%veer ?:(=('z' tip) %$ tip) way fil]]
+::  +poke-reset:  send %lyra to initiate kernel upgrade
 ::
-++  poke-reset                                        ::  reset system
-  |=  hood-reset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card)
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
-  :-  [%flog /reset %vega (weld top /hoon) (weld top /arvo)]
-  %+  turn
-    ^-  (list {p/@tas q/path})
-    :~  [%$ /zuse]
-        [%a /vane/ames]
-        [%b /vane/behn]
-        [%c /vane/clay]
-        [%d /vane/dill]
-        [%e /vane/eyre]
-        [%f /vane/ford]
-        [%g /vane/gall]
-        [%j /vane/jael]
-    ==
-  |=  {p/@tas q/path}
-  =+  way=`path`(welp top q)
-  =+  txt=.^(@ %cx (welp way /hoon))
-  [%flog /reset %veer p way txt]
+::    And reinstall %zuse and the vanes with %veer.
+::    Trigger with |reset.
 ::
-++  poke-meset                                        ::  reset system (new)
-  |=  hood-reset  =<  abet
-  %-  emil
-  %-  flop  ^-  (list card)
-  =+  top=`path`/(scot %p our)/home/(scot %da now)/sys
-  =+  hun=.^(@ %cx (welp top /hoon/hoon))
-  =+  arv=.^(@ %cx (welp top /arvo/hoon))
-  :-  [%flog /reset [%velo `@t`hun `@t`arv]]
-  :-  =+  way=(weld top `path`/zuse)
-      [%flog /reset %veer %$ way .^(@ %cx (welp way /hoon))]
+++  poke-reset
+  |=  hood-reset
+  =<  abet
+  %-  emil  %-  flop
+  ^-  (list card)
+  =/  top=path  /(scot %p our)/home/(scot %da now)/sys
+  =/  hun  .^(@ %cx (welp top /hoon/hoon))
+  =/  arv  .^(@ %cx (welp top /arvo/hoon))
+  :-  [%flog /reset [%lyra `@t`hun `@t`arv]]
   %+  turn
-    ^-  (list {p/@tas q/@tas})
-    :~  [%a %ames]
-        [%b %behn]
-        [%c %clay]
-        [%d %dill]
-        [%e %eyre]
-        [%f %ford]
-        [%g %gall]
-        [%j %jael]
-    ==
-  |=  {p/@tas q/@tas}
-  =+  way=`path`(welp top /vane/[q])
-  =+  txt=.^(@ %cx (welp way /hoon))
-  [%flog /reset %veer p way txt]
+    (module-ova:pill top)
+  |=(a=[wire flog:dill] [%flog a])
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet

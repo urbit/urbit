@@ -1,13 +1,14 @@
 ::
 ::::  /hoon/sole/sur
   ::
-=>  |%
+^?
+|%
 ++  sole-action                                         ::  sole to app
   $%  ::  {$abo ~}                                      ::  reset interaction
       {$det sole-change}                                ::  command line edit
       {$ret ~}                                         ::  submit and clear
       {$clr ~}                                         ::  exit context
-  ==                                                    :: 
+  ==                                                    ::
 ++  sole-buffer  (list @c)                              ::  command state
 ++  sole-change                                         ::  network change
   $:  ler/sole-clock                                    ::  destination clock
@@ -41,7 +42,7 @@
   ==                                                    ::
 ++  sole-command                                        ::  command state
   $:  pos/@ud                                           ::  cursor position
-      say/sole-share                                    ::  cursor 
+      say/sole-share                                    ::  cursor
   ==                                                    ::
 ++  sole-prompt                                         ::  prompt definition
   $:  vis/?                                             ::  command visible
@@ -66,20 +67,18 @@
 ::                                                      ::
 ++  sole-product                                        ::  success result
   |*  out/$-(* *)                                       ::
-  %+  pair  (list tank)                                 ::  
+  %+  pair  (list tank)                                 ::
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
 ++  sole-request                                         ::  scraper result
   |*  out/$-(* *)                                       ::  output structure
-  %+  pair  (list tank)                                 ::  
+  %+  pair  (list tank)                                 ::
   %+  each  (unit out)                                  ::  ~ is abort
   %^    trel                                            ::  fetch and continue
       (unit knot)
     hiss:eyre
   $-(httr:eyre (sole-request out))
---
-|%
 ::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun

@@ -16,8 +16,8 @@
   ::
 |%
 ++  data  $%({$json json} {$mime mime})
-++  card  $%  {$build wire @p ? schematic:ford}
-              {$info wire @p toro:clay}
+++  card  $%  {$build wire ? schematic:ford}
+              {$info wire toro:clay}
           ==
 --
 ::
@@ -34,7 +34,7 @@
   =+  ext=%md
   ?~  (file (en-beam beak-now [ext sup]))
     ~|(not-found+[ext `path`(flop sup)] !!)
-  =-  abet:(emit %info write+~ our -)
+  =-  abet:(emit %info write+~ -)
   (fray (en-beam beak-now [ext sup]))
 ::
 ++  poke-tree
@@ -57,7 +57,7 @@
     =+  .^(path %e /(scot %p our)/serv/(scot %da now))
     ?>(?=({@tas @tas *} -) -)
   =;  sob/soba:clay
-    ?~(sob abet abet:(emit %info write+~ our `toro:clay`[i.t.sev %& sob]))
+    ?~(sob abet abet:(emit %info write+~ `toro:clay`[i.t.sev %& sob]))
   =+  pax=`path`/web/plan
   =+  paf=(en-beam beak-now (flop pax))
   ?~  [fil:.^(arch %cy paf)]
@@ -134,7 +134,6 @@
   %-  emit  :*
     %build
     write+pax
-    our
     live=%.n                ::  XX defer %nice
     ^-  schematic:ford   ::  SYNTAX ERROR AT START OF LINE?
     =/  =beak  beak-now
@@ -157,7 +156,7 @@
   ::
   =/  =cage  (result-to-cage:ford build-result)
   ::
-  =-  abet:(emit %info write+~ our -)
+  =-  abet:(emit %info write+~ -)
   ::
   (foal :(welp (en-beam beak-now ~) pax /[-.cage]) cage)
 --

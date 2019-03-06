@@ -6,7 +6,9 @@
 /+  landscape
 /=  wrapped
   /^  $-(inr=manx out=manx)
-  /,  /web/pages  /~  |=(manx +<)
-      /           /~  landscape
+  /,  /web/collections  /~  landscape
+      /web/landscape    /~  landscape
+      /web/pages        /~  |=(manx +<)
+      /                 /~  landscape
   ==
 wrapped

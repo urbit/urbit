@@ -8,7 +8,7 @@
 --
 ^-  manx
 ;div
-  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-owner "{(scow %p p.bem.gas)}");
+  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-author "{(scow %p p.bem.gas)}");
   ;div.container
     ;div.row
       ;div.flex-col-2;
@@ -20,7 +20,7 @@
       ==
     ==
     ;div.row.mt-9
-      ;div.flex-offset-special.flex-col-x
+      ;div.flex-offset-2.flex-col-x
         ;h2.text-500: Meta
       ==
     ==

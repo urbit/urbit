@@ -4,9 +4,9 @@
 /?  309
 /+  collections
 ::
-::  collections: 
-::    
-::    get collection-config file at rendered path, 
+::  collections:
+::
+::    get collection-config file at rendered path,
 ::    and all collections-item files  the subpath.
 ::    outputs a +collection defined in /lib/collections/hoon
 ::
@@ -14,7 +14,7 @@
 ::
 /=  collection
   /^  collection:collections
-  /;  |=  [a=config:collections b=(map knot item:collections) ~] 
+  /;  |=  [a=config:collections b=(map knot item:collections) ~]
           [a b]
       /.  /collections-config/
           /_  /collections-item/

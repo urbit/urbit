@@ -1,230 +1,221 @@
-::  ::  %behn, just a timer
+::  %behn, just a timer
+!:
 !?  164
-::::
+::
 =,  behn
-|=  pit/vase
-=>  =~
-|%
-+*  sqeu  [a b]                                         ::  binary skew queno
-          $~  [0 *a *b ~]                               ::
-          $:  r/@u                                      ::  rank+depth
-              k/a                                       ::  priority
-              n/b                                       ::  value
-              c/(broq a b)                              ::  children
-          ==                                            ::
-+*  broq  [a b]                                         ::  brodal skew qeu
-          (list (sqeu a b))                             ::
-+$  move  {p/duct q/(wind note gift:able)}              ::  local move
-+$  note  ~                                             ::  out request $->
-+$  sign  ~                                             ::  in result $<-
-+$  clok  (broq @da duct)                               ::  stored timers
-+$  coke  $~  [%0 ~ ~]
-          $:  $0                                        ::  all state
-              tym/{p/clok q/clok}                       ::  positive+negative
-          ==                                            ::
---
+|=  pit=vase
+=>  |%
+    +$  move  [p=duct q=(wind note:able gift:able)]
+    +$  sign  ~
+    ::
+    +$  behn-state
+      $:  timers=(list timer)
+          unix-duct=duct
+          next-wake=(unit @da)
+      ==
+    ::
+    +$  timer  [date=@da =duct]
+    --
 ::
-|%
-++  raze
-  |=  tym/{p/clok q/clok}
-  ^+  tym
-  ?~  p.tym  tym
-  ?~  q.tym  tym
-  ?:  (gth p:~(get up p.tym) p:~(get up q.tym))         ::  killed nonexisting
-    ~&  [%snooze-lost del=p:~(get up q.tym) top=p:~(get up p.tym)]
-    $(q.tym ~(pop up q.tym))
-  ?:  =(~(get up p.tym) ~(get up q.tym))
-    $(tym [~(pop up p.tym) ~(pop up q.tym)])
-  tym
-::
-++  up                                                  ::  priority queue
-  =+  [key=@da val=duct]
-  =+  cmp=lte                                           ::  lte=min, gte=max
-  =>  |%
-      ++  link
-        |=  {p/(sqeu key val) q/(sqeu key val)}         ::  link eq rank
-        ^-  (sqeu key val)
-        ?>  =(r.p r.q)
-          ?:  (cmp k.p k.q)
-            [r=+(r.p) k=k.p n=n.p c=[i=q t=c.p]]
-          [r=+(r.q) k=k.q n=n.q c=[i=p t=c.q]]
-      ::
-      ++  sink                                          ::  skew link
-        |=  {p/(sqeu key val) q/(sqeu key val) r/(sqeu key val)}
-        ^-  (sqeu key val)
-        ?:  &((cmp k.q k.p) (cmp k.q k.r))
-          [r=+(r.q) k=k.q n=n.q c=[i=p t=[i=r t=c.q]]]
-        ?:  &((cmp k.r k.p) (cmp k.r k.q))
-          [r=+(r.r) k=k.r n=n.r c=[i=p t=[i=q t=c.r]]]
-        [r=+(r.q) k=k.p n=n.p c=[i=q t=[i=r t=~]]]
-      ::
-      ++  sert                                          ::  internal ins op
-        |=  {p/(sqeu key val) q/(broq key val)}
-        ^-  (broq key val)
-        ?~  q  [p ~]
-        ?>  (lte r.p r.i.q)
-        ?:  (lth r.p r.i.q)
-          [i=p t=q]
-        $(p (link p i.q), q t.q)
-      ::
-      ++  uniq                                          ::  remove init dup
-        |=  q/(broq key val)
-        ?~  q  ~
-        (sert i.q t.q)
-      ::
-      ++  meek                                          ::  unique meld
-        |=  {p/(broq key val) q/(broq key val)}
-        ^-  (broq key val)
-        ?~  p  q
-        ?~  q  p
-        ?:  (lth r.i.p r.i.q)
-          [i.p $(p t.p)]
-        ?:  (lth r.i.q r.i.p)
-          [i.q $(q t.q)]
-        (sert (link i.p i.q) $(p t.p, q t.q))
-      ::
-      ++  mini                                           ::  getmin
-        |=  q/(broq key val)
-        ^-  p/{(sqeu key val) (broq key val)}
-        ?~  q  ~|(%fatal-mini-empty !!)
-        ?~  t.q  [i=i.q t=~]
-        =+  [l r]=$(q t.q)
-        ?:  (cmp k.i.q k.l)
-          [i.q t.q]
-        [l [i.q r]]
-      ::
-      ++  spit                                          ::  split
-        |=  {p/(broq key val) q/(list {k/key n/val}) r/(broq key val)}
-        ^-  {t/(broq key val) x/(list {k/key n/val})}
-        ?~  r
-          [t=p x=q]
-        ?:  =(0 r.i.r)
-          $(q [[k=k.i.r n=n.i.r] q], r t.r)
-        $(p [i.r p], r t.r)
-      --
-  |_  a/(broq key val)                                  ::  public interface
-  ++  put                                               ::  insert element
-    |=  {k/key n/val}
-    ^+  a
-    ?~  a  [i=[r=0 k=k n=n c=~] t=~]
-    ?~  t.a  [i=[r=0 k=k n=n c=~] t=a]
-    ?:  =(r.i.a r.i.t.a)
-      [i=(sink [r=0 k=k n=n c=~] i.a i.t.a) t=t.t.a]
-    [i=[r=0 k=k n=n c=~] t=a]
+=>  |%
+++  per-event
+  =|  moves=(list move)
+  |=  [[our=ship now=@da =duct] state=behn-state]
   ::
-  ++  pop                                               ::  remove top
-    ^+  a
-    =+  ?~  a  ~|(%empty-broq-pop !!)
-        [l r]=(mini a)
-    =+  [t x]=(spit ~ ~ c.l)
-    =.  a  r
-    =.  a  (uni t)
-    (gas x)
+  |%
+  ::  %entry-points
   ::
-  ++  gas
-    |=  b/(list {k/key n/val})
-    ^+  a
-    (roll b |=({{k/key n/val} q/_a} (put(a q) k n)))
+  ::  +born: urbit restarted; refresh :next-wake and store wakeup timer duct
   ::
-  ++  tap
-    ^-  (list {k/key n/val})
-    ?~  a  ~
-    [get tap(a pop)]
+  ++  born  set-unix-wake(next-wake.state ~, unix-duct.state duct)
+  ::  +crud: error report; hand off to %dill to be printed
   ::
-  ++  get                                               ::  retrieve top
-    ^-  {p/key q/val}
-    ?~  a  ~|(%empty-broq-peek !!)
-    ?~  t.a  [k n]:i.a
-    =+  m=get(a t.a)
-    ?.((cmp k.i.a p.m) m [k n]:i.a)
+  ++  crud
+    |=  [p=@tas q=tang]
+    ^+  [moves state]
+    [[duct %slip %d %flog %crud p q]~ state]
+  ::  +rest: cancel the timer at :date, then adjust unix wakeup
+  ::  +wait: set a new timer at :date, then adjust unix wakeup
   ::
-  ++  uni                                               ::  merge
-    |=  q/(broq key val)
-    ^+  a
-    (meek (uniq a) (uniq q))
+  ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
+  ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
+  ::  +vega: learn of a kernel upgrade
+  ::
+  ++  vega  [moves state]
+  ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
+  ::
+  ++  wake
+    ^+  [moves state]
+    ::
+    ?~  timers.state  ~|(%behn-wake-no-timer !!)
+    ::  if unix woke us too early, retry by resetting the unix wakeup timer
+    ::
+    ?:  (gth date.i.timers.state now)
+      ~?  debug=%.n  [%behn-wake-too-soon `@dr`(sub date.i.timers.state now)]
+      set-unix-wake(next-wake.state ~)
+    ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
+    ::
+    =<  set-unix-wake
+    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state)
+  ::  +wegh: produce memory usage report for |mass
+  ::
+  ++  wegh
+    ^+  [moves state]
+    :_  state  :_  ~
+    :^  duct  %give  %mass
+    :+  %behn  %|
+    :~  timers+&+timers.state
+        dot+&+state
+    ==
+  ::  %utilities
+  ::
+  ::+|
+  ::
+  ++  event-core  .
+  ::  +emit-vane-wake: produce a move to wake a vane; assumes no prior moves
+  ::
+  ++  emit-vane-wake  |=(=^duct event-core(moves [duct %give %wake ~]~))
+  ::  +emit-doze: set new unix wakeup timer in state and emit move to unix
+  ::
+  ::    We prepend the unix %doze event so that it is handled first. Arvo must
+  ::    handle this first because the moves %behn emits will get handled in
+  ::    depth-first order. If we're handling a %wake which causes a move to a
+  ::    different vane and a %doze event to send to unix, Arvo needs to process
+  ::    the %doze first because otherwise if the move to the other vane calls
+  ::    back into %behn and emits a second %doze, the second %doze would be
+  ::    handled by unix first which is incorrect.
+  ::
+  ++  emit-doze
+    |=  =date=(unit @da)
+    ^+  event-core
+    ::  make sure we don't try to wake up in the past
+    ::
+    =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
+    ::
+    %_  event-core
+      next-wake.state  date-unit
+      moves            [[unix-duct.state %give %doze date-unit] moves]
+    ==
+  ::  +set-unix-wake: set or unset next unix wakeup timer based on :i.timers
+  ::
+  ++  set-unix-wake
+    =<  [moves state]
+    ^+  event-core
+    ::
+    =*  next-wake  next-wake.state
+    =*  timers     timers.state
+    ::  if no timers, cancel existing wakeup timer or no-op
+    ::
+    ?~  timers
+      ?~  next-wake
+        event-core
+      (emit-doze ~)
+    ::  if :next-wake is in the past or not soon enough, reset it
+    ::
+    ?^  next-wake
+      ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
+        event-core
+      (emit-doze `date.i.timers)
+    ::  there was no unix wakeup timer; set one
+    ::
+    (emit-doze `date.i.timers)
+  ::  +set-timer: set a timer, maintaining the sort order of the :timers list
+  ::
+  ++  set-timer
+    =*  timers  timers.state
+    |=  t=timer
+    ^+  timers
+    ::
+    ?~  timers
+      ~[t]
+    ::  ignore duplicates
+    ::
+    ?:  =(t i.timers)
+      ~?  debug=%.n  [%behn-set-duplicate t]
+      timers
+    ::  timers at the same date form a fifo queue
+    ::
+    ?:  (lth date.t date.i.timers)
+      [t timers]
+    ::
+    [i.timers $(timers t.timers)]
+  ::  +unset-timer: cancel a timer; if it already expired, no-op
+  ::
+  ++  unset-timer
+    =*  timers  timers.state
+    |=  t=timer
+    ^+  timers
+    ::  if we don't have this timer, no-op
+    ::
+    ?~  timers
+      ~?  debug=%.n  [%behn-unset-missing t]
+      ~
+    ?:  =(i.timers t)
+      t.timers
+    ::
+    [i.timers $(timers t.timers)]
   --
 --
-.  ==
-=|  $:  $0                                              ::
-        tym/{p/clok q/clok}                             ::  positive+negative
-    ==                                                  ::
-|=  {now/@da eny/@ ski/sley}                            ::  current invocation
-^?
-|%                                                      ::  poke+peek pattern
-++  call                                                ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
-      ==
-  ^-  {p/(list move) q/_..^$}
-  =>  %=    .                                           ::  XX temporary
-          q.hic
-        ^-  task:able
-        ?:  ?=($soft -.q.hic)
-          ::  ~&  [%behn-call-soft (,@tas `*`-.p.q.hic)]
-          ((hard task:able) p.q.hic)
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  q.hic
-        ~&  [%behn-call-flub (@tas `*`-.q.hic)]
-        ((hard task:able) q.hic)
-      ==
-  =^  mof  tym
-    ?-    -.q.hic
-        $rest
-      =.  q.tym  (~(put up q.tym) p.q.hic hen)
-      =.  tym  (raze tym)
-      [~ tym]
-    ::
-        $wait
-      =.  p.tym  (~(put up p.tym) p.q.hic hen)
-      =.  tym  (raze tym)
-      [~ tym]
-    ::
-        $wake
-      |-  ^+  [*(list move) tym]
-      =.  tym  (raze tym)
-      ?:  =([~ ~] tym)  [~ tym]                         ::  XX  TMI
-      ?:  =(~ p.tym)
-        ~&  %weird-wake  [~ tym]
-      =+  nex=~(get up p.tym)
-      ?:  (lte now p.nex)  [~ tym]
-      =^  mof  tym  $(p.tym ~(pop up p.tym))
-      [[`move`[q.nex %give %wake ~] mof] tym]
-    ::
-        $wegh
-      :_  tym  :_  ~
-      :^  hen  %give  %mass
-      :-  %behn
-      :-  %|
-      :~  tym+[%& tym]
-      ==
-    ==
-  [mof ..^$]
 ::
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ?~  p.tym  ~
-  (some p:[~(get up p.tym)])
+=|  behn-state
+=*  state  -
+|=  [our=ship now=@da eny=@uvJ ski=sley]
+=*  behn-gate  .
+^?
+|%
+::  +call: handle a +task:able:behn request
+::
+++  call
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
+      ==
+  ^-  [(list move) _behn-gate]
+  ::
+  =/  =task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  =/  event-core  (per-event [our now hen] state)
+  ::
+  =^  moves  state
+    ?-  -.task
+      %born  born:event-core
+      %crud  (crud:event-core [p q]:task)
+      %rest  (rest:event-core date=p.task)
+      %vega  vega:event-core
+      %wait  (wait:event-core date=p.task)
+      %wake  wake:event-core
+      %wegh  wegh:event-core
+    ==
+  [moves behn-gate]
+::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |=  old/{$0 tym/{clok clok}}
-  ^+  ..^$
-  ..^$(tym tym.old)
+  |=  old=*
+  ^+  behn-gate
+  ::
+  ~|  %behn-load-fail
+  behn-gate(state (behn-state old))
+::  +scry: view timer state
+::
+::    TODO: not referentially transparent w.r.t. elapsed timers,
+::    which might or might not show up in the product
 ::
 ++  scry
-  |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
   ^-  (unit (unit cage))
-  ?.  ?=(%& -.why)  ~
-  =*  who  p.why
-  =+  ^=  liz
-      |-  ^-  (list {@da duct})
-      =.  tym  (raze tym)
-      ?~  p.tym  ~
-      [~(get up p.tym) $(p.tym ~(pop up p.tym))]
-  [~ ~ %tank !>(>liz<)]
+  ::
+  ?.  ?=(%& -.why)
+    ~
+  [~ ~ %tank !>(>timers<)]
 ::
-++  stay  [%0 tym]
-++  take                                                ::  process move
-  |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+++  stay  state
+++  take
+  |=  [tea=wire hen=duct hin=(hypo sign)]
+  ^-  [(list move) _behn-gate]
+  ~|  %behn-take-not-implemented
   !!
 --
+

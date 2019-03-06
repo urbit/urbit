@@ -3,9 +3,12 @@ node_js:
 - 4
 
 before_install:
-# building vere directly in lieu of a working debian package script
 # pwd: ~/urbit/arvo
-- cd ../
+- cd .travis/
+- bash check-trailing-whitespace.sh
+- cd ../../
+# pwd: ~/urbit
+# building vere directly in lieu of a working debian package script
 - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
 - unzip ninja-linux.zip
 - sudo mv ninja /usr/bin/
@@ -46,12 +49,7 @@ addons:
     - openssl
     - libssl-dev
     - libncurses5-dev
-    - automake
-    - autoconf
-    - make
-    - libtool
-    - g++
-    - re2c
+    - gcc
     - libcurl4-gnutls-dev
     - unzip
     - gdb

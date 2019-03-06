@@ -27,7 +27,7 @@
       ^=  call-args
         :+  duct=~[/info]  type=-:!>(*task:able:clay)
         ^-  task:able:clay
-        :^  %info  ~nul  %home
+        :+  %info  %home
         ^-  nori:clay
         :-  %&
         ^-  soba:clay
@@ -50,7 +50,7 @@
                 :+  %pass  /castifying/~nul/home/~1111.1.1
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+                [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
             !>  i.moves
         ::
           %+  expect-eq
@@ -60,7 +60,7 @@
                 :+  %pass  /diffing/~nul/home/~1111.1.1
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~1111.1.1 [%list ~]]]
+                [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
             !>  i.t.moves
         ::
           ^-  tang
@@ -84,9 +84,6 @@
           ::
           ?.  ?=([%f %build *] note)
             [%leaf "bad move, not a %build: {<move>}"]~
-          ::
-          %+  weld
-            (expect-eq !>(~nul) !>(our.note))
           ::
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
@@ -144,9 +141,6 @@
         ::
         ?.  ?=([%f %build *] note)
           [%leaf "bad move, not a %build: {<move>}"]~
-        ::
-        %+  weld
-          (expect-eq !>(~nul) !>(our.note))
         ::
         %+  weld
           (expect-eq !>(%.n) !>(live.note))
@@ -235,9 +229,6 @@
           [%leaf "bad move, not a %build: {<move>}"]~
         ::
         %+  weld
-          (expect-eq !>(~nul) !>(our.note))
-        ::
-        %+  weld
           (expect-eq !>(%.n) !>(live.note))
         ::
         %-  expect-schematic:test-ford
@@ -315,7 +306,7 @@
       ^=  call-args
         :+  duct=~[/info2]  type=-:!>(*task:able:clay)
         ^-  task:able:clay
-        :^  %info  ~nul  %home
+        :+  %info  %home
         ^-  nori:clay
         :-  %&
         ^-  soba:clay
@@ -359,7 +350,7 @@
       scry=*sley
       ^=  take-args
         :*  wire=/queued-request
-            duct=~[/info2] 
+            duct=~[/info2]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
             [%b %wake ~]
@@ -380,7 +371,7 @@
                 :+  %pass  /castifying/~nul/home/~2222.2.2
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+                [%build live=%.n [%pin ~2222.2.2 [%list ~]]]
             !>  i.moves
         ::
           %+  expect-eq
@@ -390,7 +381,7 @@
                 :+  %pass  /diffing/~nul/home/~2222.2.2
                 ^-  note:clay-gate
                 :-  %f
-                [%build ~nul live=%.n [%pin ~2222.2.2 [%list ~]]]
+                [%build live=%.n [%pin ~2222.2.2 [%list ~]]]
             !>  i.t.moves
         ::
           ^-  tang
@@ -414,9 +405,6 @@
           ::
           ?.  ?=([%f %build *] note)
             [%leaf "bad move, not a %build: {<move>}"]~
-          ::
-          %+  weld
-            (expect-eq !>(~nul) !>(our.note))
           ::
           %+  weld
             (expect-eq !>(%.n) !>(live.note))
@@ -463,7 +451,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate now=now eny=0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (call:clay-core call-args)
   ::
@@ -484,7 +472,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate now=now eny=0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (call:clay-core call-args)
   ::
@@ -502,7 +490,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate now=now eny=0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (take:clay-core take-args)
   ::
@@ -523,7 +511,7 @@
       ==
   ^-  [tang _clay-gate]
   ::
-  =/  clay-core  (clay-gate now=now eny=0xdead.beef scry=scry)
+  =/  clay-core  (clay-gate our=~nul now=now eny=`@`0xdead.beef scry=scry)
   ::
   =^  moves  clay-gate  (take:clay-core take-args)
   ::

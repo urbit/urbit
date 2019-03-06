@@ -81,7 +81,7 @@
     =+  =>  (from-seed:bip32 64^seed)
         (derive-path "m/44'/60'/0'/0/0")
     :+  [public-key private-key]
-      (address-from-prv:ethereum private-key)
+      (address-from-prv:key:ethereum private-key)
     chain-code
   ::
   ++  urbit

@@ -55,7 +55,7 @@
     ++  hood-make                                       ::
       =+  $:{our/@p hed/hood-head}                      ::
       |@  ++  $
-            ?-  hed 
+            ?-  hed
               $drum  (make:hood-drum our)
               $helm  *part:hood-helm
               $kiln  *part:hood-kiln
@@ -141,6 +141,7 @@
 ++  mere-kiln                 (wrap take-mere):from-kiln
 ++  mere-kiln-sync            (wrap take-mere-sync):from-kiln
 ++  wake-kiln-overload        (wrap take-wake-overload):from-kiln
+++  wake-helm-automass        (wrap take-wake-automass):from-helm
 ++  onto-drum                 (wrap take-onto):from-drum
 ++  peer-drum                 (wrap peer):from-drum
 ++  poke-atom                 (wrap poke-atom):from-helm
@@ -166,8 +167,10 @@
 ++  poke-helm-tlon-add-fora   (wrap poke-tlon-add-fora):from-helm
 ++  poke-helm-tlon-add-stream  (wrap poke-tlon-add-stream):from-helm
 ++  poke-helm-tlon-init-stream  (wrap poke-tlon-init-stream):from-helm
+++  poke-helm-automass        (wrap poke-automass):from-helm
+++  poke-helm-cancel-automass  (wrap poke-cancel-automass):from-helm
+++  poke-helm-bonk            (wrap poke-bonk):from-helm
 ++  poke-hood-sync            (wrap poke-sync):from-kiln
-++  poke-hood-init-sync       (wrap poke-init-sync):from-kiln
 ++  poke-kiln-commit          (wrap poke-commit):from-kiln
 ++  poke-kiln-info            (wrap poke-info):from-kiln
 ++  poke-kiln-label           (wrap poke-label):from-kiln

@@ -1,4 +1,4 @@
-::                                                      ::  ::  
+::                                                      ::  ::
 ::::  /app/talk/hoon                                    ::  ::
   ::                                                    ::  ::
 ::
@@ -13,15 +13,12 @@
 ::  since that's the only thing the client ever
 ::  subscribes to.
 ::
-/-    hall-sur=hall, sole-sur=sole                      ::  structures
-/+    hall-lib=hall, sole-lib=sole                      ::  libraries
+/-    sole-sur=sole                                     ::  structures
+/+    *hall, sole-lib=sole                              ::  libraries
 /=    seed  /~  !>(.)
 ::
 ::::
   ::
-=,  hall-sur
-=,  sole-sur
-=,  hall-lib
 =>  ::  #
     ::  #  %arch
     ::  #
@@ -47,7 +44,7 @@
     ++  shell                                           ::  console session
       $:  id/bone                                       ::  identifier
           latest/@ud                                    ::  latest shown msg num
-          say/sole-share                                ::  console state
+          say/sole-share:sole-sur                       ::  console state
           active/audience                               ::  active targets
           settings/(set term)                           ::  frontend settings
           width/@ud                                     ::  display width
@@ -55,7 +52,7 @@
       ==                                                ::
     ++  move  (pair bone card)                          ::  all actions
     ++  lime                                            ::  diff fruit
-      $%  {$sole-effect sole-effect}                    ::
+      $%  {$sole-effect sole-effect:sole-sur}           ::
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$hall-command command}                       ::
@@ -330,7 +327,7 @@
     :_  +>
     ::  seperate our sole-effects from other moves.
     =/  yop
-      |-  ^-  (pair (list move) (list sole-effect))
+      |-  ^-  (pair (list move) (list sole-effect:sole-sur))
       ?~  moves  [~ ~]
       =+  mor=$(moves t.moves)
       ?:  ?&  =(id.cli p.i.moves)
@@ -340,7 +337,7 @@
       [[i.moves p.mor] q.mor]
     ::  flop moves, flop and squash sole-effects into a %mor.
     =+  moz=(flop p.yop)
-    =/  foc/(unit sole-effect)
+    =/  foc/(unit sole-effect:sole-sur)
       ?~  q.yop  ~
       ?~  t.q.yop  `i.q.yop                             ::  single sole-effect
       `[%mor (flop q.yop)]                              ::  more sole-effects
@@ -590,7 +587,7 @@
   ++  ta-sole
     ::  apply sole input
     ::
-    |=  act/sole-action
+    |=  act/sole-action:sole-sur
     ^+  +>
     ?.  =(id.cli ost.bol)
       ~&(%strange-sole !!)
@@ -626,7 +623,7 @@
     ++  sh-fact
       ::  adds a console effect to ++ta's moves.
       ::
-      |=  fec/sole-effect
+      |=  fec/sole-effect:sole-sur
       ^+  +>
       +>(moves [[id.she %diff %sole-effect fec] moves])
     ::
@@ -655,7 +652,7 @@
     ++  sh-sole
       ::  applies sole action.
       ::
-      |=  act/sole-action
+      |=  act/sole-action:sole-sur
       ^+  +>
       ?-  -.act
         $det  (sh-edit +.act)
@@ -669,7 +666,7 @@
       ::  called when typing into the cli prompt.
       ::  applies the change and does sanitizing.
       ::
-      |=  cal/sole-change
+      |=  cal/sole-change:sole-sur
       ^+  +>
       =^  inv  say.she  (~(transceive sole-lib say.she) cal)
       =+  fix=(sh-sane inv buf.say.she)
@@ -991,14 +988,14 @@
       ::  parses cli prompt input using ++sh-read and
       ::  sanitizes when invalid.
       ::
-      |=  {inv/sole-edit buf/(list @c)}
-      ^-  {lit/(list sole-edit) err/(unit @u)}
+      |=  {inv/sole-edit:sole-sur buf/(list @c)}
+      ^-  {lit/(list sole-edit:sole-sur) err/(unit @u)}
       =+  res=(rose (tufa buf) sh-read)
       ?:  ?=(%| -.res)  [[inv]~ `p.res]
       :_  ~
       ?~  p.res  ~
       =+  wok=u.p.res
-      |-  ^-  (list sole-edit)
+      |-  ^-  (list sole-edit:sole-sur)
       ?+  -.wok
         ~
       ::
@@ -1009,11 +1006,11 @@
     ++  sh-slug
       ::  corrects invalid prompt input.
       ::
-      |=  {lit/(list sole-edit) err/(unit @u)}
+      |=  {lit/(list sole-edit:sole-sur) err/(unit @u)}
       ^+  +>
       ?~  lit  +>
       =^  lic  say.she
-          (~(transmit sole-lib say.she) `sole-edit`?~(t.lit i.lit [%mor lit]))
+          (~(transmit sole-lib say.she) `sole-edit:sole-sur`?~(t.lit i.lit [%mor lit]))
       (sh-fact [%mor [%det lic] ?~(err ~ [%err u.err]~)])
     ::
     ++  sh-obey
@@ -1266,7 +1263,7 @@
         =-  (sh-act %phrase - [%inv inv [self nom]]~)
         %-  ~(rep in sis)
         |=  {s/ship a/audience}
-        (~(put in a) [s %inbox])
+        (~(put in a) [s %i])
       ::
       ++  filter
         |=  {nom/name cus/? utf/?}
@@ -1374,7 +1371,7 @@
         ::
         |=  cis/(set circle)  ^+  ..sh-work
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
-        |=  {cir/circle gop/group}  ^-  (unit sole-effect)
+        |=  {cir/circle gop/group}  ^-  (unit sole-effect:sole-sur)
         ?.  |(=(~ cis) (~(has in cis) cir))  ~
         ?:  =(%mailbox sec.con:(fall (~(get by mirrors) cir) *config))  ~
         ?.  (~(has in sources) cir)  ~
@@ -1407,14 +1404,14 @@
         %+  sh-fact  %mor
         %-  ~(rep by binds)
         |=  $:  {gyf/char aus/(set audience)}
-                lis/(list sole-effect)
+                lis/(list sole-effect:sole-sur)
             ==
         %+  weld  lis
-        ^-  (list sole-effect)
+        ^-  (list sole-effect:sole-sur)
         %-  ~(rep in aus)
-        |=  {a/audience l/(list sole-effect)}
+        |=  {a/audience l/(list sole-effect:sole-sur)}
         %+  weld  l
-        ^-  (list sole-effect)
+        ^-  (list sole-effect:sole-sur)
         [%txt [gyf ' ' ~(ar-phat ar a)]]~
       ::
       ++  number
@@ -1466,7 +1463,7 @@
           =-  ~(tap in (~(del in src:-) [cir ~]))
           (fall (~(get by mirrors) cir) *config)
         |=  s/^source
-        ^-  sole-effect
+        ^-  sole-effect:sole-sur
         :-  %txt
         %+  weld  ~(cr-phat cr cir.s)
         %+  roll  (range-to-path ran.s)
@@ -1607,7 +1604,7 @@
         ::
         ::  prints help message
         ::
-        (sh-fact %txt "see http://urbit.org/docs/using/messaging/")
+        (sh-fact %txt "see https://urbit.org/docs/learn/arvo/arvo-internals/messaging/")
       --
     ::
     ++  sh-pact
@@ -2234,7 +2231,7 @@
     ::  produces sole-effect for printing message
     ::  details.
     ::
-    ^-  sole-effect
+    ^-  sole-effect:sole-sur
     ~[%mor [%tan tr-meta] tr-body]
   ::
   ++  tr-rend
@@ -2306,7 +2303,7 @@
     ::  long-form display of message contents, specific
     ::  to each speech type.
     ::
-    |-  ^-  sole-effect
+    |-  ^-  sole-effect:sole-sur
     ?-  -.sep
         $lin
       tan+~[leaf+"{?:(pat.sep "@ " "")}{(trip msg.sep)}"]
@@ -2509,7 +2506,7 @@
 ++  poke-sole-action
   ::  incoming sole action. process it.
   ::
-  |=  act/sole-action
+  |=  act/sole-action:sole-sur
   ta-done:(ta-sole:ta act)
 ::
 ::TODO  for debug purposes. remove eventually.

@@ -1,6 +1,5 @@
 ^-  manx
-
-;div
-  ;div(urb-component "InboxPage");
-  ;input(type "hidden", name "urb-metadata", urb-structure-type "header-inbox");
+;meta(http-equiv "refresh", content "0; url=/~~/landscape");
+;script(type "text/javascript")
+  ; window.location = "/~~/landscape"
 ==

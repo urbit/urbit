@@ -1,6 +1,5 @@
-!:
 ::  clay (4c), revision control
-::
+!:
 ::  This is split in three top-level sections:  structure definitions, main
 ::  logic, and arvo interface.
 ::
@@ -181,7 +180,7 @@
 ::
 ::  Formal vane state.
 ::
-::  --  `fat` is a collection of our domestic ships.
+::  --  `rom` is our domestic state.
 ::  --  `hoy` is a collection of foreign ships where we know something about
 ::      their clay.
 ::  --  `ran` is the object store.
@@ -193,7 +192,7 @@
 ::  --  `tip` is the date of the last write; if now, enqueue incoming requests.
 ::
 ++  raft                                                ::  filesystem
-  $:  fat/(map ship room)                               ::  domestic
+  $:  rom/room                                          ::  domestic
       hoy/(map ship rung)                               ::  foreign
       ran/rang                                          ::  hashes
       mon/(map term beam)                               ::  mount points
@@ -331,19 +330,19 @@
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
   $%  $:  $a                                            ::  to %ames
-  $%  {$want p/sock q/path r/*}                         ::
+  $%  {$want p/ship q/path r/*}                         ::
   ==  ==                                                ::
       $:  $c                                            ::  to %clay
-  $%  {$info p/@p q/@tas r/nori}                        ::  internal edit
-      {$merg p/@p q/@tas r/@p s/@tas t/case u/germ}     ::  merge desks
-      {$warp p/sock q/riff}                             ::
-      {$werp p/ship q/sock r/riff}                      ::
+  $%  {$info q/@tas r/nori}                             ::  internal edit
+      {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
+      {$warp p/ship q/riff}                             ::
+      {$werp p/ship q/ship r/riff}                      ::
   ==  ==                                                ::
       $:  $d                                            ::
   $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
   ==  ==                                                ::
       $:  $f                                            ::
-  $%  [%build our=@p live=? schematic=schematic:ford]      ::
+  $%  [%build live=? schematic=schematic:ford]          ::
   ==  ==
       $:  $b                                            ::
   $%  {$wait p/@da}                                     ::
@@ -389,25 +388,24 @@
 ::
 ::  The state includes:
 ::
+::  --  local urbit `our`
 ::  --  current time `now`
 ::  --  current duct `hen`
-::  --  local urbit `our`
+::  --  all vane state `++raft` (rarely used, except for the object store)
 ::  --  target urbit `her`
 ::  --  target desk `syd`
-::  --  all vane state `++raft` (rarely used, except for the object store)
 ::
 ::  For local desks, `our` == `her` is one of the urbits on our pier.  For
 ::  foreign desks, `her` is the urbit the desk is on and `our` is the local
 ::  urbit that's managing the relationship with the foreign urbit.  Don't mix
 ::  up those two, or there will be wailing and gnashing of teeth.
 ::
-::  While setting up `++de`, we check if the given `her` is a local urbit.  If
-::  so, we pull the room from `fat` in the raft and get the desk information
-::  from `dos` in there.  Otherwise, we get the rung from `hoy` and get the
-::  desk information from `rus` in there.  In either case, we normalize the
-::  desk information to a `++rede`, which is all the desk-specific data that
-::  we utilize in `++de`.  Because it's effectively a part of the `++de`
-::  state, let's look at what we've got:
+::  While setting up `++de`, we check if `our` == `her`. If so, we get
+::  the desk information from `dos.rom`.  Otherwise, we get the rung from
+::  `hoy` and get the desk information from `rus` in there.  In either case,
+::  we normalize the desk information to a `++rede`, which is all the
+::  desk-specific data that we utilize in `++de`.  Because it's effectively
+::  a part of the `++de` state, let's look at what we've got:
 ::
 ::  --  `lim` is the most recent date we're confident we have all the
 ::      information for.  For local desks, this is always `now`.  For foreign
@@ -430,47 +428,44 @@
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 |%
 ++  de                                                  ::  per desk
-  |=  {now/@da hen/duct raft}
-  |=  {{our/@p her/@p} syd/desk}
-  =*  ruf  +>+<+>
-  =+  ^-  {hun/(unit duct) rede}
-      =+  rom=(~(get by fat.ruf) her)
-      ?~  rom
+  |=  [our=ship now=@da hen=duct raft]
+  |=  [her=ship syd=desk]
+  ::  XX ruf=raft crashes in the compiler
+  ::
+  =*  ruf  |3.+6.^$
+  ::
+  =+  ^-  [hun=(unit duct) rede]
+      ?.  =(our her)
+        ::  no duct, foreign +rede or default
+        ::
         :-  ~
-        %+  fall
-          (~(get by rus:(fall (~(get by hoy.ruf) her) *rung)) syd)
-        :*  lim=~2000.1.1
-            ref=[~ *rind]
-            qyx=~
-            dom=*dome
-            dok=~
-            mer=~
-            per=~
-            pew=~
-        ==
-      :-  `hun.u.rom
-      =+  jod=(fall (~(get by dos.u.rom) syd) *dojo)
-      :*  lim=now
-          ref=~
-          qyx=qyx.jod
-          dom=dom.jod
-          dok=dok.jod
-          mer=mer.jod
-          per=per.jod
-          pew=pew.jod
-      ==
-  =*  red  ->
+        =/  rus  rus:(fall (~(get by hoy.ruf) her) *rung)
+        %+  fall  (~(get by rus) syd)
+        [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome dok=~ mer=~ per=~ pew=~]
+      ::  administrative duct, domestic +rede
+      ::
+      :-  `hun.rom.ruf
+      =/  jod  (fall (~(get by dos.rom.ruf) syd) *dojo)
+      [lim=now ref=~ [qyx dom dok mer per pew]:jod]
+  ::
+  =*  red=rede  ->
   =|  mow/(list move)
   |%
   ++  abet                                              ::  resolve
-    ^-  {(list move) raft}
-    :_  =+  rom=(~(get by fat.ruf) her)
-        ?~  rom
-          =+  rug=(~(put by rus:(fall (~(get by hoy.ruf) her) *rung)) syd red)
-          ruf(hoy (~(put by hoy.ruf) her rug))
-        =+  dos=(~(put by dos.u.rom) syd [qyx dom dok mer per pew])
-        ruf(fat (~(put by fat.ruf) her [(need hun) dos]))
-    (flop mow)
+    ^-  [(list move) raft]
+    :-  (flop mow)
+    ?.  =(our her)
+      ::  save foreign +rede
+      ::
+      =/  rus  rus:(fall (~(get by hoy.ruf) her) *rung)
+      =/  rug  (~(put by rus) syd red)
+      ruf(hoy (~(put by hoy.ruf) her rug))
+    ::  save domestic +room
+    ::
+    %=  ruf
+      hun.rom  (need hun)
+      dos.rom  (~(put by dos.rom.ruf) syd [qyx dom dok mer per pew]:red)
+    ==
   ::
   ::  Handle `%sing` requests
   ::
@@ -622,7 +617,7 @@
       (emit hen %give %writ ~ [p.mun q.mun syd] r.mun p.dat)
     %-  emit
     :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
-        %f  %build  our  live=%.n  %pin
+        %f  %build  live=%.n  %pin
         (case-to-date q.mun)
         (lobe-to-schematic:ze [her syd] r.mun p.dat)
     ==
@@ -637,6 +632,7 @@
     ::  translate other cases to dates
     ::
     =/  aey  (case-to-aeon:ze case)
+    ::  ~&  [%case-to-date aey let.dom our her syd case]
     ?~  aey  `@da`0
     ?:  =(0 u.aey)  `@da`0
     t:(aeon-to-yaki:ze u.aey)
@@ -702,7 +698,7 @@
   ::
   ++  send-over-ames
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
-    (emit a %pass b %a %want [our c] [%c %question p.q.d (scot %ud p.d) ~] q.d)
+    (emit a %pass b %a %want c [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -838,12 +834,12 @@
     %-  emit
     ^-  move
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
+        %build  live=%.n  %list
         ^-  (list schematic:ford)
         %+  turn  `(list path)`mus
         |=  a/path
         :-  [%$ %path !>(a)]
-        :^  %cast  [her syd]  %mime
+        :^  %cast  [our %home]  %mime
         =+  (need (need (read-x:ze cas a)))
         ?:  ?=(%& -<)
           [%$ p.-]
@@ -1209,18 +1205,18 @@
       ^-  (list move)
       :~  :*  hen  %pass
               [%inserting (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
+              %f  %build  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford)
               %+  turn  ins.nuz
               |=  {pax/path mis/miso}
               ?>  ?=($ins -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  =>((flop pax) ?~(. %$ i))
-              [%cast [her syd] - [%$ p.mis]]
+              [%cast [our %home] - [%$ p.mis]]
           ==
           :*  hen  %pass
               [%diffing (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
+              %f  %build  live=%.n  %pin  wen  %list
               ^-  (list schematic:ford)
               %+  turn  dif.nuz
               |=  {pax/path mis/miso}
@@ -1228,11 +1224,11 @@
               =+  (need (need (read-x:ze let.dom pax)))
               ?>  ?=(%& -<)
               :-  [%$ %path -:!>(*path) pax]
-              [%pact [her syd] [%$ p.-] [%$ p.mis]]
+              [%pact [our %home] [%$ p.-] [%$ p.mis]]
           ==
           :*  hen  %pass
               [%castifying (scot %p her) syd (scot %da wen) ~]
-              %f  %build  our  live=%.n  %pin  wen  %list
+              %f  %build  live=%.n  %pin  wen  %list
               ::~  [her syd %da wen]  %tabl
               ^-  (list schematic:ford)
               %+  turn  mut.nuz
@@ -1240,7 +1236,7 @@
               ?>  ?=($mut -.mis)
               :-  [%$ %path -:!>(*path) pax]
               =+  (lobe-to-mark:ze (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-              [%cast [her syd] - [%$ p.mis]]
+              [%cast [our %home] - [%$ p.mis]]
           ==
       ==
     %_    +>.$
@@ -1403,13 +1399,13 @@
     %-  emit
     :*  hen  %pass
         [%mutating (scot %p her) syd (scot %da wen) ~]
-        %f  %build  our  live=%.n  %pin  wen  %list
+        %f  %build  live=%.n  %pin  wen  %list
         ^-  (list schematic:ford)
         %+  turn  cat
         |=  {pax/path cay/cage}
         :-  [%$ %path -:!>(*path) pax]
         =+  (lobe-to-schematic:ze [her syd] pax (~(got by q:(aeon-to-yaki:ze let.dom)) pax))
-        [%diff [her syd] - [%$ cay]]
+        [%diff [our %home] - [%$ cay]]
     ==
   ::
   ::  Handle result of diffing mutations.
@@ -1500,7 +1496,7 @@
     ^+  +>
     %-  emit
     :*  hen  %pass  [%patching (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
+        %build  live=%.n  %list
         ^-  (list schematic:ford)
         %+  turn  (sort ~(tap by hat) sort-by-head)
         |=  {a/path b/lobe}
@@ -1587,7 +1583,7 @@
     ::  =-  ~&  %formed-ergo  -
     %-  emit(dok ~)
     :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
-        %build  our  live=%.n  %list
+        %build  live=%.n  %list
         ^-  (list schematic:ford)
         %+  turn  ~(tap in sum)
         |=  a/path
@@ -1598,7 +1594,7 @@
           [%$ %null !>(~)]
         =+  (~(get by mim.dom) a)
         ?^  -  [%$ %mime !>(u.-)]
-        :^  %cast  [her syd]  %mime
+        :^  %cast  [our %home]  %mime
         =+  (need (need (read-x:ze let.dom a)))
         ?:  ?=(%& -<)
           [%$ p.-]
@@ -1761,7 +1757,7 @@
     %-  emit
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %f  %build  our  live=%.n  %pin
+        %f  %build  live=%.n  %pin
         (case-to-date cas)
         (vale-page [her syd] peg)
     ==
@@ -1774,8 +1770,8 @@
   ++  vale-page
     |=  [disc=disc:ford a=page]
     ^-  schematic:ford
-    ?.  ?=($hoon p.a)  [%vale disc a]
-    ?.  ?=(@t q.a)  [%dude |.(>%weird-hoon<) %ride [%zpzp ~] %$ *cage]
+    ?.  ?=($hoon p.a)  [%vale [our %home] a]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
     [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Verify the foreign data is of the the mark it claims to be.
@@ -1811,49 +1807,52 @@
         ==
     ^+  +>
     =<  wake
-    =+  ^-  nut/(map tako yaki)
-        %-  molt  ^-  (list (pair tako yaki))
-        %+  turn  ~(tap in lar)
-        |=  yak/yaki
-        [r.yak yak]
-    =+  ^-  nat/(map lobe blob)
-        %-  molt  ^-  (list (pair lobe blob))
-        %+  turn  ~(tap in bar)
-        |=  bol/blob
-        [p.bol bol]
-    ~|  :*  %bad-foreign-update
-            :*  gar=gar
-                let=let
-                nut=(~(run by nut) ,~)
-                nat=(~(run by nat) ,~)
+    ::  hit: updated commit-hashes by @ud case
+    ::
+    =/  hit  (~(uni by hit.dom) gar)
+    ::  nut: new commit-hash/commit pairs
+    ::
+    =/  nut
+      (turn ~(tap in lar) |=(=yaki [r.yaki yaki]))
+    ::  hut: updated commits by hash
+    ::
+    =/  hut  (~(gas by hut.ran) nut)
+    ::  nat: new blob-hash/blob pairs
+    ::
+    =/  nat
+      (turn ~(tap in bar) |=(=blob [p.blob blob]))
+    ::  lat: updated blobs by hash
+    ::
+    =/  lat  (~(gas by lat.ran) nat)
+    ::  traverse updated state and sanity check
+    ::
+    =+  ~|  :*  %bad-foreign-update
+                [gar=gar let=let nut=(turn nut head) nat=(turn nat head)]
+                [hitdom=hit.dom letdom=let.dom]
             ==
-            :*  hitdom=hit.dom
-                letdom=let.dom
-                hutran=(~(run by hut.ran) ,~)
-                latran=(~(run by lat.ran) ,~)
-            ==
-        ==
-    =+  hit=(~(uni by hit.dom) gar)
-    =+  let=let
-    =+  hut=(~(uni by hut.ran) nut)
-    =+  lat=(~(uni by lat.ran) nat)
-    =+  ?:  =(0 let)  ~
-        =+  yon=`aeon`1                                 ::  sanity check
-        |-
-        ~|  yon=yon
-        =+  tak=(~(got by hit) yon)
-        =+  yak=(~(got by hut) tak)
-        =+  %-  ~(urn by q.yak)
-            |=  {pax/path lob/lobe}
-            ~|  [pax=path lob=lobe]
-            (~(got by lat) lob)
-        ?:  =(let yon)
+      ?:  =(0 let)
+        ~
+      =/  =aeon  1
+      |-  ^-  ~
+      =/  =tako
+        ~|  [%missing-aeon aeon]  (~(got by hit) aeon)
+      =/  =yaki
+        ~|  [%missing-tako tako]  (~(got by hut) tako)
+      =+  %+  turn
+            ~(tap by q.yaki)
+          |=  [=path =lobe]
+          ~|  [%missing-blob path lobe]
+          ?>  (~(has by lat) lobe)
           ~
-        $(yon +(yon))
+      ?:  =(let aeon)
+        ~
+      $(aeon +(aeon))
+    ::  persist updated state
+    ::
     %=  +>.$
+      let.dom   (max let let.dom)
       lim       (max (fall lem lim) lim)
       hit.dom   hit
-      let.dom   (max let let.dom)
       hut.ran   hut
       lat.ran   lat
     ==
@@ -1870,7 +1869,7 @@
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %f  %build  our  live=%.n  %pin  (case-to-date cas)
+        %f  %build  live=%.n  %pin  (case-to-date cas)
         %list
         ^-  (list schematic:ford)
         %+  turn  ~(tap in pop)
@@ -2169,7 +2168,7 @@
       |=  [disc=disc:ford a=page]
       ^-  schematic:ford
       ::
-      ?.  ?=($hoon p.a)  [%volt disc a]
+      ?.  ?=($hoon p.a)  [%volt [our %home] a]
       ::  %hoon bootstrapping
       [%$ p.a [%atom %t ~] q.a]
     ::
@@ -2193,7 +2192,7 @@
       ?-  -.bol
         $direct     (page-to-schematic disc q.bol)
         $delta      ~|  delta+q.q.bol
-                    [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
+                    [%pact [our %home] $(lob q.q.bol) (page-to-schematic disc r.bol)]
       ==
     ::
     ::  Hashes a page to get a lobe.
@@ -2757,12 +2756,13 @@
         ~
       ?-  p.mun
           $d
-        =+  rom=(~(get by fat.ruf) her)
-        ?~  rom
-          ~&(%null-rom-cd [~ ~])
+        ::  XX this should only allow reads at the currebt date
+        ::
+        ?:  !=(our her)
+          [~ ~]
         ?^  r.mun
           ~&(%no-cd-path [~ ~])
-        [~ ~ %& %noun !>(~(key by dos.u.rom))]
+        [~ ~ %& %noun !>(~(key by dos.rom.ruf))]
       ::
         $p  (read-p r.mun)
         $t  (bind (read-t yon r.mun) (lift |=(a=cage [%& a])))
@@ -2928,8 +2928,7 @@
         %-  emit(wat.dat %ali)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ali ~]
-            %c  %warp  [p.bob p.ali]  q.ali
-            `[%sing %v cas.dat /]
+            [%c %warp p.ali q.ali `[%sing %v cas.dat /]]
         ==
       ::
       ::  Parse the state of ali's desk, and get the most recent commit.
@@ -3173,7 +3172,9 @@
         :*  hen  %pass
             =+  (cat 3 %diff- nam)
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali - ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.oth)  %list
+            %f  %build  live=%.n  %pin
+            (case-to-date:((de our now hen ruf) p.oth q.oth) r.oth)
+            %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by q.bas.dat)
             |=  {pax/path lob/lobe}
@@ -3191,7 +3192,9 @@
             :-  ~
             =/  disc  [p.oth q.oth]
             :-  [%$ %path !>(pax)]
-            [%diff disc (lobe-to-schematic disc pax lob) (lobe-to-schematic disc pax u.a)]
+            :^  %diff  [our %home]
+              (lobe-to-schematic disc pax lob)
+            (lobe-to-schematic disc pax u.a)
         ==
       ::
       ::  Diff ali's commit against the mergebase.
@@ -3302,7 +3305,7 @@
           %-  emit(wat.dat %merge)
           :*  hen  %pass
               [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %merge ~]
-              %f  %build  p.bob  live=%.n  %list
+              %f  %build  live=%.n  %list
               ^-  (list schematic:ford)
               %+  turn  ~(tap by (~(int by can.dal.dat) can.dob.dat))
               |=  {pax/path *}
@@ -3342,7 +3345,7 @@
         %-  emit(wat.dat %build)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %build ~]
-            %f  %build  p.bob  live=%.n  %list
+            %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by bof.dat)
             |=  {pax/path cay/(unit cage)}
@@ -3488,7 +3491,7 @@
         %-  emit(wat.dat %checkout)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %checkout ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
+            %f  %build  live=%.n  %pin  (case-to-date r.val)  %list
 ::            ~  val  %tabl
             ^-  (list schematic:ford)
             %+  murn  ~(tap by q.new.dat)
@@ -3546,7 +3549,7 @@
         %-  emit(wat.dat %ergo)
         :*  hen  %pass
             [%merge (scot %p p.bob) q.bob (scot %p p.ali) q.ali %ergo ~]
-            %f  %build  p.bob  live=%.n  %pin  (case-to-date r.val)  %list
+            %f  %build  live=%.n  %pin  (case-to-date r.val)  %list
             ^-  (list schematic:ford)
             %+  turn  ~(tap in sum)
             |=  a/path
@@ -3556,7 +3559,7 @@
             ?.  b
               [%$ %null !>(~)]
             =/  disc  [p q]:val
-            :^  %cast  disc  %mime
+            :^  %cast  [our %home]  %mime
             (lobe-to-schematic:zez disc a (~(got by q.new.dat) a))
         ==
       ::
@@ -3641,7 +3644,7 @@
           =+  bol=(~(got by lat.ran) lob)
           ?-  -.bol
             $direct     (page-to-schematic disc q.bol)
-            $delta      [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
+            $delta      [%pact [our %home] $(lob q.q.bol) (page-to-schematic disc r.bol)]
           ==
         ::
         ::  Find the most recent common ancestor(s).
@@ -3689,7 +3692,7 @@
 ::  This is the arvo interface vane.  Our formal state is a `++raft`, which
 ::  has five components:
 ::
-::  --  `fat` is the state for all local desks.
+::  --  `rom` is the state for all local desks.
 ::  --  `hoy` is the state for all foreign desks.
 ::  --  `ran` is the global, hash-addressed object store.
 ::  --  `mon` is the set of mount points in unix.
@@ -3700,28 +3703,21 @@
     $:  $1                                            ::  vane version
         ruf/raft                                      ::  revision tree
     ==                                                ::
-|=  {now/@da eny/@ ski/sley}                          ::  activate
+|=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
 ^?                                                    ::  opaque core
 |%                                                    ::
 ++  call                                              ::  handle request
-  |=  $:  hen/duct
-          hic/(hypo (hobo task:able))
+  |=  $:  hen=duct
+          type=*
+          wrapped-task=(hobo task:able)
       ==
-  =*  req  q.hic
-  =>  %=    .                                         ::  XX temporary
-          req
-        ^-  task:able
-        ?:  ?=($soft -.req)
-          =+
-          ~|([%bad-soft (@t -.p.req)] ((soft task:able) p.req))
-          ?~  -
-            ~&  [%bad-softing (@t -.p.req)]  !!
-          u.-
-        ?:  (~(nest ut -:!>(*task:able)) | p.hic)  req
-        ~&  [%clay-call-flub (@tas `*`-.req)]
-        ((hard task:able) req)
-      ==
-  ^+  [p=*(list move) q=..^$]
+  ::
+  =/  req=task:able
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ((hard task:able) p.wrapped-task)
+  ::
+  ^+  [*(list move) ..^$]
   ?-    -.req
       $boat
     :_  ..^$
@@ -3733,11 +3729,10 @@
       (~(put by cez.ruf) nom.req cew.req)
     ::  wake all desks, a request may have been affected.
     =|  mos/(list move)
-    =+  rom=(fall (~(get by fat.ruf) our.req) *room)
-    =+  des=~(tap in ~(key by dos.rom))
+    =/  des  ~(tap in ~(key by dos.rom.ruf))
     |-
     ?~  des  [[[hen %give %mack ~] mos] ..^^$]
-    =+  den=((de now hen ruf) [. .]:our.req i.des)
+    =/  den  ((de our now hen ruf) our i.des)
     =^  mor  ruf
       =<  abet:wake
       ?:  ?=(^ cew.req)  den
@@ -3748,8 +3743,7 @@
     [[hen %give %cruz cez.ruf]~ ..^$]
   ::
       $crow
-    =+  rom=(fall (~(get by fat.ruf) our.req) *room)
-    =+  des=~(tap by dos.rom)
+    =/  des  ~(tap by dos.rom.ruf)
     =|  rus/(map desk {r/regs w/regs})
     |^
       ?~  des  [[hen %give %croz rus]~ ..^^$]
@@ -3768,9 +3762,12 @@
       (~(has in who.r) |+nom.req)
     --
   ::
+      $crud
+    [[[hen %slip %d %flog req] ~] ..^$]
+  ::
       $drop
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      =/  den  ((de our now hen ruf) our des.req)
       abet:drop-me:den
     [mos ..^$]
   ::
@@ -3789,25 +3786,12 @@
     ?:  =(%$ des.req)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      =/  den  ((de our now hen ruf) our des.req)
       abet:(edit:den now dit.req)
     [mos ..^$]
   ::
       $init
-    :_  %_    ..^$
-            fat.ruf
-          ?<  (~(has by fat.ruf) our.req)
-          (~(put by fat.ruf) our.req [-(hun hen)]:[*room .])
-        ==
-    ^-  (list move)
-    ?:  ?=(%czar (clan:title our.req))
-      ~
-    =/  bos=ship
-      ;;  ship
-      %-  need  %-  need
-      %-  (sloy ski)
-      [[151 %noun] %j (en-beam:format [our.req %sein da+now] /(scot %p our.req))]
-    [hen %pass /init-merge %c %merg our.req %base bos %kids da+now %init]~
+    [~ ..^$(hun.rom.ruf hen)]
   ::
       $into
     =.  hez.ruf  `hen
@@ -3818,11 +3802,8 @@
     =+  ^-  bem/beam
         ?^  bem
           u.bem
-        [[?>(?=(^ fat.ruf) p.n.fat.ruf) %base %ud 1] ~]
-    =+  rom=(~(get by fat.ruf) p.bem)
-    ?~  rom
-      ~
-    =+  dos=(~(get by dos.u.rom) q.bem)
+        [[our %base %ud 1] ~]
+    =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       ~
     ?:  =(0 let.dom.u.dos)
@@ -3834,18 +3815,18 @@
               ?=($mime p.p.b)
               ?=({$hoon ~} (slag (dec (lent a)) a))
           ==
-      :~  [hen %pass /one %c %info p.bem q.bem %& one]
-          [hen %pass /two %c %info p.bem q.bem %& two]
+      :~  [hen %pass /one %c %info q.bem %& one]
+          [hen %pass /two %c %info q.bem %& two]
       ==
     =+  yak=(~(got by hut.ran.ruf) (~(got by hit.dom.u.dos) let.dom.u.dos))
     =+  cos=(mode-to-soba q.yak (flop s.bem) all.req fis.req)
-    [hen %pass /both %c %info p.bem q.bem %& cos]~
+    [hen %pass /both %c %info q.bem %& cos]~
   ::
       $merg                                               ::  direct state up
     ?:  =(%$ des.req)
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      =/  den  ((de our now hen ruf) our des.req)
       abet:abet:(start:(me:ze:den [her.req dem.req] ~ &) cas.req how.req)
     [mos ..^$]
   ::
@@ -3858,14 +3839,11 @@
     =*  bem  bem.req
     =.  mon.ruf
       (~(put by mon.ruf) des.req [p.bem q.bem r.bem] s.bem)
-    =+  yar=(~(get by fat.ruf) p.bem)
-    ?~  yar
-      [~ ..^$]
-    =+  dos=(~(get by dos.u.yar) q.bem)
+    =/  dos  (~(get by dos.rom.ruf) q.bem)
     ?~  dos
       [~ ..^$]
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:p.bem q.bem)
+      =/  den  ((de our now hen ruf) p.bem q.bem)
       abet:(mont:den des.req bem)
     [mos ..^$]
   ::
@@ -3903,33 +3881,33 @@
   ::
       $perm
     =^  mos  ruf
-      ::TODO  after new boot system, just use our from global.
-      =+  den=((de now hen ruf) [. .]:our.req des.req)
+      =/  den  ((de our now hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
       $sunk  [~ ..^$]
   ::
+      $vega  [~ ..^$]
+  ::
       ?($warp $werp)
+    ::  capture whether this read is on behalf of another ship
+    ::  for permissions enforcement
+    ::
     =^  for  req
       ?:  ?=($warp -.req)
         [~ req]
-      :_  [%warp wer.req rif.req]
-      ?:  =(who.req p.wer.req)  ~
-      `who.req
+      :-  ?:(=(our who.req) ~ `who.req)
+      [%warp wer.req rif.req]
+    ::
     ?>  ?=($warp -.req)
     =*  rif  rif.req
     =^  mos  ruf
-      =+  den=((de now hen ruf) wer.req p.rif)
+      =/  den  ((de our now hen ruf) wer.req p.rif)
       =<  abet
       ?~  q.rif
         cancel-request:den
       (start-request:den for u.q.rif)
     [mos ..^$]
-  ::
-      $went
-    ::  this won't happen until we send responses.
-    !!
   ::
       $west
     =*  wer  wer.req
@@ -3938,115 +3916,39 @@
       =+  ryf=((hard riff) res.req)
       :_  ..^$
       :~  [hen %give %mack ~]
-          :-  hen
-          :^  %pass  [(scot %p p.wer) (scot %p q.wer) t.pax]
-            %c
-          [%werp q.wer [p.wer p.wer] ryf]
+          =/  =wire
+            [(scot %p our) (scot %p wer) t.pax]
+          [hen %pass wire %c %werp wer our ryf]
       ==
     ?>  ?=({$answer @ @ ~} pax)
     =+  syd=(slav %tas i.t.pax)
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
-      =+  den=((de now hen ruf) wer syd)
+      =/  den  ((de our now hen ruf) wer syd)
       abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::
       $wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
-    :-  %clay
-    :-  %|
-    :~  domestic+[%& fat.ruf]
-        foreign+[%& hoy.ruf]
-        :-  %object-store  :-  %|
-        :~  commits+[%& hut.ran.ruf]
-            blobs+[%& lat.ran.ruf]
+    :+  %clay  %|
+    :~  domestic+&+rom.ruf
+        foreign+&+hoy.ruf
+        :+  %object-store  %|
+        :~  commits+&+hut.ran.ruf
+            blobs+&+lat.ran.ruf
         ==
+        dot+&+ruf
     ==
   ==
 ::
-::  All timers are handled by `%behn` nowadays.
-++  doze
-  |=  {now/@da hen/duct}
-  ^-  (unit @da)
-  ~
-::
 ++  load
   =>  |%
-      ++  rove-0
-        $%  {$sing p/mood}
-            {$next p/mood q/cach}
-            $:  $mult
-                p/mool
-                q/(unit aeon)
-                r/(map (pair care path) cach)
-                s/(map (pair care path) cach)
-            ==
-            {$many p/? q/moat r/(map path lobe)}
-        ==
-      ++  wove-0  (cork wove |=(a/wove a(q (rove-0 q.a))))
-      ++  cult-0  (jug wove-0 duct)
-      ++  dojo-0  (cork dojo |=(a/dojo a(qyx *cult-0)))
-      ++  rede-0  (cork rede |=(a/rede a(qyx *cult-0)))
-      ++  room-0  (cork room |=(a/room a(dos (~(run by dos.a) dojo-0))))
-      ++  rung-0  (cork rung |=(a/rung a(rus (~(run by rus.a) rede-0))))
-      ++  raft-0
-        %+  cork  raft
-        |=  a/raft
-        %=  a
-          fat   (~(run by fat.a) room-0)
-          hoy   (~(run by hoy.a) rung-0)
-        ==
-      ::
-      ++  axle  $%({$1 ruf/raft} {$0 ruf/raft-0})
+      ++  axle  $%([%1 ruf=raft])
       --
-  |=  old/axle
+  |=  old=axle
   ^+  ..^$
-  ?-  -.old
-      $1
-    ..^$(ruf ruf.old)
-  ::
-      $0
-    |^
-      =-  ^$(old [%1 -])
-      =+  ruf.old
-      :*  (~(run by fat) rom)
-          (~(run by hoy) run)
-          ran  mon  hez  ~  ~  *@da
-      ==
-    ::
-    ++  wov
-      |=  a/wove-0
-      ^-  wove
-      :-  p.a
-      ?.  ?=($next -.q.a)  q.a
-      [%next p.q.a ~ q.q.a]
-    ::
-    ++  cul
-      |=  a/cult-0
-      ^-  cult
-      %-  ~(gas by *cult)
-      %+  turn  ~(tap by a)
-      |=  {p/wove-0 q/(set duct)}
-      [(wov p) q]
-    ::
-    ++  rom
-      |=  room-0
-      ^-  room
-      :-  hun
-      %-  ~(run by dos)
-      |=  d/dojo-0
-      ^-  dojo
-      d(qyx (cul qyx.d))
-    ::
-    ++  run
-      |=  a/rung-0
-      =-  a(rus (~(run by rus.a) -))
-      |=  r/rede-0
-      ^-  rede
-      r(qyx (cul qyx.r))
-    --
-  ==
+  ..^$(ruf ruf.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4055,7 +3957,6 @@
   =*  his  p.why
   ::  ~&  scry+[ren `path`[(scot %p his) syd ~(rent co lot) tyl]]
   ::  =-  ~&  %scry-done  -
-  =+  got=(~(has by fat.ruf) his)
   =+  luk=?.(?=(%$ -.lot) ~ ((soft case) p.lot))
   ?~  luk  [~ ~]
   ?:  =(%$ ren)
@@ -4070,7 +3971,7 @@
     ?:  ?=(%| -.m)  ~
     ?:  =(p.m his)  ~
     `p.m
-  =+  den=((de now [/scryduct ~] ruf) [. .]:his syd)
+  =/  den  ((de our now [/scryduct ~] ruf) his syd)
   =+  (aver:den for u.run u.luk tyl)
   ?~  -               -
   ?~  u.-             -
@@ -4080,23 +3981,19 @@
 ++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
-  ^+  [p=*(list move) q=..^$]
+  ^+  [*(list move) ..^$]
   ?:  ?=({$merge @ @ @ @ @ ~} tea)
     ?>  ?=(?($writ $made) +<.q.hin)
-    =+  our=(slav %p i.t.tea)
     =*  syd  i.t.t.tea
     =+  her=(slav %p i.t.t.t.tea)
     =*  sud  i.t.t.t.t.tea
     =*  sat  i.t.t.t.t.t.tea
     =+  dat=?-(+<.q.hin $writ [%& p.q.hin], $made [%| result.q.hin])
-    =+  ^-  kan/(unit dome)
-        %+  biff  (~(get by fat.ruf) her)
-        |=  room
-        %+  bind  (~(get by dos) sud)
-        |=  dojo
-        dom
+    =/  kan=(unit dome)
+        %+  bind  (~(get by dos.rom.ruf) sud)
+        |=(a=dojo dom.a)
     =^  mos  ruf
-      =+  den=((de now hen ruf) [. .]:our syd)
+      =/  den  ((de our now hen ruf) our syd)
       abet:abet:(route:(me:ze:den [her sud] kan |) sat dat)
     [mos ..^$]
   ?:  ?=({$blab care @ @ *} tea)
@@ -4123,76 +4020,68 @@
     ?+    -.tea  !!
         $inserting
       ?>  ?=({@ @ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-inserting:den wen result.q.hin)
       [mos ..^$]
     ::
         $diffing
       ?>  ?=({@ @ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-diffing:den wen result.q.hin)
       [mos ..^$]
     ::
         $castifying
       ?>  ?=({@ @ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-castify:den wen result.q.hin)
       [mos ..^$]
     ::
         $mutating
       ?>  ?=({@ @ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =+  wen=(slav %da i.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-mutating:den wen result.q.hin)
       [mos ..^$]
     ::
         $patching
       ?>  ?=({@ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-patch:den result.q.hin)
       [mos ..^$]
     ::
         $ergoing
       ?>  ?=({@ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  syd=(slav %tas i.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [. .]:our syd)
+        =/  den  ((de our now hen ruf) our syd)
         abet:(take-ergo:den result.q.hin)
       [mos ..^$]
     ::
         $foreign-plops
       ?>  ?=({@ @ @ @ ~} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
       =+  lem=(slav %da i.t.t.t.t.tea)
       =^  mos  ruf
-        =+  den=((de now hen ruf) [our her] syd)
+        =/  den  ((de our now hen ruf) her syd)
         abet:(take-foreign-plops:den ?~(lem ~ `lem) result.q.hin)
       [mos ..^$]
     ::
         $foreign-x
       ?>  ?=({@ @ @ @ @ *} t.tea)
-      =+  our=(slav %p i.t.tea)
       =+  her=(slav %p i.t.t.tea)
       =+  syd=(slav %tas i.t.t.t.tea)
       =+  car=((hard care) i.t.t.t.t.tea)
@@ -4202,7 +4091,7 @@
           ->+
       =*  pax  t.t.t.t.t.t.tea
       =^  mos  ruf
-        =+  den=((de now hen ruf) [our her] syd)
+        =/  den  ((de our now hen ruf) her syd)
         abet:(take-foreign-x:den car cas pax result.q.hin)
       [mos ..^$]
     ==
@@ -4221,7 +4110,7 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
-    =^  queued  cue.ruf  ~(get to cue.ruf) 
+    =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued
@@ -4230,23 +4119,18 @@
     ?>  =(hen queued-duct)
     ::
     (call hen [-:!>(*task:able) queued-task])
-    ::  =+  dal=(turn ~(tap by fat.ruf) |=([a=@p b=room] a))
-    ::  =|  mos=(list move)
-    ::  |-  ^-  [p=(list move) q=_..^^$]
-    ::  ?~  dal  [mos ..^^$]
-    ::  =+  une=(un i.dal now hen ruf)
-    ::  =^  som  une  wake:une
-    ::  $(dal t.dal, ruf abet:une, mos (weld som mos))
+    ::  =^  mos=(list move)  une
+    ::    wake:(un our now hen ruf)
+    ::  [mos ..^^$]
   ::
       $writ
     ?>  ?=({@ @ *} tea)
     ~|  i=i.tea
     ~|  it=i.t.tea
-    =+  our=(slav %p i.tea)
     =+  him=(slav %p i.t.tea)
     :_  ..^$
     :~  :*  hen  %pass  /writ-want  %a
-            %want  [our him]  [%c %answer t.t.tea]
+            %want  him  [%c %answer t.t.tea]
             (bind p.+.q.hin rant-to-rand)
         ==
     ==

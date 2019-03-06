@@ -4,7 +4,7 @@
 ::
 ++  test-signing-transaction-1
   %+  expect-eq
-    !>  %+  sign-transaction:ethereum
+    !>  %+  sign-transaction:key:ethereum
           :*  123
               1.000
               5.000
@@ -25,7 +25,7 @@
 ::
 ++  test-signing-transaction-2
   %+  expect-eq
-    !>  %+  sign-transaction:ethereum
+    !>  %+  sign-transaction:key:ethereum
           :*  42
               1.000
               5.000

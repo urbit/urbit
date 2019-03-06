@@ -17,7 +17,7 @@
     -8~kX.3ALiG.rQjOi.HZ9hj.84b6G.P5pCZ.UtNtt.Lh9TE.2DQJ2
   =/  url  (de-purl:html 'http://localhost:8545')
   =/  dan
-    [`seed:able:jael`[~nul 1 key ~] ~ ~ [/org/urbit ~] 0 url ~]
+    [`seed:able:jael`[~nul 1 key ~] ~nul ~ [/org/urbit ~] 0 url ~]
   ::
   =^  results1  jael-gate
     =/  hen=duct
@@ -41,7 +41,7 @@
     %-  jael-call-with-comparator  :*
       jael-gate
       now=(add ~s1 ~1234.5.6)
-      call-args=[duct=[/ /term/1 wir ~] type=*type %vein ~nul]
+      call-args=[duct=[/ /term/1 wir ~] type=*type %vein ~]
       ^=  comparator
         |=  moves=(list move:jael-gate)
         ;:  weld
@@ -56,9 +56,9 @@
   ::
   =^  results3  jael-gate
     =/  hiss-httr=hiss:eyre
-      %+  json-request:ethereum
+      %+  json-request:rpc:ethereum
         (need url)
-      %+  request-to-json:ethereum
+      %+  request-to-json:rpc:ethereum
         `'block number'
       [%eth-block-number ~]
     %-  jael-take-with-comparator  :*
@@ -89,7 +89,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  call:jael  call-args
@@ -109,7 +109,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  call:jael  call-args
@@ -126,7 +126,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  take:jael  take-args
@@ -146,7 +146,7 @@
       ==
   ^-  [tang _jael-gate]
   ::
-  =/  jael  (jael-gate now=now eny=`@e`0xdead.beef scry=*sley)
+  =/  jael  (jael-gate our=~nul now=now eny=`@`0xdead.beef scry=*sley)
   ::
   =^  moves  jael-gate
     %-  take:jael  take-args
