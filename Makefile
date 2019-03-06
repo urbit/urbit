@@ -2,12 +2,13 @@ PKGS = minima extrema rusthello prog
 
 ################################################################################
 
-.PHONY: build all install release test clean
+.PHONY: build build-all install release test clean
 
 build:
-	nix-build --no-out-link
+	nix-build -A urbit -A urb --no-out-link
 
-all: build release test
+build-all:
+	nix-build --no-out-link
 
 install:
 	nix-env -f . -iA urbit -iA urbit-debug -iA urb
