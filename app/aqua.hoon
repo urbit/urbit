@@ -59,8 +59,8 @@
     --
 =,  gall
 ::
-::  aqua-effect-list: collect list of aqua effects to broadcast at once
-::                    to avoid gall backpressure
+::  unix-{effects,events,boths}: collect jar of effects and events to
+::    brodcast all at once to avoid gall backpressure
 ::  moves: Hoist moves into state for cleaner state management
 ::
 =|  unix-effects=(jar ship unix-effect)
@@ -78,22 +78,31 @@
   =+  (fall (~(get by piers) who) *pier)
   =*  pier-data  -
   |%
+  ::
+  ::  Done; install data
+  ::
   ++  abet-pe
     ^+  this
     =.  piers  (~(put by piers) who pier-data)
     this
   ::
+  ::  Initialize new ship
+  ::
   ++  apex
     =.  pier-data  *pier
     =.  snap  assembled
-    ~&  r=(met 3 (jam snap))
+    ~&  pill-size=(met 3 (jam snap))
     ..abet-pe
+  ::
+  ::  Enqueue events to child arvo
   ::
   ++  push-events
     |=  ova=(list unix-event)
     ^+  ..abet-pe
     =.  next-events  (~(gas to next-events) ova)
     ..abet-pe
+  ::
+  ::  Send moves to host arvo
   ::
   ++  emit-moves
     |=  ms=(list move)
@@ -109,14 +118,14 @@
     ?.  processing-events
       ..abet-pe
     =^  ovo  next-events  ~(get to next-events)
-    =/  res  (mox +47.snap)
-    ?>  ?=(%0 -.res)
-    =/  poke  p.res
+    =/  poke-arm  (mox +47.snap)
+    ?>  ?=(%0 -.poke-arm)
+    =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
-    =/  res  (slum poke tym ovo)
-    =.  snap  +3.res
+    =/  poke-result  (slum poke tym ovo)
+    =.  snap  +.poke-result
     =.  ..abet-pe  (publish-event tym ovo)
-    =.  ..abet-pe  (handle-effects ((list ovum) -.res))
+    =.  ..abet-pe  (handle-effects ((list ovum) -.poke-result))
     $
   ::
   ::  Peek
@@ -170,6 +179,7 @@
       ?~  next-timer
         ..abet-pe
       cancel-timer
+    ::
     ::  Sleep eyre
     ::
     ::    Eyre doesn't support cancelling HTTP requests from userspace.
