@@ -5,7 +5,7 @@
 ::
 =,  format
 =,  ethereum
-=,  ethe
+=,  rpc
 =,  mimes:html
 |_  txs=(list transaction)
 ++  u-parser

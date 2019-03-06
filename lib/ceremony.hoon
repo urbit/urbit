@@ -1,6 +1,7 @@
 ::
-=,  ethe
 =,  ethereum
+=,  rpc
+=,  key
 ::
 =|  addr=address
 =|  gas-price=@ud
@@ -207,6 +208,8 @@
   =+  lin-gal=(get-locked-galaxies 'linear')
   =+  lin-sar=(get-locked-stars 'linear')
   ::
+  :: =+  linear-star-release=0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
+  :: =.  constitution  0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
   =+  con-rec=get-conditional-recipients
   =+  con-gal=(get-locked-galaxies 'conditional')
   =+  con-sar=(get-locked-stars 'conditional')
@@ -438,7 +441,7 @@
   %+  turn  enumerated
   |=  [n=@ud tx=transaction]
   ~?  =(0 (mod n 100))  [%signing n]
-  (crip '0' 'x' ((x-co:co 0) (sign-transaction tx pk)))
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction:key:ethereum tx pk)))
 ::
 ::  create or spawn a ship, configure its spawn proxy and pubkeys
 ++  create-ship
@@ -531,12 +534,22 @@
   ::
   ::  if the parent galaxy hasn't made the target contracts
   ::  a spawn proxy yet, do so now
-  =+  par=(^sein:title star)
-  =?  this  !(~(has in gals) par)
-    =.  gals  (~(put in gals) par)
-    %^  do  constitution  300.000
-    %+  set-spawn-proxy:dat  par
-    into
+  :: =+  par=(^sein:title star)
+  :: =?  this  !(~(has in gals) par)
+  ::   =.  gals  (~(put in gals) par)
+  ::   %^  do  constitution  300.000
+  ::   %+  set-spawn-proxy:dat  par
+  ::   into
+  ::
+  ::  spawn to self, then set transfer proxy
+  ::
+  =.  this
+    %^  do  constitution  550.000
+    (spawn:dat star)
+  =.  this
+    %^  do  constitution  550.000
+    (set-transfer-proxy:dat star to)
+  ::  finally, deposit
   ::
   =.  this
     %^  do  into  550.000
@@ -628,7 +641,7 @@
   ++  transfer-ship
     |=  [who=ship to=address]
     ^-  call-data
-    :-  'transferShip(uint32,address,bool)'
+    :-  'transferPoint(uint32,address,bool)'
     :~  [%uint `@`who]
         [%address to]
         [%bool |]
@@ -675,6 +688,7 @@
             rate-unit=@ud
         ==
     ^-  call-data
+    ~&  [%register-linear stars to]
     :-  'register(address,uint256,uint16,uint16,uint256)'
     :~  [%address to]
         [%uint windup]

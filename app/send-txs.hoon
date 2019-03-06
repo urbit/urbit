@@ -111,7 +111,7 @@
   ==
 ::
 ++  write-file-transactions
-  |=  [pax=path tox=(list transaction:ethe)]
+  |=  [pax=path tox=(list transaction:ethereum)]
   ^-  move
   ?>  ?=([@ desk @ *] pax)
   :*  ost.bol
@@ -136,10 +136,10 @@
   :-  ost.bol
   :^  %hiss  (weld wir ~[tag])  ~
   :+  %json-rpc-response  %hiss
-  (json-request:ethereum url jon)
+  (json-request:rpc:ethereum url jon)
 ::
 ++  batch-requests
-  |=  [wir=wire req=(list [(unit @t) request:ethe])]
+  |=  [wir=wire req=(list [(unit @t) request:rpc:ethereum])]
   ^-  (list move)
   %^    fan-requests
       wir
@@ -149,7 +149,7 @@
         =>  (need (de-purl:html 'http://localhost:8555'))
         parity+.(p.p |)
     ==
-  a+(turn req request-to-json:ethereum)
+  a+(turn req request-to-json:rpc:ethereum)
 ::
 ++  send-next-batch
   ^-  [(list move) _this]
