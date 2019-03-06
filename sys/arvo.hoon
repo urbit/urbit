@@ -644,7 +644,7 @@
 ::
 =/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
-=|  $:  lac=_&                                          ::  laconic bit
+=|  $:  lac=_|                                          ::  laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
         bud=vase                                        ::  %zuse

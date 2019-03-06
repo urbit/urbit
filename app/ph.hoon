@@ -12,20 +12,27 @@
 =,  aquarium
 =,  ph
 =>  $~  |%
-    ++  move  (pair bone card)
-    ++  card
+    +$  move  (pair bone card)
+    +$  card
       $%  [%poke wire dock %aqua-events (list aqua-event)]
           [%peer wire dock path]
           [%pull wire dock ~]
       ==
     ::
-    ++  state
+    +$  state
       $:  %0
           raw-test-cores=(map term test-core)
-          test-cores=(map term [hers=(list ship) cor=test-core])
+          test-cores=(map term test-core-state)
           other-state
       ==
-    ++  other-state
+    ::
+    +$  test-core-state
+      $:  hers=(list ship)
+          cor=test-core
+          effect-log=(list [who=ship ovo=unix-effect])
+      ==
+    ::
+    +$  other-state
       $~
     --
 =,  gall
@@ -53,7 +60,7 @@
         =.  num  +(num)
         :_  ..start
         %-  zing
-        :~  (init ~bud)
+        :~  (init ~bud ~)
             (dojo ~bud "[%test-result (add 2 3)]")
         ==
       ::
@@ -63,7 +70,6 @@
         ~&  [%num num]
         :_  ..start
         (expect-dojo-output ~bud who ovo "[%test-result 5]")
-        ::  XX  if it's been five minutes, we failed
       --
     ::
       :-  %hi
@@ -75,8 +81,8 @@
         ^-  (pair (list ph-event) _..start)
         :_  ..start
         %-  zing
-        :~  (init ~bud)
-            (init ~dev)
+        :~  (init ~bud ~)
+            (init ~dev ~)
             (dojo ~bud "|hi ~dev")
         ==
       ::
@@ -143,6 +149,16 @@
           (star ~marbud)
         (touch-file ~bud %base)
       (check-file-touched ~marbud %home)
+    ::
+      :-  %boot-azimuth
+      %+  compose-tests
+        %+  compose-tests
+          (raw-ship ~bud `(dawn:azimuth ~bud))
+        (touch-file ~bud %home)
+      ::  %-  assert-happens
+      ::  :~
+      ::  ==
+      *test-core
     ::
       :-  %individual-breach
       *test-core
@@ -239,10 +255,24 @@
       [%run-test lab=@tas]
     =/  res=[events=(list ph-event) new-state=test-core]
       (start:(~(got by raw-test-cores) lab.arg) now.hid)
-    =.  test-cores  (~(put by test-cores) lab.arg [ships .]:new-state.res)
+    =.  test-cores  (~(put by test-cores) lab.arg [ships . ~]:new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
     [(weld moves-1 moves-2) this]
+  ::
+      [%print lab=@tas]
+    =/  log  effect-log:(~(got by test-cores) lab.arg)
+    ~&  lent=(lent log)
+    ~&  %+  roll  log
+        |=  [[who=ship ovo=unix-effect] ~]
+        ?:  ?=(?(%blit %doze) -.q.ovo)
+          ~
+        ?:  ?=(%ergo -.q.ovo)
+          ~&  [who [- +<]:ovo %omitted-by-ph]
+          ~
+        ~&  [who ovo]
+        ~
+    `this
   ==
 ::
 ++  diff-aqua-effects
@@ -259,6 +289,8 @@
     |-  ^-  (quip ph-event _u.test-cor)
     ?~  ovo.ova
       [~ u.test-cor]
+    =.  effect-log.u.test-cor
+      [[who i.ovo]:ova effect-log.u.test-cor]
     =^  events-1  cor.u.test-cor
       (route:cor.u.test-cor now.hid who.ova i.ovo.ova)
     =^  events-2  u.test-cor

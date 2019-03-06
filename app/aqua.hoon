@@ -23,25 +23,35 @@
 /-  aquarium
 =,  aquarium
 =>  $~  |%
-    ++  move  (pair bone card)
-    ++  card
+    +$  move  (pair bone card)
+    +$  card
       $%  [%wait wire p=@da]
           [%rest wire p=@da]
           [%hiss wire p=(unit user:eyre) q=mark r=(cask hiss:eyre)]
-          [%diff %aqua-effects aqua-effects]
+          [%diff diff-type]
       ==
-    ++  state
+    ::
+    ::  Outgoing subscription updates
+    ::
+    +$  diff-type
+      $%  [%aqua-effects aqua-effects]
+          [%aqua-events aqua-events]
+          [%aqua-boths aqua-boths]
+      ==
+    ::
+    +$  state
       $:  %0
           pil=pill
           assembled=*
           tym=@da
-          init-cache=(map ship pier)
+          init-cache=(map [ship (unit dawn-event)] pier)
           fleet-snaps=(map term (map ship pier))
           piers=(map ship pier)
       ==
-    ++  pier
+    ::
+    +$  pier
       $:  snap=*
-          event-log=(list [@da unix-event])
+          event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
           next-timer=(unit @da)
@@ -55,6 +65,8 @@
 ::  moves: Hoist moves into state for cleaner state management
 ::
 =|  unix-effects=(jar ship unix-effect)
+=|  unix-events=(jar ship unix-timed-event)
+=|  unix-boths=(jar ship unix-both)
 =|  moves=(list move)
 |_  $:  hid=bowl
         state
@@ -103,8 +115,8 @@
     =/  poke  p.res
     =.  tym  (max +(tym) now.hid)
     =/  res  (slum poke tym ovo)
-    =.  event-log  [[tym ovo] event-log]
     =.  snap  +3.res
+    =.  ..abet-pe  (publish-event tym ovo)
     =.  ..abet-pe  (handle-effects ((list ovum) -.res))
     $
   ::
@@ -307,6 +319,7 @@
       ~&  [who=who %cant-cancel-thus num=num]
       =.  http-requests  (~(del in http-requests) num)
       ..abet-pe
+    ~&  [who=who %requesting u.req]
     =.  http-requests  (~(put in http-requests) num)
     %-  emit-moves  :_  ~
     :*  ost.hid
@@ -360,6 +373,17 @@
     |=  ovo=unix-effect
     ^+  ..abet-pe
     =.  unix-effects  (~(add ja unix-effects) who ovo)
+    =.  unix-boths  (~(add ja unix-boths) who [%effect ovo])
+    ..abet-pe
+  ::
+  ::  Give event to our subscribers
+  ::
+  ++  publish-event
+    |=  ovo=unix-timed-event
+    ^+  ..abet-pe
+    =.  event-log  [ovo event-log]
+    =.  unix-events  (~(add ja unix-events) who ovo)
+    =.  unix-boths  (~(add ja unix-boths) who [%event ovo])
     ..abet-pe
   --
 ::
@@ -369,8 +393,10 @@
 ::
 ++  apex-aqua
   ^+  this
-  =:  moves  ~
+  =:  moves         ~
       unix-effects  ~
+      unix-events   ~
+      unix-boths    ~
     ==
   this
 ::
@@ -381,13 +407,28 @@
     %+  murn  ~(tap by sup.hid)
     |=  [b=bone her=ship pax=path]
     ^-  (unit move)
-    ?.  ?=([%effects @ ~] pax)
-      ~
-    =/  who  (slav %p i.t.pax)
-    =/  fx  (~(get ja unix-effects) who)
-    ?~  fx
-      ~
-    `[b %diff %aqua-effects who fx]
+    ?+    pax  ~
+        [%effects @ ~]
+      =/  who  (slav %p i.t.pax)
+      =/  fx  (~(get ja unix-effects) who)
+      ?~  fx
+        ~
+      `[b %diff %aqua-effects who fx]
+    ::
+        [%events @ ~]
+      =/  who  (slav %p i.t.pax)
+      =/  ve  (~(get ja unix-events) who)
+      ?~  ve
+        ~
+      `[b %diff %aqua-events who ve]
+    ::
+        [%boths @ ~]
+      =/  who  (slav %p i.t.pax)
+      =/  bo  (~(get ja unix-boths) who)
+      ?~  bo
+        ~
+      `[b %diff %aqua-boths who bo]
+    ==
   [(flop moves) this]
 ::
 ++  emit-moves
@@ -424,6 +465,32 @@
     `this
   ?~  (slaw %p i.pax)
     ~&  [%aqua-bad-peer-effects-ship pax]
+    !!
+  `this
+::
+::  Subscribe to events to a ship
+::
+++  peer-events
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  ?=([@ ~] pax)
+    ~&  [%aqua-bad-peer-events pax]
+    `this
+  ?~  (slaw %p i.pax)
+    ~&  [%aqua-bad-peer-events-ship pax]
+    !!
+  `this
+::
+::  Subscribe to both events and effects of a ship
+::
+++  peer-boths
+  |=  pax=path
+  ^-  (quip move _this)
+  ?.  ?=([@ ~] pax)
+    ~&  [%aqua-bad-peer-boths pax]
+    `this
+  ?~  (slaw %p i.pax)
+    ~&  [%aqua-bad-peer-boths-ship pax]
     !!
   `this
 ::
@@ -500,24 +567,8 @@
     =/  hers  ((list ship) hers.val)
     ?~  hers
       this
-    =^  ms  this  (poke-aqua-events [%init-ship i.hers]~)
+    =^  ms  this  (poke-aqua-events [%init-ship i.hers ~]~)
     (emit-moves ms)
-    ::  %+  turn-ships  ((list ship) hers.val)
-    ::  |=  [who=ship thus=_this]
-    ::  =.  this  thus
-    ::  ~&  [%initting who]
-    ::  %-  push-events:apex:(pe who)
-    ::  ^-  (list unix-event)
-    ::  :~  `unix-event`[/ %wack 0]  ::  eny
-    ::      `unix-event`[/ %whom who]  ::  eny
-    ::      `unix-event`[//newt/0v1n.2m9vh %barn ~]
-    ::      `unix-event`[//behn/0v1n.2m9vh %born ~]
-    ::      `unix-event`[//term/1 %boot %fake who]
-    ::      `unix-event`-.userspace-ova.pil
-    ::      `unix-event`[//http/0v1n.2m9vh %born ~]
-    ::      `unix-event`[//http/0v1n.2m9vh %live 8.080 `8.445]
-    ::      `unix-event`[//term/1 %belt %ctl `@c`%x]
-    ::  ==
   ::
       [%dojo hers=* command=*]
     %+  turn-ships  ((list ship) hers.val)
@@ -602,11 +653,11 @@
   =.  this  thus
   ?-  -.ovo
       %init-ship
-    =/  prev  (~(get by init-cache) who.ovo)
-    ?:  &(?=(^ prev) (lth who.ovo ~marzod))
-      ~&  [%loading-cached-ship who.ovo]
-      =.  this  (restore-ships ~[who.ovo] init-cache)
-      (pe who.ovo)
+    ::  =/  prev  (~(get by init-cache) [who keys]:ovo)
+    ::  ?:  &(?=(^ prev) (lth who.ovo ~marzod))
+    ::    ~&  [%loading-cached-ship who.ovo]
+    ::    =.  this  (restore-ship who.ovo u.prev)
+    ::    (pe who.ovo)
     =.  this  abet-pe:sleep:(pe who.ovo)
     =/  initted
       =<  plow
@@ -616,14 +667,17 @@
           [/ %whom who.ovo]  ::  eny
           [//newt/0v1n.2m9vh %barn ~]
           [//behn/0v1n.2m9vh %born ~]
-          [//term/1 %boot %fake who.ovo]
+          :+  //term/1  %boot
+          ?~  keys.ovo
+            [%fake who.ovo]
+          [%dawn u.keys.ovo]
           -.userspace-ova.pil
           [//http/0v1n.2m9vh %born ~]
           [//http/0v1n.2m9vh %live 8.080 `8.445]
       ==
     =.  this  abet-pe:initted
     =.  init-cache
-      %+  ~(put by init-cache)  who.ovo
+      %+  ~(put by init-cache)  [who keys]:ovo
       (~(got by piers) who.ovo)
     (pe who.ovo)
   ::
@@ -725,6 +779,15 @@
     |=  [who=ship thus=_this]
     =.  this  thus
     restore:(pe who)
+  this
+::
+::  Restore ships from pier
+::
+++  restore-ship
+  |=  [her=ship per=pier]
+  =.  this  abet-pe:plow:sleep:(pe her)
+  =.  piers  (~(put by piers) her per)
+  =.  this  abet-pe:plow:restore:(pe her)
   this
 ::
 ::  Received timer wake

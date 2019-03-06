@@ -12,7 +12,7 @@
   ::
   ::  Unique name, used as a cache label.
   ::
-  ++  label  *term
+  ++  label  *@ta
   ::
   ::  List of ships that are part of the test.
   ::
@@ -43,9 +43,9 @@
   [%event who ovo]
 ::
 ++  init
-  |=  who=ship
+  |=  [who=ship keys=(unit dawn-event)]
   ^-  (list ph-event)
-  [%init-ship who]~
+  [%init-ship who keys]~
 ::
 ::  factor out send-events-to
 ::
@@ -102,6 +102,51 @@
   ?.  ?=(%ergo -.q.ovo)
     ~
   (fun)
+::
+++  azimuth
+  |%
+  ++  dawn
+    |=  who=ship
+    ^-  dawn-event
+    :*  (need (private-key who))
+        (^sein:title who)
+        czar
+        ~[~['arvo' 'netw' 'ork']]
+        0
+        `(need (de-purl:html 'http://localhost:8545'))
+        ~
+    ==
+  ::
+  ++  czar
+    ^-  (map ship [life pass])
+    %-  my
+    ^-  (list (pair ship [life pass]))
+    %+  murn  (gulf 0x0 0xff)
+    |=  her=ship
+    ^-  (unit [ship life pass])
+    =/  pub  (public-key her)
+    ?~  pub
+      ~
+    `[her u.pub]
+  ::
+  ++  private-key
+    |=  who=ship
+    =-  (~(get by -) who)
+    ^-  (map ship seed:able:jael)
+    %-  my
+    :~  [~bud ~bud 1 'BbudB' ~]
+        [~dev ~dev 1 'Bdev' ~]
+    ==
+  ::
+  ++  public-key
+    |=  who=ship
+    ^-  (unit [life pass])
+    =/  priv  (private-key who)
+    ?~  priv
+      ~
+    =/  cub  (nol:nu:crub:crypto key.u.priv)
+    `[lyf.u.priv pub:ex:cub]
+  --
 ::
 ++  test-lib
   |_  our=ship
@@ -178,15 +223,15 @@
   ::    Consider ++galaxy, ++star, ++planet, and ++ship-with-ancestors.
   ::
   ++  raw-ship
-    |=  her=ship
+    |=  [her=ship keys=(unit dawn-event)]
     ^-  test-core
     |%
-    ++  label  (cat 3 'init-' (scot %p her))
+    ++  label  :((cury cat 3) 'init-' (scot %p her) '-' (scot %uw (mug (fall keys *dawn-event))))
     ++  ships  ~[her]
     ++  start
       |=  now=@da
       ^-  (quip ph-event _..start)
-      [(init her) ..start]
+      [(init her keys) ..start]
     ::
     ++  route
       |=  [now=@da who=ship ovo=unix-effect]
@@ -215,19 +260,19 @@
   ++  galaxy
     |=  her=ship
     ?>  =(%czar (clan:title her))
-    (raw-ship her)
+    (raw-ship her ~)
   ::
   ++  star
     |=  her=ship
     ?>  =(%king (clan:title her))
     %+  compose-tests  (galaxy (^sein:title her))
-    (raw-ship her)
+    (raw-ship her ~)
   ::
   ++  planet
     |=  her=ship
     ?>  =(%duke (clan:title her))
     %+  compose-tests  (star (^sein:title her))
-    (raw-ship her)
+    (raw-ship her ~)
   ::
   ++  ship-with-ancestors
     |=  her=ship
