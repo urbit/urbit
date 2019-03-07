@@ -2,7 +2,7 @@ PKGS = minima extrema rusthello prog
 
 ################################################################################
 
-.PHONY: build build-all install release test clean
+.PHONY: build build-all install release test clean ctags
 
 build:
 	nix-build -A urbit -A urb --no-out-link
@@ -24,3 +24,6 @@ test:
 clean:
 	rm -rf ./out ./work
 	rm -f result result-*
+
+ctags:
+	ctags $(shell find pkg/urbit -type f -name '*.[ch]')

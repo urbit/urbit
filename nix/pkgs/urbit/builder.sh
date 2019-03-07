@@ -6,6 +6,8 @@ cd src
 
 bash ./configure
 
+make clean
+
 make urbit urbit-worker -j8
 
 mkdir -p $out/bin

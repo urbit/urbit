@@ -596,7 +596,7 @@ c3_w Exit;
 **    ==
 */
 c3_i
-u3m_bail(u3_noun how)
+u3m_bail(c3_m how)
 {
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {
     abort();
@@ -617,7 +617,7 @@ u3m_bail(u3_noun how)
     }
     else {
       c3_assert(_(u3ud(u3h(how))));
-      fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+      fprintf(stderr, "\r\nbail: %ld\r\n", u3h(how));
     }
   }
 
@@ -635,7 +635,7 @@ u3m_bail(u3_noun how)
       static c3_w xuc_w = 0;
 
       {
-        // fprintf(stderr, "exit %d\r\n", xuc_w);
+        // fprintf(stderr, "exit %ld\r\n", xuc_w);
         // if ( 49 == xuc_w ) { abort(); }
         xuc_w++;
         break;
@@ -1297,7 +1297,7 @@ _cm_in_pretty(u3_noun som, c3_o sel_o, c3_c* str_c)
       c3_c buf_c[6];
       c3_w len_w;
 
-      snprintf(buf_c, 6, "%d", som);
+      snprintf(buf_c, 6, "%ld", som);
       len_w = strlen(buf_c);
 
       if ( str_c ) { strcpy(str_c, buf_c); str_c += len_w; }

@@ -32,7 +32,7 @@
     **
     ** Bits 0-29 are a word offset against u3_Loom (u3_post).
     */
-      typedef c3_w u3_noun;
+      typedef c3_d u3_noun;
 
     /* u3_weak: u3_noun which may be u3_none (not a noun).
     */
