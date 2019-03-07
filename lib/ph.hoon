@@ -6,7 +6,7 @@
 |%
 ::  Defines a complete integration test.
 ::
-++  test-core
+++  raw-test-core
   $_  ^?
   |%
   ::
@@ -27,6 +27,18 @@
   ::
   ::  Called on every effect from a ship.
   ::
+  ++  route  |~([now=@da ship unix-effect] *[? (quip ph-event _^?(..start)]))
+  --
+::
+++  porcelain-test-core
+  $_  ^?
+  |%
+  ::  Called first to kick off the test.
+  ::
+  ++  start  |~(now=@da *(quip ph-event _^?(..start)))
+  ::
+  ::  Called on every effect from a ship.
+  ::
   ++  route  |~([now=@da ship unix-effect] *(quip ph-event _^?(..start)))
   --
 ::
@@ -35,12 +47,29 @@
       aqua-event
   ==
 ::
+++  porcelain-test
+  |=  [label=@ta porcelain=porcelain-test-core]
+  ^-  raw-test-core
+  |%
+  ++  label  ^label
+  ++  ships  ~
+  ++  start
+    |=  now=@da
+    =^  events  porcelain  (start:porcelain now)
+    [events ..start]
+  ::
+  ++  route
+    |=  args=[@da ship unix-effect]
+    =^  events  porcelain  (route:porcelain args)
+    [& events ..start]
+  --
+::
 ++  send-events-to
   |=  [who=ship what=(list unix-event)]
   ^-  (list ph-event)
   %+  turn  what
-  |=  ovo=unix-event
-  [%event who ovo]
+  |=  ue=unix-event
+  [%event who ue]
 ::
 ++  init
   |=  [who=ship keys=(unit dawn-event)]
@@ -72,13 +101,13 @@
   ==
 ::
 ++  on-dojo-output
-  |=  [who=ship her=ship ovo=unix-effect what=tape fun=$-($~ (list ph-event))]
+  |=  [who=ship her=ship uf=unix-effect what=tape fun=$-($~ (list ph-event))]
   ^-  (list ph-event)
   ?.  =(who her)
     ~
-  ?.  ?=(%blit -.q.ovo)
+  ?.  ?=(%blit -.q.uf)
     ~
-  ?.  %+  lien  p.q.ovo
+  ?.  %+  lien  p.q.uf
       |=  =blit:dill
       ?.  ?=(%lin -.blit)
         |
@@ -87,19 +116,19 @@
   (fun)
 ::
 ++  expect-dojo-output
-  |=  [who=ship her=ship ovo=unix-effect what=tape]
+  |=  [who=ship her=ship uf=unix-effect what=tape]
   ^-  (list ph-event)
   %-  on-dojo-output
-  :^  who  her  ovo
+  :^  who  her  uf
   :-  what
   |=  ~
   [%test-done &]~
 ::
 ++  on-ergo
-  |=   [who=ship her=ship ovo=unix-effect fun=$-($~ (list ph-event))]
+  |=   [who=ship her=ship uf=unix-effect fun=$-($~ (list ph-event))]
   ?.  =(who her)
     ~
-  ?.  ?=(%ergo -.q.ovo)
+  ?.  ?=(%ergo -.q.uf)
     ~
   (fun)
 ::
@@ -151,8 +180,8 @@
 ++  test-lib
   |_  our=ship
   ++  compose-tests
-    |=  [a=test-core b=test-core]
-    ^-  test-core
+    |=  [a=raw-test-core b=raw-test-core]
+    ^-  raw-test-core
     =/  done-with-a  |
     =>
       |%
@@ -208,14 +237,18 @@
     ::    like that.
     ::
     ++  route
-      |=  [now=@da who=ship ovo=unix-effect]
-      ^-  (quip ph-event _..start)
+      |=  [now=@da who=ship uf=unix-effect]
+      ^-  [? (quip ph-event _..start)]
       ?:  done-with-a
-        =^  events  b  (route:b now who ovo)
-        [events ..start]
-      =^  events  a  (route:a now who ovo)
+        =+  ^-  [thru=? events=(list ph-event) cor=raw-test-core]
+            (route:b now who uf)
+        =.  b  cor
+        [thru events ..start]
+      =+  ^-  [thru=? events=(list ph-event) cor=raw-test-core]
+          (route:a now who uf)
+      =.  a  cor
       =^  events  ..filter-a  (filter-a now events)
-      [events ..start]
+      [thru events ..start]
     --
   ::
   ::  Don't use directly, or else you might not have a parent.
@@ -224,7 +257,7 @@
   ::
   ++  raw-ship
     |=  [her=ship keys=(unit dawn-event)]
-    ^-  test-core
+    ^-  raw-test-core
     |%
     ++  label  :((cury cat 3) 'init-' (scot %p her) '-' (scot %uw (mug (fall keys *dawn-event))))
     ++  ships  ~[her]
@@ -234,8 +267,9 @@
       [(init her keys) ..start]
     ::
     ++  route
-      |=  [now=@da who=ship ovo=unix-effect]
-      ^-  (quip ph-event _..start)
+      |=  [now=@da who=ship uf=unix-effect]
+      ^-  [? (quip ph-event _..start)]
+      :-  &
       :_  ..start
       %-  zing
       ::  This is a pretty bad heuristic, but in general galaxies will
@@ -244,13 +278,13 @@
       ::
       :~
         %-  on-dojo-output
-        :^  her  who  ovo
+        :^  her  who  uf
         :-  "+ /{(scow %p her)}/base/2/web/testing/udon"
         |=  ~
         [%test-done &]~
       ::
         %-  on-dojo-output
-        :^  her  who  ovo
+        :^  her  who  uf
         :-  "is your neighbor"
         |=  ~
         [%test-done &]~
@@ -291,11 +325,10 @@
   ::
   ++  touch-file
     |=  [her=ship des=desk]
-    ^-  test-core
+    %+  porcelain-test
+      (cat 3 'touch-file-' (scot %p her))
     =|  warped=@t
     |%
-    ++  label  (cat 3 'touch-file-' (scot %p her))
-    ++  ships  ~
     ++  start
       |=  now=@da
       ^-  (pair (list ph-event) _..start)
@@ -309,12 +342,12 @@
       ==
     ::
     ++  route
-      |=  [now=@da who=ship ovo=unix-effect]
+      |=  [now=@da who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       :_  ..start
       %-  zing
       :~  %-  on-ergo
-          :^  her  who  ovo
+          :^  her  who  uf
           |=  $~
           =/  pax  /i/(scot %p her)/[des]/(scot %da now)/sur/aquarium/hoon/noun
           ?:  =(warped (need (scry-aqua (unit @) now pax)))
@@ -330,10 +363,9 @@
   ::
   ++  check-file-touched
     |=  [her=ship des=desk]
-    ^-  test-core
+    %+  porcelain-test
+      (cat 3 'check-file-touched-' (scot %p her))
     |%
-    ++  label  (cat 3 'check-file-touched-' (scot %p her))
-    ++  ships  ~
     ++  start
       |=  now=@da
       ::  mounting is not strictly necessary since we check via scry,
@@ -345,7 +377,7 @@
       [(dojo her "|mount /={(trip des)}=") ..start]
     ::
     ++  route
-      |=  [now=@da who=ship ovo=unix-effect]
+      |=  [now=@da who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       =/  cb
         |=  $~
@@ -364,8 +396,8 @@
         ~
       :_  ..start
       %-  zing
-      :~  (on-ergo her who ovo cb)
-          (on-dojo-output her who ovo ">=" cb)
+      :~  (on-ergo her who uf cb)
+          (on-dojo-output her who uf ">=" cb)
       ==
     --
   ::
@@ -375,10 +407,9 @@
   ::
   ++  reload-vane
     |=  [her=ship vane=term]
-    ^-  test-core
+    %+  porcelain-test
+      :((cury cat 3) 'reload-vane-' (scot %p her) '-' vane)
     |%
-    ++  label  :((cury cat 3) 'reload-vane-' (scot %p her) '-' vane)
-    ++  ships  ~
     ++  start
       |=  now=@da
       ^-  (pair (list ph-event) _..start)
@@ -392,7 +423,7 @@
       ==
     ::
     ++  route
-      |=  [now=@da who=ship ovo=unix-effect]
+      |=  [now=@da who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       `..start
     --
