@@ -22,7 +22,7 @@ all_srcs = $(common) $(king) $(serf)
 
 ################################################################################
 
-all: jets/c/can.o jets/c/bex.o jets/c/ripn.o
+all: jets/c/can.o jets/c/bex.o jets/c/ripn.o jets/c/cat.o jets/c/cap.o jets/c/con.o
 
 clean:
 	rm -f $(all_objs) ./urbit ./urbit-worker ./tags
