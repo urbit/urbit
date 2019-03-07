@@ -7713,6 +7713,7 @@
         ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a
         ::  length of 32.
         ::  Note that for any X, len(enc(X)) is a multiple of 32.
+        ~|  [%bytes-n-too-long max=32 actual=p.p.dat]
         ?>  (lte p.p.dat 32)
         (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
       ::
@@ -7722,7 +7723,7 @@
         ::  by the minimum number of zero-bytes such that len(enc(X)) is a
         ::  multiple of 32.
         %+  weld  $(dat [%uint p.p.dat])
-        $(dat [%bytes-n p.dat])
+        (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
       ::
           %string
         ::  enc(X) = enc(enc_utf8(X)), i.e. X is utf-8 encoded and this value is
