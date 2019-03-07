@@ -10,7 +10,7 @@
 
     /* u3_nul: 0, hoon ~.
     */
-#     define u3_nul   0
+#     define u3_nul   { .all = 0 }
 
     /* u3_blip: 0, hoon %$.
     */
@@ -32,7 +32,10 @@
     **
     ** Bits 0-29 are a word offset against u3_Loom (u3_post).
     */
-      typedef c3_d u3_noun;
+      typedef union {
+          c3_d all;
+          c3_w haf[2];
+      } u3_noun;
 
     /* u3_weak: u3_noun which may be u3_none (not a noun).
     */

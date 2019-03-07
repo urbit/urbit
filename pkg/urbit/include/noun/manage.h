@@ -34,7 +34,7 @@
       **    %time               ::  timed out
       **    %oops               ::  assertion failure
       */
-        c3_i
+        u3_noun
         u3m_bail(c3_m how_m) __attribute__((noreturn));
 
       /* u3m_init(): start the environment.

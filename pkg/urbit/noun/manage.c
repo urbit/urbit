@@ -595,7 +595,7 @@ c3_w Exit;
 **        [%3 code trace]
 **    ==
 */
-c3_i
+u3_noun
 u3m_bail(c3_m how)
 {
   if ( (c3__exit == how) && (u3R == &u3H->rod_u) ) {

@@ -46,19 +46,21 @@
   one word, and cons them onto the front of the result.
 */
 u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
-  if ( !_(u3a_is_cat(bits) || bits==0 || bits>31) ) {
+  if ( !_(u3a_is_cat(bits) || bits.haf[1]==0 || bits.haf[1]>31) ) {
     return u3m_bail(c3__fail);
   }
 
+  c3_w bits_w = u3a_get_cat32(bits);
+
   c3_w bit_width  = u3r_met(0, atom);
-  c3_w num_blocks = DIVCEIL(bit_width, bits);
+  c3_w num_blocks = DIVCEIL(bit_width, bits_w);
 
   u3_noun res = u3_nul;
 
   for ( c3_w blk = 0; blk < num_blocks; blk++ ) {
     c3_w next_blk = blk + 1;
     c3_w blks_rem = num_blocks - next_blk;
-    c3_w bits_rem = blks_rem * bits;
+    c3_w bits_rem = blks_rem * bits_w;
     c3_w ins_idx  = bits_rem / 32;
     c3_w sig_idx  = ins_idx + 1;
 
@@ -66,15 +68,15 @@ u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
 
     c3_w ins_word  = u3r_word(ins_idx, atom);
     c3_w sig_word  = u3r_word(sig_idx, atom);
-    c3_w nbits_ins = c3_min(bits, 32 - bits_rem_in_ins_word);
-    c3_w nbits_sig = bits - nbits_ins;
+    c3_w nbits_ins = c3_min(bits_w, 32 - bits_rem_in_ins_word);
+    c3_w nbits_sig = bits_w - nbits_ins;
 
     c3_w ins_word_bits = TAKEBITS(nbits_ins, ins_word >> bits_rem_in_ins_word);
     c3_w sig_word_bits = TAKEBITS(nbits_sig, sig_word);
 
     c3_w item = ins_word_bits | (sig_word_bits << nbits_ins);
 
-    res = u3nc(item, res);
+    res = u3nc(u3a_cat32(item), res);
   }
 
   return res;

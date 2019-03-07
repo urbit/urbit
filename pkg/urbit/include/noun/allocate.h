@@ -177,14 +177,35 @@
                                    (void *) \
                                    ( ((c3_w *)(void*)(tox_v)) - \
                                       c3_wiseof(u3a_box)  ) )
-    /* Inside a noun.
-    */
-#     define u3a_is_cat(som)    (((som) >> 31) ? c3n : c3y)
-#     define u3a_is_dog(som)    (((som) >> 31) ? c3y : c3n)
 
-#     define u3a_is_pug(som)    ((2 == ((som) >> 30)) ? c3y : c3n)
-#     define u3a_is_pom(som)    ((3 == ((som) >> 30)) ? c3y : c3n)
-#     define u3a_to_off(som)    ((som) & 0x3fffffff)
+
+u3_noun u3m_bail (c3_m how);
+
+static inline c3_o
+u3a_is_cat(u3_noun som) {
+  if (som.haf[0] != 0) return c3n;
+  if (som.haf[1] >> 31) return c3n;
+  return c3y;
+}
+
+static inline c3_t
+u3a_is_dog(u3_noun som) { return (som.haf[1] >> 31) ? c3y : c3n; }
+
+static inline c3_w
+u3a_get_cat32(u3_noun som) {
+  if (!u3a_is_cat(som)) u3m_bail(c3__exit);
+  return som.haf[1];
+}
+
+static inline u3_noun
+u3a_cat32(c3_w val) {
+  if (val >> 31) u3m_bail(c3__exit);
+  return (u3_noun){ .haf = { 0, val } };
+}
+
+#     define u3a_is_pug(som)    ((2 == ((som.haf[1]) >> 30)) ? c3y : c3n)
+#     define u3a_is_pom(som)    ((3 == ((som.haf[1]) >> 30)) ? c3y : c3n)
+#     define u3a_to_off(som)    ((som.haf[1]) & 0x3fffffff)
 #     define u3a_to_ptr(som)    (u3a_into(u3a_to_off(som)))
 #     define u3a_to_wtr(som)    ((c3_w *)u3a_to_ptr(som))
 #     define u3a_to_pug(off)    (off | 0x80000000)
@@ -196,13 +217,13 @@
 #     define u3a_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3a_outa(dog_w))
 
 #     define u3a_h(som) \
-        ( _(u3a_is_cell(som)) \
-           ? ( ((u3a_cell *)u3a_to_ptr(som))->hed )\
+        ( _(u3a_is_cell(som.haf[1])) \
+           ? ( ((u3a_cell *)u3a_to_ptr(som.haf[1]))->hed )\
            : u3m_bail(c3__exit) )
 
 #     define u3a_t(som) \
-        ( _(u3a_is_cell(som)) \
-           ? ( ((u3a_cell *)u3a_to_ptr(som))->tel )\
+        ( _(u3a_is_cell(som.haf[1])) \
+           ? ( ((u3a_cell *)u3a_to_ptr(som.haf[1]))->tel )\
            : u3m_bail(c3__exit) )
 
 #     define  u3a_into(x) ((void *)(u3_Loom + (x)))
@@ -240,27 +261,27 @@
                        !(u3a_south_is_junior(r, dog)))
 
 #     define  u3a_is_junior(r, som) \
-                ( _(u3a_is_cat(som)) \
+                ( _(u3a_is_cat(som.haf[1])) \
                       ?  c3n \
                       :  _(u3a_is_north(r)) \
-                         ?  u3a_north_is_junior(r, som) \
-                         :  u3a_south_is_junior(r, som) )
+                         ?  u3a_north_is_junior(r, som.haf[1]) \
+                         :  u3a_south_is_junior(r, som.haf[1]) )
 
 #     define  u3a_is_senior(r, som) \
-                ( _(u3a_is_cat(som)) \
+                ( _(u3a_is_cat(som.haf[1])) \
                       ?  c3y \
                       :  _(u3a_is_north(r)) \
-                         ?  u3a_north_is_senior(r, som) \
-                         :  u3a_south_is_senior(r, som) )
+                         ?  u3a_north_is_senior(r, som.haf[1]) \
+                         :  u3a_south_is_senior(r, som.haf[1]) )
 
 #     define  u3a_is_mutable(r, som) \
-                ( _(u3a_is_atom(som)) \
+                ( _(u3a_is_atom(som.haf[1])) \
                   ? c3n \
-                  : _(u3a_is_senior(r, som)) \
+                  : _(u3a_is_senior(r, som.haf[1])) \
                   ? c3n \
-                  : _(u3a_is_junior(r, som)) \
+                  : _(u3a_is_junior(r, som.haf[1])) \
                   ? c3n \
-                  : (u3a_botox(u3a_to_ptr(som))->use_w == 1) \
+                  : (u3a_botox(u3a_to_ptr(som.haf[1]))->use_w == 1) \
                   ? c3y : c3n )
 
   /**  Globals.
