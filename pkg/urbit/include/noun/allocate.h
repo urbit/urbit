@@ -189,45 +189,95 @@ u3a_is_cat(u3_noun som) {
 }
 
 static inline c3_t
-u3a_is_dog(u3_noun som) { return (som.haf[1] >> 31) ? c3y : c3n; }
+u3a_is_dog(u3_noun som) { return __(som.haf[1] >> 31); }
+
+#define u3a_cat31_unsafe(lit)  (u3_noun){.haf={0,lit}}
 
 static inline c3_w
-u3a_get_cat32(u3_noun som) {
-  if (!u3a_is_cat(som)) u3m_bail(c3__exit);
+u3a_get_cat31(u3_noun som) {
+  if (!_(u3a_is_cat(som))) u3m_bail(c3__exit);
   return som.haf[1];
 }
 
+static inline c3_o
+u3a_cat31_equals_noun(c3_w val, u3_noun som) {
+  if (!_(u3a_is_cat(som))) return c3n;
+  return (som.haf[1] == val);
+}
+
+static inline c3_o
+u3a_is_none(u3_noun som) {
+  return __( som.haf[0]==0 && som.haf[1]==0xffffffff );
+}
+
 static inline u3_noun
-u3a_cat32(c3_w val) {
+u3a_cat31(c3_w val) {
   if (val >> 31) u3m_bail(c3__exit);
   return (u3_noun){ .haf = { 0, val } };
 }
 
-#     define u3a_is_pug(som)    ((2 == ((som.haf[1]) >> 30)) ? c3y : c3n)
-#     define u3a_is_pom(som)    ((3 == ((som.haf[1]) >> 30)) ? c3y : c3n)
-#     define u3a_to_off(som)    ((som.haf[1]) & 0x3fffffff)
-#     define u3a_to_ptr(som)    (u3a_into(u3a_to_off(som)))
-#     define u3a_to_wtr(som)    ((c3_w *)u3a_to_ptr(som))
-#     define u3a_to_pug(off)    (off | 0x80000000)
-#     define u3a_to_pom(off)    (off | 0xc0000000)
+static inline c3_o
+u3a_is_pug(u3_noun som) {
+  return __( 2 == ((som.haf[1]) >> 30) );
+}
 
-#     define u3a_is_atom(som)    c3o(u3a_is_cat(som), \
-                                         u3a_is_pug(som))
-#     define u3a_is_cell(som)    u3a_is_pom(som)
-#     define u3a_de_twin(dog, dog_w)  ((dog & 0xc0000000) | u3a_outa(dog_w))
+static inline c3_o
+u3a_is_pom(u3_noun som) {
+  return __( 3 == ((som.haf[1]) >> 30) );
+}
 
-#     define u3a_h(som) \
-        ( _(u3a_is_cell(som.haf[1])) \
-           ? ( ((u3a_cell *)u3a_to_ptr(som.haf[1]))->hed )\
-           : u3m_bail(c3__exit) )
+// noun to offset
+static inline c3_w
+u3a_to_off(u3_noun som) {
+  assert(som.haf[0] == 0);
+  return ((som.haf[1]) & 0x3fffffff);
+}
 
-#     define u3a_t(som) \
-        ( _(u3a_is_cell(som.haf[1])) \
-           ? ( ((u3a_cell *)u3a_to_ptr(som.haf[1]))->tel )\
-           : u3m_bail(c3__exit) )
+// offset to pug
+static inline u3_noun
+u3a_to_pug(c3_w off) {
+  return (u3_noun){ .haf = { 0, (off | 0x80000000) } };
+}
 
-#     define  u3a_into(x) ((void *)(u3_Loom + (x)))
-#     define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
+// offset to pom
+static inline u3_noun
+u3a_to_pom(c3_w off) {
+  return (u3_noun){ .haf = { 0, (off | 0xc0000000) } };
+}
+
+#define u3a_to_ptr(som) \
+  (u3a_into(u3a_to_off(som)))
+
+#define u3a_to_wtr(som) \
+  ((c3_w *)u3a_to_ptr(som))
+
+#define u3a_is_atom(som) \
+  c3o(u3a_is_cat(som), u3a_is_pug(som))
+
+#define u3a_is_cell(som) \
+  u3a_is_pom(som)
+
+#define u3a_de_twin(dog, dog_w) \
+  ((dog & 0xc0000000) | u3a_outa(dog_w))
+
+#define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
+
+#define  u3a_into(x) ((void *)(u3_Loom + (x)))
+#define  u3a_outa(p) (((c3_w*)(void*)(p)) - u3_Loom)
+
+static inline u3_noun
+u3a_h(u3_noun som) {
+  if ( !_(u3a_is_cell(som)) ) return u3m_bail(c3__exit);
+  u3a_cell* p = u3a_to_ptr(som);
+  return p->hed;
+}
+
+static inline u3_noun
+u3a_t(u3_noun som) {
+  if ( !_(u3a_is_cell(som)) ) return u3m_bail(c3__exit);
+  u3a_cell* p = u3a_to_ptr(som);
+  return p->tel;
+}
 
 #     define  u3a_is_north(r)  __(r->cap_p > r->hat_p)
 #     define  u3a_is_south(r)  !u3a_is_north(r)
@@ -296,8 +346,6 @@ u3a_cat32(c3_w val) {
 #ifdef U3_MEMORY_DEBUG
       c3_global c3_w u3_Code;
 #endif
-
-#   define u3_Loom      ((c3_w *)(void *)U3_OS_LoomBase)
 
   /**  Functions.
   **/

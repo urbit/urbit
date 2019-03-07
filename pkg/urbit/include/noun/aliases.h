@@ -6,11 +6,11 @@
   **/
     /* u3_none - u3_noun which is not a noun.
     */
-#     define u3_none  (u3_noun)0xffffffff
+#     define u3_none  (u3_noun){.haf={0,0xffffffff}}
 
     /* u3_nul: 0, hoon ~.
     */
-#     define u3_nul   { .all = 0 }
+#     define u3_nul   { .haf = {0,0} }
 
     /* u3_blip: 0, hoon %$.
     */

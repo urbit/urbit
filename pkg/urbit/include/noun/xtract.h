@@ -1,57 +1,59 @@
-/* i/n/x.h
-**
-** This file is in the public domain.
-*/
-  /**  Constants.
-  **/
-    /* Conventional axes for gate call.
-    */
-#     define u3x_pay      3       //  payload
-#     define u3x_sam      6       //  sample
-#       define u3x_sam_1  6
-#       define u3x_sam_2  12
-#       define u3x_sam_3  13
-#       define u3x_sam_4  24
-#       define u3x_sam_5  25
-#       define u3x_sam_6  26
-#       define u3x_sam_12 52
-#       define u3x_sam_13 53
-#       define u3x_sam_7  27
-#       define u3x_sam_14 54
-#       define u3x_sam_15 55
-#       define u3x_sam_30 110
-#       define u3x_sam_31 111
-#     define u3x_con      7       //  context
-#     define u3x_con_2    14      //  context
-#     define u3x_con_3    15      //  context
-#     define u3x_con_sam  30      //  sample in gate context
-#     define u3x_bat      2       //  battery
+////////////////////////////////////////////////////////////////////////////////
+// i/n/x.h
+//
+// This file is in the public domain.
+////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+// Constants ///////////////////////////////////////////////////////////////////
 
-  /**  Macros.
-  **/
-    /* Word axis macros.  For 31-bit axes only.
-    */
-      /* u3x_dep(): number of axis bits.
-      */
-#       define u3x_dep(a_w)   (c3_bits_word(a_w) - 1)
+// Conventional Axes for Gate Call /////////////////////////////////////////////
 
-      /* u3x_cap(): root axis, 2 or 3.
-      */
-#       define u3x_cap(a_w) ({                        \
-          c3_assert( 1 < a_w );                       \
-          (0x2 | (a_w >> (u3x_dep(a_w) - 1))); })
+#define u3x_pay      u3a_cat31_unsafe(3)       //  payload
 
-      /* u3x_mas(): remainder after cap.
-      */
-#       define u3x_mas(a_w) ({                        \
-          c3_assert( 1 < a_w );                       \
-          ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) ); })
+#define u3x_sam      u3a_cat31_unsafe(6)       //  sample
+#define u3x_sam_1    u3a_cat31_unsafe(6)
+#define u3x_sam_2    u3a_cat31_unsafe(12)
+#define u3x_sam_3    u3a_cat31_unsafe(13)
+#define u3x_sam_4    u3a_cat31_unsafe(24)
+#define u3x_sam_5    u3a_cat31_unsafe(25)
+#define u3x_sam_6    u3a_cat31_unsafe(26)
+#define u3x_sam_12   u3a_cat31_unsafe(52)
+#define u3x_sam_13   u3a_cat31_unsafe(53)
+#define u3x_sam_7    u3a_cat31_unsafe(27)
+#define u3x_sam_14   u3a_cat31_unsafe(54)
+#define u3x_sam_15   u3a_cat31_unsafe(55)
+#define u3x_sam_30   u3a_cat31_unsafe(110)
+#define u3x_sam_31   u3a_cat31_unsafe(111)
 
-      /* u3x_peg(): connect two axes.
-      */
-#       define u3x_peg(a_w, b_w) \
-          ( (a_w << u3x_dep(b_w)) | (b_w &~ (1 << u3x_dep(b_w))) )
+#define u3x_con      u3a_cat31_unsafe(7)       //  context
+#define u3x_con_2    u3a_cat31_unsafe(14)      //  context
+#define u3x_con_3    u3a_cat31_unsafe(15)      //  context
+#define u3x_con_sam  u3a_cat31_unsafe(30)      //  sample in gate context
+
+#define u3x_bat      u3a_cat31_unsafe(2)       //  battery
+
+////////////////////////////////////////////////////////////////////////////////
+// Macros //////////////////////////////////////////////////////////////////////
+
+// Word Axis Macros -- For 31-bit Axes Only ////////////////////////////////////
+
+// u3x_dep(): number of axis bits.
+#define u3x_dep(a_w)   (c3_bits_word(a_w) - 1)
+
+// u3x_cap(): root axis, 2 or 3.
+#define u3x_cap(a_w) ({                       \
+  c3_assert( 1 < a_w );                       \
+  (0x2 | (a_w >> (u3x_dep(a_w) - 1))); })
+
+// u3x_mas(): remainder after cap.
+#define u3x_mas(a_w) ({                       \
+  c3_assert( 1 < a_w );                       \
+  ( (a_w & ~(1 << u3x_dep(a_w))) | (1 << (u3x_dep(a_w) - 1)) ); })
+
+// u3x_peg(): connect two axes.
+#define u3x_peg(a_w, b_w) \
+  ( (a_w << u3x_dep(b_w)) | (b_w &~ (1 << u3x_dep(b_w))) )
 
   /**  Functions.
   **/

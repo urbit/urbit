@@ -50,7 +50,7 @@ u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
     return u3m_bail(c3__fail);
   }
 
-  c3_w bits_w = u3a_get_cat32(bits);
+  c3_w bits_w = u3a_get_cat31(bits);
 
   c3_w bit_width  = u3r_met(0, atom);
   c3_w num_blocks = DIVCEIL(bit_width, bits_w);
@@ -76,7 +76,7 @@ u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
 
     c3_w item = ins_word_bits | (sig_word_bits << nbits_ins);
 
-    res = u3nc(u3a_cat32(item), res);
+    res = u3nc(u3a_cat31(item), res);
   }
 
   return res;
