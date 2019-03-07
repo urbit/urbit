@@ -1757,7 +1757,9 @@
     :*  hen  %pass
         [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
         %f  %build  live=%.n  %pin
-        (case-to-date cas)
+        ::  See ++validate-plops to explain why it's not (case-to-date cas)
+        ::
+        now
         (vale-page [her syd] peg)
     ==
   ::
@@ -1868,7 +1870,14 @@
     %-  emit
     :*  hen  %pass
         [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %f  %build  live=%.n  %pin  (case-to-date cas)
+        %f  %build  live=%.n  %pin
+        ::  This corresponds to all the changes from [her syd]
+        ::  to [our %home].  This should be (case-to-date cas)
+        ::  in the context of the foreign desk, but since we're
+        ::  getting everything from our own desk now we want to
+        ::  use our most recent commit.
+        ::
+        now
         %list
         ^-  (list schematic:ford)
         %+  turn  ~(tap in pop)

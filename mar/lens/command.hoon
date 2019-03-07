@@ -44,6 +44,7 @@
       %-  of  :~
         stdout+none
         output-file+so
+        output-pill+so
         output-clay+(su (easy /sentinel/path))
         url+(su auri:de-purl:html)
         to-api+(su ;~(plug sym ;~(pfix col prn)))
