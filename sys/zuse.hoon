@@ -7755,23 +7755,19 @@
     ::
     ::  decoding
     ::
-    ++  decode-topics
-      ::  tox:  list of hex words
-      |*  [tox=(lest @ux) tys=(list etyp)]
-      =-  (decode-arguments (crip -) tys)
-      %+  roll  `(list @ux)`tox
-      |=  [top=@ tos=tape]
-      (weld tos (render-hex-bytes 32 top))
+    ++  decode-topics  decode-arguments
     ::
     ++  decode-results
       ::  rex:  string of hex bytes with leading 0x.
       |*  [rex=@t tys=(list etyp)]
-      (decode-arguments (rsh 3 2 rex) tys)
+      =-  (decode-arguments - tys)
+      %+  turn  (rip 9 (rsh 3 2 rex))
+      (curr rash hex)
     ::
     ++  decode-arguments
-      |*  [res=@t tys=(list etyp)]
+      |*  [wos=(list @) tys=(list etyp)]
+      =/  wos=(list @)  wos  ::  get rid of tmi
       =|  win=@ud
-      =/  wos=(list @t)  (rip 9 res)
       =<  (decode-from 0 tys)
       |%
       ++  decode-from
@@ -7796,22 +7792,21 @@
             ?(%address %bool %uint)  ::  %int %real %ureal
           :-  +(win)
           ?-  typ
-            %address  `@ux`(rash wor hex)
-            %uint     `@ud`(rash wor hex)
-            %bool     =(1 (rash wor hex))
+            %address  `@ux`wor
+            %uint     `@ud`wor
+            %bool     =(1 wor)
           ==
         ::
             %string
           =+  $(tys ~[%bytes])
-          ~!  -
           [nin (trip (swp 3 q.dat))]
         ::
             %bytes
           :-  +(win)
           ::  find the word index of the actual data.
-          =/  lic=@ud  (div (rash wor hex) 32)
+          =/  lic=@ud  (div wor 32)
           ::  learn the bytelength of the data.
-          =/  len=@ud  (rash (snag lic wos) hex)
+          =/  len=@ud  (snag lic wos)
           (decode-bytes-n +(lic) len)
         ::
             [%bytes-n *]
@@ -7821,11 +7816,11 @@
             [%array *]
           :-  +(win)
           ::  find the word index of the actual data.
-          =.  win  (div (rash wor hex) 32)
+          =.  win  (div wor 32)
           ::  read the elements from their location.
           %-  tail
           %^  decode-array-n  ~[t.typ]  +(win)
-          (rash (snag win wos) hex)
+          (snag win wos)
         ::
             [%array-n *]
           (decode-array-n ~[t.typ] win n.typ)
@@ -7835,18 +7830,16 @@
         |=  [fro=@ud bys=@ud]
         ^-  octs
         ::  parse {bys} bytes from {fro}.
-        =-  [bys (rash - hex)]
-        %^  end  3  (mul 2 bys)
-        %+  can  9
-        %+  turn
-          (swag [fro +((div (dec bys) 32))] wos)
-        |=(a=@t [1 a])
+        :-  bys
+        %^  rsh  3  (sub 32 (mod bys 33))
+        %+  rep  8
+        (flop (swag [fro +((div (dec bys) 32))] wos))
       ::
       ++  decode-array-n
         ::NOTE  we take (list etyp) even though we only operate on
         ::      a single etyp as a workaround for urbit/arvo#673
+        ::NOTE  careful! produces lists without type info
         =|  res=(list)
-        ~&  %watch-out--arrays-without-typeinfo
         |*  [tys=(list etyp) fro=@ud len=@ud]
         ^-  [@ud (list)]
         ?~  tys  !!
