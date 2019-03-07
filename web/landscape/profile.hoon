@@ -14,7 +14,7 @@
       ;div.flex-col-2;
       ;div.flex-col-x
         ;div.profile-avatar
-          ;div(urb-component "Sigil", urb-size "320", urb-ship "{(scow %p p.bem.gas)}", urb-suffix "false");
+          ;div(urb-component "Sigil", urb-size "310", urb-ship "{(scow %p p.bem.gas)}", urb-suffix "false");
           ;div(urb-component "ProfileMsgBtn", urb-ship "{(scow %p p.bem.gas)}");
         ==
       ==
