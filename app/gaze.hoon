@@ -16,13 +16,11 @@
       ::  time: timstamps of block numbers
       ::  seen: events sorted by timestamp, newest first
       ::  days: stats by day, newest first
-      ::  lock: when ships got locked up
       ::
       qued=loglist
       time=(map @ud @da)
       seen=(list [wen=@da wat=event])
       days=(list [day=@da sat=stats])
-      lock=(map @p @da)
   ==
 ::
 ++  event
@@ -65,11 +63,11 @@
   [~ ..prep(+<+ u.old)]
 ::
 ++  poke-noun
-  |=  a=?(%kick-watcher %regaze %debug)
+  |=  a=?(%kick-watcher %regaze %losetime %debug)
   ^-  (quip move _+>)
   ?-  a
       %kick-watcher
-    :_  +>.$
+    :_  +>.$(qued ~, seen ~, days ~, time ~)
     :~
       :-  ost
       :*  %poke
@@ -89,7 +87,7 @@
     ==
   ::
       %regaze
-    :_  +>.$(qued ~, seen ~)
+    :_  +>.$(qued ~, seen ~, days ~)
     :~
       :-  ost
       :*  %peer
@@ -99,9 +97,12 @@
       ==
     ==
   ::
+      %losetime
+    [~ +>.$(time ~)]
+  ::
       %debug
-    ~&  latest=(turn (scag 10 seen) head)
-    ~&  oldest=(turn (slag (sub (lent seen) 10) seen) head)
+    ~&  latest=(turn (scag 5 seen) head)
+    ~&  oldest=(turn (slag (sub (lent seen) 5) seen) head)
     ~&  :-  'order is'
         =-  ?:(sane 'sane' 'insane')
         %+  roll  seen
@@ -111,7 +112,7 @@
         (lte this last)
     ~&  time=~(wyt by time)
     ~&  qued=(lent qued)
-    ~&  days=(scag 5 days)
+    ~&  days=(lent days)
     [~ +>.$]
   ==
 ::
@@ -169,11 +170,16 @@
   =-  =^  moz  +>.$  (queue-logs mistime)  ::  oldest first
       =.  +>.$  (process-logs havtime)  ::  oldest first
       [moz +>.$]
-  ^-  [havtime=loglist mistime=loglist]
-  %+  skid  (flop `loglist`logs)  ::  put oldest first
-  |=  log=event-log:rpc
-  %-  ~(has by time)
-  block-number:(need mined.log)
+  ::  sort based on timstamp known, throw out lockup logs
+  ::
+  %+  roll  `loglist`logs
+  |=  [log=event-log:rpc havtime=loglist mistime=loglist]
+  ^+  [havtime mistime]
+  =+  bon=block-number:(need mined.log)
+  ?:  (is-lockup-block bon)  [havtime mistime]
+  ?:  (~(has by time) bon)
+    [[log havtime] mistime]
+  [havtime [log mistime]]
 ::
 ::  +queue-logs: hold on to new logs, requesting timestamps for them
 ::
@@ -244,12 +250,10 @@
   |=  logs=loglist  ::  oldest first
   ^+  +>
   ?~  logs  +>
-  =-  =<  .(seen remove-lockups)
-      %_  +>.$
+  =-  %_  +>.$
         qued  (flop rest)  ::  oldest first
         seen  (weld logs seen)  ::  newest first
         days  (count-events (flop logs))  ::  oldest first
-        lock  (find-lockups logs)
       ==
   %+  roll  `loglist`logs
   |=  [log=event-log:rpc rest=loglist logs=(list [wen=@da wat=event])]
@@ -272,12 +276,7 @@
   ?:  =(azimuth:contracts address.log)
     =+  (event-log-to-point-diff log)
     ?~  -  ~
-    ::  ignore initial events for locked up stars
-    ::
-    ::TODO  do this filtering earlier, so we don't ask for unnecessary blocks
-    =;  ignore=?  ?:(ignore ~ `azimuth+u)
-    ::TODO  check against lock map
-    |
+    `azimuth+u
   ::TODO  delegated sending support
   ~
 ::
@@ -341,41 +340,22 @@
     %spawn-proxy       sat(spawn-p [who.eve spawn-p.sat])
   ==
 ::
-::  +find-lockups: search the seen event log for lockup events
+::  +is-lockup-block: whether the block contains lockup/ignorable transactions
 ::
-::    lockup events are identified by a transfer to either the linear or
-::    conditional star release contract. a timestamp of the lockup transfer
-::    is saved so that we can discard all events prior to it.
+::    this is the stupid dumb equivalent to actually identifying lockup
+::    transactions procedurally, which is still in git history, but didn't
+::    work quite right for unidentified reasons
 ::
-++  find-lockups
-  |=  =_seen
-  ^+  lock
-  %-  ~(gas in lock)
-  %+  murn  seen
-  |=  [wen=@da wat=event]
-  ^-  (unit [@p @da])
-  ::  ?.  ?=(%azimuth -.wat)  ~
-  ?+  -.dif.wat  ~
-      %owner
-    ?.  ?|  =(linear-star-release:contracts new.dif.wat)
-            =(conditional-star-release:contracts new.dif.wat)
-        ==
-      ~
-    `[who.wat wen]
-  ==
-::
-++  remove-lockups
-  ^+  seen
-  ~&  [%removing ~(wyt by lock)]
-  %+  murn  seen
-  |=  ven=[wen=@da wat=event]
-  ^-  (unit _ven)
-  ::  ?.  ?=(%azimuth -.wat.ven)  `ven
-  =+  who=(who-from-event wat.ven)
-  =+  lok=(~(get by lock) who)
-  ?~  lok  `ven
-  ?:  (lte wen.ven u.lok)  ~
-  `ven
+++  is-lockup-block
+  |=  num=@ud
+  ^-  ?
+  %+  roll
+    ^-  (list [@ud @ud])
+    :~  [7.050.978 7.051.038]
+    ==
+  |=  [[start=@ud end=@ud] in=_|]
+  ?:  in  &
+  &((gte num start) (lte num end))
 ::
 ++  who-from-event
   |=  eve=event
