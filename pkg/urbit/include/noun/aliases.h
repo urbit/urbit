@@ -10,7 +10,7 @@
 
     /* u3_nul: 0, hoon ~.
     */
-#     define u3_nul   { .haf = {0,0} }
+#     define u3_nul   (u3_noun){ .haf = {0,0} }
 
     /* u3_blip: 0, hoon %$.
     */

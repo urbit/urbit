@@ -26,20 +26,23 @@ u3_noun u3qc_can(u3_atom a, u3_noun b) {
     while ( 1 ) {
       u3_noun i_cab, pi_cab, qi_cab;
 
-      if ( u3a_is_cat(cab) && 0 == u3a_get_cat31(cab) ) {
+      if ( _(u3a_is_cat(cab)) && 0 == u3a_get_cat31(cab) ) {
         break;
       }
 
-      if ( c3n == u3du(cab) ) return u3m_bail(c3__fail);
+      if ( !_(u3du(cab)) ) return u3m_bail(c3__fail);
       i_cab = u3h(cab);
-      if ( c3n == u3du(i_cab) ) return u3m_bail(c3__fail);
+
+      if ( !_(u3du(i_cab)) ) return u3m_bail(c3__fail);
+
       pi_cab = u3h(i_cab);
       qi_cab = u3t(i_cab);
-      if ( c3n == u3a_is_cat(pi_cab) ) return u3m_bail(c3__fail);
+
+      if ( !_(u3a_is_cat(pi_cab)) ) return u3m_bail(c3__fail);
 
       c3_w pi_cab_w = u3a_get_cat31(pi_cab);
 
-      if ( c3n == u3ud(qi_cab) )  return u3m_bail(c3__fail);
+      if ( !_(u3ud(qi_cab)) )  return u3m_bail(c3__fail);
       if ( (tot_w + pi_cab_w) < tot_w ) return u3m_bail(c3__fail);
 
       tot_w += pi_cab_w;
@@ -60,7 +63,7 @@ u3_noun u3qc_can(u3_atom a, u3_noun b) {
     u3_noun cab   = b;
     c3_w    pos_w = 0;
 
-    while ( u3a_cat31_equals_noun(0, cab) ) {
+    while ( _(u3a_cat31_equals_noun(0, cab)) ) {
       u3_noun i_cab  = u3h(cab);
       u3_atom pi_cab = u3h(i_cab);
       u3_atom qi_cab = u3t(i_cab);
@@ -79,8 +82,8 @@ u3_noun u3qc_can(u3_atom a, u3_noun b) {
 u3_noun u3wc_can(u3_noun cor) {
     u3_noun a, b;
 
-    if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
-         (c3n == u3ud(a)) )
+    if ( !_(u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
+         !_(u3ud(a)) )
     {
         return u3m_bail(c3__fail);
     }

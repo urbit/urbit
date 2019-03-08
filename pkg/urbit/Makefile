@@ -26,6 +26,9 @@ all: jets/c/can.o jets/c/bex.o jets/c/ripn.o \
      jets/c/cat.o jets/c/cap.o jets/c/con.o  \
      jets/c/dis.o jets/c/dor.o jets/c/dvr.o  \
      jets/c/end.o jets/c/gor.o jets/c/lsh.o  \
+     jets/c/mas.o jets/c/met.o jets/c/mix.o  \
+     jets/c/mor.o jets/c/mug.o jets/c/muk.o  \
+     jets/c/peg.o jets/c/po.o  jets/c/pow.o  \
 
 clean:
 	rm -f $(all_objs) ./urbit ./urbit-worker ./tags

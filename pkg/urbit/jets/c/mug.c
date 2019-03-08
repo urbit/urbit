@@ -1,19 +1,15 @@
-/* j/3/mug.c
-**
-*/
+////////////////////////////////////////////////////////////////////////////////
+// j/3/mug.c
+////////////////////////////////////////////////////////////////////////////////
+
 #include "all.h"
 
+u3_noun u3wc_mug(u3_noun cor) {
+  u3_noun sam = u3r_at(u3x_sam, cor);
 
-/* functions
-*/
-  u3_noun
-  u3wc_mug(u3_noun cor)
-  {
-    u3_noun sam;
-
-    if ( u3_none == (sam = u3r_at(u3x_sam, cor)) ) {
-      return u3m_bail(c3__exit);
-    } else {
-      return u3r_mug(sam);
-    }
+  if ( !_(u3a_is_none(sam)) ) {
+    return u3m_bail(c3__exit);
   }
+
+  return UNSAFECAT(u3r_mug(sam));
+}

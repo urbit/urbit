@@ -46,7 +46,11 @@
   one word, and cons them onto the front of the result.
 */
 u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
-  if ( !_(u3a_is_cat(bits) || bits.haf[1]==0 || bits.haf[1]>31) ) {
+  if ( !_(u3a_is_cat(bits)) ) {
+    return u3m_bail(c3__fail);
+  }
+
+  if ( bits.haf[1] == 0 || bits.haf[1] > 31 ) {
     return u3m_bail(c3__fail);
   }
 
@@ -85,9 +89,9 @@ u3_noun u3qc_ripn(u3_atom bits, u3_atom atom) {
 u3_noun u3wc_ripn(u3_noun cor) {
   u3_noun bits, atom;
 
-  if ( (c3n == u3r_mean(cor, u3x_sam_2, &bits, u3x_sam_3, &atom, 0)) ||
-       (c3n == u3ud(bits)) ||
-       (c3n == u3ud(atom)) )
+  if ( !_(u3r_mean(cor, u3x_sam_2, &bits, u3x_sam_3, &atom, 0)) ||
+       !_(u3ud(bits)) ||
+       !_(u3ud(atom)) )
   {
     return u3m_bail(c3__exit);
   }

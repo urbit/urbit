@@ -188,8 +188,13 @@ u3a_is_cat(u3_noun som) {
   return c3y;
 }
 
-static inline c3_t
-u3a_is_dog(u3_noun som) { return __(som.haf[1] >> 31); }
+static inline u3_atom loobean_cat(c3_o l) {
+  return (u3_noun){ .haf = { 0, l.v } };
+}
+
+static inline c3_o u3a_is_dog(u3_noun som) {
+  return __(som.haf[1] >> 31);
+}
 
 #define UNSAFECAT(lit)  (u3_noun){.haf={0,lit}}
 
@@ -199,14 +204,35 @@ u3a_get_cat31(u3_noun som) {
   return som.haf[1];
 }
 
+u3_noun u3i_words(c3_w a_w, const c3_w* b_w);
+
+static inline u3_atom
+u3a_word_to_atom(const c3_w wrd) {
+  if ( (wrd >> 31) ) {
+    return u3i_words(1, &wrd);
+  }
+
+  return UNSAFECAT(wrd);
+}
+
 static inline c3_o
 u3a_cat31_equals_noun(c3_w val, u3_noun som) {
   if (!_(u3a_is_cat(som))) return c3n;
-  return (som.haf[1] == val);
+  return __(som.haf[1] == val);
 }
 
 static inline c3_o
 u3a_is_nil(u3_noun som) {
+  return __( som.haf[0]==0 && som.haf[1]==0 );
+}
+
+static inline c3_o
+u3a_is_true(u3_noun som) {
+  return __( som.haf[0]==0 && som.haf[1]==1 );
+}
+
+static inline c3_o
+u3a_is_false(u3_noun som) {
   return __( som.haf[0]==0 && som.haf[1]==0 );
 }
 

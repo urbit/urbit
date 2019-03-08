@@ -9,7 +9,7 @@
 */
 u3_noun
 u3i_words(c3_w        a_w,
-            const c3_w* b_w)
+          const c3_w* b_w)
 {
   /* Strip trailing zeroes.
   */

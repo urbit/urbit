@@ -23,7 +23,7 @@ u3_noun u3qc_bex(u3_atom a) {
 u3_noun u3wc_bex(u3_noun cor) {
   u3_noun a = u3r_at(u3x_sam, cor);
 
-  if ( u3a_is_none(a) || (c3n == u3ud(a)) )
+  if ( _(u3a_is_none(a)) || !_(u3ud(a)) )
   {
     return u3m_bail(c3__exit);
   }

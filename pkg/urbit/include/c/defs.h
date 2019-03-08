@@ -5,11 +5,20 @@
   /** Loobeans - inverse booleans to match nock.
   **/
 
-#define c3y (c3_o)0
-#define c3n (c3_o)1
+static const c3_o c3y = { 0 };
+static const c3_o c3n = { 1 };
 
-#     define _(x)        (c3y == (x))
-#     define __(x)       ((x) ? c3y : c3n)
+static inline c3_o to_loobean(c3_t b) {
+  return (b ? c3y : c3n);
+}
+
+static inline c3_t from_loobean(c3_o l) {
+  return (l.v ? 0 : 1);
+}
+
+#define _(x)   from_loobean(x)
+#define __(x)  to_loobean(x)
+
 #     define c3a(x, y)   __(_(x) && _(y))
 #     define c3o(x, y)   __(_(x) || _(y))
 

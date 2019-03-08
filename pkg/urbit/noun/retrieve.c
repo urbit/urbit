@@ -1071,7 +1071,7 @@ u3r_hext(u3_noun  a,
 */
 c3_w
 u3r_met(c3_y    a_y,
-          u3_atom b)
+        u3_atom b)
 {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
@@ -1276,8 +1276,7 @@ u3r_mp(mpz_t   a_mp,
 */
 c3_w
 u3r_word(c3_w    a_w,
-           u3_atom b)
-{
+         u3_atom b) {
   c3_assert(u3_none != b);
   c3_assert(_(u3a_is_atom(b)));
 
