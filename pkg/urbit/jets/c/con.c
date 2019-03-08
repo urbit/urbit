@@ -8,7 +8,7 @@ u3_noun u3qc_con(u3_atom a, u3_atom b) {
   c3_w lnb_w = u3r_met(5, b);
 
   if ( (lna_w == 0) && (lnb_w == 0) ) {
-    return u3a_cat31_unsafe(0);
+    return UNSAFECAT(0);
   }
 
   c3_w  len_w = c3_max(lna_w, lnb_w);

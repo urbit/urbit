@@ -12,10 +12,10 @@ u3_noun u3qc_cap(u3_atom a) {
   }
 
   if ( (1 == u3r_bit((met_w - 2), a)) ) {
-    return u3a_cat31_unsafe(3);
+    return UNSAFECAT(3);
   }
 
-  return u3a_cat31_unsafe(2);
+  return UNSAFECAT(2);
 }
 
 u3_noun u3wc_cap(u3_noun cor) {

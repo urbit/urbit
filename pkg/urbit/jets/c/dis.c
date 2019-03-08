@@ -14,7 +14,7 @@
     c3_w lnb_w = u3r_met(5, b);
 
     if ( (lna_w == 0) && (lnb_w == 0) ) {
-      return 0;
+      return UNSAFECAT(0);
     } else {
       c3_w  len_w = c3_max(lna_w, lnb_w);
       c3_w* sal_w = u3a_slab(len_w);

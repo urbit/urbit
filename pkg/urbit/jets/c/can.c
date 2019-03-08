@@ -48,7 +48,7 @@ u3_noun u3qc_can(u3_atom a, u3_noun b) {
   }
 
   if ( 0 == tot_w ) {
-    return u3a_cat31_unsafe(0);
+    return UNSAFECAT(0);
   }
 
   if ( 0 == (sal_w = u3a_slaq(a_g, tot_w)) ) {

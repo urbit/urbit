@@ -19,7 +19,7 @@ u3_noun u3qc_cat(u3_atom a, u3_atom b, u3_atom c) {
   c3_w   all_w = (lew_w + ler_w);
 
   if ( 0 == all_w ) {
-    return u3a_cat31_unsafe(0);
+    return UNSAFECAT(0);
   }
 
   c3_w* sal_w = u3a_slaq(a_g, all_w);

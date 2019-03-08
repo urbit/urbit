@@ -11,7 +11,7 @@
            u3_atom b)
   {
     if ( c3y == u3r_sing(a, b) ) {
-      return c3y;
+      return UNSAFECAT(c3y);
     }
     else {
       if ( c3y == u3ud(a) ) {
@@ -19,12 +19,12 @@
           return u3qa_lth(a, b);
         }
         else {
-          return c3y;
+          return UNSAFECAT(c3y);
         }
       }
       else {
         if ( c3y == u3ud(b) ) {
-          return c3n;
+          return UNSAFECAT(c3n);
         }
         else {
           if ( c3y == u3r_sing(u3h(a), u3h(b)) ) {

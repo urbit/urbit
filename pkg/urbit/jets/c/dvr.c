@@ -10,12 +10,14 @@
   u3qc_dvr(u3_atom a,
            u3_atom b)
   {
-    if ( 0 == b) {
+    if ( u3a_is_nil(b) ) {
       return u3m_bail(c3__exit);
     }
     else {
       if ( _(u3a_is_cat(a)) && _(u3a_is_cat(b)) ) {
-        return u3nc(a / b, a % b);
+        c3_w a_w = u3a_get_cat31(a);
+        c3_w b_w = u3a_get_cat31(b);
+        return u3nc(UNSAFECAT(a_w / b_w), UNSAFECAT(a_w % b_w));
       }
       else {
         mpz_t a_mp, b_mp;

@@ -191,7 +191,7 @@ u3a_is_cat(u3_noun som) {
 static inline c3_t
 u3a_is_dog(u3_noun som) { return __(som.haf[1] >> 31); }
 
-#define u3a_cat31_unsafe(lit)  (u3_noun){.haf={0,lit}}
+#define UNSAFECAT(lit)  (u3_noun){.haf={0,lit}}
 
 static inline c3_w
 u3a_get_cat31(u3_noun som) {
@@ -203,6 +203,11 @@ static inline c3_o
 u3a_cat31_equals_noun(c3_w val, u3_noun som) {
   if (!_(u3a_is_cat(som))) return c3n;
   return (som.haf[1] == val);
+}
+
+static inline c3_o
+u3a_is_nil(u3_noun som) {
+  return __( som.haf[0]==0 && som.haf[1]==0 );
 }
 
 static inline c3_o

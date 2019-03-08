@@ -9,29 +9,29 @@
 
 // Conventional Axes for Gate Call /////////////////////////////////////////////
 
-#define u3x_pay      u3a_cat31_unsafe(3)       //  payload
+#define u3x_pay      UNSAFECAT(3)       //  payload
 
-#define u3x_sam      u3a_cat31_unsafe(6)       //  sample
-#define u3x_sam_1    u3a_cat31_unsafe(6)
-#define u3x_sam_2    u3a_cat31_unsafe(12)
-#define u3x_sam_3    u3a_cat31_unsafe(13)
-#define u3x_sam_4    u3a_cat31_unsafe(24)
-#define u3x_sam_5    u3a_cat31_unsafe(25)
-#define u3x_sam_6    u3a_cat31_unsafe(26)
-#define u3x_sam_12   u3a_cat31_unsafe(52)
-#define u3x_sam_13   u3a_cat31_unsafe(53)
-#define u3x_sam_7    u3a_cat31_unsafe(27)
-#define u3x_sam_14   u3a_cat31_unsafe(54)
-#define u3x_sam_15   u3a_cat31_unsafe(55)
-#define u3x_sam_30   u3a_cat31_unsafe(110)
-#define u3x_sam_31   u3a_cat31_unsafe(111)
+#define u3x_sam      UNSAFECAT(6)       //  sample
+#define u3x_sam_1    UNSAFECAT(6)
+#define u3x_sam_2    UNSAFECAT(12)
+#define u3x_sam_3    UNSAFECAT(13)
+#define u3x_sam_4    UNSAFECAT(24)
+#define u3x_sam_5    UNSAFECAT(25)
+#define u3x_sam_6    UNSAFECAT(26)
+#define u3x_sam_12   UNSAFECAT(52)
+#define u3x_sam_13   UNSAFECAT(53)
+#define u3x_sam_7    UNSAFECAT(27)
+#define u3x_sam_14   UNSAFECAT(54)
+#define u3x_sam_15   UNSAFECAT(55)
+#define u3x_sam_30   UNSAFECAT(110)
+#define u3x_sam_31   UNSAFECAT(111)
 
-#define u3x_con      u3a_cat31_unsafe(7)       //  context
-#define u3x_con_2    u3a_cat31_unsafe(14)      //  context
-#define u3x_con_3    u3a_cat31_unsafe(15)      //  context
-#define u3x_con_sam  u3a_cat31_unsafe(30)      //  sample in gate context
+#define u3x_con      UNSAFECAT(7)       //  context
+#define u3x_con_2    UNSAFECAT(14)      //  context
+#define u3x_con_3    UNSAFECAT(15)      //  context
+#define u3x_con_sam  UNSAFECAT(30)      //  sample in gate context
 
-#define u3x_bat      u3a_cat31_unsafe(2)       //  battery
+#define u3x_bat      UNSAFECAT(2)       //  battery
 
 ////////////////////////////////////////////////////////////////////////////////
 // Macros //////////////////////////////////////////////////////////////////////
