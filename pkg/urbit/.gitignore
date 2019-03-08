@@ -1,18 +1,13 @@
-#
-# Configuration Result
-#
 /config.mk
-include/config.h
-#
-# Build Outputs
-#
-*.o
+/include/config.h
+
 /urbit
 /urbit-worker
 /tags
-#
-# Editor Bullshit
-#
+
+*.c.orig
+*.o
+
 .tags
 TAGS
 cscope.*

@@ -35,8 +35,8 @@ u3_noun u3wc_rsh(u3_noun cor) {
   u3_noun a, b, c;
 
   if ( !_(u3r_mean(cor, u3x_sam_2, &a,
-                        u3x_sam_6, &b,
-                        u3x_sam_7, &c, 0)) ||
+                   u3x_sam_6, &b,
+                   u3x_sam_7, &c, 0)) ||
        !_(u3ud(a)) ||
        !_(u3ud(b)) ||
        !_(u3ud(c)) )
@@ -50,7 +50,9 @@ u3_noun u3wc_rsh(u3_noun cor) {
 u3_noun u3kc_rsh(u3_noun a, u3_noun b, u3_noun c) {
   u3_noun d = u3qc_rsh(a, b, c);
 
-  u3z(a); u3z(b); u3z(c);
+  u3z(a);
+  u3z(b);
+  u3z(c);
   return d;
 }
 

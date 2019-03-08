@@ -11,8 +11,12 @@ let
     with pkgs;
     [ curl gmp libsigsegv ncurses openssl zlib ];
 
+  util =
+    [ pkgs.astyle ];
+
   vendor =
     [ argon2 softfloat3 ed25519 ent h2o scrypt uv murmur3 secp256k1 sni ];
+
 
   # osx =
     # with pkgs;
@@ -32,7 +36,7 @@ pkgs.stdenv.mkDerivation {
   src     = ../../../pkg/urbit;
   builder = ./builder.sh;
 
-  nativeBuildInputs = deps ++ vendor;
+  nativeBuildInputs = deps ++ vendor ++ util;
 
   # See https://github.com/NixOS/nixpkgs/issues/18995
   hardeningDisable = if debug then [ "all" ] else [];

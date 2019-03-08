@@ -11,7 +11,8 @@ u3_noun u3qc_muk(u3_atom seed, u3_atom len, u3_atom key) {
   //  can't u3a_calloc 0 bytes
   //
   c3_assert( u3r_met(3, key) <= len_w );
-  c3_y *key_y;
+  c3_y* key_y;
+
   if ( 0 == len_w ) {
     key_y = 0;
   }
@@ -37,8 +38,8 @@ u3_noun u3wc_muk(u3_noun cor) {
   u3_noun seed, len, key;
 
   if ( !_(u3r_mean(cor, u3x_sam_2, &seed,
-                             u3x_sam_6, &len,
-                             u3x_sam_7, &key, 0)) ||
+                   u3x_sam_6, &len,
+                   u3x_sam_7, &key, 0)) ||
        !_(u3ud(seed)) ||
        !_(u3ud(len))  ||
        !_(u3ud(key))  )

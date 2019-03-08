@@ -20,6 +20,7 @@ u3_noun u3wc_swp(u3_noun cor) {
 
 u3_noun u3kc_swp(u3_atom a, u3_atom b) {
   u3_noun res = u3qc_swp(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return res;
 }

@@ -28,7 +28,7 @@ u3_noun u3wc_peg(u3_noun cor) {
        _(u3a_is_nil(a)) ||
        _(u3a_is_nil(b)) ||
        !_(u3ud(b)) ||
-       (!_(u3ud(a)) && !_(u3a_cat31_equals_noun(1,b))) )
+       (!_(u3ud(a)) && !_(u3a_cat31_equals_noun(1, b))) )
   {
     return u3m_bail(c3__exit);
   }

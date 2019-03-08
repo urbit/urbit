@@ -44,9 +44,9 @@ u3_noun u3wc_cut(u3_noun cor) {
   u3_noun a, b, c, d;
 
   if ( !_(u3r_mean(cor, u3x_sam_2,  &a,
-                        u3x_sam_12, &b,
-                        u3x_sam_13, &c,
-                        u3x_sam_7,  &d, 0)) ||
+                   u3x_sam_12, &b,
+                   u3x_sam_13, &c,
+                   u3x_sam_7,  &d, 0)) ||
        !_(u3ud(a)) ||
        !_(u3ud(b)) ||
        !_(u3ud(c)) ||

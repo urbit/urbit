@@ -21,6 +21,7 @@ u3_noun u3qc_dis(u3_atom a, u3_atom b) {
       for ( i_w = 0; i_w < len_w; i_w++ ) {
         sal_w[i_w] &= (i_w >= lnb_w) ? 0 : u3r_word(i_w, b);
       }
+
       return u3a_malt(sal_w);
     }
   }

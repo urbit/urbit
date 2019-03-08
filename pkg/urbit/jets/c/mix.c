@@ -21,6 +21,7 @@ u3_noun u3qc_mix(u3_atom a, u3_atom b) {
       for ( i_w = 0; i_w < lnb_w; i_w++ ) {
         sal_w[i_w] ^= u3r_word(i_w, b);
       }
+
       return u3a_malt(sal_w);
     }
   }
@@ -41,6 +42,7 @@ u3_noun u3wc_mix(u3_noun cor) {
 
 u3_noun u3kc_mix(u3_atom a, u3_atom b) {
   u3_noun res = u3qc_mix(a, b);
-  u3z(a); u3z(b);
+  u3z(a);
+  u3z(b);
   return res;
 }

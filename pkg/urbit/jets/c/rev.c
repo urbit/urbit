@@ -19,8 +19,8 @@ u3_noun u3wc_rev(u3_noun cor) {
   u3_noun boz, len, dat;
 
   if ( !_(u3r_mean(cor, u3x_sam_2, &boz,
-                        u3x_sam_6, &len,
-                        u3x_sam_7, &dat, 0)) ||
+                   u3x_sam_6, &len,
+                   u3x_sam_7, &dat, 0)) ||
        !_(u3ud(boz)) ||
        !_(u3ud(len)) ||
        !_(u3ud(dat)) )
@@ -33,6 +33,8 @@ u3_noun u3wc_rev(u3_noun cor) {
 
 u3_noun u3kc_rev(u3_atom boz, u3_atom len, u3_atom dat) {
   u3_noun res = u3qc_rev(boz, len, dat);
-  u3z(boz); u3z(len); u3z(dat);
+  u3z(boz);
+  u3z(len);
+  u3z(dat);
   return res;
 }

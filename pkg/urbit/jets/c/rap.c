@@ -32,12 +32,15 @@ u3_noun u3qc_rap(u3_atom a, u3_noun b) {
       else if ( (tot_w + (len_w = u3r_met(a_g, h_cab))) < tot_w ) {
         return u3m_bail(c3__fail);
       }
+
       tot_w += len_w;
       cab = u3t(cab);
     }
+
     if ( 0 == tot_w ) {
       return UNSAFECAT(0);
     }
+
     if ( 0 == (sal_w = u3a_slaq(a_g, tot_w)) ) {
       return u3m_bail(c3__fail);
     }

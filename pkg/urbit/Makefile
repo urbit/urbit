@@ -1,6 +1,6 @@
 include config.mk
 
-jets_base = $(wildcard jets/c/*.c)
+jets_base = $(wildcard jets/c/*.c) # $(wildcard jets/e/*.c)
 
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
@@ -20,7 +20,7 @@ all_srcs = $(common) $(king) $(serf)
 
 ################################################################################
 
-.PHONY: all clean mkproper
+.PHONY: all clean mkproper reformat
 
 ################################################################################
 
@@ -31,6 +31,10 @@ clean:
 
 mrproper: clean
 	rm -f config.mk include/config.h
+
+reformat:
+	ARTISTIC_STYLE_OPTIONS=.astylerc astyle jets/c/*.c
+
 
 ################################################################################
 

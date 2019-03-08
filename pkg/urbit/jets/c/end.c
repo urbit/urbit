@@ -29,6 +29,7 @@ u3_noun u3qc_end(u3_atom a, u3_atom b, u3_atom c) {
   if ( 0 == sal_w ) {
     return u3m_bail(c3__fail);
   }
+
   u3r_chop(a_g, 0, b_w, 0, sal_w, c);
 
   return u3a_malt(sal_w);
@@ -38,8 +39,8 @@ u3_noun u3wc_end(u3_noun cor) {
   u3_noun a, b, c;
 
   if ( !_(u3r_mean(cor, u3x_sam_2, &a,
-                        u3x_sam_6, &b,
-                        u3x_sam_7, &c, 0)) ||
+                   u3x_sam_6, &b,
+                   u3x_sam_7, &c, 0)) ||
        !_(u3ud(a)) ||
        !_(u3ud(b)) ||
        !_(u3ud(c)) )
