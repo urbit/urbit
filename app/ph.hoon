@@ -14,14 +14,20 @@
 =>  $~  |%
     +$  move  (pair bone card)
     +$  card
-      $%  [%poke wire dock poke-types]
+      $%  [%poke wire dock poke-type]
           [%peer wire dock path]
           [%pull wire dock ~]
+          [%diff diff-type]
       ==
     ::
-    +$  poke-types
+    +$  poke-type
       $%  [%aqua-events (list aqua-event)]
           [%drum-start term term]
+          [%aqua-vane-control ?(%subscribe %unsubscribe)]
+      ==
+    ::
+    +$  diff-type
+      $%  [%aqua-effects aqua-effects]
       ==
     ::
     +$  state
@@ -74,7 +80,7 @@
         |=  [now=@da who=ship uf=unix-effect]
         ^-  [? (quip ph-event _..start)]
         ~&  [%num num]
-        :-  ?
+        :-  &
         :_  ..start
         (expect-dojo-output ~bud who uf "[%test-result 5]")
       --
@@ -97,7 +103,7 @@
       ++  route
         |=  [now=@da who=ship uf=unix-effect]
         ^-  [? (quip ph-event _..start)]
-        :-  ?
+        :-  &
         :_  ..start
         (expect-dojo-output ~bud who uf "hi ~dev successful")
       --
@@ -106,7 +112,7 @@
     ::
       :-  %composed-child-boot
       %+  compose-tests  (planet ~linnup-torsyx)
-      %+  porcelain-test %composed-child-boot
+      %+  porcelain-test  %composed-child-boot
       |%
       ++  start
         |=  now=@da
@@ -202,7 +208,7 @@
   ^-  (unit move)
   ?.  ?=([%effects ~] pax)
     ~
-  `[b %diff %aqua-effects ae]
+  `[ost.hid %diff %aqua-effects afs]
 ::
 ++  run-events
   |=  [lab=term what=(list ph-event)]
@@ -305,34 +311,35 @@
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
   ^-  (quip move _this)
-  ::  ~&  [%diff-aqua-effect way who.ae]
+  ::  ~&  [%diff-aqua-effect way who.afs]
   ?>  ?=([@tas @ ~] way)
   =/  lab  i.way
   =/  test-cor  (~(get by test-cores) lab)
   ?~  test-cor
     ~&  [%ph-dropping lab]
     `this
-  =+  |-  ^-  $:  thru-effects=(list unix-effects)
-                  events=(list ph=event)
+  =+  |-  ^-  $:  thru-effects=(list unix-effect)
+                  events=(list ph-event)
                   cor=_u.test-cor
               ==
-      ?~  ufs.ae
+      ?~  ufs.afs
         [~ ~ u.test-cor]
       =.  effect-log.u.test-cor
-        [[who i.ufs]:ae effect-log.u.test-cor]
-      =+  ^-  [[thru=? events-1=(list ph-event)] cor=cor.u.test-cor]
-          (route:cor.u.test-cor now.hid who.ae i.ufs.ae)
+        [[who i.ufs]:afs effect-log.u.test-cor]
+      =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-cor]
+          (route:cor.u.test-cor now.hid who.afs i.ufs.afs)
       =.  cor.u.test-cor  cor
-      =+  $(ufs.ae t.ufs.ae)
+      =+  $(ufs.afs t.ufs.afs)
       :+  ?:  thru
-            [i.ufs.ae thru-effects]
-          thru-efects
+            [i.ufs.afs thru-effects]
+          thru-effects
         (weld events-1 events)
       cor
-  =.  u.test=cor  cor
+  =.  u.test-cor  cor
   =.  test-cores  (~(put by test-cores) lab u.test-cor)
-  =^  moves  this  (publish-aqua-effects who.ae thru-effects)
-  (run-events lab events)
+  =/  moves-1  (publish-aqua-effects who.afs thru-effects)
+  =^  moves-2  this  (run-events lab events)
+  [(weld moves-1 moves-2) this]
 ::
 ::  Subscribe to effects
 ::

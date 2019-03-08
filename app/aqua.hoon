@@ -92,9 +92,9 @@
   ::  Enqueue events to child arvo
   ::
   ++  push-events
-    |=  ova=(list unix-event)
+    |=  ues=(list unix-event)
     ^+  ..abet-pe
-    =.  next-events  (~(gas to next-events) ova)
+    =.  next-events  (~(gas to next-events) ues)
     ..abet-pe
   ::
   ::  Send moves to host arvo
@@ -271,7 +271,7 @@
 ++  peer-effects
   |=  pax=path
   ^-  (quip move _this)
-  ?:  ?=([@ @ *] pax)
+  ?.  ?=([@ *] pax)
     ~&  [%aqua-bad-peer-effects pax]
     `this
   ?~  (slaw %p i.pax)
@@ -524,11 +524,11 @@
 ::
 ++  peek-x-ships
   |=  pax=path
-  ^-  (unit (unit %noun (list ship)))
+  ^-  (unit (unit [%noun (list ship)]))
   ?.  ?=(~ pax)
     ~
   :^  ~  ~  %noun
-  (turn ~(tap by piers) head)
+  `(list ship)`(turn ~(tap by piers) head)
 ::
 ::  Trivial scry for mock
 ::

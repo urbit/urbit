@@ -27,7 +27,7 @@
   ::
   ::  Called on every effect from a ship.
   ::
-  ++  route  |~([now=@da ship unix-effect] *[? (quip ph-event _^?(..start)]))
+  ++  route  |~([now=@da ship unix-effect] *[? (quip ph-event _^?(..start))])
   --
 ::
 ++  porcelain-test-core

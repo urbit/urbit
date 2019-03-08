@@ -37,12 +37,12 @@
 ++  emit-aqua-events
   |=  aes=(list aqua-event)
   %-  emit-moves
-  [%poke /aqua-events [our %aqua] %aqua-events aes]~
+  [ost %poke /aqua-events [our %aqua] %aqua-events aes]~
 ::
 ++  poke-aqua-vane-control
   |=  command=?(%subscribe %unsubscribe)
-  :_  this(subscribed =(command %subscribe)
-  (aqua-vane-control-handler subscribed)
+  :_  this(subscribed =(command %subscribe))
+  (aqua-vane-control-handler our ost subscribed command)
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
@@ -53,13 +53,13 @@
     this
   =.  this
     ?+  -.q.i.ufs.afs  this
-      %blit     (handle-blit i.ufs.afs)
-    --
+      %blit     (handle-blit who.afs i.ufs.afs)
+    ==
   $(ufs.afs t.ufs.afs)
 ::
 ++  handle-blit
-  |=  [way=wire %blit blits=(list blit:dill)]
-  ^+  ..abet-pe
+  |=  [who=@p way=wire %blit blits=(list blit:dill)]
+  ^+  this
   =/  last-line
     %+  roll  blits
     |=  [b=blit:dill line=tape]
@@ -74,5 +74,5 @@
         %url  ~&  [%activate-url p.b]  line
     ==
   ~&  last-line
-  ..abet-pe
+  this
 --

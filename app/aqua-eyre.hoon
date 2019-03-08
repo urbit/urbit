@@ -14,8 +14,10 @@
     +$  state
       $:  %0
           subscribed=_|
-          piers=(map ship http-requests=(set @ud))
+          piers=(map ship pier)
       ==
+    ::
+    +$  pier  http-requests=(set @ud)
     --
 =,  gall
 =|  moves=(list move)
@@ -32,12 +34,12 @@
 ++  emit-aqua-events
   |=  aes=(list aqua-event)
   %-  emit-moves
-  [%poke /aqua-events [our %aqua] %aqua-events aes]~
+  [ost %poke /aqua-events [our %aqua] %aqua-events aes]~
 ::
 ++  poke-aqua-vane-control
   |=  command=?(%subscribe %unsubscribe)
-  :_  this(subscribed =(command %subscribe)
-  (aqua-vane-control-handler subscribed)
+  :_  this(subscribed =(command %subscribe))
+  (aqua-vane-control-handler our ost subscribed command)
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
@@ -51,7 +53,7 @@
       %sleep    abet-pe:handle-sleep:(pe who.afs)
       %restore  abet-pe:handle-restore:(pe who.afs)
       %thus     abet-pe:(handle-thus:(pe who.afs) i.ufs.afs)
-    --
+    ==
   $(ufs.afs t.ufs.afs)
 ::
 ::  Received inbound HTTP response
@@ -59,7 +61,7 @@
 ++  sigh-httr
   |=  [way=wire res=httr:eyre]
   ^-  (quip move _this)
-  =.  this  apex-aqua  =<  abet-aqua
+  =.  this  apex  =<  abet
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
@@ -70,7 +72,7 @@
 ++  sigh-tang
   |=  [way=wire tan=tang]
   ^-  (quip move _this)
-  =.  this  apex-aqua  =<  abet-aqua
+  =.  this  apex  =<  abet
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
   ~&  [%received-httr who]
@@ -92,8 +94,10 @@
   ::
   ++  handle-restore
     ^+  ..abet-pe
-    %-  emit-aqua-events
-    [%event who [//http/0v1n.2m9vh %born ~]]~
+    =.  this
+      %-  emit-aqua-events
+      [%event who [//http/0v1n.2m9vh %born ~]]~
+    ..abet-pe
   ::
   ++  handle-thus
     |=  [way=wire %thus num=@ud req=(unit hiss:eyre)]
@@ -110,14 +114,16 @@
       ..abet-pe
     ~&  [who=who %aqua-eyre-requesting u.req]
     =.  http-requests  (~(put in http-requests) num)
-    %-  emit-moves  :_  ~
-    :*  ost.hid
-        %hiss
-        /(scot %p who)/(scot %ud num)
-        ~
-        %httr
-        [%hiss u.req]
-    ==
+    =.  this
+      %-  emit-moves  :_  ~
+      :*  ost
+          %hiss
+          /(scot %p who)/(scot %ud num)
+          ~
+          %httr
+          [%hiss u.req]
+      ==
+    ..abet-pe
   ::
   ::  Pass HTTP response back to virtual ship
   ::
@@ -130,7 +136,9 @@
       ~&  [who=who %ignoring-httr num=num]
       ..abet-pe
     =.  http-requests  (~(del in http-requests) num)
-    (emit-aqua-events [%event who [//http/0v1n.2m9vh %they num res]~)
+    =.  this
+      (emit-aqua-events [%event who [//http/0v1n.2m9vh %they num res]]~)
+    ..abet-pe
   ::
   ::  Got error in HTTP response
   ::
@@ -145,4 +153,5 @@
     =.  http-requests  (~(del in http-requests) num)
     %-  (slog tan)
     ..abet-pe
+  --
 --

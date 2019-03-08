@@ -35,12 +35,12 @@
 ++  emit-aqua-events
   |=  aes=(list aqua-event)
   %-  emit-moves
-  [%poke /aqua-events [our %aqua] %aqua-events aes]~
+  [ost %poke /aqua-events [our %aqua] %aqua-events aes]~
 ::
 ++  poke-aqua-vane-control
   |=  command=?(%subscribe %unsubscribe)
-  :_  this(subscribed =(command %subscribe)
-  (aqua-vane-control-handler subscribed)
+  :_  this(subscribed =(command %subscribe))
+  (aqua-vane-control-handler our ost subscribed command)
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
@@ -51,12 +51,13 @@
     this
   =.  this
     ?+  -.q.i.ufs.afs  this
-      %restore  handle-restore
+      %restore  (handle-restore who.afs)
       %send     (handle-send i.ufs.afs)
-    --
+    ==
   $(ufs.afs t.ufs.afs)
 ::
 ++  handle-restore
+  |=  who=@p
   %-  emit-aqua-events
   [%event who [//newt/0v1n.2m9vh %barn ~]]~
 ::

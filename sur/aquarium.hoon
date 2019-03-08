@@ -69,28 +69,28 @@
       snap=(unit snapshot:jael)
   ==
 ::
-+$  vane-card
++$  vane-move
+  %+  pair  bone
   $%  [%peer wire dock path]
       [%pull wire dock ~]
   ==
 ::
 ++  aqua-vane-control-handler
-  |=  subscribed=?
-  |=  command=?(%subscribe %unsubscribe)
-  ^-  (list vane-cards)
+  |=  [our=@p ost=bone subscribed=? command=?(%subscribe %unsubscribe)]
+  ^-  (list vane-move)
   ?-    command
       %subscribe
     %+  weld
-      ^-  (list vane-card)
+      ^-  (list vane-move)
       ?.  subscribed
         ~
-      [%pull /aqua [our %ph]]~
-    ^-  (list vane-card)
-    [%peer /aqua [our %ph] /effects]~
+      [ost %pull /aqua [our %ph] ~]~
+    ^-  (list vane-move)
+    [ost %peer /aqua [our %ph] /effects]~
   ::
       %unsubscribe
     ?.  subscribed
       ~
-    [%pull /aqua [our %ph]]~
-  --
+    [ost %pull /aqua [our %ph] ~]~
+  ==
 --

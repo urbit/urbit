@@ -13,8 +13,10 @@
     +$  state
       $:  %0
           subscribed=_|
-          piers=(map ship next-timer=(unit @da))
+          piers=(map ship pier)
       ==
+    ::
+    +$  pier  next-timer=(unit @da)
     --
 =,  gall
 =|  moves=(list move)
@@ -31,12 +33,12 @@
 ++  emit-aqua-events
   |=  aes=(list aqua-event)
   %-  emit-moves
-  [%poke /aqua-events [our %aqua] %aqua-events aes]~
+  [ost %poke /aqua-events [our %aqua] %aqua-events aes]~
 ::
 ++  poke-aqua-vane-control
   |=  command=?(%subscribe %unsubscribe)
-  :_  this(subscribed =(command %subscribe)
-  (aqua-vane-control-handler subscribed)
+  :_  this(subscribed =(command %subscribe))
+  (aqua-vane-control-handler our ost subscribed command)
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
@@ -50,7 +52,7 @@
       %sleep    abet-pe:handle-sleep:(pe who.afs)
       %restore  abet-pe:handle-restore:(pe who.afs)
       %doze     abet-pe:(handle-doze:(pe who.afs) i.ufs.afs)
-    --
+    ==
   $(ufs.afs t.ufs.afs)
 ::
 ::  Received timer wake
@@ -82,15 +84,17 @@
   ::
   ++  handle-restore
     ^+  ..abet-pe
-    %-  emit-aqua-events
-    [%event who [//behn/0v1n.2m9vh %born ~]]~
+    =.  this
+      %-  emit-aqua-events
+      [%event who [//behn/0v1n.2m9vh %born ~]]~
+    ..abet-pe
   ::
   ++  handle-doze
     |=  [way=wire %doze tim=(unit @da)]
     ^+  ..abet-pe
     ?~  tim
       ?~  next-timer
-        this
+        ..abet-pe
       cancel-timer
     ?~  next-timer
       (set-timer u.tim)
@@ -101,16 +105,18 @@
     =.  tim  +(tim)  ::  nobody's perfect
     ~&  [who=who %setting-timer tim]
     =.  next-timer  `tim
-    (emit-moves [ost.hid %wait /(scot %p who) tim]~)
+    =.  this  (emit-moves [ost %wait /(scot %p who) tim]~)
+    ..abet-pe
   ::
   ++  cancel-timer
     ~&  [who=who %cancell-timer (need next-timer)]
     =.  next-timer  ~
-    (emit-moves [ost.hid %rest /(scot %p who) (need next-timer)]~)
+    =.  this  (emit-moves [ost %rest /(scot %p who) (need next-timer)]~)
+    ..abet-pe
   ::
   ++  take-wake
     |=  [way=wire ~]
-    ~&  [who=who %aqua-behn-wake now.hid]
+    ~&  [who=who %aqua-behn-wake now]
     =.  next-timer  ~
     =.  this
       %-  emit-aqua-events
