@@ -218,27 +218,27 @@
       =/  ufs  (~(get ja unix-effects) who)
       ?~  ufs
         ~
-      [b %diff %aqua-effects who ufs]~
+      [b %diff %aqua-effects who (flop ufs)]~
     ::
         [%effects ~]
       %+  turn
         ~(tap by unix-effects)
       |=  [who=ship ufs=(list unix-effect)]
-      [b %diff %aqua-effects who ufs]
+      [b %diff %aqua-effects who (flop ufs)]
     ::
         [%events @ ~]
       =/  who  (slav %p i.t.pax)
       =/  ve  (~(get ja unix-events) who)
       ?~  ve
         ~
-      [b %diff %aqua-events who ve]~
+      [b %diff %aqua-events who (flop ve)]~
     ::
         [%boths @ ~]
       =/  who  (slav %p i.t.pax)
       =/  bo  (~(get ja unix-boths) who)
       ?~  bo
         ~
-      [b %diff %aqua-boths who bo]~
+      [b %diff %aqua-boths who (flop bo)]~
     ==
   [(flop moves) this]
 ::

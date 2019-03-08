@@ -110,8 +110,8 @@
   ::
   ++  cancel-timer
     ~&  [who=who %cancell-timer (need next-timer)]
-    =.  next-timer  ~
     =.  this  (emit-moves [ost %rest /(scot %p who) (need next-timer)]~)
+    =.  next-timer  ~
     ..abet-pe
   ::
   ++  take-wake

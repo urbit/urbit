@@ -62,14 +62,12 @@
     :~
       :-  %add
       ^-  raw-test-core
-      =+  num=5
       |%
       ++  label  %add
       ++  ships  ~[~bud]
       ++  start
         |=  now=@da
         ^-  (pair (list ph-event) _..start)
-        =.  num  +(num)
         :_  ..start
         %-  zing
         :~  (init ~bud ~)
@@ -79,7 +77,6 @@
       ++  route
         |=  [now=@da who=ship uf=unix-effect]
         ^-  [? (quip ph-event _..start)]
-        ~&  [%num num]
         :-  &
         :_  ..start
         (expect-dojo-output ~bud who uf "[%test-result 5]")
@@ -208,7 +205,7 @@
   ^-  (unit move)
   ?.  ?=([%effects ~] pax)
     ~
-  `[ost.hid %diff %aqua-effects afs]
+  `[b %diff %aqua-effects afs]
 ::
 ++  run-events
   |=  [lab=term what=(list ph-event)]
@@ -220,7 +217,7 @@
     ?~  what
       [%& ~]
     ?:  ?=(%test-done -.i.what)
-      ~&  ?~(p.i.what "test successful" "test failed")
+      ~&  ?~(p.i.what "TEST SUCCESSFUL" "TEST FAILED")
       [%| ~]
     =/  nex  $(what t.what)
     ?:  ?=(%| -.nex)
@@ -271,7 +268,6 @@
 ::
 ++  poke-noun
   |=  arg=*
-  ~&  %herm
   ^-  (quip move _this)
   ?+  arg  ~|(%bad-noun-arg !!)
       %init
@@ -279,7 +275,7 @@
     %-  zing  ^-  (list (list move))
     %+  turn
       ^-  (list term)
-      ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
+      ~[%aqua %aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
     |=  vane-app=term
     :~  [ost.hid %poke /start [our.hid %hood] %drum-start %home vane-app]
         [ost.hid %poke /init [our.hid vane-app] %aqua-vane-control %subscribe]
