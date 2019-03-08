@@ -6735,6 +6735,13 @@
     ::                                                  ::::
   ++  chrono  ^?
     |%
+    ::  +from-unix: unix timestamp to @da
+    ::
+    ++  from-unix
+      |=  timestamp=@ud
+      ^-  @da
+      %+  add  ~1970.1.1
+      (mul timestamp ~s1)
     ::                                                  ::  ++dawn:chrono:
     ++  dawn                                            ::  Jan 1 weekday
       |=  yer/@ud
@@ -7897,6 +7904,7 @@
                   adr=(list address)
                   top=(list ?(@ux (list @ux)))
               ==
+              [%eth-get-block-by-number bon=@ud txs=?]
               [%eth-get-filter-logs fid=@ud]
               $:  %eth-get-logs
                   fro=(unit block)
@@ -8052,6 +8060,12 @@
             ?~  top.req  ~
             :+  ~  'topics'
             (topics-to-json top.req)
+        ==
+      ::
+          %eth-get-block-by-number
+        :-  'eth_getBlockByNumber'
+        :~  (tape (num-to-hex bon.req))
+            b+txs.req
         ==
       ::
           %eth-get-filter-logs

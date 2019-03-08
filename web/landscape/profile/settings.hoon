@@ -16,21 +16,6 @@
       ;div.flex-col-2;
       ;div.flex-col-x
         ;a.vanilla.btn.btn-primary(href (trip 'javascript:(function(){document.querySelectorAll("[urb-devices]")[0].classList.add("hide"); document.querySelectorAll("[urb-qr]")[0].classList.remove("hide");})()')): Connect device
-        ;h2.mt-6: Devices
-        ;h3.text-mono.mt-4: 108.208.53.121
-        ;div: Current session
-        ;h3.text-mono.mt-4: 67.188.43.52
-        ;div: Chrome on OS X 10.12.6
-        ;div
-          ;span.mr-3: Last login:
-          ;span.text-mono: 2018.4.21
-        ==
-        ;h3.text-mono.mt-4: 43.222.12.64
-        ;div: iOS 14.11
-        ;div
-          ;span.mr-3: Last login:
-          ;span.text-mono: 2018.3.12
-        ==
         ;div.mt-6
           ;a.h3.vanilla.text-red(href "javascript:void(0)"): Log Out ↓
         ==
