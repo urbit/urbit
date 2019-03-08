@@ -337,7 +337,8 @@
       =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
       :_  ..start
       %-  zing
-      :~  (dojo her "|mount /={(trip des)}=")
+      :~  (dojo her "|verb")
+          (dojo her "|mount /={(trip des)}=")
           (insert-file her des pax warped)
       ==
     ::

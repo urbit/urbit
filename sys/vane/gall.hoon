@@ -1363,9 +1363,8 @@
           =(~ tyl)
           =([%$ %da now] lot)
           =(our his)
-          (~(has by bum.mast.all) syd)
       ==
-    ``[%null !>(~)]
+    ``[%noun !>((~(has by bum.mast.all) syd))]
   ?.  =(our his)
     ~
   ?.  =([%$ %da now] lot)

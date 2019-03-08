@@ -47,6 +47,8 @@
       $~
     --
 =,  gall
+=/  vane-apps=(list term)
+  ~[%aqua %aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
 |_  $:  hid=bowl
         state
     ==
@@ -266,20 +268,37 @@
       /effects/(scot %p her)
   ==
 ::
+::  Start the vane drivers
+::
+++  init-vanes
+  ^-  (list move)
+  %+  murn
+    `(list term)`[%aqua vane-apps]
+  |=  vane-app=term
+  ^-  (unit move)
+  =/  app-started
+    .^(? %gu /(scot %p our.hid)/[vane-app]/(scot %da now.hid))
+  ?:  app-started
+    ~
+  `[ost.hid %poke /start [our.hid %hood] %drum-start %home vane-app]
+::
+::  Restart the vane drivers' subscriptions
+::
+++  subscribe-vanes
+  ^-  (list move)
+  %+  turn
+    vane-apps
+  |=  vane-app=term
+  [ost.hid %poke /init [our.hid vane-app] %aqua-vane-control %subscribe]
+::
+::  User interface
+::
 ++  poke-noun
   |=  arg=*
   ^-  (quip move _this)
   ?+  arg  ~|(%bad-noun-arg !!)
       %init
-    :_  this
-    %-  zing  ^-  (list (list move))
-    %+  turn
-      ^-  (list term)
-      ~[%aqua %aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
-    |=  vane-app=term
-    :~  [ost.hid %poke /start [our.hid %hood] %drum-start %home vane-app]
-        [ost.hid %poke /init [our.hid vane-app] %aqua-vane-control %subscribe]
-    ==
+    [init-vanes this]
   ::
       [%run-test lab=@tas]
     =/  res=[events=(list ph-event) new-state=raw-test-core]
@@ -287,7 +306,7 @@
     =.  test-cores  (~(put by test-cores) lab.arg [ships . ~]:new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
-    [(weld moves-1 moves-2) this]
+    [:(weld init-vanes subscribe-vanes moves-1 moves-2) this]
   ::
       [%print lab=@tas]
     =/  log  effect-log:(~(got by test-cores) lab.arg)
@@ -303,6 +322,8 @@
         ~
     `this
   ==
+::
+::  Receive effects back from aqua
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]
