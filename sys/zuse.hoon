@@ -7831,9 +7831,13 @@
         ^-  octs
         ::  parse {bys} bytes from {fro}.
         :-  bys
-        %^  rsh  3  (sub 32 (mod bys 33))
+        %^  rsh  3
+          =+  (mod bys 32)
+          ?:(=(0 -) - (sub 32 -))
         %+  rep  8
-        (flop (swag [fro +((div (dec bys) 32))] wos))
+        %-  flop
+        =-  (swag [fro -] wos)
+        +((div (dec bys) 32))
       ::
       ++  decode-array-n
         ::NOTE  we take (list etyp) even though we only operate on
@@ -8214,8 +8218,10 @@
     |=  [wat=tape mof=@ud wer=?(%left %right)]
     ^-  tape
     =+  len=(lent wat)
-    ?:  =(len mof)  wat
-    =+  tad=(reap (sub mof (mod len mof)) '0')
+    ?:  =(0 len)  (reap mof '0')
+    =+  mad=(mod len mof)
+    ?:  =(0 mad)  wat
+    =+  tad=(reap (sub mof mad) '0')
     %-  weld
     ?:(?=(%left wer) [tad wat] [wat tad])
   ::
