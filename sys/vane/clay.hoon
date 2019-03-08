@@ -1171,7 +1171,6 @@
       ?~  hat
         +>.$
       wake:(print-changes:(checkout-ankh u.hat) wen lem)
-    ~&  [%edit our hen]
     ?.  =(~ dok)
       ~&  %already-applying-changes  +>
     ::
@@ -2376,7 +2375,6 @@
     ++  apply-changes                                   ::   apply-changes:ze
       |=  lar/(list {p/path q/misu})                    ::  store changes
       ^-  (map path blob)
-      ~&  [%apply-changes our hen]
       =+  ^=  hat                                       ::  current state
           ?:  =(let.dom 0)                              ::  initial commit
             ~                                           ::  has nothing
@@ -4250,11 +4248,11 @@
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued
     ::
-    ~&  :*  %x-clay-waking
-            queued-duct
-            hen
-            ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
-        ==
+    ::  ~&  :*  %x-clay-waking
+    ::          queued-duct
+    ::          hen
+    ::          ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
+    ::      ==
     ~|  [%mismatched-ducts %queued queued-duct %timer hen]
     ?>  =(hen queued-duct)
     ::
