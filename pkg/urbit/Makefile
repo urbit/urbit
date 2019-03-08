@@ -29,6 +29,7 @@ all: jets/c/can.o jets/c/bex.o jets/c/ripn.o \
      jets/c/mas.o jets/c/met.o jets/c/mix.o  \
      jets/c/mor.o jets/c/mug.o jets/c/muk.o  \
      jets/c/peg.o jets/c/po.o  jets/c/pow.o  \
+     jets/c/rap.o jets/c/rep.o jets/c/rev.o jets/c/rip.o  \
 
 clean:
 	rm -f $(all_objs) ./urbit ./urbit-worker ./tags

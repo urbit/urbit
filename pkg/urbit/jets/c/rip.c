@@ -1,11 +1,13 @@
 #include "all.h"
 
 u3_noun u3qc_rip(u3_atom bloq, u3_atom b) {
-  if ( !_(u3a_is_cat(bloq)) || (bloq >= 32) ) {
+  c3_w bloq_w = u3a_get_cat31(bloq);
+
+  if ( (bloq_w >= 32) ) {
     return u3m_bail(c3__fail);
   }
 
-  c3_g bloq_g = bloq;
+  c3_g bloq_g = bloq_w;
 
   /*
     This is a fast-path for the case where all the resulting blocks will
@@ -27,7 +29,7 @@ u3_noun u3qc_rip(u3_atom bloq, u3_atom b) {
       c3_w src_w = u3r_word(wor_w, b);                  //  find word by index
       c3_w rip_w = (src_w >> sif_w) & bmask_w;          //  get item from word
 
-      acc = u3nc(rip_w, acc);
+      acc = u3nc(UNSAFECAT(rip_w), acc);
     }
 
     return acc;
@@ -69,9 +71,9 @@ u3_noun u3qc_rip(u3_atom bloq, u3_atom b) {
 u3_noun u3wc_rip(u3_noun cor) {
   u3_noun a, b;
 
-  if ( (c3n == u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
-       (c3n == u3ud(a)) ||
-       (c3n == u3ud(b))
+  if ( !_(u3r_mean(cor, u3x_sam_2, &a, u3x_sam_3, &b, 0)) ||
+       !_(u3ud(a)) ||
+       !_(u3ud(b))
      ) {
     return u3m_bail(c3__exit);
   }
