@@ -1,9 +1,4 @@
-::  gaze: azimuth analytics
-::
-::TODO  daily stats, but also sane longer-period stats
-::      probably convert block numbers to day, then store difs by day
-::      every day, week, and month, append entry to csv file with stat counters
-::  not on a timer, but whenever we see a block belogns to the next day/week etc
+::  gaze: azimuth statistics
 ::
 /+  *eth-watcher
 ::
@@ -45,21 +40,23 @@
 ::
 ++  move  (pair bone card)
 ++  card
-  $%  [%hiss wire (unit user:eyre) mark %hiss hiss:eyre]
-      ::  [%wait wire @da]
-      ::  [%rest @da]
-      [%poke wire [ship %eth-watcher] %eth-watcher-action action]
+  $%  [%poke wire [ship %eth-watcher] %eth-watcher-action action]
       [%peer wire [ship %eth-watcher] path]
+      [%hiss wire (unit user:eyre) mark %hiss hiss:eyre]
+      [%wait wire @da]
+      [%info wire desk nori:clay]
   ==
 --
 ::
 |_  [bowl:gall state]
 ++  node-url  (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+++  export-frequency  ~h1
 ::
 ++  prep
   |=  old=(unit state)
   ?~  old
-    [~ ..prep]
+    :_  ..prep
+    [ost %wait /export (add now export-frequency)]~
   [~ ..prep(+<+ u.old)]
 ::
 ::  +poke-noun: do a thing
@@ -326,6 +323,28 @@
   ==
 ::
 ::
+::  +wake-export: periodically export data
+::
+++  wake-export
+  |=  [=wire ~]
+  ^-  (quip move _+>)
+  :_  +>
+  :~  [ost %wait /export (add now export-frequency)]
+      (export-move %days (export-days days))
+      (export-move %months (export-months days))
+      (export-move %events export-raw)
+  ==
+::
+::  +export-move: %info move to write exported .txt
+::
+++  export-move
+  |=  [nom=@t dat=(list @t)]
+  ^-  move
+  :^  ost  %info  /export/[nom]
+  %+  foal:space:userlib
+    /(scot %p our)/home/(scot %da now)/gaze-exports/[nom]/txt
+  [%txt !>(dat)]
+::
 ::  +peek-x: accept gall scry
 ::
 ::    %/days/txt:   per day, digest stats
@@ -334,43 +353,49 @@
 ::
 ++  peek-x
   |=  pax=path
-  ^-  (unit (unit [mark *]))
+  ^-  (unit (unit (pair mark *)))
   ?~  pax  ~
   ?:  =(%days i.pax)
     :^  ~  ~  %txt
     (export-days days)
   ?:  =(%months i.pax)
     :^  ~  ~  %txt
-    %-  export-days
-    ^+  days
-    %+  roll  (flop days)
-    |=  [[day=@da sat=stats] mos=(list [mod=@da sat=stats])]
-    ^+  mos
-    =/  mod=@da
-      %-  year
-      =+  (yore day)
-      -(d.t 1)
-    ?~  mos  [mod sat]~
-    ?:  !=(mod mod.i.mos)
-      [[mod sat] mos]
-    :_  t.mos
-    :-  mod
-    ::TODO  this is hideous. can we make a wet gate do this?
-    :*  (weld spawned.sat spawned.sat.i.mos)
-        (weld activated.sat activated.sat.i.mos)
-        (weld transfer-p.sat transfer-p.sat.i.mos)
-        (weld transferred.sat transferred.sat.i.mos)
-        (weld configured.sat configured.sat.i.mos)
-        (weld breached.sat breached.sat.i.mos)
-        (weld request.sat request.sat.i.mos)
-        (weld sponsor.sat sponsor.sat.i.mos)
-        (weld management-p.sat management-p.sat.i.mos)
-        (weld voting-p.sat voting-p.sat.i.mos)
-        (weld spawn-p.sat spawn-p.sat.i.mos)
-    ==
+    (export-months days)
   ?:  =(%raw i.pax)
     ``txt+export-raw
   ~
+::
+::  +export-months: generate a csv of stats per month
+::
+++  export-months
+  |=  =_days
+  %-  export-days
+  ^+  days
+  %+  roll  (flop days)
+  |=  [[day=@da sat=stats] mos=(list [mod=@da sat=stats])]
+  ^+  mos
+  =/  mod=@da
+    %-  year
+    =+  (yore day)
+    -(d.t 1)
+  ?~  mos  [mod sat]~
+  ?:  !=(mod mod.i.mos)
+    [[mod sat] mos]
+  :_  t.mos
+  :-  mod
+  ::TODO  this is hideous. can we make a wet gate do this?
+  :*  (weld spawned.sat spawned.sat.i.mos)
+      (weld activated.sat activated.sat.i.mos)
+      (weld transfer-p.sat transfer-p.sat.i.mos)
+      (weld transferred.sat transferred.sat.i.mos)
+      (weld configured.sat configured.sat.i.mos)
+      (weld breached.sat breached.sat.i.mos)
+      (weld request.sat request.sat.i.mos)
+      (weld sponsor.sat sponsor.sat.i.mos)
+      (weld management-p.sat management-p.sat.i.mos)
+      (weld voting-p.sat voting-p.sat.i.mos)
+      (weld spawn-p.sat spawn-p.sat.i.mos)
+  ==
 ::
 ::  +export-days: generate a csv of stats per day
 ::
