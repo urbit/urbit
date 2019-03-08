@@ -152,6 +152,8 @@
         (weld voting-p.sat voting-p.sat.i.mos)
         (weld spawn-p.sat spawn-p.sat.i.mos)
     ==
+  ?:  =(%raw i.pax)
+    ``txt+export-raw
   ~
 ::
 ::  +diff-eth-watcher-update: process new logs, clear state on rollback
@@ -408,5 +410,49 @@
     ==
   ::
   ++  num  (d-co:co 1)
+  --
+::
+::  +export-raw: generate a csv of individual transactions
+::
+++  export-raw
+  :-  %-  crip
+      ;:  weld
+        "date,"
+        "point,"
+        "event,"
+        "field 1"
+      ==
+  |^  ^-  (list @t)
+      %+  turn  seen
+      |=  [wen=@da wat=event]
+      %-  crip
+      ;:  weld
+        (scow %da wen)  ","
+        (pon who.wat)   ","
+        (point-diff-to-row dif.wat)
+      ==
+  ::
+  ++  point-diff-to-row
+    |=  dif=diff-point
+    ?-  -.dif
+      %full               "full,"
+      %owner              "owner,{(adr new.dif)}"
+      %activated          "activated,"
+      %spawned            "spawned,{(pon who.dif)}"
+      %keys               "keys,{(num life.dif)}"
+      %continuity         "breached,{(num new.dif)}"
+      %sponsor            "sponsor,{(spo has.new.dif)} {(pon who.new.dif)}"
+      %escape             "escape-req,{(req new.dif)}"
+      %management-proxy   "management-p,{(adr new.dif)}"
+      %voting-proxy       "voting-p,{(adr new.dif)}"
+      %spawn-proxy        "spawn-p,{(adr new.dif)}"
+      %transfer-proxy     "transfer-p,{(adr new.dif)}"
+    ==
+  ::
+  ++  num  (d-co:co 1)
+  ++  pon  (cury scow %p)
+  ++  adr  ['0' 'x' (x-co:co 20)]
+  ++  spo  |=(h=? ?:(h "escaped to" "detached from"))
+  ++  req  |=(r=(unit @p) ?~(r "canceled" (pon u.r)))
   --
 --
