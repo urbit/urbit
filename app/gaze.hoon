@@ -62,8 +62,14 @@
     [~ ..prep]
   [~ ..prep(+<+ u.old)]
 ::
+::  +poke-noun: do a thing
+::
+::    %kick-watcher:  reset, tell %eth-watcher to look for events for us
+::    %regaze:        reset (but keep timestamps), subscribe to eth-watcher
+::    %debug:         print debug info
+::
 ++  poke-noun
-  |=  a=?(%kick-watcher %regaze %losetime %debug)
+  |=  a=?(%kick-watcher %regaze %debug)
   ^-  (quip move _+>)
   ?-  a
       %kick-watcher
@@ -97,9 +103,6 @@
       ==
     ==
   ::
-      %losetime
-    [~ +>.$(time ~)]
-  ::
       %debug
     ~&  latest=(turn (scag 5 seen) head)
     ~&  oldest=(turn (slag (sub (lent seen) 5) seen) head)
@@ -115,46 +118,6 @@
     ~&  days=(lent days)
     [~ +>.$]
   ==
-::
-++  peek-x
-  |=  pax=path
-  ^-  (unit (unit [mark *]))
-  ?~  pax  ~
-  ?:  =(%days i.pax)
-    :^  ~  ~  %txt
-    (export days)
-  ?:  =(%months i.pax)
-    :^  ~  ~  %txt
-    %-  export
-    ^+  days
-    %+  roll  (flop days)
-    |=  [[day=@da sat=stats] mos=(list [mod=@da sat=stats])]
-    ^+  mos
-    =/  mod=@da
-      %-  year
-      =+  (yore day)
-      -(d.t 1)
-    ?~  mos  [mod sat]~
-    ?:  !=(mod mod.i.mos)
-      [[mod sat] mos]
-    :_  t.mos
-    :-  mod
-    ::TODO  this is hideous. can we make a wet gate do this?
-    :*  (weld spawned.sat spawned.sat.i.mos)
-        (weld activated.sat activated.sat.i.mos)
-        (weld transfer-p.sat transfer-p.sat.i.mos)
-        (weld transferred.sat transferred.sat.i.mos)
-        (weld configured.sat configured.sat.i.mos)
-        (weld breached.sat breached.sat.i.mos)
-        (weld request.sat request.sat.i.mos)
-        (weld sponsor.sat sponsor.sat.i.mos)
-        (weld management-p.sat management-p.sat.i.mos)
-        (weld voting-p.sat voting-p.sat.i.mos)
-        (weld spawn-p.sat spawn-p.sat.i.mos)
-    ==
-  ?:  =(%raw i.pax)
-    ``txt+export-raw
-  ~
 ::
 ::  +diff-eth-watcher-update: process new logs, clear state on rollback
 ::
@@ -182,6 +145,23 @@
   ?:  (~(has by time) bon)
     [[log havtime] mistime]
   [havtime [log mistime]]
+::
+::  +is-lockup-block: whether the block contains lockup/ignorable transactions
+::
+::    this is the stupid dumb equivalent to actually identifying lockup
+::    transactions procedurally, which is still in git history, but didn't
+::    work quite right for unidentified reasons
+::
+++  is-lockup-block
+  |=  num=@ud
+  ^-  ?
+  %+  roll
+    ^-  (list [@ud @ud])
+    :~  [7.050.978 7.051.038]
+    ==
+  |=  [[start=@ud end=@ud] in=_|]
+  ?:  in  &
+  &((gte num start) (lte num end))
 ::
 ::  +queue-logs: hold on to new logs, requesting timestamps for them
 ::
@@ -217,6 +197,8 @@
     `(scot %ud num)
   [%eth-get-block-by-number num |]
 ::
+::  +sigh-json-rpc-response: get block details, extract timestamps
+::
 ++  sigh-json-rpc-response
   |=  [=wire =response:rpc:jstd]
   ^-  (quip move _+>)
@@ -247,7 +229,6 @@
 ::
 ::  +process logs that are in the queue
 ::
-::
 ++  process-logs
   |=  logs=loglist  ::  oldest first
   ^+  +>
@@ -271,6 +252,8 @@
   =+  ven=(event-log-to-event log)
   ?~  ven  logs
   [[u.tim u.ven] logs]
+::
+::  +event-log-to-event: turn raw log into gaze noun
 ::
 ++  event-log-to-event
   |=  log=event-log:rpc
@@ -342,32 +325,56 @@
     %spawn-proxy       sat(spawn-p [who.eve spawn-p.sat])
   ==
 ::
-::  +is-lockup-block: whether the block contains lockup/ignorable transactions
 ::
-::    this is the stupid dumb equivalent to actually identifying lockup
-::    transactions procedurally, which is still in git history, but didn't
-::    work quite right for unidentified reasons
+::  +peek-x: accept gall scry
 ::
-++  is-lockup-block
-  |=  num=@ud
-  ^-  ?
-  %+  roll
-    ^-  (list [@ud @ud])
-    :~  [7.050.978 7.051.038]
+::    %/days/txt:   per day, digest stats
+::    %/months/txt: per month, digest stats
+::    %/raw/txt:    all observed events
+::
+++  peek-x
+  |=  pax=path
+  ^-  (unit (unit [mark *]))
+  ?~  pax  ~
+  ?:  =(%days i.pax)
+    :^  ~  ~  %txt
+    (export-days days)
+  ?:  =(%months i.pax)
+    :^  ~  ~  %txt
+    %-  export-days
+    ^+  days
+    %+  roll  (flop days)
+    |=  [[day=@da sat=stats] mos=(list [mod=@da sat=stats])]
+    ^+  mos
+    =/  mod=@da
+      %-  year
+      =+  (yore day)
+      -(d.t 1)
+    ?~  mos  [mod sat]~
+    ?:  !=(mod mod.i.mos)
+      [[mod sat] mos]
+    :_  t.mos
+    :-  mod
+    ::TODO  this is hideous. can we make a wet gate do this?
+    :*  (weld spawned.sat spawned.sat.i.mos)
+        (weld activated.sat activated.sat.i.mos)
+        (weld transfer-p.sat transfer-p.sat.i.mos)
+        (weld transferred.sat transferred.sat.i.mos)
+        (weld configured.sat configured.sat.i.mos)
+        (weld breached.sat breached.sat.i.mos)
+        (weld request.sat request.sat.i.mos)
+        (weld sponsor.sat sponsor.sat.i.mos)
+        (weld management-p.sat management-p.sat.i.mos)
+        (weld voting-p.sat voting-p.sat.i.mos)
+        (weld spawn-p.sat spawn-p.sat.i.mos)
     ==
-  |=  [[start=@ud end=@ud] in=_|]
-  ?:  in  &
-  &((gte num start) (lte num end))
+  ?:  =(%raw i.pax)
+    ``txt+export-raw
+  ~
 ::
-++  who-from-event
-  |=  eve=event
-  ?+  -.dif.eve  who.eve
-    %spawned  who.dif.eve
-  ==
+::  +export-days: generate a csv of stats per day
 ::
-::  +export: generate a csv of stats per day
-::
-++  export
+++  export-days
   |=  =_days
   :-  %-  crip
       ;:  weld
