@@ -1,6 +1,3 @@
-/* j/3/end.c
-**
-*/
 #include "all.h"
 
 u3_noun u3qc_end(u3_atom a, u3_atom b, u3_atom c) {

@@ -1,11 +1,5 @@
-/* j/3/cat.c
-**
-*/
 #include "all.h"
 
-
-/* functions
-*/
 u3_noun u3qc_cat(u3_atom a, u3_atom b, u3_atom c) {
   c3_w a_w = u3a_get_cat31(a);
 

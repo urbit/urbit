@@ -1,7 +1,6 @@
 #include "all.h"
 
-//  good old linear search
-//
+// _po_find: good old linear search
 static u3_noun _po_find(u3_noun buf, u3_noun a) {
   if ( !_(u3a_is_cat(a)) ) {
     return u3_nul;

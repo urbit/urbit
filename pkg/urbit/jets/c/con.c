@@ -1,6 +1,3 @@
-/* j/3/con.c
-**
-*/
 #include "all.h"
 
 u3_noun u3qc_con(u3_atom a, u3_atom b) {
