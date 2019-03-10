@@ -346,19 +346,16 @@ u3t_flee(void)
 void
 u3t_trace_open()
 {
-
   c3_c fil_c[2048];
-  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3_Host.dir_c);
+  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3C.dir_c);
 
   struct stat st;
   if ( -1 == stat(fil_c, &st) ) {
     mkdir(fil_c, 0700);
   }
 
-  c3_c * wen_c = u3r_string(u3A->wen);
   c3_c lif_c[2048];
-  snprintf(lif_c, 2048, "%s/%s.json", fil_c, wen_c);
-  free(wen_c);
+  snprintf(lif_c, 2048, "%s/%d.json", fil_c, u3_Host.tra_u.fun_w);
 
   u3_Host.tra_u.fil_u = fopen(lif_c, "w");
   u3_Host.tra_u.nid_w = (int)getpid();
@@ -402,6 +399,7 @@ u3t_trace_close()
   // We don't terminate the JSON because of the file format.
   fclose(u3_Host.tra_u.fil_u);
   u3_Host.tra_u.con_w = 0;
+  u3_Host.tra_u.fun_w++;
 }
 
 /*  u3t_trace_time(): microsecond clock

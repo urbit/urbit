@@ -762,6 +762,37 @@ main(c3_i argc, c3_c* argv[])
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
   }
 
+  /* load pier directory
+  */
+  {
+    c3_i  abs_i = 1000;
+    c3_c* abs_c = c3_malloc(abs_i);
+
+    while ( abs_c != getcwd(abs_c, abs_i) ) {
+      free(abs_c);
+      abs_i *= 2;
+      abs_c = c3_malloc(abs_i);
+    }
+
+    c3_i ful_i = abs_i + strlen(dir_c);
+    c3_c* ful_c = c3_malloc(ful_i);
+    snprintf(ful_c, ful_i, "%s/%s", abs_c, dir_c);
+
+    u3C.dir_c = strdup(ful_c);
+
+    free(ful_c);
+    free(abs_c);
+  }
+
+  /*  clear tracing struct
+  */
+  {
+    u3_Host.tra_u.nid_w = 0;
+    u3_Host.tra_u.fil_u = NULL;
+    u3_Host.tra_u.con_w = 0;
+    u3_Host.tra_u.fun_w = 0;
+  }
+
   /* boot image
   */
   {
