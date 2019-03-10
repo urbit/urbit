@@ -486,7 +486,7 @@ u3t_event_trace(const c3_c* name, c3_c type)
           "\"tid\": 1, \"ts\": %" PRIu64 ", \"id\": \"0x100\"}, \n",
           name,
           type,
-          u3_Host.tra_u.nid_w,
+          getpid(),
           u3t_trace_time());
   u3_Host.tra_u.con_w++;
 }

@@ -576,11 +576,35 @@ _serf_poke_work(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  full event
 {
-  if ( evt_d <= u3V.len_w ) {
+  if ( u3C.wag_w & u3o_trace ) {
+    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+      u3t_trace_open();
+    }
+    else if ( u3_Host.tra_u.con_w >= 100000 ) {
+      u3t_trace_close();
+      u3t_trace_open();
+    }
+  }
+
+  if ( evt_d < 6 ) {
+    c3_c lab_c[8];
+    snprintf(lab_c, 8, "boot: %llu", evt_d);
+
+    u3t_event_trace(lab_c, 'B');
     _serf_work_boot(evt_d, mug_l, job);
+    u3t_event_trace(lab_c, 'E');
   }
   else {
+    u3_noun wir = u3h(u3t(job));
+    u3_noun cad = u3h(u3t(u3t(job)));
+
+    c3_c lab_c[2048];
+    snprintf(lab_c, 2048, "event %llu: [%s %s]", evt_d,
+             u3m_pretty_path(wir), u3m_pretty(cad));
+
+    u3t_event_trace(lab_c, 'B');
     _serf_work_live(evt_d, mug_l, job);
+    u3t_event_trace(lab_c, 'E');
   }
 }
 
