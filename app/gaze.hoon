@@ -483,7 +483,7 @@
   ::
   ++  num  (d-co:co 1)
   ++  pon  (cury scow %p)
-  ++  adr  ['0' 'x' (x-co:co 20)]
+  ++  adr  |=(a=@ ['0' 'x' ((x-co:co 20) a)])
   ++  spo  |=(h=? ?:(h "escaped to" "detached from"))
   ++  req  |=(r=(unit @p) ?~(r "canceled" (pon u.r)))
   --
