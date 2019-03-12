@@ -1,0 +1,6 @@
+|%
++$  command
+  $%  [%forward ~]
+      [%back ~]
+  ==
+--
