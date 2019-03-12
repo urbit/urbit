@@ -13,7 +13,7 @@
   ;input(type "hidden", name "urb-metadata", urb-structure-type "header-profile", urb-author "{(scow %p p.bem.gas)}");
   ;div.container(urb-devices "")
     ;div.row.mt-4
-      ;div.flex-col-2;
+      ;div.flex-col-1;
       ;div.flex-col-x
         ;a.vanilla.btn.btn-primary(href (trip 'javascript:(function(){document.querySelectorAll("[urb-devices]")[0].classList.add("hide"); document.querySelectorAll("[urb-qr]")[0].classList.remove("hide");})()')): Connect device
         ;div.mt-6
@@ -24,7 +24,7 @@
   ==
   ;div.container.hide(urb-qr "")
     ;div.row.mt-4
-      ;div.flex-col-2;
+      ;div.flex-col-1;
       ;div.flex-col-x
         ;div
           =urb-component  "QRCodeComponent"
