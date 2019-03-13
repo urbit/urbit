@@ -5,7 +5,7 @@
 |=  [[now=@da eny=@ bek=beak] $~ $~]
 ::
 ::  :-  %build
-|=  [authorized=? http-request:light]
+|=  [authorized=? request:http]
 ^-  mime
 :-  ['text' 'html' ~]
 %-  as-octs:mimes:html
