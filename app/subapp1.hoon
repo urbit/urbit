@@ -2,7 +2,12 @@
 /=  index
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/subapp1/index  /&html&/!hymn/
+  /:  /===/app/subapp1/index  /html/
+/=  script
+  /^  octs
+  /;  as-octs:mimes:html
+  /:  /===/app/subapp1/script  /js/
+
 ::
 |%
 :: +move: output effect
@@ -45,6 +50,21 @@
   %-  (require-authorization ost.bol move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
+  =+  request-line=(parse-request-line url.request.inbound-request)
+  =/  name=@t
+    =+  back-path=(flop site.request-line)
+    ?~  back-path
+      'World'
+    i.back-path
+  ::
+  ?:  =(name 'script')
+    :_  this
+    :~  ^-  move
+        :-  ost.bol
+        :*  %http-response
+            [%start [200 ['content-type' 'application/javascript']~] [~ script] %.y]
+        ==
+    ==
   :_  this
   :~  ^-  move
       :-  ost.bol

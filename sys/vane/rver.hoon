@@ -627,9 +627,7 @@
     }
   };
 
-  export function newChannel() {
-    return new Channel;
-  }
+  window.urb = new Channel();
   '''
 ::  +format-ud-as-integer: prints a number for consumption outside urbit
 ::

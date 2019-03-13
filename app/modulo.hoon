@@ -1,9 +1,9 @@
 /-  *modulo
 /+  *server
-/=  test-page
+/=  index
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/modulo/index  /&html&/!hymn/
+  /:  /===/app/modulo/index  /html/
 /=  modulo-js
   /^  octs
   /;  as-octs:mimes:html
@@ -35,6 +35,21 @@
       ==
   ==
 ::
+++  session-as-json
+  |=  [cur=(unit [term @]) session=(map term @t) order=(list term)]
+  ^-  json
+  ?~  cur
+    *json
+  %-  pairs:enjs
+  :~  [%app %s -.u.cur]
+      [%url %s (~(got by session) -.u.cur)]
+      :-  %list
+        :-  %a
+      %+  turn  order
+        |=  [a=term]
+        [%s a]
+  ==
+::
 --
 ::
 |_  [bow=bowl:gall sta=state]
@@ -56,17 +71,13 @@
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:http-server]
-  ~&  [%bound success]
   [~ this]
 ::
-++  session-as-json
-  ^-  json
-  ?~  cur.sta
-    *json
-  %-  pairs:enjs
-  :~  [%app %s -.u.cur.sta]
-      [%url %s (~(got by session.sta) u.cur.sta)]
-  ==
+++  peer-applist
+  |=  [pax=path]
+  ^-  (quip move _this)
+  :_  this
+  [ost.bow %diff %json (session-as-json cur.sta session.sta order.sta)]~
 ::
 ++  session-js
   ^-  octs
@@ -76,9 +87,17 @@
   %-  crip
   ;:  weld
       (trip 'window.onload = function() {')
+      "window.ship = '{(trip (rsh 3 1 (crip <our.bow>)))}';"
       "  window.state = "
-      (en-json:html session-as-json)
+      (en-json:html (session-as-json cur.sta session.sta order.sta))
       (trip '}();')
+      %-  trip
+      '''
+      document.onkeydown = (event) => {
+        if (!event.metaKey || event.keyCode !== 75) { return; }
+        window.parent.postMessage("commandPalette", "*");
+      };
+      '''
   ==
 ::  +poke-handle-http-request: received on a new connection established
 ::
@@ -88,7 +107,6 @@
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)
-  ~&  [%request-line request-line]
   =/  name=@t
     =+  back-path=(flop site.request-line)
     ?~  back-path
@@ -116,7 +134,7 @@
   :~  ^-  move
       :-  ost.bow
       :*  %http-response
-          [%start [200 ['content-type' 'text/html']~] [~ test-page] %.y]
+          [%start [200 ['content-type' 'text/html']~] [~ index] %.y]
       ==
   ==
 ::  +poke-handle-http-cancel: received when a connection was killed
@@ -132,7 +150,6 @@
   |=  bin=term
   ^-  (quip move _this)
   =/  url  (crip "~{(scow %tas bin)}")
-  ~&  [%poke-mod-bind bin]
   ?:  (~(has by session.sta) bin)
     [~ this]
   :-  [`move`[ost.bow %connect / [~ /[url]] bin] ~]
@@ -142,12 +159,15 @@
   ::
       order.sta
     (weld order.sta ~[bin])
+  ::
+      cur.sta
+    ?~  cur.sta  `[bin 0]
+      cur.sta
   ==
 ::
 ++  poke-modulo-unbind
   |=  bin=term
   ^-  (quip move _this)
-  ~&  [%poke-mod-unbind bin]
   =/  url  (crip "~{(scow %tas bin)}")
   ?.  (~(has by session.sta) bin)
     [~ this]
@@ -171,7 +191,6 @@
 ++  poke-modulo-command
   |=  com=command
   ^-  (quip move _this)
-  ~&  [%poke-mod-com com]
   =/  length  (lent order.sta)
   ?~  cur.sta
     [~ this]
@@ -180,20 +199,25 @@
   =/  new-cur=(unit [term @])
   ?-  -.com
     %forward
-      ?:  =(length +.u.cur.sta)
+      ?:  =((dec length) +.u.cur.sta)
         `[(snag 0 order.sta) 0]
-      =/  ind  +(-.u.cur.sta) 
+      =/  ind  +(+.u.cur.sta) 
       `[(snag ind order.sta) ind]
     %back
       ?:  =(0 +.u.cur.sta)
         =/  ind  (dec length)
         `[(snag ind order.sta) ind]
-      =/  ind  (dec -.u.cur.sta)
+      =/  ind  (dec +.u.cur.sta)
       `[(snag ind order.sta) ind]
+    %go
+      =/  ind  (find [app.com]~ order.sta)
+      ?~  ind
+        cur.sta
+      `[app.com u.ind]
   ==
   :_  this(cur.sta new-cur)
-  %+  turn  (prey:pubsub:userlib /sessions bow)
+  %+  turn  (prey:pubsub:userlib /applist bow)
   |=  [=bone ^]
-  [bone %diff %json session-as-json]
+  [bone %diff %json (session-as-json new-cur session.sta order.sta)]
 ::
 --
