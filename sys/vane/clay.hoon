@@ -4249,7 +4249,7 @@
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued
     ::
-    ::  ~&  :*  %x-clay-waking
+    ::  ~&  :*  %clay-waking
     ::          queued-duct
     ::          hen
     ::          ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
