@@ -342,6 +342,20 @@
       %receive
     =^  moves  state.ax  (receive:client +.task)
     [moves light-gate]
+  ::
+      %wegh
+    :_  light-gate
+    :~  :*  duct
+            %give
+            %mass
+            ^-  mass
+            :+  %lient  %|
+            :~  nex+&+next-id.state.ax
+                outbound+&+outbound-duct.state.ax
+                by-id+&+connection-by-id.state.ax
+                by-duct+&+connection-by-duct.state.ax
+                axle+&+ax
+    ==  ==  ==
   ==
 ::  http-client issues no requests to other vanes
 ::

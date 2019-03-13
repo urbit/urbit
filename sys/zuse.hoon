@@ -2057,6 +2057,9 @@
           ::  %response: response to the caller
           ::
           [%http-response =client-response]
+          ::  memory usage report
+          ::
+          [%mass =mass]
       ==
     ::
     ++  task
@@ -2075,6 +2078,9 @@
           ::  receives http data from outside
           ::
           [%receive id=@ud =http-event:http]
+          ::  memory usage request
+          ::
+          [%wegh ~]
       ==
     --
   ::  +client-response: one or more client responses given to the caller
@@ -2162,6 +2168,9 @@
           ::    not allowed.
           ::
           [%bound accepted=? =binding]
+          ::  memory usage report
+          ::
+          [%mass =mass]
       ==
     ::
     ++  task
@@ -2197,6 +2206,9 @@
           ::    the first place.
           ::
           [%disconnect =binding]
+          ::  memory usage request
+          ::
+          [%wegh ~]
       ==
     ::
     --

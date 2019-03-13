@@ -1666,6 +1666,20 @@
       %disconnect
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
+  ::
+      %wegh
+    :_  http-server-gate
+    :~  :*  duct
+            %give
+            %mass
+            ^-  mass
+            :+  %rver  %|
+            :~  bindings+&+bindings.server-state.ax
+                auth+&+authentication-state.server-state.ax
+                connections+&+connections.server-state.ax
+                channels+&+channel-state.server-state.ax
+                axle+&+ax
+    ==  ==  ==
   ==
 ::
 ++  take
