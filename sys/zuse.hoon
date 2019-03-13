@@ -836,6 +836,13 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
+  ++  bale                                              ::  driver state
+    |*  a/_*                                            ::  %jael keys type
+    $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
+        {usr/user dom/(list @t)}                        ::  req user, domain
+        key/a                                           ::  secrets from %jael
+    ==                                                  ::
+  ::
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
         aut/(jug @tas @t)                               ::  client identities
@@ -849,7 +856,7 @@
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
     ==                                                  ::
-    
+  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
   ++  hiss  {p/purl q/moth}                             ::  outbound request
