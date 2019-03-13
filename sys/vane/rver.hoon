@@ -1606,13 +1606,13 @@
           [[~ /~/channel] duct [%channel ~]]
       ==
     [~ http-server-gate]
+  ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
     [~ http-server-gate]
   ::  %born: new unix process
+  ::
   ?:  ?=(%born -.task)
-    ::
-    ~&  [%todo-handle-born p.task]
     ::  close previously open connections
     ::
     ::    When we have a new unix process, every outstanding open connection is
@@ -1648,12 +1648,12 @@
   =/  server  (per-server-event event-args)
   ?-    -.task
   ::
-      ::  %live: no idea what this is for
+      ::  %live: notifies us of our running server config
+      ::
+      ::    [insecure-port=@ud secure-port=(unit @ud)]
       ::
       %live
-    ::
     ~&  [%todo-live task]
-    ::
     [~ http-server-gate]
   ::
       %request
