@@ -458,7 +458,8 @@
     (pe ~bud)  ::  XX why ~bud?  need an example
   ::
       %event
-    ~&  ev=-.q.ue.ae
+    ~?  !?=(?(%belt %hear) -.q.ue.ae)
+      raw-event=[who.ae -.q.ue.ae]
     (push-events:(pe who.ae) [ue.ae]~)
   ==
 ::

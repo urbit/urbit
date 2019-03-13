@@ -22,20 +22,27 @@
     --
 =,  gall
 =|  moves=(list move)
+=|  aqua-event-list=(list aqua-event)
+=|  ships=(list ship)
 |_  $:  bowl
         state
     ==
 ++  this  .
-++  apex  %_(this moves ~)
-++  abet  [(flop moves) this]
+++  apex  %_(this moves ~, aqua-event-list ~, ships ~)
+++  abet
+  =?  this  !=(~ aqua-event-list)
+    %-  emit-moves
+    [ost %poke /aqua-events [our %aqua] %aqua-events aqua-event-list]~
+  ::  ~?  !?=(~ moves)  [%aqua-ames-moves (lent moves)]
+  [moves this]
+::
 ++  emit-moves
   |=  ms=(list move)
-  %_(this moves (weld ms moves))
+  %_(this moves (weld moves ms))
 ::
 ++  emit-aqua-events
   |=  aes=(list aqua-event)
-  %-  emit-moves
-  [ost %poke /aqua-events [our %aqua] %aqua-events aes]~
+  %_(this aqua-event-list (weld aqua-event-list aes))
 ::
 ++  poke-aqua-vane-control
   |=  command=?(%subscribe %unsubscribe)
@@ -65,9 +72,10 @@
   |=  [way=wire %send lan=lane:ames pac=@]
   ^+  this
   =/  hear  [//newt/0v1n.2m9vh %hear lan pac]
-  %-  emit-aqua-events
-  %+  turn
+  =?  ships  =(~ ships)
     .^((list ship) %gx /(scot %p our)/aqua/(scot %da now)/ships/noun)
+  %-  emit-aqua-events
+  %+  turn  ships
   |=  who=ship
   [%event who hear]
 --

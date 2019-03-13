@@ -124,11 +124,15 @@
   |=  ~
   [%test-done &]~
 ::
+++  is-ergo
+  |=  [who=ship her=ship uf=unix-effect]
+  ?&  =(who her)
+      ?=(%ergo -.q.uf)
+  ==
+::
 ++  on-ergo
-  |=   [who=ship her=ship uf=unix-effect fun=$-($~ (list ph-event))]
-  ?.  =(who her)
-    ~
-  ?.  ?=(%ergo -.q.uf)
+  |=  [who=ship her=ship uf=unix-effect fun=$-($~ (list ph-event))]
+  ?.  (is-ergo who her uf)
     ~
   (fun)
 ::
@@ -327,35 +331,31 @@
     |=  [her=ship des=desk]
     %+  porcelain-test
       (cat 3 'touch-file-' (scot %p her))
-    =|  warped=@t
+    =|  [warped=@t change-sent=_|]
     |%
     ++  start
       |=  now=@da
       ^-  (pair (list ph-event) _..start)
-      =/  pax
-        /(scot %p our)/home/(scot %da now)/sur/aquarium/hoon
-      =.  warped  (cat 3 '=>  .  ' .^(@t %cx pax))
       :_  ..start
-      %-  zing
-      :~  (dojo her "|verb")
-          (dojo her "|mount /={(trip des)}=")
-          (insert-file her des pax warped)
-      ==
+      (dojo her "|mount /={(trip des)}=")
     ::
     ++  route
       |=  [now=@da who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
+      ?.  (is-ergo her who uf)
+        `..start
+      ?.  change-sent
+        =/  host-pax
+          /(scot %p our)/home/(scot %da now)/sur/aquarium/hoon
+        =.  warped  (cat 3 '=>  .  ' .^(@t %cx host-pax))
+        =.  change-sent  &
+        [(insert-file her des host-pax warped) ..start]
       :_  ..start
-      %-  zing
-      :~  %-  on-ergo
-          :^  her  who  uf
-          |=  $~
-          =/  pax  /i/(scot %p her)/[des]/(scot %da now)/sur/aquarium/hoon/noun
-          ?:  =(warped (need (scry-aqua (unit @) now pax)))
-            [%test-done &]~
-          ~&  %not-done-yet
-          ~
-      ==
+      =/  pax  /i/(scot %p her)/[des]/(scot %da now)/sur/aquarium/hoon/noun
+      ?:  =(warped (need (scry-aqua (unit @) now pax)))
+        [%test-done &]~
+      ~&  %not-done-yet
+      ~
     --
   ::
   ::  Checks that /sur/aquarium/hoon has been touched, as by ++touch-file

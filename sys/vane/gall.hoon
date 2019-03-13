@@ -728,10 +728,16 @@
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(20 suy)
-        [%| +]
-      ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
-      [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
+      =/  subscriber-ship  p:(~(got by sup.ged) ost)
+      ?:  &(=(20 suy) !=(our subscriber-ship))
+        ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
+        [%| ..ap-fill]
+      ::  ~&  :*  %gall-pushing-20
+      ::          ost
+      ::          suy=suy
+      ::          (~(get by r.zam) ost)
+      ::      ==
+      [%& ..ap-fill(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
       ~/  %ap-find

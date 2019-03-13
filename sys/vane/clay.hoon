@@ -3773,6 +3773,7 @@
     =/  wait=(list move)
       ?^(cue.ruf ~ [hen %pass /queued-request %b %wait now]~)
     =.  cue.ruf  (~(put to cue.ruf) [hen req])
+    ::  ~&  [%enqueueing (turn ~(tap to cue.ruf) head)]
     [wait ..^$]
   (handle-task hen req)
 ::

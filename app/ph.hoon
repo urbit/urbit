@@ -291,6 +291,18 @@
   |=  vane-app=term
   [ost.hid %poke /init [our.hid vane-app] %aqua-vane-control %subscribe]
 ::
+::  Pause all existing ships
+::
+++  pause-fleet
+  ^-  (list move)
+  :_  ~
+  :*  ost.hid  %poke  /pause-fleet  [our.hid %aqua]  %aqua-events
+      %+  turn
+        .^((list ship) %gx /(scot %p our.hid)/aqua/(scot %da now.hid)/ships/noun)
+      |=  who=ship
+      [%pause-events who]
+  ==
+::
 ::  User interface
 ::
 ++  poke-noun
@@ -306,7 +318,7 @@
     =.  test-cores  (~(put by test-cores) lab.arg [ships . ~]:new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
-    [:(weld init-vanes subscribe-vanes moves-1 moves-2) this]
+    [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
   ::
       [%print lab=@tas]
     =/  log  effect-log:(~(got by test-cores) lab.arg)
@@ -367,4 +379,11 @@
     ~&  [%ph-bad-peer-effects pax]
     `this
   `this
+::
+::  Subscription cancelled
+::
+++  pull
+  |=  pax=path
+  ~&  [%ph-unsubscribed pax ost.hid]
+  `+>.$
 --
