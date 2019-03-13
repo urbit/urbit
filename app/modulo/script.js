@@ -34,6 +34,9 @@ window.addEventListener("message", (event) => {
   input.style = "";
   input.addEventListener("keyup", (e) => {
     if (e.keyCode !== 13) { return; }
+    popup.style = "display:hidden;";
+    popup.style = "visibility:hidden !important;";
+
     window.urb.poke(window.ship, "modulo", "modulo-command", 
       {
         go: input.value
