@@ -19,6 +19,7 @@
 ++  sink
   $%  {$stdout ~}
       {$output-file pax/@t}
+      {$output-pill pax/@t}
       {$output-clay pax/path}
       {$url url/purl:eyre}
       {$to-api api/term command/@t}

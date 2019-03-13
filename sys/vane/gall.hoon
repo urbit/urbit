@@ -1297,6 +1297,7 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
+        $bonk  `%a
         $build  `%f
         $cash  `%a
         $conf  `%g

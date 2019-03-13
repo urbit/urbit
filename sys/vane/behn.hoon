@@ -25,51 +25,38 @@
   |%
   ::  %entry-points
   ::
-  ::  +born: handle urbit restart
+  ::  +born: urbit restarted; refresh :next-wake and store wakeup timer duct
   ::
-  ++  born
-    ^+  [moves state]
-    ::  store this duct for setting unix wakeup timers
-    ::
-    =.  unix-duct.state  duct
-    ::  process any elapsed timers and clear and reset :next-wake
-    ::
-    =>  notify-clients
-    set-wake(next-wake.state ~)
+  ++  born  set-unix-wake(next-wake.state ~, unix-duct.state duct)
   ::  +crud: error report; hand off to %dill to be printed
   ::
   ++  crud
     |=  [p=@tas q=tang]
     ^+  [moves state]
     [[duct %slip %d %flog %crud p q]~ state]
-  ::  +rest: cancel the timer at :date, resetting :next-wake if needed
+  ::  +rest: cancel the timer at :date, then adjust unix wakeup
+  ::  +wait: set a new timer at :date, then adjust unix wakeup
   ::
-  ++  rest
-    |=  date=@da
-    ^+  [moves state]
-    ::
-    =.  timers.state  (unset-timer [date duct])
-    set-wake
+  ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
+  ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
   ::  +vega: learn of a kernel upgrade
   ::
-  ++  vega
-    [moves state]
-  ::  +wait: set a new timer at :date, resetting :next-wake if needed
-  ::
-  ++  wait
-    |=  date=@da
-    ^+  [moves state]
-    ::  process elapsed timers first to maintain sort order
-    ::
-    =.  event-core    notify-clients
-    =.  timers.state  (set-timer [date duct])
-    set-wake
-  ::  +wake: unix says we should wake up; notify clients and set :next-wake
+  ++  vega  [moves state]
+  ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
   ::
   ++  wake
     ^+  [moves state]
-    =>  notify-clients
-    set-wake(next-wake.state ~)
+    ::
+    ?~  timers.state  ~|(%behn-wake-no-timer !!)
+    ::  if unix woke us too early, retry by resetting the unix wakeup timer
+    ::
+    ?:  (gth date.i.timers.state now)
+      ~?  debug=%.n  [%behn-wake-too-soon `@dr`(sub date.i.timers.state now)]
+      set-unix-wake(next-wake.state ~)
+    ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
+    ::
+    =<  set-unix-wake
+    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state)
   ::  +wegh: produce memory usage report for |mass
   ::
   ++  wegh
@@ -85,28 +72,10 @@
   ::+|
   ::
   ++  event-core  .
-  ::  +notify-clients: wake up vanes whose timers have expired
+  ::  +emit-vane-wake: produce a move to wake a vane; assumes no prior moves
   ::
-  ::    When we return the list moves to clients, we flop them so they're in
-  ::    the same order as they were in :timers.
-  ::
-  ++  notify-clients
-    =*  timers  timers.state
-    |-  ^+  event-core
-    ::
-    ?~  timers
-      =.  moves  (flop moves)
-      event-core
-    ::
-    ?:  (gth date.i.timers now)
-      =.  moves  (flop moves)
-      event-core
-    ::
-    %_  $
-      timers  t.timers
-      moves   [[duct.i.timers %give %wake ~] moves]
-    ==
-  ::  +set-wake: set or unset a unix timer to wake us when next timer expires
+  ++  emit-vane-wake  |=(=^duct event-core(moves [duct %give %wake ~]~))
+  ::  +emit-doze: set new unix wakeup timer in state and emit move to unix
   ::
   ::    We prepend the unix %doze event so that it is handled first. Arvo must
   ::    handle this first because the moves %behn emits will get handled in
@@ -116,30 +85,40 @@
   ::    back into %behn and emits a second %doze, the second %doze would be
   ::    handled by unix first which is incorrect.
   ::
-  ++  set-wake
-    ^+  [moves state]
+  ++  emit-doze
+    |=  =date=(unit @da)
+    ^+  event-core
+    ::  make sure we don't try to wake up in the past
+    ::
+    =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
+    ::
+    %_  event-core
+      next-wake.state  date-unit
+      moves            [[unix-duct.state %give %doze date-unit] moves]
+    ==
+  ::  +set-unix-wake: set or unset next unix wakeup timer based on :i.timers
+  ::
+  ++  set-unix-wake
+    =<  [moves state]
+    ^+  event-core
     ::
     =*  next-wake  next-wake.state
     =*  timers     timers.state
-    =*  unix-duct  unix-duct.state
     ::  if no timers, cancel existing wakeup timer or no-op
     ::
     ?~  timers
       ?~  next-wake
-        [moves state]
-      :_  state(next-wake ~)
-      [[unix-duct %give %doze ~] moves]
+        event-core
+      (emit-doze ~)
     ::  if :next-wake is in the past or not soon enough, reset it
     ::
     ?^  next-wake
       ?:  &((gte date.i.timers u.next-wake) (lte now u.next-wake))
-        [moves state]
-      :_  state(next-wake `date.i.timers)
-      [[unix-duct %give %doze `date.i.timers] moves]
+        event-core
+      (emit-doze `date.i.timers)
     ::  there was no unix wakeup timer; set one
     ::
-    :_  state(next-wake `date.i.timers)
-    [[unix-duct %give %doze `date.i.timers] moves]
+    (emit-doze `date.i.timers)
   ::  +set-timer: set a timer, maintaining the sort order of the :timers list
   ::
   ++  set-timer
@@ -152,6 +131,7 @@
     ::  ignore duplicates
     ::
     ?:  =(t i.timers)
+      ~?  debug=%.n  [%behn-set-duplicate t]
       timers
     ::  timers at the same date form a fifo queue
     ::
@@ -163,11 +143,12 @@
   ::
   ++  unset-timer
     =*  timers  timers.state
-    |=  [t=timer]
+    |=  t=timer
     ^+  timers
-    ::  if we don't have this timer, no-op; for debugging, add a printf here
+    ::  if we don't have this timer, no-op
     ::
     ?~  timers
+      ~?  debug=%.n  [%behn-unset-missing t]
       ~
     ?:  =(i.timers t)
       t.timers
