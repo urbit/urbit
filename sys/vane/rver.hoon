@@ -30,6 +30,13 @@
           $%  [%rest p=@da]
               [%wait p=@da]
       ==  ==
+      ::  %d: to dill
+      ::
+      $:  %d
+          ::
+          ::
+      $%  [%flog =flog:dill]
+      ==  ==
       ::  %f: to ford
       ::
       $:  %f
@@ -1583,6 +1590,12 @@
       wrapped-task
     ~|  [%p-wrapped-task p.wrapped-task]
     ((hard task:able) p.wrapped-task)
+  ::  %crud: notifies us of an event failure
+  ::
+  ?:  ?=(%crud -.task)
+    =/  moves=(list move)
+      [[duct %slip %d %flog task] ~]
+    [moves http-server-gate]
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)

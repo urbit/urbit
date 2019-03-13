@@ -2070,7 +2070,10 @@
       ==
     ::
     ++  task
-      $%  ::  system started up; reset open connections
+      $%  ::  event failure notification
+          ::
+          [%crud p=@tas q=(list tank)]
+          ::  system started up; reset open connections
           ::
           [%born ~]
           ::  report upgrade
@@ -2181,7 +2184,10 @@
       ==
     ::
     ++  task
-      $%  ::  initializes ourselves with an identity
+      $%  ::  event failure notification
+          ::
+          [%crud p=@tas q=(list tank)]
+          ::  initializes ourselves with an identity
           ::
           ::    TODO: Remove this once we single home.
           ::

@@ -23,7 +23,14 @@
   ==
 ::  +note: private request from light to another vane
 ::
-+$  note  _~
++$  note
+  $%  ::  %d: to dill
+      ::
+      $:  %d
+          ::
+          ::
+      $%  [%flog =flog:dill]
+  ==  ==  ==
 --
 ::  more structures
 ::
@@ -302,6 +309,12 @@
       wrapped-task
     ~|  [%p-wrapped-task p.wrapped-task]
     ((hard task:able) p.wrapped-task)
+  ::  %crud: notifies us of an event failure
+  ::
+  ?:  ?=(%crud -.task)
+    =/  moves=(list move)
+      [[duct %slip %d %flog task] ~]
+    [moves light-gate]
   ::
   ?:  ?=(%vega -.task)
     [~ light-gate]
