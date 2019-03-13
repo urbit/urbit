@@ -1060,13 +1060,13 @@
         void
         u3_http_ef_that(u3_noun tat);
 
-      /* u3_http_ef_http_server: send %http-server to http.
+      /* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
       */
         void
         u3_http_ef_http_server(c3_l    sev_l,
                                c3_l    coq_l,
                                c3_l    seq_l,
-                               u3_noun rep);
+                               u3_noun cad);
 
       /* u3_http_ef_thou(): send %thou effect to http.
       */

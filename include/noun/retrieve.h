@@ -139,6 +139,11 @@
         c3_o
         u3r_sing(u3_noun a, u3_noun b);
 
+      /* u3rz_sing(): transferring u3r_sing
+      */
+        c3_o
+        u3rz_sing(u3_noun a, u3_noun b);
+
       /* u3r_sung(): yes iff (a) and (b) are the same noun, unifying equals.
       **
       **   Make sure you have no live, uncounted pointers to any noun

@@ -1566,72 +1566,95 @@ u3_http_ef_thou(c3_l     sev_l,
   u3z(rep);
 }
 
-/*  responds to an incoming %http-server card from %light
-*/
-void
-u3_http_ef_http_server(c3_l    sev_l,
-                       c3_l    coq_l,
-                       c3_l    seq_l,
-                       u3_noun rep)
+static u3_hreq*
+_http_search_req(c3_l    sev_l,
+                 c3_l    coq_l,
+                 c3_l    seq_l)
 {
   u3_http* htp_u;
   u3_hcon* hon_u;
   u3_hreq* req_u;
   c3_w bug_w = u3C.wag_w & u3o_verbose;
 
-  if (c3y == u3r_sing(u3i_string("set-config"), u3k(u3h(rep)))) {
-    // sets server configuration
-    u3_http_ef_form(u3k(u3t(rep)));
-  }
-  else if ( !(htp_u = _http_serv_find(sev_l)) ) {
+  if ( !(htp_u = _http_serv_find(sev_l)) ) {
     if ( bug_w ) {
       uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
     }
+    return 0;
   }
   else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
     if ( bug_w ) {
       uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
     }
+    return 0;
   }
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
       uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
                      sev_l, coq_l, seq_l));
     }
+    return 0;
   }
-  else if (c3y == u3r_sing(u3i_string("response"), u3k(u3h(rep)))) {
-    // responds to data
-    u3_noun response = u3t(rep);
 
-    if (c3y == u3r_sing(u3i_string("start"), u3k(u3h(response)))) {
-      // Separate the %start message into its components.
-      u3_noun response_header, data, complete;
-      u3_noun status, headers;
-      if (c3y == u3r_trel(u3t(response), &response_header, &data, &complete) &&
-          c3y == u3r_cell(response_header, &status, &headers)) {
+  return req_u;
+}
+
+/* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
+*/
+void
+u3_http_ef_http_server(c3_l    sev_l,
+                       c3_l    coq_l,
+                       c3_l    seq_l,
+                       u3_noun cad)
+{
+  u3_hreq* req_u;
+
+  u3_noun tag, dat;
+  u3x_cell(cad, &tag, &dat);
+
+  //  sets server configuration
+  //
+  if ( c3y == u3rz_sing(u3i_string("set-config"), u3k(tag)) ) {
+    u3_http_ef_form(u3k(dat));
+  }
+  //  responds to an open request
+  //
+  else if ( 0 != (req_u = _http_search_req(sev_l, coq_l, seq_l)) ) {
+    if ( c3y == u3rz_sing(u3i_string("response"), u3k(tag)) ) {
+      u3_noun response = dat;
+
+      if ( c3y == u3rz_sing(u3i_string("start"), u3k(u3h(response))) ) {
+        //  Separate the %start message into its components.
+        //
+        u3_noun response_header, data, complete;
+        u3_noun status, headers;
+        u3x_trel(u3t(response), &response_header, &data, &complete);
+        u3x_cell(response_header, &status, &headers);
+
         _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
                             u3k(complete));
-      } else {
-        uL(fprintf(uH, "http: strange %%start response\n"));
       }
-    } else if (c3y == u3r_sing(u3i_string("continue"), u3k(u3h(response)))) {
-      // Separate the %continue message into its components.
-      u3_noun data, complete;
-      if (c3y == u3r_cell(u3t(response), &data, &complete)) {
+      else if ( c3y == u3rz_sing(u3i_string("continue"), u3k(u3h(response))) ) {
+        //  Separate the %continue message into its components.
+        //
+        u3_noun data, complete;
+        u3x_cell(u3t(response), &data, &complete);
+
         _http_continue_respond(req_u, u3k(data), u3k(complete));
-      } else {
-        uL(fprintf(uH, "http: strange %%continue response\n"));
       }
-    } else if (c3y == u3r_sing(u3i_string("cancel"), u3k(u3h(response)))) {
-      uL(fprintf(uH, "http: %%cancel not handled yet\n"));
-    } else {
+      else if (c3y == u3rz_sing(u3i_string("cancel"), u3k(u3h(response)))) {
+        uL(fprintf(uH, "http: %%cancel not handled yet\n"));
+      }
+      else {
+        uL(fprintf(uH, "http: strange response\n"));
+      }
+    }
+    else {
       uL(fprintf(uH, "http: strange response\n"));
     }
-  } else {
-    uL(fprintf(uH, "http: strange response\n"));
   }
 
-  u3z(rep);
+  u3z(cad);
 }
 
 /* _http_serv_start_all(): initialize and start servers based on saved config.

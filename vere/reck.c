@@ -266,7 +266,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
     if ( (c3n == u3r_cell(t_pox, &it_pox, &tt_pox)) ) {
       u3z(pox); u3z(fav); return c3n;
     }
-    else if (c3y == u3r_sing(u3i_string("http-server"), u3k(it_pox))) {
+    else if ( c3y == u3rz_sing(u3i_string("http-server"), u3k(it_pox)) ) {
       u3_noun pud = tt_pox;
       u3_noun p_pud, t_pud, tt_pud, q_pud, r_pud, s_pud;
       c3_l    sev_l, coq_l, seq_l;
@@ -303,7 +303,7 @@ _reck_kick_spec(u3_noun pox, u3_noun fav)
       u3z(pox); u3z(fav);
       return c3y;
     }
-    else if (c3y == u3r_sing(u3i_string("http-client"), u3k(it_pox))) {
+    else if ( c3y == u3rz_sing(u3i_string("http-client"), u3k(it_pox)) ) {
       u3_cttp_ef_http_client(u3k(fav));
 
       u3z(pox); u3z(fav);
