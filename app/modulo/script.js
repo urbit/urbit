@@ -26,32 +26,42 @@ function doSub() {
   );
 }
 
+var palette = false;
+
 window.addEventListener("message", (event) => {
   let popup = document.getElementById("popup");
   let input = document.getElementById("input");
 
-  popup.style = "position:absolute; left: 0; top: 0; display:block; width: 100%; height: 100%; margin: 0 0; background-color:white;";
-  input.style = "";
-  input.addEventListener("keyup", (e) => {
-    if (e.keyCode !== 13) { return; }
+  if (palette) {
+    palette = false;
     popup.style = "display:hidden;";
-    popup.style = "visibility:hidden !important;";
+    input.style = "visibility:hidden !important;";
+    input.value = "";
+  } else {
+    palette = true;
 
-    window.urb.poke(window.ship, "modulo", "modulo-command", 
-      {
-        go: input.value
-      },
-      (json) => {
-        console.log(json);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    popup.style = "position:absolute; left: 0; top: 0; display:block; width: 100%; height: 100%; margin: 0 0; background-color:white;";
+    input.style = "";
+    input.focus();
+    input.addEventListener("keyup", (e) => {
+      if (e.keyCode !== 13) { return; }
+      popup.style = "display:hidden;";
+      popup.style = "visibility:hidden !important;";
 
-  });
+      window.urb.poke(window.ship, "modulo", "modulo-command", 
+        {
+          go: input.value
+        },
+        (json) => {
+          console.log(json);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
 
-
+    });
+  }
 });
 
 setFrame();
