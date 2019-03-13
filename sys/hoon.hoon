@@ -3747,13 +3747,17 @@
           df4d.225e.2d56.7fd6.1395.a3f8.c582
     (cut 3 [a 1] b)
   --
-::
 ++  ob
   |%
-  ++  feen                                              ::  conceal structure v2
+  ::  +fein: conceal structure, v3.
+  ::
+  ::    +fein conceals planet-sized atoms.  The idea is that it should not be
+  ::    trivial to tell which planet a star has spawned under.
+  ::
+  ++  fein
     |=  pyn/@  ^-  @
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
-      (add 0x1.0000 (fice (sub pyn 0x1.0000)))
+      (add 0x1.0000 (feis (sub pyn 0x1.0000)))
     ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
       =+  lo=(dis pyn 0xffff.ffff)
       =+  hi=(dis pyn 0xffff.ffff.0000.0000)
@@ -3761,10 +3765,14 @@
       $(pyn lo)
     pyn
   ::
-  ++  fend                                              ::  restore structure v2
+  ::  +fynd: restore structure, v3.
+  ::
+  ::    Restores obfuscated values that have been enciphered with +fein.
+  ::
+  ++  fynd
     |=  cry/@  ^-  @
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
-      (add 0x1.0000 (teil (sub cry 0x1.0000)))
+      (add 0x1.0000 (tail (sub cry 0x1.0000)))
     ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
       =+  lo=(dis cry 0xffff.ffff)
       =+  hi=(dis cry 0xffff.ffff.0000.0000)
@@ -3772,43 +3780,126 @@
       $(cry lo)
     cry
   ::
-  ++  fice                                              ::  adapted from
-    |=  nor/@                                           ::  black and rogaway
-    ^-  @                                               ::  "ciphers with
-    =+  ^=  sel                                         ::   arbitrary finite
-    %+  rynd  3                                         ::   domains", 2002
-    %+  rynd  2
-    %+  rynd  1
-    %+  rynd  0
-    [(mod nor 65.535) (div nor 65.535)]
-    (add (mul 65.535 -.sel) +.sel)
+  ::  +feis: a four-round generalised Feistel cipher over the domain
+  ::         [2^16, 2^32 - 1].
   ::
-  ++  teil                                              ::  reverse ++fice
-    |=  vip/@
+  ::    See: Black & Rogaway (2002), Ciphers for arbitrary finite domains.
+  ::
+  ++  feis
+    |=  m=@
     ^-  @
-    =+  ^=  sel
-    %+  rund  0
-    %+  rund  1
-    %+  rund  2
-    %+  rund  3
-    [(mod vip 65.535) (div vip 65.535)]
-    (add (mul 65.535 -.sel) +.sel)
+    (fee 4 65.535 65.536 (mul 65.535 65.536) m)
   ::
-  ++  rynd                                              ::  feistel round
-    |=  {n/@ l/@ r/@}
-    ^-  {@ @}
-    :-  r
-    ?~  (mod n 2)
-      (~(sum fo 65.535) l (muk (snag n raku) 2 r))
-    (~(sum fo 65.536) l (muk (snag n raku) 2 r))
+  ::  +tail: reverse +feis.
   ::
-  ++  rund                                              ::  reverse round
-    |=  {n/@ l/@ r/@}
-    ^-  {@ @}
-    :-  r
-    ?~  (mod n 2)
-      (~(dif fo 65.535) l (muk (snag n raku) 2 r))
-    (~(dif fo 65.536) l (muk (snag n raku) 2 r))
+  ++  tail
+    |=  m=@
+    ^-  @
+    (feen 4 65.535 65.536 (mul 65.535 65.536) m)
+  ::
+  ::  +fee: "Fe" in B&R (2002).
+  ::
+  ++  fee
+    |=  [r=@ a=@ b=@ k=@ m=@]
+    ^-  @
+    =+  c=(fe r a b m)
+    ?:  (lth c k)
+      c
+    (fe r a b c)
+  ::
+  ::  +feen: "Fe^-1" in B&R (2002).
+  ::
+  ++  feen
+    |=  [r=@ a=@ b=@ k=@ m=@]
+    ^-  @
+    =+  c=(fen r a b m)
+    ?:  (lth c k)
+      c
+    (fen r a b c)
+  ::
+  ::  +fe:  "fe" in B&R (2002).
+  ::
+  ::    Note that this implementation differs slightly from the reference paper
+  ::    to support some legacy behaviour.  See urbit/arvo#1105.
+  ::
+  ++  fe
+    |=  [r=@ a=@ b=@ m=@]
+    ^-  @
+    =+  j=1
+    =+  ell=(mod m a)
+    =+  arr=(div m a)
+    |-
+    ::
+    ?:  (gth j r)
+      ?.  =((mod r 2) 0)
+        (add (mul arr a) ell)
+      ?:  =(arr a)
+        (add (mul arr a) ell)
+      (add (mul ell a) arr)
+    ::
+    =/  f  (eff (sub j 1) arr)
+    ::
+    =/  tmp
+    ?.  =((mod j 2) 0)
+      (mod (add f ell) a)
+    (mod (add f ell) b)
+    ::
+    $(j +(j), ell arr, arr tmp)
+  ::
+  ::  +fen:  "fe^-1" in B&R (2002).
+  ::
+  ::    Note that this implementation differs slightly from the reference paper
+  ::    to support some legacy behaviour.  See urbit/arvo#1105.
+  ::
+  ++  fen
+    |=  [r=@ a=@ b=@ m=@]
+    ^-  @
+    =+  j=r
+    ::
+    =/  ahh
+    ?.  =((mod r 2) 0)
+      (div m a)
+    (mod m a)
+    ::
+    =/  ale
+    ?.  =((mod r 2) 0)
+      (mod m a)
+    (div m a)
+    ::
+    =/  ell
+    ?:  =(ale a)
+      ahh
+    ale
+    ::
+    =/  arr
+    ?:  =(ale a)
+      ale
+    ahh
+    ::
+    |-
+    ?:  (lth j 1)
+      (add (mul arr a) ell)
+    =/  f  (eff (sub j 1) ell)
+    ::
+    ::  Note that there is a slight deviation here to avoid dealing with
+    ::  negative values.  We add 'a' or 'b' to arr as appropriate and reduce
+    ::  'f' modulo the same number before performing subtraction.
+    ::
+    =/  tmp
+    ?.  =((mod j 2) 0)
+      (mod (sub (add arr a) (mod f a)) a)
+    (mod (sub (add arr b) (mod f b)) b)
+    ::
+    $(j (sub j 1), ell tmp, arr ell)
+  ::
+  ::  +eff: a murmur3-based pseudorandom function.  'F' in B&R (2002).
+  ::
+  ++  eff
+    |=  [j=@ r=@]
+    ^-  @
+    (muk (snag j raku) 2 r)
+  ::
+  ::  +raku: seeds for eff.
   ::
   ++  raku
     ^-  (list @ux)
@@ -3817,6 +3908,7 @@
         0x85bc.ae01
         0x4b38.7af7
     ==
+  ::
   --
 ::
 ::::  3g: molds and mold builders
@@ -5617,7 +5709,7 @@
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  %+  cook  fend:ob
+  ++  fed  %+  cook  fynd:ob
            ;~  pose
              %+  bass  0x1.0000.0000.0000.0000          ::  oversized
                ;~  plug
@@ -5729,7 +5821,7 @@
           ==
         ::
             $p
-          =+  sxz=(feen:ob q.p.lot)
+          =+  sxz=(fein:ob q.p.lot)
           =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)
