@@ -802,7 +802,7 @@
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
-  ::    Nonce has already been saved in +sigh-httr. The next effect
+  ::    Nonce has already been saved in +http-response. The next effect
   ::    is specified in the wire.
   ::
   ++  nonce
@@ -1150,19 +1150,18 @@
 ++  http-response
   |=  [=wire response=client-response:http-client]
   ^-  (quip move _this)
+  ::  ignore progress reports
   ::
-  ?.  ?=(%finished -.response)
-    ::  ignore progress reports
+  ?:  ?=(%progress -.response)
     [~ this]
   ::
-  (sigh-httr wire (to-httr:http-client +.response))
-::  +sigh-httr: accept http response
-::
-++  sigh-httr
-  |=  [=wire rep=httr]
-  ^-  (quip move _this)
   ?>  ?=([%acme ^] wire)
   =<  abet
+  ::
+  ?:  ?=(%cancel -.response)
+    (retry:event t.wire)
+  ::
+  =/  rep=httr  (to-httr:http-client +.response)
   ::  add nonce to pool, if present
   ::
   =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
@@ -1183,7 +1182,7 @@
     (nonce:effect spur)
   ::  XX replace with :hall notification
   ::
-  ~|  [%sigh-fail wire]
+  ~|  [%http-response-fail wire]
   %.  [spur rep]
   ?+  act
       ~&([%unknown-http-response act] !!)
