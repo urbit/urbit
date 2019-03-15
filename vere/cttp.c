@@ -238,6 +238,30 @@ _cttp_heds_math(u3_noun mah)
   return hed_u;
 }
 
+// XX deduplicate with _http_heds_from_noun
+/* _cttp_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
+*/
+static u3_hhed*
+_cttp_heds_from_noun(u3_noun hed)
+{
+  u3_noun deh = hed;
+  u3_noun i_hed;
+
+  u3_hhed* hed_u = 0;
+
+  while ( u3_nul != hed ) {
+    i_hed = u3h(hed);
+    u3_hhed* nex_u = _cttp_hed_new(u3h(i_hed), u3t(i_hed));
+    nex_u->nex_u = hed_u;
+
+    hed_u = nex_u;
+    hed = u3t(hed);
+  }
+
+  u3z(deh);
+  return hed_u;
+}
+
 // XX deduplicate with _http_heds_to_noun
 /* _cttp_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
 */
@@ -590,6 +614,7 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
 
   // TODO: mah is a semiparsed header format, which is not what we were passed in.
   /* ceq_u->hed_u = _cttp_heds_math(u3k(mah)); */
+  ceq_u->hed_u = _cttp_heds_from_noun(u3k(headers));
 
   if ( u3_nul != body ) {
     ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(body)));
