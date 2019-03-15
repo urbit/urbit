@@ -205,7 +205,7 @@
         c3_c*            hot_c;             //  host
         c3_s             por_s;             //  port
         c3_c*            por_c;             //  port (string)
-        c3_m             met_m;             //  method
+        c3_c*            met_c;             //  method
         c3_c*            url_c;             //  url
         u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  body

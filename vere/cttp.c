@@ -529,6 +529,7 @@ _cttp_creq_free(u3_creq* ceq_u)
 
   free(ceq_u->hot_c);
   free(ceq_u->por_c);
+  free(ceq_u->met_c);
   free(ceq_u->url_c);
   free(ceq_u->vec_u);
   free(ceq_u);
@@ -581,8 +582,10 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
     ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
   }
 
-  // TODO: met_m is used for lowercase only. Here, we're using it in uppercase.
-  ceq_u->met_m = method;
+  //  XX this should be checked against a whitelist
+  //
+  c3_assert( c3y == u3ud(method) );
+  ceq_u->met_c = u3r_string(method);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
 
   // TODO: mah is a semiparsed header format, which is not what we were passed in.
@@ -601,6 +604,8 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
 }
 
 /* _cttp_creq_new(): create a request from a +hiss noun
+**
+**  XX obsolete, remove
 */
 static u3_creq*
 _cttp_creq_new(c3_l num_l, u3_noun hes)
@@ -633,7 +638,9 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
     ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
   }
 
-  ceq_u->met_m = met;
+  //  XX should be capitalized
+  //
+  ceq_u->met_c = u3r_string(met);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
   ceq_u->hed_u = _cttp_heds_math(u3k(mah));
 
@@ -687,21 +694,15 @@ _cttp_creq_fire_heds(u3_creq* ceq_u, u3_hhed* hed_u)
 static void
 _cttp_creq_fire(u3_creq* ceq_u)
 {
-  // TODO: This needs to be better. The met_m that we send now is uppercassed.
-  switch ( ceq_u->met_m ) {
-    default: c3_assert(0);
-    case c3_s3('G', 'E', 'T'):  _cttp_creq_fire_str(ceq_u, "GET ");      break;
-    case c3__get:   _cttp_creq_fire_str(ceq_u, "GET ");      break;
-    case c3__put:   _cttp_creq_fire_str(ceq_u, "PUT ");      break;
-    case c3__post:  _cttp_creq_fire_str(ceq_u, "POST ");     break;
-    case c3__head:  _cttp_creq_fire_str(ceq_u, "HEAD ");     break;
-    case c3__conn:  _cttp_creq_fire_str(ceq_u, "CONNECT ");  break;
-    case c3__delt:  _cttp_creq_fire_str(ceq_u, "DELETE ");   break;
-    case c3__opts:  _cttp_creq_fire_str(ceq_u, "OPTIONS ");  break;
-    case c3__trac:  _cttp_creq_fire_str(ceq_u, "TRACE ");    break;
+  {
+    c3_w  len_w = strlen(ceq_u->met_c) + 1 + strlen(ceq_u->url_c) + 12;
+    c3_c* lin_c = c3_malloc(len_w);
+
+    len_w = snprintf(lin_c, len_w, "%s %s HTTP/1.1\r\n",
+                                   ceq_u->met_c,
+                                   ceq_u->url_c);
+    _cttp_creq_fire_str(ceq_u, lin_c);
   }
-  _cttp_creq_fire_str(ceq_u, ceq_u->url_c);
-  _cttp_creq_fire_str(ceq_u, " HTTP/1.1\r\n");
 
   {
     c3_c* hot_c = ceq_u->hot_c ? ceq_u->hot_c : ceq_u->ipf_c;
@@ -885,7 +886,7 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
     ceq_u->vec_u = _cttp_bods_to_vec(ceq_u->rub_u, &len_w);
     *vec_t = len_w;
     *vec_p = ceq_u->vec_u;
-    *hed_i = c3__head == ceq_u->met_m;
+    *hed_i = (0 == strcmp(ceq_u->met_c, "HEAD"));
   }
 
   return _cttp_creq_on_head;
