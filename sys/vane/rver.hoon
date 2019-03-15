@@ -1197,7 +1197,27 @@
         $(requests t.requests)
       ::
           %unsubscribe
-        !!
+        ::
+        =.  gall-moves
+          :_  gall-moves
+          ^-  move
+          :^  duct  %pass
+            /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+          =,  i.requests
+          [%g %deal [our ship] `cush:gall`[app %pull ~]]
+        ::  TODO: Check existence to prevent duplicates?
+        ::
+        =.  session.channel-state.state
+          %+  ~(jab by session.channel-state.state)  channel-id
+          |=  =channel
+          ^+  channel
+          =,  i.requests
+          %_    channel
+              subscriptions
+            (skip subscriptions.channel |=(a=[@p term ^path] =(a [ship app path])))
+          ==
+        ::
+        $(requests t.requests)
       ==
     ::  +on-gall-response: turns a gall response into an event
     ::

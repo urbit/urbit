@@ -1014,6 +1014,107 @@
     results2
   ==
 ::
+++  test-channel-unsubscribe-stops-events
+  ::  common initialization
+  ::
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
+  ::  poke gets a success message
+  ::
+  =^  results2  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m1)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %coup ~]
+         ==
+      moves=~
+    ==
+  ::  subscription gets a success message
+  ::
+  =^  results3  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=*sley
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %reap ~]
+         ==
+      moves=~
+    ==
+  ::  sending an unsubscribe sends an unsubscribe to gall
+  ::
+  =^  results4  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m3)
+      scry=*sley
+      ^=  call-args
+        :*  duct=~[/http-put-request]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "unsubscribe",
+              "id": 2,
+              "ship": "nul",
+              "app": "two",
+              "path": "/one/two/three"}
+            ]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-gall-deal
+            :*  /channel/subscription/'0123456789abcdef'/'2'
+                [~nul ~nul]  %two  %pull  ~
+            ==
+            card.i.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  i.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %rest  (add ~1111.1.2 ~h12)
+                ==
+            !>  i.t.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %wait  :(add ~1111.1.2 ~h12 ~m3)
+                ==
+            !>  i.t.t.t.moves
+    ==  ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+  ==
+::
 ++  test-prune-events
   =/  q=(qeu [id=@ud lines=wall])  ~
   =.  q  (~(put to q) [0 ~])
