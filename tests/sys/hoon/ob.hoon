@@ -72,4 +72,53 @@
     ::
   ==
 ::
+++  test-exhaustive-small
+  =/  a=(list @)  ~[5 9 2 6 4 0 8 7 1 10 3 11]
+  =/  b=(list @)  ~[2 1 0 3 10 4 9 5 7 11 6 8]
+  =/  c=(list @)  ~[10 6 7 1 0 11 3 9 5 2 8 4]
+  =/  d=(list @)  ~[11 0 3 5 9 8 6 10 4 1 2 7]
+  ::
+  =/  prf
+  |=  [j=@ r=@]
+  ^-  @
+  ?:  =(j 0)
+    (snag r a)
+  ?:  =(j 1)
+    (snag r b)
+  ?:  =(j 2)
+    (snag r c)
+  (snag r d)
+  ::
+  ::
+  =/  feis
+  |=  arg=@
+  ^-  @
+  (fee:ob 4 3 4 12 prf arg)
+  ::
+  =/  tail
+  |=  arg=@
+  ^-  @
+  (feen:ob 4 3 4 12 prf arg)
+  ::
+  =/  emm=(list @)  ~[0 1 2 3 4 5 6 7 8 9 10 11]
+  =/  semm=(set @)  (sy emm)
+  ::
+  =/  perm=(list @)  (turn emm feis)
+  =/  inv=(list @)  (turn perm tail)
+  =/  distincts=(set @)  (sy perm)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  (lent perm)
+      !>  (lent ~(tap in distincts))
+    ::
+    %+  expect-eq
+      !>  &
+      !>  (roll perm |=([x=@ acc=?] &((~(has in semm) x) acc)))
+    ::
+    %+  expect-eq
+      !>  emm
+      !>  inv
+    ::
+  ==
 --
