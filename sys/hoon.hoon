@@ -3788,34 +3788,34 @@
   ++  feis
     |=  m=@
     ^-  @
-    (fee 4 65.535 65.536 (mul 65.535 65.536) m)
+    (fee 4 65.535 65.536 (mul 65.535 65.536) eff m)
   ::
   ::  +tail: reverse +feis.
   ::
   ++  tail
     |=  m=@
     ^-  @
-    (feen 4 65.535 65.536 (mul 65.535 65.536) m)
+    (feen 4 65.535 65.536 (mul 65.535 65.536) eff m)
   ::
   ::  +fee: "Fe" in B&R (2002).
   ::
   ++  fee
-    |=  [r=@ a=@ b=@ k=@ m=@]
+    |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  c=(fe r a b m)
+    =+  c=(fe r a b prf m)
     ?:  (lth c k)
       c
-    (fe r a b c)
+    (fe r a b prf c)
   ::
   ::  +feen: "Fe^-1" in B&R (2002).
   ::
   ++  feen
-    |=  [r=@ a=@ b=@ k=@ m=@]
+    |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  c=(fen r a b m)
+    =+  c=(fen r a b prf m)
     ?:  (lth c k)
       c
-    (fen r a b c)
+    (fen r a b prf c)
   ::
   ::  +fe:  "fe" in B&R (2002).
   ::
@@ -3823,7 +3823,7 @@
   ::    to support some legacy behaviour.  See urbit/arvo#1105.
   ::
   ++  fe
-    |=  [r=@ a=@ b=@ m=@]
+    |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =+  j=1
     =+  ell=(mod m a)
@@ -3837,7 +3837,7 @@
         (add (mul arr a) ell)
       (add (mul ell a) arr)
     ::
-    =/  f  (eff (sub j 1) arr)
+    =/  f  (prf (sub j 1) arr)
     ::
     =/  tmp
     ?.  =((mod j 2) 0)
@@ -3852,7 +3852,7 @@
   ::    to support some legacy behaviour.  See urbit/arvo#1105.
   ::
   ++  fen
-    |=  [r=@ a=@ b=@ m=@]
+    |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =+  j=r
     ::
@@ -3879,7 +3879,7 @@
     |-
     ?:  (lth j 1)
       (add (mul arr a) ell)
-    =/  f  (eff (sub j 1) ell)
+    =/  f  (prf (sub j 1) ell)
     ::
     ::  Note that there is a slight deviation here to avoid dealing with
     ::  negative values.  We add 'a' or 'b' to arr as appropriate and reduce
