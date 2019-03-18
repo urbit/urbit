@@ -7713,7 +7713,6 @@
         ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a
         ::  length of 32.
         ::  Note that for any X, len(enc(X)) is a multiple of 32.
-        ~|  [%bytes-n-too-long max=32 actual=p.p.dat]
         ?>  (lte p.p.dat 32)
         (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
       ::
@@ -7723,7 +7722,7 @@
         ::  by the minimum number of zero-bytes such that len(enc(X)) is a
         ::  multiple of 32.
         %+  weld  $(dat [%uint p.p.dat])
-        (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
+        $(dat [%bytes-n p.dat])
       ::
           %string
         ::  enc(X) = enc(enc_utf8(X)), i.e. X is utf-8 encoded and this value is
@@ -7755,19 +7754,24 @@
     ::
     ::  decoding
     ::
-    ++  decode-topics  decode-arguments
+    ++  decode-topics
+      ::  tox:  list of hex words
+      |*  [tox=(lest @ux) tys=(list etyp)]
+      =-  (decode-arguments (crip -) tys)
+      %+  render-hex-bytes  (mul 32 (lent tox))
+      %+  roll  `(list @ux)`tox
+      |=  [top=@ux tos=@]
+      (cat 8 top tos)
     ::
     ++  decode-results
       ::  rex:  string of hex bytes with leading 0x.
       |*  [rex=@t tys=(list etyp)]
-      =-  (decode-arguments - tys)
-      %+  turn  (rip 9 (rsh 3 2 rex))
-      (curr rash hex)
+      (decode-arguments (rsh 3 2 rex) tys)
     ::
     ++  decode-arguments
-      |*  [wos=(list @) tys=(list etyp)]
-      =/  wos=(list @)  wos  ::  get rid of tmi
+      |*  [res=@t tys=(list etyp)]
       =|  win=@ud
+      =/  wos=(list @t)  (rip 9 res)
       =<  (decode-from 0 tys)
       |%
       ++  decode-from
@@ -7792,21 +7796,22 @@
             ?(%address %bool %uint)  ::  %int %real %ureal
           :-  +(win)
           ?-  typ
-            %address  `@ux`wor
-            %uint     `@ud`wor
-            %bool     =(1 wor)
+            %address  `@ux`(rash wor hex)
+            %uint     `@ud`(rash wor hex)
+            %bool     =(1 (rash wor hex))
           ==
         ::
             %string
           =+  $(tys ~[%bytes])
+          ~!  -
           [nin (trip (swp 3 q.dat))]
         ::
             %bytes
           :-  +(win)
           ::  find the word index of the actual data.
-          =/  lic=@ud  (div wor 32)
+          =/  lic=@ud  (div (rash wor hex) 32)
           ::  learn the bytelength of the data.
-          =/  len=@ud  (snag lic wos)
+          =/  len=@ud  (rash (snag lic wos) hex)
           (decode-bytes-n +(lic) len)
         ::
             [%bytes-n *]
@@ -7816,11 +7821,11 @@
             [%array *]
           :-  +(win)
           ::  find the word index of the actual data.
-          =.  win  (div wor 32)
+          =.  win  (div (rash wor hex) 32)
           ::  read the elements from their location.
           %-  tail
           %^  decode-array-n  ~[t.typ]  +(win)
-          (snag win wos)
+          (rash (snag win wos) hex)
         ::
             [%array-n *]
           (decode-array-n ~[t.typ] win n.typ)
@@ -7830,20 +7835,18 @@
         |=  [fro=@ud bys=@ud]
         ^-  octs
         ::  parse {bys} bytes from {fro}.
-        :-  bys
-        %^  rsh  3
-          =+  (mod bys 32)
-          ?:(=(0 -) - (sub 32 -))
-        %+  rep  8
-        %-  flop
-        =-  (swag [fro -] wos)
-        +((div (dec bys) 32))
+        =-  [bys (rash - hex)]
+        %^  end  3  (mul 2 bys)
+        %+  can  9
+        %+  turn
+          (swag [fro +((div (dec bys) 32))] wos)
+        |=(a=@t [1 a])
       ::
       ++  decode-array-n
         ::NOTE  we take (list etyp) even though we only operate on
         ::      a single etyp as a workaround for urbit/arvo#673
-        ::NOTE  careful! produces lists without type info
         =|  res=(list)
+        ~&  %watch-out--arrays-without-typeinfo
         |*  [tys=(list etyp) fro=@ud len=@ud]
         ^-  [@ud (list)]
         ?~  tys  !!
@@ -8218,10 +8221,8 @@
     |=  [wat=tape mof=@ud wer=?(%left %right)]
     ^-  tape
     =+  len=(lent wat)
-    ?:  =(0 len)  (reap mof '0')
-    =+  mad=(mod len mof)
-    ?:  =(0 mad)  wat
-    =+  tad=(reap (sub mof mad) '0')
+    ?:  =(len mof)  wat
+    =+  tad=(reap (sub mof (mod len mof)) '0')
     %-  weld
     ?:(?=(%left wer) [tad wat] [wat tad])
   ::
