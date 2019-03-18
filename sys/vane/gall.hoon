@@ -1326,8 +1326,6 @@
         $wait  `%b
         $want  `%a
         $warp  `%c
-        $well  `%e
-        $well  `%e
         $wind  `%j
         $wipe  `%f
       ::
