@@ -518,52 +518,28 @@
     ==
   ::
   ++  login-page
-    %+  titl  'Login - Landscape'
-    ;=
-    ;div.header-container.container
-      ;div.row
-        ;div.flex-col-x.header-breadcrumbs;
-      ==
-      ;div.row.align-center.header-mainrow
-        ;div.flex-col-2.justify-end;
-        ;h1.flex-col-x.header-title: Login
-      ==
-    ==
-    ;div.container
-      ;div.row
-        ;div.flex-col-2;
-        ;div.flex-col-x
-          ;div.row.mt-10
-            ;h3.col-md-12: Ship
-          ==
+    %+  titl  'Sign in - Urbit'
+    ;=  ;div.container.top
           ;div.row
-            ;input#ship.col-md-10.h3.text-500.collection-title(placeholder "your-ship", contenteditable "");
-          ==
-          ;div.row.mt-5
-            ;h3.col-md-12
-              ; Type
-              ;span.text-mono.mr-1: +code
-              ; in your terminal and press enter
+            ;div.col-md-4
+              ;h1.sign: Sign in
+            ==
+            ;div.col-md-8
+              ;p.ship
+                ;label.sig: ~
+                ;input#ship.mono(contenteditable "", placeholder "your-urbit");
+              ==
+              ;input#pass.mono(type "password", placeholder "passcode");
+              ;h2.advice: Type +{;code:("+code")} in your dojo for your passcode.
+              ;pre:code#err;
             ==
           ==
-          ;div.row
-            ;input#pass.col-md-10.h3.mono.text-500.collection-title(type "password", placeholder "passcode");
-          ==
-          ;div.row.mt-5
-            ;button#login.btn-primary.btn(disabled "true"): Login
-          ==
-          ;div.row.mt-5
-            ;pre#err;
-          ==
         ==
-      ==
-    ==
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 $(function() {
                   $ship = $('#ship')
                   $pass = $('#pass')
-                  $login = $('#login')
                   $ship.on('keydown', function(e) {
                     if(e.keyCode === 13 || e.keyCode === 9) {
                       if(!urb.is_me($ship.val().toLowerCase()))
@@ -573,22 +549,13 @@
                       e.preventDefault()
                     }
                   })
-                  $pass.on('keypress', function(e) {
-                    if($pass.val().length > -1) {
-                      $login.prop('disabled', false)
-                    } else {
-                      $login.prop('disabled', true)
-                    }
+                  $ship.on('focus', function(e) {
+                    $pass.hide()
                   })
-                  $pass.on('paste', function(e) {
-                    if($pass.val().length > -1) {
-                      $login.prop('disabled', false)
-                    } else {
-                      $login.prop('disabled', true)
+                  $pass.on('keydown', function(e) {
+                    if(e.keyCode === 13) {
+                      urb.submit($ship.val().toLowerCase(),$pass.val())
                     }
-                  })
-                  $login.on('click', function(e) {
-                    urb.submit($ship.val().toLowerCase(),$pass.val())
                   })
                   if(window.ship) {
                     $ship.val(urb.ship)
@@ -638,7 +605,8 @@
         ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/===/web/landscape/css/index.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/fonts.css");
+        ;link(rel "stylesheet", href "/===/web/lib/css/bootstrap.css");
       ==
       ;body:"*{b}"
     ==
