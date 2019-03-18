@@ -13,7 +13,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -26,7 +26,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -36,7 +36,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -46,7 +46,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
       expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
     ==
@@ -63,7 +63,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -73,7 +73,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -83,7 +83,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%disconnect [~ /]]]
       expected-moves=~
     ==
@@ -93,7 +93,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
       expected-moves=[duct=~[/app2] %give %bound %.y [~ /]]~
     ==
@@ -111,7 +111,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -121,7 +121,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -131,7 +131,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app2] ~ [%disconnect [~ /]]]
       expected-moves=~
     ==
@@ -141,7 +141,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app2] ~ [%connect [~ /] %app2]]
       expected-moves=[duct=~[/app2] %give %bound %.n [~ /]]~
     ==
@@ -160,7 +160,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -170,7 +170,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -204,7 +204,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -214,7 +214,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -224,7 +224,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -261,7 +261,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
@@ -291,7 +291,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -301,7 +301,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -311,7 +311,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -348,7 +348,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
@@ -369,7 +369,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
@@ -398,7 +398,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -408,7 +408,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /'~landscape'] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /'~landscape']]~
     ==
@@ -418,7 +418,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -455,7 +455,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-app/app1  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)  :-  *type
@@ -473,7 +473,7 @@
     %-  perform-authentication  :*
       http-server-gate
       now=~1111.1.5
-      scry=*sley
+      scry=scry-provides-code
     ==
   ::  going back to the original url will acknowledge the authentication cookie
   ::
@@ -481,7 +481,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.5..1.0.0
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         ^-  [=duct type=* wrapped-task=(hobo task:able:http-server-gate)]
         :*  duct=~[/http-blah]  ~
@@ -541,7 +541,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -551,7 +551,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/gen1] ~ [%serve [~ /] [%home /gen/handler/hoon ~]]]
       expected-moves=[duct=~[/gen1] %give %bound %.y [~ /]]~
     ==
@@ -561,7 +561,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -607,7 +607,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/run-build  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
@@ -734,7 +734,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -743,7 +743,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -783,7 +783,7 @@
     %-  http-server-take-with-comparator  :*
       http-server-gate
       now=(add ~1111.1.2 ~h12)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/timeout/'0123456789abcdef'  duct=~[/http-blah]
             ^-  (hypo sign:http-server-gate)
@@ -819,7 +819,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -834,7 +834,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -849,7 +849,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m2)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -866,7 +866,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add ~1111.1.2 ~m3)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
             %request
@@ -918,7 +918,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add ~1111.1.2 ~m4)
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
@@ -954,7 +954,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=(add ~1111.1.2 ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
             %request
@@ -1024,7 +1024,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1039,7 +1039,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m2)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1054,7 +1054,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=(add ~1111.1.2 ~m3)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
             %request
@@ -1137,7 +1137,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1152,7 +1152,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m2)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1167,7 +1167,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add ~1111.1.2 ~m3)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
             %request
@@ -1216,7 +1216,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m4)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1247,7 +1247,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=(add ~1111.1.2 ~m5)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
             %request
@@ -1282,7 +1282,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add ~1111.1.2 ~m6)
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/http-get-open] ~ %cancel-request ~]
       ^=  expected-moves
         ^-  (list move:http-server-gate)
@@ -1299,7 +1299,7 @@
     %-  http-server-take  :*
       http-server-gate
       now=(add ~1111.1.2 ~m7)
-      scry=*sley
+      scry=scry-provides-code
       ^=  take-args
         :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
             ^-  (hypo sign:http-server-gate)
@@ -1317,7 +1317,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add ~1111.1.2 ~m8)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-get-open]  ~
             %request
@@ -1381,7 +1381,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -1391,7 +1391,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/app1] ~ [%connect [~ /] %app1]]
       expected-moves=[duct=~[/app1] %give %bound %.y [~ /]]~
     ==
@@ -1403,7 +1403,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.3
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -1441,7 +1441,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.4
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/born] ~ [%born ~]]
       ^=  expected-moves
         |=  moves=(list move:http-server-gate)
@@ -1630,7 +1630,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=start-now
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -1658,7 +1658,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=(add start-now ~m1)
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-blah]  ~
             %request
@@ -1701,7 +1701,7 @@
     %-  http-server-call  :*
       http-server-gate
       now=~1111.1.1
-      scry=*sley
+      scry=scry-provides-code
       call-args=[duct=~[/init] ~ [%init ~nul]]
       expected-moves=~
     ==
@@ -1711,7 +1711,7 @@
     %-  perform-authentication  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
     ==
   ::  send the channel a poke and a subscription request
   ::
@@ -1719,7 +1719,7 @@
     %-  http-server-call-with-comparator  :*
       http-server-gate
       now=~1111.1.2
-      scry=*sley
+      scry=scry-provides-code
       ^=  call-args
         :*  duct=~[/http-put-request]  ~
             %request
@@ -1782,4 +1782,17 @@
   ::
   :_  http-server-gate
   :(weld results1 results2 results3)
+::
+++  scry-provides-code  ^-  sley
+  |=  [* (unit (set monk)) =term =beam]
+  ^-  (unit (unit cage))
+  ::
+  ?>  =(%j term)
+  ?>  =(~nul p.beam)
+  ?>  =(%code q.beam)
+  ?>  =(%da -.r.beam)
+  ?>  =(/~nul s.beam)
+  ::  This is the default code for a fakeship.
+  ::
+  [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
 --
