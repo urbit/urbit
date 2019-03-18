@@ -1289,7 +1289,7 @@
   ^-  (quip move _this)
   ?~  old
     =/  =move
-      [ost.bow %connect /acme [~ /'.well-known'/acme-challenge] dap.bow]
+      [ost.bow %connect /acme [~ /'.well-known'/acme-challenge] %acme]
     [[move ~] this]
   [~ this(+<+ u.old)]
 ::  +bound: response to %connect binding request
