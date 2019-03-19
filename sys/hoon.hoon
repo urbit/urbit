@@ -3760,8 +3760,8 @@
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
       (add 0x1.0000 (feis (sub pyn 0x1.0000)))
     ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
-      =+  lo=(dis pyn 0xffff.ffff)
-      =+  hi=(dis pyn 0xffff.ffff.0000.0000)
+      =/  lo  (dis pyn 0xffff.ffff)
+      =/  hi  (dis pyn 0xffff.ffff.0000.0000)
       %+  con  hi
       $(pyn lo)
     pyn
@@ -3775,8 +3775,8 @@
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
       (add 0x1.0000 (tail (sub cry 0x1.0000)))
     ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
-      =+  lo=(dis cry 0xffff.ffff)
-      =+  hi=(dis cry 0xffff.ffff.0000.0000)
+      =/  lo  (dis cry 0xffff.ffff)
+      =/  hi  (dis cry 0xffff.ffff.0000.0000)
       %+  con  hi
       $(cry lo)
     cry
@@ -3812,10 +3812,10 @@
   ++  fee
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  c=(fe r a b prf m)
-    ?:  (lth c k)
-      c
-    (fe r a b prf c)
+    =/  c  (fe r a b prf m)
+      ?:  (lth c k)
+        c
+      (fe r a b prf c)
   ::
   ::  +feen: "Fe^-1" in B&R (2002).
   ::
@@ -3825,10 +3825,10 @@
   ++  feen
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  c=(fen r a b prf m)
-    ?:  (lth c k)
-      c
-    (fen r a b prf c)
+    =/  c  (fen r a b prf m)
+      ?:  (lth c k)
+        c
+      (fen r a b prf c)
   ::
   ::  +fe:  "fe" in B&R (2002).
   ::
@@ -3840,9 +3840,9 @@
   ++  fe
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  j=1
-    =+  ell=(mod m a)
-    =+  arr=(div m a)
+    =/  j  1
+    =/  ell  (mod m a)
+    =/  arr  (div m a)
     |-
     ::
     ?:  (gth j r)
@@ -3879,7 +3879,7 @@
   ++  fen
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
-    =+  j=r
+    =/  j  r
     ::
     =/  ahh
     ?.  =((mod r 2) 0)
