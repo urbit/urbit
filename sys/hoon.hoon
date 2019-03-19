@@ -3747,6 +3747,7 @@
           df4d.225e.2d56.7fd6.1395.a3f8.c582
     (cut 3 [a 1] b)
   --
+::
 ++  ob
   |%
   ::  +fein: conceal structure, v3.
@@ -3799,6 +3800,15 @@
   ::
   ::  +fee: "Fe" in B&R (2002).
   ::
+  ::    A Feistel cipher given the following parameters:
+  ::
+  ::    r:    number of Feistel rounds
+  ::    a, b: parameters such that ab >= k
+  ::    k:    value such that the domain of the cipher is [0, k - 1]
+  ::    prf:  a gate denoting a family of pseudorandom functions indexed by
+  ::          its first argument and taking its argument second as input
+  ::    m:    an input value in the domain [0, k - 1]
+  ::
   ++  fee
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
@@ -3809,6 +3819,9 @@
   ::
   ::  +feen: "Fe^-1" in B&R (2002).
   ::
+  ::    Reverses a Feistel cipher constructed with parameters described in
+  ::    +fee.
+  ::
   ++  feen
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
@@ -3818,6 +3831,8 @@
     (fen r a b prf c)
   ::
   ::  +fe:  "fe" in B&R (2002).
+  ::
+  ::    An internal function to +fee.
   ::
   ::    Note that this implementation differs slightly from the reference paper
   ::    to support some legacy behaviour.  See urbit/arvo#1105.
@@ -3833,6 +3848,16 @@
     ?:  (gth j r)
       ?.  =((mod r 2) 0)
         (add (mul arr a) ell)
+      ::
+      :: Note that +fe differs from B&R (2002)'s "fe" below, as a previous
+      :: implementation of this cipher contained a bug such that certain inputs
+      :: could encipher to the same output.
+      ::
+      :: To correct these problem cases while also preserving the cipher's
+      :: legacy behaviour on most inputs, we check for a problem case (which
+      :: occurs when 'arr' is equal to 'a') and, if detected, use an alternate
+      :: permutation instead.
+      ::
       ?:  =(arr a)
         (add (mul arr a) ell)
       (add (mul ell a) arr)
@@ -3865,6 +3890,12 @@
     ?.  =((mod r 2) 0)
       (mod m a)
     (div m a)
+    ::
+    :: Similar to the comment in +fe, +fen differs from B&R (2002)'s "fe^-1"
+    :: here in order to preserve the legacy cipher's behaviour on most inputs.
+    ::
+    :: Here problem cases can be identified by 'ahh' equating with 'a'; we
+    :: correct those cases by swapping the values of 'ahh' and 'ale'.
     ::
     =/  ell
     ?:  =(ale a)
