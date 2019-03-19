@@ -3781,7 +3781,7 @@
     cry
   ::
   ::  +feis: a four-round generalised Feistel cipher over the domain
-  ::         [2^16, 2^32 - 1].
+  ::         [0, 2^32 - 2^16 - 1].
   ::
   ::    See: Black & Rogaway (2002), Ciphers for arbitrary finite domains.
   ::
