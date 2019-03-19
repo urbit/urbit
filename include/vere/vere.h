@@ -309,6 +309,7 @@
           c3_o         diz_o;               //  spinner activated
           c3_d         eve_d;               //  spinner start tick (unix μs)
           c3_d         end_d;               //  spinner end tick (unix μs)
+          c3_y         seq_y;               //  spinner glyph index
           c3_c*        why_c;               //  spinner event wire (root only)
         } sun;
 
@@ -484,6 +485,11 @@
         u3_utat          tat_u;             //  control state
         struct termios   bak_u;             //  cooked terminal state
         struct termios   raw_u;             //  raw terminal state
+
+        c3_y             bog_y;             // current ncurses bg color
+        c3_y             fog_y;             // current ncurses fg color
+        c3_w             eff_y;             // current ncurses effects 
+
       } u3_utty;
 
     /* u3_utel: unix telnet listener.
