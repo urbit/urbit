@@ -3813,9 +3813,9 @@
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =/  c  (fe r a b prf m)
-      ?:  (lth c k)
-        c
-      (fe r a b prf c)
+    ?:  (lth c k)
+      c
+    (fe r a b prf c)
   ::
   ::  +feen: "Fe^-1" in B&R (2002).
   ::
@@ -3826,9 +3826,9 @@
     |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
     ^-  @
     =/  c  (fen r a b prf m)
-      ?:  (lth c k)
-        c
-      (fen r a b prf c)
+    ?:  (lth c k)
+      c
+    (fen r a b prf c)
   ::
   ::  +fe:  "fe" in B&R (2002).
   ::
