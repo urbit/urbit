@@ -1357,20 +1357,29 @@
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
-  ::    TODO: Get the authentication state and source url here.
-  ::
   ++  handle-ford-response
     |=  made-result=made-result:ford
     ^-  [(list move) server-state]
     ::
+    =+  connection=(~(got by connections.state) duct)
+    ::
     ?:  ?=(%incomplete -.made-result)
       %^  return-static-data-on-duct  500  'text/html'
-      ::  TODO: Thread original URL and authentication state here.
-      (internal-server-error %.y 'http://' tang.made-result)
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          tang.made-result
+      ==
     ::
     ?:  ?=(%error -.build-result.made-result)
       %^  return-static-data-on-duct  500  'text/html'
-      (internal-server-error %.y 'http://' message.build-result.made-result)
+      ::
+      %-  internal-server-error  :*
+          authenticated.inbound-request.connection
+          url.request.inbound-request.connection
+          message.build-result.made-result
+      ==
     ::
     =/  =cage  (result-to-cage:ford build-result.made-result)
     ::
@@ -1386,6 +1395,21 @@
         ==
         `(unit octs)`[~ q.result]
         complete=%.y
+    ==
+  ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup
+  ::
+  ++  handle-gall-error
+    |=  =tang
+    ^-  [(list move) server-state]
+    ::
+    =+  connection=(~(got by connections.state) duct)
+    ::
+    %^  return-static-data-on-duct  500  'text/html'
+    ::
+    %-  internal-server-error  :*
+        authenticated.inbound-request.connection
+        url.request.inbound-request.connection
+        tang
     ==
   ::  +handle-response: check a response for correctness and send to earth
   ::
@@ -1710,11 +1734,23 @@
   ::
   ++  run-app
     ::
-    ?.  ?=([%g %unto %http-response *] sign)
-      ::  entirely normal to get things other than http-response calls, but we
-      ::  don't care.
+    ?>  ?=([%g %unto *] sign)
+    ::
+    ::
+    ?:  ?=([%coup *] p.sign)
+      ?~  p.p.sign
+        ::  received a positive acknowledgment: take no action
+        ::
+        [~ http-server-gate]
+      ::  we have an error; propagate it to the client
       ::
-      [~ http-server-gate]
+      =/  event-args  [[our eny duct now scry-gate] server-state.ax]
+      =/  handle-gall-error
+        handle-gall-error:(per-server-event event-args)
+      =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
+      [moves http-server-gate]
+    ::
+    ?>  ?=([%g %unto %http-response *] sign)
     ::
     =/  event-args  [[our eny duct now scry-gate] server-state.ax]
     =/  handle-response  handle-response:(per-server-event event-args)
