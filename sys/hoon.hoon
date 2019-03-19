@@ -3839,11 +3839,10 @@
   ::
   ++  fe
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
-    ^-  @
     =/  j  1
     =/  ell  (mod m a)
     =/  arr  (div m a)
-    |-
+    |-  ^-  @
     ::
     ?:  (gth j r)
       ?.  =((mod r 2) 0)
@@ -3878,7 +3877,6 @@
   ::
   ++  fen
     |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
-    ^-  @
     =/  j  r
     ::
     =/  ahh
@@ -3907,7 +3905,7 @@
         ale
       ahh
     ::
-    |-
+    |-  ^-  @
     ?:  (lth j 1)
       (add (mul arr a) ell)
     =/  f  (prf (sub j 1) ell)
