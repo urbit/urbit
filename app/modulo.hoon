@@ -110,29 +110,11 @@
     i.back-path
   ::
   ?:  =(name 'session')
-    :_  this
-    :~  ^-  move
-        :-  ost.bow
-        :*  %http-response
-            [%start [200 ['content-type' 'application/javascript']~] [~ session-js] %.y]
-        ==
-    ==
+    [[ost.bow %http-response (js-response session-js)]~ this]
   ?:  =(name 'script')
-    :_  this
-    :~  ^-  move
-        :-  ost.bow
-        :*  %http-response
-            [%start [200 ['content-type' 'application/javascript']~] [~ modulo-js] %.y]
-        ==
-    ==
+    [[ost.bow %http-response (js-response modulo-js)]~ this]
   ::
-  :_  this
-  :~  ^-  move
-      :-  ost.bow
-      :*  %http-response
-          [%start [200 ['content-type' 'text/html']~] [~ index] %.y]
-      ==
-  ==
+  [[ost.bow %http-response (html-response index)]~ this]
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
