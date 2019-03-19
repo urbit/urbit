@@ -59,14 +59,10 @@
 ++  prep
   |=  old=(unit *)
   ^-  (quip move _this)
-  ~&  %prep
   ?~  old
     :_  this
     [ost.bow [%connect / [~ /] %modulo]]~
-  :_  this(sta *state)
-  :~  [ost.bow %poke /bind-subapp [our.bow %modulo] %modulo-bind %subapp]
-      [ost.bow %poke /bind-subapp1 [our.bow %modulo] %modulo-bind %subapp1]
-  ==
+  [~ this(sta *state)]
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
@@ -110,7 +106,7 @@
   =/  name=@t
     =+  back-path=(flop site.request-line)
     ?~  back-path
-      'World'
+      !!
     i.back-path
   ::
   ?:  =(name 'session')

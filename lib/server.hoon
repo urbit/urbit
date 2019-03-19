@@ -26,4 +26,24 @@
     "/~/login?redirect={(trip url.request.inbound-request)}"
   [bone [%http-response %start [307 ['location' redirect]~] ~ %.y]]~
 ::
+++  manx-to-octs
+  |=  man=manx
+  ^-  octs
+  (as-octs:mimes:html (crip (en-xml:html man)))
+::
+++  html-response
+  |=  oct-html=octs
+  ^-  http-event:http
+  [%start [200 ['content-type' 'text/html']~] [~ oct-html] %.y]
+::
+++  js-response
+  |=  oct-js=octs
+  ^-  http-event:http
+  [%start [200 ['content-type' 'application/js']~] [~ oct-js] %.y]
+::
+++  css-response
+  |=  oct-css=octs
+  ^-  http-event:http
+  [%start [200 ['content-type' 'text/css']~] [~ oct-css] %.y]
+::
 --
