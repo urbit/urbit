@@ -1782,9 +1782,6 @@
       =^  moves  server-state.ax
         (on-channel-timeout i.t.t.wire)
       [moves http-server-gate]
-      ::    %wake
-      ::
-      ::  TODO: wake me up inside
     ::
         ?(%poke %subscription)
       ?>  ?=([%g %unto *] sign)
