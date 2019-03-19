@@ -3788,14 +3788,14 @@
   ++  feis
     |=  m=@
     ^-  @
-    (fee 4 65.535 65.536 (mul 65.535 65.536) eff m)
+    (fee 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
   ::
   ::  +tail: reverse +feis.
   ::
   ++  tail
     |=  m=@
     ^-  @
-    (feen 4 65.535 65.536 (mul 65.535 65.536) eff m)
+    (feen 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
   ::
   ::  +fee: "Fe" in B&R (2002).
   ::
