@@ -869,19 +869,19 @@
       (lte now expiry-time.u.session)
     ::  +code: returns the same as |code
     ::
-    ::    This has the problem where the signature for sky vs sley.
-    ::
     ++  code
       ^-  @ta
-      'lidlut-tabwed-pillex-ridrup'
-      ::  =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
-      ::  %^  rsh  3  1
-      ::  (scot %p (@ (need ((sloy scry) [151 %noun] %a pax))))
+      ::
+      =+  pax=/(scot %p our)/code/(scot %da now)/(scot %p our)
+      =+  res=((sloy scry) [151 %noun] %j pax)
+      ::
+      (rsh 3 1 (scot %p (@ (need (need res)))))
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
   ::    Eyre offers a remote interface to your Urbit through channels, which
-  ::    are persistent connections on the server which 
+  ::    are persistent connections on the server which can be disconnected and
+  ::    reconnected on the client.
   ::
   ++  by-channel
     ::  moves: the moves to be sent out at the end of this event, reversed
@@ -1204,7 +1204,27 @@
         $(requests t.requests)
       ::
           %unsubscribe
-        !!
+        ::
+        =.  gall-moves
+          :_  gall-moves
+          ^-  move
+          :^  duct  %pass
+            /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+          =,  i.requests
+          [%g %deal [our ship] `cush:gall`[app %pull ~]]
+        ::  TODO: Check existence to prevent duplicates?
+        ::
+        =.  session.channel-state.state
+          %+  ~(jab by session.channel-state.state)  channel-id
+          |=  =channel
+          ^+  channel
+          =,  i.requests
+          %_    channel
+              subscriptions
+            (skip subscriptions.channel |=(a=[@p term ^path] =(a [ship app path])))
+          ==
+        ::
+        $(requests t.requests)
       ==
     ::  +on-gall-response: turns a gall response into an event
     ::
