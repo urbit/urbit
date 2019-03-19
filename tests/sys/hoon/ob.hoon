@@ -18,6 +18,14 @@
       !>  123.456.789.012.345
       !>  (fynd:ob (fein:ob 123.456.789.012.345))
     ::
+    %+  expect-eq
+      !>  4.267.685.634
+      !>  (fynd:ob (fein:ob 4.267.685.634))
+    ::
+    %+  expect-eq
+      !>  1.625.882.369
+      !>  (fynd:ob (fein:ob 1.625.882.369))
+    ::
   ==
 ::
 ++  test-fein-fynd-match-reference-vals
@@ -49,6 +57,14 @@
     %+  expect-eq
       !>  1.208.402.137
       !>  (tail:ob (feis:ob 1.208.402.137))
+    ::
+    %+  expect-eq
+      !>  4.267.685.634
+      !>  (tail:ob (feis:ob 4.267.685.634))
+    ::
+    %+  expect-eq
+      !>  1.625.882.369
+      !>  (tail:ob (feis:ob 1.625.882.369))
     ::
   ==
 ::
