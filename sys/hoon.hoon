@@ -3865,9 +3865,9 @@
     =/  f  (prf (sub j 1) arr)
     ::
     =/  tmp
-    ?.  =((mod j 2) 0)
-      (mod (add f ell) a)
-    (mod (add f ell) b)
+      ?.  =((mod j 2) 0)
+        (mod (add f ell) a)
+      (mod (add f ell) b)
     ::
     $(j +(j), ell arr, arr tmp)
   ::
@@ -3882,14 +3882,14 @@
     =/  j  r
     ::
     =/  ahh
-    ?.  =((mod r 2) 0)
-      (div m a)
-    (mod m a)
+      ?.  =((mod r 2) 0)
+        (div m a)
+      (mod m a)
     ::
     =/  ale
-    ?.  =((mod r 2) 0)
-      (mod m a)
-    (div m a)
+      ?.  =((mod r 2) 0)
+        (mod m a)
+      (div m a)
     ::
     :: Similar to the comment in +fe, +fen differs from B&R (2002)'s "fe^-1"
     :: here in order to preserve the legacy cipher's behaviour on most inputs.
@@ -3898,14 +3898,14 @@
     :: correct those cases by swapping the values of 'ahh' and 'ale'.
     ::
     =/  ell
-    ?:  =(ale a)
-      ahh
-    ale
+      ?:  =(ale a)
+        ahh
+      ale
     ::
     =/  arr
-    ?:  =(ale a)
-      ale
-    ahh
+      ?:  =(ale a)
+        ale
+      ahh
     ::
     |-
     ?:  (lth j 1)
@@ -3917,9 +3917,9 @@
     ::  'f' modulo the same number before performing subtraction.
     ::
     =/  tmp
-    ?.  =((mod j 2) 0)
-      (mod (sub (add arr a) (mod f a)) a)
-    (mod (sub (add arr b) (mod f b)) b)
+      ?.  =((mod j 2) 0)
+        (mod (sub (add arr a) (mod f a)) a)
+      (mod (sub (add arr b) (mod f b)) b)
     ::
     $(j (sub j 1), ell tmp, arr ell)
   ::
