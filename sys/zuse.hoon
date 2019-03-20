@@ -296,6 +296,47 @@
       `value.i.header-list
     ::
     $(header-list t.header-list)
+  ::  +set-header: sets the value of an item in the header list
+  ::
+  ::    This adds to the end if it doesn't exist.
+  ::
+  ++  set-header
+    |=  [header=@t value=@t =header-list:http]
+    ^-  header-list:http
+    ::
+    ?~  header-list
+      ::  we didn't encounter the value, add it to the end
+      ::
+      [[header value] ~]
+    ::
+    ?:  =(key.i.header-list header)
+      [[header value] t.header-list]
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +delete-header: removes the first instance of a header from the list
+  ::
+  ++  delete-header
+    |=  [header=@t =header-list:http]
+    ^-  header-list:http
+    ::
+    ?~  header-list
+      ~
+    ::  if we see it in the list, remove it
+    ::
+    ?:  =(key.i.header-list header)
+      t.header-list
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +simple-payload: a simple, one event response used for generators
+  ::
+  +$  simple-payload
+    $:  ::  response-header: status code, etc
+        ::
+        =response-header
+        ::  data: the data returned as the body
+        ::
+        data=(unit octs)
+    ==
   --
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network

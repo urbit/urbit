@@ -6,8 +6,9 @@
 ::
 ::  :-  %build
 |=  [authorized=? request:http]
-^-  mime
-:-  ['text' 'html' ~]
+^-  simple-payload:http
+:-  [200 ['content-type' 'text/html']~]
+:-  ~
 %-  as-octs:mimes:html
 %-  crip
 %-  en-xml:html
