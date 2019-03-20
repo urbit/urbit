@@ -383,7 +383,7 @@
   ::
   ++  check-file-touched
     |=  [her=ship des=desk]
-    %+  porcelain-test
+    %+  stateless-test
       (cat 3 'check-file-touched-' (scot %p her))
     |_  now=@da
     ++  start
@@ -392,12 +392,11 @@
       ::  ergos (and dojo because we can't guarantee an ergo if the desk
       ::  is already mounted)
       ::
-      [(dojo her "|mount /={(trip des)}=") ..start]
+      (dojo her "|mount /={(trip des)}=")
     ::
     ++  route
       |=  [who=ship uf=unix-effect]
-      ^-  (quip ph-event _..start)
-      :_  ..start
+      ^-  (list ph-event)
       ?.  ?|  (is-ergo her who uf)
               (is-dojo-output her who uf ">=")
           ==
@@ -421,14 +420,13 @@
   ::
   ++  reload-vane
     |=  [her=ship vane=term]
-    %+  porcelain-test
+    %+  stateless-test
       :((cury cat 3) 'reload-vane-' (scot %p her) '-' vane)
     |_  now=@da
     ++  start
-      ^-  (pair (list ph-event) _..start)
+      ^-  (list ph-event)
       =/  pax
         /(scot %p our)/home/(scot %da now)/sys/vane/[vane]/hoon
-      :_  ..start
       %-  zing
       :~  (dojo her "|mount /=home=")
           (insert-file her %home pax .^(@t %cx pax))
@@ -437,8 +435,7 @@
     ::
     ++  route
       |=  [who=ship uf=unix-effect]
-      ^-  (quip ph-event _..start)
-      `..start
+      ~
     --
   ::
   ++  scry-aqua
