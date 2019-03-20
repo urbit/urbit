@@ -54,114 +54,106 @@
     ==
 ++  this  .
 ++  test-lib  ~(. ^test-lib our.hid)
-++  install-tests
-  ^+  this
-  =.  raw-test-cores
-    ~&  jael=.^(noun %j /(scot %p our.hid)/code/(scot %da now.hid)/(scot %p our.hid))
-    =,  test-lib
-    %-  malt
-    ^-  (list (pair term raw-test-core))
-    :~
-      :-  %add
-      ^-  raw-test-core
-      |%
-      ++  label  %add
-      ++  ships  ~[~bud]
-      ++  start
-        |=  now=@da
-        ^-  (pair (list ph-event) _..start)
-        :_  ..start
-        %-  zing
-        :~  (init ~bud ~)
-            (dojo ~bud "[%test-result (add 2 3)]")
-        ==
-      ::
-      ++  route
-        |=  [now=@da who=ship uf=unix-effect]
-        ^-  [? (quip ph-event _..start)]
-        :-  &
-        :_  ..start
-        (expect-dojo-output ~bud who uf "[%test-result 5]")
-      --
+::
+::  Tests that will be run automatically with :ph %run-all-tests
+::
+++  auto-tests
+  =,  test-lib
+  %-  malt
+  ^-  (list (pair term raw-test-core))
+  :~
+    :-  %boot-bud
+    (galaxy ~bud)
+  ::
+    :-  %add
+    ^-  raw-test-core
+    %+  compose-tests  (galaxy ~bud)
+    %+  stateless-test
+      %add
+    |%
+    ++  start
+      |=  now=@da
+      (dojo ~bud "[%test-result (add 2 3)]")
     ::
-      :-  %hi
-      ^-  raw-test-core
-      |%
-      ++  label  %hi
-      ++  ships  ~[~bud ~dev]
-      ++  start
-        |=  now=@da
-        ^-  (pair (list ph-event) _..start)
-        :_  ..start
-        %-  zing
-        :~  (init ~bud ~)
-            (init ~dev ~)
-            (dojo ~bud "|hi ~dev")
-        ==
-      ::
-      ++  route
-        |=  [now=@da who=ship uf=unix-effect]
-        ^-  [? (quip ph-event _..start)]
-        :-  &
-        :_  ..start
-        (expect-dojo-output ~bud who uf "hi ~dev successful")
-      --
-    ::
-      [%headstart-bud (galaxy ~bud)]
-    ::
-      :-  %composed-child-boot
-      %+  compose-tests  (planet ~linnup-torsyx)
-      %+  porcelain-test  %composed-child-boot
-      |%
-      ++  start
-        |=  now=@da
-        [(dojo ~linnup-torsyx "|hi ~bud") ..start]
-      ::
-      ++  route
-        |=  [now=@da who=ship uf=unix-effect]
-        ^-  (quip ph-event _..start)
-        :_  ..start
-        %-  on-dojo-output
-        :^  ~linnup-torsyx  who  uf
-        :-  "hi ~bud successful"
-        |=  ~
-        [%test-done &]~
-      --
-    ::
-      :-  %composed-child-boot-2
+    ++  route
+      |=  [now=@da who=ship uf=unix-effect]
+      (expect-dojo-output ~bud who uf "[%test-result 5]")
+    --
+  ::
+    :-  %hi
+    %+  compose-tests
       %+  compose-tests
-        %+  compose-tests  (planet ~mitnep-todsut)
-          (planet ~haplun-todtus)
-      %+  porcelain-test
-        %composed-child-boot-2
-      |%
-      ++  start
-        |=  now=@da
-        [(dojo ~haplun-todtus "|hi ~bud") ..start]
-      ::
-      ++  route
-        |=  [now=@da who=ship uf=unix-effect]
-        ^-  (quip ph-event _..start)
-        :_  ..start
-        %-  on-dojo-output
-        :^  ~haplun-todtus  who  uf
-        :-  "hi ~bud successful"
-        |=  ~
-        [%test-done &]~
-      --
+        (galaxy ~bud)
+      (galaxy ~dev)
+    %+  stateless-test
+      %hi
+    |%
+    ++  start
+      |=  now=@da
+      (dojo ~bud "|hi ~dev")
     ::
-      :-  %change-file
-      %+  compose-tests  (galaxy ~bud)
-      (touch-file ~bud %home)
+    ++  route
+      |=  [now=@da who=ship uf=unix-effect]
+      (expect-dojo-output ~bud who uf "hi ~dev successful")
+    --
+  ::
+    :-  %boot-planet
+    (planet ~linnup-torsyx)
+  ::
+    :-  %hi-grandparent
+    %+  compose-tests  (planet ~linnup-torsyx)
+    %+  stateless-test
+      %hi-grandparent
+    |%
+    ++  start
+      |=  now=@da
+      (dojo ~linnup-torsyx "|hi ~bud")
     ::
-      :-  %child-sync
+    ++  route
+      |=  [now=@da who=ship uf=unix-effect]
+      (expect-dojo-output ~linnup-torsyx who uf "hi ~bud successful")
+    --
+  ::
+    :-  %second-cousin-hi
+    %+  compose-tests
+      %+  compose-tests  (planet ~mitnep-todsut)
+        (planet ~haplun-todtus)
+    %+  stateless-test
+      %second-cousin-hi
+    |%
+    ++  start
+      |=  now=@da
+      (dojo ~haplun-todtus "|hi ~bud")
+    ::
+    ++  route
+      |=  [now=@da who=ship uf=unix-effect]
+      (expect-dojo-output ~haplun-todtus who uf "hi ~bud successful")
+    --
+  ::
+    :-  %change-file
+    %+  compose-tests  (galaxy ~bud)
+    (touch-file ~bud %home)
+  ::
+    :-  %child-sync
+    %+  compose-tests
       %+  compose-tests
-        %+  compose-tests
-          (star ~marbud)
-        (touch-file ~bud %base)
-      (check-file-touched ~marbud %home)
-    ::
-      :-  %boot-azimuth
+        (star ~marbud)
+      (touch-file ~bud %base)
+    (check-file-touched ~marbud %home)
+  ==
+::
+::  Tests that will not be run automatically.
+::
+::    Some valid reasons for not running a test automatically:
+::    - Nondeterministic
+::    - Depends on external services
+::    - Is very slow
+::
+++  manual-tests
+  =,  test-lib
+  %-  malt
+  ^-  (list (pair term raw-test-core))
+  :~  :-  %boot-from-azimuth
       %+  compose-tests
         %+  compose-tests
           (raw-ship ~bud `(dawn:azimuth ~bud))
@@ -170,27 +162,18 @@
       ::  :~
       ::  ==
       *raw-test-core
-    ::
-      :-  %individual-breach
-      *raw-test-core
-      ::
-      ::  (init ~zod)
-      ::  (init ~marzod)
-      ::  wait for sync to finish
-      ::  cycle ~zod keys
-      ::  verify it sunk
-      ::  kill ~zod
-      ::  (init ~zod) w/new keys
-      ::  change file on ~zod
-      ::  wait for sync to finish
-      ::  verify file has changed on ~marzod
-      ::
-    ==
+  ==
+::
+++  install-tests
+  ^+  this
+  =.  raw-test-cores
+    (~(uni by auto-tests) manual-tests)
   this
 ::
 ++  prep
   |=  old=(unit [@ tests=* rest=*])
   ^-  (quip move _this)
+  ~&  jael=.^(noun %j /(scot %p our.hid)/code/(scot %da now.hid)/(scot %p our.hid))
   =.  this  install-tests
   ?~  old
     `this

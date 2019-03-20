@@ -30,6 +30,8 @@
   ++  route  |~([now=@da ship unix-effect] *[? (quip ph-event _^?(..start))])
   --
 ::
+::  XXX  doc
+::
 ++  porcelain-test-core
   $_  ^?
   |%
@@ -42,10 +44,21 @@
   ++  route  |~([now=@da ship unix-effect] *(quip ph-event _^?(..start)))
   --
 ::
+::  XXX  doc
+::
+++  stateless-test-core
+  $_  ^?
+  |%
+  ++  start  |~(now=@da *(list ph-event))
+  ++  route  |~([now=@da ship unix-effect] *(list ph-event))
+  --
+::
 ++  ph-event
   $%  [%test-done p=?]
       aqua-event
   ==
+::
+::  XXX doc
 ::
 ++  porcelain-test
   |=  [label=@ta porcelain=porcelain-test-core]
@@ -62,6 +75,23 @@
     |=  args=[@da ship unix-effect]
     =^  events  porcelain  (route:porcelain args)
     [& events ..start]
+  --
+::
+::  XXX doc
+::
+++  stateless-test
+  |=  [label=@tas stateless=stateless-test-core]
+  %+  porcelain-test
+    label
+  ^-  porcelain-test-core
+  |%
+  ++  start
+    |=  now=@da
+    [(start:stateless now) ..start]
+  ::
+  ++  route
+    |=  args=[@da ship unix-effect]
+    [(route:stateless args) ..start]
   --
 ::
 ++  send-events-to
@@ -100,28 +130,23 @@
     [//sync/0v1n.2m9vh %into des | [t.t.t.pax `file]~]
   ==
 ::
-++  on-dojo-output
-  |=  [who=ship her=ship uf=unix-effect what=tape fun=$-($~ (list ph-event))]
-  ^-  (list ph-event)
-  ?.  =(who her)
-    ~
-  ?.  ?=(%blit -.q.uf)
-    ~
-  ?.  %+  lien  p.q.uf
+++  is-dojo-output
+  |=  [who=ship her=ship uf=unix-effect what=tape]
+  ?&  =(who her)
+      ?=(%blit -.q.uf)
+    ::
+      %+  lien  p.q.uf
       |=  =blit:dill
       ?.  ?=(%lin -.blit)
         |
       !=(~ (find what p.blit))
-    ~
-  (fun)
+  ==
 ::
 ++  expect-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
   ^-  (list ph-event)
-  %-  on-dojo-output
-  :^  who  her  uf
-  :-  what
-  |=  ~
+  ?.  (is-dojo-output who her uf what)
+    ~
   [%test-done &]~
 ::
 ++  is-ergo
@@ -281,16 +306,14 @@
       ::  second.
       ::
       :~
-        %-  on-dojo-output
-        :^  her  who  uf
-        :-  "+ /{(scow %p her)}/base/2/web/testing/udon"
-        |=  ~
+        ?.  %^  is-dojo-output  her  who  :-  uf
+            "+ /{(scow %p her)}/base/2/web/testing/udon"
+          ~
         [%test-done &]~
       ::
-        %-  on-dojo-output
-        :^  her  who  uf
-        :-  "is your neighbor"
-        |=  ~
+        ?.  %^  is-dojo-output  her  who  :-  uf
+            "is your neighbor"
+          ~
         [%test-done &]~
       ==
     --
@@ -354,7 +377,6 @@
       =/  pax  /i/(scot %p her)/[des]/(scot %da now)/sur/aquarium/hoon/noun
       ?:  =(warped (need (scry-aqua (unit @) now pax)))
         [%test-done &]~
-      ~&  %not-done-yet
       ~
     --
   ::
@@ -374,32 +396,27 @@
       ::  ergos (and dojo because we can't guarantee an ergo if the desk
       ::  is already mounted)
       ::
-      ~&  %mounting
       [(dojo her "|mount /={(trip des)}=") ..start]
     ::
     ++  route
       |=  [now=@da who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
-      =/  cb
-        |=  $~
-        ~&  %cbing
-        =/  pax  /home/(scot %da now)/sur/aquarium/hoon
-        =/  warped  (cat 3 '=>  .  ' .^(@t %cx (weld /(scot %p our) pax)))
-        =/  aqua-pax
-          ;:  weld
-              /i/(scot %p her)
-              pax(- des)
-              /noun
-          ==
-        ?:  =(warped (need (scry-aqua (unit @) now aqua-pax)))
-          [%test-done &]~
-        ~&  %not-done-yet
-        ~
       :_  ..start
-      %-  zing
-      :~  (on-ergo her who uf cb)
-          (on-dojo-output her who uf ">=" cb)
-      ==
+      ?.  ?|  (is-ergo her who uf)
+              (is-dojo-output her who uf ">=")
+          ==
+        ~
+      =/  pax  /home/(scot %da now)/sur/aquarium/hoon
+      =/  warped  (cat 3 '=>  .  ' .^(@t %cx (weld /(scot %p our) pax)))
+      =/  aqua-pax
+        ;:  weld
+            /i/(scot %p her)
+            pax(- des)
+            /noun
+        ==
+      ?:  =(warped (need (scry-aqua (unit @) now aqua-pax)))
+        [%test-done &]~
+      ~
     --
   ::
   ::  Reload vane from filesystem

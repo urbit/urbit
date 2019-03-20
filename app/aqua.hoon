@@ -260,7 +260,7 @@
     ?:  &(?=(^ next-events.q.i.pers) processing-events.q.i.pers)
       `p.i.pers
     $(pers t.pers)
-  ~&  plowing=who
+  ~?  aqua-debug=|  plowing=who
   ?~  who
     this
   =.  this  abet-pe:plow:(pe u.who)
