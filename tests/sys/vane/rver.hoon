@@ -850,11 +850,11 @@
                 %start
                 :-  400
                 :~  ['content-type' 'text/html']
-                    ['content-length' '206']
+                    ['content-length' '186']
                 ==
               ::
                 :-  ~
-                %^  internal-server-error:http-server-gate  %.n
+                %^  bad-request:http-server-gate  %.n
                 '/~/channel/1234567890abcdef'  ~
               ::
                 complete=%.y
