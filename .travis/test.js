@@ -97,6 +97,9 @@ Promise.resolve(urbit)
   return rePill(urbit);
 })
 .then(function(){
+  return urbit.expect(/dojo> /);
+})
+.then(function(){
   return urbit.exit(0);
 })
 .catch(function(err){
