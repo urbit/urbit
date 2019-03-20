@@ -15,7 +15,7 @@
 ::
 ::
 |%
-+$  post-page  [p=@da q=?(%default %edit)]
++$  post-page  [p=@da q=?(%default %edit %new)]
 --
 |=  [shp=@p col=@da pos=(unit post-page)]
 ^-  manx
@@ -48,30 +48,55 @@
     ==
   ::
   ::
-    ?>  ?=(%collection -.itm)
-    =/  posttt=(unit item:collections)  (~(get by data.col.itm) (scot %da p.u.pos))
-    ?~  posttt
-      ;div: Invalid collection
+  ?>  ?=(%collection -.itm)
+  =/  posttt=(unit item:collections)  (~(get by data.col.itm) (scot %da p.u.pos))
+  ?:  ?&(?=(~ posttt) !=(q.u.pos %new))
+    ;div: Invalid collection
+  ^-  manx
+  ?-    q.u.pos 
+      %default
+    ?<  ?=(~ posttt)
     ?>  ?=(%both -.u.posttt)
-    ^-  manx
+    ;div.container
+      ;div.row
+        ;div.flex-col-2;
+        ;div.flex-col-x
+          ;div.collection-index
+            ;+  (meta-to-elem u.posttt)
+            ;+  (both-to-elem col.u.posttt raw.u.posttt)
+          ==
+        ==
+        ;div.flex-col-2;
+      ==
+    ==
+  ::
+      %edit
+    ?<  ?=(~ posttt)
+    ?>  ?=(%both -.u.posttt)
+    =/  dat  data.raw.u.posttt
     ;div.row
       ;div.flex-col-2;
       ;div.flex-col-x
         ;div.collection-index
           ;+  (meta-to-elem u.posttt)
-          ;+  
-            ?-    q.u.pos 
-                %default  
-              (both-to-elem col.u.posttt raw.u.posttt)
-            ::
-                %edit
-              =/  dat  data.raw.u.posttt
-              (coll-edit shp col p.u.pos dat)
-            ==
+          ;+  (coll-edit shp col p.u.pos dat)
         ==
       ==
       ;div.flex-col-2;
     ==
+  ::
+      %new
+    ;div.row
+      ;div.flex-col-2;
+      ;div.flex-col-x
+        ;div.collection-index
+          ;+  (meta-to-elem itm)
+          ;+  (coll-new shp col)
+        ==
+      ==
+      ;div.flex-col-2;
+    ==
+  ==
 ::
 ++  collection-to-elem
   |=  col=collection:collections
