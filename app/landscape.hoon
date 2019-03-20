@@ -4,11 +4,17 @@
 /=  script
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/landscape/js/index  /js/
+  /:  /===/app/landscape/js/index  
+  /|  /js/
+      /~  ~
+  ==
 /=  style
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/landscape/css/index  /css/
+  /:  /===/app/landscape/css/index  
+  /|  /css/
+      /~  ~
+  ==
 /=  profile
   /:  /===/app/landscape/profile  /!noun/
 /=  inbox

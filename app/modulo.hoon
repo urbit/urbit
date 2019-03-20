@@ -3,11 +3,17 @@
 /=  index
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/modulo/index  /html/
+  /:  /===/app/modulo/index
+  /|  /html/
+      /~  ~
+  ==
 /=  modulo-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/modulo/script  /js/
+  /:  /===/app/modulo/script
+  /|  /js/
+      /~  ~
+  ==
 =,  format
 |%
 :: +move: output effect
