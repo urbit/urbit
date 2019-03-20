@@ -1,14 +1,15 @@
 ::
 ::::  /hoon/ph/lib
   ::
+::  XXX should raw-ship and others be stateless-test-core?
 /-  aquarium
 =,  aquarium
 |%
 ::  Defines a complete integration test.
 ::
 ++  raw-test-core
-  $_  ^?
-  |%
+  $_  ^|
+  |_  now=@da
   ::
   ::  Unique name, used as a cache label.
   ::
@@ -23,34 +24,34 @@
   ::
   ::  Called first to kick off the test.
   ::
-  ++  start  |~(now=@da *(quip ph-event _^?(..start)))
+  ++  start  *(quip ph-event _^|(..start))
   ::
   ::  Called on every effect from a ship.
   ::
-  ++  route  |~([now=@da ship unix-effect] *[? (quip ph-event _^?(..start))])
+  ++  route  |~([ship unix-effect] *[? (quip ph-event _^|(..start))])
   --
 ::
 ::  XXX  doc
 ::
 ++  porcelain-test-core
-  $_  ^?
-  |%
+  $_  ^|
+  |_  now=@da
   ::  Called first to kick off the test.
   ::
-  ++  start  |~(now=@da *(quip ph-event _^?(..start)))
+  ++  start  *(quip ph-event _^|(..start))
   ::
   ::  Called on every effect from a ship.
   ::
-  ++  route  |~([now=@da ship unix-effect] *(quip ph-event _^?(..start)))
+  ++  route  |~([ship unix-effect] *(quip ph-event _^|(..start)))
   --
 ::
 ::  XXX  doc
 ::
 ++  stateless-test-core
-  $_  ^?
-  |%
-  ++  start  |~(now=@da *(list ph-event))
-  ++  route  |~([now=@da ship unix-effect] *(list ph-event))
+  $_  ^|
+  |_  now=@da
+  ++  start  *(list ph-event)
+  ++  route  |~([ship unix-effect] *(list ph-event))
   --
 ::
 ++  ph-event
@@ -63,17 +64,16 @@
 ++  porcelain-test
   |=  [label=@ta porcelain=porcelain-test-core]
   ^-  raw-test-core
-  |%
+  |_  now=@da
   ++  label  ^label
   ++  ships  ~
   ++  start
-    |=  now=@da
-    =^  events  porcelain  (start:porcelain now)
+    =^  events  porcelain  ~(start porcelain now)
     [events ..start]
   ::
   ++  route
-    |=  args=[@da ship unix-effect]
-    =^  events  porcelain  (route:porcelain args)
+    |=  args=[ship unix-effect]
+    =^  events  porcelain  (~(route porcelain now) args)
     [& events ..start]
   --
 ::
@@ -84,14 +84,13 @@
   %+  porcelain-test
     label
   ^-  porcelain-test-core
-  |%
+  |_  now=@da
   ++  start
-    |=  now=@da
-    [(start:stateless now) ..start]
+    [~(start stateless now) ..start]
   ::
   ++  route
-    |=  args=[@da ship unix-effect]
-    [(route:stateless args) ..start]
+    |=  args=[ship unix-effect]
+    [(~(route stateless now) args) ..start]
   --
 ::
 ++  send-events-to
@@ -228,10 +227,10 @@
           [[%test-done |]~ ..filter-a]
         =.  done-with-a  &
         =/  snap-event  [%snap-ships label:a ships:a]
-        =^  events-start  b  (start:b now)
+        =^  events-start  b  ~(start b now)
         [(welp other-events [snap-event events-start]) ..filter-a]
       --
-    |%
+    |_  now=@da
     ::
     ::  Cache lookup label
     ::
@@ -244,7 +243,6 @@
     ::  Start with start of a
     ::
     ++  start
-      |=  now=@da
       ^-  (quip ph-event _..start)
       =/  have-cache
         (scry-aqua ? now /fleet-snap/[label:a]/noun)
@@ -255,7 +253,7 @@
       ::    =^  events-start  b  (start:b now)
       ::    =^  events  ..filter-a  (filter-a now restore-event events-start)
       ::    [events ..start]
-      =^  events  a  (start:a now)
+      =^  events  a  ~(start a now)
       [events ..start]
     ::
     ::  Keep going on a until it's done.  If success, go to b.
@@ -266,15 +264,15 @@
     ::    like that.
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       ^-  [? (quip ph-event _..start)]
       ?:  done-with-a
         =+  ^-  [thru=? events=(list ph-event) cor=raw-test-core]
-            (route:b now who uf)
+            (~(route b now) who uf)
         =.  b  cor
         [thru events ..start]
       =+  ^-  [thru=? events=(list ph-event) cor=raw-test-core]
-          (route:a now who uf)
+          (~(route a now) who uf)
       =.  a  cor
       =^  events  ..filter-a  (filter-a now events)
       [thru events ..start]
@@ -287,16 +285,15 @@
   ++  raw-ship
     |=  [her=ship keys=(unit dawn-event)]
     ^-  raw-test-core
-    |%
+    |_  now=@da
     ++  label  :((cury cat 3) 'init-' (scot %p her) '-' (scot %uw (mug (fall keys *dawn-event))))
     ++  ships  ~[her]
     ++  start
-      |=  now=@da
       ^-  (quip ph-event _..start)
       [(init her keys) ..start]
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       ^-  [? (quip ph-event _..start)]
       :-  &
       :_  ..start
@@ -355,15 +352,15 @@
     %+  porcelain-test
       (cat 3 'touch-file-' (scot %p her))
     =|  [warped=@t change-sent=_|]
-    |%
+    ^-  porcelain-test-core
+    |_  now=@da
     ++  start
-      |=  now=@da
       ^-  (pair (list ph-event) _..start)
       :_  ..start
       (dojo her "|mount /={(trip des)}=")
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       ?.  (is-ergo her who uf)
         `..start
@@ -388,9 +385,8 @@
     |=  [her=ship des=desk]
     %+  porcelain-test
       (cat 3 'check-file-touched-' (scot %p her))
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       ::  mounting is not strictly necessary since we check via scry,
       ::  but this way we don't have to check on every event, just
       ::  ergos (and dojo because we can't guarantee an ergo if the desk
@@ -399,7 +395,7 @@
       [(dojo her "|mount /={(trip des)}=") ..start]
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       :_  ..start
       ?.  ?|  (is-ergo her who uf)
@@ -427,9 +423,8 @@
     |=  [her=ship vane=term]
     %+  porcelain-test
       :((cury cat 3) 'reload-vane-' (scot %p her) '-' vane)
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       ^-  (pair (list ph-event) _..start)
       =/  pax
         /(scot %p our)/home/(scot %da now)/sys/vane/[vane]/hoon
@@ -441,7 +436,7 @@
       ==
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       ^-  (quip ph-event _..start)
       `..start
     --

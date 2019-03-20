@@ -458,7 +458,7 @@
     (pe ~bud)  ::  XX why ~bud?  need an example
   ::
       %event
-    ~?  !?=(?(%belt %hear) -.q.ue.ae)
+    ~?  &(aqua-debug=| !?=(?(%belt %hear) -.q.ue.ae))
       raw-event=[who.ae -.q.ue.ae]
     (push-events:(pe who.ae) [ue.ae]~)
   ==

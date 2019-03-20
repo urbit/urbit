@@ -70,13 +70,12 @@
     %+  compose-tests  (galaxy ~bud)
     %+  stateless-test
       %add
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       (dojo ~bud "[%test-result (add 2 3)]")
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       (expect-dojo-output ~bud who uf "[%test-result 5]")
     --
   ::
@@ -87,13 +86,12 @@
       (galaxy ~dev)
     %+  stateless-test
       %hi
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       (dojo ~bud "|hi ~dev")
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       (expect-dojo-output ~bud who uf "hi ~dev successful")
     --
   ::
@@ -104,13 +102,12 @@
     %+  compose-tests  (planet ~linnup-torsyx)
     %+  stateless-test
       %hi-grandparent
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       (dojo ~linnup-torsyx "|hi ~bud")
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       (expect-dojo-output ~linnup-torsyx who uf "hi ~bud successful")
     --
   ::
@@ -120,13 +117,12 @@
         (planet ~haplun-todtus)
     %+  stateless-test
       %second-cousin-hi
-    |%
+    |_  now=@da
     ++  start
-      |=  now=@da
       (dojo ~haplun-todtus "|hi ~bud")
     ::
     ++  route
-      |=  [now=@da who=ship uf=unix-effect]
+      |=  [who=ship uf=unix-effect]
       (expect-dojo-output ~haplun-todtus who uf "hi ~bud successful")
     --
   ::
@@ -297,7 +293,7 @@
   ::
       [%run-test lab=@tas]
     =/  res=[events=(list ph-event) new-state=raw-test-core]
-      (start:(~(got by raw-test-cores) lab.arg) now.hid)
+      ~(start (~(got by raw-test-cores) lab.arg) now.hid)
     =.  test-cores  (~(put by test-cores) lab.arg [ships . ~]:new-state.res)
     =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
     =^  moves-2  this  (run-events lab.arg events.res)
@@ -339,7 +335,7 @@
       =.  effect-log.u.test-cor
         [[who i.ufs]:afs effect-log.u.test-cor]
       =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-cor]
-          (route:cor.u.test-cor now.hid who.afs i.ufs.afs)
+          (~(route cor.u.test-cor now.hid) who.afs i.ufs.afs)
       =.  cor.u.test-cor  cor
       =+  $(ufs.afs t.ufs.afs)
       :+  ?:  thru
