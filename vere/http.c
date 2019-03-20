@@ -365,6 +365,7 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   req_u->rec_u = rec_u;
   req_u->sat_e = u3_rsat_init;
   req_u->tim_u = 0;
+  req_u->gen_u = 0;
   req_u->pre_u = 0;
 
   _http_req_link(hon_u, req_u);
