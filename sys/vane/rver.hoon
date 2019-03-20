@@ -652,8 +652,6 @@
       ::
       =-  [[duct %pass /run-build %f %build live=%.n schematic=-]~ state]
       ::
-      =-  [%cast [our desk.generator.action] %mime -]
-      ::
       :+  %call
         :+  %call
           [%core [[our desk.generator.action] (flop path.generator.action)]]
@@ -1383,17 +1381,28 @@
     ::
     =/  =cage  (result-to-cage:ford build-result.made-result)
     ::
+    =/  result=simple-payload:http  ((hard simple-payload:http) q.q.cage)
+    ::  ensure we have a valid content-length header
+    ::
+    ::    We pass on the response and the headers the generator produces, but
+    ::    ensure that we have a single content-length header set correctly in
+    ::    the returned if this has a body, and has no content-length if there
+    ::    is no body returned to the client.
+    ::
+    =.  headers.response-header.result
+      ?~  data.result
+        (delete-header:http 'content-length' headers.response-header.result)
+      ::
+      %^  set-header:http  'content-length'
+        (crip (format-ud-as-integer p.u.data.result))
+      headers.response-header.result
+    ::
     %-  handle-response
-    =/  result=mime  ((hard mime) q.q.cage)
     ::
     ^-  http-event:http
     :*  %start
-        :-  200
-        ^-  header-list:http
-        :~  ['content-type' (en-mite:mimes:html p.result)]
-            ['content-length' (crip (format-ud-as-integer p.q.result))]
-        ==
-        `(unit octs)`[~ q.result]
+        response-header.result
+        data.result
         complete=%.y
     ==
   ::  +handle-gall-error: a call to +poke-http-response resulted in a %coup

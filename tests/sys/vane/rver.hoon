@@ -682,7 +682,6 @@
             !>  p.card
         ::
         %+  expect-schematic
-          :^  %cast  [~nul %home]  %mime
           :+  %call
             :+  %call
               [%core [[~nul %home] /hoon/handler/gen]]
@@ -706,8 +705,10 @@
             ^-  made-result:ford
             :-  %complete
             ^-  build-result:ford
-            :-  %success
-            [%cast %mime !>([['text' 'plain' ~] (as-octs:mimes:html 'one two three')])]
+            :^  %success  %cast  %mime
+            !>
+            :-  [200 ['content-type' 'text/plain']~]
+            `(as-octs:mimes:html 'one two three')
          ==
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %give  %response

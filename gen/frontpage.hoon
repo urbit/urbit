@@ -5,9 +5,10 @@
 |=  [[now=@da eny=@ bek=beak] $~ $~]
 ::
 ::  :-  %build
-|=  [authorized=? http-request:light]
-^-  mime
-:-  ['text' 'html' ~]
+|=  [authorized=? request:http]
+^-  simple-payload:http
+:-  [200 ['content-type' 'text/html']~]
+:-  ~
 %-  as-octs:mimes:html
 %-  crip
 %-  en-xml:html
