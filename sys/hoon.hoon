@@ -3806,7 +3806,7 @@
   ::    a, b: parameters such that ab >= k
   ::    k:    value such that the domain of the cipher is [0, k - 1]
   ::    prf:  a gate denoting a family of pseudorandom functions indexed by
-  ::          its first argument and taking its argument second as input
+  ::          its first argument and taking its second argument as input
   ::    m:    an input value in the domain [0, k - 1]
   ::
   ++  fee
@@ -3819,7 +3819,7 @@
   ::
   ::  +feen: "Fe^-1" in B&R (2002).
   ::
-  ::    Reverses a Feistel cipher constructed with parameters described in
+  ::    Reverses a Feistel cipher constructed with parameters as described in
   ::    +fee.
   ::
   ++  feen
