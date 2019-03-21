@@ -246,13 +246,13 @@
       ^-  (quip ph-event _..start)
       =/  have-cache
         (scry-aqua ? now /fleet-snap/[label:a]/noun)
-      ::  ?:  have-cache
-      ::    ~&  [%caching-in label:a label]
-      ::    =.  done-with-a  &
-      ::    =/  restore-event  [%restore-snap label:a]
-      ::    =^  events-start  b  (start:b now)
-      ::    =^  events  ..filter-a  (filter-a now restore-event events-start)
-      ::    [events ..start]
+      ?:  have-cache
+        ~&  [%caching-in label:a label]
+        =.  done-with-a  &
+        =/  restore-event  [%restore-snap label:a]
+        =^  events-start  b  ~(start b now)
+        =^  events  ..filter-a  (filter-a now restore-event events-start)
+        [events ..start]
       =^  events  a  ~(start a now)
       [events ..start]
     ::

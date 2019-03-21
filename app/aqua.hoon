@@ -131,11 +131,9 @@
     ?>  ?=(%0 -.res)
     =/  peek  p.res
     =/  pax  (path p)
-    ~&  [who=who %peeking-in tym pax]
     ?>  ?=([@ @ @ @ *] pax)
     =.  i.t.t.t.pax  (scot %da tym)
     =/  pek  (slum peek [tym pax])
-    ~&  [who=who %peeked]
     pek
   ::
   ::  Wish
@@ -166,7 +164,7 @@
     =.  ..abet-pe
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
-        ~&  [who=who %unknown-effect i.effects]
+        ~?  aqua-debug=|  [who=who %unknown-effect i.effects]
         ..abet-pe
       (publish-effect u.sof)
     $(effects t.effects)
@@ -500,7 +498,6 @@
 ++  peek-x-fleet-snap
   |=  pax=path
   ^-  (unit (unit [%noun noun]))
-  ~&  [%peeking pax]
   ?.  ?=([@ ~] pax)
     ~
   :^  ~  ~  %noun
@@ -511,7 +508,6 @@
 ++  peek-x-i
   |=  pax=path
   ^-  (unit (unit [%noun noun]))
-  ~&  [%peeking-i pax]
   ?.  ?=([@ @ @ *] pax)
     ~
   =/  who  (slav %p i.pax)

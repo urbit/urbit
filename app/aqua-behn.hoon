@@ -103,20 +103,20 @@
   ++  set-timer
     |=  tim=@da
     =.  tim  +(tim)  ::  nobody's perfect
-    ~&  [who=who %setting-timer tim]
+    ~?  debug=|  [who=who %setting-timer tim]
     =.  next-timer  `tim
     =.  this  (emit-moves [ost %wait /(scot %p who) tim]~)
     ..abet-pe
   ::
   ++  cancel-timer
-    ~&  [who=who %cancell-timer (need next-timer)]
+    ~?  debug=|  [who=who %cancell-timer (need next-timer)]
     =.  this  (emit-moves [ost %rest /(scot %p who) (need next-timer)]~)
     =.  next-timer  ~
     ..abet-pe
   ::
   ++  take-wake
     |=  [way=wire ~]
-    ~&  [who=who %aqua-behn-wake now]
+    ~?  debug=|  [who=who %aqua-behn-wake now]
     =.  next-timer  ~
     =.  this
       %-  emit-aqua-events

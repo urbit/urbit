@@ -33,7 +33,7 @@
     +$  state
       $:  %0
           raw-test-cores=(map term raw-test-core)
-          test-cores=(map term test-core-state)
+          test-core=(unit test-core-state)
           other-state
       ==
     ::
@@ -44,7 +44,9 @@
       ==
     ::
     +$  other-state
-      $~
+      $:  test-qeu=(qeu term)
+          results=(list (pair term ?))
+      ==
     --
 =,  gall
 =/  vane-apps=(list term)
@@ -59,7 +61,6 @@
 ::
 ++  auto-tests
   =,  test-lib
-  %-  malt
   ^-  (list (pair term raw-test-core))
   :~
     :-  %boot-bud
@@ -119,11 +120,11 @@
       %second-cousin-hi
     |_  now=@da
     ++  start
-      (dojo ~haplun-todtus "|hi ~bud")
+      (dojo ~haplun-todtus "|hi ~mitnep-todsut")
     ::
     ++  route
       |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~haplun-todtus who uf "hi ~bud successful")
+      (expect-dojo-output ~haplun-todtus who uf "hi ~mitnep-todsut successful")
     --
   ::
     :-  %change-file
@@ -147,7 +148,6 @@
 ::
 ++  manual-tests
   =,  test-lib
-  %-  malt
   ^-  (list (pair term raw-test-core))
   :~  :-  %boot-from-azimuth
       %+  compose-tests
@@ -163,20 +163,21 @@
 ++  install-tests
   ^+  this
   =.  raw-test-cores
-    (~(uni by auto-tests) manual-tests)
+    (~(uni by (malt auto-tests)) (malt manual-tests))
   this
 ::
 ++  prep
   |=  old=(unit [@ tests=* rest=*])
   ^-  (quip move _this)
-  ~&  jael=.^(noun %j /(scot %p our.hid)/code/(scot %da now.hid)/(scot %p our.hid))
+  ~&  prep=%ph
   =.  this  install-tests
-  ?~  old
-    `this
-  =/  new  ((soft other-state) rest.u.old)
-  ?~  new
-    `this
-  `this(+<+>+> u.new)
+  `this
+  ::  ?~  old
+  ::    `this
+  ::  =/  new  ((soft other-state) rest.u.old)
+  ::  ?~  new
+  ::    `this
+  ::  `this(+<+>+> u.new)
 ::
 ++  publish-aqua-effects
   |=  afs=aqua-effects
@@ -194,32 +195,34 @@
   ?:  =(~ what)
     `this
   =/  res
-    |-  ^-  (each (list aqua-event) $~)
+    |-  ^-  (each (list aqua-event) ?)
     ?~  what
       [%& ~]
     ?:  ?=(%test-done -.i.what)
-      ~&  ?~(p.i.what "TEST SUCCESSFUL" "TEST FAILED")
-      [%| ~]
+      ~&  ?~  p.i.what
+            "TEST {(trip lab)} SUCCESSFUL"
+          "TEST {(trip lab)} FAILED"
+      [%| p.i.what]
     =/  nex  $(what t.what)
     ?:  ?=(%| -.nex)
       nex
     [%& `aqua-event`i.what p.nex]
   ?:  ?=(%| -.res)
-    (cancel-test lab)
+    =^  moves-1  this  (finish-test lab p.res)
+    =^  moves-2  this  run-test
+    [(weld moves-1 moves-2) this]
   [[ost.hid %poke /running [our.hid %aqua] %aqua-events p.res]~ this]
 ::
 ::  Cancel subscriptions to ships
 ::
-++  cancel-test
-  |=  lab=term
+++  finish-test
+  |=  [lab=term success=?]
   ^-  (quip move _this)
-  =/  test  (~(get by test-cores) lab)
-  ?~  test
+  ?~  test-core
     `this
-  =.  test-cores  (~(del by test-cores) lab)
-  :_  this
+  :_  this(test-core ~, results [[lab success] results])
   %-  zing
-  %+  turn  hers.u.test
+  %+  turn  hers.u.test-core
   |=  her=ship
   ^-  (list move)
   :~  [ost.hid %pull /[lab]/(scot %p her) [our.hid %aqua] ~]
@@ -231,6 +234,42 @@
           [%pause-events her]~
       ==
   ==
+::
+::  XXX doc
+::
+++  run-test
+  ^-  (quip move _this)
+  ?^  test-core
+    `this
+  ?:  =(~ test-qeu)
+    ?~  results
+      `this
+    =/  throw-away  print-results
+    `this(results ~)
+  =^  lab  test-qeu  ~(get to test-qeu)
+  ~&  [running-test=lab test-qeu]
+  =/  res=[events=(list ph-event) new-state=raw-test-core]
+    ~(start (~(got by raw-test-cores) lab) now.hid)
+  =>  .(test-core `(unit test-core-state)`test-core)
+  =.  test-core  `[ships . ~]:new-state.res
+  =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
+  =^  moves-2  this  (run-events lab events.res)
+  [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
+::
+::
+::
+++  print-results
+  ~&  "TEST REPORT:"
+  =/  throw-away
+    %+  turn
+      results
+    |=  [lab=term success=?]
+    ~&  "{?:(success "SUCCESS" "FAILURE")}: {(trip lab)}"
+    ~
+  ~&  ?:  (levy results |=([term s=?] s))
+        "ALL TESTS SUCCEEDED"
+      "FAILURES"
+  ~
 ::
 ::  Should check whether we're already subscribed
 ::
@@ -291,16 +330,24 @@
       %init
     [init-vanes this]
   ::
-      [%run-test lab=@tas]
-    =/  res=[events=(list ph-event) new-state=raw-test-core]
-      ~(start (~(got by raw-test-cores) lab.arg) now.hid)
-    =.  test-cores  (~(put by test-cores) lab.arg [ships . ~]:new-state.res)
-    =^  moves-1  this  (subscribe-to-effects lab.arg ships.new-state.res)
-    =^  moves-2  this  (run-events lab.arg events.res)
-    [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
+      %run-all-tests
+    =.  test-qeu
+      %-  ~(gas to test-qeu)
+      (turn auto-tests head)
+    run-test
   ::
-      [%print lab=@tas]
-    =/  log  effect-log:(~(got by test-cores) lab.arg)
+      [%run-test lab=@tas]
+    ?.  (~(has by raw-test-cores) lab.arg)
+      ~&  [%no-test lab.arg]
+      `this
+    =.  test-qeu  (~(put to test-qeu) lab.arg)
+    run-test
+  ::
+      %cancel-test
+    !!
+  ::
+      %print
+    =/  log  effect-log:(need test-core)
     ~&  lent=(lent log)
     ~&  %+  roll  log
         |=  [[who=ship uf=unix-effect] ~]
@@ -322,29 +369,28 @@
   ::  ~&  [%diff-aqua-effect way who.afs]
   ?>  ?=([@tas @ ~] way)
   =/  lab  i.way
-  =/  test-cor  (~(get by test-cores) lab)
-  ?~  test-cor
+  ?~  test-core
     ~&  [%ph-dropping lab]
     `this
   =+  |-  ^-  $:  thru-effects=(list unix-effect)
                   events=(list ph-event)
-                  cor=_u.test-cor
+                  cor=_u.test-core
               ==
       ?~  ufs.afs
-        [~ ~ u.test-cor]
-      =.  effect-log.u.test-cor
-        [[who i.ufs]:afs effect-log.u.test-cor]
-      =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-cor]
-          (~(route cor.u.test-cor now.hid) who.afs i.ufs.afs)
-      =.  cor.u.test-cor  cor
+        [~ ~ u.test-core]
+      =.  effect-log.u.test-core
+        [[who i.ufs]:afs effect-log.u.test-core]
+      =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
+          (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
+      =.  cor.u.test-core  cor
       =+  $(ufs.afs t.ufs.afs)
       :+  ?:  thru
             [i.ufs.afs thru-effects]
           thru-effects
         (weld events-1 events)
       cor
-  =.  u.test-cor  cor
-  =.  test-cores  (~(put by test-cores) lab u.test-cor)
+  =.  test-core  `cor
+  =>  .(test-core `(unit test-core-state)`test-core)
   =/  moves-1  (publish-aqua-effects who.afs thru-effects)
   =^  moves-2  this  (run-events lab events)
   [(weld moves-1 moves-2) this]
@@ -363,6 +409,5 @@
 ::
 ++  pull
   |=  pax=path
-  ~&  [%ph-unsubscribed pax ost.hid]
   `+>.$
 --
