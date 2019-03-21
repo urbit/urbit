@@ -928,10 +928,10 @@
   +=  http-rule
     $%  :: %cert: set or clear certificate and keypair
         ::
-        [%cert p=(unit [key=wain cert=wain])]
+        [%cert cert=(unit [key=wain cert=wain])]
         :: %turf: add or remove established dns binding
         ::
-        [%turf p=?(%put %del) q=turf]
+        [%turf action=?(%put %del) =turf]
     ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
@@ -2240,9 +2240,12 @@
           ::  report upgrade
           ::
           [%vega ~]
-          ::  set http ports (?)
+          ::  notifies us of the ports of our live http servers
           ::
-          [%live p=@ud q=(unit @ud)]
+          [%live insecure=@ud secure=(unit @ud)]
+          ::  update http configuration
+          ::
+          [%rule =http-rule:eyre]
           ::  starts handling an inbound http request
           ::
           [%request secure=? =address =request:http]
