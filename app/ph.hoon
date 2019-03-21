@@ -343,8 +343,11 @@
     =.  test-qeu  (~(put to test-qeu) lab.arg)
     run-test
   ::
-      %cancel-test
-    !!
+      %cancel
+    =^  moves-1  this  (finish-test %last |)
+    =.  test-qeu  ~
+    =^  moves-2  this  run-test
+    [:(weld moves-1 moves-2) this]
   ::
       %print
     =/  log  effect-log:(need test-core)
