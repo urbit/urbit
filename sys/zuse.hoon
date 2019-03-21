@@ -301,8 +301,8 @@
   ::    This adds to the end if it doesn't exist.
   ::
   ++  set-header
-    |=  [header=@t value=@t =header-list:http]
-    ^-  header-list:http
+    |=  [header=@t value=@t =header-list]
+    ^-  ^header-list
     ::
     ?~  header-list
       ::  we didn't encounter the value, add it to the end
@@ -316,8 +316,8 @@
   ::  +delete-header: removes the first instance of a header from the list
   ::
   ++  delete-header
-    |=  [header=@t =header-list:http]
-    ^-  header-list:http
+    |=  [header=@t =header-list]
+    ^-  ^header-list
     ::
     ?~  header-list
       ~
