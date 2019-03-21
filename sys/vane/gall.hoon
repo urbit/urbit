@@ -1319,7 +1319,6 @@
         $ogre  `%c
         $perm  `%c
         $rest  `%b
-        $rule  `%e
         $serv  `%e
         $snap  `%j
         $them  `%e
@@ -1332,6 +1331,7 @@
         $request  `%l
         $serve    `%r
         $connect  `%r
+        $rule     `%r
       ==
     --
   --

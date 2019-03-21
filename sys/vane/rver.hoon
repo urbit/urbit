@@ -110,6 +110,15 @@
       ::  channel-state: state managed by the +channel core
       ::
       =channel-state
+      ::  domains: domain-names that resolve to us
+      ::
+      domains=(set turf)
+      ::  http-config: our server configuration
+      ::
+      =http-config
+      ::  ports: live servers
+      ::
+      ports=[insecure=@ud secure=(unit @ud)]
   ==
 ::  +outstanding-connection: open http connections not fully complete:
 ::
@@ -1699,7 +1708,7 @@
     ;:  weld
       ::  hand back default configuration for now
       ::
-      [duct %give %set-config *http-config]~
+      [duct %give %set-config http-config.server-state.ax]~
     ::
       closed-connections
     ==
@@ -1707,15 +1716,42 @@
   ::
   =/  event-args  [[our eny duct now scry-gate] server-state.ax]
   =/  server  (per-server-event event-args)
-  ?-    -.task
   ::
-      ::  %live: notifies us of our running server config
-      ::
-      ::    [insecure-port=@ud secure-port=(unit @ud)]
+  ?-    -.task
+      ::  %live: notifies us of the ports of our live http servers
       ::
       %live
-    ~&  [%todo-live task]
+    =.  ports.server-state.ax  +.task
     [~ http-server-gate]
+      ::  %rule: updates our http configuration
+      ::
+      %rule
+    ?-  -.http-rule.task
+        ::  %cert: install tls certificate
+        ::
+        %cert
+      =*  config  http-config.server-state.ax
+      ?:  =(secure.config cert.http-rule.task)
+        [~ http-server-gate]
+      =.  secure.config  cert.http-rule.task
+      :_  http-server-gate
+      [duct %give %set-config config]~
+        ::  %turf: add or remove domain name
+        ::
+        %turf
+      =*  domains  domains.server-state.ax
+      =/  mod/(set turf)
+        ?:  ?=(%put action.http-rule.task)
+          (~(put in domains) turf.http-rule.task)
+        (~(del in domains) turf.http-rule.task)
+      ?:  =(domains mod)
+        [~ http-server-gate]
+      =.  domains  mod
+      :_  http-server-gate
+      =/  cmd
+        [%acme %poke `cage`[%acme-order !>(mod)]]
+      [duct %pass /acme/order %g %deal [our our] cmd]~
+    ==
   ::
       %request
     =^  moves  server-state.ax  (request:server +.task)
@@ -1854,6 +1890,41 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  *
-  [~ ~]
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  (unit (unit cage))
+  ?.  ?=(%& -.why)
+    ~
+  =*  who  p.why
+  ?.  ?=(%$ ren)
+    [~ ~]
+  ?.  ?=(%$ -.lot)
+    [~ ~]
+  ?.  ?=(%host syd)
+    [~ ~]
+  %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
+  ^-  (unit (unit hart:eyre))
+  ?.  =(our who)
+    ?.  =([%da now] p.lot)
+      [~ ~]
+    ~&  [%r %scry-foreign-host who]
+    ~
+  =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+  ?+  p.lot
+    [~ ~]
+  ::
+      [%tas %fake]
+    ``[& [~ 8.443] %& /localhost]
+  ::
+      [%tas %real]
+    =*  domains  domains.server-state.ax
+    =*  ports  ports.server-state.ax
+    =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
+    =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
+    =/  port=(unit @ud)
+      ?.  secure
+        ?:(=(80 insecure.ports) ~ `insecure.ports)
+      ?>  ?=(^ secure.ports)
+      ?:(=(443 u.secure.ports) ~ secure.ports)
+    ``[secure port host]
+  ==
 --
