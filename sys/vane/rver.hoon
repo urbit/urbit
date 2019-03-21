@@ -1896,6 +1896,41 @@
 ::  +scry: request a path in the urbit namespace
 ::
 ++  scry
-  |=  *
-  [~ ~]
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  (unit (unit cage))
+  ?.  ?=(%& -.why)
+    ~
+  =*  who  p.why
+  ?.  ?=(%$ ren)
+    [~ ~]
+  ?.  ?=(%$ -.lot)
+    [~ ~]
+  ?.  ?=(%host syd)
+    [~ ~]
+  %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
+  ^-  (unit (unit hart:eyre))
+  ?.  =(our who)
+    ?.  =([%da now] p.lot)
+      [~ ~]
+    ~&  [%r %scry-foreign-host who]
+    ~
+  =.  p.lot  ?.(=([%da now] p.lot) p.lot [%tas %real])
+  ?+  p.lot
+    [~ ~]
+  ::
+      [%tas %fake]
+    ``[& [~ 8.443] %& /localhost]
+  ::
+      [%tas %real]
+    =*  domains  domains.server-state.ax
+    =*  ports  ports.server-state.ax
+    =/  =host:eyre  [%& ?^(domains n.domains /localhost)]
+    =/  secure=?  &(?=(^ secure.ports) !?=(hoke:eyre host))
+    =/  port=(unit @ud)
+      ?.  secure
+        ?:(=(80 insecure.ports) ~ `insecure.ports)
+      ?>  ?=(^ secure.ports)
+      ?:(=(443 u.secure.ports) ~ secure.ports)
+    ``[secure port host]
+  ==
 --
