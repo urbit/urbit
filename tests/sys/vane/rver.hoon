@@ -186,9 +186,9 @@
                 %start
                 :-  404
                 :~  ['content-type' 'text/html']
-                    ['content-length' '153']
+                    ['content-length' '156']
                 ==
-                [~ (file-not-found-page:http-server-gate '/')]
+                [~ (error-page:http-server-gate 404 %.n '/' ~)]
                 complete=%.y
         ==  ==
     ==
@@ -848,14 +848,18 @@
                 %give
                 %response
                 %start
-                :-  400
+                :-  403
                 :~  ['content-type' 'text/html']
-                    ['content-length' '186']
+                    ['content-length' '182']
                 ==
               ::
                 :-  ~
-                %^  bad-request:http-server-gate  %.n
-                '/~/channel/1234567890abcdef'  ~
+                %-  error-page:http-server-gate  :*
+                  403
+                  %.n
+                  '/~/channel/1234567890abcdef'
+                  ~
+                ==
               ::
                 complete=%.y
         ==  ==

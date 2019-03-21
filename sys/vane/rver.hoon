@@ -319,23 +319,6 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
-::  +file-not-found-page: 404 page for when all other options failed
-::
-++  file-not-found-page
-  |=  url=@t
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  ;html
-    ;head
-      ;title:"404 Not Found"
-    ==
-    ;body
-      ;h1:"Not Found"
-      ;p:"The requested URL {<(trip url)>} was not found on this server."
-    ==
-  ==
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
@@ -412,20 +395,31 @@
           ~
     ==
   ==
-::  +bad-request: 400 page, with an error string if logged in
+::  +error-page: 400 page, with an error string if logged in
 ::
-++  bad-request
-  |=  [authorized=? url=@t t=tape]
+++  error-page
+  |=  [code=@ud authorized=? url=@t t=tape]
   ^-  octs
+  ::
+  =/  code-as-tape=tape  (format-ud-as-integer code)
+  =/  message=tape
+    ?:  =(code 400)
+      "Bad Request"
+    ?:  =(code 403)
+      "Forbidden"
+    ?:  =(code 404)
+      "Not Found"
+    "Unknown Error"
+  ::
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
   ;html
     ;head
-      ;title:"400 Bad Request"
+      ;title:"{code-as-tape} {message}"
     ==
     ;body
-      ;h1:"Bad Request"
+      ;h1:"{message}"
       ;p:"There was an error while handling the request for {<(trip url)>}."
       ;*  ?:  authorized
             ;=
@@ -715,7 +709,7 @@
     ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
-      (file-not-found-page url.request)
+      (error-page 404 authenticated url.request ~)
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -919,8 +913,8 @@
       ::    page; issuing a redirect won't help.
       ::
       ?.  authenticated
-        %^  return-static-data-on-duct  400  'text/html'
-        (bad-request authenticated url.request "unauthenticated channel usage")
+        %^  return-static-data-on-duct  403  'text/html'
+        (error-page 403 authenticated url.request "unauthenticated channel usage")
       ::  parse out the path key the subscription is on
       ::
       =+  request-line=(parse-request-line url.request)
@@ -928,7 +922,7 @@
         ::  url is not of the form '/~/channel/'
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request authenticated url.request "malformed channel url")
+        (error-page 400 authenticated url.request "malformed channel url")
       ::  channel-id: unique channel id parsed out of url
       ::
       =+  channel-id=i.t.t.site.request-line
@@ -1046,12 +1040,12 @@
       ::
       ?~  maybe-channel=(~(get by session.channel-state.state) channel-id)
         %^  return-static-data-on-duct  404  'text/html'
-        (file-not-found-page url.request)
+        (error-page 404 %.y url.request ~)
       ::  if there's already a duct listening to this channel, we must 400
       ::
       ?:  ?=([%| *] state.u.maybe-channel)
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request %.y url.request "channel already bound")
+        (error-page 400 %.y url.request "channel already bound")
       ::  when opening an event-stream, we must cancel our timeout timer
       ::
       =.  moves
@@ -1128,22 +1122,22 @@
       ::
       ?~  body.request
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request %.y url.request "no put body")
+        (error-page 400 %.y url.request "no put body")
       ::  if the incoming body isn't json, this is a bad request, 400.
       ::
       ?~  maybe-json=(de-json:html q.u.body.request)
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request %.y url.request "put body not json")
+        (error-page 400 %.y url.request "put body not json")
       ::  parse the json into an array of +channel-request items
       ::
       ?~  maybe-requests=(parse-channel-request u.maybe-json)
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request %.y url.request "invalid channel json")
+        (error-page 400 %.y url.request "invalid channel json")
       ::  while weird, the request list could be empty
       ::
       ?:  =(~ u.maybe-requests)
         %^  return-static-data-on-duct  400  'text/html'
-        (bad-request %.y url.request "empty list of actions")
+        (error-page 400 %.y url.request "empty list of actions")
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
