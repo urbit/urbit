@@ -1,35 +1,7 @@
-# subrepositories, downloaded pills
-/arvo/
-*.pill
-# autoconf
-/.MAKEFILE-VERSION
-/make.conf
-/.make.conf
-# intermediate
-*.swo
-*.swp
-*.o
-/outside/**/*.a
-/outside/re2/obj
-# build
-/bin/
-/vere.pkg
-.tags
-.etags
-GPATH
-GTAGS
-GRTAGS
-# scratch
-/zod/
-# dependencies
-node_modules/
-.sass-cache
-# OS
-.DS_Store
-# ??
-/inst
-cscope.*
-build/
-TAGS
-/fakezod
+/out
+/result
+/result-*
+/work
 /zod
+/fakezod*
+tags
