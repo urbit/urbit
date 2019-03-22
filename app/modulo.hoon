@@ -22,12 +22,14 @@
 :: +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire [(unit @t) (list @t)] term]
-      [%disconnect wire [(unit @t) (list @t)]]
+  $%  [%connect wire binding:http-server term]
+      [%serve wire binding:http-server generator:http-server]
+      [%disconnect wire binding:http-server]
       [%http-response =http-event:http]
       [%poke wire dock poke]
       [%diff %json json]
   ==
+
 +$  poke
   $%  [%modulo-bind app=term]
       [%modulo-unbind app=term]
@@ -67,8 +69,11 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    [ost.bow [%connect / [~ /] %modulo]]~
+    :~  [ost.bow %connect / [~ /] %modulo]
+        [ost.bow %serve / [~ /'~landscape'] %home /gen/landscape/hoon ~]
+    ==
   [~ this(sta *state)]
+::
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
@@ -83,44 +88,44 @@
 ::
 ++  session-js
   ^-  octs
-  ?~  cur.sta
-    *octs
+::  ?~  cur.sta
+::    *octs
   %-  as-octs:mimes:html
   %-  crip
-  ;:  weld
-      (trip 'window.onload = function() {')
+::  ;:  weld
+::      (trip 'window.onload = function() {')
       "window.ship = '{(trip (rsh 3 1 (crip <our.bow>)))}';"
-      "  window.state = "
-      (en-json:html (session-as-json cur.sta session.sta order.sta))
-      (trip '}();')
-      %-  trip
-      '''
-      document.onkeydown = (event) => {
-        if (!event.metaKey || event.keyCode !== 75) { return; }
-        window.parent.postMessage("commandPalette", "*");
-      };
-      '''
-  ==
+::      (trip '};')
+::  ==
+::      "  window.state = "
+::      (en-json:html (session-as-json cur.sta session.sta order.sta))
+::      (trip '}();')
+::      %-  trip
+::      '''
+::      document.onkeydown = (event) => {
+::        if (!event.metaKey || event.keyCode !== 75) { return; }
+::        window.parent.postMessage("commandPalette", "*");
+::      };
+::      '''
+::
 ::  +poke-handle-http-request: received on a new connection established
 ::
 ++  poke-handle-http-request
-  %-  (require-authorization ost.bow move this)
+  %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
   ::
-  =+  request-line=(parse-request-line url.request.inbound-request)
-  =/  name=@t
-    =+  back-path=(flop site.request-line)
-    ?~  back-path
-      !!
-    i.back-path
-  ::
-  ?:  =(name 'session')
-    [[ost.bow %http-response (js-response session-js)]~ this]
-  ?:  =(name 'script')
-    [[ost.bow %http-response (js-response modulo-js)]~ this]
-  ::
-  [[ost.bow %http-response (html-response index)]~ this]
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  =/  site  (flop site.request-line)
+  ?~  site
+    [[ost.bow %http-response (redirect:app '~landscape')]~ this]
+  ?+  site
+    [[ost.bow %http-response (html-response:app index)]~ this]
+      [%session *]
+    [[ost.bow %http-response (js-response:app session-js)]~ this]
+      [%script *]
+    [[ost.bow %http-response (js-response:app modulo-js)]~ this]
+  ==
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel

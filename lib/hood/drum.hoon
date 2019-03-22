@@ -84,7 +84,6 @@
       [%base %talk]
       [%base %dojo]
       [%base %modulo]
-      [%base %landscape]
   ==
   :~  [%home %collections]
       [%home %acme]
@@ -93,7 +92,6 @@
       [%home %hall]
       [%home %talk]
       [%home %modulo]
-      [%home %landscape]
   ==
 ::
 ++  deft-fish                                           ::  default connects
