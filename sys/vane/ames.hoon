@@ -1451,6 +1451,16 @@
     ?:  ?=(%crud -.kyz)
       [[[hen [%slip %d %flog kyz]] ~] +>]
     ?:  ?=(%west -.kyz)
+      ::  a .cha path of /a/give/* is immediately acknowledged and
+      ::  routed directly out to unix
+      ::
+      ?:  ?=([%give *] q.kyz)
+        ~|  [%ames-bad-duct %give from=p.kyz route=q.kyz]
+        ?>  ?=(^ gad.fox)
+        :_  +>.$
+        [[gad.fox %give kyz] [hen %give %mack ~] ~]
+      ::  a .cha path of /a/pi is just a ping, immediately acknowledged
+      ::
       ?>  ?=([%pi ~] q.kyz)
       :_  +>.$
       [[hen %give %mack ~] ~]

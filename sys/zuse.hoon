@@ -373,6 +373,7 @@
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
+          {$west p/ship q/path r/*}                     ::
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  sign                                            ::  in result _<-
