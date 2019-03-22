@@ -1,7 +1,6 @@
 ::
 ::::
   ::
-
 |=  [shp=@p col=@da]
 ^-  manx
 ;div.container

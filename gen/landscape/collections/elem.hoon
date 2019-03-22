@@ -4,9 +4,9 @@
 /?  309
 /+  collections, cram
 /=  coll-new
-  /:  /===/app/landscape/collections/new  /!noun/
+  /:  /===/gen/landscape/collections/new  /!noun/
 /=  coll-edit
-  /:  /===/app/landscape/collections/edit  /!noun/
+  /:  /===/gen/landscape/collections/edit  /!noun/
 /=  cols
   /^  collection:collections
   /;  |=  a=(map knot item:collections)

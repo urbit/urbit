@@ -1,30 +1,30 @@
 /+  *server
 /=  index
-  /:  /===/app/landscape/index  /!noun/
+  /:  /===/gen/landscape/index  /!noun/
 /=  script
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/landscape/js/index
+  /:  /===/gen/landscape/js/index-min
   /|  /js/
       /~  ~
   ==
 /=  style
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/landscape/css/index
+  /:  /===/gen/landscape/css/index
   /|  /css/
       /~  ~
   ==
 /=  profile
-  /:  /===/app/landscape/profile  /!noun/
+  /:  /===/gen/landscape/profile  /!noun/
 /=  inbox
-  /:  /===/app/landscape/inbox  /!noun/
+  /:  /===/gen/landscape/inbox  /!noun/
 /=  stream
-  /:  /===/app/landscape/stream  /!noun/
+  /:  /===/gen/landscape/stream  /!noun/
 /=  coll-elem
-  /:  /===/app/landscape/collections/elem  /!noun/
+  /:  /===/gen/landscape/collections/elem  /!noun/
 /=  coll-new
-  /:  /===/app/landscape/collections/new   /!noun/
+  /:  /===/gen/landscape/collections/new   /!noun/
 ::
 ::
 |=  [[now=@da eny=@ bek=beak] $~ $~]
