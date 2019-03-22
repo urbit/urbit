@@ -1058,7 +1058,7 @@
       /* u3_http_ef_that: send %that effect to http.
       */
         void
-        u3_http_ef_that(u3_noun tat);
+        u3_http_ef_that(u3_noun sip, u3_noun tat);
 
       /* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
       */
@@ -1067,25 +1067,6 @@
                                c3_l    coq_l,
                                c3_l    seq_l,
                                u3_noun cad);
-
-      /* u3_http_ef_thou(): send %thou effect to http.
-      */
-        void
-        u3_http_ef_thou(c3_l     sev_l,
-                        c3_l     coq_l,
-                        c3_l     seq_l,
-                        u3_noun  rep);
-
-      /* u3_cttp_ef_thus(): send %thus effect to cttp.
-      */
-        void
-        u3_cttp_ef_thus(c3_l    num_l,
-                        u3_noun req);
-
-      /* u3_cttp_ef_http_client(): send %http-client effect to cttp.
-      */
-        void
-        u3_cttp_ef_http_client(u3_noun fav);
 
       /* u3_http_ef_bake(): create new http server.
       */
@@ -1197,11 +1178,10 @@
 
     /**  HTTP client.
     **/
-      /* u3_cttp_ef_thus(): send %thus effect to cttp.
+      /* u3_cttp_ef_http_client(): send %http-client effect to cttp.
       */
         void
-        u3_cttp_ef_thus(c3_l    num_l,
-                        u3_noun req);
+        u3_cttp_ef_http_client(u3_noun fav);
 
       /* u3_cttp_ef_back(): initialization event on restart.
       */

@@ -1522,51 +1522,6 @@ u3_http_ef_bake(void)
   u3v_plan(pax, u3nc(c3__born, ipf));
 }
 
-/* u3_http_ef_thou(): send %thou from %eyre as http response.
-*/
-void
-u3_http_ef_thou(c3_l     sev_l,
-                c3_l     coq_l,
-                c3_l     seq_l,
-                u3_noun  rep)
-{
-  u3_http* htp_u;
-  u3_hcon* hon_u;
-  u3_hreq* req_u;
-  c3_w bug_w = u3C.wag_w & u3o_verbose;
-
-  if ( !(htp_u = _http_serv_find(sev_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
-    }
-  }
-  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
-    }
-  }
-  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
-                     sev_l, coq_l, seq_l));
-    }
-  }
-  else {
-    /* u3_noun p_rep, q_rep, r_rep; */
-
-    fprintf(stderr, "Old %%thou not used anymore\n");
-
-    /* if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) { */
-    /*   uL(fprintf(uH, "http: strange response\n")); */
-    /* } */
-    /* else { */
-    /*   _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep)); */
-    /* } */
-  }
-
-  u3z(rep);
-}
-
 static u3_hreq*
 _http_search_req(c3_l    sev_l,
                  c3_l    coq_l,
@@ -2583,7 +2538,7 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
 static void
 _proxy_ward_plan(u3_ward* rev_u)
 {
-  u3_noun non;
+  u3_noun non, cad;
 
   {
     c3_w* non_w = c3_malloc(64);
@@ -2600,17 +2555,19 @@ _proxy_ward_plan(u3_ward* rev_u)
     rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
   }
 
-  // TODO: all this forwarding stuff doesn't work with %light/http-server.
-  
-  // XX confirm duct
-  u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-                     u3nc(u3k(u3A->sen), u3_nul));
+  {
+    u3_noun who = u3i_chubs(2, rev_u->who_d);
+    u3_noun cha = u3nq(c3__a, c3__give, c3__prox, u3_nul);
+    u3_noun dat = u3nc(c3__that, u3nt(rev_u->por_s,
+                                      u3k(rev_u->con_u->sec),
+                                      non));
 
-  u3_noun wis = u3nc(c3__wise, u3nq(u3i_chubs(2, rev_u->who_d),
-                                    rev_u->por_s,
-                                    u3k(rev_u->con_u->sec),
-                                    non));
-  u3v_plan(pax, wis);
+    cad = u3nq(c3__want, who, cha, dat);
+  }
+
+  //  XX s/b c3__ames?
+  //
+  u3v_plan(u3nt(u3_blip, c3__newt, u3_nul), cad);
 }
 
 /* _proxy_ward_start(): start ward (ship-specific listener).
@@ -3163,18 +3120,19 @@ _proxy_serv_start(u3_prox* lis_u)
 /* u3_http_ef_that(): reverse proxy requested connection notification.
 */
 void
-u3_http_ef_that(u3_noun tat)
+u3_http_ef_that(u3_noun sip, u3_noun tat)
 {
-  u3_noun sip, por, sec, non;
+  u3_noun por, sec, non;
 
-  if ( ( c3n == u3r_qual(tat, &sip, &por, &sec, &non) ) ||
-       ( c3n == u3ud(sip) ) ||
-       ( c3n == u3a_is_cat(por) ) ||
-       !( c3y == sec || c3n == sec ) ||
-       ( c3n == u3ud(non) ) ) {
-    uL(fprintf(uH, "http: that: invalid card\n"));
-  }
-  else {
+  u3x_trel(tat, &por, &sec, &non);
+  c3_assert( c3y == u3a_is_cat(por) );
+  c3_assert( c3y == sec || c3n == sec );
+  c3_assert( c3y == u3ud(non) );
+
+  //  XX sip s/b validated -- could be *any* ship
+  //
+
+  {
     u3_http* htp_u;
     u3_warc* cli_u;
 
@@ -3207,5 +3165,6 @@ u3_http_ef_that(u3_noun tat)
     }
   }
 
+  u3z(sip);
   u3z(tat);
 }

@@ -127,57 +127,6 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
   c3_assert(!"not reached"); return 0;
 }
 
-/* _reck_kick_http(): apply http effects.
-*/
-static u3_noun
-_reck_kick_http(u3_noun  pox,
-                c3_l     sev_l,
-                c3_l     coq_l,
-                c3_l     seq_l,
-                u3_noun  fav)
-{
-  u3_noun p_fav, q_fav;
-
-  if ( c3n == u3du(fav) ) {
-    u3z(pox); u3z(fav); return c3n;
-  }
-  else switch ( u3h(fav) ) {
-    default: u3z(pox); u3z(fav); return c3n;
-
-    case c3__form: p_fav = u3t(fav);
-    {
-      u3_http_ef_form(u3k(p_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
-
-    case c3__that: p_fav = u3t(fav);
-    {
-      u3_http_ef_that(u3k(p_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
-
-    case c3__thus: p_fav = u3h(u3t(fav)); q_fav = u3t(u3t(fav));
-    {
-      u3_cttp_ef_thus(u3r_word(0, p_fav), u3k(q_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
-    case c3__thou: p_fav = u3t(fav);
-    {
-      u3_http_ef_thou(sev_l, coq_l, seq_l, u3k(p_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    } break;
-  }
-  c3_assert(!"not reached"); return c3n;
-}
-
 /* _reck_kick_behn(): apply packet network outputs.
 */
 static u3_noun
@@ -230,6 +179,7 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
 {
   switch ( u3h(fav) ) {
     default: break;
+
     case c3__send: {
       u3_noun lan = u3k(u3h(u3t(fav)));
       u3_noun pac = u3k(u3t(u3t(fav)));
@@ -242,7 +192,31 @@ _reck_kick_newt(u3_noun pox, u3_noun fav)
       u3_ames_ef_turf(u3k(u3t(fav)));
       u3z(pox); u3z(fav); return c3y;
     } break;
+
+    case c3__west: {
+      u3_noun who, cha, dat;
+      u3x_trel(u3t(fav), &who, &cha, &dat);
+
+      //  XX route by cha path?
+      //  s/b //give/prox
+      //
+      switch ( u3h(dat) ) {
+        default: break;
+
+        case c3__that: {
+          u3_http_ef_that(u3k(who), u3k(u3t(dat)));
+          u3z(pox); u3z(fav); return c3y;
+        }
+      }
+    }
+
+    case c3__woot: {
+      //  XX print tang if nack?
+      //
+      u3z(pox); u3z(fav); return c3y;
+    }
   }
+
   u3z(pox); u3z(fav); return c3n;
 }
 
