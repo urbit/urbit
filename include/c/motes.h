@@ -98,7 +98,7 @@
 #   define c3__bnsp   c3_s4('b','n','s','p')
 #   define c3__boat   c3_s4('b','o','a','t')
 #   define c3__boce   c3_s4('b','o','c','e')
-#   define c3__bog    c3_s3('b','o', 'g')  /* set background color in term */
+#   define c3__bog    c3_s3('b','o','g') 
 #   define c3__boil   c3_s4('b','o','i','l')
 #   define c3__boin   c3_s4('b','o','i','n')
 #   define c3__bolt   c3_s4('b','o','l','t')
@@ -365,11 +365,11 @@
 #   define c3__echo   c3_s4('e','c','h','o')
 #   define c3__edge   c3_s4('e','d','g','e')
 #   define c3__edit   c3_s4('e','d','i','t')
-#   define c3__eff    c3_s3('e','f', 'f')  /* set effect in term */
-#   define c3__eff_bl c3_s2('b','l')        /* term effect blink */
-#   define c3__eff_br c3_s2('b','r')        /* term effect bold */
-#   define c3__eff_no 0                     /* term effect normal */
-#   define c3__eff_un c3_s2('u','n')        /* term effect underline */
+#   define c3__eff    c3_s3('e','f','f') 
+#   define c3__eff_bl c3_s2('b','l') 
+#   define c3__eff_br c3_s2('b','r') 
+#   define c3__eff_no 0 
+#   define c3__eff_un c3_s2('u','n') 
 #   define c3__elm    c3_s3('e','l','m')
 #   define c3__else   c3_s4('e','l','s','e')
 #   define c3__emph   c3_s4('e','m','p','h')
@@ -422,7 +422,7 @@
 #   define c3__flog   c3_s4('f','l','o','g')
 #   define c3__flot   c3_s4('f','l','o','t')
 #   define c3__flow   c3_s4('f','l','o','w')
-#   define c3__fog    c3_s3('f','o', 'g')  /* set foreground color in term */
+#   define c3__fog    c3_s3('f','o','g') 
 #   define c3__fon    c3_s3('f','o','n')
 #   define c3__fond   c3_s4('f','o','n','d')
 #   define c3__for    c3_s3('f','o','r')
@@ -883,7 +883,7 @@
 #   define c3__prec   c3_s4('p','r','e','c')
 #   define c3__pret   c3_s4('p','r','e','t')
 #   define c3__prex   c3_s4('p','r','e','x')
-#   define c3__pri    c3_s3('p','r', 'i')  /* print some text at current location in term */
+#   define c3__pri    c3_s3('p','r','i') 
 #   define c3__pril   c3_s4('p','r','i','l')
 #   define c3__pro    c3_s3('p','r','o')
 #   define c3__prod   c3_s4('p','r','o','d')
@@ -1058,7 +1058,7 @@
 #   define c3__sub    c3_s3('s','u','b')
 #   define c3__sunt   c3_s4('s','u','n','t')
 #   define c3__sure   c3_s4('s','u','r','e')
-#   define c3__sxy    c3_s3('s','x', 'y')  /* move to x,y coordinates in term */
+#   define c3__sxy    c3_s3('s','x','y') 
 #   define c3__sym    c3_s3('s','y','m')
 #   define c3__sync   c3_s4('s','y','n','c')
 #   define c3__sys    c3_s3('s','y','s')
