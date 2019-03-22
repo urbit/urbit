@@ -1455,7 +1455,7 @@
       ::  routed directly out to unix
       ::
       ?:  ?=([%give *] q.kyz)
-        ~|  [%ames-bad-duct %give duct=gad.fox p.kyz]
+        ~|  [%ames-bad-duct %give from=p.kyz route=q.kyz]
         ?>  ?=(^ gad.fox)
         :_  +>.$
         [[gad.fox %give kyz] [hen %give %mack ~] ~]
