@@ -127,49 +127,6 @@ _reck_kick_term(u3_noun pox, c3_l tid_l, u3_noun fav)
   c3_assert(!"not reached"); return 0;
 }
 
-/* _reck_kick_http(): apply http effects.
-*/
-static u3_noun
-_reck_kick_http(u3_noun  pox,
-                c3_l     sev_l,
-                c3_l     coq_l,
-                c3_l     seq_l,
-                u3_noun  fav)
-{
-  u3_noun p_fav, q_fav;
-
-  if ( c3n == u3du(fav) ) {
-    u3z(pox); u3z(fav); return c3n;
-  }
-  else switch ( u3h(fav) ) {
-    default: u3z(pox); u3z(fav); return c3n;
-
-    case c3__form: p_fav = u3t(fav);
-    {
-      u3_http_ef_form(u3k(p_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
-
-    case c3__thus: p_fav = u3h(u3t(fav)); q_fav = u3t(u3t(fav));
-    {
-      u3_cttp_ef_thus(u3r_word(0, p_fav), u3k(q_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    }
-    case c3__thou: p_fav = u3t(fav);
-    {
-      u3_http_ef_thou(sev_l, coq_l, seq_l, u3k(p_fav));
-
-      u3z(pox); u3z(fav);
-      return c3y;
-    } break;
-  }
-  c3_assert(!"not reached"); return c3n;
-}
-
 /* _reck_kick_behn(): apply packet network outputs.
 */
 static u3_noun

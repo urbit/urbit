@@ -1522,51 +1522,6 @@ u3_http_ef_bake(void)
   u3v_plan(pax, u3nc(c3__born, ipf));
 }
 
-/* u3_http_ef_thou(): send %thou from %eyre as http response.
-*/
-void
-u3_http_ef_thou(c3_l     sev_l,
-                c3_l     coq_l,
-                c3_l     seq_l,
-                u3_noun  rep)
-{
-  u3_http* htp_u;
-  u3_hcon* hon_u;
-  u3_hreq* req_u;
-  c3_w bug_w = u3C.wag_w & u3o_verbose;
-
-  if ( !(htp_u = _http_serv_find(sev_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
-    }
-  }
-  else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
-    }
-  }
-  else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
-    if ( bug_w ) {
-      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
-                     sev_l, coq_l, seq_l));
-    }
-  }
-  else {
-    /* u3_noun p_rep, q_rep, r_rep; */
-
-    fprintf(stderr, "Old %%thou not used anymore\n");
-
-    /* if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) { */
-    /*   uL(fprintf(uH, "http: strange response\n")); */
-    /* } */
-    /* else { */
-    /*   _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep)); */
-    /* } */
-  }
-
-  u3z(rep);
-}
-
 static u3_hreq*
 _http_search_req(c3_l    sev_l,
                  c3_l    coq_l,

@@ -208,36 +208,6 @@ _cttp_hed_new(u3_atom nam, u3_atom val)
   return hed_u;
 }
 
-// XX vv similar to _http_heds_from_noun
-/* _cttp_heds_math(): create headers from +math
-*/
-static u3_hhed*
-_cttp_heds_math(u3_noun mah)
-{
-  u3_noun hed = u3kdi_tap(mah);
-  u3_noun deh = hed;
-
-  u3_hhed* hed_u = 0;
-
-  while ( u3_nul != hed ) {
-    u3_noun nam = u3h(u3h(hed));
-    u3_noun lit = u3t(u3h(hed));
-
-    while ( u3_nul != lit ) {
-      u3_hhed* nex_u = _cttp_hed_new(nam, u3h(lit));
-      nex_u->nex_u = hed_u;
-
-      hed_u = nex_u;
-      lit = u3t(lit);
-    }
-
-    hed = u3t(hed);
-  }
-
-  u3z(deh);
-  return hed_u;
-}
-
 // XX deduplicate with _http_heds_from_noun
 /* _cttp_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
 */
@@ -559,14 +529,14 @@ _cttp_creq_free(u3_creq* ceq_u)
   free(ceq_u);
 }
 
-/* _cttp_creq_new_from_request(): create a request from an +http-request 
+/* _cttp_creq_new(): create a u3_creq from an +http-request 
  *
  *   If we were rewriting all of this from scratch, this isn't how we'd do it.
  *
- *   We start with the 
+ *   We start with the (?? - JB)
  */
 static u3_creq*
-_cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
+_cttp_creq_new(c3_l num_l, u3_noun hes)
 {
   u3_creq* ceq_u = c3_calloc(sizeof(*ceq_u));
 
@@ -612,8 +582,6 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
   ceq_u->met_c = u3r_string(method);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
 
-  // TODO: mah is a semiparsed header format, which is not what we were passed in.
-  /* ceq_u->hed_u = _cttp_heds_math(u3k(mah)); */
   ceq_u->hed_u = _cttp_heds_from_noun(u3k(headers));
 
   if ( u3_nul != body ) {
@@ -625,57 +593,6 @@ _cttp_creq_new_from_request(c3_l num_l, u3_noun hes)
   u3z(unit_pul);
   u3z(hes);
 
-  return ceq_u;
-}
-
-/* _cttp_creq_new(): create a request from a +hiss noun
-**
-**  XX obsolete, remove
-*/
-static u3_creq*
-_cttp_creq_new(c3_l num_l, u3_noun hes)
-{
-  u3_creq* ceq_u = c3_calloc(sizeof(*ceq_u));
-
-  u3_noun pul = u3h(hes);      // +purl
-  u3_noun hat = u3h(pul);      // +hart
-  u3_noun sec = u3h(hat);
-  u3_noun por = u3h(u3t(hat));
-  u3_noun hot = u3t(u3t(hat)); // +host
-  u3_noun moh = u3t(hes);      // +moth
-  u3_noun met = u3h(moh);      // +meth
-  u3_noun mah = u3h(u3t(moh)); // +math
-  u3_noun bod = u3t(u3t(moh));
-
-  ceq_u->sat_e = u3_csat_init;
-  ceq_u->num_l = num_l;
-  ceq_u->sec   = sec;
-
-  if ( c3y == u3h(hot) ) {
-    ceq_u->hot_c = _cttp_creq_host(u3k(u3t(hot)));
-  } else {
-    ceq_u->ipf_w = u3r_word(0, u3t(hot));
-    ceq_u->ipf_c = _cttp_creq_ip(ceq_u->ipf_w);
-  }
-
-  if ( u3_nul != por ) {
-    ceq_u->por_s = u3t(por);
-    ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
-  }
-
-  //  XX should be capitalized
-  //
-  ceq_u->met_c = u3r_string(met);
-  ceq_u->url_c = _cttp_creq_url(u3k(pul));
-  ceq_u->hed_u = _cttp_heds_math(u3k(mah));
-
-  if ( u3_nul != bod ) {
-    ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(bod)));
-  }
-
-  _cttp_creq_link(ceq_u);
-
-  u3z(hes);
   return ceq_u;
 }
 
@@ -781,16 +698,6 @@ _cttp_creq_quit(u3_creq* ceq_u)
   _cttp_creq_free(ceq_u);
 }
 
-/* /\* _cttp_httr(): dispatch http response to %eyre */
-/* *\/ */
-/* static void */
-/* _cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct) */
-/* { */
-/*   u3_noun htr = u3nt(sas_w, mes, uct); */
-/*   u3_noun pox = u3nt(u3_blip, c3__http, u3_nul); */
-/*   u3v_plan(pox, u3nt(c3__they, num_l, htr)); */
-/* } */
-
 static void
 _cttp_http_client_receive(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
@@ -818,7 +725,6 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   uL(fprintf(uH, "http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c));
 
   // XX include err_c as response body?
-  /* _cttp_httr(ceq_u->num_l, cod_w, u3_nul, u3_nul); */
   _cttp_http_client_receive(ceq_u->num_l, cod_w, u3_nul, u3_nul);
   _cttp_creq_free(ceq_u);
 }
@@ -830,7 +736,6 @@ _cttp_creq_respond(u3_creq* ceq_u)
 {
   u3_cres* res_u = ceq_u->res_u;
 
-  /* _cttp_httr(ceq_u->num_l, res_u->sas_w, res_u->hed, */
   _cttp_http_client_receive(ceq_u->num_l, res_u->sas_w, res_u->hed,
              ( !res_u->bod_u ) ? u3_nul :
              u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)));
@@ -1058,28 +963,6 @@ _cttp_init_h2o()
   return ctx_u;
 };
 
-/* u3_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
-*/
-void
-u3_cttp_ef_thus(c3_l    num_l,
-                u3_noun cuq)
-{
-  u3_creq* ceq_u;
-
-  if ( u3_nul == cuq ) {
-    ceq_u =_cttp_creq_find(num_l);
-
-    if ( ceq_u ) {
-      _cttp_creq_quit(ceq_u);
-    }
-  }
-  else {
-    ceq_u = _cttp_creq_new(num_l, u3k(u3t(cuq)));
-    _cttp_creq_start(ceq_u);
-  }
-  u3z(cuq);
-}
-
 /* u3_cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
 */
 void
@@ -1091,7 +974,7 @@ u3_cttp_ef_http_client(u3_noun fav)
     u3_noun p_fav, q_fav;
     u3x_cell(u3t(fav), &p_fav, &q_fav);
 
-    ceq_u = _cttp_creq_new_from_request(u3r_word(0, p_fav), u3k(q_fav));
+    ceq_u = _cttp_creq_new(u3r_word(0, p_fav), u3k(q_fav));
 
     if ( ceq_u ) {
       _cttp_creq_start(ceq_u);
