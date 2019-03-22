@@ -2583,7 +2583,7 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
 static void
 _proxy_ward_plan(u3_ward* rev_u)
 {
-  u3_noun non;
+  u3_noun non, cad;
 
   {
     c3_w* non_w = c3_malloc(64);
@@ -2600,17 +2600,19 @@ _proxy_ward_plan(u3_ward* rev_u)
     rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
   }
 
-  // TODO: all this forwarding stuff doesn't work with %light/http-server.
-  
-  // XX confirm duct
-  u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-                     u3nc(u3k(u3A->sen), u3_nul));
+  {
+    u3_noun who = u3i_chubs(2, rev_u->who_d);
+    u3_noun cha = u3nq(c3__a, c3__give, c3__prox, u3_nul);
+    u3_noun dat = u3nc(c3__that, u3nt(rev_u->por_s,
+                                      u3k(rev_u->con_u->sec),
+                                      non));
 
-  u3_noun wis = u3nc(c3__wise, u3nq(u3i_chubs(2, rev_u->who_d),
-                                    rev_u->por_s,
-                                    u3k(rev_u->con_u->sec),
-                                    non));
-  u3v_plan(pax, wis);
+    cad = u3nq(c3__want, who, cha, dat);
+  }
+
+  //  XX s/b c3__ames?
+  //
+  u3v_plan(u3nt(u3_blip, c3__newt, u3_nul), cad);
 }
 
 /* _proxy_ward_start(): start ward (ship-specific listener).
@@ -3163,18 +3165,19 @@ _proxy_serv_start(u3_prox* lis_u)
 /* u3_http_ef_that(): reverse proxy requested connection notification.
 */
 void
-u3_http_ef_that(u3_noun tat)
+u3_http_ef_that(u3_noun sip, u3_noun tat)
 {
-  u3_noun sip, por, sec, non;
+  u3_noun por, sec, non;
 
-  if ( ( c3n == u3r_qual(tat, &sip, &por, &sec, &non) ) ||
-       ( c3n == u3ud(sip) ) ||
-       ( c3n == u3a_is_cat(por) ) ||
-       !( c3y == sec || c3n == sec ) ||
-       ( c3n == u3ud(non) ) ) {
-    uL(fprintf(uH, "http: that: invalid card\n"));
-  }
-  else {
+  u3x_trel(tat, &por, &sec, &non);
+  c3_assert( c3y == u3a_is_cat(por) );
+  c3_assert( c3y == sec || c3n == sec );
+  c3_assert( c3y == u3ud(non) );
+
+  //  XX sip s/b validated -- could be *any* ship
+  //
+
+  {
     u3_http* htp_u;
     u3_warc* cli_u;
 
@@ -3207,5 +3210,6 @@ u3_http_ef_that(u3_noun tat)
     }
   }
 
+  u3z(sip);
   u3z(tat);
 }

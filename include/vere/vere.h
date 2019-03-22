@@ -1058,7 +1058,7 @@
       /* u3_http_ef_that: send %that effect to http.
       */
         void
-        u3_http_ef_that(u3_noun tat);
+        u3_http_ef_that(u3_noun sip, u3_noun tat);
 
       /* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
       */
