@@ -3947,6 +3947,11 @@
     ~&  rift=[p.req q.req]
     ~&  desks=(turn ~(tap by dos.rom.ruf) head)
     ~&  hoy=(turn ~(tap by hoy.ruf) head)
+    ::
+    ::  Don't clear state, because it doesn't quite work yet.
+    ::
+    ?:  =(0 0)
+      `...^$
     ::  if we sunk, don't clear clay
     ::
     ?:  =(our p.req)
