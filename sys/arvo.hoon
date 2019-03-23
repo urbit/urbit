@@ -627,7 +627,6 @@
                 ==
               ::  upgrade once we've accumulated identity, entropy, and %zuse
               ::
-              ~&  [%upgrading ?=(^ who) ?=(^ eny) ?=(^ bod)]
               ?.  &(?=(^ who) ?=(^ eny) ?=(^ bod))
                 [~ +>.$]
               ~>  %slog.[0 leaf+"arvo: metamorphosis"]

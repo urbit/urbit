@@ -158,6 +158,67 @@
       ::  :~
       ::  ==
       *raw-test-core
+    ::
+      :-  %simple-add
+      %+  compose-tests  (galaxy ~bud)
+      %+  stateless-test
+        %add
+      ^-  stateless-test-core
+      |_  now=@da
+      ++  start
+        =/  command  "[%test-result (add 2 3)]"
+        :~  [%event ~bud //term/1 %belt %txt ((list @c) command)]
+            [%event ~bud //term/1 %belt %ret ~]
+        ==
+      ::
+      ++  route
+        |=  [who=ship uf=unix-effect]
+        ?.  (is-dojo-output ~bud who uf "[%test-result 5]")
+          ~
+        [%test-done &]~
+      --
+    ::
+      :-  %count
+      %+  compose-tests  (galaxy ~bud)
+      %+  porcelain-test
+        %state
+      =|  count=@
+      |_  now=@da
+      ++  start
+        ^-  (quip ph-event _..start)
+        [(dojo ~bud "\"count: {<count>}\"") ..start]
+      ::
+      ++  route
+        |=  [who=ship uf=unix-effect]
+        ^-  (quip ph-event _..start)
+        ?.  (is-dojo-output ~bud who uf "\"count: {<count>}\"")
+          [~ ..start]
+        ?:  (gte count 10)
+          [[%test-done &]~ ..start]
+        =.  count  +(count)
+        start
+      --
+    ::
+      :-  %break-behn
+      %+  compose-tests
+        %+  compose-tests
+          (galaxy ~bud)
+        (galaxy ~dev)
+      ^-  raw-test-core
+      |_  now=@da
+      ++  label  %break-behn
+      ++  ships  ~
+      ++  start
+        [(dojo ~bud "|hi ~dev") ..start]
+      ::
+      ++  route
+        |=  [who=ship uf=unix-effect]
+        ^-  [? (quip ph-event _..start)]
+        ?:  ?=(%doze -.q.uf)
+          [| ~ ..start]
+        :-  &  :_  ..start
+        (expect-dojo-output ~bud who uf "hi ~dev successful")
+      --
   ==
 ::
 ++  install-tests
@@ -235,7 +296,7 @@
       ==
   ==
 ::
-::  XXX doc
+::  Start another test if one is in the queue
 ::
 ++  run-test
   ^-  (quip move _this)
@@ -256,7 +317,7 @@
   =^  moves-2  this  (run-events lab events.res)
   [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
 ::
-::
+::  Print results with ~&
 ::
 ++  print-results
   ~&  "TEST REPORT:"

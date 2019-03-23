@@ -1,7 +1,6 @@
 ::
 ::::  /hoon/ph/lib
   ::
-::  XXX should raw-ship and others be stateless-test-core?
 /-  aquarium
 =,  aquarium
 |%
@@ -28,10 +27,18 @@
   ::
   ::  Called on every effect from a ship.
   ::
+  ::    The loobean in the return value says whether we should pass on
+  ::    the effect to vane drivers.  Usually this should be yes.
+  ::
   ++  route  |~([ship unix-effect] *[? (quip ph-event _^|(..start))])
   --
 ::
-::  XXX  doc
+::  A simpler interface for when you don't need all the power.
+::
+::    Doesn't allwow you to explicitly subscribe to certain ships or
+::    blocking certain effects from going to their usual vane drivers.
+::
+::    Use with +porcelain-test
 ::
 ++  porcelain-test-core
   $_  ^|
@@ -45,12 +52,19 @@
   ++  route  |~([ship unix-effect] *(quip ph-event _^|(..start)))
   --
 ::
-::  XXX  doc
+::  A simpler interface for when you don't need test state.
+::
+::    Use with +stateless-test
 ::
 ++  stateless-test-core
   $_  ^|
   |_  now=@da
+  ::  Called first to kick off the test.
+  ::
   ++  start  *(list ph-event)
+  ::
+  ::  Called on every effect from a ship.
+  ::
   ++  route  |~([ship unix-effect] *(list ph-event))
   --
 ::
@@ -59,7 +73,7 @@
       aqua-event
   ==
 ::
-::  XXX doc
+::  Call with a +porecelain-test-core create a stateless test.
 ::
 ++  porcelain-test
   |=  [label=@ta porcelain=porcelain-test-core]
@@ -77,7 +91,7 @@
     [& events ..start]
   --
 ::
-::  XXX doc
+::  Call with a +stateless-test-core create a stateless test.
 ::
 ++  stateless-test
   |=  [label=@tas stateless=stateless-test-core]
@@ -93,12 +107,16 @@
     [(~(route stateless now) args) ..start]
   --
 ::
+::  Turn [ship (list unix-event)] into (list ph-event)
+::
 ++  send-events-to
   |=  [who=ship what=(list unix-event)]
   ^-  (list ph-event)
   %+  turn  what
   |=  ue=unix-event
   [%event who ue]
+::
+::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
   |=  [who=ship keys=(unit dawn-event)]
@@ -119,6 +137,8 @@
     [//term/1 %belt %ret ~]
   ==
 ::
+::  Inject a file into a ship
+::
 ++  insert-file
   |=  [who=ship des=desk pax=path txt=@t]
   ^-  (list ph-event)
@@ -128,6 +148,9 @@
   :~
     [//sync/0v1n.2m9vh %into des | [t.t.t.pax `file]~]
   ==
+::
+::  Checks whether the given event is a dojo output blit containing the
+::  given tape
 ::
 ++  is-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
@@ -141,6 +164,8 @@
       !=(~ (find what p.blit))
   ==
 ::
+::  Test is successful if +is-dojo-output
+::
 ++  expect-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
   ^-  (list ph-event)
@@ -148,17 +173,13 @@
     ~
   [%test-done &]~
 ::
+::  Check whether the given event is an ergo
+::
 ++  is-ergo
   |=  [who=ship her=ship uf=unix-effect]
   ?&  =(who her)
       ?=(%ergo -.q.uf)
   ==
-::
-++  on-ergo
-  |=  [who=ship her=ship uf=unix-effect fun=$-($~ (list ph-event))]
-  ?.  (is-ergo who her uf)
-    ~
-  (fun)
 ::
 ++  azimuth
   |%
@@ -207,6 +228,11 @@
 ::
 ++  test-lib
   |_  our=ship
+  ::
+  ::  Run one test, then the next.
+  ::
+  ::    Caches the result of the first test.
+  ::
   ++  compose-tests
     |=  [a=raw-test-core b=raw-test-core]
     ^-  raw-test-core
@@ -278,7 +304,7 @@
       [thru events ..start]
     --
   ::
-  ::  Don't use directly, or else you might not have a parent.
+  ::  Don't use directly unless you've already started any parent.
   ::
   ::    Consider ++galaxy, ++star, ++planet, and ++ship-with-ancestors.
   ::
@@ -345,8 +371,6 @@
   ::
   ::  Touches /sur/aquarium/hoon on the given ship.
   ::
-  ::    Ship must have been started.
-  ::
   ++  touch-file
     |=  [her=ship des=desk]
     %+  porcelain-test
@@ -377,9 +401,7 @@
       ~
     --
   ::
-  ::  Checks that /sur/aquarium/hoon has been touched, as by ++touch-file
-  ::
-  ::    Ship must have been started.
+  ::  Check that /sur/aquarium/hoon has been touched, as by ++touch-file
   ::
   ++  check-file-touched
     |=  [her=ship des=desk]
@@ -416,8 +438,6 @@
   ::
   ::  Reload vane from filesystem
   ::
-  ::    Ship must have been started.
-  ::
   ++  reload-vane
     |=  [her=ship vane=term]
     %+  stateless-test
@@ -437,6 +457,8 @@
       |=  [who=ship uf=unix-effect]
       ~
     --
+  ::
+  ::  Scry into a running aqua ship
   ::
   ++  scry-aqua
     |*  [a=mold now=@da pax=path]
