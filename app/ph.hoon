@@ -50,7 +50,7 @@
     --
 =,  gall
 =/  vane-apps=(list term)
-  ~[%aqua %aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
+  ~[%aqua-ames %aqua-behn %aqua-dill %aqua-eyre]
 |_  $:  hid=bowl
         state
     ==
