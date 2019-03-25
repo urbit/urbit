@@ -32,6 +32,12 @@ urbit -F zod -A /path/to/arvo -B /path/to.pill -c fakezod
 
 To run all tests in `/tests`, run `+test` in dojo. `+test /some/path` would only run all tests in `/tests/some/path`.
 
+## Contributing
+
+Contributions of any form are more than welcome! If something doesn't seem right, and there is no issue about it yet, feel free to open one.
+
+If you're looking to make code contributions, a good place to start might be the [good contributor issues](https://github.com/urbit/arvo/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+contributor+issue%22).
+
 ## Maintainers
 
 Most parts of Arvo have dedicated maintainers.
