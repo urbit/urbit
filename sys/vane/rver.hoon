@@ -854,16 +854,22 @@
         %-  crip
         "urbauth={<session>}; Path=/; Max-Age=86400"
       ::
-      =/  new-location=@t
-        ?~  redirect=(get-header:http 'redirect' u.parsed)
-          '/'
-        u.redirect
+      ?~  redirect=(get-header:http 'redirect' u.parsed)
+        %-  handle-response
+        :*  %start
+            :-  status-code=200
+            ^=  headers
+              :~  ['set-cookie' cookie-line]
+              ==
+            data=~
+            complete=%.y
+        ==
       ::
       %-  handle-response
       :*  %start
           :-  status-code=307
           ^=  headers
-            :~  ['location' new-location]
+            :~  ['location' u.redirect]
                 ['set-cookie' cookie-line]
             ==
           data=~
