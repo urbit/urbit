@@ -772,15 +772,13 @@
           '''
   ::
     %+  expect-eq
-      !>  `[%unsubscribe 2 ~marlyt %thing /other]~
+      !>  `[%unsubscribe 2 1]~
       !>  %-  parse-channel-request:http-server-gate
           %-  need  %-  de-json:html
           '''
           [{"action": "unsubscribe",
             "id": 2,
-            "ship": "marlyt",
-            "app": "thing",
-            "path": "/other"}]
+            "subscription": 1}]
           '''
   ::
       %+  expect-eq
@@ -893,7 +891,7 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         %+  expect-gall-deal
-          :*  /channel/subscription/'0123456789abcdef'
+          :*  /channel/subscription/'0123456789abcdef'/1
               [~nul ~nul]  %two  %pull  ~
           ==
           card.i.moves
@@ -1164,9 +1162,7 @@
             '''
             [{"action": "unsubscribe",
               "id": 2,
-              "ship": "nul",
-              "app": "two",
-              "path": "/one/two/three"}
+              "subscription": 1}
             ]
             '''
         ==
@@ -1178,8 +1174,10 @@
           [%leaf "wrong number of moves: {<(lent moves)>}"]~
         ::
         ;:  weld
+          ::  we want to cancel the subscription id on which we originally subscribed
+          ::
           %+  expect-gall-deal
-            :*  /channel/subscription/'0123456789abcdef'/'2'
+            :*  /channel/subscription/'0123456789abcdef'/'1'
                 [~nul ~nul]  %two  %pull  ~
             ==
             card.i.moves
@@ -1208,6 +1206,276 @@
     results2
     results3
     results4
+  ==
+::
+++  test-channel-double-subscription-works
+  ::  common initialization
+  ::
+  =^  results1  http-server-gate  (perform-init-start-channel http-server-gate *sley)
+  ::  poke gets a success message
+  ::
+  =^  results2  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m1)
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/poke/'0123456789abcdef'/'0'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %coup ~]
+         ==
+      moves=~
+    ==
+  ::  subscription gets a success message
+  ::
+  =^  results3  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %reap ~]
+         ==
+      moves=~
+    ==
+  ::  now make a second subscription from the client on the same path
+  ::
+  =^  results3  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m3)
+      scry=scry-provides-code
+      ^=  call-args
+        :*  duct=~[/http-put-request]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "subscribe",
+              "id": 2,
+              "ship": "nul",
+              "app": "two",
+              "path": "/one/two/three"}
+            ]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-gall-deal
+            :*  /channel/subscription/'0123456789abcdef'/'2'
+                [~nul ~nul]  %two
+                %peel  %json  /one/two/three
+            ==
+            card.i.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  i.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %rest  (add ~1111.1.2 ~h12)
+                ==
+            !>  i.t.t.moves
+        ::
+          %+  expect-eq
+            !>  :*  ~[/http-put-request]  %pass
+                    /channel/timeout/'0123456789abcdef'
+                    %b  %wait  :(add ~1111.1.2 ~h12 ~m3)
+                ==
+            !>  i.t.t.t.moves
+    ==  ==
+  ::  subscription gets a result (on the id 1)
+  ::
+  =^  results4  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'1'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+         ==
+      moves=~
+    ==
+  ::  subscription gets a result (on the id 2)
+  ::
+  =^  results5  http-server-gate
+    %-  http-server-take  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+         ==
+      moves=~
+    ==
+  ::  open up the channel
+  ::
+  =^  results6  http-server-gate
+    %-  http-server-call  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m3)
+      scry=scry-provides-code
+      ^=  call-args
+        :*  duct=~[/http-get-open]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'GET'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+            ~
+        ==
+      ^=  expected-moves
+        ^-  (list move:http-server-gate)
+        :~  :*  duct=~[/http-get-open]
+                %give
+                %response
+                %start
+                :-  200
+                :~  ['content-type' 'text/event-stream']
+                    ['cache-control' 'no-cache']
+                    ['connection' 'keep-alive']
+                ==
+              ::
+                :-  ~
+                %-  as-octs:mimes:html
+                '''
+                id: 0
+                data: {"ok":"ok","id":0,"response":"poke"}
+
+                id: 1
+                data: {"ok":"ok","id":1,"response":"subscribe"}
+
+                id: 2
+                data: {"json":[1,2],"id":1,"response":"diff"}
+
+                id: 3
+                data: {"json":[1,2],"id":2,"response":"diff"}
+
+
+                '''
+              ::
+                complete=%.n
+            ==
+            ::  opening the channel cancels the timeout timer
+            ::
+            :*  duct=~[/http-put-request]  %pass
+                /channel/timeout/'0123456789abcdef'
+                [%b %rest ~1111.1.2..12.03.00]
+    ==  ==  ==
+  ::  we can close the first channel without closing the second
+  ::
+  =^  results7  http-server-gate
+    %-  http-server-call-with-comparator  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m3)
+      scry=scry-provides-code
+      ^=  call-args
+        :*  duct=~[/http-put-request]  ~
+            %request
+            %.n
+            [%ipv4 .192.168.1.1]
+            %'PUT'
+            '/~/channel/0123456789abcdef'
+            ['cookie' 'urbauth=0v3.q0p7t.mlkkq.cqtto.p0nvi.2ieea']~
+        ::
+            :-  ~
+            %-  as-octs:mimes:html
+            '''
+            [{"action": "unsubscribe",
+              "id": 3,
+              "subscription": 1}
+            ]
+            '''
+        ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        ::
+        ;:  weld
+          %+  expect-gall-deal
+            :*  /channel/subscription/'0123456789abcdef'/'1'
+                [~nul ~nul]  %two  %pull  ~
+            ==
+            card.i.moves
+        ::
+          %+  expect-eq
+            !>  [~[/http-put-request] %give %response %start [200 ~] ~ %.y]
+            !>  i.t.moves
+    ==  ==
+  ::  gall responds on the second subscription.
+  ::
+  ::    This just tests that closing one of the two subscriptions doesn't
+  ::    unsubscribe to the other.
+  ::
+  =^  results8  http-server-gate
+    %-  http-server-take-with-comparator  :*
+      http-server-gate
+      now=(add ~1111.1.2 ~m2)
+      scry=scry-provides-code
+      ^=  take-args
+        :*  wire=/channel/subscription/'0123456789abcdef'/'2'  duct=~[/http-put-request]
+            ^-  (hypo sign:http-server-gate)
+            :-  *type
+            [%g %unto %diff %json !>(`json`[%a [%n '1'] [%n '2'] ~])]
+         ==
+      ^=  comparator
+        |=  moves=(list move:http-server-gate)
+        ^-  tang
+        ::
+        ?.  ?=([^ ~] moves)
+          [%leaf "wrong number of moves: {<(lent moves)>}"]~
+        %+  expect-eq
+          !>  :*  ~[/http-get-open]  %give  %response  %continue
+                  :-  ~
+                  %-  as-octs:mimes:html
+                  '''
+                  id: 4
+                  data: {"json":[1,2],"id":2,"response":"diff"}
+
+
+                  '''
+                  complete=%.n
+              ==
+          !>  i.moves
+    ==
+  ::
+  ;:  weld
+    results1
+    results2
+    results3
+    results4
+    results5
+    results6
+    results7
+    results8
   ==
 ::
 ++  test-prune-events
