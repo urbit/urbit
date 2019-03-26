@@ -242,7 +242,7 @@
       ::    We maintain a list of subscriptions so if a channel times out, we
       ::    can cancel all the subscriptions we've made.
       ::
-      subscriptions=(list [ship=@p app=term =path])
+      subscriptions=(map wire [ship=@p app=term =path])
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -258,7 +258,7 @@
       [%subscribe request-id=@ud ship=@p app=term =path]
       ::  %unsubscribe: unsubscribes from an application path
       ::
-      [%unsubscribe request-id=@ud ship=@p app=term =path]
+      [%unsubscribe request-id=@ud subscription-id=@ud]
   ==
 ::  channel-timeout: the delay before a channel should be reaped
 ::
@@ -324,7 +324,7 @@
   ?:  =('unsubscribe' u.maybe-key)
     %.  item
     %+  pe  %unsubscribe
-    (ot id+ni ship+(su fed:ag) app+so path+(su ;~(pfix fas (more fas urs:ab))) ~)
+    (ot id+ni subscription+ni ~)
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
@@ -404,7 +404,7 @@
           ~
     ==
   ==
-::  +error-page: 400 page, with an error string if logged in
+::  +error-page: error page, with an error string if logged in
 ::
 ++  error-page
   |=  [code=@ud authorized=? url=@t t=tape]
@@ -505,8 +505,10 @@
         });
     }
 
-    //  subscribes to a path on an
+    //  subscribes to a path on an specific app and ship.
     //
+    //    Returns a subscription id, which is the same as the same internal id
+    //    passed to your Urbit.
     subscribe(ship, app, path, connectionErrFunc, eventFunc, quitFunc) {
       var id = this.nextId();
       this.outstandingSubscriptions.set(
@@ -518,6 +520,19 @@
           "ship": ship,
           "app": app,
           "path": path
+        });
+
+      return id;
+    }
+
+    //  unsubscribe to a specific subscription
+    //
+    unsubscribe(subscriptionId) {
+      var id = this.nextId();
+      this.sendJSONToChannel({
+          "id": id,
+          "action": "unsubscribe",
+          "subscription": subscriptionId
         });
     }
 
@@ -1200,44 +1215,49 @@
       ::
           %subscribe
         ::
+        =/  channel-wire=path
+          /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+        ::
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass
-            /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
+          :^  duct  %pass  channel-wire
           =,  i.requests
           [%g %deal [our ship] `cush:gall`[app %peel %json path]]
-        ::  TODO: Check existence to prevent duplicates?
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          ^+  channel
           =,  i.requests
-          channel(subscriptions [[ship app path] subscriptions.channel])
+          channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path]))
         ::
         $(requests t.requests)
       ::
           %unsubscribe
+        =/  channel-wire=path
+          /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
+        ::
+        =/  subscriptions
+          subscriptions:(~(got by session.channel-state.state) channel-id)
+        ::
+        ?~  maybe-subscription=(~(get by subscriptions) channel-wire)
+          ::  the client sent us a weird request referring to a subscription
+          ::  which isn't active.
+          ::
+          ~&  [%missing-subscription-in-unsubscribe channel-wire]
+          $(requests t.requests)
         ::
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass
-            /channel/subscription/[channel-id]/(scot %ud request-id.i.requests)
-          =,  i.requests
+          :^  duct  %pass  channel-wire
+          =,  u.maybe-subscription
           [%g %deal [our ship] `cush:gall`[app %pull ~]]
-        ::  TODO: Check existence to prevent duplicates?
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
-          ^+  channel
-          =,  i.requests
-          %_    channel
-              subscriptions
-            (skip subscriptions.channel |=(a=[@p term ^path] =(a [ship app path])))
-          ==
+          channel(subscriptions (~(del by subscriptions.channel) channel-wire))
         ::
         $(requests t.requests)
       ==
@@ -1368,14 +1388,11 @@
           ==
       ::  produce a list of moves which cancels every gall subscription
       ::
-      %+  turn  subscriptions.session
-      |=  [ship=@p app=term =path]
+      %+  turn  ~(tap by subscriptions.session)
+      |=  [channel-wire=path ship=@p app=term =path]
       ^-  move
-      ::  todo: double check this; which duct should we be canceling on? does
-      ::  gall strongly bind to a duct as a cause like ford does?
       ::
-      :^  duct  %pass  /channel/subscription/[channel-id]
-      [%g %deal [our ship] app %pull ~]
+      [duct %pass channel-wire [%g %deal [our ship] app %pull ~]]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
