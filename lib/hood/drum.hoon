@@ -80,11 +80,11 @@
   ::
   ?:  ?=($pawn myr)
     [[%base %collections] [%base %hall] [%base %talk] [%base %dojo] ~]
-  :~  [%home %collections]
-      [%home %acme]
-      [%home %dns]
+  :~  ::  [%home %collections]
+      ::  [%home %acme]
+      ::  [%home %dns]
+      ::  [%home %hall]
       [%home %dojo]
-      [%home %hall]
       [%home %talk]
   ==
 ::

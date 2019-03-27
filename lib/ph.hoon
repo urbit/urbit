@@ -123,7 +123,7 @@
   ^-  (list ph-event)
   [%init-ship who keys]~
 ::
-::  factor out send-events-to
+::  Send dojo command
 ::
 ++  dojo
   |=  [who=ship what=tape]
@@ -180,6 +180,16 @@
   ?&  =(who her)
       ?=(%ergo -.q.uf)
   ==
+::
+::  Check if given effect is an http request; extract
+::
+++  extract-thus-to
+  |=  [uf=unix-effect dest=@t]
+  ^-  (unit [num=@ud mot=moth:eyre])
+  ?.  ?=(%thus -.q.uf)  ~
+  ?~  q.q.uf  ~
+  ?.  =(p.u.q.q.uf (rash dest auri:de-purl:html))  ~
+  `[p.q.uf q.u.q.q.uf]
 ::
 ++  azimuth
   |%
@@ -272,13 +282,13 @@
       ^-  (quip ph-event _..start)
       =/  have-cache
         (scry-aqua ? now /fleet-snap/[label:a]/noun)
-      ?:  have-cache
-        ~&  [%caching-in label:a label]
-        =.  done-with-a  &
-        =/  restore-event  [%restore-snap label:a]
-        =^  events-start  b  ~(start b now)
-        =^  events  ..filter-a  (filter-a now restore-event events-start)
-        [events ..start]
+      ::  ?:  have-cache
+      ::    ~&  [%caching-in label:a label]
+      ::    =.  done-with-a  &
+      ::    =/  restore-event  [%restore-snap label:a]
+      ::    =^  events-start  b  ~(start b now)
+      ::    =^  events  ..filter-a  (filter-a now restore-event events-start)
+      ::    [events ..start]
       =^  events  a  ~(start a now)
       [events ..start]
     ::
@@ -303,6 +313,63 @@
       =^  events  ..filter-a  (filter-a now events)
       [thru events ..start]
     --
+  ::
+  ::  Wrap a test with an effect filter.
+  ::
+  ::    This allows intercepting particular effects for special
+  ::    handling.
+  ::
+  ++  wrap-test
+    |=  $:  lab=@ta
+            filter=$-([ship unix-effect] [thru=? pe=(list ph-event)])
+            cor=raw-test-core
+        ==
+    ^-  raw-test-core
+    |_  now=@da
+    ++  label  :((cury cat 3) label:cor '--w--' lab)
+    ++  ships  ships:cor
+    ++  start
+      =^  events  cor  ~(start cor now)
+      [events ..start]
+    ::
+    ++  route
+      |=  [who=ship uf=unix-effect]
+      ^-  [? (quip ph-event _^|(..start))]
+      =+  ^-  [thru-test=? events-test=(list ph-event) cor-test=_cor]
+        (~(route cor now) who uf)
+      =.  cor  cor-test
+      ?.  thru-test
+        [| events-test ..start]
+      =+  ^-  [thru-filter=? events-filter=(list ph-event)]
+        (filter who uf)
+      [thru-filter (weld events-test events-filter) ..start]
+    --
+  ::
+  ::  Mock HTTP responses to particular requests
+  ::
+  ++  wrap-test-http
+    |=  [url=@t responses=(map @t @t) cor=raw-test-core]
+    %^    wrap-test
+        (cat 3 'http-' (scot %uw (mug url responses)))
+      |=  [who=ship uf=unix-effect]
+      ^-  [? (list ph-event)]
+      =/  thus  (extract-thus-to uf url)
+      ?~  thus
+        [& ~]
+      ?~  r.mot.u.thus
+        [& ~]
+      =/  resp  (~(get by responses) q.u.r.mot.u.thus)
+      ?~  resp
+        [& ~] 
+      :-  |  :_  ~
+      :*  %event
+          who
+          //http/0v1n.2m9vh
+          %they
+          num.u.thus
+          [200 ~ `(as-octs:mimes:html u.resp)]
+      ==
+    cor
   ::
   ::  Don't use directly unless you've already started any parent.
   ::

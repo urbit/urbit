@@ -40,12 +40,12 @@
     +$  test-core-state
       $:  hers=(list ship)
           cor=raw-test-core
-          effect-log=(list [who=ship uf=unix-effect])
       ==
     ::
     +$  other-state
       $:  test-qeu=(qeu term)
           results=(list (pair term ?))
+          effect-log=(list [who=ship uf=unix-effect])
       ==
     --
 =,  gall
@@ -150,14 +150,24 @@
   =,  test-lib
   ^-  (list (pair term raw-test-core))
   :~  :-  %boot-from-azimuth
+      %-  compose-tests
+      :_  *raw-test-core
+      %^    wrap-test-http
+          'http://localhost:8545'
+        %-  malt
+        ^-  (list [@t @t])
+        :~  :-  '{"params":[],"id":"block number","jsonrpc":"2.0","method":"eth_blockNumber"}'
+            'response-1'
+            :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","toBlock":"0x7"}],"id":"catch up","jsonrpc":"2.0","method":"eth_getLogs"}'
+            'response-1'
+            :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381"}],"id":"new filter","jsonrpc":"2.0","method":"eth_newFilter"}'
+            'response-1'
+            :-  '{"params":["0x07"],"id":"filter logs","jsonrpc":"2.0","method":"eth_getFilterLogs"}'
+            'response-1'
+        ==
       %+  compose-tests
-        %+  compose-tests
-          (raw-ship ~bud `(dawn:azimuth ~bud))
-        (touch-file ~bud %home)
-      ::  %-  assert-happens
-      ::  :~
-      ::  ==
-      *raw-test-core
+        (raw-ship ~bud `(dawn:azimuth ~bud))
+      (touch-file ~bud %home)
     ::
       :-  %simple-add
       %+  compose-tests  (galaxy ~bud)
@@ -309,10 +319,11 @@
     `this(results ~)
   =^  lab  test-qeu  ~(get to test-qeu)
   ~&  [running-test=lab test-qeu]
+  =.  effect-log  ~
   =/  res=[events=(list ph-event) new-state=raw-test-core]
     ~(start (~(got by raw-test-cores) lab) now.hid)
   =>  .(test-core `(unit test-core-state)`test-core)
-  =.  test-core  `[ships . ~]:new-state.res
+  =.  test-core  `[ships .]:new-state.res
   =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
   =^  moves-2  this  (run-events lab events.res)
   [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
@@ -411,9 +422,8 @@
     [:(weld moves-1 moves-2) this]
   ::
       %print
-    =/  log  effect-log:(need test-core)
-    ~&  lent=(lent log)
-    ~&  %+  roll  log
+    ~&  lent=(lent effect-log)
+    ~&  %+  roll  effect-log
         |=  [[who=ship uf=unix-effect] ~]
         ?:  ?=(?(%blit %doze) -.q.uf)
           ~
@@ -439,21 +449,22 @@
   =+  |-  ^-  $:  thru-effects=(list unix-effect)
                   events=(list ph-event)
                   cor=_u.test-core
+                  log=_effect-log
               ==
       ?~  ufs.afs
-        [~ ~ u.test-core]
-      =.  effect-log.u.test-core
-        [[who i.ufs]:afs effect-log.u.test-core]
+        [~ ~ u.test-core ~]
       =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
           (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
       =.  cor.u.test-core  cor
       =+  $(ufs.afs t.ufs.afs)
-      :+  ?:  thru
-            [i.ufs.afs thru-effects]
-          thru-effects
-        (weld events-1 events)
-      cor
+      :^    ?:  thru
+              [i.ufs.afs thru-effects]
+            thru-effects
+          (weld events-1 events)
+        cor
+      [[who i.ufs]:afs log]
   =.  test-core  `cor
+  =.  effect-log  (weld log effect-log)
   =>  .(test-core `(unit test-core-state)`test-core)
   =/  moves-1  (publish-aqua-effects who.afs thru-effects)
   =^  moves-2  this  (run-events lab events)
