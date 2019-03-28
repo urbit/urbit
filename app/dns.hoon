@@ -454,8 +454,9 @@
 ++  http-response
   |=  [=wire response=client-response:http-client]
   ^-  (quip move _this)
-  ?.  ?=(%finished -.response)
-    ::  progress report
+  ::  ignore progress reports
+  ::
+  ?:  ?=(%progress -.response)
     [~ this]
   ::
   ?+  wire
@@ -466,11 +467,17 @@
     ?~  nem
       ~&  [%not-an-authority %http-response wire response]
       [~ this]
-    abet:(~(http-response bind u.nem) t.wire (to-httr:http-client +.response))
+    =<  abet
+    ?:  ?=(%cancel -.response)
+      (~(http-cancel bind u.nem) t.wire)
+    (~(http-response bind u.nem) t.wire (to-httr:http-client +.response))
   ::
       [%relay %him @ *]
     =/  him=ship  (slav %p i.t.t.wire)
-    abet:(http-response:(tell him) t.t.t.wire (to-httr:http-client +.response))
+    =<  abet
+    ?:  ?=(%cancel -.response)
+      (http-cancel:(tell him) t.t.t.wire)
+    (http-response:(tell him) t.t.t.wire (to-httr:http-client +.response))
   ==
 ::  +wake: timer callback
 ::
@@ -616,10 +623,10 @@
     |=  [try=@ud =wire]
     ^-  ^wire
     (weld /authority/try/(scot %ud try) wire)
-  ::  +http-crash: handle failed http request
+  ::  +http-cancel: retry canceled http request
   ::
-  ++  http-crash
-    |=  [=wire =tang]
+  ++  http-cancel
+    |=  =wire
     ^+  this
     ?>  ?=([%try @ @ *] wire)
     =/  try  (slav %ud i.t.wire)
@@ -858,10 +865,10 @@
     |=  [try=@ud act=@tas]
     ^-  wire
     /relay/him/(scot %p him)/try/(scot %ud try)/[act]
-  ::  +http-crash: handle failed http request
+  ::  +http-cancel: retry canceled http request
   ::
-  ++  http-crash
-    |=  [=wire =tang]
+  ++  http-cancel
+    |=  =wire
     ^+  this
     ?>  ?=([%try @ @ ~] wire)
     =/  try  (slav %ud i.t.wire)
