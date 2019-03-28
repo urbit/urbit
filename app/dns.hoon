@@ -10,8 +10,10 @@
       [%hall-action %phrase audience:hall (list speech:hall)]
   ==
 +$  card
-  $%  [%request wire request:http outbound-config:http-client]
+  $%  [%connect wire =binding:http-server app=term]
+      [%http-response =http-event:http]
       [%poke wire dock poke]
+      [%request wire request:http outbound-config:http-client]
       [%rule wire %turf %put turf]
       [%wait wire @da]
   ==
@@ -47,6 +49,101 @@
   ?~  t.hot
     (rap 3 [i.hot out])
   $(out [sep i.hot out], hot t.hot)
+::  +local-uri: XX
+::
+++  local-uri
+  |=  [our=ship =path]
+  ^-  @t
+  =/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+  (crip (en-purl:html [hart [~ path] ~]))
+::  +oauth2-config: as one would expect
+::
++$  oauth2-config
+  $:  auth-url=@t
+      exchange-url=@t
+      domain=turf
+      initial-path=path
+      redirect-path=path
+      scopes=(list @t)
+  ==
+::
+::  +oauth2: library core
+::
+++  oauth2
+  |_  [our=@p now=@da config=oauth2-config]
+  ::
+  ++  code
+    ^-  @t
+    %-  crip
+    +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
+  ::
+  :: to initialize these values: |init-oauth2 /com/googleapis
+  ::
+  ++  oauth2-secrets
+    ^-  [client-id=@t client-secret=@t]
+    =;  =wain
+      ?>  ?=([@t @t ~] wain)
+      [i.wain i.t.wain]
+    ::
+    %-  to-wain:format
+    %-  need
+    %+  de:crub:crypto  code
+    %+  slav  %uw
+    .^(@ %cx :(weld /(scot %p our)/home/(scot %da now)/sec domain.config /atom))
+  ::
+  ++  initial-uri  (local-uri our initial-path.config)
+  ++  redirect-uri  (local-uri our redirect-path.config)
+  ::
+  ++  redirect-to-provider
+    ^-  @t
+    =/  url  (need (de-purl:html auth-url.config))
+    =.  r.url
+      :*  ['access_type' 'offline']
+          ['response_type' 'code']
+          ['prompt' 'consent']
+          ['client_id' client-id:oauth2-secrets]
+          ['redirect_uri' redirect-uri]
+          ['scope' (join ' ' scopes.config)]
+          r.url
+      ==
+    (crip (en-purl:html url))
+  ::
+  ++  retrieve-access-token
+    |=  code=@t
+    ^-  request:http
+    =/  hed
+      :~  ['Accept' 'application/json']
+          ['Content-Type' 'application/x-www-form-urlencoded']
+      ==
+    =/  bod
+      %-  some  %-  as-octt:mimes:html
+      %-  tail  %-  tail:en-purl:html
+      :~  ['client_id' client-id:oauth2-secrets]
+          ::  note: required, unused parameter
+          ::
+          ['redirect_uri' redirect-uri]
+          ['client_secret' client-secret:oauth2-secrets]
+          ['grant_type' 'authorization_code']
+          ['code' code]
+      ==
+    [%'POST' exchange-url.config hed bod]
+  ::
+  ++  parse-token-response
+    |=  =octs
+    ^-  (unit [access=@t expires=@u refresh=@t])
+    %.  q.octs
+    ;~  biff
+      de-json:html
+      =,  dejs-soft:format
+      (ot 'access_token'^so 'expires_in'^ni 'refresh_token'^so ~)
+    ==
+  ::  XX implement
+  ::
+  ++  refresh-token  !!
+  --
+--
+::
+=>  |%
 ::  +name: fully-qualified domain name for :ship
 ::
 ++  name
@@ -282,6 +379,17 @@
 ::  |gcloud: GCP provider
 ::
 ++  gcloud
+  =>  |%
+      ++  headers
+        |=  aut=authority
+        ?>  ?=(%gcloud -.pro.aut)
+        ?.  ?=(^ auth.pro.aut)
+          ~|  %gcloud-missing-auth  !!
+        %-  ~(gas by *math:eyre)
+        :~  ['Content-Type' ['application/json' ~]]
+            ['Authorization' [`@t`(cat 3 'Bearer ' access.u.auth.pro.aut) ~]]
+        ==
+      --
   |_  aut=authority
   ::  +base: provider service endpoint
   ::
@@ -294,7 +402,7 @@
     ^-  hiss:eyre
     ?>  ?=(%gcloud -.pro.aut)
     :-  (endpoint base /[project.pro.aut]/['managedZones']/[zone.pro.aut])
-    [%get ~ ~]
+    [%get (headers aut) ~]
   ::  +record: JSON-formatted provider-specific dns record
   ::
   ++  record
@@ -326,8 +434,6 @@
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/changes
-    =/  hed=math
-      (my content-type+['application/json' ~] ~)
     =/  bod=octs
       %-  as-octt:mimes:html
       %-  en-json:html
@@ -336,7 +442,7 @@
       :-  ['additions' %a (record him tar) ~]
       ?~  pre  ~
       [['deletions' %a (record him tar.u.pre) ~] ~]
-    [url %post hed `bod]
+    [url %post (headers aut) `bod]
   ::  +existing: list existing records stored by provider
   ::
   ++  existing
@@ -347,9 +453,9 @@
     =/  url=purl
       %+  endpoint  base
       /[project.pro.aut]/['managedZones']/[zone.pro.aut]/rrsets
-    =/  hed=math
-      ?~  page  ~
-      (~(put by *math) 'pageToken' [u.page]~)
+    =/  hed=math  (headers aut)
+    =?  hed  ?=(^ page)
+      (~(put by hed) 'pageToken' [u.page]~)
     [url %get hed ~]
   ::  +parse-list: existing records stored by provider
   ::
@@ -416,6 +522,20 @@
 ::  +this: is sparta
 ::
 ++  this  .
+::  |oauth2-core: configured oauth functionality (for |gcloud only)
+::
+++  oauth2-core
+  =/  =oauth2-config
+    :*  auth-url='https://accounts.google.com/o/oauth2/v2/auth'
+        exchange-url='https://www.googleapis.com/oauth2/v4/token'
+        domain=/com/googleapis
+        redirect-path=/dns/oauth
+        initial-path=/dns/oauth/result
+        :~  'https://www.googleapis.com/auth/ndev.clouddns.readwrite'
+            'https://www.googleapis.com/auth/cloud-platform.read-only'
+    ==  ==
+  ~(. oauth2 our.bow now.bow oauth2-config)
+::
 ::  +notify: send :hall notification
 ::
 ++  notify
@@ -479,6 +599,20 @@
       (http-cancel:(tell him) t.t.t.wire)
     (http-response:(tell him) t.t.t.wire (to-httr:http-client +.response))
   ==
+::
+++  poke-handle-http-request
+  |=  =inbound-request:http-server
+  ^-  (quip move _this)
+  ?~  nem
+      ~&  :*  %not-an-authority
+              %http-request
+              =>  inbound-request
+              [authenticated secure address [method url]:request]
+          ==
+    =/  =move
+      [ost.bow %http-response %start [%403 ~] ~ %.y]
+    [[move ~] this]
+  abet:(~(http-request bind u.nem) inbound-request)
 ::  +wake: timer callback
 ::
 ++  wake
@@ -511,7 +645,7 @@
       %authority
     ~|  %authority-reset-wat-do
     ?<  ?=(^ nem)
-    abet:(init:bind aut.com 1)
+    abet:(pre-init:bind aut.com)
   ::  create binding (if authority) and forward request
   ::
   ::    [%bind for=ship him=ship target]
@@ -586,8 +720,22 @@
   ^-  (quip move _this)
   ?^  old
     [~ this(+<+ u.old)]
-  ::  XX print :dns|ip config instructions for stars?
+  ::  XX this binding should be deleted when we're done
+  ::  but that would require tracking bones
   ::
+  =/  =move
+    [ost.bow %connect /dns/oauth [~ /dns/oauth] %dns]
+  ::  XX also print :dns|ip config instructions for stars?
+  ::
+  [[move ~] this]
+::
+++  bound
+  |=  [=wire accepted=? =binding:http-server]
+  ?:  accepted
+    [~ this]
+  ::  XX better error message
+  ::
+  ~&  [%dns-http-path-binding-failed +<]
   [~ this]
 ::  |bind: acting as zone authority
 ::
@@ -633,6 +781,10 @@
     ?+  t.t.wire
       ~&([%bind %unknown-crash wire] this)
     ::
+        [%oath %access ~]
+      ~&  %do-the-oauth-thing-again
+      this
+    ::
         [%confirm ~]
       =.  try  +(try)
       (emit (wait (http-wire try /confirm) (min ~h1 (backoff try))))
@@ -654,6 +806,26 @@
     =/  try  (slav %ud i.t.wire)
     ?+  t.t.wire
       ~&([%bind %unknown-response wire rep] this)
+    ::  response providing oauth access token (|gcloud only)
+    ::
+        [%oauth %access ~]
+      ?>  ?=(%gcloud -.pro.aut.nam)
+      ::  XX save access/refresh tokens
+      ::
+      ?.  =(200 p.rep)
+        ~&  [%oauth-failed p.rep]
+        this
+      ?~  r.rep
+        ~&  [%oauth-failed %no-body]
+        this
+      =/  data  (parse-token-response:oauth2 u.r.rep)
+      ?~  data
+        ~&  [%oauth-failed %invalid-body u.r.rep]
+        this
+      =.  auth.pro.aut.nam  (some [access refresh]:u.data)
+      ::  XX  use expiry to set refresh timer
+      ::
+      (init 1)
     ::  response confirming a valid nameserver config
     ::
         [%confirm ~]
@@ -678,6 +850,8 @@
       =/  him=ship  (slav %p i.t.t.t.wire)
       =/  for=ship  (slav %p i.t.t.t.t.t.wire)
       =/  id
+        ::  XX move into provider interface
+        ::
         ?.  ?=(%fcloud -.pro.aut.nam)  ~.
         ~|  [%authority-create-confirm-id rep]
         ?>  ?=(^ r.rep)
@@ -698,6 +872,86 @@
         this
       (restore u.r.rep)
     ==
+  ::  +http-request: act as server for oauth redirects (|gcloud only)
+  ::
+  ++  http-request
+    |=  =inbound-request:http-server
+    ^+  this
+    ?>  ?=(%gcloud -.pro.aut.nam)
+    ::
+    =/  parsed=(unit (pair pork:eyre quay:eyre))
+      %+  rush
+        url.request.inbound-request
+      ;~(plug ;~(pose apat:de-purl:html (easy *pork:eyre)) yque:de-purl:html)
+    ::
+    ?.  ?=(^ parsed)
+      ~|  [%invalid-url url.request.inbound-request]  !!
+    =*  url  q.p.u.parsed
+    =*  ext  p.p.u.parsed
+    =*  params  q.u.parsed
+  ::
+    ?+  url
+      (emit %http-response %start [%404 ~] ~ %.y)
+    ::
+        [%dns %oauth ~]
+      =/  link  (trip redirect-to-provider:oauth2-core)
+      =/  bod=(unit octs)
+        %-  some
+        %-  as-octt:mimes:html
+        %-  en-xml:html
+        ;html
+          ;head
+            ;title:  :dns oauth
+          ==
+          ;body
+            ;p  make sure that the oauth credential is configured
+                with a redirect uri of {(trip redirect-uri:oauth2-core)}
+            ==
+            ;a(href link):  {link}
+          ==
+        ==
+      (emit %http-response %start [%200 ~] bod %.y)
+    ::
+        [%dns %oauth %result ~]
+      =/  code  (~(got by (my params)) %code)
+      ::  XX make path configurable
+      ::
+      =/  hed  [['Location' '/dns/oauth/success'] ~]
+      ::  XX y no tisdot tho
+      ::
+      %-  =<  emit
+        %:  emit
+          %request
+          (http-wire 1 /oauth/access)
+          (retrieve-access-token:oauth2-core code)
+          *outbound-config:http-client
+        ==
+      ::  XX don't redirect to success until above request
+      ::  comes back successfully
+      ::
+      [%http-response %start [%301 hed] ~ %.y]
+    ::
+        [%dns %oauth %success ~]
+      =/  bod=(unit octs)
+        %-  some
+        %-  as-octt:mimes:html
+        %-  en-xml:html
+        ;html
+          ;head
+            ;title:  :dns oauth
+          ==
+          ;body
+            ;p: you may close the browser window
+            ;p
+              ;span:  XX remove me
+              ::  XX make path configurable
+              ::
+              ;a(href "/dns/oauth"):  again
+            ==
+          ==
+        ==
+      (emit %http-response %start [%201 ~] bod %.y)
+    ==
   ::  +retry: re-attempt http request after timer
   ::
   ++  retry
@@ -709,7 +963,7 @@
       ~&([%bind %unknown-retry wire] this)
     ::
         [%confirm ~]
-      (init aut.nam try)
+      (init try)
     ::
         [%create @ %for @ ~]
       =/  him=ship  (slav %p i.t.t.t.wire)
@@ -720,12 +974,26 @@
       =*  page  i.t.t.t.wire
       (update ?~(page ~ `page) try)
     ==
+  ::  +pre-init: gross
+  ::
+  ++  pre-init
+    |=  aut=authority
+    =.  nam  [aut ~ ~ ~]
+    ::  XX move this into the provider interface
+    ::
+    ?:  ?&  ?=(%gcloud -.pro.aut)
+            ?=(~ auth.pro.aut)
+        ==
+      ~&  %do-the-oauth-thing
+      ~&  initial-uri:oauth2-core
+      this
+    (init 1)
   ::  +init: establish zone authority (request confirmation)
   ::
   ++  init
-    |=  [aut=authority try=@ud]
-    %-  emit(nam [aut ~ ~ ~])
-    (request (http-wire try /confirm) zone:(provider aut))
+    |=  try=@ud
+    %-  emit
+    (request (http-wire try /confirm) zone:(provider aut.nam))
   ::  +update: retrieve existing remote nameserver records
   ::
   ++  update
@@ -748,7 +1016,7 @@
     |-  ^+  this
     ?~  dat
       ?~(page this (update page 1))
-    =/  nob=bound  [now.bow id.i.dat tar.i.dat ~]
+    =/  nob=^bound  [now.bow id.i.dat tar.i.dat ~]
     $(dat t.dat, bon.nam (~(put by bon.nam) ship.i.dat nob))
   ::  +create: bind :him, on behalf of :for
   ::
@@ -790,7 +1058,7 @@
     =/  =wire
       (http-wire try /create/(scot %p him)/for/(scot %p for))
     =/  pre=(unit [id=@ta tar=target])
-      =/  bon=(unit bound)  (~(get by bon.nam) him)
+      =/  bon=(unit ^bound)  (~(get by bon.nam) him)
       ?~(bon ~ `[id.u.bon cur.u.bon])
     =/  req=hiss:eyre
       (create:(provider aut.nam) him tar pre)
@@ -811,9 +1079,9 @@
   ++  confirm
     |=  [for=ship him=ship id=@ta]
     =/  tar=target  (~(got by pen.nam) him)
-    =/  bon=(unit bound)
+    =/  bon=(unit ^bound)
       (~(get by bon.nam) him)
-    =/  nob=bound
+    =/  nob=^bound
       [now.bow id tar ?~(bon ~ [[wen.u.bon cur.u.bon] hit.u.bon])]
     =:  pen.nam  (~(del by pen.nam) him)
         bon.nam  (~(put by bon.nam) him nob)

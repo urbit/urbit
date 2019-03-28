@@ -27,4 +27,4 @@
 %+  parse  urs:ab
 |=  zone=@ta
 %-  produce
-[%dns-command %authority [p.hot %gcloud project zone]]
+[%dns-command %authority [p.hot %gcloud project zone ~]]
