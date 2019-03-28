@@ -2443,6 +2443,10 @@
     ?:  =(~ snaps.sap.lex)
       snap.snap
     $
+  ::
+      %turf
+    ?.  ?=(~ tyl)  [~ ~]
+    [~ ~ %noun !>(tuf.own.sub.lex)]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

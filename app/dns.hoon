@@ -724,11 +724,23 @@
   ::  XX this binding should be deleted when we're done
   ::  but that would require tracking bones
   ::
-  =/  =move
+  =|  mov=(list move)
+  =.  mov
+    :_  mov
     [ost.bow %connect /dns/oauth [~ /dns/oauth] %dns]
-  ::  XX also print :dns|ip config instructions for stars?
+  ::  galaxies must already have dns bindings on *all* ames domains
   ::
-  [[move ~] this]
+  =?  mov  ?=(%czar (clan:title our.bow))
+    %+  weld  mov
+    %+  turn
+      .^((list turf) %j /(scot %p our.bow)/turf/(scot %da now.bow))
+    |=  =turf
+    ^-  move
+    =/  full  (weld turf /(crip +:(scow %p our.bow)))
+    [ost.bow %rule /bound %turf %put full]
+  ::  XX print :dns|ip config instructions for stars?
+  ::
+  [mov this]
 ::
 ++  bound
   |=  [=wire accepted=? =binding:http-server]
