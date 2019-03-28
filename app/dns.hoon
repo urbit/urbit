@@ -217,15 +217,6 @@
 ::
 ++  fcloud
   =>  |%
-      ++  headers
-        |=  aut=authority
-        ?>  ?=(%fcloud -.pro.aut)
-        %-  ~(gas by *math:eyre)
-        :~  ['Content-Type' ['application/json' ~]]
-            ['X-Auth-Email' [email.auth.pro.aut ~]]
-            ['X-Auth-Key' [key.auth.pro.aut ~]]
-        ==
-      ::
       ++  parse-raw-record
         |=  aut-dom=turf
         ^-  $-  json
@@ -270,6 +261,16 @@
   ++  base
     ^-  purl:eyre
     (need (de-purl:html 'https://api.cloudflare.com/client/v4'))
+  ::  +headers: standard HTTP headers for all |fcloud requests
+  ::
+  ++  headers
+    |=  aut=authority
+    ?>  ?=(%fcloud -.pro.aut)
+    %-  ~(gas by *math:eyre)
+    :~  ['Content-Type' ['application/json' ~]]
+        ['X-Auth-Email' [email.auth.pro.aut ~]]
+        ['X-Auth-Key' [key.auth.pro.aut ~]]
+    ==
   ::  +zone: provider-specific zone info request
   ::
   ++  zone
@@ -379,23 +380,23 @@
 ::  |gcloud: GCP provider
 ::
 ++  gcloud
-  =>  |%
-      ++  headers
-        |=  aut=authority
-        ?>  ?=(%gcloud -.pro.aut)
-        ?.  ?=(^ auth.pro.aut)
-          ~|  %gcloud-missing-auth  !!
-        %-  ~(gas by *math:eyre)
-        :~  ['Content-Type' ['application/json' ~]]
-            ['Authorization' [`@t`(cat 3 'Bearer ' access.u.auth.pro.aut) ~]]
-        ==
-      --
   |_  aut=authority
   ::  +base: provider service endpoint
   ::
   ++  base
     ^-  purl:eyre
     (need (de-purl:html 'https://www.googleapis.com/dns/v1/projects'))
+  ::  +headers: standard HTTP headers for all |gcloud requests
+  ::
+  ++  headers
+    |=  aut=authority
+    ?>  ?=(%gcloud -.pro.aut)
+    ?.  ?=(^ auth.pro.aut)
+      ~|  %gcloud-missing-auth  !!
+    %-  ~(gas by *math:eyre)
+    :~  ['Content-Type' ['application/json' ~]]
+        ['Authorization' [`@t`(cat 3 'Bearer ' access.u.auth.pro.aut) ~]]
+    ==
   ::  +zone: provider-specific zone info request
   ::
   ++  zone
