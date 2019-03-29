@@ -1447,7 +1447,6 @@
                :~  [hen %slip %a %sunk who lyf]
                    [hen %slip %c %sunk who lyf]
                    [hen %slip %d %sunk who lyf]
-                   [hen %slip %e %sunk who lyf]
                    [hen %slip %f %sunk who lyf]
                    [hen %slip %g %sunk who lyf]
                ==
