@@ -1326,10 +1326,11 @@
         $wind  `%j
         $wipe  `%f
       ::
-        $request  `%l
-        $serve    `%r
-        $connect  `%r
-        $rule     `%r
+        $request     `%l
+        $serve       `%r
+        $connect     `%r
+        $disconnect  `%r
+        $rule        `%r
       ==
     --
   --

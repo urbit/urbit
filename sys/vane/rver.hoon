@@ -626,10 +626,6 @@
       return this.requestId++;
     }
   };
-
-  export function newChannel() {
-    return new Channel;
-  }
   '''
 ::  +format-ud-as-integer: prints a number for consumption outside urbit
 ::
@@ -856,16 +852,22 @@
         %-  crip
         "urbauth={<session>}; Path=/; Max-Age=86400"
       ::
-      =/  new-location=@t
-        ?~  redirect=(get-header:http 'redirect' u.parsed)
-          '/'
-        u.redirect
+      ?~  redirect=(get-header:http 'redirect' u.parsed)
+        %-  handle-response
+        :*  %start
+            :-  status-code=200
+            ^=  headers
+              :~  ['set-cookie' cookie-line]
+              ==
+            data=~
+            complete=%.y
+        ==
       ::
       %-  handle-response
       :*  %start
           :-  status-code=307
           ^=  headers
-            :~  ['location' new-location]
+            :~  ['location' u.redirect]
                 ['set-cookie' cookie-line]
             ==
           data=~
@@ -1333,10 +1335,13 @@
       |=  [channel-id=@t json-text=wall]
       ^-  [(list move) server-state]
       ::
-      =/  channel=channel
-        (~(got by session.channel-state.state) channel-id)
+      =/  channel=(unit channel)
+        (~(get by session.channel-state.state) channel-id)
+      ?~  channel
+        ~&  [%received-event-for-nonexistent-channel channel-id]
+        [~ state]
       ::
-      =/  event-id  next-id.channel
+      =/  event-id  next-id.u.channel
       ::
       =/  event-stream-lines=wall
         %-  weld  :_  [""]~
@@ -1346,10 +1351,10 @@
         (weld "data: " tape)
       ::  if a client is connected, send this event to them.
       ::
-      =?  moves  ?=([%| *] state.channel)
+      =?  moves  ?=([%| *] state.u.channel)
         ^-  (list move)
         :_  moves
-        :+  p.state.channel  %give
+        :+  p.state.u.channel  %give
         ^-  gift:able:http-server
         :*  %response  %continue
         ::
