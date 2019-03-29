@@ -1319,9 +1319,7 @@
         $ogre  `%c
         $perm  `%c
         $rest  `%b
-        $serv  `%e
         $snap  `%j
-        $them  `%e
         $wait  `%b
         $want  `%a
         $warp  `%c

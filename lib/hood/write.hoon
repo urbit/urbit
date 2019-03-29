@@ -54,6 +54,8 @@
   ?.  =(our src)
     ~|(foreign-write+[our=our src=src] !!)
   =/  sev
+    ::  XX this scry will always fail. wat do?
+    ::
     =+  .^(path %e /(scot %p our)/serv/(scot %da now))
     ?>(?=({@tas @tas *} -) -)
   =;  sob/soba:clay
