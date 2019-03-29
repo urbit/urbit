@@ -5,13 +5,18 @@
 ::
 ++  parse-request-line
   |=  url=@t
-  ^-  [[(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
+  ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
   (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
 ::
 ++  manx-to-octs
   |=  man=manx
   ^-  octs
   (as-octs:mimes:html (crip (en-xml:html man)))
+::
+++  json-to-octs
+  |=  jon=json
+  ^-  octs
+  (as-octs:mimes:html (crip (en-json:html jon)))
 ::
 ++  app
   |%
@@ -44,10 +49,19 @@
     ^-  http-event:http
     [%start [200 ['content-type' 'application/js']~] [~ oct-js] %.y]
   ::
+  ++  json-response
+    |=  oct-js=octs
+    ^-  http-event:http
+    [%start [200 ['content-type' 'application/json']~] [~ oct-js] %.y]
+  ::
   ++  css-response
     |=  oct-css=octs
     ^-  http-event:http
     [%start [200 ['content-type' 'text/css']~] [~ oct-css] %.y]
+  ::
+  ++  not-found
+    ^-  http-event:http
+    [%start [404 ~] ~ %.y]
   ::
   ++  login-redirect
     |=  =inbound-request:http-server
@@ -75,6 +89,11 @@
     |=  =octs
     ^-  simple-payload:http
     [[200 ['content-type' 'application/js']~] `octs]
+  ::
+  ++  json-response
+    |=  =octs
+    ^-  simple-payload:http
+    [[200 ['content-type' 'application/json']~] `octs]
   ::
   ++  css-response
     |=  =octs

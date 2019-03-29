@@ -4,9 +4,9 @@
 /?  309
 /+  collections, cram
 /=  coll-new
-  /:  /===/gen/landscape/collections/new  /!noun/
+  /:  /===/app/landscape/collections/new  /!noun/
 /=  coll-edit
-  /:  /===/gen/landscape/collections/edit  /!noun/
+  /:  /===/app/landscape/collections/edit  /!noun/
 /=  cols
   /^  collection:collections
   /;  |=  a=(map knot item:collections)
@@ -17,12 +17,17 @@
 |%
 +$  post-page  [p=@da q=?(%default %edit %new)]
 --
-|=  [shp=@p col=@da pos=(unit post-page)]
-^-  manx
+|=  [shp=@p col=@da pos=(unit post-page) json=?]
+^-  $%  [%hymn manx]
+        [%json ^json]
+    ==
 =/  itm=(unit item:collections)  (~(get by data.cols) (scot %da col))
+?:  json
+  ?~  itm  [%json ~]
+  [%json (item-to-json:collections u.itm)]
 ?~  itm
-  ;div: Invalid collection
-=<  (item-to-elem u.itm)
+  [%hymn ;div:(Invalid collection)]
+=<  [%hymn (item-to-elem u.itm)]
 |%
 ++  item-to-elem
   !:

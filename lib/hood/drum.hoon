@@ -83,6 +83,7 @@
       [%base %hall]
       [%base %talk]
       [%base %dojo]
+      [%base %landscape]
       [%base %modulo]
   ==
   :~  [%home %collections]
@@ -91,6 +92,7 @@
       [%home %dojo]
       [%home %hall]
       [%home %talk]
+      [%home %landscape]
       [%home %modulo]
   ==
 ::

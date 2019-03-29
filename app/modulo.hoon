@@ -70,7 +70,7 @@
   ?~  old
     :_  this
     :~  [ost.bow %connect / [~ /] %modulo]
-        [ost.bow %serve / [~ /'~landscape'] %home /gen/landscape/hoon ~]
+        [ost.bow %connect / [~ /'~landscape'] %landscape]
     ==
   [~ this(sta *state)]
 ::

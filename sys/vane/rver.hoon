@@ -1337,10 +1337,12 @@
       |=  [channel-id=@t json-text=wall]
       ^-  [(list move) server-state]
       ::
-      =/  channel=channel
-        (~(got by session.channel-state.state) channel-id)
+      =/  channel=(unit channel)
+        (~(get by session.channel-state.state) channel-id)
+      ?~  channel
+        [~ state]
       ::
-      =/  event-id  next-id.channel
+      =/  event-id  next-id.u.channel
       ::
       =/  event-stream-lines=wall
         %-  weld  :_  [""]~
@@ -1350,10 +1352,10 @@
         (weld "data: " tape)
       ::  if a client is connected, send this event to them.
       ::
-      =?  moves  ?=([%| *] state.channel)
+      =?  moves  ?=([%| *] state.u.channel)
         ^-  (list move)
         :_  moves
-        :+  p.state.channel  %give
+        :+  p.state.u.channel  %give
         ^-  gift:able:http-server
         :*  %response  %continue
         ::
