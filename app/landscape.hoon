@@ -32,6 +32,7 @@
 ::
 +$  card
   $%  [%http-response =http-event:http]
+      [%connect wire binding:http-server term]
       [%peer wire dock path]
       [%diff diff]
       [%quit ~]
@@ -43,9 +44,22 @@
 ::
 --
 ::
-|_  [bol=bowl:gall sta=(map @ @)]
+|_  [bol=bowl:gall ~]
 ::
 ++  this  .
+::
+++  prep
+  |=  old=(unit ~)
+  ^-  (quip move _this)
+  ?~  old
+    :_  this
+    [ost.bol %connect / [~ /'~landscape'] %landscape]~
+  [~ this]
+::
+++  bound
+  |=  [wir=wire success=? binding=binding:http-server]
+  ^-  (quip move _this)
+  [~ this]
 ::
 ++  peer-xship
   |=  wir=wire
@@ -142,8 +156,8 @@
   ::  collections top level page
   ::
       [%'~landscape' %collections @t @t ~]
-    =/  shp/@p    (slav %p i.t.t.site.request-line)
-    =/  col/@da   (slav %da i.t.t.t.site.request-line)
+    =/  shp=@p    (slav %p i.t.t.site.request-line)
+    =/  col=@da   (slav %da i.t.t.t.site.request-line)
     ?:  =(shp our.bol)
       ::  local request
       ::
@@ -177,8 +191,8 @@
   ::  collections new post page
   ::
       [%'~landscape' %collections @t @t %new ~]
-    =/  shp/@p    (slav %p i.t.t.site.request-line)
-    =/  col/@da   (slav %da i.t.t.t.site.request-line)
+    =/  shp=@p    (slav %p i.t.t.site.request-line)
+    =/  col=@da   (slav %da i.t.t.t.site.request-line)
     ?:  =(shp our.bol)
       =/  dif=diff  (coll-elem shp col `[*@da %new] |)
       ?>  ?=(%hymn -.dif)
@@ -193,9 +207,9 @@
   ::  collections view post page
   ::
       [%'~landscape' %collections @t @t @t ~]
-    =/  shp/@p    (slav %p i.t.t.site.request-line)
-    =/  col/@da   (slav %da i.t.t.t.site.request-line)
-    =/  pos/@da   (slav %da i.t.t.t.t.site.request-line)
+    =/  shp=@p    (slav %p i.t.t.site.request-line)
+    =/  col=@da   (slav %da i.t.t.t.site.request-line)
+    =/  pos=@da   (slav %da i.t.t.t.t.site.request-line)
     ?:  =(shp our.bol)
       =/  jon=?  =(ext.request-line [~ ~.json])
       =/  dif=diff  (coll-elem shp col `[pos %default] jon)
@@ -227,9 +241,9 @@
   ::  collections edit post page
   ::
       [%'~landscape' %collections @t @t @t %edit ~]
-    =/  shp/@p    (slav %p i.t.t.site.request-line)
-    =/  col/@da   (slav %da i.t.t.t.site.request-line)
-    =/  pos/@da   (slav %da i.t.t.t.t.site.request-line)
+    =/  shp=@p    (slav %p i.t.t.site.request-line)
+    =/  col=@da   (slav %da i.t.t.t.site.request-line)
+    =/  pos=@da   (slav %da i.t.t.t.t.site.request-line)
     ?:  =(shp our.bol)
       =/  dif=diff  (coll-elem shp col `[pos %edit] |)
       ?>  ?=(%hymn -.dif)

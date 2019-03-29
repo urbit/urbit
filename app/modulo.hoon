@@ -69,15 +69,14 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    :~  [ost.bow %connect / [~ /] %modulo]
-        [ost.bow %connect / [~ /'~landscape'] %landscape]
-    ==
-  [~ this(sta *state)]
+    [ost.bow %connect / [~ /] %modulo]~
+  [~ this]
 ::
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
   |=  [wir=wire success=? binding=binding:http-server]
+  ^-  (quip move _this)
   [~ this]
 ::
 ++  peer-applist
@@ -90,11 +89,10 @@
   ^-  octs
 ::  ?~  cur.sta
 ::    *octs
-  %-  as-octs:mimes:html
-  %-  crip
+  %-  as-octt:mimes:html
 ::  ;:  weld
 ::      (trip 'window.onload = function() {')
-      "window.ship = '{(trip (rsh 3 1 (crip <our.bow>)))}';"
+      "window.ship = '{+:(scow %p our.bow)}';"
 ::      (trip '};')
 ::  ==
 ::      "  window.state = "

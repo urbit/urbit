@@ -11,12 +11,12 @@
 ++  manx-to-octs
   |=  man=manx
   ^-  octs
-  (as-octs:mimes:html (crip (en-xml:html man)))
+  (as-octt:mimes:html (en-xml:html man))
 ::
 ++  json-to-octs
   |=  jon=json
   ^-  octs
-  (as-octs:mimes:html (crip (en-json:html jon)))
+  (as-octt:mimes:html (en-json:html jon))
 ::
 ++  app
   |%
