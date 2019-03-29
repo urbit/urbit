@@ -3,7 +3,7 @@
 ::
 +$  provider
   $%  [%fcloud zone=@ta auth=[email=@t key=@t]]
-      [%gcloud project=@ta zone=@ta]
+      [%gcloud project=@ta zone=@ta auth=(unit [access=@t refresh=@t])]
   ==
 ::  +authority: responsibility for a DNS zone
 ::
