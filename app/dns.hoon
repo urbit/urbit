@@ -3,7 +3,7 @@
 ::
 ::  moves and state
 ::
-=>  |%
+|%
 +$  move  (pair bone card)
 +$  poke
   $%  [%dns-command command]
@@ -32,9 +32,9 @@
   ==
 --
 ::
-::  helpers
+::  oauth2 implementation, and helpers
 ::
-=>  |%
+|%
 ::  +join: join list of cords with separator
 ::
 ::    XX move to zuse?
@@ -143,7 +143,9 @@
   --
 --
 ::
-=>  |%
+::  app/provider helpers
+::
+|%
 ::  +name: fully-qualified domain name for :ship
 ::
 ++  name
@@ -204,7 +206,7 @@
 ::
 ::  service providers
 ::
-=>  |%
+|%
 ::  +provider: initialize provider-specific core
 ::
 ++  provider
