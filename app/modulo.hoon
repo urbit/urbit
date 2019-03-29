@@ -90,9 +90,11 @@
 ::  ?~  cur.sta
 ::    *octs
   %-  as-octt:mimes:html
-::  ;:  weld
+  ;:  weld
 ::      (trip 'window.onload = function() {')
       "window.ship = '{+:(scow %p our.bow)}';"
+      "window.urb = new Channel();"
+  ==
 ::      (trip '};')
 ::  ==
 ::      "  window.state = "

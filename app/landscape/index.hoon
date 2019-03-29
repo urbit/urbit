@@ -9,6 +9,7 @@
       =name     "viewport"
       =content  "width=device-width, initial-scale=1, shrink-to-fit=no";
     ;link(rel "stylesheet", href "/~landscape/css.css");
+    ;script@"/~/channel/channel.js";
     ;script@"/session.js";
   ==
 ::
@@ -16,7 +17,6 @@
     ;div#root
       ;+  inner
     ==
-    ;script@"/~/channel/channel.js";
     ;script@"/~landscape/js.js";
   ==
 ==

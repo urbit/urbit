@@ -626,8 +626,6 @@
       return this.requestId++;
     }
   };
-
-  window.urb = new Channel();
   '''
 ::  +format-ud-as-integer: prints a number for consumption outside urbit
 ::
@@ -1340,6 +1338,7 @@
       =/  channel=(unit channel)
         (~(get by session.channel-state.state) channel-id)
       ?~  channel
+        ~&  [%received-event-for-nonexistent-channel channel-id]
         [~ state]
       ::
       =/  event-id  next-id.u.channel
