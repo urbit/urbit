@@ -99,6 +99,8 @@ _pier_work_bail(void*       vod_p,
 static void
 _pier_save_boot_complete(void* vod_p)
 {
+  //  no-op, callback required by u3_foil_append()
+  //
 }
 
 /* _pier_save_boot(): save boot metadata.

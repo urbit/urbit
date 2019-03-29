@@ -121,7 +121,7 @@ static c3_c sag_w;
       ::
       ::    XX presumably the effects of %vent in +wyrd
       ::
-      [%cede p=ship q[(list ovum)]
+      [%cede p=ship q=(list ovum)]
       ::  accept command
       ::
       [%firm ~]
