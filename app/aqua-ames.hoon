@@ -7,7 +7,7 @@
 ::
 /-  aquarium
 =,  aquarium
-=>  $~  |%
+=>  |%
     +$  move  (pair bone card)
     +$  card
       $%  [%poke wire dock %aqua-events (list aqua-event)]
@@ -48,6 +48,8 @@
   |=  command=?(%subscribe %unsubscribe)
   :_  this(subscribed =(command %subscribe))
   (aqua-vane-control-handler our ost subscribed command)
+::
+::  Handle effects from ships.  We only react to %send effects.
 ::
 ++  diff-aqua-effects
   |=  [way=wire afs=aqua-effects]

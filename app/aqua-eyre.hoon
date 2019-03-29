@@ -2,7 +2,7 @@
 ::
 /-  aquarium
 =,  aquarium
-=>  $~  |%
+=>  |%
     +$  move  (pair bone card)
     +$  card
       $%  [%poke wire dock %aqua-events (list aqua-event)]

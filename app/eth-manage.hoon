@@ -34,7 +34,7 @@
       %look-ethnode
     :_  ~
     =/  pul
-      (need (de-purl:html 'http://localhost:8545'))
+      (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
     [ost.hid %look /hi |+pul]
   ::
       [%look-kick who=@p]

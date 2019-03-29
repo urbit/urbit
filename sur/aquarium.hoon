@@ -1,10 +1,10 @@
 ::
-::  Traditionally, ovo refers an event or card, and ova refers to a list
-::  of them.  We have several versions of each of these depending on
-::  context, so we do away with that naming scheme and use the following
-::  naming scheme.
+::  Traditionally, ovo refers to an ovum -- (pair wire card) -- and ova
+::  refers to a list of them.  We have several versions of each of these
+::  depending on context, so we do away with that naming scheme and use
+::  the following naming scheme.
 ::
-::  Every card is either a an `event` or an `effect`.  Prepended to this
+::  Every card is either an `event` or an `effect`.  Prepended to this
 ::  is `unix` if it has no ship associated with it, or `aqua` if it
 ::  does.  `timed` is added if it includes the time of the event.
 ::

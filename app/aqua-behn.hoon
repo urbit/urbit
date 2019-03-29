@@ -1,6 +1,6 @@
 /-  aquarium
 =,  aquarium
-=>  $~  |%
+=>  |%
     +$  move  (pair bone card)
     +$  card
       $%  [%poke wire dock %aqua-events (list aqua-event)]
@@ -102,7 +102,6 @@
   ::
   ++  set-timer
     |=  tim=@da
-    =.  tim  +(tim)  ::  nobody's perfect
     ~?  debug=|  [who=who %setting-timer tim]
     =.  next-timer  `tim
     =.  this  (emit-moves [ost %wait /(scot %p who) tim]~)
