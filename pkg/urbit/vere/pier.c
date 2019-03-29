@@ -23,6 +23,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#undef VERBOSE_EVENTS
+
   /*    event handling proceeds on two parallel paths.  on the first
   **    path, the event is processed in the child worker process (serf).
   **    state transitions are as follows:
@@ -222,7 +224,9 @@ _pier_disk_precommit_complete(void*    vod_p,
 
     /* delete the file; the reactor will re-request.
     */
-    //  fprintf(stderr, "pier: (%" PRIu64 "): precommit: replaced\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replaced\r\n", wit_u->evt_d);
+#endif
 
     u3_foil_delete(0, 0, fol_u);
     wit_u->fol_u = 0;
@@ -230,7 +234,9 @@ _pier_disk_precommit_complete(void*    vod_p,
   else {
     /* advance the precommit complete pointer.
     */
-    //  fprintf(stderr, "pier: (%" PRIu64 "): precommit: complete\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: (%" PRIu64 "): precommit: complete\r\n", wit_u->evt_d);
+#endif
 
     c3_assert(wit_u->evt_d == (1ULL + log_u->pre_d));
     log_u->pre_d = wit_u->evt_d;
@@ -248,7 +254,9 @@ _pier_disk_precommit_request(u3_writ* wit_u)
 
   c3_c* nam_c;
 
-  //  fprintf(stderr, "pier: (%" PRIu64 "): precommit: request\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: (%" PRIu64 "): precommit: request\r\n", wit_u->evt_d);
+#endif
 
   /* writ must be fully computed
   */
@@ -304,7 +312,9 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     c3_assert(wit_u->evt_d == log_u->rep_d);
     c3_assert(wit_u->evt_d == log_u->pre_d);
 
-    // fprintf(stderr, "pier: (%" PRIu64 "): precommit: replacing\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replacing\r\n", wit_u->evt_d);
+#endif
 
     log_u->rep_d -= 1ULL;
     log_u->pre_d -= 1ULL;
@@ -315,7 +325,9 @@ _pier_disk_precommit_replace(u3_writ* wit_u)
     /* otherwise, decrement the precommit request counter.
     ** the returning request will notice this and rerequest.
     */
-    // fprintf(stderr, "pier: (%" PRIu64 "): precommit: replace\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replace\r\n", wit_u->evt_d);
+#endif
 
     c3_assert(wit_u->evt_d == log_u->rep_d);
     log_u->rep_d -= 1ULL;
@@ -331,7 +343,9 @@ _pier_disk_commit_complete(void* vod_p)
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
-  //  fprintf(stderr, "pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
+#endif
 
   /* advance commit counter
   */
@@ -352,7 +366,9 @@ _pier_disk_commit_request(u3_writ* wit_u)
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
-  //  fprintf(stderr, "pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
+#endif
 
   /* append to logfile
   */
@@ -403,7 +419,9 @@ _pier_work_release(u3_writ* wit_u)
   u3_lord* god_u = pir_u->god_u;
   u3_noun  vir;
 
-  // fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
+#endif
 
   /* advance release counter
   */
@@ -485,7 +503,9 @@ _pier_work_complete(u3_writ* wit_u,
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
-  // fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
+#endif
 
   god_u->dun_d += 1;
   c3_assert(god_u->dun_d == wit_u->evt_d);
@@ -512,7 +532,10 @@ _pier_work_replace(u3_writ* wit_u,
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
+#ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: replace\r\n", wit_u->evt_d);
+#endif
+
   c3_assert(god_u->sen_d == wit_u->evt_d);
 
   /* move backward in work processing
@@ -540,7 +563,10 @@ _pier_work_compute(u3_writ* wit_u)
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
 
-  //  fprintf(stderr, "pier: (%" PRIu64 "): compute: request\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): compute: request\r\n", wit_u->evt_d);
+#endif
+
   c3_assert(wit_u->evt_d == (1 + god_u->sen_d));
 
   wit_u->mug_l = god_u->mug_l;
@@ -619,7 +645,9 @@ start:
     if ( (wit_u->evt_d <= log_u->com_d) &&
          (wit_u->evt_d <= god_u->dun_d) )
     {
-      //  fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
+#ifdef VERBOSE_EVENTS
+      fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
+#endif
 
       /* remove from queue; must be at end, since commit/compute are serial
       */
@@ -673,7 +701,9 @@ _pier_disk_load_precommit_file(u3_pier* pir_u,
 
   wit_u = c3_calloc(sizeof(*wit_u));
 
-  //  fprintf(stderr, "pier: (%" PRIu64 "): %p restore\r\n", evt_d, wit_u);
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): %p restore\r\n", evt_d, wit_u);
+#endif
 
   wit_u->pir_u = pir_u;
   wit_u->evt_d = evt_d;
@@ -812,7 +842,9 @@ _pier_disk_load_commit(u3_pier* pir_u,
   else {
     c3_d pos_d = log_u->fol_u->end_d;
 
-    //  fprintf(stderr, "pier: load: commit: at %" PRIx64 "\r\n", pos_d);
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: load: commit: at %" PRIx64 "\r\n", pos_d);
+#endif
 
     while ( pos_d ) {
       c3_d  len_d, evt_d;
@@ -821,7 +853,7 @@ _pier_disk_load_commit(u3_pier* pir_u,
 
       buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
       if ( !buf_d ) {
-        //  fprintf(stderr, "pier: load: commit: corrupt\r\n");
+        fprintf(stderr, "pier: load: commit: corrupt\r\n");
         return c3n;
       }
 
@@ -872,7 +904,9 @@ _pier_disk_load_commit(u3_pier* pir_u,
       */
       {
         if ( !old_d ) {
-          //  fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
+#ifdef VERBOSE_EVENTS
+          fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
+#endif
 
           log_u->com_d = log_u->moc_d = old_d = evt_d;
         }
@@ -894,7 +928,9 @@ _pier_disk_load_commit(u3_pier* pir_u,
       else {
         u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
 
-        //  fprintf(stderr, "pier: load: commit: %" PRIu64 "\r\n", evt_d);
+#ifdef VERBOSE_EVENTS
+        fprintf(stderr, "pier: load: commit: %" PRIu64 "\r\n", evt_d);
+#endif
 
         wit_u->pir_u = pir_u;
         wit_u->evt_d = evt_d;
@@ -1352,7 +1388,9 @@ _pier_play(u3_pier* pir_u,
            c3_d     lav_d,
            c3_l     mug_l)
 {
+#ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", lav_d, mug_l);
+#endif
 
   u3_pier_work_save(pir_u);
 
