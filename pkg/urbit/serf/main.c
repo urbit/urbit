@@ -691,7 +691,6 @@ _serf_poke(void* vod_p, u3_noun mat)
           goto error;
         }
 
-        fprintf(stderr, "serf: save\r\n");
         u3z(jar);
 
         return u3e_save();
