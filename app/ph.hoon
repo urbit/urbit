@@ -85,16 +85,7 @@
       %+  compose-tests
         (galaxy ~bud)
       (galaxy ~dev)
-    %+  stateless-test
-      %hi
-    |_  now=@da
-    ++  start
-      (dojo ~bud "|hi ~dev")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~bud who uf "hi ~dev successful")
-    --
+    (send-hi ~bud ~dev)
   ::
     :-  %boot-planet
     (planet ~linnup-torsyx)
@@ -149,25 +140,41 @@
 ++  manual-tests
   =,  test-lib
   ^-  (list (pair term raw-test-core))
-  :~  :-  %boot-from-azimuth
-      %-  compose-tests
-      :_  *raw-test-core
+  =/  static-eth-node
+    %-  malt
+    ^-  (list [@t @t])
+    :~  ::  :-  '{"params":[],"id":"block number","jsonrpc":"2.0","method":"eth_blockNumber"}'
+        ::  '{"id":"block number","jsonrpc":"2.0","result":"0x7"}'
+        ::  :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","toBlock":"0x7"}],"id":"catch up","jsonrpc":"2.0","method":"eth_getLogs"}'
+        ::  '{"id":"catch up","jsonrpc":"2.0","result":[{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x68ddd548d852373c1a0647be1b0c3df020e34bacbf6f2e2e9ceb4e80db517e3f","blockHash":"0x3783bf0ba0e9de7449c50375d899a72f00f9423a6dd881b677d4768e3ba7855a","blockNumber":"0x1","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000","topics":["0xfafd04ade1daae2e1fdb0fc1cc6a899fd424063ed5c92120e67e073053b94898"],"type":"mined"},{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x9ccaa993d930767468a34fa04cd13b0b7868d93eb9900b11f2b1f7d55a0670da","blockHash":"0xff1b610fe58f1938fbccf449363ddd574a902f9a3a71771e0215335b4d99abaa","blockNumber":"0x6","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x","topics":["0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0","0x0000000000000000000000006deffb0cafdb11d175f123f6891aa64f01c24f7d","0x00000000000000000000000056db68f29203ff44a803faa2404a44ecbb7a7480"],"type":"mined"}]}'
+        :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381"}],"id":"new filter","jsonrpc":"2.0","method":"eth_newFilter"}'
+        '{"id":"new filter","jsonrpc":"2.0","result":"0xa"}'
+        :-  '{"params":["0x0a"],"id":"filter logs","jsonrpc":"2.0","method":"eth_getFilterLogs"}'
+        '{"id":"filter logs","jsonrpc":"2.0","result":[{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x68ddd548d852373c1a0647be1b0c3df020e34bacbf6f2e2e9ceb4e80db517e3f","blockHash":"0x3783bf0ba0e9de7449c50375d899a72f00f9423a6dd881b677d4768e3ba7855a","blockNumber":"0x1","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000","topics":["0xfafd04ade1daae2e1fdb0fc1cc6a899fd424063ed5c92120e67e073053b94898"],"type":"mined"},{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x9ccaa993d930767468a34fa04cd13b0b7868d93eb9900b11f2b1f7d55a0670da","blockHash":"0xff1b610fe58f1938fbccf449363ddd574a902f9a3a71771e0215335b4d99abaa","blockNumber":"0x6","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x","topics":["0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0","0x0000000000000000000000006deffb0cafdb11d175f123f6891aa64f01c24f7d","0x00000000000000000000000056db68f29203ff44a803faa2404a44ecbb7a7480"],"type":"mined"}]}'
+        :-  '{"params":["0x0a"],"id":"poll filter","jsonrpc":"2.0","method":"eth_getFilterChanges"}'
+        '{"id":"poll filter","jsonrpc":"2.0","result":[]}'
+    ==
+  :~  :-  %boot-az
       %^    wrap-test-http
           'http://localhost:8545'
-        %-  malt
-        ^-  (list [@t @t])
-        :~  :-  '{"params":[],"id":"block number","jsonrpc":"2.0","method":"eth_blockNumber"}'
-            'response-1'
-            :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","toBlock":"0x7"}],"id":"catch up","jsonrpc":"2.0","method":"eth_getLogs"}'
-            'response-1'
-            :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381"}],"id":"new filter","jsonrpc":"2.0","method":"eth_newFilter"}'
-            'response-1'
-            :-  '{"params":["0x07"],"id":"filter logs","jsonrpc":"2.0","method":"eth_getFilterLogs"}'
-            'response-1'
-        ==
+        static-eth-node
+      %-  compose-tests
+      :_  *raw-test-core
       %+  compose-tests
         (raw-ship ~bud `(dawn:azimuth ~bud))
       (touch-file ~bud %home)
+    ::
+      :-  %boot-az-hi
+      %^    wrap-test-http
+          'http://localhost:8545'
+        static-eth-node
+      %-  compose-tests
+      :_  *raw-test-core
+      %+  compose-tests
+        %+  compose-tests
+          (raw-ship ~bud `(dawn:azimuth ~bud))
+        (raw-ship ~dev `(dawn:azimuth ~dev))
+      (send-hi ~bud ~dev)
     ::
       :-  %simple-add
       %+  compose-tests  (galaxy ~bud)

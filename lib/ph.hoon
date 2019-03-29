@@ -525,6 +525,21 @@
       ~
     --
   ::
+  ::  Send hi from one ship to another
+  ::
+  ++  send-hi
+    |=  [from=@p to=@p]
+    %+  stateless-test
+      :((cury cat 3) 'hi-' (scot %p from) '-' (scot %p to))
+    |_  now=@da
+    ++  start
+      (dojo from "|hi {(scow %p to)}")
+    ::
+    ++  route
+      |=  [who=ship uf=unix-effect]
+      (expect-dojo-output from who uf "hi {(scow %p to)} successful")
+    --
+  ::
   ::  Scry into a running aqua ship
   ::
   ++  scry-aqua
