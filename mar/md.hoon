@@ -16,4 +16,5 @@
   |%
   ++  mime  [/text/plain (as-octs (of-wain txt))]
   --
+++  grad  %mime
 --
