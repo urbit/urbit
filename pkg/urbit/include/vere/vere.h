@@ -612,7 +612,6 @@
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
-          u3_foil*         fol_u;               //  precommit file
           u3_atom          mat;                 //  jammed $work, or 0
           u3_noun          act;                 //  action list
           struct _u3_writ* nex_u;               //  next in queue, or 0
@@ -644,11 +643,8 @@
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
-          u3_dire*         pre_u;               //  precommit directory
           u3_foil*         fol_u;               //  logfile
           c3_d             end_d;               //  byte end of file
-          c3_d             rep_d;               //  precommit requested
-          c3_d             pre_d;               //  precommitted
           c3_d             moc_d;               //  commit requested
           c3_d             com_d;               //  committed
           struct _u3_pier* pir_u;               //  pier backpointer

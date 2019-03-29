@@ -25,51 +25,43 @@
 
 #undef VERBOSE_EVENTS
 
-  /*    event handling proceeds on two parallel paths.  on the first
-  **    path, the event is processed in the child worker process (serf).
+  /*    event handling proceeds on a single path. across both the
+  **    child worker process (serf) and parent i/o process (king).
   **    state transitions are as follows:
   **
   **        generated               (event numbered and queued)
   **        dispatched              (sent to worker)
   **        computed                (completed by worker)
+  **        commit requested        (sent to storage subsystem)
+  **        commit complete         (king notified)
   **        released                (output actions allowed)
   **
   **    we dispatch one event at a time to the worker.  we don't do
   **    anything in parallel.
   **
-  **    in parallel, we try to save the event.  it goes through phases:
-  **
-  **        generated
-  **        precommit requested
-  **        precommit complete
-  **        commit requested
-  **        commit complete
-  **
-  **    the sanity constraints that connect these two paths:
+  **    the sanity constraints that constrain this path:
   **
   **        - an event can't request a commit until it's computed.
   **        - an event can't be released until it, and all events
-  **          preceding it, are computed and precommitted.
+  **          preceding it, are computed and committed.
   **
   **    event numbers are uint64 (c3_d) which start with 1.  we order
   **    events as we receive them.
   **
   **    events are executed in order by the working process, and
-  **    (at present) precommitted and committed in strict order.
-  **
-  **    physically, precommits are saved to individual files, then
-  **    appended to a single commit log once successfully computed.
+  **    (at present) committed in strict order.
   **
   **    the result of computing an event can be completion (in which
   **    case we go directly to commit) or replacement (in which we
-  **    replace the input event with a different event).  in case of
-  **    replacement, we delete the old precommit and write the new one.
+  **    replace the input event with a different event).
   **
-  **    after crash recovery, events precommitted and computed, but
-  **    not yet committed, have at-least-once semantics in their
-  **    output effects.  (not the actual changes to the arvo state,
-  **    which are of course exactly-once.)  ideally all your outputs
-  **    are network packets or idempotent http requests!
+  **    after crash recovery, events committed but not in the snapshot
+  **    (the state of the serf) are replayed (re-computed), but their
+  **    output effects are ignored. it is possible that effects of
+  **    (only the last of ?) these events are not completely released to
+  **    the outside world -- but they should never be released more than once.
+  **
+  **    XX analyze replay more comprehensively
   */
 
 static void _pier_apply(u3_pier*);
@@ -204,136 +196,6 @@ _pier_insert_ovum(u3_pier* pir_u,
   _pier_insert(pir_u, msc_l, u3nc(now, ovo));
 }
 
-/* _pier_disk_precommit_complete(): save request completed.
-*/
-static void
-_pier_disk_precommit_complete(void*    vod_p,
-                              u3_foil* fol_u)
-{
-  u3_writ* wit_u = vod_p;
-  u3_pier* pir_u = wit_u->pir_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  wit_u->fol_u = fol_u;
-
-  if ( wit_u->evt_d != log_u->rep_d ) {
-    /* if this precommit is marked as not requested, it's been
-    ** replaced in the event stream.
-    */
-    c3_assert(wit_u->evt_d == (1ULL + log_u->rep_d));
-
-    /* delete the file; the reactor will re-request.
-    */
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replaced\r\n", wit_u->evt_d);
-#endif
-
-    u3_foil_delete(0, 0, fol_u);
-    wit_u->fol_u = 0;
-  }
-  else {
-    /* advance the precommit complete pointer.
-    */
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: (%" PRIu64 "): precommit: complete\r\n", wit_u->evt_d);
-#endif
-
-    c3_assert(wit_u->evt_d == (1ULL + log_u->pre_d));
-    log_u->pre_d = wit_u->evt_d;
-  }
-  _pier_apply(pir_u);
-}
-
-/* _pier_disk_precommit_request(): start save request.
-*/
-static void
-_pier_disk_precommit_request(u3_writ* wit_u)
-{
-  u3_pier* pir_u = wit_u->pir_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  c3_c* nam_c;
-
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: (%" PRIu64 "): precommit: request\r\n", wit_u->evt_d);
-#endif
-
-  /* writ must be fully computed
-  */
-  {
-    c3_assert(0 != wit_u->mat);
-  }
-
-  /* build filename
-  */
-  {
-    c3_c  buf_c[256];
-
-    sprintf(buf_c, "%" PRIu64 "-%x.urbit-log", wit_u->evt_d,
-                                        u3r_mug(wit_u->mat));
-
-    nam_c = malloc(1 + strlen(buf_c));
-    strcpy(nam_c, buf_c);
-  }
-
-  /* create and write file.
-  */
-  {
-    c3_d  len_d = u3r_met(6, wit_u->mat);
-    c3_d* buf_d = c3_malloc(8 * len_d);
-
-    u3r_chubs(0, len_d, buf_d, wit_u->mat);
-    u3_foil_invent(_pier_disk_precommit_complete,
-                   wit_u,
-                   log_u->pre_u,
-                   nam_c,
-                   buf_d,
-                   len_d);
-  }
-
-  /* mark as precommitted.
-  */
-  log_u->rep_d += 1;
-}
-
-/* _pier_disk_precommit_replace(): replace precommit.
-*/
-static void
-_pier_disk_precommit_replace(u3_writ* wit_u)
-{
-  u3_pier* pir_u = wit_u->pir_u;
-  u3_disk* log_u = pir_u->log_u;
-
-  /* if the replaced event is already precommitted,
-  ** undo the precommit and delete the file.
-  */
-  if ( wit_u->evt_d <= log_u->pre_d ) {
-    c3_assert(0 != wit_u->fol_u);
-    c3_assert(wit_u->evt_d == log_u->rep_d);
-    c3_assert(wit_u->evt_d == log_u->pre_d);
-
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replacing\r\n", wit_u->evt_d);
-#endif
-
-    log_u->rep_d -= 1ULL;
-    log_u->pre_d -= 1ULL;
-
-    u3_foil_delete(0, wit_u, wit_u->fol_u);
-  }
-  else {
-    /* otherwise, decrement the precommit request counter.
-    ** the returning request will notice this and rerequest.
-    */
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: (%" PRIu64 "): precommit: replace\r\n", wit_u->evt_d);
-#endif
-
-    c3_assert(wit_u->evt_d == log_u->rep_d);
-    log_u->rep_d -= 1ULL;
-  }
-}
-
 /* _pier_disk_commit_complete(): commit complete.
 */
 static void
@@ -397,12 +259,6 @@ _pier_disk_commit_request(u3_writ* wit_u)
 static void
 _pier_dispose(u3_writ* wit_u)
 {
-  /* delete precommit file
-  */
-  if ( wit_u->fol_u ) {
-    u3_foil_delete(0, 0, wit_u->fol_u);
-  }
-
   /* free contents
   */
   u3z(wit_u->job);
@@ -549,10 +405,6 @@ _pier_work_replace(u3_writ* wit_u,
 
     god_u->sen_d -= 1;
   }
-
-  /* move backward in precommit processing
-  */
-  _pier_disk_precommit_replace(wit_u);
 }
 
 /* _pier_work_compute(): dispatch for processing.
@@ -606,33 +458,11 @@ start:
       act_o = c3y;
     }
 
-    /* if writ (a) has been sent to compute and is (b) next in line to
-    ** precommit and (c) no precommit is in progress and (d) we've booted,
-    ** request precommit
-    */
-    if ( (wit_u->evt_d <= god_u->sen_d) &&
-         (wit_u->evt_d == (1 + log_u->pre_d)) &&
-         (log_u->pre_d == log_u->rep_d) &&
-         (god_u->dun_d >= pir_u->but_d) )
-    {
-      _pier_disk_precommit_request(wit_u);
-      act_o = c3y;
-    }
-
-    /* if writ is (a) computed and (b) precommitted, release actions
+    /* if writ is (a) computed and (b) next in line to commit,
+    ** and (c) no commit is in progress and (d) we've booted,
+    ** request commit.
     */
     if ( (wit_u->evt_d <= god_u->dun_d) &&
-         (wit_u->evt_d <= log_u->pre_d) &&
-         (wit_u->evt_d > god_u->rel_d) )
-    {
-      _pier_work_release(wit_u);
-      act_o = c3y;
-    }
-
-    /* if writ is (a) released and (b) next in line to commit,
-    ** and (c) no commit is in progress, request commit.
-    */
-    if ( (wit_u->evt_d <= god_u->rel_d) &&
          (wit_u->evt_d == (1 + log_u->moc_d)) &&
          (wit_u->evt_d == (1 + log_u->com_d)) )
     {
@@ -640,28 +470,44 @@ start:
       act_o = c3y;
     }
 
-    /* if writ is (a) committed and (b) computed, delete from queue
+    /* if writ is (a) committed and (b) computed,
+    ** release effects and delete from queue
     */
     if ( (wit_u->evt_d <= log_u->com_d) &&
          (wit_u->evt_d <= god_u->dun_d) )
     {
+      //  effects must be released in order
+      //
+      c3_assert(wit_u == pir_u->ext_u);
+
+      //  remove from queue
+      //
+      //    XX must be done before releasing effects
+      //    which is currently reentrant
+      //
+      {
 #ifdef VERBOSE_EVENTS
-      fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
+        fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
 #endif
 
-      /* remove from queue; must be at end, since commit/compute are serial
-      */
-      {
-        c3_assert(wit_u == pir_u->ext_u);
-        pir_u->ext_u = pir_u->ext_u->nex_u;
-
-        _pier_dispose(wit_u);
+        pir_u->ext_u = wit_u->nex_u;
 
         if ( wit_u == pir_u->ent_u ) {
           c3_assert(pir_u->ext_u == 0);
           pir_u->ent_u = 0;
         }
       }
+
+      //  will be false during replay
+      //
+      //    XX better replay tracking
+      //
+      if ( wit_u->evt_d > god_u->rel_d ) {
+        _pier_work_release(wit_u);
+      }
+
+      _pier_dispose(wit_u);
+
       wit_u = pir_u->ext_u;
       act_o = c3y;
     }
@@ -677,150 +523,6 @@ start:
   if ( c3y == act_o ) {
     act_o = c3n;
     goto start;
-  }
-}
-
-/* _pier_disk_load_precommit_file(): load precommit file into writ.
-*/
-static u3_writ*
-_pier_disk_load_precommit_file(u3_pier* pir_u,
-                               c3_d     lav_d,
-                               c3_c*    nam_c)
-{
-  u3_writ* wit_u;
-  c3_d     evt_d;
-  c3_l     mug_l;
-  c3_d     pos_d;
-  c3_d*    buf_d;
-  c3_d     len_d;
-
-  if ( 2 != sscanf(nam_c, "%" PRIu64 "-%x.urbit-log", &evt_d, &mug_l) ) {
-    //  fprintf(stderr, "pier: load: precommit: bad file: %s\r\n", nam_c);
-    return 0;
-  }
-
-  wit_u = c3_calloc(sizeof(*wit_u));
-
-#ifdef VERBOSE_EVENTS
-  fprintf(stderr, "pier: (%" PRIu64 "): %p restore\r\n", evt_d, wit_u);
-#endif
-
-  wit_u->pir_u = pir_u;
-  wit_u->evt_d = evt_d;
-
-  wit_u->fol_u = u3_foil_absorb(pir_u->log_u->pre_u, nam_c);
-  if ( 0 == wit_u->fol_u ) {
-    //  fprintf(stderr, "pier: load: precommit: absorb failed: %s\r\n", nam_c);
-    c3_free(wit_u);
-
-    return 0;
-  }
-  if ( evt_d < lav_d ) {
-    // fprintf(stderr, "pier: load: precommit: already done: %s\r\n", nam_c);
-    u3_foil_delete(0, 0, wit_u->fol_u);
-    c3_free(wit_u);
-
-    return 0;
-  }
-
-  pos_d = wit_u->fol_u->end_d;
-  if ( 0 == pos_d ) {
-    fprintf(stderr, "pier: load: precommit: empty: %s\r\n", nam_c);
-    u3_foil_delete(0, 0, wit_u->fol_u);
-    c3_free(wit_u);
-    return 0;
-  }
-  if ( 0 == (buf_d = u3_foil_reveal(wit_u->fol_u,
-                                    &pos_d,
-                                    &len_d)) )
-  {
-    //  fprintf(stderr, "pier: load: precommit: reveal failed: %s\r\n", nam_c);
-    u3_foil_delete(0, 0, wit_u->fol_u);
-    c3_free(wit_u);
-
-    return 0;
-  }
-  wit_u->mat = u3i_chubs(len_d, buf_d);
-  c3_free(buf_d);
-
-  if ( mug_l != u3r_mug(wit_u->mat) ) {
-    //  fprintf(stderr, "pier: load: precommit: reveal failed: %s\r\n", nam_c);
-    u3_foil_delete(0, 0, wit_u->fol_u);
-    u3z(wit_u->mat);
-    c3_free(wit_u);
-
-    return 0;
-  }
-
-  /*  the problem with a precommit is that we don't know whether we
-  **  actually computed and acknowledged it.  the worst case is a
-  **  network packet that causes an infinite loop, which we crash
-  **  while trying to execute.
-  **
-  **  if we discard a precommit that in fact completed, we may have
-  **  sent an acknowledgment without realizing it -- creating a
-  **  network discontinuity.  but if we uniformly apply all precommits,
-  **  we may "apply" an infinite loop.  there is no perfect answer,
-  **  of course.
-  **
-  **  the correct behavior here is a consistent mapping from event
-  **  to timer.  we apply this same mapping, but quadruple the timer
-  **  expiration, while re-executing precommits.  if it still times
-  **  out, we conclude that we must not have completed the original
-  **  event, and can throw away the precommit.
-  */
-
-  return wit_u;
-}
-
-/* _pier_compare(): ascending sort compare.
-*/
-static c3_i
-_pier_compare(const void* vod_p, const void* dov_p)
-{
-  const u3_writ* const* wit_u = vod_p;
-  const u3_writ* const* twi_u = dov_p;
-
-  return ((c3_ds)((*wit_u)->evt_d) - (c3_ds)((*twi_u)->evt_d));
-}
-
-/* _pier_disk_load_precommit(): load all precommits.
-*/
-static u3_writ**
-_pier_disk_load_precommit(u3_pier* pir_u,
-                          c3_d     lav_d)
-{
-  u3_disk* log_u = pir_u->log_u;
-  u3_dent* all_u = log_u->pre_u->all_u;
-  u3_writ* pre_u = 0;
-  c3_w     num_w = 0;
-
-  while ( all_u ) {
-    u3_writ* wit_u = _pier_disk_load_precommit_file(pir_u,
-                                                    lav_d,
-                                                    all_u->nam_c);
-
-    if ( wit_u ) {
-      wit_u->nex_u = pre_u;
-      pre_u = wit_u;
-      num_w++;
-    }
-    all_u = all_u->nex_u;
-  }
-
-  {
-    u3_writ** ray_u = c3_malloc((1 + num_w) * sizeof(u3_writ*));
-    c3_w      i_w;
-
-    i_w = 0;
-    while ( pre_u ) {
-      ray_u[i_w++] = pre_u;
-      pre_u = pre_u->nex_u;
-    }
-    ray_u[i_w] = 0;
-
-    qsort(ray_u, num_w, sizeof(u3_writ*), _pier_compare);
-    return ray_u;
   }
 }
 
@@ -1179,55 +881,10 @@ _pier_boot_vent(u3_pier* pir_u)
 */
 static c3_o
 _pier_disk_consolidate(u3_pier*  pir_u,
-                       u3_writ** ray_u,
                        c3_d      lav_d)
 {
   u3_disk* log_u = pir_u->log_u;
   u3_lord* god_u = pir_u->god_u;
-
-  /* consolidate precommits and set disk counters
-  */
-  {
-    /* we have precommitted everything we've committed
-    */
-    log_u->pre_d = log_u->rep_d = log_u->com_d;
-
-    /* in addition, what are these precommits?  in the current
-    ** overly strict implementation, there can be only one live
-    ** precommit at a time.  however, this implementation supports
-    ** multiple precommits.
-    */
-    {
-      u3_writ** rep_u = ray_u;
-
-      while ( *rep_u ) {
-        if ( pir_u->ent_u == 0 ) {
-          pir_u->ent_u = pir_u->ext_u = *rep_u;
-        }
-        else {
-          if ( (*rep_u)->evt_d <= log_u->com_d ) {
-            fprintf(stderr, "pier: consolidate: stale precommit %" PRIu64 "\r\n",
-                            (*rep_u)->evt_d);
-            _pier_dispose(*rep_u);
-          }
-          else if ( (*rep_u)->evt_d != (1ULL + pir_u->ent_u->evt_d) ) {
-            fprintf(stderr, "pier: consolidate: event gap %" PRIu64 ", %" PRIu64 "\r\n",
-                            (*rep_u)->evt_d,
-                            pir_u->ent_u->evt_d);
-            goto error;
-          }
-          else {
-            pir_u->ent_u->nex_u = *rep_u;
-            pir_u->ent_u = *rep_u;
-
-            log_u->pre_d = log_u->rep_d = (*rep_u)->evt_d;
-          }
-        }
-        rep_u++;
-      }
-      c3_free(ray_u);
-    }
-  }
 
   /* set work and pier counters.
   */
@@ -1236,12 +893,18 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     god_u->dun_d = (lav_d - 1ULL);
     god_u->rel_d = log_u->com_d;
 
-    pir_u->gen_d = (1ULL + log_u->pre_d);
+    //  XX double check this
+    //
+    if ( 0 != pir_u->ent_u ) {
+      pir_u->gen_d = (1ULL + pir_u->ent_u->evt_d);
+    }
+    else {
+      pir_u->gen_d = lav_d;
+    }
   }
 
-  /* handle boot semantics.  we don't save any commits or precommits
-  ** before we've fully booted, to avoid creating weird half-booted
-  ** ships.
+  /* handle boot semantics.  we don't save any commits before we've
+  ** fully booted, to avoid creating weird half-booted ships.
   **
   ** after the boot is complete, we'll start sending system events.
   */
@@ -1282,7 +945,6 @@ _pier_disk_create(u3_pier* pir_u,
                   c3_d     lav_d)
 {
   u3_disk*  log_u = c3_calloc(sizeof(*log_u));
-  u3_writ** ray_u;
 
   log_u->pir_u = pir_u;
   pir_u->log_u = log_u;
@@ -1328,21 +990,6 @@ _pier_disk_create(u3_pier* pir_u,
       c3_free(log_c);
     }
 
-    /* pier/.urb/pre
-    */
-    {
-      c3_c* pre_c = c3_malloc(10 + strlen(pir_u->pax_c));
-
-      strcpy(pre_c, pir_u->pax_c);
-      strcat(pre_c, "/.urb/pre");
-
-      if ( 0 == (log_u->pre_u = u3_foil_folder(pre_c)) ) {
-        c3_free(pre_c);
-        return c3n;
-      }
-      c3_free(pre_c);
-    }
-
     /* pier/.urb/put and pier/.urb/get
     */
     {
@@ -1366,15 +1013,12 @@ _pier_disk_create(u3_pier* pir_u,
     if ( c3n == _pier_disk_load_commit(pir_u, lav_d) ) {
       return c3n;
     }
-    if ( !(ray_u = _pier_disk_load_precommit(pir_u, lav_d)) ) {
-      return c3n;
-    }
   }
 
   /* consolidate loaded logic
   */
   {
-    if ( c3n == _pier_disk_consolidate(pir_u, ray_u, lav_d) ) {
+    if ( c3n == _pier_disk_consolidate(pir_u, lav_d) ) {
       return c3n;
     }
   }
