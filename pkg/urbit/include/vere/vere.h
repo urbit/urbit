@@ -546,8 +546,7 @@
     /* u3_opts: command line configuration.
     */
       typedef struct _u3_opts {
-        // XX find a way to re-enable -A (fastboot)
-        // c3_c*   arv_c;                      //  -A, initial sync from
+        c3_c*   arv_c;                      //  -A, initial sync from
         c3_o    abo;                        //  -a, abort aggressively
         c3_c*   pil_c;                      //  -B, bootstrap from
         c3_o    bat;                        //  -b, batch create
@@ -573,8 +572,7 @@
         c3_o    qui;                        //  -q, quiet
         c3_o    rep;                        //  -R, report build info
         c3_o    has;                        //  -S, Skip battery hashes
-        // XX find a way to re-enable -s (auto-pill)
-        // c3_o    git;                        //  -s, pill url from arvo git hash
+        c3_o    git;                        //  -s, pill url from arvo git hash
         c3_o    etn;                        //  -t, trust snapshot for pre-boot
         c3_c*   url_c;                      //  -u, pill url
         c3_o    vno;                        //  -V, replay without reboots
@@ -666,10 +664,10 @@
       */
         typedef struct _u3_pier {
           c3_c*            pax_c;               //  pier directory
-          c3_c*            sys_c;               //  pill file
           c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
           c3_d             but_d;               //  boot barrier
+          c3_d             lif_d;               //  lifecycle boot barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
           c3_d             sec_d[1];            //  generator (unstretched)
           c3_d             key_d[4];            //  secret (stretched)
@@ -678,6 +676,7 @@
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
           u3_noun          bot;                 //  boot event XX review
+          u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
@@ -1073,10 +1072,10 @@
         void
         u3_unix_ef_move(void);
 
-      /* u3_unix_initial_into(): intialize filesystem from urb/zod
+      /* u3_unix_initial_into_card(): create initial filesystem sync card.
       */
-        void
-        u3_unix_ef_initial_into(u3_pier *pir_u);
+        u3_noun
+        u3_unix_initial_into_card(c3_c* arv_c);
 
       /* u3_unix_ef_look(): update filesystem from unix
       */
@@ -1227,7 +1226,7 @@
       /* u3_pier_create(): create a pier, loading existing.
       */
         u3_pier*
-        u3_pier_create(c3_w wag_w, c3_c* pax_c, c3_c* sys_c);
+        u3_pier_create(c3_w wag_w, c3_c* pax_c);
 
       /* u3_pier_interrupt(): interrupt running process.
       */

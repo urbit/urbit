@@ -872,6 +872,135 @@ _unix_update_mount(u3_pier *pir_u, u3_umon* mon_u, u3_noun all)
   }
 }
 
+/* _unix_initial_update_file(): read file, but don't watch
+** XX deduplicate with _unix_update_file()
+*/
+static u3_noun
+_unix_initial_update_file(c3_c* pax_c, c3_c* bas_c)
+{
+  struct stat buf_u;
+  c3_i  fid_i = open(pax_c, O_RDONLY, 0644);
+  c3_ws len_ws, red_ws;
+  c3_y* dat_y;
+
+  if ( fid_i < 0 || fstat(fid_i, &buf_u) < 0 ) {
+    if ( ENOENT == errno ) {
+      return u3_nul;
+    }
+    else {
+      uL(fprintf(uH, "error opening initial file %s: %s\r\n",
+                 pax_c, strerror(errno)));
+      return u3_nul;
+    }
+  }
+
+  len_ws = buf_u.st_size;
+  dat_y = c3_malloc(len_ws);
+
+  red_ws = read(fid_i, dat_y, len_ws);
+
+  if ( close(fid_i) < 0 ) {
+    uL(fprintf(uH, "error closing initial file %s: %s\r\n",
+               pax_c, strerror(errno)));
+  }
+
+  if ( len_ws != red_ws ) {
+    if ( red_ws < 0 ) {
+      uL(fprintf(uH, "error reading initial file %s: %s\r\n",
+                 pax_c, strerror(errno)));
+    }
+    else {
+      uL(fprintf(uH, "wrong # of bytes read in initial file %s: %d %d\r\n",
+                 pax_c, len_ws, red_ws));
+    }
+    free(dat_y);
+    return u3_nul;
+  }
+  else {
+    u3_noun pax = _unix_string_to_path_helper(pax_c
+                   + strlen(bas_c)
+                   + 1); /* XX slightly less VERY BAD than before*/
+    u3_noun mim = u3nt(c3__text, u3i_string("plain"), u3_nul);
+    u3_noun dat = u3nt(mim, len_ws, u3i_bytes(len_ws, dat_y));
+
+    free(dat_y);
+    return u3nc(u3nt(pax, u3_nul, dat), u3_nul);
+  }
+}
+
+/* _unix_initial_update_dir(): read directory, but don't watch
+** XX deduplicate with _unix_update_dir()
+*/
+static u3_noun
+_unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
+{
+  u3_noun can = u3_nul;
+
+  DIR* rid_u = opendir(pax_c);
+  if ( !rid_u ) {
+    uL(fprintf(uH, "error opening initial directory: %s: %s\r\n",
+               pax_c, strerror(errno)));
+    return u3_nul;
+  }
+
+  while ( 1 ) {
+    struct dirent  ent_u;
+    struct dirent* out_u;
+    c3_w err_w;
+
+    if ( 0 != (err_w = readdir_r(rid_u, &ent_u, &out_u)) ) {
+      uL(fprintf(uH, "error loading initial directory %s: %s\r\n",
+                 pax_c, strerror(errno)));
+      c3_assert(0);
+    }
+    else if ( !out_u ) {
+      break;
+    }
+    else if ( '.' == out_u->d_name[0] ) {
+      continue;
+    }
+    else {
+      c3_c* pox_c = _unix_down(pax_c, out_u->d_name);
+
+      struct stat buf_u;
+
+      if ( 0 != stat(pox_c, &buf_u) ) {
+        uL(fprintf(uH, "initial can't stat %s: %s\r\n",
+                   pox_c, strerror(errno)));
+        free(pox_c);
+        continue;
+      }
+      else {
+        if ( S_ISDIR(buf_u.st_mode) ) {
+          can = u3kb_weld(_unix_initial_update_dir(pox_c, bas_c), can);
+        }
+        else {
+          can = u3kb_weld(_unix_initial_update_file(pox_c, bas_c), can);
+        }
+        free(pox_c);
+      }
+    }
+  }
+
+  if ( closedir(rid_u) < 0 ) {
+    uL(fprintf(uH, "error closing initial directory %s: %s\r\n",
+               pax_c, strerror(errno)));
+  }
+
+  return can;
+}
+
+/* u3_unix_initial_into_card(): create initial filesystem sync card.
+*/
+u3_noun
+u3_unix_initial_into_card(c3_c* arv_c)
+{
+  u3_noun can = _unix_initial_update_dir(arv_c, arv_c);
+
+  return u3nc(u3nt(u3_blip, c3__sync, u3_nul),
+              u3nq(c3__into, u3_nul, c3y, can));
+}
+
 /* _unix_sign_cb: signal callback.
 */
 static void

@@ -2,6 +2,7 @@
 **
 ** the main loop of the daemon process
 */
+#include <curl/curl.h>
 #include <unistd.h>
 #include <uv.h>
 #include "all.h"
@@ -12,39 +13,123 @@
 static c3_c sag_w;
 
 /*
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::  wyrd: requires auth to a single relevant ship       ::
-::  doom: requires auth to the daemon itself            ::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-|%                                                      ::
-+$  fate                                                ::  client to lord
-  $%  [%auth p=(unit ship) q=@]                         ::  authenticate client
-      [%wyrd p=ship q=wyrd]                             ::  ship action
-      [%doom p=doom]                                    ::  daemon command
-  ==                                                    ::
-+$  wyrd                                                ::  ship action
-  $%  [%susp ~]                                         ::  release this pier
-      [%vent p=ovum]                                    ::  generate event
-  ==                                                    ::
-+$  doom                                                ::  daemon command
-  $%  [%boot p=boot q=@pill r=@t]                       ::  boot (r=pier)
-      [%exit ~]                                         ::  end the daemon
-      [%pier p=(unit @t)]                               ::  acquire a pier
-      [%root p=ship q=wyrd]                             ::  admin ship actions
-  ==                                                    ::
-+$  boot                                                ::  boot procedures
-  $%  [%come p=(unit ship)]                             ::  mine a comet
-      [%dawn p=seed]                                    ::  real keys
-      [%fake p=who]                                     ::  fake keys
-  ==                                                    ::
-+$  pill                                                ::  boot sequence
-  (each path=@t pill=@)                                 ::
-+$  cede                                                ::  lord to client
-  $%  [%cede p=ship q[(list ovum)]                      ::  send cards
-      [%firm ~]                                         ::  accept command
-      [%deny p=@t]                                      ::  reject command
-  ==                                                    ::
---                                                      ::
+::  king/client protocol:
+::
+|%
+::  +fate: client to lord
+::
++$  fate
+  $%  ::  authenticate client
+      ::
+      [%auth p=(unit ship) q=@]
+      ::  ship action
+      ::
+      [%wyrd p=ship q=wyrd]
+      ::  daemon command
+      ::
+      [%doom p=doom]
+  ==
+::  +wyrd: ship action
+::
+::    Should require auth to a single relevant ship
+::
++$  wyrd
+  $%  :: release this pier
+      ::
+      ::    XX not implemented
+      ::
+      [%susp ~]
+      ::  generate event
+      ::
+      ::    XX partially implemented
+      ::
+      [%vent p=ovum]
+  ==
+::  +doom: daemon command
+::
+::    Should require auth to the daemon itself
+::
++$  doom
+  $%  ::  boot
+      ::
+      ::  p: boot procedure
+      ::  q: pill specifier
+      ::  r: path to pier
+      ::
+      [%boot p=boot q=pill r=@t]
+      ::  end the daemon
+      ::
+      ::    XX not implemented
+      ::
+      [%exit ~]
+      ::  acquire a pier
+      ::
+      ::    XX used for restart, may not be right
+      ::
+      [%pier p=(unit @t)]
+      ::  admin ship actions
+      ::
+      ::    XX not implemented
+      ::
+      [%root p=ship q=wyrd]
+  ==
+::  +boot: boot procedures
+::
++$  boot
+  $%  ::  mine a comet
+      ::
+      ::  p: optionally under a specific star
+      ::
+      [%come p=(unit ship)]
+      ::  boot with real keys
+      ::
+      ::    And perform pre-boot validation, retrieve snapshot, etc.
+      ::
+      [%dawn p=seed]
+      ::  boot with fake keys
+      ::
+      ::  p: identity
+      ::
+      [%fake p=ship]
+  ==
+::  +pill: boot-sequence ingredients
+::
++$  pill
+  %+  each
+    ::  %&: complete pill (either +brass or +solid)
+    ::
+    ::  p: jammed pill
+    ::  q: optional %into ovum overriding that of .p
+    ::
+    [p=@ q=(unit ovum)]
+  ::  %|: incomplete pill (+ivory)
+  ::
+  ::    XX not implemented, needs generation of
+  ::    %veer ova for install %zuse and the vanes
+  ::
+  ::  p: jammed pill
+  ::  q: module ova
+  ::  r: userspace ova
+  ::
+  [p=@ q=(list ovum) r=(list ovum)]
+::  +cede: lord to client
+::
+::  XX not implemented
+::
++$  cede
+  $%  ::  send cards
+      ::
+      ::    XX presumably the effects of %vent in +wyrd
+      ::
+      [%cede p=ship q=(list ovum)]
+      ::  accept command
+      ::
+      [%firm ~]
+      ::  reject command
+      ::
+      [%deny p=@t]
+  ==
+--
 */
 
 void _king_auth(u3_noun auth);
@@ -333,20 +418,155 @@ _king_socket_connect(uv_stream_t *sock, int status)
   u3_newt_read((u3_moat *)mor_u);
 }
 
-/* _boothack_pill(): parse CLI pill arguments into (each path pill)
+/* _king_curl_alloc(): allocate a response buffer for curl
+**  XX deduplicate with dawn.c
+*/
+static size_t
+_king_curl_alloc(void* dat_v, size_t uni_t, size_t mem_t, uv_buf_t* buf_u)
+{
+  size_t siz_t = uni_t * mem_t;
+  buf_u->base = c3_realloc(buf_u->base, 1 + siz_t + buf_u->len);
+
+  memcpy(buf_u->base + buf_u->len, dat_v, siz_t);
+  buf_u->len += siz_t;
+  buf_u->base[buf_u->len] = 0;
+
+  return siz_t;
+}
+
+/* _king_get_atom(): HTTP GET url_c, produce the response body as an atom.
+**  XX deduplicate with dawn.c
+*/
+static u3_noun
+_king_get_atom(c3_c* url_c)
+{
+  CURL *curl;
+  CURLcode result;
+  long cod_l;
+
+  uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
+
+  if ( !(curl = curl_easy_init()) ) {
+    fprintf(stderr, "failed to initialize libcurl\n");
+    exit(1);
+  }
+
+  curl_easy_setopt(curl, CURLOPT_URL, url_c);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _king_curl_alloc);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
+
+  result = curl_easy_perform(curl);
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
+
+  //  XX retry?
+  //
+  if ( CURLE_OK != result ) {
+    fprintf(stderr, "failed to fetch %s: %s\n",
+                    url_c, curl_easy_strerror(result));
+    exit(1);
+  }
+  if ( 300 <= cod_l ) {
+    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    exit(1);
+  }
+
+  curl_easy_cleanup(curl);
+
+  return u3i_bytes(buf_u.len, (const c3_y*)buf_u.base);
+}
+
+/* _get_cmd_output(): Run a shell command and capture its output.
+   Exits with an error if the command fails or produces no output.
+   The 'out_c' parameter should be an array of sufficient length to hold
+   the command's output, up to a max of len_c characters.
+*/
+static void
+_get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
+{
+  FILE *fp = popen(cmd_c, "r");
+  if ( NULL == fp ) {
+    fprintf(stderr, "'%s' failed\n", cmd_c);
+    exit(1);
+  }
+
+  if ( NULL == fgets(out_c, len_c, fp) ) {
+    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    exit(1);
+  }
+
+  pclose(fp);
+}
+
+/* _arvo_hash(): get a shortened hash of the last git commit
+   that modified the sys/ directory in arvo.
+   hax_c must be an array with length >= 11.
+*/
+static void
+_arvo_hash(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c cmd_c[2048];
+
+  sprintf(cmd_c, "git -C %s log -1 HEAD --format=%%H -- sys/", arv_c);
+  _get_cmd_output(cmd_c, out_c, 11);
+
+  out_c[10] = 0;  //  end with null-byte
+}
+
+/* _git_pill_url(): produce a URL from which to download a pill
+   based on the location of an arvo git repository.
+*/
+static void
+_git_pill_url(c3_c *out_c, c3_c *arv_c)
+{
+  c3_c hax_c[11];
+
+  assert(NULL != arv_c);
+
+  if ( 0 != system("which git >> /dev/null") ) {
+    fprintf(stderr, "boot: could not find git executable\r\n");
+    exit(1);
+  }
+
+  _arvo_hash(hax_c, arv_c);
+  sprintf(out_c, "https://bootstrap.urbit.org/git-%s.pill", hax_c);
+}
+
+/* _boothack_pill(): parse CLI pill arguments into +pill specifier
 */
 static u3_noun
 _boothack_pill(void)
 {
-  if ( 0 == u3_Host.ops_u.pil_c ) {
-    //  XX download default pill
-    //  XX support -u
-    //
-    fprintf(stderr, "boot: new ship must specify pill (-B)\r\n");
-    exit(1);
+  u3_noun arv = u3_nul;
+  u3_noun pil;
+
+  if ( 0 != u3_Host.ops_u.pil_c ) {
+    fprintf(stderr, "boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
+    pil = u3m_file(u3_Host.ops_u.pil_c);
+  }
+  else {
+    c3_c url_c[2048];
+
+    if ( (c3y == u3_Host.ops_u.git) &&
+       (0 != u3_Host.ops_u.arv_c) )
+    {
+      _git_pill_url(url_c, u3_Host.ops_u.arv_c);
+    }
+    else {
+      c3_assert( 0 != u3_Host.ops_u.url_c );
+      strcpy(url_c, u3_Host.ops_u.url_c);
+    }
+
+    fprintf(stderr, "boot: downloading pill %s\r\n", url_c);
+    pil = _king_get_atom(url_c);
   }
 
-  return u3nc(c3y, u3i_string(u3_Host.ops_u.pil_c));
+  if ( 0 != u3_Host.ops_u.arv_c ) {
+    fprintf(stderr, "boot: preparing filesystem from %s\r\n",
+                    u3_Host.ops_u.arv_c);
+    arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
+  }
+
+  return u3nt(c3y, pil, arv);
 }
 
 /* _boothack_key(): parse a private key file or value

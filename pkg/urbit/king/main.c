@@ -72,10 +72,7 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.dry = c3n;
   u3_Host.ops_u.etn = c3n;
   u3_Host.ops_u.gab = c3n;
-
-  //  XX find a way to re-enable -s (auto-pill)
-  //
-  // u3_Host.ops_u.git = c3n;
+  u3_Host.ops_u.git = c3n;
 
   //  always disable hashboard
   //  XX temporary, remove once hashes are added
@@ -92,10 +89,8 @@ _main_getopt(c3_i argc, c3_c** argv)
   u3_Host.ops_u.veb = c3n;
   u3_Host.ops_u.kno_w = DefaultKernel;
 
-  //  XX re-enable -s, -A
-  //
   while ( -1 != (ch_i=getopt(argc, argv,
-                 "G:J:B:K:H:w:u:e:E:f:F:k:m:p:LjabcCdgqtvxPDRS")) )
+                 "G:J:B:K:A:H:w:u:e:E:f:F:k:m:p:LjabcCdgqstvxPDRS")) )
   {
     switch ( ch_i ) {
       case 'J': {
@@ -111,10 +106,8 @@ _main_getopt(c3_i argc, c3_c** argv)
         break;
       }
       case 'A': {
-        // XX find a way to re-enable -A (fastboot)
-        // u3_Host.ops_u.arv_c = strdup(optarg);
-        // break;
-        return c3n;
+        u3_Host.ops_u.arv_c = strdup(optarg);
+        break;
       }
       case 'H': {
         u3_Host.ops_u.dns_c = strdup(optarg);
@@ -188,8 +181,7 @@ _main_getopt(c3_i argc, c3_c** argv)
       case 'D': { u3_Host.ops_u.dry = c3y; break; }
       case 'q': { u3_Host.ops_u.qui = c3y; break; }
       case 'v': { u3_Host.ops_u.veb = c3y; break; }
-      // XX find a way to re-enable -s (auto-pill)
-      // case 's': { u3_Host.ops_u.git = c3y; break; }
+      case 's': { u3_Host.ops_u.git = c3y; break; }
       case 'S': { u3_Host.ops_u.has = c3y; break; }
       case 't': { u3_Host.ops_u.etn = c3y; break; }
       case '?': default: {
@@ -325,20 +317,18 @@ _main_getopt(c3_i argc, c3_c** argv)
     return c3n;
   }
   else if ( u3_Host.ops_u.nuu == c3y
-           && u3_Host.ops_u.url_c == 0 ) {
-           // XX find a way to re-enable -s (auto-pill)
-           // && u3_Host.ops_u.git == c3n ) {
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.git == c3n ) {
     u3_Host.ops_u.url_c =
       "https://bootstrap.urbit.org/urbit-" URBIT_VERSION ".pill";
   }
-  // XX find a way to re-enable -A (fastboot)
-  // else if ( u3_Host.ops_u.nuu == c3y
-  //          && u3_Host.ops_u.url_c == 0
-  //          && u3_Host.ops_u.arv_c == 0 ) {
+  else if ( u3_Host.ops_u.nuu == c3y
+           && u3_Host.ops_u.url_c == 0
+           && u3_Host.ops_u.arv_c == 0 ) {
 
-  //   fprintf(stderr, "-s only makes sense with -A\n");
-  //   return c3n;
-  // }
+    fprintf(stderr, "-s only makes sense with -A\n");
+    return c3n;
+  }
 
   if ( u3_Host.ops_u.pil_c != 0 ) {
     struct stat s;
