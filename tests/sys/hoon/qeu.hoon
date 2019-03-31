@@ -16,6 +16,7 @@
 |%
 ++  unqueue
   |=  [queue=(qeu @) test=(list @)]
+  ^-  tang
   %-  zing
   |-  ^-  (list tang)
   ?~  test   ~
@@ -31,20 +32,20 @@
 ++  test-descending-sorted-list  ^-  tang
   ::
   =+  queue=(~(gas to `(qeu @)`~) descending)
-  ;:(welp (unqueue [queue descending]))
+  (unqueue [queue descending])
 ::
 ++  test-ascending-sorted-list  ^-  tang
   ::
   =+  queue=(~(gas to `(qeu @)`~) ascending)
-  ;:(welp (unqueue [queue ascending]))
+  (unqueue [queue ascending])
 ::
 ++  test-unsorted-list  ^-  tang
   ::
   =+  queue=(~(gas to `(qeu @)`~) unsorted)
-  ;:(welp (unqueue [queue unsorted]))
+  (unqueue [queue unsorted])
 ::
 ++  test-duplicates-list  ^-  tang
   ::
   =+  queue=(~(gas to `(qeu @)`~) duplicates)
-  ;:(welp (unqueue [queue duplicates]))
+  (unqueue [queue duplicates])
 --
