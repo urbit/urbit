@@ -69,7 +69,8 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  life  @ud                                           ::  ship version
+++  life  @ud                                           ::  ship key revision
+++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -252,7 +253,7 @@
           [%init p=ship]                                ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
@@ -487,7 +488,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -652,8 +653,8 @@
           {$harm ~}                                     ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
-          {$noop ~}                                     ::  no operation
-          {$sunk p=ship q=life}                         ::  report death
+          {$noop ~}                                    ::  no operation
+          {$sunk p=ship q=rift}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -750,7 +751,7 @@
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
@@ -992,7 +993,7 @@
           [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship =life]
+          [%sunk =ship =rift]
           ::  %vega: report kernel upgrade
           ::
           [%vega ~]
@@ -1686,7 +1687,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship q/life}                         ::  report death
+          {$sunk p=ship q/rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
@@ -1834,7 +1835,7 @@
       ==  ==                                            ::
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
@@ -7198,12 +7199,14 @@
         |%
         ::  azimuth: data contract
         ::
-        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
         ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
+        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  6.784.800
+        ++  launch  6.784.800  ::  mainnet
+        ::  ++  launch  0  ::  local bridge
         --
       ::
       ::  hashes of ship event signatures

@@ -5751,6 +5751,10 @@
       ::
       =?  state  ?=(^ last-sent.live.duct-status)
         =/  old-build=^build  build(date date.u.last-sent.live.duct-status)
+        ~?  =(date.build date.old-build)
+          :+  "old and new builds have same date, will probably crash!"
+            (build-to-tape build)
+          (build-to-tape old-build)
         ::
         (remove-anchor-from-root old-build [%duct duct])
       ::
