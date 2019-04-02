@@ -88,6 +88,10 @@
   ++  emit-doze
     |=  =date=(unit @da)
     ^+  event-core
+    ::  no-op if .unix-duct has not yet been set
+    ::
+    ?~  unix-duct.state
+      event-core
     ::  make sure we don't try to wake up in the past
     ::
     =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
