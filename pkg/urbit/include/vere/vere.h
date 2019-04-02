@@ -1239,7 +1239,12 @@
       /* u3_pier_exit(): trigger a gentle shutdown.
       */
         void
-        u3_pier_exit(void);
+        u3_pier_exit(u3_pier* pir_u);
+
+      /* u3_pier_bail(): clean up all event state.
+      */
+        void
+        u3_pier_bail(void);
 
       /* u3_pier_work(): send event; real pier pointer.
       */

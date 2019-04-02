@@ -529,7 +529,7 @@ _stop_exit(c3_i int_i)
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
   //  XX crashes if we haven't started a pier yet
   //
-  u3_pier_exit();
+  u3_pier_exit(u3_pier_stub());
 }
 
 /*

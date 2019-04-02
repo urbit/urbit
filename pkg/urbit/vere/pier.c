@@ -66,6 +66,7 @@
 
 static void _pier_apply(u3_pier*);
 static void _pier_boot_complete(u3_pier*, c3_o);
+static void _pier_loop_exit(u3_pier* pir_u);
 
 #if 0
 /* _pier_disk_bail(): bail from disk i/o.
@@ -1368,19 +1369,16 @@ u3_pier_discover(u3_pier* pir_u,
 /* u3_pier_exit(): trigger a gentle shutdown.
 */
 void
-u3_pier_exit(void)
+u3_pier_exit(u3_pier* pir_u)
 {
-  if ( 0 == u3K.len_w ) {
-    c3_assert(!"plan: no pier");
-  }
-  else {
-    u3_pier* pir_u = u3K.tab_u[0];
+  fprintf(stderr, "pier: exit\r\n");
+  u3_pier_work_save(pir_u);
+  _pier_work_shutdown(pir_u);
+  _pier_loop_exit(pir_u);
 
-    fprintf(stderr, "pier: exit\r\n");
-    u3_pier_work_save(pir_u);
-    _pier_work_shutdown(pir_u);
-    uv_stop(u3L);
-  }
+  //  XX no can do
+  //
+  uv_stop(u3L);
 }
 
 /* u3_pier_send(): modern send with target and path.
@@ -1425,7 +1423,7 @@ c3_rand(c3_w* rad_w)
     uL(fprintf(uH, "c3_rand getentropy: %s\n", strerror(errno)));
     //  XX review
     //
-    u3_pier_exit();
+    u3_pier_bail();
   }
 }
 
@@ -1453,30 +1451,10 @@ _pier_loop_time(void)
   u3v_time(u3_time_in_tv(&tim_tv));
 }
 
-/* _pier_loop_init(): initialize loop handlers.
-*/
-static void
-_pier_loop_init(void)
-{
-  c3_l cod_l;
-
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_init();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_init();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__cttp);
-  u3_cttp_io_init();
-  u3a_lop(cod_l);
-}
-
 /* _pier_loop_init_pier(): initialize loop handlers.
 */
 static void
-_pier_loop_init_pier(u3_pier* pir_u)
+_pier_loop_init(u3_pier* pir_u)
 {
   c3_l cod_l;
 
@@ -1501,6 +1479,22 @@ _pier_loop_init_pier(u3_pier* pir_u)
   cod_l = u3a_lush(c3__save);
   u3_save_io_init(pir_u);
   u3a_lop(cod_l);
+
+  //  XX legacy handlers, not yet scoped to a pier
+  //
+  {
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_init();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__http);
+    u3_http_io_init();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__cttp);
+    u3_cttp_io_init();
+    u3a_lop(cod_l);
+  }
 }
 
 /* _pier_loop_wake(): initialize listeners and send initial events.
@@ -1524,54 +1518,60 @@ _pier_loop_wake(u3_pier* pir_u)
   u3_behn_ef_bake(pir_u);
   u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_talk();
-  u3_http_ef_bake();
-  u3a_lop(cod_l);
+  //  XX legacy handlers, not yet scoped to a pier
+  //
+  {
+    cod_l = u3a_lush(c3__http);
+    u3_http_io_talk();
+    u3_http_ef_bake();
+    u3a_lop(cod_l);
 
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_talk();
-  u3_term_ef_bake();
-  u3a_lop(cod_l);
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_talk();
+    u3_term_ef_bake();
+    u3a_lop(cod_l);
+  }
 }
 
 /* _pier_loop_exit(): terminate I/O across the process.
 */
-#if 0
 static void
-_pier_loop_exit(void)
+_pier_loop_exit(u3_pier* pir_u)
 {
   c3_l cod_l;
 
   cod_l = u3a_lush(c3__unix);
-  u3_unix_io_exit(u3_pier_stub());
+  u3_unix_io_exit(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__ames);
-  u3_ames_io_exit(u3_pier_stub());
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__term);
-  u3_term_io_exit();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__http);
-  u3_http_io_exit();
-  u3a_lop(cod_l);
-
-  cod_l = u3a_lush(c3__cttp);
-  u3_cttp_io_exit();
+  u3_ames_io_exit(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__save);
-  u3_save_io_exit(u3_pier_stub());
+  u3_save_io_exit(pir_u);
   u3a_lop(cod_l);
 
   cod_l = u3a_lush(c3__behn);
-  u3_behn_io_exit(u3_pier_stub());
+  u3_behn_io_exit(pir_u);
   u3a_lop(cod_l);
+
+  //  XX legacy handlers, not yet scoped to a pier
+  //
+  {
+    cod_l = u3a_lush(c3__term);
+    u3_term_io_exit();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__http);
+    u3_http_io_exit();
+    u3a_lop(cod_l);
+
+    cod_l = u3a_lush(c3__cttp);
+    u3_cttp_io_exit();
+    u3a_lop(cod_l);
+  }
 }
-#endif
 
 #if 0
 /* _pier_boot_seed(): build the cryptographic seed noun.
@@ -1706,7 +1706,7 @@ void
 u3_pier_bail(void)
 {
   fflush(stdout);
-  u3_pier_exit();
+  u3_pier_exit(u3_pier_stub());
 
   exit(1);
 }
@@ -1850,26 +1850,16 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
     pir_u->pil = u3k(pil);
   }
 
-  //  initialize boot i/o
+  //  initialize i/o handlers
   //
-  _pier_loop_init_pier(pir_u);
+  _pier_loop_init(pir_u);
 
   //  initialize polling handle
   //
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
 
-  //  initialize loop
-  //
-  _pier_loop_init();
-
-  //  XX: _pier_loop_exit() should be called somewhere, but is not.
-  //
-
-  u3z(who);
-  u3z(ven);
-  u3z(pil);
-  u3z(pax);
+  u3z(who); u3z(ven); u3z(pil); u3z(pax);
 }
 
 /* u3_pier_stay(): resume the new pier system.
@@ -1881,21 +1871,14 @@ u3_pier_stay(c3_w wag_w, u3_noun pax)
   //
   u3_pier* pir_u = u3_pier_create(wag_w, u3r_string(pax));
 
-  //  initialize boot i/o
+  //  initialize i/o handlers
   //
-  _pier_loop_init_pier(pir_u);
+  _pier_loop_init(pir_u);
 
   //  initialize polling handle
   //
   uv_prepare_init(u3_Host.lup_u, &pir_u->pep_u);
   uv_prepare_start(&pir_u->pep_u, _pier_loop_prepare);
-
-  //  initialize loop
-  //
-  _pier_loop_init();
-
-  //  XX: _pier_loop_exit() should be called somewhere, but is not.
-  //
 
   u3z(pax);
 }
