@@ -1427,19 +1427,6 @@ c3_rand(c3_w* rad_w)
   }
 }
 
-#if 0
-/* _pier_zen(): get OS entropy.
-*/
-static u3_noun
-_pier_zen()
-{
-  c3_w rad_w[16];
-
-  c3_rand(rad_w);
-  return u3i_words(16, rad_w);
-}
-#endif
-
 /* _pier_loop_time(): set time.
 */
 static void
@@ -1572,91 +1559,6 @@ _pier_loop_exit(u3_pier* pir_u)
     u3a_lop(cod_l);
   }
 }
-
-#if 0
-/* _pier_boot_seed(): build the cryptographic seed noun.
-*/
-static u3_noun
-_pier_boot_seed(u3_pier* pir_u)
-{
-  if ( 0 == u3_Host.ops_u.imp_c ) {
-    u3_noun ten = _pier_zen();
-    return u3nq(c3__make, u3_nul, 11, u3nc(ten, u3_Host.ops_u.fak));
-  }
-  else {
-    u3_noun imp = u3i_string(u3_Host.ops_u.imp_c);
-    u3_noun whu = u3dc("slaw", 'p', u3k(imp));
-
-    if ( (u3_nul == whu) ) {
-      fprintf(stderr, "czar: incorrect format\r\n");
-      c3_assert(0);
-    }
-    else {
-      u3_noun gun = u3_nul;
-      if (c3n == u3_Host.ops_u.fak) {
-        c3_assert(!"must run as fake for now");
-      }
-      else {
-        gun = u3nc(u3_nul, u3_nul);
-      }
-      return u3nq(c3__sith,
-                 u3k(u3t(whu)),
-                 u3k(u3t(gun)),
-                 u3_Host.ops_u.fak);
-
-      u3z(whu); u3z(gun);
-    }
-    u3z(imp);
-  }
-}
-#endif
-
-#if 0
-/* _pier_boot_legacy(): poorly organized legacy boot calls.
-*/
-static void
-_pier_boot_legacy(u3_pier* pir_u,
-                  c3_o     nuu_o)
-{
-  /* XX XX horrible backward compatibility hack - still used
-  ** in sist.c, raft.c, unix.c
-  */
-  u3_Host.ops_u.nuu = nuu_o;
-
-  if ( c3y == nuu_o ) {
-    u3_noun pig = _pier_boot_seed(pir_u);
-
-    {
-      u3_noun pax = u3nq(u3_blip, c3__term, '1', u3_nul);
-      u3_pier_plan(pax, u3nc(c3__boot, pig));
-    }
-
-    u3_ames_ef_bake();
-    u3_term_ef_bunk();
-
-    if ( u3_Host.ops_u.imp_c ) {
-      u3_unix_ef_initial_into();
-    }
-    /* from unix.c
-    */
-    if ( c3n == nuu_o ) {
-      u3_pier_plan(u3nt(u3_blip, c3__boat, u3_nul),
-                   u3nc(c3__boat, u3_nul));
-    }
-  }
-
-  u3_http_ef_bake();
-
-  _pier_loop_talk();
-
-  _pier_loop_poll();
-  u3_term_ef_boil(1);
-
-  if ( c3y == u3_Host.ops_u.veb ) {
-    u3_term_ef_verb();
-  }
-}
-#endif
 
 /* _pier_boot_complete(): start organic event flow on boot/reboot.
 */
