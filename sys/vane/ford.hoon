@@ -2678,7 +2678,7 @@
         :_  message.u.input-result
         :-  %leaf
         ;:  weld
-          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          "ford: %cast "  (trip mark)  " on ["  (trip (scot %p ship.disc))
           " "  (trip desk.disc)  "] failed on input:"
         ==
       ::
@@ -2699,7 +2699,7 @@
         :_  message.u.translation-path-result
         :-  %leaf
         ;:  weld
-          "ford: %cast "  (trip mark)  "on ["  (trip (scot %p ship.disc))
+          "ford: %cast "  (trip mark)  " on ["  (trip (scot %p ship.disc))
           " "  (trip desk.disc)  "] failed:"
         ==
       ::
