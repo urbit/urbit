@@ -2,7 +2,7 @@
 
 set -e
 
-URBIT_VERSION=0.7.0
+URBIT_VERSION=0.8.0
 
 deps="                                                                    \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
@@ -15,7 +15,7 @@ defmacro () {
   echo "#define $1 $2" >>include/config.h
 }
 
-defmacro URBIT_VERSION '"0.7.0"'
+defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
 [ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "$CPU_DEBUG" ]        && defmacro U3_CPU_DEBUG 1
