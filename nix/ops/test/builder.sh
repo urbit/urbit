@@ -42,7 +42,8 @@ urb ./ship -p test -d ':-  %renders  /'
 urb ./ship -d '~&  %finish-test-renders  ~'
 
 # Run the test generator
-urb ./ship -d '+test' | tee test-generator-output
+urb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
+  tee test-generator-output
 
 shutdown
 

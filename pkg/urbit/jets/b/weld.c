@@ -10,15 +10,19 @@
   u3qb_weld(u3_noun a,
             u3_noun b)
   {
-    if ( 0 == a ) {
-      return u3k(b);
+    u3_noun c = u3qb_flop(a);
+    u3_noun d = c;
+
+    u3k(b);
+
+    while ( u3_nul != c ) {
+      b = u3nc(u3k(u3h(c)), b);
+      c = u3t(c);
     }
-    else if ( c3n == u3du(a) ) {
-      return u3m_bail(c3__exit);
-    }
-    else {
-      return u3nc(u3k(u3h(a)), u3qb_weld(u3t(a), b));
-    }
+
+    u3z(d);
+
+    return b;
   }
   u3_noun
   u3wb_weld(u3_noun cor)

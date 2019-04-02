@@ -6,14 +6,15 @@
   static u3_noun
   _turn_in(u3j_site* sit_u, u3_noun a)
   {
-    if ( u3_nul == a ) {
-      return u3_nul;
+    u3_noun b = u3_nul;
+
+    while ( u3_nul != a ) {
+      b = u3nc(u3j_gate_slam(sit_u, u3k(u3h(a))),
+               b);
+      a = u3t(a);
     }
-    else {
-      return u3nc(
-          u3j_gate_slam(sit_u, u3k(u3h(a))),
-          _turn_in(sit_u, u3t(a)));
-    }
+
+    return u3kb_flop(b);
   }
 
 /* functions
