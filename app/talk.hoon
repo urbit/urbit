@@ -2098,7 +2098,7 @@
     ::  render circle (as glyph if we can).
     ?~  moy
       =+  cha=(~(get by bound) one ~ ~)
-      =-  ?~(cha - "{u.cha ~} {-}")
+      =-  ?~(cha - "{u.cha ~}")
       ~(cr-phat cr one)
     (~(cr-curt cr one) u.moy)
   --
