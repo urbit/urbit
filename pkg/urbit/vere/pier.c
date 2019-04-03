@@ -255,16 +255,18 @@ _pier_disk_commit_request(u3_writ* wit_u)
   }
 }
 
-/* _pier_dispose(): dispose of writ.
+/* _pier_writ_dispose(): dispose of writ.
 */
 static void
-_pier_dispose(u3_writ* wit_u)
+_pier_writ_dispose(u3_writ* wit_u)
 {
   /* free contents
   */
   u3z(wit_u->job);
   u3z(wit_u->mat);
   u3z(wit_u->act);
+
+  c3_free(wit_u);
 }
 
 /* _pier_work_release(): apply side effects.
@@ -507,7 +509,7 @@ start:
         _pier_work_release(wit_u);
       }
 
-      _pier_dispose(wit_u);
+      _pier_writ_dispose(wit_u);
 
       wit_u = pir_u->ext_u;
       act_o = c3y;
