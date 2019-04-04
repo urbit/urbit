@@ -124,6 +124,8 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 {
   u3_lord* god_u = pir_u->god_u;
 
+  c3_assert( 0 != pir_u->lif_d );
+
   u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
@@ -661,6 +663,8 @@ _pier_disk_read_header(u3_pier* pir_u, u3_noun ovo)
   c3_assert( 1 >= u3r_met(3, len) );
 
   _pier_set_ship(pir_u, u3k(who), u3k(fak));
+
+  pir_u->lif_d = u3r_chub(0, len);
 
   u3z(ovo);
 

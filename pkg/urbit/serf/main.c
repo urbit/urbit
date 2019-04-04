@@ -598,6 +598,7 @@ static void
 _serf_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
 {
   c3_assert( u3_none == u3A->our );
+  c3_assert( 0 != len_w );
 
   u3A->our = who;
   u3A->fak = fak;
