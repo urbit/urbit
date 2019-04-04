@@ -440,8 +440,13 @@ _pier_apply(u3_pier* pir_u)
   u3_disk* log_u = pir_u->log_u;
   u3_lord* god_u = pir_u->god_u;
 
-  if ( !log_u || !god_u ) {
+  if ( (0 == log_u) ||
+       (0 == god_u) ||
+       (c3n == god_u->liv_o) )
+  {
+    return;
   }
+
   u3_writ* wit_u;
   c3_o     act_o = c3n;
 
@@ -1028,18 +1033,25 @@ _pier_disk_create(u3_pier* pir_u,
   return c3y;
 }
 
-/* _pier_play(): with active worker, create or load log.
+/* _pier_work_play(): with active worker, create or load log.
 */
 static void
-_pier_play(u3_pier* pir_u,
-           c3_d     lav_d,
-           c3_l     mug_l)
+_pier_work_play(u3_pier* pir_u,
+                c3_d     lav_d,
+                c3_l     mug_l)
 {
+  u3_lord* god_u = pir_u->god_u;
+
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", lav_d, mug_l);
 #endif
 
-  u3_pier_work_save(pir_u);
+  c3_assert( c3n == god_u->liv_o );
+  god_u->liv_o = c3y;
+
+  //  all events in the serf are complete
+  //
+  god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
   /* load all committed events
   */
@@ -1153,7 +1165,7 @@ _pier_work_poke(void*   vod_p,
             }
           }
 
-          _pier_play(pir_u, lav_d, mug_l);
+          _pier_work_play(pir_u, lav_d, mug_l);
 
           u3z(jar); u3z(mat);
           break;
@@ -1242,6 +1254,7 @@ _pier_work_create(u3_pier* pir_u)
 
   pir_u->god_u = god_u;
   god_u->pir_u = pir_u;
+  god_u->liv_o = c3n;
 
   /* spawn new process and connect to it
   */

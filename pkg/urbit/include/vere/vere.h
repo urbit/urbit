@@ -626,6 +626,7 @@
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
+          c3_o                 liv_o;           //  live
           c3_d                 sen_d;           //  last event dispatched
           c3_d                 dun_d;           //  last event completed
           c3_d                 rel_d;           //  last event released
