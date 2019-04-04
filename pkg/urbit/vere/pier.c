@@ -534,7 +534,75 @@ start:
   }
 }
 
+/* _pier_disk_init_complete():
+** XX async
+*/
+static void
+_pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
+{
+  c3_assert( c3n == log_u->liv_o );
+
+  log_u->com_d = log_u->moc_d = evt_d;
+
+  log_u->liv_o = c3y;
+}
+
+/* _pier_disk_init():
+** XX async
+*/
+static c3_o
+_pier_disk_init(u3_disk* log_u)
+{
+  c3_d evt_d = 0;
+  c3_d pos_d = 0;
+
+  c3_assert( c3n == log_u->liv_o );
+
+  log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
+
+  if ( !log_u->fol_u ) {
+    return c3n;
+  }
+
+  //  use the last event in the log to set the commit point.
+  //
+  if ( 0 != (pos_d = log_u->fol_u->end_d) ) {
+    c3_d len_d = 0;
+
+    c3_d* buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
+
+    if ( !buf_d ) {
+      fprintf(stderr, "pier: load: commit: corrupt\r\n");
+      return c3n;
+    }
+
+    {
+      u3_noun mat = u3i_chubs(len_d, buf_d);
+      u3_noun ovo = u3ke_cue(u3k(mat));
+
+      c3_assert(c3__work == u3h(ovo));
+
+      u3_noun evt = u3h(u3t(ovo));
+
+      evt_d = u3r_chub(0, evt);
+
+      u3z(mat); u3z(ovo); u3z(evt);
+    }
+
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
+#endif
+
+    c3_free(buf_d);
+  }
+
+  _pier_disk_init_complete(log_u, evt_d);
+
+  return c3y;
+}
+
 /* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
+** XX async
 */
 static c3_o
 _pier_disk_load_commit(u3_pier* pir_u,
@@ -542,15 +610,13 @@ _pier_disk_load_commit(u3_pier* pir_u,
 
 {
   u3_disk* log_u = pir_u->log_u;
-  c3_d     old_d = 0;
-
-  log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
 
   if ( !log_u->fol_u ) {
     return c3n;
   }
   else {
     c3_d pos_d = log_u->fol_u->end_d;
+    c3_d old_d = 0;
 
 #ifdef VERBOSE_EVENTS
     fprintf(stderr, "pier: load: commit: at %" PRIx64 "\r\n", pos_d);
@@ -610,23 +676,15 @@ _pier_disk_load_commit(u3_pier* pir_u,
       evt_d = u3r_chub(0, evt);
       u3z(ovo);
 
-      /* use the last event in the log to set the commit point.
-      */
-      {
-        if ( !old_d ) {
-#ifdef VERBOSE_EVENTS
-          fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
-#endif
-
-          log_u->com_d = log_u->moc_d = old_d = evt_d;
-        }
-        else {
-          if ( (old_d - 1ULL) != evt_d ) {
-            fprintf(stderr, "pier: load: event order\r\n");
-            return c3n;
-          }
-          old_d = evt_d;
-        }
+      //  confirm event order
+      //
+      if ( (0 != old_d) &&
+           ((old_d - 1ULL) != evt_d) ) {
+        fprintf(stderr, "pier: load: event order\r\n");
+        return c3n;
+      }
+      else {
+        old_d = evt_d;
       }
 
       if ( evt_d < lav_d ) {
@@ -891,24 +949,32 @@ static c3_o
 _pier_disk_consolidate(u3_pier*  pir_u,
                        c3_d      lav_d)
 {
+  //  sanity check
+  //
+  if ( pir_u->ext_u && (pir_u->ext_u->evt_d != lav_d) ) {
+    fprintf(stderr, "pier: consolidate: gap: %" PRIu64 ", %" PRIu64 "\r\n",
+                    pir_u->ext_u->evt_d,
+                    lav_d);
+
+    fprintf(stderr, "consolidate: shutdown\r\n");
+
+    _pier_disk_shutdown(pir_u);
+    _pier_work_shutdown(pir_u);
+    return c3n;
+  }
+
   u3_disk* log_u = pir_u->log_u;
   u3_lord* god_u = pir_u->god_u;
 
-  /* set work and pier counters.
-  */
-  {
-    god_u->sen_d = (lav_d - 1ULL);
-    god_u->dun_d = (lav_d - 1ULL);
-    god_u->rel_d = log_u->com_d;
-
-    //  XX double check this
-    //
-    if ( 0 != pir_u->ent_u ) {
-      pir_u->gen_d = (1ULL + pir_u->ent_u->evt_d);
-    }
-    else {
-      pir_u->gen_d = lav_d;
-    }
+  //  set next expected event number
+  //
+  //    XX double check this, assumes all replay events already enqueued
+  //
+  if ( 0 != pir_u->ent_u ) {
+    pir_u->gen_d = (1ULL + pir_u->ent_u->evt_d);
+  }
+  else {
+    pir_u->gen_d = lav_d;
   }
 
   /* handle boot semantics.  we don't save any commits before we've
@@ -921,29 +987,16 @@ _pier_disk_consolidate(u3_pier*  pir_u,
   } else {
     pir_u->but_d = (lav_d - 1ULL);
 
+    //  mark all commits as released
+    //
+    god_u->rel_d = log_u->com_d;
+
     /* we have already booted this pier; send system events.
     */
     _pier_boot_complete(pir_u, c3n);
   }
 
-  /* sanity check
-  */
-  if ( pir_u->ext_u && (pir_u->ext_u->evt_d != lav_d) ) {
-    fprintf(stderr, "pier: consolidate: gap: %" PRIu64 ", %" PRIu64 "\r\n",
-                    pir_u->ext_u->evt_d,
-                    lav_d);
-    goto error;
-  }
-
   return c3y;
-
-  error: {
-    fprintf(stderr, "consolidate: shutdown\r\n");
-
-    _pier_disk_shutdown(pir_u);
-    _pier_work_shutdown(pir_u);
-    return c3n;
-  }
 }
 
 /* _pier_disk_create(): load log for given point.
@@ -952,10 +1005,11 @@ static c3_o
 _pier_disk_create(u3_pier* pir_u,
                   c3_d     lav_d)
 {
-  u3_disk*  log_u = c3_calloc(sizeof(*log_u));
+  u3_disk* log_u = c3_calloc(sizeof(*log_u));
 
-  log_u->pir_u = pir_u;
   pir_u->log_u = log_u;
+  log_u->pir_u = pir_u;
+  log_u->liv_o = c3n;
 
   /* create/load pier, urbit directory, log directory.
   */
@@ -1015,21 +1069,30 @@ _pier_disk_create(u3_pier* pir_u,
     }
   }
 
-  /* populate timeline and event queue from disk
-  */
-  {
+  //  create/load event log
+  //
+  if ( c3n == _pier_disk_init(log_u) ) {
+    return c3n;
+  }
+
+  //  if there are committed events not reflected in the serf
+  //
+  if ( log_u->com_d >= lav_d ) {
     if ( c3n == _pier_disk_load_commit(pir_u, lav_d) ) {
       return c3n;
     }
+
+    fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
+                                                             (lav_d - 1ULL),
+                                                             log_u->com_d);
   }
 
-  /* consolidate loaded logic
-  */
-  {
-    if ( c3n == _pier_disk_consolidate(pir_u, lav_d) ) {
-      return c3n;
-    }
+  // consolidate loaded logic
+  //
+  if ( c3n == _pier_disk_consolidate(pir_u, lav_d) ) {
+    return c3n;
   }
+
   return c3y;
 }
 

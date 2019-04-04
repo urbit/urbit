@@ -645,6 +645,7 @@
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
           u3_foil*         fol_u;               //  logfile
+          c3_o             liv_o;               //  live
           c3_d             end_d;               //  byte end of file
           c3_d             moc_d;               //  commit requested
           c3_d             com_d;               //  committed
