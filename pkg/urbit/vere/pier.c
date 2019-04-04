@@ -601,6 +601,47 @@ _pier_disk_init(u3_disk* log_u)
   return c3y;
 }
 
+/* _pier_set_ship():
+*/
+static void
+_pier_set_ship(u3_pier* pir_u, u3_noun who, u3_noun fak)
+{
+  c3_assert( c3y == u3ud(who) );
+  c3_assert( (c3y == fak) || (c3n == fak) );
+
+  c3_o fak_o = fak;
+  c3_d who_d[2];
+
+  u3r_chubs(0, 2, who_d, who);
+
+  c3_assert( ( (0 == pir_u->fak_o) &&
+               (0 == pir_u->who_d[0]) &&
+               (0 == pir_u->who_d[1]) ) ||
+             ( (fak_o == pir_u->fak_o) &&
+               (who_d[0] == pir_u->who_d[0]) &&
+               (who_d[1] == pir_u->who_d[1]) ) );
+
+  pir_u->fak_o = fak_o;
+  pir_u->who_d[0] = who_d[0];
+  pir_u->who_d[1] = who_d[1];
+
+  {
+    u3_noun how = u3dc("scot", 'p', u3k(who));
+
+    c3_free(pir_u->who_c);
+    pir_u->who_c = u3r_string(how);
+    u3z(how);
+  }
+
+  //  Disable networking for fake ships
+  //
+  if ( c3y == pir_u->fak_o ) {
+    u3_Host.ops_u.net = c3n;
+  }
+
+  u3z(who); u3z(fak);
+}
+
 /* _pier_disk_read_header():
 ** XX async
 */
@@ -619,15 +660,7 @@ _pier_disk_read_header(u3_pier* pir_u, u3_noun ovo)
   c3_assert( c3y == u3ud(len) );
   c3_assert( 1 >= u3r_met(3, len) );
 
-  pir_u->fak_o = (c3_o)fak;
-  pir_u->lif_d = u3r_word(0, len);
-  u3r_chubs(0, 2, pir_u->who_d, who);
-
-  //  Disable networking for fake ships
-  //
-  if ( c3y == pir_u->fak_o ) {
-    u3_Host.ops_u.net = c3n;
-  }
+  _pier_set_ship(pir_u, u3k(who), u3k(fak));
 
   u3z(ovo);
 
@@ -873,7 +906,6 @@ _pier_boot_vent(u3_pier* pir_u)
   //  prepare serf for boot sequence
   //
   {
-    pir_u->fak_o = ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n;
     fprintf(stderr, "boot: ship: %s%s\r\n",
                      pir_u->who_c,
                      (c3y == pir_u->fak_o) ? " (fake)" : "");
@@ -1221,26 +1253,7 @@ _pier_work_poke(void*   vod_p,
 
             //  single-home
             //
-            {
-              u3_atom who = u3h(r_jar);
-              c3_d  who_d[2];
-              u3r_chubs(0, 2, who_d, who);
-
-              c3_assert( ( (0 == pir_u->who_d[0]) &&
-                           (0 == pir_u->who_d[1]) ) ||
-                         ( (who_d[0] == pir_u->who_d[0]) &&
-                           (who_d[1] == pir_u->who_d[1]) ) );
-
-              pir_u->fak_o = u3t(r_jar);
-              pir_u->who_d[0] = who_d[0];
-              pir_u->who_d[1] = who_d[1];
-
-              //  Disable networking for fake ships
-              //
-              if ( c3y == pir_u->fak_o ) {
-                u3_Host.ops_u.net = c3n;
-              }
-            }
+            _pier_set_ship(pir_u, u3k(u3h(r_jar)), u3k(u3t(r_jar)));
           }
 
           _pier_work_play(pir_u, lav_d, mug_l);
@@ -1832,17 +1845,11 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    {
-      u3_noun how = u3dc("scot", 'p', u3k(who));
-
-      pir_u->who_c = u3r_string(how);
-      u3z(how);
-    }
-
-    u3r_chubs(0, 2, pir_u->who_d, who);
-
     pir_u->bot = u3k(ven);
     pir_u->pil = u3k(pil);
+
+    _pier_set_ship(pir_u, u3k(who),
+                   ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n);
   }
 
   //  initialize i/o handlers
