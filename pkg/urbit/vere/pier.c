@@ -536,73 +536,6 @@ start:
   }
 }
 
-/* _pier_disk_init_complete():
-** XX async
-*/
-static void
-_pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
-{
-  c3_assert( c3n == log_u->liv_o );
-
-  log_u->com_d = log_u->moc_d = evt_d;
-
-  log_u->liv_o = c3y;
-}
-
-/* _pier_disk_init():
-** XX async
-*/
-static c3_o
-_pier_disk_init(u3_disk* log_u)
-{
-  c3_d evt_d = 0;
-  c3_d pos_d = 0;
-
-  c3_assert( c3n == log_u->liv_o );
-
-  log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
-
-  if ( !log_u->fol_u ) {
-    return c3n;
-  }
-
-  //  use the last event in the log to set the commit point.
-  //
-  if ( 0 != (pos_d = log_u->fol_u->end_d) ) {
-    c3_d len_d = 0;
-
-    c3_d* buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
-
-    if ( !buf_d ) {
-      fprintf(stderr, "pier: load: commit: corrupt\r\n");
-      return c3n;
-    }
-
-    {
-      u3_noun mat = u3i_chubs(len_d, buf_d);
-      u3_noun ovo = u3ke_cue(u3k(mat));
-
-      c3_assert(c3__work == u3h(ovo));
-
-      u3_noun evt = u3h(u3t(ovo));
-
-      evt_d = u3r_chub(0, evt);
-
-      u3z(mat); u3z(ovo); u3z(evt);
-    }
-
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
-#endif
-
-    c3_free(buf_d);
-  }
-
-  _pier_disk_init_complete(log_u, evt_d);
-
-  return c3y;
-}
-
 /* _pier_set_ship():
 */
 static void
@@ -1046,6 +979,73 @@ _pier_disk_consolidate(u3_pier*  pir_u,
     */
     _pier_boot_complete(pir_u, c3n);
   }
+
+  return c3y;
+}
+
+/* _pier_disk_init_complete():
+** XX async
+*/
+static void
+_pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
+{
+  c3_assert( c3n == log_u->liv_o );
+
+  log_u->com_d = log_u->moc_d = evt_d;
+
+  log_u->liv_o = c3y;
+}
+
+/* _pier_disk_init():
+** XX async
+*/
+static c3_o
+_pier_disk_init(u3_disk* log_u)
+{
+  c3_d evt_d = 0;
+  c3_d pos_d = 0;
+
+  c3_assert( c3n == log_u->liv_o );
+
+  log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
+
+  if ( !log_u->fol_u ) {
+    return c3n;
+  }
+
+  //  use the last event in the log to set the commit point.
+  //
+  if ( 0 != (pos_d = log_u->fol_u->end_d) ) {
+    c3_d len_d = 0;
+
+    c3_d* buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
+
+    if ( !buf_d ) {
+      fprintf(stderr, "pier: load: commit: corrupt\r\n");
+      return c3n;
+    }
+
+    {
+      u3_noun mat = u3i_chubs(len_d, buf_d);
+      u3_noun ovo = u3ke_cue(u3k(mat));
+
+      c3_assert(c3__work == u3h(ovo));
+
+      u3_noun evt = u3h(u3t(ovo));
+
+      evt_d = u3r_chub(0, evt);
+
+      u3z(mat); u3z(ovo); u3z(evt);
+    }
+
+#ifdef VERBOSE_EVENTS
+    fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
+#endif
+
+    c3_free(buf_d);
+  }
+
+  _pier_disk_init_complete(log_u, evt_d);
 
   return c3y;
 }
