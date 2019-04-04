@@ -601,6 +601,39 @@ _pier_disk_init(u3_disk* log_u)
   return c3y;
 }
 
+/* _pier_disk_read_header():
+** XX async
+*/
+static c3_o
+_pier_disk_read_header(u3_pier* pir_u, u3_noun ovo)
+{
+  u3_noun who, fak, len;
+
+  c3_assert( c3__boot == u3h(ovo) );
+  u3x_qual(ovo, 0, &who, &fak, &len);
+
+  c3_assert( c3y == u3ud(who) );
+  c3_assert( 1 >= u3r_met(7, who) );
+  c3_assert( c3y == u3ud(fak) );
+  c3_assert( 1 >= u3r_met(0, fak) );
+  c3_assert( c3y == u3ud(len) );
+  c3_assert( 1 >= u3r_met(3, len) );
+
+  pir_u->fak_o = (c3_o)fak;
+  pir_u->lif_d = u3r_word(0, len);
+  u3r_chubs(0, 2, pir_u->who_d, who);
+
+  //  Disable networking for fake ships
+  //
+  if ( c3y == pir_u->fak_o ) {
+    u3_Host.ops_u.net = c3n;
+  }
+
+  u3z(ovo);
+
+  return c3y;
+}
+
 /* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
 ** XX async
 */
@@ -643,30 +676,12 @@ _pier_disk_load_commit(u3_pier* pir_u,
       if ( (0ULL == pos_d) &&
            (1ULL == lav_d) )
       {
-        u3_noun who, fak, len;
+        u3z(mat);
 
-        c3_assert( c3__boot == u3h(ovo) );
-        u3x_qual(ovo, 0, &who, &fak, &len);
-
-        c3_assert( c3y == u3ud(who) );
-        c3_assert( 1 >= u3r_met(7, who) );
-        c3_assert( c3y == u3ud(fak) );
-        c3_assert( 1 >= u3r_met(0, fak) );
-        c3_assert( c3y == u3ud(len) );
-        c3_assert( 1 >= u3r_met(3, len) );
-
-        pir_u->fak_o = (c3_o)fak;
-        pir_u->lif_d = u3r_word(0, len);
-        u3r_chubs(0, 2, pir_u->who_d, who);
-
-        //  Disable networking for fake ships
-        //
-        if ( c3y == pir_u->fak_o ) {
-          u3_Host.ops_u.net = c3n;
+        if ( c3n == _pier_disk_read_header(pir_u, ovo) ) {
+          return c3n;
         }
 
-        u3z(mat);
-        u3z(ovo);
         break;
       }
 
