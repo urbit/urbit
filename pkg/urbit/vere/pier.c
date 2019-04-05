@@ -68,7 +68,6 @@ static void _pier_apply(u3_pier* pir_u);
 static void _pier_boot_complete(u3_pier* pir_u);
 static void _pier_loop_exit(u3_pier* pir_u);
 
-#if 0
 /* _pier_disk_bail(): bail from disk i/o.
 */
 static void
@@ -78,7 +77,6 @@ _pier_disk_bail(void* vod_p, const c3_c* err_c)
 
   fprintf(stderr, "disk error: %s\r\n", err_c);
 }
-#endif
 
 /* _pier_work_bail(): handle subprocess error.
 */
@@ -577,31 +575,73 @@ _pier_set_ship(u3_pier* pir_u, u3_noun who, u3_noun fak)
   u3z(who); u3z(fak);
 }
 
-/* _pier_disk_read_header():
+/* _pier_disk_read_header_complete():
 ** XX async
 */
-static c3_o
-_pier_disk_read_header(u3_pier* pir_u, u3_noun ovo)
+static void
+_pier_disk_read_header_complete(u3_disk* log_u, u3_noun dat)
 {
-  u3_noun who, fak, len;
+  u3_pier* pir_u = log_u->pir_u;
 
-  c3_assert( c3__boot == u3h(ovo) );
-  u3x_qual(ovo, 0, &who, &fak, &len);
+  {
+    u3_noun who, fak, len;
 
-  c3_assert( c3y == u3ud(who) );
-  c3_assert( 1 >= u3r_met(7, who) );
-  c3_assert( c3y == u3ud(fak) );
-  c3_assert( 1 >= u3r_met(0, fak) );
-  c3_assert( c3y == u3ud(len) );
-  c3_assert( 1 >= u3r_met(3, len) );
+    u3x_trel(dat, &who, &fak, &len);
 
-  _pier_set_ship(pir_u, u3k(who), u3k(fak));
+    c3_assert( c3y == u3ud(who) );
+    c3_assert( 1 >= u3r_met(7, who) );
+    c3_assert( c3y == u3ud(fak) );
+    c3_assert( 1 >= u3r_met(0, fak) );
+    c3_assert( c3y == u3ud(len) );
+    c3_assert( 1 >= u3r_met(3, len) );
 
-  pir_u->lif_d = u3r_chub(0, len);
+    _pier_set_ship(pir_u, u3k(who), u3k(fak));
 
-  u3z(ovo);
+    pir_u->lif_d = u3r_chub(0, len);
+  }
 
-  return c3y;
+  u3z(dat);
+}
+
+/* _pier_disk_read_header():
+** XX async
+** XX very slow
+*/
+static void
+_pier_disk_read_header(u3_disk* log_u)
+{
+  c3_assert( 0 != log_u->fol_u );
+
+  c3_d pos_d = log_u->fol_u->end_d;
+  c3_o got_o = c3n;
+
+  c3_assert( 0ULL != pos_d );
+
+  while ( pos_d ) {
+    c3_d  len_d, evt_d;
+    c3_d* buf_d;
+    u3_noun mat, ovo, job, evt;
+
+    buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
+
+    if ( !buf_d ) {
+      _pier_disk_bail(0, "corrupt header");
+      return;
+    }
+
+    if ( 0ULL == pos_d) {
+      u3_noun mat = u3i_chubs(len_d, buf_d);
+      u3_noun ovo = u3ke_cue(u3k(mat));
+
+      c3_assert( c3__boot == u3h(ovo) );
+
+      _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
+
+      u3z(ovo); u3z(mat);
+    }
+
+    c3_free(buf_d);
+  }
 }
 
 /* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
@@ -632,7 +672,7 @@ _pier_disk_load_commit(u3_pier* pir_u,
 
       buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
       if ( !buf_d ) {
-        fprintf(stderr, "pier: load: commit: corrupt\r\n");
+        _pier_disk_bail(0, "load: commit: corrupt");
         return c3n;
       }
 
@@ -641,17 +681,15 @@ _pier_disk_load_commit(u3_pier* pir_u,
 
       ovo = u3ke_cue(u3k(mat));
 
-      //  single-home
+      //  reached header
       //
-      if ( (0ULL == pos_d) &&
-           (1ULL == lav_d) )
-      {
-        u3z(mat);
+      if ( 0ULL == pos_d ) {
+        c3_assert( 1ULL == lav_d );
+        c3_assert( c3__boot == u3h(ovo) );
 
-        if ( c3n == _pier_disk_read_header(pir_u, ovo) ) {
-          return c3n;
-        }
+        _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
 
+        u3z(ovo); u3z(mat);
         break;
       }
 
@@ -968,18 +1006,30 @@ _pier_boot_ready(u3_pier* pir_u)
   //  replay
   //
   else if ( god_u->dun_d < log_u->com_d) {
-    fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
-                                                              god_u->dun_d,
-                                                              log_u->com_d);
-
     //  set the boot barrier to the last committed event
     //
     pir_u->but_d = log_u->com_d;
 
     if ( 0 == god_u->dun_d ) {
+      fprintf(stderr, "pier: replaying %" PRIu64 " events\r\n",
+                                                 log_u->com_d);
+
+      //  restore pier identity
+      //
+      //    XX currently very slow
+      //    technically unnecessary due to the current _pier_disk_load_commit
+      //    could be removed if _pier_disk_load_commit were moved before block
+      //
+      _pier_disk_read_header(pir_u->log_u);
+
       //  prepare serf for replay of boot sequence, don't write log header
       //
       _pier_work_boot(pir_u, c3n);
+    }
+    else {
+      fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
+                                                                god_u->dun_d,
+                                                                log_u->com_d);
     }
 
     //  begin queuing batches of committed events
