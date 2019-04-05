@@ -255,6 +255,25 @@ _pier_disk_commit_request(u3_writ* wit_u)
   }
 }
 
+/* _pier_writ_unlink(): unlink writ from queue.
+*/
+static void
+_pier_writ_unlink(u3_writ* wit_u)
+{
+  u3_pier* pir_u = wit_u->pir_u;
+
+#ifdef VERBOSE_EVENTS
+  fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
+#endif
+
+  pir_u->ext_u = wit_u->nex_u;
+
+  if ( wit_u == pir_u->ent_u ) {
+    c3_assert(pir_u->ext_u == 0);
+    pir_u->ent_u = 0;
+  }
+}
+
 /* _pier_writ_dispose(): dispose of writ.
 */
 static void
@@ -492,18 +511,7 @@ start:
       //    XX must be done before releasing effects
       //    which is currently reentrant
       //
-      {
-#ifdef VERBOSE_EVENTS
-        fprintf(stderr, "pier: (%" PRIu64 "): delete\r\n", wit_u->evt_d);
-#endif
-
-        pir_u->ext_u = wit_u->nex_u;
-
-        if ( wit_u == pir_u->ent_u ) {
-          c3_assert(pir_u->ext_u == 0);
-          pir_u->ent_u = 0;
-        }
-      }
+      _pier_writ_unlink(wit_u);
 
       //  will be false during replay
       //
