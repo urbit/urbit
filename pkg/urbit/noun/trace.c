@@ -344,10 +344,10 @@ u3t_flee(void)
 /*  u3t_trace_open(): opens a trace file and writes the preamble.
 */
 void
-u3t_trace_open()
+u3t_trace_open(c3_c* dir_c)
 {
   c3_c fil_c[2048];
-  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3C.dir_c);
+  snprintf(fil_c, 2048, "%s/.urb/put/trace", dir_c);
 
   struct stat st;
   if ( -1 == stat(fil_c, &st) ) {
@@ -486,7 +486,7 @@ u3t_event_trace(const c3_c* name, c3_c type)
           "\"tid\": 1, \"ts\": %" PRIu64 ", \"id\": \"0x100\"}, \n",
           name,
           type,
-          getpid(),
+          u3_Host.tra_u.nid_w,
           u3t_trace_time());
   u3_Host.tra_u.con_w++;
 }

@@ -31,6 +31,7 @@
       c3_d    key_d[4];                     //  disk key
       u3_moat inn_u;                        //  message input
       u3_mojo out_u;                        //  message output
+      c3_c*   dir_c;                        //  execution directory (pier)
     } u3_serf;
     static u3_serf u3V;
 
@@ -578,17 +579,17 @@ _serf_poke_work(c3_d    evt_d,              //  event number
 {
   if ( u3C.wag_w & u3o_trace ) {
     if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
-      u3t_trace_open();
+      u3t_trace_open(u3V.dir_c);
     }
     else if ( u3_Host.tra_u.con_w >= 100000 ) {
       u3t_trace_close();
-      u3t_trace_open();
+      u3t_trace_open(u3V.dir_c);
     }
   }
 
-  if ( evt_d < 6 ) {
+  if ( evt_d <= u3V.len_w ) {
     c3_c lab_c[8];
-    snprintf(lab_c, 8, "boot: %llu", evt_d);
+    snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
 
     u3t_event_trace(lab_c, 'B');
     _serf_work_boot(evt_d, mug_l, job);
@@ -599,7 +600,7 @@ _serf_poke_work(c3_d    evt_d,              //  event number
     u3_noun cad = u3h(u3t(u3t(job)));
 
     c3_c lab_c[2048];
-    snprintf(lab_c, 2048, "event %llu: [%s %s]", evt_d,
+    snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]", evt_d,
              u3m_pretty_path(wir), u3m_pretty(cad));
 
     u3t_event_trace(lab_c, 'B');
@@ -789,23 +790,7 @@ main(c3_i argc, c3_c* argv[])
   /* load pier directory
   */
   {
-    c3_i  abs_i = 1000;
-    c3_c* abs_c = c3_malloc(abs_i);
-
-    while ( abs_c != getcwd(abs_c, abs_i) ) {
-      free(abs_c);
-      abs_i *= 2;
-      abs_c = c3_malloc(abs_i);
-    }
-
-    c3_i ful_i = abs_i + strlen(dir_c);
-    c3_c* ful_c = c3_malloc(ful_i);
-    snprintf(ful_c, ful_i, "%s/%s", abs_c, dir_c);
-
-    u3C.dir_c = strdup(ful_c);
-
-    free(ful_c);
-    free(abs_c);
+    u3V.dir_c = strdup(dir_c);
   }
 
   /*  clear tracing struct
