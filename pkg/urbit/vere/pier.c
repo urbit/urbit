@@ -297,25 +297,36 @@ _pier_work_release(u3_writ* wit_u)
   u3_lord* god_u = pir_u->god_u;
   u3_noun    vir = wit_u->act;
 
+  if ( u3_psat_pace == pir_u->sat_e ) {
+    fputc('.', stderr);
+  }
+  else {
 #ifdef VERBOSE_EVENTS
-  fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
+    fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
 #endif
 
-  /* advance release counter
-  */
-  {
-    c3_assert(wit_u->evt_d == (1ULL + god_u->rel_d));
-    god_u->rel_d += 1ULL;
+    //  advance release counter
+    //
+    {
+      c3_assert(wit_u->evt_d == (1ULL + god_u->rel_d));
+      god_u->rel_d += 1ULL;
+    }
+
+    //  apply actions
+    //
+    while ( u3_nul != vir ) {
+      u3_noun ovo, nex;
+      u3x_cell(vir, &ovo, &nex);
+
+      u3_reck_kick(pir_u, u3k(ovo));
+      vir = nex;
+    }
   }
 
-  /* apply actions
-  */
-  while ( u3_nul != vir ) {
-    u3_noun ovo, nex;
-    u3x_cell(vir, &ovo, &nex);
-
-    u3_reck_kick(pir_u, u3k(ovo));
-    vir = nex;
+  //  if we have completed the boot sequence, activate system events.
+  //
+  if ( wit_u->evt_d == pir_u->but_d ) {
+    _pier_boot_complete(pir_u);
   }
 }
 
@@ -391,12 +402,6 @@ _pier_work_complete(u3_writ* wit_u,
 
   c3_assert(wit_u->act == 0);
   wit_u->act = act;
-
-  //  if we have completed the boot sequence, activate system events.
-  //
-  if ( god_u->dun_d == pir_u->but_d ) {
-    _pier_boot_complete(pir_u);
-  }
 }
 
 /* _pier_work_replace(): worker reported replacement.
@@ -513,17 +518,12 @@ start:
       //
       _pier_writ_unlink(wit_u);
 
-      //  will be false during replay
+      //  release effects
       //
-      //    XX better replay tracking
-      //
-      if ( wit_u->evt_d > god_u->rel_d ) {
-        _pier_work_release(wit_u);
-      }
-      else {
-        fputc('.', stderr);
-      }
+      _pier_work_release(wit_u);
 
+      //  free writ
+      //
       _pier_writ_dispose(wit_u);
 
       wit_u = pir_u->ext_u;
