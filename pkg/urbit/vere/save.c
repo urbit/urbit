@@ -17,7 +17,7 @@ static void
 _save_time_cb(uv_timer_t* tim_u)
 {
   u3_pier *pir_u = tim_u->data;
-  u3_pier_work_save(pir_u);
+  u3_pier_snap(pir_u);
 }
 
 /* u3_save_ef_chld(): report save termination.
@@ -49,7 +49,8 @@ u3_save_io_init(u3_pier *pir_u)
 {
   u3_save* sav_u = pir_u->sav_u;
 
-  sav_u->ent_d = 0;
+  sav_u->req_d = 0;
+  sav_u->dun_d = 0;
   sav_u->pid_w = 0;
 
   sav_u->tim_u.data = pir_u;

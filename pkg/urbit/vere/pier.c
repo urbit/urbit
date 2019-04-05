@@ -66,7 +66,9 @@
 
 static void _pier_apply(u3_pier* pir_u);
 static void _pier_boot_complete(u3_pier* pir_u);
+static void _pier_exit_done(u3_pier* pir_u);
 static void _pier_loop_exit(u3_pier* pir_u);
+static void _pier_work_save(u3_pier* pir_u);
 
 /* _pier_disk_bail(): bail from disk i/o.
 */
@@ -328,6 +330,18 @@ _pier_work_release(u3_writ* wit_u)
   if ( wit_u->evt_d == pir_u->but_d ) {
     _pier_boot_complete(pir_u);
   }
+
+  //  take snapshot, if requested (and awaiting the commit of this event)
+  //
+  {
+    u3_save* sav_u = pir_u->sav_u;
+
+    if ( (sav_u->req_d > sav_u->dun_d) &&
+         (wit_u->evt_d == sav_u->req_d) )
+    {
+      _pier_work_save(pir_u);
+    }
+  }
 }
 
 /* _pier_work_build(): build atomic action.
@@ -360,24 +374,60 @@ _pier_work_send(u3_writ* wit_u)
   u3_newt_write(&god_u->inn_u, u3k(wit_u->mat), wit_u);
 }
 
-/*
-  u3_pier_work_save(): tell worker to save checkpoint.
-
-  If there are no unsnapshotted events, then do nothing, otherwise, send
-  `[%save ~]` to the slave.
-
-  XX Should we wait on some report of success before we update
-  `pir_u->sav_u->ent_d`?
+/* _pier_work_save(): tell worker to save checkpoint.
 */
-void
-u3_pier_work_save(u3_pier* pir_u)
+static void
+_pier_work_save(u3_pier* pir_u)
 {
   u3_lord* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
-  if ( god_u->dun_d > sav_u->ent_d ) {
-    u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__save, 0)), 0);
-    sav_u->ent_d = god_u->dun_d;
+  c3_assert( god_u->dun_d == sav_u->req_d );
+  c3_assert( log_u->com_d >= god_u->dun_d );
+
+  {
+    u3_noun mat = u3ke_jam(u3nc(c3__save, u3i_chubs(1, &god_u->dun_d)));
+    u3_newt_write(&god_u->inn_u, mat, 0);
+
+    //  XX wait on some report of success before updating?
+    //
+    sav_u->dun_d = sav_u->req_d;
+  }
+
+  //  if we're gracefully shutting down, do so now
+  //
+  if ( u3_psat_done == pir_u->sat_e ) {
+    _pier_exit_done(pir_u);
+  }
+}
+
+/* u3_pier_snap(): request snapshot
+*/
+void
+u3_pier_snap(u3_pier* pir_u)
+{
+  u3_lord* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
+  u3_save* sav_u = pir_u->sav_u;
+
+  c3_d top_d = c3_max(god_u->sen_d, god_u->dun_d);
+
+  //  no-op if there are no un-snapshot'ed events
+  //
+  if ( top_d > sav_u->dun_d ) {
+    sav_u->req_d = top_d;
+
+    //  save eagerly if all computed events are already committed
+    //
+    if ( log_u->com_d >= top_d ) {
+      _pier_work_save(pir_u);
+    }
+  }
+  //  if we're gracefully shutting down, do so now
+  //
+  else if ( u3_psat_done == pir_u->sat_e ) {
+    _pier_exit_done(pir_u);
   }
 }
 
@@ -462,6 +512,7 @@ _pier_apply(u3_pier* pir_u)
 {
   u3_disk* log_u = pir_u->log_u;
   u3_lord* god_u = pir_u->god_u;
+  u3_save* sav_u = pir_u->sav_u;
 
   if ( (0 == log_u) ||
        (0 == god_u) ||
@@ -479,11 +530,12 @@ start:
   */
   wit_u = pir_u->ext_u;
   while ( wit_u ) {
-    /* if writ is (a) next in line to compute, and (b) worker is inactive,
-    ** request computation
+    /* if writ is (a) next in line to compute, (b) worker is inactive,
+    ** and (c) a snapshot has not been requested, request computation
     */
     if ( (wit_u->evt_d == (1 + god_u->sen_d)) &&
-         (god_u->sen_d == god_u->dun_d) )
+         (god_u->sen_d == god_u->dun_d) &&
+         (sav_u->dun_d == sav_u->req_d) )
     {
       _pier_work_compute(wit_u);
       act_o = c3y;
@@ -1559,19 +1611,33 @@ u3_pier_discover(u3_pier* pir_u,
   _pier_apply(pir_u);
 }
 
+/* _pier_exit_done(): synchronously shutting down
+*/
+static void
+_pier_exit_done(u3_pier* pir_u)
+{
+  fprintf(stderr, "pier: exit\r\n");
+
+  _pier_work_shutdown(pir_u);
+  _pier_loop_exit(pir_u);
+
+  //  XX uninstall pier from u3K.tab_u, dispose
+
+  //  XX no can do
+  //
+  uv_stop(u3L);
+}
+
 /* u3_pier_exit(): trigger a gentle shutdown.
 */
 void
 u3_pier_exit(u3_pier* pir_u)
 {
-  fprintf(stderr, "pier: exit\r\n");
-  u3_pier_work_save(pir_u);
-  _pier_work_shutdown(pir_u);
-  _pier_loop_exit(pir_u);
+  pir_u->sat_e = u3_psat_done;
 
-  //  XX no can do
+  //  XX must wait for callback confirming
   //
-  uv_stop(u3L);
+  u3_pier_snap(pir_u);
 }
 
 /* u3_pier_send(): modern send with target and path.
@@ -1759,7 +1825,7 @@ static void
 _pier_boot_complete(u3_pier* pir_u)
 {
   if ( u3_psat_init != pir_u->sat_e ) {
-    u3_pier_work_save(pir_u);
+    u3_pier_snap(pir_u);
   }
 
   if ( u3_psat_boot == pir_u->sat_e ) {

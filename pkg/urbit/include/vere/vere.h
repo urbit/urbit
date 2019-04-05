@@ -351,7 +351,8 @@
       typedef struct _u3_save {
         uv_timer_t  tim_u;                  //  checkpoint timer
         uv_signal_t sil_u;                  //  child signal
-        c3_d        ent_d;                  //  event number
+        c3_d        req_d;                  //  requested at evt_d
+        c3_d        dun_d;                  //  completed at evt_d
         c3_w        pid_w;                  //  pid of checkpoint process
       } u3_save;
 
@@ -664,7 +665,8 @@
           u3_psat_init = 0,                   //  initialized
           u3_psat_boot = 1,                   //  booting
           u3_psat_pace = 2,                   //  replaying
-          u3_psat_play = 3                    //  full operation
+          u3_psat_play = 3,                   //  full operation
+          u3_psat_done = 4                    //  shutting down
         } u3_psat;
 
       /* u3_pier: ship controller.
@@ -1264,10 +1266,10 @@
         void
         u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
 
-      /* u3_pier_work_save(): tell worker to save checkpoint.
+      /* u3_pier_snap(): request checkpoint.
       */
         void
-        u3_pier_work_save(u3_pier* pir_u);
+        u3_pier_snap(u3_pier* pir_u);
 
       /* u3_pier_stub(): get the One Pier for unreconstructed code.
       */
