@@ -520,6 +520,9 @@ start:
       if ( wit_u->evt_d > god_u->rel_d ) {
         _pier_work_release(wit_u);
       }
+      else {
+        fputc('.', stderr);
+      }
 
       _pier_writ_dispose(wit_u);
 
@@ -982,6 +985,7 @@ _pier_boot_ready(u3_pier* pir_u)
 
   c3_assert( c3y == god_u->liv_o );
   c3_assert( c3y == log_u->liv_o );
+  c3_assert( u3_psat_init == pir_u->sat_e );
   c3_assert( c3n == pir_u->liv_o );
   pir_u->liv_o = c3y;
 
@@ -996,6 +1000,8 @@ _pier_boot_ready(u3_pier* pir_u)
   //  boot
   //
   if ( 0 == log_u->com_d ) {
+    pir_u->sat_e = u3_psat_boot;
+
     fprintf(stderr, "boot: ship: %s%s\r\n",
                      pir_u->who_c,
                      (c3y == pir_u->fak_o) ? " (fake)" : "");
@@ -1013,13 +1019,17 @@ _pier_boot_ready(u3_pier* pir_u)
   //  replay
   //
   else if ( god_u->dun_d < log_u->com_d) {
+    pir_u->sat_e = u3_psat_pace;
+
+    fprintf(stderr, "---------------- playback starting----------------\r\n");
+
     //  set the boot barrier to the last committed event
     //
     pir_u->but_d = log_u->com_d;
 
     if ( 0 == god_u->dun_d ) {
-      fprintf(stderr, "pier: replaying %" PRIu64 " events\r\n",
-                                                 log_u->com_d);
+      fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
+                      log_u->com_d);
 
       //  restore pier identity
       //
@@ -1034,9 +1044,10 @@ _pier_boot_ready(u3_pier* pir_u)
       _pier_work_boot(pir_u, c3n);
     }
     else {
-      fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
-                                                                god_u->dun_d,
-                                                                log_u->com_d);
+      fprintf(stderr, "pier: replaying events %" PRIu64
+                      " through %" PRIu64 "\r\n",
+                      god_u->dun_d,
+                      log_u->com_d);
     }
 
     //  begin queuing batches of committed events
@@ -1494,6 +1505,7 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c)
 
   pir_u->pax_c = pax_c;
   pir_u->wag_w = wag_w;
+  pir_u->sat_e = u3_psat_init;
   pir_u->liv_o = c3n;
 
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
@@ -1746,7 +1758,18 @@ _pier_loop_exit(u3_pier* pir_u)
 static void
 _pier_boot_complete(u3_pier* pir_u)
 {
-  u3_pier_work_save(pir_u);
+  if ( u3_psat_init != pir_u->sat_e ) {
+    u3_pier_work_save(pir_u);
+  }
+
+  if ( u3_psat_boot == pir_u->sat_e ) {
+    fprintf(stderr, "pier: boot complete\r\n");
+  }
+  else if ( u3_psat_pace == pir_u->sat_e ) {
+    fprintf(stderr, "\n\r---------------- playback complete----------------\r\n");
+  }
+
+  pir_u->sat_e = u3_psat_play;
 
   //  the main course
   //

@@ -658,6 +658,15 @@
 
         } u3_boot;
 
+      /* u3_psat: pier state.
+      */
+        typedef enum {
+          u3_psat_init = 0,                   //  initialized
+          u3_psat_boot = 1,                   //  booting
+          u3_psat_pace = 2,                   //  replaying
+          u3_psat_play = 3                    //  full operation
+        } u3_psat;
+
       /* u3_pier: ship controller.
       */
         typedef struct _u3_pier {
@@ -674,6 +683,7 @@
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
           c3_o             liv_o;               //  live
+          u3_psat          sat_e;               //  pier state
           u3_noun          bot;                 //  boot event XX review
           u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
