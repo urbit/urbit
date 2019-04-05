@@ -31,6 +31,7 @@
       c3_d    key_d[4];                     //  disk key
       u3_moat inn_u;                        //  message input
       u3_mojo out_u;                        //  message output
+      c3_c*   dir_c;                        //  execution directory (pier)
     } u3_serf;
     static u3_serf u3V;
 
@@ -576,11 +577,35 @@ _serf_poke_work(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  full event
 {
+  if ( u3C.wag_w & u3o_trace ) {
+    if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
+      u3t_trace_open(u3V.dir_c);
+    }
+    else if ( u3_Host.tra_u.con_w >= 100000 ) {
+      u3t_trace_close();
+      u3t_trace_open(u3V.dir_c);
+    }
+  }
+
   if ( evt_d <= u3V.len_w ) {
+    c3_c lab_c[8];
+    snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
+
+    u3t_event_trace(lab_c, 'B');
     _serf_work_boot(evt_d, mug_l, job);
+    u3t_event_trace(lab_c, 'E');
   }
   else {
+    u3_noun wir = u3h(u3t(job));
+    u3_noun cad = u3h(u3t(u3t(job)));
+
+    c3_c lab_c[2048];
+    snprintf(lab_c, 2048, "event %" PRIu64 ": [%s %s]", evt_d,
+             u3m_pretty_path(wir), u3m_pretty(cad));
+
+    u3t_event_trace(lab_c, 'B');
     _serf_work_live(evt_d, mug_l, job);
+    u3t_event_trace(lab_c, 'E');
   }
 }
 
@@ -760,6 +785,21 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     sscanf(wag_c, "%" SCNu32, &u3C.wag_w);
+  }
+
+  /* load pier directory
+  */
+  {
+    u3V.dir_c = strdup(dir_c);
+  }
+
+  /*  clear tracing struct
+  */
+  {
+    u3_Host.tra_u.nid_w = 0;
+    u3_Host.tra_u.fil_u = NULL;
+    u3_Host.tra_u.con_w = 0;
+    u3_Host.tra_u.fun_w = 0;
   }
 
   /* boot image

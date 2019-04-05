@@ -344,21 +344,18 @@ u3t_flee(void)
 /*  u3t_trace_open(): opens a trace file and writes the preamble.
 */
 void
-u3t_trace_open()
+u3t_trace_open(c3_c* dir_c)
 {
-
   c3_c fil_c[2048];
-  snprintf(fil_c, 2048, "%s/.urb/put/trace", u3_Host.dir_c);
+  snprintf(fil_c, 2048, "%s/.urb/put/trace", dir_c);
 
   struct stat st;
   if ( -1 == stat(fil_c, &st) ) {
     mkdir(fil_c, 0700);
   }
 
-  c3_c * wen_c = u3r_string(u3A->wen);
   c3_c lif_c[2048];
-  snprintf(lif_c, 2048, "%s/%s.json", fil_c, wen_c);
-  free(wen_c);
+  snprintf(lif_c, 2048, "%s/%d.json", fil_c, u3_Host.tra_u.fun_w);
 
   u3_Host.tra_u.fil_u = fopen(lif_c, "w");
   u3_Host.tra_u.nid_w = (int)getpid();
@@ -402,6 +399,7 @@ u3t_trace_close()
   // We don't terminate the JSON because of the file format.
   fclose(u3_Host.tra_u.fil_u);
   u3_Host.tra_u.con_w = 0;
+  u3_Host.tra_u.fun_w++;
 }
 
 /*  u3t_trace_time(): microsecond clock
@@ -435,54 +433,6 @@ u3t_nock_trace_push(u3_noun lab)
   }
 }
 
-/*  _in_trace_pretty: measure/cut prettyprint.
- *
- *  Modeled after _cm_in_pretty(), the backend to u3m_p(), but with the
- *  assumption that we're always displaying a path.
- */
-static c3_w
-_in_trace_pretty(u3_noun som, c3_c* str_c)
-{
-  if ( _(u3du(som)) ) {
-    c3_w sel_w, one_w, two_w;
-    if ( str_c ) {
-      *(str_c++) = '/';
-    }
-    sel_w = 1;
-
-    one_w = _in_trace_pretty(u3h(som), str_c);
-    if ( str_c ) {
-      str_c += one_w;
-    }
-
-    two_w = _in_trace_pretty(u3t(som), str_c);
-    if ( str_c ) {
-      str_c += two_w;
-    }
-
-    return sel_w + one_w + two_w;
-  }
-  else {
-    c3_w len_w = u3r_met(3, som);
-    if ( str_c && len_w ) {
-      u3r_bytes(0, len_w, (c3_y *)str_c, som);
-      str_c += len_w;
-    }
-    return len_w;
-  }
-}
-
-static c3_c*
-trace_pretty(u3_noun som)
-{
-  c3_w len_w = _in_trace_pretty(som, NULL);
-  c3_c* pre_c = malloc(len_w + 1);
-
-  _in_trace_pretty(som, pre_c);
-  pre_c[len_w] = 0;
-  return pre_c;
-}
-
 /* u3t_nock_trace_pop(): pops a trace from the trace stack.
  *
  * When we remove the trace from the stack, we check to see if the sample is
@@ -505,7 +455,7 @@ u3t_nock_trace_pop()
   // 33microseconds (a 30th of a millisecond).
   c3_d duration = u3t_trace_time() - start_time;
   if (duration > 33) {
-    c3_c* name = trace_pretty(lab);
+    c3_c* name = u3m_pretty_path(lab);
 
     fprintf(u3_Host.tra_u.fil_u,
             "{\"cat\": \"nock\", \"name\": \"%s\", \"ph\":\"%c\", \"pid\": %d, "

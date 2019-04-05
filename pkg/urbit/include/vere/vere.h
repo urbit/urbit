@@ -541,6 +541,7 @@
         c3_w   nid_w;                       //  nock pid
         FILE*  fil_u;                       //  trace file (json)
         c3_w   con_w;                       //  trace counter
+        c3_w   fun_w;                       //  file counter
       } u3_trac;
 
     /* u3_opts: command line configuration.

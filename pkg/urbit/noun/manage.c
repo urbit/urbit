@@ -1369,6 +1369,56 @@ u3m_pretty(u3_noun som)
   return pre_c;
 }
 
+/*  _cm_in_pretty_path: measure/cut prettyprint.
+ *
+ *  Modeled after _cm_in_pretty(), the backend to u3m_p(), but with the
+ *  assumption that we're always displaying a path.
+ */
+static c3_w
+_cm_in_pretty_path(u3_noun som, c3_c* str_c)
+{
+  if ( _(u3du(som)) ) {
+    c3_w sel_w, one_w, two_w;
+    if ( str_c ) {
+      *(str_c++) = '/';
+    }
+    sel_w = 1;
+
+    one_w = _cm_in_pretty_path(u3h(som), str_c);
+    if ( str_c ) {
+      str_c += one_w;
+    }
+
+    two_w = _cm_in_pretty_path(u3t(som), str_c);
+    if ( str_c ) {
+      str_c += two_w;
+    }
+
+    return sel_w + one_w + two_w;
+  }
+  else {
+    c3_w len_w = u3r_met(3, som);
+    if ( str_c && len_w ) {
+      u3r_bytes(0, len_w, (c3_y *)str_c, som);
+      str_c += len_w;
+    }
+    return len_w;
+  }
+}
+
+/* u3m_pretty_path(): prettyprint a path to string.
+*/
+c3_c*
+u3m_pretty_path(u3_noun som)
+{
+  c3_w len_w = _cm_in_pretty_path(som, NULL);
+  c3_c* pre_c = malloc(len_w + 1);
+
+  _cm_in_pretty_path(som, pre_c);
+  pre_c[len_w] = 0;
+  return pre_c;
+}
+
 /* u3m_p(): dumb print with caption.
 */
 void
