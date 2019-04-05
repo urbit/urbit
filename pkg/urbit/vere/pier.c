@@ -276,7 +276,7 @@ _pier_work_release(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
   u3_lord* god_u = pir_u->god_u;
-  u3_noun  vir;
+  u3_noun    vir = wit_u->act;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
@@ -291,13 +291,12 @@ _pier_work_release(u3_writ* wit_u)
 
   /* apply actions
   */
-  vir = wit_u->act;
   while ( u3_nul != vir ) {
-    u3_noun ovo = u3k(u3h(vir));
-    u3_noun nex = u3k(u3t(vir));
-    u3z(vir); vir = nex;
+    u3_noun ovo, nex;
+    u3x_cell(vir, &ovo, &nex);
 
-    u3_reck_kick(pir_u, ovo);
+    u3_reck_kick(pir_u, u3k(ovo));
+    vir = nex;
   }
 }
 
@@ -1279,7 +1278,7 @@ _pier_work_poke(void*   vod_p,
                 u3_noun mat)
 {
   u3_pier* pir_u = vod_p;
-  u3_noun jar    = u3ke_cue(u3k(mat));
+  u3_noun  jar   = u3ke_cue(u3k(mat));
   u3_noun  p_jar, q_jar, r_jar;
 
   if ( c3y != u3du(jar) ) {
@@ -1325,8 +1324,6 @@ _pier_work_poke(void*   vod_p,
       }
 
       _pier_work_play(pir_u, lav_d, mug_l);
-
-      u3z(jar); u3z(mat);
       break;
     }
 
@@ -1360,7 +1357,7 @@ _pier_work_poke(void*   vod_p,
         }
         fprintf(stderr, "pier: replace: %" PRIu64 "\r\n", evt_d);
 
-        _pier_work_replace(wit_u, u3k(r_jar), mat);
+        _pier_work_replace(wit_u, u3k(r_jar), u3k(mat));
       }
       break;
     }
@@ -1389,13 +1386,13 @@ _pier_work_poke(void*   vod_p,
     }
   }
 
+  u3z(jar); u3z(mat);
   _pier_apply(pir_u);
   return;
 
   error: {
+    u3z(jar); u3z(mat);
     _pier_work_bail(0, "bad jar");
-    u3z(jar);
-    u3z(mat);
   }
 }
 
