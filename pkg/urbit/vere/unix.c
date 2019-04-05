@@ -1010,7 +1010,7 @@ _unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
     switch ( num_i ) {
       default: fprintf(stderr, "\r\nmysterious signal %d\r\n", num_i); break;
       case SIGTERM:
-        u3_pier_exit();
+        u3_pier_exit(u3_pier_stub());
         break;
       case SIGINT:
         fprintf(stderr, "\r\ninterrupt\r\n");

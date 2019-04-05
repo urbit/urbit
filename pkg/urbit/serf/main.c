@@ -90,7 +90,7 @@
       [%exit p=@]
       ::  save snapshot to disk
       ::
-      ::  p: number of old snaps to save (XX not respected)
+      ::  p: event number
       ::
       [%save p=@]
       ::  execute event
@@ -623,6 +623,7 @@ static void
 _serf_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
 {
   c3_assert( u3_none == u3A->our );
+  c3_assert( 0 != len_w );
 
   u3A->our = who;
   u3A->fak = fak;
@@ -708,15 +709,19 @@ _serf_poke(void* vod_p, u3_noun mat)
       }
 
       case c3__save: {
-        u3_noun sap;
+        u3_noun evt;
+        c3_d evt_d;
 
-        if ( (c3n == u3r_cell(jar, 0, &sap)) ||
-             (c3n == u3ud(sap)) )
+        if ( (c3n == u3r_cell(jar, 0, &evt)) ||
+             (c3n == u3ud(evt)) )
         {
           goto error;
         }
 
-        u3z(jar);
+        evt_d = u3r_chub(0, evt);
+        u3z(evt);
+
+        c3_assert( evt_d == u3V.evt_d );
 
         return u3e_save();
       }

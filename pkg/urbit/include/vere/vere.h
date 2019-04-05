@@ -351,7 +351,8 @@
       typedef struct _u3_save {
         uv_timer_t  tim_u;                  //  checkpoint timer
         uv_signal_t sil_u;                  //  child signal
-        c3_d        ent_d;                  //  event number
+        c3_d        req_d;                  //  requested at evt_d
+        c3_d        dun_d;                  //  completed at evt_d
         c3_w        pid_w;                  //  pid of checkpoint process
       } u3_save;
 
@@ -613,7 +614,6 @@
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
-          u3_foil*         fol_u;               //  precommit file
           u3_atom          mat;                 //  jammed $work, or 0
           u3_noun          act;                 //  action list
           struct _u3_writ* nex_u;               //  next in queue, or 0
@@ -628,6 +628,7 @@
           time_t               wen_t;           //  process creation time
           u3_mojo              inn_u;           //  client's stdin
           u3_moat              out_u;           //  client's stdout
+          c3_o                 liv_o;           //  live
           c3_d                 sen_d;           //  last event dispatched
           c3_d                 dun_d;           //  last event completed
           c3_d                 rel_d;           //  last event released
@@ -645,11 +646,9 @@
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
-          u3_dire*         pre_u;               //  precommit directory
           u3_foil*         fol_u;               //  logfile
+          c3_o             liv_o;               //  live
           c3_d             end_d;               //  byte end of file
-          c3_d             rep_d;               //  precommit requested
-          c3_d             pre_d;               //  precommitted
           c3_d             moc_d;               //  commit requested
           c3_d             com_d;               //  committed
           struct _u3_pier* pir_u;               //  pier backpointer
@@ -660,6 +659,16 @@
         typedef struct _u3_boot {
 
         } u3_boot;
+
+      /* u3_psat: pier state.
+      */
+        typedef enum {
+          u3_psat_init = 0,                   //  initialized
+          u3_psat_boot = 1,                   //  booting
+          u3_psat_pace = 2,                   //  replaying
+          u3_psat_play = 3,                   //  full operation
+          u3_psat_done = 4                    //  shutting down
+        } u3_psat;
 
       /* u3_pier: ship controller.
       */
@@ -676,6 +685,8 @@
           c3_c*            who_c;               //  identity as C string
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
+          c3_o             liv_o;               //  live
+          u3_psat          sat_e;               //  pier state
           u3_noun          bot;                 //  boot event XX review
           u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
@@ -1244,17 +1255,22 @@
       /* u3_pier_exit(): trigger a gentle shutdown.
       */
         void
-        u3_pier_exit(void);
+        u3_pier_exit(u3_pier* pir_u);
+
+      /* u3_pier_bail(): clean up all event state.
+      */
+        void
+        u3_pier_bail(void);
 
       /* u3_pier_work(): send event; real pier pointer.
       */
         void
         u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav);
 
-      /* u3_pier_work_save(): tell worker to save checkpoint.
+      /* u3_pier_snap(): request checkpoint.
       */
         void
-        u3_pier_work_save(u3_pier* pir_u);
+        u3_pier_snap(u3_pier* pir_u);
 
       /* u3_pier_stub(): get the One Pier for unreconstructed code.
       */

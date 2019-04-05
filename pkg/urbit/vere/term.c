@@ -729,7 +729,7 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  then corrupts the event log), so we force shutdown.
       //
       fprintf(stderr, "term: hangup (EOF)\r\n");
-      u3_pier_exit();
+      u3_pier_exit(u3_pier_stub());
     }
     else if ( siz_i < 0 ) {
       uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
