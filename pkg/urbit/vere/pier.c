@@ -64,8 +64,8 @@
   **    XX analyze replay more comprehensively
   */
 
-static void _pier_apply(u3_pier*);
-static void _pier_boot_complete(u3_pier*, c3_o);
+static void _pier_apply(u3_pier* pir_u);
+static void _pier_boot_complete(u3_pier* pir_u);
 static void _pier_loop_exit(u3_pier* pir_u);
 
 #if 0
@@ -376,10 +376,10 @@ _pier_work_complete(u3_writ* wit_u,
   c3_assert(wit_u->act == 0);
   wit_u->act = act;
 
-  /* if we have completed the boot sequence, activate system events.
-  */
+  //  if we have completed the boot sequence, activate system events.
+  //
   if ( god_u->dun_d == pir_u->but_d ) {
-    _pier_boot_complete(pir_u, c3y);
+    _pier_boot_complete(pir_u);
   }
 }
 
@@ -927,60 +927,78 @@ _pier_boot_vent(u3_pier* pir_u)
   u3z(bot); u3z(mod); u3z(use);
 }
 
-/* _pier_disk_consolidate(): integrate loaded information.
+/* _pier_boot_ready():
 */
-static c3_o
-_pier_disk_consolidate(u3_pier*  pir_u,
-                       c3_d      lav_d)
+static void
+_pier_boot_ready(u3_pier* pir_u)
 {
-  //  sanity check
-  //
-  if ( pir_u->ext_u && (pir_u->ext_u->evt_d != lav_d) ) {
-    fprintf(stderr, "pier: consolidate: gap: %" PRIu64 ", %" PRIu64 "\r\n",
-                    pir_u->ext_u->evt_d,
-                    lav_d);
-
-    fprintf(stderr, "consolidate: shutdown\r\n");
-
-    _pier_disk_shutdown(pir_u);
-    _pier_work_shutdown(pir_u);
-    return c3n;
-  }
-
-  u3_disk* log_u = pir_u->log_u;
   u3_lord* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
+
+  c3_assert( c3y == god_u->liv_o );
+  c3_assert( c3y == log_u->liv_o );
+  c3_assert( c3n == pir_u->liv_o );
+  pir_u->liv_o = c3y;
+
+  //  mark all commits as released
+  //
+  god_u->rel_d = log_u->com_d;
 
   //  set next expected event number
   //
-  //    XX double check this, assumes all replay events already enqueued
+  pir_u->gen_d = (1ULL + log_u->com_d);
+
+  //  boot
   //
-  if ( 0 != pir_u->ent_u ) {
-    pir_u->gen_d = (1ULL + pir_u->ent_u->evt_d);
-  }
-  else {
-    pir_u->gen_d = lav_d;
-  }
+  if ( 0 == log_u->com_d ) {
+    fprintf(stderr, "boot: ship: %s%s\r\n",
+                     pir_u->who_c,
+                     (c3y == pir_u->fak_o) ? " (fake)" : "");
 
-  /* handle boot semantics.  we don't save any commits before we've
-  ** fully booted, to avoid creating weird half-booted ships.
-  **
-  ** after the boot is complete, we'll start sending system events.
-  */
-  if ( log_u->com_d == 0 ) {
-    _pier_boot_vent(pir_u);
-  } else {
-    pir_u->but_d = (lav_d - 1ULL);
-
-    //  mark all commits as released
+    //  construct/enqueue boot sequence
     //
-    god_u->rel_d = log_u->com_d;
+    _pier_boot_vent(pir_u);
 
-    /* we have already booted this pier; send system events.
-    */
-    _pier_boot_complete(pir_u, c3n);
+    //  prepare serf for boot sequence, write log header
+    //
+    //    XX move here from _pier_boot_vent, confirm lif_d is set
+    //
+    // _pier_work_boot(pir_u, c3y);
   }
+  //  replay
+  //
+  else if ( god_u->dun_d < log_u->com_d) {
+    fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
+                                                              god_u->dun_d,
+                                                              log_u->com_d);
 
-  return c3y;
+    //  set the boot barrier to the last committed event
+    //
+    pir_u->but_d = log_u->com_d;
+
+    if ( 0 == god_u->dun_d ) {
+      //  prepare serf for replay of boot sequence, don't write log header
+      //
+      _pier_work_boot(pir_u, c3n);
+    }
+
+    //  begin queuing batches of committed events
+    //
+    //    XX batch, async
+    //
+    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d));
+  }
+  //  resume
+  //
+  else {
+    //  set the boot barrier to the last computed event
+    //
+    pir_u->but_d = god_u->dun_d;
+
+    //  resume normal operation
+    //
+    _pier_boot_complete(pir_u);
+  }
 }
 
 /* _pier_disk_init_complete():
@@ -990,10 +1008,18 @@ static void
 _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
 {
   c3_assert( c3n == log_u->liv_o );
+  log_u->liv_o = c3y;
 
   log_u->com_d = log_u->moc_d = evt_d;
 
-  log_u->liv_o = c3y;
+  {
+    u3_pier* pir_u = log_u->pir_u;
+    u3_lord* god_u = pir_u->god_u;
+
+    if ( (c3y == god_u->liv_o) && (c3n == pir_u->liv_o) ) {
+      _pier_boot_ready(pir_u);
+    }
+  }
 }
 
 /* _pier_disk_init():
@@ -1053,8 +1079,7 @@ _pier_disk_init(u3_disk* log_u)
 /* _pier_disk_create(): load log for given point.
 */
 static c3_o
-_pier_disk_create(u3_pier* pir_u,
-                  c3_d     lav_d)
+_pier_disk_create(u3_pier* pir_u)
 {
   u3_disk* log_u = c3_calloc(sizeof(*log_u));
 
@@ -1126,24 +1151,6 @@ _pier_disk_create(u3_pier* pir_u,
     return c3n;
   }
 
-  //  if there are committed events not reflected in the serf
-  //
-  if ( log_u->com_d >= lav_d ) {
-    if ( c3n == _pier_disk_load_commit(pir_u, lav_d) ) {
-      return c3n;
-    }
-
-    fprintf(stderr, "pier: replaying events %" PRIu64 " to %" PRIu64 "\r\n",
-                                                             (lav_d - 1ULL),
-                                                             log_u->com_d);
-  }
-
-  // consolidate loaded logic
-  //
-  if ( c3n == _pier_disk_consolidate(pir_u, lav_d) ) {
-    return c3n;
-  }
-
   return c3y;
 }
 
@@ -1167,9 +1174,17 @@ _pier_work_play(u3_pier* pir_u,
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
-  /* load all committed events
-  */
-  _pier_disk_create(pir_u, lav_d);
+  //  load all committed events
+  //
+  _pier_disk_create(pir_u);
+
+  {
+    u3_disk* log_u = pir_u->log_u;
+
+    if ( (c3y == log_u->liv_o) && (c3n == pir_u->liv_o) ) {
+      _pier_boot_ready(pir_u);
+    }
+  }
 }
 
 /* _pier_work_exit(): handle subprocess exit.
@@ -1430,6 +1445,7 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c)
 
   pir_u->pax_c = pax_c;
   pir_u->wag_w = wag_w;
+  pir_u->liv_o = c3n;
 
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
   pir_u->teh_u = c3_calloc(sizeof(u3_behn));
@@ -1673,23 +1689,9 @@ _pier_loop_exit(u3_pier* pir_u)
 /* _pier_boot_complete(): start organic event flow on boot/reboot.
 */
 static void
-_pier_boot_complete(u3_pier* pir_u,
-                    c3_o     nuu_o)
+_pier_boot_complete(u3_pier* pir_u)
 {
-  fprintf(stderr, "pier: (%" PRIu64 "): boot: %s\r\n",
-                   pir_u->god_u->dun_d,
-                   (c3y == nuu_o ? "new" : "old"));
-
-  //  start event replay by preparing serf to %boot
-  //
-  if ( (0 == pir_u->god_u->dun_d) &&
-       (c3n == nuu_o) )
-  {
-    _pier_work_boot(pir_u, c3n);
-  }
-  else {
-    u3_pier_work_save(pir_u);
-  }
+  u3_pier_work_save(pir_u);
 
   //  the main course
   //
