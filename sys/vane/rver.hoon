@@ -1832,6 +1832,7 @@
          %run-app    run-app
          %run-build  run-build
          %channel    channel
+         %acme       acme-ack
       ==
   ::
   ++  run-app
@@ -1895,6 +1896,18 @@
         (on-gall-response i.t.t.wire `@ud`(slav %ud i.t.t.t.wire) p.sign)
       [moves http-server-gate]
     ==
+  ::
+  ++  acme-ack
+    ?>  ?=([%g %unto *] sign)
+    ::
+    ?>  ?=([%coup *] p.sign)
+    ?~  p.p.sign
+      ::  received a positive acknowledgment: take no action
+      ::
+      [~ http-server-gate]
+    ::  received a negative acknowledgment: XX do something
+    ::
+    [((slog u.p.p.sign) ~) http-server-gate]
   --
 ::
 ++  http-server-gate  ..$
