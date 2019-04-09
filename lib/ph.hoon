@@ -191,7 +191,119 @@
   ?.  =(p.u.q.q.uf (rash dest auri:de-purl:html))  ~
   `[p.q.uf q.u.q.q.uf]
 ::
-++  azimuth
++$  az-log  [topics=(lest @ux) data=@t]
+++  az
+  =|  logs=(list az-log)  ::  oldest logs first
+  =,  azimuth-events:azimuth
+  |%
+  ++  this-az  .
+  ++  add-logs
+    |=  new-logs=(list az-log)
+    ^+  this-az
+    =.  logs  [logs (weld new-logs)]
+    this-az
+  ::
+  ++  router
+    |^
+    ^-  (list $-(@t (unit @t)))
+    =,  enjs:format
+    :~  |=  req=@t
+        ?.  =((get-method req) 'eth_blockNumber')
+          ~
+        :-  ~
+        %-  pairs
+        :~  id+s+(get-id req)
+            jsonrpc+s+'2.0'
+            result+s+(crip (num-to-hex:ethereum (lent logs)))
+        ==
+      ::
+        |=  req=@t
+        ?.  =((get-method req) 'eth_getLogs')
+          ~
+        :-  ~
+        %-  pairs
+        :~  id+s+(get-id req)
+            jsonrpc+s+'2.0'
+            :+  %result  %a
+            =/  selected-logs
+              %+  swag
+                :-  (get-param req 'fromBlock')
+                (get-param req 'toBlock')]
+              logs
+            =|  count=@
+            |-  ^-  (list json)
+            ?~  selected-logs
+              ~
+            :_  $(selected-logs t.selected-logs, count +(count))
+            %-  pairs
+            :~  'logIndex'^s+'0x0'
+                'transactionIndex'^s+'0x0'
+                'transactionHash'^s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 0x5362)))
+                'blockHash'^s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 0x5363)))
+                'blockNumber'^s+(crip (num-to-hex:ethereum count))
+                'address'^s+(crip (address-to-hex:ethereum azimuth:contracts:))
+                'type'^s+'mined'
+                'data'^data.i.selected-logs
+                :+  'topics'  %a
+                %+  turn  topics.i.selected-logs
+                |=  topic=@ux
+                ^-  json
+                :-  %s
+                %-  crip
+                %-  prefix-hex:ethereum
+                (render-hex-bytes:ethereum 32 topic)
+            ==
+        ==
+      ::
+        |=  req=@t
+        ?.  =((get-method req) 'eth_newFilter')
+          ~
+        :-  ~
+        %-  pairs
+        :~  id+s+(get-id req)
+            jsonrpc+s+'2.0'
+            result+s+'0xa'
+        ==
+      ::
+      ::  XX  eth_getFilterLogs  needs state
+      ::  XX  eth_getFilterChanges  needs state
+    ==
+    ::
+    ++  get-id
+      |=  req=@t
+      =,  dejs:format
+      %_  (need (de-json:html req))
+      (ot id+so ~)
+    ::
+    ++  get-method
+      |=  req=@t
+      =,  dejs:format
+      %_  (need (de-json:html req))
+      (ot method+so ~)
+    --
+  ::
+  ++  spawn-galaxy
+    |=  who=@p
+    %-  add-logs
+    :~  [~[activated who] '']
+        [~[owner-changed who 0xdead.beef] '']
+        :-  ~[changed-keys who]
+        %-  prefix-hex:ethereum
+        ;:  welp
+          (get-keys who 1) 
+          (render-hex-bytes:ethereum 32 1)
+          (render-hex-bytes:ethereum 32 1)
+        ==
+    ==
+  ::
+  ++  get-keys
+    |=  [who=@p life=@ud]
+    %+  render-hex-bytes:ethereum  32
+    %-  keccak-256:keccak:crypto
+    (cat 3 (scot %p who) (scot %ud life))
+  --
+::
+++  ph-azimuth
   |%
   ++  dawn
     |=  who=ship
@@ -348,7 +460,7 @@
   ::  Mock HTTP responses to particular requests
   ::
   ++  wrap-test-http
-    |=  [url=@t responses=(map @t @t) cor=raw-test-core]
+    |=  [url=@t responses=(list $-(@t (unit @t))) cor=raw-test-core]
     %^    wrap-test
         (cat 3 'http-' (scot %uw (mug url responses)))
       |=  [who=ship uf=unix-effect]
@@ -358,9 +470,12 @@
         [& ~]
       ?~  r.mot.u.thus
         [& ~]
-      =/  resp  (~(get by responses) q.u.r.mot.u.thus)
-      ?~  resp
+      |-  ^-  [? (list ph-event)]
+      ?~  responses
         [& ~] 
+      =/  resp  (i.responses q.u.r.mot.u.thus)
+      ?~  resp
+        $(responses t.responses)
       :-  |  :_  ~
       :*  %event
           who

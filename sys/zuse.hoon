@@ -7199,14 +7199,14 @@
         |%
         ::  azimuth: data contract
         ::
-        ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ::  ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
         ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
-        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
+        ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  6.784.800  ::  mainnet
-        ::  ++  launch  0  ::  local bridge
+        ::  ++  launch  6.784.800  ::  mainnet
+        ++  launch  0  ::  local bridge
         --
       ::
       ::  hashes of ship event signatures
