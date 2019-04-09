@@ -1180,7 +1180,7 @@
     ::  validating a binding target
     ::
         %check-before
-      ?:  =(200 p.rep)
+      ?:  |(=(200 p.rep) =(307 p.rep))
         bind
       ?:  (gth try 10)
         (fail %check-before [(sell !>(rep)) ~])
@@ -1189,7 +1189,7 @@
     ::  validating an established binding
     ::
         %check-after
-      ?:  =(200 p.rep)
+      ?:  |(=(200 p.rep) =(307 p.rep))
         bake
       ::  no max retries, the binding has been created
       ::  XX notify after some number of failures
