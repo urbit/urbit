@@ -119,6 +119,9 @@
       ::  ports: live servers
       ::
       ports=[insecure=@ud secure=(unit @ud)]
+      ::  outgoing-duct: to unix
+      ::
+      outgoing-duct=duct
   ==
 ::  +outstanding-connection: open http connections not fully complete:
 ::
@@ -1725,6 +1728,9 @@
       =^  moves  server-state.ax  cancel-request
       ::
       $(closed-connections (weld moves closed-connections), connections t.connections)
+    ::  save duct for future %give to unix
+    ::
+    =.  outgoing-duct.server-state.ax  duct
     ::
     :_  http-server-gate
     ;:  weld
@@ -1757,7 +1763,9 @@
         [~ http-server-gate]
       =.  secure.config  cert.http-rule.task
       :_  http-server-gate
-      [duct %give %set-config config]~
+      =*  out-duct  outgoing-duct.server-state.ax
+      ?~  out-duct  ~
+      [out-duct %give %set-config config]~
         ::  %turf: add or remove domain name
         ::
         %turf
