@@ -1374,6 +1374,12 @@
     ~/  %knap
     |=  [tea=wire hen=duct sih=sign:able]
     ^-  [(list move) _+>]
+    ::  if we got an error from behn, report it to %dill; TODO handle errors
+    ::
+    ?:  ?=([%wake ^] +.sih)
+      =/  =flog:dill  [%crud %wake u.error.sih]
+      [[hen %slip %d %flog flog]~ +>.$]
+    ::
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
     ::
@@ -1421,6 +1427,8 @@
         ^-  [p=(list boon) q=fort]
         ?-  +<.sih
         ::
+            ::  only handles the non-error %wake case; error case above
+            ::
             %wake
           (~(wake am [our now fox ski]) hen)
         ::

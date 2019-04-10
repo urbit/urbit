@@ -28,12 +28,25 @@
   ::  +born: urbit restarted; refresh :next-wake and store wakeup timer duct
   ::
   ++  born  set-unix-wake(next-wake.state ~, unix-duct.state duct)
-  ::  +crud: error report; hand off to %dill to be printed
+  ::  +crud: handle failure of previous arvo event
   ::
   ++  crud
-    |=  [p=@tas q=tang]
+    |=  [tag=@tas error=tang]
     ^+  [moves state]
-    [[duct %slip %d %flog %crud p q]~ state]
+    ::  behn must get activated before other vanes in a %wake
+    ::
+    ::    TODO: uncomment this case after switching %crud tags
+    ::
+    ::    We don't know how to handle other errors, so relay them to %dill
+    ::    to be printed and don't treat them as timer failures.
+    ::
+    ::  ?.  =(%wake tag)
+    ::    ~&  %behn-crud-not-first-activation^tag
+    ::    [[duct %slip %d %flog %crud tag error]~ state]
+    ::
+    ?:  =(~ timers.state)  ~|  %behn-crud-no-timer^tag^error  !!
+    ::
+    (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
   ::  +wait: set a new timer at :date, then adjust unix wakeup
   ::
@@ -45,9 +58,15 @@
   ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
   ::
   ++  wake
+    |=  error=(unit tang)
     ^+  [moves state]
     ::
-    ?~  timers.state  ~|(%behn-wake-no-timer !!)
+    ?~  timers.state  ~|  %behn-wake-no-timer^error  !!
+    ::  if we errored, pop the timer and notify the client vane of the error
+    ::
+    ?^  error
+      =<  set-unix-wake
+      (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state error)
     ::  if unix woke us too early, retry by resetting the unix wakeup timer
     ::
     ?:  (gth date.i.timers.state now)
@@ -56,7 +75,7 @@
     ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
     ::
     =<  set-unix-wake
-    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state)
+    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state ~)
   ::  +wegh: produce memory usage report for |mass
   ::
   ++  wegh
@@ -74,7 +93,9 @@
   ++  event-core  .
   ::  +emit-vane-wake: produce a move to wake a vane; assumes no prior moves
   ::
-  ++  emit-vane-wake  |=(=^duct event-core(moves [duct %give %wake ~]~))
+  ++  emit-vane-wake
+    |=  [=^duct error=(unit tang)]
+    event-core(moves [duct %give %wake error]~)
   ::  +emit-doze: set new unix wakeup timer in state and emit move to unix
   ::
   ::    We prepend the unix %doze event so that it is handled first. Arvo must
@@ -186,11 +207,11 @@
   =^  moves  state
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [p q]:task)
+      %crud  (crud:event-core [tag tang]:task)
       %rest  (rest:event-core date=p.task)
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
-      %wake  wake:event-core
+      %wake  (wake:event-core error=~)
       %wegh  wegh:event-core
     ==
   [moves behn-gate]
