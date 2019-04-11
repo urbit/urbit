@@ -196,56 +196,73 @@
     =/  declared  p.u.bol
     (~(nest ut declared) %.n bowl-type)
   ::
+  ::  +mo-receive-core: receives an app core built by ford-turbo.
+  ::
   ++  mo-receive-core
     ~/  %mo-receive-core
     |=  [dap=dude byk=beak made-result=made-result:ford]
-    ^+  +>
+    ^+  mo-state
     ::
     ?:  ?=([%incomplete *] made-result)
-      (mo-give %onto %| tang.made-result)
+      (mo-give %onto %.n tang.made-result)
     ::
     =/  build-result  build-result.made-result
     ::
     ?:  ?=([%error *] build-result)
-      (mo-give %onto %| message.build-result)
+      (mo-give %onto %.n message.build-result)
     ::
-    =/  result-cage=cage  (result-to-cage:ford build-result)
+    =/  =cage  (result-to-cage:ford build-result)
+    =/  result-vase  q.cage
     ::
     =/  app-data=(unit seat)  (~(get by bum.mas) dap)
     ?^  app-data
       ::  update the path
       ::
-      =.  bum.mas  (~(put by bum.mas) dap u.app-data(byk byk))
+      =/  updated  u.app-data(byk byk)
+      =.  bum.mas  (~(put by bum.mas) dap updated)
       ::  magic update string from +mo-boon, "complete old boot"
       ::
-      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) q.result-cage)
+      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) result-vase)
     ::  first install of the app
     ::
-    ?.  (mo-okay q.result-cage)
-      (mo-give %onto %| [%leaf "{<dap>}: bogus core"]~)
-    =.  +>.$  (mo-born dap byk q.result-cage)
-    =+  old=+>.$
-    =+  wag=(ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
+    ?.  (mo-okay result-vase)
+      (mo-give %onto %.n [%leaf "{<dap>}: bogus core"]~)
+    ::
+    =.  mo-state  (mo-born dap byk result-vase)
+    ::
+    =/  old  mo-state
+    =/  wag  (ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
+    ::
     ?^  -.wag
-      =.  +>.$  old
-      (mo-give %onto %| u.-.wag)
-    =.  +>.$  ap-abet:+.wag
-    (mo-give:(mo-claw dap) %onto %& dap %boot now)
+      =.  mo-state  old
+      (mo-give %onto %.n u.-.wag)
+    =.  mo-state  ap-abet:+.wag
+    (mo-give:(mo-claw dap) %onto %.y dap %boot now)
   ::
-  ++  mo-born                                           ::  new seat
-    |=  {dap/dude byk/beak hav/vase}
-    =+  sat=*seat
-    %_    +>.$
-        bum.mas
-      %+  ~(put by bum.mas)  dap
-      %_  sat
+  ::  +mo-born: create a new seat.
+  ::
+  ++  mo-born
+    |=  [=dude =beak =vase]
+    ^+  mo-state
+    ::
+    =|  =seat
+    ::
+    =/  =scar
+      =/  bone  1
+      =/  bone-by-duct  [[[~ ~] 0] ~ ~]
+      =/  duct-by-bone  [[0 [~ ~]] ~ ~]
+      [p=bone q=bone-by-duct r=duct-by-bone]
+    ::
+    =/  new-seat
+      %_  seat
         mom  hen
-        byk  byk
-        hav  hav
-        p.zam  1
-        q.zam  [[[~ ~] 0] ~ ~]
-        r.zam  [[0 [~ ~]] ~ ~]
+        byk  beak
+        hav  vase
+        zam  scar
       ==
+    ::
+    %_  mo-state
+      bum.mas  (~(put by bum.mas) dude new-seat)
     ==
   ::  +mo-boot: sends an %exec to ford.
   ::
