@@ -119,7 +119,10 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  mo
   ~%  %gall-mo  +>  ~
+  ::
   =*  mas  mast.all
+  =*  bowl-type  -:!>(*bowl)
+  ::
   |_  $:  hen=duct
           moz=(list move)
       ==
