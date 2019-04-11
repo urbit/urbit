@@ -640,30 +640,51 @@
       %way  (mo-cyst-way pax sih)
     ==
   ::
-  ++  mo-cook                                           ::  take in /use
+  ::  +mo-cook: take in /use.
+  ::
+  ++  mo-cook
     ~/  %mo-cook
-    |=  {pax/path hin/(hypo sign-arvo)}
-    ^+  +>
-    ?.  ?=({@ @ $?($inn $out $cay) *} pax)
-      ~&  [%mo-cook-bad-pax pax]
-      !!
-    =+  dap=`@tas`i.pax
-    =+  pry=`prey`[%high [~ (slav %p i.t.pax)]]
-    =+  pap=(ap-abed:ap dap pry)
-    =+  vax=(slot 3 `vase`hin)
-    ?-  i.t.t.pax
-      $inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))
-      $cay  ::?.  ?=({$e $sigh *} q.hin)
-              ~&  [%mo-cook-weird q.hin]
-              ~&  [%mo-cook-weird-path pax]
-              +>.$
-            ::ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
+    |=  [=path hin=(hypo sign-arvo)]
+    ^+  mo-state
     ::
-      $out  ?.  ?=({$g $unto *} q.hin)
-              ~&  [%mo-cook-weird q.hin]
-              ~&  [%mo-cook-weird-path pax]
-              +>.$
-            ap-abet:(ap-pout:pap t.t.t.pax +>.q.hin)
+    ?.  ?=([@ @ coke *] path)
+      ~&  [%mo-cook-bad-pax path]
+      !!
+    ::
+    =/  pap
+      =/  =term  i.path
+      =/  =ffuc  [~ (slav %p i.t.path)]
+      =/  =prey  [%high ffuc]
+      (ap-abed:ap term prey)
+    ::
+    =/  vax
+      =/  =vase  hin
+      (slot 3 vase)
+    ::
+    ?-  i.t.t.path
+        ::
+        %inn
+        ::
+      =/  poured  (ap-pour:pap t.t.t.path vax)
+      ap-abet:poured
+        ::
+        %cay
+        ::
+      ?.  ?=([%e %sigh *] q.hin)
+        ~&  [%mo-cook-weird q.hin]
+        ~&  [%mo-cook-weird-path path]
+        mo-state
+      =/  purred  (ap-purr:pap +<.q.hin t.t.t.path +>.q.hin)
+      ap-abet:purred
+        ::
+        %out
+        ::
+      ?.  ?=([%g %unto *] q.hin)
+        ~&  [%mo-cook-weird q.hin]
+        ~&  [%mo-cook-weird-path path]
+        mo-state
+      =/  pouted  (ap-pout:pap t.t.t.path +>.q.hin)
+      ap-abet:pouted
     ==
   ::
   ++  mo-claw                                           ::  clear queue
