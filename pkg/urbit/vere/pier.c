@@ -516,7 +516,8 @@ _pier_apply(u3_pier* pir_u)
 
   if ( (0 == log_u) ||
        (0 == god_u) ||
-       (c3n == god_u->liv_o) )
+       (c3n == god_u->liv_o) ||
+       (u3_psat_init == pir_u->sat_e) )
   {
     return;
   }
@@ -814,6 +815,32 @@ _pier_disk_load_commit(u3_pier* pir_u,
   }
 }
 
+/* _pier_boot_create(): create boot controller
+*/
+static u3_boot*
+_pier_boot_create(u3_pier* pir_u, u3_noun pil, u3_noun ven)
+{
+  u3_boot* bot_u = c3_calloc(sizeof(u3_boot));
+  bot_u->pil = u3k(pil);
+  bot_u->ven = u3k(ven);
+  bot_u->pir_u = pir_u;
+
+  return bot_u;
+}
+
+/* _pier_boot_dispose(): dispose of boot controller
+*/
+static void
+_pier_boot_dispose(u3_boot* bot_u)
+{
+  u3_pier* pir_u = bot_u->pir_u;
+
+  u3z(bot_u->pil);
+  u3z(bot_u->ven);
+  free(bot_u);
+  pir_u->bot_u = 0;
+}
+
 /* _pier_boot_vent(): create and enqueue boot sequence
 **
 **  per cgy:
@@ -821,13 +848,14 @@ _pier_disk_load_commit(u3_pier* pir_u,
 **    the right thing.  see new arvo.
 */
 static void
-_pier_boot_vent(u3_pier* pir_u)
+_pier_boot_vent(u3_boot* bot_u)
 {
   //  bot: boot formulas
   //  mod: module ova
   //  use: userpace ova
   //
   u3_noun bot, mod, use;
+  u3_pier* pir_u = bot_u->pir_u;
 
   //  extract boot formulas and module/userspace ova from pill
   //
@@ -835,13 +863,13 @@ _pier_boot_vent(u3_pier* pir_u)
     u3_noun pil_p, pil_q, pil_r;
     u3_noun pro;
 
-    c3_assert( c3y == u3du(pir_u->pil) );
+    c3_assert( c3y == u3du(bot_u->pil) );
 
-    if ( c3y == u3h(pir_u->pil) ) {
-      u3x_trel(pir_u->pil, 0, &pil_p, &pil_q);
+    if ( c3y == u3h(bot_u->pil) ) {
+      u3x_trel(bot_u->pil, 0, &pil_p, &pil_q);
     }
     else {
-      u3x_qual(pir_u->pil, 0, &pil_p, &pil_q, &pil_r);
+      u3x_qual(bot_u->pil, 0, &pil_p, &pil_q, &pil_r);
     }
 
     pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
@@ -856,7 +884,7 @@ _pier_boot_vent(u3_pier* pir_u)
 
     //  optionally replace filesystem in userspace
     //
-    if ( c3y == u3h(pir_u->pil) ) {
+    if ( c3y == u3h(bot_u->pil) ) {
       if ( u3_nul != pil_q ) {
         c3_w len_w = 0;
         u3_noun ova = use;
@@ -890,8 +918,6 @@ _pier_boot_vent(u3_pier* pir_u)
     }
 
     u3z(pro);
-    u3z(pir_u->pil);
-    pir_u->pil = u3_nul;
   }
 
   //  prepend entropy to the module sequence
@@ -940,16 +966,6 @@ _pier_boot_vent(u3_pier* pir_u)
     }
   }
 
-  //  prepare serf for boot sequence
-  //
-  {
-    fprintf(stderr, "boot: ship: %s%s\r\n",
-                     pir_u->who_c,
-                     (c3y == pir_u->fak_o) ? " (fake)" : "");
-
-    _pier_work_boot(pir_u, c3y);
-  }
-
   //  insert module events
   //
   {
@@ -979,8 +995,8 @@ _pier_boot_vent(u3_pier* pir_u)
       //
       //    XX this is horrible
       //
-      u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
-                    u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
+      u3_noun tuf = ( c3y == pir_u->fak_o ) ? u3_nul :
+                    u3h(u3t(u3t(u3t(u3t(bot_u->ven)))));
 
 
       //  send a fake effect to bring up listeners and configure domains
@@ -1000,15 +1016,13 @@ _pier_boot_vent(u3_pier* pir_u)
     //  XX do something about this wire
     //  XX route directly to %jael?
     //
-    c3_assert( c3y == u3du(pir_u->bot) );
+    c3_assert( c3y == u3du(bot_u->ven) );
 
     u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-    u3_noun car = u3nc(c3__boot, pir_u->bot);
+    u3_noun car = u3nc(c3__boot, u3k(bot_u->ven));
     u3_noun ovo = u3nc(wir, car);
 
     _pier_insert_ovum(pir_u, 0, ovo);
-
-    pir_u->bot = u3_nul;
   }
 
   //  insert userspace events
@@ -1055,27 +1069,29 @@ _pier_boot_ready(u3_pier* pir_u)
 
   //  boot
   //
-  if ( 0 == log_u->com_d ) {
-    pir_u->sat_e = u3_psat_boot;
+  if ( 0 != pir_u->bot_u ) {
+    c3_assert( 0 == log_u->com_d );
+    c3_assert( 0 == god_u->dun_d );
+
+    //  construct/enqueue boot sequence
+    //
+    _pier_boot_vent(pir_u->bot_u);
+    _pier_boot_dispose(pir_u->bot_u);
+
+    //  prepare serf for boot sequence, write log header
+    //
+    _pier_work_boot(pir_u, c3y);
 
     fprintf(stderr, "boot: ship: %s%s\r\n",
                      pir_u->who_c,
                      (c3y == pir_u->fak_o) ? " (fake)" : "");
 
-    //  construct/enqueue boot sequence
-    //
-    _pier_boot_vent(pir_u);
-
-    //  prepare serf for boot sequence, write log header
-    //
-    //    XX move here from _pier_boot_vent, confirm lif_d is set
-    //
-    // _pier_work_boot(pir_u, c3y);
+    pir_u->sat_e = u3_psat_boot;
   }
   //  replay
   //
-  else if ( god_u->dun_d < log_u->com_d) {
-    pir_u->sat_e = u3_psat_pace;
+  else if ( god_u->dun_d < log_u->com_d ) {
+    c3_assert( 0 != log_u->com_d );
 
     fprintf(stderr, "---------------- playback starting----------------\r\n");
 
@@ -1111,10 +1127,15 @@ _pier_boot_ready(u3_pier* pir_u)
     //    XX batch, async
     //
     _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d));
+
+    pir_u->sat_e = u3_psat_pace;
   }
   //  resume
   //
   else {
+    c3_assert( 0 != log_u->com_d );
+    c3_assert( 0 != god_u->dun_d );
+
     //  set the boot barrier to the last computed event
     //
     pir_u->but_d = god_u->dun_d;
@@ -1981,11 +2002,9 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    pir_u->bot = u3k(ven);
-    pir_u->pil = u3k(pil);
+    pir_u->bot_u = _pier_boot_create(pir_u, u3k(pil), u3k(ven));
 
-    _pier_set_ship(pir_u, u3k(who),
-                   ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n);
+    _pier_set_ship(pir_u, u3k(who), ( c3__fake == u3h(ven) ) ? c3y : c3n);
   }
 
   //  initialize i/o handlers
@@ -2034,7 +2053,10 @@ u3_pier_mark(FILE* fil_u)
     pir_u = u3K.tab_u[--len_w];
     fprintf(stderr, "pier: %u\r\n", len_w);
 
-    tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot));
+    if ( 0 != pir_u->bot_u ) {
+      tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
+      tot_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
+    }
 
     {
       u3_writ* wit_u = pir_u->ent_u;
