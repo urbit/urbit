@@ -264,21 +264,36 @@
     %_  mo-state
       bum.mas  (~(put by bum.mas) dude new-seat)
     ==
+  ::
   ::  +mo-boot: sends an %exec to ford.
   ::
-  ++  mo-boot                                           ::  create ship
-    |=  {dap/dude byk/beak}
-    ^+  +>
-    %+  mo-pass  [%sys %core dap (scot %p p.byk) q.byk (scot r.byk) ~]
-    ^-  note-arvo
-    [%f %build live=%.y [%core [[p q]:byk [%hoon dap %app ~]]]]
+  ++  mo-boot
+    |=  [=dude =beak]
+    ^+  mo-state
+    ::
+    =/  =path
+      =/  ship  (scot %p p.beak)
+      =/  desk  q.beak
+      =/  case  (scot r.beak)
+      /sys/core/[dude]/[ship]/[desk]/[case]
+    ::
+    =/  =note-arvo
+      =/  disc  [p q]:beak
+      =/  spur  /hoon/[dude]/app
+      =/  schematic  [%core disc spur]
+      [%f %build live=%.y schematic]
+    ::
+    =/  pass  [path note-arvo]
+    (mo-pass pass)
   ::
-  ++  mo-away                                           ::  foreign request
+  :: +mo-away: handle a foreign request.
+  ::
+  ++  mo-away
     ~/  %mo-away
-    |=  {him/ship caz/cush}                             ::
-    ^+  +>
-    ::  ~&  [%mo-away him caz]
-    ?:  ?=($pump -.q.caz)
+    |=  [=ship =cush]
+    ^+  mo-state
+    ::
+    ?:  ?=(%pump -.q.cush)
       ::
       ::  you'd think this would send an ack for the diff
       ::  that caused this pump.  it would, but we already
@@ -286,45 +301,54 @@
       ::  we'd have to save the network duct and connect it
       ::  to this returning pump.
       ::
-      +>
-    ?:  ?=($peer-not -.q.caz)
-      ::  short circuit error
-      (mo-give %unto %reap (some p.q.caz))
-    =^  num  +>.$  (mo-bale him)
-    =+  ^=  roc  ^-  rook
-        ?-  -.q.caz
-          $poke  [%m p.p.q.caz q.q.p.q.caz]
-          $pull  [%u ~]
-          $puff  !!
-          $punk  !!
-          $peel  [%l p.q.caz q.q.caz]
-          $peer  [%s p.q.caz]
-        ==
-    %+  mo-pass
-      [%sys %way -.q.caz ~]
-    `note-arvo`[%a %want him [%g %ge p.caz ~] [num roc]]
+      mo-state
+    ::
+    ?:  ?=(%peer-not -.q.cush)
+      =/  err  (some p.q.cush)
+      (mo-give %unto %reap err)
+    ::
+    =^  num  mo-state  (mo-bale ship)
+    ::
+    =/  =rook
+      ?-  -.q.cush
+        %poke  [%m p.p.q.cush q.q.p.q.cush]
+        %pull  [%u ~]
+        %puff  !!
+        %punk  !!
+        %peel  [%l p.q.cush q.q.cush]
+        %peer  [%s p.q.cush]
+      ==
+    ::
+    =/  action  -.q.cush
+    =/  =path  /sys/way/[action]
+    =/  note=note-arvo  [%a %want ship [%g %ge p.cush ~] [num rook]]
+    ::
+    (mo-pass path note)
   ::
-  ++  mo-baal                                           ::  error convert a
-    |=  art/(unit ares)
-    ^-  ares
-    ?~(art ~ ?~(u.art `[%blank ~] u.art))
+  ::  +mo-awed: handle foreign response.
   ::
-  ++  mo-baba                                           ::  error convert b
-    |=  ars/ares
-    ^-  (unit tang)
-    ?~  ars  ~
-    `[[%leaf (trip p.u.ars)] q.u.ars]
-  ::
-  ++  mo-awed                                           ::  foreign response
-    |=  {him/ship why/?($peer $peel $poke $pull) art/(unit ares)}
-    ^+  +>
-    ::  ~&  [%mo-awed him why art]
-    =+  tug=(mo-baba (mo-baal art))
-    ?-  why
-      $peel  (mo-give %unto %reap tug)
-      $peer  (mo-give %unto %reap tug)
-      $poke  (mo-give %unto %coup tug)
-      $pull  +>.$
+  ++  mo-awed
+    |=  [=whey art=(unit ares)]
+    ^+  mo-state
+    ::
+    =/  =ares
+      =/  tanks  [%blank ~]
+      =/  tang  (some tanks)
+      (fall art tang)
+    ::
+    =/  to-tang
+      |=  ars=(pair term tang)
+      ^-  tang
+      =/  tape  (trip p.ars)
+      [[%leaf tape] q.ars]
+    ::
+    =/  result  (bind ares to-tang)
+    ::
+    ?-  whey
+      %peel  (mo-give %unto %reap result)
+      %peer  (mo-give %unto %reap result)
+      %poke  (mo-give %unto %coup result)
+      %pull  mo-state
     ==
   ::
   ++  mo-bale                                           ::  assign outbone
