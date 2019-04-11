@@ -1035,11 +1035,15 @@ _pier_boot_ready(u3_pier* pir_u)
   u3_lord* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
-  c3_assert( c3y == god_u->liv_o );
-  c3_assert( c3y == log_u->liv_o );
   c3_assert( u3_psat_init == pir_u->sat_e );
-  c3_assert( c3n == pir_u->liv_o );
-  pir_u->liv_o = c3y;
+
+  if ( ( 0 == god_u) ||
+       ( 0 == log_u) ||
+       (c3y != god_u->liv_o) ||
+       (c3y != log_u->liv_o) )
+  {
+    return;
+  }
 
   //  mark all commits as released
   //
@@ -1132,16 +1136,7 @@ _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
 
   log_u->com_d = log_u->moc_d = evt_d;
 
-  {
-    u3_pier* pir_u = log_u->pir_u;
-    u3_lord* god_u = pir_u->god_u;
-
-    if ( (0 != god_u) &&
-         (c3y == god_u->liv_o) &&
-         (c3n == pir_u->liv_o) ) {
-      _pier_boot_ready(pir_u);
-    }
-  }
+  _pier_boot_ready(log_u->pir_u);
 }
 
 /* _pier_disk_init():
@@ -1296,15 +1291,7 @@ _pier_work_play(u3_pier* pir_u,
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
-  {
-    u3_disk* log_u = pir_u->log_u;
-
-    if ( (0 != log_u) &&
-         (c3y == log_u->liv_o) &&
-         (c3n == pir_u->liv_o) ) {
-      _pier_boot_ready(pir_u);
-    }
-  }
+  _pier_boot_ready(pir_u);
 }
 
 /* _pier_work_exit(): handle subprocess exit.
@@ -1558,7 +1545,6 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c)
   pir_u->pax_c = pax_c;
   pir_u->wag_w = wag_w;
   pir_u->sat_e = u3_psat_init;
-  pir_u->liv_o = c3n;
 
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
   pir_u->teh_u = c3_calloc(sizeof(u3_behn));

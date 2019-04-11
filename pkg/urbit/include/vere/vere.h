@@ -685,7 +685,6 @@
           c3_c*            who_c;               //  identity as C string
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
-          c3_o             liv_o;               //  live
           u3_psat          sat_e;               //  pier state
           u3_noun          bot;                 //  boot event XX review
           u3_noun          pil;                 //  pill XX review
