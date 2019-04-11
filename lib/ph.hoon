@@ -191,7 +191,7 @@
   ?.  =(p.u.q.q.uf (rash dest auri:de-purl:html))  ~
   `[p.q.uf q.u.q.q.uf]
 ::
-+$  az-log  [topics=(lest @ux) data=@t]
++$  az-log  [topics=(lest @) data=@t]
 ++  az
   =|  logs=(list az-log)  ::  oldest logs first
   =,  azimuth-events:azimuth
@@ -200,86 +200,139 @@
   ++  add-logs
     |=  new-logs=(list az-log)
     ^+  this-az
-    =.  logs  [logs (weld new-logs)]
+    =.  logs  (weld logs new-logs)
     this-az
   ::
   ++  router
-    |^
-    ^-  (list $-(@t (unit @t)))
+    =|  eth-filter=(unit [from-block=@ud last-block=@ud address=@ux])
+    |=  [who=ship uf=unix-effect]
+    =*  this-router  ..$
+    ^-  [thru=? pe=(list ph-event) self=_^|(this-router)]
     =,  enjs:format
-    :~  |=  req=@t
-        ?.  =((get-method req) 'eth_blockNumber')
-          ~
-        :-  ~
-        %-  pairs
-        :~  id+s+(get-id req)
-            jsonrpc+s+'2.0'
-            result+s+(crip (num-to-hex:ethereum (lent logs)))
-        ==
-      ::
-        |=  req=@t
-        ?.  =((get-method req) 'eth_getLogs')
-          ~
-        :-  ~
-        %-  pairs
-        :~  id+s+(get-id req)
-            jsonrpc+s+'2.0'
-            :+  %result  %a
-            =/  selected-logs
-              %+  swag
-                :-  (get-param req 'fromBlock')
-                (get-param req 'toBlock')]
-              logs
-            =|  count=@
-            |-  ^-  (list json)
-            ?~  selected-logs
-              ~
-            :_  $(selected-logs t.selected-logs, count +(count))
-            %-  pairs
-            :~  'logIndex'^s+'0x0'
-                'transactionIndex'^s+'0x0'
-                'transactionHash'^s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 0x5362)))
-                'blockHash'^s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 0x5363)))
-                'blockNumber'^s+(crip (num-to-hex:ethereum count))
-                'address'^s+(crip (address-to-hex:ethereum azimuth:contracts:))
-                'type'^s+'mined'
-                'data'^data.i.selected-logs
-                :+  'topics'  %a
-                %+  turn  topics.i.selected-logs
-                |=  topic=@ux
-                ^-  json
-                :-  %s
-                %-  crip
-                %-  prefix-hex:ethereum
-                (render-hex-bytes:ethereum 32 topic)
-            ==
-        ==
-      ::
-        |=  req=@t
-        ?.  =((get-method req) 'eth_newFilter')
-          ~
-        :-  ~
-        %-  pairs
-        :~  id+s+(get-id req)
-            jsonrpc+s+'2.0'
-            result+s+'0xa'
-        ==
-      ::
-      ::  XX  eth_getFilterLogs  needs state
-      ::  XX  eth_getFilterChanges  needs state
-    ==
+    =/  thus  (extract-thus-to uf 'http://localhost:8545')
+    ?~  thus
+      [& ~ this-router]
+    ?~  r.mot.u.thus
+      [& ~ this-router]
+    =/  req  q.u.r.mot.u.thus
+    |^
+    =/  method  (get-method req)
+    ?:  =(method 'eth_blockNumber')
+      :-  |  :_  this-router
+      %+  answer-request  req
+      s+(crip (num-to-hex:ethereum (lent logs)))
+    ?:  =(method 'eth_getLogs')
+      :-  |  :_  this-router
+      %+  answer-request  req
+      %+  logs-to-json
+        (get-param-obj req 'fromBlock')
+      (get-param-obj req 'toBlock')
+    ?:  =(method 'eth_newFilter')
+      =.  eth-filter
+        :^    ~
+            (get-param-obj req 'fromBlock')
+          (get-param-obj req 'fromBlock')
+        (get-param-obj req 'address')
+      :-  |  :_  this-router
+      (answer-request req s+'0xa')
+    ?:  =(method 'eth_getFilterLogs')
+      ?~  eth-filter
+        ~|(%no-filter-not-implemented !!)
+      =.  last-block.u.eth-filter  (lent logs)
+      :-  |  :_  this-router
+      %+  answer-request  req
+      (logs-to-json from-block.u.eth-filter (lent logs))
+    ?:  =(method 'eth_getFilterChanges')
+      ?~  eth-filter
+        ~|(%no-filter-not-implemented !!)
+      =.  last-block.u.eth-filter  (lent logs)
+      :-  |  :_  this-router
+      %+  answer-request  req
+      (logs-to-json last-block.u.eth-filter (lent logs))
+    [& ~ this-router]
     ::
     ++  get-id
       |=  req=@t
       =,  dejs:format
-      %_  (need (de-json:html req))
+      %.  (need (de-json:html req))
       (ot id+so ~)
     ::
     ++  get-method
       |=  req=@t
       =,  dejs:format
-      %_  (need (de-json:html req))
+      %.  (need (de-json:html req))
       (ot method+so ~)
+    ::
+    ++  get-param-obj
+      |=  [req=@t param=@t]
+      =,  dejs:format
+      %-  hex-to-num:ethereum
+      =/  array
+        %.  (need (de-json:html req))
+        (ot params+(ar (ot param^so ~)) ~)
+      ?>  ?=([* ~] array)
+      i.array
+    ::
+    ++  answer-request
+      |=  [req=@t result=json]
+      ^-  (list ph-event)
+      =/  resp
+        %-  crip
+        %-  en-json:html
+        %-  pairs
+        :~  id+s+(get-id req)
+            jsonrpc+s+'2.0'
+            result+result
+        ==
+      :_  ~
+      :*  %event
+          who
+          //http/0v1n.2m9vh
+          %they
+          num.u.thus
+          [200 ~ `(as-octs:mimes:html resp)]
+      ==
+    ::
+    ++  logs-to-json
+      |=  [from-block=@ud to-block=@ud]
+      ^-  json
+      :-  %a
+      =/  selected-logs
+        %+  swag
+          [from-block (sub to-block from-block)]
+        logs
+      =|  count=@
+      |-  ^-  (list json)
+      ?~  selected-logs
+        ~
+      :_  $(selected-logs t.selected-logs, count +(count))
+      %-  pairs
+      :~  'logIndex'^s+'0x0'
+          'transactionIndex'^s+'0x0'
+          :+  'transactionHash'  %s
+          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5362)))
+        ::
+          :+  'blockHash'  %s
+          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5363)))
+        ::
+          :+  'blockNumber'  %s
+          (crip (num-to-hex:ethereum count))
+        ::
+          :+  'address'  %s
+          (crip (address-to-hex:ethereum azimuth:contracts:azimuth))
+        ::
+          'type'^s+'mined'
+        ::
+          'data'^s+data.i.selected-logs
+          :+  'topics'  %a
+          %+  turn  topics.i.selected-logs
+          |=  topic=@ux
+          ^-  json
+          :-  %s
+          %-  crip
+          %-  prefix-hex:ethereum
+          (render-hex-bytes:ethereum 32 `@`topic)
+      ==
     --
   ::
   ++  spawn-galaxy
@@ -288,19 +341,22 @@
     :~  [~[activated who] '']
         [~[owner-changed who 0xdead.beef] '']
         :-  ~[changed-keys who]
+        %-  crip
         %-  prefix-hex:ethereum
         ;:  welp
-          (get-keys who 1) 
-          (render-hex-bytes:ethereum 32 1)
-          (render-hex-bytes:ethereum 32 1)
+          (get-keys who 1 %auth) 
+          (get-keys who 1 %crypt) 
+          (render-hex-bytes:ethereum 32 `@`1)
+          (render-hex-bytes:ethereum 32 `@`1)
         ==
     ==
   ::
   ++  get-keys
-    |=  [who=@p life=@ud]
+    |=  [who=@p life=@ud typ=?(%auth %crypt)]
     %+  render-hex-bytes:ethereum  32
     %-  keccak-256:keccak:crypto
-    (cat 3 (scot %p who) (scot %ud life))
+    %-  as-octs:mimes:html
+    :((cury cat 3) (scot %p who) (scot %ud life) typ)
   --
 ::
 ++  ph-azimuth
@@ -455,6 +511,42 @@
       =+  ^-  [thru-filter=? events-filter=(list ph-event)]
         (filter who uf)
       [thru-filter (weld events-test events-filter) ..start]
+    --
+  ::
+  ::  Wrap a test with an effect filter.
+  ::
+  ::    This allows intercepting particular effects for special
+  ::    handling.
+  ::
+  ++  wrap-test-stateful
+    |=  $:  lab=@ta
+          ::
+            $=  filter
+            $_  |~  [ship unix-effect]
+            *[thru=? pe=(list ph-event) self=_^|(..$)]
+          ::
+            cor=raw-test-core
+        ==
+    ^-  raw-test-core
+    |_  now=@da
+    ++  label  :((cury cat 3) label:cor '--ws--' lab)
+    ++  ships  ships:cor
+    ++  start
+      =^  events  cor  ~(start cor now)
+      [events ..start]
+    ::
+    ++  route
+      |=  [who=ship uf=unix-effect]
+      ^-  [? (quip ph-event _^|(..start))]
+      =+  ^-  [thru-test=? events-test=(list ph-event) cor-test=_cor]
+        (~(route cor now) who uf)
+      =.  cor  cor-test
+      ?.  thru-test
+        [| events-test ..start]
+      =+  ^-  res=[thru=? events=(list ph-event) filter=_filter]
+        (filter who uf)
+      =.  filter  filter.res
+      [thru.res (weld events-test events.res) ..start]
     --
   ::
   ::  Mock HTTP responses to particular requests

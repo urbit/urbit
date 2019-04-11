@@ -155,20 +155,21 @@
         :-  '{"params":["0x0a"],"id":"poll filter","jsonrpc":"2.0","method":"eth_getFilterChanges"}'
         '{"id":"poll filter","jsonrpc":"2.0","result":[]}'
     ==
+  =/  eth-node  (spawn-galaxy:az ~rel)
   :~  :-  %boot-az
-      %^    wrap-test-http
-          'http://localhost:8545'
-        static-eth-node
-      ::  %-  compose-tests
-      ::  :_  *raw-test-core
+      %^    wrap-test-stateful
+          %fake-eth-node
+        router:eth-node
+      %-  compose-tests
+      :_  *raw-test-core
       %+  compose-tests
         (raw-ship ~bud `(dawn:ph-azimuth ~bud))
       (touch-file ~bud %home)
     ::
       :-  %boot-az-hi
-      %^    wrap-test-http
-          'http://localhost:8545'
-        static-eth-node
+      %^    wrap-test-stateful
+          %fake-eth-node
+        router:eth-node
       ::  %-  compose-tests
       ::  :_  *raw-test-core
       %+  compose-tests

@@ -1,7 +1,7 @@
 /-  aquarium
 =,  aquarium
 :-  %say
-|=  [* [her=ship command=tape] ~]
+|=  [* [her=ship command=tape ~] ~]
 :-  %aqua-events
 %+  turn
   ^-  (list unix-event)
