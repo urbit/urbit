@@ -1235,11 +1235,6 @@
 
     /** Pier control.
     **/
-      /* u3_pier_create(): create a pier, loading existing.
-      */
-        u3_pier*
-        u3_pier_create(c3_w wag_w, c3_c* pax_c);
-
       /* u3_pier_interrupt(): interrupt running process.
       */
         void
