@@ -13,6 +13,7 @@
         c3_o far_o;                 //  now executing in fragmentor
         c3_o coy_o;                 //  now executing in copy
         c3_o euq_o;                 //  now executing in equal
+        void (*log_f)(u3_noun);     //  now executing in equal
       } u3t_trace;
 
   /**  Macros.
@@ -43,6 +44,11 @@
       void
       u3t_init(void);
 
+    /* u3t_init(): set function pointer for slog.
+    */
+      void
+      u3t_init_slog(void (*log_f)(u3_noun));
+
     /* u3t_push(): push on trace stack.
     */
       void
@@ -62,11 +68,6 @@
     */
       void
       u3t_slog(u3_noun hod);
-
-    /* u3t_shiv(): atom-only print.
-    */
-      void
-      u3t_shiv(u3_noun hod);
 
     /* u3t_heck(): profile point.
     */

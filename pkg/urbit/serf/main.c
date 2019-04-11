@@ -734,6 +734,67 @@ _serf_poke(void* vod_p, u3_noun mat)
   }
 }
 
+#ifdef U3_EVENT_TIME_DEBUG
+/* _serf_slog_time(): slog timelapse.
+*/
+static void
+_serf_slog_time(void)
+{
+  static int old;
+  static struct timeval b4, f2, d0;
+  static c3_d b4_d;
+  c3_w ms_w;
+
+  if ( old ) {
+    gettimeofday(&f2, 0);
+    timersub(&f2, &b4, &d0);
+    ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+    if (ms_w > 1) {
+#if 0
+      fprintf(stderr, "%6d.%02dms: %9d ",
+              ms_w, (int) (d0.tv_usec % 1000) / 10,
+              ((int) (u3R->pro.nox_d - b4_d)));
+#else
+      fprintf(stderr, "%6d.%02dms ",
+              ms_w, (int) (d0.tv_usec % 1000) / 10);
+#endif
+      gettimeofday(&b4, 0);
+      b4_d = u3R->pro.nox_d;
+    }
+    else {
+      printf("            ");
+    }
+  }
+  else {
+    gettimeofday(&b4, 0);
+    b4_d = u3R->pro.nox_d;
+  }
+  old = 1;
+}
+#endif
+
+/* _serf_slog(): print directly.
+*/
+static void
+_serf_slog(u3_noun hod)
+{
+#ifdef U3_EVENT_TIME_DEBUG
+  _serf_slog_time();
+#endif
+
+  if ( c3y == u3du(hod) ) {
+    u3_noun pri = u3h(hod);
+
+    switch ( pri ) {
+      case 3: fprintf(stderr, ">>> "); break;
+      case 2: fprintf(stderr, ">> "); break;
+      case 1: fprintf(stderr, "> "); break;
+    }
+    u3_pier_tank(0, u3k(u3t(hod)));
+  }
+  u3z(hod);
+}
+
 /* u3_serf_boot(): send startup message to manager.
 */
 void
@@ -811,6 +872,7 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     u3V.evt_d = u3m_boot_new(dir_c);
+    u3t_init_slog(_serf_slog);
   }
 
   /* configure pipe to lord process
