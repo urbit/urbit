@@ -124,7 +124,7 @@
   =*  bowl-type  -:!>(*bowl)
   ::
   |_  $:  hen=duct
-          moz=(list move)
+          moves=(list move)
       ==
   ++  mo-abed                                           ::  initialize
     |=  =duct
