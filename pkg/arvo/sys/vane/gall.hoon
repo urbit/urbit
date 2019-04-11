@@ -878,7 +878,7 @@
       =>  ap-abut
       %_  +>
         bum.mas  (~(put by bum.mas) dap +<+)
-        moz  :(weld (turn zip ap-aver) (turn dub ap-avid) moz)
+        moves  :(weld (turn zip ap-aver) (turn dub ap-avid) moves)
       ==
     ::
     ++  ap-abut                                         ::  track queue
@@ -1660,29 +1660,55 @@
   --
 ++  call                                                ::  request
   ~%  %gall-call  +>   ~
-  |=  {hen/duct hic/(hypo (hobo task:able))}
+  |=  [hen=duct hic=(hypo (hobo task:able))]
   ^+  [*(list move) ..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ;;(task:able p.q.hic)))
-  ?-    -.q.hic
-      $conf
-    ?.  =(our p.p.q.hic)
-      ~&  [%gall-not-ours p.p.q.hic]
-      [~ ..^$]
-    mo-abet:(mo-conf:(mo-abed:mo hen) q.p.q.hic q.q.hic)
   ::
-      $deal
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ;;(task:able p.q.hic)))
+  ::
+  ?-    -.q.hic
+      ::
+      %conf
+      ::
+    =/  doc=dock  p.q.hic
+    =/  syp=ship  p.doc
+    ?.  =(our syp)
+      ~&  [%gall-not-ours syp]
+      [~ ..^$]
+    ::
+    =/  confed
+      =/  initialised  (mo-abed:mo hen)
+      =/  dud=dude  q.doc
+      :: =/  des=(pair ship desk)  q.q.hic :: FIXME doesn't work?!
+      =|  des=(pair ship desk)
+      (mo-conf:initialised dud des)
+    ::
+    mo-abet:confed
+  ::
+      ::
+      %deal
+      ::
     =<  mo-abet
     ?.  =(our q.p.q.hic)                                ::  either to us
       ?>  =(our p.p.q.hic)                              ::  or from us
       (mo-away:(mo-abed:mo hen) q.p.q.hic q.q.hic)
     (mo-come:(mo-abed:mo hen) p.p.q.hic q.q.hic)
   ::
-      $init
+      ::
+      %init
+      ::
     [~ ..^$(sys.mast.all hen)]
   ::
-      $vega  [~ ..^$]
+      ::
+      %sunk  [~ ..^$]
+      ::
   ::
-      $west
+      ::
+      %vega  [~ ..^$]
+      ::
+  ::
+      ::
+      %west
+      ::
     ?>  ?=({?($ge $gh) @ ~} q.q.hic)
     =*  dap  i.t.q.q.hic
     =*  him  p.q.hic
