@@ -667,12 +667,22 @@ _pier_disk_read_header_complete(u3_disk* log_u, u3_noun dat)
 }
 
 /* _pier_disk_read_header():
-** XX async
-** XX very slow
 */
 static void
 _pier_disk_read_header(u3_disk* log_u)
 {
+  //  XX disabled
+  //
+  //    This is very, very slow.
+  //    The one situation in which we currently *need* it -
+  //    full log replay - it's unnecessary thanks to the current
+  //    _pier_disk_load_commit.
+  //    In all other situations, we're covered by
+  //    _pier_work_play or u3_pier_boot.
+  //    In the long run, it seems best to always get identity
+  //    from the log for restart/replay.
+  //
+#if 0
   c3_assert( 0 != log_u->fol_u );
 
   c3_d pos_d = log_u->fol_u->end_d;
@@ -705,6 +715,7 @@ _pier_disk_read_header(u3_disk* log_u)
 
     c3_free(buf_d);
   }
+#endif
 }
 
 /* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
@@ -1099,17 +1110,15 @@ _pier_boot_ready(u3_pier* pir_u)
     //
     pir_u->but_d = log_u->com_d;
 
+    //  begin queuing batches of committed events
+    //
+    //    XX batch, async
+    //
+    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d));
+
     if ( 0 == god_u->dun_d ) {
       fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
                       log_u->com_d);
-
-      //  restore pier identity
-      //
-      //    XX currently very slow
-      //    technically unnecessary due to the current _pier_disk_load_commit
-      //    could be removed if _pier_disk_load_commit were moved before block
-      //
-      _pier_disk_read_header(pir_u->log_u);
 
       //  prepare serf for replay of boot sequence, don't write log header
       //
@@ -1121,12 +1130,6 @@ _pier_boot_ready(u3_pier* pir_u)
                       god_u->dun_d,
                       log_u->com_d);
     }
-
-    //  begin queuing batches of committed events
-    //
-    //    XX batch, async
-    //
-    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d));
 
     pir_u->sat_e = u3_psat_pace;
   }
@@ -1156,6 +1159,10 @@ _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
   log_u->liv_o = c3y;
 
   log_u->com_d = log_u->moc_d = evt_d;
+
+  //  restore pier identity (XX currently a no-op, see comment)
+  //
+  _pier_disk_read_header(log_u);
 
   _pier_boot_ready(log_u->pir_u);
 }
