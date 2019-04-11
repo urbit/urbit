@@ -879,6 +879,55 @@ _pier_work_play(u3_pier* pir_u,
   _pier_boot_ready(pir_u);
 }
 
+/* _pier_work_slog(): print directly.
+*/
+static void
+_pier_work_slog(u3_writ* wit_u, c3_w pri_w, u3_noun tan)
+{
+#ifdef U3_EVENT_TIME_DEBUG
+  {
+    static int old;
+    static struct timeval b4, f2, d0;
+    static c3_d b4_d;
+    c3_w ms_w;
+
+    if ( old ) {
+      gettimeofday(&f2, 0);
+      timersub(&f2, &b4, &d0);
+      ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
+      if (ms_w > 1) {
+  #if 0
+        fprintf(stderr, "%6d.%02dms: %9d ",
+                ms_w, (int) (d0.tv_usec % 1000) / 10,
+                ((int) (u3R->pro.nox_d - b4_d)));
+  #else
+        fprintf(stderr, "%6d.%02dms ",
+                ms_w, (int) (d0.tv_usec % 1000) / 10);
+  #endif
+        gettimeofday(&b4, 0);
+        b4_d = u3R->pro.nox_d;
+      }
+      else {
+        printf("            ");
+      }
+    }
+    else {
+      gettimeofday(&b4, 0);
+      b4_d = u3R->pro.nox_d;
+    }
+    old = 1;
+  }
+#endif
+
+  switch ( pri_w ) {
+    case 3: fprintf(stderr, ">>> "); break;
+    case 2: fprintf(stderr, ">> "); break;
+    case 1: fprintf(stderr, "> "); break;
+  }
+
+  u3_pier_tank(0, tan);
+}
+
 /* _pier_work_exit(): handle subprocess exit.
 */
 static void
@@ -1006,6 +1055,25 @@ _pier_work_poke(void*   vod_p,
           goto error;
         }
         _pier_work_complete(wit_u, mug_l, u3k(r_jar));
+      }
+      break;
+    }
+
+    case  c3__slog: {
+      if ( (c3n == u3r_qual(jar, 0, &p_jar, &q_jar, &r_jar)) ||
+           (c3n == u3ud(p_jar)) ||
+           (u3r_met(6, p_jar) != 1) ||
+           (c3n == u3ud(q_jar)) ||
+           (u3r_met(3, q_jar) > 1) )
+      {
+        goto error;
+      }
+      else {
+        c3_d     evt_d = u3r_chub(0, p_jar);
+        c3_w     pri_w = u3r_word(0, q_jar);
+        u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
+
+        _pier_work_slog(wit_u, pri_w, u3k(r_jar));
       }
       break;
     }
@@ -1903,7 +1971,6 @@ _pier_wall(u3_noun wol)
   FILE* fil_u = u3_term_io_hija();
   u3_noun wal = wol;
 
-  fil_u = stderr;  // XX
   while ( u3_nul != wal ) {
     _pier_tape(fil_u, u3k(u3h(wal)));
 
@@ -1942,7 +2009,6 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
       if ( c3__leaf == u3h(act) ) {
         FILE* fil_u = u3_term_io_hija();
 
-        fil_u = stderr;   // XX
         _pier_tape(fil_u, u3k(u3t(act)));
         putc(13, fil_u);
         putc(10, fil_u);
