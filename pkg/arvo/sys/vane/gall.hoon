@@ -151,26 +151,50 @@
       [p.mov %pass p.q.mov q.q.mov]
     [(flop (turn moves reshape))]
   ::
-  ++  mo-conf                                           ::  configure
-    |=  {dap/dude lum/culm}
-    (mo-boot dap p.p.lum q.p.lum da+now)
+  ::  +mo-conf: send an %exec to ford using a beak assembled with the current
+  ::            timestamp.
   ::
-  ++  mo-pass                                           ::  standard pass
-    |=  {pax/path noh/note-arvo}
-    %_(+> moz :_(moz [hen %pass pax noh]))
+  ++  mo-conf
+    |=  [=dude =ship =desk]
+    ^+  mo-state
+    ::
+    =/  =beak
+      =/  case  [%da now]
+      [p=ship q=desk r=case]
+    ::
+    (mo-boot dude beak)
+  ::
+  ::  +mo-pass: prepend a standard %pass move.
+  ::
+  ++  mo-pass
+    |=  pass=(pair path note-arvo)
+    ^+  mo-state
+    ::
+    =/  move  [hen %pass pass]
+    mo-state(moves [move moves])
+  ::
+  ::  +mo-give: prepend a standard %give move.
   ::
   ++  mo-give
-    |=  git/gift:able
-    %_(+> moz :_(moz [hen %give git]))
+    |=  gift=gift:able
+    ^+  mo-state
+    ::
+    =/  move  [hen %give gift]
+    mo-state(moves [move moves])
   ::
-  ++  mo-okay                                           ::  valid agent core
+  :: +mo-okay: check that a ford-built app core produces a valid bowl.
+  ::
+  ++  mo-okay
     ~/  %mo-okay
-    |=  vax/vase
+    |=  =vase
     ^-  ?
-    =+  bol=(slew 12 vax)
-    ?~  bol  |
-    (~(nest ut p.u.bol) %| -:!>(*bowl))
-  ::  +mo-receive-core: receives an app core built by ford-turbo
+    ::
+    =/  bol  (slew 12 vase)
+    ?~  bol
+      %.n
+    ::
+    =/  declared  p.u.bol
+    (~(nest ut declared) %.n bowl-type)
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
