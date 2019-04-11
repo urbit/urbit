@@ -133,17 +133,23 @@
   ::
   ++  mo-abed
     |=  =duct
-    ^+  +>
-    +>(hen duct)
+    ^+  mo-state
+    ::
+    mo-state(hen duct)
   ::
-  ++  mo-abet                                           ::  resolve to
-    ^+  [*(list move) +>+]
+  ::  +mo-abet: resolve moves.
+  ::
+  ++  mo-abet
+    ^-  [(list move) _+>+] :: FIXME get rid of lark
+    ::
     :_  +>+
-    %-  flop
-    %+  turn  moz
-    |=  a/move
-    ?.  ?=($pass -.q.a)  a
-    [p.a %pass p.q.a q.q.a]
+    =/  reshape
+      |=  mov=move
+      ^-  move
+      ?.  ?=(%pass -.q.mov)
+        mov
+      [p.mov %pass p.q.mov q.q.mov]
+    [(flop (turn moves reshape))]
   ::
   ++  mo-conf                                           ::  configure
     |=  {dap/dude lum/culm}
