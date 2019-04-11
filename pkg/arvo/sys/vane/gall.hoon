@@ -728,61 +728,116 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  {dap/dude pry/prey ren/@tas tyl/path}
+    |=  [=dude =prey =term =path]
     ^-  (unit (unit cage))
-    (ap-peek:(ap-abed:ap dap pry) ren tyl)
-  ::
-  ++  mo-clip                                           ::  apply club
-    |=  {dap/dude pry/prey cub/club}
-    ?:  ?=($puff -.cub)
-      %+  mo-pass
-        [%sys %val (scot %p q.q.pry) dap ~]
-      [%f %build live=%.n [%vale [p q]:(mo-beak dap) +.cub]]
-    ?:  ?=($punk -.cub)
-      %+  mo-pass
-        [%sys %val (scot %p q.q.pry) dap ~]
-      :*  %f  %build  live=%.n
-          ^-  schematic:ford
-          [%cast [p q]:(mo-beak dap) p.cub [%$ q.cub]]
-      ==
-    ?:  ?=($peer-not -.cub)
-      (mo-give %unto %reap (some p.cub))
-    ap-abet:(ap-club:(ap-abed:ap dap pry) cub)
-  ::
-  ++  mo-club                                           ::  local action
-    |=  {dap/dude pry/prey cub/club}
-    ^+  +>
-    ?:  |(!(~(has by bum.mas) dap) (~(has by wub.mas) dap))
-      ~&  >>  [%mo-not-running dap -.cub]
-      ::  ~&  [%mo-club-qeu dap cub]
-      =+  syf=(~(gut by wub.mas) dap *sofa)
-      +>.$(wub.mas (~(put by wub.mas) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
-    (mo-clip dap pry cub)
-  ::
-  ++  mo-gawk                                           ::  ames forward
-    |=  {him/@p dap/dude num/@ud rok/rook}
-    =.  +>  ?.(?=($u -.rok) +> (mo-give %mack ~))
-    %+  mo-pass
-      [%sys %req (scot %p him) dap (scot %ud num) ~]
-    ^-  note-arvo
-    ?-  -.rok
-      ::  %m  [%f %exec our ~ (mo-beak dap) %vale p.rok q.rok]
-      $m  [%g %deal [him our] dap %puff p.rok q.rok]
-      $l  [%g %deal [him our] dap %peel p.rok q.rok]
-      $s  [%g %deal [him our] dap %peer p.rok]
-      $u  [%g %deal [him our] dap %pull ~]
-    ==
-  ::
-  ++  mo-gawd                                           ::  ames backward
-    |=  {him/@p dap/dude num/@ud ron/roon}
-    ?-    -.ron
-        $d
-      %+  mo-pass
-        [%sys %rep (scot %p him) dap (scot %ud num) ~]
-      [%f %build live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
     ::
-        $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
-            (mo-give(hen (mo-ball him num)) %unto %quit ~)
+    =/  pap  (ap-abed:ap dude prey)
+    (ap-peek:pap term path)
+  ::
+  ::  +mo-clip: apply club.
+  ::
+  ++  mo-clip
+    |=  [=dude =prey =club]
+    ^+  mo-state
+    ::
+    =/  =path
+      =/  ship  (scot %p q.q.prey)
+      /sys/val/[ship]/[dude]
+    ::
+    =/  info
+      =/  beak  (mo-beak dude)
+      [p q]:beak
+    ::
+    ?:  ?=(%puff -.club)
+      =/  =note-arvo  [%f %build live=%.n [%vale info +.club]]
+      (mo-pass path note-arvo)
+    ::
+    ?:  ?=(%punk -.club)
+      =/  =note-arvo  [%f %build live=%.n [%cast info p.club [%$ q.club]]]
+      (mo-pass path note-arvo)
+    ::
+    ?:  ?=(%peer-not -.club)
+      =/  err  (some p.club)
+      (mo-give %unto %reap err)
+    ::
+    =/  pap  (ap-abed:ap dude prey)
+    =/  clubbed  (ap-club:pap club)
+    ap-abet:clubbed
+  ::
+  ::  +mo-club: local action.
+  ::
+  ++  mo-club
+    |=  [=dude =prey =club]
+    ^+  mo-state
+    ::
+    ?:  |(!(~(has by bum.mas) dude) (~(has by wub.mas) dude))
+      ~&  >>  [%mo-not-running dude -.club]
+      =/  sof=sofa
+        =/  kisses  (fall (~(get by wub.mas) dude) *sofa)
+        =/  kiss  [hen prey club]
+        kisses(kys (~(put to kys.kisses) kiss))
+      ::
+      %_  mo-state
+        wub.mas  (~(put by wub.mas) dude sof)
+      ==
+    ::
+    (mo-clip dude prey club)
+  ::
+  ::  +mo-gawk: ames forward.
+  ::
+  ++  mo-gawk
+    |=  [him=@p =dude num=@ud =rook]
+    ^+  mo-state
+    ::
+    =.  mo-state
+      ?.  ?=(%u -.rook)
+        mo-state
+      (mo-give %mack ~)
+    ::
+    =/  =path
+      =/  ship  (scot %p him)
+      =/  numb  (scot %ud num)
+      /sys/req/[ship]/[dude]/[numb]
+    ::
+    =/  =note-arvo
+      ?-  -.rook
+        %m  [%g %deal [him our] dude %puff p.rook q.rook]
+        %l  [%g %deal [him our] dude %peel p.rook q.rook]
+        %s  [%g %deal [him our] dude %peer p.rook]
+        %u  [%g %deal [him our] dude %pull ~]
+      ==
+    ::
+    (mo-pass path note-arvo)
+  ::
+  ::  +mo-gawd: ames backward.
+  ::
+  ++  mo-gawd
+    |=  [him=@p =dude num=@ud =roon]
+    ^+  mo-state
+    ::
+    ?-    -.roon
+        ::
+        %d
+        ::
+      =/  =path
+        =/  ship  (scot %p him)
+        =/  numb  (scot %ud num)
+        /sys/rep/[ship]/[dude]/[numb]
+      ::
+      =/  =note-arvo
+        =/  beak  (mo-beak dude)
+        =/  info  [p q]:beak
+        [%f %build live=%.n [%vale info p.roon q.roon]]
+      ::
+      (mo-pass path note-arvo)
+    ::
+        ::
+        %x
+        ::
+      =.  mo-state  (mo-give %mack ~)                  ::  XX should crash
+      ::
+      =/  out  (mo-ball him num)
+      (mo-give:(mo-abed out) %unto %quit ~)
     ==
   ::
   ++  ap                                                ::  agent engine
