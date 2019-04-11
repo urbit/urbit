@@ -126,7 +126,12 @@
   |_  $:  hen=duct
           moves=(list move)
       ==
-  ++  mo-abed                                           ::  initialize
+  ::
+  ++  mo-state  .
+  ::
+  ::  +mo-abed: initialise engine with the provided duct.
+  ::
+  ++  mo-abed
     |=  =duct
     ^+  +>
     +>(hen duct)
