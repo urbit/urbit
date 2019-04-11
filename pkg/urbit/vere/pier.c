@@ -803,6 +803,10 @@ _pier_work_complete(u3_writ* wit_u,
 
   c3_assert(wit_u->act == 0);
   wit_u->act = act;
+
+  if ( wit_u->evt_d > pir_u->lif_d ) {
+    u3_term_stop_spinner();
+  }
 }
 
 /* _pier_work_replace(): worker reported replacement.
@@ -832,6 +836,10 @@ _pier_work_replace(u3_writ* wit_u,
 
     god_u->sen_d -= 1;
   }
+
+  if ( wit_u->evt_d > pir_u->lif_d ) {
+    u3_term_stop_spinner();
+  }
 }
 
 /* _pier_work_compute(): dispatch for processing.
@@ -854,6 +862,10 @@ _pier_work_compute(u3_writ* wit_u)
   _pier_work_send(wit_u);
 
   god_u->sen_d += 1;
+
+  if ( wit_u->evt_d > pir_u->lif_d ) {
+    u3_term_start_spinner(wit_u->job);
+  }
 }
 
 /* _pier_work_play(): with active worker, create or load log.
