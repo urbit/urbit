@@ -106,6 +106,10 @@ _pier_save_boot(u3_pier* pir_u, u3_atom mat)
 {
   //  XX deduplicate with _pier_disk_commit_request
   //
+  u3_disk* log_u = pir_u->log_u;
+
+  c3_assert( 0ULL == log_u->fol_u->end_d );
+
   c3_d  len_d = u3r_met(6, mat);
   c3_d* buf_d = c3_malloc(8 * len_d);
 
@@ -113,7 +117,7 @@ _pier_save_boot(u3_pier* pir_u, u3_atom mat)
 
   u3_foil_append(_pier_save_boot_complete,
                  (void*)0,
-                 pir_u->log_u->fol_u,
+                 log_u->fol_u,
                  buf_d,
                  len_d);
 }
