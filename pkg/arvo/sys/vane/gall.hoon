@@ -351,45 +351,69 @@
       %pull  mo-state
     ==
   ::
-  ++  mo-bale                                           ::  assign outbone
-    |=  him/ship
-    ^-  {@ud _+>}
-    =+  sad=(~(gut by sap.mas) him `scad`[1 ~ ~])
-    =+  nom=(~(get by q.sad) hen)
-    ?^  nom  [u.nom +>.$]
-    :-  p.sad
-    %_    +>.$
-        sap.mas
-      %+  ~(put by sap.mas)  him
-      %_  sad
-        p  +(p.sad)
-        q  (~(put by q.sad) hen p.sad)
-        r  (~(put by r.sad) p.sad hen)
+  ::  +mo-bale: assign an out bone.
+  ::
+  ++  mo-bale
+    |=  =ship
+    ^-  [@ud _mo-state]
+    ::
+    =/  =scad
+      =/  default  [1 ~ ~]
+      =/  existing  (~(get by sap.mas) ship)
+      (fall existing default)
+    ::
+    =/  nom  (~(get by q.scad) hen)
+    ::
+    ?^  nom
+      [u.nom mo-state]
+    ::
+    =/  index  p.scad
+    ::
+    =/  contacts
+      %_  scad
+        p  +(index)
+        q  (~(put by q.scad) hen index)
+        r  (~(put by r.scad) index hen)
       ==
-    ==
+    ::
+    =/  new-state
+      %_  mo-state
+        sap.mas  (~(put by sap.mas) ship contacts)
+      ==
+    ::
+    [index new-state]
   ::
-  ++  mo-ball                                           ::  outbone by index
-    |=  {him/ship num/@ud}
+  ::  +mo-ball: retrieve an out bone by index.
+  ::
+  ++  mo-ball
+    |=  [=ship index=@ud]
     ^-  duct
-    (~(got by r:(~(got by sap.mas) him)) num)
+    ::
+    =/  conns  (~(got by sap.mas) ship)
+    =/  duct  r:conns
+    (~(got by duct) index)
   ::
-  ++  mo-come                                           ::  handle locally
-    |=  {her/ship caz/cush}
-    ^+  +>
-    =+  pry=`prey`[%high [~ her]]
-    (mo-club p.caz pry q.caz)
+  ::  +mo-come: handle locally.
   ::
-  ++  mo-coup                                           ::  back from mo-away
-    |=  {dap/dude him/ship cup/ares}
-    %^  mo-give  %unto  %coup
-    ?~  cup  ~
-    [~ `tang`[[%leaf (trip p.u.cup)] q.u.cup]]
+  ++  mo-come
+    |=  [=ship =cush]
+    ^+  mo-state
+    ::
+    =/  =prey  [%high [~ ship]]
+    (mo-club p.cush prey q.cush)
   ::
-  ++  mo-chew                                           ::  reverse build path
-    |=  pax/path
+  ::  +mo-chew: reverse build path.
+  ::
+  ++  mo-chew
+    |=  =path
     ^-  beak
-    ?>  ?=({@ @ @ ~} pax)
-    [(slav %p i.pax) i.t.pax da+(slav %da i.t.t.pax)]
+    ::
+    ?>  ?=([@ @ @ ~] path)
+    ::
+    =/  ship  (slav %p i.path)
+    =/  desk  i.t.path
+    =/  case  [%da (slav %da i.t.t.path)]
+    [p=ship q=desk r=case]
   ::
   ++  mo-cyst                                           ::  take in /sys
     ~/  %mo-cyst
