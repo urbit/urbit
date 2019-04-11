@@ -415,133 +415,229 @@
     =/  case  [%da (slav %da i.t.t.path)]
     [p=ship q=desk r=case]
   ::
-  ++  mo-cyst                                           ::  take in /sys
+  ::  +mo-cyst-core: receive a core.
+  ::
+  ++  mo-cyst-core
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([%f %made *] sign-arvo)
+    ?>  ?=([@ @ @ @ @ ~] path)
+    ::
+    =/  =beak  (mo-chew t.t.t.path)
+    (mo-receive-core i.t.t.path beak result.sign-arvo)
+  ::
+  ::  +mo-cyst-pel: translated peer.
+  ::
+  ++  mo-cyst-pel
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([%f %made *] sign-arvo)
+    ?>  ?=([@ @ ~] path)
+    ::
+    ?:  ?=([%incomplete *] result.sign-arvo)
+      =/  err  (some tang.result.sign-arvo)
+      (mo-give %unto %coup err)
+    ::
+    =/  build-result  build-result.result.sign-arvo
+    ::
+    ?:  ?=([%error *] build-result)
+      =/  err  (some message.build-result)
+      (mo-give %unto %coup err)
+    ::
+    =/  =cage  (result-to-cage:ford build-result)
+    (mo-give %unto %diff cage)
+  ::
+  ::  +mo-cyst-red: diff ack.
+  ::
+  ++  mo-cyst-red
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([@ @ @ @ ~] path)
+    ::
+    ?.  ?=([%a %woot *] sign-arvo)
+      ~&  [%red-want path]
+      mo-state
+    ::
+    =/  him  (slav %p i.t.path)
+    =/  dap  i.t.t.path
+    =/  num  (slav %ud i.t.t.t.path)
+    ::
+    =/  gift  +>.sign-arvo
+    ::
+    =/  sys-path
+      =/  pax  [%req t.path]
+      [%sys pax]
+    ::
+    ?~  q.gift
+      =/  =note-arvo  [%g %deal [him our] dap %pump ~]
+      (mo-pass sys-path note-arvo)
+    ::
+    =/  gall-move  [%g %deal [him our] dap %pull ~]
+    =/  ames-move  [%a %want him [%g %gh dap ~] [num %x ~]]
+    ::
+    =.  mo-state  (mo-pass sys-path gall-move)
+    =.  mo-state  (mo-pass sys-path ames-move)
+    ::
+    ?.  ?=([~ ~ %mack *] q.gift)
+      ~&  [%diff-bad-ack q.gift]
+      mo-state
+    ~&  [%diff-bad-ack %mack]
+    =/  slaw  (slog (flop q.,.+>.q.gift))
+    (slaw mo-state)
+  ::
+  ::  +mo-cyst-rep: reverse request.
+  ::
+  ++  mo-cyst-rep
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([@ @ @ @ ~] path)
+    ?>  ?=([%f %made *] sign-arvo)
+    ::
+    =/  him  (slav %p i.t.path)
+    =/  dap  i.t.t.path
+    =/  num  (slav %ud i.t.t.t.path)
+    ::
+    ?:  ?=([%incomplete *] result.sign-arvo)
+      =/  err  (some tang.result.sign-arvo)
+      (mo-give %mack err)
+    ::
+    =/  build-result  build-result.result.sign-arvo
+    ::
+    ?:  ?=([%error *] build-result)
+      ::  "XX should crash"
+      =/  err  (some message.build-result)
+      (mo-give %mack err)
+    ::
+    ::  "XX pump should ack"
+    =.  mo-state  (mo-give %mack ~)
+    ::
+    =/  duct  (mo-ball him num)
+    =/  initialised  (mo-abed duct)
+    ::
+    =/  =cage  (result-to-cage:ford build-result)
+    =/  move  [%unto %diff cage]
+    ::
+    (mo-give:initialised move)
+  ::
+  ::  +mo-cyst-req: inbound request.
+  ::
+  ++  mo-cyst-req
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([@ @ @ @ ~] path)
+    ::
+    =/  him  (slav %p i.t.path)
+    =/  dap  i.t.t.path
+    =/  num  (slav %ud i.t.t.t.path)
+    ::
+    ?:  ?=([%f %made *] sign-arvo)
+      ?:  ?=([%incomplete *] result.sign-arvo)
+        =/  err  (some tang.result.sign-arvo)
+        (mo-give %mack err)
+      ::
+      =/  build-result  build-result.result.sign-arvo
+      ::
+      ?:  ?=([%error *] build-result)
+        =/  err  (some message.build-result)
+        (mo-give %mack err)
+      ::
+      =/  =cage  (result-to-cage:ford build-result)
+      =/  sys-path  [%sys path]
+      =/  =note-arvo  [%g %deal [him our] i.t.t.path %poke cage]
+      ::
+      (mo-pass sys-path note-arvo)
+    ::
+    ?:  ?=([%a %woot *] sign-arvo)
+      mo-state
+    ::
+    ?>  ?=([%g %unto *] sign-arvo)
+    ::
+    =/  =cuft  +>.sign-arvo
+    ::
+    ?-    -.cuft
+        ::
+        %coup
+        ::
+      (mo-give %mack p.cuft)
+        ::
+        %diff
+        ::
+      =/  sys-path  [%sys %red t.path]
+      =/  note  [%a %want him [%g %gh dap ~] [num %d p.p.cuft q.q.p.cuft]]
+      (mo-pass sys-path note)
+        ::
+        %quit
+        ::
+      =/  sys-path  [%sys path]
+      =/  note  [%a %want him [%g %gh dap ~] [num %x ~]]
+      (mo-pass sys-path note)
+        ::
+        %reap
+        ::
+      (mo-give %mack p.cuft)
+    ==
+  ::
+  ::  +mo-cyst-val: inbound validate.
+  ::
+  ++  mo-cyst-val
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([%f %made *] sign-arvo)
+    ?>  ?=([@ @ @ ~] path)
+    ::
+    =/  him  (slav %p i.t.path)
+    =/  dap  i.t.t.path
+    ::
+    ?:  ?=([%incomplete *] result.sign-arvo)
+      =/  err  (some tang.result.sign-arvo)
+      (mo-give %unto %coup err)
+    ::
+    =/  build-result  build-result.result.sign-arvo
+    ::
+    ?:  ?=([%error *] build-result)
+      =/  err  (some message.build-result)
+      (mo-give %unto %coup err)
+    ::
+    =/  =prey  [%high ~ him]
+    =/  =cage  (result-to-cage:ford build-result)
+    =/  =club  [%poke cage]
+    (mo-clip dap prey club)
+  ::
+  ::  +mo-cyst-way: outbound request.
+  ::
+  ++  mo-cyst-way
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?>  ?=([%a %woot *] sign-arvo)
+    ?>  ?=([@ @ ~] path)
+    ::
+    =/  why  ;;(whey i.t.path)
+    =/  art  +>+.sign-arvo
+    ::
+    (mo-awed why art)
+  ::
+  ::  +mo-cyst: take in /sys.
+  ::
+  ++  mo-cyst
     ~/  %mo-cyst
-    |=  {pax/path sih/sign-arvo}
-    ^+  +>
-    ?+    -.pax  !!
-        $core
-      ?>  ?=([%f %made *] sih)
-      ?>  ?=({@ @ @ @ ~} t.pax)
-      (mo-receive-core i.t.pax (mo-chew t.t.pax) result.sih)
+    |=  [pax=path sih=sign-arvo]
+    ^+  mo-state
     ::
-        %pel                                            ::  translated peer
-      ?>  ?=({@ ~} t.pax)
-      =+  mar=i.t.pax
-      ?>  ?=([%f %made *] sih)
-      ::
-      ?:  ?=([%incomplete *] result.sih)
-        (mo-give %unto %coup `tang.result.sih)
-      ::
-      =/  build-result  build-result.result.sih
-      ::
-      ?:  ?=([%error *] build-result)
-        (mo-give %unto %coup `message.build-result)
-      ::
-      (mo-give %unto %diff (result-to-cage:ford build-result))
-    ::
-        $red                                            ::  diff ack
-      ?>  ?=({@ @ @ ~} t.pax)
-      ?.  ?=({$a $woot *} sih)
-        ~&  [%red-went pax]
-        +>.$
-      =+  :*  him=(slav %p i.t.pax)
-              dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
-          ==
-      =>  .(pax `path`[%req t.pax])
-      ?~  q.+>.sih
-        (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
-      :: should not happen (XX wat mean?)
-      ::
-      %-  ?.  ?=([~ ~ %mack *] q.+>.sih)
-            ~&  [%diff-bad-ack q.+>.sih]
-            same
-          ~&  [%diff-bad-ack %mack]
-          (slog (flop q.,.+>.q.+>.sih))
-      =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %want him [%g %gh dap ~] [num %x ~])
-    ::
-        %rep                                            ::  reverse request
-      ?>  ?=({@ @ @ ~} t.pax)
-      ?>  ?=([%f %made *] sih)
-      =+  :*  him=(slav %p i.t.pax)
-              dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
-          ==
-      ::
-      ?:  ?=([%incomplete *] result.sih)
-        ::  "XX should crash"
-        (mo-give %mack `tang.result.sih)
-      ::
-      =/  build-result  build-result.result.sih
-      ::
-      ?:  ?=([%error *] build-result)
-        ::  "XX should crash"
-        (mo-give %mack `message.build-result)
-      ::
-      ::  "XX pump should ack"
-      =.  +>.$  (mo-give %mack ~)
-      =*  result-cage  (result-to-cage:ford build-result)
-      (mo-give(hen (mo-ball him num)) %unto %diff result-cage)
-    ::
-        $req                                            ::  inbound request
-      ?>  ?=({@ @ @ ~} t.pax)
-      =+  :*  him=(slav %p i.t.pax)
-              dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
-          ==
-      ?:  ?=({$f $made *} sih)
-        ?:  ?=([%incomplete *] result.sih)
-          ::  "XX should crash"
-          (mo-give %mack `tang.result.sih)
-        ::
-        =/  build-result  build-result.result.sih
-        ::
-        ?:  ?=([%error *] build-result)
-          ::  "XX should crash"
-          (mo-give %mack `message.build-result)
-        =/  cay/cage  (result-to-cage:ford build-result)
-        (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke cay)
-      ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
-      ?>  ?=({$g $unto *} sih)
-      =+  cuf=`cuft`+>.sih
-      ?-    -.cuf
-        $coup  (mo-give %mack p.cuf)
-        $diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %want him [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
-        $quit  %+  mo-pass  [%sys pax]
-               [%a %want him [%g %gh dap ~] [num %x ~]]
-        $reap  (mo-give %mack p.cuf)
-        ::  we send http-responses, we don't receive them.
-        ::
-        $http-response  !!
-      ==
-    ::
-        %val                                            ::  inbound validate
-      ?>  ?=({@ @ ~} t.pax)
-      =+  [him=(slav %p i.t.pax) dap=i.t.t.pax]
-      ?>  ?=([%f %made *] sih)
-      ::
-      ?:  ?=([%incomplete *] result.sih)
-        (mo-give %unto %coup `tang.result.sih)
-      ::
-      =/  build-result  build-result.result.sih
-      ::
-      ?:  ?=([%error *] build-result)
-        (mo-give %unto %coup `message.build-result)
-      ::
-      =*  result-cage  (result-to-cage:ford build-result)
-      (mo-clip dap `prey`[%high ~ him] [%poke result-cage])
-    ::
-        $way                                            ::  outbound request
-      ?>  ?=({$a $woot *} sih)
-      ?>  ?=({@ ~} t.pax)
-      %-  mo-awed
-      :*  `ship`p.+>.sih
-          ;;(?($peer $peel $poke $pull) i.t.pax)
-          +>+.sih
-      ==
+    ?+  -.pax  !!
+      %core  (mo-cyst-core pax sih)
+      %pel  (mo-cyst-pel pax sih)
+      %red  (mo-cyst-red pax sih)
+      %rep  (mo-cyst-rep pax sih)
+      %req  (mo-cyst-req pax sih)
+      %val  (mo-cyst-val pax sih)
+      %way  (mo-cyst-way pax sih)
     ==
   ::
   ++  mo-cook                                           ::  take in /use
