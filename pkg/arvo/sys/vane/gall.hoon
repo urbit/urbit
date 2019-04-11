@@ -2,33 +2,44 @@
 !?  163
 !:
 ::::
-|=  pit/vase
+|=  pit=vase
 =,  gall
 =>  =~
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  volt  ?($low $high)                                 ::  voltage
-++  torc  $@(?($iron $gold) {$lead p/ship})             ::  security control
+++  coke                                                ::  cook
+  $?  %inn                                              ::
+      %out                                              ::
+      %cay                                              ::
+  ==                                                    ::
+++  volt  ?(%low %high)                                 ::  voltage
+++  torc  $@(?(%iron %gold) [%lead p=ship])             ::  security control
 ++  roon                                                ::  reverse ames msg
-  $%  {$d p/mark q/*}                                   ::  diff (diff)
-      {$x ~}                                           ::
+  $%  [%d p=mark q=*]                                   ::  diff (diff)
+      [%x ~]                                            ::
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
-  $%  {$m p/mark q/*}                                   ::  message
-      {$l p/mark q/path}                                ::  "peel" subscribe
-      {$s p/path}                                       ::  subscribe
-      {$u ~}                                           ::  cancel+unsubscribe
+  $%  [%m p=mark q=*]                                   ::  message
+      [%l p=mark q=path]                                ::  "peel" subscribe
+      [%s p=path]                                       ::  subscribe
+      [%u ~]                                            ::  cancel+unsubscribe
+  ==                                                    ::
+++  whey                                                ::  foreign response
+  $?  %peer                                             ::
+      %peel                                             ::
+      %poke                                             ::
+      %pull                                             ::
   ==                                                    ::
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    local arvo
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  cote                                                ::  ++ap note
-  $%  {$meta p/@tas q/vase}                             ::
-      {$send p/ship q/cush}                             ::
-::      {$hiss p/(unit knot) q/mark r/cage}               ::
+  $%  [%meta p=@tas q=vase]                             ::
+      [%send p=ship q=cush]                             ::
+      [%hiss p=(unit knot) q=mark r=cage]               ::
   ==                                                    ::
 ++  cove  (pair bone (wind cote cuft))                  ::  internal move
-++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
+++  move  (pair duct (wind note-arvo gift-arvo))        ::  typed move
 --                                                      ::
 |%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -36,35 +47,35 @@
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state proper
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  axle                                                ::  all state
-  $:  $0                                                ::  state version
+  $:  %0                                                ::  state version
       =mast                                             ::  apps by ship
   ==                                                    ::
 ++  gest                                                ::  subscriber data
-  $:  sup/bitt                                          ::  incoming subscribers
-      neb/boat                                          ::  outgoing subscribers
-      qel/(map bone @ud)                                ::  queue meter
+  $:  sup=bitt                                          ::  incoming subscribers
+      neb=boat                                          ::  outgoing subscribers
+      qel=(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
-  $:  mak/*                                             ::  (deprecated)
-      sys/duct                                          ::  system duct
-      sap/(map ship scad)                               ::  foreign contacts
-      bum/(map dude seat)                               ::  running agents
-      wub/(map dude sofa)                               ::  waiting queue
+  $:  mak=*                                             ::  (deprecated)
+      sys=duct                                          ::  system duct
+      sap=(map ship scad)                               ::  foreign contacts
+      bum=(map dude seat)                               ::  running agents
+      wub=(map dude sofa)                               ::  waiting queue
   ==                                                    ::
 ++  ffuc                                                ::  new cuff
-    $:  p/(unit (set ship))                             ::  disclosing to
-        q/ship                                          ::  attributed to
+    $:  p=(unit (set ship))                             ::  disclosing to
+        q=ship                                          ::  attributed to
     ==                                                  ::
 ++  prey  (pair volt ffuc)                              ::  privilege
 ++  scad                                                ::  foreign connection
-  $:  p/@ud                                             ::  index
-      q/(map duct @ud)                                  ::  by duct
-      r/(map @ud duct)                                  ::  by index
+  $:  p=@ud                                             ::  index
+      q=(map duct @ud)                                  ::  by duct
+      r=(map @ud duct)                                  ::  by index
   ==                                                    ::
 ++  scar                                                ::  opaque input
-  $:  p/@ud                                             ::  bone sequence
-      q/(map duct bone)                                 ::  by duct
-      r/(map bone duct)                                 ::  by bone
+  $:  p=@ud                                             ::  bone sequence
+      q=(map duct bone)                                 ::  by duct
+      r=(map bone duct)                                 ::  by bone
   ==                                                    ::
 ::                                                      ::
 ::  XX a hack, required to break a subscription loop    ::
@@ -72,32 +83,32 @@
 ::  See usage in ap-misvale.                            ::
 ++  misvale-data  (set wire)                            ::  subscrs w/ bad marks
 ++  seat                                                ::  agent state
-  $:  misvale/misvale-data                              ::  bad reqs
-      vel/worm                                          ::  cache
+  $:  misvale=misvale-data                              ::  bad reqs
+      vel=worm                                          ::  cache
       arms=(map [term path] (unit (pair @ud term)))     ::  ap-find cache
-      mom/duct                                          ::  control duct
-      liv/?                                             ::  unstopped
-      toc/torc                                          ::  privilege
-      tyc/stic                                          ::  statistics
-      ged/gest                                          ::  subscribers
-      hav/vase                                          ::  running state
-      byk/beak                                          ::  update control
-      pyl/(map bone mark)                               ::  req'd translations
-      zam/scar                                          ::  opaque ducts
+      mom=duct                                          ::  control duct
+      liv=?                                             ::  unstopped
+      toc=torc                                          ::  privilege
+      tyc=stic                                          ::  statistics
+      ged=gest                                          ::  subscribers
+      hav=vase                                          ::  running state
+      byk=beak                                          ::  update control
+      pyl=(map bone mark)                               ::  req'd translations
+      zam=scar                                          ::  opaque ducts
   ==                                                    ::
 ++  sofa                                                ::  queue for blocked
-  $:  kys/(qeu (trel duct prey club))                   ::  queued kisses
+  $:  kys=(qeu (trel duct prey club))                   ::  queued kisses
   ==                                                    ::
 ++  stic                                                ::  statistics
-  $:  act/@ud                                           ::  change number
-      eny/@uvJ                                          ::  entropy
-      lat/@da                                           ::  time
+  $:  act=@ud                                           ::  change number
+      eny=@uvJ                                          ::  entropy
+      lat=@da                                           ::  time
   ==                                                    ::
 --                                                      ::
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::  vane header
     ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 .  ==
-=|  all/axle                                            ::  all vane state
+=|  all=axle                                            ::  all vane state
 |=  $:  our=ship                                        ::  identity
         now=@da                                         ::  urban time
         eny=@uvJ                                        ::  entropy
@@ -870,7 +881,7 @@
       ::
       ::  TODO: Magic vase validation. I have no idea how malformed checking works.
       ::
-      ::  This should be moved into +cote instead of the rest of 
+      ::  This should be moved into +cote instead of the rest of
       ::
       :_  +>.$
       [%& sto %give %http-response ;;(http-event:http q.vax)]
