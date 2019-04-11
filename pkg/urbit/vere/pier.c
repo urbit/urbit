@@ -1021,15 +1021,18 @@ _pier_work_poke(void*   vod_p,
         {
           // XX not the right place to print an error!
           //
+#if 0
           u3m_p("wire", u3h(u3t(r_jar)));
           u3m_p("oust", u3h(u3t(u3t(wit_u->job))));
           u3m_p("with", u3h(u3t(u3t(r_jar))));
           if ( c3__crud == u3h(u3t(u3t(r_jar))) ) {
             u3_pier_punt(0, u3k(u3t(u3t(u3t(u3t(r_jar))))));
           }
-
+#endif
         }
+#ifdef VERBOSE_EVENTS
         fprintf(stderr, "pier: replace: %" PRIu64 "\r\n", evt_d);
+#endif
 
         _pier_work_replace(wit_u, u3k(r_jar), u3k(mat));
       }
@@ -1146,7 +1149,6 @@ _pier_work_create(u3_pier* pir_u)
     god_u->ops_u.file = arg_c[0];
     god_u->ops_u.args = arg_c;
 
-    fprintf(stderr, "pier: spawn\r\n");
     if ( (err_i = uv_spawn(u3L, &god_u->cub_u, &god_u->ops_u)) ) {
       fprintf(stderr, "spawn: %s: %s\r\n", arg_c[0], uv_strerror(err_i));
 
