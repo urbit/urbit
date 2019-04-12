@@ -12,8 +12,12 @@
   [ost %wait /(scot %da now) +(now)]
 ::
 ++  wake
-  |=  {wir/wire ~}
+  |=  {wir/wire error=(unit tang)}
   ?>  ?=({@ ~} wir)
+  ?^  error
+    %-  (slog u.error)
+    ~&  %time-behn-failed
+    [~ +>.$]
   ~&  [%took `@dr`(sub now (slav %da i.wir))]
   [~ +>.$]
 --
