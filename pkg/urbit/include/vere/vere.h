@@ -657,7 +657,9 @@
       /* u3_boot: startup controller.
       */
         typedef struct _u3_boot {
-
+          u3_noun          pil;                 //  pill
+          u3_noun          ven;                 //  boot event
+          struct _u3_pier* pir_u;               //  pier backpointer
         } u3_boot;
 
       /* u3_psat: pier state.
@@ -676,8 +678,9 @@
           c3_c*            pax_c;               //  pier directory
           c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
-          c3_d             but_d;               //  boot barrier
-          c3_d             lif_d;               //  lifecycle boot barrier
+          c3_d             lif_d;               //  lifecycle barrier
+          u3_boot*         bot_u;               //  boot state
+          c3_d             but_d;               //  boot/restart barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
           c3_d             sec_d[1];            //  generator (unstretched)
           c3_d             key_d[4];            //  secret (stretched)
@@ -685,10 +688,7 @@
           c3_c*            who_c;               //  identity as C string
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
-          c3_o             liv_o;               //  live
           u3_psat          sat_e;               //  pier state
-          u3_noun          bot;                 //  boot event XX review
-          u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
           u3_lord*         god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface

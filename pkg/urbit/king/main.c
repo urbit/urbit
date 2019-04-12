@@ -232,12 +232,18 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.nuu = c3y;
   }
 
-  //  make -c optional
+  //  make -c optional, catch invalid boot of existing pier
   //
-  if ( c3n == u3_Host.ops_u.nuu ) {
+  {
     struct stat s;
     if ( 0 != stat(u3_Host.dir_c, &s) ) {
-      u3_Host.ops_u.nuu = c3y;
+      if ( c3n == u3_Host.ops_u.nuu ) {
+        u3_Host.ops_u.nuu = c3y;
+      }
+    }
+    else if ( c3y == u3_Host.ops_u.nuu ) {
+      fprintf(stderr, "unable to boot; %s already exists\r\n", u3_Host.dir_c);
+      return c3n;
     }
   }
 

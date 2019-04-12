@@ -66,6 +66,7 @@
 
 static void _pier_apply(u3_pier* pir_u);
 static void _pier_boot_complete(u3_pier* pir_u);
+static void _pier_disk_load_commit(u3_pier* pir_u, c3_d lav_d, c3_d len_d);
 static void _pier_exit_done(u3_pier* pir_u);
 static void _pier_loop_exit(u3_pier* pir_u);
 static void _pier_work_save(u3_pier* pir_u);
@@ -105,6 +106,10 @@ _pier_save_boot(u3_pier* pir_u, u3_atom mat)
 {
   //  XX deduplicate with _pier_disk_commit_request
   //
+  u3_disk* log_u = pir_u->log_u;
+
+  c3_assert( 0ULL == log_u->fol_u->end_d );
+
   c3_d  len_d = u3r_met(6, mat);
   c3_d* buf_d = c3_malloc(8 * len_d);
 
@@ -112,7 +117,7 @@ _pier_save_boot(u3_pier* pir_u, u3_atom mat)
 
   u3_foil_append(_pier_save_boot_complete,
                  (void*)0,
-                 pir_u->log_u->fol_u,
+                 log_u->fol_u,
                  buf_d,
                  len_d);
 }
@@ -301,6 +306,20 @@ _pier_work_release(u3_writ* wit_u)
 
   if ( u3_psat_pace == pir_u->sat_e ) {
     fputc('.', stderr);
+
+    //  enqueue another batch of events for replay
+    //
+    {
+      u3_disk* log_u = pir_u->log_u;
+
+      //  XX requires that writs be unlinked before effects are released
+      //
+      if ( (0 == pir_u->ent_u) &&
+           (wit_u->evt_d < log_u->com_d) )
+      {
+        _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+      }
+    }
   }
   else {
 #ifdef VERBOSE_EVENTS
@@ -516,7 +535,8 @@ _pier_apply(u3_pier* pir_u)
 
   if ( (0 == log_u) ||
        (0 == god_u) ||
-       (c3n == god_u->liv_o) )
+       (c3n == god_u->liv_o) ||
+       (u3_psat_init == pir_u->sat_e) )
   {
     return;
   }
@@ -638,7 +658,6 @@ _pier_set_ship(u3_pier* pir_u, u3_noun who, u3_noun fak)
 }
 
 /* _pier_disk_read_header_complete():
-** XX async
 */
 static void
 _pier_disk_read_header_complete(u3_disk* log_u, u3_noun dat)
@@ -666,12 +685,22 @@ _pier_disk_read_header_complete(u3_disk* log_u, u3_noun dat)
 }
 
 /* _pier_disk_read_header():
-** XX async
-** XX very slow
 */
 static void
 _pier_disk_read_header(u3_disk* log_u)
 {
+  //  XX disabled
+  //
+  //    This is very, very slow.
+  //    The one situation in which we currently *need* it -
+  //    full log replay - it's unnecessary thanks to the current
+  //    _pier_disk_load_commit.
+  //    In all other situations, we're covered by
+  //    _pier_work_play or u3_pier_boot.
+  //    In the long run, it seems best to always get identity
+  //    from the log for restart/replay.
+  //
+#if 0
   c3_assert( 0 != log_u->fol_u );
 
   c3_d pos_d = log_u->fol_u->end_d;
@@ -704,114 +733,150 @@ _pier_disk_read_header(u3_disk* log_u)
 
     c3_free(buf_d);
   }
+#endif
 }
 
-/* _pier_disk_load_commit(): load all commits >= evt_d; set ent_u, ext_u.
-** XX async
+/* _pier_disk_load_commit(): load len_d commits >= lav_d; enqueue for replay
 */
-static c3_o
+static void
 _pier_disk_load_commit(u3_pier* pir_u,
-                       c3_d     lav_d)
-
+                       c3_d     lav_d,
+                       c3_d     len_d)
 {
   u3_disk* log_u = pir_u->log_u;
 
-  if ( !log_u->fol_u ) {
-    return c3n;
-  }
-  else {
-    c3_d pos_d = log_u->fol_u->end_d;
-    c3_d old_d = 0;
+  c3_d max_d = lav_d + len_d;
+  c3_d pos_d = log_u->fol_u->end_d;
+  c3_d old_d = 0;
+
+  c3_assert ( 0 != log_u->fol_u );
 
 #ifdef VERBOSE_EVENTS
     fprintf(stderr, "pier: load: commit: at %" PRIx64 "\r\n", pos_d);
 #endif
 
-    while ( pos_d ) {
-      c3_d  len_d, evt_d;
-      c3_d* buf_d;
-      u3_noun mat, ovo, job, evt;
+  while ( pos_d ) {
+    c3_d  len_d, evt_d;
+    c3_d* buf_d;
+    u3_noun mat, ovo, job, evt;
 
-      buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
-      if ( !buf_d ) {
-        _pier_disk_bail(0, "load: commit: corrupt");
-        return c3n;
-      }
+    buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
 
-      mat = u3i_chubs(len_d, buf_d);
-      c3_free(buf_d);
+    if ( !buf_d ) {
+      _pier_disk_bail(0, "pier: load: commit: corrupt");
+      return;
+    }
 
-      ovo = u3ke_cue(u3k(mat));
+    mat = u3i_chubs(len_d, buf_d);
+    c3_free(buf_d);
 
-      //  reached header
-      //
-      if ( 0ULL == pos_d ) {
-        c3_assert( 1ULL == lav_d );
-        c3_assert( c3__boot == u3h(ovo) );
+    ovo = u3ke_cue(u3k(mat));
 
-        _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
+    //  reached header
+    //
+    if ( 0ULL == pos_d ) {
+      c3_assert( 1ULL == lav_d );
+      c3_assert( c3__boot == u3h(ovo) );
 
-        u3z(ovo); u3z(mat);
-        break;
-      }
+      _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
 
-      c3_assert(c3__work == u3h(ovo));
-      evt = u3h(u3t(ovo));
-      job = u3k(u3t(u3t(u3t(ovo))));
-      evt_d = u3r_chub(0, evt);
-      u3z(ovo);
+      u3z(ovo); u3z(mat);
+      break;
+    }
 
-      //  confirm event order
-      //
-      if ( (0 != old_d) &&
-           ((old_d - 1ULL) != evt_d) ) {
-        fprintf(stderr, "pier: load: event order\r\n");
-        return c3n;
-      }
-      else {
-        old_d = evt_d;
-      }
+    c3_assert(c3__work == u3h(ovo));
+    evt = u3h(u3t(ovo));
+    job = u3k(u3t(u3t(u3t(ovo))));
+    evt_d = u3r_chub(0, evt);
+    u3z(ovo);
 
-      if ( evt_d < lav_d ) {
-        u3z(mat);
-        u3z(job);
+    //  confirm event order
+    //
+    if ( (0 != old_d) &&
+         ((old_d - 1ULL) != evt_d) ) {
+      _pier_disk_bail(0, "pier: load: commit: event order");
+      return;
+    }
+    else {
+      old_d = evt_d;
+    }
 
-        return c3y;
-      }
-      else {
-        u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
+    //  done: read past the first event requested
+    //
+    if ( evt_d < lav_d ) {
+      u3z(mat);
+      u3z(job);
+      return;
+    }
+    //  skip: haven't reached the last event requested
+    //
+    else if ( evt_d > max_d ) {
+      u3z(mat);
+      u3z(job);
+      continue;
+    }
+    //  enqueue requested event
+    //
+    else {
+      u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
 
 #ifdef VERBOSE_EVENTS
-        fprintf(stderr, "pier: load: commit: %" PRIu64 "\r\n", evt_d);
+      fprintf(stderr, "pier: load: commit: %" PRIu64 "\r\n", evt_d);
 #endif
 
-        wit_u->pir_u = pir_u;
-        wit_u->evt_d = evt_d;
-        wit_u->job = job;
-        wit_u->mat = mat;
+      wit_u->pir_u = pir_u;
+      wit_u->evt_d = evt_d;
+      wit_u->job = job;
+      wit_u->mat = mat;
 
-        /* insert at queue exit -- the oldest events run first
-        */
-        if ( !pir_u->ent_u && !pir_u->ext_u ) {
-          pir_u->ent_u = pir_u->ext_u = wit_u;
+      /* insert at queue exit -- the oldest events run first
+      */
+      if ( !pir_u->ent_u && !pir_u->ext_u ) {
+        pir_u->ent_u = pir_u->ext_u = wit_u;
+      }
+      else {
+        if ( (1ULL + wit_u->evt_d) != pir_u->ext_u->evt_d ) {
+          fprintf(stderr, "pier: load: commit: event gap: %" PRIx64 ", %"
+                           PRIx64 "\r\n",
+                           wit_u->evt_d,
+                           pir_u->ext_u->evt_d);
+          u3z(mat);
+          u3z(job);
+          _pier_disk_bail(0, "pier: load: comit: event gap");
+          return;
         }
-        else {
-          if ( (1ULL + wit_u->evt_d) != pir_u->ext_u->evt_d ) {
-            fprintf(stderr, "pier: load: commit: event gap: %" PRIx64 ", %"
-                             PRIx64 "\r\n",
-                             wit_u->evt_d,
-                             pir_u->ext_u->evt_d);
-            u3z(mat);
-            u3z(job);
-            return c3n;
-          }
-          wit_u->nex_u = pir_u->ext_u;
-          pir_u->ext_u = wit_u;
-        }
+
+        wit_u->nex_u = pir_u->ext_u;
+        pir_u->ext_u = wit_u;
       }
     }
-    return c3y;
   }
+}
+
+/* _pier_boot_create(): create boot controller
+*/
+static u3_boot*
+_pier_boot_create(u3_pier* pir_u, u3_noun pil, u3_noun ven)
+{
+  u3_boot* bot_u = c3_calloc(sizeof(u3_boot));
+  bot_u->pil = u3k(pil);
+  bot_u->ven = u3k(ven);
+  bot_u->pir_u = pir_u;
+
+  return bot_u;
+}
+
+/* _pier_boot_dispose(): dispose of boot controller
+*/
+static void
+_pier_boot_dispose(u3_boot* bot_u)
+{
+  u3_pier* pir_u = bot_u->pir_u;
+
+  u3z(bot_u->pil);
+  u3z(bot_u->ven);
+  free(bot_u);
+  pir_u->bot_u = 0;
 }
 
 /* _pier_boot_vent(): create and enqueue boot sequence
@@ -821,13 +886,14 @@ _pier_disk_load_commit(u3_pier* pir_u,
 **    the right thing.  see new arvo.
 */
 static void
-_pier_boot_vent(u3_pier* pir_u)
+_pier_boot_vent(u3_boot* bot_u)
 {
   //  bot: boot formulas
   //  mod: module ova
   //  use: userpace ova
   //
   u3_noun bot, mod, use;
+  u3_pier* pir_u = bot_u->pir_u;
 
   //  extract boot formulas and module/userspace ova from pill
   //
@@ -835,13 +901,13 @@ _pier_boot_vent(u3_pier* pir_u)
     u3_noun pil_p, pil_q, pil_r;
     u3_noun pro;
 
-    c3_assert( c3y == u3du(pir_u->pil) );
+    c3_assert( c3y == u3du(bot_u->pil) );
 
-    if ( c3y == u3h(pir_u->pil) ) {
-      u3x_trel(pir_u->pil, 0, &pil_p, &pil_q);
+    if ( c3y == u3h(bot_u->pil) ) {
+      u3x_trel(bot_u->pil, 0, &pil_p, &pil_q);
     }
     else {
-      u3x_qual(pir_u->pil, 0, &pil_p, &pil_q, &pil_r);
+      u3x_qual(bot_u->pil, 0, &pil_p, &pil_q, &pil_r);
     }
 
     pro = u3m_soft(0, u3ke_cue, u3k(pil_p));
@@ -856,7 +922,7 @@ _pier_boot_vent(u3_pier* pir_u)
 
     //  optionally replace filesystem in userspace
     //
-    if ( c3y == u3h(pir_u->pil) ) {
+    if ( c3y == u3h(bot_u->pil) ) {
       if ( u3_nul != pil_q ) {
         c3_w len_w = 0;
         u3_noun ova = use;
@@ -890,8 +956,6 @@ _pier_boot_vent(u3_pier* pir_u)
     }
 
     u3z(pro);
-    u3z(pir_u->pil);
-    pir_u->pil = u3_nul;
   }
 
   //  prepend entropy to the module sequence
@@ -940,16 +1004,6 @@ _pier_boot_vent(u3_pier* pir_u)
     }
   }
 
-  //  prepare serf for boot sequence
-  //
-  {
-    fprintf(stderr, "boot: ship: %s%s\r\n",
-                     pir_u->who_c,
-                     (c3y == pir_u->fak_o) ? " (fake)" : "");
-
-    _pier_work_boot(pir_u, c3y);
-  }
-
   //  insert module events
   //
   {
@@ -979,8 +1033,8 @@ _pier_boot_vent(u3_pier* pir_u)
       //
       //    XX this is horrible
       //
-      u3_noun tuf = ( c3__fake == u3h(pir_u->bot) ) ? u3_nul :
-                    u3h(u3t(u3t(u3t(u3t(pir_u->bot)))));
+      u3_noun tuf = ( c3y == pir_u->fak_o ) ? u3_nul :
+                    u3h(u3t(u3t(u3t(u3t(bot_u->ven)))));
 
 
       //  send a fake effect to bring up listeners and configure domains
@@ -1000,15 +1054,13 @@ _pier_boot_vent(u3_pier* pir_u)
     //  XX do something about this wire
     //  XX route directly to %jael?
     //
-    c3_assert( c3y == u3du(pir_u->bot) );
+    c3_assert( c3y == u3du(bot_u->ven) );
 
     u3_noun wir = u3nq(u3_blip, c3__term, '1', u3_nul);
-    u3_noun car = u3nc(c3__boot, pir_u->bot);
+    u3_noun car = u3nc(c3__boot, u3k(bot_u->ven));
     u3_noun ovo = u3nc(wir, car);
 
     _pier_insert_ovum(pir_u, 0, ovo);
-
-    pir_u->bot = u3_nul;
   }
 
   //  insert userspace events
@@ -1035,11 +1087,15 @@ _pier_boot_ready(u3_pier* pir_u)
   u3_lord* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
-  c3_assert( c3y == god_u->liv_o );
-  c3_assert( c3y == log_u->liv_o );
   c3_assert( u3_psat_init == pir_u->sat_e );
-  c3_assert( c3n == pir_u->liv_o );
-  pir_u->liv_o = c3y;
+
+  if ( ( 0 == god_u) ||
+       ( 0 == log_u) ||
+       (c3y != god_u->liv_o) ||
+       (c3y != log_u->liv_o) )
+  {
+    return;
+  }
 
   //  mark all commits as released
   //
@@ -1051,27 +1107,29 @@ _pier_boot_ready(u3_pier* pir_u)
 
   //  boot
   //
-  if ( 0 == log_u->com_d ) {
-    pir_u->sat_e = u3_psat_boot;
+  if ( 0 != pir_u->bot_u ) {
+    c3_assert( 0 == log_u->com_d );
+    c3_assert( 0 == god_u->dun_d );
+
+    //  construct/enqueue boot sequence
+    //
+    _pier_boot_vent(pir_u->bot_u);
+    _pier_boot_dispose(pir_u->bot_u);
+
+    //  prepare serf for boot sequence, write log header
+    //
+    _pier_work_boot(pir_u, c3y);
 
     fprintf(stderr, "boot: ship: %s%s\r\n",
                      pir_u->who_c,
                      (c3y == pir_u->fak_o) ? " (fake)" : "");
 
-    //  construct/enqueue boot sequence
-    //
-    _pier_boot_vent(pir_u);
-
-    //  prepare serf for boot sequence, write log header
-    //
-    //    XX move here from _pier_boot_vent, confirm lif_d is set
-    //
-    // _pier_work_boot(pir_u, c3y);
+    pir_u->sat_e = u3_psat_boot;
   }
   //  replay
   //
-  else if ( god_u->dun_d < log_u->com_d) {
-    pir_u->sat_e = u3_psat_pace;
+  else if ( god_u->dun_d < log_u->com_d ) {
+    c3_assert( 0 != log_u->com_d );
 
     fprintf(stderr, "---------------- playback starting----------------\r\n");
 
@@ -1079,17 +1137,13 @@ _pier_boot_ready(u3_pier* pir_u)
     //
     pir_u->but_d = log_u->com_d;
 
+    //  begin queuing batches of committed events
+    //
+    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+
     if ( 0 == god_u->dun_d ) {
       fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
                       log_u->com_d);
-
-      //  restore pier identity
-      //
-      //    XX currently very slow
-      //    technically unnecessary due to the current _pier_disk_load_commit
-      //    could be removed if _pier_disk_load_commit were moved before block
-      //
-      _pier_disk_read_header(pir_u->log_u);
 
       //  prepare serf for replay of boot sequence, don't write log header
       //
@@ -1102,15 +1156,14 @@ _pier_boot_ready(u3_pier* pir_u)
                       log_u->com_d);
     }
 
-    //  begin queuing batches of committed events
-    //
-    //    XX batch, async
-    //
-    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d));
+    pir_u->sat_e = u3_psat_pace;
   }
   //  resume
   //
   else {
+    c3_assert( 0 != log_u->com_d );
+    c3_assert( 0 != god_u->dun_d );
+
     //  set the boot barrier to the last computed event
     //
     pir_u->but_d = god_u->dun_d;
@@ -1122,7 +1175,6 @@ _pier_boot_ready(u3_pier* pir_u)
 }
 
 /* _pier_disk_init_complete():
-** XX async
 */
 static void
 _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
@@ -1132,20 +1184,14 @@ _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
 
   log_u->com_d = log_u->moc_d = evt_d;
 
-  {
-    u3_pier* pir_u = log_u->pir_u;
-    u3_lord* god_u = pir_u->god_u;
+  //  restore pier identity (XX currently a no-op, see comment)
+  //
+  _pier_disk_read_header(log_u);
 
-    if ( (0 != god_u) &&
-         (c3y == god_u->liv_o) &&
-         (c3n == pir_u->liv_o) ) {
-      _pier_boot_ready(pir_u);
-    }
-  }
+  _pier_boot_ready(log_u->pir_u);
 }
 
 /* _pier_disk_init():
-** XX async
 */
 static c3_o
 _pier_disk_init(u3_disk* log_u)
@@ -1296,15 +1342,7 @@ _pier_work_play(u3_pier* pir_u,
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
-  {
-    u3_disk* log_u = pir_u->log_u;
-
-    if ( (0 != log_u) &&
-         (c3y == log_u->liv_o) &&
-         (c3n == pir_u->liv_o) ) {
-      _pier_boot_ready(pir_u);
-    }
-  }
+  _pier_boot_ready(pir_u);
 }
 
 /* _pier_work_exit(): handle subprocess exit.
@@ -1558,7 +1596,6 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c)
   pir_u->pax_c = pax_c;
   pir_u->wag_w = wag_w;
   pir_u->sat_e = u3_psat_init;
-  pir_u->liv_o = c3n;
 
   pir_u->sam_u = c3_calloc(sizeof(u3_ames));
   pir_u->teh_u = c3_calloc(sizeof(u3_behn));
@@ -1995,11 +2032,9 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    pir_u->bot = u3k(ven);
-    pir_u->pil = u3k(pil);
+    pir_u->bot_u = _pier_boot_create(pir_u, u3k(pil), u3k(ven));
 
-    _pier_set_ship(pir_u, u3k(who),
-                   ( c3__fake == u3h(pir_u->bot) ) ? c3y : c3n);
+    _pier_set_ship(pir_u, u3k(who), ( c3__fake == u3h(ven) ) ? c3y : c3n);
   }
 
   //  initialize i/o handlers
@@ -2048,7 +2083,10 @@ u3_pier_mark(FILE* fil_u)
     pir_u = u3K.tab_u[--len_w];
     fprintf(stderr, "pier: %u\r\n", len_w);
 
-    tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot));
+    if ( 0 != pir_u->bot_u ) {
+      tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
+      tot_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
+    }
 
     {
       u3_writ* wit_u = pir_u->ent_u;
