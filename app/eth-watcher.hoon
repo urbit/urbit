@@ -117,7 +117,7 @@
   ^-  (quip move _+>)
   ?^  error
     %-  (slog u.error)
-    done
+    [~ ..wake]
   ?>  ?=([@ %poll ~] wir)
   done:poll-filter:(open:watcher i.wir)
 ::
