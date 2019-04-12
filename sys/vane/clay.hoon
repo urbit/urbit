@@ -4345,7 +4345,7 @@
 ::  +rift-scry: for a +rift
 ::
 ++  rift-scry
-  ~/  %rift-scry
+  ~%  %rift-scry  ..is  ~
   |=  who=ship
   ^-  (unit rift)
   =;  lyf
