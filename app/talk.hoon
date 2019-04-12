@@ -1604,7 +1604,7 @@
         ::
         ::  prints help message
         ::
-        (sh-fact %txt "see https://urbit.org/docs/learn/arvo/arvo-internals/messaging/")
+        (sh-fact %txt "see https://urbit.org/docs/using/messaging/")
       --
     ::
     ++  sh-pact
