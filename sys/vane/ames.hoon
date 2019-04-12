@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=2
+=+  protocol-version=3
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
