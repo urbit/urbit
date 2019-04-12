@@ -359,7 +359,7 @@ _serf_send_complete(u3_noun vir)
                   vir));
 }
 
-/* _serf_send_slog(): send hint output.
+/* _serf_send_slog(): send hint output (hod is [priority tank]).
 */
 static void
 _serf_send_slog(u3_noun hod)
