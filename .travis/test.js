@@ -82,6 +82,26 @@ function barMass(urb) {
   })
 }
 
+function aqua(urb) {
+  return urb.line("|start %ph")
+  .then(function(){
+    return urb.line(":ph %init");
+  })
+  .then(function(){
+    return urb.line(":aqua &pill +solid");
+  })
+  .then(function(){
+    urb.every(/TEST [^ ]* FAILED/, function(arg){
+      throw Error(arg);
+    });
+    return urb.line(":ph [%run-test %hi]");
+  })
+  .then(function(){
+    return urb.expectEcho("ALL TESTS SUCCEEDED")
+    .then(function(){ return urb.resetListeners(); })
+  })
+}
+
 Promise.resolve(urbit)
 .then(actions.safeBoot)
 .then(function(){
@@ -92,6 +112,9 @@ Promise.resolve(urbit)
 .then(actions.testRenderers)
 .then(function(){
   return barMass(urbit);
+})
+.then(function(){
+  return aqua(urbit);
 })
 .then(function(){
   return rePill(urbit);
