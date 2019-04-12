@@ -54,10 +54,10 @@ static void
 _foil_fail(const c3_c* why_c, c3_i err_i)
 {
   if ( err_i ) {
-    fprintf(stderr, "%s: error: %s\r\n", why_c, uv_strerror(err_i));
+    u3l_log("%s: error: %s\r\n", why_c, uv_strerror(err_i));
     c3_assert(0);
   } else {
-    fprintf(stderr, "%s: file error\r\n", why_c);
+    u3l_log("%s: file error\r\n", why_c);
   }
   exit(1);
 }
@@ -561,7 +561,7 @@ u3_foil_reveal(u3_foil* fol_u,              //  file from
       timersub(&aft_u, &req_u->bef_u, &gap_u);
       mls_w = (gap_u.tv_sec * 1000) + (gap_u.tv_usec / 1000);
 
-      fprintf(stderr, "invent ms: %d\r\n", mls_w);
+      u3l_log("invent ms: %d\r\n", mls_w);
     }
 #endif
       req_u->fun_f(req_u->vod_p, req_u->fol_u);

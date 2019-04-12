@@ -355,7 +355,7 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
   //c3_assert(u3_rsat_plan == req_u->sat_e);
 
   if ( u3_rsat_plan != req_u->sat_e ) {
-    //uL(fprintf(uH, "duplicate response\n"));
+    //u3l_log("duplicate response\n");
     return;
   }
 
@@ -442,8 +442,8 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
 
   if ( u3_none == req ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
-      uL(fprintf(uH, "strange %.*s request\n", (int)rec_u->method.len,
-                                               rec_u->method.base));
+      u3l_log("strange %.*s request\n", (int)rec_u->method.len,
+              rec_u->method.base);
     }
     c3_c* msg_c = "bad request";
     h2o_send_error_generic(rec_u, 400, msg_c, msg_c, 0);
@@ -545,7 +545,7 @@ _http_conn_free(uv_handle_t* han_t)
       noh_u = noh_u->nex_u;
     }
 
-    uL(fprintf(uH, "http conn free %d of %u server %d\n", hon_u->coq_l, len_w, htp_u->sev_l));
+    u3l_log("http conn free %d of %u server %d\n", hon_u->coq_l, len_w, htp_u->sev_l);
   }
 #endif
 
@@ -562,13 +562,13 @@ _http_conn_free(uv_handle_t* han_t)
       noh_u = noh_u->nex_u;
     }
 
-    uL(fprintf(uH, "http conn free %u remaining\n", len_w));
+    u3l_log("http conn free %u remaining\n", len_w);
   }
 #endif
 
   if ( (0 == htp_u->hon_u) && (0 != h2o_u->ctx_u.shutdown_requested) ) {
 #if 0
-    uL(fprintf(uH, "http conn free %d free server %d\n", hon_u->coq_l, htp_u->sev_l));
+    u3l_log("http conn free %d free server %d\n", hon_u->coq_l, htp_u->sev_l);
 #endif
     _http_serv_free(htp_u);
   }
@@ -592,7 +592,7 @@ _http_conn_new(u3_http* htp_u)
   _http_conn_link(htp_u, hon_u);
 
 #if 0
-  uL(fprintf(uH, "http conn neww %d server %d\n", hon_u->coq_l, htp_u->sev_l));
+  u3l_log("http conn neww %d server %d\n", hon_u->coq_l, htp_u->sev_l);
 #endif
 
   return hon_u;
@@ -758,7 +758,7 @@ static void
 _http_serv_free(u3_http* htp_u)
 {
 #if 0
-  uL(fprintf(uH, "http serv free %d\n", htp_u->sev_l));
+  u3l_log("http serv free %d\n", htp_u->sev_l);
 #endif
 
   c3_assert( 0 == htp_u->hon_u );
@@ -827,7 +827,7 @@ _http_serv_close(u3_http* htp_u)
   h2o_context_request_shutdown(&h2o_u->ctx_u);
 
 #if 0
-  uL(fprintf(uH, "http serv close %d %p\n", htp_u->sev_l, &htp_u->wax_u));
+  u3l_log("http serv close %d %p\n", htp_u->sev_l, &htp_u->wax_u);
 #endif
 
   uv_close((uv_handle_t*)&htp_u->wax_u, _http_serv_close_cb);
@@ -875,7 +875,7 @@ _http_serv_accept(u3_http* htp_u)
   if ( 0 != (sas_i = uv_accept((uv_stream_t*)&htp_u->wax_u,
                                (uv_stream_t*)&hon_u->wax_u)) ) {
     if ( (u3C.wag_w & u3o_verbose) ) {
-      uL(fprintf(uH, "http: accept: %s\n", uv_strerror(sas_i)));
+      u3l_log("http: accept: %s\n", uv_strerror(sas_i));
     }
 
     uv_close((uv_handle_t*)&hon_u->wax_u, _http_conn_free);
@@ -904,7 +904,7 @@ _http_serv_listen_cb(uv_stream_t* str_u, c3_i sas_i)
   u3_http* htp_u = (u3_http*)str_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "http: listen_cb: %s\n", uv_strerror(sas_i)));
+    u3l_log("http: listen_cb: %s\n", uv_strerror(sas_i));
   }
   else {
     _http_serv_accept(htp_u);
@@ -1012,7 +1012,7 @@ _http_serv_start(u3_http* htp_u)
         continue;
       }
 
-      uL(fprintf(uH, "http: listen: %s\n", uv_strerror(sas_i)));
+      u3l_log("http: listen: %s\n", uv_strerror(sas_i));
 
       if ( 0 != htp_u->rox_u ) {
         _proxy_serv_free(htp_u->rox_u);
@@ -1027,17 +1027,17 @@ _http_serv_start(u3_http* htp_u)
     }
 
     if ( 0 != htp_u->rox_u ) {
-      uL(fprintf(uH, "http: live (%s, %s) on %d (proxied on %d)\n",
-                   (c3y == htp_u->sec) ? "secure" : "insecure",
-                   (c3y == htp_u->lop) ? "loopback" : "public",
-                   htp_u->por_s,
-                   htp_u->rox_u->por_s));
+      u3l_log("http: live (%s, %s) on %d (proxied on %d)\n",
+              (c3y == htp_u->sec) ? "secure" : "insecure",
+              (c3y == htp_u->lop) ? "loopback" : "public",
+              htp_u->por_s,
+              htp_u->rox_u->por_s);
     }
     else {
-      uL(fprintf(uH, "http: live (%s, %s) on %d\n",
-                   (c3y == htp_u->sec) ? "secure" : "insecure",
-                   (c3y == htp_u->lop) ? "loopback" : "public",
-                   htp_u->por_s));
+      u3l_log("http: live (%s, %s) on %d\n",
+              (c3y == htp_u->sec) ? "secure" : "insecure",
+              (c3y == htp_u->lop) ? "loopback" : "public",
+              htp_u->por_s);
     }
 
     break;
@@ -1141,7 +1141,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     BIO_free(bio_u);
 
     if( 0 == sas_i ) {
-      uL(fprintf(uH, "http: load private key failed:\n"));
+      u3l_log("http: load private key failed:\n");
       ERR_print_errors_fp(uH);
       uL(1);
 
@@ -1159,7 +1159,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
     X509_free(xer_u);
 
     if( 0 == sas_i ) {
-      uL(fprintf(uH, "http: load certificate failed:\n"));
+      u3l_log("http: load certificate failed:\n");
       ERR_print_errors_fp(uH);
       uL(1);
 
@@ -1341,25 +1341,25 @@ u3_http_ef_thou(c3_l     sev_l,
 
   if ( !(htp_u = _http_serv_find(sev_l)) ) {
     if ( bug_w ) {
-      uL(fprintf(uH, "http: server not found: %x\r\n", sev_l));
+      u3l_log("http: server not found: %x\r\n", sev_l);
     }
   }
   else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
     if ( bug_w ) {
-      uL(fprintf(uH, "http: connection not found: %x/%d\r\n", sev_l, coq_l));
+      u3l_log("http: connection not found: %x/%d\r\n", sev_l, coq_l);
     }
   }
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
-      uL(fprintf(uH, "http: request not found: %x/%d/%d\r\n",
-                     sev_l, coq_l, seq_l));
+      u3l_log("http: request not found: %x/%d/%d\r\n",
+              sev_l, coq_l, seq_l);
     }
   }
   else {
     u3_noun p_rep, q_rep, r_rep;
 
     if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
-      uL(fprintf(uH, "http: strange response\n"));
+      u3l_log("http: strange response\n");
     }
     else {
       _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
@@ -1455,7 +1455,7 @@ _http_serv_restart(void)
     _http_serv_start_all();
   }
   else {
-    uL(fprintf(uH, "http: restarting servers to apply configuration\n"));
+    u3l_log("http: restarting servers to apply configuration\n");
 
     while ( 0 != htp_u ) {
       if ( c3y == htp_u->liv ) {
@@ -1507,7 +1507,7 @@ u3_http_ef_form(u3_noun fig)
        !( c3y == pro || c3n == pro ) ||
        !( c3y == log || c3n == log ) ||
        !( c3y == red || c3n == red ) ) {
-    uL(fprintf(uH, "http: form: invalid card\n"));
+    u3l_log("http: form: invalid card\n");
     u3z(fig);
     return;
   }
@@ -1832,17 +1832,17 @@ _proxy_write_cb(uv_write_t* wri_u, c3_i sas_i)
       proxy_write_ctx* ctx_u = wri_u->data;
 
       if ( ctx_u->str_u == (uv_stream_t*)ctx_u->con_u->upt_u ) {
-        uL(fprintf(uH, "proxy: write upstream: %s\n", uv_strerror(sas_i)));
+        u3l_log("proxy: write upstream: %s\n", uv_strerror(sas_i));
       }
       else if ( ctx_u->str_u == (uv_stream_t*)&(ctx_u->con_u->don_u) ) {
-        uL(fprintf(uH, "proxy: write downstream: %s\n", uv_strerror(sas_i)));
+        u3l_log("proxy: write downstream: %s\n", uv_strerror(sas_i));
       }
       else {
-        uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+        u3l_log("proxy: write: %s\n", uv_strerror(sas_i));
       }
     }
     else {
-      uL(fprintf(uH, "proxy: write: %s\n", uv_strerror(sas_i)));
+      u3l_log("proxy: write: %s\n", uv_strerror(sas_i));
     }
   }
 
@@ -1888,7 +1888,7 @@ _proxy_read_downstream_cb(uv_stream_t* don_u,
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
-      uL(fprintf(uH, "proxy: read downstream: %s\n", uv_strerror(siz_w)));
+      u3l_log("proxy: read downstream: %s\n", uv_strerror(siz_w));
     }
     _proxy_conn_close(con_u);
   }
@@ -1909,7 +1909,7 @@ _proxy_read_upstream_cb(uv_stream_t* upt_u,
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
-      uL(fprintf(uH, "proxy: read upstream: %s\n", uv_strerror(siz_w)));
+      u3l_log("proxy: read upstream: %s\n", uv_strerror(siz_w));
     }
     _proxy_conn_close(con_u);
   }
@@ -1950,7 +1950,7 @@ _proxy_loop_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
   u3_pcon* con_u = upc_u->data;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: connect: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: connect: %s\n", uv_strerror(sas_i));
     _proxy_conn_close(con_u);
   }
   else {
@@ -2010,7 +2010,7 @@ _proxy_loop_connect(u3_pcon* con_u)
   if ( 0 != (sas_i = uv_tcp_connect(upc_u, upt_u,
                                     (const struct sockaddr*)&lop_u,
                                     _proxy_loop_connect_cb)) ) {
-    uL(fprintf(uH, "proxy: connect: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: connect: %s\n", uv_strerror(sas_i));
     free(upc_u);
     _proxy_conn_close(con_u);
   }
@@ -2192,7 +2192,7 @@ _proxy_wcon_peek_read_cb(uv_stream_t* upt_u,
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
-      uL(fprintf(uH, "proxy: ward peek: %s\n", uv_strerror(siz_w)));
+      u3l_log("proxy: ward peek: %s\n", uv_strerror(siz_w));
     }
     _proxy_wcon_close(won_u);
   }
@@ -2204,7 +2204,7 @@ _proxy_wcon_peek_read_cb(uv_stream_t* upt_u,
     if ( ((len_w + 1) != siz_w) ||
          (len_w != buf_u->base[0]) ||
          (0 != memcmp(rev_u->non_u.base, buf_u->base + 1, len_w)) ) {
-      // uL(fprintf(uH, "proxy: ward auth fail\n"));
+      // u3l_log("proxy: ward auth fail\n");
       _proxy_wcon_unlink(won_u);
       _proxy_wcon_close(won_u);
     }
@@ -2243,7 +2243,7 @@ _proxy_ward_accept(u3_ward* rev_u)
 
   if ( 0 != (sas_i = uv_accept((uv_stream_t*)&rev_u->tcp_u,
                                (uv_stream_t*)&won_u->upt_u)) ) {
-    uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: accept: %s\n", uv_strerror(sas_i));
     _proxy_wcon_close(won_u);
   }
   else {
@@ -2259,7 +2259,7 @@ _proxy_ward_listen_cb(uv_stream_t* tcp_u, c3_i sas_i)
   u3_ward* rev_u = (u3_ward*)tcp_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: ward: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: ward: %s\n", uv_strerror(sas_i));
   }
   else {
     _proxy_ward_accept(rev_u);
@@ -2274,7 +2274,7 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
   u3_ward* rev_u = tim_u->data;
 
   if ( 0 != rev_u ) {
-    uL(fprintf(uH, "proxy: ward expired: %d\n", rev_u->por_s));
+    u3l_log("proxy: ward expired: %d\n", rev_u->por_s);
     _proxy_ward_close(rev_u);
     _proxy_conn_close(rev_u->con_u);
   }
@@ -2337,7 +2337,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
                                TCP_BACKLOG, _proxy_ward_listen_cb)) ||
        0 != (sas_i = uv_tcp_getsockname(&rev_u->tcp_u,
                                         (struct sockaddr*)&add_u, &add_i))) {
-    uL(fprintf(uH, "proxy: ward: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: ward: %s\n", uv_strerror(sas_i));
     _proxy_ward_close(rev_u);
     _proxy_conn_close(con_u);
   }
@@ -2348,7 +2348,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     {
       u3_noun who = u3dc("scot", 'p', u3k(sip));
       c3_c* who_c = u3r_string(who);
-      fprintf(stderr, "\r\nward for %s started on %u\r\n", who_c, rev_u->por_s);
+      u3l_log("\r\nward for %s started on %u\r\n", who_c, rev_u->por_s);
       free(who_c);
       u3z(who);
     }
@@ -2373,7 +2373,7 @@ _proxy_ward_connect_cb(uv_connect_t * upc_u, c3_i sas_i)
   u3_pcon* con_u = upc_u->data;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: ward connect: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: ward connect: %s\n", uv_strerror(sas_i));
     _proxy_conn_close(con_u);
   }
   else {
@@ -2415,7 +2415,7 @@ _proxy_ward_connect(u3_warc* cli_u)
   if ( 0 != (sas_i = uv_tcp_connect(upc_u, &con_u->don_u,
                                     (const struct sockaddr*)&add_u,
                                     _proxy_ward_connect_cb)) ) {
-      uL(fprintf(uH, "proxy: ward connect: %s\n", uv_strerror(sas_i)));
+      u3l_log("proxy: ward connect: %s\n", uv_strerror(sas_i));
       free(upc_u);
       _proxy_conn_close(con_u);
   }
@@ -2431,7 +2431,7 @@ _proxy_ward_resolve_cb(uv_getaddrinfo_t* adr_u,
   u3_warc* cli_u = adr_u->data;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: ward: resolve: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: ward: resolve: %s\n", uv_strerror(sas_i));
     _proxy_warc_free(cli_u);
   }
   else {
@@ -2477,7 +2477,7 @@ _proxy_ward_resolve(u3_warc* cli_u)
 
   if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u, _proxy_ward_resolve_cb,
                                          cli_u->hot_c, 0, &hin_u)) ) {
-    uL(fprintf(uH, "proxy: ward: resolve: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: ward: resolve: %s\n", uv_strerror(sas_i));
     _proxy_warc_free(cli_u);
   }
 }
@@ -2657,13 +2657,13 @@ _proxy_peek(u3_pcon* con_u)
     default: c3_assert(0);
 
     case u3_pars_fail: {
-      uL(fprintf(uH, "proxy: peek fail\n"));
+      u3l_log("proxy: peek fail\n");
       _proxy_conn_close(con_u);
       break;
     }
 
     case u3_pars_moar: {
-      uL(fprintf(uH, "proxy: peek moar\n"));
+      u3l_log("proxy: peek moar\n");
       // XX count retries, fail after some n
       _proxy_peek_read(con_u);
       break;
@@ -2692,7 +2692,7 @@ _proxy_peek_read_cb(uv_stream_t* don_u,
 
   if ( 0 > siz_w ) {
     if ( UV_EOF != siz_w ) {
-      uL(fprintf(uH, "proxy: peek: %s\n", uv_strerror(siz_w)));
+      u3l_log("proxy: peek: %s\n", uv_strerror(siz_w));
     }
     _proxy_conn_close(con_u);
   }
@@ -2787,7 +2787,7 @@ _proxy_serv_accept(u3_prox* lis_u)
   c3_i sas_i;
   if ( 0 != (sas_i = uv_accept((uv_stream_t*)&lis_u->sev_u,
                                (uv_stream_t*)&con_u->don_u)) ) {
-    uL(fprintf(uH, "proxy: accept: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: accept: %s\n", uv_strerror(sas_i));
     _proxy_conn_close(con_u);
   }
   else {
@@ -2803,7 +2803,7 @@ _proxy_serv_listen_cb(uv_stream_t* sev_u, c3_i sas_i)
   u3_prox* lis_u = (u3_prox*)sev_u;
 
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "proxy: listen_cb: %s\n", uv_strerror(sas_i)));
+    u3l_log("proxy: listen_cb: %s\n", uv_strerror(sas_i));
   }
   else {
     _proxy_serv_accept(lis_u);
@@ -2848,7 +2848,7 @@ _proxy_serv_start(u3_prox* lis_u)
         continue;
       }
 
-      uL(fprintf(uH, "proxy: listen: %s\n", uv_strerror(sas_i)));
+      u3l_log("proxy: listen: %s\n", uv_strerror(sas_i));
       _proxy_serv_free(lis_u);
       return 0;
     }
@@ -2869,7 +2869,7 @@ u3_http_ef_that(u3_noun tat)
        ( c3n == u3a_is_cat(por) ) ||
        !( c3y == sec || c3n == sec ) ||
        ( c3n == u3ud(non) ) ) {
-    uL(fprintf(uH, "http: that: invalid card\n"));
+    u3l_log("http: that: invalid card\n");
   }
   else {
     u3_http* htp_u;
@@ -2885,8 +2885,8 @@ u3_http_ef_that(u3_noun tat)
     //  so this situation can be avoided
     //
     if ( 0 == htp_u ) {
-      uL(fprintf(uH, "http: that: no %s server\n", (c3y == sec) ?
-                                                   "secure" : "insecure"));
+      u3l_log("http: that: no %s server\n",
+              (c3y == sec) ? "secure" : "insecure");
     }
     else {
       cli_u = _proxy_warc_new(htp_u, (u3_atom)u3k(sip), (u3_atom)u3k(non),

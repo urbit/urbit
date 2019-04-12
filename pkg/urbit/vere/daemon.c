@@ -374,7 +374,7 @@ void
 _daemon_bail(u3_moor *vod_p, const c3_c *err_c)
 {
   u3_moor *free_p;
-  fprintf(stderr, "_daemon_bail: %s\r\n", err_c);
+  u3l_log("_daemon_bail: %s\r\n", err_c);
 
   if ( vod_p == 0 ) {
     free_p = u3K.cli_u;
@@ -447,7 +447,7 @@ _daemon_get_atom(c3_c* url_c)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    fprintf(stderr, "failed to initialize libcurl\n");
+    u3l_log("failed to initialize libcurl\n");
     exit(1);
   }
 
@@ -461,12 +461,12 @@ _daemon_get_atom(c3_c* url_c)
   //  XX retry?
   //
   if ( CURLE_OK != result ) {
-    fprintf(stderr, "failed to fetch %s: %s\n",
-                    url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n",
+            url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
-    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
     exit(1);
   }
 
@@ -485,12 +485,12 @@ _get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
 {
   FILE *fp = popen(cmd_c, "r");
   if ( NULL == fp ) {
-    fprintf(stderr, "'%s' failed\n", cmd_c);
+    u3l_log("'%s' failed\n", cmd_c);
     exit(1);
   }
 
   if ( NULL == fgets(out_c, len_c, fp) ) {
-    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    u3l_log("'%s' produced no output\n", cmd_c);
     exit(1);
   }
 
@@ -523,7 +523,7 @@ _git_pill_url(c3_c *out_c, c3_c *arv_c)
   assert(NULL != arv_c);
 
   if ( 0 != system("which git >> /dev/null") ) {
-    fprintf(stderr, "boot: could not find git executable\r\n");
+    u3l_log("boot: could not find git executable\r\n");
     exit(1);
   }
 
@@ -540,7 +540,7 @@ _boothack_pill(void)
   u3_noun pil;
 
   if ( 0 != u3_Host.ops_u.pil_c ) {
-    fprintf(stderr, "boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
+    u3l_log("boot: loading pill %s\r\n", u3_Host.ops_u.pil_c);
     pil = u3m_file(u3_Host.ops_u.pil_c);
   }
   else {
@@ -556,13 +556,13 @@ _boothack_pill(void)
       strcpy(url_c, u3_Host.ops_u.url_c);
     }
 
-    fprintf(stderr, "boot: downloading pill %s\r\n", url_c);
+    u3l_log("boot: downloading pill %s\r\n", url_c);
     pil = _daemon_get_atom(url_c);
   }
 
   if ( 0 != u3_Host.ops_u.arv_c ) {
-    fprintf(stderr, "boot: preparing filesystem from %s\r\n",
-                    u3_Host.ops_u.arv_c);
+    u3l_log("boot: preparing filesystem from %s\r\n",
+            u3_Host.ops_u.arv_c);
     arv = u3nc(u3_nul, u3_unix_initial_into_card(u3_Host.ops_u.arv_c));
   }
 
@@ -581,7 +581,7 @@ _boothack_key(u3_noun kef)
 
     if ( u3_nul == des ) {
       c3_c* kef_c = u3r_string(kef);
-      fprintf(stderr, "dawn: invalid private keys: %s\r\n", kef_c);
+      u3l_log("dawn: invalid private keys: %s\r\n", kef_c);
       free(kef_c);
       exit(1);
     }
@@ -601,16 +601,16 @@ _boothack_key(u3_noun kef)
     u3_noun whu = u3dc("slaw", 'p', u3k(woh));
 
     if ( u3_nul == whu ) {
-      fprintf(stderr, "dawn: invalid ship specificed with -w %s\r\n",
-                                                 u3_Host.ops_u.who_c);
+      u3l_log("dawn: invalid ship specificed with -w %s\r\n",
+              u3_Host.ops_u.who_c);
       exit(1);
     }
 
     if ( c3n == u3r_sing(ship, u3t(whu)) ) {
       u3_noun how = u3dc("scot", 'p', u3k(ship));
       c3_c* how_c = u3r_string(u3k(how));
-      fprintf(stderr, "dawn: mismatch between -w %s and -K %s\r\n",
-                                                 u3_Host.ops_u.who_c, how_c);
+      u3l_log("dawn: mismatch between -w %s and -K %s\r\n",
+              u3_Host.ops_u.who_c, how_c);
 
       u3z(how);
       free(how_c);
@@ -640,7 +640,7 @@ _boothack_doom(void)
     u3_noun whu = u3dc("slaw", 'p', u3k(fak));
 
     if ( u3_nul == whu ) {
-      fprintf(stderr, "boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
+      u3l_log("boot: malformed -F ship %s\r\n", u3_Host.ops_u.fak_c);
       exit(1);
     }
 
@@ -659,7 +659,7 @@ _boothack_doom(void)
       kef = u3i_string(u3_Host.ops_u.gen_c);
     }
     else {
-      fprintf(stderr, "boot: must specify a key with -k or -G\r\n");
+      u3l_log("boot: must specify a key with -k or -G\r\n");
       exit(1);
     }
 
@@ -787,7 +787,7 @@ u3_daemon_commence()
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
   uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _daemon_socket_connect);
-  fprintf(stderr, "cmd socket up\r\n");
+  u3l_log("cmd socket up\r\n");
 
   _daemon_loop_init();
 

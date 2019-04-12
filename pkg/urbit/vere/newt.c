@@ -54,15 +54,14 @@ _newt_consume(u3_moat* mot_u)
         memcpy(met_u->hun_y, mot_u->rag_y, mot_u->len_d);
 
 #if 0
-          fprintf(stderr,
-              "newt: %d: create: msg %p, new block %p, len %"
-              PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
-              getpid(),
-              mot_u->mes_u,
-              met_u,
-              met_u->len_d,
-              mot_u->mes_u->has_d,
-              mot_u->mes_u->len_d);
+        u3l_log("newt: %d: create: msg %p, new block %p, len %"
+                PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
+                getpid(),
+                mot_u->mes_u,
+                met_u,
+                met_u->len_d,
+                mot_u->mes_u->has_d,
+                mot_u->mes_u->len_d);
 #endif
         /* enqueue block
         */
@@ -97,9 +96,9 @@ _newt_consume(u3_moat* mot_u)
           nel_d |= ((c3_d) mot_u->rag_y[6]) << 48ULL;
           nel_d |= ((c3_d) mot_u->rag_y[7]) << 56ULL;
 #if 0
-          fprintf(stderr, "newt: %d: parsed length %" PRIu64 "\r\n",
-                          getpid(),
-                          nel_d);
+          u3l_log("newt: %d: parsed length %" PRIu64 "\r\n",
+                  getpid(),
+                  nel_d);
 #endif
           mot_u->len_d -= 8ULL;
 
@@ -225,13 +224,13 @@ _newt_read_cb(uv_stream_t*    str_u,
   u3_moat* mot_u = (void *)str_u;
 
   if ( UV_EOF == len_i ) {
-    // fprintf(stderr, "newt: %d: stream closed\r\n", getpid());
+    // u3l_log("newt: %d: stream closed\r\n", getpid());
     uv_read_stop(str_u);
     mot_u->bal_f(mot_u->vod_p, "stream closed");
   }
   else {
 #if 0
-    fprintf(stderr, "newt: %d: read %ld\r\n", getpid(), len_i);
+    u3l_log("newt: %d: read %ld\r\n", getpid(), len_i);
 #endif
 
     if ( mot_u->rag_y ) {
@@ -289,7 +288,7 @@ _newt_write_cb(uv_write_t* wri_u, c3_i sas_i)
   free(req_u);
 
   if ( 0 != sas_i ) {
-    fprintf(stderr, "newt: bad write %d\r\n", sas_i);
+    u3l_log("newt: bad write %d\r\n", sas_i);
     moj_u->bal_f(vod_p, uv_strerror(sas_i));
   }
 }
@@ -323,7 +322,7 @@ u3_newt_write(u3_mojo* moj_u,
   buf_u.len = len_w + 8;
 
 #if 0
-  fprintf(stderr, "newt: %d: write %d\n", getpid(), len_w + 8);
+  u3l_log("newt: %d: write %d\n", getpid(), len_w + 8);
 #endif
   if ( 0 != (err_i = uv_write((uv_write_t*)req_u,
                               (uv_stream_t*)&moj_u->pyp_u,

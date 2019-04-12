@@ -72,7 +72,7 @@
     int argon_res;
     switch ( type ) {
       default:
-        fprintf(stderr, "\nunjetted argon2 variant %i\n", type);
+        u3l_log("\nunjetted argon2 variant %i\n", type);
         u3m_bail(c3__exit);
         break;
       //
@@ -94,7 +94,7 @@
     }
 
     if ( ARGON2_OK != argon_res ) {
-      fprintf(stderr, "\nargon2 error: %s\n", argon2_error_message(argon_res));
+      u3l_log("\nargon2 error: %s\n", argon2_error_message(argon_res));
       u3m_bail(c3__exit);
     }
 

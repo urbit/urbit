@@ -990,6 +990,11 @@
         FILE*
         u3_term_io_hija(void);
 
+      /* u3_term_it_log(): writes a log message
+      */
+        void
+        u3_term_io_log(c3_c* line);
+
       /* u3_term_io_loja(): release console from cooked print.
       */
         void

@@ -37,20 +37,20 @@
     ret_w = EVP_DigestInit_ex(con_u, rip_u, NULL);
     if ( 1 != ret_w ) {
       u3a_free(dat_y);
-      fprintf(stderr, "\rripe jet: crypto library fail 1\n");
+      u3l_log("\rripe jet: crypto library fail 1\n");
       return u3m_bail(c3__exit);
     }
 
     ret_w = EVP_DigestUpdate(con_u, (void*)dat_y, wid);
     u3a_free(dat_y);
     if (1 != ret_w) {
-      fprintf(stderr, "\rripe jet: crypto library fail 2\n");
+      u3l_log("\rripe jet: crypto library fail 2\n");
       return u3m_bail(c3__exit);
     }
 
     ret_w = EVP_DigestFinal_ex(con_u, sib_y, &sil_w);
     if ( 1 != ret_w ) {
-      fprintf(stderr, "\rripe jet: crypto library fail 3\n");
+      u3l_log("\rripe jet: crypto library fail 3\n");
       return u3m_bail(c3__exit);
     }
 
@@ -71,7 +71,7 @@
                  u3ud(wid) || u3ud(dat))
        )
     {
-      fprintf(stderr, "\rripe jet: argument error\n");
+      u3l_log("\rripe jet: argument error\n");
       return u3m_bail(c3__exit);
     }
     else {

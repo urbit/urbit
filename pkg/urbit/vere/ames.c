@@ -36,7 +36,7 @@ _ames_alloc(uv_handle_t* had_u,
 static void
 _ames_free(void* ptr_v)
 {
-//  uL(fprintf(uH, "free %p\n", ptr_v));
+//  u3l_log("free %p\n", ptr_v);
   free(ptr_v);
 }
 
@@ -59,7 +59,7 @@ _ames_send_cb(uv_udp_send_t* req_u, c3_i sas_i)
 
 #if 0
   if ( 0 != sas_i ) {
-    uL(fprintf(uH, "ames: send_cb: %s\n", uv_strerror(sas_i)));
+    u3l_log("ames: send_cb: %s\n", uv_strerror(sas_i));
   }
 #endif
 
@@ -96,7 +96,7 @@ _ames_send(u3_pact* pac_u)
                                  &buf_u, 1,
                                  (const struct sockaddr*)&add_u,
                                  _ames_send_cb)) ) {
-    uL(fprintf(uH, "ames: send: %s\n", uv_strerror(sas_i)));
+    u3l_log("ames: send: %s\n", uv_strerror(sas_i));
   }
 }
 
@@ -122,7 +122,7 @@ _ames_czar_gone(u3_pact* pac_u, time_t now)
   u3_pier* pir_u = u3_pier_stub();
   u3_ames* sam_u = pir_u->sam_u;
 
-  uL(fprintf(uH, "ames: czar at %s: not found (b)\n", pac_u->dns_c));
+  u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
   if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
        (0xffffffff == sam_u->imp_w[pac_u->imp_y]) ) {
     sam_u->imp_w[pac_u->imp_y] = 0xffffffff;
@@ -168,7 +168,7 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
         u3_noun nam = u3dc("scot", c3__if, wad);
         c3_c*   nam_c = u3r_string(nam);
 
-        uL(fprintf(uH, "ames: czar %s: ip %s\n", pac_u->dns_c, nam_c));
+        u3l_log("ames: czar %s: ip %s\n", pac_u->dns_c, nam_c);
 
         free(nam_c); u3z(nam);
       }
@@ -208,7 +208,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
   if ( 0 == bos_c ) {
     u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
     c3_c*  nam_c = u3r_string(nam);
-    fprintf(stderr, "ames: no galaxy domain for %s, no-op\r\n", nam_c);
+    u3l_log("ames: no galaxy domain for %s, no-op\r\n", nam_c);
 
     free(nam_c);
     u3z(nam);
@@ -232,7 +232,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
     pac_u->dns_c = c3_malloc(1 + strlen(bos_c) + 1 + strlen(nam_c));
 
     snprintf(pac_u->dns_c, 256, "%s.%s", nam_c + 1, bos_c);
-    // uL(fprintf(uH, "czar %s, dns %s\n", nam_c, pac_u->dns_c));
+    // u3l_log("czar %s, dns %s\n", nam_c, pac_u->dns_c);
 
     free(nam_c);
     u3z(nam);
@@ -246,7 +246,7 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
       if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u,
                                         _ames_czar_cb,
                                         pac_u->dns_c, 0, 0)) ) {
-        uL(fprintf(uH, "ames: %s\n", uv_strerror(sas_i)));
+        u3l_log("ames: %s\n", uv_strerror(sas_i));
         _ames_czar_gone(pac_u, now);
         return;
       }
@@ -351,7 +351,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
               const struct sockaddr* adr_u,
               unsigned         flg_i)
 {
-  // uL(fprintf(uH, "ames: rx %p\r\n", buf_u.base));
+  // u3l_log("ames: rx %p\r\n", buf_u.base);
 
   if ( 0 == nrd_i ) {
     _ames_free(buf_u->base);
@@ -360,7 +360,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     {
       u3_noun             msg   = u3i_bytes((c3_w)nrd_i, (c3_y*)buf_u->base);
 
-      // fprintf(stderr, "ames: plan\r\n");
+      // u3l_log("ames: plan\r\n");
 #if 0
       u3z(msg);
 #else
@@ -397,10 +397,10 @@ _ames_io_start(u3_pier* pir_u)
     por_s = _ames_czar_port(num_y);
 
     if ( c3y == u3_Host.ops_u.net ) {
-      uL(fprintf(uH, "ames: czar: %s on %d\n", imp_c, por_s));
+      u3l_log("ames: czar: %s on %d\n", imp_c, por_s);
     }
     else {
-      uL(fprintf(uH, "ames: czar: %s on %d (localhost only)\n", imp_c, por_s));
+      u3l_log("ames: czar: %s on %d (localhost only)\n", imp_c, por_s);
     }
 
     u3z(imp);
@@ -409,7 +409,7 @@ _ames_io_start(u3_pier* pir_u)
 
   int ret;
   if ( 0 != (ret = uv_udp_init(u3L, &sam_u->wax_u)) ) {
-    uL(fprintf(uH, "ames: init: %s\n", uv_strerror(ret)));
+    u3l_log("ames: init: %s\n", uv_strerror(ret));
     c3_assert(0);
   }
 
@@ -428,11 +428,10 @@ _ames_io_start(u3_pier* pir_u)
     int ret;
     if ( (ret = uv_udp_bind(&sam_u->wax_u,
                             (const struct sockaddr*) & add_u, 0)) != 0 ) {
-      uL(fprintf(uH, "ames: bind: %s\n",
-                     uv_strerror(ret)));
+      u3l_log("ames: bind: %s\n",
+              uv_strerror(ret));
       if (UV_EADDRINUSE == ret){
-        uL(fprintf(uH,
-                    "    ...perhaps you've got two copies of vere running?\n"));
+        u3l_log("    ...perhaps you've got two copies of vere running?\n");
       }
       u3_pier_exit(pir_u);
     }
@@ -443,7 +442,7 @@ _ames_io_start(u3_pier* pir_u)
     sam_u->por_s = ntohs(add_u.sin_port);
   }
 
-  // uL(fprintf(uH, "ames: on localhost, UDP %d.\n", sam_u->por_s));
+  // u3l_log("ames: on localhost, UDP %d.\n", sam_u->por_s);
   uv_udp_recv_start(&sam_u->wax_u, _ames_alloc, _ames_recv_cb);
 
   sam_u->liv = c3y;
@@ -526,7 +525,7 @@ u3_ames_ef_turf(u3_pier* pir_u, u3_noun tuf)
     u3z(tuf);
   }
   else if ( (c3n == pir_u->fak_o) && (0 == sam_u->dns_c) ) {
-    uL(fprintf(uH, "ames: turf: no domains\n"));
+    u3l_log("ames: turf: no domains\n");
   }
 
   if ( c3n == sam_u->liv ) {

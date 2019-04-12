@@ -255,7 +255,7 @@ u3_term_io_init()
                                       _term_spinner_cb,
                                       uty_u);
         if ( 0 != ret_w ) {
-          uL(fprintf(uH, "term: spinner start: %s\n", uv_strerror(ret_w)));
+          u3l_log("term: spinner start: %s\n", uv_strerror(ret_w));
           free(uty_u->tat_u.sun.sit_u);
           uty_u->tat_u.sun.sit_u = NULL;
           uv_mutex_unlock(&uty_u->tat_u.mex_u);
@@ -302,7 +302,7 @@ u3_term_io_exit(void)
         //  XX can block exit waiting for wakeup (max _SPIN_COOL_US)
         c3_w ret_w;
         if ( 0 != (ret_w = uv_thread_join(sit_u)) ) {
-          uL(fprintf(uH, "term: spinner exit: %s\n", uv_strerror(ret_w)));
+          u3l_log("term: spinner exit: %s\n", uv_strerror(ret_w));
         }
         else {
           uv_mutex_destroy(&uty_u->tat_u.mex_u);
@@ -344,7 +344,7 @@ _term_write_cb(uv_write_t* wri_u, c3_i sas_i)
   _u3_write_t* ruq_u = (void *)wri_u;
 
   if ( 0 != sas_i ) {
-    // uL(fprintf(uH, "term: write: ERROR\n"));
+    // u3l_log("term: write: ERROR\n");
   }
   free(ruq_u->buf_y);
   free(ruq_u);
@@ -365,7 +365,7 @@ _term_it_write_buf(u3_utty* uty_u, uv_buf_t buf_u)
                      &buf_u, 1,
                               _term_write_cb)) )
   {
-    uL(fprintf(uH, "terminal: %s\n", uv_strerror(ret_w)));
+    u3l_log("terminal: %s\n", uv_strerror(ret_w));
   }
 }
 
@@ -657,10 +657,10 @@ _term_io_suck_char(u3_utty* uty_u, c3_y cay_y)
       u3_noun huv = u3i_bytes(tat_u->fut.wid_w, tat_u->fut.syb_y);
       u3_noun wug;
 
-      // uL(fprintf(uH, "muck-utf8 len %d\n", tat_u->fut.len_w));
-      // uL(fprintf(uH, "muck-utf8 %x\n", huv));
+      // u3l_log("muck-utf8 len %d\n", tat_u->fut.len_w);
+      // u3l_log("muck-utf8 %x\n", huv);
       wug = u3do("taft", huv);
-      // uL(fprintf(uH, "muck-utf32 %x\n", tat_u->fut.len_w));
+      // u3l_log("muck-utf32 %x\n", tat_u->fut.len_w);
 
       tat_u->fut.len_w = tat_u->fut.wid_w = 0;
       _term_io_belt(uty_u, u3nt(c3__txt, wug, u3_nul));
@@ -728,11 +728,11 @@ _term_suck(u3_utty* uty_u, const c3_y* buf, ssize_t siz_i)
       //  The process hangs if we do nothing (and ctrl-z
       //  then corrupts the event log), so we force shutdown.
       //
-      fprintf(stderr, "term: hangup (EOF)\r\n");
+      u3l_log("term: hangup (EOF)\r\n");
       u3_pier_exit(u3_pier_stub());
     }
     else if ( siz_i < 0 ) {
-      uL(fprintf(uH, "term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i)));
+      u3l_log("term %d: read: %s\n", uty_u->tid_l, uv_strerror(siz_i));
     }
     else {
       c3_i i;
@@ -1147,8 +1147,8 @@ u3_term_ef_blit(c3_l     tid_l,
   u3_utty* uty_u = _term_ef_get(tid_l);
 
   if ( 0 == uty_u ) {
-    // uL(fprintf(uH, "no terminal %d\n", tid_l));
-    // uL(fprintf(uH, "uty_u %p\n", u3_Host.uty_u));
+    // u3l_log("no terminal %d\n", tid_l);
+    // u3l_log("uty_u %p\n", u3_Host.uty_u);
 
     u3z(bls); return;
   }
@@ -1245,6 +1245,15 @@ u3_term_io_loja(int x)
       }
     }
   }
+}
+
+/* u3_term_it_log(): writes a log message
+*/
+void
+u3_term_io_log(c3_c* line)
+{
+  FILE* stream = u3_term_io_hija();
+  u3_term_io_loja(fprintf(stream, "%s", line));
 }
 
 /* u3_term_tape_to(): dump a tape to a file.

@@ -26,7 +26,7 @@ _reck_mole(u3_noun  fot,
   if ( (c3n == u3r_cell(uco, &p_uco, &q_uco)) ||
        (u3_nul != p_uco) )
   {
-    uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
+    u3l_log("strange mole %s\n", u3r_string(san));
 
     u3z(fot); u3z(uco); return c3n;
   }
@@ -108,7 +108,7 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
       u3_noun lan = u3k(u3h(u3t(fav)));
       u3_noun pac = u3k(u3t(u3t(fav)));
 
-      fprintf(stderr, "kick: strange send\r\n");
+      u3l_log("kick: strange send\r\n");
       u3_ames_ef_send(pir_u, lan, pac);
       u3z(pox); u3z(fav); return c3y;
     } break;
@@ -125,7 +125,7 @@ _reck_kick_term(u3_pier* pir_u, u3_noun pox, c3_l tid_l, u3_noun fav)
     {
       // daemon ignores %init
       // u3A->own = u3nc(u3k(p_fav), u3A->own);
-      // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+      // u3l_log("kick: init: %d\n", p_fav);
       u3z(pox); u3z(fav); return c3y;
     } break;
 
@@ -288,7 +288,7 @@ _reck_kick_ames(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     {
       // daemon ignores %init
       // u3A->own = u3nc(u3k(p_fav), u3A->own);
-      // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+      // u3l_log("kick: init: %d\n", p_fav);
       u3z(pox); u3z(fav); return c3y;
     } break;
   }
@@ -380,7 +380,7 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
         // daemon ignores %init
         // p_fav = u3t(fav);
         // u3A->own = u3nc(u3k(p_fav), u3A->own);
-        // uL(fprintf(uH, "kick: init: %d\n", p_fav));
+        // u3l_log("kick: init: %d\n", p_fav);
         u3z(pox); u3z(fav); return c3y;
       } break;
 
@@ -393,7 +393,7 @@ _reck_kick_spec(u3_pier* pir_u, u3_noun pox, u3_noun fav)
              (u3_nul != q_pud) ||
              (c3n == _reck_orchid(c3__ud, u3k(p_pud), &tid_l)) )
         {
-          uL(fprintf(uH, "term: bad tire\n"));
+          u3l_log("term: bad tire\n");
           u3z(pox); u3z(fav); return c3n;
         } else {
           return _reck_kick_term(pir_u, pox, tid_l, fav);
@@ -418,7 +418,7 @@ _reck_kick_norm(u3_pier* pir_u, u3_noun pox, u3_noun fav)
 
     case c3__vega:
     {
-      uL(fprintf(uH, "<<<reset>>>\n"));
+      u3l_log("<<<reset>>>\n");
       u3z(pox); u3z(fav);
 
       //  reclaim memory from persistent caches
@@ -429,7 +429,7 @@ _reck_kick_norm(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     }
     case c3__exit:
     {
-      uL(fprintf(uH, "<<<goodbye>>>\n"));
+      u3l_log("<<<goodbye>>>\n");
       u3_pier_exit(pir_u);
 
       u3z(pox); u3z(fav); return c3y;
@@ -466,9 +466,9 @@ u3_reck_kick(u3_pier* pir_u, u3_noun ovo)
     }
     else {
       u3_noun tox = u3do("spat", u3k(u3h(ovo)));
-      uL(fprintf(uH, "kick: lost %%%s on %s\n",
-                     u3r_string(u3h(u3t(ovo))),
-                     u3r_string(tox)));
+      u3l_log("kick: lost %%%s on %s\n",
+              u3r_string(u3h(u3t(ovo))),
+              u3r_string(tox));
       u3z(tox);
 #if 0
       if ( c3__hear == u3h(u3t(ovo)) ) {

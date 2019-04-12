@@ -312,7 +312,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 static void
 _worker_fail(void* vod_p, const c3_c* wut_c)
 {
-  fprintf(stderr, "worker: fail: %s\r\n", wut_c);
+  u3l_log("worker: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -329,9 +329,9 @@ _worker_send(u3_noun job)
 static void
 _worker_send_replace(c3_d evt_d, u3_noun ovo)
 {
-  fprintf(stderr, "worker_send_replace %" PRIu64 " %s\r\n",
-                  evt_d,
-                  u3r_string(u3h(u3t(ovo))));
+  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
+          evt_d,
+          u3r_string(u3h(u3t(ovo))));
 
   _worker_send(u3nq(c3__work,
                     u3i_chubs(1, &evt_d),
@@ -448,7 +448,7 @@ _worker_work_live(c3_d    evt_d,              //  event number
     if ( c3__belt != u3h(u3t(ovo)) ) {
       c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      fprintf(stderr, "worker: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
+      u3l_log("worker: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
     }
   }
 #endif
@@ -466,9 +466,9 @@ _worker_work_live(c3_d    evt_d,              //  event number
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
     if (c3__belt != u3h(u3t(ovo)) || clr_w != 2) {
-      uL(fprintf(uH, "\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
-                        clr_w, txt_c, evt_d, ms_w,
-                        (int) (d0.tv_usec % 1000) / 10));
+      u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
+              clr_w, txt_c, evt_d, ms_w,
+              (int) (d0.tv_usec % 1000) / 10);
     }
     free(txt_c);
   }
@@ -538,7 +538,7 @@ _worker_work_boot(c3_d    evt_d,
 
   u3A->roe = u3nc(job, u3A->roe);
 
-  fprintf(stderr, "worker: (%" PRIu64 ")| boot\r\n", evt_d);
+  u3l_log("worker: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
@@ -546,18 +546,18 @@ _worker_work_boot(c3_d    evt_d,
     eve = u3kb_flop(u3A->roe);
     u3A->roe = 0;
 
-    fprintf(stderr, "worker: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
+    u3l_log("worker: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
     pru = u3m_soft(0, _worker_boot_fire, eve);
 
     if ( u3_blip != u3h(pru) ) {
-      fprintf(stderr, "boot failed\r\n");
+      u3l_log("boot failed\r\n");
       exit(1);
     }
 
     u3A->roc = u3k(u3t(pru));
 
-    fprintf(stderr, "worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
+    u3l_log("worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
 
     //  XX set u3A->evt_d ?
     //
@@ -759,7 +759,7 @@ u3_worker_boot(void)
     u3V.len_w = 0;
   }
 
-  fprintf(stderr, "worker: play %" PRIu64 "\r\n", nex_d);
+  u3l_log("worker: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
 }

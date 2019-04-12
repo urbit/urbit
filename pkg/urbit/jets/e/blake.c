@@ -43,7 +43,7 @@
 
     if ( 0 != ret )
     {
-      fprintf(stderr, "\rblake jet: cryto lib error\n");
+      u3l_log("\rblake jet: cryto lib error\n");
       return u3m_bail(c3__exit);
     }
 
@@ -64,7 +64,7 @@
                 u3r_cell(key, &wik, &dak) || u3ud(wik) || u3ud(dak) ||
                 u3ud(out) )
     {
-      fprintf(stderr, "\rblake jet: arguments error\n");
+      u3l_log("\rblake jet: arguments error\n");
       return u3m_bail(c3__exit);
     } else {
       return u3qe_blake(wid, dat, wik, dak, out);
