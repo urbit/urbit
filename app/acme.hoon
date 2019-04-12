@@ -1223,8 +1223,9 @@
 ::  +wake: timer wakeup event
 ::
 ++  wake
-  |=  [wir=wire ~]
+  |=  [wir=wire error=(unit tang)]
   ^-  (quip move _this)
+  ?^  error  ~|  %acme-timer-failed  !!
   ?>  ?=([%acme *] wir)
   abet:(retry:event t.wir)
 ::  +poke-acme-order: create new order for a set of domains
