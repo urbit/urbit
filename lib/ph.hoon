@@ -330,7 +330,7 @@
       ::
       :~
         ?.  %^  is-dojo-output  her  who  :-  uf
-            "+ /{(scow %p her)}/base/2/web/testing/udon"
+            "clay: committed initial filesystem (all)"
           ~
         [%test-done &]~
       ::
