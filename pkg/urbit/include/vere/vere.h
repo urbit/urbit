@@ -619,9 +619,9 @@
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
 
-      /* u3_lord: working process controller.
+      /* u3_controller: working process controller.
       */
-        typedef struct _u3_lord {
+        typedef struct _u3_controller {
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
@@ -634,7 +634,7 @@
           c3_d                 rel_d;           //  last event released
           c3_l                 mug_l;           //  mug after last completion
           struct _u3_pier*     pir_u;           //  pier backpointer
-        } u3_lord;
+        } u3_controller;
 
       /* u3_disk: manage events on disk.
       **
@@ -690,7 +690,7 @@
           c3_o             fak_o;               //  yes iff fake security
           u3_psat          sat_e;               //  pier state
           u3_disk*         log_u;               //  event log
-          u3_lord*         god_u;               //  computer
+          u3_controller*   god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
           u3_behn*         teh_u;               //  behn timer
           u3_unix*         unx_u;               //  sync and clay
@@ -702,25 +702,25 @@
 
       /* u3_king: all executing piers.
       */
-        typedef struct _u3_king {
+        typedef struct _u3_daemon {
           c3_c*     soc_c;                      //  socket name
-          c3_w      len_w;                      //  number of lords used
-          c3_w      all_w;                      //  number of lords allocated
-          u3_pier** tab_u;                      //  lord table
+          c3_w      len_w;                      //  number used
+          c3_w      all_w;                      //  number allocated
+          u3_pier** tab_u;                      //  pier table
           uv_pipe_t cmd_u;                      //  command socket
           u3_moor*  cli_u;                      //  connected clients
           uv_timer_t tim_u;                     //  gc timer
-        } u3_king;
+        } u3_daemon;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
-#     define u3K  u3_King
+#     define u3K  u3_Daemon
 
   /** Global variables.
   **/
-    c3_global  u3_host  u3_Host;
-    c3_global  c3_c*    u3_Local;
-    c3_global  u3_king  u3_King;
+    c3_global  u3_host   u3_Host;
+    c3_global  c3_c*     u3_Local;
+    c3_global  u3_daemon u3_Daemon;
 
   /** Functions.
   **/
@@ -1326,12 +1326,12 @@
         u3_noun
         u3_dawn_vent(u3_noun seed);
 
-      /* u3_king_commence(): start the daemon
+      /* u3_daemon_commence(): start the daemon
       */
         void
-        u3_king_commence();
+        u3_daemon_commence();
 
-      /* u3_king_grab(): gc the kingdom
+      /* u3_king_grab(): gc the daemon area
       */
         void
-        u3_king_grab(void* vod_p);
+        u3_daemon_grab(void* vod_p);

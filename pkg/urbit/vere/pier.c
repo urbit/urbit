@@ -26,14 +26,14 @@
 #undef VERBOSE_EVENTS
 
   /*    event handling proceeds on a single path. across both the
-  **    child worker process (serf) and parent i/o process (king).
+  **    child worker process (worker) and parent i/o process (daemon).
   **    state transitions are as follows:
   **
   **        generated               (event numbered and queued)
   **        dispatched              (sent to worker)
   **        computed                (completed by worker)
   **        commit requested        (sent to storage subsystem)
-  **        commit complete         (king notified)
+  **        commit complete         (daemon notified)
   **        released                (output actions allowed)
   **
   **    we dispatch one event at a time to the worker.  we don't do
@@ -56,7 +56,7 @@
   **    replace the input event with a different event).
   **
   **    after crash recovery, events committed but not in the snapshot
-  **    (the state of the serf) are replayed (re-computed), but their
+  **    (the state of the worker) are replayed (re-computed), but their
   **    output effects are ignored. it is possible that effects of
   **    (only the last of ?) these events are not completely released to
   **    the outside world -- but they should never be released more than once.
@@ -122,12 +122,12 @@ _pier_save_boot(u3_pier* pir_u, u3_atom mat)
                  len_d);
 }
 
-/* _pier_work_boot(): prepare serf boot.
+/* _pier_work_boot(): prepare worker boot.
 */
 static void
 _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   c3_assert( 0 != pir_u->lif_d );
 
@@ -155,7 +155,7 @@ _pier_disk_shutdown(u3_pier* pir_u)
 static void
 _pier_work_shutdown(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__exit, 0)), 0);
 }
@@ -301,7 +301,7 @@ static void
 _pier_work_release(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_noun    vir = wit_u->act;
 
   if ( u3_psat_pace == pir_u->sat_e ) {
@@ -386,7 +386,7 @@ static void
 _pier_work_send(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   c3_assert(0 != wit_u->mat);
 
@@ -398,7 +398,7 @@ _pier_work_send(u3_writ* wit_u)
 static void
 _pier_work_save(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
@@ -426,7 +426,7 @@ _pier_work_save(u3_pier* pir_u)
 void
 u3_pier_snap(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
@@ -458,7 +458,7 @@ _pier_work_complete(u3_writ* wit_u,
                     u3_noun  act)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
@@ -481,7 +481,7 @@ _pier_work_replace(u3_writ* wit_u,
                    u3_noun  mat)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: replace\r\n", wit_u->evt_d);
@@ -508,7 +508,7 @@ static void
 _pier_work_compute(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: request\r\n", wit_u->evt_d);
@@ -530,7 +530,7 @@ static void
 _pier_apply(u3_pier* pir_u)
 {
   u3_disk* log_u = pir_u->log_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_save* sav_u = pir_u->sav_u;
 
   if ( (0 == log_u) ||
@@ -1084,7 +1084,7 @@ _pier_boot_vent(u3_boot* bot_u)
 static void
 _pier_boot_ready(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
   c3_assert( u3_psat_init == pir_u->sat_e );
@@ -1116,7 +1116,7 @@ _pier_boot_ready(u3_pier* pir_u)
     _pier_boot_vent(pir_u->bot_u);
     _pier_boot_dispose(pir_u->bot_u);
 
-    //  prepare serf for boot sequence, write log header
+    //  prepare worker for boot sequence, write log header
     //
     _pier_work_boot(pir_u, c3y);
 
@@ -1145,7 +1145,7 @@ _pier_boot_ready(u3_pier* pir_u)
       fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
                       log_u->com_d);
 
-      //  prepare serf for replay of boot sequence, don't write log header
+      //  prepare worker for replay of boot sequence, don't write log header
       //
       _pier_work_boot(pir_u, c3n);
     }
@@ -1329,7 +1329,7 @@ _pier_work_play(u3_pier* pir_u,
                 c3_d     lav_d,
                 c3_l     mug_l)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", lav_d, mug_l);
@@ -1338,7 +1338,7 @@ _pier_work_play(u3_pier* pir_u,
   c3_assert( c3n == god_u->liv_o );
   god_u->liv_o = c3y;
 
-  //  all events in the serf are complete
+  //  all events in the worker are complete
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
@@ -1352,7 +1352,7 @@ _pier_work_exit(uv_process_t* req_u,
                 c3_ds         sas_i,
                 c3_i          sig_i)
 {
-  u3_lord* god_u = (void *) req_u;
+  u3_controller* god_u = (void *) req_u;
   u3_pier* pir_u = god_u->pir_u;
 
   fprintf(stderr, "pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
@@ -1507,10 +1507,10 @@ _pier_work_poke(void*   vod_p,
 
 /* pier_work_create(): instantiate child process.
 */
-u3_lord*
+u3_controller*
 _pier_work_create(u3_pier* pir_u)
 {
-  u3_lord* god_u = c3_calloc(sizeof *god_u);
+  u3_controller* god_u = c3_calloc(sizeof *god_u);
 
   pir_u->god_u = god_u;
   god_u->pir_u = pir_u;
@@ -1608,7 +1608,7 @@ u3_pier_create(c3_w wag_w, c3_c* pax_c)
     return 0;
   }
 
-  //  start the serf process
+  //  start the worker process
   //
   if ( !(pir_u->god_u = _pier_work_create(pir_u)) ) {
     return 0;

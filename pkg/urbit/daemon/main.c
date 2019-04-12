@@ -792,7 +792,7 @@ main(c3_i   argc,
       close(rad);
     }
 
-    u3_king_commence();
+    u3_daemon_commence();
   }
   return 0;
 }
