@@ -17,5 +17,5 @@ fi
 pkg=$(nix-build nix/ops -A bootbus --no-out-link)
 
 mkdir -p "$(dirname "$target")"
-cp -L -r $pkg/ $target
+cp -r $pkg/ $target
 chmod -R u+rw $target
