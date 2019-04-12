@@ -1447,36 +1447,6 @@ _pier_boot_vent(u3_boot* bot_u)
     }
   }
 
-  //  XX moar boot sequence woes
-  //
-  //    some i/o must be initialized before legacy boot
-  //
-  {
-    //  partially duplicates _pier_loop_wake()
-    //
-    c3_l cod_l;
-
-    cod_l = u3a_lush(c3__ames);
-    {
-      //  stash domain for fake effect
-      //
-      //    XX this is horrible
-      //
-      u3_noun tuf = ( c3y == pir_u->fak_o ) ? u3_nul :
-                    u3h(u3t(u3t(u3t(u3t(bot_u->ven)))));
-
-
-      //  send a fake effect to bring up listeners and configure domains
-      //
-      //    XX horrible hack
-      //
-      u3_ames_ef_turf(pir_u, u3k(tuf));
-    }
-
-    u3_ames_ef_bake(pir_u);
-    u3a_lop(cod_l);
-  }
-
   //  insert legacy boot event
   //
   {
