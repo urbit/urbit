@@ -45,8 +45,8 @@ u3t_drop(void)
 void
 u3t_slog(u3_noun hod)
 {
-  if ( 0 != u3T.log_f ) {
-    u3T.log_f(hod);
+  if ( 0 != u3C.log_f ) {
+    u3C.log_f(hod);
   }
   else {
     u3z(hod);
@@ -506,15 +506,6 @@ u3t_init(void)
   u3T.far_o = c3n;
   u3T.coy_o = c3n;
   u3T.euq_o = c3n;
-  u3T.log_f = 0;
-}
-
-/* u3t_init(): set function pointer for slog.
-*/
-void
-u3t_init_slog(void (*log_f)(u3_noun))
-{
-  u3T.log_f = log_f;
 }
 
 /* u3t_boot(): turn sampling on.

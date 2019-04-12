@@ -828,7 +828,7 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     u3V.evt_d = u3m_boot_new(dir_c);
-    u3t_init_slog(_serf_send_slog);
+    u3C.log_f = _serf_send_slog;
   }
 
   /* configure pipe to lord process

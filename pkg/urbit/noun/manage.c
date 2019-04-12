@@ -1878,6 +1878,7 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Activate tracing.
   */
+  u3C.log_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.
@@ -1918,6 +1919,7 @@ u3m_boot_pier(void)
 
   /* Activate tracing.
   */
+  u3C.log_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.
