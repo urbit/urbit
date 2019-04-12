@@ -1678,8 +1678,7 @@
     =/  confed
       =/  initialised  (mo-abed:mo hen)
       =/  dud=dude  q.doc
-      :: =/  des=(pair ship desk)  q.q.hic :: FIXME doesn't work?!
-      =|  des=(pair ship desk)
+      =/  des=(pair ship desk)  q.q.hic
       (mo-conf:initialised dud des)
     ::
     mo-abet:confed
