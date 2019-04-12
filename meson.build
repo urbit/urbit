@@ -236,7 +236,7 @@ endforeach
 incdir = include_directories('include/')
 
 conf_data = configuration_data()
-conf_data.set('URBIT_VERSION', '"0.7.3"')
+conf_data.set('URBIT_VERSION', '"0.7.4"')
 conf_data.set('U3_MEMORY_DEBUG', get_option('gc'))
 conf_data.set('U3_CPU_DEBUG', get_option('prof'))
 conf_data.set('U3_EVENT_TIME_DEBUG', get_option('event-time'))
