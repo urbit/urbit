@@ -1985,6 +1985,12 @@ _pier_wall(u3_noun wol)
   FILE* fil_u = u3_term_io_hija();
   u3_noun wal = wol;
 
+  //  XX temporary, for urb.py test runner
+  //
+  if ( c3y == u3_Host.ops_u.dem ) {
+    fil_u = stderr;
+  }
+
   while ( u3_nul != wal ) {
     _pier_tape(fil_u, u3k(u3h(wal)));
 
@@ -2022,6 +2028,12 @@ u3_pier_punt(c3_l tab_l, u3_noun tac)
 
       if ( c3__leaf == u3h(act) ) {
         FILE* fil_u = u3_term_io_hija();
+
+        //  XX temporary, for urb.py test runner
+        //
+        if ( c3y == u3_Host.ops_u.dem ) {
+          fil_u = stderr;
+        }
 
         _pier_tape(fil_u, u3k(u3t(act)));
         putc(13, fil_u);
