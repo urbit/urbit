@@ -817,10 +817,9 @@ _cj_hot_mean(c3_l par_l, u3_noun nam)
 
 /* u3j_boot(): initialize jet system.
 */
-void
+c3_w
 u3j_boot(c3_o nuu_o)
 {
-  c3_w jax_l;
   c3_assert(u3R == &(u3H->rod_u));
 
   u3D.len_l =_cj_count(0, u3D.dev_u);
@@ -833,8 +832,11 @@ u3j_boot(c3_o nuu_o)
     u3h_free(u3R->jed.hot_p);
   }
   u3R->jed.hot_p = u3h_new();
-  jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.dev_u[0].par_u, u3_nul, u3D.dev_u);
-  fprintf(stderr, "boot: installed %d jets\r\n", jax_l);
+
+  return _cj_install(u3D.ray_u, 1,
+                     (c3_l) (long long) u3D.dev_u[0].par_u,
+                     u3_nul,
+                     u3D.dev_u);
 }
 
 /* _cj_soft(): kick softly by arm axis.

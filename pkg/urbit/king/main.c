@@ -242,8 +242,9 @@ _main_getopt(c3_i argc, c3_c** argv)
       }
     }
     else if ( c3y == u3_Host.ops_u.nuu ) {
-      fprintf(stderr, "unable to boot; %s already exists\r\n", u3_Host.dir_c);
-      return c3n;
+      fprintf(stderr, "tried to create, but %s already exists\n", u3_Host.dir_c);
+      fprintf(stderr, "normal usage: %s %s\n", argv[0], u3_Host.dir_c);
+      exit(1);
     }
   }
 

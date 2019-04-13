@@ -934,6 +934,16 @@
 
     /**  Terminal, new style.
     **/
+      /* u3_term_start_spinner(): prepare spinner state. RETAIN.
+      */
+        void
+        u3_term_start_spinner(u3_noun ovo);
+
+      /* u3_term_stop_spinner(): reset spinner state and restore input line.
+      */
+        void
+        u3_term_stop_spinner(void);
+
       /* u3_term_get_blew(): return window size [columns rows].
       */
         u3_noun
@@ -1235,11 +1245,6 @@
 
     /** Pier control.
     **/
-      /* u3_pier_create(): create a pier, loading existing.
-      */
-        u3_pier*
-        u3_pier_create(c3_w wag_w, c3_c* pax_c);
-
       /* u3_pier_interrupt(): interrupt running process.
       */
         void

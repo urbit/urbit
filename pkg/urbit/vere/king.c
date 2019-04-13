@@ -787,7 +787,6 @@ u3_king_commence()
   uv_pipe_init(u3L, &u3K.cmd_u, 0);
   uv_pipe_bind(&u3K.cmd_u, u3K.soc_c);
   uv_listen((uv_stream_t *)&u3K.cmd_u, 128, _king_socket_connect);
-  fprintf(stderr, "cmd socket up\r\n");
 
   _king_loop_init();
 
