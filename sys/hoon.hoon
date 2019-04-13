@@ -1875,10 +1875,9 @@
   ::
   ++  nap                                               ::  removes head
     ?>  ?=(^ a)
-    ?~  a  ~
-    =+  b=get
-    ?~  q.b  ~
-    bal(a ^+(a [n=n.q.b l=l.q.b r=r.q.b]))
+    ?:  =(~ l.a)  r.a
+    =+  b=get(a l.a)
+    bal(a ^+(a [p.b q.b r.a]))
   ::
   ++  put                                               ::  insert new tail
     |*  b/*
