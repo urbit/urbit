@@ -903,7 +903,9 @@ _term_stop_spinner(u3_utty* uty_u)
 void
 u3_term_start_spinner(u3_noun ovo)
 {
-  _term_start_spinner(_term_main(), ovo);
+  if ( c3n == u3_Host.ops_u.dem ) {
+    _term_start_spinner(_term_main(), ovo);
+  }
 }
 
 /* u3_term_stop_spinner(): reset spinner state and restore input line.
@@ -911,7 +913,9 @@ u3_term_start_spinner(u3_noun ovo)
 void
 u3_term_stop_spinner(void)
 {
-  _term_stop_spinner(_term_main());
+  if ( c3n == u3_Host.ops_u.dem ) {
+    _term_stop_spinner(_term_main());
+  }
 }
 
 /* _term_spinner_cb(): manage spinner (off-thread).
