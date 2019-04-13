@@ -1090,6 +1090,7 @@
     ::
     ?:  ?&  =(%base syd)
             |(=(1 let.dom) =(2 let.dom))
+            ?=([%& ^] lem)
         ==
       =/  msg=tape
         %+  weld
