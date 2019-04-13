@@ -240,6 +240,31 @@
       --
   ==
 ::
+++  monad-tests
+  ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
+  :~  :+  %boot-bud
+        ~[~bud]
+      %+  (bind:(ph ,~) ,~)
+        ^-  _*data:(ph ,~)
+        |=  uf
+        [`[& ~] & (init ~bud ~) ..$]
+      ^-  _*data:(ph ,~)
+      |=  uf
+      =;  done=?
+        [?:(done `[& ~] ~) & ~ ..$]
+      ::  This is a pretty bad heuristic, but in general galaxies will
+      ::  hit the first of these cases, and other ships will hit the
+      ::  second.
+      ::
+      ?|
+        %^  is-dojo-output  her  who  :-  uf
+        "+ /{(scow %p her)}/base/2/web/testing/udon"
+      ::
+        %^  is-dojo-output  her  who  :-  uf
+        "is your neighbor"
+      ==
+  ==
+::
 ++  install-tests
   ^+  this
   =.  raw-test-cores

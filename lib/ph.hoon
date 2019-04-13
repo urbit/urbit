@@ -4,6 +4,79 @@
 /-  aquarium
 =,  aquarium
 |%
++$  ph-input
+  [who=ship uf=unix-effect]
+::
+++  ph
+  |*  a=mold
+  |%
+  ++  ph-output
+    $:  result=(unit [success=? value=a])
+        thru=?
+        events=(list ph-event)
+        self=data
+    ==
+  ::
+  ++  data
+    $_
+    |~  ph-input
+    $:  result=(unit [success=? value=a])
+        thru=?
+        events=(list ph-event)
+        self=_^|(..$)
+    ==
+  ++  return
+    |=  arg=a
+    ::  ^-  data
+    |=  ph-input
+    ::  ^-  ph-output
+    ~!  data=$:data
+    ~!  dbuc=..$
+    ~!  tdata=$:$:data
+    ~!  tdbuc=$:..$
+    [`[& arg] & ~ ..$]
+  ::
+  ++  bind
+    |*  b=mold
+    |=  [m-a=data fun=_|~(a *data:(ph b))]
+    ^-  _*data:(ph b)
+    =|  m-b=(unit _*data:(ph b))
+    |=  input=ph-input
+    ?~  m-b
+      =/  a-res=ph-output
+        (m-a input)
+      ?~  result.a-res
+        =.  m-a  self.a-res
+        [~ thru.a-res events.a-res ..$]
+      ?.  success.u.result.a-res
+        [`[| *b] +.a-res]
+      =/  fun-res=_*data:(ph b)
+        (fun value.u.result.a-res)
+      =/  o=ph-output
+        $(m-b `fun-res)
+      [result.o thru.o (welp events.a-res events.o) self.o]
+    =/  b-res=ph-output
+      (u.m-b ph-input)
+    =.  u.m-b  self.b-res
+    [result.b-res thru.b-res events.b-res ..$]
+  ::
+  --
+++  wrap-filter
+  |*  o=mold
+  |*  i=mold
+  |=  [outer=_*data:(ph o) inner=_*data:(ph i)]
+  ^-  _*data:(ph ,[o i])
+  |=  input=ph-input
+  =/  res-i=_*ph-output:(ph i)
+    (inner input)
+  =.  inner  self.res-i
+  ?.  thru.res-i
+    [result.res-i thru.res-i events.res-i ..$]
+  =/  res-o=_*ph-output:(ph o)
+    (outer input)
+  =.  outer  self.res-o
+  [result.res-i thru.res-o (welp events.res-i events.res-o) ..$]
+::
 ::  Defines a complete integration test.
 ::
 ++  raw-test-core
@@ -344,8 +417,8 @@
         %-  crip
         %-  prefix-hex:ethereum
         ;:  welp
-          (get-keys who 1 %auth) 
-          (get-keys who 1 %crypt) 
+          (get-keys who 1 %auth)
+          (get-keys who 1 %crypt)
           (render-hex-bytes:ethereum 32 `@`1)
           (render-hex-bytes:ethereum 32 `@`1)
         ==
@@ -564,7 +637,7 @@
         [& ~]
       |-  ^-  [? (list ph-event)]
       ?~  responses
-        [& ~] 
+        [& ~]
       =/  resp  (i.responses q.u.r.mot.u.thus)
       ?~  resp
         $(responses t.responses)
