@@ -200,7 +200,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [dap=dude byk=beak made-result=made-result:ford]
+    |=  [=dude =beak made-result=made-result:ford]
     ^+  mo-state
     ::
     ?:  ?=([%incomplete *] made-result)
@@ -214,30 +214,30 @@
     =/  =cage  (result-to-cage:ford build-result)
     =/  result-vase  q.cage
     ::
-    =/  app-data=(unit seat)  (~(get by bum.mas) dap)
+    =/  app-data=(unit seat)  (~(get by bum.mas) dude)
     ?^  app-data
       ::  update the path
       ::
-      =/  updated  u.app-data(byk byk)
-      =.  bum.mas  (~(put by bum.mas) dap updated)
+      =/  updated  u.app-data(byk beak)
+      =.  bum.mas  (~(put by bum.mas) dude updated)
       ::  magic update string from +mo-boon, "complete old boot"
       ::
-      ap-abet:(ap-peep:(ap-abed:ap dap [%high [~ our]]) result-vase)
+      ap-abet:(ap-peep:(ap-abed:ap dude [%high [~ our]]) result-vase)
     ::  first install of the app
     ::
     ?.  (mo-okay result-vase)
-      (mo-give %onto %.n [%leaf "{<dap>}: bogus core"]~)
+      (mo-give %onto %.n [%leaf "{<dude>}: bogus core"]~)
     ::
-    =.  mo-state  (mo-born dap byk result-vase)
+    =.  mo-state  (mo-born dude beak result-vase)
     ::
     =/  old  mo-state
-    =/  wag  (ap-prop:(ap-abed:ap dap [%high [~ our]]) ~)
+    =/  wag  (ap-prop:(ap-abed:ap dude [%high [~ our]]) ~)
     ::
     ?^  -.wag
       =.  mo-state  old
       (mo-give %onto %.n u.-.wag)
     =.  mo-state  ap-abet:+.wag
-    (mo-give:(mo-claw dap) %onto %.y dap %boot now)
+    (mo-give:(mo-claw dude) %onto %.y dude %boot now)
   ::
   ::  +mo-born: create a new seat.
   ::
@@ -402,19 +402,6 @@
     =/  =prey  [%high [~ ship]]
     (mo-club p.cush prey q.cush)
   ::
-  ::  +mo-chew: reverse build path.
-  ::
-  ++  mo-chew
-    |=  =path
-    ^-  beak
-    ::
-    ?>  ?=([@ @ @ ~] path)
-    ::
-    =/  ship  (slav %p i.path)
-    =/  desk  i.t.path
-    =/  case  [%da (slav %da i.t.t.path)]
-    [p=ship q=desk r=case]
-  ::
   ::  +mo-cyst-core: receive a core.
   ::
   ++  mo-cyst-core
@@ -424,7 +411,12 @@
     ?>  ?=([%f %made *] sign-arvo)
     ?>  ?=([@ @ @ @ @ ~] path)
     ::
-    =/  =beak  (mo-chew t.t.t.path)
+    =/  =beak
+      =/  ship  (slav %p i.t.t.path)
+      =/  desk  i.t.t.t.path
+      =/  case  [%da (slav %da i.t.t.t.t.path)]
+      [p=ship q=desk r=case]
+    ::
     (mo-receive-core i.t.t.path beak result.sign-arvo)
   ::
   ::  +mo-cyst-pel: translated peer.
@@ -485,7 +477,7 @@
       ~&  [%diff-bad-ack q.gift]
       mo-state
     ~&  [%diff-bad-ack %mack]
-    =/  slaw  (slog (flop q.,.+>.q.gift))
+    =/  slaw  (slog (flop q.,.+>.q.gift)) :: FIXME overly noisy lark
     (slaw mo-state)
   ::
   ::  +mo-cyst-rep: reverse request.
@@ -770,15 +762,17 @@
     |=  [=dude =prey =club]
     ^+  mo-state
     ::
+    =/  default-sofa  *sofa
+    ::
     ?:  |(!(~(has by bum.mas) dude) (~(has by wub.mas) dude))
       ~&  >>  [%mo-not-running dude -.club]
-      =/  sof=sofa
-        =/  kisses  (fall (~(get by wub.mas) dude) *sofa)
+      =/  =sofa
+        =/  kisses  (fall (~(get by wub.mas) dude) default-sofa)
         =/  kiss  [hen prey club]
         kisses(kys (~(put to kys.kisses) kiss))
       ::
       %_  mo-state
-        wub.mas  (~(put by wub.mas) dude sof)
+        wub.mas  (~(put by wub.mas) dude sofa)
       ==
     ::
     (mo-clip dude prey club)
