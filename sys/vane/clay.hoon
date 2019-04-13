@@ -4072,13 +4072,8 @@
   |=  old=axle
   ^+  ..^$
   =?  old  ?=(%1 -.old)
-    ~&  desks=(turn ~(tap by dos.rom.ruf-1.old) head)
-    ~&  hoy=(turn ~(tap by hoy.ruf-1.old) head)
     (load-1-2 old)
-  ~&  hrm=[-.old ver]
   ?>  ?=(%2 -.old)
-  ~&  desks=(turn ~(tap by dos.rom.ruf-2.old) head)
-  ~&  hoy=(turn ~(tap by hoy.ruf-2.old) head)
   %_(..^$ ruf ruf-2.old)
 ::
 ++  load-1-2
