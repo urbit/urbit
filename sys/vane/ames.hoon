@@ -26,7 +26,8 @@
   ::
   |%
   ++  bite                                              ::  packet to cake
-    |=  pac=rock  ^-  cake
+    |=  pac=rock
+    ^-  (unit cake)
     =+  [mag=(end 5 1 pac) bod=(rsh 5 1 pac)]
     =+  :*  vez=(end 0 3 mag)                           ::  protocol version
             chk=(cut 0 [3 20] mag)                      ::  checksum
@@ -34,8 +35,12 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(protocol-version vez)
-    ?>  =(chk (end 0 20 (mug bod)))
+    ::  XX  these packets should be firewalled in vere so that they don't
+    ::      make it into the event log
+    ::
+    ?.  =(protocol-version vez)      ~
+    ?.  =(chk (end 0 20 (mug bod)))  ~
+    %-  some
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
     (rsh 3 (add wix vix) bod)
@@ -606,19 +611,19 @@
       ~/  %gnaw
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(protocol-version (end 0 3 pac))  [~ fox]
-      =+  kec=(bite pac)
-      ?:  (goop p.p.kec)
+      =/  kec=(unit cake)  (bite pac)
+      ?~  kec  [~ fox]
+      ?:  (goop p.p.u.kec)
         [~ fox]
-      ?.  =(our q.p.kec)
+      ?.  =(our q.p.u.kec)
         [~ fox]
       =;  zap=[p=(list boon) q=fort]
         [(weld p.zap next) q.zap]
       =<  zork
       =<  zank
-      ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:um p.p.kec) kay ryn %none (shaf %flap pac))
-      [q.kec r.kec]
+      ::  ~&  [%hear p.p.u.kec ryn `@p`(mug (shaf %flap pac))]
+      %-  ~(chew la:(ho:um p.p.u.kec) kay ryn %none (shaf %flap pac))
+      [q.u.kec r.u.kec]
     ::
     ++  goop                                            ::  blacklist
       |=  him=ship
