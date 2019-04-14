@@ -55,6 +55,7 @@
       [%ergo p=@tas q=mode:clay]
       [%sleep ~]
       [%restore ~]
+      [%init ~]
   ==
 +$  pill
   [boot-ova=* kernel-ova=(list unix-event) userspace-ova=(list unix-event)]

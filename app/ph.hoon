@@ -34,17 +34,25 @@
       $:  %0
           raw-test-cores=(map term raw-test-core)
           test-core=(unit test-core-state)
+          monad-tests=(map term [(list ship) _*data:(ph ,~)])
           other-state
       ==
     ::
     +$  test-core-state
-      $:  lab=term
-          hers=(list ship)
-          cor=raw-test-core
+      $%  $:  %&
+              lab=term
+              hers=(list ship)
+              m-test=_*data:(ph ,~)
+          ==
+          $:  %|
+              lab=term
+              hers=(list ship)
+              cor=raw-test-core
+          ==
       ==
     ::
     +$  other-state
-      $:  test-qeu=(qeu term)
+      $:  test-qeu=(qeu [? term])
           results=(list (pair term ?))
           effect-log=(list [who=ship uf=unix-effect])
       ==
@@ -240,35 +248,20 @@
       --
   ==
 ::
-++  monad-tests
+++  manual-monad-tests
   ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
+  =,  m-test-lib
   :~  :+  %boot-bud
         ~[~bud]
-      %+  (bind:(ph ,~) ,~)
-        ^-  _*data:(ph ,~)
-        |=  uf
-        [`[& ~] & (init ~bud ~) ..$]
-      ^-  _*data:(ph ,~)
-      |=  uf
-      =;  done=?
-        [?:(done `[& ~] ~) & ~ ..$]
-      ::  This is a pretty bad heuristic, but in general galaxies will
-      ::  hit the first of these cases, and other ships will hit the
-      ::  second.
-      ::
-      ?|
-        %^  is-dojo-output  her  who  :-  uf
-        "+ /{(scow %p her)}/base/2/web/testing/udon"
-      ::
-        %^  is-dojo-output  her  who  :-  uf
-        "is your neighbor"
-      ==
+      (raw-ship ~bud ~)
   ==
 ::
 ++  install-tests
   ^+  this
   =.  raw-test-cores
     (~(uni by (malt auto-tests)) (malt manual-tests))
+  =.  monad-tests
+    (malt manual-monad-tests)
   this
 ::
 ++  prep
@@ -304,9 +297,6 @@
     ?~  what
       [%& ~]
     ?:  ?=(%test-done -.i.what)
-      ~&  ?~  p.i.what
-            "TEST {(trip lab)} SUCCESSFUL"
-          "TEST {(trip lab)} FAILED"
       [%| p.i.what]
     =/  nex  $(what t.what)
     ?:  ?=(%| -.nex)
@@ -325,6 +315,9 @@
   ^-  (quip move _this)
   ?~  test-core
     `this
+  ~&  ?:  success
+        "TEST {(trip lab)} SUCCESSFUL"
+      "TEST {(trip lab)} FAILED"
   :_  this(test-core ~, results [[lab success] results])
   %-  zing
   %+  turn  hers.u.test-core
@@ -351,15 +344,27 @@
       `this
     =/  throw-away  print-results
     `this(results ~)
-  =^  lab  test-qeu  ~(get to test-qeu)
-  ~&  [running-test=lab test-qeu]
+  =^  test  test-qeu  ~(get to test-qeu)
+  =+  [m=? lab=term]=test
+  ?.  m
+    ~&  [running-test=lab test-qeu]
+    =.  effect-log  ~
+    =/  res=[events=(list ph-event) new-state=raw-test-core]
+      ~(start (~(got by raw-test-cores) lab) now.hid)
+    =>  .(test-core `(unit test-core-state)`test-core)
+    =.  test-core  `[%| lab [ships .]:new-state.res]
+    =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
+    =^  moves-2  this  (run-events lab events.res)
+    [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
+  ~&  [running-m-test=lab test-qeu]
   =.  effect-log  ~
-  =/  res=[events=(list ph-event) new-state=raw-test-core]
-    ~(start (~(got by raw-test-cores) lab) now.hid)
+  =+  ^-  [ships=(list ship) m-test=_*data:(ph ,~)]
+      (~(got by monad-tests) lab)
   =>  .(test-core `(unit test-core-state)`test-core)
-  =.  test-core  `[lab [ships .]:new-state.res]
-  =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
-  =^  moves-2  this  (run-events lab events.res)
+  =.  test-core  `[%& lab ships m-test]
+  =^  moves-1  this  (subscribe-to-effects lab ships)
+  =^  moves-2  this
+    (diff-aqua-effects /[lab]/(scot %p -.ships) -.ships [/ %init ~]~)
   [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
 ::
 ::  Print results with ~&
@@ -439,14 +444,24 @@
       %run-all-tests
     =.  test-qeu
       %-  ~(gas to test-qeu)
-      (turn auto-tests head)
+      %+  turn
+        (turn auto-tests head)
+      |=  t=term
+      [| t]
     run-test
   ::
       [%run-test lab=@tas]
     ?.  (~(has by raw-test-cores) lab.arg)
       ~&  [%no-test lab.arg]
       `this
-    =.  test-qeu  (~(put to test-qeu) lab.arg)
+    =.  test-qeu  (~(put to test-qeu) [| lab.arg])
+    run-test
+  ::
+      [%run-m-test lab=@tas]
+    ?.  (~(has by monad-tests) lab.arg)
+      ~&  [%no-test lab.arg]
+      `this
+    =.  test-qeu  (~(put to test-qeu) [& lab.arg])
     run-test
   ::
       %cancel
@@ -483,29 +498,68 @@
   ?.  =(lab lab.u.test-core)
     ~&  [%ph-dropping-strange lab]
     [[ost.hid %pull way [our.hid %aqua] ~]~ this]
+  ?:  ?=(%| -.u.test-core)
+    =+  |-  ^-  $:  thru-effects=(list unix-effect)
+                    events=(list ph-event)
+                    cor=_u.test-core
+                    log=_effect-log
+                ==
+        ?~  ufs.afs
+          [~ ~ u.test-core ~]
+        =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
+            (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
+        =.  cor.u.test-core  cor
+        =+  $(ufs.afs t.ufs.afs)
+        :^    ?:  thru
+                [i.ufs.afs thru-effects]
+              thru-effects
+            (weld events-1 events)
+          cor
+        [[who i.ufs]:afs log]
+    =.  test-core  `cor
+    =.  effect-log  (weld log effect-log)
+    =>  .(test-core `(unit test-core-state)`test-core)
+    =/  moves-1  (publish-aqua-effects who.afs thru-effects)
+    =^  moves-2  this  (run-events lab events)
+    [(weld moves-1 moves-2) this]
   =+  |-  ^-  $:  thru-effects=(list unix-effect)
                   events=(list ph-event)
-                  cor=_u.test-core
                   log=_effect-log
+                  done=(unit ?)
+                  m-test=_m-test.u.test-core
               ==
       ?~  ufs.afs
-        [~ ~ u.test-core ~]
-      =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
-          (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
-      =.  cor.u.test-core  cor
-      =+  $(ufs.afs t.ufs.afs)
-      :^    ?:  thru
+        [~ ~ ~ ~ m-test.u.test-core]
+      =/  m-res=_*ph-output:(ph ,~)
+        (m-test.u.test-core who.afs i.ufs.afs)
+      =?  ufs.afs  =(%cont -.next.m-res)
+        [[/ %init ~] ufs.afs]
+      =^  done=(unit ?)  m-test.u.test-core
+        ?-    -.next.m-res
+          %wait  [~ m-test.u.test-core]
+          %cont  [~ self.next.m-res]
+          %done  [`success.next.m-res m-test.u.test-core]
+        ==
+      =+  ^-  _$
+          ?~  done
+            $(ufs.afs t.ufs.afs)
+          [~ ~ ~ done m-test.u.test-core]
+      :^    ?:  thru.m-res
               [i.ufs.afs thru-effects]
             thru-effects
-          (weld events-1 events)
-        cor
-      [[who i.ufs]:afs log]
-  =.  test-core  `cor
-  =.  effect-log  (weld log effect-log)
-  =>  .(test-core `(unit test-core-state)`test-core)
-  =/  moves-1  (publish-aqua-effects who.afs thru-effects)
-  =^  moves-2  this  (run-events lab events)
-  [(weld moves-1 moves-2) this]
+          (weld events.m-res events)
+        [[who i.ufs]:afs log]
+      [done m-test]
+    =.  m-test.u.test-core  m-test
+    =.  effect-log  (weld log effect-log)
+    =>  .(test-core `(unit test-core-state)`test-core)
+    ?^  done
+      =^  moves-1  this  (finish-test lab u.done)
+      =^  moves-2  this  run-test
+      [(weld moves-1 moves-2) this]
+    =/  moves-1  (publish-aqua-effects who.afs thru-effects)
+    =^  moves-2  this  (run-events lab events)
+    [(weld moves-1 moves-2) this]
 ::
 ::  Subscribe to effects
 ::

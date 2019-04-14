@@ -3,6 +3,7 @@
   ::
 /-  aquarium
 =,  aquarium
+=>  .
 |%
 +$  ph-input
   [who=ship uf=unix-effect]
@@ -11,71 +12,112 @@
   |*  a=mold
   |%
   ++  ph-output
-    $:  result=(unit [success=? value=a])
-        thru=?
+    $~  [& ~ %done & *a]
+    $:  thru=?
         events=(list ph-event)
-        self=data
+        $=  next
+        $%  [%wait ~]
+            [%cont self=data]
+            [%done success=? value=a]
+        ==
     ==
   ::
-  ++  data
-    $_
-    |~  ph-input
-    $:  result=(unit [success=? value=a])
-        thru=?
-        events=(list ph-event)
-        self=_^|(..$)
-    ==
+  ++  data  $-(ph-input ph-output)
   ++  return
     |=  arg=a
-    ::  ^-  data
+    ^-  data
     |=  ph-input
-    ::  ^-  ph-output
-    ~!  data=$:data
-    ~!  dbuc=..$
-    ~!  tdata=$:$:data
-    ~!  tdbuc=$:..$
-    [`[& arg] & ~ ..$]
-  ::
-  ++  bind
-    |*  b=mold
-    |=  [m-a=data fun=_|~(a *data:(ph b))]
-    ^-  _*data:(ph b)
-    =|  m-b=(unit _*data:(ph b))
-    |=  input=ph-input
-    ?~  m-b
-      =/  a-res=ph-output
-        (m-a input)
-      ?~  result.a-res
-        =.  m-a  self.a-res
-        [~ thru.a-res events.a-res ..$]
-      ?.  success.u.result.a-res
-        [`[| *b] +.a-res]
-      =/  fun-res=_*data:(ph b)
-        (fun value.u.result.a-res)
-      =/  o=ph-output
-        $(m-b `fun-res)
-      [result.o thru.o (welp events.a-res events.o) self.o]
-    =/  b-res=ph-output
-      (u.m-b ph-input)
-    =.  u.m-b  self.b-res
-    [result.b-res thru.b-res events.b-res ..$]
-  ::
+    [& ~ %done & arg]
   --
-++  wrap-filter
-  |*  o=mold
-  |*  i=mold
-  |=  [outer=_*data:(ph o) inner=_*data:(ph i)]
-  ^-  _*data:(ph ,[o i])
-  |=  input=ph-input
-  =/  res-i=_*ph-output:(ph i)
-    (inner input)
-  =.  inner  self.res-i
-  ?.  thru.res-i
-    [result.res-i thru.res-i events.res-i ..$]
-  =/  res-o=_*ph-output:(ph o)
-    (outer input)
-  =.  outer  self.res-o
-  [result.res-i thru.res-o (welp events.res-i events.res-o) ..$]
+::
+++  m-test-lib
+  |%
+  ++  ph-bind
+    |*  a=mold
+    |*  b=mold
+    |=  [m-a=_*data:(ph a) fun=_|~(a *data:(ph b))]
+    ^+  *data:(ph b)
+    |=  input=ph-input
+    =/  a-res=_*ph-output:(ph a)
+      (m-a input)
+    ^+  *ph-output:(ph b)
+    :+  thru.a-res  events.a-res
+    ?-    -.next.a-res
+        %wait  [%wait ~]
+        %cont
+      :-  %cont
+      |=  input-inner=ph-input
+      ^$(m-a self.next.a-res, input input-inner)
+    ::
+        %done
+      ?.  success.next.a-res
+        [%done | *b]
+      :-  %cont
+      (fun value.next.a-res)
+    ==
+  ++  boot-ship
+    |=  [her=ship keys=(unit dawn-event)]
+    ^+  *data:(ph ,[%booted who=@p])
+    |=  ph-input
+    ~&  %first-i
+    [& (init ~bud ~) %done & %booted her]
+  ::
+  ++  check-ship-booted
+    |=  her=ship
+    ^+  *data:(ph ,[%boot-done whodunnit=@p])
+    |=  ph-input
+    =;  done=?
+      ~&  [%second-i done]
+      :+  &  ~
+      ?:  done
+        [%done & %boot-done her]
+      [%wait ~]
+    ::  This is a pretty bad heuristic, but in general galaxies will
+    ::  hit the first of these cases, and other ships will hit the
+    ::  second.
+    ::
+    ?|
+      %^  is-dojo-output  ~bud  who  :-  uf
+      "+ /{(scow %p ~bud)}/base/2/web/testing/udon"
+    ::
+      %^  is-dojo-output  ~bud  who  :-  uf
+      "is your neighbor"
+    ==
+  ::
+  ++  raw-ship
+    |=  [her=ship keys=(unit dawn-event)]
+    ^+  *data:(ph ,~)
+    ::  [%boot-done h=@p] ~&(who-monad=who (check-ship-booted her)), 
+    ::  ;#(ph-bind ~ (return:(ph ,~) ~), [%booted who=@p] (return:(ph ,[%booted who=@p]) [%booted who=~tyr]), ~ (return:(ph ,~) ~), ~ (return:(ph ,~) ~))
+    ::  ;#(ph-bind [%booted who=@p] (boot-ship her keys), [%booted whom=@p] (boot-ship ~tyr keys), ~ ~&([%ww who whom] (return:(ph ,~) ~)))
+    ;#    ph-bind
+        [%booted who=@p]      <--  (boot-ship her keys)
+        [%boot-done whos=@p]  <--  (check-ship-booted her)
+        ~  <--
+      ~&  [%wws who whos]
+      (return:(ph ,~) ~)
+    ==
+    ::  %+  (bind:(ph ,~) ,~)
+    ::    (boot-ship her keys)
+    ::  |=  ~
+    ::  (check-ship-booted her)
+  --
+::
+::  ++  wrap-filter
+::    |*  o=mold
+::    |*  i=mold
+::    |=  [outer=_*data:(ph o) inner=_*data:(ph i)]
+::    ^+  *data:(ph ,[o i])
+::    |=  input=ph-input
+::    =/  res-i=_*ph-output:(ph i)
+::      (inner input)
+::    =.  inner  self.res-i
+::    ?.  thru.res-i
+::      [result.res-i thru.res-i events.res-i ..$]
+::    =/  res-o=_*ph-output:(ph o)
+::      (outer input)
+::    =.  outer  self.res-o
+::    [result.res-i thru.res-o (welp events.res-i events.res-o) ..$]
 ::
 ::  Defines a complete integration test.
 ::
