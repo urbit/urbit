@@ -73,6 +73,14 @@
           ::
           [p=@ q=@ r=(pair date ovum)]
       ==
+      ::  sends a line to stderr while computing event
+      ::
+      $:  %stdr
+          ::  p: event number
+          ::  q: output cord
+          ::
+          [p=@ q=cord]
+      ==
       ::  send slog hint while computing event
       ::
       $:  %slog
@@ -357,6 +365,14 @@ _worker_send_complete(u3_noun vir)
                     u3i_chubs(1, &u3V.evt_d),
                     u3r_mug(u3A->roc),
                     vir));
+}
+
+/* _worker_send_stdr(): send stderr output
+*/
+static void
+_worker_send_stdr(c3_c* cstr)
+{
+  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.evt_d), u3i_string(cstr)));
 }
 
 /* _worker_send_slog(): send hint output (hod is [priority tank]).
@@ -828,7 +844,8 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     u3V.evt_d = u3m_boot_new(dir_c);
-    u3C.log_f = _worker_send_slog;
+    u3C.stderr_log_f = _worker_send_stdr;
+    u3C.slog_f = _worker_send_slog;
   }
 
   /* configure pipe to daemon process

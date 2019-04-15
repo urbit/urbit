@@ -726,9 +726,9 @@ main(c3_i   argc,
       */
       u3C.dir_c = u3_Host.dir_c;
 
-      /*  Sets the logging function to one that doesn't interfere with the
+      /*  Logging that doesn't interfere with console output.
       */
-      u3C.err_log_f = u3_term_io_log;
+      u3C.stderr_log_f = u3_term_io_log;
 
       /*  Set GC flag.
       */

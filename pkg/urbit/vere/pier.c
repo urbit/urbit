@@ -903,6 +903,16 @@ _pier_work_play(u3_pier* pir_u,
   _pier_boot_ready(pir_u);
 }
 
+/* _pier_work_stdr(): prints an error message to stderr
+ */
+static void
+_pier_work_stdr(u3_writ* wit_u, u3_noun cord)
+{
+  c3_c* str = u3r_string(cord);
+  u3C.stderr_log_f(str);
+  free(str);
+}
+
 /* _pier_work_slog(): print directly.
 */
 static void
@@ -1082,6 +1092,23 @@ _pier_work_poke(void*   vod_p,
           goto error;
         }
         _pier_work_complete(wit_u, mug_l, u3k(r_jar));
+      }
+      break;
+    }
+
+    case c3__stdr: {
+      if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) ||
+           (c3n == u3ud(p_jar)) ||
+           (u3r_met(6, p_jar) != 1) ||
+           (c3n == u3ud(q_jar)) )
+      {
+        goto error;
+      }
+      else {
+        c3_d     evt_d = u3r_chub(0, p_jar);
+        u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
+
+        _pier_work_stdr(wit_u, q_jar);
       }
       break;
     }
