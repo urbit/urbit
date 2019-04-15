@@ -1010,13 +1010,6 @@
         void
         u3_term_io_loja(int x);
 
-      /* uL, uH: wrap hijack/lojack around fprintf.
-      **
-      **  uL(fprintf(uH, ...));
-      */
-#       define uH    u3_term_io_hija()
-#       define uL(x) u3_term_io_loja(x)
-
 
     /**  Ames, packet networking.
     **/
