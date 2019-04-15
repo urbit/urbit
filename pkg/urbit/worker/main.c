@@ -72,6 +72,15 @@
           ::  r: replacement event (at date)
           ::
           [p=@ q=@ r=(pair date ovum)]
+      ==
+      ::  send slog hint while computing event
+      ::
+      $:  %slog
+          ::  p: event number
+          ::  q: priority
+          ::  r: output tank
+          ::
+          [p=@ q=@ r=tank]
   ==  ==
 ::  +writ: from daemon to worker
 ::
@@ -348,6 +357,14 @@ _worker_send_complete(u3_noun vir)
                     u3i_chubs(1, &u3V.evt_d),
                     u3r_mug(u3A->roc),
                     vir));
+}
+
+/* _worker_send_slog(): send hint output (hod is [priority tank]).
+*/
+static void
+_worker_send_slog(u3_noun hod)
+{
+  _worker_send(u3nt(c3__slog, u3i_chubs(1, &u3V.evt_d), hod));
 }
 
 /* _worker_lame(): event failed, replace with error event.
@@ -811,6 +828,7 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     u3V.evt_d = u3m_boot_new(dir_c);
+    u3C.log_f = _worker_send_slog;
   }
 
   /* configure pipe to daemon process

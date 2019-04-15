@@ -20,6 +20,7 @@ static        void _term_read_cb(uv_stream_t* tcp_u,
                                  ssize_t      siz_i,
                                  const uv_buf_t *     buf_u);
 static inline void _term_suck(u3_utty*, const c3_y*, ssize_t);
+static u3_utty* _term_main();
 
 #define _SPIN_COOL_US 500000  //  spinner activation delay when cool
 #define _SPIN_WARM_US 50000   //  spinner activation delay when warm
@@ -858,6 +859,8 @@ _term_start_spinner(u3_utty* uty_u, u3_noun ovo)
     lag_d = _SPIN_COOL_US;
   }
 
+  //  second item of the event wire
+  //
   u3_noun why = u3h(u3t(u3h(u3t(ovo))));
   if ( c3__term == why ) {
     u3_noun eve = u3t(u3t(ovo));
@@ -874,7 +877,7 @@ _term_start_spinner(u3_utty* uty_u, u3_noun ovo)
   uv_mutex_unlock(&uty_u->tat_u.mex_u);
 }
 
-/* _term_stop_spinner(): reset spinner state and restore input line.
+/* u3_term_stop_spinner(): reset spinner state and restore input line.
 */
 static void
 _term_stop_spinner(u3_utty* uty_u)
@@ -893,6 +896,26 @@ _term_stop_spinner(u3_utty* uty_u)
   uty_u->tat_u.sun.eve_d = 0;
   free(uty_u->tat_u.sun.why_c);
   uty_u->tat_u.sun.why_c = NULL;
+}
+
+/* u3_term_start_spinner(): prepare spinner state. RETAIN.
+*/
+void
+u3_term_start_spinner(u3_noun ovo)
+{
+  if ( c3n == u3_Host.ops_u.dem ) {
+    _term_start_spinner(_term_main(), ovo);
+  }
+}
+
+/* u3_term_stop_spinner(): reset spinner state and restore input line.
+*/
+void
+u3_term_stop_spinner(void)
+{
+  if ( c3n == u3_Host.ops_u.dem ) {
+    _term_stop_spinner(_term_main());
+  }
 }
 
 /* _term_spinner_cb(): manage spinner (off-thread).

@@ -40,85 +40,16 @@ u3t_drop(void)
   }
 }
 
-extern void
-u3_pier_tank(c3_l tab_l, u3_noun tac);
-
-#ifdef U3_EVENT_TIME_DEBUG
-/* _t_slog_time(): slog timelapse.
-*/
-void
-_t_slog_time(void)
-{
-  static int old;
-  static struct timeval b4, f2, d0;
-  static c3_d b4_d;
-  c3_w ms_w;
-
-  if ( old ) {
-    gettimeofday(&f2, 0);
-    timersub(&f2, &b4, &d0);
-    ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    if (ms_w > 1) {
-#if 0
-      fprintf(stderr, "%6d.%02dms: %9d ",
-              ms_w, (int) (d0.tv_usec % 1000) / 10,
-              ((int) (u3R->pro.nox_d - b4_d)));
-#else
-      fprintf(stderr, "%6d.%02dms ",
-              ms_w, (int) (d0.tv_usec % 1000) / 10);
-#endif
-      gettimeofday(&b4, 0);
-      b4_d = u3R->pro.nox_d;
-    }
-    else {
-      printf("            ");
-    }
-  }
-  else {
-    gettimeofday(&b4, 0);
-    b4_d = u3R->pro.nox_d;
-  }
-  old = 1;
-}
-#endif
-
 /* u3t_slog(): print directly.
 */
 void
 u3t_slog(u3_noun hod)
 {
-#ifdef U3_EVENT_TIME_DEBUG
-  _t_slog_time();
-#endif
-
-  if ( c3y == u3du(hod) ) {
-    u3_noun pri = u3h(hod);
-
-    switch ( pri ) {
-      case 3: fprintf(stderr, ">>> "); break;
-      case 2: fprintf(stderr, ">> "); break;
-      case 1: fprintf(stderr, "> "); break;
-    }
-    u3_pier_tank(0, u3k(u3t(hod)));
-  }
-  u3z(hod);
-}
-
-/* u3t_shiv(): quick print.
-*/
-void
-u3t_shiv(u3_noun hod)
-{
-#ifdef U3_EVENT_TIME_DEBUG
-  _t_slog_time();
-#endif
-
-  if ( c3n == u3ud(hod) ) {
+  if ( 0 != u3C.log_f ) {
+    u3C.log_f(hod);
   }
   else {
-    c3_c *str_c = u3r_string(hod);
-    fprintf(stderr, "%s\r\n", str_c);
-    free(str_c);
+    u3z(hod);
   }
 }
 

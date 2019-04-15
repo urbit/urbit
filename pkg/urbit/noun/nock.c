@@ -116,14 +116,6 @@ _n_hint(u3_noun zep,
       return _n_nock_on(bus, nex);
     }
 
-    case c3__shiv: {
-      u3t_off(noc_o);
-      u3t_shiv(hod);
-      u3t_on(noc_o);
-
-      return _n_nock_on(bus, nex);
-    }
-
     case c3__germ: {
       u3_noun pro = _n_nock_on(bus, nex);
 

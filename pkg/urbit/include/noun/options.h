@@ -11,6 +11,7 @@
         c3_c*   dir_c;                        //  execution directory (pier)
         c3_w    wag_w;                        //  flags (both ways)
         void (*err_log_f)(c3_c*);             //  optional error logging redirect
+        void (*log_f)(u3_noun);               //  function pointer for slog
       } u3o_config;
 
     /* u3o_flag: process/system flags.

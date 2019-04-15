@@ -30,8 +30,6 @@ u3v_boot(u3_noun eve)
 
   //  ensure zero-initialized kernel
   //
-  //    So that u3t_slog won't try to print tanks.
-  //
   u3A->roc = 0;
 
   {
