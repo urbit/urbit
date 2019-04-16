@@ -6686,7 +6686,6 @@
   ::                                            ::::::  miscellaneous
     {$mcts p/marl:hoot}                                 ::  ;=  list templating
     {$mccl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
-    {$mchx p/hoon q/(list (pair spec hoon))}            ::  ;:  do notation
     {$mcnt p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
     {$mcmc p/hoon q/hoon}                               ::  ;;  normalize
@@ -8763,28 +8762,6 @@
           ~      !!
         ==
       ==
-    ::
-        {$mchx *}
-      ?~  q.gen
-        ~|("open-mchx" !!)
-      =/  last-spec
-        |-  ^-  spec
-        ?~  t.q.gen
-          p.i.q.gen
-        $(q.gen t.q.gen)
-      |-  ^-  hoon
-      ?~  t.q.gen
-        q.i.q.gen
-      :^    %cnls
-          :+  %cnhp
-            :+  %cnhp
-              p.gen
-            [%ktcl p.i.q.gen]
-          [%ktcl last-spec]
-        q.i.q.gen
-      :+  %brts
-        p.i.q.gen
-      $(q.gen t.q.gen)
     ::
         {$mcnt *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
         {$mcsg *}                                       ::                  ;~
@@ -13972,7 +13949,6 @@
   ++  hoon-to-plum
     |=  [maxdepth=@ x=hoon]
     |^  ^-  plum
-      !:
       ?+    x
           %autocons
         [%$ @]     (axis-to-cord p.x)
@@ -14053,7 +14029,6 @@
         [%sgzp *]  (rune '~!' ~ ~ (hoons ~[p q]:x))
         [%mcts *]  %ast-node-mcts
         [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
-        [%mchx *]  (rune ';#' `'==' `[':(' spc ')'] (hoons ~[p]:x))  ::  XX
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
         [%mcmc *]  (rune ';;' ~ ~ (hoons ~[p q]:x))
@@ -16662,7 +16637,6 @@
               %-  stew
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
-                  ['#' (rune hax %mchx exp0)]
                   ['/' (rune net %mcnt expa)]
                   ['~' (rune sig %mcsg expi)]
                   [';' (rune mic %mcmc expb)]
@@ -16857,7 +16831,6 @@
     ::
     ++  glop  ~+((glue mash))                           ::  separated by space
     ++  gunk  ~+((glue muck))                           ::  separated list
-    ++  gink  ~+((glue mick))                           ::  separated <- list
     ++  butt  |*  zor/rule                              ::  closing == if tall
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor/rule                              ::  closing -- and tall
@@ -16870,9 +16843,6 @@
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
-    ++  mick  ?:  tol                                   ::  <- separator
-                ;~(plug gap gal hep hep gap)
-                ace
     ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
               =+  ^=  gub
                   |=  {a/term b/$%({%& p/wing} {%| p/hoon})}
@@ -16906,7 +16876,6 @@
               ==
     ++  rack  (most mash ;~(gunk loaf loaf))            ::  list [hoon hoon]
     ++  ruck  (most mash ;~(gunk loan loaf))            ::  list [spec hoon]
-    ++  rock  (most mash ;~(gink loan loaf))            ::  list [spec hoon]
     ++  rick  (most mash ;~(gunk rope loaf))            ::  list [wing hoon]
     ::
     ::    hoon contents
@@ -16939,7 +16908,6 @@
     ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
-    ++  exp0  |.((butt ;~(gunk loaf rock)))             ::  ;#
     ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon
