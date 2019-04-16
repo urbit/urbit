@@ -370,9 +370,9 @@ _worker_send_complete(u3_noun vir)
 /* _worker_send_stdr(): send stderr output
 */
 static void
-_worker_send_stdr(c3_c* cstr)
+_worker_send_stdr(c3_c* str_c)
 {
-  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.evt_d), u3i_string(cstr)));
+  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.evt_d), u3i_string(str_c)));
 }
 
 /* _worker_send_slog(): send hint output (hod is [priority tank]).

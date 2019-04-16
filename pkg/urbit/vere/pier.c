@@ -1099,7 +1099,7 @@ _pier_work_poke(void*   vod_p,
     case c3__stdr: {
       if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) ||
            (c3n == u3ud(p_jar)) ||
-           (u3r_met(6, p_jar) != 1) ||
+           (u3r_met(6, p_jar) > 1) ||
            (c3n == u3ud(q_jar)) )
       {
         goto error;
