@@ -26,14 +26,14 @@
 #undef VERBOSE_EVENTS
 
   /*    event handling proceeds on a single path. across both the
-  **    child worker process (serf) and parent i/o process (king).
+  **    child worker process (worker) and parent i/o process (daemon).
   **    state transitions are as follows:
   **
   **        generated               (event numbered and queued)
   **        dispatched              (sent to worker)
   **        computed                (completed by worker)
   **        commit requested        (sent to storage subsystem)
-  **        commit complete         (king notified)
+  **        commit complete         (daemon notified)
   **        released                (output actions allowed)
   **
   **    we dispatch one event at a time to the worker.  we don't do
@@ -56,7 +56,7 @@
   **    replace the input event with a different event).
   **
   **    after crash recovery, events committed but not in the snapshot
-  **    (the state of the serf) are replayed (re-computed), but their
+  **    (the state of the worker) are replayed (re-computed), but their
   **    output effects are ignored. it is possible that effects of
   **    (only the last of ?) these events are not completely released to
   **    the outside world -- but they should never be released more than once.
@@ -77,7 +77,7 @@ _pier_disk_bail(void* vod_p, const c3_c* err_c)
 {
   // u3_writ* wit_u = vod_p;
 
-  fprintf(stderr, "disk error: %s\r\n", err_c);
+  u3l_log("disk error: %s\r\n", err_c);
 }
 
 /* _pier_disk_shutdown(): close the log.
@@ -97,7 +97,7 @@ _pier_disk_commit_complete(void* vod_p)
   u3_disk* log_u = pir_u->log_u;
 
 #ifdef VERBOSE_EVENTS
-  fprintf(stderr, "pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
+  u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
 #endif
 
   /* advance commit counter
@@ -120,7 +120,7 @@ _pier_disk_commit_request(u3_writ* wit_u)
   u3_disk* log_u = pir_u->log_u;
 
 #ifdef VERBOSE_EVENTS
-  fprintf(stderr, "pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
+  u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
 #endif
 
   /* append to logfile
@@ -226,7 +226,19 @@ _pier_disk_read_header(u3_disk* log_u)
   c3_d pos_d = log_u->fol_u->end_d;
   c3_o got_o = c3n;
 
-  c3_assert( 0ULL != pos_d );
+      //  XX requires that writs be unlinked before effects are released
+      //
+      if ( (0 == pir_u->ent_u) &&
+           (wit_u->evt_d < log_u->com_d) )
+      {
+        _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+      }
+    }
+  }
+  else {
+#ifdef VERBOSE_EVENTS
+    u3l_log("pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
+#endif
 
   while ( pos_d ) {
     c3_d  len_d, evt_d;
@@ -630,7 +642,7 @@ _pier_work_bail(void*       vod_p,
 static void
 _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   c3_assert( 0 != pir_u->lif_d );
 
@@ -651,7 +663,7 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 static void
 _pier_work_shutdown(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   u3_newt_write(&god_u->inn_u, u3ke_jam(u3nc(c3__exit, 0)), 0);
 }
@@ -679,7 +691,7 @@ static void
 _pier_work_send(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
   c3_assert(0 != wit_u->mat);
 
@@ -691,7 +703,7 @@ _pier_work_send(u3_writ* wit_u)
 static void
 _pier_work_save(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
@@ -720,7 +732,7 @@ static void
 _pier_work_release(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_noun    vir = wit_u->act;
 
   if ( u3_psat_pace == pir_u->sat_e ) {
@@ -790,7 +802,7 @@ _pier_work_complete(u3_writ* wit_u,
                     u3_noun  act)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
@@ -817,7 +829,7 @@ _pier_work_replace(u3_writ* wit_u,
                    u3_noun  mat)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: replace\r\n", wit_u->evt_d);
@@ -848,7 +860,7 @@ static void
 _pier_work_compute(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): compute: request\r\n", wit_u->evt_d);
@@ -875,7 +887,7 @@ _pier_work_play(u3_pier* pir_u,
                 c3_d     lav_d,
                 c3_l     mug_l)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
 
 #ifdef VERBOSE_EVENTS
   fprintf(stderr, "pier: (%" PRIu64 "): boot at mug %x\r\n", lav_d, mug_l);
@@ -889,6 +901,16 @@ _pier_work_play(u3_pier* pir_u,
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
   _pier_boot_ready(pir_u);
+}
+
+/* _pier_work_stdr(): prints an error message to stderr
+ */
+static void
+_pier_work_stdr(u3_writ* wit_u, u3_noun cord)
+{
+  c3_c* str = u3r_string(cord);
+  u3C.stderr_log_f(str);
+  free(str);
 }
 
 /* _pier_work_slog(): print directly.
@@ -947,10 +969,10 @@ _pier_work_exit(uv_process_t* req_u,
                 c3_ds         sas_i,
                 c3_i          sig_i)
 {
-  u3_lord* god_u = (void *) req_u;
+  u3_controller* god_u = (void *) req_u;
   u3_pier* pir_u = god_u->pir_u;
 
-  fprintf(stderr, "pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
+  u3l_log("pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
   uv_close((uv_handle_t*) req_u, 0);
 
   _pier_disk_shutdown(pir_u);
@@ -1066,10 +1088,27 @@ _pier_work_poke(void*   vod_p,
         u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
 
         if ( !wit_u ) {
-          fprintf(stderr, "poke: no writ: %" PRIu64 "\r\n", evt_d);
+          u3l_log("poke: no writ: %" PRIu64 "\r\n", evt_d);
           goto error;
         }
         _pier_work_complete(wit_u, mug_l, u3k(r_jar));
+      }
+      break;
+    }
+
+    case c3__stdr: {
+      if ( (c3n == u3r_trel(jar, 0, &p_jar, &q_jar)) ||
+           (c3n == u3ud(p_jar)) ||
+           (u3r_met(6, p_jar) > 1) ||
+           (c3n == u3ud(q_jar)) )
+      {
+        goto error;
+      }
+      else {
+        c3_d     evt_d = u3r_chub(0, p_jar);
+        u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
+
+        _pier_work_stdr(wit_u, q_jar);
       }
       break;
     }
@@ -1106,10 +1145,10 @@ _pier_work_poke(void*   vod_p,
 
 /* pier_work_create(): instantiate child process.
 */
-static u3_lord*
+static u3_controller*
 _pier_work_create(u3_pier* pir_u)
 {
-  u3_lord* god_u = c3_calloc(sizeof *god_u);
+  u3_controller* god_u = c3_calloc(sizeof *god_u);
 
   pir_u->god_u = god_u;
   god_u->pir_u = pir_u;
@@ -1596,7 +1635,7 @@ _pier_boot_complete(u3_pier* pir_u)
 static void
 _pier_boot_ready(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
 
   c3_assert( u3_psat_init == pir_u->sat_e );
@@ -1692,7 +1731,7 @@ static void
 _pier_apply(u3_pier* pir_u)
 {
   u3_disk* log_u = pir_u->log_u;
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_save* sav_u = pir_u->sav_u;
 
   if ( (0 == log_u) ||
@@ -1802,7 +1841,7 @@ _pier_create(c3_w wag_w, c3_c* pax_c)
     return 0;
   }
 
-  //  start the serf process
+  //  start the worker process
   //
   if ( !(pir_u->god_u = _pier_work_create(pir_u)) ) {
     return 0;
@@ -1836,7 +1875,7 @@ u3_pier_interrupt(u3_pier* pir_u)
 static void
 _pier_exit_done(u3_pier* pir_u)
 {
-  fprintf(stderr, "pier: exit\r\n");
+  u3l_log("pier: exit\r\n");
 
   _pier_work_shutdown(pir_u);
   _pier_loop_exit(pir_u);
@@ -1865,7 +1904,7 @@ u3_pier_exit(u3_pier* pir_u)
 void
 u3_pier_snap(u3_pier* pir_u)
 {
-  u3_lord* god_u = pir_u->god_u;
+  u3_controller* god_u = pir_u->god_u;
   u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
@@ -1939,7 +1978,7 @@ void
 c3_rand(c3_w* rad_w)
 {
   if ( 0 != ent_getentropy(rad_w, 64) ) {
-    uL(fprintf(uH, "c3_rand getentropy: %s\n", strerror(errno)));
+    u3l_log("c3_rand getentropy: %s\n", strerror(errno));
     //  XX review
     //
     u3_pier_bail();
@@ -2142,7 +2181,7 @@ u3_pier_mark(FILE* fil_u)
 
   while ( 0 < len_w ) {
     pir_u = u3K.tab_u[--len_w];
-    fprintf(stderr, "pier: %u\r\n", len_w);
+    u3l_log("pier: %u\r\n", len_w);
 
     if ( 0 != pir_u->bot_u ) {
       tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));

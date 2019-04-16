@@ -3,18 +3,18 @@ include config.mk
 jets = jets/tree.c $(wildcard jets/*/*.c)
 noun = $(wildcard noun/*.c)
 vere = $(wildcard vere/*.c)
-king = $(wildcard king/*.c)
-serf = $(wildcard serf/*.c)
+daemon = $(wildcard daemon/*.c)
+worker = $(wildcard worker/*.c)
 
 common  = $(jets) $(noun) $(vere)
 headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
-king_objs   = $(shell echo $(king) | sed 's/\.c/.o/g')
-serf_objs   = $(shell echo $(serf) | sed 's/\.c/.o/g')
+daemon_objs = $(shell echo $(daemon) | sed 's/\.c/.o/g')
+worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
-all_objs = $(common_objs) $(king_objs) $(serf_objs)
-all_srcs = $(common) $(king) $(serf)
+all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
+all_srcs = $(common) $(daemon) $(worker)
 
 ################################################################################
 
@@ -32,11 +32,11 @@ mrproper: clean
 
 ################################################################################
 
-urbit: $(common_objs) $(king_objs)
+urbit: $(common_objs) $(daemon_objs)
 	@echo CC -o $@
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-urbit-worker: $(common_objs) $(serf_objs)
+urbit-worker: $(common_objs) $(worker_objs)
 	@echo CC -o $@
 	@$(CC) $^ $(LDFLAGS) -o $@
 

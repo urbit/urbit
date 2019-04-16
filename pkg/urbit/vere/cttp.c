@@ -706,7 +706,7 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   // XX anything other than a 504?
   c3_w cod_w = 504;
 
-  uL(fprintf(uH, "http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c));
+  u3l_log("http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c);
 
   // XX include err_c as response body?
   _cttp_httr(ceq_u->num_l, cod_w, u3_nul, u3_nul);

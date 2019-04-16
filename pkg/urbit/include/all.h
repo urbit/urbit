@@ -19,6 +19,7 @@
 #   include "noun/hashtable.h" //  u3h: hashtables
 #   include "noun/imprison.h"  //  u3i: noun construction
 #   include "noun/jets.h"      //  u3j: jet control
+#   include "noun/log.h"       //  u3l: logging
 #   include "noun/manage.h"    //  u3m: master state
 #   include "noun/nock.h"      //  u3n: nock execution
 #   include "noun/options.h"   //  u3o: config options
@@ -31,24 +32,3 @@
 #   include "jets/k.h"         //  u3k: jets (transfer, args)
 #   include "jets/q.h"         //  u3q: jets (retain, args)
 #   include "jets/w.h"         //  u3w: jets (retain, core)
-
-  /** u3_term: log output dependencies.
-  **/
-    extern FILE*
-    u3_term_io_hija(void);
-
-    extern void
-    u3_term_io_loja(int x);
-
-    extern void
-    u3_term_tape(u3_noun tep);
-
-    extern void
-    u3_term_wall(u3_noun wol);
-
-  /* uL, uH: wrap hijack/lojack around fprintf.
-  **
-  **  uL(fprintf(uH, ...));
-  */
-#   define uH    u3_term_io_hija()
-#   define uL(x) u3_term_io_loja(x)

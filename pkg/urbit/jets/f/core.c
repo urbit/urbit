@@ -22,7 +22,7 @@
              (u3_nul == u3h(hr_con)) &&
              (u3_nul == u3t(hr_con)) )
         {
-          fprintf(stderr, "old core\r\n");
+          u3l_log("old core\r\n");
           abort();
         }
       }

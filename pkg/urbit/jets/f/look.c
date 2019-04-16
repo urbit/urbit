@@ -20,7 +20,7 @@
       u3r_trel(dab, &n_dab, &l_dab, &r_dab);
       if ( c3n == u3du(n_dab) ) {
         // return u3m_bail(c3__fail);
-        fprintf(stderr, "bad look\r\n");
+        u3l_log("bad look\r\n");
         return u3m_bail(c3__exit) ;
       }
       else {

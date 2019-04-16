@@ -45,8 +45,8 @@ u3t_drop(void)
 void
 u3t_slog(u3_noun hod)
 {
-  if ( 0 != u3C.log_f ) {
-    u3C.log_f(hod);
+  if ( 0 != u3C.slog_f ) {
+    u3C.slog_f(hod);
   }
   else {
     u3z(hod);

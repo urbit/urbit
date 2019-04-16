@@ -45,7 +45,7 @@ u3v_boot(u3_noun eve)
     u3_noun pro = u3m_soft_run(gul, u3n_nock_on, eve, lyf);
 
     if ( 0 != u3h(pro) ) {
-      fprintf(stderr, "boot: failed: invalid boot sequence (from pill)\r\n");
+      u3l_log("boot: failed: invalid boot sequence (from pill)\r\n");
       u3z(pro);
       return;
     }
@@ -77,7 +77,7 @@ u3v_load(u3_noun pil)
 {
   u3_noun sys = u3ke_cue(pil);
 
-  fprintf(stderr, "load: mug: %x\r\n", u3r_mug(sys));
+  u3l_log("load: mug: %x\r\n", u3r_mug(sys));
   {
     u3_noun cor = u3v_fire(sys);
     u3_noun pro;
@@ -100,9 +100,9 @@ u3v_lite(u3_noun pil)
 
   u3x_trel(arv, &bot, 0, 0);
 
-  fprintf(stderr, "lite: arvo formula %x\r\n", u3r_mug(arv));
+  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
   cor = u3n_nock_on(bot, lyf);
-  fprintf(stderr, "lite: core %x\r\n", u3r_mug(cor));
+  u3l_log("lite: core %x\r\n", u3r_mug(cor));
 
   pro = u3k(u3r_at(7, cor));
 
@@ -127,11 +127,11 @@ u3v_boot(c3_c* pas_c)
   pru = u3m_soft(0, u3v_load, u3k(u3A->sys));
 
   if ( u3h(pru) != 0 ) {
-    fprintf(stderr, "boot failed\r\n");
+    u3l_log("boot failed\r\n");
     exit(1);
   }
 
-  fprintf(stderr, "boot: final state %x\r\n", u3r_mug(u3t(pru)));
+  u3l_log("boot: final state %x\r\n", u3r_mug(u3t(pru)));
 
   u3A->ken = 0;
   u3A->roc = u3k(u3t(pru));
@@ -148,11 +148,11 @@ u3v_boot_lite(u3_atom lit)
   u3_noun pru = u3m_soft(0, u3v_lite, lit);
 
   if ( u3h(pru) != 0 ) {
-    fprintf(stderr, "boot failed\r\n");
+    u3l_log("boot failed\r\n");
     exit(1);
   }
 
-  fprintf(stderr, "lite: final state %x\r\n", u3r_mug(u3t(pru)));
+  u3l_log("lite: final state %x\r\n", u3r_mug(u3t(pru)));
 
   u3A->roc = u3k(u3t(pru));
 
@@ -279,7 +279,7 @@ _cv_nock_poke(u3_noun ovo)
     u3_noun tox = u3do("spat", u3k(u3h(ovo)));
     c3_c*   tox_c = u3r_string(tox);
 
-    fprintf(stderr, "poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
+    u3l_log("poke: %%%s (%x) on %s\r\n", ovi_c, u3r_mug(ovo), tox_c);
     free(tox_c); free(ovi_c); u3z(tox);
   }
 #endif
@@ -293,9 +293,9 @@ _cv_nock_poke(u3_noun ovo)
     c3_c*   ovi_c = u3r_string(u3h(u3t(ovo)));
 
     if ( u3_nul == u3h(pro) ) {
-      fprintf(stderr, "  blank: %s\r\n", ovi_c);
+      u3l_log("  blank: %s\r\n", ovi_c);
     } else {
-      fprintf(stderr, "  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
+      u3l_log("  happy: %s: %d\r\n", ovi_c, u3kb_lent(u3k(u3h(pro))));
     }
     free(ovi_c);
   }
@@ -403,7 +403,7 @@ _cv_mole(u3_noun  fot,
        (0 != q_uco) ||
        (c3n == u3_sing(fot, r_uco)) )
   {
-    uL(fprintf(uH, "strange mole %s\n", u3r_string(san)));
+    u3l_log("strange mole %s\n", u3r_string(san)));
 
     u3z(fot); u3z(uco); return c3n;
   }

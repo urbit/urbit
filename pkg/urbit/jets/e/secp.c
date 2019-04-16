@@ -64,7 +64,7 @@ u3we_sign(u3_noun cor)
                         0)) ||
        (c3n == u3ud(has)) ||
        (c3n == u3ud(prv))) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   } else {
     return (u3qe_sign(has, prv));
@@ -100,7 +100,7 @@ u3qe_sign(u3_atom has,
                                          (secp256k1_nonce_function) NULL,  /* IN: nonce-function ptr ; NULL = default */
                                          (const void *) NULL);             /* IN: data for nonce function; not used  */
   if (1 != ret) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 
@@ -113,7 +113,7 @@ u3qe_sign(u3_atom has,
                                                                 & v,      /* OUT: v */
                                                                 & sig_u); /* IN:  65 byte sig */
   if (1 != ret) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 
@@ -149,7 +149,7 @@ u3we_reco(u3_noun cor)
        (c3n == u3ud(sir)) ||
        (c3n == u3ud(sis)) )
     {
-      fprintf(stderr, "\rsecp jet: crypto package error\n");
+      u3l_log("\rsecp jet: crypto package error\n");
       return u3m_bail(c3__exit);
     } else {
     return u3qe_reco(has, siv, sir, sis);
@@ -197,7 +197,7 @@ u3qe_reco(u3_atom has,
                                                                   ras_y,     /* IN:  r/s */
                                                                   siv_ws);   /* IN:  v */
   if (1 != ret) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 
@@ -210,7 +210,7 @@ u3qe_reco(u3_atom has,
                                 (const c3_y *) & has);        /* IN: message has */
 
   if (1 != ret) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 
@@ -226,7 +226,7 @@ u3qe_reco(u3_atom has,
                                       SECP256K1_EC_UNCOMPRESSED); /* IN: flags */
 
   if (1 != ret) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 
@@ -269,7 +269,7 @@ u3we_make(u3_noun cor)
        (c3n == u3ud(has)) ||
        (c3n == u3ud(prv)) )
     {
-      fprintf(stderr, "\rsecp jet: crypto package error\n");
+      u3l_log("\rsecp jet: crypto package error\n");
       return u3m_bail(c3__exit);
     } else {
     return u3qe_make(has, prv);
@@ -303,7 +303,7 @@ u3qe_make(u3_atom has,
                                             (void *) NULL,        /* IN: arbitrary data pointer (unused) */
                                             0);                   /* IN: attempt number (0 == normal) */
   if (1 != ret_ws) {
-    fprintf(stderr, "\rsecp jet: crypto package error\n");
+    u3l_log("\rsecp jet: crypto package error\n");
     return u3m_bail(c3__exit);
   }
 

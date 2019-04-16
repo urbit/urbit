@@ -352,7 +352,7 @@ _ch_trim_slot(u3h_root* har_u, u3h_slot *sot_w, c3_w lef_w, c3_w rem_w)
   else {
     u3_noun kev = u3h_slot_to_noun(*sot_w);
     *sot_w = 0;
-    // uL(fprintf(uH, "trim: freeing %x, use count %d\r\n", kev, u3a_use(kev)));
+    // u3l_log("trim: freeing %x, use count %d\r\n", kev, u3a_use(kev)));
     u3z(kev);
 
     har_u->arm_u.mug_w = _ch_skip_slot(har_u->arm_u.mug_w, lef_w);

@@ -10,7 +10,8 @@
         u3_noun who;                          //  single identity
         c3_c*   dir_c;                        //  execution directory (pier)
         c3_w    wag_w;                        //  flags (both ways)
-        void (*log_f)(u3_noun);               //  function pointer for slog
+        void (*stderr_log_f)(c3_c*);          //  errors from c code
+        void (*slog_f)(u3_noun);              //  function pointer for slog
       } u3o_config;
 
     /* u3o_flag: process/system flags.

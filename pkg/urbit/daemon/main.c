@@ -533,7 +533,7 @@ report(void)
 void
 _stop_exit(c3_i int_i)
 {
-  fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
+  u3l_log("\r\n[received keyboard stop signal, exiting]\r\n");
   //  XX crashes if we haven't started a pier yet
   //
   u3_pier_exit(u3_pier_stub());
@@ -726,6 +726,10 @@ main(c3_i   argc,
       */
       u3C.dir_c = u3_Host.dir_c;
 
+      /*  Logging that doesn't interfere with console output.
+      */
+      u3C.stderr_log_f = u3_term_io_log;
+
       /*  Set GC flag.
       */
       if ( _(u3_Host.ops_u.gab) ) {
@@ -793,7 +797,7 @@ main(c3_i   argc,
       close(rad);
     }
 
-    u3_king_commence();
+    u3_daemon_commence();
   }
   return 0;
 }

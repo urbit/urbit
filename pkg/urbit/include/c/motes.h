@@ -1042,6 +1042,7 @@
 #   define c3__spot   c3_s4('s','p','o','t')
 #   define c3__stam   c3_s4('s','t','a','m')
 #   define c3__star   c3_s4('s','t','a','r')
+#   define c3__stdr   c3_s4('s','t','d','r')
 #   define c3__stem   c3_s4('s','t','e','m')
 #   define c3__step   c3_s4('s','t','e','p')
 #   define c3__stid   c3_s4('s','t','i','d')

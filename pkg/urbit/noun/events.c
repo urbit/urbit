@@ -121,8 +121,8 @@ u3e_fault(void* adr_v, c3_i ser_i)
   c3_w* adr_w = (c3_w*) adr_v;
 
   if ( (adr_w < u3_Loom) || (adr_w >= (u3_Loom + u3a_words)) ) {
-    fprintf(stderr, "address %p out of loom!\r\n", adr_v);
-    fprintf(stderr, "loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
+    u3l_log("address %p out of loom!\r\n", adr_v);
+    u3l_log("loom: [%p : %p)\r\n", u3_Loom, u3_Loom + u3a_words);
     c3_assert(0);
     return 0;
   }
@@ -143,8 +143,8 @@ u3e_fault(void* adr_v, c3_i ser_i)
 #endif
 
     if ( 0 != (u3P.dit_w[blk_w] & (1 << bit_w)) ) {
-      fprintf(stderr, "strange page: %d, at %p, off %x\r\n",
-                      pag_w, adr_w, off_w);
+      u3l_log("strange page: %d, at %p, off %x\r\n",
+              pag_w, adr_w, off_w);
       abort();
     }
 
@@ -203,7 +203,7 @@ _ce_image_open(u3e_image* img_u)
       }
       else {
         if ( siz_d != (pgs_d << (c3_d)(u3a_page + 2)) ) {
-          fprintf(stderr, "%s: corrupt size %" PRIx64 "\r\n", ful_c, siz_d);
+          u3l_log("%s: corrupt size %" PRIx64 "\r\n", ful_c, siz_d);
           return c3n;
         }
         img_u->pgs_w = (c3_w) pgs_d;
@@ -738,11 +738,11 @@ _ce_image_fine(u3e_image* img_u,
     if ( mem_w != fil_w ) {
       c3_w pag_w = (ptr_w - u3_Loom) >> u3a_page;
 
-      fprintf(stderr, "mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n",
-                       pag_w,
-                       mem_w,
-                       fil_w,
-                       u3K.mug_w[pag_w]);
+      u3l_log("mismatch: page %d, mem_w %x, fil_w %x, K %x\r\n",
+              pag_w,
+              mem_w,
+              fil_w,
+              u3K.mug_w[pag_w]);
       abort();
     }
     ptr_w += stp_ws;

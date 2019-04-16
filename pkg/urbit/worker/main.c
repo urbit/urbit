@@ -1,4 +1,4 @@
-/* vere/serf.c
+/* worker/main.c
 **
 **  the main loop of a worker process.
 */
@@ -24,7 +24,7 @@
 #include "all.h"
 #include <vere/vere.h>
 
-    typedef struct _u3_serf {
+    typedef struct _u3_worker {
       c3_w    len_w;                        //  boot sequence length
       c3_d    evt_d;                        //  last event processed
       c3_l    mug_l;                        //  hash of state
@@ -32,14 +32,14 @@
       u3_moat inn_u;                        //  message input
       u3_mojo out_u;                        //  message output
       c3_c*   dir_c;                        //  execution directory (pier)
-    } u3_serf;
-    static u3_serf u3V;
+    } u3_worker;
+    static u3_worker u3V;
 
 /*
-::  serf-lord protocol:
+::  worker to daemon protocol
 ::
 |%
-::  +plea: from serf to lord
+::  +plea: from worker to daemon
 ::
 +$  plea
   $%  ::  status on startup
@@ -73,6 +73,14 @@
           ::
           [p=@ q=@ r=(pair date ovum)]
       ==
+      ::  sends a line to stderr while computing event
+      ::
+      $:  %stdr
+          ::  p: event number
+          ::  q: output cord
+          ::
+          [p=@ q=cord]
+      ==
       ::  send slog hint while computing event
       ::
       $:  %slog
@@ -82,7 +90,7 @@
           ::
           [p=@ q=@ r=tank]
   ==  ==
-::  +writ: from lord to serf
+::  +writ: from daemon to worker
 ::
 +$  writ
   $%  ::  prepare to boot
@@ -114,20 +122,20 @@
 --
 */
 
-/* _serf_space(): print n spaces.
+/* _worker_space(): print n spaces.
 */
-void _serf_space(FILE* fil_u,  c3_w n)
+void _worker_space(FILE* fil_u,  c3_w n)
 {
   for (; n > 0; n--)
     (fprintf(fil_u," "));
 }
 
-/* _serf_print_memory(): print memory amount.
+/* _worker_print_memory(): print memory amount.
 **
-**  Helper for _serf_prof(), just an un-captioned u3a_print_memory().
+**  Helper for _worker_prof(), just an un-captioned u3a_print_memory().
 */
 void
-_serf_print_memory(FILE* fil_u, c3_w wor_w)
+_worker_print_memory(FILE* fil_u, c3_w wor_w)
 {
   c3_w byt_w = (wor_w * 4);
   c3_w gib_w = (byt_w / 1000000000);
@@ -150,21 +158,21 @@ _serf_print_memory(FILE* fil_u, c3_w wor_w)
   }
 }
 
-/* _serf_prof(): print memory profile. RETAIN.
+/* _worker_prof(): print memory profile. RETAIN.
 */
 c3_w
-_serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
+_worker_prof(FILE* fil_u, c3_w den, u3_noun mas)
 {
   c3_w tot_w = 0;
   u3_noun h_mas, t_mas;
 
   if ( c3n == u3r_cell(mas, &h_mas, &t_mas) ) {
-    _serf_space(fil_u, den);
+    _worker_space(fil_u, den);
     fprintf(fil_u, "mistyped mass\r\n");
     return tot_w;
   }
   else if ( _(u3du(h_mas)) ) {
-    _serf_space(fil_u, den);
+    _worker_space(fil_u, den);
     fprintf(fil_u, "mistyped mass head\r\n");
     {
       c3_c* lab_c = u3m_pretty(h_mas);
@@ -174,7 +182,7 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
     return tot_w;
   }
   else {
-    _serf_space(fil_u, den);
+    _worker_space(fil_u, den);
 
     {
       c3_c* lab_c = u3m_pretty(h_mas);
@@ -190,7 +198,7 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
     }
     else if ( c3y == it_mas ) {
       tot_w += u3a_mark_noun(tt_mas);
-      _serf_print_memory(fil_u, tot_w);
+      _worker_print_memory(fil_u, tot_w);
 
 #if 1
       /* The basic issue here is that tt_mas is included in
@@ -225,29 +233,29 @@ _serf_prof(FILE* fil_u, c3_w den, u3_noun mas)
       fprintf(fil_u, "\r\n");
 
       while ( _(u3du(tt_mas)) ) {
-        tot_w += _serf_prof(fil_u, den+2, u3h(tt_mas));
+        tot_w += _worker_prof(fil_u, den+2, u3h(tt_mas));
         tt_mas = u3t(tt_mas);
       }
 
-      _serf_space(fil_u, den);
+      _worker_space(fil_u, den);
       fprintf(fil_u, "--");
-      _serf_print_memory(fil_u, tot_w);
+      _worker_print_memory(fil_u, tot_w);
 
       return tot_w;
 
     }
     else {
-      _serf_space(fil_u, den);
+      _worker_space(fil_u, den);
       fprintf(fil_u, "mistyped (strange) mass tail\r\n");
       return tot_w;
     }
   }
 }
 
-/* _serf_grab(): garbage collect, checking for profiling. RETAIN.
+/* _worker_grab(): garbage collect, checking for profiling. RETAIN.
 */
 static void
-_serf_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
+_worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 {
   if ( u3_nul == sac) {
     if ( u3C.wag_w & (u3o_debug_ram | u3o_check_corrupt) ) {
@@ -290,7 +298,7 @@ _serf_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     c3_assert( u3R == &(u3H->rod_u) );
 
     fprintf(fil_u, "\r\n");
-    usr_w = _serf_prof(fil_u, 0, sac);
+    usr_w = _worker_prof(fil_u, 0, sac);
     u3a_print_memory(fil_u, "total userspace", usr_w);
 
     man_w = u3m_mark(fil_u);
@@ -316,72 +324,80 @@ _serf_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
   }
 }
 
-/* _serf_fail(): failure stub.
+/* _worker_fail(): failure stub.
 */
 static void
-_serf_fail(void* vod_p, const c3_c* wut_c)
+_worker_fail(void* vod_p, const c3_c* wut_c)
 {
-  fprintf(stderr, "serf: fail: %s\r\n", wut_c);
+  u3l_log("worker: fail: %s\r\n", wut_c);
   exit(1);
 }
 
-/* _serf_send(): send result back to lord.
+/* _worker_send(): send result back to daemon.
 */
 static void
-_serf_send(u3_noun job)
+_worker_send(u3_noun job)
 {
   u3_newt_write(&u3V.out_u, u3ke_jam(job), 0);
 }
 
-/* _serf_send_replace(): send replacement job back to lord.
+/* _worker_send_replace(): send replacement job back to daemon.
 */
 static void
-_serf_send_replace(c3_d evt_d, u3_noun ovo)
+_worker_send_replace(c3_d evt_d, u3_noun ovo)
 {
-  fprintf(stderr, "serf_send_replace %" PRIu64 " %s\r\n",
-                  evt_d,
-                  u3r_string(u3h(u3t(ovo))));
+  u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
+          evt_d,
+          u3r_string(u3h(u3t(ovo))));
 
-  _serf_send(u3nq(c3__work,
-                  u3i_chubs(1, &evt_d),
-                  u3V.mug_l,
-                  u3nc(u3k(u3A->now), ovo)));
+  _worker_send(u3nq(c3__work,
+                    u3i_chubs(1, &evt_d),
+                    u3V.mug_l,
+                    u3nc(u3k(u3A->now), ovo)));
 }
 
-/* _serf_send_complete(): report completion.
+/* _worker_send_complete(): report completion.
 */
 static void
-_serf_send_complete(u3_noun vir)
+_worker_send_complete(u3_noun vir)
 {
-  _serf_send(u3nq(c3__done,
-                  u3i_chubs(1, &u3V.evt_d),
-                  u3r_mug(u3A->roc),
-                  vir));
+  _worker_send(u3nq(c3__done,
+                    u3i_chubs(1, &u3V.evt_d),
+                    u3r_mug(u3A->roc),
+                    vir));
 }
 
-/* _serf_send_slog(): send hint output (hod is [priority tank]).
+/* _worker_send_stdr(): send stderr output
 */
 static void
-_serf_send_slog(u3_noun hod)
+_worker_send_stdr(c3_c* str_c)
 {
-  _serf_send(u3nt(c3__slog, u3i_chubs(1, &u3V.evt_d), hod));
+  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.evt_d), u3i_string(str_c)));
 }
 
-/* _serf_lame(): event failed, replace with error event.
+/* _worker_send_slog(): send hint output (hod is [priority tank]).
 */
 static void
-_serf_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
+_worker_send_slog(u3_noun hod)
+{
+  _worker_send(u3nt(c3__slog, u3i_chubs(1, &u3V.evt_d), hod));
+}
+
+/* _worker_lame(): event failed, replace with error event.
+*/
+static void
+_worker_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
 {
   // %crud will be sent on the original wire.
   //
-  _serf_send_replace(evt_d, u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan)));
+  _worker_send_replace(evt_d, u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan)));
   u3z(ovo);
 }
 
-/* _serf_sure(): event succeeded, report completion.
+/* _worker_sure(): event succeeded, report completion.
 */
 static void
-_serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
+_worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 {
   u3z(u3A->roc);
   u3A->roc = cor;
@@ -405,7 +421,7 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
         sac = u3k(u3t(fec));
         //  replace the %mass data with ~
         //
-        //    For efficient transmission to king.
+        //    For efficient transmission to daemon.
         //
         riv = u3kb_weld(u3qb_scag(i_w, vir),
                         u3nc(u3nt(u3k(u3h(u3h(riv))), c3__mass, u3_nul),
@@ -428,18 +444,18 @@ _serf_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 
   //  XX this runs on replay too
   //
-  _serf_grab(sac, ovo, vir);
-  _serf_send_complete(vir);
+  _worker_grab(sac, ovo, vir);
+  _worker_send_complete(vir);
 
   u3z(sac); u3z(ovo);
 }
 
-/* _serf_work_live(): apply event.
+/* _worker_work_live(): apply event.
 */
 static void
-_serf_work_live(c3_d    evt_d,              //  event number
-                c3_l    mug_l,              //  mug of state
-                u3_noun job)                //  event date
+_worker_work_live(c3_d    evt_d,              //  event number
+                  c3_l    mug_l,              //  mug of state
+                  u3_noun job)                //  event date
 {
   u3_noun now, ovo, gon;
 
@@ -465,7 +481,7 @@ _serf_work_live(c3_d    evt_d,              //  event number
     if ( c3__belt != u3h(u3t(ovo)) ) {
       c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      fprintf(stderr, "serf: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
+      u3l_log("worker: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
     }
   }
 #endif
@@ -483,9 +499,9 @@ _serf_work_live(c3_d    evt_d,              //  event number
     ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
     clr_w = ms_w > 1000 ? 1 : ms_w < 100 ? 2 : 3; //  red, green, yellow
     if (c3__belt != u3h(u3t(ovo)) || clr_w != 2) {
-      uL(fprintf(uH, "\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
-                        clr_w, txt_c, evt_d, ms_w,
-                        (int) (d0.tv_usec % 1000) / 10));
+      u3l_log("\x1b[3%dm%%%s (%" PRIu64 ") %4d.%02dms\x1b[0m\n",
+              clr_w, txt_c, evt_d, ms_w,
+              (int) (d0.tv_usec % 1000) / 10);
     }
     free(txt_c);
   }
@@ -500,7 +516,7 @@ _serf_work_live(c3_d    evt_d,              //  event number
     u3k(ovo); u3k(why); u3k(tan);
     u3z(gon); u3z(job);
 
-    _serf_lame(evt_d, ovo, why, tan);
+    _worker_lame(evt_d, ovo, why, tan);
   }
   else {
     //  event accepted
@@ -517,7 +533,7 @@ _serf_work_live(c3_d    evt_d,              //  event number
     u3k(ovo); u3k(vir); u3k(cor);
     u3z(gon); u3z(job);
 
-    _serf_sure(ovo, vir, cor);
+    _worker_sure(ovo, vir, cor);
 
     //  reclaim memory from persistent caches on |reset
     //
@@ -527,10 +543,10 @@ _serf_work_live(c3_d    evt_d,              //  event number
   }
 }
 
-/* _serf_boot_fire(): execute boot sequence.
+/* _worker_boot_fire(): execute boot sequence.
 */
 static u3_noun
-_serf_boot_fire(u3_noun eve)
+_worker_boot_fire(u3_noun eve)
 {
   //  XX virtualize? use u3v_boot?
   //
@@ -543,10 +559,10 @@ _serf_boot_fire(u3_noun eve)
   return pro;
 }
 
-/* _serf_work_boot(): apply initial-stage event.
+/* _worker_work_boot(): apply initial-stage event.
 */
 static void
-_serf_work_boot(c3_d    evt_d,
+_worker_work_boot(c3_d    evt_d,
                 c3_l    mug_l,
                 u3_noun job)
 {
@@ -555,7 +571,7 @@ _serf_work_boot(c3_d    evt_d,
 
   u3A->roe = u3nc(job, u3A->roe);
 
-  fprintf(stderr, "serf: (%" PRIu64 ")| boot\r\n", evt_d);
+  u3l_log("worker: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
@@ -563,34 +579,34 @@ _serf_work_boot(c3_d    evt_d,
     eve = u3kb_flop(u3A->roe);
     u3A->roe = 0;
 
-    fprintf(stderr, "serf: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
+    u3l_log("worker: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
-    pru = u3m_soft(0, _serf_boot_fire, eve);
+    pru = u3m_soft(0, _worker_boot_fire, eve);
 
     if ( u3_blip != u3h(pru) ) {
-      fprintf(stderr, "boot failed\r\n");
+      u3l_log("boot failed\r\n");
       exit(1);
     }
 
     u3A->roc = u3k(u3t(pru));
 
-    fprintf(stderr, "serf: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
+    u3l_log("worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
 
     //  XX set u3A->evt_d ?
     //
     u3z(pru);
   }
 
-  _serf_send(u3nq(c3__done,
-                  u3i_chubs(1, &evt_d),
-                  0,
-                  u3_nul));
+  _worker_send(u3nq(c3__done,
+                    u3i_chubs(1, &evt_d),
+                    0,
+                    u3_nul));
 }
 
-/* _serf_poke_work(): apply event.
+/* _worker_poke_work(): apply event.
 */
 static void
-_serf_poke_work(c3_d    evt_d,              //  event number
+_worker_poke_work(c3_d    evt_d,              //  event number
                 c3_l    mug_l,              //  mug of state
                 u3_noun job)                //  full event
 {
@@ -609,7 +625,7 @@ _serf_poke_work(c3_d    evt_d,              //  event number
     snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
 
     u3t_event_trace(lab_c, 'B');
-    _serf_work_boot(evt_d, mug_l, job);
+    _worker_work_boot(evt_d, mug_l, job);
     u3t_event_trace(lab_c, 'E');
   }
   else {
@@ -621,23 +637,23 @@ _serf_poke_work(c3_d    evt_d,              //  event number
              u3m_pretty_path(wir), u3m_pretty(cad));
 
     u3t_event_trace(lab_c, 'B');
-    _serf_work_live(evt_d, mug_l, job);
+    _worker_work_live(evt_d, mug_l, job);
     u3t_event_trace(lab_c, 'E');
   }
 }
 
-/* _serf_poke_exit(): exit on command.
+/* _worker_poke_exit(): exit on command.
 */
 static void
-_serf_poke_exit(c3_w cod_w)                 //  exit code
+_worker_poke_exit(c3_w cod_w)                 //  exit code
 {
   exit(cod_w);
 }
 
-/* _serf_poke_boot(): prepare to boot.
+/* _worker_poke_boot(): prepare to boot.
 */
 static void
-_serf_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
+_worker_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
 {
   c3_assert( u3_none == u3A->our );
   c3_assert( 0 != len_w );
@@ -647,10 +663,10 @@ _serf_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
   u3V.len_w = len_w;
 }
 
-/* _serf_poke():
+/* _worker_poke():
 */
 void
-_serf_poke(void* vod_p, u3_noun mat)
+_worker_poke(void* vod_p, u3_noun mat)
 {
   u3_noun jar = u3ke_cue(mat);
 
@@ -683,7 +699,7 @@ _serf_poke(void* vod_p, u3_noun mat)
         u3k(fak);
         u3z(jar);
 
-        return _serf_poke_boot(who, fak, len_w);
+        return _worker_poke_boot(who, fak, len_w);
       }
 
       case c3__work: {
@@ -705,7 +721,7 @@ _serf_poke(void* vod_p, u3_noun mat)
         u3k(job);
         u3z(jar);
 
-        return _serf_poke_work(evt_d, mug_l, job);
+        return _worker_poke_work(evt_d, mug_l, job);
       }
 
       case c3__exit: {
@@ -722,7 +738,7 @@ _serf_poke(void* vod_p, u3_noun mat)
         cod_w = u3r_word(0, cod);
         u3z(jar);
 
-        return _serf_poke_exit(cod_w);
+        return _worker_poke_exit(cod_w);
       }
 
       case c3__save: {
@@ -747,14 +763,14 @@ _serf_poke(void* vod_p, u3_noun mat)
 
   error: {
     u3z(jar);
-    _serf_fail(0, "bad jar");
+    _worker_fail(0, "bad jar");
   }
 }
 
-/* u3_serf_boot(): send startup message to manager.
+/* u3_worker_boot(): send startup message to manager.
 */
 void
-u3_serf_boot(void)
+u3_worker_boot(void)
 {
   c3_d nex_d  = 1ULL;
   u3_noun dat = u3_nul;
@@ -776,9 +792,9 @@ u3_serf_boot(void)
     u3V.len_w = 0;
   }
 
-  fprintf(stderr, "serf: play %" PRIu64 "\r\n", nex_d);
+  u3l_log("worker: play %" PRIu64 "\r\n", nex_d);
 
-  _serf_send(u3nc(c3__play, dat));
+  _worker_send(u3nc(c3__play, dat));
 }
 
 /* main(): main() when run as urbit-worker
@@ -828,10 +844,11 @@ main(c3_i argc, c3_c* argv[])
   */
   {
     u3V.evt_d = u3m_boot_new(dir_c);
-    u3C.log_f = _serf_send_slog;
+    u3C.stderr_log_f = _worker_send_stdr;
+    u3C.slog_f = _worker_send_slog;
   }
 
-  /* configure pipe to lord process
+  /* configure pipe to daemon process
   */
   {
     c3_i err_i;
@@ -847,19 +864,19 @@ main(c3_i argc, c3_c* argv[])
 
   /* set up writing
   */
-  u3V.out_u.bal_f = _serf_fail;
+  u3V.out_u.bal_f = _worker_fail;
 
   /* start reading
   */
   u3V.inn_u.vod_p = &u3V;
-  u3V.inn_u.pok_f = _serf_poke;
-  u3V.inn_u.bal_f = _serf_fail;
+  u3V.inn_u.pok_f = _worker_poke;
+  u3V.inn_u.bal_f = _worker_fail;
 
   u3_newt_read(&u3V.inn_u);
 
   /* send start request
   */
-  u3_serf_boot();
+  u3_worker_boot();
 
   /* enter loop
   */
