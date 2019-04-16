@@ -31,7 +31,7 @@
 #include "all.h"
 #include "vere/vere.h"
 
-#define NEWT_VERBOSE
+#undef NEWT_VERBOSE
 
 /* _newt_consume(): advance buffer processing.
 */
