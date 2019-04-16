@@ -615,7 +615,7 @@
   ::                                                    ::
   ::                                                    ::
 ::
-::  +snoc Append an element to the end of a list.
+::  +snoc: append an element to the end of a list
 ::
 ++  snoc
   |*  [a/(list) b/*]
@@ -673,6 +673,13 @@
     |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
+::
+::  +bake: convert wet gate to dry gate by specifying argument mold
+::
+++  bake
+  |*  [f=gate a=mold]
+  |=  arg=a
+  (f arg)
 ::
 ++  lent                                                ::  length
   ~/  %lent
