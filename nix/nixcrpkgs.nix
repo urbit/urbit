@@ -5,4 +5,4 @@ let
 
 in
 
-import ./nixcrpkgs/top.nix { inherit sdk_file nixpkgs; }
+import ./nixcrpkgs/top.nix { inherit nixpkgs; }
