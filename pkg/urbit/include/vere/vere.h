@@ -4,6 +4,7 @@
 */
 
 #include "h2o.h"
+#include "lmdb.h"
 
   /** Quasi-tunable parameters.
   **/
@@ -649,6 +650,7 @@
           u3_foil*         fol_u;               //  logfile
           c3_o             liv_o;               //  live
           c3_d             end_d;               //  byte end of file
+          MDB_env*          db_u;               //  lmdb environment. replaces fol_u.
           c3_d             moc_d;               //  commit requested
           c3_d             com_d;               //  committed
           struct _u3_pier* pir_u;               //  pier backpointer

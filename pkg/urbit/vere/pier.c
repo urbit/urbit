@@ -85,6 +85,7 @@ _pier_disk_bail(void* vod_p, const c3_c* err_c)
 static void
 _pier_disk_shutdown(u3_pier* pir_u)
 {
+  u3m_lmdb_shutdown(pir_u->log_u->db_u);
 }
 
 /* _pier_disk_commit_complete(): commit complete.
@@ -175,6 +176,38 @@ _pier_disk_write_header(u3_pier* pir_u, u3_atom mat)
                  log_u->fol_u,
                  buf_d,
                  len_d);
+}
+
+
+static void
+_pier_db_write_header(u3_pier* pir_u,
+                      u3_noun who,
+                      u3_noun is_fake,
+                      u3_noun life)
+{
+  u3m_lmdb_write_identity(pir_u->log_u->db_u,
+                          who, is_fake, life);
+
+  u3z(who);
+  u3z(is_fake);
+  u3z(life);
+}
+
+/* _pier_db_read_header(): reads the ships metadata from lmdb
+ */
+static void
+_pier_db_read_header(u3_pier* pir_u)
+{
+  u3_noun who, is_fake, life;
+  u3m_lmdb_read_identity(pir_u->log_u->db_u,
+                         &who, &is_fake, &life);
+
+  _pier_boot_set_ship(pir_u, u3k(who), u3k(is_fake));
+  pir_u->lif_d = u3r_chub(0, life);
+
+  u3z(who);
+  u3z(is_fake);
+  u3z(life);
 }
 
 /* _pier_disk_read_header_complete():
@@ -397,7 +430,11 @@ _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
 
   //  restore pier identity (XX currently a no-op, see comment)
   //
-  _pier_disk_read_header(log_u);
+  //_pier_disk_read_header(log_u);
+
+  // TODO: We want to restore our identity right here?
+  //
+  //_pier_db_read_header(log_u->pir_u);
 
   _pier_boot_ready(log_u->pir_u);
 }
@@ -504,6 +541,12 @@ _pier_disk_create(u3_pier* pir_u)
         c3_free(log_c);
         return c3n;
       }
+
+      if ( 0 == (log_u->db_u = u3m_lmdb_init(log_c)) ) {
+        c3_free(log_c);
+        return c3n;
+      }
+
       c3_free(log_c);
     }
 
@@ -637,7 +680,7 @@ _pier_work_bail(void*       vod_p,
   fprintf(stderr, "pier: work error: %s\r\n", err_c);
 }
 
-/* _pier_work_boot(): prepare serf boot.
+/* _pier_work_boot(): prepare for boot.
 */
 static void
 _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
@@ -649,8 +692,12 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
   u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
-  u3_atom mat = u3ke_jam(msg);
 
+  if ( c3y == sav_o ) {
+    _pier_db_write_header(pir_u, u3k(who), u3k(pir_u->fak_o), u3k(len));
+  }
+
+  u3_atom mat = u3we_jam(msg);
   if ( c3y == sav_o ) {
     _pier_disk_write_header(pir_u, u3k(mat));
   }
@@ -896,7 +943,7 @@ _pier_work_play(u3_pier* pir_u,
   c3_assert( c3n == god_u->liv_o );
   god_u->liv_o = c3y;
 
-  //  all events in the serf are complete
+  //  all events in the worker are complete
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
 
@@ -1667,7 +1714,7 @@ _pier_boot_ready(u3_pier* pir_u)
     _pier_boot_vent(pir_u->bot_u);
     _pier_boot_dispose(pir_u->bot_u);
 
-    //  prepare serf for boot sequence, write log header
+    //  prepare worker for boot sequence, write log header
     //
     _pier_work_boot(pir_u, c3y);
 
@@ -1696,7 +1743,7 @@ _pier_boot_ready(u3_pier* pir_u)
       fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
                       log_u->com_d);
 
-      //  prepare serf for replay of boot sequence, don't write log header
+      //  prepare worker for replay of boot sequence, don't write log header
       //
       _pier_work_boot(pir_u, c3n);
     }

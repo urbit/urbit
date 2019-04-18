@@ -6,7 +6,7 @@ let
 
   crossdeps =
     with env;
-    [ curl libgmp libsigsegv ncurses openssl zlib ];
+    [ curl libgmp libsigsegv ncurses openssl zlib lmdb ];
 
   vendor =
     with deps;
