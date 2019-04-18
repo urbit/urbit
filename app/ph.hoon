@@ -253,7 +253,15 @@
   =,  m-test-lib
   :~  :+  %boot-bud
         ~[~bud]
+      =/  m  (ph ,~)
       (raw-ship ~bud ~)
+    ::
+      :+  %hi
+        ~[~bud ~dev]
+      =/  m  (ph ,~)
+      =%  ~  bind:m  (raw-ship ~bud ~)
+      =%  ~  bind:m  (raw-ship ~dev ~)
+      (send-hi ~bud ~dev)
   ==
 ::
 ++  install-tests

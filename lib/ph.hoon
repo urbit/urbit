@@ -11,56 +11,62 @@
 ++  ph
   |*  a=mold
   |%
-  ++  ph-output
+  ++  ph-output  (ph-output-raw a)
+  ++  ph-output-raw
+    |*  a=mold
     $~  [& ~ %done & *a]
     $:  thru=?
         events=(list ph-event)
         $=  next
         $%  [%wait ~]
-            [%cont self=data]
+            [%cont self=(data-raw a)]
             [%done success=? value=a]
         ==
     ==
   ::
-  ++  data  $-(ph-input ph-output)
+  ++  data  (data-raw a)
+  ++  data-raw
+    |*  a=mold
+    $-(ph-input (ph-output-raw a))
+  ::
   ++  return
     |=  arg=a
     ^-  data
     |=  ph-input
     [& ~ %done & arg]
-  --
-::
-++  m-test-lib
-  |%
-  ++  ph-bind
-    |*  a=mold
+  ::
+  ++  bind
     |*  b=mold
-    |=  [m-a=_*data:(ph a) fun=_|~(a *data:(ph b))]
-    ^+  *data:(ph b)
+    |=  [m-b=(data-raw b) fun=$-(b data)]
+    ^-  data
     |=  input=ph-input
-    =/  a-res=_*ph-output:(ph a)
-      (m-a input)
-    ^+  *ph-output:(ph b)
-    :+  thru.a-res  events.a-res
-    ?-    -.next.a-res
+    =/  b-res=(ph-output-raw b)
+      (m-b input)
+    ^-  ph-output
+    :+  thru.b-res  events.b-res
+    ?-    -.next.b-res
         %wait  [%wait ~]
         %cont
       :-  %cont
       |=  input-inner=ph-input
-      ^$(m-a self.next.a-res, input input-inner)
+      ^$(m-b self.next.b-res, input input-inner)
     ::
         %done
-      ?.  success.next.a-res
-        [%done | *b]
+      ?.  success.next.b-res
+        [%done | *a]
       :-  %cont
-      (fun value.next.a-res)
+      (fun value.next.b-res)
     ==
+  --
+::
+++  m-test-lib
+  |%
   ++  boot-ship
     |=  [her=ship keys=(unit dawn-event)]
     ^+  *data:(ph ,[%booted who=@p])
     |=  ph-input
     ~&  %first-i
-    [& (init ~bud ~) %done & %booted her]
+    [& (init her ~) %done & %booted her]
   ::
   ++  check-ship-booted
     |=  her=ship
@@ -77,30 +83,50 @@
     ::  second.
     ::
     ?|
-      %^  is-dojo-output  ~bud  who  :-  uf
-      "+ /{(scow %p ~bud)}/base/2/web/testing/udon"
+      %^  is-dojo-output  her  who  :-  uf
+      "+ /{(scow %p her)}/base/2/web/testing/udon"
     ::
-      %^  is-dojo-output  ~bud  who  :-  uf
+      %^  is-dojo-output  her  who  :-  uf
       "is your neighbor"
     ==
   ::
+  ++  send-hi
+    |=  [from=@p to=@p]
+    =/  m  (ph ,~)
+    ^-  data:m
+    =%  ~  bind:m
+      ^-  data:m
+      |=  ph-input
+      [& (dojo from "|hi {(scow %p to)}") %done & ~]
+    ^-  data:m
+    |=  input=ph-input
+    ^-  ph-output:m
+    :+  &  ~
+    ?.  (is-dojo-output from who.input uf.input "hi {(scow %p to)} successful")
+      [%wait ~]
+    [%done & ~]
+  ::
   ++  raw-ship
     |=  [her=ship keys=(unit dawn-event)]
-    ^+  *data:(ph ,~)
     ::  [%boot-done h=@p] ~&(who-monad=who (check-ship-booted her)), 
     ::  ;#(ph-bind ~ (return:(ph ,~) ~), [%booted who=@p] (return:(ph ,[%booted who=@p]) [%booted who=~tyr]), ~ (return:(ph ,~) ~), ~ (return:(ph ,~) ~))
     ::  ;#(ph-bind [%booted who=@p] (boot-ship her keys), [%booted whom=@p] (boot-ship ~tyr keys), ~ ~&([%ww who whom] (return:(ph ,~) ~)))
-    ;#    ph-bind
-        [%booted who=@p]      <--  (boot-ship her keys)
-        [%boot-done whos=@p]  <--  (check-ship-booted her)
-        ~  <--
-      ~&  [%wws who whos]
-      (return:(ph ,~) ~)
-    ==
+    ::  ;#    ph-bind
+    ::      [%booted who=@p]      <--  (boot-ship her keys)
+    ::      [%boot-done whos=@p]  <--  (check-ship-booted her)
+    ::      ~  <--
+    ::    ~&  [%wws who whos]
+    ::    (return:(ph ,~) ~)
+    ::  ==
     ::  %+  (bind:(ph ,~) ,~)
     ::    (boot-ship her keys)
     ::  |=  ~
     ::  (check-ship-booted her)
+    =/  m  (ph ,~)
+    ^-  data:m
+    =%  [%booted who=@p]      bind:m  (boot-ship her keys)
+    =%  [%boot-done whos=@p]  bind:m  (check-ship-booted her)
+    (return:m ~)
   --
 ::
 ::  ++  wrap-filter
