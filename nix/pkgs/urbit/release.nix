@@ -20,6 +20,7 @@ env.make_derivation {
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;
+  NCURSES          = env.ncurses;
 
   name          = "${name}-${env_name}";
   exename       = name;

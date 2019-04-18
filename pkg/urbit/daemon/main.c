@@ -8,6 +8,7 @@
 #include <limits.h>
 #include <uv.h>
 #include <sigsegv.h>
+#include <stdlib.h>
 #include <ncurses/curses.h>
 #include <termios.h>
 #include <ncurses/term.h>
@@ -644,6 +645,12 @@ main(c3_i   argc,
   c3_i worker_exe_len = 1 + strlen(argv[0]) + strlen("-worker");
   u3_Host.wrk_c = c3_malloc(worker_exe_len);
   snprintf(u3_Host.wrk_c, worker_exe_len, "%s-worker", argv[0]);
+
+  // Set TERMINFO_DIRS environment variable
+  c3_i terminfo_len = 1 + strlen(argv[0]) + strlen("-terminfo");
+  c3_c terminfo_dir[terminfo_len];
+  snprintf(terminfo_dir, terminfo_len, "%s-terminfo", argv[0]);
+  setenv("TERMINFO_DIRS", terminfo_dir, 1);
 
   if ( c3y == u3_Host.ops_u.dem ) {
     _fork_into_background_process();

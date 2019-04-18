@@ -22,3 +22,4 @@ res=$(release "$env.$pkg")
 mkdir -p ./bin/$env
 traced cp -f $res/bin/$pkg ./bin/$env/$pkg
 traced cp -f $res/bin/$pkg-worker ./bin/$env/$pkg-worker
+traced cp -r $res/bin/$pkg-terminfo ./bin/$env/$pkg-terminfo
