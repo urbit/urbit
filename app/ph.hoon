@@ -250,18 +250,38 @@
 ::
 ++  manual-monad-tests
   ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
-  =,  m-test-lib
+  =+  ~(. m-test-lib our.hid)
   =/  eth-node  (spawn-galaxy:az ~rel)
   =/  m  (ph ,~)
   :~  :+  %boot-bud
         ~[~bud]
       (raw-ship ~bud ~)
     ::
+      :+  %add
+        ~[~bud]
+      ;<  ~  bind:m  (raw-ship ~bud ~)
+      |=  pin=ph-input
+      ?:  =(%init -.q.uf.pin)
+        [& (dojo ~bud "[%test-result (add 2 3)]") %wait ~]
+      ?:  (is-dojo-output ~bud who.pin uf.pin "[%test-result 5]")
+        [& ~ %done ~]
+      [& ~ %wait ~]
+    ::
       :+  %hi
         ~[~bud ~dev]
       ;<  ~  bind:m  (raw-ship ~bud ~)
       ;<  ~  bind:m  (raw-ship ~dev ~)
       (send-hi ~bud ~dev)
+    ::
+      :+  %boot-planet
+        ~[~bud ~marbud ~linnup-torsyx]
+      (planet ~linnup-torsyx)
+    ::
+      :+  %second-cousin-hi
+        ~[~bud ~marbud ~linnup-torsyx ~dev ~mardev ~mitnep-todsut]
+      ;<  ~  bind:m  (planet ~linnup-torsyx)
+      ;<  ~  bind:m  (planet ~mitnep-todsut)
+      (send-hi ~linnup-torsyx ~mitnep-todsut)
     ::
       :+  %boot-az
         ~[~bud]
@@ -274,6 +294,18 @@
           router:(spawn-galaxy:node ~pem)
         stall
       (return:m ~)
+    ::
+      :+  %change-file
+        ~[~bud]
+      ;<  ~        bind:m  (raw-ship ~bud ~)
+      ;<  file=@t  bind:m  (touch-file ~bud %home)
+      (check-file-touched ~bud %home file)
+    ::
+      :+  %child-sync
+        ~[~bud ~marbud]
+      ;<  ~        bind:m  (star ~marbud)
+      ;<  file=@t  bind:m  (touch-file ~bud %base)
+      (check-file-touched ~marbud %home file)
   ==
 ::
 ++  install-tests
@@ -551,7 +583,7 @@
       ?~  ufs.afs
         [~ ~ ~ ~ m-test.u.test-core]
       =/  m-res=_*ph-output:(ph ,~)
-        (m-test.u.test-core who.afs i.ufs.afs)
+        (m-test.u.test-core now.hid who.afs i.ufs.afs)
       =?  ufs.afs  =(%cont -.next.m-res)
         [i.ufs.afs [/ %init ~] t.ufs.afs]
       =^  done=(unit ?)  m-test.u.test-core

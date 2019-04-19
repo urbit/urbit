@@ -6,7 +6,7 @@
 =>  .
 |%
 +$  ph-input
-  [who=ship uf=unix-effect]
+  [now=@da who=ship uf=unix-effect]
 ::
 ++  ph
   |*  a=mold
@@ -54,16 +54,34 @@
   --
 ::
 ++  m-test-lib
-  |%
+  |_  our=ship
   ++  stall
     |=  ph-input
     [& ~ %wait ~]
+  ::
+  ++  just-events
+    |=  events=(list ph-event)
+    =/  m  (ph ,~)
+    ^-  data:m
+    |=  ph-input
+    [& events %done ~]
+  ::
+  ::  Scry into a running aqua ship
+  ::
+  ++  scry-aqua
+    |*  [a=mold now=@da pax=path]
+    .^  a
+        %gx
+        (scot %p our)
+        %aqua
+        (scot %da now)
+        pax
+    ==
   ::
   ++  boot-ship
     |=  [her=ship keys=(unit dawn-event)]
     ^+  *data:(ph ,~)
     |=  ph-input
-    ~&  %first-i
     [& (init her keys) %done ~]
   ::
   ++  check-ship-booted
@@ -71,7 +89,6 @@
     ^+  *data:(ph ,~)
     |=  ph-input
     =;  done=?
-      ~&  [%second-i done]
       :+  &  ~
       ?:  done
         [%done ~]
@@ -111,6 +128,59 @@
     ;<  ~  bind:m  (boot-ship her keys)
     ;<  ~  bind:m  (check-ship-booted her)
     (return:m ~)
+  ::
+  ++  star
+    |=  her=ship
+    =/  m  (ph ,~)
+    ^-  data:m
+    ;<  ~  bind:m  (raw-ship (^sein:title her) ~)
+    (raw-ship her ~)
+  ::
+  ++  planet
+    |=  her=ship
+    =/  m  (ph ,~)
+    ^-  data:m
+    ;<  ~  bind:m  (star (^sein:title her))
+    (raw-ship her ~)
+  ::
+  ++  mount
+    |=  [her=ship des=desk]
+    =/  m  (ph ,~)
+    ^-  data:m
+    ;<  ~  bind:m  (just-events (dojo her "|mount /={(trip des)}="))
+    |=  pin=ph-input
+    ?:  (is-ergo her who.pin uf.pin)
+      [& ~ %done ~]
+    [& ~ %wait ~]
+  ::
+  ++  touch-file
+    |=  [her=ship des=desk]
+    =/  m  (ph ,@t)
+    ^-  data:m
+    ;<  ~  bind:m  (mount her des)
+    |=  pin=ph-input
+    =/  host-pax
+      /(scot %p our)/home/(scot %da now.pin)/sur/aquarium/hoon
+    =/  warped  (cat 3 '=>  .  ' .^(@t %cx host-pax))
+    [& (insert-file her des host-pax warped) %done warped]
+  ::
+  ++  check-file-touched
+    |=  [her=ship des=desk warped=@t]
+    =/  m  (ph ,~)
+    ^-  data:m
+    |=  pin=ph-input
+    ?.  &(=(her who.pin) ?=(?(%init %ergo) -.q.uf.pin))
+      [& ~ %wait ~]
+    =/  pax  /home/(scot %da now.pin)/sur/aquarium/hoon
+    =/  aqua-pax
+      ;:  weld
+          /i/(scot %p her)
+          pax(- des)
+          /noun
+      ==
+    ?:  =(warped (need (scry-aqua (unit @) now.pin aqua-pax)))
+      [& ~ %done ~]
+    [& ~ %wait ~]
   --
 ::
 ++  philter
@@ -383,10 +453,10 @@
     |%
     ++  stay  this-az
     ++  run
-      |=  [who=ship uf=unix-effect]
+      |=  pin=ph-input
       ^-  output:n
       =,  enjs:format
-      =/  thus  (extract-thus-to uf 'http://localhost:8545')
+      =/  thus  (extract-thus-to uf.pin 'http://localhost:8545')
       ?~  thus
         [& ~ %wait ~]
       ?~  r.mot.u.thus
@@ -468,7 +538,7 @@
           ==
         :_  ~
         :*  %event
-            who
+            who.pin
             //http/0v1n.2m9vh
             %they
             num.u.thus
