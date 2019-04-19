@@ -16921,6 +16921,7 @@
     ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
+    ++  exp1  |.(;~(gunk loan loaf loaf loaf))          ::  spec and three hoons
     ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon

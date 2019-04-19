@@ -14,13 +14,14 @@
   ++  ph-output  (ph-output-raw a)
   ++  ph-output-raw
     |*  a=mold
-    $~  [& ~ %done & *a]
+    $~  [& ~ %done *a]
     $:  thru=?
         events=(list ph-event)
         $=  next
         $%  [%wait ~]
             [%cont self=(data-raw a)]
-            [%done success=? value=a]
+            [%fail ~]
+            [%done value=a]
         ==
     ==
   ::
@@ -33,7 +34,7 @@
     |=  arg=a
     ^-  data
     |=  ph-input
-    [& ~ %done & arg]
+    [& ~ %done arg]
   ::
   ++  bind
     |*  b=mold
@@ -45,38 +46,35 @@
     ^-  ph-output
     :+  thru.b-res  events.b-res
     ?-    -.next.b-res
-        %wait  [%wait ~]
-        %cont
-      :-  %cont
-      |=  input-inner=ph-input
-      ^$(m-b self.next.b-res, input input-inner)
-    ::
-        %done
-      ?.  success.next.b-res
-        [%done | *a]
-      :-  %cont
-      (fun value.next.b-res)
+      %wait  [%wait ~]
+      %cont  [%cont ..$(m-b self.next.b-res)]
+      %fail  [%fail ~]
+      %done  [%cont (fun value.next.b-res)]
     ==
   --
 ::
 ++  m-test-lib
   |%
+  ++  stall
+    |=  ph-input
+    [& ~ %wait ~]
+  ::
   ++  boot-ship
     |=  [her=ship keys=(unit dawn-event)]
-    ^+  *data:(ph ,[%booted who=@p])
+    ^+  *data:(ph ,~)
     |=  ph-input
     ~&  %first-i
-    [& (init her ~) %done & %booted her]
+    [& (init her keys) %done ~]
   ::
   ++  check-ship-booted
     |=  her=ship
-    ^+  *data:(ph ,[%boot-done whodunnit=@p])
+    ^+  *data:(ph ,~)
     |=  ph-input
     =;  done=?
       ~&  [%second-i done]
       :+  &  ~
       ?:  done
-        [%done & %boot-done her]
+        [%done ~]
       [%wait ~]
     ::  This is a pretty bad heuristic, but in general galaxies will
     ::  hit the first of these cases, and other ships will hit the
@@ -94,56 +92,90 @@
     |=  [from=@p to=@p]
     =/  m  (ph ,~)
     ^-  data:m
-    =%  ~  bind:m
+    ;<  ~  bind:m
       ^-  data:m
       |=  ph-input
-      [& (dojo from "|hi {(scow %p to)}") %done & ~]
+      [& (dojo from "|hi {(scow %p to)}") %done ~]
     ^-  data:m
     |=  input=ph-input
     ^-  ph-output:m
     :+  &  ~
     ?.  (is-dojo-output from who.input uf.input "hi {(scow %p to)} successful")
       [%wait ~]
-    [%done & ~]
+    [%done ~]
   ::
   ++  raw-ship
     |=  [her=ship keys=(unit dawn-event)]
-    ::  [%boot-done h=@p] ~&(who-monad=who (check-ship-booted her)), 
-    ::  ;#(ph-bind ~ (return:(ph ,~) ~), [%booted who=@p] (return:(ph ,[%booted who=@p]) [%booted who=~tyr]), ~ (return:(ph ,~) ~), ~ (return:(ph ,~) ~))
-    ::  ;#(ph-bind [%booted who=@p] (boot-ship her keys), [%booted whom=@p] (boot-ship ~tyr keys), ~ ~&([%ww who whom] (return:(ph ,~) ~)))
-    ::  ;#    ph-bind
-    ::      [%booted who=@p]      <--  (boot-ship her keys)
-    ::      [%boot-done whos=@p]  <--  (check-ship-booted her)
-    ::      ~  <--
-    ::    ~&  [%wws who whos]
-    ::    (return:(ph ,~) ~)
-    ::  ==
-    ::  %+  (bind:(ph ,~) ,~)
-    ::    (boot-ship her keys)
-    ::  |=  ~
-    ::  (check-ship-booted her)
     =/  m  (ph ,~)
     ^-  data:m
-    =%  [%booted who=@p]      bind:m  (boot-ship her keys)
-    =%  [%boot-done whos=@p]  bind:m  (check-ship-booted her)
+    ;<  ~  bind:m  (boot-ship her keys)
+    ;<  ~  bind:m  (check-ship-booted her)
     (return:m ~)
   --
 ::
-::  ++  wrap-filter
-::    |*  o=mold
-::    |*  i=mold
-::    |=  [outer=_*data:(ph o) inner=_*data:(ph i)]
-::    ^+  *data:(ph ,[o i])
-::    |=  input=ph-input
-::    =/  res-i=_*ph-output:(ph i)
-::      (inner input)
-::    =.  inner  self.res-i
-::    ?.  thru.res-i
-::      [result.res-i thru.res-i events.res-i ..$]
-::    =/  res-o=_*ph-output:(ph o)
-::      (outer input)
-::    =.  outer  self.res-o
-::    [result.res-i thru.res-o (welp events.res-i events.res-o) ..$]
+++  philter
+  |*  o=mold
+  |%
+  ++  output
+    $~  [& ~ %wait ~]
+    $:  thru=?
+        events=(list ph-event)
+        $=  next
+        $%  [%wait ~]
+            [%cont self=data]
+        ==
+    ==
+  ++  data
+    $_  ^?
+    |%
+    ++  stay  *o
+    ++  run   |~(ph-input *output)
+    --
+  --
+::
+++  wrap-filter
+  |*  [o=mold i=mold]
+  |=  [outer=_*data:(philter o) inner=_*data:(ph i)]
+  ^+  *data:(ph ,[o i])
+  |=  input=ph-input
+  =/  res-i=_*ph-output:(ph i)
+    (inner input)
+  ?.  thru.res-i
+    :+  thru.res-i  events.res-i
+    ?-  -.next.res-i
+      %wait  [%wait ~]
+      %cont  [%cont ..$(inner self.next.res-i)]
+      %fail  [%fail ~]
+      %done  [%done stay:outer value.next.res-i]
+    ==
+  =/  res-o=_*output:(philter o)
+    (run:outer input)
+  ^+  *ph-output:(ph ,[o i])
+  :+  thru.res-o  (welp events.res-i events.res-o)
+  ?-    -.next.res-i
+      %wait
+  ^+  +>:*ph-output:(ph ,[o i])
+    ?-  -.next.res-o
+      %wait  [%wait ~]
+      %cont  [%cont ..$(outer self.next.res-o)]
+    ==
+  ::
+      %cont
+  ^+  +>:*ph-output:(ph ,[o i])
+    =.  inner  self.next.res-i
+    ?-  -.next.res-o
+      %wait  [%cont ..$]
+      %cont  [%cont ..$(outer self.next.res-o)]
+    ==
+  ::
+      %fail  [%fail ~]
+      %done
+  ^+  +>:*ph-output:(ph ,[o i])
+    ?-  -.next.res-o
+      %wait  [%done stay:outer value.next.res-i]
+      %cont  [%done stay:self.next.res-o value.next.res-i]
+    ==
+  ==
 ::
 ::  Defines a complete integration test.
 ::
@@ -335,6 +367,7 @@
 +$  az-log  [topics=(lest @) data=@t]
 ++  az
   =|  logs=(list az-log)  ::  oldest logs first
+  =|  eth-filter=(unit [from-block=@ud last-block=@ud address=@ux])
   =,  azimuth-events:azimuth
   |%
   ++  this-az  .
@@ -345,135 +378,144 @@
     this-az
   ::
   ++  router
-    =|  eth-filter=(unit [from-block=@ud last-block=@ud address=@ux])
-    |=  [who=ship uf=unix-effect]
-    =*  this-router  ..$
-    ^-  [thru=? pe=(list ph-event) self=_^|(this-router)]
-    =,  enjs:format
-    =/  thus  (extract-thus-to uf 'http://localhost:8545')
-    ?~  thus
-      [& ~ this-router]
-    ?~  r.mot.u.thus
-      [& ~ this-router]
-    =/  req  q.u.r.mot.u.thus
-    |^
-    =/  method  (get-method req)
-    ?:  =(method 'eth_blockNumber')
-      :-  |  :_  this-router
-      %+  answer-request  req
-      s+(crip (num-to-hex:ethereum (lent logs)))
-    ?:  =(method 'eth_getLogs')
-      :-  |  :_  this-router
-      %+  answer-request  req
-      %+  logs-to-json
-        (get-param-obj req 'fromBlock')
-      (get-param-obj req 'toBlock')
-    ?:  =(method 'eth_newFilter')
-      =.  eth-filter
-        :^    ~
-            (get-param-obj req 'fromBlock')
+    =/  n  (philter ,_this-az)
+    ^+  *data:n
+    |%
+    ++  stay  this-az
+    ++  run
+      |=  [who=ship uf=unix-effect]
+      ^-  output:n
+      =,  enjs:format
+      =/  thus  (extract-thus-to uf 'http://localhost:8545')
+      ?~  thus
+        [& ~ %wait ~]
+      ?~  r.mot.u.thus
+        [& ~ %wait ~]
+      =/  req  q.u.r.mot.u.thus
+      |^  ^-  output:n
+      =/  method  (get-method req)
+      ?:  =(method 'eth_blockNumber')
+        :-  |  :_  [%wait ~]
+        %+  answer-request  req
+        s+(crip (num-to-hex:ethereum (lent logs)))
+      ?:  =(method 'eth_getLogs')
+        :-  |  :_  [%wait ~]
+        %+  answer-request  req
+        %+  logs-to-json
           (get-param-obj req 'fromBlock')
-        (get-param-obj req 'address')
-      :-  |  :_  this-router
-      (answer-request req s+'0xa')
-    ?:  =(method 'eth_getFilterLogs')
-      ?~  eth-filter
-        ~|(%no-filter-not-implemented !!)
-      =.  last-block.u.eth-filter  (lent logs)
-      :-  |  :_  this-router
-      %+  answer-request  req
-      (logs-to-json from-block.u.eth-filter (lent logs))
-    ?:  =(method 'eth_getFilterChanges')
-      ?~  eth-filter
-        ~|(%no-filter-not-implemented !!)
-      =.  last-block.u.eth-filter  (lent logs)
-      :-  |  :_  this-router
-      %+  answer-request  req
-      (logs-to-json last-block.u.eth-filter (lent logs))
-    [& ~ this-router]
-    ::
-    ++  get-id
-      |=  req=@t
-      =,  dejs:format
-      %.  (need (de-json:html req))
-      (ot id+so ~)
-    ::
-    ++  get-method
-      |=  req=@t
-      =,  dejs:format
-      %.  (need (de-json:html req))
-      (ot method+so ~)
-    ::
-    ++  get-param-obj
-      |=  [req=@t param=@t]
-      =,  dejs:format
-      %-  hex-to-num:ethereum
-      =/  array
+        (get-param-obj req 'toBlock')
+      ?:  =(method 'eth_newFilter')
+        :+  |  
+          (answer-request req s+'0xa')
+        =.  eth-filter
+          :^    ~
+              (get-param-obj req 'fromBlock')
+            (get-param-obj req 'fromBlock')
+          (get-param-obj req 'address')
+        [%cont ..stay]
+      ?:  =(method 'eth_getFilterLogs')
+        ~&  [%filter-logs (lent logs) eth-filter]
+        ?~  eth-filter
+          ~|(%no-filter-not-implemented !!)
+        :+  |
+          %+  answer-request  req
+          (logs-to-json from-block.u.eth-filter (lent logs))
+        =.  last-block.u.eth-filter  (lent logs)
+        [%cont ..stay]
+      ?:  =(method 'eth_getFilterChanges')
+        ~&  [%filter-changes (lent logs) eth-filter]
+        ?~  eth-filter
+          ~|(%no-filter-not-implemented !!)
+        :+  |  
+          %+  answer-request  req
+          (logs-to-json last-block.u.eth-filter (lent logs))
+        =.  last-block.u.eth-filter  (lent logs)
+        [%cont ..stay]
+      [& ~ %wait ~]
+      ::
+      ++  get-id
+        |=  req=@t
+        =,  dejs:format
         %.  (need (de-json:html req))
-        (ot params+(ar (ot param^so ~)) ~)
-      ?>  ?=([* ~] array)
-      i.array
-    ::
-    ++  answer-request
-      |=  [req=@t result=json]
-      ^-  (list ph-event)
-      =/  resp
-        %-  crip
-        %-  en-json:html
-        %-  pairs
-        :~  id+s+(get-id req)
-            jsonrpc+s+'2.0'
-            result+result
-        ==
-      :_  ~
-      :*  %event
-          who
-          //http/0v1n.2m9vh
-          %they
-          num.u.thus
-          [200 ~ `(as-octs:mimes:html resp)]
-      ==
-    ::
-    ++  logs-to-json
-      |=  [from-block=@ud to-block=@ud]
-      ^-  json
-      :-  %a
-      =/  selected-logs
-        %+  swag
-          [from-block (sub to-block from-block)]
-        logs
-      =|  count=@
-      |-  ^-  (list json)
-      ?~  selected-logs
-        ~
-      :_  $(selected-logs t.selected-logs, count +(count))
-      %-  pairs
-      :~  'logIndex'^s+'0x0'
-          'transactionIndex'^s+'0x0'
-          :+  'transactionHash'  %s
-          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5362)))
-        ::
-          :+  'blockHash'  %s
-          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5363)))
-        ::
-          :+  'blockNumber'  %s
-          (crip (num-to-hex:ethereum count))
-        ::
-          :+  'address'  %s
-          (crip (address-to-hex:ethereum azimuth:contracts:azimuth))
-        ::
-          'type'^s+'mined'
-        ::
-          'data'^s+data.i.selected-logs
-          :+  'topics'  %a
-          %+  turn  topics.i.selected-logs
-          |=  topic=@ux
-          ^-  json
-          :-  %s
+        (ot id+so ~)
+      ::
+      ++  get-method
+        |=  req=@t
+        =,  dejs:format
+        %.  (need (de-json:html req))
+        (ot method+so ~)
+      ::
+      ++  get-param-obj
+        |=  [req=@t param=@t]
+        =,  dejs:format
+        %-  hex-to-num:ethereum
+        =/  array
+          %.  (need (de-json:html req))
+          (ot params+(ar (ot param^so ~)) ~)
+        ?>  ?=([* ~] array)
+        i.array
+      ::
+      ++  answer-request
+        |=  [req=@t result=json]
+        ^-  (list ph-event)
+        =/  resp
           %-  crip
-          %-  prefix-hex:ethereum
-          (render-hex-bytes:ethereum 32 `@`topic)
-      ==
+          %-  en-json:html
+          %-  pairs
+          :~  id+s+(get-id req)
+              jsonrpc+s+'2.0'
+              result+result
+          ==
+        :_  ~
+        :*  %event
+            who
+            //http/0v1n.2m9vh
+            %they
+            num.u.thus
+            [200 ~ `(as-octs:mimes:html resp)]
+        ==
+      ::
+      ++  logs-to-json
+        |=  [from-block=@ud to-block=@ud]
+        ^-  json
+        :-  %a
+        =/  selected-logs
+          %+  swag
+            [from-block (sub to-block from-block)]
+          logs
+        =/  count  from-block
+        |-  ^-  (list json)
+        ?~  selected-logs
+          ~
+        :_  $(selected-logs t.selected-logs, count +(count))
+        %-  pairs
+        :~  'logIndex'^s+'0x0'
+            'transactionIndex'^s+'0x0'
+            :+  'transactionHash'  %s
+            (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5362)))
+          ::
+            :+  'blockHash'  %s
+            (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5363)))
+          ::
+            :+  'blockNumber'  %s
+            (crip (num-to-hex:ethereum count))
+          ::
+            :+  'address'  %s
+            (crip (address-to-hex:ethereum azimuth:contracts:azimuth))
+          ::
+            'type'^s+'mined'
+          ::
+            'data'^s+data.i.selected-logs
+            :+  'topics'  %a
+            %+  turn  topics.i.selected-logs
+            |=  topic=@ux
+            ^-  json
+            :-  %s
+            %-  crip
+            %-  prefix-hex:ethereum
+            (render-hex-bytes:ethereum 32 `@`topic)
+        ==
+      --
     --
   ::
   ++  spawn-galaxy

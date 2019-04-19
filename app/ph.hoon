@@ -164,27 +164,27 @@
         '{"id":"poll filter","jsonrpc":"2.0","result":[]}'
     ==
   =/  eth-node  (spawn-galaxy:az ~rel)
-  :~  :-  %boot-az
-      %^    wrap-test-stateful
-          %fake-eth-node
-        router:eth-node
-      %-  compose-tests
-      :_  *raw-test-core
-      %+  compose-tests
-        (raw-ship ~bud `(dawn:ph-azimuth ~bud))
-      (touch-file ~bud %home)
-    ::
-      :-  %boot-az-hi
-      %^    wrap-test-stateful
-          %fake-eth-node
-        router:eth-node
+  :~  ::  :-  %boot-az
+      ::  %^    wrap-test-stateful
+      ::      %fake-eth-node
+      ::    router:eth-node
       ::  %-  compose-tests
       ::  :_  *raw-test-core
-      %+  compose-tests
-        %+  compose-tests
-          (raw-ship ~bud `(dawn:ph-azimuth ~bud))
-        (raw-ship ~dev `(dawn:ph-azimuth ~dev))
-      (send-hi ~bud ~dev)
+      ::  %+  compose-tests
+      ::    (raw-ship ~bud `(dawn:ph-azimuth ~bud))
+      ::  (touch-file ~bud %home)
+    ::
+      ::  :-  %boot-az-hi
+      ::  %^    wrap-test-stateful
+      ::      %fake-eth-node
+      ::    router:eth-node
+      ::  ::  %-  compose-tests
+      ::  ::  :_  *raw-test-core
+      ::  %+  compose-tests
+      ::    %+  compose-tests
+      ::      (raw-ship ~bud `(dawn:ph-azimuth ~bud))
+      ::    (raw-ship ~dev `(dawn:ph-azimuth ~dev))
+      ::  (send-hi ~bud ~dev)
     ::
       :-  %simple-add
       %+  compose-tests  (galaxy ~bud)
@@ -251,17 +251,29 @@
 ++  manual-monad-tests
   ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
   =,  m-test-lib
+  =/  eth-node  (spawn-galaxy:az ~rel)
+  =/  m  (ph ,~)
   :~  :+  %boot-bud
         ~[~bud]
-      =/  m  (ph ,~)
       (raw-ship ~bud ~)
     ::
       :+  %hi
         ~[~bud ~dev]
-      =/  m  (ph ,~)
-      =%  ~  bind:m  (raw-ship ~bud ~)
-      =%  ~  bind:m  (raw-ship ~dev ~)
+      ;<  ~  bind:m  (raw-ship ~bud ~)
+      ;<  ~  bind:m  (raw-ship ~dev ~)
       (send-hi ~bud ~dev)
+    ::
+      :+  %boot-az
+        ~[~bud]
+      ;<  [node=_eth-node ~]  bind:m
+        %+  (wrap-filter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:ph-azimuth ~bud))
+      ;<  [node=_eth-node ~]  bind:m
+        %+  (wrap-filter ,_eth-node ,~)
+          router:(spawn-galaxy:node ~pem)
+        stall
+      (return:m ~)
   ==
 ::
 ++  install-tests
@@ -541,12 +553,13 @@
       =/  m-res=_*ph-output:(ph ,~)
         (m-test.u.test-core who.afs i.ufs.afs)
       =?  ufs.afs  =(%cont -.next.m-res)
-        [[/ %init ~] ufs.afs]
+        [i.ufs.afs [/ %init ~] t.ufs.afs]
       =^  done=(unit ?)  m-test.u.test-core
         ?-    -.next.m-res
           %wait  [~ m-test.u.test-core]
           %cont  [~ self.next.m-res]
-          %done  [`success.next.m-res m-test.u.test-core]
+          %fail  [`| m-test.u.test-core]
+          %done  [`& m-test.u.test-core]
         ==
       =+  ^-  _$
           ?~  done

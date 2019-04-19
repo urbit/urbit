@@ -117,10 +117,13 @@
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
-    =/  poke-result  (slum poke tym ue)
-    =.  snap  +.poke-result
+    =/  poke-result  (mule |.((slum poke tym ue)))
+    ?:  ?=(%| -.poke-result)
+      %-  (slog >%aqua-crash< p.poke-result)
+      $
+    =.  snap  +.p.poke-result
     =.  ..abet-pe  (publish-event tym ue)
-    =.  ..abet-pe  (handle-effects ((list ovum) -.poke-result))
+    =.  ..abet-pe  (handle-effects ((list ovum) -.p.poke-result))
     $
   ::
   ::  Peek
