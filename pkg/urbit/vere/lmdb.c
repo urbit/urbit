@@ -201,6 +201,8 @@ static void u3m_lmdb_write_events_cb(uv_work_t* req) {
     u3m_bail(c3__fail);
   }
 
+  // TODO: Thread MDB_NOOVERWRITE into this; we should never be overwriting items.
+
   // TODO: We need to detect the database being full, making the database
   // maxsize larger, and then retrying this transaction.
   //
@@ -233,14 +235,14 @@ static void u3m_lmdb_write_events_after_cb(uv_work_t* req, int status) {
   free(req);
 }
 
-//  u3m_lmdb_write_events(): Asynchronously writes events to the database.
+// u3m_lmdb_write_events(): Asynchronously writes events to the database.
 //
-//  This writes all the passed in events along with log metadata updates to the
-//  database as a single transaction on a worker thread. Once the transaction
-//  is completed, it calls the passed in callback on the main loop thread.
+// This writes all the passed in events along with log metadata updates to the
+// database as a single transaction on a worker thread. Once the transaction
+// is completed, it calls the passed in callback on the main loop thread.
 //
-//  TODO: Make this take multiple events in one commit once we have this
-//  working one at a time.
+// TODO: Make this take multiple events in one commit once we have this
+// working one at a time.
 //
 void u3m_lmdb_write_events(MDB_env* environment,
                            u3_writ* event_u,
@@ -269,6 +271,99 @@ void u3m_lmdb_write_events(MDB_env* environment,
                 req,
                 u3m_lmdb_write_events_cb,
                 u3m_lmdb_write_events_after_cb);
+}
+
+// u3m_lmdb_read_events(): Synchronously reads events from the database.
+//
+// This searches through first_event_d in order 
+//
+// Returns yes if everything completed without errors.
+//
+c3_o u3m_lmdb_read_events(MDB_env* environment,
+                          c3_d first_event_d,
+                          c3_d len_d,
+                          void (*callback)(c3_d id, u3_noun ovo))
+{
+  // Creates the read transaction.
+  MDB_txn* transaction_u;
+  c3_w ret_w = mdb_txn_begin(environment,
+                             (MDB_txn *) NULL,
+                             MDB_RDONLY, /* flags */
+                             &transaction_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Opens the database as part of the transaction.
+  c3_w flags_w = MDB_CREATE | MDB_INTEGERKEY;
+  MDB_dbi database_u;
+  ret_w = mdb_dbi_open(transaction_u,
+                       "EVENTS",
+                       flags_w,
+                       &database_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Creates a cursor to iterate over keys starting at first_event_d.
+  MDB_cursor* cursor_u;
+  ret_w = mdb_cursor_open(transaction_u, database_u, &cursor_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: cursor_open fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Sets the cursor to the position of first_event_d.
+  MDB_val key;
+  MDB_val val;
+  key.mv_size = sizeof(c3_d);
+  key.mv_data = &first_event_d;
+
+  ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_SET_RANGE);
+  if (0 != ret_w) {
+    u3l_log("lmdb: could not find initial event %" PRIu64 ": %s\r\n",
+            first_event_d, mdb_strerror(ret_w));
+    mdb_cursor_close(cursor_u);
+    return c3n;
+  }
+
+  // Load up to len_d events, iterating forward across the cursor.
+  for (c3_d loaded = 0; (ret_w != MDB_NOTFOUND) && (loaded < len_d); ++loaded) {
+    // As a sanity check, we make sure that there aren't any discontinuities in
+    // the sequence of loaded events.
+    c3_d current_id = first_event_d + loaded;
+    if (key.mv_size != sizeof(c3_d) ||
+        *(c3_d*)key.mv_data != current_id) {
+      u3l_log("lmdb: invalid cursor key\r\n");
+      return c3n;
+    }
+
+    // Now build the atom version and then the cued version from the raw data
+    u3_noun mat = u3i_chubs(val.mv_size, val.mv_data);
+    u3_noun ovo = u3ke_cue(u3k(mat));
+
+    callback(current_id, ovo);
+
+    u3z(ovo);
+    u3z(mat);
+
+    ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_NEXT);
+    if (ret_w != 0 && ret_w != MDB_NOTFOUND) {
+      u3l_log("lmdb: error while loading events: %s\r\n",
+              mdb_strerror(ret_w));
+      return c3n;
+    }
+  }
+
+  mdb_cursor_close(cursor_u);
+
+  // Read-only transactions are aborted since we don't need to record the fact
+  // that we performed a read.
+  mdb_txn_abort(transaction_u);
+
+  return c3y;
 }
 
 // Writes the event log identity information.

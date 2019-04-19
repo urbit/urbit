@@ -93,20 +93,11 @@ _pier_disk_shutdown(u3_pier* pir_u)
 static void
 _pier_db_commit_complete(u3_writ* wit_u)
 {
-  u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
-}
-
-/* _pier_disk_commit_complete(): commit complete.
-*/
-static void
-_pier_disk_commit_complete(void* vod_p)
-{
-  u3_writ* wit_u = vod_p;
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
 #ifdef VERBOSE_EVENTS
-  u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
+  u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
 #endif
 
   /* advance commit counter
@@ -120,6 +111,29 @@ _pier_disk_commit_complete(void* vod_p)
   _pier_apply(pir_u);
 }
 
+/* /\* _pier_disk_commit_complete(): commit complete. */
+/* *\/ */
+/* static void */
+/* _pier_disk_commit_complete(void* vod_p) */
+/* { */
+/*   u3_writ* wit_u = vod_p; */
+/*   u3_pier* pir_u = wit_u->pir_u; */
+/*   u3_disk* log_u = pir_u->log_u; */
+
+/* #ifdef VERBOSE_EVENTS */
+/*   u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d); */
+/* #endif */
+
+/*   /\* advance commit counter */
+/*   *\/ */
+/*   { */
+/*     c3_assert(wit_u->evt_d == log_u->moc_d); */
+/*     c3_assert(wit_u->evt_d == (1ULL + log_u->com_d)); */
+/*     log_u->com_d += 1ULL; */
+/*   } */
+
+/*   _pier_apply(pir_u); */
+/* } */
 
 /* _pier_disk_commit_request(): start commit.
 */
@@ -133,19 +147,19 @@ _pier_disk_commit_request(u3_writ* wit_u)
   u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
 #endif
 
-  /* append to logfile
-  */
-  {
-    c3_d  len_d = u3r_met(6, wit_u->mat);
-    c3_d* buf_d = c3_malloc(8 * len_d);
+  /* /\* append to logfile */
+  /* *\/ */
+  /* { */
+  /*   c3_d  len_d = u3r_met(6, wit_u->mat); */
+  /*   c3_d* buf_d = c3_malloc(8 * len_d); */
 
-    u3r_chubs(0, len_d, buf_d, wit_u->mat);
-    u3_foil_append(_pier_disk_commit_complete,
-                   wit_u,
-                   log_u->fol_u,
-                   buf_d,
-                   len_d);
-  }
+  /*   u3r_chubs(0, len_d, buf_d, wit_u->mat); */
+  /*   u3_foil_append(_pier_disk_commit_complete, */
+  /*                  wit_u, */
+  /*                  log_u->fol_u, */
+  /*                  buf_d, */
+  /*                  len_d); */
+  /* } */
 
   /* put it in the database
   */
