@@ -4,7 +4,7 @@
 */
 
 #include "h2o.h"
-#include "lmdb.h"
+#include <lmdb.h>
 
   /** Quasi-tunable parameters.
   **/
@@ -1340,3 +1340,22 @@
       */
         void
         u3_daemon_grab(void* vod_p);
+
+
+
+MDB_env* u3m_lmdb_init(const char* log_path);
+void u3m_lmdb_shutdown(MDB_env* env);
+
+void u3m_lmdb_write_events(MDB_env* environment,
+                           u3_writ* event_u,
+                           void (*callback)(u3_writ*));
+
+void u3m_lmdb_write_identity(MDB_env* environment,
+                             u3_noun who,
+                             u3_noun is_fake,
+                             u3_noun life);
+void u3m_lmdb_read_identity(MDB_env* environment,
+                            u3_noun* who,
+                            u3_noun* is_fake,
+                            u3_noun* life);
+

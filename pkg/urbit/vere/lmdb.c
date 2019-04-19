@@ -6,6 +6,8 @@
 #include <uv.h>
 #include <lmdb.h>
 
+#include "vere/vere.h"
+
 // Event log persistence for Urbit
 //
 // Persistence works by having an lmdb environment opened on the main
@@ -39,6 +41,14 @@ MDB_env* u3m_lmdb_init(const char* log_path)
   ret_w = mdb_env_set_maxdbs(env, 3);
   if (ret_w != 0) {
     u3l_log("lmdb: failed to set number of databases: %s\n", mdb_strerror(ret_w));
+    return 0;
+  }
+
+  // TODO: Start with a gigabyte for the event log.
+  //
+  ret_w = mdb_env_set_mapsize(env, 1024 * 1024 * 1024);
+  if (ret_w != 0) {
+    u3l_log("lmdb: failed to set database size: %s\n", mdb_strerror(ret_w));
     return 0;
   }
 
@@ -138,23 +148,94 @@ void _perform_get_on_databse_noun(MDB_txn* transaction_u,
   *noun = u3qe_cue(raw_atom);
 }
 
+struct _write_request_data {
+  // The database environment to write to. This object is thread-safe, though
+  // the transactions and handles opened from it are explicitly not.
+  MDB_env* environment;
+
+  // The original event. Not to be accessed from the worker thread; only used
+  // in the callback executed on the main loop thread.
+  u3_writ* event;
+
+  // The event number from event separated out so we can access it on the other
+  // thread.
+  c3_d event_number;
+
+  // The event serialized out of the loom into a malloced structure accessible
+  // from the worker thread.
+  void* malloced_event_data;
+
+  // The size of the malloced_event_data. We keep track of this for the
+  // database write.
+  size_t malloced_event_data_size;
+
+  // Called on main loop thread on completion.
+  void (*callback)(u3_writ*);
+};
+
 // Implementation of u3m_lmdb_write_events() called on a worker thread.
 //
 static void u3m_lmdb_write_events_cb(uv_work_t* req) {
 
+  fprintf(stderr, "Starting write...\r\n");
+  
+  /* struct _write_request_data* data = req->data; */
+
+  /* // Creates the write transaction. */
+  /* MDB_txn* transaction_u; */
+  /* c3_w ret_w = mdb_txn_begin(data->environment, */
+  /*                            (MDB_txn *) NULL, */
+  /*                            0, /\* flags *\/ */
+  /*                            &transaction_u); */
+  /* if (0 != ret_w) { */
+  /*   u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w)); */
+  /*   u3m_bail(c3__fail); */
+  /* } */
+
+  /* // Opens the database as part of the transaction. */
+  /* c3_w flags_w = MDB_CREATE | MDB_INTEGERKEY; */
+  /* MDB_dbi database_u; */
+  /* ret_w = mdb_dbi_open(transaction_u, */
+  /*                      "EVENTS", */
+  /*                      flags_w, */
+  /*                      &database_u); */
+  /* if (0 != ret_w) { */
+  /*   u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w)); */
+  /*   u3m_bail(c3__fail); */
+  /* } */
+
+  /* // TODO: We need to detect the database being full, making the database */
+  /* // maxsize larger, and then retrying this transaction. */
+  /* // */
+  /* _perform_put_on_databse_raw(transaction_u, */
+  /*                             database_u, */
+  /*                             &(data->event_number), */
+  /*                             sizeof(c3_d), */
+  /*                             data->malloced_event_data, */
+  /*                             data->malloced_event_data_size); */
+
+  /* ret_w = mdb_txn_commit(transaction_u); */
+  /* if (0 != ret_w) { */
+  /*   u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n", */
+  /*           data->event_number, */
+  /*           mdb_strerror(ret_w)); */
+  /*   u3m_bail(c3__fail); */
+  /* } */
+
+  fprintf(stderr, "Completed write...\r\n");
 }
 
 // Implementation of u3m_lmdb_write_events() called on the main loop thread
 // after the worker thread event completes.
 //
 static void u3m_lmdb_write_events_after_cb(uv_work_t* req, int status) {
-  // Calls the user provided cb
+  struct _write_request_data* data = req->data;
 
+  data->callback(data->event);
 
-  // Cleans up req->data.
-
+  free(data->malloced_event_data);
+  free(data);
 }
-
 
 //  u3m_lmdb_write_events(): Asynchronously writes events to the database.
 //
@@ -162,18 +243,34 @@ static void u3m_lmdb_write_events_after_cb(uv_work_t* req, int status) {
 //  database as a single transaction on a worker thread. Once the transaction
 //  is completed, it calls the passed in callback on the main loop thread.
 //
+//  TODO: Make this take multiple events in one commit once we have this
+//  working one at a time.
+//
 void u3m_lmdb_write_events(MDB_env* environment,
-                           int first_event_id,
-                           u3_noun* events,
-                           int event_count
-                           /*,  TODO: ADD CALLBACK */
-                           )
+                           u3_writ* event_u,
+                           void (*callback)(u3_writ*))
 {
-  // Packs up all the events for transport.
-  //
+  // Serialize the jammed $work into a malloced buffer we can send to the other
+  // thread.
+  c3_d  len_d  = u3r_met(6, event_u->mat);
+  c3_d* data_u = c3_malloc(8 * len_d);
+  u3r_chubs(0, len_d, data_u, event_u->mat);
 
+  // Structure to pass to the worker thread.
+  struct _write_request_data* data = c3_malloc(sizeof(struct _write_request_data));
+  data->environment = environment;
+  data->event = event_u;
+  data->event_number = event_u->evt_d;
+  data->malloced_event_data = data_u;
+  data->malloced_event_data_size = 8 * len_d;
+  data->callback = callback;
+
+  // Queue asynchronous work to happen on the other thread.
   uv_work_t req;
-  req.data = /* malloc() */ 0;
+  req.data = data;
+
+  /* u3m_lmdb_write_events_cb(&req); */
+  /* u3m_lmdb_write_events_after_cb(&req, 5); */
 
   uv_queue_work(uv_default_loop(),
                 &req,
@@ -236,7 +333,7 @@ void u3m_lmdb_read_identity(MDB_env* environment,
   MDB_txn* transaction_u;
   c3_w ret_w = mdb_txn_begin(environment,
                              (MDB_txn *) NULL,
-                             0, /* flags */
+                             MDB_RDONLY, /* flags */
                              &transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));

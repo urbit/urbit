@@ -85,7 +85,16 @@ _pier_disk_bail(void* vod_p, const c3_c* err_c)
 static void
 _pier_disk_shutdown(u3_pier* pir_u)
 {
+  fprintf(stderr, "SHUTING DOWN THE SYSTEM\r\n");
   u3m_lmdb_shutdown(pir_u->log_u->db_u);
+}
+
+/* _pier_db_commit_complete(): commit complete.
+ */
+static void
+_pier_db_commit_complete(u3_writ* wit_u)
+{
+  u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
 }
 
 /* _pier_disk_commit_complete(): commit complete.
@@ -112,6 +121,7 @@ _pier_disk_commit_complete(void* vod_p)
   _pier_apply(pir_u);
 }
 
+
 /* _pier_disk_commit_request(): start commit.
 */
 static void
@@ -137,6 +147,14 @@ _pier_disk_commit_request(u3_writ* wit_u)
                    buf_d,
                    len_d);
   }
+
+  /* put it in the database
+  */
+  /* { */
+  /*   u3m_lmdb_write_events(log_u->db_u, */
+  /*                         wit_u, */
+  /*                         _pier_db_commit_complete); */
+  /* } */
 
   /* advance commit-request counter
   */
@@ -187,10 +205,6 @@ _pier_db_write_header(u3_pier* pir_u,
 {
   u3m_lmdb_write_identity(pir_u->log_u->db_u,
                           who, is_fake, life);
-
-  u3z(who);
-  u3z(is_fake);
-  u3z(life);
 }
 
 /* _pier_db_read_header(): reads the ships metadata from lmdb
@@ -694,7 +708,7 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
 
   if ( c3y == sav_o ) {
-    _pier_db_write_header(pir_u, u3k(who), u3k(pir_u->fak_o), u3k(len));
+    _pier_db_write_header(pir_u, who, u3k(pir_u->fak_o), len);
   }
 
   u3_atom mat = u3we_jam(msg);
@@ -1817,6 +1831,7 @@ start:
          (wit_u->evt_d == (1 + log_u->moc_d)) &&
          (wit_u->evt_d == (1 + log_u->com_d)) )
     {
+      // TODO(erg): This is the place where we build up things into a queue.
       _pier_disk_commit_request(wit_u);
       act_o = c3y;
     }
