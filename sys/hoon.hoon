@@ -6704,7 +6704,6 @@
     {$tsls p/hoon q/hoon}                               ::  =+  q w/[p subject]
     {$tssg p/(list hoon)}                               ::  =~  hoon stack
     {$tstr p/(pair term (unit spec)) q/hoon r/hoon}     ::  =*  new style
-    {$tscn p/spec q/hoon r/hoon s/hoon}                 ::  =%  bind
     {$tscm p/hoon q/hoon}                               ::  =,  overload p in q
   ::                                            ::::::  conditionals
     {$wtbr p/(list hoon)}                               ::  ?|  loobean or
@@ -8821,16 +8820,6 @@
       :+  %tsld
         r.gen
       [%tune [[p.p.gen ~ ?~(q.p.gen q.gen [%kthp u.q.p.gen q.gen])] ~ ~] ~]
-    ::
-        {$tscn *}
-      :^    %cnls
-          :+  %cnhp
-            q.gen
-          [%ktcl p.gen]
-        r.gen
-      :+  %brts
-        p.gen
-      s.gen
     ::
         {$tscl *}
       [%tsbn [%cncb [[%& 1] ~] p.gen] q.gen]
@@ -14070,7 +14059,6 @@
         [%tstr *]  ?~  q.p.x
                      (rune '=*' ~ ~ p.p.x (hoons ~[q r]:x))
                    (rune '=*' ~ ~ (spec [%bsts p.p.x u.q.p.x]) (hoons ~[q r]:x))
-        [%tscn *]  (rune '=%' ~ ~ (spec p.x) (hoons ~[q r s]:x))
         [%tscm *]  (rune '=,' ~ ~ (hoons ~[p q]:x))
         [%wtbr *]  (rune '?|' `'--' `['|(' ' ' ')'] (hoons p:x))
         [%wthp *]  (rune '?-' `'==' ~ (wing p.x) (matches q.x))
@@ -16682,7 +16670,6 @@
                   ['>' (rune ban %tsbn expb)]
                   ['-' (rune hep %tshp expb)]
                   ['*' (rune tar %tstr expg)]
-                  ['%' (rune cen %tscn exp1)]
                   [',' (rune com %tscm expb)]
                   ['+' (rune lus %tsls expb)]
                   ['~' (rune sig %tssg expi)]
@@ -16934,7 +16921,6 @@
     ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
-    ++  exp1  |.(;~(gunk loan loaf loaf loaf))          ::  spec and three hoons
     ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon
