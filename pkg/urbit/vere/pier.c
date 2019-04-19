@@ -85,7 +85,6 @@ _pier_disk_bail(void* vod_p, const c3_c* err_c)
 static void
 _pier_disk_shutdown(u3_pier* pir_u)
 {
-  fprintf(stderr, "SHUTING DOWN THE SYSTEM\r\n");
   u3m_lmdb_shutdown(pir_u->log_u->db_u);
 }
 
@@ -150,11 +149,11 @@ _pier_disk_commit_request(u3_writ* wit_u)
 
   /* put it in the database
   */
-  /* { */
-  /*   u3m_lmdb_write_events(log_u->db_u, */
-  /*                         wit_u, */
-  /*                         _pier_db_commit_complete); */
-  /* } */
+  {
+    u3m_lmdb_write_events(log_u->db_u,
+                          wit_u,
+                          _pier_db_commit_complete);
+  }
 
   /* advance commit-request counter
   */
@@ -1939,6 +1938,7 @@ _pier_exit_done(u3_pier* pir_u)
 {
   u3l_log("pier: exit\r\n");
 
+  _pier_disk_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
   _pier_loop_exit(pir_u);
 

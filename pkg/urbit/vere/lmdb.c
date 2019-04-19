@@ -176,53 +176,48 @@ struct _write_request_data {
 // Implementation of u3m_lmdb_write_events() called on a worker thread.
 //
 static void u3m_lmdb_write_events_cb(uv_work_t* req) {
+  struct _write_request_data* data = req->data;
 
-  fprintf(stderr, "Starting write...\r\n");
-  
-  /* struct _write_request_data* data = req->data; */
+  // Creates the write transaction.
+  MDB_txn* transaction_u;
+  c3_w ret_w = mdb_txn_begin(data->environment,
+                             (MDB_txn *) NULL,
+                             0, /* flags */
+                             &transaction_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail);
+  }
 
-  /* // Creates the write transaction. */
-  /* MDB_txn* transaction_u; */
-  /* c3_w ret_w = mdb_txn_begin(data->environment, */
-  /*                            (MDB_txn *) NULL, */
-  /*                            0, /\* flags *\/ */
-  /*                            &transaction_u); */
-  /* if (0 != ret_w) { */
-  /*   u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w)); */
-  /*   u3m_bail(c3__fail); */
-  /* } */
+  // Opens the database as part of the transaction.
+  c3_w flags_w = MDB_CREATE | MDB_INTEGERKEY;
+  MDB_dbi database_u;
+  ret_w = mdb_dbi_open(transaction_u,
+                       "EVENTS",
+                       flags_w,
+                       &database_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    u3m_bail(c3__fail);
+  }
 
-  /* // Opens the database as part of the transaction. */
-  /* c3_w flags_w = MDB_CREATE | MDB_INTEGERKEY; */
-  /* MDB_dbi database_u; */
-  /* ret_w = mdb_dbi_open(transaction_u, */
-  /*                      "EVENTS", */
-  /*                      flags_w, */
-  /*                      &database_u); */
-  /* if (0 != ret_w) { */
-  /*   u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w)); */
-  /*   u3m_bail(c3__fail); */
-  /* } */
+  // TODO: We need to detect the database being full, making the database
+  // maxsize larger, and then retrying this transaction.
+  //
+  _perform_put_on_databse_raw(transaction_u,
+                              database_u,
+                              &(data->event_number),
+                              sizeof(c3_d),
+                              data->malloced_event_data,
+                              data->malloced_event_data_size);
 
-  /* // TODO: We need to detect the database being full, making the database */
-  /* // maxsize larger, and then retrying this transaction. */
-  /* // */
-  /* _perform_put_on_databse_raw(transaction_u, */
-  /*                             database_u, */
-  /*                             &(data->event_number), */
-  /*                             sizeof(c3_d), */
-  /*                             data->malloced_event_data, */
-  /*                             data->malloced_event_data_size); */
-
-  /* ret_w = mdb_txn_commit(transaction_u); */
-  /* if (0 != ret_w) { */
-  /*   u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n", */
-  /*           data->event_number, */
-  /*           mdb_strerror(ret_w)); */
-  /*   u3m_bail(c3__fail); */
-  /* } */
-
-  fprintf(stderr, "Completed write...\r\n");
+  ret_w = mdb_txn_commit(transaction_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n",
+            data->event_number,
+            mdb_strerror(ret_w));
+    u3m_bail(c3__fail);
+  }
 }
 
 // Implementation of u3m_lmdb_write_events() called on the main loop thread
@@ -235,6 +230,7 @@ static void u3m_lmdb_write_events_after_cb(uv_work_t* req, int status) {
 
   free(data->malloced_event_data);
   free(data);
+  free(req);
 }
 
 //  u3m_lmdb_write_events(): Asynchronously writes events to the database.
@@ -266,18 +262,14 @@ void u3m_lmdb_write_events(MDB_env* environment,
   data->callback = callback;
 
   // Queue asynchronous work to happen on the other thread.
-  uv_work_t req;
-  req.data = data;
-
-  /* u3m_lmdb_write_events_cb(&req); */
-  /* u3m_lmdb_write_events_after_cb(&req, 5); */
+  uv_work_t* req = c3_malloc(sizeof(uv_work_t));
+  req->data = data;
 
   uv_queue_work(uv_default_loop(),
-                &req,
+                req,
                 u3m_lmdb_write_events_cb,
                 u3m_lmdb_write_events_after_cb);
 }
-
 
 // Writes the event log identity information.
 //
