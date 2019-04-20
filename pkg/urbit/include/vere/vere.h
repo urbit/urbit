@@ -1359,3 +1359,7 @@ void u3m_lmdb_read_identity(MDB_env* environment,
                             u3_noun* is_fake,
                             u3_noun* life);
 
+c3_o u3m_lmdb_read_events(MDB_env* environment,
+                          c3_d first_event_d,
+                          c3_d len_d,
+                          void (*callback)(c3_d id, u3_noun ovo));

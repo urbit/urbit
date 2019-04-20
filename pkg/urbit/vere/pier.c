@@ -328,6 +328,29 @@ _pier_disk_read_header(u3_disk* log_u)
 #endif
 }
 
+
+static void
+_pier_db_on_commit_loaded(c3_d id,
+                          u3_noun ovo)
+{
+  // Enqueues the event for replay
+
+}
+
+/* _pier_db_load_commit(): load len_d commits >= lav_d; enqueue for replay
+*/
+static void
+_pier_db_load_commits(u3_pier* pir_u,
+                      c3_d     lav_d,
+                      c3_d     len_d)
+{
+  u3m_lmdb_read_events(pir_u->log_u->db_u,
+                       lav_d,
+                       len_d,
+                       _pier_db_on_commit_loaded);
+}
+
+
 /* _pier_disk_load_commit(): load len_d commits >= lav_d; enqueue for replay
 */
 static void
@@ -718,13 +741,13 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 
   u3_noun who = u3i_chubs(2, pir_u->who_d);
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
-  u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
 
   if ( c3y == sav_o ) {
     _pier_db_write_header(pir_u, who, u3k(pir_u->fak_o), len);
   }
 
-  u3_atom mat = u3we_jam(msg);
+  u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
+  u3_atom mat = u3ke_jam(msg);
   if ( c3y == sav_o ) {
     _pier_disk_write_header(pir_u, u3k(mat));
   }
