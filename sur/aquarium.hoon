@@ -1,4 +1,3 @@
-::
 ::  Traditionally, ovo refers to an ovum -- (pair wire card) -- and ova
 ::  refers to a list of them.  We have several versions of each of these
 ::  depending on context, so we do away with that naming scheme and use
@@ -12,6 +11,11 @@
 ::  it's a list.
 ::
 |%
+++  ph-event
+  $%  [%test-done p=?]
+      aqua-event
+  ==
+::
 +$  aqua-event
   $%  [%init-ship who=ship keys=(unit dawn-event)]
       [%pause-events who=ship]

@@ -7,10 +7,12 @@
 ::  - Restore a fleet
 ::  - Compose tests
 ::
-/-  aquarium
-/+  ph
+/-  aquarium, ph
+/+  ph, ph-tests, ph-azimuth, ph-philter
+=,  ph-sur=^ph
 =,  aquarium
 =,  ph
+=,  ph-philter
 =>  $~  |%
     +$  move  (pair bone card)
     +$  card
@@ -32,27 +34,19 @@
     ::
     +$  state
       $:  %0
-          raw-test-cores=(map term raw-test-core)
           test-core=(unit test-core-state)
-          monad-tests=(map term [(list ship) _*data:(ph ,~)])
+          tests=(map term [(list ship) _*data:(ph ,~)])
           other-state
       ==
     ::
     +$  test-core-state
-      $%  $:  %&
-              lab=term
-              hers=(list ship)
-              m-test=_*data:(ph ,~)
-          ==
-          $:  %|
-              lab=term
-              hers=(list ship)
-              cor=raw-test-core
-          ==
+      $:  lab=term
+          hers=(list ship)
+          test=_*data:(ph ,~)
       ==
     ::
     +$  other-state
-      $:  test-qeu=(qeu [? term])
+      $:  test-qeu=(qeu term)
           results=(list (pair term ?))
           effect-log=(list [who=ship uf=unix-effect])
       ==
@@ -64,194 +58,10 @@
         state
     ==
 ++  this  .
-++  test-lib  ~(. ^test-lib our.hid)
-::
-::  Tests that will be run automatically with :ph %run-all-tests
-::
-++  auto-tests
-  =,  test-lib
-  ^-  (list (pair term raw-test-core))
-  :~
-    :-  %boot-bud
-    (galaxy ~bud)
-  ::
-    :-  %add
-    ^-  raw-test-core
-    %+  compose-tests  (galaxy ~bud)
-    %+  stateless-test
-      %add
-    |_  now=@da
-    ++  start
-      (dojo ~bud "[%test-result (add 2 3)]")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~bud who uf "[%test-result 5]")
-    --
-  ::
-    :-  %hi
-    %+  compose-tests
-      %+  compose-tests
-        (galaxy ~bud)
-      (galaxy ~dev)
-    (send-hi ~bud ~dev)
-  ::
-    :-  %boot-planet
-    (planet ~linnup-torsyx)
-  ::
-    :-  %hi-grandparent
-    %+  compose-tests  (planet ~linnup-torsyx)
-    %+  stateless-test
-      %hi-grandparent
-    |_  now=@da
-    ++  start
-      (dojo ~linnup-torsyx "|hi ~bud")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~linnup-torsyx who uf "hi ~bud successful")
-    --
-  ::
-    :-  %second-cousin-hi
-    %+  compose-tests
-      %+  compose-tests  (planet ~mitnep-todsut)
-        (planet ~haplun-todtus)
-    %+  stateless-test
-      %second-cousin-hi
-    |_  now=@da
-    ++  start
-      (dojo ~haplun-todtus "|hi ~mitnep-todsut")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~haplun-todtus who uf "hi ~mitnep-todsut successful")
-    --
-  ::
-    :-  %change-file
-    %+  compose-tests  (galaxy ~bud)
-    (touch-file ~bud %home)
-  ::
-    :-  %child-sync
-    %+  compose-tests
-      %+  compose-tests
-        (star ~marbud)
-      (touch-file ~bud %base)
-    (check-file-touched ~marbud %home)
-  ==
-::
-::  Tests that will not be run automatically.
-::
-::    Some valid reasons for not running a test automatically:
-::    - Nondeterministic
-::    - Depends on external services
-::    - Is very slow
-::
 ++  manual-tests
-  =,  test-lib
-  ^-  (list (pair term raw-test-core))
-  =/  static-eth-node
-    %-  malt
-    ^-  (list [@t @t])
-    :~  :-  '{"params":[],"id":"block number","jsonrpc":"2.0","method":"eth_blockNumber"}'
-        '{"id":"block number","jsonrpc":"2.0","result":"0x7"}'
-        :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","toBlock":"0x7"}],"id":"catch up","jsonrpc":"2.0","method":"eth_getLogs"}'
-        '{"id":"catch up","jsonrpc":"2.0","result":[{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x68ddd548d852373c1a0647be1b0c3df020e34bacbf6f2e2e9ceb4e80db517e3f","blockHash":"0x3783bf0ba0e9de7449c50375d899a72f00f9423a6dd881b677d4768e3ba7855a","blockNumber":"0x1","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000","topics":["0xfafd04ade1daae2e1fdb0fc1cc6a899fd424063ed5c92120e67e073053b94898"],"type":"mined"},{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x9ccaa993d930767468a34fa04cd13b0b7868d93eb9900b11f2b1f7d55a0670da","blockHash":"0xff1b610fe58f1938fbccf449363ddd574a902f9a3a71771e0215335b4d99abaa","blockNumber":"0x6","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x","topics":["0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0","0x0000000000000000000000006deffb0cafdb11d175f123f6891aa64f01c24f7d","0x00000000000000000000000056db68f29203ff44a803faa2404a44ecbb7a7480"],"type":"mined"}]}'
-        :-  '{"params":[{"fromBlock":"0x0","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381"}],"id":"new filter","jsonrpc":"2.0","method":"eth_newFilter"}'
-        '{"id":"new filter","jsonrpc":"2.0","result":"0xa"}'
-        :-  '{"params":["0x0a"],"id":"filter logs","jsonrpc":"2.0","method":"eth_getFilterLogs"}'
-        '{"id":"filter logs","jsonrpc":"2.0","result":[{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x68ddd548d852373c1a0647be1b0c3df020e34bacbf6f2e2e9ceb4e80db517e3f","blockHash":"0x3783bf0ba0e9de7449c50375d899a72f00f9423a6dd881b677d4768e3ba7855a","blockNumber":"0x1","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b6578616d706c652e636f6d000000000000000000000000000000000000000000","topics":["0xfafd04ade1daae2e1fdb0fc1cc6a899fd424063ed5c92120e67e073053b94898"],"type":"mined"},{"logIndex":"0x0","transactionIndex":"0x0","transactionHash":"0x9ccaa993d930767468a34fa04cd13b0b7868d93eb9900b11f2b1f7d55a0670da","blockHash":"0xff1b610fe58f1938fbccf449363ddd574a902f9a3a71771e0215335b4d99abaa","blockNumber":"0x6","address":"0x863d9c2e5c4c133596cfac29d55255f0d0f86381","data":"0x","topics":["0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0","0x0000000000000000000000006deffb0cafdb11d175f123f6891aa64f01c24f7d","0x00000000000000000000000056db68f29203ff44a803faa2404a44ecbb7a7480"],"type":"mined"}]}'
-        :-  '{"params":["0x0a"],"id":"poll filter","jsonrpc":"2.0","method":"eth_getFilterChanges"}'
-        '{"id":"poll filter","jsonrpc":"2.0","result":[]}'
-    ==
-  =/  eth-node  (spawn-galaxy:az ~rel)
-  :~  ::  :-  %boot-az
-      ::  %^    wrap-test-stateful
-      ::      %fake-eth-node
-      ::    router:eth-node
-      ::  %-  compose-tests
-      ::  :_  *raw-test-core
-      ::  %+  compose-tests
-      ::    (raw-ship ~bud `(dawn:ph-azimuth ~bud))
-      ::  (touch-file ~bud %home)
-    ::
-      ::  :-  %boot-az-hi
-      ::  %^    wrap-test-stateful
-      ::      %fake-eth-node
-      ::    router:eth-node
-      ::  ::  %-  compose-tests
-      ::  ::  :_  *raw-test-core
-      ::  %+  compose-tests
-      ::    %+  compose-tests
-      ::      (raw-ship ~bud `(dawn:ph-azimuth ~bud))
-      ::    (raw-ship ~dev `(dawn:ph-azimuth ~dev))
-      ::  (send-hi ~bud ~dev)
-    ::
-      :-  %simple-add
-      %+  compose-tests  (galaxy ~bud)
-      %+  stateless-test
-        %add
-      ^-  stateless-test-core
-      |_  now=@da
-      ++  start
-        =/  command  "[%test-result (add 2 3)]"
-        :~  [%event ~bud //term/1 %belt %txt ((list @c) command)]
-            [%event ~bud //term/1 %belt %ret ~]
-        ==
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ?.  (is-dojo-output ~bud who uf "[%test-result 5]")
-          ~
-        [%test-done &]~
-      --
-    ::
-      :-  %count
-      %+  compose-tests  (galaxy ~bud)
-      %+  porcelain-test
-        %state
-      =|  count=@
-      |_  now=@da
-      ++  start
-        ^-  (quip ph-event _..start)
-        [(dojo ~bud "\"count: {<count>}\"") ..start]
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ^-  (quip ph-event _..start)
-        ?.  (is-dojo-output ~bud who uf "\"count: {<count>}\"")
-          [~ ..start]
-        ?:  (gte count 10)
-          [[%test-done &]~ ..start]
-        =.  count  +(count)
-        start
-      --
-    ::
-      :-  %break-behn
-      %+  compose-tests
-        %+  compose-tests
-          (galaxy ~bud)
-        (galaxy ~dev)
-      ^-  raw-test-core
-      |_  now=@da
-      ++  label  %break-behn
-      ++  ships  ~
-      ++  start
-        [(dojo ~bud "|hi ~dev") ..start]
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ^-  [? (quip ph-event _..start)]
-        ?:  ?=(%doze -.q.uf)
-          [| ~ ..start]
-        :-  &  :_  ..start
-        (expect-dojo-output ~bud who uf "hi ~dev successful")
-      --
-  ==
-::
-++  manual-monad-tests
   ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
-  =+  ~(. m-test-lib our.hid)
-  =/  eth-node  (spawn-galaxy:az ~rel)
+  =+  (ph-tests our.hid)
+  =/  eth-node  (spawn-galaxy:ph-azimuth ~rel)
   =/  m  (ph ,~)
   :~  :+  %boot-bud
         ~[~bud]
@@ -286,11 +96,11 @@
       :+  %boot-az
         ~[~bud]
       ;<  [node=_eth-node ~]  bind:m
-        %+  (wrap-filter ,_eth-node ,~)
+        %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
-        (raw-ship ~bud `(dawn:ph-azimuth ~bud))
+        (raw-ship ~bud `(dawn:legacy:ph-azimuth ~bud))
       ;<  [node=_eth-node ~]  bind:m
-        %+  (wrap-filter ,_eth-node ,~)
+        %+  (wrap-philter ,_eth-node ,~)
           router:(spawn-galaxy:node ~pem)
         stall
       (return:m ~)
@@ -310,10 +120,7 @@
 ::
 ++  install-tests
   ^+  this
-  =.  raw-test-cores
-    (~(uni by (malt auto-tests)) (malt manual-tests))
-  =.  monad-tests
-    (malt manual-monad-tests)
+  =.  tests  (malt manual-tests)
   this
 ::
 ++  prep
@@ -396,24 +203,13 @@
       `this
     =/  throw-away  print-results
     `this(results ~)
-  =^  test  test-qeu  ~(get to test-qeu)
-  =+  [m=? lab=term]=test
-  ?.  m
-    ~&  [running-test=lab test-qeu]
-    =.  effect-log  ~
-    =/  res=[events=(list ph-event) new-state=raw-test-core]
-      ~(start (~(got by raw-test-cores) lab) now.hid)
-    =>  .(test-core `(unit test-core-state)`test-core)
-    =.  test-core  `[%| lab [ships .]:new-state.res]
-    =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
-    =^  moves-2  this  (run-events lab events.res)
-    [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
-  ~&  [running-m-test=lab test-qeu]
+  =^  lab  test-qeu  ~(get to test-qeu)
+  ~&  [running-test=lab test-qeu]
   =.  effect-log  ~
-  =+  ^-  [ships=(list ship) m-test=_*data:(ph ,~)]
-      (~(got by monad-tests) lab)
+  =+  ^-  [ships=(list ship) test=_*data:(ph ,~)]
+      (~(got by tests) lab)
   =>  .(test-core `(unit test-core-state)`test-core)
-  =.  test-core  `[%& lab ships m-test]
+  =.  test-core  `[lab ships test]
   =^  moves-1  this  (subscribe-to-effects lab ships)
   =^  moves-2  this
     (diff-aqua-effects /[lab]/(scot %p -.ships) -.ships [/ %init ~]~)
@@ -486,34 +282,16 @@
 ::
 ::  User interface
 ::
-++  poke-noun
-  |=  arg=*
+++  poke-ph-command
+  |=  com=cli:ph-sur
   ^-  (quip move _this)
-  ?+  arg  ~|(%bad-noun-arg !!)
-      %init
-    [init-vanes this]
-  ::
-      %run-all-tests
-    =.  test-qeu
-      %-  ~(gas to test-qeu)
-      %+  turn
-        (turn auto-tests head)
-      |=  t=term
-      [| t]
-    run-test
-  ::
-      [%run-test lab=@tas]
-    ?.  (~(has by raw-test-cores) lab.arg)
-      ~&  [%no-test lab.arg]
+  ?-  -.com
+      %init  [init-vanes this]
+      %run
+    ?.  (~(has by tests) lab.com)
+      ~&  [%no-test lab.com]
       `this
-    =.  test-qeu  (~(put to test-qeu) [| lab.arg])
-    run-test
-  ::
-      [%run-m-test lab=@tas]
-    ?.  (~(has by monad-tests) lab.arg)
-      ~&  [%no-test lab.arg]
-      `this
-    =.  test-qeu  (~(put to test-qeu) [& lab.arg])
+    =.  test-qeu  (~(put to test-qeu) lab.com)
     run-test
   ::
       %cancel
@@ -521,6 +299,12 @@
     =.  test-qeu  ~
     =^  moves-2  this  run-test
     [:(weld moves-1 moves-2) this]
+  ::
+      %run-all
+    =.  test-qeu
+      %-  ~(gas to test-qeu)
+      (turn manual-tests head)
+    run-test
   ::
       %print
     ~&  lent=(lent effect-log)
@@ -550,60 +334,36 @@
   ?.  =(lab lab.u.test-core)
     ~&  [%ph-dropping-strange lab]
     [[ost.hid %pull way [our.hid %aqua] ~]~ this]
-  ?:  ?=(%| -.u.test-core)
-    =+  |-  ^-  $:  thru-effects=(list unix-effect)
-                    events=(list ph-event)
-                    cor=_u.test-core
-                    log=_effect-log
-                ==
-        ?~  ufs.afs
-          [~ ~ u.test-core ~]
-        =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
-            (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
-        =.  cor.u.test-core  cor
-        =+  $(ufs.afs t.ufs.afs)
-        :^    ?:  thru
-                [i.ufs.afs thru-effects]
-              thru-effects
-            (weld events-1 events)
-          cor
-        [[who i.ufs]:afs log]
-    =.  test-core  `cor
-    =.  effect-log  (weld log effect-log)
-    =>  .(test-core `(unit test-core-state)`test-core)
-    =/  moves-1  (publish-aqua-effects who.afs thru-effects)
-    =^  moves-2  this  (run-events lab events)
-    [(weld moves-1 moves-2) this]
   =+  |-  ^-  $:  thru-effects=(list unix-effect)
                   events=(list ph-event)
                   log=_effect-log
                   done=(unit ?)
-                  m-test=_m-test.u.test-core
+                  test=_test.u.test-core
               ==
       ?~  ufs.afs
-        [~ ~ ~ ~ m-test.u.test-core]
+        [~ ~ ~ ~ test.u.test-core]
       =/  m-res=_*ph-output:(ph ,~)
-        (m-test.u.test-core now.hid who.afs i.ufs.afs)
+        (test.u.test-core now.hid who.afs i.ufs.afs)
       =?  ufs.afs  =(%cont -.next.m-res)
         [i.ufs.afs [/ %init ~] t.ufs.afs]
-      =^  done=(unit ?)  m-test.u.test-core
+      =^  done=(unit ?)  test.u.test-core
         ?-    -.next.m-res
-          %wait  [~ m-test.u.test-core]
+          %wait  [~ test.u.test-core]
           %cont  [~ self.next.m-res]
-          %fail  [`| m-test.u.test-core]
-          %done  [`& m-test.u.test-core]
+          %fail  [`| test.u.test-core]
+          %done  [`& test.u.test-core]
         ==
       =+  ^-  _$
           ?~  done
             $(ufs.afs t.ufs.afs)
-          [~ ~ ~ done m-test.u.test-core]
+          [~ ~ ~ done test.u.test-core]
       :^    ?:  thru.m-res
               [i.ufs.afs thru-effects]
             thru-effects
           (weld events.m-res events)
         [[who i.ufs]:afs log]
-      [done m-test]
-    =.  m-test.u.test-core  m-test
+      [done test]
+    =.  test.u.test-core  test
     =.  effect-log  (weld log effect-log)
     =>  .(test-core `(unit test-core-state)`test-core)
     ?^  done
