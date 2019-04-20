@@ -94,7 +94,7 @@ function aqua(urb) {
     urb.every(/TEST [^ ]* FAILED/, function(arg){
       throw Error(arg);
     });
-    return urb.line(":ph %run-all-tests");
+    return urb.line(":ph|run %hi");
   })
   .then(function(){
     return urb.expectEcho("ALL TESTS SUCCEEDED")

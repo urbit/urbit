@@ -93,18 +93,6 @@
       ;<  ~  bind:m  (planet ~mitnep-todsut)
       (send-hi ~linnup-torsyx ~mitnep-todsut)
     ::
-      :+  %boot-az
-        ~[~bud]
-      ;<  [node=_eth-node ~]  bind:m
-        %+  (wrap-philter ,_eth-node ,~)
-          router:eth-node
-        (raw-ship ~bud `(dawn:legacy:ph-azimuth ~bud))
-      ;<  [node=_eth-node ~]  bind:m
-        %+  (wrap-philter ,_eth-node ,~)
-          router:(spawn-galaxy:node ~pem)
-        stall
-      (return:m ~)
-    ::
       :+  %change-file
         ~[~bud]
       ;<  ~        bind:m  (raw-ship ~bud ~)
@@ -116,6 +104,18 @@
       ;<  ~        bind:m  (star ~marbud)
       ;<  file=@t  bind:m  (touch-file ~bud %base)
       (check-file-touched ~marbud %home file)
+    ::
+      :+  %boot-az
+        ~[~bud]
+      ;<  [node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:legacy:ph-azimuth ~bud))
+      ;<  [node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:(spawn-galaxy:node ~pem)
+        (return:m ~)
+      (return:m ~)
   ==
 ::
 ++  install-tests
