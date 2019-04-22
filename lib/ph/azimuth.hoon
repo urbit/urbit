@@ -46,7 +46,7 @@
         (get-param-obj req 'fromBlock')
       (get-param-obj req 'toBlock')
     ?:  =(method 'eth_newFilter')
-      :+  |  
+      :+  |
         (answer-request req s+'0xa')
       =.  eth-filter
         :^    ~
@@ -67,7 +67,7 @@
       ~&  [%filter-changes (lent logs) eth-filter]
       ?~  eth-filter
         ~|(%no-filter-not-implemented !!)
-      :+  |  
+      :+  |
         %+  answer-request  req
         (logs-to-json last-block.u.eth-filter (lent logs))
       =.  last-block.u.eth-filter  (lent logs)
