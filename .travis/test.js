@@ -85,7 +85,7 @@ function barMass(urb) {
 function aqua(urb) {
   return urb.line("|start %ph")
   .then(function(){
-    return urb.line(":ph %init");
+    return urb.line(":ph|init");
   })
   .then(function(){
     return urb.line(":aqua &pill +solid");
