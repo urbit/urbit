@@ -18,10 +18,10 @@
         events=(list ph-event)
         $=  next
         $%  [%wait ~]
-            [%cont self=data]
+            [%cont self=form]
         ==
     ==
-  ++  data
+  ++  form
     $_  ^?
     |%
     ++  stay  *o
@@ -35,10 +35,10 @@
 ::
 ++  wrap-philter
   |*  [o=mold i=mold]
-  |=  [outer=_*data:(philter o) inner=_*data:(ph i)]
-  ^+  *data:(ph ,[o i])
+  |=  [outer=_*form:(philter o) inner=_*form:(ph i)]
+  ^+  *form:(ph ,[o i])
   |=  input=ph-input
-  =/  res-i=_*ph-output:(ph i)
+  =/  res-i=_*output:(ph i)
     (inner input)
   ?.  thru.res-i
     :+  thru.res-i  events.res-i
@@ -50,7 +50,7 @@
     ==
   =/  res-o=_*output:(philter o)
     (run:outer input)
-  ^+  *ph-output:(ph ,[o i])
+  ^+  *output:(ph ,[o i])
   :+  thru.res-o  (welp events.res-i events.res-o)
   ?-    -.next.res-i
       %wait

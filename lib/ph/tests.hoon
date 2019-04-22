@@ -36,7 +36,7 @@
 ++  just-events
   |=  events=(list ph-event)
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   |=  ph-input
   [& events %done ~]
 ::
@@ -44,7 +44,7 @@
 ::
 ++  boot-ship
   |=  [her=ship keys=(unit dawn-event)]
-  ^+  *data:(ph ,~)
+  ^+  *form:(ph ,~)
   |=  ph-input
   [& (init her keys) %done ~]
 ::
@@ -52,7 +52,7 @@
 ::
 ++  check-ship-booted
   |=  her=ship
-  ^+  *data:(ph ,~)
+  ^+  *form:(ph ,~)
   |=  ph-input
   =;  done=?
     :+  &  ~
@@ -76,14 +76,14 @@
 ++  send-hi
   |=  [from=@p to=@p]
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m
-    ^-  data:m
+    ^-  form:m
     |=  ph-input
     [& (dojo from "|hi {(scow %p to)}") %done ~]
-  ^-  data:m
+  ^-  form:m
   |=  input=ph-input
-  ^-  ph-output:m
+  ^-  output:m
   :+  &  ~
   ?.  (is-dojo-output from who.input uf.input "hi {(scow %p to)} successful")
     [%wait ~]
@@ -94,17 +94,16 @@
 ++  raw-ship
   |=  [her=ship keys=(unit dawn-event)]
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m  (boot-ship her keys)
-  ;<  ~  bind:m  (check-ship-booted her)
-  (return:m ~)
+  (check-ship-booted her)
 ::
 ::  Boot a fake star and its parent.
 ::
 ++  star
   |=  her=ship
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m  (raw-ship (^sein:title her) ~)
   (raw-ship her ~)
 ::
@@ -113,7 +112,7 @@
 ++  planet
   |=  her=ship
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m  (star (^sein:title her))
   (raw-ship her ~)
 ::
@@ -122,7 +121,7 @@
 ++  mount
   |=  [her=ship des=desk]
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m  (just-events (dojo her "|mount /={(trip des)}="))
   |=  pin=ph-input
   ?:  (is-ergo her who.pin uf.pin)
@@ -134,7 +133,7 @@
 ++  touch-file
   |=  [her=ship des=desk]
   =/  m  (ph ,@t)
-  ^-  data:m
+  ^-  form:m
   ;<  ~  bind:m  (mount her des)
   |=  pin=ph-input
   =/  host-pax
@@ -147,7 +146,7 @@
 ++  check-file-touched
   |=  [her=ship des=desk warped=@t]
   =/  m  (ph ,~)
-  ^-  data:m
+  ^-  form:m
   |=  pin=ph-input
   ?.  &(=(her who.pin) ?=(?(%init %ergo) -.q.uf.pin))
     [& ~ %wait ~]

@@ -20,7 +20,7 @@
 ::
 ++  router
   =/  n  (philter ,_this-az)
-  ^-  data:n
+  ^-  form:n
   |%
   ++  stay  this-az
   ++  run

@@ -35,14 +35,14 @@
     +$  state
       $:  %0
           test-core=(unit test-core-state)
-          tests=(map term [(list ship) _*data:(ph ,~)])
+          tests=(map term [(list ship) _*form:(ph ,~)])
           other-state
       ==
     ::
     +$  test-core-state
       $:  lab=term
           hers=(list ship)
-          test=_*data:(ph ,~)
+          test=_*form:(ph ,~)
       ==
     ::
     +$  other-state
@@ -59,7 +59,7 @@
     ==
 ++  this  .
 ++  manual-tests
-  ^-  (list (pair term [(list ship) _*data:(ph ,~)]))
+  ^-  (list (pair term [(list ship) _*form:(ph ,~)]))
   =+  (ph-tests our.hid)
   =/  eth-node  (spawn-galaxy:ph-azimuth ~rel)
   =/  m  (ph ,~)
@@ -111,11 +111,12 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         (raw-ship ~bud `(dawn:legacy:ph-azimuth ~bud))
+      =.  node  (spawn-galaxy:node ~pem)
       ;<  [node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
-          router:(spawn-galaxy:node ~pem)
-        (return:m ~)
-      (return:m ~)
+          router:node
+        (pure:m ~)
+      (pure:m ~)
   ==
 ::
 ++  install-tests
@@ -206,7 +207,7 @@
   =^  lab  test-qeu  ~(get to test-qeu)
   ~&  [running-test=lab test-qeu]
   =.  effect-log  ~
-  =+  ^-  [ships=(list ship) test=_*data:(ph ,~)]
+  =+  ^-  [ships=(list ship) test=_*form:(ph ,~)]
       (~(got by tests) lab)
   =>  .(test-core `(unit test-core-state)`test-core)
   =.  test-core  `[lab ships test]
@@ -342,7 +343,7 @@
               ==
       ?~  ufs.afs
         [~ ~ ~ ~ test.u.test-core]
-      =/  m-res=_*ph-output:(ph ,~)
+      =/  m-res=_*output:(ph ,~)
         (test.u.test-core now.hid who.afs i.ufs.afs)
       =?  ufs.afs  =(%cont -.next.m-res)
         [i.ufs.afs [/ %init ~] t.ufs.afs]

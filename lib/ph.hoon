@@ -25,8 +25,8 @@
 ::  monad laws:  If `f` and `g` are the sort of function that go in the
 ::  second argument to bind and `m` is a test, then:
 ::
-::    (cork return (curr bind f)) = f
-::    (bind m return) = m
+::    (cork pure (curr bind f)) = f
+::    (bind m pure) = m
 ::    ((bind m f) g) = (bind m (bind f g))
 ::
 ::  Maintaining these laws requires a particular interpretation of the
@@ -39,42 +39,42 @@
 +$  ph-input
   [now=@da who=ship uf=unix-effect]
 ::
+++  ph-output-raw
+  |*  a=mold
+  $~  [& ~ %done *a]
+  $:  thru=?
+      events=(list ph-event)
+      $=  next
+      $%  [%wait ~]
+          [%cont self=(ph-form-raw a)]
+          [%fail ~]
+          [%done value=a]
+      ==
+  ==
+::
+++  ph-form-raw
+  |*  a=mold
+  $-(ph-input (ph-output-raw a))
+::
 ++  ph
   |*  a=mold
   |%
-  ++  ph-output  (ph-output-raw a)
-  ++  ph-output-raw
-    |*  a=mold
-    $~  [& ~ %done *a]
-    $:  thru=?
-        events=(list ph-event)
-        $=  next
-        $%  [%wait ~]
-            [%cont self=(data-raw a)]
-            [%fail ~]
-            [%done value=a]
-        ==
-    ==
-  ::
-  ++  data  (data-raw a)
-  ++  data-raw
-    |*  a=mold
-    $-(ph-input (ph-output-raw a))
-  ::
-  ++  return
+  ++  output  (ph-output-raw a)
+  ++  form  (ph-form-raw a)
+  ++  pure
     |=  arg=a
-    ^-  data
+    ^-  form
     |=  ph-input
     [& ~ %done arg]
   ::
   ++  bind
     |*  b=mold
-    |=  [m-b=(data-raw b) fun=$-(b data)]
-    ^-  data
+    |=  [m-b=(ph-form-raw b) fun=$-(b form)]
+    ^-  form
     |=  input=ph-input
     =/  b-res=(ph-output-raw b)
       (m-b input)
-    ^-  ph-output
+    ^-  output
     :+  thru.b-res  events.b-res
     ?-    -.next.b-res
       %wait  [%wait ~]
