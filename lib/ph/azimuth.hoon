@@ -38,7 +38,7 @@
     ?:  =(method 'eth_blockNumber')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
-      s+(crip (num-to-hex:ethereum (lent logs)))
+      s+(crip (num-to-hex:ethereum latest-block))
     ?:  =(method 'eth_getLogs')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
@@ -55,24 +55,28 @@
         (get-param-obj req 'address')
       [%cont ..stay]
     ?:  =(method 'eth_getFilterLogs')
-      ~&  [%filter-logs (lent logs) eth-filter]
+      ~&  [%filter-logs latest-block eth-filter]
       ?~  eth-filter
         ~|(%no-filter-not-implemented !!)
       :+  |
         %+  answer-request  req
-        (logs-to-json from-block.u.eth-filter (lent logs))
-      =.  last-block.u.eth-filter  (lent logs)
+        ~|  [eth-filter latest-block]
+        (logs-to-json from-block.u.eth-filter latest-block)
+      =.  last-block.u.eth-filter  latest-block
       [%cont ..stay]
     ?:  =(method 'eth_getFilterChanges')
-      ~&  [%filter-changes (lent logs) eth-filter]
+      ~&  [%filter-changes latest-block eth-filter]
       ?~  eth-filter
         ~|(%no-filter-not-implemented !!)
       :+  |
         %+  answer-request  req
-        (logs-to-json last-block.u.eth-filter (lent logs))
-      =.  last-block.u.eth-filter  (lent logs)
+        (logs-to-json last-block.u.eth-filter latest-block)
+      =.  last-block.u.eth-filter  latest-block
       [%cont ..stay]
     [& ~ %wait ~]
+    ::
+    ++  latest-block
+      (add launch:contracts:azimuth (lent logs))
     ::
     ++  get-id
       |=  req=@t
@@ -122,7 +126,7 @@
       :-  %a
       =/  selected-logs
         %+  swag
-          [from-block (sub to-block from-block)]
+          [(sub from-block launch:contracts:azimuth) (sub to-block from-block)]
         logs
       =/  count  from-block
       |-  ^-  (list json)
