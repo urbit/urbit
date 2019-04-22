@@ -250,9 +250,12 @@ void u3m_lmdb_write_events(MDB_env* environment,
 {
   // Serialize the jammed $work into a malloced buffer we can send to the other
   // thread.
-  c3_d  len_d  = u3r_met(6, event_u->mat);
-  c3_d* data_u = c3_malloc(8 * len_d);
-  u3r_chubs(0, len_d, data_u, event_u->mat);
+  c3_w  siz_w  = u3r_met(3, event_u->mat);
+  c3_y* data_u = c3_calloc(siz_w);
+  u3r_bytes(0, siz_w, data_u, event_u->mat);
+
+  fprintf(stderr, "writing event id %" PRIu64 " to db with len %u\r\n",
+          event_u->evt_d, siz_w);
 
   // Structure to pass to the worker thread.
   struct _write_request_data* data = c3_malloc(sizeof(struct _write_request_data));
@@ -260,7 +263,7 @@ void u3m_lmdb_write_events(MDB_env* environment,
   data->event = event_u;
   data->event_number = event_u->evt_d;
   data->malloced_event_data = data_u;
-  data->malloced_event_data_size = 8 * len_d;
+  data->malloced_event_data_size = siz_w;
   data->callback = callback;
 
   // Queue asynchronous work to happen on the other thread.
@@ -282,7 +285,7 @@ void u3m_lmdb_write_events(MDB_env* environment,
 c3_o u3m_lmdb_read_events(MDB_env* environment,
                           c3_d first_event_d,
                           c3_d len_d,
-                          void (*callback)(c3_d id, u3_noun ovo))
+                          c3_o(*callback)(c3_d id, u3_noun ovo))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -321,7 +324,7 @@ c3_o u3m_lmdb_read_events(MDB_env* environment,
   key.mv_size = sizeof(c3_d);
   key.mv_data = &first_event_d;
 
-  ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_SET_RANGE);
+  ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_SET_KEY);
   if (0 != ret_w) {
     u3l_log("lmdb: could not find initial event %" PRIu64 ": %s\r\n",
             first_event_d, mdb_strerror(ret_w));
@@ -341,10 +344,15 @@ c3_o u3m_lmdb_read_events(MDB_env* environment,
     }
 
     // Now build the atom version and then the cued version from the raw data
-    u3_noun mat = u3i_chubs(val.mv_size, val.mv_data);
+    u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
     u3_noun ovo = u3ke_cue(u3k(mat));
 
-    callback(current_id, ovo);
+    if (callback(current_id, ovo) == c3n) {
+      u3z(ovo);
+      u3z(mat);
+      u3l_log("lmdb: aborting replay due to error.\r\n");
+      return c3n;
+    }
 
     u3z(ovo);
     u3z(mat);

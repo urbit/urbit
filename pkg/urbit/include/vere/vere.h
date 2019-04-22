@@ -1362,4 +1362,4 @@ void u3m_lmdb_read_identity(MDB_env* environment,
 c3_o u3m_lmdb_read_events(MDB_env* environment,
                           c3_d first_event_d,
                           c3_d len_d,
-                          void (*callback)(c3_d id, u3_noun ovo));
+                          c3_o(*callback)(c3_d id, u3_noun ovo));

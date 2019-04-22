@@ -159,6 +159,8 @@ _pier_disk_commit_request(u3_writ* wit_u)
     c3_d* buf_d = c3_malloc(8 * len_d);
 
     u3r_chubs(0, len_d, buf_d, wit_u->mat);
+    /* fprintf(stderr, "writing event id %" PRIu64 " to log with len %zu\r\n", */
+    /*         wit_u->evt_d, len_d); */
     u3_foil_append(_pier_disk_commit_complete,
                    wit_u,
                    log_u->fol_u,
@@ -334,12 +336,22 @@ _pier_disk_read_header(u3_disk* log_u)
 }
 
 
-static void
+static c3_o
 _pier_db_on_commit_loaded(c3_d id,
                           u3_noun ovo)
 {
-  // Enqueues the event for replay
+  /* u3_noun evt = u3h(u3t(ovo)); */
+  /* u3_noun job = u3k(u3t(u3t(u3t(ovo)))); */
+  /* c3_d evt_d = u3r_chub(0, evt); */
 
+  /* if (evt_d != id) { */
+  /*   _pier_disk_bail(0, "pier: load: commit: event order"); */
+  /*   return c3n; */
+  /* } */
+
+  fprintf(stderr, "replaying event %" PRIu64 "\r\n", id);
+
+  return c3y;
 }
 
 /* _pier_db_load_commit(): load len_d commits >= lav_d; enqueue for replay
@@ -389,7 +401,6 @@ _pier_disk_load_commit(u3_pier* pir_u,
 
     mat = u3i_chubs(len_d, buf_d);
     c3_free(buf_d);
-
     ovo = u3ke_cue(u3k(mat));
 
     //  reached header
@@ -409,6 +420,12 @@ _pier_disk_load_commit(u3_pier* pir_u,
     job = u3k(u3t(u3t(u3t(ovo))));
     evt_d = u3r_chub(0, evt);
     u3z(ovo);
+
+    fprintf(stderr, "Loaded %" PRIu64 " with size %llu\r\n", evt_d, len_d);
+
+    /* u3m_p("mat", mat); */
+
+    /* fprintf(stderr, "Loaded %" PRIu64 " with size %zu\r\n", evt_d, len_d); */
 
     //  confirm event order
     //
@@ -1792,7 +1809,8 @@ _pier_boot_ready(u3_pier* pir_u)
 
     //  begin queuing batches of committed events
     //
-    _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+    /* _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL); */
+    _pier_db_load_commits(pir_u, (1ULL + god_u->dun_d), 1000ULL);
 
     if ( 0 == god_u->dun_d ) {
       fprintf(stderr, "pier: replaying events 1 through %" PRIu64 "\r\n",
