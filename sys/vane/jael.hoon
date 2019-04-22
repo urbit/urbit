@@ -983,6 +983,12 @@
         abet:~(wake et hen our now urb.lex sub.lex etn.lex sap.lex)
       abet:(~(init et hen our now [urb sub etn sap]:lex) our (sein our))
     ::
+        [%b %wake ^]
+      ::  TODO: handle behn error
+      ::
+      ~&  %jael-wake-bad^u.error.hin
+      +>.$
+    ::
         [%j %vent *]
       %+  cute  hen  =<  abet
       (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.hin)
@@ -2443,6 +2449,10 @@
     ?:  =(~ snaps.sap.lex)
       snap.snap
     $
+  ::
+      %turf
+    ?.  ?=(~ tyl)  [~ ~]
+    [~ ~ %noun !>(tuf.own.sub.lex)]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

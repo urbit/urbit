@@ -6,7 +6,7 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=2
+=+  protocol-version=3
 |%
 +=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
 ::  |pact: internal packet structures
@@ -554,6 +554,14 @@
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %saxo da+now /(scot %p who)]
+    ::  +turf-scry: for network domains
+    ::
+    ++  turf-scry
+      ~/  %turf
+      ;;  (list turf)
+      %-  need  %-  need
+      %-  (sloy-light ski)
+      [[151 %noun] %j our %turf da+now ~]
     ::
     ++  vein                                            ::    vein:am
       ~/  %vein
@@ -1300,7 +1308,14 @@
       :_  fox  [hen [%pass wire %j %pubs p.bon]]~
     ::
         %bock
-      :_  fox  [hen %give %turf tuf.fox]~
+      ::  ignore %turf if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox]
+      :_  fox
+      [gad.fox %give %turf tuf.fox]~
     ::
         %brew
       :_  fox  [hen [%pass / %j %turf ~]]~
@@ -1323,9 +1338,13 @@
       :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
+      ::  drop packet if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox]
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
-      ~|  [%ames-bad-duct duct=gad.fox lane=p.bon]
-      ?>  ?=(^ gad.fox)
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
@@ -1333,6 +1352,12 @@
       :_  fox(tim `p.bon)
       %-  flop
       ^-  (list move)
+      ::  XX should this be the unix duct (gad.fox)?
+      ::
+      ::    It seems far more important that the duct be always
+      ::    predictable than that it be the unix duct, which
+      ::    may change, or be unset during first boot.
+      ::
       :-  [gad.fox %pass /ames %b %wait p.bon]
       ?~  tim.fox  ~
       [gad.fox %pass /ames %b %rest u.tim.fox]~
@@ -1374,15 +1399,17 @@
     ~/  %knap
     |=  [tea=wire hen=duct sih=sign:able]
     ^-  [(list move) _+>]
+    ::  if we got an error from behn, report it to %dill; TODO handle errors
+    ::
+    ?:  ?=([%wake ^] +.sih)
+      =/  =flog:dill  [%crud %wake u.error.sih]
+      [[hen %slip %d %flog flog]~ +>.$]
+    ::
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
     ::
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
-    ::
-        %turf
-      =.  tuf.fox  turf.sih
-      [~ +>.$]
     ::
         %pubs
       ?.  ?=([%pubs @ ~] tea)
@@ -1421,8 +1448,16 @@
         ^-  [p=(list boon) q=fort]
         ?-  +<.sih
         ::
+            ::  only handles the non-error %wake case; error case above
+            ::
             %wake
           (~(wake am [our now fox ski]) hen)
+        ::
+            %turf
+          ?:  =(tuf.fox turf.sih)
+            [~ fox]
+          =.  tuf.fox  turf.sih
+          [[%bock ~]~ fox]
         ::
             ?(%mean %nice)                              ::  XX obsolete
           ?:  ?=([%ye ~] tea)
@@ -1461,8 +1496,10 @@
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
             %barn
-          :_  fox(gad hen)
-          [%bock ~]~
+          =:  gad.fox  hen
+              tuf.fox  ~(turf-scry am [our now fox ski])
+            ==
+          [[%bock ~]~ fox]
         ::
             %bonk
           :_  fox

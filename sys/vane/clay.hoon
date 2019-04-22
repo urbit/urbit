@@ -341,8 +341,11 @@
       {$warp p/ship q/riff}                             ::
       {$werp p/ship q/ship r/riff}                      ::
   ==  ==                                                ::
-      $:  $d                                            ::
-  $%  {$flog p/{$crud p/@tas q/(list tank)}}            ::  to %dill
+      $:  $d                                            ::  to %dill
+  $%  $:  $flog                                         ::
+          $%  {$crud p/@tas q/(list tank)}              ::
+              {$text p/tape}                            ::
+      ==  ==                                            ::
   ==  ==                                                ::
       $:  $f                                            ::
   $%  [%build live=? schematic=schematic:ford]          ::
@@ -368,7 +371,7 @@
           $%  [%made date=@da result=made-result:ford]  ::
           ==  ==                                        ::
               $:  $b                                    ::
-          $%  {$wake ~}                                ::  timer activate
+          $%  {$wake error=(unit tang)}                 ::  timer activate
           ==  ==                                        ::
               $:  @tas                                  ::  by any
           $%  {$crud p/@tas q/(list tank)}              ::
@@ -1083,6 +1086,17 @@
   ++  print-changes
     |=  {wen/@da lem/nuri}
     ^+  +>
+    ::  skip full change output for initial filesystem
+    ::
+    ?:  ?&  =(%base syd)
+            |(=(1 let.dom) =(2 let.dom))
+        ==
+      =/  msg=tape
+        %+  weld
+          "clay: committed initial filesystem"
+        ?:(=(1 let.dom) " (hoon)" " (all)")
+      (emit (need hun) %pass / %d %flog %text msg)
+    ::
     =+  pre=`path`~[(scot %p her) syd (scot %ud let.dom)]
     ?-  -.lem
       %|  (print-to-dill '=' %leaf :(weld (trip p.lem) " " (spud pre)))
@@ -4242,6 +4256,11 @@
   ::
       $note  [[hen %give +.q.hin]~ ..^$]
       $wake
+    ::  TODO: handle behn errors
+    ::
+    ?^  error.q.hin
+      [[hen %slip %d %flog %crud %wake u.error.q.hin]~ ..^$]
+    ::
     ?:  ?=([%tyme ~] tea)
       ~&  %out-of-tyme
       `..^$
@@ -4340,7 +4359,7 @@
 ::  +rift-scry: for a +rift
 ::
 ++  rift-scry
-  ~/  %rift-scry
+  ~%  %rift-scry  ..is  ~
   |=  who=ship
   ^-  (unit rift)
   =;  lyf

@@ -42,7 +42,7 @@
           $%  {$woot p/ship q/coop}                     ::  acknowledgment
           ==  ==                                        ::
               $:  $b                                    ::  by %behn
-          $%  {$wake ~}                                ::  timer activate
+          $%  {$wake error=(unit tang)}                 ::  timer activate
           ==  ==                                        ::
               $:  $g                                    ::  by %gall
           $%  {$unto p/cuft:gall}                      ::  within agent
@@ -1028,6 +1028,11 @@
       ==
     ::
         $wake
+      ::  TODO: handle behn errors
+      ::
+      ?^  error.sih
+        +>.$(mow [[hen %slip %d %flog %crud %wake u.error.sih] mow])
+      ::
       ?>  ?=({?($of $ow) @ ~} tee)
       ?:  ?=($ow -.tee)
         abut:(ire-ix p.tee)

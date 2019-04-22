@@ -58,12 +58,12 @@
 ::  Received timer wake
 ::
 ++  wake
-  |=  [way=wire ~]
+  |=  [way=wire error=(unit tang)]
   ^-  (quip move _this)
   =.  this  apex  =<  abet
   ?>  ?=([@ *] way)
   =/  who  (,@p (slav %p i.way))
-  abet-pe:(take-wake:(pe who) t.way ~)
+  abet-pe:(take-wake:(pe who) t.way error)
 ::
 ++  pe
   |=  who=ship
@@ -114,12 +114,18 @@
     ..abet-pe
   ::
   ++  take-wake
-    |=  [way=wire ~]
-    ~?  debug=|  [who=who %aqua-behn-wake now]
+    |=  [way=wire error=(unit tang)]
+    ~?  debug=|  [who=who %aqua-behn-wake now error=error]
     =.  next-timer  ~
     =.  this
       %-  emit-aqua-events
-      [%event who [//behn/0v1n.2m9vh %wake ~]]~
+      :_  ~
+      ^-  aqua-event
+      :+  %event  who
+      :-  //behn/0v1n.2m9vh
+      ?~  error
+        [%wake ~]
+      [%crud %fail u.error]
     ..abet-pe
   --
 --

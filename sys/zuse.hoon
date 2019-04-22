@@ -226,7 +226,7 @@
       ==                                                ::
     ++  sign                                            ::  in result _<-
       $%  $:  $b                                        ::  to %behn
-      $%  {$wake ~}                                     ::  timer activate
+      $%  {$wake error=(unit tang)}                     ::  timer activate
       ==  ==                                            ::
           $:  %j                                        ::  from %jael
       $%  [%pubs public:able:jael]                      ::  public keys
@@ -424,23 +424,23 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $%  $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
-      ==  ==  ==                                        ::
+      $%  $:  %d                                        ::  to %dill
+      $%  [$flog =flog:dill]
+      ==  ==  ==
     ++  gift                                            ::  out result <-$
-      $%  {$doze p/(unit @da)}                          ::  next alarm
-          {$mass p/mass}                                ::  memory usage
-          {$wake ~}                                    ::  wakeup
-      ==                                                ::
+      $%  [%doze p=(unit @da)]                          ::  next alarm
+          [%mass p=mass]                                ::  memory usage
+          [%wake error=(unit tang)]                     ::  wakeup or failed
+      ==
     ++  task                                            ::  in request ->$
-      $%  {$born ~}                                     ::  new unix process
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$rest p/@da}                                 ::  cancel alarm
-          {$vega ~}                                     ::  report upgrade
-          {$wait p/@da}                                 ::  set alarm
-          {$wake ~}                                    ::  timer activate
-          {$wegh ~}                                    ::  report memory
-      ==                                                ::
+      $%  [%born ~]                                     ::  new unix process
+          [%crud tag=@tas =tang]                        ::  error with trace
+          [%rest p=@da]                                 ::  cancel alarm
+          [%vega ~]                                     ::  report upgrade
+          [%wait p=@da]                                 ::  set alarm
+          [%wake ~]                                     ::  timer activate
+          [%wegh ~]                                     ::  report memory
+      ==
     --  ::able
   --  ::behn
 ::                                                      ::::
@@ -1849,7 +1849,7 @@
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
     ++  sign                                            ::  in result $<-
-      $%  {$b $wake ~}                                  ::  wakeup
+      $%  {$b $wake error=(unit tang)}                  ::  wakeup
           [%e %sigh p=cage]                             ::  marked http response
           [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
@@ -7099,16 +7099,17 @@
 ++  unix-task                                           ::  input from unix
   $%  {$belt p/belt:dill}                               ::  dill: keyboard
       {$blew p/blew:dill}                               ::  dill: configure
-      {$boat ~}                                        ::  clay: reboot
-      {$born ~}                                        ::  eyre: new process
-      {$hail ~}                                        ::  dill: refresh
+      {$boat ~}                                         ::  clay: reboot
+      {$born ~}                                         ::  eyre: new process
+      [%crud tag=@tas =tang]                            ::  any vane: error report
+      {$hail ~}                                         ::  dill: refresh
       {$hear p/lane:ames q/@}                           ::  ames: input packet
-      {$hook ~}                                        ::  dill: hangup
+      {$hook ~}                                         ::  dill: hangup
       {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
       {$they p/@ud q/httr:eyre}                         ::  eyre: in response
       {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
-      {$thud ~}                                        ::  eyre: in cancel
-      {$wake ~}                                        ::  behn: wakeup
+      {$thud ~}                                         ::  eyre: in cancel
+      {$wake ~}                                         ::  behn: wakeup
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
