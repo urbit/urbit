@@ -100,6 +100,9 @@ _pier_db_commit_complete(u3_writ* wit_u)
   u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
 #endif
 
+  // TODO: Advance the commit counter when we move the event log entirely over
+  // to the DB.
+
   /* advance commit counter
   */
   {
@@ -111,29 +114,29 @@ _pier_db_commit_complete(u3_writ* wit_u)
   _pier_apply(pir_u);
 }
 
-/* /\* _pier_disk_commit_complete(): commit complete. */
-/* *\/ */
-/* static void */
-/* _pier_disk_commit_complete(void* vod_p) */
-/* { */
-/*   u3_writ* wit_u = vod_p; */
-/*   u3_pier* pir_u = wit_u->pir_u; */
-/*   u3_disk* log_u = pir_u->log_u; */
+/* _pier_disk_commit_complete(): commit complete.
+*/
+static void
+_pier_disk_commit_complete(void* vod_p)
+{
+  u3_writ* wit_u = vod_p;
+  u3_pier* pir_u = wit_u->pir_u;
+  u3_disk* log_u = pir_u->log_u;
 
-/* #ifdef VERBOSE_EVENTS */
-/*   u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d); */
-/* #endif */
+#ifdef VERBOSE_EVENTS
+  u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
+#endif
 
-/*   /\* advance commit counter */
-/*   *\/ */
-/*   { */
-/*     c3_assert(wit_u->evt_d == log_u->moc_d); */
-/*     c3_assert(wit_u->evt_d == (1ULL + log_u->com_d)); */
-/*     log_u->com_d += 1ULL; */
-/*   } */
+  /* /\* advance commit counter */
+  /* *\/ */
+  /* { */
+  /*   c3_assert(wit_u->evt_d == log_u->moc_d); */
+  /*   c3_assert(wit_u->evt_d == (1ULL + log_u->com_d)); */
+  /*   log_u->com_d += 1ULL; */
+  /* } */
 
-/*   _pier_apply(pir_u); */
-/* } */
+  /* _pier_apply(pir_u); */
+}
 
 /* _pier_disk_commit_request(): start commit.
 */
@@ -147,19 +150,21 @@ _pier_disk_commit_request(u3_writ* wit_u)
   u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
 #endif
 
-  /* /\* append to logfile */
-  /* *\/ */
-  /* { */
-  /*   c3_d  len_d = u3r_met(6, wit_u->mat); */
-  /*   c3_d* buf_d = c3_malloc(8 * len_d); */
+  /* append to logfile
+  */
+  {
+    //  TODO: Remove the logfile when we have reading otherwise working.
+    //
+    c3_d  len_d = u3r_met(6, wit_u->mat);
+    c3_d* buf_d = c3_malloc(8 * len_d);
 
-  /*   u3r_chubs(0, len_d, buf_d, wit_u->mat); */
-  /*   u3_foil_append(_pier_disk_commit_complete, */
-  /*                  wit_u, */
-  /*                  log_u->fol_u, */
-  /*                  buf_d, */
-  /*                  len_d); */
-  /* } */
+    u3r_chubs(0, len_d, buf_d, wit_u->mat);
+    u3_foil_append(_pier_disk_commit_complete,
+                   wit_u,
+                   log_u->fol_u,
+                   buf_d,
+                   len_d);
+  }
 
   /* put it in the database
   */
@@ -480,7 +485,7 @@ _pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
 
   //  restore pier identity (XX currently a no-op, see comment)
   //
-  //_pier_disk_read_header(log_u);
+  _pier_disk_read_header(log_u);
 
   // TODO: We want to restore our identity right here?
   //
