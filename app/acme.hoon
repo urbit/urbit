@@ -1267,6 +1267,7 @@
     this
   ::
     ::  install privkey and cert .pem from /=home=/acme, ignores app state
+    ::TODO  refactor this out of %acme, see also arvo#1151
     ::
       %install-from-clay
     =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
