@@ -119,7 +119,7 @@
     =.  tym  (max +(tym) now.hid)
     =/  poke-result  (mule |.((slum poke tym ue)))
     ?:  ?=(%| -.poke-result)
-      %-  (slog >%aqua-crash< p.poke-result)
+      %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $
     =.  snap  +.p.poke-result
     =.  ..abet-pe  (publish-event tym ue)
@@ -513,14 +513,15 @@
 ++  peek-x-i
   |=  pax=path
   ^-  (unit (unit [%noun noun]))
-  ?.  ?=([@ @ @ *] pax)
+  ?.  ?=([@ @ @ @ *] pax)
     ~
-  =/  who  (slav %p i.pax)
+  =/  who  (slav %p i.t.pax)
   =/  pier  (~(get by piers) who)
+  =/  ren  i.t.t.t.pax
   ?~  pier
     ~
   :^  ~  ~  %noun
-  (peek:(pe who) [%cx pax])
+  (peek:(pe who) pax)
 ::
 ::  Get all created ships
 ::
