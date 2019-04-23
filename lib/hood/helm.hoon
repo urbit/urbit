@@ -114,7 +114,11 @@
   abet:(emit %bonk /bonk ~)
 ::
 ++  take-wake-automass
-  |=  [way=wire ~]
+  |=  [way=wire error=(unit tang)]
+  ?^  error
+    %-  (slog u.error)
+    ~&  %helm-wake-automass-fail
+    abet
   =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
   =<  abet
   %-  emil

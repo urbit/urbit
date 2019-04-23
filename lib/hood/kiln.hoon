@@ -337,7 +337,11 @@
   abet:writ:autoload
 ::
 ++  take-wake-overload
-  |=  {way/wire ~}
+  |=  {way/wire error=(unit tang)}
+  ?^  error
+    %-  (slog u.error)
+    ~&  %kiln-take-wake-overload-fail
+    abet
   ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
   ~&  %wake-overload-deprecated
