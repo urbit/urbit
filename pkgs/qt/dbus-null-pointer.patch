@@ -1,0 +1,12 @@
+diff -ur qtbase-opensource-src-5.9.6-orig/src/platformsupport/linuxaccessibility/dbusconnection.cpp qtbase-opensource-src-5.9.6/src/platformsupport/linuxaccessibility/dbusconnection.cpp
+--- qtbase-opensource-src-5.9.6-orig/src/platformsupport/linuxaccessibility/dbusconnection.cpp	2018-06-19 12:42:00.533895696 -0700
++++ qtbase-opensource-src-5.9.6/src/platformsupport/linuxaccessibility/dbusconnection.cpp	2018-06-19 12:45:03.308744607 -0700
+@@ -75,7 +75,7 @@
+     connect(dbusWatcher, SIGNAL(serviceRegistered(QString)), this, SLOT(serviceRegistered()));
+ 
+     // If it is registered already, setup a11y right away
+-    if (c.interface()->isServiceRegistered(A11Y_SERVICE))
++    if (c.interface() && c.interface()->isServiceRegistered(A11Y_SERVICE))
+         serviceRegistered();
+ 
+     // In addition try if there is an xatom exposing the bus address, this allows applications run as root to work
