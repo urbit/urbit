@@ -350,17 +350,12 @@ _pier_db_on_commit_loaded(u3_pier* pir_u,
     return c3n;
   }
 
-  fprintf(stderr, "replaying event %" PRIu64 "\r\n", id);
-
-
   // Need to grab references to the nouns above.
   u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
   wit_u->pir_u = pir_u;
   wit_u->evt_d = evt_d;
   wit_u->job = u3k(job);
   wit_u->mat = u3k(mat);
-
-  // OK, so my queuing logic isn't correct, since I'm never setting the exit 
 
   // Insert at queue front since we're loading events in order
   if ( !pir_u->ent_u ) {
@@ -392,9 +387,6 @@ _pier_db_load_commits(u3_pier* pir_u,
                       c3_d     lav_d,
                       c3_d     len_d)
 {
-  u3l_log("pier: replaying events from %" PRIu64 " (count %" PRIu64 ")\r\n",
-          lav_d, len_d);
-
   if (lav_d == 1) {
     // We are restarting from event 1. That means we need to set the ship from
     // the log identity information.
@@ -471,12 +463,6 @@ _pier_disk_load_commit(u3_pier* pir_u,
     job = u3k(u3t(u3t(u3t(ovo))));
     evt_d = u3r_chub(0, evt);
     u3z(ovo);
-
-    fprintf(stderr, "Loaded %" PRIu64 " with size %llu\r\n", evt_d, len_d);
-
-    /* u3m_p("mat", mat); */
-
-    /* fprintf(stderr, "Loaded %" PRIu64 " with size %zu\r\n", evt_d, len_d); */
 
     //  confirm event order
     //
@@ -877,11 +863,33 @@ _pier_work_save(u3_pier* pir_u)
   u3_disk* log_u = pir_u->log_u;
   u3_save* sav_u = pir_u->sav_u;
 
-  c3_assert( god_u->dun_d == sav_u->req_d );
+  // This is wrong?  We can have requested that the worker should snapshot
+  // between when the worker was given a compute request and when the worker
+  // returns a compute response. (See the c3_max() call in u3_pier_snap().) I
+  // don't know what the semantics are supposed to be here.
+  //
+  // Let's say we're in replay of the event log from nothing. We might have
+  // u3_pier_snap() called from a timer. I've seen crashes when:
+  //
+  //   god_u->dun_d: 24, sav_u->req_d: 25, log_u->com_d: 31
+  //
+  // com_d is greater than req_d is greater than dun_d because we're waiting
+  // for the worker to complete replay of already committed events. And this
+  // seems OK because we can totally request that the worker produce a snapshot
+  // of event 25 even though we haven't marked it as done because we know that
+  // it committed previously?
+  //
+  // No! This breaks because it ignores the req_d and instead tells the worker
+  // to go with what was req_d.
+  //
+  // c3_assert( god_u->dun_d == sav_u->req_d );
+
   c3_assert( log_u->com_d >= god_u->dun_d );
 
   {
-    u3_noun mat = u3ke_jam(u3nc(c3__save, u3i_chubs(1, &god_u->dun_d)));
+    // TODO: Verify change to req_d is correct during code review.
+    //
+    u3_noun mat = u3ke_jam(u3nc(c3__save, u3i_chubs(1, &sav_u->req_d)));
     u3_newt_write(&god_u->inn_u, mat, 0);
 
     //  XX wait on some report of success before updating?
@@ -918,7 +926,8 @@ _pier_work_release(u3_writ* wit_u)
       if ( (0 == pir_u->ent_u) &&
            (wit_u->evt_d < log_u->com_d) )
       {
-        _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+        //_pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
+        _pier_db_load_commits(pir_u, (1ULL + god_u->dun_d), 1000ULL);
       }
     }
   }

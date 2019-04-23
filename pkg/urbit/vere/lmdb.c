@@ -254,9 +254,6 @@ void u3m_lmdb_write_events(MDB_env* environment,
   c3_y* data_u = c3_calloc(siz_w);
   u3r_bytes(0, siz_w, data_u, event_u->mat);
 
-  fprintf(stderr, "writing event id %" PRIu64 " to db with len %u\r\n",
-          event_u->evt_d, siz_w);
-
   // Structure to pass to the worker thread.
   struct _write_request_data* data = c3_malloc(sizeof(struct _write_request_data));
   data->environment = environment;
