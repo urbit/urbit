@@ -1260,7 +1260,7 @@
         void
         u3_pier_exit(u3_pier* pir_u);
 
-      /* u3_pier_bail(): clean up all event state.
+      /* u3_pier_bail(): immediately shutdown..
       */
         void
         u3_pier_bail(void);
@@ -1333,6 +1333,11 @@
       */
         void
         u3_daemon_commence();
+
+      /* u3_daemon_bail(): immediately shutdown.
+      */
+        void
+        u3_daemon_bail(void);
 
       /* u3_king_grab(): gc the daemon area
       */

@@ -530,13 +530,13 @@ report(void)
          H2O_LIBRARY_VERSION_PATCH);
 }
 
-void
+static void
 _stop_exit(c3_i int_i)
 {
-  u3l_log("\r\n[received keyboard stop signal, exiting]\r\n");
-  //  XX crashes if we haven't started a pier yet
+  //  explicit fprintf to avoid allocation in u3l_log
   //
-  u3_pier_exit(u3_pier_stub());
+  fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
+  u3_daemon_bail();
 }
 
 /*
@@ -663,6 +663,8 @@ main(c3_i   argc,
   u3_ve_sysopt();
 
   //  Block profiling signal, which should be delievered to exactly one thread.
+  //
+  //    XX review, may be unnecessary due to similar in u3m_init()
   //
   if ( _(u3_Host.ops_u.pro) ) {
     sigset_t set;

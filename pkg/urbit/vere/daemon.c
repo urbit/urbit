@@ -796,6 +796,16 @@ u3_daemon_commence()
   exit(0);
 }
 
+/* u3_daemon_bail(): immediately shutdown.
+*/
+void
+u3_daemon_bail(void)
+{
+  _daemon_loop_exit();
+  u3_pier_bail();
+  exit(1);
+}
+
 /* u3_daemon_grab(): gc the daemon area
 */
 void
