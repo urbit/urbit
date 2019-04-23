@@ -388,10 +388,50 @@ _worker_send_slog(u3_noun hod)
 static void
 _worker_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
 {
-  // %crud will be sent on the original wire.
+  u3_noun rep;
+  u3_noun wir, tag, cad;
+
+  u3x_trel(ovo, &wir, &tag, &cad);
+
+  //  a deterministic error (%exit) in a network packet (%hear)
+  //  generates a negative-acknowlegement attempt (%hole).
   //
-  _worker_send_replace(evt_d, u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan)));
-  u3z(ovo);
+  //    A comment from the old implementation:
+  //      There should be a separate path for crypto failures,
+  //      to prevent timing attacks, but isn't right now.  To deal
+  //      with a crypto failure, just drop the packet.
+  //
+  if ( (c3__hear == tag) && (c3__exit == why) ) {
+    rep = u3nt(u3k(wir), c3__hole, u3k(cad));
+  }
+  //  failed event notifications (%crud) are replaced with
+  //  an even more generic notifications, on a generic arvo wire.
+  //
+  //    N.B this must not be allowed to fail!
+  //
+  else if ( c3__crud == tag ) {
+    rep = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+               u3nc(c3__warn, u3i_tape("crude crashed!")));
+  }
+  //  failed failure failing fails
+  //
+  else if ( c3__warn == tag ) {
+    _worker_fail(0, "%warn replacement event failed");
+    c3_assert(0);
+  }
+  //  failure notifications are sent on the same wire
+  //
+  else {
+    //  prepend failure mote to tank
+    //
+    u3_noun tap = u3kb_weld(u3i_tape("bail: "), u3qc_rip(3, why));
+    u3_noun nat = u3nc(u3nc(c3__leaf, tap), u3k(tan));
+    rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
+  }
+
+  _worker_send_replace(evt_d, rep);
+
+  u3z(ovo); u3z(why); u3z(tan);
 }
 
 /* _worker_sure(): event succeeded, report completion.
