@@ -282,14 +282,16 @@ void u3m_lmdb_write_events(MDB_env* environment,
 //
 // Returns yes if everything completed without errors.
 //
-c3_o u3m_lmdb_read_events(MDB_env* environment,
-                          c3_d first_event_d,
-                          c3_d len_d,
-                          c3_o(*callback)(c3_d id, u3_noun ovo))
+c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
+                           c3_d first_event_d,
+                           c3_d len_d,
+                           c3_o(*callback)(u3_pier* pir_u, c3_d id, u3_noun mat,
+                                           u3_noun ovo))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
-  c3_w ret_w = mdb_txn_begin(environment,
+  c3_w ret_w = mdb_txn_begin(pir_u->log_u->db_u,
+                             //environment,
                              (MDB_txn *) NULL,
                              MDB_RDONLY, /* flags */
                              &transaction_u);
@@ -347,7 +349,7 @@ c3_o u3m_lmdb_read_events(MDB_env* environment,
     u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
     u3_noun ovo = u3ke_cue(u3k(mat));
 
-    if (callback(current_id, ovo) == c3n) {
+    if (callback(pir_u, current_id, mat, ovo) == c3n) {
       u3z(ovo);
       u3z(mat);
       u3l_log("lmdb: aborting replay due to error.\r\n");

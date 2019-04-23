@@ -335,21 +335,52 @@ _pier_disk_read_header(u3_disk* log_u)
 #endif
 }
 
-
 static c3_o
-_pier_db_on_commit_loaded(c3_d id,
+_pier_db_on_commit_loaded(u3_pier* pir_u,
+                          c3_d id,
+                          u3_noun mat,
                           u3_noun ovo)
 {
-  /* u3_noun evt = u3h(u3t(ovo)); */
-  /* u3_noun job = u3k(u3t(u3t(u3t(ovo)))); */
-  /* c3_d evt_d = u3r_chub(0, evt); */
+  u3_noun evt = u3h(u3t(ovo));
+  u3_noun job = u3k(u3t(u3t(u3t(ovo))));
+  c3_d evt_d = u3r_chub(0, evt);
 
-  /* if (evt_d != id) { */
-  /*   _pier_disk_bail(0, "pier: load: commit: event order"); */
-  /*   return c3n; */
-  /* } */
+  if (evt_d != id) {
+    _pier_disk_bail(0, "pier: load: commit: event order");
+    return c3n;
+  }
 
   fprintf(stderr, "replaying event %" PRIu64 "\r\n", id);
+
+
+  // Need to grab references to the nouns above.
+  u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
+  wit_u->pir_u = pir_u;
+  wit_u->evt_d = evt_d;
+  wit_u->job = u3k(job);
+  wit_u->mat = u3k(mat);
+
+  // OK, so my queuing logic isn't correct, since I'm never setting the exit 
+
+  // Insert at queue front since we're loading events in order
+  if ( !pir_u->ent_u ) {
+    c3_assert(!pir_u->ext_u);
+
+    pir_u->ent_u = pir_u->ext_u = wit_u;
+  }
+  else {
+    if ( wit_u->evt_d != (1ULL + pir_u->ent_u->evt_d) ) {
+      fprintf(stderr, "pier: load: commit: event gap: %" PRIx64 ", %"
+              PRIx64 "\r\n",
+              wit_u->evt_d,
+              pir_u->ent_u->evt_d);
+      _pier_disk_bail(0, "pier: load: comit: event gap");
+      return c3n;
+    }
+
+    pir_u->ent_u->nex_u = wit_u;
+    pir_u->ent_u = wit_u;
+  }
 
   return c3y;
 }
@@ -361,10 +392,30 @@ _pier_db_load_commits(u3_pier* pir_u,
                       c3_d     lav_d,
                       c3_d     len_d)
 {
-  u3m_lmdb_read_events(pir_u->log_u->db_u,
-                       lav_d,
-                       len_d,
-                       _pier_db_on_commit_loaded);
+  u3l_log("pier: replaying events from %" PRIu64 " (count %" PRIu64 ")\r\n",
+          lav_d, len_d);
+
+  if (lav_d == 1) {
+    // We are restarting from event 1. That means we need to set the ship from
+    // the log identity information.
+    u3_noun who, fak, len;
+    u3m_lmdb_read_identity(pir_u->log_u->db_u,
+                           &who,
+                           &fak,
+                           &len);
+
+    _pier_boot_set_ship(pir_u, u3k(who), u3k(fak));
+    pir_u->lif_d = u3r_chub(0, len);
+
+    u3z(who);
+    u3z(fak);
+    u3z(len);
+  }
+
+  u3m_lmdb_queue_events(pir_u,
+                        lav_d,
+                        len_d,
+                        _pier_db_on_commit_loaded);
 }
 
 
