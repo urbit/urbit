@@ -74,6 +74,7 @@ void u3m_lmdb_shutdown(MDB_env* env)
 static
 void _perform_put_on_databse_raw(MDB_txn* transaction_u,
                                  MDB_dbi database_u,
+                                 c3_w flags,
                                  void* key,
                                  size_t key_len,
                                  void* value,
@@ -86,7 +87,7 @@ void _perform_put_on_databse_raw(MDB_txn* transaction_u,
   value_val.mv_size = value_len;
   value_val.mv_data = value;
 
-  c3_w ret_w = mdb_put(transaction_u, database_u, &key_val, &value_val, 0);
+  c3_w ret_w = mdb_put(transaction_u, database_u, &key_val, &value_val, flags);
   if (ret_w != 0) {
     u3l_log("lmdb: write failed: %s\n", mdb_strerror(ret_w));
     u3m_bail(c3__fail);
@@ -125,6 +126,7 @@ void _perform_put_on_databse_noun(MDB_txn* transaction_u,
 
   _perform_put_on_databse_raw(transaction_u,
                               database_u,
+                              0,
                               key, strlen(key),
                               bytes_y, len_w);
 
@@ -201,13 +203,12 @@ static void u3m_lmdb_write_events_cb(uv_work_t* req) {
     u3m_bail(c3__fail);
   }
 
-  // TODO: Thread MDB_NOOVERWRITE into this; we should never be overwriting items.
-
   // TODO: We need to detect the database being full, making the database
   // maxsize larger, and then retrying this transaction.
   //
   _perform_put_on_databse_raw(transaction_u,
                               database_u,
+                              MDB_NOOVERWRITE,
                               &(data->event_number),
                               sizeof(c3_d),
                               data->malloced_event_data,

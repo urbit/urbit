@@ -70,20 +70,18 @@ static void _pier_boot_ready(u3_pier* pir_u);
 static void _pier_boot_set_ship(u3_pier* pir_u, u3_noun who, u3_noun fak);
 static void _pier_exit_done(u3_pier* pir_u);
 
-/* _pier_disk_bail(): bail from disk i/o.
+/* _pier_db_bail(): bail from disk i/o.
 */
 static void
-_pier_disk_bail(void* vod_p, const c3_c* err_c)
+_pier_db_bail(void* vod_p, const c3_c* err_c)
 {
-  // u3_writ* wit_u = vod_p;
-
   u3l_log("disk error: %s\r\n", err_c);
 }
 
-/* _pier_disk_shutdown(): close the log.
+/* _pier_db_shutdown(): close the log.
 */
 static void
-_pier_disk_shutdown(u3_pier* pir_u)
+_pier_db_shutdown(u3_pier* pir_u)
 {
   u3m_lmdb_shutdown(pir_u->log_u->db_u);
 }
@@ -100,9 +98,6 @@ _pier_db_commit_complete(u3_writ* wit_u)
   u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
 #endif
 
-  // TODO: Advance the commit counter when we move the event log entirely over
-  // to the DB.
-
   /* advance commit counter
   */
   {
@@ -114,10 +109,10 @@ _pier_db_commit_complete(u3_writ* wit_u)
   _pier_apply(pir_u);
 }
 
-/* _pier_disk_commit_request(): start commit.
+/* _pier_db_commit_request(): start commit.
 */
 static void
-_pier_disk_commit_request(u3_writ* wit_u)
+_pier_db_commit_request(u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
@@ -181,7 +176,7 @@ _pier_db_on_commit_loaded(u3_pier* pir_u,
   c3_d evt_d = u3r_chub(0, evt);
 
   if (evt_d != id) {
-    _pier_disk_bail(0, "pier: load: commit: event order");
+    _pier_db_bail(0, "pier: load: commit: event order");
     return c3n;
   }
 
@@ -204,7 +199,7 @@ _pier_db_on_commit_loaded(u3_pier* pir_u,
               PRIx64 "\r\n",
               wit_u->evt_d,
               pir_u->ent_u->evt_d);
-      _pier_disk_bail(0, "pier: load: comit: event gap");
+      _pier_db_bail(0, "pier: load: comit: event gap");
       return c3n;
     }
 
@@ -245,10 +240,10 @@ _pier_db_load_commits(u3_pier* pir_u,
                         _pier_db_on_commit_loaded);
 }
 
-/* _pier_disk_init():
+/* _pier_db_init():
 */
 static c3_o
-_pier_disk_init(u3_disk* log_u)
+_pier_db_init(u3_disk* log_u)
 {
   c3_d evt_d = 0;
   c3_d pos_d = 0;
@@ -261,13 +256,8 @@ _pier_disk_init(u3_disk* log_u)
     return c3n;
   }
 
-    log_u->liv_o = c3y;
-
+  log_u->liv_o = c3y;
   log_u->com_d = log_u->moc_d = evt_d;
-
-  // TODO: We want to restore our identity right here?
-  //
-  //_pier_db_read_header(log_u->pir_u);
 
   _pier_boot_ready(log_u->pir_u);
 
@@ -353,7 +343,7 @@ _pier_disk_create(u3_pier* pir_u)
 
   //  create/load event log
   //
-  if ( c3n == _pier_disk_init(log_u) ) {
+  if ( c3n == _pier_db_init(log_u) ) {
     return c3n;
   }
 
@@ -597,7 +587,6 @@ _pier_work_release(u3_writ* wit_u)
       if ( (0 == pir_u->ent_u) &&
            (wit_u->evt_d < log_u->com_d) )
       {
-        //_pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
         _pier_db_load_commits(pir_u, (1ULL + god_u->dun_d), 1000ULL);
       }
     }
@@ -825,7 +814,7 @@ _pier_work_exit(uv_process_t* req_u,
   u3l_log("pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
   uv_close((uv_handle_t*) req_u, 0);
 
-  _pier_disk_shutdown(pir_u);
+  _pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
 }
 
@@ -1621,7 +1610,7 @@ start:
          (wit_u->evt_d == (1 + log_u->com_d)) )
     {
       // TODO(erg): This is the place where we build up things into a queue.
-      _pier_disk_commit_request(wit_u);
+      _pier_db_commit_request(wit_u);
       act_o = c3y;
     }
 
@@ -1728,7 +1717,7 @@ _pier_exit_done(u3_pier* pir_u)
 {
   u3l_log("pier: exit\r\n");
 
-  _pier_disk_shutdown(pir_u);
+  _pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
   _pier_loop_exit(pir_u);
 
