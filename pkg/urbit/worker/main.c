@@ -329,7 +329,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 static void
 _worker_fail(void* vod_p, const c3_c* wut_c)
 {
-  u3l_log("worker: fail: %s\r\n", wut_c);
+  u3l_log("work: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -481,7 +481,7 @@ _worker_work_live(c3_d    evt_d,              //  event number
     if ( c3__belt != u3h(u3t(ovo)) ) {
       c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      u3l_log("worker: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
+      u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
     }
   }
 #endif
@@ -563,15 +563,15 @@ _worker_boot_fire(u3_noun eve)
 */
 static void
 _worker_work_boot(c3_d    evt_d,
-                c3_l    mug_l,
-                u3_noun job)
+                  c3_l    mug_l,
+                  u3_noun job)
 {
   c3_assert(evt_d == u3V.evt_d + 1ULL);
   u3V.evt_d = evt_d;
 
   u3A->roe = u3nc(job, u3A->roe);
 
-  u3l_log("worker: (%" PRIu64 ")| boot\r\n", evt_d);
+  u3l_log("work: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
@@ -579,7 +579,7 @@ _worker_work_boot(c3_d    evt_d,
     eve = u3kb_flop(u3A->roe);
     u3A->roe = 0;
 
-    u3l_log("worker: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
+    u3l_log("work: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
     pru = u3m_soft(0, _worker_boot_fire, eve);
 
@@ -590,7 +590,7 @@ _worker_work_boot(c3_d    evt_d,
 
     u3A->roc = u3k(u3t(pru));
 
-    u3l_log("worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
+    u3l_log("work: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
 
     //  XX set u3A->evt_d ?
     //
@@ -607,8 +607,8 @@ _worker_work_boot(c3_d    evt_d,
 */
 static void
 _worker_poke_work(c3_d    evt_d,              //  event number
-                c3_l    mug_l,              //  mug of state
-                u3_noun job)                //  full event
+                  c3_l    mug_l,              //  mug of state
+                  u3_noun job)                //  full event
 {
   if ( u3C.wag_w & u3o_trace ) {
     if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
@@ -796,7 +796,7 @@ u3_worker_boot(void)
     u3V.len_w = 0;
   }
 
-  u3l_log("worker: play %" PRIu64 "\r\n", nex_d);
+  u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
 }
