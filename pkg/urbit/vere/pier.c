@@ -114,30 +114,6 @@ _pier_db_commit_complete(u3_writ* wit_u)
   _pier_apply(pir_u);
 }
 
-/* _pier_disk_commit_complete(): commit complete.
-*/
-static void
-_pier_disk_commit_complete(void* vod_p)
-{
-  u3_writ* wit_u = vod_p;
-  u3_pier* pir_u = wit_u->pir_u;
-  u3_disk* log_u = pir_u->log_u;
-
-#ifdef VERBOSE_EVENTS
-  u3l_log("pier: (%" PRIu64 "): commit: complete\r\n", wit_u->evt_d);
-#endif
-
-  /* /\* advance commit counter */
-  /* *\/ */
-  /* { */
-  /*   c3_assert(wit_u->evt_d == log_u->moc_d); */
-  /*   c3_assert(wit_u->evt_d == (1ULL + log_u->com_d)); */
-  /*   log_u->com_d += 1ULL; */
-  /* } */
-
-  /* _pier_apply(pir_u); */
-}
-
 /* _pier_disk_commit_request(): start commit.
 */
 static void
@@ -149,24 +125,6 @@ _pier_disk_commit_request(u3_writ* wit_u)
 #ifdef VERBOSE_EVENTS
   u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
 #endif
-
-  /* append to logfile
-  */
-  {
-    //  TODO: Remove the logfile when we have reading otherwise working.
-    //
-    c3_d  len_d = u3r_met(6, wit_u->mat);
-    c3_d* buf_d = c3_malloc(8 * len_d);
-
-    u3r_chubs(0, len_d, buf_d, wit_u->mat);
-    /* fprintf(stderr, "writing event id %" PRIu64 " to log with len %zu\r\n", */
-    /*         wit_u->evt_d, len_d); */
-    u3_foil_append(_pier_disk_commit_complete,
-                   wit_u,
-                   log_u->fol_u,
-                   buf_d,
-                   len_d);
-  }
 
   /* put it in the database
   */
@@ -182,38 +140,6 @@ _pier_disk_commit_request(u3_writ* wit_u)
     c3_assert(wit_u->evt_d == (1ULL + log_u->moc_d));
     log_u->moc_d += 1ULL;
   }
-}
-
-/* _pier_disk_write_header_complete(): commit complete.
-*/
-static void
-_pier_disk_write_header_complete(void* vod_p)
-{
-  //  no-op, callback required by u3_foil_append()
-  //
-}
-
-/* _pier_disk_write_header(): save boot metadata.
-*/
-static void
-_pier_disk_write_header(u3_pier* pir_u, u3_atom mat)
-{
-  //  XX deduplicate with _pier_disk_commit_request
-  //
-  u3_disk* log_u = pir_u->log_u;
-
-  c3_assert( 0ULL == log_u->fol_u->end_d );
-
-  c3_d  len_d = u3r_met(6, mat);
-  c3_d* buf_d = c3_malloc(8 * len_d);
-
-  u3r_chubs(0, len_d, buf_d, mat);
-
-  u3_foil_append(_pier_disk_write_header_complete,
-                 (void*)0,
-                 log_u->fol_u,
-                 buf_d,
-                 len_d);
 }
 
 
@@ -242,97 +168,6 @@ _pier_db_read_header(u3_pier* pir_u)
   u3z(who);
   u3z(is_fake);
   u3z(life);
-}
-
-/* _pier_disk_read_header_complete():
-*/
-static void
-_pier_disk_read_header_complete(u3_disk* log_u, u3_noun dat)
-{
-  u3_pier* pir_u = log_u->pir_u;
-
-  {
-    u3_noun who, fak, len;
-
-    u3x_trel(dat, &who, &fak, &len);
-
-    c3_assert( c3y == u3ud(who) );
-    c3_assert( 1 >= u3r_met(7, who) );
-    c3_assert( c3y == u3ud(fak) );
-    c3_assert( 1 >= u3r_met(0, fak) );
-    c3_assert( c3y == u3ud(len) );
-    c3_assert( 1 >= u3r_met(3, len) );
-
-    _pier_boot_set_ship(pir_u, u3k(who), u3k(fak));
-
-    pir_u->lif_d = u3r_chub(0, len);
-  }
-
-  u3z(dat);
-}
-
-/* _pier_disk_read_header():
-*/
-static void
-_pier_disk_read_header(u3_disk* log_u)
-{
-  //  XX disabled
-  //
-  //    This is very, very slow.
-  //    The one situation in which we currently *need* it -
-  //    full log replay - it's unnecessary thanks to the current
-  //    _pier_disk_load_commit.
-  //    In all other situations, we're covered by
-  //    _pier_work_play or u3_pier_boot.
-  //    In the long run, it seems best to always get identity
-  //    from the log for restart/replay.
-  //
-#if 0
-  c3_assert( 0 != log_u->fol_u );
-
-  c3_d pos_d = log_u->fol_u->end_d;
-  c3_o got_o = c3n;
-
-      //  XX requires that writs be unlinked before effects are released
-      //
-      if ( (0 == pir_u->ent_u) &&
-           (wit_u->evt_d < log_u->com_d) )
-      {
-        _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL);
-      }
-    }
-  }
-  else {
-#ifdef VERBOSE_EVENTS
-    u3l_log("pier: (%" PRIu64 "): compute: release\r\n", wit_u->evt_d);
-#endif
-
-  while ( pos_d ) {
-    c3_d  len_d, evt_d;
-    c3_d* buf_d;
-    u3_noun mat, ovo, job, evt;
-
-    buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
-
-    if ( !buf_d ) {
-      _pier_disk_bail(0, "corrupt header");
-      return;
-    }
-
-    if ( 0ULL == pos_d) {
-      u3_noun mat = u3i_chubs(len_d, buf_d);
-      u3_noun ovo = u3ke_cue(u3k(mat));
-
-      c3_assert( c3__boot == u3h(ovo) );
-
-      _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
-
-      u3z(ovo); u3z(mat);
-    }
-
-    c3_free(buf_d);
-  }
-#endif
 }
 
 static c3_o
@@ -410,144 +245,6 @@ _pier_db_load_commits(u3_pier* pir_u,
                         _pier_db_on_commit_loaded);
 }
 
-
-/* _pier_disk_load_commit(): load len_d commits >= lav_d; enqueue for replay
-*/
-static void
-_pier_disk_load_commit(u3_pier* pir_u,
-                       c3_d     lav_d,
-                       c3_d     len_d)
-{
-  u3_disk* log_u = pir_u->log_u;
-
-  c3_d max_d = lav_d + len_d;
-  c3_d pos_d = log_u->fol_u->end_d;
-  c3_d old_d = 0;
-
-  c3_assert ( 0 != log_u->fol_u );
-
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: load: commit: at %" PRIx64 "\r\n", pos_d);
-#endif
-
-  while ( pos_d ) {
-    c3_d  len_d, evt_d;
-    c3_d* buf_d;
-    u3_noun mat, ovo, job, evt;
-
-    buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
-
-    if ( !buf_d ) {
-      _pier_disk_bail(0, "pier: load: commit: corrupt");
-      return;
-    }
-
-    mat = u3i_chubs(len_d, buf_d);
-    c3_free(buf_d);
-    ovo = u3ke_cue(u3k(mat));
-
-    //  reached header
-    //
-    if ( 0ULL == pos_d ) {
-      c3_assert( 1ULL == lav_d );
-      c3_assert( c3__boot == u3h(ovo) );
-
-      _pier_disk_read_header_complete(log_u, u3k(u3t(ovo)));
-
-      u3z(ovo); u3z(mat);
-      break;
-    }
-
-    c3_assert(c3__work == u3h(ovo));
-    evt = u3h(u3t(ovo));
-    job = u3k(u3t(u3t(u3t(ovo))));
-    evt_d = u3r_chub(0, evt);
-    u3z(ovo);
-
-    //  confirm event order
-    //
-    if ( (0 != old_d) &&
-         ((old_d - 1ULL) != evt_d) ) {
-      _pier_disk_bail(0, "pier: load: commit: event order");
-      return;
-    }
-    else {
-      old_d = evt_d;
-    }
-
-    //  done: read past the first event requested
-    //
-    if ( evt_d < lav_d ) {
-      u3z(mat);
-      u3z(job);
-      return;
-    }
-    //  skip: haven't reached the last event requested
-    //
-    else if ( evt_d > max_d ) {
-      u3z(mat);
-      u3z(job);
-      continue;
-    }
-    //  enqueue requested event
-    //
-    else {
-      u3_writ* wit_u = c3_calloc(sizeof(u3_writ));
-
-#ifdef VERBOSE_EVENTS
-      fprintf(stderr, "pier: load: commit: %" PRIu64 "\r\n", evt_d);
-#endif
-
-      wit_u->pir_u = pir_u;
-      wit_u->evt_d = evt_d;
-      wit_u->job = job;
-      wit_u->mat = mat;
-
-      /* insert at queue exit -- the oldest events run first
-      */
-      if ( !pir_u->ent_u && !pir_u->ext_u ) {
-        pir_u->ent_u = pir_u->ext_u = wit_u;
-      }
-      else {
-        if ( (1ULL + wit_u->evt_d) != pir_u->ext_u->evt_d ) {
-          fprintf(stderr, "pier: load: commit: event gap: %" PRIx64 ", %"
-                           PRIx64 "\r\n",
-                           wit_u->evt_d,
-                           pir_u->ext_u->evt_d);
-          u3z(mat);
-          u3z(job);
-          _pier_disk_bail(0, "pier: load: comit: event gap");
-          return;
-        }
-
-        wit_u->nex_u = pir_u->ext_u;
-        pir_u->ext_u = wit_u;
-      }
-    }
-  }
-}
-
-/* _pier_disk_init_complete():
-*/
-static void
-_pier_disk_init_complete(u3_disk* log_u, c3_d evt_d)
-{
-  c3_assert( c3n == log_u->liv_o );
-  log_u->liv_o = c3y;
-
-  log_u->com_d = log_u->moc_d = evt_d;
-
-  //  restore pier identity (XX currently a no-op, see comment)
-  //
-  _pier_disk_read_header(log_u);
-
-  // TODO: We want to restore our identity right here?
-  //
-  //_pier_db_read_header(log_u->pir_u);
-
-  _pier_boot_ready(log_u->pir_u);
-}
-
 /* _pier_disk_init():
 */
 static c3_o
@@ -558,45 +255,21 @@ _pier_disk_init(u3_disk* log_u)
 
   c3_assert( c3n == log_u->liv_o );
 
-  log_u->fol_u = u3_foil_absorb(log_u->com_u, "commit.urbit-log");
-
-  if ( !log_u->fol_u ) {
+  // Request from the database the last event
+  if ( c3n == u3m_lmdb_get_latest_event_number(log_u->db_u, &evt_d) ) {
+    u3l_log("disk init from lmdb failed.");
     return c3n;
   }
 
-  //  use the last event in the log to set the commit point.
+    log_u->liv_o = c3y;
+
+  log_u->com_d = log_u->moc_d = evt_d;
+
+  // TODO: We want to restore our identity right here?
   //
-  if ( 0 != (pos_d = log_u->fol_u->end_d) ) {
-    c3_d len_d = 0;
+  //_pier_db_read_header(log_u->pir_u);
 
-    c3_d* buf_d = u3_foil_reveal(log_u->fol_u, &pos_d, &len_d);
-
-    if ( !buf_d ) {
-      fprintf(stderr, "pier: load: commit: corrupt\r\n");
-      return c3n;
-    }
-
-    {
-      u3_noun mat = u3i_chubs(len_d, buf_d);
-      u3_noun ovo = u3ke_cue(u3k(mat));
-
-      c3_assert(c3__work == u3h(ovo));
-
-      u3_noun evt = u3h(u3t(ovo));
-
-      evt_d = u3r_chub(0, evt);
-
-      u3z(mat); u3z(ovo); u3z(evt);
-    }
-
-#ifdef VERBOSE_EVENTS
-    fprintf(stderr, "pier: load: last %" PRIu64 "\r\n", evt_d);
-#endif
-
-    c3_free(buf_d);
-  }
-
-  _pier_disk_init_complete(log_u, evt_d);
+  _pier_boot_ready(log_u->pir_u);
 
   return c3y;
 }
@@ -646,11 +319,13 @@ _pier_disk_create(u3_pier* pir_u)
       strcpy(log_c, pir_u->pax_c);
       strcat(log_c, "/.urb/log");
 
+      // Creates the folder
       if ( 0 == (log_u->com_u = u3_foil_folder(log_c)) ) {
         c3_free(log_c);
         return c3n;
       }
 
+      // Inits the database
       if ( 0 == (log_u->db_u = u3m_lmdb_init(log_c)) ) {
         c3_free(log_c);
         return c3n;
@@ -807,10 +482,6 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
 
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
   u3_atom mat = u3ke_jam(msg);
-  if ( c3y == sav_o ) {
-    _pier_disk_write_header(pir_u, u3k(mat));
-  }
-
   u3_newt_write(&god_u->inn_u, mat, 0);
 }
 
@@ -1869,7 +1540,6 @@ _pier_boot_ready(u3_pier* pir_u)
 
     //  begin queuing batches of committed events
     //
-    /* _pier_disk_load_commit(pir_u, (1ULL + god_u->dun_d), 1000ULL); */
     _pier_db_load_commits(pir_u, (1ULL + god_u->dun_d), 1000ULL);
 
     if ( 0 == god_u->dun_d ) {

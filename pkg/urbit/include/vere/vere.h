@@ -1364,3 +1364,4 @@ c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
                            c3_d len_d,
                            c3_o(*callback)(u3_pier* pir_u, c3_d id, u3_noun mat,
                                            u3_noun ovo));
+c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number);

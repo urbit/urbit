@@ -373,6 +373,72 @@ c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
   return c3y;
 }
 
+// Reads the last key in order from the EVENTS table as the latest event number
+//
+// On table empty, returns c3y but doesn't modify event_number.
+//
+c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
+{
+  // Creates the read transaction.
+  MDB_txn* transaction_u;
+  c3_w ret_w = mdb_txn_begin(environment,
+                             (MDB_txn *) NULL,
+                             0, /* flags */
+                             &transaction_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Opens the database as part of the transaction.
+  c3_w flags_w = MDB_CREATE | MDB_INTEGERKEY;
+  MDB_dbi database_u;
+  ret_w = mdb_dbi_open(transaction_u,
+                       "EVENTS",
+                       flags_w,
+                       &database_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Creates a cursor to point to the last event
+  MDB_cursor* cursor_u;
+  ret_w = mdb_cursor_open(transaction_u, database_u, &cursor_u);
+  if (0 != ret_w) {
+    u3l_log("lmdb: cursor_open fail: %s\n", mdb_strerror(ret_w));
+    return c3n;
+  }
+
+  // Set the cursor at the end of the line.
+  MDB_val key;
+  MDB_val val;
+  ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_LAST);
+  if (MDB_NOTFOUND == ret_w) {
+    // Clean up, but don't error out.
+    mdb_cursor_close(cursor_u);
+    mdb_txn_abort(transaction_u);
+    return c3y;
+  }
+
+  if (0 != ret_w) {
+    u3l_log("lmdb: could not find last event: %s\r\n", mdb_strerror(ret_w));
+    mdb_cursor_close(cursor_u);
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
+
+  *event_number = *(c3_d*)key.mv_data;
+
+  mdb_cursor_close(cursor_u);
+
+  // Read-only transactions are aborted since we don't need to record the fact
+  // that we performed a read.
+  mdb_txn_abort(transaction_u);
+
+  return c3y;
+}
+
 // Writes the event log identity information.
 //
 // We have a secondary database (table) in this environment named META where we
