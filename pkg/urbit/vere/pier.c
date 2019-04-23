@@ -837,6 +837,12 @@ _pier_work_replace(u3_writ* wit_u,
 
   c3_assert(god_u->sen_d == wit_u->evt_d);
 
+  //  something has gone very wrong, we should probably stop now
+  //
+  if ( wit_u->rep_d >= 3ULL ) {
+    u3_pier_bail();
+  }
+
   /* move backward in work processing
   */
   {
@@ -846,7 +852,9 @@ _pier_work_replace(u3_writ* wit_u,
     u3z(wit_u->mat);
     wit_u->mat = mat;
 
-    god_u->sen_d -= 1;
+    wit_u->rep_d += 1ULL;
+
+    god_u->sen_d -= 1ULL;
   }
 
   if ( wit_u->evt_d > pir_u->lif_d ) {

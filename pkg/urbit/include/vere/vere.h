@@ -611,6 +611,7 @@
           struct _u3_pier* pir_u;               //  backpointer to pier
           u3_noun          job;                 //  (pair date ovum)
           c3_d             evt_d;               //  event number
+          c3_d             rep_d;               //  replacement count
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
