@@ -1,0 +1,93 @@
+diff -ur cctools-port-c1cc758/cctools/include/stuff/errors.h cctools-port-libstuff-no-error/cctools/include/stuff/errors.h
+--- cctools-port-c1cc758/cctools/include/stuff/errors.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/include/stuff/errors.h	2017-11-10 21:52:54.172522281 -0800
+@@ -40,7 +40,7 @@
+     __attribute__ ((format (printf, 1, 2)))
+ #endif
+     __attribute__((visibility("hidden")));
+-extern void error(
++extern void errorf(
+     const char *format, ...)
+ #ifdef __GNUC__
+     __attribute__ ((format (printf, 1, 2)))
+diff -ur cctools-port-c1cc758/cctools/libstuff/errors.c cctools-port-libstuff-no-error/cctools/libstuff/errors.c
+--- cctools-port-c1cc758/cctools/libstuff/errors.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/errors.c	2017-11-10 21:52:42.795730237 -0800
+@@ -57,7 +57,7 @@
+  */
+ __private_extern__
+ void
+-error(
++errorf(
+ const char *format,
+ ...)
+ {
+diff -ur cctools-port-c1cc758/cctools/libstuff/ofile.c cctools-port-libstuff-no-error/cctools/libstuff/ofile.c
+--- cctools-port-c1cc758/cctools/libstuff/ofile.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/ofile.c	2017-11-10 21:54:20.156803208 -0800
+@@ -115,6 +115,8 @@
+ };
+ #endif /* !defined(OTOOL) */
+ 
++#define error errorf
++
+ static enum bool ofile_specific_arch(
+     struct ofile *ofile,
+     uint32_t narch);
+diff -ur cctools-port-c1cc758/cctools/libstuff/swap_headers.c cctools-port-libstuff-no-error/cctools/libstuff/swap_headers.c
+--- cctools-port-c1cc758/cctools/libstuff/swap_headers.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/swap_headers.c	2017-11-10 21:54:49.873797374 -0800
+@@ -50,6 +50,8 @@
+ #include "stuff/bytesex.h"
+ #include "stuff/errors.h"
+ 
++#define error errorf
++
+ /*
+  * swap_object_headers() swaps the object file headers from the host byte sex
+  * into the non-host byte sex.  It returns TRUE if it can and did swap the
+diff -ur cctools-port-c1cc758/cctools/libstuff/SymLoc.c cctools-port-libstuff-no-error/cctools/libstuff/SymLoc.c
+--- cctools-port-c1cc758/cctools/libstuff/SymLoc.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/SymLoc.c	2017-11-10 21:53:06.199321490 -0800
+@@ -118,7 +118,7 @@
+     if(fclose(file) != 0)
+ 	system_error("fclose() failed");
+     if (!*viewPath) {
+-        error("symLocForDylib(): Can't locate view path for release %s",
++        errorf("symLocForDylib(): Can't locate view path for release %s",
+ 	      releaseName);
+         return NULL;
+     }
+@@ -252,7 +252,7 @@
+     // process return value
+     if (!c) {
+ 	if(no_error_if_missing == FALSE)
+-	    error("Can't find project that builds %s", installName);
++	    errorf("Can't find project that builds %s", installName);
+         return NULL;
+     } else {
+ 	*found_project = TRUE;
+diff -ur cctools-port-c1cc758/cctools/libstuff/version_number.c cctools-port-libstuff-no-error/cctools/libstuff/version_number.c
+--- cctools-port-c1cc758/cctools/libstuff/version_number.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/version_number.c	2017-11-10 21:55:18.674114769 -0800
+@@ -27,6 +27,8 @@
+ #include "stuff/allocate.h"
+ #include "stuff/errors.h"
+ 
++#define error errorf
++
+ /*
+  * get_version_number() converts an ascii version number string of the form:
+  *	X[.Y[.Z]]
+diff -ur cctools-port-c1cc758/cctools/libstuff/writeout.c cctools-port-libstuff-no-error/cctools/libstuff/writeout.c
+--- cctools-port-c1cc758/cctools/libstuff/writeout.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-libstuff-no-error/cctools/libstuff/writeout.c	2017-11-10 21:55:43.537722114 -0800
+@@ -37,6 +37,8 @@
+ #include "stuff/lto.h"
+ #endif /* LTO_SUPPORT */
+ 
++#define error errorf
++
+ static void copy_new_symbol_info(
+     char *p,
+     uint32_t *size,
