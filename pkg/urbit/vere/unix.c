@@ -1001,26 +1001,6 @@ u3_unix_initial_into_card(c3_c* arv_c)
               u3nq(c3__into, u3_nul, c3y, can));
 }
 
-/* _unix_sign_cb: signal callback.
-*/
-static void
-_unix_sign_cb(uv_signal_t* sil_u, c3_i num_i)
-{
-  {
-    switch ( num_i ) {
-      default: u3l_log("\r\nmysterious signal %d\r\n", num_i); break;
-      case SIGTERM:
-        u3_pier_exit(u3_pier_stub());
-        break;
-      case SIGINT:
-        u3l_log("\r\ninterrupt\r\n");
-        u3_term_ef_ctlc();
-        break;
-      case SIGWINCH: u3_term_ef_winc(); break;
-    }
-  }
-}
-
 /* _unix_sync_file(): sync file to unix
 */
 static void
@@ -1293,18 +1273,6 @@ u3_unix_release(c3_c* pax_c)
   free(paf_c);
 }
 
-/* u3_unix_ef_hold()
-*/
-void
-u3_unix_ef_hold(void)
-{
-  u3_usig* sig_u;
-
-  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
-    uv_signal_stop(&sig_u->sil_u);
-  }
-}
-
 /* u3_unix_ef_bake(): initial effects for new process.
 */
 void
@@ -1313,18 +1281,6 @@ u3_unix_ef_bake(u3_pier *pir_u)
   u3_pier_work(pir_u,
                u3nt(u3_blip, c3__boat, u3_nul),
                u3nc(c3__boat, u3_nul));
-}
-
-/* u3_unix_ef_move()
-*/
-void
-u3_unix_ef_move(void)
-{
-  u3_usig* sig_u;
-
-  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
-    uv_signal_start(&sig_u->sil_u, _unix_sign_cb, sig_u->num_i);
-  }
 }
 
 /* u3_unix_ef_look(): update the root.
@@ -1348,7 +1304,6 @@ void
 u3_unix_io_talk(u3_pier *pir_u)
 {
   u3_unix_acquire(pir_u->pax_c);
-  u3_unix_ef_move();
 }
 
 /* u3_unix_io_exit(): terminate unix I/O.

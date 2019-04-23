@@ -80,9 +80,6 @@ static sigjmp_buf u3_Signal;
 static uint8_t Sigstk[SIGSTKSZ];
 #endif
 
-void u3_unix_ef_hold(void);         //  suspend system signal regime
-void u3_unix_ef_move(void);         //  restore system signal regime
-
 #if 0
 /* _cm_punt(): crudely print trace.
 */
@@ -319,7 +316,11 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 static void
 _cm_signal_deep(c3_w sec_w)
 {
-  u3_unix_ef_hold();
+  //  disable outer system signal handling
+  //
+  if ( 0 != u3C.sign_hold_f ) {
+    u3C.sign_hold_f();
+  }
 
 #ifndef NO_OVERFLOW
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
@@ -366,7 +367,13 @@ _cm_signal_done()
 
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
-  u3_unix_ef_move();
+
+  //  restore outer system signal handling
+  //
+  if ( 0 != u3C.sign_move_f ) {
+    u3C.sign_move_f();
+  }
+
   u3t_boff();
 }
 
@@ -1875,6 +1882,8 @@ u3m_boot_new(c3_c* dir_c)
   /* Activate tracing.
   */
   u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.
@@ -1919,6 +1928,8 @@ u3m_boot_pier(void)
   /* Activate tracing.
   */
   u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.

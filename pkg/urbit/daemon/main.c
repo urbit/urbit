@@ -662,7 +662,7 @@ main(c3_i   argc,
 #endif
   u3_ve_sysopt();
 
-  //  Block profiling signal, which should be delievered to exactly one thread.
+  //  Block profiling signal, which should be delivered to exactly one thread.
   //
   //    XX review, may be unnecessary due to similar in u3m_init()
   //
@@ -678,6 +678,8 @@ main(c3_i   argc,
   }
 
   //  Handle SIGTSTP as if it was SIGTERM.
+  //
+  //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
 

@@ -12,6 +12,8 @@
         c3_w    wag_w;                        //  flags (both ways)
         void (*stderr_log_f)(c3_c*);          //  errors from c code
         void (*slog_f)(u3_noun);              //  function pointer for slog
+        void (*sign_hold_f)(void);            //  suspend system signal regime
+        void (*sign_move_f)(void);            //  restore system signal regime
       } u3o_config;
 
     /* u3o_flag: process/system flags.
