@@ -113,8 +113,11 @@
   done:(put-snapshot-diff:(open:watcher i.pax) ost)
 ::
 ++  wake
-  |=  [wir=wire ~]
+  |=  [wir=wire error=(unit tang)]
   ^-  (quip move _+>)
+  ?^  error
+    %-  (slog u.error)
+    [~ ..wake]
   ?>  ?=([@ %poll ~] wir)
   done:poll-filter:(open:watcher i.wir)
 ::
