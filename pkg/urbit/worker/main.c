@@ -647,6 +647,10 @@ _worker_poke_work(c3_d    evt_d,              //  event number
 static void
 _worker_poke_exit(c3_w cod_w)                 //  exit code
 {
+  if ( u3C.wag_w & u3o_debug_cpu ) {
+    u3t_damp();
+  }
+
   exit(cod_w);
 }
 
