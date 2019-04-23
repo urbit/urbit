@@ -41,7 +41,7 @@
         void
         u3m_leap(c3_w pad_w);
 
-      /* u3m_golf(): record cap length for u3_flog().
+      /* u3m_golf(): record cap length for u3m_flog().
       */
         c3_w
         u3m_golf(void);
@@ -841,7 +841,7 @@ u3m_love(u3_noun pro)
   return pro;
 }
 
-/* u3m_golf(): record cap_p length for u3_flog().
+/* u3m_golf(): record cap_p length for u3m_flog().
 */
 c3_w
 u3m_golf(void)

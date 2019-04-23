@@ -401,7 +401,7 @@ _cv_mole(u3_noun  fot,
   if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
        (0 != p_uco) ||
        (0 != q_uco) ||
-       (c3n == u3_sing(fot, r_uco)) )
+       (c3n == u3r_sing(fot, r_uco)) )
   {
     u3l_log("strange mole %s\n", u3r_string(san)));
 
