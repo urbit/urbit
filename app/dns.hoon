@@ -491,8 +491,11 @@
 ::  +wake: timer callback
 ::
 ++  wake
-  |=  [=wire ~]
+  |=  [=wire error=(unit tang)]
   ^-  (quip move _this)
+  ?^  error
+    %-  (slog u.error)
+    [~ this]
   ?+    wire
       ~&  [%strange-wake wire]
       [~ this]
