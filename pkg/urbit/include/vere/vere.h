@@ -307,15 +307,6 @@
         struct _u3_moor* nex_u;
       } u3_moor;
 
-    /* u3_foil: abstract chub-addressed file.
-    */
-      typedef struct _u3_foil {
-        uv_file          fil_u;             //  libuv file handle
-        struct _u3_dire* dir_u;             //  parent directory
-        c3_c*            nam_c;             //  name within parent
-        c3_d             end_d;             //  end of file
-      } u3_foil;
-
     /* u3_dent: directory entry.
     */
       typedef struct _u3_dent {
@@ -647,10 +638,9 @@
           u3_dire*         dir_u;               //  main pier directory
           u3_dire*         urb_u;               //  urbit system data
           u3_dire*         com_u;               //  log directory
-          u3_foil*         fol_u;               //  logfile
           c3_o             liv_o;               //  live
           c3_d             end_d;               //  byte end of file
-          MDB_env*          db_u;               //  lmdb environment. replaces fol_u.
+          MDB_env*          db_u;               //  lmdb environment.
           c3_d             moc_d;               //  commit requested
           c3_d             com_d;               //  committed
           struct _u3_pier* pir_u;               //  pier backpointer
@@ -863,69 +853,6 @@
       */
         u3_dire*
         u3_foil_folder(const c3_c* pax_c);         //  directory object, or 0
-
-      /* u3_foil_create(): create a new, empty file, not syncing.
-      */
-        void
-        u3_foil_create(void      (*fun_f)(void*,    //  context pointer
-                                          u3_foil*),//  file object
-                       void*       vod_p,           //  context pointer
-                       u3_dire*    dir_u,           //  directory
-                       const c3_c* nam_c);          //  name of new file
-
-      /* u3_foil_absorb(): absorb logfile, truncating to last good frame; block.
-      */
-        u3_foil*
-        u3_foil_absorb(u3_dire* dir_u,              //  directory
-                       c3_c*    nam_c);             //  filename
-
-      /* u3_foil_delete(): delete a file; free descriptor.
-      */
-        void
-        u3_foil_delete(void   (*fun_f)(void*),      //  context pointer
-                       void*    vod_p,              //  context pointer
-                       u3_foil* fol_u);             //  file to delete
-
-      /* u3_foil_append(): write a frame at the end of a file, freeing buffer.
-      */
-        void
-        u3_foil_append(void   (*fun_f)(void*),      //  context pointer
-                       void*    vod_p,              //  context pointer
-                       u3_foil* fol_u,              //  file
-                       c3_d*    buf_d,              //  buffer to write from
-                       c3_d     len_d);             //  length in chubs
-
-      /* u3_foil_reveal(): read the frame before a position, blocking.
-      */
-        c3_d*
-        u3_foil_reveal(u3_foil* fol_u,              //  file from
-                       c3_d*    pos_d,              //  end position/prev end
-                       c3_d*    len_d);             //  length return
-
-      /* u3_foil_commit(): reveal from one file, append to another.
-      */
-        void
-        u3_foil_commit(void   (*fun_f)(void*,       //  context pointer
-                                       u3_foil*,    //  file from
-                                       c3_d,        //  previous from
-                                       u3_foil*,    //  file to
-                                       c3_d),       //  end of to
-                       void*    vod_p,              //  context pointer
-                       u3_foil* del_u,              //  file from
-                       c3_d     del_d,              //  end of from frame
-                       u3_foil* unt_u,              //  file to
-                       c3_d     unt_d);             //  end of to frame
-
-      /* u3_foil_invent(): make new file with one frame; free buffer, sync.
-      */
-        void
-        u3_foil_invent(void   (*fun_f)(void*,       //  context pointer
-                                       u3_foil*),   //  new file
-                       void*    vod_p,              //  context pointer
-                       u3_dire* dir_u,              //  directory
-                       c3_c*    nam_c,              //  filename
-                       c3_d*    buf_d,              //  buffer (to free)
-                       c3_d     len_d);             //  length
 
     /**  Output.
     **/
