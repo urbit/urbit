@@ -83,7 +83,7 @@ _pier_db_bail(void* vod_p, const c3_c* err_c)
 static void
 _pier_db_shutdown(u3_pier* pir_u)
 {
-  u3m_lmdb_shutdown(pir_u->log_u->db_u);
+  u3_lmdb_shutdown(pir_u->log_u->db_u);
 }
 
 /* _pier_db_commit_complete(): commit complete.
@@ -124,9 +124,9 @@ _pier_db_commit_request(u3_writ* wit_u)
   /* put it in the database
   */
   {
-    u3m_lmdb_write_event(log_u->db_u,
-                         wit_u,
-                         _pier_db_commit_complete);
+    u3_lmdb_write_event(log_u->db_u,
+                        wit_u,
+                        _pier_db_commit_complete);
   }
 
   /* advance commit-request counter
@@ -144,8 +144,8 @@ _pier_db_write_header(u3_pier* pir_u,
                       u3_noun is_fake,
                       u3_noun life)
 {
-  u3m_lmdb_write_identity(pir_u->log_u->db_u,
-                          who, is_fake, life);
+  u3_lmdb_write_identity(pir_u->log_u->db_u,
+                         who, is_fake, life);
 }
 
 /* _pier_db_read_header(): reads the ships metadata from lmdb
@@ -154,8 +154,8 @@ static void
 _pier_db_read_header(u3_pier* pir_u)
 {
   u3_noun who, is_fake, life;
-  u3m_lmdb_read_identity(pir_u->log_u->db_u,
-                         &who, &is_fake, &life);
+  u3_lmdb_read_identity(pir_u->log_u->db_u,
+                        &who, &is_fake, &life);
 
   _pier_boot_set_ship(pir_u, u3k(who), u3k(is_fake));
   pir_u->lif_d = u3r_chub(0, life);
@@ -221,10 +221,10 @@ _pier_db_load_commits(u3_pier* pir_u,
     // We are restarting from event 1. That means we need to set the ship from
     // the log identity information.
     u3_noun who, fak, len;
-    u3m_lmdb_read_identity(pir_u->log_u->db_u,
-                           &who,
-                           &fak,
-                           &len);
+    u3_lmdb_read_identity(pir_u->log_u->db_u,
+                          &who,
+                          &fak,
+                          &len);
 
     _pier_boot_set_ship(pir_u, u3k(who), u3k(fak));
     pir_u->lif_d = u3r_chub(0, len);
@@ -234,10 +234,10 @@ _pier_db_load_commits(u3_pier* pir_u,
     u3z(len);
   }
 
-  u3m_lmdb_read_events(pir_u,
-                       lav_d,
-                       len_d,
-                       _pier_db_on_commit_loaded);
+  u3_lmdb_read_events(pir_u,
+                      lav_d,
+                      len_d,
+                      _pier_db_on_commit_loaded);
 }
 
 /* _pier_db_init():
@@ -251,7 +251,7 @@ _pier_db_init(u3_disk* log_u)
   c3_assert( c3n == log_u->liv_o );
 
   // Request from the database the last event
-  if ( c3n == u3m_lmdb_get_latest_event_number(log_u->db_u, &evt_d) ) {
+  if ( c3n == u3_lmdb_get_latest_event_number(log_u->db_u, &evt_d) ) {
     u3l_log("disk init from lmdb failed.");
     return c3n;
   }
@@ -316,7 +316,7 @@ _pier_disk_create(u3_pier* pir_u)
       }
 
       // Inits the database
-      if ( 0 == (log_u->db_u = u3m_lmdb_init(log_c)) ) {
+      if ( 0 == (log_u->db_u = u3_lmdb_init(log_c)) ) {
         c3_free(log_c);
         return c3n;
       }

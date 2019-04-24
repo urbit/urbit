@@ -21,11 +21,11 @@
 // We perform the very first metadata writes on the main thread because we
 // can't do anything until they persist.
 
-/* u3m_lmdb_init(): Opens up a log environment
+/* u3_lmdb_init(): Opens up a log environment
 **
 ** Precondition: log_path points to an already created directory
 */
-MDB_env* u3m_lmdb_init(const char* log_path)
+MDB_env* u3_lmdb_init(const char* log_path)
 {
   MDB_env* env = 0;
   c3_w ret_w = mdb_env_create(&env);
@@ -58,9 +58,9 @@ MDB_env* u3m_lmdb_init(const char* log_path)
   return env;
 }
 
-/* u3m_lmdb_shutdown(): Shuts down lmdb
+/* u3_lmdb_shutdown(): Shuts down lmdb
 */
-void u3m_lmdb_shutdown(MDB_env* env)
+void u3_lmdb_shutdown(MDB_env* env)
 {
   mdb_env_close(env);
 }
@@ -164,7 +164,7 @@ void _perform_get_on_databse_noun(MDB_txn* transaction_u,
 }
 
 
-/* _write_request_data: callback struct for u3m_lmdb_write_event()
+/* _write_request_data: callback struct for u3_lmdb_write_event()
 */
 struct _write_request_data {
   // The database environment to write to. This object is thread-safe, though
@@ -191,12 +191,12 @@ struct _write_request_data {
   void (*on_complete)(u3_writ*);
 };
 
-/* _u3m_lmdb_write_event_cb(): Implementation of u3m_lmdb_write_event()
+/* _u3_lmdb_write_event_cb(): Implementation of u3_lmdb_write_event()
 **
 ** This is always run on a libuv background worker thread; actual nouns cannot
 ** be touched here.
 */
-static void _u3m_lmdb_write_event_cb(uv_work_t* req) {
+static void _u3_lmdb_write_event_cb(uv_work_t* req) {
   struct _write_request_data* data = req->data;
 
   // Creates the write transaction.
@@ -242,12 +242,12 @@ static void _u3m_lmdb_write_event_cb(uv_work_t* req) {
   }
 }
 
-/* _u3m_lmdb_write_event_after_cb(): Implementation of u3m_lmdb_write_event()
+/* _u3_lmdb_write_event_after_cb(): Implementation of u3_lmdb_write_event()
 **
 ** This is always run on the main loop thread after the worker thread event
 ** completes.
 */
-static void _u3m_lmdb_write_event_after_cb(uv_work_t* req, int status) {
+static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
   struct _write_request_data* data = req->data;
 
   data->on_complete(data->event);
@@ -257,7 +257,7 @@ static void _u3m_lmdb_write_event_after_cb(uv_work_t* req, int status) {
   free(req);
 }
 
-/* u3m_lmdb_write_event(): Asynchronously writes events to the database.
+/* u3_lmdb_write_event(): Asynchronously writes events to the database.
 **
 ** This writes all the passed in events along with log metadata updates to the
 ** database as a single transaction on a worker thread. Once the transaction
@@ -266,9 +266,9 @@ static void _u3m_lmdb_write_event_after_cb(uv_work_t* req, int status) {
 ** TODO: Make this take multiple events in one commit once we have this
 ** working one at a time.
 */
-void u3m_lmdb_write_event(MDB_env* environment,
-                          u3_writ* event_u,
-                          void (*on_complete)(u3_writ*))
+void u3_lmdb_write_event(MDB_env* environment,
+                         u3_writ* event_u,
+                         void (*on_complete)(u3_writ*))
 {
   // Serialize the jammed $work into a malloced buffer we can send to the other
   // thread.
@@ -291,11 +291,11 @@ void u3m_lmdb_write_event(MDB_env* environment,
 
   uv_queue_work(uv_default_loop(),
                 req,
-                _u3m_lmdb_write_event_cb,
-                _u3m_lmdb_write_event_after_cb);
+                _u3_lmdb_write_event_cb,
+                _u3_lmdb_write_event_after_cb);
 }
 
-/* u3m_lmdb_read_events(): Synchronously reads events from the database.
+/* u3_lmdb_read_events(): Synchronously reads events from the database.
 **
 ** Reads back up to |len_d| events starting with |first_event_d|. For
 ** each event, the event will be passed to |on_event_read| and further
@@ -303,11 +303,11 @@ void u3m_lmdb_write_event(MDB_env* environment,
 **
 ** Returns c3y on complete success; c3n on any error.
 */
-c3_o u3m_lmdb_read_events(u3_pier* pir_u,
-                          c3_d first_event_d,
-                          c3_d len_d,
-                          c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
-                                               u3_noun mat, u3_noun ovo))
+c3_o u3_lmdb_read_events(u3_pier* pir_u,
+                         c3_d first_event_d,
+                         c3_d len_d,
+                         c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
+                                              u3_noun mat, u3_noun ovo))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -397,12 +397,12 @@ c3_o u3m_lmdb_read_events(u3_pier* pir_u,
   return c3y;
 }
 
-/* u3m_lmdb_get_latest_event_number(): Gets last event id persisted
+/* u3_lmdb_get_latest_event_number(): Gets last event id persisted
 **
 ** Reads the last key in order from the EVENTS table as the latest event
 ** number. On table empty, returns c3y but doesn't modify event_number.
 */
-c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
+c3_o u3_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -464,15 +464,15 @@ c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
   return c3y;
 }
 
-/* u3m_lmdb_write_identity(): Writes the event log identity information
+/* u3_lmdb_write_identity(): Writes the event log identity information
 **
 ** We have a secondary database (table) in this environment named META where we
 ** read/write identity information from/to.
 */
-void u3m_lmdb_write_identity(MDB_env* environment,
-                             u3_noun who,
-                             u3_noun is_fake,
-                             u3_noun life)
+void u3_lmdb_write_identity(MDB_env* environment,
+                            u3_noun who,
+                            u3_noun is_fake,
+                            u3_noun life)
 {
   // Creates the write transaction.
   MDB_txn* transaction_u;
@@ -509,12 +509,12 @@ void u3m_lmdb_write_identity(MDB_env* environment,
 }
 
 
-/* u3m_lmdb_read_identity(): Reads the event log identity information.
+/* u3_lmdb_read_identity(): Reads the event log identity information.
 */
-void u3m_lmdb_read_identity(MDB_env* environment,
-                            u3_noun* who,
-                            u3_noun* is_fake,
-                            u3_noun* life) {
+void u3_lmdb_read_identity(MDB_env* environment,
+                           u3_noun* who,
+                           u3_noun* is_fake,
+                           u3_noun* life) {
   // Creates the write transaction.
   MDB_txn* transaction_u;
   c3_w ret_w = mdb_txn_begin(environment,

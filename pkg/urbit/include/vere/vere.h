@@ -1270,26 +1270,26 @@
 
     /* Database
     */
-      /* u3m_lmdb_init(): Initializes lmdb inside log_path
+      /* u3_lmdb_init(): Initializes lmdb inside log_path
       */
-      MDB_env* u3m_lmdb_init(const char* log_path);
+      MDB_env* u3_lmdb_init(const char* log_path);
 
-      /* u3m_lmdb_shutdown(): Shuts down the entire logging system
+      /* u3_lmdb_shutdown(): Shuts down the entire logging system
       */
-      void u3m_lmdb_shutdown(MDB_env* env);
+      void u3_lmdb_shutdown(MDB_env* env);
 
-      /* u3m_lmdb_get_latest_event_number(): Gets last event id persisted
+      /* u3_lmdb_get_latest_event_number(): Gets last event id persisted
       */
-      c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment,
-                                            c3_d* event_number);
+      c3_o u3_lmdb_get_latest_event_number(MDB_env* environment,
+                                           c3_d* event_number);
 
-      /* u3m_lmdb_write_event(): Persists an event to the database
+      /* u3_lmdb_write_event(): Persists an event to the database
       */
-      void u3m_lmdb_write_event(MDB_env* environment,
-                                u3_writ* event_u,
-                                void (*on_complete)(u3_writ*));
+      void u3_lmdb_write_event(MDB_env* environment,
+                               u3_writ* event_u,
+                               void (*on_complete)(u3_writ*));
 
-      /* u3m_lmdb_read_events(): Reads events back from the database
+      /* u3_lmdb_read_events(): Reads events back from the database
       **
       ** Reads back up to |len_d| events starting with |first_event_d|. For
       ** each event, the event will be passed to |on_event_read| and further
@@ -1297,24 +1297,24 @@
       **
       ** Returns c3y on complete success; c3n on any error.
       */
-      c3_o u3m_lmdb_read_events(u3_pier* pir_u,
-                                c3_d first_event_d,
-                                c3_d len_d,
-                                c3_o(*on_event_read)(u3_pier* pir_u,
-                                                     c3_d id,
-                                                     u3_noun mat,
-                                                     u3_noun ovo));
+      c3_o u3_lmdb_read_events(u3_pier* pir_u,
+                               c3_d first_event_d,
+                               c3_d len_d,
+                               c3_o(*on_event_read)(u3_pier* pir_u,
+                                                    c3_d id,
+                                                    u3_noun mat,
+                                                    u3_noun ovo));
 
-      /* u3m_lmdb_write_identity(): Writes log identity
+      /* u3_lmdb_write_identity(): Writes log identity
       */
-      void u3m_lmdb_write_identity(MDB_env* environment,
-                                   u3_noun who,
-                                   u3_noun is_fake,
-                                   u3_noun life);
+      void u3_lmdb_write_identity(MDB_env* environment,
+                                  u3_noun who,
+                                  u3_noun is_fake,
+                                  u3_noun life);
 
-      /* u3m_lmdb_read_identity(): Reads log identity
+      /* u3_lmdb_read_identity(): Reads log identity
       */
-      void u3m_lmdb_read_identity(MDB_env* environment,
-                                  u3_noun* who,
-                                  u3_noun* is_fake,
-                                  u3_noun* life);
+      void u3_lmdb_read_identity(MDB_env* environment,
+                                 u3_noun* who,
+                                 u3_noun* is_fake,
+                                 u3_noun* life);
