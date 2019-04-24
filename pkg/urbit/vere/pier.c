@@ -942,7 +942,7 @@ _pier_work_slog(u3_writ* wit_u, c3_w pri_w, u3_noun tan)
         b4_d = u3R->pro.nox_d;
       }
       else {
-        printf("            ");
+        fprintf(stderr, "            ");
       }
     }
     else {
