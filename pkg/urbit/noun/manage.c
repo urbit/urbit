@@ -354,7 +354,7 @@ _cm_signal_deep(c3_w sec_w)
 static void
 _cm_signal_done()
 {
-  // signal(SIGINT, SIG_IGN);
+  signal(SIGINT, SIG_IGN);
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
