@@ -411,13 +411,15 @@
     ?>  ?=([%f %made *] sign-arvo)
     ?>  ?=([@ @ @ @ @ ~] path)
     ::
+    =/  beak-path  t.t.path
+    ::
     =/  =beak
-      =/  ship  (slav %p i.t.t.path)
-      =/  desk  i.t.t.t.path
-      =/  case  [%da (slav %da i.t.t.t.t.path)]
+      =/  ship  (slav %p i.beak-path)
+      =/  desk  i.t.beak-path
+      =/  case  [%da (slav %da i.t.t.beak-path)]
       [p=ship q=desk r=case]
     ::
-    (mo-receive-core i.t.t.path beak result.sign-arvo)
+    (mo-receive-core i.t.path beak result.sign-arvo)
   ::
   ::  +mo-cyst-pel: translated peer.
   ::
