@@ -1985,14 +1985,16 @@ c3_rand(c3_w* rad_w)
   }
 }
 
-/* u3_pier_bail(): clean up all event state.
+/* u3_pier_bail(): immediately shutdown.
 */
 void
 u3_pier_bail(void)
 {
-  fflush(stdout);
-  u3_pier_exit(u3_pier_stub());
+  if ( 0 != u3K.len_w ) {
+    _pier_exit_done(u3_pier_stub());
+  }
 
+  fflush(stdout);
   exit(1);
 }
 

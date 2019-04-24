@@ -438,82 +438,6 @@ u3_ve_sysopt()
   u3_Local = strdup(u3_Host.dir_c);
 }
 
-#if 0
-static jmp_buf Signal_buf;
-#ifndef SIGSTKSZ
-# define SIGSTKSZ 16384
-#endif
-static uint8_t Sigstk[SIGSTKSZ];
-
-volatile enum { sig_none, sig_overflow, sig_interrupt } Sigcause;
-
-static void _main_cont(void *arg1, void *arg2, void *arg3)
-{
-  (void)(arg1);
-  (void)(arg2);
-  (void)(arg3);
-  siglongjmp(Signal_buf, 1);
-}
-
-static void
-overflow_handler(int emergency, stackoverflow_context_t scp)
-{
-  if ( 1 == emergency ) {
-    write(2, "stack emergency\n", strlen("stack emergency" + 2));
-    exit(1);
-  } else {
-    Sigcause = sig_overflow;
-    sigsegv_leave_handler(_main_cont, NULL, NULL, NULL);
-  }
-}
-
-  //  Install signal handlers and set buffers.
-  //
-  //  Note that we use the sigmask-restoring variant.  Essentially, when
-  //  we get a signal, we force the system back into the just-booted state.
-  //  If anything goes wrong during boot (above), it's curtains.
-  {
-    if ( 0 != sigsetjmp(Signal_buf, 1) ) {
-      switch ( Sigcause ) {
-        case sig_overflow: printf("[stack overflow]\r\n"); break;
-        case sig_interrupt: printf("[interrupt]\r\n"); break;
-        default: printf("[signal error!]\r\n"); break;
-      }
-      Sigcause = sig_none;
-
-      signal(SIGINT, SIG_DFL);
-      stackoverflow_deinstall_handler();
-
-      //  Print the trace, do a GC, etc.
-      //
-      //  This is half-assed at present, so we exit.
-      //
-      u3_lo_sway(0, u3k(u3_wire_tax(u3_Wire)));
-
-      u3_pier_exit(u3A);
-
-      exit(1);
-    }
-    if ( -1 == stackoverflow_install_handler
-        (overflow_handler, Sigstk, SIGSTKSZ) )
-    {
-      fprintf(stderr, "overflow_handler: install failed\n");
-      exit(1);
-    }
-    signal(SIGINT, interrupt_handler);
-    signal(SIGIO, SIG_IGN);
-  }
-
-static void
-interrupt_handler(int x)
-{
-  Sigcause = sig_interrupt;
-  longjmp(Signal_buf, 1);
-}
-#endif
-
-#define GRAB
-
 static void
 report(void)
 {
@@ -531,13 +455,13 @@ report(void)
          H2O_LIBRARY_VERSION_PATCH);
 }
 
-void
+static void
 _stop_exit(c3_i int_i)
 {
-  u3l_log("\r\n[received keyboard stop signal, exiting]\r\n");
-  //  XX crashes if we haven't started a pier yet
+  //  explicit fprintf to avoid allocation in u3l_log
   //
-  u3_pier_exit(u3_pier_stub());
+  fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
+  u3_daemon_bail();
 }
 
 /*
@@ -669,7 +593,9 @@ main(c3_i   argc,
 #endif
   u3_ve_sysopt();
 
-  //  Block profiling signal, which should be delievered to exactly one thread.
+  //  Block profiling signal, which should be delivered to exactly one thread.
+  //
+  //    XX review, may be unnecessary due to similar in u3m_init()
   //
   if ( _(u3_Host.ops_u.pro) ) {
     sigset_t set;
@@ -683,6 +609,8 @@ main(c3_i   argc,
   }
 
   //  Handle SIGTSTP as if it was SIGTERM.
+  //
+  //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
 
