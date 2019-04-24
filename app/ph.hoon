@@ -61,7 +61,7 @@
 ++  manual-tests
   ^-  (list (pair term [(list ship) _*form:(ph ,~)]))
   =+  (ph-tests our.hid)
-  =/  eth-node  (spawn-galaxy:ph-azimuth ~bud)
+  =/  eth-node  (spawn:ph-azimuth ~bud)
   =/  m  (ph ,~)
   :~  :+  %boot-bud
         ~[~bud]
@@ -115,7 +115,7 @@
     ::
       :+  %breach-hi
         ~[~bud ~dev]
-      =.  eth-node  (spawn-galaxy:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~dev)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
@@ -130,6 +130,29 @@
         ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
         (wait-for-dojo ~bud "hi ~dev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-hi-cousin
+        ~[~bud ~dev ~marbud ~mardev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~mardev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~marbud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~mardev))
+        (send-hi ~marbud ~mardev)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~mardev ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
+        (wait-for-dojo ~bud "hi ~mardev successful")
       (pure:m ~)
   ==
 ::

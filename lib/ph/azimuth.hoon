@@ -213,11 +213,15 @@
     (as-octs:mimes:html (get-public who lyfe %auth))
   1
 ::
-++  spawn-galaxy
+++  spawn
   |=  who=@p
   ?<  (~(has by lives) who)
   =.  lives  (~(put by lives) who [1 0])
   %-  add-logs
+  %+  welp
+    ?:  =(%czar (clan:title who))
+      ~
+    ~[(spawned:lo (^sein:title who) who)]
   :~  (activated:lo who)
       (owner-changed:lo who 0xdead.beef)
       %-  changed-keys:lo
@@ -284,7 +288,6 @@
     :+  &  ~
     =/  aqua-pax  /i/j/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
     =/  rut  (scry-aqua noun our now.pin aqua-pax)
-    ~&  [new-rut=[0 new-rut] rut=rut]
     ?:  =([~ new-rut] rut)
       [%done ~]
     [%wait ~]
@@ -324,10 +327,13 @@
     ^-  az-log
     [~[^activated who] '']
   ::
-  ++  owner-changed
-    |=  [who=ship owner=@ux]
+  ++  broke-continuity
+    |=  [who=ship rut=rift]
     ^-  az-log
-    [~[^owner-changed who owner] '']
+    :-  ~[^broke-continuity who]
+    %-  crip
+    %-  prefix-hex:ethereum
+    (render-hex-bytes:ethereum 32 `@`rut)
   ::
   ++  changed-keys
     |=  [who=ship enc=@ux aut=@ux crypto=@ud lyfe=life]
@@ -342,12 +348,14 @@
         (render-hex-bytes:ethereum 32 `@`lyfe)
     ==
   ::
-  ++  broke-continuity
-    |=  [who=ship rut=rift]
+  ++  owner-changed
+    |=  [who=ship owner=@ux]
     ^-  az-log
-    :-  ~[^broke-continuity who]
-    %-  crip
-    %-  prefix-hex:ethereum
-    (render-hex-bytes:ethereum 32 `@`rut)
+    [~[^owner-changed who owner] '']
+  ::
+  ++  spawned
+    |=  [par=ship who=ship]
+    ^-  az-log
+    [~[^spawned par who] '']
   --
 --
