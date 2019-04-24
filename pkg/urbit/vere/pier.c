@@ -947,6 +947,8 @@ _pier_work_poke(void*   vod_p,
         c3_d     evt_d = u3r_chub(0, p_jar);
         u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
 
+        // Unlike slog, we always reprint interpreter errors during replay.
+
         _pier_work_stdr(wit_u, q_jar);
       }
       break;
@@ -966,7 +968,18 @@ _pier_work_poke(void*   vod_p,
         c3_w     pri_w = u3r_word(0, q_jar);
         u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
 
-        _pier_work_slog(wit_u, pri_w, u3k(r_jar));
+        // XXX: The wit_u pointer will almost always be 0 because of how the
+        // worker process manages the difference between u3V.evt_d vs
+        // u3A->ent_d. We want to look at the evt_d as reported by the looked
+        // up wit_u so we have some defense against our child process spamming
+        // us with invalid garbage, but for now, take its event report at its
+        // word.
+        //
+        // Only print this slog if the event is uncommitted.
+
+        if ( evt_d >= pir_u->log_u->com_d ) {
+          _pier_work_slog(wit_u, pri_w, u3k(r_jar));
+        }
       }
       break;
     }
