@@ -124,9 +124,9 @@ _pier_db_commit_request(u3_writ* wit_u)
   /* put it in the database
   */
   {
-    u3m_lmdb_write_events(log_u->db_u,
-                          wit_u,
-                          _pier_db_commit_complete);
+    u3m_lmdb_write_event(log_u->db_u,
+                         wit_u,
+                         _pier_db_commit_complete);
   }
 
   /* advance commit-request counter
@@ -234,10 +234,10 @@ _pier_db_load_commits(u3_pier* pir_u,
     u3z(len);
   }
 
-  u3m_lmdb_queue_events(pir_u,
-                        lav_d,
-                        len_d,
-                        _pier_db_on_commit_loaded);
+  u3m_lmdb_read_events(pir_u,
+                       lav_d,
+                       len_d,
+                       _pier_db_on_commit_loaded);
 }
 
 /* _pier_db_init():

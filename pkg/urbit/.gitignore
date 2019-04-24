@@ -9,7 +9,6 @@ include/config.h
 *.o
 /urbit
 /urbit-worker
-/urbit-tests
 /tags
 #
 # Editor Bullshit

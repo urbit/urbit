@@ -14,20 +14,17 @@
 // thread. This environment is used to create read-only transactions
 // synchronously when needed.
 //
-// But most of the lmdb operates asynchronously in the uv worker pool. Since
-// individual transactions are bound to threads, we perform all blocking
-// writing on worker threads. We do this so we can perform event batching on
-// the main thread instead of blocking it; the main thread is still a libuv
-// loop.
+// But the majority of lmdb writes operate asynchronously in the uv worker
+// pool. Since individual transactions are bound to threads, we perform all
+// blocking writing on worker threads.
 //
-// There are several metadata writes which we can perform from whatever thread
-// because we they're inherently stop-the-world blocking. Thankfully, these
-// should be "cheap" and "rare".
+// We perform the very first metadata writes on the main thread because we
+// can't do anything until they persist.
 
-// Opens up a log environment. This can eventually be made 
-//
-// Precondition: log_path points to an already created directory
-//
+/* u3m_lmdb_init(): Opens up a log environment
+**
+** Precondition: log_path points to an already created directory
+*/
 MDB_env* u3m_lmdb_init(const char* log_path)
 {
   MDB_env* env = 0;
@@ -61,16 +58,19 @@ MDB_env* u3m_lmdb_init(const char* log_path)
   return env;
 }
 
+/* u3m_lmdb_shutdown(): Shuts down lmdb
+*/
 void u3m_lmdb_shutdown(MDB_env* env)
 {
   mdb_env_close(env);
 }
 
-// Writes a key/value pair to a specific database as part of a transaction.
-//
-// The raw version doesn't take ownership of either key/value and performs no
-// nock calculations, so it is safe to call from any thread.
-//
+/* _perform_put_on_databse_raw(): Writes a key/value pair to a specific
+** database as part of a transaction.
+**
+** The raw version doesn't take ownership of either key/value and performs no
+** nock calculations, so it is safe to call from any thread.
+*/
 static
 void _perform_put_on_databse_raw(MDB_txn* transaction_u,
                                  MDB_dbi database_u,
@@ -94,6 +94,9 @@ void _perform_put_on_databse_raw(MDB_txn* transaction_u,
   }
 }
 
+/* _perform_get_on_databse_raw(): Reads a key/value pair to a specific
+** database as part of a transaction.
+*/
 static
 void _perform_get_on_databse_raw(MDB_txn* transaction_u,
                                  MDB_dbi database_u,
@@ -111,6 +114,11 @@ void _perform_get_on_databse_raw(MDB_txn* transaction_u,
   }
 }
 
+/* _perform_put_on_databse_noun(): Writes a noun to the database.
+**
+** This requires access to the loom so it must only be run from the libuv
+** thread.
+*/
 static
 void _perform_put_on_databse_noun(MDB_txn* transaction_u,
                                   MDB_dbi database_u,
@@ -134,6 +142,11 @@ void _perform_put_on_databse_noun(MDB_txn* transaction_u,
   u3z(mat);
 }
 
+/* _perform_get_on_databse_noun(): Reads a noun from the database.
+**
+** This requires access to the loom so it must only be run from the libuv
+** thread.
+*/
 static
 void _perform_get_on_databse_noun(MDB_txn* transaction_u,
                                   MDB_dbi database_u,
@@ -150,6 +163,9 @@ void _perform_get_on_databse_noun(MDB_txn* transaction_u,
   *noun = u3qe_cue(raw_atom);
 }
 
+
+/* _write_request_data: callback struct for u3m_lmdb_write_event()
+*/
 struct _write_request_data {
   // The database environment to write to. This object is thread-safe, though
   // the transactions and handles opened from it are explicitly not.
@@ -172,12 +188,15 @@ struct _write_request_data {
   size_t malloced_event_data_size;
 
   // Called on main loop thread on completion.
-  void (*callback)(u3_writ*);
+  void (*on_complete)(u3_writ*);
 };
 
-// Implementation of u3m_lmdb_write_events() called on a worker thread.
-//
-static void u3m_lmdb_write_events_cb(uv_work_t* req) {
+/* _u3m_lmdb_write_event_cb(): Implementation of u3m_lmdb_write_event()
+**
+** This is always run on a libuv background worker thread; actual nouns cannot
+** be touched here.
+*/
+static void _u3m_lmdb_write_event_cb(uv_work_t* req) {
   struct _write_request_data* data = req->data;
 
   // Creates the write transaction.
@@ -223,31 +242,33 @@ static void u3m_lmdb_write_events_cb(uv_work_t* req) {
   }
 }
 
-// Implementation of u3m_lmdb_write_events() called on the main loop thread
-// after the worker thread event completes.
-//
-static void u3m_lmdb_write_events_after_cb(uv_work_t* req, int status) {
+/* _u3m_lmdb_write_event_after_cb(): Implementation of u3m_lmdb_write_event()
+**
+** This is always run on the main loop thread after the worker thread event
+** completes.
+*/
+static void _u3m_lmdb_write_event_after_cb(uv_work_t* req, int status) {
   struct _write_request_data* data = req->data;
 
-  data->callback(data->event);
+  data->on_complete(data->event);
 
   free(data->malloced_event_data);
   free(data);
   free(req);
 }
 
-// u3m_lmdb_write_events(): Asynchronously writes events to the database.
-//
-// This writes all the passed in events along with log metadata updates to the
-// database as a single transaction on a worker thread. Once the transaction
-// is completed, it calls the passed in callback on the main loop thread.
-//
-// TODO: Make this take multiple events in one commit once we have this
-// working one at a time.
-//
-void u3m_lmdb_write_events(MDB_env* environment,
-                           u3_writ* event_u,
-                           void (*callback)(u3_writ*))
+/* u3m_lmdb_write_event(): Asynchronously writes events to the database.
+**
+** This writes all the passed in events along with log metadata updates to the
+** database as a single transaction on a worker thread. Once the transaction
+** is completed, it calls the passed in callback on the main loop thread.
+**
+** TODO: Make this take multiple events in one commit once we have this
+** working one at a time.
+*/
+void u3m_lmdb_write_event(MDB_env* environment,
+                          u3_writ* event_u,
+                          void (*on_complete)(u3_writ*))
 {
   // Serialize the jammed $work into a malloced buffer we can send to the other
   // thread.
@@ -262,7 +283,7 @@ void u3m_lmdb_write_events(MDB_env* environment,
   data->event_number = event_u->evt_d;
   data->malloced_event_data = data_u;
   data->malloced_event_data_size = siz_w;
-  data->callback = callback;
+  data->on_complete = on_complete;
 
   // Queue asynchronous work to happen on the other thread.
   uv_work_t* req = c3_malloc(sizeof(uv_work_t));
@@ -270,21 +291,23 @@ void u3m_lmdb_write_events(MDB_env* environment,
 
   uv_queue_work(uv_default_loop(),
                 req,
-                u3m_lmdb_write_events_cb,
-                u3m_lmdb_write_events_after_cb);
+                _u3m_lmdb_write_event_cb,
+                _u3m_lmdb_write_event_after_cb);
 }
 
-// u3m_lmdb_read_events(): Synchronously reads events from the database.
-//
-// This searches through first_event_d in order 
-//
-// Returns yes if everything completed without errors.
-//
-c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
-                           c3_d first_event_d,
-                           c3_d len_d,
-                           c3_o(*callback)(u3_pier* pir_u, c3_d id, u3_noun mat,
-                                           u3_noun ovo))
+/* u3m_lmdb_read_events(): Synchronously reads events from the database.
+**
+** Reads back up to |len_d| events starting with |first_event_d|. For
+** each event, the event will be passed to |on_event_read| and further
+** reading will be aborted if the callback returns c3n.
+**
+** Returns c3y on complete success; c3n on any error.
+*/
+c3_o u3m_lmdb_read_events(u3_pier* pir_u,
+                          c3_d first_event_d,
+                          c3_d len_d,
+                          c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
+                                               u3_noun mat, u3_noun ovo))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -347,7 +370,7 @@ c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
     u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
     u3_noun ovo = u3ke_cue(u3k(mat));
 
-    if (callback(pir_u, current_id, mat, ovo) == c3n) {
+    if (on_event_read(pir_u, current_id, mat, ovo) == c3n) {
       u3z(ovo);
       u3z(mat);
       u3l_log("lmdb: aborting replay due to error.\r\n");
@@ -374,10 +397,11 @@ c3_o u3m_lmdb_queue_events(u3_pier* pir_u,
   return c3y;
 }
 
-// Reads the last key in order from the EVENTS table as the latest event number
-//
-// On table empty, returns c3y but doesn't modify event_number.
-//
+/* u3m_lmdb_get_latest_event_number(): Gets last event id persisted
+**
+** Reads the last key in order from the EVENTS table as the latest event
+** number. On table empty, returns c3y but doesn't modify event_number.
+*/
 c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
 {
   // Creates the read transaction.
@@ -440,11 +464,11 @@ c3_o u3m_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
   return c3y;
 }
 
-// Writes the event log identity information.
-//
-// We have a secondary database (table) in this environment named META where we
-// read/write identity information from/to.
-//
+/* u3m_lmdb_write_identity(): Writes the event log identity information
+**
+** We have a secondary database (table) in this environment named META where we
+** read/write identity information from/to.
+*/
 void u3m_lmdb_write_identity(MDB_env* environment,
                              u3_noun who,
                              u3_noun is_fake,
@@ -484,8 +508,9 @@ void u3m_lmdb_write_identity(MDB_env* environment,
   }
 }
 
-// Reads the event log identity information.
-//
+
+/* u3m_lmdb_read_identity(): Reads the event log identity information.
+*/
 void u3m_lmdb_read_identity(MDB_env* environment,
                             u3_noun* who,
                             u3_noun* is_fake,
