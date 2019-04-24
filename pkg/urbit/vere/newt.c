@@ -38,11 +38,6 @@
 static void
 _newt_consume(u3_moat* mot_u)
 {
-#ifdef NEWT_VERBOSE
-  u3l_log("ENTER _newt_consume()\r\n");
-  u3l_log("DEBUG %" PRIu64 "\r\n", mot_u->len_d);
-#endif
-
   /*  process stray bytes, trying to create a new message
   **  or add a block to an existing one.
   */
@@ -207,10 +202,6 @@ _newt_consume(u3_moat* mot_u)
     */
     break;
   }
-
-#ifdef NEWT_VERBOSE
-  u3l_log("RETURN _newt_consume()\r\n");
-#endif
 }
 
 /* _raft_alloc(): libuv-style allocator for raft.
