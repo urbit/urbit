@@ -200,7 +200,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [=dude =beak made-result=made-result:ford]
+    |=  [=dude =beak =made-result:ford]
     ^+  mo-state
     ::
     ?:  ?=([%incomplete *] made-result)
