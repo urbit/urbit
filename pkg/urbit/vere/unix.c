@@ -1199,8 +1199,6 @@ u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil)
     _unix_scan_mount_point(pir_u, mon_u);
   }
   u3z(hil);
-  pir_u->unx_u->dyr = c3y;
-  u3_unix_ef_look(pir_u, c3y);
 }
 
 /* u3_unix_io_init(): initialize unix sync.
