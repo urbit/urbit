@@ -26,4 +26,20 @@ rec {
     name = "urbit-debug";
     debug = true;
   };
+
+  urbit-worker = import ./urbit-worker {
+    inherit pkgs ent;
+    inherit (deps) argon2 murmur3 uv ed25519 sni scrypt softfloat3;
+    inherit (deps) secp256k1 h2o;
+    name = "urbit";
+    debug = false;
+  };
+
+  urbit-worker-debug = import ./urbit-worker-debug {
+    inherit pkgs ent;
+    inherit (deps) argon2 murmur3 uv ed25519 sni scrypt softfloat3;
+    inherit (deps) secp256k1 h2o;
+    name = "urbit-debug";
+    debug = true;
+  };
 }

@@ -18,4 +18,3 @@ make urbit urbit-worker -j8
 
 mkdir -p $out/bin
 cp urbit        $out/bin/$exename
-cp urbit-worker $out/bin/$exename-worker

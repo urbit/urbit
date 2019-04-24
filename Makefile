@@ -5,7 +5,7 @@ PKGS = minima extrema rusthello prog
 .PHONY: build build-all install release test clean
 
 build:
-	nix-build -A urbit -A urb --no-out-link
+	nix-build -A urbit-worker -A urbit -A urb --no-out-link
 
 build-all:
 	nix-build --no-out-link

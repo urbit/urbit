@@ -6,8 +6,7 @@ cd src
 
 bash ./configure
 
-make urbit urbit-worker -j8
+make urbit -j8
 
 mkdir -p $out/bin
 cp urbit $out/bin/$exename
-cp urbit-worker $out/bin/$exename-worker
