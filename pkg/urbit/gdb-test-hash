@@ -1,4 +1,0 @@
-file bin/test_hash
-handle SIGSEGV nostop noprint
-start
-

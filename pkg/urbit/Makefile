@@ -15,22 +15,35 @@ worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
+all_exes = ./hash_tests ./hashtable_tests ./urbit ./urbit-worker
 
 ################################################################################
 
-.PHONY: all clean mkproper
+.PHONY: all test clean mkproper
 
 ################################################################################
 
-all: urbit urbit-worker
+all: urbit urbit-worker hashtable_tests hash_tests
+
+test: hashtable_tests hash_tests
+	./hashtable_tests
+	./hash_tests
 
 clean:
-	rm -f $(all_objs) ./urbit ./urbit-worker ./tags
+	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
 	rm -f config.mk include/config.h
 
 ################################################################################
+
+hashtable_tests: $(common_objs) tests/hashtable_tests.o
+	@echo CC -o $@
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+hash_tests: $(common_objs) tests/hash_tests.o
+	@echo CC -o $@
+	@$(CC) $^ $(LDFLAGS) -o $@
 
 urbit: $(common_objs) $(daemon_objs)
 	@echo CC -o $@
