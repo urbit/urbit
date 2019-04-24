@@ -31,6 +31,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#undef NEWT_VERBOSE
+
 /* _newt_consume(): advance buffer processing.
 */
 static void
@@ -53,7 +55,7 @@ _newt_consume(u3_moat* mot_u)
         met_u->len_d = mot_u->len_d;
         memcpy(met_u->hun_y, mot_u->rag_y, mot_u->len_d);
 
-#if 0
+#ifdef NEWT_VERBOSE
         u3l_log("newt: %d: create: msg %p, new block %p, len %"
                 PRIu64 ", has %" PRIu64 ", needs %" PRIu64 "\r\n",
                 getpid(),
@@ -95,7 +97,8 @@ _newt_consume(u3_moat* mot_u)
           nel_d |= ((c3_d) mot_u->rag_y[5]) << 40ULL;
           nel_d |= ((c3_d) mot_u->rag_y[6]) << 48ULL;
           nel_d |= ((c3_d) mot_u->rag_y[7]) << 56ULL;
-#if 0
+
+#ifdef NEWT_VERBOSE
           u3l_log("newt: %d: parsed length %" PRIu64 "\r\n",
                   getpid(),
                   nel_d);
@@ -229,10 +232,21 @@ _newt_read_cb(uv_stream_t*    str_u,
     mot_u->bal_f(mot_u->vod_p, "stream closed");
   }
   else {
-#if 0
+#ifdef NEWT_VERBOSE
     u3l_log("newt: %d: read %ld\r\n", getpid(), len_i);
 #endif
 
+#ifdef NEWT_VERBOSE
+  u3l_log("newt: %d: <bytes>", getpid());
+  for ( int i = 0; i < len_i; i++) {
+    if (0 == (i % 16)) u3l_log("\r\n");
+    u3l_log("  %02x", (unsigned) buf_u->base[i]);
+  }
+  u3l_log("\r\nnewt: %d: </bytes>\r\n", getpid());
+#endif
+
+    //  grow read buffer by `len_d` bytes
+    //
     if ( mot_u->rag_y ) {
       mot_u->rag_y = c3_realloc(mot_u->rag_y, mot_u->len_d + len_d);
       memcpy(mot_u->rag_y + mot_u->len_d, buf_u->base, len_d);
@@ -321,9 +335,19 @@ u3_newt_write(u3_mojo* moj_u,
   buf_u.base = (c3_c*) buf_y;
   buf_u.len = len_w + 8;
 
-#if 0
+#ifdef NEWT_VERBOSE
   u3l_log("newt: %d: write %d\n", getpid(), len_w + 8);
 #endif
+
+#ifdef NEWT_VERBOSE
+    u3l_log("newt: %d: <bytes>", getpid());
+  for ( int i = 0; i < len_w+8; i++) {
+    if (0 == (i % 16)) u3l_log("\r\n");
+    u3l_log("  %02x", (unsigned) buf_u.base[i]);
+  }
+  u3l_log("\r\nnewt: %d: </bytes>\r\n", getpid());
+#endif
+
   if ( 0 != (err_i = uv_write((uv_write_t*)req_u,
                               (uv_stream_t*)&moj_u->pyp_u,
                               &buf_u,

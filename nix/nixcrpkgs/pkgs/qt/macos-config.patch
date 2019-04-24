@@ -1,0 +1,167 @@
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang.conf	2017-11-03 20:37:01.001539490 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang.conf	2017-11-03 20:46:20.159382848 -0700
+@@ -4,8 +4,8 @@
+ 
+ QMAKE_COMPILER          = gcc clang llvm   # clang pretends to be gcc
+ 
+-QMAKE_CC                = clang
+-QMAKE_CXX               = clang++
++QMAKE_CC                = $${CROSS_COMPILE}clang
++QMAKE_CXX               = $${CROSS_COMPILE}clang++
+ 
+ QMAKE_LINK_C            = $$QMAKE_CC
+ QMAKE_LINK_C_SHLIB      = $$QMAKE_CC
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang-mac.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/clang-mac.conf	2017-11-03 20:37:01.001539490 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/clang-mac.conf	2017-11-03 20:55:13.878575754 -0700
+@@ -6,8 +6,6 @@
+ 
+ QMAKE_XCODE_GCC_VERSION = com.apple.compilers.llvm.clang.1_0
+ 
+-QMAKE_CXXFLAGS += -stdlib=libc++
+-QMAKE_LFLAGS   += -stdlib=libc++
+ QMAKE_AR_LTCG  = libtool -static -o
+ 
+ QMAKE_CFLAGS_APPLICATION_EXTENSION  = -fapplication-extension
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/common/mac.conf	2017-11-03 20:37:01.001539490 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/common/mac.conf	2017-11-03 22:03:30.960602142 -0700
+@@ -35,10 +35,10 @@
+ 
+ QMAKE_ACTOOL            = actool
+ 
+-QMAKE_DSYMUTIL          = dsymutil
+-QMAKE_STRIP             = strip
++QMAKE_DSYMUTIL          = $${CROSS_COMPILE}dsymutil
++QMAKE_STRIP             = $${CROSS_COMPILE}strip
+ QMAKE_STRIPFLAGS_LIB   += -S -x
+ 
+-QMAKE_AR                = ar cq
+-QMAKE_RANLIB            = ranlib -s
+-QMAKE_NM                = nm -P
++QMAKE_AR                = $${CROSS_COMPILE}ar cq
++QMAKE_RANLIB            = $${CROSS_COMPILE}ranlib -s
++QMAKE_NM                = $${CROSS_COMPILE}nm -P
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_post.prf	2017-11-03 20:37:01.008206202 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_post.prf	2017-11-03 21:06:25.247871399 -0700
+@@ -2,29 +2,6 @@
+ 
+ !no_objective_c:CONFIG += objective_c
+ 
+-qt {
+-    qtConfig(static) {
+-        # C++11 support means using libc++ instead of libstd++. As the
+-        # two libraries are incompatible we need to ensure the end user
+-        # project is built using the same C++11 support/no support as Qt.
+-        qtConfig(c++11) {
+-            CONFIG += c++11
+-        } else: c++11 {
+-            warning("Qt was not built with C++11 enabled, disabling feature")
+-            CONFIG -= c++11
+-        }
+-
+-        !c++11 {
+-            # Explicitly use libstdc++ if C++11 support is not enabled,
+-            # as otherwise the compiler will choose the standard library
+-            # based on the deployment target, which for iOS 7 and OS X 10.9
+-            # is libc++, and we can't mix and match the two.
+-            QMAKE_CXXFLAGS += -stdlib=libstdc++
+-            QMAKE_LFLAGS   += -stdlib=libstdc++
+-        }
+-    }
+-}
+-
+ # Add the same default rpaths as Xcode does for new projects.
+ # This is especially important for iOS/tvOS/watchOS where no other option is possible.
+ !no_default_rpath {
+@@ -89,10 +66,6 @@
+ 
+     arch_flags = $(EXPORT_ARCH_ARGS)
+ 
+-    QMAKE_CFLAGS += $$arch_flags
+-    QMAKE_CXXFLAGS += $$arch_flags
+-    QMAKE_LFLAGS += $$arch_flags
+-
+     QMAKE_PCH_ARCHS = $$VALID_ARCHS
+ 
+     macos: deployment_target = $$QMAKE_MACOSX_DEPLOYMENT_TARGET
+@@ -149,9 +122,6 @@
+         else: \
+             version_identifier = $$device.deployment_identifier
+         version_min_flag = -m$${version_identifier}-version-min=$$deployment_target
+-        QMAKE_CFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
+-        QMAKE_CXXFLAGS += -isysroot $$QMAKE_MAC_SDK_PATH $$version_min_flag
+-        QMAKE_LFLAGS += -Wl,-syslibroot,$$QMAKE_MAC_SDK_PATH $$version_min_flag
+     }
+ 
+     # Enable precompiled headers for multiple architectures
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_pre.prf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/default_pre.prf	2017-11-03 20:37:01.008206202 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/default_pre.prf	2017-11-03 20:46:20.159382848 -0700
+@@ -1,43 +1,6 @@
+ CONFIG = asset_catalogs rez $$CONFIG
+ load(default_pre)
+ 
+-isEmpty(QMAKE_XCODE_DEVELOPER_PATH) {
+-    # Get path of Xcode's Developer directory
+-    QMAKE_XCODE_DEVELOPER_PATH = $$system("/usr/bin/xcode-select --print-path 2>/dev/null")
+-    isEmpty(QMAKE_XCODE_DEVELOPER_PATH): \
+-        error("Xcode path is not set. Please use xcode-select to choose Xcode installation path.")
+-
+-    # Make sure Xcode path is valid
+-    !exists($$QMAKE_XCODE_DEVELOPER_PATH): \
+-        error("Xcode is not installed in $${QMAKE_XCODE_DEVELOPER_PATH}. Please use xcode-select to choose Xcode installation path.")
+-}
+-
+-isEmpty(QMAKE_XCODEBUILD_PATH): \
+-    QMAKE_XCODEBUILD_PATH = $$system("/usr/bin/xcrun -find xcodebuild 2>/dev/null")
+-
+-!isEmpty(QMAKE_XCODEBUILD_PATH) {
+-    # Make sure Xcode is set up properly
+-    !system("/usr/bin/xcrun xcodebuild -license check 2>/dev/null"): \
+-        error("Xcode not set up properly. You need to confirm the license agreement by running 'sudo xcrun xcodebuild -license accept'.")
+-
+-    isEmpty(QMAKE_XCODE_VERSION) {
+-        # Extract Xcode version using xcodebuild
+-        xcode_version = $$system("/usr/bin/xcrun xcodebuild -version")
+-        QMAKE_XCODE_VERSION = $$member(xcode_version, 1)
+-        isEmpty(QMAKE_XCODE_VERSION): error("Could not resolve Xcode version.")
+-        unset(xcode_version)
+-    }
+-}
+-
+-isEmpty(QMAKE_TARGET_BUNDLE_PREFIX) {
+-    QMAKE_XCODE_PREFERENCES_FILE = $$(HOME)/Library/Preferences/com.apple.dt.Xcode.plist
+-    exists($$QMAKE_XCODE_PREFERENCES_FILE): \
+-        QMAKE_TARGET_BUNDLE_PREFIX = $$system("/usr/libexec/PlistBuddy -c 'print IDETemplateOptions:bundleIdentifierPrefix' $$QMAKE_XCODE_PREFERENCES_FILE 2>/dev/null")
+-
+-    !isEmpty(_QMAKE_CACHE_):!isEmpty(QMAKE_TARGET_BUNDLE_PREFIX): \
+-        cache(QMAKE_TARGET_BUNDLE_PREFIX)
+-}
+-
+ QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
+ 
+ # Make the default debug info format for static debug builds
+diff -ur qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/sdk.prf
+--- qtbase-opensource-src-5.9.2-orig/mkspecs/features/mac/sdk.prf	2017-11-03 20:37:01.008206202 -0700
++++ qtbase-opensource-src-5.9.2-mac/mkspecs/features/mac/sdk.prf	2017-11-03 20:46:20.159382848 -0700
+@@ -18,7 +18,7 @@
+         sdk = $$QMAKE_MAC_SDK
+ 
+     isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}) {
+-        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("/usr/bin/xcrun --sdk $$sdk $$info 2>/dev/null")
++        QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("xcrun --sdk $$sdk $$info 2>/dev/null")
+         # --show-sdk-platform-path won't work for Command Line Tools; this is fine
+         # only used by the XCTest backend to testlib
+         isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}):if(!isEmpty(QMAKE_XCODEBUILD_PATH)|!equals(info, "--show-sdk-platform-path")): \
+@@ -50,7 +50,7 @@
+     value = $$eval($$tool)
+     isEmpty(value): next()
+ 
+-    sysrooted = $$system("/usr/bin/xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
++    sysrooted = $$system("xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
+     isEmpty(sysrooted): next()
+ 
+     $$tool = $$sysrooted $$member(value, 1, -1)

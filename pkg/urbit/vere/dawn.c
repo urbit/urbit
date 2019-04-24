@@ -319,7 +319,7 @@ u3_dawn_vent(u3_noun seed)
   //  no snapshot
   //
   else {
-    printf("dawn: no ethereum snapshot specified\n");
+    u3l_log("dawn: no ethereum snapshot specified\n");
     sap = u3_nul;
   }
 

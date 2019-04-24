@@ -194,7 +194,7 @@ u3v_start(u3_noun now)
   {
     c3_c* wen_c = u3r_string(u3A->wen);
 
-    printf("arvo: time: %s\n", wen_c);
+    u3l_log("arvo: time: %s\n", wen_c);
     free(wen_c);
   }
 
