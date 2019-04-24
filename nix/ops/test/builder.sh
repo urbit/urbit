@@ -20,29 +20,29 @@ shutdown () {
 
 trap shutdown EXIT
 
-urb ./ship -p hood -d '+hood/autoload |'
-urb ./ship -p hood -d '+hood/mount %'
+herb ./ship -p hood -d '+hood/autoload |'
+herb ./ship -p hood -d '+hood/mount %'
 
 rm -r ./ship/home
 cp -r $ARVO ./ship/home
 
-urb ./ship -p hood -d '+hood/commit %home'
+herb ./ship -p hood -d '+hood/commit %home'
 
 # Start the test app
-urb ./ship -p hood -d '+hood/start %test'
+herb ./ship -p hood -d '+hood/start %test'
 
 # Run the %cores tests
-urb ./ship -d '~&  ~  ~&  %start-test-cores  ~'
-urb ./ship -p test -d ':-  %cores  /'
-urb ./ship -d '~&  %finish-test-cores  ~'
+herb ./ship -d '~&  ~  ~&  %start-test-cores  ~'
+herb ./ship -p test -d ':-  %cores  /'
+herb ./ship -d '~&  %finish-test-cores  ~'
 
 # Run the %renders tests
-urb ./ship -d '~&  ~  ~&  %start-test-renders  ~'
-urb ./ship -p test -d ':-  %renders  /'
-urb ./ship -d '~&  %finish-test-renders  ~'
+herb ./ship -d '~&  ~  ~&  %start-test-renders  ~'
+herb ./ship -p test -d ':-  %renders  /'
+herb ./ship -d '~&  %finish-test-renders  ~'
 
 # Run the test generator
-urb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
+herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
   tee test-generator-output
 
 shutdown

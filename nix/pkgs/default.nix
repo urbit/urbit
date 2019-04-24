@@ -9,7 +9,7 @@ in
 rec {
   arvo         = import ./arvo         { inherit pkgs; };
   ent          = import ./ent          { inherit pkgs; };
-  urb          = import ../../pkg/urb  { inherit pkgs; };
+  herb         = import ../../pkg/herb  { inherit pkgs; };
 
   urbit = import ./urbit {
     inherit pkgs ent;
