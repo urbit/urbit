@@ -15,8 +15,8 @@ cleanup () {
 
 trap cleanup EXIT
 
-urb ./zod -p hood -d '+hood/autoload |'
-urb ./zod -p hood -d "+hood/mount %"
+herb ./zod -p hood -d '+hood/autoload |'
+herb ./zod -p hood -d "+hood/mount %"
 
 rm -r ./zod/home
 cp -r $ARVO ./zod/home
@@ -25,7 +25,7 @@ cp -r $ARVO ./zod/home
 # cp    $ARVO/gen/solid.hoon ./zod/home/gen/
 # cp    $ARVO/lib/pill.hoon  ./zod/home/lib/
 
-urb ./zod -p hood       -d "+hood/commit %home"
-urb ./zod -P urbit.pill -d '+solid, =dub &'
+herb ./zod -p hood       -d "+hood/commit %home"
+herb ./zod -P urbit.pill -d '+solid, =dub &'
 
 mv urbit.pill $out

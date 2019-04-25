@@ -10,12 +10,12 @@ ship=$1
 test -d $ship/.urb
 test -f $ship/.vere.lock
 
-urb $ship -p hood -d '+hood/autoload |'
+herb $ship -p hood -d '+hood/autoload |'
 
-urb $ship -p hood -d "+hood/mount %"
+herb $ship -p hood -d "+hood/mount %"
 
 rm -r $ship/home
 
 cp -r pkg/arvo $ship/home
 
-urb $ship -p hood -d "+hood/commit %home"
+herb $ship -p hood -d "+hood/commit %home"

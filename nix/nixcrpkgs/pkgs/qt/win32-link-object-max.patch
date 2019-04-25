@@ -1,0 +1,16 @@
+diff -ur qtbase-opensource-src-5.9.6-orig/mkspecs/win32-g++/qmake.conf qtbase-opensource-src-5.9.6/mkspecs/win32-g++/qmake.conf
+--- qtbase-opensource-src-5.9.6-orig/mkspecs/win32-g++/qmake.conf	2018-06-19 12:41:49.061465695 -0700
++++ qtbase-opensource-src-5.9.6/mkspecs/win32-g++/qmake.conf	2018-06-19 12:42:15.406453120 -0700
+@@ -54,10 +54,8 @@
+ QMAKE_LFLAGS_WINDOWS    = -Wl,-subsystem,windows
+ QMAKE_LFLAGS_DLL        = -shared
+ QMAKE_LFLAGS_GCSECTIONS = -Wl,--gc-sections
+-equals(QMAKE_HOST.os, Windows) {
+-    QMAKE_LINK_OBJECT_MAX = 10
+-    QMAKE_LINK_OBJECT_SCRIPT = object_script
+-}
++QMAKE_LINK_OBJECT_MAX = 10
++QMAKE_LINK_OBJECT_SCRIPT = object_script
+ QMAKE_EXT_OBJ           = .o
+ QMAKE_EXT_RES           = _res.o
+ QMAKE_PREFIX_SHLIB      =

@@ -194,7 +194,7 @@ u3v_start(u3_noun now)
   {
     c3_c* wen_c = u3r_string(u3A->wen);
 
-    printf("arvo: time: %s\n", wen_c);
+    u3l_log("arvo: time: %s\n", wen_c);
     free(wen_c);
   }
 
@@ -401,7 +401,7 @@ _cv_mole(u3_noun  fot,
   if ( (c3n == u3r_qual(uco, &p_uco, &q_uco, &r_uco, &s_uco)) ||
        (0 != p_uco) ||
        (0 != q_uco) ||
-       (c3n == u3_sing(fot, r_uco)) )
+       (c3n == u3r_sing(fot, r_uco)) )
   {
     u3l_log("strange mole %s\n", u3r_string(san)));
 

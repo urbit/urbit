@@ -15,13 +15,13 @@ cleanup () {
 
 trap cleanup EXIT
 
-urb ./zod -p hood -d '+hood/autoload |'
-urb ./zod -p hood -d "+hood/mount %"
+herb ./zod -p hood -d '+hood/autoload |'
+herb ./zod -p hood -d "+hood/mount %"
 
 rm -r ./zod/home
 cp -r $ARVO ./zod/home
 
-urb ./zod -p hood       -d "+hood/commit %home"
-urb ./zod -P brass.pill -d '+brass'
+herb ./zod -p hood       -d "+hood/commit %home"
+herb ./zod -P brass.pill -d '+brass'
 
 mv brass.pill $out

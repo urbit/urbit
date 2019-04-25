@@ -1,0 +1,102 @@
+diff -ur systemd-234-orig/src/basic/glob-util.c systemd-234/src/basic/glob-util.c
+--- systemd-234-orig/src/basic/glob-util.c	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/glob-util.c	2017-07-22 20:11:56.931514364 -0700
+@@ -31,22 +31,8 @@
+ int safe_glob(const char *path, int flags, glob_t *pglob) {
+         int k;
+ 
+-        /* We want to set GLOB_ALTDIRFUNC ourselves, don't allow it to be set. */
+-        assert(!(flags & GLOB_ALTDIRFUNC));
+-
+-        if (!pglob->gl_closedir)
+-                pglob->gl_closedir = (void (*)(void *)) closedir;
+-        if (!pglob->gl_readdir)
+-                pglob->gl_readdir = (struct dirent *(*)(void *)) readdir_no_dot;
+-        if (!pglob->gl_opendir)
+-                pglob->gl_opendir = (void *(*)(const char *)) opendir;
+-        if (!pglob->gl_lstat)
+-                pglob->gl_lstat = lstat;
+-        if (!pglob->gl_stat)
+-                pglob->gl_stat = stat;
+-
+         errno = 0;
+-        k = glob(path, flags | GLOB_ALTDIRFUNC, NULL, pglob);
++        k = glob(path, flags, NULL, pglob);
+ 
+         if (k == GLOB_NOMATCH)
+                 return -ENOENT;
+@@ -66,7 +52,7 @@
+ 
+         assert(path);
+ 
+-        k = safe_glob(path, GLOB_NOSORT|GLOB_BRACE, &g);
++        k = safe_glob(path, GLOB_NOSORT, &g);
+         if (k == -ENOENT)
+                 return false;
+         if (k < 0)
+@@ -78,7 +64,7 @@
+         _cleanup_globfree_ glob_t g = {};
+         int k;
+ 
+-        k = safe_glob(path, GLOB_NOSORT|GLOB_BRACE, &g);
++        k = safe_glob(path, GLOB_NOSORT, &g);
+         if (k < 0)
+                 return k;
+ 
+diff -ur systemd-234-orig/src/basic/missing.h systemd-234/src/basic/missing.h
+--- systemd-234-orig/src/basic/missing.h	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/missing.h	2017-07-21 08:02:12.349505168 -0700
+@@ -40,6 +40,22 @@
+ #include <uchar.h>
+ #include <unistd.h>
+ 
++static __inline__ char * canonicalize_file_name(const char * path)
++{
++  return realpath(path, NULL);
++}
++
++static __inline__ char * strndupa(const char * s, size_t n)
++{
++  size_t length = strnlen(s, n);
++  char * new_string = (char *)__builtin_alloca(length + 1);
++  new_string[length] = 0;
++  memcpy(new_string, s, length);
++  return new_string;
++}
++
++typedef int comparison_fn_t(const void *, const void *);
++
+ #ifdef HAVE_AUDIT
+ #include <libaudit.h>
+ #endif
+@@ -550,7 +566,7 @@
+ #  ifdef HAVE___SECURE_GETENV
+ #    define secure_getenv __secure_getenv
+ #  else
+-#    error "neither secure_getenv nor __secure_getenv are available"
++#    define secure_getenv getenv
+ #  endif
+ #endif
+ 
+diff -ur systemd-234-orig/src/basic/mkdir.c systemd-234/src/basic/mkdir.c
+--- systemd-234-orig/src/basic/mkdir.c	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/mkdir.c	2017-07-22 21:09:51.065274838 -0700
+@@ -28,6 +28,7 @@
+ #include "path-util.h"
+ #include "stat-util.h"
+ #include "user-util.h"
++#include "missing.h"
+ 
+ int mkdir_safe_internal(const char *path, mode_t mode, uid_t uid, gid_t gid, mkdir_func_t _mkdir) {
+         struct stat st;
+diff -ur systemd-234-orig/src/basic/parse-util.c systemd-234/src/basic/parse-util.c
+--- systemd-234-orig/src/basic/parse-util.c	2017-07-17 19:46:03.031674662 -0700
++++ systemd-234/src/basic/parse-util.c	2017-07-21 07:59:05.337491775 -0700
+@@ -30,6 +30,7 @@
+ #include "parse-util.h"
+ #include "process-util.h"
+ #include "string-util.h"
++#include "missing.h"
+ 
+ int parse_boolean(const char *v) {
+         assert(v);

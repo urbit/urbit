@@ -41,7 +41,7 @@
         void
         u3m_leap(c3_w pad_w);
 
-      /* u3m_golf(): record cap length for u3_flog().
+      /* u3m_golf(): record cap length for u3m_flog().
       */
         c3_w
         u3m_golf(void);
@@ -79,9 +79,6 @@ static sigjmp_buf u3_Signal;
 #ifndef NO_OVERFLOW
 static uint8_t Sigstk[SIGSTKSZ];
 #endif
-
-void u3_unix_ef_hold(void);         //  suspend system signal regime
-void u3_unix_ef_move(void);         //  restore system signal regime
 
 #if 0
 /* _cm_punt(): crudely print trace.
@@ -319,7 +316,11 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 static void
 _cm_signal_deep(c3_w sec_w)
 {
-  u3_unix_ef_hold();
+  //  disable outer system signal handling
+  //
+  if ( 0 != u3C.sign_hold_f ) {
+    u3C.sign_hold_f();
+  }
 
 #ifndef NO_OVERFLOW
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
@@ -353,7 +354,7 @@ _cm_signal_deep(c3_w sec_w)
 static void
 _cm_signal_done()
 {
-  // signal(SIGINT, SIG_IGN);
+  signal(SIGINT, SIG_IGN);
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
@@ -366,7 +367,13 @@ _cm_signal_done()
 
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
-  u3_unix_ef_move();
+
+  //  restore outer system signal handling
+  //
+  if ( 0 != u3C.sign_move_f ) {
+    u3C.sign_move_f();
+  }
+
   u3t_boff();
 }
 
@@ -560,7 +567,7 @@ u3m_dump(void)
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
-        // printf("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
+        // u3l_log("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
 #endif
         mem_w += box_u->siz_w;
       }
@@ -834,7 +841,7 @@ u3m_love(u3_noun pro)
   return pro;
 }
 
-/* u3m_golf(): record cap_p length for u3_flog().
+/* u3m_golf(): record cap_p length for u3m_flog().
 */
 c3_w
 u3m_golf(void)
@@ -1581,7 +1588,8 @@ u3m_init(void)
       }
       exit(1);
     }
-    printf("loom: mapped %dMB\r\n", len_w >> 20);
+
+    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 
@@ -1624,7 +1632,8 @@ _cm_init_new(void)
       }
       exit(1);
     }
-    printf("loom: mapped %dMB\r\n", len_w >> 20);
+
+    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 
@@ -1720,7 +1729,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
       if ( stat(ful_c, &s) == 0 ) {
         /* we're in a "logical boot". awful hack, but bail here */
-        printf("%s confirmed to exist\r\n", ful_c);
+        u3l_log("%s confirmed to exist\r\n", ful_c);
         return;
       }
     }
@@ -1729,7 +1738,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
     if ( pil_c != 0 ) {
       snprintf(ful_c, 2048, "cp %s %s/.urb/%s",
                       pil_c, dir_c, nam_c);
-      printf("%s\r\n", ful_c);
+      u3l_log("%s\r\n", ful_c);
       if ( 0 != system(ful_c) ) {
         u3l_log("could not %s\n", ful_c);
         exit(1);
@@ -1750,7 +1759,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       }
 
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-      printf("fetching %s to %s\r\n", url_c, ful_c);
+      u3l_log("fetching %s to %s\r\n", url_c, ful_c);
       if ( !(curl = curl_easy_init()) ) {
         u3l_log("failed to initialize libcurl\n");
         exit(1);
@@ -1817,7 +1826,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-    printf("boot: loading %s\r\n", ful_c);
+    u3l_log("boot: loading %s\r\n", ful_c);
 
     {
       u3_noun pil = u3m_file(ful_c);
@@ -1875,6 +1884,8 @@ u3m_boot_new(c3_c* dir_c)
   /* Activate tracing.
   */
   u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.
@@ -1919,6 +1930,8 @@ u3m_boot_pier(void)
   /* Activate tracing.
   */
   u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.

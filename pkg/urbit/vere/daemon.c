@@ -674,6 +674,104 @@ _boothack_doom(void)
   return u3nq(c3__boot, bot, _boothack_pill(), pax);
 }
 
+/* _daemon_sign_init(): initialize daemon signal handlers
+*/
+static void
+_daemon_sign_init(void)
+{
+  //  gracefully shutdown on SIGTERM
+  //
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGTERM;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+
+  //  forward SIGINT to worker
+  //
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGINT;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+
+  //  inject new dimensions after terminal resize
+  //
+  {
+    u3_usig* sig_u;
+
+    sig_u = c3_malloc(sizeof(u3_usig));
+    uv_signal_init(u3L, &sig_u->sil_u);
+
+    sig_u->num_i = SIGWINCH;
+    sig_u->nex_u = u3_Host.sig_u;
+    u3_Host.sig_u = sig_u;
+  }
+}
+
+/* _daemon_sign_cb: signal callback.
+*/
+static void
+_daemon_sign_cb(uv_signal_t* sil_u, c3_i num_i)
+{
+  switch ( num_i ) {
+    default: {
+      u3l_log("\r\nmysterious signal %d\r\n", num_i);
+      break;
+    }
+
+    case SIGTERM: {
+      u3_pier_exit(u3_pier_stub());
+      break;
+    }
+
+    case SIGINT: {
+      u3l_log("\r\ninterrupt\r\n");
+      u3_term_ef_ctlc();
+      break;
+    }
+
+    case SIGWINCH: {
+      u3_term_ef_winc();
+      break;
+    }
+  }
+}
+
+/* _daemon_sign_move(): enable daemon signal handlers
+*/
+static void
+_daemon_sign_move(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_start(&sig_u->sil_u, _daemon_sign_cb, sig_u->num_i);
+  }
+}
+
+/* _daemon_sign_hold(): disable daemon signal handlers
+*/
+static void
+_daemon_sign_hold(void)
+{
+  u3_usig* sig_u;
+
+  for ( sig_u = u3_Host.sig_u; sig_u; sig_u = sig_u->nex_u ) {
+    uv_signal_stop(&sig_u->sil_u);
+  }
+}
+
 /* _boothack_cb(): callback for the boothack self-connection
 **  (as if we were a client process)
 */
@@ -693,37 +791,8 @@ _boothack_cb(uv_connect_t *conn, int status)
 void
 _daemon_loop_init()
 {
-  /* move signals out of unix.c */
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGTERM;
-    sig_u->nex_u = u3_Host.sig_u;
-    u3_Host.sig_u = sig_u;
-  }
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGINT;
-    sig_u->nex_u = u3_Host.sig_u;
-    u3_Host.sig_u = sig_u;
-  }
-  {
-    u3_usig* sig_u;
-
-    sig_u = c3_malloc(sizeof(u3_usig));
-    uv_signal_init(u3L, &sig_u->sil_u);
-
-    sig_u->num_i = SIGWINCH;
-    sig_u->nex_u = u3_Host.sig_u;
-    u3_Host.sig_u = sig_u;
-  }
+  _daemon_sign_init();
+  _daemon_sign_move();
 
   /* boot hack */
   {
@@ -757,6 +826,14 @@ u3_daemon_commence()
   u3C.wag_w |= u3o_hashless;
 
   u3m_boot_pier();
+
+  //  wire up signal controls
+  //
+  u3C.sign_hold_f = _daemon_sign_hold;
+  u3C.sign_move_f = _daemon_sign_move;
+
+  //  boot the ivory pill
+  //
   {
     u3_noun lit;
 
@@ -794,6 +871,16 @@ u3_daemon_commence()
 
   _daemon_loop_exit();
   exit(0);
+}
+
+/* u3_daemon_bail(): immediately shutdown.
+*/
+void
+u3_daemon_bail(void)
+{
+  _daemon_loop_exit();
+  u3_pier_bail();
+  exit(1);
 }
 
 /* u3_daemon_grab(): gc the daemon area

@@ -1,6 +1,3 @@
-[submodule "nix/nixcrpkgs"]
-	path = nix/nixcrpkgs
-	url = https://github.com/urbit/nixcrpkgs
 [submodule "pkg/arvo"]
 	path = pkg/arvo
 	url = https://github.com/urbit/arvo.git
