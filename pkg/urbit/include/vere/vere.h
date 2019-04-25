@@ -1335,3 +1335,6 @@
       */
         void
         u3_king_grab(void* vod_p);
+
+        c3_w
+		u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);

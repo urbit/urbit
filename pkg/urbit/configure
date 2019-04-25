@@ -17,6 +17,14 @@ defmacro () {
 
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
+# propogate this info into config.h, so that we can know what __attribute__ style to use in aliases.
+if [ ${CC-cc} == "gcc" ]
+then
+     defmacro GCC 1
+else
+     defmacro GCC 0
+fi	
+
 [ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
 [ -n "$CPU_DEBUG" ]        && defmacro U3_CPU_DEBUG 1
 [ -n "$EVENT_TIME_DEBUG" ] && defmacro U3_EVENT_TIME_DEBUG 1

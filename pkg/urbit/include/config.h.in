@@ -3,6 +3,8 @@
 
 #mesondefine URBIT_VERSION
 
+#mesondefine GCC
+
 #mesondefine U3_OS_linux
 #mesondefine U3_OS_bsd
 #mesondefine U3_OS_osx

@@ -15,6 +15,23 @@
 
 #include "vere/vere.h"
 
+c3_w u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+{
+  errno = 0;
+  struct dirent * tmp_u = readdir(dirp);
+  
+  if (NULL == tmp_u){
+    *result = NULL;
+    return (errno);  // either success or error code
+  } else {
+    memcpy(entry, tmp_u, sizeof(struct dirent));
+    *result = entry;
+  }
+  
+  return(0);
+}
+ 
+
 /* _unix_down(): descend path.
 */
 static c3_c*
@@ -311,7 +328,7 @@ _unix_scan_mount_point(u3_pier *pir_u, u3_umon* mon_u)
     struct dirent* out_u;
     c3_w err_w;
 
-    if ( 0 != (err_w = readdir_r(rid_u, &ent_u, &out_u)) ) {
+    if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
       uL(fprintf(uH, "erroring loading pier directory %s: %s\r\n",
                  mon_u->dir_u.pax_c, strerror(errno)));
       c3_assert(0);
@@ -756,7 +773,7 @@ _unix_update_dir(u3_pier *pir_u, u3_udir* dir_u)
     struct dirent* out_u;
     c3_w err_w;
 
-    if ( (err_w = readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
+    if ( (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) != 0 ) {
       uL(fprintf(uH, "error loading directory %s: %s\r\n",
                  dir_u->pax_c, strerror(err_w)));
       c3_assert(0);
@@ -948,7 +965,7 @@ _unix_initial_update_dir(c3_c* pax_c, c3_c* bas_c)
     struct dirent* out_u;
     c3_w err_w;
 
-    if ( 0 != (err_w = readdir_r(rid_u, &ent_u, &out_u)) ) {
+    if ( 0 != (err_w = u3_readdir_r(rid_u, &ent_u, &out_u)) ) {
       uL(fprintf(uH, "error loading initial directory %s: %s\r\n",
                  pax_c, strerror(errno)));
       c3_assert(0);

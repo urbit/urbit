@@ -633,12 +633,22 @@ _ce_patch_apply(u3_ce_patch* pat_u)
   //printf("image: sou_w %d, new %d\r\n", u3P.sou_u.pgs_w, pat_u->con_u->sou_w);
 
   if ( u3P.nor_u.pgs_w > pat_u->con_u->nor_w ) {
-    ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3a_page + 2));
+    c3_w ret_w;
+    ret_w = ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3a_page + 2));
+    if (ret_w){
+      perror("_ce_patch_apply");
+      c3_assert(0);
+    }
   }
   u3P.nor_u.pgs_w = pat_u->con_u->nor_w;
 
   if ( u3P.sou_u.pgs_w > pat_u->con_u->sou_w ) {
-    ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3a_page + 2));
+    c3_w ret_w;
+    ret_w = ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3a_page + 2));
+    if (ret_w){
+      perror("_ce_patch_apply");
+      c3_assert(0);
+    }
   }
   u3P.sou_u.pgs_w = pat_u->con_u->sou_w;
 
