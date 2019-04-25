@@ -619,9 +619,9 @@
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
 
-      /* u3_lord: working process controller.
+      /* u3_controller: working process controller.
       */
-        typedef struct _u3_lord {
+        typedef struct _u3_controller {
           uv_process_t         cub_u;           //  process handle
           uv_process_options_t ops_u;           //  process configuration
           uv_stdio_container_t cod_u[3];        //  process options
@@ -634,7 +634,7 @@
           c3_d                 rel_d;           //  last event released
           c3_l                 mug_l;           //  mug after last completion
           struct _u3_pier*     pir_u;           //  pier backpointer
-        } u3_lord;
+        } u3_controller;
 
       /* u3_disk: manage events on disk.
       **
@@ -657,7 +657,9 @@
       /* u3_boot: startup controller.
       */
         typedef struct _u3_boot {
-
+          u3_noun          pil;                 //  pill
+          u3_noun          ven;                 //  boot event
+          struct _u3_pier* pir_u;               //  pier backpointer
         } u3_boot;
 
       /* u3_psat: pier state.
@@ -676,8 +678,9 @@
           c3_c*            pax_c;               //  pier directory
           c3_w             wag_w;               //  config flags
           c3_d             gen_d;               //  last event discovered
-          c3_d             but_d;               //  boot barrier
-          c3_d             lif_d;               //  lifecycle boot barrier
+          c3_d             lif_d;               //  lifecycle barrier
+          u3_boot*         bot_u;               //  boot state
+          c3_d             but_d;               //  boot/restart barrier
           c3_d             tic_d[1];            //  ticket (unstretched)
           c3_d             sec_d[1];            //  generator (unstretched)
           c3_d             key_d[4];            //  secret (stretched)
@@ -685,12 +688,9 @@
           c3_c*            who_c;               //  identity as C string
           c3_s             por_s;               //  UDP port
           c3_o             fak_o;               //  yes iff fake security
-          c3_o             liv_o;               //  live
           u3_psat          sat_e;               //  pier state
-          u3_noun          bot;                 //  boot event XX review
-          u3_noun          pil;                 //  pill XX review
           u3_disk*         log_u;               //  event log
-          u3_lord*         god_u;               //  computer
+          u3_controller*   god_u;               //  computer
           u3_ames*         sam_u;               //  packet interface
           u3_behn*         teh_u;               //  behn timer
           u3_unix*         unx_u;               //  sync and clay
@@ -702,25 +702,25 @@
 
       /* u3_king: all executing piers.
       */
-        typedef struct _u3_king {
+        typedef struct _u3_daemon {
           c3_c*     soc_c;                      //  socket name
-          c3_w      len_w;                      //  number of lords used
-          c3_w      all_w;                      //  number of lords allocated
-          u3_pier** tab_u;                      //  lord table
+          c3_w      len_w;                      //  number used
+          c3_w      all_w;                      //  number allocated
+          u3_pier** tab_u;                      //  pier table
           uv_pipe_t cmd_u;                      //  command socket
           u3_moor*  cli_u;                      //  connected clients
           uv_timer_t tim_u;                     //  gc timer
-        } u3_king;
+        } u3_daemon;
 
 #     define u3L  u3_Host.lup_u             //  global event loop
 #     define u3Z  (&(u3_Raft))
-#     define u3K  u3_King
+#     define u3K  u3_Daemon
 
   /** Global variables.
   **/
-    c3_global  u3_host  u3_Host;
-    c3_global  c3_c*    u3_Local;
-    c3_global  u3_king  u3_King;
+    c3_global  u3_host   u3_Host;
+    c3_global  c3_c*     u3_Local;
+    c3_global  u3_daemon u3_Daemon;
 
   /** Functions.
   **/
@@ -934,6 +934,16 @@
 
     /**  Terminal, new style.
     **/
+      /* u3_term_start_spinner(): prepare spinner state. RETAIN.
+      */
+        void
+        u3_term_start_spinner(u3_noun ovo);
+
+      /* u3_term_stop_spinner(): reset spinner state and restore input line.
+      */
+        void
+        u3_term_stop_spinner(void);
+
       /* u3_term_get_blew(): return window size [columns rows].
       */
         u3_noun
@@ -990,17 +1000,15 @@
         FILE*
         u3_term_io_hija(void);
 
+      /* u3_term_it_log(): writes a log message
+      */
+        void
+        u3_term_io_log(c3_c* line);
+
       /* u3_term_io_loja(): release console from cooked print.
       */
         void
         u3_term_io_loja(int x);
-
-      /* uL, uH: wrap hijack/lojack around fprintf.
-      **
-      **  uL(fprintf(uH, ...));
-      */
-#       define uH    u3_term_io_hija()
-#       define uL(x) u3_term_io_loja(x)
 
 
     /**  Ames, packet networking.
@@ -1235,11 +1243,6 @@
 
     /** Pier control.
     **/
-      /* u3_pier_create(): create a pier, loading existing.
-      */
-        u3_pier*
-        u3_pier_create(c3_w wag_w, c3_c* pax_c);
-
       /* u3_pier_interrupt(): interrupt running process.
       */
         void
@@ -1257,7 +1260,7 @@
         void
         u3_pier_exit(u3_pier* pir_u);
 
-      /* u3_pier_bail(): clean up all event state.
+      /* u3_pier_bail(): immediately shutdown..
       */
         void
         u3_pier_bail(void);
@@ -1326,15 +1329,20 @@
         u3_noun
         u3_dawn_vent(u3_noun seed);
 
-      /* u3_king_commence(): start the daemon
+      /* u3_daemon_commence(): start the daemon
       */
         void
-        u3_king_commence();
+        u3_daemon_commence();
 
-      /* u3_king_grab(): gc the kingdom
+      /* u3_daemon_bail(): immediately shutdown.
       */
         void
-        u3_king_grab(void* vod_p);
+        u3_daemon_bail(void);
+
+      /* u3_king_grab(): gc the daemon area
+      */
+        void
+        u3_daemon_grab(void* vod_p);
 
         c3_w
-		u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+    		u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);

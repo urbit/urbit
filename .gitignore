@@ -6,3 +6,6 @@
 /fakezod*
 tags
 TAGS
+bin/darwin
+bin/linux32
+bin/linux64

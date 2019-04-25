@@ -80,7 +80,7 @@ _cj_hash(c3_c* has_c)
 {
   c3_w i_w, len_w = strlen(has_c);
   if ( 64 != len_w ) {
-    fprintf(stderr, "bash not 64 characters: %s\r\n", has_c);
+    u3l_log("bash not 64 characters: %s\r\n", has_c);
     c3_assert(0);
   }
   c3_assert( 64 == len_w );
@@ -257,18 +257,18 @@ _cj_axis(u3_noun fol)
          (0 != p_fol) ||
          (!_(u3a_is_cat(q_fol))) )
     {
-      fprintf(stderr, "axis: bad a\r\n");
+      u3l_log("axis: bad a\r\n");
       return 0;
     }
     return q_fol;
   }
   else {
     if ( 9 != p_fol )
-      { fprintf(stderr, "axis: bad b\r\n"); return 0; }
+      { u3l_log("axis: bad b\r\n"); return 0; }
     if ( !_(u3a_is_cat(q_fol)) )
-      { fprintf(stderr, "axis: bad c\r\n"); return 0; }
+      { u3l_log("axis: bad c\r\n"); return 0; }
     if ( !_(u3du(r_fol)) || (0 != u3h(r_fol)) || (1 != u3t(r_fol)) )
-      { fprintf(stderr, "axis: bad d\r\n"); return 0; }
+      { u3l_log("axis: bad d\r\n"); return 0; }
 
     return q_fol;
   }
@@ -299,7 +299,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
              ((1 << 31) & (axe_l = (c3_w)axe_d)) ||
              (axe_l < 2) )
         {
-          fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
+          u3l_log("jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
         }
       }
       else {
@@ -307,7 +307,7 @@ _cj_warm_hump(c3_l jax_l, u3_noun huc)
         u3_noun fol = u3kdb_get(u3k(huc), nam);
 
         if ( u3_none == fol ) {
-          fprintf(stderr, "jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
+          u3l_log("jets: activate: bad fcs %s\r\n", jet_u->fcs_c);
         }
         else {
           axe_l = _cj_axis(fol);
@@ -802,7 +802,7 @@ _cj_hot_mean(c3_l par_l, u3_noun nam)
     while ( (cop_u = &dev_u[i_l])->cos_c ) {
       if ( _(u3r_sing_c(cop_u->cos_c, nam)) ) {
 #if 0
-        fprintf(stderr, "hot: bound jet %d/%s/%s/\r\n",
+        u3l_log("hot: bound jet %d/%s/%s/\r\n",
                         cop_u->jax_l,
                         cop_u->cos_c,
                         par_u ? par_u->cos_c : "~");
@@ -817,10 +817,9 @@ _cj_hot_mean(c3_l par_l, u3_noun nam)
 
 /* u3j_boot(): initialize jet system.
 */
-void
+c3_w
 u3j_boot(c3_o nuu_o)
 {
-  c3_w jax_l;
   c3_assert(u3R == &(u3H->rod_u));
 
   u3D.len_l =_cj_count(0, u3D.dev_u);
@@ -833,8 +832,11 @@ u3j_boot(c3_o nuu_o)
     u3h_free(u3R->jed.hot_p);
   }
   u3R->jed.hot_p = u3h_new();
-  jax_l = _cj_install(u3D.ray_u, 1, (c3_l) (long long) u3D.dev_u[0].par_u, u3_nul, u3D.dev_u);
-  fprintf(stderr, "boot: installed %d jets\r\n", jax_l);
+
+  return _cj_install(u3D.ray_u, 1,
+                     (c3_l) (long long) u3D.dev_u[0].par_u,
+                     u3_nul,
+                     u3D.dev_u);
 }
 
 /* _cj_soft(): kick softly by arm axis.
@@ -912,7 +914,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       ham_u->liv = c3y;
 
       if ( c3n == u3r_sing(ame, pro) ) {
-        fprintf(stderr, "test: %s %s: mismatch: good %x, bad %x\r\n",
+        u3l_log("test: %s %s: mismatch: good %x, bad %x\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c,
                u3r_mug(ame),
@@ -925,7 +927,7 @@ _cj_kick_z(u3_noun cor, u3j_core* cop_u, u3j_harm* ham_u, u3_atom axe)
       else {
 
 #if 1
-        fprintf(stderr, "test: %s %s\r\n",
+        u3l_log("test: %s %s\r\n",
                cop_u->cos_c,
                (!strcmp(".2", ham_u->fcs_c)) ? "$" : ham_u->fcs_c);
 #endif
@@ -1674,7 +1676,7 @@ u3j_gate_prep(u3j_site* sit_u, u3_noun cor)
             pay = u3qc_cap(pax),
             pam = u3qc_mas(pax);
     if ( 3 != pay || 2 == pam || (3 != pam && 3 != u3qc_cap(pam)) ) {
-      fprintf(stderr, "u3j_gate_prep(): parent axis includes sample\r\n");
+      u3l_log("u3j_gate_prep(): parent axis includes sample\r\n");
       u3m_p("axis", pax);
       u3_weak act = _cj_find_warm(loc);
       c3_assert( u3_none != act );
@@ -1745,12 +1747,12 @@ _cj_minx(u3_noun cey, u3_noun cor)
 
     par = u3r_at(axe, cor);
     if ( u3_none == par || c3n == u3du(par) ) {
-      fprintf(stderr, "fund: %s is bogus\r\n", u3r_string(nam));
+      u3l_log("fund: %s is bogus\r\n", u3r_string(nam));
       return u3_none;
     }
     pel = _cj_spot(par, NULL);
     if ( u3_none == pel ) {
-      fprintf(stderr, "fund: in %s, parent %x not found at %d\r\n",
+      u3l_log("fund: in %s, parent %x not found at %d\r\n",
                       u3r_string(nam),
                       u3r_mug(u3h(par)),
                       axe);
@@ -1809,7 +1811,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
     jax_l = _cj_hot_mean(par_l, nam);
 #if 0
     u3m_p("new jet", bal);
-    fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+    u3l_log("  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
 
     if ( !(u3C.wag_w & u3o_hashless) ) {
@@ -1817,17 +1819,17 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
         c3_y dig_y[32];
         c3_w i_w;
         u3_noun i = bal;
-        fprintf(stderr, "hot jet: ");
+        u3l_log("hot jet: ");
         while ( i != u3_nul ) {
           _cj_print_tas(stderr, u3h(i));
           i = u3t(i);
         }
-        fprintf(stderr, "\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
+        u3l_log("\r\n  axe %d, jax %d,\r\n  bash ", axe, jax_l);
         u3r_bytes(0, 32, dig_y, bas);
         for ( i_w = 32; i_w > 0; ) {
-          fprintf(stderr, "%02x", dig_y[--i_w]);
+          u3l_log("%02x", dig_y[--i_w]);
         }
-        fprintf(stderr, "\r\n");
+        u3l_log("\r\n");
       }
     }
 
@@ -1857,7 +1859,7 @@ _cj_mine(u3_noun cey, u3_noun cor, u3_noun bas)
 
     if ( c3n == hav_o ) {
       u3m_p("unregistered battery", bal);
-      fprintf(stderr, "hash: %x\r\n", bas);
+      u3l_log("hash: %x\r\n", bas);
     }
     u3z(bas);
   }
@@ -2069,7 +2071,7 @@ _cj_ream(u3_noun all)
       act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
 #if 0
       u3m_p("old jet", bal);
-      fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+      u3l_log("  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
       u3h_put(u3R->jed.war_p, loc, act);
     }
@@ -2108,7 +2110,7 @@ _cj_ream(u3_noun all)
         act   = u3nq(jax_l, hap, bal, _cj_jit(jax_l, bat));
 #if 0
         u3m_p("old jet", bal);
-        fprintf(stderr, "  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
+        u3l_log("  bat %x, jax %d\r\n", u3r_mug(bat), jax_l);
 #endif
         u3h_put(u3R->jed.war_p, loc, act);
       }

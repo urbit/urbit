@@ -70,7 +70,7 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    fprintf(stderr, "failed to initialize libcurl\n");
+    u3l_log("failed to initialize libcurl\n");
     exit(1);
   }
 
@@ -93,12 +93,12 @@ _dawn_post_json(c3_c* url_c, uv_buf_t lod_u)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    fprintf(stderr, "failed to fetch %s: %s\n",
-                    url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n",
+            url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
-    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
     exit(1);
   }
 
@@ -120,7 +120,7 @@ _dawn_get_jam(c3_c* url_c)
   uv_buf_t buf_u = uv_buf_init(c3_malloc(1), 0);
 
   if ( !(curl = curl_easy_init()) ) {
-    fprintf(stderr, "failed to initialize libcurl\n");
+    u3l_log("failed to initialize libcurl\n");
     exit(1);
   }
 
@@ -135,12 +135,12 @@ _dawn_get_jam(c3_c* url_c)
 
   // XX retry?
   if ( CURLE_OK != result ) {
-    fprintf(stderr, "failed to fetch %s: %s\n",
-                    url_c, curl_easy_strerror(result));
+    u3l_log("failed to fetch %s: %s\n",
+            url_c, curl_easy_strerror(result));
     exit(1);
   }
   if ( 300 <= cod_l ) {
-    fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
+    u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
     exit(1);
   }
 
@@ -197,7 +197,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
     }
   }
 
-  fprintf(stderr, "dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
+  u3l_log("dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
 
   // XX deconstruct sas, print helpful error messages
   u3m_p("pre-boot error", u3t(sas));
@@ -213,7 +213,7 @@ static u3_noun
 _dawn_need_unit(u3_noun nit, c3_c* msg_c)
 {
   if ( u3_nul == nit ) {
-    fprintf(stderr, "%s\r\n", msg_c);
+    u3l_log("%s\r\n", msg_c);
     exit(1);
   }
   else {
@@ -232,7 +232,7 @@ _dawn_purl(u3_noun rac)
 
   if ( 0 == u3_Host.ops_u.eth_c ) {
     if ( c3__czar == rac ) {
-      fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
+      u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
       exit(1);
     }
 
@@ -247,7 +247,7 @@ _dawn_purl(u3_noun rac)
 
     if ( u3_nul == rul ) {
       if ( c3__czar == rac ) {
-        fprintf(stderr, "boot: galaxy requires ethereum gateway via -e\r\n");
+        u3l_log("boot: galaxy requires ethereum gateway via -e\r\n");
         exit(1);
       }
 
@@ -279,11 +279,11 @@ _dawn_turf(c3_c* dns_c)
   u3_noun rul = u3dc("rush", u3k(dns), u3k(par));
 
   if ( (u3_nul == rul) || (c3n == u3h(u3t(rul))) ) {
-    fprintf(stderr, "boot: invalid domain specified with -H %s\r\n", dns_c);
+    u3l_log("boot: invalid domain specified with -H %s\r\n", dns_c);
     exit(1);
   }
   else {
-    fprintf(stderr, "boot: overriding network domains with %s\r\n", dns_c);
+    u3l_log("boot: overriding network domains with %s\r\n", dns_c);
     u3_noun dom = u3t(u3t(rul));
     tuf = u3nc(u3k(dom), u3_nul);
   }
@@ -306,7 +306,7 @@ u3_dawn_vent(u3_noun seed)
   //  load snapshot from file
   //
   if ( 0 != u3_Host.ops_u.ets_c ) {
-    fprintf(stderr, "boot: loading ethereum snapshot\r\n");
+    u3l_log("boot: loading ethereum snapshot\r\n");
     u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
     sap = u3nc(u3_nul, raw_snap);
   }
@@ -319,7 +319,7 @@ u3_dawn_vent(u3_noun seed)
   //  no snapshot
   //
   else {
-    printf("dawn: no ethereum snapshot specified\n");
+    u3l_log("dawn: no ethereum snapshot specified\n");
     sap = u3_nul;
   }
 
@@ -334,14 +334,14 @@ u3_dawn_vent(u3_noun seed)
   //  pin block number
   //
   if ( c3y == u3_Host.ops_u.etn ) {
-    fprintf(stderr, "boot: extracting block from snapshot\r\n");
+    u3l_log("boot: extracting block from snapshot\r\n");
 
     bok = _dawn_need_unit(u3do("bloq:snap:dawn", u3k(u3t(sap))),
                           "boot: failed to extract "
                           "block from snapshot");
   }
   else {
-    fprintf(stderr, "boot: retrieving latest block\r\n");
+    u3l_log("boot: retrieving latest block\r\n");
 
     u3_noun oct = u3v_wish("bloq:give:dawn");
     u3_noun kob = _dawn_eth_rpc(url_c, u3k(oct));
@@ -357,7 +357,7 @@ u3_dawn_vent(u3_noun seed)
     u3_noun pot;
 
     if ( c3y == u3_Host.ops_u.etn ) {
-      fprintf(stderr, "boot: extracting public keys from snapshot\r\n");
+      u3l_log("boot: extracting public keys from snapshot\r\n");
 
       pot = _dawn_need_unit(u3dc("point:snap:dawn", u3k(ship), u3k(u3t(sap))),
                             "boot: failed to extract "
@@ -378,16 +378,16 @@ u3_dawn_vent(u3_noun seed)
           u3_noun seg = u3dc("scot", 'p', u3k(who));
           c3_c* seg_c = u3r_string(seg);
 
-          fprintf(stderr, "boot: retrieving %s's public keys (for %s)\r\n",
-                                              seg_c, u3_Host.ops_u.who_c);
+          u3l_log("boot: retrieving %s's public keys (for %s)\r\n",
+                  seg_c, u3_Host.ops_u.who_c);
           free(seg_c);
           u3z(seg);
         }
       }
       else {
         who = u3k(ship);
-        fprintf(stderr, "boot: retrieving %s's public keys\r\n",
-                                           u3_Host.ops_u.who_c);
+        u3l_log("boot: retrieving %s's public keys\r\n",
+                u3_Host.ops_u.who_c);
       }
 
       {
@@ -408,7 +408,7 @@ u3_dawn_vent(u3_noun seed)
     u3_noun liv = u3_nul;
     // u3_noun liv = _dawn_get_json(parent, /some/url)
 
-    fprintf(stderr, "boot: verifying keys\r\n");
+    u3l_log("boot: verifying keys\r\n");
 
     //  (each sponsor=ship error=@tas)
     //
@@ -432,14 +432,14 @@ u3_dawn_vent(u3_noun seed)
   //  (map ship [=life =pass]): galaxy table
   //
   if ( c3y == u3_Host.ops_u.etn ) {
-    fprintf(stderr, "boot: extracting galaxy table from snapshot\r\n");
+    u3l_log("boot: extracting galaxy table from snapshot\r\n");
 
     zar = _dawn_need_unit(u3do("czar:snap:dawn", u3k(u3t(sap))),
                           "boot: failed to extract "
                           "galaxy table from snapshot");
   }
   else {
-    fprintf(stderr, "boot: retrieving galaxy table\r\n");
+    u3l_log("boot: retrieving galaxy table\r\n");
 
     u3_noun oct = u3do("czar:give:dawn", u3k(bok));
     u3_noun raz = _dawn_eth_rpc(url_c, u3k(oct));
@@ -455,14 +455,14 @@ u3_dawn_vent(u3_noun seed)
     tuf = _dawn_turf(u3_Host.ops_u.dns_c);
   }
   else if ( c3y == u3_Host.ops_u.etn ) {
-    fprintf(stderr, "boot: extracting network domains from snapshot\r\n");
+    u3l_log("boot: extracting network domains from snapshot\r\n");
 
     tuf = _dawn_need_unit(u3do("turf:snap:dawn", u3k(u3t(sap))),
                           "boot: failed to extract "
                           "network domains from snapshot");
   }
   else {
-    fprintf(stderr, "boot: retrieving network domains\r\n");
+    u3l_log("boot: retrieving network domains\r\n");
 
     u3_noun oct = u3do("turf:give:dawn", u3k(bok));
     u3_noun fut = _dawn_eth_rpc(url_c, u3k(oct));
@@ -492,8 +492,8 @@ _dawn_come(u3_noun stars)
     c3_rand(eny_w);
     eny = u3i_words(16, eny_w);
 
-    fprintf(stderr, "boot: mining a comet. May take up to an hour.\r\n");
-    fprintf(stderr, "If you want to boot faster, get an Azimuth point.\r\n");
+    u3l_log("boot: mining a comet. May take up to an hour.\r\n");
+    u3l_log("If you want to boot faster, get an Azimuth point.\r\n");
 
     seed = u3dc("come:dawn", u3k(stars), u3k(eny));
     u3z(eny);
@@ -503,7 +503,7 @@ _dawn_come(u3_noun stars)
     u3_noun who = u3dc("scot", 'p', u3k(u3h(seed)));
     c3_c* who_c = u3r_string(who);
 
-    fprintf(stderr, "boot: found comet %s\r\n", who_c);
+    u3l_log("boot: found comet %s\r\n", who_c);
     free(who_c);
     u3z(who);
   }

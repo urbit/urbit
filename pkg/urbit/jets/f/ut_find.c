@@ -630,11 +630,11 @@
       default: return u3m_bail(c3__fail);
 
       case c3__noun: {
-        // fprintf(stderr, "noun\r\n");
+        // u3l_log("noun\r\n");
         return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__void: {
-        // fprintf(stderr, "void\r\n");
+        // u3l_log("void\r\n");
         // return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
         return u3_nul;
       }
@@ -644,17 +644,17 @@
 
       case c3__atom:
       {
-        // fprintf(stderr, "atom\r\n");
+        // u3l_log("atom\r\n");
         return _find_buck_stop(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__cell:
       {
-        // fprintf(stderr, "cell\r\n");
+        // u3l_log("cell\r\n");
         return _find_buck_cell(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__core:
       {
-        // fprintf(stderr, "core\r\n");
+        // u3l_log("core\r\n");
         return _find_buck_core(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__hint:
@@ -666,17 +666,17 @@
       }
       case c3__face:
       {
-        // fprintf(stderr, "face\r\n");
+        // u3l_log("face\r\n");
         return _find_buck_face(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__fork:
       {
-        // fprintf(stderr, "fork\r\n");
+        // u3l_log("fork\r\n");
         return _find_buck_fork(van, sut, way, p_heg, q_heg, axe, lon, gil);
       }
       case c3__hold:
       {
-        // fprintf(stderr, "hold\r\n");
+        // u3l_log("hold\r\n");
         if ( (c3y == u3qdi_has(gil, sut)) ) {
           return u3_nul;
         }

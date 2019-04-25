@@ -373,13 +373,13 @@ u3a_reclaim(void)
   if ( (0 == u3R->cax.har_p) ||
        (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) )
   {
-    fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
+    u3l_log("allocate: reclaim: memo cache: empty\r\n");
     u3m_bail(c3__meme);
   }
 
 #if 1
-  fprintf(stderr, "allocate: reclaim: half of %d entries\r\n",
-                   u3to(u3h_root, u3R->cax.har_p)->use_w);
+  u3l_log("allocate: reclaim: half of %d entries\r\n",
+          u3to(u3h_root, u3R->cax.har_p)->use_w);
 
   u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
 #else
@@ -406,7 +406,7 @@ _ca_willoc(c3_w len_w, c3_w ald_w, c3_w alp_w)
     sel_w += 1;
   }
 
-  // fprintf(stderr, "walloc %d: *pfr_p %x\n", len_w, u3R->all.fre_p[sel_w]);
+  // u3l_log("walloc %d: *pfr_p %x\n", len_w, u3R->all.fre_p[sel_w]);
   while ( 1 ) {
     u3p(u3a_fbox) *pfr_p = &u3R->all.fre_p[sel_w];
 
@@ -537,7 +537,7 @@ u3a_walloc(c3_w len_w)
       u3a_botox(ptr_v) == (u3a_box*)(void *)0x200dfe3e4 ) {
     static int xuc_i;
 
-    printf("xuc_i %d\r\n", xuc_i);
+    u3l_log("xuc_i %d\r\n", xuc_i);
     if ( 1 == xuc_i ) {
       u3a_box* box_u = u3a_botox(ptr_v);
 
@@ -664,7 +664,7 @@ u3a_malloc(size_t len_i)
   if ( u3a_botox(out_w) == (u3a_box*)(void *)0x3bdd1c80) {
     static int xuc_i = 0;
 
-    fprintf(stderr,"xuc_i %d\r\n", xuc_i);
+    u3l_log("xuc_i %d\r\n", xuc_i);
     // if ( 1 == xuc_i ) { abort(); }
     xuc_i++;
   }
@@ -869,7 +869,7 @@ u3a_free(void* tox_v)
   c3_w  pad_w = tox_w[-1];
   c3_w* org_w = tox_w - (pad_w + 1);
 
-  // printf("free %p %p\r\n", org_w, tox_w);
+  // u3l_log("free %p %p\r\n", org_w, tox_w);
   u3a_wfree(org_w);
 }
 
@@ -995,7 +995,7 @@ _me_gain_use(u3_noun dog)
     if ( u3r_mug(dog) == 0x15d47649 ) {
       static c3_w bug_w = 0;
 
-      printf("bad %x %d %d\r\n", dog, bug_w, box_u->use_w);
+      u3l_log("bad %x %d %d\r\n", dog, bug_w, box_u->use_w);
       if ( bug_w == 0 ) { abort(); }
       bug_w++;
     }
@@ -1005,7 +1005,7 @@ _me_gain_use(u3_noun dog)
       static c3_w bug_w = 0;
 
       if ( BDA == dog ) {
-        printf("BDA %d %d\r\n", bug_w, box_u->use_w);
+        u3l_log("BDA %d %d\r\n", bug_w, box_u->use_w);
         // if ( bug_w == 0 ) { abort(); }
         bug_w++;
       }
@@ -1019,7 +1019,7 @@ _me_gain_use(u3_noun dog)
       if ( FOO && u3a_botox(u3a_to_ptr(dog)) == (void *)0x200dfe3e4 ) {
         u3a_box* box_u = u3a_botox(u3a_to_ptr(dog));
 
-        printf("GAIN %d %d\r\n", bug_w, box_u->use_w);
+        u3l_log("GAIN %d %d\r\n", bug_w, box_u->use_w);
         if ( bug_w == 8 ) { abort(); }
         bug_w++;
       }
@@ -1168,7 +1168,7 @@ _me_copy_south(u3_noun dog)
     if ( dog_u->mug_w >> 31 ) {
       u3_noun nov = (u3_noun) dog_u->mug_w;
 
-      // printf("south: %p is already %p\r\n", dog_u, u3a_to_ptr(nov));
+      // u3l_log("south: %p is already %p\r\n", dog_u, u3a_to_ptr(nov));
 
       c3_assert(_(u3a_south_is_normal(u3R, nov)));
       _me_gain_use(nov);
@@ -1182,10 +1182,10 @@ _me_copy_south(u3_noun dog)
         u3_noun     new   = u3a_de_twin(dog, new_w);
         u3a_cell* new_u = (u3a_cell*)(void *)new_w;
 
-        // printf("south: cell %p to %p\r\n", old_u, new_u);
+        // u3l_log("south: cell %p to %p\r\n", old_u, new_u);
 #if 0
         if ( old_u->mug_w == 0x730e66cc ) {
-          fprintf(stderr, "BAD: take %p\r\n", new_u);
+          u3l_log("BAD: take %p\r\n", new_u);
         }
 #endif
         new_u->mug_w = old_u->mug_w;
@@ -1204,7 +1204,7 @@ _me_copy_south(u3_noun dog)
         u3_noun     new   = u3a_de_twin(dog, new_w);
         u3a_atom* new_u = (u3a_atom*)(void *)new_w;
 
-        // printf("south: atom %p to %p\r\n", old_u, new_u);
+        // u3l_log("south: atom %p to %p\r\n", old_u, new_u);
 
         new_u->mug_w = old_u->mug_w;
         // new_u->mug_w = 0;
@@ -1241,7 +1241,7 @@ _me_take_north(u3_noun dog)
     */
     u3_noun mos = _me_copy_north(dog);
 
-    // printf("north: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
+    // u3l_log("north: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
     return mos;
   }
   else {
@@ -1267,7 +1267,7 @@ _me_take_south(u3_noun dog)
     */
     u3_noun mos = _me_copy_south(dog);
 
-    // printf("south: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
+    // u3l_log("south: %p to %p\r\n", u3a_to_ptr(dog), u3a_to_ptr(mos));
     return mos;
   }
   else {
@@ -1497,7 +1497,7 @@ void
 u3a_luse(u3_noun som)
 {
   if ( 0 == u3a_use(som) ) {
-    fprintf(stderr, "luse: insane %d 0x%x\r\n", som, som);
+    u3l_log("luse: insane %d 0x%x\r\n", som, som);
     abort();
   }
   if ( _(u3du(som)) ) {
@@ -1545,7 +1545,7 @@ u3a_mark_ptr(void* ptr_v)
     c3_ws use_ws = (c3_ws)box_u->use_w;
 
     if ( use_ws == 0 ) {
-      fprintf(stderr, "%p is bogus\r\n", ptr_v);
+      u3l_log("%p is bogus\r\n", ptr_v);
       siz_w = 0;
     }
     else {
@@ -1579,7 +1579,7 @@ u3a_mark_mptr(void* ptr_v)
   c3_w  pad_w = ptr_w[-1];
   c3_w* org_w = ptr_w - (pad_w + 1);
 
-  // printf("free %p %p\r\n", org_w, ptr_w);
+  // u3l_log("free %p %p\r\n", org_w, ptr_w);
   return u3a_mark_ptr(org_w);
 }
 
@@ -1709,9 +1709,9 @@ _ca_print_box(u3a_box* box_u)
       {
         int i;
         for ( i = 0; i < box_u->siz_w; i++ ) {
-          printf("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+          u3l_log("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
         }
-        printf("\r\n");
+        u3l_log("\r\n");
       }
 #endif
       return 0;
@@ -1733,12 +1733,12 @@ _ca_print_box(u3a_box* box_u)
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 {
-  fprintf(stderr, "%s: %p mug=%x (marked=%u swept=%u)\r\n",
-                  cap_c,
-                  box_u,
-                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
-                  eus_w,
-                  use_w);
+  u3l_log("%s: %p mug=%x (marked=%u swept=%u)\r\n",
+          cap_c,
+          box_u,
+          ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+          eus_w,
+          use_w);
 
   if ( box_u->cod_w ) {
     u3m_p("    code", box_u->cod_w);
@@ -1748,7 +1748,7 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
-    fprintf(stderr, "    data: %s\r\n", dat_c);
+    u3l_log("    data: %s\r\n", dat_c);
     free(dat_c);
   }
 }
@@ -1758,17 +1758,17 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
 {
-  fprintf(stderr, "%s: %p mug=%x swept=%d\r\n",
-                  cap_c,
-                  box_u,
-                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
-                  use_ws);
+  u3l_log("%s: %p mug=%x swept=%d\r\n",
+          cap_c,
+          box_u,
+          ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+          use_ws);
 
   u3a_print_memory(stderr, "    size", box_u->siz_w);
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
-    fprintf(stderr, "    data: %s\r\n", dat_c);
+    u3l_log("    data: %s\r\n", dat_c);
     free(dat_c);
   }
 }
@@ -1808,8 +1808,8 @@ u3a_sweep(void)
     }
 #ifdef U3_CPU_DEBUG
     if ( fre_w != u3R->all.fre_w ) {
-      fprintf(stderr, "fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
-          fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
+      u3l_log("fre discrepancy (%x): %x, %x, %x\r\n", u3R->par_p,
+              fre_w, u3R->all.fre_w, (u3R->all.fre_w - fre_w));
     }
 #endif
     neg_w = (end_w - fre_w);

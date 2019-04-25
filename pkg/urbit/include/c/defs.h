@@ -20,8 +20,7 @@
 #     define c3_assert(x)                       \
         do {                                    \
           if (!(x)) {                           \
-            fprintf(stderr,                     \
-                    "\rAssertion '%s' failed "  \
+            u3l_log("\rAssertion '%s' failed "  \
                     "in %s:%d\n",               \
                     #x, __FILE__, __LINE__);    \
             c3_cooked();                        \
@@ -83,18 +82,6 @@
         | (((w) >> 16) & 0xff) << 8 \
         | (((w) >>  8) & 0xff) << 16 \
         | ( (w)        & 0xff) << 24 )
-
-    /* Logging shorthand.
-    */
-#     define c3_log_every(n, args...) \
-        do {                          \
-          static c3_w cnt_w = 0;      \
-                                      \
-          if ( 0 == cnt_w % (n) ) {   \
-            uL(fprintf(uH, args));    \
-          }                           \
-          cnt_w = (cnt_w + 1) % (n);  \
-        } while (0)
 
     /* Asserting allocators.
     */

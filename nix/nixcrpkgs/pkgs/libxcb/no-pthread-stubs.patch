@@ -1,0 +1,12 @@
+diff -ur libxcb-1.12-orig/configure libxcb-1.12/configure
+--- libxcb-1.12-orig/configure	2017-07-29 22:28:37.986987240 -0700
++++ libxcb-1.12/configure	2017-07-29 22:51:26.410210675 -0700
+@@ -19666,7 +19666,7 @@
+ $as_echo "yes" >&6; }
+ 
+ fi
+-NEEDED="pthread-stubs xau >= 0.99.2"
++NEEDED="xau >= 0.99.2"
+ 
+ pkg_failed=no
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for NEEDED" >&5

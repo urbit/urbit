@@ -85,7 +85,7 @@ do LDFLAGS="${LDFLAGS-} -l$dep"
 done
 
 cat >config.mk <<EOF
-CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math
+CFLAGS  := ${CFLAGS-} -funsigned-char -ffast-math -std=gnu99
 LDFLAGS := $LDFLAGS
 CC      := ${CC-cc}
 EOF

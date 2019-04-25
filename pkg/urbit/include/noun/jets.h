@@ -132,7 +132,7 @@
     **/
       /* u3j_boot(): initialize jet system.
       */
-        void
+        c3_w
         u3j_boot(c3_o nuu_o);
 
       /* u3j_clear(): clear jet table to re-register.

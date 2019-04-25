@@ -1,0 +1,2661 @@
+diff -ur cctools-port-c1cc758/cctools/ar/archive.h cctools-port-format/cctools/ar/archive.h
+--- cctools-port-c1cc758/cctools/ar/archive.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ar/archive.h	2017-11-10 21:42:36.315713255 -0800
+@@ -112,11 +112,11 @@
+ } CHDR;
+ 
+ /* Header format strings. */
+-#define	HDR1	"%s%-13d%-12ld%-6u%-6u%-8o%-10qd%2s"
+-#define	HDR2	"%-16.16s%-12ld%-6u%-6u%-8o%-10qd%2s"
++#define	HDR1	"%s%-13d%-12ld%-6u%-6u%-8o%-10ld%2s"
++#define	HDR2	"%-16.16s%-12ld%-6u%-6u%-8o%-10ld%2s"
+ 
+ #define	OLDARMAXNAME	15
+-#define	HDR3	"%-16.15s%-12ld%-6u%-6u%-8o%-10qd%2s"
++#define	HDR3	"%-16.15s%-12ld%-6u%-6u%-8o%-10ld%2s"
+ 
+ 
+ #include <sys/cdefs.h>
+diff -ur cctools-port-c1cc758/cctools/ar/contents.c cctools-port-format/cctools/ar/contents.c
+--- cctools-port-c1cc758/cctools/ar/contents.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ar/contents.c	2017-11-10 21:43:06.022707300 -0800
+@@ -107,7 +107,7 @@
+ 			goto next;
+ 		if (options & AR_V) {
+ 			(void)strmode(chdr.mode, buf);
+-			(void)printf("%s %6d/%-6d %8qd ",
++			(void)printf("%s %6d/%-6d %8ld ",
+ 			    buf + 1, chdr.uid, chdr.gid, chdr.size);
+ 			tp = localtime(&chdr.date);
+ 			(void)strftime(buf, sizeof(buf), "%b %e %H:%M %Y", tp);
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c cctools-port-format/cctools/ld64/src/ld/debugline.c
+--- cctools-port-c1cc758/cctools/ld64/src/ld/debugline.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/debugline.c	2017-11-10 19:13:05.914926185 -0800
+@@ -396,11 +396,11 @@
+ 	      case DW_LNE_set_address:
+ 		if (sz == 9) {
+ 		  lnd->cur.pc = read_64 (eop);
+-	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", lnd->cur.pc);
++	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08lX)\n", lnd->cur.pc);
+ 		}
+ 		else if (sz == 5) {
+ 		  lnd->cur.pc = read_32 (eop);
+-	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08llX)\n", lnd->cur.pc);
++	          if (verbose) fprintf(stderr, "DW_LNE_set_address(0x%08lX)\n", lnd->cur.pc);
+ 		}
+ 		else
+ 		  return false;
+@@ -442,11 +442,11 @@
+ 	  if (tmp == (uint64_t) -1)
+ 	    return false;
+ 	  lnd->cur.pc += tmp * lnd->minimum_instruction_length;
+-	  if (verbose) fprintf(stderr, "DW_LNS_advance_pc(0x%08llX)\n", lnd->cur.pc);
++	  if (verbose) fprintf(stderr, "DW_LNS_advance_pc(0x%08lX)\n", lnd->cur.pc);
+ 	  break;
+ 	case DW_LNS_advance_line:
+ 	  lnd->cur.line += read_sleb128 (lnd);
+-	  if (verbose) fprintf(stderr, "DW_LNS_advance_line(%lld)\n", lnd->cur.line);
++	  if (verbose) fprintf(stderr, "DW_LNS_advance_line(%ld)\n", lnd->cur.line);
+ 	  break;
+ 	case DW_LNS_set_file:
+ 	  if (verbose) fprintf(stderr, "DW_LNS_set_file\n");
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/InputFiles.cpp cctools-port-format/cctools/ld64/src/ld/InputFiles.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/InputFiles.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/InputFiles.cpp	2017-11-10 19:13:05.914926185 -0800
+@@ -226,7 +226,7 @@
+ 	if ( fd == -1 )
+ 		throwf("can't open file, errno=%d", errno);
+ 	if ( info.fileLen < 20 )
+-		throwf("file too small (length=%llu)", info.fileLen);
++		throwf("file too small (length=%lu)", info.fileLen);
+ 
+ 	uint8_t* p = (uint8_t*)::mmap(NULL, info.fileLen, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
+ 	if ( p == (uint8_t*)(-1) )
+@@ -276,7 +276,7 @@
+ 					newFileLen = statBuffer.st_size;
+ 				}
+ 				if ( fileOffset+len > newFileLen ) {
+-					throwf("truncated fat file. Slice from %u to %llu is past end of file with length %llu", 
++					throwf("truncated fat file. Slice from %u to %lu is past end of file with length %lu", 
+ 						fileOffset, fileOffset+len, info.fileLen);
+ 				}
+ 			}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/ld.cpp cctools-port-format/cctools/ld64/src/ld/ld.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/ld.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/ld.cpp	2017-11-10 19:13:05.914926185 -0800
+@@ -1026,10 +1026,10 @@
+ 		// sanity check size
+ 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
+ 															  && (_options.outputKind() != Options::kStaticExecutable) )
+-			throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
++			throwf("section %s (address=0x%08lX, size=%lu) would make the output executable exceed available address range", 
+ 						sect->sectionName(), address, sect->size);
+ 		
+-		if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  address=0x%08lX, hidden=%d, alignment=%02d, section=%s,%s\n",
+ 						sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
+ 		// update running totals
+ 		if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
+@@ -1060,7 +1060,7 @@
+ 				address = ( (unalignedAddress+alignment-1) & (-alignment) );
+ 				sect->alignmentPaddingBytes = (address - unalignedAddress);
+ 				sect->address = address;
+-				if ( log ) fprintf(stderr, "  address=0x%08llX, hidden=%d, alignment=%02d, section=%s,%s\n",
++				if ( log ) fprintf(stderr, "  address=0x%08lX, hidden=%d, alignment=%02d, section=%s,%s\n",
+ 									sect->address, sect->isSectionHidden(), sect->alignment, sect->segmentName(), sect->sectionName());
+ 				// update running totals
+ 				if ( !sect->isSectionHidden() || hiddenSectionsOccupyAddressSpace )
+@@ -1119,7 +1119,7 @@
+ 		// sanity check size
+ 		if ( ((address + sect->size) > _options.maxAddress()) && (_options.outputKind() != Options::kObjectFile) 
+ 															  && (_options.outputKind() != Options::kStaticExecutable) )
+-				throwf("section %s (address=0x%08llX, size=%llu) would make the output executable exceed available address range", 
++				throwf("section %s (address=0x%08lX, size=%lu) would make the output executable exceed available address range", 
+ 						sect->sectionName(), address, sect->size);
+ 
+ 		// sanity check it does not overlap a fixed address segment
+@@ -1145,7 +1145,7 @@
+ 			}
+ 		}
+ 		
+-		if ( log ) fprintf(stderr, "  address=0x%08llX, size=0x%08llX, hidden=%d, alignment=%02d, padBytes=%d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  address=0x%08lX, size=0x%08lX, hidden=%d, alignment=%02d, padBytes=%d, section=%s,%s\n",
+ 							sect->address, sect->size, sect->isSectionHidden(), sect->alignment, sect->alignmentPaddingBytes, 
+ 							sect->segmentName(), sect->sectionName());
+ 		// update running totals
+@@ -1159,7 +1159,7 @@
+ 			ld::Internal::FinalSection* sect = *it;
+ 			//if ( sect->isSectionHidden() )
+ 			//	continue;
+-			fprintf(stderr, "  address:0x%08llX, alignment:2^%d, size:0x%08llX, padBytes:%d, section:%s/%s\n",
++			fprintf(stderr, "  address:0x%08lX, alignment:2^%d, size:0x%08lX, padBytes:%d, section:%s/%s\n",
+ 							sect->address, sect->alignment, sect->size, sect->alignmentPaddingBytes, 
+ 							sect->segmentName(), sect->sectionName());
+ 	
+@@ -1200,7 +1200,7 @@
+ 			fileOffset += sect->size;
+ 		}
+ 		
+-		if ( log ) fprintf(stderr, "  fileoffset=0x%08llX, address=0x%08llX, hidden=%d, size=%lld, alignment=%02d, section=%s,%s\n",
++		if ( log ) fprintf(stderr, "  fileoffset=0x%08lX, address=0x%08lX, hidden=%d, size=%ld, alignment=%02d, section=%s,%s\n",
+ 				sect->fileOffset, sect->address, sect->isSectionHidden(), sect->size, sect->alignment, 
+ 				sect->segmentName(), sect->sectionName());
+ 	}
+@@ -1226,7 +1226,7 @@
+ {
+ 	char* result = out;
+ 	char rawNum[30];
+-	sprintf(rawNum, "%llu", in);
++	sprintf(rawNum, "%lu", in);
+ 	const int rawNumLen = strlen(rawNum);
+ 	for(int i=0; i < rawNumLen-1; ++i) {
+ 		*out++ = rawNum[i];
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/LinkEdit.hpp cctools-port-format/cctools/ld64/src/ld/LinkEdit.hpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/LinkEdit.hpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/LinkEdit.hpp	2017-11-10 19:13:05.914926185 -0800
+@@ -324,39 +324,39 @@
+ 				done = true;
+ 				break;
+ 			case REBASE_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case REBASE_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(REBASE_OPCODE_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_IMM_TIMES(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_IMM_TIMES | it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -534,39 +534,39 @@
+ 				done = true;
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
+ 				break;
+ 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n", it->operand1, it->name);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0lX, %s)\n", it->operand1, it->name);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | it->operand1);
+ 				this->_encodedData.append_string(it->name);
+ 				break;
+ 			case BIND_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_ADDEND_SLEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
+ 				this->_encodedData.append_sleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case BIND_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+@@ -575,16 +575,16 @@
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -772,39 +772,39 @@
+ 				done = true;
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_DYLIB_SPECIAL_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | (it->operand1 & BIND_IMMEDIATE_MASK));
+ 				break;
+ 			case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0llX, %s)\n", it->operand1, it->name);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM(0x%0lX, %s)\n", it->operand1, it->name);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | it->operand1);
+ 				this->_encodedData.append_string(it->name);
+ 				break;
+ 			case BIND_OPCODE_SET_TYPE_IMM:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_TYPE_IMM(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_TYPE_IMM | it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_ADDEND_SLEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_ADDEND_SLEB);
+ 				this->_encodedData.append_sleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%lld, 0x%llX)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%ld, 0x%lX)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+ 				break;
+ 			case BIND_OPCODE_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+@@ -813,16 +813,16 @@
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%llX)\n", it->operand1);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB(0x%lX)\n", it->operand1);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%lld=0x%llX)\n", it->operand1, it->operand1*sizeof(pint_t));
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED(%ld=0x%lX)\n", it->operand1, it->operand1*sizeof(pint_t));
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | it->operand1 );
+ 				break;
+ 			case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+-				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%lld, %lld)\n", it->operand1, it->operand2);
++				if ( log ) fprintf(stderr, "BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB(%ld, %ld)\n", it->operand1, it->operand2);
+ 				this->_encodedData.append_byte(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+ 				this->_encodedData.append_uleb128(it->operand1);
+ 				this->_encodedData.append_uleb128(it->operand2);
+@@ -1018,7 +1018,7 @@
+ 				entry.importName = atom->name();
+ 			}
+ 			entries.push_back(entry);
+-			//fprintf(stderr, "re-export %s from lib %llu as %s\n", entry.importName, entry.other, entry.name);
++			//fprintf(stderr, "re-export %s from lib %lu as %s\n", entry.importName, entry.other, entry.name);
+ 		}
+ 		else if ( atom->definition() == ld::Atom::definitionAbsolute ) {
+ 			entry.name = atom->name();
+@@ -1136,7 +1136,7 @@
+ 			_64bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1152,7 +1152,7 @@
+ 			_32bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1179,7 +1179,7 @@
+ 			_thumbHi16Locations[extra].push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1207,7 +1207,7 @@
+ 			_64bitPointerLocations.push_back(address);
+ 			break;
+ 		default:
+-			warning("codegen at address 0x%08llX prevents image from working in dyld shared cache", address);
++			warning("codegen at address 0x%08lX prevents image from working in dyld shared cache", address);
+ 			break;
+ 	}
+ }
+@@ -1219,9 +1219,9 @@
+ 	pint_t addr = this->_options.baseAddress();
+ 	for(typename std::vector<uint64_t>::const_iterator it = locations.begin(); it != locations.end(); ++it) {
+ 		pint_t nextAddr = *it;
+-		//fprintf(stderr, "nextAddr=0x%0llX\n", (uint64_t)nextAddr);
++		//fprintf(stderr, "nextAddr=0x%0lX\n", (uint64_t)nextAddr);
+ 		uint64_t delta = nextAddr - addr;
+-		//fprintf(stderr, "delta=0x%0llX\n", delta);
++		//fprintf(stderr, "delta=0x%0lX\n", delta);
+ 		if ( delta == 0 ) 
+ 			throw "double split seg info for same address";
+ 		// uleb128 encode
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp cctools-port-format/cctools/ld64/src/ld/Options.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/Options.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/Options.cpp	2017-11-10 19:13:05.914926185 -0800
+@@ -2622,7 +2622,7 @@
+ 				fBaseAddress = parseAddress(address);
+ 				uint64_t temp = ((fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment)); 
+ 				if ( fBaseAddress != temp ) {
+-					warning("-seg1addr not %lld byte aligned, rounding up", fSegmentAlignment);
++					warning("-seg1addr not %ld byte aligned, rounding up", fSegmentAlignment);
+ 					fBaseAddress = temp;
+ 				}
+ 				cannotBeUsedWithBitcode(arg);
+@@ -2886,7 +2886,7 @@
+ 				seg.address = parseAddress(argv[++i]);
+ 				uint64_t temp = ((seg.address+fSegmentAlignment-1) & (-fSegmentAlignment)); 
+ 				if ( seg.address != temp )
+-					warning("-segaddr %s not %lld byte aligned", seg.name, fSegmentAlignment);
++					warning("-segaddr %s not %ld byte aligned", seg.name, fSegmentAlignment);
+ 				fCustomSegmentAddresses.push_back(seg);
+ 				cannotBeUsedWithBitcode(arg);
+ 			}
+@@ -4572,7 +4572,7 @@
+ 			}
+ 			// range check -seg1addr for ARM
+ 			if ( fBaseAddress > fMaxAddress ) {
+-				warning("ignoring -seg1addr 0x%08llX.  Address out of range.", fBaseAddress);
++				warning("ignoring -seg1addr 0x%08lX.  Address out of range.", fBaseAddress);
+ 				fBaseAddress = 0;
+ 			}
+ 			break;
+@@ -5207,7 +5207,7 @@
+ 	// Make sure -image_base matches alignment
+ 	uint64_t alignedBaseAddress = (fBaseAddress+fSegmentAlignment-1) & (-fSegmentAlignment);
+ 	if ( alignedBaseAddress != fBaseAddress ) {
+-		warning("base address 0x%llX is not properly aligned. Changing it to 0x%llX", fBaseAddress, alignedBaseAddress);
++		warning("base address 0x%lX is not properly aligned. Changing it to 0x%lX", fBaseAddress, alignedBaseAddress);
+ 		fBaseAddress = alignedBaseAddress;
+ 	}
+ 
+@@ -5401,7 +5401,7 @@
+ 				break;
+ 		}
+ 		if ( (fStackSize & (-fSegmentAlignment)) != fStackSize )
+-			throwf("-stack_size must be multiple of segment alignment (%lldKB)", fSegmentAlignment/1024);
++			throwf("-stack_size must be multiple of segment alignment (%ldKB)", fSegmentAlignment/1024);
+ 		switch ( fOutputKind ) {
+ 			case Options::kDynamicExecutable:
+ 			case Options::kStaticExecutable:
+@@ -5416,7 +5416,7 @@
+ 				throw "-stack_size option can only be used when linking a main executable";
+ 		}
+ 		if ( fStackSize > fStackAddr )
+-			throwf("-stack_size (0x%08llX) must be smaller than -stack_addr (0x%08llX)", fStackSize, fStackAddr);
++			throwf("-stack_size (0x%08lX) must be smaller than -stack_addr (0x%08lX)", fStackSize, fStackAddr);
+ 	}
+ 
+ 	// check that -allow_stack_execute is only used with main executables
+@@ -5582,7 +5582,7 @@
+ 		if ( fZeroPageSize != ULLONG_MAX ) {
+ 			for (std::vector<SegmentStart>::iterator it = fCustomSegmentAddresses.begin(); it != fCustomSegmentAddresses.end(); ++it) {
+ 				if ( it->address < fZeroPageSize )
+-					throwf("-segaddr %s 0x%llX conflicts with -pagezero_size", it->name, it->address);
++					throwf("-segaddr %s 0x%lX conflicts with -pagezero_size", it->name, it->address);
+ 			}
+ 		}
+ 		// verify no duplicates
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/OutputFile.cpp cctools-port-format/cctools/ld64/src/ld/OutputFile.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/OutputFile.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/OutputFile.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -132,13 +132,13 @@
+ {
+ 	fprintf(stderr, "SORTED:\n");
+ 	for (std::vector<ld::Internal::FinalSection*>::iterator it = state.sections.begin(); it != state.sections.end(); ++it) {
+-		fprintf(stderr, "final section %p %s/%s %s start addr=0x%08llX, size=0x%08llX, alignment=%02d, fileOffset=0x%08llX\n", 
++		fprintf(stderr, "final section %p %s/%s %s start addr=0x%08lX, size=0x%08lX, alignment=%02d, fileOffset=0x%08lX\n", 
+ 				(*it), (*it)->segmentName(), (*it)->sectionName(), (*it)->isSectionHidden() ? "(hidden)" : "", 
+ 				(*it)->address, (*it)->size, (*it)->alignment, (*it)->fileOffset);
+ 		if ( printAtoms ) {
+ 			std::vector<const ld::Atom*>& atoms = (*it)->atoms;
+ 			for (std::vector<const ld::Atom*>::iterator ait = atoms.begin(); ait != atoms.end(); ++ait) {
+-				fprintf(stderr, "   %p (0x%04llX) %s\n", *ait, (*ait)->size(), (*ait)->name());
++				fprintf(stderr, "   %p (0x%04lX) %s\n", *ait, (*ait)->size(), (*ait)->name());
+ 			}
+ 		}
+ 	}
+@@ -179,7 +179,7 @@
+ 		ld::Internal::FinalSection* sect = *it;
+ 		if ( (segFirstSection == NULL ) || strcmp(segFirstSection->segmentName(), sect->segmentName()) != 0 ) {
+ 			if ( segFirstSection != NULL ) {
+-				//fprintf(stderr, "findSegment(0x%llX) seg changed to %s\n", addr, sect->segmentName());
++				//fprintf(stderr, "findSegment(0x%lX) seg changed to %s\n", addr, sect->segmentName());
+ 				if ( (addr >= segFirstSection->address) && (addr < lastSection->address+lastSection->size) ) {
+ 					*start = segFirstSection->address;
+ 					*end = lastSection->address+lastSection->size;
+@@ -219,7 +219,7 @@
+ 					break;
+ 				default:
+ 					(const_cast<ld::Atom*>(atom))->setSectionStartAddress(sect->address);
+-					if ( log ) fprintf(stderr, "    atom=%p, addr=0x%08llX, name=%s\n", atom, atom->finalAddress(), atom->name());
++					if ( log ) fprintf(stderr, "    atom=%p, addr=0x%08lX, name=%s\n", atom, atom->finalAddress(), atom->name());
+ 					break;
+ 			}
+ 		}
+@@ -435,7 +435,7 @@
+ 	switch ( atom.symbolTableInclusion() ) {
+ 		case ld::Atom::symbolTableNotIn:
+ 		case ld::Atom::symbolTableNotInFinalLinkedImages:
+-			sprintf(buffer, "%s@0x%08llX", atom.name(), atom.objectAddress());
++			sprintf(buffer, "%s@0x%08lX", atom.name(), atom.objectAddress());
+ 			break;
+ 		case ld::Atom::symbolTableIn:
+ 		case ld::Atom::symbolTableInAndNeverStrip:
+@@ -598,7 +598,7 @@
+ 	for (std::vector<ld::Internal::FinalSection*>::iterator it = state.sections.begin(); it != state.sections.end(); ++it) {
+ 		if ( (*it)->isSectionHidden() )
+ 			continue;
+-		fprintf(stderr, "    %s/%s addr=0x%08llX, size=0x%08llX, fileOffset=0x%08llX, type=%d\n", 
++		fprintf(stderr, "    %s/%s addr=0x%08lX, size=0x%08lX, fileOffset=0x%08lX, type=%d\n", 
+ 				(*it)->segmentName(), (*it)->sectionName(), 
+ 				(*it)->address, (*it)->size, (*it)->fileOffset, (*it)->type());
+ 	}
+@@ -612,7 +612,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("8-bit reference out of range (%lld max is +/-127B): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("8-bit reference out of range (%ld max is +/-127B): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -626,7 +626,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("16-bit reference out of range (%lld max is +/-32KB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("16-bit reference out of range (%ld max is +/-32KB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup),  
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -640,7 +640,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("32-bit branch out of range (%lld max is +/-2GB): from %s (0x%08llX) to %s (0x%08llX)",
++		throwf("32-bit branch out of range (%ld max is +/-2GB): from %s (0x%08lX) to %s (0x%08lX)",
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -659,7 +659,7 @@
+ 		if ( (_options.architecture() == CPU_TYPE_ARM) || (_options.architecture() == CPU_TYPE_I386) ) {
+ 			// Unlikely userland code does funky stuff like this, so warn for them, but not warn for -preload or -static
+ 			if ( (_options.outputKind() != Options::kPreload) && (_options.outputKind() != Options::kStaticExecutable) ) {
+-				warning("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
++				warning("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to 0x%08lX", 
+ 						displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+ 			}
+ 			return;
+@@ -669,10 +669,10 @@
+ 		
+ 		const ld::Atom* target;	
+ 		if ( fixup->binding == ld::Fixup::bindingNone )
+-			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to 0x%08llX", 
++			throwf("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to 0x%08lX", 
+ 				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), displacement);
+ 		else
+-			throwf("32-bit absolute address out of range (0x%08llX max is 4GB): from %s + 0x%08X (0x%08llX) to %s (0x%08llX)", 
++			throwf("32-bit absolute address out of range (0x%08lX max is 4GB): from %s + 0x%08X (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), fixup->offsetInAtom, atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -687,7 +687,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("32-bit RIP relative reference out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("32-bit RIP relative reference out of range (%ld max is +/-4GB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -700,7 +700,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("ARM ldr 12-bit displacement out of range (%lld max is +/-4096B): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("ARM ldr 12-bit displacement out of range (%ld max is +/-4096B): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -720,7 +720,7 @@
+ 	printSectionLayout(state);
+ 	
+ 	const ld::Atom* target;	
+-	throwf("b/bl/blx ARM branch out of range (%lld max is +/-32MB): from %s (0x%08llX) to %s (0x%08llX)", 
++	throwf("b/bl/blx ARM branch out of range (%ld max is +/-32MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 			displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 			addressOf(state, fixup, &target));
+ }
+@@ -752,12 +752,12 @@
+ 
+ 	const ld::Atom* target;	
+ 	if ( _options.preferSubArchitecture() && _options.archSupportsThumb2() ) {
+-		throwf("b/bl/blx thumb2 branch out of range (%lld max is +/-16MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b/bl/blx thumb2 branch out of range (%ld max is +/-16MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+ 	else {
+-		throwf("b/bl/blx thumb1 branch out of range (%lld max is +/-4MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b/bl/blx thumb1 branch out of range (%ld max is +/-4MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -772,7 +772,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("b(l) ARM64 branch out of range (%lld max is +/-128MB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("b(l) ARM64 branch out of range (%ld max is +/-128MB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -786,7 +786,7 @@
+ 		printSectionLayout(state);
+ 		
+ 		const ld::Atom* target;	
+-		throwf("ARM64 ADRP out of range (%lld max is +/-4GB): from %s (0x%08llX) to %s (0x%08llX)", 
++		throwf("ARM64 ADRP out of range (%ld max is +/-4GB): from %s (0x%08lX) to %s (0x%08lX)", 
+ 				displacement, atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fixup), 
+ 				addressOf(state, fixup, &target));
+ 	}
+@@ -1871,7 +1871,7 @@
+ 					uint32_t nextDisp = (j1 << 13) | (j2 << 11) | imm11;
+ 					uint32_t firstDisp = (s << 10) | imm10;
+ 					newInstruction = instruction | (nextDisp << 16) | firstDisp;
+-					//warning("s=%d, j1=%d, j2=%d, imm10=0x%0X, imm11=0x%0X, instruction=0x%08X, first=0x%04X, next=0x%04X, new=0x%08X, disp=0x%llX for %s to %s\n",
++					//warning("s=%d, j1=%d, j2=%d, imm10=0x%0X, imm11=0x%0X, instruction=0x%08X, first=0x%04X, next=0x%04X, new=0x%08X, disp=0x%lX for %s to %s\n",
+ 					//	s, j1, j2, imm10, imm11, instruction, firstDisp, nextDisp, newInstruction, delta, atom->name(), toTarget->name());
+ 					set32LE(fixUpLocation, newInstruction);				
+ 				}
+@@ -2003,7 +2003,7 @@
+ 									// vector and byte LDR/STR have same "size" bits, need to check other bits to differenciate
+ 									implictShift = 4;
+ 									if ( (offset & 0xF) != 0 ) {
+-											throwf("128-bit LDR/STR not 16-byte aligned: from %s (0x%08llX) to %s (0x%08llX)", 
++											throwf("128-bit LDR/STR not 16-byte aligned: from %s (0x%08lX) to %s (0x%08lX)", 
+ 												atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fit), 
+ 												addressOf(state, fit, &toTarget));
+ 									}
+@@ -2011,21 +2011,21 @@
+ 								break;
+ 							case 1:
+ 								if ( (offset & 0x1) != 0 ) {
+-										throwf("16-bit LDR/STR not 2-byte aligned: from %s (0x%08llX) to %s (0x%08llX)", 
++										throwf("16-bit LDR/STR not 2-byte aligned: from %s (0x%08lX) to %s (0x%08lX)", 
+ 											atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fit), 
+ 											addressOf(state, fit, &toTarget));
+ 								}
+ 								break;
+ 							case 2:
+ 								if ( (offset & 0x3) != 0 ) {
+-										throwf("32-bit LDR/STR not 4-byte aligned: from %s (0x%08llX) to %s (0x%08llX)", 
++										throwf("32-bit LDR/STR not 4-byte aligned: from %s (0x%08lX) to %s (0x%08lX)", 
+ 											atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fit), 
+ 											addressOf(state, fit, &toTarget));
+ 								}
+ 								break;
+ 							case 3:
+ 								if ( (offset & 0x7) != 0 ) {
+-										throwf("64-bit LDR/STR not 8-byte aligned: from %s (0x%08llX) to %s (0x%08llX)", 
++										throwf("64-bit LDR/STR not 8-byte aligned: from %s (0x%08lX) to %s (0x%08lX)", 
+ 											atom->name(), atom->finalAddress(), referenceTargetAtomName(state, fit), 
+ 											addressOf(state, fit, &toTarget));
+ 								}
+@@ -2177,11 +2177,11 @@
+ 						set32LE(infoA.instructionContent, makeNOP());
+ 						set32LE(infoB.instructionContent, makeLDR_literal(ldrInfoB, infoA.targetAddress, infoB.instructionAddress));
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-ldr at 0x%08llX transformed to LDR literal, usableSegment=%d usableSegment\n", infoB.instructionAddress, usableSegment);
++							fprintf(stderr, "adrp-ldr at 0x%08lX transformed to LDR literal, usableSegment=%d usableSegment\n", infoB.instructionAddress, usableSegment);
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-ldr at 0x%08llX not transformed, isLDR=%d, literalableSize=%d, inRange=%d, usableSegment=%d, scaledOffset=%d\n", 
++							fprintf(stderr, "adrp-ldr at 0x%08lX not transformed, isLDR=%d, literalableSize=%d, inRange=%d, usableSegment=%d, scaledOffset=%d\n", 
+ 								infoB.instructionAddress, isLDR, literalableSize, withinOneMeg(infoB.instructionAddress, infoA.targetAddress), usableSegment, ldrInfoB.offset);
+ 					}
+ 					break;
+@@ -2208,7 +2208,7 @@
+ 						set32LE(infoB.instructionContent, makeNOP());
+ 						set32LE(infoC.instructionContent, makeLDR_literal(ldrInfoC, infoA.targetAddress+ldrInfoC.offset, infoC.instructionAddress));
+ 						if ( _options.verboseOptimizationHints() ) {
+-							fprintf(stderr, "adrp-add-ldr at 0x%08llX T1 transformed to LDR literal\n", infoC.instructionAddress);
++							fprintf(stderr, "adrp-add-ldr at 0x%08lX T1 transformed to LDR literal\n", infoC.instructionAddress);
+ 						}
+ 					}
+ 					else if ( usableSegment && withinOneMeg(infoA.instructionAddress, infoA.targetAddress+ldrInfoC.offset) ) {
+@@ -2219,7 +2219,7 @@
+ 						set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 						set32LE(infoC.instructionContent, infoC.instruction & 0xFFC003FF);	
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-ldr at 0x%08llX T4 transformed to ADR/LDR\n", infoB.instructionAddress);						
++							fprintf(stderr, "adrp-add-ldr at 0x%08lX T4 transformed to ADR/LDR\n", infoB.instructionAddress);						
+ 					}
+ 					else if ( ((infoB.targetAddress % ldrInfoC.size) == 0) && (ldrInfoC.offset == 0) ) {
+ 						// can do T2 transformation by merging ADD into LD
+@@ -2228,11 +2228,11 @@
+ 						ldrInfoC.offset += addInfoB.addend;
+ 						set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-ldr at 0x%08llX T2 transformed to ADRP/LDR \n", infoC.instructionAddress);
++							fprintf(stderr, "adrp-add-ldr at 0x%08lX T2 transformed to ADRP/LDR \n", infoC.instructionAddress);
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-ldr at 0x%08llX could not be transformed, loadSize=%d, literalableSize=%d, inRange=%d, usableSegment=%d, targetFourByteAligned=%d, imm12=%d\n", 
++							fprintf(stderr, "adrp-add-ldr at 0x%08lX could not be transformed, loadSize=%d, literalableSize=%d, inRange=%d, usableSegment=%d, targetFourByteAligned=%d, imm12=%d\n", 
+ 									infoC.instructionAddress, ldrInfoC.size, literalableSize, withinOneMeg(infoC.instructionAddress, infoA.targetAddress+ldrInfoC.offset), usableSegment, targetFourByteAligned, ldrInfoC.offset);
+ 					}
+ 					break;
+@@ -2252,11 +2252,11 @@
+ 						set32LE(infoA.instructionContent, makeADR(addInfoB.destReg, infoA.targetAddress, infoA.instructionAddress));
+ 						set32LE(infoB.instructionContent, makeNOP());	
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add at 0x%08llX transformed to ADR\n", infoB.instructionAddress);
++							fprintf(stderr, "adrp-add at 0x%08lX transformed to ADR\n", infoB.instructionAddress);
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add at 0x%08llX not transformed, isAdd=%d, inRange=%d, usableSegment=%d\n", 
++							fprintf(stderr, "adrp-add at 0x%08lX not transformed, isAdd=%d, inRange=%d, usableSegment=%d\n", 
+ 								infoB.instructionAddress, isADD, withinOneMeg(infoA.targetAddress, infoA.instructionAddress), usableSegment);
+ 					}
+ 					break;
+@@ -2278,19 +2278,19 @@
+ 						LOH_ASSERT(ldrInfoB.size == 8);
+ 						LOH_ASSERT(!ldrInfoB.isFloat);
+ 						LOH_ASSERT(ldrInfoC.baseReg == ldrInfoB.reg);
+-						//fprintf(stderr, "infoA.target=%p, %s, infoA.targetAddress=0x%08llX\n", infoA.target, infoA.target->name(), infoA.targetAddress);
++						//fprintf(stderr, "infoA.target=%p, %s, infoA.targetAddress=0x%08lX\n", infoA.target, infoA.target->name(), infoA.targetAddress);
+ 						targetFourByteAligned = ( ((infoA.targetAddress + ldrInfoC.offset) & 0x3) == 0 );
+ 						if ( usableSegment && targetFourByteAligned && withinOneMeg(infoB.instructionAddress, infoA.targetAddress + ldrInfoC.offset) ) {
+ 							// can do T5 transform
+ 							set32LE(infoA.instructionContent, makeNOP());
+ 							set32LE(infoB.instructionContent, makeLDR_literal(ldrInfoB, infoA.targetAddress, infoB.instructionAddress));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX T5 transformed to LDR literal of GOT plus LDR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX T5 transformed to LDR literal of GOT plus LDR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else {
+ 							if ( _options.verboseOptimizationHints() ) 
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX no optimization done\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX no optimization done\n", infoC.instructionAddress);
+ 						}
+ 					}
+ 					else if ( isADD ) {
+@@ -2305,7 +2305,7 @@
+ 							set32LE(infoB.instructionContent, makeNOP());	
+ 							set32LE(infoC.instructionContent, makeLDR_literal(ldrInfoC, infoA.targetAddress + ldrInfoC.offset, infoC.instructionAddress));
+ 							if ( _options.verboseOptimizationHints() ) 
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX T1 transformed to LDR literal\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX T1 transformed to LDR literal\n", infoC.instructionAddress);
+ 						}
+ 						else if ( usableSegment && withinOneMeg(infoA.instructionAddress, infoA.targetAddress) ) {
+ 							// can do T4 transform
+@@ -2313,7 +2313,7 @@
+ 							set32LE(infoB.instructionContent, makeNOP());	
+ 							set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX T4 transformed to ADR/LDR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX T4 transformed to ADR/LDR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else if ( ((infoA.targetAddress % ldrInfoC.size) == 0) && ((addInfoB.addend + ldrInfoC.offset) < 4096) ) {
+@@ -2323,19 +2323,19 @@
+ 							ldrInfoC.offset += addInfoB.addend;
+ 							set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX T2 transformed to ADRP/NOP/LDR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX T2 transformed to ADRP/NOP/LDR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else {
+ 							// T3 transform already done by ld::passes:got:doPass()
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX T3 transformed to ADRP/ADD/LDR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX T3 transformed to ADRP/ADD/LDR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() ) 							
+-							fprintf(stderr, "adrp-ldr-got-ldr at 0x%08llX not ADD or LDR\n", infoC.instructionAddress);
++							fprintf(stderr, "adrp-ldr-got-ldr at 0x%08lX not ADD or LDR\n", infoC.instructionAddress);
+ 					}
+ 					break;
+ 				case LOH_ARM64_ADRP_ADD_STR:
+@@ -2361,7 +2361,7 @@
+ 						set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 						set32LE(infoC.instructionContent, infoC.instruction & 0xFFC003FF);	
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-str at 0x%08llX T4 transformed to ADR/STR\n", infoB.instructionAddress);						
++							fprintf(stderr, "adrp-add-str at 0x%08lX T4 transformed to ADR/STR\n", infoB.instructionAddress);						
+ 					}
+ 					else if ( ((infoB.targetAddress % ldrInfoC.size) == 0) && (ldrInfoC.offset == 0) ) {
+ 						// can do T2 transformation by merging ADD into STR
+@@ -2370,11 +2370,11 @@
+ 						ldrInfoC.offset += addInfoB.addend;
+ 						set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-str at 0x%08llX T2 transformed to ADRP/STR \n", infoC.instructionAddress);
++							fprintf(stderr, "adrp-add-str at 0x%08lX T2 transformed to ADRP/STR \n", infoC.instructionAddress);
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-add-str at 0x%08llX could not be transformed, loadSize=%d, inRange=%d, usableSegment=%d, imm12=%d\n", 
++							fprintf(stderr, "adrp-add-str at 0x%08lX could not be transformed, loadSize=%d, inRange=%d, usableSegment=%d, imm12=%d\n", 
+ 									infoC.instructionAddress, ldrInfoC.size, withinOneMeg(infoC.instructionAddress, infoA.targetAddress+ldrInfoC.offset), usableSegment, ldrInfoC.offset);
+ 					}
+ 					break;
+@@ -2402,12 +2402,12 @@
+ 							set32LE(infoA.instructionContent, makeNOP());
+ 							set32LE(infoB.instructionContent, makeLDR_literal(ldrInfoB, infoA.targetAddress, infoB.instructionAddress));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-str at 0x%08llX T5 transformed to LDR literal of GOT plus STR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-str at 0x%08lX T5 transformed to LDR literal of GOT plus STR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else {
+ 							if ( _options.verboseOptimizationHints() ) 
+-								fprintf(stderr, "adrp-ldr-got-str at 0x%08llX no optimization done\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-str at 0x%08lX no optimization done\n", infoC.instructionAddress);
+ 						}
+ 					}
+ 					else if ( isADD ) {
+@@ -2422,7 +2422,7 @@
+ 							set32LE(infoB.instructionContent, makeNOP());	
+ 							set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-str at 0x%08llX T4 transformed to ADR/STR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-str at 0x%08lX T4 transformed to ADR/STR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else if ( ((infoA.targetAddress % ldrInfoC.size) == 0) && (ldrInfoC.offset == 0) ) {
+@@ -2432,19 +2432,19 @@
+ 							ldrInfoC.offset += addInfoB.addend;
+ 							set32LE(infoC.instructionContent, makeLoadOrStore(ldrInfoC));
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-str at 0x%08llX T4 transformed to ADRP/NOP/STR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-str at 0x%08lX T4 transformed to ADRP/NOP/STR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 						else {
+ 							// T3 transform already done by ld::passes:got:doPass()
+ 							if ( _options.verboseOptimizationHints() ) {
+-								fprintf(stderr, "adrp-ldr-got-str at 0x%08llX T3 transformed to ADRP/ADD/STR\n", infoC.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got-str at 0x%08lX T3 transformed to ADRP/ADD/STR\n", infoC.instructionAddress);
+ 							}
+ 						}
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() ) 							
+-							fprintf(stderr, "adrp-ldr-got-str at 0x%08llX not ADD or LDR\n", infoC.instructionAddress);
++							fprintf(stderr, "adrp-ldr-got-str at 0x%08lX not ADD or LDR\n", infoC.instructionAddress);
+ 					}
+ 					break;
+ 				case LOH_ARM64_ADRP_LDR_GOT:
+@@ -2463,7 +2463,7 @@
+ 								set32LE(infoA.instructionContent, makeNOP());
+ 								set32LE(infoB.instructionContent, makeLDR_literal(ldrInfoB, infoA.targetAddress, infoB.instructionAddress));
+ 								if ( _options.verboseOptimizationHints() ) {
+-									fprintf(stderr, "adrp-ldr-got at 0x%08llX T5 transformed to NOP/LDR\n", infoC.instructionAddress);
++									fprintf(stderr, "adrp-ldr-got at 0x%08lX T5 transformed to NOP/LDR\n", infoC.instructionAddress);
+ 								}
+ 							}
+ 						}
+@@ -2473,23 +2473,23 @@
+ 								set32LE(infoA.instructionContent, makeADR(addInfoB.destReg, infoA.targetAddress, infoA.instructionAddress));
+ 								set32LE(infoB.instructionContent, makeNOP());
+ 								if ( _options.verboseOptimizationHints() ) {
+-									fprintf(stderr, "adrp-ldr-got at 0x%08llX T4 transformed to ADR/STR\n", infoC.instructionAddress);
++									fprintf(stderr, "adrp-ldr-got at 0x%08lX T4 transformed to ADR/STR\n", infoC.instructionAddress);
+ 								}
+ 							}
+ 						}
+ 						else {
+ 							if ( _options.verboseOptimizationHints() )
+-								fprintf(stderr, "adrp-ldr-got at 0x%08llX not LDR or ADD\n", infoB.instructionAddress);
++								fprintf(stderr, "adrp-ldr-got at 0x%08lX not LDR or ADD\n", infoB.instructionAddress);
+ 						}
+ 					}
+ 					else {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "adrp-ldr-got at 0x%08llX not ADRP\n", infoA.instructionAddress);
++							fprintf(stderr, "adrp-ldr-got at 0x%08lX not ADRP\n", infoA.instructionAddress);
+ 					}
+ 					break;
+ 				default:
+ 						if ( _options.verboseOptimizationHints() ) 							
+-							fprintf(stderr, "unknown hint kind %d alt.info.kind at 0x%08llX\n", alt.info.kind, infoA.instructionAddress);
++							fprintf(stderr, "unknown hint kind %d alt.info.kind at 0x%08lX\n", alt.info.kind, infoA.instructionAddress);
+ 					break;
+ 			}
+ 		}
+@@ -2511,13 +2511,13 @@
+ 					LOH_ASSERT(isPageKind(infoB.fixup));
+ 					if ( (infoA.instruction & 0x9F000000) != 0x90000000 ) {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "may-reused-adrp at 0x%08llX no longer an ADRP, now 0x%08X\n", infoA.instructionAddress, infoA.instruction);
++							fprintf(stderr, "may-reused-adrp at 0x%08lX no longer an ADRP, now 0x%08X\n", infoA.instructionAddress, infoA.instruction);
+ 						sAdrpNA++;
+ 						break;
+ 					}
+ 					if ( (infoB.instruction & 0x9F000000) != 0x90000000 ) {
+ 						if ( _options.verboseOptimizationHints() )
+-							fprintf(stderr, "may-reused-adrp at 0x%08llX no longer an ADRP, now 0x%08X\n", infoB.instructionAddress, infoA.instruction);
++							fprintf(stderr, "may-reused-adrp at 0x%08lX no longer an ADRP, now 0x%08X\n", infoB.instructionAddress, infoA.instruction);
+ 						sAdrpNA++;
+ 						break;
+ 					}
+@@ -2607,7 +2607,7 @@
+ 		if ( takesNoDiskSpace(sect) )
+ 			continue;
+ 		const bool sectionUsesNops = (sect->type() == ld::Section::typeCode);
+-		//fprintf(stderr, "file offset=0x%08llX, section %s\n", sect->fileOffset, sect->sectionName());
++		//fprintf(stderr, "file offset=0x%08lX, section %s\n", sect->fileOffset, sect->sectionName());
+ 		std::vector<const ld::Atom*>& atoms = sect->atoms;
+ 		bool lastAtomWasThumb = false;
+ 		for (std::vector<const ld::Atom*>::iterator ait = atoms.begin(); ait != atoms.end(); ++ait) {
+@@ -2662,11 +2662,11 @@
+ 			// the bitcode section should also be excluded in the UUID computation.
+ 			// Bitcode section should appears before LINKEDIT
+ 			// Exclude section cmd
+-			if ( log ) fprintf(stderr, "bundle cmd start=0x%08llX, bundle cmd end=0x%08llX\n",
++			if ( log ) fprintf(stderr, "bundle cmd start=0x%08lX, bundle cmd end=0x%08lX\n",
+ 							   bitcodeCmdOffset, bitcodeCmdEnd);
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(bitcodeCmdOffset, bitcodeCmdEnd));
+ 			// Exclude section content
+-			if ( log ) fprintf(stderr, "bundle start=0x%08llX, bundle end=0x%08llX\n",
++			if ( log ) fprintf(stderr, "bundle start=0x%08lX, bundle end=0x%08lX\n",
+ 							   bitcodeSectOffset, bitcodePaddingEnd);
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(bitcodeSectOffset, bitcodePaddingEnd));
+ 		}
+@@ -2691,8 +2691,8 @@
+ 			uint64_t lastStabNlistFileOffset   = symbolTableFileOffset + stabsOffsetEnd;
+ 			uint64_t firstStabStringFileOffset = stringPoolFileOffset  + stabsStringsOffsetStart;
+ 			uint64_t lastStabStringFileOffset  = stringPoolFileOffset  + tabsStringsOffsetEnd;
+-			if ( log ) fprintf(stderr, "stabNlist offset=0x%08llX, size=0x%08llX\n", firstStabNlistFileOffset, lastStabNlistFileOffset-firstStabNlistFileOffset);
+-			if ( log ) fprintf(stderr, "stabString offset=0x%08llX, size=0x%08llX\n", firstStabStringFileOffset, lastStabStringFileOffset-firstStabStringFileOffset);
++			if ( log ) fprintf(stderr, "stabNlist offset=0x%08lX, size=0x%08lX\n", firstStabNlistFileOffset, lastStabNlistFileOffset-firstStabNlistFileOffset);
++			if ( log ) fprintf(stderr, "stabString offset=0x%08lX, size=0x%08lX\n", firstStabStringFileOffset, lastStabStringFileOffset-firstStabStringFileOffset);
+ 			assert(firstStabNlistFileOffset <= firstStabStringFileOffset);
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(firstStabNlistFileOffset, lastStabNlistFileOffset));
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(firstStabStringFileOffset, lastStabStringFileOffset));
+@@ -2701,12 +2701,12 @@
+ 			uint64_t linkeditSegCmdSize;
+ 			_headersAndLoadCommandAtom->linkeditCmdInfo(linkeditSegCmdOffset, linkeditSegCmdSize);
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(linkeditSegCmdOffset, linkeditSegCmdOffset+linkeditSegCmdSize));
+-			if ( log ) fprintf(stderr, "linkedit SegCmdOffset=0x%08llX, size=0x%08llX\n", linkeditSegCmdOffset, linkeditSegCmdSize);
++			if ( log ) fprintf(stderr, "linkedit SegCmdOffset=0x%08lX, size=0x%08lX\n", linkeditSegCmdOffset, linkeditSegCmdSize);
+ 			uint64_t symbolTableCmdOffset;
+ 			uint64_t symbolTableCmdSize;
+ 			_headersAndLoadCommandAtom->symbolTableCmdInfo(symbolTableCmdOffset, symbolTableCmdSize);
+ 			excludeRegions.emplace_back(std::pair<uint64_t, uint64_t>(symbolTableCmdOffset, symbolTableCmdOffset+symbolTableCmdSize));
+-			if ( log ) fprintf(stderr, "linkedit SegCmdOffset=0x%08llX, size=0x%08llX\n", symbolTableCmdOffset, symbolTableCmdSize);
++			if ( log ) fprintf(stderr, "linkedit SegCmdOffset=0x%08lX, size=0x%08lX\n", symbolTableCmdOffset, symbolTableCmdSize);
+ 		}
+ 		if ( !excludeRegions.empty() ) {
+ 			CC_MD5_CTX md5state;
+@@ -2722,11 +2722,11 @@
+ 				uint64_t regionStart = region.first;
+ 				uint64_t regionEnd = region.second;
+ 				assert(checksumStart <= regionStart && regionStart <= regionEnd && "Region overlapped");
+-				if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n", checksumStart, regionStart);
++				if ( log ) fprintf(stderr, "checksum 0x%08lX -> 0x%08lX\n", checksumStart, regionStart);
+ 				CC_MD5_Update(&md5state, &wholeBuffer[checksumStart], regionStart - checksumStart);
+ 				checksumStart = regionEnd;
+ 			}
+-			if ( log ) fprintf(stderr, "checksum 0x%08llX -> 0x%08llX\n", checksumStart, _fileSize);
++			if ( log ) fprintf(stderr, "checksum 0x%08lX -> 0x%08lX\n", checksumStart, _fileSize);
+ 			CC_MD5_Update(&md5state, &wholeBuffer[checksumStart], _fileSize-checksumStart);
+ 			CC_MD5_Final(digest, &md5state);
+ 			if ( log ) fprintf(stderr, "uuid=%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X\n", digest[0], digest[1], digest[2],
+@@ -2857,7 +2857,7 @@
+ 		
+ 		wholeBuffer = (uint8_t *)mmap(NULL, _fileSize, PROT_WRITE|PROT_READ, MAP_SHARED, fd, 0);
+ 		if ( wholeBuffer == MAP_FAILED )
+-			throwf("can't create buffer of %llu bytes for output", _fileSize);
++			throwf("can't create buffer of %lu bytes for output", _fileSize);
+ 	} 
+ 	else {
+ 		if ( outputIsRegularFile )
+@@ -2869,7 +2869,7 @@
+ 		// try to allocate buffer for entire output file content
+ 		wholeBuffer = (uint8_t*)calloc(_fileSize, 1);
+ 		if ( wholeBuffer == NULL )
+-			throwf("can't create buffer of %llu bytes for output", _fileSize);
++			throwf("can't create buffer of %lu bytes for output", _fileSize);
+ 	}
+ 	
+ 	if ( _options.UUIDMode() == Options::kUUIDRandom ) {
+@@ -4284,7 +4284,7 @@
+ 					uint64_t sctEnd = (sct->address+sct->size);
+ 					if ( (sct->address <= targetAddress) && (targetAddress < sctEnd) ) {
+ 						if ( (targetAddress+checkAddend) > sctEnd ) {
+-							warning("data symbol %s from %s has pointer to %s + 0x%08llX. "  
++							warning("data symbol %s from %s has pointer to %s + 0x%08lX. "  
+ 									"That large of an addend may disable %s from being put in the dyld shared cache.", 
+ 									atom->name(), atom->file()->path(), target->name(), addend, _options.installPath() );
+ 						}
+@@ -4728,7 +4728,7 @@
+ 		if ( sect->isSectionHidden() )
+ 			continue;
+ 		bool codeSection = (sect->type() == ld::Section::typeCode);
+-		if (log) fprintf(stderr, "sect: %s, address=0x%llX\n", sect->sectionName(), sect->address);
++		if (log) fprintf(stderr, "sect: %s, address=0x%lX\n", sect->sectionName(), sect->address);
+ 		for (std::vector<const ld::Atom*>::iterator ait = sect->atoms.begin(); ait != sect->atoms.end(); ++ait) {
+ 			const ld::Atom* atom = *ait;
+ 			const ld::Atom* target = NULL;
+@@ -4887,7 +4887,7 @@
+ 						if ( !hadSubtract && addend )
+ 							toOffset += addend;
+ 						assert(toSectionIndex != 255);
+-						if (log) fprintf(stderr, "from (%d.%s + 0x%llX) to (%d.%s + 0x%llX), kind=%d, atomAddr=0x%llX, sectAddr=0x%llx\n",
++						if (log) fprintf(stderr, "from (%d.%s + 0x%lX) to (%d.%s + 0x%lX), kind=%d, atomAddr=0x%lX, sectAddr=0x%lx\n",
+ 										fromSectionIndex, sect->sectionName(), fromOffset, toSectionIndex, state.atomToSection[target]->sectionName(),
+ 										toOffset, kind, atom->finalAddress(), sect->address);
+ 						_splitSegV2Infos.push_back(SplitSegInfoV2Entry(fromSectionIndex, fromOffset, toSectionIndex, toOffset, kind));
+@@ -4961,7 +4961,7 @@
+ 				ld::Internal::FinalSection* sect = *sit;
+ 				if ( sect->isSectionHidden() ) 
+ 					continue;
+-				fprintf(mapFile, "0x%08llX\t0x%08llX\t%s\t%s\n", sect->address, sect->size, 
++				fprintf(mapFile, "0x%08lX\t0x%08lX\t%s\t%s\n", sect->address, sect->size, 
+ 							sect->segmentName(), sect->sectionName());
+ 			}
+ 			// write table of symbols
+@@ -5026,7 +5026,7 @@
+ 						}
+ 						name = buffer;
+ 					}
+-					fprintf(mapFile, "0x%08llX\t0x%08llX\t[%3u] %s\n", atom->finalAddress(), atom->size(), 
++					fprintf(mapFile, "0x%08lX\t0x%08lX\t[%3u] %s\n", atom->finalAddress(), atom->size(), 
+ 							readerToFileOrdinal[atom->originalFile()], name);
+ 				}
+ 			}
+@@ -5060,7 +5060,7 @@
+ 						buffer[4095] = '\0';
+ 						name = buffer;
+ 					}
+-					fprintf(mapFile, "<<dead>> \t0x%08llX\t[%3u] %s\n",  atom->size(),
++					fprintf(mapFile, "<<dead>> \t0x%08lX\t[%3u] %s\n",  atom->size(),
+ 							readerToFileOrdinal[atom->originalFile()], name);
+ 				}
+ 			}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/archive_file.cpp cctools-port-format/cctools/ld64/src/ld/parsers/archive_file.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/archive_file.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/archive_file.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -601,7 +601,7 @@
+ 		const char* entryName = &_tableOfContentStrings[E::get32(entry->ran_un.ran_strx)];
+ 		uint64_t offset = E::get32(entry->ran_off);
+ 		if ( offset > _archiveFilelength ) {
+-			throwf("malformed archive TOC entry for %s, offset %d is beyond end of file %lld\n",
++			throwf("malformed archive TOC entry for %s, offset %d is beyond end of file %ld\n",
+ 				entryName, entry->ran_off, _archiveFilelength);
+ 		}
+ 		
+@@ -622,11 +622,11 @@
+ 		const char* entryName = &_tableOfContentStrings[E::get64(entry->ran_un.ran_strx)];
+ 		uint64_t offset = E::get64(entry->ran_off);
+ 		if ( offset > _archiveFilelength ) {
+-			throwf("malformed archive TOC entry for %s, offset %lld is beyond end of file %lld\n",
++			throwf("malformed archive TOC entry for %s, offset %ld is beyond end of file %ld\n",
+ 				entryName, entry->ran_off, _archiveFilelength);
+ 		}
+ 
+-		//fprintf(stderr, "adding hash %d: %s -> 0x%0llX\n", i, entryName, offset);
++		//fprintf(stderr, "adding hash %d: %s -> 0x%0lX\n", i, entryName, offset);
+ 		_hashTable[entryName] = offset;
+ 	}
+ }
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfInstructions.hpp	2017-11-10 19:13:05.918259550 -0800
+@@ -245,7 +245,7 @@
+ 			pint_t offsetOfFunctionAddress = p-currentCFI;
+ 			pint_t pcStart = addressSpace.getEncodedP(p, nextCFI, cieInfo.pointerEncoding);
+ 			pint_t pcRange = addressSpace.getEncodedP(p, nextCFI, cieInfo.pointerEncoding & 0x0F);
+-			//fprintf(stderr, "FDE with pcRange [0x%08llX, 0x%08llX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
++			//fprintf(stderr, "FDE with pcRange [0x%08lX, 0x%08lX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
+ 			entry->u.fdeInfo.function.targetAddress = pcStart;
+ 			entry->u.fdeInfo.function.offsetInCFI = offsetOfFunctionAddress;
+ 			entry->u.fdeInfo.function.encodingOfTargetAddress = cieInfo.pointerEncoding;
+@@ -429,7 +429,7 @@
+ template <typename A, typename R>
+ int DwarfInstructions<A,R>::stepWithDwarf(A& addressSpace, pint_t pc, pint_t fdeStart, R& registers)
+ {
+-	//fprintf(stderr, "stepWithDwarf(pc=0x%0llX, fdeStart=0x%0llX)\n", (uint64_t)pc, (uint64_t)fdeStart);
++	//fprintf(stderr, "stepWithDwarf(pc=0x%0lX, fdeStart=0x%0lX)\n", (uint64_t)pc, (uint64_t)fdeStart);
+ 	typename CFI_Parser<A>::FDE_Info fdeInfo;
+ 	typename CFI_Parser<A>::CIE_Info cieInfo;
+ 	if ( CFI_Parser<A>::decodeFDE(addressSpace, fdeStart, &fdeInfo, &cieInfo) == NULL ) {
+@@ -483,7 +483,7 @@
+ 	pint_t expressionEnd = expression+20; // just need something until length is read
+ 	uint64_t length = addressSpace.getULEB128(p, expressionEnd);
+ 	expressionEnd = p + length;
+-	if (log) fprintf(stderr, "evaluateExpression(): length=%llu\n", length);
++	if (log) fprintf(stderr, "evaluateExpression(): length=%lu\n", length);
+ 	pint_t stack[100];
+ 	pint_t* sp = stack;
+ 	*(++sp) = initialStackValue;
+@@ -491,7 +491,7 @@
+ 	while ( p < expressionEnd ) {
+ 		if (log) {
+ 			for(pint_t* t = sp; t > stack; --t) {
+-				fprintf(stderr, "sp[] = 0x%llX\n", (uint64_t)(*t));
++				fprintf(stderr, "sp[] = 0x%lX\n", (uint64_t)(*t));
+ 			}
+ 		}
+ 		uint8_t opcode = addressSpace.get8(p++);
+@@ -504,14 +504,14 @@
+ 				value = addressSpace.getP(p);
+ 				p += sizeof(pint_t);
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 		
+ 			case DW_OP_deref:
+ 				// pop stack, dereference, push result
+ 				value = *sp--;
+ 				*(++sp) = addressSpace.getP(value);
+-				if (log) fprintf(stderr, "dereference 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "dereference 0x%lX\n", (uint64_t)value);
+ 				break;
+ 		
+ 			case DW_OP_const1u:
+@@ -519,7 +519,7 @@
+ 				value = addressSpace.get8(p);
+ 				p += 1;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 				
+ 			case DW_OP_const1s:
+@@ -527,7 +527,7 @@
+ 				svalue = (int8_t)addressSpace.get8(p);
+ 				p += 1;
+ 				*(++sp) = svalue;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)svalue);
+ 				break;
+ 		
+ 			case DW_OP_const2u:
+@@ -535,7 +535,7 @@
+ 				value = addressSpace.get16(p);
+ 				p += 2;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 				
+ 			case DW_OP_const2s:
+@@ -543,7 +543,7 @@
+ 				svalue = (int16_t)addressSpace.get16(p);
+ 				p += 2;
+ 				*(++sp) = svalue;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)svalue);
+ 				break;
+ 		
+ 			case DW_OP_const4u:
+@@ -551,7 +551,7 @@
+ 				value = addressSpace.get32(p);
+ 				p += 4;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 				
+ 			case DW_OP_const4s:
+@@ -559,7 +559,7 @@
+ 				svalue = (int32_t)addressSpace.get32(p);
+ 				p += 4;
+ 				*(++sp) = svalue;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)svalue);
+ 				break;
+ 				
+ 			case DW_OP_const8u:
+@@ -567,7 +567,7 @@
+ 				value = addressSpace.get64(p);
+ 				p += 8;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 				
+ 			case DW_OP_const8s:
+@@ -575,21 +575,21 @@
+ 				value = (int32_t)addressSpace.get64(p);
+ 				p += 8;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 		
+ 			case DW_OP_constu:
+ 				// push immediate ULEB128 value
+ 				value = addressSpace.getULEB128(p, expressionEnd);
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)value);
+ 				break;
+ 				
+ 			case DW_OP_consts:
+ 				// push immediate SLEB128 value
+ 				svalue = addressSpace.getSLEB128(p, expressionEnd);
+ 				*(++sp) = svalue;
+-				if (log) fprintf(stderr, "push 0x%llX\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "push 0x%lX\n", (uint64_t)svalue);
+ 				break;
+ 		
+ 			case DW_OP_dup:
+@@ -642,7 +642,7 @@
+ 				// pop stack, dereference, push result
+ 				value = *sp--;
+ 				*sp = *((uint64_t*)value);
+-				if (log) fprintf(stderr, "x-dereference 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "x-dereference 0x%lX\n", (uint64_t)value);
+ 				break;
+ 			
+ 			case DW_OP_abs:
+@@ -740,7 +740,7 @@
+ 				svalue = (int16_t)addressSpace.get16(p);
+ 				p += 2;
+ 				p += svalue;
+-				if (log) fprintf(stderr, "skip %lld\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "skip %ld\n", (uint64_t)svalue);
+ 				break;
+ 			
+ 			case DW_OP_bra:
+@@ -748,7 +748,7 @@
+ 				p += 2;
+ 				if ( *sp-- )
+ 					p += svalue;
+-				if (log) fprintf(stderr, "bra %lld\n", (uint64_t)svalue);
++				if (log) fprintf(stderr, "bra %ld\n", (uint64_t)svalue);
+ 				break;
+ 			
+ 			case DW_OP_eq:
+@@ -821,7 +821,7 @@
+ 			case DW_OP_lit31:
+ 				value = opcode - DW_OP_lit0;
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "push literal 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "push literal 0x%lX\n", (uint64_t)value);
+ 				break;
+ 		
+ 			case DW_OP_reg0:
+@@ -864,7 +864,7 @@
+ 			case DW_OP_regx:
+ 				reg = addressSpace.getULEB128(p, expressionEnd);
+ 				*(++sp) = registers.getRegister(reg);
+-				if (log) fprintf(stderr, "push reg %d + 0x%llX\n", reg, (uint64_t)svalue);
++				if (log) fprintf(stderr, "push reg %d + 0x%lX\n", reg, (uint64_t)svalue);
+ 				break;			
+ 
+ 			case DW_OP_breg0:
+@@ -902,14 +902,14 @@
+ 				reg = opcode - DW_OP_breg0;
+ 				svalue = addressSpace.getSLEB128(p, expressionEnd);
+ 				*(++sp) = registers.getRegister(reg) + svalue;
+-				if (log) fprintf(stderr, "push reg %d + 0x%llX\n", reg, (uint64_t)svalue);
++				if (log) fprintf(stderr, "push reg %d + 0x%lX\n", reg, (uint64_t)svalue);
+ 				break;
+ 			
+ 			case DW_OP_bregx:
+ 				reg = addressSpace.getULEB128(p, expressionEnd);
+ 				svalue = addressSpace.getSLEB128(p, expressionEnd);
+ 				*(++sp) = registers.getRegister(reg) + svalue;
+-				if (log) fprintf(stderr, "push reg %d + 0x%llX\n", reg, (uint64_t)svalue);
++				if (log) fprintf(stderr, "push reg %d + 0x%lX\n", reg, (uint64_t)svalue);
+ 				break;
+ 			
+ 			case DW_OP_fbreg:
+@@ -940,7 +940,7 @@
+ 						ABORT("DW_OP_deref_size with bad size");
+ 				}
+ 				*(++sp) = value;
+-				if (log) fprintf(stderr, "sized dereference 0x%llX\n", (uint64_t)value);
++				if (log) fprintf(stderr, "sized dereference 0x%lX\n", (uint64_t)value);
+ 				break;
+ 			
+ 			case DW_OP_xderef_size:
+@@ -954,7 +954,7 @@
+ 		}
+ 	
+ 	}
+-	if (log) fprintf(stderr, "expression evaluates to 0x%llX\n", (uint64_t)*sp);
++	if (log) fprintf(stderr, "expression evaluates to 0x%lX\n", (uint64_t)*sp);
+ 	return *sp;
+ }
+ 
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/libunwind/DwarfParser.hpp	2017-11-10 19:13:05.918259550 -0800
+@@ -212,12 +212,12 @@
+ template <typename A>
+ bool CFI_Parser<A>::findFDE(A& addressSpace, pint_t pc, pint_t ehSectionStart, uint32_t sectionLength, pint_t fdeHint, FDE_Info* fdeInfo, CIE_Info* cieInfo)
+ {
+-	//fprintf(stderr, "findFDE(0x%llX)\n", (long long)pc);
++	//fprintf(stderr, "findFDE(0x%lX)\n", (long long)pc);
+ 	pint_t p = (fdeHint != 0) ? fdeHint : ehSectionStart;
+ 	const pint_t ehSectionEnd = p + sectionLength;
+ 	while ( p < ehSectionEnd ) {
+ 		pint_t currentCFI = p;
+-		//fprintf(stderr, "findFDE() CFI at 0x%llX\n", (long long)p);
++		//fprintf(stderr, "findFDE() CFI at 0x%lX\n", (long long)p);
+ 		uint64_t cfiLength = addressSpace.get32(p);
+ 		p += 4;
+ 		if ( cfiLength == 0xffffffff ) {
+@@ -244,7 +244,7 @@
+ 					// parse pc begin and range
+ 					pint_t pcStart = addressSpace.getEncodedP(p, nextCFI, cieInfo->pointerEncoding);
+ 					pint_t pcRange = addressSpace.getEncodedP(p, nextCFI, cieInfo->pointerEncoding & 0x0F);
+-					//fprintf(stderr, "FDE with pcRange [0x%08llX, 0x%08llX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
++					//fprintf(stderr, "FDE with pcRange [0x%08lX, 0x%08lX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
+ 					// test if pc is within the function this FDE covers
+ 					if ( (pcStart < pc) && (pc <= pcStart+pcRange) ) {
+ 						// parse rest of info
+@@ -269,11 +269,11 @@
+ 						fdeInfo->fdeInstructions = p;
+ 						fdeInfo->pcStart = pcStart;
+ 						fdeInfo->pcEnd = pcStart+pcRange;
+-						//fprintf(stderr, "findFDE(pc=0x%llX) found with pcRange [0x%08llX, 0x%08llX)\n",(uint64_t)pc, (uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
++						//fprintf(stderr, "findFDE(pc=0x%lX) found with pcRange [0x%08lX, 0x%08lX)\n",(uint64_t)pc, (uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
+ 						return true;
+ 					}
+ 					else {
+-						//fprintf(stderr, "findFDE(pc=0x%llX) not found with pcRange [0x%08llX, 0x%08llX)\n",(uint64_t)pc, (uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
++						//fprintf(stderr, "findFDE(pc=0x%lX) not found with pcRange [0x%08lX, 0x%08lX)\n",(uint64_t)pc, (uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
+ 						// pc is not in begin/range, skip this FDE
+ 					}
+ 				}
+@@ -284,13 +284,13 @@
+ 			}
+ 			else {
+ 				// malformed FDE.  CIE is bad
+-				//fprintf(stderr, "malformed FDE, cieStart=0x%llX, ehSectionStart=0x%llX, ehSectionEnd=0x%llX\n",
++				//fprintf(stderr, "malformed FDE, cieStart=0x%lX, ehSectionStart=0x%lX, ehSectionEnd=0x%lX\n",
+ 				//	(uint64_t)cieStart, (uint64_t)ehSectionStart, (uint64_t)ehSectionEnd);
+ 			}
+ 			p = nextCFI;
+ 		}
+ 	}
+-	//fprintf(stderr, "findFDE(pc=0x%llX) not found\n",(uint64_t)pc);
++	//fprintf(stderr, "findFDE(pc=0x%lX) not found\n",(uint64_t)pc);
+ 	return false;
+ }
+ 
+@@ -302,7 +302,7 @@
+ template <typename A>
+ const char* CFI_Parser<A>::parseCIE(A& addressSpace, pint_t cie, CIE_Info* cieInfo)
+ {
+-	//fprintf(stderr, "parseCIE(0x%llX)\n", (long long)cie);
++	//fprintf(stderr, "parseCIE(0x%lX)\n", (long long)cie);
+ 	cieInfo->pointerEncoding = 0;
+ 	cieInfo->lsdaEncoding = 0;
+ 	cieInfo->personalityEncoding = 0;
+@@ -463,7 +463,7 @@
+ 			pint_t offsetOfFunctionAddress = p-currentCFI;
+ 			pint_t pcStart = addressSpace.getEncodedP(p, nextCFI, cieInfo.pointerEncoding);
+ 			pint_t pcRange = addressSpace.getEncodedP(p, nextCFI, cieInfo.pointerEncoding & 0x0F);
+-			//fprintf(stderr, "FDE with pcRange [0x%08llX, 0x%08llX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
++			//fprintf(stderr, "FDE with pcRange [0x%08lX, 0x%08lX)\n",(uint64_t)pcStart, (uint64_t)(pcStart+pcRange));
+ 			// test if pc is within the function this FDE covers
+ 			entry.function.address = pcStart;
+ 			entry.function.offsetInFDE = offsetOfFunctionAddress;
+@@ -518,7 +518,7 @@
+ 	pint_t p = instructions;
+ 	uint32_t codeOffset = 0;
+ 	PrologInfo initialState = *results;
+-	if ( logDwarf ) fprintf(stderr, "parseInstructions(instructions=0x%0llX)\n", (uint64_t)instructionsEnd);
++	if ( logDwarf ) fprintf(stderr, "parseInstructions(instructions=0x%0lX)\n", (uint64_t)instructionsEnd);
+ 	
+ 	// see Dwarf Spec, section 6.4.2 for details on unwind opcodes
+ 	while ( (p < instructionsEnd) && (codeOffset < pcoffset) ) {
+@@ -564,7 +564,7 @@
+ 					results->registerSavedMoreThanOnce = true;
+ 				results->savedRegisters[reg].location = kRegisterInCFA;
+ 				results->savedRegisters[reg].value = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended(reg=%lld, offset=%lld)\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended(reg=%ld, offset=%ld)\n", reg, offset);
+ 				break;
+ 			case DW_CFA_restore_extended:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);;
+@@ -573,7 +573,7 @@
+ 					return false;
+ 				}
+ 				results->savedRegisters[reg] = initialState.savedRegisters[reg];
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_restore_extended(reg=%lld)\n", reg);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_restore_extended(reg=%ld)\n", reg);
+ 				break;
+ 			case DW_CFA_undefined:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -582,7 +582,7 @@
+ 					return false;
+ 				}
+ 				results->savedRegisters[reg].location = kRegisterUnused;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_undefined(reg=%lld)\n", reg);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_undefined(reg=%ld)\n", reg);
+ 				break;
+ 			case DW_CFA_same_value:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -597,7 +597,7 @@
+ 				results->savedRegisters[reg].location = kRegisterUnused;
+ 				// set flag to disable conversion to compact unwind
+ 				results->sameValueUsed = true;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_same_value(reg=%lld)\n", reg);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_same_value(reg=%ld)\n", reg);
+ 				break;
+ 			case DW_CFA_register:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -614,7 +614,7 @@
+ 				results->savedRegisters[reg].value = reg2;
+ 				// set flag to disable conversion to compact unwind
+ 				results->registersInOtherRegisters = true;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_register(reg=%lld, reg2=%lld)\n", reg, reg2);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_register(reg=%ld, reg2=%ld)\n", reg, reg2);
+ 				break;
+ 			case DW_CFA_remember_state:
+ 				// avoid operator new, because that would be an upward dependency
+@@ -652,7 +652,7 @@
+ 				results->cfaRegisterOffset = offset;
+ 				if ( offset > 0x80000000 ) 
+ 					results->cfaOffsetWasNegative = true;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa(reg=%lld, offset=%lld)\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa(reg=%ld, offset=%ld)\n", reg, offset);
+ 				break;
+ 			case DW_CFA_def_cfa_register:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -661,7 +661,7 @@
+ 					return false;
+ 				}
+ 				results->cfaRegister = reg;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_register(%lld)\n", reg);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_register(%ld)\n", reg);
+ 				break;
+ 			case DW_CFA_def_cfa_offset:
+ 				results->cfaRegisterOffset = addressSpace.getULEB128(p, instructionsEnd);
+@@ -673,7 +673,7 @@
+ 				results->cfaExpression = p;
+ 				length = addressSpace.getULEB128(p, instructionsEnd);
+ 				p += length;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_expression(expression=0x%llX, length=%llu)\n", 
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_expression(expression=0x%lX, length=%lu)\n", 
+ 													results->cfaExpression, length);
+ 				break;
+ 			case DW_CFA_expression:
+@@ -686,7 +686,7 @@
+ 				results->savedRegisters[reg].value = p;
+ 				length = addressSpace.getULEB128(p, instructionsEnd);
+ 				p += length;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_expression(reg=%lld, expression=0x%llX, length=%llu)\n", 
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_expression(reg=%ld, expression=0x%lX, length=%lu)\n", 
+ 													reg, results->savedRegisters[reg].value, length);
+ 				break;
+ 			case DW_CFA_offset_extended_sf:
+@@ -700,7 +700,7 @@
+ 					results->registerSavedMoreThanOnce = true;
+ 				results->savedRegisters[reg].location = kRegisterInCFA;
+ 				results->savedRegisters[reg].value = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended_sf(reg=%lld, offset=%lld)\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_offset_extended_sf(reg=%ld, offset=%ld)\n", reg, offset);
+ 				break;
+ 			case DW_CFA_def_cfa_sf:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -711,7 +711,7 @@
+ 				}
+ 				results->cfaRegister = reg;
+ 				results->cfaRegisterOffset = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_sf(reg=%lld, offset=%lld)\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_def_cfa_sf(reg=%ld, offset=%ld)\n", reg, offset);
+ 				break;
+ 			case DW_CFA_def_cfa_offset_sf:
+ 				results->cfaRegisterOffset = addressSpace.getSLEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
+@@ -723,7 +723,7 @@
+ 				offset = addressSpace.getULEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
+ 				results->savedRegisters[reg].location = kRegisterOffsetFromCFA;
+ 				results->savedRegisters[reg].value = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset(reg=%lld, offset=%lld\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset(reg=%ld, offset=%ld\n", reg, offset);
+ 				break;
+ 			case DW_CFA_val_offset_sf:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -734,7 +734,7 @@
+ 				offset = addressSpace.getSLEB128(p, instructionsEnd) * cieInfo.dataAlignFactor;
+ 				results->savedRegisters[reg].location = kRegisterOffsetFromCFA;
+ 				results->savedRegisters[reg].value = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset_sf(reg=%lld, offset=%lld\n", reg, offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_offset_sf(reg=%ld, offset=%ld\n", reg, offset);
+ 				break;
+ 			case DW_CFA_val_expression:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -746,13 +746,13 @@
+ 				results->savedRegisters[reg].value = p;
+ 				length = addressSpace.getULEB128(p, instructionsEnd);
+ 				p += length;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_expression(reg=%lld, expression=0x%llX, length=%lld)\n", 
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_val_expression(reg=%ld, expression=0x%lX, length=%ld)\n", 
+ 													reg, results->savedRegisters[reg].value, length);
+ 				break;
+ 			case DW_CFA_GNU_args_size:
+ 				offset = addressSpace.getULEB128(p, instructionsEnd);
+ 				results->spExtraArgSize = offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_args_size(%lld)\n", offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_args_size(%ld)\n", offset);
+ 				break;
+ 			case DW_CFA_GNU_negative_offset_extended:
+ 				reg = addressSpace.getULEB128(p, instructionsEnd);
+@@ -765,7 +765,7 @@
+ 					results->registerSavedMoreThanOnce = true;
+ 				results->savedRegisters[reg].location = kRegisterInCFA;
+ 				results->savedRegisters[reg].value = -offset;
+-				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_negative_offset_extended(%lld)\n", offset);
++				if ( logDwarf ) fprintf(stderr, "DW_CFA_GNU_negative_offset_extended(%ld)\n", offset);
+ 				break;
+ 			default:
+ 				operand = opcode & 0x3F;
+@@ -784,7 +784,7 @@
+ 						}
+ 						results->savedRegisters[reg].location = kRegisterInCFA;
+ 						results->savedRegisters[reg].value = offset;
+-						if ( logDwarf ) fprintf(stderr, "DW_CFA_offset(reg=%d, offset=%lld)\n", operand, offset);
++						if ( logDwarf ) fprintf(stderr, "DW_CFA_offset(reg=%d, offset=%ld)\n", operand, offset);
+ 						break;
+ 					case DW_CFA_advance_loc:
+ 						codeOffset += operand * cieInfo.codeAlignFactor;
+@@ -796,7 +796,7 @@
+ 						//return true; // gcc-4.5 starts the epilog with this
+ 						reg = operand;
+ 						results->savedRegisters[reg] = initialState.savedRegisters[reg];
+-						if ( logDwarf ) fprintf(stderr, "DW_CFA_restore(reg=%lld)\n", reg);
++						if ( logDwarf ) fprintf(stderr, "DW_CFA_restore(reg=%ld)\n", reg);
+ 						break;
+ 					default: 
+ 						if ( logDwarf ) fprintf(stderr, "unknown CFA opcode 0x%02X\n", opcode);
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp cctools-port-format/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/parsers/macho_relocatable_file.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -902,7 +902,7 @@
+ {
+ 	const macho_section<P>* sct = this->sect().machoSection();
+ 	if ( this->_objAddress > sct->addr() + sct->size() )
+-		throwf("malformed .o file, symbol has address 0x%0llX which is outside range of its section", (uint64_t)this->_objAddress);
++		throwf("malformed .o file, symbol has address 0x%0lX which is outside range of its section", (uint64_t)this->_objAddress);
+ 	uint32_t fileOffset = sct->offset() - sct->addr() + this->_objAddress;
+ 	return this->sect().file().fileContent()+fileOffset;
+ }
+@@ -1561,7 +1561,7 @@
+ 			const macho_nlist<P>& sym = parser.symbolFromIndex(sortedSymbolIndexes[symIndex]);
+ 			if ( ! sect.ignoreLabel(parser.nameFromSymbol(sym)) ) {
+ 				pint_t nextSymbolAddr = sym.n_value();
+-				//fprintf(stderr, "sectNum=%d, nextSymbolAddr=0x%08llX, name=%s\n", sectNum, (uint64_t)nextSymbolAddr, parser.nameFromSymbol(sym));
++				//fprintf(stderr, "sectNum=%d, nextSymbolAddr=0x%08lX, name=%s\n", sectNum, (uint64_t)nextSymbolAddr, parser.nameFromSymbol(sym));
+ 				if ( (nextSymbolAddr > startAddr) || ((nextSymbolAddr == startAddr) && (sym.n_sect() == sectNum)) )
+ 					break;
+ 			}
+@@ -1801,7 +1801,7 @@
+ 		for(uint32_t i=0; i < countOfCFIs; ++i) {
+ 			if ( cfiArray[i].isCIE )
+ 				continue;
+-			//fprintf(stderr, "cfiArray[i].func = 0x%08llX, cfiArray[i].lsda = 0x%08llX, encoding=0x%08X\n",
++			//fprintf(stderr, "cfiArray[i].func = 0x%08lX, cfiArray[i].lsda = 0x%08lX, encoding=0x%08X\n",
+ 			//			(uint64_t)cfiArray[i].u.fdeInfo.function.targetAddress,
+ 			//			(uint64_t)cfiArray[i].u.fdeInfo.lsda.targetAddress,
+ 			//			cfiArray[i].u.fdeInfo.compactUnwindInfo);
+@@ -1865,7 +1865,7 @@
+ 		breakIterator.beginSection();
+ 		uint32_t count = sections[i]->computeAtomCount(*this, breakIterator, cfis);
+ 		//const macho_section<P>* sect = sections[i]->machoSection();
+-		//fprintf(stderr, "computed count=%u for section %s size=%llu\n", count, sect->sectname(), (sect != NULL) ? sect->size() : 0);
++		//fprintf(stderr, "computed count=%u for section %s size=%lu\n", count, sect->sectname(), (sect != NULL) ? sect->size() : 0);
+ 		computedAtomCount += count;
+ 	}
+ 	//fprintf(stderr, "allocating %d atoms * sizeof(Atom<A>)=%ld, sizeof(ld::Atom)=%ld\n", computedAtomCount, sizeof(Atom<A>), sizeof(ld::Atom));
+@@ -2340,7 +2340,7 @@
+ 	if ( log ) {
+ 		fprintf(stderr, "unsorted sections:\n");
+ 		for(unsigned int i=0; i < _machOSectionsCount; ++i ) 
+-			fprintf(stderr, "0x%08llX %s %s\n", _sectionsStart[i].addr(), _sectionsStart[i].segname(), _sectionsStart[i].sectname());
++			fprintf(stderr, "0x%08lX %s %s\n", _sectionsStart[i].addr(), _sectionsStart[i].segname(), _sectionsStart[i].sectname());
+  	}
+ 	
+ 	// sort by symbol table address
+@@ -2351,7 +2351,7 @@
+ 	if ( log ) {
+ 		fprintf(stderr, "sorted sections:\n");
+ 		for(unsigned int i=0; i < _machOSectionsCount; ++i ) 
+-			fprintf(stderr, "0x%08llX %s %s\n", _sectionsStart[array[i]].addr(), _sectionsStart[array[i]].segname(), _sectionsStart[array[i]].sectname());
++			fprintf(stderr, "0x%08lX %s %s\n", _sectionsStart[array[i]].addr(), _sectionsStart[array[i]].segname(), _sectionsStart[array[i]].sectname());
+ 	}
+ }
+ 
+@@ -2446,7 +2446,7 @@
+ 	_overlappingSymbols = false;
+ 	for (unsigned int i=1; i < _symbolsInSections; ++i) {
+ 		if ( symbolFromIndex(array[i-1]).n_value() == symbolFromIndex(array[i]).n_value() ) {
+-			//fprintf(stderr, "overlapping symbols at 0x%08llX\n", symbolFromIndex(array[i-1]).n_value());
++			//fprintf(stderr, "overlapping symbols at 0x%08lX\n", symbolFromIndex(array[i-1]).n_value());
+ 			_overlappingSymbols = true;
+ 			break;
+ 		}
+@@ -2455,7 +2455,7 @@
+ 	if ( log ) {
+ 		fprintf(stderr, "sorted symbols:\n");
+ 		for(unsigned int i=0; i < _symbolsInSections; ++i ) 
+-			fprintf(stderr, "0x%09llX symIndex=%d sectNum=%2d, %s\n", symbolFromIndex(array[i]).n_value(), array[i], symbolFromIndex(array[i]).n_sect(), nameFromSymbol(symbolFromIndex(array[i])) );
++			fprintf(stderr, "0x%09lX symIndex=%d sectNum=%2d, %s\n", symbolFromIndex(array[i]).n_value(), array[i], symbolFromIndex(array[i]).n_sect(), nameFromSymbol(symbolFromIndex(array[i])) );
+ 	}
+ }
+ 
+@@ -2553,7 +2553,7 @@
+ 				_file->_swiftVersion = ((flags >> 8) & 0xFF);
+                 _file->_objcHasCategoryClassPropertiesField = (flags & 64);
+ 				if ( sect->size() > 8 ) {
+-					warning("section %s/%s has unexpectedly large size %llu in %s", 
++					warning("section %s/%s has unexpectedly large size %lu in %s", 
+ 							sect->segname(), Section<A>::makeSectionName(sect), sect->size(), _file->path());
+ 				}
+ 			}
+@@ -2805,7 +2805,7 @@
+ 		}
+ 	}
+ 	
+-	throwf("sectionForAddress(0x%llX) address not in any section", (uint64_t)addr);
++	throwf("sectionForAddress(0x%lX) address not in any section", (uint64_t)addr);
+ }
+ 
+ template <typename A>
+@@ -3540,7 +3540,7 @@
+ 			di += 4;
+ 			break;
+ 		default:
+-			warning("unknown dwarf string encoding (form=%lld) in %s", form, this->_path);
++			warning("unknown dwarf string encoding (form=%ld) in %s", form, this->_path);
+ 			break;
+ 	}
+ 	return result;
+@@ -3647,7 +3647,7 @@
+ 				std::map<uint32_t,const char*>	dwarfIndexToFile;
+ 				if ( lines != NULL ) {
+ 					while ( line_next(lines, &result, line_stop_pc) ) {
+-						//fprintf(stderr, "curAtom=%p, result.pc=0x%llX, result.line=%llu, result.end_of_sequence=%d,"
++						//fprintf(stderr, "curAtom=%p, result.pc=0x%lX, result.line=%lu, result.end_of_sequence=%d,"
+ 						//				  " curAtomAddress=0x%X, curAtomSize=0x%X\n",
+ 						//		curAtom, result.pc, result.line, result.end_of_sequence, curAtomAddress, curAtomSize);
+ 						// work around weird debug line table compiler generates if no functions in __text section
+@@ -3720,7 +3720,7 @@
+ 							entry.info.atomOffset = curAtomOffset;
+ 							entry.info.fileName = filename;
+ 							entry.info.lineNumber = result.line;
+-							//fprintf(stderr, "addr=0x%08llX, line=%lld, file=%s, atom=%s, atom.size=0x%X, end=%d\n", 
++							//fprintf(stderr, "addr=0x%08lX, line=%ld, file=%s, atom=%s, atom.size=0x%X, end=%d\n", 
+ 							//		result.pc, result.line, filename, curAtom->name(), curAtomSize, result.end_of_sequence);
+ 							entries.push_back(entry);
+ 							curAtom->incrementLineInfoCount();
+@@ -3796,7 +3796,7 @@
+ 								stab.string = symString;
+ 							}
+ 							else {
+-								fprintf(stderr, "can't find atom for stabs BNSYM at %08llX in %s",
++								fprintf(stderr, "can't find atom for stabs BNSYM at %08lX in %s",
+ 									(uint64_t)sym.n_value(), _path);
+ 							}
+ 							break;
+@@ -3859,7 +3859,7 @@
+ 									stab.string = symString;
+ 								}
+ 								else {
+-									warning("can't find atom for stabs FUN at %08llX in %s",
++									warning("can't find atom for stabs FUN at %08lX in %s",
+ 										(uint64_t)currentAtomAddress, _path);
+ 								}
+ 							}
+@@ -3895,7 +3895,7 @@
+ 								stab.string = symString;
+ 							}
+ 							else {
+-								warning("can't find atom for stabs 0x%X at %08llX in %s",
++								warning("can't find atom for stabs 0x%X at %08lX in %s",
+ 									type, (uint64_t)sym.n_value(), _path);
+ 							}
+ 							break;
+@@ -3927,7 +3927,7 @@
+ 										stab.string = symString;
+ 									}
+ 									else {
+-										warning("can't find atom for stabs FUN at %08llX in %s",
++										warning("can't find atom for stabs FUN at %08lX in %s",
+ 											(uint64_t)currentAtomAddress, _path);
+ 									}
+ 								}
+@@ -4339,7 +4339,7 @@
+ 	const uint32_t sectionAlignment = this->_machOSection->align();
+ 	uint32_t modulus = (addr % (1 << sectionAlignment));
+ 	if ( modulus > 0xFFFF )
+-		warning("alignment for symbol at address 0x%08llX in %s exceeds 2^16", (uint64_t)addr, this->file().path());
++		warning("alignment for symbol at address 0x%08lX in %s exceeds 2^16", (uint64_t)addr, this->file().path());
+ 	return ld::Atom::Alignment(sectionAlignment, modulus);
+ }
+ 
+@@ -4842,7 +4842,7 @@
+ 				}
+ 			}
+ 		}
+-		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08llX", (uint64_t)addr);
++		throwf("__eh_frame parsing problem.  Can't find target of reference to address 0x%08lX", (uint64_t)addr);
+ 	}
+ }
+ 		
+@@ -5403,7 +5403,7 @@
+ 					skip = true;
+ 				}
+ 				else {
+-					//fprintf(stderr, "  0x%08llX make annon, size=%lld\n", (uint64_t)foundAddr, (uint64_t)size);
++					//fprintf(stderr, "  0x%08lX make annon, size=%ld\n", (uint64_t)foundAddr, (uint64_t)size);
+ 					new (allocatedSpace) Atom<A>(*this, this->unlabeledAtomName(parser, foundAddr), foundAddr, 
+ 											this->elementSizeAtAddress(foundAddr), this->definition(), 
+ 											this->combine(parser, foundAddr), this->scopeAtAddress(parser, foundAddr), 
+@@ -5413,7 +5413,7 @@
+ 			}
+ 			else {
+ 				// make named atom for label
+-				//fprintf(stderr, "  0x%08llX make labeled\n", (uint64_t)foundAddr);
++				//fprintf(stderr, "  0x%08lX make labeled\n", (uint64_t)foundAddr);
+ 				new (allocatedSpace) Atom<A>(*this, parser, *foundLabel, labeledAtomSize);
+ 			}
+ 			if ( !skip ) {
+@@ -5427,7 +5427,7 @@
+ 		for (pint_t addr = foundAddr; addr < (foundAddr+size); addr += elementSizeAtAddress(addr) ) {
+ 			// make anon atoms for area before label
+ 			if ( this->useElementAt(parser, it, addr) ) {
+-				//fprintf(stderr, "  0x%08llX make annon, size=%lld\n", (uint64_t)addr, (uint64_t)elementSizeAtAddress(addr));
++				//fprintf(stderr, "  0x%08lX make annon, size=%ld\n", (uint64_t)addr, (uint64_t)elementSizeAtAddress(addr));
+ 				allocatedSpace = (Atom<A>*)p;
+ 				new (allocatedSpace) Atom<A>(*this, this->unlabeledAtomName(parser, addr), addr, this->elementSizeAtAddress(addr), 
+ 											this->definition(), this->combine(parser, addr), this->scopeAtAddress(parser, addr), 
+@@ -7587,17 +7587,17 @@
+ 	const uint64_t atomEndAddr = atomStartAddr + inAtom->size();
+ 	for(int i=0; i < count; ++i) {
+ 		if ( (addrs[i] < atomStartAddr) || (addrs[i] >= atomEndAddr) ) {
+-			warning("arm64 Linker Optimiztion Hint addresses are not in same atom: 0x%08llX and 0x%08llX",
++			warning("arm64 Linker Optimiztion Hint addresses are not in same atom: 0x%08lX and 0x%08lX",
+ 				lowestAddress, addrs[i]);
+ 			return; // skip this LOH
+ 		}
+ 		if ( (addrs[i] & 0x3) != 0 ) {
+-			warning("arm64 Linker Optimiztion Hint address is not 4-byte aligned: 0x%08llX", addrs[i]);
++			warning("arm64 Linker Optimiztion Hint address is not 4-byte aligned: 0x%08lX", addrs[i]);
+ 			return; // skip this LOH
+ 		}
+ 		if ( (addrs[i] - lowestAddress) > 0xFFFF ) {
+ 			if ( parser.verboseOptimizationHints() ) {
+-				warning("arm64 Linker Optimiztion Hint addresses are too far apart: 0x%08llX and 0x%08llX",
++				warning("arm64 Linker Optimiztion Hint addresses are too far apart: 0x%08lX and 0x%08lX",
+ 					lowestAddress, addrs[i]);
+ 			}
+ 			return; // skip this LOH
+@@ -7785,7 +7785,7 @@
+ 				this->addLOH(parser, kind, count, addrs);
+ 				//fprintf(stderr, "kind=%d", kind);
+ 				//for (int32_t i=0; i < count; ++i) {
+-				//	fprintf(stderr, ", addr=0x%08llX", addrs[i]);
++				//	fprintf(stderr, ", addr=0x%08lX", addrs[i]);
+ 				//}
+ 				//fprintf(stderr, "\n");
+ 			}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/branch_island.cpp cctools-port-format/cctools/ld64/src/ld/passes/branch_island.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/passes/branch_island.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/branch_island.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -451,7 +451,7 @@
+ 	uint64_t totalTextSize = offset + stubCount*16;
+ 	if ( (totalTextSize < textSizeWhenMightNeedBranchIslands(opts, hasThumbBranches)) && !haveCrossSectionBranches )
+ 		return;
+-	if (_s_log) fprintf(stderr, "ld: section %s size=%llu, might need branch islands\n", textSection->sectionName(), totalTextSize);
++	if (_s_log) fprintf(stderr, "ld: section %s size=%lu, might need branch islands\n", textSection->sectionName(), totalTextSize);
+ 	
+ 	// Figure out how many regions of branch islands will be needed, and their locations.
+ 	// Construct a vector containing the atoms after which branch islands will be inserted,
+@@ -493,7 +493,7 @@
+ 		regionsMap[i] = new AtomToIsland();
+ 		regionsIslands[i] = new std::vector<const ld::Atom*>();
+ 		regionAddresses[i] = branchIslandInsertionPoints[i]->sectionOffset() + branchIslandInsertionPoints[i]->size();
+-		if (_s_log) fprintf(stderr, "ld: branch islands will be inserted at 0x%08llX after %s\n", regionAddresses[i], branchIslandInsertionPoints[i]->name());
++		if (_s_log) fprintf(stderr, "ld: branch islands will be inserted at 0x%08lX after %s\n", regionAddresses[i], branchIslandInsertionPoints[i]->name());
+ 	}
+ 	unsigned int islandCount = 0;
+ 	
+@@ -561,7 +561,7 @@
+ 					if ( pos == region->end() ) {
+ 						island = makeBranchIsland(opts, fit->kind, 0, target, finalTargetAndOffset, atom->section(), true);
+ 						(*region)[finalTargetAndOffset] = island;
+-						if (_s_log) fprintf(stderr, "added absolute branching island %p %s, displacement=%lld\n", 
++						if (_s_log) fprintf(stderr, "added absolute branching island %p %s, displacement=%ld\n", 
+ 												island, island->name(), displacement);
+ 						++islandCount;
+ 						regionsIslands[0]->push_back(island);
+@@ -577,7 +577,7 @@
+ 				else if ( displacement > kBranchLimit ) {
+ 					// create forward branch chain
+ 					const ld::Atom* nextTarget = target;
+-					if (_s_log) fprintf(stderr, "need forward branching island srcAdr=0x%08llX, dstAdr=0x%08llX, target=%s\n",
++					if (_s_log) fprintf(stderr, "need forward branching island srcAdr=0x%08lX, dstAdr=0x%08lX, target=%s\n",
+ 														srcAddr, dstAddr, target->name());
+ 					for (int i=kIslandRegionsCount-1; i >=0 ; --i) {
+ 						AtomToIsland* region = regionsMap[i];
+@@ -609,7 +609,7 @@
+ 						AtomToIsland* region = regionsMap[i];
+ 						int64_t islandRegionAddr = regionAddresses[i];
+ 						if ( (dstAddr < islandRegionAddr) && (islandRegionAddr <= srcAddr) ) {
+-							if (_s_log) fprintf(stderr, "need backward branching island srcAdr=0x%08llX, dstAdr=0x%08llX, target=%s\n", srcAddr, dstAddr, target->name());
++							if (_s_log) fprintf(stderr, "need backward branching island srcAdr=0x%08lX, dstAdr=0x%08lX, target=%s\n", srcAddr, dstAddr, target->name());
+ 							AtomToIsland::iterator pos = region->find(finalTargetAndOffset);
+ 							if ( pos == region->end() ) {
+ 								ld::Atom* island = makeBranchIsland(opts, fit->kind, i, prevTarget, finalTargetAndOffset, atom->section(), false);
+@@ -670,7 +670,7 @@
+ 		ld::Internal::FinalSection* sect = *sit;
+ 		uint16_t maxAlignment = 0;
+ 		uint64_t offset = 0;
+-		if ( log ) fprintf(stderr, "  section=%s/%s, address=0x%08llX\n", sect->segmentName(), sect->sectionName(), sect->address);
++		if ( log ) fprintf(stderr, "  section=%s/%s, address=0x%08lX\n", sect->segmentName(), sect->sectionName(), sect->address);
+ 		for (std::vector<const ld::Atom*>::iterator ait = sect->atoms.begin(); ait != sect->atoms.end(); ++ait) {
+ 			const ld::Atom* atom = *ait;
+ 			uint32_t atomAlignmentPowerOf2 = atom->alignment().powerOf2;
+@@ -688,7 +688,7 @@
+ 					offset += requiredModulus+alignment-currentModulus;
+ 			}
+ 			
+-			if ( log ) fprintf(stderr, "    0x%08llX atom=%p, name=%s\n", sect->address+offset, atom, atom->name());
++			if ( log ) fprintf(stderr, "    0x%08lX atom=%p, name=%s\n", sect->address+offset, atom, atom->name());
+ 			sAtomToAddress[atom] = sect->address + offset;
+ 			
+ 			offset += atom->size();
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/code_dedup.cpp cctools-port-format/cctools/ld64/src/ld/passes/code_dedup.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/passes/code_dedup.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/code_dedup.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -296,7 +296,7 @@
+             continue;
+         if ( verbose )  {
+             dedupSavings += ((dups.size() - 1) * masterAtom->size());
+-            fprintf(stderr, "deduplicate the following %lu functions (%llu bytes apiece):\n", dups.size(), masterAtom->size());
++            fprintf(stderr, "deduplicate the following %lu functions (%lu bytes apiece):\n", dups.size(), masterAtom->size());
+         }
+         for (const ld::Atom* dupAtom : dups) {
+             if ( verbose )
+@@ -313,7 +313,7 @@
+         }
+     }
+     if ( verbose )  {
+-        fprintf(stderr, "deduplication saved %llu bytes of __text\n", dedupSavings);
++        fprintf(stderr, "deduplication saved %lu bytes of __text\n", dedupSavings);
+     }
+ 
+     if ( log ) {
+@@ -348,7 +348,7 @@
+     if ( log ) {
+         fprintf(stderr, "atoms before pruning:\n");
+         for (const ld::Atom* atom : textSection->atoms)
+-            fprintf(stderr, "  %p (size=%llu) %sp\n", atom, atom->size(), atom->name());
++            fprintf(stderr, "  %p (size=%lu) %sp\n", atom, atom->size(), atom->name());
+     }
+     // remove replaced atoms from section
+ 	textSection->atoms.erase(std::remove_if(textSection->atoms.begin(), textSection->atoms.end(),
+@@ -363,7 +363,7 @@
+     if ( log ) {
+         fprintf(stderr, "atoms after pruning:\n");
+         for (const ld::Atom* atom : textSection->atoms)
+-            fprintf(stderr, "  %p (size=%llu) %sp\n", atom, atom->size(), atom->name());
++            fprintf(stderr, "  %p (size=%lu) %sp\n", atom, atom->size(), atom->name());
+     }
+ 
+    //fprintf(stderr, "hash-count=%lu, fixup-compares=%lu, atom-count=%u\n", sHashCount, sFixupCompareCount, atomsBeingComparedCount);
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/dtrace_dof.cpp cctools-port-format/cctools/ld64/src/ld/passes/dtrace_dof.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/passes/dtrace_dof.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/dtrace_dof.cpp	2017-11-10 19:13:05.918259550 -0800
+@@ -308,9 +308,9 @@
+ 			f->reserveFixups(3*probeCount);
+ 			for (uint32_t i=0; i < probeCount; ++i) {
+ 				uint64_t offset = offsetsInDOF[i];
+-				//fprintf(stderr, "%s offset[%d]=0x%08llX\n", providerName, i, offset);
++				//fprintf(stderr, "%s offset[%d]=0x%08lX\n", providerName, i, offset);
+ 				if ( offset > dofSectionSize )
+-					throwf("offsetsInDOF[%d]=%0llX > dofSectionSize=%0lX\n", i, offset, dofSectionSize);
++					throwf("offsetsInDOF[%d]=%0lX > dofSectionSize=%0lX\n", i, offset, dofSectionSize);
+ 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k1of4, ld::Fixup::kindSetTargetAddress, probes[i].atom));
+ 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k2of4, ld::Fixup::kindAddAddend, probes[i].offset));
+ 				f->addSectionFixup(ld::Fixup(offset, ld::Fixup::k3of4, ld::Fixup::kindSubtractTargetAddress, &f->atom()));
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/passes/huge.cpp cctools-port-format/cctools/ld64/src/ld/passes/huge.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/passes/huge.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/passes/huge.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -115,7 +115,7 @@
+ 			const ld::Atom* atom = *ait;
+ 			if ( (address > 0x7FFFFFFFLL) && !sect->isSectionHidden() ) {
+ 				state.usingHugeSections = true;
+-				if (log) fprintf(stderr, "atom: %s is >2GB (0x%09llX), so enabling huge mode\n", atom->name(), address);
++				if (log) fprintf(stderr, "atom: %s is >2GB (0x%09lX), so enabling huge mode\n", atom->name(), address);
+ 				break;
+ 			}
+ 			address += atom->size();
+@@ -139,7 +139,7 @@
+ 				if ( atom->size() > 1024*1024 ) {
+ 					hugeSection->atoms.push_back(atom);
+ 					state.atomToSection[atom] = hugeSection;
+-					if (log) fprintf(stderr, "moved to __huge: %s, size=%llu\n", atom->name(), atom->size());
++					if (log) fprintf(stderr, "moved to __huge: %s, size=%lu\n", atom->name(), atom->size());
+ 					*ait = NULL;  // change atom to NULL for later bulk removal
+ 					movedSome = true;
+ 				}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/ld/SymbolTable.cpp cctools-port-format/cctools/ld64/src/ld/SymbolTable.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/ld/SymbolTable.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/ld/SymbolTable.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -324,7 +324,7 @@
+ 						if ( _atomB.size() > _atomA.size() ) {
+ 							const char* atomApath = (_atomA.file() != NULL) ? _atomA.file()->path() : "<internal>";
+ 							const char* atomBpath = (_atomB.file() != NULL) ? _atomB.file()->path() : "<internal>";
+-							warning("tentative definition of '%s' with size %llu from '%s' is being replaced by real definition of smaller size %llu from '%s'",
++							warning("tentative definition of '%s' with size %lu from '%s' is being replaced by real definition of smaller size %lu from '%s'",
+ 									_atomA.name(), _atomB.size(), atomBpath, _atomA.size(), atomApath);
+ 						}
+ 						pickAtomA();
+@@ -344,7 +344,7 @@
+ 						if ( _atomA.size() > _atomB.size() ) {
+ 							const char* atomApath = (_atomA.file() != NULL) ? _atomA.file()->path() : "<internal>";
+ 							const char* atomBpath = (_atomB.file() != NULL) ? _atomB.file()->path() : "<internal>";
+-							warning("tentative definition of '%s' with size %llu from '%s' is being replaced by real definition of smaller size %llu from '%s'",
++							warning("tentative definition of '%s' with size %lu from '%s' is being replaced by real definition of smaller size %lu from '%s'",
+ 									_atomA.name(), _atomA.size(),atomApath, _atomB.size(), atomBpath);
+ 						}
+ 						pickAtomB();
+diff -ur cctools-port-c1cc758/cctools/ld64/src/other/dyldinfo.cpp cctools-port-format/cctools/ld64/src/other/dyldinfo.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/other/dyldinfo.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/other/dyldinfo.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -587,7 +587,7 @@
+ 			return i;
+ 		}
+ 	}
+-	throwf("address 0x%llX is not in any segment", (uint64_t)address);
++	throwf("address 0x%lX is not in any segment", (uint64_t)address);
+ }
+ 
+ template <typename A>
+@@ -599,7 +599,7 @@
+ 			return (pint_t*)((uint8_t*)fHeader + offsetInMappedFile);
+ 		}
+ 	}
+-	throwf("address 0x%llX is not in any segment", (uint64_t)vmaddress);
++	throwf("address 0x%lX is not in any segment", (uint64_t)vmaddress);
+ }
+ 
+ template <typename A>
+@@ -686,26 +686,26 @@
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+ 					for (int i=0; i < immediate; ++i) {
+-						printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+ 					count = read_uleb128(p, end);
+ 					for (uint32_t i=0; i < count; ++i) {
+-						printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+-					printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++					printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 					segOffset += read_uleb128(p, end) + sizeof(pint_t);
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+ 					count = read_uleb128(p, end);
+ 					skip = read_uleb128(p, end);
+ 					for (uint32_t i=0; i < count; ++i) {
+-						printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += skip + sizeof(pint_t);
+ 					}
+ 					break;
+@@ -754,15 +754,15 @@
+ 				case REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+ 					segmentIndex = immediate;
+ 					address = read_uleb128(p, end);
+-					printf("0x%04X REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%d, 0x%08llX)\n", opcodeOffset, segmentIndex, address);
++					printf("0x%04X REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(%d, 0x%08lX)\n", opcodeOffset, segmentIndex, address);
+ 					break;
+ 				case REBASE_OPCODE_ADD_ADDR_ULEB:
+ 					address = read_uleb128(p, end);
+-					printf("0x%04X REBASE_OPCODE_ADD_ADDR_ULEB(0x%0llX)\n", opcodeOffset, address);
++					printf("0x%04X REBASE_OPCODE_ADD_ADDR_ULEB(0x%0lX)\n", opcodeOffset, address);
+ 					break;
+ 				case REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+ 					address = immediate*sizeof(pint_t);
+-					printf("0x%04X REBASE_OPCODE_ADD_ADDR_IMM_SCALED(0x%0llX)\n", opcodeOffset, address);
++					printf("0x%04X REBASE_OPCODE_ADD_ADDR_IMM_SCALED(0x%0lX)\n", opcodeOffset, address);
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+ 					printf("0x%04X REBASE_OPCODE_DO_REBASE_IMM_TIMES(%d)\n", opcodeOffset, immediate);
+@@ -871,12 +871,12 @@
+ 					break;
+ 				case BIND_OPCODE_SET_ADDEND_SLEB:
+ 					addend = read_sleb128(p, end);
+-					printf("0x%04X BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", opcodeOffset, addend);
++					printf("0x%04X BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", opcodeOffset, addend);
+ 					break;
+ 				case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+ 					segmentIndex = immediate;
+ 					address = read_uleb128(p, end);
+-					printf("0x%04X BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(0x%02X, 0x%08llX)\n", opcodeOffset, segmentIndex, address);
++					printf("0x%04X BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(0x%02X, 0x%08lX)\n", opcodeOffset, segmentIndex, address);
+ 					break;
+ 				case BIND_OPCODE_ADD_ADDR_ULEB:
+ 					skip = read_uleb128(p, end);
+@@ -987,22 +987,22 @@
+ 					segOffset += read_uleb128(p, end);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND:
+-					printf("%-7s %-16s 0x%08llX %10s  %5lld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
++					printf("%-7s %-16s 0x%08lX %10s  %5ld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
+ 					segOffset += sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-					printf("%-7s %-16s 0x%08llX %10s  %5lld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
++					printf("%-7s %-16s 0x%08lX %10s  %5ld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
+ 					segOffset += read_uleb128(p, end) + sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-					printf("%-7s %-16s 0x%08llX %10s  %5lld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
++					printf("%-7s %-16s 0x%08lX %10s  %5ld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
+ 					segOffset += immediate*sizeof(pint_t) + sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+ 					count = read_uleb128(p, end);
+ 					skip = read_uleb128(p, end);
+ 					for (uint32_t i=0; i < count; ++i) {
+-						printf("%-7s %-16s 0x%08llX %10s  %5lld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
++						printf("%-7s %-16s 0x%08lX %10s  %5ld %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, fromDylib, symbolName, weak_import );
+ 						segOffset += skip + sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1070,22 +1070,22 @@
+ 					segOffset += read_uleb128(p, end);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND:
+-					printf("%-7s %-16s 0x%08llX %10s   %5lld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
++					printf("%-7s %-16s 0x%08lX %10s   %5ld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
+ 					segOffset += sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+-					printf("%-7s %-16s 0x%08llX %10s   %5lld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
++					printf("%-7s %-16s 0x%08lX %10s   %5ld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
+ 					segOffset += read_uleb128(p, end) + sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+-					printf("%-7s %-16s 0x%08llX %10s   %5lld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
++					printf("%-7s %-16s 0x%08lX %10s   %5ld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
+ 					segOffset += immediate*sizeof(pint_t) + sizeof(pint_t);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+ 					count = read_uleb128(p, end);
+ 					skip = read_uleb128(p, end);
+ 					for (uint32_t i=0; i < count; ++i) {
+-					printf("%-7s %-16s 0x%08llX %10s   %5lld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
++					printf("%-7s %-16s 0x%08lX %10s   %5ld %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName, addend, symbolName );
+ 							segOffset += skip + sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1178,7 +1178,7 @@
+ 					segOffset += read_uleb128(p, end);
+ 					break;
+ 				case BIND_OPCODE_DO_BIND:
+-					printf("%-7s %-16s 0x%08llX 0x%04X %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, lazy_offset, fromDylib, symbolName, weak_import);
++					printf("%-7s %-16s 0x%08lX 0x%04X %-16s %s%s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, lazy_offset, fromDylib, symbolName, weak_import);
+ 					segOffset += sizeof(pint_t);
+ 					break;
+ 				default:
+@@ -1252,12 +1252,12 @@
+ 					break;
+ 				case BIND_OPCODE_SET_ADDEND_SLEB:
+ 					addend = read_sleb128(p, end);
+-					printf("0x%04X BIND_OPCODE_SET_ADDEND_SLEB(%lld)\n", opcodeOffset, addend);
++					printf("0x%04X BIND_OPCODE_SET_ADDEND_SLEB(%ld)\n", opcodeOffset, addend);
+ 					break;
+ 				case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+ 					segmentIndex = immediate;
+ 					address = read_uleb128(p, end);
+-					printf("0x%04X BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(0x%02X, 0x%08llX)\n", opcodeOffset, segmentIndex, address);
++					printf("0x%04X BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB(0x%02X, 0x%08lX)\n", opcodeOffset, segmentIndex, address);
+ 					break;
+ 				case BIND_OPCODE_ADD_ADDR_ULEB:
+ 					skip = read_uleb128(p, end);
+@@ -1317,7 +1317,7 @@
+ 			if ( reExport )
+ 				printf("[re-export] ");
+ 			else
+-				printf("0x%08llX  ", fBaseAddress+it->address);
++				printf("0x%08lX  ", fBaseAddress+it->address);
+ 			printf("%s", it->name);
+ 			if ( weakDef || threadLocal || resolver || abs ) {
+ 				bool needComma = false;
+@@ -1341,7 +1341,7 @@
+ 				if ( resolver ) {
+ 					if ( needComma ) 
+ 						printf(", ");
+-					printf("resolver=0x%08llX", it->other);
++					printf("resolver=0x%08lX", it->other);
+ 					needComma = true;
+ 				}
+ 				printf("]");
+@@ -1375,13 +1375,13 @@
+ 				++p;
+ 			++p;
+ 			if ( *importName == '\0' ) 
+-				printf("\tnode%03ld [ label=%s,re-export from dylib=%llu ];\n", (long)(me-start), cummulativeString, ordinal);
++				printf("\tnode%03ld [ label=%s,re-export from dylib=%lu ];\n", (long)(me-start), cummulativeString, ordinal);
+ 			else
+-				printf("\tnode%03ld [ label=%s,re-export %s from dylib=%llu ];\n", (long)(me-start), cummulativeString, importName, ordinal);
++				printf("\tnode%03ld [ label=%s,re-export %s from dylib=%lu ];\n", (long)(me-start), cummulativeString, importName, ordinal);
+ 		}
+ 		else {
+ 			uint64_t address = read_uleb128(p, end);
+-			printf("\tnode%03ld [ label=%s,addr0x%08llX ];\n", (long)(me-start), cummulativeString, address);
++			printf("\tnode%03ld [ label=%s,addr0x%08lX ];\n", (long)(me-start), cummulativeString, address);
+ 			if ( flags & EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER )
+ 				read_uleb128(p, end);
+ 		}
+@@ -1469,25 +1469,25 @@
+ 						++p;
+ 					++p;
+ 					if ( strlen(importName) == 0 )
+-						printf("[flags=REEXPORT ordinal=%llu] ", ordinal);
++						printf("[flags=REEXPORT ordinal=%lu] ", ordinal);
+ 					else
+-						printf("[flags=REEXPORT ordinal=%llu import=%s] ", ordinal, importName);
++						printf("[flags=REEXPORT ordinal=%lu import=%s] ", ordinal, importName);
+ 				}
+ 				else if ( flags & EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER ) {
+ 					uint64_t stub = read_uleb128(p, end);
+ 					uint64_t resolver = read_uleb128(p, end);
+-					printf("[flags=STUB_AND_RESOLVER stub=0x%06llX resolver=0x%06llX] ", stub, resolver);
++					printf("[flags=STUB_AND_RESOLVER stub=0x%06lX resolver=0x%06lX] ", stub, resolver);
+ 				}
+ 				else {
+ 					uint64_t address = read_uleb128(p, end);
+ 					if ( (flags & EXPORT_SYMBOL_FLAGS_KIND_MASK) == EXPORT_SYMBOL_FLAGS_KIND_REGULAR )
+-						printf("[addr=0x%06llX] ", address);
++						printf("[addr=0x%06lX] ", address);
+ 					else if ( (flags & EXPORT_SYMBOL_FLAGS_KIND_MASK) == EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL)
+-						printf("[flags=THREAD_LOCAL addr=0x%06llX] ", address);
++						printf("[flags=THREAD_LOCAL addr=0x%06lX] ", address);
+ 					else if ( (flags & EXPORT_SYMBOL_FLAGS_KIND_MASK) == EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE)
+-						printf("[flags=ABSOLUTE addr=0x%06llX] ", address);
++						printf("[flags=ABSOLUTE addr=0x%06lX] ", address);
+ 					else
+-						printf("[flags=0x%llX addr=0x%06llX] ", flags, address);
++						printf("[flags=0x%lX addr=0x%06lX] ", flags, address);
+ 				}
+ 			}
+ 			// print child edges
+@@ -1627,7 +1627,7 @@
+ 	do {
+ 		delta = read_uleb128(p, end);
+ 		address += delta;
+-		printf("0x%0llX   %s\n", address+fBaseAddress, kindStr); 
++		printf("0x%0lX   %s\n", address+fBaseAddress, kindStr); 
+ 	} while (delta);
+ 
+ 	return p;
+@@ -1659,7 +1659,7 @@
+ 				char fromSectionName[20];
+ 				strncpy(fromSectionName, fromSection->sectname(), 16);
+ 				fromSectionName[16] = '\0';
+-				printf("from sect=%s/%s, to sect=%s/%s, count=%lld:\n", fromSection->segname(), fromSectionName, toSection->segname(), toSection->sectname(), toOffsetCount);
++				printf("from sect=%s/%s, to sect=%s/%s, count=%ld:\n", fromSection->segname(), fromSectionName, toSection->segname(), toSection->sectname(), toOffsetCount);
+ 				uint64_t toSectionOffset = 0;
+ 				const char* lastFromSymbol = NULL;
+ 				for (uint64_t j=0; j < toOffsetCount; ++j) {
+@@ -1678,12 +1678,12 @@
+ 							if ( (s != lastFromSymbol) && (s != NULL) )
+ 								printf("  %s:\n", s);
+ 							const char* toSymbol = closestSymbolNameForAddress(toSection->addr()+toSectionOffset, &symbolOffset, toSectionIndex);
+-							printf("       from addr=0x%0llX %s to addr=0x%0llX", fromSection->addr()+fromSectionOffset, sharedRegionKindName(kind), toSection->addr()+toSectionOffset);
++							printf("       from addr=0x%0lX %s to addr=0x%0lX", fromSection->addr()+fromSectionOffset, sharedRegionKindName(kind), toSection->addr()+toSectionOffset);
+ 							if ( toSymbol != NULL ) {
+ 								if ( symbolOffset == 0 )
+ 									printf(" (%s)", toSymbol);
+ 								else
+-									printf(" (%s + %lld)", toSymbol, symbolOffset);
++									printf(" (%s + %ld)", toSymbol, symbolOffset);
+ 							}
+ 							printf("\n");
+ 							lastFromSymbol = s;
+@@ -1740,16 +1740,16 @@
+ void DyldInfoPrinter<arm>::printFunctionStartLine(uint64_t addr)
+ {
+ 	if ( addr & 1 )
+-		printf("0x%0llX [thumb] %s\n", (addr & -2), symbolNameForAddress(addr & -2)); 
++		printf("0x%0lX [thumb] %s\n", (addr & -2), symbolNameForAddress(addr & -2)); 
+ 	else
+-		printf("0x%0llX         %s\n", addr, symbolNameForAddress(addr)); 
++		printf("0x%0lX         %s\n", addr, symbolNameForAddress(addr)); 
+ }
+ #endif
+ 
+ template <typename A>
+ void DyldInfoPrinter<A>::printFunctionStartLine(uint64_t addr)
+ {
+-	printf("0x%0llX   %s\n", addr, symbolNameForAddress(addr)); 
++	printf("0x%0lX   %s\n", addr, symbolNameForAddress(addr)); 
+ }
+ 
+ 
+@@ -2023,7 +2023,7 @@
+ 				const char* typeName = relocTypeName(reloc->r_type());
+ 				const char* segName  = segmentName(segIndex);
+ 				const char* sectName = sectionName(segIndex, addr);
+-				printf("%-8s %-16s 0x%08llX  %s\n", segName, sectName, (uint64_t)addr, typeName);
++				printf("%-8s %-16s 0x%08lX  %s\n", segName, sectName, (uint64_t)addr, typeName);
+ 			} 
+ 			else {
+ 				const macho_scattered_relocation_info<P>* sreloc = (macho_scattered_relocation_info<P>*)reloc;
+@@ -2032,7 +2032,7 @@
+ 				const char* typeName = relocTypeName(sreloc->r_type());
+ 				const char* segName  = segmentName(segIndex);
+ 				const char* sectName = sectionName(segIndex, addr);
+-				printf("%-8s %-16s 0x%08llX  %s\n", segName, sectName, (uint64_t)addr, typeName);
++				printf("%-8s %-16s 0x%08lX  %s\n", segName, sectName, (uint64_t)addr, typeName);
+ 			}
+ 		}
+ 		// look for local non-lazy-pointers
+@@ -2054,7 +2054,7 @@
+ 							const char* typeName = "pointer";
+ 							const char* segName  = segmentName(segIndex);
+ 							const char* sectName = sectionName(segIndex, addr);
+-							printf("%-8s %-16s 0x%08llX  %s\n", segName, sectName, (uint64_t)addr, typeName);
++							printf("%-8s %-16s 0x%08lX  %s\n", segName, sectName, (uint64_t)addr, typeName);
+ 						}
+ 					}
+ 				}
+@@ -2080,7 +2080,7 @@
+ 			pint_t thumb = 0;
+ 			if ( sym->n_desc() & N_ARM_THUMB_DEF )
+ 				thumb = 1;
+-			printf("0x%08llX %s%s\n", sym->n_value()+thumb, flags, &fStrings[sym->n_strx()]);
++			printf("0x%08lX %s%s\n", sym->n_value()+thumb, flags, &fStrings[sym->n_strx()]);
+ 		}
+ 	}
+ }
+@@ -2176,7 +2176,7 @@
+ 				// To get the addend requires subtracting out the base address it was prebound to.
+ 				addend -= sym->n_value();
+ 			}
+-			printf("%-8s %-16s 0x%08llX %10s %4s  %5lld %-16s %s\n", segName, sectName, (uint64_t)addr, 
++			printf("%-8s %-16s 0x%08lX %10s %4s  %5ld %-16s %s\n", segName, sectName, (uint64_t)addr, 
+ 									typeName, weak_import, addend, fromDylib, symbolName);
+ 		}
+ 		// look for non-lazy pointers
+@@ -2203,7 +2203,7 @@
+ 							const char* segName  = segmentName(segIndex);
+ 							const char* sectName = sectionName(segIndex, addr);
+ 							int64_t addend = 0;
+-							printf("%-8s %-16s 0x%08llX %10s %4s  %5lld %-16s %s\n", segName, sectName, (uint64_t)addr, 
++							printf("%-8s %-16s 0x%08lX %10s %4s  %5ld %-16s %s\n", segName, sectName, (uint64_t)addr, 
+ 																	typeName, weak_import, addend, fromDylib, symbolName);
+ 						}
+ 					}
+@@ -2242,7 +2242,7 @@
+ 						uint8_t segIndex = segmentIndexForAddress(addr);
+ 						const char* segName  = segmentName(segIndex);
+ 						const char* sectName = sectionName(segIndex, addr);
+-						printf("%-7s %-16s 0x%08llX 0x%04X %-16s %s\n", segName, sectName, (uint64_t)addr, symbolIndex, fromDylib, symbolName);
++						printf("%-7s %-16s 0x%08lX 0x%04X %-16s %s\n", segName, sectName, (uint64_t)addr, symbolIndex, fromDylib, symbolName);
+ 					}
+ 				}
+ 				else if ( (type == S_SYMBOL_STUBS) && (((sect->flags() & S_ATTR_SELF_MODIFYING_CODE) != 0)) && (sect->reserved2() == 5) ) {
+@@ -2259,7 +2259,7 @@
+ 							uint8_t segIndex = segmentIndexForAddress(addr);
+ 							const char* segName  = segmentName(segIndex);
+ 							const char* sectName = sectionName(segIndex, addr);
+-							printf("%-7s %-16s 0x%08llX 0x%04X %-16s %s\n", segName, sectName, (uint64_t)addr, symbolIndex, fromDylib, symbolName);
++							printf("%-7s %-16s 0x%08lX 0x%04X %-16s %s\n", segName, sectName, (uint64_t)addr, symbolIndex, fromDylib, symbolName);
+ 						}
+ 					}
+ 				}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/other/machochecker.cpp cctools-port-format/cctools/ld64/src/other/machochecker.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/other/machochecker.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/other/machochecker.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -639,12 +639,12 @@
+ 	if ( threadInfo != NULL ) {
+ 		pint_t initialPC = getEntryPoint(threadInfo);
+ 		if ( (initialPC < fTEXTSegment->vmaddr()) ||  (initialPC >= (fTEXTSegment->vmaddr()+fTEXTSegment->vmsize())) ) 
+-			throwf("entry point 0x%0llX is outside __TEXT segment", (long long)initialPC);
++			throwf("entry point 0x%0lX is outside __TEXT segment", (long long)initialPC);
+ 	}
+ 	else if ( entryPoint != NULL ) {
+ 		pint_t initialOffset = entryPoint->entryoff();
+ 		if ( (initialOffset < fTEXTSegment->fileoff()) ||  (initialOffset >= (fTEXTSegment->fileoff()+fTEXTSegment->filesize())) ) 
+-			throwf("entry point 0x%0llX is outside __TEXT segment", (long long)initialOffset);
++			throwf("entry point 0x%0lX is outside __TEXT segment", (long long)initialOffset);
+ 	}
+ 	
+ 	// checks for executables
+@@ -1086,7 +1086,7 @@
+ 						for (pint_t* p=arrayStart; p < arrayEnd; ++p) {
+ 							pint_t pointer = P::getP(*p);
+ 							if ( (pointer < fTEXTSegment->vmaddr()) ||  (pointer >= (fTEXTSegment->vmaddr()+fTEXTSegment->vmsize())) ) 
+-								throwf("%s 0x%08llX points outside __TEXT segment", kind, (long long)pointer);
++								throwf("%s 0x%08lX points outside __TEXT segment", kind, (long long)pointer);
+ 						}
+ 						// check each pointer in array will be rebased and not bound
+ 						if ( fSlidableImage ) {
+@@ -1094,9 +1094,9 @@
+ 							pint_t sectionEndddr = sect->addr() + sect->size();
+ 							for(pint_t addr = sectionBeginAddr; addr < sectionEndddr; addr += sizeof(pint_t)) {
+ 								if ( addressIsBindingSite(addr) )
+-									throwf("%s at 0x%0llX has binding to external symbol", kind, (long long)addr);
++									throwf("%s at 0x%0lX has binding to external symbol", kind, (long long)addr);
+ 								if ( ! addressIsRebaseSite(addr) )
+-									throwf("%s at 0x%0llX is not rebased", kind, (long long)addr);
++									throwf("%s at 0x%0lX is not rebased", kind, (long long)addr);
+ 							}
+ 						}
+ 						break;
+@@ -1392,7 +1392,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( (rangeStart <= addr) && (addr < rangeEnd) )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1402,7 +1402,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( (rangeStart <= addr) && (addr < rangeEnd) )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1410,7 +1410,7 @@
+ 					addr = segStartAddr+segOffset;
+ 					if ( (rangeStart <= addr) && (addr < rangeEnd) )
+ 						return true;
+-					//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++					//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 					segOffset += read_uleb128(p, end) + sizeof(pint_t);
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+@@ -1420,7 +1420,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( (rangeStart <= addr) && (addr < rangeEnd) )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += skip + sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1482,7 +1482,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( addr == targetAddr )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1492,7 +1492,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( addr == targetAddr )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += sizeof(pint_t);
+ 					}
+ 					break;
+@@ -1500,7 +1500,7 @@
+ 					addr = segStartAddr+segOffset;
+ 					if ( addr == targetAddr )
+ 						return true;
+-					//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++					//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 					segOffset += read_uleb128(p, end) + sizeof(pint_t);
+ 					break;
+ 				case REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+@@ -1510,7 +1510,7 @@
+ 						addr = segStartAddr+segOffset;
+ 						if ( addr == targetAddr )
+ 							return true;
+-						//printf("%-7s %-16s 0x%08llX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
++						//printf("%-7s %-16s 0x%08lX  %s\n", segName, sectionName(segIndex, segStartAddr+segOffset), segStartAddr+segOffset, typeName);
+ 						segOffset += skip + sizeof(pint_t);
+ 					}
+ 					break;
+diff -ur cctools-port-c1cc758/cctools/ld64/src/other/ObjectDump.cpp cctools-port-format/cctools/ld64/src/other/ObjectDump.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/other/ObjectDump.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/other/ObjectDump.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -630,7 +630,7 @@
+ 			}
+ 			else {
+ 				uint64_t sectAddr = addressOfFirstAtomInSection(atom.section());
+-				sprintf(buffer, "%s@%s+0x%08llX", atom.name(), atom.section().sectionName(), atom.objectAddress()-sectAddr);
++				sprintf(buffer, "%s@%s+0x%08lX", atom.name(), atom.section().sectionName(), atom.objectAddress()-sectAddr);
+ 			}
+ 			break;
+ 		case ld::Atom::symbolTableNotInFinalLinkedImages:
+@@ -704,10 +704,10 @@
+ 			printf(" - %s", referenceTargetAtomName(ref));
+ 			break;
+ 		case ld::Fixup::kindAddAddend:
+-			printf(" + 0x%llX", ref->u.addend);
++			printf(" + 0x%lX", ref->u.addend);
+ 			break;
+ 		case ld::Fixup::kindSubtractAddend:
+-			printf(" - 0x%llX", ref->u.addend);
++			printf(" - 0x%lX", ref->u.addend);
+ 			break;
+ 		case ld::Fixup::kindSetTargetImageOffset:
+ 			printf("imageOffset(%s)", referenceTargetAtomName(ref));
+@@ -1063,7 +1063,7 @@
+ void dumper::dumpAtom(const ld::Atom& atom)
+ {		
+  	printf("name:     %s\n", makeName(atom)); 
+-	printf("size:     0x%0llX\n", atom.size());
++	printf("size:     0x%0lX\n", atom.size());
+ 	printf("align:    %u mod %u\n", atom.alignment().modulus, (1 << atom.alignment().powerOf2) );
+ 	printf("scope:    %s\n", scopeString(atom));
+ 	if ( sShowDefinitionKind ) 
+diff -ur cctools-port-c1cc758/cctools/ld64/src/other/rebase.cpp cctools-port-format/cctools/ld64/src/other/rebase.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/other/rebase.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/other/rebase.cpp	2017-11-10 19:13:05.921592917 -0800
+@@ -454,7 +454,7 @@
+ template <typename A>
+ void Rebaser<A>::rebaseAt(int segIndex, uint64_t offset, uint8_t type)
+ {
+-	//fprintf(stderr, "rebaseAt(seg=%d, offset=0x%08llX, type=%d\n", segIndex, offset, type);
++	//fprintf(stderr, "rebaseAt(seg=%d, offset=0x%08lX, type=%d\n", segIndex, offset, type);
+ 	static int lastSegIndex = -1;
+ 	static uint8_t* lastSegMappedStart = NULL;
+ 	if ( segIndex != lastSegIndex ) {
+@@ -857,7 +857,7 @@
+ 				ai.vmSize = rebaser->getVMSize();
+ 				ai.orgBase = rebaser->getBaseAddress();
+ 				ai.newBase = 0;
+-				//fprintf(stderr, "base=0x%llX, size=0x%llX\n", ai.orgBase, ai.vmSize);
++				//fprintf(stderr, "base=0x%lX, size=0x%lX\n", ai.orgBase, ai.vmSize);
+ 				info.archs.push_back(ai);
+ 			}
+ 		}
+@@ -903,7 +903,7 @@
+ 				if ( (*rit)->getArchitecture() == fait->arch ) {
+ 					(*rit)->setBaseAddress(fait->newBase);
+ 					if ( verbose )
+-						printf("%8s 0x%0llX -> 0x%0llX  %s\n", nameForArch(fait->arch), fait->orgBase, fait->newBase, info.path);
++						printf("%8s 0x%0lX -> 0x%0lX  %s\n", nameForArch(fait->arch), fait->orgBase, fait->newBase, info.path);
+ 				}
+ 			}	
+ 		}
+diff -ur cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp cctools-port-format/cctools/ld64/src/other/unwinddump.cpp
+--- cctools-port-c1cc758/cctools/ld64/src/other/unwinddump.cpp	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/ld64/src/other/unwinddump.cpp	2017-11-10 19:13:05.924926282 -0800
+@@ -250,7 +250,7 @@
+ 				value |= 1;
+ 			if ( value == addr ) {
+ 				const char* r = &fStrings[fSymbols[i].n_strx()];
+-				//fprintf(stderr, "addr=0x%08llX, i=%u, n_type=0x%0X, r=%s\n", (long long)(fSymbols[i].n_value()), i,  fSymbols[i].n_type(), r);
++				//fprintf(stderr, "addr=0x%08lX, i=%u, n_type=0x%0X, r=%s\n", (long long)(fSymbols[i].n_value()), i,  fSymbols[i].n_type(), r);
+ 				return r;
+ 			}
+ 			else if ( offset != NULL ) {
+@@ -904,14 +904,14 @@
+ template <typename A>
+ void UnwindPrinter<A>::printObjectUnwindSection(bool showFunctionNames)
+ {
+-	printf("Arch: %s, Section: __LD,__compact_unwind (size=0x%08llX, => %lld entries)\n", 
++	printf("Arch: %s, Section: __LD,__compact_unwind (size=0x%08lX, => %ld entries)\n", 
+ 				archName(), fUnwindSection->size(), fUnwindSection->size() / sizeof(macho_compact_unwind_entry<P>));
+ 	
+ 	const macho_compact_unwind_entry<P>* const entriesStart = (macho_compact_unwind_entry<P>*)((uint8_t*)fHeader + fUnwindSection->offset());
+ 	const macho_compact_unwind_entry<P>* const entriesEnd = (macho_compact_unwind_entry<P>*)((uint8_t*)fHeader + fUnwindSection->offset() + fUnwindSection->size());
+ 	for (const macho_compact_unwind_entry<P>* entry=entriesStart; entry < entriesEnd; ++entry) {
+ 		uint64_t entryAddress = ((char*)entry - (char*)entriesStart) + fUnwindSection->addr();
+-		printf("0x%08llX:\n", entryAddress);
++		printf("0x%08lX:\n", entryAddress);
+ 		const char* functionNameStr;
+ 		pint_t funcAddress;
+ 		uint32_t offsetInFunction;
+@@ -923,11 +923,11 @@
+ 			funcAddress = entry->codeStart();
+ 		}
+ 		if ( offsetInFunction == 0 )
+-			printf("  start:        0x%08llX   %s\n", (uint64_t)funcAddress, functionNameStr);
++			printf("  start:        0x%08lX   %s\n", (uint64_t)funcAddress, functionNameStr);
+ 		else
+-			printf("  start:        0x%08llX   %s+0x%X\n", (uint64_t)funcAddress+offsetInFunction, functionNameStr, offsetInFunction);
++			printf("  start:        0x%08lX   %s+0x%X\n", (uint64_t)funcAddress+offsetInFunction, functionNameStr, offsetInFunction);
+ 		
+-		printf("  end:          0x%08llX   (len=0x%08X)\n", (uint64_t)(funcAddress+offsetInFunction+entry->codeLen()), entry->codeLen());
++		printf("  end:          0x%08lX   (len=0x%08X)\n", (uint64_t)(funcAddress+offsetInFunction+entry->codeLen()), entry->codeLen());
+ 		
+ 		char encodingString[200];
+ 		this->decode(entry->compactUnwindInfo(), ((const uint8_t*)fHeader), encodingString);
+@@ -947,9 +947,9 @@
+ 			uint32_t lsdaOffset;
+ 			const char* lsdaName = this->functionName(entry->lsda(), &lsdaOffset);
+ 			if ( lsdaOffset == 0 )
+-				printf("  lsda:         0x%08llX  %s\n", (uint64_t)entry->lsda(), lsdaName);
++				printf("  lsda:         0x%08lX  %s\n", (uint64_t)entry->lsda(), lsdaName);
+ 			else
+-				printf("  lsda:         0x%08llX  %s+0x%X\n", (uint64_t)entry->lsda(), lsdaName, lsdaOffset);
++				printf("  lsda:         0x%08lX  %s+0x%X\n", (uint64_t)entry->lsda(), lsdaName, lsdaOffset);
+ 		}
+ 	}
+ }
+@@ -962,7 +962,7 @@
+ 	const uint8_t* sectionContent = (uint8_t*)fHeader + fUnwindSection->offset();
+ 	macho_unwind_info_section_header<P>* sectionHeader = (macho_unwind_info_section_header<P>*)(sectionContent);
+ 	
+-	printf("Arch: %s, Section: __TEXT,__unwind_info (addr=0x%08llX, size=0x%08llX, fileOffset=0x%08X)\n", 
++	printf("Arch: %s, Section: __TEXT,__unwind_info (addr=0x%08lX, size=0x%08lX, fileOffset=0x%08X)\n", 
+ 				archName(), fUnwindSection->addr(), fUnwindSection->size(), fUnwindSection->offset());
+ 	printf("\tversion=0x%08X\n", sectionHeader->version());
+ 	printf("\tcommonEncodingsArraySectionOffset=0x%08X\n", sectionHeader->commonEncodingsArraySectionOffset());
+diff -ur cctools-port-c1cc758/cctools/libstuff/ofile.c cctools-port-format/cctools/libstuff/ofile.c
+--- cctools-port-c1cc758/cctools/libstuff/ofile.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/libstuff/ofile.c	2017-11-10 19:38:34.511211634 -0800
+@@ -3108,7 +3108,7 @@
+ 	    }
+ 	    if(offset %
+ 	       (1 << align) != 0){
+-		error("fat file: %s offset: %llu for cputype (%d) cpusubtype "
++		error("fat file: %s offset: %lu for cputype (%d) cpusubtype "
+ 		      "(%d)) not aligned on it's alignment (2^%u)",
+ 		      ofile->file_name, offset, cputype,
+ 		      cpusubtype & ~CPU_SUBTYPE_MASK, align);
+@@ -3210,7 +3210,7 @@
+ 		return(CHECK_BAD);
+ 	    }
+ 	    if(offset % (1 << align) != 0){
+-		archive_member_error(ofile, "fat file's offset: %llu for "
++		archive_member_error(ofile, "fat file's offset: %lu for "
+ 			"cputype (%d) cpusubtype (%d) not aligned on it's "
+ 			"alignment (2^%u)", offset, cputype,
+ 			cpusubtype & ~CPU_SUBTYPE_MASK, align);
+diff -ur cctools-port-c1cc758/cctools/libstuff/writeout.c cctools-port-format/cctools/libstuff/writeout.c
+--- cctools-port-c1cc758/cctools/libstuff/writeout.c	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-format/cctools/libstuff/writeout.c	2017-11-10 19:40:56.792695079 -0800
+@@ -421,7 +421,7 @@
+ 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&file,
+ 			    file_size, TRUE)) != KERN_SUCCESS)
+ 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
+-		       "size %llu", filename, file_size);
++		       "size %lu", filename, file_size);
+ 
+ 	/*
+ 	 * If there is more than one architecture then fill in the fat file
+@@ -460,7 +460,7 @@
+ 		if(offset > UINT32_MAX && archs[i].fat_arch64 == NULL){
+ 		    error("file too large to create as a fat file because "
+ 			  "offset field in struct fat_arch is only 32-bits and "
+-			  "offset (%llu) to architecture %s exceeds that",
++			  "offset (%lu) to architecture %s exceeds that",
+ 			  offset, archs[i].fat_arch_name);
+ 		    return;
+ 		}
+diff -ur cctools-port-c1cc758/cctools/misc/libtool.c cctools-port-format/cctools/misc/libtool.c
+--- cctools-port-c1cc758/cctools/misc/libtool.c	2017-11-10 19:22:01.790476705 -0800
++++ cctools-port-format/cctools/misc/libtool.c	2017-11-10 19:24:48.435607249 -0800
+@@ -2545,7 +2545,7 @@
+ 	    if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
+ 				library_size, TRUE)) != KERN_SUCCESS)
+ 		mach_fatal(r, "can't vm_allocate() buffer for output file: %s "
+-			   "of size %llu", output, library_size);
++			   "of size %lu", output, library_size);
+ 
+ 
+ 	    /* put in the archive magic string in the buffer */
+@@ -2581,7 +2581,7 @@
+ 	if((r = vm_allocate(mach_task_self(), (vm_address_t *)&library,
+ 			    library_size, TRUE)) != KERN_SUCCESS)
+ 	    mach_fatal(r, "can't vm_allocate() buffer for output file: %s of "
+-		       "size %llu", output, library_size);
++		       "size %lu", output, library_size);
+ 
+ 	/*
+ 	 * Create the output file.  The unlink() is done to handle the problem
+@@ -2635,7 +2635,7 @@
+ 		if(cmd_flags.fat64 == FALSE && offset > UINT32_MAX)
+ 		    error("file too large to create as a fat file because "
+ 			  "offset field in struct fat_arch is only 32-bits and "
+-			  "offset (%llu) to architecture %s exceeds that",
++			  "offset (%lu) to architecture %s exceeds that",
+ 			  offset, archs[i].arch_flag.name);
+ 		if(archs[i].arch_flag.cputype & CPU_ARCH_ABI64){
+ 		    if(cmd_flags.fat64 == TRUE)
+@@ -2660,7 +2660,7 @@
+ 		if(cmd_flags.fat64 == FALSE && archs[i].size > UINT32_MAX)
+ 		    error("file too large to create as a fat file because "
+ 			  "size field in struct fat_arch is only 32-bits and "
+-			  "size (%llu) of architecture %s exceeds that",
++			  "size (%lu) of architecture %s exceeds that",
+ 			  archs[i].size, archs[i].arch_flag.name);
+ 		if(cmd_flags.fat64 == TRUE)
+ 		    fat_arch64[i].size = archs[i].size;
+@@ -3043,15 +3043,15 @@
+ 	    return;
+ 
+ 	if(offset + size > library_size)
+-	    fatal("internal error: output_flush(offset = %llu, size = %llu) "
+-		  "out of range for library_size = %llu", offset, size,
++	    fatal("internal error: output_flush(offset = %lu, size = %lu) "
++		  "out of range for library_size = %lu", offset, size,
+ 		  library_size);
+ 
+ #ifdef DEBUG
+ 	if(cmd_flags.debug & (1 << 2))
+ 	    print_block_list();
+ 	if(cmd_flags.debug & (1 << 1))
+-	    printf("output_flush(offset = %llu, size %llu)", offset, size);
++	    printf("output_flush(offset = %lu, size %lu)", offset, size);
+ #endif /* DEBUG */
+ 
+ 	if(size == 0){
+@@ -3087,9 +3087,9 @@
+ 	 */
+ 	if(before != NULL){
+ 	    if(before->offset + before->size > offset){
+-		warning("internal error: output_flush(offset = %llu, size = "
+-			"%llu) overlaps with flushed block(offset = %llu, "
+-			"size = %llu)", offset, size, before->offset,
++		warning("internal error: output_flush(offset = %lu, size = "
++			"%lu) overlaps with flushed block(offset = %lu, "
++			"size = %lu)", offset, size, before->offset,
+ 			before->size);
+ 		printf("calling abort()\n");	
+ 		abort();
+@@ -3097,9 +3097,9 @@
+ 	}
+ 	if(after != NULL){
+ 	    if(offset + size > after->offset){
+-		warning("internal error: output_flush(offset = %llu, size = "
+-			"%llu) overlaps with flushed block(offset = %llu, "
+-			"size = %llu)", offset, size, after->offset,
++		warning("internal error: output_flush(offset = %lu, size = "
++			"%lu) overlaps with flushed block(offset = %lu, "
++			"size = %lu)", offset, size, after->offset,
+ 			after->size);
+ 		printf("calling abort()\n");	
+ 		abort();

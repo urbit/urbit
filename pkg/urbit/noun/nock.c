@@ -3,23 +3,6 @@
 */
 #include "all.h"
 
-      /* u3_term_io_hija(): hijack console for cooked print.
-      */
-        FILE*
-        u3_term_io_hija(void);
-
-      /* u3_term_io_loja(): release console from cooked print.
-      */
-        void
-        u3_term_io_loja(int x);
-
-      /* uL, uH: wrap hijack/lojack around fprintf.
-      **
-      **  uL(fprintf(uH, ...));
-      */
-#       define uH    u3_term_io_hija()
-#       define uL(x) u3_term_io_loja(x)
-
 // define to have each opcode printed as it executes,
 // along with some other debugging info
 #        undef VERBOSE_BYTECODE
@@ -96,11 +79,11 @@ _n_hint(u3_noun zep,
           low_i = 1;
           if ( 0 == (u3R->pro.nox_d % 65536ULL) ) {
             if ( c3__spot == zep ) {
-              uL(fprintf(uH, "spot %d/%d : %d/%d\r\n",
-                             u3h(u3h(u3t(hod))),
-                             u3t(u3h(u3t(hod))),
-                             u3h(u3t(u3t(hod))),
-                             u3t(u3t(u3t(hod)))));
+              u3l_log("spot %d/%d : %d/%d\r\n",
+                      u3h(u3h(u3t(hod))),
+                      u3t(u3h(u3t(hod))),
+                      u3h(u3t(u3t(hod))),
+                      u3t(u3t(u3t(hod))));
             }
           }
           low_i = 0;
@@ -130,14 +113,6 @@ _n_hint(u3_noun zep,
         u3t_slog(hod);
         u3t_on(noc_o);
       }
-      return _n_nock_on(bus, nex);
-    }
-
-    case c3__shiv: {
-      u3t_off(noc_o);
-      u3t_shiv(hod);
-      u3t_on(noc_o);
-
       return _n_nock_on(bus, nex);
     }
 

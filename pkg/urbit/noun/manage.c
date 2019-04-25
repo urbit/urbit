@@ -41,7 +41,7 @@
         void
         u3m_leap(c3_w pad_w);
 
-      /* u3m_golf(): record cap length for u3_flog().
+      /* u3m_golf(): record cap length for u3m_flog().
       */
         c3_w
         u3m_golf(void);
@@ -79,9 +79,6 @@ static sigjmp_buf u3_Signal;
 #ifndef NO_OVERFLOW
 static uint8_t Sigstk[SIGSTKSZ];
 #endif
-
-void u3_unix_ef_hold(void);         //  suspend system signal regime
-void u3_unix_ef_move(void);         //  restore system signal regime
 
 #if 0
 /* _cm_punt(): crudely print trace.
@@ -306,7 +303,7 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 
       while ( rod_u->kid_p ) {
 #if 0
-        fprintf(stderr, "collecting %d frames\r\n",
+        u3l_log("collecting %d frames\r\n",
               u3kb_lent((u3to(u3_road, rod_u->kid_p)->bug.tax));
 #endif
         tax = u3kb_weld(_cm_stack_recover(u3to(u3_road, rod_u->kid_p)), tax);
@@ -329,7 +326,11 @@ _cm_signal_recover(c3_l sig_l, u3_noun arg)
 static void
 _cm_signal_deep(c3_w sec_w)
 {
-  u3_unix_ef_hold();
+  //  disable outer system signal handling
+  //
+  if ( 0 != u3C.sign_hold_f ) {
+    u3C.sign_hold_f();
+  }
 
 #ifndef NO_OVERFLOW
   stackoverflow_install_handler(_cm_signal_handle_over, Sigstk, SIGSTKSZ);
@@ -363,7 +364,7 @@ _cm_signal_deep(c3_w sec_w)
 static void
 _cm_signal_done()
 {
-  // signal(SIGINT, SIG_IGN);
+  signal(SIGINT, SIG_IGN);
   signal(SIGTERM, SIG_IGN);
   signal(SIGVTALRM, SIG_IGN);
 
@@ -376,7 +377,13 @@ _cm_signal_done()
 
     setitimer(ITIMER_VIRTUAL, &itm_u, 0);
   }
-  u3_unix_ef_move();
+
+  //  restore outer system signal handling
+  //
+  if ( 0 != u3C.sign_move_f ) {
+    u3C.sign_move_f();
+  }
+
   u3t_boff();
 }
 
@@ -399,7 +406,7 @@ u3m_file(c3_c* pas_c)
   c3_y*       pad_y;
 
   if ( (fid_i < 0) || (fstat(fid_i, &buf_b) < 0) ) {
-    fprintf(stderr, "%s: %s\r\n", pas_c, strerror(errno));
+    u3l_log("%s: %s\r\n", pas_c, strerror(errno));
     return u3m_bail(c3__fail);
   }
   fln_w = buf_b.st_size;
@@ -558,7 +565,7 @@ u3m_dump(void)
       fre_u = fre_u->nex_u;
     }
   }
-  fprintf(stderr, "dump: hat_w %x, fre_w %x, allocated %x\n",
+  u3l_log("dump: hat_w %x, fre_w %x, allocated %x\n",
           hat_w, fre_w, (hat_w - fre_w));
 
   if ( 0 != (hat_w - fre_w) ) {
@@ -570,14 +577,14 @@ u3m_dump(void)
 
       if ( 0 != box_u->use_w ) {
 #ifdef U3_MEMORY_DEBUG
-        // printf("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
+        // u3l_log("live %d words, code %x\n", box_u->siz_w, box_u->cod_w);
 #endif
         mem_w += box_u->siz_w;
       }
       box_w += box_u->siz_w;
     }
 
-    fprintf(stderr, "second count: %x\n", mem_w);
+    u3l_log("second count: %x\n", mem_w);
   }
 }
 #endif
@@ -623,11 +630,11 @@ u3m_bail(u3_noun how)
       str_c[2] = ((how >> 16) & 0xff);
       str_c[3] = ((how >> 24) & 0xff);
       str_c[4] = 0;
-      fprintf(stderr, "\r\nbail: %s\r\n", str_c);
+      u3l_log("\r\nbail: %s\r\n", str_c);
     }
     else {
       c3_assert(_(u3ud(u3h(how))));
-      fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
+      u3l_log("\r\nbail: %d\r\n", u3h(how));
     }
   }
 
@@ -637,7 +644,7 @@ u3m_bail(u3_noun how)
     }
 
     case c3__meme: {
-      fprintf(stderr, "bailing out\r\n");
+      u3l_log("bailing out\r\n");
       abort();
     }
     case c3__exit: {
@@ -645,7 +652,7 @@ u3m_bail(u3_noun how)
       static c3_w xuc_w = 0;
 
       {
-        // fprintf(stderr, "exit %d\r\n", xuc_w);
+        // u3l_log("exit %d\r\n", xuc_w);
         // if ( 49 == xuc_w ) { abort(); }
         xuc_w++;
         break;
@@ -653,7 +660,7 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
-      fprintf(stderr, "bailing out\r\n");
+      u3l_log("bailing out\r\n");
       assert(0);
   }
 
@@ -738,7 +745,7 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_south(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      fprintf(stderr, "leap: from north %p (cap %x), to south %p\r\n",
+      u3l_log("leap: from north %p (cap %x), to south %p\r\n",
               u3R,
               u3R->cap_p + len_p,
               rod_u);
@@ -750,7 +757,7 @@ u3m_leap(c3_w pad_w)
 
       rod_u = _pave_north(u3a_into(bot_p), c3_wiseof(u3a_road), len_w);
 #if 0
-      fprintf(stderr, "leap: from north %p (cap %p), to south %p\r\n",
+      u3l_log("leap: from north %p (cap %p), to south %p\r\n",
               u3R,
               u3R->cap_p - len_p,
               rod_u);
@@ -785,7 +792,7 @@ u3m_fall()
   c3_assert(0 != u3R->par_p);
 
 #if 0
-  fprintf(stderr, "fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
+  u3l_log("fall: from %s %p, to %s %p (cap %p, was %p)\r\n",
           _(u3a_is_north(u3R)) ? "north" : "south",
           u3R,
           _(u3a_is_north(u3R)) ? "north" : "south",
@@ -844,7 +851,7 @@ u3m_love(u3_noun pro)
   return pro;
 }
 
-/* u3m_golf(): record cap_p length for u3_flog().
+/* u3m_golf(): record cap_p length for u3m_flog().
 */
 c3_w
 u3m_golf(void)
@@ -1436,7 +1443,7 @@ u3m_p(const c3_c* cap_c, u3_noun som)
 {
   c3_c* pre_c = u3m_pretty(som);
 
-  fprintf(stderr, "%s: %s\r\n", cap_c, pre_c);
+  u3l_log("%s: %s\r\n", cap_c, pre_c);
   free(pre_c);
 }
 
@@ -1530,7 +1537,7 @@ static void
 _cm_signals(void)
 {
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
-    fprintf(stderr, "sigsegv install failed\n");
+    u3l_log("sigsegv install failed\n");
     exit(1);
   }
   // signal(SIGINT, _loom_stop);
@@ -1583,16 +1590,16 @@ u3m_init(void)
                          MAP_ANON | MAP_PRIVATE,
                          -1, 0);
 
-      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      fprintf(stderr, "see urbit.org/docs/getting-started#swap for adding swap space\r\n");
+      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      u3l_log("see urbit.org/docs/getting-started#swap for adding swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
-        fprintf(stderr,
-                "if porting to a new platform, try U3_OS_LoomBase %p\r\n",
+        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
                 dyn_v);
       }
       exit(1);
     }
-    printf("loom: mapped %dMB\r\n", len_w >> 20);
+
+    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 
@@ -1627,16 +1634,16 @@ _cm_init_new(void)
                          MAP_ANON | MAP_PRIVATE,
                          -1, 0);
 
-      fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      fprintf(stderr, "see urbit.org/docs/using/install to add swap space\r\n");
+      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
+      u3l_log("see urbit.org/docs/using/install to add swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
-        fprintf(stderr,
-                "if porting to a new platform, try U3_OS_LoomBase %p\r\n",
+        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
                 dyn_v);
       }
       exit(1);
     }
-    printf("loom: mapped %dMB\r\n", len_w >> 20);
+
+    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
   }
 }
 
@@ -1652,12 +1659,12 @@ _get_cmd_output(c3_c *cmd_c, c3_c *out_c, c3_w len_c)
 {
   FILE *fp = popen(cmd_c, "r");
   if ( NULL == fp ) {
-    fprintf(stderr, "'%s' failed\n", cmd_c);
+    u3l_log("'%s' failed\n", cmd_c);
     exit(1);
   }
 
   if ( NULL == fgets(out_c, len_c, fp) ) {
-    fprintf(stderr, "'%s' produced no output\n", cmd_c);
+    u3l_log("'%s' produced no output\n", cmd_c);
     exit(1);
   }
 
@@ -1690,7 +1697,7 @@ _git_pill_url(c3_c *out_c, c3_c *arv_c)
   assert(NULL != arv_c);
 
   if ( 0 != system("which git >> /dev/null") ) {
-    fprintf(stderr, "Could not find git executable\n");
+    u3l_log("Could not find git executable\n");
     exit(1);
   }
 
@@ -1732,7 +1739,7 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       snprintf(ful_c, 2048, "%s/.urb/%s", dir_c, nam_c);
       if ( stat(ful_c, &s) == 0 ) {
         /* we're in a "logical boot". awful hack, but bail here */
-        printf("%s confirmed to exist\r\n", ful_c);
+        u3l_log("%s confirmed to exist\r\n", ful_c);
         return;
       }
     }
@@ -1741,9 +1748,9 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
     if ( pil_c != 0 ) {
       snprintf(ful_c, 2048, "cp %s %s/.urb/%s",
                       pil_c, dir_c, nam_c);
-      printf("%s\r\n", ful_c);
+      u3l_log("%s\r\n", ful_c);
       if ( 0 != system(ful_c) ) {
-        fprintf(stderr, "could not %s\n", ful_c);
+        u3l_log("could not %s\n", ful_c);
         exit(1);
       }
     }
@@ -1762,13 +1769,13 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       }
 
       snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-      printf("fetching %s to %s\r\n", url_c, ful_c);
+      u3l_log("fetching %s to %s\r\n", url_c, ful_c);
       if ( !(curl = curl_easy_init()) ) {
-        fprintf(stderr, "failed to initialize libcurl\n");
+        u3l_log("failed to initialize libcurl\n");
         exit(1);
       }
       if ( !(file = fopen(ful_c, "w")) ) {
-        fprintf(stderr, "failed to open %s\n", ful_c);
+        u3l_log("failed to open %s\n", ful_c);
         exit(1);
       }
       curl_easy_setopt(curl, CURLOPT_URL, url_c);
@@ -1777,16 +1784,14 @@ _boot_home(c3_c *dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c)
       curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &cod_l);
       fclose(file);
       if ( CURLE_OK != result ) {
-        fprintf(stderr, "failed to fetch %s: %s\n",
-                        url_c, curl_easy_strerror(result));
-        fprintf(stderr,
-                "please fetch it manually and specify the location with -B\n");
+        u3l_log("failed to fetch %s: %s\n",
+                url_c, curl_easy_strerror(result));
+        u3l_log("please fetch it manually and specify the location with -B\n");
         exit(1);
       }
       if ( 300 <= cod_l ) {
-        fprintf(stderr, "error fetching %s: HTTP %ld\n", url_c, cod_l);
-        fprintf(stderr,
-                "please fetch it manually and specify the location with -B\n");
+        u3l_log("error fetching %s: HTTP %ld\n", url_c, cod_l);
+        u3l_log("please fetch it manually and specify the location with -B\n");
         exit(1);
       }
       curl_easy_cleanup(curl);
@@ -1831,7 +1836,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
     _boot_home(dir_c, pil_c, url_c, arv_c);
 
     snprintf(ful_c, 2048, "%s/.urb/urbit.pill", dir_c);
-    printf("boot: loading %s\r\n", ful_c);
+    u3l_log("boot: loading %s\r\n", ful_c);
 
     {
       u3_noun pil = u3m_file(ful_c);
@@ -1841,7 +1846,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
         u3_noun pro = u3m_soft(0, u3ke_cue, u3k(pil));
 
         if ( 0 != u3h(pro) ) {
-          fprintf(stderr, "boot: failed: unable to parse pill\r\n");
+          u3l_log("boot: failed: unable to parse pill\r\n");
           exit(1);
         }
 
@@ -1852,7 +1857,7 @@ u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c,
       //  XX confirm trel of lists?
       //
       if ( c3n == u3r_trel(sys, &bot, 0, 0) ) {
-        fprintf(stderr, "boot: failed: obsolete pill structure\r\n");
+        u3l_log("boot: failed: obsolete pill structure\r\n");
         exit(1);
       }
 
@@ -1888,6 +1893,9 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Activate tracing.
   */
+  u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.
@@ -1896,7 +1904,10 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Initialize the jet system.
   */
-  u3j_boot(nuu_o);
+  {
+    c3_w len_w = u3j_boot(nuu_o);
+    u3l_log("boot: installed %d jets\r\n", len_w);
+  }
 
   /* Reactivate jets on old kernel.
   */
@@ -1928,6 +1939,9 @@ u3m_boot_pier(void)
 
   /* Activate tracing.
   */
+  u3C.slog_f = 0;
+  u3C.sign_hold_f = 0;
+  u3C.sign_move_f = 0;
   u3t_init();
 
   /* Construct or activate the allocator.

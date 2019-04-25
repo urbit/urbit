@@ -40,85 +40,16 @@ u3t_drop(void)
   }
 }
 
-extern void
-u3_pier_tank(c3_l tab_l, u3_noun tac);
-
-#ifdef U3_EVENT_TIME_DEBUG
-/* _t_slog_time(): slog timelapse.
-*/
-void
-_t_slog_time(void)
-{
-  static int old;
-  static struct timeval b4, f2, d0;
-  static c3_d b4_d;
-  c3_w ms_w;
-
-  if ( old ) {
-    gettimeofday(&f2, 0);
-    timersub(&f2, &b4, &d0);
-    ms_w = (d0.tv_sec * 1000) + (d0.tv_usec / 1000);
-    if (ms_w > 1) {
-#if 0
-      fprintf(stderr, "%6d.%02dms: %9d ",
-              ms_w, (int) (d0.tv_usec % 1000) / 10,
-              ((int) (u3R->pro.nox_d - b4_d)));
-#else
-      fprintf(stderr, "%6d.%02dms ",
-              ms_w, (int) (d0.tv_usec % 1000) / 10);
-#endif
-      gettimeofday(&b4, 0);
-      b4_d = u3R->pro.nox_d;
-    }
-    else {
-      printf("            ");
-    }
-  }
-  else {
-    gettimeofday(&b4, 0);
-    b4_d = u3R->pro.nox_d;
-  }
-  old = 1;
-}
-#endif
-
 /* u3t_slog(): print directly.
 */
 void
 u3t_slog(u3_noun hod)
 {
-#ifdef U3_EVENT_TIME_DEBUG
-  _t_slog_time();
-#endif
-
-  if ( c3y == u3du(hod) ) {
-    u3_noun pri = u3h(hod);
-
-    switch ( pri ) {
-      case 3: fprintf(stderr, ">>> "); break;
-      case 2: fprintf(stderr, ">> "); break;
-      case 1: fprintf(stderr, "> "); break;
-    }
-    u3_pier_tank(0, u3k(u3t(hod)));
-  }
-  u3z(hod);
-}
-
-/* u3t_shiv(): quick print.
-*/
-void
-u3t_shiv(u3_noun hod)
-{
-#ifdef U3_EVENT_TIME_DEBUG
-  _t_slog_time();
-#endif
-
-  if ( c3n == u3ud(hod) ) {
+  if ( 0 != u3C.slog_f ) {
+    u3C.slog_f(hod);
   }
   else {
-    c3_c *str_c = u3r_string(hod);
-    fprintf(stderr, "%s\r\n", str_c);
-    free(str_c);
+    u3z(hod);
   }
 }
 
@@ -491,46 +422,33 @@ u3t_event_trace(const c3_c* name, c3_c type)
   u3_Host.tra_u.con_w++;
 }
 
-extern FILE*
-u3_term_io_hija(void);
-
-extern void
-u3_term_io_loja(int x);
-
-extern void
-u3_term_tape(u3_noun tep);
-
-extern void
-u3_term_wall(u3_noun wol);
-
 /* u3t_print_steps: print step counter.
 */
 void
 u3t_print_steps(c3_c* cap_c, c3_d sep_d)
 {
-  FILE* fil_f = u3_term_io_hija();
-
   c3_w gib_w = (sep_d / 1000000000ULL);
   c3_w mib_w = (sep_d % 1000000000ULL) / 1000000ULL;
   c3_w kib_w = (sep_d % 1000000ULL) / 1000ULL;
   c3_w bib_w = (sep_d % 1000ULL);
 
+  //  XX prints to stderr since it's called on shutdown, daemon may be gone
+  //
   if ( sep_d ) {
     if ( gib_w ) {
-      fprintf(fil_f, "%s: G/%d.%03d.%03d.%03d\r\n",
+      fprintf(stderr, "%s: G/%d.%03d.%03d.%03d\r\n",
           cap_c, gib_w, mib_w, kib_w, bib_w);
     }
     else if ( mib_w ) {
-      fprintf(fil_f, "%s: M/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
+      fprintf(stderr, "%s: M/%d.%03d.%03d\r\n", cap_c, mib_w, kib_w, bib_w);
     }
     else if ( kib_w ) {
-      fprintf(fil_f, "%s: K/%d.%03d\r\n", cap_c, kib_w, bib_w);
+      fprintf(stderr, "%s: K/%d.%03d\r\n", cap_c, kib_w, bib_w);
     }
     else if ( bib_w ) {
-      fprintf(fil_f, "%s: %d\r\n", cap_c, bib_w);
+      fprintf(stderr, "%s: %d\r\n", cap_c, bib_w);
     }
   }
-  u3_term_io_loja(0);
 }
 
 /* u3t_damp(): print and clear profile data.
@@ -541,8 +459,22 @@ u3t_damp(void)
   if ( 0 != u3R->pro.day ) {
     u3_noun wol = u3do("pi-tell", u3R->pro.day);
 
-    fprintf(stderr, "\r\n");
-    u3_term_wall(wol);
+    //  XX prints to stderr since it's called on shutdown, daemon may be gone
+    //
+    {
+      u3_noun low = wol;
+
+      while ( u3_nul != low ) {
+        c3_c* str_c = (c3_c*)u3r_tape(u3h(low));
+
+        fprintf(stderr, "%s\r\n", str_c);
+        c3_free(str_c);
+
+        low = u3t(low);
+      }
+
+      u3z(wol);
+    }
 
     /* bunt a +doss
     */
@@ -560,7 +492,6 @@ u3t_damp(void)
 */
 void _ct_sigaction(c3_i x_i)
 {
-  // fprintf(stderr, "itimer!\r\n"); abort();
   u3t_samp();
 }
 
