@@ -23,3 +23,5 @@ GRTAGS
 GTAGS
 *.swo
 *.swp
+hash_tests
+hashtable_tests

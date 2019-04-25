@@ -1,4 +1,4 @@
-# urb
+# Herb
 
 Unix control of Urbit
 
@@ -7,10 +7,10 @@ Unix control of Urbit
 To run without installing anything:
 
 ```bash
-nix-shell --pure --command 'python ./urb -d "(add 3 4)"'
+nix-shell --pure --command 'python ./herb -d "(add 3 4)"'
 ```
 
-To install `urb`:
+To install `herb`:
 
 ```bash
 nix-env -if .

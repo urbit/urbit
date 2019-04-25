@@ -3,7 +3,7 @@
 pkgs.stdenv.mkDerivation rec {
   name        = "solid";
   builder     = ./builder.sh;
-  buildInputs = [ urbit tlon.urb pkgs.coreutils ];
+  buildInputs = [ urbit tlon.herb pkgs.coreutils ];
 
   FAKEZOD = fakezod;
   ARVO    = arvo;

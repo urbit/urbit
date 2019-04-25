@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-mkdir ./build &> /dev/null
-meson . ./build --buildtype=release "$@"
-ninja -C build

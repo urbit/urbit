@@ -21,19 +21,19 @@ let
 in
 
 pkgs.stdenv.mkDerivation rec {
-  name         = "urb";
+  name         = "herb";
   buildInputs  = [ pyenv ];
   unpackPhase  = "true";
   installPhase = ''
     mkdir -p $out/bin
 
-    cp ${./urb} $out/bin/urb.py
+    cp ${./herb} $out/bin/herb.py
 
-    cat > $out/bin/urb <<EOF
+    cat > $out/bin/herb <<EOF
     #!/usr/bin/env bash
-    ${pyexe} $out/bin/urb.py "\$@"
+    ${pyexe} $out/bin/herb.py "\$@"
     EOF
 
-    chmod +x $out/bin/urb
+    chmod +x $out/bin/herb
   '';
 }
