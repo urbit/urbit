@@ -65,20 +65,20 @@ void u3_lmdb_shutdown(MDB_env* env)
   mdb_env_close(env);
 }
 
-/* _perform_put_on_databse_raw(): Writes a key/value pair to a specific
+/* _perform_put_on_database_raw(): Writes a key/value pair to a specific
 ** database as part of a transaction.
 **
 ** The raw version doesn't take ownership of either key/value and performs no
 ** nock calculations, so it is safe to call from any thread.
 */
 static
-void _perform_put_on_databse_raw(MDB_txn* transaction_u,
-                                 MDB_dbi database_u,
-                                 c3_w flags,
-                                 void* key,
-                                 size_t key_len,
-                                 void* value,
-                                 size_t value_len) {
+void _perform_put_on_database_raw(MDB_txn* transaction_u,
+                                  MDB_dbi database_u,
+                                  c3_w flags,
+                                  void* key,
+                                  size_t key_len,
+                                  void* value,
+                                  size_t value_len) {
   MDB_val key_val, value_val;
 
   key_val.mv_size = key_len;
@@ -94,11 +94,11 @@ void _perform_put_on_databse_raw(MDB_txn* transaction_u,
   }
 }
 
-/* _perform_get_on_databse_raw(): Reads a key/value pair to a specific
+/* _perform_get_on_database_raw(): Reads a key/value pair to a specific
 ** database as part of a transaction.
 */
 static
-void _perform_get_on_databse_raw(MDB_txn* transaction_u,
+void _perform_get_on_database_raw(MDB_txn* transaction_u,
                                  MDB_dbi database_u,
                                  void* key,
                                  size_t key_len,
@@ -114,16 +114,16 @@ void _perform_get_on_databse_raw(MDB_txn* transaction_u,
   }
 }
 
-/* _perform_put_on_databse_noun(): Writes a noun to the database.
+/* _perform_put_on_database_noun(): Writes a noun to the database.
 **
 ** This requires access to the loom so it must only be run from the libuv
 ** thread.
 */
 static
-void _perform_put_on_databse_noun(MDB_txn* transaction_u,
-                                  MDB_dbi database_u,
-                                  c3_c* key,
-                                  u3_noun noun) {
+void _perform_put_on_database_noun(MDB_txn* transaction_u,
+                                   MDB_dbi database_u,
+                                   c3_c* key,
+                                   u3_noun noun) {
   // jam noun into an atom representation
   u3_atom mat = u3ke_jam(noun);
 
@@ -132,31 +132,31 @@ void _perform_put_on_databse_noun(MDB_txn* transaction_u,
   c3_y* bytes_y = (c3_y*) malloc(len_w);
   u3r_bytes(0, len_w, bytes_y, mat);
 
-  _perform_put_on_databse_raw(transaction_u,
-                              database_u,
-                              0,
-                              key, strlen(key),
-                              bytes_y, len_w);
+  _perform_put_on_database_raw(transaction_u,
+                               database_u,
+                               0,
+                               key, strlen(key),
+                               bytes_y, len_w);
 
   free(bytes_y);
   u3z(mat);
 }
 
-/* _perform_get_on_databse_noun(): Reads a noun from the database.
+/* _perform_get_on_database_noun(): Reads a noun from the database.
 **
 ** This requires access to the loom so it must only be run from the libuv
 ** thread.
 */
 static
-void _perform_get_on_databse_noun(MDB_txn* transaction_u,
-                                  MDB_dbi database_u,
-                                  c3_c* key,
-                                  u3_noun* noun) {
+void _perform_get_on_database_noun(MDB_txn* transaction_u,
+                                   MDB_dbi database_u,
+                                   c3_c* key,
+                                   u3_noun* noun) {
   MDB_val value_val;
-  _perform_get_on_databse_raw(transaction_u,
-                              database_u,
-                              key, strlen(key),
-                              &value_val);
+  _perform_get_on_database_raw(transaction_u,
+                               database_u,
+                               key, strlen(key),
+                               &value_val);
 
   // Take the bytes and cue them.
   u3_atom raw_atom = u3i_bytes(value_val.mv_size, value_val.mv_data);
@@ -225,13 +225,13 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
   // TODO: We need to detect the database being full, making the database
   // maxsize larger, and then retrying this transaction.
   //
-  _perform_put_on_databse_raw(transaction_u,
-                              database_u,
-                              MDB_NOOVERWRITE,
-                              &(data->event_number),
-                              sizeof(c3_d),
-                              data->malloced_event_data,
-                              data->malloced_event_data_size);
+  _perform_put_on_database_raw(transaction_u,
+                               database_u,
+                               MDB_NOOVERWRITE,
+                               &(data->event_number),
+                               sizeof(c3_d),
+                               data->malloced_event_data,
+                               data->malloced_event_data_size);
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
@@ -497,9 +497,9 @@ void u3_lmdb_write_identity(MDB_env* environment,
     u3m_bail(c3__fail);
   }
 
-  _perform_put_on_databse_noun(transaction_u, database_u, "who", who);
-  _perform_put_on_databse_noun(transaction_u, database_u, "is-fake", is_fake);
-  _perform_put_on_databse_noun(transaction_u, database_u, "life", life);
+  _perform_put_on_database_noun(transaction_u, database_u, "who", who);
+  _perform_put_on_database_noun(transaction_u, database_u, "is-fake", is_fake);
+  _perform_put_on_database_noun(transaction_u, database_u, "life", life);
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
@@ -537,9 +537,9 @@ void u3_lmdb_read_identity(MDB_env* environment,
     u3m_bail(c3__fail);
   }
 
-  _perform_get_on_databse_noun(transaction_u, database_u, "who", who);
-  _perform_get_on_databse_noun(transaction_u, database_u, "is-fake", is_fake);
-  _perform_get_on_databse_noun(transaction_u, database_u, "life", life);
+  _perform_get_on_database_noun(transaction_u, database_u, "who", who);
+  _perform_get_on_database_noun(transaction_u, database_u, "is-fake", is_fake);
+  _perform_get_on_database_noun(transaction_u, database_u, "life", life);
 
   // Read-only transactions are aborted since we don't need to record the fact
   // that we performed a read.
