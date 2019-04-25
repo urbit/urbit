@@ -114,10 +114,9 @@
       ::
       $:  %work
           ::  p: event number
-          ::  q: mug of state (or 0)
-          ::  r: event (at date)
+          ::  q: a jammed noun [mug [date ovum]]
           ::
-          [p=@ q=@ r=(pair date ovum)]
+          [p=@ q=@]
   ==  ==
 --
 */
@@ -350,10 +349,11 @@ _worker_send_replace(c3_d evt_d, u3_noun ovo)
           evt_d,
           u3r_string(u3h(u3t(ovo))));
 
-  _worker_send(u3nq(c3__work,
+  _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
-                    u3V.mug_l,
-                    u3nc(u3k(u3A->now), ovo)));
+                    u3ke_jam(u3nt(u3V.mug_l,
+                                  u3k(u3A->now),
+                                  ovo))));
 }
 
 /* _worker_send_complete(): report completion.
@@ -707,22 +707,29 @@ _worker_poke(void* vod_p, u3_noun mat)
       }
 
       case c3__work: {
-        u3_noun evt, mug, job;
+        u3_noun evt, jammed_entry, mug, job;
         c3_d evt_d;
         c3_l mug_l;
 
-        if ( (c3n == u3r_qual(jar, 0, &evt, &mug, &job)) ||
+        if ( (c3n == u3r_trel(jar, 0, &evt, &jammed_entry)) ||
              (c3n == u3ud(evt)) ||
-             (1 != u3r_met(6, evt)) ||
-             (c3n == u3ud(mug)) ||
-             (1 < u3r_met(5, mug)) )
+             (1 != u3r_met(6, evt)) )
         {
+          goto error;
+        }
+
+        u3_noun entry = u3ke_cue(u3k(jammed_entry));
+        if ( (c3y != u3du(entry)) ||
+             (c3n == u3r_cell(entry, &mug, &job)) ||
+             (c3n == u3ud(mug)) ||
+             (1 < u3r_met(5, mug)) ) {
           goto error;
         }
 
         evt_d = u3r_chub(0, evt);
         mug_l = u3r_word(0, mug);
         u3k(job);
+        u3z(entry);
         u3z(jar);
 
         return _worker_poke_work(evt_d, mug_l, job);
