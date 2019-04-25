@@ -748,7 +748,7 @@
   ::  In either case, they fall through here to be handled
   ::  after the fact in +feck.
   ::
-  ?:  ?=(?(%veer %verb %wack) -.q.ovo)
+  ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
@@ -799,6 +799,21 @@
     ?>  ?=(@ q.q.ovo)
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
+  ::  learn of event-replacement failure
+  ::
+      %warn
+    :_  +>.$
+    ?.  ?=(^ +.q.ovo)
+      ~
+    =/  msg=tape
+      :(weld "(for %" (trip (symp +<.q.ovo)) ") failed")
+    ~>  %slog.[0 leaf+(weld "arvo: replacement event " msg)]
+    ?:  lac
+      ~
+    =/  rep
+      %-  mule  |.
+      ((slog (tang +>.q.ovo)) ~)
+    ?.(?=(%& -.rep) ~ p.rep)
   ==
 ::
 ++  vega                                                ::  reboot kernel
