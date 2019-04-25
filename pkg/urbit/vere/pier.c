@@ -674,6 +674,12 @@ _pier_work_replace(u3_writ* wit_u,
 
   c3_assert(god_u->sen_d == wit_u->evt_d);
 
+  //  something has gone very wrong, we should probably stop now
+  //
+  if ( wit_u->rep_d >= 3ULL ) {
+    u3_pier_bail();
+  }
+
   /* move backward in work processing
   */
   {
@@ -683,7 +689,9 @@ _pier_work_replace(u3_writ* wit_u,
     u3z(wit_u->mat);
     wit_u->mat = mat;
 
-    god_u->sen_d -= 1;
+    wit_u->rep_d += 1ULL;
+
+    god_u->sen_d -= 1ULL;
   }
 
   if ( wit_u->evt_d > pir_u->lif_d ) {
@@ -1139,6 +1147,18 @@ _pier_loop_wake(u3_pier* pir_u)
 {
   c3_l cod_l;
 
+  //  inject fresh entropy
+  //
+  {
+    c3_w    eny_w[16];
+    c3_rand(eny_w);
+
+    u3_noun wir = u3nt(u3_blip, c3__arvo, u3_nul);
+    u3_noun car = u3nc(c3__wack, u3i_words(16, eny_w));
+
+    _pier_writ_insert_ovum(pir_u, 0, u3nc(wir, car));
+  }
+
   cod_l = u3a_lush(c3__unix);
   u3_unix_io_talk(pir_u);
   u3_unix_ef_bake(pir_u);
@@ -1355,8 +1375,6 @@ _pier_boot_vent(u3_boot* bot_u)
   }
 
   //  prepend entropy to the module sequence
-  //
-  //    XX also copy to _pier_loop_wake?
   //
   {
     c3_w    eny_w[16];
