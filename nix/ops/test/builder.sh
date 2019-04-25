@@ -5,7 +5,7 @@ set -ex
 cp -r $SHIP ./ship
 chmod -R u+rw ./ship
 
-urbit -d ./ship 2> urbit-output
+$URBIT -d ./ship 2> urbit-output
 
 tail -f urbit-output >&2 &
 tailproc=$!
