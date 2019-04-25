@@ -10,7 +10,7 @@ let
 
   libs =
     with pkgs;
-    [ openssl zlib curl gmp scrypt libsigsegv ncurses openssl zlib ];
+    [ openssl zlib curl gmp scrypt libsigsegv ncurses openssl zlib lmdb ];
 
   osx =
     with pkgs;
