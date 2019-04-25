@@ -363,7 +363,7 @@ _worker_send_complete(u3_noun vir)
 {
   _worker_send(u3nq(c3__done,
                     u3i_chubs(1, &u3V.evt_d),
-                    u3r_mug(u3A->roc),
+                    u3V.mug_l,
                     vir));
 }
 
@@ -401,6 +401,7 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 {
   u3z(u3A->roc);
   u3A->roc = cor;
+  u3V.mug_l = u3r_mug(u3A->roc);
 
   u3_noun sac = u3_nul;
 
@@ -461,7 +462,7 @@ _worker_work_live(c3_d    evt_d,              //  event number
 
   c3_assert(evt_d == u3V.evt_d + 1ULL);
   if ( 0 != mug_l ) {
-    c3_assert(u3r_mug(u3A->roc) == mug_l);
+    c3_assert(u3V.mug_l == mug_l);
   }
 
   u3x_cell(job, &now, &ovo);
@@ -567,6 +568,10 @@ _worker_work_boot(c3_d    evt_d,
                 u3_noun job)
 {
   c3_assert(evt_d == u3V.evt_d + 1ULL);
+  if ( 0 != mug_l ) {
+    c3_assert(u3V.mug_l == mug_l);
+  }
+
   u3V.evt_d = evt_d;
 
   u3A->roe = u3nc(job, u3A->roe);
@@ -589,17 +594,21 @@ _worker_work_boot(c3_d    evt_d,
     }
 
     u3A->roc = u3k(u3t(pru));
+    u3V.mug_l = u3r_mug(u3A->roc);
 
-    u3l_log("worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
+    u3l_log("work: (%" PRIu64 ")| core: %x\r\n", evt_d, u3V.mug_l);
 
     //  XX set u3A->evt_d ?
     //
     u3z(pru);
   }
+  else {
+    u3V.mug_l = u3r_mug(job);
+  }
 
   _worker_send(u3nq(c3__done,
                     u3i_chubs(1, &evt_d),
-                    0,
+                    u3V.mug_l,
                     u3_nul));
 }
 
@@ -787,9 +796,10 @@ u3_worker_boot(void)
   u3_noun dat = u3_nul;
 
   if ( u3_none != u3A->our ) {
+    u3V.mug_l = u3r_mug(u3A->roc);
     nex_d = u3A->ent_d + 1ULL;
     dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
-                              0, // XX u3r_mug(u3A->roc),
+                              u3V.mug_l,
                               u3nc(u3k(u3A->our), u3k(u3A->fak))));
 
     //  disable hashboard for fake ships

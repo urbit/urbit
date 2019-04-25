@@ -652,6 +652,20 @@ _pier_work_complete(u3_writ* wit_u,
   fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
 #endif
 
+  if ( u3_psat_pace == pir_u->sat_e &&
+       wit_u->nex_u &&
+       mug_l != wit_u->nex_u->mug_l ) {
+    // While we are replaying the event log, we also perform checks that the
+    // resulting mug_l for this urbit's state is equivalent to the expected
+    // input state of the next event. If it isn't, we have either corruption or
+    // non-determinism during replay and either should cause a bail.
+    u3l_log("Invalid recomputed state. For event %" PRIu64 ", the computed mug "
+            "was %x but event %" PRIu64 " expected %x.\r\n",
+            wit_u->evt_d, mug_l, wit_u->nex_u->evt_d, wit_u->nex_u->mug_l);
+
+    u3_pier_bail();
+  }
+
   god_u->dun_d += 1;
   c3_assert(god_u->dun_d == wit_u->evt_d);
 
