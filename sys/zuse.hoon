@@ -8198,6 +8198,8 @@
     |=  n=@
     ^-  tape
     %-  prefix-hex
+    ?:  =(0 n)
+      "0"
     %-  render-hex-bytes
     (as-octs:mimes:html n)
   ::
