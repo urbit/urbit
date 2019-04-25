@@ -902,8 +902,6 @@ _pier_work_poke(void*   vod_p,
         goto error;
       }
       else {
-        // TODO: This new code is really scary and I don't know how to test it yet.
-        //
         c3_d     evt_d = u3r_chub(0, p_jar);
         u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
 
