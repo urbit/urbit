@@ -29,10 +29,9 @@ static u3_utty* _term_main();
 
 static void _write(int  fd,  const  void  *buf,  size_t count)
 {
-  
   if (count != write(fd,  buf, count)){
-    fprintf(stderr, "write failed\r\n");
-    assert(0);
+    u3l_log("write failed\r\n");
+    c3_assert(0);
   }
 }
 

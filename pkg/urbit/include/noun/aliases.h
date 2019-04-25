@@ -107,14 +107,3 @@
 #     define  u3tn(type, x) (x == 0) ? (void *)0 :  ((type *) u3a_into(x))
 #     define  u3of(type, x) (u3a_outa((type *)x))
 
-
-/* turn off address sanitizer to increase speed
-   https://en.wikipedia.org/wiki/AddressSanitizer
-*/
-#if GCC
-	/* gcc style */
-    #define NO_SANITIZE_ADDRESS  __attribute__((no_sanitize_address))
-#else
-    /* Clang style */
-    #define NO_SANITIZE_ADDRESS  __attribute__((no_sanitize("address")))
-#endif

@@ -161,7 +161,7 @@ u3r_at(u3_atom a, u3_noun b)
     }
   }
 
-NO_SANITIZE_ADDRESS
+__attribute__((no_sanitize_address))
 c3_o
 u3r_mean(u3_noun som,
         ...)

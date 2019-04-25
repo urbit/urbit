@@ -1345,4 +1345,4 @@
         u3_daemon_grab(void* vod_p);
 
         c3_w
-    		u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+        u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
