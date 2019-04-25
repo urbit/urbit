@@ -13,7 +13,7 @@ pkgs.stdenv.mkDerivation rec {
   builder     = ./builder.sh;
   buildInputs = [ tlon.herb ];
 
-  URBIT   = urbitExe
+  URBIT   = urbitExe;
   FAKEZOD = fakezod;
   ARVO    = arvo;
 }
