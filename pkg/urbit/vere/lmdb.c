@@ -72,7 +72,7 @@ void u3_lmdb_shutdown(MDB_env* env)
 ** nock calculations, so it is safe to call from any thread.
 */
 static
-void _perform_put_on_database_raw(MDB_txn* transaction_u,
+c3_o _perform_put_on_database_raw(MDB_txn* transaction_u,
                                   MDB_dbi database_u,
                                   c3_w flags,
                                   void* key,
@@ -90,19 +90,21 @@ void _perform_put_on_database_raw(MDB_txn* transaction_u,
   c3_w ret_w = mdb_put(transaction_u, database_u, &key_val, &value_val, flags);
   if (ret_w != 0) {
     u3l_log("lmdb: write failed: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return c3n;
   }
+
+  return c3y;
 }
 
 /* _perform_get_on_database_raw(): Reads a key/value pair to a specific
 ** database as part of a transaction.
 */
 static
-void _perform_get_on_database_raw(MDB_txn* transaction_u,
-                                 MDB_dbi database_u,
-                                 void* key,
-                                 size_t key_len,
-                                 MDB_val* value) {
+c3_o _perform_get_on_database_raw(MDB_txn* transaction_u,
+                                  MDB_dbi database_u,
+                                  void* key,
+                                  size_t key_len,
+                                  MDB_val* value) {
   MDB_val key_val;
   key_val.mv_size = key_len;
   key_val.mv_data = key;
@@ -110,8 +112,10 @@ void _perform_get_on_database_raw(MDB_txn* transaction_u,
   c3_w ret_w = mdb_get(transaction_u, database_u, &key_val, value);
   if (ret_w != 0) {
     u3l_log("lmdb: read failed: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return c3n;
   }
+
+  return c3y;
 }
 
 /* _perform_put_on_database_noun(): Writes a noun to the database.
@@ -120,7 +124,7 @@ void _perform_get_on_database_raw(MDB_txn* transaction_u,
 ** thread.
 */
 static
-void _perform_put_on_database_noun(MDB_txn* transaction_u,
+c3_o _perform_put_on_database_noun(MDB_txn* transaction_u,
                                    MDB_dbi database_u,
                                    c3_c* key,
                                    u3_noun noun) {
@@ -132,14 +136,17 @@ void _perform_put_on_database_noun(MDB_txn* transaction_u,
   c3_y* bytes_y = (c3_y*) malloc(len_w);
   u3r_bytes(0, len_w, bytes_y, mat);
 
-  _perform_put_on_database_raw(transaction_u,
-                               database_u,
-                               0,
-                               key, strlen(key),
-                               bytes_y, len_w);
+  c3_o ret = _perform_put_on_database_raw(
+      transaction_u,
+      database_u,
+      0,
+      key, strlen(key),
+      bytes_y, len_w);
 
   free(bytes_y);
   u3z(mat);
+
+  return ret;
 }
 
 /* _perform_get_on_database_noun(): Reads a noun from the database.
@@ -148,21 +155,24 @@ void _perform_put_on_database_noun(MDB_txn* transaction_u,
 ** thread.
 */
 static
-void _perform_get_on_database_noun(MDB_txn* transaction_u,
+c3_o _perform_get_on_database_noun(MDB_txn* transaction_u,
                                    MDB_dbi database_u,
                                    c3_c* key,
                                    u3_noun* noun) {
   MDB_val value_val;
-  _perform_get_on_database_raw(transaction_u,
-                               database_u,
-                               key, strlen(key),
-                               &value_val);
+  c3_o ret = _perform_get_on_database_raw(transaction_u,
+                                          database_u,
+                                          key, strlen(key),
+                                          &value_val);
+  if (ret == c3n) {
+    return c3y;
+  }
 
   // Take the bytes and cue them.
   u3_atom raw_atom = u3i_bytes(value_val.mv_size, value_val.mv_data);
   *noun = u3qe_cue(raw_atom);
+  return c3y;
 }
-
 
 /* _write_request_data: callback struct for u3_lmdb_write_event()
 */
@@ -187,8 +197,11 @@ struct _write_request_data {
   // database write.
   size_t malloced_event_data_size;
 
+  // Whether the write completed successfully.
+  c3_o success;
+
   // Called on main loop thread on completion.
-  void (*on_complete)(u3_writ*);
+  void (*on_complete)(c3_o, u3_writ*);
 };
 
 /* _u3_lmdb_write_event_cb(): Implementation of u3_lmdb_write_event()
@@ -207,7 +220,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                              &transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return;
   }
 
   // Opens the database as part of the transaction.
@@ -219,27 +232,30 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
                        &database_u);
   if (0 != ret_w) {
     u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return;
   }
 
   // TODO: We need to detect the database being full, making the database
   // maxsize larger, and then retrying this transaction.
   //
-  _perform_put_on_database_raw(transaction_u,
-                               database_u,
-                               MDB_NOOVERWRITE,
-                               &(data->event_number),
-                               sizeof(c3_d),
-                               data->malloced_event_data,
-                               data->malloced_event_data_size);
+  c3_o success = _perform_put_on_database_raw(
+      transaction_u,
+      database_u,
+      MDB_NOOVERWRITE,
+      &(data->event_number),
+      sizeof(c3_d),
+      data->malloced_event_data,
+      data->malloced_event_data_size);
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n",
             data->event_number,
             mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return;
   }
+
+  data->success = c3y;
 }
 
 /* _u3_lmdb_write_event_after_cb(): Implementation of u3_lmdb_write_event()
@@ -250,7 +266,7 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
 static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
   struct _write_request_data* data = req->data;
 
-  data->on_complete(data->event);
+  data->on_complete(data->success, data->event);
 
   free(data->malloced_event_data);
   free(data);
@@ -268,7 +284,7 @@ static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
 */
 void u3_lmdb_write_event(MDB_env* environment,
                          u3_writ* event_u,
-                         void (*on_complete)(u3_writ*))
+                         void (*on_complete)(c3_o, u3_writ*))
 {
   // Serialize the jammed $work into a malloced buffer we can send to the other
   // thread.
@@ -284,6 +300,7 @@ void u3_lmdb_write_event(MDB_env* environment,
   data->malloced_event_data = data_u;
   data->malloced_event_data_size = siz_w;
   data->on_complete = on_complete;
+  data->success = c3n;
 
   // Queue asynchronous work to happen on the other thread.
   uv_work_t* req = c3_malloc(sizeof(uv_work_t));
@@ -469,7 +486,7 @@ c3_o u3_lmdb_get_latest_event_number(MDB_env* environment, c3_d* event_number)
 ** We have a secondary database (table) in this environment named META where we
 ** read/write identity information from/to.
 */
-void u3_lmdb_write_identity(MDB_env* environment,
+c3_o u3_lmdb_write_identity(MDB_env* environment,
                             u3_noun who,
                             u3_noun is_fake,
                             u3_noun life)
@@ -482,7 +499,7 @@ void u3_lmdb_write_identity(MDB_env* environment,
                              &transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return c3n;
   }
 
   // Opens the database as part of the transaction.
@@ -494,24 +511,43 @@ void u3_lmdb_write_identity(MDB_env* environment,
                        &database_u);
   if (0 != ret_w) {
     u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    mdb_txn_abort(transaction_u);
+    return c3n;
   }
 
-  _perform_put_on_database_noun(transaction_u, database_u, "who", who);
-  _perform_put_on_database_noun(transaction_u, database_u, "is-fake", is_fake);
-  _perform_put_on_database_noun(transaction_u, database_u, "life", life);
+  c3_o ret;
+  ret = _perform_put_on_database_noun(transaction_u, database_u, "who", who);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
+
+  ret = _perform_put_on_database_noun(transaction_u, database_u, "is-fake",
+                                      is_fake);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
+
+  ret = _perform_put_on_database_noun(transaction_u, database_u, "life", life);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: failed to commit transaction: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return c3n;
   }
+
+  return c3y;
 }
 
 
 /* u3_lmdb_read_identity(): Reads the event log identity information.
 */
-void u3_lmdb_read_identity(MDB_env* environment,
+c3_o u3_lmdb_read_identity(MDB_env* environment,
                            u3_noun* who,
                            u3_noun* is_fake,
                            u3_noun* life) {
@@ -523,7 +559,7 @@ void u3_lmdb_read_identity(MDB_env* environment,
                              &transaction_u);
   if (0 != ret_w) {
     u3l_log("lmdb: txn_begin fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    return c3n;
   }
 
   // Opens the database as part of the transaction.
@@ -534,14 +570,33 @@ void u3_lmdb_read_identity(MDB_env* environment,
                         &database_u);
   if (0 != ret_w) {
     u3l_log("lmdb: dbi_open fail: %s\n", mdb_strerror(ret_w));
-    u3m_bail(c3__fail);
+    mdb_txn_abort(transaction_u);
+    return c3n;
   }
 
-  _perform_get_on_database_noun(transaction_u, database_u, "who", who);
-  _perform_get_on_database_noun(transaction_u, database_u, "is-fake", is_fake);
-  _perform_get_on_database_noun(transaction_u, database_u, "life", life);
+  c3_o ret;
+  ret = _perform_get_on_database_noun(transaction_u, database_u, "who", who);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
+
+  ret = _perform_get_on_database_noun(transaction_u, database_u, "is-fake",
+                                      is_fake);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
+
+  ret = _perform_get_on_database_noun(transaction_u, database_u, "life", life);
+  if (ret == c3n) {
+    mdb_txn_abort(transaction_u);
+    return c3n;
+  }
 
   // Read-only transactions are aborted since we don't need to record the fact
   // that we performed a read.
   mdb_txn_abort(transaction_u);
+
+  return c3y;
 }

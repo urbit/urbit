@@ -89,10 +89,15 @@ _pier_db_shutdown(u3_pier* pir_u)
 /* _pier_db_commit_complete(): commit complete.
  */
 static void
-_pier_db_commit_complete(u3_writ* wit_u)
+_pier_db_commit_complete(c3_o success, u3_writ* wit_u)
 {
   u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
+
+  if (success == c3n) {
+    u3l_log("Failed to persist event. Exiting to prevent corruption.");
+    u3_pier_bail();
+  }
 
 #ifdef VERBOSE_EVENTS
   u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
@@ -144,8 +149,11 @@ _pier_db_write_header(u3_pier* pir_u,
                       u3_noun is_fake,
                       u3_noun life)
 {
-  u3_lmdb_write_identity(pir_u->log_u->db_u,
-                         who, is_fake, life);
+  c3_o ret = u3_lmdb_write_identity(pir_u->log_u->db_u,
+                                    who, is_fake, life);
+  if (ret == c3n) {
+    u3_pier_bail();
+  }
 }
 
 /* _pier_db_read_header(): reads the ships metadata from lmdb
@@ -154,8 +162,12 @@ static void
 _pier_db_read_header(u3_pier* pir_u)
 {
   u3_noun who, is_fake, life;
-  u3_lmdb_read_identity(pir_u->log_u->db_u,
-                        &who, &is_fake, &life);
+  c3_o ret = u3_lmdb_read_identity(pir_u->log_u->db_u,
+                                   &who, &is_fake, &life);
+  if (ret == c3n) {
+    u3l_log("Failed to load identity. Exiting...");
+    u3_pier_bail();
+  }
 
   _pier_boot_set_ship(pir_u, u3k(who), u3k(is_fake));
   pir_u->lif_d = u3r_chub(0, life);
@@ -221,10 +233,14 @@ _pier_db_load_commits(u3_pier* pir_u,
     // We are restarting from event 1. That means we need to set the ship from
     // the log identity information.
     u3_noun who, fak, len;
-    u3_lmdb_read_identity(pir_u->log_u->db_u,
-                          &who,
-                          &fak,
-                          &len);
+    c3_o ret = u3_lmdb_read_identity(pir_u->log_u->db_u,
+                                     &who,
+                                     &fak,
+                                     &len);
+    if (ret == c3n) {
+      u3l_log("Failed to load identity for replay. Exiting...");
+      u3_pier_bail();
+    }
 
     _pier_boot_set_ship(pir_u, u3k(who), u3k(fak));
     pir_u->lif_d = u3r_chub(0, len);
@@ -234,10 +250,14 @@ _pier_db_load_commits(u3_pier* pir_u,
     u3z(len);
   }
 
-  u3_lmdb_read_events(pir_u,
-                      lav_d,
-                      len_d,
-                      _pier_db_on_commit_loaded);
+  c3_o ret = u3_lmdb_read_events(pir_u,
+                                 lav_d,
+                                 len_d,
+                                 _pier_db_on_commit_loaded);
+  if (ret == c3n) {
+    u3l_log("Failed to read event log for replay. Exiting...");
+    u3_pier_bail();
+  }
 }
 
 /* _pier_db_init():

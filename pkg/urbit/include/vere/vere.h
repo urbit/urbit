@@ -1287,7 +1287,7 @@
       */
       void u3_lmdb_write_event(MDB_env* environment,
                                u3_writ* event_u,
-                               void (*on_complete)(u3_writ*));
+                               void (*on_complete)(c3_o success, u3_writ*));
 
       /* u3_lmdb_read_events(): Reads events back from the database
       **
@@ -1306,15 +1306,19 @@
                                                     u3_noun ovo));
 
       /* u3_lmdb_write_identity(): Writes log identity
+      **
+      ** Returns c3y on complete success; c3n on any error.
       */
-      void u3_lmdb_write_identity(MDB_env* environment,
+      c3_o u3_lmdb_write_identity(MDB_env* environment,
                                   u3_noun who,
                                   u3_noun is_fake,
                                   u3_noun life);
 
       /* u3_lmdb_read_identity(): Reads log identity
+      **
+      ** Returns c3y on complete success; c3n on any error.
       */
-      void u3_lmdb_read_identity(MDB_env* environment,
+      c3_o u3_lmdb_read_identity(MDB_env* environment,
                                  u3_noun* who,
                                  u3_noun* is_fake,
                                  u3_noun* life);
