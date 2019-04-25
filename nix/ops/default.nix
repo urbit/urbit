@@ -1,4 +1,4 @@
-{ pkgs ? import ../nixpkgs.nix }:
+{ pkgs ? import ../nixpkgs.nix, debug ? false }:
 
 let
 
@@ -12,34 +12,34 @@ in
 rec {
 
   bootzod = import ./fakeship {
-    inherit pkgs tlon deps urbit;
+    inherit pkgs tlon deps debug;
     brass = ../../bin/brass.pill;
     ship = "zod";
   };
 
   bootbus = import ./fakeship {
-    inherit pkgs tlon deps urbit;
+    inherit pkgs tlon deps debug;
     brass = ../../bin/brass.pill;
     ship = "bus";
   };
 
   test = import ./test {
-    inherit pkgs tlon deps urbit arvo;
+    inherit pkgs tlon deps arvo debug;
     ship = bootzod;
   };
 
   solid = import ./solid {
-    inherit arvo pkgs tlon deps urbit;
+    inherit arvo pkgs tlon deps debug;
     fakezod = bootzod;
   };
 
   brass = import ./brass {
-    inherit arvo pkgs tlon deps urbit;
+    inherit arvo pkgs tlon deps debug;
     fakezod = bootzod;
   };
 
   fakezod = import ./fakeship {
-    inherit pkgs tlon deps urbit brass;
+    inherit pkgs tlon deps brass debug;
     ship = "zod";
   };
 
