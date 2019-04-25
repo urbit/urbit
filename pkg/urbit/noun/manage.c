@@ -94,19 +94,28 @@ _cm_punt(u3_noun tax)
 }
 #endif
 
+static void _write(int  fd,  const  void  *buf,  size_t count)
+{
+  if (count != write(fd,  buf, count)){
+    u3l_log("write failed\r\n");
+    c3_assert(0);
+  }
+}
+
+
 /* _cm_emergency(): write emergency text to stderr, never failing.
 */
 static void
 _cm_emergency(c3_c* cap_c, c3_l sig_l)
 {
-  write(2, "\r\n", 2);
-  write(2, cap_c, strlen(cap_c));
+  _write(2, "\r\n", 2);
+  _write(2, cap_c, strlen(cap_c));
 
   if ( sig_l ) {
-    write(2, ": ", 2);
-    write(2, &sig_l, 4);
+    _write(2, ": ", 2);
+    _write(2, &sig_l, 4);
   }
-  write(2, "\r\n", 2);
+  _write(2, "\r\n", 2);
 }
 
 static void _cm_overflow(void *arg1, void *arg2, void *arg3)

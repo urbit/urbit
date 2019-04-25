@@ -1274,6 +1274,10 @@
         void
         u3_daemon_grab(void* vod_p);
 
+
+        c3_w
+        u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
     /* Database
     */
       /* u3_lmdb_init(): Initializes lmdb inside log_path
@@ -1328,3 +1332,5 @@
                                  u3_noun* who,
                                  u3_noun* is_fake,
                                  u3_noun* life);
+
+

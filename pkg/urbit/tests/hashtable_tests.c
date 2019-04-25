@@ -6,6 +6,10 @@ static void _test_cache_trimming(void);
 static void _test_no_cache(void);
 static void _test_skip_slot(void);
 
+// defined in noun/hashtable.c
+c3_w _ch_skip_slot(c3_w mug_w, c3_w lef_w);
+
+
 /* main(): run all test cases.
 */
 int
