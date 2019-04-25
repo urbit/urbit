@@ -143,14 +143,8 @@
   ++  mo-abet
     ^-  [(list move) _mo-context]
     ::
-    :_  mo-context
-    =/  reshape
-      |=  mov=move
-      ^-  move
-      ?.  ?=(%pass -.q.mov)
-        mov
-      [p.mov %pass p.q.mov q.q.mov]
-    [(flop (turn moves reshape))]
+    =/  resolved  (flop moves)
+    [resolved mo-context]
   ::
   ::  +mo-conf: send an %exec to ford using a beak assembled with the current
   ::            timestamp.
@@ -160,27 +154,27 @@
     ^+  mo-state
     ::
     =/  =beak
-      =/  case  [%da now]
+      =/  =case  [%da now]
       [p=ship q=desk r=case]
     ::
     (mo-boot dude beak)
   ::
-  ::  +mo-pass: prepend a standard %pass move.
+  ::  +mo-pass: prepend a standard %pass move to the move state.
   ::
   ++  mo-pass
     |=  pass=(pair path note-arvo)
     ^+  mo-state
     ::
-    =/  move  [hen %pass pass]
+    =/  =move  [hen %pass pass]
     mo-state(moves [move moves])
   ::
-  ::  +mo-give: prepend a standard %give move.
+  ::  +mo-give: prepend a standard %give move to the move state.
   ::
   ++  mo-give
-    |=  gift=gift:able
+    |=  =gift:able
     ^+  mo-state
     ::
-    =/  move  [hen %give gift]
+    =/  =move  [hen %give gift]
     mo-state(moves [move moves])
   ::
   :: +mo-okay: check that a ford-built app core produces a valid bowl.
@@ -190,12 +184,12 @@
     |=  =vase
     ^-  ?
     ::
-    =/  bol  (slew 12 vase)
-    ?~  bol
+    =/  val  (slew 12 vase)
+    ?~  val
       %.n
     ::
-    =/  declared  p.u.bol
-    (~(nest ut declared) %.n bowl-type)
+    =/  bowl  p.u.val
+    (~(nest ut bowl) %.n bowl-type)
   ::
   ::  +mo-receive-core: receives an app core built by ford-turbo.
   ::
@@ -393,15 +387,6 @@
     =/  conns  (~(got by sap.mas) ship)
     =/  duct  r:conns
     (~(got by duct) index)
-  ::
-  ::  +mo-come: handle locally.
-  ::
-  ++  mo-come
-    |=  [=ship =cush]
-    ^+  mo-state
-    ::
-    =/  =prey  [%high [~ ship]]
-    (mo-club p.cush prey q.cush)
   ::
   ::  +mo-cyst-core: receive a core.
   ::
@@ -759,13 +744,17 @@
     =/  clubbed  (ap-club:pap club)
     ap-abet:clubbed
   ::
-  ::  +mo-club: local action.
+  ::  +mo-come: handle locally
   ::
-  ++  mo-club
-    |=  [=dude =prey =club]
+  ++  mo-come
+    |=  [=ship =cush]
     ^+  mo-state
     ::
     =/  default-sofa  *sofa
+    ::
+    =/  =prey  [%high [~ ship]]
+    =/  =dude  p.cush
+    =/  =club  q.cush
     ::
     ?:  |(!(~(has by bum.mas) dude) (~(has by wub.mas) dude))
       ~&  >>  [%mo-not-running dude -.club]
