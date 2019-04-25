@@ -803,6 +803,7 @@ _worker_poke(void* vod_p, u3_noun mat)
 
         evt_d = u3r_chub(0, evt);
         u3z(evt);
+        u3z(jar);
 
         c3_assert( evt_d == u3V.evt_d );
 
