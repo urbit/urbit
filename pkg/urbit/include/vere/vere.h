@@ -607,7 +607,7 @@
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
-          u3_atom          mat;                 //  jammed $work, or 0
+          u3_atom          mat;                 //  jammed [mug_l job], or 0
           u3_noun          act;                 //  action list
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
@@ -1312,8 +1312,7 @@
                                c3_d len_d,
                                c3_o(*on_event_read)(u3_pier* pir_u,
                                                     c3_d id,
-                                                    u3_noun mat,
-                                                    u3_noun ovo));
+                                                    u3_noun mat));
 
       /* u3_lmdb_write_identity(): Writes log identity
       **

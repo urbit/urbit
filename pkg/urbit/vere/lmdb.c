@@ -324,7 +324,7 @@ c3_o u3_lmdb_read_events(u3_pier* pir_u,
                          c3_d first_event_d,
                          c3_d len_d,
                          c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
-                                              u3_noun mat, u3_noun ovo))
+                                              u3_noun mat))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -377,24 +377,27 @@ c3_o u3_lmdb_read_events(u3_pier* pir_u,
     // As a sanity check, we make sure that there aren't any discontinuities in
     // the sequence of loaded events.
     c3_d current_id = first_event_d + loaded;
-    if (key.mv_size != sizeof(c3_d) ||
-        *(c3_d*)key.mv_data != current_id) {
+    if (key.mv_size != sizeof(c3_d)) {
       u3l_log("lmdb: invalid cursor key\r\n");
+      return c3n;
+    }
+    if (*(c3_d*)key.mv_data != current_id) {
+      u3l_log("lmdb: missing event in database. Expected %" PRIu64 ", received %"
+              PRIu64 "\r\n",
+              current_id,
+              *(c3_d*)key.mv_data);
       return c3n;
     }
 
     // Now build the atom version and then the cued version from the raw data
     u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
-    u3_noun ovo = u3ke_cue(u3k(mat));
 
-    if (on_event_read(pir_u, current_id, mat, ovo) == c3n) {
-      u3z(ovo);
+    if (on_event_read(pir_u, current_id, mat) == c3n) {
       u3z(mat);
       u3l_log("lmdb: aborting replay due to error.\r\n");
       return c3n;
     }
 
-    u3z(ovo);
     u3z(mat);
 
     ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_NEXT);
