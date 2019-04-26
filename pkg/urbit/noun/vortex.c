@@ -159,50 +159,6 @@ u3v_boot_lite(u3_atom lit)
   u3z(pru);
 }
 
-/* u3v_hose(): clear initial ovum queue.
-*/
-void
-u3v_hose(void)
-{
-  u3p(u3v_cart) egg_p = u3A->ova.egg_p;
-
-  while ( egg_p ) {
-    u3v_cart*     egg_u = u3to(u3v_cart, egg_p);
-    u3p(u3v_cart) nex_p = egg_u->nex_p;
-
-    u3a_lose(egg_u->vir);
-    u3a_free(egg_u);
-
-    egg_p = nex_p;
-  }
-  u3A->ova.egg_p = u3A->ova.geg_p = 0;
-  u3z(u3A->roe);
-  u3A->roe = u3_nul;
-}
-
-//  XX deprecated, remove
-#if 0
-/* u3v_start(): start time.
-*/
-void
-u3v_start(u3_noun now)
-{
-  u3v_time(now);
-  u3v_numb();
-  u3A->sac = u3_nul;
-
-  {
-    c3_c* wen_c = u3r_string(u3A->wen);
-
-    u3l_log("arvo: time: %s\n", wen_c);
-    free(wen_c);
-  }
-
-  if ( u3C.wag_w & u3o_trace )
-    u3t_trace_open();
-}
-#endif
-
 /* u3v_wish(): text expression with cache.
 */
 u3_noun
@@ -485,56 +441,6 @@ u3v_sway(u3_noun blu, c3_l tab_l, u3_noun tax)
   u3z(mok);
 }
 
-//  XX deprecated, remove
-#if 0
-/* u3v_plan(): queue ovum (external).
-*/
-void
-u3v_plan(u3_noun pax, u3_noun fav)
-{
-  u3_noun egg = u3nc(pax, fav);
-  u3A->roe = u3nc(u3nc(u3_nul, egg), u3A->roe);
-}
-#endif
-
-//  XX deprecated, remove
-#if 0
-/* u3v_plow(): queue multiple ova (external).
-*/
-void
-u3v_plow(u3_noun ova)
-{
-  u3_noun ovi = ova;
-
-  while ( u3_nul != ovi ) {
-    u3_noun ovo=u3h(ovi);
-
-    u3v_plan(u3k(u3h(ovo)), u3k(u3t(ovo)));
-    ovi = u3t(ovi);
-  }
-  u3z(ova);
-}
-#endif
-
-/* _cv_mark_ova(): mark ova queue.
-*/
-c3_w
-_cv_mark_ova(u3p(u3v_cart) egg_p)
-{
-  c3_w tot_w = 0;
-
-  while ( egg_p ) {
-    u3v_cart* egg_u = u3to(u3v_cart, egg_p);
-
-    tot_w += u3a_mark_mptr(egg_u);
-    tot_w += u3a_mark_noun(egg_u->vir);
-
-    egg_p = egg_u->nex_p;
-  }
-
-  return tot_w;
-}
-
 /* u3v_mark(): mark arvo kernel.
 */
 c3_w
@@ -549,9 +455,6 @@ u3v_mark(FILE* fil_u)
   tot_w += u3a_maid(fil_u, "  instance string", u3a_mark_noun(arv_u->sen));
   tot_w += u3a_maid(fil_u, "  identity", u3a_mark_noun(arv_u->our));
   tot_w += u3a_maid(fil_u, "  fake", u3a_mark_noun(arv_u->fak));
-  tot_w += u3a_maid(fil_u, "  pending events", u3a_mark_noun(arv_u->roe));
-  tot_w += u3a_maid(fil_u, "  event-log key", u3a_mark_noun(arv_u->key));
   tot_w += u3a_maid(fil_u, "  kernel", u3a_mark_noun(arv_u->roc));
-  tot_w += u3a_maid(fil_u, "  egg basket", _cv_mark_ova(arv_u->ova.egg_p));
   return   u3a_maid(fil_u, "total arvo stuff", tot_w);
 }

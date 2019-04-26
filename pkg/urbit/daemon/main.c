@@ -16,6 +16,8 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 #include <h2o.h>
+#include <curl/curl.h>
+#include <argon2.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -441,6 +443,7 @@ u3_ve_sysopt()
 static void
 report(void)
 {
+  printf("urbit %s\n", URBIT_VERSION);
   printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
   printf("sigsegv: %d.%d\n",
@@ -453,6 +456,15 @@ report(void)
          H2O_LIBRARY_VERSION_MAJOR,
          H2O_LIBRARY_VERSION_MINOR,
          H2O_LIBRARY_VERSION_PATCH);
+  printf("lmdb: %d.%d.%d\n",
+         MDB_VERSION_MAJOR,
+         MDB_VERSION_MINOR,
+         MDB_VERSION_PATCH);
+  printf("curl: %d.%d.%d\n",
+         LIBCURL_VERSION_MAJOR,
+         LIBCURL_VERSION_MINOR,
+         LIBCURL_VERSION_PATCH);
+  printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
 static void
@@ -603,7 +615,7 @@ main(c3_i   argc,
     sigemptyset(&set);
     sigaddset(&set, SIGPROF);
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      perror("pthread_sigmask");
+      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
       exit(1);
     }
   }
@@ -716,21 +728,6 @@ main(c3_i   argc,
     */
     SSL_library_init();
     SSL_load_error_strings();
-
-    {
-      c3_i rad;
-      c3_y buf[4096];
-
-      // RAND_status, at least on OS X, never returns true.
-      // 4096 bytes should be enough entropy for anyone, right?
-      rad = open("/dev/urandom", O_RDONLY);
-      if ( 4096 != read(rad, &buf, 4096) ) {
-        perror("rand-seed");
-        exit(1);
-      }
-      RAND_seed(buf, 4096);
-      close(rad);
-    }
 
     u3_daemon_commence();
   }

@@ -653,20 +653,6 @@ _pier_work_complete(u3_writ* wit_u,
   fprintf(stderr, "pier: (%" PRIu64 "): compute: complete\r\n", wit_u->evt_d);
 #endif
 
-  if ( u3_psat_pace == pir_u->sat_e &&
-       wit_u->nex_u &&
-       mug_l != wit_u->nex_u->mug_l ) {
-    // While we are replaying the event log, we also perform checks that the
-    // resulting mug_l for this urbit's state is equivalent to the expected
-    // input state of the next event. If it isn't, we have either corruption or
-    // non-determinism during replay and either should cause a bail.
-    u3l_log("Invalid recomputed state. For event %" PRIu64 ", the computed mug "
-            "was %x but event %" PRIu64 " expected %x.\r\n",
-            wit_u->evt_d, mug_l, wit_u->nex_u->evt_d, wit_u->nex_u->mug_l);
-
-    u3_pier_bail();
-  }
-
   god_u->dun_d += 1;
   c3_assert(god_u->dun_d == wit_u->evt_d);
 
@@ -766,6 +752,7 @@ _pier_work_play(u3_pier* pir_u,
   //  all events in the worker are complete
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
+  god_u->mug_l = mug_l;
 
   _pier_boot_ready(pir_u);
 }
@@ -987,16 +974,14 @@ _pier_work_poke(void*   vod_p,
         goto error;
       }
       else {
-        // XXX: The wit_u pointer will almost always be 0 because of how the
-        // worker process manages the difference between u3V.evt_d vs
-        // u3A->ent_d. Either stop communicating the evt_d in the wire protocol
-        // or fix the worker to keep track of and communicate the correct event
-        // number.
         c3_d     evt_d = u3r_chub(0, p_jar);
         c3_w     pri_w = u3r_word(0, q_jar);
         u3_writ* wit_u = _pier_writ_find(pir_u, evt_d);
 
-        // Only print this slog if the event is uncommitted.
+        //  skip slog during replay
+        //
+        //    XX also update the worker to skip *sending* the slog during replay
+        //
         if ( u3_psat_pace != pir_u->sat_e ) {
           _pier_work_slog(wit_u, pri_w, u3k(r_jar));
         }
