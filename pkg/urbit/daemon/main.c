@@ -456,6 +456,10 @@ report(void)
          H2O_LIBRARY_VERSION_MAJOR,
          H2O_LIBRARY_VERSION_MINOR,
          H2O_LIBRARY_VERSION_PATCH);
+  printf("lmdb: %d.%d.%d\n",
+         MDB_VERSION_MAJOR,
+         MDB_VERSION_MINOR,
+         MDB_VERSION_PATCH);
   printf("curl: %d.%d.%d\n",
          LIBCURL_VERSION_MAJOR,
          LIBCURL_VERSION_MINOR,
