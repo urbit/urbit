@@ -26,6 +26,7 @@
 
     typedef struct _u3_worker {
       c3_w    len_w;                        //  boot sequence length
+      u3_noun roe;                          //  lifecycle formulas
       c3_d    sen_d;                        //  last event requested
       c3_d    dun_d;                        //  last event processed
       c3_l    mug_l;                        //  hash of state
@@ -201,9 +202,9 @@ _worker_prof(FILE* fil_u, c3_w den, u3_noun mas)
       _worker_print_memory(fil_u, tot_w);
 
 #if 1
-      /* The basic issue here is that tt_mas is included in
-       * u3A->sac, so they can't both be roots in the normal
-       * sense. When we mark u3A->sac later on, we want tt_mas
+      /* The basic issue here is that tt_mas is included in .sac
+       * (the whole profile), so they can't both be roots in the
+       * normal sense. When we mark .sac later on, we want tt_mas
        * to appear unmarked, but its children should be already
        * marked.
       */
@@ -263,7 +264,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     }
   }
   else {
-    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, vir_w = 0;
+    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, roe_w = 0, vir_w = 0;
 
     FILE* fil_u;
 
@@ -308,6 +309,9 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 
     ova_w = u3a_mark_noun(ovo);
     u3a_print_memory(fil_u, "event", ova_w);
+
+    roe_w = u3a_mark_noun(u3V.roe);
+    u3a_print_memory(fil_u, "lifecycle events", roe_w);
 
     vir_w = u3a_mark_noun(vir);
     u3a_print_memory(fil_u, "effects", vir_w);
@@ -616,15 +620,15 @@ _worker_work_boot(c3_d evt_d, u3_noun job)
   c3_assert(evt_d == u3V.sen_d + 1ULL);
   u3V.sen_d = evt_d;
 
-  u3A->roe = u3nc(job, u3A->roe);
+  u3V.roe = u3nc(job, u3V.roe);
 
   u3l_log("work: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
 
-    eve = u3kb_flop(u3A->roe);
-    u3A->roe = 0;
+    eve = u3kb_flop(u3V.roe);
+    u3V.roe = u3_nul;
 
     u3l_log("work: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
