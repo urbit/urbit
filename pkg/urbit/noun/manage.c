@@ -1911,7 +1911,6 @@ u3m_boot_new(c3_c* dir_c)
   /* Reactivate jets on old kernel.
   */
   if ( !_(nuu_o) ) {
-    u3v_hose();
     u3j_ream();
     u3n_ream();
 
