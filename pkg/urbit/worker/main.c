@@ -773,7 +773,7 @@ _worker_poke(void* vod_p, u3_noun mat)
           goto error;
         }
 
-        u3_noun entry = u3ke_cue(u3k(jammed_entry));
+        u3_noun entry = u3qe_cue(jammed_entry);
         if ( (c3y != u3du(entry)) ||
              (c3n == u3r_cell(entry, &mug, &job)) ||
              (c3n == u3ud(mug)) ||
@@ -818,7 +818,6 @@ _worker_poke(void* vod_p, u3_noun mat)
         }
 
         evt_d = u3r_chub(0, evt);
-        u3z(evt);
         u3z(jar);
 
         c3_assert( evt_d == u3V.evt_d );
