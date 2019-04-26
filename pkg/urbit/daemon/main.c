@@ -729,21 +729,6 @@ main(c3_i   argc,
     SSL_library_init();
     SSL_load_error_strings();
 
-    {
-      c3_i rad;
-      c3_y buf[4096];
-
-      // RAND_status, at least on OS X, never returns true.
-      // 4096 bytes should be enough entropy for anyone, right?
-      rad = open("/dev/urandom", O_RDONLY);
-      if ( 4096 != read(rad, &buf, 4096) ) {
-        perror("rand-seed");
-        exit(1);
-      }
-      RAND_seed(buf, 4096);
-      close(rad);
-    }
-
     u3_daemon_commence();
   }
   return 0;
