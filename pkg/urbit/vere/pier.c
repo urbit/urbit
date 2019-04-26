@@ -765,6 +765,7 @@ _pier_work_play(u3_pier* pir_u,
   //  all events in the worker are complete
   //
   god_u->rel_d = god_u->dun_d = god_u->sen_d = (lav_d - 1ULL);
+  god_u->mug_l = mug_l;
 
   _pier_boot_ready(pir_u);
 }
