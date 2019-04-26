@@ -195,9 +195,30 @@
 ++  peer
   |=  wir=wire
   ^-  (quip move _this)
-  ::~&  peer-prize+str.sta
+  =/  response=streams
+    ?+  wir
+      %=  str.sta
+        env.inbox  (scag 1.000 env.inbox.str.sta)
+      ==
+    ::  negative range from latest
+    ::
+        [%primary @t ~]
+      =/  val=@  (slav %ud i.t.wir)
+      %=  str.sta
+        env.inbox  (scag val env.inbox.str.sta)
+      ==
+    ::  negative range from offset
+    ::
+        [%primary @t @t ~]
+      =/  offset=@  (slav %ud i.t.wir)
+      =/  num=@     (slav %ud i.t.t.wir)
+      %=  str.sta
+        env.inbox  (swag [offset num] env.inbox.str.sta)
+      ==
+    ::
+    ==
   :_  this
-  [ost.bol %diff %collections-prize str.sta]~
+  [ost.bol %diff %collections-prize response]~
 ::
 ::  +reap: recieve acknowledgement for peer, retry on failure
 ::
