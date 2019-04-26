@@ -585,7 +585,11 @@ _worker_work_live(c3_d evt_d, u3_noun job)
 
     _worker_sure(ovo, vir, cor);
 
-    //  reclaim memory from persistent caches on |reset
+    //  reclaim memory from persistent caches periodically
+    //
+    //    XX this is a hack to work around the fact that
+    //    the bytecode caches grow rapidly and are not
+    //    able to be simply capped (due to internal posts).
     //
     if ( 0 == (evt_d % 1000ULL) ) {
       u3m_reclaim();
