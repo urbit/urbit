@@ -60,7 +60,7 @@
       ::
       $:  %done
           ::  p: event number
-          ::  q: mug of state (or 0)
+          ::  q: mug of kernel
           ::  r: effects
           ::
           [p=@ q=@ r=(list ovum)]
@@ -69,7 +69,7 @@
       ::
       $:  %work
           ::  p: event number
-          ::  q: mug of state (or 0)
+          ::  q: mug of kernel
           ::  r: replacement event (at date)
           ::
           [p=@ q=@ r=(pair date ovum)]
@@ -502,24 +502,17 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 /* _worker_work_live(): apply event.
 */
 static void
-_worker_work_live(c3_d    evt_d,              //  event number
-                  c3_l    mug_l,              //  mug of state
-                  u3_noun job)                //  event date
+_worker_work_live(c3_d evt_d, u3_noun job)
 {
   u3_noun now, ovo, gon;
 
   c3_assert(evt_d == u3V.dun_d + 1ULL);
-
-  if ( 0 != mug_l ) {
-    c3_assert(u3V.mug_l == mug_l);
-  }
+  u3V.sen_d = evt_d;
 
   u3x_cell(job, &now, &ovo);
 
   u3z(u3A->now);
   u3A->now = u3k(now);
-
-  u3V.sen_d = evt_d;
 
 #ifdef U3_EVENT_TIME_DEBUG
   {
@@ -611,19 +604,12 @@ _worker_boot_fire(u3_noun eve)
 /* _worker_work_boot(): apply initial-stage event.
 */
 static void
-_worker_work_boot(c3_d    evt_d,
-                  c3_l    mug_l,
-                  u3_noun job)
+_worker_work_boot(c3_d evt_d, u3_noun job)
 {
   //  here we asset on u3V.sen_d, because u3V.dun_d isn't set until
   //  after u3V.sen_d == u3V.len_w (ie, after the lifecycle evaluation)
   //
   c3_assert(evt_d == u3V.sen_d + 1ULL);
-
-  if ( 0 != mug_l ) {
-    c3_assert(u3V.mug_l == mug_l);
-  }
-
   u3V.sen_d = evt_d;
 
   u3A->roe = u3nc(job, u3A->roe);
@@ -655,6 +641,9 @@ _worker_work_boot(c3_d    evt_d,
     u3z(pru);
   }
   else {
+    //  prior to the evaluation of the entire lifecycle sequence,
+    //  we simply use the mug of the formula as the kernel mug
+    //
     u3V.mug_l = u3r_mug(job);
   }
 
@@ -681,12 +670,29 @@ _worker_poke_work(c3_d    evt_d,              //  event number
     }
   }
 
+  //  Require mugs to match
+  //
+  //    We use mugs to enforce that %work is always performed against
+  //    the exact kernel we expect it to be. If it isn't, we have either
+  //    event-log corruption or non-determism on replay, or programmer error
+  //    in normal operation. In either case, we immediately exit.
+  //
+  if ( u3V.mug_l != mug_l ) {
+    u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
+    u3l_log("work: computed mug is %x but event %" PRIu64 " expected %x.\r\n",
+            u3V.mug_l,
+            evt_d,
+            mug_l);
+    _worker_fail(0, "bad jar");
+    return;
+  }
+
   if ( evt_d <= u3V.len_w ) {
     c3_c lab_c[8];
     snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
 
     u3t_event_trace(lab_c, 'B');
-    _worker_work_boot(evt_d, mug_l, job);
+    _worker_work_boot(evt_d, job);
     u3t_event_trace(lab_c, 'E');
   }
   else {
@@ -698,7 +704,7 @@ _worker_poke_work(c3_d    evt_d,              //  event number
              u3m_pretty_path(wir), u3m_pretty(cad));
 
     u3t_event_trace(lab_c, 'B');
-    _worker_work_live(evt_d, mug_l, job);
+    _worker_work_live(evt_d, job);
     u3t_event_trace(lab_c, 'E');
   }
 }
