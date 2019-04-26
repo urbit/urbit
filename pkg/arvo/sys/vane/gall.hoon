@@ -96,9 +96,7 @@
       pyl=(map bone mark)                               ::  req'd translations
       zam=scar                                          ::  opaque ducts
   ==                                                    ::
-++  sofa                                                ::  queue for blocked
-  $:  kys=(qeu (trel duct prey club))                   ::  queued kisses
-  ==                                                    ::
+++  sofa  (qeu (trel duct prey club))                   ::  blocked kisses
 ++  stic                                                ::  statistics
   $:  act=@ud                                           ::  change number
       eny=@uvJ                                          ::  entropy
@@ -683,12 +681,12 @@
     |-
     ^+  mo-state
     ::
-    ?:  =(~ kys.u.suf)
+    ?:  =(~ u.suf)
       %_  mo-state
         wub.mas  (~(del by wub.mas) dude)
       ==
     ::
-    =^  lep  kys.u.suf  [p q]:~(get to kys.u.suf)
+    =^  lep  u.suf  [p q]:~(get to u.suf)
     ::
     =/  move  [p.lep %slip %g %deal [q.q.q.lep our] dude r.lep]
     $(moves [move moves])
@@ -756,12 +754,17 @@
     =/  =dude  p.cush
     =/  =club  q.cush
     ::
-    ?:  |(!(~(has by bum.mas) dude) (~(has by wub.mas) dude))
-      ~&  >>  [%mo-not-running dude -.club]
+    =/  is-running  (~(has by bum.mas) dude)
+    =/  is-waiting  (~(has by wub.mas) dude)
+    ::
+    ?:  |(!is-running is-waiting)
+      ~&  >>  [%mo-not-running dude -.club] :: FIXME remove?
+      ::
       =/  =sofa
-        =/  kisses  (fall (~(get by wub.mas) dude) default-sofa)
+        =/  waiting  (~(get by wub.mas) dude)
+        =/  kisses  (fall waiting default-sofa)
         =/  kiss  [hen prey club]
-        kisses(kys (~(put to kys.kisses) kiss))
+        (~(put to kisses) kiss)
       ::
       %_  mo-state
         wub.mas  (~(put by wub.mas) dude sofa)
