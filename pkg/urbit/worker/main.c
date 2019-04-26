@@ -344,17 +344,15 @@ _worker_send(u3_noun job)
 /* _worker_send_replace(): send replacement job back to daemon.
 */
 static void
-_worker_send_replace(c3_d evt_d, u3_noun ovo)
+_worker_send_replace(c3_d evt_d, u3_noun job)
 {
   u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
           evt_d,
-          u3r_string(u3h(u3t(ovo))));
+          u3r_string(u3h(u3t(u3t(job)))));
 
   _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
-                    u3ke_jam(u3nt(u3V.mug_l,
-                                  u3k(u3A->now),
-                                  ovo))));
+                    u3ke_jam(u3nc(u3V.mug_l, job))));
 }
 
 /* _worker_send_complete(): report completion.
@@ -387,7 +385,7 @@ _worker_send_slog(u3_noun hod)
 /* _worker_lame(): event failed, replace with error event.
 */
 static void
-_worker_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
+_worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
 {
   u3_noun rep;
   u3_noun wir, tag, cad;
@@ -436,7 +434,7 @@ _worker_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
     rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
   }
 
-  _worker_send_replace(evt_d, rep);
+  _worker_send_replace(evt_d, u3nc(now, rep));
 
   u3z(ovo); u3z(why); u3z(tan);
 }
@@ -505,14 +503,15 @@ static void
 _worker_work_live(c3_d evt_d, u3_noun job)
 {
   u3_noun now, ovo, gon;
+  u3_noun last_date;
 
   c3_assert(evt_d == u3V.dun_d + 1ULL);
   u3V.sen_d = evt_d;
 
   u3x_cell(job, &now, &ovo);
 
-  u3z(u3A->now);
-  u3A->now = u3k(now);
+  last_date = u3A->now;
+  u3A->now  = u3k(now);
 
 #ifdef U3_EVENT_TIME_DEBUG
   {
@@ -552,6 +551,10 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     //  event rejected
     //
     u3V.sen_d = u3V.dun_d;
+    //  restore previous time
+    //
+    u3_noun nex = u3A->now;
+    u3A->now    = last_date;
 
     u3_noun why, tan;
     u3x_cell(gon, &why, &tan);
@@ -559,12 +562,13 @@ _worker_work_live(c3_d evt_d, u3_noun job)
     u3k(ovo); u3k(why); u3k(tan);
     u3z(gon); u3z(job);
 
-    _worker_lame(evt_d, ovo, why, tan);
+    _worker_lame(evt_d, nex, ovo, why, tan);
   }
   else {
     //  event accepted
     //
     u3V.dun_d = u3V.sen_d;
+    u3z(last_date);
 
     //  vir/(list ovum)  list of effects
     //  cor/arvo         arvo core
