@@ -1293,6 +1293,13 @@
       c3_o u3_lmdb_get_latest_event_number(MDB_env* environment,
                                            c3_d* event_number);
 
+      struct u3_lmdb_write_request;
+
+      struct u3_lmdb_write_request*
+      u3_lmdb_build_write_request(u3_writ* event_u, c3_d count);
+
+      void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request);
+
       /* u3_lmdb_write_event(): Persists an event to the database
       */
       void u3_lmdb_write_event(MDB_env* environment,

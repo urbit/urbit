@@ -174,6 +174,70 @@ c3_o _perform_get_on_database_noun(MDB_txn* transaction_u,
   return c3y;
 }
 
+/* u3_lmdb_write_request: contains multiple data 
+**
+*/
+struct u3_lmdb_write_request {
+  // The event number of the first event.
+  c3_d first_event;
+
+  // The number of events in this write request. Nonzero.
+  c3_d event_count;
+
+  // An array of serialized event datas. The array size is |event_count|. We
+  // perform the event serialization on the main thread so we can read the loom
+  // and write into a malloced structure for the worker thread.
+  void** malloced_event_data;
+
+  // An array of sizes of serialized event datas. We keep track of this for the
+  // database write.
+  size_t* malloced_event_data_size;
+};
+
+/* u3_lmdb_build_write_request(): Reads t
+**
+** Returns null when the event ids in u3_writ are not contiguous.
+*/
+struct u3_lmdb_write_request*
+u3_lmdb_build_write_request(u3_writ* event_u, c3_d count)
+{
+  struct u3_lmdb_write_request* request =
+      c3_malloc(sizeof(struct u3_lmdb_write_request));
+  request->first_event = event_u->evt_d;
+  request->event_count = count;
+  request->malloced_event_data = c3_malloc(sizeof(void*) * count);
+  request->malloced_event_data_size = c3_malloc(sizeof(size_t) * count);
+
+  for (c3_d i = 0; i < count; ++i) {
+    // Sanity check that the events in u3_writ are in order.
+    c3_assert(event_u->evt_d == (request->first_event + i));
+
+    // Serialize the jammed event log entry into a malloced buffer we can send
+    // to the other thread.
+    c3_w  siz_w  = u3r_met(3, event_u->mat);
+    c3_y* data_u = c3_calloc(siz_w);
+    u3r_bytes(0, siz_w, data_u, event_u->mat);
+
+    request->malloced_event_data[i] = data_u;
+    request->malloced_event_data_size[i] = siz_w;
+
+    event_u = event_u->nex_u;
+  }
+
+  return request;
+}
+
+/* u3_lmdb_free_write_request(): Frees a write request
+*/
+void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request) {
+  for (c3_d i = 0; i < request->event_count; ++i)
+    free(request->malloced_event_data[i]);
+
+  free(request->malloced_event_data);
+  free(request->malloced_event_data_size);
+  free(request);
+}
+
 /* _write_request_data: callback struct for u3_lmdb_write_event()
 */
 struct _write_request_data {

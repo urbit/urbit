@@ -126,6 +126,12 @@ _pier_db_commit_request(u3_writ* wit_u)
   u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
 #endif
 
+  // |wit_u| is the first of possibly several uncommitted events. We instead
+  // want to commit all of them at once.
+  //
+  //
+
+
   /* put it in the database
   */
   {
@@ -1651,6 +1657,12 @@ start:
          (wit_u->evt_d == (1 + log_u->moc_d)) &&
          (wit_u->evt_d == (1 + log_u->com_d)) )
     {
+      c3_d count = 1 + (god_u->dun_d - wit_u->evt_d);
+      struct u3_lmdb_write_request* request =
+          u3_lmdb_build_write_request(wit_u, count);
+      c3_assert(request != 0);
+      u3_lmdb_free_write_request(request);
+
       // TODO(erg): This is the place where we build up things into a queue.
       _pier_db_commit_request(wit_u);
       act_o = c3y;
