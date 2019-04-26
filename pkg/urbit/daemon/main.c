@@ -16,6 +16,8 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 #include <h2o.h>
+#include <curl/curl.h>
+#include <argon2.h>
 
 #define U3_GLOBAL
 #define C3_GLOBAL
@@ -441,6 +443,7 @@ u3_ve_sysopt()
 static void
 report(void)
 {
+  printf("urbit %s\n", URBIT_VERSION);
   printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
   printf("sigsegv: %d.%d\n",
@@ -453,6 +456,11 @@ report(void)
          H2O_LIBRARY_VERSION_MAJOR,
          H2O_LIBRARY_VERSION_MINOR,
          H2O_LIBRARY_VERSION_PATCH);
+  printf("curl: %d.%d.%d\n",
+         LIBCURL_VERSION_MAJOR,
+         LIBCURL_VERSION_MINOR,
+         LIBCURL_VERSION_PATCH);
+  printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
 static void

@@ -197,7 +197,7 @@ _dawn_fail(u3_noun who, u3_noun rac, u3_noun sas)
     }
   }
 
-  u3l_log("dawn: invalid keys for %s '%s'\r\n", rac_c, how_c);
+  u3l_log("boot: invalid keys for %s '%s'\r\n", rac_c, how_c);
 
   // XX deconstruct sas, print helpful error messages
   u3m_p("pre-boot error", u3t(sas));
@@ -306,20 +306,22 @@ u3_dawn_vent(u3_noun seed)
   //  load snapshot from file
   //
   if ( 0 != u3_Host.ops_u.ets_c ) {
-    u3l_log("boot: loading ethereum snapshot\r\n");
+    u3l_log("boot: loading azimuth snapshot\r\n");
     u3_noun raw_snap = u3ke_cue(u3m_file(u3_Host.ops_u.ets_c));
     sap = u3nc(u3_nul, raw_snap);
   }
   //  load snapshot from HTTP URL
   //
   else if ( 0 != u3_Host.ops_u.sap_c ) {
+    u3l_log("boot: downloading azimuth snapshot from %s\r\n",
+            u3_Host.ops_u.sap_c);
     u3_noun raw_snap = _dawn_get_jam(u3_Host.ops_u.sap_c);
     sap = u3nc(u3_nul, raw_snap);
   }
   //  no snapshot
   //
   else {
-    u3l_log("dawn: no ethereum snapshot specified\n");
+    u3l_log("boot: no azimuth snapshot specified\n");
     sap = u3_nul;
   }
 
