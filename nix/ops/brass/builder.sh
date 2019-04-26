@@ -5,7 +5,7 @@ set -ex
 cp -r $FAKEZOD ./zod
 chmod -R u+rw ./zod
 
-urbit -d ./zod
+$URBIT -d ./zod
 
 cleanup () {
   if [ -e ./zod/.vere.lock ]
