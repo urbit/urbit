@@ -615,7 +615,7 @@ main(c3_i   argc,
     sigemptyset(&set);
     sigaddset(&set, SIGPROF);
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      perror("pthread_sigmask");
+      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
       exit(1);
     }
   }
