@@ -850,21 +850,28 @@
       (mo-give:abedded %unto %quit ~)
     ==
   ::
-  ++  ap                                                ::  agent engine
+  ::  +ap: agent engine
+  ::
+  ++  ap
     ~%  %gall-ap  +>  ~
-    |_  $:  $:  dap/dude
-                pry/prey
-                ost/bone
-                zip/(list cove)
-                dub/(list (each suss tang))
+    |_  $:  $:  dap=dude
+                pry=prey
+                ost=bone
+                zip=(list cove)
+                dub=(list (each suss tang))
             ==
             seat
         ==
     ::
-    ++  ap-abed                                         ::  initialize
+    ++  ap-state  .
+    ::
+    ::  +ap-abed: initialise.
+    ::
+    ++  ap-abed
       ~/  %ap-abed
-      |=  {dap/dude pry/prey}
-      ^+  +>
+      |=  [dap=dude pry=prey]
+      ^+  ap-state
+      ::
       =:  ^dap   dap
           ^pry   pry
           +>+<+  `seat`(~(got by bum.mas) dap)
@@ -875,18 +882,21 @@
           lat.tyc  now
         ==
       ?^  unt
-        +>.$(ost u.unt)
-      %=  +>.$
+        ap-state(ost u.unt)
+      %=  ap-state
         ost      p.zam
         p.zam    +(p.zam)
         q.zam    (~(put by q.zam) hen p.zam)
         r.zam    (~(put by r.zam) p.zam hen)
       ==
     ::
-    ++  ap-abet                                         ::  resolve
-      ^+  +>
+    ::  +ap-abet: resolve moves.
+    ::
+    ++  ap-abet
+      ^+  mo-state
+      ::
       =>  ap-abut
-      %_  +>
+      %_  mo-state
         bum.mas  (~(put by bum.mas) dap +<+)
         moves  :(weld (turn zip ap-aver) (turn dub ap-avid) moves)
       ==
