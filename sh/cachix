@@ -5,6 +5,10 @@ fail () {
   exit 1
 }
 
+if [ -z "$CACHIX_SIGNING_KEY" ]
+then fail "The CACHIX_AUTH_TOKEN environment variable needs to be set."
+fi
+
 if [ -z "$CACHIX_AUTH_TOKEN" ]
 then fail "The CACHIX_AUTH_TOKEN environment variable needs to be set."
 fi
@@ -16,7 +20,7 @@ cleanup () {
 trap cleanup EXIT
 
 cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
-cachix use urbit
-nix-build nix/dep-repos.nix > .cache.list
-nix-build default.nix >> .cache.list
-cachix push urbit < .cache.list
+cachix use urbit2
+nix-build --no-out-link nix/dep-repos.nix > .cache.list
+nix-build --no-out-link default.nix      >> .cache.list
+cachix push urbit2 < .cache.list
