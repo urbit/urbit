@@ -113,8 +113,10 @@
         ska=sley                                        ::  activate
     ==                                                  ::  opaque core
 ~%  %gall-top  ..is  ~
-|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state machine
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  state machine
+::
+|%
 ++  mo
   ~%  %gall-mo  +>  ~
   ::
@@ -854,6 +856,9 @@
   ::
   ++  ap
     ~%  %gall-ap  +>  ~
+    ::
+    :: FIXME refactor this into something sane
+    ::
     |_  $:  $:  dap=dude
                 pry=prey
                 ost=bone
@@ -869,20 +874,24 @@
     ::
     ++  ap-abed
       ~/  %ap-abed
-      |=  [dap=dude pry=prey]
+      |=  [=dude =prey]
       ^+  ap-state
       ::
-      =:  ^dap   dap
-          ^pry   pry
-          +>+<+  `seat`(~(got by bum.mas) dap)
-        ==
-      =+  unt=(~(get by q.zam) hen)
+      =:  dap   dude
+          pry   prey
+          +>+<+  `seat`(~(got by bum.mas) dude) :: FIXME lark
+      ==
+      ::
+      =/  unt  (~(get by q.zam) hen)
+      ::
       =:  act.tyc  +(act.tyc)
-          eny.tyc  (shaz (mix (add dap act.tyc) eny))
+          eny.tyc  (shaz (mix (add dude act.tyc) eny))
           lat.tyc  now
-        ==
+      ==
+      ::
       ?^  unt
         ap-state(ost u.unt)
+      ::
       %=  ap-state
         ost      p.zam
         p.zam    +(p.zam)
@@ -910,16 +919,19 @@
       |-
       ^+  ap-state
       ?^  pyz
-        ?.  ?=({$give $diff *} q.i.pyz)
+        ?.  ?=([%give %diff *] q.i.pyz)
           $(pyz t.pyz)
         =^  vad  ap-state  ap-fill(ost p.i.pyz)
         $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
-      =+  ded=~(tap in ful)
+      ::
+      =/  ded  ~(tap in ful)
       |-
       ^+  ap-state
       ?~  ded  ap-state
       =>  %*(. $(ded t.ded) ost i.ded)
-      =+  tib=(~(get by sup.ged) ost)
+      ::
+      =/  tib  (~(get by sup.ged) ost)
+      ::
       ?~  tib  ~&([%ap-abut-bad-bone dap ost] ..ap-kill)
       ap-kill(q.q.pry p.u.tib)
     ::
@@ -932,25 +944,25 @@
       ::
       :-  (~(got by r.zam) p.cov)
       ?-    -.q.cov
-          ?($slip $sick)  !!
-          $give
+          ?(%slip %sick)  !!
+          %give
         ?<  =(0 p.cov)
-        ?.  ?=($diff -.p.q.cov)
+        ?.  ?=(%diff -.p.q.cov)
           [%give %unto p.q.cov]
-        =+  cay=`cage`p.p.q.cov
-        =+  mar=(~(gut by pyl) p.cov p.cay)
+        ::
+        =/  cay=cage  p.p.q.cov
+        =/  mar  (~(gut by pyl) p.cov p.cay)
+        ::
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
         [%f %build live=%.n [%cast [p q]:(mo-beak dap) mar [%$ cay]]]
       ::
-          $pass
+          %pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
-::          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
-          $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
-          $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
-::          $response  `note-arvo`[%i %response raw-http-response.q.q.cov]
+          %send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
+          %meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
         ==
         ::
         :: I'm sort of stumped on how to get a %give out of the above; it's
@@ -961,7 +973,10 @@
     ::  +ap-avid: onto results.
     ::
     ++  ap-avid
-      |=(a=(each suss tang) [hen %give %onto a])
+      |=  a=(each suss tang)
+      ^-  move
+      ::
+      [hen %give %onto a]
     ::
     ::  +ap-call: call into server.
     ::
