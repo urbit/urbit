@@ -215,22 +215,33 @@
       =.  bum.mas  (~(put by bum.mas) dude updated)
       ::  magic update string from +mo-boon, "complete old boot"
       ::
-      ap-abet:(ap-peep:(ap-abed:ap dude [%high [~ our]]) result-vase)
+      =/  =prey  [%high [~ our]]
+      =/  abedded  (ap-abed:ap dude prey)
+      =/  peeped  (ap-peep:abedded result-vase)
+      ap-abet:peeped
     ::  first install of the app
     ::
     ?.  (mo-okay result-vase)
-      (mo-give %onto %.n [%leaf "{<dude>}: bogus core"]~)
+      =/  err  [[%leaf "{<dude>}: bogus core"] ~]
+      (mo-give %onto %.n err)
     ::
     =.  mo-state  (mo-born dude beak result-vase)
     ::
     =/  old  mo-state
-    =/  wag  (ap-prop:(ap-abed:ap dude [%high [~ our]]) ~)
+    ::
+    =/  wag
+      =/  =prey  [%high [~ our]]
+      =/  abedded  (ap-abed:ap dude prey)
+      (ap-prop:abedded ~)
     ::
     ?^  -.wag
       =.  mo-state  old
       (mo-give %onto %.n u.-.wag)
+    ::
     =.  mo-state  ap-abet:+.wag
-    (mo-give:(mo-claw dude) %onto %.y dude %boot now)
+    ::
+    =/  clawed  (mo-claw dude)
+    (mo-give:clawed %onto %.y dude %boot now)
   ::
   ::  +mo-born: create a new seat.
   ::
@@ -286,7 +297,10 @@
     |=  [=ship =cush]
     ^+  mo-state
     ::
-    ?:  ?=(%pump -.q.cush)
+    =/  =dude  p.cush
+    =/  =club  q.cush
+    ::
+    ?:  ?=(%pump -.club)
       ::
       ::  you'd think this would send an ack for the diff
       ::  that caused this pump.  it would, but we already
@@ -296,27 +310,28 @@
       ::
       mo-state
     ::
-    ?:  ?=(%peer-not -.q.cush)
-      =/  err  (some p.q.cush)
+    ?:  ?=(%peer-not -.club)
+      =/  =tang  p.club
+      =/  err  (some tang)
       (mo-give %unto %reap err)
     ::
-    =^  num  mo-state  (mo-bale ship)
+    =^  bone  mo-state  (mo-bale ship)
     ::
     =/  =rook
-      ?-  -.q.cush
-        %poke  [%m p.p.q.cush q.q.p.q.cush]
+      ?-  -.club
+        %poke  [%m p.p.club q.q.p.club]
         %pull  [%u ~]
         %puff  !!
         %punk  !!
-        %peel  [%l p.q.cush q.q.cush]
-        %peer  [%s p.q.cush]
+        %peel  [%l club]
+        %peer  [%s p.club]
       ==
     ::
-    =/  action  -.q.cush
+    =/  action  -.club
     =/  =path  /sys/way/[action]
-    =/  note=note-arvo  [%a %want ship [%g %ge p.cush ~] [num rook]]
+    =/  =note-arvo  [%a %want ship [%g %ge dude ~] [bone rook]]
     ::
-    (mo-pass path note)
+    (mo-pass path note-arvo)
   ::
   ::  +mo-awed: handle foreign response.
   ::
@@ -348,7 +363,7 @@
   ::
   ++  mo-bale
     |=  =ship
-    ^-  [@ud _mo-state]
+    ^-  [bone _mo-state]
     ::
     =/  =scad
       =/  default  [1 ~ ~]
@@ -369,12 +384,12 @@
         r  (~(put by r.scad) index hen)
       ==
     ::
-    =/  new-state
+    =/  next
       %_  mo-state
         sap.mas  (~(put by sap.mas) ship contacts)
       ==
     ::
-    [index new-state]
+    [index next]
   ::
   ::  +mo-ball: retrieve an out bone by index.
   ::
@@ -443,13 +458,13 @@
     =/  dap  i.t.t.path
     =/  num  (slav %ud i.t.t.t.path)
     ::
-    =/  gift  +>.sign-arvo
+    =/  =coop  q.+>.sign-arvo
     ::
     =/  sys-path
       =/  pax  [%req t.path]
       [%sys pax]
     ::
-    ?~  q.gift
+    ?~  coop
       =/  =note-arvo  [%g %deal [him our] dap %pump ~]
       (mo-pass sys-path note-arvo)
     ::
@@ -459,11 +474,11 @@
     =.  mo-state  (mo-pass sys-path gall-move)
     =.  mo-state  (mo-pass sys-path ames-move)
     ::
-    ?.  ?=([~ ~ %mack *] q.gift)
-      ~&  [%diff-bad-ack q.gift]
+    ?.  ?=([~ ~ %mack *] coop)
+      ~&  [%diff-bad-ack coop]
       mo-state
     ~&  [%diff-bad-ack %mack]
-    =/  slaw  (slog (flop q.,.+>.q.gift)) :: FIXME overly noisy lark
+    =/  slaw  (slog (flop q.,.+>.coop)) :: kill this lark
     (slaw mo-state)
   ::
   ::  +mo-cyst-rep: reverse request.
@@ -605,17 +620,17 @@
   ::
   ++  mo-cyst
     ~/  %mo-cyst
-    |=  [pax=path sih=sign-arvo]
+    |=  [=path =sign-arvo]
     ^+  mo-state
     ::
-    ?+  -.pax  !!
-      %core  (mo-cyst-core pax sih)
-      %pel  (mo-cyst-pel pax sih)
-      %red  (mo-cyst-red pax sih)
-      %rep  (mo-cyst-rep pax sih)
-      %req  (mo-cyst-req pax sih)
-      %val  (mo-cyst-val pax sih)
-      %way  (mo-cyst-way pax sih)
+    ?+  -.path  !!
+      %core  (mo-cyst-core path sign-arvo)
+      %pel  (mo-cyst-pel path sign-arvo)
+      %red  (mo-cyst-red path sign-arvo)
+      %rep  (mo-cyst-rep path sign-arvo)
+      %req  (mo-cyst-req path sign-arvo)
+      %val  (mo-cyst-val path sign-arvo)
+      %way  (mo-cyst-way path sign-arvo)
     ==
   ::
   ::  +mo-cook: take in /use.
@@ -674,21 +689,26 @@
     ?.  (~(has by bum.mas) dude)
       mo-state
     ::
-    =/  suf  (~(get by wub.mas) dude)
-    ?~  suf
+    =/  maybe-sofa  (~(get by wub.mas) dude)
+    ::
+    ?~  maybe-sofa
       mo-state
+    ::
+    =/  =sofa  u.maybe-sofa
     ::
     |-
     ^+  mo-state
-    ::
-    ?:  =(~ u.suf)
+    ?:  =(~ sofa)
       %_  mo-state
         wub.mas  (~(del by wub.mas) dude)
       ==
     ::
-    =^  lep  u.suf  [p q]:~(get to u.suf)
+    =^  cushion  sofa  [p q]:~(get to sofa)
+    =/  =duct  p.cushion
+    =/  =prey  q.cushion
+    =/  =club  r.cushion
     ::
-    =/  move  [p.lep %slip %g %deal [q.q.q.lep our] dude r.lep]
+    =/  move  [duct %slip %g %deal [q.q.prey our] dude club]
     $(moves [move moves])
   ::
   ::  +mo-beak: build beak.
@@ -722,16 +742,18 @@
       =/  ship  (scot %p q.q.prey)
       /sys/val/[ship]/[dude]
     ::
-    =/  info
+    =/  ship-info
       =/  beak  (mo-beak dude)
       [p q]:beak
     ::
     ?:  ?=(%puff -.club)
-      =/  =note-arvo  [%f %build live=%.n [%vale info +.club]]
+      =/  =schematic:ford  [%vale ship-info +.club]
+      =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
     ?:  ?=(%punk -.club)
-      =/  =note-arvo  [%f %build live=%.n [%cast info p.club [%$ q.club]]]
+      =/  =schematic:ford  [%cast ship-info p.club [%$ q.club]]
+      =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
     ?:  ?=(%peer-not -.club)
@@ -742,7 +764,7 @@
     =/  clubbed  (ap-club:pap club)
     ap-abet:clubbed
   ::
-  ::  +mo-come: handle locally
+  ::  +mo-come: handle locally.
   ::
   ++  mo-come
     |=  [=ship =cush]
@@ -775,7 +797,7 @@
   ::  +mo-gawk: ames forward.
   ::
   ++  mo-gawk
-    |=  [him=@p =dude num=@ud =rook]
+    |=  [=ship =dude =bone =rook]
     ^+  mo-state
     ::
     =.  mo-state
@@ -784,16 +806,16 @@
       (mo-give %mack ~)
     ::
     =/  =path
-      =/  ship  (scot %p him)
-      =/  numb  (scot %ud num)
-      /sys/req/[ship]/[dude]/[numb]
+      =/  him  (scot %p ship)
+      =/  num  (scot %ud bone)
+      /sys/req/[him]/[dude]/[num]
     ::
     =/  =note-arvo
       ?-  -.rook
-        %m  [%g %deal [him our] dude %puff p.rook q.rook]
-        %l  [%g %deal [him our] dude %peel p.rook q.rook]
-        %s  [%g %deal [him our] dude %peer p.rook]
-        %u  [%g %deal [him our] dude %pull ~]
+        %m  [%g %deal [ship our] dude %puff p.rook q.rook]
+        %l  [%g %deal [ship our] dude %peel p.rook q.rook]
+        %s  [%g %deal [ship our] dude %peer p.rook]
+        %u  [%g %deal [ship our] dude %pull ~]
       ==
     ::
     (mo-pass path note-arvo)
@@ -801,32 +823,31 @@
   ::  +mo-gawd: ames backward.
   ::
   ++  mo-gawd
-    |=  [him=@p =dude num=@ud =roon]
+    |=  [=ship =dude =bone =roon]
     ^+  mo-state
     ::
     ?-    -.roon
         ::
         %d
-        ::
       =/  =path
-        =/  ship  (scot %p him)
-        =/  numb  (scot %ud num)
-        /sys/rep/[ship]/[dude]/[numb]
+        =/  him  (scot %p ship)
+        =/  num  (scot %ud bone)
+        /sys/rep/[him]/[dude]/[num]
       ::
       =/  =note-arvo
         =/  beak  (mo-beak dude)
         =/  info  [p q]:beak
-        [%f %build live=%.n [%vale info p.roon q.roon]]
+        =/  =schematic:ford  [%vale info p.roon q.roon]
+        [%f %build live=%.n schematic]
       ::
       (mo-pass path note-arvo)
-    ::
         ::
         %x
-        ::
       =.  mo-state  (mo-give %mack ~)                  ::  XX should crash
       ::
-      =/  out  (mo-ball him num)
-      (mo-give:(mo-abed out) %unto %quit ~)
+      =/  out  (mo-ball ship bone)
+      =/  abedded  (mo-abed out)
+      (mo-give:abedded %unto %quit ~)
     ==
   ::
   ++  ap                                                ::  agent engine
