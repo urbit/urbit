@@ -2,8 +2,8 @@ source $setup
 
 cp -r $src ./src
 chmod -R u+w ./src
-cd src
+cd src/libraries/liblmdb
 
-export DESTDIR="$out"
-
-make install
+mkdir ../out
+DESTDIR="../out" make install
+cp -r ../out/usr/local "$out"
