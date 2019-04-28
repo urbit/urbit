@@ -117,6 +117,9 @@
 ::  state machine
 ::
 |%
+::
+::  +mo: move handling.
+::
 ++  mo
   ~%  %gall-mo  +>  ~
   ::
@@ -146,18 +149,27 @@
     =/  resolved  (flop moves)
     [resolved mo-context]
   ::
-  ::  +mo-conf: send an %exec to ford using a beak assembled with the current
-  ::            timestamp.
+  ::  +mo-boot: pass an %exec move to ford.
   ::
-  ++  mo-conf
+  ++  mo-boot
     |=  [=dude =ship =desk]
     ^+  mo-state
     ::
-    =/  =beak
-      =/  =case  [%da now]
-      [p=ship q=desk r=case]
+    =/  =case  [%da now]
     ::
-    (mo-boot dude beak)
+    =/  =path
+      =/  ship  (scot %p ship)
+      =/  case  (scot case)
+      /sys/core/[dude]/[ship]/[desk]/[case]
+    ::
+    =/  =note-arvo
+      =/  disc  [ship desk]
+      =/  spur  /hoon/[dude]/app
+      =/  schematic  [%core disc spur]
+      [%f %build live=%.y schematic]
+    ::
+    =/  pass  [path note-arvo]
+    (mo-pass pass)
   ::
   ::  +mo-pass: prepend a standard %pass move to the move state.
   ::
@@ -177,7 +189,7 @@
     =/  =move  [hen %give gift]
     mo-state(moves [move moves])
   ::
-  :: +mo-okay: check that a ford-built app core produces a valid bowl.
+  :: +mo-okay: check that a vase contains a valid bowl.
   ::
   ++  mo-okay
     ~/  %mo-okay
@@ -191,7 +203,7 @@
     =/  bowl  p.u.val
     (~(nest ut bowl) %.n bowl-type)
   ::
-  ::  +mo-receive-core: receives an app core built by ford-turbo.
+  ::  +mo-receive-core: receives an app core built by ford.
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
@@ -215,7 +227,7 @@
       ::
       =/  updated  u.app-data(byk beak)
       =.  bum.mas  (~(put by bum.mas) dude updated)
-      ::  magic update string from +mo-boon, "complete old boot"
+      ::  magic update string from the old +mo-boon, "complete old boot"
       ::
       =/  =prey  [%high [~ our]]
       =/  abedded  (ap-abed:ap dude prey)
@@ -270,27 +282,6 @@
     %_  mo-state
       bum.mas  (~(put by bum.mas) dude new-seat)
     ==
-  ::
-  ::  +mo-boot: sends an %exec to ford.
-  ::
-  ++  mo-boot
-    |=  [=dude =beak]
-    ^+  mo-state
-    ::
-    =/  =path
-      =/  ship  (scot %p p.beak)
-      =/  desk  q.beak
-      =/  case  (scot r.beak)
-      /sys/core/[dude]/[ship]/[desk]/[case]
-    ::
-    =/  =note-arvo
-      =/  disc  [p q]:beak
-      =/  spur  /hoon/[dude]/app
-      =/  schematic  [%core disc spur]
-      [%f %build live=%.y schematic]
-    ::
-    =/  pass  [path note-arvo]
-    (mo-pass pass)
   ::
   :: +mo-away: handle a foreign request.
   ::
@@ -1829,13 +1820,13 @@
       ~&  [%gall-not-ours syp]
       [~ ..^$]
     ::
-    =/  confed
+    =/  booted
       =/  initialised  (mo-abed:mo hen)
       =/  dud=dude  q.doc
       =/  des=(pair ship desk)  q.q.hic
-      (mo-conf:initialised dud des)
+      (mo-boot:initialised dud des)
     ::
-    mo-abet:confed
+    mo-abet:booted
   ::
       ::
       %deal
