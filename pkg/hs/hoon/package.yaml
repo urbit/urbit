@@ -1,6 +1,6 @@
-name:                hoon-hs
+name:                language-hoon
 version:             0.1.0.0
-github:              "urbit/hoon-hs"
+github:              "urbit/urbit"
 license:             BSD3
 
 library:

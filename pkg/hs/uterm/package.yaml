@@ -19,6 +19,7 @@ dependencies:
  - base
  - classy-prelude
  - lens
+ - language-hoon
 
 executables:
   pomo:
