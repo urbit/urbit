@@ -1,0 +1,73 @@
+name:                hoon-hs
+version:             0.1.0.0
+github:              "urbit/hoon-hs"
+license:             BSD3
+
+library:
+  source-dirs: src
+
+extra-source-files:
+  - README.md
+  - ChangeLog.md
+
+dependencies:
+  - base
+  - classy-prelude
+  - containers
+  - data-fix
+  - integer-gmp
+  - ghc-prim
+  - lens
+  - megaparsec
+  - mtl
+  - multimap
+  - para
+  - pretty-show
+  - QuickCheck
+  - semigroups
+  - smallcheck
+  - tasty
+  - tasty-quickcheck
+  - tasty-th
+  - text
+  - these
+  - unordered-containers
+  - vector
+
+ghc-options:
+  - -threaded
+  - -rtsopts
+  - -with-rtsopts=-N
+  - -fwarn-incomplete-patterns
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PartialTypeSignatures
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - UnicodeSyntax
+  - ViewPatterns
+  - BlockArguments
+  - NamedFieldPuns
+  - TemplateHaskell
