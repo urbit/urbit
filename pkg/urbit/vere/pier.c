@@ -104,10 +104,10 @@ _pier_db_commit_complete(c3_o success,
 
 #ifdef VERBOSE_EVENTS
   if (event_count_d != 1) {
-    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): db commit completed\r\n",
-            first_event_d, first_event_d + count_d - 1ULL);
+    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): db commit: complete\r\n",
+            first_event_d, first_event_d + event_count_d - 1ULL);
   } else {
-    u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", first_event_d);
+    u3l_log("pier: (%" PRIu64 "): db commit: complete\r\n", first_event_d);
   }
 #endif
 
@@ -116,7 +116,7 @@ _pier_db_commit_complete(c3_o success,
   {
     c3_assert((first_event_d + event_count_d - 1ULL) == log_u->moc_d);
     c3_assert(first_event_d == (1ULL + log_u->com_d));
-    log_u->com_d += 1ULL;
+    log_u->com_d += event_count_d;
   }
 
   _pier_loop_resume(pir_u);
@@ -134,10 +134,10 @@ _pier_db_commit_request(u3_pier* pir_u,
 
 #ifdef VERBOSE_EVENTS
   if (count_d != 1) {
-    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): commit: request\r\n",
+    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): db commit: request\r\n",
             first_event_d, first_event_d + count_d - 1ULL);
   } else {
-    u3l_log("pier: (%" PRIu64 "): commit: request\r\n", first_event_d);
+    u3l_log("pier: (%" PRIu64 "): db commit: request\r\n", first_event_d);
   }
 #endif
 
@@ -1647,6 +1647,11 @@ _pier_apply(u3_pier* pir_u)
 
   u3_writ* wit_u;
   c3_o     act_o = c3n;
+
+  // Warning: This entire event queuing system is way too clever; it tries to
+  // maintain a single linked list with multiple index based integer iterators
+  // over it instead of just using separate lists for the different stages of
+  // event handling.
 
 start:
 
