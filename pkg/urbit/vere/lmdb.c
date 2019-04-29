@@ -174,8 +174,7 @@ c3_o _perform_get_on_database_noun(MDB_txn* transaction_u,
   return c3y;
 }
 
-/* u3_lmdb_write_request: contains multiple events to be written together
-**
+/* u3_lmdb_write_request: Events to be written together
 */
 struct u3_lmdb_write_request {
   // The event number of the first event.
@@ -194,9 +193,7 @@ struct u3_lmdb_write_request {
   size_t* malloced_event_data_size;
 };
 
-/* u3_lmdb_build_write_request(): Reads t
-**
-** Returns null when the event ids in u3_writ are not contiguous.
+/* u3_lmdb_build_write_request(): Allocates and builds a write request
 */
 struct u3_lmdb_write_request*
 u3_lmdb_build_write_request(u3_writ* event_u, c3_d count)

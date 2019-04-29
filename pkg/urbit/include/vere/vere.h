@@ -1294,11 +1294,20 @@
       c3_o u3_lmdb_get_latest_event_number(MDB_env* environment,
                                            c3_d* event_number);
 
+      /* u3_lmdb_write_request: opaque write request structures
+      */
       struct u3_lmdb_write_request;
 
+      /* u3_lmdb_build_write_reuqest(): allocates and builds a write request
+      **
+      ** Reads count sequential writs starting with event_u and creates a
+      ** single write request for all those writs.
+      */
       struct u3_lmdb_write_request*
       u3_lmdb_build_write_request(u3_writ* event_u, c3_d count);
 
+      /* u3_lmdb_free_write_request(): frees a write requst
+      */
       void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request);
 
       /* u3_lmdb_write_event(): Persists an event to the database
@@ -1306,7 +1315,8 @@
       void u3_lmdb_write_event(MDB_env* environment,
                                u3_pier* pir_u,
                                struct u3_lmdb_write_request* request_u,
-                               void (*on_complete)(c3_o success, u3_pier*, c3_d, c3_d));
+                               void (*on_complete)(c3_o success, u3_pier*,
+                                                   c3_d, c3_d));
 
       /* u3_lmdb_read_events(): Reads events back from the database
       **

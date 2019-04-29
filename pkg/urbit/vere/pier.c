@@ -1648,11 +1648,6 @@ _pier_apply(u3_pier* pir_u)
   u3_writ* wit_u;
   c3_o     act_o = c3n;
 
-  // Warning: This entire event queuing system is way too clever; it tries to
-  // maintain a single linked list with multiple index based integer iterators
-  // over it instead of just using separate lists for the different stages of
-  // event handling.
-
 start:
 
   /* iterate from queue exit, advancing any writs that can advance
