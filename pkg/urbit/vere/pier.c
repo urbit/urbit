@@ -90,9 +90,11 @@ _pier_db_shutdown(u3_pier* pir_u)
 /* _pier_db_commit_complete(): commit complete.
  */
 static void
-_pier_db_commit_complete(c3_o success, u3_writ* wit_u)
+_pier_db_commit_complete(c3_o success,
+                         u3_pier* pir_u,
+                         c3_d first_event_d,
+                         c3_d event_count_d)
 {
-  u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
   if (success == c3n) {
@@ -101,15 +103,20 @@ _pier_db_commit_complete(c3_o success, u3_writ* wit_u)
   }
 
 #ifdef VERBOSE_EVENTS
-  u3l_log("pier: (%" PRIu64 "): db commit completed\r\n", wit_u->evt_d);
+  if (event_count_d != 1) {
+    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): db commit: complete\r\n",
+            first_event_d, first_event_d + event_count_d - 1ULL);
+  } else {
+    u3l_log("pier: (%" PRIu64 "): db commit: complete\r\n", first_event_d);
+  }
 #endif
 
   /* advance commit counter
   */
   {
-    c3_assert(wit_u->evt_d == log_u->moc_d);
-    c3_assert(wit_u->evt_d == (1ULL + log_u->com_d));
-    log_u->com_d += 1ULL;
+    c3_assert((first_event_d + event_count_d - 1ULL) == log_u->moc_d);
+    c3_assert(first_event_d == (1ULL + log_u->com_d));
+    log_u->com_d += event_count_d;
   }
 
   _pier_loop_resume(pir_u);
@@ -118,28 +125,36 @@ _pier_db_commit_complete(c3_o success, u3_writ* wit_u)
 /* _pier_db_commit_request(): start commit.
 */
 static void
-_pier_db_commit_request(u3_writ* wit_u)
+_pier_db_commit_request(u3_pier* pir_u,
+                        struct u3_lmdb_write_request* request_u,
+                        c3_d first_event_d,
+                        c3_d count_d)
 {
-  u3_pier* pir_u = wit_u->pir_u;
   u3_disk* log_u = pir_u->log_u;
 
 #ifdef VERBOSE_EVENTS
-  u3l_log("pier: (%" PRIu64 "): commit: request\r\n", wit_u->evt_d);
+  if (count_d != 1) {
+    u3l_log("pier: (%" PRIu64 "-%" PRIu64 "): db commit: request\r\n",
+            first_event_d, first_event_d + count_d - 1ULL);
+  } else {
+    u3l_log("pier: (%" PRIu64 "): db commit: request\r\n", first_event_d);
+  }
 #endif
 
   /* put it in the database
   */
   {
     u3_lmdb_write_event(log_u->db_u,
-                        wit_u,
+                        pir_u,
+                        request_u,
                         _pier_db_commit_complete);
   }
 
   /* advance commit-request counter
   */
   {
-    c3_assert(wit_u->evt_d == (1ULL + log_u->moc_d));
-    log_u->moc_d += 1ULL;
+    c3_assert(first_event_d == (1ULL + log_u->moc_d));
+    log_u->moc_d += count_d;
   }
 }
 
@@ -1658,8 +1673,15 @@ start:
          (wit_u->evt_d == (1 + log_u->moc_d)) &&
          (wit_u->evt_d == (1 + log_u->com_d)) )
     {
-      // TODO(erg): This is the place where we build up things into a queue.
-      _pier_db_commit_request(wit_u);
+      c3_d count = 1 + (god_u->dun_d - wit_u->evt_d);
+      struct u3_lmdb_write_request* request =
+          u3_lmdb_build_write_request(wit_u, count);
+      c3_assert(request != 0);
+
+      _pier_db_commit_request(pir_u,
+                              request,
+                              wit_u->evt_d,
+                              count);
       act_o = c3y;
     }
 
