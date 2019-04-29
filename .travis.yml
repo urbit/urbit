@@ -2,15 +2,15 @@ language: nix
 nix: 2.1.3
 
 install:
-  # nix-env -iA cachix -f https://cachix.org/api/v1/install
+  - nix-env -iA cachix -f https://cachix.org/api/v1/install
 
 before_install:
   - git lfs pull
 
 script:
-  # cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
-  # cachix use urbit
+  - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
+  - cachix use urbit2
   - make
   - make test
   - sh/update-brass-pill # To verify that this works.
-  # ./sh/cachix
+  - ./sh/cachix

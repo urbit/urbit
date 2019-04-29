@@ -691,6 +691,7 @@
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
           uv_prepare_t     pep_u;               //  preloop registration
+          uv_idle_t        idl_u;               //  postloop registration
         } u3_pier;
 
       /* u3_king: all executing piers.

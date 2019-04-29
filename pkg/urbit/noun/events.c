@@ -155,7 +155,7 @@ u3e_fault(void* adr_v, c3_i ser_i)
                         (1 << (u3a_page + 2)),
                         (PROT_READ | PROT_WRITE)) )
     {
-      perror("mprotect");
+      u3l_log("loom: fault mprotect: %s\r\n", strerror(errno));
       c3_assert(0);
       return 0;
     }
@@ -182,14 +182,14 @@ _ce_image_open(u3e_image* img_u)
 
   snprintf(ful_c, 8192, "%s/.urb/chk/%s.bin", u3P.dir_c, img_u->nam_c);
   if ( -1 == (img_u->fid_i = open(ful_c, mod_i, 0666)) ) {
-    perror(ful_c);
+    u3l_log("loom: open %s: %s\r\n", ful_c, strerror(errno));
     return c3n;
   }
   else {
     struct stat buf_u;
 
     if ( -1 == fstat(img_u->fid_i, &buf_u) ) {
-      perror(ful_c);
+      u3l_log("loom: stat %s: %s\r\n", ful_c, strerror(errno));
       c3_assert(0);
       return c3n;
     }
@@ -273,13 +273,13 @@ _ce_patch_create(u3_ce_patch* pat_u)
 
   snprintf(ful_c, 8192, "%s/.urb/chk/control.bin", u3P.dir_c);
   if ( -1 == (pat_u->ctl_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    perror(ful_c);
+    u3l_log("loom: patch open control.bin: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
   snprintf(ful_c, 8192, "%s/.urb/chk/memory.bin", u3P.dir_c);
   if ( -1 == (pat_u->mem_i = open(ful_c, O_RDWR | O_CREAT | O_EXCL, 0600)) ) {
-    perror(ful_c);
+    u3l_log("loom: patch open memory.bin: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 }
@@ -311,12 +311,12 @@ _ce_patch_verify(u3_ce_patch* pat_u)
     c3_w mem_w[1 << u3a_page];
 
     if ( -1 == lseek(pat_u->mem_i, (i_w << (u3a_page + 2)), SEEK_SET) ) {
-      perror("seek");
+      u3l_log("loom: patch seek: %s\r\n", strerror(errno));
       c3_assert(0);
       return c3n;
     }
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
-      perror("read");
+      u3l_log("loom: patch read: %s\r\n", strerror(errno));
       c3_assert(0);
       return c3n;
     }
@@ -636,7 +636,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     c3_w ret_w;
     ret_w = ftruncate(u3P.nor_u.fid_i, u3P.nor_u.pgs_w << (u3a_page + 2));
     if (ret_w){
-      perror("_ce_patch_apply");
+      u3l_log("loom: patch apply truncate north: %s\r\n", strerror(errno));
       c3_assert(0);
     }
   }
@@ -646,7 +646,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     c3_w ret_w;
     ret_w = ftruncate(u3P.sou_u.fid_i, u3P.sou_u.pgs_w << (u3a_page + 2));
     if (ret_w){
-      perror("_ce_patch_apply");
+      u3l_log("loom: patch apply truncate south: %s\r\n", strerror(errno));
       c3_assert(0);
     }
   }
@@ -656,7 +656,7 @@ _ce_patch_apply(u3_ce_patch* pat_u)
        (-1 == lseek(u3P.nor_u.fid_i, 0, SEEK_SET)) ||
        (-1 == lseek(u3P.sou_u.fid_i, 0, SEEK_SET)) )
   {
-    perror("apply: seek");
+    u3l_log("loom: patch apply seek 0: %s\r\n", strerror(errno));
     c3_assert(0);
   }
 
@@ -676,16 +676,16 @@ _ce_patch_apply(u3_ce_patch* pat_u)
     }
 
     if ( -1 == read(pat_u->mem_i, mem_w, (1 << (u3a_page + 2))) ) {
-      perror("apply: read");
+      u3l_log("loom: patch apply read: %s\r\n", strerror(errno));
       c3_assert(0);
     }
     else {
       if ( -1 == lseek(fid_i, (off_w << (u3a_page + 2)), SEEK_SET) ) {
-        perror("apply: lseek");
+        u3l_log("loom: patch apply seek: %s\r\n", strerror(errno));
         c3_assert(0);
       }
       if ( -1 == write(fid_i, mem_w, (1 << (u3a_page + 2))) ) {
-        perror("apply: write");
+        u3l_log("loom: patch apply write: %s\r\n", strerror(errno));
         c3_assert(0);
       }
     }
@@ -707,7 +707,7 @@ _ce_image_blit(u3e_image* img_u,
   lseek(img_u->fid_i, 0, SEEK_SET);
   for ( i_w=0; i_w < img_u->pgs_w; i_w++ ) {
     if ( -1 == read(img_u->fid_i, ptr_w, (1 << (u3a_page + 2))) ) {
-      perror("read");
+      u3l_log("loom: image blit read: %s\r\n", strerror(errno));
       c3_assert(0);
     }
 #if 0
@@ -739,7 +739,7 @@ _ce_image_fine(u3e_image* img_u,
     c3_w mem_w, fil_w;
 
     if ( -1 == read(img_u->fid_i, buf_w, (1 << (u3a_page + 2))) ) {
-      perror("read");
+      u3l_log("loom: image fine read: %s\r\n", strerror(errno));
       c3_assert(0);
     }
     mem_w = u3r_mug_words(ptr_w, (1 << u3a_page));
@@ -882,7 +882,7 @@ u3e_live(c3_o nuu_o, c3_c* dir_c)
                        -(1 << u3a_page));
 
         if ( 0 != mprotect((void *)u3_Loom, u3a_bytes, PROT_READ) ) {
-          perror("protect");
+          u3l_log("loom: live mprotect: %s\r\n", strerror(errno));
           c3_assert(0);
         }
 

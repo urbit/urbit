@@ -167,7 +167,7 @@ _t_samp_process(u3_road* rod_u)
       pef = t_pef;
     }
 
-    // fprintf(stderr, "sample: stack length %d\r\n", u3kb_lent(u3k(pal)));
+    // u3l_log("sample: stack length %d\r\n", u3kb_lent(u3k(pal)));
     return pal;
   }
 }
@@ -536,7 +536,7 @@ u3t_boot(void)
       sigemptyset(&set);
       sigaddset(&set, SIGPROF);
       if ( 0 != pthread_sigmask(SIG_UNBLOCK, &set, NULL) ) {
-        perror("pthread_sigmask");
+        u3l_log("trace: thread mask SIGPROF: %s\r\n", strerror(errno));
       }
     }
 
@@ -569,7 +569,7 @@ u3t_boff(void)
       sigemptyset(&set);
       sigaddset(&set, SIGPROF);
       if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-        perror("pthread_sigmask");
+        u3l_log("trace: thread mask SIGPROF: %s\r\n", strerror(errno));
       }
     }
 
