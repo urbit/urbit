@@ -1303,8 +1303,9 @@
       /* u3_lmdb_write_event(): Persists an event to the database
       */
       void u3_lmdb_write_event(MDB_env* environment,
-                               u3_writ* event_u,
-                               void (*on_complete)(c3_o success, u3_writ*));
+                               u3_pier* pir_u,
+                               struct u3_lmdb_write_request* request_u,
+                               void (*on_complete)(c3_o success, u3_pier*, c3_d, c3_d));
 
       /* u3_lmdb_read_events(): Reads events back from the database
       **
