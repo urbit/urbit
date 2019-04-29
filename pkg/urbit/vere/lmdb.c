@@ -317,10 +317,11 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
               request->first_event,
               mdb_strerror(ret_w));
     } else {
+      c3_d through = request->first_event + request->event_count - 1ULL;
       u3l_log("lmdb: failed to commit events %" PRIu64  " through %" PRIu64
               ": %s\n",
               request->first_event,
-              request->first_event + request->event_count - 1ULL,
+              through,
               mdb_strerror(ret_w));
     }
     data->success = c3n;
