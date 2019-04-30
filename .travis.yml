@@ -11,18 +11,11 @@ script:
   - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   - cachix use urbit2
 
-  # ./sh/cachix-local
+  - ./sh/cachix-local
+  - ./sh/cachix-release
+
   - make
-  # make test
-  # sh/update-brass-pill # To verify that this works.
+  - make release
 
-  # echo "Local build finished!"
-  # echo "Local build finished!"
-  # echo "Local build finished!"
-
-  # ./sh/cachix-release
-  # make release
-
-  # echo "Release build finished!"
-  # echo "Release build finished!"
-  # echo "Release build finished!"
+  - make test
+  - sh/update-brass-pill
