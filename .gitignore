@@ -9,3 +9,4 @@ TAGS
 bin/darwin
 bin/linux32
 bin/linux64
+release

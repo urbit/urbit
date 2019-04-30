@@ -19,9 +19,9 @@ env="$2"
 
 res=$(release "$env.$pkg")
 
-mkdir -p ./bin/$env
-traced cp -f $res/bin/$pkg ./bin/$env/$pkg
-traced cp -f $res/bin/$pkg-worker ./bin/$env/$pkg-worker
-traced cp -r $res/bin/$pkg-terminfo ./bin/$env/$pkg-terminfo
+mkdir -p ./release/$env
+traced cp -f $res/bin/$pkg ./release/$env/$pkg
+traced cp -f $res/bin/$pkg-worker ./release/$env/$pkg-worker
+traced cp -r $res/bin/$pkg-terminfo ./release/$env/$pkg-terminfo
 
-chmod -R u+wr ./bin/$env/$pkg-terminfo
+chmod -R u+wr ./release/$env/$pkg-terminfo

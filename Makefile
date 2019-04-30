@@ -14,7 +14,6 @@ install:
 	nix-env -f . -iA urbit -iA urbit-debug -iA herb
 
 release:
-	sh/release urbit linux32
 	sh/release urbit linux64
 	sh/release urbit darwin
 
