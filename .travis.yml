@@ -13,8 +13,8 @@ script:
 
   - ./sh/cachix-local
   - make
-  - make test
-  - sh/update-brass-pill # To verify that this works.
+  # make test
+  # sh/update-brass-pill # To verify that this works.
 
   - echo "Local build finished!"
   - echo "Local build finished!"
