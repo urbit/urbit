@@ -25,27 +25,19 @@ let
     import ./pkgs/urbit/release.nix env
       { ent = ent env; debug = true; name = "urbit-debug"; };
 
+  builds-for-platform = plat:
+    plat.deps // {
+      inherit (plat.env) curl libgmp libsigsegv ncurses openssl zlib lmdb;
+
+      ent         = ent         plat;
+      urbit       = urbit       plat;
+      urbit-debug = urbit-debug plat;
+    };
+
 in
 
 {
-  linux32-env = linux32.env;
-  linux32 = linux32.deps // {
-    ent         = ent         linux32;
-    urbit       = urbit       linux32;
-    urbit-debug = urbit-debug linux32;
-  };
-
-  linux64-env = linux64.env;
-  linux64 = linux64.deps // {
-    ent         = ent         linux64;
-    urbit       = urbit       linux64;
-    urbit-debug = urbit-debug linux64;
-  };
-
-  darwin-env = darwin.env;
-  darwin = darwin.deps // {
-    ent         = ent         darwin;
-    urbit       = urbit       darwin;
-    urbit-debug = urbit-debug darwin;
-  };
+  linux32 = builds-for-platform linux32;
+  linux64 = builds-for-platform linux64;
+  darwin  = builds-for-platform darwin;
 }
