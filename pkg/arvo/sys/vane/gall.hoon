@@ -267,9 +267,9 @@
     ::
     =/  =scar
       =/  bone  1
-      =/  bone-by-duct  [[[~ ~] 0] ~ ~]
-      =/  duct-by-bone  [[0 [~ ~]] ~ ~]
-      [p=bone q=bone-by-duct r=duct-by-bone]
+      =/  bone-duct  [[[~ ~] 0] ~ ~]
+      =/  duct-bone  [[0 [~ ~]] ~ ~]
+      [p=bone q=bone-duct r=duct-bone]
     ::
     =/  new-seat
       %_  seat
