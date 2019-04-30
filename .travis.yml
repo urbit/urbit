@@ -17,12 +17,12 @@ script:
   # sh/update-brass-pill # To verify that this works.
 
   # echo "Local build finished!"
-  - echo "Local build finished!"
-  - echo "Local build finished!"
+  # echo "Local build finished!"
+  # echo "Local build finished!"
 
   # ./sh/cachix-release
-  - make release
+  # make release
 
-  - echo "Release build finished!"
-  - echo "Release build finished!"
-  - echo "Release build finished!"
+  # echo "Release build finished!"
+  # echo "Release build finished!"
+  # echo "Release build finished!"
