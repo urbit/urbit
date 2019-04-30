@@ -10,8 +10,19 @@ before_install:
 script:
   - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   - cachix use urbit2
-  - make release
+
+  - ./sh/cachix-local
   - make
   - make test
   - sh/update-brass-pill # To verify that this works.
-  - ./sh/cachix
+
+  - echo "Local build finished!"
+  - echo "Local build finished!"
+  - echo "Local build finished!"
+
+  - ./sh/cachix-release
+  - make release
+
+  - echo "Release build finished!"
+  - echo "Release build finished!"
+  - echo "Release build finished!"
