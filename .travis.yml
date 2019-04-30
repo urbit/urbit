@@ -10,6 +10,7 @@ before_install:
 script:
   - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   - cachix use urbit2
+  - make release
   - make
   - make test
   - sh/update-brass-pill # To verify that this works.
