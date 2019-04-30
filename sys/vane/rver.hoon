@@ -675,6 +675,31 @@
   ::
   |=  [[our=@p eny=@ =duct now=@da scry=sley] state=server-state]
   |%
+  ::  +request-local: bypass authentication for local lens connections
+  ::
+  ++  request-local
+    |=  [secure=? =address =request:http]
+    ^-  [(list move) server-state]
+    ::
+    =/  act  [%app app=%lens]
+    =/  connection=outstanding-connection
+      [act [& secure address request] ~ 0]
+    ::
+    =.  connections.state
+      (~(put by connections.state) duct connection)
+    ::
+    :_  state
+    :_  ~
+    :^  duct  %pass  /run-app/[app.act]
+    ^-  note
+    :^  %g  %deal  [our our]
+    ::
+    ^-  cush:gall
+    :*  app.act
+        %poke
+        %handle-http-request
+        !>(inbound-request.connection)
+    ==
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -1784,7 +1809,13 @@
     ==
   ::
       %request
+    ~&  task
     =^  moves  server-state.ax  (request:server +.task)
+    [moves http-server-gate]
+  ::
+      %request-local
+    ~&  task
+    =^  moves  server-state.ax  (request-local:server +.task)
     [moves http-server-gate]
   ::
       %cancel-request

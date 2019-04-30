@@ -2251,6 +2251,9 @@
           ::  starts handling an inbound http request
           ::
           [%request secure=? =address =request:http]
+          ::  starts handling an backdoor http request
+          ::
+          [%request-local secure=? =address =request:http]
           ::  cancels a previous request
           ::
           [%cancel-request ~]
