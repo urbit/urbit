@@ -1317,7 +1317,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   // enable ALPN for HTTP 2 support
-#if H2O_USE_ALPN
+#if 0 //H2O_USE_ALPN
   {
     SSL_CTX_set_ecdh_auto(tls_u, 1);
     h2o_ssl_register_alpn_protocols(tls_u, h2o_http2_alpn_protocols);
