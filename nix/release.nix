@@ -28,16 +28,20 @@ let
   builds-for-platform = plat:
     plat.deps // {
       inherit (plat.env) curl libgmp libsigsegv ncurses openssl zlib lmdb;
-
+      inherit (plat.env) cmake_toolchain;
       ent         = ent         plat;
       urbit       = urbit       plat;
       urbit-debug = urbit-debug plat;
     };
+
+  darwin_extra = {
+    inherit (darwin.env) ranlib ld sdk ar toolchain tapi strip; # pkgconfig;
+  };
 
 in
 
 {
   linux32 = builds-for-platform linux32;
   linux64 = builds-for-platform linux64;
-  darwin  = builds-for-platform darwin;
+  darwin  = darwin_extra // builds-for-platform darwin;
 }

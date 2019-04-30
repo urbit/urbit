@@ -28,9 +28,13 @@ in
 
 let
 
-  pkgs    = import ./pkgs {};
-  deps    = import ./deps {};
-  release = flattenSetPrefix (import ./release.nix);
+  pkgs      = import ./pkgs {};
+  deps      = import ./deps {};
+  nixcrpkgs = import ./nixcrpkgs.nix {};
+  release   = import ./release.nix;
+
+  all_releases = flattenSetPrefix release;
+  pkgconf      = nixcrpkgs.native.pkgconf;
 
   # Cache the result of cloning source repos.
   repos = {
@@ -47,4 +51,4 @@ let
 
 in
 
-  deps // pkgs // release // repos
+  deps // pkgs // all_releases // repos
