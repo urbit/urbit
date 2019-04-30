@@ -21,5 +21,8 @@ trap cleanup EXIT
 
 cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
 cachix use urbit2
-nix-build --no-out-link nix/cache.nix > .cache.list
+
+nix-build --no-out-link nix/cachix/local.nix    > .cache.list
+nix-build --no-out-link nix/cachix/release.nix >> .cache.list
+
 cachix push urbit2 < .cache.list
