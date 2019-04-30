@@ -73,6 +73,6 @@
         %sav  ~&  [%save-file-to p.b]  line
         %url  ~&  [%activate-url p.b]  line
     ==
-  ~&  last-line
+  ~?  !=(~ last-line)  last-line
   this
 --

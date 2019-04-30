@@ -498,7 +498,6 @@
   ::  +rift-scry: for a +rift
   ::
   ++  rift-scry
-    ~/  %rift-scry
     |=  who=ship
     ^-  (unit rift)
     =;  rit
@@ -3965,8 +3964,8 @@
     ::
     ::  Don't clear state, because it doesn't quite work yet.
     ::
-    ?:  =(0 0)
-      `..^$
+    ::  ?:  =(0 0)
+    ::    `..^$
     ::  if we sunk, don't clear clay
     ::
     ?:  =(our p.req)

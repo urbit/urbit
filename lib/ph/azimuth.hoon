@@ -248,7 +248,9 @@
     ^+  *form:(ph ,~)
     |=  pin=ph-input
     :+  &  ~
-    =/  aqua-pax  /i/j/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
+    =/  aqua-pax
+      :-  %i
+      /(scot %p her)/j/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
     =/  lyfe  (scry-aqua noun our now.pin aqua-pax)
     ~&  [new-lyfe=[0 new-lyfe] lyfe=lyfe]
     ?:  =([~ new-lyfe] lyfe)
@@ -286,7 +288,9 @@
     ^+  *form:(ph ,~)
     |=  pin=ph-input
     :+  &  ~
-    =/  aqua-pax  /i/j/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
+    =/  aqua-pax
+      :-  %i
+      /(scot %p her)/j/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
     =/  rut  (scry-aqua noun our now.pin aqua-pax)
     ?:  =([~ new-rut] rut)
       [%done ~]

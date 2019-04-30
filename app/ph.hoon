@@ -142,8 +142,8 @@
           router:eth-node
         ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
-        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~marbud))
-        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~mardev))
+        ;<  ~  bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
         (send-hi ~marbud ~mardev)
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~mardev ~marbud)
@@ -152,7 +152,31 @@
           router:eth-node
         ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
         ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
-        (wait-for-dojo ~bud "hi ~mardev successful")
+        (wait-for-dojo ~marbud "hi ~mardev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-sync
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  ~        bind:m  (just-events (dojo ~bud "|sync %base ~dev %kids"))
+        ;<  file=@t  bind:m  (touch-file ~dev %base)
+        (check-file-touched ~bud %home file)
+        ::  ;<  ~        bind:m  (check-file-touched ~bud %home file)
+        ::  (just-events (dojo ~bud "|verb"))
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  file=@t  bind:m  (touch-file ~dev %base)
+        ;<  file=@t  bind:m  (touch-file ~dev %base)
+        (check-file-touched ~bud %home file)
       (pure:m ~)
   ==
 ::

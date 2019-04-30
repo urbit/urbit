@@ -142,7 +142,16 @@
   |=  pin=ph-input
   =/  host-pax
     /(scot %p our)/home/(scot %da now.pin)/sur/aquarium/hoon
-  =/  warped  (cat 3 '=>  .  ' .^(@t %cx host-pax))
+  =/  pax  /sur/aquarium/hoon
+  =/  aqua-pax
+    ;:  weld
+        /i/(scot %p her)/cx/(scot %p her)/[des]/(scot %da now.pin)
+        pax
+        /noun
+    ==
+  =/  warped
+    %^  cat  3  '=>  .  '
+    (need (scry-aqua (unit @) our now.pin aqua-pax))
   [& (insert-file her des host-pax warped) %done warped]
 ::
 ::  Check /sur/aquarium/hoon on the given has the given contents.
@@ -150,15 +159,16 @@
 ++  check-file-touched
   |=  [her=ship des=desk warped=@t]
   =/  m  (ph ,~)
+  ;<  ~  bind:m  (mount her des)
   ^-  form:m
   |=  pin=ph-input
   ?.  &(=(her who.pin) ?=(?(%init %ergo) -.q.uf.pin))
     [& ~ %wait ~]
-  =/  pax  /home/(scot %da now.pin)/sur/aquarium/hoon
+  =/  pax  /sur/aquarium/hoon
   =/  aqua-pax
     ;:  weld
-        /i/cx/(scot %p her)
-        pax(- des)
+        /i/(scot %p her)/cx/(scot %p her)/[des]/(scot %da now.pin)
+        pax
         /noun
     ==
   ?:  =(warped (need (scry-aqua (unit @) our now.pin aqua-pax)))
