@@ -17,9 +17,6 @@ script:
   - make
   - make release
 
-  - mkdir -p artifact
-  - tar c release | xz > "artifact/release-$TRAVIS_COMMIT.tar.xz"
-
   # make test
   # sh/update-brass-pill
 
@@ -30,5 +27,9 @@ deploy:
     secret_access_key:
       secure: lALZvAW22oBMCXafvDOkqKDkdP0K8bGKlSb6uhh54z+2bJu49+5vrfxgA9YLcExGiz8uFttzNYhEoAQEjb96DPHAHvH2iJrwieKltrWM4hLkGuSHVSCBIIm+Qe4BVRSVJPQ1rtO1ausNr0XuzO6BVnKY7NCrz8la2XNjm5+miQdtrJUnrfy2JsM/c/Bkwjj3Tc4op9Ne+7Xzc9DI6LB97XiJx5PgeOx1WeZi9IKQ3IhPBHBzBpBrJ4lWxb4PFvDUqNzSk1wuMGy/sH73IFhGcz3CZRZYbeICDdwmHcUnkdPxG6+RLH+YLhSxx175R+HdaARRQvRANxvY9KNJ11NKmV3Rs9q7fZgWZbrptuB0CDMhfZ/Aiz9tgHGV0UVhYHb8n614fDIKzpXwIy5DPjCKpxPoZRVzABQcdzPTvxnZtZDbarsfdfq0vh9xXNPLGuFYZQnZ6iEpv17qp/2TbeCBSMKIxwIG3LQTwr0a4wKL1T/YIZm6oiN6NycHhMHaczQIRANKw9e7oqbgnXu/WnqHIxyTY2CCvzVOgipRmKKa7jz7CcSoP883XZ9o7WAOnfJY+T4ofpdkzHn1ElNXPjDPpX7CUkowNFH4DZk2Ljwe0CgxPOF6ygnsNrqqs4XoNQaBnHGXMq20Upg6OK9MBmZibtlX9STCeSAt4WudekpEOPU=
     bucket: bootstrap.urbit.org
-    local-dir: artifact/
+    local-dir: release/
     acl: public-read
+    on:
+      condition: "-d release/"
+      repo: urbit/urbit
+      all_branches: true
