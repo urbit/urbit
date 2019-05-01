@@ -2,7 +2,15 @@
 
 set -e
 
-ver="${TRAVIS_TAG-${TRAVIS_COMMIT-$(git rev-parse HEAD)}}"
+if [ -n "${TRAVIS_TAG-}" ]
+then
+  ver="$TRAVIS_TAG"
+elif [ -n "${TRAVIS_COMMIT-}" ]
+then
+  ver="$TRAVIS_COMMIT"
+else
+  ver="$(git rev-parse HEAD)"
+fi
 
 mkdir -p release
 
