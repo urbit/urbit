@@ -1,7 +1,3 @@
-PKGS = minima extrema rusthello prog
-
-################################################################################
-
 .PHONY: build build-all install cross release test clean
 
 build:

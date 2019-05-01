@@ -17,8 +17,8 @@ script:
   - make
   - make release
 
-  # make test
-  # sh/update-brass-pill
+  - make test
+  - sh/update-brass-pill
 
 deploy:
   - skip_cleanup: true
