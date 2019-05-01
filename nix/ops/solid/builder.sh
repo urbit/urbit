@@ -29,3 +29,5 @@ herb ./zod -p hood       -d "+hood/commit %home"
 herb ./zod -P urbit.pill -d '+solid, =dub &'
 
 mv urbit.pill $out
+
+set +x

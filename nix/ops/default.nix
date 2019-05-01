@@ -7,19 +7,22 @@ let
   arvo  = tlon.arvo;
   urbit = tlon.urbit;
 
+  bootbrass = ../../bin/brass.pill;
+  bootsolid = ../../bin/solid.pill;
+
 in
 
 rec {
 
   bootzod = import ./fakeship {
     inherit pkgs tlon deps debug;
-    brass = ../../bin/brass.pill;
+    brass = bootbrass;
     ship = "zod";
   };
 
   bootbus = import ./fakeship {
     inherit pkgs tlon deps debug;
-    brass = ../../bin/brass.pill;
+    brass = bootbrass;
     ship = "bus";
   };
 

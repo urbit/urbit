@@ -64,3 +64,5 @@ mkdir $out
 cp test-renders-output   $out/renders
 cp test-cores-output     $out/cores
 cp test-generator-output $out/generator
+
+set +x

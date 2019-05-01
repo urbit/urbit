@@ -17,3 +17,5 @@ else
     kill $(< $out/.vere.lock) || true
     exit 1
 fi
+
+set +x

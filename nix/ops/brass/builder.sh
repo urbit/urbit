@@ -1,6 +1,6 @@
 source $stdenv/setup
 
-set -ex
+set -x
 
 cp -r $FAKEZOD ./zod
 chmod -R u+rw ./zod
@@ -25,3 +25,5 @@ herb ./zod -p hood       -d "+hood/commit %home"
 herb ./zod -P brass.pill -d '+brass'
 
 mv brass.pill $out
+
+set +x
