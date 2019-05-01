@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -x
+
+sh/test &
+testpid=$!
+
+sh/update-brass-pill &
+pillpid=$!
+
+wait $testpid $pillpid

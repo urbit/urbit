@@ -1,28 +1,21 @@
 source $stdenv/setup
 
-set -x
+set -ex
 
-cp -r $FAKEZOD ./zod
-chmod -R u+rw ./zod
+cp -r $PIER ./pier
+chmod -R u+rw ./pier
 
-$URBIT -d ./zod
+$URBIT -d ./pier
 
 cleanup () {
-  if [ -e ./zod/.vere.lock ]
-  then kill $(< ./zod/.vere.lock) || true;
+  if [ -e ./pier/.vere.lock ]
+  then kill $(< ./pier/.vere.lock) || true;
   fi
 }
 
 trap cleanup EXIT
 
-herb ./zod -p hood -d '+hood/autoload |'
-herb ./zod -p hood -d "+hood/mount %"
-
-rm -r ./zod/home
-cp -r $ARVO ./zod/home
-
-herb ./zod -p hood       -d "+hood/commit %home"
-herb ./zod -P brass.pill -d '+brass'
+herb ./pier -P brass.pill -d '+brass'
 
 mv brass.pill $out
 

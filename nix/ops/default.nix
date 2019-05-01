@@ -14,36 +14,31 @@ in
 
 rec {
 
-  bootzod = import ./fakeship {
-    inherit pkgs tlon deps debug;
-    brass = bootbrass;
+  zod = import ./fakeship {
+    inherit pkgs tlon deps arvo debug;
+    pill = bootsolid;
     ship = "zod";
   };
 
-  bootbus = import ./fakeship {
-    inherit pkgs tlon deps debug;
-    brass = bootbrass;
+  bus = import ./fakeship {
+    inherit pkgs tlon deps arvo debug;
+    pill = bootsolid;
     ship = "bus";
   };
 
   test = import ./test {
-    inherit pkgs tlon deps arvo debug;
-    ship = bootzod;
+    inherit pkgs tlon deps debug;
+    ship = bus;
   };
 
   solid = import ./solid {
     inherit arvo pkgs tlon deps debug;
-    fakezod = bootzod;
+    pier = zod;
   };
 
   brass = import ./brass {
     inherit arvo pkgs tlon deps debug;
-    fakezod = bootzod;
-  };
-
-  fakezod = import ./fakeship {
-    inherit pkgs tlon deps brass debug;
-    ship = "zod";
+    pier = zod;
   };
 
 }

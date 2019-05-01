@@ -4,6 +4,3 @@ set -ex
 
 pkg=$(nix-build nix/ops -A brass --no-out-link)
 cp $pkg bin/brass.pill
-
-pkg=$(nix-build nix/ops -A solid --no-out-link)
-cp $pkg bin/solid.pill

@@ -1,4 +1,4 @@
-{ pkgs, tlon, deps, fakezod, arvo, debug }:
+{ pkgs, tlon, deps, pier, arvo, debug }:
 
 let
 
@@ -13,7 +13,7 @@ pkgs.stdenv.mkDerivation rec {
   builder     = ./builder.sh;
   buildInputs = [ tlon.herb pkgs.coreutils ];
 
-  URBIT   = urbitExe;
-  FAKEZOD = fakezod;
-  ARVO    = arvo;
+  URBIT = urbitExe;
+  PIER  = pier;
+  ARVO  = arvo;
 }
