@@ -1359,6 +1359,22 @@ u3_sist_boot(void)
 
       if ( 0 != u3_Host.ops_u.key_c ) {
         u3_noun des = u3m_file(u3_Host.ops_u.key_c);
+
+        // handle trailing newline
+        //
+        {
+          c3_c* key_c = u3r_string(des);
+          c3_w len_w = strlen(key_c);
+
+          if (len_w && (key_c[len_w - 1] == '\n')) {
+            key_c[len_w - 1] = '\0';
+            u3z(des);
+            des = u3i_string(key_c);
+          }
+
+          free(key_c);
+        }
+
         sed = sist_key(des);
       }
       else if ( 0 != u3_Host.ops_u.gen_c ) {
