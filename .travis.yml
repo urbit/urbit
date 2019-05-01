@@ -25,7 +25,7 @@ deploy:
     provider: gcs
     access_key_id: GOOGTADOPP55X5ZTH3IKAXQW
     secret_access_key:
-      secure: "VjA+nEfT6eqClZmmK17+SbVv55fBKt2OG61+oXG+CYgEYqUhX5f56EuCxmWkIiUMMnIcnkz3tSO2PVTbMrCKqucRppW4cZPZmj7VpJK0ttZGuYh4tYSGYcF5BAQsnwDo2jKLNDY0nYrvXPK8xLTIpKGJbt+z0dOQa1oydXRykhY="
+      secure: rSPif0VHX3Q3QpWM9iUt/Z9sicCY8ABuwVFPeT3YUnAAmSXM46PIHKieoGs79kx9IelFyQsM8xS0XWyt4S/haR7VaTJY+zHJjf0AnA1sr5ZIV70t3K0SXzq4+E1ffOZRiC0VmHatPz10wjaIpHxpjcROqQV4M1dBCq2H/rpccIE=
     bucket: bootstrap.urbit.org
     local-dir: release/
     acl: public-read
