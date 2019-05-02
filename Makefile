@@ -19,5 +19,5 @@ test:
 	sh/test
 
 clean:
-	rm -rf ./out ./work
+	rm -rf ./cross ./release
 	rm -f result result-*
