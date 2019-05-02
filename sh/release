@@ -18,7 +18,6 @@ for plat in linux64 darwin
 do
   sh/cross urbit "$plat"
 
-  echo "packaging release/urbit-$plat-$ver.tar.xz"
-  (cd cross/$plat; tar c .) |
-    xz > release/urbit-$plat-$ver.tar.xz
+  echo "packaging release/urbit-$plat-$ver.tgz"
+  (cd cross/$plat; tar cz .) > release/urbit-$plat-$ver.tgz
 done
