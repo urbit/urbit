@@ -4,18 +4,6 @@
 */
   /**  Data structures.
   **/
-    /* u3_cart: ovum carton.
-    */
-      struct _u3v_arvo;
-
-      typedef struct _u3v_cart {
-        u3_noun               vir;      //  effects of ovum
-        c3_o                  did;      //  cart considered for commit?
-        c3_o                  cit;      //  cart committed?
-        c3_d                  ent_d;    //  event number
-        u3p(struct _u3v_cart) nex_p;
-      } u3v_cart;
-
     /* u3v_arvo: modern arvo structure.
     */
       typedef struct _u3v_arvo {
@@ -28,18 +16,9 @@
         u3_noun our;                      //  identity
         u3_noun fak;                      //  c3y is fake
 
-        u3_noun sac;                      //  space profiling
-
-        u3_noun roe;                      //  temporary unsaved events
-        u3_noun key;                      //  log key, or 0
         u3_noun sys;                      //  system pill
 
         u3_noun roc;                      //  kernel core
-
-        struct {                          //  ova waiting to process
-          u3p(u3v_cart) egg_p;            //  exit of ovum queue
-          u3p(u3v_cart) geg_p;            //  entry of ovum queue
-        } ova;
       } u3v_arvo;
 
     /* u3v_home: all internal (within image) state.
@@ -144,11 +123,6 @@
     */
       void
       u3v_plow(u3_noun ova);
-
-    /* u3v_hose(): clear initial ovum queue.
-    */
-      void
-      u3v_hose(void);
 
     /* u3v_mark(): mark arvo kernel.
     */

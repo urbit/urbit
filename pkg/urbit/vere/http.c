@@ -461,7 +461,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
     req_u->tim_u->data = req_u;
     uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 300 * 1000, 0);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 900 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
   }

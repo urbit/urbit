@@ -1851,7 +1851,7 @@ u3a_sweep(void)
           weq_w += box_u->siz_w;
         }
         else {
-          _ca_print_leak("weak", box_u, box_u->eus_w, box_u->use_w);
+          _ca_print_leak("leak", box_u, box_u->eus_w, box_u->use_w);
 
           leq_w += box_u->siz_w;
         }

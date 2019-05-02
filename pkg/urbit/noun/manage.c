@@ -94,19 +94,28 @@ _cm_punt(u3_noun tax)
 }
 #endif
 
+static void _write(int  fd,  const  void  *buf,  size_t count)
+{
+  if (count != write(fd,  buf, count)){
+    u3l_log("write failed\r\n");
+    c3_assert(0);
+  }
+}
+
+
 /* _cm_emergency(): write emergency text to stderr, never failing.
 */
 static void
 _cm_emergency(c3_c* cap_c, c3_l sig_l)
 {
-  write(2, "\r\n", 2);
-  write(2, cap_c, strlen(cap_c));
+  _write(2, "\r\n", 2);
+  _write(2, cap_c, strlen(cap_c));
 
   if ( sig_l ) {
-    write(2, ": ", 2);
-    write(2, &sig_l, 4);
+    _write(2, ": ", 2);
+    _write(2, &sig_l, 4);
   }
-  write(2, "\r\n", 2);
+  _write(2, "\r\n", 2);
 }
 
 static void _cm_overflow(void *arg1, void *arg2, void *arg3)
@@ -1492,7 +1501,7 @@ _cm_limits(void)
                           ? (65536 << 10)
                           : rlm.rlim_max;
     if ( 0 != setrlimit(RLIMIT_STACK, &rlm) ) {
-      perror("stack");
+      u3l_log("boot: stack size: %s\r\n", strerror(errno));
       exit(1);
     }
   }
@@ -1504,7 +1513,7 @@ _cm_limits(void)
     c3_assert(0 == ret_i);
     rlm.rlim_cur = 10240; // default OSX max, not in rlim_max irritatingly
     if ( 0 != setrlimit(RLIMIT_NOFILE, &rlm) ) {
-      // perror("file limit");
+      u3l_log("boot: open file limit: %s\r\n", strerror(errno));
       //  no exit, not a critical limit
     }
   }
@@ -1515,7 +1524,7 @@ _cm_limits(void)
     getrlimit(RLIMIT_CORE, &rlm);
     rlm.rlim_cur = RLIM_INFINITY;
     if ( 0 != setrlimit(RLIMIT_CORE, &rlm) ) {
-      perror("core limit");
+      u3l_log("boot: core limit: %s\r\n", strerror(errno));
       //  no exit, not a critical limit
     }
   }
@@ -1527,7 +1536,7 @@ static void
 _cm_signals(void)
 {
   if ( 0 != sigsegv_install_handler(u3e_fault) ) {
-    u3l_log("sigsegv install failed\n");
+    u3l_log("boot: sigsegv install failed\n");
     exit(1);
   }
   // signal(SIGINT, _loom_stop);
@@ -1543,7 +1552,7 @@ _cm_signals(void)
     sigaddset(&set, SIGPROF);
 
     if ( 0 != pthread_sigmask(SIG_BLOCK, &set, NULL) ) {
-      perror("pthread_sigmask");
+      u3l_log("boot: thread mask SIGPROF: %s\r\n", strerror(errno));
       exit(1);
     }
   }
@@ -1902,7 +1911,6 @@ u3m_boot_new(c3_c* dir_c)
   /* Reactivate jets on old kernel.
   */
   if ( !_(nuu_o) ) {
-    u3v_hose();
     u3j_ream();
     u3n_ream();
 

@@ -26,7 +26,9 @@
 
     typedef struct _u3_worker {
       c3_w    len_w;                        //  boot sequence length
-      c3_d    evt_d;                        //  last event processed
+      u3_noun roe;                          //  lifecycle formulas
+      c3_d    sen_d;                        //  last event requested
+      c3_d    dun_d;                        //  last event processed
       c3_l    mug_l;                        //  hash of state
       c3_d    key_d[4];                     //  disk key
       u3_moat inn_u;                        //  message input
@@ -59,7 +61,7 @@
       ::
       $:  %done
           ::  p: event number
-          ::  q: mug of state (or 0)
+          ::  q: mug of kernel
           ::  r: effects
           ::
           [p=@ q=@ r=(list ovum)]
@@ -68,7 +70,7 @@
       ::
       $:  %work
           ::  p: event number
-          ::  q: mug of state (or 0)
+          ::  q: mug of kernel
           ::  r: replacement event (at date)
           ::
           [p=@ q=@ r=(pair date ovum)]
@@ -114,10 +116,9 @@
       ::
       $:  %work
           ::  p: event number
-          ::  q: mug of state (or 0)
-          ::  r: event (at date)
+          ::  q: a jammed noun [mug [date ovum]]
           ::
-          [p=@ q=@ r=(pair date ovum)]
+          [p=@ q=@]
   ==  ==
 --
 */
@@ -201,9 +202,9 @@ _worker_prof(FILE* fil_u, c3_w den, u3_noun mas)
       _worker_print_memory(fil_u, tot_w);
 
 #if 1
-      /* The basic issue here is that tt_mas is included in
-       * u3A->sac, so they can't both be roots in the normal
-       * sense. When we mark u3A->sac later on, we want tt_mas
+      /* The basic issue here is that tt_mas is included in .sac
+       * (the whole profile), so they can't both be roots in the
+       * normal sense. When we mark .sac later on, we want tt_mas
        * to appear unmarked, but its children should be already
        * marked.
       */
@@ -263,7 +264,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     }
   }
   else {
-    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, vir_w = 0;
+    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, roe_w = 0, vir_w = 0;
 
     FILE* fil_u;
 
@@ -309,6 +310,9 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     ova_w = u3a_mark_noun(ovo);
     u3a_print_memory(fil_u, "event", ova_w);
 
+    roe_w = u3a_mark_noun(u3V.roe);
+    u3a_print_memory(fil_u, "lifecycle events", roe_w);
+
     vir_w = u3a_mark_noun(vir);
     u3a_print_memory(fil_u, "effects", vir_w);
 
@@ -329,7 +333,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 static void
 _worker_fail(void* vod_p, const c3_c* wut_c)
 {
-  u3l_log("worker: fail: %s\r\n", wut_c);
+  u3l_log("work: fail: %s\r\n", wut_c);
   exit(1);
 }
 
@@ -344,16 +348,15 @@ _worker_send(u3_noun job)
 /* _worker_send_replace(): send replacement job back to daemon.
 */
 static void
-_worker_send_replace(c3_d evt_d, u3_noun ovo)
+_worker_send_replace(c3_d evt_d, u3_noun job)
 {
   u3l_log("worker_send_replace %" PRIu64 " %s\r\n",
           evt_d,
-          u3r_string(u3h(u3t(ovo))));
+          u3r_string(u3h(u3t(u3t(job)))));
 
-  _worker_send(u3nq(c3__work,
+  _worker_send(u3nt(c3__work,
                     u3i_chubs(1, &evt_d),
-                    u3V.mug_l,
-                    u3nc(u3k(u3A->now), ovo)));
+                    u3ke_jam(u3nc(u3V.mug_l, job))));
 }
 
 /* _worker_send_complete(): report completion.
@@ -362,8 +365,8 @@ static void
 _worker_send_complete(u3_noun vir)
 {
   _worker_send(u3nq(c3__done,
-                    u3i_chubs(1, &u3V.evt_d),
-                    u3r_mug(u3A->roc),
+                    u3i_chubs(1, &u3V.dun_d),
+                    u3V.mug_l,
                     vir));
 }
 
@@ -372,7 +375,7 @@ _worker_send_complete(u3_noun vir)
 static void
 _worker_send_stdr(c3_c* str_c)
 {
-  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.evt_d), u3i_string(str_c)));
+  _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.sen_d), u3i_string(str_c)));
 }
 
 /* _worker_send_slog(): send hint output (hod is [priority tank]).
@@ -380,18 +383,64 @@ _worker_send_stdr(c3_c* str_c)
 static void
 _worker_send_slog(u3_noun hod)
 {
-  _worker_send(u3nt(c3__slog, u3i_chubs(1, &u3V.evt_d), hod));
+  _worker_send(u3nt(c3__slog, u3i_chubs(1, &u3V.sen_d), hod));
 }
 
 /* _worker_lame(): event failed, replace with error event.
 */
 static void
-_worker_lame(c3_d evt_d, u3_noun ovo, u3_noun why, u3_noun tan)
+_worker_lame(c3_d evt_d, u3_noun now, u3_noun ovo, u3_noun why, u3_noun tan)
 {
-  // %crud will be sent on the original wire.
+  u3_noun rep;
+  u3_noun wir, tag, cad;
+
+  u3x_trel(ovo, &wir, &tag, &cad);
+
+  //  a deterministic error (%exit) in a network packet (%hear)
+  //  generates a negative-acknowlegement attempt (%hole).
   //
-  _worker_send_replace(evt_d, u3nc(u3k(u3h(ovo)), u3nt(c3__crud, why, tan)));
-  u3z(ovo);
+  //    A comment from the old implementation:
+  //      There should be a separate path for crypto failures,
+  //      to prevent timing attacks, but isn't right now.  To deal
+  //      with a crypto failure, just drop the packet.
+  //
+  if ( (c3__hear == tag) && (c3__exit == why) ) {
+    rep = u3nt(u3k(wir), c3__hole, u3k(cad));
+  }
+  //  failed event notifications (%crud) are replaced with
+  //  an even more generic notifications, on a generic arvo wire.
+  //  N.B this must not be allowed to fail!
+  //
+  //    [%warn original-event-tag=@tas combined-trace=(list tank)]
+  //
+  else if ( c3__crud == tag ) {
+    u3_noun lef = u3nc(c3__leaf, u3i_tape("crude crashed!"));
+    u3_noun nat = u3kb_weld(u3k(u3t(cad)), u3nc(lef, u3k(tan)));
+    rep = u3nc(u3nt(u3_blip, c3__arvo, u3_nul),
+               u3nt(c3__warn, u3k(u3h(cad)), nat));
+  }
+  //  failed failure failing fails
+  //
+  else if ( c3__warn == tag ) {
+    _worker_fail(0, "%warn replacement event failed");
+    c3_assert(0);
+  }
+  //  failure notifications are sent on the same wire
+  //
+  //    [%crud event-tag=@tas event-trace=(list tank)]
+  //
+  else {
+    //  prepend failure mote to tank
+    //
+    u3_noun lef = u3nc(c3__leaf, u3kb_weld(u3i_tape("bail: "),
+                                           u3qc_rip(3, why)));
+    u3_noun nat = u3kb_weld(u3k(tan), u3nc(lef, u3_nul));
+    rep = u3nc(u3k(wir), u3nt(c3__crud, u3k(tag), nat));
+  }
+
+  _worker_send_replace(evt_d, u3nc(now, rep));
+
+  u3z(ovo); u3z(why); u3z(tan);
 }
 
 /* _worker_sure(): event succeeded, report completion.
@@ -400,7 +449,9 @@ static void
 _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 {
   u3z(u3A->roc);
-  u3A->roc = cor;
+  u3A->roc   = cor;
+  u3A->ent_d = u3V.dun_d;
+  u3V.mug_l  = u3r_mug(u3A->roc);
 
   u3_noun sac = u3_nul;
 
@@ -453,25 +504,18 @@ _worker_sure(u3_noun ovo, u3_noun vir, u3_noun cor)
 /* _worker_work_live(): apply event.
 */
 static void
-_worker_work_live(c3_d    evt_d,              //  event number
-                  c3_l    mug_l,              //  mug of state
-                  u3_noun job)                //  event date
+_worker_work_live(c3_d evt_d, u3_noun job)
 {
   u3_noun now, ovo, gon;
+  u3_noun last_date;
 
-  c3_assert(evt_d == u3V.evt_d + 1ULL);
-  if ( 0 != mug_l ) {
-    c3_assert(u3r_mug(u3A->roc) == mug_l);
-  }
+  c3_assert(evt_d == u3V.dun_d + 1ULL);
+  u3V.sen_d = evt_d;
 
   u3x_cell(job, &now, &ovo);
 
-  u3z(u3A->now);
-  u3A->now = u3k(now);
-
-  //  XX why is this set before u3v_poke?
-  //
-  u3A->ent_d = evt_d;
+  last_date = u3A->now;
+  u3A->now  = u3k(now);
 
 #ifdef U3_EVENT_TIME_DEBUG
   {
@@ -481,7 +525,7 @@ _worker_work_live(c3_d    evt_d,              //  event number
     if ( c3__belt != u3h(u3t(ovo)) ) {
       c3_c* txt_c = u3r_string(u3h(u3t(ovo)));
 
-      u3l_log("worker: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
+      u3l_log("work: %s (%" PRIu64 ") live\r\n", txt_c, evt_d);
     }
   }
 #endif
@@ -510,20 +554,26 @@ _worker_work_live(c3_d    evt_d,              //  event number
   if ( u3_blip != u3h(gon) ) {
     //  event rejected
     //
+    u3V.sen_d = u3V.dun_d;
+    //  restore previous time
+    //
+    u3_noun nex = u3A->now;
+    u3A->now    = last_date;
+
     u3_noun why, tan;
     u3x_cell(gon, &why, &tan);
 
     u3k(ovo); u3k(why); u3k(tan);
     u3z(gon); u3z(job);
 
-    _worker_lame(evt_d, ovo, why, tan);
+    _worker_lame(evt_d, nex, ovo, why, tan);
   }
   else {
     //  event accepted
     //
-    //    XX reconcile/dedupe with u3A->ent_d
-    //
-    u3V.evt_d = evt_d;
+    u3V.dun_d = u3V.sen_d;
+    u3z(last_date);
+
     //  vir/(list ovum)  list of effects
     //  cor/arvo         arvo core
     //
@@ -535,9 +585,13 @@ _worker_work_live(c3_d    evt_d,              //  event number
 
     _worker_sure(ovo, vir, cor);
 
-    //  reclaim memory from persistent caches on |reset
+    //  reclaim memory from persistent caches periodically
     //
-    if ( 0 == (u3A->ent_d % 1000ULL) ) {
+    //    XX this is a hack to work around the fact that
+    //    the bytecode caches grow rapidly and are not
+    //    able to be simply capped (due to internal posts).
+    //
+    if ( 0 == (evt_d % 1000ULL) ) {
       u3m_reclaim();
     }
   }
@@ -562,24 +616,25 @@ _worker_boot_fire(u3_noun eve)
 /* _worker_work_boot(): apply initial-stage event.
 */
 static void
-_worker_work_boot(c3_d    evt_d,
-                c3_l    mug_l,
-                u3_noun job)
+_worker_work_boot(c3_d evt_d, u3_noun job)
 {
-  c3_assert(evt_d == u3V.evt_d + 1ULL);
-  u3V.evt_d = evt_d;
+  //  here we asset on u3V.sen_d, because u3V.dun_d isn't set until
+  //  after u3V.sen_d == u3V.len_w (ie, after the lifecycle evaluation)
+  //
+  c3_assert(evt_d == u3V.sen_d + 1ULL);
+  u3V.sen_d = evt_d;
 
-  u3A->roe = u3nc(job, u3A->roe);
+  u3V.roe = u3nc(job, u3V.roe);
 
-  u3l_log("worker: (%" PRIu64 ")| boot\r\n", evt_d);
+  u3l_log("work: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
     u3_noun eve, pru;
 
-    eve = u3kb_flop(u3A->roe);
-    u3A->roe = 0;
+    eve = u3kb_flop(u3V.roe);
+    u3V.roe = u3_nul;
 
-    u3l_log("worker: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
+    u3l_log("work: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
     pru = u3m_soft(0, _worker_boot_fire, eve);
 
@@ -588,18 +643,25 @@ _worker_work_boot(c3_d    evt_d,
       exit(1);
     }
 
-    u3A->roc = u3k(u3t(pru));
+    u3V.dun_d  = evt_d;
+    u3A->ent_d = u3V.dun_d;
+    u3A->roc   = u3k(u3t(pru));
+    u3V.mug_l  = u3r_mug(u3A->roc);
 
-    u3l_log("worker: (%" PRIu64 ")| core: %x\r\n", evt_d, u3r_mug(u3A->roc));
+    u3l_log("work: (%" PRIu64 ")| core: %x\r\n", evt_d, u3V.mug_l);
 
-    //  XX set u3A->evt_d ?
-    //
     u3z(pru);
+  }
+  else {
+    //  prior to the evaluation of the entire lifecycle sequence,
+    //  we simply use the mug of the formula as the kernel mug
+    //
+    u3V.mug_l = u3r_mug(job);
   }
 
   _worker_send(u3nq(c3__done,
                     u3i_chubs(1, &evt_d),
-                    0,
+                    u3V.mug_l,
                     u3_nul));
 }
 
@@ -607,8 +669,8 @@ _worker_work_boot(c3_d    evt_d,
 */
 static void
 _worker_poke_work(c3_d    evt_d,              //  event number
-                c3_l    mug_l,              //  mug of state
-                u3_noun job)                //  full event
+                  c3_l    mug_l,              //  mug of state
+                  u3_noun job)                //  full event
 {
   if ( u3C.wag_w & u3o_trace ) {
     if ( u3_Host.tra_u.con_w == 0  && u3_Host.tra_u.fun_w == 0 ) {
@@ -620,12 +682,29 @@ _worker_poke_work(c3_d    evt_d,              //  event number
     }
   }
 
+  //  Require mugs to match
+  //
+  //    We use mugs to enforce that %work is always performed against
+  //    the exact kernel we expect it to be. If it isn't, we have either
+  //    event-log corruption or non-determism on replay, or programmer error
+  //    in normal operation. In either case, we immediately exit.
+  //
+  if ( u3V.mug_l != mug_l ) {
+    u3l_log("work: invalid %%work for event %" PRIu64 ".\r\n", evt_d);
+    u3l_log("work: computed mug is %x but event %" PRIu64 " expected %x.\r\n",
+            u3V.mug_l,
+            evt_d,
+            mug_l);
+    _worker_fail(0, "bad jar");
+    return;
+  }
+
   if ( evt_d <= u3V.len_w ) {
     c3_c lab_c[8];
     snprintf(lab_c, 8, "boot: %" PRIu64 "", evt_d);
 
     u3t_event_trace(lab_c, 'B');
-    _worker_work_boot(evt_d, mug_l, job);
+    _worker_work_boot(evt_d, job);
     u3t_event_trace(lab_c, 'E');
   }
   else {
@@ -637,7 +716,7 @@ _worker_poke_work(c3_d    evt_d,              //  event number
              u3m_pretty_path(wir), u3m_pretty(cad));
 
     u3t_event_trace(lab_c, 'B');
-    _worker_work_live(evt_d, mug_l, job);
+    _worker_work_live(evt_d, job);
     u3t_event_trace(lab_c, 'E');
   }
 }
@@ -707,22 +786,29 @@ _worker_poke(void* vod_p, u3_noun mat)
       }
 
       case c3__work: {
-        u3_noun evt, mug, job;
+        u3_noun evt, jammed_entry, mug, job;
         c3_d evt_d;
         c3_l mug_l;
 
-        if ( (c3n == u3r_qual(jar, 0, &evt, &mug, &job)) ||
+        if ( (c3n == u3r_trel(jar, 0, &evt, &jammed_entry)) ||
              (c3n == u3ud(evt)) ||
-             (1 != u3r_met(6, evt)) ||
-             (c3n == u3ud(mug)) ||
-             (1 < u3r_met(5, mug)) )
+             (1 != u3r_met(6, evt)) )
         {
+          goto error;
+        }
+
+        u3_noun entry = u3qe_cue(jammed_entry);
+        if ( (c3y != u3du(entry)) ||
+             (c3n == u3r_cell(entry, &mug, &job)) ||
+             (c3n == u3ud(mug)) ||
+             (1 < u3r_met(5, mug)) ) {
           goto error;
         }
 
         evt_d = u3r_chub(0, evt);
         mug_l = u3r_word(0, mug);
         u3k(job);
+        u3z(entry);
         u3z(jar);
 
         return _worker_poke_work(evt_d, mug_l, job);
@@ -756,9 +842,9 @@ _worker_poke(void* vod_p, u3_noun mat)
         }
 
         evt_d = u3r_chub(0, evt);
-        u3z(evt);
+        u3z(jar);
 
-        c3_assert( evt_d == u3V.evt_d );
+        c3_assert( evt_d == u3V.dun_d );
 
         return u3e_save();
       }
@@ -780,9 +866,10 @@ u3_worker_boot(void)
   u3_noun dat = u3_nul;
 
   if ( u3_none != u3A->our ) {
-    nex_d = u3A->ent_d + 1ULL;
+    u3V.mug_l = u3r_mug(u3A->roc);
+    nex_d = u3V.dun_d + 1ULL;
     dat   = u3nc(u3_nul, u3nt(u3i_chubs(1, &nex_d),
-                              0, // XX u3r_mug(u3A->roc),
+                              u3V.mug_l,
                               u3nc(u3k(u3A->our), u3k(u3A->fak))));
 
     //  disable hashboard for fake ships
@@ -796,7 +883,7 @@ u3_worker_boot(void)
     u3V.len_w = 0;
   }
 
-  u3l_log("worker: play %" PRIu64 "\r\n", nex_d);
+  u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
   _worker_send(u3nc(c3__play, dat));
 }
@@ -812,6 +899,9 @@ main(c3_i argc, c3_c* argv[])
   c3_c*      wag_c = argv[3];
 
   c3_assert(4 == argc);
+
+  memset(&u3V, 0, sizeof(u3V));
+  memset(&u3_Host.tra_u, 0, sizeof(u3_Host.tra_u));
 
   /* load passkey
   */
@@ -835,19 +925,10 @@ main(c3_i argc, c3_c* argv[])
     u3V.dir_c = strdup(dir_c);
   }
 
-  /*  clear tracing struct
-  */
-  {
-    u3_Host.tra_u.nid_w = 0;
-    u3_Host.tra_u.fil_u = NULL;
-    u3_Host.tra_u.con_w = 0;
-    u3_Host.tra_u.fun_w = 0;
-  }
-
   /* boot image
   */
   {
-    u3V.evt_d = u3m_boot_new(dir_c);
+    u3V.sen_d = u3V.dun_d = u3m_boot_new(dir_c);
     u3C.stderr_log_f = _worker_send_stdr;
     u3C.slog_f = _worker_send_slog;
   }

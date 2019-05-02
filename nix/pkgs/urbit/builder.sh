@@ -7,7 +7,7 @@ cd src
 bash ./configure
 
 make clean
-make urbit urbit-worker -j8
+make all -j8
 make test
 
 mkdir -p $out/bin

@@ -192,8 +192,8 @@ _walk_in(const c3_c* dir_c, c3_w len_w)
     struct dirent  ent_n;
     struct dirent* out_n;
 
-    if ( readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
-      u3l_log("%s: %s\n", dir_c, strerror(errno));
+    if ( u3_readdir_r(dir_d, &ent_n, &out_n) != 0 ) {
+       u3l_log("%s: %s\n", dir_c, strerror(errno));
       break;
     }
     else if ( !out_n ) {

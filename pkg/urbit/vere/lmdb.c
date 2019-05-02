@@ -41,9 +41,11 @@ MDB_env* u3_lmdb_init(const char* log_path)
     return 0;
   }
 
-  // TODO: Start with a gigabyte for the event log.
+  // TODO: Start with forty gigabytes for the maximum event log size. We'll
+  // need to do something more sophisticated for real in the long term, though.
   //
-  ret_w = mdb_env_set_mapsize(env, 1024 * 1024 * 1024);
+  const size_t forty_gigabytes = 42949672960;
+  ret_w = mdb_env_set_mapsize(env, forty_gigabytes);
   if (ret_w != 0) {
     u3l_log("lmdb: failed to set database size: %s\n", mdb_strerror(ret_w));
     return 0;
@@ -174,6 +176,67 @@ c3_o _perform_get_on_database_noun(MDB_txn* transaction_u,
   return c3y;
 }
 
+/* u3_lmdb_write_request: Events to be written together
+*/
+struct u3_lmdb_write_request {
+  // The event number of the first event.
+  c3_d first_event;
+
+  // The number of events in this write request. Nonzero.
+  c3_d event_count;
+
+  // An array of serialized event datas. The array size is |event_count|. We
+  // perform the event serialization on the main thread so we can read the loom
+  // and write into a malloced structure for the worker thread.
+  void** malloced_event_data;
+
+  // An array of sizes of serialized event datas. We keep track of this for the
+  // database write.
+  size_t* malloced_event_data_size;
+};
+
+/* u3_lmdb_build_write_request(): Allocates and builds a write request
+*/
+struct u3_lmdb_write_request*
+u3_lmdb_build_write_request(u3_writ* event_u, c3_d count)
+{
+  struct u3_lmdb_write_request* request =
+      c3_malloc(sizeof(struct u3_lmdb_write_request));
+  request->first_event = event_u->evt_d;
+  request->event_count = count;
+  request->malloced_event_data = c3_malloc(sizeof(void*) * count);
+  request->malloced_event_data_size = c3_malloc(sizeof(size_t) * count);
+
+  for (c3_d i = 0; i < count; ++i) {
+    // Sanity check that the events in u3_writ are in order.
+    c3_assert(event_u->evt_d == (request->first_event + i));
+
+    // Serialize the jammed event log entry into a malloced buffer we can send
+    // to the other thread.
+    c3_w  siz_w  = u3r_met(3, event_u->mat);
+    c3_y* data_u = c3_calloc(siz_w);
+    u3r_bytes(0, siz_w, data_u, event_u->mat);
+
+    request->malloced_event_data[i] = data_u;
+    request->malloced_event_data_size[i] = siz_w;
+
+    event_u = event_u->nex_u;
+  }
+
+  return request;
+}
+
+/* u3_lmdb_free_write_request(): Frees a write request
+*/
+void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request) {
+  for (c3_d i = 0; i < request->event_count; ++i)
+    free(request->malloced_event_data[i]);
+
+  free(request->malloced_event_data);
+  free(request->malloced_event_data_size);
+  free(request);
+}
+
 /* _write_request_data: callback struct for u3_lmdb_write_event()
 */
 struct _write_request_data {
@@ -181,27 +244,17 @@ struct _write_request_data {
   // the transactions and handles opened from it are explicitly not.
   MDB_env* environment;
 
-  // The original event. Not to be accessed from the worker thread; only used
-  // in the callback executed on the main loop thread.
-  u3_writ* event;
+  // The pier that we're writing for.
+  u3_pier* pir_u;
 
-  // The event number from event separated out so we can access it on the other
-  // thread.
-  c3_d event_number;
-
-  // The event serialized out of the loom into a malloced structure accessible
-  // from the worker thread.
-  void* malloced_event_data;
-
-  // The size of the malloced_event_data. We keep track of this for the
-  // database write.
-  size_t malloced_event_data_size;
+  // The encapsulated request. This may contain multiple event writes.
+  struct u3_lmdb_write_request* request;
 
   // Whether the write completed successfully.
   c3_o success;
 
   // Called on main loop thread on completion.
-  void (*on_complete)(c3_o, u3_writ*);
+  void (*on_complete)(c3_o, u3_pier*, c3_d, c3_d);
 };
 
 /* _u3_lmdb_write_event_cb(): Implementation of u3_lmdb_write_event()
@@ -235,23 +288,42 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
     return;
   }
 
-  // TODO: We need to detect the database being full, making the database
-  // maxsize larger, and then retrying this transaction.
-  //
-  c3_o success = _perform_put_on_database_raw(
-      transaction_u,
-      database_u,
-      MDB_NOOVERWRITE,
-      &(data->event_number),
-      sizeof(c3_d),
-      data->malloced_event_data,
-      data->malloced_event_data_size);
+  struct u3_lmdb_write_request* request = data->request;
+  for (c3_d i = 0; i < request->event_count; ++i) {
+    c3_d event_number = request->first_event + i;
+
+    c3_o success = _perform_put_on_database_raw(
+        transaction_u,
+        database_u,
+        MDB_NOOVERWRITE,
+        &event_number,
+        sizeof(c3_d),
+        request->malloced_event_data[i],
+        request->malloced_event_data_size[i]);
+
+    if (success == c3n) {
+      u3l_log("lmdb: failed to write event %" PRIu64 "\n", event_number);
+      mdb_txn_abort(transaction_u);
+      data->success = c3n;
+      return;
+    }
+  }
 
   ret_w = mdb_txn_commit(transaction_u);
   if (0 != ret_w) {
-    u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n",
-            data->event_number,
-            mdb_strerror(ret_w));
+    if ( request->event_count == 1 ) {
+      u3l_log("lmdb: failed to commit event %" PRIu64  ": %s\n",
+              request->first_event,
+              mdb_strerror(ret_w));
+    } else {
+      c3_d through = request->first_event + request->event_count - 1ULL;
+      u3l_log("lmdb: failed to commit events %" PRIu64  " through %" PRIu64
+              ": %s\n",
+              request->first_event,
+              through,
+              mdb_strerror(ret_w));
+    }
+    data->success = c3n;
     return;
   }
 
@@ -266,9 +338,12 @@ static void _u3_lmdb_write_event_cb(uv_work_t* req) {
 static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
   struct _write_request_data* data = req->data;
 
-  data->on_complete(data->success, data->event);
+  data->on_complete(data->success,
+                    data->pir_u,
+                    data->request->first_event,
+                    data->request->event_count);
 
-  free(data->malloced_event_data);
+  u3_lmdb_free_write_request(data->request);
   free(data);
   free(req);
 }
@@ -278,27 +353,17 @@ static void _u3_lmdb_write_event_after_cb(uv_work_t* req, int status) {
 ** This writes all the passed in events along with log metadata updates to the
 ** database as a single transaction on a worker thread. Once the transaction
 ** is completed, it calls the passed in callback on the main loop thread.
-**
-** TODO: Make this take multiple events in one commit once we have this
-** working one at a time.
 */
 void u3_lmdb_write_event(MDB_env* environment,
-                         u3_writ* event_u,
-                         void (*on_complete)(c3_o, u3_writ*))
+                         u3_pier* pir_u,
+                         struct u3_lmdb_write_request* request_u,
+                         void (*on_complete)(c3_o, u3_pier*, c3_d, c3_d))
 {
-  // Serialize the jammed $work into a malloced buffer we can send to the other
-  // thread.
-  c3_w  siz_w  = u3r_met(3, event_u->mat);
-  c3_y* data_u = c3_calloc(siz_w);
-  u3r_bytes(0, siz_w, data_u, event_u->mat);
-
   // Structure to pass to the worker thread.
   struct _write_request_data* data = c3_malloc(sizeof(struct _write_request_data));
   data->environment = environment;
-  data->event = event_u;
-  data->event_number = event_u->evt_d;
-  data->malloced_event_data = data_u;
-  data->malloced_event_data_size = siz_w;
+  data->pir_u = pir_u;
+  data->request = request_u;
   data->on_complete = on_complete;
   data->success = c3n;
 
@@ -324,7 +389,7 @@ c3_o u3_lmdb_read_events(u3_pier* pir_u,
                          c3_d first_event_d,
                          c3_d len_d,
                          c3_o(*on_event_read)(u3_pier* pir_u, c3_d id,
-                                              u3_noun mat, u3_noun ovo))
+                                              u3_noun mat))
 {
   // Creates the read transaction.
   MDB_txn* transaction_u;
@@ -377,24 +442,27 @@ c3_o u3_lmdb_read_events(u3_pier* pir_u,
     // As a sanity check, we make sure that there aren't any discontinuities in
     // the sequence of loaded events.
     c3_d current_id = first_event_d + loaded;
-    if (key.mv_size != sizeof(c3_d) ||
-        *(c3_d*)key.mv_data != current_id) {
+    if (key.mv_size != sizeof(c3_d)) {
       u3l_log("lmdb: invalid cursor key\r\n");
+      return c3n;
+    }
+    if (*(c3_d*)key.mv_data != current_id) {
+      u3l_log("lmdb: missing event in database. Expected %" PRIu64 ", received %"
+              PRIu64 "\r\n",
+              current_id,
+              *(c3_d*)key.mv_data);
       return c3n;
     }
 
     // Now build the atom version and then the cued version from the raw data
     u3_noun mat = u3i_bytes(val.mv_size, val.mv_data);
-    u3_noun ovo = u3ke_cue(u3k(mat));
 
-    if (on_event_read(pir_u, current_id, mat, ovo) == c3n) {
-      u3z(ovo);
+    if (on_event_read(pir_u, current_id, mat) == c3n) {
       u3z(mat);
       u3l_log("lmdb: aborting replay due to error.\r\n");
       return c3n;
     }
 
-    u3z(ovo);
     u3z(mat);
 
     ret_w = mdb_cursor_get(cursor_u, &key, &val, MDB_NEXT);

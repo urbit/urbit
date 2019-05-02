@@ -17,6 +17,12 @@ all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
 all_exes = ./hash_tests ./hashtable_tests ./urbit ./urbit-worker
 
+
+# -Werror promotes all warnings that are enabled into errors (this is on)
+# -Wall issues all types of errors.  This is off (for now)
+CFLAGS := $(CFLAGS)
+
+
 ################################################################################
 
 .PHONY: all test clean mkproper

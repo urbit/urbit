@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 pkg=$(nix-build nix/ops -A brass --no-out-link)
-
 cp $pkg bin/brass.pill

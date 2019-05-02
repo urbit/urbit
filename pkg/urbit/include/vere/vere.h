@@ -603,10 +603,11 @@
           struct _u3_pier* pir_u;               //  backpointer to pier
           u3_noun          job;                 //  (pair date ovum)
           c3_d             evt_d;               //  event number
+          c3_d             rep_d;               //  replacement count
           u3_noun          now;                 //  event time
           c3_l             msc_l;               //  ms to timeout
           c3_l             mug_l;               //  hash before executing
-          u3_atom          mat;                 //  jammed $work, or 0
+          u3_atom          mat;                 //  jammed [mug_l job], or 0
           u3_noun          act;                 //  action list
           struct _u3_writ* nex_u;               //  next in queue, or 0
         } u3_writ;
@@ -690,6 +691,7 @@
           u3_writ*         ent_u;               //  entry of queue
           u3_writ*         ext_u;               //  exit of queue
           uv_prepare_t     pep_u;               //  preloop registration
+          uv_idle_t        idl_u;               //  postloop registration
         } u3_pier;
 
       /* u3_king: all executing piers.
@@ -1273,6 +1275,10 @@
         void
         u3_daemon_grab(void* vod_p);
 
+
+        c3_w
+        u3_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
+
     /* Database
     */
       /* u3_lmdb_init(): Initializes lmdb inside log_path
@@ -1288,11 +1294,29 @@
       c3_o u3_lmdb_get_latest_event_number(MDB_env* environment,
                                            c3_d* event_number);
 
+      /* u3_lmdb_write_request: opaque write request structures
+      */
+      struct u3_lmdb_write_request;
+
+      /* u3_lmdb_build_write_reuqest(): allocates and builds a write request
+      **
+      ** Reads count sequential writs starting with event_u and creates a
+      ** single write request for all those writs.
+      */
+      struct u3_lmdb_write_request*
+      u3_lmdb_build_write_request(u3_writ* event_u, c3_d count);
+
+      /* u3_lmdb_free_write_request(): frees a write requst
+      */
+      void u3_lmdb_free_write_request(struct u3_lmdb_write_request* request);
+
       /* u3_lmdb_write_event(): Persists an event to the database
       */
       void u3_lmdb_write_event(MDB_env* environment,
-                               u3_writ* event_u,
-                               void (*on_complete)(c3_o success, u3_writ*));
+                               u3_pier* pir_u,
+                               struct u3_lmdb_write_request* request_u,
+                               void (*on_complete)(c3_o success, u3_pier*,
+                                                   c3_d, c3_d));
 
       /* u3_lmdb_read_events(): Reads events back from the database
       **
@@ -1307,8 +1331,7 @@
                                c3_d len_d,
                                c3_o(*on_event_read)(u3_pier* pir_u,
                                                     c3_d id,
-                                                    u3_noun mat,
-                                                    u3_noun ovo));
+                                                    u3_noun mat));
 
       /* u3_lmdb_write_identity(): Writes log identity
       **
@@ -1327,3 +1350,5 @@
                                  u3_noun* who,
                                  u3_noun* is_fake,
                                  u3_noun* life);
+
+

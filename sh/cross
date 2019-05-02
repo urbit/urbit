@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -e
+
+err () { echo "$@" >&2; exit 1; }
+
+[ $# = 2 ] || {
+  sh/cross urbit linux64
+  sh/cross urbit darwin
+  exit 0
+}
+
+traced () {
+  echo '$' "$@" >&2; "$@"
+}
+
+release () {
+  traced nix-build nix/release.nix --no-out-link -A "$1"
+}
+
+pkg="$1"
+env="$2"
+
+res=$(release "$env.$pkg")
+
+mkdir -p ./cross/$env
+traced cp -f $res/bin/$pkg ./cross/$env/$pkg
+traced cp -f $res/bin/$pkg-worker ./cross/$env/$pkg-worker
+traced cp -r $res/bin/$pkg-terminfo ./cross/$env/$pkg-terminfo
+
+chmod -R u+wr ./cross/$env/$pkg-terminfo
