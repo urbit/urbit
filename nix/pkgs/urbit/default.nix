@@ -29,7 +29,7 @@ pkgs.stdenv.mkDerivation {
   # See https://github.com/NixOS/nixpkgs/issues/18995
   hardeningDisable = if debug then [ "all" ] else [];
 
-  CFLAGS           = if debug then "-O1 -g -Werror" else "-O3 -Werror";
+  CFLAGS           = if debug then "-O3 -g -Werror" else "-O3 -Werror";
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;
