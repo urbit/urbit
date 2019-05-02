@@ -1603,51 +1603,6 @@ u3m_init(void)
   }
 }
 
-/* _cm_init_new(): start the environment.
-*/
-void
-_cm_init_new(void)
-{
-  _cm_limits();
-  _cm_signals();
-
-  /* Make sure GMP uses our malloc.
-  */
-  mp_set_memory_functions(u3a_malloc, u3a_realloc2, u3a_free2);
-
-  /* Map at fixed address.
-  */
-  {
-    c3_w  len_w = u3a_bytes;
-    void* map_v;
-
-    map_v = mmap((void *)u3_Loom,
-                 len_w,
-                 (PROT_READ | PROT_WRITE),
-                 (MAP_ANON | MAP_FIXED | MAP_PRIVATE),
-                 -1, 0);
-
-    if ( -1 == (c3_ps)map_v ) {
-      void* dyn_v = mmap((void *)0,
-                         len_w,
-                         PROT_READ,
-                         MAP_ANON | MAP_PRIVATE,
-                         -1, 0);
-
-      u3l_log("boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      u3l_log("see urbit.org/docs/getting-started/installing-urbit/#swap"
-              "for adding swap space\r\n");
-      if ( -1 != (c3_ps)map_v ) {
-        u3l_log("if porting to a new platform, try U3_OS_LoomBase %p\r\n",
-                dyn_v);
-      }
-      exit(1);
-    }
-
-    u3l_log("loom: mapped %dMB\r\n", len_w >> 20);
-  }
-}
-
 //  XX orphaned, find a way to restore
 #if 0
 /* _get_cmd_output(): Run a shell command and capture its output.
@@ -1886,7 +1841,7 @@ u3m_boot_new(c3_c* dir_c)
 
   /* Activate the loom.
   */
-  _cm_init_new();
+  u3m_init();
 
   /* Activate the storage system.
   */
@@ -1935,7 +1890,7 @@ u3m_boot_pier(void)
 {
   /* Activate the loom.
   */
-  _cm_init_new();
+  u3m_init();
 
   /* Activate tracing.
   */
