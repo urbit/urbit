@@ -11,8 +11,7 @@ script:
   - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   - cachix use urbit2
 
-  - ./sh/cachix-local
-  - ./sh/cachix-release
+  - ./sh/cachix
 
   - make
   - make release
