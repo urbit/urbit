@@ -2,26 +2,22 @@
 
 set -e
 
-err () { echo "$@" >&2; exit 1; }
+if [ -n "${TRAVIS_TAG-}" ]
+then
+  ver="$TRAVIS_TAG"
+elif [ -n "${TRAVIS_COMMIT-}" ]
+then
+  ver="$TRAVIS_COMMIT"
+else
+  ver="$(git rev-parse HEAD)"
+fi
 
-[ $# = 2 ] || err "usage: $0 pkg host"
+mkdir -p release
 
-traced () {
-  echo '$' "$@" >&2; "$@"
-}
+for plat in linux64 darwin
+do
+  sh/cross urbit "$plat"
 
-release () {
-  traced nix-build nix/release.nix --no-out-link -A "$1"
-}
-
-pkg="$1"
-env="$2"
-
-res=$(release "$env.$pkg")
-
-mkdir -p ./bin/$env
-traced cp -f $res/bin/$pkg ./bin/$env/$pkg
-traced cp -f $res/bin/$pkg-worker ./bin/$env/$pkg-worker
-traced cp -r $res/bin/$pkg-terminfo ./bin/$env/$pkg-terminfo
-
-chmod -R u+wr ./bin/$env/$pkg-terminfo
+  echo "packaging release/urbit-$plat-$ver.tgz"
+  (cd cross/$plat; tar cz .) > release/urbit-$plat-$ver.tgz
+done

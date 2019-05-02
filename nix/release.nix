@@ -10,7 +10,6 @@ let
       deps = crossdeps env;
     };
 
-  linux32 = release "linux32" nixcrpkgs.linux32;
   linux64 = release "linux64" nixcrpkgs.linux64;
   darwin  = release "darwin"  nixcrpkgs.mac;
 
@@ -21,31 +20,21 @@ let
     import ./pkgs/urbit/release.nix env
       { ent = ent env; debug = false; name = "urbit"; };
 
-  urbit-debug = env:
-    import ./pkgs/urbit/release.nix env
-      { ent = ent env; debug = true; name = "urbit-debug"; };
+  builds-for-platform = plat:
+    plat.deps // {
+      inherit (plat.env) curl libgmp libsigsegv ncurses openssl zlib lmdb;
+      inherit (plat.env) cmake_toolchain;
+      ent         = ent         plat;
+      urbit       = urbit       plat;
+    };
+
+  darwin_extra = {
+    inherit (darwin.env) ranlib ld sdk ar toolchain tapi strip;
+  };
 
 in
 
 {
-  linux32-env = linux32.env;
-  linux32 = linux32.deps // {
-    ent         = ent         linux32;
-    urbit       = urbit       linux32;
-    urbit-debug = urbit-debug linux32;
-  };
-
-  linux64-env = linux64.env;
-  linux64 = linux64.deps // {
-    ent         = ent         linux64;
-    urbit       = urbit       linux64;
-    urbit-debug = urbit-debug linux64;
-  };
-
-  darwin-env = darwin.env;
-  darwin = darwin.deps // {
-    ent         = ent         darwin;
-    urbit       = urbit       darwin;
-    urbit-debug = urbit-debug darwin;
-  };
+  linux64 = builds-for-platform linux64;
+  darwin  = darwin_extra // builds-for-platform darwin;
 }

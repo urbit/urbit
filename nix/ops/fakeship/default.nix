@@ -1,4 +1,4 @@
-{ pkgs, tlon, deps, brass, ship, debug }:
+{ pkgs, tlon, deps, pill, ship, arvo, debug }:
 
 let
 
@@ -13,6 +13,7 @@ pkgs.stdenv.mkDerivation {
   builder     = ./builder.sh;
   buildInputs = [ tlon.herb ];
   URBIT       = urbitExe;
-  PILL        = brass;
+  ARVO        = arvo;
+  PILL        = pill;
   SHIP        = ship;
 }
