@@ -1527,7 +1527,7 @@ u3m_init(void)
                          -1, 0);
 
       fprintf(stderr, "boot: mapping %dMB failed\r\n", (len_w / (1024 * 1024)));
-      fprintf(stderr, "see urbit.org/docs/getting-started#swap for adding swap space\r\n");
+      fprintf(stderr, "see urbit.org/docs/getting-started/installing-urbit/#swap for adding swap space\r\n");
       if ( -1 != (c3_ps)map_v ) {
         fprintf(stderr, 
                 "if porting to a new platform, try U3_OS_LoomBase %p\r\n", 
