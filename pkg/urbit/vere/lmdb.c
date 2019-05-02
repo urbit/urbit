@@ -44,7 +44,8 @@ MDB_env* u3_lmdb_init(const char* log_path)
   // TODO: Start with forty gigabytes for the maximum event log size. We'll
   // need to do something more sophisticated for real in the long term, though.
   //
-  ret_w = mdb_env_set_mapsize(env, 40 * 1024 * 1024 * 1024);
+  const size_t forty_gigabytes = 42949672960;
+  ret_w = mdb_env_set_mapsize(env, forty_gigabytes);
   if (ret_w != 0) {
     u3l_log("lmdb: failed to set database size: %s\n", mdb_strerror(ret_w));
     return 0;
