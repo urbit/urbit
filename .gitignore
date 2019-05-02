@@ -3,9 +3,9 @@
 /result-*
 /work
 /zod
+/bus
 /fakezod*
 tags
 TAGS
-bin/darwin
-bin/linux32
-bin/linux64
+cross/
+release/

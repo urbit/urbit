@@ -1,4 +1,4 @@
-{ pkgs, tlon, deps, ship, arvo, debug }:
+{ pkgs, tlon, deps, ship, debug }:
 
 let
 
@@ -15,5 +15,4 @@ pkgs.stdenv.mkDerivation rec {
 
   URBIT = urbitExe;
   SHIP  = ship;
-  ARVO  = arvo;
 }

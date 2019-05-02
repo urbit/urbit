@@ -184,7 +184,7 @@ let
     global_license_set = { };
 
     # Make it easy to build or refer to the build tools.
-    inherit clang tapi ld ranlib ar sdk toolchain;
+    inherit clang tapi ld ranlib ar sdk toolchain strip;
 
     make_derivation = import ../make_derivation.nix crossenv;
   };

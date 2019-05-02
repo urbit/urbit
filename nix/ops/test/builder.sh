@@ -20,14 +20,6 @@ shutdown () {
 
 trap shutdown EXIT
 
-herb ./ship -p hood -d '+hood/autoload |'
-herb ./ship -p hood -d '+hood/mount %'
-
-rm -r ./ship/home
-cp -r $ARVO ./ship/home
-
-herb ./ship -p hood -d '+hood/commit %home'
-
 # Start the test app
 herb ./ship -p hood -d '+hood/start %test'
 
@@ -64,3 +56,5 @@ mkdir $out
 cp test-renders-output   $out/renders
 cp test-cores-output     $out/cores
 cp test-generator-output $out/generator
+
+set +x

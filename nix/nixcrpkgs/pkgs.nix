@@ -20,6 +20,10 @@ rec {
     inherit crossenv;
   };
 
+  lmdb = import ./pkgs/lmdb {
+    inherit crossenv;
+  };
+
   ncurses = import ./pkgs/ncurses {
     inherit crossenv;
   };
