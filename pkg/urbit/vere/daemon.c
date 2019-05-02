@@ -862,7 +862,10 @@ u3_daemon_commence()
       lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
     }
 
-    u3v_boot_lite(lit);
+    if ( c3n == u3v_boot_lite(lit)) {
+      u3l_log("lite: boot failed\r\n");
+      exit(1);
+    }
   }
 
   /* listen on command socket

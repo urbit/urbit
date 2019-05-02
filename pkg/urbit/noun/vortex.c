@@ -8,6 +8,80 @@
 #define _CVX_POKE 47
 #define _CVX_PEEK 46
 
+/* _cv_life(): execute initial lifecycle, producing Arvo core.
+*/
+u3_noun
+_cv_life(u3_noun eve)
+{
+  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
+  u3_noun gat = u3n_nock_on(eve, lyf);
+  u3_noun cor = u3k(u3x_at(7, gat));
+
+  u3z(gat);
+  return cor;
+}
+
+/* u3v_boot(): evaluate boot sequence, making a kernel
+*/
+c3_o
+u3v_boot(u3_noun eve)
+{
+  u3_noun pro;
+
+  //  ensure zero-initialized kernel
+  //
+  u3A->roc = 0;
+
+  pro = u3m_soft(0, _cv_life, eve);
+
+  if ( u3_blip != u3h(pro) ) {
+    u3z(pro);
+    return c3n;
+  }
+
+  u3A->roc = u3k(u3t(pro));
+
+  u3z(pro);
+  return c3y;
+}
+
+/* _cv_lite(): load lightweight, core-only pill.
+*/
+u3_noun
+_cv_lite(u3_noun pil)
+{
+  u3_noun arv = u3ke_cue(pil);
+  u3_noun eve, pro;
+
+  u3x_trel(arv, &eve, 0, 0);
+
+  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
+  pro = _cv_life(eve);
+  u3l_log("lite: core %x\r\n", u3r_mug(pro));
+
+  u3z(arv);
+  return pro;
+}
+
+/* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
+*/
+c3_o
+u3v_boot_lite(u3_atom lit)
+{
+  u3_noun pro = u3m_soft(0, _cv_lite, lit);
+
+  if ( u3_blip != u3h(pro) ) {
+    u3z(pro);
+    return c3n;
+  }
+
+  u3A->roc = u3k(u3t(pro));
+  u3l_log("lite: final state %x\r\n", u3r_mug(u3A->roc));
+
+  u3z(pro);
+  return c3y;
+}
+
 /* _cv_nock_wish(): call wish through hardcoded interface.
 */
 static u3_noun
@@ -19,144 +93,6 @@ _cv_nock_wish(u3_noun txt)
   pro = u3n_slam_on(fun, txt);
 
   return pro;
-}
-
-/* u3v_boot(): evaluate boot sequence, making a kernel
-*/
-void
-u3v_boot(u3_noun eve)
-{
-  u3_noun cor;
-
-  //  ensure zero-initialized kernel
-  //
-  u3A->roc = 0;
-
-  {
-    //  default namespace function: |=(a/{* *} ~)
-    //
-    u3_noun gul = u3nt(u3nt(1, 0, 0), 0, 0);
-    //  lifecycle formula
-    //
-    u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
-    //  evalute lifecycle formula against the boot sequence
-    //  in a virtualization context
-    //
-    u3_noun pro = u3m_soft_run(gul, u3n_nock_on, eve, lyf);
-
-    if ( 0 != u3h(pro) ) {
-      u3l_log("boot: failed: invalid boot sequence (from pill)\r\n");
-      u3z(pro);
-      return;
-    }
-
-    cor = u3k(u3t(pro));
-    u3z(pro);
-  }
-
-  //  save the Arvo core (at +7 of the Arvo gate)
-  //
-  u3A->roc = u3k(u3x_at(7, cor));
-  u3z(cor);
-}
-
-/* u3v_fire(): execute initial lifecycle.
-*/
-u3_noun
-u3v_fire(u3_noun sys)
-{
-  u3_noun fol = u3nt(2, u3nc(0, 3), u3nc(0, 2));
-
-  return u3n_nock_on(sys, fol);
-}
-
-/* u3v_load(): loading sequence.
-*/
-u3_noun
-u3v_load(u3_noun pil)
-{
-  u3_noun sys = u3ke_cue(pil);
-
-  u3l_log("load: mug: %x\r\n", u3r_mug(sys));
-  {
-    u3_noun cor = u3v_fire(sys);
-    u3_noun pro;
-
-    pro = u3k(u3r_at(7, cor));
-
-    u3z(cor);
-    return pro;
-  }
-}
-
-/* u3v_lite(): load lightweight, core-only pill.
-*/
-u3_noun
-u3v_lite(u3_noun pil)
-{
-  u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
-  u3_noun arv = u3ke_cue(pil);
-  u3_noun bot, cor, pro;
-
-  u3x_trel(arv, &bot, 0, 0);
-
-  u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
-  cor = u3n_nock_on(bot, lyf);
-  u3l_log("lite: core %x\r\n", u3r_mug(cor));
-
-  pro = u3k(u3r_at(7, cor));
-
-  u3z(cor);
-  u3z(arv);
-  return pro;
-}
-
-//  XX deprecated, remove
-#if 0
-/* u3v_boot(): correct bootstrap sequence.
-*/
-void
-u3v_boot(c3_c* pas_c)
-{
-  u3_noun pru;
-
-  if ( !u3A->sys ) {
-    u3A->sys = u3m_file(pas_c);
-  }
-
-  pru = u3m_soft(0, u3v_load, u3k(u3A->sys));
-
-  if ( u3h(pru) != 0 ) {
-    u3l_log("boot failed\r\n");
-    exit(1);
-  }
-
-  u3l_log("boot: final state %x\r\n", u3r_mug(u3t(pru)));
-
-  u3A->ken = 0;
-  u3A->roc = u3k(u3t(pru));
-
-  u3z(pru);
-}
-#endif
-
-/* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
-*/
-void
-u3v_boot_lite(u3_atom lit)
-{
-  u3_noun pru = u3m_soft(0, u3v_lite, lit);
-
-  if ( u3h(pru) != 0 ) {
-    u3l_log("boot failed\r\n");
-    exit(1);
-  }
-
-  u3l_log("lite: final state %x\r\n", u3r_mug(u3t(pru)));
-
-  u3A->roc = u3k(u3t(pru));
-
-  u3z(pru);
 }
 
 /* u3v_wish(): text expression with cache.
@@ -184,40 +120,6 @@ u3v_wish(const c3_c* str_c)
   u3z(txt);
   return exp;
 }
-
-//  XX deprecated, remove
-#if 0
-/* _cv_mung(): formula wrapper with gate and sample.
-*/
-  static u3_noun
-  _cv_mung_in(u3_noun gam)
-  {
-    u3_noun pro = u3n_slam_on(u3k(u3h(gam)), u3k(u3t(gam)));
-
-    u3z(gam); return pro;
-  }
-static u3_noun
-_cv_mung(c3_w sec_w, u3_noun gat, u3_noun sam)
-{
-  u3_noun gam = u3nc(gat, sam);
-
-  return u3m_soft(0, _cv_mung_in, gam);
-}
-#endif
-
-//  XX deprecated, remove
-#if 0
-/* u3v_pike(): poke with floating core.
-*/
-u3_noun
-u3v_pike(u3_noun ovo, u3_noun cor)
-{
-  u3_noun fun = u3n_nock_on(cor, u3k(u3x_at(_CVX_POKE, cor)));
-  u3_noun sam = u3nc(u3k(u3A->now), ovo);
-
-  return _cv_mung(0, fun, sam);
-}
-#endif
 
 /* _cv_nock_poke(): call poke through hardcoded interface.
 */

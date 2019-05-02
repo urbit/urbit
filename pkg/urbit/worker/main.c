@@ -597,22 +597,6 @@ _worker_work_live(c3_d evt_d, u3_noun job)
   }
 }
 
-/* _worker_boot_fire(): execute boot sequence.
-*/
-static u3_noun
-_worker_boot_fire(u3_noun eve)
-{
-  //  XX virtualize? use u3v_boot?
-  //
-  u3_noun cor = u3n_nock_on(eve, u3nt(2, u3nc(0, 3), u3nc(0, 2)));
-  u3_noun pro;
-
-  pro = u3k(u3r_at(7, cor));
-
-  u3z(cor);
-  return pro;
-}
-
 /* _worker_work_boot(): apply initial-stage event.
 */
 static void
@@ -629,28 +613,21 @@ _worker_work_boot(c3_d evt_d, u3_noun job)
   u3l_log("work: (%" PRIu64 ")| boot\r\n", evt_d);
 
   if ( u3V.len_w == evt_d ) {
-    u3_noun eve, pru;
-
-    eve = u3kb_flop(u3V.roe);
-    u3V.roe = u3_nul;
+    u3_noun eve = u3kb_flop(u3V.roe);
+    u3V.roe     = u3_nul;
 
     u3l_log("work: (%" PRIu64 ")| pill: %x\r\n", evt_d, u3r_mug(eve));
 
-    pru = u3m_soft(0, _worker_boot_fire, eve);
-
-    if ( u3_blip != u3h(pru) ) {
-      u3l_log("boot failed\r\n");
+    if ( c3n == u3v_boot(eve) ) {
+      u3l_log("work: boot failed: invalid sequence (from pill)\r\n");
       exit(1);
     }
 
     u3V.dun_d  = evt_d;
-    u3A->ent_d = u3V.dun_d;
-    u3A->roc   = u3k(u3t(pru));
     u3V.mug_l  = u3r_mug(u3A->roc);
+    u3A->ent_d = u3V.dun_d;
 
     u3l_log("work: (%" PRIu64 ")| core: %x\r\n", evt_d, u3V.mug_l);
-
-    u3z(pru);
   }
   else {
     //  prior to the evaluation of the entire lifecycle sequence,
