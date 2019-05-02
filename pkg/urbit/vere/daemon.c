@@ -840,7 +840,7 @@ u3_daemon_commence()
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
 
-  u3m_boot_pier();
+  u3m_boot_lite();
 
   //  wire up signal controls
   //

@@ -928,7 +928,7 @@ main(c3_i argc, c3_c* argv[])
   /* boot image
   */
   {
-    u3V.sen_d = u3V.dun_d = u3m_boot_new(dir_c);
+    u3V.sen_d = u3V.dun_d = u3m_boot(dir_c);
     u3C.stderr_log_f = _worker_send_stdr;
     u3C.slog_f = _worker_send_slog;
   }
