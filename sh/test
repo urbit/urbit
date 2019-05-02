@@ -2,7 +2,7 @@
 
 set -e
 
-pkg=$(nix-build nix/ops -A test --no-out-link --arg debug true)
+pkg=$(nix-build nix/ops -A test --no-out-link --arg debug false) # TODO debug=true
 
 hdr () {
   echo =====$(sed 's/./=/g' <<< "$1")=====
