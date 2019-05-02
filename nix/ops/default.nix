@@ -10,10 +10,6 @@ let
   bootbrass = ../../bin/brass.pill;
   bootsolid = ../../bin/solid.pill;
 
-in
-
-rec {
-
   zod = import ./fakeship {
     inherit pkgs tlon deps arvo debug;
     pill = bootsolid;
@@ -25,6 +21,10 @@ rec {
     pill = bootsolid;
     ship = "bus";
   };
+
+in
+
+rec {
 
   test = import ./test {
     inherit pkgs tlon deps debug;
