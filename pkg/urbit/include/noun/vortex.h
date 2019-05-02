@@ -15,9 +15,6 @@
         u3_noun sen;                      //  instance string
         u3_noun our;                      //  identity
         u3_noun fak;                      //  c3y is fake
-
-        u3_noun sys;                      //  system pill
-
         u3_noun roc;                      //  kernel core
       } u3v_arvo;
 
