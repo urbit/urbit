@@ -783,7 +783,7 @@ _http_serv_free(u3_http* htp_u)
     tim_u->data = htp_u;
 
     uv_timer_init(u3L, tim_u);
-    uv_timer_start(tim_u, http_serv_free_cb, 5000, 0);
+    uv_timer_start(tim_u, http_serv_free_cb, 10000, 0);
   }
 }
 
