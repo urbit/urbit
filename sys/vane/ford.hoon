@@ -161,9 +161,9 @@
 ::  +sign: private response from another vane to ford
 ::
 +=  sign
-  $%  ::  %c: from clay
+  $?  ::  %c: from clay
       ::
-      $:  %c
+      $:  ?(%b %c)
           ::  %writ: internal (intra-ship) file response
           ::
           $%  $:  %writ
@@ -6258,7 +6258,7 @@
     ++  take-rebuilds
       ^-  [(list move) ford-state]
       ::
-      ?>  ?=([%c %wris *] sign)
+      ?>  ?=([@tas %wris *] sign)
       =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
@@ -6289,7 +6289,7 @@
     ++  take-unblocks
       ^-  [(list move) ford-state]
       ::
-      ?>  ?=([%c %writ *] sign)
+      ?>  ?=([@tas %writ *] sign)
       ::  scry-request: the +scry-request we had previously blocked on
       ::
       =/  =scry-request

@@ -1445,7 +1445,7 @@
                    net:(fall (~(get by pos.eth) who) *point)
                  *[life pass continuity-number=@ud [? @p] (unit @p)]
                %+  weld
-                 %-  flop
+                 ::  %-  flop
                  ^-  (list move)
                  :~  [hen %slip %a %sunk who rit]
                      [hen %slip %c %sunk who rit]
