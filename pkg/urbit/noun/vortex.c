@@ -26,22 +26,22 @@ _cv_life(u3_noun eve)
 c3_o
 u3v_boot(u3_noun eve)
 {
-  u3_noun pro;
-
   //  ensure zero-initialized kernel
   //
   u3A->roc = 0;
 
-  pro = u3m_soft(0, _cv_life, eve);
+  {
+    u3_noun pro = u3m_soft(0, _cv_life, eve);
 
-  if ( u3_blip != u3h(pro) ) {
+    if ( u3_blip != u3h(pro) ) {
+      u3z(pro);
+      return c3n;
+    }
+
+    u3A->roc = u3k(u3t(pro));
     u3z(pro);
-    return c3n;
   }
 
-  u3A->roc = u3k(u3t(pro));
-
-  u3z(pro);
   return c3y;
 }
 
@@ -56,7 +56,7 @@ _cv_lite(u3_noun pil)
   u3x_trel(arv, &eve, 0, 0);
 
   u3l_log("lite: arvo formula %x\r\n", u3r_mug(arv));
-  pro = _cv_life(eve);
+  pro = _cv_life(u3k(eve));
   u3l_log("lite: core %x\r\n", u3r_mug(pro));
 
   u3z(arv);
@@ -68,17 +68,24 @@ _cv_lite(u3_noun pil)
 c3_o
 u3v_boot_lite(u3_atom lit)
 {
-  u3_noun pro = u3m_soft(0, _cv_lite, lit);
+  //  ensure zero-initialized kernel
+  //
+  u3A->roc = 0;
 
-  if ( u3_blip != u3h(pro) ) {
+  {
+    u3_noun pro = u3m_soft(0, _cv_lite, lit);
+
+    if ( u3_blip != u3h(pro) ) {
+      u3z(pro);
+      return c3n;
+    }
+
+    u3A->roc = u3k(u3t(pro));
     u3z(pro);
-    return c3n;
   }
 
-  u3A->roc = u3k(u3t(pro));
   u3l_log("lite: final state %x\r\n", u3r_mug(u3A->roc));
 
-  u3z(pro);
   return c3y;
 }
 
