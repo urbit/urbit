@@ -654,6 +654,21 @@ _boothack_doom(void)
 
     if ( 0 != u3_Host.ops_u.key_c ) {
       kef = u3m_file(u3_Host.ops_u.key_c);
+
+      // handle trailing newline
+      //
+      {
+        c3_c* key_c = u3r_string(kef);
+        c3_w  len_w = strlen(key_c);
+
+        if (len_w && (key_c[len_w - 1] == '\n')) {
+          key_c[len_w - 1] = '\0';
+          u3z(kef);
+          kef = u3i_string(key_c);
+        }
+
+        c3_free(key_c);
+      }
     }
     else if ( 0 != u3_Host.ops_u.gen_c ) {
       kef = u3i_string(u3_Host.ops_u.gen_c);
@@ -825,7 +840,7 @@ u3_daemon_commence()
   sag_w = u3C.wag_w;
   u3C.wag_w |= u3o_hashless;
 
-  u3m_boot_pier();
+  u3m_boot_lite();
 
   //  wire up signal controls
   //
@@ -847,7 +862,10 @@ u3_daemon_commence()
       lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
     }
 
-    u3v_boot_lite(lit);
+    if ( c3n == u3v_boot_lite(lit)) {
+      u3l_log("lite: boot failed\r\n");
+      exit(1);
+    }
   }
 
   /* listen on command socket

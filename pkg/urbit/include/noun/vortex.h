@@ -15,9 +15,6 @@
         u3_noun sen;                      //  instance string
         u3_noun our;                      //  identity
         u3_noun fak;                      //  c3y is fake
-
-        u3_noun sys;                      //  system pill
-
         u3_noun roc;                      //  kernel core
       } u3v_arvo;
 
@@ -39,35 +36,15 @@
 
   /**  Functions.
   **/
-    /* u3v_do(): use a kernel function.
-    */
-      u3_noun
-      u3v_do(const c3_c* txt_c, u3_noun arg);
-
     /* u3v_boot(): evaluate boot sequence, making a kernel
     */
-      void
+      c3_o
       u3v_boot(u3_noun eve);
 
     /* u3v_boot_lite(): light bootstrap sequence, just making a kernel.
     */
-      void
+      c3_o
       u3v_boot_lite(u3_noun lit);
-
-    /* u3v_start(): start time.
-    */
-      void
-      u3v_start(u3_noun now);
-
-    /* u3v_arm(): load a kernel arm.
-    */
-      u3_noun
-      u3v_arm(const c3_c* txt_c);
-
-    /* u3v_pike(): poke with floating core.
-    */
-      u3_noun
-      u3v_pike(u3_noun ovo, u3_noun cor);
 
     /* u3v_do(): use a kernel function.
     */
@@ -118,11 +95,6 @@
     */
       void
       u3v_plan(u3_noun pax, u3_noun fav);
-
-    /* u3v_plow(): queue multiple ova (external).
-    */
-      void
-      u3v_plow(u3_noun ova);
 
     /* u3v_mark(): mark arvo kernel.
     */

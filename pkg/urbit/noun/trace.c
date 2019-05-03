@@ -77,7 +77,7 @@ u3t_heck(u3_atom cog)
     u3R = &(u3H->rod_u);
     {
       if ( 0 == u3R->pro.day ) {
-        u3R->pro.day = u3v_do("doss", 0);
+        u3R->pro.day = u3do("doss", 0);
       }
       u3R->pro.day = u3dc("pi-heck", u3i_string(str_c), u3R->pro.day);
     }

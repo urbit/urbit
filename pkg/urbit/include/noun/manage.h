@@ -4,21 +4,15 @@
 */
     /** System management.
     **/
-      /* u3m_boot(): start the u3 system.
-      */
-        void
-        u3m_boot(c3_o nuu_o, c3_o bug_o, c3_c* dir_c, c3_c *pil_c, c3_c *url_c, c3_c *arv_c);
-
-      /* u3m_boot_new(): start the u3 system (new).  return next event,
-      ** starting from 1.
+      /* u3m_boot(): start the u3 system. return next event, starting from 1.
       */
         c3_d
-        u3m_boot_new(c3_c* dir_c);
+        u3m_boot(c3_c* dir_c);
 
-      /* u3m_boot_pier(): start without checkpointing.
+      /* u3m_boot_lite(): start without checkpointing.
       */
         c3_d
-        u3m_boot_pier(void);
+        u3m_boot_lite(void);
 
       /* u3m_bail(): bail out.  Does not return.
       **
