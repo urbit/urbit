@@ -1206,7 +1206,7 @@ u3m_soft(c3_w    sec_w,
     //
     if ( 0 == u3A->roc ) {
       u3z(why);
-      return u3nc(2, u3_nul);
+      return u3nc(c3__fail, u3_nul);
     }
     else {
       u3_noun tax, cod, pro, mok;
