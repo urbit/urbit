@@ -508,7 +508,7 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
 
   if ( c3y == sav_o ) {
-    _pier_db_write_header(pir_u, who, u3k(pir_u->fak_o), len);
+    _pier_db_write_header(pir_u, u3k(who), pir_u->fak_o, u3k(len));
   }
 
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
