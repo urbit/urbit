@@ -10,7 +10,7 @@
 
 /* _cv_life(): execute initial lifecycle, producing Arvo core.
 */
-u3_noun
+static u3_noun
 _cv_life(u3_noun eve)
 {
   u3_noun lyf = u3nt(2, u3nc(0, 3), u3nc(0, 2));
@@ -47,7 +47,7 @@ u3v_boot(u3_noun eve)
 
 /* _cv_lite(): load lightweight, core-only pill.
 */
-u3_noun
+static u3_noun
 _cv_lite(u3_noun pil)
 {
   u3_noun arv = u3ke_cue(pil);
