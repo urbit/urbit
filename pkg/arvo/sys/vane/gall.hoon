@@ -5,116 +5,286 @@
 |=  pit=vase
 =,  gall
 =>  =~
-|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    rest of arvo
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  coke                                                ::  cook
-  $?  %inn                                              ::
-      %out                                              ::
-      %cay                                              ::
-  ==                                                    ::
-++  volt  ?(%low %high)                                 ::  voltage
-++  torc  $@(?(%iron %gold) [%lead p=ship])             ::  security control
-++  roon                                                ::  reverse ames msg
-  $%  [%d p=mark q=*]                                   ::  diff (diff)
-      [%x ~]                                            ::
-  ==                                                    ::
-++  rook                                                ::  forward ames msg
-  $%  [%m p=mark q=*]                                   ::  message
-      [%l p=mark q=path]                                ::  "peel" subscribe
-      [%s p=path]                                       ::  subscribe
-      [%u ~]                                            ::  cancel+unsubscribe
-  ==                                                    ::
-++  whey                                                ::  foreign response
-  $?  %peer                                             ::
-      %peel                                             ::
-      %poke                                             ::
-      %pull                                             ::
-  ==                                                    ::
---                                                      ::
-|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    local arvo
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  cote                                                ::  ++ap note
-  $%  [%meta p=@tas q=vase]                             ::
-      [%send p=ship q=cush]                             ::
-      [%hiss p=(unit knot) q=mark r=cage]               ::
-  ==                                                    ::
-++  cove  (pair bone (wind cote cuft))                  ::  internal move
-++  move  (pair duct (wind note-arvo gift-arvo))        ::  typed move
---                                                      ::
-|%  ::::::::::::::::::::::::::::::::::::::::::::::::::::::    %gall state
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  axle-n  ?(axle)                                     ::  upgrade path
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::  state proper
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
-++  axle                                                ::  all state
-  $:  %0                                                ::  state version
-      =mast                                             ::  apps by ship
-  ==                                                    ::
-++  gest                                                ::  subscriber data
-  $:  sup=bitt                                          ::  incoming subscribers
-      neb=boat                                          ::  outgoing subscribers
-      qel=(map bone @ud)                                ::  queue meter
-  ==                                                    ::
-++  mast                                                ::  ship state
-  $:  mak=*                                             ::  (deprecated)
-      sys=duct                                          ::  system duct
-      sap=(map ship scad)                               ::  foreign contacts
-      bum=(map dude seat)                               ::  running agents
-      wub=(map dude sofa)                               ::  waiting queue
-  ==                                                    ::
-++  ffuc                                                ::  new cuff
-    $:  p=(unit (set ship))                             ::  disclosing to
-        q=ship                                          ::  attributed to
-    ==                                                  ::
-++  prey  (pair volt ffuc)                              ::  privilege
-++  scad                                                ::  foreign connection
-  $:  p=@ud                                             ::  index
-      q=(map duct @ud)                                  ::  by duct
-      r=(map @ud duct)                                  ::  by index
-  ==                                                    ::
-++  scar                                                ::  opaque input
-  $:  p=@ud                                             ::  bone sequence
-      q=(map duct bone)                                 ::  by duct
-      r=(map bone duct)                                 ::  by bone
-  ==                                                    ::
-::                                                      ::
-::  XX a hack, required to break a subscription loop    ::
-::  which arises when an invalid mark crashes a diff.   ::
-::  See usage in ap-misvale.                            ::
-++  misvale-data  (set wire)                            ::  subscrs w/ bad marks
-++  seat                                                ::  agent state
-  $:  misvale=misvale-data                              ::  bad reqs
-      vel=worm                                          ::  cache
-      arms=(map [term path] (unit (pair @ud term)))     ::  ap-find cache
-      mom=duct                                          ::  control duct
-      liv=?                                             ::  unstopped
-      toc=torc                                          ::  privilege
-      tyc=stic                                          ::  statistics
-      ged=gest                                          ::  subscribers
-      hav=vase                                          ::  running state
-      byk=beak                                          ::  update control
-      pyl=(map bone mark)                               ::  req'd translations
-      zam=scar                                          ::  opaque ducts
-  ==                                                    ::
-++  sofa  (qeu (trel duct prey club))                   ::  blocked kisses
-++  stic                                                ::  statistics
-  $:  act=@ud                                           ::  change number
-      eny=@uvJ                                          ::  entropy
-      lat=@da                                           ::  time
-  ==                                                    ::
---                                                      ::
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::  vane header
-    ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::
+::  (rest of arvo)
+::
+|%
+::
+::  +coke: cook.
+::
+++  coke
+  $?  %inn
+      %out
+      %cay
+  ==
+::
+::  +volt: voltage.
+::
+++  volt  ?(%low %high)
+::
+::  +torc: security control.
+::
+++  torc  $@(?(%iron %gold) [%lead p=ship])
+::
+::  +roon: reverse ames message.
+::
+++  roon
+  $%
+      :: diff (diff)
+      ::
+      [%d p=mark q=*]
+      [%x ~]
+  ==
+::
+::  +rook: forward ames message.
+::
+++  rook
+  $%
+      :: message
+      ::
+      [%m p=mark q=*]
+      :: "peel" subscribe
+      ::
+      [%l p=mark q=path]
+      :: subscribe
+      ::
+      [%s p=path]
+      :: cancel+unsubscribe
+      ::
+      [%u ~]
+  ==
+::
+::  +whey: foreign response.
+::
+++  whey
+  $?  %peer
+      %peel
+      %poke
+      %pull
+  ==
+::
+--
+::
+::  (local arvo)
+::
+|%
+::
+::  +cote: +ap note.
+::
+++  cote
+  $%  [%meta p=@tas q=vase]
+      [%send p=ship q=cush]
+      [%hiss p=(unit knot) q=mark r=cage]
+  ==
+::
+::  +cove: internal move.
+::
+++  cove  (pair bone (wind cote cuft))
+::
+::  +move: typed moved.
+::
+++  move  (pair duct (wind note-arvo gift-arvo))
+--
+::
+::  (%gall state)
+::
+|%
+::
+::  +axle-n: upgrade path.
+::
+++  axle-n  ?(axle)
+::
+::  +axle: all state.
+::
+++  axle
+  $:
+      :: state version
+      ::
+      %0
+      :: apps by ship
+      ::
+      =mast
+  ==
+::
+::  +gest: subscriber data.
+::
+++  gest
+  $:
+      :: incoming subscribers
+      ::
+      sup=bitt
+      :: outgoing subscribers
+      ::
+      neb=boat
+      :: queue meter
+      ::
+      qel=(map bone @ud)
+  ==
+::
+::  +mast: ship state.
+::
+++  mast
+  $:
+      :: (deprecated)
+      ::
+      mak=*
+      ::  system duct
+      ::
+      sys=duct
+      ::  foreign contacts
+      ::
+      sap=(map ship scad)
+      ::  running agents
+      ::
+      bum=(map dude seat)
+      ::  waiting queue
+      ::
+      wub=(map dude sofa)
+  ==
+::
+::  +ffuc: new cuff.
+::
+++  ffuc
+    $:
+        :: disclosing to
+        ::
+        p=(unit (set ship))
+        :: attributed to
+        ::
+        q=ship
+    ==
+::
+::  +prey: privilege.
+::
+++  prey  (pair volt ffuc)
+::
+::  +scad: foreign connections.
+::
+++  scad
+  $:
+      :: index
+      ::
+      p=@ud
+      :: by duct
+      ::
+      q=(map duct @ud)
+      :: by index
+      ::
+      r=(map @ud duct)
+  ==
+::
+::  +scar: opaque input.
+::
+++  scar
+  $:
+      :: bone sequence
+      ::
+      p=@ud
+      :: by duct
+      ::
+      q=(map duct bone)
+      :: by bone
+      ::
+      r=(map bone duct)
+  ==
+::
+::  +misvale-data: subscribers with bad marks.
+::
+::    XX a hack, required to break a subscription loop
+::    which arises when an invalid mark crashes a diff.
+::    See usage in ap-misvale.
+::
+++  misvale-data  (set wire)
+::
+::  +seat: agent state.
+::
+++  seat
+  $:
+      :: bad reqs
+      ::
+      misvale=misvale-data
+      :: cache
+      ::
+      vel=worm
+      :: ap-find cache
+      ::
+      arms=(map [term path] (unit (pair @ud term)))
+      :: control duct
+      ::
+      mom=duct
+      :: unstopped
+      ::
+      liv=?
+      :: privilege
+      ::
+      toc=torc
+      :: statistics
+      ::
+      tyc=stic
+      :: subscribers
+      ::
+      ged=gest
+      :: running state
+      ::
+      hav=vase
+      :: update control
+      ::
+      byk=beak
+      :: req'd translations
+      ::
+      pyl=(map bone mark)
+      :: opaque ducts
+      ::
+      zam=scar
+  ==
+::
+:: +sofa: blocked kisses.
+::
+++  sofa  (qeu (trel duct prey club))
+::
+:: +stic: statistics.
+::
+++  stic
+  $:
+      :: change number
+      ::
+      act=@ud
+      :: entropy
+      ::
+      eny=@uvJ
+      :: time
+      ::
+      lat=@da
+  ==
+--
+::
+:: (vane header)
+::
 .  ==
-=|  all=axle                                            ::  all vane state
-|=  $:  our=ship                                        ::  identity
-        now=@da                                         ::  urban time
-        eny=@uvJ                                        ::  entropy
-        ska=sley                                        ::  activate
-    ==                                                  ::  opaque core
+::
+:: (all vane state)
+::
+=|  all=axle
+|=  $:
+        :: identity
+        ::
+        our=ship
+        :: urban time
+        ::
+        now=@da
+        :: entropy
+        ::
+        eny=@uvJ
+        :: activate
+        ::
+        ska=sley
+    ==
+::
+::  (opaque core)
+::
 ~%  %gall-top  ..is  ~
 ::
-::  state machine
+::  (state machine)
 ::
 |%
 ::
@@ -127,12 +297,13 @@
 ++  mo
   ~%  %gall-mo  +>  ~
   ::
-  =*  mas  mast.all
   =*  bowl-type  -:!>(*bowl)
   ::
-  |_  $:  hen=duct
-          moves=(list move)
-      ==
+  |_
+    $:
+      hen=duct
+      moves=(list move)
+    ==
   ::
   ++  mo-state  .
   ::
@@ -224,12 +395,12 @@
     =/  =cage  (result-to-cage:ford build-result)
     =/  result-vase  q.cage
     ::
-    =/  app-data=(unit seat)  (~(get by bum.mas) dude)
+    =/  app-data=(unit seat)  (~(get by bum.mast.all) dude)
     ?^  app-data
       ::  update the path
       ::
       =/  updated  u.app-data(byk beak)
-      =.  bum.mas  (~(put by bum.mas) dude updated)
+      =.  bum.mast.all  (~(put by bum.mast.all) dude updated)
       ::  magic update string from the old +mo-boon, "complete old boot"
       ::
       =/  =prey  [%high [~ our]]
@@ -283,7 +454,7 @@
       ==
     ::
     %_  mo-state
-      bum.mas  (~(put by bum.mas) dude new-seat)
+      bum.mast.all  (~(put by bum.mast.all) dude new-seat)
     ==
   ::
   :: +mo-away: handle a foreign request.
@@ -363,7 +534,7 @@
     ::
     =/  =scad
       =/  default  [1 ~ ~]
-      =/  existing  (~(get by sap.mas) ship)
+      =/  existing  (~(get by sap.mast.all) ship)
       (fall existing default)
     ::
     =/  nom  (~(get by q.scad) hen)
@@ -382,7 +553,7 @@
     ::
     =/  next
       %_  mo-state
-        sap.mas  (~(put by sap.mas) ship contacts)
+        sap.mast.all  (~(put by sap.mast.all) ship contacts)
       ==
     ::
     [index next]
@@ -393,7 +564,7 @@
     |=  [=ship index=@ud]
     ^-  duct
     ::
-    =/  conns  (~(got by sap.mas) ship)
+    =/  conns  (~(got by sap.mast.all) ship)
     =/  duct  r:conns
     (~(got by duct) index)
   ::
@@ -607,7 +778,7 @@
     ?>  ?=([%a %woot *] sign-arvo)
     ?>  ?=([@ @ ~] path)
     ::
-    =/  why  ;;(whey i.t.path)
+    =/  why  (whey i.t.path)
     =/  art  +>+.sign-arvo
     ::
     (mo-awed why art)
@@ -682,10 +853,10 @@
     |=  =dude
     ^+  mo-state
     ::
-    ?.  (~(has by bum.mas) dude)
+    ?.  (~(has by bum.mast.all) dude)
       mo-state
     ::
-    =/  maybe-sofa  (~(get by wub.mas) dude)
+    =/  maybe-sofa  (~(get by wub.mast.all) dude)
     ::
     ?~  maybe-sofa
       mo-state
@@ -695,7 +866,7 @@
     |-  ^+  mo-state
     ?:  =(~ sofa)
       %_  mo-state
-        wub.mas  (~(del by wub.mas) dude)
+        wub.mast.all  (~(del by wub.mast.all) dude)
       ==
     ::
     =^  cushion  sofa  [p q]:~(get to sofa)
@@ -711,7 +882,7 @@
   ++  mo-beak
     |=  =dude
     ^-  beak
-    ?~  app-data=(~(get by bum.mas) dude)
+    ?~  app-data=(~(get by bum.mast.all) dude)
       ::
       ::  XX this fallback is necessary, as .dude could be either the source
       ::  or the destination app. ie, it might not exist locally ...
@@ -769,19 +940,19 @@
     =/  =dude  p.cush
     =/  =club  q.cush
     ::
-    =/  is-running  (~(has by bum.mas) dude)
-    =/  is-waiting  (~(has by wub.mas) dude)
+    =/  is-running  (~(has by bum.mast.all) dude)
+    =/  is-waiting  (~(has by wub.mast.all) dude)
     ::
     ?:  |(!is-running is-waiting)
       ::
       =/  =sofa
-        =/  waiting  (~(get by wub.mas) dude)
+        =/  waiting  (~(get by wub.mast.all) dude)
         =/  kisses  (fall waiting *sofa)
         =/  kiss  [hen prey club]
         (~(put to kisses) kiss)
       ::
       %_  mo-state
-        wub.mas  (~(put by wub.mas) dude sofa)
+        wub.mast.all  (~(put by wub.mast.all) dude sofa)
       ==
     ::
     (mo-clip dude prey club)
@@ -870,7 +1041,7 @@
       ^+  ap-state
       ::
       =/  =seat
-        =/  sitting  (~(got by bum.mas) dude)
+        =/  sitting  (~(got by bum.mast.all) dude)
         =/  =stic
           =/  stat  tyc.sitting
           =/  nact  +(act.stat)
@@ -906,7 +1077,7 @@
       ::
       =>  ap-abut
       %_  mo-state
-        bum.mas  (~(put by bum.mas) dap sat)
+        bum.mast.all  (~(put by bum.mast.all) dap sat)
         moves  :(weld (turn zip ap-aver) (turn dub ap-avid) moves)
       ==
     ::
@@ -2122,7 +2293,8 @@
       ::
       %init
       ::
-    [~ gall-payload(sys.mast.all duct)]
+    =/  payload  gall-payload(sys.mast.all duct)
+    [~ payload]
       ::
       %sunk
       ::
@@ -2139,11 +2311,11 @@
     =*  him  p.q.hic
     ::
     ?:  ?=(%ge i.q.q.hic)
-      =/  mes  ;;({@ud rook} r.q.hic)
+      =/  mes  ;;((pair @ud rook) r.q.hic)
       =<  mo-abet
       (mo-gawk:initialised him dap mes)
     ::
-    =/  mes  ;;({@ud roon} r.q.hic)
+    =/  mes  ;;((pair @ud roon) r.q.hic)
     =<  mo-abet
     (mo-gawd:initialised him dap mes)
   ::
@@ -2171,40 +2343,44 @@
   |=  old=axle-n
   ^+  gall-payload
   ?-  -.old
-      %0  gall-payload(all old)
+    %0  gall-payload(all old)
   ==
 ::
 ::  +scry: standard scry.
 ::
 ++  scry
   ~/  %gall-scry
-  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  |=  [fur=(unit (set monk)) =term =shop =desk =coin =path]
   ^-  (unit (unit cage))
-  ?.  ?=(%.y -.why)
+  ?.  ?=(%.y -.shop)
     ~
   ::
-  =*  his  p.why
+  =/  =ship  p.shop
   ::
-  ?:  ?&  =(%u ren)
-          =(~ tyl)
-          =([%$ %da now] lot)
-          =(our his)
+  ?:  ?&  =(%u term)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
       ==
-    ``[%noun !>((~(has by bum.mast.all) syd))]
+    =/  =vase  !>((~(has by bum.mast.all) desk))
+    =/  =cage  [%noun vase]
+    (some (some cage))
   ::
-  ?.  =(our his)
+  ?.  =(our ship)
     ~
   ::
-  ?.  =([%$ %da now] lot)
+  ?.  =([%$ %da now] coin)
     ~
   ::
-  ?.  (~(has by bum.mast.all) syd)
-    [~ ~]
+  ?.  (~(has by bum.mast.all) desk)
+    (some ~)
   ::
-  ?.  ?=(^ tyl)
+  ?.  ?=(^ path)
     ~
   ::
-  (mo-peek:mo-abed:mo syd high+`his ren tyl)
+  =/  initialised  mo-abed:mo
+  =/  =prey  [%high [p=~ q=ship]]
+  (mo-peek:initialised desk prey term path)
 ::
 ::  +stay: save without cache.
 ::
@@ -2216,13 +2392,23 @@
 ::
 ++  take
   ~/  %gall-take
-  |=  [tea=wire hen=duct hin=(hypo sign-arvo)]
-  ^+  [*(list move) ..^$]
-  ~|  [%gall-take tea]
-  ?>  ?=([?($sys $use) *] tea)
-  =+  mow=(mo-abed:mo hen)
-  ?-  i.tea
-    %sys  mo-abet:(mo-cyst:mow t.tea q.hin)
-    %use  mo-abet:(mo-cook:mow t.tea hin)
+  |=  [=wire =duct hin=(hypo sign-arvo)]
+  ^-  [(list move) _gall-payload]
+  ::
+  ~|  [%gall-take wire]
+  ::
+  ?>  ?=([?(%sys %use) *] wire)
+  =/  initialised  (mo-abed:mo duct)
+  ?-  i.wire
+      ::
+      %sys
+      ::
+    =/  syssed  (mo-cyst:initialised t.wire q.hin)
+    mo-abet:syssed
+      ::
+      %use
+      ::
+    =/  cooked  (mo-cook:initialised t.wire hin)
+    mo-abet:cooked
   ==
 --
