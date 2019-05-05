@@ -20,8 +20,10 @@ dependencies:
  - classy-prelude
  - stm
  - stm-chans
+ - async
  - lens
+ - largeword
+ - time
 
-executables:
-  vere:
-    main: Main.hs
+library:
+  source-dirs: .

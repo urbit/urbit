@@ -1,0 +1,184 @@
+{-
+  TODO When is `u3_behn_io_init` called?
+-}
+
+data Pier
+data Timer
+
+data Wen = Wen Noun Noun Noun
+
+data TimeVal = TimeVal
+  { tv_sec  :: time_t      -- seconds
+  , tv_usec :: suseconds_t -- microseconds
+  }
+
+data Event
+  = Wake
+  | Born
+
+data Wire
+  = Blip     -- Empty path
+  | Behn
+  | Sen Text -- "an instance string"
+
+newtype Knot = Knot Text
+
+newtype Wire = Wire [Knot]
+
+data Duct = [Wire]
+
+data Blip = Blip Behn (Maybe Void)
+
+
+{-
+  alm  -- is timer active?
+  tim  -- timer
+  data -- associated pier
+-}
+data Behn = Behn
+  { _alm  :: TVar Bool
+  , _tim  :: TVar Timer
+  , _data :: TVar Pier
+  }
+
+makeLenses ''Behn
+
+--------------------------------------------------------------------------------
+
+newTimer :: IO Timer
+newTimer = undefined
+
+init :: Pier -> IO ()
+init p =
+  timer <- newTimer
+  atomically $ do
+    writeTVar (p ^. teh.alm) False
+    writeTVar (p ^. teh.tim) timer
+    writeTVar (p ^. teh.data) p
+
+exit :: Pier -> IO ()
+exit _ = pure ()
+
+doze :: Pier -> Maybe Wen -> IO ()
+doze pir mWen = do
+  (active, timer) <- do
+    (,) <$> readTVarIO (pir ^. teh.alm)
+        <*> readTVarIO (pir ^. teh.tim)
+
+  if active
+    then stopTimer timer -- TODO Race condition
+    else pure ()
+
+  case mWen of
+    Nothing  -> pure ()
+    Just (Wen x y z) -> do
+      timeVal <- getTimeOfDay
+      let now = u3_time_in_tv timeVal
+      let gap = u3_time_gap_ms(y, z)
+      writeTVar (p ^. teh.alm) True
+      startTimer timer gap $ do
+        u3_pier *pir_u = tim_u->data;
+        u3_behn* teh_u = pir_u->teh_u;
+        writeTVar (p ^. teh.alm) False;
+        pierWork pir [Blip Behn] Wake
+
+bake :: Pier -> IO ()
+bake = do
+  sen <- readTVarIO (u3A ^. sen)
+  pierWork pir [Blip Behn (Sen sen)] Born
+
+/* u3_behn_ef_bake(): notify %behn that we're live
+*/
+void
+u3_behn_ef_bake(u3_pier *pir_u)
+{
+  u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
+
+  u3_pier_work(pir_u, pax, u3nc(c3__born, u3_nul));
+}
+
+
+{-
+  u3_time_in_tv timeVal
+  u3_time_gap_ms(y, z)
+  u3nt(u3_blip, c3__behn, u3_nul),
+  u3nc(c3__wake, u3_nul));
+-}
+
+
+--------------------------------------------------------------------------------
+
+/* u3_behn(): initialize time timer.
+*/
+void
+u3_behn_io_init(u3_pier *pir_u)
+{
+  u3_behn* teh_u = pir_u->teh_u;
+  teh_u->alm = c3n;
+
+  uv_timer_init(u3L, &teh_u->tim_u);
+  teh_u->tim_u.data = pir_u;
+}
+
+/* u3_behn_io_exit(): terminate timer.
+*/
+void
+u3_behn_io_exit(u3_pier *pir_u)
+{
+}
+
+/* _behn_time_cb(): timer callback.
+*/
+static void
+_behn_time_cb(uv_timer_t* tim_u)
+{
+  u3_pier *pir_u = tim_u->data;
+  u3_behn* teh_u = pir_u->teh_u;
+  teh_u->alm = c3n;
+
+  {
+    u3_pier_work
+      (pir_u,
+       u3nt(u3_blip, c3__behn, u3_nul),
+       u3nc(c3__wake, u3_nul));
+  }
+}
+
+/* u3_behn_ef_doze(): set or cancel timer
+*/
+void
+u3_behn_ef_doze(u3_pier *pir_u, u3_noun wen)
+{
+  u3_behn* teh_u = pir_u->teh_u;
+
+  if ( c3y == teh_u->alm ) {
+    uv_timer_stop(&teh_u->tim_u);
+    teh_u->alm = c3n;
+  }
+
+  if ( (u3_nul != wen) &&
+       (c3y == u3du(wen)) &&
+       (c3y == u3ud(u3t(wen))) )
+  {
+    struct timeval tim_tv;
+    gettimeofday(&tim_tv, 0);
+
+    u3_noun now = u3_time_in_tv(&tim_tv);
+    c3_d gap_d = u3_time_gap_ms(now, u3k(u3t(wen)));
+
+    teh_u->alm = c3y;
+    uv_timer_start(&teh_u->tim_u, _behn_time_cb, gap_d, 0);
+  }
+
+  u3z(wen);
+}
+
+/* u3_behn_ef_bake(): notify %behn that we're live
+*/
+void
+u3_behn_ef_bake(u3_pier *pir_u)
+{
+  u3_noun pax = u3nq(u3_blip, c3__behn, u3k(u3A->sen), u3_nul);
+
+  u3_pier_work(pir_u, pax, u3nc(c3__born, u3_nul));
+}
