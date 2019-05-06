@@ -10,6 +10,18 @@
 ::
 |%
 ::
+::  +internal-gift: synonym for +cuft.
+::
+++  internal-gift  cuft
+::
+::  +internal-task: synonym for +cush.
+::
+++  internal-task  cush
+::
+::  +agent-action: synonym for +club.
+::
+++  agent-action  club
+::
 ::  +coke: cook.
 ::
 ++  coke
@@ -22,66 +34,71 @@
 ::
 ++  volt  ?(%low %high)
 ::
-::  +torc: security control.
+::  +security-control: security control.
 ::
-++  torc  $@(?(%iron %gold) [%lead p=ship])
+++  security-control  $@(?(%iron %gold) [%lead p=ship])
 ::
-::  +roon: reverse ames message.
+::  +reverse-ames: reverse ames message.
 ::
-++  roon
+++  reverse-ames
   $%
-      :: diff (diff)
+      :: diff
       ::
-      [%d p=mark q=*]
-      [%x ~]
+      [action=%d p=mark q=*]
+      ::  etc.
+      ::
+      [action=%x ~]
   ==
 ::
-::  +rook: forward ames message.
+::  +forward-ames: forward ames message.
 ::
-++  rook
+++  forward-ames
   $%
       :: message
       ::
-      [%m p=mark q=*]
+      [action=%m mark=mark noun=*]
       :: "peel" subscribe
       ::
-      [%l p=mark q=path]
+      [action=%l mark=mark path=path]
       :: subscribe
       ::
-      [%s p=path]
+      [action=%s path=path]
       :: cancel+unsubscribe
       ::
-      [%u ~]
+      [action=%u ~]
   ==
 ::
-::  +whey: foreign response.
+::  +foreign-response: foreign response.
 ::
-++  whey
+++  foreign-response
   $?  %peer
       %peel
       %poke
       %pull
   ==
-::
 --
 ::
 ::  (local arvo)
 ::
 |%
 ::
-::  +cote: +ap note.
+::  +internal-note: +ap note.
 ::
-++  cote
-  $%  [%meta p=@tas q=vase]
-      [%send p=ship q=cush]
-      [%hiss p=(unit knot) q=mark r=cage]
+++  internal-note
+  $%  [task=%meta =term =vase]
+      [task=%send =ship =internal-task]
+      [task=%hiss knot=(unit knot) =mark =cage]
   ==
 ::
-::  +cove: internal move.
+::  +internal-move: internal move.
 ::
-++  cove  (pair bone (wind cote cuft))
+++  internal-move
+  $:
+    =bone
+    move=(wind internal-note internal-gift)
+  ==
 ::
-::  +move: typed moved.
+::  +move: typed move.
 ::
 ++  move  (pair duct (wind note-arvo gift-arvo))
 --
@@ -90,102 +107,110 @@
 ::
 |%
 ::
-::  +axle-n: upgrade path.
+::  +gall-old: upgrade path.
 ::
-++  axle-n  ?(axle)
+++  gall-old  ?(gall)
 ::
-::  +axle: all state.
+::  +gall: all state.
 ::
-++  axle
+++  gall
   $:
       :: state version
       ::
       %0
       :: apps by ship
       ::
-      =mast
+      =ship-state
   ==
 ::
-::  +gest: subscriber data.
+::  +subscriber-data: subscriber data.
 ::
-++  gest
+++  subscriber-data
   $:
       :: incoming subscribers
       ::
-      sup=bitt
+      incoming=bitt
       :: outgoing subscribers
       ::
-      neb=boat
+      outgoing=boat
       :: queue meter
       ::
-      qel=(map bone @ud)
+      meter=(map bone @ud)
   ==
 ::
-::  +mast: ship state.
+::  +ship-state: ship state.
 ::
-++  mast
+++  ship-state
   $:
       :: (deprecated)
       ::
       mak=*
       ::  system duct
       ::
-      sys=duct
+      system-duct=duct
       ::  foreign contacts
       ::
-      sap=(map ship scad)
+      contacts=(map ship foreign)
       ::  running agents
       ::
-      bum=(map dude seat)
+      running=(map dude agent)
       ::  waiting queue
       ::
-      wub=(map dude sofa)
+      waiting=(map dude blocked)
   ==
 ::
-::  +ffuc: new cuff.
+::  +routes: new cuff.
 ::
-++  ffuc
+++  routes
     $:
         :: disclosing to
         ::
-        p=(unit (set ship))
+        disclosing=(unit (set ship))
         :: attributed to
         ::
-        q=ship
+        attributing=ship
     ==
 ::
-::  +prey: privilege.
+::  +privilege: privilege.
 ::
-++  prey  (pair volt ffuc)
+++  privilege
+    $:
+        :: voltage
+        ::
+        =volt
+        :: routes
+        ::
+        =routes
+    ==
 ::
-::  +scad: foreign connections.
+::  +foreign: foreign connections.
 ::
-++  scad
+++  foreign
   $:
       :: index
       ::
-      p=@ud
+      index=@ud
       :: by duct
       ::
-      q=(map duct @ud)
+      index-map=(map duct @ud)
       :: by index
       ::
-      r=(map @ud duct)
+      duct-map=(map @ud duct)
   ==
 ::
-::  +scar: opaque input.
+::  +opaque-ducts: opaque input.
 ::
-++  scar
+++  opaque-ducts
   $:
       :: bone sequence
       ::
-      p=@ud
+      bone=@ud
       :: by duct
       ::
-      q=(map duct bone)
+      bone-map=(map duct bone)
       :: by bone
       ::
-      r=(map bone duct)
+      duct-map=(map bone duct)
   ==
 ::
 ::  +misvale-data: subscribers with bad marks.
@@ -196,65 +221,65 @@
 ::
 ++  misvale-data  (set wire)
 ::
-::  +seat: agent state.
+::  +agent: agent state.
 ::
-++  seat
+++  agent
   $:
       :: bad reqs
       ::
       misvale=misvale-data
       :: cache
       ::
-      vel=worm
+      cache=worm
       :: ap-find cache
       ::
-      arms=(map [term path] (unit (pair @ud term)))
+      find-cache=(map [term path] (unit (pair @ud term)))
       :: control duct
       ::
-      mom=duct
+      control-duct=duct
       :: unstopped
       ::
-      liv=?
+      live=?
       :: privilege
       ::
-      toc=torc
+      privilege=security-control
       :: statistics
       ::
-      tyc=stic
+      stats=stats
       :: subscribers
       ::
-      ged=gest
+      subscribers=subscriber-data
       :: running state
       ::
-      hav=vase
+      running-state=vase
       :: update control
       ::
-      byk=beak
+      beak=beak
       :: req'd translations
       ::
-      pyl=(map bone mark)
+      required-trans=(map bone mark)
       :: opaque ducts
       ::
-      zam=scar
+      ducts=opaque-ducts
   ==
 ::
-:: +sofa: blocked kisses.
+:: +blocked: blocked kisses.
 ::
-++  sofa  (qeu (trel duct prey club))
+++  blocked  (qeu (trel duct privilege agent-action))
 ::
-:: +stic: statistics.
+:: +stats: statistics.
 ::
-++  stic
+++  stats
   $:
       :: change number
       ::
-      act=@ud
+      change=@ud
       :: entropy
       ::
       eny=@uvJ
       :: time
       ::
-      lat=@da
+      time=@da
   ==
 --
 ::
@@ -264,7 +289,7 @@
 ::
 :: (all vane state)
 ::
-=|  all=axle
+=|  =gall
 |=  $:
         :: identity
         ::
@@ -296,8 +321,6 @@
 ::
 ++  mo
   ~%  %gall-mo  +>  ~
-  ::
-  =*  bowl-type  -:!>(*bowl)
   ::
   |_
     $:
@@ -351,7 +374,7 @@
     |=  pass=(pair path note-arvo)
     ^+  mo-state
     ::
-    =/  =move  [hen %pass pass]
+    =/  =move  [hen [%pass pass]]
     mo-state(moves [move moves])
   ::
   ::  +mo-give: prepend a standard %give move to the move state.
@@ -360,7 +383,7 @@
     |=  =gift:able
     ^+  mo-state
     ::
-    =/  =move  [hen %give gift]
+    =/  =move  [hen [%give gift]]
     mo-state(moves [move moves])
   ::
   :: +mo-okay: check that a vase contains a valid bowl.
@@ -370,12 +393,15 @@
     |=  =vase
     ^-  ?
     ::
-    =/  val  (slew 12 vase)
-    ?~  val
+    ::  inferred type of default bowl
+    =/  bowl-type  -:!>(*bowl)
+    ::
+    =/  maybe-vase  (slew 12 vase)
+    ?~  maybe-vase
       %.n
     ::
-    =/  bowl  p.u.val
-    (~(nest ut bowl) %.n bowl-type)
+    =/  =type  p.u.maybe-vase
+    (~(nest ut type) %.n bowl-type)
   ::
   ::  +mo-receive-core: receives an app core built by ford.
   ::
@@ -395,17 +421,25 @@
     =/  =cage  (result-to-cage:ford build-result)
     =/  result-vase  q.cage
     ::
-    =/  app-data=(unit seat)  (~(get by bum.mast.all) dude)
+    =/  app-data=(unit agent)
+      (~(get by running.ship-state.gall) dude)
+    ::
     ?^  app-data
       ::  update the path
       ::
-      =/  updated  u.app-data(byk beak)
-      =.  bum.mast.all  (~(put by bum.mast.all) dude updated)
+      =/  updated  u.app-data(beak beak)
+      ::
+      =.  running.ship-state.gall
+        (~(put by running.ship-state.gall) dude updated)
+      ::
       ::  magic update string from the old +mo-boon, "complete old boot"
       ::
-      =/  =prey  [%high [~ our]]
-      =/  abedded  (ap-abed:ap dude prey)
-      =/  peeped  (ap-peep:abedded result-vase)
+      =/  =privilege
+        =/  =routes  [disclosing=~ attributing=our]
+        [%high routes]
+      ::
+      =/  initialised  (ap-abed:ap dude privilege)
+      =/  peeped  (ap-peep:initialised result-vase)
       ap-abet:peeped
     ::  first install of the app
     ::
@@ -418,56 +452,61 @@
     =/  old  mo-state
     ::
     =/  wag
-      =/  =prey  [%high [~ our]]
-      =/  abedded  (ap-abed:ap dude prey)
-      (ap-prop:abedded ~)
+      =/  =routes  [disclosing=~ attributing=our]
+      =/  =privilege  [%high routes]
+      =/  initialised  (ap-abed:ap dude privilege)
+      (ap-prop:initialised ~)
     ::
-    ?^  -.wag
+    =/  maybe-tang  -.wag
+    =/  new  +.wag
+    ::
+    ?^  maybe-tang
       =.  mo-state  old
-      (mo-give %onto %.n u.-.wag)
+      (mo-give %onto %.n u.maybe-tang)
     ::
-    =.  mo-state  ap-abet:+.wag
+    =.  mo-state  ap-abet:new
     ::
     =/  clawed  (mo-claw dude)
     (mo-give:clawed %onto %.y dude %boot now)
   ::
-  ::  +mo-born: create a new seat.
+  ::  +mo-born: create a new agent.
   ::
   ++  mo-born
     |=  [=dude =beak =vase]
     ^+  mo-state
     ::
-    =|  =seat
+    =/  =opaque-ducts
+      :+  bone=1
+        bone-map=[[[~ ~] 0] ~ ~]
+       duct-map=[[0 [~ ~]] ~ ~]
     ::
-    =/  =scar
-      =/  bone  1
-      =/  bone-duct  [[[~ ~] 0] ~ ~]
-      =/  duct-bone  [[0 [~ ~]] ~ ~]
-      [p=bone q=bone-duct r=duct-bone]
-    ::
-    =/  new-seat
-      %_  seat
-        mom  hen
-        byk  beak
-        hav  vase
-        zam  scar
+    =/  agent
+      =/  default-agent  *agent
+      %_  default-agent
+        control-duct    hen
+        beak            beak
+        running-state   vase
+        ducts           opaque-ducts
       ==
     ::
+    =/  agents
+      (~(put by running.ship-state.gall) dude agent)
+    ::
     %_  mo-state
-      bum.mast.all  (~(put by bum.mast.all) dude new-seat)
+      running.ship-state.gall  agents
     ==
   ::
   :: +mo-away: handle a foreign request.
   ::
   ++  mo-away
     ~/  %mo-away
-    |=  [=ship =cush]
+    |=  [=ship =internal-task]
     ^+  mo-state
     ::
-    =/  =dude  p.cush
-    =/  =club  q.cush
+    =/  =dude  p.internal-task
+    =/  =agent-action  q.internal-task
     ::
-    ?:  ?=(%pump -.club)
+    ?:  ?=(%pump -.agent-action)
       ::
       ::  you'd think this would send an ack for the diff
       ::  that caused this pump.  it would, but we already
@@ -477,33 +516,37 @@
       ::
       mo-state
     ::
-    ?:  ?=(%peer-not -.club)
-      =/  =tang  p.club
-      =/  err  (some tang)
-      (mo-give %unto %reap err)
+    ?:  ?=(%peer-not -.agent-action)
+      =/  =tang  p.agent-action
+      (mo-give %unto %reap (some tang))
     ::
     =^  bone  mo-state  (mo-bale ship)
     ::
-    =/  =rook
-      ?-  -.club
-        %poke  [%m p.p.club q.q.p.club]
+    =/  =forward-ames
+      ?-  -.agent-action
+        %poke  [%m p.p.agent-action q.q.p.agent-action]
         %pull  [%u ~]
         %puff  !!
         %punk  !!
-        %peel  [%l club]
-        %peer  [%s p.club]
+        %peel  [%l agent-action]
+        %peer  [%s p.agent-action]
       ==
     ::
-    =/  action  -.club
-    =/  =path  /sys/way/[action]
-    =/  =note-arvo  [%a %want ship [%g %ge dude ~] [bone rook]]
+    =/  sys-path
+      =/  action  -.agent-action
+      /sys/way/[action]
     ::
-    (mo-pass path note-arvo)
+    =/  =note-arvo
+      =/  =path  [%g %ge dude ~]
+      =/  noun  [bone forward-ames]
+      [%a %want ship path noun]
+    ::
+    (mo-pass sys-path note-arvo)
   ::
   ::  +mo-awed: handle foreign response.
   ::
   ++  mo-awed
-    |=  [=whey art=(unit ares)]
+    |=  [=foreign-response art=(unit ares)]
     ^+  mo-state
     ::
     =/  =ares
@@ -519,7 +562,7 @@
     ::
     =/  result  (bind ares to-tang)
     ::
-    ?-  whey
+    ?-  foreign-response
       %peel  (mo-give %unto %reap result)
       %peer  (mo-give %unto %reap result)
       %poke  (mo-give %unto %coup result)
@@ -532,28 +575,29 @@
     |=  =ship
     ^-  [bone _mo-state]
     ::
-    =/  =scad
-      =/  default  [1 ~ ~]
-      =/  existing  (~(get by sap.mast.all) ship)
-      (fall existing default)
+    =/  =foreign
+      =/  existing  (~(get by contacts.ship-state.gall) ship)
+      (fall existing [1 ~ ~])
     ::
-    =/  nom  (~(get by q.scad) hen)
+    =/  existing  (~(get by index-map.foreign) hen)
     ::
-    ?^  nom
-      [u.nom mo-state]
+    ?^  existing
+      [u.existing mo-state]
     ::
-    =/  index  p.scad
+    =/  index  index.foreign
     ::
-    =/  contacts
-      %_  scad
-        p  +(index)
-        q  (~(put by q.scad) hen index)
-        r  (~(put by r.scad) index hen)
+    =/  new-foreign
+      %_  foreign
+        index      +(index)
+        index-map  (~(put by index-map.foreign) hen index)
+        duct-map   (~(put by duct-map.foreign) index hen)
       ==
+    ::
+    =/  contacts  (~(put by contacts.ship-state.gall) ship new-foreign)
     ::
     =/  next
       %_  mo-state
-        sap.mast.all  (~(put by sap.mast.all) ship contacts)
+        contacts.ship-state.gall  contacts
       ==
     ::
     [index next]
@@ -564,9 +608,8 @@
     |=  [=ship index=@ud]
     ^-  duct
     ::
-    =/  conns  (~(got by sap.mast.all) ship)
-    =/  duct  r:conns
-    (~(got by duct) index)
+    =/  =foreign  (~(got by contacts.ship-state.gall) ship)
+    (~(got by duct-map.foreign) index)
   ::
   ::  +mo-cyst-core: receive a core.
   ::
@@ -580,9 +623,9 @@
     =/  beak-path  t.t.path
     ::
     =/  =beak
-      =/  ship  (slav %p i.beak-path)
-      =/  desk  i.t.beak-path
-      =/  case  [%da (slav %da i.t.t.beak-path)]
+      =/  =ship  (slav %p i.beak-path)
+      =/  =desk  i.t.beak-path
+      =/  =case  [%da (slav %da i.t.t.beak-path)]
       [p=ship q=desk r=case]
     ::
     (mo-receive-core i.t.path beak result.sign-arvo)
@@ -645,8 +688,8 @@
       ~&  [%diff-bad-ack coop]
       mo-state
     ~&  [%diff-bad-ack %mack]
-    =/  slaw  (slog (flop q.,.+>.coop)) :: FIXME kill this lark
-    (slaw mo-state)
+    =/  print  (slog (flop q.,.+>.coop))
+    (print mo-state)
   ::
   ::  +mo-cyst-rep: reverse request.
   ::
@@ -668,18 +711,18 @@
     =/  build-result  build-result.result.sign-arvo
     ::
     ?:  ?=([%error *] build-result)
-      ::  "XX should crash"
+      ::  XX should crash
       =/  err  (some message.build-result)
       (mo-give %mack err)
     ::
-    ::  "XX pump should ack"
+    ::  XX pump should ack
     =.  mo-state  (mo-give %mack ~)
     ::
     =/  duct  (mo-ball him num)
     =/  initialised  (mo-abed duct)
     ::
     =/  =cage  (result-to-cage:ford build-result)
-    =/  move  [%unto %diff cage]
+    =/  move  [%unto [%diff cage]]
     ::
     (mo-give:initialised move)
   ::
@@ -717,29 +760,37 @@
     ::
     ?>  ?=([%g %unto *] sign-arvo)
     ::
-    =/  =cuft  +>.sign-arvo
+    =/  =internal-gift  +>.sign-arvo
     ::
-    ?-    -.cuft
+    ?-    -.internal-gift
         ::
         %coup
         ::
-      (mo-give %mack p.cuft)
+      (mo-give %mack p.internal-gift)
         ::
         %diff
         ::
       =/  sys-path  [%sys %red t.path]
-      =/  note  [%a %want him [%g %gh dap ~] [num %d p.p.cuft q.q.p.cuft]]
-      (mo-pass sys-path note)
+      =/  =note-arvo
+        =/  path  [%g %gh dap ~]
+        =/  noun  [num %d p.p.internal-gift q.q.p.internal-gift]
+        [%a %want him path noun]
+      ::
+      (mo-pass sys-path note-arvo)
         ::
         %quit
         ::
       =/  sys-path  [%sys path]
-      =/  note  [%a %want him [%g %gh dap ~] [num %x ~]]
-      (mo-pass sys-path note)
+      =/  =note-arvo
+        =/  path  [%g %gh dap ~]
+        =/  noun  [num %x ~]
+        [%a %want him path noun]
+      ::
+      (mo-pass sys-path note-arvo)
         ::
         %reap
         ::
-      (mo-give %mack p.cuft)
+      (mo-give %mack p.internal-gift)
     ==
   ::
   ::  +mo-cyst-val: inbound validate.
@@ -751,8 +802,8 @@
     ?>  ?=([%f %made *] sign-arvo)
     ?>  ?=([@ @ @ ~] path)
     ::
-    =/  him  (slav %p i.t.path)
-    =/  dap  i.t.t.path
+    =/  =ship  (slav %p i.t.path)
+    =/  =dude  i.t.t.path
     ::
     ?:  ?=([%incomplete *] result.sign-arvo)
       =/  err  (some tang.result.sign-arvo)
@@ -764,10 +815,13 @@
       =/  err  (some message.build-result)
       (mo-give %unto %coup err)
     ::
-    =/  =prey  [%high ~ him]
+    =/  =privilege
+      =/  =routes  [disclosing=~ attributing=ship]
+      [%high routes]
+    ::
     =/  =cage  (result-to-cage:ford build-result)
-    =/  =club  [%poke cage]
-    (mo-clip dap prey club)
+    =/  =agent-action  [%poke cage]
+    (mo-clip dude privilege agent-action)
   ::
   ::  +mo-cyst-way: outbound request.
   ::
@@ -778,10 +832,10 @@
     ?>  ?=([%a %woot *] sign-arvo)
     ?>  ?=([@ @ ~] path)
     ::
-    =/  why  (whey i.t.path)
+    =/  =foreign-response  (foreign-response i.t.path)
     =/  art  +>+.sign-arvo
     ::
-    (mo-awed why art)
+    (mo-awed foreign-response art)
   ::
   ::  +mo-cyst: take in /sys.
   ::
@@ -813,37 +867,47 @@
     ::
     =/  initialised
       =/  =term  i.path
-      =/  =ffuc  [~ (slav %p i.t.path)]
-      =/  =prey  [%high ffuc]
-      (ap-abed:ap term prey)
+      =/  =privilege
+        =/  =ship  (slav %p i.t.path)
+        =/  =routes  [disclosing=~ attributing=ship]
+        [%high routes]
+      ::
+      (ap-abed:ap term privilege)
     ::
-    =/  vax
-      =/  =vase  hin
-      (slot 3 vase)
+    =/  =vase  (slot 3 hin)
+    =/  =sign-arvo  q.hin
     ::
     ?-  i.t.t.path
         ::
         %inn
         ::
-      =/  poured  (ap-pour:initialised t.t.t.path vax)
+      =/  poured  (ap-pour:initialised t.t.t.path vase)
       ap-abet:poured
         ::
         %cay
         ::
-      ?.  ?=([%e %sigh *] q.hin)
-        ~&  [%mo-cook-weird q.hin]
+      ?.  ?=([%e %sigh *] sign-arvo)
+        ~&  [%mo-cook-weird sign-arvo]
         ~&  [%mo-cook-weird-path path]
         mo-state
-      =/  purred  (ap-purr:initialised +<.q.hin t.t.t.path +>.q.hin)
+      ::
+      =/  purred
+        =/  =cage  +>.sign-arvo
+        (ap-purr:initialised %sigh t.t.t.path cage)
+      ::
       ap-abet:purred
         ::
         %out
         ::
-      ?.  ?=([%g %unto *] q.hin)
-        ~&  [%mo-cook-weird q.hin]
+      ?.  ?=([%g %unto *] sign-arvo)
+        ~&  [%mo-cook-weird sign-arvo]
         ~&  [%mo-cook-weird-path path]
         mo-state
-      =/  pouted  (ap-pout:initialised t.t.t.path +>.q.hin)
+      ::
+      =/  pouted
+        =/  =internal-gift  +>.sign-arvo
+        (ap-pout:initialised t.t.t.path internal-gift)
+      ::
       ap-abet:pouted
     ==
   ::
@@ -853,28 +917,35 @@
     |=  =dude
     ^+  mo-state
     ::
-    ?.  (~(has by bum.mast.all) dude)
+    ?.  (~(has by running.ship-state.gall) dude)
       mo-state
     ::
-    =/  maybe-sofa  (~(get by wub.mast.all) dude)
+    =/  maybe-blocked  (~(get by waiting.ship-state.gall) dude)
     ::
-    ?~  maybe-sofa
+    ?~  maybe-blocked
       mo-state
     ::
-    =/  =sofa  u.maybe-sofa
+    =/  =blocked  u.maybe-blocked
     ::
     |-  ^+  mo-state
-    ?:  =(~ sofa)
+    ::
+    ?:  =(~ blocked)
       %_  mo-state
-        wub.mast.all  (~(del by wub.mast.all) dude)
+        waiting.ship-state.gall  (~(del by waiting.ship-state.gall) dude)
       ==
     ::
-    =^  cushion  sofa  [p q]:~(get to sofa)
-    =/  =duct  p.cushion
-    =/  =prey  q.cushion
-    =/  =club  r.cushion
+    =^  kiss  blocked  [p q]:~(get to blocked)
     ::
-    =/  move  [duct %slip %g %deal [q.q.prey our] dude club]
+    =/  =duct  p.kiss
+    =/  =privilege  q.kiss
+    =/  =agent-action  r.kiss
+    ::
+    =/  move
+      =/  =sock  [attributing.routes.privilege our]
+      =/  =internal-task  [dude agent-action]
+      =/  card  [%slip %g %deal sock internal-task]
+      [duct card]
+    ::
     $(moves [move moves])
   ::
   ::  +mo-beak: build beak.
@@ -882,89 +953,94 @@
   ++  mo-beak
     |=  =dude
     ^-  beak
-    ?~  app-data=(~(get by bum.mast.all) dude)
+    ?~  app-data=(~(get by running.ship-state.gall) dude)
       ::
       ::  XX this fallback is necessary, as .dude could be either the source
       ::  or the destination app. ie, it might not exist locally ...
       ::
       [our %home %da now]
-    byk.u.app-data
+    beak.u.app-data
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [=dude =prey =term =path]
+    |=  [=dude =privilege =term =path]
     ^-  (unit (unit cage))
     ::
-    =/  initialised  (ap-abed:ap dude prey)
+    =/  initialised  (ap-abed:ap dude privilege)
     (ap-peek:initialised term path)
   ::
-  ::  +mo-clip: apply club.
+  ::  +mo-clip: apply action.
   ::
   ++  mo-clip
-    |=  [=dude =prey =club]
+    |=  [=dude =privilege =agent-action]
     ^+  mo-state
     ::
     =/  =path
-      =/  ship  (scot %p q.q.prey)
+      =/  ship  (scot %p attributing.routes.privilege)
       /sys/val/[ship]/[dude]
     ::
-    =/  ship-info
-      =/  beak  (mo-beak dude)
+    =/  ship-desk
+      =/  =beak  (mo-beak dude)
       [p q]:beak
     ::
-    ?:  ?=(%puff -.club)
-      =/  =schematic:ford  [%vale ship-info +.club]
+    ?:  ?=(%puff -.agent-action)
+      =/  =schematic:ford  [%vale ship-desk +.agent-action]
       =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
-    ?:  ?=(%punk -.club)
-      =/  =schematic:ford  [%cast ship-info p.club [%$ q.club]]
+    ?:  ?=(%punk -.agent-action)
+      =/  =schematic:ford  [%cast ship-desk p.agent-action [%$ q.agent-action]]
       =/  =note-arvo  [%f %build live=%.n schematic]
       (mo-pass path note-arvo)
     ::
-    ?:  ?=(%peer-not -.club)
-      =/  err  (some p.club)
+    ?:  ?=(%peer-not -.agent-action)
+      =/  err  (some p.agent-action)
       (mo-give %unto %reap err)
     ::
-    =/  initialised  (ap-abed:ap dude prey)
-    =/  applied  (ap-club:initialised club)
+    =/  initialised  (ap-abed:ap dude privilege)
+    =/  applied  (ap-agent-action:initialised agent-action)
     ap-abet:applied
   ::
   ::  +mo-come: handle locally.
   ::
   ++  mo-come
-    |=  [=ship =cush]
+    |=  [=ship =internal-task]
     ^+  mo-state
     ::
-    =/  =prey  [%high [~ ship]]
-    =/  =dude  p.cush
-    =/  =club  q.cush
+    =/  =privilege
+      =/  =routes  [disclosing=~ attributing=ship]
+      [%high routes]
     ::
-    =/  is-running  (~(has by bum.mast.all) dude)
-    =/  is-waiting  (~(has by wub.mast.all) dude)
+    =/  =dude  p.internal-task
+    =/  =agent-action  q.internal-task
+    ::
+    =/  is-running  (~(has by running.ship-state.gall) dude)
+    =/  is-waiting  (~(has by waiting.ship-state.gall) dude)
     ::
     ?:  |(!is-running is-waiting)
       ::
-      =/  =sofa
-        =/  waiting  (~(get by wub.mast.all) dude)
-        =/  kisses  (fall waiting *sofa)
-        =/  kiss  [hen prey club]
+      =/  =blocked
+        =/  waiting  (~(get by waiting.ship-state.gall) dude)
+        =/  kisses  (fall waiting *blocked)
+        =/  kiss  [hen privilege agent-action]
         (~(put to kisses) kiss)
       ::
+      =/  waiting  (~(put by waiting.ship-state.gall) dude blocked)
+      ::
       %_  mo-state
-        wub.mast.all  (~(put by wub.mast.all) dude sofa)
+        waiting.ship-state.gall  waiting
       ==
     ::
-    (mo-clip dude prey club)
+    (mo-clip dude privilege agent-action)
   ::
   ::  +mo-gawk: ames forward.
   ::
   ++  mo-gawk
-    |=  [=ship =dude =bone =rook]
+    |=  [=ship =dude =bone =forward-ames]
     ^+  mo-state
     ::
     =.  mo-state
-      ?.  ?=(%u -.rook)
+      ?.  ?=(%u action.forward-ames)
         mo-state
       (mo-give %mack ~)
     ::
@@ -973,12 +1049,38 @@
       =/  num  (scot %ud bone)
       /sys/req/[him]/[dude]/[num]
     ::
+    =/  =sock  [ship our]
+    ::
     =/  =note-arvo
-      ?-  -.rook
-        %m  [%g %deal [ship our] dude %puff p.rook q.rook]
-        %l  [%g %deal [ship our] dude %peel p.rook q.rook]
-        %s  [%g %deal [ship our] dude %peer p.rook]
-        %u  [%g %deal [ship our] dude %pull ~]
+      ?-  action.forward-ames
+          ::
+          %m
+          ::
+        =/  =task:able
+          =/  =internal-task  [dude %puff [mark noun]:forward-ames]
+          [%deal sock internal-task]
+        [%g task]
+          ::
+          %l
+          ::
+        =/  =task:able
+          =/  =internal-task  [dude %peel [mark path]:forward-ames]
+          [%deal sock internal-task]
+        [%g task]
+          ::
+          %s
+          ::
+        =/  =task:able
+          =/  =internal-task  [dude %peer path.forward-ames]
+          [%deal sock internal-task]
+        [%g task]
+          ::
+          %u
+          ::
+        =/  =task:able
+          =/  =internal-task  [dude %pull ~]
+          [%deal sock internal-task]
+        [%g task]
       ==
     ::
     (mo-pass path note-arvo)
@@ -986,10 +1088,10 @@
   ::  +mo-gawd: ames backward.
   ::
   ++  mo-gawd
-    |=  [=ship =dude =bone =roon]
+    |=  [=ship =dude =bone =reverse-ames]
     ^+  mo-state
     ::
-    ?-    -.roon
+    ?-    action.reverse-ames
         ::
         %d
         ::
@@ -1001,7 +1103,7 @@
       =/  =note-arvo
         =/  beak  (mo-beak dude)
         =/  info  [p q]:beak
-        =/  =schematic:ford  [%vale info p.roon q.roon]
+        =/  =schematic:ford  [%vale info p.reverse-ames q.reverse-ames]
         [%f %build live=%.n schematic]
       ::
       (mo-pass path note-arvo)
@@ -1024,11 +1126,11 @@
     ~%  %gall-ap  +>  ~
     ::
     |_  $:  dap=dude
-            pry=prey
+            pry=privilege
             ost=bone
-            zip=(list cove)
+            zip=(list internal-move)
             dub=(list (each suss tang))
-            sat=seat
+            sat=agent
         ==
     ::
     ++  ap-state  .
@@ -1037,37 +1139,32 @@
     ::
     ++  ap-abed
       ~/  %ap-abed
-      |=  [=dude =prey]
+      |=  [=dude =privilege]
       ^+  ap-state
       ::
-      =/  =seat
-        =/  sitting  (~(got by bum.mast.all) dude)
-        =/  =stic
-          =/  stat  tyc.sitting
-          =/  nact  +(act.stat)
-          =/  trop  (shaz (mix (add dude nact) eny))
-          [act=nact eny=trop lat=now]
-        sitting(tyc stic)
+      =/  =agent
+        =/  running  (~(got by running.ship-state.gall) dude)
+        =/  =stats
+          =/  change  +(change.stats.running)
+          =/  trop  (shaz (mix (add dude change) eny))
+          [change=change eny=trop time=now]
+        running(stats stats)
       ::
-      =/  bone  p.zam.seat
-      =/  bone-duct  q.zam.seat
-      =/  duct-bone  r.zam.seat
-      ::
-      =/  maybe-bone  (~(get by bone-duct) hen)
+      =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
       ::
       ?^  maybe-bone
         =/  bone  u.maybe-bone
-        ap-state(dap dude, pry prey, sat seat, ost bone)
+        ap-state(dap dude, pry privilege, sat agent, ost bone)
       ::
-      =/  =scar
-        =/  bone  +(bone)
-        =/  bone-duct  (~(put by bone-duct) hen bone)
-        =/  duct-bone  (~(put by duct-bone) bone hen)
-        [p=bone q=bone-duct r=duct-bone]
+      =/  =opaque-ducts
+        =/  bone  +(bone.ducts.agent)
+        :+  bone=bone
+          bone-map=(~(put by bone-map.ducts.agent) hen bone)
+        duct-map=(~(put by duct-map.ducts.agent) bone hen)
       ::
       %=  ap-state
-        ost      bone
-        zam.sat  scar
+        ost        bone.ducts.agent
+        ducts.sat  opaque-ducts
       ==
     ::
     ::  +ap-abet: resolve moves.
@@ -1076,9 +1173,17 @@
       ^+  mo-state
       ::
       =>  ap-abut
+      ::
+      =/  running  (~(put by running.ship-state.gall) dap sat)
+      ::
+      =/  moves
+        =/  from-internal  (turn zip ap-aver)
+        =/  from-suss  (turn dub ap-avid)
+        :(weld from-internal from-suss moves)
+      ::
       %_  mo-state
-        bum.mast.all  (~(put by bum.mast.all) dap sat)
-        moves  :(weld (turn zip ap-aver) (turn dub ap-avid) moves)
+        running.ship-state.gall  running
+        moves                    moves
       ==
     ::
     ::  +ap-abut: track queue.
@@ -1086,106 +1191,113 @@
     ++  ap-abut
       ^+  ap-state
       ::
-      =/  coves  zip
+      =/  internal-moves  zip
       =/  bones  *(set bone)
       ::
       |-  ^+  ap-state
-      ?^  coves
-        ?.  ?=([%give %diff *] q.i.coves)
-          $(coves t.coves)
+      ::
+      ?^  internal-moves
+        ?.  ?=([%give %diff *] move.i.internal-moves)
+          $(internal-moves t.internal-moves)
         ::
-        =^  added  ap-state  ap-fill(ost p.i.coves)
+        =/  =internal-move  i.internal-moves
+        =^  filled  ap-state  ap-fill(ost bone.internal-move)
         ::
-        =/  ribs
-          ?:  added
+        =/  new-bones
+          ?:  filled
             bones
-          (~(put in bones) p.i.coves)
+          (~(put in bones) bone.internal-move)
         ::
-        $(coves t.coves, bones ribs)
+        $(internal-moves t.internal-moves, bones new-bones)
       ::
       =/  boned  ~(tap in bones)
       ::
       |-  ^+  ap-state
+      ::
       ?~  boned
         ap-state
-      =>  %*(. $(boned t.boned) ost i.boned) :: FIXME
       ::
-      =/  tib  (~(get by sup.ged.sat) ost)
+      =>  $(boned t.boned, ost i.boned)
+      ::
+      =/  tib  (~(get by incoming.subscribers.sat) ost)
       ::
       ?~  tib
         ~&  [%ap-abut-bad-bone dap ost]
-        ..ap-kill
-      ap-kill(q.q.pry p.u.tib)
+        ap-state
+      ::
+      ap-kill(attributing.routes.pry p.u.tib)
     ::
-    ::  +ap-aver: cove to move.
+    ::  +ap-aver: internal move to move.
     ::
     ++  ap-aver
       ~/  %ap-aver
-      |=  =cove
+      |=  =internal-move
       ^-  move
       ::
-      :-  (~(got by r.zam.sat) p.cove)
-      ?-    -.q.cove
+      =/  =duct  (~(got by duct-map.ducts.sat) bone.internal-move)
+      =/  card
+        ?-    -.move.internal-move
+            ::
+            %slip  !!
+            ::
+            %sick  !!
+            ::
+            %give
+            ::
+          ?<  =(0 bone.internal-move)
           ::
-          %slip  !!
+          =/  =internal-gift  p.move.internal-move
+          ?.  ?=(%diff -.internal-gift)
+            [%give %unto internal-gift]
           ::
-          %sick  !!
+          =/  =cage  p.internal-gift
+          =/  =mark
+            =/  trans  (~(get by required-trans.sat) bone.internal-move)
+            (fall trans p.cage)
           ::
-          %give
+          ?:  =(mark p.cage)
+            [%give %unto internal-gift]
           ::
-        ?<  =(0 p.cove)
-        ?.  ?=(%diff -.p.q.cove)
-          [%give %unto p.q.cove]
-        ::
-        =/  =cage  p.p.q.cove
-        =/  =mark  ((~(gut by pyl.sat) p.cove p.cage)
-        ::
-        ?:  =(mark p.cage)
-          [%give %unto p.q.cove]
-        ::
-        =/  =path  /sys/pel/[dap]
-        =/  =schematic:ford
-          =/  =beak  (mo-beak dap)
-          [%cast [p q]:beak mark [%$ cage]]
-        ::
-        =/  =note-arvo  [%f %build live=%.n schematic]
-        [%pass path note-arvo]
+          =/  =path  /sys/pel/[dap]
           ::
-          %pass
-        ::
-        =/  =path  /sys/pel/[dap]
-        =/  =schematic:ford
-          =/  =beak  (mo-beak dap)
-          [%cast [p q]:beak mark [%$ cage]]
-        ::
-        =/  =note-arvo  [%f %build live=%.n schematic]
-        [%pass path note-arvo]
+          [%pass path note-arvo]
+            ::
+            %pass
+            ::
+          =/  =path  p.move.internal-move
+          =/  =internal-note  q.move.internal-move
           ::
-          %pass
+          =/  use-path  [%use dap path]
           ::
-        =/  =path  [%use dap p.q.cove]
-        =/  =note-arvo
-          ?-  -.q.q.cove
-              %send
-            =/  =sock  [our p.q.q.cove]
-            =/  =cush  [q.q.q.cove]
-            [%g %deal sock cush]
-              ::
-              %meta
-            =/  =term  p.q.q.cove
-            =/  =vase  q.q.q.cove
-            [term %meta vase]
-          ==
-        [%pass path note-arvo]
-      ==
+          =/  =note-arvo
+            ?-  task.internal-note
+                ::
+                ::
+                %send
+                ::
+              =/  =sock  [our ship.internal-note]
+              =/  =internal-task  internal-task.internal-note
+              [%g %deal sock internal-task]
+                ::
+                %meta
+                ::
+              =/  =term  term.internal-note
+              =/  =vase  vase.internal-note
+              [term %meta vase]
+            ==
+          ::
+          [%pass use-path note-arvo]
+        ==
+      ::
+      [duct card]
     ::
     ::  +ap-avid: onto results.
     ::
     ++  ap-avid
-      |=  a=(each suss tang)
+      |=  report=(each suss tang)
       ^-  move
       ::
-      [hen %give %onto a]
+      [hen %give %onto report]
     ::
     ::  +ap-call: call into server.
     ::
@@ -1197,71 +1309,95 @@
       =.  ap-state  ap-bowl
       =^  arm  ap-state  (ap-farm term)
       ::
-      ?:  ?=(%| -.arm)
+      ?:  ?=(%.n -.arm)
         [(some p.arm) ap-state]
       ::
-      =^  zem  ap-state  (ap-slam term p.arm vase)
+      =^  arm  ap-state  (ap-slam term p.arm vase)
       ::
-      ?:  ?=(%| -.zem)
-        [(some p.zem) ap-state]
-      (ap-sake p.zem)
+      ?:  ?=(%.n -.arm)
+        [(some p.arm) ap-state]
+      (ap-sake p.arm)
     ::
     ::  +ap-peek: peek.
     ::
     ++  ap-peek
       ~/  %ap-peek
-      |=  [ren=@tas tyl=path]
+      |=  [=term tyl=path]
       ^-  (unit (unit cage))
       ::
-      =+
-        ?.  ?=(%x ren)
+      =/  marked
+        ?.  ?=(%x term)
           [mark=%$ tyl=tyl]
+        ::
         =/  =path  (flop tyl)
+        ::
         ?>  ?=(^ path)
         [mark=i.path tyl=(flop t.path)]
       ::
-      =^  cug  ap-state  (ap-find %peek ren tyl)
+      =/  =mark  mark.marked
+      =/  tyl  tyl.marked
       ::
-      ?~  cug
+      =^  maybe-arm  ap-state  (ap-find %peek term tyl)
+      ::
+      ?~  maybe-arm
         =/  =tank  [%leaf "peek find fail"]
-        ((slog tank >tyl< >mark< ~) [~ ~])
+        =/  print  (slog tank >tyl< >mark< ~)
+        (print [~ ~])
       ::
-      =^  arm  ap-state  (ap-farm q.u.cug)
+      =^  arm  ap-state  (ap-farm q.u.maybe-arm)
       ::
-      ?:  ?=(%| -.arm)
+      ?:  ?=(%.n -.arm)
         =/  =tank  [%leaf "peek farm fail"]
-        ((slog tank p.arm) [~ ~])
+        =/  print  (slog tank p.arm)
+        (print [~ ~])
       ::
       =/  slammed
-        =/  =path  [ren tyl]
-        =/  =vase  !>((slag p.u.cug path))
-        (ap-slam q.u.cug p.arm vase)
+        =/  index  p.u.maybe-arm
+        =/  term  q.u.maybe-arm
+        =/  =vase
+          =/  =path  [term tyl]
+          =/  raw  (slag index path)
+          !>  raw
+        (ap-slam term p.arm vase)
       ::
-      =^  zem  ap-state  slammed
+      =^  possibly-vase  ap-state  slammed
       ::
-      ?:  ?=(%| -.zem)
+      ?:  ?=(%.n -.possibly-vase)
         =/  =tank  [%leaf "peek slam fail"]
-        ((slog tank p.zem) [~ ~])
+        =/  print  (slog tank p.possibly-vase)
+        (print [~ ~])
+      ::
+      =/  slammed-vase  p.possibly-vase
+      =/  vase-value  q.slammed-vase
       ::
       =/  err
         =/  =tank  [%leaf "peek bad result"]
-        ((slog tank ~) [~ ~])
+        =/  print  (slog tank ~)
+        (print [~ ~])
       ::
-      ?+  q.p.zem  err
-          ~              ~
-       ::
-          [~ ~]         [~ ~]
-       ::
+      ?+  vase-value  err
+          ::
+          ~
+          ::
+        ~
+          ::
+          [~ ~]
+          ::
+        [~ ~]
+          ::
           [~ ~ ^]
-        =/  =vase  (sped (slot 7 p.zem))
+          ::
+        =/  =vase  (sped (slot 7 slammed-vase))
         ::
         ?.  ?=([p=@ *] q.vase)
           =/  =tank  [%leaf "scry: malformed cage"]
-          ((slog tank ~) [~ ~])
+          =/  print  (slog tank ~)
+          (print [~ ~])
         ::
         ?.  ((sane %as) p.q.vase)
           =/  =tank  [%leaf "scry: malformed cage"]
-          ((slog tank ~) [~ ~])
+          =/  print  (slog tank ~)
+          (print [~ ~])
         ::
         ?.  =(mark p.q.vase)
           [~ ~]
@@ -1270,16 +1406,16 @@
         (some (some cage))
       ==
     ::
-    ::  +ap-club: apply effect.
+    ::  +ap-agent-action: apply effect.
     ::
-    ++  ap-club
-      |=  =club
+    ++  ap-agent-action
+      |=  =agent-action
       ^+  ap-state
       ::
-      ?-  -.club
-        %peel       (ap-peel +.club)
-        %poke       (ap-poke +.club)
-        %peer       (ap-peer +.club)
+      ?-  -.agent-action
+        %peel       (ap-peel +.agent-action)
+        %poke       (ap-poke +.agent-action)
+        %peer       (ap-peer +.agent-action)
         %puff       !!
         %punk       !!
         %peer-not   !!
@@ -1291,37 +1427,40 @@
     ::
     ++  ap-diff
       ~/  %ap-diff
-      |=  [=ship pax=path =cage]
+      |=  [=ship =path =cage]
       ^+  ap-state
       ::
-      =/  diff  [%diff p.cage +.pax]
+      =/  rest  +.path
+      =/  diff  [%diff p.cage rest]
       ::
-      =^  cug  ap-state  (ap-find diff)
+      =^  maybe-arm  ap-state  (ap-find diff)
       ::
-      ?~  cug
-        =/  target  [%.n ship +.pax]
+      ?~  maybe-arm
+        =/  target  [%.n ship rest]
         ::
         =/  =tang
-          =/  why  "diff: no {<`path`[p.cage +.pax]>}"
+          =/  why  "diff: no {<[p.cage rest]>}"
           (ap-suck why)
         ::
         =/  lame  (ap-lame %diff tang)
         (ap-pump:lame target)
       ::
+      =/  arm  u.maybe-arm
+      ::
       =/  =vase
         =/  target
-          ?:  =(0 p.u.cug)
-            =/  vas  (ap-cage cage)
-            [!>(`path`+.pax) vas]
-          [!>((slag (dec p.u.cug) `path`+.pax)) q.cage]
+          ?:  =(0 p.arm)
+            =/  =vase  (ap-cage cage)
+            [!>(rest) vase]
+          [!>((slag (dec p.arm) rest)) q.cage]
         (slop target)
       ::
-      =^  cam  ap-state  (ap-call q.u.cug vase)
+      =^  called  ap-state  (ap-call q.arm vase)
       ::
-      ?^  cam
-        =/  lame  (ap-lame q.u.cug u.cam)
-        (ap-pump:lame %.n ship pax)
-      (ap-pump %.y ship pax)
+      ?^  called
+        =/  lame  (ap-lame q.arm u.called)
+        (ap-pump:lame %.n ship path)
+      (ap-pump %.y ship path)
     ::
     ::  +ap-cage: cage to tagged vase.
     ::
@@ -1340,29 +1479,36 @@
       =/  way  [(scot %p ship) %out path]
       ::
       ?:  is-ok
-        (ap-pass way %send ship -.path %pump ~)
+        =/  =internal-note  [%send ship -.path %pump ~]
+        (ap-pass way internal-note)
       ::
       =/  give  (ap-give %quit ~)
-      (ap-pass:give way %send ship -.path %pull ~)
+      =/  =internal-note  [%send ship -.path %pull ~]
+      (ap-pass:give way internal-note)
     ::
     ::  +ap-fail: drop from queue.
     ::
     ++  ap-fall
       ^+  ap-state
       ::
-      ?.  (~(has by sup.ged.sat) ost)
+      ?.  (~(has by incoming.subscribers.sat) ost)
         ap-state
       ::
-      =/  soy  (~(get by qel.ged.sat) ost)
+      =/  level  (~(get by meter.subscribers.sat) ost)
       ::
-      ?:  |(?=(~ soy) =(0 u.soy))
+      ?:  |(?=(~ level) =(0 u.level))
         ap-state
       ::
-      =.  u.soy  (dec u.soy)
+      =.  u.level  (dec u.level)
       ::
-      ?:  =(0 u.soy)
-        ap-state(qel.ged.sat (~(del by qel.ged.sat) ost))
-      ap-state(qel.ged.sat (~(put by qel.ged.sat) ost u.soy))
+      ?:  =(0 u.level)
+        =/  deleted  (~(del by meter.subscribers.sat) ost)
+        %_  ap-state
+          meter.subscribers.sat  deleted
+        ==
+      ::
+      =/  dropped  (~(put by meter.subscribers.sat) ost u.level)
+      ap-state(meter.subscribers.sat dropped)
     ::
     ::  +ap-farm: produce arm.
     ::
@@ -1371,40 +1517,63 @@
       |=  =term
       ^-  [(each vase tang) _ap-state]
       ::
-      =/  pyz  (mule |.((~(mint wa vel.sat) p.hav.sat [%limb term]))) :: FIXME
+      =/  compiled
+        =/  =type  p.running-state.sat
+        =/  =hoon  [%limb term]
+        (~(mint wa cache.sat) type hoon)
       ::
-      ?:  ?=(%.n -.pyz)
-        =/  =tang  +.pyz
+      =/  virtual
+        =/  trap  |.(compiled)
+        (mule trap)
+      ::
+      ?:  ?=(%.n -.virtual)
+        =/  =tang  p.virtual
         [[%.n tang] ap-state]
       ::
-      =/  this=(each vase tang)
-        =/  ton  (mock [q.hav.sat q.+<.pyz] ap-sled)
+      =/  possibly-vase=(each vase tang)
+        =/  value  q.running-state.sat
+        =/  ton  (mock [value q.+<.virtual] ap-sled)
         ?-  -.ton
-          %0  [%.y p.+<.pyz p.ton]
-          %1  [%.n (turn p.ton |=(a/* (smyt (path a))))]
+          %0  [%.y p.+<.virtual p.ton]
+          %1  [%.n (turn p.ton |=(a=* (smyt (path a))))]
           %2  [%.n p.ton]
         ==
       ::
-      =/  =worm  +>.pyz
-      =/  next  ap-state(vel.sat worm)
-      [this next]
+      =/  next
+        =/  =worm  +>.virtual
+        %_  ap-state
+          cache.sat  worm
+        ==
+      ::
+      [possibly-vase next]
     ::
     ::  +ap-fill: add to queue.
     ::
     ++  ap-fill
       ^-  [? _ap-state]
-      =/  suy  (~(gut by qel.ged.sat) ost 0)
-      =/  subscriber=(unit (pair ship path))
-        (~(get by sup.ged.sat) ost)
       ::
-      ?:  ?&  =(20 suy)
+      =/  meter  (~(gut by meter.subscribers.sat) ost 0)
+      =/  subscriber=(unit (pair ship path))
+        (~(get by incoming.subscribers.sat) ost)
+      ::
+      =/  incoming  (~(get by incoming.subscribers.sat) ost)
+      =/  duct  (~(get by duct-map.ducts.sat) ost)
+      ::
+      ?:  ?&  =(20 meter)
               ?|  ?=(~ subscriber)
                   !=(our p.u.subscriber)
               ==
           ==
-        ~&  [%gall-pulling-20 ost (~(get by sup.ged.sat) ost) (~(get by r.zam.sat) ost)]
-        [%.n ..ap-fill]
-      [%.y ..ap-fill(qel.ged.sat (~(put by qel.ged.sat) ost +(suy)))]
+        ~&  [%gall-pulling-20 ost incoming duct]
+        [%.n ap-state]
+      ::
+      =/  next
+        =/  meter  (~(put by meter.subscribers.sat) ost +(meter))
+        %_  ap-state
+          meter.subscribers.sat  meter
+        ==
+      ::
+      [%.y next]
     ::
     ::  +ap-find: general arm.
     ::
@@ -1412,11 +1581,10 @@
       ~/  %ap-find
       |=  [=term =path]
       ^-  [(unit (pair @ud @tas)) _ap-state]
-      ::  check cache
       ::
-      =/  maybe-result  (~(get by arms.sat) [term path])
-      ?^  maybe-result
-        [u.maybe-result ap-state]
+      =/  maybe-cached  (~(get by find-cache.sat) [term path])
+      ?^  maybe-cached
+        [u.maybe-cached ap-state]
       ::
       =/  result
         =/  dep  0
@@ -1434,7 +1602,7 @@
           ~
         (some [dep term])
       ::
-      =.  arms.sat  (~(put by arms.sat) [term path] result)
+      =.  find-cache.sat  (~(put by find-cache.sat) [term path] result)
       ::
       [result ap-state]
     ::
@@ -1445,37 +1613,42 @@
       |=  =term
       ^-  ?
       ::
-      (slob term p.hav.sat)
+      =/  =type  p.running-state.sat
+      (slob term type)
     ::
     ::  +ap-give: return result.
     ::
     ++  ap-give
-      |=  =cuft
+      |=  =internal-gift
       ^+  ap-state
       ::
-      =/  coves  [[ost %give cuft] zip]
-      ap-state(zip coves)
+      =/  internal-moves
+        =/  move  [%give internal-gift]
+        =/  =internal-move  [ost move]
+        [internal-move zip]
+      ::
+      ap-state(zip internal-moves)
     ::
     ::  +ap-bowl: set up bowl.
     ::
     ++  ap-bowl
       ^+  ap-state
-      :: FIXME
+      ::
       %_    ap-state
-          +12.q.hav.sat
+          +12.q.running-state.sat
         ^-   bowl
         :*  :*  our                               ::  host
-                q.q.pry                           ::  guest
+                attributing.routes.pry            ::  guest
                 dap                               ::  agent
             ==                                    ::
             :*  wex=~                             ::  outgoing
-                sup=sup.ged.sat                       ::  incoming
+                sup=incoming.subscribers.sat      ::  incoming
             ==                                    ::
             :*  ost=ost                           ::  cause
-                act=act.tyc.sat                       ::  tick
-                eny=eny.tyc.sat                       ::  nonce
-                now=lat.tyc.sat                       ::  time
-                byk=byk.sat                           ::  source
+                act=change.stats.sat              ::  tick
+                eny=eny.stats.sat                 ::  nonce
+                now=time.stats.sat                ::  time
+                byk=beak.sat                      ::  source
         ==  ==                                    ::
       ==
     ::
@@ -1484,40 +1657,41 @@
     ++  ap-move
       ~/  %ap-move
       |=  =vase
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      ?@  q.vase
+      =/  noun  q.vase
+      ::
+      ?@  noun
         =/  =tang  (ap-suck "move: invalid move (atom)")
         [[%.n tang] ap-state]
       ::
-      ?^  -.q.vase
+      ?^  -.noun
         =/  =tang  (ap-suck "move: invalid move (bone)")
         [[%.n tang] ap-state]
       ::
-      ?@  +.q.vase
-        =/  =tang  (ap-suck "move: invalid move(card)")
+      ?@  +.noun
+        =/  =tang  (ap-suck "move: invalid move (card)")
         [[%.n tang] ap-state]
       ::
-      =/  hun  (~(get by r.zam.sat) -.q.vase)
+      =/  =bone  -.noun
+      =/  has-duct  (~(has by duct-map.ducts.sat) bone)
       ::
-      ?.  &((~(has by r.zam.sat) -.q.vase) !=(0 -.q.vase))
-        ~&  [q-vase+q.vase has-by-r-zam+(~(has by r.zam.sat) -.q.vase)]
-        =/  =tang  (ap-suck "move: invalid card (bone {<-.q.vase>})")
+      ?.  &(has-duct !=(0 bone))
+        =/  =tang  (ap-suck "move: invalid card (bone {<bone>})")
         [[%.n tang] ap-state]
       ::
-      =^  pec  vel.sat  (~(spot wa vel.sat) 3 vase)
-      =^  cav  vel.sat  (~(slot wa vel.sat) 3 pec)
+      =^  vase  cache.sat  (~(spot wa cache.sat) 3 vase)
+      =^  vase  cache.sat  (~(slot wa cache.sat) 3 vase)
       ::
-      ?+  +<.q.vase
-               (ap-move-pass -.q.vase +<.q.vase cav)
-        %diff  (ap-move-diff -.q.vase cav)
-        %hiss  (ap-move-hiss -.q.vase cav)
-        %peel  (ap-move-peel -.q.vase cav)
-        %peer  (ap-move-peer -.q.vase cav)
-        %pull  (ap-move-pull -.q.vase cav)
-        %poke  (ap-move-poke -.q.vase cav)
-        %send  (ap-move-send -.q.vase cav)
-        %quit  (ap-move-quit -.q.vase cav)
+      ?+  +<.noun  (ap-move-pass bone +<.noun vase)
+        %diff  (ap-move-diff bone vase)
+        %hiss  (ap-move-hiss bone vase)
+        %peel  (ap-move-peel bone vase)
+        %peer  (ap-move-peer bone vase)
+        %pull  (ap-move-pull bone vase)
+        %poke  (ap-move-poke bone vase)
+        %send  (ap-move-send bone vase)
+        %quit  (ap-move-quit bone vase)
         %http-response  (ap-move-http-response -.q.vax cav)
       ==
     ::
@@ -1526,48 +1700,63 @@
     ++  ap-move-quit
       ~/  %quit
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =/  that=(each cove tang)
+      =/  possibly-internal-move=(each internal-move tang)
         ?^  q.vase
           =/  =tang  (ap-suck "quit: improper give")
           [%.n tang]
-        =/  =cuft  [%quit ~]
-        =/  =cove  [bone %give cuft]
-        [%.y p=cove]
+        ::
+        =/  =internal-move
+          =/  =internal-gift  [%quit ~]
+          =/  move  [%give internal-gift]
+          [bone move]
+        ::
+        [%.y internal-move]
       ::
       =/  next
-        =/  incoming  (~(del by sup.ged.sat) bone)
-        ap-state(sup.ged.sat incoming)
+        =/  incoming  (~(del by incoming.subscribers.sat) bone)
+        %_  ap-state
+          incoming.subscribers.sat  incoming
+        ==
       ::
-      [that next]
+      [possibly-internal-move next]
     ::
     ::  +ap-move-diff: give diff move.
     ::
     ++  ap-move-diff
       ~/  %diff
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  pec  vel.sat  (~(sped wa vel.sat) vase)
+      =^  vase  cache.sat  (~(sped wa cache.sat) vase)
       ::
-      ?.  &(?=(^ q.pec) ?=(@ -.q.pec) ((sane %tas) -.q.pec)) :: FIXME
+      =/  value  q.vase
+      ::
+      ?.  ?&  ?=(^ value)
+              ?=(@ -.value)
+              ((sane %tas) -.value)
+          ==
         =/  =tang  (ap-suck "diff: improper give")
         [[%.n tang] ap-state]
       ::
-      =^  tel  vel.sat  (~(slot wa vel.sat) 3 pec)
+      =^  vase  cache.sat  (~(slot wa cache.sat) 3 vase)
       ::
-      =/  =cove
-        =/  =cage  [-.q.pec tel]
-        [bone %give %diff cage]
+      =/  =internal-move
+        =/  =cage  [-.value vase]
+        =/  move  [%give %diff cage]
+        [bone move]
       ::
-      [[%.y p=cove] ap-state]
+      [[%.y internal-move] ap-state]
     ::
+    ::  +ap-move-http-response
+    ::
+    ++  ap-move-http-response
+      |=  [sto=bone vax=vase]
+      ^-  [(each cove tang) _ap-state]
       ::
-      ::  TODO: Magic vase validation. I have no idea how malformed
-      ::  checking works.
-      ::
-      ::  This should be moved into +cote
+      ::  TODO: Magic vase validation. I have no idea how malformed checking
+      ::  works.
       ::
       :_  ap-state
       [%& sto %give %http-response ;;(http-event:http q.vax)]
@@ -1580,192 +1769,248 @@
       |=  =vase
       ^-  [(each (trel path ship term) tang) _ap-state]
       ::
-      =/  that=(each (trel path ship term) tang)
+      =/  possibly-trel=(each (trel path ship term) tang)
         ?.  ?&  ?=([p=* [q=@ r=@] s=*] q.vase)
                 (gte 1 (met 7 q.q.vase))
             ==
           =/  =tang  (ap-suck "mess: malformed target")
           [%.n tang]
         ::
-        =/  pux  ((soft path) p.q.vase)
+        =/  pax  ((soft path) p.q.vase)
         ::
-        ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        ?.  ?&  ?=(^ pax)
+                (levy u.pax (sane %ta))
+            ==
           =/  =tang  (ap-suck "mess: malformed path")
           [%.n tang]
         ::
-        =/  =path  [(scot %p q.q.vase) %out r.q.vase u.pux]
+        =/  =path  [(scot %p q.q.vase) %out r.q.vase u.pax]
         =/  =ship  q.q.vase
         =/  =term  r.q.vase
         [%.y path ship term]
       ::
-      [that ap-state]
+      [possibly-trel ap-state]
     ::
     ::  +ap-move-pass: pass general move.
     ::
     ++  ap-move-pass
       ~/  %pass
       |=  [=bone =noun =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      ?.  &(?=(@ noun) ((sane %tas) noun))
+      ?.  ?&  ?=(@ noun)
+              ((sane %tas) noun)
+          ==
         =/  =tang  (ap-suck "pass: malformed card")
         [[%.n tang] ap-state]
       ::
-      =/  pux  ((soft path) -.q.vase)
+      =/  pax  ((soft path) -.q.vase)
       ::
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+      ?.  ?&  ?=(^ pax)
+              (levy u.pax (sane %ta))
+          ==
         =/  =tang  (ap-suck "pass: malformed path")
         ~&  [%bad-path pux]
         [[%.n tang] ap-state]
       ::
-      =/  huj  (ap-vain noun)
+      =/  maybe-vane  (ap-vain noun)
       ::
-      ?~  huj
+      ?~  maybe-vane
         =/  =tang  (ap-suck "move: unknown note {(trip noun)}")
         [[%.n tang] ap-state]
       ::
-      =^  tel  vel.sat  (~(slot wa vel.sat) 3 vase)
+      =/  vane  u.maybe-vane
       ::
-      :_  ap-state
-      :^  %.y  bone  %pass
-      :-  [(scot %p q.q.pry) %inn u.pux]
-      [%meta u.huj (slop (ap-term %tas noun) tel)]
+      =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 vase)
+      ::
+      =/  =internal-move
+        =/  =path  [(scot %p attributing.routes.pry) %inn u.pax]
+        =/  vase  (ap-term %tas noun)
+        =/  combined  (slop vase at-slot)
+        =/  =internal-note  [%meta vane combined]
+        =/  card  [%pass path internal-note]
+        [bone card]
+      ::
+      [[%.y internal-move] ap-state]
     ::
     ::  +ap-move-poke: pass %poke.
     ::
     ++  ap-move-poke
       ~/  %poke
-      |=  [sto=bone vax=vase]
-      ^-  [(each cove tang) _ap-state]
+      |=  [=bone =vase]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  yep  ap-state  (ap-move-mess vax)
+      =^  possibly-target  ap-state  (ap-move-mess vase)
       ::
-      ?:  ?=(%.n -.yep)
-        [yep ap-state]
+      ?:  ?=(%.n -.possibly-target)
+        [possibly-target ap-state]
       ::
-      =^  gaw  vel.sat  (~(slot wa vel.sat) 7 vax)
+      =^  at-slot  cache.sat  (~(slot wa cache.sat) 7 vase)
       ::
-      ?.  &(?=([p=@ q=*] q.gaw) ((sane %tas) p.q.gaw))
+      ?.  ?&  ?=([p=@ q=*] q.at-slot)
+              ((sane %tas) p.q.at-slot)
+          ==
         =/  =tang  (ap-suck "poke: malformed cage")
         [[%.n tang] ap-state]
       ::
-      =^  paw  vel.sat  (~(stop wa vel.sat) 3 gaw)
+      =^  specialised  cache.sat  (~(stop wa cache.sat) 3 at-slot)
       ::
-      :_  ap-state
-      :^  %.y  sto  %pass
-      :-  p.p.yep
-      [%send q.p.yep r.p.yep %poke p.q.gaw paw]
+      =/  target  p.possibly-target
+      =/  =path  p.target
+      =/  =ship  q.target
+      =/  =term  r.target
+      ::
+      =/  =internal-move
+        =/  =internal-task  [term %poke p.q.at-slot specialised]
+        =/  =internal-note  [%send ship internal-task]
+        =/  card  [%pass path internal-note]
+        [bone card]
+      ::
+      [[%.y internal-move] ap-state]
     ::
     ::  +ap-move-peel: pass %peel.
     ::
     ++  ap-move-peel
       ~/  %peel
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  yep  ap-state  (ap-move-mess vase)
+      =^  possibly-target  ap-state  (ap-move-mess vase)
       ::
-      :: FIXME invert
-      :_  ap-state
-      ?:  ?=(%.n -.yep)
-        yep
+      ?:  ?=(%.n -.possibly-target)
+        [possibly-target ap-state]
       ::
-      =/  mar  ((soft mark) +>-.q.vase)
+      =/  target  p.possibly-target
+      =/  =ship  q.target
+      =/  =term  r.target
       ::
-      ?~  mar
+      =/  mark  ((soft mark) +>-.q.vase)
+      ::
+      ?~  mark
         =/  =tang  (ap-suck "peel: malformed mark")
-        [%.n tang]
+        [[%.n tang] ap-state]
       ::
-      =/  pux  ((soft path) +>+.q.vase)
+      =/  pax  ((soft path) +>+.q.vase)
       ::
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+      ?.  ?&  ?=(^ pax)
+              (levy u.pax (sane %ta))
+          ==
         =/  =tang  (ap-suck "peel: malformed path")
-        [%.n tang]
+        [[%.n tang] ap-state]
       ::
-      ?:  (~(has in misvale.sat) p.p.yep)
-        =/  err  [leaf+"peel: misvalidation encountered"]~
-        :^  %.y  bone  %pass
-        :-  p.p.yep
-        [%send q.p.yep r.p.yep %peer-not err]
+      =/  move
+        ?:  (~(has in misvale.sat) p.target)
+          =/  =internal-task
+            =/  =tang  [[%leaf "peel: misvalidation encountered"] ~]
+            =/  =agent-action  [%peer-not tang]
+            [term agent-action]
+          ::
+          =/  =internal-note  [%send ship internal-task]
+          =/  card  [%pass p.target internal-note]
+          [bone card]
+        ::
+        =/  =agent-action  [%peel u.mark u.pax]
+        =/  =internal-task  [term agent-action]
+        =/  =internal-note  [%send ship internal-task]
+        =/  card  [%pass p.target internal-note]
+        [bone card]
       ::
-      :^  %.y  bone  %pass
-      :-  p.p.yep
-      [%send q.p.yep r.p.yep %peel u.mar u.pux]
+      [[%.y move] ap-state]
     ::
     ::  +ap-move-peer: pass %peer.
     ::
     ++  ap-move-peer
       ~/  %peer
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  yep  ap-state  (ap-move-mess vase)
+      =^  possibly-target  ap-state  (ap-move-mess vase)
       ::
-      :_  ap-state
-      ?:  ?=(%.n -.yep)
-        yep
+      ?:  ?=(%.n -.possibly-target)
+        [possibly-target ap-state]
       ::
-      =/  pux  ((soft path) +>.q.vase)
+      =/  target  p.possibly-target
+      =/  =ship  q.target
+      =/  =term  r.target
       ::
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+      =/  pax  ((soft path) +>.q.vase)
+      ::
+      ?.  ?&  ?=(^ pax)
+              (levy u.pax (sane %ta))
+          ==
         =/  =tang  (ap-suck "peer: malformed path")
-        [%.n tang]
+        [[%.n tang] ap-state]
       ::
-      ?:  (~(has in misvale.sat) p.p.yep)
-        =/  err  [leaf+"peer: misvalidation encountered"]~
-        :^  %&  bone  %pass
-        :-  p.p.yep
-        [%send q.p.yep r.p.yep %peer-not err]
+      =/  move
+        ?:  (~(has in misvale.sat) p.target)
+          =/  err  [[%leaf "peer: misvalidation encountered"] ~]
+          =/  =agent-action  [%peer-not err]
+          =/  =internal-note  [%send ship term agent-action]
+          =/  card  [%pass p.target internal-note]
+          [bone card]
+        ::
+        =/  =agent-action  [%peer u.pax]
+        =/  =internal-note  [%send ship term agent-action]
+        =/  card  [%pass p.target internal-note]
+        [bone card]
       ::
-      :^  %&  bone  %pass
-      :-  p.p.yep
-      [%send q.p.yep r.p.yep %peer u.pux]
+      [[%.y move] ap-state]
     ::
     ::  +ap-move-pull: pass %pull.
     ::
     ++  ap-move-pull
       ~/  %pull
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  yep  ap-state  (ap-move-mess vase)
+      =^  possibly-target  ap-state  (ap-move-mess vase)
       ::
-      :_  ap-state
-      ?:  ?=(%.n -.yep)
-        yep
+      ?:  ?=(%.n -.possibly-target)
+        [possibly-target ap-state]
+      ::
+      =/  target  p.possibly-target
+      =/  =ship  q.target
+      =/  =term  r.target
       ::
       ?.  =(~ +>.q.vase)
         =/  =tang  (ap-suck "pull: malformed card")
-        [%.n tang]
+        [[%.n tang] ap-state]
       ::
-      :^  %.y  bone  %pass
-      :-  p.p.yep
-      [%send q.p.yep r.p.yep %pull ~]
+      =/  move
+        =/  =agent-action  [%pull ~]
+        =/  =internal-note  [%send ship term agent-action]
+        =/  card  [%pass p.target internal-note]
+        [bone card]
+      ::
+      [[%.y move] ap-state]
     ::
     ::  +ap-move-send: pass gall action.
     ::
     ++  ap-move-send
       ~/  %send
       |=  [=bone =vase]
-      ^-  [(each cove tang) _ap-state]
+      ^-  [(each internal-move tang) _ap-state]
       ::
       ?.  ?&  ?=([p=* [q=@ r=@] [s=@ t=*]] q.vase)
               (gte 1 (met 7 q.q.vase))
               ((sane %tas) r.q.vase)
           ==
-        =/  =tang  (ap-suck "send: improper ask.[%send wire gill club]")
-        :_(ap-state [%.n tang])
+        =/  =tang  (ap-suck "send: improper ask.[%send wire gill agent-action]")
+        [[%.n tang] ap-state]
       ::
-      =/  pux  ((soft path) p.q.vase)
+      =/  pax  ((soft path) p.q.vase)
       ::
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+      ?.  ?&  ?=(^ pax)
+              (levy u.pax (sane %ta))
+          ==
         =/  =tang  (ap-suck "send: malformed path")
         [[%.n tang] ap-state]
       ::
       ?:  ?=($poke s.q.vase)
-        =^  gav  vel.sat  (~(spot wa vel.sat) 7 vase)
         ::
-        ?>  =(%poke -.q.gav)
+        =^  specialised  cache.sat  (~(spot wa cache.sat) 7 vase)
+        ::
+        ?>  =(%poke -.q.specialised)
         ::
         ?.  ?&  ?=([p=@ q=*] t.q.vase)
                 ((sane %tas) p.t.q.vase)
@@ -1773,32 +2018,45 @@
           =/  =tang  (ap-suck "send: malformed poke")
           [[%.n tang] ap-state]
         ::
-        =^  vig  vel.sat  (~(spot wa vel.sat) 3 gav)
-        =^  geb  vel.sat  (~(slot wa vel.sat) 3 vig)
+        =^  specialised  cache.sat  (~(spot wa cache.sat) 3 specialised)
+        =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 specialised)
         ::
-        :_  ap-state
-        :^  %.y  bone  %pass
-        :-  [(scot %p q.q.vase) %out r.q.vase u.pux]
-        ^-  cote
-        [%send q.q.vase r.q.vase %poke p.t.q.vase geb]
+        =/  move
+          =/  =agent-action  [%poke p.t.q.vase at-slot]
+          =/  =internal-note  [%send q.q.vase r.q.vase agent-action]
+          =/  =path  [(scot %p q.q.vase) %out r.q.vase u.pax]
+          =/  card  [%pass path internal-note]
+          [bone card]
+        ::
+        [[%.y move] ap-state]
       ::
-      :_  ap-state
-      =/  cob  ((soft club) [s t]:q.vase)
-      ?~  cob
-        =/  =tang  (ap-suck "send: malformed club")
-        [%.n tang]
-      :^  %&  bone  %pass
-      :-  [(scot %p q.q.vase) %out r.q.vase u.pux]
-      [%send q.q.vase r.q.vase u.cob]
+      =/  maybe-action  ((soft agent-action) [s t]:q.vase)
+      ?~  maybe-action
+        =/  =tang  (ap-suck "send: malformed agent-action")
+        [[%.n tang] ap-state]
+      ::
+      =/  move
+        =/  =agent-action  u.maybe-action
+        =/  =internal-note  [%send q.q.vase r.q.vase agent-action]
+        =/  =path  [(scot %p q.q.vase) %out r.q.vase u.pax]
+        =/  card  [%pass path internal-note]
+        [bone card]
+      ::
+      [[%.y move] ap-state]
     ::
     ::  +ap-pass: request action.
     ::
     ++  ap-pass
-      |=  [=path =cote]
+      |=  [=path =internal-note]
       ^+  ap-state
       ::
-      =/  =cove  [ost %pass path cote]
-      ap-state(zip [cove zip])
+      =/  =internal-move
+        =/  move  [%pass path internal-note]
+        [ost move]
+      ::
+      =/  internal-moves  [internal-move zip]
+      ::
+      ap-state(zip internal-moves)
     ::
     ::  +ap-peep: reinstall.
     ::
@@ -1807,10 +2065,16 @@
       |=  =vase
       ^+  ap-state
       ::
-      =/  pep  (ap-prep(hav.sat vase) (some hav.sat))
-      ?~  -.pep
-        +.pep
-      (ap-lame %prep-failed u.-.pep)
+      =/  prep
+        =/  installed  ap-prep(running-state.sat vase)
+        =/  running  (some running-state.sat)
+        (installed running)
+      ::
+      =^  maybe-tang  ap-state  prep
+      ::
+      ?~  maybe-tang
+        ap-state
+      (ap-lame %prep-failed u.maybe-tang)
     ::
     ::  +ap-peel: apply %peel.
     ::
@@ -1818,7 +2082,7 @@
       |=  [=mark =path]
       ^+  ap-state
       ::
-      =.  pyl.sat  (~(put by pyl.sat) ost mark)
+      =.  required-trans.sat  (~(put by required-trans.sat) ost mark)
       ::
       (ap-peer path)
     ::
@@ -1829,23 +2093,30 @@
       |=  pax=path
       ^+  ap-state
       ::
-      =.  sup.ged.sat  (~(put by sup.ged.sat) ost [q.q.pry pax])
-      =^  cug  ap-state  (ap-find %peer pax)
+      =/  incoming  [attributing.routes.pry pax]
       ::
-      ?~  cug
+      =.  incoming.subscribers.sat
+        (~(put by incoming.subscribers.sat) ost incoming)
+      ::
+      =^  maybe-arm  ap-state  (ap-find %peer pax)
+      ::
+      ?~  maybe-arm
         ap-state
       ::
+      =/  arm  u.maybe-arm
+      =/  =vase  !>((slag p.arm pax))
       =/  old  zip
       ::
       =.  zip  ~
-      =^  cam  ap-state
-          :: FIXME
-          %+  ap-call  q.u.cug
-          !>(`path`(slag p.u.cug pax))
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
       ::
-      =.  zip  (weld zip `(list cove)`[[ost %give %reap cam] old])
+      =/  internal-moves=(list internal-move)
+        =/  move  [ost %give %reap maybe-tang]
+        [move old]
       ::
-      ?^  cam
+      =.  zip  (weld zip internal-moves)
+      ::
+      ?^  maybe-tang
         ap-pule
       ap-state
     ::
@@ -1856,17 +2127,21 @@
       |=  =cage
       ^+  ap-state
       ::
-      =^  cug  ap-state  (ap-find %poke p.cage ~)
+      =^  maybe-arm  ap-state  (ap-find %poke p.cage ~)
       ::
-      ?~  cug
+      ?~  maybe-arm
         =/  =tang  (ap-suck "no poke arm for {(trip p.cage)}")
         (ap-give %coup (some tang))
       ::
-      =^  tur  ap-state
-          :: FIXME
-          %+  ap-call  q.u.cug
-          ?.  =(0 p.u.cug)  q.cage
-          (slop (ap-term %tas p.cage) q.cage)
+      =/  arm  u.maybe-arm
+      ::
+      =/  =vase
+        =/  vas  (ap-term %tas p.cage)
+        ?.  =(0 p.arm)
+          q.cage
+        (slop vas q.cage)
+      ::
+      =^  tur  ap-state  (ap-call q.arm vase)
       (ap-give %coup tur)
     ::
     ::  +ap-lame: pour error.
@@ -1875,21 +2150,24 @@
       |=  [=term =tang]
       ^+  ap-state
       ::
-      =^  cug  ap-state  (ap-find /lame)
+      =^  maybe-arm  ap-state  (ap-find /lame)
       ::
-      :: FIXME
-      ?~  cug
-        =.  tang  [>%ap-lame dap term< (turn tang |=(a=tank rose+[~ "! " ~]^[a]~))]
+      =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
+      ::
+      ?~  maybe-arm
+        =/  tang  [>%ap-lame dap term< (turn tang form)]
         ~>  %slog.`rose+["  " "[" "]"]^(flop tang)
         ap-state
       ::
-      =^  cam  ap-state
-        %+  ap-call  q.u.cug
-        !>([term tang])
+      =/  arm  u.maybe-arm
+      =/  =vase  !>([term tang])
       ::
-      ?^  cam
-        =.  tang  [>%ap-lame-lame< (turn u.cam |=(a/tank rose+[~ "! " ~]^[a]~))]
-        ~>  %slog.`rose+["  " "[" "]"]^(welp (flop tang) leaf+"." (flop u.cam))
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
+      ::
+      ?^  maybe-tang
+        =/  tang  u.maybe-tang
+        =/  etc  (flop [>%ap-lame-lame< (turn tang form)])
+        ~>  %slog.`rose+["  " "[" "]"]^(welp etc [%leaf "." (flop tang)])
         ap-state
       ::
       ap-state
@@ -1908,28 +2186,31 @@
     ::
     ++  ap-pour
       ~/  %ap-pour
-      |=  [pax=path =vase]
+      |=  [=path =vase]
       ^+  ap-state
       ::
       ?.  &(?=([@ *] q.vase) ((sane %tas) -.q.vase))
         =/  =tang  (ap-suck "pour: malformed card")
         (ap-lame %pour tang)
       ::
-      =^  cug  ap-state  (ap-find [-.q.vase pax])
+      =/  =term  -.q.vase
       ::
-      ?~  cug
-        =/  =tang  (ap-suck "pour: no {(trip -.q.vase)}: {<pax>}")
-        (ap-lame -.q.vase tang)
+      =^  maybe-arm  ap-state  (ap-find [term path])
       ::
-      =^  tel  vel.sat  (~(slot wa vel.sat) 3 vase)
-      =^  cam  ap-state
-          %+  ap-call  q.u.cug
-          %+  slop
-            !>(`path`(slag p.u.cug pax))
-          tel
+      ?~  maybe-arm
+        =/  =tang  (ap-suck "pour: no {(trip -.q.vase)}: {<path>}")
+        (ap-lame term tang)
       ::
-      ?^  cam
-        (ap-lame -.q.vase u.cam)
+      =/  arm  u.maybe-arm
+      ::
+      =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 vase)
+      ::
+      =/  vase  (slop !>((slag p.arm path)) at-slot)
+      ::
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
+      ::
+      ?^  maybe-tang
+        (ap-lame term u.maybe-tang)
       ap-state
     ::
     ::  +ap-purr: unwrap take.
@@ -1939,97 +2220,120 @@
       |=  [=term pax=path =cage]
       ^+  ap-state
       ::
-      =^  cug  ap-state  (ap-find [term p.cage pax])
-      ?~  cug
+      =^  maybe-arm  ap-state  (ap-find [term p.cage pax])
+      ::
+      ?~  maybe-arm
         =/  =tang  (ap-suck "{(trip term)}: no {<`path`[p.cage pax]>}")
         (ap-lame term tang)
       ::
+      =/  arm  u.maybe-arm
+      ::
       =/  =vase
         %-  slop
-        ?:  =(0 p.u.cug)
-          =/  vas  (ap-cage cage)
-          [!>(`path`pax) vas]
-        [!>((slag (dec p.u.cug) `path`pax)) q.cage]
+        ?:  =(0 p.arm)
+          =/  =vase  (ap-cage cage)
+          [!>(`path`pax) vase]
+        [!>((slag (dec p.arm) `path`pax)) q.cage]
       ::
-      =^  cam  ap-state  (ap-call q.u.cug vase)
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
       ::
-      ?^  cam
-        (ap-lame q.u.cug u.cam)
+      ?^  maybe-tang
+        (ap-lame q.arm u.maybe-tang)
       ap-state
     ::
     ::  +ap-pout: specific take.
     ::
     ++  ap-pout
-      |=  [=path =cuft]
+      |=  [=path =internal-gift]
       ^+  ap-state
       ::
-      ?-  -.cuft
-        %coup  (ap-take %coup +.path (some !>(p.cuft)))
-        %diff  (ap-diff q.q.pry path p.cuft)
+      ?-  -.internal-gift
+        %coup  (ap-take %coup +.path (some !>(p.internal-gift)))
+        %diff  (ap-diff attributing.routes.pry path p.internal-gift)
         %quit  (ap-take %quit +.path ~)
-        %reap  (ap-take %reap +.path (some !>(p.cuft)))
+        %reap  (ap-take %reap +.path (some !>(p.internal-gift)))
         %http-response  !!
       ==
     ::
     ::  +ap-prep: install.
     ::
     ++  ap-prep
-      |=  vux=(unit vase)
+      |=  maybe-vase=(unit vase)
       ^-  [(unit tang) _ap-state]
       ::
-      =^  gac  ap-state  (ap-prop vux)
+      =^  maybe-tang  ap-state  (ap-prop maybe-vase)
       ::
-      :-  gac
-      %=    ap-state
-          misvale.sat
-        ~?  !=(misvale.sat *misvale-data)  misvale-drop+misvale.sat
-        *misvale-data                 ::  new app might mean new marks
+      =/  new-misvale-data
+         ~?  !=(misvale.sat *misvale-data)
+           [%misvale-drop misvale.sat]
+         :: new app might mean new marks
+         *misvale-data
       ::
-          arms.sat
-        ~
+      =/  new-dub
+        =/  =term  ?~(maybe-vase %boot %bump)
+        ::
+        =/  possibly-suss
+          ?~  maybe-tang
+            =/  =suss  [dap term now]
+            [%.y suss]
+          [%.n u.maybe-tang]
+        ::
+        [possibly-suss dub]
       ::
-          dub
-        :_(dub ?~(gac [%& dap ?~(vux %boot %bump) now] [%| u.gac]))
-      ==
+      =/  next
+        %=  ap-state
+          misvale.sat     new-misvale-data
+          dub             new-dub
+          find-cache.sat  ~
+        ==
+      ::
+      [maybe-tang next]
     ::
     ::  +ap-prop: install.
     ::
     ++  ap-prop
       ~/  %ap-prop
-      |=  vux=(unit vase)
+      |=  maybe-vase=(unit vase)
       ^-  [(unit tang) _ap-state]
       ::
-      ?.  (ap-fond %prep)
-        ?~  vux
-          (some ap-state)
+      =/  exists-arm  (ap-fond %prep)
+      ::
+      ?.  exists-arm
+        ?~  maybe-vase
+          [~ ap-state]
         ::
-        =+  [new=p:(slot 13 hav.sat) old=p:(slot 13 u.vux)]
+        =/  new  (slot 13 running-state.sat)
+        =/  new-type  p:new
         ::
-        ?.  (~(nest ut p:(slot 13 hav.sat)) %| p:(slot 13 u.vux))
+        =/  old  (slot 13 u.maybe-vase)
+        =/  old-type  p:old
+        ::
+        ?.  (~(nest ut new-type) %.n old-type)
           =/  =tang  (ap-suck "prep mismatch")
-          :_(ap-state (some tang))
-        (some ap-state(+13.q.hav.sat +13.q.u.vux))
+          [(some tang) ap-state]
+        ::
+        =/  next  ap-state(+13.q.running-state.sat +13.q.u.maybe-vase)
+        [~ next]
       ::
-      =^  tur  ap-state
-          %+  ap-call  %prep
-          ?~(vux !>(~) (slop !>(~) (slot 13 u.vux)))
+      =/  =vase
+        ?~  maybe-vase
+          !>(~)
+        (slop !>(~) (slot 13 u.maybe-vase))
       ::
-      ?~  tur
-        (some ap-state)
-      :_(ap-state (some u.tur))
+      (ap-call %prep vase)
     ::
     ::  +ap-pule: silent delete.
     ::
     ++  ap-pule
       ^+  ap-state
       ::
-      =/  wim  (~(get by sup.ged.sat) ost)
-      ?~  wim
+      =/  incoming  (~(get by incoming.subscribers.sat) ost)
+      ?~  incoming
         ap-state
       ::
       %_  ap-state
-        sup.ged.sat  (~(del by sup.ged.sat) ost)
-        qel.ged.sat  (~(del by qel.ged.sat) ost)
+        incoming.subscribers.sat  (~(del by incoming.subscribers.sat) ost)
+        meter.subscribers.sat     (~(del by meter.subscribers.sat) ost)
       ==
     ::
     ::  +ap-pull: load delete.
@@ -2037,25 +2341,28 @@
     ++  ap-pull
       ^+  ap-state
       ::
-      =/  wim  (~(get by sup.ged.sat) ost)
-      ?~  wim
+      =/  maybe-incoming  (~(get by incoming.subscribers.sat) ost)
+      ?~  maybe-incoming
         ap-state
       ::
-      =:  sup.ged.sat  (~(del by sup.ged.sat) ost)
-          qel.ged.sat  (~(del by qel.ged.sat) ost)
+      =/  incoming  u.maybe-incoming
+      ::
+      =:  incoming.subscribers.sat  (~(del by incoming.subscribers.sat) ost)
+          meter.subscribers.sat     (~(del by meter.subscribers.sat) ost)
       ==
       ::
-      =^  cug  ..ap-pull  (ap-find %pull q.u.wim)
+      =^  maybe-arm  ap-state  (ap-find %pull q.incoming)
       ::
-      ?~  cug
+      ?~  maybe-arm
         ap-state
       ::
-      =^  cam  ap-state
-        %+  ap-call  q.u.cug
-        !>((slag p.u.cug q.u.wim))
+      =/  arm  u.maybe-arm
+      =/  =vase  !>((slag p.arm q.incoming))
       ::
-      ?^  cam
-        (ap-lame q.u.cug u.cam)
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
+      ::
+      ?^  maybe-tang
+        (ap-lame q.arm u.maybe-tang)
       ap-state
     ::
     ::  +ap-kill: queue kill.
@@ -2068,21 +2375,25 @@
     ::
     ++  ap-take
       ~/  %ap-take
-      |=  [=term =path vux=(unit vase)]
+      |=  [=term =path maybe-vase=(unit vase)]
       ^+  ap-state
       ::
-      =^  cug  ap-state  (ap-find term path)
+      =^  maybe-arm  ap-state  (ap-find term path)
       ::
-      ?~  cug
+      ?~  maybe-arm
         ap-state
       ::
-      =^  cam  ap-state
-        %+  ap-call  q.u.cug
-        =+  den=!>((slag p.u.cug path))
-        ?~(vux den (slop den u.vux))
+      =/  arm  u.maybe-arm
+      =/  =vase
+        =/  vax  !>((slag p.arm path))
+        ?~  maybe-vase
+          vax
+        (slop vax u.maybe-vase)
       ::
-      ?^  cam
-        (ap-lame q.u.cug u.cam)
+      =^  maybe-tang  ap-state  (ap-call q.arm vase)
+      ::
+      ?^  maybe-tang
+        (ap-lame q.arm u.maybe-tang)
       ap-state
     ::
     ::  +ap-safe: process move list.
@@ -2090,30 +2401,32 @@
     ++  ap-safe
       ~/  %ap-safe
       |=  =vase
-      ^-  [(each (list cove) tang) _ap-state]
+      ^-  [(each (list internal-move) tang) _ap-state]
       ::
       ?~  q.vase
-        [[%.y p=~] ap-state]
+        [[%.y ~] ap-state]
       ::
       ?@  q.vase
         =/  =tang  (ap-suck "move: malformed list")
         [[%.n tang] ap-state]
       ::
-      =^  hed  vel.sat  (~(slot wa vel.sat) 2 vase)
-      =^  sud  ap-state  (ap-move hed)
+      =^  hed  cache.sat  (~(slot wa cache.sat) 2 vase)
+      =^  possibly-internal-move  ap-state  (ap-move hed)
       ::
-      ?:  ?=(%| -.sud)
-        [sud ap-state]
+      ?:  ?=(%.n -.possibly-internal-move)
+        [possibly-internal-move ap-state]
       ::
-      =^  tel  vel.sat  (~(slot wa vel.sat) 3 vase)
+      =/  =internal-move  p.possibly-internal-move
+      ::
+      =^  tel  cache.sat  (~(slot wa cache.sat) 3 vase)
       =^  res  ap-state  $(vase tel)
       ::
-      =/  that
+      =/  possibly-internal-moves
         ?:  ?=(%.n -.res)
           res
-        [%.y p.sud p.res]
+        [%.y [internal-move p.res]]
       ::
-      [that ap-state]
+      [possibly-internal-moves ap-state]
     ::
     ::  +ap-sake: handle result.
     ::
@@ -2126,23 +2439,29 @@
         =/  =tang  (ap-suck "sake: invalid product (atom)")
         [(some tang) ap-state]
       ::
-      =^  hed  vel.sat  (~(slot wa vel.sat) 2 vase)
-      =^  muz  ap-state  (ap-safe hed)
+      =^  hed  cache.sat  (~(slot wa cache.sat) 2 vase)
+      =^  possibly-internal-moves  ap-state  (ap-safe hed)
       ::
-      ?:  ?=(%.n -.muz)
-        [(some p.muz) ap-state]
+      ?:  ?=(%.n -.possibly-internal-moves)
+        =/  =tang  p.possibly-internal-moves
+        [(some tang) ap-state]
       ::
-      =^  tel  vel.sat  (~(slot wa vel.sat) 3 vase)
-      =^  sav  ap-state  (ap-save tel)
+      =/  internal-moves  p.possibly-internal-moves
       ::
-      ?:  ?=(%.n -.sav)
-        [(some p.sav) ap-state]
+      =^  tel  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  possibly-vase  ap-state  (ap-save tel)
       ::
-      :-  ~
-      %_  ap-state
-        zip  (weld (flop p.muz) zip)
-        hav.sat  p.sav
-      ==
+      ?:  ?=(%.n -.possibly-vase)
+        =/  =tang  p.possibly-vase
+        [(some tang) ap-state]
+      ::
+      =/  next
+        %_  ap-state
+          zip                (weld (flop internal-moves) zip)
+          running-state.sat  p.possibly-vase
+        ==
+      ::
+      [~ next]
     ::
     ::  +ap-save: verify core.
     ::
@@ -2151,39 +2470,57 @@
       |=  vax=vase
       ^-  [(each vase tang) _ap-state]
       ::
-      =^  gud  vel.sat  (~(nest wa vel.sat) p.hav.sat p.vax)
+      =/  received-type  p.vax
+      =/  running-type  p.running-state.sat
       ::
-      :_  ap-state
-      ?.  gud
-        =/  =tang  (ap-suck "invalid core")
-        [%.n tang]
-      [%.y vax]
+      =^  nests  cache.sat  (~(nest wa cache.sat) running-type received-type)
+      ::
+      =/  possibly-vase
+        ?.  nests
+          =/  =tang  (ap-suck "invalid core")
+          [%.n tang]
+        [%.y vax]
+      ::
+      [possibly-vase ap-state]
     ::
     ::  +ap-slam: virtual slam.
     ::
     ++  ap-slam
       ~/  %ap-slam
-      |=  [cog=term gat=vase arg=vase]
+      |=  [=term gat=vase arg=vase]
       ^-  [(each vase tang) _ap-state]
       ::
-      =/  wyz
-        %-  mule  |.
-        (~(mint wa vel.sat) [%cell p.gat p.arg] [%cnsg [%$ ~] [%$ 2] [%$ 3] ~])
+      =/  compiled
+        =/  =type  [%cell p.gat p.arg]
+        =/  =hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+        (~(mint wa cache.sat) type hoon)
       ::
-      ?:  ?=(%.n -.wyz)
-        %-  =/  sam  (~(peek ut p.gat) %free 6)
-            (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
-        =/  =tang  (ap-suck "call: {<cog>}: type mismatch")
-        [[%.n tang] ap-state]
+      =/  virtual
+        =/  trap  |.(compiled)
+        (mule trap)
       ::
-      :_  ap-state(vel.sat +>.wyz)
-      =+  [typ nok]=+<.wyz
-      =/  ton  (mock [[q.gat q.arg] nok] ap-sled)
-      ?-  -.ton
-        %0  [%.y typ p.ton]
-        %1  [%.n (turn p.ton |=(a/* (smyt (path a))))]
-        %2  [%.n p.ton]
-      ==
+      ?:  ?=(%.n -.virtual)
+        =/  =tang  (ap-suck "call: {<term>}: type mismatch")
+        =/  sam  (~(peek ut p.gat) %free 6)
+        =/  print
+          (slog >%ap-slam-mismatch< ~(duck ut p.arg) ~(duck ut sam) ~)
+        (print [[%.n tang] ap-state])
+      ::
+      =/  =worm  +>.virtual
+      =/  =vase  +<.virtual
+      =/  =type  p.vase
+      =/  nock  q.vase
+      =/  ton  (mock [[q.gat q.arg] nock] ap-sled)
+      ::
+      =/  possibly-vase
+        ?-  -.ton
+          %0  [%.y type p.ton]
+          %1  [%.n (turn p.ton |=(a=* (smyt (path a))))]
+          %2  [%.n p.ton]
+        ==
+      ::
+      =/  next  ap-state(cache.sat worm)
+      [possibly-vase next]
     ::
     ::  +ap-sled: namespace view.
     ::
@@ -2214,8 +2551,8 @@
       ^-  (unit @tas)
       ::
       ?+  term  ~&  [%ap-vain term]
-               ~
-        %bonk  `%a
+          ~
+        %bonk   `%a
         %build  `%f
         %cash  `%a
         %conf  `%g
@@ -2262,7 +2599,7 @@
   |=  [=duct hic=(hypo (hobo task:able))]
   ^-  [(list move) _gall-payload]
   ::
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ;;(task:able p.q.hic)))
+  =>  .(q.hic ?.(?=(%soft -.q.hic) q.hic ;;(task:able p.q.hic)))
   ::
   =/  initialised  (mo-abed:mo duct)
   ::
@@ -2293,7 +2630,7 @@
       ::
       %init
       ::
-    =/  payload  gall-payload(sys.mast.all duct)
+    =/  payload  gall-payload(system-duct.ship-state.gall duct)
     [~ payload]
       ::
       %sunk
@@ -2307,43 +2644,55 @@
       %west
       ::
     ?>  ?=([?(%ge %gh) @ ~] q.q.hic)
-    =*  dap  i.t.q.q.hic
-    =*  him  p.q.hic
+    =/  dap  i.t.q.q.hic
+    =/  him  p.q.hic
     ::
     ?:  ?=(%ge i.q.q.hic)
-      =/  mes  ;;((pair @ud rook) r.q.hic)
+      =/  mes  ;;((pair @ud forward-ames) r.q.hic)
       =<  mo-abet
       (mo-gawk:initialised him dap mes)
     ::
-    =/  mes  ;;((pair @ud roon) r.q.hic)
+    =/  mes  ;;((pair @ud reverse-ames) r.q.hic)
     =<  mo-abet
     (mo-gawd:initialised him dap mes)
   ::
       %wash
-    =.  bum.mast.all  (~(run by bum.mast.all) |=(=seat seat(vel *worm)))
-    [~ ..^$]
-  ::
-      $wegh
+    =.  running.ship-state.gall  (~(run by running.ship-state.gall) |=(=agent agent(cache *worm)))
+    [~ gall-payload]
+      ::
+      %wegh
+      ::
+    =/  waiting
+      =/  queued  (~(run by waiting.ship-state.gall) |=(blocked [%.y +<]))
+      (sort ~(tap by queued) aor)
+    ::
+    =/  running
+      =/  active  (~(run by running.ship-state.gall) |=(agent [%.y +<]))
+      (sort ~(tap by active) aor)
+    ::
     =/  =mass
       :+  %gall  %.n
-      :~  foreign+&+sap.mast.all
-          :+  %blocked  %.n
-          (sort ~(tap by (~(run by wub.mast.all) |=(sofa [%.y +<]))) aor)
-          :+  %active   %.n
-          (sort ~(tap by (~(run by bum.mast.all) |=(seat [%.y +<]))) aor)
-          [%dot %.y all]
+      :~  [%foreign %.y contacts.ship-state.gall]
+          [%blocked %.n waiting]
+          [%active %.n running]
+          [%dot %.y gall]
       ==
-    =/  =move  [duct %give %mass mass]
-    [[move ~] gall-payload]
+    ::
+    =/  moves
+      =/  =move  [duct %give %mass mass]
+      [move ~]
+    ::
+    [moves gall-payload]
   ==
 ::
 ::  +load: recreate vane.
 ::
 ++  load
-  |=  old=axle-n
+  |=  =gall-old
   ^+  gall-payload
-  ?-  -.old
-    %0  gall-payload(all old)
+  ::
+  ?-  -.gall-old
+    %0  gall-payload(gall gall-old)
   ==
 ::
 ::  +scry: standard scry.
@@ -2362,7 +2711,7 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    =/  =vase  !>((~(has by bum.mast.all) desk))
+    =/  =vase  !>((~(has by running.ship-state.gall) desk))
     =/  =cage  [%noun vase]
     (some (some cage))
   ::
@@ -2372,21 +2721,19 @@
   ?.  =([%$ %da now] coin)
     ~
   ::
-  ?.  (~(has by bum.mast.all) desk)
+  ?.  (~(has by running.ship-state.gall) desk)
     (some ~)
   ::
   ?.  ?=(^ path)
     ~
   ::
   =/  initialised  mo-abed:mo
-  =/  =prey  [%high [p=~ q=ship]]
-  (mo-peek:initialised desk prey term path)
+  =/  =privilege  [%high [~ ship]]
+  (mo-peek:initialised desk privilege term path)
 ::
 ::  +stay: save without cache.
 ::
-++  stay
-  ^-  axle
-  all
+++  stay  gall
 ::
 ::  +take: response.
 ::
@@ -2398,17 +2745,15 @@
   ~|  [%gall-take wire]
   ::
   ?>  ?=([?(%sys %use) *] wire)
+  ::
   =/  initialised  (mo-abed:mo duct)
+  ::
+  =>
+  ::
   ?-  i.wire
-      ::
-      %sys
-      ::
-    =/  syssed  (mo-cyst:initialised t.wire q.hin)
-    mo-abet:syssed
-      ::
-      %use
-      ::
-    =/  cooked  (mo-cook:initialised t.wire hin)
-    mo-abet:cooked
+    %sys  (mo-cyst:initialised t.wire q.hin)
+    %use  (mo-cook:initialised t.wire hin)
   ==
+  ::
+  mo-abet
 --
