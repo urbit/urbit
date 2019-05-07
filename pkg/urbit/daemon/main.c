@@ -467,6 +467,8 @@ report(void)
   printf("argon2: 0x%x\n", ARGON2_VERSION_NUMBER);
 }
 
+/* _stop_exit(): exit immediately.
+*/
 static void
 _stop_exit(c3_i int_i)
 {
@@ -474,6 +476,18 @@ _stop_exit(c3_i int_i)
   //
   fprintf(stderr, "\r\n[received keyboard stop signal, exiting]\r\n");
   u3_daemon_bail();
+}
+
+/* _stop_trace(): print trace on SIGABRT.
+*/
+static void
+_stop_trace(c3_i int_i)
+{
+  //  if we have a pier, unmap the event log before dumping core
+  //
+  if ( 0 != u3K.len_w ) {
+    u3_pier_db_shutdown(u3_pier_stub());
+  }
 }
 
 /*
@@ -625,6 +639,10 @@ main(c3_i   argc,
   //    Configured here using signal() so as to be immediately available.
   //
   signal(SIGTSTP, _stop_exit);
+
+  //  Cleanup on SIGABRT.
+  //
+  signal(SIGABRT, _stop_trace);
 
   printf("~\n");
   //  printf("welcome.\n");

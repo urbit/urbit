@@ -79,10 +79,10 @@ _pier_db_bail(void* vod_p, const c3_c* err_c)
   u3l_log("disk error: %s\r\n", err_c);
 }
 
-/* _pier_db_shutdown(): close the log.
+/* u3_pier_db_shutdown(): close the log.
 */
-static void
-_pier_db_shutdown(u3_pier* pir_u)
+void
+u3_pier_db_shutdown(u3_pier* pir_u)
 {
   u3_lmdb_shutdown(pir_u->log_u->db_u);
 }
@@ -844,7 +844,7 @@ _pier_work_exit(uv_process_t* req_u,
   u3l_log("pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
   uv_close((uv_handle_t*) req_u, 0);
 
-  _pier_db_shutdown(pir_u);
+  u3_pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
 }
 
@@ -1787,7 +1787,7 @@ _pier_exit_done(u3_pier* pir_u)
 {
   u3l_log("pier: exit\r\n");
 
-  _pier_db_shutdown(pir_u);
+  u3_pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
   _pier_loop_exit(pir_u);
 

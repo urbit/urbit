@@ -1174,6 +1174,11 @@
 
     /** Pier control.
     **/
+      /* u3_pier_db_shutdown(): close the log.
+      */
+        void
+        u3_pier_db_shutdown(u3_pier* pir_u);
+
       /* u3_pier_interrupt(): interrupt running process.
       */
         void
