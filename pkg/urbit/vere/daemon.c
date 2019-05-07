@@ -601,7 +601,7 @@ _boothack_key(u3_noun kef)
     u3_noun whu = u3dc("slaw", 'p', u3k(woh));
 
     if ( u3_nul == whu ) {
-      u3l_log("dawn: invalid ship specificed with -w %s\r\n",
+      u3l_log("dawn: invalid ship specified with -w %s\r\n",
               u3_Host.ops_u.who_c);
       exit(1);
     }
