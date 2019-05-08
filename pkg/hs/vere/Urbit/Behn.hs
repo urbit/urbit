@@ -34,50 +34,29 @@
     to return) first, and then `doze` action will wait until that finishes.
 -}
 
-module Vere.Behn (Behn, init, wait, doze) where
+module Urbit.Behn (Behn, init, wait, doze) where
 
-import Control.Concurrent
-import Control.Concurrent.Async hiding (wait)
-import Control.Concurrent.MVar
+import Prelude hiding (init)
+import Control.Lens
+
 import Data.LargeWord
-import Prelude                  hiding (init)
+import Control.Concurrent.MVar
 
-import Data.Time.Clock.System (SystemTime(..), getSystemTime)
-import Control.Lens  ((&))
-import Control.Monad (void)
+import Control.Concurrent.Async (Async, async, cancel, asyncThreadId)
+import Control.Concurrent       (threadDelay, killThread)
+import Control.Monad            (void)
+import Data.Time.Clock.System   (SystemTime(..), getSystemTime)
+import Urbit.Time               (Wen)
 
+import qualified Control.Concurrent.Async as Async
+import qualified Urbit.Time               as Time
 
--- Time Stuff ------------------------------------------------------------------
-
-type UrbitTime = Word128
-
-urNow :: IO UrbitTime
-urNow = systemTimeToUrbitTime <$> getSystemTime
-
-{-
-    TODO This is wrong.
-
-    - The high word should be `(0x8000000cce9e0d80ULL + secs)`
-    - The low word should be `(((usecs * 65536ULL) / 1000000ULL) << 48ULL)`
--}
-systemTimeToUrbitTime :: SystemTime -> UrbitTime
-systemTimeToUrbitTime (MkSystemTime secs ns) =
-  LargeKey (fromIntegral secs) (fromIntegral ns)
-
--- TODO
-urbitTimeToMicrosecs :: UrbitTime -> Int
-urbitTimeToMicrosecs x = fromIntegral x
-
--- TODO Double Check this
-diffTime :: UrbitTime -> UrbitTime -> UrbitTime
-diffTime fst snd | fst >= snd = 0
-                 | otherwise  = snd - fst
 
 -- Behn Stuff ------------------------------------------------------------------
 
 data Behn = Behn
-  { bState  :: MVar (Maybe (UrbitTime, Async ()))
-  , bSignal :: MVar UrbitTime
+  { bState  :: MVar (Maybe (Wen, Async ()))
+  , bSignal :: MVar Wen
   }
 
 init :: IO Behn
@@ -86,23 +65,25 @@ init = do
   sig <- newEmptyMVar
   pure (Behn st sig)
 
-wait :: Behn -> IO UrbitTime
+wait :: Behn -> IO Wen
 wait (Behn _ sig) = takeMVar sig
 
-startTimerThread :: Behn -> UrbitTime -> IO (Async ())
+startTimerThread :: Behn -> Wen -> IO (Async ())
 startTimerThread (Behn vSt sig) time =
   async $ do
-    now <- urNow
-    threadDelay (urbitTimeToMicrosecs (now `diffTime` time))
-    void (swapMVar vSt Nothing >> tryPutMVar sig time)
+    now <- Time.now
+    threadDelay (Time.gap now time ^. Time.microSecs)
+    takeMVar vSt
+    void $ tryPutMVar sig time
+    putMVar vSt Nothing
 
-doze :: Behn -> Maybe UrbitTime -> IO ()
+doze :: Behn -> Maybe Wen -> IO ()
 doze behn@(Behn vSt sig) mNewTime = do
   takeMVar vSt >>= \case Nothing        -> pure ()
                          Just (_,timer) -> cancel timer
 
   newSt <- mNewTime & \case
-    Nothing   -> pure (Nothing :: Maybe (UrbitTime, Async ()))
+    Nothing   -> pure (Nothing :: Maybe (Wen, Async ()))
     Just time -> do timer <- startTimerThread behn time
                     pure (Just (time, timer))
 

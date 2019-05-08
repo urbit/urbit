@@ -3,17 +3,17 @@ version: 0.1.0
 license: AGPL-3.0-only
 
 default-extensions:
- - OverloadedStrings
- - TypeApplications
- - UnicodeSyntax
+ - DeriveGeneric
  - FlexibleContexts
- - TemplateHaskell
- - QuasiQuotes
  - LambdaCase
  - NoImplicitPrelude
+ - OverloadedStrings
+ - QuasiQuotes
  - ScopedTypeVariables
- - DeriveAnyClass
- - DeriveGeneric
+ - TemplateHaskell
+ - TypeApplications
+ - UnicodeSyntax
+ - ViewPatterns
 
 dependencies:
  - base
@@ -25,5 +25,9 @@ dependencies:
  - largeword
  - time
 
-library:
-  source-dirs: .
+executables:
+  vere:
+    main: Main.hs
+    source-dirs: .
+    ghc-options:
+      - -threaded
