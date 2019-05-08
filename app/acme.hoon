@@ -743,7 +743,7 @@
     ?.  ?=(^ next-order)
       this
     =/  idx  (slav %ud i.t.wire)
-    =/  valid  =(200 p.rep)
+    =/  valid  |(=(200 p.rep) =(307 p.rep))
     =/  item=(list [=turf idx=@ud valid=?])
       (skim ~(tap by u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
     ?.  ?&  ?=([^ ~] item)
