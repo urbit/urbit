@@ -1,4 +1,4 @@
-module Nock.Types where
+module Language.Hoon.Nock.Types where
 
 import ClassyPrelude
 

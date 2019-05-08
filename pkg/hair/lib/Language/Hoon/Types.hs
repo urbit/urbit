@@ -1,14 +1,17 @@
-module Types where
+module Language.Hoon.Types where
 
 import Prelude
 
+import Language.Hoon.Nock.Types
+
 import qualified Data.Map as Map
-import Data.Map (Map)
 import qualified Data.Set as Set
-import Data.Set (Set)
+
+import Data.Map           (Map)
+import Data.Set           (Set)
 import Data.List.NonEmpty (NonEmpty)
 
-import Nock.Types
+--------------------------------------------------------------------------------
 
 hoonVersion :: Atom
 hoonVersion = 141

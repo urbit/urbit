@@ -1,14 +1,14 @@
-module Desugar (desugar) where
+module Language.Hoon.Desugar (desugar) where
 
 import Prelude
 
 import Data.List.NonEmpty (NonEmpty((:|)))
 import qualified Data.Map as Map
 
-import Nock.Types
-import Types
-import SpecToMold
-import SpecToBunt
+import Language.Hoon.Nock.Types
+import Language.Hoon.Types
+import Language.Hoon.SpecToMold
+import Language.Hoon.SpecToBunt
 
 -- open:ap
 desugar :: Bool -> Hoon -> BHoon

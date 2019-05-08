@@ -1,5 +1,7 @@
 {-# LANGUAGE NumericUnderscores, GeneralizedNewtypeDeriving #-}
 
+-- TODO This is slow.
+
 module Urbit.Time where
 
 import Prelude

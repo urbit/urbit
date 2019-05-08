@@ -1,8 +1,8 @@
-module IR.Desugar where
+module Language.Hoon.IR.Desugar where
 
 import ClassyPrelude hiding (union)
 
-import IR.Ty
+import Language.Hoon.IR.Ty
 import Control.Lens
 
 import Data.Foldable      (foldr1)
@@ -10,14 +10,14 @@ import Data.List.NonEmpty (NonEmpty(..))
 import Data.Char          (ord)
 import Text.Show.Pretty   (pPrint)
 
-import qualified AST.Parser  as AST
-import qualified AST.Types   as AST
+import qualified Language.Hoon.AST.Parser  as AST
+import qualified Language.Hoon.AST.Types   as AST
 import qualified Data.Map    as Map
 import qualified Data.Set    as Set
-import qualified IR.Infer    as IR
-import qualified IR.Ty       as IR
-import qualified LL.Run      as LL
-import qualified LL.Types    as LL
+import qualified Language.Hoon.IR.Infer    as IR
+import qualified Language.Hoon.IR.Ty       as IR
+import qualified Language.Hoon.LL.Run      as LL
+import qualified Language.Hoon.LL.Types    as LL
 import qualified Prelude
 import qualified System.Exit as Sys
 

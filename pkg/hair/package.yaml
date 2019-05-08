@@ -1,22 +1,37 @@
-name:                language-hoon
-version:             0.1.0.0
-github:              "urbit/urbit"
-license:             BSD3
+name: vere
+version: 0.1.0
+license: AGPL-3.0-only
 
 library:
-  source-dirs: src
+  source-dirs: lib
 
-extra-source-files:
-  - README.md
-  - ChangeLog.md
+executables:
+  uterm:
+    main: Main.hs
+    source-dirs: app/uterm
+    dependencies: ["vere"]
+
+  vere:
+    main: Main.hs
+    source-dirs: app/vere
+    dependencies: ["vere"]
+
+ghc-options:
+  - -threaded
+  - -rtsopts
+  - -with-rtsopts=-N
+  - -fwarn-incomplete-patterns
+  - -O2
 
 dependencies:
+  - async
   - base
   - classy-prelude
   - containers
   - data-fix
-  - integer-gmp
   - ghc-prim
+  - integer-gmp
+  - largeword
   - lens
   - megaparsec
   - mtl
@@ -26,23 +41,21 @@ dependencies:
   - QuickCheck
   - semigroups
   - smallcheck
+  - stm
+  - stm-chans
   - tasty
   - tasty-quickcheck
   - tasty-th
   - text
   - these
+  - time
   - unordered-containers
   - vector
-
-ghc-options:
-  - -threaded
-  - -rtsopts
-  - -with-rtsopts=-N
-  - -fwarn-incomplete-patterns
 
 default-extensions:
   - ApplicativeDo
   - BangPatterns
+  - BlockArguments
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
@@ -51,13 +64,13 @@ default-extensions:
   - FlexibleInstances
   - FunctionalDependencies
   - GADTs
-  - GeneralizedNewtypeDeriving
   - LambdaCase
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
   - OverloadedStrings
   - PartialTypeSignatures
+  - QuasiQuotes
   - Rank2Types
   - RankNTypes
   - RecordWildCards
@@ -68,6 +81,3 @@ default-extensions:
   - TypeFamilies
   - UnicodeSyntax
   - ViewPatterns
-  - BlockArguments
-  - NamedFieldPuns
-  - TemplateHaskell

@@ -1,21 +1,21 @@
-module IR.Infer where
+module Language.Hoon.IR.Infer where
 
 import ClassyPrelude hiding (union, intersect, subtract, negate)
 import Control.Monad.Fix
 import Data.Void
-import IR.Ty
+import Language.Hoon.IR.Ty
 
 import Data.List.NonEmpty
-import LL.Types hiding (L, R, Ctx)
+import Language.Hoon.LL.Types hiding (L, R, Ctx)
 import Control.Category ((>>>))
 import Control.Lens
 import Data.Function ((&))
 import Data.Maybe (fromJust)
 
-import qualified LL.Types as LL
+import qualified Language.Hoon.LL.Types as LL
 import qualified Data.Map as Map
 import qualified Data.Set as Set
-import qualified IR.Wing as Wing
+import qualified Language.Hoon.IR.Wing as Wing
 import qualified Prelude
 
 

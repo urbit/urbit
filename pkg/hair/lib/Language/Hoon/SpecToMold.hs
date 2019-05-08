@@ -1,7 +1,7 @@
-module SpecToMold (specToMold) where
+module Language.Hoon.SpecToMold (specToMold) where
 
 import Prelude
-import Types
+import Language.Hoon.Types
 
 -- | factory:ax. Given a spec and a boolean (?) produces a normalizing gate.
 specToMold :: Bool -> Spec -> Hoon

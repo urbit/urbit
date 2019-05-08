@@ -1,7 +1,7 @@
-module LL.Types where
+module Language.Hoon.LL.Types where
 
 import ClassyPrelude hiding (union, intersect)
-import IR.Ty
+import Language.Hoon.IR.Ty
 import Control.Lens
 import Control.Lens.TH
 import Control.Monad.Fix

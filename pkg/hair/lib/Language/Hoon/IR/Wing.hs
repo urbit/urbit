@@ -1,8 +1,8 @@
-module IR.Wing where
+module Language.Hoon.IR.Wing where
 
 import ClassyPrelude hiding (union)
 import Control.Lens hiding (union)
-import IR.Ty
+import Language.Hoon.IR.Ty
 
 import Control.Category ((>>>))
 import qualified Data.Set as Set

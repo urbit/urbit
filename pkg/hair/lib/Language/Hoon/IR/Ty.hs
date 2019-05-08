@@ -1,4 +1,4 @@
-module IR.Ty where
+module Language.Hoon.IR.Ty where
 
 import ClassyPrelude hiding (union, intersect)
 import Control.Lens

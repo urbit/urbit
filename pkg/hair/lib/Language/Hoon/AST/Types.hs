@@ -1,6 +1,6 @@
 -- TODO Handle comments
 
-module AST.Types where
+module Language.Hoon.AST.Types where
 
 import ClassyPrelude
 import Data.List.NonEmpty (NonEmpty)

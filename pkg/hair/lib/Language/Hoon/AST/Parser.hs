@@ -1,8 +1,8 @@
 -- TODO Handle comments
 
-module AST.Parser where
+module Language.Hoon.AST.Parser where
 
-import AST.Types
+import Language.Hoon.AST.Types
 import ClassyPrelude hiding (head, many, some, try)
 import Control.Lens
 import Text.Megaparsec

@@ -1,11 +1,11 @@
-module LL.Gen where
+module Language.Hoon.LL.Gen where
 
 import ClassyPrelude hiding (union)
 import Data.Bits (shift, finiteBitSize, countLeadingZeros)
 
-import IR.Ty (Sym, Nat)
-import LL.Types
-import Nock.Types
+import Language.Hoon.IR.Ty (Sym, Nat)
+import Language.Hoon.LL.Types
+import Language.Hoon.Nock.Types
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set

@@ -1,18 +1,18 @@
-module LL.Run where
+module Language.Hoon.LL.Run where
 
 import ClassyPrelude hiding (succ, union, intersect)
 import Control.Lens
 import Control.Lens.TH
 import Control.Monad.Fix
 import Data.Void
-import IR.Ty (Ty, Nat, Sym, Hoon, HoonPath)
-import LL.Types
+import Language.Hoon.IR.Ty (Ty, Nat, Sym, Hoon, HoonPath)
+import Language.Hoon.LL.Types
 
 import Control.Category ((>>>))
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
-import qualified IR.Wing as Wing
+import qualified Language.Hoon.IR.Wing as Wing
 import qualified Prelude
 
 
