@@ -142,7 +142,7 @@ addGap :: Wen -> Gap -> Wen
 addGap (Wen fs) (Gap g) = Wen (fs + g)
 
 sleep :: Gap -> IO ()
-sleep gap = threadDelay (gap ^. microSecs)
+sleep gap = do threadDelay (gap ^. microSecs)
 
 sleepUntil :: Wen -> IO ()
 sleepUntil end = do

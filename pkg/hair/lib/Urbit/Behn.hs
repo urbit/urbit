@@ -32,6 +32,12 @@
     before releasing it.
   - If the timer gets the the lock first, it will fire (causeing `wait`
     to return) first, and then `doze` action will wait until that finishes.
+
+  ## TODO
+
+  `threadDelay` has low accuracy. Consider using
+  `GHC.Event.registerTimeout` instead. It's API is very close to what
+  we want for this anyways.
 -}
 
 module Urbit.Behn (Behn, init, wait, doze) where
@@ -44,7 +50,7 @@ import Control.Concurrent.MVar
 
 import Control.Concurrent.Async (Async, async, cancel, asyncThreadId)
 import Control.Concurrent       (threadDelay, killThread)
-import Control.Monad            (void)
+import Control.Monad            (void, when)
 import Data.Time.Clock.System   (SystemTime(..), getSystemTime)
 import Urbit.Time               (Wen)
 
@@ -72,7 +78,7 @@ startTimerThread :: Behn -> Wen -> IO (Async ())
 startTimerThread (Behn vSt sig) time =
   async $ do
     now <- Time.now
-    threadDelay (Time.gap now time ^. Time.microSecs)
+    Time.sleepUntil time
     takeMVar vSt
     void $ tryPutMVar sig time
     putMVar vSt Nothing
