@@ -14,30 +14,6 @@
     replaces the old one.
   - If a timer is unset (with `doze _ Nothing`), the timer will not fire
     until a new time has been set.
-
-  ## Implementation Notes
-
-  We use `tryPutMVar` when the timer fires, so that things will continue
-  to work correctly if the user does not call `wait`. If a timer fires
-  before `wait` is called, `wait` will return immediatly.
-
-  To handle race conditions, the MVar in `bState` is used as a lock. The
-  code for setting a timer and the thread that runs when the timer fires
-  (which causes `wait` to return) both take that MVar before acting.
-
-  So, if the timer fires conncurently with a call to `doze`,
-  then one of those threads will get the lock and the other will wait:
-
-  - If the `doze` call gets the lock first, it will kill the timer thread
-    before releasing it.
-  - If the timer gets the the lock first, it will fire (causeing `wait`
-    to return) first, and then `doze` action will wait until that finishes.
-
-  ## TODO
-
-  `threadDelay` has low accuracy. Consider using
-  `GHC.Event.registerTimeout` instead. It's API is very close to what
-  we want for this anyways.
 -}
 
 module Urbit.Behn (Behn, init, wait, doze) where
@@ -45,52 +21,53 @@ module Urbit.Behn (Behn, init, wait, doze) where
 import Prelude hiding (init)
 import Control.Lens
 
-import Data.LargeWord
-import Control.Concurrent.MVar
+import Control.Concurrent.MVar (MVar, takeMVar, newEmptyMVar, putMVar)
+import Control.Monad           (void, when)
+import Data.IORef              (IORef, writeIORef, readIORef, newIORef)
 
-import Control.Concurrent.Async (Async, async, cancel, asyncThreadId)
-import Control.Concurrent       (threadDelay, killThread)
-import Control.Monad            (void, when)
-import Data.Time.Clock.System   (SystemTime(..), getSystemTime)
-import Urbit.Time               (Wen)
-
-import qualified Control.Concurrent.Async as Async
-import qualified Urbit.Time               as Time
+import qualified Urbit.Time as Time
+import qualified GHC.Event  as Ev
 
 
 -- Behn Stuff ------------------------------------------------------------------
 
 data Behn = Behn
-  { bState  :: MVar (Maybe (Wen, Async ()))
-  , bSignal :: MVar Wen
+  { bState   :: IORef (Maybe Ev.TimeoutKey)
+  , bSignal  :: MVar ()
+  , bManager :: Ev.TimerManager
   }
 
 init :: IO Behn
 init = do
-  st  <- newMVar Nothing
+  st  <- newIORef Nothing
   sig <- newEmptyMVar
-  pure (Behn st sig)
+  man <- Ev.getSystemTimerManager
+  pure (Behn st sig man)
 
-wait :: Behn -> IO Wen
-wait (Behn _ sig) = takeMVar sig
+wait :: Behn -> IO ()
+wait (Behn _ sig _) = takeMVar sig
 
-startTimerThread :: Behn -> Wen -> IO (Async ())
-startTimerThread (Behn vSt sig) time =
-  async $ do
-    now <- Time.now
-    Time.sleepUntil time
-    takeMVar vSt
-    void $ tryPutMVar sig time
-    putMVar vSt Nothing
+setTimer :: Behn -> Time.Wen -> IO ()
+setTimer behn@(Behn vSt sig man) time = do
+  killTimer behn
+  now <- Time.now
+  case (now >= time) of
+      True  -> void (putMVar sig ())
+      False -> do
+          let microSleep = Time.gap now time ^. Time.microSecs
+          let fire       = putMVar sig () >> killTimer behn
+          key <- Ev.registerTimeout man microSleep fire
+          writeIORef vSt $! Just key
 
-doze :: Behn -> Maybe Wen -> IO ()
-doze behn@(Behn vSt sig) mNewTime = do
-  takeMVar vSt >>= \case Nothing        -> pure ()
-                         Just (_,timer) -> cancel timer
+killTimer :: Behn -> IO ()
+killTimer (Behn vSt sig man) = do
+    mKey <- do st <- readIORef vSt
+               writeIORef vSt $! Nothing
+               pure st
+    mKey & \case
+      Just k  -> Ev.unregisterTimeout man k
+      Nothing -> pure ()
 
-  newSt <- mNewTime & \case
-    Nothing   -> pure (Nothing :: Maybe (Wen, Async ()))
-    Just time -> do timer <- startTimerThread behn time
-                    pure (Just (time, timer))
-
-  void (putMVar vSt newSt)
+doze :: Behn -> Maybe Time.Wen -> IO ()
+doze behn Nothing  = killTimer behn
+doze behn (Just t) = setTimer behn t
