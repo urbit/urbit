@@ -737,10 +737,16 @@
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(20 suy)
-        [%| +]
-      ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
-      [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
+      =/  subscriber-ship  p:(~(got by sup.ged) ost)
+      ?:  &(=(20 suy) !=(our subscriber-ship))
+        ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
+        [%| ..ap-fill]
+      ::  ~&  :*  %gall-pushing-20
+      ::          ost
+      ::          suy=suy
+      ::          (~(get by r.zam) ost)
+      ::      ==
+      [%& ..ap-fill(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
       ~/  %ap-find
@@ -1297,40 +1303,40 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
-        $bonk  `%a
-        $build  `%f
-        $cash  `%a
-        $conf  `%g
-        $cred  `%c
-        $crew  `%c
-        $crow  `%c
-        $deal  `%g
-        $dirk  `%c
-        $drop  `%c
-        $flog  `%d
-        $info  `%c
-        $keep  `%f
-        $kill  `%f
-        $look  `%j
-        $merg  `%c
-        $mint  `%j
-        $mont  `%c
-        $nuke  `%a
-        $ogre  `%c
-        $perm  `%c
-        $rest  `%b
-        $snap  `%j
-        $wait  `%b
-        $want  `%a
-        $warp  `%c
-        $wind  `%j
-        $wipe  `%f
+        %bonk  `%a
+        %build  `%f
+        %cash  `%a
+        %conf  `%g
+        %cred  `%c
+        %crew  `%c
+        %crow  `%c
+        %deal  `%g
+        %dirk  `%c
+        %drop  `%c
+        %flog  `%d
+        %info  `%c
+        %keep  `%f
+        %kill  `%f
+        %look  `%j
+        %merg  `%c
+        %mint  `%j
+        %mont  `%c
+        %nuke  `%a
+        %ogre  `%c
+        %perm  `%c
+        %rest  `%b
+        %snap  `%j
+        %wait  `%b
+        %want  `%a
+        %warp  `%c
+        %wind  `%j
+        %wipe  `%f
       ::
-        $request     `%l
-        $serve       `%r
-        $connect     `%r
-        $disconnect  `%r
-        $rule        `%r
+        %request     `%l
+        %serve       `%r
+        %connect     `%r
+        %disconnect  `%r
+        %rule        `%r
       ==
     --
   --
@@ -1403,9 +1409,8 @@
           =(~ tyl)
           =([%$ %da now] lot)
           =(our his)
-          (~(has by bum.mast.all) syd)
       ==
-    ``[%null !>(~)]
+    ``[%noun !>((~(has by bum.mast.all) syd))]
   ?.  =(our his)
     ~
   ?.  =([%$ %da now] lot)

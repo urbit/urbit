@@ -338,7 +338,11 @@
   abet:writ:autoload
 ::
 ++  take-wake-overload
-  |=  {way/wire ~}
+  |=  {way/wire error=(unit tang)}
+  ?^  error
+    %-  (slog u.error)
+    ~&  %kiln-take-wake-overload-fail
+    abet
   ?>  ?=({@ ~} way)
   =+  tym=(slav %dr i.way)
   ~&  %wake-overload-deprecated
@@ -383,10 +387,12 @@
   ++  writ
     |=  rot=riot
     ?~  rot
-      %^    spam
-          leaf+"bad %writ response"
-        (render "on sync" sud her syd)
-      ~
+      =.  +>.$
+        %^    spam
+            leaf+"sync cancelled, retrying"
+          (render "on sync" sud her syd)
+        ~
+      start-sync
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
@@ -415,6 +421,13 @@
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
+    ?:  ?=([%| %ali-sunk *] mes)
+      =.  +>.$
+        %^    spam
+            leaf+"merge cancelled because sunk, restarting"
+          (render "on sync" sud her syd)
+        ~
+      start-sync:stop
     =.  let  +(let)
     =.  +>.$
       %-  spam

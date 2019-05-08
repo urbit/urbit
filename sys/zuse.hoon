@@ -69,7 +69,8 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  life  @ud                                           ::  ship version
+++  life  @ud                                           ::  ship key revision
+++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ::  
 ::
@@ -378,7 +379,7 @@
       ==                                                ::
     ++  sign                                            ::  in result _<-
       $%  $:  $b                                        ::  to %behn
-      $%  {$wake ~}                                     ::  timer activate
+      $%  {$wake error=(unit tang)}                     ::  timer activate
       ==  ==                                            ::
           $:  %j                                        ::  from %jael
       $%  [%pubs public:able:jael]                      ::  public keys
@@ -405,7 +406,7 @@
           [%init p=ship]                                ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$wake ~}                                     ::  timer activate
           {$wegh ~}                                     ::  report memory
@@ -576,23 +577,23 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $%  $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
-      ==  ==  ==                                        ::
+      $%  $:  %d                                        ::  to %dill
+      $%  [$flog =flog:dill]
+      ==  ==  ==
     ++  gift                                            ::  out result <-$
-      $%  {$doze p/(unit @da)}                          ::  next alarm
-          {$mass p/mass}                                ::  memory usage
-          {$wake ~}                                    ::  wakeup
-      ==                                                ::
+      $%  [%doze p=(unit @da)]                          ::  next alarm
+          [%mass p=mass]                                ::  memory usage
+          [%wake error=(unit tang)]                     ::  wakeup or failed
+      ==
     ++  task                                            ::  in request ->$
-      $%  {$born ~}                                     ::  new unix process
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$rest p/@da}                                 ::  cancel alarm
-          {$vega ~}                                     ::  report upgrade
-          {$wait p/@da}                                 ::  set alarm
-          {$wake ~}                                    ::  timer activate
-          {$wegh ~}                                    ::  report memory
-      ==                                                ::
+      $%  [%born ~]                                     ::  new unix process
+          [%crud tag=@tas =tang]                        ::  error with trace
+          [%rest p=@da]                                 ::  cancel alarm
+          [%vega ~]                                     ::  report upgrade
+          [%wait p=@da]                                 ::  set alarm
+          [%wake ~]                                     ::  timer activate
+          [%wegh ~]                                     ::  report memory
+      ==
     --  ::able
   --  ::behn
 ::                                                      ::::
@@ -640,7 +641,7 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$sunk p=ship q=life}                         ::  report death
+          {$sunk p=ship q=rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -805,8 +806,8 @@
           {$harm ~}                                     ::  all terms hung up
           {$init p/ship}                                ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
-          {$noop ~}                                     ::  no operation
-          {$sunk p=ship q=life}                         ::  report death
+          {$noop ~}                                    ::  no operation
+          {$sunk p=ship q=rift}                         ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1077,7 +1078,7 @@
           [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship =life]
+          [%sunk =ship =rift]
           ::  %vega: report kernel upgrade
           ::
           [%vega ~]
@@ -1771,7 +1772,7 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           {$init p/ship}                                ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship q/life}                         ::  report death
+          {$sunk p=ship q/rift}                         ::  report death
           {$vega ~}                                     ::  report upgrade
           {$west p/ship q/path r/*}                     ::  network request
           {$wegh ~}                                     ::  report memory
@@ -1919,7 +1920,7 @@
       ==  ==
           $:  @tas                                      ::
       $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=life]                         ::  report death
+          [%sunk p=ship q=rift]                         ::  report death
       ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
@@ -1933,7 +1934,7 @@
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
     ++  sign                                            ::  in result $<-
-      $%  {$b $wake ~}                                  ::  wakeup
+      $%  {$b $wake error=(unit tang)}                  ::  wakeup
           [%j %vent p=vent-result]                      ::  ethereum changes
           [%a %woot p=ship q=coop]                      ::  message result
           [%l %http-response =client-response:http-client]
@@ -7261,28 +7262,33 @@
       ::                                                ::  ++lef:yu:chrono:
       ++  lef                                           ::  leapsecond dates
         ^-  (list @da)
-        :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
-            ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
-            ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
-            ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
-            ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
-            ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
-            ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
-            ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
-            ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
-            ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
-            ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
-            ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
-            ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
+        :~  ~2016.12.31..23.59.59   ~2015.6.30..23.59.59
+            ~2012.6.30..23.59.59    ~2008.12.31..23.59.58
+            ~2005.12.31..23.59.57   ~1998.12.31..23.59.56
+            ~1997.6.30..23.59.55    ~1995.12.31..23.59.54
+            ~1994.6.30..23.59.53    ~1993.6.30..23.59.52
+            ~1992.6.30..23.59.51    ~1990.12.31..23.59.50
+            ~1989.12.31..23.59.49   ~1987.12.31..23.59.48
+            ~1985.6.30..23.59.47    ~1983.6.30..23.59.46
+            ~1982.6.30..23.59.45    ~1981.6.30..23.59.44
+            ~1979.12.31..23.59.43   ~1978.12.31..23.59.42
+            ~1977.12.31..23.59.41   ~1976.12.31..23.59.40
+            ~1975.12.31..23.59.39   ~1974.12.31..23.59.38
+            ~1973.12.31..23.59.37   ~1972.12.31..23.59.36
+            ~1972.6.30..23.59.35
         ==
-      ::                                                ::  ++les:yu:chrono:
-      ++  les                                           ::  leapsecond days
+      ::
+      ::  +les:yu:chrono: leapsecond days
+      ::
+      ::    https://www.ietf.org/timezones/data/leap-seconds.list
+      ::
+      ++  les
         ^-  (list @da)
-        :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
-            ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
-            ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
-            ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
-            ~1973.1.1  ~1972.7.1
+        :~  ~2017.1.1  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1
+            ~1997.7.1  ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1
+            ~1990.1.1  ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1
+            ~1980.1.1  ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1
+            ~1974.1.1  ~1973.1.1  ~1972.7.1
         ==
       --  ::yu
     --  ::chrono
@@ -7481,13 +7487,14 @@
 ++  unix-task                                           ::  input from unix
   $%  {$belt p/belt:dill}                               ::  dill: keyboard
       {$blew p/blew:dill}                               ::  dill: configure
-      {$boat ~}                                        ::  clay: reboot
-      {$born ~}                                        ::  eyre: new process
-      {$hail ~}                                        ::  dill: refresh
+      {$boat ~}                                         ::  clay: reboot
+      {$born ~}                                         ::  eyre: new process
+      [%crud tag=@tas =tang]                            ::  any vane: error report
+      {$hail ~}                                         ::  dill: refresh
       {$hear p/lane:ames q/@}                           ::  ames: input packet
-      {$hook ~}                                        ::  dill: hangup
+      {$hook ~}                                         ::  dill: hangup
       {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
-      {$wake ~}                                        ::  behn: wakeup
+      {$wake ~}                                         ::  behn: wakeup
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
@@ -7578,12 +7585,14 @@
         |%
         ::  azimuth: data contract
         ::
-        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
         ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
+        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  6.784.800
+        ++  launch  6.784.800  ::  mainnet
+        ::  ++  launch  0  ::  local bridge
         --
       ::
       ::  hashes of ship event signatures
@@ -8093,6 +8102,7 @@
         ::  enc(X) is the sequence of bytes in X padded with zero-bytes to a
         ::  length of 32.
         ::  Note that for any X, len(enc(X)) is a multiple of 32.
+        ~|  [%bytes-n-too-long max=32 actual=p.p.dat]
         ?>  (lte p.p.dat 32)
         (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
       ::
@@ -8102,7 +8112,7 @@
         ::  by the minimum number of zero-bytes such that len(enc(X)) is a
         ::  multiple of 32.
         %+  weld  $(dat [%uint p.p.dat])
-        $(dat [%bytes-n p.dat])
+        (pad-to-multiple (render-hex-bytes p.dat) 64 %right)
       ::
           %string
         ::  enc(X) = enc(enc_utf8(X)), i.e. X is utf-8 encoded and this value is
@@ -8134,24 +8144,19 @@
     ::
     ::  decoding
     ::
-    ++  decode-topics
-      ::  tox:  list of hex words
-      |*  [tox=(lest @ux) tys=(list etyp)]
-      =-  (decode-arguments (crip -) tys)
-      %+  render-hex-bytes  (mul 32 (lent tox))
-      %+  roll  `(list @ux)`tox
-      |=  [top=@ux tos=@]
-      (cat 8 top tos)
+    ++  decode-topics  decode-arguments
     ::
     ++  decode-results
       ::  rex:  string of hex bytes with leading 0x.
       |*  [rex=@t tys=(list etyp)]
-      (decode-arguments (rsh 3 2 rex) tys)
+      =-  (decode-arguments - tys)
+      %+  turn  (rip 9 (rsh 3 2 rex))
+      (curr rash hex)
     ::
     ++  decode-arguments
-      |*  [res=@t tys=(list etyp)]
+      |*  [wos=(list @) tys=(list etyp)]
+      =/  wos=(list @)  wos  ::  get rid of tmi
       =|  win=@ud
-      =/  wos=(list @t)  (rip 9 res)
       =<  (decode-from 0 tys)
       |%
       ++  decode-from
@@ -8176,22 +8181,21 @@
             ?(%address %bool %uint)  ::  %int %real %ureal
           :-  +(win)
           ?-  typ
-            %address  `@ux`(rash wor hex)
-            %uint     `@ud`(rash wor hex)
-            %bool     =(1 (rash wor hex))
+            %address  `@ux`wor
+            %uint     `@ud`wor
+            %bool     =(1 wor)
           ==
         ::
             %string
           =+  $(tys ~[%bytes])
-          ~!  -
           [nin (trip (swp 3 q.dat))]
         ::
             %bytes
           :-  +(win)
           ::  find the word index of the actual data.
-          =/  lic=@ud  (div (rash wor hex) 32)
+          =/  lic=@ud  (div wor 32)
           ::  learn the bytelength of the data.
-          =/  len=@ud  (rash (snag lic wos) hex)
+          =/  len=@ud  (snag lic wos)
           (decode-bytes-n +(lic) len)
         ::
             [%bytes-n *]
@@ -8201,11 +8205,11 @@
             [%array *]
           :-  +(win)
           ::  find the word index of the actual data.
-          =.  win  (div (rash wor hex) 32)
+          =.  win  (div wor 32)
           ::  read the elements from their location.
           %-  tail
           %^  decode-array-n  ~[t.typ]  +(win)
-          (rash (snag win wos) hex)
+          (snag win wos)
         ::
             [%array-n *]
           (decode-array-n ~[t.typ] win n.typ)
@@ -8215,18 +8219,20 @@
         |=  [fro=@ud bys=@ud]
         ^-  octs
         ::  parse {bys} bytes from {fro}.
-        =-  [bys (rash - hex)]
-        %^  end  3  (mul 2 bys)
-        %+  can  9
-        %+  turn
-          (swag [fro +((div (dec bys) 32))] wos)
-        |=(a=@t [1 a])
+        :-  bys
+        %^  rsh  3
+          =+  (mod bys 32)
+          ?:(=(0 -) - (sub 32 -))
+        %+  rep  8
+        %-  flop
+        =-  (swag [fro -] wos)
+        +((div (dec bys) 32))
       ::
       ++  decode-array-n
         ::NOTE  we take (list etyp) even though we only operate on
         ::      a single etyp as a workaround for urbit/arvo#673
+        ::NOTE  careful! produces lists without type info
         =|  res=(list)
-        ~&  %watch-out--arrays-without-typeinfo
         |*  [tys=(list etyp) fro=@ud len=@ud]
         ^-  [@ud (list)]
         ?~  tys  !!
@@ -8591,6 +8597,8 @@
     |=  n=@
     ^-  tape
     %-  prefix-hex
+    ?:  =(0 n)
+      "0"
     %-  render-hex-bytes
     (as-octs:mimes:html n)
   ::
@@ -8615,8 +8623,10 @@
     |=  [wat=tape mof=@ud wer=?(%left %right)]
     ^-  tape
     =+  len=(lent wat)
-    ?:  =(len mof)  wat
-    =+  tad=(reap (sub mof (mod len mof)) '0')
+    ?:  =(0 len)  (reap mof '0')
+    =+  mad=(mod len mof)
+    ?:  =(0 mad)  wat
+    =+  tad=(reap (sub mof mad) '0')
     %-  weld
     ?:(?=(%left wer) [tad wat] [wat tad])
   ::

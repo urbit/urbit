@@ -473,7 +473,7 @@
   ::
   ++  hurl                                              ::  start loop
     |=  {lac/? ovo/ovum}
-    ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo]
+    ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo now]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
     ?>  ?=(^ p.ovo)
@@ -655,7 +655,7 @@
 ::
 =/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
-=|  $:  lac=?                                           ::  laconic bit
+=|  $:  lac=_&                                          ::  laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
         bud=vase                                        ::  %zuse
@@ -760,7 +760,7 @@
   ::  In either case, they fall through here to be handled
   ::  after the fact in +feck.
   ::
-  ?:  ?=(?(%veer %verb %wack) -.q.ovo)
+  ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
   ::
   =^  zef  vanes
@@ -811,6 +811,21 @@
     ?>  ?=(@ q.q.ovo)
     =.  eny  (shaz (cat 3 eny q.q.ovo))
     [~ +>.$]
+  ::  learn of event-replacement failure
+  ::
+      %warn
+    :_  +>.$
+    ?.  ?=(^ +.q.ovo)
+      ~
+    =/  msg=tape
+      :(weld "(for %" (trip (symp +<.q.ovo)) ") failed")
+    ~>  %slog.[0 leaf+(weld "arvo: replacement event " msg)]
+    ?:  lac
+      ~
+    =/  rep
+      %-  mule  |.
+      ((slog (tang +>.q.ovo)) ~)
+    ?.(?=(%& -.rep) ~ p.rep)
   ==
 ::
 ++  vega                                                ::  reboot kernel
