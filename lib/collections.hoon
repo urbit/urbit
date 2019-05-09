@@ -310,7 +310,7 @@
   |=  [seg=@ta out=term]
   %^  cat  3
     ?:(=(%$ out) out (cat 3 out '-'))
-    ((hard @tas) seg)
+    ;;(@tas seg)
   [our nam]
 ::
 ::  +allowed-by: checks if ship :who is allowed by the permission rules in :dic
@@ -402,7 +402,7 @@
   =/  entries=wain
     %+  turn  ~(tap by a)
     |=  b=[knot cord]
-    =/  c=[term cord]  ((hard ,[term cord]) b)
+    =/  c=[term cord]  ;;([term cord] b)
     (crip "  [{<-.c>} {<+.c>}]")
   ::
   ?~  entries  ~

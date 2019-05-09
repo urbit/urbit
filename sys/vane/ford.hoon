@@ -2655,7 +2655,7 @@
         (return-result %success %call [type.u.slit-result p.val])
       ::
           %1
-        =/  blocked-paths=(list path)  ((hard (list path)) p.val)
+        =/  blocked-paths=(list path)  ;;((list path) p.val)
         (blocked-paths-to-receipt %call blocked-paths)
       ::
           %2
@@ -4776,7 +4776,7 @@
         (return-result %success %ride [type.u.slim-result p.val])
       ::
           %1
-        =/  blocked-paths=(list path)  ((hard (list path)) p.val)
+        =/  blocked-paths=(list path)  ;;((list path) p.val)
         (blocked-paths-to-receipt %ride blocked-paths)
       ::
           %2
@@ -6144,7 +6144,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::  we wrap +per-event with a call that binds our event args
   ::
   =*  this-event  (per-event [our duct now scry-gate] state.ax)
