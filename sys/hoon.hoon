@@ -6688,7 +6688,7 @@
     {$mccl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
     {$mcnt p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
-    {$mcmc p/hoon q/hoon}                               ::  ;;  normalize
+    {$mcmc p/spec q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
     {$tsbr p/spec q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
@@ -8790,17 +8790,7 @@
       ==                                                ::
     ::
         {$mcmc *}                                       ::                  ;;
-      :+  %tsbn  [%ktts %v %$ 1]                        ::  =>  v=.
-      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
-                 [%tsbn [%limb %v] p.gen]               ::  =>(v {p.gen})
-      :+  %tsls  [%ktts %b [%tsbn [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
-      :+  %tsls                                         ::  =+  c=(a b)
-        [%ktts %c [%cncl [%limb %a] [%limb %b] ~]]      ::
-      :+  %wtbn                                         ::  ?>(=(`*`c `*`b) c)
-        :+  %dtts                                       ::
-        [%kthp [%base %noun] [%limb %c]]                ::
-        [%kthp [%base %noun] [%limb %b]]                ::
-      [%limb %c]                                        ::
+      [%cnhp ~(factory ax fab p.gen) q.gen]
     ::
         {$tsbr *}
       [%tsls ~(example ax fab p.gen) q.gen]
@@ -14031,7 +14021,7 @@
         [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
-        [%mcmc *]  (rune ';;' ~ ~ (hoons ~[p q]:x))
+        [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tscl *]  (tiscol-to-plum p.x q.x)
         [%tsnt *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
@@ -16643,7 +16633,7 @@
               :~  [':' (rune col %mccl expi)]
                   ['/' (rune net %mcnt expa)]
                   ['~' (rune sig %mcsg expi)]
-                  [';' (rune mic %mcmc expb)]
+                  [';' (rune mic %mcmc exqc)]
               ==
             ==
           :-  '='
