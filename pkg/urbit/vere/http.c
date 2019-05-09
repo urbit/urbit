@@ -1790,6 +1790,18 @@ u3_http_ef_form(u3_noun fig)
   u3_Host.fig_u.for_u = for_u;
 
   _http_serv_restart();
+
+  //  The control server has now started.
+  //
+  //    If we're in daemon mode, we need to inform the parent process
+  //    that we've finished booting.
+  //
+  //    XX using this effect is a terrible heuristic;
+  //    "fully booted" should be formalized.
+  //
+  if (u3_Host.bot_f) {
+    u3_Host.bot_f();
+  }
 }
 
 /* u3_http_io_init(): initialize http I/O.
