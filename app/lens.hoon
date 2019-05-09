@@ -1,4 +1,7 @@
+/-  lens
 /+  *server
+/=  lens-mark  /:  /===/mar/lens/command
+                   /!noun/
 =,  format
 |%
 :: +move: output effect
@@ -8,29 +11,25 @@
 ::
 +$  card
   $%  [%connect wire binding:http-server term]
-      [%serve wire binding:http-server generator:http-server]
-      [%disconnect wire binding:http-server]
       [%http-response =http-event:http]
+      [%peel wire dock mark path]
       [%poke wire dock poke]
-      [%diff %json json]
+      [%pull wire dock ~]
   ==
 ::
 +$  poke
-  $%  [%modulo-bind app=term]
-      [%modulo-unbind app=term]
+  $%  [%lens-command command:lens]
   ==
 ::
 +$  state
-  $%  $:  %0   
-          session=(map term @t)
-          order=(list term)
-          cur=(unit [term @])
+  $%  $:  %0
+          job=(unit [=bone com=command:lens])
       ==
   ==
 ::
 --
 ::
-|_  [bow=bowl:gall sta=state]
+|_  [bow=bowl:gall state=state]
 ::
 ++  this  .
 ::
@@ -50,16 +49,56 @@
   %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
+  ?^  job.state
+    :_  this
+    [ost.bow %http-response %start [%500 ~] ~ %.y]~
   ::
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  site  (flop site.request-line)
   ::
-  =/  htm
-    %-  manx-to-octs
-    ;div: successfully contacted lens
   ~&  lens+inbound-request
+  =/  jon=json
+    (need (de-json:html q:(need body.request.inbound-request)))
+  =/  com=command:lens
+    (json:grab:lens-mark jon)
+  :_  this(job.state (some [ost.bow com]))
+  [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
+::
+++  diff-lens-json
+  |=  [=wire jon=json]
+  ^-  (quip move _this)
+  ~&  [%diff-lens-json wire jon]
+  ?~  jon
+    [~ this]
+  ?>  ?=(^ job.state)
+  :_  this(job.state ~)
+  [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
+::
+++  quit
+  |=  =wire
+  ^-  (quip move _this)
+  ~&  [%quit wire]
+  [~ this]
+::
+++  reap
+  |=  [=wire saw=(unit tang)]
+  ^-  (quip move _this)
+  ~&  [%reap wire]
+  ?^  saw
+    [((slog u.saw) ~) this]
+  ?>  ?=(^ job.state)
   :_  this
-  [ost.bow %http-response (html-response:app htm)]~
+  :~  [ost.bow %poke /sole [our.bow %dojo] %lens-command com.u.job.state]
+      [ost.bow %pull /sole [our.bow %dojo] ~]
+  ==
+::
+++  coup
+  |=  [=wire saw=(unit tang)]
+  ^-  (quip move _this)
+  ~&  [%coup wire]
+  ?^  saw
+    [((slog u.saw) ~) this]
+  [~ this]
 ::
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
