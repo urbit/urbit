@@ -946,6 +946,9 @@ _cttp_init_h2o()
 };
 
 /* u3_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
+
+  -- zuse will have a type for this
+
 */
 void
 u3_cttp_ef_thus(c3_l    num_l,
@@ -954,7 +957,7 @@ u3_cttp_ef_thus(c3_l    num_l,
   u3_creq* ceq_u;
 
   if ( u3_nul == cuq ) {
-    ceq_u =_cttp_creq_find(num_l);
+    ceq_u = _cttp_creq_find(num_l);
 
     if ( ceq_u ) {
       _cttp_creq_quit(ceq_u);

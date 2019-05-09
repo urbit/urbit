@@ -4,6 +4,9 @@ license: AGPL-3.0-only
 
 library:
   source-dirs: lib
+  ghc-options:
+    - -fwarn-incomplete-patterns
+    - -O2
 
 executables:
   uterm:
@@ -15,13 +18,12 @@ executables:
     main: Main.hs
     source-dirs: app/vere
     dependencies: ["vere"]
-
-ghc-options:
-  - -threaded
-  - -rtsopts
-  - "-with-rtsopts=-H128m"
-  - -fwarn-incomplete-patterns
-  - -O2
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - "-with-rtsopts=-H128m"
+      - -fwarn-incomplete-patterns
+      - -O2
 
 dependencies:
   - async
@@ -81,3 +83,4 @@ default-extensions:
   - TypeFamilies
   - UnicodeSyntax
   - ViewPatterns
+  - NumericUnderscores

@@ -25,49 +25,28 @@ import Control.Concurrent.MVar (MVar, takeMVar, newEmptyMVar, putMVar)
 import Control.Monad           (void, when)
 import Data.IORef              (IORef, writeIORef, readIORef, newIORef)
 
-import qualified Urbit.Time as Time
-import qualified GHC.Event  as Ev
+import qualified Urbit.Timer as Timer
+import qualified Urbit.Time  as Time
+import qualified GHC.Event   as Ev
 
 
 -- Behn Stuff ------------------------------------------------------------------
 
 data Behn = Behn
-  { bState   :: IORef (Maybe Ev.TimeoutKey)
-  , bSignal  :: MVar ()
-  , bManager :: Ev.TimerManager
+  { bTimer  :: Timer.Timer
+  , bSignal :: MVar ()
   }
 
 init :: IO Behn
 init = do
-  st  <- newIORef Nothing
+  tim <- Timer.init
   sig <- newEmptyMVar
-  man <- Ev.getSystemTimerManager
-  pure (Behn st sig man)
+  pure (Behn tim sig)
 
 wait :: Behn -> IO ()
-wait (Behn _ sig _) = takeMVar sig
-
-setTimer :: Behn -> Time.Wen -> IO ()
-setTimer behn@(Behn vSt sig man) time = do
-  killTimer behn
-  now <- Time.now
-  case (now >= time) of
-      True  -> void (putMVar sig ())
-      False -> do
-          let microSleep = Time.gap now time ^. Time.microSecs
-          let fire       = putMVar sig () >> killTimer behn
-          key <- Ev.registerTimeout man microSleep fire
-          writeIORef vSt $! Just key
-
-killTimer :: Behn -> IO ()
-killTimer (Behn vSt sig man) = do
-    mKey <- do st <- readIORef vSt
-               writeIORef vSt $! Nothing
-               pure st
-    mKey & \case
-      Just k  -> Ev.unregisterTimeout man k
-      Nothing -> pure ()
+wait (Behn _ sig) = takeMVar sig
 
 doze :: Behn -> Maybe Time.Wen -> IO ()
-doze behn Nothing  = killTimer behn
-doze behn (Just t) = setTimer behn t
+doze behn Nothing  = Timer.stop (bTimer behn)
+doze (Behn tim sig) (Just t) =
+  Timer.start tim (t ^. Time.systemTime) (putMVar sig ())
