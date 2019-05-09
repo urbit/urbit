@@ -14022,7 +14022,7 @@
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
         [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
-        [%tsbr *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
+        [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tscl *]  (tiscol-to-plum p.x q.x)
         [%tsnt *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
         [%tsmc *]  (rune '=;' ~ ~ [(skin p.x) (hoons ~[q r]:x)])
