@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -ex
+
+pkg=$(nix-build nix/ops -A solid --no-out-link)
+cp $pkg bin/solid.pill

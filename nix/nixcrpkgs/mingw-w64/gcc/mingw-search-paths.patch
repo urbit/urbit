@@ -1,0 +1,14 @@
+Make it so GCC does not force us to have a "mingw" symlink.
+
+--- gcc-6.3.0-orig/gcc/config/i386/mingw32.h
++++ gcc-6.3.0/gcc/config/i386/mingw32.h
+@@ -163,3 +163,3 @@
+ #ifndef STANDARD_STARTFILE_PREFIX_1
+-#define STANDARD_STARTFILE_PREFIX_1 "/mingw/lib/"
++#define STANDARD_STARTFILE_PREFIX_1 "/lib/"
+ #endif
+@@ -172,3 +172,3 @@
+ #undef NATIVE_SYSTEM_HEADER_DIR
+-#define NATIVE_SYSTEM_HEADER_DIR "/mingw/include"
++#define NATIVE_SYSTEM_HEADER_DIR "/include"
+ 
