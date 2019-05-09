@@ -144,7 +144,7 @@
     %-  of  :~
       name+(ot nom+so mon+tors ~)
       text+(cu to-wain:format so)
-      tank+(ot dat+(cu ;;((list tank) blob)) ~)
+      tank+(ot dat+(cu (list tank) blob) ~)
     ==
   ::
   ++  blob  (cu cue (su fel:de-base64:mimes:html))
