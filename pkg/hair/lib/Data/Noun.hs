@@ -6,7 +6,7 @@ import Prelude
 
 import Control.Applicative
 import Control.Monad
-import Data.Noun.Atom
+import Data.Noun.Atom (Atom)
 import Data.Bits
 
 import Data.List     (intercalate)
