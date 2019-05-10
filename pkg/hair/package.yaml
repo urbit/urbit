@@ -61,6 +61,7 @@ default-extensions:
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
+  - DeriveDataTypeable
   - EmptyDataDecls
   - FlexibleContexts
   - FlexibleInstances
@@ -70,6 +71,7 @@ default-extensions:
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
+  - NumericUnderscores
   - OverloadedStrings
   - PartialTypeSignatures
   - QuasiQuotes
@@ -83,4 +85,3 @@ default-extensions:
   - TypeFamilies
   - UnicodeSyntax
   - ViewPatterns
-  - NumericUnderscores
