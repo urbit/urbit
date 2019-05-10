@@ -7094,7 +7094,7 @@
   $%  {$a gift:able:ames}
       $:  $b
           $%  gift:able:behn
-              [%writ ~]
+              [%writ riot:clay]
           ==
       ==
       {$c gift:able:clay}

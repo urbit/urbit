@@ -391,7 +391,7 @@
   ==  ==  ==                                            ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
-          $%  $:  %$
+          $%  $:  %y
           $%  {$init-clad ~}
           ==  ==
               $:  $a                                    ::  by %ames
@@ -420,7 +420,7 @@
 ::  Old state types for ++load
 ::
 =>  |%
-++  raft-1  raft
++$  raft-1  raft
 --  =>
 ::  %utilities
 ::
@@ -538,7 +538,7 @@
 ::  completed, we end up at `++apply-edit`, where our unified story picks up
 ::  again.
 ::
-++  edit
+++  commit
   ::  Global constants.  These do not change during an edit.
   ::
   |=  $:  our=ship
@@ -551,20 +551,21 @@
   |^
   ::  Initial arguments
   ::
-  |=  [lem=nori dom=dome ran=rang]
+  |=  [lem=nori original-dome=dome ran=rang]
   =/  m  commit-clad
   ^-  form:m
   ?:  ?=(%| -.lem)
-    =.  dom  (execute-label:(state:util dom ran) p.lem)
-    =/  e  ~(. cor dom ran)
+    =.  original-dome
+      (execute-label:(state:util original-dome original-dome ran) p.lem)
+    =/  e  (cor original-dome ran)
     ;<  ~  bind:m  (print-changes:e %| p.lem)
     (pure:m dom:e ran:e)
-  =/  e  ~(. cor dom ran)
-  ;<  [=dork e=_cor]             bind:m  (fill-dork:e wen p.lem)
-  ;<  [=suba e=_cor]             bind:m  (apply-dork:e wen dork)
-  ;<  e=_cor                     bind:m  checkout-new-state:e
-  ;<  ~                          bind:m  (ergo-changes:e suba)
-  ;<  ~                          bind:m  (print-changes:e %& suba)
+  =/  e  (cor original-dome ran)
+  ;<  [=dork e=_*cor]  bind:m  (fill-dork:e wen p.lem)
+  ;<  [=suba e=_*cor]  bind:m  (apply-dork:e wen dork)
+  ;<  e=_*cor          bind:m  checkout-new-state:e
+  ;<  ~                bind:m  (ergo-changes:e suba)
+  ;<  ~                bind:m  (print-changes:e %& suba)
   (pure:m dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
@@ -572,9 +573,11 @@
   ::    These are the global state variables that an edit may change.
   ::
   ++  cor
-    |_  [dom=dome ran=rang]
+    |=  [dom=dome ran=rang]
+    =/  original-dome  dom
+    |%
     ++  this-cor  .
-    ++  sutil  (state:util dom ran)
+    ++  sutil  (state:util original-dome dom ran)
     ++  fill-dork
       |=  [wen=@da =soba]
       =/  m  (clad ,[dork _this-cor])
@@ -710,11 +713,11 @@
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  ins
-            |=  {pax/path mis/miso}
+            |=  [pax=path mis=miso]
             ?>  ?=($ins -.mis)
             :-  [%$ %path -:!>(*path) pax]
             =+  =>((flop pax) ?~(. %$ i))
-            [%cast [our %home] - [%$ p.mis]]
+            [%cast [our syd] - [%$ p.mis]]
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
       ^-  form:m
@@ -741,7 +744,7 @@
             =+  (need (need (read-x:sutil & let.dom pax)))
             ?>  ?=(%& -<)
             :-  [%$ %path -:!>(*path) pax]
-            [%pact [our %home] [%$ p.-] [%$ p.mis]]
+            [%pact [our syd] [%$ p.-] [%$ p.mis]]
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
       ^-  form:m
@@ -775,7 +778,7 @@
             =/  mar
               %-  lobe-to-mark:sutil
               (~(got by q:(aeon-to-yaki:sutil let.dom)) pax)
-            [%cast [our %home] mar [%$ p.mis]]
+            [%cast [our syd] mar [%$ p.mis]]
         ==
       ;<  res=made-result:ford    bind:m  expect-ford
       ;<  hashes=(map path lobe)  bind:m
@@ -800,9 +803,9 @@
             |=  {pax/path cay/cage}
             :-  [%$ %path -:!>(*path) pax]
             =/  scheme
-              %^  lobe-to-schematic:sutil  [our %home]  pax
+              %^  lobe-to-schematic:sutil  [our syd]  pax
               (~(got by q:(aeon-to-yaki:sutil let.dom)) pax)
-            [%diff [our %home] scheme [%$ cay]]
+            [%diff [our syd] scheme [%$ cay]]
         ==
       ;<  res=made-result:ford    bind:m  expect-ford
       %-  pure:m
@@ -912,7 +915,7 @@
             |=  {a/path b/lobe}
             ^-  schematic:ford
             :-  [%$ %path-hash !>([a b])]
-            (lobe-to-schematic:sutil [our %home] a b)
+            (lobe-to-schematic:sutil [our syd] a b)
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
       ?.  ?=([%complete %success *] res)
@@ -957,11 +960,11 @@
               [%$ %null !>(~)]
             =+  (~(get by mim.dom) a)
             ?^  -  [%$ %mime !>(u.-)]
-            :^  %cast  [our %home]  %mime
+            :^  %cast  [our syd]  %mime
             =/  x  (need (need (read-x:sutil & let.dom a)))
             ?:  ?=(%& -<)
               [%$ p.x]
-            (lobe-to-schematic:sutil [our %home] a p.x)
+            (lobe-to-schematic:sutil [our syd] a p.x)
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
       ?:  ?=([%incomplete *] res)
@@ -1063,29 +1066,35 @@
           mon=(map term beam)
           hez=(unit duct)
       ==
+  ::  Run ford operations on ali unless it's a foreign desk
+  ::
+  =/  ford-disc=disc:ford
+    ?:  =(p.ali-disc p.bob-disc)
+      ali-disc
+    bob-disc
   |^
   ::  Initial arguments
   ::
   |=  [gem=germ dom=dome ran=rang]
   =/  m  merge-clad
   ^-  form:m
-  =/  e  ~(. cor dom ran)
+  =/  e  (cor dom ran)
   ;<  [bob=(unit yaki) gem=germ]  bind:m  (get-bob:e gem)
-  ;<  [ali=yaki e=_cor]           bind:m  fetch-ali:e
+  ;<  [ali=yaki e=_*cor]          bind:m  fetch-ali:e
   ;<    $=  res
         %-  unit
         $:  conflicts=(set path)
             bop=(map path cage)
             new=yaki
             erg=(map path ?)
-            e=_cor
+            e=_*cor
         ==
       bind:m
     (merge:e gem cas ali bob)
   ?~  res
     (pure:m ~ dom:e ran:e)
   =.  e  e.u.res
-  ;<  e=_cor    bind:m  (checkout:e gem cas bob new.u.res bop.u.res)
+  ;<  e=_*cor     bind:m  (checkout:e gem cas bob new.u.res bop.u.res)
   ;<  ~         bind:m  (ergo:e gem cas mon erg.u.res new.u.res)
   (pure:m conflicts.u.res dom:e ran:e)
   ::
@@ -1094,9 +1103,11 @@
   ::    These are the global state variables that a merge may change.
   ::
   ++  cor
-    |_  [dom=dome ran=rang]
+    |=  [dom=dome ran=rang]
+    =/  original-dome  dom
+    |%
     ++  this-cor  .
-    ++  sutil  (state:util dom ran)
+    ++  sutil  (state:util original-dome dom ran)
     ++  get-bob
       |=  gem=germ
       =/  m  (clad ,[bob=(unit yaki) gem=germ])
@@ -1154,7 +1165,7 @@
             bop=(map path cage)
             new=yaki
             erg=(map path ?)
-            e=_cor
+            e=_this-cor
         ==
       ^-  form:m
       ?-    gem
@@ -1360,9 +1371,9 @@
             ?:  =(u.a u.-)
               ~
             :-  ~
-            =/  disc  [our %home]
+            =/  disc  ford-disc
             :-  [%$ %path !>(pax)]
-            :^  %diff  [our %home]
+            :^  %diff  ford-disc
               (lobe-to-schematic:sutil disc pax lob)
             (lobe-to-schematic:sutil disc pax u.a)
         ==
@@ -1475,7 +1486,7 @@
               !!
             :*  %pact
                 [p.bob-disc q.bob-disc]
-                (lobe-to-schematic:sutil [our %home] pax u.-)
+                (lobe-to-schematic:sutil ford-disc pax u.-)
                 [%$ u.cay]
             ==
         ==
@@ -1608,7 +1619,7 @@
               ~
             :+  ~
               [%$ %path !>(pax)]
-            (merge-lobe-to-schematic:he (fall bob *yaki) [our %home] pax lob)
+            (merge-lobe-to-schematic:he (fall bob *yaki) ford-disc pax lob)
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
       =+  tay=(made-result-to-cages-or-error:util res)
@@ -1655,8 +1666,8 @@
             =+  b=(~(got by erg) a)
             ?.  b
               [%$ %null !>(~)]
-            =/  disc  [our %home]  ::  [p q]:val
-            :^  %cast  [our %home]  %mime
+            =/  disc  ford-disc  ::  [p q]:val
+            :^  %cast  ford-disc  %mime
             (lobe-to-schematic:sutil disc a (~(got by q.new) a))
         ==
       ;<  res=made-result:ford  bind:m  expect-ford
@@ -1902,7 +1913,7 @@
     $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
   ::
   ++  state
-    |=  [dom=dome ran=rang]
+    |=  [original-dome=dome dom=dome ran=rang]
     |%
     ::  These convert between aeon (version number), tako (commit hash), yaki
     ::  (commit data structure), lobe (content hash), and blob (content).
@@ -1932,6 +1943,7 @@
     ::
     ++  lobe-to-schematic  (cury lobe-to-schematic-p &)
     ++  lobe-to-schematic-p
+      =.  dom  original-dome
       |=  [local=? disc=disc:ford pax=path lob=lobe]
       ^-  schematic:ford
       ::
@@ -2784,7 +2796,7 @@
       (weld mos.u.act effects.c-res)
     ?-  -.next.c-res
       %wait  +>.$
-      %cont  $(com.cad.u.act self.next.c-res, sign [%$ %init-clad ~])
+      %cont  $(com.cad.u.act self.next.c-res, sign [%y %init-clad ~])
       %fail  (fail-commit err.next.c-res)
       %done  (done-commit mos.u.act value.next.c-res)
     ==
@@ -2837,7 +2849,7 @@
       (weld mos.u.act effects.c-res)
     ?-  -.next.c-res
       %wait  +>.$
-      %cont  $(mer.cad.u.act self.next.c-res, sign [%$ %init-clad ~])
+      %cont  $(mer.cad.u.act self.next.c-res, sign [%y %init-clad ~])
       %fail  (fail-merge err.next.c-res)
       %done  (done-merge mos.u.act value.next.c-res)
     ==
@@ -2872,7 +2884,48 @@
     =.  act  ~
     ?~  cue
       .
-    (emit [hen %pass /queued-request %b %wait now])
+    =/  =duct  -:~(top to cue)
+    (emit [duct %pass /queued-request %b %wait now])
+  ::
+  ::  Send new data to unix.
+  ::
+  ::  Combine the paths in mim in dok and the result of the ford call in
+  ::  ++take-patch to create a list of nodes that need to be sent to unix (in
+  ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
+  ::
+  ++  take-ergo
+    |=  res/made-result:ford
+    ^+  +>
+    ?:  ?=([%incomplete *] res)
+      ~&  %bad-take-ergo
+      +>.$
+      ::  (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" tang.res)
+    ?.  ?=([%complete %success *] res)
+      ~&  %bad-take-ergo-2
+      +>.$
+      ::  =*  message  message.build-result.res
+      ::  (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" message)
+    ?~  hez  ~|(%no-sync-duct !!)
+    =+  ^-  can/(map path (unit mime))
+        %-  malt  ^-  mode
+        %+  turn  (made-result-to-cages:util res)
+        |=  {pax/cage mim/cage}
+        ?.  ?=($path p.pax)
+          ~|(%ergo-bad-path-mark !!)
+        :-  ((hard path) q.q.pax)
+        ?.  ?=($mime p.mim)
+          ~
+        `((hard mime) q.q.mim)
+    =+  mus=(must-ergo:util our syd mon (turn ~(tap by can) head))
+    %-  emil
+    %+  turn  ~(tap by mus)
+    |=  {pot/term len/@ud pak/(set path)}
+    :*  u.hez  %give  %ergo  pot
+        %+  turn  ~(tap in pak)
+        |=  pax/path
+        [(slag len pax) (~(got by can) pax)]
+    ==
+  ::
   ::
   ::  Handle the result of the ford call in ++checkout-ankh.
   ::
@@ -3416,7 +3469,7 @@
   ::  --  `lab` is a map of labels to revision numbers.
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  ++  util  (state:[^util] dom ran)
+  ++  util  (state:[^util] dom dom ran)
   ++  ze
     |%
     ::  These convert between aeon (version number), tako (commit hash), yaki
@@ -3783,7 +3836,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%2                                        ::  vane version
+    $:  ver=%1                                        ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [our=ship now=@da eny=@uvJ ski=sley]              ::  current invocation
@@ -3794,6 +3847,7 @@
           type=*
           wrapped-task=(hobo task:able)
       ==
+  ^-  [(list move) _..^$]
   ::
   =/  req=task:able
     ?.  ?=(%soft -.wrapped-task)
@@ -3802,21 +3856,42 @@
   ::
   ::  only one of these should be going at once, so queue
   ::
-  ?:  &(?=(?(%info %into %merg) -.req) |(?=(^ act.ruf) ?=(^ cue.ruf)))
+  ?:  ?=(?(%info %into %merg) -.req)
+    ::  If there's an active write or a queue, enqueue
+    ::
+    ::    We only want one active write so each can be a clean
+    ::    transaction.
+    ::
+    ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
+      =.  cue.ruf  (~(put to cue.ruf) [hen req])
+      [~ ..^$]
+    ::  If there's the last commit happened in this event, enqueue
+    ::
+    ::    Without this, two commits could have the same date, which
+    ::    would make clay violate referential transparency.
+    ::
+    =/  =desk  des.req
+    =/  =dojo  (fall (~(get by dos.rom.ruf) desk) *dojo)
+    ?:  =(0 let.dom.dojo)
+      (handle-task hen req)
+    =/  sutil  (state:util dom.dojo dom.dojo ran.ruf) 
+    =/  last-write=@da  t:(aeon-to-yaki:sutil let.dom.dojo)
+    ?:  !=(last-write now)
+      (handle-task hen req)
     =.  cue.ruf  (~(put to cue.ruf) [hen req])
-    ::  ~&  [%enqueueing (turn ~(tap to cue.ruf) head)]
-    [wait ..^$]
+    =/  wait-behn  [hen %pass /queued-request %b %wait now]
+    [[wait-behn ~] ..^$]
   (handle-task hen req)
 ::
 ++  handle-task
   |=  [hen=duct req=task:able]
-  ^+  [*(list move) ..^$]
+  ^-  [(list move) _..^$]
   ?-    -.req
-      $boat
+      %boat
     :_  ..^$
     [hen %give %hill (turn ~(tap by mon.ruf) head)]~
   ::.
-      $cred
+      %cred
     =.  cez.ruf
       ?~  cew.req  (~(del by cez.ruf) nom.req)
       (~(put by cez.ruf) nom.req cew.req)
@@ -3832,10 +3907,10 @@
       (forget-crew:den nom.req)
     $(des t.des, mos (weld mos mor))
   ::
-      $crew
+      %crew
     [[hen %give %cruz cez.ruf]~ ..^$]
   ::
-      $crow
+      %crow
     =/  des  ~(tap by dos.rom.ruf)
     =|  rus/(map desk {r/regs w/regs})
     |^
@@ -3855,28 +3930,22 @@
       (~(has in who.r) |+nom.req)
     --
   ::
-      $crud
+      %crud
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
-      $drop
+      %drop
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:drop-me:den
     [mos ..^$]
   ::
-      $info
+      %info
     ?:  =(%$ des.req)
       ~|(%info-no-desk !!)
-    =/  den  ((de our now ski hen ruf) our des.req)
-    =/  doj=(unit dojo)  (~(get by dos.rom.ruf) des.req)
-    ?~  doj
-      ~&  [%bad-info-no-desk des.req]
-      =^  mos  ruf
-        abet:finish-write:den
-      [mos ..^$]
+    =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
     =.  act.ruf
       =/  writer=form:commit-clad
-        %-  %-  edit
+        %-  %-  commit
             :*  our
                 des.req
                 now
@@ -3885,19 +3954,20 @@
                 hun.rom.ruf
             ==
         :*  dit.req
-            dom.u.doj
+            dom.dojo
             ran.ruf
         ==
       `[hen req ~ %commit writer]
     =^  mos  ruf
-      abet:(take-commit:den [%$ %init-clad ~])
+      =/  den  ((de our now ski hen ruf) our des.req)
+      abet:(take-commit:den [%y %init-clad ~])
     [mos ..^$]
   ::
-      $init
+      %init
     ~&  [%init hen]
     [~ ..^$(hun.rom.ruf hen)]
   ::
-      $into
+      %into
     =.  hez.ruf  `hen
     :_  ..^$
     =+  bem=(~(get by mon.ruf) des.req)
@@ -3912,12 +3982,12 @@
       ~
     ?:  =(0 let.dom.u.dos)
       =+  cos=(mode-to-soba ~ s.bem all.req fis.req)
-      =+  ^-  {one/(list {path miso}) two/(list {path miso})}
+      =+  ^-  [one=soba two=soba]
           %+  skid  cos
-          |=  {a/path b/miso}
-          ?&  ?=($ins -.b)
-              ?=($mime p.p.b)
-              ?=({$hoon ~} (slag (dec (lent a)) a))
+          |=  [a=path b=miso]
+          ?&  ?=(%ins -.b)
+              ?=(%mime p.p.b)
+              ?=([%hoon ~] (slag (dec (lent a)) a))
           ==
       :~  [hen %pass /one %c %info q.bem %& one]
           [hen %pass /two %c %info q.bem %& two]
@@ -3926,16 +3996,10 @@
     =+  cos=(mode-to-soba q.yak (flop s.bem) all.req fis.req)
     [hen %pass /both %c %info q.bem %& cos]~
   ::
-      $merg                                               ::  direct state up
+      %merg                                               ::  direct state up
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
-    =/  den  ((de our now ski hen ruf) our des.req)
-    =/  doj=(unit dojo)  (~(get by dos.rom.ruf) des.req)
-    ?~  doj
-      ~&  [%bad-info-no-desk des.req]
-      =^  mos  ruf
-        abet:finish-write:den
-      [mos ..^$]
+    =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
     =.  act.ruf
       =/  writer=form:merge-clad
         %-  %-  merge
@@ -3948,15 +4012,16 @@
                 hez.ruf
             ==
         :*  how.req
-            dom.u.doj
+            dom.dojo
             ran.ruf
         ==
       `[hen req ~ %merge writer]
     =^  mos  ruf
-      abet:(take-merge:den [%$ %init-clad ~])
+      =/  den  ((de our now ski hen ruf) our des.req)
+      abet:(take-merge:den [%y %init-clad ~])
     [mos ..^$]
   ::
-      $mont
+      %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =+  pot=(~(get by mon.ruf) des.req)
     ?^  pot
@@ -3973,7 +4038,7 @@
       abet:(mont:den des.req bem)
     [mos ..^$]
   ::
-      $dirk
+      %dirk
     ?~  hez.ruf
       ~&  %no-sync-duct
       [~ ..^$]
@@ -3983,7 +4048,7 @@
     :-  ~[[u.hez.ruf %give %dirk des.req]]
         ..^$
   ::
-      $ogre
+      %ogre
     ?~  hez.ruf
       ~&  %no-sync-duct
       [~ ..^$]
@@ -4005,13 +4070,13 @@
     |=  {pon/term bem/beam}
     [u.hez.ruf %give %ogre pon]
   ::
-      $perm
+      %perm
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      $sunk
+      %sunk
     ~&  rift=[p.req q.req]
     ~&  desks=(turn ~(tap by dos.rom.ruf) head)
     ~&  hoy=(turn ~(tap by hoy.ruf) head)
@@ -4061,19 +4126,19 @@
     =.  hoy.ruf  (~(del by hoy.ruf) p.req)
     [(weld clear-ford-cache-moves cancel-moves) ..^$]
   ::
-      $vega  [~ ..^$]
+      %vega  [~ ..^$]
   ::
-      ?($warp $werp)
+      ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
     ::
     =^  for  req
-      ?:  ?=($warp -.req)
+      ?:  ?=(%warp -.req)
         [~ req]
       :-  ?:(=(our who.req) ~ `who.req)
       [%warp wer.req rif.req]
     ::
-    ?>  ?=($warp -.req)
+    ?>  ?=(%warp -.req)
     =*  rif  rif.req
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) wer.req p.rif)
@@ -4083,10 +4148,10 @@
       (start-request:den for u.q.rif)
     [mos ..^$]
   ::
-      $west
+      %west
     =*  wer  wer.req
     =*  pax  pax.req
-    ?:  ?=({$question *} pax)
+    ?:  ?=({%question *} pax)
       =+  ryf=((hard riff) res.req)
       :_  ..^$
       :~  [hen %give %mack ~]
@@ -4094,7 +4159,7 @@
             [(scot %p our) (scot %p wer) t.pax]
           [hen %pass wire %c %werp wer our ryf]
       ==
-    ?>  ?=({$answer @ @ ~} pax)
+    ?>  ?=({%answer @ @ ~} pax)
     =+  syd=(slav %tas i.t.pax)
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
@@ -4102,7 +4167,7 @@
       abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::
-      $wegh
+      %wegh
     :_  ..^$  :_  ~
     :^  hen  %give  %mass
     :+  %clay  %|
@@ -4118,13 +4183,14 @@
 ::
 ++  load
   =>  |%
-      ++  axle  $%  [%1 ruf-1=raft-1]
-                ==
+      +$  axle  [%1 ruf-1=raft]
       --
-  |=  old=axle
-  ^+  ..^$
-  ?>  ?=(%1 -.old)
-  %_(..^$ ruf ruf-1.old)
+  |=  *
+  ..^$
+  ::  |=  old=axle
+  ::  ^+  ..^$
+  ::  ?>  ?=(%1 -.old)
+  ::  %_(..^$ ruf ruf-1.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4154,7 +4220,7 @@
   ?:  ?=(%& -.u.u.-)  ``p.u.u.-
   ~
 ::
-++  stay  [%2 ruf]
+++  stay  [%1 ruf]
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
@@ -4189,13 +4255,21 @@
       %init-clad
     ~|(%clad-not-real !!)
   ::
-      $crud
+      %crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
   ::
-      $made
+      %made
     ?~  tea  !!
     ?+    -.tea  !!
-        $foreign-plops
+        $ergoing
+      ?>  ?=({@ @ ~} t.tea)
+      =+  syd=(slav %tas i.t.t.tea)
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) our syd)
+        abet:(take-ergo:den result.q.hin)
+      [mos ..^$]
+    :: 
+        %foreign-plops
       ?>  ?=({@ @ @ @ ~} t.tea)
       =+  her=(slav %p i.t.t.tea)
       =*  syd  i.t.t.t.tea
@@ -4205,7 +4279,7 @@
         abet:(take-foreign-plops:den ?~(lem ~ `lem) result.q.hin)
       [mos ..^$]
     ::
-        $foreign-x
+        %foreign-x
       ?>  ?=({@ @ @ @ @ *} t.tea)
       =+  her=(slav %p i.t.t.tea)
       =+  syd=(slav %tas i.t.t.t.tea)
@@ -4221,7 +4295,7 @@
       [mos ..^$]
     ==
   ::
-      $mere
+      %mere
     ?:  ?=(%& -.p.+.q.hin)
       ~&  'initial merge succeeded'
       [~ ..^$]
@@ -4233,8 +4307,8 @@
         q.p.p.+.q.hin
     [~ ..^$]
   ::
-      $note  [[hen %give +.q.hin]~ ..^$]
-      $wake
+      %note  [[hen %give +.q.hin]~ ..^$]
+      %wake
     ::  TODO: handle behn errors
     ::
     ?^  error.q.hin
@@ -4262,7 +4336,7 @@
     ::
     (handle-task hen queued-task)
   ::
-      $writ
+      %writ
     ?>  ?=({@ @ *} tea)
     ~|  i=i.tea
     ~|  it=i.t.tea
@@ -4274,10 +4348,10 @@
         ==
     ==
   ::
-      $send
+      %send
     [[[hen %give +.q.hin] ~] ..^$]
   ::
-      $woot
+      %woot
     [~ ..^$]
     :: ?~  r.q.hin  [~ ..^$]
     :: ~&  [%clay-lost p.q.hin r.q.hin tea]
