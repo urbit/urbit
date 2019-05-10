@@ -392,7 +392,7 @@
           (render "on sync" sud her syd)
         ~
       start-sync
-    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
+    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::
@@ -625,7 +625,7 @@
         ?.  ?=($path p.pax)
           ~|  "strange path mark: {<p.pax>}"
           !!
-        [((hard path) q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
+        [;;(path q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
     :: ~&  >  kiln-made+[(turn can head) syd=syd +<.abet]
     =+  notated=(skid can |=({path a/(unit miso)} ?=(^ a)))
     =+  annotated=(turn `(list (pair path *))`-.notated head)

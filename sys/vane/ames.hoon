@@ -908,7 +908,7 @@
                   %none
                 ::  ~&  %chew-none
                 =.  puz  (bilk:puz now)
-                (chow ((hard meal) (cue msg)))
+                (chow ;;(meal (cue msg)))
               ::
                   %fast
                 ::  ~&  %chew-fast
@@ -919,24 +919,24 @@
                 ?~  dey  +>.$
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
-                (chow(aut sin) ((hard meal) (cue (dy:cub:sen:gus key bod))))
+                (chow(aut sin) ;;(meal (cue (dy:cub:sen:gus key bod))))
               ::
                   %full
                 ::  ~&  %chew-full
-                =/  mex  ((hard full:pact) (cue msg))
+                =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
-                =/  mes  ((hard (pair @ @)) (cue sem))
+                =/  mes  ;;((pair @ @) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
-                =/  mex  ((hard open:pact) (cue msg))
+                =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
@@ -1269,7 +1269,7 @@
       =/  task=task:able
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
-        ((hard task:able) p.wrapped-task)
+        ;;(task:able p.wrapped-task)
       =.  any.ton.fox  eny
       =^  duy  ..knob  (knob hen task)
       [duy ..^$]

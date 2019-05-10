@@ -3462,7 +3462,7 @@
       ++  sure                                          ::
         |=  txt=@
         ^-  (unit @ux)
-        =+  ((hard {sig/@ msg/@}) (cue txt))
+        =+  ;;({sig/@ msg/@} (cue txt))
         ?.  (veri:ed sig msg sgn.pub)  ~
         (some msg)
       ::                                                ::  ++seal:as:crub:
@@ -3483,7 +3483,7 @@
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
-        =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+        =+  ;;({iv/@ len/@ cph/@} (cue txt))
         =+  try=(~(de siva:aes shar ~) iv len cph)
         ?~  try  ~
         (sure:as:(com:nu:crub bpk) u.try)
@@ -3492,7 +3492,7 @@
     ++  de                                              ::  decrypt
       |=  {key/@J txt/@}
       ^-  (unit @ux)
-      =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+      =+  ;;({iv/@ len/@ cph/@} (cue txt))
       %^    ~(de sivc:aes (shaz key) ~)
           iv
         len
@@ -6353,7 +6353,7 @@
       |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem]
+      [(malt qix) ;;(cred ced) bem]
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
