@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Applicative
 import Control.Monad
-import Numeric.Natural
+import GHC.Natural
 import Data.Noun
 
 import Data.Word     (Word, Word32, Word64)

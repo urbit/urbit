@@ -2,6 +2,7 @@ module Data.Noun.Jam where
 
 import ClassyPrelude
 import Data.Noun
+import Data.Noun.Atom
 import Data.Noun.Poet
 import Data.Bits
 import Control.Lens
@@ -13,9 +14,6 @@ import Control.Monad (guard)
 
 jam :: Noun -> Atom
 jam = undefined
-
-bitWidth :: Atom -> Atom
-bitWidth = undefined
 
 bitIdx :: Atom -> Atom -> Bool
 bitIdx idx buf = testBit buf (fromIntegral idx)

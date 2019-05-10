@@ -6,7 +6,7 @@ import Prelude
 
 import Control.Applicative
 import Control.Monad
-import Numeric.Natural
+import Data.Noun.Atom
 import Data.Bits
 
 import Data.List     (intercalate)
@@ -16,8 +16,6 @@ import qualified Control.Monad.Fail as Fail
 
 
 -- Types -----------------------------------------------------------------------
-
-type Atom = Natural
 
 data Cell = ACell !Noun !Noun
   deriving (Eq, Ord)
