@@ -391,7 +391,7 @@
   ++  start-sync
     =>  (spam (render "finding ship and desk" sud her syd) ~)
     =/  =wire  /kiln/find-ship/[syd]/(scot %p her)/[sud]
-    (blab [ost %warp wire her sud `[%sing %y ud+2 /]] ~)
+    (blab [ost %warp wire her sud `[%sing %y ud+1 /]] ~)
   ::
   ++  take-find-ship
     |=  rot=riot
