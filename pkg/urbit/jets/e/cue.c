@@ -61,36 +61,37 @@
     return u3nt(p, q, 0);
   }
 
-  u3_noun
-  u3qe_cue(u3_atom a)
-  {
-    u3p(u3h_root) har_p = u3h_new();
+u3_noun
+u3qe_cue(u3_atom a)
+{
+  u3p(u3h_root) har_p = u3h_new();
 
-    u3_noun x = _cue_in(har_p, a, 0);
-    u3_noun y = u3k(u3h(u3t(x)));
+  u3_noun x = _cue_in(har_p, a, 0);
+  u3_noun y = u3k(u3h(u3t(x)));
 
-    u3h_free(har_p);
+  u3h_free(har_p);
 
-    u3z(x);
-    return y;
+  u3z(x);
+  return y;
+}
+
+u3_noun
+u3we_cue(u3_noun cor)
+{
+  u3_noun a;
+
+  if ( (u3_none == (a = u3r_at(u3x_sam, cor))) ) {
+    return u3m_bail(c3__fail);
+  } else {
+    return u3qe_cue(a);
   }
-  u3_noun
-  u3we_cue(u3_noun cor)
-  {
-    u3_noun a;
+}
 
-    if ( (u3_none == (a = u3r_at(u3x_sam, cor))) ) {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3qe_cue(a);
-    }
-  }
-  u3_noun
-  u3ke_cue(u3_atom a)
-  {
-    u3_noun b = u3qe_cue(a);
+u3_noun
+u3ke_cue(u3_atom a)
+{
+  u3_noun b = u3qe_cue(a);
 
-    u3z(a);
-    return b;
-  }
-
+  u3z(a);
+  return b;
+}
