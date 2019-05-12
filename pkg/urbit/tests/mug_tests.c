@@ -90,6 +90,8 @@ _test_mug(void)
       exit(1);
     }
   }
+
+  fprintf(stderr, "test_mug: ok\n");
 }
 
 /* main(): run all test cases.
