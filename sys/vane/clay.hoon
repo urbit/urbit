@@ -2462,22 +2462,40 @@
   ::  foreign ship.
   ::
   ++  duce                                              ::  produce request
-    |=  wov/wove
+    |=  wov=wove
     ^+  +>
+    =/  print-wove
+      |=  =wove
+      :-  p.wove
+      ?-  -.q.wove
+        %sing  [%sing p.q.wove]
+        %next  [%next [p q]:q.wove]
+        %mult  [%mult [p q]:q.wove]
+        %many  [%many [p q]:q.wove]
+      ==
+    =/  print-cult
+      |=  =cult
+      %+  turn  ~(tap by cult)
+      |=  [=wove ducts=(set duct)]
+      [ducts (print-wove wove)]
+    ~&  [%duce-1 wov=(print-wove wov) qyx=(print-cult qyx)]
     =.  wov  (dedupe wov)
+    ~&  [%duce-2 wov=(print-wove wov) qyx=(print-cult qyx)]
     =.  qyx  (~(put ju qyx) wov hen)
+    ~&  [%duce-3 wov=(print-wove wov) qyx=(print-cult qyx)]
     ?~  ref
       (mabe q.wov |=(@da (bait hen +<)))
-    |-  ^+  +>+.$
+    ~&  [%duce-4 wov=(print-wove wov) qyx=(print-cult qyx)]
+    |-  ^+  +>+>+.$
     =+  rav=(reve q.wov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=({$sing $v *} rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    =.  +>+.$
+    =.  +>+>+.$
       =<  ?>(?=(^ ref) .)
       (send-over-ames hen [(scot %ud inx) ~] her inx syd ~ vaw)
-    %=  +>+.$
+    %=  +>+>+.$
       nix.u.ref  +(nix.u.ref)
       bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -2826,11 +2844,11 @@
     |=  [mos=(list move) =dome =rang]
     ^+  +>
     =.  +>.$  (emil mos)
-    =.  +>.$  wake
     =:  dom      dome
         hut.ran  (~(uni by hut.ran) hut.rang)
         lat.ran  (~(uni by lat.ran) lat.rang)
       ==
+    =.  +>.$  wake
     finish-write
   ::
   ::  Continue merging
@@ -2874,13 +2892,29 @@
     ^+  +>
     =.  +>.$  (emil mos)
     =.  +>.$  (emit [hen %give %mere %& conflicts])
+    =/  print-wove
+      |=  =wove
+      :-  p.wove
+      ?-  -.q.wove
+        %sing  [%sing p.q.wove]
+        %next  [%next [p q]:q.wove]
+        %mult  [%mult [p q]:q.wove]
+        %many  [%many [p q]:q.wove]
+      ==
+    =/  print-cult
+      |=  =cult
+      %+  turn  ~(tap by cult)
+      |=  [=wove ducts=(set duct)]
+      [ducts (print-wove wove)]
+    ~&  [%done-moves-qyx-1 qyx=(print-cult qyx)]
     ~&  [%done-moves-1 (turn mow |=(=move [- +<]:move))]
-    =.  +>.$  wake
+    ~&  [%done-moves-qyx-2 qyx=(print-cult qyx)]
     ~&  [%done-moves-2 (turn mow |=(=move [- +<]:move))]
     =:  dom      dome
         hut.ran  (~(uni by hut.ran) hut.rang)
         lat.ran  (~(uni by lat.ran) lat.rang)
       ==
+    =.  +>.$  wake
     finish-write
   ::
   ::  Start next item in write queue
@@ -3284,6 +3318,7 @@
     ?-    -.rov
         $sing
       =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.rov))
+      ~&  [%wake-sing-cas cas]
       ?^  cas
         %=    $
             xiq  t.xiq
@@ -3291,16 +3326,19 @@
                     (blab-all q.i.xiq p.rov %& u.u.cas)
         ==
       =+  nao=(case-to-aeon q.p.rov)
+      ~&  [%wake-sing-nao q.p.rov nao]
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
       ::  ~&  %reading-at-aeon
       =+  vid=(read-at-aeon:ze for u.nao p.rov)
       ::  ~&  %red-at-aeon
       ?~  vid
+        ~&  [%wake-sing-vid-null]
         ::  ?:  =(0 u.nao)
         ::    ~&  [%oh-poor `path`[syd '0' r.p.rov]]
         ::    $(xiq t.xiq)
         ::  ~&  [%oh-well desk=syd mood=p.rov aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
+      ~&  [%wake-sing-vid-non-null]
       $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.rov))
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
