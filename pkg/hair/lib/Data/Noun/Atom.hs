@@ -20,6 +20,9 @@ newtype Atom = Atom Natural
 instance Show Atom where
   show (Atom a) = show a
 
+{-
+  An Atom with a bit-offset.
+-}
 data Cursor = Cursor
     { _cOffset :: {-# UNPACK #-} !Int
     , _cBuffer :: {-# UNPACK #-} !Atom
@@ -37,6 +40,10 @@ makeLenses ''Cursor
 makeLenses ''Slice
 
 --------------------------------------------------------------------------------
+
+{-
+  TODO Support 32-bit archetectures.
+-}
 
 wordBitWidth :: Word# -> Word#
 wordBitWidth w = minusWord# 64## (clz# w)
