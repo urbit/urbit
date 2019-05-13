@@ -2478,14 +2478,10 @@
       %+  turn  ~(tap by cult)
       |=  [=wove ducts=(set duct)]
       [ducts (print-wove wove)]
-    ~&  [%duce-1 wov=(print-wove wov) qyx=(print-cult qyx)]
     =.  wov  (dedupe wov)
-    ~&  [%duce-2 wov=(print-wove wov) qyx=(print-cult qyx)]
     =.  qyx  (~(put ju qyx) wov hen)
-    ~&  [%duce-3 wov=(print-wove wov) qyx=(print-cult qyx)]
     ?~  ref
       (mabe q.wov |=(@da (bait hen +<)))
-    ~&  [%duce-4 wov=(print-wove wov) qyx=(print-cult qyx)]
     |-  ^+  +>+>+.$
     =+  rav=(reve q.wov)
     =+  ^=  vaw  ^-  rave
@@ -2689,15 +2685,11 @@
     ^+  +>
     ?-    -.rav
         $sing
-      ~&  [%sing for rav]
       =+  ver=(aver for p.rav)
       ?~  ver
-        ~&  [%sing-duce for rav]
         (duce for rav)
       ?~  u.ver
-        ~&  [%sing-blub for rav]
         (blub hen)
-      ~&  [%sing-blab for rav]
       (blab hen p.rav u.u.ver)
     ::
     ::  for %mult and %next, get the data at the specified case, then go forward
@@ -2892,24 +2884,6 @@
     ^+  +>
     =.  +>.$  (emil mos)
     =.  +>.$  (emit [hen %give %mere %& conflicts])
-    =/  print-wove
-      |=  =wove
-      :-  p.wove
-      ?-  -.q.wove
-        %sing  [%sing p.q.wove]
-        %next  [%next [p q]:q.wove]
-        %mult  [%mult [p q]:q.wove]
-        %many  [%many [p q]:q.wove]
-      ==
-    =/  print-cult
-      |=  =cult
-      %+  turn  ~(tap by cult)
-      |=  [=wove ducts=(set duct)]
-      [ducts (print-wove wove)]
-    ~&  [%done-moves-qyx-1 qyx=(print-cult qyx)]
-    ~&  [%done-moves-1 (turn mow |=(=move [- +<]:move))]
-    ~&  [%done-moves-qyx-2 qyx=(print-cult qyx)]
-    ~&  [%done-moves-2 (turn mow |=(=move [- +<]:move))]
     =:  dom      dome
         hut.ran  (~(uni by hut.ran) hut.rang)
         lat.ran  (~(uni by lat.ran) lat.rang)
@@ -3318,7 +3292,6 @@
     ?-    -.rov
         $sing
       =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.rov))
-      ~&  [%wake-sing-cas cas]
       ?^  cas
         %=    $
             xiq  t.xiq
@@ -3326,19 +3299,16 @@
                     (blab-all q.i.xiq p.rov %& u.u.cas)
         ==
       =+  nao=(case-to-aeon q.p.rov)
-      ~&  [%wake-sing-nao q.p.rov nao]
       ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
       ::  ~&  %reading-at-aeon
       =+  vid=(read-at-aeon:ze for u.nao p.rov)
       ::  ~&  %red-at-aeon
       ?~  vid
-        ~&  [%wake-sing-vid-null]
         ::  ?:  =(0 u.nao)
         ::    ~&  [%oh-poor `path`[syd '0' r.p.rov]]
         ::    $(xiq t.xiq)
         ::  ~&  [%oh-well desk=syd mood=p.rov aeon=u.nao]
         $(xiq t.xiq, xaq [i.xiq xaq])
-      ~&  [%wake-sing-vid-non-null]
       $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.rov))
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
@@ -3900,13 +3870,12 @@
   ::
   ::  only one of these should be going at once, so queue
   ::
-  ?:  ?=(?(%info %into %merg) -.req)
+  ?:  ?=(?(%info %merg) -.req)
     ::  If there's an active write or a queue, enqueue
     ::
     ::    We only want one active write so each can be a clean
     ::    transaction.
     ::
-    ~&  [%clall-1 our]
     ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
       =.  cue.ruf  (~(put to cue.ruf) [hen req])
       ~&  :*  %clall-enqueing
@@ -3922,23 +3891,17 @@
     ::    Without this, two commits could have the same date, which
     ::    would make clay violate referential transparency.
     ::
-    ~&  [%clall-2 our]
     =/  =desk  des.req
     =/  =dojo  (fall (~(get by dos.rom.ruf) desk) *dojo)
     ?:  =(0 let.dom.dojo)
-      ~&  [%clall-3 our]
       (handle-task hen req)
-    ~&  [%clall-4 our]
     =/  sutil  (state:util dom.dojo dom.dojo ran.ruf) 
     =/  last-write=@da  t:(aeon-to-yaki:sutil let.dom.dojo)
     ?:  !=(last-write now)
-      ~&  [%clall-5 our]
       (handle-task hen req)
-    ~&  [%clall-6 our]
     =.  cue.ruf  (~(put to cue.ruf) [hen req])
     =/  wait-behn  [hen %pass /queued-request %b %wait now]
     [[wait-behn ~] ..^$]
-  ~&  [%clall-7 our]
   (handle-task hen req)
 ::
 ++  handle-task
@@ -4022,7 +3985,6 @@
     [mos ..^$]
   ::
       %init
-    ~&  [%init hen]
     [~ ..^$(hun.rom.ruf hen)]
   ::
       %into
@@ -4280,10 +4242,8 @@
 ::
 ++  stay  [%1 ruf]
 ++  take                                              ::  accept response
-  ~&  [%ctake-pull our]
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  ~&  [%ctake-1 our tea]
   ?:  ?=({$commit @ ~} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
@@ -4371,7 +4331,6 @@
       %wake
     ::  TODO: handle behn errors
     ::
-    ~&  [%cwake-1 our tea]
     ?^  error.q.hin
       [[hen %slip %d %flog %crud %wake u.error.q.hin]~ ..^$]
     ::
@@ -4382,12 +4341,10 @@
     ::  from ++bait, then I don't think we have any handling for that
     ::  sort of thing.
     ::
-    ~&  [%cwake-2 our tea]
     =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
     =/  queued-duct=duct       -.queued
     =/  queued-task=task:able  +.queued
-    ~&  [%cwake-3 our tea]
     ::
     ::  ~&  :*  %clay-waking
     ::          queued-duct
@@ -4395,11 +4352,8 @@
     ::          ?~(cue.ruf /empty -:(need ~(top to cue.ruf)))
     ::      ==
     ~|  [%mismatched-ducts %queued queued-duct %timer hen]
-    ~&  [%cwake-4 our tea]
     ?>  =(hen queued-duct)
     ::
-    ~&  [%cwake-5 our tea]
-    ~&  [%going hen -.queued-task]
     (handle-task hen queued-task)
   ::
       %writ

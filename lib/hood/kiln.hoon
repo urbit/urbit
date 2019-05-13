@@ -395,7 +395,7 @@
   ::
   ++  take-find-ship
     |=  rot=riot
-    =>  (spam (render "activated {<rot>} sync" sud her syd) ~)
+    =>  (spam (render "activated sync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     (blab [ost %warp wire her sud `[%sing %w [%da now] /]] ~)
   ::
@@ -408,9 +408,7 @@
           (render "on sync" sud her syd)
         ~
       start-sync
-    ~&  kiln-writ-let-a=let
     =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
-    ~&  kiln-writ-let-b=let
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::

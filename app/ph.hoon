@@ -166,14 +166,13 @@
         ;<  ~        bind:m  (just-events (dojo ~bud "|sync %base ~dev %kids"))
         ;<  file=@t  bind:m  (touch-file ~dev %base)
         (check-file-touched ~bud %home file)
-        ::  ;<  ~        bind:m  (check-file-touched ~bud %home file)
-        ::  (just-events (dojo ~bud "|verb"))
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~dev ~bud)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  ~        bind:m  (just-events (dojo ~dev "|merge %base ~bud %kids, =gem %this"))
         ;<  file=@t  bind:m  (touch-file ~dev %base)
         ;<  file=@t  bind:m  (touch-file ~dev %base)
         (check-file-touched ~bud %home file)
