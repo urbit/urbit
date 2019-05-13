@@ -3,6 +3,19 @@
 */
 #include "all.h"
 
+#define CUE_ROOT 0
+#define CUE_HEAD 1
+#define CUE_TAIL 2
+
+//  stack frame for record head vs tail iteration
+//
+//    In Hoon, this structure would be as follows:
+//
+//    $%  [%root ~]
+//        [%head cell-cursor=@]
+//        [%tail cell-cursor=@ hed-width=@ hed-value=@]
+//    ==
+//
 typedef struct cueframe
 {
   c3_y    tag_y;
@@ -47,15 +60,12 @@ _cue_pop(c3_ys mov, c3_ys off)
   return *fam_u;
 }
 
-#define CUE_ROOT 0
-#define CUE_HEAD 1
-#define CUE_TAIL 2
-
 u3_noun
 u3qe_cue(u3_atom a)
 {
+  //  initialize signed stack offsets (relative to north/south road)
+  //
   c3_ys mov, off;
-
   {
     c3_y wis_y = c3_wiseof(cueframe);
     c3_o nor_o = u3a_is_north(u3R);
@@ -63,17 +73,27 @@ u3qe_cue(u3_atom a)
     off = ( c3y == nor_o ? 0 : -wis_y );
   }
 
+  //  initialize a hash table for dereference backrefs
+  //
   u3p(u3h_root) har_p = u3h_new();
 
   //  stash the current stack post
   //
   u3p(cueframe) cap_p = u3R->cap_p;
+
+  //  push the (only) ROOT stack frame (our termination condition)
+  //
   _cue_push(mov, off, CUE_ROOT, 0, 0, 0);
 
+  // initialize cursor to bit-position 0
+  //
   u3_atom cur = 0;
+
+  //  the bitwidth and produce from reading at cursor
+  //
   u3_atom wid, pro;
 
-  //  read from atom at at cursor
+  //  read from atom at cursor
   //  push on to the stack and continue (cell-head recursion)
   //  or set .wid and .pro and goto give
   //  TRANSFER .cur
@@ -83,7 +103,7 @@ u3qe_cue(u3_atom a)
     //
     c3_y tag_y = u3qc_cut(0, cur, 1, a);
 
-    //  low bit unset, cursor points to an atom
+    //  low bit unset, (1 + cur) points to an atom
     //
     if ( 0 == tag_y ) {
       u3_noun bur;
@@ -109,7 +129,7 @@ u3qe_cue(u3_atom a)
       u3z(x);
     }
 
-    //  next bit set, cursor points to a backreference
+    //  next bit set, (2 + cur) points to a backref
     //
     if ( 1 == tag_y ) {
       u3_noun bur;
@@ -131,7 +151,7 @@ u3qe_cue(u3_atom a)
       goto give;
     }
 
-    //  next bit unset, cursor points to a cell
+    //  next bit unset, (2 + cur) points to the head of a cell
     //
     {
       _cue_push(mov, off, CUE_HEAD, cur, 0, 0);
@@ -145,6 +165,7 @@ u3qe_cue(u3_atom a)
   //  push on to the stack and goto pass (cell-tail recursion)
   //  or pop the stack and continue (goto give)
   //  TRANSFER .wid, .pro, and contents of .fam_u
+  //  NOTE: .cur is in scope, but we have already lost our reference to it
   //
   give: {
     cueframe fam_u = _cue_pop(mov, off);
@@ -154,10 +175,15 @@ u3qe_cue(u3_atom a)
         c3_assert(0);
       }
 
+      //  fam_u is our stack root, we're done
+      //
       case CUE_ROOT: {
         break;
       }
 
+      //  .wid and .pro are the head of the cell at fam_u.cur,
+      //  save them on the stack, set the cursor to the tail and rad
+      //
       case CUE_HEAD: {
         _cue_push(mov, off, CUE_TAIL, fam_u.cur, wid, pro);
 
@@ -165,6 +191,10 @@ u3qe_cue(u3_atom a)
         goto pass;
       }
 
+      //  .wid and .pro are the tail of the cell at fam_u.cur,
+      //  cons up the cell (and memoize), calculate its total width,
+      //  and "give" the new value
+      //
       case CUE_TAIL: {
         pro = u3nc(fam_u.hed, pro);
         u3h_put(har_p, fam_u.cur, u3k(pro));
