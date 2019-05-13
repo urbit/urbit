@@ -89,14 +89,13 @@ u3qe_cue(u3_atom a)
   //
   u3_atom cur = 0;
 
-  //  the bitwidth and produce from reading at cursor
+  //  the bitwidth and product from reading at cursor
   //
   u3_atom wid, pro;
 
   //  read from atom at cursor
-  //  push on to the stack and continue (cell-head recursion)
-  //  or set .wid and .pro and goto give
-  //  TRANSFER .cur
+  //
+  //    TRANSFER .cur
   //
   pass: {
     //  read tag bit at cur
@@ -104,6 +103,8 @@ u3qe_cue(u3_atom a)
     c3_y tag_y = u3qc_cut(0, cur, 1, a);
 
     //  low bit unset, (1 + cur) points to an atom
+    //
+    //    produce atom and the width we read
     //
     if ( 0 == tag_y ) {
       u3_noun bur;
@@ -131,6 +132,8 @@ u3qe_cue(u3_atom a)
 
     //  next bit set, (2 + cur) points to a backref
     //
+    //    produce referenced value and the width we read
+    //
     if ( 1 == tag_y ) {
       u3_noun bur;
       {
@@ -153,6 +156,8 @@ u3qe_cue(u3_atom a)
 
     //  next bit unset, (2 + cur) points to the head of a cell
     //
+    //    push a frame to mark HEAD recursion and read the head
+    //
     {
       _cue_push(mov, off, CUE_HEAD, cur, 0, 0);
 
@@ -161,11 +166,10 @@ u3qe_cue(u3_atom a)
     }
   }
 
-  //  pop off the stack and read from .wid and .pro
-  //  push on to the stack and goto pass (cell-tail recursion)
-  //  or pop the stack and continue (goto give)
-  //  TRANSFER .wid, .pro, and contents of .fam_u
-  //  NOTE: .cur is in scope, but we have already lost our reference to it
+  //  consume: popped stack frame, .wid and .pro from above.
+  //
+  //    TRANSFER .wid, .pro, and contents of .fam_u
+  //    (.cur is in scope, but we have already lost our reference to it)
   //
   give: {
     cueframe fam_u = _cue_pop(mov, off);
@@ -175,14 +179,15 @@ u3qe_cue(u3_atom a)
         c3_assert(0);
       }
 
-      //  fam_u is our stack root, we're done
+      //  fam_u is our stack root, we're done.
       //
       case CUE_ROOT: {
         break;
       }
 
-      //  .wid and .pro are the head of the cell at fam_u.cur,
-      //  save them on the stack, set the cursor to the tail and rad
+      //  .wid and .pro are the head of the cell at fam_u.cur.
+      //  save them (and the cell cursor) in a TAIL frame,
+      //  set the cursor to the tail and read there.
       //
       case CUE_HEAD: {
         _cue_push(mov, off, CUE_TAIL, fam_u.cur, wid, pro);
@@ -192,8 +197,8 @@ u3qe_cue(u3_atom a)
       }
 
       //  .wid and .pro are the tail of the cell at fam_u.cur,
-      //  cons up the cell (and memoize), calculate its total width,
-      //  and "give" the new value
+      //  construct the cell, memoize it, and produce it along with
+      //  its total width (as if it were a read from above).
       //
       case CUE_TAIL: {
         pro = u3nc(fam_u.hed, pro);
