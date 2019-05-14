@@ -15,7 +15,7 @@ worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
-all_exes = ./hash_tests ./hashtable_tests ./urbit ./urbit-worker
+all_exes = ./mug_tests jam_tests ./hashtable_tests ./urbit ./urbit-worker
 
 
 # -Werror promotes all warnings that are enabled into errors (this is on)
@@ -29,11 +29,12 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-all: urbit urbit-worker hashtable_tests hash_tests
+all: urbit urbit-worker hashtable_tests jam_tests mug_tests
 
-test: hashtable_tests hash_tests
+test: hashtable_tests jam_tests mug_tests
 	./hashtable_tests
-	./hash_tests
+	./jam_tests
+	./mug_tests
 
 clean:
 	rm -f ./tags $(all_objs) $(all_exes)
@@ -47,7 +48,11 @@ hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-hash_tests: $(common_objs) tests/hash_tests.o
+jam_tests: $(common_objs) tests/jam_tests.o
+	@echo CC -o $@
+	@$(CC) $^ $(LDFLAGS) -o $@
+
+mug_tests: $(common_objs) tests/mug_tests.o
 	@echo CC -o $@
 	@$(CC) $^ $(LDFLAGS) -o $@
 
