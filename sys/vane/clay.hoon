@@ -2261,7 +2261,7 @@
   ::
   ++  emil
     |=  mof/(list move)
-    %_(+> mow (weld mof mow))
+    %_(+> mow (weld (flop mof) mow))
   ::
   ::  Produce either null or a result along a subscription.
   ::
