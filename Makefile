@@ -1,4 +1,4 @@
-.PHONY: build build-all install cross release test clean
+.PHONY: build build-all install cross release test pills clean
 
 build:
 	nix-build -A urbit -A herb --no-out-link
@@ -17,6 +17,10 @@ release:
 
 test:
 	sh/test
+
+pills:
+	sh/update-solid-pill
+	sh/update-brass-pill
 
 clean:
 	rm -rf ./out ./work

@@ -383,11 +383,23 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
 
   u3_noun pox = _http_req_to_duct(req_u);
 
-  u3_pier_plan(pox, u3nq(u3i_string("request"),
-                         req_u->hon_u->htp_u->sec,
-                         u3nc(c3__ipv4,
-                              u3i_words(1, &req_u->hon_u->ipf_w)),
-                         req));
+  if ( c3y == req_u->hon_u->htp_u->lop ) {
+    u3_pier_plan(pox, u3nq(u3i_string("request-local"),
+                           //  XX automatically secure too?
+                           //
+                           req_u->hon_u->htp_u->sec,
+                           u3nc(c3__ipv4,
+                                u3i_words(1, &req_u->hon_u->ipf_w)),
+                           req));
+
+  }
+  else {
+    u3_pier_plan(pox, u3nq(u3i_string("request"),
+                           req_u->hon_u->htp_u->sec,
+                           u3nc(c3__ipv4,
+                                u3i_words(1, &req_u->hon_u->ipf_w)),
+                           req));
+  }
 }
 
 /* _http_hgen_dispose(): dispose response generator and buffers
@@ -646,7 +658,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
     req_u->tim_u->data = req_u;
     uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 300 * 1000, 0);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
   }
@@ -1317,7 +1329,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   // enable ALPN for HTTP 2 support
-#if H2O_USE_ALPN
+#if 0 //H2O_USE_ALPN
   {
     SSL_CTX_set_ecdh_auto(tls_u, 1);
     h2o_ssl_register_alpn_protocols(tls_u, h2o_http2_alpn_protocols);
@@ -1778,6 +1790,18 @@ u3_http_ef_form(u3_noun fig)
   u3_Host.fig_u.for_u = for_u;
 
   _http_serv_restart();
+
+  //  The control server has now started.
+  //
+  //    If we're in daemon mode, we need to inform the parent process
+  //    that we've finished booting.
+  //
+  //    XX using this effect is a terrible heuristic;
+  //    "fully booted" should be formalized.
+  //
+  if (u3_Host.bot_f) {
+    u3_Host.bot_f();
+  }
 }
 
 /* u3_http_io_init(): initialize http I/O.
@@ -2606,7 +2630,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     //  XX how long?
     //
     uv_timer_init(u3L, &rev_u->tim_u);
-    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 300 * 1000, 0);
+    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 600 * 1000, 0);
   }
 
   u3z(sip);
