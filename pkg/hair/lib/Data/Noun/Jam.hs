@@ -10,11 +10,45 @@ import Control.Lens
 import Data.Map      (Map)
 import Control.Monad (guard)
 
+import Test.Tasty
+import Test.Tasty.TH
+import Test.Tasty.QuickCheck as QC
+import Test.QuickCheck
+
 --------------------------------------------------------------------------------
 
 jam :: Noun -> Atom
-jam = undefined
+jam = view _2 . go 0 mempty
+  where
+    go :: Int -> Map Noun Int -> Noun -> (Int, Atom, Map Noun Int)
+    go idx tbl noun =
+      over _3 (insertMap noun idx) $
+      case (lookup noun tbl, noun) of
+          (Just ref, Atom atm) | bitWidth atm <= bitWidth (toAtom ref) ->
+              (1+sz, shiftL res 1, tbl)
+                where (sz, res) = mat atm
+          (Just ref, _) ->
+              (2+sz, xor 3 (shiftL res 2), tbl)
+                where (sz, res) = mat (toAtom ref)
+          (Nothing, Atom atm) ->
+              (1+sz, shiftL res 1, tbl)
+                where (sz, res) = mat atm
+          (Nothing, Cell lef rit) ->
+            (2+lSz+rSz, xor 1 (shiftL (bitConcat lRes rRes) 2), rTbl)
+              where (lSz, lRes, lTbl) = go (idx+2)   tbl  lef
+                    (rSz, rRes, rTbl) = go (idx+lSz) lTbl rit
 
+mat :: Atom -> (Int, Atom)
+mat 0 = (1, 1)
+mat atm = (bufWid, buffer)
+  where
+    atmWid = bitWidth atm
+    preWid = bitWidth (toAtom atmWid)
+    bufWid = preWid + preWid + atmWid
+    prefix = 2 ^ toAtom preWid
+    suffix = xor (takeBits (preWid-1) $ toAtom bufWid)
+                 (shiftL atm (preWid-1))
+    buffer = bitConcat suffix prefix
 leadingZeros :: Cursor -> Maybe Int
 leadingZeros (Cursor idx buf) = go 0
   where wid  = bitWidth buf
@@ -51,8 +85,58 @@ cue buf = view _2 <$> go mempty 0
                               r <- lookup (fromIntegral at) tbl
                               pure (2+wid, r, tbl)
 
+pills :: [Atom]
+pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
+        , 0x3170_c7c1, 0x93_c7c1, 0x1bd5_b7dd_e080
+        ]
+
 cueTest :: Maybe [Noun]
-cueTest =
-  traverse cue [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
-               , 0x3170_c7c1, 0x93_c7c1, 0x1bd5_b7dd_e080
-               ]
+cueTest = traverse cue pills
+
+jamTest :: Maybe [Atom]
+jamTest = fmap jam <$> cueTest
+
+prop_jamRoundTrip :: Noun -> Bool
+prop_jamRoundTrip n = Just n == cue (jam n)
+
+main :: IO ()
+main = $(defaultMainGenerator)
+
+--    ?:  =(0 a)
+--      [1 1]
+--    =+  b=(met 0 a)
+--    =+  c=(met 0 b)
+--    :-  (add (add c c) b)
+--    (cat 0 (bex c) (mix (end 0 (dec c) b) (lsh 0 (dec c) a)))
+
+--    |=  a/@
+--    ^-  {p/@ q/@}
+--    ?:  =(0 a)
+--      [1 1]
+--    =+  b=(met 0 a)
+--    =+  c=(met 0 b)
+--    :-  (add (add c c) b)
+--    (cat 0 (bex c) )
+
+--  ++  jam
+--    |=  a/*
+--    ^-  @
+--    =+  b=0
+--    =+  m=`(map * @)`~
+--    =<  q
+--    |-  ^-  {p/@ q/@ r/(map * @)}
+--    =+  c=(~(get by m) a)
+--    ?~  c
+--      =>  .(m (~(put by m) a b))
+--      ?:  ?=(@ a)
+--        =+  d=(mat a)
+--        [(add 1 p.d) (lsh 0 1 q.d) m]
+--      =>  .(b (add 2 b))
+--      =+  d=$(a -.a)
+--      =+  e=$(a +.a, b (add b p.d), m r.d)
+--      [(add 2 (add p.d p.e)) (mix 1 (lsh 0 2 (cat 0 q.d q.e))) r.e]
+--    ?:  ?&(?=(@ a) (lte (met 0 a) (met 0 u.c)))
+--      =+  d=(mat a)
+--      [(add 1 p.d) (lsh 0 1 q.d) m]
+--    =+  d=(mat u.c)
+--    [(add 2 p.d) (mix 3 (lsh 0 2 q.d)) m]

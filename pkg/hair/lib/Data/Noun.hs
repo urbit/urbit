@@ -1,5 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 module Data.Noun where
 
 import Prelude
@@ -8,6 +6,8 @@ import Control.Applicative
 import Control.Monad
 import Data.Noun.Atom (Atom)
 import Data.Bits
+import GHC.Generics
+import Test.QuickCheck.Arbitrary
 
 import Data.List     (intercalate)
 import Data.Typeable (Typeable)
@@ -39,6 +39,23 @@ instance Show Noun where
     where
       fmtCell :: [String] -> String
       fmtCell xs = "[" <> intercalate " " xs <> "]"
+
+instance Arbitrary Noun where
+  arbitrary = do
+    arbitrary >>= \case
+      True  -> Atom <$> arbitrary
+      False -> Cell <$> (Atom <$> arbitrary) <*> (Atom <$> arbitrary)
+
+
+-- Predicates ------------------------------------------------------------------
+
+isAtom :: Noun -> Bool
+isAtom (Atom _)   = True
+isAtom (Cell _ _) = False
+
+isCell :: Noun -> Bool
+isCell (Atom _)   = False
+isCell (Cell _ _) = True
 
 
 -- Tuples ----------------------------------------------------------------------

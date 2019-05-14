@@ -4,16 +4,15 @@ import Prelude
 
 import Control.Applicative
 import Control.Monad
-import GHC.Natural
 import Data.Noun
+import Data.Noun.Atom
+import GHC.Natural
 
 import Data.List      (intercalate)
-import Data.Noun.Atom (Atom)
 import Data.Typeable  (Typeable)
 import Data.Word      (Word, Word32, Word64)
 
 import qualified Control.Monad.Fail as Fail
-import qualified Data.Noun.Atom     as Atom
 
 
 -- IResult ---------------------------------------------------------------------
@@ -160,7 +159,7 @@ instance ToNoun Atom where
   toNoun = Atom
 
 instance ToNoun Natural where
-  toNoun = toNoun . Atom.Atom
+  toNoun = toNoun . toAtom
 
 
 -- Cell Conversion -------------------------------------------------------------

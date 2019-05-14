@@ -58,10 +58,11 @@ default-extensions:
   - ApplicativeDo
   - BangPatterns
   - BlockArguments
+  - DeriveDataTypeable
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
-  - DeriveDataTypeable
+  - DerivingStrategies
   - EmptyDataDecls
   - FlexibleContexts
   - FlexibleInstances

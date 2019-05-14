@@ -11,14 +11,16 @@ import GHC.Prim
 import GHC.Word
 import GHC.Int
 import Data.Bits
+import Test.QuickCheck.Arbitrary
+import Test.QuickCheck.Gen
 
 --------------------------------------------------------------------------------
 
-newtype Atom = Atom Natural
-  deriving (Eq, Ord, Num, Bits, Enum, Real, Integral)
+newtype Atom = MkAtom Natural
+  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral)
 
 instance Show Atom where
-  show (Atom a) = show a
+  show (MkAtom a) = show a
 
 {-
   An Atom with a bit-offset.
@@ -39,6 +41,28 @@ data Slice = Slice
 makeLenses ''Cursor
 makeLenses ''Slice
 
+
+-- Instances -------------------------------------------------------------------
+
+instance Arbitrary Atom where
+  arbitrary = MkAtom . fromIntegral . abs <$> (arbitrary :: Gen Integer)
+
+
+-- Conversion ------------------------------------------------------------------
+
+class IsAtom a where
+  toAtom   :: a -> Atom
+  fromAtom :: Atom -> a
+
+instance IsAtom Int where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
+
+instance IsAtom Natural where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
+
+
 --------------------------------------------------------------------------------
 
 {-
@@ -56,8 +80,8 @@ bigNatBitWidth nat =
     lswBits          = wordBitWidth (indexBigNat# nat lastIdx)
 
 bitWidth :: Atom -> Int
-bitWidth (Atom (NatS# gl)) = I# (word2Int# (wordBitWidth gl))
-bitWidth (Atom (NatJ# bn)) = I# (word2Int# (bigNatBitWidth bn))
+bitWidth (MkAtom (NatS# gl)) = I# (word2Int# (wordBitWidth gl))
+bitWidth (MkAtom (NatJ# bn)) = I# (word2Int# (bigNatBitWidth bn))
 
 
 --------------------------------------------------------------------------------
@@ -74,18 +98,26 @@ bumpCursor off = over cOffset (+ fromIntegral off)
 
 --------------------------------------------------------------------------------
 
-slice :: Atom -> Atom -> Atom -> Slice
-slice offset size buf = Slice (fromIntegral offset) (fromIntegral size) buf
+slice :: (Atom, Atom) -> Atom -> Atom
+slice (offset, size) buf =
+  fromSlice (Slice (fromAtom offset) (fromAtom size) buf)
 
 fromSlice :: Slice -> Atom
 fromSlice (Slice off wid buf) = mask .&. (shiftR buf off)
-  where mask = shiftL (Atom 1) wid - 1
+  where mask = shiftL (MkAtom 1) wid - 1
+
 
 --------------------------------------------------------------------------------
 
-takeBits :: Atom -> Atom -> Atom
+takeBits :: Int -> Atom -> Atom
 takeBits wid buf = mask .&. buf
-  where mask = shiftL (Atom 1) (fromIntegral wid) - 1
+  where mask = shiftL (MkAtom 1) wid - 1
 
 bitIdx :: Int -> Atom -> Bool
-bitIdx idx buf = testBit buf (fromIntegral idx)
+bitIdx idx buf = testBit buf idx
+
+bitConcat :: Atom -> Atom -> Atom
+bitConcat x y = low .|. high
+  where
+    low  = y
+    high = shiftL y (bitWidth x)
