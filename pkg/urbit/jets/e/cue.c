@@ -7,7 +7,7 @@
 #define CUE_HEAD 1
 #define CUE_TAIL 2
 
-//  stack frame for record head vs tail iteration
+//  stack frame for recording head vs tail iteration
 //
 //    In Hoon, this structure would be as follows:
 //
@@ -97,7 +97,7 @@ u3qe_cue(u3_atom a)
   //
   //    TRANSFER .cur
   //
-  pass: {
+  read: {
     //  read tag bit at cur
     //
     c3_y tag_y = u3qc_cut(0, cur, 1, a);
@@ -119,7 +119,7 @@ u3qe_cue(u3_atom a)
       wid = u3qa_inc(u3h(bur));
 
       u3z(bur);
-      goto give;
+      goto take;
     }
 
     //  read tag bit at (1 + cur)
@@ -151,7 +151,7 @@ u3qe_cue(u3_atom a)
       wid = u3qa_add(2, u3h(bur));
 
       u3z(bur);
-      goto give;
+      goto take;
     }
 
     //  next bit unset, (2 + cur) points to the head of a cell
@@ -162,7 +162,7 @@ u3qe_cue(u3_atom a)
       _cue_push(mov, off, CUE_HEAD, cur, 0, 0);
 
       cur = u3qa_add(2, cur);
-      goto pass;
+      goto read;
     }
   }
 
@@ -171,7 +171,7 @@ u3qe_cue(u3_atom a)
   //    TRANSFER .wid, .pro, and contents of .fam_u
   //    (.cur is in scope, but we have already lost our reference to it)
   //
-  give: {
+  take: {
     cueframe fam_u = _cue_pop(mov, off);
 
     switch ( fam_u.tag_y ) {
@@ -193,7 +193,7 @@ u3qe_cue(u3_atom a)
         _cue_push(mov, off, CUE_TAIL, fam_u.cur, wid, pro);
 
         cur = u3ka_add(2, u3qa_add(wid, fam_u.cur));
-        goto pass;
+        goto read;
       }
 
       //  .wid and .pro are the tail of the cell at fam_u.cur,
@@ -204,7 +204,7 @@ u3qe_cue(u3_atom a)
         pro = u3nc(fam_u.hed, pro);
         u3h_put(har_p, fam_u.cur, u3k(pro));
         wid = u3ka_add(2, u3ka_add(wid, fam_u.wid));
-        goto give;
+        goto take;
       }
     }
   }
