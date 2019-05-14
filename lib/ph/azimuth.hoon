@@ -114,10 +114,10 @@
       :_  ~
       :*  %event
           who.pin
-          //http/0v1n.2m9vh
-          %they
+          //http-client/0v1n.2m9vh
+          %receive
           num.u.thus
-          [200 ~ `(as-octs:mimes:html resp)]
+          [%start [200 ~] `(as-octs:mimes:html resp) &]
       ==
     ::
     ++  logs-to-json

@@ -2251,6 +2251,9 @@
           ::  starts handling an inbound http request
           ::
           [%request secure=? =address =request:http]
+          ::  starts handling an backdoor http request
+          ::
+          [%request-local secure=? =address =request:http]
           ::  cancels a previous request
           ::
           [%cancel-request ~]
@@ -7485,16 +7488,52 @@
   ==
 ::
 ++  unix-task                                           ::  input from unix
-  $%  {$belt p/belt:dill}                               ::  dill: keyboard
-      {$blew p/blew:dill}                               ::  dill: configure
-      {$boat ~}                                         ::  clay: reboot
-      {$born ~}                                         ::  eyre: new process
-      [%crud tag=@tas =tang]                            ::  any vane: error report
-      {$hail ~}                                         ::  dill: refresh
-      {$hear p/lane:ames q/@}                           ::  ames: input packet
-      {$hook ~}                                         ::  dill: hangup
-      {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
-      {$wake ~}                                         ::  behn: wakeup
+  $%  ::  %ames: new process
+      ::
+      [%barn ~]
+      ::  %dill: keyboard input
+      ::
+      [%belt p=belt:dill]
+      ::  %dill: configure terminal (resized)
+      ::
+      [%blew p=blew:dill]
+      ::  %clay: new process
+      ::
+      [%boat ~]
+      ::  %behn/%lient/%rver: new process
+      ::
+      [%born ~]
+      %cancel-request
+      ::  any vane: error report
+      ::
+      [%crud tag=@tas =tang]
+      ::  %dill: reset terminal configuration
+      ::
+      [%hail ~]
+      ::  %ames: hear packet
+      ::
+      [%hear p=lane:ames q=@]
+      ::  %clay: external edit
+      ::
+      [%into p=desk q=? r=mode:clay]
+      ::  %rver: learn ports of live http servers
+      ::
+      [%live insecure=@ud secure=(unit @ud)]
+      ::  %lient: hear (partial) http response
+      ::
+      [%receive id=@ud =http-event:http]
+      ::  %rver: starts handling an inbound http request
+      ::
+      [%request secure=? =address:http-server =request:http]
+      ::  %rver: starts handling an backdoor http request
+      ::
+      [%request-local secure=? =address:http-server =request:http]
+      ::  %behn: wakeup
+      ::
+      [%wake ~]
+      ::  %ames: send message
+      ::
+      [%want p=ship q=path r=*]
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth

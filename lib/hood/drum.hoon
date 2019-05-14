@@ -80,6 +80,7 @@
   ::
   ?:  ?=($pawn myr)
   :~  [%base %collections]
+      [%home %lens]
       [%base %hall]
       [%base %talk]
       [%base %dojo]
@@ -87,6 +88,7 @@
       [%base %modulo]
   ==
   :~  [%home %collections]
+      [%home %lens]
       [%home %acme]
       [%home %dns]
       [%home %dojo]
