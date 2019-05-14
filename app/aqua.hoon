@@ -461,7 +461,7 @@
       %event
     ~?  &(aqua-debug=| !?=(?(%belt %hear) -.q.ue.ae))
       raw-event=[who.ae -.q.ue.ae]
-    ~?  &(debug=& ?=(%they -.q.ue.ae))
+    ~?  &(debug=& ?=(%receive -.q.ue.ae))
       raw-event=[who.ae ue.ae]
     (push-events:(pe who.ae) [ue.ae]~)
   ==
