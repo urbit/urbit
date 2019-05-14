@@ -1809,12 +1809,10 @@
     ==
   ::
       %request
-    ~&  task
     =^  moves  server-state.ax  (request:server +.task)
     [moves http-server-gate]
   ::
       %request-local
-    ~&  task
     =^  moves  server-state.ax  (request-local:server +.task)
     [moves http-server-gate]
   ::

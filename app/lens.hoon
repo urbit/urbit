@@ -56,7 +56,6 @@
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  site  (flop site.request-line)
   ::
-  ~&  lens+inbound-request
   =/  jon=json
     (need (de-json:html q:(need body.request.inbound-request)))
   =/  com=command:lens
@@ -67,7 +66,6 @@
 ++  diff-lens-json
   |=  [=wire jon=json]
   ^-  (quip move _this)
-  ~&  [%diff-lens-json wire jon]
   ?~  jon
     [~ this]
   ?>  ?=(^ job.state)
