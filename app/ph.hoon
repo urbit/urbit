@@ -156,26 +156,52 @@
       (pure:m ~)
     ::
       :+  %breach-sync
-        ~[~bud ~dev]
-      =.  eth-node  (spawn:eth-node ~dev)
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
-        ;<  ~        bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
-        ;<  ~        bind:m  (just-events (dojo ~bud "|sync %base ~dev %kids"))
-        ;<  file=@t  bind:m  (touch-file ~dev %base)
-        (check-file-touched ~bud %home file)
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
       ;<  eth-node=_eth-node  bind:m
-        (breach-and-hear:eth-node our.hid ~dev ~bud)
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
-        ;<  ~        bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
-        ;<  ~        bind:m  (just-events (dojo ~dev "|merge %base ~bud %kids, =gem %this"))
-        ;<  file=@t  bind:m  (touch-file ~dev %base)
-        ;<  file=@t  bind:m  (touch-file ~dev %base)
-        (check-file-touched ~bud %home file)
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      (pure:m ~)
+    ::
+      :+  %breach-multiple
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:eth-node ~bud))
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~marbud ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
       (pure:m ~)
   ==
 ::

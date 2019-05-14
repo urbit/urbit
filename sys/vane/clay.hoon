@@ -76,17 +76,11 @@
 ::  of all version numbers to commit hashes (commits are in hut.rang), and map
 ::  of labels to version numbers.
 ::
-::  `mim` is a cache of all new content that came with a mime mark.  Often,
-::  we need to convert to mime anyway to send to unix, so we just keep it
-::  around. If you try to perform more than one commit at a time on a desk,
-::  this will break, but so will lots of other things.
-::
 ++  dome
   $:  ank/ankh                                          ::  state
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
-      mim/(map path mime)                               ::  mime cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -209,9 +203,6 @@
 ::      subscriptions exist only until they've been filled.
 ::  --  `dom` is the actual state of the filetree.  Since this is used almost
 ::      exclusively in `++ze`, we describe it there.
-::  --  `dok` is a possible set of outstanding requests to ford to perform
-::      various tasks on commit.  This is null iff we're not in the middle of
-::      a commit.
 ::
 ++  rede                                                ::  universal project
           $:  lim/@da                                   ::  complete to
@@ -299,7 +290,11 @@
 ::
 ++  plop  blob                                          ::  unvalidated blob
 ::
-::  The clay monad, for easier-to-follow state machines
+::  The clay monad, for easier-to-follow state machines.
+::
+::  The best way to think about a clad is that it's a transaction that
+::  may take multiple arvo events, and may send notes to other vanes to
+::  get information.
 ::
 +$  clad-input  [now=@da new-rang=rang =sign]
 ::
@@ -307,8 +302,9 @@
 ::           later stage of the process fails, so they shouldn't have any
 ::           semantic effect on the rest of the system.
 ::  effects: moves to send after the process ends.
-::  wait:    don't done
-::  cont:    continue process with new thunk
+::  wait:    don't move on, stay here.  The next sign should come back
+::           to this same callback.
+::  cont:    continue process with new callback.
 ::  fail:    abort process; don't send effects
 ::  done:    finish process; send effects
 ::
@@ -476,70 +472,10 @@
 --  =>
 |%
 ::
-::  This is the entry point to the commit flow.  It deserves some
-::  explaining, since it's rather long and convoluted.
-::
-::  In short, ++edit takes a ++nori and turns it into a ++nuri, which is the
-::  same thing except that every change is a misu instead of a miso.  Thus,
-::  insertions are converted to the correct mark, diffs are applied, and
-::  mutations (change content by replacement) are diffed.  It also fills out
-::  the other fields in `++dork`.  We run `++apply-edit` to create the final
-::  nuri and execute the changes.
-::
-::  We take a `++nori`, which is either a label-add request or a `++soba`,
-::  which is a list of changes.  If it's a label, it's easy and we just pass
-::  it to `++execute-changes:ze`.
-::
-::  If the given `++nori` is a list of file changes, then we our goal is to
-::  convert the list of `++miso` changes to `++misu` changes.  In other
-::  words, turn the `++nori` into a `++nuri`.  Then, we pass it to
-::  `++execute-changes:ze`, which applies the changes to our state, and then
-::  we check out the new revision.  XX  reword
-::
-::  Anyhow, enough of high-level talk.  It's time to get down to the
-::  nitty-gritty.
-::
-::  When we get a list of `++miso` changes, we split them into four types:
-::  deletions, insertions, diffs (i.e. change from diff), and mutations
-::  (i.e. change from new data).  We do four different things with them.
-::
-::  For deletions, we just fill in `del` in `++dork` with a list of the
-::  deleted files.
-::
-::  For insertions, we distinguish bewtween `%hoon` files and all other
-::  files.  For `%hoon` files, we just store them to `ink` in `++dork` so
-::  that we add diff them directly.  `%hoon` files have to be treated
-::  specially to make the bootstrapping sequence work, since the mark
-::  definitions are themselves `%hoon` files.
-::
-::  For the other files, we make a `%tabl` compound ford request to convert
-::  the data for the new file to the the mark indicated by the last knot in
-::  the path.
-::
-::  For diffs, we make a `%tabl` compound ford request to apply the diff to
-::  the existing content.  We also store the diffs in `dig` in `++dork`.
-::
-::  For mutations, we make a `%tabl` compound ford request to convert the
-::  given new data to the mark of the already-existing file.  Later on in
-::  `++take-castify` we'll create the ford request to actually perform the
-::  diff.  We also store the mutations in `muc` in `++dork`.  I'm pretty
-::  sure that's useless because who cares about the original data.
-::  XX delete `muc`.
-::
-::  Finally, for performance reasons we cache any of the data that came in
-::  as a `%mime` cage.  We do this because many commits come from unix,
-::  where they're passed in as `%mime` and need to be turned back into it
-::  for the ergo.  We cache both `%hoon` and non-`%hoon` inserts and
-::  mutations.
-::
-::  At this point, the flow of control goes through the three ford requests
-::  back to `++take-inserting`, `++take-diffing`, and `++take-castifying`,
-::  which itself leads to `++take-mutating`.  Once each of those has
-::  completed, we end up at `++apply-edit`, where our unified story picks up
-::  again.
+::  Make a new commit with the given +nori of changes.
 ::
 ++  commit
-  ::  Global constants.  These do not change during an edit.
+  ::  Global constants.  These do not change during a commit.
   ::
   |=  $:  our=ship
           syd=desk
@@ -555,17 +491,23 @@
   =/  m  commit-clad
   ^-  form:m
   ?:  ?=(%| -.lem)
+    ::  If the change is just adding a label, handle it directly.
+    ::
     =.  original-dome
       (execute-label:(state:util original-dome original-dome ran) p.lem)
     =/  e  (cor original-dome ran)
     ;<  ~  bind:m  (print-changes:e %| p.lem)
     (pure:m dom:e ran:e)
+  ::
+  ::  Else, collect the data, apply it, fill in our local cache, let
+  ::  unix know, and print a notification to the screen.
+  ::
   =/  e  (cor original-dome ran)
-  ;<  [=dork e=_*cor]  bind:m  (fill-dork:e wen p.lem)
-  ;<  [=suba e=_*cor]  bind:m  (apply-dork:e wen dork)
-  ;<  e=_*cor          bind:m  checkout-new-state:e
-  ;<  ~                bind:m  (ergo-changes:e suba)
-  ;<  ~                bind:m  (print-changes:e %& suba)
+  ;<  [=dork mim=(map path mime)]  bind:m  (fill-dork:e wen p.lem)
+  ;<  [=suba e=_*cor]              bind:m  (apply-dork:e wen dork)
+  ;<  e=_*cor                      bind:m  checkout-new-state:e
+  ;<  ~                            bind:m  (ergo-changes:e suba mim)
+  ;<  ~                            bind:m  (print-changes:e %& suba)
   (pure:m dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
@@ -578,9 +520,21 @@
     |%
     ++  this-cor  .
     ++  sutil  (state:util original-dome dom ran)
+    ::
+    ::  Collect all the insertions, deletions, diffs, and mutations
+    ::  which are requested.
+    ::
+    ::  Sends them through ford for casting, patching, and diffing so
+    ::  that the produced dork has all the relevant cages filled in.
+    ::
+    ::  Also fills in the mime cache.  Often we need to convert to mime
+    ::  anyway to send (back) to unix, so we just keep it around rather
+    ::  than recalculating it.  This is less necessary than before
+    ::  because of the ford cache.
+    ::
     ++  fill-dork
       |=  [wen=@da =soba]
-      =/  m  (clad ,[dork _this-cor])
+      =/  m  (clad ,[=dork mim=(map path mime)])
       ^-  form:m
       =|  $=  nuz
           $:  del=(list (pair path miso))
@@ -601,6 +555,12 @@
           =/  pax=path  p.i.soba
           =/  mar=mark  p.p.q.i.soba
           ::
+          ::  We store `%hoon` files directly to `ink` so that we add
+          ::  them without requiring any mark definitions.  `%hoon`
+          ::  files have to be treated specially to make the
+          ::  bootstrapping sequence work, since the mark definitions
+          ::  are themselves `%hoon` files.
+          ::
           ?:  ?&  ?=([%hoon *] (flop pax))
                   ?=(%mime mar)
               ==
@@ -612,15 +572,6 @@
           =/  mis=miso  q.i.soba
           ?>  ?=(%mut -.mis)
           =/  cag=cage  p.mis
-          ::  if :mis has the %mime mark and it's the same as cached, no-op
-          ::
-          ?:  ?.  =(%mime p.cag)
-                %.n
-              ?~  cached=(~(get by mim.dom) pax)
-                %.n
-              =(((hard mime) q.q.cag) u.cached)
-            ::
-            $(soba t.soba)
           ::  if the :mis mark is the target mark and the value is the same, no-op
           ::
           ?:  =/  target-mark=mark  =+(spur=(flop pax) ?~(spur !! i.spur))
@@ -654,19 +605,10 @@
          =+  =>((flop pax) ?~(. %$ i))
          [pax - [%atom %t ~] ((hard @t) +>.q.q.p.mis)]
       ::
-      =.  mim.dom
-        ::  remove all deleted files from the new mime cache
+      =/  mim
+        ::  add the new files to the new mime cache
         ::
-        =.  mim.dom
-          |-  ^+  mim.dom
-          ?~  del.nuz  mim.dom
-          ::
-          =.  mim.dom  (~(del by mim.dom) `path`p.i.del.nuz)
-          ::
-          $(del.nuz t.del.nuz)
-        ::  add or overwrite the new files to the new mime cache
-        ::
-        %-  ~(gas by mim.dom)
+        %-  malt
         ^-  (list (pair path mime))
         ;:  weld
           ^-  (list (pair path mime))
@@ -696,15 +638,17 @@
           `[pax ((hard mime) q.q.p.mis)]
         ==
       ::
-      ;<  ins=(list (pair path cage))       bind:m  (send-inserting wen ins.nuz)
-      ;<  dif=(list (trel path lobe cage))  bind:m  (send-diffing wen dif.nuz)
-      ;<  mut=(list (trel path lobe cage))  bind:m  (send-mutating wen mut.nuz)
+      ;<  ins=(list (pair path cage))       bind:m  (calc-inserts wen ins.nuz)
+      ;<  dif=(list (trel path lobe cage))  bind:m  (calc-diffs wen dif.nuz)
+      ;<  mut=(list (trel path lobe cage))  bind:m  (calc-mutates wen mut.nuz)
       %+  pure:m
         ^-  dork
         [del=(turn del.nuz head) ink ins dif mut]
-      this-cor
+      mim
     ::
-    ++  send-inserting
+    ::  Build the list of insertions by casting to the correct mark.
+    ::
+    ++  calc-inserts
       |=  [wen=@da ins=(list (pair path miso))]
       =/  m  (clad (list (pair path cage)))
       ^-  form:m
@@ -730,7 +674,10 @@
         ~|(%clay-take-inserting-strange-path-mark !!)
       [((hard path) q.q.pax) cay]
     ::
-    ++  send-diffing
+    ::  Build the list of diffs by apply the given diffs to the existing
+    ::  data.
+    ::
+    ++  calc-diffs
       |=  [wen=@da dif=(list (pair path miso))]
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
@@ -762,7 +709,10 @@
       =+  paf=((hard path) q.q.pax)
       [paf (page-to-lobe:sutil [p q.q]:cay) (~(got by dig) paf)]
     ::
-    ++  send-mutating
+    ::  Build the list of mutations by casting to the correct mark and
+    ::  diffing against the existing data.
+    ::
+    ++  calc-mutates
       |=  [wen=@da mut=(list (pair path miso))]
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
@@ -820,53 +770,8 @@
       =+  paf=((hard path) q.q.pax)
       `[paf (~(got by hashes) paf) cay]
     ::
-    ::  Handle result of insertion.
-    ::
-    ::  For commit flow overview, see ++edit.
-    ::
-    ::  Insertions are cast to the correct mark, and here we put the result in
-    ::  ins.dok.  If dif and mut are full in dok (i.e. we've already processed
-    ::  diffs and mutations), then we go ahead and run ++apply-edit.
-    ::
-    ::  XX move doc
-    ::
-    ::  Handle result of diffing.
-    ::
-    ::  For commit flow overview, see ++edit.
-    ::
-    ::  Diffs are applied to the original data, and here we put the result in
-    ::  dif.dok.  If ins and mut are full in dok (i.e. we've already processed
-    ::  insertions and mutations), then we go ahead and run ++apply-edit.
-    ::
-    ::  XX  move doc
-    ::
-    ::  Handle result of casting mutations.
-    ::
-    ::  For commit flow overview, see ++edit.
-    ::
-    ::  The new content from a mutation is first casted to the correct mark, and
-    ::  here we hash the correctly-marked content and put the result in muh.dok.
-    ::  Then we diff the new content against the original content.  The result of
-    ::  this is handled in ++take-mutating.
-    ::
-    ::  XX  move doc
-    ::
-    ::  Handle result of diffing mutations.
-    ::
-    ::  For commit flow overview, see ++edit.
-    ::
-    ::  We put the calculated diffs of the new content vs the old content (from
-    ::  ++take-castify) in mut.dok.  If ins and mut are full in dok (i.e. we've
-    ::  already processed insertions and diffs), then we go ahead and run
-    ::  ++apply-edit.
-    ::
-    ::  XX  move doc
-    ::
-    ::  Now that dok is completely filled, we can apply the changes in the commit.
-    ::
-    ::  We collect the relevant data from dok and run ++execute-changes to apply
-    ::  them to our state.  Then we run ++checkout-ankh to update our ankh (cache
-    ::  of the content at the current aeon).
+    ::  Collect the relevant data from dok and run +execute-changes to
+    ::  apply them to our state.
     ::
     ++  apply-dork
       |=  [wen=@da =dork]
@@ -898,10 +803,8 @@
         ==
       (pure:m sim this-cor)
     ::
-    ::  Takes a map of paths to lobes and tells ford to convert to an ankh.
-    ::
-    ::  Specifically, we tell ford to convert each lobe into a blob, then we call
-    ::  ++take-patch to apply the result to our current ankh and update unix.
+    ::  Take the map of paths to lobes, convert to blobs, and save the
+    ::  resulting ankh to the dome.
     ::
     ++  checkout-new-state
       =/  m  (clad ,_this-cor)
@@ -931,10 +834,11 @@
       =.  ank.dom  (map-to-ankh:sutil (malt cat))
       (pure:m this-cor)
     ::
-    ::  XX doc
+    ::  Choose which changes must be synced to unix, and do so.  We
+    ::  convert to mime before dropping the ergo event to unix.
     ::
     ++  ergo-changes
-      |=  =suba
+      |=  [=suba mim=(map path mime)]
       =/  m  (clad ,~)
       ^-  form:m
       ?~  hez  (pure:m ~)
@@ -958,7 +862,7 @@
             =+  b=(~(got by changes) a)
             ?:  ?=($del -.b)
               [%$ %null !>(~)]
-            =+  (~(get by mim.dom) a)
+            =+  (~(get by mim) a)
             ?^  -  [%$ %mime !>(u.-)]
             :^  %cast  [our syd]  %mime
             =/  x  (need (need (read-x:sutil & let.dom a)))
@@ -1031,7 +935,7 @@
         ^$(p.lem t.p.lem)
       ==
     ::
-    ::  Sends a tank straight to dill for printing.
+    ::  Send a tank straight to dill for printing.
     ::
     ++  print-to-dill
       |=  {car/@tD tan/tank}
@@ -1043,9 +947,9 @@
     --
   --
 ::
-::  This thread respresents a currently running merge.  We always
-::  say we're merging from 'ali' to 'bob'.  The basic steps, not all
-::  of which are always needed, are:
+::  This transaction respresents a currently running merge.  We always
+::  say we're merging from 'ali' to 'bob'.  The basic steps, not all of
+::  which are always needed, are:
 ::
 ::  --  fetch ali's desk
 ::  --  diff ali's desk against the mergebase
@@ -1092,9 +996,11 @@
       bind:m
     (merge:e gem cas ali bob)
   ?~  res
+    ::  if no changes, we're done
+    ::
     (pure:m ~ dom:e ran:e)
   =.  e  e.u.res
-  ;<  e=_*cor     bind:m  (checkout:e gem cas bob new.u.res bop.u.res)
+  ;<  e=_*cor   bind:m  (checkout:e gem cas bob new.u.res bop.u.res)
   ;<  ~         bind:m  (ergo:e gem cas mon erg.u.res new.u.res)
   (pure:m conflicts.u.res dom:e ran:e)
   ::
@@ -1108,6 +1014,9 @@
     |%
     ++  this-cor  .
     ++  sutil  (state:util original-dome dom ran)
+    ::
+    ::  Fetch the local disk, if it's there.
+    ::
     ++  get-bob
       |=  gem=germ
       =/  m  (clad ,[bob=(unit yaki) gem=germ])
@@ -1251,31 +1160,33 @@
           `[pax !=(~ a)]
         this-cor
       ::
-      ::  If this is a %meet, %mate, or %meld merge, we may need to fetch
-      ::  more data.  If this merge is either trivial or a fast-forward, we
-      ::  short-circuit to either ++done or the %fine case.
+      ::  If this is a %meet, %mate, or %meld merge, we may need to
+      ::  fetch more data.  If this merge is either trivial or a
+      ::  fast-forward, we short-circuit to either ++done or the %fine
+      ::  case.
       ::
       ::  Otherwise, we find the best common ancestor(s) with
-      ::  ++find-merge-points.  If there's no common ancestor, we error out.
-      ::  Additionally, if there's more than one common ancestor (i.e. this
-      ::  is a criss-cross merge), we error out.  Something akin to git's
-      ::  recursive merge should probably be used here, but it isn't.
+      ::  ++find-merge-points.  If there's no common ancestor, we error
+      ::  out.  Additionally, if there's more than one common ancestor
+      ::  (i.e. this is a criss-cross merge), we error out.  Something
+      ::  akin to git's recursive merge should probably be used here,
+      ::  but it isn't.
       ::
-      ::  Once we have our single best common ancestor (merge base), we store
-      ::  it in bas.dat.  If this is a %mate or %meld merge, we need to diff
-      ::  ali's commit against the merge base, so we pass control over to
-      ::  ++diff-ali.
+      ::  Once we have our single best common ancestor (merge base), we
+      ::  store it in bas.  If this is a %mate or %meld merge, we diff
+      ::  both against the mergebase, merge the conflicts, and build the
+      ::  new commit.
       ::
-      ::  Otherwise (i.e. this is a %meet merge), we create a list of all the
-      ::  changes between the mege base and ali's commit and store it in
-      ::  dal.dat, and we put a similar list for bob's commit in dob.dat.
-      ::  Then we create bof, which is the a set of changes in both ali and
-      ::  bob's commits.  If this has any members, we have conflicts, which is
-      ::  an error in a %meet merge, so we error out.
+      ::  Otherwise (i.e. this is a %meet merge), we create a list of
+      ::  all the changes between the mergebase and ali's commit and
+      ::  store it in ali-diffs, and we put a similar list for bob's
+      ::  commit in bob-diffs.  Then we create bof, which is the a set
+      ::  of changes in both ali and bob's commits.  If this has any
+      ::  members, we have conflicts, which is an error in a %meet
+      ::  merge, so we error out.
       ::
-      ::  Otherwise, we merge the merge base data with ali's data and bob's
-      ::  data, which produces the data for the new commit, which we put in
-      ::  new.dat.  Then we checkout the new data.
+      ::  Otherwise, we merge the merge base data with ali's data and
+      ::  bob's data, which produces the data for the new commit.
       ::
           ?($meet $mate $meld)
         =/  bob  (need bob)
@@ -1413,7 +1324,7 @@
           (some pax ~)
       ==
     ::
-    ::  Merge conflicting diffs
+    ::  Merge diffs that are on the same file.
     ::
     ++  merge-conflicts
       |=  [conflicts-ali=(map path cage) conflicts-bob=(map path cage)]
@@ -1597,8 +1508,8 @@
           this-cor(hut.ran (~(put by hut.ran) r.new new))
       ==
     ::
-    ::  Convert new commit into actual data (i.e. blobs rather than lobes).
-    ::  Apply the new commit to our state
+    ::  Convert new commit into actual data (i.e. blobs rather than
+    ::  lobes).  Apply the new commit to our state
     ::
     ++  checkout
       |=  [gem=germ cas=case bob=(unit yaki) new=yaki bop=(map path cage)]
@@ -1741,13 +1652,6 @@
       ++  merge-lobe-to-schematic
         |=  [bob=yaki disc=disc:ford pax=path lob=lobe]
         ^-  schematic:ford
-        ::  XX  we used to short-circuit if the result was already
-        ::  calculated in ali's desk.  This would be nice, but I don't
-        ::  think it'll kill performance too bad.
-        ::  =+  ^=  lal
-        ::      %+  biff  alh
-        ::      |=  had/dome
-        ::      (~(get by q:(tako-to-yaki:sutil (~(got by hit.had) let.had))) pax)
         =+  lol=(~(get by q.bob) pax)
         |-  ^-  schematic:ford
         ?:  =([~ lob] lol)
@@ -1800,6 +1704,8 @@
       --
     --
   --
+::
+::  An assortment of useful functions, used in +commit, +merge, and +de
 ::
 ++  util
   |%
@@ -1912,6 +1818,13 @@
       (mule |.(`~`~|([%expected-path got=p.pax] !!)))
     $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
   ::
+  ::  Useful functions which operate on a dome and a rang.
+  ::
+  ::  `original-dome` is the dome which we had when the transaction
+  ::  started.  This is used as a lobe-to-blob cache in
+  ::  +lobe-to-schematic so we don't have to recalculate the blobs for
+  ::  files which haven't changed.
+  ::
   ++  state
     |=  [original-dome=dome dom=dome ran=rang]
     |%
@@ -1929,8 +1842,7 @@
         $direct     p.q
       ==
     ::
-    ::
-    ::  Creates a schematic out of a page (which is a [mark noun]).
+    ::  Create a schematic out of a page (which is a [mark noun]).
     ::
     ++  page-to-schematic
       |=  [disc=disc:ford a=page]
@@ -1939,7 +1851,7 @@
       ::  %hoon bootstrapping
       [%$ p.a [%atom %t ~] q.a]
     ::
-    ::  Creates a schematic out of a lobe (content hash).
+    ::  Create a schematic out of a lobe (content hash).
     ::
     ++  lobe-to-schematic  (cury lobe-to-schematic-p &)
     ++  lobe-to-schematic-p
@@ -1964,7 +1876,7 @@
                  [%pact disc $(lob q.q.bol) (page-to-schematic disc r.bol)]
       ==
     ::
-    ::  Hashes a page to get a lobe.
+    ::  Hash a page to get a lobe.
     ::
     ++  page-to-lobe  |=(page (shax (jam +<)))
     ::
@@ -2008,9 +1920,9 @@
     ::
     ::  Reduce a case to an aeon (version number)
     ::
-    ::  We produce null if we can't yet reduce the case for whatever resaon
-    ::  (usually either the time or aeon hasn't happened yet or the label hasn't
-    ::  been created), we produce null.
+    ::  We produce null if we can't yet reduce the case for whatever
+    ::  resaon (usually either the time or aeon hasn't happened yet or
+    ::  the label hasn't been created).
     ::
     ++  case-to-aeon-before
       |=  [lim=@da lok=case]
@@ -2061,10 +1973,8 @@
       |=  [=path =blob]
       [p.blob blob]
     ::
-    ::  Applies a change list, creating the commit and applying it to the
-    ::  current state.
-    ::
-    ::  Also produces the new data from the commit for convenience.
+    ::  Apply a change list, creating the commit and applying it to
+    ::  the current state.
     ::
     ++  execute-changes
       |=  [wen=@da lem=suba]
@@ -2082,24 +1992,22 @@
               !=((lent p.new-yaki) 1)
               !=(q.new-yaki q:(aeon-to-yaki let.dom))
           ==
-          ~&  %clay-silent
           ~
       =:  let.dom  +(let.dom)
           hit.dom  (~(put by hit.dom) +(let.dom) r.new-yaki)
           hut.ran  (~(put by hut.ran) r.new-yaki new-yaki)
       ==
       `[dom ran]
-    ::  +>.$(ank (map-to-ankh q.yak))
     ::
-    ::  Applies label to current revision
+    ::  Apply label to current revision
     ::
     ++  execute-label
       |=  lab=@tas
       ?<  (~(has by lab.dom) lab)
       dom(lab (~(put by lab.dom) lab let.dom))
     ::
-    ::  Apply a list of changes against the current state and produce the new
-    ::  state.
+    ::  Apply a list of changes against the current state and produce
+    ::  the new state.
     ::
     ++  apply-changes                                   ::   apply-changes
       |=  [change-files=(list [p=path q=misu])]
@@ -2159,7 +2067,7 @@
         ~|([%two-diffs-for-same-file pax] !!)
       ==
     ::
-    ::  Traverses parentage and finds all ancestor hashes
+    ::  Traverse parentage and find all ancestor hashes
     ::
     ++  reachable-takos                                 ::  reachable
       |=  p/tako
@@ -2172,12 +2080,13 @@
         s                                               ::  hence skip
       (~(uni in s) ^$(p q))                             ::  otherwise traverse
     ::
-    ::  Gets the data at a node.
+    ::  Get the data at a node.
     ::
-    ::  If it's in our ankh (current state cache), we can just produce the
-    ::  result.  Otherwise, we've got to look up the node at the aeon to get the
-    ::  content hash, use that to find the blob, and use the blob to get the
-    ::  data.  We also special-case the hoon mark for bootstrapping purposes.
+    ::  If it's in our ankh (current state cache), we can just produce
+    ::  the result.  Otherwise, we've got to look up the node at the
+    ::  aeon to get the content hash, use that to find the blob, and use
+    ::  the blob to get the data.  We also special-case the hoon mark
+    ::  for bootstrapping purposes.
     ::
     ++  read-x
       |=  [local=? yon=aeon pax=path]
@@ -2273,9 +2182,6 @@
 ::      subscriptions exist only until they've been filled.
 ::  --  `dom` is the actual state of the filetree.  Since this is used almost
 ::      exclusively in `++ze`, we describe it there.
-::  --  `dok` is a possible set of outstanding requests to ford to perform
-::      various tasks on commit.  This is null iff we're not in the middle of
-::      a commit.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ++  de                                                  ::  per desk
@@ -2407,7 +2313,7 @@
     ::  translate the case to a date
     ::
     =/  cas  [%da (case-to-date q.n.das)]
-    =-  (emit hen %give %wris cas -)
+    =-  (emit hen %slip %b %drip !>([%wris cas -]))
     (~(run in `(set mood)`das) |=(m/mood [p.m r.m]))
   ::
   ::  Give next step in a subscription.
@@ -2454,6 +2360,26 @@
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
     (emit a %pass b %a %want c [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
+  ::  Printable form of a wove; useful for debugging
+  ::
+  ++  print-wove
+    |=  =wove
+    :-  p.wove
+    ?-  -.q.wove
+      %sing  [%sing p.q.wove]
+      %next  [%next [p q]:q.wove]
+      %mult  [%mult [p q]:q.wove]
+      %many  [%many [p q]:q.wove]
+    ==
+  ::
+  ::  Printable form of a cult; useful for debugging
+  ::
+  ++  print-cult
+    |=  =cult
+    %+  turn  ~(tap by cult)
+    |=  [=wove ducts=(set duct)]
+    [ducts (print-wove wove)]
+  ::
   ::  Create a request that cannot be filled immediately.
   ::
   ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
@@ -2464,34 +2390,20 @@
   ++  duce                                              ::  produce request
     |=  wov=wove
     ^+  +>
-    =/  print-wove
-      |=  =wove
-      :-  p.wove
-      ?-  -.q.wove
-        %sing  [%sing p.q.wove]
-        %next  [%next [p q]:q.wove]
-        %mult  [%mult [p q]:q.wove]
-        %many  [%many [p q]:q.wove]
-      ==
-    =/  print-cult
-      |=  =cult
-      %+  turn  ~(tap by cult)
-      |=  [=wove ducts=(set duct)]
-      [ducts (print-wove wove)]
     =.  wov  (dedupe wov)
     =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
       (mabe q.wov |=(@da (bait hen +<)))
-    |-  ^+  +>+>+.$
+    |-  ^+  +>+.$
     =+  rav=(reve q.wov)
     =+  ^=  vaw  ^-  rave
       ?.  ?=({$sing $v *} rav)  rav
       [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
     =+  inx=nix.u.ref
-    =.  +>+>+.$
+    =.  +>+.$
       =<  ?>(?=(^ ref) .)
       (send-over-ames hen [(scot %ud inx) ~] her inx syd ~ vaw)
-    %=  +>+>+.$
+    %=  +>+.$
       nix.u.ref  +(nix.u.ref)
       bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
@@ -2940,44 +2852,23 @@
         [(slag len pax) (~(got by can) pax)]
     ==
   ::
-  ::
-  ::  Handle the result of the ford call in ++checkout-ankh.
-  ::
-  ::  We apply the changes by calling ++execute-changes, then we convert the
-  ::  result of the ford call from ++checkout-ankh into a map of paths to data
-  ::  for the current aeon of this desk.  We turn this into an ankh and store
-  ::  it to our state.  Finally, we choose which paths need to be synced to
-  ::  unix, and convert the data at those paths to mime (except those paths
-  ::  which were added originally as mime, because we still have that stored in
-  ::  mim in dok).  The result is handled in ++take-ergo.
-  ::
-  ::  XX move doc
-  ::
-  ::
-  ::  Send new data to unix.
-  ::
-  ::  Combine the paths in mim in dok and the result of the ford call in
-  ::  ++take-patch to create a list of nodes that need to be sent to unix (in
-  ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
-  ::
-  ::  XX  move doc
-  ::
   ::  Called when a foreign ship answers one of our requests.
   ::
   ::  After updating ref (our request manager), we handle %x, %w, and %y
-  ::  responses.  For %x, we call ++validate-x to validate the type of the
-  ::  response.  For %y, we coerce the result to an arch.
+  ::  responses.  For %x, we call ++validate-x to validate the type of
+  ::  the response.  For %y, we coerce the result to an arch.
   ::
   ::  For %w, we check to see if it's a @ud response (e.g. for
-  ::  cw+//~sampel-sipnym/desk/~time-or-label).  If so, it's easy.  Otherwise,
-  ::  we look up our subscription request, then assert the response was a nako.
-  ::  If this is the first update for a desk, we assume everything's well-typed
-  ::  and call ++apply-foreign-update directly.  Otherwise, we call
-  ::  ++validate-plops to verify that the data we're getting is well typed.
+  ::  cw+//~sampel-sipnym/desk/~time-or-label).  If so, it's easy.
+  ::  Otherwise, we look up our subscription request, then assert the
+  ::  response was a nako.  If this is the first update for a desk, we
+  ::  assume everything's well-typed and call ++apply-foreign-update
+  ::  directly.  Otherwise, we call ++validate-plops to verify that the
+  ::  data we're getting is well typed.
   ::
-  ::  Be careful to call ++wake if/when necessary (i.e. when the state changes
-  ::  enough that a subscription could be filled).  Every case must call it
-  ::  individually.
+  ::  Be careful to call ++wake if/when necessary (i.e. when the state
+  ::  changes enough that a subscription could be filled).  Every case
+  ::  must call it individually.
   ::
   ++  take-foreign-update                              ::  external change
     |=  {inx/@ud rut/(unit rand)}
@@ -3483,7 +3374,13 @@
   ::  --  `lab` is a map of labels to revision numbers.
   ::
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  ::
+  ::  The useful utility functions that are common to several cores
+  ::
   ++  util  (state:[^util] dom dom ran)
+  ::
+  ::  Other utility functions
+  ::
   ++  ze
     |%
     ::  These convert between aeon (version number), tako (commit hash), yaki
@@ -3874,19 +3771,20 @@
     ::  If there's an active write or a queue, enqueue
     ::
     ::    We only want one active write so each can be a clean
-    ::    transaction.
+    ::    transaction.  We don't intercept `%into` because it
+    ::    immediately translates itself into one or two `%info` calls.
     ::
     ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
       =.  cue.ruf  (~(put to cue.ruf) [hen req])
-      ~&  :*  %clall-enqueing
-              cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
-              ^=  act
-              ?~  act.ruf
-                ~
-              [hen req -.cad]:u.act.ruf
-          ==
+      ::  ~&  :*  %clall-enqueing
+      ::          cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
+      ::          ^=  act
+      ::          ?~  act.ruf
+      ::            ~
+      ::          [hen req -.cad]:u.act.ruf
+      ::      ==
       [~ ..^$]
-    ::  If there's the last commit happened in this event, enqueue
+    ::  If the last commit happened in this event, enqueue
     ::
     ::    Without this, two commits could have the same date, which
     ::    would make clay violate referential transparency.
@@ -3895,7 +3793,7 @@
     =/  =dojo  (fall (~(get by dos.rom.ruf) desk) *dojo)
     ?:  =(0 let.dom.dojo)
       (handle-task hen req)
-    =/  sutil  (state:util dom.dojo dom.dojo ran.ruf) 
+    =/  sutil  (state:util dom.dojo dom.dojo ran.ruf)
     =/  last-write=@da  t:(aeon-to-yaki:sutil let.dom.dojo)
     ?:  !=(last-write now)
       (handle-task hen req)
@@ -3903,6 +3801,8 @@
     =/  wait-behn  [hen %pass /queued-request %b %wait now]
     [[wait-behn ~] ..^$]
   (handle-task hen req)
+::
+::  Handle a task, without worrying about write queueing
 ::
 ++  handle-task
   |=  [hen=duct req=task:able]
@@ -4101,15 +4001,9 @@
     ~&  desks=(turn ~(tap by dos.rom.ruf) head)
     ~&  hoy=(turn ~(tap by hoy.ruf) head)
     ::
-    ::  Don't clear state, because it doesn't quite work yet.
-    ::
-    ::  ?:  =(0 0)
-    ::    `..^$
-    ::  if we sunk, don't clear clay
-    ::
     ?:  =(our p.req)
       [~ ..^$]
-    ::  cancel subscriptions
+    ::  Cancel subscriptions
     ::
     =/  foreign-desk=(unit rung)
       (~(get by hoy.ruf) p.req)
@@ -4136,6 +4030,8 @@
       %+  turn  cancel-ducts
       |=  =duct
       [duct %slip %b %drip !>([%writ ~])]
+    ::  Clear ford cache
+    ::
     =/  clear-ford-cache-moves=(list move)
       :~  [hen %pass /clear/keep %f %keep 0 1]
           [hen %pass /clear/wipe %f %wipe 100]
@@ -4288,7 +4184,7 @@
         =/  den  ((de our now ski hen ruf) our syd)
         abet:(take-ergo:den result.q.hin)
       [mos ..^$]
-    :: 
+    ::
         %foreign-plops
       ?>  ?=({@ @ @ @ ~} t.tea)
       =+  her=(slav %p i.t.t.tea)
