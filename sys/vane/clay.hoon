@@ -850,7 +850,7 @@
             (turn ~(tap by must) (corl tail tail))
           |=  {pak/(set path) acc/(set path)}
           (~(uni in acc) pak)
-      =+  changes=(malt suba)
+      =/  changes  (malt suba)
       ;<  ~  bind:m
         %-  just-do
         :*  %f  %build  live=%.n  %list
@@ -875,7 +875,7 @@
         (clad-fail %ergo-fail-incomplete leaf+"clay ergo incomplete" tang.res)
       ?.  ?=([%complete %success *] res)
         (clad-fail %ergo-fail leaf+"clay ergo failed" message.build-result.res)
-      =+  ^-  changes=(map path (unit mime))
+      =/  changes  (map path (unit mime))
           %-  malt  ^-  mode
           %+  turn  (made-result-to-cages:util res)
           |=  [pax=cage mim=cage]
