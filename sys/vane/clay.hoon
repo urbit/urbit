@@ -76,11 +76,17 @@
 ::  of all version numbers to commit hashes (commits are in hut.rang), and map
 ::  of labels to version numbers.
 ::
+::  `mim` is a cache of the content in the directories that are mounted
+::  to unix.  Often, we convert to/from mime without anything really
+::  having changed; this lets us short-circuit that in some cases.
+::  Whenever you give an `%ergo`, you must update this.
+::
 ++  dome
   $:  ank/ankh                                          ::  state
       let/aeon                                          ::  top id
       hit/(map aeon tako)                               ::  versions by id
       lab/(map @tas aeon)                               ::  labels
+      mim/(map path mime)                               ::  mime cache
   ==                                                    ::
 ::
 ::  Commit state.
@@ -506,8 +512,9 @@
   ;<  [=dork mim=(map path mime)]  bind:m  (fill-dork:e wen p.lem)
   ;<  [=suba e=_*cor]              bind:m  (apply-dork:e wen dork)
   ;<  e=_*cor                      bind:m  checkout-new-state:e
-  ;<  ~                            bind:m  (ergo-changes:e suba mim)
+  ;<  mim=(map path mime)          bind:m  (ergo-changes:e suba mim)
   ;<  ~                            bind:m  (print-changes:e %& suba)
+  =.  mim.dom.e  mim
   (pure:m dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
@@ -572,6 +579,15 @@
           =/  mis=miso  q.i.soba
           ?>  ?=(%mut -.mis)
           =/  cag=cage  p.mis
+          ::  if :mis has the %mime mark and it's the same as cached, no-op
+          ::
+          ?:  ?.  =(%mime p.cag)
+                %.n
+              ?~  cached=(~(get by mim.dom) pax)
+                %.n
+              =(q:;;(mime q.q.cag) q.u.cached)
+            ::
+            $(soba t.soba)
           ::  if the :mis mark is the target mark and the value is the same, no-op
           ::
           ?:  =/  target-mark=mark  =+(spur=(flop pax) ?~(spur !! i.spur))
@@ -839,12 +855,12 @@
     ::
     ++  ergo-changes
       |=  [=suba mim=(map path mime)]
-      =/  m  (clad ,~)
+      =/  m  (clad ,mim=(map path mime))
       ^-  form:m
-      ?~  hez  (pure:m ~)
+      ?~  hez  (pure:m mim)
       =+  must=(must-ergo:util our syd mon (turn suba head))
       ?:  =(~ must)
-        (pure:m ~)
+        (pure:m mim)
       =+  ^-  all-paths/(set path)
           %+  roll
             (turn ~(tap by must) (corl tail tail))
@@ -885,10 +901,11 @@
           ?.  ?=($mime p.mim)
             ~
           `;;(mime q.q.mim)
+      =.  mim  (apply-changes-to-mim:util mim changes)
       =+  must=(must-ergo:util our syd mon (turn ~(tap by changes) head))
       ^-  form:m
       |=  clad-input
-      :-  ~  :_  [%done ~]
+      :-  ~  :_  [%done mim]
       %+  turn  ~(tap by must)
       |=  {pot/term len/@ud pak/(set path)}
       :*  u.hez  %give  %ergo  pot
@@ -1000,8 +1017,9 @@
     ::
     (pure:m ~ dom:e ran:e)
   =.  e  e.u.res
-  ;<  e=_*cor   bind:m  (checkout:e gem cas bob new.u.res bop.u.res)
-  ;<  ~         bind:m  (ergo:e gem cas mon erg.u.res new.u.res)
+  ;<  e=_*cor   bind:m     (checkout:e gem cas bob new.u.res bop.u.res)
+  ;<  mim=(map path mime)  bind:m  (ergo:e gem cas mon erg.u.res new.u.res)
+  =.  mim.dom.e  mim
   (pure:m conflicts.u.res dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
@@ -1551,11 +1569,11 @@
     ::
     ++  ergo
       |=  [gem=germ cas=case mon=(map term beam) erg=(map path ?) new=yaki]
-      =/  m  (clad ,~)
+      =/  m  (clad ,mim=(map path mime))
       ^-  form:m
       =+  must=(must-ergo:util our q.bob-disc mon (turn ~(tap by erg) head))
       ?:  =(~ must)
-        (pure:m ~)
+        (pure:m mim.dom)
       =/  sum=(set path)
         =+  (turn ~(tap by must) (corl tail tail))
         %+  roll  -
@@ -1595,11 +1613,12 @@
           $(p.tay t.p.tay, nac :_(nac [;;(path q.q.pax) mit]))
       ?:  ?=([@ *] tan)  (error:he cas tan)
       =/  can=(map path (unit mime))  (malt tan)
+      =/  mim  (apply-changes-to-mim:util mim.dom can)
       ?~  hez
         (error:he cas %ergo-no-hez ~)
       ^-  form:m
       |=  clad-input
-      :-  ~  :_  [%done ~]
+      :-  ~  :_  [%done mim]
       %+  turn  ~(tap by must)
       |=  {pot/term len/@ud pak/(set path)}
       :*  u.hez  %give  %ergo  pot
@@ -1724,6 +1743,22 @@
     %+  skim  can
     |=  pax/path
     &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+  ::
+  ::  Add or remove entries to the mime cache
+  ::
+  ++  apply-changes-to-mim
+    |=  [mim=(map path mime) changes=(map path (unit mime))]
+    ^-  (map path mime)
+    =/  changes-l=(list [pax=path change=(unit mime)])
+      ~(tap by changes)
+    |-  ^-  (map path mime)
+    ?~  changes-l
+      mim
+    ?~  change.i.changes-l
+      $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
+    $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
+  ::
+  ::  Crashes on ford failure
   ::
   ++  ford-fail  |=(tan/tang ~|(%ford-fail (mean tan)))
   ::
@@ -2841,6 +2876,8 @@
         ?.  ?=($mime p.mim)
           ~
         `;;(mime q.q.mim)
+    ::  XX  could interfere with running transaction
+    =.  mim.dom  (apply-changes-to-mim:util mim.dom can)
     =+  mus=(must-ergo:util our syd mon (turn ~(tap by can) head))
     %-  emil
     %+  turn  ~(tap by mus)
@@ -4100,12 +4137,13 @@
   =>  |%
       +$  axle  [%1 ruf-1=raft]
       --
-  |=  *
-  ..^$
-  ::  |=  old=axle
-  ::  ^+  ..^$
-  ::  ?>  ?=(%1 -.old)
-  ::  %_(..^$ ruf ruf-1.old)
+  ::  |=  *
+  ::  ..^$
+  ::  XX switch back
+  |=  old=axle
+  ^+  ..^$
+  ?>  ?=(%1 -.old)
+  %_(..^$ ruf ruf-1.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
