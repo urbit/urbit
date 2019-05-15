@@ -44,8 +44,11 @@ makeLenses ''Slice
 
 -- Instances -------------------------------------------------------------------
 
+instance Arbitrary Natural where
+  arbitrary = fromInteger . abs <$> arbitrary
+
 instance Arbitrary Atom where
-  arbitrary = MkAtom . fromIntegral . abs <$> (arbitrary :: Gen Integer)
+  arbitrary = MkAtom <$> arbitrary
 
 
 -- Conversion ------------------------------------------------------------------
@@ -54,11 +57,15 @@ class IsAtom a where
   toAtom   :: a -> Atom
   fromAtom :: Atom -> a
 
+instance IsAtom Natural where
+  toAtom              = MkAtom
+  fromAtom (MkAtom a) = a
+
 instance IsAtom Int where
   toAtom   = fromIntegral
   fromAtom = fromIntegral
 
-instance IsAtom Natural where
+instance IsAtom Integer where
   toAtom   = fromIntegral
   fromAtom = fromIntegral
 
@@ -117,7 +124,4 @@ bitIdx :: Int -> Atom -> Bool
 bitIdx idx buf = testBit buf idx
 
 bitConcat :: Atom -> Atom -> Atom
-bitConcat x y = low .|. high
-  where
-    low  = y
-    high = shiftL y (bitWidth x)
+bitConcat x y = x .|. shiftL y (bitWidth x)

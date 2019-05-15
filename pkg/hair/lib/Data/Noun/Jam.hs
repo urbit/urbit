@@ -6,6 +6,7 @@ import Data.Noun.Atom
 import Data.Noun.Poet
 import Data.Bits
 import Control.Lens
+import Text.Printf
 
 import Data.Map      (Map)
 import Control.Monad (guard)
@@ -15,15 +16,48 @@ import Test.Tasty.TH
 import Test.Tasty.QuickCheck as QC
 import Test.QuickCheck
 
---------------------------------------------------------------------------------
+
+-- Length-Encoded Atoms --------------------------------------------------------
+
+mat :: Atom -> (Int, Atom)
+mat 0   = (1, 1)
+mat atm = (bufWid, buffer)
+  where
+    atmWid = bitWidth atm
+    preWid = bitWidth (toAtom atmWid)
+    bufWid = preWid + preWid + atmWid
+    prefix = shiftL 1 preWid
+    extras = takeBits (preWid-1) $ toAtom atmWid
+    suffix = xor extras (shiftL atm (preWid-1))
+    buffer = bitConcat prefix suffix
+
+rub :: Cursor -> Maybe (Int, Atom)
+rub slc@(Cursor idx buf) =
+  leadingZeros slc >>= \case
+    0      -> pure (1, 0)
+    prefix -> pure (sz, val)
+      where
+        widIdx = idx + 1 + prefix
+        width  = fromSlice (Slice widIdx (prefix - 1) buf)
+        datIdx = widIdx + (prefix-1)
+        datWid = fromIntegral $ 2^(prefix-1) + width
+        sz     = datWid + (2*prefix)
+        val    = fromSlice (Slice datIdx datWid buf)
+
+
+-- Noun Serialization ----------------------------------------------------------
 
 jam :: Noun -> Atom
 jam = view _2 . go 0 mempty
   where
+    insertNoun :: Noun -> Int -> Map Noun Int -> Map Noun Int
+    insertNoun n i tbl = lookup n tbl
+                       & maybe tbl (const $ insertMap n i tbl)
+
     go :: Int -> Map Noun Int -> Noun -> (Int, Atom, Map Noun Int)
-    go idx tbl noun =
-      over _3 (insertMap noun idx) $
-      case (lookup noun tbl, noun) of
+    go idx oldTbl noun =
+      let tbl = insertNoun noun idx oldTbl in
+      case (Nothing :: Maybe Int, noun) of
           (Just ref, Atom atm) | bitWidth atm <= bitWidth (toAtom ref) ->
               (1+sz, shiftL res 1, tbl)
                 where (sz, res) = mat atm
@@ -38,35 +72,12 @@ jam = view _2 . go 0 mempty
               where (lSz, lRes, lTbl) = go (idx+2)   tbl  lef
                     (rSz, rRes, rTbl) = go (idx+lSz) lTbl rit
 
-mat :: Atom -> (Int, Atom)
-mat 0 = (1, 1)
-mat atm = (bufWid, buffer)
-  where
-    atmWid = bitWidth atm
-    preWid = bitWidth (toAtom atmWid)
-    bufWid = preWid + preWid + atmWid
-    prefix = 2 ^ toAtom preWid
-    suffix = xor (takeBits (preWid-1) $ toAtom bufWid)
-                 (shiftL atm (preWid-1))
-    buffer = bitConcat suffix prefix
+
 leadingZeros :: Cursor -> Maybe Int
 leadingZeros (Cursor idx buf) = go 0
   where wid  = bitWidth buf
         go n = do guard (n < wid)
                   if bitIdx (idx+n) buf then pure n else go (n+1)
-
-rub :: Cursor -> Maybe (Int, Atom)
-rub slc@(Cursor idx buf) =
-  leadingZeros slc >>= \case
-    0      -> pure (1, 0)
-    prefix -> pure (sz, val)
-      where
-        widIdx = idx + 1 + prefix
-        width  = fromSlice (Slice widIdx (prefix - 1) buf)
-        datIdx = widIdx + (prefix-1)
-        datWid = fromIntegral $ 2^(prefix-1) + width
-        sz     = datWid + (2*prefix)
-        val    = fromSlice (Slice datIdx datWid buf)
 
 cue :: Atom -> Maybe Noun
 cue buf = view _2 <$> go mempty 0
@@ -85,9 +96,12 @@ cue buf = view _2 <$> go mempty 0
                               r <- lookup (fromIntegral at) tbl
                               pure (2+wid, r, tbl)
 
+
+-- Tests -----------------------------------------------------------------------
+
 pills :: [Atom]
 pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
-        , 0x3170_c7c1, 0x93_c7c1, 0x1bd5_b7dd_e080
+        , 0x3170_c7c1, 0x93_c7c1, 0xa_72e0, 0x1bd5_b7dd_e080
         ]
 
 cueTest :: Maybe [Noun]
@@ -96,8 +110,14 @@ cueTest = traverse cue pills
 jamTest :: Maybe [Atom]
 jamTest = fmap jam <$> cueTest
 
-prop_jamRoundTrip :: Noun -> Bool
-prop_jamRoundTrip n = Just n == cue (jam n)
+prop_jamCue :: Noun -> Bool
+prop_jamCue n = Just n == cue (jam n)
+
+prop_matRub :: Atom -> Bool
+prop_matRub atm = matSz==rubSz && rubRes==atm
+  where
+    (matSz, matBuf) = mat atm
+    (rubSz, rubRes) = fromMaybe (0,0) (rub $ Cursor 0 matBuf)
 
 main :: IO ()
 main = $(defaultMainGenerator)

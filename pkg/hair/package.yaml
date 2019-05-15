@@ -56,6 +56,7 @@ dependencies:
 
 default-extensions:
   - ApplicativeDo
+  - GeneralizedNewtypeDeriving
   - BangPatterns
   - BlockArguments
   - DeriveDataTypeable

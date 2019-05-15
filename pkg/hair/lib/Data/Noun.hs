@@ -8,6 +8,8 @@ import Data.Noun.Atom (Atom)
 import Data.Bits
 import GHC.Generics
 import Test.QuickCheck.Arbitrary
+import Test.QuickCheck.Gen
+import Debug.Trace
 
 import Data.List     (intercalate)
 import Data.Typeable (Typeable)
@@ -41,10 +43,15 @@ instance Show Noun where
       fmtCell xs = "[" <> intercalate " " xs <> "]"
 
 instance Arbitrary Noun where
-  arbitrary = do
-    arbitrary >>= \case
-      True  -> Atom <$> arbitrary
-      False -> Cell <$> (Atom <$> arbitrary) <*> (Atom <$> arbitrary)
+  arbitrary = resize 12 genNoun
+    where
+      genNoun = do
+        sz  <- getSize
+        bit <- arbitrary
+        case (sz, bit) of
+          ( 0, _     ) -> Atom <$> arbitrary
+          ( _, False ) -> Atom <$> arbitrary
+          ( _, True  ) -> scale pred (Cell <$> genNoun <*> genNoun)
 
 
 -- Predicates ------------------------------------------------------------------
