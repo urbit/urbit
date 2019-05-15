@@ -10133,7 +10133,7 @@
     ~/  %mint
     |=  {gol/type gen/hoon}
     ^-  {p/type q/nock}
-    ~&  %pure-mint
+    ::~&  %pure-mint
     |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
       ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
