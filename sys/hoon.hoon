@@ -256,13 +256,6 @@
   --
 ::
 ++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
-++  hard                                                ::  force remold
-  |*  han/$-(* *)
-  |=  fud/*  ^-  han
-  ~_  leaf+"hard"
-  =+  gol=(han fud)
-  ?>(=(gol fud) gol)
-::
 ::
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
@@ -6696,7 +6689,7 @@
     {$mcnt p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
     {$mcgl p/spec q/hoon r/hoon s/hoon}                 ::  ;<  bind
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
-    {$mcmc p/hoon q/hoon}                               ::  ;;  normalize
+    {$mcmc p/spec q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
     {$tsbr p/spec q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
@@ -8808,17 +8801,7 @@
       ==                                                ::
     ::
         {$mcmc *}                                       ::                  ;;
-      :+  %tsbn  [%ktts %v %$ 1]                        ::  =>  v=.
-      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
-                 [%tsbn [%limb %v] p.gen]               ::  =>(v {p.gen})
-      :+  %tsls  [%ktts %b [%tsbn [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
-      :+  %tsls                                         ::  =+  c=(a b)
-        [%ktts %c [%cncl [%limb %a] [%limb %b] ~]]      ::
-      :+  %wtbn                                         ::  ?>(=(`*`c `*`b) c)
-        :+  %dtts                                       ::
-        [%kthp [%base %noun] [%limb %c]]                ::
-        [%kthp [%base %noun] [%limb %b]]                ::
-      [%limb %c]                                        ::
+      [%cnhp ~(factory ax fab p.gen) q.gen]
     ::
         {$tsbr *}
       [%tsls ~(example ax fab p.gen) q.gen]
@@ -11215,7 +11198,7 @@
         $type
       =+  tyr=|.((dial dole))
       =+  vol=tyr(sut lum)
-      =+  cis=((hard tank) .*(vol [%9 2 %0 1]))
+      =+  cis=;;(tank .*(vol [%9 2 %0 1]))
       :^  ~   %palm
         [~ ~ ~ ~]
       [[%leaf '#' 't' '/' ~] cis ~]
@@ -11227,7 +11210,7 @@
       |-  ^-  (list tank)
       ?~  lum  ~
       ?@  lum  !!
-      [[%leaf (trip ((hard @) -.lum))] $(lum +.lum)]
+      [[%leaf (trip ;;(@ -.lum))] $(lum +.lum)]
     ::
         $wool
       :-  ~
@@ -14050,8 +14033,8 @@
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
         [%mcgl *]  (rune ';<' ~ ~ (spec p.x) (hoons ~[q r s]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
-        [%mcmc *]  (rune ';;' ~ ~ (hoons ~[p q]:x))
-        [%tsbr *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
+        [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
+        [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tscl *]  (tiscol-to-plum p.x q.x)
         [%tsnt *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
         [%tsmc *]  (rune '=;' ~ ~ [(skin p.x) (hoons ~[q r]:x)])
@@ -14555,20 +14538,20 @@
       |=  [p=xpat n=*]
       ^-  plum
       ?-  p
-        %hoon      (hoon-to-plum 999 ((hard hoon) n))
-        %json      (json-to-plum ((hard json) n))
-        %manx      (manx-to-plum ((hard manx) n))
-        %nock      (nock-to-plum ((hard nock) n))
-        %path      (path-to-plum ((hard path) n))
-        %plum      ((hard plum) n)
-        %skin      (skin-to-plum ((hard skin) n))
-        %spec      (spec-to-plum ((hard spec) n))
-        %tape      (tape-to-plum ((hard tape) n))
-        %tour      (tour-to-plum ((hard tour) n))
+        %hoon      (hoon-to-plum 999 ;;(hoon n))
+        %json      (json-to-plum ;;(json n))
+        %manx      (manx-to-plum ;;(manx n))
+        %nock      (nock-to-plum ;;(nock n))
+        %path      (path-to-plum ;;(path n))
+        %plum      ;;(plum n)
+        %skin      (skin-to-plum ;;(skin n))
+        %spec      (spec-to-plum ;;(spec n))
+        %tape      (tape-to-plum ;;(tape n))
+        %tour      (tour-to-plum ;;(tour n))
         %type      =/  ttp  type-to-plum
-                   ((hard plum) .*(ttp(+< n) [9 2 0 1]))
+                   ;;(plum .*(ttp(+< n) [9 2 0 1]))
         %vase      =/  vtp  vase-to-plum
-                   =/  =plum  ((hard plum) .*(vtp(+< n) [9 2 0 1]))
+                   =/  =plum  ;;(plum .*(vtp(+< n) [9 2 0 1]))
                    (rune '!>' ~ ~ ~[plum])
         [%gate *]  (render-gate sample.p product.p)
         [%gear *]  '%gear'                              ::  XX TODO
@@ -15994,9 +15977,13 @@
         ::
           (stag %code (ifix [tec tec] (calf tec)))
         ::
-        ::  ++arm
+        ::  ++arm, +-arm, +$arm, +*arm, ++arm:core, ...
         ::
-          (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
+          %+  stag  %code
+          ;~  plug
+            lus  ;~(pose lus hep bus tar)
+            low  (star ;~(pose nud low hep col))
+          ==
         ::
         ::  [arbitrary *content*](url)
         ::
@@ -16659,7 +16646,7 @@
                   ['/' (rune net %mcnt expa)]
                   ['<' (rune gal %mcgl exp1)]
                   ['~' (rune sig %mcsg expi)]
-                  [';' (rune mic %mcmc expb)]
+                  [';' (rune mic %mcmc exqc)]
               ==
             ==
           :-  '='

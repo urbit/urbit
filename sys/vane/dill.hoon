@@ -415,7 +415,7 @@
             $reap  ?~  p.p.+>.sih
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
+            $diff  pump:(from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
             {$c $note *}
@@ -501,7 +501,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)

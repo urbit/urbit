@@ -86,7 +86,8 @@
   ^-  {key/@t sec/@t ~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {key/@t sec/@t ~}) (to-wain:format key))
+    ;;  {key/@t sec/@t ~}
+    (to-wain:format key)
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth1 {<`path`dom>}

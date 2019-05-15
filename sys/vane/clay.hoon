@@ -603,7 +603,7 @@
          ^-  (pair path cage)
          ?>  ?=($ins -.mis)
          =+  =>((flop pax) ?~(. %$ i))
-         [pax - [%atom %t ~] ((hard @t) +>.q.q.p.mis)]
+         [pax - [%atom %t ~] ;;(@t +>.q.q.p.mis)]
       ::
       =/  mim
         ::  add the new files to the new mime cache
@@ -618,7 +618,7 @@
           ?>  ?=($ins -.mis)
           ?.  ?=($mime p.p.mis)
             ~
-          `[pax ((hard mime) q.q.p.mis)]
+          `[pax ;;(mime q.q.p.mis)]
         ::
           ^-  (list (pair path mime))
           %+  murn  ink.nuz
@@ -626,7 +626,7 @@
           ^-  (unit (pair path mime))
           ?>  ?=($ins -.mis)
           ?>  ?=($mime p.p.mis)
-          `[pax ((hard mime) q.q.p.mis)]
+          `[pax ;;(mime q.q.p.mis)]
         ::
           ^-  (list (pair path mime))
           %+  murn  mut.nuz
@@ -635,7 +635,7 @@
           ?>  ?=($mut -.mis)
           ?.  ?=($mime p.p.mis)
             ~
-          `[pax ((hard mime) q.q.p.mis)]
+          `[pax ;;(mime q.q.p.mis)]
         ==
       ::
       ;<  ins=(list (pair path cage))       bind:m  (calc-inserts wen ins.nuz)
@@ -672,7 +672,7 @@
       |=  {pax/cage cay/cage}
       ?.  ?=($path p.pax)
         ~|(%clay-take-inserting-strange-path-mark !!)
-      [((hard path) q.q.pax) cay]
+      [;;(path q.q.pax) cay]
     ::
     ::  Build the list of diffs by apply the given diffs to the existing
     ::  data.
@@ -706,7 +706,7 @@
       ^-  (pair path (pair lobe cage))
       ?.  ?=($path p.pax)
         ~|(%clay-take-diffing-strange-path-mark !!)
-      =+  paf=((hard path) q.q.pax)
+      =+  paf=;;(path q.q.pax)
       [paf (page-to-lobe:sutil [p q.q]:cay) (~(got by dig) paf)]
     ::
     ::  Build the list of mutations by casting to the correct mark and
@@ -738,7 +738,7 @@
             |=  {pax/cage cay/cage}
             ?.  ?=($path p.pax)
               ~|(%castify-bad-path-mark !!)
-            [((hard path) q.q.pax) cay]
+            [;;(path q.q.pax) cay]
         :_  :+  ~  %done
             ^-  (map path lobe)
             %-  malt
@@ -767,7 +767,7 @@
         ~|(%clay-take-mutating-strange-path-mark !!)
       ?:  ?=($null p.cay)
         ~
-      =+  paf=((hard path) q.q.pax)
+      =+  paf=;;(path q.q.pax)
       `[paf (~(got by hashes) paf) cay]
     ::
     ::  Collect the relevant data from dok and run +execute-changes to
@@ -830,7 +830,7 @@
           |=  {pax/cage cay/cage}
           ?.  ?=($path-hash p.pax)
             ~|(%patch-bad-path-mark !!)
-          [-< -> +]:[((hard {path lobe}) q.q.pax) cay]
+          [-< -> +]:[;;({path lobe} q.q.pax) cay]
       =.  ank.dom  (map-to-ankh:sutil (malt cat))
       (pure:m this-cor)
     ::
@@ -875,16 +875,16 @@
         (clad-fail %ergo-fail-incomplete leaf+"clay ergo incomplete" tang.res)
       ?.  ?=([%complete %success *] res)
         (clad-fail %ergo-fail leaf+"clay ergo failed" message.build-result.res)
-      =/  changes  (map path (unit mime))
+      =/  changes=(map path (unit mime))
           %-  malt  ^-  mode
           %+  turn  (made-result-to-cages:util res)
           |=  [pax=cage mim=cage]
           ?.  ?=($path p.pax)
             ~|(%ergo-bad-path-mark !!)
-          :-  ((hard path) q.q.pax)
+          :-  ;;(path q.q.pax)
           ?.  ?=($mime p.mim)
             ~
-          `((hard mime) q.q.mim)
+          `;;(mime q.q.mim)
       =+  must=(must-ergo:util our syd mon (turn ~(tap by changes) head))
       ^-  form:m
       |=  clad-input
@@ -1045,14 +1045,13 @@
       =.  ran  r
       ?~  rot
         (error:he cas %bad-fetch-ali ~)
-      =+  ^=  ali-dome
-          %.  q.q.r.u.rot
-          %-  hard
-          $:  ank=*
-              let=@ud
-              hit=(map @ud tako)
-              lab=(map @tas @ud)
-          ==
+      =/  ali-dome
+          ;;  $:  ank=*
+                  let=@ud
+                  hit=(map @ud tako)
+                  lab=(map @tas @ud)
+              ==
+          q.q.r.u.rot
       ?:  =(0 let.ali-dome)
         (error:he cas %no-ali-disc ~)
       =/  tak  (~(get by hit.ali-dome) let.ali-dome)
@@ -1592,8 +1591,8 @@
           ?.  ?=($path p.pax)
             [%ergo >[%expected-path got=p.pax]< ~]
           =*  mim  q.i.p.tay
-          =+  mit=?.(?=($mime p.mim) ~ `((hard mime) q.q.mim))
-          $(p.tay t.p.tay, nac :_(nac [((hard path) q.q.pax) mit]))
+          =+  mit=?.(?=($mime p.mim) ~ `;;(mime q.q.mim))
+          $(p.tay t.p.tay, nac :_(nac [;;(path q.q.pax) mit]))
       ?:  ?=([@ *] tan)  (error:he cas tan)
       =/  can=(map path (unit mime))  (malt tan)
       ?~  hez
@@ -1816,7 +1815,7 @@
     =*  pax  p.i.tay
     ?.  ?=($path p.pax)
       (mule |.(`~`~|([%expected-path got=p.pax] !!)))
-    $(tay t.tay, can (~(put by can) ((hard path) q.q.pax) q.i.tay))
+    $(tay t.tay, can (~(put by can) ;;(path q.q.pax) q.i.tay))
   ::
   ::  Useful functions which operate on a dome and a rang.
   ::
@@ -2113,11 +2112,11 @@
       |-  ^-  @t                      ::  (urge cord) would be faster
       =+  bol=(lobe-to-blob u.lob)
       ?:  ?=($direct -.bol)
-        ((hard @t) q.q.bol)
+        ;;(@t q.q.bol)
       ?>  ?=($delta -.bol)
       =+  txt=$(u.lob q.q.bol)
       ?>  ?=($txt-diff p.r.bol)
-      =+  dif=((hard (urge cord)) q.r.bol)
+      =+  dif=;;((urge cord) q.r.bol)
       =,  format
       =+  pac=(of-wain (lurk:differ (to-wain (cat 3 txt '\0a')) dif))
       (end 3 (dec (met 3 pac)) pac)
@@ -2838,10 +2837,10 @@
         |=  {pax/cage mim/cage}
         ?.  ?=($path p.pax)
           ~|(%ergo-bad-path-mark !!)
-        :-  ((hard path) q.q.pax)
+        :-  ;;(path q.q.pax)
         ?.  ?=($mime p.mim)
           ~
-        `((hard mime) q.q.mim)
+        `;;(mime q.q.mim)
     =+  mus=(must-ergo:util our syd mon (turn ~(tap by can) head))
     %-  emil
     %+  turn  ~(tap by mus)
@@ -2922,9 +2921,9 @@
         :+  ~
           p.r.u.rut
         ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
-          $cass  !>(((hard cass) q.r.u.rut))
+          $cass  !>(;;(cass q.r.u.rut))
           $null  [[%atom %n ~] ~]
-          $nako  !>(~|([%harding [&1 &2 &3]:q.r.u.rut] ((hard nako) q.r.u.rut)))
+          $nako  !>(~|([%molding [&1 &2 &3]:q.r.u.rut] ;;(nako q.r.u.rut)))
         ==
       ?.  ?=($nako p.r.u.rut)  [?>(?=(^ ref) .)]:wake
       =+  rav=`rave`q.u.ruv
@@ -2934,7 +2933,7 @@
       =+  nex=(~(get by haw.u.ref) nez)
       ?~  nex  +>+.^$
       ?~  u.nex  +>+.^$  ::  should never happen
-      =.  nak.u.ref  `((hard nako) q.q.u.u.nex)
+      =.  nak.u.ref  `;;(nako q.q.u.u.nex)
       =.  +>+.^$
         ?:  =(0 let.dom)
           =<  ?>(?=(^ ref) .)
@@ -2956,7 +2955,7 @@
           haw.u.ref
         %+  ~(put by haw.u.ref)
           [p.p.u.rut q.p.u.rut q.u.rut]
-        `[p.r.u.rut !>(((hard arch) q.r.u.rut))]
+        `[p.r.u.rut !>(;;(arch q.r.u.rut))]
       ==
     ::
         $z
@@ -3121,7 +3120,7 @@
         ?.  ?=($blob p.bob)
           ~|  %plop-not-blob
           !!
-        =+  bol=((hard blob) q.q.bob)
+        =+  bol=;;(blob q.q.bob)
         ?-  -.bol
           $delta      [-.bol p.bol q.bol p.cay q.q.cay]
           $direct     [-.bol p.bol p.cay q.q.cay]
@@ -3763,7 +3762,7 @@
   =/  req=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   ::  only one of these should be going at once, so queue
   ::
@@ -4068,7 +4067,7 @@
     =*  wer  wer.req
     =*  pax  pax.req
     ?:  ?=({%question *} pax)
-      =+  ryf=((hard riff) res.req)
+      =+  ryf=;;(riff res.req)
       :_  ..^$
       :~  [hen %give %mack ~]
           =/  =wire
@@ -4080,7 +4079,7 @@
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) wer syd)
-      abet:(take-foreign-update:den inx ((hard (unit rand)) res.req))
+      abet:(take-foreign-update:den inx ;;((unit rand) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::
       %wegh
@@ -4162,7 +4161,7 @@
     :*  hen  %slip  %b  %drip  !>
     :*  %writ  ~
         ^-  {care case @tas}
-        [i.t.tea ((hard case) +>:(slay i.t.t.tea)) i.t.t.t.tea]
+        [i.t.tea ;;(case +>:(slay i.t.t.tea)) i.t.t.t.tea]
     ::
         `path`t.t.t.t.tea
         `cage`(result-to-cage:ford build-result.result.q.hin)
@@ -4199,7 +4198,7 @@
       ?>  ?=({@ @ @ @ @ *} t.tea)
       =+  her=(slav %p i.t.t.tea)
       =+  syd=(slav %tas i.t.t.t.tea)
-      =+  car=((hard care) i.t.t.t.t.tea)
+      =+  car=;;(care i.t.t.t.t.tea)
       =+  ^-  cas/case
           =+  (slay i.t.t.t.t.t.tea)
           ?>  ?=({~ %$ case} -)

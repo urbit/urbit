@@ -230,7 +230,7 @@
   =/  =task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   =/  event-core  (per-event [our now hen] state)
   ::

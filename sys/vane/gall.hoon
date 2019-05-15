@@ -1304,7 +1304,7 @@
   ~%  %gall-call  +>   ~
   |=  {hen/duct hic/(hypo (hobo task:able))}
   ^+  [*(list move) ..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ;;(task:able p.q.hic)))
   ?-    -.q.hic
       $conf
     ?.  =(our p.p.q.hic)
@@ -1331,10 +1331,10 @@
     =*  dap  i.t.q.q.hic
     =*  him  p.q.hic
     ?:  ?=($ge i.q.q.hic)
-      =+  mes=((hard {@ud rook}) r.q.hic)
+      =+  mes=;;({@ud rook} r.q.hic)
       =<  mo-abet
       (mo-gawk:(mo-abed:mo hen) him dap mes)
-    =+  mes=((hard {@ud roon}) r.q.hic)
+    =+  mes=;;({@ud roon} r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo hen) him dap mes)
   ::

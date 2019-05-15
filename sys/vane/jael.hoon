@@ -1943,7 +1943,7 @@
       ~&  [%yikes cuz]
       +>.$
     ?>  ?=(%httr mar)
-    =+  raw-rep=~|(res ((hard httr:eyre) q.res))
+    =+  raw-rep=~|(res ;;(httr:eyre q.res))
     =+  rep=(httr-to-rpc-response raw-rep)
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)

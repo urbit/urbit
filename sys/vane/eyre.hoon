@@ -1063,7 +1063,7 @@
           (fail-turbo 404 message.build-result.result.sih)
         =/  cay=cage  (result-to-cage:ford build-result.result.sih)
         ?:  ?=($red-quri p.cay)
-          =+  url=(apex:en-purl ((hard quri) q.q.cay))
+          =+  url=(apex:en-purl ;;(quri q.q.cay))
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
@@ -1073,7 +1073,7 @@
           ::
           (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
         =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
-        =+  ((hard {mit/mite rez/octs}) q.q.cay)
+        =+  ;;({mit/mite rez/octs} q.q.cay)
         ::  TODO: This used to use dep for etag control.
         ::
         ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
@@ -1089,7 +1089,7 @@
         ?:  =('~' p.tee)
           (eyre-them tee q.cay)
         =+  usr=(slav %ta p.tee)
-        =+  ((hard {pul/purl ^}) q.q.cay)
+        =+  ;;({pul/purl ^} q.q.cay)
         ?.  ?=(%& -.r.p.pul)
           ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
@@ -1479,7 +1479,7 @@
         =*  pef  i.t.q.pok
         =+  but=t.t.q.pok                 ::  XX  =*
         ?+    pef  ~|(pfix-lost+`path`/~/[pef] !!)
-            $debug  ((hard perk) [%bugs but])
+            $debug  ;;(perk [%bugs but])
             $away  [%away ~]
             $ac
           ?~  but  ~|(no-host+`path`/~/[pef] !!)
@@ -1509,7 +1509,7 @@
             $on
           :-  %poll
           ?^  but  [(raid but %uv ~)]~
-          =+  dep=((hard (list {@ ~})) quy)
+          =+  dep=;;((list {@ ~}) quy)
           =<  ?~(. !! .)
           (turn dep |=({a/@tas ~} (slav %uv a)))
         ::
@@ -2328,7 +2328,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   ^+  [*(list move) ..^$]
   ?:  ?=($wegh -.task)
