@@ -1,5 +1,5 @@
 ::  Nuevo is a kernel in Hoon which collaborates with vere to be multi-process.
-d::
+::
 ::  An instance of Nuevo wraps one and only one hoon program and communicates
 ::  with other instances of Nuevo via message passing. Individual nuevo
 ::  instances may be run in serial or in parallel depending on the
@@ -24,38 +24,48 @@ d::
 ::  processes on a single event queue, and complicated green thread solutions.
 ::
 |%
-::  There is a difference between how a handle to an external resource is
-::  represented between vere and nuevo and how it is represented between nuevo
-::  and the program it wraps. We will call the opaque handles sent between
-::  nuevo instances `+handle`s, after the existing meaning of handles in modern
-::  operating systems, which are usually opaque integers.
+::  Processes in Nuevo form a strict DAG, with the "root" process being special
+::  and owned by Vere. The edges of this graph are called connections. Each
+::  connection represents ownership of subprocesses recursively.
 ::
-+$  handle
-  $%  ::  A handle which represents the ownership of the first process by vere.
+::  An instance of Nuevo understands its place in this DAG, knowing its parent
+::  and its children.
+::
++$  connection
+  $%  ::  A connection which represents the ownership of the first process by vere.
       ::
       [%top ~]
-      ::  An io handle is a handle to a toplevel io driver.
+      ::  A connection representing a nuevo process.
       ::
-      [%io driver=term]
-      ::  A pid handle is a handle to a different process.
-      ::
-      ::    Processes are hierarchical by name. The userland part of a program
-      ::    can only see the current name, not the full path. Likewise, for an
-      ::    individual program, the names of its child processes are unique.
-      ::
-      ::    TODO: There's some pretty deep questions about divergence between
-      ::    the path specified by the pid's creator, and who might end up with
-      ::    each side of the handle.
-      ::
-      [%pid pid=path id=@u]
+      [%process =path]
   ==
 ::
-::  Each handle represents a one-to-one connection with another part of the
-::  system. While there might be 30 handles to `[%pid pid=/blah ...]` live in
-::  the system, across the entire fleet of Nuevo instances that make up your
-::  Urbit, there are only two instances of `[%pid pid=/blah id=7]`. There is
-::  only a single real `[%top ~]` and `[%io driver id=@]` inside your Urbit,
-::  since vere conceptually holds the other end of the handle.
+::  Connections represent the ownership and spawning structure of the entire
+::  OS. Connections can not be moved or reattached; if /a spawns /a/b, /a
+::  cannot pass that connection to /c.
+::
+::  Separate from the ownership structure are the pipes on which messages are
+::  sent. These can span the structure of the program; they let /a/b have a
+::  typed command stream to /c/d without the intermediation of /a or /c. We
+::  call references to these command streams handles.  Each handle represents a
+::  one-to-one connection with another part of the system, and is thus co-owned
+::  by any two connections.
+::
++$  handle
+  $%  ::  A pipe handle is a handle which communicates with a different process
+      ::
+      ::    For every represented pipe, there are two `[%pipe ...]` handles
+      ::    among all the nuevo instances, each referring to the other
+      ::    endpoint.
+      ::
+      [%pipe id=@u =connection]
+      ::  An io handle is a handle which communicates with a toplevel io driver
+      ::
+      ::    There is only a single `[%io ...]` handle per represented io pipe
+      ::    because the counterparty is in vere.
+      ::
+      [%io driver=term id=@u]
+  ==
 ::
 ::  A handle by itself is often not enough to perform a negotiation; we often
 ::  need explicit typing information about the data which is coming over a
@@ -66,8 +76,10 @@ d::
       send=xtype
   ==
 ::
-::  Nuevo maintains a mapping from a handle to a bone, an opaque type which
-::  represents a handle. It's just an integer, but we make it entirely untyped
+::  Pipe handles understand which connection it is attached to, which is part
+::  of why we want Nuevo to maintain a mapping from a handle to a bone, an
+::  opaque type which represents a handle so that a program can't inspect the
+::  handle itself. It's just an integer, but we make it entirely untyped
 ::  because the user program shouldn't be introspecting on it.
 ::
 +$  bone
@@ -76,34 +88,45 @@ d::
 ::  But what can Nuevo do with handles? Handles are references to resources
 ::  outside of a single instance of Nuevo, and instances of Nuevo pass them as
 ::  part of the message machinery. Nuevo instances trust each other to not
-::  forge handles.
+::  forge handles or connections.
 ::
 ::  So an instance of Nuevo can receives events and emit effects. These are
 ::  messages received from and sent to vere, which is actually mediating
 ::  between IO drivers and individual nuevo processes.
 ::
 +$  events
-  $%  ::  -- Message Passing Primitives --
+  $%  ::  -- Process control --
       ::
       ::  For there to be a program to receive a message, that program needs to
       ::  be started first. This is the first message in the lifecycle of a
       ::  nuevo instance.
       ::
-      ::  Each program is given as a vase of nock code to be executed as a
-      ::  persistent process, along with an initial state used as the permanent
-      ::  state of the program.
+      ::  In this first message, we are given the connection name to our
+      ::  parent, along with this process' name. This establishes this process'
+      ::  place in the hierarchy. It is also gives the program's vase of nock
+      ::  code to be executed as a persistent process, along with an initial
+      ::  state used as the permanent state of the program.
       ::
-      ::  At the user program level, after initialization, this will be treated
-      ::  like a normal %recv.
+      ::  Finally, it gives a handle which is the pipe which receives a
+      ::  message.  At the user program level, after initialization, this will
+      ::  be treated like a normal %recv.
       ::
       $:  %init
+          =connection
           name=path
           program=vase
-          state=vase
+          state=(map path vase)
           sent-over=[handle handle-type]
           gaining=(list [handle handle-type])
           message=*
       ==
+      ::
+      
+
+
+      ::
+      ::  -- Message Passing Primitives --
+      ::
       ::  Receives a message on a handle. Each %recv is translated into a user
       ::  level call, with the :sent-over and :gaining are translated into
       ::  bones in order, and :message is validated against the handle-type
@@ -115,11 +138,15 @@ d::
       ::  crash while holding on to [%io %http 0], how does my server ever
       ::  recover?
       ::
-      [%recv sent-over=handle gaining=(list [handle handle-type]) message=*]
+      $:  %recv
+          sent-over=handle
+          gaining=(list [handle handle-type])
+          message=*
+      ==
       ::  Remote handles have been closed; we must have a notification that we
       ::  understand.
       ::
-      [%closed sent-over=handle closed=(list handle)]
+      [%closed =connection closed=(list handle)]
       ::  Sent to each process on vere restart. all existing io handles are
       ::  defunct. This is the only incoming event which doesn't come over a
       ::  handle, since this process may not have a reference to outside, or
@@ -140,8 +167,6 @@ d::
       ::
       [%forked name=term handle=(each [handle handle-type] tang)]
 
-
-
       ::  Called on nondeterministic crashes. If an instance of nuevo runs out
       ::  of memory or otherwise causes a nondeterministic crash, vere replaces
       ::  the crashed event with one of these events to represent and handle
@@ -157,35 +182,99 @@ d::
   ==
 ::
 +$  effects
-  $%  ::  Sends a message over handle. a handle represents a bidirectional
+  $%  ::  -- Process Control --
+      ::
+      ::  An individual instance of nuevo can do a few things regarding
+      ::  processes: it can request a new process be forked, it can request its
+      ::  child forked processes to terminate themselves, or it can terminate
+      ::  itself.
+      ::
+      ::::
+      ::
+      ::  Launches a process.
+      ::
+      $:  %fork
+          ::  The name of the new process, appended to the current process path
+          ::
+          name=term
+          ::  Whether vere should log this process in the event log
+          ::
+          logged=?
+          ::  A vase of nock code to run inside the new process
+          ::
+          program=vase
+          ::  Committed state map.
+          ::
+          ::    Processes have a permanent state which is `[%commit ]`ed when a
+          ::    program wants to save it. The state map is a hierarchical map
+          ::    of saved states used during process starts.
+          ::
+          ::    Let's say we're forking /ames. There should be a {[/ames
+          ::    <vase>]} entry in the map.
+          ::
+          state=(map path vase)
+          ::  The type of the handle we establish with our child process
+          ::
+          ::    When we fork a new process, we establish a %pipe handle of the
+          ::    following type. This process will receive this handle (or an
+          ::    error) in the corresponding %forked notification we will
+          ::    receive.
+          ::
+          =handle-type
+          ::  Like normal messages, we may lose handles that we send to the new
+          ::  process.
+          ::
+          losing=(list [handle handle-type])
+          ::  The message to send. Must be of handle-type.
+          ::
+          message=*
+      ==
+      ::  Sends a shutdown request to the named child process.
+      ::
+      ::    :term must refer to a child process of ours. It will receive a
+      ::    %shutdown effect, instructing it to recurse the shutdown message,
+      ::    close all handles, and eventually pass all state upwards when its
+      ::    complete.
+      ::
+      [%shutdown name=term]
+      ::  Terminates the current process.
+      ::
+      ::    When a process terminates, it sends our current permanent state
+      ::    upwards to the parent for handling. If this terminate was a crash,
+      ::    we pass the :trace upwards, too.
+      ::
+      [%terminate trace=(unit tang) state=(map path vase)]
+      ::
+      ::  -- Message Passing Primitives --
+      ::
+      ::  Sends a message over handle. a handle represents a bidirectional
       ::  pipe. To give a handle we own to some other process, we must lose it
       ::  ourselves; any attempt to send on these handles from user code will
       ::  cause the process to crash.
       ::
-      [%send send-over=handle losing=(list channel) message=*]
+      [%send send-over=handle losing=(list [handle handle-type]) message=*]
       ::  Closes a set of handles.
       ::
-      ::    Handle closing is done either explicitly or on process crash. Since
-      ::    a process has
+      ::    We close possibly multiple handles from the remote :connection.
+      ::    Handle closing is done either explicitly or on process crash. If
+      ::    the remote process is shutting down, we receive a close event with
+      ::    all handles between our processes. We never receive handles from
+      ::    different connections in one event.
       ::
-      [%close send-over=handle close=(list handle)]
+      [%close =connection close=(list handle)]
       ::
       ::  -- Async Primitives --
       ::
       ::  Performs a calculation asynchronously.
       ::
+      ::    :id is a per-nuevo instance monotonically increasing
+      ::    integer. Per-process, ids are never repeated.
+      ::
       [%do id=@async to-compute=nock]
       ::  Cancels an outstanding %async calculation. No %result will be
-      ::  injected back into
+      ::  injected back into this nuevo 
       ::
       [%stop id=@async]
-      ::
-      ::  -- Forking Primitives --
-      ::
-      ::  Launches a process, passing a list of handles we're losing in this
-      ::  process to one that the new process will gain.
-      ::
-      [%fork name=term logged=? program=vase losing=(list channel) message=*]
   ==
 ::
 :: Handles send typed messages, so the messages that come over [%top ~] also
@@ -441,70 +530,171 @@ d::
 ::
 ::  ==========
 ::
-::  Example 3: Crash semantics
+::
+::  Example 3 (amended): Crash and Restart semantics
 ::
 ::  [Step 1]: Your program is chugging along and has reached a place where it
-::  wants to commit its permanent state. Recall in the above sample program
-::  core, that a program's state is divided into the :state and the :temp part,
-::  where one must emit an explicit [%commit ...] effect to save that part of
-::  the state, while :temp can be thrown away on any crash. Most data should be
-::  temp data.
+::  wants to commit its permanent state. Let's say we've rewritten ames so that
+::  each separate ship that it communicates with is its own process and we've
+::  written a vere interpreter such that messages from ~zod come directly on a
+::  UDP `[%io ...]` handle, so that we can process messages from different
+::  ships in parallel.
 ::
-::  {pid:/child/parent}
+::  Recall in the above sample program core, that a program's state is divided
+::  into the :state and the :temp part, where one must emit an explicit
+::  [%commit ...] effect to save that part of the state, while :temp can be
+::  thrown away on any crash. Most data should be temp data.
+::
+::  {process:/ames/~zod}
 ::  ...
-::  ===>  A long running transaction has completed! Time to commit our permanent
-::        state! The program emits a [%commit ...] effect...but this causes no
-::        nuevo level effects to be emitted!
+::  ===>  A long running transaction has completed! We're sending off a message
+::        on a UDP port. Because we still haven't fixed the sequence number
+::        issue in this example, it is time to commit our permanent state! The
+::        process emits a [%commit ...] effect...but this causes no nuevo level
+::        effects to be emitted!
 ::  -->  ~
 ::
 ::
-::  [Step 2]: Your program keeps chugging along, but hits a non-deterministic
-::  error. Maybe you're using too much memory. It doesn't matter, vere then
+::  [Step 2]: Ames itself keeps chugging along, but hits a non-deterministic
+::  error. Maybe it's using too much memory. It doesn't matter, vere then
 ::  sends the nuevo instance a %crash event, telling the nuevo instance to
 ::  crash its process and to preform the shutdown steps.
 ::
-::  {pid:/child/parent}
+::  {process:/ames}
 ::  [%crash some-error-tang]
 ::  -->  nuevo doesn't even run the program. all it knows is that the last
-::       instance of it crashed.
-::  -->  :~  [%crashed parent=[%pid /parent 0]
-::                     committed=<the vase of the last commit>
-::                     losing=[[%io %thing 7] [%pid /parent 8] ~]]
-::           ::  Nuevo keeps track of handles from some other part of the
+::       instance of it crashed, and it starts the shutdown procedure.
+::  -->  :~  ::  Nuevo keeps track of handles from some other part of the
 ::           ::  system, and must notify them the crash, too.
-::           [%close parent=[%pid /other 5]
-::                   losing=[[%pid /other 3] ~]]
-::           ::  This nuevo process is over.
-::           [%terminate ~]
+::           ::
+::           [%close [%path /gall/thing] [[%pipe 5 [%path /gall/thing]]
+::                                        [%pipe 31 [%path /gall/thing]] ~]
+::           ::  The toplevel process owns some sort of UDP IO which needs
+::           ::  to be cleaned up, too.
+::           ::
+::           [%close [%top ~] [[%io ...] ~]]
+::           ::
+::           ::  This nuevo instance knows about its child connections and
+::           ::  cannot terminate itself until it knows that all its child
+::           ::  processes have terminated. It is now in an intermediate crashing
+::           ::  state where it has closed all handles it has and is waiting for
+::           ::  its children to terminate so it can terminate.
+::           ::
+::           [%shutdown /ames/~zod]
+::           [%shutdown /ames/~nec]
 ::       ==
-::  -->  (This nuevo instance shuts down)
-::
-::  When a process crashes, only then does it send upward the vase from the
-::  last %commit to the parent. Because Nuevo is trusted and is trusted to deal
-::  with crashes correctly, we don't have to send each committed permanent
-::  state each time a %commit occurs, incurring event log writes of possibly
-::  large pieces of state. We only have to do this on crash because we can
-::  trust nuevo.
-::
-::  Nuevo keeps track of which handles were passed over which other
-::  handles. All those handles need to be closed.
+::  -->  (This nuevo instance is no longer in a state where it will receive
+::        events other than shutdown requests.)
 ::
 ::
-::  [Step 3]: Parent receives the
+::  [Step 3]: The ~zod handling process receives the shtudown request.
 ::
-::  {pid:/parent}
-::  [%crashed sent-on=[%pid /parent 0]
-::            committed=<vase of commit>
-::            losing=...]
-::  ===>  the parent, which spawned /child/parent in the first place, can now
-::        restart the child, from the last known good state.
-::  -->  [%fork name=child
-::              logged=%.y
-::              program=<program vase>
-::              state=<the last committed state, which was just passed to us>
-::              sent-over=[[%pid / 0] <http server type>]
-::              losing=[[[%io %http 0] [<type> <type>]] ~]
-::              message=[%start ~]]
+::  {process:/ames/~zod}
+::  [%shutdown ~]
+::  -->  nuevo doesn't even run the program. A shutdown request is just going to
+::       pass the `[%commit ...]`ed state upwards and terminate the process.
+::  -->  :~  ::  Nuevo automatically closes handles
+::           [%close [%path /gall/one] [[%pipe 51 /gall/one] ~]]
+::           [%close [%path /gall/stuff] [[%pipe 12 /gall/one] ~]]
+::           ::  Nuevo cleans up its outstanding asynchronous tasks on shutdown
+::           ::
+::           [%stop 5]
+::           ::  Nuevo sends a terminated message, which will pass its `%commit`
+::           ::  state upwards
+::           [%terminate ~ {[/ames/~zod <state vase>] ~ ~}]
+::       ==
+::  -->  (vere participates in terminating /ames/~zod)
+::
+::
+::  [Step 4]: Toplevel ames received the ~nec shutdown previously, and will now
+::  handle the last ~zod shutdown.
+::
+::  {process:/ames}
+::  [%terminated ~ /ames/~zod {[/ames/~zod <state vase>] ~ ~}]
+::  -->  nuevo doesn't even run the program. Now that it's aggregated all the
+::       state of its children, it propagates the original crash upwards with
+::       its own committed state and the committed state of all of its
+::       children.
+::  -->  :~  [%crashed crash-stack {[/ames ...] [/ames/~zod ...] ...}]
+::       ==
+::  -->  (vere participates in terminating /ames)
+::
+::
+::  [Step 5]: Time for recovery. Only now is / alerted about the crashing of
+::  /ames. It's been notified about the handle closure, which should prevent it
+::  from sending further messages to it. But only now does it receive the crash
+::  state.
+::
+::  {process:/}
+::  [%crashed crash-stack /ames {[/ames ...] [/ames/~zod ...] ...}]
+::  -->  nuevo notifies the process creator about what to do
+::  ==>  userboot owns ames, and receives the program level message about the
+::       crash. userboot is going to
+::  -->  :~  [%fork ames %.y program=<ames vase> state=<state map>]
+::       ==
+::
+::
+::  [Step 6]: Ames is initting!
+::
+::  {process:/ames}
+::  [%init connection=[%process /]
+::         name=ames
+::         program=<userboot vase>
+::         state=[state map]
+::         sent-over=[handle handle-type]
+::         gaining=~
+::         message=[%init ~]
+::  -->  nuevo looks in the state map for /ames and sets it as the core state.
+::  ==>  the %init arm does some stuff and sees it has children to restart
+::  -->  :~  [%fork ~nec %.y program=<per ship vase> state=[[/~nec <vase>] ~]]
+::           [%fork ~zod %.y program=<per ship vase> state=[[/~zod <vase>] ~]]
+::           [%forked ames [communication handle]]
+::       ==
+::
+::  <eliding / getting the /ames %forked message>
+::
+::  [Step 7]: Ames children reinit.
+::
+::  {process:/ames/~nec}
+::  [%init connection=[%process /]
+::         name=~nec
+::         program=<userboot vase>
+::         state=[[/~nec <vase>] ~]
+::         sent-over=[
+::         gaining=~
+::         message=[%init ~]]
+
+::
+::  [Step X]: Somewhere in all of this, /ames needs to receive its [%io ]
+::  handle back so it can
+
+
+::  TODO: Need to rethink how data gets reinflated from saved state.
+::
+::  Should the event log be able to make references into the grain silo?
+
+
+
+
+
+::  Types of shutdown events:
+::
+::  - You crashed, start the shutdown. (Doesn't notify program)
+::  - You are terminated. Give me your and your children's state. (Doesn't notify program)
+::  - Your direct child crashed, here is the state, ask the program what to do.
+::
+
+
+
+
+::  TODO
+::
+::  - %fork needs to establish the type of the handle. %init receives a handle
+::  of that type. %forked gives the requested handle type to the caller.
+
+
+
+
 
 
 ::  TODO:
