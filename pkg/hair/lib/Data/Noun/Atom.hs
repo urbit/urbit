@@ -13,6 +13,7 @@ import GHC.Int
 import Data.Bits
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
+import Text.Printf
 
 --------------------------------------------------------------------------------
 
@@ -60,6 +61,10 @@ class IsAtom a where
 instance IsAtom Natural where
   toAtom              = MkAtom
   fromAtom (MkAtom a) = a
+
+instance IsAtom Word where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
 
 instance IsAtom Int where
   toAtom   = fromIntegral
@@ -125,3 +130,23 @@ bitIdx idx buf = testBit buf idx
 
 bitConcat :: Atom -> Atom -> Atom
 bitConcat x y = x .|. shiftL y (bitWidth x)
+
+
+-- Bit Buffers -----------------------------------------------------------------
+
+data Buf = Buf !Int !Atom
+
+instance Show Buf where
+  show (Buf sz bits) = "0b"
+                    <> replicate (sz - bitWidth bits) '0'
+                    <> printf "%b (%d bits)" (toInteger bits) sz
+
+instance Semigroup Buf where
+  Buf xSz xBuf <> Buf ySz yBuf = Buf (xSz+ySz) (xBuf .|. shiftL yBuf xSz)
+
+instance Monoid Buf where
+  mempty = Buf 0 0
+
+instance IsAtom Buf where
+  toAtom (Buf _ bits) = bits
+  fromAtom bits = Buf (bitWidth bits) bits

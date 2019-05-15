@@ -51,6 +51,7 @@ dependencies:
   - text
   - these
   - time
+  - transformers
   - unordered-containers
   - vector
 
