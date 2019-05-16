@@ -14,9 +14,10 @@
 ::  because we don't want user code to leak handles.
 ::
 ::  Nuevo and Vere operate as part of a standardized state machine around
-::  process creation, execution and event dispatch. The initial process is
-::  created with %init, which is given a single initial handle which represents
-::  communication with vere.
+::  process creation, execution and event dispatch. All processes start their
+::  lives with %init applied to a nuevo kernel, with a typed handle which
+::  represents communication with their parent. In the case of the top process,
+::  this connection is conceptually with vere.
 ::
 ::  Nuevo processes have no actual relation to OS processes and an implementer
 ::  should feel free to do any mapping that is semantically equivalent, which
@@ -52,14 +53,14 @@
 ::  by any two connections.
 ::
 +$  handle
-  $%  ::  A pipe handle is a handle which communicates with a different process
+  $%  ::  A pipe is a handle which communicates with a different process
       ::
       ::    For every represented pipe, there are two `[%pipe ...]` handles
       ::    among all the nuevo instances, each referring to the other
       ::    endpoint.
       ::
       [%pipe id=@u =connection]
-      ::  An io handle is a handle which communicates with a toplevel io driver
+      ::  An io is a handle which communicates with a toplevel io driver
       ::
       ::    There is only a single `[%io ...]` handle per represented io pipe
       ::    because the counterparty is in vere.
@@ -88,9 +89,8 @@
 ::  But what can Nuevo do with handles? Handles are references to resources
 ::  outside of a single instance of Nuevo, and instances of Nuevo pass them as
 ::  part of the message machinery. Nuevo instances trust each other to not
-::  forge handles or connections.
-::
-::  Message passing is used enough that we define a type for it.
+::  forge handles or connections. In these messages, we may need to pass
+::  ownership of a handle over the message.
 ::
 +$  message
   $:  ::  Handles being transferred in this message
@@ -396,7 +396,7 @@
 ::  initializes a program with a state along with passing a user level message
 ::  which is delivered immediately to the program.
 ::
-::  {pid:/}
+::  {process:/}
 ::  [%init connection=[%top ~]
 ::         name=/
 ::         program=<userboot vase>
@@ -424,12 +424,12 @@
 ::                       [%start ~]
 ::
 ::
-::  [Step two]: pid:/http is started from the %fork given to vere. Vere
+::  [Step two]: process:/http is started from the %fork given to vere. Vere
 ::  understands the full state machine so it takes the %fork and turns it into
 ::  an %init. Since logged=%.y, the events on this instance of nuevo go into
 ::  the event log and are replayable.
 ::
-::  {pid:/http}
+::  {process:/http}
 ::  [%init connection=[%process /]
 ::         name=/http
 ::         program=<http server vase>
@@ -444,10 +444,10 @@
 ::  -->  [%send [%io http 0] message=[~ [%start-http-thing port=80]]]
 ::
 ::
-::  [Step three]: pid:/ receives back a message that its forked process was
+::  [Step three]: process:/ receives back a message that its forked process was
 ::  created.
 ::
-::  {pid:/}
+::  {process:/}
 ::  [%forked name=http
 ::           handle=[| [%pipe 0 [%process /http]] [<type> <type>]]]
 ::  ===> This gets passed into the user program. Assuming we have some sort of
@@ -458,7 +458,7 @@
 ::  [Step four]: Look, an incoming http request! But it comes directly from the
 ::  io driver instead of from [%top ~] or from [%pid / 0].
 ::
-::  {pid:/http}
+::  {process:/http}
 ::  [%recv sent-over=[%io %http 0]
 ::         message=  :-  [[%io %http 1] <session type> <session type>]
 ::                   [%session-opened 0]
@@ -476,7 +476,7 @@
 ::  instructs us to drop all %io handles. Only processes which have %io handles
 ::  receive the [%cleario ~] message.
 ::
-::  {pid:/http}
+::  {process:/http}
 ::  [%cleario ~]
 ::  ===> Well, that means we're going to have to cancel our current asynchronous
 ::       thread, since the handle which caused it is gone. (We'll need to have
@@ -489,7 +489,7 @@
 ::  the first process, who now distributes the new %io handles to its child
 ::  processes.
 ::
-::  {pid:/}
+::  {process:/}
 ::  [%recv sent-over=[%pipe 0 [%top ~]]
 ::         message=  :-  [[[%io %http 3] [<xtype> <xtype>]] ~]
 ::                   [%born handles={[%http 0]}]
@@ -503,12 +503,12 @@
 ::
 ::  Example 2: Handles as subscriptions
 ::
-::  [Step 1]: You are pid:/foo and have a handle to pid:/bar of the following
-::  type:
+::  [Step 1]: You are process:/foo and have a handle to process:/bar of the
+::  following type:
 ::
 ::    |%
 ::    ++  recv
-::      $%  [%get-sub bone]
+::      $%  [%get-sub @ud]
 ::      ==
 ::    ++  send
 ::      $%  [%subscribe-to =path]
@@ -517,13 +517,13 @@
 ::
 ::  So you send off your subscription request
 ::
-::  {pid:/foo}
+::  {process:/foo}
 ::  --> [%send send-over=[%pipe 5 [%process /bar]]
 ::             message=[~ [%subscribe-to=/data/path]]
 ::
 ::
-::  [Step 2]: You subscribed to the remote resource and hear back a handle of
-::  this type over the requested type:
+::  [Step 2]: You are process:/bar and must deal with the subscription. We want
+::  to send back a new handle of the type:
 ::
 ::    |%
 ::    ++  recv
@@ -533,7 +533,19 @@
 ::      ~
 ::    --
 ::
-::  {pid:/foo}
+::  {process:/bar}
+::  --> [%recv send-over=[%pipe 5 [%process /foo]]
+::             message=[~ [%subscribe-to=/data/path]]]
+::  ==> We invoke the program, which wants to send back a new handle to
+::      represent results on this subscription.
+::  --> [%send send-over=[%pipe 5 [%process /foo]]
+::             message= :-  [[%pipe 6 [%process /bar]] ~]
+::                      [%get-sub 0]
+::
+::
+::  [Step 3]: /foo hears back with the new handle.
+::
+::  {process:/foo}
 ::  [%recv sent-over=[%pipe 5 [%process /bar]]
 ::         message=  :-  [[[%pipe 6 [%process /bar]] <recv> <send>] ~]
 ::                   [%get-sub 0]]
@@ -543,23 +555,96 @@
 ::       later.
 ::  -->  ~
 ::
-::  [Step 3]: Our program receives a new thing on the subscription handle.
 ::
-::  {pid:/foo}
+::  [Step 4]: Something happened! /bar alerts its subscribers.
+::
+::  {process:/bar}
+::  <something happens>
+::  -->  [%send send-over=[%pipe 6 [%process /bar]]
+::              message=[~ [%subscription-result "some data"]]]
+::
+::
+::  [Step 5]: Our program receives a new thing on the subscription handle.
+::
+::  {process:/foo}
 ::  [%recv sent-over=[%pipe 6 [%process /bar]]
 ::         message=[~ [%subscription-result "some data"]]
 ::  ===> /foo does some internal processing on the result.
 ::  -->  ~
 ::
 ::
-::  [Step 4]: Our program reacts to the subscription handle being closed.
+:::::: At this point, the path forks and I want to show both sides:
 ::
-::  {pid:/foo}
-::  [%closed [%process /bar] [[%pipe 6 [%process /bar]] ~]]
-::  ===>  /foo can now react to the subscription handle closign. it could try
-::        to resubscribe, or maybe this is expected.
+::
+::  [Step A-6]: It's been a few messages now and /foo has heard enough. It wants
+::  to close the connection.
+::
+::  {process:/foo}
+::  <some cause>
+::  ==>  /foo realizes that it no longer needs to subscribe to this connection.
+::       To signal this, it just closes the connection.
+::  -->  [%close [%process /bar] [%pipe 6 [%process /bar]]]
+::
+::
+::  [Step A-7]: /bar receives the handle closing message.
+::
+::  {process:/bar}
+::  [%closed [%process /foo] ~[%pipe 6 [%process /foo]]]
+::  ==>  /bar modifies some internal subscription state, as sending data on
+::       this closed bone will crash it in the future.
 ::  -->  ~
 ::
+::
+::  [Step A-8]: However, since this is a multiprocess system, there was
+::  cross-talk and /bar had already sent another message on the handle. Nuevo
+::  ignores this and doesn't dispatch the message to its program at all.
+::
+::  {process:/foo}
+::  [%recv sent-over=[%pipe 6 [%process /bar]]
+::         message=[~ [%subscription-result "more data"]]]
+::  --> silently dropped
+::
+:::::: And on the other side....
+::
+::  [Step B-6]: /bar decides the subscription is over. Maybe the subscription
+::  was only for one message on an asynchronous callback, in which case this
+::  could be rolled into the previous /bar output in Step 4.
+::
+::  {process:/bar}
+::  <something happens>
+::  -->  [%close [%process /foo] ~[%pipe 6 [%process /bar]]]
+::
+::
+::  [Step B-7]: /foo receives the closed subscription handle.
+::
+::  {process:/foo}
+::  [%closed [%process /bar] ~[%pipe 6 [%process /foo]]]
+::  ==> Our program reacts to the subscription handle being closed.
+::
+:::::: This even handles crashes, too:
+::
+::  [Step C-6]: /bar crashes for some reason, this automatically closes
+::  all handles, including the subscription handle and the toplevel pipe
+::
+::  {process:/bar}
+::  ==> !!
+::  --> :~  [%close [%process /foo] [[%pipe 5 [%process /foo]]
+::                                   [%pipe 6 [%process /foo]] ~]]
+::          :: other shutdown tasks go here.
+::      ==
+::
+::
+::  [Step C-7]: /foo sees all the handles closed. The user code in /foo
+::  receives the notification that both of its handles have sunk.
+::
+::  {process:/foo}
+::  [%closed [%process /bar] [<pipes 5 and 6> ~]]
+::  ==> Program reacts to the remote crash.
+
+::  We'll elaborate on the full crashing semantics in Example 3.
+::
+::::  The remaining question in this example is how are new handles allocated
+::::  at the user program level in a 
 ::
 ::  ==========
 ::
@@ -703,15 +788,26 @@
       ::  our children in the process DAG.
       ::
       child=(map term connection)
+      ::  the program this nuevo instance runs
+      ::
+      program=vase
       ::  the next bone id to assign to the incoming handle
       ::
-      next-bone=@
+      next-bone=@bone
       ::  mappings between bones and handles
       ::
-      bone-to-handle=(map handle bone)
-      handle-to-bone=(map bone handle)
+      bone-to-handle=(map handle @bone)
+      handle-to-bone=(map @bone handle)
+      ::  the next async task id for this process
+      ::
+      next-async-task=@async
+      ::  asynchronous tasks which we've kicked off but haven't heard back from
+      ::
+      outstanding-async-tasks=(set @async)
       ::
       ::
+      ::  TODO: There's a lot more here, but I feel like I should send this
+      ::  out.
   ==
 ::
 
@@ -720,4 +816,6 @@
 ::  how Erlang handled some of these process related issues before I finalize
 ::  the design; they have 20 years of experience doing this sort of process
 ::  oriented message passing and we should learn from them.
-::
+
+
+::  TODO: How are handle names picked for being unique in a multiprocess system?
