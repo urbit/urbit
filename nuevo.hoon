@@ -38,6 +38,8 @@
       [%top ~]
       ::  A connection representing a nuevo process.
       ::
+      ::    TODO: Does this have the equivalent of a life on it?
+      ::
       [%process =path]
   ==
 ::
@@ -59,11 +61,25 @@
       ::    among all the nuevo instances, each referring to the other
       ::    endpoint.
       ::
-      [%pipe id=@u =connection]
+      ::    Two pipes are the same if they have the same :id and
+      ::    :creator. :counterparty is the connection which owns the other side
+      ::    of the pipe. Note that the two :counterparty s which end up with the
+      ::    pipe may be different from the :creator.
+      ::
+      ::    TODO: Do we need to have a third unique pid separate from the path
+      ::    based process name? The point of [id creator] is to be globally
+      ::    unique and if /process can be recreated, we probably need the first
+      ::    instance of /process to have a separate id from the second instance
+      ::    of /process.
+      ::
+      [%pipe id=@u creator=connection counterparty=connection]
       ::  An io is a handle which communicates with a toplevel io driver
       ::
       ::    There is only a single `[%io ...]` handle per represented io pipe
       ::    because the counterparty is in vere.
+      ::
+      ::    Unlike %pipe, %io handles are always created by an exterior IO
+      ::    driver so there's no ambiguity about equivalence or :id.
       ::
       [%io driver=term id=@u]
   ==
@@ -247,6 +263,10 @@
           ::    error) in the corresponding %forked notification we will
           ::    receive.
           ::
+          ::    The creator of the handle is technically the forked process,
+          ::    and this process receives their handle back on the %forked
+          ::    message.
+          ::
           =handle-type
           ::  The message to send. Must be of handle-type.
           ::
@@ -378,7 +398,7 @@
     |=  [cause=bone gaining=(list bone) msg=<input channel type>]
     ^-  [(list sysmsg) _temp]
     :_  temp
-    [[%commit stae] ~]
+    [[%commit state] ~]
   --
 --
 ::
@@ -401,16 +421,16 @@
 ::         name=/
 ::         program=<userboot vase>
 ::         state=~
-::         sent-over=[%pipe 0 [%top ~]]
+::         sent-over=[%pipe 0 [%process /] [%top ~]]
 ::         sent-over-type=[recv=<xtyp> send=<xtype>]
 ::         message= :-  [[[%io %http 0] [<xtype> <xtype>]] ~]
 ::                  [%init handles={[%http 0]}]
 ::  ===> We have the first program passed in from the outside. This instance
-::       of nuevo assigns bone 0 to `[%pipe 0 [%top ~]]` and bone 1 to
-::       `[%io %http 0], takes the passed in program vase and uses that as the
-::       program to run, would put in the permanent state vase if there was a /
-::       in the map (but there isn't on startup), puts the various bone mappings
-::       in the state with types, and finally calls:
+::       of nuevo assigns bone 0 to `[%pipe 0 [%process /] [%top ~]]` and bone
+::       1 to `[%io %http 0], takes the passed in program vase and uses that as
+::       the program to run, would put in the permanent state vase if there was
+::       a / in the map (but there isn't on startup), puts the various bone
+::       mappings in the state with types, and finally calls:
 ::
 ::         (~(do ...) 0 [1 ~] [%init handles={[%http 0]}])
 ::
@@ -434,7 +454,7 @@
 ::         name=/http
 ::         program=<http server vase>
 ::         state=~
-::         sent-over=[%pipe 0 [%process /]]
+::         sent-over=[%pipe 0 [%process /http] [%process /]]
 ::         sent-over-type=[<recv> <send>]
 ::         message=  :-  [[[%io %http 0] [<type> <type>]] ~]
 ::                   [%start ~]
@@ -449,7 +469,7 @@
 ::
 ::  {process:/}
 ::  [%forked name=http
-::           handle=[| [%pipe 0 [%process /http]] [<type> <type>]]]
+::           handle=[| [%pipe 0 [%process /http] [%process /http]] [<type> <type>]]]
 ::  ===> This gets passed into the user program. Assuming we have some sort of
 ::       await/async system, this is the "return" value of the fork call.
 ::  -->  ~
@@ -490,11 +510,11 @@
 ::  processes.
 ::
 ::  {process:/}
-::  [%recv sent-over=[%pipe 0 [%top ~]]
+::  [%recv sent-over=[%pipe 0 [%process /] [%top ~]]
 ::         message=  :-  [[[%io %http 3] [<xtype> <xtype>]] ~]
 ::                   [%born handles={[%http 0]}]
 ::  ===> Userboot now distributes the new handles to its children
-::  -->  [%send send-over=[%pipe 0 [%process /http]]
+::  -->  [%send send-over=[%pipe 0 [%process /http] [%process /http]]
 ::              message=  :-  [[[%io %http 3] [<xtype> <xtype>]] ~]
 ::                        [%born 0]]
 ::
@@ -518,7 +538,7 @@
 ::  So you send off your subscription request
 ::
 ::  {process:/foo}
-::  --> [%send send-over=[%pipe 5 [%process /bar]]
+::  --> [%send send-over=[%pipe 5 [%process /bar] [%process /bar]]
 ::             message=[~ [%subscribe-to=/data/path]]
 ::
 ::
@@ -534,20 +554,20 @@
 ::    --
 ::
 ::  {process:/bar}
-::  --> [%recv send-over=[%pipe 5 [%process /foo]]
+::  --> [%recv send-over=[%pipe 5 [%process /bar] [%process /foo]]
 ::             message=[~ [%subscribe-to=/data/path]]]
 ::  ==> We invoke the program, which wants to send back a new handle to
 ::      represent results on this subscription.
-::  --> [%send send-over=[%pipe 5 [%process /foo]]
-::             message= :-  [[%pipe 6 [%process /bar]] ~]
+::  --> [%send send-over=[%pipe 5 [%process /bar] [%process /foo]]
+::             message= :-  [[%pipe 6 [%process /bar] [%process /foo]] ~]
 ::                      [%get-sub 0]
 ::
 ::
 ::  [Step 3]: /foo hears back with the new handle.
 ::
 ::  {process:/foo}
-::  [%recv sent-over=[%pipe 5 [%process /bar]]
-::         message=  :-  [[[%pipe 6 [%process /bar]] <recv> <send>] ~]
+::  [%recv sent-over=[%pipe 5 [%process /bar] [%process /bar]]
+::         message=  :-  [[[%pipe 6 [%process /bar] [%process /foo]] <recv> <send>] ~]
 ::                   [%get-sub 0]]
 ::  ===> /foo has received a new handle which represents the subscription
 ::       Since it's a handle (like everything else in the system), it is legible
@@ -560,14 +580,14 @@
 ::
 ::  {process:/bar}
 ::  <something happens>
-::  -->  [%send send-over=[%pipe 6 [%process /bar]]
+::  -->  [%send send-over=[%pipe 6 [%process /bar] [%process /foo]]
 ::              message=[~ [%subscription-result "some data"]]]
 ::
 ::
 ::  [Step 5]: Our program receives a new thing on the subscription handle.
 ::
 ::  {process:/foo}
-::  [%recv sent-over=[%pipe 6 [%process /bar]]
+::  [%recv sent-over=[%pipe 6 [%process /bar] [%process /bar]]
 ::         message=[~ [%subscription-result "some data"]]
 ::  ===> /foo does some internal processing on the result.
 ::  -->  ~
@@ -583,13 +603,13 @@
 ::  <some cause>
 ::  ==>  /foo realizes that it no longer needs to subscribe to this connection.
 ::       To signal this, it just closes the connection.
-::  -->  [%close [%process /bar] [%pipe 6 [%process /bar]]]
+::  -->  [%close [%process /bar] [%pipe 6 [%process /bar] [%process /bar]]]
 ::
 ::
 ::  [Step A-7]: /bar receives the handle closing message.
 ::
 ::  {process:/bar}
-::  [%closed [%process /foo] ~[%pipe 6 [%process /foo]]]
+::  [%closed [%process /foo] ~[%pipe 6 [%process /bar] [%process /foo]]]
 ::  ==>  /bar modifies some internal subscription state, as sending data on
 ::       this closed bone will crash it in the future.
 ::  -->  ~
@@ -600,7 +620,7 @@
 ::  ignores this and doesn't dispatch the message to its program at all.
 ::
 ::  {process:/foo}
-::  [%recv sent-over=[%pipe 6 [%process /bar]]
+::  [%recv sent-over=[%pipe 6 [%process /bar] [%process /bar]]
 ::         message=[~ [%subscription-result "more data"]]]
 ::  --> silently dropped
 ::
@@ -612,13 +632,13 @@
 ::
 ::  {process:/bar}
 ::  <something happens>
-::  -->  [%close [%process /foo] ~[%pipe 6 [%process /bar]]]
+::  -->  [%close [%process /foo] ~[%pipe 6 [%process /bar] [%pipe /foo]]]
 ::
 ::
 ::  [Step B-7]: /foo receives the closed subscription handle.
 ::
 ::  {process:/foo}
-::  [%closed [%process /bar] ~[%pipe 6 [%process /foo]]]
+::  [%closed [%process /bar] ~[%pipe 6 [%process /foo] [%process /bar]]]
 ::  ==> Our program reacts to the subscription handle being closed.
 ::
 :::::: This even handles crashes, too:
@@ -628,8 +648,8 @@
 ::
 ::  {process:/bar}
 ::  ==> !!
-::  --> :~  [%close [%process /foo] [[%pipe 5 [%process /foo]]
-::                                   [%pipe 6 [%process /foo]] ~]]
+::  --> :~  [%close [%process /foo] [[%pipe 5 [%process /bar] [%process /foo]]
+::                                   [%pipe 6 [%process /bar] [%process /foo] ~]]
 ::          :: other shutdown tasks go here.
 ::      ==
 ::
@@ -644,7 +664,7 @@
 ::  We'll elaborate on the full crashing semantics in Example 3.
 ::
 ::::  The remaining question in this example is how are new handles allocated
-::::  at the user program level in a 
+::::  at the user program level.
 ::
 ::  ==========
 ::
@@ -775,7 +795,6 @@
 ::  <eliding / getting the /ames %forked message>
 ::
 ::
-::
 ::::::::
 ::
 :: So after looking through those examples, what state does an instance of the
@@ -819,3 +838,8 @@
 
 
 ::  TODO: How are handle names picked for being unique in a multiprocess system?
+
+::  TODO: Thing about race condition between sending a process shutting down
+::  and receiving a shutdown message. Do we just drop messages? I suspect
+::  that's what we do. But this requires individual processes to have unique
+::  identifiers across instances.
