@@ -2,7 +2,12 @@ source $stdenv/setup
 
 set -ex
 
-$URBIT -d -F $SHIP -A "$ARVO" -B "$PILL" $out
+if [ -z "$ARVO" ]
+then
+    $URBIT -d -F $SHIP -B "$PILL" $out
+else
+    $URBIT -d -F $SHIP -A "$ARVO" -B "$PILL" $out
+fi
 
 check () {
   [ 3 -eq "$(herb $out -d 3)" ]
