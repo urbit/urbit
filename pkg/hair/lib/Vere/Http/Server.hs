@@ -23,9 +23,13 @@ data Config = Config
   , redirect :: Bool
   }
 
-newtype Key = Key Wain
-newtype Cert = Cert Wain
+-- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
+-- from Wain
+newtype Key = Key PEM
+newtype Cert = Cert PEM
 data Wain = Wain [Text]
+
+data PEM
 
 data ClientResponse
   = Progress ResponseHeader Int (Maybe Int) (Maybe ByteString)
