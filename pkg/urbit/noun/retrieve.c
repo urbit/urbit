@@ -1639,11 +1639,12 @@ u3r_mug(u3_noun veb)
 
   //  read from the current noun .veb
   //
-  read: {
+  advance: {
     //  veb is a direct atom, mug is not memoized
     //
     if ( _(u3a_is_cat(veb)) ) {
       mug_w = u3r_mug_bytes((c3_y*)&veb, u3r_met(3, veb));
+      goto retreat;
     }
     //  veb is indirect, a pointer into the loom
     //
@@ -1654,6 +1655,7 @@ u3r_mug(u3_noun veb)
       //
       if ( 0 != veb_u->mug_w ) {
         mug_w = veb_u->mug_w;
+        goto retreat;
       }
       //  veb is an indirect atom, mug its bytes and memoize
       //
@@ -1661,6 +1663,7 @@ u3r_mug(u3_noun veb)
         u3a_atom* vat_u = (u3a_atom*)veb_u;
         mug_w = u3r_mug_bytes((c3_y*)vat_u->buf_w, u3r_met(3, veb));
         vat_u->mug_w = mug_w;
+        goto retreat;
       }
       //  veb is a cell, push a stack frame to mark head-recursion
       //  and read the head
@@ -1669,14 +1672,14 @@ u3r_mug(u3_noun veb)
         u3a_cell* cel_u = (u3a_cell*)veb_u;
         _mug_push(mov, off, MUG_HEAD, cel_u, 0);
         veb = cel_u->hed;
-        goto read;
+        goto advance;
       }
     }
   }
 
   //  consume the popped stack frame and mug from above
   //
-  take: {
+  retreat: {
     mugframe fam_u = _mug_pop(mov, off);
 
     switch ( fam_u.tag_y ) {
@@ -1698,7 +1701,7 @@ u3r_mug(u3_noun veb)
         _mug_push(mov, off, MUG_TAIL, fam_u.cel_u, mug_w);
 
         veb = fam_u.cel_u->tel;
-        goto read;
+        goto advance;
       }
 
       //  mug_w is the mug of the tail of cel_u
@@ -1708,7 +1711,7 @@ u3r_mug(u3_noun veb)
         u3a_cell* cel_u = fam_u.cel_u;
         mug_w = u3r_mug_both(fam_u.mug_w, mug_w);
         cel_u->mug_w = mug_w;
-        goto take;
+        goto retreat;
       }
     }
   }
