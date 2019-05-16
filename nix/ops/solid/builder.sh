@@ -15,7 +15,15 @@ cleanup () {
 
 trap cleanup EXIT
 
-herb ./pier -P solid.pill -d '+solid, =dub &'
+herb ./pier -p hood -d '+hood/merge %stage our %home'
+herb ./pier -p hood -d "+hood/mount /=stage="
+
+rm -r ./pier/stage
+cp -r $ARVO ./pier/stage
+
+herb ./pier -p hood -d "+hood/commit %stage"
+
+herb ./pier -P solid.pill -d '+solid /=stage=/sys, =dub &'
 
 mv solid.pill $out
 
