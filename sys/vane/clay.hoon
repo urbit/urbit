@@ -317,7 +317,7 @@
 ++  clad-output-raw
   |*  a=mold
   $~  [~ ~ %done *a]
-  $:  notes=(list note)
+  $:  notes=(list [path note])
       effects=(list move)
       $=  next
       $%  [%wait ~]
@@ -435,11 +435,11 @@
 ::  Just send a note.
 ::
 ++  just-do
-  |=  note=note
+  |=  [=path =note]
   =/  m  (clad ,~)
   ^-  form:m
   |=  clad-input
-  [[note]~ ~ %done ~]
+  [[path note]~ ~ %done ~]
 ::
 ::  Wait for ford to respond
 ::
@@ -669,7 +669,7 @@
       =/  m  (clad (list (pair path cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /inserts
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  ins
@@ -698,7 +698,7 @@
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /diffs
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  dif
@@ -733,7 +733,7 @@
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /casts
         :*  %f  %build  live=%.n  %pin  wen  %list
             ::~  [her syd %da wen]  %tabl
             ^-  (list schematic:ford)
@@ -761,9 +761,10 @@
             %+  turn  cat
             |=  {pax/path cay/cage}
             [pax (page-to-lobe:sutil [p q.q]:cay)]
-        ^-  (list note)
+        ^-  (list [path note])
         :_  ~
-        :*  %f  %build  live=%.n  %pin  wen  %list
+        :*  /mutates
+            %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  cat
             |=  {pax/path cay/cage}
@@ -826,7 +827,7 @@
       =/  m  (clad ,_this-cor)
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /checkout
         =/  new-yaki  (aeon-to-yaki:sutil let.dom)
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
@@ -868,7 +869,7 @@
           (~(uni in acc) pak)
       =/  changes  (malt suba)
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /ergo
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  turn  ~(tap in all-paths)
@@ -1057,7 +1058,7 @@
       =/  m  (clad ,[ali=yaki e=_this-cor])
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /fetch-ali
         [%c %warp p.ali-disc q.ali-disc `[%sing %v cas /]]
       ;<  [rot=riot r=rang]  bind:m  (expect-clay ran)
       =.  ran  r
@@ -1281,7 +1282,7 @@
       =/  m  (clad ,cane)
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /diff-bas
         :*  %f  %build  live=%.n  %pin  wen
             %list
             ^-  (list schematic:ford)
@@ -1348,7 +1349,7 @@
       =/  m  (clad ,bof=(map path (unit cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /merge-conflicts
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  turn
@@ -1398,7 +1399,7 @@
         ==
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /build
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by bof)
@@ -1537,7 +1538,7 @@
             ?:  ?=($init gem)
               [p.ali-disc q.ali-disc cas]
             [p.bob-disc q.bob-disc da+wen]
-        %-  just-do
+        %+  just-do  /checkout
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by q.new)
@@ -1584,7 +1585,7 @@
           [p.ali-disc q.ali-disc cas]
         [p.bob-disc q.bob-disc da+wen]
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /ergo
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  ~(tap in sum)
@@ -2750,8 +2751,8 @@
       =<  ?>(?=([~ * * * %commit *] act) .)  ::  TMI
       %-  emil
       %+  turn  notes.c-res
-      |=  =note
-      [hen %pass /commit/[syd] note]
+      |=  [=path =note]
+      [hen %pass (weld /commit/[syd] path) note]
     =.  mos.u.act
       (weld mos.u.act effects.c-res)
     ?-  -.next.c-res
@@ -2803,8 +2804,8 @@
       =<  ?>(?=([~ * * * %merge *] act) .)  ::  TMI
       %-  emil
       %+  turn  notes.c-res
-      |=  =note
-      [hen %pass /merge/[syd] note]
+      |=  [=path =note]
+      [hen %pass (weld /merge/[syd] path) note]
     =.  mos.u.act
       (weld mos.u.act effects.c-res)
     ?-  -.next.c-res
@@ -4137,13 +4138,13 @@
   =>  |%
       +$  axle  [%1 ruf-1=raft]
       --
-  ::  |=  *
-  ::  ..^$
+  |=  *
+  ..^$
   ::  XX switch back
-  |=  old=axle
-  ^+  ..^$
-  ?>  ?=(%1 -.old)
-  %_(..^$ ruf ruf-1.old)
+  ::  |=  old=axle
+  ::  ^+  ..^$
+  ::  ?>  ?=(%1 -.old)
+  ::  %_(..^$ ruf ruf-1.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4177,13 +4178,13 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  ?:  ?=({$commit @ ~} tea)
+  ?:  ?=({$commit @ *} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-commit:den q.hin)
     [mos ..^$]
-  ?:  ?=({$merge @ ~} tea)
+  ?:  ?=({$merge @ *} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)

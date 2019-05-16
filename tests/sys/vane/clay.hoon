@@ -59,7 +59,7 @@
           =/  =wire  p.card
           ::
           %+  weld
-            (expect-eq !>(/commit/home) !>(wire))
+            (expect-eq !>(/commit/home/inserts) !>(wire))
           ::
           =/  note=note:clay-gate  q.card
           ::
@@ -92,7 +92,7 @@
       now=~1111.1.1
       scry=*sley
       ^=  take-args
-        :*  wire=/commit/home
+        :*  wire=/commit/home/inserts
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
@@ -117,7 +117,7 @@
           !>  ^-  move:clay-gate
               :-  duct=~[/info]
               ^-  (wind note:clay-gate gift:able:clay)
-              :+  %pass  /commit/home
+              :+  %pass  /commit/home/diffs
               ^-  note:clay-gate
               :-  %f
               [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
@@ -132,7 +132,7 @@
       now=~1111.1.1
       scry=*sley
       ^=  take-args
-        :*  wire=/commit/home
+        :*  wire=/commit/home/diffs
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
@@ -149,7 +149,7 @@
           !>  ^-  move:clay-gate
               :-  duct=~[/info]
               ^-  (wind note:clay-gate gift:able:clay)
-              :+  %pass  /commit/home
+              :+  %pass  /commit/home/casts
               ^-  note:clay-gate
               :-  %f
               [%build live=%.n [%pin ~1111.1.1 [%list ~]]]
@@ -164,7 +164,7 @@
       now=~1111.1.1
       scry=*sley
       ^=  take-args
-        :*  wire=/commit/home
+        :*  wire=/commit/home/casts
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
@@ -190,7 +190,7 @@
         =/  =wire  p.card
         ::
         %+  weld
-          (expect-eq !>(/commit/home) !>(wire))
+          (expect-eq !>(/commit/home/mutates) !>(wire))
         ::
         =/  note=note:clay-gate  q.card
         ::
@@ -214,7 +214,7 @@
       now=~1111.1.1
       scry=*sley
       ^=  take-args
-        :*  wire=/commit/home
+        :*  wire=/commit/home/mutates
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
@@ -240,7 +240,7 @@
         =/  =wire  p.card
         ::
         %+  weld
-          (expect-eq !>(/commit/home) !>(wire))
+          (expect-eq !>(/commit/home/checkout) !>(wire))
         ::
         =/  note=note:clay-gate  q.card
         ::
@@ -276,7 +276,7 @@
       now=~1111.1.1
       scry=*sley
       ^=  take-args
-        :*  wire=/commit/home
+        :*  wire=/commit/home/checkout
             duct=~[/info]
             -:!>(*sign:clay-gate)
             ^-  sign:clay-gate
