@@ -19,11 +19,7 @@
   ==
 ::
 ++  command
-  $%  [%generate =path =batch]
-  ==
-::
-++  batch
-  $%  [%single =network nonce=@ud =call]
+  $%  [%generate =path =network nonce=@ud =batch]
   ==
 ::
 ++  network
@@ -31,6 +27,20 @@
       %ropsten
       %fake
       [%other id=@]
+  ==
+::
+++  batch
+  $%  [%single =call]
+      [%deed as=address deeds-json=cord]
+  ==
+::
+++  rights
+  $:  own=address
+      manage=(unit address)
+      voting=(unit address)
+      transfer=(unit address)
+      spawn=(unit address)
+      net=(unit [crypt=@ux auth=@ux])
   ==
 ::
 ++  call
@@ -73,7 +83,8 @@
     %+  write-file-transactions
       path.command
     ?-  -.batch.command
-      %single  [(single +.batch.command) ~]
+      %single  [(single [network nonce +.batch]:command) ~]
+      %deed    (deed [network nonce +.batch]:command)
     ==
   ==
 ::
@@ -132,6 +143,85 @@
     %set-spawn-proxy  (set-spawn-proxy:dat +.call)
     %transfer-ship  (transfer-ship:dat +.call)
     %set-transfer-proxy  (set-transfer-proxy:dat +.call)
+  ==
+::
+++  deed
+  |=  [=network nonce=@ud as=address deeds-json=cord]
+  ^-  (list transaction)
+  =/  deeds=(list [=ship rights])
+    (parse-registration deeds-json)
+  ::TODO  split per spawn proxy
+  =|  txs=(list transaction)
+  |^  ::  $
+    ?~  deeds  (flop txs)
+    =*  deed  i.deeds
+    =.  txs
+      ?.  ?=(%czar (clan:title ship.deed))
+        %-  do-here
+        (spawn:dat ship.deed as)
+      ~|  %galaxy-held-by-ceremony
+      ?>  =(0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964 as)
+      ~&  [%assuming-galaxy-owned-by-ceremony ship.deed]
+      txs
+    =?  txs  ?=(^ net.deed)
+      %-  do-here
+      (configure-keys:dat [ship u.net]:deed)
+    =?  txs  ?=(^ manage.deed)
+      %-  do-here
+      (set-management-proxy:dat [ship u.manage]:deed)
+    =?  txs  ?=(^ voting.deed)
+      %-  do-here
+      (set-voting-proxy:dat [ship u.voting]:deed)
+    =?  txs  ?=(^ spawn.deed)
+      %-  do-here
+      (set-spawn-proxy:dat [ship u.spawn]:deed)
+    =.  txs
+      %-  do-here
+      (transfer-ship:dat [ship own]:deed)
+    $(deeds t.deeds)
+  ::
+  ::TODO  maybe-do, take dat gat and unit argument
+  ++  do-here
+    |=  dat=tape
+    ~&  [%tx-num (lent txs)]
+    :_  txs
+    (do network (add nonce (lent txs)) ecliptic 5.000.000.000 dat)
+  --
+::
+++  parse-registration
+  |=  reg=cord
+  ^-  (list [=ship rights])
+  ~|  %registration-json-insane
+  =+  jon=(need (de-json:html reg))
+  ~|  %registration-json-invalid
+  ?>  ?=(%o -.jon)
+  =.  p.jon  (~(del by p.jon) 'idCode')
+  %+  turn  ~(tap by p.jon)
+  |=  [who=@t deed=json]
+  ^-  [ship rights]
+  :-  (rash who dum:ag)
+  ?>  ?=(%a -.deed)
+  ::  array has contents of:
+  ::  [owner, transfer, spawn, mgmt, delegate, auth_key, crypt_key]
+  ~|  [%registration-incomplete deed (lent p.deed)]
+  ?>  =(7 (lent p.deed))
+  =<  :*  (. 0 %address)       ::  owner
+          (. 3 %unit-address)  ::  management
+          (. 4 %unit-address)  ::  voting
+          (. 1 %unit-address)  ::  transfer
+          (. 2 %unit-address)  ::  spawn
+          (both (. 6 %key) (. 5 %key))  ::  crypt, auth
+      ==
+  |*  [i=@ud what=?(%address %unit-address %key)]
+  =+  j=(snag i p.deed)
+  ~|  [%registration-invalid-value what j]
+  ?>  ?=(%s -.j)
+  %+  rash  p.j
+  =+  adr=;~(pfix (jest '0x') hex)
+  ?-  what
+    %address       adr
+    %unit-address  ;~(pose (stag ~ adr) (cold ~ (jest '')))
+    %key           ;~(pose (stag ~ hex) (cold ~ (jest '')))
   ==
 ::
 ::  call data generation
