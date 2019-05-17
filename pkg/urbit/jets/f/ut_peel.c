@@ -3,26 +3,18 @@
 */
 #include "all.h"
 
-
-/* logic
-*/
   u3_noun
   _cqfu_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
-             u3_noun met)
+             u3_noun axe)
   {
-    if ( c3__gold == met ) {
-      return u3nc(c3y, c3y);
-    }
-    else switch ( way ) {
-      default: return u3m_bail(c3__fail);
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_cook("_cqfu_peel-peel", von, "peel");
 
-      case c3__both: return u3nc(c3n, c3n);
-      case c3__free: return u3nc(c3y, c3y);
-      case c3__read: return u3nc(((met == c3__zinc) ? c3y : c3n), c3n);
-      case c3__rite: return u3nc(((met == c3__iron) ? c3y : c3n), c3n);
-    }
+    gat = u3i_molt(gat, u3x_sam_2, u3k(way), u3x_sam_3, u3k(axe), 0);
+
+    return u3n_nock_on(gat, u3k(u3x_at(u3x_bat, gat))); 
   }
 
 /* boilerplate
@@ -30,17 +22,17 @@
   u3_noun
   u3wfu_peel(u3_noun cor)
   {
-    u3_noun sut, way, met, van;
+    u3_noun sut, way, axe, van;
 
     if ( (c3n == u3r_mean(cor, u3x_sam_2, &way,
-                               u3x_sam_3, &met,
+                               u3x_sam_3, &axe,
                                u3x_con, &van,
                                0)) ||
          (u3_none == (sut = u3r_at(u3x_sam, van))) )
     {
       return u3m_bail(c3__fail);
     } else {
-      return _cqfu_peel(van, sut, way, met);
+      return u3qfu_peel(van, sut, way, axe);
     }
   }
 
@@ -48,8 +40,8 @@
   u3qfu_peel(u3_noun van,
              u3_noun sut,
              u3_noun way,
-             u3_noun met)
+             u3_noun axe)
   {
-    return _cqfu_peel(van, sut, way, met);
+    return _cqfu_peel(van, sut, way, axe);
   }
 
