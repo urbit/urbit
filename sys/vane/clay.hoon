@@ -158,6 +158,7 @@
       $=  eval-data
       $%  [%commit commit=eval-form:eval:commit-clad]
           [%merge merge=eval-form:eval:merge-clad]
+          [%mount mount=eval-form:eval:mount-clad]
       ==
   ==
 ::
@@ -177,6 +178,12 @@
 ::  conflicts encountered in the merge.
 ::
 ++  merge-clad  (clad ,[(set path) dome rang])
+::
+::  The clad monad for mounts.
+::
+::  Just a new mount point and mime cache.
+::
+++  mount-clad  (clad ,[new-mon=(pair term beam) mim=(map path mime)])
 ::
 ::  Object store.
 ::
@@ -991,17 +998,8 @@
             ~
           `;;(mime q.q.mim)
       =.  mim  (apply-changes-to-mim:util mim changes)
-      =+  must=(must-ergo:util our syd mon (turn ~(tap by changes) head))
-      ^-  form:m
-      |=  clad-input
-      :-  ~  :_  [%done mim]
-      %+  turn  ~(tap by must)
-      |=  {pot/term len/@ud pak/(set path)}
-      :*  u.hez  %give  %ergo  pot
-          %+  turn  ~(tap in pak)
-          |=  pax/path
-          [(slag len pax) (~(got by changes) pax)]
-      ==
+      ;<  ~  bind:m  (give-ergo:util u.hez our syd mon changes)
+      (pure:m mim)
     ::
     ::  Print a summary of changes to dill.
     ::
@@ -1701,20 +1699,12 @@
           =+  mit=?.(?=($mime p.mim) ~ `;;(mime q.q.mim))
           $(p.tay t.p.tay, nac :_(nac [;;(path q.q.pax) mit]))
       ?:  ?=([@ *] tan)  (error:he cas tan)
-      =/  can=(map path (unit mime))  (malt tan)
-      =/  mim  (apply-changes-to-mim:util mim.dom can)
+      =/  changes=(map path (unit mime))  (malt tan)
+      =/  mim  (apply-changes-to-mim:util mim.dom changes)
       ?~  hez
         (error:he cas %ergo-no-hez ~)
-      ^-  form:m
-      |=  clad-input
-      :-  ~  :_  [%done mim]
-      %+  turn  ~(tap by must)
-      |=  {pot/term len/@ud pak/(set path)}
-      :*  u.hez  %give  %ergo  pot
-          %+  turn  ~(tap in pak)
-          |=  pax/path
-          [(slag len pax) (~(got by can) pax)]
-      ==
+      ;<  ~  bind:m  (give-ergo:util u.hez our q.bob-disc mon changes)
+      (pure:m mim)
     ::
     ::  A small set of helper functions to assist in merging.
     ::
@@ -1810,6 +1800,79 @@
         $(unk bun)
       --
     --
+  --
+::
+::  Mount a beam to unix
+::
+++  mount
+  |=  $:  our=ship
+          syd=desk
+          wen=@da
+          hez=duct
+          dom=dome
+          ran=rang
+      ==
+  |^
+  |=  [pot=term bem=beam mon=(map term beam)]
+  =/  m  mount-clad
+  ^-  form:m
+  =/  old-mon  (~(get by mon) pot)
+  ?^  old-mon
+    (clad-fail %already-mounted >u.old-mon< ~)
+  =.  mon  (~(put by mon) pot bem)
+  ;<  changes=(map path (unit mime))  bind:m  (cast-to-mime bem)
+  ;<  ~                               bind:m  (ergo changes mon)
+  =/  mim  (apply-changes-to-mim:util mim.dom changes)
+  (pure:m [pot bem] mim)
+  ::
+  ++  sutil  (state:util dom dom ran)
+  ::  Initializes a new mount point.
+  ::
+  ++  cast-to-mime
+    |=  bem=beam
+    =/  m  (clad ,(map path (unit mime)))
+    ^-  form:m
+    =*  pax  s.bem
+    =/  =aeon  (need (case-to-aeon-before:sutil wen r.bem))
+    =/  must
+      =/  all  (turn ~(tap by q:(aeon-to-yaki:sutil aeon)) head)
+      (skim all |=(paf/path =(pax (scag (lent pax) paf))))
+    ?~  must
+      (pure:m ~)
+    ;<  ~  bind:m
+      %+  just-do  /ergoing
+      :*  %f  %build  live=%.n  %list
+          ^-  (list schematic:ford)
+          %+  turn  `(list path)`must
+          |=  a/path
+          :-  [%$ %path !>(a)]
+          :^  %cast  [our %home]  %mime
+          =+  (need (need (read-x:sutil & aeon a)))
+          ?:  ?=(%& -<)
+            [%$ p.-]
+          (lobe-to-schematic:sutil [our %home] a p.-)
+      ==
+    ;<  res=made-result:ford  bind:m  expect-ford
+    ?:  ?=([%incomplete *] res)
+      (clad-fail %ergo-fail-incomplete leaf+"clay ergo incomplete" tang.res)
+    ?.  ?=([%complete %success *] res)
+      (clad-fail %ergo-fail leaf+"clay ergo failed" message.build-result.res)
+    %-  pure:m
+    %-  malt  ^-  mode
+    %+  turn  (made-result-to-cages:util res)
+    |=  [pax=cage mim=cage]
+    ?.  ?=($path p.pax)
+      ~|(%ergo-bad-path-mark !!)
+    :-  ;;(path q.q.pax)
+    ?.  ?=($mime p.mim)
+      ~
+    `;;(mime q.q.mim)
+  ::
+  ::  Send changes to unix
+  ::
+  ++  ergo
+    |=  [changes=(map path (unit mime)) mon=(map term beam)]
+    (give-ergo:util hez our syd mon changes)
   --
 ::
 ::  A simple foreign request.
@@ -2010,6 +2073,28 @@
     %+  skim  can
     |=  pax/path
     &(=(p.bem our) =(q.bem syd) =((flop s.bem) (scag (lent s.bem) pax)))
+  ::
+  ::  Send changes to unix
+  ::
+  ++  give-ergo
+    |=  $:  hez=duct
+            our=ship
+            syd=desk
+            mon=(map term beam)
+            changes=(map path (unit mime))
+        ==
+    =/  m  (clad ,~)
+    ^-  form:m
+    =/  must  (must-ergo our syd mon (turn ~(tap by changes) head))
+    |=  clad-input
+    :-  ~  :_  [%done ~]
+    %+  turn  ~(tap by must)
+    |=  [pot=term len=@ud pak=(set path)]
+    :*  hez  %give  %ergo  pot
+        %+  turn  ~(tap in pak)
+        |=  pax=path
+        [(slag len pax) (~(got by changes) pax)]
+    ==
   ::
   ::  Add or remove entries to the mime cache
   ::
@@ -2796,32 +2881,6 @@
       ==
     ==
   ::
-  ::  Initializes a new mount point.
-  ::
-  ++  mont
-    |=  {pot/term bem/beam}
-    ^+  +>
-    =+  pax=s.bem
-    =+  cas=(need (case-to-aeon r.bem))
-    =+  can=(turn ~(tap by q:(aeon-to-yaki:ze cas)) head)
-    =+  mus=(skim can |=(paf/path =(pax (scag (lent pax) paf))))
-    ?~  mus
-      +>.$
-    %-  emit
-    ^-  move
-    :*  hen  %pass  [%ergoing (scot %p her) syd ~]  %f
-        %build  live=%.n  %list
-        ^-  (list schematic:ford)
-        %+  turn  `(list path)`mus
-        |=  a/path
-        :-  [%$ %path !>(a)]
-        :^  %cast  [our %home]  %mime
-        =+  (need (need (read-x:ze cas a)))
-        ?:  ?=(%& -<)
-          [%$ p.-]
-        (lobe-to-schematic [her syd] a p.-)
-    ==
-  ::
   ::  Set permissions for a node.
   ::
   ++  perm
@@ -3102,6 +3161,43 @@
     =.  +>.$  wake
     finish-write
   ::
+  ::  Continue mounting
+  ::
+  ++  take-mount
+    |=  =sign
+    ^+  +>
+    =/  m  mount-clad
+    ?~  act
+      ~|(%no-active-write !!)
+    ?.  ?=(%mount -.eval-data.u.act)
+      ~|(%active-not-mount !!)
+    =^  r=[moves=(list move) =eval-result:eval:m]  mount.eval-data.u.act
+      (take:eval:m mount.eval-data.u.act hen /mount/[syd] now ran sign)
+    =>  .(+>.$ (emil moves.r))  :: TMI
+    ?-  -.eval-result.r
+      %next  +>.$
+      %fail  (fail-mount err.eval-result.r)
+      %done  (done-mount value.eval-result.r)
+    ==
+  ::
+  ::  Don't release effects or apply state changes; print error
+  ::
+  ++  fail-mount
+    |=  err=(pair term tang)
+    ^+  +>
+    %-  (slog leaf+"mount failed" leaf+(trip p.err) q.err)
+    finish-write
+  ::
+  ::  Release effects and apply state changes
+  ::
+  ++  done-mount
+    |=  [new-mon=(pair term beam) mim=(map path mime)]
+    ^+  +>
+    =:  mon      (~(put by mon) new-mon)
+        mim.dom  mim
+      ==
+    finish-write
+  ::
   ::  Start next item in write queue
   ::
   ++  finish-write
@@ -3286,47 +3382,6 @@
       %-  from-form:eval:update-clad
       ((foreign-update our her syd now) q.rave rut.next lim dom ran)
     (take-foreign-update clad-init-sign)
-  ::
-  ::  Send new data to unix.
-  ::
-  ::  Combine the paths in mim in dok and the result of the ford call in
-  ::  ++take-patch to create a list of nodes that need to be sent to unix (in
-  ::  an %ergo card) to keep unix up-to-date.  Send this to unix.
-  ::
-  ++  take-ergo
-    |=  res/made-result:ford
-    ^+  +>
-    ?:  ?=([%incomplete *] res)
-      ~&  %bad-take-ergo
-      +>.$
-      ::  (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" tang.res)
-    ?.  ?=([%complete %success *] res)
-      ~&  %bad-take-ergo-2
-      +>.$
-      ::  =*  message  message.build-result.res
-      ::  (print-to-dill '!' %rose [" " "" ""] leaf+"clay ergo failed" message)
-    ?~  hez  ~|(%no-sync-duct !!)
-    =+  ^-  can/(map path (unit mime))
-        %-  malt  ^-  mode
-        %+  turn  (made-result-to-cages:util res)
-        |=  {pax/cage mim/cage}
-        ?.  ?=($path p.pax)
-          ~|(%ergo-bad-path-mark !!)
-        :-  ;;(path q.q.pax)
-        ?.  ?=($mime p.mim)
-          ~
-        `;;(mime q.q.mim)
-    ::  XX  could interfere with running transaction
-    =.  mim.dom  (apply-changes-to-mim:util mim.dom can)
-    =+  mus=(must-ergo:util our syd mon (turn ~(tap by can) head))
-    %-  emil
-    %+  turn  ~(tap by mus)
-    |=  {pot/term len/@ud pak/(set path)}
-    :*  u.hez  %give  %ergo  pot
-        %+  turn  ~(tap in pak)
-        |=  pax/path
-        [(slag len pax) (~(got by can) pax)]
-    ==
   ::
   ++  mabe                                            ::  maybe fire function
     |=  {rov/rove fun/$-(@da _.)}
@@ -3962,7 +4017,7 @@
   ::
   ::  only one of these should be going at once, so queue
   ::
-  ?:  ?=(?(%info %merg) -.req)
+  ?:  ?=(?(%info %merg %mont) -.req)
     ::  If there's an active write or a queue, enqueue
     ::
     ::    We only want one active write so each can be a clean
@@ -4058,8 +4113,8 @@
       %info
     ?:  =(%$ des.req)
       ~|(%info-no-desk !!)
-    =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
     =.  act.ruf
+      =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
       =/  writer=form:commit-clad
         %-  %-  commit
             :*  our
@@ -4073,7 +4128,7 @@
             dom.dojo
             ran.ruf
         ==
-      `[hen req %commit ~ writer]
+      `[hen req %commit (from-form:eval:commit-clad writer)]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(take-commit:den clad-init-sign)
@@ -4114,8 +4169,8 @@
       %merg                                               ::  direct state up
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
-    =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
     =.  act.ruf
+      =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
       =/  writer=form:merge-clad
         %-  %-  merge
             :*  our
@@ -4130,7 +4185,7 @@
             dom.dojo
             ran.ruf
         ==
-      `[hen req %merge ~ writer]
+      `[hen req %merge (from-form:eval:merge-clad writer)]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(take-merge:den clad-init-sign)
@@ -4138,19 +4193,25 @@
   ::
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
-    =+  pot=(~(get by mon.ruf) des.req)
-    ?^  pot
-      ~&  [%already-mounted pot]
-      [~ ..^$]
-    =*  bem  bem.req
-    =.  mon.ruf
-      (~(put by mon.ruf) des.req [p.bem q.bem r.bem] s.bem)
-    =/  dos  (~(get by dos.rom.ruf) q.bem)
-    ?~  dos
-      [~ ..^$]
+    =.  act.ruf
+      =/  =dojo  (fall (~(get by dos.rom.ruf) q.bem.req) *dojo)
+      =/  writer=form:mount-clad
+        %-  %-  mount
+            :*  our
+                q.bem.req
+                now
+                (need hez.ruf)
+                dom.dojo
+                ran.ruf
+            ==
+        :*  des.req
+            bem.req
+            mon.ruf
+        ==
+      `[hen req %mount (from-form:eval:mount-clad writer)]
     =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) p.bem q.bem)
-      abet:(mont:den des.req bem)
+      =/  den  ((de our now ski hen ruf) p.bem.req q.bem.req)
+      abet:(take-mount:den clad-init-sign)
     [mos ..^$]
   ::
       %dirk
@@ -4350,6 +4411,13 @@
       abet:(take-merge:den q.hin)
     [mos ..^$]
   ::
+  ?:  ?=({$mount @ *} tea)
+    =*  syd  i.t.tea
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) our syd)
+      abet:(take-mount:den q.hin)
+    [mos ..^$]
+  ::
   ?:  ?=({%foreign-request @ @ @ *} tea)
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
@@ -4390,18 +4458,7 @@
       %crud
     [[[hen %slip %d %flog +.q.hin] ~] ..^$]
   ::
-      %made
-    ?~  tea  !!
-    ?+    -.tea  !!
-        $ergoing
-      ?>  ?=({@ @ ~} t.tea)
-      =+  syd=(slav %tas i.t.t.tea)
-      =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) our syd)
-        abet:(take-ergo:den result.q.hin)
-      [mos ..^$]
-    ==
-  ::
+      %made  ~|(%clay-raw-ford !!)
       %mere
     ?:  ?=(%& -.p.+.q.hin)
       ~&  'initial merge succeeded'
