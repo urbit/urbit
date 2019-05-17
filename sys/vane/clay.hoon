@@ -149,6 +149,8 @@
 ::
 ::  Currently active write
 ::
+::  XX add cue here like active-updates
+::
 ++  active-write
   %-  unit
   $:  hen=duct
@@ -231,8 +233,25 @@
               bom/(map @ud {p/duct q/rave})             ::  outstanding
               fod/(map duct @ud)                        ::  current requests
               haw/(map mood (unit cage))                ::  simple cache
-              nak/(unit nako)                           ::  pending validation
+              pud/update-qeu                            ::  active updates
+              pur/request-map                           ::  active requests
           ==                                            ::
+::
+::  The clad monad for foreign updates.
+::
+::  Same as +commit-clad, except inclues `lim`, as in +rede.  Null if
+::  subscription ended.
+::
+++  update-clad  (clad ,(unit [lim=@da dome rang]))
+++  update-qeu
+  $:  waiting=(qeu [inx=@ud rut=(unit rand)])
+      eval-data=(unit [inx=@ud =eval-form:eval:update-clad])
+  ==
+::
+::  The clad monad for foreign simple requests
+::
+++  request-clad  (clad ,cage)
+++  request-map   ,(map inx=@ud [=mood =eval-form:eval:request-clad])
 ::
 ::  Domestic ship.
 ::
@@ -265,19 +284,13 @@
 ::  Foreign desk data.
 ::
 ++  rung
-          $:  rit=rift                                  ::  lyfe of 1st contact
+          $:  rit=rift                                  ::  rift of 1st contact
               rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
 ::  Hash of a commit, for lookup in the object store (hut.ran)
 ::
 ++  tako  @                                             ::  yaki ref
-::
-::  Merge state.
-::
-++  wait  $?  $null   $ali    $diff-ali   $diff-bob     ::  what are we
-              $merge  $build  $checkout   $ergo         ::  waiting for?
-          ==                                            ::
 ::
 ::  Commit.
 ::
@@ -336,6 +349,8 @@
   |=  clad-input
   [~ ~ %fail err]
 ::
+++  clad-init-sign  `sign`[%y %init-clad ~]
+::
 ++  clad
   |*  a=mold
   |%
@@ -374,6 +389,13 @@
       $:  effects=(list move)
           =form
       ==
+    ::
+    ::  Convert initial form to eval-form
+    ::
+    ++  from-form
+      |=  =form
+      ^-  eval-form
+      [~ form]
     ::
     ::  The cases of results of +take
     ::
@@ -423,11 +445,12 @@
         ::
         %_  $
           form.eval-form   self.next.output
-          sign.clad-input  [%y %init-clad ~]
+          sign.clad-input  clad-init-sign
         ==
       ==
     --
   --
+::
 ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
@@ -1789,6 +1812,184 @@
     --
   --
 ::
+::  A simple foreign request.
+::
+++  foreign-request
+  |=  $:  our=ship
+          her=ship
+          syd=desk
+          wen=@da
+      ==
+  |^
+  |=  [=rave =rand]
+  =/  m  request-clad
+  ^-  form:m
+  ?-    p.p.rand
+      $d  ~|  %totally-temporary-error-please-replace-me  !!
+      $p  ~|  %requesting-foreign-permissions-is-invalid  !!
+      $t  ~|  %requesting-foreign-directory-is-vaporware  !!
+      $u  ~|  %prolly-poor-idea-to-get-rang-over-network  !!
+      $v  ~|  %weird-shouldnt-get-v-request-from-network  !!
+      $z  ~|  %its-prolly-not-reasonable-to-request-ankh  !!
+      $x  (validate-x [p.p q.p q r]:rand)
+  ::
+      $y
+    (pure:m [p.r.rand !>(;;(arch q.r.rand))])
+  ::
+      $w
+    %-  pure:m
+    :-  p.r.rand
+    ?+  p.r.rand  ~|  %strange-w-over-nextwork  !!
+      $cass  !>(;;(cass q.r.rand))
+      $null  [[%atom %n ~] ~]
+      $nako  !>(~|([%molding [&1 &2 &3]:q.r.rand] ;;(nako q.r.rand)))
+    ==
+  ==
+  ::
+  ::  Make sure that incoming data is of the mark it claims to be.
+  ::
+  ++  validate-x
+    |=  [car=care cas=case pax=path peg=page]
+    =/  m  (clad ,cage)
+    ;<  ~  bind:m
+      %+  just-do  /foreign-x
+      [%f %build live=%.n %pin wen (vale-page:util [our %home] peg)]
+    ;<  res=made-result:ford  bind:m  expect-ford
+    ^-  form:m
+    ?.  ?=([%complete %success *] res)
+      =/  message  (made-result-as-error:ford res)
+      (clad-fail %validate-foreign-x-failed message)
+    (pure:m (result-to-cage:ford build-result.res))
+  --
+::
+::  A full foreign update.  Validate and apply to our local cache of
+::  their state.
+::
+++  foreign-update
+  |=  $:  our=ship
+          her=ship
+          syd=desk
+          wen=@da
+      ==
+  |^
+  |=  [=moat rand=(unit rand) lim=@da dom=dome ran=rang]
+  =/  m  update-clad
+  ^-  form:m
+  ?~  rand
+    (pure:m ~)
+  =/  lem  ?.(?=(%da -.q.moat) lim p.q.moat)
+  ?>  ?=(%nako p.r.u.rand)
+  =/  nako  ;;(nako q.r.u.rand)
+  ?:  =(0 let.dom)
+    ;<  [dom=dome ran=rang]  bind:m  (apply-foreign-update nako dom ran)
+    (pure:m ~ lem dom ran)
+  ;<  blobs=(set blob)     bind:m  (validate-plops bar.nako)
+  ;<  [dom=dome ran=rang]  bind:m
+    (apply-foreign-update nako(bar blobs) dom ran)
+  (pure:m ~ lem dom ran)
+  ::
+  ::  Make sure that incoming data is of the mark it claims to be.
+  ::
+  ++  validate-plops
+    |=  plops=(set plop)
+    =/  m  (clad ,(set blob))
+    ^-  form:m
+    ;<  ~  bind:m
+      %+  just-do  /validate-plops
+      :*  %f  %build  live=%.n  %pin  wen
+          %list
+          ^-  (list schematic:ford)
+          %+  turn  ~(tap in plops)
+          |=  a/plop
+          ?-  -.a
+              $direct
+            :-  [%$ %blob !>([%direct p.a *page])]
+            (vale-page:util [our %home] p.q.a q.q.a)
+          ::
+              $delta
+            :-  [%$ %blob !>([%delta p.a q.a *page])]
+            (vale-page:util [our %home] p.r.a q.r.a)
+          ==
+      ==
+    ;<  res=made-result:ford  bind:m  expect-ford
+    =/  cages  (made-result-to-cages-or-error:util res)
+    ?:  ?=(%| -.cages)
+      (clad-fail %validate-plops-failed p.cages)
+    =|  blobs=(list blob)
+    |-  ^-  form:m
+    ?~  p.cages
+      (pure:m (silt blobs))
+    =*  bob  p.i.p.cages
+    =*  cay  q.i.p.cages
+    ?.  ?=(%blob p.bob)
+      (clad-fail %validate-plops-not-blob >p.bob< ~)
+    =/  new-blob=blob
+      =/  blob  ;;(blob q.q.bob)
+      ?-  -.blob
+        %delta   [-.blob p.blob q.blob p.cay q.q.cay]
+        %direct  [-.blob p.blob p.cay q.q.cay]
+      ==
+    $(p.cages t.p.cages, blobs [new-blob blobs])
+  ::
+  ::  When we get a %w foreign update, store this in our state.
+  ::
+  ::  We get the commits and blobs from the nako and add them to our object
+  ::  store, then we update the map of aeons to commits and the latest aeon.
+  ::
+  ++  apply-foreign-update
+    |=  [=nako dom=dome ran=rang]
+    =/  m  (clad ,[dome rang])
+    ^-  form:m
+    ::  hit: updated commit-hashes by @ud case
+    ::
+    =/  hit  (~(uni by hit.dom) gar.nako)
+    ::  nut: new commit-hash/commit pairs
+    ::
+    =/  nut
+      (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
+    ::  hut: updated commits by hash
+    ::
+    =/  hut  (~(gas by hut.ran) nut)
+    ::  nat: new blob-hash/blob pairs
+    ::
+    =/  nat
+      (turn ~(tap in bar.nako) |=(=blob [p.blob blob]))
+    ::  lat: updated blobs by hash
+    ::
+    =/  lat  (~(gas by lat.ran) nat)
+    ::  traverse updated state and sanity check
+    ::
+    =+  ~|  :*  %bad-foreign-update
+                [gar=gar let=let.nako nut=(turn nut head) nat=(turn nat head)]
+                [hitdom=hit.dom letdom=let.dom]
+            ==
+      ?:  =(0 let.nako)
+        ~
+      =/  =aeon  1
+      |-  ^-  ~
+      =/  =tako
+        ~|  [%missing-aeon aeon]  (~(got by hit) aeon)
+      =/  =yaki
+        ~|  [%missing-tako tako]  (~(got by hut) tako)
+      =+  %+  turn
+            ~(tap by q.yaki)
+          |=  [=path =lobe]
+          ~|  [%missing-blob path lobe]
+          ?>  (~(has by lat) lobe)
+          ~
+      ?:  =(let.nako aeon)
+        ~
+      $(aeon +(aeon))
+    ::  produce updated state
+    ::
+    =:  let.dom   (max let.nako let.dom)
+        hit.dom   hit
+        hut.ran   hut
+        lat.ran   lat
+      ==
+    (pure:m dom ran)
+  --
+::
 ::  An assortment of useful functions, used in +commit, +merge, and +de
 ::
 ++  util
@@ -1823,6 +2024,18 @@
     ?~  change.i.changes-l
       $(changes-l t.changes-l, mim (~(del by mim) pax.i.changes-l))
     $(changes-l t.changes-l, mim (~(put by mim) [pax u.change]:i.changes-l))
+  ::
+  ::  Create a schematic to validate a page.
+  ::
+  ::  If the mark is %hoon, we short-circuit the validation for bootstrapping
+  ::  purposes.
+  ::
+  ++  vale-page
+    |=  [=disc:ford a=page]
+    ^-  schematic:ford
+    ?.  ?=($hoon p.a)  [%vale disc a]
+    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
+    [%$ p.a [%atom %t ~] q.a]
   ::
   ::  Crashes on ford failure
   ::
@@ -2899,6 +3112,181 @@
     =/  =duct  duct:(need ~(top to cue))
     (emit [duct %pass /queued-request %b %wait now])
   ::
+  ::  Continue foreign request
+  ::
+  ++  take-foreign-request
+    |=  [inx=@ud =sign]
+    ^+  +>
+    =/  m  request-clad
+    ?>  ?=(^ ref)
+    ?~  request=(~(get by pur.u.ref) inx)
+      ~|(%no-active-foreign-request !!)
+    =^  r=[moves=(list move) =eval-result:eval:m]  eval-form.u.request
+      %-  take:eval:m
+      :*  eval-form.u.request
+          hen
+          /foreign-request/(scot %p her)/[syd]/(scot %ud inx)
+          now
+          ran
+          sign
+      ==
+    ?-  -.eval-result.r
+      %next  +>.$
+      %fail  (fail-foreign-request inx mood.u.request err.eval-result.r)
+      %done  (done-foreign-request inx mood.u.request value.eval-result.r)
+    ==
+  ::
+  ::  Fail foreign request
+  ::
+  ++  fail-foreign-request
+    |=  [inx=@ud =mood err=(pair term tang)]
+    ^+  +>
+    %-  (slog leaf+"foreign request failed" leaf+(trip p.err) q.err)
+    ?>  ?=(^ ref)
+    =:  haw.u.ref  (~(put by haw.u.ref) mood ~)
+        bom.u.ref  (~(del by bom.u.ref) inx)
+        fod.u.ref  (~(del by fod.u.ref) hen)
+      ==
+    wake
+  ::
+  ::  Finish foreign request
+  ::
+  ++  done-foreign-request
+    |=  [inx=@ud =mood =cage]
+    ^+  +>
+    ?>  ?=(^ ref)
+    =:  haw.u.ref  (~(put by haw.u.ref) mood `cage)
+        bom.u.ref  (~(del by bom.u.ref) inx)
+        fod.u.ref  (~(del by fod.u.ref) hen)
+      ==
+    wake
+  ::
+  ::  Called when a foreign ship answers one of our requests.
+  ::
+  ::  If it's a `%many` request, start a `+foreign-update`.  Else start
+  ::  a `+foreign-request`.
+  ::
+  ::  After updating ref (our request manager), we handle %x, %w, and %y
+  ::  responses.  For %x, we call ++validate-x to validate the type of
+  ::  the response.  For %y, we coerce the result to an arch.
+  ::
+  ++  take-foreign-answer                              ::  external change
+    |=  [inx=@ud rut=(unit rand)]
+    ^+  +>
+    ?>  ?=(^ ref)
+    =+  ruv=(~(get by bom.u.ref) inx)
+    ?~  ruv  +>.$
+    =/  rav=rave  q.u.ruv
+    ?:  ?=(%many -.rav)
+      ::  add to update queue
+      ::
+      =.  waiting.pud.u.ref
+        (~(put to waiting.pud.u.ref) inx rut)
+      ::  start update if nothing active
+      ::
+      start-next-foreign-update
+    ?~  rut
+      ::  nothing here, so cache that
+      ::
+      %_    wake
+          haw.u.ref
+        ?.  ?=($sing -.rav)  haw.u.ref
+        (~(put by haw.u.ref) p.rav ~)
+      ==
+    ::  something here, so kick off a validator
+    ::
+    =.  pur.u.ref
+      %+  ~(put by pur.u.ref)
+        inx
+      :-  [p.p q.p q]:u.rut
+      %-  from-form:eval:request-clad
+      ((foreign-request our her syd now) rav u.rut)
+    (take-foreign-request inx clad-init-sign)
+  ::
+  ::  Continue foreign update
+  ::
+  ++  take-foreign-update
+    |=  =sign
+    ^+  +>
+    =/  m  update-clad
+    ?>  ?=(^ ref)
+    ?~  eval-data.pud.u.ref
+      ~|(%no-active-foreign-update !!)
+    =*  ed  u.eval-data.pud.u.ref
+    =^    r=[moves=(list move) =eval-result:eval:m]
+        eval-form.u.eval-data.pud.u.ref
+      %-  take:eval:m
+      :*  eval-form.ed
+          hen
+          /foreign-update/(scot %p her)/[syd]
+          now
+          ran
+          sign
+      ==
+    ?-  -.eval-result.r
+      %next  +>.$
+      %fail  (fail-foreign-update inx.ed err.eval-result.r)
+      %done  (done-foreign-update inx.ed value.eval-result.r)
+    ==
+  ::
+  ::  Fail foreign update
+  ::
+  ++  fail-foreign-update
+    |=  [inx=@ud err=(pair term tang)]
+    ^+  +>
+    %-  (slog leaf+"foreign update failed" leaf+(trip p.err) q.err)
+    ?>  ?=(^ ref)
+    =:  bom.u.ref  (~(del by bom.u.ref) inx)
+        fod.u.ref  (~(del by fod.u.ref) hen)
+      ==
+    =.  +>.$  =<(?>(?=(^ ref) .) wake)
+    =.  eval-data.pud.u.ref  ~
+    start-next-foreign-update
+  ::
+  ::  Finish foreign update
+  ::
+  ++  done-foreign-update
+    |=  [inx=@ud res=(unit [new-lim=@da =new=dome =new=rang])]
+    ^+  +>
+    ?>  ?=(^ ref)
+    =:  bom.u.ref  (~(del by bom.u.ref) inx)
+        fod.u.ref  (~(del by fod.u.ref) hen)
+      ==
+    ?~  res
+      wake
+    =:  lim  new-lim.u.res
+        dom  new-dome.u.res
+        ran  new-rang.u.res
+      ==
+    =.  +>.$  =<(?>(?=(^ ref) .) wake)
+    =.  eval-data.pud.u.ref  ~
+    start-next-foreign-update
+  ::
+  ::  Kick off the the next foreign update in the queue
+  ::
+  ++  start-next-foreign-update
+    ^+  .
+    ?>  ?=(^ ref)
+    ?.  =(~ eval-data.pud.u.ref)
+      .
+    ?:  =(~ waiting.pud.u.ref)
+      .
+    =^  next=[inx=@ud rut=(unit rand)]  waiting.pud.u.ref
+      ~(get to waiting.pud.u.ref)
+    =/  ruv  (~(get by bom.u.ref) inx.next)
+    ?~  ruv
+      ~&  [%clay-foreign-update-lost her syd inx.next]
+      start-next-foreign-update
+    =.  hen  p.u.ruv
+    =/  =rave  q.u.ruv
+    ?>  ?=(%many -.rave)
+    =.  eval-data.pud.u.ref
+      :-  ~
+      :-  inx.next
+      %-  from-form:eval:update-clad
+      ((foreign-update our her syd now) q.rave rut.next lim dom ran)
+    (take-foreign-update clad-init-sign)
+  ::
   ::  Send new data to unix.
   ::
   ::  Combine the paths in mim in dok and the result of the ford call in
@@ -2939,287 +3327,6 @@
         |=  pax/path
         [(slag len pax) (~(got by can) pax)]
     ==
-  ::
-  ::  Called when a foreign ship answers one of our requests.
-  ::
-  ::  After updating ref (our request manager), we handle %x, %w, and %y
-  ::  responses.  For %x, we call ++validate-x to validate the type of
-  ::  the response.  For %y, we coerce the result to an arch.
-  ::
-  ::  For %w, we check to see if it's a @ud response (e.g. for
-  ::  cw+//~sampel-sipnym/desk/~time-or-label).  If so, it's easy.
-  ::  Otherwise, we look up our subscription request, then assert the
-  ::  response was a nako.  If this is the first update for a desk, we
-  ::  assume everything's well-typed and call ++apply-foreign-update
-  ::  directly.  Otherwise, we call ++validate-plops to verify that the
-  ::  data we're getting is well typed.
-  ::
-  ::  Be careful to call ++wake if/when necessary (i.e. when the state
-  ::  changes enough that a subscription could be filled).  Every case
-  ::  must call it individually.
-  ::
-  ++  take-foreign-update                              ::  external change
-    |=  {inx/@ud rut/(unit rand)}
-    ^+  +>
-    ?>  ?=(^ ref)
-    |-  ^+  +>+.$
-    =+  ruv=(~(get by bom.u.ref) inx)
-    ?~  ruv  +>+.$
-    =>  ?.  |(?=(~ rut) ?=($sing -.q.u.ruv))  .
-        %_  .
-          bom.u.ref  (~(del by bom.u.ref) inx)
-          fod.u.ref  (~(del by fod.u.ref) p.u.ruv)
-        ==
-    ?~  rut
-      =+  rav=`rave`q.u.ruv
-      =<  ?>(?=(^ ref) .)
-      %_    wake
-          lim
-        ?.(&(?=($many -.rav) ?=($da -.q.q.rav)) lim `@da`p.q.q.rav)
-      ::
-          haw.u.ref
-        ?.  ?=($sing -.rav)  haw.u.ref
-        (~(put by haw.u.ref) p.rav ~)
-      ==
-    ?-    p.p.u.rut
-        $d
-      ~|  %totally-temporary-error-please-replace-me
-      !!
-        $p
-      ~|  %requesting-foreign-permissions-is-invalid
-      !!
-        $t
-      ~|  %requesting-foreign-directory-is-vaporware
-      !!
-        $u
-      ~|  %im-thinkin-its-prolly-a-bad-idea-to-request-rang-over-the-network
-      !!
-    ::
-        $v
-      ~|  %weird-we-shouldnt-get-a-dome-request-over-the-network
-      !!
-    ::
-        $x
-      =<  ?>(?=(^ ref) .)
-      (validate-x p.p.u.rut q.p.u.rut q.u.rut r.u.rut)
-    ::
-        $w
-      =.  haw.u.ref
-        %+  ~(put by haw.u.ref)
-          [p.p.u.rut q.p.u.rut q.u.rut]
-        :+  ~
-          p.r.u.rut
-        ?+  p.r.u.rut  ~|  %strange-w-over-nextwork  !!
-          $cass  !>(;;(cass q.r.u.rut))
-          $null  [[%atom %n ~] ~]
-          $nako  !>(~|([%molding [&1 &2 &3]:q.r.u.rut] ;;(nako q.r.u.rut)))
-        ==
-      ?.  ?=($nako p.r.u.rut)  [?>(?=(^ ref) .)]:wake
-      =+  rav=`rave`q.u.ruv
-      ?>  ?=($many -.rav)
-      |-  ^+  +>+.^$
-      =+  nez=[%w [%ud let.dom] ~]
-      =+  nex=(~(get by haw.u.ref) nez)
-      ?~  nex  +>+.^$
-      ?~  u.nex  +>+.^$  ::  should never happen
-      =.  nak.u.ref  `;;(nako q.q.u.u.nex)
-      =.  +>+.^$
-        ?:  =(0 let.dom)
-          =<  ?>(?=(^ ref) .)
-          %+  apply-foreign-update
-            ?.(?=($da -.q.q.rav) ~ `p.q.q.rav)
-          (need nak.u.ref)
-        =<  ?>(?=(^ ref) .)
-        %^    validate-plops
-            [%ud let.dom]
-          ?.(?=($da -.q.q.rav) ~ `p.q.q.rav)
-        bar:(need nak.u.ref)
-      %=  $
-        haw.u.ref  (~(del by haw.u.ref) nez)
-      ==
-    ::
-        $y
-      =<  ?>(?=(^ ref) .)
-      %_    wake
-          haw.u.ref
-        %+  ~(put by haw.u.ref)
-          [p.p.u.rut q.p.u.rut q.u.rut]
-        `[p.r.u.rut !>(;;(arch q.r.u.rut))]
-      ==
-    ::
-        $z
-      ~|  %its-prolly-not-reasonable-to-request-ankh-over-the-network-sorry
-      !!
-    ==
-  ::
-  ::  Check that given data is actually of the mark it claims to be.
-  ::
-  ::  Result is handled in ++take-foreign-x
-  ::
-  ++  validate-x
-    |=  {car/care cas/case pax/path peg/page}
-    ^+  +>
-    %-  emit
-    :*  hen  %pass
-        [%foreign-x (scot %p our) (scot %p her) syd car (scot cas) pax]
-        %f  %build  live=%.n  %pin
-        now
-        (vale-page [her syd] peg)
-    ==
-  ::
-  ::  Create a schematic to validate a page.
-  ::
-  ::  If the mark is %hoon, we short-circuit the validation for bootstrapping
-  ::  purposes.
-  ::
-  ++  vale-page
-    |=  [disc=disc:ford a=page]
-    ^-  schematic:ford
-    ?.  ?=($hoon p.a)  [%vale [our %home] a]
-    ?.  ?=(@t q.a)  [%dude >%weird-hoon< %ride [%zpzp ~] %$ *cage]
-    [%$ p.a [%atom %t ~] q.a]
-  ::
-  ::  Verify the foreign data is of the the mark it claims to be.
-  ::
-  ::  This completes the receiving of %x foreign data.
-  ::
-  ++  take-foreign-x
-    |=  {car/care cas/case pax/path res/made-result:ford}
-    ^+  +>
-    ?>  ?=(^ ref)
-    ?.  ?=([%complete %success *] res)
-      ~|  "validate foreign x failed"
-      =+  why=(made-result-as-error:ford res)
-      ~>  %mean.|.(%*(. >[%plop-fail %why]< |1.+> why))
-      !!
-    =*  as-cage  `(result-to-cage:ford build-result.res)
-    wake(haw.u.ref (~(put by haw.u.ref) [car cas pax] as-cage))
-  ::
-  ::  When we get a %w foreign update, store this in our state.
-  ::
-  ::  We get the commits and blobs from the nako and add them to our object
-  ::  store, then we update the map of aeons to commits and the latest aeon.
-  ::
-  ::  We call ++wake at the end to update anyone whose subscription is fulfilled
-  ::  by this state change.
-  ::
-  ++  apply-foreign-update                              ::  apply subscription
-    |=  $:  lem/(unit @da)                              ::  complete up to
-            gar/(map aeon tako)                         ::  new ids
-            let/aeon                                    ::  next id
-            lar/(set yaki)                              ::  new commits
-            bar/(set blob)                              ::  new content
-        ==
-    ^+  +>
-    =<  wake
-    ::  hit: updated commit-hashes by @ud case
-    ::
-    =/  hit  (~(uni by hit.dom) gar)
-    ::  nut: new commit-hash/commit pairs
-    ::
-    =/  nut
-      (turn ~(tap in lar) |=(=yaki [r.yaki yaki]))
-    ::  hut: updated commits by hash
-    ::
-    =/  hut  (~(gas by hut.ran) nut)
-    ::  nat: new blob-hash/blob pairs
-    ::
-    =/  nat
-      (turn ~(tap in bar) |=(=blob [p.blob blob]))
-    ::  lat: updated blobs by hash
-    ::
-    =/  lat  (~(gas by lat.ran) nat)
-    ::  traverse updated state and sanity check
-    ::
-    =+  ~|  :*  %bad-foreign-update
-                [gar=gar let=let nut=(turn nut head) nat=(turn nat head)]
-                [hitdom=hit.dom letdom=let.dom]
-            ==
-      ?:  =(0 let)
-        ~
-      =/  =aeon  1
-      |-  ^-  ~
-      =/  =tako
-        ~|  [%missing-aeon aeon]  (~(got by hit) aeon)
-      =/  =yaki
-        ~|  [%missing-tako tako]  (~(got by hut) tako)
-      =+  %+  turn
-            ~(tap by q.yaki)
-          |=  [=path =lobe]
-          ~|  [%missing-blob path lobe]
-          ?>  (~(has by lat) lobe)
-          ~
-      ?:  =(let aeon)
-        ~
-      $(aeon +(aeon))
-    ::  persist updated state
-    ::
-    %=  +>.$
-      let.dom   (max let let.dom)
-      lim       (max (fall lem lim) lim)
-      hit.dom   hit
-      hut.ran   hut
-      lat.ran   lat
-    ==
-  ::
-  ::  Make sure that incoming data is of the correct type.
-  ::
-  ::  This is a ford call to make sure that incoming data is of the mark it
-  ::  claims to be.  The result is handled in ++take-foreign-plops.
-  ::
-  ++  validate-plops
-    |=  {cas/case lem/(unit @da) pop/(set plop)}
-    ^+  +>
-    =+  lum=(scot %da (fall lem *@da))
-    %-  emit
-    :*  hen  %pass
-        [%foreign-plops (scot %p our) (scot %p her) syd lum ~]
-        %f  %build  live=%.n  %pin
-        ::  This corresponds to all the changes from [her syd]
-        ::  to [our %home].  This should be (case-to-date cas)
-        ::  in the context of the foreign desk, but since we're
-        ::  getting everything from our own desk now we want to
-        ::  use our most recent commit.
-        ::
-        now
-        %list
-        ^-  (list schematic:ford)
-        %+  turn  ~(tap in pop)
-        |=  a/plop
-        ?-  -.a
-          $direct  [[%$ %blob !>([%direct p.a *page])] (vale-page [her syd] p.q.a q.q.a)]
-          $delta
-            [[%$ %blob !>([%delta p.a q.a *page])] (vale-page [her syd] p.r.a q.r.a)]
-        ==
-    ==
-  ::
-  ::  Verify that foreign plops validated correctly.  If so, apply them to our
-  ::  state.
-  ::
-  ++  take-foreign-plops
-    |=  {lem/(unit @da) res/made-result:ford}
-    ^+  +>
-    ?>  ?=(^ ref)
-    ?>  ?=(^ nak.u.ref)
-    =+  ^-  lat/(list blob)
-        %+  turn
-          ~|  "validate foreign plops failed"
-          (made-result-to-cages:[^util] res)
-        |=  {bob/cage cay/cage}
-        ?.  ?=($blob p.bob)
-          ~|  %plop-not-blob
-          !!
-        =+  bol=;;(blob q.q.bob)
-        ?-  -.bol
-          $delta      [-.bol p.bol q.bol p.cay q.q.cay]
-          $direct     [-.bol p.bol p.cay q.q.cay]
-        ==
-    %^    apply-foreign-update
-        lem
-      gar.u.nak.u.ref
-    :+  let.u.nak.u.ref
-      lar.u.nak.u.ref
-    (silt lat)
   ::
   ++  mabe                                            ::  maybe fire function
     |=  {rov/rove fun/$-(@da _.)}
@@ -3969,7 +4076,7 @@
       `[hen req %commit ~ writer]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(take-commit:den [%y %init-clad ~])
+      abet:(take-commit:den clad-init-sign)
     [mos ..^$]
   ::
       %init
@@ -4026,7 +4133,7 @@
       `[hen req %merge ~ writer]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
-      abet:(take-merge:den [%y %init-clad ~])
+      abet:(take-merge:den clad-init-sign)
     [mos ..^$]
   ::
       %mont
@@ -4168,7 +4275,7 @@
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) wer syd)
-      abet:(take-foreign-update:den inx ;;((unit rand) res.req))
+      abet:(take-foreign-answer:den inx ;;((unit rand) res.req))
     [[[hen %give %mack ~] mos] ..^$]
   ::
       %wegh
@@ -4235,12 +4342,31 @@
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-commit:den q.hin)
     [mos ..^$]
+  ::
   ?:  ?=({$merge @ *} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-merge:den q.hin)
     [mos ..^$]
+  ::
+  ?:  ?=({%foreign-request @ @ @ *} tea)
+    =/  her  (slav %p i.t.tea)
+    =/  syd  (slav %tas i.t.t.tea)
+    =/  inx  (slav %ud i.t.t.t.tea)
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) her syd)
+      abet:(take-foreign-request:den inx q.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=({%foreign-update @ @ *} tea)
+    =/  her  (slav %p i.t.tea)
+    =/  syd  (slav %tas i.t.t.tea)
+    =^  mos  ruf
+      =/  den  ((de our now ski hen ruf) her syd)
+      abet:(take-foreign-update:den q.hin)
+    [mos ..^$]
+  ::
   ?:  ?=({$blab care @ @ *} tea)
     ?>  ?=($made +<.q.hin)
     ?.  ?=([%complete %success *] result.q.hin)
@@ -4256,6 +4382,7 @@
         `path`t.t.t.t.tea
         `cage`(result-to-cage:ford build-result.result.q.hin)
     ==  ==
+  ::
   ?-    -.+.q.hin
       %init-clad
     ~|(%clad-not-real !!)
@@ -4272,31 +4399,6 @@
       =^  mos  ruf
         =/  den  ((de our now ski hen ruf) our syd)
         abet:(take-ergo:den result.q.hin)
-      [mos ..^$]
-    ::
-        %foreign-plops
-      ?>  ?=({@ @ @ @ ~} t.tea)
-      =+  her=(slav %p i.t.t.tea)
-      =*  syd  i.t.t.t.tea
-      =+  lem=(slav %da i.t.t.t.t.tea)
-      =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her syd)
-        abet:(take-foreign-plops:den ?~(lem ~ `lem) result.q.hin)
-      [mos ..^$]
-    ::
-        %foreign-x
-      ?>  ?=({@ @ @ @ @ *} t.tea)
-      =+  her=(slav %p i.t.t.tea)
-      =+  syd=(slav %tas i.t.t.t.tea)
-      =+  car=;;(care i.t.t.t.t.tea)
-      =+  ^-  cas/case
-          =+  (slay i.t.t.t.t.t.tea)
-          ?>  ?=({~ %$ case} -)
-          ->+
-      =*  pax  t.t.t.t.t.t.tea
-      =^  mos  ruf
-        =/  den  ((de our now ski hen ruf) her syd)
-        abet:(take-foreign-x:den car cas pax result.q.hin)
       [mos ..^$]
     ==
   ::
