@@ -58,9 +58,9 @@ dependencies:
 
 default-extensions:
   - ApplicativeDo
-  - GeneralizedNewtypeDeriving
   - BangPatterns
   - BlockArguments
+  - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
   - DeriveGeneric
@@ -71,6 +71,7 @@ default-extensions:
   - FlexibleInstances
   - FunctionalDependencies
   - GADTs
+  - GeneralizedNewtypeDeriving
   - LambdaCase
   - MultiParamTypeClasses
   - NamedFieldPuns

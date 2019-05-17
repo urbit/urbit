@@ -1,80 +1,86 @@
--- +http-client ----------------------------------------------------------------
+{-
+  - TODO When making a request, handle the case where the request id is
+         already in use.
+  - TODO When canceling a request, don't send Http.Canceled if the
+         request already finished.
+-}
 
 module Vere.Http.Client where
 
 import ClassyPrelude
 import Data.Void
-import qualified Vere.Http as Http
+import Vere.Http as Http
 import Control.Concurrent hiding (newEmptyMVar, putMVar)
 
-import Network.HTTP.Client as H
+import qualified Network.HTTP.Client as H
 
--- | An http client effect is either requesting outbound, or canceling an old
--- outbound connection.
+--------------------------------------------------------------------------------
+
+
+type ReqId = Word
+
+data Ev = Receive ReqId Http.Event -- %receive
+
 data Eff
-  = Request Word Http.Request
-  | CancelRequest Word
+  = NewReq ReqId Request -- %request
+  | CancelReq ReqId      -- %cancel-request
 
-data Ev
-  = Receive Word Http.Event
+data State = State
+  { sManager :: H.Manager
+  , sLive    :: TVar (Map ReqId ThreadId)
+  , sChan    :: MVar Ev
+  }
 
--- | All live requests
-data State = State H.Manager (TVar (Map Word ThreadId)) (MVar Ev)
+
+--------------------------------------------------------------------------------
+
+cvtReq :: Request -> H.Request
+cvtReq = undefined
+
+cvtRespHeaders :: H.Response a -> ResponseHeader
+cvtRespHeaders resp = undefined
+
+
+--------------------------------------------------------------------------------
 
 initState :: IO State
-initState = do
-  manager <- H.newManager defaultManagerSettings
-  liveReqs <- newTVarIO mempty
-  channels <- newEmptyMVar
-  pure (State manager liveReqs channels)
+initState = State <$> H.newManager H.defaultManagerSettings
+                  <*> newTVarIO mempty
+                  <*> newEmptyMVar
 
+emit :: State -> Ev -> IO ()
+emit (State _ _ chan) event = putMVar chan event
 
-emitEvent :: State -> Ev -> IO ()
-emitEvent (State _ _ chan) event =
-  putMVar chan event
+runEff :: State -> Eff -> IO ()
+runEff st@(State _ s _) = \case CancelReq id  -> cancelReq st id
+                                NewReq id req -> newReq st id req
 
-run :: State -> Eff -> IO ()
-run st@(State manager s _) (Request id request) = do
-  -- TODO: Handle case where id is already live
-  x <- startHTTP st id request
-  atomically $ modifyTVar s (insertMap id x)
+newReq :: State -> ReqId -> Request -> IO ()
+newReq st id req = do tid <- runReq st id req
+                      atomically $ modifyTVar (sLive st) (insertMap id tid)
 
-run st@(State manager s _) (CancelRequest id) =
+cancelReq :: State -> ReqId -> IO ()
+cancelReq st id =
   join $ atomically $ do
-    m <- readTVar s
-    case lookup id m of
-      Nothing -> pure (pure ())
-      Just r -> do
-        m <- writeTVar s (deleteMap id m)
-        pure (cancelHTTP st id r)
+    tbl <- readTVar (sLive st)
+    case lookup id tbl of
+      Nothing  -> pure (pure ())
+      Just tid -> do
+        writeTVar (sLive st) (deleteMap id tbl)
+        pure $ do killThread tid
+                  emit st (Receive id Canceled)
 
-
-startHTTP :: State -> Word -> Http.Request -> IO ThreadId
-startHTTP st@(State manager _ chan) id request = forkIO $ do
-    withResponse (convertRequest request) manager $ \response -> do
-      let headers = convertResponseHeaders response
-      emitEvent st (Receive id (Http.Start headers Nothing False))
-      readChunks (H.responseBody response)
+runReq :: State -> ReqId -> Request -> IO ThreadId
+runReq st id request =
+    forkIO $ H.withResponse (cvtReq request) (sManager st) $ \resp -> do
+      let headers  = cvtRespHeaders resp
+      let getChunk = recv (H.responseBody resp)
+      let loop = getChunk >>= \case
+                   Just bs -> emit st (Receive id $ Received bs) >> loop
+                   Nothing -> emit st (Receive id Done)
+      emit st (Receive id $ Started headers)
+      loop
   where
-    readChunks :: H.BodyReader -> IO ()
-    readChunks reader = do
-      chunk <- H.brRead reader
-      if null chunk
-        then emitEvent st (Receive id (Http.Continue Nothing True))
-        else do
-          emitEvent st (Receive id (Http.Continue (Just chunk) False))
-          readChunks reader
-
-
-convertRequest :: Http.Request -> H.Request
-convertRequest = undefined
-
-convertResponseHeaders :: H.Response a -> Http.ResponseHeader
-convertResponseHeaders response = undefined
-
-cancelHTTP :: State -> Word -> ThreadId -> IO ()
-cancelHTTP st requestId threadId = do
-  -- There's a race condition here because threadId could have already
-  -- finished.
-  killThread threadId
-  emitEvent st (Receive requestId (Http.Cancel))
+    recv :: H.BodyReader -> IO (Maybe ByteString)
+    recv read = read <&> \case chunk | null chunk -> Nothing
+                                     | otherwise  -> Just chunk
