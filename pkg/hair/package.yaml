@@ -31,6 +31,7 @@ dependencies:
   - classy-prelude
   - containers
   - data-fix
+  - extra
   - flat
   - ghc-prim
   - http-client

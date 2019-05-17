@@ -43,15 +43,17 @@ instance Show Noun where
       fmtCell xs = "[" <> intercalate " " xs <> "]"
 
 instance Arbitrary Noun where
-  arbitrary = resize 120 genNoun
+  arbitrary = resize 1000 go
     where
-      genNoun = do
+      dub x = Cell x x
+      go = do
         sz  <- getSize
-        bit <- arbitrary
-        case (sz, bit) of
-          ( 0, _     ) -> Atom <$> arbitrary
-          ( _, False ) -> Atom <$> arbitrary
-          ( _, True  ) -> scale (\x -> x-10) (Cell <$> genNoun <*> genNoun)
+        (bit, bat) <- arbitrary
+        case (sz, bit, bat) of
+          ( 0, _,     _    ) -> Atom <$> arbitrary
+          ( _, False, _    ) -> Atom <$> arbitrary
+          ( _, True,  True ) -> dub <$> arbitrary
+          ( _, True,  _    ) -> scale (\x -> x-10) (Cell <$> go <*> go)
 
 
 -- Predicates ------------------------------------------------------------------
