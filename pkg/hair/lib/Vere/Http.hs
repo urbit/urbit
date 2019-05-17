@@ -18,7 +18,7 @@ data Request = Request
   }
 
 data ResponseHeader = ResponseHeader
-  { statusCode :: Integer
+  { statusCode :: Int
   , headers :: [Header]
   }
 
@@ -26,3 +26,4 @@ data Event = Started ResponseHeader -- [%start hdr (unit octs) ?]
            | Received ByteString    -- [%continue [~ octs] %.n]
            | Done                   -- [%continue ~ %.y]
            | Canceled               -- %cancel
+           | Failed Text            -- %cancel

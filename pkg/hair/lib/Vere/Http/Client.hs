@@ -8,6 +8,8 @@ module Vere.Http.Client where
 import ClassyPrelude
 import Vere.Http
 
+import qualified Data.CaseInsensitive as CI
+import qualified Network.HTTP.Types as HT
 import qualified Network.HTTP.Client as H
 
 --------------------------------------------------------------------------------
@@ -28,11 +30,26 @@ data State = State
 
 --------------------------------------------------------------------------------
 
-cvtReq :: Request -> H.Request
-cvtReq = undefined
+cvtReq :: Request -> Maybe H.Request
+cvtReq r =
+  H.parseRequest (unpack (url r)) <&> \init -> init
+    { H.method = encodeUtf8 $ tshow (method r),
+      H.requestHeaders =
+        headerList r <&> \(Header k v) -> (CI.mk (encodeUtf8 k),
+                                           encodeUtf8 v),
+      H.requestBody =
+        H.RequestBodyBS $ case body r of
+                            Nothing -> ""
+                            Just b -> b
+    }
 
 cvtRespHeaders :: H.Response a -> ResponseHeader
-cvtRespHeaders resp = undefined
+cvtRespHeaders resp =
+  ResponseHeader (HT.statusCode (H.responseStatus resp)) heads
+  where
+    heads = H.responseHeaders resp <&> \(k, v) ->
+      Header (decodeUtf8 (CI.original k)) (decodeUtf8 v)
+
 
 --------------------------------------------------------------------------------
 
@@ -45,8 +62,8 @@ emit :: State -> Ev -> IO ()
 emit st event = putMVar (sChan st) event
 
 runEff :: State -> Eff -> IO ()
-runEff st = \case CancelReq id  -> cancelReq st id
-                  NewReq id req -> newReq st id req
+runEff st = \case NewReq id req -> newReq st id req
+                  CancelReq id  -> cancelReq st id
 
 newReq :: State -> ReqId -> Request -> IO ()
 newReq st id req = do async <- runReq st id req
@@ -70,7 +87,10 @@ cancelReq st id =
                        pure (cancelThread st id async)
 
 runReq :: State -> ReqId -> Request -> IO (Async ())
-runReq st id req = async (H.withResponse (cvtReq req) (sManager st) exec)
+runReq st id req = async $
+  case cvtReq req of
+    Nothing -> emit st (Receive id (Failed "bad-request-e"))
+    Just r  -> H.withResponse r (sManager st) exec
   where
     recv :: H.BodyReader -> IO (Maybe ByteString)
     recv read = read <&> \case chunk | null chunk -> Nothing

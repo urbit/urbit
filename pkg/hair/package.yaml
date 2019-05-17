@@ -28,6 +28,7 @@ executables:
 dependencies:
   - async
   - base
+  - case-insensitive
   - classy-prelude
   - containers
   - data-fix
@@ -35,6 +36,7 @@ dependencies:
   - flat
   - ghc-prim
   - http-client
+  - http-types
   - integer-gmp
   - largeword
   - lens
