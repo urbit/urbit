@@ -16,15 +16,19 @@ import Data.Bits
 import GHC.Generics
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
+import Data.Flat
+import Data.Flat.Bits
 
 import Data.List     (intercalate)
 import Data.Typeable (Typeable)
+import Data.Word
 
 import Control.Monad.State.Strict hiding (forM_)
 import Control.Monad.Trans.Maybe
 
-import qualified Data.Vector as V
-import qualified Data.List   as L
+import qualified Data.Vector         as V
+import qualified Data.List           as L
+import qualified Data.Vector.Unboxed as UV
 
 import Test.Tasty
 import Test.Tasty.TH
@@ -34,72 +38,98 @@ import Test.QuickCheck
 
 -- External Types --------------------------------------------------------------
 
-newtype Zip = Zip (Vector ZipNode)
-  deriving newtype (Eq, Ord, Show)
-
-
--- Internal Types --------------------------------------------------------------
-
 data ZipNode
     = ZipAtom !Atom
-    | ZipCell !Word !Word
-  deriving (Eq, Ord, Show)
+    | ZipCell !ZipRef !ZipRef
+  deriving stock    (Eq, Ord, Show, Generic)
+  deriving anyclass Flat
 
+data ZipRef
+    = ZRInline !ZipNode
+    | ZRIndex  !Word
+  deriving stock    (Eq, Ord, Show, Generic)
+  deriving anyclass Flat
 
---------------------------------------------------------------------------------
-
-tag :: Bool -> Buf -> Buf
-tag bit buf = (if bit then Buf 1 1 else Buf 1 0) <> buf
-
-jamZipNode :: ZipNode -> Buf
-jamZipNode (ZipAtom a)   = tag False (mat a)
-jamZipNode (ZipCell l r) = tag True (mat (toAtom l) <> mat (toAtom r))
-
-jamZip :: Zip -> Buf
-jamZip (Zip vec) = fold (length : nodes)
-  where
-    length = mat (toAtom (V.length vec))
-    nodes  = jamZipNode <$> V.toList vec
-
-cueZip :: Buf -> Maybe Zip
-cueZip = undefined
-
+-- TODO NonEmpty
+newtype Zip = Zip [ZipNode]
+  deriving stock   Generic
+  deriving newtype (Eq, Ord, Show, Flat)
 
 -- Zip -------------------------------------------------------------------------
 
 type ZipM a = State ([ZipNode], Word, Map Noun Word) a
 
-zip :: Noun -> Zip
-zip = \n -> evalState (go n >> end) ([], 0, mempty)
+findDups :: Noun -> Set Noun
+findDups = done . go mempty
   where
+    done :: Map Noun Word -> Set Noun
+    done = keysSet . filterMap (> 1)
+
+    ins :: Noun -> Map Noun Word -> Map Noun Word
+    ins = alterMap $ \case Nothing -> Just 1
+                           Just n  -> Just (n+1)
+
+    go :: Map Noun Word -> Noun -> Map Noun Word
+    go acc a@(Atom _)   = ins a acc
+    go acc c@(Cell l r) = go (go (ins c acc) l) r
+
+zzip :: Noun -> Zip
+zzip = zip
+
+zip :: Noun -> Zip
+zip top = evalState (go top >> end) ([], 0, mempty)
+  where
+    dups :: Set Noun
+    dups = findDups top
+
     end :: ZipM Zip
     end = do
       (acc, _, _) <- get
-      pure (Zip $ V.fromList $ reverse acc)
+      pure (Zip $ reverse acc)
 
-    ins :: Noun -> ZipNode -> ZipM Word
+    ins :: Noun -> ZipNode -> ZipM ZipRef
     ins noun node = do
       (acc, nex, tbl) <- get
       put (node:acc, nex+1, insertMap noun nex tbl)
-      pure nex
+      pure (ZRIndex nex)
 
-    go :: Noun -> ZipM Word
-    go noun = do
+    doAtom :: Atom -> ZipM ZipRef
+    doAtom a = do
+      if a >= 128 && member (Atom a) dups
+      then ins (Atom a) (ZipAtom a)
+      else pure (ZRInline (ZipAtom a))
+
+    doCell :: (Noun, Noun) -> ZipM ZipRef
+    doCell (l,r) = do
+      lRef <- loop l
+      rRef <- loop r
+      let res = ZipCell lRef rRef
+      if member (Cell l r) dups
+      then ins (Cell l r) res
+      else pure (ZRInline res)
+
+    loop :: Noun -> ZipM ZipRef
+    loop noun = do
       (acc, nex, tbl) <- get
       case (lookup noun tbl, noun) of
-        (Just w,  _)        -> pure w
-        (Nothing, Atom atm) -> ins noun (ZipAtom atm)
-        (Nothing, Cell l r) -> (ZipCell <$> go l <*> go r) >>= ins noun
+        (Just w,  _)        -> pure (ZRIndex w)
+        (Nothing, Atom atm) -> doAtom atm
+        (Nothing, Cell l r) -> doCell (l,r)
 
+    go :: Noun -> ZipM ZipRef
+    go noun = do
+      loop noun >>= \case
+        ZRInline x -> ins noun x
+        ZRIndex _  -> error "Impossible -- duplicate top-level node"
 
 -- Unzip -----------------------------------------------------------------------
 
 type UnZipM a = MaybeT (State (Word, Map Word Noun)) a
 
 unzip :: Zip -> Maybe Noun
-unzip (Zip vec) | V.length vec == 0 = Nothing
+unzip (Zip [])  = Nothing
 unzip (Zip vec) =
-    L.last <$> cvt (V.toList vec)
+    L.last <$> cvt vec
   where
     cvt :: [ZipNode] -> Maybe [Noun]
     cvt nodes = evalState (runMaybeT $ go nodes) (0, mempty)
@@ -109,12 +139,13 @@ unzip (Zip vec) =
       modify $ \(nex, tbl) -> (nex+1, insertMap nex noun tbl)
       pure noun
 
-    find :: Word -> UnZipM Noun
-    find idx = do
-      (nex, tbl) <- get
-      lookup idx tbl & \case
-        Nothing  -> error "bad zip"
-        Just res -> pure res
+    find :: ZipRef -> UnZipM Noun
+    find (ZRInline (ZipAtom a))   = pure (Atom a)
+    find (ZRInline (ZipCell l r)) = Cell <$> find l <*> find r
+    find (ZRIndex idx)            = do (nex, tbl) <- get
+                                       lookup idx tbl & \case
+                                         Nothing  -> error "bad zip"
+                                         Just res -> pure res
 
     go :: [ZipNode] -> UnZipM [Noun]
     go = mapM $ \case ZipAtom a   -> ins (Atom a)
@@ -123,14 +154,23 @@ unzip (Zip vec) =
 
 -- Tests -----------------------------------------------------------------------
 
-compareSize :: Noun -> (Int, Int)
-compareSize n = (jamSz, zipSz)
+compareSize :: Noun -> Int
+compareSize n = flatSz - jamSz
   where
-    Buf jamSz _ =  fromAtom (jam n)
-    Buf zipSz _ =  jamZip (zip n)
+    Buf jamSz _ = fromAtom (jam n)
+    flatSz      = UV.length (bits (zip n))
 
 prop_zipUnzip :: Noun -> Bool
 prop_zipUnzip n = Just n == unzip (zip n)
 
 main :: IO ()
 main = $(defaultMainGenerator)
+
+dub :: Noun -> Noun
+dub x = Cell x x
+
+testSizes :: IO ()
+testSizes = do
+  nouns <- sample' (arbitrary :: Gen Noun)
+  traverse_ (print . compareSize) nouns
+  -- traverse_ print nouns

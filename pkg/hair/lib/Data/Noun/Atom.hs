@@ -14,11 +14,12 @@ import Data.Bits
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
 import Text.Printf
+import Data.Flat
 
 --------------------------------------------------------------------------------
 
 newtype Atom = MkAtom Natural
-  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral)
+  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat)
 
 instance Show Atom where
   show (MkAtom a) = show a
@@ -49,7 +50,11 @@ instance Arbitrary Natural where
   arbitrary = fromInteger . abs <$> arbitrary
 
 instance Arbitrary Atom where
-  arbitrary = MkAtom <$> arbitrary
+  arbitrary = do
+    arbitrary >>= \case
+      False -> MkAtom <$> arbitrary
+      True  -> do n <- MkAtom <$> arbitrary
+                  pure (n + 2 ^ (n `mod` 64))
 
 
 -- Conversion ------------------------------------------------------------------
@@ -58,9 +63,29 @@ class IsAtom a where
   toAtom   :: a -> Atom
   fromAtom :: Atom -> a
 
+instance IsAtom Atom where
+  toAtom   = id
+  fromAtom = id
+
 instance IsAtom Natural where
   toAtom              = MkAtom
   fromAtom (MkAtom a) = a
+
+instance IsAtom Word8 where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
+
+instance IsAtom Word16 where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
+
+instance IsAtom Word32 where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
+
+instance IsAtom Word64 where
+  toAtom   = fromIntegral
+  fromAtom = fromIntegral
 
 instance IsAtom Word where
   toAtom   = fromIntegral

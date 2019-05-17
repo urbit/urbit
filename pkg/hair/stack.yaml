@@ -8,3 +8,4 @@ ghc-options:
 
 extra-deps:
   - para-1.1@sha256:a90eebb063ad70271e6e2a7f00a93e8e8f8b77273f100f39852fbf8301926f81
+  - flat-0.3.4@sha256:002a0e0ae656ea8cc02a772d0bcb6ea7dbd7f2e79070959cc748ad1e7138eb38
