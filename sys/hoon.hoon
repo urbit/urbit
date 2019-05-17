@@ -608,7 +608,7 @@
   ::                                                    ::
   ::                                                    ::
 ::
-::  +snoc Append an element to the end of a list.
+::  +snoc: append an element to the end of a list
 ::
 ++  snoc
   |*  [a/(list) b/*]
@@ -666,6 +666,13 @@
     |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
+::
+::  +bake: convert wet gate to dry gate by specifying argument mold
+::
+++  bake
+  |*  [f=gate a=mold]
+  |=  arg=a
+  (f arg)
 ::
 ++  lent                                                ::  length
   ~/  %lent
@@ -6680,6 +6687,7 @@
     {$mcts p/marl:hoot}                                 ::  ;=  list templating
     {$mccl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
     {$mcnt p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
+    {$mcgl p/spec q/hoon r/hoon s/hoon}                 ::  ;<  bind
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
     {$mcmc p/spec q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
@@ -8757,6 +8765,16 @@
       ==
     ::
         {$mcnt *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        {$mcgl *}
+      :^    %cnls
+          :+  %cnhp
+            q.gen
+          [%ktcl p.gen]
+        r.gen
+      :+  %brts
+        p.gen
+      s.gen
+    ::
         {$mcsg *}                                       ::                  ;~
       |-  ^-  hoon
       ?-  q.gen
@@ -14013,6 +14031,7 @@
         [%mcts *]  %ast-node-mcts
         [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
+        [%mcgl *]  (rune ';<' ~ ~ (spec p.x) (hoons ~[q r s]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
         [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
@@ -16625,6 +16644,7 @@
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
                   ['/' (rune net %mcnt expa)]
+                  ['<' (rune gal %mcgl exp1)]
                   ['~' (rune sig %mcsg expi)]
                   [';' (rune mic %mcmc exqc)]
               ==
@@ -16895,6 +16915,7 @@
     ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
+    ++  exp1  |.(;~(gunk loan loaf loaf loaf))          ::  spec and three hoons
     ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon

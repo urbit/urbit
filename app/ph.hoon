@@ -7,10 +7,12 @@
 ::  - Restore a fleet
 ::  - Compose tests
 ::
-/-  aquarium
-/+  ph
+/-  aquarium, ph
+/+  ph, ph-tests, ph-azimuth, ph-philter
+=,  ph-sur=^ph
 =,  aquarium
 =,  ph
+=,  ph-philter
 =>  $~  |%
     +$  move  (pair bone card)
     +$  card
@@ -32,20 +34,21 @@
     ::
     +$  state
       $:  %0
-          raw-test-cores=(map term raw-test-core)
           test-core=(unit test-core-state)
+          tests=(map term [(list ship) _*form:(ph ,~)])
           other-state
       ==
     ::
     +$  test-core-state
-      $:  hers=(list ship)
-          cor=raw-test-core
-          effect-log=(list [who=ship uf=unix-effect])
+      $:  lab=term
+          hers=(list ship)
+          test=_*form:(ph ,~)
       ==
     ::
     +$  other-state
       $:  test-qeu=(qeu term)
           results=(list (pair term ?))
+          effect-log=(list [who=ship uf=unix-effect])
       ==
     --
 =,  gall
@@ -55,176 +58,156 @@
         state
     ==
 ++  this  .
-++  test-lib  ~(. ^test-lib our.hid)
-::
-::  Tests that will be run automatically with :ph %run-all-tests
-::
-++  auto-tests
-  =,  test-lib
-  ^-  (list (pair term raw-test-core))
-  :~
-    :-  %boot-bud
-    (galaxy ~bud)
-  ::
-    :-  %add
-    ^-  raw-test-core
-    %+  compose-tests  (galaxy ~bud)
-    %+  stateless-test
-      %add
-    |_  now=@da
-    ++  start
-      (dojo ~bud "[%test-result (add 2 3)]")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~bud who uf "[%test-result 5]")
-    --
-  ::
-    :-  %hi
-    %+  compose-tests
-      %+  compose-tests
-        (galaxy ~bud)
-      (galaxy ~dev)
-    %+  stateless-test
-      %hi
-    |_  now=@da
-    ++  start
-      (dojo ~bud "|hi ~dev")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~bud who uf "hi ~dev successful")
-    --
-  ::
-    :-  %boot-planet
-    (planet ~linnup-torsyx)
-  ::
-    :-  %hi-grandparent
-    %+  compose-tests  (planet ~linnup-torsyx)
-    %+  stateless-test
-      %hi-grandparent
-    |_  now=@da
-    ++  start
-      (dojo ~linnup-torsyx "|hi ~bud")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~linnup-torsyx who uf "hi ~bud successful")
-    --
-  ::
-    :-  %second-cousin-hi
-    %+  compose-tests
-      %+  compose-tests  (planet ~mitnep-todsut)
-        (planet ~haplun-todtus)
-    %+  stateless-test
-      %second-cousin-hi
-    |_  now=@da
-    ++  start
-      (dojo ~haplun-todtus "|hi ~mitnep-todsut")
-    ::
-    ++  route
-      |=  [who=ship uf=unix-effect]
-      (expect-dojo-output ~haplun-todtus who uf "hi ~mitnep-todsut successful")
-    --
-  ::
-    :-  %change-file
-    %+  compose-tests  (galaxy ~bud)
-    (touch-file ~bud %home)
-  ::
-    :-  %child-sync
-    %+  compose-tests
-      %+  compose-tests
-        (star ~marbud)
-      (touch-file ~bud %base)
-    (check-file-touched ~marbud %home)
-  ==
-::
-::  Tests that will not be run automatically.
-::
-::    Some valid reasons for not running a test automatically:
-::    - Nondeterministic
-::    - Depends on external services
-::    - Is very slow
-::
 ++  manual-tests
-  =,  test-lib
-  ^-  (list (pair term raw-test-core))
-  :~  :-  %boot-from-azimuth
-      %+  compose-tests
-        %+  compose-tests
-          (raw-ship ~bud `(dawn:azimuth ~bud))
-        (touch-file ~bud %home)
-      ::  %-  assert-happens
-      ::  :~
-      ::  ==
-      *raw-test-core
+  ^-  (list (pair term [(list ship) _*form:(ph ,~)]))
+  =+  (ph-tests our.hid)
+  =/  eth-node  (spawn:ph-azimuth ~bud)
+  =/  m  (ph ,~)
+  :~  :+  %boot-bud
+        ~[~bud]
+      (raw-ship ~bud ~)
     ::
-      :-  %simple-add
-      %+  compose-tests  (galaxy ~bud)
-      %+  stateless-test
-        %add
-      ^-  stateless-test-core
-      |_  now=@da
-      ++  start
-        =/  command  "[%test-result (add 2 3)]"
-        :~  [%event ~bud //term/1 %belt %txt ((list @c) command)]
-            [%event ~bud //term/1 %belt %ret ~]
-        ==
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ?.  (is-dojo-output ~bud who uf "[%test-result 5]")
-          ~
-        [%test-done &]~
-      --
+      :+  %add
+        ~[~bud]
+      ;<  ~  bind:m  (raw-ship ~bud ~)
+      |=  pin=ph-input
+      ?:  =(%init -.q.uf.pin)
+        [& (dojo ~bud "[%test-result (add 2 3)]") %wait ~]
+      ?:  (is-dojo-output ~bud who.pin uf.pin "[%test-result 5]")
+        [& ~ %done ~]
+      [& ~ %wait ~]
     ::
-      :-  %count
-      %+  compose-tests  (galaxy ~bud)
-      %+  porcelain-test
-        %state
-      =|  count=@
-      |_  now=@da
-      ++  start
-        ^-  (quip ph-event _..start)
-        [(dojo ~bud "\"count: {<count>}\"") ..start]
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ^-  (quip ph-event _..start)
-        ?.  (is-dojo-output ~bud who uf "\"count: {<count>}\"")
-          [~ ..start]
-        ?:  (gte count 10)
-          [[%test-done &]~ ..start]
-        =.  count  +(count)
-        start
-      --
+      :+  %hi
+        ~[~bud ~dev]
+      ;<  ~  bind:m  (raw-ship ~bud ~)
+      ;<  ~  bind:m  (raw-ship ~dev ~)
+      (send-hi ~bud ~dev)
     ::
-      :-  %break-behn
-      %+  compose-tests
-        %+  compose-tests
-          (galaxy ~bud)
-        (galaxy ~dev)
-      ^-  raw-test-core
-      |_  now=@da
-      ++  label  %break-behn
-      ++  ships  ~
-      ++  start
-        [(dojo ~bud "|hi ~dev") ..start]
-      ::
-      ++  route
-        |=  [who=ship uf=unix-effect]
-        ^-  [? (quip ph-event _..start)]
-        ?:  ?=(%doze -.q.uf)
-          [| ~ ..start]
-        :-  &  :_  ..start
-        (expect-dojo-output ~bud who uf "hi ~dev successful")
-      --
+      :+  %boot-planet
+        ~[~bud ~marbud ~linnup-torsyx]
+      (planet ~linnup-torsyx)
+    ::
+      :+  %second-cousin-hi
+        ~[~bud ~marbud ~linnup-torsyx ~dev ~mardev ~mitnep-todsut]
+      ;<  ~  bind:m  (planet ~linnup-torsyx)
+      ;<  ~  bind:m  (planet ~mitnep-todsut)
+      (send-hi ~linnup-torsyx ~mitnep-todsut)
+    ::
+      :+  %change-file
+        ~[~bud]
+      ;<  ~        bind:m  (raw-ship ~bud ~)
+      ;<  file=@t  bind:m  (touch-file ~bud %home)
+      (check-file-touched ~bud %home file)
+    ::
+      :+  %child-sync
+        ~[~bud ~marbud]
+      ;<  ~        bind:m  (star ~marbud)
+      ;<  file=@t  bind:m  (touch-file ~bud %base)
+      (check-file-touched ~marbud %home file)
+    ::
+      :+  %boot-az
+        ~[~bud]
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:eth-node ~bud))
+      (pure:m ~)
+    ::
+      :+  %breach-hi
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        (send-hi ~bud ~dev)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        (wait-for-dojo ~bud "hi ~dev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-hi-cousin
+        ~[~bud ~dev ~marbud ~mardev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~mardev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  ~  bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
+        (send-hi ~marbud ~mardev)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~mardev ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
+        (wait-for-dojo ~marbud "hi ~mardev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-sync
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      (pure:m ~)
+    ::
+      :+  %breach-multiple
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:eth-node ~bud))
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~marbud ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      (pure:m ~)
   ==
 ::
 ++  install-tests
   ^+  this
-  =.  raw-test-cores
-    (~(uni by (malt auto-tests)) (malt manual-tests))
+  =.  tests  (malt manual-tests)
   this
 ::
 ++  prep
@@ -260,9 +243,6 @@
     ?~  what
       [%& ~]
     ?:  ?=(%test-done -.i.what)
-      ~&  ?~  p.i.what
-            "TEST {(trip lab)} SUCCESSFUL"
-          "TEST {(trip lab)} FAILED"
       [%| p.i.what]
     =/  nex  $(what t.what)
     ?:  ?=(%| -.nex)
@@ -281,6 +261,9 @@
   ^-  (quip move _this)
   ?~  test-core
     `this
+  ~&  ?:  success
+        "TEST {(trip lab)} SUCCESSFUL"
+      "TEST {(trip lab)} FAILED"
   :_  this(test-core ~, results [[lab success] results])
   %-  zing
   %+  turn  hers.u.test-core
@@ -309,12 +292,14 @@
     `this(results ~)
   =^  lab  test-qeu  ~(get to test-qeu)
   ~&  [running-test=lab test-qeu]
-  =/  res=[events=(list ph-event) new-state=raw-test-core]
-    ~(start (~(got by raw-test-cores) lab) now.hid)
+  =.  effect-log  ~
+  =+  ^-  [ships=(list ship) test=_*form:(ph ,~)]
+      (~(got by tests) lab)
   =>  .(test-core `(unit test-core-state)`test-core)
-  =.  test-core  `[ships . ~]:new-state.res
-  =^  moves-1  this  (subscribe-to-effects lab ships.new-state.res)
-  =^  moves-2  this  (run-events lab events.res)
+  =.  test-core  `[lab ships test]
+  =^  moves-1  this  (subscribe-to-effects lab ships)
+  =^  moves-2  this
+    (diff-aqua-effects /[lab]/(scot %p -.ships) -.ships [/ %init ~]~)
   [:(weld init-vanes pause-fleet subscribe-vanes moves-1 moves-2) this]
 ::
 ::  Print results with ~&
@@ -384,24 +369,16 @@
 ::
 ::  User interface
 ::
-++  poke-noun
-  |=  arg=*
+++  poke-ph-command
+  |=  com=cli:ph-sur
   ^-  (quip move _this)
-  ?+  arg  ~|(%bad-noun-arg !!)
-      %init
-    [init-vanes this]
-  ::
-      %run-all-tests
-    =.  test-qeu
-      %-  ~(gas to test-qeu)
-      (turn auto-tests head)
-    run-test
-  ::
-      [%run-test lab=@tas]
-    ?.  (~(has by raw-test-cores) lab.arg)
-      ~&  [%no-test lab.arg]
+  ?-  -.com
+      %init  [init-vanes this]
+      %run
+    ?.  (~(has by tests) lab.com)
+      ~&  [%no-test lab.com]
       `this
-    =.  test-qeu  (~(put to test-qeu) lab.arg)
+    =.  test-qeu  (~(put to test-qeu) lab.com)
     run-test
   ::
       %cancel
@@ -410,10 +387,15 @@
     =^  moves-2  this  run-test
     [:(weld moves-1 moves-2) this]
   ::
+      %run-all
+    =.  test-qeu
+      %-  ~(gas to test-qeu)
+      (turn manual-tests head)
+    run-test
+  ::
       %print
-    =/  log  effect-log:(need test-core)
-    ~&  lent=(lent log)
-    ~&  %+  roll  log
+    ~&  lent=(lent effect-log)
+    ~&  %+  roll  effect-log
         |=  [[who=ship uf=unix-effect] ~]
         ?:  ?=(?(%blit %doze) -.q.uf)
           ~
@@ -434,30 +416,50 @@
   ?>  ?=([@tas @ ~] way)
   =/  lab  i.way
   ?~  test-core
-    ~&  [%ph-dropping lab]
-    `this
+    ~&  [%ph-dropping-done lab]
+    [[ost.hid %pull way [our.hid %aqua] ~]~ this]
+  ?.  =(lab lab.u.test-core)
+    ~&  [%ph-dropping-strange lab]
+    [[ost.hid %pull way [our.hid %aqua] ~]~ this]
   =+  |-  ^-  $:  thru-effects=(list unix-effect)
                   events=(list ph-event)
-                  cor=_u.test-core
+                  log=_effect-log
+                  done=(unit ?)
+                  test=_test.u.test-core
               ==
       ?~  ufs.afs
-        [~ ~ u.test-core]
-      =.  effect-log.u.test-core
-        [[who i.ufs]:afs effect-log.u.test-core]
-      =+  ^-  [thru=? events-1=(list ph-event) cor=_cor.u.test-core]
-          (~(route cor.u.test-core now.hid) who.afs i.ufs.afs)
-      =.  cor.u.test-core  cor
-      =+  $(ufs.afs t.ufs.afs)
-      :+  ?:  thru
-            [i.ufs.afs thru-effects]
-          thru-effects
-        (weld events-1 events)
-      cor
-  =.  test-core  `cor
-  =>  .(test-core `(unit test-core-state)`test-core)
-  =/  moves-1  (publish-aqua-effects who.afs thru-effects)
-  =^  moves-2  this  (run-events lab events)
-  [(weld moves-1 moves-2) this]
+        [~ ~ ~ ~ test.u.test-core]
+      =/  m-res=_*output:(ph ,~)
+        (test.u.test-core now.hid who.afs i.ufs.afs)
+      =?  ufs.afs  =(%cont -.next.m-res)
+        [i.ufs.afs [/ %init ~] t.ufs.afs]
+      =^  done=(unit ?)  test.u.test-core
+        ?-    -.next.m-res
+          %wait  [~ test.u.test-core]
+          %cont  [~ self.next.m-res]
+          %fail  [`| test.u.test-core]
+          %done  [`& test.u.test-core]
+        ==
+      =+  ^-  _$
+          ?~  done
+            $(ufs.afs t.ufs.afs)
+          [~ ~ ~ done test.u.test-core]
+      :^    ?:  thru.m-res
+              [i.ufs.afs thru-effects]
+            thru-effects
+          (weld events.m-res events)
+        [[who i.ufs]:afs log]
+      [done test]
+    =.  test.u.test-core  test
+    =.  effect-log  (weld log effect-log)
+    =>  .(test-core `(unit test-core-state)`test-core)
+    ?^  done
+      =^  moves-1  this  (finish-test lab u.done)
+      =^  moves-2  this  run-test
+      [(weld moves-1 moves-2) this]
+    =/  moves-1  (publish-aqua-effects who.afs thru-effects)
+    =^  moves-2  this  (run-events lab events)
+    [(weld moves-1 moves-2) this]
 ::
 ::  Subscribe to effects
 ::

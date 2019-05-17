@@ -57,6 +57,7 @@ Most parts of Arvo have dedicated maintainers.
 * `/app/dns`: @joemfb (~master-morzod)
 * `/app/hall`: @fang- (~palfun-foslup)
 * `/app/talk`: @fang- (~palfun-foslup)
+* `/app/aqua`: @philipcmonk (~wicdev-wisryt)
 * `/lib/test`: @eglaysher (~littel-ponnys)
 
 ## Contact

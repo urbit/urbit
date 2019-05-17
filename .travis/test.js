@@ -85,7 +85,7 @@ function barMass(urb) {
 function aqua(urb) {
   return urb.line("|start %ph")
   .then(function(){
-    return urb.line(":ph %init");
+    return urb.line(":ph|init");
   })
   .then(function(){
     return urb.line(":aqua &pill +solid");
@@ -94,7 +94,7 @@ function aqua(urb) {
     urb.every(/TEST [^ ]* FAILED/, function(arg){
       throw Error(arg);
     });
-    return urb.line(":ph [%run-test %hi]");
+    return urb.line(":ph|run %hi");
   })
   .then(function(){
     return urb.expectEcho("ALL TESTS SUCCEEDED")

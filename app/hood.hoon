@@ -202,5 +202,6 @@
 ++  reap-drum-phat            (wrap reap-phat):from-drum
 ++  woot-helm                 (wrap take-woot):from-helm
 ++  writ-kiln-autoload        (wrap take-writ-autoload):from-kiln
+++  writ-kiln-find-ship       (wrap take-writ-find-ship):from-kiln
 ++  writ-kiln-sync            (wrap take-writ-sync):from-kiln
 --

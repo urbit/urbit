@@ -1,6 +1,6 @@
 /-  aquarium
 =,  aquarium
 :-  %say
-|=  [* [her=ship] ~]
+|=  [* [her=ship ~] ~]
 :-  %aqua-events
 [%init-ship her ~]~
