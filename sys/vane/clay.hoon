@@ -153,10 +153,9 @@
   %-  unit
   $:  hen=duct
       req=task:able
-      mos=(list move)
-      $=  cad
-      $%  [%commit com=form:commit-clad]
-          [%merge mer=form:merge-clad]
+      $=  eval-data
+      $%  [%commit commit=eval-form:eval:commit-clad]
+          [%merge merge=eval-form:eval:merge-clad]
       ==
   ==
 ::
@@ -306,7 +305,8 @@
 ::
 ::  notes:   notes to send immediately.  These will go out even if a
 ::           later stage of the process fails, so they shouldn't have any
-::           semantic effect on the rest of the system.
+::           semantic effect on the rest of the system.  Path is
+::           included exclusively for documentation and |verb.
 ::  effects: moves to send after the process ends.
 ::  wait:    don't move on, stay here.  The next sign should come back
 ::           to this same callback.
@@ -317,7 +317,7 @@
 ++  clad-output-raw
   |*  a=mold
   $~  [~ ~ %done *a]
-  $:  notes=(list note)
+  $:  notes=(list [path note])
       effects=(list move)
       $=  next
       $%  [%wait ~]
@@ -342,7 +342,7 @@
   ++  output  (clad-output-raw a)
   ++  form  (clad-form-raw a)
   ++  pure
-    |=  [arg=a]
+    |=  arg=a
     ^-  form
     |=  clad-input
     [~ ~ %done arg]
@@ -362,6 +362,71 @@
       %fail  [%fail err.next.b-res]
       %done  [%cont (fun value.next.b-res)]
     ==
+  ::
+  ::  The clad monad must be evaluted in a particular way to maintain
+  ::  its monadic character.  +take:eval implements this.
+  ::
+  ++  eval
+    |%
+    ::  Indelible state of a clad
+    ::
+    +$  eval-form
+      $:  effects=(list move)
+          =form
+      ==
+    ::
+    ::  The cases of results of +take
+    ::
+    +$  eval-result
+      $%  [%next ~]
+          [%fail err=(pair term tang)]
+          [%done value=a]
+      ==
+    ::
+    ::  Take a new sign and run the clad against it
+    ::
+    ++  take
+      ::  moves: accumulate throughout recursion the moves to be
+      ::         produced now
+      =|  moves=(list move)
+      |=  [=eval-form =duct =our=wire =clad-input]
+      ^-  [[(list move) =eval-result] _eval-form]
+      ::  run the clad callback
+      ::
+      =/  =output  (form.eval-form clad-input)
+      ::  add notes to moves
+      ::
+      =.  moves
+        %+  welp
+          moves
+        %+  turn  notes.output
+        |=  [=path =note]
+        [duct %pass (weld our-wire path) note]
+      ::  add effects to list to be produced when done
+      ::
+      =.  effects.eval-form
+        (weld effects.eval-form effects.output)
+      ::  if done, produce effects
+      ::
+      =?  moves  ?=(%done -.next.output)
+        %+  welp
+          moves
+        effects.eval-form
+      ::  case-wise handle next steps
+      ::
+      ?-  -.next.output
+          %wait  [[moves %next ~] eval-form]
+          %fail  [[moves %fail err.next.output] eval-form]
+          %done  [[moves %done value.next.output] eval-form]
+          %cont
+        ::  recurse to run continuation with initialization move
+        ::
+        %_  $
+          form.eval-form   self.next.output
+          sign.clad-input  [%y %init-clad ~]
+        ==
+      ==
+    --
   --
 ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
@@ -435,11 +500,11 @@
 ::  Just send a note.
 ::
 ++  just-do
-  |=  note=note
+  |=  [=path =note]
   =/  m  (clad ,~)
   ^-  form:m
   |=  clad-input
-  [[note]~ ~ %done ~]
+  [[path note]~ ~ %done ~]
 ::
 ::  Wait for ford to respond
 ::
@@ -669,7 +734,7 @@
       =/  m  (clad (list (pair path cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /inserts
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  ins
@@ -698,7 +763,7 @@
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /diffs
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  dif
@@ -733,7 +798,7 @@
       =/  m  (clad (list (trel path lobe cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /casts
         :*  %f  %build  live=%.n  %pin  wen  %list
             ::~  [her syd %da wen]  %tabl
             ^-  (list schematic:ford)
@@ -761,9 +826,10 @@
             %+  turn  cat
             |=  {pax/path cay/cage}
             [pax (page-to-lobe:sutil [p q.q]:cay)]
-        ^-  (list note)
+        ^-  (list [path note])
         :_  ~
-        :*  %f  %build  live=%.n  %pin  wen  %list
+        :*  /mutates
+            %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  cat
             |=  {pax/path cay/cage}
@@ -826,7 +892,7 @@
       =/  m  (clad ,_this-cor)
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /checkout
         =/  new-yaki  (aeon-to-yaki:sutil let.dom)
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
@@ -868,7 +934,7 @@
           (~(uni in acc) pak)
       =/  changes  (malt suba)
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /ergo
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  turn  ~(tap in all-paths)
@@ -1057,7 +1123,7 @@
       =/  m  (clad ,[ali=yaki e=_this-cor])
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /fetch-ali
         [%c %warp p.ali-disc q.ali-disc `[%sing %v cas /]]
       ;<  [rot=riot r=rang]  bind:m  (expect-clay ran)
       =.  ran  r
@@ -1281,7 +1347,7 @@
       =/  m  (clad ,cane)
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /diff-bas
         :*  %f  %build  live=%.n  %pin  wen
             %list
             ^-  (list schematic:ford)
@@ -1348,7 +1414,7 @@
       =/  m  (clad ,bof=(map path (unit cage)))
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /merge-conflicts
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  turn
@@ -1398,7 +1464,7 @@
         ==
       ^-  form:m
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /build
         :*  %f  %build  live=%.n  %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by bof)
@@ -1537,7 +1603,7 @@
             ?:  ?=($init gem)
               [p.ali-disc q.ali-disc cas]
             [p.bob-disc q.bob-disc da+wen]
-        %-  just-do
+        %+  just-do  /checkout
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  murn  ~(tap by q.new)
@@ -1584,7 +1650,7 @@
           [p.ali-disc q.ali-disc cas]
         [p.bob-disc q.bob-disc da+wen]
       ;<  ~  bind:m
-        %-  just-do
+        %+  just-do  /ergo
         :*  %f  %build  live=%.n  %pin  wen  %list
             ^-  (list schematic:ford)
             %+  turn  ~(tap in sum)
@@ -2741,24 +2807,18 @@
   ++  take-commit
     |=  =sign
     ^+  +>
+    =/  m  commit-clad
     ?~  act
       ~|(%no-active-write !!)
-    ?.  ?=(%commit -.cad.u.act)
-      ~|(%active-not-write !!)
-    =/  c-res  (com.cad.u.act now ran sign)
-    =.  +>.$
-      =<  ?>(?=([~ * * * %commit *] act) .)  ::  TMI
-      %-  emil
-      %+  turn  notes.c-res
-      |=  =note
-      [hen %pass /commit/[syd] note]
-    =.  mos.u.act
-      (weld mos.u.act effects.c-res)
-    ?-  -.next.c-res
-      %wait  +>.$
-      %cont  $(com.cad.u.act self.next.c-res, sign [%y %init-clad ~])
-      %fail  (fail-commit err.next.c-res)
-      %done  (done-commit mos.u.act value.next.c-res)
+    ?.  ?=(%commit -.eval-data.u.act)
+      ~|(%active-not-commit !!)
+    =^  r=[moves=(list move) =eval-result:eval:m]  commit.eval-data.u.act
+      (take:eval:m commit.eval-data.u.act hen /commit/[syd] now ran sign)
+    =>  .(+>.$ (emil moves.r))  :: TMI
+    ?-  -.eval-result.r
+      %next  +>.$
+      %fail  (fail-commit err.eval-result.r)
+      %done  (done-commit value.eval-result.r)
     ==
   ::
   ::  Don't release effects or apply state changes; print error
@@ -2779,9 +2839,8 @@
   ::  Release effects and apply state changes
   ::
   ++  done-commit
-    |=  [mos=(list move) =dome =rang]
+    |=  [=dome =rang]
     ^+  +>
-    =.  +>.$  (emil mos)
     =:  dom      dome
         hut.ran  (~(uni by hut.ran) hut.rang)
         lat.ran  (~(uni by lat.ran) lat.rang)
@@ -2794,24 +2853,18 @@
   ++  take-merge
     |=  =sign
     ^+  +>
+    =/  m  merge-clad
     ?~  act
       ~|(%no-active-write !!)
-    ?.  ?=(%merge -.cad.u.act)
-      ~|(%active-not-write !!)
-    =/  c-res  (mer.cad.u.act now ran sign)
-    =.  +>.$
-      =<  ?>(?=([~ * * * %merge *] act) .)  ::  TMI
-      %-  emil
-      %+  turn  notes.c-res
-      |=  =note
-      [hen %pass /merge/[syd] note]
-    =.  mos.u.act
-      (weld mos.u.act effects.c-res)
-    ?-  -.next.c-res
-      %wait  +>.$
-      %cont  $(mer.cad.u.act self.next.c-res, sign [%y %init-clad ~])
-      %fail  (fail-merge err.next.c-res)
-      %done  (done-merge mos.u.act value.next.c-res)
+    ?.  ?=(%merge -.eval-data.u.act)
+      ~|(%active-not-merge !!)
+    =^  r=[moves=(list move) =eval-result:eval:m]  merge.eval-data.u.act
+      (take:eval:m merge.eval-data.u.act hen /merge/[syd] now ran sign)
+    =>  .(+>.$ (emil moves.r))  :: TMI
+    ?-  -.eval-result.r
+      %next  +>.$
+      %fail  (fail-merge err.eval-result.r)
+      %done  (done-merge value.eval-result.r)
     ==
   ::
   ::  Don't release effects or apply state changes; print error
@@ -2826,9 +2879,8 @@
   ::  Release effects and apply state changes
   ::
   ++  done-merge
-    |=  [mos=(list move) conflicts=(set path) =dome =rang]
+    |=  [conflicts=(set path) =dome =rang]
     ^+  +>
-    =.  +>.$  (emil mos)
     =.  +>.$  (emit [hen %give %mere %& conflicts])
     =:  dom      dome
         hut.ran  (~(uni by hut.ran) hut.rang)
@@ -3914,7 +3966,7 @@
             dom.dojo
             ran.ruf
         ==
-      `[hen req ~ %commit writer]
+      `[hen req %commit ~ writer]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(take-commit:den [%y %init-clad ~])
@@ -3971,7 +4023,7 @@
             dom.dojo
             ran.ruf
         ==
-      `[hen req ~ %merge writer]
+      `[hen req %merge ~ writer]
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our des.req)
       abet:(take-merge:den [%y %init-clad ~])
@@ -4177,13 +4229,13 @@
 ++  take                                              ::  accept response
   |=  {tea/wire hen/duct hin/(hypo sign)}
   ^+  [*(list move) ..^$]
-  ?:  ?=({$commit @ ~} tea)
+  ?:  ?=({$commit @ *} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
       abet:(take-commit:den q.hin)
     [mos ..^$]
-  ?:  ?=({$merge @ ~} tea)
+  ?:  ?=({$merge @ *} tea)
     =*  syd  i.t.tea
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) our syd)
