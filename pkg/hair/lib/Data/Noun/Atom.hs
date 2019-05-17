@@ -53,9 +53,7 @@ instance Arbitrary Atom where
   arbitrary = do
     arbitrary >>= \case
       False -> MkAtom <$> arbitrary
-      True  -> do n <- MkAtom <$> arbitrary
-                  pure (n + 2 ^ (n `mod` 64))
-
+      True  -> arbitrary <&> ((`mod` 16) . MkAtom)
 
 -- Conversion ------------------------------------------------------------------
 

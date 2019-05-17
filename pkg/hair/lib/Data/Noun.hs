@@ -9,7 +9,7 @@ import Data.Bits
 import GHC.Generics
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
-import Debug.Trace
+import Data.Flat hiding (getSize)
 
 import Data.List     (intercalate)
 import Data.Typeable (Typeable)
@@ -25,7 +25,8 @@ data Cell = ACell !Noun !Noun
 data Noun
     = Atom !Atom
     | Cell !Noun !Noun
-  deriving (Eq, Ord)
+  deriving stock    (Eq, Ord, Generic)
+  deriving anyclass Flat
 
 data CellIdx = L | R
   deriving (Eq, Ord, Show)
@@ -48,7 +49,7 @@ instance Arbitrary Noun where
       dub x = Cell x x
       go = do
         sz  <- getSize
-        (bit, bat) <- arbitrary
+        (bit, bat :: Bool) <- arbitrary
         case (sz, bit, bat) of
           ( 0, _,     _    ) -> Atom <$> arbitrary
           ( _, False, _    ) -> Atom <$> arbitrary
