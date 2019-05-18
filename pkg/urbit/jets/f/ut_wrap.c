@@ -3,73 +3,17 @@
 */
 #include "all.h"
 
-  static u3_noun _cqfu_wrap(u3_noun, u3_noun, u3_noun);
-
-  static u3_noun
-  _wrap_fork(u3_noun van, u3_noun p_sut, u3_noun yoz)
-  {
-    if ( u3_nul == p_sut ) {
-      return u3_nul;
-    }
-    else {
-      return u3nc(_cqfu_wrap(van, u3h(p_sut), yoz),
-                  _wrap_fork(van, u3t(p_sut), yoz));
-    }
-  }
-
   static u3_noun
   _cqfu_wrap(u3_noun van,
              u3_noun sut,
              u3_noun yoz)
   {
-    u3_noun p_sut, q_sut;
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
+    u3_noun gat = u3j_cook("_cqfu_wrap-wrap", von, "wrap");
 
-    if ( c3n == u3du(sut) )  {
-      return u3m_error("wrap-type");
-    }
-    else switch ( u3h(sut) ) {
-      default: return u3m_error("wrap-type");
+    gat = u3i_molt(gat, u3x_sam, u3k(yoz), 0);
 
-      case c3__core: u3x_cell(u3t(sut), &p_sut, &q_sut);
-      {
-        u3_noun pq_sut, qq_sut, rq_sut;
-        u3_noun ppq_sut, qpq_sut, rpq_sut;
-
-        if ( c3n == u3r_trel(q_sut, &pq_sut, &qq_sut, &rq_sut) ) {
-          return u3m_bail(c3__fail);
-        }
-        if ( c3n == u3r_trel(pq_sut, &ppq_sut, &qpq_sut, &rpq_sut) ) {
-          return u3m_bail(c3__fail);
-        }
-        else if ( (c3__gold != rpq_sut) &&
-                  (c3__lead != yoz) ) {
-          return u3m_error("wrap-metal");
-        }
-        else {
-          return u3nt(c3__core,
-                      u3k(p_sut),
-                      u3nt(u3nt(u3k(ppq_sut), u3k(qpq_sut), u3k(yoz)),
-                           u3k(qq_sut),
-                           u3k(rq_sut)));
-        }
-      }
-      case c3__fork: p_sut = u3t(sut);
-      {
-        u3_noun yed = u3qdi_tap(p_sut);
-        u3_noun ret = u3kf_fork(_wrap_fork(van, yed, yoz));
-
-        u3z(yed);
-        return ret;
-      }
-      case c3__hold:
-      {
-        u3_noun fop = u3qfu_repo(van, sut);
-        u3_noun pro = _cqfu_wrap(van, fop, yoz);
-
-        u3z(fop);
-        return pro;
-      }
-    }
+    return u3n_nock_on(gat, u3k(u3x_at(u3x_bat, gat)));
   }
 
 /* boilerplate
@@ -84,7 +28,7 @@
     {
       return u3m_bail(c3__fail);
     } else {
-      return _cqfu_wrap(van, sut, yoz);
+      return u3qfu_wrap(van, sut, yoz);
     }
   }
 
