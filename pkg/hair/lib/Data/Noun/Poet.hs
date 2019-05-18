@@ -146,6 +146,9 @@ class ToNoun a where
 
 -- Atom Conversion -------------------------------------------------------------
 
+instance ToNoun Noun where
+  toNoun = id
+
 instance ToNoun Word where
   toNoun = Atom . fromIntegral
 

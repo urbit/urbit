@@ -22,9 +22,9 @@ import Data.Either.Extra
 import GHC.Natural
 import Data.Flat
 
+import Data.Maybe    (fromJust)
 import Data.List     (intercalate)
 import Data.Typeable (Typeable)
-import Data.Word
 
 import Control.Monad.State.Strict hiding (forM_, replicateM)
 import Control.Monad.Trans.Maybe
@@ -53,8 +53,11 @@ instance IsAtom Unary where
 data ZipAtom
     = ZATiny Unary
     | ZAWide Natural
-  deriving stock    (Eq, Ord, Show, Generic)
+  deriving stock    (Eq, Ord, Generic)
   deriving anyclass Flat
+
+instance Show ZipAtom where
+  show = show . toAtom
 
 instance IsAtom ZipAtom where
   toAtom (ZATiny u) = toAtom u
@@ -79,90 +82,51 @@ data ZipRef
 
 type Zip = ([ZipNode], ZipNode)
 
--- Zip -------------------------------------------------------------------------
+-- Zip and UnZip ---------------------------------------------------------------
 
-type ZipM a = State ([ZipNode], ZipAtom, Map Noun ZipAtom) a
-
-findDups :: Noun -> Set Noun
-findDups = keysSet . filterMap ((> 1) . toAtom) . go mempty
+refCount :: Noun -> Map Noun Word
+refCount = go mempty
   where
-    ins :: Noun -> Map Noun ZipAtom -> Map Noun ZipAtom
-    ins = alterMap (Just . maybe (fromAtom 1) (fromAtom . (+1) . toAtom))
+    ins :: Noun -> Map Noun Word -> Map Noun Word
+    ins = alterMap (Just . maybe 1 (+1))
 
-    go :: Map Noun ZipAtom -> Noun -> Map Noun ZipAtom
+    go :: Map Noun Word -> Noun -> Map Noun Word
     go acc a@(Atom _)   = ins a acc
     go acc c@(Cell l r) = go (go (ins c acc) l) r
 
-zzip :: Noun -> Zip
-zzip = zip
+zipTable :: Noun -> (Vector Noun, Map Noun Int)
+zipTable top = (tbl, keys tbl)
+  where
+    keys = mapFromList . V.toList . fmap swap . V.indexed
+    big  = \case { Atom a -> a >= 128; _ -> True }
+    tbl  = filter big
+         $ fmap fst
+         $ V.fromList
+         $ sortBy (comparing snd)
+         $ mapToList
+         $ filterMap (> 1)
+         $ refCount top
 
 zip :: Noun -> Zip
-zip top = evalState exec ([], fromAtom 0, mempty)
+zip top = (V.toList dups, cvtNode top)
   where
-    dups :: Set Noun
-    dups = findDups top
-
-    ins :: Noun -> ZipNode -> ZipM ZipRef
-    ins noun node = do
-      (acc, nex, tbl) <- get
-      put (node:acc, (fromAtom (toAtom nex + 1)), insertMap noun nex tbl)
-      pure (ZRIndex nex)
-
-    doAtom :: Atom -> ZipM ZipRef
-    doAtom a = do
-      if a >= 128 && member (Atom a) dups
-      then ins (Atom a) (ZipAtom (fromAtom a))
-      else pure (ZRInline (ZipAtom (fromAtom a)))
-
-    doCell :: (Noun, Noun) -> ZipM ZipRef
-    doCell (l,r) = do
-      lRef <- loop l
-      rRef <- loop r
-      let res = ZipCell lRef rRef
-      if member (Cell l r) dups
-      then ins (Cell l r) res
-      else pure (ZRInline res)
-
-    loop :: Noun -> ZipM ZipRef
-    loop noun = do
-      (acc, nex, tbl) <- get
-      case (lookup noun tbl, noun) of
-        (Just w,  _)        -> pure (ZRIndex w)
-        (Nothing, Atom atm) -> doAtom atm
-        (Nothing, Cell l r) -> doCell (l,r)
-
-    exec :: ZipM Zip
-    exec = loop top >>= \case
-             ZRIndex _  -> error "Impossible -- duplicate top-level node"
-             ZRInline x -> do (acc, _, _) <- get
-                              pure (reverse acc, x)
-
--- Unzip -----------------------------------------------------------------------
-
-type UnZipM a = MaybeT (State (ZipAtom, Map ZipAtom Noun)) a
+    (tbl, keys) = zipTable top
+    dups        = cvtNode <$> tbl
+    cvtRef n    = lookup n keys & \case Nothing -> ZRInline (cvtNode n)
+                                        Just a  -> ZRIndex (fromAtom $ toAtom a)
+    cvtNode     = \case Atom a   -> ZipAtom (fromAtom a)
+                        Cell l r -> ZipCell (cvtRef l) (cvtRef r)
 
 unzip :: Zip -> Maybe Noun
-unzip (dups, top) =
-    evalState (runMaybeT (go dups >> root top)) (fromAtom 0, mempty)
+unzip (V.fromList -> dups, top) = recover top
   where
-    root :: ZipNode -> UnZipM Noun
-    root (ZipAtom a)   = pure (Atom (toAtom a))
-    root (ZipCell l r) = Cell <$> find l <*> find r
+    recover :: ZipNode -> Maybe Noun
+    recover (ZipAtom a)   = pure (Atom $ toAtom a)
+    recover (ZipCell l r) = Cell <$> getRef l <*> getRef r
 
-    ins :: Noun -> UnZipM Noun
-    ins noun = do
-      modify $ \(nex, tbl) -> (fromAtom (toAtom nex+1), insertMap nex noun tbl)
-      pure noun
-
-    find :: ZipRef -> UnZipM Noun
-    find (ZRInline (ZipAtom a))   = pure (Atom (toAtom a))
-    find (ZRInline (ZipCell l r)) = Cell <$> find l <*> find r
-    find (ZRIndex idx)            = do (nex, tbl) <- get
-                                       (MaybeT . pure) $ lookup idx tbl
-
-    go :: [ZipNode] -> UnZipM [Noun]
-    go = mapM $ \case ZipAtom a   -> ins (Atom (toAtom a))
-                      ZipCell l r -> ins =<< Cell <$> find l <*> find r
+    getRef :: ZipRef -> Maybe Noun
+    getRef (ZRInline n) = recover n
+    getRef (ZRIndex ix) = dups V.!? fromAtom (toAtom ix) >>= recover
 
 
 -- Tests -----------------------------------------------------------------------
@@ -204,17 +168,17 @@ dub :: Noun -> Noun
 dub x = Cell x x
 
 allAtoms :: Int -> [Noun]
-allAtoms n = Atom <$> [0..toAtom n]
+allAtoms n = Atom . (\n -> 2^n - 1) <$> [0..toAtom n]
 
 allCells :: Int -> [Noun]
 allCells 0 = allAtoms 1
 allCells n = do
-  a <- allAtoms (n*2 - 1)
+  a <- Atom <$> [0, (2 ^ toAtom n) - 1]
   c <- allCells (n-1)
   [Cell c a, Cell a c, Cell c c]
 
 allNouns :: Int -> [Noun]
-allNouns sz = ordNub (allCells sz <> allAtoms (sz*2))
+allNouns sz = ordNub (allCells sz)
 
 nounSizes :: (Noun -> Int) -> Int -> [(Int, Noun)]
 nounSizes f sz = sort (allNouns sz <&> \n -> (f n, n))
@@ -233,7 +197,6 @@ sumFlatZipSizes dep = sum $ map fst (nounSizes (length . bits . zip) dep)
 
 sumJamSizes :: Int -> Int
 sumJamSizes dep = sum $ map fst (nounSizes jamSz dep)
-
 
 compareSizes :: (Noun -> Int) -> IO ()
 compareSizes f = do
