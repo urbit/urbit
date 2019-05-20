@@ -32,6 +32,12 @@
 ++  batch
   $%  [%single =call]
       [%deed as=address deeds-json=cord]
+      [%lock what=(list ship) to=address =lockup]
+  ==
+::
+++  lockup
+  $%  [%linear windup-years=@ud unlock-years=@ud]
+      [%conditional [b1=@ud b2=@ud b3=@ud] unlock-years-per-batch=@ud]
   ==
 ::
 ++  rights
@@ -82,9 +88,11 @@
     =-  [[- ~] this]
     %+  write-file-transactions
       path.command
+    ::TODO  probably just store network and nonce in tmp state?
     ?-  -.batch.command
       %single  [(single [network nonce +.batch]:command) ~]
       %deed    (deed [network nonce +.batch]:command)
+      %lock    (lock [network nonce +.batch]:command)
     ==
   ==
 ::
@@ -114,11 +122,11 @@
 ++  do
   ::TODO  maybe reconsider encode-call interface, if we end up wanting @ux
   ::      as or more often than we want tapes
-  |=  [=network nonce=@ud to=address gas=@ud dat=$@(@ux tape)]
+  |=  [=network nonce=@ud to=address dat=$@(@ux tape)]
   ^-  transaction
   :*  nonce
-      8.000.000.000.000
-      600.000
+      8.000.000.000.000  ::TODO  global config
+      600.000  ::TODO  global config
       to
       0
       `@`?@(dat dat (tape-to-ux dat))
@@ -133,7 +141,7 @@
 ++  single
   |=  [=network nonce=@ud =call]
   ^-  transaction
-  =-  (do network nonce ecliptic 5.000.000.000 -)
+  =-  (do network nonce ecliptic -)
   ?-  -.call
     %create-galaxy  (create-galaxy:dat +.call)
     %spawn  (spawn:dat +.call)
@@ -183,9 +191,8 @@
   ::TODO  maybe-do, take dat gat and unit argument
   ++  do-here
     |=  dat=tape
-    ~&  [%tx-num (lent txs)]
     :_  txs
-    (do network (add nonce (lent txs)) ecliptic 5.000.000.000 dat)
+    (do network (add nonce (lent txs)) ecliptic dat)
   --
 ::
 ++  parse-registration
@@ -223,6 +230,79 @@
     %unit-address  ;~(pose (stag ~ adr) (cold ~ (jest '')))
     %key           ;~(pose (stag ~ hex) (cold ~ (jest '')))
   ==
+::
+::TODO  need secondary kind of lockup logic, where
+::      1) we need to batch-transfer stars to the ceremony
+::      2) (not forget to register and) deposit already-active stars
+++  lock
+  |=  [=network nonce=@ud what=(list ship) to=address =lockup]
+  ^-  (list transaction)
+  ~&  %assuming-lockup-done-by-ceremony
+  ~&  %assuming-ceremony-controls-parents
+  =.  what  ::  expand galaxies into stars
+    %-  zing
+    %+  turn  what
+    |=  s=ship
+    ^-  (list ship)
+    ?.  =(%czar (clan:title s))  [s]~
+    (turn (gulf 1 255) |=(k=@ud (cat 3 s k)))
+  =/  parents
+    =-  ~(tap in -)
+    %+  roll  what
+    |=  [s=ship ss=(set ship)]
+    ?>  =(%king (clan:title s))
+    (~(put in ss) (^sein:title s))
+  ~|  %invalid-lockup-ships
+  ?>  ~|  %does-this-also-work
+      ?|  ?=(%linear -.lockup)
+          =(`@`(lent what) :(add b1.lockup b2.lockup b3.lockup))
+      ==
+  =/  contract=address
+    ?-  -.lockup
+      %linear       0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
+      %conditional  0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+    ==
+  =|  txs=(list transaction)
+  |^
+    ?^  parents
+      =.  txs
+        %-  do-here
+        (set-spawn-proxy:dat i.parents contract)
+      $(parents t.parents)
+    =.  txs
+      %-  do-here
+      ?-  -.lockup
+        %linear       (register-linear to (lent what) +.lockup)
+        %conditional  (register-conditional to +.lockup)
+      ==
+    |-
+    ?~  what  (flop txs)
+    =.  txs
+      %-  do-here
+      (deposit:dat to i.what)
+    $(what t.what)
+  ::TODO  maybe-do, take dat gat and unit argument
+  ++  do-here
+    |=  dat=tape
+    :_  txs
+    (do network (add nonce (lent txs)) contract dat)
+  --
+::
+++  register-linear
+  |=  [to=address stars=@ud windup-years=@ud unlock-years=@ud]
+  %-  register-linear:dat
+  :*  to
+      (mul windup-years yer:yo)
+      stars
+      (div (mul unlock-years yer:yo) stars)
+      1
+  ==
+::
+++  register-conditional
+  |=  [to=address [b1=@ud b2=@ud b3=@ud] unlock-years-per-batch=@ud]
+  %-  register-conditional:dat
+  =-  [`address`to b1 b2 b3 `@ud`- 1]
+  (div (mul unlock-years-per-batch yer:yo) :(add b1 b2 b3))
 ::
 ::  call data generation
 ::TODO  most of these should later be cleaned and go in ++constitution
