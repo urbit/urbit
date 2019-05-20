@@ -97,6 +97,7 @@
   ==                                                    ::
 ++  sign-behn                                           ::
   $%  {$mass p/mass}                                    ::
+      {$writ p/riot:clay}                               ::
   ==                                                    ::
 ++  sign-clay                                           ::
   $%  {$mere p/(each (set path) (pair term tang))}      ::
@@ -420,7 +421,7 @@
             {$c $note *}
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            {$c $writ *}
+            {?($b $c) $writ *}
           init
         ::
             {$c $mere *}

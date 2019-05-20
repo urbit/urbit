@@ -424,18 +424,23 @@
   ++  able  ^?
     |%
     ++  note                                            ::  out request $->
-      $%  $:  %d                                        ::  to %dill
-      $%  [$flog =flog:dill]
+      $%  $:  %b                                        ::  to %behn
+      $%  [%wait p=@da]
+      ==  ==
+          $:  %d                                        ::  to %dill
+      $%  [%flog =flog:dill]
       ==  ==  ==
     ++  gift                                            ::  out result <-$
       $%  [%doze p=(unit @da)]                          ::  next alarm
           [%mass p=mass]                                ::  memory usage
           [%wake error=(unit tang)]                     ::  wakeup or failed
+          [%meta p=vase]
       ==
     ++  task                                            ::  in request ->$
       $%  [%born ~]                                     ::  new unix process
           [%crud tag=@tas =tang]                        ::  error with trace
           [%rest p=@da]                                 ::  cancel alarm
+          [%drip p=vase]                                ::  give in next event
           [%vega ~]                                     ::  report upgrade
           [%wait p=@da]                                 ::  set alarm
           [%wake ~]                                     ::  timer activate
@@ -7087,7 +7092,11 @@
   ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
-      {$b gift:able:behn}
+      $:  $b
+          $%  gift:able:behn
+              [%writ riot:clay]
+          ==
+      ==
       {$c gift:able:clay}
       {$d gift:able:dill}
       {$e gift:able:eyre}
@@ -8198,6 +8207,8 @@
     |=  n=@
     ^-  tape
     %-  prefix-hex
+    ?:  =(0 n)
+      "0"
     %-  render-hex-bytes
     (as-octs:mimes:html n)
   ::

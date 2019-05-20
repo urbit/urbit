@@ -21,6 +21,8 @@
 ::  We get ++unix-event and ++pill from /-aquarium
 ::
 /-  aquarium
+/+  pill
+=,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
     +$  move  (pair bone card)
@@ -117,10 +119,13 @@
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
-    =/  poke-result  (slum poke tym ue)
-    =.  snap  +.poke-result
+    =/  poke-result  (mule |.((slum poke tym ue)))
+    ?:  ?=(%| -.poke-result)
+      %-  (slog >%aqua-crash< >guest=who< p.poke-result)
+      $
+    =.  snap  +.p.poke-result
     =.  ..abet-pe  (publish-event tym ue)
-    =.  ..abet-pe  (handle-effects ((list ovum) -.poke-result))
+    =.  ..abet-pe  (handle-effects ((list ovum) -.p.poke-result))
     $
   ::
   ::  Peek
@@ -371,6 +376,14 @@
     =^  ms  this  (poke-pill pil)
     (emit-moves ms)
   ::
+      [%swap-files ~]
+    =.  userspace-ova.pil
+      :_  ~
+      %-  unix-event
+      (file-ovum:pill-lib /(scot %p our.hid)/home/(scot %da now.hid))
+    =^  ms  this  (poke-pill pil)
+    (emit-moves ms)
+  ::
       [%wish hers=* p=@t]
     %+  turn-ships  ((list ship) hers.val)
     |=  [who=ship thus=_this]
@@ -458,6 +471,8 @@
       %event
     ~?  &(aqua-debug=| !?=(?(%belt %hear) -.q.ue.ae))
       raw-event=[who.ae -.q.ue.ae]
+    ~?  &(debug=| ?=(%they -.q.ue.ae))
+      raw-event=[who.ae ue.ae]
     (push-events:(pe who.ae) [ue.ae]~)
   ==
 ::
@@ -508,14 +523,15 @@
 ++  peek-x-i
   |=  pax=path
   ^-  (unit (unit [%noun noun]))
-  ?.  ?=([@ @ @ *] pax)
+  ?.  ?=([@ @ @ @ @ *] pax)
     ~
   =/  who  (slav %p i.pax)
   =/  pier  (~(get by piers) who)
+  =/  ren  i.t.t.t.t.pax
   ?~  pier
     ~
   :^  ~  ~  %noun
-  (peek:(pe who) [%cx pax])
+  (peek:(pe who) t.pax)
 ::
 ::  Get all created ships
 ::

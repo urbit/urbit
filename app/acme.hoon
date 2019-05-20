@@ -1266,6 +1266,15 @@
     ~&  [%failed-order-history fal.hit]
     this
   ::
+    ::  install privkey and cert .pem from /=home=/acme, ignores app state
+    ::TODO  refactor this out of %acme, see also arvo#1151
+    ::
+      %install-from-clay
+    =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
+    =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
+    =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
+    (emit %rule /install %cert `[key cer])
+  ::
       %init
     init
   ::
