@@ -1,65 +1,127 @@
 {-# LANGUAGE MagicHash #-}
 
+-- TODO Handle 32-bit architectures
+
 module Data.Noun.Pill where
 
 import ClassyPrelude
-import Data.Noun
+import Data.Noun hiding (toList, fromList)
 import Data.Noun.Atom
-import Data.Noun.Jam
+import Data.Noun.Jam hiding (main)
 import Data.Flat
 import Control.Monad.Except
-import Control.Lens
+import Control.Lens hiding (index, Index)
 import Data.Either.Extra (mapLeft)
 import GHC.Natural
 import Data.Bits
 import GHC.Integer.GMP.Internals
+import GHC.Int
+import GHC.Word
+import GHC.Exts (sizeofByteArray#)
 
 import qualified Data.Primitive.ByteArray as Prim
 import qualified Data.Vector.Primitive    as VP
 import qualified Data.ByteString          as BS
 
+import Test.Tasty
+import Test.Tasty.TH
+import Test.Tasty.QuickCheck as QC
+import Test.QuickCheck
+
 --------------------------------------------------------------------------------
 
-stripTrailingZeros :: ByteString -> ByteString
-stripTrailingZeros buf = BS.take (len - go 0 (len - 1)) buf
+stripTrailingZeros :: IsSequence seq
+                   => Int ~ Index seq
+                   => (Eq (Element seq), Num (Element seq))
+                   => seq -> seq
+stripTrailingZeros buf = take (len - go 0 (len - 1)) buf
   where
     len = length buf
-    go n i | i < 0               = n
-           | 0 == BS.index buf i = go (n+1) (i-1)
-           | otherwise           = n
+    go n i | i < 0                  = n
+           | 0 == unsafeIndex buf i = go (n+1) (i-1)
+           | otherwise              = n
 
-unpackWord :: ByteString -> Word
-unpackWord buf =
-  case length buf of
-    0 -> 0
-    1 -> i 0 0
-    2 -> i 0 0 .|. i 1 8
-    3 -> i 0 0 .|. i 1 8 .|. i 2 16
-    n -> i 0 0 .|. i 1 8 .|. i 2 16 .|. i 3 24
+--------------------------------------------------------------------------------
+
+wordArrToBigNat :: VP.Vector Word -> BigNat
+wordArrToBigNat v@(VP.Vector off (I# len) (Prim.ByteArray buf)) =
+  case VP.length v of
+    0 -> zeroBigNat
+    1 -> wordToBigNat (case VP.unsafeIndex v 0 of W# w -> w)
+    n -> if off /= 0 then error "words2Nat: bad-vec" else
+         byteArrayToBigNat# buf len
+
+wordsToBigNat :: [Word] -> BigNat
+wordsToBigNat = wordArrToBigNat . VP.fromList
+
+bigNatToWords :: BigNat -> [Word]
+bigNatToWords (BN# bArr) =
+  stripTrailingZeros
+    $ VP.toList
+    $ VP.Vector 0 (I# (sizeofByteArray# bArr) `div` 8)
+    $ Prim.ByteArray bArr
+
+--------------------------------------------------------------------------------
+
+naturalToBigNat :: Natural -> BigNat
+naturalToBigNat (NatS# w)  = wordToBigNat w
+naturalToBigNat (NatJ# bn) = bn
+
+wordsToNatural :: [Word] -> Natural
+wordsToNatural []  = 0
+wordsToNatural [w] = fromIntegral w
+wordsToNatural ws  = NatJ# (wordsToBigNat ws)
+
+naturalToWords :: Natural -> [Word]
+naturalToWords = bigNatToWords . naturalToBigNat
+
+--------------------------------------------------------------------------------
+
+dumbPackWord :: ByteString -> Word
+dumbPackWord bs = go 0 0 (toList bs)
   where
+    go acc i []     = acc
+    go acc i (x:xs) = go (acc .|. shiftL (fromIntegral x) (8*i)) (i+1) xs
+
+-- TODO This assumes 64-bit words
+packWord :: ByteString -> Word
+packWord buf = go 0 0 (toList buf)
+  where
+    go acc idx []     = acc
+    go acc idx (x:xs) = go (acc .|. i idx (8*idx)) (idx+1) xs
+
     i :: Int -> Int -> Word
     i idx off = shiftL (fromIntegral $ BS.index buf idx) off
 
-words2Nat :: [Word] -> Natural
-words2Nat []  = 0
-words2Nat [w] = fromIntegral w
-words2Nat ws =
-    if off /= 0 then error "words2Nat bad vec" else
-    NatJ# (BN# buf)
+-- TODO This assumes 64-bit words
+unpackWord :: Word -> ByteString
+unpackWord wor = reverse $ fromList $ go 0 []
   where
-    VP.Vector off len (Prim.ByteArray buf) = VP.fromList ws
+    go i acc | i >= 8    = acc
+    go i acc | otherwise = go (i+1) (fromIntegral (shiftR wor (i*8)) : acc)
 
-unpackWords :: ByteString -> [Word]
-unpackWords =
-    \case buf | length buf <= 4 -> [unpackWord buf]
-              | otherwise       -> go [] buf
+--------------------------------------------------------------------------------
+
+bytesToWords :: ByteString -> [Word]
+bytesToWords = go []
   where
     go :: [Word] -> ByteString -> [Word]
     go acc buf | null buf  = reverse acc
-    go acc buf | otherwise = go (unpackWord buf : acc) (BS.drop 4 buf)
+    go acc buf | otherwise = go (packWord buf : acc) (drop 8 buf)
+
+wordsToBytes :: [Word] -> ByteString
+wordsToBytes = concat . fmap unpackWord
+
+--------------------------------------------------------------------------------
+
+dumbUnpackAtom :: ByteString -> Atom
+dumbUnpackAtom bs = go 0 0 (toList bs)
+  where
+    go acc i []     = acc
+    go acc i (x:xs) = go (acc .|. shiftL (fromIntegral x) (8*i)) (i+1) xs
 
 unpackAtom :: ByteString -> Atom
-unpackAtom = MkAtom . words2Nat . unpackWords . stripTrailingZeros
+unpackAtom = MkAtom . wordsToNatural . bytesToWords . stripTrailingZeros
 
 loadFile :: FilePath -> IO Atom
 loadFile = fmap unpackAtom . readFile
@@ -69,9 +131,6 @@ loadJam = fmap cue . loadFile
 
 -- dumpJam :: FilePath -> Noun -> IO ()
 -- dumpJam pat = writeFile pat . packAtom . jam
-
--- packWord :: Word -> ByteString
--- packWord buf = undefined
 
 -- packAtom :: Atom -> ByteString
 -- packAtom = undefined
@@ -83,6 +142,45 @@ loadFlat :: Flat a => FilePath -> IO (Either Text a)
 loadFlat pat = do
   bs <- readFile pat
   pure $ mapLeft tshow $ unflat bs
+
+data Pill = Brass | Ivory | Solid
+
+tryPill :: Pill -> IO String
+tryPill pill =
+    loadJam pat <&> \case Nothing -> "nil"; Just (Atom _) -> "atom"; _ -> "cell"
+  where
+    pat = case pill of Brass -> "./bin/brass.pill"
+                       Solid -> "./bin/solid.pill"
+                       Ivory -> "./bin/ivory.pill"
+
+-- Tests -----------------------------------------------------------------------
+
+instance Arbitrary BigNat where
+  arbitrary = naturalToBigNat <$> arbitrary
+
+instance Show BigNat where
+  show = show . NatJ#
+
+roundTrip :: Eq a => (a -> b) -> (b -> a) -> (a -> Bool)
+roundTrip f g x = x == g (f x)
+
+equiv :: Eq b => (a -> b) -> (a -> b) -> (a -> Bool)
+equiv f g x = f x == g x
+
+check :: Atom -> Atom
+check = toAtom . (id :: Integer -> Integer) . fromAtom
+
+prop_packWord       = equiv packWord dumbPackWord . fromList
+prop_unpackBigNat   = roundTrip bigNatToWords wordsToBigNat
+prop_packBigNat     = roundTrip wordsToBigNat bigNatToWords . stripTrailingZeros
+prop_unpackDumb     = equiv unpackAtom dumbUnpackAtom . fromList
+prop_packUnpackWord = roundTrip unpackWord packWord
+prop_explodeBytes   = roundTrip wordsToBytes bytesToWords
+
+--------------------------------------------------------------------------------
+
+main :: IO ()
+main = $(defaultMainGenerator)
 
 {-
 /* u3i_bytes():

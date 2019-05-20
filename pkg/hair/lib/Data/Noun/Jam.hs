@@ -105,18 +105,24 @@ mat atm = Buf bufWid buffer
     suffix = xor extras (shiftL atm (preWid-1))
     buffer = bitConcat prefix suffix
 
+bufVal Nothing = "<nil>"
+bufVal (Just (Buf sz v)) = show v <> " [" <> show sz <> "]"
+
 rub :: Cursor -> Maybe Buf
-rub slc@(Cursor idx buf) =
-  leadingZeros slc >>= \case
-    0      -> pure (Buf 1 0)
-    prefix -> pure (Buf sz val)
-      where
-        widIdx = idx + 1 + prefix
-        width  = fromSlice (Slice widIdx (prefix - 1) buf)
-        datIdx = widIdx + (prefix-1)
-        datWid = fromIntegral $ 2^(prefix-1) + width
-        sz     = datWid + (2*prefix)
-        val    = fromSlice (Slice datIdx datWid buf)
+rub slc@(Cursor idx buf) = trace (bufVal res) res
+  where
+    res =
+      trace ("rub-" <> show idx) $
+      leadingZeros slc >>= \case
+        0      -> pure (Buf 1 0)
+        prefix -> pure (Buf sz val)
+          where
+            widIdx = idx + 1 + prefix
+            width  = fromSlice (Slice widIdx (prefix - 1) buf)
+            datIdx = widIdx + (prefix-1)
+            datWid = fromIntegral $ 2^(prefix-1) + width
+            sz     = datWid + (2*prefix)
+            val    = fromSlice (Slice datIdx datWid buf)
 
 -- Noun Serialization ----------------------------------------------------------
 
@@ -160,6 +166,7 @@ cue buf = view _2 <$> go mempty 0
   where
     go :: Map Int Noun -> Int -> Maybe (Int, Noun, Map Int Noun)
     go tbl i =
+      trace ("go-" <> show i)
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub (Cursor (i+1) buf)
                               let r = toNoun at
@@ -169,6 +176,7 @@ cue buf = view _2 <$> go mempty 0
                               let r = Cell lef rit
                               pure (2+lSz+rSz, r, insertMap i r tbl)
         (True,  True  ) -> do Buf wid at <- rub (Cursor (i+2) buf)
+                              traceM ("ref-" <> show at)
                               r <- lookup (fromIntegral at) tbl & \case
                                      Nothing -> error ("bad-ref-" <> show at)
                                      Just ix -> Just ix

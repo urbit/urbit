@@ -130,6 +130,10 @@ fromCursor (Cursor off buf) = shiftR buf off
 bumpCursor :: Word -> Cursor -> Cursor
 bumpCursor off = over cOffset (+ fromIntegral off)
 
+instance IsAtom Cursor where
+  toAtom (Cursor off bits) = shiftR bits off
+  fromAtom = Cursor 0
+
 
 --------------------------------------------------------------------------------
 
