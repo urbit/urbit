@@ -134,7 +134,7 @@ unzip (V.fromList -> dups, top) = recover top
 compareSize :: Noun -> Int
 compareSize n = flatSz - jamSz
   where
-    Buf jamSz _ = fromAtom (jam n)
+    Buf jamSz _ = fromAtom (jam' n)
     flatSz      = length (bits (zip n))
 
 compareZipCompression :: Noun -> Int
@@ -147,7 +147,7 @@ compareRawToJam :: Noun -> Int
 compareRawToJam n = rawSz - jamSz
   where
     rawSz       = length (bits n)
-    Buf jamSz _ = fromAtom (jam n)
+    Buf jamSz _ = fromAtom (jam' n)
 
 prop_zipUnzip :: Noun -> Bool
 prop_zipUnzip n = Just n == unzip (zip n)
@@ -184,7 +184,7 @@ nounSizes :: (Noun -> Int) -> Int -> [(Int, Noun)]
 nounSizes f sz = sort (allNouns sz <&> \n -> (f n, n))
 
 jamSz :: Noun -> Int
-jamSz = (\(Buf sz _) -> sz) . fromAtom . jam
+jamSz = (\(Buf sz _) -> sz) . fromAtom . jam'
 
 showFlatZipSizes :: Int -> IO ()
 showFlatZipSizes dep = traverse_ print (nounSizes (length . bits . zip) dep)
@@ -192,15 +192,22 @@ showFlatZipSizes dep = traverse_ print (nounSizes (length . bits . zip) dep)
 showJamSizes :: Int -> IO ()
 showJamSizes dep = traverse_ print (nounSizes jamSz dep)
 
-sumFlatZipSizes :: Int -> Int
-sumFlatZipSizes dep = sum $ map fst (nounSizes (length . bits . zip) dep)
+--------------------------------------------------------------------------------
 
 sumJamSizes :: Int -> Int
 sumJamSizes dep = sum $ map fst (nounSizes jamSz dep)
 
+sumFlatSizes :: Int -> Int
+sumFlatSizes dep = sum $ map fst (nounSizes (length . bits) dep)
+
+sumFlatZipSizes :: Int -> Int
+sumFlatZipSizes dep = sum $ map fst (nounSizes (length . bits . zip) dep)
+
+--------------------------------------------------------------------------------
+
 compareSizes :: (Noun -> Int) -> IO ()
 compareSizes f = do
-  nouns <- join <$> (replicateM 50 (sample' (arbitrary :: Gen Noun)) :: IO [[Noun]])
+  nouns <- join <$> (replicateM 100 (sample' (arbitrary :: Gen Noun)) :: IO [[Noun]])
   traverse_ print $ reverse
                   $ ordNub
                   $ sort
