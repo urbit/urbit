@@ -29,6 +29,7 @@ import Data.Typeable (Typeable)
 import Control.Monad.State.Strict hiding (forM_, replicateM)
 import Control.Monad.Trans.Maybe
 
+import qualified ClassyPrelude
 import qualified Data.Vector         as V
 import qualified Data.List           as L
 import qualified Data.Vector.Unboxed as UV
@@ -95,16 +96,15 @@ refCount = go mempty
     go acc c@(Cell l r) = go (go (ins c acc) l) r
 
 zipTable :: Noun -> (Vector Noun, Map Noun Int)
-zipTable top = (tbl, keys tbl)
+zipTable top = (V.fromList tbl, keys)
   where
-    keys = mapFromList . V.toList . fmap swap . V.indexed
-    big  = \case { Atom a -> a >= 128; _ -> True }
-    tbl  = filter big
-         $ fmap fst
-         $ V.fromList
+    keys = mapFromList (ClassyPrelude.zip tbl [0..])
+    big  = \case Atom a -> a >= 127+8
+                 _      -> True
+    tbl  = fmap fst
          $ sortBy (comparing snd)
+         $ filter (\(k,v) -> big k && v>1)
          $ mapToList
-         $ filterMap (> 1)
          $ refCount top
 
 zip :: Noun -> Zip

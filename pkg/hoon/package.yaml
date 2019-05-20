@@ -1,4 +1,4 @@
-name: vere
+name: language-hoon
 version: 0.1.0
 license: AGPL-3.0-only
 
@@ -8,27 +8,9 @@ library:
     - -fwarn-incomplete-patterns
     - -O2
 
-executables:
-  uterm:
-    main: Main.hs
-    source-dirs: app/uterm
-    dependencies: ["vere"]
-
-  vere:
-    main: Main.hs
-    source-dirs: app/vere
-    dependencies: ["vere"]
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - "-with-rtsopts=-H128m"
-      - -fwarn-incomplete-patterns
-      - -O2
-
 dependencies:
   - async
   - base
-  - bytestring
   - case-insensitive
   - classy-prelude
   - containers
@@ -46,7 +28,6 @@ dependencies:
   - multimap
   - para
   - pretty-show
-  - primitive
   - QuickCheck
   - semigroups
   - smallcheck

@@ -1,7 +1,8 @@
 resolver: lts-13.10
 
 packages:
-  - .
+  - pkg/hair
+  - pkg/hoon
 
 ghc-options:
   vere: "-fobject-code"
