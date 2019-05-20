@@ -104,20 +104,22 @@ instance IsAtom Integer where
   TODO Support 32-bit archetectures.
 -}
 
-wordBitWidth :: Word# -> Word#
-wordBitWidth w = minusWord# 64## (clz# w)
+wordBitWidth# :: Word# -> Word#
+wordBitWidth# w = minusWord# 64## (clz# w)
 
-bigNatBitWidth :: BigNat -> Word#
-bigNatBitWidth nat =
+bigNatBitWidth# :: BigNat -> Word#
+bigNatBitWidth# nat =
     lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` 64##)
   where
     (# lastIdx, _ #) = subIntC# (sizeofBigNat# nat) 1#
-    lswBits          = wordBitWidth (indexBigNat# nat lastIdx)
+    lswBits          = wordBitWidth# (indexBigNat# nat lastIdx)
 
-bitWidth :: Atom -> Int
-bitWidth (MkAtom (NatS# gl)) = I# (word2Int# (wordBitWidth gl))
-bitWidth (MkAtom (NatJ# bn)) = I# (word2Int# (bigNatBitWidth bn))
+atomBitWidth# :: Atom -> Word#
+atomBitWidth# (MkAtom (NatS# gl)) = wordBitWidth# gl
+atomBitWidth# (MkAtom (NatJ# bn)) = bigNatBitWidth# bn
 
+bitWidth :: Num a => Atom -> a
+bitWidth a = fromIntegral (W# (atomBitWidth# a))
 
 --------------------------------------------------------------------------------
 

@@ -13,6 +13,12 @@ executables:
     main: Main.hs
     source-dirs: app/uterm
     dependencies: ["vere"]
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - "-with-rtsopts=-H128m"
+      - -fwarn-incomplete-patterns
+      - -O2
 
   vere:
     main: Main.hs
