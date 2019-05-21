@@ -1,6 +1,23 @@
 {-# LANGUAGE MagicHash #-}
 
--- TODO Handle 32-bit architectures
+{-
+    TODO Handle 32-bit architectures
+    TODO A faster version of this is possible:
+
+      - Get the byte-length of a file.
+      - Round up to a multiple of 8 (or 4 if 32bit cpu)
+      - Allocate a mutable vector of Word8 with that size.
+      - Read the file into the array.
+      - Manually cast to an array of Word.
+      - On big endian, update each words with `System.Endian.fromLE64`.
+      - If there are trailing 0 words, adjust the vector size to delete them.
+      - unsafeFreeze the vector.
+      - Run `byteArrayToBigNat#` on the underlying byte array.
+      - Convert the BigNat to a Natural, to an Atom.
+      - The whole thing becomes zero-copy for little endian machines, with
+        one zero-copy transformation of the whole structure on big-endian
+        machines.
+-}
 
 module Data.Noun.Pill where
 

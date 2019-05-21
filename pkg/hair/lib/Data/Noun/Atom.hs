@@ -29,14 +29,14 @@ instance Show Atom where
 -}
 data Cursor = Cursor
     { _cOffset :: {-# UNPACK #-} !Int
-    , _cBuffer :: {-# UNPACK #-} !Atom
+    , _cBuffer :: !Atom
     }
   deriving (Eq, Ord, Show)
 
 data Slice = Slice
     { _sOffset :: {-# UNPACK #-} !Int
     , _sWidth  :: {-# UNPACK #-} !Int
-    , _sBuffer :: {-# UNPACK #-} !Atom
+    , _sBuffer :: !Atom
     }
   deriving (Eq, Ord, Show)
 

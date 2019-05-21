@@ -67,6 +67,7 @@ dependencies:
   - transformers
   - unordered-containers
   - vector
+  - hashtables
 
 default-extensions:
   - ApplicativeDo
