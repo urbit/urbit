@@ -13,7 +13,7 @@
 //
 //    $%  [%root ~]
 //        [%head cell-cursor=@]
-//        [%tail cell-cursor=@ hed-width=@ hed-value=@]
+//        [%tail cell-cursor=@ hed-width=@ hed-value=*]
 //    ==
 //
 typedef struct cueframe
