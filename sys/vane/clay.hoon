@@ -244,6 +244,16 @@
               pur/request-map                           ::  active requests
           ==                                            ::
 ::
+::  Result of a subscription
+::
+++  sub-result
+  $%  [%blab =mood data=(each cage lobe)]
+      [%bleb ins=@ud range=(unit (pair aeon aeon))]
+      [%balk cage=(unit (each cage lobe)) =mood]
+      [%blas moods=(set mood)]
+      [%blub ~]
+  ==
+::
 ::  The clad monad for foreign updates.
 ::
 ::  Same as +commit-clad, except inclues `lim`, as in +rede.  Null if
@@ -275,17 +285,17 @@
 ::  Generally used when we store a request in our state somewhere.
 ::
 ++  cach  (unit (unit (each cage lobe)))                ::  cached result
-++  wove  {p/(unit ship) q/rove}                        ::  stored source + req
++$  wove  [for=(unit ship) =rove]                       ::  stored source + req
 ++  rove                                                ::  stored request
-          $%  {$sing p/mood}                            ::  single request
-              {$next p/mood q/(unit aeon) r/cach}       ::  next version of one
-              $:  $mult                                 ::  next version of any
-                  p/mool                                ::  original request
-                  q/(unit aeon)                         ::  checking for change
-                  r/(map (pair care path) cach)         ::  old version
-                  s/(map (pair care path) cach)         ::  new version
+          $%  [%sing =mood]                             ::  single request
+              [%next =mood aeon=(unit aeon) =cach]      ::  next version of one
+              $:  %mult                                 ::  next version of any
+                  =mool                                 ::  original request
+                  aeon=(unit aeon)                      ::  checking for change
+                  old-cach=(map [=care =path] cach)     ::  old version
+                  new-cach=(map [=care =path] cach)     ::  new version
               ==                                        ::
-              {$many p/? q/moat r/(map path lobe)}      ::  change range
+              [%many track=? =moat lobes=(map path lobe)] ::  change range
           ==                                            ::
 ::
 ::  Foreign desk data.
@@ -425,6 +435,7 @@
       =/  =output  (form.eval-form clad-input)
       ::  add notes to moves
       ::
+      ~&  [%take-eval our-wire notes=(lent notes.output) effects=(lent effects.output)]
       =.  moves
         %+  welp
           moves
@@ -609,8 +620,9 @@
   ;<  e=_*cor                      bind:m  checkout-new-state:e
   ;<  mim=(map path mime)          bind:m  (ergo-changes:e suba mim)
   ;<  ~                            bind:m  (print-changes:e %& suba)
-  =.  mim.dom.e  mim
   (pure:m dom:e ran:e)
+  ::  =.  mim.dom.e  mim
+  ::(pure:m dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
   ::
@@ -1938,17 +1950,24 @@
   |=  [=moat rand=(unit rand) lim=@da dom=dome ran=rang]
   =/  m  update-clad
   ^-  form:m
+  ~&  [%foreign-update our her syd wen]
   ?~  rand
+    ~&  [%foreign-update-null]
     (pure:m ~)
-  =/  lem  ?.(?=(%da -.q.moat) lim p.q.moat)
+  =/  lem  ?.(?=(%da -.to.moat) lim p.to.moat)
   ?>  ?=(%nako p.r.u.rand)
   =/  nako  ;;(nako q.r.u.rand)
   ?:  =(0 let.dom)
+    ~&  [%foreign-update-zero]
     ;<  [dom=dome ran=rang]  bind:m  (apply-foreign-update nako dom ran)
+    ~&  [%foreign-update-zero-pure]
     (pure:m ~ lem dom ran)
+  ~&  [%foreign-update-nonzero]
   ;<  blobs=(set blob)     bind:m  (validate-plops bar.nako)
+  ~&  [%foreign-update-validated]
   ;<  [dom=dome ran=rang]  bind:m
     (apply-foreign-update nako(bar blobs) dom ran)
+  ~&  [%foreign-update-applied]
   (pure:m ~ lem dom ran)
   ::
   ::  Make sure that incoming data is of the mark it claims to be.
@@ -1957,8 +1976,10 @@
     |=  plops=(set plop)
     =/  m  (clad ,(set blob))
     ^-  form:m
+    ~&  [%validating-plops ~(wyt in plops)]
     ;<  ~  bind:m
       %+  just-do  /validate-plops
+      ~&  [%validating-plops-producing]
       :*  %f  %build  live=%.n  %pin  wen
           %list
           ^-  (list schematic:ford)
@@ -2645,8 +2666,8 @@
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
       `(bind u.ezy |=(a/cage [%& a]))
-    =+  nao=(case-to-aeon q.mun)
-    ::  ~&  [%aver-mun nao [%from syd lim q.mun]]
+    =+  nao=(case-to-aeon case.mun)
+    ::  ~&  [%aver-mun nao [%from syd lim case.mun]]
     ?~(nao ~ (read-at-aeon:ze for u.nao mun))
   ::
   ::  Queue a move.
@@ -2692,12 +2713,12 @@
     |=  {hen/duct mun/mood dat/(each cage lobe)}
     ^+  +>
     ?:  ?=(%& -.dat)
-      (emit hen %slip %b %drip !>([%writ ~ [p.mun q.mun syd] r.mun p.dat]))
+      (emit hen %slip %b %drip !>([%writ ~ [care.mun case.mun syd] path.mun p.dat]))
     %-  emit
-    :*  hen  %pass  [%blab p.mun (scot q.mun) syd r.mun]
+    :*  hen  %pass  [%blab care.mun (scot case.mun) syd path.mun]
         %f  %build  live=%.n  %pin
-        (case-to-date q.mun)
-        (lobe-to-schematic [her syd] r.mun p.dat)
+        (case-to-date case.mun)
+        (lobe-to-schematic [her syd] path.mun p.dat)
     ==
   ::
   ++  case-to-date  (cury case-to-date:util lim)
@@ -2710,9 +2731,9 @@
     ?>  ?=(^ das)
     ::  translate the case to a date
     ::
-    =/  cas  [%da (case-to-date q.n.das)]
+    =/  cas  [%da (case-to-date case.n.das)]
     =-  (emit hen %slip %b %drip !>([%wris cas -]))
-    (~(run in `(set mood)`das) |=(m/mood [p.m r.m]))
+    (~(run in `(set mood)`das) |=(m/mood [care.m path.m]))
   ::
   ::  Give next step in a subscription.
   ::
@@ -2746,11 +2767,11 @@
     =.  +>.send  ..duct-lift
     $(all t.all, duct-lift (send i.all arg))
   ::
-  ++  blub-all  (duct-lift |=({a/duct ~} (blub a)))    ::  lifted ++blub
-  ++  blab-all  (duct-lift blab)                        ::  lifted ++blab
-  ++  blas-all  (duct-lift blas)                        ::  lifted ++blas
-  ++  balk-all  (duct-lift balk)                        ::  lifted ++balk
-  ++  bleb-all  (duct-lift bleb)                        ::  lifted ++bleb
+  ++  blub-all  (duct-lift |=([a=duct ~] (blub a)))
+  ++  blab-all  (duct-lift blab)
+  ++  blas-all  (duct-lift blas)
+  ++  balk-all  (duct-lift balk)
+  ++  bleb-all  (duct-lift bleb)
   ::
   ::  Transfer a request to another ship's clay.
   ::
@@ -2762,12 +2783,12 @@
   ::
   ++  print-wove
     |=  =wove
-    :-  p.wove
-    ?-  -.q.wove
-      %sing  [%sing p.q.wove]
-      %next  [%next [p q]:q.wove]
-      %mult  [%mult [p q]:q.wove]
-      %many  [%many [p q]:q.wove]
+    :-  for.wove
+    ?-  -.rove.wove
+      %sing  [%sing mood.rove.wove]
+      %next  [%next [mood aeon]:rove.wove]
+      %mult  [%mult [mool aeon]:rove.wove]
+      %many  [%many [track moat]:rove.wove]
     ==
   ::
   ::  Printable form of a cult; useful for debugging
@@ -2791,19 +2812,19 @@
     =.  wov  (dedupe wov)
     =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
-      (mabe q.wov |=(@da (bait hen +<)))
+      (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
-    =+  rav=(reve q.wov)
-    =+  ^=  vaw  ^-  rave
-      ?.  ?=({$sing $v *} rav)  rav
-      [%many %| [%ud let.dom] `case`q.p.rav r.p.rav]
+    =/  =rave  (rove-to-rave rove.wov)
+    =.  rave
+      ?.  ?=([%sing %v *] rave)  rave
+      [%many %| [%ud let.dom] case.mood.rave path.mood.rave]
     =+  inx=nix.u.ref
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
-      (send-over-ames hen [(scot %ud inx) ~] her inx syd ~ vaw)
+      (send-over-ames hen [(scot %ud inx) ~] her inx syd ~ rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
-      bom.u.ref  (~(put by bom.u.ref) inx [hen vaw])
+      bom.u.ref  (~(put by bom.u.ref) inx [hen rave])
       fod.u.ref  (~(put by fod.u.ref) hen inx)
     ==
   ::
@@ -2818,65 +2839,65 @@
     |=  wov/wove
     ^-  wove
     =;  won/(unit wove)  (fall won wov)
-    =*  rov  q.wov
+    =*  rov  rove.wov
     ?-    -.rov
         $sing  ~
         $next
-      =+  aey=(case-to-aeon q.p.rov)
+      =+  aey=(case-to-aeon case.mood.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
       |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      ?.  =(p.wov p.haw)  ~
-      =*  hav  q.haw
+      ?.  =(for.wov for.haw)  ~
+      =*  hav  rove.haw
       =-  ?:(- `haw ~)
       ?&  ?=($next -.hav)
-          =(p.hav p.rov(q q.p.hav))
+          =(mood.hav mood.rov(case case.mood.hav))
         ::
           ::  only a match if this request is before
           ::  or at our starting case.
-          =+  hay=(case-to-aeon q.p.hav)
+          =+  hay=(case-to-aeon case.mood.hav)
           ?~(hay | (lte u.hay u.aey))
       ==
     ::
         $mult
-      =+  aey=(case-to-aeon p.p.rov)
+      =+  aey=(case-to-aeon case.mool.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
       |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      ?.  =(p.wov p.haw)  ~
-      =*  hav  q.haw
+      ?.  =(for.wov for.haw)  ~
+      =*  hav  rove.haw
       =-  ?:(- `haw ~)
       ?&  ?=($mult -.hav)
-          =(p.hav p.rov(p p.p.hav))
+          =(mool.hav mool.rov(case case.mool.hav))
         ::
           ::  only a match if this request is before
           ::  or at our starting case, and it has been
           ::  tested at least that far.
-          =+  hay=(case-to-aeon p.p.hav)
+          =+  hay=(case-to-aeon case.mool.hav)
           ?&  ?=(^ hay)
               (lte u.hay u.aey)
-              ?=(^ q.hav)
-              (gte u.q.hav u.aey)
+              ?=(^ aeon.hav)
+              (gte u.aeon.hav u.aey)
           ==
       ==
     ::
         $many
-      =+  aey=(case-to-aeon p.q.rov)
+      =+  aey=(case-to-aeon from.moat.rov)
       ?~  aey  ~
       %-  ~(rep in ~(key by qyx))
       |=  {haw/wove res/(unit wove)}
       ?^  res  res
-      ?.  =(p.wov p.haw)  ~
-      =*  hav  q.haw
+      ?.  =(for.wov for.haw)  ~
+      =*  hav  rove.haw
       =-  ?:(- `haw ~)
       ?&  ?=($many -.hav)
-          =(hav rov(p.q p.q.hav))
+          =(hav rov(from.moat from.moat.hav))
         ::
           ::  only a match if this request is before
           ::  or at our starting case.
-          =+  hay=(case-to-aeon p.q.hav)
+          =+  hay=(case-to-aeon from.moat.hav)
           ?~(hay | (lte u.hay u.aey))
       ==
     ==
@@ -2947,7 +2968,7 @@
       ?:  =(~ wos)  +                                   ::  XX handle?
       |-  ^+  +>
       ?~  wos  +>
-      $(wos t.wos, +> (mabe q.i.wos |=(@da (best hen +<))))
+      $(wos t.wos, +> (run-if-future rove.i.wos |=(@da (best hen +<))))
     ^+  ..cancel-request
     =+  nux=(~(get by fod.u.ref) hen)
     ?~  nux  ..cancel-request
@@ -2965,114 +2986,14 @@
   ::  and then waiting if the subscription range extends into the future.
   ::
   ++  start-request
-    |=  {for/(unit ship) rav/rave}
-    ^+  +>
-    ?-    -.rav
-        $sing
-      =+  ver=(aver for p.rav)
-      ?~  ver
-        (duce for rav)
-      ?~  u.ver
-        (blub hen)
-      (blab hen p.rav u.u.ver)
-    ::
-    ::  for %mult and %next, get the data at the specified case, then go forward
-    ::  in time until we find a change (as long as we have no unknowns).
-    ::  if we find no change, store request for later.
-    ::  %next is just %mult with one path, so we pretend %next = %mult here.
-        ?($next $mult)
-      |^
-      =+  cas=?:(?=($next -.rav) q.p.rav p.p.rav)
-      =+  aey=(case-to-aeon cas)
-      ::  if the requested case is in the future, we can't know anything yet.
-      ?~  aey  (store ~ ~ ~)
-      =+  old=(read-all-at cas)
-      =+  yon=+(u.aey)
-      |-  ^+  ..start-request
-      ::  if we need future revisions to look for change, wait.
-      ?:  (gth yon let.dom)
-        (store `yon old ~)
-      =+  new=(read-all-at [%ud yon])
-      ::  if we don't know everything now, store the request for later.
-      ?.  &((levy ~(tap by old) know) (levy ~(tap by new) know))
-        (store `yon old new)
-      ::  if we do know everything now, compare old and new.
-      ::  if there are differences, send response. if not, try next aeon.
-      =;  res
-        ?~  res  $(yon +(yon))
-        (respond res)
-      %+  roll  ~(tap by old)
-      |=  $:  {{car/care pax/path} ole/cach}
-              res/(map mood (each cage lobe))
-          ==
-      =+  neu=(~(got by new) car pax)
-      ?<  |(?=(~ ole) ?=(~ neu))
-      =-  ?~(- res (~(put by res) u.-))
-      ^-  (unit (pair mood (each cage lobe)))
-      =+  mod=[car [%ud yon] pax]
-      ?~  u.ole
-       ?~  u.neu  ~                                     ::  not added
-       `[mod u.u.neu]                                   ::  added
-      ?~  u.neu
-        `[mod [%& %null [%atom %n ~] ~]]                ::  deleted
-      ?:  (equivalent-data:ze u.u.neu u.u.ole)  ~       ::  unchanged
-      `[mod u.u.neu]                                    ::  changed
-      ::
-      ++  store                                         ::  check again later
-        |=  $:  nex/(unit aeon)
-                old/(map (pair care path) cach)
-                new/(map (pair care path) cach)
-            ==
-        ^+  ..start-request
-        %+  duce  for
-        ^-  rove
-        ?:  ?=($mult -.rav)
-          [-.rav p.rav nex old new]
-        :^  -.rav  p.rav  nex
-        =+  ole=~(tap by old)
-        ?>  (lte (lent ole) 1)
-        ?~  ole  ~
-        q:(snag 0 `(list (pair (pair care path) cach))`ole)
-      ::
-      ++  respond                                       ::  send changes
-        |=  res/(map mood (each cage lobe))
-        ^+  ..start-request
-        ?:  ?=($mult -.rav)  (blas hen ~(key by res))
-        ?>  ?=({* ~ ~} res)
-        (blab hen n.res)
-      ::
-      ++  know  |=({(pair care path) c/cach} ?=(^ c))   ::  know about file
-      ::
-      ++  read-all-at                                   ::  files at case, maybe
-        |=  cas/case
-        %-  ~(gas by *(map (pair care path) cach))
-        =/  req/(set (pair care path))
-          ?:  ?=($mult -.rav)  q.p.rav
-          [[p.p.rav r.p.rav] ~ ~]
-        %+  turn  ~(tap by req)
-        |=  {c/care p/path}
-        ^-  (pair (pair care path) cach)
-        [[c p] (aver for c cas p)]
-      --
-    ::
-        $many
-      =+  nab=(case-to-aeon p.q.rav)
-      ?~  nab
-        ?>  =(~ (case-to-aeon q.q.rav))
-        (duce for [- p q ~]:rav)
-      =+  huy=(case-to-aeon q.q.rav)
-      ?:  &(?=(^ huy) |((lth u.huy u.nab) &(=(0 u.huy) =(0 u.nab))))
-        (blub hen)
-      =+  top=?~(huy let.dom u.huy)
-      =+  ear=(lobes-at-path:ze for top r.q.rav)
-      =.  +>.$
-        (bleb hen u.nab ?:(p.rav ~ `[u.nab top]))
-      ?^  huy
-        (blub hen)
-      =+  ^=  ptr  ^-  case
-          [%ud +(let.dom)]
-      (duce for `rove`[%many p.rav [ptr q.q.rav r.q.rav] ear])
-    ==
+    |=  [for=(unit ship) rav=rave]
+    ^+  ..start-request
+    =+  ^-  [new-sub=(unit rove) sub-results=(list sub-result)]
+        (try-fill-sub for (rave-to-rove rav))
+    =.  ..start-request  (send-sub-results sub-results [hen ~ ~])
+    ?~  new-sub
+      ..start-request
+    (duce for u.new-sub)
   ::
   ::  Continue committing
   ::
@@ -3226,6 +3147,7 @@
           ran
           sign
       ==
+    =>  .(+>.$ (emil moves.r))  :: TMI
     ?-  -.eval-result.r
       %next  +>.$
       %fail  (fail-foreign-request inx mood.u.request err.eval-result.r)
@@ -3287,7 +3209,7 @@
       %_    wake
           haw.u.ref
         ?.  ?=($sing -.rav)  haw.u.ref
-        (~(put by haw.u.ref) p.rav ~)
+        (~(put by haw.u.ref) mood.rav ~)
       ==
     ::  something here, so kick off a validator
     ::
@@ -3305,10 +3227,13 @@
     |=  =sign
     ^+  +>
     =/  m  update-clad
+    ~&  %taking-foreign-update
     ?>  ?=(^ ref)
     ?~  eval-data.pud.u.ref
       ~|(%no-active-foreign-update !!)
+    ~&  %taking-foreign-update-nonnull
     =*  ed  u.eval-data.pud.u.ref
+    =/  inx  inx.ed
     =^    r=[moves=(list move) =eval-result:eval:m]
         eval-form.u.eval-data.pud.u.ref
       %-  take:eval:m
@@ -3319,10 +3244,12 @@
           ran
           sign
       ==
+    =>  .(+>.$ (emil moves.r))  :: TMI
+    ~&  [%taking-foreign-update-switch inx]
     ?-  -.eval-result.r
-      %next  +>.$
-      %fail  (fail-foreign-update inx.ed err.eval-result.r)
-      %done  (done-foreign-update inx.ed value.eval-result.r)
+      %next  ~&  %taking-foreign-update-next  +>.$
+      %fail  ~&  %taking-foreign-update-fail  (fail-foreign-update inx err.eval-result.r)
+      %done  ~&  %taking-foreign-update-done  (done-foreign-update inx value.eval-result.r)
     ==
   ::
   ::  Fail foreign update
@@ -3348,6 +3275,7 @@
     =:  bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
       ==
+    ~&  [%done-foreign-update mow=(lent mow)]
     ?~  res
       wake
     =:  lim  new-lim.u.res
@@ -3355,6 +3283,7 @@
         ran  new-rang.u.res
       ==
     =.  +>.$  =<(?>(?=(^ ref) .) wake)
+    ~&  [%done-foreign-update-woke mow=(lent mow)]
     =.  eval-data.pud.u.ref  ~
     start-next-foreign-update
   ::
@@ -3364,11 +3293,14 @@
     ^+  .
     ?>  ?=(^ ref)
     ?.  =(~ eval-data.pud.u.ref)
+      ~&  [%not-starting-update-active +<.eval-data.pud.u.ref]
       .
     ?:  =(~ waiting.pud.u.ref)
+      ~&  %not-starting-update-none-waiting
       .
     =^  next=[inx=@ud rut=(unit rand)]  waiting.pud.u.ref
       ~(get to waiting.pud.u.ref)
+    ~&  [%yes-starting-update inx.next]
     =/  ruv  (~(get by bom.u.ref) inx.next)
     ?~  ruv
       ~&  [%clay-foreign-update-lost her syd inx.next]
@@ -3380,212 +3312,324 @@
       :-  ~
       :-  inx.next
       %-  from-form:eval:update-clad
-      ((foreign-update our her syd now) q.rave rut.next lim dom ran)
+      ((foreign-update our her syd now) moat.rave rut.next lim dom ran)
     (take-foreign-update clad-init-sign)
   ::
-  ++  mabe                                            ::  maybe fire function
-    |=  {rov/rove fun/$-(@da _.)}
+  ::  fire function if request is in future
+  ::
+  ++  run-if-future
+    |=  [rov=rove fun=$-(@da _.)]
     ^+  +>.$
     %+  fall
       %+  bind
         ^-  (unit @da)
         ?-    -.rov
-            $sing
-          ?.  ?=($da -.q.p.rov)  ~
-          `p.q.p.rov
+            %sing
+          ?.  ?=(%da -.case.mood.rov)  ~
+          `p.case.mood.rov
         ::
-            $next  ~
-        ::
-            $mult  ~
-        ::
-            $many
+            %next  ~
+            %mult  ~
+            %many
           %^  hunt  lth
-            ?.  ?=($da -.p.q.rov)  ~
-            ?.((lth now p.p.q.rov) ~ [~ p.p.q.rov])
-          ?.  ?=($da -.q.q.rov)  ~
-          (hunt gth [~ now] [~ p.q.q.rov])
+            ?.  ?=(%da -.from.moat.rov)  ~
+            ?.((lth now p.from.moat.rov) ~ [~ p.from.moat.rov])
+          ?.  ?=(%da -.to.moat.rov)  ~
+          (hunt gth [~ now] [~ p.to.moat.rov])
         ==
       fun
     +>.$
   ::
-  ++  reve
+  ++  rave-to-rove
+    |=  rav/rave
+    ^-  rove
+    ?-  -.rav
+      %sing  rav
+      %next  [- mood ~ ~]:rav
+      %mult  [- mool ~ ~ ~]:rav
+      %many  [- track moat ~]:rav
+    ==
+  ::
+  ++  rove-to-rave
     |=  rov/rove
     ^-  rave
     ?-  -.rov
-      $sing  rov
-      $next  [- p]:rov
-      $mult  [- p]:rov
-      $many  [- p q]:rov
+      %sing  rov
+      %next  [- mood]:rov
+      %mult  [- mool]:rov
+      %many  [- track moat]:rov
     ==
+  ::
+  ++  send-sub-results
+    |=  [sub-results=(list sub-result) ducts=(set duct)]
+    ^+  ..wake
+    ?~  sub-results
+      ..wake
+    =.  ..wake
+      ?-  -.i.sub-results
+        %blab  (blab-all ducts +.i.sub-results)
+        %bleb  (bleb-all ducts +.i.sub-results)
+        %balk  (balk-all ducts +.i.sub-results)
+        %blas  (blas-all ducts +.i.sub-results)
+        %blub  (blub-all ducts +.i.sub-results)
+      ==
+    $(sub-results t.sub-results)
   ::
   ::  Loop through open subscriptions and check if we can fill any of them.
   ::
-  ++  wake                                            ::  update subscribers
+  ++  wake
     ^+  .
-    =+  xiq=~(tap by qyx)
-    =|  xaq/(list {p/wove q/(set duct)})
+    =/  old-subs=(list [=wove ducts=(set duct)])  ~(tap by qyx)
+    =|  new-subs=_old-subs
     |-  ^+  ..wake
-    ?~  xiq
-      ..wake(qyx (~(gas by *cult) xaq))
-    ?:  =(~ q.i.xiq)  $(xiq t.xiq, xaq xaq)           :: drop forgotten
-    =*  for  p.p.i.xiq
-    =*  rov  q.p.i.xiq
+    ?~  old-subs
+      ::  install new subs
+      ::
+      ..wake(qyx (~(gas by *cult) new-subs))
+    ?:  =(~ ducts.i.old-subs)
+      ::  drop forgotten roves
+      ::
+      $(old-subs t.old-subs, new-subs new-subs)
+    =+  ^-  [new-sub=(unit rove) sub-results=(list sub-result)]
+        (try-fill-sub wove.i.old-subs)
+    =.  ..wake  (send-sub-results sub-results ducts.i.old-subs)
+    =.  new-subs
+      ?~  new-sub
+        new-subs
+      [[[for.wove.i.old-subs u.new-sub] ducts.i.old-subs] new-subs]
+    $(old-subs t.old-subs)
+  ::
+  ::  Try to fill a subscription
+  ::
+  ++  try-fill-sub
+    |=  [for=(unit ship) rov=rove]
+    ^-  [new-sub=(unit rove) (list sub-result)]
     ?-    -.rov
-        $sing
-      =+  cas=?~(ref ~ (~(get by haw.u.ref) `mood`p.rov))
-      ?^  cas
-        %=    $
-            xiq  t.xiq
-            ..wake  ?~  u.cas  (blub-all q.i.xiq ~)
-                    (blab-all q.i.xiq p.rov %& u.u.cas)
-        ==
-      =+  nao=(case-to-aeon q.p.rov)
-      ?~  nao  $(xiq t.xiq, xaq [i.xiq xaq])
-      ::  ~&  %reading-at-aeon
-      =+  vid=(read-at-aeon:ze for u.nao p.rov)
-      ::  ~&  %red-at-aeon
-      ?~  vid
-        ::  ?:  =(0 u.nao)
-        ::    ~&  [%oh-poor `path`[syd '0' r.p.rov]]
-        ::    $(xiq t.xiq)
-        ::  ~&  [%oh-well desk=syd mood=p.rov aeon=u.nao]
-        $(xiq t.xiq, xaq [i.xiq xaq])
-      $(xiq t.xiq, ..wake (balk-all q.i.xiq u.vid p.rov))
+        %sing
+      =/  cache-value=(unit (unit cage))
+        ?~(ref ~ (~(get by haw.u.ref) mood.rov))
+      ?^  cache-value
+        ::  if we have a result in our cache, produce it
+        ::
+        :-  ~
+        ?~  u.cache-value
+          [%blub ~]~
+        [%blab mood.rov %& u.u.cache-value]~
+      ::  else, check to see if rove is for an aeon we know
+      ::
+      =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
+      ?~  aeon
+        [`rov ~]
+      ::  we have the appropriate aeon, so read in the data
+      ::
+      =/  value=(unit (unit (each cage lobe)))
+        (read-at-aeon:ze for u.aeon mood.rov)
+      ?~  value
+        ::  We don't have the data directly, which is potentially
+        ::  problematical.  How can we fetch the data?
+        ::
+        ?:  =(0 u.aeon)
+          ~&  [%clay-sing-indirect-data-0 `path`[syd '0' path.mood.rov]]
+          [~ ~]
+        ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
+        [`rov ~]
+      ::  we have the data, so we produce the results
+      ::
+      [`rov [%balk u.value mood.rov]~]
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
-        ?($next $mult)
+    ::
+        ?(%next %mult)
       ::  because %mult requests need to wait on multiple files for each
-      ::  revision that needs to be checked for changes, we keep two cache maps.
-      ::  {old} is the revision at {(dec yon)}, {new} is the revision at {yon}.
-      ::  if we have no {yon} yet, that means it was still unknown last time
-      ::  we checked.
+      ::  revision that needs to be checked for changes, we keep two
+      ::  cache maps.  {old} is the revision at {(dec aeon)}, {new} is
+      ::  the revision at {aeon}.  if we have no {aeon} yet, that means
+      ::  it was still unknown last time we checked.
+      ::
       =*  vor  rov
       |^
-      =/  rov/rove
-        ?:  ?=($mult -.vor)  vor
-        =*  mod  p.vor
+      =/  rov=rove
+        ?:  ?=(%mult -.vor)  vor
         :*  %mult
-            [q.mod [[p.mod r.mod] ~ ~]]
-            q.vor
-            [[[p.mod r.mod] r.vor] ~ ~]
+            [case [[care path] ~ ~]]:mood.vor
+            aeon.vor
+            [[[care.mood.vor path.mood.vor] cach.vor] ~ ~]
             ~
         ==
-      ?>  ?=($mult -.rov)
-      =*  mol  p.rov
-      =*  yon  q.rov
-      =*  old  r.rov
-      =*  new  s.rov
-      ::  we will either respond, or store the maybe updated request.
-      =;  res/(each (map mood (each cage lobe)) rove)
+      ?>  ?=(%mult -.rov)
+      ::  we will either respond or store the maybe updated request.
+      ::
+      =;  res=(each (map mood (each cage lobe)) rove)
           ?:  ?=(%& -.res)
             (respond p.res)
           (store p.res)
-      |-  ::  so that we can retry for the next aeon if possible/needed.
+      ::  recurse here on next aeon if possible/needed.
+      ::
+      |-  ^-  (each (map mood (each cage lobe)) rove)
       ::  if we don't have an aeon yet, see if we have one now.
-      ?~  yon
-        =+  aey=(case-to-aeon p.mol)
+      ::
+      ?~  aeon.rov
+        =/  aeon=(unit aeon)  (case-to-aeon case.mool.rov)
         ::  if we still don't, wait.
-        ?~  aey  |+rov
+        ::
+        ?~  aeon  |+rov
         ::  if we do, update the request and retry.
-        $(rov [-.rov mol `+(u.aey) ~ ~])
+        ::
+        $(aeon.rov `+(u.aeon), old-cach.rov ~, new-cach.rov ~)
       ::  if old isn't complete, try filling in the gaps.
-      =?  old  !(complete old)
-        (read-unknown mol(p [%ud (dec u.yon)]) old)
+      ::
+      =?  old-cach.rov  !(complete old-cach.rov)
+        (read-unknown mool.rov(case [%ud (dec u.aeon.rov)]) old-cach.rov)
       ::  if the next aeon we want to compare is in the future, wait again.
-      =+  aey=(case-to-aeon [%ud u.yon])
-      ?~  aey  |+rov
+      ::
+      =/  next-aeon=(unit aeon)  (case-to-aeon [%ud u.aeon.rov])
+      ?~  next-aeon  |+rov
       ::  if new isn't complete, try filling in the gaps.
-      =?  new  !(complete new)
-        (read-unknown mol(p [%ud u.yon]) new)
+      ::
+      =?  new-cach.rov  !(complete new-cach.rov)
+        (read-unknown mool.rov(case [%ud u.aeon.rov]) new-cach.rov)
       ::  if they're still not both complete, wait again.
-      ?.  ?&  (complete old)
-              (complete new)
+      ::
+      ?.  ?&  (complete old-cach.rov)
+              (complete new-cach.rov)
           ==
         |+rov
-      ::  if there are any changes, send response. if none, move onto next aeon.
-      =;  res
-        ?^  res  &+res
-        $(rov [-.rov mol `+(u.yon) old ~])
-      %+  roll  ~(tap by old)
-      |=  $:  {{car/care pax/path} ole/cach}
-              res/(map mood (each cage lobe))
-          ==
-      =+  neu=(~(got by new) car pax)
-      ?<  |(?=(~ ole) ?=(~ neu))
-      =-  ?~(- res (~(put by res) u.-))
-      ^-  (unit (pair mood (each cage lobe)))
-      =+  mod=[car [%ud u.yon] pax]
-      ?~  u.ole
-       ?~  u.neu  ~                                     ::  not added
-       `[mod u.u.neu]                                   ::  added
-      ?~  u.neu
-        `[mod [%& %null [%atom %n ~] ~]]                ::  deleted
-      ?:  (equivalent-data:ze u.u.neu u.u.ole)  ~       ::  unchanged
-      `[mod u.u.neu]                                    ::  changed
+      ::  both complete, so check if anything has changed
       ::
-      ++  store                                         ::  check again later
-        |=  rov/rove
-        ^+  ..wake
-        =-  ^^$(xiq t.xiq, xaq [i.xiq(p [for -]) xaq])
-        ?>  ?=($mult -.rov)
-        ?:  ?=($mult -.vor)  rov
-        ?>  ?=({* ~ ~} r.rov)
-        =*  one  n.r.rov
-        [%next [p.p.one p.p.rov q.p.one] q.rov q.one]
+      =/  changes=(map mood (each cage lobe))
+        %+  roll  ~(tap by old-cach.rov)
+        |=  $:  [[car=care pax=path] old-cach-value=cach]
+                changes=(map mood (each cage lobe))
+            ==
+        =/  new-cach-value=cach  (~(got by new-cach.rov) car pax)
+        ?<  |(?=(~ old-cach-value) ?=(~ new-cach-value))
+        =/  new-entry=(unit (pair mood (each cage lobe)))
+          =/  =mood  [car [%ud u.aeon.rov] pax]
+          ?~  u.old-cach-value
+            ?~  u.new-cach-value
+              ::  not added
+              ::
+              ~
+            ::  added
+            ::
+            `[mood u.u.new-cach-value]
+          ?~  u.new-cach-value
+            ::  deleted
+            ::
+            `[mood [%& %null [%atom %n ~] ~]]
+          ?:  (equivalent-data:ze u.u.new-cach-value u.u.old-cach-value)
+            ::  unchanged
+            ::
+            ~
+          ::  changed
+          ::
+          `[mood u.u.new-cach-value]
+        ::  if changed, save the change
+        ::
+        ?~  new-entry
+          changes
+        (~(put by changes) u.new-entry)
+      ::  if there are any changes, send response. if none, move on to
+      ::  next aeon.
       ::
-      ++  respond                                       ::  send changes
-        |=  res/(map mood (each cage lobe))
-        ^+  ..wake
-        ::NOTE  want to use =-, but compiler bug?
-        ?:  ?=($mult -.vor)
-          ^^$(xiq t.xiq, ..wake (blas-all q.i.xiq ~(key by res)))
-        ?>  ?=({* ~ ~} res)
-        ^^$(xiq t.xiq, ..wake (blab-all q.i.xiq n.res))
+      ?^  changes  &+changes
+      $(u.aeon.rov +(u.aeon.rov), new-cach.rov ~)
       ::
-      ++  complete                                      ::  no unknowns
-        |=  hav/(map (pair care path) cach)
+      ::  check again later
+      ::
+      ++  store
+        |=  rov=rove
+        ^-  [new-sub=(unit rove) (list sub-result)]
+        =/  new-rove=rove
+          ?>  ?=(%mult -.rov)
+          ?:  ?=(%mult -.vor)  rov
+          ?>  ?=([* ~ ~] old-cach.rov)
+          =*  one  n.old-cach.rov
+          [%next [care.p.one case.mool.rov path.p.one] aeon.rov q.one]
+        [`new-rove ~]
+      ::
+      ::  send changes
+      ::
+      ++  respond
+        |=  res=(map mood (each cage lobe))
+        ^-  [new-sub=(unit rove) (list sub-result)]
+        :-  ~
+        ?:  ?=(%mult -.vor)
+          [%blas ~(key by res)]~
+        ?>  ?=([* ~ ~] res)
+        [%blab n.res]~
+      ::
+      ::  no unknowns
+      ::
+      ++  complete
+        |=  hav=(map (pair care path) cach)
         ?&  ?=(^ hav)
             (levy ~(tap by `(map (pair care path) cach)`hav) know)
         ==
       ::
-      ++  know  |=({(pair care path) c/cach} ?=(^ c))   ::  know about file
+      ::  know about file in cach
       ::
-      ++  read-unknown                                  ::  fill in the blanks
-        |=  {mol/mool hav/(map (pair care path) cach)}
-        %.  |=  {{c/care p/path} o/cach}
-            ?^(o o (aver for c p.mol p))
-        =-  ~(urn by -)
-        ?^  hav  hav
-        %-  ~(gas by *(map (pair care path) cach))
-        (turn ~(tap in q.mol) |=({c/care p/path} [[c p] ~]))
+      ++  know  |=({(pair care path) c/cach} ?=(^ c))
+      ::
+      ::  fill in the blanks
+      ::
+      ++  read-unknown
+        |=  [=mool hav=(map (pair care path) cach)]
+        =?  hav  ?=(~ hav)
+          %-  malt  ^-  (list (pair (pair care path) cach))
+          %+  turn
+            ~(tap in paths.mool)
+          |=  [c=care p=path]
+          ^-  [[care path] cach]
+          [[c p] ~]
+        %-  ~(urn by hav)
+        |=  [[c=care p=path] o=cach]
+        ?^(o o (aver for c case.mool p))
       --
     ::
-        $many
-      =+  mot=`moat`q.rov
-      =*  sav  r.rov
-      =+  nab=(case-to-aeon p.mot)
-      ?~  nab
-        $(xiq t.xiq, xaq [i.xiq xaq])
-      =+  huy=(case-to-aeon q.mot)
-      ?~  huy
-        =.  p.mot  [%ud +(let.dom)]
-        %=  $
-          xiq     t.xiq
-          xaq     [i.xiq(q.q.p mot) xaq]
-          ..wake  =+  ^=  ear
-                      (lobes-at-path:ze for let.dom r.mot)
-                  ?:  =(sav ear)  ..wake
-                  (bleb-all q.i.xiq let.dom ?:(p.rov ~ `[u.nab let.dom]))
-        ==
-      %=  $
-        xiq     t.xiq
-        ..wake  =-  (blub-all:- q.i.xiq ~)
-                =+  ^=  ear
-                    (lobes-at-path:ze for u.huy r.mot)
-                ?:  =(sav ear)  (blub-all q.i.xiq ~)
-                (bleb-all q.i.xiq +(u.nab) ?:(p.rov ~ `[u.nab u.huy]))
-      ==
+        %many
+      =/  from-aeon  (case-to-aeon from.moat.rov)
+      ?~  from-aeon
+        ::  haven't entered the relevant range, so do nothing
+        ::
+        [`rov ~]
+      =/  to-aeon  (case-to-aeon to.moat.rov)
+      ?~  to-aeon
+        ::  we're in the middle of the range, so produce what we can,
+        ::  but don't end the subscription
+        ::
+        ::  update "from" case to the aeon after now
+        ::
+        =.  from.moat.rov
+          [%ud +(let.dom)]
+        :-  `rov
+        =/  new-lobes=(map path lobe)
+          (lobes-at-path:ze for let.dom path.moat.rov)
+        ?:  =(lobes.rov new-lobes)
+          ::  if no changes, don't produce results
+          ::
+          ~
+        ::  else changes, so produce them
+        ::
+        [%bleb let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
+      ::  we're past the end of the range, so end subscription
+      ::
+      :-  ~
+      =/  new-lobes=(map path lobe)
+        (lobes-at-path:ze for u.to-aeon path.moat.rov)
+      ::  if changed, give subscription result
+      ::
+      =/  bleb=(list sub-result)
+        ?:  =(lobes.rov new-lobes)
+          ~
+        [%bleb +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
+      ::  end subscription
+      ::
+      =/  blub=(list sub-result)
+        [%blub ~]~
+      (weld bleb blub)
     ==
+  ::
   ++  drop-me
     ^+  .
     ~|  %clay-drop-me-not-implemented
@@ -3950,34 +3994,34 @@
     ::
     ::  Get a value at an aeon.
     ::
-    ::  Value can be either null, meaning we don't have it yet, {null null},
-    ::  meaning we know it doesn't exist, or {null null (each cage lobe)},
+    ::  Value can be either null, meaning we don't have it yet, [null null],
+    ::  meaning we know it doesn't exist, or [null null (each cage lobe)],
     ::  meaning we either have the value directly or a content hash of the
     ::  value.
     ::
     ++  read-at-aeon                                    ::    read-at-aeon:ze
       |=  [for=(unit ship) yon=aeon mun=mood]           ::  seek and read
       ^-  (unit (unit (each cage lobe)))
-      ?.  |(?=(~ for) (may-read u.for p.mun yon r.mun))
+      ?.  |(?=(~ for) (may-read u.for care.mun yon path.mun))
         ~
-      ?-  p.mun
+      ?-  care.mun
           %d
         ::  XX this should only allow reads at the current date
         ::
         ?:  !=(our her)
           [~ ~]
-        ?^  r.mun
+        ?^  path.mun
           ~&(%no-cd-path [~ ~])
         [~ ~ %& %noun !>(~(key by dos.rom.ruf))]
       ::
-        %p  (read-p r.mun)
-        %t  (bind (read-t yon r.mun) (lift |=(a=cage [%& a])))
-        %u  (read-u yon r.mun)
-        %v  (bind (read-v yon r.mun) (lift |=(a/cage [%& a])))
-        %w  (read-w q.mun)
-        %x  (read-x yon r.mun)
-        %y  (bind (read-y yon r.mun) (lift |=(a/cage [%& a])))
-        %z  (bind (read-z yon r.mun) (lift |=(a/cage [%& a])))
+        %p  (read-p path.mun)
+        %t  (bind (read-t yon path.mun) (lift |=(a=cage [%& a])))
+        %u  (read-u yon path.mun)
+        %v  (bind (read-v yon path.mun) (lift |=(a/cage [%& a])))
+        %w  (read-w case.mun)
+        %x  (read-x yon path.mun)
+        %y  (bind (read-y yon path.mun) (lift |=(a/cage [%& a])))
+        %z  (bind (read-z yon path.mun) (lift |=(a/cage [%& a])))
       ==
     ++  zu  zu:util
     --
@@ -4026,14 +4070,15 @@
     ::
     ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
       =.  cue.ruf  (~(put to cue.ruf) [hen req])
-      ::  ~&  :*  %clall-enqueing
-      ::          cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
-      ::          ^=  act
-      ::          ?~  act.ruf
-      ::            ~
-      ::          [hen req -.cad]:u.act.ruf
-      ::      ==
+      ~&  :*  %clall-enqueing
+              cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
+              ^=  act
+              ?~  act.ruf
+                ~
+              [hen req -.eval-data]:u.act.ruf
+          ==
       [~ ..^$]
+    ~&  %clall-running
     ::  If the last commit happened in this event, enqueue
     ::
     ::    Without this, two commits could have the same date, which
@@ -4357,13 +4402,13 @@
   =>  |%
       +$  axle  [%1 ruf-1=raft]
       --
-  ::  |=  *
-  ::  ..^$
+  |=  *
+  ..^$
   ::  XX switch back
-  |=  old=axle
-  ^+  ..^$
-  ?>  ?=(%1 -.old)
-  %_(..^$ ruf ruf-1.old)
+  ::  |=  old=axle
+  ::  ^+  ..^$
+  ::  ?>  ?=(%1 -.old)
+  ::  %_(..^$ ruf ruf-1.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
