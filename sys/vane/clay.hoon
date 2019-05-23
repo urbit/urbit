@@ -254,7 +254,7 @@
 ::
 ::  The clad monad for foreign updates.
 ::
-::  Same as +commit-clad, except inclues `lim`, as in +rede.  Null if
+::  Same as +commit-clad, except includes `lim`, as in +rede.  Null if
 ::  subscription ended.
 ::
 ++  update-clad  (clad ,(unit [lim=@da dome rang]))
@@ -284,7 +284,7 @@
 ::
 ++  cach  (unit (unit (each cage lobe)))                ::  cached result
 +$  wove  [for=(unit ship) =rove]                       ::  stored source + req
-++  rove                                                ::  stored request $%  [%sing =mood]                             ::  single request
+++  rove                                                ::  stored request
           $%  [%sing =mood]                             ::  single request
               [%next =mood aeon=(unit aeon) =cach]      ::  next version of one
               $:  %mult                                 ::  next version of any
@@ -639,8 +639,6 @@
   ;<  ~                            bind:m  (print-changes:e %& suba)
   =.  mim.dom.e  mim
   (pure:m dom:e ran:e)
-  ::  =.  mim.dom.e  mim
-  ::(pure:m dom:e ran:e)
   ::
   ::  A stateful core, where the global state is a dome and a rang.
   ::
@@ -4301,11 +4299,10 @@
       %-  zing  ^-  (list (list duct))
       %+  turn  ~(tap by rus.u.foreign-desk)
       |=  [=desk =rede]
-      ~&  [%sunk-desk desk]
       ^-  (list duct)  %-  zing  ^-  (list (list duct))
       %+  turn  ~(tap by qyx.rede)
       |=  [=wove ducts=(set duct)]
-      ~&  [%sunk-wove (print-wove wove) ducts]
+      ::  ~&  [%sunk-wove desk (print-wove wove) ducts]
       ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
