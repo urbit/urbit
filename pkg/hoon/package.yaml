@@ -12,6 +12,7 @@ dependencies:
   - async
   - base
   - case-insensitive
+  - chunked-data
   - classy-prelude
   - containers
   - data-fix
