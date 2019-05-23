@@ -2,7 +2,7 @@
 
 module Language.Attila.IR where
 
-import ClassyPrelude hiding (either, fail, try)
+import ClassyPrelude hiding (fail, try)
 import GHC.Natural
 import Control.Lens
 import Data.Vector (Vector, (!), (!?))
@@ -10,6 +10,7 @@ import Control.Monad.Fail
 import Control.Arrow ((>>>))
 import Data.ChunkedZip (Zip)
 import Language.Hoon.Nock.Types
+import Text.Show.Pretty (pPrint)
 
 --------------------------------------------------------------------------------
 
@@ -81,14 +82,14 @@ newtype Infer a = Infer { runInfer :: Either Text a }
 instance MonadFail Infer where
   fail = Infer . Left . pack
 
-infGuard :: String -> Bool -> Infer ()
-infGuard _   True  = pure ()
-infGuard msg False = fail msg
+guardInfer :: String -> Bool -> Infer ()
+guardInfer _   True  = pure ()
+guardInfer msg False = fail msg
 
 unify :: Vec Ty -> Infer Ty
-unify = toList >>> \case []   -> pure voidTy
+unify = toList >>> \case []   -> pure tVoid
                          x:xs -> do let err = "bad-unify " <> show (x:xs)
-                                    infGuard err (all (== x) xs)
+                                    guardInfer err (all (== x) xs)
                                     pure x
 
 --------------------------------------------------------------------------------
@@ -112,66 +113,43 @@ infer sub (Cho tys n exp) = infer sub exp >>= inferCho tys n
 infer sub (Eat exp bods)  = inferEat sub exp bods
 
 inferGet :: Nat -> Ty -> Infer Ty
-inferGet n = \case Mul tys -> idx tys
-                   _       -> fail "not-mul"
-  where
-    idx tys = (tys !? fromIntegral n) & \case
-                Nothing -> fail "mul-bad-index"
-                Just ty -> pure ty
+inferGet n ty = do
+  Mul tys <- pure ty
+  maybe (fail "mul-bad-index") pure (tys !? fromIntegral n)
 
 inferCho :: Vec Ty -> Nat -> Ty -> Infer Ty
 inferCho tys n ty = do
-  (tys !? fromIntegral n) & \case
-    Nothing -> fail "cho-bad-index"
-    Just tu -> do unify [tu, ty]
-                  pure (Sum tys)
+  tu <- maybe (fail "cho-bad-index") pure (tys !? fromIntegral n)
+  unify [tu, ty]
+  pure (Sum tys)
 
 inferEat :: Ty -> Exp -> Vec Exp -> Infer Ty
-inferEat sub exp bods =
-    infer sub exp >>= \case Sum tys -> checkSum tys
-                            _       -> fail "eat-not-sum"
+inferEat sub exp bods = do
+    Sum tys <- infer sub exp
+    guardInfer "eat-bad-len" (length tys == length bods)
+    unify =<< zipWithM checkBranch tys bods
   where
-    checkSum :: Vec Ty -> Infer Ty
-    checkSum tys = do
-      infGuard "eat-bad-len" (length tys == length bods)
-      unify =<< zipWithM checkBranch tys bods
-
     checkBranch :: Ty -> Exp -> Infer Ty
-    checkBranch brTy exp = infer (pair (pair Nat brTy) sub) exp
+    checkBranch brTy exp = infer (tSum (tSum Nat brTy) sub) exp
 
 --------------------------------------------------------------------------------
 
-unit :: Ty
-unit = Mul []
+tPair :: Ty -> Ty -> Ty
+tPair x y = Mul [x,y]
 
-voidTy :: Ty
-voidTy = Sum []
+tSum :: Ty -> Ty -> Ty
+tSum x y = Sum [x, y]
 
-pair :: Ty -> Ty -> Ty
-pair x y = Mul [x,y]
-
-either :: Ty -> Ty -> Ty
-either x y = Sum [x, y]
-
---------------------------------------------------------------------------------
-
-tAtom :: Ty
+tUnit, tVoid, tAtom, tNoun, tOpt, tEith, tBool, tOrd, tTop :: Ty
+tUnit = Mul []
+tVoid = Sum []
 tAtom = Nat
-
-tNoun :: Ty
-tNoun = Fix $ either Nat (pair (Ref 0) (Ref 0))
-
-tOpt :: Ty
-tOpt = All $ either unit (Ref 0)
-
-tEith :: Ty
-tEith = All $ All $ either (Ref 1) (Ref 0)
-
-tBool :: Ty
-tBool = either unit unit
-
-tOrd :: Ty
-tOrd = Sum [unit, unit, unit]
+tNoun = Fix $ tSum Nat (tSum (Ref 0) (Ref 0))
+tOpt  = All $ tSum tUnit (Ref 0)
+tEith = All $ All $ tSum (Ref 1) (Ref 0)
+tBool = tSum tUnit tUnit
+tOrd  = Sum [tUnit, tUnit, tUnit]
+tTop  = All $ Ref 0
 
 
 -- Expression Examples ---------------------------------------------------------
@@ -179,130 +157,109 @@ tOrd = Sum [unit, unit, unit]
 tup2 :: Exp -> Exp -> Exp
 tup2 x y = Tup [x, y]
 
-choEx :: Exp
+choEx, tupEx, widEx, eatEx :: Exp
 choEx = Cho [Nat, Nat] 0 (Lit 0)
-
-tupEx :: Exp
 tupEx = Get 0 $ Get 1 $ tup2 (Lit 3) $ tup2 (Lit 4) (Lit 5)
-
-widEx :: Exp
 widEx = Wit (Lit 3) Sub
-
-eatEx :: Exp
 eatEx = Eat choEx [Get 1 (Get 0 Sub), Inc (Lit 0)]
 
 
 --------------------------------------------------------------------------------
 
-try :: Exp -> Either Text Ty
-try = runInfer . infer voidTy
+try :: Exp -> IO ()
+try e = do
+  putStrLn "<exp>"
+  pPrint e
+  putStrLn "</exp>\n"
+  putStrLn "<type>"
+  pPrint (runInfer (infer tTop e))
+  putStrLn "</type>\n"
+  putStrLn "<nock>"
+  pPrint (compile tTop e)
+  putStrLn "</nock>\n"
 
-build :: Exp -> Either Text (Ty, Nock)
-build = compile voidTy
-
-tryTup :: Either Text Ty
+tryTup :: IO ()
 tryTup = try tupEx
 
-tryWid :: Either Text Ty
+tryWid :: IO ()
 tryWid = try widEx
 
-tryCho :: Either Text Ty
+tryCho :: IO ()
 tryCho = try choEx
 
-tryEat :: Either Text Ty
+tryEat :: IO ()
 tryEat = try eatEx
 
-buildTup :: Either Text (Ty, Nock)
-buildTup = build tupEx
-
-buildWid :: Either Text (Ty, Nock)
-buildWid = build widEx
-
-buildCho :: Either Text (Ty, Nock)
-buildCho = build choEx
-
-buildEat :: Either Text (Ty, Nock)
-buildEat = build eatEx
+tryAll :: IO ()
+tryAll = tryTup >> tryWid >> tryCho >> tryEat
 
 --------------------------------------------------------------------------------
 
 -- TODO Record layout.
-compile :: Ty -> Exp -> Either Text (Ty, Nock)
+compile :: Ty -> Exp -> Either Text Nock
 compile sut = \case
   Sub ->
-    pure (sut, NZeroAxis 1)
+    pure (NZeroAxis 1)
   Lit n ->
-    pure (Nat, NOneConst (Atom $ fromIntegral n))
+    pure (NOneConst (Atom $ fromIntegral n))
   Inc x -> do
-    (_, nock) <- compile sut x
-    pure (Nat, NFourSucc nock)
+    nock <- compile sut x
+    pure (NFourSucc nock)
   Cho tys n exp -> do
-    (_, nock) <- compile sut exp
-    let tag = NOneConst (Atom (fromIntegral n))
-    pure (Sum tys, NCons tag nock)
+    nock <- compile sut exp
+    pure (NCons (NOneConst (Atom (fromIntegral n))) nock)
   Get n exp -> do
-    (vecTy, vecNock) <- compile sut exp
-
-    tys <- case vecTy of
-             Mul tys -> pure tys
-             ty      -> Left ("get-not-mul: " <> tshow ty)
-
-    let axis = getAxis n (fromIntegral $ length tys)
-    let resTy = tys ! fromIntegral n
-    pure (resTy, NSevenThen vecNock (NZeroAxis $ fromIntegral axis))
+    vecTy   <- runInfer (infer sut exp)
+    vecNock <- compile sut exp
+    axis    <- case vecTy of
+                 Mul tys -> pure (getAxis n (fromIntegral $ length tys))
+                 ty      -> Left ("get-not-mul: " <> tshow ty)
+    pure (NSevenThen vecNock (NZeroAxis $ fromIntegral axis))
 
   Tup xs -> do
-    ty <- runInfer (infer sut (Tup xs))
     nock <- genCons sut (toList xs)
-    pure (ty, nock)
+    pure nock
 
   Eat exp brs -> do
-    (headTy, nock) <- compile sut exp
-
+    headTy     <- runInfer (infer sut exp)
+    nock       <- compile sut exp
     newSubjTys <- headTy & \case
-      Sum tys -> pure $ fmap (\x -> pair (pair Nat x) sut) tys
-      _       -> Left "you are dumb"
+                    Sum tys -> pure (tys <&> (\x -> tSum (tSum Nat x) sut))
+                    _       -> Left "you are dumb"
 
-    nocks <- fmap snd <$> zipWithM compile newSubjTys brs
+    nocks <- zipWithM compile newSubjTys brs
 
-    resTy <- runInfer (infer sut (Eat exp brs))
-
-    pure (resTy, NEightPush nock (cases (toList nocks)))
+    pure (NEightPush nock (cases (toList nocks)))
 
   Eke x y -> do
-    (_, nock1) <- compile sut x
-    (_, nock2) <- compile sut y
-    pure (tBool, NFiveEq nock1 nock2)
+    nock1 <- compile sut x
+    nock2 <- compile sut y
+    pure (NFiveEq nock1 nock2)
 
   Wit ex1 ex2 -> do
-    (sut',  nock1) <- compile sut ex1
-    (resTy, nock2) <- compile sut' ex2
-    pure (resTy, NSevenThen nock1 nock2)
+    sut'  <- runInfer (infer sut ex1)
+    nock1 <- compile sut ex1
+    nock2 <- compile sut' ex2
+    pure (NSevenThen nock1 nock2)
 
   Lam ty exp -> do
-    resTy <- runInfer (infer ty exp)
-    nock <- (NOneConst . nockToNoun . snd) <$> compile ty exp
-    pure (Nok sut resTy, nock)
+    NOneConst . nockToNoun <$> compile ty exp
 
   Fir sub for -> do
-    (subTy, subNock) <- compile sut sub
-    (forTy, forNock) <- compile sut for
-    resTy <- case forTy of
-               Nok _ resTy -> pure resTy
-               _           -> Left "bad-fir-e"
-    pure (resTy, NTwoCompose subNock forNock)
+    subNock <- compile sut sub
+    forNock <- compile sut for
+    pure (NTwoCompose subNock forNock)
     -- TODO Nock nine
 
 zapZap :: Nock
 zapZap = NZeroAxis 0
 
 genCons :: Ty -> [Exp] -> Either Text Nock
-genCons sut []     = snd <$> compile sut (Lit 0)
-genCons sut [x]    = snd <$> compile sut x
-genCons sut (x:xs) = do
-  (_, n)  <- compile sut x
-  (_, ns) <- compile sut (Tup (fromList xs))
-  pure (NCons n ns)
+genCons sut []     = compile sut (Lit 0)
+genCons sut [x]    = compile sut x
+genCons sut (x:xs) = do n  <- compile sut x
+                        ns <- compile sut (Tup (fromList xs))
+                        pure (NCons n ns)
 
 cases :: [Nock] -> Nock
 cases = go 0
