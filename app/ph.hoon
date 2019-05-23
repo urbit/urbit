@@ -175,7 +175,6 @@
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
         ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
         ;<  file=@t  bind:m  (touch-file ~bud %base)
-        ;<  ~        bind:m  (just-events (dojo ~marbud "|verb"))
         ;<  file=@t  bind:m  (touch-file ~bud %base)
         (check-file-touched ~marbud %home file)
       (pure:m ~)
@@ -203,7 +202,6 @@
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
         ;<  file=@t  bind:m  (touch-file ~bud %base)
-        ;<  ~        bind:m  (just-events (dojo ~marbud "|verb"))
         ;<  file=@t  bind:m  (touch-file ~bud %base)
         (check-file-touched ~marbud %home file)
       (pure:m ~)

@@ -149,8 +149,6 @@
 ::
 ::  Currently active write
 ::
-::  XX add cue here like active-updates
-::
 ++  active-write
   %-  unit
   $:  hen=duct
@@ -435,7 +433,6 @@
       =/  =output  (form.eval-form clad-input)
       ::  add notes to moves
       ::
-      ~&  [%take-eval our-wire notes=(lent notes.output) effects=(lent effects.output)]
       =.  moves
         %+  welp
           moves
@@ -1950,24 +1947,17 @@
   |=  [=moat rand=(unit rand) lim=@da dom=dome ran=rang]
   =/  m  update-clad
   ^-  form:m
-  ~&  [%foreign-update our her syd wen]
   ?~  rand
-    ~&  [%foreign-update-null]
     (pure:m ~)
   =/  lem  ?.(?=(%da -.to.moat) lim p.to.moat)
   ?>  ?=(%nako p.r.u.rand)
   =/  nako  ;;(nako q.r.u.rand)
   ?:  =(0 let.dom)
-    ~&  [%foreign-update-zero]
     ;<  [dom=dome ran=rang]  bind:m  (apply-foreign-update nako dom ran)
-    ~&  [%foreign-update-zero-pure]
     (pure:m ~ lem dom ran)
-  ~&  [%foreign-update-nonzero]
   ;<  blobs=(set blob)     bind:m  (validate-plops bar.nako)
-  ~&  [%foreign-update-validated]
   ;<  [dom=dome ran=rang]  bind:m
     (apply-foreign-update nako(bar blobs) dom ran)
-  ~&  [%foreign-update-applied]
   (pure:m ~ lem dom ran)
   ::
   ::  Make sure that incoming data is of the mark it claims to be.
@@ -1976,10 +1966,8 @@
     |=  plops=(set plop)
     =/  m  (clad ,(set blob))
     ^-  form:m
-    ~&  [%validating-plops ~(wyt in plops)]
     ;<  ~  bind:m
       %+  just-do  /validate-plops
-      ~&  [%validating-plops-producing]
       :*  %f  %build  live=%.n  %pin  wen
           %list
           ^-  (list schematic:ford)
@@ -3227,11 +3215,9 @@
     |=  =sign
     ^+  +>
     =/  m  update-clad
-    ~&  %taking-foreign-update
     ?>  ?=(^ ref)
     ?~  eval-data.pud.u.ref
       ~|(%no-active-foreign-update !!)
-    ~&  %taking-foreign-update-nonnull
     =*  ed  u.eval-data.pud.u.ref
     =/  inx  inx.ed
     =^    r=[moves=(list move) =eval-result:eval:m]
@@ -3245,11 +3231,10 @@
           sign
       ==
     =>  .(+>.$ (emil moves.r))  :: TMI
-    ~&  [%taking-foreign-update-switch inx]
     ?-  -.eval-result.r
-      %next  ~&  %taking-foreign-update-next  +>.$
-      %fail  ~&  %taking-foreign-update-fail  (fail-foreign-update inx err.eval-result.r)
-      %done  ~&  %taking-foreign-update-done  (done-foreign-update inx value.eval-result.r)
+      %next  +>.$
+      %fail  (fail-foreign-update inx err.eval-result.r)
+      %done  (done-foreign-update inx value.eval-result.r)
     ==
   ::
   ::  Fail foreign update
@@ -3275,7 +3260,6 @@
     =:  bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
       ==
-    ~&  [%done-foreign-update mow=(lent mow)]
     ?~  res
       wake
     =:  lim  new-lim.u.res
@@ -3283,7 +3267,6 @@
         ran  new-rang.u.res
       ==
     =.  +>.$  =<(?>(?=(^ ref) .) wake)
-    ~&  [%done-foreign-update-woke mow=(lent mow)]
     =.  eval-data.pud.u.ref  ~
     start-next-foreign-update
   ::
@@ -3293,14 +3276,11 @@
     ^+  .
     ?>  ?=(^ ref)
     ?.  =(~ eval-data.pud.u.ref)
-      ~&  [%not-starting-update-active +<.eval-data.pud.u.ref]
       .
     ?:  =(~ waiting.pud.u.ref)
-      ~&  %not-starting-update-none-waiting
       .
     =^  next=[inx=@ud rut=(unit rand)]  waiting.pud.u.ref
       ~(get to waiting.pud.u.ref)
-    ~&  [%yes-starting-update inx.next]
     =/  ruv  (~(get by bom.u.ref) inx.next)
     ?~  ruv
       ~&  [%clay-foreign-update-lost her syd inx.next]
@@ -3410,11 +3390,9 @@
         %sing
       =/  cache-value=(unit (unit cage))
         ?~(ref ~ (~(get by haw.u.ref) mood.rov))
-      ~&  [%fill-sub-sing our her syd (print-wove for rov)]
       ?^  cache-value
         ::  if we have a result in our cache, produce it
         ::
-        ~&  [%fill-sub-sing-cached]
         :-  ~
         ?~  u.cache-value
           [%blub ~]~
@@ -3423,14 +3401,12 @@
       ::
       =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
       ?~  aeon
-        ~&  [%fill-sub-sing-no-aeon]
         [`rov ~]
       ::  we have the appropriate aeon, so read in the data
       ::
       =/  value=(unit (unit (each cage lobe)))
         (read-at-aeon:ze for u.aeon mood.rov)
       ?~  value
-        ~&  [%fill-sub-sing-no-value]
         ::  We don't have the data directly, which is potentially
         ::  problematical.  How can we fetch the data?
         ::
@@ -3439,7 +3415,6 @@
           [~ ~]
         ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
         [`rov ~]
-      ~&  [%fill-sub-sing-value]
       ::  we have the data, so we produce the results
       ::
       [~ [%balk u.value mood.rov]~]
@@ -3595,16 +3570,13 @@
       --
     ::
         %many
-      ~&  [%fill-sub-many our her syd (print-wove for rov)]
       =/  from-aeon  (case-to-aeon from.moat.rov)
       ?~  from-aeon
-        ~&  [%fill-sub-many-no-from-aeon]
         ::  haven't entered the relevant range, so do nothing
         ::
         [`rov ~]
       =/  to-aeon  (case-to-aeon to.moat.rov)
       ?~  to-aeon
-        ~&  [%fill-sub-many-no-to-aeon u.from-aeon]
         ::  we're in the middle of the range, so produce what we can,
         ::  but don't end the subscription
         ::
@@ -3616,15 +3588,12 @@
         =/  new-lobes=(map path lobe)
           (lobes-at-path:ze for let.dom path.moat.rov)
         ?:  =(lobes.rov new-lobes)
-          ~&  [%fill-sub-many-no-to-aeon-no-changes]
           ::  if no changes, don't produce results
           ::
           ~
-        ~&  [%fill-sub-many-no-to-aeon-changes]
         ::  else changes, so produce them
         ::
         [%bleb let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
-      ~&  [%fill-sub-many-both-aeons from-aeon to-aeon]
       ::  we're past the end of the range, so end subscription
       ::
       :-  ~
@@ -3634,9 +3603,7 @@
       ::
       =/  bleb=(list sub-result)
         ?:  =(lobes.rov new-lobes)
-          ~&  [%fill-sub-many-yes-aeon-no-changes old=lobes.rov new=new-lobes]
           ~
-        ~&  [%fill-sub-many-yes-aeon-yes-changes]
         [%bleb +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
       ::  end subscription
       ::
@@ -3720,8 +3687,7 @@
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       ::  we use %z for the check because it looks at all child paths.
-      ?.  |(?=(~ for) (may-read u.for %z yon pax))  ~&  %lobes-at-path-no  ~
-      ~&  [%lobes-at-path (aeon-to-yaki yon)]
+      ?.  |(?=(~ for) (may-read u.for %z yon pax))  ~
       %-  malt
       %+  skim
         %~  tap  by
@@ -4086,15 +4052,14 @@
     ::
     ?:  |(!=(~ act.ruf) !=(~ cue.ruf))
       =.  cue.ruf  (~(put to cue.ruf) [hen req])
-      ~&  :*  %clall-enqueing
-              cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
-              ^=  act
-              ?~  act.ruf
-                ~
-              [hen req -.eval-data]:u.act.ruf
-          ==
+      ::  ~&  :*  %clall-enqueing
+      ::          cue=(turn ~(tap to cue.ruf) |=([=duct =task:able] [duct -.task]))
+      ::          ^=  act
+      ::          ?~  act.ruf
+      ::            ~
+      ::          [hen req -.eval-data]:u.act.ruf
+      ::      ==
       [~ ..^$]
-    ~&  %clall-running
     ::  If the last commit happened in this event, enqueue
     ::
     ::    Without this, two commits could have the same date, which
@@ -4418,13 +4383,13 @@
   =>  |%
       +$  axle  [%1 ruf-1=raft]
       --
-  |=  *
-  ..^$
+  ::  |=  *
+  ::  ..^$
   ::  XX switch back
-  ::  |=  old=axle
-  ::  ^+  ..^$
-  ::  ?>  ?=(%1 -.old)
-  ::  %_(..^$ ruf ruf-1.old)
+  |=  old=axle
+  ^+  ..^$
+  ?>  ?=(%1 -.old)
+  %_(..^$ ruf ruf-1.old)
 ::
 ++  scry                                              ::  inspect
   |=  {fur/(unit (set monk)) ren/@tas why/shop syd/desk lot/coin tyl/path}
@@ -4542,7 +4507,6 @@
     ?:  ?=([%tyme @ @ ~] tea)
       =/  her  (slav %p i.t.tea)
       =/  syd  (slav %tas i.t.t.tea)
-      ~&  [%out-of-tyme our=our her=her `@tas`syd]
       =^  mos  ruf
         =/  den  ((de our now ski hen ruf) her syd)
         abet:wake:den
