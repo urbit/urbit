@@ -5,10 +5,13 @@ module Vere.Http where
 import ClassyPrelude
 import Data.Noun
 
+import qualified Data.CaseInsensitive as CI
+import qualified Network.HTTP.Types as HT
+import qualified Network.HTTP.Types.Method as H
+
 data Header = Header Text Text
 
-data Method = CONNECT | DELETE | GET | HEAD | OPTIONS | POST | PUT | TRACE
-  deriving (Eq,Ord,Show)
+type Method = H.StdMethod
 
 data Request = Request
   { method :: Method
@@ -27,3 +30,8 @@ data Event = Started ResponseHeader -- [%start hdr (unit octs) ?]
            | Done                   -- [%continue ~ %.y]
            | Canceled               -- %cancel
            | Failed Text            -- %cancel
+
+convertHeaders :: [HT.Header] -> [Header]
+convertHeaders = fmap f
+  where
+    f (k, v) = Header (decodeUtf8 (CI.original k)) (decodeUtf8 v)

@@ -244,10 +244,11 @@ peekWord :: Get Word
 peekWord = do
   off <- peekUsedBits
   cur <- peekCurWord
-  if off == 0 then pure cur else do
-  nex <- peekNextWord
-  advance 64
-  pure (dropLowBits off cur .|. dropHighBits off nex)
+  if off == 0 then pure cur else
+    do
+      nex <- peekNextWord
+      advance 64
+      pure (dropLowBits off cur .|. dropHighBits off nex)
 
 dropLowBits :: Word -> Word -> Word
 dropLowBits bits wor = shiftR wor (fromIntegral bits :: Int)

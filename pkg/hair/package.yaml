@@ -42,6 +42,7 @@ dependencies:
   - extra
   - flat
   - ghc-prim
+  - hashtables
   - http-client
   - http-types
   - integer-gmp
@@ -67,7 +68,7 @@ dependencies:
   - transformers
   - unordered-containers
   - vector
-  - hashtables
+  - wai
 
 default-extensions:
   - ApplicativeDo

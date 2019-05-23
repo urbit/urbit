@@ -47,8 +47,7 @@ cvtRespHeaders :: H.Response a -> ResponseHeader
 cvtRespHeaders resp =
   ResponseHeader (HT.statusCode (H.responseStatus resp)) heads
   where
-    heads = H.responseHeaders resp <&> \(k, v) ->
-      Header (decodeUtf8 (CI.original k)) (decodeUtf8 v)
+    heads = convertHeaders (H.responseHeaders resp)
 
 
 --------------------------------------------------------------------------------
