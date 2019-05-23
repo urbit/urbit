@@ -10,7 +10,7 @@ import Control.Monad.Fail
 import Control.Arrow ((>>>))
 import Data.ChunkedZip (Zip)
 import Language.Hoon.Nock.Types
-import Text.Show.Pretty (pPrint)
+import Text.Show.Pretty (ppShow)
 
 --------------------------------------------------------------------------------
 
@@ -57,15 +57,15 @@ data Ty
 data Exp
   = Sub
   | Lam Ty Exp
-  | Wit Exp Exp
+  | Wit Ty Exp Exp
   | Fir Exp Exp
   | Lit Nat
   | Inc Exp
   | Eke Exp Exp
   | Tup (Vec Exp)
-  | Get Nat Exp
+  | Get {- (Vec Ty) -} Nat Exp
   | Cho (Vec Ty) Nat Exp
-  | Eat Exp (Vec Exp)
+  | Eat {- (Vec Ty) -} Exp (Vec Exp)
   deriving (Eq, Ord, Show)
 
 --------------------------------------------------------------------------------
@@ -95,26 +95,28 @@ unify = toList >>> \case []   -> pure tVoid
 --------------------------------------------------------------------------------
 
 infer :: Ty -> Exp -> Infer Ty
-infer sub Sub             = pure sub
-infer sub (Lam lub b)     = Nok lub <$> infer lub b
-infer sub (Wit new bod)   = do newSub <- infer sub new
-                               infer newSub bod
-infer sub (Fir new bod)   = do newSub <- infer sub new
-                               infer newSub bod
-infer _   (Lit _)         = pure Nat
-infer sub (Inc exp)       = do eTy <- infer sub exp
-                               unify [eTy, Nat]
-infer sub (Eke ex1 ex2)   = do ty1 <- infer sub ex1
-                               ty2 <- infer sub ex2
-                               unify [Nat, ty1, ty2]
-infer sub (Tup exps)      = Mul <$> traverse (infer sub) exps
-infer sub (Get n tup)     = infer sub tup >>= inferGet n
-infer sub (Cho tys n exp) = infer sub exp >>= inferCho tys n
-infer sub (Eat exp bods)  = inferEat sub exp bods
+infer sut Sub              = pure sut
+infer sut (Lam lub b)      = Nok lub <$> infer lub b
+infer sut (Wit ty new bod) = do newSub <- infer sut new
+                                unify [ty, newSub]
+                                infer ty bod
+infer sut (Fir new bod)    = do newSub <- infer sut new
+                                infer newSub bod
+infer _   (Lit _)          = pure Nat
+infer sut (Inc exp)        = do eTy <- infer sut exp
+                                unify [eTy, Nat]
+infer sut (Eke ex1 ex2)    = do ty1 <- infer sut ex1
+                                ty2 <- infer sut ex2
+                                unify [Nat, ty1, ty2]
+infer sut (Tup exps)       = Mul <$> traverse (infer sut) exps
+infer sut (Get n tup)      = infer sut tup >>= inferGet n
+infer sut (Cho tys n exp)  = infer sut exp >>= inferCho tys n
+infer sut (Eat exp bods)   = inferEat sut exp bods
 
 inferGet :: Nat -> Ty -> Infer Ty
 inferGet n ty = do
-  Mul tys <- pure ty
+  tys <- ty & \case Mul tys -> pure tys
+                    _       -> fail ("mul-bad-ty: " <> show ty)
   maybe (fail "mul-bad-index") pure (tys !? fromIntegral n)
 
 inferCho :: Vec Ty -> Nat -> Ty -> Infer Ty
@@ -130,7 +132,7 @@ inferEat sub exp bods = do
     unify =<< zipWithM checkBranch tys bods
   where
     checkBranch :: Ty -> Exp -> Infer Ty
-    checkBranch brTy exp = infer (tSum (tSum Nat brTy) sub) exp
+    checkBranch brTy exp = infer (tPair (tPair Nat brTy) sub) exp
 
 --------------------------------------------------------------------------------
 
@@ -160,38 +162,43 @@ tup2 x y = Tup [x, y]
 choEx, tupEx, widEx, eatEx :: Exp
 choEx = Cho [Nat, Nat] 0 (Lit 0)
 tupEx = Get 0 $ Get 1 $ tup2 (Lit 3) $ tup2 (Lit 4) (Lit 5)
-widEx = Wit (Lit 3) Sub
+widEx = Wit Nat (Lit 3) Sub
 eatEx = Eat choEx [Get 1 (Get 0 Sub), Inc (Lit 0)]
 
 
 --------------------------------------------------------------------------------
 
-try :: Exp -> IO ()
-try e = do
-  putStrLn "<exp>"
-  pPrint e
-  putStrLn "</exp>\n"
-  putStrLn "<type>"
-  pPrint (runInfer (infer tTop e))
-  putStrLn "</type>\n"
-  putStrLn "<nock>"
-  pPrint (compile tTop e)
-  putStrLn "</nock>\n"
+indent :: String -> String
+indent = unlines . fmap ("        " <>) . lines
+
+try :: Text -> Exp -> IO ()
+try m e = do
+  putStrLn ("<" <> m <> ">")
+  putStrLn "    <exp>"
+  putStr (pack $ indent (ppShow e))
+  putStrLn "    </exp>"
+  putStrLn "    <type>"
+  putStr (pack $ indent (ppShow (runInfer (infer tTop e))))
+  putStrLn "    </type>"
+  putStrLn "    <nock>"
+  putStr (pack $ indent (ppShow (compile tTop e)))
+  putStrLn "    </nock>"
+  putStrLn ("</" <> m <> ">\n")
 
 tryTup :: IO ()
-tryTup = try tupEx
+tryTup = try "tup" tupEx
 
-tryWid :: IO ()
-tryWid = try widEx
+tryWit :: IO ()
+tryWit = try "wid" widEx
 
 tryCho :: IO ()
-tryCho = try choEx
+tryCho = try "cho" choEx
 
 tryEat :: IO ()
-tryEat = try eatEx
+tryEat = try "eat" eatEx
 
 tryAll :: IO ()
-tryAll = tryTup >> tryWid >> tryCho >> tryEat
+tryAll = tryTup >> tryWit >> tryCho >> tryEat
 
 --------------------------------------------------------------------------------
 
@@ -224,7 +231,7 @@ compile sut = \case
     headTy     <- runInfer (infer sut exp)
     nock       <- compile sut exp
     newSubjTys <- headTy & \case
-                    Sum tys -> pure (tys <&> (\x -> tSum (tSum Nat x) sut))
+                    Sum tys -> pure (tys <&> (\x -> tPair (tPair Nat x) sut))
                     _       -> Left "you are dumb"
 
     nocks <- zipWithM compile newSubjTys brs
@@ -236,8 +243,7 @@ compile sut = \case
     nock2 <- compile sut y
     pure (NFiveEq nock1 nock2)
 
-  Wit ex1 ex2 -> do
-    sut'  <- runInfer (infer sut ex1)
+  Wit sut' ex1 ex2 -> do
     nock1 <- compile sut ex1
     nock2 <- compile sut' ex2
     pure (NSevenThen nock1 nock2)
