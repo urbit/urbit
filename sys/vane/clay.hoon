@@ -580,6 +580,26 @@
   !!
 --  =>
 |%
+::  Printable form of a wove; useful for debugging
+::
+++  print-wove
+  |=  =wove
+  :-  for.wove
+  ?-  -.rove.wove
+    %sing  [%sing mood.rove.wove]
+    %next  [%next [mood aeon]:rove.wove]
+    %mult  [%mult [mool aeon]:rove.wove]
+    %many  [%many [track moat]:rove.wove]
+  ==
+::
+::  Printable form of a cult; useful for debugging
+::
+++  print-cult
+  |=  =cult
+  %+  turn  ~(tap by cult)
+  |=  [=wove ducts=(set duct)]
+  [ducts (print-wove wove)]
+::
 ::
 ::  Make a new commit with the given +nori of changes.
 ::
@@ -2768,26 +2788,6 @@
     |=  {a/duct b/path c/ship d/{p/@ud q/riff}}
     (emit a %pass b %a %want c [%c %question p.q.d (scot %ud p.d) ~] q.d)
   ::
-  ::  Printable form of a wove; useful for debugging
-  ::
-  ++  print-wove
-    |=  =wove
-    :-  for.wove
-    ?-  -.rove.wove
-      %sing  [%sing mood.rove.wove]
-      %next  [%next [mood aeon]:rove.wove]
-      %mult  [%mult [mool aeon]:rove.wove]
-      %many  [%many [track moat]:rove.wove]
-    ==
-  ::
-  ::  Printable form of a cult; useful for debugging
-  ::
-  ++  print-cult
-    |=  =cult
-    %+  turn  ~(tap by cult)
-    |=  [=wove ducts=(set duct)]
-    [ducts (print-wove wove)]
-  ::
   ::  Create a request that cannot be filled immediately.
   ::
   ::  If it's a local request, we just put in in `qyx`, setting a timer if it's
@@ -4301,14 +4301,12 @@
       %-  zing  ^-  (list (list duct))
       %+  turn  ~(tap by rus.u.foreign-desk)
       |=  [=desk =rede]
-      %+  weld
-        ^-  (list duct)  %-  zing  ^-  (list (list duct))
-        %+  turn  ~(tap by qyx.rede)
-        |=  [=wove ducts=(set duct)]
-        ~(tap in ducts)
-      ?~  ref.rede
-        ~
-      (turn ~(tap by fod.u.ref.rede) head)
+      ~&  [%sunk-desk desk]
+      ^-  (list duct)  %-  zing  ^-  (list (list duct))
+      %+  turn  ~(tap by qyx.rede)
+      |=  [=wove ducts=(set duct)]
+      ~&  [%sunk-wove (print-wove wove) ducts]
+      ~(tap in ducts)
     =/  cancel-moves=(list move)
       %+  turn  cancel-ducts
       |=  =duct
@@ -4596,6 +4594,7 @@
   ?~  -
     `[paf %ins %mime -:!>(*mime) u.mim]
   `[paf %mut %mime -:!>(*mime) u.mim]
+::
 ::  +rift-scry: for a +rift
 ::
 ++  rift-scry

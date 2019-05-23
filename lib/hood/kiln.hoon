@@ -457,7 +457,7 @@
             q.p.mes
         ==
       ::
-          $no-ali-desk
+          $no-ali-disc
         :~  (render "sync activated" sud her syd)
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
