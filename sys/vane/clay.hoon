@@ -260,13 +260,13 @@
 ++  update-clad  (clad ,(unit [lim=@da dome rang]))
 ++  update-qeu
   $:  waiting=(qeu [inx=@ud rut=(unit rand)])
-      eval-data=(unit [inx=@ud =eval-form:eval:update-clad])
+      eval-data=(unit [inx=@ud rut=(unit rand) =eval-form:eval:update-clad])
   ==
 ::
 ::  The clad monad for foreign simple requests
 ::
 ++  request-clad  (clad ,cage)
-++  request-map   ,(map inx=@ud [=mood =eval-form:eval:request-clad])
+++  request-map   ,(map inx=@ud [=rand =eval-form:eval:request-clad])
 ::
 ::  Domestic ship.
 ::
@@ -3137,17 +3137,18 @@
     =>  .(+>.$ (emil moves.r))  :: TMI
     ?-  -.eval-result.r
       %next  +>.$
-      %fail  (fail-foreign-request inx mood.u.request err.eval-result.r)
-      %done  (done-foreign-request inx mood.u.request value.eval-result.r)
+      %fail  (fail-foreign-request inx rand.u.request err.eval-result.r)
+      %done  (done-foreign-request inx rand.u.request value.eval-result.r)
     ==
   ::
   ::  Fail foreign request
   ::
   ++  fail-foreign-request
-    |=  [inx=@ud =mood err=(pair term tang)]
+    |=  [inx=@ud =rand err=(pair term tang)]
     ^+  +>
     %-  (slog leaf+"foreign request failed" leaf+(trip p.err) q.err)
     ?>  ?=(^ ref)
+    =/  =mood  [p.p q.p q]:rand
     =:  haw.u.ref  (~(put by haw.u.ref) mood ~)
         bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
@@ -3157,9 +3158,10 @@
   ::  Finish foreign request
   ::
   ++  done-foreign-request
-    |=  [inx=@ud =mood =cage]
+    |=  [inx=@ud =rand =cage]
     ^+  +>
     ?>  ?=(^ ref)
+    =/  =mood  [p.p q.p q]:rand
     =:  haw.u.ref  (~(put by haw.u.ref) mood `cage)
         bom.u.ref  (~(del by bom.u.ref) inx)
         fod.u.ref  (~(del by fod.u.ref) hen)
@@ -3203,7 +3205,7 @@
     =.  pur.u.ref
       %+  ~(put by pur.u.ref)
         inx
-      :-  [p.p q.p q]:u.rut
+      :-  u.rut
       %-  from-form:eval:request-clad
       ((foreign-request our her syd now) rav u.rut)
     (take-foreign-request inx clad-init-sign)
@@ -3289,7 +3291,8 @@
     ?>  ?=(%many -.rave)
     =.  eval-data.pud.u.ref
       :-  ~
-      :-  inx.next
+      :+  inx.next
+        rut.next
       %-  from-form:eval:update-clad
       ((foreign-update our her syd now) moat.rave rut.next lim dom ran)
     (take-foreign-update clad-init-sign)
