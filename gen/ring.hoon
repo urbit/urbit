@@ -194,6 +194,7 @@
     %+  point-add
       (point-mul prev-s ecc-g)
     (point-mul prev-ch (snag prev-k public-keys))
+  ~&  [%added a=[prev-s ecc-g] b=[prev-ch (snag prev-k public-keys)] gs=gs]
   ::
   =/  hs=(unit point)
     ?~  link-state
@@ -206,6 +207,7 @@
   ::
   =/  ch=@
     (generate-challenge message gs link-state hs)
+  ~&  [%challenge-for prev-k ch]
   ::
   ?~  ss
     [ch challenges]
@@ -296,7 +298,7 @@
     =|  count=@
     =|  random-s-values=(list @)
     |-
-    ?:  =(count participants)
+    ?:  =(count (sub participants 1))
       [random-s-values rand]
     ::
     =^  v=@  rand  (rads:rand ecc-n)
@@ -325,7 +327,7 @@
       anonymity-list
       sk2-to-prev-sk
     ::
-      k
+      (mod (add k 1) participants)
       sk1
       chk1
       [chk1 ~]
@@ -346,7 +348,7 @@
     %+  reorder
       (sub participants (add k 1))
     (flop reversed-chk-to-chk1)
-  ~&  [%ordered-challenges ordered-challenges]
+  ::  ~&  [%ordered-challenges ordered-challenges]
   ?>  ?=(^ ordered-challenges)
   ::
   =/  ordered-ss=(list @)
@@ -354,7 +356,7 @@
       (sub participants k)
     ^-  (list @)
     [sk sk1 sk2-to-prev-sk]
-  ~&  [%ordered-ss ordered-ss]
+  ::  ~&  [%ordered-ss ordered-ss]
   ::
   [i.ordered-challenges ordered-ss ?~(linkage ~ `y.u.linkage)]
 ::  +verify: verify signature
@@ -394,6 +396,7 @@
       (point-mul s0 ecc-g)
     ::
     (point-mul ch0.signature (head anonymity-list))
+  ~&  [%added a=[s0 ecc-g] b=[ch0.signature (head anonymity-list)] z0p=z0p]
   ::  generate the linkage using public data, and the y point from the signature
   ::
   =/  linkage=(unit [data=@ h=point y=point])
@@ -432,7 +435,7 @@
       [ch1 ~]
     ==
   ::
-  ~&  [%ch0 ch0.signature]
+  ~&  [%sig-ch0 ch0.signature]
   ~&  [%challenges challenges]
   ::
   =(ch0.signature (head challenges))
@@ -443,7 +446,6 @@
 :-  %say
 |=  [[now=time eny=@ our=ship ^] ~ ~]
 :-  %noun
-~&  %about-to-generate-keys
 ::  deterministically generate keys with insecure numbers for testing purposes
 ::
 =/  key-num=@  2
@@ -454,7 +456,7 @@
   =|  keys=(list [pk=point sk=@])
   ::
   |-
-  ?:  =(count 4)
+  ?:  =(count 3)
     keys
   ::
   =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
@@ -471,15 +473,20 @@
 =/  my-public-key=point  (head my-key)
 =/  my-private-key=@  (tail my-key)
 ::
-~&  %about-to-start-real-signing
+~&  %start----------signing
+::
+=/  message  "blah"
+::=/  scope  [~ [%link-scope 52]]
+=/  scope  ~
 ::
 =/  signature
-  (sign "blah" [~ [%link-scope 52]] key-set my-public-key my-private-key eny)
+  (sign message scope key-set my-public-key my-private-key eny)
 ::
-~&  [%signature signature]
+~&  %start----------verification
 ::
 =/  verified
-  (verify "blah" [~ [%link-scope 52]] key-set signature)
+  (verify message scope key-set signature)
 ::
+~&  [%signature signature]
 ~&  [%verified verified]
 verified
