@@ -4,7 +4,8 @@
 ::  an ugly copy/paste of the private parts of +ed:crypto here
 ::
 ++  ed
-  =+  ::  q: prime modulus of field
+  =+  ~+
+      ::  q: prime modulus of field
       ::
       =+  [b=256 q=(sub (bex 255) 19)]
       =+  fq=~(. fo q)
@@ -59,6 +60,26 @@
     ?:  =(1 (dis 1 e))
       (ward qq pp)
     qq
+  ::                                                ::  ++curv:ed:crypto
+  ++  curv                                          ::  point on curve?
+    |=  {x/@ y/@}  ^-  ?
+    .=  0
+        %+  dif.fq
+          %+  sum.fq
+            (pro.fq (sub q (sit.fq x)) x)
+          (pro.fq y y)
+        (sum.fq 1 :(pro.fq d x x y y))
+  ::                                                ::  ++deco:ed:crypto
+  ++  deco                                          ::  decode point
+    |=  s/@  ^-  (unit {@ @})
+    =+  y=(cut 0 [0 (dec b)] s)
+    =+  si=(cut 0 [(dec b) 1] s)
+    =+  x=(xrec y)
+    =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
+    =+  pp=[x y]
+    ?.  (curv pp)
+      ~
+    [~ pp]
   ::  +prime-order: the prime order of the edwards curve
   ::
   ++  l
@@ -103,23 +124,35 @@
   (mod (shaz (jam input)) ecc-n)
 ::
 ::::
+::
+::  +generate-public-linkage: generate public linkage information
+::
+++  generate-public-linkage
+  |=  link-scope=*
+  ^-  [data=@ h=point]
+  ::
+  =/  data=@   (oracle link-scope)
+  =/  h=point  (point-base-mul data)
+  [data h]
+
 ::  +generate-linkage: generates linkage information from scope and private key
 ::
 ::    data: deterministically picked data point based off scope
 ::    h:    h = [data] * g
 ::    y:    y = [x] * h
 ++  generate-linkage
-  |=  [link-scope=(unit @) my-private-key=@]
+  |=  [link-scope=(unit *) my-private-key=@]
   ^-  (unit [data=@ h=point y=point])
   ::
   ?~  link-scope
     ~
   ::
-  =/  data=@   (oracle u.link-scope)
-  =/  h=point  (point-base-mul data)
+  ~&  %generating-linkage
+  =+  [data=@ h=point]=(generate-public-linkage u.link-scope)
   =/  y=point  (point-mul my-private-key h)
+  ~&  %finished-generating-linkage
   [~ data h y]
-::  +gen-challenge: generate challenge from a given message
+::  +generate-challenge: generate challenge from a given message
 ::
 ::    When :link-scope is ~ (ie, we're not building a linked ring signature),
 ::    calculates just the hash of `[message g]`. Otherwise, weaves the linkage
@@ -148,15 +181,14 @@
   |=  $:  link-state=(unit [data=@ h=point y=point])
           message=*
           public-keys=(list point)
+          ss=(list @)
       ::
           prev-k=@u
           prev-s=@
           prev-ch=@
-          ss=(list @)
+          challenges=(list @)
       ==
   ^-  (list @)
-  =|  challenges=(list @)
-  |-
   ::
   =/  gs=point
     %+  point-add
@@ -207,20 +239,17 @@
 ::  +ring-signature: types of a ring signature
 ::
 ++  ring-signature
-  $%  ::  unlinked ring signature
+  $:  ch0=@
       ::
-      ::    Signature without a linkage tag. Not Sybil resistant, but
-      ::    untraceable even in the case of a private key leak.
-      ::
-      [%unlinked c0=@ s=(list @)]
-      ::  linked ring signature
+      s=(list @)
+      ::  linked ring signature tag
       ::
       ::    Two linked ring signatures with the same link scope can be shown to
       ::    have been made by the same private key, leading to Sybil
       ::    resistance...but if your private keys are compromised, your
       ::    adversary can determine which signatures you made.
       ::
-      [%linked c0=@ s=(list @) tag=point]
+      y=(unit point)
   ==
 --
 ::  Signature interface
@@ -232,10 +261,12 @@
 ::
 ++  sign
   |=  $:  message=*
+          link-scope=(unit *)
+      ::
           anonymity-set=(set point)
           my-public-key=point
           my-private-key=@
-          link-scope=(unit @)
+      ::
           eny=@uvJ
       ==
   ^-  ring-signature
@@ -292,11 +323,12 @@
       linkage
       message
       anonymity-list
+      sk2-to-prev-sk
     ::
       k
       sk1
       chk1
-      sk2-to-prev-sk
+      [chk1 ~]
     ==
   ~&  [%reversed-chk-to-chk1 reversed-chk-to-chk1]
   ?>  ?=(^ reversed-chk-to-chk1)
@@ -304,9 +336,10 @@
   ::  Compute s = u - x * c mod n
   ::
   =/  sk=@
-    ::  TODO: Because we are not using real private keys, sub undermultiplies below
-    0
-    ::(mod (sub u (mul my-private-key chk)) ecc-n)
+    ::  Naively, we'd want to run `(mod (sub u (mul my-private-key chk)) ecc-n)`,
+    ::  but this causes an integer underflow because we're in unsigned integers.
+    ::
+    (~(dif fo ecc-n) u (mul my-private-key chk))
   ~&  [%sk sk]
   ::
   =/  ordered-challenges=(list @)
@@ -323,15 +356,130 @@
     [sk sk1 sk2-to-prev-sk]
   ~&  [%ordered-ss ordered-ss]
   ::
-  ?~  linkage
-    [%unlinked i.ordered-challenges ordered-ss]
-  [%linked i.ordered-challenges ordered-ss y.u.linkage]
+  [i.ordered-challenges ordered-ss ?~(linkage ~ `y.u.linkage)]
+::  +verify: verify signature
 ::
+::    TODO: I really feel like I should have implemented +verify first because
+::    it would have forced me to work through the 
+::
+++  verify
+  |=  $:  message=*
+          link-scope=(unit *)
+      ::
+          anonymity-set=(set point)
+          signature=ring-signature
+      ==
+  ^-  ?
+  ::  TODO: if our signature has a linking y, we must have a link-scope and
+  ::  vice versa.
+  ::
+  ::  decompose the signature into [s0 s1 s2....]
+  ::
+  ~!  s.signature
+  ?>  ?=([@ @ *] s.signature)
+  =/  s0=@  i.s.signature
+  =/  s1=@  i.t.s.signature
+  =/  s2-to-end=(list @)  t.t.s.signature
+  ::  anonymity-list: set of public keys listified in ring order
+  ::
+  =/  anonymity-list=(list point)
+    ~(tap in anonymity-set)
+  ::  participants: length of :anonymity-list
+  ::
+  =/  participants=@u
+    (lent anonymity-list)
+  ::
+  =/  z0p=point
+    %+  point-add
+      (point-mul s0 ecc-g)
+    ::
+    (point-mul ch0.signature (head anonymity-list))
+  ::  generate the linkage using public data, and the y point from the signature
+  ::
+  =/  linkage=(unit [data=@ h=point y=point])
+    ?~  link-scope
+      ~
+    =+  [data=@ h=point]=(generate-public-linkage u.link-scope)
+    :-  ~
+    [data h (need y.signature)]
+  ::
+  =/  z0pp=(unit point)
+    ?~  linkage
+      ~
+    :-  ~
+    %+  point-add
+      (point-mul s0 h.u.linkage)
+    (point-mul ch0.signature y.u.linkage)
+  ::  initial challenge
+  ::
+  =/  ch1=@
+    (generate-challenge message z0p linkage z0pp)
+  ::
+  ::  TODO: OK, verification isn't working and I suspect it's because I'm not
+  ::  jamming the initial challenge list state into generate-challenge
+  ::  correctly?
+  ::
+  =/  challenges
+    %-  generate-challenges  :*
+      linkage
+      message
+      anonymity-list
+      s2-to-end
+    ::
+      (mod 1 participants)
+      s1
+      ch1
+      [ch1 ~]
+    ==
+  ::
+  ~&  [%ch0 ch0.signature]
+  ~&  [%challenges challenges]
+  ::
+  =(ch0.signature (head challenges))
 --
+::
+::
+::
 :-  %say
 |=  [[now=time eny=@ our=ship ^] ~ ~]
 :-  %noun
-::  todo: we're at the point where we need to actually be building real public
-::  key pairs.
+~&  %about-to-generate-keys
+::  deterministically generate keys with insecure numbers for testing purposes
 ::
-(sign "blah" (sy [0 0] [1 1] [2 2] [3 3] ~) [1 1] 5 [~ 52] eny)
+=/  key-num=@  2
+::  create a list of public/private keypairs
+::
+=/  keys=(list [pk=point sk=@])
+  =|  count=@
+  =|  keys=(list [pk=point sk=@])
+  ::
+  |-
+  ?:  =(count 4)
+    keys
+  ::
+  =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
+  =/  pk=point  (need (deco:ed (puck:ed:crypto sk)))
+  ::
+  $(keys [[pk sk] keys], count +(count), key-num +(key-num))
+::  create the key set the interface expects
+::
+=/  key-set=(set point)
+  (sy (turn keys head))
+~&  [%keys-to-use key-set]
+::
+=/  my-key  (snag 1 keys)
+=/  my-public-key=point  (head my-key)
+=/  my-private-key=@  (tail my-key)
+::
+~&  %about-to-start-real-signing
+::
+=/  signature
+  (sign "blah" [~ [%link-scope 52]] key-set my-public-key my-private-key eny)
+::
+~&  [%signature signature]
+::
+=/  verified
+  (verify "blah" [~ [%link-scope 52]] key-set signature)
+::
+~&  [%verified verified]
+verified
