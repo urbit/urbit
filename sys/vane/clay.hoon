@@ -617,6 +617,7 @@
   ;<  e=_*cor                      bind:m  checkout-new-state:e
   ;<  mim=(map path mime)          bind:m  (ergo-changes:e suba mim)
   ;<  ~                            bind:m  (print-changes:e %& suba)
+  =.  mim.dom.e  mim
   (pure:m dom:e ran:e)
   ::  =.  mim.dom.e  mim
   ::(pure:m dom:e ran:e)
