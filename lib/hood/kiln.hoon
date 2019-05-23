@@ -123,7 +123,7 @@
 ++  poke-track                                        ::
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
-    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
+    abet:(spam (render "already tracking" [sud her syd]:hos) ~)
   abet:abet:start-track:(auto hos)
 ::
 ++  poke-sync                                         ::

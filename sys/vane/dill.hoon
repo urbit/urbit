@@ -307,7 +307,7 @@
       ++  mere                                          ::  continue init
         ~&  [%dill-mere our ram]
         ^+  .
-        =/  myt  (flop (need tem))
+        =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])

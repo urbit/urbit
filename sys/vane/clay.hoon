@@ -286,7 +286,7 @@
 ::
 ++  cach  (unit (unit (each cage lobe)))                ::  cached result
 +$  wove  [for=(unit ship) =rove]                       ::  stored source + req
-++  rove                                                ::  stored request
+++  rove                                                ::  stored request $%  [%sing =mood]                             ::  single request
           $%  [%sing =mood]                             ::  single request
               [%next =mood aeon=(unit aeon) =cach]      ::  next version of one
               $:  %mult                                 ::  next version of any
@@ -2696,13 +2696,13 @@
   ::
   ++  bait
     |=  {hen/duct tym/@da}
-    (emit hen %pass /tyme %b %wait tym)
+    (emit hen %pass /tyme/(scot %p her)/[syd] %b %wait tym)
   ::
   ::  Cancel timer.
   ::
   ++  best
     |=  {hen/duct tym/@da}
-    (emit hen %pass /tyme %b %rest tym)
+    (emit hen %pass /tyme/(scot %p her)/[syd] %b %rest tym)
   ::
   ::  Give subscription result.
   ::
@@ -3332,10 +3332,11 @@
             %mult  ~
             %many
           %^  hunt  lth
-            ?.  ?=(%da -.from.moat.rov)  ~
-            ?.((lth now p.from.moat.rov) ~ [~ p.from.moat.rov])
+            ?.  ?=(%da -.from.moat.rov)    ~
+            ?.  (lth now p.from.moat.rov)  ~
+            [~ p.from.moat.rov]
           ?.  ?=(%da -.to.moat.rov)  ~
-          (hunt gth [~ now] [~ p.to.moat.rov])
+          `(max now p.to.moat.rov)
         ==
       fun
     +>.$
@@ -3375,12 +3376,13 @@
       ==
     $(sub-results t.sub-results)
   ::
-  ::  Loop through open subscriptions and check if we can fill any of them.
+  ::  Loop through open subscriptions and check if we can fill any of
+  ::  them.
   ::
   ++  wake
     ^+  .
     =/  old-subs=(list [=wove ducts=(set duct)])  ~(tap by qyx)
-    =|  new-subs=_old-subs
+    =|  new-subs=(list [=wove ducts=(set duct)])
     |-  ^+  ..wake
     ?~  old-subs
       ::  install new subs
@@ -3389,7 +3391,7 @@
     ?:  =(~ ducts.i.old-subs)
       ::  drop forgotten roves
       ::
-      $(old-subs t.old-subs, new-subs new-subs)
+      $(old-subs t.old-subs)
     =+  ^-  [new-sub=(unit rove) sub-results=(list sub-result)]
         (try-fill-sub wove.i.old-subs)
     =.  ..wake  (send-sub-results sub-results ducts.i.old-subs)
@@ -3408,9 +3410,11 @@
         %sing
       =/  cache-value=(unit (unit cage))
         ?~(ref ~ (~(get by haw.u.ref) mood.rov))
+      ~&  [%fill-sub-sing our her syd (print-wove for rov)]
       ?^  cache-value
         ::  if we have a result in our cache, produce it
         ::
+        ~&  [%fill-sub-sing-cached]
         :-  ~
         ?~  u.cache-value
           [%blub ~]~
@@ -3419,12 +3423,14 @@
       ::
       =/  aeon=(unit aeon)  (case-to-aeon case.mood.rov)
       ?~  aeon
+        ~&  [%fill-sub-sing-no-aeon]
         [`rov ~]
       ::  we have the appropriate aeon, so read in the data
       ::
       =/  value=(unit (unit (each cage lobe)))
         (read-at-aeon:ze for u.aeon mood.rov)
       ?~  value
+        ~&  [%fill-sub-sing-no-value]
         ::  We don't have the data directly, which is potentially
         ::  problematical.  How can we fetch the data?
         ::
@@ -3433,9 +3439,10 @@
           [~ ~]
         ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov aeon=u.aeon]
         [`rov ~]
+      ~&  [%fill-sub-sing-value]
       ::  we have the data, so we produce the results
       ::
-      [`rov [%balk u.value mood.rov]~]
+      [~ [%balk u.value mood.rov]~]
     ::
     ::  %next is just %mult with one path, so we pretend %next = %mult here.
     ::
@@ -3588,13 +3595,16 @@
       --
     ::
         %many
+      ~&  [%fill-sub-many our her syd (print-wove for rov)]
       =/  from-aeon  (case-to-aeon from.moat.rov)
       ?~  from-aeon
+        ~&  [%fill-sub-many-no-from-aeon]
         ::  haven't entered the relevant range, so do nothing
         ::
         [`rov ~]
       =/  to-aeon  (case-to-aeon to.moat.rov)
       ?~  to-aeon
+        ~&  [%fill-sub-many-no-to-aeon u.from-aeon]
         ::  we're in the middle of the range, so produce what we can,
         ::  but don't end the subscription
         ::
@@ -3606,12 +3616,15 @@
         =/  new-lobes=(map path lobe)
           (lobes-at-path:ze for let.dom path.moat.rov)
         ?:  =(lobes.rov new-lobes)
+          ~&  [%fill-sub-many-no-to-aeon-no-changes]
           ::  if no changes, don't produce results
           ::
           ~
+        ~&  [%fill-sub-many-no-to-aeon-changes]
         ::  else changes, so produce them
         ::
         [%bleb let.dom ?:(track.rov ~ `[u.from-aeon let.dom])]~
+      ~&  [%fill-sub-many-both-aeons from-aeon to-aeon]
       ::  we're past the end of the range, so end subscription
       ::
       :-  ~
@@ -3621,7 +3634,9 @@
       ::
       =/  bleb=(list sub-result)
         ?:  =(lobes.rov new-lobes)
+          ~&  [%fill-sub-many-yes-aeon-no-changes old=lobes.rov new=new-lobes]
           ~
+        ~&  [%fill-sub-many-yes-aeon-yes-changes]
         [%bleb +(u.from-aeon) ?:(track.rov ~ `[u.from-aeon u.to-aeon])]~
       ::  end subscription
       ::
@@ -3705,7 +3720,8 @@
       ^-  (map path lobe)
       ?:  =(0 yon)  ~
       ::  we use %z for the check because it looks at all child paths.
-      ?:  |(?=(~ for) (may-read u.for %z yon pax))  ~
+      ?.  |(?=(~ for) (may-read u.for %z yon pax))  ~&  %lobes-at-path-no  ~
+      ~&  [%lobes-at-path (aeon-to-yaki yon)]
       %-  malt
       %+  skim
         %~  tap  by
@@ -4523,12 +4539,14 @@
     ?^  error.q.hin
       [[hen %slip %d %flog %crud %wake u.error.q.hin]~ ..^$]
     ::
-    ?:  ?=([%tyme ~] tea)
-      ~&  %out-of-tyme
-      `..^$
-    ::  dear reader, if it crashes here, check the wire.  If it came
-    ::  from ++bait, then I don't think we have any handling for that
-    ::  sort of thing.
+    ?:  ?=([%tyme @ @ ~] tea)
+      =/  her  (slav %p i.t.tea)
+      =/  syd  (slav %tas i.t.t.tea)
+      ~&  [%out-of-tyme our=our her=her `@tas`syd]
+      =^  mos  ruf
+        =/  den  ((de our now ski hen ruf) her syd)
+        abet:wake:den
+      [mos ..^$]
     ::
     =^  queued  cue.ruf  ~(get to cue.ruf)
     ::
