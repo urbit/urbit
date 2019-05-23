@@ -46,14 +46,14 @@ static const c3_i TCP_BACKLOG = 16;
 static u3_weak
 _http_vec_to_meth(h2o_iovec_t vec_u)
 {
-  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? c3__get  :
-         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? c3__put  :
-         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? c3__post :
-         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? c3__head :
-         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? c3__conn :
-         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? c3__delt :
-         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? c3__opts :
-         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? c3__trac :
+  return ( 0 == strncmp(vec_u.base, "GET",     vec_u.len) ) ? u3i_string("GET") :
+         ( 0 == strncmp(vec_u.base, "PUT",     vec_u.len) ) ? u3i_string("PUT")  :
+         ( 0 == strncmp(vec_u.base, "POST",    vec_u.len) ) ? u3i_string("POST") :
+         ( 0 == strncmp(vec_u.base, "HEAD",    vec_u.len) ) ? u3i_string("HEAD") :
+         ( 0 == strncmp(vec_u.base, "CONNECT", vec_u.len) ) ? u3i_string("CONNECT") :
+         ( 0 == strncmp(vec_u.base, "DELETE",  vec_u.len) ) ? u3i_string("DELETE") :
+         ( 0 == strncmp(vec_u.base, "OPTIONS", vec_u.len) ) ? u3i_string("OPTIONS") :
+         ( 0 == strncmp(vec_u.base, "TRACE",   vec_u.len) ) ? u3i_string("TRACE") :
          // TODO ??
          // ( 0 == strncmp(vec_u.base, "PATCH",   vec_u.len) ) ? c3__patc :
          u3_none;
@@ -81,28 +81,74 @@ _http_vec_to_octs(h2o_iovec_t vec_u)
                       _http_vec_to_atom(vec_u));
 }
 
-/* _http_vec_from_octs(): convert (unit octs) to h2o_iovec_t
+/* _cttp_bods_free(): free body structure.
 */
-static h2o_iovec_t
-_http_vec_from_octs(u3_noun oct)
+static void
+_cttp_bods_free(u3_hbod* bod_u)
 {
-  if ( u3_nul == oct ) {
-    return h2o_iovec_init(0, 0);
+  while ( bod_u ) {
+    u3_hbod* nex_u = bod_u->nex_u;
+
+    free(bod_u);
+    bod_u = nex_u;
+  }
+}
+
+/* _cttp_bod_from_octs(): translate octet-stream noun into body.
+*/
+static u3_hbod*
+_cttp_bod_from_octs(u3_noun oct)
+{
+  c3_w len_w;
+
+  if ( !_(u3a_is_cat(u3h(oct))) ) {     //  2GB max
+    u3m_bail(c3__fail); return 0;
+  }
+  len_w = u3h(oct);
+
+  {
+    u3_hbod* bod_u = c3_malloc(1 + len_w + sizeof(*bod_u));
+    bod_u->hun_y[len_w] = 0;
+    bod_u->len_w = len_w;
+    u3r_bytes(0, len_w, bod_u->hun_y, u3t(oct));
+
+    bod_u->nex_u = 0;
+
+    u3z(oct);
+    return bod_u;
+  }
+}
+
+/* _cttp_bods_to_vec(): translate body buffers to array of h2o_iovec_t
+*/
+static h2o_iovec_t*
+_cttp_bods_to_vec(u3_hbod* bod_u, c3_w* tot_w)
+{
+  h2o_iovec_t* vec_u;
+  c3_w len_w;
+
+  {
+    u3_hbod* bid_u = bod_u;
+    len_w = 0;
+
+    while( bid_u ) {
+      len_w++;
+      bid_u = bid_u->nex_u;
+    }
   }
 
-  //  2GB max
-  if ( c3n == u3a_is_cat(u3h(u3t(oct))) ) {
-    u3m_bail(c3__fail);
+  vec_u = c3_malloc(sizeof(h2o_iovec_t) * len_w);
+  len_w = 0;
+
+  while( bod_u ) {
+    vec_u[len_w] = h2o_iovec_init(bod_u->hun_y, bod_u->len_w);
+    len_w++;
+    bod_u = bod_u->nex_u;
   }
 
-  c3_w len_w  = u3h(u3t(oct));
-  c3_y* buf_y = c3_malloc(1 + len_w);
-  buf_y[len_w] = 0;
+  *tot_w = len_w;
 
-  u3r_bytes(0, len_w, buf_y, u3t(u3t(oct)));
-
-  u3z(oct);
-  return h2o_iovec_init(buf_y, len_w);
+  return vec_u;
 }
 
 /* _http_heds_to_noun(): convert h2o_header_t to (list (pair @t @t))
@@ -244,7 +290,7 @@ _http_req_unlink(u3_hreq* req_u)
 static u3_noun
 _http_req_to_duct(u3_hreq* req_u)
 {
-  return u3nt(u3_blip, c3__http,
+  return u3nt(u3_blip, u3i_string("http-server"),
               u3nq(u3dc("scot", c3_s2('u','v'), req_u->hon_u->htp_u->sev_l),
                    u3dc("scot", c3_s2('u','d'), req_u->hon_u->coq_l),
                    u3dc("scot", c3_s2('u','d'), req_u->seq_l),
@@ -257,8 +303,20 @@ static void
 _http_req_kill(u3_hreq* req_u)
 {
   u3_noun pox = _http_req_to_duct(req_u);
-  u3_pier_plan(pox, u3nc(c3__thud, u3_nul));
+
+  u3_pier_plan(pox, u3nc(u3i_string("cancel-request"),
+                         u3_nul));
 }
+
+typedef struct _u3_hgen {
+  h2o_generator_t neg_u;             // response callbacks
+  c3_o            red;               // ready to send
+  c3_o            dun;               // done sending
+  u3_hbod*        bod_u;             // pending body
+  u3_hbod*        nud_u;             // pending free
+  u3_hhed*        hed_u;             // pending free
+  u3_hreq*        req_u;             // originating request
+} u3_hgen;
 
 /* _http_req_done(): request finished, deallocation callback
 */
@@ -268,7 +326,8 @@ _http_req_done(void* ptr_v)
   u3_hreq* req_u = (u3_hreq*)ptr_v;
 
   // client canceled request
-  if ( u3_rsat_plan == req_u->sat_e ) {
+  if ( (u3_rsat_plan == req_u->sat_e ) ||
+       (0 != req_u->gen_u && c3n == ((u3_hgen*)req_u->gen_u)->dun )) {
     _http_req_kill(req_u);
   }
 
@@ -306,6 +365,7 @@ _http_req_new(u3_hcon* hon_u, h2o_req_t* rec_u)
   req_u->rec_u = rec_u;
   req_u->sat_e = u3_rsat_init;
   req_u->tim_u = 0;
+  req_u->gen_u = 0;
   req_u->pre_u = 0;
 
   _http_req_link(hon_u, req_u);
@@ -322,19 +382,25 @@ _http_req_dispatch(u3_hreq* req_u, u3_noun req)
   req_u->sat_e = u3_rsat_plan;
 
   u3_noun pox = _http_req_to_duct(req_u);
-  u3_noun typ = _(req_u->hon_u->htp_u->lop) ? c3__chis : c3__this;
 
-  u3_pier_plan(pox, u3nq(typ,
-                     req_u->hon_u->htp_u->sec,
-                     u3nc(c3y, u3i_words(1, &req_u->hon_u->ipf_w)),
-                     req));
+  if ( c3y == req_u->hon_u->htp_u->lop ) {
+    u3_pier_plan(pox, u3nq(u3i_string("request-local"),
+                           //  XX automatically secure too?
+                           //
+                           req_u->hon_u->htp_u->sec,
+                           u3nc(c3__ipv4,
+                                u3i_words(1, &req_u->hon_u->ipf_w)),
+                           req));
+
+  }
+  else {
+    u3_pier_plan(pox, u3nq(u3i_string("request"),
+                           req_u->hon_u->htp_u->sec,
+                           u3nc(c3__ipv4,
+                                u3i_words(1, &req_u->hon_u->ipf_w)),
+                           req));
+  }
 }
-
-typedef struct _u3_hgen {
-  h2o_generator_t neg_u;
-  h2o_iovec_t     bod_u;
-  u3_hhed*        hed_u;
-} u3_hgen;
 
 /* _http_hgen_dispose(): dispose response generator and buffers
 */
@@ -343,16 +409,91 @@ _http_hgen_dispose(void* ptr_v)
 {
   u3_hgen* gen_u = (u3_hgen*)ptr_v;
   _http_heds_free(gen_u->hed_u);
-  free(gen_u->bod_u.base);
+  gen_u->hed_u = 0;
+  _cttp_bods_free(gen_u->nud_u);
+  gen_u->nud_u = 0;
+  _cttp_bods_free(gen_u->bod_u);
+  gen_u->bod_u = 0;
 }
 
-/* _http_req_respond(): write httr to h2o_req_t->res and send
+static void
+_http_hgen_send(u3_hgen* gen_u)
+{
+  c3_assert( c3y == gen_u->red );
+  c3_assert( 0 == gen_u->nud_u );
+
+  u3_hreq* req_u = gen_u->req_u;
+  h2o_req_t* rec_u = req_u->rec_u;
+
+  c3_w len_w;
+  h2o_iovec_t* vec_u = _cttp_bods_to_vec(gen_u->bod_u, &len_w);
+
+  if ( c3n == gen_u->dun ) {
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_IN_PROGRESS);
+
+    // Restart the timer
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 45 * 1000, 0);
+  }
+  else {
+    h2o_send(rec_u, vec_u, len_w, H2O_SEND_STATE_FINAL);
+
+    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+
+    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
+      rec_u->http1_is_persistent = 0;
+    }
+  }
+
+  // not ready again until _proceed
+  gen_u->red = c3n;
+
+  // stash bod_u to be free'd later
+  gen_u->nud_u = gen_u->bod_u;
+  gen_u->bod_u = 0;
+  free(vec_u);
+}
+
+/* _http_hgen_stop(): h2o is closing an in-progress response.
 */
 static void
-_http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
+_http_hgen_stop(h2o_generator_t* neg_u, h2o_req_t* rec_u)
 {
-  // XX ideally
-  //c3_assert(u3_rsat_plan == req_u->sat_e);
+  // kill request in %light
+}
+
+/* _http_hgen_proceed(): h2o is ready for more response data.
+*/
+static void
+_http_hgen_proceed(h2o_generator_t* neg_u, h2o_req_t* rec_u)
+{
+  u3_hgen* gen_u = (u3_hgen*)neg_u;
+  u3_hreq* req_u = gen_u->req_u;
+
+  // sanity check
+  c3_assert( rec_u == req_u->rec_u );
+
+  gen_u->red = c3y;
+
+  _http_heds_free(gen_u->hed_u);
+  gen_u->hed_u = 0;
+  _cttp_bods_free(gen_u->nud_u);
+  gen_u->nud_u = 0;
+
+  if ( 0 != gen_u->bod_u ) {
+    _http_hgen_send(gen_u);
+  }
+}
+
+/* _http_start_respond(): write a [%http-response %start ...] to h2o_req_t->res
+*/
+static void
+_http_start_respond(u3_hreq* req_u,
+                    u3_noun status,
+                    u3_noun headers,
+                    u3_noun data,
+                    u3_noun complete)
+{
+  // u3l_log("start\n");
 
   if ( u3_rsat_plan != req_u->sat_e ) {
     //u3l_log("duplicate response\n");
@@ -365,19 +506,14 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
 
   h2o_req_t* rec_u = req_u->rec_u;
 
-  rec_u->res.status = sas;
-  rec_u->res.reason = (sas < 200) ? "weird" :
-                      (sas < 300) ? "ok" :
-                      (sas < 400) ? "moved" :
-                      (sas < 500) ? "missing" :
+  rec_u->res.status = status;
+  rec_u->res.reason = (status < 200) ? "weird" :
+                      (status < 300) ? "ok" :
+                      (status < 400) ? "moved" :
+                      (status < 500) ? "missing" :
                       "hosed";
 
-  u3_hhed* hed_u = _http_heds_from_noun(u3k(hed));
-
-  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
-                                        _http_hgen_dispose);
-  gen_u->neg_u = (h2o_generator_t){0, 0};
-  gen_u->hed_u = hed_u;
+  u3_hhed* hed_u = _http_heds_from_noun(u3k(headers));
 
   while ( 0 != hed_u ) {
     h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
@@ -386,21 +522,82 @@ _http_req_respond(u3_hreq* req_u, u3_noun sas, u3_noun hed, u3_noun bod)
     hed_u = hed_u->nex_u;
   }
 
-  gen_u->bod_u = _http_vec_from_octs(u3k(bod));
-  rec_u->res.content_length = gen_u->bod_u.len;
+  u3_hgen* gen_u = h2o_mem_alloc_shared(&rec_u->pool, sizeof(*gen_u),
+                                        _http_hgen_dispose);
+  gen_u->neg_u = (h2o_generator_t){ _http_hgen_proceed, _http_hgen_stop };
+  gen_u->red   = c3y;
+  gen_u->dun   = complete;
+  gen_u->bod_u = ( u3_nul == data ) ?
+                 0 : _cttp_bod_from_octs(u3k(u3t(data)));
+  gen_u->nud_u = 0;
+  gen_u->hed_u = hed_u;
+  gen_u->req_u = req_u;
+
+  req_u->gen_u = gen_u;
 
   h2o_start_response(rec_u, &gen_u->neg_u);
-  h2o_send(rec_u, &gen_u->bod_u, 1, H2O_SEND_STATE_FINAL);
 
-  {
-    u3_h2o_serv* h2o_u = req_u->hon_u->htp_u->h2o_u;
+  _http_hgen_send(gen_u);
 
-    if ( 0 != h2o_u->ctx_u.shutdown_requested ) {
-      rec_u->http1_is_persistent = 0;
+  u3z(status); u3z(headers); u3z(data); u3z(complete);
+}
+
+/* _http_continue_respond(): write a [%http-response %continue ...] to
+ * h2o_req_t->res
+*/
+static void
+_http_continue_respond(u3_hreq* req_u,
+                       /* u3_noun status, */
+                       /* u3_noun headers, */
+                       u3_noun data,
+                       u3_noun complete)
+{
+  // u3l_log("continue\n");
+
+  // XX add sequence numbers for %continue effects?
+  // Arvo does not (currently) guarantee effect idempotence!!
+
+  // response has not yet been started
+  if ( u3_rsat_ripe != req_u->sat_e ) {
+    // u3l_log("duplicate response\n");
+    return;
+  }
+
+  u3_hgen* gen_u = req_u->gen_u;
+
+  uv_timer_stop(req_u->tim_u);
+
+  // XX proposed sequence number safety check
+  // if ( sequence <= gen_u->sequence ) {
+  //   return;
+  // }
+  //
+  // c3_assert( sequence == ++gen_u->sequence );
+
+  gen_u->dun = complete;
+
+  if ( u3_nul != data ) {
+    u3_hbod* bod_u = _cttp_bod_from_octs(u3k(u3t(data)));
+
+    if ( 0 == gen_u->bod_u ) {
+      gen_u->bod_u = bod_u;
+    }
+    else {
+      u3_hbod* pre_u = gen_u->bod_u;
+
+      while ( 0 != pre_u->nex_u ) {
+        pre_u = pre_u->nex_u;
+      }
+
+      pre_u->nex_u = bod_u;
     }
   }
 
-  u3z(sas); u3z(hed); u3z(bod);
+  if ( c3y == gen_u->red ) {
+    _http_hgen_send(gen_u);
+  }
+
+  u3z(data); u3z(complete);
 }
 
 /* _http_rec_to_httq(): convert h2o_req_t to httq
@@ -461,7 +658,7 @@ _http_rec_accept(h2o_handler_t* han_u, h2o_req_t* rec_u)
     req_u->tim_u = c3_malloc(sizeof(*req_u->tim_u));
     req_u->tim_u->data = req_u;
     uv_timer_init(u3L, req_u->tim_u);
-    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 900 * 1000, 0);
+    uv_timer_start(req_u->tim_u, _http_req_timer_cb, 600 * 1000, 0);
 
     _http_req_dispatch(req_u, req);
   }
@@ -640,6 +837,9 @@ static void
 _http_serv_unlink(u3_http* htp_u)
 {
   // XX link elsewhere initially, relink on start?
+#if 0
+  u3l_log("http serv unlink %d\n", htp_u->sev_l);
+#endif
 
   if ( u3_Host.htp_u == htp_u ) {
     u3_Host.htp_u = htp_u->nex_u;
@@ -746,6 +946,10 @@ static void
 http_serv_free_cb(uv_timer_t* tim_u)
 {
   u3_http* htp_u = tim_u->data;
+
+#if 0
+  u3l_log("http serv free cb %d\n", htp_u->sev_l);
+#endif
 
   _http_serv_really_free(htp_u);
 
@@ -1125,7 +1329,7 @@ _http_init_tls(uv_buf_t key_u, uv_buf_t cer_u)
                           "RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS");
 
   // enable ALPN for HTTP 2 support
-#if H2O_USE_ALPN
+#if 0 //H2O_USE_ALPN
   {
     SSL_CTX_set_ecdh_auto(tls_u, 1);
     h2o_ssl_register_alpn_protocols(tls_u, h2o_http2_alpn_protocols);
@@ -1321,18 +1525,15 @@ u3_http_ef_bake(void)
     u3z(hot);
   }
 
-  u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
+  u3_noun pax = u3nq(u3_blip, u3i_string("http-server"), u3k(u3A->sen), u3_nul);
 
   u3_pier_plan(pax, u3nc(c3__born, ipf));
 }
 
-/* u3_http_ef_thou(): send %thou from %eyre as http response.
-*/
-void
-u3_http_ef_thou(c3_l     sev_l,
-                c3_l     coq_l,
-                c3_l     seq_l,
-                u3_noun  rep)
+static u3_hreq*
+_http_search_req(c3_l    sev_l,
+                 c3_l    coq_l,
+                 c3_l    seq_l)
 {
   u3_http* htp_u;
   u3_hcon* hon_u;
@@ -1343,30 +1544,81 @@ u3_http_ef_thou(c3_l     sev_l,
     if ( bug_w ) {
       u3l_log("http: server not found: %x\r\n", sev_l);
     }
+    return 0;
   }
   else if ( !(hon_u = _http_conn_find(htp_u, coq_l)) ) {
     if ( bug_w ) {
       u3l_log("http: connection not found: %x/%d\r\n", sev_l, coq_l);
     }
+    return 0;
   }
   else if ( !(req_u = _http_req_find(hon_u, seq_l)) ) {
     if ( bug_w ) {
       u3l_log("http: request not found: %x/%d/%d\r\n",
               sev_l, coq_l, seq_l);
     }
+    return 0;
   }
-  else {
-    u3_noun p_rep, q_rep, r_rep;
 
-    if ( c3n == u3r_trel(rep, &p_rep, &q_rep, &r_rep) ) {
-      u3l_log("http: strange response\n");
+  return req_u;
+}
+
+/* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
+*/
+void
+u3_http_ef_http_server(c3_l    sev_l,
+                       c3_l    coq_l,
+                       c3_l    seq_l,
+                       u3_noun cad)
+{
+  u3_hreq* req_u;
+
+  u3_noun tag, dat;
+  u3x_cell(cad, &tag, &dat);
+
+  //  sets server configuration
+  //
+  if ( c3y == u3rz_sing(u3i_string("set-config"), u3k(tag)) ) {
+    u3_http_ef_form(u3k(dat));
+  }
+  //  responds to an open request
+  //
+  else if ( 0 != (req_u = _http_search_req(sev_l, coq_l, seq_l)) ) {
+    if ( c3y == u3rz_sing(u3i_string("response"), u3k(tag)) ) {
+      u3_noun response = dat;
+
+      if ( c3y == u3rz_sing(u3i_string("start"), u3k(u3h(response))) ) {
+        //  Separate the %start message into its components.
+        //
+        u3_noun response_header, data, complete;
+        u3_noun status, headers;
+        u3x_trel(u3t(response), &response_header, &data, &complete);
+        u3x_cell(response_header, &status, &headers);
+
+        _http_start_respond(req_u, u3k(status), u3k(headers), u3k(data),
+                            u3k(complete));
+      }
+      else if ( c3y == u3rz_sing(u3i_string("continue"), u3k(u3h(response))) ) {
+        //  Separate the %continue message into its components.
+        //
+        u3_noun data, complete;
+        u3x_cell(u3t(response), &data, &complete);
+
+        _http_continue_respond(req_u, u3k(data), u3k(complete));
+      }
+      else if (c3y == u3rz_sing(u3i_string("cancel"), u3k(u3h(response)))) {
+        u3l_log("http: %%cancel not handled yet\n");
+      }
+      else {
+        u3l_log("http: strange response\n");
+      }
     }
     else {
-      _http_req_respond(req_u, u3k(p_rep), u3k(q_rep), u3k(r_rep));
+      u3l_log("http: strange response\n");
     }
   }
 
-  u3z(rep);
+  u3z(cad);
 }
 
 /* _http_serv_start_all(): initialize and start servers based on saved config.
@@ -1436,7 +1688,10 @@ _http_serv_start_all(void)
   {
     c3_assert( u3_none != non );
 
-    u3_noun pax = u3nq(u3_blip, c3__http, u3k(u3A->sen), u3_nul);
+    u3_noun pax = u3nq(u3_blip,
+                       u3i_string("http-server"),
+                       u3k(u3A->sen),
+                       u3_nul);
     u3_pier_plan(pax, u3nt(c3__live, non, sec));
   }
 
@@ -1535,6 +1790,18 @@ u3_http_ef_form(u3_noun fig)
   u3_Host.fig_u.for_u = for_u;
 
   _http_serv_restart();
+
+  //  The control server has now started.
+  //
+  //    If we're in daemon mode, we need to inform the parent process
+  //    that we've finished booting.
+  //
+  //    XX using this effect is a terrible heuristic;
+  //    "fully booted" should be formalized.
+  //
+  if (u3_Host.bot_f) {
+    u3_Host.bot_f();
+  }
 }
 
 /* u3_http_io_init(): initialize http I/O.
@@ -2285,7 +2552,7 @@ _proxy_ward_timer_cb(uv_timer_t* tim_u)
 static void
 _proxy_ward_plan(u3_ward* rev_u)
 {
-  u3_noun non;
+  u3_noun non, cad;
 
   {
     c3_w* non_w = c3_malloc(64);
@@ -2302,15 +2569,19 @@ _proxy_ward_plan(u3_ward* rev_u)
     rev_u->non_u = uv_buf_init((c3_c*)non_w, len_w);
   }
 
-  // XX confirm duct
-  u3_noun pax = u3nq(u3_blip, c3__http, c3__prox,
-                     u3nc(u3k(u3A->sen), u3_nul));
+  {
+    u3_noun who = u3i_chubs(2, rev_u->who_d);
+    u3_noun cha = u3nq(c3__a, c3__give, c3__prox, u3_nul);
+    u3_noun dat = u3nc(c3__that, u3nt(rev_u->por_s,
+                                      u3k(rev_u->con_u->sec),
+                                      non));
 
-  u3_noun wis = u3nc(c3__wise, u3nq(u3i_chubs(2, rev_u->who_d),
-                                    rev_u->por_s,
-                                    u3k(rev_u->con_u->sec),
-                                    non));
-  u3_pier_plan(pax, wis);
+    cad = u3nq(c3__want, who, cha, dat);
+  }
+
+  //  XX s/b c3__ames?
+  //
+  u3_pier_plan(u3nt(u3_blip, c3__newt, u3_nul), cad);
 }
 
 /* _proxy_ward_start(): start ward (ship-specific listener).
@@ -2359,7 +2630,7 @@ _proxy_ward_start(u3_pcon* con_u, u3_noun sip)
     //  XX how long?
     //
     uv_timer_init(u3L, &rev_u->tim_u);
-    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 300 * 1000, 0);
+    uv_timer_start(&rev_u->tim_u, _proxy_ward_timer_cb, 600 * 1000, 0);
   }
 
   u3z(sip);
@@ -2860,18 +3131,19 @@ _proxy_serv_start(u3_prox* lis_u)
 /* u3_http_ef_that(): reverse proxy requested connection notification.
 */
 void
-u3_http_ef_that(u3_noun tat)
+u3_http_ef_that(u3_noun sip, u3_noun tat)
 {
-  u3_noun sip, por, sec, non;
+  u3_noun por, sec, non;
 
-  if ( ( c3n == u3r_qual(tat, &sip, &por, &sec, &non) ) ||
-       ( c3n == u3ud(sip) ) ||
-       ( c3n == u3a_is_cat(por) ) ||
-       !( c3y == sec || c3n == sec ) ||
-       ( c3n == u3ud(non) ) ) {
-    u3l_log("http: that: invalid card\n");
-  }
-  else {
+  u3x_trel(tat, &por, &sec, &non);
+  c3_assert( c3y == u3a_is_cat(por) );
+  c3_assert( c3y == sec || c3n == sec );
+  c3_assert( c3y == u3ud(non) );
+
+  //  XX sip s/b validated -- could be *any* ship
+  //
+
+  {
     u3_http* htp_u;
     u3_warc* cli_u;
 
@@ -2904,5 +3176,6 @@ u3_http_ef_that(u3_noun tat)
     }
   }
 
+  u3z(sip);
   u3z(tat);
 }

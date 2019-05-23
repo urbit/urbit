@@ -506,6 +506,30 @@ _dawn_come(u3_noun stars)
     c3_c* who_c = u3r_string(who);
 
     u3l_log("boot: found comet %s\r\n", who_c);
+
+  //  enable to print and save comet private key for future reuse
+  //
+#if 0
+    {
+      u3_noun key = u3dc("scot", c3__uw, u3qe_jam(seed));
+      c3_c* key_c = u3r_string(key);
+
+      u3l_log("boot: comet private key\n  %s\n", key_c);
+
+      {
+        c3_c  pat_c[64];
+        snprintf(pat_c, 64, "%s.key", who_c + 1);
+
+        FILE* fil_u = fopen(pat_c, "w");
+        fprintf(fil_u, "%s\n", key_c);
+        fclose(fil_u);
+      }
+
+      free(key_c);
+      u3z(key);
+    }
+#endif
+
     free(who_c);
     u3z(who);
   }

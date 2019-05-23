@@ -79,10 +79,10 @@ _pier_db_bail(void* vod_p, const c3_c* err_c)
   u3l_log("disk error: %s\r\n", err_c);
 }
 
-/* _pier_db_shutdown(): close the log.
+/* u3_pier_db_shutdown(): close the log.
 */
-static void
-_pier_db_shutdown(u3_pier* pir_u)
+void
+u3_pier_db_shutdown(u3_pier* pir_u)
 {
   u3_lmdb_shutdown(pir_u->log_u->db_u);
 }
@@ -508,7 +508,7 @@ _pier_work_boot(u3_pier* pir_u, c3_o sav_o)
   u3_noun len = u3i_chubs(1, &pir_u->lif_d);
 
   if ( c3y == sav_o ) {
-    _pier_db_write_header(pir_u, who, u3k(pir_u->fak_o), len);
+    _pier_db_write_header(pir_u, u3k(who), pir_u->fak_o, u3k(len));
   }
 
   u3_noun msg = u3nq(c3__boot, who, pir_u->fak_o, len);
@@ -844,7 +844,7 @@ _pier_work_exit(uv_process_t* req_u,
   u3l_log("pier: exit: status %" PRIu64 ", signal %d\r\n", sas_i, sig_i);
   uv_close((uv_handle_t*) req_u, 0);
 
-  _pier_db_shutdown(pir_u);
+  u3_pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
 }
 
@@ -1218,6 +1218,7 @@ _pier_loop_wake(u3_pier* pir_u)
     cod_l = u3a_lush(c3__http);
     u3_http_io_talk();
     u3_http_ef_bake();
+    u3_cttp_ef_bake();
     u3a_lop(cod_l);
 
     cod_l = u3a_lush(c3__term);
@@ -1787,7 +1788,7 @@ _pier_exit_done(u3_pier* pir_u)
 {
   u3l_log("pier: exit\r\n");
 
-  _pier_db_shutdown(pir_u);
+  u3_pier_db_shutdown(pir_u);
   _pier_work_shutdown(pir_u);
   _pier_loop_exit(pir_u);
 

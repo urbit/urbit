@@ -51,6 +51,7 @@
         c3_w             seq_l;             //  sequence within connection
         u3_rsat          sat_e;             //  request state
         uv_timer_t*      tim_u;             //  timeout
+        void*            gen_u;             //  response generator
         struct _u3_hcon* hon_u;             //  connection backlink
         struct _u3_hreq* nex_u;             //  next in connection's list
         struct _u3_hreq* pre_u;             //  next in connection's list
@@ -205,7 +206,7 @@
         c3_c*            hot_c;             //  host
         c3_s             por_s;             //  port
         c3_c*            por_c;             //  port (string)
-        c3_m             met_m;             //  method
+        c3_c*            met_c;             //  method
         c3_c*            url_c;             //  url
         u3_hhed*         hed_u;             //  headers
         u3_hbod*         bod_u;             //  body
@@ -1102,21 +1103,15 @@
       /* u3_http_ef_that: send %that effect to http.
       */
         void
-        u3_http_ef_that(u3_noun tat);
+        u3_http_ef_that(u3_noun sip, u3_noun tat);
 
-      /* u3_http_ef_thou(): send %thou effect to http.
+      /* u3_http_ef_http_server(): dispatch an %http-server effect from %light.
       */
         void
-        u3_http_ef_thou(c3_l     sev_l,
-                        c3_l     coq_l,
-                        c3_l     seq_l,
-                        u3_noun  rep);
-
-      /* u3_cttp_ef_thus(): send %thus effect to cttp.
-      */
-        void
-        u3_cttp_ef_thus(c3_l    num_l,
-                        u3_noun req);
+        u3_http_ef_http_server(c3_l    sev_l,
+                               c3_l    coq_l,
+                               c3_l    seq_l,
+                               u3_noun cad);
 
       /* u3_http_ef_bake(): create new http server.
       */
@@ -1141,11 +1136,17 @@
 
     /**  HTTP client.
     **/
-      /* u3_cttp_ef_thus(): send %thus effect to cttp.
+      /**  HTTP client.
+    **/
+      /* u3_cttp_ef_http_client(): send %http-client effect to cttp.
       */
         void
-        u3_cttp_ef_thus(c3_l    num_l,
-                        u3_noun req);
+        u3_cttp_ef_http_client(u3_noun fav);
+
+      /* u3_cttp_ef_back(): initialization event on restart.
+      */
+        void
+        u3_cttp_ef_bake();
 
       /* u3_cttp_io_init(): initialize cttp I/O.
       */
@@ -1174,6 +1175,11 @@
 
     /** Pier control.
     **/
+      /* u3_pier_db_shutdown(): close the log.
+      */
+        void
+        u3_pier_db_shutdown(u3_pier* pir_u);
+
       /* u3_pier_interrupt(): interrupt running process.
       */
         void
