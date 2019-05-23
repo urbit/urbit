@@ -194,7 +194,7 @@
     %+  point-add
       (point-mul prev-s ecc-g)
     (point-mul prev-ch (snag prev-k public-keys))
-  ~&  [%added a=[prev-s ecc-g] b=[prev-ch (snag prev-k public-keys)] gs=gs]
+  ~&  [%added prev-k=prev-k a=[prev-s=prev-s 'ecc-g'] b=[prev-ch=prev-ch pubkey=(snag prev-k public-keys)] gs=gs]
   ::
   =/  hs=(unit point)
     ?~  link-state
@@ -207,7 +207,7 @@
   ::
   =/  ch=@
     (generate-challenge message gs link-state hs)
-  ~&  [%challenge-for prev-k ch]
+  ~&  [%challenge-for prev-k=prev-k ch]
   ::
   ?~  ss
     [ch challenges]
@@ -276,6 +276,8 @@
   ::
   =/  anonymity-list=(list point)
     ~(tap in anonymity-set)
+  ::
+  ~&  [%anonymity-list anonymity-list]
   ::  participants: length of :anonymity-list
   ::
   =/  participants=@u
@@ -285,6 +287,7 @@
   =/  k=@u
     ~|  [%couldnt-find my-public-key in=anonymity-list]
     (need (find [my-public-key ~] anonymity-list))
+  ~&  [%our-position-k k]
   ::  Generate linkage information if given
   ::
   =/  linkage=(unit [data=@ h=point y=point])
@@ -332,7 +335,6 @@
       chk1
       [chk1 ~]
     ==
-  ~&  [%reversed-chk-to-chk1 reversed-chk-to-chk1]
   ?>  ?=(^ reversed-chk-to-chk1)
   =/  chk=@  i.reversed-chk-to-chk1
   ::  Compute s = u - x * c mod n
@@ -348,15 +350,17 @@
     %+  reorder
       (sub participants (add k 1))
     (flop reversed-chk-to-chk1)
-  ::  ~&  [%ordered-challenges ordered-challenges]
+  ~&  [%ordered-challenges ordered-challenges]
   ?>  ?=(^ ordered-challenges)
+  ::
+  ~&  [%unordered-ss `(list @u)`[sk sk1 sk2-to-prev-sk]]
   ::
   =/  ordered-ss=(list @)
     %+  reorder
       (sub participants k)
     ^-  (list @)
     [sk sk1 sk2-to-prev-sk]
-  ::  ~&  [%ordered-ss ordered-ss]
+  ~&  [%ordered-ss ordered-ss]
   ::
   [i.ordered-challenges ordered-ss ?~(linkage ~ `y.u.linkage)]
 ::  +verify: verify signature
@@ -396,7 +400,7 @@
       (point-mul s0 ecc-g)
     ::
     (point-mul ch0.signature (head anonymity-list))
-  ~&  [%added a=[s0 ecc-g] b=[ch0.signature (head anonymity-list)] z0p=z0p]
+  ~&  [%added a=[s0=s0 'ecc-g'] b=[ch0sig=ch0.signature pubkey-head=(head anonymity-list)] z0p=z0p]
   ::  generate the linkage using public data, and the y point from the signature
   ::
   =/  linkage=(unit [data=@ h=point y=point])
@@ -417,6 +421,7 @@
   ::
   =/  ch1=@
     (generate-challenge message z0p linkage z0pp)
+  ~&  [%ch1-from-z0p ch1]
   ::
   ::  TODO: OK, verification isn't working and I suspect it's because I'm not
   ::  jamming the initial challenge list state into generate-challenge
@@ -456,7 +461,7 @@
   =|  keys=(list [pk=point sk=@])
   ::
   |-
-  ?:  =(count 3)
+  ?:  =(count 4)
     keys
   ::
   =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
@@ -467,9 +472,8 @@
 ::
 =/  key-set=(set point)
   (sy (turn keys head))
-~&  [%keys-to-use key-set]
 ::
-=/  my-key  (snag 1 keys)
+=/  my-key  (snag 0 keys)
 =/  my-public-key=point  (head my-key)
 =/  my-private-key=@  (tail my-key)
 ::
@@ -481,12 +485,12 @@
 ::
 =/  signature
   (sign message scope key-set my-public-key my-private-key eny)
+~&  [%signature signature]
 ::
 ~&  %start----------verification
 ::
 =/  verified
   (verify message scope key-set signature)
 ::
-~&  [%signature signature]
 ~&  [%verified verified]
 verified
