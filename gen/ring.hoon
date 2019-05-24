@@ -272,101 +272,128 @@
           eny=@uvJ
       ==
   ^-  ring-signature
-  ::  anonymity-list: set of public keys listified in ring order
+  |^  ~&  [%anonymity-list anonymity-list]
+      ::  k: our public-key's position in :anonymity-list
+      ::
+      =/  k=@u
+        ~|  [%couldnt-find my-public-key in=anonymity-list]
+        (need (find [my-public-key ~] anonymity-list))
+      ~&  [%our-position-k k]
+      ::  Generate linkage information if given
+      ::
+      =/  linkage=(unit [data=@ h=point y=point])
+        (generate-linkage link-scope my-private-key)
+      ::  initialize our random number generator from entropy
+      ::
+      =+  rand=~(. og eny)
+      ::  generate the random s values used in the ring
+      ::
+      =^  random-s-values=(list @)  rand
+        =|  count=@
+        =|  random-s-values=(list @)
+        |-
+        ?:  =(count (sub participants 1))
+          [random-s-values rand]
+        ::
+        =^  v=@  rand  (rads:rand ecc-n)
+        $(count (add 1 count), random-s-values [v random-s-values])
+      ::
+      ~&  [%random-sk-values random-s-values]
+      ?>  ?=(^ random-s-values)
+      =/  sk1=@  i.random-s-values
+      =/  sk2-to-prev-sk=(list @)  t.random-s-values
+      ::  Pick a random :u
+      ::
+      =^  u=@  rand
+        (rads:rand ecc-n)
+      ~&  [%random-u u]
+      ::  Compute challenge at k + 1
+      ::
+      =/  chk1=@
+        %-  generate-challenge  :*
+          message
+          (point-mul u ecc-g)
+          linkage
+          (point-mul-h u linkage)
+        ==
+      ~&  [%chk1 chk1]
+      ::  Generate challenges for [ck, ..., c1, c0, ... ck + 2, ck + 1]
+      ::
+      =/  reversed-chk-to-chk1=(list @)
+        %-  generate-challenges  :*
+          linkage
+          message
+          anonymity-list
+          sk2-to-prev-sk
+        ::
+          (mod (add k 1) participants)
+          sk1
+          chk1
+          [chk1 ~]
+        ==
+      =/  chk=@  (head reversed-chk-to-chk1)
+      ~&  [%chk-for-sk chk]
+      ~&  [%my-private-key my-private-key]
+      ::  Compute s = u - x * c mod n
+      ::
+      ::    TODO: I believe this part is wrong and that this is what is
+      ::    breaking the signature verification. For some reason, this doesn't
+      ::    result in . I must be screwing up the math here, but I don't
+      ::    understand how.
+      ::
+      ::    The aos implementation is "let sK = (u - ECDSA.private_d privKey *
+      ::    chK) `mod` n", and I believe the following is equivalent? At least
+      ::    with smaller prime numbers, testing it in both the dojo and ghci,
+      ::    they got the same results on simple things like `5 - 14 % 7`.
+      ::
+      ::    But I must be doing something wrong here because this sk doesn't
+      ::    line up with the rest of the ring.
+      ::
+      =/  sk=@  (~(dif fo ecc-n) u (mul my-private-key chk))
+      ~&  [%sk sk]
+      ~&  [%u-ecc-g (point-mul u ecc-g)]
+      ::
+      =/  ordered-challenges=(list @)
+        (order-challenges k (flop reversed-chk-to-chk1))
+      ::
+      =/  ordered-ss=(list @)  (order-ss k [sk sk1 sk2-to-prev-sk])
+      =/  ch0  (head ordered-challenges)
+      ::
+      ::::
+      ::  TODO: Debuging cruft.
+      ::
+      ::    :final-linkage should actually be equal to ch0, but isn't. The
+      ::    :final-gs point should have a different sk so that :final-linkage
+      ::    does equal :ch0; I don't believe that chk or `(snag k
+      ::    anonymity-list)` are wrong or editable.
+      ::
+      =/  final-gs=point
+        %+  point-add
+          (point-mul sk ecc-g)
+        (point-mul chk (snag k anonymity-list))
+      ~&  [%final-gs final-gs]
+      =/  final-linkage
+        (generate-challenge message final-gs ~ ~)
+      ~&  [%final-linkage final-linkage]
+      ::::
+      ::
+      [ch0 ordered-ss ?~(linkage ~ `y.u.linkage)]
   ::
-  =/  anonymity-list=(list point)
+  ++  anonymity-list
     ~(tap in anonymity-set)
   ::
-  ~&  [%anonymity-list anonymity-list]
-  ::  participants: length of :anonymity-list
-  ::
-  =/  participants=@u
+  ++  participants
     (lent anonymity-list)
-  ::  k: our public-key's position in :anonymity-list
   ::
-  =/  k=@u
-    ~|  [%couldnt-find my-public-key in=anonymity-list]
-    (need (find [my-public-key ~] anonymity-list))
-  ~&  [%our-position-k k]
-  ::  Generate linkage information if given
+  ++  order-challenges
+    |=  [k=@ ch=(list @)]
+    (reorder (sub participants (add k 1)) ch)
   ::
-  =/  linkage=(unit [data=@ h=point y=point])
-    (generate-linkage link-scope my-private-key)
-  ::  initialize our random number generator from entropy
-  ::
-  =+  rand=~(. og eny)
-  ::  generate the random s values used in the ring
-  ::
-  =^  random-s-values=(list @)  rand
-    =|  count=@
-    =|  random-s-values=(list @)
-    |-
-    ?:  =(count (sub participants 1))
-      [random-s-values rand]
-    ::
-    =^  v=@  rand  (rads:rand ecc-n)
-    $(count (add 1 count), random-s-values [v random-s-values])
-  ::
-  ~&  [%random-sk-values random-s-values]
-  ?>  ?=(^ random-s-values)
-  =/  sk1=@  i.random-s-values
-  =/  sk2-to-prev-sk=(list @)  t.random-s-values
-  ::  Pick a random :u
-  ::
-  =^  u=@  rand
-    (rads:rand ecc-n)
-  ~&  [%random-u u]
-  ::  Compute challenge at k + 1
-  ::
-  =/  chk1=@
-    (generate-challenge message (point-mul u ecc-g) linkage (point-mul-h u linkage))
-  ~&  [%chk1 chk1]
-  ::  Generate challenges for [ck, ..., c1, c0, ... ck + 2, ck + 1]
-  ::
-  =/  reversed-chk-to-chk1=(list @)
-    %-  generate-challenges  :*
-      linkage
-      message
-      anonymity-list
-      sk2-to-prev-sk
-    ::
-      (mod (add k 1) participants)
-      sk1
-      chk1
-      [chk1 ~]
-    ==
-  ?>  ?=(^ reversed-chk-to-chk1)
-  =/  chk=@  i.reversed-chk-to-chk1
-  ::  Compute s = u - x * c mod n
-  ::
-  =/  sk=@
-    ::  Naively, we'd want to run `(mod (sub u (mul my-private-key chk)) ecc-n)`,
-    ::  but this causes an integer underflow because we're in unsigned integers.
-    ::
-    (~(dif fo ecc-n) u (mul my-private-key chk))
-  ~&  [%sk sk]
-  ::
-  =/  ordered-challenges=(list @)
-    %+  reorder
-      (sub participants (add k 1))
-    (flop reversed-chk-to-chk1)
-  ~&  [%ordered-challenges ordered-challenges]
-  ?>  ?=(^ ordered-challenges)
-  ::
-  ~&  [%unordered-ss `(list @u)`[sk sk1 sk2-to-prev-sk]]
-  ::
-  =/  ordered-ss=(list @)
-    %+  reorder
-      (sub participants k)
-    ^-  (list @)
-    [sk sk1 sk2-to-prev-sk]
-  ~&  [%ordered-ss ordered-ss]
-  ::
-  [i.ordered-challenges ordered-ss ?~(linkage ~ `y.u.linkage)]
+  ++  order-ss
+    |=  [k=@ sk-to-prev-sk=(list @)]
+    (reorder (sub participants k) sk-to-prev-sk)
+  --
 ::  +verify: verify signature
-::
-::    TODO: I really feel like I should have implemented +verify first because
-::    it would have forced me to work through the 
 ::
 ++  verify
   |=  $:  message=*
@@ -423,10 +450,6 @@
     (generate-challenge message z0p linkage z0pp)
   ~&  [%ch1-from-z0p ch1]
   ::
-  ::  TODO: OK, verification isn't working and I suspect it's because I'm not
-  ::  jamming the initial challenge list state into generate-challenge
-  ::  correctly?
-  ::
   =/  challenges
     %-  generate-challenges  :*
       linkage
@@ -467,7 +490,12 @@
   =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
   =/  pk=point  (need (deco:ed (puck:ed:crypto sk)))
   ::
-  $(keys [[pk sk] keys], count +(count), key-num +(key-num))
+  ::  TODO: My understanding is that when we're using these things as points
+  ::  and scalars, the scalar of my private key is the thing I originally
+  ::  multiplied by the curve's g parameter. (But I tried it the other way just
+  ::  in case.)
+  ::
+  $(keys [[pk key-num] keys], count +(count), key-num +(key-num))
 ::  create the key set the interface expects
 ::
 =/  key-set=(set point)
