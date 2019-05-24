@@ -11,7 +11,10 @@
 |%
 ++  state
   $:  cli=shell
+      inp=in-progress
   ==
+::
+::  state & commands
 ::
 ++  shell
   $:  id=bone
@@ -19,7 +22,7 @@
   ==
 ::
 ++  command
-  $%  [%generate =path =network nonce=@ud =batch]
+  $%  [%generate =path =network as=address =batch]
   ==
 ::
 ++  network
@@ -31,7 +34,7 @@
 ::
 ++  batch
   $%  [%single =call]
-      [%deed as=address deeds-json=cord]
+      [%deed deeds-json=cord]
       [%lock what=(list ship) to=address =lockup]
   ==
 ::
@@ -60,6 +63,141 @@
       [%set-transfer-proxy who=ship proxy=address]
   ==
 ::
+::  monadic structures
+::
+::  in-progress: monad currently in progress
+::
+++  in-progress
+  %-  unit
+  $%  [%command command=eval-form:eval:null-glad]
+  ==
+::
+::  null-glad: monad that produces nothing, "just effects"
+::
+++  null-glad   (glad ,~)
+::
+::  glad-input: ~ for initialization, value for node response
+::
+++  glad-input  (unit response:rpc:jstd)
+::
+::  glad-output-raw: moves + intermediate monad state/result
+::
+++  glad-output-raw
+  |*  a=mold
+  $~  [~ %done *a]
+  $:  moves=(list move)
+      $=  next
+      $%  [%wait ~]
+          [%cont self=(glad-form-raw a)]
+          [%fail err=tang]
+          [%done value=a]
+      ==
+  ==
+::
+::  glad-form-raw: shape of monad function
+::
+++  glad-form-raw
+  |*  a=mold
+  $-(glad-input (glad-output-raw a))
+::
+::  glad-fail: procudes failure result
+::
+++  glad-fail
+  |=  err=tang
+  |=  glad-input
+  [~ %fail err]
+::
+::  glad: monad object for monads that produce moves at intermediate steps
+::
+++  glad
+  |*  a=mold
+  |%
+  ++  output  (glad-output-raw a)
+  ++  form    (glad-form-raw a)
+  ::
+  ::  pure: produce intermediate result
+  ::
+  ++  pure
+    |=  arg=a
+    ^-  form
+    |=  glad-input
+    [~ %done arg]
+  ::
+  ::  bind: run m-b until it's done. once done, call fun with its result
+  ::
+  ++  bind
+    |*  b=mold
+    |=  [m-b=(glad-form-raw b) fun=$-(b form)]
+    ^-  form
+    |=  input=glad-input
+    =/  b-res=(glad-output-raw b)
+      (m-b input)
+    ^-  output
+    :-  moves.b-res
+    ?-  -.next.b-res
+      %wait  [%wait ~]
+      %cont  [%cont ..$(m-b self.next.b-res)]
+      %fail  [%fail err.next.b-res]
+      %done  [%cont (fun value.next.b-res)]
+    ==
+  ::
+  ::  eval: call take with the latest input to kick monad object into action
+  ::
+  ++  eval
+    |%
+    +$  eval-form
+      $:  =form
+      ==
+    ::
+    ::  from-form:  eval-form from form
+    ::
+    ++  from-form
+      |=  =form
+      ^-  eval-form
+      form
+    ::
+    ::  eval-result: how far +take got
+    ::
+    +$  eval-result
+      $%  [%next ~]
+          [%fail err=tang]
+          [%done value=a]
+      ==
+    ::
+    ::  take: run the monad operations as far as they can go right now
+    ::
+    ++  take
+      =|  moves=(list move)
+      |=  [=eval-form =our=wire =glad-input]
+      ^-  [[(list move) =eval-result] _eval-form]
+      ::  run the current function
+      ::
+      =/  =output  (form.eval-form glad-input)
+      ::  add moves
+      ::
+      =.  moves
+        (weld moves moves.output)
+      ::  case-wise handle next steps
+      ::
+      ?-  -.next.output
+        %wait  [[moves %next ~] eval-form]
+        %fail  [[moves %fail err.next.output] eval-form]
+        %done  [[moves %done value.next.output] eval-form]
+      ::
+          %cont
+        ::  recurse to run continuation (next function in monad),
+        ::  which is always started off with "initialization" input
+        ::
+        %_  $
+          form.eval-form   self.next.output
+          glad-input       ~
+        ==
+      ==
+    --
+  --
+::
+::  effects
+::
 ++  move  (pair bone card)
 ++  card
   $%  [%hiss wire ~ mark %hiss hiss:eyre]
@@ -68,6 +206,7 @@
       [%wait wire @da]
   ==
 ::
+::  constants
 ::
 ++  ecliptic  `address`0x6ac0.7b7c.4601.b5ce.11de.8dfe.6335.b871.c7c4.dd4d
 --
@@ -80,19 +219,157 @@
   ^-  (quip move _this)
   [~ ..prep]
 ::
+++  sigh-tang-nonce
+  |=  [=wire =tang]
+  ^-  (quip move _this)
+  =.  tang  [leaf+"claz failed" tang]
+  [~ (fail-command tang)]
+::
+++  sigh-json-rpc-response-command
+  |=  [=wire =response:rpc:jstd]
+  ^-  (quip move _this)
+  (take-command-sigh wire `response)
+::
+++  take-command-sigh
+  |=  [=wire response=glad-input]
+  ^-  (quip move _this)
+  ::  we expect this to be called only if we have an in-progress monad
+  ::
+  ?~  inp
+    ~|(%no-in-progress !!)
+  :: ?.  ?=(%command -.u.inp)  ::NOTE  mint-vain rn
+  ::   ~|([%unexpected-response -.u.inp] !!)
+  ::  kick in-progress monad with response, updating it with the next callable
+  ::  it spits out
+  ::
+  =/  m  null-glad
+  =^  r=[moves=(list move) =eval-result:eval:m]  command.u.inp
+    (take:eval:m command.u.inp wire response)
+  :-  moves.r
+  ::  continue depending on the eval result
+  ::
+  ?-  -.eval-result.r
+    ::  not done, don't change app state further
+    ::
+    %next  this
+    ::  failed, clean & update app state
+    ::
+    %fail  (fail-command err.eval-result.r)
+    ::  succeeded, finalize & update app state
+    ::
+    %done  (done-command value.eval-result.r)
+  ==
+::
+::  fail-command: handle fail of nonce-fetching monad
+::
+++  fail-command
+  |=  err=tang
+  ^+  this
+  ~&  'command processing failed'
+  ::TODO  error printing
+  this(inp ~)
+::
+::  done-command: handle result of nonce-fetching monad
+::
+++  done-command
+  |=  ~
+  ^+  this
+  ~&  %command-done
+  this(inp ~)
+::
 ++  poke-noun
   |=  =command
   ^-  (quip move _this)
+  ::  create active monad, store in state
+  ::
+  =.  inp
+    %-  some
+    :-  %command
+    %-  from-form:eval:null-glad
+    (deal-with-command command)
+  ::  kick off monad
+  ::
+  (take-command-sigh / ~)
+::
+::  monadic helpers
+::
+::  emit effects from monad without further processing
+::
+++  just-do
+  |=  =move
+  ^-  form:null-glad
+  |=  glad-input
+  [[move ~] %done ~]
+::
+::  get-next-nonce: monad function for fetching a nonce
+::
+++  get-next-nonce
+  |=  for=address
+  =/  m  (glad ,@ud)
+  ^-  form:m
+  ;<  =json  bind:m
+    %+  do-request-expect-json-result  `'some-id'
+    ^-  request
+    [%eth-get-transaction-count for]
+  ^-  form:m
+  ?.  ?=(%s -.json)
+    (glad-fail *tang) ::TODO  proper error, "unexpected json"
+  %-  pure:m
+  (rash p.json ;~(pfix (jest '0x') hex))
+::
+++  do-hiss
+  |=  [=mark =hiss:eyre]
+  ^-  form:null-glad
+  |=  glad-input
+  ^-  output:null-glad
+  =-  [[[ost.bowl -] ~] %done ~]
+  ::TODO  wire in sample?
+  [%hiss /command ~ %json-rpc-response %hiss hiss]
+::
+++  do-request
+  |=  [rid=(unit @t) =request]
+  %+  do-hiss  %json-rpc-response
+  ^-  hiss:eyre
+  %+  json-request
+    ::TODO  vary per network
+    (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+  (request-to-json rid request)
+::
+++  expect-response
+  =/  m  (glad response:rpc:jstd)
+  ^-  form:m
+  |=  in=glad-input
+  ?~  in  [~ %wait ~]
+  [~ %done u.in]
+::
+++  do-request-expect-json-result
+  |=  [rid=(unit @) =request]
+  =/  m  (glad json)
+  ;<  ~  bind:m
+    (do-request rid request)
+  ;<  =response:rpc:jstd  bind:m
+    expect-response
+  ?.  ?=(%result -.response)
+    (glad-fail *tang) ::TODO  make pretty error message
+  (pure:m res.response)
+::
+::  transaction generation logic
+::
+++  deal-with-command
+  |=  =command
+  =/  m  null-glad
+  ^-  form:m
+  ;<  nonce=@ud  bind:m  (get-next-nonce as.command)
+  ^-  form:m
+  %-  just-do
   ?-  -.command
       %generate
-    =-  [[- ~] this]
     %+  write-file-transactions
       path.command
-    ::TODO  probably just store network and nonce in tmp state?
     ?-  -.batch.command
-      %single  [(single [network nonce +.batch]:command) ~]
-      %deed    (deed [network nonce +.batch]:command)
-      %lock    (lock [network nonce +.batch]:command)
+      %single  [(single nonce [network as +.batch]:command) ~]
+      %deed    (deed nonce [network as +.batch]:command)
+      %lock    (lock nonce [network as +.batch]:command)
     ==
   ==
 ::
@@ -139,7 +416,7 @@
   ==
 ::
 ++  single
-  |=  [=network nonce=@ud =call]
+  |=  [nonce=@ud =network as=address =call]
   ^-  transaction
   =-  (do network nonce ecliptic -)
   ?-  -.call
@@ -154,7 +431,7 @@
   ==
 ::
 ++  deed
-  |=  [=network nonce=@ud as=address deeds-json=cord]
+  |=  [nonce=@ud =network as=address deeds-json=cord]
   ^-  (list transaction)
   =/  deeds=(list [=ship rights])
     (parse-registration deeds-json)
@@ -235,7 +512,7 @@
 ::      1) we need to batch-transfer stars to the ceremony
 ::      2) (not forget to register and) deposit already-active stars
 ++  lock
-  |=  [=network nonce=@ud what=(list ship) to=address =lockup]
+  |=  [nonce=@ud =network as=address what=(list ship) to=address =lockup]
   ^-  (list transaction)
   ~&  %assuming-lockup-done-by-ceremony
   ~&  %assuming-ceremony-controls-parents
