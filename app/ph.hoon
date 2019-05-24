@@ -164,7 +164,9 @@
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  %checking-file-touched
         (check-file-touched ~marbud %home file)
+      ~&  %checked-file-touched
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~bud ~marbud)
       ;<  [eth-node=_eth-node ~]  bind:m

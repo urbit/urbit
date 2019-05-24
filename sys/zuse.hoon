@@ -549,22 +549,22 @@
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
   ++  miso                                              ::  ankh delta
-    $%  {$del ~}                                       ::  delete
+    $%  {$del ~}                                        ::  delete
         {$ins p/cage}                                   ::  insert
         {$dif p/cage}                                   ::  mutate from diff
         {$mut p/cage}                                   ::  mutate from raw
     ==                                                  ::
   ++  misu                                              ::  computed delta
-    $%  {$del ~}                                       ::  delete
+    $%  {$del ~}                                        ::  delete
         {$ins p/cage}                                   ::  insert
         {$dif p/lobe q/cage}                            ::  mutate from diff
     ==                                                  ::
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
-  ++  moat  {p/case q/case r/path}                      ::  change range
+  +$  moat  [from=case to=case =path]                   ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
-  ++  mood  {p/care q/case r/path}                      ::  request in desk
-  ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
+  +$  mood  [=care =case =path]                         ::  request in desk
+  +$  mool  [=case paths=(set (pair care path))]        ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {%& p/soba}                                     ::  delta
         {%| p/@tas}                                     ::  label
@@ -585,10 +585,10 @@
         r/cage                                          ::  data
     ==                                                  ::
   ++  rave                                              ::  general request
-    $%  {$sing p/mood}                                  ::  single request
-        {$next p/mood}                                  ::  await next version
-        {$mult p/mool}                                  ::  next version of any
-        {$many p/? q/moat}                              ::  track range
+    $%  [%sing =mood]                                   ::  single request
+        [%next =mood]                                   ::  await next version
+        [%mult =mool]                                   ::  next version of any
+        [%many track=? =moat]                           ::  track range
     ==                                                  ::
   ++  real                                              ::  resolved permissions
     $:  mod/?($black $white)                            ::
