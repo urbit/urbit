@@ -5,7 +5,7 @@ module Vere.Http.Server where
 import ClassyPrelude
 import Vere.Http
 
-import Control.Concurrent (ThreadId, killThread)
+import Control.Concurrent (ThreadId, killThread, forkIO)
 import Data.Noun.Atom
 import Data.Noun.Pill (packAtom)
 import qualified Network.HTTP.Types as H
@@ -82,7 +82,8 @@ startServer s c = do
 
   -- we need to do the dance where we do the socket checking dance. or shove a
   -- socket into it.
-  W.runTLS tls W.defaultSettings (app s)
+  tid <- forkIO $ W.runTLS tls W.defaultSettings (app s)
+  putMVar (thread s) (Just (c, tid))
 
 app :: State -> W.Application
 app s req respond = bracket_
