@@ -55,4 +55,3 @@ nockToNoun = go
 
     ho (Tag x) = (Atom x)
     ho (Assoc x n) = (Cell (Atom x) (go n))
-

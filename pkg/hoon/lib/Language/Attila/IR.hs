@@ -63,9 +63,9 @@ data Exp
   | Inc Exp
   | Eke Exp Exp
   | Tup (Vec Exp)
-  | Get {- (Vec Ty) -} Nat Exp
+  | Get Nat (Vec Ty) Exp
   | Cho (Vec Ty) Nat Exp
-  | Eat {- (Vec Ty) -} Exp (Vec Exp)
+  | Eat (Vec Ty) Exp (Vec Exp)
   deriving (Eq, Ord, Show)
 
 --------------------------------------------------------------------------------
@@ -95,44 +95,36 @@ unify = toList >>> \case []   -> pure tVoid
 --------------------------------------------------------------------------------
 
 infer :: Ty -> Exp -> Infer Ty
-infer sut Sub              = pure sut
-infer sut (Lam lub b)      = Nok lub <$> infer lub b
-infer sut (Wit ty new bod) = do newSub <- infer sut new
-                                unify [ty, newSub]
-                                infer ty bod
-infer sut (Fir new bod)    = do newSub <- infer sut new
-                                infer newSub bod
-infer _   (Lit _)          = pure Nat
-infer sut (Inc exp)        = do eTy <- infer sut exp
-                                unify [eTy, Nat]
-infer sut (Eke ex1 ex2)    = do ty1 <- infer sut ex1
-                                ty2 <- infer sut ex2
-                                unify [Nat, ty1, ty2]
-infer sut (Tup exps)       = Mul <$> traverse (infer sut) exps
-infer sut (Get n tup)      = infer sut tup >>= inferGet n
-infer sut (Cho tys n exp)  = infer sut exp >>= inferCho tys n
-infer sut (Eat exp bods)   = inferEat sut exp bods
-
-inferGet :: Nat -> Ty -> Infer Ty
-inferGet n ty = do
-  tys <- ty & \case Mul tys -> pure tys
-                    _       -> fail ("mul-bad-ty: " <> show ty)
-  maybe (fail "mul-bad-index") pure (tys !? fromIntegral n)
-
-inferCho :: Vec Ty -> Nat -> Ty -> Infer Ty
-inferCho tys n ty = do
-  tu <- maybe (fail "cho-bad-index") pure (tys !? fromIntegral n)
-  unify [tu, ty]
-  pure (Sum tys)
-
-inferEat :: Ty -> Exp -> Vec Exp -> Infer Ty
-inferEat sub exp bods = do
-    Sum tys <- infer sub exp
-    guardInfer "eat-bad-len" (length tys == length bods)
-    unify =<< zipWithM checkBranch tys bods
-  where
-    checkBranch :: Ty -> Exp -> Infer Ty
-    checkBranch brTy exp = infer (tPair (tPair Nat brTy) sub) exp
+infer sut Sub                = pure sut
+infer sut (Lam lub b)        = Nok lub <$> infer lub b
+infer sut (Wit ty new bod)   = do newSub <- infer sut new
+                                  unify [ty, newSub]
+                                  infer ty bod
+infer sut (Fir new bod)      = do newSub <- infer sut new
+                                  infer newSub bod
+infer _   (Lit _)            = pure Nat
+infer sut (Inc exp)          = do eTy <- infer sut exp
+                                  unify [eTy, Nat]
+infer sut (Eke ex1 ex2)      = do ty1 <- infer sut ex1
+                                  ty2 <- infer sut ex2
+                                  unify [Nat, ty1, ty2]
+infer sut (Tup exps)         = Mul <$> traverse (infer sut) exps
+infer sut (Get n tys tup)    = do tupTy <- infer sut tup
+                                  unify [Mul tys, tupTy]
+                                  maybe (fail "mul-bad-index") pure
+                                    (tys !? fromIntegral n)
+infer sut (Cho tys n exp)    = do ty <- infer sut exp
+                                  tu <- maybe (fail "cho-bad-index") pure
+                                          (tys !? fromIntegral n)
+                                  unify [tu, ty]
+                                  pure (Sum tys)
+infer sut (Eat tys exp bods) = do expTy <- infer sut exp
+                                  unify [expTy, Sum tys]
+                                  guardInfer "eat-bad-len"
+                                    (length tys == length bods)
+                                  let checkBranch br exp =
+                                        infer (tPair (tPair Nat br) sut) exp
+                                  unify =<< zipWithM checkBranch tys bods
 
 --------------------------------------------------------------------------------
 
@@ -161,9 +153,17 @@ tup2 x y = Tup [x, y]
 
 choEx, tupEx, widEx, eatEx :: Exp
 choEx = Cho [Nat, Nat] 0 (Lit 0)
-tupEx = Get 0 $ Get 1 $ tup2 (Lit 3) $ tup2 (Lit 4) (Lit 5)
 widEx = Wit Nat (Lit 3) Sub
-eatEx = Eat choEx [Get 1 (Get 0 Sub), Inc (Lit 0)]
+tupEx = Get 0 [Nat, Nat]
+      $ Get 1 [Nat, Mul [Nat, Nat]]
+      $ tup2 (Lit 3) (tup2 (Lit 4) (Lit 5))
+
+eatEx = Eat [Nat, Nat]
+          choEx
+          [ Get 1 [Nat, Nat]
+              (Get 0 [Mul [Nat, Nat], tTop] Sub)
+          , Inc (Lit 0)
+          ]
 
 
 --------------------------------------------------------------------------------
@@ -173,17 +173,13 @@ indent = unlines . fmap ("        " <>) . lines
 
 try :: Text -> Exp -> IO ()
 try m e = do
-  putStrLn ("<" <> m <> ">")
-  putStrLn "    <exp>"
+  putStrLn (m <> ":")
+  putStrLn "    exp:"
   putStr (pack $ indent (ppShow e))
-  putStrLn "    </exp>"
-  putStrLn "    <type>"
+  putStrLn "    type:"
   putStr (pack $ indent (ppShow (runInfer (infer tTop e))))
-  putStrLn "    </type>"
-  putStrLn "    <nock>"
+  putStrLn "    nock:"
   putStr (pack $ indent (ppShow (compile tTop e)))
-  putStrLn "    </nock>"
-  putStrLn ("</" <> m <> ">\n")
 
 tryTup :: IO ()
 tryTup = try "tup" tupEx
@@ -215,27 +211,19 @@ compile sut = \case
   Cho tys n exp -> do
     nock <- compile sut exp
     pure (NCons (NOneConst (Atom (fromIntegral n))) nock)
-  Get n exp -> do
-    vecTy   <- runInfer (infer sut exp)
+  Get n tys exp -> do
     vecNock <- compile sut exp
-    axis    <- case vecTy of
-                 Mul tys -> pure (getAxis n (fromIntegral $ length tys))
-                 ty      -> Left ("get-not-mul: " <> tshow ty)
+    axis    <- pure (getAxis n (fromIntegral $ length tys))
     pure (NSevenThen vecNock (NZeroAxis $ fromIntegral axis))
 
   Tup xs -> do
     nock <- genCons sut (toList xs)
     pure nock
 
-  Eat exp brs -> do
-    headTy     <- runInfer (infer sut exp)
+  Eat tys exp brs -> do
     nock       <- compile sut exp
-    newSubjTys <- headTy & \case
-                    Sum tys -> pure (tys <&> (\x -> tPair (tPair Nat x) sut))
-                    _       -> Left "you are dumb"
-
-    nocks <- zipWithM compile newSubjTys brs
-
+    newSubjTys <- pure (tys <&> (\x -> tPair (tPair Nat x) sut))
+    nocks      <- zipWithM compile newSubjTys brs
     pure (NEightPush nock (cases (toList nocks)))
 
   Eke x y -> do
