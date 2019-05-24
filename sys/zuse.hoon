@@ -7913,6 +7913,7 @@
                   top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-changes fid=@ud]
+              [%eth-get-transaction-count adr=address]
               [%eth-send-raw-transaction dat=@ux]
           ==
         ::
@@ -8097,6 +8098,9 @@
       ::
           %eth-get-filter-changes
         ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
+      ::
+          %eth-get-transaction-count
+        ['eth_getTransactionCount' (tape (address-to-hex adr.req)) ~]
       ::
           %eth-send-raw-transaction
         ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
