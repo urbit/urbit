@@ -35,7 +35,8 @@ data Ty
   - Sub -- Reference the current subject.
   - Lam -- A formula (with the type for its subject)
   - Wit -- Run an expression against a new subject.
-  - Fir -- Run a formula against a subject.
+  - Eva -- Eval a formula against a subject.
+  - Fir -- Fire an arm of a core.
 
   Atoms:
 
@@ -58,7 +59,8 @@ data Exp
   = Sub
   | Lam Ty Exp
   | Wit Ty Exp Exp
-  | Fir Exp Exp
+  | Eva Exp Exp
+  | Fir Nat (Ty, Vec Ty) Exp
   | Lit Nat
   | Inc Exp
   | Eke Exp Exp
@@ -92,39 +94,79 @@ unify = toList >>> \case []   -> pure tVoid
                                     guardInfer err (all (== x) xs)
                                     pure x
 
+unifyVec :: Vec Ty -> Vec Ty -> Infer (Vec Ty)
+unifyVec xs ys = do
+  let lenMsg = "unify-bad-len: " <> show (xs, ys)
+  guardInfer lenMsg (length xs == length ys)
+  zipWithM (\x y -> unify [x,y]) xs ys
+
 --------------------------------------------------------------------------------
 
+battery :: Ty -> Infer (Vec Ty)
+battery (Mul [Mul arms, _ctx]) = pure arms
+battery ty                     = fail ("battery-not-core: " <> show ty)
+
+arm :: Nat -> Ty -> Vec Ty -> Infer (Nat, Ty, Ty)
+arm n cor arms = do
+  let len = fromIntegral (length arms)
+  arms !? fromIntegral n & \case
+    Nothing ->
+      fail ("arm-bad-idx: " <> show (n, arms))
+    Just (Nok nokSut nokRes) -> do
+      unify [cor, nokSut]
+      pure (getAxis n len, nokSut, nokRes)
+    Just armTy ->
+      fail ("arm-not-nok: " <> show armTy)
+
+nokResTy :: Ty -> Ty -> Infer Ty
+nokResTy sut (Nok nSut nRes) = unify [sut, nSut] $> nRes
+nokResTy _   ty              = fail ("not-nok: " <> show ty)
+
 infer :: Ty -> Exp -> Infer Ty
-infer sut Sub                = pure sut
-infer sut (Lam lub b)        = Nok lub <$> infer lub b
-infer sut (Wit ty new bod)   = do newSub <- infer sut new
-                                  unify [ty, newSub]
-                                  infer ty bod
-infer sut (Fir new bod)      = do newSub <- infer sut new
-                                  infer newSub bod
-infer _   (Lit _)            = pure Nat
-infer sut (Inc exp)          = do eTy <- infer sut exp
-                                  unify [eTy, Nat]
-infer sut (Eke ex1 ex2)      = do ty1 <- infer sut ex1
-                                  ty2 <- infer sut ex2
-                                  unify [Nat, ty1, ty2]
-infer sut (Tup exps)         = Mul <$> traverse (infer sut) exps
-infer sut (Get n tys tup)    = do tupTy <- infer sut tup
-                                  unify [Mul tys, tupTy]
-                                  maybe (fail "mul-bad-index") pure
-                                    (tys !? fromIntegral n)
-infer sut (Cho tys n exp)    = do ty <- infer sut exp
-                                  tu <- maybe (fail "cho-bad-index") pure
-                                          (tys !? fromIntegral n)
-                                  unify [tu, ty]
-                                  pure (Sum tys)
-infer sut (Eat tys exp bods) = do expTy <- infer sut exp
-                                  unify [expTy, Sum tys]
-                                  guardInfer "eat-bad-len"
-                                    (length tys == length bods)
-                                  let checkBranch br exp =
-                                        infer (tPair (tPair Nat br) sut) exp
-                                  unify =<< zipWithM checkBranch tys bods
+infer sut = \case
+  Sub -> do
+    pure sut
+  Lam lub b -> do
+    Nok lub <$> infer lub b
+  Wit ty new bod -> do
+    newSut <- infer sut new
+    unify [ty, newSut]
+    infer ty bod
+  Eva new bod -> do
+    sut' <- infer sut new
+    infer sut bod >>= nokResTy sut
+  Fir n (corTy, armTys) cor -> do
+    corTy'  <- infer sut cor
+    armTys' <- battery corTy
+    unify [corTy, corTy']
+    unifyVec armTys armTys'
+    view _3 <$> arm n corTy armTys
+  Lit _  -> do
+    pure Nat
+  Inc exp -> do
+    eTy <- infer sut exp
+    unify [eTy, Nat]
+  Eke ex1 ex2 -> do
+    ty1 <- infer sut ex1
+    ty2 <- infer sut ex2
+    unify [Nat, ty1, ty2]
+  Tup exps -> do
+    Mul <$> traverse (infer sut) exps
+  Get n tys tup -> do
+    tupTy <- infer sut tup
+    unify [Mul tys, tupTy]
+    maybe (fail "mul-bad-index") pure (tys !? fromIntegral n)
+  Cho tys n exp -> do
+    ty <- infer sut exp
+    tu <- maybe (fail "cho-bad-index") pure (tys !? fromIntegral n)
+    unify [tu, ty]
+    pure (Sum tys)
+  Eat tys exp bods -> do
+    expTy <- infer sut exp
+    unify [expTy, Sum tys]
+    guardInfer "eat-bad-len" (length tys == length bods)
+    let checkBranch br exp = infer (tPair (tPair Nat br) sut) exp
+    unify =<< zipWithM checkBranch tys bods
 
 --------------------------------------------------------------------------------
 
@@ -134,8 +176,9 @@ tPair x y = Mul [x,y]
 tSum :: Ty -> Ty -> Ty
 tSum x y = Sum [x, y]
 
-tUnit, tVoid, tAtom, tNoun, tOpt, tEith, tBool, tOrd, tTop :: Ty
+tUnit, tBox, tVoid, tAtom, tNoun, tOpt, tEith, tBool, tOrd, tTop :: Ty
 tUnit = Mul []
+tBox  = All $ Mul [Ref 0]
 tVoid = Sum []
 tAtom = Nat
 tNoun = Fix $ tSum Nat (tSum (Ref 0) (Ref 0))
@@ -198,7 +241,10 @@ tryAll = tryTup >> tryWit >> tryCho >> tryEat
 
 --------------------------------------------------------------------------------
 
--- TODO Record layout.
+{-
+  - TODO Record layout (tree instead of list).
+  - TODO Sum layout (use all of atom, atom-head, and cell-head).
+-}
 compile :: Ty -> Exp -> Either Text Nock
 compile sut = \case
   Sub ->
@@ -215,35 +261,32 @@ compile sut = \case
     vecNock <- compile sut exp
     axis    <- pure (getAxis n (fromIntegral $ length tys))
     pure (NSevenThen vecNock (NZeroAxis $ fromIntegral axis))
-
   Tup xs -> do
     nock <- genCons sut (toList xs)
     pure nock
-
   Eat tys exp brs -> do
     nock       <- compile sut exp
     newSubjTys <- pure (tys <&> (\x -> tPair (tPair Nat x) sut))
     nocks      <- zipWithM compile newSubjTys brs
     pure (NEightPush nock (cases (toList nocks)))
-
   Eke x y -> do
     nock1 <- compile sut x
     nock2 <- compile sut y
     pure (NFiveEq nock1 nock2)
-
   Wit sut' ex1 ex2 -> do
     nock1 <- compile sut ex1
     nock2 <- compile sut' ex2
     pure (NSevenThen nock1 nock2)
-
   Lam ty exp -> do
     NOneConst . nockToNoun <$> compile ty exp
-
-  Fir sub for -> do
+  Eva sub for -> do
     subNock <- compile sut sub
     forNock <- compile sut for
     pure (NTwoCompose subNock forNock)
-    -- TODO Nock nine
+  Fir n (corTy, armTys) cor -> do
+    getCore <- compile sut cor
+    (a,_,_) <- runInfer (arm n corTy armTys)
+    pure (NNineInvoke (fromIntegral a) getCore)
 
 zapZap :: Nock
 zapZap = NZeroAxis 0
