@@ -321,7 +321,7 @@
   ::  input if it fits or a default value if it doesn't.
   ::
   ::  examples: * @ud ,[p=time q=?(%a %b)]
-  _|~(* +<)
+  $~(* $-(* *))
 ::
 +*  pair  [head tail]
   ::    dual tuple
@@ -16735,13 +16735,14 @@
           :+  %brtr
             :-  %bscl
             =-  ?>(?=(^ -) -)
+            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
+            ::  ie {term}=mold
+            ::
             %+  turn  c
             |=  =term
             ^-  spec
             =/  tar  [%base %noun]
-            :+  %bsts  term
-            :+  %bssg  [%brts tar $/6]
-            [%bshp tar tar]
+            [%bsts term [%bssg tar [%bshp tar tar]]]
           [%ktcl [%made [b c] e]]
         ;~  pfix  (jest '+*')
           ;~  plug
