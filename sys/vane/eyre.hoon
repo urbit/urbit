@@ -12,53 +12,61 @@
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
-          $%  $:  $a                                    ::  to %ames
-          $%  {$want p/ship q/{path *}}                 ::
-          ==  ==                                        ::
-              $:  $b                                    ::  to  %behn
-          $%  {$wait p/@da}                             ::
-              {$rest p/@da}                             ::
-          ==  ==                                        ::
-              $:  $d                                    ::  to %dill
-          $%  {$flog p/{$crud p/@tas q/(list tank)}}    ::
-          ==  ==                                        ::
-              $:  $e                                    ::  to self
-          $%  {$thud ~}                                ::  proxied death
-              {$this p/? q/clip r/httq}                 ::  proxied request
-              {$meta vase}                              ::  type check
-          ==  ==                                        ::
-              $:  $f                                            ::
-          $%  [%build live=? schematic=schematic:ford]
-              [%kill ~]
-          ==  ==
-              $:  $g                                    ::  to %gall
-          $%  {$deal p/sock q/cush:gall}               ::  full transmission
-          ==  ==                                        ::
-              $:  %j                                    ::  to %jael
-          $%  [%turf ~]                                 ::  view domains
-          ==  ==  ==                                    ::
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %a                                            ::  to %ames
+          $>(%want task:able:ames)                      ::
+      ==                                                ::
+      $:  %b                                            ::  to  %behn
+          $>  $?  %rest                                 ::
+                  %wait                                 ::
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %d                                            ::  to %dill
+          $>(%flog task:able:dill)                      ::
+      ==                                                ::
+      $:  %e                                            ::  to self
+          $%  [%meta vase]                              ::  type check
+              $>  $?  %this                             ::  proxied request
+                      %thud                             ::  proxied death
+                  ==                                    ::
+              task:able                                 ::
+      ==  ==                                            ::
+      $:  %f                                            ::
+          $>  $?  %build                                ::
+                  %kill                                 ::
+              ==                                        ::
+          task:able:ford                                ::
+      ==                                                ::
+      $:  %g                                            ::  to %gall
+          $>(%deal task:able:gall)                      ::  full transmission
+      ==                                                ::
+      $:  %j                                            ::  to %jael
+          $>(%turf task:able:jael)                      ::  view domains
+  ==  ==                                                ::
 ++  sign                                                ::  in result $<-
-          $%  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}                     ::  acknowledgment
-          ==  ==                                        ::
-              $:  $b                                    ::  by %behn
-          $%  {$wake error=(unit tang)}                 ::  timer activate
-          ==  ==                                        ::
-              $:  $g                                    ::  by %gall
-          $%  {$unto p/cuft:gall}                      ::  within agent
-          ==  ==                                        ::
-              $:  $e                                    ::  by self
-          $%  {$thou p/httr}                            ::  response for proxy
-          ==  ==                                        ::
-              $:  $f
-          $%  [%made date=@da result=made-result:ford]  ::
-          ==  ==
-              $:  %j                                    ::  from %jael
-          $%  [%turf turf=(list turf)]                  ::  bind to domains
-          ==  ==                                        ::
-              $:  @tas                                  ::  by any
-          $%  {$crud p/@tas q/(list tank)}              ::
-          ==  ==  ==                                    ::
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %a                                            ::  by %ames
+          $>(%woot gift:able:ames)                      ::  acknowledgment
+      ==                                                ::
+      $:  %b                                            ::  by %behn
+          $>(%wake gift:able:behn)                      ::  timer activate
+      ==                                                ::
+      $:  %g                                            ::  by %gall
+          $>(%unto gift:able:gall)                      ::  within agent
+      ==                                                ::
+      $:  %e                                            ::  by self
+          $>(%thou gift:able)                           ::  response for proxy
+      ==                                                ::
+      $:  %f                                            ::  by %ford
+          $>(%made gift:able:ford)                      ::  build result
+      ==                                                ::
+      $:  %j                                            ::  by %jael
+          $>(%turf gift:able:jael)                      ::  bind to domains
+      ==                                                ::
+      $:  @tas                                          ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+  ==  ==  ==                                            ::
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  ~                                        ::  wire subset
           $%  {$ac p/hole q/whir}                       ::  cookied
