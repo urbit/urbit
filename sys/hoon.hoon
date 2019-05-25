@@ -8319,7 +8319,7 @@
       ::
           {$bsld *}
         :+  %tsls
-          relative
+          relative:clear(mod q.mod)
         :+  %wtld
           [%wtts [%over ~[&/3] p.mod] ~[&/4]]
         $/2
@@ -8328,7 +8328,7 @@
       ::
           {$bsbn *}
         :+  %tsls
-          relative
+          relative:clear(mod q.mod)
         :+  %wtbn
           [%wtts [%over ~[&/3] p.mod] ~[&/4]]
         $/2
