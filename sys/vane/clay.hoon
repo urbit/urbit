@@ -469,57 +469,64 @@
 ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
-  $%  $:  $a                                            ::  to %ames
-  $%  {$want p/ship q/path r/*}                         ::
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %a                                            ::  to %ames
+          $>(%want task:able:ames)                      ::
+      ==                                                ::
+      $:  %b                                            ::  to %behn
+          $>  $?  %drip                                 ::
+                  %rest                                 ::
+                  %wait                                 ::
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %c                                            ::  to %clay
+          $>  $?  %info                                 ::  internal edit
+                  %merg                                 ::  merge desks
+                  %warp                                 ::
+                  %werp                                 ::
+              ==                                        ::
+          task:able                                     ::
+      ==                                                ::
+      $:  %d                                            ::  to %dill
+          $>(%flog task:able:dill)                      ::
+      ==                                                ::
+      $:  %f                                            ::  to %ford
+          $>  $?  %build                                ::
+                  %keep                                 ::
+                  %wipe                                 ::
+              ==                                        ::
+          task:able:ford                                ::
   ==  ==                                                ::
-      $:  $c                                            ::  to %clay
-  $%  {$info q/@tas r/nori}                             ::  internal edit
-      {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
-      {$warp p/ship q/riff}                             ::
-      {$werp p/ship q/ship r/riff}                      ::
-  ==  ==                                                ::
-      $:  $d                                            ::  to %dill
-  $%  $:  $flog                                         ::
-          $%  {$crud p/@tas q/(list tank)}              ::
-              {$text p/tape}                            ::
-      ==  ==                                            ::
-  ==  ==                                                ::
-      $:  $f                                            ::
-  $%  [%build live=? schematic=schematic:ford]          ::
-      [%keep compiler-cache=@ud build-cache=@ud]        ::
-      [%wipe percent-to-remove=@ud]                     ::
-  ==  ==                                                ::
-      $:  $b                                            ::
-  $%  {$wait p/@da}                                     ::
-      {$rest p/@da}                                     ::
-      {$drip p/vase}                                    ::
-  ==  ==  ==                                            ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
-          $%  $:  %y
-          $%  {$init-clad ~}
-          ==  ==
-              $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}                     ::
-              {$send p/lane:ames q/@}                   ::  transmit packet
-          ==  ==                                        ::
-              $:  %b
-          $%  {$writ p/riot}                            ::
-          ==  ==
-              $:  $c                                    ::  by %clay
-          $%  {$note p/@tD q/tank}                      ::
-              {$mere p/(each (set path) (pair term tang))}
-              {$writ p/riot}                            ::
-          ==  ==                                        ::
-              $:  $f                                    ::
-          $%  [%made date=@da result=made-result:ford]  ::
-          ==  ==                                        ::
-              $:  $b                                    ::
-          $%  {$wake error=(unit tang)}                 ::  timer activate
-          ==  ==                                        ::
-              $:  @tas                                  ::  by any
-          $%  {$crud p/@tas q/(list tank)}              ::
-          ==  ==  ==                                    ::
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %y                                            ::
+          $%  [%init-clad ~]                            ::
+      ==  ==                                            ::
+      $:  %a                                            ::  by %ames
+          $>  $?  %send                                 ::  XX strange
+                  %woot                                 ::
+              ==                                        ::
+          gift:able:ames                                ::
+      ==                                                ::
+      $:  %b                                            ::  by %behn
+          $%  $>(%wake gift:able:behn)                  ::  timer activate
+              $>(%writ gift:able)                       ::  XX %slip
+      ==  ==                                            ::
+      $:  %c                                            ::  by %clay
+          $>  $?  %mere                                 ::
+                  %note                                 ::
+                  %writ                                 ::
+              ==                                        ::
+          gift:able                                     ::
+      ==                                                ::
+      $:  %f                                            ::  by %ford
+          $>(%made gift:able:ford)                      ::
+      ==                                                ::
+      $:  @tas                                          ::  by any
+          $%  [%crud p=@tas q=(list tank)]              ::
+  ==  ==  ==                                            ::
 --
 ::
 ::  Old state types for ++load
