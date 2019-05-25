@@ -5,8 +5,19 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note:able gift:able)]
-    +$  sign  [%b %wake error=(unit tang)]
+    +$  move  [p=duct q=(wind note gift:able)]
+    +$  note                                            ::  out request $->
+      $~  [%b %wait *@da]                               ::
+      $%  $:  %b                                        ::   to self
+              $>(%wait task:able)                       ::  set timer
+          ==                                            ::
+          $:  %d                                        ::    to %dill
+              $>(%flog task:able:dill)                  ::  log output
+      ==  ==                                            ::
+    +$  sign
+      $~  [%b %wake ~]
+      $%  [%b $>(%wake gift:able)]
+      ==
     ::
     +$  behn-state
       $:  timers=(list timer)

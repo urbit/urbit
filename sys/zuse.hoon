@@ -384,13 +384,6 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  note                                            ::  out request $->
-      $%  $:  %b                                        ::  to %behn
-      $%  [%wait p=@da]
-      ==  ==
-          $:  %d                                        ::  to %dill
-      $%  [%flog =flog:dill]
-      ==  ==  ==
     ++  gift                                            ::  out result <-$
       $%  [%doze p=(unit @da)]                          ::  next alarm
           [%mass p=mass]                                ::  memory usage
