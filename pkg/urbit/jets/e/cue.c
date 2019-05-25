@@ -73,7 +73,7 @@ u3qe_cue(u3_atom a)
     off = ( c3y == nor_o ? 0 : -wis_y );
   }
 
-  //  initialize a hash table for dereference backrefs
+  //  initialize a hash table for dereferencing backrefs
   //
   u3p(u3h_root) har_p = u3h_new();
 

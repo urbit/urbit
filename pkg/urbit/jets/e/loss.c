@@ -29,8 +29,8 @@
         u3z(loc_u->kad[i_w]);
       }
     }
-    free(loc_u->hev);
-    free(loc_u->kad);
+    u3a_free(loc_u->hev);
+    u3a_free(loc_u->kad);
   }
 
   //  extract lcs  -  XX don't use the stack like this
@@ -71,7 +71,7 @@
     {
       c3_w i_w;
 
-      loc_u->hev = c3_malloc(u3kb_lent(u3k(hev)) * sizeof(u3_noun));
+      loc_u->hev = u3a_malloc(u3kb_lent(u3k(hev)) * sizeof(u3_noun));
 
       for ( i_w = 0; u3_nul != hev; i_w++ ) {
         loc_u->hev[i_w] = u3h(hev);
@@ -80,7 +80,7 @@
       loc_u->lev_w = i_w;
     }
     loc_u->kct_w = 0;
-    loc_u->kad = c3_malloc((1 + c3_min(loc_u->lev_w, loc_u->lel_w)) *
+    loc_u->kad = u3a_malloc((1 + c3_min(loc_u->lev_w, loc_u->lel_w)) *
                              sizeof(u3_noun));
 
     //  Compute equivalence classes.
