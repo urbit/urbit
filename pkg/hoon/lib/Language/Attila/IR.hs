@@ -133,8 +133,9 @@ infer sut = \case
     unify [ty, newSut]
     infer ty bod
   Eva new bod -> do
-    sut' <- infer sut new
-    infer sut bod >>= nokResTy sut
+    sut'  <- infer sut new
+    nokTy <- infer sut bod
+    nokResTy sut' nokTy
   Fir n (corTy, armTys) cor -> do
     corTy'  <- infer sut cor
     armTys' <- battery corTy
@@ -208,6 +209,25 @@ eatEx = Eat [Nat, Nat]
           , Inc (Lit 0)
           ]
 
+lamEx :: Exp
+lamEx = Lam Nat (tup2 (Inc Sub) Sub)
+
+evaEx :: Exp
+evaEx = Eva (Lit 0) lamEx
+
+armExTy, batExTy, corExTy :: Ty
+armExTy = Nok corExTy Nat
+batExTy = Mul [armExTy]
+corExTy = Mul [batExTy, Nat]
+
+armEx :: Exp
+armEx = Lam corExTy Sub
+
+batEx :: Exp
+batEx = Tup [armEx]
+
+corEx :: Exp
+corEx = Tup [batEx, Lit 0]
 
 --------------------------------------------------------------------------------
 
@@ -236,8 +256,26 @@ tryCho = try "cho" choEx
 tryEat :: IO ()
 tryEat = try "eat" eatEx
 
+tryLam :: IO ()
+tryLam = try "lam" lamEx
+
+tryEva :: IO ()
+tryEva = try "eva" evaEx
+
+{- TODO Implement recursive types -}
+-- tryArm :: IO ()
+-- tryArm = try "arm" armEx
+
+{- TODO Implement recursive types -}
+-- tryBat :: IO ()
+-- tryBat = try "bat" batEx
+
+{- TODO Implement recursive types -}
+-- tryCor :: IO ()
+-- tryCor = try "cor" corEx
+
 tryAll :: IO ()
-tryAll = tryTup >> tryWit >> tryCho >> tryEat
+tryAll = tryTup >> tryWit >> tryCho >> tryEat >> tryLam >> tryEva
 
 --------------------------------------------------------------------------------
 
