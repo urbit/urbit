@@ -197,26 +197,6 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  note                                            ::  out request $->
-      $%  $:  $b                                        ::  to %behn
-      $%  {$rest p/@da}                                 ::  cancel timer
-          {$wait p/@da}                                 ::  set timer
-      ==  ==                                            ::
-          $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
-      ==  ==                                            ::
-          $:  %j                                        ::  to %jael
-      $%  [%meet =ship =life =pass]                     ::  neighbor
-          [%pubs =ship]                                 ::  view public keys
-          [%turf ~]                                     ::  view domains
-          [%vein ~]                                     ::  view private keys
-      ==  ==                                            ::
-          $:  $g                                        ::  to %gall
-      $%  {$deal p/sock q/cush:gall}                    ::
-      ==  ==                                            ::
-          $:  @tas                                      ::  to any
-      $%  {$west p/ship q/path r/*}                     ::
-      ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$mack p/(unit tang)}                         ::  acknowledgement
           {$mass p/mass}                                ::  memory usage
@@ -224,27 +204,8 @@
           {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
-    ++  sign                                            ::  in result _<-
-      $%  $:  $b                                        ::  to %behn
-      $%  {$wake error=(unit tang)}                     ::  timer activate
-      ==  ==                                            ::
-          $:  %j                                        ::  from %jael
-      $%  [%pubs public:able:jael]                      ::  public keys
-          [%turf turf=(list turf)]                      ::  bind to domains
-          [%vein =life vein=(map life ring)]            ::  private keys
-      ==  ==                                            ::
-          $:  $g                                        ::  from %gall
-      $%  {$unto p/cuft:gall}                           ::
-          {$mean p/ares}                                ::  XX old clean up
-          {$nice ~}                                    ::
-      ==  ==                                            ::
-          $:  @tas                                      ::
-      $%  {$crud p/@tas q/(list tank)}                  ::  by any
-          {$mack p/(unit tang)}                         ::  message ack
-          {$woot p/ship q/coop}                         ::  reaction message
-      ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
-      $%  {$barn ~}                                    ::  new unix process
+      $%  {$barn ~}                                     ::  new unix process
           {$bonk ~}                                     ::  reset the timer
           {$crud p/@tas q/(list tank)}                  ::  error with trace
           {$hear p/lane q/@}                            ::  receive packet

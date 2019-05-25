@@ -8,7 +8,56 @@
 ::
 =+  protocol-version=3
 |%
-+=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %d                                            ::    to %dill
+          $>(%flog task:able:dill)                      ::  log output
+      ==                                                ::
+      $:  %j                                            ::    to %jael
+          $>  $?  %meet                                 ::  neighbor
+                  %pubs                                 ::  view public keys
+                  %turf                                 ::  view domains
+                  %vein                                 ::  view private keys
+              ==                                        ::
+          task:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    to %gall
+          $>(%deal task:able:gall)                      ::  interact with apps
+      ==                                                ::
+      $:  @tas                                          ::    to any
+          $>(%west task:able)                           ::  deliver message
+  ==  ==                                                ::
++$  sign                                                ::  in result _<-
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %b                                            ::    from %behn
+          $>(%wake gift:able:behn)                      ::  timer activate
+      ==                                                ::
+      $:  %j                                            ::    from %jael
+          $>  $?  %pubs                                 ::  public keys
+                  %turf                                 ::  bind to domains
+                  %vein                                 ::  private keys
+              ==                                        ::
+          gift:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    from %gall
+          $%  [%mean p=ares]                            ::  XX obsolete
+              [%nice ~]                                 ::  XX obsolete
+              $>(%unto gift:able:gall)                  ::  application ack
+      ==  ==                                            ::
+      $:  @tas                                          ::    from any
+          $%  [%crud p=@tas q=(list tank)]              ::  error report
+              $>  $?  %mack                             ::  message ack
+                      %woot                             ::  reaction message
+                  ==                                    ::
+              gift:able                                 ::
+  ==  ==  ==                                            ::
 ::  |pact: internal packet structures
 ::
 ++  pact
@@ -1294,7 +1343,7 @@
     ++  stay  fox
     ++  take                                            ::  accept response
       ~/  %take
-      |=  [tea=wire hen=duct hin=(hypo sign:able)]
+      |=  [tea=wire hen=duct hin=(hypo sign)]
       ^-  [(list move) _..^$]
       =.  any.ton.fox  eny
       =^  duy  ..knap
@@ -1402,7 +1451,7 @@
   ::
   ++  knap
     ~/  %knap
-    |=  [tea=wire hen=duct sih=sign:able]
+    |=  [tea=wire hen=duct sih=sign]
     ^-  [(list move) _+>]
     ::  if we got an error from behn, report it to %dill; TODO handle errors
     ::
