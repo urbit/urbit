@@ -60,11 +60,52 @@
       [~ ~ %done httr.u.trad-input]
     ~|  [%expected-sigh got=-.u.trad-input]
     !!
+  ::
+  ++  extract-httr-body
+    |=  =httr:eyre
+    =/  m  (trad ,cord)
+    ^-  form:m
+    ?.  =(2 (div p.httr 100))
+      (trad-fail:trad-lib %httr-error >p.httr< >+.httr< ~)
+    ?~  r.httr
+      (trad-fail:trad-lib %expected-httr-body >httr< ~)
+    (pure:m q.u.r.httr)
+  ::
+  ++  parse-json
+    |=  =cord
+    =/  m  (trad ,json)
+    ^-  form:m
+    =/  json=(unit json)  (de-json:html cord)
+    ?~  json
+      (trad-fail:trad-lib %json-parse-error ~)
+    (pure:m u.json)
+  ::
+  ++  fetch-json
+    |=  url=tape
+    =/  m  (trad ,json)
+    ^-  form:m
+    =/  =hiss:eyre
+      :*  purl=(scan url auri:de-purl:html)
+          meth=%get
+          math=~
+          body=~
+      ==
+    ;<  ~           bind:m  (send-hiss hiss)
+    ;<  =httr:eyre  bind:m  expect-sigh
+    ;<  =cord       bind:m  (extract-httr-body httr)
+    (parse-json cord)
   --
 ++  create-tapp
   |=  handler=tapp-core
   |_  [=bowl:gall tapp-state]
   ++  this-tapp  .
+  ++  prep
+    |=  old-state=*
+    ^-  (quip move _this-tapp)
+    =/  old  ((soft tapp-state) old-state)
+    ?~  old
+      `this-tapp
+    `this-tapp(+<+ u.old)
   ::
   ::  Start a command
   ::
@@ -123,7 +164,6 @@
   ++  done-trad
     |=  state=state-type
     ^-  (quip move _this-tapp)
-    ~&  %trad-done
     =.  app-state  state
     finish-trad
   ::
