@@ -1776,26 +1776,6 @@
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
-    ++  note                                            ::  out request $->
-      =,  eyre                                          ::
-      $%  $:  %b                                        ::
-      $%  [%rest p=@da]                                 ::  cancel timer
-          [%wait p=@da]                                 ::  wait until
-      ==  ==                                            ::
-          $:  %e                                        ::
-      $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-      ==  ==                                            ::
-          $:  %a                                        ::
-      $%  [%want p=ship q=path r=*]                     ::  send message
-      ==  ==                                            ::
-          $:  %j                                        ::
-      $%  [%vent-result p=vent-result]                  ::  tmp workaround
-          [%look src=(each ship purl:eyre)]             ::
-      ==  ==                                            ::
-          $:  @tas                                      ::
-      $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=rift]                         ::  report death
-      ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
           pubs=(map life pass)                          ::  pubkeys by number
@@ -1807,12 +1787,6 @@
     ::
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
-    ++  sign                                            ::  in result $<-
-      $%  {$b $wake error=(unit tang)}                  ::  wakeup
-          [%e %sigh p=cage]                             ::  marked http response
-          [%j %vent p=vent-result]                      ::  ethereum changes
-          [%a %woot p=ship q=coop]                      ::  message result
-      ==                                                ::
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
       action                                            ::  change
