@@ -16731,21 +16731,18 @@
         %+  cook
           |=  [b=term c=(list term) e=spec]
           ^-  [term hoon]
-          :*  b
-              :+  %brtr
-                :-  %bscl
-                =-  ?>(?=(^ -) -)
-                %+  turn  c
-                |=  =term
-                ^-  spec
-                :+  %bsts
-                  term
-                [%bshp [%base %noun] [%base %noun]]
-              :-  %ktcl
-              :+  %made
-                [b c]
-              e
-          ==
+          :-  b
+          :+  %brtr
+            :-  %bscl
+            =-  ?>(?=(^ -) -)
+            %+  turn  c
+            |=  =term
+            ^-  spec
+            =/  tar  [%base %noun]
+            :+  %bsts  term
+            :+  %bssg  [%brts tar $/6]
+            [%bshp tar tar]
+          [%ktcl [%made [b c] e]]
         ;~  pfix  (jest '+*')
           ;~  plug
             ;~(pfix gap sym)
