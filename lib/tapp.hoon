@@ -1,4 +1,7 @@
+/-  tapp
 /+  trad
+=,  card=card:tapp
+=,  sign=sign:tapp
 =,  trad-lib=trad
 |*  [state-type=mold command-type=mold]
 |%
@@ -16,17 +19,6 @@
 ++  trad-lib  (^trad-lib sign card)
 ++  trad  trad:trad-lib
 ::
-::  Possible async calls
-::
-+$  card
-  $%  [%hiss wire ~ %httr %hiss hiss:eyre]
-  ==
-::
-::  Possible async responses
-::
-+$  sign
-  $%  [%sigh =httr:eyre]
-  ==
 +$  move  (pair bone card)
 ++  tapp-trad  (trad state-type)
 +$  tapp-state
@@ -34,67 +26,6 @@
       active=(unit eval-form:eval:tapp-trad)
       app-state=state-type
   ==
-++  helpers
-  =,  trad-input=trad-input:trad-lib
-  |%
-  ++  just-do
-    |=  =card
-    =/  m  (trad ,~)
-    ^-  form:m
-    |=  trad-input
-    [[/ card]~ ~ %done ~]
-  ::
-  ++  send-hiss
-    |=  =hiss:eyre
-    =/  m  (trad ,~)
-    ^-  form:m
-    (just-do %hiss / ~ %httr %hiss hiss)
-  ::
-  ++  expect-sigh
-    =/  m  (trad ,httr:eyre)
-    ^-  form:m
-    |=  =trad-input
-    ?~  trad-input
-      [~ ~ %wait ~]
-    ?:  ?=(%sigh -.u.trad-input)
-      [~ ~ %done httr.u.trad-input]
-    ~|  [%expected-sigh got=-.u.trad-input]
-    !!
-  ::
-  ++  extract-httr-body
-    |=  =httr:eyre
-    =/  m  (trad ,cord)
-    ^-  form:m
-    ?.  =(2 (div p.httr 100))
-      (trad-fail:trad-lib %httr-error >p.httr< >+.httr< ~)
-    ?~  r.httr
-      (trad-fail:trad-lib %expected-httr-body >httr< ~)
-    (pure:m q.u.r.httr)
-  ::
-  ++  parse-json
-    |=  =cord
-    =/  m  (trad ,json)
-    ^-  form:m
-    =/  json=(unit json)  (de-json:html cord)
-    ?~  json
-      (trad-fail:trad-lib %json-parse-error ~)
-    (pure:m u.json)
-  ::
-  ++  fetch-json
-    |=  url=tape
-    =/  m  (trad ,json)
-    ^-  form:m
-    =/  =hiss:eyre
-      :*  purl=(scan url auri:de-purl:html)
-          meth=%get
-          math=~
-          body=~
-      ==
-    ;<  ~           bind:m  (send-hiss hiss)
-    ;<  =httr:eyre  bind:m  expect-sigh
-    ;<  =cord       bind:m  (extract-httr-body httr)
-    (parse-json cord)
-  --
 ++  create-tapp
   |=  handler=tapp-core
   |_  [=bowl:gall tapp-state]
@@ -102,6 +33,7 @@
   ++  prep
     |=  old-state=*
     ^-  (quip move _this-tapp)
+    ~&  %tapp-loaded
     =/  old  ((soft tapp-state) old-state)
     ?~  old
       `this-tapp
@@ -131,6 +63,13 @@
     |=  [=wire =tang]
     ^-  (quip move _this-tapp)
     (fail-trad %failed-sigh tang)
+  ::
+  ++  wake
+    |=  [=wire error=(unit tang)]
+    ^-  (quip move _this-tapp)
+    ?^  error
+      (fail-trad %timer-fire-failed u.error)
+    (take-trad `[%wake ~])
   ::
   ::  Continue computing trad
   ::

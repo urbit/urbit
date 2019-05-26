@@ -3,7 +3,7 @@
 ::
 ::  Fetches the top comment of each of the top 10 stories from Hacker News
 ::
-/+  tapp
+/+  tapp, stdio
 ::
 ::  Preamble
 ::
@@ -14,7 +14,6 @@
     ==
   +$  command  cord
   ++  tapp  (^tapp state command)
-  ::
   --
 =>
   |%
@@ -39,7 +38,7 @@
 --
 =,  trad=trad:tapp
 =,  tapp-trad=tapp-trad:tapp
-=,  helpers:tapp
+=,  stdio
 ::
 ::  The app
 ::
@@ -57,6 +56,8 @@
   ::  If requested to print, just print what we have in our state
   ::
   ?:  =(command 'print')
+    ~&  'drumroll please...'
+    ;<  ~  bind:m  (wait (add now.bowl ~s5))
     ~&  'Top comments:'
     %-  (slog (zing (turn top-comments comment-to-tang)))
     (pure:m top-comments)
@@ -64,6 +65,10 @@
   ::  Otherwise, fetch the top HN stories
   ::
   =.  top-comments  ~
+  ::
+  ::  If this whole thing takes more than 5 seconds, cancel it
+  ::
+  %+  (set-timeout _top-comments)  (add now.bowl ~s5)
   ;<  =top-stories=json  bind:m  (fetch-json top-stories:urls)
   =/  top-stories=(list @ud)
     ((ar ni):dejs:format top-stories-json)
