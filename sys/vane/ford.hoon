@@ -144,45 +144,33 @@
   ==
 ::  +note: private request from ford to another vane
 ::
-+=  note
++$  note
+  $~  [%c %warp *@p *riff:clay]
   $%  ::  %c: to clay
       ::
       $:  %c
           ::  %warp: internal (intra-ship) file request
           ::
-          $%  $:  %warp
-                  ::  ship: target for request
-                  ::
-                  =ship
-                  ::  riff: clay request contents
-                  ::
-                  riff=riff:clay
-  ==  ==  ==  ==
+          $>(%warp task:able:clay)
+  ==  ==
 ::  +sign: private response from another vane to ford
 ::
-+=  sign
++$  sign
+  $~  [%c %writ *riot:clay]
   $?  ::  %c: from clay
       ::
+      ::    XX also from behn due to %slip asynchronicity
+      ::
       $:  ?(%b %c)
-          ::  %writ: internal (intra-ship) file response
-          ::
-          $%  $:  %writ
-                  ::  riot: response contents
+          $>  $?  ::  %writ: internal (intra-ship) file response
                   ::
-                  riot=riot:clay
+                  %writ
+                  ::  %wris: response to %mult; many changed files
+                  ::
+                  %wris
               ==
-              ::  %wris: response to %mult; many changed files
-              ::
-              $:  %wris
-                  ::  case: case of the new files
-                  ::
-                  ::    %wris can only return dates to us.
-                  ::
-                  case=[%da p=@da]
-                  ::  care-paths: the +care:clay and +path of each file
-                  ::
-                  care-paths=(set [care=care:clay =path])
-  ==  ==  ==  ==
+          gift:able:clay
+  ==  ==
 --
 |%
 ::  +axle: overall ford state
@@ -6259,6 +6247,8 @@
       ^-  [(list move) ford-state]
       ::
       ?>  ?=([@tas %wris *] sign)
+      =*  case-sign  p.sign
+      =*  care-paths-sign  q.sign
       =+  [ship desk date]=(raid:wired t.wire ~[%p %tas %da])
       =/  disc  [ship desk]
       ::
@@ -6281,7 +6271,7 @@
       =*  event-args  [[our i.ducts now scry-gate] state.ax]
       =*  rebuild  rebuild:(per-event event-args)
       =^  duct-moves  state.ax
-        (rebuild subscription p.case.sign disc care-paths.sign)
+        (rebuild subscription p.case-sign disc care-paths-sign)
       ::
       $(ducts t.ducts, moves (weld moves duct-moves))
     ::  +take-unblocks: unblock all builds waiting on this scry request
@@ -6290,6 +6280,7 @@
       ^-  [(list move) ford-state]
       ::
       ?>  ?=([@tas %writ *] sign)
+      =*  riot-sign  p.sign
       ::  scry-request: the +scry-request we had previously blocked on
       ::
       =/  =scry-request
@@ -6300,9 +6291,9 @@
       ::    If the result is `~`, the requested resource was not available.
       ::
       =/  scry-result=(unit cage)
-        ?~  riot.sign
+        ?~  riot-sign
           ~
-        `r.u.riot.sign
+        `r.u.riot-sign
       ::
       =/  ducts=(list ^duct)
         ~|  [%ford-take-missing-scry-request scry-request]
