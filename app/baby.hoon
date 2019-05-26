@@ -57,7 +57,8 @@
   ::
   ?:  =(command 'print')
     ~&  'drumroll please...'
-    ;<  ~  bind:m  (wait (add now.bowl ~s5))
+    ;<  now=@da  bind:m  get-time
+    ;<  ~        bind:m  (wait (add now ~s3))
     ~&  'Top comments:'
     %-  (slog (zing (turn top-comments comment-to-tang)))
     (pure:m top-comments)
@@ -66,16 +67,16 @@
   ::
   =.  top-comments  ~
   ::
-  ::  If this whole thing takes more than 5 seconds, cancel it
+  ::  If this whole thing takes more than 15 seconds, cancel it
   ::
-  %+  (set-timeout _top-comments)  (add now.bowl ~s5)
+  %+  (set-timeout _top-comments)  (add now.bowl ~s15)
   ;<  =top-stories=json  bind:m  (fetch-json top-stories:urls)
   =/  top-stories=(list @ud)
     ((ar ni):dejs:format top-stories-json)
   ::
-  ::  Loop through the first 10 stories
+  ::  Loop through the first 5 stories
   ::
-  =.  top-stories  (scag 10 top-stories)
+  =.  top-stories  (scag 5 top-stories)
   |-  ^-  form:m
   =*  loop  $
   ::

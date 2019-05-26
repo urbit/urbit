@@ -1,6 +1,6 @@
-|*  [input-type=mold card-type=mold]
+|*  [input-type=mold card-type=mold contract-type=mold]
 |%
-+$  trad-input  (unit input-type)
++$  trad-input  [=bowl:gall in=(unit [=wire sign=input-type])]
 +$  trad-move  (pair bone card-type)
 ::
 ::  notes:   notes to send immediately.  These will go out even if a
@@ -16,9 +16,10 @@
 ::
 ++  trad-output-raw
   |*  a=mold
-  $~  [~ ~ %done *a]
+  $~  [~ ~ ~ %done *a]
   $:  notes=(list [path card-type])
       effects=(list card-type)
+      contracts=(set [add=? contract=contract-type])
       $=  next
       $%  [%wait ~]
           [%cont self=(trad-form-raw a)]
@@ -34,7 +35,7 @@
 ++  trad-fail
   |=  err=(pair term tang)
   |=  trad-input
-  [~ ~ %fail err]
+  [~ ~ ~ %fail err]
 ::
 ++  trad
   |*  a=mold
@@ -45,7 +46,7 @@
     |=  arg=a
     ^-  form
     |=  trad-input
-    [~ ~ %done arg]
+    [~ ~ ~ %done arg]
   ::
   ++  bind
     |*  b=mold
@@ -55,7 +56,7 @@
     =/  b-res=(trad-output-raw b)
       (m-b input)
     ^-  output
-    :+  notes.b-res  effects.b-res
+    :^  notes.b-res  effects.b-res  contracts.b-res
     ?-    -.next.b-res
       %wait  [%wait ~]
       %cont  [%cont ..$(m-b self.next.b-res)]
@@ -72,6 +73,7 @@
     ::
     +$  eval-form
       $:  effects=(list card-type)
+          contracts=(set contract-type)
           =form
       ==
     ::
@@ -80,14 +82,14 @@
     ++  from-form
       |=  =form
       ^-  eval-form
-      [~ form]
+      [~ ~ form]
     ::
     ::  The cases of results of +take
     ::
     +$  eval-result
       $%  [%next ~]
-          [%fail err=(pair term tang)]
-          [%done value=a]
+          [%fail contracts=(set contract-type) err=(pair term tang)]
+          [%done contracts=(set contract-type) value=a]
       ==
     ::
     ::  Take a new sign and run the trad against it
@@ -96,8 +98,9 @@
       ::  moves: accumulate throughout recursion the moves to be
       ::         produced now
       =|  moves=(list trad-move)
-      |=  [=eval-form =bone =our=wire =trad-input]
+      |=  [=eval-form =bone =trad-input]
       ^-  [[(list trad-move) =eval-result] _eval-form]
+      =*  take-loop  $
       ::  run the trad callback
       ::
       =/  =output  (form.eval-form trad-input)
@@ -114,6 +117,33 @@
       ::
       =.  effects.eval-form
         (weld effects.eval-form effects.output)
+      ::  add or remove contracts
+      ::
+      =.  .
+        =*  loop-result  .
+        =/  new=(list [add=? contract=contract-type])
+          ~(tap in contracts.output)
+        |-  ^+  loop-result
+        =*  loop  $
+        ?~  new
+          loop-result
+        ?:  add.i.new
+          ?:  (~(has in contracts.eval-form) contract.i.new)
+            %=  loop-result
+              next.output  [%fail %contract-already-exists >contract.i.new< ~]
+            ==
+          %=  loop
+            contracts.eval-form  (~(put in contracts.eval-form) contract.i.new)
+            new                  t.new
+          ==
+        ?:  (~(has in contracts.eval-form) contract.i.new)
+          %=  loop
+            contracts.eval-form  (~(del in contracts.eval-form) contract.i.new)
+            new                  t.new
+          ==
+        %=  loop-result
+          next.output  [%fail %contract-doesnt-exist >contract.i.new< ~]
+        ==
       ::  if done, produce effects
       ::
       =?  moves  ?=(%done -.next.output)
@@ -127,14 +157,14 @@
       ::
       ?-  -.next.output
           %wait  [[moves %next ~] eval-form]
-          %fail  [[moves %fail err.next.output] eval-form]
-          %done  [[moves %done value.next.output] eval-form]
+          %fail  [[moves %fail contracts.eval-form err.next.output] eval-form]
+          %done  [[moves %done contracts.eval-form value.next.output] eval-form]
           %cont
         ::  recurse to run continuation with initialization input
         ::
-        %_  $
+        %_  take-loop
           form.eval-form  self.next.output
-          trad-input      ~
+          trad-input      [bowl.trad-input ~]
         ==
       ==
     --

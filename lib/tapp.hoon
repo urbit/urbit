@@ -2,6 +2,7 @@
 /+  trad
 =,  card=card:tapp
 =,  sign=sign:tapp
+=,  contract=contract:tapp
 =,  trad-lib=trad
 |*  [state-type=mold command-type=mold]
 |%
@@ -16,7 +17,7 @@
     *form:tapp-trad
   --
 ::
-++  trad-lib  (^trad-lib sign card)
+++  trad-lib  (^trad-lib sign card contract)
 ++  trad  trad:trad-lib
 ::
 +$  move  (pair bone card)
@@ -55,21 +56,21 @@
   ++  sigh-httr
     |=  [=wire =httr:eyre]
     ^-  (quip move _this-tapp)
-    (take-trad `[%sigh httr])
+    (take-trad bowl `[wire %sigh httr])
   ::
   ::  Failed http request
   ::
   ++  sigh-tang
     |=  [=wire =tang]
     ^-  (quip move _this-tapp)
-    (fail-trad %failed-sigh tang)
+    (oob-fail-trad %failed-sigh tang)
   ::
   ++  wake
     |=  [=wire error=(unit tang)]
     ^-  (quip move _this-tapp)
     ?^  error
-      (fail-trad %timer-fire-failed u.error)
-    (take-trad `[%wake ~])
+      (oob-fail-trad %timer-fire-failed u.error)
+    (take-trad bowl `[wire %wake ~])
   ::
   ::  Continue computing trad
   ::
@@ -78,41 +79,55 @@
     ^-  (quip move _this-tapp)
     =/  m  tapp-trad
     ?~  active
+      ::  Can't cancel HTTP requests, so we might get answers after end
+      ::  of computation
+      ::
+      ?:  ?=([~ @ %sigh *] in.trad-input)
+        `this-tapp
       ~|  %no-active-trad  !!
     =^  r=[moves=(list move) =eval-result:eval:m]  u.active
-      (take:eval:m u.active ost.bowl /trad trad-input)
+      (take:eval:m u.active ost.bowl trad-input)
     =>  .(active `(unit eval-form:eval:tapp-trad)`active)  :: TMI
     =^  moves=(list move)  this-tapp
       ?-  -.eval-result.r
         %next  `this-tapp
-        %fail  (fail-trad err.eval-result.r)
-        %done  (done-trad value.eval-result.r)
+        %fail  (fail-trad [contracts err]:eval-result.r)
+        %done  (done-trad [contracts value]:eval-result.r)
       ==
     [(weld moves.r moves) this-tapp]
+  ::
+  ::  Fails currently-running trad
+  ::
+  ++  oob-fail-trad
+    (cury fail-trad contracts:(need active))
   ::
   ::  Called on trad failure
   ::
   ++  fail-trad
-    |=  err=(pair term tang)
+    |=  [contracts=(set contract) err=(pair term tang)]
     ^-  (quip move _this-tapp)
     %-  (slog leaf+"tapp command failed" leaf+(trip p.err) q.err)
-    finish-trad
+    (finish-trad contracts)
   ::
   ::  Called on trad success
   ::
   ++  done-trad
-    |=  state=state-type
+    |=  [contracts=(set contract) state=state-type]
     ^-  (quip move _this-tapp)
     =.  app-state  state
-    finish-trad
+    (finish-trad contracts)
   ::
   ::  Called whether trad failed or succeeded
   ::
   ++  finish-trad
+    |=  contracts=(set contract)
     ^-  (quip move _this-tapp)
+    =^  moves-1  this-tapp  (cancel-contracts contracts)
     =.  active   ~
     =.  waiting  +:~(get to waiting)
-    start-trad
+    =^  moves-2  this-tapp  start-trad
+    [(weld moves-1 moves-2) this-tapp]
+  ::
   ::
   ::  Try to start next command
   ::
@@ -129,6 +144,23 @@
       %-  from-form:eval:tapp-trad
       ^-  form:tapp-trad
       (~(handle-command handler bowl app-state) u.next)
-    (take-trad ~)
+    (take-trad bowl ~)
+  ::
+  ::  Cancel outstanding contracts
+  ::
+  ++  cancel-contracts
+    |=  contracts=(set contract)
+    ^-  (quip move this-tapp)
+    [(zing (turn ~(tap in contracts) cancel-contract)) this-tapp]
+  ::
+  ::  Cancel individual contract
+  ::
+  ++  cancel-contract
+    |=  =contract
+    ^-  (list move)
+    ?-  -.contract
+      %wait  [ost.bowl %rest /(scot %da at.contract) at.contract]~
+      %hiss  ~  ::  can't cancel; will ignore response
+    ==
   --
 --
