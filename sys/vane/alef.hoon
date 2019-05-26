@@ -3,14 +3,140 @@
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 ::
 |%
++|  %generics
+::
+::  +ordered-set: treap with user-specified horizontal order
+::
+::    Conceptually smaller items go on the left, so the smallest item
+::    can be popped off the head. If $item is `@` and .compare is +lte,
+::    then the numerically smallest item is the head.
+::
+++  ordered-set
+  |*  item=mold
+  ::  +compare: item comparator for horizontal order
+  ::
+  |=  compare=$-([item item] ?)
+  |%
+  ::  +check-balance: verify horizontal and vertical orderings
+  ::
+  ++  check-balance
+    =|  [l=(unit item) r=(unit item)]
+    |=  a=(tree item)
+    ^-  ?
+    ::  empty tree is valid
+    ::
+    ?~  a  %.y
+    ::  nonempty trees must maintain several criteria
+    ::
+    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
+        ::
+        ?~(l %.y (compare n.a u.l))
+        ::  if .n.a is right of .u.r, assert horizontal comparator
+        ::
+        ?~(r %.y (compare u.r n.a))
+        ::  if .a is not leftmost element, assert vertical order between
+        ::  .l.a and .n.a and recurse to the left with .n.a as right
+        ::  neighbor
+        ::
+        ?~(l.a %.y &((mor n.a n.l.a) $(a l.a, l `n.a)))
+        ::  if .a is not rightmost element, assert vertical order
+        ::  between .r.a and .n.a and recurse to the right with .n.a as
+        ::  left neighbor
+        ::
+        ?~(r.a %.y &((mor n.a n.r.a) $(a r.a, r `n.a)))
+    ==
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    |=  [a=(tree item) =item]
+    ^-  (tree ^item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=item l=~ r=~]
+    ::  base case: ignore duplicate
+    ::
+    ?:  =(n.a item)  a
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare item n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor n.a n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor n.a n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +peek: produce head (smallest item) or null
+  ::
+  ++  peek
+    |=  a=(tree item)
+    ^-  (unit item)
+    ::
+    ?~  a    ~
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +pop: produce .head (smallest item) and .rest or crash if empty
+  ::
+  ++  pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ::
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    ::
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor n.a n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::  +sift: remove and produce all items matching .reject predicate
+  ::
+  ::    Unrolls to a list, extracts items, then rolls back into a tree.
+  ::    Removed items are produced smallest to largest.
+  ::
+  ++  sift
+    |=  [a=(tree item) reject=$-(item ?)]
+    ^-  [lost=(list item) kept=(tree item)]
+    ::
+    =+  [l k]=(skid (tap a) reject)  [l (gas ~ k)]
+  ::  +tap: convert to list, smallest to largest
+  ::
+  ++  tap
+    |=  a=(tree item)
+    ^-  (list item)
+    ::
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    ::
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +gas: put a list of items
+  ::
+  ++  gas
+    |=  [a=(tree item) b=(list item)]
+    ^-  (tree item)
+    ::
+    ?~  b  a
+    $(b t.b, a (put a i.b))
+  --
+::
 +|  %atomics
 ::
 +$  blob           @uxblob
 +$  bone           @udbone
++$  fragment       @uwfragment
 +$  lane           @uxlane
-+$  message-num    @udmessage
-+$  packet-num     @udpacket
++$  message-num    @udmessagenum
++$  fragment-num   @udfragmentnum
 +$  public-key     @uwpublickey
++$  signature      @uwsignature
 +$  symmetric-key  @uwsymmetrickey
 ::  $rank: which kind of ship address, by length
 ::
@@ -42,6 +168,41 @@
 ::    interpreter. This enforces that Ames is transport-agnostic.
 ::
 +$  packet  [=dyad encrypted=? origin=(unit lane) content=*]
+::  $open-packet: unencrypted packet payload, for comet self-attestation
+::
++$  open-packet
+  $:  =signature
+      =sndr=life
+      =rcvr=life
+      rcvr=ship
+  ==
+::  $shut-packet: encrypted packet payload
+::
++$  shut-packet
+  $:  =sndr=life
+      =rcvr=life
+      =bone
+      =message-num
+      meat=(each fragment-meat ack-meat)
+  ==
+::  $fragment-meat: contents of a message-fragment packet
+::
++$  fragment-meat
+  $:  num-fragments=fragment-num
+      =fragment-num
+      =fragment
+  ==
+::  $ack-meat: contents of an acknowledgment packet; fragment or message
+::
+::    Fragment acks reference the $fragment-num of the target packet.
+::
+::    Message acks contain a success flag .ok, which is %.n in case of
+::    negative acknowledgment (nack), along with .lag that describes the
+::    time it took to process the message. .lag is zero if the message
+::    was processed during a single Arvo event. At the moment, .lag is
+::    always zero.
+::
++$  ack-meat  (each fragment-num [ok=? lag=@dr])
 ::
 +|  %state
 ::
@@ -89,7 +250,7 @@
       ==
       route=(unit [direct=? =lane])
       =ossuary
-      snd=(map bone snd-state)
+      snd=(map bone message-pump-state)
       rcv=(map bone rcv-state)
   ==
 ::  $ossuary: bone<-->duct bijection and .next bone to map to a duct
@@ -105,8 +266,22 @@
   $:  rcv-packets=(list [=lane =packet])
       snd-messages=(list [=duct =message])
   ==
-+$  snd-state
-  $:  _!!
++$  message-pump-state
+  $:  next-to-send=message-num
+      unsent-messages=(qeu message)
+      unsent-fragments=(list [=fragment-num =fragment])
+      =packet-pump-state
+  ==
++$  packet-pump-state
+  $:  next-wake=(unit @da)
+      live=(tree [sent-at=@da dead-at=@da fragment-descriptor])
+      lost=(tree fragment-descriptor)
+  ==
++$  fragment-descriptor
+  $:  [=sndr=life =rcvr=life]
+      =message-num
+      =fragment-num
+      =fragment
   ==
 +$  rcv-state
   $:  _!!
