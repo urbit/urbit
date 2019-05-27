@@ -147,7 +147,7 @@
 ::
 +$  rank  ?(%0 %1 %2 %3)
 ::
-+|  %dynamics
++|  %kinetics
 ::
 ::  $channel: combined sender and receiver identifying data
 ::
@@ -168,6 +168,8 @@
 ::  $dyad: pair of sender and receiver ships
 ::
 +$  dyad  [sndr=ship rcvr=ship]
+::
++$  error  [tag=@tas =tang]
 ::  $message: application-level message
 ::
 ::    path: internal route on the receiving ship
@@ -265,12 +267,28 @@
   $:  rcv-packets=(list [=lane =packet])
       snd-messages=(list [=duct =message])
   ==
+::  $message-pump-state: persistent state for |message-pump
+::
+::    next-message-num: sequence number of next message to send
+::    unsent-messages: messages to be sent after current message
+::    unsent-fragments: fragments of current message waiting for sending
+::    unacked-fragments: number of fragments waiting on ack
+::    packet-pump-state: state of corresponding |packet-pump
+::
 +$  message-pump-state
   $:  =next=message-num
       unsent-messages=(qeu message)
       unsent-fragments=(list static-fragment)
+      unacked-fragments=(map message-num fragment-num)
       =packet-pump-state
   ==
+::  $packet-pump-state: persistent state for |packet-pump
+::
+::    next-wake: last timer we've set, or null
+::    live: packets in flight
+::    lost: packets to retry
+::    pump-metrics: congestion control information
+::
 +$  packet-pump-state
   $:  next-wake=(unit @da)
       live=(tree live-fragment)
@@ -308,6 +326,63 @@
   $:  num-fragments=fragment-num
       num-received=fragment-num
       fragments=(map fragment-num fragment)
+  ==
+::
++|  %dialectics
+::
+::  $message-pump-task: job for |message-pump
+::
+::    %send: packetize and send application-level message
+::    %hear-ack: deal with a packet acknowledgment
+::    %hear-nack: deal with message negative acknowledgment
+::    %wake: handle timer firing
+::
++$  message-pump-task
+  $%  [%send =message-num =message]
+      [%hear-ack =message-num =fragment-num]
+      [%hear-nack =message-num]
+      [%wake ~]
+  ==
+::  $message-pump-gift: effect from |message-pump
+::
+::    %send: emit message fragment
+::    %ack-message: report message acknowledgment
+::    %set-timer: set a new timer at .date
+::    %unset-timer: cancel timer at .date
+::
++$  message-pump-gift
+  $%  [%send =static-fragment]
+      [%ack-message =message-num error=(unit error)]
+      [%set-timer date=@da]
+      [%unset-timer date=@da]
+  ==
+::  $packet-pump-task: job for |packet-pump
+::
+::    %hear-ack: deal with a packet acknowledgment
+::    %hear-nack: deal with message negative acknowledgment
+::    %flush: finalize this event (i.e. maybe set timer)
+::    %send: enqueue or emit message fragments
+::    %wake: handle timer firing
+::
++$  packet-pump-task
+  $%  [%hear-ack =message-num =fragment-num]
+      [%hear-nack =message-num]
+      [%flush ~]
+      [%send fragments=(list static-fragment)]
+      [%wake ~]
+  ==
+::  $packet-pump-gift: effect from |packet-pump
+::
+::    %ack-fragment: report fresh ack on a message fragment
+::    %send: emit message fragment
+::    %set-timer: set a new timer at .date
+::    %unset-timer: cancel timer at .date
+::
++$  packet-pump-gift
+  $%  [%ack-fragment =message-num =fragment-num]
+      [%send =static-fragment]
+      [%set-timer date=@da]
+      [%unset-timer date=@da]
   ==
 --
 |%
