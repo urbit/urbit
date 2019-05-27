@@ -152,9 +152,7 @@
 ::  $channel: combined sender and receiver identifying data
 ::
 +$  channel
-  $:  ::  dyad: [our her] if sending; [her our] when receiving
-      ::
-      dyad
+  $:  [our=ship her=ship]
       ::  our data, common to all dyads
       ::
       $:  =our=life
@@ -222,7 +220,7 @@
 ::
 +$  ack-meat  (each fragment-num [ok=? lag=@dr])
 ::
-+|  %state
++|  %statics
 ::
 ::  $ames-state: state for entire vane
 ::
