@@ -132,9 +132,9 @@
 +$  blob           @uxblob
 +$  bone           @udbone
 +$  fragment       @uwfragment
++$  fragment-num   @udfragmentnum
 +$  lane           @uxlane
 +$  message-num    @udmessagenum
-+$  fragment-num   @udfragmentnum
 +$  public-key     @uwpublickey
 +$  signature      @uwsignature
 +$  symmetric-key  @uwsymmetrickey
@@ -147,8 +147,26 @@
 ::
 +$  rank  ?(%0 %1 %2 %3)
 ::
-+|  %parts
++|  %dynamics
 ::
+::  $channel: combined sender and receiver identifying data
+::
++$  channel
+  $:  ::  dyad: [our her] if sending; [her our] when receiving
+      ::
+      dyad
+      ::  our data, common to all dyads
+      ::
+      $:  =our=life
+          crypto-core=acru:ames
+      ==
+      ::  her data, specific to this dyad
+      ::
+      $:  =symmetric-key
+          =her=life
+          =her=public-key
+          her-sponsors=(list ship)
+  ==  ==
 ::  $dyad: pair of sender and receiver ships
 ::
 +$  dyad  [sndr=ship rcvr=ship]
@@ -206,24 +224,6 @@
 ::
 +|  %state
 ::
-::  $channel: combined sender and receiver identifying data
-::
-+$  channel
-  $:  ::  dyad: [our her] if sending; [her our] when receiving
-      ::
-      dyad
-      ::  our data, common to all dyads
-      ::
-      $:  =our=life
-          crypto-core=acru:ames
-      ==
-      ::  her data, specific to this dyad
-      ::
-      $:  =symmetric-key
-          =her=life
-          =her=public-key
-          her-sponsors=(list ship)
-  ==  ==
 ::  $ames-state: state for entire vane
 ::
 +$  ames-state
@@ -280,18 +280,13 @@
       =pump-metrics
   ==
 +$  pump-metrics
-  $:  ::  empirically observed data
-      ::
-      $:  num-live=@ud
-          num-lost=@ud
-          last-sent-at=@da
-          last-dead-at=@da
-      ==
-      ::  derived state
-      ::
-      $:  rtt=@dr
-          max-live=@ud
-  ==  ==
+  $:  num-live=@ud
+      num-lost=@ud
+      last-sent-at=@da
+      last-dead-at=@da
+      rtt=@dr
+      max-live=@ud
+  ==
 +$  live-fragment
   $:  sent-at=@da
       dead-at=@da
