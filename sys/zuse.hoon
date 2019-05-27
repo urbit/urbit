@@ -7033,20 +7033,53 @@
       {$j gift:able:jael}
   ==
 ::
-++  unix-task                                           ::  input from unix
-  $%  {$belt p/belt:dill}                               ::  dill: keyboard
-      {$blew p/blew:dill}                               ::  dill: configure
-      {$boat ~}                                         ::  clay: reboot
-      {$born ~}                                         ::  eyre: new process
-      [%crud tag=@tas =tang]                            ::  any vane: error report
-      {$hail ~}                                         ::  dill: refresh
-      {$hear p/lane:ames q/@}                           ::  ames: input packet
-      {$hook ~}                                         ::  dill: hangup
-      {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
-      {$they p/@ud q/httr:eyre}                         ::  eyre: in response
-      {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
-      {$thud ~}                                         ::  eyre: in cancel
-      {$wake ~}                                         ::  behn: wakeup
++$  unix-task                                           ::  input from unix
+  $~  [%wake ~]
+  $%  ::  %ames: new process
+      ::
+      $>(%barn task:able:ames)
+      ::  %dill: keyboard input
+      ::
+      $>(%belt task:able:dill)
+      ::  %dill: configure terminal (resized)
+      ::
+      $>(%blew task:able:dill)
+      ::  %clay: new process
+      ::
+      $>(%boat task:able:clay)
+      ::  %behn/%eyre: new process
+      ::
+      [%born ~]
+      ::  any vane: error report
+      ::
+      [%crud tag=@tas =tang]
+      ::  %dill: reset terminal configuration
+      ::
+      $>(%hail task:able:dill)
+      ::  %ames: hear packet
+      ::
+      $>(%hear task:able:ames)
+      ::  %dill: hangup
+      ::
+      $>(%hook task:able:dill)
+      ::  %clay: external edit
+      ::
+      $>(%into task:able:clay)
+      ::  %eyre: learn ports of live http servers
+      ::
+      $>(%live task:able:eyre)
+      ::  %eyre: hear http response
+      ::
+      $>(%they task:able:eyre)
+      ::  %eyre: hear http request
+      ::
+      $>(%this task:able:eyre)
+      ::  %eyre: hear http request cancellation
+      ::
+      $>(%thud task:able:eyre)
+      ::  %behn: wakeup
+      ::
+      $>(%wake task:able:behn)
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
