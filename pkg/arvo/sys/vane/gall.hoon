@@ -1614,18 +1614,15 @@
         =/  dep  0
         |-  ^-  (unit (pair @ud @tas))
         =/  spu
-          ~&  [%spu-branching-on path]
           ?~  path
             ~
           =/  hyped  (cat 3 term (cat 3 '-' i.path))
           $(path t.path, dep +(dep), term hyped)
         ::
-        ~&  [%spu-is spu]
         ?^  spu
           spu
         ::
         ?.  (ap-exists-arm term)
-          ~&  [%no-such-arm term]
           ~
         (some [dep term])
       ::
