@@ -4353,10 +4353,11 @@
     [mos ..^$]
   ::
       %west
-    =*  wer  wer.req
-    =*  pax  pax.req
+    =*  wer  p.req
+    =*  pax  q.req
+    =*  res  r.req
     ?:  ?=({%question *} pax)
-      =+  ryf=;;(riff res.req)
+      =+  ryf=;;(riff res)
       :_  ..^$
       :~  [hen %give %mack ~]
           =/  =wire
@@ -4368,7 +4369,7 @@
     =+  inx=(slav %ud i.t.t.pax)
     =^  mos  ruf
       =/  den  ((de our now ski hen ruf) wer syd)
-      abet:(take-foreign-answer:den inx ;;((unit rand) res.req))
+      abet:(take-foreign-answer:den inx ;;((unit rand) res))
     [[[hen %give %mack ~] mos] ..^$]
   ::
       %wegh

@@ -248,7 +248,7 @@
   =^  moves  state
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [tag tang]:task)
+      %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
       %drip  (drip:event-core move=p.task)
       %vega  vega:event-core
