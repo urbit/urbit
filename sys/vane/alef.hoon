@@ -252,11 +252,12 @@
       =ossuary
       snd=(map bone message-pump-state)
       rcv=(map bone rcv-state)
+      nax=(set [=bone =message-num])
   ==
-::  $ossuary: bone<-->duct bijection and .next bone to map to a duct
+::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
 +$  ossuary
-  $:  next=bone
+  $:  =next=bone
       by-duct=(map duct bone)
       by-bone=(map bone duct)
   ==
@@ -267,24 +268,53 @@
       snd-messages=(list [=duct =message])
   ==
 +$  message-pump-state
-  $:  next-to-send=message-num
+  $:  =next=message-num
       unsent-messages=(qeu message)
-      unsent-fragments=(list [=fragment-num =fragment])
+      unsent-fragments=(list static-fragment)
       =packet-pump-state
   ==
 +$  packet-pump-state
   $:  next-wake=(unit @da)
-      live=(tree [sent-at=@da dead-at=@da fragment-descriptor])
-      lost=(tree fragment-descriptor)
+      live=(tree live-fragment)
+      lost=(tree static-fragment)
+      =pump-metrics
   ==
-+$  fragment-descriptor
-  $:  [=sndr=life =rcvr=life]
-      =message-num
++$  pump-metrics
+  $:  ::  empirically observed data
+      ::
+      $:  num-live=@ud
+          num-lost=@ud
+          last-sent-at=@da
+          last-dead-at=@da
+      ==
+      ::  derived state
+      ::
+      $:  rtt=@dr
+          max-live=@ud
+  ==  ==
++$  live-fragment
+  $:  sent-at=@da
+      dead-at=@da
+      retried=?
+      static-fragment
+  ==
++$  static-fragment
+  $:  =message-num
+      num-fragments=fragment-num
       =fragment-num
       =fragment
   ==
 +$  rcv-state
-  $:  _!!
+  $:  last-acked=message-num
+      last-heard=message-num
+      pending-vane-ack=(qeu [=message-num =message])
+      live-messages=(map message-num partial-rcv-message)
+      nax=(set message-num)
+  ==
++$  partial-rcv-message
+  $:  num-fragments=fragment-num
+      num-received=fragment-num
+      fragments=(map fragment-num fragment)
   ==
 --
 |%
