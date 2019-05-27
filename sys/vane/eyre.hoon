@@ -65,8 +65,8 @@
           $>(%turf gift:able:jael)                      ::  bind to domains
       ==                                                ::
       $:  @tas                                          ::  by any
-          $%  [%crud p=@tas q=(list tank)]              ::
-  ==  ==  ==                                            ::
+          $>(%crud vane-task)                           ::  XX strange
+  ==  ==                                                ::
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  ~                                        ::  wire subset
           $%  {$ac p/hole q/whir}                       ::  cookied

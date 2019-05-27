@@ -117,8 +117,8 @@
           $>(%look task)                                ::  set ethereum source
       ==                                                ::
       $:  @tas                                          ::
-  $%  [%init p=ship]                                    ::  report install
-      [%sunk p=ship q=rift]                             ::  report death
+  $%  $>(%init vane-task)                               ::  report install
+      $>(%sunk vane-task)                               ::  report death
   ==  ==  ==                                            ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-

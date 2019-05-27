@@ -525,8 +525,8 @@
           $>(%made gift:able:ford)                      ::
       ==                                                ::
       $:  @tas                                          ::  by any
-          $%  [%crud p=@tas q=(list tank)]              ::
-  ==  ==  ==                                            ::
+          $>(%crud vane-task)                           ::  XX strange
+  ==  ==                                                ::
 --
 ::
 ::  Old state types for ++load

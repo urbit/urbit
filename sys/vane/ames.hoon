@@ -52,7 +52,7 @@
               $>(%unto gift:able:gall)                  ::  application ack
       ==  ==                                            ::
       $:  @tas                                          ::    from any
-          $%  [%crud p=@tas q=(list tank)]              ::  error report
+          $%  $>(%crud vane-task)                       ::  XX strange
               $>  $?  %mack                             ::  message ack
                       %woot                             ::  reaction message
                   ==                                    ::
