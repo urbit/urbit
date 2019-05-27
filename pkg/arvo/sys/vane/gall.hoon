@@ -2324,11 +2324,13 @@
         ?~  maybe-vase
           [~ ap-state]
         ::
-        =/  new  (slot 13 running-state.sat)
-        =/  new-type  p:new
+        =/  new-type
+          =/  new  (slot 13 running-state.sat)
+          p.new
         ::
-        =/  old  (slot 13 u.maybe-vase)
-        =/  old-type  p:old
+        =/  old-type
+          =/  old  (slot 13 u.maybe-vase)
+          p.old
         ::
         ?.  (~(nest ut new-type) %.n old-type)
           =/  =tang  (ap-tang "prep mismatch")
