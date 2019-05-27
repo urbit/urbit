@@ -88,11 +88,19 @@ guardInfer :: String -> Bool -> Infer ()
 guardInfer _   True  = pure ()
 guardInfer msg False = fail msg
 
+unify2 :: Ty -> Ty -> Infer Ty
+unify2 x y = do
+  let err = "(bad_unify " <> show x <> " ## " <> show y <> ")"
+  guardInfer err (x == y)
+  pure x
+
 unify :: Vec Ty -> Infer Ty
-unify = toList >>> \case []   -> pure tVoid
-                         x:xs -> do let err = "bad-unify " <> show (x:xs)
-                                    guardInfer err (all (== x) xs)
-                                    pure x
+unify = go . toList
+  where
+    go :: [Ty] -> Infer Ty
+    go []       = pure tVoid
+    go [x]      = pure x
+    go (x:y:zs) = unify2 x y >> go (y:zs)
 
 unifyVec :: Vec Ty -> Vec Ty -> Infer (Vec Ty)
 unifyVec xs ys = do
@@ -114,7 +122,7 @@ arm n cor arms = do
       fail ("arm-bad-idx: " <> show (n, arms))
     Just (Nok nokSut nokRes) -> do
       unify [cor, nokSut]
-      pure (getAxis n len, nokSut, nokRes)
+      pure (armAxis n len, nokSut, nokRes)
     Just armTy ->
       fail ("arm-not-nok: " <> show armTy)
 
@@ -195,9 +203,9 @@ tTop  = All $ Ref 0
 tup2 :: Exp -> Exp -> Exp
 tup2 x y = Tup [x, y]
 
-choEx, tupEx, widEx, eatEx :: Exp
+choEx, tupEx, witEx, eatEx :: Exp
 choEx = Cho [Nat, Nat] 0 (Lit 0)
-widEx = Wit Nat (Lit 3) Sub
+witEx = Wit Nat (Lit 3) Sub
 tupEx = Get 0 [Nat, Nat]
       $ Get 1 [Nat, Mul [Nat, Nat]]
       $ tup2 (Lit 3) (tup2 (Lit 4) (Lit 5))
@@ -218,16 +226,19 @@ evaEx = Eva (Lit 0) lamEx
 armExTy, batExTy, corExTy :: Ty
 armExTy = Nok corExTy Nat
 batExTy = Mul [armExTy]
-corExTy = Mul [batExTy, Nat]
+corExTy = Fix $ Mul [Mul [Nok (Ref 0) Nat], Nat]
 
 armEx :: Exp
-armEx = Lam corExTy Sub
+armEx = Lam corExTy (Get 1 [batExTy, Nat] Sub)
 
 batEx :: Exp
 batEx = Tup [armEx]
 
 corEx :: Exp
 corEx = Tup [batEx, Lit 0]
+
+firEx :: Exp
+firEx = Fir 0 (corExTy, [armExTy]) corEx
 
 --------------------------------------------------------------------------------
 
@@ -244,38 +255,18 @@ try m e = do
   putStrLn "    nock:"
   putStr (pack $ indent (ppShow (compile tTop e)))
 
-tryTup :: IO ()
-tryTup = try "tup" tupEx
-
-tryWit :: IO ()
-tryWit = try "wid" widEx
-
-tryCho :: IO ()
-tryCho = try "cho" choEx
-
-tryEat :: IO ()
-tryEat = try "eat" eatEx
-
-tryLam :: IO ()
-tryLam = try "lam" lamEx
-
-tryEva :: IO ()
-tryEva = try "eva" evaEx
-
-{- TODO Implement recursive types -}
--- tryArm :: IO ()
--- tryArm = try "arm" armEx
-
-{- TODO Implement recursive types -}
--- tryBat :: IO ()
--- tryBat = try "bat" batEx
-
-{- TODO Implement recursive types -}
--- tryCor :: IO ()
--- tryCor = try "cor" corEx
-
 tryAll :: IO ()
-tryAll = tryTup >> tryWit >> tryCho >> tryEat >> tryLam >> tryEva
+tryAll = do
+  try "tup" tupEx
+  try "wit" witEx
+  try "cho" choEx
+  try "eat" eatEx
+  try "lam" lamEx
+  try "eva" evaEx
+  try "arm" armEx
+  try "bat" batEx
+  try "cor" corEx
+  try "fir" firEx
 
 --------------------------------------------------------------------------------
 
@@ -297,7 +288,7 @@ compile sut = \case
     pure (NCons (NOneConst (Atom (fromIntegral n))) nock)
   Get n tys exp -> do
     vecNock <- compile sut exp
-    axis    <- pure (getAxis n (fromIntegral $ length tys))
+    axis    <- pure (tupAxis n (fromIntegral $ length tys))
     pure (NSevenThen vecNock (NZeroAxis $ fromIntegral axis))
   Tup xs -> do
     nock <- genCons sut (toList xs)
@@ -345,10 +336,24 @@ cases = go 0
                                  nock
                                  (go (tag+1) nocks)
 
-getAxis :: Nat -> Nat -> Nat
-getAxis 0 1                = 1
-getAxis 0 len              = 2
-getAxis i len | i+1 == len = 1 + getAxis (i-1) len
-getAxis i len              = 2 * (1 + getAxis (i-1) len)
+tupAxis :: Nat -> Nat -> Nat
+tupAxis 0 1                = 1
+tupAxis 0 len              = 2
+tupAxis i len | i+1 == len = 1 + tupAxis (i-1) len
+tupAxis i len              = 2 * (1 + tupAxis (i-1) len)
+
+armAxis :: Nat -> Nat -> Nat
+armAxis 0 1                = 2
+armAxis 0 len              = 4
+armAxis i len | i+1 == len = 1 + armAxis (i-1) len
+armAxis i len              = 2 * (1 + armAxis (i-1) len)
 
 -- Credits: Morgan, Ted, Benjamin
+
+{-
+Fix (Mul [Mul [Nok (Ref 0) Nat],Nat])
+Fix (Mul [Mul [Nok (Ref 0) Nat],Nat])
+
+1: (Fix (Mul [Mul [Nok (Ref 0) Nat],Nat]))
+2: (Fix (Mul [Mul [Nok (Ref 0) Nat],Nat]))
+-}
