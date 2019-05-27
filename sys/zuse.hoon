@@ -7049,6 +7049,8 @@
       $>(%boat task:able:clay)
       ::  %behn/%eyre: new process
       ::
+      ::    XX %eyre includes payload
+      ::
       [%born ~]
       ::  any vane: error report
       ::
