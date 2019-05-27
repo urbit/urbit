@@ -269,17 +269,51 @@
   ==
 ::  $message-pump-state: persistent state for |message-pump
 ::
-::    next-message-num: sequence number of next message to send
+::    Messages queue up in |message-pump's .unsent-messages until they
+::    can be packetized and fed into |packet-pump for sending.  When we
+::    pop a message off .unsent-messages, we push as many fragments as
+::    we can into |packet-pump, then place the remaining in
+::    .unsent-fragments.  We also insert an entry in .unacked-fragments
+::    initialized with the total number of fragments in the message.
+::
+::    When we hear a packet ack, we send it to |packet-pump.  If we
+::    haven't seen it before, |packet-pump reports the fresh ack.  We
+::    then decrement that message's entry in .unacked-fragments.
+::
+::    When .unacked-fragments goes to zero on a .message-num, that means
+::    all fragments have been acked, so delete this entry from
+::    .unsent-fragments.  If this message is not .current, then it's a
+::    future message and .current has not yet been acked, so we place
+::    the message in .queued-acks.
+::
+::    If it is the current message, emit the message ack, increment
+::    .current, and check if this next message is in .queued-acks.  If
+::    it is, emit the message (n)ack, increment .current, and check the
+::    next message.  Repeat until .current is not fully acked.
+::
+::    When we hear a message nack, we send it to |packet-pump, which
+::    deletes all packets from that message.  If .current gets nacked,
+::    clear .unsent-fragments and go into the same flow as when we hear
+::    the last packet ack on a message.
+::
+::    The following equation is always true:
+::    .next - .current == number of messages in flight
+::
+::    current: sequence number of message being sent
+::    next: sequence number of next message to send
 ::    unsent-messages: messages to be sent after current message
 ::    unsent-fragments: fragments of current message waiting for sending
 ::    unacked-fragments: number of fragments waiting on ack
+::    queued-acks: future message acks to be applied after current
 ::    packet-pump-state: state of corresponding |packet-pump
 ::
 +$  message-pump-state
-  $:  =next=message-num
+  $:  current=message-num
+      next=message-num
       unsent-messages=(qeu message)
       unsent-fragments=(list static-fragment)
       unacked-fragments=(map message-num fragment-num)
+      queued-acks=(map message-num ok=?)
       =packet-pump-state
   ==
 ::  $packet-pump-state: persistent state for |packet-pump
@@ -340,7 +374,7 @@
 +$  message-pump-task
   $%  [%send =message-num =message]
       [%hear-ack =message-num =fragment-num]
-      [%hear-nack =message-num]
+      [%hear-nack =message-num lag=@dr]
       [%wake ~]
   ==
 ::  $message-pump-gift: effect from |message-pump
@@ -352,7 +386,7 @@
 ::
 +$  message-pump-gift
   $%  [%send =static-fragment]
-      [%ack-message =message-num error=(unit error)]
+      [%ack-message =message-num ok=?]
       [%set-timer date=@da]
       [%unset-timer date=@da]
   ==
@@ -366,7 +400,7 @@
 ::
 +$  packet-pump-task
   $%  [%hear-ack =message-num =fragment-num]
-      [%hear-nack =message-num]
+      [%hear-nack =message-num lag=@dr]
       [%flush ~]
       [%send fragments=(list static-fragment)]
       [%wake ~]
