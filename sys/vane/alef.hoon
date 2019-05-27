@@ -299,6 +299,11 @@
 ::    The following equation is always true:
 ::    .next - .current == number of messages in flight
 ::
+::    At the end of a task, |message-pump sends a %flush task to
+::    |packet-pump, which can trigger a timer to be set or cleared based
+::    on congestion control calculations. When it fires, the timer will
+::    generally cause one or more packets to be resent.
+::
 ::    current: sequence number of message being sent
 ::    next: sequence number of next message to send
 ::    unsent-messages: messages to be sent after current message
@@ -319,8 +324,8 @@
 ::  $packet-pump-state: persistent state for |packet-pump
 ::
 ::    next-wake: last timer we've set, or null
-::    live: packets in flight
-::    lost: packets to retry
+::    live: packets in flight; sent but not yet acked
+::    lost: packets to retry, since they timed out with no ack
 ::    pump-metrics: congestion control information
 ::
 +$  packet-pump-state
