@@ -87,7 +87,7 @@
     :*  [sndr=~nec rcvr=~doznec-doznec]
         encrypted=%.y
         origin=~
-        content=[12 13]
+        content=%double-secret
     ==
   =/  =blob:alef  (encode-packet:alef packet)
   ::

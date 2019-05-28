@@ -598,14 +598,18 @@
   ++  on-hear-shut
     |=  [=lane =packet]
     ^+  event-core
+    ::  encrypted packet content must be an encrypted atom
+    ::
+    ?>  ?=(@ content.packet)
     ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-packet lane packet)
     ::
-    =/  =peer-state  +.u.sndr-state
-    =/  =channel     [[our sndr.packet] +.ames-state -.peer-state]
+    =/  =peer-state   +.u.sndr-state
+    =/  =channel      [[our sndr.packet] +.ames-state -.peer-state]
+    =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::
     !!
   ::
@@ -631,6 +635,23 @@
     ::
     event-core
   --
+::  +encrypt: encrypt $shut-packet into atomic packet content
+::
+++  encrypt
+  |=  [=symmetric-key plaintext=shut-packet]
+  ^-  @
+  ::
+  (en:crub:crypto symmetric-key (jam plaintext))
+::  +decrypt: decrypt packet content to a $shut-packet or die
+::
+++  decrypt
+  |=  [=symmetric-key ciphertext=@]
+  ^-  shut-packet
+  ::
+  ;;  shut-packet
+  %-  cue
+  %-  need
+  (de:crub:crypto symmetric-key ciphertext)
 ::  +encode-packet: serialize a packet into a bytestream
 ::
 ++  encode-packet
