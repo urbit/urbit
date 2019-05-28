@@ -125,7 +125,7 @@
   ::
   ::  Start a command
   ::
-  ++  poke-noun
+  ++  poke
     |=  command=command-type
     ^-  (quip move _this-tapp)
     =.  waiting  (~(put to waiting) %poke command)

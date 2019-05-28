@@ -12,7 +12,7 @@
   +$  state
     $:  top-comments=(list tape)
     ==
-  +$  command  cord
+  +$  command  [%noun =cord]
   +$  poke-data
     $%  [%noun cord]
     ==
@@ -63,7 +63,7 @@
   ::
   ::  If requested to print, just print what we have in our state
   ::
-  ?:  =(command 'print')
+  ?:  =(cord.command 'print')
     ~&  'drumroll please...'
     ;<  now=@da  bind:m  get-time
     ;<  ~        bind:m  (wait (add now ~s3))
@@ -92,7 +92,7 @@
   ::
   ?~  top-stories
     ;<  ~  bind:m  (give-result /comments %comments top-comments)
-    (handle-command 'print')
+    (handle-command %noun 'print')
   ::
   ::  Else, fetch the story info
   ::

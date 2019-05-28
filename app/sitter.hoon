@@ -8,7 +8,7 @@
   +$  state
     $:  subscription=(unit subscription-state)
     ==
-  +$  command  cord
+  +$  command  [%noun =cord]
   +$  poke-data
     $%  [%noun cord]
     ==
@@ -29,7 +29,7 @@
   |=  =command
   =/  m  tapp-trad
   ^-  form:m
-  ?:  =(command 'pull')
+  ?:  =(cord.command 'pull')
     ?~  subscription
       (trad-fail %no-subscription ~)
     ;<  ~  bind:m  (pull-app [target path]:u.subscription)
