@@ -153,10 +153,10 @@
       contacts=(map ship foreign)
       ::  running agents
       ::
-      running=(map dude agent)
+      running=(map term agent)
       ::  waiting queue
       ::
-      waiting=(map dude blocked)
+      waiting=(map term blocked)
   ==
 ::
 ::  +routes: new cuff.
@@ -352,7 +352,7 @@
   ::    and date information.
   ::
   ++  mo-boot
-    |=  [=dude =ship =desk]
+    |=  [=term =ship =desk]
     ^+  mo-state
     ::
     =/  =case  [%da now]
@@ -360,11 +360,11 @@
     =/  =path
       =/  ship  (scot %p ship)
       =/  case  (scot case)
-      /sys/core/[dude]/[ship]/[desk]/[case]
+      /sys/core/[term]/[ship]/[desk]/[case]
     ::
     =/  =note-arvo
       =/  disc  [ship desk]
-      =/  spur  /hoon/[dude]/app
+      =/  spur  /hoon/[term]/app
       =/  =schematic:ford  [%core disc spur]
       [%f %build live=%.y schematic]
     ::
@@ -408,7 +408,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [=dude =beak =made-result:ford]
+    |=  [=term =beak =made-result:ford]
     ^+  mo-state
     ::
     ?:  ?=([%incomplete *] made-result)
@@ -423,7 +423,7 @@
     =/  result-vase  q.cage
     ::
     =/  app-data=(unit agent)
-      (~(get by running.ship-state.gall) dude)
+      (~(get by running.ship-state.gall) term)
     ::
     ?^  app-data
       ::  update the path
@@ -431,7 +431,7 @@
       =/  updated  u.app-data(beak beak)
       ::
       =.  running.ship-state.gall
-        (~(put by running.ship-state.gall) dude updated)
+        (~(put by running.ship-state.gall) term updated)
       ::
       ::  magic update string from the old +mo-boon, "complete old boot"
       ::
@@ -439,23 +439,23 @@
         =/  =routes  [disclosing=~ attributing=our]
         [%high routes]
       ::
-      =/  initialised  (ap-abed:ap dude privilege)
+      =/  initialised  (ap-abed:ap term privilege)
       =/  peeped  (ap-reinstall:initialised result-vase)
       ap-abet:peeped
     ::  first install of the app
     ::
     ?.  (mo-contains-valid-bowl result-vase)
-      =/  err  [[%leaf "{<dude>}: bogus core"] ~]
+      =/  err  [[%leaf "{<term>}: bogus core"] ~]
       (mo-give %onto %.n err)
     ::
-    =.  mo-state  (mo-new-agent dude beak result-vase)
+    =.  mo-state  (mo-new-agent term beak result-vase)
     ::
     =/  old  mo-state
     ::
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
       =/  =privilege  [%high routes]
-      =/  initialised  (ap-abed:ap dude privilege)
+      =/  initialised  (ap-abed:ap term privilege)
       (ap-prep:initialised ~)
     ::
     =/  maybe-tang  -.wag
@@ -467,13 +467,13 @@
     ::
     =.  mo-state  ap-abet:new
     ::
-    =/  cleared  (mo-clear-queue dude)
-    (mo-give:cleared %onto %.y dude %boot now)
+    =/  cleared  (mo-clear-queue term)
+    (mo-give:cleared %onto %.y term %boot now)
   ::
   ::  +mo-new-agent: create a new agent and add it to state.
   ::
   ++  mo-new-agent
-    |=  [=dude =beak =vase]
+    |=  [=term =beak =vase]
     ^+  mo-state
     ::
     =/  =opaque-ducts
@@ -490,7 +490,7 @@
         ducts           opaque-ducts
       ==
     ::
-    =/  running  (~(put by running.ship-state.gall) dude agent)
+    =/  running  (~(put by running.ship-state.gall) term agent)
     ::
     %_  mo-state
       running.ship-state.gall  running
@@ -503,7 +503,7 @@
     |=  [=ship =internal-task]
     ^+  mo-state
     ::
-    =/  =dude  p.internal-task
+    =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
     ::
     ?:  ?=(%pump -.agent-action)
@@ -537,7 +537,7 @@
       /sys/way/[action]
     ::
     =/  =note-arvo
-      =/  =path  /g/ge/[dude]
+      =/  =path  /g/ge/[term]
       =/  =noun  [bone forward-ames]
       [%a %want ship path noun]
     ::
@@ -817,7 +817,7 @@
     ?>  ?=([@ @ @ ~] path)
     ::
     =/  =ship  (slav %p i.t.path)
-    =/  =dude  i.t.t.path
+    =/  =term  i.t.t.path
     ::
     ?:  ?=([%incomplete *] result.sign-arvo)
       =/  err  (some tang.result.sign-arvo)
@@ -835,7 +835,7 @@
     ::
     =/  =cage  (result-to-cage:ford build-result)
     =/  =agent-action  [%poke cage]
-    (mo-apply dude privilege agent-action)
+    (mo-apply term privilege agent-action)
   ::
   ::  +mo-handle-sys-way: outbound request.
   ::
@@ -928,13 +928,13 @@
   ::  +mo-clear-queue: clear blocked kisses.
   ::
   ++  mo-clear-queue
-    |=  =dude
+    |=  =term
     ^+  mo-state
     ::
-    ?.  (~(has by running.ship-state.gall) dude)
+    ?.  (~(has by running.ship-state.gall) term)
       mo-state
     ::
-    =/  maybe-blocked  (~(get by waiting.ship-state.gall) dude)
+    =/  maybe-blocked  (~(get by waiting.ship-state.gall) term)
     ::
     ?~  maybe-blocked
       mo-state
@@ -944,7 +944,7 @@
     |-  ^+  mo-state
     ::
     ?:  =(~ blocked)
-      =/  waiting   (~(del by waiting.ship-state.gall) dude)
+      =/  waiting   (~(del by waiting.ship-state.gall) term)
       %_  mo-state
         waiting.ship-state.gall  waiting
       ==
@@ -957,7 +957,7 @@
     ::
     =/  move
       =/  =sock  [attributing.routes.privilege our]
-      =/  =internal-task  [dude agent-action]
+      =/  =internal-task  [term agent-action]
       =/  card  [%slip %g %deal sock internal-task]
       [duct card]
     ::
@@ -966,11 +966,11 @@
   ::  +mo-beak: assemble a beak for the provided app.
   ::
   ++  mo-beak
-    |=  =dude
+    |=  =term
     ^-  beak
-    ?~  app-data=(~(get by running.ship-state.gall) dude)
+    ?~  app-data=(~(get by running.ship-state.gall) term)
       ::
-      ::  XX this fallback is necessary, as .dude could be either the source
+      ::  XX this fallback is necessary, as .term could be either the source
       ::  or the destination app. ie, it might not exist locally ...
       ::
       [our %home %da now]
@@ -980,7 +980,7 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [=dude =privilege =term =path]
+    |=  [dude=term =privilege =term =path]
     ^-  (unit (unit cage))
     ::
     =/  initialised  (ap-abed:ap dude privilege)
@@ -989,15 +989,15 @@
   ::  +mo-apply: apply action.
   ::
   ++  mo-apply
-    |=  [=dude =privilege =agent-action]
+    |=  [=term =privilege =agent-action]
     ^+  mo-state
     ::
     =/  =path
       =/  ship  (scot %p attributing.routes.privilege)
-      /sys/val/[ship]/[dude]
+      /sys/val/[ship]/[term]
     ::
     =/  ship-desk
-      =/  =beak  (mo-beak dude)
+      =/  =beak  (mo-beak term)
       [p q]:beak
     ::
     ?:  ?=(%puff -.agent-action)
@@ -1014,7 +1014,7 @@
       =/  err  (some p.agent-action)
       (mo-give %unto %reap err)
     ::
-    =/  initialised  (ap-abed:ap dude privilege)
+    =/  initialised  (ap-abed:ap term privilege)
     =/  applied  (ap-apply:initialised agent-action)
     ap-abet:applied
   ::
@@ -1028,32 +1028,32 @@
       =/  =routes  [disclosing=~ attributing=ship]
       [%high routes]
     ::
-    =/  =dude  p.internal-task
+    =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
     ::
-    =/  is-running  (~(has by running.ship-state.gall) dude)
-    =/  is-waiting  (~(has by waiting.ship-state.gall) dude)
+    =/  is-running  (~(has by running.ship-state.gall) term)
+    =/  is-waiting  (~(has by waiting.ship-state.gall) term)
     ::
     ?:  |(!is-running is-waiting)
       ::
       =/  =blocked
-        =/  waiting  (~(get by waiting.ship-state.gall) dude)
+        =/  waiting  (~(get by waiting.ship-state.gall) term)
         =/  kisses  (fall waiting *blocked)
         =/  kiss  [hen privilege agent-action]
         (~(put to kisses) kiss)
       ::
-      =/  waiting  (~(put by waiting.ship-state.gall) dude blocked)
+      =/  waiting  (~(put by waiting.ship-state.gall) term blocked)
       ::
       %_  mo-state
         waiting.ship-state.gall  waiting
       ==
     ::
-    (mo-apply dude privilege agent-action)
+    (mo-apply term privilege agent-action)
   ::
   ::  +mo-handle-forward: ames forward.
   ::
   ++  mo-handle-forward
-    |=  [=ship =dude =bone =forward-ames]
+    |=  [=ship =term =bone =forward-ames]
     ^+  mo-state
     ::
     =.  mo-state
@@ -1064,7 +1064,7 @@
     =/  =path
       =/  him  (scot %p ship)
       =/  num  (scot %ud bone)
-      /sys/req/[him]/[dude]/[num]
+      /sys/req/[him]/[term]/[num]
     ::
     =/  =sock  [ship our]
     ::
@@ -1074,28 +1074,28 @@
           %m
           ::
         =/  =task:able
-          =/  =internal-task  [dude %puff [mark noun]:forward-ames]
+          =/  =internal-task  [term %puff [mark noun]:forward-ames]
           [%deal sock internal-task]
         [%g task]
           ::
           %l
           ::
         =/  =task:able
-          =/  =internal-task  [dude %peel [mark path]:forward-ames]
+          =/  =internal-task  [term %peel [mark path]:forward-ames]
           [%deal sock internal-task]
         [%g task]
           ::
           %s
           ::
         =/  =task:able
-          =/  =internal-task  [dude %peer path.forward-ames]
+          =/  =internal-task  [term %peer path.forward-ames]
           [%deal sock internal-task]
         [%g task]
           ::
           %u
           ::
         =/  =task:able
-          =/  =internal-task  [dude %pull ~]
+          =/  =internal-task  [term %pull ~]
           [%deal sock internal-task]
         [%g task]
       ==
@@ -1105,7 +1105,7 @@
   ::  +mo-handle-backward: ames backward.
   ::
   ++  mo-handle-backward
-    |=  [=ship =dude =bone =reverse-ames]
+    |=  [=ship =term =bone =reverse-ames]
     ^+  mo-state
     ::
     ?-    action.reverse-ames
@@ -1115,10 +1115,10 @@
       =/  =path
         =/  him  (scot %p ship)
         =/  num  (scot %ud bone)
-        /sys/rep/[him]/[dude]/[num]
+        /sys/rep/[him]/[term]/[num]
       ::
       =/  =note-arvo
-        =/  beak  (mo-beak dude)
+        =/  beak  (mo-beak term)
         =/  info  [p q]:beak
         =/  =schematic:ford  [%vale info p.reverse-ames q.reverse-ames]
         [%f %build live=%.n schematic]
@@ -1142,7 +1142,7 @@
   ++  ap
     ~%  %gall-ap  +>  ~
     ::
-    |_  $:  dap=dude
+    |_  $:  dap=term
             pry=privilege
             ost=bone
             zip=(list internal-move)
@@ -1156,14 +1156,14 @@
     ::
     ++  ap-abed
       ~/  %ap-abed
-      |=  [=dude =privilege]
+      |=  [=term =privilege]
       ^+  ap-state
       ::
       =/  =agent
-        =/  running  (~(got by running.ship-state.gall) dude)
+        =/  running  (~(got by running.ship-state.gall) term)
         =/  =stats
           =/  change  +(change.stats.running)
-          =/  trop  (shaz (mix (add dude change) eny))
+          =/  trop  (shaz (mix (add term change) eny))
           [change=change eny=trop time=now]
         running(stats stats)
       ::
@@ -1172,7 +1172,7 @@
       ?^  maybe-bone
         =/  bone  u.maybe-bone
         %_  ap-state
-          dap  dude
+          dap  term
           pry  privilege
           sat  agent
           ost  bone
