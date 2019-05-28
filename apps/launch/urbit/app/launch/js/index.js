@@ -40850,7 +40850,7 @@
 
 	    this.bindPaths = bindPaths;
 
-	    api.bind("home", path,
+	    api.bind("launch", path,
 	      this.handleEvent.bind(this),
 	      this.handleError.bind(this),
 	      ship);
@@ -49027,7 +49027,7 @@
 	})));
 	});
 
-	const _jsxFileName = "/Users/logan/Dev/apps/launch/src/js/components/dropdown.js";
+	const _jsxFileName = "/Users/logan/Dev/interface/apps/launch/src/js/components/dropdown.js";
 	let style = {
 	  circle: {
 	    width: '2em',
@@ -49068,7 +49068,7 @@
 
 	}
 
-	const _jsxFileName$1 = "/Users/logan/Dev/apps/launch/src/js/components/header.js";
+	const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/launch/src/js/components/header.js";
 	class Header extends react_1 {
 
 	  constructor(props) {
@@ -49117,7 +49117,7 @@
 
 	}
 
-	const _jsxFileName$2 = "/Users/logan/Dev/apps/launch/src/js/components/tile.js";
+	const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/launch/src/js/components/tile.js";
 	class Tile extends react_1 {
 
 	  constructor(props) {
@@ -49140,7 +49140,7 @@
 
 	}
 
-	const _jsxFileName$3 = "/Users/logan/Dev/apps/launch/src/js/components/home.js";
+	const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/launch/src/js/components/home.js";
 	const loadExternalScript = (ext, callback) => {
 	  const script = document.createElement('script');
 	  script.src = '/~' + ext + '/tile.js';
@@ -49193,7 +49193,7 @@
 
 	}
 
-	const _jsxFileName$4 = "/Users/logan/Dev/apps/launch/src/js/app.js";
+	const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/launch/src/js/app.js";
 	class App extends react_1 {
 
 	  constructor() {
@@ -49208,7 +49208,7 @@
 	    return (
 	       react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 19}}
 	         , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}}
-	          , react.createElement(Route, { exact: true, path: "/~home", 
+	          , react.createElement(Route, { exact: true, path: "/~launch", 
 	            render:  (props) => {
 	              return (
 	                react.createElement(Home, { 
@@ -49227,7 +49227,7 @@
 
 	window.app = App;
 
-	const _jsxFileName$5 = "/Users/logan/Dev/apps/launch/src/index.js";
+	const _jsxFileName$5 = "/Users/logan/Dev/interface/apps/launch/src/index.js";
 
 	subscription.setAuthTokens({
 	  ship: window.ship

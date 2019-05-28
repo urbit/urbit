@@ -22,7 +22,7 @@ export class Subscription {
 
     this.bindPaths = bindPaths;
 
-    api.bind("home", path,
+    api.bind("launch", path,
       this.handleEvent.bind(this),
       this.handleError.bind(this),
       ship);

@@ -62,7 +62,7 @@ typings/
 # next.js build output
 .next
 
-*/dist/
+apps/*/dist/
 */node_modules/
 */.DS_Store
 .urbitrc
