@@ -1,4 +1,4 @@
-::  Standard input/input functions.
+::  Standard input/output functions.
 ::
 ::  These are all asynchronous computations, which means they produce a
 ::  form:(trad A) for some type A.  You can always tell what they
@@ -12,8 +12,8 @@
 ::
 /-  tapp-sur=tapp
 /+  trad
-|*  poke-data=mold
-=/  tapp-sur  (tapp-sur poke-data)
+|*  [poke-data=mold out-peer-data=mold]
+=/  tapp-sur  (tapp-sur poke-data out-peer-data)
 =,  card=card:tapp-sur
 =,  sign=sign:tapp-sur
 =,  contract=contract:tapp-sur
@@ -26,7 +26,7 @@
   |=  =card
   =/  m  (trad ,~)
   ^-  form:m
-  |=  trad-input
+  |=  =trad-input
   [[/ card]~ ~ ~ %done ~]
 ::
 ::  Add or remove a contract
@@ -38,14 +38,25 @@
   |=  trad-input
   [~ ~ (silt [add contract]~) %done ~]
 ::
-::  Send effect
+::  Send effect on current bone
 ::
 ++  send-effect
   |=  =card
   =/  m  (trad ,~)
   ^-  form:m
+  ;<  =bone  bind:m
+    |=  =trad-input
+    [~ ~ ~ %done ost.bowl.trad-input]
+  (send-effect-on-bone bone card)
+::
+::  Send effect on particular bone
+::
+++  send-effect-on-bone
+  |=  [=bone =card]
+  =/  m  (trad ,~)
+  ^-  form:m
   |=  trad-input
-  [~ [card]~ ~ %done ~]
+  [~ [bone card]~ ~ %done ~]
 ::
 ::    ----
 ::
@@ -202,4 +213,52 @@
   =/  m  (trad ,~)
   ^-  form:m
   (send-effect %poke / [her app] poke-data)
+::
+++  peer-app
+  |=  [[her=ship app=term] =path]
+  =/  m  (trad ,~)
+  ^-  form:m
+  =/  =wire  (weld /(scot %p her)/[app] path)
+  (send-effect %peer wire [her app] path)
+::
+++  pull-app
+  |=  [[her=ship app=term] =path]
+  =/  m  (trad ,~)
+  ^-  form:m
+  =/  =wire  (weld /(scot %p her)/[app] path)
+  (send-effect %pull wire [her app] ~)
+::
+::    ----
+::
+::  Handle subscriptions
+::
+::  Get bones at particular path; for internal use only
+::
+++  get-bones-on-path
+  |=  =the=path
+  =/  m  (trad ,(list bone))
+  ^-  form:m
+  |=  =trad-input
+  :^  ~  ~  ~
+  :-  %done
+  %+  murn  ~(tap by sup.bowl.trad-input)
+  |=  [ost=bone her=ship =sub=path]
+  ^-  (unit bone)
+  ?.  =(the-path sub-path)
+    ~
+  `ost
+::
+::  Give a result to subscribers on particular path
+::
+++  give-result
+  |=  [=path =out-peer-data]
+  =/  m  (trad ,~)
+  ^-  form:m
+  ;<  bones=(list bone)  bind:m  (get-bones-on-path path)
+  |-  ^-  form:m
+  =*  loop  $
+  ?~  bones
+    (pure:m ~)
+  ;<  ~  bind:m  (send-effect-on-bone i.bones %diff out-peer-data)
+  loop(bones t.bones)
 --

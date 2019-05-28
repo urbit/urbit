@@ -1,21 +1,21 @@
 /-  tapp-sur=tapp
 /+  trad
-|*  [state-type=mold command-type=mold poke-data=mold]
+|*  $:  state-type=mold
+        command-type=mold
+        poke-data=mold
+        out-peer-data=mold
+        in-peer-data=mold
+    ==
 |%
-++  tapp-sur  (^tapp-sur poke-data)
+++  tapp-sur  (^tapp-sur poke-data out-peer-data)
 ++  card  card:tapp-sur
 ++  sign  sign:tapp-sur
 ++  contract  contract:tapp-sur
-::
-::  The form of a tapp
-::
-++  tapp-core
-  $_  ^|
-  |_  [bowl:gall state-type]
-  ++  handle-command
-    |~  command-type
-    *form:tapp-trad
-  --
+++  command
+  $%  [%poke command=command-type]
+      [%peer =path]
+      [%diff =dock =path =in-peer-data]
+  ==
 ::
 ++  trad-lib  (^trad sign card contract)
 ++  trad  trad:trad-lib
@@ -23,12 +23,95 @@
 +$  move  (pair bone card)
 ++  tapp-trad  (trad state-type)
 +$  tapp-state
-  $:  waiting=(qeu command-type)
+  $:  waiting=(qeu command)
       active=(unit eval-form:eval:tapp-trad)
       app-state=state-type
   ==
-++  create-tapp
-  |=  handler=tapp-core
+::
+::  The form of a tapp that only handles pokes
+::
+++  tapp-core-poke
+  $_  ^|
+  |_  [bowl:gall state-type]
+  ++  handle-command
+    |~  command-type
+    *form:tapp-trad
+  --
+::
+++  create-tapp-poke
+  |=  handler=tapp-core-poke
+  %-  create-tapp-poke-peer
+  |_  [=bowl:gall state=state-type]
+  ++  handle-command  ~(handle-command handler bowl state)
+  ++  handle-peer     |=(* (trad-fail:trad-lib %no-peer-handler >path< ~))
+  --
+::
+::  The form of a tapp that only handles pokes and peers
+::
+++  tapp-core-poke-peer
+  $_  ^|
+  |_  [bowl:gall state-type]
+  ++  handle-command
+    |~  command-type
+    *form:tapp-trad
+  ::
+  ++  handle-peer
+    |~  path
+    *form:tapp-trad
+  --
+::
+++  create-tapp-poke-peer
+  |=  handler=tapp-core-poke-peer
+  %-  create-tapp-all
+  |_  [=bowl:gall state=state-type]
+  ++  handle-command  ~(handle-command handler bowl state)
+  ++  handle-peer     ~(handle-peer handler bowl state)
+  ++  handle-diff     |=(* (trad-fail:trad-lib %no-diff-handler >path< ~))
+  --
+::
+::  The form of a tapp that only handles pokes and diffs
+::
+++  tapp-core-poke-diff
+  $_  ^|
+  |_  [bowl:gall state-type]
+  ++  handle-command
+    |~  command-type
+    *form:tapp-trad
+  ::
+  ++  handle-diff
+    |~  [dock path in-peer-data]
+    *form:tapp-trad
+  --
+::
+++  create-tapp-poke-diff
+  |=  handler=tapp-core-poke-diff
+  %-  create-tapp-all
+  |_  [=bowl:gall state=state-type]
+  ++  handle-command  ~(handle-command handler bowl state)
+  ++  handle-peer     |=(=path (trad-fail:trad-lib %no-peer-handler >path< ~))
+  ++  handle-diff     ~(handle-diff handler bowl state)
+  --
+::
+::  The form of a tapp
+::
+++  tapp-core-all
+  $_  ^|
+  |_  [bowl:gall state-type]
+  ++  handle-command
+    |~  command-type
+    *form:tapp-trad
+  ::
+  ++  handle-peer
+    |~  path
+    *form:tapp-trad
+  ::
+  ++  handle-diff
+    |~  [dock path in-peer-data]
+    *form:tapp-trad
+  --
+::
+++  create-tapp-all
+  |=  handler=tapp-core-all
   |_  [=bowl:gall tapp-state]
   ++  this-tapp  .
   ++  prep
@@ -45,9 +128,33 @@
   ++  poke-noun
     |=  command=command-type
     ^-  (quip move _this-tapp)
-    =.  waiting  (~(put to waiting) command)
+    =.  waiting  (~(put to waiting) %poke command)
     ?^  active
       ~&  [%waiting-until-current-trad-finishes waiting]
+      `this-tapp
+    start-trad
+  ::
+  ::  Receive subscription request
+  ::
+  ++  peer
+    |=  =path
+    ^-  (quip move _this-tapp)
+    =.  waiting  (~(put to waiting) %peer path)
+    ?^  active
+      `this-tapp
+    start-trad
+  ::
+  ::  Receive subscription response
+  ::
+  ++  diff
+    |=  [=wire =in-peer-data]
+    ^-  (quip move _this-tapp)
+    ?>  ?=([@ @ *] wire)
+    =/  her  (slav %p i.wire)
+    =*  app  i.t.wire
+    =*  pax  t.t.wire
+    =.  waiting  (~(put to waiting) %diff [her app] pax in-peer-data)
+    ?^  active
       `this-tapp
     start-trad
   ::
@@ -106,7 +213,12 @@
   ++  fail-trad
     |=  [contracts=(set contract) err=(pair term tang)]
     ^-  (quip move _this-tapp)
-    %-  (slog leaf+"tapp command failed" leaf+(trip p.err) q.err)
+    %-  %-  slog
+        :*  leaf+(trip dap.bowl)
+            leaf+"tapp command failed"
+            leaf+(trip p.err)
+            q.err
+        ==
     (finish-trad contracts)
   ::
   ::  Called on trad success
@@ -135,15 +247,18 @@
     ^-  (quip move _this-tapp)
     ?.  =(~ active)
       ~|  %trad-already-active  !!
-    =/  next=(unit command-type)  ~(top to waiting)
+    =/  next=(unit command)  ~(top to waiting)
     ?~  next
       `this-tapp
     =.  active
       :-  ~
-      ^-  eval-form:eval:tapp-trad
       %-  from-form:eval:tapp-trad
       ^-  form:tapp-trad
-      (~(handle-command handler bowl app-state) u.next)
+      ?-  -.u.next
+        %poke  (~(handle-command handler bowl app-state) command.u.next)
+        %peer  (~(handle-peer handler bowl app-state) path.u.next)
+        %diff  (~(handle-diff handler bowl app-state) +.u.next)
+      ==
     (take-trad bowl ~)
   ::
   ::  Cancel outstanding contracts

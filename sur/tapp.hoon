@@ -1,4 +1,4 @@
-|*  poke-data=mold
+|*  [poke-data=mold out-peer-data=mold]
 |%
 ::
 ::  Possible async calls
@@ -9,6 +9,9 @@
       [%wait wire @da]
       [%rest wire @da]
       [%poke wire dock poke-data]
+      [%peer wire dock path]
+      [%pull wire dock ~]
+      [%diff out-peer-data]
   ==
 ::
 ::  Possible async responses

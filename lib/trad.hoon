@@ -3,22 +3,23 @@
 +$  trad-input  [=bowl:gall in=(unit [=wire sign=input-type])]
 +$  trad-move  (pair bone card-type)
 ::
-::  notes:   notes to send immediately.  These will go out even if a
-::           later stage of the process fails, so they shouldn't have any
-::           semantic effect on the rest of the system.  Path is
-::           included exclusively for documentation and |verb.
-::  effects: moves to send after the process ends.
-::  wait:    don't move on, stay here.  The next sign should come back
-::           to this same callback.
-::  cont:    continue process with new callback.
-::  fail:    abort process; don't send effects
-::  done:    finish process; send effects
+::  notes:     notes to send immediately.  These will go out even if a
+::             later stage of the process fails, so they shouldn't have
+::             any semantic effect on the rest of the system.  Path is
+::             included exclusively for documentation and |verb.
+::  effects:   moves to send after the process ends.
+::  contracts: stuff to cancel at end of transaction.
+::  wait:      don't move on, stay here.  The next sign should come back
+::             to this same callback.
+::  cont:      continue process with new callback.
+::  fail:      abort process; don't send effects
+::  done:      finish process; send effects
 ::
 ++  trad-output-raw
   |*  a=mold
   $~  [~ ~ ~ %done *a]
   $:  notes=(list [path card-type])
-      effects=(list card-type)
+      effects=(list trad-move)
       contracts=(set [add=? contract=contract-type])
       $=  next
       $%  [%wait ~]
@@ -72,7 +73,7 @@
     ::  Indelible state of a trad
     ::
     +$  eval-form
-      $:  effects=(list card-type)
+      $:  effects=(list trad-move)
           contracts=(set contract-type)
           =form
       ==
@@ -149,10 +150,7 @@
       =?  moves  ?=(%done -.next.output)
         %+  welp
           moves
-        %+  turn  effects.eval-form
-        |=  card=card-type
-        ^-  trad-move
-        [bone card]
+        effects.eval-form
       ::  case-wise handle next steps
       ::
       ?-  -.next.output

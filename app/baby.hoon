@@ -16,8 +16,12 @@
   +$  poke-data
     $%  [%noun cord]
     ==
-  ++  tapp   (^tapp state command poke-data)
-  ++  stdio  (^stdio poke-data)
+  +$  out-peer-data
+    $%  [%comments (list tape)]
+    ==
+  +$  in-peer-data  ~
+  ++  tapp   (^tapp state command poke-data out-peer-data in-peer-data)
+  ++  stdio  (^stdio poke-data out-peer-data)
   --
 =>
   |%
@@ -46,8 +50,8 @@
 ::
 ::  The app
 ::
-%-  create-tapp:tapp
-^-  tapp-core:tapp
+%-  create-tapp-poke-peer:tapp
+^-  tapp-core-poke-peer:tapp
 |_  [=bowl:gall state]
 ::
 ::  Main function
@@ -84,9 +88,10 @@
   |-  ^-  form:m
   =*  loop  $
   ::
-  ::  If done, print the results
+  ::  If done, tell subscriers and print the results
   ::
   ?~  top-stories
+    ;<  ~  bind:m  (give-result /comments %comments top-comments)
     (handle-command 'print')
   ::
   ::  Else, fetch the story info
@@ -118,4 +123,11 @@
   ::
   =.  top-comments  [u.comment-text top-comments]
   loop(top-stories t.top-stories)
+::
+++  handle-peer
+  |=  =path
+  =/  m  tapp-trad
+  ^-  form:m
+  ~&  [%baby-take-peer path]
+  (pure:m top-comments)
 --
