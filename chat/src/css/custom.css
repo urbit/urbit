@@ -1,0 +1,90 @@
+p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
+  margin-block-end: unset;
+  margin-block-start: unset;
+  -webkit-margin-before: unset;
+  -webkit-margin-after: unset;
+
+  font-family: Inter, sans-serif;
+}
+
+textarea, select, input, button { 
+  outline: none; 
+  -webkit-appearance: none;
+  border: none;
+  background-color:none;
+}
+
+
+h2 {
+  font-size: 32px;
+  line-height: 48px;
+  font-weight: bold;
+}
+
+.body-regular {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+.body-large {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.label-regular {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.label-small-mono {
+  font-size: 12px;
+  line-height: 24px;
+  font-family: "Source Code Pro", monospace;
+}
+
+.body-regular-400 {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.plus-font {
+  font-size: 48px;
+  line-height: 24px;
+}
+
+.btn-font {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.fw-normal {
+  font-weight: 400;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.bg-v-light-gray {
+  background-color: #f9f9f9;
+}
+
+.nice-green {
+  color: #2AA779;
+}
+
+.bg-nice-green {
+  background: #2ED196;
+}
+
+.nice-red {
+  color: #EE5432;
+}
+
+.inter {
+  font-family: Inter, sans-serif;
+}
+
