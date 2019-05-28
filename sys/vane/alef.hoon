@@ -233,12 +233,18 @@
   ==
 ::  $ship-state: all we know about a peer
 ::
-::    %known: we know their life and public keys, so we have a channel
 ::    %alien: no PKI data, so enqueue actions to perform once we learn it
+::    %known: we know their life and public keys, so we have a channel
 ::
 +$  ship-state
-  $%  [%known peer-state]
-      [%alien pending-actions]
+  $%  [%alien pending-actions]
+      [%known peer-state]
+  ==
+::  $pending-actions: what to do when we learn a peer's life and keys
+::
++$  pending-actions
+  $:  rcv-packets=(list [=lane =packet])
+      snd-messages=(list [=duct =message])
   ==
 ::  $peer-state: state for a peer with known life and keys
 ::
@@ -260,12 +266,6 @@
   $:  =next=bone
       by-duct=(map duct bone)
       by-bone=(map bone duct)
-  ==
-::  $pending-actions: what to do when we learn a peer's life and keys
-::
-+$  pending-actions
-  $:  rcv-packets=(list [=lane =packet])
-      snd-messages=(list [=duct =message])
   ==
 ::  $message-pump-state: persistent state for |message-pump
 ::
@@ -371,7 +371,7 @@
 ::
 ::  $move: output effect; either request or response
 ::
-+$  move  (wind note gift)
++$  move  [=duct card=(wind note gift)]
 ::
 ::  $task: job for ames
 ::
@@ -562,7 +562,7 @@
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
-  ++  give  |=(=move event-core(moves [move moves]))
+  ++  emit  |=(=move event-core(moves [move moves]))
   ::
   ::
   ++  on-hear
@@ -614,7 +614,22 @@
     |=  [=lane =packet]
     ^+  event-core
     ::
-    !!
+    =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
+    ::
+    =+  ^-  [already-pending=? todos=pending-actions]
+        ?~  sndr-state
+          [%.n *pending-actions]
+        [%.y ?>(?=(%alien -.u.sndr-state) +.u.sndr-state)]
+    ::
+    =.  rcv-packets.todos  [[lane packet] rcv-packets.todos]
+    ::
+    =.  peers.ames-state
+      (~(put by peers.ames-state) sndr.packet %alien todos)
+    ::
+    =?  event-core  !already-pending
+      (emit duct %pass /alien %j %pubs sndr.packet)
+    ::
+    event-core
   --
 ::  +encode-packet: serialize a packet into a bytestream
 ::
