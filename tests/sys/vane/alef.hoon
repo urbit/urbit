@@ -2,6 +2,9 @@
 /=  alef  /:  /===/sys/vane/alef
           /!noun/
 ::
+=/  vane  (alef !>(..zuse))
+=/  lane-foo=lane:alef  `@uxlane``@`'lane-foo'
+::
 |%
 ++  test-ordered-set-gas  ^-  tang
   ::
@@ -77,4 +80,30 @@
   %+  expect-eq
     !>  packet
     !>  decoded
+::
+++  test-alien-encounter  ^-  tang
+  ::
+  =/  =packet:alef
+    :*  [sndr=~nec rcvr=~doznec-doznec]
+        encrypted=%.y
+        origin=~
+        content=[12 13]
+    ==
+  =/  =blob:alef  (encode-packet:alef packet)
+  ::
+  =/  event-args
+    [our=~doznec-doznec eny=0xdead.beef now=~2222.2.2 *sley]
+  ::
+  =/  res
+    (call:(vane event-args) ~[//unix] *type %hear lane-foo blob)
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  [~[//unix] %pass /alien %j %pubs ~nec]~
+      !>  -.res
+  ::
+    %+  expect-eq
+      !>  [%alien [lane-foo packet]~ ~]
+      !>  (~(got by peers.ames-state.+.res) ~nec)
+  ==
 --
