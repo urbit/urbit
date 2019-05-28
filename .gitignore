@@ -62,7 +62,12 @@ typings/
 # next.js build output
 .next
 
+apps/*/dist
 */dist/
 */node_modules/
 */.DS_Store
 .urbitrc
+
+# vim swap files
+*.swo
+*.swp
