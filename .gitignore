@@ -1,4 +1,4 @@
-# Logs
+#Logs
 logs
 *.log
 npm-debug.log*
@@ -63,6 +63,11 @@ typings/
 .next
 
 apps/*/dist/
+*/dist/
 */node_modules/
 */.DS_Store
 .urbitrc
+
+# vim swap files
+*.swo
+*.swp
