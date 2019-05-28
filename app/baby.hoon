@@ -13,7 +13,11 @@
     $:  top-comments=(list tape)
     ==
   +$  command  cord
-  ++  tapp  (^tapp state command)
+  +$  poke-data
+    $%  [%noun cord]
+    ==
+  ++  tapp   (^tapp state command poke-data)
+  ++  stdio  (^stdio poke-data)
   --
 =>
   |%

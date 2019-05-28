@@ -1,3 +1,4 @@
+|*  poke-data=mold
 |%
 ::
 ::  Possible async calls
@@ -7,6 +8,7 @@
       [%them wire ~]
       [%wait wire @da]
       [%rest wire @da]
+      [%poke wire dock poke-data]
   ==
 ::
 ::  Possible async responses

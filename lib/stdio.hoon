@@ -12,6 +12,8 @@
 ::
 /-  tapp-sur=tapp
 /+  trad
+|*  poke-data=mold
+=/  tapp-sur  (tapp-sur poke-data)
 =,  card=card:tapp-sur
 =,  sign=sign:tapp-sur
 =,  contract=contract:tapp-sur
@@ -35,6 +37,15 @@
   ^-  form:m
   |=  trad-input
   [~ ~ (silt [add contract]~) %done ~]
+::
+::  Send effect
+::
+++  send-effect
+  |=  =card
+  =/  m  (trad ,~)
+  ^-  form:m
+  |=  trad-input
+  [~ [card]~ ~ %done ~]
 ::
 ::    ----
 ::
@@ -181,4 +192,14 @@
   ?.  ?=(%cont -.next.c-res)
     c-res
   c-res(self.next ..loop(computation self.next.c-res))
+::
+::    ----
+::
+::  Apps
+::
+++  poke-app
+  |=  [[her=ship app=term] =poke-data]
+  =/  m  (trad ,~)
+  ^-  form:m
+  (send-effect %poke / [her app] poke-data)
 --

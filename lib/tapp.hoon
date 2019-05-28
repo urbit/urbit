@@ -1,11 +1,11 @@
-/-  tapp
+/-  tapp-sur=tapp
 /+  trad
-=,  card=card:tapp
-=,  sign=sign:tapp
-=,  contract=contract:tapp
-=,  trad-lib=trad
-|*  [state-type=mold command-type=mold]
+|*  [state-type=mold command-type=mold poke-data=mold]
 |%
+++  tapp-sur  (^tapp-sur poke-data)
+++  card  card:tapp-sur
+++  sign  sign:tapp-sur
+++  contract  contract:tapp-sur
 ::
 ::  The form of a tapp
 ::
@@ -17,7 +17,7 @@
     *form:tapp-trad
   --
 ::
-++  trad-lib  (^trad-lib sign card contract)
+++  trad-lib  (^trad sign card contract)
 ++  trad  trad:trad-lib
 ::
 +$  move  (pair bone card)
@@ -34,7 +34,7 @@
   ++  prep
     |=  old-state=*
     ^-  (quip move _this-tapp)
-    ~&  %tapp-loaded
+    ~&  [%tapp-loaded dap.bowl]
     =/  old  ((soft tapp-state) old-state)
     ?~  old
       `this-tapp
