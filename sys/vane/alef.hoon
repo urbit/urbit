@@ -369,6 +369,72 @@
 ::
 +|  %dialectics
 ::
+::  $task: job for ames
+::
+::    %born: process restart notification
+::    %crud: crash report
+::    %hear: packet from unix
+::    %hole: report that packet handling crashed
+::    %init: vane boot
+::    %sunk: a ship breached and has a new .rift
+::    %vega: kernel reload notification
+::    %wegh: request for memory usage report
+::    %west: request to send message
+::
++$  task
+  $%  [%born ~]
+      [%crud =error]
+      [%hear =lane =blob]
+      [%hole =lane =blob]
+      [%init =ship]
+      [%sunk =ship =rift]
+      [%vega ~]
+      [%wegh ~]
+      [%west =ship =message]
+  ==
+::  $gift: effect from ames
+::
+::    %east: message to vane from peer
+::    %send: packet to unix
+::    %rest: notify vane that peer (n)acked our message
+::
++$  gift
+  $%  [%east payload=*]
+      [%send =lane =blob]
+      [%rest error=(unit error)]
+  ==
+::  $note: request to other vane
+::
+::    TODO: specialize gall interface for subscription management
+::
++$  note
+  $%  $:  %b
+      $%  [%wait date=@da]
+          [%rest date=@da]
+      ==  ==
+      $:  %c
+      $%  [%west =ship =message]
+      ==  ==
+      $:  %g
+      $%  [%west =ship =message]
+      ==  ==
+      $:  %j
+      $%  [%pubs =ship]
+          [%turf ~]
+          [%west =ship =message]
+          [%vein ~]
+  ==  ==  ==
+::  $sign: response from other vane
+::
++$  sign
+  $%  $:  %b
+      $%  [%wake error=(unit tang)]
+      ==  ==
+      $:  %j
+      $%  [%pubs public:able:jael]
+          [%turf turf=(list turf)]
+          [%vein =life vein=(map life ring)]
+  ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
 ::    %send: packetize and send application-level message
@@ -384,14 +450,14 @@
   ==
 ::  $message-pump-gift: effect from |message-pump
 ::
-::    %send: emit message fragment
 ::    %ack-message: report message acknowledgment
+::    %send: emit message fragment
 ::    %set-timer: set a new timer at .date
 ::    %unset-timer: cancel timer at .date
 ::
 +$  message-pump-gift
-  $%  [%send =static-fragment]
-      [%ack-message =message-num ok=?]
+  $%  [%ack-message =message-num ok=?]
+      [%send =static-fragment]
       [%set-timer date=@da]
       [%unset-timer date=@da]
   ==
@@ -424,6 +490,46 @@
       [%unset-timer date=@da]
   ==
 --
+::  external vane interface
+::
+=<
+|=  pit=vase
+=|  =ames-state
+|=  [our=ship eny=@ now=@da scry-gate=sley]
+=*  ames-gate  .
+|%
+::  +call: handle request $task
+::
+++  call
+  |=  [=duct type=* wrapped-task=(hobo task)]
+  ^-  [(list move) _ames-gate]
+  ::
+  !!
+::  +take: handle response $sign
+::
+++  take
+  |=  [=wire =duct type=* =sign]
+  ^-  [(list move) _ames-gate]
+  ::
+  !!
+::  +stay: extract state before reload
+::
+++  stay  ames-state
+::  +load: load in old state after reload
+::
+++  load
+  |=  old=^ames-state
+  ames-gate(ames-state old)
+::  +scry: dereference namespace
+::
+++  scry
+  |=  [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
+  ^-  (unit (unit cage))
+  ::
+  [~ ~]
+--
+::  helper cores
+::
 |%
 ::  +encode-packet: serialize a packet into a bytestream
 ::
