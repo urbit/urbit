@@ -185,7 +185,7 @@
 ::    address.  Routes are opaque to Arvo and only have meaning in the
 ::    interpreter. This enforces that Ames is transport-agnostic.
 ::
-+$  packet  [=dyad encrypted=? origin=(unit lane) content=*]
++$  packet  [dyad encrypted=? origin=(unit lane) content=*]
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
 +$  open-packet
@@ -369,6 +369,10 @@
 ::
 +|  %dialectics
 ::
+::  $move: output effect; either request or response
+::
++$  move  (wind note gift)
+::
 ::  $task: job for ames
 ::
 ::    %born: process restart notification
@@ -504,7 +508,28 @@
   |=  [=duct type=* wrapped-task=(hobo task)]
   ^-  [(list move) _ames-gate]
   ::
-  !!
+  =/  =task
+    ?.  ?=(%soft -.wrapped-task)
+      wrapped-task
+    ;;(task p.wrapped-task)
+  ::
+  =/  event-core  (per-event [our eny now scry-gate] duct ames-state)
+  ::
+  =^  moves  ames-state
+    =<  abet
+    ?-  -.task
+      %born  !!
+      %crud  !!
+      %hear  (on-hear:event-core [lane blob]:task)
+      %hole  !!
+      %init  !!
+      %sunk  !!
+      %vega  !!
+      %wegh  !!
+      %west  !!
+    ==
+  ::
+  [moves ames-gate]
 ::  +take: handle response $sign
 ::
 ++  take
@@ -528,17 +553,77 @@
   ::
   [~ ~]
 --
-::  helper cores
+::  helpers
 ::
 |%
+++  per-event
+  =|  moves=(list move)
+  |=  [[our=ship eny=@ now=@da scry-gate=sley] =duct =ames-state]
+  |%
+  ++  event-core  .
+  ++  abet  [(flop moves) ames-state]
+  ++  give  |=(=move event-core(moves [move moves]))
+  ::
+  ::
+  ++  on-hear
+    |=  [=lane =blob]
+    ^+  event-core
+    ::
+    =/  =packet  (decode-packet blob)
+    ::
+    %.  [lane packet]
+    ::
+    ?.  =(our rcvr.packet)
+      on-hear-forward
+    ::
+    ?:  encrypted.packet
+      on-hear-shut
+    on-hear-open
+  ::
+  ::
+  ++  on-hear-forward
+    |=  [=lane =packet]
+    ^+  event-core
+    ::
+    !!
+  ::
+  ::
+  ++  on-hear-open
+    |=  [=lane =packet]
+    ^+  event-core
+    ::
+    !!
+  ::
+  ::
+  ++  on-hear-shut
+    |=  [=lane =packet]
+    ^+  event-core
+    ::
+    =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
+    ::
+    ?.  ?=([~ %known *] sndr-state)
+      (enqueue-alien-packet lane packet)
+    ::
+    =/  =peer-state  +.u.sndr-state
+    =/  =channel     [[our sndr.packet] +.ames-state -.peer-state]
+    ::
+    !!
+  ::
+  ::
+  ++  enqueue-alien-packet
+    |=  [=lane =packet]
+    ^+  event-core
+    ::
+    !!
+  --
 ::  +encode-packet: serialize a packet into a bytestream
 ::
 ++  encode-packet
   |=  packet
   ^-  blob
   ::
-  =/  sndr-meta  (encode-ship-metadata sndr.dyad)
-  =/  rcvr-meta  (encode-ship-metadata rcvr.dyad)
+  =/  sndr-meta  (encode-ship-metadata sndr)
+  =/  rcvr-meta  (encode-ship-metadata rcvr)
   ::  body: <<sndr rcvr (jam [origin content])>>
   ::
   ::    The .sndr and .rcvr ship addresses are encoded with fixed
@@ -548,8 +633,8 @@
   ::
   =/  body=@
     ;:  mix
-      sndr.dyad
-      (lsh 3 size.sndr-meta rcvr.dyad)
+      sndr
+      (lsh 3 size.sndr-meta rcvr)
       (lsh 3 (add size.sndr-meta size.rcvr-meta) (jam [origin content]))
     ==
   ::  header: 32-bit header assembled from bitstreams of fields
