@@ -51,10 +51,6 @@ class UrbitApi {
     });
   }
 
-  /*
-    Special actions
-  */
-
   permit(cir, aud, message) {
     this.hall({
       permit: {
@@ -103,22 +99,6 @@ class UrbitApi {
     });
   }
 
-  message(aud, words) {
-    let msg = {
-      aud,
-      ses: [{
-        lin: {
-          msg: words,
-          pat: false
-        }
-      }]
-    };
-
-    this.hall({
-      phrase: msg
-    });
-  }
-
   source(nom, sub) {
     this.hall({
       source: {
@@ -144,37 +124,6 @@ class UrbitApi {
         nom,
         red
       }
-    })
-  }
-
-  create(nom, priv) {
-    this.hall({
-      create: {
-        nom: nom,
-        des: "chatroom",
-        sec: priv ? "village" : "channel"
-      }
-    });
-  }
-
-  ire(aud, uid, msg) {
-    let message = {
-      aud: aud,
-      ses: [{
-        ire: {
-          top: uid,
-          sep: {
-            lin: {
-              msg: msg,
-              pat: false
-            }
-          }
-        }
-      }]
-    }
-
-    this.hall({
-      phrase: message
     })
   }
 }

@@ -17,6 +17,10 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	function getCjsExportFromNamespace (n) {
+		return n && n.default || n;
+	}
+
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -47458,6 +47462,8 @@
 		isBuffer: isBuffer
 	});
 
+	var require$$0 = getCjsExportFromNamespace(bufferEs6);
+
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -47510,7 +47516,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = bufferEs6.Buffer;
+	    Buffer = require$$0.Buffer;
 	  } catch (e) {
 	  }
 
@@ -51744,10 +51750,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    });
 	  }
 
-	  /*
-	    Special actions
-	  */
-
 	  permit(cir, aud, message) {
 	    this.hall({
 	      permit: {
@@ -51796,22 +51798,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    });
 	  }
 
-	  message(aud, words) {
-	    let msg = {
-	      aud,
-	      ses: [{
-	        lin: {
-	          msg: words,
-	          pat: false
-	        }
-	      }]
-	    };
-
-	    this.hall({
-	      phrase: msg
-	    });
-	  }
-
 	  source(nom, sub) {
 	    this.hall({
 	      source: {
@@ -51837,37 +51823,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        nom,
 	        red
 	      }
-	    });
-	  }
-
-	  create(nom, priv) {
-	    this.hall({
-	      create: {
-	        nom: nom,
-	        des: "chatroom",
-	        sec: priv ? "village" : "channel"
-	      }
-	    });
-	  }
-
-	  ire(aud, uid, msg) {
-	    let message = {
-	      aud: aud,
-	      ses: [{
-	        ire: {
-	          top: uid,
-	          sep: {
-	            lin: {
-	              msg: msg,
-	              pat: false
-	            }
-	          }
-	        }
-	      }]
-	    };
-
-	    this.hall({
-	      phrase: message
 	    });
 	  }
 	}

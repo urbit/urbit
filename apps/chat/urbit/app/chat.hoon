@@ -44,7 +44,7 @@
   |=  old=(unit state)
   ^-  (quip move _this)
   ?~  old
-    =/  inboxpat  /circle/inbox/config/group
+    =/  inboxpat  /circle/inbox/config/peers
     =/  circlespat  /circles/[(scot %p our.bol)]
     =/  inboxi/poke 
       :-  %hall-action
