@@ -153,6 +153,7 @@
 ::
 +$  channel
   $:  [our=ship her=ship]
+      now=@da
       ::  our data, common to all dyads
       ::
       $:  =our=life
@@ -237,16 +238,34 @@
 ::    %known: we know their life and public keys, so we have a channel
 ::
 +$  ship-state
-  $%  [%alien pending-actions]
+  $%  [%alien pending-requests]
       [%known peer-state]
   ==
-::  $pending-actions: what to do when we learn a peer's life and keys
+::  $pending-requests: what to do when we learn a peer's life and keys
 ::
-+$  pending-actions
+::    rcv-packets: packets we've received from unix
+::    snd-messages: messages local vanes have asked us to send
+::
++$  pending-requests
   $:  rcv-packets=(list [=lane =packet])
       snd-messages=(list [=duct =message])
   ==
 ::  $peer-state: state for a peer with known life and keys
+::
+::    route: transport-layer destination for packets to peer
+::    ossuary: bone<->duct mapper
+::    snd: per-bone message pumps to send messages as fragments
+::    rcv: per-bone message stills to assemble messages from fragments
+::    nax: unprocessed nacks (negative acknowledgments)
+::         Each value is ~ when we've received the ack packet but not a
+::         naxplanation, or an error when we've received a naxplanation
+::         but not the ack packet.
+::
+::         When we hear a nack packet or an explanation, if there's no
+::         entry in .nax, we make a new entry. Otherwise, if this new
+::         information completes the packet+naxplanation, we remove the
+::         entry and emit a nack to the local vane that asked us to send
+::         the message.
 ::
 +$  peer-state
   $:  $:  =symmetric-key
@@ -257,8 +276,8 @@
       route=(unit [direct=? =lane])
       =ossuary
       snd=(map bone message-pump-state)
-      rcv=(map bone rcv-state)
-      nax=(set [=bone =message-num])
+      rcv=(map bone message-still-state)
+      nax=(map [=bone =message-num] (unit error))
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
@@ -354,13 +373,26 @@
       =fragment-num
       =fragment
   ==
-+$  rcv-state
+::  $message-still-state: state of |message-still to assemble messages
+::
+::    last-acked: highest $message-num we've fully acknowledged
+::    last-heard: highest $message-num we've heard all fragments on
+::    pending-vane-ack: heard but not processed by local vane
+::    live-messages: partially received messages
+::    naxplanations: enqueued nack diagnostics
+::
++$  message-still-state
   $:  last-acked=message-num
       last-heard=message-num
       pending-vane-ack=(qeu [=message-num =message])
       live-messages=(map message-num partial-rcv-message)
-      nax=(set message-num)
   ==
+::  $partial-rcv-message: message for which we've received some fragments
+::
+::    num-fragments: total number of fragments in this message
+::    num-received: how many fragments we've received so far
+::    fragments: fragments we've received, eventually producing a $message
+::
 +$  partial-rcv-message
   $:  num-fragments=fragment-num
       num-received=fragment-num
@@ -442,14 +474,14 @@
 ::  $message-pump-task: job for |message-pump
 ::
 ::    %send: packetize and send application-level message
-::    %hear-ack: deal with a packet acknowledgment
-::    %hear-nack: deal with message negative acknowledgment
+::    %hear-fragment-ack: deal with a packet acknowledgment
+::    %hear-message-ack: deal with message negative acknowledgment
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
   $%  [%send =message-num =message]
-      [%hear-ack =message-num =fragment-num]
-      [%hear-nack =message-num lag=@dr]
+      [%hear-fragment-ack =message-num =fragment-num]
+      [%hear-message-ack =message-num ok=? lag=@dr]
       [%wake ~]
   ==
 ::  $message-pump-gift: effect from |message-pump
@@ -474,8 +506,8 @@
 ::    %wake: handle timer firing
 ::
 +$  packet-pump-task
-  $%  [%hear-ack =message-num =fragment-num]
-      [%hear-nack =message-num lag=@dr]
+  $%  [%hear-fragment-ack =message-num =fragment-num]
+      [%hear-message-ack =message-num ok=? lag=@dr]
       [%flush ~]
       [%send fragments=(list static-fragment)]
       [%wake ~]
@@ -492,6 +524,28 @@
       [%send =static-fragment]
       [%set-timer date=@da]
       [%unset-timer date=@da]
+  ==
+::  $message-still-task: job for |message-still
+::
+::    %hear: handle receiving a message fragment packet
+::    %done: receive confirmation from vane of processing completion or
+::           failure with diagnostic
+::
++$  message-still-task
+  $%  [%hear =lane =shut-packet]
+      [%done =message-num error=(unit error)]
+  ==
+::  $message-still-gift: effect from |message-still
+::
+::    %hear-message: $message assembled from received packets, to be
+::                   sent to a local vane for processing
+::    %send-fragment-ack: emit ack in response to heard fragment
+::    %send-message-ack: emit ack in response to message processing
+::
++$  message-still-gift
+  $%  [%hear-message =message]
+      [%send-fragment-ack =message-num =fragment-num]
+      [%send-message-ack =message-num ok=? lag=@dr]
   ==
 --
 ::  external vane interface
@@ -608,11 +662,83 @@
       (enqueue-alien-packet lane packet)
     ::
     =/  =peer-state   +.u.sndr-state
-    =/  =channel      [[our sndr.packet] +.ames-state -.peer-state]
+    =/  =channel      [[our sndr.packet] now +.ames-state -.peer-state]
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
+    ::  ward against replay attacks
+    ::
+    ?>  =(sndr-life.shut-packet her-life.channel)
+    ?>  =(rcvr-life.shut-packet our-life.channel)
+    ::
+    ?:  ?=(%& -.meat.shut-packet)
+      %+  on-hear-fragment
+        %-  fall  :_  *message-still-state
+        (~(get by rcv.peer-state) bone.shut-packet)
+      [channel lane shut-packet]
+    ::
+    %+  on-hear-ack
+      %-  fall  :_  *message-pump-state
+      (~(get by snd.peer-state) bone.shut-packet)
+    [channel lane shut-packet]
+  ::
+  ::
+  ++  on-hear-ack
+    |=  [=message-pump-state =channel =lane =shut-packet]
+    ^+  event-core
+    ::
+    =/  pump  (make-message-pump message-pump-state channel)
+    ::
+    =/  task=message-pump-task
+      ?>  ?=(%| -.meat.shut-packet)
+      ?:  ?=(%& -.p.meat.shut-packet)
+        [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
+      [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
+    ::
+    =^  pump-gifts  message-pump-state  (work:pump task)
+    ::
+    =.  peers.ames-state
+      %+  ~(jab by peers.ames-state)  her.channel
+      |=  =ship-state
+      ?>  ?=(%known -.ship-state)
+      =/  =peer-state  +.ship-state
+      =.  snd.peer-state
+        (~(put by snd.peer-state) bone.shut-packet message-pump-state)
+      [%known peer-state]
+    ::
+    (process-pump-gifts pump-gifts)
+  ::
+  ::
+  ++  process-pump-gifts
+    |=  pump-gifts=(list message-pump-gift)
+    ^+  event-core
     ::
     !!
   ::
+  ::
+  ++  on-hear-fragment
+    |=  [=message-still-state =channel =lane =shut-packet]
+    ^+  event-core
+    ::
+    =/  still  (make-message-still message-still-state channel)
+    ::
+    =^  still-gifts  message-still-state  (work:still %hear lane shut-packet)
+    ::
+    =.  peers.ames-state
+      %+  ~(jab by peers.ames-state)  her.channel
+      |=  =ship-state
+      ?>  ?=(%known -.ship-state)
+      =/  =peer-state  +.ship-state
+      =.  rcv.peer-state
+        (~(put by rcv.peer-state) bone.shut-packet message-still-state)
+      [%known peer-state]
+    ::
+    (process-still-gifts still-gifts)
+  ::
+  ::
+  ++  process-still-gifts
+    |=  still-gifts=(list message-still-gift)
+    ^+  event-core
+    ::
+    !!
   ::
   ++  enqueue-alien-packet
     |=  [=lane =packet]
@@ -620,9 +746,9 @@
     ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
     ::
-    =+  ^-  [already-pending=? todos=pending-actions]
+    =+  ^-  [already-pending=? todos=pending-requests]
         ?~  sndr-state
-          [%.n *pending-actions]
+          [%.n *pending-requests]
         [%.y ?>(?=(%alien -.u.sndr-state) +.u.sndr-state)]
     ::
     =.  rcv-packets.todos  [[lane packet] rcv-packets.todos]
@@ -634,6 +760,83 @@
       (emit duct %pass /alien %j %pubs sndr.packet)
     ::
     event-core
+  --
+::
+::
+++  make-message-pump
+  |=  [=message-pump-state =channel]
+  =|  gifts=(list message-pump-gift)
+  |%
+  ++  work
+    |=  task=message-pump-task
+    ^+  [gifts message-pump-state]
+    ::
+    =-  [(flop -.-) +.-]
+    ::
+    ?-  -.task
+      %hear-fragment-ack  (on-hear-fragment-ack [message-num fragment-num]:task)
+      %hear-message-ack   (on-hear-message-ack [message-num ok lag]:task)
+      %send               (on-send [message-num message]:task)
+      %wake               on-wake
+    ==
+  ::
+  ::
+  ++  on-hear-fragment-ack
+    |=  [=message-num =fragment-num]
+    ^+  [gifts message-pump-state]
+    ::
+    !!
+  ::
+  ::
+  ++  on-hear-message-ack
+    |=  [=message-num ok=? lag=@dr]
+    ^+  [gifts message-pump-state]
+    ::
+    !!
+  ::
+  ::
+  ++  on-send
+    |=  [=message-num =message]
+    ^+  [gifts message-pump-state]
+    ::
+    !!
+  ::
+  ::
+  ++  on-wake
+    ^+  [gifts message-pump-state]
+    ::
+    !!
+  --
+::
+::
+++  make-message-still
+  |=  [=message-still-state =channel]
+  =|  gifts=(list message-still-gift)
+  |%
+  ++  work
+    |=  task=message-still-task
+    ^+  [gifts message-still-state]
+    ::
+    =-  [(flop -.-) +.-]
+    ::
+    ?-  -.task
+      %hear  (on-hear [lane shut-packet]:task)
+      %done  (on-done [message-num error]:task)
+    ==
+  ::
+  ::
+  ++  on-hear
+    |=  [=lane =shut-packet]
+    ^+  [gifts message-still-state]
+    ::
+    !!
+  ::
+  ::
+  ++  on-done
+    |=  [=message-num error=(unit error)]
+    ^+  [gifts message-still-state]
+    ::
+    !!
   --
 ::  +encrypt: encrypt $shut-packet into atomic packet content
 ::
