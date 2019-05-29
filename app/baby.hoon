@@ -50,8 +50,8 @@
 ::
 ::  The app
 ::
-%-  create-tapp-poke-peer:tapp
-^-  tapp-core-poke-peer:tapp
+%-  create-tapp-poke-peer-take:tapp
+^-  tapp-core-poke-peer-take:tapp
 |_  [=bowl:gall state]
 ::
 ::  Main function
@@ -69,6 +69,9 @@
     ;<  ~        bind:m  (wait (add now ~s3))
     ~&  'Top comments:'
     %-  (slog (zing (turn top-comments comment-to-tang)))
+    (pure:m top-comments)
+  ?:  =(cord.command 'poll')
+    ;<  ~  bind:m  (wait-effect (add now.bowl ~s15))
     (pure:m top-comments)
   ::
   ::  Otherwise, fetch the top HN stories
@@ -130,4 +133,13 @@
   ^-  form:m
   ~&  [%baby-take-peer path]
   (pure:m top-comments)
+::
+++  handle-take
+  |=  sign:tapp
+  =/  m  tapp-trad
+  ^-  form:m
+  ;<  =state  bind:m  (handle-command %noun 'fetch')
+  =.  top-comments  state
+  (pure:m top-comments)
+  ::  (handle-command %noun 'poll')
 --

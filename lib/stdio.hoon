@@ -147,7 +147,7 @@
   |=  at=@da
   =/  m  (trad ,~)
   ^-  form:m
-  ;<  ~  bind:m  (send-raw-card %wait /(scot %da at) at)
+  ;<  ~  bind:m  (send-raw-card %wait /note/(scot %da at) at)
   (set-raw-contract & %wait at)
 ::
 ::  Wait until we get a wake event
@@ -184,6 +184,14 @@
   ^-  form:m
   ;<  ~  bind:m  (send-wait until)
   take-wake
+::
+::  Wait until time then start new computation
+::
+++  wait-effect
+  |=  until=@da
+  =/  m  (trad ,~)
+  ^-  form:m
+  (send-effect %wait /effect/(scot %da until) until)
 ::
 ::  Cancel computation if not done by time
 ::
