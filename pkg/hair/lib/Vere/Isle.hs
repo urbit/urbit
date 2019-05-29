@@ -1,14 +1,44 @@
 module Vere.Isle where
 
-import Prelude
+import ClassyPrelude
+
 import qualified Vere.Isle.Util as C
-import qualified SDL
+import qualified SDL            as SDL
+
+import Data.Flat (Flat)
 
 --------------------------------------------------------------------------------
 
-{-
+data Color
+    = Black     | DarkGray
+    | Blue      | LightBlue
+    | Green     | LightGreen
+    | Cyan      | LightCyan
+    | Red       | LightRed
+    | Magenta   | LightMagenta
+    | Brown     | Yellow
+    | LightGray | White
+  deriving stock    (Eq, Ord, Show, Enum, Bounded, Generic)
+  deriving anyclass Flat
 
--}
+toRGB :: Color -> (Word8, Word8, Word8)
+toRGB = \case
+  Black        -> (0x00, 0x00, 0x00)
+  DarkGray     -> (0x55, 0x55, 0x55)
+  Blue         -> (0x00, 0x00, 0xAA)
+  LightBlue    -> (0x55, 0x55, 0xFF)
+  Green        -> (0x00, 0xAA, 0x00)
+  LightGreen   -> (0x55, 0xFF, 0x55)
+  Cyan         -> (0x00, 0xAA, 0xAA)
+  LightCyan    -> (0x55, 0xFF, 0xFF)
+  Red          -> (0xAA, 0x00, 0x00)
+  LightRed     -> (0xFF, 0x55, 0x55)
+  Magenta      -> (0xAA, 0x00, 0xAA)
+  LightMagenta -> (0xFF, 0x55, 0xFF)
+  Brown        -> (0xAA, 0x55, 0x00)
+  Yellow       -> (0xFF, 0xFF, 0x55)
+  LightGray    -> (0xAA, 0xAA, 0xAA)
+  White        -> (0xFF, 0xFF, 0xFF)
 
 --------------------------------------------------------------------------------
 
