@@ -1808,7 +1808,9 @@
   $|  (tree (pair key value))
   |=(a=(tree (pair)) ~(apt by a))
 ::
-+*  qeu  [item]       (tree item)                       ::  queue
++*  qeu  [item]                                         ::  queue
+  $|  (tree item)
+  |=(a=(tree) ~(apt to a))
 ::
 +*  set  [item]                                         ::  set
   $|  (tree item)
