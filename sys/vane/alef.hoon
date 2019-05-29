@@ -299,16 +299,21 @@
 ::    haven't seen it before, |packet-pump reports the fresh ack.  We
 ::    then decrement that message's entry in .unacked-fragments.
 ::
-::    When .unacked-fragments goes to zero on a .message-num, that means
-::    all fragments have been acked, so delete this entry from
-::    .unsent-fragments.  If this message is not .current, then it's a
-::    future message and .current has not yet been acked, so we place
-::    the message in .queued-acks.
+::    When we hear a message ack (positive or negative), we treat that
+::    as though all fragments have been acked.  If this message is not
+::    .current, then it's a future message and .current has not yet been
+::    acked, so we place the message in .queued-message-acks.
 ::
-::    If it is the current message, emit the message ack, increment
-::    .current, and check if this next message is in .queued-acks.  If
-::    it is, emit the message (n)ack, increment .current, and check the
-::    next message.  Repeat until .current is not fully acked.
+::    If we hear a message ack before we've sent all the
+::    fragments for that message, clear .unsent-fragments. If the
+::    message ack was positive, print it out because it indicates the
+::    peer is not behaving properly.
+::
+::    If the ack is for the current message, emit the message ack,
+::    increment .current, and check if this next message is in
+::    .queued-message-acks.  If it is, emit the message (n)ack,
+::    increment .current, and check the next message.  Repeat until
+::    .current is not fully acked.
 ::
 ::    When we hear a message nack, we send it to |packet-pump, which
 ::    deletes all packets from that message.  If .current gets nacked,
@@ -328,7 +333,7 @@
 ::    unsent-messages: messages to be sent after current message
 ::    unsent-fragments: fragments of current message waiting for sending
 ::    unacked-fragments: number of fragments waiting on ack
-::    queued-acks: future message acks to be applied after current
+::    queued-message-acks: future message acks to be applied after current
 ::    packet-pump-state: state of corresponding |packet-pump
 ::
 +$  message-pump-state
@@ -336,8 +341,7 @@
       next=message-num
       unsent-messages=(qeu message)
       unsent-fragments=(list static-fragment)
-      unacked-fragments=(map message-num fragment-num)
-      queued-acks=(map message-num ok=?)
+      queued-message-acks=(map message-num ok=?)
       =packet-pump-state
   ==
 ::  $packet-pump-state: persistent state for |packet-pump
@@ -479,7 +483,7 @@
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
-  $%  [%send =message-num =message]
+  $%  [%send =message]
       [%hear-fragment-ack =message-num =fragment-num]
       [%hear-message-ack =message-num ok=? lag=@dr]
       [%wake ~]
@@ -487,41 +491,37 @@
 ::  $message-pump-gift: effect from |message-pump
 ::
 ::    %ack-message: report message acknowledgment
-::    %send: emit message fragment
+::    %send-fragment: emit message fragment
 ::    %set-timer: set a new timer at .date
 ::    %unset-timer: cancel timer at .date
 ::
 +$  message-pump-gift
   $%  [%ack-message =message-num ok=?]
-      [%send =static-fragment]
+      [%send-fragment =static-fragment]
       [%set-timer date=@da]
       [%unset-timer date=@da]
   ==
 ::  $packet-pump-task: job for |packet-pump
 ::
-::    %hear-ack: deal with a packet acknowledgment
-::    %hear-nack: deal with message negative acknowledgment
-::    %flush: finalize this event (i.e. maybe set timer)
-::    %send: enqueue or emit message fragments
+::    %hear-fragment-ack: deal with a packet acknowledgment
+::    %hear-message-ack: deal with message acknowledgment
+::    %finalize: finish event, possibly updating timer
 ::    %wake: handle timer firing
 ::
 +$  packet-pump-task
   $%  [%hear-fragment-ack =message-num =fragment-num]
-      [%hear-message-ack =message-num ok=? lag=@dr]
-      [%flush ~]
-      [%send fragments=(list static-fragment)]
+      [%hear-message-ack =message-num lag=@dr]
+      [%finalize ~]
       [%wake ~]
   ==
 ::  $packet-pump-gift: effect from |packet-pump
 ::
-::    %ack-fragment: report fresh ack on a message fragment
-::    %send: emit message fragment
+::    %send-fragment: emit message fragment
 ::    %set-timer: set a new timer at .date
 ::    %unset-timer: cancel timer at .date
 ::
 +$  packet-pump-gift
-  $%  [%ack-fragment =message-num =fragment-num]
-      [%send =static-fragment]
+  $%  [%send-fragment =static-fragment]
       [%set-timer date=@da]
       [%unset-timer date=@da]
   ==
@@ -766,46 +766,210 @@
 ++  make-message-pump
   |=  [=message-pump-state =channel]
   =|  gifts=(list message-pump-gift)
+  ::
   |%
+  ++  message-pump  .
+  ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
+  ++  packet-pump
+    (make-packet-pump packet-pump-state.message-pump-state channel)
+  ::  +work: handle a $message-pump-task
+  ::
   ++  work
     |=  task=message-pump-task
     ^+  [gifts message-pump-state]
     ::
-    =-  [(flop -.-) +.-]
-    ::
-    ?-  -.task
-      %hear-fragment-ack  (on-hear-fragment-ack [message-num fragment-num]:task)
-      %hear-message-ack   (on-hear-message-ack [message-num ok lag]:task)
-      %send               (on-send [message-num message]:task)
-      %wake               on-wake
+    =~  ?-  -.task
+          %send              (on-send message.task)
+          %hear-message-ack  (on-hear-message-ack [message-num ok lag]:task)
+          *                  (run-packet-pump task)
+        ==
+        feed-packets
+        (run-packet-pump %finalize ~)
+        [(flop gifts) message-pump-state]
     ==
   ::
   ::
-  ++  on-hear-fragment-ack
-    |=  [=message-num =fragment-num]
-    ^+  [gifts message-pump-state]
+  ++  on-send
+    |=  =message
+    ^+  message-pump
+    ::
+    =.  unsent-messages.message-pump-state
+      (~(put to unsent-messages.message-pump-state) message)
+    ::
+    message-pump
+  ::
+  ::
+  ++  on-hear-message-ack
+    |=  [=message-num ok=? lag=@dr]
+    ^+  message-pump
+    ::  ignore acks on already-processed messages
+    ::
+    ?:  (lth message-num current.message-pump-state)
+      message-pump
+    ::  ignore duplicate already-processed acks waiting for emission
+    ::
+    ?:  (~(has by queued-message-acks.message-pump-state) message-num)
+      message-pump
+    ::  clear and print .unsent-fragments if nonempty
+    ::
+    =?    unsent-fragments.message-pump-state
+        ::
+        ?&  =(current next):message-pump-state
+            ?=(^ unsent-fragments.message-pump-state)
+        ==
+      ~&  %early-message-ack^ok^her.channel
+      ~
+    ::  clear all packets from this message from the packet pump
+    ::
+    =.  message-pump  (run-packet-pump %hear-message-ack message-num lag)
+    ::
+    =.  queued-message-acks.message-pump-state
+      (~(put by queued-message-acks.message-pump-state) message-num ok)
+    ::
+    |-  ^+  message-pump
+    ::
+    =/  ack
+      %-  ~(get by queued-message-acks.message-pump-state)
+      current.message-pump-state
+    ::
+    ?~  ack
+      message-pump
+    ::
+    =.  queued-message-acks.message-pump-state
+      %-  ~(del by queued-message-acks.message-pump-state)
+      current.message-pump-state
+    ::
+    =.  message-pump  (give %ack-message current.message-pump-state ok.u.ack)
+    ::
+    $(current.message-pump-state +(current.message-pump-state))
+  ::
+  ::
+  ++  feed-packets
+    ::  if nothing to send, no-op
+    ::
+    ?:  ?&  =(~ unsent-messages.message-pump-state)
+            =(~ unsent-fragments.message-pump-state)
+        ==
+      ::
+      message-pump
+    ::  we have unsent fragments of the current message; feed them
+    ::
+    ?.  =(~ unsent-fragments.message-pump-state)
+      =/  res  (send:packet-pump unsent-fragments.message-pump-state)
+      =+  [unsent packet-pump-gifts state]=res
+      ::
+      =.  unsent-fragments.message-pump-state   unsent
+      =.  packet-pump-state.message-pump-state  state
+      ::
+      =.  message-pump  (process-packet-pump-gifts packet-pump-gifts)
+      ::  if it sent all of them, feed it more; otherwise, we're done
+      ::
+      ?~  unsent
+        feed-packets
+      message-pump
+    ::  .unsent-messages is nonempty; pop a message off and feed it
+    ::
+    =^  message  unsent-messages.message-pump-state
+      ~(get to unsent-messages.message-pump-state)
+    ::
+    =.  unsent-fragments.message-pump-state
+      ::
+      =/  chunks  (rip 13 (jam message))
+      =/  num-fragments=fragment-num  (lent chunks)
+      =|  counter=@
+      ::
+      |-  ^-  (list static-fragment)
+      ?~  chunks  ~
+      ::
+      :-  [message-num=next.message-pump-state num-fragments counter i.chunks]
+      ::
+      $(chunks t.chunks, counter +(counter))
+    ::
+    =.  next.message-pump-state  +(next.message-pump-state)
+    feed-packets
+  ::
+  ::
+  ++  run-packet-pump
+    |=  =packet-pump-task
+    ^+  message-pump
+    ::
+    =^  packet-pump-gifts  packet-pump-state.message-pump-state
+      (work:packet-pump packet-pump-task)
+    ::
+    (process-packet-pump-gifts packet-pump-gifts)
+  ::
+  ::
+  ++  process-packet-pump-gifts
+    |=  packet-pump-gifts=(list packet-pump-gift)
+    ^+  message-pump
+    ::
+    ?~  packet-pump-gifts
+      message-pump
+    =.  message-pump  (give i.packet-pump-gifts)
+    ::
+    $(packet-pump-gifts t.packet-pump-gifts)
+  --
+::
+::
+++  make-packet-pump
+  |=  [=packet-pump-state =channel]
+  =|  gifts=(list packet-pump-gift)
+  |%
+  ++  packet-pump  .
+  ++  work
+    |=  task=packet-pump-task
+    ^+  [gifts packet-pump-state]
+    ::
+    =-  [(flop gifts) packet-pump-state]
+    ::
+    ?-  -.task
+      %hear-fragment-ack  !!
+      %hear-message-ack   (on-hear-message-ack message-num.task)
+      %wake               on-wake
+      %finalize           on-finalize
+    ==
+  ::
+  ::
+  ++  send
+    |=  fragments=(list static-fragment)
+    ^+  [fragments gifts packet-pump-state]
     ::
     !!
   ::
   ::
   ++  on-hear-message-ack
-    |=  [=message-num ok=? lag=@dr]
-    ^+  [gifts message-pump-state]
+    |=  =message-num
+    ^+  packet-pump
+    ::
+    =.  live.packet-pump-state
+      =<  kept
+      %+  sift:live-set  live.packet-pump-state
+      |=  item=live-fragment
+      =(message-num.item message-num)
     ::
     !!
   ::
   ::
-  ++  on-send
-    |=  [=message-num =message]
-    ^+  [gifts message-pump-state]
+  ++  on-finalize
+    ^+  packet-pump
     ::
     !!
   ::
   ::
   ++  on-wake
-    ^+  [gifts message-pump-state]
+    ^+  packet-pump
     ::
     !!
+  ++  live-set
+    %-  (ordered-set live-fragment)
+    |=  [a=live-fragment b=live-fragment]
+    ^-  ?
+    ::
+    ?:  (lth message-num.a message-num.b)
+      %.y
+    ?:  (gth message-num.a message-num.b)
+      %.n
+    (lte fragment-num.a fragment-num.b)
   --
 ::
 ::
