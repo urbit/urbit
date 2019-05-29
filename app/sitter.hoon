@@ -8,16 +8,14 @@
   +$  state
     $:  subscription=(unit subscription-state)
     ==
-  +$  command  [%noun =cord]
-  +$  poke-data
-    $%  [%noun cord]
-    ==
+  +$  in-poke-data   [%noun =cord]
+  +$  out-poke-data  [%noun =cord]
   +$  out-peer-data  ~
   +$  in-peer-data
     $%  [%comments comments=(list tape)]
     ==
-  ++  tapp   (^tapp state command poke-data out-peer-data in-peer-data)
-  ++  stdio  (^stdio poke-data out-peer-data)
+  ++  tapp   (^tapp state in-poke-data out-poke-data in-peer-data out-peer-data)
+  ++  stdio  (^stdio out-poke-data out-peer-data)
   --
 =,  trad=trad:tapp
 =,  tapp-trad=tapp-trad:tapp
@@ -25,11 +23,11 @@
 %-  create-tapp-poke-diff:tapp
 ^-  tapp-core-poke-diff:tapp
 |_  [=bowl:gall state]
-++  handle-command
-  |=  =command
+++  handle-poke
+  |=  =in-poke-data
   =/  m  tapp-trad
   ^-  form:m
-  ?:  =(cord.command 'pull')
+  ?:  =(cord.in-poke-data 'pull')
     ?~  subscription
       (trad-fail %no-subscription ~)
     ;<  ~  bind:m  (pull-app [target path]:u.subscription)

@@ -12,16 +12,14 @@
   +$  state
     $:  top-comments=(list tape)
     ==
-  +$  command  [%noun =cord]
-  +$  poke-data
-    $%  [%noun cord]
-    ==
+  +$  in-poke-data   [%noun =cord]
+  +$  out-poke-data  ~
+  +$  in-peer-data   ~
   +$  out-peer-data
     $%  [%comments (list tape)]
     ==
-  +$  in-peer-data  ~
-  ++  tapp   (^tapp state command poke-data out-peer-data in-peer-data)
-  ++  stdio  (^stdio poke-data out-peer-data)
+  ++  tapp   (^tapp state in-poke-data out-poke-data in-peer-data out-peer-data)
+  ++  stdio  (^stdio out-poke-data out-peer-data)
   --
 =>
   |%
@@ -56,21 +54,21 @@
 ::
 ::  Main function
 ::
-++  handle-command
-  |=  =command
+++  handle-poke
+  |=  =in-poke-data
   =/  m  tapp-trad
   ^-  form:m
   ::
   ::  If requested to print, just print what we have in our state
   ::
-  ?:  =(cord.command 'print')
+  ?:  =(cord.in-poke-data 'print')
     ~&  'drumroll please...'
     ;<  now=@da  bind:m  get-time
     ;<  ~        bind:m  (wait (add now ~s3))
     ~&  'Top comments:'
     %-  (slog (zing (turn top-comments comment-to-tang)))
     (pure:m top-comments)
-  ?:  =(cord.command 'poll')
+  ?:  =(cord.in-poke-data 'poll')
     ;<  ~  bind:m  (wait-effect (add now.bowl ~s15))
     (pure:m top-comments)
   ::
@@ -95,7 +93,7 @@
   ::
   ?~  top-stories
     ;<  ~  bind:m  (give-result /comments %comments top-comments)
-    (handle-command %noun 'print')
+    (handle-poke %noun 'print')
   ::
   ::  Else, fetch the story info
   ::
@@ -138,8 +136,8 @@
   |=  sign:tapp
   =/  m  tapp-trad
   ^-  form:m
-  ;<  =state  bind:m  (handle-command %noun 'fetch')
+  ;<  =state  bind:m  (handle-poke %noun 'fetch')
   =.  top-comments  state
   (pure:m top-comments)
-  ::  (handle-command %noun 'poll')
+  ::  (handle-poke %noun 'poll')
 --
