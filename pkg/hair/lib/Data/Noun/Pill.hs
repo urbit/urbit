@@ -157,6 +157,12 @@ unpackAtom (MkAtom a) = wordsToBytes (naturalToWords a)
 
 --------------------------------------------------------------------------------
 
+bsToNoun :: ByteString -> Maybe Noun
+bsToNoun = cue . packAtom
+
+nounToBs :: Noun -> ByteString
+nounToBs = unpackAtom . jam
+
 loadFile :: FilePath -> IO Atom
 loadFile = fmap packAtom . readFile
 

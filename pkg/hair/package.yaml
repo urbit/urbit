@@ -48,6 +48,7 @@ dependencies:
   - integer-gmp
   - largeword
   - lens
+  - lmdb
   - megaparsec
   - mtl
   - multimap
