@@ -1795,9 +1795,16 @@
   ::
 +*  jar  [key value]  (map key (list value))            ::  map of lists
 +*  jug  [key value]  (map key (set value))             ::  map of sets
-+*  map  [key value]  (tree (pair key value))           ::  table
+::
++*  map  [key value]                                    ::  table
+  $|  (tree (pair key value))
+  |=(a=(tree (pair)) ~(apt by a))
+::
 +*  qeu  [item]       (tree item)                       ::  queue
-+*  set  [item]       (tree item)                       ::  set
+::
++*  set  [item]                                         ::  set
+  $|  (tree item)
+  |=(a=(tree) ~(apt in a))
 ::
 ::::  2l: container from container                      ::
   ::                                                    ::
