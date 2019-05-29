@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
 import { IconSend } from '/components/lib/icons/icon-send';
 
-import { isUrl, uuid, isDMStation } from '/lib/util';
+import { isUrl, uuid } from '/lib/util';
 
 
 export class ChatInput extends Component {
@@ -73,16 +73,7 @@ export class ChatInput extends Component {
 
     let config = this.props.configs[this.state.station];
 
-    if (isDMStation(this.props.station)) {
-      aud = this.props.station
-        .split("/")[1]
-        .split(".")
-        .map((mem) => `~${mem}/${this.props.circle}`);
-
-    } else {
-      aud = [this.props.station];
-    }
-
+    aud = [this.props.station];
     if (isUrl(this.state.message)) {
       sep = {
         url: this.state.message

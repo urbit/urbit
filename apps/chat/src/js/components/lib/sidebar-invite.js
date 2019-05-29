@@ -12,7 +12,7 @@ export class SidebarInvite extends Component {
       return;
     }
 
-    this.updateInvite(msg.uid, cir, 'Accept');
+    this.updateInvite(msg.uid, cir, true);
   }
 
   onReject() {
@@ -23,7 +23,7 @@ export class SidebarInvite extends Component {
       return;
     }
     
-    this.updateInvite(msg.uid, cir, 'Reject');
+    this.updateInvite(msg.uid, cir, false);
   }
 
   updateInvite(uid, cir, resp) {
@@ -48,7 +48,7 @@ export class SidebarInvite extends Component {
       phrase: msg
     });
 
-    this.props.api.source(cir, true);
+    this.props.api.source(cir, resp);
   }
 
   render() {

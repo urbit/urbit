@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { isDMStation, getMessageContent } from '/lib/util';
+import { getMessageContent } from '/lib/util';
 import { Sigil } from '/components/lib/icons/sigil';
 import classnames from 'classnames';
 import moment from 'moment';

@@ -8,18 +8,12 @@ export class NewScreen extends Component {
     super(props);
 
     this.state = {
-      displayName: '',
       idName: '',
       invites: ''
     };
 
-    this.dnChange = this.dnChange.bind(this);
     this.idChange = this.idChange.bind(this);
     this.invChange = this.invChange.bind(this);
-  }
-
-  dnChange(event) {
-    this.setState({displayName: event.target.value});
   }
 
   idChange(event) {
@@ -31,7 +25,6 @@ export class NewScreen extends Component {
   }
 
   onClickCreate() {
-    if (!this.state.displayName) { return; }
     if (!this.state.idName) { return; }
 
     let station = `~${this.props.api.authTokens.ship}/${this.state.idName}`;
@@ -93,12 +86,7 @@ export class NewScreen extends Component {
       <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
         <h2 className="mb3">Create a New Chat</h2>
         <div>
-          <p className="label-regular fw-bold">Display Name</p>
-          <input 
-            className="body-large bn pa2 pl0 mb2 w-50"
-            placeholder="friend-club"
-            onChange={this.dnChange} />
-          <p className="label-regular fw-bold">Id Name</p>
+          <p className="label-regular fw-bold">Name</p>
           <input 
             className="body-large bn pa2 pl0 mb2 w-50"
             placeholder="secret-chat"

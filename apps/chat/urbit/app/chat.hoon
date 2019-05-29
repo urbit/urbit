@@ -44,13 +44,14 @@
   |=  old=(unit state)
   ^-  (quip move _this)
   ?~  old
-    =/  inboxpat  /circle/inbox/config/peers
+    =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
+    =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group
     =/  inboxi/poke 
       :-  %hall-action
           [%source %inbox %.y (silt [[our.bol %i] ~]~)]
     :_  this
-    :~  [ost.bol %peer inboxpat [our.bol %hall] inboxpat]
+    :~  [ost.bol %peer inboxwir [our.bol %hall] inboxpat]
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
@@ -134,6 +135,7 @@
 ::      ::
 ::        %circle
       ?>  ?=(%circle -.piz)
+      ~&  piz
       =/  circle/circle:hall  [our.bol &2:wir]
       ?:  =(circle [our.bol %inbox])
     ::
@@ -169,7 +171,7 @@
     ::  fill remote configs with message data
     ::
       =*  messages  messages.str.sta
-      =/  circle/circle:hall  [our.bol &2:wir]
+      =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
       :-  ~
       %=  this
         messages.str.sta  (~(put by messages) circle nes.piz)
@@ -215,7 +217,7 @@
         %gram
     ?>  ?=(%gram -.sto)
     =*  messages  messages.str.sta
-    =/  circle/circle:hall  [our.bol &2:wir]
+    =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
     =/  nes/(list envelope:hall)  (~(got by messages) circle)
     :-  (send-chat-update [%message circle nev.sto])
     %=  this
@@ -274,6 +276,8 @@
           :: ignore when circ is not inbox
           [~ this]
         =*  affectedcir  cir.src.dif.sto
+        =/  newwir/wire
+          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/config
         =/  pat/path  /circle/[nom.affectedcir]/grams/config
         ::  we've added a source to our inbox
         ::
@@ -283,7 +287,7 @@
           ==
           :-  
           %+  weld
-            [ost.bol %peer pat [our.bol %hall] pat]~
+            [ost.bol %peer newwir [hos.affectedcir %hall] pat]~
             (send-chat-update [%inbox newinbox])
           %=  this
             inbox.str.sta  newinbox
@@ -301,7 +305,7 @@
         ::
         :-  
         %+  weld
-          [ost.bol %pull pat [our.bol %hall] ~]~
+          [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
           (send-chat-update [%inbox newinbox])
         %=  this
           src.inbox.str.sta  (~(del in src.inbox.str.sta) src.dif.sto)
@@ -385,8 +389,10 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
+    =/  shp/@p  (slav %p &2:wir)
+    =/  pat  /circle/[&3:wir]/grams/config
     :_  this
-    [ost.bol %peer wir [our.bol %hall] wir]~
+    [ost.bol %peer wir [shp %hall] pat]~
   ::
       %circles
     :_  this
@@ -404,8 +410,10 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
+    =/  shp/@p  (slav %p &2:wir)
+    =/  pat  /circle/[&3:wir]/grams/config
     :_  this
-    [ost.bol %peer wir [our.bol %hall] wir]~
+    [ost.bol %peer wir [shp %hall] wir]~
   ::
       %circles
     :_  this

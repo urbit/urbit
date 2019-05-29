@@ -6,7 +6,7 @@ import { Message } from '/components/lib/message';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
 
-import { prettyShip, getMessageContent, isDMStation } from '/lib/util';
+import { prettyShip, getMessageContent } from '/lib/util';
 
 export class ChatScreen extends Component {
   constructor(props) {
