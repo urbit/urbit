@@ -198,9 +198,9 @@
       duct-map=(map @ud duct)
   ==
 ::
-::  +opaque-ducts: opaque input.
+::  +ducts: opaque input.
 ::
-++  opaque-ducts
+++  ducts
   $:
       :: bone sequence
       ::
@@ -260,10 +260,10 @@
       required-trans=(map bone mark)
       :: opaque ducts
       ::
-      ducts=opaque-ducts
+      ducts=ducts
   ==
 ::
-:: +blocked: blocked kisses.
+:: +blocked: blocked tasks.
 ::
 ++  blocked  (qeu (trel duct privilege agent-action))
 ::
@@ -369,6 +369,7 @@
       [%f %build live=%.y schematic]
     ::
     =/  pass  [path note-arvo]
+    ~&  [%mo-passing pass]
     (mo-pass pass)
   ::
   ::  +mo-pass: prepend a standard %pass move to the move state.
@@ -387,6 +388,7 @@
     ^+  mo-state
     ::
     =/  =move  [hen [%give gift]]
+    ~&  [%mo-giving move]
     mo-state(moves [move moves])
   ::
   :: +mo-contains-valid-bowl: check that a vase contains a valid bowl.
@@ -452,6 +454,7 @@
     ::
     =/  old  mo-state
     ::
+    ~&  [%mo-initialising term]
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
       =/  =privilege  [%high routes]
@@ -462,21 +465,27 @@
     =/  new  +.wag
     ::
     ?^  maybe-tang
+      ~&  [%mo-got-tang u.maybe-tang]
       =.  mo-state  old
       (mo-give %onto %.n u.maybe-tang)
     ::
+    ~&  %mo-abetting-new
     =.  mo-state  ap-abet:new
     ::
+    ~&  %mo-clearing-queue
     =/  cleared  (mo-clear-queue term)
-    (mo-give:cleared %onto %.y term %boot now)
+    =/  =suss  [term %boot now]
+    ~&  [%mo-giving-boot suss]
+    (mo-give:cleared %onto [%.y suss])
   ::
   ::  +mo-new-agent: create a new agent and add it to state.
   ::
+  ::  FIXME add some printfs to check and see if this is working alright
   ++  mo-new-agent
     |=  [=term =beak =vase]
     ^+  mo-state
     ::
-    =/  =opaque-ducts
+    =/  =ducts
       :+  bone=1
         bone-map=[[[~ ~] 0] ~ ~]
        duct-map=[[0 [~ ~]] ~ ~]
@@ -487,7 +496,7 @@
         control-duct    hen
         beak            beak
         running-state   vase
-        ducts           opaque-ducts
+        ducts           ducts
       ==
     ::
     =/  running  (~(put by running.ship-state.gall) term agent)
@@ -885,18 +894,17 @@
         =/  =ship  (slav %p i.t.path)
         =/  =routes  [disclosing=~ attributing=ship]
         [%high routes]
-      ::
       (ap-abed:ap term privilege)
     ::
-    =/  =vase  (slot 3 hin)
     =/  =sign-arvo  q.hin
     ::
     ?-  i.t.t.path
         ::
         %inn
         ::
-      =/  poured  (ap-generic-take:initialised t.t.t.path vase)
-      ap-abet:poured
+      =/  =vase  (slot 3 hin)
+      =/  taken  (ap-generic-take:initialised t.t.t.path vase)
+      ap-abet:taken
         ::
         %cay
         ::
@@ -905,11 +913,11 @@
         ~&  [%mo-handle-use-weird-path path]
         mo-state
       ::
-      =/  purred
+      =/  taken
         =/  =cage  +>.sign-arvo
         (ap-unwrap-take:initialised %sigh t.t.t.path cage)
       ::
-      ap-abet:purred
+      ap-abet:taken
         ::
         %out
         ::
@@ -918,25 +926,29 @@
         ~&  [%mo-handle-use-weird-path path]
         mo-state
       ::
-      =/  pouted
+      =/  taken
         =/  =internal-gift  +>.sign-arvo
         (ap-specific-take:initialised t.t.t.path internal-gift)
       ::
-      ap-abet:pouted
+      ap-abet:taken
     ==
   ::
-  ::  +mo-clear-queue: clear blocked kisses.
+  ::  +mo-clear-queue: clear blocked tasks.
   ::
   ++  mo-clear-queue
     |=  =term
     ^+  mo-state
     ::
+    ~&  [%mo-clearing-queue-for term]
+    ::
     ?.  (~(has by running.ship-state.gall) term)
+      ~&  %mo-nothing-running
       mo-state
     ::
     =/  maybe-blocked  (~(get by waiting.ship-state.gall) term)
     ::
     ?~  maybe-blocked
+      ~&  %mo-nothing-blocked
       mo-state
     ::
     =/  =blocked  u.maybe-blocked
@@ -949,11 +961,12 @@
         waiting.ship-state.gall  waiting
       ==
     ::
-    =^  kiss  blocked  [p q]:~(get to blocked)
+    =^  task  blocked  [p q]:~(get to blocked)
+    ~&  [%mo-found-task task]
     ::
-    =/  =duct  p.kiss
-    =/  =privilege  q.kiss
-    =/  =agent-action  r.kiss
+    =/  =duct  p.task
+    =/  =privilege  q.task
+    =/  =agent-action  r.task
     ::
     =/  move
       =/  =sock  [attributing.routes.privilege our]
@@ -961,6 +974,7 @@
       =/  card  [%slip %g %deal sock internal-task]
       [duct card]
     ::
+    ~&  [%mo-prepending-move move]
     $(moves [move moves])
   ::
   ::  +mo-beak: assemble a beak for the provided app.
@@ -1038,9 +1052,9 @@
       ::
       =/  =blocked
         =/  waiting  (~(get by waiting.ship-state.gall) term)
-        =/  kisses  (fall waiting *blocked)
-        =/  kiss  [hen privilege agent-action]
-        (~(put to kisses) kiss)
+        =/  tasks  (fall waiting *blocked)
+        =/  task  [hen privilege agent-action]
+        (~(put to tasks) task)
       ::
       =/  waiting  (~(put by waiting.ship-state.gall) term blocked)
       ::
@@ -1178,7 +1192,8 @@
           ost  bone
         ==
       ::
-      =/  =opaque-ducts
+      :: FIXME check
+      =/  =ducts
         =/  bone  +(bone.ducts.agent)
         :+  bone=bone
           bone-map=(~(put by bone-map.ducts.agent) hen bone)
@@ -1186,7 +1201,7 @@
       ::
       %=  ap-state
         ost        bone.ducts.agent
-        ducts.sat  opaque-ducts
+        ducts.sat  ducts
       ==
     ::
     ::  +ap-abet: resolve moves.
@@ -1449,9 +1464,9 @@
       ^+  ap-state
       ::
       =/  rest  +.path
-      =/  diff  [%diff p.cage rest]
+      =/  pax  [p.cage rest]
       ::
-      =^  maybe-arm  ap-state  (ap-find-arm diff)
+      =^  maybe-arm  ap-state  (ap-find-arm %diff pax)
       ::
       ?~  maybe-arm
         =/  target  [%.n ship rest]
@@ -1604,7 +1619,6 @@
       ~/  %ap-find-arm
       |=  [=term =path]
       ^-  [(unit (pair @ud @tas)) _ap-state]
-      ::
       ::
       =/  maybe-cached  (~(get by arm-cache.sat) [term path])
       ?^  maybe-cached
@@ -2644,6 +2658,7 @@
       ~&  [%gall-not-ours ship]
       [~ gall-payload]
     ::
+    ~&  [%gall-booting q.dock q.task]
     =>  (mo-boot:initialised q.dock q.task)
     mo-abet
       ::
@@ -2782,11 +2797,12 @@
   ?>  ?=([?(%sys %use) *] wire)
   ::
   =/  initialised  (mo-abed:mo duct)
+  =/  =sign-arvo  q.hin
   ::
   =>
   ::
   ?-  i.wire
-    %sys  (mo-handle-sys:initialised t.wire q.hin)
+    %sys  (mo-handle-sys:initialised t.wire sign-arvo)
     %use  (mo-handle-use:initialised t.wire hin)
   ==
   ::
