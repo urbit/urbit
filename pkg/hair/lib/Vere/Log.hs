@@ -20,9 +20,12 @@ import qualified Data.Vector.Mutable as MV
 
 --------------------------------------------------------------------------------
 
+-- TODO: We are uncertain about q's type. There's some serious entanglement
+-- with u3_pier in this logic in the C code, and you might not be able to get
+-- away with anything less than passing the full u3_writ around.
 data State = State
   { env :: MDB_env
-  , q   :: TQueue Void
+  , q   :: TQueue (Word64,Atom,Noun)
   }
 
 data LogIdentity = LogIdentity
@@ -102,6 +105,12 @@ mdbValToWord64 (MDB_val sz ptr) = do
 withWordPtr :: Word64 -> (Ptr Word64 -> IO a) -> IO a
 withWordPtr w cb = do
   allocaBytes (sizeOf w) (\p -> poke p w >> cb p)
+
+
+writeEvent :: State -> Word64 -> Atom -> Noun -> IO ()
+writeEvent s id event effect = atomically $
+  writeTQueue (q s) (id, event, effect)
+
 
 -- TODO: This will read len items and will error if there are less than that
 -- available. This differs from the current pier.c's expectations.
