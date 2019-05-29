@@ -1,11 +1,10 @@
 module Vere.Log where
 
 import Database.LMDB.Raw
-import ClassyPrelude hiding ((<|))
+import ClassyPrelude
 import Data.Void
 import Data.ByteString.Unsafe
 import GHC.Ptr (castPtr)
-import Data.List.NonEmpty (NonEmpty(..), (<|))
 
 --------------------------------------------------------------------------------
 
@@ -30,22 +29,26 @@ shutdown s = mdb_env_close (env s)
 
 --------------------------------------------------------------------------------
 
-readQueue :: TQueue a -> STM (NonEmpty a)
+{-
+    Read one or more items from a TQueue, only blocking on the first item.
+-}
+readQueue :: TQueue a -> STM (NonNull [a])
 readQueue q =
     readTQueue q >>= go . singleton
   where
-    go acc = tryReadTQueue q >>= \case
-      Nothing   -> pure (reverse acc)
-      Just item -> go (item <| acc)
+    go acc =
+      tryReadTQueue q >>= \case
+        Nothing   -> pure (reverse acc)
+        Just item -> go (item <| acc)
 
 byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
 byteStringAsMdbVal bs k =
   unsafeUseAsCStringLen bs \(ptr,sz) ->
     k (MDB_val (fromIntegral sz) (castPtr ptr))
 
-put :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> ByteString
-    -> IO Bool
-put flags txn db key val =
+putRaw :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> ByteString
+       -> IO Bool
+putRaw flags txn db key val =
   byteStringAsMdbVal key \mKey ->
   byteStringAsMdbVal val \mVal ->
   mdb_put flags txn db mKey mVal
