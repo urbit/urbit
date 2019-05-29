@@ -1,15 +1,20 @@
 module Vere.Log where
 
 import Database.LMDB.Raw
-import ClassyPrelude
+import ClassyPrelude hiding ((<|))
 import Data.Void
 import Data.ByteString.Unsafe
+import GHC.Ptr (castPtr)
+import Data.List.NonEmpty (NonEmpty(..), (<|))
+
+--------------------------------------------------------------------------------
 
 data State = State
   { env :: MDB_env
   , q   :: TQueue Void
   }
 
+--------------------------------------------------------------------------------
 
 init :: FilePath -> IO State
 init dir = do
@@ -20,26 +25,27 @@ init dir = do
   tq <- newTQueueIO
   pure (State env tq)
 
-
 shutdown :: State -> IO ()
 shutdown s = mdb_env_close (env s)
 
+--------------------------------------------------------------------------------
 
-readQueue :: TQueue a -> STM [a]
-readQueue q = do
-  first <- readTQueue q
-  go [first]
+readQueue :: TQueue a -> STM (NonEmpty a)
+readQueue q =
+    readTQueue q >>= go . singleton
   where
     go acc = tryReadTQueue q >>= \case
-      Nothing -> pure (reverse acc)
-      Just item -> go (item:acc)
+      Nothing   -> pure (reverse acc)
+      Just item -> go (item <| acc)
 
+byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
+byteStringAsMdbVal bs k =
+  unsafeUseAsCStringLen bs \(ptr,sz) ->
+    k (MDB_val (fromIntegral sz) (castPtr ptr))
 
--- put :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> ByteString -> IO ()
--- put flags txn db key val = do
---   unsafeUseAsCStringLen key $ \(pkey, skey) ->
---     unsafeUseAsCStringLen val $ \(pval, sval) -> do
---       let m_key = MDB_val skey pkey
---           m_val = MDB_val sval pval
---       success <- mdb_put flags txn db m_key m_val
---       pure ()
+put :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> ByteString
+    -> IO Bool
+put flags txn db key val =
+  byteStringAsMdbVal key \mKey ->
+  byteStringAsMdbVal val \mVal ->
+  mdb_put flags txn db mKey mVal
