@@ -28,7 +28,7 @@ gulp.task('css-bundle', function() {
     .src('src/index-css.css')
     .pipe(cssimport())
     .pipe(cssnano())
-    .pipe(gulp.dest('./urbit-code/app/modulo'));
+    .pipe(gulp.dest('./urbit/app/modulo'));
 });
 
 gulp.task('jsx-transform', function(cb) {
@@ -64,18 +64,18 @@ gulp.task('js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit-code/app/modulo/'))
+    .pipe(gulp.dest('./urbit/app/modulo/'))
     .on('end', cb);
 });
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit-code/app/modulo/index-js.js')
+  return gulp.src('./urbit/app/modulo/index-js.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit-code/app/modulo/'));
+    .pipe(gulp.dest('./urbit/app/modulo/'));
 });
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit-code/**/*');
+  let ret = gulp.src('urbit/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function(pier) {
     ret = ret.pipe(gulp.dest(pier));
@@ -112,5 +112,5 @@ gulp.task('watch', gulp.series('default', function() {
   gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
   gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
 
-  gulp.watch('urbit-code/**/*', gulp.parallel('urbit-copy'));
+  gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
 }));
