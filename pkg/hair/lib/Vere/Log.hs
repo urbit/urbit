@@ -72,12 +72,12 @@ byteStringAsMdbVal bs k =
 
 mdbValToAtom :: MDB_val -> IO Atom
 mdbValToAtom (MDB_val sz ptr) = do
-  packAtom <$> BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
+  packAtom . Pill <$> BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
 
 mdbValToNoun :: MDB_val -> IO Noun
 mdbValToNoun (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  maybe (error "mdb bad cue") pure (cue (packAtom bs))
+  maybe (error "mdb bad cue") pure (cue (packAtom (Pill bs)))
 
 putRaw :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> MDB_val -> MDB_val -> IO ()
 putRaw flags txn db key val =
@@ -94,8 +94,7 @@ putNoun flags txn db key val =
 putJam :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> Word64 -> Jam -> IO ()
 putJam  flags txn db id (Jam atom) = do
   withWord64AsMDBval id $ \idVal -> do
-    -- TODO: This unpackAtom hangs.
-    let !bs = unpackAtom atom
+    let !bs = unPill (unpackAtom atom)
     byteStringAsMdbVal bs $ \mVal -> do
       putRaw flags txn db idVal mVal
 
@@ -219,7 +218,7 @@ readLogIdentity (LogState env _ _ _) = do
 writeLogIdentity :: LogState -> LogIdentity -> IO ()
 writeLogIdentity (LogState env _ _ _) LogIdentity{..} = do
   txn <- mdb_txn_begin env Nothing False
-  db  <- mdb_dbi_open txn (Just "META") []
+  db  <- mdb_dbi_open txn (Just "META") [MDB_CREATE]
   let flags = compileWriteFlags []
   putNoun flags txn db "who" who
   putNoun flags txn db "is-fake" is_fake

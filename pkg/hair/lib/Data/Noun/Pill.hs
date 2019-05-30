@@ -209,6 +209,9 @@ pillToNoun = cue . packAtom
 nounToPill :: Noun -> Pill
 nounToPill = unpackAtom . jam
 
+nounToBs :: Noun -> ByteString
+nounToBs = unPill . nounToPill
+
 loadFile :: FilePath -> IO Atom
 loadFile = fmap packAtom . readPill
 

@@ -7,7 +7,7 @@ import Vere.Http
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
 import Data.Noun.Atom
-import Data.Noun.Pill (packAtom)
+import Data.Noun.Pill (packAtom, Pill(..))
 import qualified Network.HTTP.Types as H
 import qualified Network.Wai as W
 import qualified Network.Wai.Handler.Warp as W
@@ -100,7 +100,7 @@ cookMeth re =
 data Octs = Octs Atom Atom
 
 bsToOcts :: ByteString -> Octs
-bsToOcts bs = Octs (fromIntegral (length bs)) (packAtom bs)
+bsToOcts bs = Octs (fromIntegral (length bs)) (packAtom (Pill bs))
 
 readEvents :: W.Request -> IO Request
 readEvents request = do

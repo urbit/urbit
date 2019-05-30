@@ -7,8 +7,8 @@ import qualified Vere.Log as Log
 
 main :: IO ()
 main = do
-  let logPath = "/Users/erg/src/urbit/zod/.urb/log/"
-      falselogPath = "/Users/erg/src/urbit/zod/.urb/falselog/"
+  let logPath = "/Users/erg/src/urbit/zod/.urb/falselog/"
+      falselogPath = "/Users/erg/src/urbit/zod/.urb/falselog2/"
 
   -- junk
   persistQueue <- newTQueueIO
@@ -16,21 +16,23 @@ main = do
   logState <- Log.init logPath persistQueue (writeTQueue releaseQueue)
 
   -- 
-  log <- Log.readLogIdentity logState
-  print log
+  logId <- Log.readLogIdentity logState
+  print logId
 
   --
   latestEvent <- Log.latestEventNumber logState
   print latestEvent
 
   --
-  events <- Log.readEvents logState 30 3000
+  events <- Log.readEvents logState 1 3142
   --print $ cue . snd <$> events
 
   --
   persistQueue2 <- newTQueueIO
   releaseQueue2 <- newTQueueIO
   falseLogState <- Log.init falselogPath persistQueue2 (writeTQueue releaseQueue2)
+
+  Log.writeLogIdentity falseLogState logId
 
   let writs = events <&> \(id, a) ->
         Writ id Nothing (Jam a) []
