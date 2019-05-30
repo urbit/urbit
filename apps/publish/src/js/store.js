@@ -1,6 +1,6 @@
 class Store {
   constructor() {
-    this.collections = window.injectedState;
+    this.state = window.injectedState;
     this.setState = () => {};
   }
 

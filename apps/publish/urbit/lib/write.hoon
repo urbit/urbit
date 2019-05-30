@@ -126,15 +126,16 @@
   %-  pairs:enjs:format
   :~  info+(collection-build-to-json col.col)
     :+  %posts
-      %a
-    %+  turn  ~(tap in ~(key by pos.col))
-    |=  post=@tas
-    ^-  json
+      %o
+    %+  roll  ~(tap in ~(key by pos.col))
+    |=  [post=@tas out=(map @t json)]
     =/  post-build  (~(got by pos.col) post)
     =/  comm-build  (~(got by com.col) post)
+
+    %+  ~(put by out)
+      post
     %-  pairs:enjs:format
-    :~  name+s+post
-        post+(post-build-to-json post-build)
+    :~  post+(post-build-to-json post-build)
         comments+(comment-build-to-json comm-build)
     ==
   ==
@@ -144,25 +145,31 @@
   ^-  json
   %-  pairs:enjs:format
   :~  :+  %pubs
-        %a
-      %+  turn  ~(tap by pubs.sat)
-      |=  [nom=@tas col=collection]
-      ^-  json
-      %-  pairs:enjs:format
-      :~  [%coll s+nom]
-          [%data (total-build-to-json col)]
-      ==
+        %o
+      %+  roll  ~(tap by pubs.sat)
+      |=  [[nom=@tas col=collection] out=(map @t json)]
+      %+  ~(put by out)
+        nom
+      (total-build-to-json col)
   ::
       :+  %subs
-        %a
-      %+  turn  ~(tap by subs.sat)
-      |=  [[who=@p nom=@tas] col=collection]
-      ^-  json
-      %-  pairs:enjs:format
-      :~  [%coll s+nom]
-          [%who (ship:enjs:format who)]
-          [%data (total-build-to-json col)]
-      ==
+        %o
+      %-  ~(rep by subs.sat)
+      |=  $:  [[who=@p nom=@tas] col=collection]
+              out=(map @t [%o (map @t json)])
+          ==
+      =/  shp=@t  (rsh 3 1 (scot %p who))
+      ?:  (~(has by out) shp)
+        %+  ~(put by out)
+          shp
+        :-  %o 
+        %+  ~(put by +:(~(got by out) shp))
+          nom
+        (total-build-to-json col)
+      %+  ~(put by out)
+        shp
+      :-  %o
+      (my [nom (total-build-to-json col)] ~)
   ::
       :+  %latest
         %a

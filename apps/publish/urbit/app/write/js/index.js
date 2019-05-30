@@ -26,6 +26,10 @@
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
   }
 
+  function getCjsExportFromNamespace (n) {
+  	return n && n.default || n;
+  }
+
   /*
   object-assign
   (c) Sindre Sorhus
@@ -47467,6 +47471,8 @@
     isBuffer: isBuffer
   });
 
+  var require$$0 = getCjsExportFromNamespace(bufferEs6);
+
   var bn = createCommonjsModule(function (module) {
   (function (module, exports) {
 
@@ -47519,7 +47525,7 @@
 
     var Buffer;
     try {
-      Buffer = bufferEs6.Buffer;
+      Buffer = require$$0.Buffer;
     } catch (e) {
     }
 
@@ -52116,7 +52122,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   class Store {
     constructor() {
-      this.collections = window.injectedState;
+      this.state = window.injectedState;
       this.setState = () => {};
     }
 
@@ -52391,7 +52397,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   }).call(commonjsGlobal);
 
-
+  //# sourceMappingURL=performance-now.js.map
   });
 
   var root = typeof window === 'undefined' ? commonjsGlobal : window
@@ -54944,22 +54950,36 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       function createDate (y, m, d, h, M, s, ms) {
           // can't just apply() to create a date:
           // https://stackoverflow.com/q/181348
-          var date = new Date(y, m, d, h, M, s, ms);
-
+          var date;
           // the date constructor remaps years 0-99 to 1900-1999
-          if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
-              date.setFullYear(y);
+          if (y < 100 && y >= 0) {
+              // preserve leap years using a full 400 year cycle, then reset
+              date = new Date(y + 400, m, d, h, M, s, ms);
+              if (isFinite(date.getFullYear())) {
+                  date.setFullYear(y);
+              }
+          } else {
+              date = new Date(y, m, d, h, M, s, ms);
           }
+
           return date;
       }
 
       function createUTCDate (y) {
-          var date = new Date(Date.UTC.apply(null, arguments));
-
+          var date;
           // the Date.UTC function remaps years 0-99 to 1900-1999
-          if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
-              date.setUTCFullYear(y);
+          if (y < 100 && y >= 0) {
+              var args = Array.prototype.slice.call(arguments);
+              // preserve leap years using a full 400 year cycle, then reset
+              args[0] = y + 400;
+              date = new Date(Date.UTC.apply(null, args));
+              if (isFinite(date.getUTCFullYear())) {
+                  date.setUTCFullYear(y);
+              }
+          } else {
+              date = new Date(Date.UTC.apply(null, arguments));
           }
+
           return date;
       }
 
@@ -55061,7 +55081,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
       var defaultLocaleWeek = {
           dow : 0, // Sunday is the first day of the week.
-          doy : 6  // The week that contains Jan 1st is the first week of the year.
+          doy : 6  // The week that contains Jan 6th is the first week of the year.
       };
 
       function localeFirstDayOfWeek () {
@@ -55170,25 +55190,28 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
 
       // LOCALES
+      function shiftWeekdays (ws, n) {
+          return ws.slice(n, 7).concat(ws.slice(0, n));
+      }
 
       var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
       function localeWeekdays (m, format) {
-          if (!m) {
-              return isArray(this._weekdays) ? this._weekdays :
-                  this._weekdays['standalone'];
-          }
-          return isArray(this._weekdays) ? this._weekdays[m.day()] :
-              this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
+          var weekdays = isArray(this._weekdays) ? this._weekdays :
+              this._weekdays[(m && m !== true && this._weekdays.isFormat.test(format)) ? 'format' : 'standalone'];
+          return (m === true) ? shiftWeekdays(weekdays, this._week.dow)
+              : (m) ? weekdays[m.day()] : weekdays;
       }
 
       var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
       function localeWeekdaysShort (m) {
-          return (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
+          return (m === true) ? shiftWeekdays(this._weekdaysShort, this._week.dow)
+              : (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
       }
 
       var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
       function localeWeekdaysMin (m) {
-          return (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
+          return (m === true) ? shiftWeekdays(this._weekdaysMin, this._week.dow)
+              : (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
       }
 
       function handleStrictParse$1(weekdayName, format, strict) {
@@ -55937,13 +55960,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                       weekdayOverflow = true;
                   }
               } else if (w.e != null) {
-                  // local weekday -- counting starts from begining of week
+                  // local weekday -- counting starts from beginning of week
                   weekday = w.e + dow;
                   if (w.e < 0 || w.e > 6) {
                       weekdayOverflow = true;
                   }
               } else {
-                  // default to begining of week
+                  // default to beginning of week
                   weekday = dow;
               }
           }
@@ -56537,7 +56560,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               years = normalizedInput.year || 0,
               quarters = normalizedInput.quarter || 0,
               months = normalizedInput.month || 0,
-              weeks = normalizedInput.week || 0,
+              weeks = normalizedInput.week || normalizedInput.isoWeek || 0,
               days = normalizedInput.day || 0,
               hours = normalizedInput.hour || 0,
               minutes = normalizedInput.minute || 0,
@@ -56841,7 +56864,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
                   ms : toInt(absRound(match[MILLISECOND] * 1000)) * sign // the millisecond decimal point is included in the match
               };
           } else if (!!(match = isoRegex.exec(input))) {
-              sign = (match[1] === '-') ? -1 : (match[1] === '+') ? 1 : 1;
+              sign = (match[1] === '-') ? -1 : 1;
               duration = {
                   y : parseIso(match[2], sign),
                   M : parseIso(match[3], sign),
@@ -56883,7 +56906,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
 
       function positiveMomentsDifference(base, other) {
-          var res = {milliseconds: 0, months: 0};
+          var res = {};
 
           res.months = other.month() - base.month() +
               (other.year() - base.year()) * 12;
@@ -56992,7 +57015,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           if (!(this.isValid() && localInput.isValid())) {
               return false;
           }
-          units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
+          units = normalizeUnits(units) || 'millisecond';
           if (units === 'millisecond') {
               return this.valueOf() > localInput.valueOf();
           } else {
@@ -57005,7 +57028,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           if (!(this.isValid() && localInput.isValid())) {
               return false;
           }
-          units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
+          units = normalizeUnits(units) || 'millisecond';
           if (units === 'millisecond') {
               return this.valueOf() < localInput.valueOf();
           } else {
@@ -57014,9 +57037,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
 
       function isBetween (from, to, units, inclusivity) {
+          var localFrom = isMoment(from) ? from : createLocal(from),
+              localTo = isMoment(to) ? to : createLocal(to);
+          if (!(this.isValid() && localFrom.isValid() && localTo.isValid())) {
+              return false;
+          }
           inclusivity = inclusivity || '()';
-          return (inclusivity[0] === '(' ? this.isAfter(from, units) : !this.isBefore(from, units)) &&
-              (inclusivity[1] === ')' ? this.isBefore(to, units) : !this.isAfter(to, units));
+          return (inclusivity[0] === '(' ? this.isAfter(localFrom, units) : !this.isBefore(localFrom, units)) &&
+              (inclusivity[1] === ')' ? this.isBefore(localTo, units) : !this.isAfter(localTo, units));
       }
 
       function isSame (input, units) {
@@ -57025,7 +57053,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           if (!(this.isValid() && localInput.isValid())) {
               return false;
           }
-          units = normalizeUnits(units || 'millisecond');
+          units = normalizeUnits(units) || 'millisecond';
           if (units === 'millisecond') {
               return this.valueOf() === localInput.valueOf();
           } else {
@@ -57035,11 +57063,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
 
       function isSameOrAfter (input, units) {
-          return this.isSame(input, units) || this.isAfter(input,units);
+          return this.isSame(input, units) || this.isAfter(input, units);
       }
 
       function isSameOrBefore (input, units) {
-          return this.isSame(input, units) || this.isBefore(input,units);
+          return this.isSame(input, units) || this.isBefore(input, units);
       }
 
       function diff (input, units, asFloat) {
@@ -57216,62 +57244,130 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           return this._locale;
       }
 
+      var MS_PER_SECOND = 1000;
+      var MS_PER_MINUTE = 60 * MS_PER_SECOND;
+      var MS_PER_HOUR = 60 * MS_PER_MINUTE;
+      var MS_PER_400_YEARS = (365 * 400 + 97) * 24 * MS_PER_HOUR;
+
+      // actual modulo - handles negative numbers (for dates before 1970):
+      function mod$1(dividend, divisor) {
+          return (dividend % divisor + divisor) % divisor;
+      }
+
+      function localStartOfDate(y, m, d) {
+          // the date constructor remaps years 0-99 to 1900-1999
+          if (y < 100 && y >= 0) {
+              // preserve leap years using a full 400 year cycle, then reset
+              return new Date(y + 400, m, d) - MS_PER_400_YEARS;
+          } else {
+              return new Date(y, m, d).valueOf();
+          }
+      }
+
+      function utcStartOfDate(y, m, d) {
+          // Date.UTC remaps years 0-99 to 1900-1999
+          if (y < 100 && y >= 0) {
+              // preserve leap years using a full 400 year cycle, then reset
+              return Date.UTC(y + 400, m, d) - MS_PER_400_YEARS;
+          } else {
+              return Date.UTC(y, m, d);
+          }
+      }
+
       function startOf (units) {
+          var time;
           units = normalizeUnits(units);
-          // the following switch intentionally omits break keywords
-          // to utilize falling through the cases.
+          if (units === undefined || units === 'millisecond' || !this.isValid()) {
+              return this;
+          }
+
+          var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
           switch (units) {
               case 'year':
-                  this.month(0);
-                  /* falls through */
+                  time = startOfDate(this.year(), 0, 1);
+                  break;
               case 'quarter':
+                  time = startOfDate(this.year(), this.month() - this.month() % 3, 1);
+                  break;
               case 'month':
-                  this.date(1);
-                  /* falls through */
+                  time = startOfDate(this.year(), this.month(), 1);
+                  break;
               case 'week':
+                  time = startOfDate(this.year(), this.month(), this.date() - this.weekday());
+                  break;
               case 'isoWeek':
+                  time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1));
+                  break;
               case 'day':
               case 'date':
-                  this.hours(0);
-                  /* falls through */
+                  time = startOfDate(this.year(), this.month(), this.date());
+                  break;
               case 'hour':
-                  this.minutes(0);
-                  /* falls through */
+                  time = this._d.valueOf();
+                  time -= mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR);
+                  break;
               case 'minute':
-                  this.seconds(0);
-                  /* falls through */
+                  time = this._d.valueOf();
+                  time -= mod$1(time, MS_PER_MINUTE);
+                  break;
               case 'second':
-                  this.milliseconds(0);
+                  time = this._d.valueOf();
+                  time -= mod$1(time, MS_PER_SECOND);
+                  break;
           }
 
-          // weeks are a special case
-          if (units === 'week') {
-              this.weekday(0);
-          }
-          if (units === 'isoWeek') {
-              this.isoWeekday(1);
-          }
-
-          // quarters are also special
-          if (units === 'quarter') {
-              this.month(Math.floor(this.month() / 3) * 3);
-          }
-
+          this._d.setTime(time);
+          hooks.updateOffset(this, true);
           return this;
       }
 
       function endOf (units) {
+          var time;
           units = normalizeUnits(units);
-          if (units === undefined || units === 'millisecond') {
+          if (units === undefined || units === 'millisecond' || !this.isValid()) {
               return this;
           }
 
-          // 'date' is an alias for 'day', so it should be considered as such.
-          if (units === 'date') {
-              units = 'day';
+          var startOfDate = this._isUTC ? utcStartOfDate : localStartOfDate;
+
+          switch (units) {
+              case 'year':
+                  time = startOfDate(this.year() + 1, 0, 1) - 1;
+                  break;
+              case 'quarter':
+                  time = startOfDate(this.year(), this.month() - this.month() % 3 + 3, 1) - 1;
+                  break;
+              case 'month':
+                  time = startOfDate(this.year(), this.month() + 1, 1) - 1;
+                  break;
+              case 'week':
+                  time = startOfDate(this.year(), this.month(), this.date() - this.weekday() + 7) - 1;
+                  break;
+              case 'isoWeek':
+                  time = startOfDate(this.year(), this.month(), this.date() - (this.isoWeekday() - 1) + 7) - 1;
+                  break;
+              case 'day':
+              case 'date':
+                  time = startOfDate(this.year(), this.month(), this.date() + 1) - 1;
+                  break;
+              case 'hour':
+                  time = this._d.valueOf();
+                  time += MS_PER_HOUR - mod$1(time + (this._isUTC ? 0 : this.utcOffset() * MS_PER_MINUTE), MS_PER_HOUR) - 1;
+                  break;
+              case 'minute':
+                  time = this._d.valueOf();
+                  time += MS_PER_MINUTE - mod$1(time, MS_PER_MINUTE) - 1;
+                  break;
+              case 'second':
+                  time = this._d.valueOf();
+                  time += MS_PER_SECOND - mod$1(time, MS_PER_SECOND) - 1;
+                  break;
           }
 
-          return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+          this._d.setTime(time);
+          hooks.updateOffset(this, true);
+          return this;
       }
 
       function valueOf () {
@@ -57977,10 +58073,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
           units = normalizeUnits(units);
 
-          if (units === 'month' || units === 'year') {
-              days   = this._days   + milliseconds / 864e5;
+          if (units === 'month' || units === 'quarter' || units === 'year') {
+              days = this._days + milliseconds / 864e5;
               months = this._months + daysToMonths(days);
-              return units === 'month' ? months : months / 12;
+              switch (units) {
+                  case 'month':   return months;
+                  case 'quarter': return months / 3;
+                  case 'year':    return months / 12;
+              }
           } else {
               // handle milliseconds separately because of floating point math errors (issue #1867)
               days = this._days + Math.round(monthsToDays(this._months));
@@ -58023,6 +58123,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       var asDays         = makeAs('d');
       var asWeeks        = makeAs('w');
       var asMonths       = makeAs('M');
+      var asQuarters     = makeAs('Q');
       var asYears        = makeAs('y');
 
       function clone$1 () {
@@ -58214,6 +58315,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       proto$2.asDays         = asDays;
       proto$2.asWeeks        = asWeeks;
       proto$2.asMonths       = asMonths;
+      proto$2.asQuarters     = asQuarters;
       proto$2.asYears        = asYears;
       proto$2.valueOf        = valueOf$1;
       proto$2._bubble        = bubble;
@@ -58258,7 +58360,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       // Side effect imports
 
 
-      hooks.version = '2.22.2';
+      hooks.version = '2.24.0';
 
       setHookCallback(createLocal);
 
@@ -58299,7 +58401,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           TIME: 'HH:mm',                                  // <input type="time" />
           TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
           TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
-          WEEK: 'YYYY-[W]WW',                             // <input type="week" />
+          WEEK: 'GGGG-[W]WW',                             // <input type="week" />
           MONTH: 'YYYY-MM'                                // <input type="month" />
       };
 
@@ -58308,36 +58410,250 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   })));
   });
 
-  const _jsxFileName = "/Users/isaac/urbit/projects/write/src/js/components/collection-list.js";
+  const _jsxFileName = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/post-preview.js";
 
-  class CollectionList extends react_1 {
-    render() {
-      console.log("collection-list.props", this.props);
-    
-      let listItems = this.props.list.map((coll) => {
-        return (
-          react.createElement('p', { className: "w-100", __self: this, __source: {fileName: _jsxFileName, lineNumber: 11}}
-            , coll.data.info.title
-          )
-        );
+  class PostPreview extends react_1 {
+    constructor(props) {
+      super(props);
 
+      moment.updateLocale('en', {
+        relativeTime: {
+          past: function(input) {
+            return input === 'just now'
+              ? input
+              : input + ' ago'
+          },
+          s : 'just now',
+          future : 'in %s',
+          m  : '1m',
+          mm : '%dm',
+          h  : '1h',
+          hh : '%dh',
+          d  : '1d',
+          dd : '%dd',
+          M  : '1 month',
+          MM : '%d months',
+          y  : '1 year',
+          yy : '%d years',
+        }
       });
+    }
 
-      console.log(listItems);
+    render() {
+
+      console.log(this.props);
+      let comments = this.props.post.numComments == 1
+        ? '1 comment'
+        : `${this.props.post.numComments} comments`;
+      let date = moment(this.props.post.date).fromNow();
+      let authorDate = `~${this.props.post.author} • ${date}`;
+      let collLink = "/~publish/~" + 
+        this.props.post.author + "/" +
+        this.props.post.collectionName;
+      let postLink = collLink + "/" + this.props.post.postName;
 
       return (
-        react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName, lineNumber: 21}}
-          , listItems
+        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}
+          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
+            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 51}}
+              , this.props.post.postTitle
+            )
+            , react.createElement('p', { className: "body-regular-400", __self: this, __source: {fileName: _jsxFileName, lineNumber: 54}}
+              , this.props.post.postSnippet
+            )
+          )
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 58}}
+            , comments
+          )
+          , react.createElement(Link, { to: collLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 61}}
+            , react.createElement('p', { className: "body-regular gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 62}}
+              , this.props.post.collectionTitle
+            )
+          )
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 66}}
+            , authorDate
+          )
         )
       );
     }
   }
 
-  const _jsxFileName$1 = "/Users/isaac/urbit/projects/write/src/js/components/root.js";
+  const _jsxFileName$1 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/recent.js";
+
+  class Recent extends react_1 {
+    constructor(props){
+      super(props);
+      console.log("recent props", props);
+    }
+
+    buildRecent() {
+      var recent = [];
+      var group = {
+        date: new Date(), 
+        posts: [],
+      };
+
+      for (var i=0; i<this.props.latest.length; i++) {
+        let index = this.props.latest[i];
+        let post = this.retrievePost(index.post, index.coll, index.who);
+        let postDate = new Date(post.info["date-created"]);
+        let postProps = this.buildPostPreviewProps(index.post, index.coll, index.who);
+
+        if (group.posts.length == 0) {
+          group = {
+            date: this.roundDay(postDate),
+            posts: [postProps],
+          };
+
+          if (i == (this.props.latest.length - 1)) {
+            recent.push(Object.assign({}, group));
+          }
+
+        } else if ( this.sameDay(group.date, postDate) ) {
+          group.posts.push(postProps) ;
+        } else {
+          recent.push(Object.assign({}, group));
+
+          group = {
+            date: this.roundDay(postDate),
+            posts: [postProps],
+          };
+
+          if (i == (this.props.latest.length - 1)) {
+            recent.push(Object.assign({}, group));
+          }
+
+        }
+      }
+      return recent;
+    }
+
+    buildPostPreviewProps(post, coll, who){
+      let pos = this.retrievePost(post, coll, who);
+      let col = this.retrieveColl(coll, who);
+      let com = this.retrieveComments(post, coll, who);
+
+      return {
+        postTitle: pos.info.title,
+        postName:  post,
+        postSnippet: "body snippet",
+        numComments: com.length,
+        collectionTitle: col.title,
+        collectionName:  coll,
+        author: who,
+        date: pos.info["date-created"]
+      }
+
+    }
+
+
+    retrievePost(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].post;
+      } else {
+        return this.props.subs[who][coll].posts[post].post;
+      }
+    }
+
+    retrieveComments(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].comments;
+      } else {
+        return this.props.subs[who][coll].posts[post].comments;
+      }
+    }
+
+    retrieveColl(coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].info;
+      } else {
+        return this.props.subs[who][coll].info;
+      }
+    }
+
+
+
+    roundDay(d) {
+      let result = new Date(d.getTime());
+      result.setHours(0);
+      result.setMinutes(0);
+      result.setSeconds(0);
+      result.setMilliseconds(0);
+      return result
+    }
+
+    sameDay(d1, d2) {
+      return d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate() &&
+        d1.getFullYear() === d2.getFullYear();
+    }
+
+    dateLabel(d) {
+      let today = new Date();
+
+      console.log("today", today);
+
+      let yesterday = new Date(today.getTime() - (1000*60*60*24));
+      if (this.sameDay(d, today)) {
+        return "Today";
+      } else if (this.sameDay(d, yesterday)) {
+        return "Yesterday";
+      } else if ( d.getFullYear() === today.getFullYear() ) {
+        let month = d.toLocaleString('en-us', {month: 'long'});
+        let day = d.getDate();
+        return month + ' ' + day;
+      } else {
+        let month = d.toLocaleString('en-us', {month: 'long'});
+        let day = d.getDate();
+        let year = d.getFullYear();
+        return month + ' ' + day + ' ' + year;
+      }
+    }
+
+
+    render() {
+      let recent = this.buildRecent();
+
+      console.log("recent", recent);
+
+
+      let body = recent.map((group) => {
+        let posts = group.posts.map((post) => {
+          return (
+            react.createElement(PostPreview, {
+              post: post, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 146}}
+            )
+          );
+        });
+        let date = this.dateLabel(group.date);
+        return (
+          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 153}}
+            , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 154}}
+              , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 155}}
+                , date
+              )
+            )
+            , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 159}}
+              , posts
+            )
+          )
+        );
+      });
+
+
+      return (
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 168}}
+          , body
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/root.js";
   class Root extends react_1 {
     constructor(props) {
       super(props);
-      this.state = store.collections;
+      this.state = store.state;
 
       console.log("root.state", this.state);
 
@@ -58346,46 +58662,41 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
     render() {
       return (
-        react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 25}}
-          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 26}}
-          , react.createElement(Route, { exact: true, path: "/~publish",
+        react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 26}}
+          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 27}}
+
+          , react.createElement(Route, { exact: true, path: "/~publish/recent",
             render:  (props) => {
               return (
-                react.createElement('div', { className: "cf h-100 w-100 absolute"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 30}}
-                  , react.createElement('div', { className: "fl w-100 h3"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 31}}
-                    , react.createElement('h1', {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 32}}, "Publish")
+                react.createElement('div', { className: "cf w-100 absolute"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 32}}
+                  , react.createElement('div', { className: "fl w-100 h3 pl4 mt3"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 33}}
+                    , react.createElement('p', { className: "body-large b gray-50"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 34}}, "Publish")
                   )
-                  , react.createElement('div', { className: "fl flex w-100 h-100"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 34}}
-                    , react.createElement('div', { className: "fl h-100 overflow-x-hidden"  , style: { flexBasis: 400 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 35}}
-                      , react.createElement('p', { className: "fl w-100 h2 bb"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 36}}, "Latest"
+                  , react.createElement('div', { className: "fl flex w-100 bb pl4"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 36}}
+                    , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 37}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 38}}, "Recent"
 
                       )
                     )
-                    , react.createElement('div', { className: "fl h-100 overflow-x-hidden"  , style: { flexBasis: 400 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 40}}
-                      , react.createElement('p', { className: "fl w-100 h2 bb"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 41}}, "Subs"
+                    , react.createElement('div', { className: "fl", style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 42}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 43}}, "Subscriptions"
 
-                      )
-                      , react.createElement(CollectionList, {
-                        list: this.state.subs, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 44}}
                       )
                     )
-                    , react.createElement('div', { className: "fl h-100 overflow-x-hidden"  , style: { flexBasis: 400 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 48}}
-                      , react.createElement('p', { className: "fl w-100 h2 bb"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 49}}, "Pubs"
+                    , react.createElement('div', { className: "fl", style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 47}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}, "My Blogs"
 
                       )
-                        , react.createElement(CollectionList, {
-                          list: this.state.pubs, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 52}}
-                        )
                     )
-                    , react.createElement('div', { className: "fl h-100 overflow-x-hidden"  , style: { flexBasis: 400 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 56}}
-                      , react.createElement('p', { className: "fl w-100 h2 bb"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 57}}, "Create Button? idk"
-
-                      )
+                  )
+                  , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 53}}
+                    , react.createElement(Recent, {
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 54}}
                     )
                   )
                 )
               );
-           }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 27}} )
+           }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 29}} )
           )
         )
       )
@@ -58444,7 +58755,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   let subscription = new Subscription();
 
-  const _jsxFileName$2 = "/Users/isaac/urbit/projects/write/src/index.js";
+  const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/publish/src/index.js";
   console.log('app running');
 
   /*
@@ -58465,7 +58776,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   window._ = lodash;
 
   reactDom.render((
-    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$2, lineNumber: 32}} )
+    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$3, lineNumber: 32}} )
   ), document.querySelectorAll("#root")[0]);
 
 }));

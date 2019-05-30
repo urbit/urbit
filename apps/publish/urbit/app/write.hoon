@@ -808,44 +808,58 @@
       [[[~ %js] [%'~publish' %index ~]] ~]
     :_  this
     [ost.bol %http-response (js-response:app js)]~
-  ::
+  ::  home page; redirect to recent
   ::
       [[~ [%'~publish' ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
+    [ost.bol %http-response (redirect:app '/~publish/recent')]~
+  ::  recent page
   ::
-  ::
-      [[~ [%'~publish' @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-    =/  hym=manx
-      ;div: {<u.who>} root page
+      [[~ [%'~publish' %recent ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
+  ::  subscriptions
   ::
-  ::  forum view
+      [[~ [%'~publish' %subs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  published
+  ::
+      [[~ [%'~publish' %pubs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  blog
   ::
       [[~ [%'~publish' @t @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    =/  coll=@tas  i.t.t.site.request-line
-::    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-  ::
-  ::  post view
+    =/  who=(unit @p)  (slaw %p i.t.site.request-line)
+    =/  blog=@tas      i.t.t.site.request-line
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  blog post
   ::
       [[~ [%'~publish' @t @t @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    =/  coll=@tas  i.t.t.site.request-line
-    =/  post=@tas  i.t.t.t.site.request-line
-::    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-    ::  local request
+    =/  who=(unit @p)  (slaw %p i.t.site.request-line)
+    =/  blog=@tas      i.t.t.site.request-line
+    =/  post=@tas      i.t.t.t.site.request-line
     ::
+    ?~  who  [[ost.bol %http-response not-found:app]~ this]
+    =/  col=(unit collection)
+      ?:  =(u.who our.bol)
+        (~(get by pubs.sat) blog)
+      (~(get by subs.sat) u.who blog)
+    ?~  col  [[ost.bol %http-response not-found:app]~ this]
+    =/  pos  (~(get by pos.u.col) post)
+    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
+    
+
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
   ::
   ==
 ::

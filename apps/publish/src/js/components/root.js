@@ -9,11 +9,12 @@ import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { Sidebar } from '/components/sidebar';
 import { CollectionList } from '/components/collection-list';
+import { Recent } from '/components/recent';
 
 export class Root extends Component {
   constructor(props) {
     super(props);
-    this.state = store.collections;
+    this.state = store.state;
 
     console.log("root.state", this.state);
 
@@ -24,40 +25,35 @@ export class Root extends Component {
     return (
       <BrowserRouter>
         <div>
-        <Route exact path="/~publish"
+
+        <Route exact path="/~publish/recent"
           render={ (props) => {
             return (
-              <div className="cf h-100 w-100 absolute">
-                <div className="fl w-100 h3">
-                  <h1>Publish</h1>
+              <div className="cf w-100 absolute">
+                <div className="fl w-100 h3 pl4 mt3">
+                  <p className="body-large b gray-50">Publish</p>
                 </div>
-                <div className="fl flex w-100 h-100">
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Latest
+                <div className="fl flex w-100 bb pl4">
+                  <div className="fl bb" style={{ flexBasis: 148 }}>
+                    <p className="fl w-100 h2 label-regular">
+                      Recent
                     </p>
                   </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Subs
-                    </p>
-                    <CollectionList
-                      list={this.state.subs}
-                    />
-                  </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Pubs
-                    </p>
-                      <CollectionList
-                        list={this.state.pubs}
-                      />
-                  </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Create Button? idk
+                  <div className="fl" style={{ flexBasis: 148 }}>
+                    <p className="fl w-100 h2 label-regular gray-30">
+                      Subscriptions
                     </p>
                   </div>
+                  <div className="fl" style={{ flexBasis: 148 }}>
+                    <p className="fl w-100 h2 label-regular gray-30">
+                      My Blogs
+                    </p>
+                  </div>
+                </div>
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
                 </div>
               </div>
             );
