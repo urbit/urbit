@@ -120,12 +120,12 @@
       %0
       :: apps by ship
       ::
-      =ship-state
+      =apps
   ==
 ::
-::  +subscriber-data: subscriber data.
+::  +subscribers: subscriber data.
 ::
-++  subscriber-data
+++  subscribers
   $:
       :: incoming subscribers
       ::
@@ -138,9 +138,9 @@
       meter=(map bone @ud)
   ==
 ::
-::  +ship-state: ship state.
+::  +apps: ship state.
 ::
-++  ship-state
+++  apps
   $:
       :: (deprecated)
       ::
@@ -248,7 +248,7 @@
       stats=stats
       :: subscribers
       ::
-      subscribers=subscriber-data
+      subscribers=subscribers
       :: running state
       ::
       running-state=vase
@@ -425,15 +425,15 @@
     =/  result-vase  q.cage
     ::
     =/  app-data=(unit agent)
-      (~(get by running.ship-state.gall) term)
+      (~(get by running.apps.gall) term)
     ::
     ?^  app-data
       ::  update the path
       ::
       =/  updated  u.app-data(beak beak)
       ::
-      =.  running.ship-state.gall
-        (~(put by running.ship-state.gall) term updated)
+      =.  running.apps.gall
+        (~(put by running.apps.gall) term updated)
       ::
       ::  magic update string from the old +mo-boon, "complete old boot"
       ::
@@ -480,7 +480,6 @@
   ::
   ::  +mo-new-agent: create a new agent and add it to state.
   ::
-  ::  FIXME add some printfs to check and see if this is working alright
   ++  mo-new-agent
     |=  [=term =beak =vase]
     ^+  mo-state
@@ -499,10 +498,10 @@
         ducts           ducts
       ==
     ::
-    =/  running  (~(put by running.ship-state.gall) term agent)
+    =/  running  (~(put by running.apps.gall) term agent)
     ::
     %_  mo-state
-      running.ship-state.gall  running
+      running.apps.gall  running
     ==
   ::
   :: +mo-handle-foreign-request: handle a foreign request.
@@ -585,7 +584,7 @@
     ^-  [bone _mo-state]
     ::
     =/  =foreign
-      =/  existing  (~(get by contacts.ship-state.gall) ship)
+      =/  existing  (~(get by contacts.apps.gall) ship)
       (fall existing [1 ~ ~])
     ::
     =/  existing  (~(get by index-map.foreign) hen)
@@ -602,11 +601,11 @@
           index-map  (~(put by index-map.foreign) hen index)
           duct-map   (~(put by duct-map.foreign) index hen)
         ==
-      (~(put by contacts.ship-state.gall) ship new-foreign)
+      (~(put by contacts.apps.gall) ship new-foreign)
     ::
     =/  next
       %_  mo-state
-        contacts.ship-state.gall  contacts
+        contacts.apps.gall  contacts
       ==
     ::
     [index next]
@@ -617,7 +616,7 @@
     |=  [=ship index=@ud]
     ^-  duct
     ::
-    =/  =foreign  (~(got by contacts.ship-state.gall) ship)
+    =/  =foreign  (~(got by contacts.apps.gall) ship)
     (~(got by duct-map.foreign) index)
   ::
   ::  +mo-handle-sys-core: receive a core.
@@ -941,11 +940,11 @@
     ::
     ~&  [%mo-clearing-queue-for term]
     ::
-    ?.  (~(has by running.ship-state.gall) term)
+    ?.  (~(has by running.apps.gall) term)
       ~&  %mo-nothing-running
       mo-state
     ::
-    =/  maybe-blocked  (~(get by waiting.ship-state.gall) term)
+    =/  maybe-blocked  (~(get by waiting.apps.gall) term)
     ::
     ?~  maybe-blocked
       ~&  %mo-nothing-blocked
@@ -956,9 +955,9 @@
     |-  ^+  mo-state
     ::
     ?:  =(~ blocked)
-      =/  waiting   (~(del by waiting.ship-state.gall) term)
+      =/  waiting   (~(del by waiting.apps.gall) term)
       %_  mo-state
-        waiting.ship-state.gall  waiting
+        waiting.apps.gall  waiting
       ==
     ::
     =^  task  blocked  [p q]:~(get to blocked)
@@ -982,7 +981,7 @@
   ++  mo-beak
     |=  =term
     ^-  beak
-    ?~  app-data=(~(get by running.ship-state.gall) term)
+    ?~  app-data=(~(get by running.apps.gall) term)
       ::
       ::  XX this fallback is necessary, as .term could be either the source
       ::  or the destination app. ie, it might not exist locally ...
@@ -1045,21 +1044,21 @@
     =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
     ::
-    =/  is-running  (~(has by running.ship-state.gall) term)
-    =/  is-waiting  (~(has by waiting.ship-state.gall) term)
+    =/  is-running  (~(has by running.apps.gall) term)
+    =/  is-waiting  (~(has by waiting.apps.gall) term)
     ::
     ?:  |(!is-running is-waiting)
       ::
       =/  =blocked
-        =/  waiting  (~(get by waiting.ship-state.gall) term)
+        =/  waiting  (~(get by waiting.apps.gall) term)
         =/  tasks  (fall waiting *blocked)
         =/  task  [hen privilege agent-action]
         (~(put to tasks) task)
       ::
-      =/  waiting  (~(put by waiting.ship-state.gall) term blocked)
+      =/  waiting  (~(put by waiting.apps.gall) term blocked)
       ::
       %_  mo-state
-        waiting.ship-state.gall  waiting
+        waiting.apps.gall  waiting
       ==
     ::
     (mo-apply term privilege agent-action)
@@ -1174,7 +1173,7 @@
       ^+  ap-state
       ::
       =/  =agent
-        =/  running  (~(got by running.ship-state.gall) term)
+        =/  running  (~(got by running.apps.gall) term)
         =/  =stats
           =/  change  +(change.stats.running)
           =/  trop  (shaz (mix (add term change) eny))
@@ -1192,13 +1191,14 @@
           ost  bone
         ==
       ::
-      :: FIXME check
       =/  =ducts
         =/  bone  +(bone.ducts.agent)
         :+  bone=bone
           bone-map=(~(put by bone-map.ducts.agent) hen bone)
         duct-map=(~(put by duct-map.ducts.agent) bone hen)
       ::
+      ~&  [%ap-updating-bone-to bone.ducts.agent]
+      ~&  [%ap-updating-ducts-to ducts]
       %=  ap-state
         ost        bone.ducts.agent
         ducts.sat  ducts
@@ -1211,7 +1211,7 @@
       ::
       =>  ap-track-queue
       ::
-      =/  running  (~(put by running.ship-state.gall) dap sat)
+      =/  running  (~(put by running.apps.gall) dap sat)
       ::
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
@@ -1220,8 +1220,8 @@
         :(weld from-internal from-suss moves)
       ::
       %_  mo-state
-        running.ship-state.gall  running
-        moves                    moves
+        running.apps.gall  running
+        moves              moves
       ==
     ::
     ::  +ap-track-queue: track queue.
@@ -2677,7 +2677,7 @@
       ::
       %init
       ::
-    =/  payload  gall-payload(system-duct.ship-state.gall duct)
+    =/  payload  gall-payload(system-duct.apps.gall duct)
     [~ payload]
       ::
       %sunk
@@ -2713,16 +2713,16 @@
       %wegh
       ::
     =/  waiting
-      =/  queued  (~(run by waiting.ship-state.gall) |=(blocked [%.y +<]))
+      =/  queued  (~(run by waiting.apps.gall) |=(blocked [%.y +<]))
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by running.ship-state.gall) |=(agent [%.y +<]))
+      =/  active  (~(run by running.apps.gall) |=(agent [%.y +<]))
       (sort ~(tap by active) aor)
     ::
     =/  =mass
       :+  %gall  %.n
-      :~  [%foreign %.y contacts.ship-state.gall]
+      :~  [%foreign %.y contacts.apps.gall]
           [%blocked %.n waiting]
           [%active %.n running]
           [%dot %.y gall]
@@ -2761,7 +2761,7 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    =/  =vase  !>((~(has by running.ship-state.gall) desk))
+    =/  =vase  !>((~(has by running.apps.gall) desk))
     =/  =cage  [%noun vase]
     (some (some cage))
   ::
@@ -2771,7 +2771,7 @@
   ?.  =([%$ %da now] coin)
     ~
   ::
-  ?.  (~(has by running.ship-state.gall) desk)
+  ?.  (~(has by running.apps.gall) desk)
     (some ~)
   ::
   ?.  ?=(^ path)
