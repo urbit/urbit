@@ -369,7 +369,6 @@
       [%f %build live=%.y schematic]
     ::
     =/  pass  [path note-arvo]
-    ~&  [%mo-passing pass]
     (mo-pass pass)
   ::
   ::  +mo-pass: prepend a standard %pass move to the move state.
@@ -388,7 +387,6 @@
     ^+  mo-state
     ::
     =/  =move  [hen [%give gift]]
-    ~&  [%mo-giving move]
     mo-state(moves [move moves])
   ::
   :: +mo-contains-valid-bowl: check that a vase contains a valid bowl.
@@ -454,7 +452,6 @@
     ::
     =/  old  mo-state
     ::
-    ~&  [%mo-initialising term]
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
       =/  =privilege  [%high routes]
@@ -465,17 +462,13 @@
     =/  new  +.wag
     ::
     ?^  maybe-tang
-      ~&  [%mo-got-tang u.maybe-tang]
       =.  mo-state  old
       (mo-give %onto %.n u.maybe-tang)
     ::
-    ~&  %mo-abetting-new
     =.  mo-state  ap-abet:new
     ::
-    ~&  %mo-clearing-queue
     =/  cleared  (mo-clear-queue term)
     =/  =suss  [term %boot now]
-    ~&  [%mo-giving-boot suss]
     (mo-give:cleared %onto [%.y suss])
   ::
   ::  +mo-new-agent: create a new agent and add it to state.
@@ -938,16 +931,12 @@
     |=  =term
     ^+  mo-state
     ::
-    ~&  [%mo-clearing-queue-for term]
-    ::
     ?.  (~(has by running.apps.gall) term)
-      ~&  %mo-nothing-running
       mo-state
     ::
     =/  maybe-blocked  (~(get by waiting.apps.gall) term)
     ::
     ?~  maybe-blocked
-      ~&  %mo-nothing-blocked
       mo-state
     ::
     =/  =blocked  u.maybe-blocked
@@ -961,7 +950,6 @@
       ==
     ::
     =^  task  blocked  [p q]:~(get to blocked)
-    ~&  [%mo-found-task task]
     ::
     =/  =duct  p.task
     =/  =privilege  q.task
@@ -973,7 +961,6 @@
       =/  card  [%slip %g %deal sock internal-task]
       [duct card]
     ::
-    ~&  [%mo-prepending-move move]
     $(moves [move moves])
   ::
   ::  +mo-beak: assemble a beak for the provided app.
