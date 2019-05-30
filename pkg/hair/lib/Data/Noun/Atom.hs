@@ -18,7 +18,7 @@ import Data.Flat
 
 --------------------------------------------------------------------------------
 
-newtype Atom = MkAtom Natural
+newtype Atom = MkAtom { unAtom :: Natural }
   deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat)
 
 instance Show Atom where
