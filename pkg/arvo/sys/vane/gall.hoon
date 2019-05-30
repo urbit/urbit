@@ -1175,31 +1175,26 @@
       =/  =agent
         =/  running  (~(got by running.apps.gall) term)
         =/  =stats
-          =/  change  +(change.stats.running)
-          =/  trop  (shaz (mix (add term change) eny))
-          [change=change eny=trop time=now]
+          :+  +(change.stats.running)
+            (shaz (mix (add term change.stats.running) eny))
+          now
         running(stats stats)
       ::
       =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
       ::
+      =.  dap  term
+      =.  pry  privilege
+      =.  sat  agent
+      ::
       ?^  maybe-bone
-        =/  bone  u.maybe-bone
-        %_  ap-state
-          dap  term
-          pry  privilege
-          sat  agent
-          ost  bone
-        ==
+        ap-state(ost u.maybe-bone)
       ::
       =/  =ducts
-        =/  bone  +(bone.ducts.agent)
-        :+  bone=bone
-          bone-map=(~(put by bone-map.ducts.agent) hen bone)
-        duct-map=(~(put by duct-map.ducts.agent) bone hen)
+        :+  +(bone.ducts.agent)
+          (~(put by bone-map.ducts.agent) hen bone.ducts.agent)
+        (~(put by duct-map.ducts.agent) bone.ducts.agent hen)
       ::
-      ~&  [%ap-updating-bone-to bone.ducts.agent]
-      ~&  [%ap-updating-ducts-to ducts]
-      %=  ap-state
+      %_  ap-state
         ost        bone.ducts.agent
         ducts.sat  ducts
       ==
