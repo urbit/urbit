@@ -92,10 +92,12 @@ putNoun flags txn db key val =
   putRaw flags txn db mKey mVal
 
 putJam :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> Word64 -> Jam -> IO ()
-putJam  flags txn db id (Jam atom) =
-  withWord64AsMDBval id $ \idVal ->
-  byteStringAsMdbVal (unpackAtom atom) $ \mVal ->
-  putRaw flags txn db idVal mVal
+putJam  flags txn db id (Jam atom) = do
+  withWord64AsMDBval id $ \idVal -> do
+    -- TODO: This unpackAtom hangs.
+    let !bs = unpackAtom atom
+    byteStringAsMdbVal bs $ \mVal -> do
+      putRaw flags txn db idVal mVal
 
 get :: MDB_txn -> MDB_dbi -> ByteString -> IO Noun
 get txn db key =
@@ -124,8 +126,8 @@ persistThread :: MDB_env
               -> TQueue (Writ [Effect])
               -> (Writ [Effect] -> STM ())
               -> IO (Async ())
-persistThread env inputQueue onPersist = async $
-  do
+persistThread env inputQueue onPersist = asyncBound $
+  forever do
     writs <- atomically $ readQueue inputQueue
     writeEvents writs
     atomically $ traverse_ onPersist writs
@@ -136,7 +138,7 @@ persistThread env inputQueue onPersist = async $
 
       let flags = compileWriteFlags [MDB_NOOVERWRITE]
 
-      for_ writs $ \w ->
+      for_ writs $ \w -> do
         putJam flags txn db (eventId w) (event w)
 
       mdb_txn_commit txn

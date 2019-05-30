@@ -153,7 +153,7 @@ packAtom :: ByteString -> Atom
 packAtom = MkAtom . wordsToNatural . bytesToWords . stripTrailingZeros
 
 unpackAtom :: Atom -> ByteString
-unpackAtom (MkAtom a) = wordsToBytes (naturalToWords a)
+unpackAtom (MkAtom a) = trace "unpack" $! wordsToBytes (naturalToWords a)
 
 --------------------------------------------------------------------------------
 

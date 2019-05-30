@@ -9,6 +9,17 @@ library:
     - -O2
 
 executables:
+  test:
+    main: Main.hs
+    source-dirs: app/test
+    dependencies: ["vere"]
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - "-with-rtsopts=-H128m"
+      - -fwarn-incomplete-patterns
+      - -O2
+
   uterm:
     main: Main.hs
     source-dirs: app/uterm

@@ -14,9 +14,7 @@ newtype Jam = Jam Atom
 
 data Writ a = Writ
   { eventId          :: Word64
-  , job              :: (Wen, Ovum)   -- (pair date ovum)
   , timeout          :: Maybe Word
-  , mug              :: Mug
   , event            :: Jam           -- mat
   , payload          :: a
   }
