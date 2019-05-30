@@ -148,7 +148,7 @@
       $%  {$dill-blit dill-blit:dill}                ::
       ==                                              ::
     ++  card                                          ::  general card
-      $%  {$conf wire dock $load ship term}           ::
+      $%  {$conf wire dock ship term}                 ::
           {$diff lime}                                ::
           {$peer wire dock path}                      ::
           {$poke wire dock pear}                      ::
@@ -272,7 +272,7 @@
   ?:  &(?=(^ hig) |(?=(~ u.hig) =(p.wel syd.u.u.hig)))  +>.$
   =.  +>.$  (se-text "activated app {(trip p.wel)}/{(trip q.wel)}")
   %-  se-emit(fur (~(put by fur) q.wel ~))
-  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] %load our.hid p.wel]
+  [ost.hid %conf [%drum p.wel q.wel ~] [our.hid q.wel] our.hid p.wel]
 ::
 ++  se-adze                                           ::  update connections
   ^+  .
