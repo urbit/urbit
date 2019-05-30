@@ -28,9 +28,6 @@
               ==                                        ::
           task:able:jael                                ::
       ==                                                ::
-      $:  %g                                            ::    to %gall
-          $>(%deal task:able:gall)                      ::  interact with apps
-      ==                                                ::
       $:  @tas                                          ::    to any
           $>(%west task:able)                           ::  deliver message
   ==  ==                                                ::
@@ -1417,19 +1414,8 @@
       [gad.fox %pass /ames %b %rest u.tim.fox]~
     ::
         %raki
-      =*  her  p.bon
-      =/  moz=(list move)
-        [hen [%pass / %j %meet her life=q.bon pass=r.bon]]~
-      ::  poke :dns with an indirect binding if her is a planet we're spnsoring
-      ::
-      =?  moz  ?&  ?=(%duke (clan:title her))
-                   ?=(%king (clan:title our))
-                   =(our (~(sein-scry am [our now fox ski]) her))
-               ==
-        =/  cmd  [%meet her]
-        =/  pok  [%dns %poke `cage`[%dns-command !>(cmd)]]
-        :_  moz  [hen [%pass / %g %deal [our our] pok]]
-      [moz fox]
+      :_  fox
+      [hen [%pass / %j %meet who=p.bon life=q.bon pass=r.bon]]~
     ::
         %sake
       =/  =wire  /our/(scot %p our)
