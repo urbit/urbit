@@ -3,22 +3,24 @@
 +$  trad-input  [=bowl:gall in=(unit [=wire sign=input-type])]
 +$  trad-move  (pair bone card-type)
 ::
-::  notes:     notes to send immediately.  These will go out even if a
-::             later stage of the process fails, so they shouldn't have
-::             any semantic effect on the rest of the system.  Path is
-::             included exclusively for documentation and |verb.
-::  effects:   moves to send after the process ends.
-::  contracts: stuff to cancel at end of transaction.
+::  cards:     cards to send immediately.  These will go out even if a
+::             later stage of the computation fails, so they shouldn't have
+::             any semantic effect on the rest of the system.
+::             Alternately, they may record an entry in contracts with
+::             enough information to undo the effect if the computation
+::             fails.
+::  effects:   moves to send after the computation ends.
+::  contracts: stuff to cancel at end of computation.
 ::  wait:      don't move on, stay here.  The next sign should come back
 ::             to this same callback.
-::  cont:      continue process with new callback.
-::  fail:      abort process; don't send effects
-::  done:      finish process; send effects
+::  cont:      continue computation with new callback.
+::  fail:      abort computation; don't send effects
+::  done:      finish computation; send effects
 ::
 ++  trad-output-raw
   |*  a=mold
   $~  [~ ~ ~ %done *a]
-  $:  notes=(list [path card-type])
+  $:  cards=(list card-type)
       effects=(list trad-move)
       contracts=(set [add=? contract=contract-type])
       $=  next
@@ -33,21 +35,39 @@
   |*  a=mold
   $-(trad-input (trad-output-raw a))
 ::
+::  Abort asynchronous computation with error message
+::
 ++  trad-fail
   |=  err=(pair term tang)
   |=  trad-input
   [~ ~ ~ %fail err]
 ::
+::  Asynchronous transcaction monad.
+::
+::  Combo of four monads:
+::  - Reader on input-type
+::  - Writer on card-type
+::  - Continuation
+::  - Exception
+::
 ++  trad
   |*  a=mold
   |%
   ++  output  (trad-output-raw a)
+  ::
+  ::  Type of an asynchronous computation.
+  ::
   ++  form  (trad-form-raw a)
+  ::
+  ::  Monadic pure.  Identity computation for bind.
+  ::
   ++  pure
     |=  arg=a
     ^-  form
     |=  trad-input
     [~ ~ ~ %done arg]
+  ::
+  ::  Monadic bind.  Combines two computations, associatively.
   ::
   ++  bind
     |*  b=mold
@@ -57,7 +77,7 @@
     =/  b-res=(trad-output-raw b)
       (m-b input)
     ^-  output
-    :^  notes.b-res  effects.b-res  contracts.b-res
+    :^  cards.b-res  effects.b-res  contracts.b-res
     ?-    -.next.b-res
       %wait  [%wait ~]
       %cont  [%cont ..$(m-b self.next.b-res)]
@@ -105,13 +125,13 @@
       ::  run the trad callback
       ::
       =/  =output  (form.eval-form trad-input)
-      ::  add notes to moves
+      ::  add cards to moves
       ::
       =.  moves
         %+  welp
           moves
-        %+  turn  notes.output
-        |=  [=path card=card-type]
+        %+  turn  cards.output
+        |=  card=card-type
         ^-  trad-move
         [bone card]
       ::  add effects to list to be produced when done

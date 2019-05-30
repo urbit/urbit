@@ -27,7 +27,7 @@
   =/  m  (trad ,~)
   ^-  form:m
   |=  =trad-input
-  [[/ card]~ ~ ~ %done ~]
+  [[card]~ ~ ~ %done ~]
 ::
 ::  Add or remove a contract
 ::

@@ -41,7 +41,7 @@
     :*  top-stories=(weld base "topstories.json")
         item=|=(item=@ud `tape`:(welp base "item/" +>:(scow %ui item) ".json"))
     ==
---
+  --
 =,  trad=trad:tapp
 =,  tapp-trad=tapp-trad:tapp
 =,  stdio
@@ -89,7 +89,7 @@
   |-  ^-  form:m
   =*  loop  $
   ::
-  ::  If done, tell subscriers and print the results
+  ::  If done, tell subscribers and print the results
   ::
   ?~  top-stories
     ;<  ~  bind:m  (give-result /comments %comments top-comments)
@@ -139,5 +139,4 @@
   ;<  =state  bind:m  (handle-poke %noun 'fetch')
   =.  top-comments  state
   (pure:m top-comments)
-  ::  (handle-poke %noun 'poll')
 --

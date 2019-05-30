@@ -32,9 +32,10 @@
       (trad-fail %no-subscription ~)
     ;<  ~  bind:m  (pull-app [target path]:u.subscription)
     (pure:m ~)
-  ;<  ~  bind:m  (poke-app [our.bowl %example-tapp-fetch] %noun 'print')
-  ;<  ~  bind:m  (peer-app [our.bowl %example-tapp-fetch] /comments)
-  =.  subscription  `[[our.bowl %example-tapp-fetch] /comments]
+  =/  target  [our.bowl %example-tapp-fetch]
+  ;<  ~  bind:m  (poke-app target %noun 'print')
+  ;<  ~  bind:m  (peer-app target /comments)
+  =.  subscription  `[target /comments]
   ;<  ~  bind:m  (wait (add now.bowl ~s3))
   (pure:m subscription)
 ::
