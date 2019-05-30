@@ -129,7 +129,7 @@
   |=  =path
   =/  m  tapp-trad
   ^-  form:m
-  ~&  [%baby-take-peer path]
+  ~&  [%tapp-fetch-take-peer path]
   (pure:m top-comments)
 ::
 ++  handle-take

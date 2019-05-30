@@ -32,9 +32,9 @@
       (trad-fail %no-subscription ~)
     ;<  ~  bind:m  (pull-app [target path]:u.subscription)
     (pure:m ~)
-  ;<  ~  bind:m  (poke-app [our.bowl %baby] %noun 'print')
-  ;<  ~  bind:m  (peer-app [our.bowl %baby] /comments)
-  =.  subscription  `[[our.bowl %baby] /comments]
+  ;<  ~  bind:m  (poke-app [our.bowl %example-tapp-fetch] %noun 'print')
+  ;<  ~  bind:m  (peer-app [our.bowl %example-tapp-fetch] /comments)
+  =.  subscription  `[[our.bowl %example-tapp-fetch] /comments]
   ;<  ~  bind:m  (wait (add now.bowl ~s3))
   (pure:m subscription)
 ::
@@ -43,6 +43,6 @@
   =/  m  tapp-trad
   ^-  form:m
   ?>  ?=(%comments -.data)
-  ~&  sitter-got-data=(lent comments.data)
+  ~&  subscriber-got-data=(lent comments.data)
   (pure:m subscription)
 --
