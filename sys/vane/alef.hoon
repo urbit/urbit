@@ -183,19 +183,19 @@
         =>  push-r
         rip
       =>  .(a `(tree item)`a)
+      ::
+      |-  ^+  self
       ?:  =(~ stack)
         ~&  %rip-stack-gone
         self
-      ::
       =^  direction  self  pop
-      ?-  direction
-          %l  ~&  %rip-popped-l  rip
+      ?-    direction
+          %l  ~&  %rip-popped-l
+        =>  push-r
+        rip
+      ::
           %r  ~&  %rip-popped-r
-              =>  pop
-              =>  ?:  ?=([[%l *] *] stack)
-                    push-l
-                  push-r
-              rip
+        $
       ==
     ::  apply .f to a single node, updating .state, .stop, and .a
     ::
