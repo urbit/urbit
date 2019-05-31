@@ -71,3 +71,4 @@ apps/*/dist
 # vim swap files
 *.swo
 *.swp
+*.swn
