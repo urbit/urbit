@@ -56,7 +56,18 @@
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  b  (trav:atom-map a 3 |=([k=@ud v=@tas] [`@tas`+(v) =(5 k)]))
+  =/  trav-func  (trav:atom-map ,(list [@ud @tas]))
+  ::
+  =/  b  %-  trav-func
+         :*  a
+             start=3
+             state=~
+             ::
+             |=  [s=(list [@ud @tas]) k=@ud v=@tas]
+             :+  `@tas`+(v)
+               =(5 k)
+             [[k v] s]
+         ==
   ::
   ~&  a=a
   ~&  b=b

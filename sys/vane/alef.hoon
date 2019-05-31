@@ -104,28 +104,32 @@
   ::
   ::
   ++  trav
-    |=  [a=(tree item) start=key f=$-(item [val ?])]
-    =|  visited=(list key)
-    =/  stop=?  %.n
+    |*  state=mold
+    |=  $:  a=(tree item)
+            start=key
+            =state
+            f=$-([state item] [val ? state])
+        ==
+    ::  acc: accumulator
+    ::
+    =/  acc  [stop=`?`%.n state=state]
     =<  abet  =<  apse
     |%
-    ++  abet  a
+    ++  abet  [state.acc a]
     ++  self  .
     ++  apse
       ^+  .
       ?~  a  .
-      ?:  stop  .
+      ?:  stop.acc  .
       ?.  (compare start key.n.a)  ?~(r.a . rigt)
       =>  left
-      =<  ?.  stop
+      =<  ?.  stop.acc
             rigt
           self
-      ?:  stop
+      ?:  stop.acc
         self
       ?>  ?=(^ a)
-      =^  res  stop  (f n.a)
-      =.  visited  [key.n.a visited]
-      ~&  visited=(flop visited)
+      =^  res  acc  (f state.acc n.a)
       =.  val.n.a  res
       self
     ++  left
