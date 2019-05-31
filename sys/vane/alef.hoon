@@ -103,6 +103,44 @@
     rest.l(r a(r r.rest.l))
   ::
   ::
+  ++  trav
+    |=  [a=(tree item) start=key f=$-(item [val ?])]
+    =|  visited=(list key)
+    =/  stop=?  %.n
+    =<  abet  =<  apse
+    |%
+    ++  abet  a
+    ++  self  .
+    ++  apse
+      ^+  .
+      ?~  a  .
+      ?:  stop  .
+      ?.  (compare start key.n.a)  ?~(r.a . rigt)
+      =>  left
+      =<  ?.  stop
+            rigt
+          self
+      ?:  stop
+        self
+      ?>  ?=(^ a)
+      =^  res  stop  (f n.a)
+      =.  visited  [key.n.a visited]
+      ~&  visited=(flop visited)
+      =.  val.n.a  res
+      self
+    ++  left
+      ?>  ?=(^ a)
+      ^+  .
+      =/  lef  apse(a l.a)
+      lef(a a(l a.lef))
+    ++  rigt
+      ?>  ?=(^ a)
+      ^+  .
+      =/  rig  apse(a r.a)
+      rig(a a(r a.rig))
+    --
+  ::
+  ::
   ++  traverse
     =>  |%
         +$  frame  [?(%l %r) (tree item)]

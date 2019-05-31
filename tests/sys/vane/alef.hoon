@@ -52,6 +52,16 @@
     !>  `[0 %a]
     !>  (peek:atom-map a)
 ::
+++  test-ordered-map-trav  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  (trav:atom-map a 3 |=([k=@ud v=@tas] [`@tas`+(v) =(5 k)]))
+  ::
+  ~&  a=a
+  ~&  b=b
+  ~
+::
 ++  test-ordered-map-traverse  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
