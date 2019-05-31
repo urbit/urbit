@@ -6,8 +6,6 @@ import { Link } from 'react-router-dom';
 export class Header extends Component {
   constructor(props) {
     super(props);
-
-    console.log("header.props", props);
   }
 
   retrievePost(post, coll, who) {

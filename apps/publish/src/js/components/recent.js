@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/post-preview';
+import { RecentPreview } from '/components/recent-preview';
 
 
 export class Recent extends Component {
   constructor(props){
     super(props)
-    console.log("recent props", props);
   }
 
   buildRecent() {
@@ -114,8 +113,6 @@ export class Recent extends Component {
   dateLabel(d) {
     let today = new Date();
 
-    console.log("today", today);
-
     let yesterday = new Date(today.getTime() - (1000*60*60*24));
     if (this.sameDay(d, today)) {
       return "Today";
@@ -137,13 +134,10 @@ export class Recent extends Component {
   render() {
     let recent = this.buildRecent();
 
-    console.log("recent", recent);
-
-
     let body = recent.map((group) => {
       let posts = group.posts.map((post) => {
         return (
-          <PostPreview
+          <RecentPreview
             post={post}
           />
         );

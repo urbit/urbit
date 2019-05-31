@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 
-export class PostPreview extends Component {
+export class RecentPreview extends Component {
   constructor(props) {
     super(props);
 
@@ -43,8 +43,6 @@ export class PostPreview extends Component {
       this.props.post.collectionName;
     let postLink = collLink + "/" + this.props.post.postName;
 
-//    let postTitle = 
-
     return (
       <div className="w-336 ma2">
         <Link to={postLink}>
@@ -53,6 +51,14 @@ export class PostPreview extends Component {
           </p>
           <p className="body-regular-400">
             {this.props.post.postSnippet}
+          </p>
+        </Link>
+        <p className="label-small gray-50">
+          {comments}
+        </p>
+        <Link to={collLink}>
+          <p className="body-regular gray-50">
+            {this.props.post.collectionTitle}
           </p>
         </Link>
         <p className="label-small gray-50">

@@ -6,11 +6,9 @@ import _ from 'lodash';
 
 import { api } from '/api';
 import { store } from '/store';
-import { Skeleton } from '/components/skeleton';
-import { Sidebar } from '/components/sidebar';
-import { CollectionList } from '/components/collection-list';
 import { Recent } from '/components/recent';
 import { Header } from '/components/header';
+import { Blog } from '/components/blog';
 
 export class Root extends Component {
   constructor(props) {
@@ -30,39 +28,43 @@ export class Root extends Component {
           <Route exact path="/~publish/recent"
             render={ (props) => {
               return (
-                  <div className="fl w-100">
-                    <Recent
-                      {...this.state}
-                    />
-                  </div>
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
+                </div>
               );
            }} />
           <Route exact path="/~publish/subs"
             render={ (props) => {
               return (
-                  <div className="fl w-100">
-                    <Recent
-                      {...this.state}
-                    />
-                  </div>
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
+                </div>
               );
            }} />
           <Route exact path="/~publish/pubs"
             render={ (props) => {
               return (
-                  <div className="fl w-100">
-                    <Recent
-                      {...this.state}
-                    />
-                  </div>
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
+                </div>
               );
            }} />
 
           <Route exact path="/~publish/:ship/:blog"
             render={ (props) => {
               return (
-                <div>
-                  blog page
+                <div className="fl w-100">
+                  <Blog
+                    blogId = {props.match.params.blog}
+                    ship = {props.match.params.ship.slice(1)}
+                    {...this.state}
+                  />
                 </div>
               );
            }} />
