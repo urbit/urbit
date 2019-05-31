@@ -52,6 +52,31 @@
     !>  `[0 %a]
     !>  (peek:atom-map a)
 ::
+++  test-ordered-map-traverse  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =+  ^-  [state=(list @tas) b=(tree [@ud @tas])]
+      %-  (traverse:atom-map ,(list @tas))
+      :*  a
+          start=3
+          state=~
+          ^=  f
+          |=  [state=(list @tas) item=[key=@ud val=@tas]]
+          ^-  [[stop=? new-val=(unit @tas)] state=(list @tas)]
+          ::
+          ~&  :*  state=state
+                  item=item
+              ==
+          ::
+          ?:  =(3 (lent state))
+            [[stop=%.y new-val=`val.item] state]
+          [[stop=%.n new-val=~] [val.item state]]
+      ==
+  ::
+  ~&  [state b]
+  ~
+::
 +|  %ordered-set
 ::
 ++  test-ordered-set-gas  ^-  tang

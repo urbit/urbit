@@ -128,19 +128,19 @@
     ::
     ++  self  .
     ++  push-l
-      ?>  ?=(^ a)
+      ~&  %push-l^`path`(turn stack head)
       =.  stack  [[%l a] stack]
-      =.  a  l.a
-      self
+      ?>  ?=(^ a)
+      self(a l.a)
     ++  push-r
+      ~&  %push-r^`path`(turn stack head)
       ?>  ?=(^ a)
       =.  stack  [[%r a] stack]
-      =.  a  r.a
-      self
+      self(a r.a)
     ++  pop
+      =-  ~&  `path`/pop/[-.-]  -
       ?>  ?=(^ stack)
       =/  =frame  i.stack
-      =.  stack  t.stack
       =.  a
         =/  b  +.frame
         ?>  ?=(^ b)
@@ -148,19 +148,21 @@
           %l  b(l a)
           %r  b(r a)
         ==
-      self
+      [-.frame self(stack t.stack)]
     ++  unwind
-      ?~  stack  self
-      =>  pop
+      ^+  self
+      ?:  =(~ stack)  self
+      =.  self  +:pop
       unwind
     ::  starting from root, find .start item
     ::
     ++  dig
+      ~&  %dig
       ?~  a  self
       ::
-      ?:  =(start n.a)
+      ?:  =(start key.n.a)
         self
-      =>  ?:  (compare start n.a)
+      =>  ?:  (compare start key.n.a)
             push-l
           push-r
       dig
@@ -168,28 +170,38 @@
     ::
     ++  rip
       ^+  self
+      ~&  %rip
       ::
-      ?~  a  self
+      ?:  =(~ a)  self
       =.  self  rip-node
       ::
       ?:  stop
+        ~&  %rip-stop
         self
-      ?^  r.a
+      ?:  ?=([* * r=^] a)
+        ~&  %rip-push
         =>  push-r
         rip
-      ?~  stack
+      =>  .(a `(tree item)`a)
+      ?:  =(~ stack)
+        ~&  %rip-stack-gone
         self
-      =^  frame  self  pop
-      ?-  -.frame
-          %l  rip
-          %r  =>  pop
-              =>  push-r
+      ::
+      =^  direction  self  pop
+      ?-  direction
+          %l  ~&  %rip-popped-l  rip
+          %r  ~&  %rip-popped-r
+              =>  pop
+              =>  ?:  ?=([[%l *] *] stack)
+                    push-l
+                  push-r
               rip
       ==
     ::  apply .f to a single node, updating .state, .stop, and .a
     ::
     ++  rip-node
       ^+  self
+      ~&  %rip-node
       ::
       ?>  ?=(^ a)
       ::  run .f, mutating .state and .stop and producing .new-val
@@ -197,7 +209,7 @@
       =^  res  state  (f state n.a)
       =.  stop  stop.res
       ::
-      =.  a
+      =/  b
         ::  replace .val.n.a; does not affect ordering
         ::
         ?^  new-val.res  a(val.n u.new-val.res)
@@ -210,7 +222,7 @@
           l.a(r $(l.a r.l.a))
         r.a(l $(r.a l.r.a))
       ::
-      self
+      self(a b)
     --
   ::  +sift: remove and produce all items matching .reject predicate
   ::
