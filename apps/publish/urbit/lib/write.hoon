@@ -143,7 +143,7 @@
     :-  %order
     %-  pairs:enjs:format
     :~  pin+a+(turn pin.order.col |=(s=@tas [%s s]))
-        unpin+a+(turn pin.order.col |=(s=@tas [%s s]))
+        unpin+a+(turn unpin.order.col |=(s=@tas [%s s]))
     ==
 
   ==
