@@ -5,7 +5,55 @@
 =/  vane  (alef !>(..zuse))
 =/  lane-foo=lane:alef  `@uxlane``@`'lane-foo'
 ::
+=/  items-from-keys
+  |=  keys=(list @ud)
+  %+  turn  keys
+  |=  k=@ud
+  [k `@tas`(add k %a)]
+::
+=/  test-items=(list [@ud @tas])
+  (items-from-keys (gulf 0 6))
+::
+=/  atom-map  ((ordered-map:alef @ud @tas) lte)
+::
 |%
+::
++|  %ordered-map
+::
+++  test-ordered-map-gas  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  %.y
+    !>  (check-balance:atom-map a)
+::
+++  test-ordered-map-tap  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  test-items
+    !>  (tap:atom-map a)
+::
+++  test-ordered-map-pop  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  [[0 %a] (gas:atom-map ~ (items-from-keys (gulf 1 6)))]
+    !>  (pop:atom-map a)
+::
+++  test-ordered-map-peek  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  %+  expect-eq
+    !>  `[0 %a]
+    !>  (peek:atom-map a)
+::
++|  %ordered-set
+::
 ++  test-ordered-set-gas  ^-  tang
   ::
   =/  atom-set  ((ordered-set:alef @) lte)

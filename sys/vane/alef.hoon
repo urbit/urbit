@@ -35,7 +35,7 @@
     ::
     ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
         ::
-        ?~(l %.y ~!(n.a (compare key.n.a u.l)))
+        ?~(l %.y (compare key.n.a u.l))
         ::  if .n.a is right of .u.r, assert horizontal comparator
         ::
         ?~(r %.y (compare u.r key.n.a))
@@ -66,14 +66,14 @@
     ?:  (compare key key.n.a)
       =/  l  $(a l.a)
       ?>  ?=(^ l)
-      ?:  (mor n.a n.l)
+      ?:  (mor key.n.a key.n.l)
         a(l l)
       l(r a(l r.l))
     ::  item goes on right; recurse right then rebalance vertical order
     ::
     =/  r  $(a r.a)
     ?>  ?=(^ r)
-    ?:  (mor n.a n.r)
+    ?:  (mor key.n.a key.n.r)
       a(r r)
     r(l a(r l.r))
   ::  +peek: produce head (smallest item) or null
@@ -98,7 +98,7 @@
     :-  head.l
     ::  load .rest.l back into .a and rebalance
     ::
-    ?:  |(?=(~ rest.l) (mor n.a n.rest.l))
+    ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
       a(l rest.l)
     rest.l(r a(r r.rest.l))
   ::
@@ -206,7 +206,7 @@
         |-  ^-  (tree item)
         ?~  l.a  r.a
         ?~  r.a  l.a
-        ?:  (mor n.l.a n.r.a)
+        ?:  (mor key.n.l.a key.n.r.a)
           l.a(r $(l.a r.l.a))
         r.a(l $(r.a l.r.a))
       ::
