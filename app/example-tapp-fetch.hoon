@@ -12,13 +12,14 @@
   +$  state
     $:  top-comments=(list tape)
     ==
+  +$  peek-data  _!!
   +$  in-poke-data   [%noun =cord]
   +$  out-poke-data  ~
   +$  in-peer-data   ~
   +$  out-peer-data
     $%  [%comments (list tape)]
     ==
-  ++  tapp   (^tapp state in-poke-data out-poke-data in-peer-data out-peer-data)
+  ++  tapp   (^tapp state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
 =>
