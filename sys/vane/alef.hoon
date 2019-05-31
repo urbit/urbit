@@ -101,170 +101,98 @@
     ?:  |(?=(~ rest.l) (mor key.n.a key.n.rest.l))
       a(l rest.l)
     rest.l(r a(r r.rest.l))
+  ::  +nip: remove root; for internal use
   ::
+  ++  nip
+    |=  a=(tree item)
+    ^-  (tree item)
+    ::
+    ?>  ?=(^ a)
+    ::  delete .n.a; merge and balance .l.a and .r.a
+    ::
+    |-  ^-  (tree item)
+    ?~  l.a  r.a
+    ?~  r.a  l.a
+    ?:  (mor key.n.l.a key.n.r.a)
+      l.a(r $(l.a r.l.a))
+    r.a(l $(r.a l.r.a))
+  ::  +traverse: stateful partial inorder traversal
   ::
-  ++  trav
+  ::    Mutates .state on each run of .f.  Starts at .start key.  Stops
+  ::    when .f produces .stop=%.y.  Traverses from smaller to larger
+  ::    keys.  Each run of .f can replace an item's value or delete the
+  ::    item.
+  ::
+  ++  traverse
     |*  state=mold
     |=  $:  a=(tree item)
             start=key
             =state
-            f=$-([state item] [val ? state])
+            f=$-([state item] [(unit val) ? state])
         ==
+    ^+  [state a]
     ::  acc: accumulator
     ::
+    ::    .stop: set to %.y by .f when done traversing
+    ::    .state: threaded through each run of .f and produced by +abet
+    ::
     =/  acc  [stop=`?`%.n state=state]
-    =<  abet  =<  apse
+    =<  abet  =<  main
     |%
     ++  abet  [state.acc a]
     ++  self  .
-    ++  apse
+    ::  +main: main recursive loop; performs a partial inorder traversal
+    ::
+    ++  main
       ^+  .
+      ::  stop if empty or we've been told to stop
+      ::
       ?~  a  .
       ?:  stop.acc  .
-      ?.  (compare start key.n.a)  ?~(r.a . rigt)
+      ::  while we're left of .start, move right
+      ::
+      ?.  (compare start key.n.a)  right
+      ::  inorder traversal: left -> node -> right, recursively
+      ::
       =>  left
+      ::  only continue rightward if we weren't told to stop
       =<  ?.  stop.acc
-            rigt
+            right
           self
-      ?:  stop.acc
-        self
+      ::  if left told us to stop, don't mutate node
+      ::
+      ?:  stop.acc  self
+      ::  run .f on node, updating .stop.acc and .state.acc
+      ::
       ?>  ?=(^ a)
       =^  res  acc  (f state.acc n.a)
-      =.  val.n.a  res
-      self
-    ++  left
-      ?>  ?=(^ a)
-      ^+  .
-      =/  lef  apse(a l.a)
-      lef(a a(l a.lef))
-    ++  rigt
-      ?>  ?=(^ a)
-      ^+  .
-      =/  rig  apse(a r.a)
-      rig(a a(r a.rig))
-    --
-  ::
-  ::
-  ++  traverse
-    =>  |%
-        +$  frame  [?(%l %r) (tree item)]
-        --
-    =|  stack=(list frame)
-    =/  stop=?  %.n
-    ::
-    |*  state=mold
-    ::
-    |=  $:  a=(tree item)
-            start=key
-            =state
-            $=  f
-            $-  [state item]
-            [[stop=? new-val=(unit val)] state]
-        ==
-    ^-  [^state (tree item)]
-    ::
-    |^  =>  dig
-        =>  rip
-        =>  unwind
-        [state a]
-    ::
-    ++  self  .
-    ++  push-l
-      ~&  %push-l^`path`(turn stack head)
-      =.  stack  [[%l a] stack]
-      ?>  ?=(^ a)
-      self(a l.a)
-    ++  push-r
-      ~&  %push-r^`path`(turn stack head)
-      ?>  ?=(^ a)
-      =.  stack  [[%r a] stack]
-      self(a r.a)
-    ++  pop
-      =-  ~&  `path`/pop/[-.-]  -
-      ?>  ?=(^ stack)
-      =/  =frame  i.stack
-      =.  a
-        =/  b  +.frame
-        ?>  ?=(^ b)
-        ?-  -.frame
-          %l  b(l a)
-          %r  b(r a)
-        ==
-      [-.frame self(stack t.stack)]
-    ++  unwind
-      ^+  self
-      ?:  =(~ stack)  self
-      =.  self  +:pop
-      unwind
-    ::  starting from root, find .start item
-    ::
-    ++  dig
-      ~&  %dig
-      ?~  a  self
+      ::  TMI
       ::
-      ?:  =(start key.n.a)
-        self
-      =>  ?:  (compare start key.n.a)
-            push-l
-          push-r
-      dig
-    ::  traverse left-to-right, applying .f until .stop
-    ::
-    ++  rip
-      ^+  self
-      ~&  %rip
-      ::
-      ?:  =(~ a)  self
-      =.  self  rip-node
-      ::
-      ?:  stop
-        ~&  %rip-stop
-        self
-      ?:  ?=([* * r=^] a)
-        ~&  %rip-push
-        =>  push-r
-        rip
       =>  .(a `(tree item)`a)
+      =.  a
+        ::  if .f requested node deletion, merge and balance .l.a and .r.a
+        ::
+        ?~  res  (nip a)
+        ::  we kept the node; replace its .val; order is unchanged
+        ::
+        ?>  ?=(^ a)
+        a(val.n u.res)
       ::
-      |-  ^+  self
-      ?:  =(~ stack)
-        ~&  %rip-stack-gone
-        self
-      =^  direction  self  pop
-      ?-    direction
-          %l  ~&  %rip-popped-l
-        =>  push-r
-        rip
-      ::
-          %r  ~&  %rip-popped-r
-        $
-      ==
-    ::  apply .f to a single node, updating .state, .stop, and .a
+      self
+    ::  +left: recurse on the left subtree, copying mutant back into .a
     ::
-    ++  rip-node
-      ^+  self
-      ~&  %rip-node
-      ::
-      ?>  ?=(^ a)
-      ::  run .f, mutating .state and .stop and producing .new-val
-      ::
-      =^  res  state  (f state n.a)
-      =.  stop  stop.res
-      ::
-      =/  b
-        ::  replace .val.n.a; does not affect ordering
-        ::
-        ?^  new-val.res  a(val.n u.new-val.res)
-        ::  delete .n.a; merge and balance .l.a and .r.a
-        ::
-        |-  ^-  (tree item)
-        ?~  l.a  r.a
-        ?~  r.a  l.a
-        ?:  (mor key.n.l.a key.n.r.a)
-          l.a(r $(l.a r.l.a))
-        r.a(l $(r.a l.r.a))
-      ::
-      self(a b)
+    ++  left
+      ^+  .
+      ?~  a  .
+      =/  lef  main(a l.a)
+      lef(a a(l a.lef))
+    ::  +right: recurse on the right subtree, copying mutant back into .a
+    ::
+    ++  right
+      ^+  .
+      ?~  a  .
+      =/  rig  main(a r.a)
+      rig(a a(r a.rig))
     --
   ::  +sift: remove and produce all items matching .reject predicate
   ::

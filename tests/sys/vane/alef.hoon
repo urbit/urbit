@@ -52,11 +52,21 @@
     !>  `[0 %a]
     !>  (peek:atom-map a)
 ::
-++  test-ordered-map-trav  ^-  tang
+++  test-ordered-map-nip  ^-  tang
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  trav-func  (trav:atom-map ,(list [@ud @tas]))
+  =/  b  (nip:atom-map a)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [3^%d] [4^%e] [5^%f]])
+    !>  b
+::
+++  test-ordered-map-traverse  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  trav-func  (traverse:atom-map ,(list [@ud @tas]))
   ::
   =/  b  %-  trav-func
          :*  a
@@ -64,39 +74,22 @@
              state=~
              ::
              |=  [s=(list [@ud @tas]) k=@ud v=@tas]
-             :+  `@tas`+(v)
+             :+  ?:  =(3 k)
+                   ~
+                 [~ `@tas`+(v)]
                =(5 k)
              [[k v] s]
          ==
   ::
-  ~&  a=a
-  ~&  b=b
-  ~
-::
-++  test-ordered-map-traverse  ^-  tang
+  ;:  weld
+    %+  expect-eq
+      !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [4^%f] [5^%g] [6^%g]])
+      !>  +.b
   ::
-  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
-  ::
-  =+  ^-  [state=(list @tas) b=(tree [@ud @tas])]
-      %-  (traverse:atom-map ,(list @tas))
-      :*  a
-          start=3
-          state=~
-          ^=  f
-          |=  [state=(list @tas) item=[key=@ud val=@tas]]
-          ^-  [[stop=? new-val=(unit @tas)] state=(list @tas)]
-          ::
-          ~&  :*  state=state
-                  item=item
-              ==
-          ::
-          ?:  =(3 (lent state))
-            [[stop=%.y new-val=`val.item] state]
-          [[stop=%.n new-val=~] [val.item state]]
-      ==
-  ::
-  ~&  [state b]
-  ~
+    %+  expect-eq
+      !>  ~[[5^%f] [4^%e] [3^%d]]
+      !>  -.b
+  ==
 ::
 +|  %ordered-set
 ::
