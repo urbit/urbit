@@ -118,7 +118,8 @@
     r.a(l $(r.a l.r.a))
   ::  +traverse: stateful partial inorder traversal
   ::
-  ::    Mutates .state on each run of .f.  Starts at .start key.  Stops
+  ::    Mutates .state on each run of .f.  Starts at .start key, or if
+  ::    .start is ~, starts at the head (item with smallest key).  Stops
   ::    when .f produces .stop=%.y.  Traverses from smaller to larger
   ::    keys.  Each run of .f can replace an item's value or delete the
   ::    item.
@@ -126,7 +127,7 @@
   ++  traverse
     |*  state=mold
     |=  $:  a=(tree item)
-            start=key
+            start=(unit key)
             =state
             f=$-([state item] [(unit val) ? state])
         ==
@@ -149,9 +150,12 @@
       ::
       ?~  a  .
       ?:  stop.acc  .
-      ::  while we're left of .start, move right
+      ::  if nonempty .start, while we're left of .start, move right
       ::
-      ?.  (compare start key.n.a)  right
+      ?:  ?&  ?=(^ start)
+              !(compare u.start key.n.a)
+          ==
+        right
       ::  inorder traversal: left -> node -> right, recursively
       ::
       =>  left

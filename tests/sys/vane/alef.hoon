@@ -66,11 +66,9 @@
   ::
   =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
   ::
-  =/  trav-func  (traverse:atom-map ,(list [@ud @tas]))
-  ::
-  =/  b  %-  trav-func
+  =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
          :*  a
-             start=3
+             start=`3
              state=~
              ::
              |=  [s=(list [@ud @tas]) k=@ud v=@tas]
@@ -88,6 +86,33 @@
   ::
     %+  expect-eq
       !>  ~[[5^%f] [4^%e] [3^%d]]
+      !>  -.b
+  ==
+::
+++  test-ordered-map-traverse-null-start  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
+  ::
+  =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
+         :*  a
+             start=~
+             state=~
+             ::
+             |=  [s=(list [@ud @tas]) k=@ud v=@tas]
+             :+  ?:  =(3 k)
+                   ~
+                 [~ `@tas`+(v)]
+               =(5 k)
+             [[k v] s]
+         ==
+  ::
+  ;:  weld
+    %+  expect-eq
+      !>  (gas:atom-map ~ ~[[0^%b] [1^%c] [2^%d] [4^%f] [5^%g] [6^%g]])
+      !>  +.b
+  ::
+    %+  expect-eq
+      !>  (flop (items-from-keys (gulf 0 5)))
       !>  -.b
   ==
 ::
