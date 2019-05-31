@@ -576,8 +576,7 @@
 ::
 +$  packet-pump-state
   $:  next-wake=(unit @da)
-      live=(tree live-fragment)
-      lost=(tree static-fragment)
+      live=(tree [live-packet-key live-packet-val])
       =pump-metrics
   ==
 +$  pump-metrics
@@ -587,6 +586,14 @@
       last-dead-at=@da
       rtt=@dr
       max-live=@ud
+  ==
++$  live-packet-key  [=message-num =fragment-num]
++$  live-packet-val
+  $:  expiry=@da
+      sent-date=@da
+      retried=?
+      num-fragments=fragment-num
+      =fragment
   ==
 +$  live-fragment
   $:  sent-at=@da
@@ -1139,6 +1146,23 @@
   =|  gifts=(list packet-pump-gift)
   |%
   ++  packet-pump  .
+  ::  +packet-queue: all sent fragments, ordered by sequence number
+  ::
+  ++  packet-queue
+    %-  (ordered-map live-packet-key live-packet-val)
+    |=  [a=live-packet-key b=live-packet-key]
+    ^-  ?
+    ::
+    ?:  (lth message-num.a message-num.b)
+      %.y
+    ?:  (gth message-num.a message-num.b)
+      %.n
+    (lte fragment-num.a fragment-num.b)
+  ::  +gauge: inflate a |pump-gauge to track congestion control
+  ::
+  ++  gauge  (make-pump-gauge now.channel pump-metrics.packet-pump-state)
+  ::  +work: handle $packet-pump-task request
+  ::
   ++  work
     |=  task=packet-pump-task
     ^+  [gifts packet-pump-state]
@@ -1153,22 +1177,57 @@
     ==
   ::
   ::
+  ++  main
+    ^+  packet-pump
+    !!
+  ::  +send: try to send a list of packets, returning unsent and effects
+  ::
   ++  send
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts packet-pump-state]
     ::
     !!
+  ::  +on-hear-fragment-ack: handle ack on a live packet
   ::
+  ++  on-hear-fragment-ack
+    |=  [=message-num =fragment-num]
+    ^+  packet-pump
+    ::
+    =-  =.  pump-metrics.packet-pump-state  metrics.-
+        =.  live.packet-pump-state     live.-
+        main
+    ::
+    ^+  [metrics=pump-metrics live=live]:packet-pump-state
+    ::
+    %-  (traverse:packet-queue pump-metrics)
+    :^    live.packet-pump-state
+        start=~
+      acc=pump-metrics.packet-pump-state
+    |=  $:  =pump-metrics
+            key=live-packet-key
+            val=live-packet-val
+        ==
+    ^-  [new-val=(unit live-packet-val) stop=? ^pump-metrics]
+    ::
+    =/  gauge  (make-pump-gauge now.channel pump-metrics)
+    ::  is this the acked packet?
+    ::
+    ?:  =(key [message-num fragment-num])
+      ::  delete acked packet, update metrics, and stop traversal
+      ::
+      :+  new-val=~
+        stop=%.y
+      (on-ack:gauge [sent-date expiry retried]:val)
+    ::  ack was out of order; mark expired, tell gauge, and continue
+    ::
+    :+  new-val=`val(expiry `@da`0)
+      stop=%.n
+    (on-skipped-packet:gauge [sent-date expiry retried]:val)
+  ::  +on-hear-message-ack: apply ack to all packets from .message-num
   ::
   ++  on-hear-message-ack
     |=  =message-num
     ^+  packet-pump
-    ::
-    =.  live.packet-pump-state
-      =<  kept
-      %+  sift:live-set  live.packet-pump-state
-      |=  item=live-fragment
-      =(message-num.item message-num)
     ::
     !!
   ::
@@ -1183,16 +1242,26 @@
     ^+  packet-pump
     ::
     !!
-  ++  live-set
-    %-  (ordered-set live-fragment)
-    |=  [a=live-fragment b=live-fragment]
-    ^-  ?
+  --
+::
+::
+++  make-pump-gauge
+  |=  [now=@da =pump-metrics]
+  |%
+  ++  on-skipped-packet
+    |=  [sent-date=@da expiry=@da retried=?]
     ::
-    ?:  (lth message-num.a message-num.b)
-      %.y
-    ?:  (gth message-num.a message-num.b)
-      %.n
-    (lte fragment-num.a fragment-num.b)
+    ::  TODO: decrease .max-live
+    ::
+    pump-metrics
+  ::
+  ++  on-ack
+    |=  [sent-date=@da expiry=@da retried=?]
+    ^+  pump-metrics
+    ::
+    ::  TODO: adjust .rtt and .max-live
+    ::
+    pump-metrics(num-live (dec num-live.pump-metrics))
   --
 ::
 ::
