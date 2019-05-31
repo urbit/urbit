@@ -125,6 +125,7 @@
   ^-  json
   %-  pairs:enjs:format
   :~  info+(collection-build-to-json col.col)
+  ::
     :+  %posts
       %o
     %+  roll  ~(tap in ~(key by pos.col))
@@ -138,6 +139,13 @@
     :~  post+(post-build-to-json post-build)
         comments+(comment-build-to-json comm-build)
     ==
+  ::
+    :-  %order
+    %-  pairs:enjs:format
+    :~  pin+a+(turn pin.order.col |=(s=@tas [%s s]))
+        unpin+a+(turn pin.order.col |=(s=@tas [%s s]))
+    ==
+
   ==
 ::
 ++  state-to-json
