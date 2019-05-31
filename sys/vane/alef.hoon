@@ -4,7 +4,244 @@
 ::
 |%
 +|  %generics
+::  $mk-item: constructor for +ordered-map item type
 ::
++*  mk-item  [key val]  [key=key val=val]
+::  +ordered-map: treap with user-specified horizontal order
+::
+::    Conceptually smaller items go on the left, so the item with the
+::    smallest key can be popped off the head. If $key is `@` and
+::    .compare is +lte, then the numerically smallest item is the head.
+::
+++  ordered-map
+  |*  [key=mold val=mold]
+  =>  |%
+      +$  item  (mk-item key val)
+      --
+  ::  +compare: item comparator for horizontal order
+  ::
+  |=  compare=$-([key key] ?)
+  |%
+  ::  +check-balance: verify horizontal and vertical orderings
+  ::
+  ++  check-balance
+    =|  [l=(unit key) r=(unit key)]
+    |=  a=(tree item)
+    ^-  ?
+    ::  empty tree is valid
+    ::
+    ?~  a  %.y
+    ::  nonempty trees must maintain several criteria
+    ::
+    ?&  ::  if .n.a is left of .u.l, assert horizontal comparator
+        ::
+        ?~(l %.y ~!(n.a (compare key.n.a u.l)))
+        ::  if .n.a is right of .u.r, assert horizontal comparator
+        ::
+        ?~(r %.y (compare u.r key.n.a))
+        ::  if .a is not leftmost element, assert vertical order between
+        ::  .l.a and .n.a and recurse to the left with .n.a as right
+        ::  neighbor
+        ::
+        ?~(l.a %.y &((mor key.n.a key.n.l.a) $(a l.a, l `key.n.a)))
+        ::  if .a is not rightmost element, assert vertical order
+        ::  between .r.a and .n.a and recurse to the right with .n.a as
+        ::  left neighbor
+        ::
+        ?~(r.a %.y &((mor key.n.a key.n.r.a) $(a r.a, r `key.n.a)))
+    ==
+  ::  +put: ordered item insert
+  ::
+  ++  put
+    |=  [a=(tree item) =key =val]
+    ^-  (tree item)
+    ::  base case: replace null with single-item tree
+    ::
+    ?~  a  [n=[key val] l=~ r=~]
+    ::  base case: overwrite existing .key with new .val
+    ::
+    ?:  =(key.n.a key)  a(val.n val)
+    ::  if item goes on left, recurse left then rebalance vertical order
+    ::
+    ?:  (compare key key.n.a)
+      =/  l  $(a l.a)
+      ?>  ?=(^ l)
+      ?:  (mor n.a n.l)
+        a(l l)
+      l(r a(l r.l))
+    ::  item goes on right; recurse right then rebalance vertical order
+    ::
+    =/  r  $(a r.a)
+    ?>  ?=(^ r)
+    ?:  (mor n.a n.r)
+      a(r r)
+    r(l a(r l.r))
+  ::  +peek: produce head (smallest item) or null
+  ::
+  ++  peek
+    |=  a=(tree item)
+    ^-  (unit item)
+    ::
+    ?~  a    ~
+    ?~  l.a  `n.a
+    $(a l.a)
+  ::  +pop: produce .head (smallest item) and .rest or crash if empty
+  ::
+  ++  pop
+    |=  a=(tree item)
+    ^-  [head=item rest=(tree item)]
+    ::
+    ?~  a    !!
+    ?~  l.a  [n.a r.a]
+    ::
+    =/  l  $(a l.a)
+    :-  head.l
+    ::  load .rest.l back into .a and rebalance
+    ::
+    ?:  |(?=(~ rest.l) (mor n.a n.rest.l))
+      a(l rest.l)
+    rest.l(r a(r r.rest.l))
+  ::
+  ::
+  ++  traverse
+    =>  |%
+        +$  frame  [?(%l %r) (tree item)]
+        --
+    =|  stack=(list frame)
+    =/  stop=?  %.n
+    ::
+    |*  state=mold
+    ::
+    |=  $:  a=(tree item)
+            start=key
+            =state
+            $=  f
+            $-  [state item]
+            [[stop=? new-val=(unit val)] state]
+        ==
+    ^-  [^state (tree item)]
+    ::
+    |^  =>  dig
+        =>  rip
+        =>  unwind
+        [state a]
+    ::
+    ++  self  .
+    ++  push-l
+      ?>  ?=(^ a)
+      =.  stack  [[%l a] stack]
+      =.  a  l.a
+      self
+    ++  push-r
+      ?>  ?=(^ a)
+      =.  stack  [[%r a] stack]
+      =.  a  r.a
+      self
+    ++  pop
+      ?>  ?=(^ stack)
+      =/  =frame  i.stack
+      =.  stack  t.stack
+      =.  a
+        =/  b  +.frame
+        ?>  ?=(^ b)
+        ?-  -.frame
+          %l  b(l a)
+          %r  b(r a)
+        ==
+      self
+    ++  unwind
+      ?~  stack  self
+      =>  pop
+      unwind
+    ::  starting from root, find .start item
+    ::
+    ++  dig
+      ?~  a  self
+      ::
+      ?:  =(start n.a)
+        self
+      =>  ?:  (compare start n.a)
+            push-l
+          push-r
+      dig
+    ::  traverse left-to-right, applying .f until .stop
+    ::
+    ++  rip
+      ^+  self
+      ::
+      ?~  a  self
+      =.  self  rip-node
+      ::
+      ?:  stop
+        self
+      ?^  r.a
+        =>  push-r
+        rip
+      ?~  stack
+        self
+      =^  frame  self  pop
+      ?-  -.frame
+          %l  rip
+          %r  =>  pop
+              =>  push-r
+              rip
+      ==
+    ::  apply .f to a single node, updating .state, .stop, and .a
+    ::
+    ++  rip-node
+      ^+  self
+      ::
+      ?>  ?=(^ a)
+      ::  run .f, mutating .state and .stop and producing .new-val
+      ::
+      =^  res  state  (f state n.a)
+      =.  stop  stop.res
+      ::
+      =.  a
+        ::  replace .val.n.a; does not affect ordering
+        ::
+        ?^  new-val.res  a(val.n u.new-val.res)
+        ::  delete .n.a; merge and balance .l.a and .r.a
+        ::
+        |-  ^-  (tree item)
+        ?~  l.a  r.a
+        ?~  r.a  l.a
+        ?:  (mor n.l.a n.r.a)
+          l.a(r $(l.a r.l.a))
+        r.a(l $(r.a l.r.a))
+      ::
+      self
+    --
+  ::  +sift: remove and produce all items matching .reject predicate
+  ::
+  ::    Unrolls to a list, extracts items, then rolls back into a tree.
+  ::    Removed items are produced smallest to largest.
+  ::
+  ++  sift
+    |=  [a=(tree item) reject=$-(item ?)]
+    ^-  [lost=(list item) kept=(tree item)]
+    ::
+    =+  [l k]=(skid (tap a) reject)  [l (gas ~ k)]
+  ::  +tap: convert to list, smallest to largest
+  ::
+  ++  tap
+    |=  a=(tree item)
+    ^-  (list item)
+    ::
+    =|  b=(list item)
+    |-  ^+  b
+    ?~  a  b
+    ::
+    $(a l.a, b [n.a $(a r.a)])
+  ::  +gas: put a list of items
+  ::
+  ++  gas
+    |=  [a=(tree item) b=(list item)]
+    ^-  (tree item)
+    ::
+    ?~  b  a
+    $(b t.b, a (put a i.b))
+  --
 ::  +ordered-set: treap with user-specified horizontal order
 ::
 ::    Conceptually smaller items go on the left, so the smallest item
