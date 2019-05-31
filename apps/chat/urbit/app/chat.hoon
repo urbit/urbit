@@ -44,9 +44,9 @@
   |=  old=(unit state)
   ^-  (quip move _this)
   ?~  old
-    =/  inboxpat  /circle/inbox/config/group
+    =/  inboxpat  /circle/inbox/config-l/config-r/group-r/group-l
     =/  circlespat  /circles/[(scot %p our.bol)]
-    =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group
+    =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group-r/group-l
     =/  inboxi/poke 
       :-  %hall-action
           [%source %inbox %.y (silt [[our.bol %i] ~]~)]
@@ -58,13 +58,97 @@
     ==
   [~ this(sta u.old)]
 ::
-::  +peer-primary: subscribe to our data and updates
+::  +peer-messages: subscribe to subset of messages and updates
+::
++$  internal-state  
+  $:  
+    lis=(list [circle:hall @])
+    item=[cir=circle:hall count=@ud]
+    index=@
+  ==
+++  generate-circle-indices
+  |=  wir=wire
+  ^-  (list [circle:hall @])
+  =/  data
+    %^  spin  (swag [0 (lent wir)] wir)  *internal-state
+    |=  [a=@ta b=internal-state]
+    ^-  [* out=internal-state]
+    =/  switch  (dvr index.b 3)
+    ?:  =(q.switch 0)  :: remainder 0, should be a ship
+      ?:  =(index.b 0)  ::  if item is null, don't add to list
+        :-  0
+        %=  b
+          hos.cir.item  (slav %p a)
+          index  +(index.b)
+        ==
+      ::  if item is not null, add to list
+      :-  0
+      %=  b
+        hos.cir.item  (slav %p a)
+        nom.cir.item  *name:hall
+        count.item  0
+        lis  (snoc lis.b item.b)
+        index  +(index.b)
+      ==
+    ?:  =(q.switch 1)  :: remainder 1, should be a circle name
+      :-  0
+      %=  b
+        nom.cir.item  a
+        index  +(index.b)
+      ==
+    ?:  =(q.switch 2)  :: remainder 2, should be a number
+      :-  0
+      %=  b
+        count.item  (need (rush a dem))
+        index  +(index.b)
+      ==
+    !!  ::  impossible
+  ?:  =(index.q.data 0)
+    ~
+  (snoc lis.q.data item.q.data)
 ::
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
+  =/  indices  (generate-circle-indices wir)
+  ?~  indices
+    :_  this
+    [ost.bol %diff %chat-initial str.sta]~
+  =*  messages  messages.str.sta
+  =/  lisunitmov/(list (unit move)) 
+    %+  turn  indices
+      |=  [cir=circle:hall start=@ud]
+      ^-  (unit move)
+      =/  wholelist/(unit (list envelope:hall))  (~(get by messages) cir)
+      ?~  wholelist
+        ~
+      =/  end/@  (lent u.wholelist)
+      ?:  (gte start end)
+        ~
+      :-  ~
+      :*  ost.bol
+          %diff
+          %chat-update
+          [%messages cir start end (swag [start end] u.wholelist)]
+      ==
+  =/  lismov/(list move)
+    %+  turn
+    %+  skim  lisunitmov
+    |=  umov=(unit move)
+    ^-  ?
+    ?~  umov
+      %.n
+    %.y
+    need
   :_  this
-  [ost.bol %diff %chat-streams str.sta]~
+  %+  weld
+  [ost.bol %diff %chat-config str.sta]~
+  lismov
+::
+++  peer-updates
+  |=  wir=wire
+  ^-  (quip move _this)
+  [~ this]
 ::
 ++  poke-noun
   |=  a=*
@@ -93,7 +177,7 @@
 ++  send-chat-update
   |=  upd=update
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /primary bol)
+  %+  turn  (prey:pubsub:userlib /updates bol)
   |=  [=bone *]
   [bone %diff %chat-update upd]
 ::
@@ -123,19 +207,12 @@
     ::  %circle wire
     ::
       %circle
-::    ?+  -.piz
-::      ::
-::      ::  %peers prize
-::      ::
-::::        %peers
-::::      ?>  ?=(%peers -.piz)
-::::      [~ this]
 ::      ::
 ::      ::  %circle prize
 ::      ::
 ::        %circle
       ?>  ?=(%circle -.piz)
-      ~&  piz
+      ~&  pes.piz
       =/  circle/circle:hall  [our.bol &2:wir]
       ?:  =(circle [our.bol %inbox])
     ::
@@ -145,27 +222,46 @@
           %-  ~(uni in configs.str.sta)
           ^-  (map circle:hall (unit config:hall))
           (~(run by rem.cos.piz) |=(a=config:hall `a))
-        ~&  pes.piz
+        ::
         =/  circles/(list circle:hall)
           %+  turn  ~(tap in src.loc.cos.piz)
             |=  src=source:hall
             ^-  circle:hall
             cir.src
+        ::
         =/  meslis/(list [circle:hall (list envelope:hall)])
           %+  turn  circles
           |=  cir=circle:hall
           ^-  [circle:hall (list envelope:hall)]
           [cir ~]
+        ::
+        =/  localpeers/(set @p)  
+          %-  silt  %+  turn  ~(tap by loc.pes.piz)
+          |=  [shp=@p stat=status:hall]
+          shp
+        ::
+        =/  peers/(map circle:hall (set @p))
+          %-  ~(rep by rem.pes.piz)
+          |=  [[cir=circle:hall grp=group:hall] acc=(map circle:hall (set @p))]
+          ^-  (map circle:hall (set @p))
+          =/  newset
+            %-  silt  %+  turn  ~(tap by grp)
+            |=  [shp=@p stat=status:hall]
+            shp
+          (~(put by acc) cir newset)
+        ::
         :-
           %+  turn  ~(tap in (~(del in (silt circles)) [our.bol %inbox]))
             |=  cir=circle:hall
             ^-  move
-            =/  pat/path  /circle/[nom.cir]/config/grams
+            =/  pat/path  /circle/[nom.cir]/config-l/config-r/group-r/group-l
             [ost.bol %peer pat [our.bol %hall] pat]
+          ::
           %=  this
               inbox.str.sta  loc.cos.piz
               configs.str.sta  configs
               messages.str.sta  (molt meslis)
+              peers.str.sta  (~(put by peers) [our.bol %inbox] localpeers)
           ==
     ::
     ::  fill remote configs with message data
@@ -224,22 +320,27 @@
       messages.str.sta  (~(put by messages) circle (snoc nes nev.sto))
     ==
     ::
-    ::  %peer:
+    ::  %status:
     ::
-        %peer
-    ?>  ?=(%peer -.sto)
-    ~&  add.sto
-    ~&  who.sto
-    ~&  qer.sto
-    [~ this]
+      %status
+    ?>  ?=(%status -.sto)
+    =/  peers/(set @p)
+      ?:  =(%remove -.dif.sto)
+        (~(del in (~(got by peers.str.sta) cir.sto)) who.sto)
+      (~(put in (~(got by peers.str.sta) cir.sto)) who.sto)
+    :-  (send-chat-update [%peers cir.sto peers])
+    %=  this 
+      peers.str.sta  (~(put by peers.str.sta) cir.sto peers)
+    ==
+
     ::
     ::  %config: config has changed
     ::
         %config
-      =*  circ  cir.sto
-      ::
-      ?+  -.dif.sto
-        [~ this]
+    =*  circ  cir.sto
+    ::
+    ?+  -.dif.sto
+      [~ this]
       ::
       ::  %full: set all of config without side effects 
       ::
@@ -277,8 +378,8 @@
           [~ this]
         =*  affectedcir  cir.src.dif.sto
         =/  newwir/wire
-          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/config
-        =/  pat/path  /circle/[nom.affectedcir]/grams/config
+          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/config/group-r/group-l
+        =/  pat/path  /circle/[nom.affectedcir]/grams/config/group-r/group-l
         ::  we've added a source to our inbox
         ::
         ?:  add.dif.sto
@@ -411,7 +512,7 @@
   ::
       %circle
     =/  shp/@p  (slav %p &2:wir)
-    =/  pat  /circle/[&3:wir]/grams/config
+    =/  pat  /circle/[&3:wir]/grams/config/group-r/group-l
     :_  this
     [ost.bol %peer wir [shp %hall] wir]~
   ::

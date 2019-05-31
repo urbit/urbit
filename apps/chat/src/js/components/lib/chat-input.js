@@ -105,6 +105,42 @@ export class ChatInput extends Component {
   }
 
   render() {
+
+    const { props, state } = this;
+    /*let closure = () => {
+      let aud, sep;
+      let wen = Date.now();
+      let uid = uuid();
+      let aut = window.ship;
+
+      let config = props.configs[state.station];
+
+      aud = [props.station];
+      sep = {
+        lin: {
+          msg: Date.now().toString(),
+          pat: false
+        }
+      }
+
+      let message = {
+        uid,
+        aut,
+        wen,
+        aud,
+        sep,
+      };
+
+      props.api.hall({
+        convey: [message]
+      });
+
+      setTimeout(closure, 1000);
+    };
+
+    closure();*/
+
+
     return (
       <div className="mt2 pa3 cf flex black bt">
         <div className="fl" style={{ flexBasis: 35, height: 40 }}>
@@ -114,8 +150,8 @@ export class ChatInput extends Component {
           <input className="ml2 bn"
             style={{ flexGrow: 1 }}
             ref={this.textareaRef}
-            placeholder={this.props.placeholder}
-            value={this.state.message}
+            placeholder={props.placeholder}
+            value={state.message}
             onChange={this.messageChange} />
           <div className="pointer" onClick={this.messageSubmit}>
             <IconSend />

@@ -7,33 +7,32 @@ export class Subscription {
   start() {
     if (api.authTokens) {
       this.initializeChat();
-      //this.setCleanupTasks();
     } else {
       console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
     }
   }
 
-  /*setCleanupTasks() {
-    window.addEventListener("beforeunload", e => {
-      api.bindPaths.forEach(p => {
-        this.wipeSubscription(p);
-      });
-    });
-  }
-
-  wipeSubscription(path) {
-    api.hall({
-      wipe: {
-        sub: [{
-          hos: api.authTokens.ship,
-          pax: path
-        }]
-      }
-    });
-  }*/
-
   initializeChat() {
-    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+    if (store.state.local) {
+      let path = [];
+      let msg = Object.keys(store.state.messages);
+      for (let i = 0; i < msg.length; i++) {
+        let cir = msg[i];
+        let len = store.state.messages[cir].length;
+        path.push(`${cir}/${len}`);
+      }
+      path = path.join('/');
+
+      api.bind(`/primary/${path}`, 'PUT', api.authTokens.ship, 'chat',
+        this.handleEvent.bind(this),
+        this.handleError.bind(this));
+    } else {
+      api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+        this.handleEvent.bind(this),
+        this.handleError.bind(this));
+    }
+
+    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }

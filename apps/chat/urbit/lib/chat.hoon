@@ -16,8 +16,9 @@
 ::
 +$  diff
   $%  [%hall-rumor rumor:hall]
-      [%chat-streams streams]
+      [%chat-initial streams]
       [%chat-update update]
+      [%chat-config streams]
   ==
 ::
 +$  poke
@@ -49,6 +50,7 @@
 +$  update
   $%  [%inbox con=config:hall]
       [%message cir=circle:hall env=envelope:hall]
+      [%messages cir=circle:hall start=@ud end=@ud env=(list envelope:hall)]
       [%config cir=circle:hall con=config:hall]
       [%circles cir=(set name:hall)]
       [%peers cir=circle:hall per=(set @p)]

@@ -51,6 +51,15 @@ class UrbitApi {
     });
   }
 
+  notify(aud, bool) {
+    this.hall({
+      notify: {
+        aud,
+        pes: !!bool ? 'hear' : 'gone'
+      }
+    });
+  }
+
   permit(cir, aud, message) {
     this.hall({
       permit: {

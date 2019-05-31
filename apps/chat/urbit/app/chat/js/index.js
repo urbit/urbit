@@ -17,6 +17,10 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	function getCjsExportFromNamespace (n) {
+		return n && n.default || n;
+	}
+
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -47458,6 +47462,8 @@
 		isBuffer: isBuffer
 	});
 
+	var require$$0 = getCjsExportFromNamespace(bufferEs6);
+
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -47510,7 +47516,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = bufferEs6.Buffer;
+	    Buffer = require$$0.Buffer;
 	  } catch (e) {
 	  }
 
@@ -51734,6 +51740,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    });
 	  }
 
+	  notify(aud, bool) {
+	    this.hall({
+	      notify: {
+	        aud,
+	        pes: !!bool ? 'hear' : 'gone'
+	      }
+	    });
+	  }
+
 	  permit(cir, aud, message) {
 	    this.hall({
 	      permit: {
@@ -51814,11 +51829,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	let api = new UrbitApi();
 	window.api = api;
 
-	class ChatReducer {
+	class InitialReducer {
+	  reduce(json, state) {
+	    let data = lodash.get(json, 'initial', false);
+	    if (data) {
+	      state.messages = data.messages;
+	      state.inbox = data.inbox;
+	      state.configs = data.configs;
+	      state.circles = data.circles;
+	    }
+	  }
+	}
+
+	class ConfigReducer {
 	  reduce(json, state) {
 	    let data = lodash.get(json, 'chat', false);
 	    if (data) {
-	      state.messages = data.messages;
 	      state.inbox = data.inbox;
 	      state.configs = data.configs;
 	      state.circles = data.circles;
@@ -51832,6 +51858,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    if (data) {
 	      this.reduceInbox(lodash.get(data, 'inbox', false), state);
 	      this.reduceMessage(lodash.get(data, 'message', false), state);
+	      this.reduceMessages(lodash.get(data, 'messages', false), state);
 	      this.reduceConfig(lodash.get(data, 'config', false), state);
 	      this.reduceCircles(lodash.get(data, 'circles', false), state);
 	    }
@@ -51851,6 +51878,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    }
 	  }
 
+	  reduceMessages(messages, state) {
+	    if (messages.circle in state.messages) {
+	      let station = state.messages[messages.circle];
+	      if (
+	        station.length > 0 &&
+	        station[station.length - 1].num === station.length - 1  &&
+	        messages.start === station.length
+	      ) {
+	        state.messages[messages.circle] = 
+	          state.messages[messages.circle].concat(messages.envelopes);
+	      } else {
+	        console.error('%messages has indices inconsistent with localStorage');
+	      }
+	    }
+	  }
+
 	  reduceConfig(config, state) {
 	    if (config) {
 	      state.configs[config.circle] = config.config;
@@ -51867,16 +51910,29 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	class Store {
 	  constructor() {
-	    this.state = {
-	      inbox: {},
-	      messages: [],
-	      configs: {},
-	      circles: []
-	    };
+	    let state = localStorage.getItem('store');
 
-	    this.chatReducer = new ChatReducer();
+	    if (!state) {
+	      this.state = {
+	        inbox: {},
+	        messages: [],
+	        configs: {},
+	        circles: [],
+	        local: false
+	      };
+	    } else {
+	      this.state = JSON.parse(state);
+	      // TODO: wtf???
+	      delete this.state.messages[undefined];
+	      console.log(this.state);
+	      this.state.local = true;
+	    }
+
+	    this.initialReducer = new InitialReducer();
+	    this.configReducer = new ConfigReducer();
 	    this.updateReducer = new UpdateReducer();
 	    this.setState = () => {};
+
 	  }
 
 	  setStateHandler(setState) {
@@ -51884,16 +51940,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  handleEvent(data) {
+	    console.log(data);
 	    let json = data.data;
 
-	    this.chatReducer.reduce(json, this.state);
+	    this.initialReducer.reduce(json, this.state);
+	    this.configReducer.reduce(json, this.state);
 	    this.updateReducer.reduce(json, this.state);
 
 	    this.setState(this.state);
+	    localStorage.setItem('store', JSON.stringify(this.state));
 	  }
 	}
 
 	let store = new Store();
+	window.store = store;
 
 	const _jsxFileName = "/Users/logan/Dev/interface/apps/chat/src/js/components/skeleton.js";
 
@@ -56957,20 +57017,56 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  render() {
+
+	    const { props, state } = this;
+	    /*let closure = () => {
+	      let aud, sep;
+	      let wen = Date.now();
+	      let uid = uuid();
+	      let aut = window.ship;
+
+	      let config = props.configs[state.station];
+
+	      aud = [props.station];
+	      sep = {
+	        lin: {
+	          msg: Date.now().toString(),
+	          pat: false
+	        }
+	      }
+
+	      let message = {
+	        uid,
+	        aut,
+	        wen,
+	        aud,
+	        sep,
+	      };
+
+	      props.api.hall({
+	        convey: [message]
+	      });
+
+	      setTimeout(closure, 1000);
+	    };
+
+	    closure();*/
+
+
 	    return (
-	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 109}}
-	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 110}}
-	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 111}} )
+	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 145}}
+	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 146}}
+	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 147}} )
 	        )
-	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 113}}
+	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 149}}
 	          , react.createElement('input', { className: "ml2 bn" ,
 	            style: { flexGrow: 1 },
 	            ref: this.textareaRef,
-	            placeholder: this.props.placeholder,
-	            value: this.state.message,
-	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 114}} )
-	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 120}}
-	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 121}} )
+	            placeholder: props.placeholder,
+	            value: state.message,
+	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 150}} )
+	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 156}}
+	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 157}} )
 	          )
 	        )
 	      )
@@ -56987,14 +57083,47 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      station: props.match.params.ship + "/" + props.match.params.station,
 	      circle: props.match.params.station,
 	      host: props.match.params.ship,
-	      numPeople: 0
+	      numPeople: 0,
+	      numPages: 1,
+	      scrollLocked: false
 	    };
 
+	    this.topMessage = {};
 	    this.buildMessage = this.buildMessage.bind(this);
+	    this.onScroll = this.onScroll.bind(this);
 	  }
 
 	  componentDidMount() {
 	    this.updateNumPeople();
+	    this.scrollElement.scrollIntoView(false);
+	  }
+
+	  scrollToBottom() {
+	    if (!this.state.scrollLocked) {
+	      console.log('scroll to bottom');
+	      this.scrollElement.scrollIntoView({ behavior: 'smooth' });
+	    }
+	  }
+
+	  onScroll(e) {
+	    if (e.target.scrollTop === 0) {
+	      let topMessage = this.topMessage;
+
+	      this.setState({
+	        numPages: this.state.numPages + 1,
+	        scrollLocked: true
+	      }, () => {
+	        this.topMessage[1].scrollIntoView(true);
+	      });
+	    } else if (
+	        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
+	      e.target.clientHeight
+	    ) {
+	      this.setState({
+	        numPages: 1,
+	        scrollLocked: false
+	      });
+	    }
 	  }
 
 	  componentDidUpdate(prevProps, prevState) {
@@ -57012,6 +57141,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    this.updateReadNumber();
 	    this.updateNumPeople();
 	    this.updateNumMessagesLoaded(prevProps, prevState);
+	    this.scrollToBottom();
 	  }
 
 	  updateReadNumber() {
@@ -57048,42 +57178,62 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    }
 	  }
 
-	  buildMessage(msg) {
+	  buildMessage(msg, index) {
 	    let details = msg.printship ? null : getMessageContent(msg.gam);
 
 	    if (msg.printship) {
 	      return (
 	        react.createElement('a', { 
 	          className: "vanilla hoverline text-600 text-mono"   , 
-	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 85}}
+	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 119}}
 	          , prettyShip(`~${msg.gam.aut}`)[0]
 	        )
 	      );
 	    }
-	    return (
-	      react.createElement(Message, { key: msg.gam.uid, msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 93}} )
-	    );
+
+	    if (index % 50 === 0) {
+	      let pageNum = index / 50;
+	      return (
+	        react.createElement('div', { ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 130}}
+	          , react.createElement(Message, { 
+	            key: msg.gam.uid, msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 131}} )
+	        )
+	      );
+	    } else {
+	      return (
+	        react.createElement(Message, { key: msg.gam.uid, msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 137}} )
+	      );
+	    }
 	  }
 
 	  render() {
+	    const { props, state } = this;
 	    let messages = this.props.messages[this.state.station] || [];
+	    if (messages.length > 50 * state.numPages) {
+	      messages =
+	        messages.slice(messages.length - (50 * state.numPages), messages.length);
+	    }
 	    let chatMessages = messages.map(this.buildMessage);
 
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 102}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 103}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 104}}, this.state.circle)
-	          , react.createElement(ChatTabBar, { ...this.props, station: this.state.station, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 105}} )
+	      react.createElement('div', { className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 152}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 153}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 154}}, this.state.circle)
+	          , react.createElement(ChatTabBar, { ...this.props, station: this.state.station, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 155}} )
 	        )
-	        , react.createElement('div', { className: "overflow-y-scroll", style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 107}}
+	        , react.createElement('div', {
+	          className: "overflow-y-scroll",
+	          style: { flexGrow: 1 },
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 157}}
 	          , chatMessages
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 162}})
 	        )
 	        , react.createElement(ChatInput, { 
 	          api: this.props.api,
 	          configs: this.props.configs,
 	          station: this.state.station,
 	          circle: this.state.circle,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 110}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 164}} )
 	      )
 	    )
 	  }
@@ -57545,33 +57695,32 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  start() {
 	    if (api.authTokens) {
 	      this.initializeChat();
-	      //this.setCleanupTasks();
 	    } else {
 	      console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
 	    }
 	  }
 
-	  /*setCleanupTasks() {
-	    window.addEventListener("beforeunload", e => {
-	      api.bindPaths.forEach(p => {
-	        this.wipeSubscription(p);
-	      });
-	    });
-	  }
-
-	  wipeSubscription(path) {
-	    api.hall({
-	      wipe: {
-	        sub: [{
-	          hos: api.authTokens.ship,
-	          pax: path
-	        }]
-	      }
-	    });
-	  }*/
-
 	  initializeChat() {
-	    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+	    if (store.state.local) {
+	      let path = [];
+	      let msg = Object.keys(store.state.messages);
+	      for (let i = 0; i < msg.length; i++) {
+	        let cir = msg[i];
+	        let len = store.state.messages[cir].length;
+	        path.push(`${cir}/${len}`);
+	      }
+	      path = path.join('/');
+
+	      api.bind(`/primary/${path}`, 'PUT', api.authTokens.ship, 'chat',
+	        this.handleEvent.bind(this),
+	        this.handleError.bind(this));
+	    } else {
+	      api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+	        this.handleEvent.bind(this),
+	        this.handleError.bind(this));
+	    }
+
+	    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
 	      this.handleEvent.bind(this),
 	      this.handleError.bind(this));
 	  }
