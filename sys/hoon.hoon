@@ -17197,7 +17197,7 @@
       ~&  %nest-failed
       =+  foo=(skol ref)
       =+  bar=(skol sut)
-      ~&  %nets-need
+      ~&  %nest-need
       ~>  %slog.[0 bar]
       ~&  %nest-have
       ~>  %slog.[0 foo]
