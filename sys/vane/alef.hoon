@@ -491,15 +491,15 @@
 ::  $message-pump-gift: effect from |message-pump
 ::
 ::    %ack-message: report message acknowledgment
-::    %send-fragment: emit message fragment
-::    %set-timer: set a new timer at .date
-::    %unset-timer: cancel timer at .date
+::    %send: emit message fragment
+::    %wait: set a new timer at .date
+::    %rest: cancel timer at .date
 ::
 +$  message-pump-gift
   $%  [%ack-message =message-num ok=?]
-      [%send-fragment =static-fragment]
-      [%set-timer date=@da]
-      [%unset-timer date=@da]
+      [%send =static-fragment]
+      [%wait date=@da]
+      [%rest date=@da]
   ==
 ::  $packet-pump-task: job for |packet-pump
 ::
@@ -516,14 +516,14 @@
   ==
 ::  $packet-pump-gift: effect from |packet-pump
 ::
-::    %send-fragment: emit message fragment
-::    %set-timer: set a new timer at .date
-::    %unset-timer: cancel timer at .date
+::    %send: emit message fragment
+::    %wait: set a new timer at .date
+::    %rest: cancel timer at .date
 ::
 +$  packet-pump-gift
-  $%  [%send-fragment =static-fragment]
-      [%set-timer date=@da]
-      [%unset-timer date=@da]
+  $%  [%send =static-fragment]
+      [%wait date=@da]
+      [%rest date=@da]
   ==
 ::  $message-still-task: job for |message-still
 ::
@@ -539,13 +539,13 @@
 ::
 ::    %hear-message: $message assembled from received packets, to be
 ::                   sent to a local vane for processing
-::    %send-fragment-ack: emit ack in response to heard fragment
-::    %send-message-ack: emit ack in response to message processing
+::    %ack-fragment: emit ack in response to heard fragment
+::    %ack-message: emit ack in response to message processing
 ::
 +$  message-still-gift
   $%  [%hear-message =message]
-      [%send-fragment-ack =message-num =fragment-num]
-      [%send-message-ack =message-num ok=? lag=@dr]
+      [%ack-fragment =message-num =fragment-num]
+      [%ack-message =message-num ok=? lag=@dr]
   ==
 --
 ::  external vane interface
