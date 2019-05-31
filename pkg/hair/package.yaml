@@ -66,6 +66,7 @@ dependencies:
   - para
   - pretty-show
   - primitive
+  - process
   - QuickCheck
   - sdl2
   - sdl2-image

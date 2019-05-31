@@ -15,3 +15,4 @@ initPier top = do
   logState <- Log.init logPath persistQueue (writeTQueue releaseQueue)
 
   pure (Pier{..})
+
