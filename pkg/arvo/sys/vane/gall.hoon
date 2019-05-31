@@ -1371,8 +1371,7 @@
         =/  term  q.u.maybe-arm
         =/  =vase
           =/  =path  [term tyl]
-          =/  raw  (slag index path)
-          !>  raw
+          !>  (slag index path)
         (ap-slam term p.arm vase)
       ::
       =^  possibly-vase  ap-state  slammed
@@ -1409,7 +1408,7 @@
           =/  print  (slog tank ~)
           (print [~ ~])
         ::
-        ?.  ((sane %as) p.q.vase)
+        ?.  ((sane %tas) p.q.vase)
           =/  =tank  [%leaf "scry: malformed cage"]
           =/  print  (slog tank ~)
           (print [~ ~])
