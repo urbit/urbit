@@ -52123,6 +52123,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   class Store {
     constructor() {
       this.state = window.injectedState;
+      console.log("store.state", this.state);
       this.setState = () => {};
     }
 
@@ -58649,7 +58650,284 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/root.js";
+  const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/header.js";
+  class Header extends react_1 {
+    constructor(props) {
+      super(props);
+
+      console.log("header.props", props);
+    }
+
+    retrievePost(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].post;
+      } else {
+        return this.props.subs[who][coll].posts[post].post;
+      }
+    }
+
+    retrieveComments(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].comments;
+      } else {
+        return this.props.subs[who][coll].posts[post].comments;
+      }
+    }
+
+    retrieveColl(coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].info;
+      } else {
+        return this.props.subs[who][coll].info;
+      }
+    }
+
+    render() {
+      return (
+        react.createElement('div', { className: "cf w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 39}}
+          , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 40}}
+            , react.createElement('p', { className: "fl body-large b gray-50 publish"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 41}}, "Publish")
+            , react.createElement('p', { className: "label-regular b fr"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 42}}, "+ Create" )
+          )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/recent",
+            render:  (props) => {
+              return (
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 49}}
+                  )
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 51}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 52}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 53}}, "Recent"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 58}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 60}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 61}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 62}}, "Subscriptions"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 67}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 69}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 70}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 71}}, "My Blogs"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 76}}
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 45}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/subs",
+            render:  (props) => {
+              return (
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 85}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 86}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 88}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 89}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 90}}, "Recent"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 95}}
+                  )
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 97}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 98}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 99}}, "Subscriptions"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 104}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 106}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 107}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 108}}, "My Blogs"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 113}}
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 82}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/pubs",
+            render:  (props) => {
+              return (
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 122}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 123}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 125}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 126}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 127}}, "Recent"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 132}}
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 134}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 135}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 136}}, "Subscriptions"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 141}}
+                  )
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 143}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 144}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 145}}, "My Blogs"
+
+                      )
+                    )
+                  )
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 150}}
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 119}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
+            render:  (props) => {
+              let ship = props.match.params.ship.slice(1);
+              let blogId = props.match.params.blog;
+
+              let blogLink = `/~publish/~${ship}/${blogId}`;
+              let blog = this.retrieveColl(blogId, ship);
+              let blogName = blog.title;
+
+              return (
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 166}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 167}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 168}}, "Home"
+
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 172}}, "->"
+
+                  )
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 175}}
+                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 176}}
+                      , blogName
+                    )
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 156}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
+            render:  (props) => {
+              let ship = props.match.params.ship.slice(1);
+              let blogId = props.match.params.blog;
+              let postId = props.match.params.post;
+
+              let blogLink = `/~publish/~${ship}/${blogId}`;
+              let blog = this.retrieveColl(blogId, ship);
+              let blogName = blog.title;
+
+              let postLink = `/~publish/~${ship}/${blogId}/${postId}`;
+              let post = this.retrievePost(postId, blogId, ship);
+              let postName = post.info.title;
+
+              return (
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 199}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 200}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 201}}, "Home"
+
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 205}}, "->"
+
+                  )
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 208}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 209}}
+                      , blogName
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 213}}, "->"
+
+                  )
+                  , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 216}}
+                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 217}}
+                      , postName
+                    )
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 184}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/new",
+            render:  (props) => {
+              return (
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 228}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 229}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 230}}, "Home"
+
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 234}}, "->"
+
+                  )
+                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 237}}, "New"
+
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 225}} )
+
+          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/new",
+            render:  (props) => {
+              let ship = props.match.params.ship.slice(1);
+              let blogId = props.match.params.blog;
+
+              let blogLink = `/~publish/~${ship}/${blogId}`;
+              let blog = this.retrieveColl(blogId, ship);
+              let blogName = blog.title;
+
+              return (
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 254}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 255}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 256}}, "Home"
+
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 260}}, "->"
+
+                  )
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 263}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 264}}
+                      , blogName
+                    )
+                  )
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 268}}, "->"
+
+                  )
+                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 271}}, "New Post"
+
+                  )
+                )
+              );
+            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 244}} )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/root.js";
   class Root extends react_1 {
     constructor(props) {
       super(props);
@@ -58662,44 +58940,60 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
     render() {
       return (
-        react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 26}}
-          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 27}}
-
-          , react.createElement(Route, { exact: true, path: "/~publish/recent",
-            render:  (props) => {
-              return (
-                react.createElement('div', { className: "cf w-100 absolute"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 32}}
-                  , react.createElement('div', { className: "fl w-100 h3 pl4 mt3"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 33}}
-                    , react.createElement('p', { className: "body-large b gray-50"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 34}}, "Publish")
-                  )
-                  , react.createElement('div', { className: "fl flex w-100 bb pl4"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 36}}
-                    , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 37}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 38}}, "Recent"
-
+        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 27}}
+          , react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}
+            , react.createElement(Header, { ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 29}} )
+            , react.createElement(Route, { exact: true, path: "/~publish/recent",
+              render:  (props) => {
+                return (
+                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 33}}
+                      , react.createElement(Recent, {
+                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 34}}
                       )
                     )
-                    , react.createElement('div', { className: "fl", style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 42}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 43}}, "Subscriptions"
-
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 30}} )
+            , react.createElement(Route, { exact: true, path: "/~publish/subs",
+              render:  (props) => {
+                return (
+                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 43}}
+                      , react.createElement(Recent, {
+                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 44}}
                       )
                     )
-                    , react.createElement('div', { className: "fl", style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 47}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}, "My Blogs"
-
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 40}} )
+            , react.createElement(Route, { exact: true, path: "/~publish/pubs",
+              render:  (props) => {
+                return (
+                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 53}}
+                      , react.createElement(Recent, {
+                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 54}}
                       )
                     )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 50}} )
+
+            , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
+              render:  (props) => {
+                return (
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 64}}, "blog page"
+
                   )
-                  , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 53}}
-                    , react.createElement(Recent, {
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 54}}
-                    )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 61}} )
+
+            , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
+              render:  (props) => {
+                return (
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 73}}, "post page"
+
                   )
-                )
-              );
-           }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 29}} )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 70}} )
           )
         )
-      )
+      );
     }
   }
 
@@ -58755,7 +59049,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   let subscription = new Subscription();
 
-  const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/publish/src/index.js";
+  const _jsxFileName$4 = "/Users/isaac/urbit/projects/interface/apps/publish/src/index.js";
   console.log('app running');
 
   /*
@@ -58776,7 +59070,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   window._ = lodash;
 
   reactDom.render((
-    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$3, lineNumber: 32}} )
+    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$4, lineNumber: 32}} )
   ), document.querySelectorAll("#root")[0]);
 
 }));

@@ -10,6 +10,7 @@ import { Skeleton } from '/components/skeleton';
 import { Sidebar } from '/components/sidebar';
 import { CollectionList } from '/components/collection-list';
 import { Recent } from '/components/recent';
+import { Header } from '/components/header';
 
 export class Root extends Component {
   constructor(props) {
@@ -23,44 +24,60 @@ export class Root extends Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div>
+      <div>
+        <BrowserRouter>
+          <Header {...this.state} />
+          <Route exact path="/~publish/recent"
+            render={ (props) => {
+              return (
+                  <div className="fl w-100">
+                    <Recent
+                      {...this.state}
+                    />
+                  </div>
+              );
+           }} />
+          <Route exact path="/~publish/subs"
+            render={ (props) => {
+              return (
+                  <div className="fl w-100">
+                    <Recent
+                      {...this.state}
+                    />
+                  </div>
+              );
+           }} />
+          <Route exact path="/~publish/pubs"
+            render={ (props) => {
+              return (
+                  <div className="fl w-100">
+                    <Recent
+                      {...this.state}
+                    />
+                  </div>
+              );
+           }} />
 
-        <Route exact path="/~publish/recent"
-          render={ (props) => {
-            return (
-              <div className="cf w-100 absolute">
-                <div className="fl w-100 h3 pl4 mt3">
-                  <p className="body-large b gray-50">Publish</p>
+          <Route exact path="/~publish/:ship/:blog"
+            render={ (props) => {
+              return (
+                <div>
+                  blog page
                 </div>
-                <div className="fl flex w-100 bb pl4">
-                  <div className="fl bb" style={{ flexBasis: 148 }}>
-                    <p className="fl w-100 h2 label-regular">
-                      Recent
-                    </p>
-                  </div>
-                  <div className="fl" style={{ flexBasis: 148 }}>
-                    <p className="fl w-100 h2 label-regular gray-30">
-                      Subscriptions
-                    </p>
-                  </div>
-                  <div className="fl" style={{ flexBasis: 148 }}>
-                    <p className="fl w-100 h2 label-regular gray-30">
-                      My Blogs
-                    </p>
-                  </div>
+              );
+           }} />
+
+          <Route exact path="/~publish/:ship/:blog/:post"
+            render={ (props) => {
+              return (
+                <div>
+                  post page
                 </div>
-                <div className="fl w-100">
-                  <Recent
-                    {...this.state}
-                  />
-                </div>
-              </div>
-            );
-         }} />
-        </div>
-      </BrowserRouter>
-    )
+              );
+           }} />
+        </BrowserRouter>
+      </div>
+    );
   }
 }
 

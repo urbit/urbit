@@ -78,3 +78,16 @@ h2 {
 .h-80 {
   height: 80px;
 }
+
+.publish {
+  margin-left: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.b-gray-30 {
+  border-color: #B1B2B3;
+}
+
+
