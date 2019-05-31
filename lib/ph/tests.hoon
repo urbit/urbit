@@ -4,22 +4,6 @@
 =,  ph
 =,  ph-util
 |=  our=ship
-=>  ::  Helper functions, not tests
-    ::
-    |%
-    ::  Scry into a running aqua ship
-    ::
-    ++  scry-aqua
-      |*  [a=mold now=@da pax=path]
-      .^  a
-          %gx
-          (scot %p our)
-          %aqua
-          (scot %da now)
-          pax
-      ==
-    ::
-    --
 ::
 ::  Useful tests
 ::
@@ -31,6 +15,16 @@
   |=  ph-input
   [& ~ %wait ~]
 ::
+::  Stall until you run :aqua|dojo ~ship "%go" on any ship.
+::
+++  please-press-enter
+  ^+  *form:(ph ,~)
+  |=  pin=ph-input
+  :+  &  ~
+  ?:  (is-dojo-output who.pin who.pin uf.pin "%go")
+    [%done ~]
+  [%wait ~]
+::
 ::  Test to produce events unconditionally.
 ::
 ++  just-events
@@ -39,6 +33,18 @@
   ^-  form:m
   |=  ph-input
   [& events %done ~]
+::
+::
+::
+++  wait-for-dojo
+  |=  [her=@p what=tape]
+  =/  m  (ph ,~)
+  ^-  form:m
+  |=  pin=ph-input
+  :+  &  ~
+  ?.  (is-dojo-output her who.pin uf.pin what)
+    [%wait ~]
+  [%done ~]
 ::
 ::  Boot ship; don't check it succeeded.
 ::
@@ -76,18 +82,16 @@
 ++  send-hi
   |=  [from=@p to=@p]
   =/  m  (ph ,~)
-  ^-  form:m
-  ;<  ~  bind:m
-    ^-  form:m
-    |=  ph-input
-    [& (dojo from "|hi {(scow %p to)}") %done ~]
-  ^-  form:m
-  |=  input=ph-input
-  ^-  output:m
-  :+  &  ~
-  ?.  (is-dojo-output from who.input uf.input "hi {(scow %p to)} successful")
-    [%wait ~]
-  [%done ~]
+  ;<  ~  bind:m  (just-events (dojo from "|hi {(scow %p to)}"))
+  (wait-for-dojo from "hi {(scow %p to)} successful")
+::
+::  Send "|hi" and wait for "not responding" message
+::
+++  send-hi-not-responding
+  |=  [from=@p to=@p]
+  =/  m  (ph ,~)
+  ;<  ~  bind:m  (just-events (dojo from "|hi {(scow %p to)}"))
+  (wait-for-dojo from "{(scow %p to)} not responding still trying")
 ::
 ::  Boot a ship and verify it booted.  Parent must already be booted.
 ::
@@ -138,7 +142,16 @@
   |=  pin=ph-input
   =/  host-pax
     /(scot %p our)/home/(scot %da now.pin)/sur/aquarium/hoon
-  =/  warped  (cat 3 '=>  .  ' .^(@t %cx host-pax))
+  =/  pax  /sur/aquarium/hoon
+  =/  aqua-pax
+    ;:  weld
+        /i/(scot %p her)/cx/(scot %p her)/[des]/(scot %da now.pin)
+        pax
+        /noun
+    ==
+  =/  warped
+    %^  cat  3  '=>  .  '
+    (need (scry-aqua (unit @) our now.pin aqua-pax))
   [& (insert-file her des host-pax warped) %done warped]
 ::
 ::  Check /sur/aquarium/hoon on the given has the given contents.
@@ -146,18 +159,19 @@
 ++  check-file-touched
   |=  [her=ship des=desk warped=@t]
   =/  m  (ph ,~)
+  ;<  ~  bind:m  (mount her des)
   ^-  form:m
   |=  pin=ph-input
   ?.  &(=(her who.pin) ?=(?(%init %ergo) -.q.uf.pin))
     [& ~ %wait ~]
-  =/  pax  /home/(scot %da now.pin)/sur/aquarium/hoon
+  =/  pax  /sur/aquarium/hoon
   =/  aqua-pax
     ;:  weld
-        /i/(scot %p her)
-        pax(- des)
+        /i/(scot %p her)/cx/(scot %p her)/[des]/(scot %da now.pin)
+        pax
         /noun
     ==
-  ?:  =(warped (need (scry-aqua (unit @) now.pin aqua-pax)))
+  ?:  =(warped (need (scry-aqua (unit @) our now.pin aqua-pax)))
     [& ~ %done ~]
   [& ~ %wait ~]
 --

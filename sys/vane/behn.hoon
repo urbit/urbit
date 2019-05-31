@@ -5,13 +5,30 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note:able gift:able)]
-    +$  sign  ~
+    +$  move  [p=duct q=(wind note gift:able)]
+    +$  note                                            ::  out request $->
+      $~  [%b %wait *@da]                               ::
+      $%  $:  %b                                        ::   to self
+              $>(%wait task:able)                       ::  set timer
+          ==                                            ::
+          $:  %d                                        ::    to %dill
+              $>(%flog task:able:dill)                  ::  log output
+      ==  ==                                            ::
+    +$  sign
+      $~  [%b %wake ~]
+      $%  [%b $>(%wake gift:able)]
+      ==
     ::
     +$  behn-state
       $:  timers=(list timer)
           unix-duct=duct
           next-wake=(unit @da)
+          drips=drip-manager
+      ==
+    ::
+    +$  drip-manager
+      $:  count=@ud
+          movs=(map @ud vase)
       ==
     ::
     +$  timer  [date=@da =duct]
@@ -52,6 +69,30 @@
   ::
   ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
   ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
+  ::  +drip:  XX
+  ::
+  ++  drip
+    |=  mov=vase
+    =<  [moves state]
+    ^+  event-core
+    =.  moves
+      [duct %pass /drip/(scot %ud count.drips.state) %b %wait +(now)]~
+    =.  movs.drips.state
+      (~(put by movs.drips.state) count.drips.state mov)
+    =.  count.drips.state  +(count.drips.state)
+    event-core
+  ::  +take-drip:  XX
+  ::
+  ++  take-drip
+    |=  [num=@ud error=(unit tang)]
+    =<  [moves state]
+    ^+  event-core
+    =/  drip  (~(got by movs.drips.state) num)
+    =.  movs.drips.state  (~(del by movs.drips.state) num)
+    ?^  error
+      ::  if we errored, drop it
+      event-core
+    event-core(moves [duct %give %meta drip]~)
   ::  +vega: learn of a kernel upgrade
   ::
   ++  vega  [moves state]
@@ -200,15 +241,16 @@
   =/  =task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   =/  event-core  (per-event [our now hen] state)
   ::
   =^  moves  state
     ?-  -.task
       %born  born:event-core
-      %crud  (crud:event-core [tag tang]:task)
+      %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
+      %drip  (drip:event-core move=p.task)
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
       %wake  (wake:event-core error=~)
@@ -240,7 +282,10 @@
 ++  take
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
-  ~|  %behn-take-not-implemented
-  !!
+  ?>  ?=([%drip @ ~] tea)
+  =/  event-core  (per-event [our now hen] state)
+  =^  moves  state
+    (take-drip:event-core (slav %ud i.t.tea) error.q.hin)
+  [moves behn-gate]
 --
 

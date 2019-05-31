@@ -87,4 +87,16 @@
   ?~  q.q.uf  ~
   ?.  =(p.u.q.q.uf (rash dest auri:de-purl:html))  ~
   `[p.q.uf q.u.q.q.uf]
+::
+::  Scry into a running aqua ship
+::
+++  scry-aqua
+  |*  [a=mold our=@p now=@da pax=path]
+  .^  a
+      %gx
+      (scot %p our)
+      %aqua
+      (scot %da now)
+      pax
+  ==
 --

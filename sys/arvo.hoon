@@ -591,7 +591,7 @@
     ::
     ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
-              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              =>  .(+< ;;([now=@da ovo=ovum] +<))
               ^-  [(list ovum) *]
               =.  +>.$
                 ?+  -.q.ovo
@@ -652,23 +652,23 @@
 =<  ::  Arvo structural interface
     ::
     |%
-    ++  come  |=  {@ @ @ (list ovum) vise pone}         ::   4
-              ^-  {(list ovum) _+>}
+    ++  come  |=  [@ @ @ (list ovum) vise pone]         ::   4
+              ^-  [(list ovum) _+>]
               ~&  %hoon-come
               =^  rey  +>+  (^come +<)
               [rey +>.$]
     ::
-    ++  load  |=  {@ @ @ (list ovum) vase pane}         ::  10
-              ^-  {(list ovum) _+>}
+    ++  load  |=  [@ @ @ (list ovum) vase pane]         ::  10
+              ^-  [(list ovum) _+>]
               ~&  %hoon-load
               =^  rey  +>+  (^load +<)
               [rey +>.$]
     ::
-    ++  peek  |=(* (^peek ((hard {@da path}) +<)))      ::  46
+    ++  peek  |=(* (^peek ;;([@da path] +<)))      ::  46
     ::
     ++  poke  |=  *                                     ::  47
               ^-  [(list ovum) *]
-              =>  .(+< ((hard ,[now=@da ovo=ovum]) +<))
+              =>  .(+< ;;([now=@da ovo=ovum] +<))
               =^  ova  +>+.$  (^poke now ovo)
               =|  out=(list ovum)
               |-  ^-  [(list ovum) *]
@@ -678,7 +678,7 @@
               ::
               ?:  ?=(%lyra -.q.i.ova)
                 %+  fall
-                  (vega now t.ova ({@ @} +.q.i.ova))
+                  (vega now t.ova ;;([@ @] +.q.i.ova))
                 [~ +>.^$]
               ::  iterate over effects, handling those on arvo proper
               ::  and passing the rest through as output
@@ -687,7 +687,7 @@
               =?  out  ?=(^ vov)  [+.vov out]
               $(ova t.ova)
     ::
-    ++  wish  |=(* (^wish ((hard @ta) +<)))             ::  22
+    ++  wish  |=(* (^wish ;;(@ta +<)))             ::  22
     --
 ::  Arvo implementation core
 ::
@@ -909,7 +909,7 @@
 ::
 ++  veer
   |=  [who=ship now=@da fav=curd]
-  =>  .(fav ((hard {$veer lal/@ta pax/path txt/@t}) fav))
+  =>  .(fav ;;({$veer lal/@ta pax/path txt/@t} fav))
   =-  ?:(?=(%| -.res) ((slog p.res) +>.$) p.res)
   ^=  res  %-  mule  |.
   ?:  =(%$ lal.fav)

@@ -61,7 +61,7 @@
 ++  manual-tests
   ^-  (list (pair term [(list ship) _*form:(ph ,~)]))
   =+  (ph-tests our.hid)
-  =/  eth-node  (spawn-galaxy:ph-azimuth ~rel)
+  =/  eth-node  (spawn:ph-azimuth ~bud)
   =/  m  (ph ,~)
   :~  :+  %boot-bud
         ~[~bud]
@@ -107,15 +107,103 @@
     ::
       :+  %boot-az
         ~[~bud]
-      ;<  [node=_eth-node ~]  bind:m
+      ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
-        (raw-ship ~bud `(dawn:legacy:ph-azimuth ~bud))
-      =.  node  (spawn-galaxy:node ~pem)
-      ;<  [node=_eth-node ~]  bind:m
+        (raw-ship ~bud `(dawn:eth-node ~bud))
+      (pure:m ~)
+    ::
+      :+  %breach-hi
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
-          router:node
-        (pure:m ~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        (send-hi ~bud ~dev)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        (wait-for-dojo ~bud "hi ~dev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-hi-cousin
+        ~[~bud ~dev ~marbud ~mardev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~mardev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ;<  ~  bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
+        (send-hi ~marbud ~mardev)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~mardev ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
+        ;<  ~  bind:m  (raw-ship ~mardev `(dawn:eth-node ~mardev))
+        (wait-for-dojo ~marbud "hi ~mardev successful")
+      (pure:m ~)
+    ::
+      :+  %breach-sync
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  %checking-file-touched
+        (check-file-touched ~marbud %home file)
+      ~&  %checked-file-touched
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      (pure:m ~)
+    ::
+      :+  %breach-multiple
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        (raw-ship ~bud `(dawn:eth-node ~bud))
+      ;<  eth-node=_eth-node  bind:m
+        (breach-and-hear:eth-node our.hid ~marbud ~bud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        (check-file-touched ~marbud %home file)
       (pure:m ~)
   ==
 ::

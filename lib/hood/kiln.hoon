@@ -123,7 +123,7 @@
 ++  poke-track                                        ::
   |=  hos/kiln-sync
   ?:  (~(has by syn) hos)
-    abet:(spam (render "already syncing" [sud her syd]:hos) ~)
+    abet:(spam (render "already tracking" [sud her syd]:hos) ~)
   abet:abet:start-track:(auto hos)
 ::
 ++  poke-sync                                         ::
@@ -320,6 +320,16 @@
       ==
   abet:abet:(mere:(auto hos) mes)
 ::
+++  take-writ-find-ship                               ::
+  |=  {way/wire rot/riot}
+  ?>  ?=({@ @ @ *} way)
+  =+  ^-  hos/kiln-sync
+      :*  syd=(slav %tas i.way)
+          her=(slav %p i.t.way)
+          sud=(slav %tas i.t.t.way)
+      ==
+  abet:abet:(take-find-ship:(auto hos) rot)
+::
 ++  take-writ-sync                                    ::
   |=  {way/wire rot/riot}
   ?>  ?=({@ @ @ *} way)
@@ -379,7 +389,13 @@
     (blab [ost %warp wire her sud `[%sing %y ud+let /]] ~)
   ::
   ++  start-sync
-    =<  (spam (render "activated sync" sud her syd) ~)
+    =>  (spam (render "finding ship and desk" sud her syd) ~)
+    =/  =wire  /kiln/find-ship/[syd]/(scot %p her)/[sud]
+    (blab [ost %warp wire her sud `[%sing %y ud+1 /]] ~)
+  ::
+  ++  take-find-ship
+    |=  rot=riot
+    =>  (spam (render "activated sync" sud her syd) ~)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     (blab [ost %warp wire her sud `[%sing %w [%da now] /]] ~)
   ::
@@ -392,7 +408,7 @@
           (render "on sync" sud her syd)
         ~
       start-sync
-    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:((hard cass:clay) q.q.r.u.rot)
+    =.  let  ?.  ?=($w p.p.u.rot)  let  ud:;;(cass:clay q.q.r.u.rot)
     =/  =wire  /kiln/sync/[syd]/(scot %p her)/[sud]
     ::  germ: merge mode for sync merges
     ::
@@ -420,10 +436,10 @@
   ::
   ++  mere
     |=  mes=(each (set path) (pair term tang))
-    ?:  ?=([%| %ali-sunk *] mes)
+    ?:  ?=([%| %bad-fetch-ali *] mes)
       =.  +>.$
         %^    spam
-            leaf+"merge cancelled because sunk, restarting"
+            leaf+"merge cancelled, maybe because sunk; restarting"
           (render "on sync" sud her syd)
         ~
       start-sync:stop
@@ -441,7 +457,7 @@
             q.p.mes
         ==
       ::
-          $no-ali-desk
+          $no-ali-disc
         :~  (render "sync activated" sud her syd)
             leaf+"note: blank desk {<sud>} on {<her>}"
         ==
@@ -625,7 +641,7 @@
         ?.  ?=($path p.pax)
           ~|  "strange path mark: {<p.pax>}"
           !!
-        [((hard path) q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
+        [;;(path q.q.pax) ?:(?=($null p.dif) ~ `[%dif dif])]
     :: ~&  >  kiln-made+[(turn can head) syd=syd +<.abet]
     =+  notated=(skid can |=({path a/(unit miso)} ?=(^ a)))
     =+  annotated=(turn `(list (pair path *))`-.notated head)

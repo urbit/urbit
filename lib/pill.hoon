@@ -48,6 +48,8 @@
 ::     bas: full path to / directory
 ::
 ++  file-ovum
+  =/  directories
+    `(list path)`~[/app /gen /lib /mar /ren /sec /sur /sys /tests /web]
   |=  bas=path
   ^-  ovum
   ::
@@ -62,7 +64,7 @@
   ::    /tests  unit tests
   ::    /web    %eyre web content
   ::
-  %.  [/app /gen /lib /mar /ren /sec /sur /sys /tests /web ~]
+  %.  directories
   |=  ::  sal: all spurs to load from
       ::
       sal/(list spur)
