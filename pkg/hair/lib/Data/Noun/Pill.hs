@@ -2,6 +2,7 @@
 
 {-
     TODO Handle 32-bit architectures
+    TODO Handle big-endian.
     TODO A faster version of this is possible:
 
       - Get the byte-length of a file.
@@ -25,7 +26,7 @@ import ClassyPrelude
 import Data.Noun hiding (toList, fromList)
 import Data.Noun.Atom
 import Data.Noun.Jam hiding (main)
-import Data.Flat hiding (from)
+import Data.Flat hiding (from, to)
 import Control.Monad.Except
 import Control.Lens hiding (index, Index)
 import Data.Either.Extra (mapLeft)
@@ -57,6 +58,14 @@ import Test.QuickCheck
 -}
 newtype Pill = Pill { unPill :: ByteString }
 
+instance Eq Pill where
+  (==) x y = (x ^. pillBS) == (y ^. pillBS)
+
+instance Show Pill where
+  show = show . view pillBS
+
+--------------------------------------------------------------------------------
+
 strip :: (IsSequence seq, Int ~ Index seq, Eq (Element seq), Num (Element seq))
       => seq -> seq
 strip buf = take (len - go 0 (len - 1)) buf
@@ -66,8 +75,8 @@ strip buf = take (len - go 0 (len - 1)) buf
            | 0 == unsafeIndex buf i = go (n+1) (i-1)
            | otherwise              = n
 
-pillBytes :: Iso' Pill ByteString
-pillBytes = iso to from
+pillBS :: Iso' Pill ByteString
+pillBS = iso to from
   where
     to :: Pill -> ByteString
     to = strip . unPill
@@ -75,54 +84,38 @@ pillBytes = iso to from
     from :: ByteString -> Pill
     from = Pill . strip
 
-instance Eq Pill where
-  (==) x y = (x ^. pillBytes) == (y ^. pillBytes)
+--------------------------------------------------------------------------------
 
-instance Show Pill where
-  show = show . view pillBytes
+bigNatWords :: Iso' BigNat (VP.Vector Word)
+bigNatWords = iso to from
+  where
+    to (BN# bArr) = VP.Vector 0 (I# (sizeofByteArray# bArr) `div` 8)
+                                (Prim.ByteArray bArr)
+
+    from v@(VP.Vector off (I# len) (Prim.ByteArray buf)) =
+      case VP.length v of
+        0 -> zeroBigNat
+        1 -> wordToBigNat (case VP.unsafeIndex v 0 of W# w -> w)
+        n -> if off /= 0 then error "words2Nat: bad-vec" else
+             byteArrayToBigNat# buf len
 
 --------------------------------------------------------------------------------
 
-wordsToBigNat :: VP.Vector Word -> BigNat
-wordsToBigNat v@(VP.Vector off (I# len) (Prim.ByteArray buf)) =
-  case VP.length v of
-    0 -> zeroBigNat
-    1 -> wordToBigNat (case VP.unsafeIndex v 0 of W# w -> w)
-    n -> if off /= 0 then error "words2Nat: bad-vec" else
-         byteArrayToBigNat# buf len
+bigNatBits :: Iso' BigNat (VU.Vector Bool)
+bigNatBits = undefined
 
-bigNatToWords :: BigNat -> VP.Vector Word
-bigNatToWords (BN# bArr) = VP.Vector 0 (I# (sizeofByteArray# bArr) `div` 8)
-                           $ Prim.ByteArray bArr
+natWords :: Iso' Natural (VP.Vector Word)
+natWords = naturalBigNat . bigNatWords
 
---------------------------------------------------------------------------------
+naturalBigNat :: Iso' Natural BigNat
+naturalBigNat = iso to from
+  where
+    to = \case NatS# w  -> wordToBigNat w
+               NatJ# bn -> bn
 
-bigNatToBits :: BigNat -> VU.Vector Bool
-bigNatToBits = undefined
-
-bitsToBigNat :: BigNat -> VU.Vector Bool
-bitsToBigNat = undefined
-
---------------------------------------------------------------------------------
-
-naturalToBigNat :: Natural -> BigNat
-naturalToBigNat (NatS# w)  = wordToBigNat w
-naturalToBigNat (NatJ# bn) = bn
-
-bigNatToNatural :: BigNat -> Natural
-bigNatToNatural bn =
-    case sizeofBigNat# bn of
-      0# -> 0
-      1# -> NatS# (bigNatToWord bn)
-      _  -> NatJ# bn
-
---------------------------------------------------------------------------------
-
-wordsToNatural :: VP.Vector Word -> Natural
-wordsToNatural = bigNatToNatural . wordsToBigNat
-
-naturalToWords :: Natural -> VP.Vector Word
-naturalToWords = bigNatToWords . naturalToBigNat
+    from bn = case sizeofBigNat# bn of 0# -> 0
+                                       1# -> NatS# (bigNatToWord bn)
+                                       _  -> NatJ# bn
 
 --------------------------------------------------------------------------------
 
@@ -133,31 +126,31 @@ dumbPackWord bs = go 0 0 (toList bs)
     go acc i (x:xs) = go (acc .|. shiftL (fromIntegral x) (8*i)) (i+1) xs
 
 -- TODO This assumes 64-bit words
-packWord :: ByteString -> Word
-packWord buf = go 0 0
-  where
-    top        = min 8 (length buf)
-    i idx off  = shiftL (fromIntegral $ BS.index buf idx) off
-    go acc idx = if idx >= top then acc else
-                 go (acc .|. i idx (8*idx)) (idx+1)
+packedWord :: Iso' ByteString Word
+packedWord = iso to from
+ where
+    from wor = reverse $ fromList $ go 0 []
+      where
+        go i acc | i >= 8    = acc
+        go i acc | otherwise = go (i+1) (fromIntegral (shiftR wor (i*8)) : acc)
 
-
--- TODO This assumes 64-bit words
-unpackWord :: Word -> ByteString
-unpackWord wor = reverse $ fromList $ go 0 []
-  where
-    go i acc | i >= 8    = acc
-    go i acc | otherwise = go (i+1) (fromIntegral (shiftR wor (i*8)) : acc)
+    to buf = go 0 0
+      where
+        top        = min 8 (length buf)
+        i idx off  = shiftL (fromIntegral $ BS.index buf idx) off
+        go acc idx = if idx >= top then acc else
+                     go (acc .|. i idx (8*idx)) (idx+1)
 
 --------------------------------------------------------------------------------
 
 wordsToBytes :: VP.Vector Word -> VP.Vector Word8
-wordsToBytes (VP.Vector off sz buf) = VP.Vector (off*8) (sz*8) buf
+wordsToBytes (VP.Vector off sz buf) =
+  VP.Vector (off*8) (sz*8) buf
 
-byteStrToWords :: ByteString -> VP.Vector Word
-byteStrToWords bytes =
-  VP.generate (1 + length bytes `div` 8) $ \i ->
-    packWord (BS.drop (i*8) bytes)
+bsToWords :: ByteString -> VP.Vector Word
+bsToWords bs =
+  VP.generate (1 + length bs `div` 8) $ \i ->
+    view packedWord (BS.drop (i*8) bs)
 
 -- TODO Support Big-Endian
 bytesBS :: Iso' (VP.Vector Word8) ByteString
@@ -173,61 +166,75 @@ bytesBS = iso to from
     from bs = VP.generate (length bs) (BS.index bs)
 
 pillWords :: Iso' Pill (VP.Vector Word)
-pillWords = iso to from
+pillWords = iso toVec fromVec
   where
-    to   = byteStrToWords . view pillBytes
-    from = Pill . view bytesBS . wordsToBytes
+    toVec   = view (pillBS . to bsToWords)
+    fromVec = view (to wordsToBytes . bytesBS . from pillBS)
+
+_CueBytes :: Prism' ByteString Noun
+_CueBytes = from pillBS . from pill . _Cue
 
 --------------------------------------------------------------------------------
 
 {-
-    This is a stupid, but obviously correct version of `packAtom`.
+    This is a stupid, but obviously correct version of `view (from pill)`.
 -}
 dumbPackAtom :: Pill -> Atom
-dumbPackAtom = go 0 0 . toList . view pillBytes
+dumbPackAtom = go 0 0 . toList . view pillBS
   where
     go acc i []     = acc
     go acc i (x:xs) = go (acc .|. shiftL (fromIntegral x) (8*i)) (i+1) xs
 
-packAtom :: Pill -> Atom
-packAtom = MkAtom . wordsToNatural . byteStrToWords . view pillBytes
+atomNat :: Iso' Atom Natural
+atomNat = iso unAtom MkAtom
 
-unpackAtom :: Atom -> Pill
-unpackAtom = view (from pillWords) . naturalToWords . unAtom
+pill :: Iso' Atom Pill
+pill = iso toAtom fromPill
+  where
+    toAtom   = view (atomNat . natWords . from pillWords)
+    fromPill = view (pillBS . to bsToWords . from natWords . from atomNat)
 
 --------------------------------------------------------------------------------
 
-readPill :: FilePath -> IO Pill
-readPill = fmap Pill . readFile
+_Cue :: Prism' Atom Noun
+_Cue = prism' jam cue
 
-writePill :: FilePath -> Pill -> IO ()
-writePill fp = writeFile fp . view pillBytes
+_Tall :: Flat a => Prism' ByteString a
+_Tall = prism' flat (eitherToMaybe . unflat)
+  where
+    eitherToMaybe :: Either a b -> Maybe b
+    eitherToMaybe (Left x)  = Nothing
+    eitherToMaybe (Right x) = Just x
 
-pillToNoun :: Pill -> Maybe Noun
-pillToNoun = cue . packAtom
+--------------------------------------------------------------------------------
 
-nounToPill :: Noun -> Pill
-nounToPill = unpackAtom . jam
+loadPill :: FilePath -> IO Pill
+loadPill = fmap Pill . readFile
 
-nounToBs :: Noun -> ByteString
-nounToBs = unPill . nounToPill
+loadAtom :: FilePath -> IO Atom
+loadAtom = fmap (view $ from pillBS . from pill) . readFile
 
-loadFile :: FilePath -> IO Atom
-loadFile = fmap packAtom . readPill
-
-loadJam :: FilePath -> IO (Maybe Noun)
-loadJam = fmap cue . loadFile
-
-dumpJam :: FilePath -> Noun -> IO ()
-dumpJam pat = writePill pat . unpackAtom . jam
-
-dumpFlat :: Flat a => FilePath -> a -> IO ()
-dumpFlat pat = writeFile pat . flat
+loadNoun :: FilePath -> IO (Maybe Noun)
+loadNoun = fmap (preview $ from pillBS . from pill . _Cue) . readFile
 
 loadFlat :: Flat a => FilePath -> IO (Either Text a)
-loadFlat pat = do
-  bs <- readFile pat
-  pure $ mapLeft tshow $ unflat bs
+loadFlat = fmap (mapLeft tshow . unflat) . readFile
+
+--------------------------------------------------------------------------------
+
+dumpPill :: FilePath -> Pill -> IO ()
+dumpPill fp = writeFile fp . view pillBS
+
+dumpAtom :: FilePath -> Atom -> IO ()
+dumpAtom fp = writeFile fp . view (pill . pillBS)
+
+dumpJam :: FilePath -> Noun -> IO ()
+dumpJam fp = writeFile fp . view (re _Cue . pill . pillBS)
+
+dumpFlat :: Flat a => FilePath -> a -> IO ()
+dumpFlat fp = writeFile fp . flat
+
+--------------------------------------------------------------------------------
 
 data PillFile = Brass | Ivory | Solid
 
@@ -239,23 +246,23 @@ instance Show PillFile where
 
 tryLoadPill :: PillFile -> IO Atom
 tryLoadPill pill = do
-    a@(MkAtom nat) <- loadFile (show pill)
+    a@(MkAtom nat) <- loadAtom (show pill)
     putStrLn "loaded"
     print (a > 0)
     putStrLn "evaled"
-    print (take 10 $ VP.toList $ naturalToWords nat)
+    print (take 10 $ VP.toList $ nat ^. natWords)
     pure a
 
 tryPackPill :: PillFile -> IO ()
 tryPackPill pf = do
   atm <- tryLoadPill pf
-  print $ length $ unPill $ unpackAtom atm
+  print $ length (atm ^. pill . pillBS)
 
 tryCuePill :: PillFile -> IO ()
 tryCuePill pill =
-    loadJam (show pill) >>= \case Nothing       -> print "nil"
-                                  Just (Atom _) -> print "atom"
-                                  _             -> print "cell"
+    loadNoun (show pill) >>= \case Nothing       -> print "nil"
+                                   Just (Atom _) -> print "atom"
+                                   _             -> print "cell"
 
 -- Tests -----------------------------------------------------------------------
 
@@ -266,10 +273,12 @@ instance Arbitrary Pill where
   arbitrary = Pill <$> arbitrary
 
 instance Arbitrary BigNat where
-  arbitrary = naturalToBigNat <$> arbitrary
+  arbitrary = view naturalBigNat <$> arbitrary
 
 instance Show BigNat where
   show = show . NatJ#
+
+--------------------------------------------------------------------------------
 
 testIso :: Eq a => Iso' a b -> a -> Bool
 testIso iso x = x == (x ^. iso . from iso)
@@ -283,14 +292,19 @@ equiv f g x = f x == g x
 check :: Atom -> Atom
 check = toAtom . (id :: Integer -> Integer) . fromAtom
 
-prop_packWordSane = equiv packWord dumbPackWord . fromList
-prop_packWord     = roundTrip unpackWord packWord
-prop_unpackWord   = roundTrip packWord (strip . unpackWord) . strip . take 8
+--------------------------------------------------------------------------------
 
-prop_unpackBigNat = roundTrip bigNatToWords wordsToBigNat
+prop_packWordSane = equiv (view packedWord) dumbPackWord . fromList
+prop_packWord     = testIso (from packedWord)
+prop_unpackWord   = roundTrip (view packedWord)
+                              (strip . view (from packedWord))
+                  . strip
+                  . take 8
 
-prop_packBigNat   = roundTrip (wordsToBigNat . VP.fromList)
-                              (strip . VP.toList . bigNatToWords)
+prop_unpackBigNat = testIso bigNatWords
+
+prop_packBigNat   = roundTrip (view (from bigNatWords) . VP.fromList)
+                              (strip . VP.toList . view bigNatWords)
                   . strip
 
 prop_implodeBytes = roundTrip (view pillWords) (view (from pillWords))
@@ -299,9 +313,9 @@ prop_explodeBytes = roundTrip (view (from pillWords) . VP.fromList)
                               (strip . VP.toList . view pillWords)
                   . strip
 
-prop_packAtomSane = equiv packAtom dumbPackAtom . Pill . fromList
-prop_unpackAtom   = roundTrip unpackAtom packAtom
-prop_packAtom     = roundTrip packAtom unpackAtom . Pill . strip
+prop_packAtomSane = equiv (view (from pill)) dumbPackAtom . Pill . fromList
+prop_unpackAtom   = roundTrip (view pill) (view (from pill))
+prop_packAtom     = roundTrip (view (from pill)) (view pill) . Pill . strip
 
 --------------------------------------------------------------------------------
 

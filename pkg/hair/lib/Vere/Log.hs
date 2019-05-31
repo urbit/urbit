@@ -11,6 +11,8 @@ module Vere.Log (
 ) where
 
 import ClassyPrelude hiding (init)
+import Control.Lens hiding ((<|))
+
 import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Jam
@@ -21,12 +23,13 @@ import Foreign.Ptr
 import Foreign.Marshal.Alloc
 import Vere.Pier.Types
 
+import Control.Lens     ((^.))
 import Foreign.Storable (peek, poke, sizeOf)
 
 import qualified Data.ByteString.Unsafe as BU
-import qualified Data.ByteString as B
-import qualified Data.Vector as V
-import qualified Data.Vector.Mutable as MV
+import qualified Data.ByteString        as B
+import qualified Data.Vector            as V
+import qualified Data.Vector.Mutable    as MV
 
 --------------------------------------------------------------------------------
 
@@ -46,7 +49,6 @@ shutdown :: LogState -> IO ()
 shutdown s = do
   void $ waitCancel (writer s)
   mdb_env_close (env s)
-
 
 waitCancel :: Async a -> IO (Either SomeException a)
 waitCancel async = cancel async >> waitCatch async
@@ -72,12 +74,18 @@ byteStringAsMdbVal bs k =
 
 mdbValToAtom :: MDB_val -> IO Atom
 mdbValToAtom (MDB_val sz ptr) = do
-  packAtom . Pill <$> BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
+  bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
+  pure (bs ^. from (pill . pillBS))
+
+maybeErr :: Maybe a -> String -> IO a
+maybeErr (Just x) _   = pure x
+maybeErr Nothing  msg = error msg
 
 mdbValToNoun :: MDB_val -> IO Noun
 mdbValToNoun (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  maybe (error "mdb bad cue") pure (cue (packAtom (Pill bs)))
+  let res = (bs ^? from pillBS . from pill . _Cue)
+  maybeErr res "mdb bad cue"
 
 putRaw :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> MDB_val -> MDB_val -> IO ()
 putRaw flags txn db key val =
@@ -88,13 +96,13 @@ putRaw flags txn db key val =
 putNoun :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> Noun -> IO ()
 putNoun flags txn db key val =
   byteStringAsMdbVal key $ \mKey ->
-  byteStringAsMdbVal (nounToBs val) $ \mVal ->
+  byteStringAsMdbVal (val ^. re _CueBytes) $ \mVal ->
   putRaw flags txn db mKey mVal
 
 putJam :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> Word64 -> Jam -> IO ()
-putJam  flags txn db id (Jam atom) = do
+putJam flags txn db id (Jam atom) = do
   withWord64AsMDBval id $ \idVal -> do
-    let !bs = unPill (unpackAtom atom)
+    let !bs = atom ^. pill . pillBS
     byteStringAsMdbVal bs $ \mVal -> do
       putRaw flags txn db idVal mVal
 

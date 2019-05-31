@@ -4,13 +4,16 @@ module Vere.Http.Server where
 
 import ClassyPrelude
 import Vere.Http
+import Data.Noun.Atom
+import Control.Lens
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
-import Data.Noun.Atom
-import Data.Noun.Pill (packAtom, Pill(..))
-import qualified Network.HTTP.Types as H
-import qualified Network.Wai as W
-import qualified Network.Wai.Handler.Warp as W
+import Data.Noun.Pill     (pill, pillBS, Pill(..))
+
+import qualified Data.ByteString             as BS
+import qualified Network.HTTP.Types          as H
+import qualified Network.Wai                 as W
+import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
 
 type ServerId = Word
@@ -99,8 +102,18 @@ cookMeth re =
 
 data Octs = Octs Atom Atom
 
-bsToOcts :: ByteString -> Octs
-bsToOcts bs = Octs (fromIntegral (length bs)) (packAtom (Pill bs))
+bsOcts :: Iso' ByteString Octs
+bsOcts = iso toOcts fromOcts
+  where
+    toOcts :: ByteString -> Octs
+    toOcts bs =
+      Octs (fromIntegral (length bs)) (bs ^. from (pill . pillBS))
+
+    fromOcts :: Octs -> ByteString
+    fromOcts (Octs (fromIntegral -> len) atm) = bs <> pad
+      where
+        bs  = atm ^. pill . pillBS
+        pad = BS.replicate (max 0 (len - length bs)) 0
 
 readEvents :: W.Request -> IO Request
 readEvents request = do
