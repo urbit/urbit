@@ -27,16 +27,21 @@ data Worker = Worker
   }
 
 
+
 --------------------------------------------------------------------------------
 
+-- Think about how to handle process exit
+-- Tear down subprocess on exit? (terminiteProcess)
 start ::  IO Worker
-start = do
-  -- Think about how to handle process exit
-  -- Tear down subprocess on exit? (terminiteProcess)
-  (Just stdin, Just stdout, _, ph) <-
-    createProcess (proc "urbit-worker" []){ std_in  = CreatePipe,
-                                            std_out = CreatePipe }
-  pure (Worker stdin stdout ph)
+start =
+  do
+    (Just i, Just o, _, p) <- createProcess pSpec
+    pure (Worker i o p)
+  where
+    pSpec =
+      (proc "urbit-worker" []) { std_in  = CreatePipe
+                               , std_out = CreatePipe
+                               }
 
 kill :: Worker -> IO ExitCode
 kill w = do
@@ -47,9 +52,6 @@ work :: Word64 -> Jam -> Atom
 work id (Jam a) = jam $ toNoun (Cord "work", id, a)
 
 newtype Job = Job Void
-  deriving newtype (Eq, Show, ToNoun, FromNoun)
-
-newtype Tank = Tank Void
   deriving newtype (Eq, Show, ToNoun, FromNoun)
 
 type EventId = Word64
@@ -217,15 +219,6 @@ computeThread w = start
 --    [%work eventId mat]
 
 --  response <- recvAtom w
-
-
-
-
-
-
-
-
-
 
 
 -- Basic Send and Receive Operations -------------------------------------------

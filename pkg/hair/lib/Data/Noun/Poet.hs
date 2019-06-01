@@ -29,8 +29,44 @@ import qualified Control.Monad.Fail as Fail
 data Nullable a = Nil | NotNil a
   deriving (Eq, Ord, Show)
 
+newtype Tour = Tour [Char]
+  deriving (Eq, Ord, Show)
+
+newtype Tape = Tape ByteString
+  deriving (Eq, Ord, Show)
+
 newtype Cord = Cord ByteString
   deriving newtype (Eq, Ord, Show)
+
+type Tang = [Tank]
+
+data Tank
+    = TLeaf Tape
+    | TPlum Plum
+    | TPalm (Tape, Tape, Tape, Tape) [Tank]
+    | TRose (Tape, Tape, Tape) [Tank]
+  deriving (Eq, Ord, Show)
+
+type Tile = Cord
+
+data WideFmt
+    = WideFmt { delimit :: Tile, enclose :: Maybe (Tile, Tile) }
+  deriving (Eq, Ord, Show)
+
+data TallFmt
+    = TallFmt { intro   :: Tile, indef   :: Maybe (Tile, Tile) }
+  deriving (Eq, Ord, Show)
+
+data PlumFmt
+    = PlumFmt (Maybe WideFmt) (Maybe TallFmt)
+  deriving (Eq, Ord, Show)
+
+data Plum
+    = PAtom Cord
+    | PPara Tile [Cord]
+    | PTree PlumFmt [Plum]
+    | PSbrk Plum
+  deriving (Eq, Ord, Show)
 
 
 -- IResult ---------------------------------------------------------------------
@@ -292,6 +328,33 @@ instance FromNoun Cord where
   parseNoun n = do
     atom <- parseNoun n
     pure $ Cord (atom ^. pill . pillBS)
+
+
+-- Tank and Plum Conversion ----------------------------------------------------
+
+instance ToNoun WideFmt where toNoun (WideFmt x xs)      = toNoun (x, xs)
+instance ToNoun TallFmt where toNoun (TallFmt x xs)      = toNoun (x, xs)
+instance ToNoun PlumFmt where toNoun (PlumFmt wide tall) = toNoun (wide, tall)
+
+instance FromNoun WideFmt where parseNoun = fmap (uncurry WideFmt) . parseNoun
+instance FromNoun TallFmt where parseNoun = fmap (uncurry TallFmt) . parseNoun
+instance FromNoun PlumFmt where parseNoun = fmap (uncurry PlumFmt) . parseNoun
+
+instance ToNoun Plum where
+  toNoun = \case
+    PAtom cord -> toNoun cord
+    PPara t cs -> toNoun (Cord "para", t, cs)
+    PTree f ps -> toNoun (Cord "tree", f, ps)
+    PSbrk p    -> toNoun (Cord "sbrk", p)
+
+instance FromNoun Plum where
+  parseNoun = undefined
+
+instance ToNoun Tank where
+  toNoun = undefined
+
+instance FromNoun Tank where
+  parseNoun = undefined
 
 
 -- Pair Conversion -------------------------------------------------------------
