@@ -1,5 +1,5 @@
 /-  tapp-sur=tapp
-/+  trad
+/+  async
 |*  $:  state-type=mold
         in-poke-data=mold
         out-poke-data=mold
@@ -18,14 +18,14 @@
       [%take =sign]
   ==
 ::
-++  trad-lib  (^trad sign card contract)
-++  trad  trad:trad-lib
+++  async-lib  (^async sign card contract)
+++  async  async:async-lib
 ::
 +$  move  (pair bone card)
-++  tapp-trad  (trad state-type)
+++  tapp-async  (async state-type)
 +$  tapp-state
   $:  waiting=(qeu command)
-      active=(unit eval-form:eval:tapp-trad)
+      active=(unit eval-form:eval:tapp-async)
       app-state=state-type
   ==
 ::
@@ -36,7 +36,7 @@
   |_  [bowl:gall state-type]
   ++  handle-poke
     |~  in-poke-data
-    *form:tapp-trad
+    *form:tapp-async
   --
 ::
 ++  create-tapp-poke
@@ -44,7 +44,7 @@
   %-  create-tapp-poke-peer
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peer  |=(* (trad-fail:trad-lib %no-peer-handler >path< ~))
+  ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
   --
 ::
 ::  The form of a tapp that only handles pokes and peers
@@ -54,11 +54,11 @@
   |_  [bowl:gall state-type]
   ++  handle-poke
     |~  in-poke-data
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ++  handle-peer
     |~  path
-    *form:tapp-trad
+    *form:tapp-async
   --
 ::
 ++  create-tapp-poke-peer
@@ -67,8 +67,8 @@
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
   ++  handle-peer  ~(handle-peer handler bowl state)
-  ++  handle-diff  |=(* (trad-fail:trad-lib %no-diff-handler >path< ~))
-  ++  handle-take  |=(* (trad-fail:trad-lib %no-take-handler >path< ~))
+  ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
+  ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
   --
 ::
 ::  The form of a tapp that only handles pokes and diffs
@@ -78,11 +78,11 @@
   |_  [bowl:gall state-type]
   ++  handle-poke
     |~  in-poke-data
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ++  handle-diff
     |~  [dock path in-peer-data]
-    *form:tapp-trad
+    *form:tapp-async
   --
 ::
 ++  create-tapp-poke-diff
@@ -90,9 +90,9 @@
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peer  |=(* (trad-fail:trad-lib %no-peer-handler >path< ~))
+  ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
   ++  handle-diff  ~(handle-diff handler bowl state)
-  ++  handle-take  |=(* (trad-fail:trad-lib %no-take-handler >path< ~))
+  ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
   --
 ::
 ::  The form of a tapp that only handles pokes, peers, and takes
@@ -102,15 +102,15 @@
   |_  [bowl:gall state-type]
   ++  handle-poke
     |~  in-poke-data
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ++  handle-peer
     |~  path
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ++  handle-take
     |~  sign
-    *form:tapp-trad
+    *form:tapp-async
   --
 ::
 ++  create-tapp-poke-peer-take
@@ -119,7 +119,7 @@
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
   ++  handle-peer  ~(handle-peer handler bowl state)
-  ++  handle-diff  |=(* (trad-fail:trad-lib %no-diff-handler >path< ~))
+  ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
   ++  handle-take  ~(handle-take handler bowl state)
   --
 ::
@@ -133,25 +133,25 @@
   ::
   ++  handle-poke
     |~  in-poke-data
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ::  Subscription request
   ::
   ++  handle-peer
     |~  path
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ::  Receive subscription result
   ::
   ++  handle-diff
     |~  [dock path in-peer-data]
-    *form:tapp-trad
+    *form:tapp-async
   ::
   ::  Receive syscall result
   ::
   ++  handle-take
     |~  sign
-    *form:tapp-trad
+    *form:tapp-async
   --
 ::
 ++  create-tapp-all
@@ -174,9 +174,9 @@
     ^-  (quip move _this-tapp)
     =.  waiting  (~(put to waiting) %poke in-poke-data)
     ?^  active
-      ~&  [%waiting-until-current-trad-finishes waiting]
+      ~&  [%waiting-until-current-async-finishes waiting]
       `this-tapp
-    start-trad
+    start-async
   ::
   ::  Receive subscription request
   ::
@@ -186,7 +186,7 @@
     =.  waiting  (~(put to waiting) %peer path)
     ?^  active
       `this-tapp
-    start-trad
+    start-async
   ::
   ::  Receive subscription response
   ::
@@ -200,28 +200,28 @@
     =.  waiting  (~(put to waiting) %diff [her app] pax in-peer-data)
     ?^  active
       `this-tapp
-    start-trad
+    start-async
   ::
-  ::  Pass response to trad
+  ::  Pass response to async
   ::
   ++  sigh-httr
     |=  [=wire =httr:eyre]
     ^-  (quip move _this-tapp)
-    (take-trad bowl `[wire %sigh httr])
+    (take-async bowl `[wire %sigh httr])
   ::
   ::  Failed http request
   ::
   ++  sigh-tang
     |=  [=wire =tang]
     ^-  (quip move _this-tapp)
-    (oob-fail-trad %failed-sigh tang)
+    (oob-fail-async %failed-sigh tang)
   ::
   ++  wake-note
     |=  [=wire error=(unit tang)]
     ^-  (quip move _this-tapp)
     ?^  error
-      (oob-fail-trad %timer-fire-failed u.error)
-    (take-trad bowl `[wire %wake ~])
+      (oob-fail-async %timer-fire-failed u.error)
+    (take-async bowl `[wire %wake ~])
   ::
   ++  wake-effect
     |=  [=wire error=(unit tang)]
@@ -229,44 +229,44 @@
     =.  waiting  (~(put to waiting) %take %wake error)
     ?^  active
       `this-tapp
-    start-trad
+    start-async
   ::
-  ::  Continue computing trad
+  ::  Continue computing async
   ::
-  ++  take-trad
-    |=  =trad-input:trad-lib
+  ++  take-async
+    |=  =async-input:async-lib
     ^-  (quip move _this-tapp)
-    =/  m  tapp-trad
+    =/  m  tapp-async
     ?~  active
       ::  Can't cancel HTTP requests, so we might get answers after end
       ::  of computation
       ::
-      ?:  ?=([~ @ %sigh *] in.trad-input)
+      ?:  ?=([~ @ %sigh *] in.async-input)
         `this-tapp
-      ~|  %no-active-trad
-      ~|  ?~  in.trad-input
+      ~|  %no-active-async
+      ~|  ?~  in.async-input
             ~
-          wire.u.in.trad-input
+          wire.u.in.async-input
       !!
     =^  r=[moves=(list move) =eval-result:eval:m]  u.active
-      (take:eval:m u.active ost.bowl trad-input)
-    =>  .(active `(unit eval-form:eval:tapp-trad)`active)  :: TMI
+      (take:eval:m u.active ost.bowl async-input)
+    =>  .(active `(unit eval-form:eval:tapp-async)`active)  :: TMI
     =^  moves=(list move)  this-tapp
       ?-  -.eval-result.r
         %next  `this-tapp
-        %fail  (fail-trad [contracts err]:eval-result.r)
-        %done  (done-trad [contracts value]:eval-result.r)
+        %fail  (fail-async [contracts err]:eval-result.r)
+        %done  (done-async [contracts value]:eval-result.r)
       ==
     [(weld moves.r moves) this-tapp]
   ::
-  ::  Fails currently-running trad
+  ::  Fails currently-running async
   ::
-  ++  oob-fail-trad
-    (cury fail-trad contracts:(need active))
+  ++  oob-fail-async
+    (cury fail-async contracts:(need active))
   ::
-  ::  Called on trad failure
+  ::  Called on async failure
   ::
-  ++  fail-trad
+  ++  fail-async
     |=  [contracts=(set contract) err=(pair term tang)]
     ^-  (quip move _this-tapp)
     %-  %-  slog
@@ -275,47 +275,47 @@
             leaf+(trip p.err)
             q.err
         ==
-    (finish-trad contracts)
+    (finish-async contracts)
   ::
-  ::  Called on trad success
+  ::  Called on async success
   ::
-  ++  done-trad
+  ++  done-async
     |=  [contracts=(set contract) state=state-type]
     ^-  (quip move _this-tapp)
     =.  app-state  state
-    (finish-trad contracts)
+    (finish-async contracts)
   ::
-  ::  Called whether trad failed or succeeded
+  ::  Called whether async failed or succeeded
   ::
-  ++  finish-trad
+  ++  finish-async
     |=  contracts=(set contract)
     ^-  (quip move _this-tapp)
     =^  moves-1  this-tapp  (cancel-contracts contracts)
     =.  active   ~
     =.  waiting  +:~(get to waiting)
-    =^  moves-2  this-tapp  start-trad
+    =^  moves-2  this-tapp  start-async
     [(weld moves-1 moves-2) this-tapp]
   ::
   ::  Try to start next command
   ::
-  ++  start-trad
+  ++  start-async
     ^-  (quip move _this-tapp)
     ?.  =(~ active)
-      ~|  %trad-already-active  !!
+      ~|  %async-already-active  !!
     =/  next=(unit command)  ~(top to waiting)
     ?~  next
       `this-tapp
     =.  active
       :-  ~
-      %-  from-form:eval:tapp-trad
-      ^-  form:tapp-trad
+      %-  from-form:eval:tapp-async
+      ^-  form:tapp-async
       ?-  -.u.next
         %poke  (~(handle-poke handler bowl app-state) +.u.next)
         %peer  (~(handle-peer handler bowl app-state) +.u.next)
         %diff  (~(handle-diff handler bowl app-state) +.u.next)
         %take  (~(handle-take handler bowl app-state) +.u.next)
       ==
-    (take-trad bowl ~)
+    (take-async bowl ~)
   ::
   ::  Cancel outstanding contracts
   ::

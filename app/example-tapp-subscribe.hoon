@@ -17,19 +17,19 @@
   ++  tapp   (^tapp state in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
-=,  trad=trad:tapp
-=,  tapp-trad=tapp-trad:tapp
+=,  async=async:tapp
+=,  tapp-async=tapp-async:tapp
 =,  stdio
 %-  create-tapp-poke-diff:tapp
 ^-  tapp-core-poke-diff:tapp
 |_  [=bowl:gall state]
 ++  handle-poke
   |=  =in-poke-data
-  =/  m  tapp-trad
+  =/  m  tapp-async
   ^-  form:m
   ?:  =(cord.in-poke-data 'pull')
     ?~  subscription
-      (trad-fail %no-subscription ~)
+      (async-fail %no-subscription ~)
     ;<  ~  bind:m  (pull-app [target path]:u.subscription)
     (pure:m ~)
   =/  target  [our.bowl %example-tapp-fetch]
@@ -41,7 +41,7 @@
 ::
 ++  handle-diff
   |=  [[her=ship app=term] =path data=in-peer-data]
-  =/  m  tapp-trad
+  =/  m  tapp-async
   ^-  form:m
   ?>  ?=(%comments -.data)
   ~&  subscriber-got-data=(lent comments.data)

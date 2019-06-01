@@ -42,8 +42,8 @@
         item=|=(item=@ud `tape`:(welp base "item/" +>:(scow %ui item) ".json"))
     ==
   --
-=,  trad=trad:tapp
-=,  tapp-trad=tapp-trad:tapp
+=,  async=async:tapp
+=,  tapp-async=tapp-async:tapp
 =,  stdio
 ::
 ::  The app
@@ -56,7 +56,7 @@
 ::
 ++  handle-poke
   |=  =in-poke-data
-  =/  m  tapp-trad
+  =/  m  tapp-async
   ^-  form:m
   ::
   ::  If requested to print, just print what we have in our state
@@ -127,14 +127,14 @@
 ::
 ++  handle-peer
   |=  =path
-  =/  m  tapp-trad
+  =/  m  tapp-async
   ^-  form:m
   ~&  [%tapp-fetch-take-peer path]
   (pure:m top-comments)
 ::
 ++  handle-take
   |=  sign:tapp
-  =/  m  tapp-trad
+  =/  m  tapp-async
   ^-  form:m
   ;<  =state  bind:m  (handle-poke %noun 'fetch')
   =.  top-comments  state
