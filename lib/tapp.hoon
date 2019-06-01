@@ -48,7 +48,11 @@
   %-  create-tapp-poke-peer
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
+  ++  handle-peer
+    |=  *
+    ~|  %default-tapp-no-sole
+    ?<  ?=([%sole *] +<)
+    (async-fail:async-lib %no-peer-handler >path< ~)
   --
 ::
 ::  The form of a tapp that only handles pokes and peers
