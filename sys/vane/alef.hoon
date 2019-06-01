@@ -227,6 +227,29 @@
     ::
     ?~  b  a
     $(b t.b, a (put a i.b))
+  ::  +uni: unify two ordered sets
+  ::
+  ++  uni
+    |=  [a=(tree item) b=(tree item)]
+    ^-  (tree item)
+    ::
+    ?~  b  a
+    ?~  a  b
+    ?:  (mor key.n.a key.n.b)
+      ::
+      ?:  =(key.n.b key.n.a)
+        [n.b $(a l.a, b l.b) $(a r.a, b r.b)]
+      ::
+      ?:  (compare key.n.b key.n.a)
+        $(l.a $(a l.a, r.b ~), b r.b)
+      $(r.a $(a r.a, l.b ~), b l.b)
+    ::
+    ?:  =(key.n.a key.n.b)
+      [n.b $(b l.b, a l.a) $(b r.b, a r.a)]
+    ::
+    ?:  (compare key.n.a key.n.b)
+      $(l.b $(b l.b, r.a ~), a r.a)
+    $(r.b $(b r.b, l.a ~), a l.a)
   --
 ::  +ordered-set: treap with user-specified horizontal order
 ::
@@ -1211,11 +1234,11 @@
       =>  [key val]
       [message-num num-fragments fragment-num fragment]
     ::
-    =.  packet-pump  (give %send static-fragment)
-    =.  metrics.state  (on-sent:gauge -.val)
+    =.  packet-pump    (give %send static-fragment)
+    =.  metrics.state  (on-resent:gauge -.val)
     ::  update $sent-packet-state and continue
     ::
-    =.  expiry.val     (next-expiry:gauge -.val)
+    =.  expiry.val     (next-retry-expiry:gauge -.val)
     =.  sent-date.val  now.channel
     =.  retried.val    %.y
     ::
@@ -1225,8 +1248,36 @@
   ++  send
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts state]
+    ::  bite off as many fragments as we can send
     ::
-    !!
+    =/  num-slots  num-slots:gauge
+    =/  sent       (scag num-slots fragments)
+    =/  unsent     (slag num-slots fragments)
+    ::  convert $static-fragment's into +ordered-set key-val pairs
+    ::
+    =/  send-queue
+      %+  gas:packet-queue  ~
+      %+  turn  sent
+      |=  static-fragment
+      ^-  [live-packet-key live-packet-val]
+      ::
+      :-  [message-num fragment-num]
+      ::
+      :-  ^-  sent-packet-state
+          ::
+          :+  expiry=next-expiry:gauge
+            sent-date=now.channel
+          retried=%.n
+      ::
+      [num-fragments fragment]
+    ::  send the packets, updating .live and .metrics
+    ::
+    =.  live.state     (uni:packet-queue live.state send-queue)
+    =.  metrics.state  (on-sent:gauge num-slots)
+    =.  gifts          (flop (turn sent |*(* [%send +<])))
+    ::  return unsent back to caller and reverse effects to finalize
+    ::
+    [unsent gifts state]
   ::  +on-hear-fragment-ack: handle ack on a live packet
   ::
   ++  on-hear-fragment-ack
@@ -1286,22 +1337,36 @@
   --
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
+::    TODO: actual congestion control
+::
 ++  make-pump-gauge
   |=  [now=@da pump-metrics]
   =*  metrics  +<+
   |%
-  ::  +next-expiry: when should a newly sent packet time out?
+  ::  +next-expiry: when should a newly sent fresh packet time out?
   ::
   ++  next-expiry
-    |=  sent-packet-state
     ^-  @da
     ::
+    (add now ~s2)
+  ::  +next-retry-expiry: when should a resent packet time out?
+  ::
+  ++  next-retry-expiry
+    |=  sent-packet-state
+    ^-  @da
     (add now ~s10)
   ::  +has-slot: can we send a packet right now?
   ::
   ++  has-slot
     ^-  ?
-    (lth [num-live max-live])
+    (gth num-slots 0)
+  ::  +num-slots: how many packets can we send right now?
+  ::
+  ++  num-slots
+    ^-  @ud
+    ?.  (gth max-live num-live)
+      0
+    (sub max-live num-live)
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
   ::    TODO: decrease .max-live
@@ -1318,9 +1383,16 @@
     ^-  pump-metrics
     ::
     metrics(num-live (dec num-live))
-  ::  +on-sent: adjust metrics based on packet emission
+  ::  +on-sent: adjust metrics based on sending .num-sent fresh packets
   ::
   ++  on-sent
+    |=  num-sent=@ud
+    ^-  pump-metrics
+    ::
+    metrics(num-live (add num-sent num-live))
+  ::  +on-resent: adjust metrics based on retrying an expired packet
+  ::
+  ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
     metrics(num-live +(num-live))

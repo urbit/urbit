@@ -116,6 +116,17 @@
       !>  -.b
   ==
 ::
+++  test-ordered-map-uni  ^-  tang
+  ::
+  =/  a=(tree [@ud @tas])  (gas:atom-map ~ (scag 4 test-items))
+  =/  b=(tree [@ud @tas])  (gas:atom-map ~ (slag 4 test-items))
+  ::
+  =/  c  (uni:atom-map a b)
+  ::
+  %+  expect-eq
+    !>  (gas:atom-map ~ test-items)
+    !>  c
+::
 +|  %ordered-set
 ::
 ++  test-ordered-set-gas  ^-  tang
