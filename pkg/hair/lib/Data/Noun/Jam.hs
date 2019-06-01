@@ -3,7 +3,6 @@ module Data.Noun.Jam where
 import ClassyPrelude
 import Data.Noun
 import Data.Noun.Atom
-import Data.Noun.Poet
 import Data.Bits
 import Control.Lens
 import Text.Printf
@@ -79,7 +78,7 @@ cue' buf = view _2 <$> go mempty 0
     go tbl i =
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub' (Cursor (i+1) buf)
-                              let r = toNoun at
+                              let r = Atom at
                               pure (wid+1, r, insertMap i r tbl)
         (True,  False ) -> do (lSz,lef,tbl) <- go tbl (i+2)
                               (rSz,rit,tbl) <- go tbl (i+2+fromIntegral lSz)
@@ -169,7 +168,7 @@ cue buf = view _2 <$> go mempty 0
       -- trace ("go-" <> show i)
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub (Cursor (i+1) buf)
-                              let r = toNoun at
+                              let r = Atom at
                               pure (wid+1, r, insertMap i r tbl)
         (True,  False ) -> do (lSz,lef,tbl) <- go tbl (i+2)
                               (rSz,rit,tbl) <- go tbl (i+2+fromIntegral lSz)

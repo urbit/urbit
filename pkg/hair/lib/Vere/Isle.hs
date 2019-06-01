@@ -21,6 +21,11 @@ data Color
   deriving stock    (Eq, Ord, Show, Enum, Bounded, Generic)
   deriving anyclass Flat
 
+type Blit = Vector (Vector Color)
+
+solid :: Color -> Blit
+solid c = replicate 640 (replicate 480 c)
+
 toRGB :: Color -> (Word8, Word8, Word8)
 toRGB = \case
   Black        -> (0x00, 0x00, 0x00)

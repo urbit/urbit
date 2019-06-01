@@ -26,18 +26,6 @@ data Worker = Worker
 --  , task       :: Async ()
   }
 
-newtype Cord = Cord ByteString
-  deriving newtype (Eq, Ord, Show)
-
---------------------------------------------------------------------------------
-
-instance ToNoun Cord where
-  toNoun (Cord bs) = Atom (bs ^. from (pill . pillBS))
-
-instance FromNoun Cord where
-  parseNoun n = do
-    atom <- parseNoun n
-    pure $ Cord (atom ^. pill . pillBS)
 
 --------------------------------------------------------------------------------
 
@@ -58,35 +46,23 @@ kill w = do
 work :: Word64 -> Jam -> Atom
 work id (Jam a) = jam $ toNoun (Cord "work", id, a)
 
-data Job = Job Void
-  deriving (Eq, Show)
+newtype Job = Job Void
+  deriving newtype (Eq, Show, ToNoun, FromNoun)
 
-data Tank = Tank Void
-  deriving (Eq, Show)
+newtype Tank = Tank Void
+  deriving newtype (Eq, Show, ToNoun, FromNoun)
 
 type EventId = Word64
 
 newtype Ship = Ship Word64 -- @p
-  deriving newtype (Eq, Show, FromNoun, ToNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
-data ShipId = ShipId { addr :: Ship, fake :: Bool }
-  deriving (Eq, Show)
-
---------------------------------------------------------------------------------
-
-data Play
-    = PlayNone                         --  ~
-    | PlaySnap EventId Mug ShipId      --  [@ @ @ ?]
-  deriving (Eq, Show)
-
-instance ToNoun Play where
-  toNoun = \case PlayNone                  -> Atom 0
-                 PlaySnap e m (ShipId a f) -> toNoun (e, m, a, f)
-
-instance FromNoun Play where
-  parseNoun = undefined
+newtype ShipId = ShipId (Ship, Bool)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 --------------------------------------------------------------------------------
+
+type Play = Nullable (EventId, Mug, ShipId)
 
 data Plea
     = Play Play
@@ -96,8 +72,23 @@ data Plea
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
 
+instance ToNoun Plea where
+  toNoun = \case
+    Play p     -> toNoun (Cord "play", p)
+    Work i m j -> toNoun (Cord "work", i, m, j)
+    Done i m o -> toNoun (Cord "done", i, m, o)
+    Stdr i msg -> toNoun (Cord "stdr", i, msg)
+    Slog i p t -> toNoun (Cord "slog", i, p, t)
+
 instance FromNoun Plea where
-  parseNoun = undefined
+  parseNoun n =
+    parseNoun n >>= \case
+      (Cord "play", p) -> parseNoun p <&> \p         -> Play p
+      (Cord "work", w) -> parseNoun w <&> \(i, m, j) -> Work i m j
+      (Cord "done", d) -> parseNoun d <&> \(i, m, o) -> Done i m o
+      (Cord "stdr", r) -> parseNoun r <&> \(i, msg)  -> Stdr i msg
+      (Cord "slog", s) -> parseNoun s <&> \(i, p, t) -> Slog i p t
+      (Cord tag   , s) -> fail ("Invalid plea tag: " <> unpack (decodeUtf8 tag))
 
 --------------------------------------------------------------------------------
 
@@ -186,26 +177,25 @@ replay w (wid, wmug) lastCommitedId getEvents = do
 
     -- todo: these actually have to happen concurrently
 
+computeThread :: Worker -> IO ()
+computeThread w = start
+  where
+    start = do
+      Play p <- recvPlea w
+      let (eventId, mug) = playWorkerState p
+      -- fuck it, we'll do it liv_o
+      undefined
 
+    boot :: WorkerState -> IO ()
+    boot workState = do
+      undefined
+      writ <- undefined -- getWrit w
+      sendAtom w (work (eventId writ) (event writ))
 
-playWorkerState :: Play -> WorkerState
-playWorkerState = \case
-  PlayNone       -> (1, Mug 0)
-  PlaySnap e m _ -> (e, m)
-
--- computeThread :: Worker -> IO ()
--- computeThread w = start
---   where
---     start = do
---       Just (Play p) <- recvPlea w
---       let (eventId, mug) = playWorkerState p
---       -- fuck it, we'll do it liv_o
-
---     boot :: WorkerState ->  -> IO ()
---     boot w = do
-
---       writ <- atomically $ (getInput w)
---       sendAtom w (work (eventId writ) (event writ))
+    playWorkerState :: Play -> WorkerState
+    playWorkerState = \case
+      Nil              -> (1, Mug 0)
+      NotNil (e, m, _) -> (e, m)
 
 
 -- The flow here is that we start the worker and then we receive a play event
@@ -257,7 +247,7 @@ recvLen = undefined
 recvBytes :: Worker -> Word64 -> IO ByteString
 recvBytes = undefined
 
-recvAtom :: Worker -> IO (Atom)
+recvAtom :: Worker -> IO Atom
 recvAtom w = do
   len <- recvLen w
   bs <- recvBytes w len

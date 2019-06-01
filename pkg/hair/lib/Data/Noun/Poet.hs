@@ -1,20 +1,36 @@
 module Data.Noun.Poet where
 
-import Prelude
+import ClassyPrelude hiding (fromList)
 import Control.Lens
 
 import Control.Applicative
 import Control.Monad
 import Data.Noun
 import Data.Noun.Atom
+import Data.Noun.Pill
 import Data.Void
+import Data.Word
 import GHC.Natural
 
 import Data.List      (intercalate)
 import Data.Typeable  (Typeable)
-import Data.Word      (Word, Word32, Word64)
 
 import qualified Control.Monad.Fail as Fail
+
+
+-- Types For Hoon Constructs ---------------------------------------------------
+
+{-|
+    `Nullable a <-> ?@(~ a)`
+
+    This is distinct from `unit`, since there is no tag on the non-atom
+    case, therefore `a` must always be cell type.
+-}
+data Nullable a = Nil | NotNil a
+  deriving (Eq, Ord, Show)
+
+newtype Cord = Cord ByteString
+  deriving newtype (Eq, Ord, Show)
 
 
 -- IResult ---------------------------------------------------------------------
@@ -169,7 +185,8 @@ instance ToNoun Noun where
 instance FromNoun Noun where
   parseNoun = pure
 
--- Bool Conversion -------------------------------------------------------------
+
+-- Loobean Conversion ----------------------------------------------------------
 
 instance ToNoun Bool where
   toNoun True  = Atom 0
@@ -181,6 +198,7 @@ instance FromNoun Bool where
   parseNoun (Cell _ _) = fail "expecting a bool, but got a cell"
   parseNoun (Atom a)   = fail ("expecting a bool, but got " <> show a)
 
+
 -- Atom Conversion -------------------------------------------------------------
 
 instance ToNoun Atom where
@@ -190,42 +208,153 @@ instance FromNoun Atom where
   parseNoun (Cell _ _) = fail "Expecting an atom, but got a cell"
   parseNoun (Atom a)   = pure a
 
+
+-- Natural Conversion-----------------------------------------------------------
+
+instance ToNoun Natural   where toNoun    = toNoun . MkAtom
+instance FromNoun Natural where parseNoun = fmap unAtom . parseNoun
+
+
 -- Word Conversion -------------------------------------------------------------
 
-instance ToNoun Word where
-  toNoun = Atom . fromIntegral
+atomToWord :: forall a. (Bounded a, Integral a) => Atom -> Parser a
+atomToWord atom = do
+  if atom > fromIntegral (maxBound :: a)
+  then fail "Atom doesn't fit in fixed-size word"
+  else pure (fromIntegral atom)
 
-instance ToNoun Word32 where
-  toNoun = Atom . fromIntegral
+wordToNoun :: Integral a => a -> Noun
+wordToNoun = Atom . fromIntegral
 
-instance FromNoun Word32 where
-  parseNoun (Cell _ _) = fail "cell is not an atom"
-  parseNoun (Atom a)   = pure (fromIntegral a) -- TODO Overflow
+nounToWord :: forall a. (Bounded a, Integral a) => Noun -> Parser a
+nounToWord = parseNoun >=> atomToWord
 
-instance ToNoun Word64 where
-  toNoun = Atom . fromIntegral
+instance ToNoun Word    where toNoun = wordToNoun
+instance ToNoun Word8   where toNoun = wordToNoun
+instance ToNoun Word16  where toNoun = wordToNoun
+instance ToNoun Word32  where toNoun = wordToNoun
+instance ToNoun Word64  where toNoun = wordToNoun
 
-instance FromNoun Word64 where
-  parseNoun (Cell _ _) = fail "cell is not an atom"
-  parseNoun (Atom a)   = pure (fromIntegral a) -- TODO Overflow
+instance FromNoun Word    where parseNoun = nounToWord
+instance FromNoun Word8   where parseNoun = nounToWord
+instance FromNoun Word16  where parseNoun = nounToWord
+instance FromNoun Word32  where parseNoun = nounToWord
+instance FromNoun Word64  where parseNoun = nounToWord
 
-instance ToNoun Natural where
-  toNoun = toNoun . toAtom
+
+-- Nullable Conversion ---------------------------------------------------------
+
+-- TODO Consider enforcing that `a` must be a cell.
+instance ToNoun a => ToNoun (Nullable a) where
+  toNoun Nil        = Atom 0
+  toNoun (NotNil x) = toNoun x
+
+instance FromNoun a => FromNoun (Nullable a) where
+  parseNoun (Atom 0) = pure Nil
+  parseNoun (Atom n) = fail ("Expected ?@(~ ^), but got " <> show n)
+  parseNoun n        = NotNil <$> parseNoun n
 
 
--- Cell Conversion -------------------------------------------------------------
+-- Maybe is `unit` -------------------------------------------------------------
+
+-- TODO Consider enforcing that `a` must be a cell.
+instance ToNoun a => ToNoun (Maybe a) where
+  toNoun Nothing  = Atom 0
+  toNoun (Just x) = Cell (Atom 0) (toNoun x)
+
+instance FromNoun a => FromNoun (Maybe a) where
+  parseNoun = \case
+      Atom          0   -> pure Nothing
+      Atom          n   -> unexpected ("atom " <> show n)
+      Cell (Atom 0) t   -> Just <$> parseNoun t
+      Cell n        _   -> unexpected ("cell with head-atom " <> show n)
+    where
+      unexpected s = fail ("Expected unit value, but got " <> s)
+
+
+-- List Conversion -------------------------------------------------------------
+
+instance ToNoun a => ToNoun [a] where
+  toNoun xs = fromList (toNoun <$> xs)
+
+instance FromNoun a => FromNoun [a] where
+  parseNoun (Atom 0)   = pure []
+  parseNoun (Atom _)   = fail "list terminated with non-null atom"
+  parseNoun (Cell l r) = (:) <$> parseNoun l <*> parseNoun r
+
+
+-- Cord Conversion -------------------------------------------------------------
+
+instance ToNoun Cord where
+  toNoun (Cord bs) = Atom (bs ^. from (pill . pillBS))
+
+instance FromNoun Cord where
+  parseNoun n = do
+    atom <- parseNoun n
+    pure $ Cord (atom ^. pill . pillBS)
+
+
+-- Pair Conversion -------------------------------------------------------------
 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
   toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
+instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
+  parseNoun (Atom n)   = fail ("expected a cell, but got an atom: " <> show n)
+  parseNoun (Cell l r) = (,) <$> parseNoun l <*> parseNoun r
+
+
+-- Trel Conversion -------------------------------------------------------------
+
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
-  toNoun (x, y, z) = Cell (toNoun x)
-                   $ Cell (toNoun y) (toNoun z)
+  toNoun (x, y, z) = toNoun (x, (y, z))
+
+instance (FromNoun a, FromNoun b, FromNoun c) => FromNoun (a, b, c) where
+  parseNoun n = do
+    (x, t) <- parseNoun n
+    (y, z) <- parseNoun t
+    pure (x, y, z)
+
+
+-- Quad Conversion -------------------------------------------------------------
 
 instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d) => ToNoun (a, b, c, d) where
-  toNoun (x, y, z, a) = Cell (toNoun x)
-                      $ Cell (toNoun y)
-                      $ Cell (toNoun z) (toNoun a)
+  toNoun (p, q, r, s) = toNoun (p, (q, r, s))
 
-instance ToNoun a => ToNoun [a] where
-  toNoun xs = fromList (toNoun <$> xs)
+instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d)
+      => FromNoun (a, b, c, d)
+      where
+  parseNoun n = do
+    (p, tail) <- parseNoun n
+    (q, r, s) <- parseNoun tail
+    pure (p, q, r, s)
+
+
+-- Pent Conversion ------------------------------------------------------------
+
+instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e)
+      => ToNoun (a, b, c, d, e) where
+  toNoun (p, q, r, s, t) = toNoun (p, (q, r, s, t))
+
+instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e)
+      => FromNoun (a, b, c, d, e)
+      where
+  parseNoun n = do
+    (p, tail)    <- parseNoun n
+    (q, r, s, t) <- parseNoun tail
+    pure (p, q, r, s, t)
+
+
+-- Sext Conversion ------------------------------------------------------------
+
+instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f)
+      => ToNoun (a, b, c, d, e, f) where
+  toNoun (p, q, r, s, t, u) = toNoun (p, (q, r, s, t, u))
+
+instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e,FromNoun f)
+      => FromNoun (a, b, c, d, e, f)
+      where
+  parseNoun n = do
+    (p, tail)       <- parseNoun n
+    (q, r, s, t, u) <- parseNoun tail
+    pure (p, q, r, s, t, u)
