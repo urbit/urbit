@@ -1,7 +1,7 @@
 ::  Standard input/output functions.
 ::
 ::  These are all asynchronous computations, which means they produce a
-::  form:(trad A) for some type A.  You can always tell what they
+::  form:(async A) for some type A.  You can always tell what they
 ::  produce by checking their first three lines.
 ::
 ::  Functions with the word "raw" in their name are for internal use
@@ -11,51 +11,51 @@
 ::  fails.
 ::
 /-  tapp-sur=tapp
-/+  trad
+/+  async
 |*  [poke-data=mold out-peer-data=mold]
 =/  tapp-sur  (tapp-sur poke-data out-peer-data)
 =,  card=card:tapp-sur
 =,  sign=sign:tapp-sur
 =,  contract=contract:tapp-sur
-=+  (trad sign card contract)
+=+  (async sign card contract)
 |%
 ::
 ::  Raw power
 ::
 ++  send-raw-card
   |=  =card
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
-  |=  =trad-input
+  |=  =async-input
   [[card]~ ~ ~ %done ~]
 ::
 ::  Add or remove a contract
 ::
 ++  set-raw-contract
   |=  [add=? =contract]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
-  |=  trad-input
+  |=  async-input
   [~ ~ (silt [add contract]~) %done ~]
 ::
 ::  Send effect on current bone
 ::
 ++  send-effect
   |=  =card
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  =bone  bind:m
-    |=  =trad-input
-    [~ ~ ~ %done ost.bowl.trad-input]
+    |=  =async-input
+    [~ ~ ~ %done ost.bowl.async-input]
   (send-effect-on-bone bone card)
 ::
 ::  Send effect on particular bone
 ::
 ++  send-effect-on-bone
   |=  [=bone =card]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
-  |=  trad-input
+  |=  async-input
   [~ [bone card]~ ~ %done ~]
 ::
 ::    ----
@@ -64,7 +64,7 @@
 ::
 ++  send-hiss
   |=  =hiss:eyre
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  ~  bind:m  (send-raw-card %hiss / ~ %httr %hiss hiss)
   (set-raw-contract & %hiss ~)
@@ -72,20 +72,20 @@
 ::  Wait until we get an HTTP response
 ::
 ++  take-sigh-raw
-  =/  m  (trad ,httr:eyre)
+  =/  m  (async ,httr:eyre)
   ^-  form:m
-  |=  =trad-input
+  |=  =async-input
   :^  ~  ~  ~
-  ?~  in.trad-input
+  ?~  in.async-input
     [%wait ~]
-  ?.  ?=(%sigh -.sign.u.in.trad-input)
-    [%fail %expected-sigh >got=-.sign.u.in.trad-input< ~]
-  [%done httr.sign.u.in.trad-input]
+  ?.  ?=(%sigh -.sign.u.in.async-input)
+    [%fail %expected-sigh >got=-.sign.u.in.async-input< ~]
+  [%done httr.sign.u.in.async-input]
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
 ++  take-sigh
-  =/  m  (trad ,httr:eyre)
+  =/  m  (async ,httr:eyre)
   ^-  form:m
   ;<  =httr:eyre  bind:m  take-sigh-raw
   ;<  ~           bind:m  (set-raw-contract | %hiss ~)
@@ -95,30 +95,30 @@
 ::
 ++  extract-httr-body
   |=  =httr:eyre
-  =/  m  (trad ,cord)
+  =/  m  (async ,cord)
   ^-  form:m
   ?.  =(2 (div p.httr 100))
-    (trad-fail %httr-error >p.httr< >+.httr< ~)
+    (async-fail %httr-error >p.httr< >+.httr< ~)
   ?~  r.httr
-    (trad-fail %expected-httr-body >httr< ~)
+    (async-fail %expected-httr-body >httr< ~)
   (pure:m q.u.r.httr)
 ::
 ::  Parse cord to json
 ::
 ++  parse-json
   |=  =cord
-  =/  m  (trad ,json)
+  =/  m  (async ,json)
   ^-  form:m
   =/  json=(unit json)  (de-json:html cord)
   ?~  json
-    (trad-fail %json-parse-error ~)
+    (async-fail %json-parse-error ~)
   (pure:m u.json)
 ::
 ::  Fetch json at given url
 ::
 ++  fetch-json
   |=  url=tape
-  =/  m  (trad ,json)
+  =/  m  (async ,json)
   ^-  form:m
   =/  =hiss:eyre
     :*  purl=(scan url auri:de-purl:html)
@@ -136,16 +136,16 @@
 ::  Time is what keeps everything from happening at once
 ::
 ++  get-time
-  =/  m  (trad ,@da)
+  =/  m  (async ,@da)
   ^-  form:m
-  |=  =trad-input
-  [~ ~ ~ %done now.bowl.trad-input]
+  |=  =async-input
+  [~ ~ ~ %done now.bowl.async-input]
 ::
 ::  Set a timer
 ::
 ++  send-wait
   |=  at=@da
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  ~  bind:m  (send-raw-card %wait /note/(scot %da at) at)
   (set-raw-contract & %wait at)
@@ -153,17 +153,17 @@
 ::  Wait until we get a wake event
 ::
 ++  take-wake-raw
-  =/  m  (trad ,@da)
+  =/  m  (async ,@da)
   ^-  form:m
-  |=  =trad-input
+  |=  =async-input
   :^  ~  ~  ~
-  ?~  in.trad-input
+  ?~  in.async-input
     [%wait ~]
-  ?.  ?=(%wake -.sign.u.in.trad-input)
-    [%fail %expected-wake >got=-.sign.u.in.trad-input< ~]
-  ?~  wire.u.in.trad-input
+  ?.  ?=(%wake -.sign.u.in.async-input)
+    [%fail %expected-wake >got=-.sign.u.in.async-input< ~]
+  ?~  wire.u.in.async-input
     [%fail %expected-wake-time ~]
-  =/  at=(unit @da)  (slaw %da i.wire.u.in.trad-input)
+  =/  at=(unit @da)  (slaw %da i.wire.u.in.async-input)
   ?~  at
     [%fail %expected-wake-time-da >wire< ~]
   [%done u.at]
@@ -171,7 +171,7 @@
 ::  Wait until we get a wake event and unset contract
 ::
 ++  take-wake
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  at=@da  bind:m  take-wake-raw
   (set-raw-contract | %wait at)
@@ -180,7 +180,7 @@
 ::
 ++  wait
   |=  until=@da
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  ~  bind:m  (send-wait until)
   take-wake
@@ -189,7 +189,7 @@
 ::
 ++  wait-effect
   |=  until=@da
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   (send-effect %wait /effect/(scot %da until) until)
 ::
@@ -197,17 +197,17 @@
 ::
 ++  set-timeout
   |*  computation-result=mold
-  =/  m  (trad ,computation-result)
+  =/  m  (async ,computation-result)
   |=  [when=@da computation=form:m]
   ^-  form:m
   ;<  ~  bind:m  (send-wait when)
-  |=  =trad-input
+  |=  =async-input
   =*  loop  $
-  ?:  ?&  ?=([~ * %wake *] in.trad-input)
-          =(/(scot %da when) wire.u.in.trad-input)
+  ?:  ?&  ?=([~ * %wake *] in.async-input)
+          =(/(scot %da when) wire.u.in.async-input)
       ==
-    [~ ~ (silt [| %wait when]~) %fail %trad-timeout ~]
-  =/  c-res  (computation trad-input)
+    [~ ~ (silt [| %wait when]~) %fail %async-timeout ~]
+  =/  c-res  (computation async-input)
   ?.  ?=(%cont -.next.c-res)
     c-res
   c-res(self.next ..loop(computation self.next.c-res))
@@ -218,20 +218,20 @@
 ::
 ++  poke-app
   |=  [[her=ship app=term] =poke-data]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   (send-effect %poke / [her app] poke-data)
 ::
 ++  peer-app
   |=  [[her=ship app=term] =path]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   =/  =wire  (weld /(scot %p her)/[app] path)
   (send-effect %peer wire [her app] path)
 ::
 ++  pull-app
   |=  [[her=ship app=term] =path]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   =/  =wire  (weld /(scot %p her)/[app] path)
   (send-effect %pull wire [her app] ~)
@@ -244,12 +244,12 @@
 ::
 ++  get-bones-on-path
   |=  =the=path
-  =/  m  (trad ,(list bone))
+  =/  m  (async ,(list bone))
   ^-  form:m
-  |=  =trad-input
+  |=  =async-input
   :^  ~  ~  ~
   :-  %done
-  %+  murn  ~(tap by sup.bowl.trad-input)
+  %+  murn  ~(tap by sup.bowl.async-input)
   |=  [ost=bone her=ship =sub=path]
   ^-  (unit bone)
   ?.  =(the-path sub-path)
@@ -260,7 +260,7 @@
 ::
 ++  give-result
   |=  [=path =out-peer-data]
-  =/  m  (trad ,~)
+  =/  m  (async ,~)
   ^-  form:m
   ;<  bones=(list bone)  bind:m  (get-bones-on-path path)
   |-  ^-  form:m

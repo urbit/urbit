@@ -1,7 +1,7 @@
 |*  [input-type=mold card-type=mold contract-type=mold]
 |%
-+$  trad-input  [=bowl:gall in=(unit [=wire sign=input-type])]
-+$  trad-move  (pair bone card-type)
++$  async-input  [=bowl:gall in=(unit [=wire sign=input-type])]
++$  async-move  (pair bone card-type)
 ::
 ::  cards:     cards to send immediately.  These will go out even if a
 ::             later stage of the computation fails, so they shouldn't have
@@ -17,29 +17,29 @@
 ::  fail:      abort computation; don't send effects
 ::  done:      finish computation; send effects
 ::
-++  trad-output-raw
+++  async-output-raw
   |*  a=mold
   $~  [~ ~ ~ %done *a]
   $:  cards=(list card-type)
-      effects=(list trad-move)
+      effects=(list async-move)
       contracts=(set [add=? contract=contract-type])
       $=  next
       $%  [%wait ~]
-          [%cont self=(trad-form-raw a)]
+          [%cont self=(async-form-raw a)]
           [%fail err=(pair term tang)]
           [%done value=a]
       ==
   ==
 ::
-++  trad-form-raw
+++  async-form-raw
   |*  a=mold
-  $-(trad-input (trad-output-raw a))
+  $-(async-input (async-output-raw a))
 ::
 ::  Abort asynchronous computation with error message
 ::
-++  trad-fail
+++  async-fail
   |=  err=(pair term tang)
-  |=  trad-input
+  |=  async-input
   [~ ~ ~ %fail err]
 ::
 ::  Asynchronous transcaction monad.
@@ -50,31 +50,31 @@
 ::  - Continuation
 ::  - Exception
 ::
-++  trad
+++  async
   |*  a=mold
   |%
-  ++  output  (trad-output-raw a)
+  ++  output  (async-output-raw a)
   ::
   ::  Type of an asynchronous computation.
   ::
-  ++  form  (trad-form-raw a)
+  ++  form  (async-form-raw a)
   ::
   ::  Monadic pure.  Identity computation for bind.
   ::
   ++  pure
     |=  arg=a
     ^-  form
-    |=  trad-input
+    |=  async-input
     [~ ~ ~ %done arg]
   ::
   ::  Monadic bind.  Combines two computations, associatively.
   ::
   ++  bind
     |*  b=mold
-    |=  [m-b=(trad-form-raw b) fun=$-(b form)]
+    |=  [m-b=(async-form-raw b) fun=$-(b form)]
     ^-  form
-    |=  input=trad-input
-    =/  b-res=(trad-output-raw b)
+    |=  input=async-input
+    =/  b-res=(async-output-raw b)
       (m-b input)
     ^-  output
     :^  cards.b-res  effects.b-res  contracts.b-res
@@ -85,15 +85,15 @@
       %done  [%cont (fun value.next.b-res)]
     ==
   ::
-  ::  The trad monad must be evaluted in a particular way to maintain
+  ::  The async monad must be evaluted in a particular way to maintain
   ::  its monadic character.  +take:eval implements this.
   ::
   ++  eval
     |%
-    ::  Indelible state of a trad
+    ::  Indelible state of a async
     ::
     +$  eval-form
-      $:  effects=(list trad-move)
+      $:  effects=(list async-move)
           contracts=(set contract-type)
           =form
       ==
@@ -113,18 +113,18 @@
           [%done contracts=(set contract-type) value=a]
       ==
     ::
-    ::  Take a new sign and run the trad against it
+    ::  Take a new sign and run the async against it
     ::
     ++  take
       ::  moves: accumulate throughout recursion the moves to be
       ::         produced now
-      =|  moves=(list trad-move)
-      |=  [=eval-form =bone =trad-input]
-      ^-  [[(list trad-move) =eval-result] _eval-form]
+      =|  moves=(list async-move)
+      |=  [=eval-form =bone =async-input]
+      ^-  [[(list async-move) =eval-result] _eval-form]
       =*  take-loop  $
-      ::  run the trad callback
+      ::  run the async callback
       ::
-      =/  =output  (form.eval-form trad-input)
+      =/  =output  (form.eval-form async-input)
       ::  add cards to moves
       ::
       =.  moves
@@ -132,7 +132,7 @@
           moves
         %+  turn  cards.output
         |=  card=card-type
-        ^-  trad-move
+        ^-  async-move
         [bone card]
       ::  add effects to list to be produced when done
       ::
@@ -182,7 +182,7 @@
         ::
         %_  take-loop
           form.eval-form  self.next.output
-          trad-input      [bowl.trad-input ~]
+          async-input     [bowl.async-input ~]
         ==
       ==
     --
