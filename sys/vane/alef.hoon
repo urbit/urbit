@@ -215,7 +215,9 @@
     ::
     ?~  b  a
     $(b t.b, a (put a i.b))
-  ::  +uni: unify two ordered sets
+  ::  +uni: unify two ordered maps
+  ::
+  ::    TODO: document a/b precedence or disjointness constraint
   ::
   ++  uni
     |=  [a=(tree item) b=(tree item)]
@@ -405,12 +407,10 @@
 ::    can be packetized and fed into |packet-pump for sending.  When we
 ::    pop a message off .unsent-messages, we push as many fragments as
 ::    we can into |packet-pump, then place the remaining in
-::    .unsent-fragments.  We also insert an entry in .unacked-fragments
-::    initialized with the total number of fragments in the message.
+::    .unsent-fragments.
 ::
 ::    When we hear a packet ack, we send it to |packet-pump.  If we
-::    haven't seen it before, |packet-pump reports the fresh ack.  We
-::    then decrement that message's entry in .unacked-fragments.
+::    haven't seen it before, |packet-pump reports the fresh ack.
 ::
 ::    When we hear a message ack (positive or negative), we treat that
 ::    as though all fragments have been acked.  If this message is not
@@ -436,7 +436,7 @@
 ::    The following equation is always true:
 ::    .next - .current == number of messages in flight
 ::
-::    At the end of a task, |message-pump sends a %flush task to
+::    At the end of a task, |message-pump sends a %finalize task to
 ::    |packet-pump, which can trigger a timer to be set or cleared based
 ::    on congestion control calculations. When it fires, the timer will
 ::    generally cause one or more packets to be resent.
@@ -445,7 +445,6 @@
 ::    next: sequence number of next message to send
 ::    unsent-messages: messages to be sent after current message
 ::    unsent-fragments: fragments of current message waiting for sending
-::    unacked-fragments: number of fragments waiting on ack
 ::    queued-message-acks: future message acks to be applied after current
 ::    packet-pump-state: state of corresponding |packet-pump
 ::
@@ -500,7 +499,6 @@
 ::    last-heard: highest $message-num we've heard all fragments on
 ::    pending-vane-ack: heard but not processed by local vane
 ::    live-messages: partially received messages
-::    naxplanations: enqueued nack diagnostics
 ::
 +$  message-still-state
   $:  last-acked=message-num
@@ -905,28 +903,33 @@
 ::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
-  |=  [=message-pump-state =channel]
+  |=  [state=message-pump-state =channel]
   =|  gifts=(list message-pump-gift)
   ::
   |%
   ++  message-pump  .
   ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
   ++  packet-pump
-    (make-packet-pump packet-pump-state.message-pump-state channel)
+    (make-packet-pump packet-pump-state.state channel)
   ::  +work: handle a $message-pump-task
   ::
   ++  work
     |=  task=message-pump-task
-    ^+  [gifts message-pump-state]
+    ^+  [gifts state]
     ::
     =~  ?-  -.task
-          %send              (on-send message.task)
-          %hear-message-ack  (on-hear-message-ack [message-num ok lag]:task)
-          *                  (run-packet-pump task)
+            %send  (on-send message.task)
+            %hear-fragment-ack
+          (on-hear-fragment-ack [message-num fragment-num]:task)
+        ::
+            %hear-message-ack
+          (on-hear-message-ack [message-num ok lag]:task)
+        ::
+            *  (run-packet-pump task)
         ==
         feed-packets
         (run-packet-pump %finalize ~)
-        [(flop gifts) message-pump-state]
+        [(flop gifts) state]
     ==
   ::  +on-send: handle request to send a message
   ::
@@ -934,73 +937,82 @@
     |=  =message
     ^+  message-pump
     ::
-    =.  unsent-messages.message-pump-state
-      (~(put to unsent-messages.message-pump-state) message)
-    ::
+    =.  unsent-messages.state  (~(put to unsent-messages.state) message)
     message-pump
+  ::  +on-hear-fragment-ack: handle packet acknowledgment
+  ::
+  ++  on-hear-fragment-ack
+    |=  [=message-num =fragment-num]
+    ^+  message-pump
+    ::  pass to |packet-pump unless duplicate or future ack
+    ::
+    ?.  (is-message-num-in-range message-num)
+      message-pump
+    (run-packet-pump %hear-fragment-ack message-num fragment-num)
   ::  +on-hear-message-ack: handle message-level acknowledgment
   ::
   ++  on-hear-message-ack
     |=  [=message-num ok=? lag=@dr]
     ^+  message-pump
-    ::  ignore acks on already-processed messages
+    ::  ignore duplicate and future acks
     ::
-    ?:  (lth message-num current.message-pump-state)
-      message-pump
-    ::  ignore duplicate already-processed acks waiting for emission
-    ::
-    ?:  (~(has by queued-message-acks.message-pump-state) message-num)
+    ?.  (is-message-num-in-range message-num)
       message-pump
     ::  clear and print .unsent-fragments if nonempty
     ::
-    =?    unsent-fragments.message-pump-state
-        ::
-        ?&  =(current next):message-pump-state
-            ?=(^ unsent-fragments.message-pump-state)
-        ==
+    =?    unsent-fragments.state
+        &(=(current next):state ?=(^ unsent-fragments.state))
+      ::
       ~&  %early-message-ack^ok^her.channel
       ~
     ::  clear all packets from this message from the packet pump
     ::
     =.  message-pump  (run-packet-pump %hear-message-ack message-num lag)
+    ::  enqueue this ack to be sent back to local client vane
     ::
-    =.  queued-message-acks.message-pump-state
-      (~(put by queued-message-acks.message-pump-state) message-num ok)
+    =.  queued-message-acks.state
+      (~(put by queued-message-acks.state) message-num ok)
+    ::  emit local acks from .queued-message-acks until incomplete
     ::
     |-  ^+  message-pump
+    ::  if .current hasn't been fully acked, we're done
     ::
-    =/  ack
-      %-  ~(get by queued-message-acks.message-pump-state)
-      current.message-pump-state
-    ::
-    ?~  ack
+    ?~  ack=(~(get by queued-message-acks.state) current.state)
       message-pump
+    ::  .current is complete; pop, emit local ack, and try next message
     ::
-    =.  queued-message-acks.message-pump-state
-      %-  ~(del by queued-message-acks.message-pump-state)
-      current.message-pump-state
+    =.  queued-message-acks.state
+      (~(del by queued-message-acks.state) current.state)
     ::
-    =.  message-pump  (give %ack-message current.message-pump-state ok.u.ack)
+    =.  message-pump  (give %ack-message current.state ok.u.ack)
     ::
-    $(current.message-pump-state +(current.message-pump-state))
+    $(current.state +(current.state))
+  ::  +is-message-num-in-range: %.y unless duplicate or future ack
+  ::
+  ++  is-message-num-in-range
+    |=  =message-num
+    ^-  ?
+    ::
+    ?:  (gte message-num next.state)
+      %.n
+    ?:  (lth message-num current.state)
+      %.n
+    !(~(has by queued-message-acks.state) message-num)
   ::  +feed-packets: give packets to |packet-pump until full
   ::
   ++  feed-packets
     ::  if nothing to send, no-op
     ::
-    ?:  ?&  =(~ unsent-messages.message-pump-state)
-            =(~ unsent-fragments.message-pump-state)
-        ==
-      ::
+    ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
       message-pump
     ::  we have unsent fragments of the current message; feed them
     ::
-    ?.  =(~ unsent-fragments.message-pump-state)
-      =/  res  (send:packet-pump unsent-fragments.message-pump-state)
-      =+  [unsent packet-pump-gifts state]=res
+    ?.  =(~ unsent-fragments.state)
+      =/  res  (feed:packet-pump unsent-fragments.state)
+      =+  [unsent packet-pump-gifts packet-pump-state]=res
       ::
-      =.  unsent-fragments.message-pump-state   unsent
-      =.  packet-pump-state.message-pump-state  state
+      =.  unsent-fragments.state   unsent
+      =.  packet-pump-state.state  packet-pump-state
       ::
       =.  message-pump  (process-packet-pump-gifts packet-pump-gifts)
       ::  if it sent all of them, feed it more; otherwise, we're done
@@ -1010,11 +1022,10 @@
       message-pump
     ::  .unsent-messages is nonempty; pop a message off and feed it
     ::
-    =^  message  unsent-messages.message-pump-state
-      ~(get to unsent-messages.message-pump-state)
+    =^  message  unsent-messages.state  ~(get to unsent-messages.state)
     ::  break .message into .chunks and set as .unsent-fragments
     ::
-    =.  unsent-fragments.message-pump-state
+    =.  unsent-fragments.state
       ::
       =/  chunks  (rip 13 (jam message))
       =/  num-fragments=fragment-num  (lent chunks)
@@ -1023,12 +1034,12 @@
       |-  ^-  (list static-fragment)
       ?~  chunks  ~
       ::
-      :-  [message-num=next.message-pump-state num-fragments counter i.chunks]
+      :-  [message-num=next.state num-fragments counter i.chunks]
       ::
       $(chunks t.chunks, counter +(counter))
     ::  try to feed packets from the next message
     ::
-    =.  next.message-pump-state  +(next.message-pump-state)
+    =.  next.state  +(next.state)
     feed-packets
   ::  +run-packet-pump: call +work:packet-pump and process results
   ::
@@ -1036,7 +1047,7 @@
     |=  =packet-pump-task
     ^+  message-pump
     ::
-    =^  packet-pump-gifts  packet-pump-state.message-pump-state
+    =^  packet-pump-gifts  packet-pump-state.state
       (work:packet-pump packet-pump-task)
     ::
     (process-packet-pump-gifts packet-pump-gifts)
@@ -1084,44 +1095,52 @@
     =-  [(flop gifts) state]
     ::
     ?-  -.task
-      %hear-fragment-ack  !!
+      %hear-fragment-ack  (on-hear-fragment-ack [message-num fragment-num]:task)
       %hear-message-ack   (on-hear-message-ack message-num.task)
-      %wake               on-wake
-      %finalize           on-finalize
+      %wake               resend-lost(next-wake.state ~)
+      %finalize           set-wake
     ==
-  ::  +main: TODO
+  ::  +resend-lost: resend as many lost packets as .gauge will allow
   ::
-  ++  main
+  ++  resend-lost
     ^+  packet-pump
     ::
     =-  =.  packet-pump  core.-
         =.  live.state   live.-
         packet-pump
+    ::  acc: state to thread through traversal
     ::
-    ^+  [core=packet-pump live=live.state]
+    ::    num-slots: start with max retries; decrement on each resend
     ::
-    %-  (traverse:packet-queue _packet-pump)
+    =|  $=  acc
+        $:  num-slots=_num-retry-slots:gauge
+            core=_packet-pump
+        ==
+    ::
+    ^+  [acc live=live.state]
+    ::
+    %-  (traverse:packet-queue _acc)
     ::
     :^    live.state
         start=~
-      acc=packet-pump
-    |=  $:  core=_packet-pump
+      acc
+    |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
         ==
-    ^-  [new-val=(unit live-packet-val) stop=? _packet-pump]
+    ^-  [new-val=(unit live-packet-val) stop=? _acc]
     ::  load mutant environment
     ::
-    =.  packet-pump  core
+    =.  packet-pump  core.acc
     ::  if we can't send any more packets, we're done
     ::
-    ?.  has-slot:gauge
-      [`val stop=%.y packet-pump]
+    ?:  =(0 num-slots.acc)
+      [`val stop=%.y acc]
     ::  if the packet hasn't expired, we're done
     ::
     ?:  (gte expiry.val now.channel)
-      [`val stop=%.y packet-pump]
-    ::  packet has expired, so re-send it
+      [`val stop=%.y acc]
+    ::  packet has expired so re-send it
     ::
     =/  =static-fragment
       =>  [key val]
@@ -1129,59 +1148,130 @@
     ::
     =.  packet-pump    (give %send static-fragment)
     =.  metrics.state  (on-resent:gauge -.val)
-    ::  update $sent-packet-state and continue
+    ::  update $sent-packet-state in .val and continue
     ::
     =.  expiry.val     (next-retry-expiry:gauge -.val)
     =.  sent-date.val  now.channel
     =.  retried.val    %.y
     ::
-    [`val stop=%.n packet-pump]
-  ::  +send: try to send a list of packets, returning unsent and effects
+    [`val stop=%.n (dec num-slots.acc) packet-pump]
+  ::  +feed: try to send a list of packets, returning unsent and effects
   ::
-  ++  send
+  ++  feed
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts state]
+    ::  return unsent back to caller and reverse effects to finalize
+    ::
+    =-  [unsent (flop gifts) state]
+    ::
+    ^+  [unsent=fragments packet-pump]
+    ::  resend lost packets first, possibly adjusting congestion control
+    ::
+    =.  packet-pump  resend-lost
     ::  bite off as many fragments as we can send
     ::
     =/  num-slots  num-slots:gauge
     =/  sent       (scag num-slots fragments)
     =/  unsent     (slag num-slots fragments)
-    ::  convert $static-fragment's into +ordered-set key-val pairs
     ::
-    =/  send-queue
-      %+  gas:packet-queue  ~
+    :-  unsent
+    ^+  packet-pump
+    ::  if nothing to send, we're done
+    ::
+    ?~  sent  packet-pump
+    ::  convert $static-fragment's into +ordered-set [key val] pairs
+    ::
+    =/  send-list
       %+  turn  sent
       |=  static-fragment
-      ^-  [live-packet-key live-packet-val]
+      ^-  [key=live-packet-key val=live-packet-val]
       ::
       :-  [message-num fragment-num]
-      ::
-      :-  ^-  sent-packet-state
-          ::
-          :+  expiry=next-expiry:gauge
+      :-  :+  expiry=next-expiry:gauge
             sent-date=now.channel
           retried=%.n
-      ::
       [num-fragments fragment]
-    ::  send the packets, updating .live and .metrics
+    ::  update .live and .metrics
     ::
-    =.  live.state     (uni:packet-queue live.state send-queue)
-    =.  metrics.state  (on-sent:gauge num-slots)
-    =.  gifts          (flop (turn sent |*(* [%send +<])))
-    ::  return unsent back to caller and reverse effects to finalize
+    =.  live.state     (gas:packet-queue live.state send-list)
+    =.  metrics.state  (on-sent:gauge (lent send-list))
+    ::  TMI
     ::
-    [unsent gifts state]
+    =>  .(sent `(list static-fragment)`sent)
+    ::  emit a $packet-pump-gift for each packet to send
+    ::
+    |-  ^+  packet-pump
+    ?~  sent  packet-pump
+    =.  packet-pump  (give %send i.sent)
+    $(sent t.sent)
   ::  +on-hear-fragment-ack: handle ack on a live packet
+  ::
+  ::    Traverse .live from the head, marking packets as lost until we
+  ::    find the acked packet. Then delete the acked packet and try to
+  ::    resend lost packets.
+  ::
+  ::    If we don't find the acked packet, no-op: no mutations, effects,
+  ::    or resending of lost packets.
   ::
   ++  on-hear-fragment-ack
     |=  [=message-num =fragment-num]
     ^+  packet-pump
     ::
+    =-  ::  if no sent packet matches the ack, don't apply mutations or effects
+        ::
+        ?.  found.-
+          packet-pump
+        ::
+        =.  metrics.state  metrics.-
+        =.  live.state     live.-
+        ::
+        resend-lost
+    ::
+    ^-  $:  [found=? metrics=pump-metrics]
+            live=(tree [live-packet-key live-packet-val])
+        ==
+    ::
+    =/  acc=[found=? metrics=pump-metrics]  [%.n metrics.state]
+    ::
+    %-  (traverse:packet-queue _acc)
+    ::
+    :^    live.state
+        start=~
+      acc
+    |=  $:  acc=_acc
+            key=live-packet-key
+            val=live-packet-val
+        ==
+    ^-  [new-val=(unit live-packet-val) stop=? _acc]
+    ::
+    =/  gauge  (make-pump-gauge now.channel metrics.acc)
+    ::  is this the acked packet?
+    ::
+    ?:  =(key [message-num fragment-num])
+      ::  delete acked packet, update metrics, and stop traversal
+      ::
+      :+  new-val=~
+        stop=%.y
+      [found=%.y metrics=(on-ack:gauge -.val)]
+    ::  ack was out of order; mark expired, tell gauge, and continue
+    ::
+    :+  new-val=`val(expiry `@da`0)
+      stop=%.n
+    [found=%.n metrics=(on-skipped-packet:gauge -.val)]
+  ::  +on-hear-message-ack: apply ack to all packets from .message-num
+  ::
+  ++  on-hear-message-ack
+    |=  =message-num
+    ^+  packet-pump
+    ::
     =-  =.  metrics.state  metrics.-
         =.  live.state     live.-
-        packet-pump
+        ::
+        resend-lost
     ::
-    ^+  [metrics=metrics live=live]:state
+    ^-  $:  metrics=pump-metrics
+            live=(tree [live-packet-key live-packet-val])
+        ==
     ::
     %-  (traverse:packet-queue pump-metrics)
     ::
@@ -1195,38 +1285,45 @@
     ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
     =/  gauge  (make-pump-gauge now.channel metrics)
-    ::  is this the acked packet?
+    ::  if ack was out of order, mark expired and continue
     ::
-    ?:  =(key [message-num fragment-num])
-      ::  delete acked packet, update metrics, and stop traversal
-      ::
-      :+  new-val=~
-        stop=%.y
-      (on-ack:gauge -.val)
-    ::  ack was out of order; mark expired, tell gauge, and continue
+    ?:  (lth message-num.key message-num)
+      :+  new-val=`val(expiry `@da`0)
+        stop=%.n
+      metrics=(on-skipped-packet:gauge -.val)
+    ::  if packet was from acked message, delete it and continue
     ::
-    :+  new-val=`val(expiry `@da`0)
-      stop=%.n
-    (on-skipped-packet:gauge -.val)
-  ::  +on-hear-message-ack: apply ack to all packets from .message-num
+    ?:  =(message-num.key message-num)
+      [new-val=~ stop=%.n metrics=(on-ack:gauge -.val)]
+    ::  we've gone past the acked message; we're done
+    ::
+    [new-val=`val stop=%.y metrics]
+  ::  +set-wake: set, unset, or reset timer, emitting moves
   ::
-  ++  on-hear-message-ack
-    |=  =message-num
+  ++  set-wake
     ^+  packet-pump
+    ::  if nonempty .live, peek at head to get next wake time
     ::
-    !!
-  ::
-  ::
-  ++  on-finalize
-    ^+  packet-pump
+    =/  new-wake=(unit @da)
+      ?~  head=(peek:packet-queue live.state)
+        ~
+      `expiry.val.u.head
+    ::  no-op if no change
     ::
-    !!
-  ::
-  ::
-  ++  on-wake
-    ^+  packet-pump
+    ?:  =(new-wake next-wake.state)  packet-pump
+    ::  unset old timer if non-null
     ::
-    !!
+    =?  packet-pump  !=(~ next-wake.state)
+      =/  old  (need next-wake.state)
+      =.  next-wake.state  ~
+      (give %rest old)
+    ::  set new timer if non-null
+    ::
+    =?  packet-pump  ?=(^ new-wake)
+      =.  next-wake.state  new-wake
+      (give %wait u.new-wake)
+    ::
+    packet-pump
   --
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
@@ -1260,6 +1357,11 @@
     ?.  (gth max-live num-live)
       0
     (sub max-live num-live)
+  ::  +num-retry-slots: how many lost packets can we resend right now?
+  ::
+  ++  num-retry-slots
+    ^-  @ud
+    max-live
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
   ::    TODO: decrease .max-live
