@@ -589,17 +589,14 @@
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
-  $:  expiry=@da
-      sent-date=@da
-      retried=?
+  $:  sent-packet-state
       num-fragments=fragment-num
       =fragment
   ==
-+$  live-fragment
-  $:  sent-at=@da
-      dead-at=@da
++$  sent-packet-state
+  $:  expiry=@da
+      sent-date=@da
       retried=?
-      static-fragment
   ==
 +$  static-fragment
   $:  =message-num
@@ -1146,6 +1143,7 @@
   =|  gifts=(list packet-pump-gift)
   |%
   ++  packet-pump  .
+  ++  give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
   ::  +packet-queue: all sent fragments, ordered by sequence number
   ::
   ++  packet-queue
@@ -1179,7 +1177,49 @@
   ::
   ++  main
     ^+  packet-pump
-    !!
+    ::
+    =-  =.  packet-pump             core.-
+        =.  live.packet-pump-state  live.-
+        packet-pump
+    ::
+    ^+  [core=packet-pump live=live.packet-pump-state]
+    ::
+    %-  (traverse:packet-queue _packet-pump)
+    ::
+    :^    live.packet-pump-state
+        start=~
+      acc=packet-pump
+    |=  $:  core=_packet-pump
+            key=live-packet-key
+            val=live-packet-val
+        ==
+    ^-  [new-val=(unit live-packet-val) stop=? _packet-pump]
+    ::  load mutant environment
+    ::
+    =.  packet-pump  core
+    ::  if we can't send any more packets, we're done
+    ::
+    ?.  has-slot:gauge
+      [`val stop=%.y packet-pump]
+    ::  if the packet hasn't expired, we're done
+    ::
+    ?:  (gte expiry.val now.channel)
+      [`val stop=%.y packet-pump]
+    ::  packet has expired, so re-send it
+    ::
+    =/  =static-fragment
+      =>  [key val]
+      [message-num num-fragments fragment-num fragment]
+    ::
+    =.  packet-pump  (give %send static-fragment)
+    =.  pump-metrics.packet-pump-state  (on-sent:gauge -.val)
+    ::  update $sent-packet-state and continue
+    ::
+    =.  expiry.val     (next-expiry:gauge -.val)
+    =.  sent-date.val  now.channel
+    =.  retried.val    %.y
+    ::
+    [`val stop=%.n packet-pump]
   ::  +send: try to send a list of packets, returning unsent and effects
   ::
   ++  send
@@ -1195,11 +1235,12 @@
     ::
     =-  =.  pump-metrics.packet-pump-state  metrics.-
         =.  live.packet-pump-state     live.-
-        main
+        packet-pump
     ::
     ^+  [metrics=pump-metrics live=live]:packet-pump-state
     ::
     %-  (traverse:packet-queue pump-metrics)
+    ::
     :^    live.packet-pump-state
         start=~
       acc=pump-metrics.packet-pump-state
@@ -1217,12 +1258,12 @@
       ::
       :+  new-val=~
         stop=%.y
-      (on-ack:gauge [sent-date expiry retried]:val)
+      (on-ack:gauge -.val)
     ::  ack was out of order; mark expired, tell gauge, and continue
     ::
     :+  new-val=`val(expiry `@da`0)
       stop=%.n
-    (on-skipped-packet:gauge [sent-date expiry retried]:val)
+    (on-skipped-packet:gauge -.val)
   ::  +on-hear-message-ack: apply ack to all packets from .message-num
   ::
   ++  on-hear-message-ack
@@ -1243,25 +1284,45 @@
     ::
     !!
   --
-::
+::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
   |=  [now=@da =pump-metrics]
   |%
+  ::  +next-expiry: when should a newly sent packet time out?
+  ::
+  ++  next-expiry
+    |=  sent-packet-state
+    ^-  @da
+    ::
+    (add now ~s10)
+  ::  +has-slot: can we send a packet right now?
+  ::
+  ++  has-slot
+    ^-  ?
+    (lth [num-live max-live]:pump-metrics)
+  ::  +on-skipped-packet: adjust metrics based on a misordered ack
+  ::
+  ::    TODO: decrease .max-live
+  ::
   ++  on-skipped-packet
-    |=  [sent-date=@da expiry=@da retried=?]
-    ::
-    ::  TODO: decrease .max-live
-    ::
+    |=  sent-packet-state
     pump-metrics
+  ::  +on-ack: adjust metrics based on a packet getting acknowledged
+  ::
+  ::    TODO: adjust .rtt and .max-live
   ::
   ++  on-ack
-    |=  [sent-date=@da expiry=@da retried=?]
+    |=  sent-packet-state
     ^+  pump-metrics
     ::
-    ::  TODO: adjust .rtt and .max-live
-    ::
     pump-metrics(num-live (dec num-live.pump-metrics))
+  ::  +on-sent: adjust metrics based on packet emission
+  ::
+  ++  on-sent
+    |=  sent-packet-state
+    ^+  pump-metrics
+    pump-metrics(num-live +(num-live.pump-metrics))
   --
 ::
 ::
