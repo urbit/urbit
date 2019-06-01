@@ -776,43 +776,59 @@
     ?>  ?=(@ content.packet)
     ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
+    ::  if we don't know them, enqueue the packet to be handled later
     ::
     ?.  ?=([~ %known *] sndr-state)
       (enqueue-alien-packet lane packet)
+    ::  decrypt packet contents using symmetric-key.channel
+    ::
+    ::    If we know them, we have a $channel with them, which we've
+    ::    populated with a .symmetric-key derived from our private key
+    ::    and their public key using elliptic curve Diffie-Hellman.
     ::
     =/  =peer-state   +.u.sndr-state
     =/  =channel      [[our sndr.packet] now +.ames-state -.peer-state]
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
+    ::    We only accept packets from a ship at their known life, and to
+    ::    us at our current life.
+    ::
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
+    ::  dispatch to .rcv or .snd based on .meat tag of fragment or ack
     ::
     ?:  ?=(%& -.meat.shut-packet)
+      ::  inflate |message-still on this .bone to handle fragment
+      ::
       %+  on-hear-fragment
         %-  fall  :_  *message-still-state
         (~(get by rcv.peer-state) bone.shut-packet)
       [channel lane shut-packet]
+    ::  inflate |message-pump on this .bone to handle acknowledgment
     ::
     %+  on-hear-ack
       %-  fall  :_  *message-pump-state
       (~(get by snd.peer-state) bone.shut-packet)
     [channel lane shut-packet]
-  ::
+  ::  +on-hear-ack: handle receipt of ack on packet or message, from unix
   ::
   ++  on-hear-ack
     |=  [=message-pump-state =channel =lane =shut-packet]
     ^+  event-core
     ::
-    =/  pump  (make-message-pump message-pump-state channel)
+    =/  message-pump  (make-message-pump message-pump-state channel)
+    ::  distinguish ack on single packet from ack on whole message
     ::
     =/  task=message-pump-task
       ?>  ?=(%| -.meat.shut-packet)
       ?:  ?=(%& -.p.meat.shut-packet)
         [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
       [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
+    ::  pass ack to the |message-pump
     ::
-    =^  pump-gifts  message-pump-state  (work:pump task)
+    =^  pump-gifts  message-pump-state  (work:message-pump task)
+    ::  apply .message-pump-state mutations to permanent state
     ::
     =.  peers.ames-state
       %+  ~(jab by peers.ames-state)  her.channel
@@ -823,23 +839,25 @@
         (~(put by snd.peer-state) bone.shut-packet message-pump-state)
       [%known peer-state]
     ::
-    (process-pump-gifts pump-gifts)
+    (process-message-pump-gifts pump-gifts)
+  ::  +process-message-pump-gifts: handle |message-pump effects
   ::
-  ::
-  ++  process-pump-gifts
+  ++  process-message-pump-gifts
     |=  pump-gifts=(list message-pump-gift)
     ^+  event-core
     ::
     !!
-  ::
+  ::  +on-hear-fragment: handle receipt of message fragment, from unix
   ::
   ++  on-hear-fragment
     |=  [=message-still-state =channel =lane =shut-packet]
     ^+  event-core
     ::
     =/  still  (make-message-still message-still-state channel)
+    ::  pass fragment to the |message-still for assembly into message
     ::
     =^  still-gifts  message-still-state  (work:still %hear lane shut-packet)
+    ::  apply .message-still-state mutations to permanent state
     ::
     =.  peers.ames-state
       %+  ~(jab by peers.ames-state)  her.channel
@@ -851,36 +869,42 @@
       [%known peer-state]
     ::
     (process-still-gifts still-gifts)
-  ::
+  ::  +process-still-gifts: handle |message-still effects
   ::
   ++  process-still-gifts
     |=  still-gifts=(list message-still-gift)
     ^+  event-core
     ::
     !!
+  ::  +enqueue-alien-packet: store packet from untrusted source
+  ::
+  ::    Also requests key and life from Jael on first contact.
   ::
   ++  enqueue-alien-packet
     |=  [=lane =packet]
     ^+  event-core
     ::
     =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
+    ::  create a default $pending-requests on first contact
     ::
     =+  ^-  [already-pending=? todos=pending-requests]
         ?~  sndr-state
           [%.n *pending-requests]
         [%.y ?>(?=(%alien -.u.sndr-state) +.u.sndr-state)]
+    ::  enqueue unprocessed packet and apply to permanent state
     ::
     =.  rcv-packets.todos  [[lane packet] rcv-packets.todos]
     ::
     =.  peers.ames-state
       (~(put by peers.ames-state) sndr.packet %alien todos)
+    ::  ask jael for .sndr life and keys on first contact
     ::
     =?  event-core  !already-pending
       (emit duct %pass /alien %j %pubs sndr.packet)
     ::
     event-core
   --
-::
+::  +make-message-pump: constructor for |message-pump
 ::
 ++  make-message-pump
   |=  [=message-pump-state =channel]
@@ -906,7 +930,7 @@
         (run-packet-pump %finalize ~)
         [(flop gifts) message-pump-state]
     ==
-  ::
+  ::  +on-send: handle request to send a message
   ::
   ++  on-send
     |=  =message
@@ -916,7 +940,7 @@
       (~(put to unsent-messages.message-pump-state) message)
     ::
     message-pump
-  ::
+  ::  +on-hear-message-ack: handle message-level acknowledgment
   ::
   ++  on-hear-message-ack
     |=  [=message-num ok=? lag=@dr]
@@ -961,7 +985,7 @@
     =.  message-pump  (give %ack-message current.message-pump-state ok.u.ack)
     ::
     $(current.message-pump-state +(current.message-pump-state))
-  ::
+  ::  +feed-packets: give packets to |packet-pump until full
   ::
   ++  feed-packets
     ::  if nothing to send, no-op
@@ -990,6 +1014,7 @@
     ::
     =^  message  unsent-messages.message-pump-state
       ~(get to unsent-messages.message-pump-state)
+    ::  break .message into .chunks and set as .unsent-fragments
     ::
     =.  unsent-fragments.message-pump-state
       ::
@@ -1003,10 +1028,11 @@
       :-  [message-num=next.message-pump-state num-fragments counter i.chunks]
       ::
       $(chunks t.chunks, counter +(counter))
+    ::  try to feed packets from the next message
     ::
     =.  next.message-pump-state  +(next.message-pump-state)
     feed-packets
-  ::
+  ::  +run-packet-pump: call +work:packet-pump and process results
   ::
   ++  run-packet-pump
     |=  =packet-pump-task
@@ -1016,7 +1042,7 @@
       (work:packet-pump packet-pump-task)
     ::
     (process-packet-pump-gifts packet-pump-gifts)
-  ::
+  ::  +process-packet-pump-gifts: pass |packet-pump effects up the chain
   ::
   ++  process-packet-pump-gifts
     |=  packet-pump-gifts=(list packet-pump-gift)
@@ -1028,7 +1054,7 @@
     ::
     $(packet-pump-gifts t.packet-pump-gifts)
   --
-::
+::  +make-packet-pump: construct |packet-pump core
 ::
 ++  make-packet-pump
   |=  [state=packet-pump-state =channel]
@@ -1036,7 +1062,7 @@
   |%
   ++  packet-pump  .
   ++  give  |=(packet-pump-gift packet-pump(gifts [+< gifts]))
-  ::  +packet-queue: all sent fragments, ordered by sequence number
+  ::  +packet-queue: type for all sent fragments, ordered by sequence number
   ::
   ++  packet-queue
     %-  (ordered-map live-packet-key live-packet-val)
@@ -1065,7 +1091,7 @@
       %wake               on-wake
       %finalize           on-finalize
     ==
-  ::
+  ::  +main: TODO
   ::
   ++  main
     ^+  packet-pump
