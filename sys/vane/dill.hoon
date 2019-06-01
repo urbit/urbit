@@ -159,7 +159,7 @@
       ++  crud
         |=  {err/@tas tac/(list tank)}
         =+  ^=  wol  ^-  wall
-            :-  (trip err)
+            :-  :(weld "%" (trip err) " event failed:")
             (zing (turn (flop tac) |=(a/tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
