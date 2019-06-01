@@ -572,12 +572,12 @@
 ::    next-wake: last timer we've set, or null
 ::    live: packets in flight; sent but not yet acked
 ::    lost: packets to retry, since they timed out with no ack
-::    pump-metrics: congestion control information
+::    metrics: congestion control information
 ::
 +$  packet-pump-state
   $:  next-wake=(unit @da)
       live=(tree [live-packet-key live-packet-val])
-      =pump-metrics
+      metrics=pump-metrics
   ==
 +$  pump-metrics
   $:  num-live=@ud
@@ -1139,7 +1139,7 @@
 ::
 ::
 ++  make-packet-pump
-  |=  [=packet-pump-state =channel]
+  |=  [state=packet-pump-state =channel]
   =|  gifts=(list packet-pump-gift)
   |%
   ++  packet-pump  .
@@ -1158,14 +1158,14 @@
     (lte fragment-num.a fragment-num.b)
   ::  +gauge: inflate a |pump-gauge to track congestion control
   ::
-  ++  gauge  (make-pump-gauge now.channel pump-metrics.packet-pump-state)
+  ++  gauge  (make-pump-gauge now.channel metrics.state)
   ::  +work: handle $packet-pump-task request
   ::
   ++  work
     |=  task=packet-pump-task
-    ^+  [gifts packet-pump-state]
+    ^+  [gifts state]
     ::
-    =-  [(flop gifts) packet-pump-state]
+    =-  [(flop gifts) state]
     ::
     ?-  -.task
       %hear-fragment-ack  !!
@@ -1178,15 +1178,15 @@
   ++  main
     ^+  packet-pump
     ::
-    =-  =.  packet-pump             core.-
-        =.  live.packet-pump-state  live.-
+    =-  =.  packet-pump  core.-
+        =.  live.state   live.-
         packet-pump
     ::
-    ^+  [core=packet-pump live=live.packet-pump-state]
+    ^+  [core=packet-pump live=live.state]
     ::
     %-  (traverse:packet-queue _packet-pump)
     ::
-    :^    live.packet-pump-state
+    :^    live.state
         start=~
       acc=packet-pump
     |=  $:  core=_packet-pump
@@ -1212,7 +1212,7 @@
       [message-num num-fragments fragment-num fragment]
     ::
     =.  packet-pump  (give %send static-fragment)
-    =.  pump-metrics.packet-pump-state  (on-sent:gauge -.val)
+    =.  metrics.state  (on-sent:gauge -.val)
     ::  update $sent-packet-state and continue
     ::
     =.  expiry.val     (next-expiry:gauge -.val)
@@ -1224,7 +1224,7 @@
   ::
   ++  send
     |=  fragments=(list static-fragment)
-    ^+  [fragments gifts packet-pump-state]
+    ^+  [fragments gifts state]
     ::
     !!
   ::  +on-hear-fragment-ack: handle ack on a live packet
@@ -1233,24 +1233,24 @@
     |=  [=message-num =fragment-num]
     ^+  packet-pump
     ::
-    =-  =.  pump-metrics.packet-pump-state  metrics.-
-        =.  live.packet-pump-state     live.-
+    =-  =.  metrics.state  metrics.-
+        =.  live.state     live.-
         packet-pump
     ::
-    ^+  [metrics=pump-metrics live=live]:packet-pump-state
+    ^+  [metrics=metrics live=live]:state
     ::
     %-  (traverse:packet-queue pump-metrics)
     ::
-    :^    live.packet-pump-state
+    :^    live.state
         start=~
-      acc=pump-metrics.packet-pump-state
-    |=  $:  =pump-metrics
+      acc=metrics.state
+    |=  $:  metrics=pump-metrics
             key=live-packet-key
             val=live-packet-val
         ==
-    ^-  [new-val=(unit live-packet-val) stop=? ^pump-metrics]
+    ^-  [new-val=(unit live-packet-val) stop=? pump-metrics]
     ::
-    =/  gauge  (make-pump-gauge now.channel pump-metrics)
+    =/  gauge  (make-pump-gauge now.channel metrics)
     ::  is this the acked packet?
     ::
     ?:  =(key [message-num fragment-num])
@@ -1287,7 +1287,8 @@
 ::  +make-pump-gauge: construct |pump-gauge congestion control core
 ::
 ++  make-pump-gauge
-  |=  [now=@da =pump-metrics]
+  |=  [now=@da pump-metrics]
+  =*  metrics  +<+
   |%
   ::  +next-expiry: when should a newly sent packet time out?
   ::
@@ -1300,29 +1301,29 @@
   ::
   ++  has-slot
     ^-  ?
-    (lth [num-live max-live]:pump-metrics)
+    (lth [num-live max-live])
   ::  +on-skipped-packet: adjust metrics based on a misordered ack
   ::
   ::    TODO: decrease .max-live
   ::
   ++  on-skipped-packet
     |=  sent-packet-state
-    pump-metrics
+    metrics
   ::  +on-ack: adjust metrics based on a packet getting acknowledged
   ::
   ::    TODO: adjust .rtt and .max-live
   ::
   ++  on-ack
     |=  sent-packet-state
-    ^+  pump-metrics
+    ^-  pump-metrics
     ::
-    pump-metrics(num-live (dec num-live.pump-metrics))
+    metrics(num-live (dec num-live))
   ::  +on-sent: adjust metrics based on packet emission
   ::
   ++  on-sent
     |=  sent-packet-state
-    ^+  pump-metrics
-    pump-metrics(num-live +(num-live.pump-metrics))
+    ^-  pump-metrics
+    metrics(num-live +(num-live))
   --
 ::
 ::
