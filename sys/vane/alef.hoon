@@ -141,7 +141,6 @@
     =<  abet  =<  main
     |%
     ++  abet  [state.acc a]
-    ++  self  .
     ::  +main: main recursive loop; performs a partial inorder traversal
     ::
     ++  main
@@ -152,27 +151,26 @@
       ?:  stop.acc  .
       ::  if nonempty .start, while we're left of .start, move right
       ::
-      ?:  ?&  ?=(^ start)
-              !(compare u.start key.n.a)
-          ==
+      ?:  &(?=(^ start) !(compare u.start key.n.a))
         right
-      ::  inorder traversal: left -> node -> right, recursively
+      ::  inorder traversal: left -> node -> right, until .f sets .stop
       ::
       =>  left
-      ::  only continue rightward if we weren't told to stop
-      =<  ?.  stop.acc
-            right
-          self
-      ::  if left told us to stop, don't mutate node
-      ::
-      ?:  stop.acc  self
+      ?:  stop.acc  .
+      =>  node
+      ?:  stop.acc  .
+      right
+    ::  +node: run .f on .n.a, updating .a, .state, and .stop
+    ::
+    ++  node
+      ^+  .
       ::  run .f on node, updating .stop.acc and .state.acc
       ::
-      ?>  ?=(^ a)
-      =^  res  acc  (f state.acc n.a)
-      ::  TMI
+      =^  res  acc
+        ?>  ?=(^ a)
+        (f state.acc n.a)
+      ::  apply update to .a from .f's product
       ::
-      =>  .(a `(tree item)`a)
       =.  a
         ::  if .f requested node deletion, merge and balance .l.a and .r.a
         ::
@@ -182,7 +180,7 @@
         ?>  ?=(^ a)
         a(val.n u.res)
       ::
-      self
+      ..node
     ::  +left: recurse on the left subtree, copying mutant back into .a
     ::
     ++  left
