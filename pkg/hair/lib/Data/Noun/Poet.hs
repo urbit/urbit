@@ -1,11 +1,13 @@
 module Data.Noun.Poet where
 
 import Prelude
+import Control.Lens
 
 import Control.Applicative
 import Control.Monad
 import Data.Noun
 import Data.Noun.Atom
+import Data.Void
 import GHC.Natural
 
 import Data.List      (intercalate)
@@ -143,11 +145,52 @@ class FromNoun a where
 class ToNoun a where
   toNoun :: a -> Noun
 
+fromNoun :: FromNoun a => Noun -> Maybe a
+fromNoun n = runParser (parseNoun n) [] onFail onSuccess
+  where
+    onFail p m  = Nothing
+    onSuccess x = Just x
 
--- Atom Conversion -------------------------------------------------------------
+_Poet :: (ToNoun a, FromNoun a) => Prism' Noun a
+_Poet = prism' toNoun fromNoun
+
+
+-- Trivial Conversion ----------------------------------------------------------
+
+instance ToNoun Void where
+  toNoun = absurd
+
+instance FromNoun Void where
+  parseNoun = fail "Can't produce void"
 
 instance ToNoun Noun where
   toNoun = id
+
+instance FromNoun Noun where
+  parseNoun = pure
+
+-- Bool Conversion -------------------------------------------------------------
+
+instance ToNoun Bool where
+  toNoun True  = Atom 0
+  toNoun False = Atom 1
+
+instance FromNoun Bool where
+  parseNoun (Atom 0)   = pure True
+  parseNoun (Atom 1)   = pure False
+  parseNoun (Cell _ _) = fail "expecting a bool, but got a cell"
+  parseNoun (Atom a)   = fail ("expecting a bool, but got " <> show a)
+
+-- Atom Conversion -------------------------------------------------------------
+
+instance ToNoun Atom where
+  toNoun = Atom
+
+instance FromNoun Atom where
+  parseNoun (Cell _ _) = fail "Expecting an atom, but got a cell"
+  parseNoun (Atom a)   = pure a
+
+-- Word Conversion -------------------------------------------------------------
 
 instance ToNoun Word where
   toNoun = Atom . fromIntegral
@@ -155,11 +198,16 @@ instance ToNoun Word where
 instance ToNoun Word32 where
   toNoun = Atom . fromIntegral
 
+instance FromNoun Word32 where
+  parseNoun (Cell _ _) = fail "cell is not an atom"
+  parseNoun (Atom a)   = pure (fromIntegral a) -- TODO Overflow
+
 instance ToNoun Word64 where
   toNoun = Atom . fromIntegral
 
-instance ToNoun Atom where
-  toNoun = Atom
+instance FromNoun Word64 where
+  parseNoun (Cell _ _) = fail "cell is not an atom"
+  parseNoun (Atom a)   = pure (fromIntegral a) -- TODO Overflow
 
 instance ToNoun Natural where
   toNoun = toNoun . toAtom

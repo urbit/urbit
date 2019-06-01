@@ -1,14 +1,19 @@
 module Vere.Pier.Types where
 
 import ClassyPrelude
+import Data.Void
 import Data.Noun
 import Data.Noun.Atom
+import Data.Noun.Poet
 import Database.LMDB.Raw
 import Urbit.Time
 
 data Effect
-data Ovum
+newtype Ovum = Ovum Void
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
 newtype Mug = Mug Word32
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype Jam = Jam Atom
 

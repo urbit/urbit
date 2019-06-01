@@ -4,6 +4,8 @@ import ClassyPrelude
 import Control.Lens
 import Data.Void
 
+import System.Exit (ExitCode)
+
 import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Jam
@@ -25,29 +27,19 @@ data Worker = Worker
   }
 
 newtype Cord = Cord ByteString
-  deriving (Eq)
+  deriving newtype (Eq, Ord, Show)
 
-instance Show Cord where
-  show (Cord bs) = show bs -- TODO
-
--------------------------------------
-
-class Poet a where
-  _Poet :: Prism' Noun a
-
-toNoun' :: Poet a => a -> Noun
-toNoun' = review _Poet
-
-fromNoun' :: Poet a => Noun -> Maybe a
-fromNoun' = preview _Poet
-
-instance Poet Cord where
-  _Poet = undefined
+--------------------------------------------------------------------------------
 
 instance ToNoun Cord where
-  toNoun = undefined
+  toNoun (Cord bs) = Atom (bs ^. from (pill . pillBS))
 
--------------------------------------
+instance FromNoun Cord where
+  parseNoun n = do
+    atom <- parseNoun n
+    pure $ Cord (atom ^. pill . pillBS)
+
+--------------------------------------------------------------------------------
 
 start ::  IO Worker
 start = do
@@ -58,8 +50,10 @@ start = do
                                             std_out = CreatePipe }
   pure (Worker stdin stdout ph)
 
-kill :: Worker -> IO ()
-kill worker = undefined
+kill :: Worker -> IO ExitCode
+kill w = do
+  terminateProcess (process w)
+  waitForProcess (process w)
 
 work :: Word64 -> Jam -> Atom
 work id (Jam a) = jam $ toNoun (Cord "work", id, a)
@@ -72,22 +66,27 @@ data Tank = Tank Void
 
 type EventId = Word64
 
-data Ship = Ship Word64 -- @p
-  deriving (Eq, Show)
+newtype Ship = Ship Word64 -- @p
+  deriving newtype (Eq, Show, FromNoun, ToNoun)
 
 data ShipId = ShipId { addr :: Ship, fake :: Bool }
   deriving (Eq, Show)
 
+--------------------------------------------------------------------------------
+
 data Play
     = PlayNone                         --  ~
     | PlaySnap EventId Mug ShipId      --  [@ @ @ ?]
-  deriving Eq
+  deriving (Eq, Show)
 
--- TODO Hack
-deriving instance Show Mug
-deriving instance Eq Mug
-deriving instance Eq Ovum
-deriving instance Show Ovum
+instance ToNoun Play where
+  toNoun = \case PlayNone                  -> Atom 0
+                 PlaySnap e m (ShipId a f) -> toNoun (e, m, a, f)
+
+instance FromNoun Play where
+  parseNoun = undefined
+
+--------------------------------------------------------------------------------
 
 data Plea
     = Play Play
@@ -95,8 +94,12 @@ data Plea
     | Done EventId Mug [Ovum]
     | Stdr EventId Cord
     | Slog EventId Word32 Tank
-  deriving Eq
+  deriving (Eq, Show)
 
+instance FromNoun Plea where
+  parseNoun = undefined
+
+--------------------------------------------------------------------------------
 
 type CompletedEventId = Word64
 type NextEventId = Word64
@@ -105,39 +108,66 @@ type LogState = Maybe EventId
 
 type WorkerState = (EventId, Mug)
 
+type ReplacementEv = (EventId, Mug, Job)
+type WorkResult    = (EventId, Mug, [Ovum])
+type WorkerResp    = (Either ReplacementEv WorkResult)
 
--- boot
--- boot = do
---   sendAtom w (
+-- Exceptions ------------------------------------------------------------------
+
+data WorkerExn
+    = BadComputeId EventId WorkResult
+    | BadReplacementId EventId ReplacementEv
+    | UnexpectedPlay EventId Play
+    | BadPleaAtom Atom
+    | BadPleaNoun Noun
+  deriving (Show)
+
+instance Exception WorkerExn
+
+-- Utils -----------------------------------------------------------------------
 
 printTank :: Word32 -> Tank -> IO ()
 printTank pri t = print "tank"
 
+guardExn :: Exception e => Bool -> e -> IO ()
+guardExn ok = unless ok . throwIO
 
-assertErr = undefined
+fromJustExn :: Exception e => Maybe a -> e -> IO a
+fromJustExn Nothing  exn = throwIO exn
+fromJustExn (Just x) exn = pure x
 
-sendAndRecv :: Worker -> EventId -> Atom -> IO (Either (EventId, Mug, Job) (EventId, Mug, [Ovum]))
+--------------------------------------------------------------------------------
+
+boot :: a -> IO b
+boot = undefined
+
+sendAndRecv :: Worker -> EventId -> Atom -> IO WorkerResp
 sendAndRecv w eventId event =
   do
-    sendAtom w (work eventId (Jam event))
+    sendAtom w $ work eventId (Jam event)
     loop
   where
-    recv i m o = do
-      assertErr (i == eventId) "bad event id in sendAndRecv"
-      pure (Right (i, m, o))
-    replace i m j = do
-      assertErr (i == eventId) "bad replacement id in sendAndRecv"
+    produce :: WorkResult -> IO WorkerResp
+    produce (i, m, o) = do
+      guardExn (i /= eventId) (BadComputeId eventId (i, m, o))
+      pure $ Right (i, m, o)
+
+    replace :: ReplacementEv -> IO WorkerResp
+    replace (i, m, j) = do
+      guardExn (i /= eventId) (BadReplacementId eventId (i, m, j))
       pure (Left (i, m, j))
+
+    loop :: IO WorkerResp
     loop = recvPlea w >>= \case
-      Nothing -> error "everything is on fire. i'm sorry."
-      Just (Play p) -> error "the state is in the wrong place."
-      Just (Done i m o) -> recv i m o
-      Just (Work i m j)  -> replace i m j
-      Just (Stdr _ cord) -> print cord >> loop
-      Just (Slog _ pri t) -> (printTank pri t) >> loop
+      Play p       -> throwIO (UnexpectedPlay eventId p)
+      Done i m o   -> produce (i, m, o)
+      Work i m j   -> replace (i, m, j)
+      Stdr _ cord  -> print cord >> loop
+      Slog _ pri t -> printTank pri t >> loop
 
-
-sendBootEvent = undefined
+sendBootEvent :: Worker -> IO ()
+sendBootEvent = do
+  undefined
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
@@ -145,9 +175,7 @@ replay :: Worker -> WorkerState -> EventId
        -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
        -> IO ()
 replay w (wid, wmug) lastCommitedId getEvents = do
-  case wid of
-    1 -> sendBootEvent
-    _ -> pure ()
+  when (wid == 1) (sendBootEvent w)
 
   -- todo: we want to stream these in chunks
   events <- getEvents wid (1 + lastCommitedId - wid)
@@ -160,9 +188,9 @@ replay w (wid, wmug) lastCommitedId getEvents = do
 
 
 
-playToState :: Play -> WorkerState
-playToState = \case
-  PlayNone -> (1, Mug 0)
+playWorkerState :: Play -> WorkerState
+playWorkerState = \case
+  PlayNone       -> (1, Mug 0)
   PlaySnap e m _ -> (e, m)
 
 -- computeThread :: Worker -> IO ()
@@ -170,12 +198,11 @@ playToState = \case
 --   where
 --     start = do
 --       Just (Play p) <- recvPlea w
---       let (eventId, mug) = playToState p
+--       let (eventId, mug) = playWorkerState p
 --       -- fuck it, we'll do it liv_o
 
 --     boot :: WorkerState ->  -> IO ()
 --     boot w = do
-      
 
 --       writ <- atomically $ (getInput w)
 --       sendAtom w (work (eventId writ) (event writ))
@@ -197,6 +224,7 @@ playToState = \case
   --  [%work ] ->  (replacement)
   --  <- [%slog]
   --  <- [%done]
+--    [%work eventId mat]
 
 --  response <- recvAtom w
 
@@ -210,8 +238,7 @@ playToState = \case
 
 
 
---------------------------------------------------------------------------------
-
+-- Basic Send and Receive Operations -------------------------------------------
 
 sendAtom :: Worker -> Atom -> IO ()
 sendAtom w a = hPut (sendHandle w) (unpackAtom a)
@@ -236,12 +263,9 @@ recvAtom w = do
   bs <- recvBytes w len
   pure (packAtom bs)
 
-fromNoun :: Noun -> Maybe a
-fromNoun = const Nothing -- TODO
-
-recvPlea :: Worker -> IO (Maybe Plea)
+recvPlea :: Worker -> IO Plea
 recvPlea w = do
   a <- recvAtom w
-  pure (cue a >>= fromNoun)
-
---    [%work eventId mat]
+  n <- fromJustExn (cue a)      (BadPleaAtom a)
+  p <- fromJustExn (fromNoun n) (BadPleaNoun n)
+  pure p
