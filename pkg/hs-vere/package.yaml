@@ -2,17 +2,11 @@ name: vere
 version: 0.1.0
 license: AGPL-3.0-only
 
-library:
-  source-dirs: lib
-  ghc-options:
-    - -fwarn-incomplete-patterns
-    - -O2
-
 executables:
   test:
     main: Main.hs
     source-dirs: app/test
-    dependencies: ["vere"]
+    dependencies: ["urbit"]
     ghc-options:
       - -threaded
       - -rtsopts
@@ -23,7 +17,7 @@ executables:
   uterm:
     main: Main.hs
     source-dirs: app/uterm
-    dependencies: ["vere"]
+    dependencies: ["urbit"]
     ghc-options:
       - -threaded
       - -rtsopts
@@ -34,7 +28,7 @@ executables:
   vere:
     main: Main.hs
     source-dirs: app/vere
-    dependencies: ["vere"]
+    dependencies: ["urbit"]
     ghc-options:
       - -threaded
       - -rtsopts
@@ -44,6 +38,7 @@ executables:
 
 dependencies:
   - async
+  - urbit
   - base
   - bytestring
   - case-insensitive

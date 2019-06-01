@@ -1,0 +1,90 @@
+name: urbit
+version: 0.1.0
+license: AGPL-3.0-only
+
+library:
+  source-dirs: lib
+  ghc-options:
+    - -fwarn-incomplete-patterns
+    - -O2
+
+dependencies:
+  - async
+  - base
+  - bytestring
+  - case-insensitive
+  - classy-prelude
+  - containers
+  - data-fix
+  - extra
+  - flat
+  - ghc-prim
+  - hashtables
+  - http-client
+  - http-types
+  - integer-gmp
+  - largeword
+  - lens
+  - lmdb
+  - megaparsec
+  - mtl
+  - multimap
+  - para
+  - pretty-show
+  - primitive
+  - process
+  - QuickCheck
+  - sdl2
+  - sdl2-image
+  - semigroups
+  - smallcheck
+  - stm
+  - stm-chans
+  - tasty
+  - tasty-quickcheck
+  - tasty-th
+  - text
+  - these
+  - time
+  - transformers
+  - unordered-containers
+  - vector
+  - wai
+  - warp
+  - warp-tls
+
+default-extensions:
+  - ApplicativeDo
+  - BangPatterns
+  - BlockArguments
+  - DeriveAnyClass
+  - DeriveDataTypeable
+  - DeriveFoldable
+  - DeriveGeneric
+  - DeriveTraversable
+  - DerivingStrategies
+  - EmptyDataDecls
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - NamedFieldPuns
+  - NoImplicitPrelude
+  - NumericUnderscores
+  - OverloadedStrings
+  - PartialTypeSignatures
+  - QuasiQuotes
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - StandaloneDeriving
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeFamilies
+  - UnicodeSyntax
+  - ViewPatterns
