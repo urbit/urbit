@@ -1,6 +1,7 @@
 /-  tapp-sur=tapp
 /+  async
 |*  $:  state-type=mold
+        peek-data=mold
         in-poke-data=mold
         out-poke-data=mold
         in-peer-data=mold
@@ -12,7 +13,8 @@
 ++  sign  sign:tapp-sur
 ++  contract  contract:tapp-sur
 ++  command
-  $%  [%poke =in-poke-data]
+  $%  [%init ~]
+      [%poke =in-poke-data]
       [%peer =path]
       [%diff =dock =path =in-peer-data]
       [%take =sign]
@@ -28,6 +30,8 @@
       active=(unit eval-form:eval:tapp-async)
       app-state=state-type
   ==
++$  tapp-peek
+  [%noun ?(? (set contract))]
 ::
 ::  The form of a tapp that only handles pokes
 ::
@@ -44,7 +48,11 @@
   %-  create-tapp-poke-peer
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
+  ++  handle-peer
+    |=  *
+    ~|  %default-tapp-no-sole
+    ?<  ?=([%sole *] +<)
+    (async-fail:async-lib %no-peer-handler >path< ~)
   --
 ::
 ::  The form of a tapp that only handles pokes and peers
@@ -65,7 +73,9 @@
   |=  handler=tapp-core-poke-peer
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
+  ++  handle-init  *form:tapp-async
   ++  handle-poke  ~(handle-poke handler bowl state)
+  ++  handle-peek  _~
   ++  handle-peer  ~(handle-peer handler bowl state)
   ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
   ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
@@ -89,7 +99,9 @@
   |=  handler=tapp-core-poke-diff
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
+  ++  handle-init  *form:tapp-async
   ++  handle-poke  ~(handle-poke handler bowl state)
+  ++  handle-peek  _~
   ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
   ++  handle-diff  ~(handle-diff handler bowl state)
   ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
@@ -117,9 +129,45 @@
   |=  handler=tapp-core-poke-peer-take
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
+  ++  handle-init  *form:tapp-async
   ++  handle-poke  ~(handle-poke handler bowl state)
+  ++  handle-peek  _~
   ++  handle-peer  ~(handle-peer handler bowl state)
   ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
+  ++  handle-take  ~(handle-take handler bowl state)
+  --
+::
+::  The form of a tapp that only handles pokes, peers, diffs, and takes
+::
+++  tapp-core-poke-peer-diff-take
+  $_  ^|
+  |_  [bowl:gall state-type]
+  ++  handle-poke
+    |~  in-poke-data
+    *form:tapp-async
+  ::
+  ++  handle-peer
+    |~  path
+    *form:tapp-async
+  ::
+  ++  handle-diff
+    |~  [dock path in-peer-data]
+    *form:tapp-async
+  ::
+  ++  handle-take
+    |~  sign
+    *form:tapp-async
+  --
+::
+++  create-tapp-poke-peer-diff-take
+  |=  handler=tapp-core-poke-peer-diff-take
+  %-  create-tapp-all
+  |_  [=bowl:gall state=state-type]
+  ++  handle-init  *form:tapp-async
+  ++  handle-poke  ~(handle-poke handler bowl state)
+  ++  handle-peek  _~
+  ++  handle-peer  ~(handle-peer handler bowl state)
+  ++  handle-diff  ~(handle-diff handler bowl state)
   ++  handle-take  ~(handle-take handler bowl state)
   --
 ::
@@ -129,11 +177,22 @@
   $_  ^|
   |_  [bowl:gall state-type]
   ::
+  ::  Initialization
+  ::
+  ++  handle-init
+    *form:tapp-async
+  ::
   ::  Input
   ::
   ++  handle-poke
     |~  in-poke-data
     *form:tapp-async
+  ::
+  ::  Read
+  ::
+  ++  handle-peek
+    |~  path
+    *(unit (unit peek-data))
   ::
   ::  Subscription request
   ::
@@ -159,12 +218,18 @@
   |_  [=bowl:gall tapp-state]
   ++  this-tapp  .
   ++  prep
-    |=  old-state=*
+    |=  old-state=(unit)
     ^-  (quip move _this-tapp)
-    ~&  [%tapp-loaded dap.bowl]
-    =/  old  ((soft tapp-state) old-state)
+    ?~  old-state
+      ~&  [%tapp-init dap.bowl]
+      =.  waiting  (~(put to waiting) %init ~)
+      start-async
+    ::
+    =/  old  ((soft tapp-state) u.old-state)
     ?~  old
+      ~&  [%tapp-reset dap.bowl]
       `this-tapp
+    ~&  [%tapp-loaded dap.bowl]
     `this-tapp(+<+ u.old)
   ::
   ::  Start a command
@@ -177,6 +242,22 @@
       ~&  [%waiting-until-current-async-finishes waiting]
       `this-tapp
     start-async
+  ::
+  ::  Read from tapp state
+  ::
+  ++  peek
+    |=  =path
+    ^-  (unit (unit ?(tapp-peek peek-data)))
+    ?-  path
+        [%x %tapp %active ~]
+      [~ ~ %noun ?=(^ active)]
+    ::
+        [%x %tapp %contracts ~]
+      [~ ~ %noun ?~(active ~ contracts.u.active)]
+    ::
+        *
+      (~(handle-peek handler bowl app-state) path)
+    ==
   ::
   ::  Receive subscription request
   ::
@@ -310,6 +391,7 @@
       %-  from-form:eval:tapp-async
       ^-  form:tapp-async
       ?-  -.u.next
+        %init  ~(handle-init handler bowl app-state)
         %poke  (~(handle-poke handler bowl app-state) +.u.next)
         %peer  (~(handle-peer handler bowl app-state) +.u.next)
         %diff  (~(handle-diff handler bowl app-state) +.u.next)

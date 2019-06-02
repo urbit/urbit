@@ -8,13 +8,14 @@
   +$  state
     $:  subscription=(unit subscription-state)
     ==
+  +$  peek-data  _!!
   +$  in-poke-data   [%noun =cord]
   +$  out-poke-data  [%noun =cord]
   +$  out-peer-data  ~
   +$  in-peer-data
     $%  [%comments comments=(list tape)]
     ==
-  ++  tapp   (^tapp state in-poke-data out-poke-data in-peer-data out-peer-data)
+  ++  tapp   (^tapp state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
 =,  async=async:tapp
