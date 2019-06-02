@@ -439,9 +439,9 @@
         =/  =routes  [disclosing=~ attributing=our]
         [%high routes]
       ::
-      =/  initialised  (ap-abed:ap term privilege)
-      =/  peeped  (ap-reinstall:initialised result-vase)
-      ap-abet:peeped
+      =/  app  (ap-abed:ap term privilege)
+      =.  app  (ap-reinstall:app result-vase)
+      ap-abet:app
     ::  first install of the app
     ::
     ?.  (mo-contains-valid-bowl result-vase)
@@ -455,21 +455,21 @@
     =/  wag
       =/  =routes  [disclosing=~ attributing=our]
       =/  =privilege  [%high routes]
-      =/  initialised  (ap-abed:ap term privilege)
-      (ap-prep:initialised ~)
+      =/  app  (ap-abed:ap term privilege)
+      (ap-prep:app ~)
     ::
     =/  maybe-tang  -.wag
-    =/  new  +.wag
+    =/  app  +.wag
     ::
     ?^  maybe-tang
       =.  mo-state  old
       (mo-give %onto %.n u.maybe-tang)
     ::
-    =.  mo-state  ap-abet:new
+    =.  mo-state  ap-abet:app
+    =.  mo-state  (mo-clear-queue term)
     ::
-    =/  cleared  (mo-clear-queue term)
     =/  =suss  [term %boot now]
-    (mo-give:cleared %onto [%.y suss])
+    (mo-give %onto [%.y suss])
   ::
   ::  +mo-new-agent: create a new agent and add it to state.
   ::
@@ -492,10 +492,7 @@
       ==
     ::
     =/  running  (~(put by running.apps.gall) term agent)
-    ::
-    %_  mo-state
-      running.apps.gall  running
-    ==
+    mo-state(running.apps.gall running)
   ::
   :: +mo-handle-foreign-request: handle a foreign request.
   ::
@@ -734,12 +731,13 @@
     =.  mo-state  (mo-give %mack ~)
     ::
     =/  duct  (mo-retrieve-bone him num)
-    =/  initialised  (mo-abed duct)
+    ::
+    =.  mo-state  (mo-abed duct)
     ::
     =/  =cage  (result-to-cage:ford build-result)
     =/  move  [%unto [%diff cage]]
     ::
-    (mo-give:initialised move)
+    (mo-give move)
   ::
   ::  +mo-handle-sys-req: inbound request.
   ::
@@ -880,7 +878,7 @@
       ~&  [%mo-handle-use-bad-path path]
       !!
     ::
-    =/  initialised
+    =/  app
       =/  =term  i.path
       =/  =privilege
         =/  =ship  (slav %p i.t.path)
@@ -895,8 +893,8 @@
         %inn
         ::
       =/  =vase  (slot 3 hin)
-      =/  taken  (ap-generic-take:initialised t.t.t.path vase)
-      ap-abet:taken
+      =.  app  (ap-generic-take:app t.t.t.path vase)
+      ap-abet:app
         ::
         %cay
         ::
@@ -905,11 +903,11 @@
         ~&  [%mo-handle-use-weird-path path]
         mo-state
       ::
-      =/  taken
+      =.  app
         =/  =cage  +>.sign-arvo
-        (ap-unwrap-take:initialised %sigh t.t.t.path cage)
+        (ap-unwrap-take:app %sigh t.t.t.path cage)
       ::
-      ap-abet:taken
+      ap-abet:app
         ::
         %out
         ::
@@ -918,11 +916,11 @@
         ~&  [%mo-handle-use-weird-path path]
         mo-state
       ::
-      =/  taken
+      =.  app
         =/  =internal-gift  +>.sign-arvo
-        (ap-specific-take:initialised t.t.t.path internal-gift)
+        (ap-specific-take:app t.t.t.path internal-gift)
       ::
-      ap-abet:taken
+      ap-abet:app
     ==
   ::
   ::  +mo-clear-queue: clear blocked tasks.
@@ -983,8 +981,8 @@
     |=  [dude=term =privilege =term =path]
     ^-  (unit (unit cage))
     ::
-    =/  initialised  (ap-abed:ap dude privilege)
-    (ap-peek:initialised term path)
+    =/  app  (ap-abed:ap dude privilege)
+    (ap-peek:app term path)
   ::
   ::  +mo-apply: apply action.
   ::
@@ -1014,9 +1012,9 @@
       =/  err  (some p.agent-action)
       (mo-give %unto %reap err)
     ::
-    =/  initialised  (ap-abed:ap term privilege)
-    =/  applied  (ap-apply:initialised agent-action)
-    ap-abet:applied
+    =/  app  (ap-abed:ap term privilege)
+    =.  app  (ap-apply:app agent-action)
+    ap-abet:app
   ::
   ::  +mo-handle-local: handle locally.
   ::
@@ -1369,8 +1367,11 @@
       =/  slammed
         =/  index  p.u.maybe-arm
         =/  term  q.u.maybe-arm
+        ~&  [%slam-index-is index]
+        ~&  [%slam-term-is term]
         =/  =vase
           =/  =path  [term tyl]
+          ~&  [%slam-path-is path]
           !>  (slag index path)
         (ap-slam term p.arm vase)
       ::
@@ -1456,8 +1457,8 @@
           =/  why  "diff: no {<[p.cage rest]>}"
           (ap-tang why)
         ::
-        =/  lame  (ap-lame %diff tang)
-        (ap-update-subscription:lame target)
+        =.  ap-state  (ap-lame %diff tang)
+        (ap-update-subscription target)
       ::
       =/  arm  u.maybe-arm
       ::
@@ -1472,8 +1473,8 @@
       =^  called  ap-state  (ap-call q.arm vase)
       ::
       ?^  called
-        =/  lame  (ap-lame q.arm u.called)
-        (ap-update-subscription:lame %.n ship path)
+        =.  ap-state  (ap-lame q.arm u.called)
+        (ap-update-subscription %.n ship path)
       (ap-update-subscription %.y ship path)
     ::
     ::  +ap-cage: cage to tagged vase.
@@ -1499,9 +1500,9 @@
         =/  =internal-note  [%send ship -.path %pump ~]
         (ap-pass way internal-note)
       ::
-      =/  give  (ap-give %quit ~)
+      =.  ap-state  (ap-give %quit ~)
       =/  =internal-note  [%send ship -.path %pull ~]
-      (ap-pass:give way internal-note)
+      (ap-pass way internal-note)
     ::
     ::  +ap-dequeue: drop from queue.
     ::
@@ -2389,7 +2390,8 @@
     ++  ap-kill
       ^+  ap-state
       ::
-      (ap-give:ap-load-delete %quit ~)
+      =>  ap-load-delete
+      (ap-give %quit ~)
     ::
     ::  +ap-non-diff-take: non-diff gall take.
     ::
