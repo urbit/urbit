@@ -118,9 +118,9 @@
       :: state version
       ::
       %0
-      :: apps by ship
+      :: agents by ship
       ::
-      =apps
+      =agents
   ==
 ::
 ::  +subscribers: subscriber data.
@@ -138,9 +138,9 @@
       meter=(map bone @ud)
   ==
 ::
-::  +apps: ship state.
+::  +agents: ship state.
 ::
-++  apps
+++  agents
   $:
       :: (deprecated)
       ::
@@ -348,9 +348,6 @@
   ::
   ::  +mo-boot: pass a %build move to %ford.
   ::
-  ::    The move is passed along a /sys/core path suffixed by app, ship, desk,
-  ::    and date information.
-  ::
   ++  mo-boot
     |=  [=term =ship =desk]
     ^+  mo-state
@@ -423,15 +420,15 @@
     =/  result-vase  q.cage
     ::
     =/  app-data=(unit agent)
-      (~(get by running.apps.gall) term)
+      (~(get by running.agents.gall) term)
     ::
     ?^  app-data
       ::  update the path
       ::
       =/  updated  u.app-data(beak beak)
       ::
-      =.  running.apps.gall
-        (~(put by running.apps.gall) term updated)
+      =.  running.agents.gall
+        (~(put by running.agents.gall) term updated)
       ::
       ::  magic update string from the old +mo-boon, "complete old boot"
       ::
@@ -491,8 +488,8 @@
         ducts           ducts
       ==
     ::
-    =/  running  (~(put by running.apps.gall) term agent)
-    mo-state(running.apps.gall running)
+    =/  running  (~(put by running.agents.gall) term agent)
+    mo-state(running.agents.gall running)
   ::
   :: +mo-handle-foreign-request: handle a foreign request.
   ::
@@ -574,7 +571,7 @@
     ^-  [bone _mo-state]
     ::
     =/  =foreign
-      =/  existing  (~(get by contacts.apps.gall) ship)
+      =/  existing  (~(get by contacts.agents.gall) ship)
       (fall existing [1 ~ ~])
     ::
     =/  existing  (~(get by index-map.foreign) hen)
@@ -591,11 +588,11 @@
           index-map  (~(put by index-map.foreign) hen index)
           duct-map   (~(put by duct-map.foreign) index hen)
         ==
-      (~(put by contacts.apps.gall) ship new-foreign)
+      (~(put by contacts.agents.gall) ship new-foreign)
     ::
     =/  next
       %_  mo-state
-        contacts.apps.gall  contacts
+        contacts.agents.gall  contacts
       ==
     ::
     [index next]
@@ -606,7 +603,7 @@
     |=  [=ship index=@ud]
     ^-  duct
     ::
-    =/  =foreign  (~(got by contacts.apps.gall) ship)
+    =/  =foreign  (~(got by contacts.agents.gall) ship)
     (~(got by duct-map.foreign) index)
   ::
   ::  +mo-handle-sys-core: receive a core.
@@ -929,10 +926,10 @@
     |=  =term
     ^+  mo-state
     ::
-    ?.  (~(has by running.apps.gall) term)
+    ?.  (~(has by running.agents.gall) term)
       mo-state
     ::
-    =/  maybe-blocked  (~(get by waiting.apps.gall) term)
+    =/  maybe-blocked  (~(get by waiting.agents.gall) term)
     ::
     ?~  maybe-blocked
       mo-state
@@ -942,9 +939,9 @@
     |-  ^+  mo-state
     ::
     ?:  =(~ blocked)
-      =/  waiting   (~(del by waiting.apps.gall) term)
+      =/  waiting   (~(del by waiting.agents.gall) term)
       %_  mo-state
-        waiting.apps.gall  waiting
+        waiting.agents.gall  waiting
       ==
     ::
     =^  task  blocked  [p q]:~(get to blocked)
@@ -966,7 +963,7 @@
   ++  mo-beak
     |=  =term
     ^-  beak
-    ?~  app-data=(~(get by running.apps.gall) term)
+    ?~  app-data=(~(get by running.agents.gall) term)
       ::
       ::  XX this fallback is necessary, as .term could be either the source
       ::  or the destination app. ie, it might not exist locally ...
@@ -1029,21 +1026,21 @@
     =/  =term  p.internal-task
     =/  =agent-action  q.internal-task
     ::
-    =/  is-running  (~(has by running.apps.gall) term)
-    =/  is-waiting  (~(has by waiting.apps.gall) term)
+    =/  is-running  (~(has by running.agents.gall) term)
+    =/  is-waiting  (~(has by waiting.agents.gall) term)
     ::
     ?:  |(!is-running is-waiting)
       ::
       =/  =blocked
-        =/  waiting  (~(get by waiting.apps.gall) term)
+        =/  waiting  (~(get by waiting.agents.gall) term)
         =/  tasks  (fall waiting *blocked)
         =/  task  [hen privilege agent-action]
         (~(put to tasks) task)
       ::
-      =/  waiting  (~(put by waiting.apps.gall) term blocked)
+      =/  waiting  (~(put by waiting.agents.gall) term blocked)
       ::
       %_  mo-state
-        waiting.apps.gall  waiting
+        waiting.agents.gall  waiting
       ==
     ::
     (mo-apply term privilege agent-action)
@@ -1140,11 +1137,11 @@
   ++  ap
     ~%  %gall-ap  +>  ~
     ::
-    |_  $:  dap=term
-            pry=privilege
-            ost=bone
-            zip=(list internal-move)
-            dub=(list (each suss tang))
+    |_  $:  agent-name=term
+            agent-privilege=privilege
+            agent-bone=bone
+            agent-moves=(list internal-move)
+            agent-config=(list (each suss tang))
             sat=agent
         ==
     ::
@@ -1158,7 +1155,7 @@
       ^+  ap-state
       ::
       =/  =agent
-        =/  running  (~(got by running.apps.gall) term)
+        =/  running  (~(got by running.agents.gall) term)
         =/  =stats
           :+  +(change.stats.running)
             (shaz (mix (add term change.stats.running) eny))
@@ -1167,12 +1164,12 @@
       ::
       =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
       ::
-      =.  dap  term
-      =.  pry  privilege
+      =.  agent-name  term
+      =.  agent-privilege  privilege
       =.  sat  agent
       ::
       ?^  maybe-bone
-        ap-state(ost u.maybe-bone)
+        ap-state(agent-bone u.maybe-bone)
       ::
       =/  =ducts
         :+  +(bone.ducts.agent)
@@ -1180,7 +1177,7 @@
         (~(put by duct-map.ducts.agent) bone.ducts.agent hen)
       ::
       %_  ap-state
-        ost        bone.ducts.agent
+        agent-bone        bone.ducts.agent
         ducts.sat  ducts
       ==
     ::
@@ -1191,16 +1188,16 @@
       ::
       =>  ap-track-queue
       ::
-      =/  running  (~(put by running.apps.gall) dap sat)
+      =/  running  (~(put by running.agents.gall) agent-name sat)
       ::
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
-        =/  from-internal  (turn zip ap-from-internal)
-        =/  from-suss  (turn dub giver)
+        =/  from-internal  (turn agent-moves ap-from-internal)
+        =/  from-suss  (turn agent-config giver)
         :(weld from-internal from-suss moves)
       ::
       %_  mo-state
-        running.apps.gall  running
+        running.agents.gall  running
         moves              moves
       ==
     ::
@@ -1209,7 +1206,7 @@
     ++  ap-track-queue
       ^+  ap-state
       ::
-      =/  internal-moves  zip
+      =/  internal-moves  agent-moves
       =/  bones  *(set bone)
       ::
       |-  ^+  ap-state
@@ -1219,7 +1216,7 @@
           $(internal-moves t.internal-moves)
         ::
         =/  =internal-move  i.internal-moves
-        =^  filled  ap-state  ap-enqueue(ost bone.internal-move)
+        =^  filled  ap-state  ap-enqueue(agent-bone bone.internal-move)
         ::
         =/  new-bones
           ?:  filled
@@ -1235,15 +1232,15 @@
       ?~  boned
         ap-state
       ::
-      =>  $(boned t.boned, ost i.boned)
+      =>  $(boned t.boned, agent-bone i.boned)
       ::
-      =/  tib  (~(get by incoming.subscribers.sat) ost)
+      =/  tib  (~(get by incoming.subscribers.sat) agent-bone)
       ::
       ?~  tib
-        ~&  [%ap-track-queue-bad-bone dap ost]
+        ~&  [%ap-track-queue-bad-bone agent-name agent-bone]
         ap-state
       ::
-      ap-kill(attributing.routes.pry p.u.tib)
+      ap-kill(attributing.routes.agent-privilege p.u.tib)
     ::
     ::  +ap-from-internal: internal move to move.
     ::
@@ -1277,7 +1274,13 @@
           ?:  =(mark p.cage)
             [%give %unto internal-gift]
           ::
-          =/  =path  /sys/pel/[dap]
+          =/  =path  /sys/pel/[agent-name]
+          ::
+          =/  =note-arvo
+            =/  =schematic:ford
+              =/  =beak  (mo-beak agent-name)
+              [%cast [p q]:beak mark [%$ cage]]
+            [%f %build live=%.n schematic]
           ::
           [%pass path note-arvo]
             ::
@@ -1286,7 +1289,7 @@
           =/  =path  p.move.internal-move
           =/  =internal-note  q.move.internal-move
           ::
-          =/  use-path  [%use dap path]
+          =/  use-path  [%use agent-name path]
           ::
           =/  =note-arvo
             ?-  task.internal-note
@@ -1509,10 +1512,10 @@
     ++  ap-dequeue
       ^+  ap-state
       ::
-      ?.  (~(has by incoming.subscribers.sat) ost)
+      ?.  (~(has by incoming.subscribers.sat) agent-bone)
         ap-state
       ::
-      =/  level  (~(get by meter.subscribers.sat) ost)
+      =/  level  (~(get by meter.subscribers.sat) agent-bone)
       ::
       ?:  |(?=(~ level) =(0 u.level))
         ap-state
@@ -1520,12 +1523,12 @@
       =.  u.level  (dec u.level)
       ::
       ?:  =(0 u.level)
-        =/  deleted  (~(del by meter.subscribers.sat) ost)
+        =/  deleted  (~(del by meter.subscribers.sat) agent-bone)
         %_  ap-state
           meter.subscribers.sat  deleted
         ==
       ::
-      =/  dropped  (~(put by meter.subscribers.sat) ost u.level)
+      =/  dropped  (~(put by meter.subscribers.sat) agent-bone u.level)
       %_  ap-state
         meter.subscribers.sat  dropped
       ==
@@ -1572,23 +1575,23 @@
     ++  ap-enqueue
       ^-  [? _ap-state]
       ::
-      =/  meter  (~(gut by meter.subscribers.sat) ost 0)
+      =/  meter  (~(gut by meter.subscribers.sat) agent-bone 0)
       =/  subscriber=(unit (pair ship path))
-        (~(get by incoming.subscribers.sat) ost)
+        (~(get by incoming.subscribers.sat) agent-bone)
       ::
-      =/  incoming  (~(get by incoming.subscribers.sat) ost)
-      =/  duct  (~(get by duct-map.ducts.sat) ost)
+      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
+      =/  duct  (~(get by duct-map.ducts.sat) agent-bone)
       ::
       ?:  ?&  =(20 meter)
               ?|  ?=(~ subscriber)
                   !=(our p.u.subscriber)
               ==
           ==
-        ~&  [%gall-pulling-20 ost incoming duct]
+        ~&  [%gall-pulling-20 agent-bone incoming duct]
         [%.n ap-state]
       ::
       =/  next
-        =/  meter  (~(put by meter.subscribers.sat) ost +(meter))
+        =/  meter  (~(put by meter.subscribers.sat) agent-bone +(meter))
         %_  ap-state
           meter.subscribers.sat  meter
         ==
@@ -1644,10 +1647,10 @@
       ::
       =/  internal-moves
         =/  move  [%give internal-gift]
-        =/  =internal-move  [ost move]
-        [internal-move zip]
+        =/  =internal-move  [agent-bone move]
+        [internal-move agent-moves]
       ::
-      ap-state(zip internal-moves)
+      ap-state(agent-moves internal-moves)
     ::
     ::  +ap-construct-bowl: set up bowl.
     ::
@@ -1658,13 +1661,13 @@
           +12.q.running-state.sat
         ^-   bowl
         :*  :*  our                               ::  host
-                attributing.routes.pry            ::  guest
-                dap                               ::  agent
+                attributing.routes.agent-privilege            ::  guest
+                agent-name                               ::  agent
             ==                                    ::
             :*  wex=~                             ::  outgoing
                 sup=incoming.subscribers.sat      ::  incoming
             ==                                    ::
-            :*  ost=ost                           ::  cause
+            :*  agent-bone=agent-bone                           ::  cause
                 act=change.stats.sat              ::  tick
                 eny=eny.stats.sat                 ::  nonce
                 now=time.stats.sat                ::  time
@@ -1844,7 +1847,7 @@
       =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 vase)
       ::
       =/  =internal-move
-        =/  =path  [(scot %p attributing.routes.pry) %inn u.pax]
+        =/  =path  [(scot %p attributing.routes.agent-privilege) %inn u.pax]
         =/  vase  (ap-atomic-vase %tas noun)
         =/  combined  (slop vase at-slot)
         =/  =internal-note  [%meta vane combined]
@@ -2072,11 +2075,11 @@
       ::
       =/  =internal-move
         =/  move  [%pass path internal-note]
-        [ost move]
+        [agent-bone move]
       ::
-      =/  internal-moves  [internal-move zip]
+      =/  internal-moves  [internal-move agent-moves]
       ::
-      ap-state(zip internal-moves)
+      ap-state(agent-moves internal-moves)
     ::
     ::  +ap-reinstall: reinstall.
     ::
@@ -2102,7 +2105,7 @@
       |=  [=mark =path]
       ^+  ap-state
       ::
-      =.  required-trans.sat  (~(put by required-trans.sat) ost mark)
+      =.  required-trans.sat  (~(put by required-trans.sat) agent-bone mark)
       ::
       (ap-peer path)
     ::
@@ -2113,10 +2116,10 @@
       |=  pax=path
       ^+  ap-state
       ::
-      =/  incoming  [attributing.routes.pry pax]
+      =/  incoming  [attributing.routes.agent-privilege pax]
       ::
       =.  incoming.subscribers.sat
-        (~(put by incoming.subscribers.sat) ost incoming)
+        (~(put by incoming.subscribers.sat) agent-bone incoming)
       ::
       =^  maybe-arm  ap-state  (ap-find-arm %peer pax)
       ::
@@ -2125,16 +2128,16 @@
       ::
       =/  arm  u.maybe-arm
       =/  =vase  !>((slag p.arm pax))
-      =/  old  zip
+      =/  old  agent-moves
       ::
-      =.  zip  ~
+      =.  agent-moves  ~
       =^  maybe-tang  ap-state  (ap-call q.arm vase)
       ::
       =/  internal-moves=(list internal-move)
-        =/  move  [ost %give %reap maybe-tang]
+        =/  move  [agent-bone %give %reap maybe-tang]
         [move old]
       ::
-      =.  zip  (weld zip internal-moves)
+      =.  agent-moves  (weld agent-moves internal-moves)
       ::
       ?^  maybe-tang
         ap-silent-delete
@@ -2175,7 +2178,7 @@
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       ::
       ?~  maybe-arm
-        =/  tang  [>%ap-lame dap term< (turn tang form)]
+        =/  tang  [>%ap-lame agent-name term< (turn tang form)]
         ~>  %slog.`rose+["  " "[" "]"]^(flop tang)
         ap-state
       ::
@@ -2269,7 +2272,7 @@
       ::
       ?-  -.internal-gift
         %coup  (ap-non-diff-take %coup +.path (some !>(p.internal-gift)))
-        %diff  (ap-diff attributing.routes.pry path p.internal-gift)
+        %diff  (ap-diff attributing.routes.agent-privilege path p.internal-gift)
         %quit  (ap-non-diff-take %quit +.path ~)
         %reap  (ap-non-diff-take %reap +.path (some !>(p.internal-gift)))
         %http-response  !!
@@ -2289,21 +2292,21 @@
          :: new app might mean new marks
          *misvale-data
       ::
-      =/  new-dub
+      =/  new-agent-config
         =/  =term  ?~(maybe-vase %boot %bump)
         ::
         =/  possibly-suss
           ?~  maybe-tang
-            =/  =suss  [dap term now]
+            =/  =suss  [agent-name term now]
             [%.y suss]
           [%.n u.maybe-tang]
         ::
-        [possibly-suss dub]
+        [possibly-suss agent-config]
       ::
       =/  next
         %=  ap-state
           misvale.sat     new-misvale-data
-          dub             new-dub
+          agent-config             new-agent-config
           arm-cache.sat   ~
         ==
       ::
@@ -2347,13 +2350,13 @@
     ++  ap-silent-delete
       ^+  ap-state
       ::
-      =/  incoming  (~(get by incoming.subscribers.sat) ost)
+      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
       ?~  incoming
         ap-state
       ::
       %_  ap-state
-        incoming.subscribers.sat  (~(del by incoming.subscribers.sat) ost)
-        meter.subscribers.sat     (~(del by meter.subscribers.sat) ost)
+        incoming.subscribers.sat  (~(del by incoming.subscribers.sat) agent-bone)
+        meter.subscribers.sat     (~(del by meter.subscribers.sat) agent-bone)
       ==
     ::
     ::  +ap-load-delete: load delete.
@@ -2361,14 +2364,14 @@
     ++  ap-load-delete
       ^+  ap-state
       ::
-      =/  maybe-incoming  (~(get by incoming.subscribers.sat) ost)
+      =/  maybe-incoming  (~(get by incoming.subscribers.sat) agent-bone)
       ?~  maybe-incoming
         ap-state
       ::
       =/  incoming  u.maybe-incoming
       ::
-      =:  incoming.subscribers.sat  (~(del by incoming.subscribers.sat) ost)
-          meter.subscribers.sat     (~(del by meter.subscribers.sat) ost)
+      =:  incoming.subscribers.sat  (~(del by incoming.subscribers.sat) agent-bone)
+          meter.subscribers.sat     (~(del by meter.subscribers.sat) agent-bone)
       ==
       ::
       =^  maybe-arm  ap-state  (ap-find-arm %pull q.incoming)
@@ -2479,7 +2482,7 @@
       ::
       =/  next
         %_  ap-state
-          zip                (weld (flop internal-moves) zip)
+          agent-moves                (weld (flop internal-moves) agent-moves)
           running-state.sat  p.possibly-vase
         ==
       ::
@@ -2554,7 +2557,7 @@
       |=  =tape
       ^-  tang
       ::
-      =/  =tank  [%leaf (weld "gall: {<dap>}: " tape)]
+      =/  =tank  [%leaf (weld "gall: {<agent-name>}: " tape)]
       [tank ~]
     ::
     ::  +ap-atomic-vase: atomic vase.
@@ -2660,7 +2663,7 @@
       ::
       %init
       ::
-    =/  payload  gall-payload(system-duct.apps.gall duct)
+    =/  payload  gall-payload(system-duct.agents.gall duct)
     [~ payload]
       ::
       %sunk
@@ -2678,15 +2681,15 @@
     =/  =noun  r.task
     ::
     ?>  ?=([?(%ge %gh) @ ~] path)
-    =/  dap  i.t.path
+    =/  agent-name  i.t.path
     ::
     ?:  ?=(%ge i.path)
       =/  mes  ;;((pair @ud forward-ames) noun)
-      =>  (mo-handle-forward:initialised ship dap mes)
+      =>  (mo-handle-forward:initialised ship agent-name mes)
       mo-abet
     ::
     =/  mes  ;;((pair @ud reverse-ames) noun)
-    =>  (mo-handle-backward:initialised ship dap mes)
+    =>  (mo-handle-backward:initialised ship agent-name mes)
     mo-abet
   ::
       %wash
@@ -2696,16 +2699,16 @@
       %wegh
       ::
     =/  waiting
-      =/  queued  (~(run by waiting.apps.gall) |=(blocked [%.y +<]))
+      =/  queued  (~(run by waiting.agents.gall) |=(blocked [%.y +<]))
       (sort ~(tap by queued) aor)
     ::
     =/  running
-      =/  active  (~(run by running.apps.gall) |=(agent [%.y +<]))
+      =/  active  (~(run by running.agents.gall) |=(agent [%.y +<]))
       (sort ~(tap by active) aor)
     ::
     =/  =mass
       :+  %gall  %.n
-      :~  [%foreign %.y contacts.apps.gall]
+      :~  [%foreign %.y contacts.agents.gall]
           [%blocked %.n waiting]
           [%active %.n running]
           [%dot %.y gall]
@@ -2744,7 +2747,7 @@
           =([%$ %da now] coin)
           =(our ship)
       ==
-    =/  =vase  !>((~(has by running.apps.gall) desk))
+    =/  =vase  !>((~(has by running.agents.gall) desk))
     =/  =cage  [%noun vase]
     (some (some cage))
   ::
@@ -2754,7 +2757,7 @@
   ?.  =([%$ %da now] coin)
     ~
   ::
-  ?.  (~(has by running.apps.gall) desk)
+  ?.  (~(has by running.agents.gall) desk)
     (some ~)
   ::
   ?.  ?=(^ path)
