@@ -804,6 +804,47 @@
 ::
 ::  <eliding / getting the /ames %forked message>
 ::
+::  ==========
+::
+::  Example 4: Program upgrading
+::
+::  [Step 1]: Nuevo is a crash-only system. This means programs aren't shut
+::  down, even in non-error situations. They are terminated. When we upgrade a
+::  program, we unceremoniously kill our process.
+::
+::  {process:/gall}
+::  [%recv sent-over=[%pipe 3 [%process /ford 4] [%process /ford 4]]
+::         message=[~ [%built <new program vase>]]]
+::  -->  Gall goes to kill the currently existing child process
+::  -->  :~  :: We just kill :ourapp.
+::           ::
+::           [%terminate /gall/ourapp]
+::       ==
+::
+::  [Step 2]: /gall/ourapp receives the termination call and doesn't event pass
+::  it to the program being run. Any nuevo process is safely terminatable at
+::  any time.
+::
+::  {process:/gall/ourapp}
+::  [%terminate ~]
+::  -->  :~  ::  Nuevo automatically closes handles and does the other stuff
+::           ::  from Example 3.
+::           ::
+::           [%close ...]
+::           ::  It also terminates itself
+::           ::
+::           [%terminated ~ {[/gall/ourapp <state vase] ~ ~}]
+::       ==
+::  -->  (vere participates in terminating /gall/ourapp)
+::
+::  [Step 3]: /gall receives word that /gall/ourapp was terminated and responds
+::  by restarting it with the new program vase.
+::
+::  {process:/gall}
+::  [%terminated ~ /gall/ourapp {[/gall/ourapp ...] ~ ~}]
+::  -->  (This has to dip into program logic; this is what gall does.)
+::  -->  :~  [%fork ourapp %.y program=<new program vase> state=<state map>]
+::           ==
 ::
 ::::::::
 ::
