@@ -33,6 +33,32 @@
 +$  tapp-peek
   [%noun ?(? (set contract))]
 ::
+::  Default handlers for all comands
+::
+++  default-tapp
+  ^-  tapp-core-all
+  |_  [bowl:gall state-type]
+  ++  handle-init
+    *form:tapp-async
+  ::
+  ++  handle-poke
+    |=(* (async-fail:async-lib %no-poke-handler ~))
+  ::
+  ++  handle-peek  _~
+  ::
+  ++  handle-peer
+    |=  =path
+    ~|  %default-tapp-no-sole
+    ?<  ?=([%sole *] path)
+    (async-fail:async-lib %no-peer-handler >path< ~)
+  ::
+  ++  handle-diff
+    |=(* (async-fail:async-lib %no-diff-handler ~))
+  ::
+  ++  handle-take
+    |=(* (async-fail:async-lib %no-take-handler ~))
+  --
+::
 ::  The form of a tapp that only handles pokes
 ::
 ++  tapp-core-poke
@@ -48,11 +74,7 @@
   %-  create-tapp-poke-peer
   |_  [=bowl:gall state=state-type]
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peer
-    |=  *
-    ~|  %default-tapp-no-sole
-    ?<  ?=([%sole *] +<)
-    (async-fail:async-lib %no-peer-handler >path< ~)
+  ++  handle-peer  handle-peer:default-tapp
   --
 ::
 ::  The form of a tapp that only handles pokes and peers
@@ -73,12 +95,12 @@
   |=  handler=tapp-core-poke-peer
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
-  ++  handle-init  *form:tapp-async
+  ++  handle-init  handle-init:default-tapp
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peek  _~
+  ++  handle-peek  handle-peek:default-tapp
   ++  handle-peer  ~(handle-peer handler bowl state)
-  ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
-  ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
+  ++  handle-diff  handle-diff:default-tapp
+  ++  handle-take  handle-take:default-tapp
   --
 ::
 ::  The form of a tapp that only handles pokes and diffs
@@ -99,12 +121,12 @@
   |=  handler=tapp-core-poke-diff
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
-  ++  handle-init  *form:tapp-async
+  ++  handle-init  handle-init:default-tapp
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peek  _~
-  ++  handle-peer  |=(* (async-fail:async-lib %no-peer-handler >path< ~))
+  ++  handle-peek  handle-peek:default-tapp
+  ++  handle-peer  handle-peer:default-tapp
   ++  handle-diff  ~(handle-diff handler bowl state)
-  ++  handle-take  |=(* (async-fail:async-lib %no-take-handler >path< ~))
+  ++  handle-take  handle-take:default-tapp
   --
 ::
 ::  The form of a tapp that only handles pokes, peers, and takes
@@ -129,11 +151,11 @@
   |=  handler=tapp-core-poke-peer-take
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
-  ++  handle-init  *form:tapp-async
+  ++  handle-init  handle-init:default-tapp
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peek  _~
+  ++  handle-peek  handle-peek:default-tapp
   ++  handle-peer  ~(handle-peer handler bowl state)
-  ++  handle-diff  |=(* (async-fail:async-lib %no-diff-handler >path< ~))
+  ++  handle-diff  handle-diff:default-tapp
   ++  handle-take  ~(handle-take handler bowl state)
   --
 ::
@@ -163,9 +185,9 @@
   |=  handler=tapp-core-poke-peer-diff-take
   %-  create-tapp-all
   |_  [=bowl:gall state=state-type]
-  ++  handle-init  *form:tapp-async
+  ++  handle-init  handle-init:default-tapp
   ++  handle-poke  ~(handle-poke handler bowl state)
-  ++  handle-peek  _~
+  ++  handle-peek  handle-peek:default-tapp
   ++  handle-peer  ~(handle-peer handler bowl state)
   ++  handle-diff  ~(handle-diff handler bowl state)
   ++  handle-take  ~(handle-take handler bowl state)
