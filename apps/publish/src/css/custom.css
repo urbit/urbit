@@ -75,6 +75,14 @@ h2 {
   width: 336px;
 }
 
+.w-688 {
+  width: 688px;
+}
+
+.w-680 {
+  width: 680px;
+}
+
 .h-80 {
   height: 80px;
 }
@@ -85,6 +93,8 @@ h2 {
   margin-bottom: 8px;
   padding: 0;
 }
+
+
 
 .b-gray-30 {
   border-color: #B1B2B3;

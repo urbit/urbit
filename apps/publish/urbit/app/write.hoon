@@ -245,7 +245,8 @@
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =.  da-this  (da-insert who.del col.del pos.del)
+      =?  da-this  ?=(~ old)
+        (da-insert who.del col.del pos.del)
       (da-emil (affection del))
     ::
         %comments

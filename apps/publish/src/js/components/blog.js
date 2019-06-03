@@ -71,8 +71,8 @@ export class Blog extends Component {
   }
 
   render() {
+    let blog = this.retrieveColl(this.props.blogId, this.props.ship);
     let postProps = this.buildPosts();
-
     let posts = postProps.map((post) => {
       return (
         <PostPreview
@@ -81,9 +81,30 @@ export class Blog extends Component {
       );
     });
 
+    let host = blog.info.owner;
+    let contributers = host + " and X others";       // XX backend work
+    let subscribers = "~bitpyx-dildus and X others"; // XX backend work
+
     return (
-      <div className="flex flex-wrap">
-        {posts}
+      <div className="flex-col">
+        <h2>{blog.info.title}</h2>
+        <div className="flex">
+          <div style={{flexBasis: 350}}>
+            <p>Host</p>
+            <p>{host}</p>
+          </div>
+          <div style={{flexBasis: 350}}>
+            <p>Contributors</p>
+            <p>{contributers}</p>
+          </div>
+          <div style={{flexBasis: 350}}>
+            <p>Subscribers</p>
+            <p>{subscribers}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap">
+          {posts}
+        </div>
       </div>
     );
   }

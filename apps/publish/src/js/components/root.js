@@ -9,6 +9,7 @@ import { store } from '/store';
 import { Recent } from '/components/recent';
 import { Header } from '/components/header';
 import { Blog } from '/components/blog';
+import { Post } from '/components/post';
 
 export class Root extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export class Root extends Component {
 
   render() {
     return (
-      <div>
+      <div className="fl w-100">
         <BrowserRouter>
           <Header {...this.state} />
           <Route exact path="/~publish/recent"
@@ -72,11 +73,17 @@ export class Root extends Component {
           <Route exact path="/~publish/:ship/:blog/:post"
             render={ (props) => {
               return (
-                <div>
-                  post page
+                <div className="fl w-100">
+                  <Post
+                    blogId = {props.match.params.blog}
+                    postId = {props.match.params.post}
+                    ship = {props.match.params.ship.slice(1)}
+                    {...this.state}
+                  />
                 </div>
               );
            }} />
+
         </BrowserRouter>
       </div>
     );
