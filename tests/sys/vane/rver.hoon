@@ -105,6 +105,30 @@
     results4
   ==
 ::
+++  test-host-matching
+  ;:  weld
+  ::
+    %+  expect-eq
+      !>(%.y)
+      !>((host-matches:http-server-gate ~ `'example.com'))
+  ::
+    %+  expect-eq
+      !>(%.y)
+      !>((host-matches:http-server-gate ~ ~))
+  ::
+    %+  expect-eq
+      !>(%.n)
+      !>((host-matches:http-server-gate `'example.com' ~))
+  ::
+    %+  expect-eq
+      !>(%.y)
+      !>((host-matches:http-server-gate `'example.com' `'example.com'))
+  ::
+    %+  expect-eq
+      !>(%.n)
+      !>((host-matches:http-server-gate `'example.com' `'blah.com'))
+  ==
+::
 ++  test-cant-remove-other-ducts-binding
   ::
   =^  results1  http-server-gate

@@ -639,6 +639,23 @@
   %-  flop
   |-  ^-  tape
   ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
+::  +host-matches: %.y if the site :binding should be used to handle :host
+::
+++  host-matches
+  |=  [binding=(unit @t) host=(unit @t)]
+  ^-  ?
+  ::  if the binding allows for matching anything, match
+  ::
+  ?~  binding
+    %.y
+  ::  if the host is ~, that means we're trying to bind nothing to a real
+  ::  binding. fail.
+  ::
+  ?~  host
+    %.n
+  ::  otherwise, do a straight comparison
+  ::
+  =(u.binding u.host)
 ::  +path-matches: returns %.y if :prefix is a prefix of :full
 ::
 ++  path-matches
@@ -1632,7 +1649,8 @@
     ::
     ::    If we are missing a 'Host:' header, if that header is a raw IP
     ::    address, or if the 'Host:' header refers to [our].urbit.org, we want
-    ::    to return ~ which is the binding for our Urbit identity.
+    ::    to return ~ which means we're unidentified and will match against any
+    ::    wildcard matching.
     ::
     ::    Otherwise, return the site given.
     ::
@@ -1676,17 +1694,19 @@
     ?~  bindings
       [%four-oh-four ~]
     ::
-    ?:  (path-matches path.binding.i.bindings parsed-url)
+    ?:  ?&  (host-matches site.binding.i.bindings raw-host)
+            (path-matches path.binding.i.bindings parsed-url)
+        ==
       action.i.bindings
     ::
     $(bindings t.bindings)
   --
-  ::
-  ::
-  ++  parse-request-line
-    |=  url=@t
-    ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
-    (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+::
+::
+++  parse-request-line
+  |=  url=@t
+  ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
+  (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
 --
 ::  end the =~
 ::
