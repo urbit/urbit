@@ -10,6 +10,7 @@ export class UpdateReducer {
       this.reduceMessages(_.get(data, 'messages', false), state);
       this.reduceConfig(_.get(data, 'config', false), state);
       this.reduceCircles(_.get(data, 'circles', false), state);
+      this.reducePeers(_.get(data, 'peers', false), state);
     }
   }
 
@@ -20,7 +21,7 @@ export class UpdateReducer {
   }
 
   reduceMessage(message, state) {
-    if (message.circle in state.messages) {
+    if (message && message.circle in state.messages) {
       state.messages[message.circle].push(message.envelope);
     } else {
       state.messages[message.circle] = [message.envelope];
@@ -28,7 +29,8 @@ export class UpdateReducer {
   }
 
   reduceMessages(messages, state) {
-    if (messages.circle in state.messages) {
+    console.log(messages);
+    if (messages && messages.circle in state.messages) {
       let station = state.messages[messages.circle];
       if (
         station.length > 0 &&
@@ -52,6 +54,12 @@ export class UpdateReducer {
   reduceCircles(circles, state) {
     if (circles) {
       state.circles = circles;
+    }
+  }
+
+  reducePeers(peers, state) {
+    if (peers) {
+      state.peers[peers.circle] = peers.peers;
     }
   }
 

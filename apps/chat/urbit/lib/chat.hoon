@@ -57,6 +57,64 @@
   ==
 ::
 +$  action  [%actions lis=(list action:hall)]
+
++$  pareto-mark
+  $%
+    [%json pax=path name=@t jon=json]
+    [%path name=@t obj=(map @t json)]
+  ==
+::
+::
+::
+::  +utilities
+::
++$  indices-internal-state
+  $:  
+    lis=(list [circle:hall @])
+    item=[cir=circle:hall count=@ud]
+    index=@
+  ==
+::
+++  generate-circle-indices
+  |=  wir=wire
+  ^-  (list [circle:hall @])
+  =/  data
+    %^  spin  (swag [0 (lent wir)] wir)  *indices-internal-state
+    |=  [a=@ta b=indices-internal-state]
+    ^-  [* out=indices-internal-state]
+    =/  switch  (dvr index.b 3)
+    ?:  =(q.switch 0)  :: remainder 0, should be a ship
+      ?:  =(index.b 0)  ::  if item is null, don't add to list
+        :-  0
+        %=  b
+          hos.cir.item  (slav %p a)
+          index  +(index.b)
+        ==
+      ::  if item is not null, add to list
+      :-  0
+      %=  b
+        hos.cir.item  (slav %p a)
+        nom.cir.item  *name:hall
+        count.item  0
+        lis  (snoc lis.b item.b)
+        index  +(index.b)
+      ==
+    ?:  =(q.switch 1)  :: remainder 1, should be a circle name
+      :-  0
+      %=  b
+        nom.cir.item  a
+        index  +(index.b)
+      ==
+    ?:  =(q.switch 2)  :: remainder 2, should be a number
+      :-  0
+      %=  b
+        count.item  (need (rush a dem))
+        index  +(index.b)
+      ==
+    !!  ::  impossible
+  ?:  =(index.q.data 0)
+    ~
+  (snoc lis.q.data item.q.data)
 ::
 --
 ::

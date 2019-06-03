@@ -33,7 +33,6 @@ export class ChatScreen extends Component {
 
   scrollToBottom() {
     if (!this.state.scrollLocked) {
-      console.log('scroll to bottom');
       this.scrollElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
@@ -127,9 +126,8 @@ export class ChatScreen extends Component {
     if (index % 50 === 0) {
       let pageNum = index / 50;
       return (
-        <div ref={ el => { this.topMessage[pageNum] = el; }}>
-          <Message 
-            key={msg.gam.uid} msg={msg.gam} details={details} />
+        <div key={msg.gam.uid}ref={ el => { this.topMessage[pageNum] = el; }}>
+          <Message msg={msg.gam} details={details} />
         </div>
       );
     } else {
@@ -141,18 +139,24 @@ export class ChatScreen extends Component {
 
   render() {
     const { props, state } = this;
-    let messages = this.props.messages[this.state.station] || [];
+    
+    let messages = props.messages[state.station] || [];
+
     if (messages.length > 50 * state.numPages) {
-      messages =
-        messages.slice(messages.length - (50 * state.numPages), messages.length);
+      messages = messages
+        .slice(messages.length - (50 * state.numPages), messages.length);
     }
+
     let chatMessages = messages.map(this.buildMessage);
+    let peers = props.peers[state.station] || [window.ship];
 
     return (
       <div className="h-100 w-100 overflow-hidden flex flex-column">
         <div className='pl2 pt2 bb mb3'>
-          <h2>{this.state.circle}</h2>
-          <ChatTabBar {...this.props} station={this.state.station} />
+          <h2>{state.circle}</h2>
+          <ChatTabBar {...props}
+            station={state.station}
+            numPeers={peers.length} />
         </div>
         <div
           className="overflow-y-scroll"
@@ -162,10 +166,10 @@ export class ChatScreen extends Component {
           <div ref={ el => { this.scrollElement = el; }}></div>
         </div>
         <ChatInput 
-          api={this.props.api}
-          configs={this.props.configs}
-          station={this.state.station}
-          circle={this.state.circle}
+          api={props.api}
+          configs={props.configs}
+          station={state.station}
+          circle={state.circle}
           placeholder='Message...' />
       </div>
     )

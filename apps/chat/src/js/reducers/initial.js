@@ -9,6 +9,7 @@ export class InitialReducer {
       state.inbox = data.inbox;
       state.configs = data.configs;
       state.circles = data.circles;
+      state.peers = data.peers;
     }
   }
 }

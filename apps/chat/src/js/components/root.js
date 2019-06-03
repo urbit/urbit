@@ -28,13 +28,18 @@ export class Root extends Component {
   }
 
   render() {
-    let configs = !!this.state.configs ? this.state.configs : {};
+    const { props, state } = this;
+
+    let configs = !!state.configs ? state.configs : {};
     let circles = Object.keys(configs).filter((conf) => {
+      if (!configs[conf]) {
+        return false;
+      }
       let cap = configs[conf].cap;
       return cap === 'dm' || cap === 'chatroom';
     });
 
-    let messages = _.get(this.state, 'messages', {});
+    let messages = _.get(state, 'messages', {});
     let messagePreviews = {};
     Object.keys(messages).forEach((stat) => {
       let arr = messages[stat];
@@ -45,7 +50,7 @@ export class Root extends Component {
       }
     });
 
-    let invites = _.get(this.state, 'messages', {});
+    let invites = _.get(state, 'messages', {});
     if (`~${window.ship}/i` in invites) {
       invites = invites[`~${window.ship}/i`];
     } else {
@@ -114,7 +119,8 @@ export class Root extends Component {
                  <ChatScreen
                    api={api}
                    configs={configs}
-                   messages={this.state.messages}
+                   messages={state.messages}
+                   peers={state.peers}
                    {...props}
                  />
                </Skeleton>
@@ -136,6 +142,7 @@ export class Root extends Component {
                  <MemberScreen
                    {...props} 
                    api={api}
+                   peers={state.peers}
                  />
                </Skeleton>
              );
@@ -156,6 +163,7 @@ export class Root extends Component {
                  <SettingsScreen 
                    {...props}
                    api={api}
+                   peers={state.peers}
                    store={store} />
                </Skeleton>
              );

@@ -37,11 +37,17 @@ export class SettingsScreen extends Component {
   }
 
   render() {
+    const { props, state } = this;
+    let peers = props.peers[state.station] || [window.ship];
+
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl2 pt2 bb mb3'>
-          <h2>{this.state.circle}</h2>
-          <ChatTabBar {...this.props} station={this.state.station} />
+          <h2>{state.circle}</h2>
+          <ChatTabBar 
+            {...props}
+            station={state.station} 
+            numPeers={peers.length} />
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>

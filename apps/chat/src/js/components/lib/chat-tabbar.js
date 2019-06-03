@@ -33,6 +33,9 @@ export class ChatTabBar extends Component {
       setColor = 'gray';
     }
 
+    let membersText = this.props.numPeers === 1 
+      ? '1 Member' : `${this.props.numPeers} Members`;
+
     return (
       <div className="w-100" style={{ height:28 }}>
         <div className={"dib w-20 h-100" + bbStream}>
@@ -43,7 +46,7 @@ export class ChatTabBar extends Component {
         <div className={"dib w-20 h-100" + bbMembers}>
           <Link
             className={'no-underline label-regular v-mid ' + memColor}
-            to={toBaseLink + '/members'}>32 Members</Link>
+            to={toBaseLink + '/members'}>{membersText}</Link>
         </div>
         <div className={"dib w-20 h-100" + bbSettings}>
           <Link

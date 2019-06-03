@@ -6,14 +6,16 @@ import { UpdateReducer } from '/reducers/update';
 
 class Store {
   constructor() {
-    let state = localStorage.getItem('store');
+    //let state = localStorage.getItem('store');
 
+    let state = false;
     if (!state) {
       this.state = {
         inbox: {},
         messages: [],
         configs: {},
         circles: [],
+        peers: {},
         local: false
       };
     } else {
@@ -44,7 +46,7 @@ class Store {
     this.updateReducer.reduce(json, this.state);
 
     this.setState(this.state);
-    localStorage.setItem('store', JSON.stringify(this.state));
+    //localStorage.setItem('store', JSON.stringify(this.state));
   }
 }
 

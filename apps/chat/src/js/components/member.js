@@ -32,11 +32,9 @@ export class MemberScreen extends Component {
 
   render() {
     const { props, state } = this;
-
-    let listMembers = [
-      'zod',
-      'bus'
-    ].map((mem) => {
+    
+    let peers = props.peers[state.station] || [window.ship];
+    let listMembers = peers.map((mem) => {
       return (
         <MemberElement 
           key={mem} 
@@ -51,7 +49,10 @@ export class MemberScreen extends Component {
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl2 pt2 bb mb3'>
           <h2>{state.circle}</h2>
-          <ChatTabBar {...props} station={state.station} />
+          <ChatTabBar
+            {...props}
+            station={state.station}
+            numPeers={peers.length} />
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2">

@@ -14,16 +14,16 @@ export class Subscription {
 
   initializeChat() {
     if (store.state.local) {
-      let path = [];
+      /*      let path = [];
       let msg = Object.keys(store.state.messages);
       for (let i = 0; i < msg.length; i++) {
         let cir = msg[i];
         let len = store.state.messages[cir].length;
         path.push(`${cir}/${len}`);
       }
-      path = path.join('/');
+      path = path.join('/');*/
 
-      api.bind(`/primary/${path}`, 'PUT', api.authTokens.ship, 'chat',
+      api.bind(`/primary`, 'PUT', api.authTokens.ship, 'chat',
         this.handleEvent.bind(this),
         this.handleError.bind(this));
     } else {
