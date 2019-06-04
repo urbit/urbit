@@ -40,6 +40,14 @@ gulp.task('jsx-transform', function(cb) {
     .pipe(gulp.dest('dist'));
 });
 
+gulp.task('tile-jsx-transform', function(cb) {
+  return gulp.src('tile/**/*.js')
+    .pipe(sucrase({
+      transforms: ['jsx']
+    }))
+    .pipe(gulp.dest('dist'));
+});
+
 gulp.task('js-imports', function(cb) {
   return gulp.src('dist/index.js')
     .pipe(rollup({
@@ -72,6 +80,35 @@ gulp.task('js-imports', function(cb) {
     .on('end', cb);
 });
 
+gulp.task('tile-js-imports', function(cb) {
+  return gulp.src('dist/tile.js')
+    .pipe(rollup({
+      plugins: [
+        commonjs({
+          namedExports: {
+            'node_modules/react/index.js': [ 'Component' ],
+          }
+        }),
+        rootImport({
+          root: `${__dirname}/dist/js`,
+          useEntry: 'prepend',
+          extensions: '.js'
+        }),
+        json(),
+        globals(),
+        builtins(),
+        resolve()
+      ]
+    }, 'umd'))
+    .on('error', function(e){
+      console.log(e);
+      cb();
+    })
+    .pipe(gulp.dest('./urbit/app/chat/js/'))
+    .on('end', cb);
+});
+
+
 gulp.task('js-minify', function () {
   return gulp.src('./urbit/app/chat/js/index.js')
     .pipe(minify())
@@ -101,13 +138,15 @@ gulp.task('urbit-copy', function () {
 });
 
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
+gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
 gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify', 'js-cachebust'))
 
 gulp.task('bundle-dev',
   gulp.series(
     gulp.parallel(
       'css-bundle',
-      'js-bundle-dev'
+      'js-bundle-dev',
+      'tile-js-bundle-dev'
     ),
     'urbit-copy'
   )
@@ -124,7 +163,10 @@ gulp.task('bundle-prod',
 );
 
 gulp.task('default', gulp.series('bundle-dev'));
+
 gulp.task('watch', gulp.series('default', function() {
+  gulp.watch('tile/**/*.js', gulp.parallel('tile-js-bundle-dev'));
+
   gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
   gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
 

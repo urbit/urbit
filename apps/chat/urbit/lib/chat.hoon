@@ -23,6 +23,7 @@
 ::
 +$  poke
   $%  [%hall-action action:hall]
+      [%noun [@tas path]]
   ==
 ::
 +$  state

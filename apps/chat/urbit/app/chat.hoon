@@ -7,6 +7,14 @@
   /|  /html/
       /~  ~
   ==
+/=  tile-js
+  /^  octs
+  /;  as-octs:mimes:html
+  /:  /===/app/chat/js/tile
+  /|  /js/
+      /~  ~
+  ==
+
 /=  script
   /^  octs
   /;  as-octs:mimes:html
@@ -55,8 +63,17 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
+        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /tile]]]
     ==
-  [~ this(sta u.old)]
+  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /tile]]]~
+  this(sta u.old)
+::
+::
+::
+++  peer-tile
+  |=  wir=wire
+  ^-  (quip move _this)
+  [~ this]
 ::
 ::  +peer-messages: subscribe to subset of messages and updates
 ::
@@ -417,6 +434,8 @@
     ?~  back-path
       ''
     i.back-path
+  ?:  =(name 'tile')
+    [[ost.bol %http-response (js-response:app tile-js)]~ this]
   ?+  site.request-line
     :_  this
     [ost.bol %http-response not-found:app]~

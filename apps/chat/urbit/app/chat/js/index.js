@@ -17,10 +17,6 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
-	function getCjsExportFromNamespace (n) {
-		return n && n.default || n;
-	}
-
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -45892,7 +45888,7 @@
 	class IconHome extends react_1 {
 	  render() {
 	    return (
-	      react.createElement('img', { src: "/~chat/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName, lineNumber: 6}} )
+	      react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName, lineNumber: 6}} )
 	    );
 	  }
 	}
@@ -53222,8 +53218,6 @@
 		isBuffer: isBuffer
 	});
 
-	var require$$0 = getCjsExportFromNamespace(bufferEs6);
-
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -53276,7 +53270,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = require$$0.Buffer;
+	    Buffer = bufferEs6.Buffer;
 	  } catch (e) {
 	  }
 
