@@ -4,6 +4,11 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 textarea, select, input, button { outline: none; }
 
 h2 {
@@ -34,6 +39,11 @@ h2 {
   font-family: "Source Code Pro", monospace;
 }
 
+.label-small {
+  font-size: 12px;
+  line-height: 24px;
+}
+
 .body-regular-400 {
   font-size: 16px;
   line-height: 24px;
@@ -52,3 +62,42 @@ h2 {
 .bg-v-light-gray {
   background-color: #f9f9f9;
 }
+
+.gray-50 {
+  color: #7F7F7F;
+}
+
+.gray-30 {
+  color: #B1B2B3;
+}
+
+.w-336 {
+  width: 336px;
+}
+
+.w-688 {
+  width: 688px;
+}
+
+.w-680 {
+  width: 680px;
+}
+
+.h-80 {
+  height: 80px;
+}
+
+.publish {
+  margin-left: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+
+
+.b-gray-30 {
+  border-color: #B1B2B3;
+}
+
+

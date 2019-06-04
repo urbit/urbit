@@ -224,8 +224,8 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [dat.del ~ ~]
-        [dat.del pos.u.old com.u.old]
+          [dat.del ~ ~ ~ ~]
+        [dat.del pos.u.old com.u.old order.u.old]
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -239,13 +239,14 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[%.n ~] (my [pos.del dat.del] ~) ~]
-        [col.u.old (~(put by pos.u.old) pos.del dat.del) com.u.old]
+          [[%.n ~] (my [pos.del dat.del] ~) ~ ~ ~]
+        [col.u.old (~(put by pos.u.old) pos.del dat.del) com.u.old order.u.old]
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =.  da-this  (da-insert who.del col.del pos.del)
+      =?  da-this  ?=(~ old)
+        (da-insert who.del col.del pos.del)
       (da-emil (affection del))
     ::
         %comments
@@ -255,8 +256,8 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[%.n ~] ~ (my [pos.del dat.del] ~)]
-        [col.u.old pos.u.old (~(put by com.u.old) pos.del dat.del)]
+          [[%.n ~] ~ (my [pos.del dat.del] ~) ~ ~]
+        [col.u.old pos.u.old (~(put by com.u.old) pos.del dat.del) order.u.old]
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -291,7 +292,7 @@
       (~(put in unread.sat) who coll post)
     ::  insertion sort into latest
     ::
-    =/  new-date=@da  (need (get-date-for-index who coll post))
+    =/  new-date=@da  date-created:(need (get-post-by-index who coll post))
     =/  pre=(list [@p @tas @tas])  ~
     =/  suf=(list [@p @tas @tas])  latest.sat
 
@@ -299,13 +300,45 @@
     |-
     ?~  suf
       (weld pre [who coll post]~)
-    =/  i-date=@da  (need (get-date-for-index i.suf))
+    =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
     ?:  (gte new-date i-date)
       (weld pre [[who coll post] suf])
     %=  $
       suf  t.suf
       pre  (snoc pre i.suf)
     ==
+    ::  insertion sort into order
+    ::
+    =/  new-post=post-info  (need (get-post-by-index who coll post))
+    =/  col=collection  (need (get-coll-by-index who coll))
+    :: 
+    =/  pre=(list @tas)  ~
+    =/  suf=(list @tas)
+      ?:  pinned.new-post
+        pin.order.col
+      unpin.order.col
+    ::
+    =/  new-list=(list @tas)
+    |-
+    ?~  suf
+      (snoc pre post)
+    =/  i-date=@da  date-created:(need (get-post-by-index who coll i.suf))
+    ?:  (gte date-created.new-post i-date)
+      (weld pre [post suf])
+    %=  $
+      suf  t.suf
+      pre  (snoc pre i.suf)
+    ==
+    ::
+    =.  order.col
+      ?:  pinned.new-post
+        [new-list unpin.order.col]
+      [pin.order.col new-list]
+    ::
+    =?  pubs.sat  =(our.bol who)
+      (~(put by pubs.sat) coll col)
+    =?  subs.sat  !=(our.bol who)
+      (~(put by subs.sat) [who coll] col)
     da-this
   --
 ::  +bake: apply delta
@@ -345,9 +378,9 @@
   ::
   ==
 ::
-++  get-date-for-index
+++  get-post-by-index
   |=  [who=@p coll=@tas post=@tas]
-  ^-  (unit @da)
+  ^-  (unit post-info)
   =/  col=(unit collection)
     ?:  =(our.bol who)
       (~(get by pubs.sat) coll)
@@ -357,7 +390,14 @@
     (~(get by pos.u.col) post)
   ?~  pos  ~
   ?:  ?=(%.n -.u.pos)  ~
-  [~ date-created.-.p.u.pos]
+  [~ -.p.u.pos]
+::
+++  get-coll-by-index
+  |=  [who=@p coll=@tas]
+  ^-  (unit collection)
+  ?:  =(our.bol who)
+    (~(get by pubs.sat) coll)
+  (~(get by subs.sat) coll)
 ::
 ++  made
   |=  [wir=wire wen=@da mad=made-result:ford]
@@ -389,7 +429,7 @@
         (bake [%collection our.bol col dat])
       ::  1st part of multi-part, store partial delta and don't process it
       ::
-      =/  del=delta  [%total our.bol col dat ~ ~]
+      =/  del=delta  [%total our.bol col dat ~ ~ ~ ~]
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -404,6 +444,7 @@
             dat
             pos.dat.u.partial.u.awa
             com.dat.u.partial.u.awa
+            [~ ~]
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -417,6 +458,7 @@
           dat
           pos.dat.u.partial.u.awa
           com.dat.u.partial.u.awa
+          [~ ~]
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -446,7 +488,7 @@
         (bake [%post our.bol col pos dat])
       ::  1st part of multi-part, store partial delta and don't process it
       ::
-      =/  del=delta  [%total our.bol col [%.n ~] (my [pos dat] ~) ~]
+      =/  del=delta  [%total our.bol col [%.n ~] (my [pos dat] ~) ~ ~ ~]
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -461,6 +503,7 @@
             col.dat.u.partial.u.awa
             (~(put by pos.dat.u.partial.u.awa) pos dat)
             com.dat.u.partial.u.awa
+            [~ ~]
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -474,6 +517,7 @@
           col.dat.u.partial.u.awa 
           (~(put by pos.dat.u.partial.u.awa) pos dat)
           com.dat.u.partial.u.awa
+          [~ ~]
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -503,7 +547,7 @@
         (bake [%comments our.bol col pos dat])
       ::  1st part of multi-part, store partial delta and don't process it
       ::
-      =/  del=delta  [%total our.bol col [%.n ~] ~ (my [pos dat] ~)]
+      =/  del=delta  [%total our.bol col [%.n ~] ~ (my [pos dat] ~) ~ ~]
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -518,6 +562,7 @@
             col.dat.u.partial.u.awa 
             pos.dat.u.partial.u.awa
             (~(put by com.dat.u.partial.u.awa) pos dat)
+            [~ ~]
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -531,6 +576,7 @@
           col.dat.u.partial.u.awa 
           pos.dat.u.partial.u.awa
           (~(put by com.dat.u.partial.u.awa) pos dat)
+          [~ ~]
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -759,7 +805,7 @@
   ::
       %unsubscribe
     =/  new-latest=(list [@p @tas @tas])
-      %+  skip  latest.sat
+      %+  skim  latest.sat
       |=  [who=@p coll=@tas post=@tas]
       ?&  =(who our.bol)
           =(coll coll.act)
@@ -767,7 +813,7 @@
     ::
     =/  new-unread=(set [@p @tas @tas])
       %-  sy
-      %+  skip  ~(tap in unread.sat)
+      %+  skim  ~(tap in unread.sat)
       |=  [who=@p coll=@tas post=@tas]
       ?&  =(who our.bol)
           =(coll coll.act)
@@ -808,44 +854,58 @@
       [[[~ %js] [%'~publish' %index ~]] ~]
     :_  this
     [ost.bol %http-response (js-response:app js)]~
-  ::
+  ::  home page; redirect to recent
   ::
       [[~ [%'~publish' ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
+    [ost.bol %http-response (redirect:app '/~publish/recent')]~
+  ::  recent page
   ::
-  ::
-      [[~ [%'~publish' @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-    =/  hym=manx
-      ;div: {<u.who>} root page
+      [[~ [%'~publish' %recent ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
+  ::  subscriptions
   ::
-  ::  forum view
+      [[~ [%'~publish' %subs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  published
+  ::
+      [[~ [%'~publish' %pubs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  blog
   ::
       [[~ [%'~publish' @t @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    =/  coll=@tas  i.t.t.site.request-line
-::    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-  ::
-  ::  post view
+    =/  who=(unit @p)  (slaw %p i.t.site.request-line)
+    =/  blog=@tas      i.t.t.site.request-line
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  blog post
   ::
       [[~ [%'~publish' @t @t @t ~]] ~]
-    =/  who=(unit ship)  (rush i.t.site.request-line ;~(pfix sig fed:ag))
-    =/  coll=@tas  i.t.t.site.request-line
-    =/  post=@tas  i.t.t.t.site.request-line
-::    ?~  who
-      :_  this
-      [ost.bol %http-response not-found:app]~
-    ::  local request
+    =/  who=(unit @p)  (slaw %p i.t.site.request-line)
+    =/  blog=@tas      i.t.t.site.request-line
+    =/  post=@tas      i.t.t.t.site.request-line
     ::
+    ?~  who  [[ost.bol %http-response not-found:app]~ this]
+    =/  col=(unit collection)
+      ?:  =(u.who our.bol)
+        (~(get by pubs.sat) blog)
+      (~(get by subs.sat) u.who blog)
+    ?~  col  [[ost.bol %http-response not-found:app]~ this]
+    =/  pos  (~(get by pos.u.col) post)
+    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
+    
+
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
   ::
   ==
 ::
