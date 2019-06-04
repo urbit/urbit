@@ -133,6 +133,24 @@
 ::
 ::    ----
 ::
+::  Identity is immutable
+::
+++  get-identity
+  =/  m  (async ,@p)
+  ^-  form:m
+  |=  =async-input
+  [~ ~ ~ %done our.bowl.async-input]
+::
+::  Entropy is always increasing
+::
+++  get-entropy
+  =/  m  (async ,@uvJ)
+  ^-  form:m
+  |=  =async-input
+  [~ ~ ~ %done eny.bowl.async-input]
+::
+::    ----
+::
 ::  Time is what keeps everything from happening at once
 ::
 ++  get-time
