@@ -11,12 +11,16 @@
 /=  js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/write/js/index  /js/
+  /|  /:  /===/app/write/js/index  /js/
+      /~  *octs
+  ==
 ::
 /=  css
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/write/css/index  /css/
+  /|  /:  /===/app/write/css/index  /css/
+      /~  *octs
+  ==
 ::
 |%
 ::
