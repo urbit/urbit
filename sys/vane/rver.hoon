@@ -60,7 +60,7 @@
       $:  %b
           ::
           ::
-          $%  [%wake ~]
+          $%  [%wake error=(unit tang)]
       ==  ==
       ::  %f: from ford
       ::
