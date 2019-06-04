@@ -104,6 +104,7 @@
   $:  col=(each collection-info tang)
       pos=(map @tas (each [post-info manx] tang))
       com=(map @tas (each (list [comment-info manx]) tang))
+      order=[pin=(list @tas) unpin=(list @tas)]
   ==
 ::
 +$  state

@@ -6,14 +6,15 @@ import _ from 'lodash';
 
 import { api } from '/api';
 import { store } from '/store';
-import { Skeleton } from '/components/skeleton';
-import { Sidebar } from '/components/sidebar';
-import { CollectionList } from '/components/collection-list';
+import { Recent } from '/components/recent';
+import { Header } from '/components/header';
+import { Blog } from '/components/blog';
+import { Post } from '/components/post';
 
 export class Root extends Component {
   constructor(props) {
     super(props);
-    this.state = store.collections;
+    this.state = store.state;
 
     console.log("root.state", this.state);
 
@@ -22,49 +23,70 @@ export class Root extends Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div>
-        <Route exact path="/~publish"
-          render={ (props) => {
-            return (
-              <div className="cf h-100 w-100 absolute">
-                <div className="fl w-100 h3">
-                  <h1>Publish</h1>
+      <div className="fl w-100">
+        <BrowserRouter>
+          <Header {...this.state} />
+          <Route exact path="/~publish/recent"
+            render={ (props) => {
+              return (
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
                 </div>
-                <div className="fl flex w-100 h-100">
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Latest
-                    </p>
-                  </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Subs
-                    </p>
-                    <CollectionList
-                      list={this.state.subs}
-                    />
-                  </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Pubs
-                    </p>
-                      <CollectionList
-                        list={this.state.pubs}
-                      />
-                  </div>
-                  <div className="fl h-100 overflow-x-hidden" style={{ flexBasis: 400 }}>
-                    <p className="fl w-100 h2 bb">
-                      Create Button? idk
-                    </p>
-                  </div>
+              );
+           }} />
+          <Route exact path="/~publish/subs"
+            render={ (props) => {
+              return (
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
                 </div>
-              </div>
-            );
-         }} />
-        </div>
-      </BrowserRouter>
-    )
+              );
+           }} />
+          <Route exact path="/~publish/pubs"
+            render={ (props) => {
+              return (
+                <div className="fl w-100">
+                  <Recent
+                    {...this.state}
+                  />
+                </div>
+              );
+           }} />
+
+          <Route exact path="/~publish/:ship/:blog"
+            render={ (props) => {
+              return (
+                <div className="fl w-100">
+                  <Blog
+                    blogId = {props.match.params.blog}
+                    ship = {props.match.params.ship.slice(1)}
+                    {...this.state}
+                  />
+                </div>
+              );
+           }} />
+
+          <Route exact path="/~publish/:ship/:blog/:post"
+            render={ (props) => {
+              return (
+                <div className="fl w-100">
+                  <Post
+                    blogId = {props.match.params.blog}
+                    postId = {props.match.params.post}
+                    ship = {props.match.params.ship.slice(1)}
+                    {...this.state}
+                  />
+                </div>
+              );
+           }} />
+
+        </BrowserRouter>
+      </div>
+    );
   }
 }
 

@@ -28,7 +28,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "lodash": "^4.17.11",
-    "moment": "^2.20.1",
+    "moment": "^2.24.0",
     "mousetrap": "^1.6.1",
     "react": "^16.5.2",
     "react-custom-scrollbars": "^4.2.1",
