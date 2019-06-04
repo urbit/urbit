@@ -29,7 +29,6 @@ export class UpdateReducer {
   }
 
   reduceMessages(messages, state) {
-    console.log(messages);
     if (messages && messages.circle in state.messages) {
       let station = state.messages[messages.circle];
       if (

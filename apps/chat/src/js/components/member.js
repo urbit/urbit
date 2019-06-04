@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
+import urbitOb from 'urbit-ob';
+import { deSig } from '/lib/util';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { MemberElement } from '/components/lib/member-element';
 
@@ -12,16 +14,31 @@ export class MemberScreen extends Component {
       station: props.match.params.ship + "/" + props.match.params.station,
       circle: props.match.params.station,
       host: props.match.params.ship,
-      invMembers: ''
+      invMembers: '',
+      error: false
     };
 
   }
 
   inviteMembers() {
     const { props, state } = this;
-    let sis = state.invMembers.trim().split(',');
-    console.log(sis);
-    props.api.permit(state.circle, sis, true);
+    let sis = state.invMembers.split(',')
+      .map((mem) => mem.trim())
+      .map(deSig);
+
+    let isValid = true;
+    sis.forEach((mem) => {
+      if (!urbitOb.isValidPatp(`~${mem}`)) {
+        isValid = false;
+      }
+    });
+
+    if (isValid) {
+      props.api.permit(state.circle, sis, true);
+      this.setState({ error: false });
+    } else {
+      this.setState({ error: true });
+    }
   }
 
   inviteMembersChange(e) {
@@ -38,12 +55,18 @@ export class MemberScreen extends Component {
       return (
         <MemberElement 
           key={mem} 
-          isHost={ props.ship === state.host }
+          isHost={ `~${mem}` === state.host }
           ship={mem}
           circle={state.circle}
           api={props.api} />
       );
     });
+
+    let errorElem = !!this.state.error ? (
+      <p className="pa2 nice-red label-regular">Invalid ship name.</p>
+    ) : (
+      <div></div>
+    );
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
@@ -75,11 +98,12 @@ export class MemberScreen extends Component {
                   height: 150
                 }}
                 onChange={this.inviteMembersChange.bind(this)}></textarea>
-              <a 
+              <button
                 onClick={this.inviteMembers.bind(this)}
-                className="label-regular underline gray btn-font">
+                className="label-regular underline gray btn-font pointer">
                 Invite
-              </a>
+              </button>
+              {errorElem}
             </div>
           ) : null }
         </div>

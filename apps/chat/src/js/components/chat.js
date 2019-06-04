@@ -85,8 +85,8 @@ export class ChatScreen extends Component {
     let lastMsgNum = (messages.length > 0) ?
       messages[messages.length - 1].num : 0;
 
-    if (config && config.red > lastMsgNum) {
-      props.api.read(circle, lastMsgNum);
+    if (config && config.red < lastMsgNum) {
+      props.api.read(state.circle, lastMsgNum);
     }
   }
 

@@ -71,7 +71,7 @@ export class ChatInput extends Component {
     let uid = uuid();
     let aut = window.ship;
 
-    let config = this.props.configs[this.state.station];
+    let config = this.props.configs[this.props.station];
 
     aud = [this.props.station];
     if (isUrl(this.state.message)) {
@@ -95,8 +95,20 @@ export class ChatInput extends Component {
       sep,
     };
 
-    this.props.api.hall({
-      convey: [message]
+    this.props.api.chat({
+      actions: {
+        lis: [
+          {
+            read: {
+              nom: this.props.circle,
+              red: config.red + 1
+            }
+          },
+          {
+            convey: [message],
+          }
+        ]
+      }
     });
 
     this.setState({

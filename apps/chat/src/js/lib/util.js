@@ -1,10 +1,6 @@
 import _ from 'lodash';
-import urbitOb from 'urbit-ob';
 import classnames from 'classnames';
 
-export const AGGREGATOR_COLL = "c";
-export const AGGREGATOR_INBOX = "aggregator-inbox";
-export const AGGREGATOR_NAMES = [AGGREGATOR_INBOX, AGGREGATOR_COLL];
 
 export function uuid() {
   let str = "0v"
@@ -62,7 +58,7 @@ export function dateToDa(d, mil) {
   );
 }
 
-function deSig(ship) {
+export function deSig(ship) {
   return ship.replace('~', '');
 }
 
@@ -192,7 +188,7 @@ export function getMessageContent(msg) {
 
   if (typeof ret === "undefined") {
     ret = {type: "unknown"};
-    console.log("ASSERT: unknown message type on ", msg)
+    console.error("ASSERT: unknown message type on ", msg)
   }
 
   return ret;

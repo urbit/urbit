@@ -17,6 +17,10 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	function getCjsExportFromNamespace (n) {
+		return n && n.default || n;
+	}
+
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -45473,6077 +45477,6 @@
 	}.call(commonjsGlobal));
 	});
 
-	var global$2 = (typeof global !== "undefined" ? global :
-	            typeof self !== "undefined" ? self :
-	            typeof window !== "undefined" ? window : {});
-
-	var lookup = [];
-	var revLookup = [];
-	var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
-	var inited = false;
-	function init () {
-	  inited = true;
-	  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-	  for (var i = 0, len = code.length; i < len; ++i) {
-	    lookup[i] = code[i];
-	    revLookup[code.charCodeAt(i)] = i;
-	  }
-
-	  revLookup['-'.charCodeAt(0)] = 62;
-	  revLookup['_'.charCodeAt(0)] = 63;
-	}
-
-	function toByteArray (b64) {
-	  if (!inited) {
-	    init();
-	  }
-	  var i, j, l, tmp, placeHolders, arr;
-	  var len = b64.length;
-
-	  if (len % 4 > 0) {
-	    throw new Error('Invalid string. Length must be a multiple of 4')
-	  }
-
-	  // the number of equal signs (place holders)
-	  // if there are two placeholders, than the two characters before it
-	  // represent one byte
-	  // if there is only one, then the three characters before it represent 2 bytes
-	  // this is just a cheap hack to not do indexOf twice
-	  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
-
-	  // base64 is 4/3 + up to two characters of the original data
-	  arr = new Arr(len * 3 / 4 - placeHolders);
-
-	  // if there are placeholders, only get up to the last complete 4 chars
-	  l = placeHolders > 0 ? len - 4 : len;
-
-	  var L = 0;
-
-	  for (i = 0, j = 0; i < l; i += 4, j += 3) {
-	    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)];
-	    arr[L++] = (tmp >> 16) & 0xFF;
-	    arr[L++] = (tmp >> 8) & 0xFF;
-	    arr[L++] = tmp & 0xFF;
-	  }
-
-	  if (placeHolders === 2) {
-	    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4);
-	    arr[L++] = tmp & 0xFF;
-	  } else if (placeHolders === 1) {
-	    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2);
-	    arr[L++] = (tmp >> 8) & 0xFF;
-	    arr[L++] = tmp & 0xFF;
-	  }
-
-	  return arr
-	}
-
-	function tripletToBase64 (num) {
-	  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
-	}
-
-	function encodeChunk (uint8, start, end) {
-	  var tmp;
-	  var output = [];
-	  for (var i = start; i < end; i += 3) {
-	    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
-	    output.push(tripletToBase64(tmp));
-	  }
-	  return output.join('')
-	}
-
-	function fromByteArray (uint8) {
-	  if (!inited) {
-	    init();
-	  }
-	  var tmp;
-	  var len = uint8.length;
-	  var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
-	  var output = '';
-	  var parts = [];
-	  var maxChunkLength = 16383; // must be multiple of 3
-
-	  // go through the array every three bytes, we'll deal with trailing stuff later
-	  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-	    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)));
-	  }
-
-	  // pad the end with zeros, but make sure to not forget the extra bytes
-	  if (extraBytes === 1) {
-	    tmp = uint8[len - 1];
-	    output += lookup[tmp >> 2];
-	    output += lookup[(tmp << 4) & 0x3F];
-	    output += '==';
-	  } else if (extraBytes === 2) {
-	    tmp = (uint8[len - 2] << 8) + (uint8[len - 1]);
-	    output += lookup[tmp >> 10];
-	    output += lookup[(tmp >> 4) & 0x3F];
-	    output += lookup[(tmp << 2) & 0x3F];
-	    output += '=';
-	  }
-
-	  parts.push(output);
-
-	  return parts.join('')
-	}
-
-	function read (buffer, offset, isLE, mLen, nBytes) {
-	  var e, m;
-	  var eLen = nBytes * 8 - mLen - 1;
-	  var eMax = (1 << eLen) - 1;
-	  var eBias = eMax >> 1;
-	  var nBits = -7;
-	  var i = isLE ? (nBytes - 1) : 0;
-	  var d = isLE ? -1 : 1;
-	  var s = buffer[offset + i];
-
-	  i += d;
-
-	  e = s & ((1 << (-nBits)) - 1);
-	  s >>= (-nBits);
-	  nBits += eLen;
-	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-	  m = e & ((1 << (-nBits)) - 1);
-	  e >>= (-nBits);
-	  nBits += mLen;
-	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-	  if (e === 0) {
-	    e = 1 - eBias;
-	  } else if (e === eMax) {
-	    return m ? NaN : ((s ? -1 : 1) * Infinity)
-	  } else {
-	    m = m + Math.pow(2, mLen);
-	    e = e - eBias;
-	  }
-	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-	}
-
-	function write (buffer, value, offset, isLE, mLen, nBytes) {
-	  var e, m, c;
-	  var eLen = nBytes * 8 - mLen - 1;
-	  var eMax = (1 << eLen) - 1;
-	  var eBias = eMax >> 1;
-	  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0);
-	  var i = isLE ? 0 : (nBytes - 1);
-	  var d = isLE ? 1 : -1;
-	  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
-
-	  value = Math.abs(value);
-
-	  if (isNaN(value) || value === Infinity) {
-	    m = isNaN(value) ? 1 : 0;
-	    e = eMax;
-	  } else {
-	    e = Math.floor(Math.log(value) / Math.LN2);
-	    if (value * (c = Math.pow(2, -e)) < 1) {
-	      e--;
-	      c *= 2;
-	    }
-	    if (e + eBias >= 1) {
-	      value += rt / c;
-	    } else {
-	      value += rt * Math.pow(2, 1 - eBias);
-	    }
-	    if (value * c >= 2) {
-	      e++;
-	      c /= 2;
-	    }
-
-	    if (e + eBias >= eMax) {
-	      m = 0;
-	      e = eMax;
-	    } else if (e + eBias >= 1) {
-	      m = (value * c - 1) * Math.pow(2, mLen);
-	      e = e + eBias;
-	    } else {
-	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-	      e = 0;
-	    }
-	  }
-
-	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-	  e = (e << mLen) | m;
-	  eLen += mLen;
-	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-	  buffer[offset + i - d] |= s * 128;
-	}
-
-	var toString = {}.toString;
-
-	var isArray = Array.isArray || function (arr) {
-	  return toString.call(arr) == '[object Array]';
-	};
-
-	var INSPECT_MAX_BYTES = 50;
-
-	/**
-	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
-	 *   === true    Use Uint8Array implementation (fastest)
-	 *   === false   Use Object implementation (most compatible, even IE6)
-	 *
-	 * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
-	 * Opera 11.6+, iOS 4.2+.
-	 *
-	 * Due to various browser bugs, sometimes the Object implementation will be used even
-	 * when the browser supports typed arrays.
-	 *
-	 * Note:
-	 *
-	 *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
-	 *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
-	 *
-	 *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
-	 *
-	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
-	 *     incorrect length in some situations.
-
-	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
-	 * get the Object implementation, which is slower but behaves correctly.
-	 */
-	Buffer.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global$2.TYPED_ARRAY_SUPPORT
-	  : true;
-
-	/*
-	 * Export kMaxLength after typed array support is determined.
-	 */
-	var _kMaxLength = kMaxLength();
-
-	function kMaxLength () {
-	  return Buffer.TYPED_ARRAY_SUPPORT
-	    ? 0x7fffffff
-	    : 0x3fffffff
-	}
-
-	function createBuffer (that, length) {
-	  if (kMaxLength() < length) {
-	    throw new RangeError('Invalid typed array length')
-	  }
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    // Return an augmented `Uint8Array` instance, for best performance
-	    that = new Uint8Array(length);
-	    that.__proto__ = Buffer.prototype;
-	  } else {
-	    // Fallback: Return an object instance of the Buffer class
-	    if (that === null) {
-	      that = new Buffer(length);
-	    }
-	    that.length = length;
-	  }
-
-	  return that
-	}
-
-	/**
-	 * The Buffer constructor returns instances of `Uint8Array` that have their
-	 * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
-	 * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
-	 * and the `Uint8Array` methods. Square bracket notation works as expected -- it
-	 * returns a single octet.
-	 *
-	 * The `Uint8Array` prototype remains unmodified.
-	 */
-
-	function Buffer (arg, encodingOrOffset, length) {
-	  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
-	    return new Buffer(arg, encodingOrOffset, length)
-	  }
-
-	  // Common case.
-	  if (typeof arg === 'number') {
-	    if (typeof encodingOrOffset === 'string') {
-	      throw new Error(
-	        'If encoding is specified then the first argument must be a string'
-	      )
-	    }
-	    return allocUnsafe(this, arg)
-	  }
-	  return from(this, arg, encodingOrOffset, length)
-	}
-
-	Buffer.poolSize = 8192; // not used by this implementation
-
-	// TODO: Legacy, not needed anymore. Remove in next major version.
-	Buffer._augment = function (arr) {
-	  arr.__proto__ = Buffer.prototype;
-	  return arr
-	};
-
-	function from (that, value, encodingOrOffset, length) {
-	  if (typeof value === 'number') {
-	    throw new TypeError('"value" argument must not be a number')
-	  }
-
-	  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-	    return fromArrayBuffer(that, value, encodingOrOffset, length)
-	  }
-
-	  if (typeof value === 'string') {
-	    return fromString(that, value, encodingOrOffset)
-	  }
-
-	  return fromObject(that, value)
-	}
-
-	/**
-	 * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
-	 * if value is a number.
-	 * Buffer.from(str[, encoding])
-	 * Buffer.from(array)
-	 * Buffer.from(buffer)
-	 * Buffer.from(arrayBuffer[, byteOffset[, length]])
-	 **/
-	Buffer.from = function (value, encodingOrOffset, length) {
-	  return from(null, value, encodingOrOffset, length)
-	};
-
-	if (Buffer.TYPED_ARRAY_SUPPORT) {
-	  Buffer.prototype.__proto__ = Uint8Array.prototype;
-	  Buffer.__proto__ = Uint8Array;
-	}
-
-	function assertSize (size) {
-	  if (typeof size !== 'number') {
-	    throw new TypeError('"size" argument must be a number')
-	  } else if (size < 0) {
-	    throw new RangeError('"size" argument must not be negative')
-	  }
-	}
-
-	function alloc (that, size, fill, encoding) {
-	  assertSize(size);
-	  if (size <= 0) {
-	    return createBuffer(that, size)
-	  }
-	  if (fill !== undefined) {
-	    // Only pay attention to encoding if it's a string. This
-	    // prevents accidentally sending in a number that would
-	    // be interpretted as a start offset.
-	    return typeof encoding === 'string'
-	      ? createBuffer(that, size).fill(fill, encoding)
-	      : createBuffer(that, size).fill(fill)
-	  }
-	  return createBuffer(that, size)
-	}
-
-	/**
-	 * Creates a new filled Buffer instance.
-	 * alloc(size[, fill[, encoding]])
-	 **/
-	Buffer.alloc = function (size, fill, encoding) {
-	  return alloc(null, size, fill, encoding)
-	};
-
-	function allocUnsafe (that, size) {
-	  assertSize(size);
-	  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0);
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-	    for (var i = 0; i < size; ++i) {
-	      that[i] = 0;
-	    }
-	  }
-	  return that
-	}
-
-	/**
-	 * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
-	 * */
-	Buffer.allocUnsafe = function (size) {
-	  return allocUnsafe(null, size)
-	};
-	/**
-	 * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
-	 */
-	Buffer.allocUnsafeSlow = function (size) {
-	  return allocUnsafe(null, size)
-	};
-
-	function fromString (that, string, encoding) {
-	  if (typeof encoding !== 'string' || encoding === '') {
-	    encoding = 'utf8';
-	  }
-
-	  if (!Buffer.isEncoding(encoding)) {
-	    throw new TypeError('"encoding" must be a valid string encoding')
-	  }
-
-	  var length = byteLength(string, encoding) | 0;
-	  that = createBuffer(that, length);
-
-	  var actual = that.write(string, encoding);
-
-	  if (actual !== length) {
-	    // Writing a hex string, for example, that contains invalid characters will
-	    // cause everything after the first invalid character to be ignored. (e.g.
-	    // 'abxxcd' will be treated as 'ab')
-	    that = that.slice(0, actual);
-	  }
-
-	  return that
-	}
-
-	function fromArrayLike (that, array) {
-	  var length = array.length < 0 ? 0 : checked(array.length) | 0;
-	  that = createBuffer(that, length);
-	  for (var i = 0; i < length; i += 1) {
-	    that[i] = array[i] & 255;
-	  }
-	  return that
-	}
-
-	function fromArrayBuffer (that, array, byteOffset, length) {
-	  array.byteLength; // this throws if `array` is not a valid ArrayBuffer
-
-	  if (byteOffset < 0 || array.byteLength < byteOffset) {
-	    throw new RangeError('\'offset\' is out of bounds')
-	  }
-
-	  if (array.byteLength < byteOffset + (length || 0)) {
-	    throw new RangeError('\'length\' is out of bounds')
-	  }
-
-	  if (byteOffset === undefined && length === undefined) {
-	    array = new Uint8Array(array);
-	  } else if (length === undefined) {
-	    array = new Uint8Array(array, byteOffset);
-	  } else {
-	    array = new Uint8Array(array, byteOffset, length);
-	  }
-
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    // Return an augmented `Uint8Array` instance, for best performance
-	    that = array;
-	    that.__proto__ = Buffer.prototype;
-	  } else {
-	    // Fallback: Return an object instance of the Buffer class
-	    that = fromArrayLike(that, array);
-	  }
-	  return that
-	}
-
-	function fromObject (that, obj) {
-	  if (internalIsBuffer(obj)) {
-	    var len = checked(obj.length) | 0;
-	    that = createBuffer(that, len);
-
-	    if (that.length === 0) {
-	      return that
-	    }
-
-	    obj.copy(that, 0, 0, len);
-	    return that
-	  }
-
-	  if (obj) {
-	    if ((typeof ArrayBuffer !== 'undefined' &&
-	        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
-	      if (typeof obj.length !== 'number' || isnan(obj.length)) {
-	        return createBuffer(that, 0)
-	      }
-	      return fromArrayLike(that, obj)
-	    }
-
-	    if (obj.type === 'Buffer' && isArray(obj.data)) {
-	      return fromArrayLike(that, obj.data)
-	    }
-	  }
-
-	  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
-	}
-
-	function checked (length) {
-	  // Note: cannot use `length < kMaxLength()` here because that fails when
-	  // length is NaN (which is otherwise coerced to zero.)
-	  if (length >= kMaxLength()) {
-	    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-	                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-	  }
-	  return length | 0
-	}
-
-	function SlowBuffer (length) {
-	  if (+length != length) { // eslint-disable-line eqeqeq
-	    length = 0;
-	  }
-	  return Buffer.alloc(+length)
-	}
-	Buffer.isBuffer = isBuffer;
-	function internalIsBuffer (b) {
-	  return !!(b != null && b._isBuffer)
-	}
-
-	Buffer.compare = function compare (a, b) {
-	  if (!internalIsBuffer(a) || !internalIsBuffer(b)) {
-	    throw new TypeError('Arguments must be Buffers')
-	  }
-
-	  if (a === b) return 0
-
-	  var x = a.length;
-	  var y = b.length;
-
-	  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-	    if (a[i] !== b[i]) {
-	      x = a[i];
-	      y = b[i];
-	      break
-	    }
-	  }
-
-	  if (x < y) return -1
-	  if (y < x) return 1
-	  return 0
-	};
-
-	Buffer.isEncoding = function isEncoding (encoding) {
-	  switch (String(encoding).toLowerCase()) {
-	    case 'hex':
-	    case 'utf8':
-	    case 'utf-8':
-	    case 'ascii':
-	    case 'latin1':
-	    case 'binary':
-	    case 'base64':
-	    case 'ucs2':
-	    case 'ucs-2':
-	    case 'utf16le':
-	    case 'utf-16le':
-	      return true
-	    default:
-	      return false
-	  }
-	};
-
-	Buffer.concat = function concat (list, length) {
-	  if (!isArray(list)) {
-	    throw new TypeError('"list" argument must be an Array of Buffers')
-	  }
-
-	  if (list.length === 0) {
-	    return Buffer.alloc(0)
-	  }
-
-	  var i;
-	  if (length === undefined) {
-	    length = 0;
-	    for (i = 0; i < list.length; ++i) {
-	      length += list[i].length;
-	    }
-	  }
-
-	  var buffer = Buffer.allocUnsafe(length);
-	  var pos = 0;
-	  for (i = 0; i < list.length; ++i) {
-	    var buf = list[i];
-	    if (!internalIsBuffer(buf)) {
-	      throw new TypeError('"list" argument must be an Array of Buffers')
-	    }
-	    buf.copy(buffer, pos);
-	    pos += buf.length;
-	  }
-	  return buffer
-	};
-
-	function byteLength (string, encoding) {
-	  if (internalIsBuffer(string)) {
-	    return string.length
-	  }
-	  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
-	      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
-	    return string.byteLength
-	  }
-	  if (typeof string !== 'string') {
-	    string = '' + string;
-	  }
-
-	  var len = string.length;
-	  if (len === 0) return 0
-
-	  // Use a for loop to avoid recursion
-	  var loweredCase = false;
-	  for (;;) {
-	    switch (encoding) {
-	      case 'ascii':
-	      case 'latin1':
-	      case 'binary':
-	        return len
-	      case 'utf8':
-	      case 'utf-8':
-	      case undefined:
-	        return utf8ToBytes(string).length
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return len * 2
-	      case 'hex':
-	        return len >>> 1
-	      case 'base64':
-	        return base64ToBytes(string).length
-	      default:
-	        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-	        encoding = ('' + encoding).toLowerCase();
-	        loweredCase = true;
-	    }
-	  }
-	}
-	Buffer.byteLength = byteLength;
-
-	function slowToString (encoding, start, end) {
-	  var loweredCase = false;
-
-	  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
-	  // property of a typed array.
-
-	  // This behaves neither like String nor Uint8Array in that we set start/end
-	  // to their upper/lower bounds if the value passed is out of range.
-	  // undefined is handled specially as per ECMA-262 6th Edition,
-	  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
-	  if (start === undefined || start < 0) {
-	    start = 0;
-	  }
-	  // Return early if start > this.length. Done here to prevent potential uint32
-	  // coercion fail below.
-	  if (start > this.length) {
-	    return ''
-	  }
-
-	  if (end === undefined || end > this.length) {
-	    end = this.length;
-	  }
-
-	  if (end <= 0) {
-	    return ''
-	  }
-
-	  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
-	  end >>>= 0;
-	  start >>>= 0;
-
-	  if (end <= start) {
-	    return ''
-	  }
-
-	  if (!encoding) encoding = 'utf8';
-
-	  while (true) {
-	    switch (encoding) {
-	      case 'hex':
-	        return hexSlice(this, start, end)
-
-	      case 'utf8':
-	      case 'utf-8':
-	        return utf8Slice(this, start, end)
-
-	      case 'ascii':
-	        return asciiSlice(this, start, end)
-
-	      case 'latin1':
-	      case 'binary':
-	        return latin1Slice(this, start, end)
-
-	      case 'base64':
-	        return base64Slice(this, start, end)
-
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return utf16leSlice(this, start, end)
-
-	      default:
-	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-	        encoding = (encoding + '').toLowerCase();
-	        loweredCase = true;
-	    }
-	  }
-	}
-
-	// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
-	// Buffer instances.
-	Buffer.prototype._isBuffer = true;
-
-	function swap (b, n, m) {
-	  var i = b[n];
-	  b[n] = b[m];
-	  b[m] = i;
-	}
-
-	Buffer.prototype.swap16 = function swap16 () {
-	  var len = this.length;
-	  if (len % 2 !== 0) {
-	    throw new RangeError('Buffer size must be a multiple of 16-bits')
-	  }
-	  for (var i = 0; i < len; i += 2) {
-	    swap(this, i, i + 1);
-	  }
-	  return this
-	};
-
-	Buffer.prototype.swap32 = function swap32 () {
-	  var len = this.length;
-	  if (len % 4 !== 0) {
-	    throw new RangeError('Buffer size must be a multiple of 32-bits')
-	  }
-	  for (var i = 0; i < len; i += 4) {
-	    swap(this, i, i + 3);
-	    swap(this, i + 1, i + 2);
-	  }
-	  return this
-	};
-
-	Buffer.prototype.swap64 = function swap64 () {
-	  var len = this.length;
-	  if (len % 8 !== 0) {
-	    throw new RangeError('Buffer size must be a multiple of 64-bits')
-	  }
-	  for (var i = 0; i < len; i += 8) {
-	    swap(this, i, i + 7);
-	    swap(this, i + 1, i + 6);
-	    swap(this, i + 2, i + 5);
-	    swap(this, i + 3, i + 4);
-	  }
-	  return this
-	};
-
-	Buffer.prototype.toString = function toString () {
-	  var length = this.length | 0;
-	  if (length === 0) return ''
-	  if (arguments.length === 0) return utf8Slice(this, 0, length)
-	  return slowToString.apply(this, arguments)
-	};
-
-	Buffer.prototype.equals = function equals (b) {
-	  if (!internalIsBuffer(b)) throw new TypeError('Argument must be a Buffer')
-	  if (this === b) return true
-	  return Buffer.compare(this, b) === 0
-	};
-
-	Buffer.prototype.inspect = function inspect () {
-	  var str = '';
-	  var max = INSPECT_MAX_BYTES;
-	  if (this.length > 0) {
-	    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
-	    if (this.length > max) str += ' ... ';
-	  }
-	  return '<Buffer ' + str + '>'
-	};
-
-	Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-	  if (!internalIsBuffer(target)) {
-	    throw new TypeError('Argument must be a Buffer')
-	  }
-
-	  if (start === undefined) {
-	    start = 0;
-	  }
-	  if (end === undefined) {
-	    end = target ? target.length : 0;
-	  }
-	  if (thisStart === undefined) {
-	    thisStart = 0;
-	  }
-	  if (thisEnd === undefined) {
-	    thisEnd = this.length;
-	  }
-
-	  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-	    throw new RangeError('out of range index')
-	  }
-
-	  if (thisStart >= thisEnd && start >= end) {
-	    return 0
-	  }
-	  if (thisStart >= thisEnd) {
-	    return -1
-	  }
-	  if (start >= end) {
-	    return 1
-	  }
-
-	  start >>>= 0;
-	  end >>>= 0;
-	  thisStart >>>= 0;
-	  thisEnd >>>= 0;
-
-	  if (this === target) return 0
-
-	  var x = thisEnd - thisStart;
-	  var y = end - start;
-	  var len = Math.min(x, y);
-
-	  var thisCopy = this.slice(thisStart, thisEnd);
-	  var targetCopy = target.slice(start, end);
-
-	  for (var i = 0; i < len; ++i) {
-	    if (thisCopy[i] !== targetCopy[i]) {
-	      x = thisCopy[i];
-	      y = targetCopy[i];
-	      break
-	    }
-	  }
-
-	  if (x < y) return -1
-	  if (y < x) return 1
-	  return 0
-	};
-
-	// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-	// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-	//
-	// Arguments:
-	// - buffer - a Buffer to search
-	// - val - a string, Buffer, or number
-	// - byteOffset - an index into `buffer`; will be clamped to an int32
-	// - encoding - an optional encoding, relevant is val is a string
-	// - dir - true for indexOf, false for lastIndexOf
-	function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
-	  // Empty buffer means no match
-	  if (buffer.length === 0) return -1
-
-	  // Normalize byteOffset
-	  if (typeof byteOffset === 'string') {
-	    encoding = byteOffset;
-	    byteOffset = 0;
-	  } else if (byteOffset > 0x7fffffff) {
-	    byteOffset = 0x7fffffff;
-	  } else if (byteOffset < -0x80000000) {
-	    byteOffset = -0x80000000;
-	  }
-	  byteOffset = +byteOffset;  // Coerce to Number.
-	  if (isNaN(byteOffset)) {
-	    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-	    byteOffset = dir ? 0 : (buffer.length - 1);
-	  }
-
-	  // Normalize byteOffset: negative offsets start from the end of the buffer
-	  if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
-	  if (byteOffset >= buffer.length) {
-	    if (dir) return -1
-	    else byteOffset = buffer.length - 1;
-	  } else if (byteOffset < 0) {
-	    if (dir) byteOffset = 0;
-	    else return -1
-	  }
-
-	  // Normalize val
-	  if (typeof val === 'string') {
-	    val = Buffer.from(val, encoding);
-	  }
-
-	  // Finally, search either indexOf (if dir is true) or lastIndexOf
-	  if (internalIsBuffer(val)) {
-	    // Special case: looking for empty string/buffer always fails
-	    if (val.length === 0) {
-	      return -1
-	    }
-	    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
-	  } else if (typeof val === 'number') {
-	    val = val & 0xFF; // Search for a byte value [0-255]
-	    if (Buffer.TYPED_ARRAY_SUPPORT &&
-	        typeof Uint8Array.prototype.indexOf === 'function') {
-	      if (dir) {
-	        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
-	      } else {
-	        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
-	      }
-	    }
-	    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
-	  }
-
-	  throw new TypeError('val must be string, number or Buffer')
-	}
-
-	function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
-	  var indexSize = 1;
-	  var arrLength = arr.length;
-	  var valLength = val.length;
-
-	  if (encoding !== undefined) {
-	    encoding = String(encoding).toLowerCase();
-	    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
-	        encoding === 'utf16le' || encoding === 'utf-16le') {
-	      if (arr.length < 2 || val.length < 2) {
-	        return -1
-	      }
-	      indexSize = 2;
-	      arrLength /= 2;
-	      valLength /= 2;
-	      byteOffset /= 2;
-	    }
-	  }
-
-	  function read (buf, i) {
-	    if (indexSize === 1) {
-	      return buf[i]
-	    } else {
-	      return buf.readUInt16BE(i * indexSize)
-	    }
-	  }
-
-	  var i;
-	  if (dir) {
-	    var foundIndex = -1;
-	    for (i = byteOffset; i < arrLength; i++) {
-	      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-	        if (foundIndex === -1) foundIndex = i;
-	        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-	      } else {
-	        if (foundIndex !== -1) i -= i - foundIndex;
-	        foundIndex = -1;
-	      }
-	    }
-	  } else {
-	    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
-	    for (i = byteOffset; i >= 0; i--) {
-	      var found = true;
-	      for (var j = 0; j < valLength; j++) {
-	        if (read(arr, i + j) !== read(val, j)) {
-	          found = false;
-	          break
-	        }
-	      }
-	      if (found) return i
-	    }
-	  }
-
-	  return -1
-	}
-
-	Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
-	  return this.indexOf(val, byteOffset, encoding) !== -1
-	};
-
-	Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-	  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
-	};
-
-	Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
-	  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
-	};
-
-	function hexWrite (buf, string, offset, length) {
-	  offset = Number(offset) || 0;
-	  var remaining = buf.length - offset;
-	  if (!length) {
-	    length = remaining;
-	  } else {
-	    length = Number(length);
-	    if (length > remaining) {
-	      length = remaining;
-	    }
-	  }
-
-	  // must be an even number of digits
-	  var strLen = string.length;
-	  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-
-	  if (length > strLen / 2) {
-	    length = strLen / 2;
-	  }
-	  for (var i = 0; i < length; ++i) {
-	    var parsed = parseInt(string.substr(i * 2, 2), 16);
-	    if (isNaN(parsed)) return i
-	    buf[offset + i] = parsed;
-	  }
-	  return i
-	}
-
-	function utf8Write (buf, string, offset, length) {
-	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-	}
-
-	function asciiWrite (buf, string, offset, length) {
-	  return blitBuffer(asciiToBytes(string), buf, offset, length)
-	}
-
-	function latin1Write (buf, string, offset, length) {
-	  return asciiWrite(buf, string, offset, length)
-	}
-
-	function base64Write (buf, string, offset, length) {
-	  return blitBuffer(base64ToBytes(string), buf, offset, length)
-	}
-
-	function ucs2Write (buf, string, offset, length) {
-	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-	}
-
-	Buffer.prototype.write = function write (string, offset, length, encoding) {
-	  // Buffer#write(string)
-	  if (offset === undefined) {
-	    encoding = 'utf8';
-	    length = this.length;
-	    offset = 0;
-	  // Buffer#write(string, encoding)
-	  } else if (length === undefined && typeof offset === 'string') {
-	    encoding = offset;
-	    length = this.length;
-	    offset = 0;
-	  // Buffer#write(string, offset[, length][, encoding])
-	  } else if (isFinite(offset)) {
-	    offset = offset | 0;
-	    if (isFinite(length)) {
-	      length = length | 0;
-	      if (encoding === undefined) encoding = 'utf8';
-	    } else {
-	      encoding = length;
-	      length = undefined;
-	    }
-	  // legacy write(string, encoding, offset, length) - remove in v0.13
-	  } else {
-	    throw new Error(
-	      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
-	    )
-	  }
-
-	  var remaining = this.length - offset;
-	  if (length === undefined || length > remaining) length = remaining;
-
-	  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-	    throw new RangeError('Attempt to write outside buffer bounds')
-	  }
-
-	  if (!encoding) encoding = 'utf8';
-
-	  var loweredCase = false;
-	  for (;;) {
-	    switch (encoding) {
-	      case 'hex':
-	        return hexWrite(this, string, offset, length)
-
-	      case 'utf8':
-	      case 'utf-8':
-	        return utf8Write(this, string, offset, length)
-
-	      case 'ascii':
-	        return asciiWrite(this, string, offset, length)
-
-	      case 'latin1':
-	      case 'binary':
-	        return latin1Write(this, string, offset, length)
-
-	      case 'base64':
-	        // Warning: maxLength not taken into account in base64Write
-	        return base64Write(this, string, offset, length)
-
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return ucs2Write(this, string, offset, length)
-
-	      default:
-	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-	        encoding = ('' + encoding).toLowerCase();
-	        loweredCase = true;
-	    }
-	  }
-	};
-
-	Buffer.prototype.toJSON = function toJSON () {
-	  return {
-	    type: 'Buffer',
-	    data: Array.prototype.slice.call(this._arr || this, 0)
-	  }
-	};
-
-	function base64Slice (buf, start, end) {
-	  if (start === 0 && end === buf.length) {
-	    return fromByteArray(buf)
-	  } else {
-	    return fromByteArray(buf.slice(start, end))
-	  }
-	}
-
-	function utf8Slice (buf, start, end) {
-	  end = Math.min(buf.length, end);
-	  var res = [];
-
-	  var i = start;
-	  while (i < end) {
-	    var firstByte = buf[i];
-	    var codePoint = null;
-	    var bytesPerSequence = (firstByte > 0xEF) ? 4
-	      : (firstByte > 0xDF) ? 3
-	      : (firstByte > 0xBF) ? 2
-	      : 1;
-
-	    if (i + bytesPerSequence <= end) {
-	      var secondByte, thirdByte, fourthByte, tempCodePoint;
-
-	      switch (bytesPerSequence) {
-	        case 1:
-	          if (firstByte < 0x80) {
-	            codePoint = firstByte;
-	          }
-	          break
-	        case 2:
-	          secondByte = buf[i + 1];
-	          if ((secondByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F);
-	            if (tempCodePoint > 0x7F) {
-	              codePoint = tempCodePoint;
-	            }
-	          }
-	          break
-	        case 3:
-	          secondByte = buf[i + 1];
-	          thirdByte = buf[i + 2];
-	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F);
-	            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-	              codePoint = tempCodePoint;
-	            }
-	          }
-	          break
-	        case 4:
-	          secondByte = buf[i + 1];
-	          thirdByte = buf[i + 2];
-	          fourthByte = buf[i + 3];
-	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F);
-	            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-	              codePoint = tempCodePoint;
-	            }
-	          }
-	      }
-	    }
-
-	    if (codePoint === null) {
-	      // we did not generate a valid codePoint so insert a
-	      // replacement char (U+FFFD) and advance only 1 byte
-	      codePoint = 0xFFFD;
-	      bytesPerSequence = 1;
-	    } else if (codePoint > 0xFFFF) {
-	      // encode to utf16 (surrogate pair dance)
-	      codePoint -= 0x10000;
-	      res.push(codePoint >>> 10 & 0x3FF | 0xD800);
-	      codePoint = 0xDC00 | codePoint & 0x3FF;
-	    }
-
-	    res.push(codePoint);
-	    i += bytesPerSequence;
-	  }
-
-	  return decodeCodePointsArray(res)
-	}
-
-	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-	// the lowest limit is Chrome, with 0x10000 args.
-	// We go 1 magnitude less, for safety
-	var MAX_ARGUMENTS_LENGTH = 0x1000;
-
-	function decodeCodePointsArray (codePoints) {
-	  var len = codePoints.length;
-	  if (len <= MAX_ARGUMENTS_LENGTH) {
-	    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-	  }
-
-	  // Decode in chunks to avoid "call stack size exceeded".
-	  var res = '';
-	  var i = 0;
-	  while (i < len) {
-	    res += String.fromCharCode.apply(
-	      String,
-	      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-	    );
-	  }
-	  return res
-	}
-
-	function asciiSlice (buf, start, end) {
-	  var ret = '';
-	  end = Math.min(buf.length, end);
-
-	  for (var i = start; i < end; ++i) {
-	    ret += String.fromCharCode(buf[i] & 0x7F);
-	  }
-	  return ret
-	}
-
-	function latin1Slice (buf, start, end) {
-	  var ret = '';
-	  end = Math.min(buf.length, end);
-
-	  for (var i = start; i < end; ++i) {
-	    ret += String.fromCharCode(buf[i]);
-	  }
-	  return ret
-	}
-
-	function hexSlice (buf, start, end) {
-	  var len = buf.length;
-
-	  if (!start || start < 0) start = 0;
-	  if (!end || end < 0 || end > len) end = len;
-
-	  var out = '';
-	  for (var i = start; i < end; ++i) {
-	    out += toHex(buf[i]);
-	  }
-	  return out
-	}
-
-	function utf16leSlice (buf, start, end) {
-	  var bytes = buf.slice(start, end);
-	  var res = '';
-	  for (var i = 0; i < bytes.length; i += 2) {
-	    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
-	  }
-	  return res
-	}
-
-	Buffer.prototype.slice = function slice (start, end) {
-	  var len = this.length;
-	  start = ~~start;
-	  end = end === undefined ? len : ~~end;
-
-	  if (start < 0) {
-	    start += len;
-	    if (start < 0) start = 0;
-	  } else if (start > len) {
-	    start = len;
-	  }
-
-	  if (end < 0) {
-	    end += len;
-	    if (end < 0) end = 0;
-	  } else if (end > len) {
-	    end = len;
-	  }
-
-	  if (end < start) end = start;
-
-	  var newBuf;
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    newBuf = this.subarray(start, end);
-	    newBuf.__proto__ = Buffer.prototype;
-	  } else {
-	    var sliceLen = end - start;
-	    newBuf = new Buffer(sliceLen, undefined);
-	    for (var i = 0; i < sliceLen; ++i) {
-	      newBuf[i] = this[i + start];
-	    }
-	  }
-
-	  return newBuf
-	};
-
-	/*
-	 * Need to make sure that buffer isn't trying to write out of bounds.
-	 */
-	function checkOffset (offset, ext, length) {
-	  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-	}
-
-	Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-	  var val = this[offset];
-	  var mul = 1;
-	  var i = 0;
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    val += this[offset + i] * mul;
-	  }
-
-	  return val
-	};
-
-	Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) {
-	    checkOffset(offset, byteLength, this.length);
-	  }
-
-	  var val = this[offset + --byteLength];
-	  var mul = 1;
-	  while (byteLength > 0 && (mul *= 0x100)) {
-	    val += this[offset + --byteLength] * mul;
-	  }
-
-	  return val
-	};
-
-	Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 1, this.length);
-	  return this[offset]
-	};
-
-	Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length);
-	  return this[offset] | (this[offset + 1] << 8)
-	};
-
-	Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length);
-	  return (this[offset] << 8) | this[offset + 1]
-	};
-
-	Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-
-	  return ((this[offset]) |
-	      (this[offset + 1] << 8) |
-	      (this[offset + 2] << 16)) +
-	      (this[offset + 3] * 0x1000000)
-	};
-
-	Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-
-	  return (this[offset] * 0x1000000) +
-	    ((this[offset + 1] << 16) |
-	    (this[offset + 2] << 8) |
-	    this[offset + 3])
-	};
-
-	Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-	  var val = this[offset];
-	  var mul = 1;
-	  var i = 0;
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    val += this[offset + i] * mul;
-	  }
-	  mul *= 0x80;
-
-	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
-
-	  return val
-	};
-
-	Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) checkOffset(offset, byteLength, this.length);
-
-	  var i = byteLength;
-	  var mul = 1;
-	  var val = this[offset + --i];
-	  while (i > 0 && (mul *= 0x100)) {
-	    val += this[offset + --i] * mul;
-	  }
-	  mul *= 0x80;
-
-	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
-
-	  return val
-	};
-
-	Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 1, this.length);
-	  if (!(this[offset] & 0x80)) return (this[offset])
-	  return ((0xff - this[offset] + 1) * -1)
-	};
-
-	Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length);
-	  var val = this[offset] | (this[offset + 1] << 8);
-	  return (val & 0x8000) ? val | 0xFFFF0000 : val
-	};
-
-	Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length);
-	  var val = this[offset + 1] | (this[offset] << 8);
-	  return (val & 0x8000) ? val | 0xFFFF0000 : val
-	};
-
-	Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-
-	  return (this[offset]) |
-	    (this[offset + 1] << 8) |
-	    (this[offset + 2] << 16) |
-	    (this[offset + 3] << 24)
-	};
-
-	Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-
-	  return (this[offset] << 24) |
-	    (this[offset + 1] << 16) |
-	    (this[offset + 2] << 8) |
-	    (this[offset + 3])
-	};
-
-	Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-	  return read(this, offset, true, 23, 4)
-	};
-
-	Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length);
-	  return read(this, offset, false, 23, 4)
-	};
-
-	Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 8, this.length);
-	  return read(this, offset, true, 52, 8)
-	};
-
-	Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 8, this.length);
-	  return read(this, offset, false, 52, 8)
-	};
-
-	function checkInt (buf, value, offset, ext, max, min) {
-	  if (!internalIsBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-	  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-	}
-
-	Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) {
-	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
-	    checkInt(this, value, offset, byteLength, maxBytes, 0);
-	  }
-
-	  var mul = 1;
-	  var i = 0;
-	  this[offset] = value & 0xFF;
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    this[offset + i] = (value / mul) & 0xFF;
-	  }
-
-	  return offset + byteLength
-	};
-
-	Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  byteLength = byteLength | 0;
-	  if (!noAssert) {
-	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
-	    checkInt(this, value, offset, byteLength, maxBytes, 0);
-	  }
-
-	  var i = byteLength - 1;
-	  var mul = 1;
-	  this[offset + i] = value & 0xFF;
-	  while (--i >= 0 && (mul *= 0x100)) {
-	    this[offset + i] = (value / mul) & 0xFF;
-	  }
-
-	  return offset + byteLength
-	};
-
-	Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0);
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
-	  this[offset] = (value & 0xff);
-	  return offset + 1
-	};
-
-	function objectWriteUInt16 (buf, value, offset, littleEndian) {
-	  if (value < 0) value = 0xffff + value + 1;
-	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
-	    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-	      (littleEndian ? i : 1 - i) * 8;
-	  }
-	}
-
-	Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff);
-	    this[offset + 1] = (value >>> 8);
-	  } else {
-	    objectWriteUInt16(this, value, offset, true);
-	  }
-	  return offset + 2
-	};
-
-	Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 8);
-	    this[offset + 1] = (value & 0xff);
-	  } else {
-	    objectWriteUInt16(this, value, offset, false);
-	  }
-	  return offset + 2
-	};
-
-	function objectWriteUInt32 (buf, value, offset, littleEndian) {
-	  if (value < 0) value = 0xffffffff + value + 1;
-	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
-	    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff;
-	  }
-	}
-
-	Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset + 3] = (value >>> 24);
-	    this[offset + 2] = (value >>> 16);
-	    this[offset + 1] = (value >>> 8);
-	    this[offset] = (value & 0xff);
-	  } else {
-	    objectWriteUInt32(this, value, offset, true);
-	  }
-	  return offset + 4
-	};
-
-	Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 24);
-	    this[offset + 1] = (value >>> 16);
-	    this[offset + 2] = (value >>> 8);
-	    this[offset + 3] = (value & 0xff);
-	  } else {
-	    objectWriteUInt32(this, value, offset, false);
-	  }
-	  return offset + 4
-	};
-
-	Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) {
-	    var limit = Math.pow(2, 8 * byteLength - 1);
-
-	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
-	  }
-
-	  var i = 0;
-	  var mul = 1;
-	  var sub = 0;
-	  this[offset] = value & 0xFF;
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
-	      sub = 1;
-	    }
-	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
-	  }
-
-	  return offset + byteLength
-	};
-
-	Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) {
-	    var limit = Math.pow(2, 8 * byteLength - 1);
-
-	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
-	  }
-
-	  var i = byteLength - 1;
-	  var mul = 1;
-	  var sub = 0;
-	  this[offset + i] = value & 0xFF;
-	  while (--i >= 0 && (mul *= 0x100)) {
-	    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
-	      sub = 1;
-	    }
-	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
-	  }
-
-	  return offset + byteLength
-	};
-
-	Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80);
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
-	  if (value < 0) value = 0xff + value + 1;
-	  this[offset] = (value & 0xff);
-	  return offset + 1
-	};
-
-	Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff);
-	    this[offset + 1] = (value >>> 8);
-	  } else {
-	    objectWriteUInt16(this, value, offset, true);
-	  }
-	  return offset + 2
-	};
-
-	Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 8);
-	    this[offset + 1] = (value & 0xff);
-	  } else {
-	    objectWriteUInt16(this, value, offset, false);
-	  }
-	  return offset + 2
-	};
-
-	Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff);
-	    this[offset + 1] = (value >>> 8);
-	    this[offset + 2] = (value >>> 16);
-	    this[offset + 3] = (value >>> 24);
-	  } else {
-	    objectWriteUInt32(this, value, offset, true);
-	  }
-	  return offset + 4
-	};
-
-	Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-	  value = +value;
-	  offset = offset | 0;
-	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
-	  if (value < 0) value = 0xffffffff + value + 1;
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 24);
-	    this[offset + 1] = (value >>> 16);
-	    this[offset + 2] = (value >>> 8);
-	    this[offset + 3] = (value & 0xff);
-	  } else {
-	    objectWriteUInt32(this, value, offset, false);
-	  }
-	  return offset + 4
-	};
-
-	function checkIEEE754 (buf, value, offset, ext, max, min) {
-	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-	  if (offset < 0) throw new RangeError('Index out of range')
-	}
-
-	function writeFloat (buf, value, offset, littleEndian, noAssert) {
-	  if (!noAssert) {
-	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38);
-	  }
-	  write(buf, value, offset, littleEndian, 23, 4);
-	  return offset + 4
-	}
-
-	Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-	  return writeFloat(this, value, offset, true, noAssert)
-	};
-
-	Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-	  return writeFloat(this, value, offset, false, noAssert)
-	};
-
-	function writeDouble (buf, value, offset, littleEndian, noAssert) {
-	  if (!noAssert) {
-	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308);
-	  }
-	  write(buf, value, offset, littleEndian, 52, 8);
-	  return offset + 8
-	}
-
-	Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-	  return writeDouble(this, value, offset, true, noAssert)
-	};
-
-	Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-	  return writeDouble(this, value, offset, false, noAssert)
-	};
-
-	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-	Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-	  if (!start) start = 0;
-	  if (!end && end !== 0) end = this.length;
-	  if (targetStart >= target.length) targetStart = target.length;
-	  if (!targetStart) targetStart = 0;
-	  if (end > 0 && end < start) end = start;
-
-	  // Copy 0 bytes; we're done
-	  if (end === start) return 0
-	  if (target.length === 0 || this.length === 0) return 0
-
-	  // Fatal error conditions
-	  if (targetStart < 0) {
-	    throw new RangeError('targetStart out of bounds')
-	  }
-	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-	  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-	  // Are we oob?
-	  if (end > this.length) end = this.length;
-	  if (target.length - targetStart < end - start) {
-	    end = target.length - targetStart + start;
-	  }
-
-	  var len = end - start;
-	  var i;
-
-	  if (this === target && start < targetStart && targetStart < end) {
-	    // descending copy from end
-	    for (i = len - 1; i >= 0; --i) {
-	      target[i + targetStart] = this[i + start];
-	    }
-	  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-	    // ascending copy from start
-	    for (i = 0; i < len; ++i) {
-	      target[i + targetStart] = this[i + start];
-	    }
-	  } else {
-	    Uint8Array.prototype.set.call(
-	      target,
-	      this.subarray(start, start + len),
-	      targetStart
-	    );
-	  }
-
-	  return len
-	};
-
-	// Usage:
-	//    buffer.fill(number[, offset[, end]])
-	//    buffer.fill(buffer[, offset[, end]])
-	//    buffer.fill(string[, offset[, end]][, encoding])
-	Buffer.prototype.fill = function fill (val, start, end, encoding) {
-	  // Handle string cases:
-	  if (typeof val === 'string') {
-	    if (typeof start === 'string') {
-	      encoding = start;
-	      start = 0;
-	      end = this.length;
-	    } else if (typeof end === 'string') {
-	      encoding = end;
-	      end = this.length;
-	    }
-	    if (val.length === 1) {
-	      var code = val.charCodeAt(0);
-	      if (code < 256) {
-	        val = code;
-	      }
-	    }
-	    if (encoding !== undefined && typeof encoding !== 'string') {
-	      throw new TypeError('encoding must be a string')
-	    }
-	    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
-	      throw new TypeError('Unknown encoding: ' + encoding)
-	    }
-	  } else if (typeof val === 'number') {
-	    val = val & 255;
-	  }
-
-	  // Invalid ranges are not set to a default, so can range check early.
-	  if (start < 0 || this.length < start || this.length < end) {
-	    throw new RangeError('Out of range index')
-	  }
-
-	  if (end <= start) {
-	    return this
-	  }
-
-	  start = start >>> 0;
-	  end = end === undefined ? this.length : end >>> 0;
-
-	  if (!val) val = 0;
-
-	  var i;
-	  if (typeof val === 'number') {
-	    for (i = start; i < end; ++i) {
-	      this[i] = val;
-	    }
-	  } else {
-	    var bytes = internalIsBuffer(val)
-	      ? val
-	      : utf8ToBytes(new Buffer(val, encoding).toString());
-	    var len = bytes.length;
-	    for (i = 0; i < end - start; ++i) {
-	      this[i + start] = bytes[i % len];
-	    }
-	  }
-
-	  return this
-	};
-
-	// HELPER FUNCTIONS
-	// ================
-
-	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g;
-
-	function base64clean (str) {
-	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-	  str = stringtrim(str).replace(INVALID_BASE64_RE, '');
-	  // Node converts strings with length < 2 to ''
-	  if (str.length < 2) return ''
-	  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-	  while (str.length % 4 !== 0) {
-	    str = str + '=';
-	  }
-	  return str
-	}
-
-	function stringtrim (str) {
-	  if (str.trim) return str.trim()
-	  return str.replace(/^\s+|\s+$/g, '')
-	}
-
-	function toHex (n) {
-	  if (n < 16) return '0' + n.toString(16)
-	  return n.toString(16)
-	}
-
-	function utf8ToBytes (string, units) {
-	  units = units || Infinity;
-	  var codePoint;
-	  var length = string.length;
-	  var leadSurrogate = null;
-	  var bytes = [];
-
-	  for (var i = 0; i < length; ++i) {
-	    codePoint = string.charCodeAt(i);
-
-	    // is surrogate component
-	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-	      // last char was a lead
-	      if (!leadSurrogate) {
-	        // no lead yet
-	        if (codePoint > 0xDBFF) {
-	          // unexpected trail
-	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-	          continue
-	        } else if (i + 1 === length) {
-	          // unpaired lead
-	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-	          continue
-	        }
-
-	        // valid lead
-	        leadSurrogate = codePoint;
-
-	        continue
-	      }
-
-	      // 2 leads in a row
-	      if (codePoint < 0xDC00) {
-	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-	        leadSurrogate = codePoint;
-	        continue
-	      }
-
-	      // valid surrogate pair
-	      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000;
-	    } else if (leadSurrogate) {
-	      // valid bmp char, but last char was a lead
-	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
-	    }
-
-	    leadSurrogate = null;
-
-	    // encode utf8
-	    if (codePoint < 0x80) {
-	      if ((units -= 1) < 0) break
-	      bytes.push(codePoint);
-	    } else if (codePoint < 0x800) {
-	      if ((units -= 2) < 0) break
-	      bytes.push(
-	        codePoint >> 0x6 | 0xC0,
-	        codePoint & 0x3F | 0x80
-	      );
-	    } else if (codePoint < 0x10000) {
-	      if ((units -= 3) < 0) break
-	      bytes.push(
-	        codePoint >> 0xC | 0xE0,
-	        codePoint >> 0x6 & 0x3F | 0x80,
-	        codePoint & 0x3F | 0x80
-	      );
-	    } else if (codePoint < 0x110000) {
-	      if ((units -= 4) < 0) break
-	      bytes.push(
-	        codePoint >> 0x12 | 0xF0,
-	        codePoint >> 0xC & 0x3F | 0x80,
-	        codePoint >> 0x6 & 0x3F | 0x80,
-	        codePoint & 0x3F | 0x80
-	      );
-	    } else {
-	      throw new Error('Invalid code point')
-	    }
-	  }
-
-	  return bytes
-	}
-
-	function asciiToBytes (str) {
-	  var byteArray = [];
-	  for (var i = 0; i < str.length; ++i) {
-	    // Node's code seems to be doing this and not & 0x7F..
-	    byteArray.push(str.charCodeAt(i) & 0xFF);
-	  }
-	  return byteArray
-	}
-
-	function utf16leToBytes (str, units) {
-	  var c, hi, lo;
-	  var byteArray = [];
-	  for (var i = 0; i < str.length; ++i) {
-	    if ((units -= 2) < 0) break
-
-	    c = str.charCodeAt(i);
-	    hi = c >> 8;
-	    lo = c % 256;
-	    byteArray.push(lo);
-	    byteArray.push(hi);
-	  }
-
-	  return byteArray
-	}
-
-
-	function base64ToBytes (str) {
-	  return toByteArray(base64clean(str))
-	}
-
-	function blitBuffer (src, dst, offset, length) {
-	  for (var i = 0; i < length; ++i) {
-	    if ((i + offset >= dst.length) || (i >= src.length)) break
-	    dst[i + offset] = src[i];
-	  }
-	  return i
-	}
-
-	function isnan (val) {
-	  return val !== val // eslint-disable-line no-self-compare
-	}
-
-
-	// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
-	// The _isBuffer check is for Safari 5-7 support, because it's missing
-	// Object.prototype.constructor. Remove this eventually
-	function isBuffer(obj) {
-	  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
-	}
-
-	function isFastBuffer (obj) {
-	  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-	}
-
-	// For Node v0.10 support. Remove this eventually.
-	function isSlowBuffer (obj) {
-	  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
-	}
-
-	var bufferEs6 = /*#__PURE__*/Object.freeze({
-		INSPECT_MAX_BYTES: INSPECT_MAX_BYTES,
-		kMaxLength: _kMaxLength,
-		Buffer: Buffer,
-		SlowBuffer: SlowBuffer,
-		isBuffer: isBuffer
-	});
-
-	var bn = createCommonjsModule(function (module) {
-	(function (module, exports) {
-
-	  // Utils
-	  function assert (val, msg) {
-	    if (!val) throw new Error(msg || 'Assertion failed');
-	  }
-
-	  // Could use `inherits` module, but don't want to move from single file
-	  // architecture yet.
-	  function inherits (ctor, superCtor) {
-	    ctor.super_ = superCtor;
-	    var TempCtor = function () {};
-	    TempCtor.prototype = superCtor.prototype;
-	    ctor.prototype = new TempCtor();
-	    ctor.prototype.constructor = ctor;
-	  }
-
-	  // BN
-
-	  function BN (number, base, endian) {
-	    if (BN.isBN(number)) {
-	      return number;
-	    }
-
-	    this.negative = 0;
-	    this.words = null;
-	    this.length = 0;
-
-	    // Reduction context
-	    this.red = null;
-
-	    if (number !== null) {
-	      if (base === 'le' || base === 'be') {
-	        endian = base;
-	        base = 10;
-	      }
-
-	      this._init(number || 0, base || 10, endian || 'be');
-	    }
-	  }
-	  if (typeof module === 'object') {
-	    module.exports = BN;
-	  } else {
-	    exports.BN = BN;
-	  }
-
-	  BN.BN = BN;
-	  BN.wordSize = 26;
-
-	  var Buffer;
-	  try {
-	    Buffer = bufferEs6.Buffer;
-	  } catch (e) {
-	  }
-
-	  BN.isBN = function isBN (num) {
-	    if (num instanceof BN) {
-	      return true;
-	    }
-
-	    return num !== null && typeof num === 'object' &&
-	      num.constructor.wordSize === BN.wordSize && Array.isArray(num.words);
-	  };
-
-	  BN.max = function max (left, right) {
-	    if (left.cmp(right) > 0) return left;
-	    return right;
-	  };
-
-	  BN.min = function min (left, right) {
-	    if (left.cmp(right) < 0) return left;
-	    return right;
-	  };
-
-	  BN.prototype._init = function init (number, base, endian) {
-	    if (typeof number === 'number') {
-	      return this._initNumber(number, base, endian);
-	    }
-
-	    if (typeof number === 'object') {
-	      return this._initArray(number, base, endian);
-	    }
-
-	    if (base === 'hex') {
-	      base = 16;
-	    }
-	    assert(base === (base | 0) && base >= 2 && base <= 36);
-
-	    number = number.toString().replace(/\s+/g, '');
-	    var start = 0;
-	    if (number[0] === '-') {
-	      start++;
-	    }
-
-	    if (base === 16) {
-	      this._parseHex(number, start);
-	    } else {
-	      this._parseBase(number, base, start);
-	    }
-
-	    if (number[0] === '-') {
-	      this.negative = 1;
-	    }
-
-	    this.strip();
-
-	    if (endian !== 'le') return;
-
-	    this._initArray(this.toArray(), base, endian);
-	  };
-
-	  BN.prototype._initNumber = function _initNumber (number, base, endian) {
-	    if (number < 0) {
-	      this.negative = 1;
-	      number = -number;
-	    }
-	    if (number < 0x4000000) {
-	      this.words = [ number & 0x3ffffff ];
-	      this.length = 1;
-	    } else if (number < 0x10000000000000) {
-	      this.words = [
-	        number & 0x3ffffff,
-	        (number / 0x4000000) & 0x3ffffff
-	      ];
-	      this.length = 2;
-	    } else {
-	      assert(number < 0x20000000000000); // 2 ^ 53 (unsafe)
-	      this.words = [
-	        number & 0x3ffffff,
-	        (number / 0x4000000) & 0x3ffffff,
-	        1
-	      ];
-	      this.length = 3;
-	    }
-
-	    if (endian !== 'le') return;
-
-	    // Reverse the bytes
-	    this._initArray(this.toArray(), base, endian);
-	  };
-
-	  BN.prototype._initArray = function _initArray (number, base, endian) {
-	    // Perhaps a Uint8Array
-	    assert(typeof number.length === 'number');
-	    if (number.length <= 0) {
-	      this.words = [ 0 ];
-	      this.length = 1;
-	      return this;
-	    }
-
-	    this.length = Math.ceil(number.length / 3);
-	    this.words = new Array(this.length);
-	    for (var i = 0; i < this.length; i++) {
-	      this.words[i] = 0;
-	    }
-
-	    var j, w;
-	    var off = 0;
-	    if (endian === 'be') {
-	      for (i = number.length - 1, j = 0; i >= 0; i -= 3) {
-	        w = number[i] | (number[i - 1] << 8) | (number[i - 2] << 16);
-	        this.words[j] |= (w << off) & 0x3ffffff;
-	        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
-	        off += 24;
-	        if (off >= 26) {
-	          off -= 26;
-	          j++;
-	        }
-	      }
-	    } else if (endian === 'le') {
-	      for (i = 0, j = 0; i < number.length; i += 3) {
-	        w = number[i] | (number[i + 1] << 8) | (number[i + 2] << 16);
-	        this.words[j] |= (w << off) & 0x3ffffff;
-	        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
-	        off += 24;
-	        if (off >= 26) {
-	          off -= 26;
-	          j++;
-	        }
-	      }
-	    }
-	    return this.strip();
-	  };
-
-	  function parseHex (str, start, end) {
-	    var r = 0;
-	    var len = Math.min(str.length, end);
-	    for (var i = start; i < len; i++) {
-	      var c = str.charCodeAt(i) - 48;
-
-	      r <<= 4;
-
-	      // 'a' - 'f'
-	      if (c >= 49 && c <= 54) {
-	        r |= c - 49 + 0xa;
-
-	      // 'A' - 'F'
-	      } else if (c >= 17 && c <= 22) {
-	        r |= c - 17 + 0xa;
-
-	      // '0' - '9'
-	      } else {
-	        r |= c & 0xf;
-	      }
-	    }
-	    return r;
-	  }
-
-	  BN.prototype._parseHex = function _parseHex (number, start) {
-	    // Create possibly bigger array to ensure that it fits the number
-	    this.length = Math.ceil((number.length - start) / 6);
-	    this.words = new Array(this.length);
-	    for (var i = 0; i < this.length; i++) {
-	      this.words[i] = 0;
-	    }
-
-	    var j, w;
-	    // Scan 24-bit chunks and add them to the number
-	    var off = 0;
-	    for (i = number.length - 6, j = 0; i >= start; i -= 6) {
-	      w = parseHex(number, i, i + 6);
-	      this.words[j] |= (w << off) & 0x3ffffff;
-	      // NOTE: `0x3fffff` is intentional here, 26bits max shift + 24bit hex limb
-	      this.words[j + 1] |= w >>> (26 - off) & 0x3fffff;
-	      off += 24;
-	      if (off >= 26) {
-	        off -= 26;
-	        j++;
-	      }
-	    }
-	    if (i + 6 !== start) {
-	      w = parseHex(number, start, i + 6);
-	      this.words[j] |= (w << off) & 0x3ffffff;
-	      this.words[j + 1] |= w >>> (26 - off) & 0x3fffff;
-	    }
-	    this.strip();
-	  };
-
-	  function parseBase (str, start, end, mul) {
-	    var r = 0;
-	    var len = Math.min(str.length, end);
-	    for (var i = start; i < len; i++) {
-	      var c = str.charCodeAt(i) - 48;
-
-	      r *= mul;
-
-	      // 'a'
-	      if (c >= 49) {
-	        r += c - 49 + 0xa;
-
-	      // 'A'
-	      } else if (c >= 17) {
-	        r += c - 17 + 0xa;
-
-	      // '0' - '9'
-	      } else {
-	        r += c;
-	      }
-	    }
-	    return r;
-	  }
-
-	  BN.prototype._parseBase = function _parseBase (number, base, start) {
-	    // Initialize as zero
-	    this.words = [ 0 ];
-	    this.length = 1;
-
-	    // Find length of limb in base
-	    for (var limbLen = 0, limbPow = 1; limbPow <= 0x3ffffff; limbPow *= base) {
-	      limbLen++;
-	    }
-	    limbLen--;
-	    limbPow = (limbPow / base) | 0;
-
-	    var total = number.length - start;
-	    var mod = total % limbLen;
-	    var end = Math.min(total, total - mod) + start;
-
-	    var word = 0;
-	    for (var i = start; i < end; i += limbLen) {
-	      word = parseBase(number, i, i + limbLen, base);
-
-	      this.imuln(limbPow);
-	      if (this.words[0] + word < 0x4000000) {
-	        this.words[0] += word;
-	      } else {
-	        this._iaddn(word);
-	      }
-	    }
-
-	    if (mod !== 0) {
-	      var pow = 1;
-	      word = parseBase(number, i, number.length, base);
-
-	      for (i = 0; i < mod; i++) {
-	        pow *= base;
-	      }
-
-	      this.imuln(pow);
-	      if (this.words[0] + word < 0x4000000) {
-	        this.words[0] += word;
-	      } else {
-	        this._iaddn(word);
-	      }
-	    }
-	  };
-
-	  BN.prototype.copy = function copy (dest) {
-	    dest.words = new Array(this.length);
-	    for (var i = 0; i < this.length; i++) {
-	      dest.words[i] = this.words[i];
-	    }
-	    dest.length = this.length;
-	    dest.negative = this.negative;
-	    dest.red = this.red;
-	  };
-
-	  BN.prototype.clone = function clone () {
-	    var r = new BN(null);
-	    this.copy(r);
-	    return r;
-	  };
-
-	  BN.prototype._expand = function _expand (size) {
-	    while (this.length < size) {
-	      this.words[this.length++] = 0;
-	    }
-	    return this;
-	  };
-
-	  // Remove leading `0` from `this`
-	  BN.prototype.strip = function strip () {
-	    while (this.length > 1 && this.words[this.length - 1] === 0) {
-	      this.length--;
-	    }
-	    return this._normSign();
-	  };
-
-	  BN.prototype._normSign = function _normSign () {
-	    // -0 = 0
-	    if (this.length === 1 && this.words[0] === 0) {
-	      this.negative = 0;
-	    }
-	    return this;
-	  };
-
-	  BN.prototype.inspect = function inspect () {
-	    return (this.red ? '<BN-R: ' : '<BN: ') + this.toString(16) + '>';
-	  };
-
-	  /*
-
-	  var zeros = [];
-	  var groupSizes = [];
-	  var groupBases = [];
-
-	  var s = '';
-	  var i = -1;
-	  while (++i < BN.wordSize) {
-	    zeros[i] = s;
-	    s += '0';
-	  }
-	  groupSizes[0] = 0;
-	  groupSizes[1] = 0;
-	  groupBases[0] = 0;
-	  groupBases[1] = 0;
-	  var base = 2 - 1;
-	  while (++base < 36 + 1) {
-	    var groupSize = 0;
-	    var groupBase = 1;
-	    while (groupBase < (1 << BN.wordSize) / base) {
-	      groupBase *= base;
-	      groupSize += 1;
-	    }
-	    groupSizes[base] = groupSize;
-	    groupBases[base] = groupBase;
-	  }
-
-	  */
-
-	  var zeros = [
-	    '',
-	    '0',
-	    '00',
-	    '000',
-	    '0000',
-	    '00000',
-	    '000000',
-	    '0000000',
-	    '00000000',
-	    '000000000',
-	    '0000000000',
-	    '00000000000',
-	    '000000000000',
-	    '0000000000000',
-	    '00000000000000',
-	    '000000000000000',
-	    '0000000000000000',
-	    '00000000000000000',
-	    '000000000000000000',
-	    '0000000000000000000',
-	    '00000000000000000000',
-	    '000000000000000000000',
-	    '0000000000000000000000',
-	    '00000000000000000000000',
-	    '000000000000000000000000',
-	    '0000000000000000000000000'
-	  ];
-
-	  var groupSizes = [
-	    0, 0,
-	    25, 16, 12, 11, 10, 9, 8,
-	    8, 7, 7, 7, 7, 6, 6,
-	    6, 6, 6, 6, 6, 5, 5,
-	    5, 5, 5, 5, 5, 5, 5,
-	    5, 5, 5, 5, 5, 5, 5
-	  ];
-
-	  var groupBases = [
-	    0, 0,
-	    33554432, 43046721, 16777216, 48828125, 60466176, 40353607, 16777216,
-	    43046721, 10000000, 19487171, 35831808, 62748517, 7529536, 11390625,
-	    16777216, 24137569, 34012224, 47045881, 64000000, 4084101, 5153632,
-	    6436343, 7962624, 9765625, 11881376, 14348907, 17210368, 20511149,
-	    24300000, 28629151, 33554432, 39135393, 45435424, 52521875, 60466176
-	  ];
-
-	  BN.prototype.toString = function toString (base, padding) {
-	    base = base || 10;
-	    padding = padding | 0 || 1;
-
-	    var out;
-	    if (base === 16 || base === 'hex') {
-	      out = '';
-	      var off = 0;
-	      var carry = 0;
-	      for (var i = 0; i < this.length; i++) {
-	        var w = this.words[i];
-	        var word = (((w << off) | carry) & 0xffffff).toString(16);
-	        carry = (w >>> (24 - off)) & 0xffffff;
-	        if (carry !== 0 || i !== this.length - 1) {
-	          out = zeros[6 - word.length] + word + out;
-	        } else {
-	          out = word + out;
-	        }
-	        off += 2;
-	        if (off >= 26) {
-	          off -= 26;
-	          i--;
-	        }
-	      }
-	      if (carry !== 0) {
-	        out = carry.toString(16) + out;
-	      }
-	      while (out.length % padding !== 0) {
-	        out = '0' + out;
-	      }
-	      if (this.negative !== 0) {
-	        out = '-' + out;
-	      }
-	      return out;
-	    }
-
-	    if (base === (base | 0) && base >= 2 && base <= 36) {
-	      // var groupSize = Math.floor(BN.wordSize * Math.LN2 / Math.log(base));
-	      var groupSize = groupSizes[base];
-	      // var groupBase = Math.pow(base, groupSize);
-	      var groupBase = groupBases[base];
-	      out = '';
-	      var c = this.clone();
-	      c.negative = 0;
-	      while (!c.isZero()) {
-	        var r = c.modn(groupBase).toString(base);
-	        c = c.idivn(groupBase);
-
-	        if (!c.isZero()) {
-	          out = zeros[groupSize - r.length] + r + out;
-	        } else {
-	          out = r + out;
-	        }
-	      }
-	      if (this.isZero()) {
-	        out = '0' + out;
-	      }
-	      while (out.length % padding !== 0) {
-	        out = '0' + out;
-	      }
-	      if (this.negative !== 0) {
-	        out = '-' + out;
-	      }
-	      return out;
-	    }
-
-	    assert(false, 'Base should be between 2 and 36');
-	  };
-
-	  BN.prototype.toNumber = function toNumber () {
-	    var ret = this.words[0];
-	    if (this.length === 2) {
-	      ret += this.words[1] * 0x4000000;
-	    } else if (this.length === 3 && this.words[2] === 0x01) {
-	      // NOTE: at this stage it is known that the top bit is set
-	      ret += 0x10000000000000 + (this.words[1] * 0x4000000);
-	    } else if (this.length > 2) {
-	      assert(false, 'Number can only safely store up to 53 bits');
-	    }
-	    return (this.negative !== 0) ? -ret : ret;
-	  };
-
-	  BN.prototype.toJSON = function toJSON () {
-	    return this.toString(16);
-	  };
-
-	  BN.prototype.toBuffer = function toBuffer (endian, length) {
-	    assert(typeof Buffer !== 'undefined');
-	    return this.toArrayLike(Buffer, endian, length);
-	  };
-
-	  BN.prototype.toArray = function toArray (endian, length) {
-	    return this.toArrayLike(Array, endian, length);
-	  };
-
-	  BN.prototype.toArrayLike = function toArrayLike (ArrayType, endian, length) {
-	    var byteLength = this.byteLength();
-	    var reqLength = length || Math.max(1, byteLength);
-	    assert(byteLength <= reqLength, 'byte array longer than desired length');
-	    assert(reqLength > 0, 'Requested array length <= 0');
-
-	    this.strip();
-	    var littleEndian = endian === 'le';
-	    var res = new ArrayType(reqLength);
-
-	    var b, i;
-	    var q = this.clone();
-	    if (!littleEndian) {
-	      // Assume big-endian
-	      for (i = 0; i < reqLength - byteLength; i++) {
-	        res[i] = 0;
-	      }
-
-	      for (i = 0; !q.isZero(); i++) {
-	        b = q.andln(0xff);
-	        q.iushrn(8);
-
-	        res[reqLength - i - 1] = b;
-	      }
-	    } else {
-	      for (i = 0; !q.isZero(); i++) {
-	        b = q.andln(0xff);
-	        q.iushrn(8);
-
-	        res[i] = b;
-	      }
-
-	      for (; i < reqLength; i++) {
-	        res[i] = 0;
-	      }
-	    }
-
-	    return res;
-	  };
-
-	  if (Math.clz32) {
-	    BN.prototype._countBits = function _countBits (w) {
-	      return 32 - Math.clz32(w);
-	    };
-	  } else {
-	    BN.prototype._countBits = function _countBits (w) {
-	      var t = w;
-	      var r = 0;
-	      if (t >= 0x1000) {
-	        r += 13;
-	        t >>>= 13;
-	      }
-	      if (t >= 0x40) {
-	        r += 7;
-	        t >>>= 7;
-	      }
-	      if (t >= 0x8) {
-	        r += 4;
-	        t >>>= 4;
-	      }
-	      if (t >= 0x02) {
-	        r += 2;
-	        t >>>= 2;
-	      }
-	      return r + t;
-	    };
-	  }
-
-	  BN.prototype._zeroBits = function _zeroBits (w) {
-	    // Short-cut
-	    if (w === 0) return 26;
-
-	    var t = w;
-	    var r = 0;
-	    if ((t & 0x1fff) === 0) {
-	      r += 13;
-	      t >>>= 13;
-	    }
-	    if ((t & 0x7f) === 0) {
-	      r += 7;
-	      t >>>= 7;
-	    }
-	    if ((t & 0xf) === 0) {
-	      r += 4;
-	      t >>>= 4;
-	    }
-	    if ((t & 0x3) === 0) {
-	      r += 2;
-	      t >>>= 2;
-	    }
-	    if ((t & 0x1) === 0) {
-	      r++;
-	    }
-	    return r;
-	  };
-
-	  // Return number of used bits in a BN
-	  BN.prototype.bitLength = function bitLength () {
-	    var w = this.words[this.length - 1];
-	    var hi = this._countBits(w);
-	    return (this.length - 1) * 26 + hi;
-	  };
-
-	  function toBitArray (num) {
-	    var w = new Array(num.bitLength());
-
-	    for (var bit = 0; bit < w.length; bit++) {
-	      var off = (bit / 26) | 0;
-	      var wbit = bit % 26;
-
-	      w[bit] = (num.words[off] & (1 << wbit)) >>> wbit;
-	    }
-
-	    return w;
-	  }
-
-	  // Number of trailing zero bits
-	  BN.prototype.zeroBits = function zeroBits () {
-	    if (this.isZero()) return 0;
-
-	    var r = 0;
-	    for (var i = 0; i < this.length; i++) {
-	      var b = this._zeroBits(this.words[i]);
-	      r += b;
-	      if (b !== 26) break;
-	    }
-	    return r;
-	  };
-
-	  BN.prototype.byteLength = function byteLength () {
-	    return Math.ceil(this.bitLength() / 8);
-	  };
-
-	  BN.prototype.toTwos = function toTwos (width) {
-	    if (this.negative !== 0) {
-	      return this.abs().inotn(width).iaddn(1);
-	    }
-	    return this.clone();
-	  };
-
-	  BN.prototype.fromTwos = function fromTwos (width) {
-	    if (this.testn(width - 1)) {
-	      return this.notn(width).iaddn(1).ineg();
-	    }
-	    return this.clone();
-	  };
-
-	  BN.prototype.isNeg = function isNeg () {
-	    return this.negative !== 0;
-	  };
-
-	  // Return negative clone of `this`
-	  BN.prototype.neg = function neg () {
-	    return this.clone().ineg();
-	  };
-
-	  BN.prototype.ineg = function ineg () {
-	    if (!this.isZero()) {
-	      this.negative ^= 1;
-	    }
-
-	    return this;
-	  };
-
-	  // Or `num` with `this` in-place
-	  BN.prototype.iuor = function iuor (num) {
-	    while (this.length < num.length) {
-	      this.words[this.length++] = 0;
-	    }
-
-	    for (var i = 0; i < num.length; i++) {
-	      this.words[i] = this.words[i] | num.words[i];
-	    }
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.ior = function ior (num) {
-	    assert((this.negative | num.negative) === 0);
-	    return this.iuor(num);
-	  };
-
-	  // Or `num` with `this`
-	  BN.prototype.or = function or (num) {
-	    if (this.length > num.length) return this.clone().ior(num);
-	    return num.clone().ior(this);
-	  };
-
-	  BN.prototype.uor = function uor (num) {
-	    if (this.length > num.length) return this.clone().iuor(num);
-	    return num.clone().iuor(this);
-	  };
-
-	  // And `num` with `this` in-place
-	  BN.prototype.iuand = function iuand (num) {
-	    // b = min-length(num, this)
-	    var b;
-	    if (this.length > num.length) {
-	      b = num;
-	    } else {
-	      b = this;
-	    }
-
-	    for (var i = 0; i < b.length; i++) {
-	      this.words[i] = this.words[i] & num.words[i];
-	    }
-
-	    this.length = b.length;
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.iand = function iand (num) {
-	    assert((this.negative | num.negative) === 0);
-	    return this.iuand(num);
-	  };
-
-	  // And `num` with `this`
-	  BN.prototype.and = function and (num) {
-	    if (this.length > num.length) return this.clone().iand(num);
-	    return num.clone().iand(this);
-	  };
-
-	  BN.prototype.uand = function uand (num) {
-	    if (this.length > num.length) return this.clone().iuand(num);
-	    return num.clone().iuand(this);
-	  };
-
-	  // Xor `num` with `this` in-place
-	  BN.prototype.iuxor = function iuxor (num) {
-	    // a.length > b.length
-	    var a;
-	    var b;
-	    if (this.length > num.length) {
-	      a = this;
-	      b = num;
-	    } else {
-	      a = num;
-	      b = this;
-	    }
-
-	    for (var i = 0; i < b.length; i++) {
-	      this.words[i] = a.words[i] ^ b.words[i];
-	    }
-
-	    if (this !== a) {
-	      for (; i < a.length; i++) {
-	        this.words[i] = a.words[i];
-	      }
-	    }
-
-	    this.length = a.length;
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.ixor = function ixor (num) {
-	    assert((this.negative | num.negative) === 0);
-	    return this.iuxor(num);
-	  };
-
-	  // Xor `num` with `this`
-	  BN.prototype.xor = function xor (num) {
-	    if (this.length > num.length) return this.clone().ixor(num);
-	    return num.clone().ixor(this);
-	  };
-
-	  BN.prototype.uxor = function uxor (num) {
-	    if (this.length > num.length) return this.clone().iuxor(num);
-	    return num.clone().iuxor(this);
-	  };
-
-	  // Not ``this`` with ``width`` bitwidth
-	  BN.prototype.inotn = function inotn (width) {
-	    assert(typeof width === 'number' && width >= 0);
-
-	    var bytesNeeded = Math.ceil(width / 26) | 0;
-	    var bitsLeft = width % 26;
-
-	    // Extend the buffer with leading zeroes
-	    this._expand(bytesNeeded);
-
-	    if (bitsLeft > 0) {
-	      bytesNeeded--;
-	    }
-
-	    // Handle complete words
-	    for (var i = 0; i < bytesNeeded; i++) {
-	      this.words[i] = ~this.words[i] & 0x3ffffff;
-	    }
-
-	    // Handle the residue
-	    if (bitsLeft > 0) {
-	      this.words[i] = ~this.words[i] & (0x3ffffff >> (26 - bitsLeft));
-	    }
-
-	    // And remove leading zeroes
-	    return this.strip();
-	  };
-
-	  BN.prototype.notn = function notn (width) {
-	    return this.clone().inotn(width);
-	  };
-
-	  // Set `bit` of `this`
-	  BN.prototype.setn = function setn (bit, val) {
-	    assert(typeof bit === 'number' && bit >= 0);
-
-	    var off = (bit / 26) | 0;
-	    var wbit = bit % 26;
-
-	    this._expand(off + 1);
-
-	    if (val) {
-	      this.words[off] = this.words[off] | (1 << wbit);
-	    } else {
-	      this.words[off] = this.words[off] & ~(1 << wbit);
-	    }
-
-	    return this.strip();
-	  };
-
-	  // Add `num` to `this` in-place
-	  BN.prototype.iadd = function iadd (num) {
-	    var r;
-
-	    // negative + positive
-	    if (this.negative !== 0 && num.negative === 0) {
-	      this.negative = 0;
-	      r = this.isub(num);
-	      this.negative ^= 1;
-	      return this._normSign();
-
-	    // positive + negative
-	    } else if (this.negative === 0 && num.negative !== 0) {
-	      num.negative = 0;
-	      r = this.isub(num);
-	      num.negative = 1;
-	      return r._normSign();
-	    }
-
-	    // a.length > b.length
-	    var a, b;
-	    if (this.length > num.length) {
-	      a = this;
-	      b = num;
-	    } else {
-	      a = num;
-	      b = this;
-	    }
-
-	    var carry = 0;
-	    for (var i = 0; i < b.length; i++) {
-	      r = (a.words[i] | 0) + (b.words[i] | 0) + carry;
-	      this.words[i] = r & 0x3ffffff;
-	      carry = r >>> 26;
-	    }
-	    for (; carry !== 0 && i < a.length; i++) {
-	      r = (a.words[i] | 0) + carry;
-	      this.words[i] = r & 0x3ffffff;
-	      carry = r >>> 26;
-	    }
-
-	    this.length = a.length;
-	    if (carry !== 0) {
-	      this.words[this.length] = carry;
-	      this.length++;
-	    // Copy the rest of the words
-	    } else if (a !== this) {
-	      for (; i < a.length; i++) {
-	        this.words[i] = a.words[i];
-	      }
-	    }
-
-	    return this;
-	  };
-
-	  // Add `num` to `this`
-	  BN.prototype.add = function add (num) {
-	    var res;
-	    if (num.negative !== 0 && this.negative === 0) {
-	      num.negative = 0;
-	      res = this.sub(num);
-	      num.negative ^= 1;
-	      return res;
-	    } else if (num.negative === 0 && this.negative !== 0) {
-	      this.negative = 0;
-	      res = num.sub(this);
-	      this.negative = 1;
-	      return res;
-	    }
-
-	    if (this.length > num.length) return this.clone().iadd(num);
-
-	    return num.clone().iadd(this);
-	  };
-
-	  // Subtract `num` from `this` in-place
-	  BN.prototype.isub = function isub (num) {
-	    // this - (-num) = this + num
-	    if (num.negative !== 0) {
-	      num.negative = 0;
-	      var r = this.iadd(num);
-	      num.negative = 1;
-	      return r._normSign();
-
-	    // -this - num = -(this + num)
-	    } else if (this.negative !== 0) {
-	      this.negative = 0;
-	      this.iadd(num);
-	      this.negative = 1;
-	      return this._normSign();
-	    }
-
-	    // At this point both numbers are positive
-	    var cmp = this.cmp(num);
-
-	    // Optimization - zeroify
-	    if (cmp === 0) {
-	      this.negative = 0;
-	      this.length = 1;
-	      this.words[0] = 0;
-	      return this;
-	    }
-
-	    // a > b
-	    var a, b;
-	    if (cmp > 0) {
-	      a = this;
-	      b = num;
-	    } else {
-	      a = num;
-	      b = this;
-	    }
-
-	    var carry = 0;
-	    for (var i = 0; i < b.length; i++) {
-	      r = (a.words[i] | 0) - (b.words[i] | 0) + carry;
-	      carry = r >> 26;
-	      this.words[i] = r & 0x3ffffff;
-	    }
-	    for (; carry !== 0 && i < a.length; i++) {
-	      r = (a.words[i] | 0) + carry;
-	      carry = r >> 26;
-	      this.words[i] = r & 0x3ffffff;
-	    }
-
-	    // Copy rest of the words
-	    if (carry === 0 && i < a.length && a !== this) {
-	      for (; i < a.length; i++) {
-	        this.words[i] = a.words[i];
-	      }
-	    }
-
-	    this.length = Math.max(this.length, i);
-
-	    if (a !== this) {
-	      this.negative = 1;
-	    }
-
-	    return this.strip();
-	  };
-
-	  // Subtract `num` from `this`
-	  BN.prototype.sub = function sub (num) {
-	    return this.clone().isub(num);
-	  };
-
-	  function smallMulTo (self, num, out) {
-	    out.negative = num.negative ^ self.negative;
-	    var len = (self.length + num.length) | 0;
-	    out.length = len;
-	    len = (len - 1) | 0;
-
-	    // Peel one iteration (compiler can't do it, because of code complexity)
-	    var a = self.words[0] | 0;
-	    var b = num.words[0] | 0;
-	    var r = a * b;
-
-	    var lo = r & 0x3ffffff;
-	    var carry = (r / 0x4000000) | 0;
-	    out.words[0] = lo;
-
-	    for (var k = 1; k < len; k++) {
-	      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
-	      // note that ncarry could be >= 0x3ffffff
-	      var ncarry = carry >>> 26;
-	      var rword = carry & 0x3ffffff;
-	      var maxJ = Math.min(k, num.length - 1);
-	      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
-	        var i = (k - j) | 0;
-	        a = self.words[i] | 0;
-	        b = num.words[j] | 0;
-	        r = a * b + rword;
-	        ncarry += (r / 0x4000000) | 0;
-	        rword = r & 0x3ffffff;
-	      }
-	      out.words[k] = rword | 0;
-	      carry = ncarry | 0;
-	    }
-	    if (carry !== 0) {
-	      out.words[k] = carry | 0;
-	    } else {
-	      out.length--;
-	    }
-
-	    return out.strip();
-	  }
-
-	  // TODO(indutny): it may be reasonable to omit it for users who don't need
-	  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
-	  // multiplication (like elliptic secp256k1).
-	  var comb10MulTo = function comb10MulTo (self, num, out) {
-	    var a = self.words;
-	    var b = num.words;
-	    var o = out.words;
-	    var c = 0;
-	    var lo;
-	    var mid;
-	    var hi;
-	    var a0 = a[0] | 0;
-	    var al0 = a0 & 0x1fff;
-	    var ah0 = a0 >>> 13;
-	    var a1 = a[1] | 0;
-	    var al1 = a1 & 0x1fff;
-	    var ah1 = a1 >>> 13;
-	    var a2 = a[2] | 0;
-	    var al2 = a2 & 0x1fff;
-	    var ah2 = a2 >>> 13;
-	    var a3 = a[3] | 0;
-	    var al3 = a3 & 0x1fff;
-	    var ah3 = a3 >>> 13;
-	    var a4 = a[4] | 0;
-	    var al4 = a4 & 0x1fff;
-	    var ah4 = a4 >>> 13;
-	    var a5 = a[5] | 0;
-	    var al5 = a5 & 0x1fff;
-	    var ah5 = a5 >>> 13;
-	    var a6 = a[6] | 0;
-	    var al6 = a6 & 0x1fff;
-	    var ah6 = a6 >>> 13;
-	    var a7 = a[7] | 0;
-	    var al7 = a7 & 0x1fff;
-	    var ah7 = a7 >>> 13;
-	    var a8 = a[8] | 0;
-	    var al8 = a8 & 0x1fff;
-	    var ah8 = a8 >>> 13;
-	    var a9 = a[9] | 0;
-	    var al9 = a9 & 0x1fff;
-	    var ah9 = a9 >>> 13;
-	    var b0 = b[0] | 0;
-	    var bl0 = b0 & 0x1fff;
-	    var bh0 = b0 >>> 13;
-	    var b1 = b[1] | 0;
-	    var bl1 = b1 & 0x1fff;
-	    var bh1 = b1 >>> 13;
-	    var b2 = b[2] | 0;
-	    var bl2 = b2 & 0x1fff;
-	    var bh2 = b2 >>> 13;
-	    var b3 = b[3] | 0;
-	    var bl3 = b3 & 0x1fff;
-	    var bh3 = b3 >>> 13;
-	    var b4 = b[4] | 0;
-	    var bl4 = b4 & 0x1fff;
-	    var bh4 = b4 >>> 13;
-	    var b5 = b[5] | 0;
-	    var bl5 = b5 & 0x1fff;
-	    var bh5 = b5 >>> 13;
-	    var b6 = b[6] | 0;
-	    var bl6 = b6 & 0x1fff;
-	    var bh6 = b6 >>> 13;
-	    var b7 = b[7] | 0;
-	    var bl7 = b7 & 0x1fff;
-	    var bh7 = b7 >>> 13;
-	    var b8 = b[8] | 0;
-	    var bl8 = b8 & 0x1fff;
-	    var bh8 = b8 >>> 13;
-	    var b9 = b[9] | 0;
-	    var bl9 = b9 & 0x1fff;
-	    var bh9 = b9 >>> 13;
-
-	    out.negative = self.negative ^ num.negative;
-	    out.length = 19;
-	    /* k = 0 */
-	    lo = Math.imul(al0, bl0);
-	    mid = Math.imul(al0, bh0);
-	    mid = (mid + Math.imul(ah0, bl0)) | 0;
-	    hi = Math.imul(ah0, bh0);
-	    var w0 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w0 >>> 26)) | 0;
-	    w0 &= 0x3ffffff;
-	    /* k = 1 */
-	    lo = Math.imul(al1, bl0);
-	    mid = Math.imul(al1, bh0);
-	    mid = (mid + Math.imul(ah1, bl0)) | 0;
-	    hi = Math.imul(ah1, bh0);
-	    lo = (lo + Math.imul(al0, bl1)) | 0;
-	    mid = (mid + Math.imul(al0, bh1)) | 0;
-	    mid = (mid + Math.imul(ah0, bl1)) | 0;
-	    hi = (hi + Math.imul(ah0, bh1)) | 0;
-	    var w1 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w1 >>> 26)) | 0;
-	    w1 &= 0x3ffffff;
-	    /* k = 2 */
-	    lo = Math.imul(al2, bl0);
-	    mid = Math.imul(al2, bh0);
-	    mid = (mid + Math.imul(ah2, bl0)) | 0;
-	    hi = Math.imul(ah2, bh0);
-	    lo = (lo + Math.imul(al1, bl1)) | 0;
-	    mid = (mid + Math.imul(al1, bh1)) | 0;
-	    mid = (mid + Math.imul(ah1, bl1)) | 0;
-	    hi = (hi + Math.imul(ah1, bh1)) | 0;
-	    lo = (lo + Math.imul(al0, bl2)) | 0;
-	    mid = (mid + Math.imul(al0, bh2)) | 0;
-	    mid = (mid + Math.imul(ah0, bl2)) | 0;
-	    hi = (hi + Math.imul(ah0, bh2)) | 0;
-	    var w2 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w2 >>> 26)) | 0;
-	    w2 &= 0x3ffffff;
-	    /* k = 3 */
-	    lo = Math.imul(al3, bl0);
-	    mid = Math.imul(al3, bh0);
-	    mid = (mid + Math.imul(ah3, bl0)) | 0;
-	    hi = Math.imul(ah3, bh0);
-	    lo = (lo + Math.imul(al2, bl1)) | 0;
-	    mid = (mid + Math.imul(al2, bh1)) | 0;
-	    mid = (mid + Math.imul(ah2, bl1)) | 0;
-	    hi = (hi + Math.imul(ah2, bh1)) | 0;
-	    lo = (lo + Math.imul(al1, bl2)) | 0;
-	    mid = (mid + Math.imul(al1, bh2)) | 0;
-	    mid = (mid + Math.imul(ah1, bl2)) | 0;
-	    hi = (hi + Math.imul(ah1, bh2)) | 0;
-	    lo = (lo + Math.imul(al0, bl3)) | 0;
-	    mid = (mid + Math.imul(al0, bh3)) | 0;
-	    mid = (mid + Math.imul(ah0, bl3)) | 0;
-	    hi = (hi + Math.imul(ah0, bh3)) | 0;
-	    var w3 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w3 >>> 26)) | 0;
-	    w3 &= 0x3ffffff;
-	    /* k = 4 */
-	    lo = Math.imul(al4, bl0);
-	    mid = Math.imul(al4, bh0);
-	    mid = (mid + Math.imul(ah4, bl0)) | 0;
-	    hi = Math.imul(ah4, bh0);
-	    lo = (lo + Math.imul(al3, bl1)) | 0;
-	    mid = (mid + Math.imul(al3, bh1)) | 0;
-	    mid = (mid + Math.imul(ah3, bl1)) | 0;
-	    hi = (hi + Math.imul(ah3, bh1)) | 0;
-	    lo = (lo + Math.imul(al2, bl2)) | 0;
-	    mid = (mid + Math.imul(al2, bh2)) | 0;
-	    mid = (mid + Math.imul(ah2, bl2)) | 0;
-	    hi = (hi + Math.imul(ah2, bh2)) | 0;
-	    lo = (lo + Math.imul(al1, bl3)) | 0;
-	    mid = (mid + Math.imul(al1, bh3)) | 0;
-	    mid = (mid + Math.imul(ah1, bl3)) | 0;
-	    hi = (hi + Math.imul(ah1, bh3)) | 0;
-	    lo = (lo + Math.imul(al0, bl4)) | 0;
-	    mid = (mid + Math.imul(al0, bh4)) | 0;
-	    mid = (mid + Math.imul(ah0, bl4)) | 0;
-	    hi = (hi + Math.imul(ah0, bh4)) | 0;
-	    var w4 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w4 >>> 26)) | 0;
-	    w4 &= 0x3ffffff;
-	    /* k = 5 */
-	    lo = Math.imul(al5, bl0);
-	    mid = Math.imul(al5, bh0);
-	    mid = (mid + Math.imul(ah5, bl0)) | 0;
-	    hi = Math.imul(ah5, bh0);
-	    lo = (lo + Math.imul(al4, bl1)) | 0;
-	    mid = (mid + Math.imul(al4, bh1)) | 0;
-	    mid = (mid + Math.imul(ah4, bl1)) | 0;
-	    hi = (hi + Math.imul(ah4, bh1)) | 0;
-	    lo = (lo + Math.imul(al3, bl2)) | 0;
-	    mid = (mid + Math.imul(al3, bh2)) | 0;
-	    mid = (mid + Math.imul(ah3, bl2)) | 0;
-	    hi = (hi + Math.imul(ah3, bh2)) | 0;
-	    lo = (lo + Math.imul(al2, bl3)) | 0;
-	    mid = (mid + Math.imul(al2, bh3)) | 0;
-	    mid = (mid + Math.imul(ah2, bl3)) | 0;
-	    hi = (hi + Math.imul(ah2, bh3)) | 0;
-	    lo = (lo + Math.imul(al1, bl4)) | 0;
-	    mid = (mid + Math.imul(al1, bh4)) | 0;
-	    mid = (mid + Math.imul(ah1, bl4)) | 0;
-	    hi = (hi + Math.imul(ah1, bh4)) | 0;
-	    lo = (lo + Math.imul(al0, bl5)) | 0;
-	    mid = (mid + Math.imul(al0, bh5)) | 0;
-	    mid = (mid + Math.imul(ah0, bl5)) | 0;
-	    hi = (hi + Math.imul(ah0, bh5)) | 0;
-	    var w5 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w5 >>> 26)) | 0;
-	    w5 &= 0x3ffffff;
-	    /* k = 6 */
-	    lo = Math.imul(al6, bl0);
-	    mid = Math.imul(al6, bh0);
-	    mid = (mid + Math.imul(ah6, bl0)) | 0;
-	    hi = Math.imul(ah6, bh0);
-	    lo = (lo + Math.imul(al5, bl1)) | 0;
-	    mid = (mid + Math.imul(al5, bh1)) | 0;
-	    mid = (mid + Math.imul(ah5, bl1)) | 0;
-	    hi = (hi + Math.imul(ah5, bh1)) | 0;
-	    lo = (lo + Math.imul(al4, bl2)) | 0;
-	    mid = (mid + Math.imul(al4, bh2)) | 0;
-	    mid = (mid + Math.imul(ah4, bl2)) | 0;
-	    hi = (hi + Math.imul(ah4, bh2)) | 0;
-	    lo = (lo + Math.imul(al3, bl3)) | 0;
-	    mid = (mid + Math.imul(al3, bh3)) | 0;
-	    mid = (mid + Math.imul(ah3, bl3)) | 0;
-	    hi = (hi + Math.imul(ah3, bh3)) | 0;
-	    lo = (lo + Math.imul(al2, bl4)) | 0;
-	    mid = (mid + Math.imul(al2, bh4)) | 0;
-	    mid = (mid + Math.imul(ah2, bl4)) | 0;
-	    hi = (hi + Math.imul(ah2, bh4)) | 0;
-	    lo = (lo + Math.imul(al1, bl5)) | 0;
-	    mid = (mid + Math.imul(al1, bh5)) | 0;
-	    mid = (mid + Math.imul(ah1, bl5)) | 0;
-	    hi = (hi + Math.imul(ah1, bh5)) | 0;
-	    lo = (lo + Math.imul(al0, bl6)) | 0;
-	    mid = (mid + Math.imul(al0, bh6)) | 0;
-	    mid = (mid + Math.imul(ah0, bl6)) | 0;
-	    hi = (hi + Math.imul(ah0, bh6)) | 0;
-	    var w6 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w6 >>> 26)) | 0;
-	    w6 &= 0x3ffffff;
-	    /* k = 7 */
-	    lo = Math.imul(al7, bl0);
-	    mid = Math.imul(al7, bh0);
-	    mid = (mid + Math.imul(ah7, bl0)) | 0;
-	    hi = Math.imul(ah7, bh0);
-	    lo = (lo + Math.imul(al6, bl1)) | 0;
-	    mid = (mid + Math.imul(al6, bh1)) | 0;
-	    mid = (mid + Math.imul(ah6, bl1)) | 0;
-	    hi = (hi + Math.imul(ah6, bh1)) | 0;
-	    lo = (lo + Math.imul(al5, bl2)) | 0;
-	    mid = (mid + Math.imul(al5, bh2)) | 0;
-	    mid = (mid + Math.imul(ah5, bl2)) | 0;
-	    hi = (hi + Math.imul(ah5, bh2)) | 0;
-	    lo = (lo + Math.imul(al4, bl3)) | 0;
-	    mid = (mid + Math.imul(al4, bh3)) | 0;
-	    mid = (mid + Math.imul(ah4, bl3)) | 0;
-	    hi = (hi + Math.imul(ah4, bh3)) | 0;
-	    lo = (lo + Math.imul(al3, bl4)) | 0;
-	    mid = (mid + Math.imul(al3, bh4)) | 0;
-	    mid = (mid + Math.imul(ah3, bl4)) | 0;
-	    hi = (hi + Math.imul(ah3, bh4)) | 0;
-	    lo = (lo + Math.imul(al2, bl5)) | 0;
-	    mid = (mid + Math.imul(al2, bh5)) | 0;
-	    mid = (mid + Math.imul(ah2, bl5)) | 0;
-	    hi = (hi + Math.imul(ah2, bh5)) | 0;
-	    lo = (lo + Math.imul(al1, bl6)) | 0;
-	    mid = (mid + Math.imul(al1, bh6)) | 0;
-	    mid = (mid + Math.imul(ah1, bl6)) | 0;
-	    hi = (hi + Math.imul(ah1, bh6)) | 0;
-	    lo = (lo + Math.imul(al0, bl7)) | 0;
-	    mid = (mid + Math.imul(al0, bh7)) | 0;
-	    mid = (mid + Math.imul(ah0, bl7)) | 0;
-	    hi = (hi + Math.imul(ah0, bh7)) | 0;
-	    var w7 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w7 >>> 26)) | 0;
-	    w7 &= 0x3ffffff;
-	    /* k = 8 */
-	    lo = Math.imul(al8, bl0);
-	    mid = Math.imul(al8, bh0);
-	    mid = (mid + Math.imul(ah8, bl0)) | 0;
-	    hi = Math.imul(ah8, bh0);
-	    lo = (lo + Math.imul(al7, bl1)) | 0;
-	    mid = (mid + Math.imul(al7, bh1)) | 0;
-	    mid = (mid + Math.imul(ah7, bl1)) | 0;
-	    hi = (hi + Math.imul(ah7, bh1)) | 0;
-	    lo = (lo + Math.imul(al6, bl2)) | 0;
-	    mid = (mid + Math.imul(al6, bh2)) | 0;
-	    mid = (mid + Math.imul(ah6, bl2)) | 0;
-	    hi = (hi + Math.imul(ah6, bh2)) | 0;
-	    lo = (lo + Math.imul(al5, bl3)) | 0;
-	    mid = (mid + Math.imul(al5, bh3)) | 0;
-	    mid = (mid + Math.imul(ah5, bl3)) | 0;
-	    hi = (hi + Math.imul(ah5, bh3)) | 0;
-	    lo = (lo + Math.imul(al4, bl4)) | 0;
-	    mid = (mid + Math.imul(al4, bh4)) | 0;
-	    mid = (mid + Math.imul(ah4, bl4)) | 0;
-	    hi = (hi + Math.imul(ah4, bh4)) | 0;
-	    lo = (lo + Math.imul(al3, bl5)) | 0;
-	    mid = (mid + Math.imul(al3, bh5)) | 0;
-	    mid = (mid + Math.imul(ah3, bl5)) | 0;
-	    hi = (hi + Math.imul(ah3, bh5)) | 0;
-	    lo = (lo + Math.imul(al2, bl6)) | 0;
-	    mid = (mid + Math.imul(al2, bh6)) | 0;
-	    mid = (mid + Math.imul(ah2, bl6)) | 0;
-	    hi = (hi + Math.imul(ah2, bh6)) | 0;
-	    lo = (lo + Math.imul(al1, bl7)) | 0;
-	    mid = (mid + Math.imul(al1, bh7)) | 0;
-	    mid = (mid + Math.imul(ah1, bl7)) | 0;
-	    hi = (hi + Math.imul(ah1, bh7)) | 0;
-	    lo = (lo + Math.imul(al0, bl8)) | 0;
-	    mid = (mid + Math.imul(al0, bh8)) | 0;
-	    mid = (mid + Math.imul(ah0, bl8)) | 0;
-	    hi = (hi + Math.imul(ah0, bh8)) | 0;
-	    var w8 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w8 >>> 26)) | 0;
-	    w8 &= 0x3ffffff;
-	    /* k = 9 */
-	    lo = Math.imul(al9, bl0);
-	    mid = Math.imul(al9, bh0);
-	    mid = (mid + Math.imul(ah9, bl0)) | 0;
-	    hi = Math.imul(ah9, bh0);
-	    lo = (lo + Math.imul(al8, bl1)) | 0;
-	    mid = (mid + Math.imul(al8, bh1)) | 0;
-	    mid = (mid + Math.imul(ah8, bl1)) | 0;
-	    hi = (hi + Math.imul(ah8, bh1)) | 0;
-	    lo = (lo + Math.imul(al7, bl2)) | 0;
-	    mid = (mid + Math.imul(al7, bh2)) | 0;
-	    mid = (mid + Math.imul(ah7, bl2)) | 0;
-	    hi = (hi + Math.imul(ah7, bh2)) | 0;
-	    lo = (lo + Math.imul(al6, bl3)) | 0;
-	    mid = (mid + Math.imul(al6, bh3)) | 0;
-	    mid = (mid + Math.imul(ah6, bl3)) | 0;
-	    hi = (hi + Math.imul(ah6, bh3)) | 0;
-	    lo = (lo + Math.imul(al5, bl4)) | 0;
-	    mid = (mid + Math.imul(al5, bh4)) | 0;
-	    mid = (mid + Math.imul(ah5, bl4)) | 0;
-	    hi = (hi + Math.imul(ah5, bh4)) | 0;
-	    lo = (lo + Math.imul(al4, bl5)) | 0;
-	    mid = (mid + Math.imul(al4, bh5)) | 0;
-	    mid = (mid + Math.imul(ah4, bl5)) | 0;
-	    hi = (hi + Math.imul(ah4, bh5)) | 0;
-	    lo = (lo + Math.imul(al3, bl6)) | 0;
-	    mid = (mid + Math.imul(al3, bh6)) | 0;
-	    mid = (mid + Math.imul(ah3, bl6)) | 0;
-	    hi = (hi + Math.imul(ah3, bh6)) | 0;
-	    lo = (lo + Math.imul(al2, bl7)) | 0;
-	    mid = (mid + Math.imul(al2, bh7)) | 0;
-	    mid = (mid + Math.imul(ah2, bl7)) | 0;
-	    hi = (hi + Math.imul(ah2, bh7)) | 0;
-	    lo = (lo + Math.imul(al1, bl8)) | 0;
-	    mid = (mid + Math.imul(al1, bh8)) | 0;
-	    mid = (mid + Math.imul(ah1, bl8)) | 0;
-	    hi = (hi + Math.imul(ah1, bh8)) | 0;
-	    lo = (lo + Math.imul(al0, bl9)) | 0;
-	    mid = (mid + Math.imul(al0, bh9)) | 0;
-	    mid = (mid + Math.imul(ah0, bl9)) | 0;
-	    hi = (hi + Math.imul(ah0, bh9)) | 0;
-	    var w9 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w9 >>> 26)) | 0;
-	    w9 &= 0x3ffffff;
-	    /* k = 10 */
-	    lo = Math.imul(al9, bl1);
-	    mid = Math.imul(al9, bh1);
-	    mid = (mid + Math.imul(ah9, bl1)) | 0;
-	    hi = Math.imul(ah9, bh1);
-	    lo = (lo + Math.imul(al8, bl2)) | 0;
-	    mid = (mid + Math.imul(al8, bh2)) | 0;
-	    mid = (mid + Math.imul(ah8, bl2)) | 0;
-	    hi = (hi + Math.imul(ah8, bh2)) | 0;
-	    lo = (lo + Math.imul(al7, bl3)) | 0;
-	    mid = (mid + Math.imul(al7, bh3)) | 0;
-	    mid = (mid + Math.imul(ah7, bl3)) | 0;
-	    hi = (hi + Math.imul(ah7, bh3)) | 0;
-	    lo = (lo + Math.imul(al6, bl4)) | 0;
-	    mid = (mid + Math.imul(al6, bh4)) | 0;
-	    mid = (mid + Math.imul(ah6, bl4)) | 0;
-	    hi = (hi + Math.imul(ah6, bh4)) | 0;
-	    lo = (lo + Math.imul(al5, bl5)) | 0;
-	    mid = (mid + Math.imul(al5, bh5)) | 0;
-	    mid = (mid + Math.imul(ah5, bl5)) | 0;
-	    hi = (hi + Math.imul(ah5, bh5)) | 0;
-	    lo = (lo + Math.imul(al4, bl6)) | 0;
-	    mid = (mid + Math.imul(al4, bh6)) | 0;
-	    mid = (mid + Math.imul(ah4, bl6)) | 0;
-	    hi = (hi + Math.imul(ah4, bh6)) | 0;
-	    lo = (lo + Math.imul(al3, bl7)) | 0;
-	    mid = (mid + Math.imul(al3, bh7)) | 0;
-	    mid = (mid + Math.imul(ah3, bl7)) | 0;
-	    hi = (hi + Math.imul(ah3, bh7)) | 0;
-	    lo = (lo + Math.imul(al2, bl8)) | 0;
-	    mid = (mid + Math.imul(al2, bh8)) | 0;
-	    mid = (mid + Math.imul(ah2, bl8)) | 0;
-	    hi = (hi + Math.imul(ah2, bh8)) | 0;
-	    lo = (lo + Math.imul(al1, bl9)) | 0;
-	    mid = (mid + Math.imul(al1, bh9)) | 0;
-	    mid = (mid + Math.imul(ah1, bl9)) | 0;
-	    hi = (hi + Math.imul(ah1, bh9)) | 0;
-	    var w10 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w10 >>> 26)) | 0;
-	    w10 &= 0x3ffffff;
-	    /* k = 11 */
-	    lo = Math.imul(al9, bl2);
-	    mid = Math.imul(al9, bh2);
-	    mid = (mid + Math.imul(ah9, bl2)) | 0;
-	    hi = Math.imul(ah9, bh2);
-	    lo = (lo + Math.imul(al8, bl3)) | 0;
-	    mid = (mid + Math.imul(al8, bh3)) | 0;
-	    mid = (mid + Math.imul(ah8, bl3)) | 0;
-	    hi = (hi + Math.imul(ah8, bh3)) | 0;
-	    lo = (lo + Math.imul(al7, bl4)) | 0;
-	    mid = (mid + Math.imul(al7, bh4)) | 0;
-	    mid = (mid + Math.imul(ah7, bl4)) | 0;
-	    hi = (hi + Math.imul(ah7, bh4)) | 0;
-	    lo = (lo + Math.imul(al6, bl5)) | 0;
-	    mid = (mid + Math.imul(al6, bh5)) | 0;
-	    mid = (mid + Math.imul(ah6, bl5)) | 0;
-	    hi = (hi + Math.imul(ah6, bh5)) | 0;
-	    lo = (lo + Math.imul(al5, bl6)) | 0;
-	    mid = (mid + Math.imul(al5, bh6)) | 0;
-	    mid = (mid + Math.imul(ah5, bl6)) | 0;
-	    hi = (hi + Math.imul(ah5, bh6)) | 0;
-	    lo = (lo + Math.imul(al4, bl7)) | 0;
-	    mid = (mid + Math.imul(al4, bh7)) | 0;
-	    mid = (mid + Math.imul(ah4, bl7)) | 0;
-	    hi = (hi + Math.imul(ah4, bh7)) | 0;
-	    lo = (lo + Math.imul(al3, bl8)) | 0;
-	    mid = (mid + Math.imul(al3, bh8)) | 0;
-	    mid = (mid + Math.imul(ah3, bl8)) | 0;
-	    hi = (hi + Math.imul(ah3, bh8)) | 0;
-	    lo = (lo + Math.imul(al2, bl9)) | 0;
-	    mid = (mid + Math.imul(al2, bh9)) | 0;
-	    mid = (mid + Math.imul(ah2, bl9)) | 0;
-	    hi = (hi + Math.imul(ah2, bh9)) | 0;
-	    var w11 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w11 >>> 26)) | 0;
-	    w11 &= 0x3ffffff;
-	    /* k = 12 */
-	    lo = Math.imul(al9, bl3);
-	    mid = Math.imul(al9, bh3);
-	    mid = (mid + Math.imul(ah9, bl3)) | 0;
-	    hi = Math.imul(ah9, bh3);
-	    lo = (lo + Math.imul(al8, bl4)) | 0;
-	    mid = (mid + Math.imul(al8, bh4)) | 0;
-	    mid = (mid + Math.imul(ah8, bl4)) | 0;
-	    hi = (hi + Math.imul(ah8, bh4)) | 0;
-	    lo = (lo + Math.imul(al7, bl5)) | 0;
-	    mid = (mid + Math.imul(al7, bh5)) | 0;
-	    mid = (mid + Math.imul(ah7, bl5)) | 0;
-	    hi = (hi + Math.imul(ah7, bh5)) | 0;
-	    lo = (lo + Math.imul(al6, bl6)) | 0;
-	    mid = (mid + Math.imul(al6, bh6)) | 0;
-	    mid = (mid + Math.imul(ah6, bl6)) | 0;
-	    hi = (hi + Math.imul(ah6, bh6)) | 0;
-	    lo = (lo + Math.imul(al5, bl7)) | 0;
-	    mid = (mid + Math.imul(al5, bh7)) | 0;
-	    mid = (mid + Math.imul(ah5, bl7)) | 0;
-	    hi = (hi + Math.imul(ah5, bh7)) | 0;
-	    lo = (lo + Math.imul(al4, bl8)) | 0;
-	    mid = (mid + Math.imul(al4, bh8)) | 0;
-	    mid = (mid + Math.imul(ah4, bl8)) | 0;
-	    hi = (hi + Math.imul(ah4, bh8)) | 0;
-	    lo = (lo + Math.imul(al3, bl9)) | 0;
-	    mid = (mid + Math.imul(al3, bh9)) | 0;
-	    mid = (mid + Math.imul(ah3, bl9)) | 0;
-	    hi = (hi + Math.imul(ah3, bh9)) | 0;
-	    var w12 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w12 >>> 26)) | 0;
-	    w12 &= 0x3ffffff;
-	    /* k = 13 */
-	    lo = Math.imul(al9, bl4);
-	    mid = Math.imul(al9, bh4);
-	    mid = (mid + Math.imul(ah9, bl4)) | 0;
-	    hi = Math.imul(ah9, bh4);
-	    lo = (lo + Math.imul(al8, bl5)) | 0;
-	    mid = (mid + Math.imul(al8, bh5)) | 0;
-	    mid = (mid + Math.imul(ah8, bl5)) | 0;
-	    hi = (hi + Math.imul(ah8, bh5)) | 0;
-	    lo = (lo + Math.imul(al7, bl6)) | 0;
-	    mid = (mid + Math.imul(al7, bh6)) | 0;
-	    mid = (mid + Math.imul(ah7, bl6)) | 0;
-	    hi = (hi + Math.imul(ah7, bh6)) | 0;
-	    lo = (lo + Math.imul(al6, bl7)) | 0;
-	    mid = (mid + Math.imul(al6, bh7)) | 0;
-	    mid = (mid + Math.imul(ah6, bl7)) | 0;
-	    hi = (hi + Math.imul(ah6, bh7)) | 0;
-	    lo = (lo + Math.imul(al5, bl8)) | 0;
-	    mid = (mid + Math.imul(al5, bh8)) | 0;
-	    mid = (mid + Math.imul(ah5, bl8)) | 0;
-	    hi = (hi + Math.imul(ah5, bh8)) | 0;
-	    lo = (lo + Math.imul(al4, bl9)) | 0;
-	    mid = (mid + Math.imul(al4, bh9)) | 0;
-	    mid = (mid + Math.imul(ah4, bl9)) | 0;
-	    hi = (hi + Math.imul(ah4, bh9)) | 0;
-	    var w13 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w13 >>> 26)) | 0;
-	    w13 &= 0x3ffffff;
-	    /* k = 14 */
-	    lo = Math.imul(al9, bl5);
-	    mid = Math.imul(al9, bh5);
-	    mid = (mid + Math.imul(ah9, bl5)) | 0;
-	    hi = Math.imul(ah9, bh5);
-	    lo = (lo + Math.imul(al8, bl6)) | 0;
-	    mid = (mid + Math.imul(al8, bh6)) | 0;
-	    mid = (mid + Math.imul(ah8, bl6)) | 0;
-	    hi = (hi + Math.imul(ah8, bh6)) | 0;
-	    lo = (lo + Math.imul(al7, bl7)) | 0;
-	    mid = (mid + Math.imul(al7, bh7)) | 0;
-	    mid = (mid + Math.imul(ah7, bl7)) | 0;
-	    hi = (hi + Math.imul(ah7, bh7)) | 0;
-	    lo = (lo + Math.imul(al6, bl8)) | 0;
-	    mid = (mid + Math.imul(al6, bh8)) | 0;
-	    mid = (mid + Math.imul(ah6, bl8)) | 0;
-	    hi = (hi + Math.imul(ah6, bh8)) | 0;
-	    lo = (lo + Math.imul(al5, bl9)) | 0;
-	    mid = (mid + Math.imul(al5, bh9)) | 0;
-	    mid = (mid + Math.imul(ah5, bl9)) | 0;
-	    hi = (hi + Math.imul(ah5, bh9)) | 0;
-	    var w14 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w14 >>> 26)) | 0;
-	    w14 &= 0x3ffffff;
-	    /* k = 15 */
-	    lo = Math.imul(al9, bl6);
-	    mid = Math.imul(al9, bh6);
-	    mid = (mid + Math.imul(ah9, bl6)) | 0;
-	    hi = Math.imul(ah9, bh6);
-	    lo = (lo + Math.imul(al8, bl7)) | 0;
-	    mid = (mid + Math.imul(al8, bh7)) | 0;
-	    mid = (mid + Math.imul(ah8, bl7)) | 0;
-	    hi = (hi + Math.imul(ah8, bh7)) | 0;
-	    lo = (lo + Math.imul(al7, bl8)) | 0;
-	    mid = (mid + Math.imul(al7, bh8)) | 0;
-	    mid = (mid + Math.imul(ah7, bl8)) | 0;
-	    hi = (hi + Math.imul(ah7, bh8)) | 0;
-	    lo = (lo + Math.imul(al6, bl9)) | 0;
-	    mid = (mid + Math.imul(al6, bh9)) | 0;
-	    mid = (mid + Math.imul(ah6, bl9)) | 0;
-	    hi = (hi + Math.imul(ah6, bh9)) | 0;
-	    var w15 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w15 >>> 26)) | 0;
-	    w15 &= 0x3ffffff;
-	    /* k = 16 */
-	    lo = Math.imul(al9, bl7);
-	    mid = Math.imul(al9, bh7);
-	    mid = (mid + Math.imul(ah9, bl7)) | 0;
-	    hi = Math.imul(ah9, bh7);
-	    lo = (lo + Math.imul(al8, bl8)) | 0;
-	    mid = (mid + Math.imul(al8, bh8)) | 0;
-	    mid = (mid + Math.imul(ah8, bl8)) | 0;
-	    hi = (hi + Math.imul(ah8, bh8)) | 0;
-	    lo = (lo + Math.imul(al7, bl9)) | 0;
-	    mid = (mid + Math.imul(al7, bh9)) | 0;
-	    mid = (mid + Math.imul(ah7, bl9)) | 0;
-	    hi = (hi + Math.imul(ah7, bh9)) | 0;
-	    var w16 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w16 >>> 26)) | 0;
-	    w16 &= 0x3ffffff;
-	    /* k = 17 */
-	    lo = Math.imul(al9, bl8);
-	    mid = Math.imul(al9, bh8);
-	    mid = (mid + Math.imul(ah9, bl8)) | 0;
-	    hi = Math.imul(ah9, bh8);
-	    lo = (lo + Math.imul(al8, bl9)) | 0;
-	    mid = (mid + Math.imul(al8, bh9)) | 0;
-	    mid = (mid + Math.imul(ah8, bl9)) | 0;
-	    hi = (hi + Math.imul(ah8, bh9)) | 0;
-	    var w17 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w17 >>> 26)) | 0;
-	    w17 &= 0x3ffffff;
-	    /* k = 18 */
-	    lo = Math.imul(al9, bl9);
-	    mid = Math.imul(al9, bh9);
-	    mid = (mid + Math.imul(ah9, bl9)) | 0;
-	    hi = Math.imul(ah9, bh9);
-	    var w18 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
-	    c = (((hi + (mid >>> 13)) | 0) + (w18 >>> 26)) | 0;
-	    w18 &= 0x3ffffff;
-	    o[0] = w0;
-	    o[1] = w1;
-	    o[2] = w2;
-	    o[3] = w3;
-	    o[4] = w4;
-	    o[5] = w5;
-	    o[6] = w6;
-	    o[7] = w7;
-	    o[8] = w8;
-	    o[9] = w9;
-	    o[10] = w10;
-	    o[11] = w11;
-	    o[12] = w12;
-	    o[13] = w13;
-	    o[14] = w14;
-	    o[15] = w15;
-	    o[16] = w16;
-	    o[17] = w17;
-	    o[18] = w18;
-	    if (c !== 0) {
-	      o[19] = c;
-	      out.length++;
-	    }
-	    return out;
-	  };
-
-	  // Polyfill comb
-	  if (!Math.imul) {
-	    comb10MulTo = smallMulTo;
-	  }
-
-	  function bigMulTo (self, num, out) {
-	    out.negative = num.negative ^ self.negative;
-	    out.length = self.length + num.length;
-
-	    var carry = 0;
-	    var hncarry = 0;
-	    for (var k = 0; k < out.length - 1; k++) {
-	      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
-	      // note that ncarry could be >= 0x3ffffff
-	      var ncarry = hncarry;
-	      hncarry = 0;
-	      var rword = carry & 0x3ffffff;
-	      var maxJ = Math.min(k, num.length - 1);
-	      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
-	        var i = k - j;
-	        var a = self.words[i] | 0;
-	        var b = num.words[j] | 0;
-	        var r = a * b;
-
-	        var lo = r & 0x3ffffff;
-	        ncarry = (ncarry + ((r / 0x4000000) | 0)) | 0;
-	        lo = (lo + rword) | 0;
-	        rword = lo & 0x3ffffff;
-	        ncarry = (ncarry + (lo >>> 26)) | 0;
-
-	        hncarry += ncarry >>> 26;
-	        ncarry &= 0x3ffffff;
-	      }
-	      out.words[k] = rword;
-	      carry = ncarry;
-	      ncarry = hncarry;
-	    }
-	    if (carry !== 0) {
-	      out.words[k] = carry;
-	    } else {
-	      out.length--;
-	    }
-
-	    return out.strip();
-	  }
-
-	  function jumboMulTo (self, num, out) {
-	    var fftm = new FFTM();
-	    return fftm.mulp(self, num, out);
-	  }
-
-	  BN.prototype.mulTo = function mulTo (num, out) {
-	    var res;
-	    var len = this.length + num.length;
-	    if (this.length === 10 && num.length === 10) {
-	      res = comb10MulTo(this, num, out);
-	    } else if (len < 63) {
-	      res = smallMulTo(this, num, out);
-	    } else if (len < 1024) {
-	      res = bigMulTo(this, num, out);
-	    } else {
-	      res = jumboMulTo(this, num, out);
-	    }
-
-	    return res;
-	  };
-
-	  // Cooley-Tukey algorithm for FFT
-	  // slightly revisited to rely on looping instead of recursion
-
-	  function FFTM (x, y) {
-	    this.x = x;
-	    this.y = y;
-	  }
-
-	  FFTM.prototype.makeRBT = function makeRBT (N) {
-	    var t = new Array(N);
-	    var l = BN.prototype._countBits(N) - 1;
-	    for (var i = 0; i < N; i++) {
-	      t[i] = this.revBin(i, l, N);
-	    }
-
-	    return t;
-	  };
-
-	  // Returns binary-reversed representation of `x`
-	  FFTM.prototype.revBin = function revBin (x, l, N) {
-	    if (x === 0 || x === N - 1) return x;
-
-	    var rb = 0;
-	    for (var i = 0; i < l; i++) {
-	      rb |= (x & 1) << (l - i - 1);
-	      x >>= 1;
-	    }
-
-	    return rb;
-	  };
-
-	  // Performs "tweedling" phase, therefore 'emulating'
-	  // behaviour of the recursive algorithm
-	  FFTM.prototype.permute = function permute (rbt, rws, iws, rtws, itws, N) {
-	    for (var i = 0; i < N; i++) {
-	      rtws[i] = rws[rbt[i]];
-	      itws[i] = iws[rbt[i]];
-	    }
-	  };
-
-	  FFTM.prototype.transform = function transform (rws, iws, rtws, itws, N, rbt) {
-	    this.permute(rbt, rws, iws, rtws, itws, N);
-
-	    for (var s = 1; s < N; s <<= 1) {
-	      var l = s << 1;
-
-	      var rtwdf = Math.cos(2 * Math.PI / l);
-	      var itwdf = Math.sin(2 * Math.PI / l);
-
-	      for (var p = 0; p < N; p += l) {
-	        var rtwdf_ = rtwdf;
-	        var itwdf_ = itwdf;
-
-	        for (var j = 0; j < s; j++) {
-	          var re = rtws[p + j];
-	          var ie = itws[p + j];
-
-	          var ro = rtws[p + j + s];
-	          var io = itws[p + j + s];
-
-	          var rx = rtwdf_ * ro - itwdf_ * io;
-
-	          io = rtwdf_ * io + itwdf_ * ro;
-	          ro = rx;
-
-	          rtws[p + j] = re + ro;
-	          itws[p + j] = ie + io;
-
-	          rtws[p + j + s] = re - ro;
-	          itws[p + j + s] = ie - io;
-
-	          /* jshint maxdepth : false */
-	          if (j !== l) {
-	            rx = rtwdf * rtwdf_ - itwdf * itwdf_;
-
-	            itwdf_ = rtwdf * itwdf_ + itwdf * rtwdf_;
-	            rtwdf_ = rx;
-	          }
-	        }
-	      }
-	    }
-	  };
-
-	  FFTM.prototype.guessLen13b = function guessLen13b (n, m) {
-	    var N = Math.max(m, n) | 1;
-	    var odd = N & 1;
-	    var i = 0;
-	    for (N = N / 2 | 0; N; N = N >>> 1) {
-	      i++;
-	    }
-
-	    return 1 << i + 1 + odd;
-	  };
-
-	  FFTM.prototype.conjugate = function conjugate (rws, iws, N) {
-	    if (N <= 1) return;
-
-	    for (var i = 0; i < N / 2; i++) {
-	      var t = rws[i];
-
-	      rws[i] = rws[N - i - 1];
-	      rws[N - i - 1] = t;
-
-	      t = iws[i];
-
-	      iws[i] = -iws[N - i - 1];
-	      iws[N - i - 1] = -t;
-	    }
-	  };
-
-	  FFTM.prototype.normalize13b = function normalize13b (ws, N) {
-	    var carry = 0;
-	    for (var i = 0; i < N / 2; i++) {
-	      var w = Math.round(ws[2 * i + 1] / N) * 0x2000 +
-	        Math.round(ws[2 * i] / N) +
-	        carry;
-
-	      ws[i] = w & 0x3ffffff;
-
-	      if (w < 0x4000000) {
-	        carry = 0;
-	      } else {
-	        carry = w / 0x4000000 | 0;
-	      }
-	    }
-
-	    return ws;
-	  };
-
-	  FFTM.prototype.convert13b = function convert13b (ws, len, rws, N) {
-	    var carry = 0;
-	    for (var i = 0; i < len; i++) {
-	      carry = carry + (ws[i] | 0);
-
-	      rws[2 * i] = carry & 0x1fff; carry = carry >>> 13;
-	      rws[2 * i + 1] = carry & 0x1fff; carry = carry >>> 13;
-	    }
-
-	    // Pad with zeroes
-	    for (i = 2 * len; i < N; ++i) {
-	      rws[i] = 0;
-	    }
-
-	    assert(carry === 0);
-	    assert((carry & ~0x1fff) === 0);
-	  };
-
-	  FFTM.prototype.stub = function stub (N) {
-	    var ph = new Array(N);
-	    for (var i = 0; i < N; i++) {
-	      ph[i] = 0;
-	    }
-
-	    return ph;
-	  };
-
-	  FFTM.prototype.mulp = function mulp (x, y, out) {
-	    var N = 2 * this.guessLen13b(x.length, y.length);
-
-	    var rbt = this.makeRBT(N);
-
-	    var _ = this.stub(N);
-
-	    var rws = new Array(N);
-	    var rwst = new Array(N);
-	    var iwst = new Array(N);
-
-	    var nrws = new Array(N);
-	    var nrwst = new Array(N);
-	    var niwst = new Array(N);
-
-	    var rmws = out.words;
-	    rmws.length = N;
-
-	    this.convert13b(x.words, x.length, rws, N);
-	    this.convert13b(y.words, y.length, nrws, N);
-
-	    this.transform(rws, _, rwst, iwst, N, rbt);
-	    this.transform(nrws, _, nrwst, niwst, N, rbt);
-
-	    for (var i = 0; i < N; i++) {
-	      var rx = rwst[i] * nrwst[i] - iwst[i] * niwst[i];
-	      iwst[i] = rwst[i] * niwst[i] + iwst[i] * nrwst[i];
-	      rwst[i] = rx;
-	    }
-
-	    this.conjugate(rwst, iwst, N);
-	    this.transform(rwst, iwst, rmws, _, N, rbt);
-	    this.conjugate(rmws, _, N);
-	    this.normalize13b(rmws, N);
-
-	    out.negative = x.negative ^ y.negative;
-	    out.length = x.length + y.length;
-	    return out.strip();
-	  };
-
-	  // Multiply `this` by `num`
-	  BN.prototype.mul = function mul (num) {
-	    var out = new BN(null);
-	    out.words = new Array(this.length + num.length);
-	    return this.mulTo(num, out);
-	  };
-
-	  // Multiply employing FFT
-	  BN.prototype.mulf = function mulf (num) {
-	    var out = new BN(null);
-	    out.words = new Array(this.length + num.length);
-	    return jumboMulTo(this, num, out);
-	  };
-
-	  // In-place Multiplication
-	  BN.prototype.imul = function imul (num) {
-	    return this.clone().mulTo(num, this);
-	  };
-
-	  BN.prototype.imuln = function imuln (num) {
-	    assert(typeof num === 'number');
-	    assert(num < 0x4000000);
-
-	    // Carry
-	    var carry = 0;
-	    for (var i = 0; i < this.length; i++) {
-	      var w = (this.words[i] | 0) * num;
-	      var lo = (w & 0x3ffffff) + (carry & 0x3ffffff);
-	      carry >>= 26;
-	      carry += (w / 0x4000000) | 0;
-	      // NOTE: lo is 27bit maximum
-	      carry += lo >>> 26;
-	      this.words[i] = lo & 0x3ffffff;
-	    }
-
-	    if (carry !== 0) {
-	      this.words[i] = carry;
-	      this.length++;
-	    }
-
-	    return this;
-	  };
-
-	  BN.prototype.muln = function muln (num) {
-	    return this.clone().imuln(num);
-	  };
-
-	  // `this` * `this`
-	  BN.prototype.sqr = function sqr () {
-	    return this.mul(this);
-	  };
-
-	  // `this` * `this` in-place
-	  BN.prototype.isqr = function isqr () {
-	    return this.imul(this.clone());
-	  };
-
-	  // Math.pow(`this`, `num`)
-	  BN.prototype.pow = function pow (num) {
-	    var w = toBitArray(num);
-	    if (w.length === 0) return new BN(1);
-
-	    // Skip leading zeroes
-	    var res = this;
-	    for (var i = 0; i < w.length; i++, res = res.sqr()) {
-	      if (w[i] !== 0) break;
-	    }
-
-	    if (++i < w.length) {
-	      for (var q = res.sqr(); i < w.length; i++, q = q.sqr()) {
-	        if (w[i] === 0) continue;
-
-	        res = res.mul(q);
-	      }
-	    }
-
-	    return res;
-	  };
-
-	  // Shift-left in-place
-	  BN.prototype.iushln = function iushln (bits) {
-	    assert(typeof bits === 'number' && bits >= 0);
-	    var r = bits % 26;
-	    var s = (bits - r) / 26;
-	    var carryMask = (0x3ffffff >>> (26 - r)) << (26 - r);
-	    var i;
-
-	    if (r !== 0) {
-	      var carry = 0;
-
-	      for (i = 0; i < this.length; i++) {
-	        var newCarry = this.words[i] & carryMask;
-	        var c = ((this.words[i] | 0) - newCarry) << r;
-	        this.words[i] = c | carry;
-	        carry = newCarry >>> (26 - r);
-	      }
-
-	      if (carry) {
-	        this.words[i] = carry;
-	        this.length++;
-	      }
-	    }
-
-	    if (s !== 0) {
-	      for (i = this.length - 1; i >= 0; i--) {
-	        this.words[i + s] = this.words[i];
-	      }
-
-	      for (i = 0; i < s; i++) {
-	        this.words[i] = 0;
-	      }
-
-	      this.length += s;
-	    }
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.ishln = function ishln (bits) {
-	    // TODO(indutny): implement me
-	    assert(this.negative === 0);
-	    return this.iushln(bits);
-	  };
-
-	  // Shift-right in-place
-	  // NOTE: `hint` is a lowest bit before trailing zeroes
-	  // NOTE: if `extended` is present - it will be filled with destroyed bits
-	  BN.prototype.iushrn = function iushrn (bits, hint, extended) {
-	    assert(typeof bits === 'number' && bits >= 0);
-	    var h;
-	    if (hint) {
-	      h = (hint - (hint % 26)) / 26;
-	    } else {
-	      h = 0;
-	    }
-
-	    var r = bits % 26;
-	    var s = Math.min((bits - r) / 26, this.length);
-	    var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
-	    var maskedWords = extended;
-
-	    h -= s;
-	    h = Math.max(0, h);
-
-	    // Extended mode, copy masked part
-	    if (maskedWords) {
-	      for (var i = 0; i < s; i++) {
-	        maskedWords.words[i] = this.words[i];
-	      }
-	      maskedWords.length = s;
-	    }
-
-	    if (s === 0) ; else if (this.length > s) {
-	      this.length -= s;
-	      for (i = 0; i < this.length; i++) {
-	        this.words[i] = this.words[i + s];
-	      }
-	    } else {
-	      this.words[0] = 0;
-	      this.length = 1;
-	    }
-
-	    var carry = 0;
-	    for (i = this.length - 1; i >= 0 && (carry !== 0 || i >= h); i--) {
-	      var word = this.words[i] | 0;
-	      this.words[i] = (carry << (26 - r)) | (word >>> r);
-	      carry = word & mask;
-	    }
-
-	    // Push carried bits as a mask
-	    if (maskedWords && carry !== 0) {
-	      maskedWords.words[maskedWords.length++] = carry;
-	    }
-
-	    if (this.length === 0) {
-	      this.words[0] = 0;
-	      this.length = 1;
-	    }
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.ishrn = function ishrn (bits, hint, extended) {
-	    // TODO(indutny): implement me
-	    assert(this.negative === 0);
-	    return this.iushrn(bits, hint, extended);
-	  };
-
-	  // Shift-left
-	  BN.prototype.shln = function shln (bits) {
-	    return this.clone().ishln(bits);
-	  };
-
-	  BN.prototype.ushln = function ushln (bits) {
-	    return this.clone().iushln(bits);
-	  };
-
-	  // Shift-right
-	  BN.prototype.shrn = function shrn (bits) {
-	    return this.clone().ishrn(bits);
-	  };
-
-	  BN.prototype.ushrn = function ushrn (bits) {
-	    return this.clone().iushrn(bits);
-	  };
-
-	  // Test if n bit is set
-	  BN.prototype.testn = function testn (bit) {
-	    assert(typeof bit === 'number' && bit >= 0);
-	    var r = bit % 26;
-	    var s = (bit - r) / 26;
-	    var q = 1 << r;
-
-	    // Fast case: bit is much higher than all existing words
-	    if (this.length <= s) return false;
-
-	    // Check bit and return
-	    var w = this.words[s];
-
-	    return !!(w & q);
-	  };
-
-	  // Return only lowers bits of number (in-place)
-	  BN.prototype.imaskn = function imaskn (bits) {
-	    assert(typeof bits === 'number' && bits >= 0);
-	    var r = bits % 26;
-	    var s = (bits - r) / 26;
-
-	    assert(this.negative === 0, 'imaskn works only with positive numbers');
-
-	    if (this.length <= s) {
-	      return this;
-	    }
-
-	    if (r !== 0) {
-	      s++;
-	    }
-	    this.length = Math.min(s, this.length);
-
-	    if (r !== 0) {
-	      var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
-	      this.words[this.length - 1] &= mask;
-	    }
-
-	    return this.strip();
-	  };
-
-	  // Return only lowers bits of number
-	  BN.prototype.maskn = function maskn (bits) {
-	    return this.clone().imaskn(bits);
-	  };
-
-	  // Add plain number `num` to `this`
-	  BN.prototype.iaddn = function iaddn (num) {
-	    assert(typeof num === 'number');
-	    assert(num < 0x4000000);
-	    if (num < 0) return this.isubn(-num);
-
-	    // Possible sign change
-	    if (this.negative !== 0) {
-	      if (this.length === 1 && (this.words[0] | 0) < num) {
-	        this.words[0] = num - (this.words[0] | 0);
-	        this.negative = 0;
-	        return this;
-	      }
-
-	      this.negative = 0;
-	      this.isubn(num);
-	      this.negative = 1;
-	      return this;
-	    }
-
-	    // Add without checks
-	    return this._iaddn(num);
-	  };
-
-	  BN.prototype._iaddn = function _iaddn (num) {
-	    this.words[0] += num;
-
-	    // Carry
-	    for (var i = 0; i < this.length && this.words[i] >= 0x4000000; i++) {
-	      this.words[i] -= 0x4000000;
-	      if (i === this.length - 1) {
-	        this.words[i + 1] = 1;
-	      } else {
-	        this.words[i + 1]++;
-	      }
-	    }
-	    this.length = Math.max(this.length, i + 1);
-
-	    return this;
-	  };
-
-	  // Subtract plain number `num` from `this`
-	  BN.prototype.isubn = function isubn (num) {
-	    assert(typeof num === 'number');
-	    assert(num < 0x4000000);
-	    if (num < 0) return this.iaddn(-num);
-
-	    if (this.negative !== 0) {
-	      this.negative = 0;
-	      this.iaddn(num);
-	      this.negative = 1;
-	      return this;
-	    }
-
-	    this.words[0] -= num;
-
-	    if (this.length === 1 && this.words[0] < 0) {
-	      this.words[0] = -this.words[0];
-	      this.negative = 1;
-	    } else {
-	      // Carry
-	      for (var i = 0; i < this.length && this.words[i] < 0; i++) {
-	        this.words[i] += 0x4000000;
-	        this.words[i + 1] -= 1;
-	      }
-	    }
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.addn = function addn (num) {
-	    return this.clone().iaddn(num);
-	  };
-
-	  BN.prototype.subn = function subn (num) {
-	    return this.clone().isubn(num);
-	  };
-
-	  BN.prototype.iabs = function iabs () {
-	    this.negative = 0;
-
-	    return this;
-	  };
-
-	  BN.prototype.abs = function abs () {
-	    return this.clone().iabs();
-	  };
-
-	  BN.prototype._ishlnsubmul = function _ishlnsubmul (num, mul, shift) {
-	    var len = num.length + shift;
-	    var i;
-
-	    this._expand(len);
-
-	    var w;
-	    var carry = 0;
-	    for (i = 0; i < num.length; i++) {
-	      w = (this.words[i + shift] | 0) + carry;
-	      var right = (num.words[i] | 0) * mul;
-	      w -= right & 0x3ffffff;
-	      carry = (w >> 26) - ((right / 0x4000000) | 0);
-	      this.words[i + shift] = w & 0x3ffffff;
-	    }
-	    for (; i < this.length - shift; i++) {
-	      w = (this.words[i + shift] | 0) + carry;
-	      carry = w >> 26;
-	      this.words[i + shift] = w & 0x3ffffff;
-	    }
-
-	    if (carry === 0) return this.strip();
-
-	    // Subtraction overflow
-	    assert(carry === -1);
-	    carry = 0;
-	    for (i = 0; i < this.length; i++) {
-	      w = -(this.words[i] | 0) + carry;
-	      carry = w >> 26;
-	      this.words[i] = w & 0x3ffffff;
-	    }
-	    this.negative = 1;
-
-	    return this.strip();
-	  };
-
-	  BN.prototype._wordDiv = function _wordDiv (num, mode) {
-	    var shift = this.length - num.length;
-
-	    var a = this.clone();
-	    var b = num;
-
-	    // Normalize
-	    var bhi = b.words[b.length - 1] | 0;
-	    var bhiBits = this._countBits(bhi);
-	    shift = 26 - bhiBits;
-	    if (shift !== 0) {
-	      b = b.ushln(shift);
-	      a.iushln(shift);
-	      bhi = b.words[b.length - 1] | 0;
-	    }
-
-	    // Initialize quotient
-	    var m = a.length - b.length;
-	    var q;
-
-	    if (mode !== 'mod') {
-	      q = new BN(null);
-	      q.length = m + 1;
-	      q.words = new Array(q.length);
-	      for (var i = 0; i < q.length; i++) {
-	        q.words[i] = 0;
-	      }
-	    }
-
-	    var diff = a.clone()._ishlnsubmul(b, 1, m);
-	    if (diff.negative === 0) {
-	      a = diff;
-	      if (q) {
-	        q.words[m] = 1;
-	      }
-	    }
-
-	    for (var j = m - 1; j >= 0; j--) {
-	      var qj = (a.words[b.length + j] | 0) * 0x4000000 +
-	        (a.words[b.length + j - 1] | 0);
-
-	      // NOTE: (qj / bhi) is (0x3ffffff * 0x4000000 + 0x3ffffff) / 0x2000000 max
-	      // (0x7ffffff)
-	      qj = Math.min((qj / bhi) | 0, 0x3ffffff);
-
-	      a._ishlnsubmul(b, qj, j);
-	      while (a.negative !== 0) {
-	        qj--;
-	        a.negative = 0;
-	        a._ishlnsubmul(b, 1, j);
-	        if (!a.isZero()) {
-	          a.negative ^= 1;
-	        }
-	      }
-	      if (q) {
-	        q.words[j] = qj;
-	      }
-	    }
-	    if (q) {
-	      q.strip();
-	    }
-	    a.strip();
-
-	    // Denormalize
-	    if (mode !== 'div' && shift !== 0) {
-	      a.iushrn(shift);
-	    }
-
-	    return {
-	      div: q || null,
-	      mod: a
-	    };
-	  };
-
-	  // NOTE: 1) `mode` can be set to `mod` to request mod only,
-	  //       to `div` to request div only, or be absent to
-	  //       request both div & mod
-	  //       2) `positive` is true if unsigned mod is requested
-	  BN.prototype.divmod = function divmod (num, mode, positive) {
-	    assert(!num.isZero());
-
-	    if (this.isZero()) {
-	      return {
-	        div: new BN(0),
-	        mod: new BN(0)
-	      };
-	    }
-
-	    var div, mod, res;
-	    if (this.negative !== 0 && num.negative === 0) {
-	      res = this.neg().divmod(num, mode);
-
-	      if (mode !== 'mod') {
-	        div = res.div.neg();
-	      }
-
-	      if (mode !== 'div') {
-	        mod = res.mod.neg();
-	        if (positive && mod.negative !== 0) {
-	          mod.iadd(num);
-	        }
-	      }
-
-	      return {
-	        div: div,
-	        mod: mod
-	      };
-	    }
-
-	    if (this.negative === 0 && num.negative !== 0) {
-	      res = this.divmod(num.neg(), mode);
-
-	      if (mode !== 'mod') {
-	        div = res.div.neg();
-	      }
-
-	      return {
-	        div: div,
-	        mod: res.mod
-	      };
-	    }
-
-	    if ((this.negative & num.negative) !== 0) {
-	      res = this.neg().divmod(num.neg(), mode);
-
-	      if (mode !== 'div') {
-	        mod = res.mod.neg();
-	        if (positive && mod.negative !== 0) {
-	          mod.isub(num);
-	        }
-	      }
-
-	      return {
-	        div: res.div,
-	        mod: mod
-	      };
-	    }
-
-	    // Both numbers are positive at this point
-
-	    // Strip both numbers to approximate shift value
-	    if (num.length > this.length || this.cmp(num) < 0) {
-	      return {
-	        div: new BN(0),
-	        mod: this
-	      };
-	    }
-
-	    // Very short reduction
-	    if (num.length === 1) {
-	      if (mode === 'div') {
-	        return {
-	          div: this.divn(num.words[0]),
-	          mod: null
-	        };
-	      }
-
-	      if (mode === 'mod') {
-	        return {
-	          div: null,
-	          mod: new BN(this.modn(num.words[0]))
-	        };
-	      }
-
-	      return {
-	        div: this.divn(num.words[0]),
-	        mod: new BN(this.modn(num.words[0]))
-	      };
-	    }
-
-	    return this._wordDiv(num, mode);
-	  };
-
-	  // Find `this` / `num`
-	  BN.prototype.div = function div (num) {
-	    return this.divmod(num, 'div', false).div;
-	  };
-
-	  // Find `this` % `num`
-	  BN.prototype.mod = function mod (num) {
-	    return this.divmod(num, 'mod', false).mod;
-	  };
-
-	  BN.prototype.umod = function umod (num) {
-	    return this.divmod(num, 'mod', true).mod;
-	  };
-
-	  // Find Round(`this` / `num`)
-	  BN.prototype.divRound = function divRound (num) {
-	    var dm = this.divmod(num);
-
-	    // Fast case - exact division
-	    if (dm.mod.isZero()) return dm.div;
-
-	    var mod = dm.div.negative !== 0 ? dm.mod.isub(num) : dm.mod;
-
-	    var half = num.ushrn(1);
-	    var r2 = num.andln(1);
-	    var cmp = mod.cmp(half);
-
-	    // Round down
-	    if (cmp < 0 || r2 === 1 && cmp === 0) return dm.div;
-
-	    // Round up
-	    return dm.div.negative !== 0 ? dm.div.isubn(1) : dm.div.iaddn(1);
-	  };
-
-	  BN.prototype.modn = function modn (num) {
-	    assert(num <= 0x3ffffff);
-	    var p = (1 << 26) % num;
-
-	    var acc = 0;
-	    for (var i = this.length - 1; i >= 0; i--) {
-	      acc = (p * acc + (this.words[i] | 0)) % num;
-	    }
-
-	    return acc;
-	  };
-
-	  // In-place division by number
-	  BN.prototype.idivn = function idivn (num) {
-	    assert(num <= 0x3ffffff);
-
-	    var carry = 0;
-	    for (var i = this.length - 1; i >= 0; i--) {
-	      var w = (this.words[i] | 0) + carry * 0x4000000;
-	      this.words[i] = (w / num) | 0;
-	      carry = w % num;
-	    }
-
-	    return this.strip();
-	  };
-
-	  BN.prototype.divn = function divn (num) {
-	    return this.clone().idivn(num);
-	  };
-
-	  BN.prototype.egcd = function egcd (p) {
-	    assert(p.negative === 0);
-	    assert(!p.isZero());
-
-	    var x = this;
-	    var y = p.clone();
-
-	    if (x.negative !== 0) {
-	      x = x.umod(p);
-	    } else {
-	      x = x.clone();
-	    }
-
-	    // A * x + B * y = x
-	    var A = new BN(1);
-	    var B = new BN(0);
-
-	    // C * x + D * y = y
-	    var C = new BN(0);
-	    var D = new BN(1);
-
-	    var g = 0;
-
-	    while (x.isEven() && y.isEven()) {
-	      x.iushrn(1);
-	      y.iushrn(1);
-	      ++g;
-	    }
-
-	    var yp = y.clone();
-	    var xp = x.clone();
-
-	    while (!x.isZero()) {
-	      for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
-	      if (i > 0) {
-	        x.iushrn(i);
-	        while (i-- > 0) {
-	          if (A.isOdd() || B.isOdd()) {
-	            A.iadd(yp);
-	            B.isub(xp);
-	          }
-
-	          A.iushrn(1);
-	          B.iushrn(1);
-	        }
-	      }
-
-	      for (var j = 0, jm = 1; (y.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
-	      if (j > 0) {
-	        y.iushrn(j);
-	        while (j-- > 0) {
-	          if (C.isOdd() || D.isOdd()) {
-	            C.iadd(yp);
-	            D.isub(xp);
-	          }
-
-	          C.iushrn(1);
-	          D.iushrn(1);
-	        }
-	      }
-
-	      if (x.cmp(y) >= 0) {
-	        x.isub(y);
-	        A.isub(C);
-	        B.isub(D);
-	      } else {
-	        y.isub(x);
-	        C.isub(A);
-	        D.isub(B);
-	      }
-	    }
-
-	    return {
-	      a: C,
-	      b: D,
-	      gcd: y.iushln(g)
-	    };
-	  };
-
-	  // This is reduced incarnation of the binary EEA
-	  // above, designated to invert members of the
-	  // _prime_ fields F(p) at a maximal speed
-	  BN.prototype._invmp = function _invmp (p) {
-	    assert(p.negative === 0);
-	    assert(!p.isZero());
-
-	    var a = this;
-	    var b = p.clone();
-
-	    if (a.negative !== 0) {
-	      a = a.umod(p);
-	    } else {
-	      a = a.clone();
-	    }
-
-	    var x1 = new BN(1);
-	    var x2 = new BN(0);
-
-	    var delta = b.clone();
-
-	    while (a.cmpn(1) > 0 && b.cmpn(1) > 0) {
-	      for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
-	      if (i > 0) {
-	        a.iushrn(i);
-	        while (i-- > 0) {
-	          if (x1.isOdd()) {
-	            x1.iadd(delta);
-	          }
-
-	          x1.iushrn(1);
-	        }
-	      }
-
-	      for (var j = 0, jm = 1; (b.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
-	      if (j > 0) {
-	        b.iushrn(j);
-	        while (j-- > 0) {
-	          if (x2.isOdd()) {
-	            x2.iadd(delta);
-	          }
-
-	          x2.iushrn(1);
-	        }
-	      }
-
-	      if (a.cmp(b) >= 0) {
-	        a.isub(b);
-	        x1.isub(x2);
-	      } else {
-	        b.isub(a);
-	        x2.isub(x1);
-	      }
-	    }
-
-	    var res;
-	    if (a.cmpn(1) === 0) {
-	      res = x1;
-	    } else {
-	      res = x2;
-	    }
-
-	    if (res.cmpn(0) < 0) {
-	      res.iadd(p);
-	    }
-
-	    return res;
-	  };
-
-	  BN.prototype.gcd = function gcd (num) {
-	    if (this.isZero()) return num.abs();
-	    if (num.isZero()) return this.abs();
-
-	    var a = this.clone();
-	    var b = num.clone();
-	    a.negative = 0;
-	    b.negative = 0;
-
-	    // Remove common factor of two
-	    for (var shift = 0; a.isEven() && b.isEven(); shift++) {
-	      a.iushrn(1);
-	      b.iushrn(1);
-	    }
-
-	    do {
-	      while (a.isEven()) {
-	        a.iushrn(1);
-	      }
-	      while (b.isEven()) {
-	        b.iushrn(1);
-	      }
-
-	      var r = a.cmp(b);
-	      if (r < 0) {
-	        // Swap `a` and `b` to make `a` always bigger than `b`
-	        var t = a;
-	        a = b;
-	        b = t;
-	      } else if (r === 0 || b.cmpn(1) === 0) {
-	        break;
-	      }
-
-	      a.isub(b);
-	    } while (true);
-
-	    return b.iushln(shift);
-	  };
-
-	  // Invert number in the field F(num)
-	  BN.prototype.invm = function invm (num) {
-	    return this.egcd(num).a.umod(num);
-	  };
-
-	  BN.prototype.isEven = function isEven () {
-	    return (this.words[0] & 1) === 0;
-	  };
-
-	  BN.prototype.isOdd = function isOdd () {
-	    return (this.words[0] & 1) === 1;
-	  };
-
-	  // And first word and num
-	  BN.prototype.andln = function andln (num) {
-	    return this.words[0] & num;
-	  };
-
-	  // Increment at the bit position in-line
-	  BN.prototype.bincn = function bincn (bit) {
-	    assert(typeof bit === 'number');
-	    var r = bit % 26;
-	    var s = (bit - r) / 26;
-	    var q = 1 << r;
-
-	    // Fast case: bit is much higher than all existing words
-	    if (this.length <= s) {
-	      this._expand(s + 1);
-	      this.words[s] |= q;
-	      return this;
-	    }
-
-	    // Add bit and propagate, if needed
-	    var carry = q;
-	    for (var i = s; carry !== 0 && i < this.length; i++) {
-	      var w = this.words[i] | 0;
-	      w += carry;
-	      carry = w >>> 26;
-	      w &= 0x3ffffff;
-	      this.words[i] = w;
-	    }
-	    if (carry !== 0) {
-	      this.words[i] = carry;
-	      this.length++;
-	    }
-	    return this;
-	  };
-
-	  BN.prototype.isZero = function isZero () {
-	    return this.length === 1 && this.words[0] === 0;
-	  };
-
-	  BN.prototype.cmpn = function cmpn (num) {
-	    var negative = num < 0;
-
-	    if (this.negative !== 0 && !negative) return -1;
-	    if (this.negative === 0 && negative) return 1;
-
-	    this.strip();
-
-	    var res;
-	    if (this.length > 1) {
-	      res = 1;
-	    } else {
-	      if (negative) {
-	        num = -num;
-	      }
-
-	      assert(num <= 0x3ffffff, 'Number is too big');
-
-	      var w = this.words[0] | 0;
-	      res = w === num ? 0 : w < num ? -1 : 1;
-	    }
-	    if (this.negative !== 0) return -res | 0;
-	    return res;
-	  };
-
-	  // Compare two numbers and return:
-	  // 1 - if `this` > `num`
-	  // 0 - if `this` == `num`
-	  // -1 - if `this` < `num`
-	  BN.prototype.cmp = function cmp (num) {
-	    if (this.negative !== 0 && num.negative === 0) return -1;
-	    if (this.negative === 0 && num.negative !== 0) return 1;
-
-	    var res = this.ucmp(num);
-	    if (this.negative !== 0) return -res | 0;
-	    return res;
-	  };
-
-	  // Unsigned comparison
-	  BN.prototype.ucmp = function ucmp (num) {
-	    // At this point both numbers have the same sign
-	    if (this.length > num.length) return 1;
-	    if (this.length < num.length) return -1;
-
-	    var res = 0;
-	    for (var i = this.length - 1; i >= 0; i--) {
-	      var a = this.words[i] | 0;
-	      var b = num.words[i] | 0;
-
-	      if (a === b) continue;
-	      if (a < b) {
-	        res = -1;
-	      } else if (a > b) {
-	        res = 1;
-	      }
-	      break;
-	    }
-	    return res;
-	  };
-
-	  BN.prototype.gtn = function gtn (num) {
-	    return this.cmpn(num) === 1;
-	  };
-
-	  BN.prototype.gt = function gt (num) {
-	    return this.cmp(num) === 1;
-	  };
-
-	  BN.prototype.gten = function gten (num) {
-	    return this.cmpn(num) >= 0;
-	  };
-
-	  BN.prototype.gte = function gte (num) {
-	    return this.cmp(num) >= 0;
-	  };
-
-	  BN.prototype.ltn = function ltn (num) {
-	    return this.cmpn(num) === -1;
-	  };
-
-	  BN.prototype.lt = function lt (num) {
-	    return this.cmp(num) === -1;
-	  };
-
-	  BN.prototype.lten = function lten (num) {
-	    return this.cmpn(num) <= 0;
-	  };
-
-	  BN.prototype.lte = function lte (num) {
-	    return this.cmp(num) <= 0;
-	  };
-
-	  BN.prototype.eqn = function eqn (num) {
-	    return this.cmpn(num) === 0;
-	  };
-
-	  BN.prototype.eq = function eq (num) {
-	    return this.cmp(num) === 0;
-	  };
-
-	  //
-	  // A reduce context, could be using montgomery or something better, depending
-	  // on the `m` itself.
-	  //
-	  BN.red = function red (num) {
-	    return new Red(num);
-	  };
-
-	  BN.prototype.toRed = function toRed (ctx) {
-	    assert(!this.red, 'Already a number in reduction context');
-	    assert(this.negative === 0, 'red works only with positives');
-	    return ctx.convertTo(this)._forceRed(ctx);
-	  };
-
-	  BN.prototype.fromRed = function fromRed () {
-	    assert(this.red, 'fromRed works only with numbers in reduction context');
-	    return this.red.convertFrom(this);
-	  };
-
-	  BN.prototype._forceRed = function _forceRed (ctx) {
-	    this.red = ctx;
-	    return this;
-	  };
-
-	  BN.prototype.forceRed = function forceRed (ctx) {
-	    assert(!this.red, 'Already a number in reduction context');
-	    return this._forceRed(ctx);
-	  };
-
-	  BN.prototype.redAdd = function redAdd (num) {
-	    assert(this.red, 'redAdd works only with red numbers');
-	    return this.red.add(this, num);
-	  };
-
-	  BN.prototype.redIAdd = function redIAdd (num) {
-	    assert(this.red, 'redIAdd works only with red numbers');
-	    return this.red.iadd(this, num);
-	  };
-
-	  BN.prototype.redSub = function redSub (num) {
-	    assert(this.red, 'redSub works only with red numbers');
-	    return this.red.sub(this, num);
-	  };
-
-	  BN.prototype.redISub = function redISub (num) {
-	    assert(this.red, 'redISub works only with red numbers');
-	    return this.red.isub(this, num);
-	  };
-
-	  BN.prototype.redShl = function redShl (num) {
-	    assert(this.red, 'redShl works only with red numbers');
-	    return this.red.shl(this, num);
-	  };
-
-	  BN.prototype.redMul = function redMul (num) {
-	    assert(this.red, 'redMul works only with red numbers');
-	    this.red._verify2(this, num);
-	    return this.red.mul(this, num);
-	  };
-
-	  BN.prototype.redIMul = function redIMul (num) {
-	    assert(this.red, 'redMul works only with red numbers');
-	    this.red._verify2(this, num);
-	    return this.red.imul(this, num);
-	  };
-
-	  BN.prototype.redSqr = function redSqr () {
-	    assert(this.red, 'redSqr works only with red numbers');
-	    this.red._verify1(this);
-	    return this.red.sqr(this);
-	  };
-
-	  BN.prototype.redISqr = function redISqr () {
-	    assert(this.red, 'redISqr works only with red numbers');
-	    this.red._verify1(this);
-	    return this.red.isqr(this);
-	  };
-
-	  // Square root over p
-	  BN.prototype.redSqrt = function redSqrt () {
-	    assert(this.red, 'redSqrt works only with red numbers');
-	    this.red._verify1(this);
-	    return this.red.sqrt(this);
-	  };
-
-	  BN.prototype.redInvm = function redInvm () {
-	    assert(this.red, 'redInvm works only with red numbers');
-	    this.red._verify1(this);
-	    return this.red.invm(this);
-	  };
-
-	  // Return negative clone of `this` % `red modulo`
-	  BN.prototype.redNeg = function redNeg () {
-	    assert(this.red, 'redNeg works only with red numbers');
-	    this.red._verify1(this);
-	    return this.red.neg(this);
-	  };
-
-	  BN.prototype.redPow = function redPow (num) {
-	    assert(this.red && !num.red, 'redPow(normalNum)');
-	    this.red._verify1(this);
-	    return this.red.pow(this, num);
-	  };
-
-	  // Prime numbers with efficient reduction
-	  var primes = {
-	    k256: null,
-	    p224: null,
-	    p192: null,
-	    p25519: null
-	  };
-
-	  // Pseudo-Mersenne prime
-	  function MPrime (name, p) {
-	    // P = 2 ^ N - K
-	    this.name = name;
-	    this.p = new BN(p, 16);
-	    this.n = this.p.bitLength();
-	    this.k = new BN(1).iushln(this.n).isub(this.p);
-
-	    this.tmp = this._tmp();
-	  }
-
-	  MPrime.prototype._tmp = function _tmp () {
-	    var tmp = new BN(null);
-	    tmp.words = new Array(Math.ceil(this.n / 13));
-	    return tmp;
-	  };
-
-	  MPrime.prototype.ireduce = function ireduce (num) {
-	    // Assumes that `num` is less than `P^2`
-	    // num = HI * (2 ^ N - K) + HI * K + LO = HI * K + LO (mod P)
-	    var r = num;
-	    var rlen;
-
-	    do {
-	      this.split(r, this.tmp);
-	      r = this.imulK(r);
-	      r = r.iadd(this.tmp);
-	      rlen = r.bitLength();
-	    } while (rlen > this.n);
-
-	    var cmp = rlen < this.n ? -1 : r.ucmp(this.p);
-	    if (cmp === 0) {
-	      r.words[0] = 0;
-	      r.length = 1;
-	    } else if (cmp > 0) {
-	      r.isub(this.p);
-	    } else {
-	      r.strip();
-	    }
-
-	    return r;
-	  };
-
-	  MPrime.prototype.split = function split (input, out) {
-	    input.iushrn(this.n, 0, out);
-	  };
-
-	  MPrime.prototype.imulK = function imulK (num) {
-	    return num.imul(this.k);
-	  };
-
-	  function K256 () {
-	    MPrime.call(
-	      this,
-	      'k256',
-	      'ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff fffffffe fffffc2f');
-	  }
-	  inherits(K256, MPrime);
-
-	  K256.prototype.split = function split (input, output) {
-	    // 256 = 9 * 26 + 22
-	    var mask = 0x3fffff;
-
-	    var outLen = Math.min(input.length, 9);
-	    for (var i = 0; i < outLen; i++) {
-	      output.words[i] = input.words[i];
-	    }
-	    output.length = outLen;
-
-	    if (input.length <= 9) {
-	      input.words[0] = 0;
-	      input.length = 1;
-	      return;
-	    }
-
-	    // Shift by 9 limbs
-	    var prev = input.words[9];
-	    output.words[output.length++] = prev & mask;
-
-	    for (i = 10; i < input.length; i++) {
-	      var next = input.words[i] | 0;
-	      input.words[i - 10] = ((next & mask) << 4) | (prev >>> 22);
-	      prev = next;
-	    }
-	    prev >>>= 22;
-	    input.words[i - 10] = prev;
-	    if (prev === 0 && input.length > 10) {
-	      input.length -= 10;
-	    } else {
-	      input.length -= 9;
-	    }
-	  };
-
-	  K256.prototype.imulK = function imulK (num) {
-	    // K = 0x1000003d1 = [ 0x40, 0x3d1 ]
-	    num.words[num.length] = 0;
-	    num.words[num.length + 1] = 0;
-	    num.length += 2;
-
-	    // bounded at: 0x40 * 0x3ffffff + 0x3d0 = 0x100000390
-	    var lo = 0;
-	    for (var i = 0; i < num.length; i++) {
-	      var w = num.words[i] | 0;
-	      lo += w * 0x3d1;
-	      num.words[i] = lo & 0x3ffffff;
-	      lo = w * 0x40 + ((lo / 0x4000000) | 0);
-	    }
-
-	    // Fast length reduction
-	    if (num.words[num.length - 1] === 0) {
-	      num.length--;
-	      if (num.words[num.length - 1] === 0) {
-	        num.length--;
-	      }
-	    }
-	    return num;
-	  };
-
-	  function P224 () {
-	    MPrime.call(
-	      this,
-	      'p224',
-	      'ffffffff ffffffff ffffffff ffffffff 00000000 00000000 00000001');
-	  }
-	  inherits(P224, MPrime);
-
-	  function P192 () {
-	    MPrime.call(
-	      this,
-	      'p192',
-	      'ffffffff ffffffff ffffffff fffffffe ffffffff ffffffff');
-	  }
-	  inherits(P192, MPrime);
-
-	  function P25519 () {
-	    // 2 ^ 255 - 19
-	    MPrime.call(
-	      this,
-	      '25519',
-	      '7fffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffed');
-	  }
-	  inherits(P25519, MPrime);
-
-	  P25519.prototype.imulK = function imulK (num) {
-	    // K = 0x13
-	    var carry = 0;
-	    for (var i = 0; i < num.length; i++) {
-	      var hi = (num.words[i] | 0) * 0x13 + carry;
-	      var lo = hi & 0x3ffffff;
-	      hi >>>= 26;
-
-	      num.words[i] = lo;
-	      carry = hi;
-	    }
-	    if (carry !== 0) {
-	      num.words[num.length++] = carry;
-	    }
-	    return num;
-	  };
-
-	  // Exported mostly for testing purposes, use plain name instead
-	  BN._prime = function prime (name) {
-	    // Cached version of prime
-	    if (primes[name]) return primes[name];
-
-	    var prime;
-	    if (name === 'k256') {
-	      prime = new K256();
-	    } else if (name === 'p224') {
-	      prime = new P224();
-	    } else if (name === 'p192') {
-	      prime = new P192();
-	    } else if (name === 'p25519') {
-	      prime = new P25519();
-	    } else {
-	      throw new Error('Unknown prime ' + name);
-	    }
-	    primes[name] = prime;
-
-	    return prime;
-	  };
-
-	  //
-	  // Base reduction engine
-	  //
-	  function Red (m) {
-	    if (typeof m === 'string') {
-	      var prime = BN._prime(m);
-	      this.m = prime.p;
-	      this.prime = prime;
-	    } else {
-	      assert(m.gtn(1), 'modulus must be greater than 1');
-	      this.m = m;
-	      this.prime = null;
-	    }
-	  }
-
-	  Red.prototype._verify1 = function _verify1 (a) {
-	    assert(a.negative === 0, 'red works only with positives');
-	    assert(a.red, 'red works only with red numbers');
-	  };
-
-	  Red.prototype._verify2 = function _verify2 (a, b) {
-	    assert((a.negative | b.negative) === 0, 'red works only with positives');
-	    assert(a.red && a.red === b.red,
-	      'red works only with red numbers');
-	  };
-
-	  Red.prototype.imod = function imod (a) {
-	    if (this.prime) return this.prime.ireduce(a)._forceRed(this);
-	    return a.umod(this.m)._forceRed(this);
-	  };
-
-	  Red.prototype.neg = function neg (a) {
-	    if (a.isZero()) {
-	      return a.clone();
-	    }
-
-	    return this.m.sub(a)._forceRed(this);
-	  };
-
-	  Red.prototype.add = function add (a, b) {
-	    this._verify2(a, b);
-
-	    var res = a.add(b);
-	    if (res.cmp(this.m) >= 0) {
-	      res.isub(this.m);
-	    }
-	    return res._forceRed(this);
-	  };
-
-	  Red.prototype.iadd = function iadd (a, b) {
-	    this._verify2(a, b);
-
-	    var res = a.iadd(b);
-	    if (res.cmp(this.m) >= 0) {
-	      res.isub(this.m);
-	    }
-	    return res;
-	  };
-
-	  Red.prototype.sub = function sub (a, b) {
-	    this._verify2(a, b);
-
-	    var res = a.sub(b);
-	    if (res.cmpn(0) < 0) {
-	      res.iadd(this.m);
-	    }
-	    return res._forceRed(this);
-	  };
-
-	  Red.prototype.isub = function isub (a, b) {
-	    this._verify2(a, b);
-
-	    var res = a.isub(b);
-	    if (res.cmpn(0) < 0) {
-	      res.iadd(this.m);
-	    }
-	    return res;
-	  };
-
-	  Red.prototype.shl = function shl (a, num) {
-	    this._verify1(a);
-	    return this.imod(a.ushln(num));
-	  };
-
-	  Red.prototype.imul = function imul (a, b) {
-	    this._verify2(a, b);
-	    return this.imod(a.imul(b));
-	  };
-
-	  Red.prototype.mul = function mul (a, b) {
-	    this._verify2(a, b);
-	    return this.imod(a.mul(b));
-	  };
-
-	  Red.prototype.isqr = function isqr (a) {
-	    return this.imul(a, a.clone());
-	  };
-
-	  Red.prototype.sqr = function sqr (a) {
-	    return this.mul(a, a);
-	  };
-
-	  Red.prototype.sqrt = function sqrt (a) {
-	    if (a.isZero()) return a.clone();
-
-	    var mod3 = this.m.andln(3);
-	    assert(mod3 % 2 === 1);
-
-	    // Fast case
-	    if (mod3 === 3) {
-	      var pow = this.m.add(new BN(1)).iushrn(2);
-	      return this.pow(a, pow);
-	    }
-
-	    // Tonelli-Shanks algorithm (Totally unoptimized and slow)
-	    //
-	    // Find Q and S, that Q * 2 ^ S = (P - 1)
-	    var q = this.m.subn(1);
-	    var s = 0;
-	    while (!q.isZero() && q.andln(1) === 0) {
-	      s++;
-	      q.iushrn(1);
-	    }
-	    assert(!q.isZero());
-
-	    var one = new BN(1).toRed(this);
-	    var nOne = one.redNeg();
-
-	    // Find quadratic non-residue
-	    // NOTE: Max is such because of generalized Riemann hypothesis.
-	    var lpow = this.m.subn(1).iushrn(1);
-	    var z = this.m.bitLength();
-	    z = new BN(2 * z * z).toRed(this);
-
-	    while (this.pow(z, lpow).cmp(nOne) !== 0) {
-	      z.redIAdd(nOne);
-	    }
-
-	    var c = this.pow(z, q);
-	    var r = this.pow(a, q.addn(1).iushrn(1));
-	    var t = this.pow(a, q);
-	    var m = s;
-	    while (t.cmp(one) !== 0) {
-	      var tmp = t;
-	      for (var i = 0; tmp.cmp(one) !== 0; i++) {
-	        tmp = tmp.redSqr();
-	      }
-	      assert(i < m);
-	      var b = this.pow(c, new BN(1).iushln(m - i - 1));
-
-	      r = r.redMul(b);
-	      c = b.redSqr();
-	      t = t.redMul(c);
-	      m = i;
-	    }
-
-	    return r;
-	  };
-
-	  Red.prototype.invm = function invm (a) {
-	    var inv = a._invmp(this.m);
-	    if (inv.negative !== 0) {
-	      inv.negative = 0;
-	      return this.imod(inv).redNeg();
-	    } else {
-	      return this.imod(inv);
-	    }
-	  };
-
-	  Red.prototype.pow = function pow (a, num) {
-	    if (num.isZero()) return new BN(1).toRed(this);
-	    if (num.cmpn(1) === 0) return a.clone();
-
-	    var windowSize = 4;
-	    var wnd = new Array(1 << windowSize);
-	    wnd[0] = new BN(1).toRed(this);
-	    wnd[1] = a;
-	    for (var i = 2; i < wnd.length; i++) {
-	      wnd[i] = this.mul(wnd[i - 1], a);
-	    }
-
-	    var res = wnd[0];
-	    var current = 0;
-	    var currentLen = 0;
-	    var start = num.bitLength() % 26;
-	    if (start === 0) {
-	      start = 26;
-	    }
-
-	    for (i = num.length - 1; i >= 0; i--) {
-	      var word = num.words[i];
-	      for (var j = start - 1; j >= 0; j--) {
-	        var bit = (word >> j) & 1;
-	        if (res !== wnd[0]) {
-	          res = this.sqr(res);
-	        }
-
-	        if (bit === 0 && current === 0) {
-	          currentLen = 0;
-	          continue;
-	        }
-
-	        current <<= 1;
-	        current |= bit;
-	        currentLen++;
-	        if (currentLen !== windowSize && (i !== 0 || j !== 0)) continue;
-
-	        res = this.mul(res, wnd[current]);
-	        currentLen = 0;
-	        current = 0;
-	      }
-	      start = 26;
-	    }
-
-	    return res;
-	  };
-
-	  Red.prototype.convertTo = function convertTo (num) {
-	    var r = num.umod(this.m);
-
-	    return r === num ? r.clone() : r;
-	  };
-
-	  Red.prototype.convertFrom = function convertFrom (num) {
-	    var res = num.clone();
-	    res.red = null;
-	    return res;
-	  };
-
-	  //
-	  // Montgomery method engine
-	  //
-
-	  BN.mont = function mont (num) {
-	    return new Mont(num);
-	  };
-
-	  function Mont (m) {
-	    Red.call(this, m);
-
-	    this.shift = this.m.bitLength();
-	    if (this.shift % 26 !== 0) {
-	      this.shift += 26 - (this.shift % 26);
-	    }
-
-	    this.r = new BN(1).iushln(this.shift);
-	    this.r2 = this.imod(this.r.sqr());
-	    this.rinv = this.r._invmp(this.m);
-
-	    this.minv = this.rinv.mul(this.r).isubn(1).div(this.m);
-	    this.minv = this.minv.umod(this.r);
-	    this.minv = this.r.sub(this.minv);
-	  }
-	  inherits(Mont, Red);
-
-	  Mont.prototype.convertTo = function convertTo (num) {
-	    return this.imod(num.ushln(this.shift));
-	  };
-
-	  Mont.prototype.convertFrom = function convertFrom (num) {
-	    var r = this.imod(num.mul(this.rinv));
-	    r.red = null;
-	    return r;
-	  };
-
-	  Mont.prototype.imul = function imul (a, b) {
-	    if (a.isZero() || b.isZero()) {
-	      a.words[0] = 0;
-	      a.length = 1;
-	      return a;
-	    }
-
-	    var t = a.imul(b);
-	    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
-	    var u = t.isub(c).iushrn(this.shift);
-	    var res = u;
-
-	    if (u.cmp(this.m) >= 0) {
-	      res = u.isub(this.m);
-	    } else if (u.cmpn(0) < 0) {
-	      res = u.iadd(this.m);
-	    }
-
-	    return res._forceRed(this);
-	  };
-
-	  Mont.prototype.mul = function mul (a, b) {
-	    if (a.isZero() || b.isZero()) return new BN(0)._forceRed(this);
-
-	    var t = a.mul(b);
-	    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
-	    var u = t.isub(c).iushrn(this.shift);
-	    var res = u;
-	    if (u.cmp(this.m) >= 0) {
-	      res = u.isub(this.m);
-	    } else if (u.cmpn(0) < 0) {
-	      res = u.iadd(this.m);
-	    }
-
-	    return res._forceRed(this);
-	  };
-
-	  Mont.prototype.invm = function invm (a) {
-	    // (AR)^-1 * R^2 = (A^-1 * R^-1) * R^2 = A^-1 * R
-	    var res = this.imod(a._invmp(this.m).mul(this.r2));
-	    return res._forceRed(this);
-	  };
-	})(module, commonjsGlobal);
-	});
-
-	// ++  muk
-	//
-	// See arvo/sys/hoon.hoon.
-
-
-
-	const ux_FF = new bn(0xFF);
-	const ux_FF00 = new bn(0xFF00);
-	const u_256 = new bn(256);
-
-	/**
-	 * Standard murmur3.
-	 *
-	 * @param  {Number}  syd
-	 * @param  {Number}  len
-	 * @param  {BN}  key
-	 * @return  {BN}
-	 */
-	const muk = (syd, len, key) => {
-	  const lo = key.and(ux_FF).toNumber();
-	  const hi = key.and(ux_FF00).div(u_256).toNumber();
-	  const kee = String.fromCharCode(lo) + String.fromCharCode(hi);
-	  return new bn(murmurhash3_32_gc(kee, syd))
-	};
-
-	// see: https://github.com/garycourt/murmurhash-js
-	//
-	// Copyright (c) 2011 Gary Court
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a copy of
-	// this software and associated documentation files (the "Software"), to deal in
-	// the Software without restriction, including without limitation the rights to
-	// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-	// of the Software, and to permit persons to whom the Software is furnished to do
-	// so, subject to the following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included in all
-	// copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	// SOFTWARE.
-
-	/**
-	 * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
-	 *
-	 * @author <a href="mailto:gary.court@gmail.com">Gary Court</a>
-	 * @see http://github.com/garycourt/murmurhash-js
-	 * @author <a href="mailto:aappleby@gmail.com">Austin Appleby</a>
-	 * @see http://sites.google.com/site/murmurhash/
-	 *
-	 * @param {string} key ASCII only
-	 * @param {number} seed Positive integer only
-	 * @return {number} 32-bit positive integer hash
-	 **/
-	const murmurhash3_32_gc = (key, seed) => {
-	  let remainder, bytes, h1, h1b, c1, c2, k1, i;
-
-	  remainder = key.length & 3; // key.length % 4
-	  bytes = key.length - remainder;
-	  h1 = seed;
-	  c1 = 0xcc9e2d51;
-	  c2 = 0x1b873593;
-	  i = 0;
-
-	  while (i < bytes) {
-	      k1 =
-	        ((key.charCodeAt(i) & 0xff)) |
-	        ((key.charCodeAt(++i) & 0xff) << 8) |
-	        ((key.charCodeAt(++i) & 0xff) << 16) |
-	        ((key.charCodeAt(++i) & 0xff) << 24);
-	    ++i;
-
-	    k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
-	    k1 = (k1 << 15) | (k1 >>> 17);
-	    k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
-
-	    h1 ^= k1;
-	        h1 = (h1 << 13) | (h1 >>> 19);
-	    h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-	    h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
-	  }
-
-	  k1 = 0;
-
-	  switch (remainder) {
-	    case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-	    case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-	    case 1: k1 ^= (key.charCodeAt(i) & 0xff);
-
-	    k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
-	    k1 = (k1 << 15) | (k1 >>> 17);
-	    k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
-	    h1 ^= k1;
-	  }
-
-	  h1 ^= key.length;
-
-	  h1 ^= h1 >>> 16;
-	  h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
-	  h1 ^= h1 >>> 13;
-	  h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
-	  h1 ^= h1 >>> 16;
-
-	  return h1 >>> 0;
-	};
-
-	var muk_1 = {
-	  muk
-	};
-
-	// ++  ob
-	//
-	// See arvo/sys/hoon.hoon.
-
-
-	const { muk: muk$1 } = muk_1;
-
-	const ux_1_0000 = new bn('10000', 'hex');
-	const ux_ffff_ffff = new bn('ffffffff', 'hex');
-	const ux_1_0000_0000 = new bn('100000000', 'hex');
-	const ux_ffff_ffff_ffff_ffff = new bn('ffffffffffffffff', 'hex');
-	const ux_ffff_ffff_0000_0000 = new bn('ffffffff00000000', 'hex');
-
-	const u_65535 = new bn('65535');
-	const u_65536 = new bn('65536');
-
-	/**
-	 * Conceal structure v2.
-	 *
-	 * @param  {String, Number, BN}  pyn
-	 * @return  {BN}
-	 */
-	const feen = (arg) => {
-	  const loop = (pyn) => {
-	    const lo = pyn.and(ux_ffff_ffff);
-	    const hi = pyn.and(ux_ffff_ffff_0000_0000);
-
-	    return pyn.gte(ux_1_0000) && pyn.lte(ux_ffff_ffff)
-	      ? ux_1_0000.add(fice(pyn.sub(ux_1_0000)))
-	      : pyn.gte(ux_1_0000_0000) && pyn.lte(ux_ffff_ffff_ffff_ffff)
-	      ? hi.or(loop(lo))
-	      : pyn
-	  };
-
-	  return loop(new bn(arg))
-	};
-
-	/**
-	 * Restore structure v2.
-	 *
-	 * @param  {String, Number, BN}  pyn
-	 * @return  {BN}
-	 */
-	const fend = (arg) => {
-	  const loop = (cry) => {
-	    const lo = cry.and(ux_ffff_ffff);
-	    const hi = cry.and(ux_ffff_ffff_0000_0000);
-
-	    return cry.gte(ux_1_0000) && cry.lte(ux_ffff_ffff)
-	      ? ux_1_0000.add(teil(cry.sub(ux_1_0000)))
-	      : cry.gte(ux_1_0000_0000) && cry.lte(ux_ffff_ffff_ffff_ffff)
-	      ? hi.or(loop(lo))
-	      : cry
-	  };
-
-	  return loop(new bn(arg))
-	};
-
-	/**
-	 * Adapted from Black and Rogaway "Ciphers with arbitrary finite domains",
-	 * 2002.
-	 *
-	 * @param  {String, Number, BN}
-	 * @return  {BN}
-	 */
-	const fice = (arg) => {
-	  const nor = new bn(arg);
-
-	  const sel =
-	    rynd(3,
-	    rynd(2,
-	    rynd(1,
-	    rynd(0, [ nor.mod(u_65535), nor.div(u_65535) ]))));
-
-	  return (u_65535.mul(sel[0])).add(sel[1])
-	};
-
-	/**
-	 * Reverse fice.
-	 *
-	 * @param  {String}  vip
-	 * @return  {BN}
-	 */
-	const teil = (arg) => {
-	  const vip = new bn(arg);
-
-	  const sel =
-	    rund(0,
-	    rund(1,
-	    rund(2,
-	    rund(3, [ vip.mod(u_65535), vip.div(u_65535) ]))));
-
-	  return (u_65535.mul(sel[0])).add(sel[1])
-	};
-
-	/**
-	 * Feistel round.
-	 *
-	 * @param  {Number}  n
-	 * @param  {Array<BN>}  [l, r]
-	 * @return  {Array<BN>}
-	 */
-	const rynd = (n, arr) => {
-	  const l = arr[0];
-	  const r = arr[1];
-	  const p = n % 2 === 0 ? u_65535 : u_65536;
-	  return [ r, l.add(muk$1(raku[n], 2, r)).mod(p) ]
-	};
-
-	/**
-	 * Reverse round.
-	 *
-	 * @param  {Number}  n
-	 * @param  {Array<BN>}  [l, r]
-	 * @return  {Array<BN>}
-	 */
-	const rund = (n, arr) => {
-	  const l = arr[0];
-	  const r = arr[1];
-	  const p = n % 2 === 0 ? u_65535 : u_65536;
-	  return [ r, l.add(p).sub(muk$1(raku[n], 2, r).mod(p)).mod(p) ]
-	};
-
-	const raku = [
-	  0xb76d5eed,
-	  0xee281300,
-	  0x85bcae01,
-	  0x4b387af7,
-	];
-
-	var ob$1 = {
-	  feen,
-	  fend,
-	  fice,
-	  teil,
-	  rynd,
-	  rund,
-	  raku
-	};
-
-	// ++  co
-	//
-	// See arvo/sys/hoon.hoon.
-
-
-
-
-
-
-	const zero = new bn(0);
-	const one = new bn(1);
-	const two = new bn(2);
-	const three = new bn(3);
-	const four = new bn(4);
-	const five = new bn(5);
-
-	const pre = `
-dozmarbinwansamlitsighidfidlissogdirwacsabwissib\
-rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\
-holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
-losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
-rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
-ritpodmottamtolsavposnapnopsomfinfonbanmorworsip\
-ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
-sivtagpadsaldivdactansidfabtarmonranniswolmispal\
-lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
-bilhaddocridmocpacravripfaltodtiltinhapmicfanpat\
-taclabmogsimsonpinlomrictapfirhasbosbatpochactid\
-havsaplindibhosdabbitbarracparloddosbortochilmac\
-tomdigfilfasmithobharmighinradmashalraglagfadtop\
-mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
-nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
-laptalpitnambonrostonfodponsovnocsorlavmatmipfip\
-`;
-
-	const suf = `
-zodnecbudwessevpersutletfulpensytdurwepserwylsun\
-rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\
-lunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\
-pyldulhetmevruttylwydtepbesdexsefwycburderneppur\
-rysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\
-secmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\
-selrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\
-syptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\
-lytdusnebrumtynseglyxpunresredfunrevrefmectedrus\
-bexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\
-tenlusnussyltecmexpubrymtucfyllepdebbermughuttun\
-bylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\
-wedducfurfexnulluclennerlexrupnedlecrydlydfenwel\
-nydhusrelrudneshesfetdesretdunlernyrsebhulryllud\
-remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
-lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
-`;
-
-	const patp2syls = name =>
-	  name.replace(/[\^~-]/g,'').match(/.{1,3}/g);
-
-	const splitAt = (index, str) => [str.slice(0, index), str.slice(index)];
-
-	const prefixes = pre.match(/.{1,3}/g);
-
-	const suffixes = suf.match(/.{1,3}/g);
-
-	const bex = (n) =>
-	  two.pow(n);
-
-	const rsh = (a, b, c) =>
-	  c.div(bex(bex(a).mul(b)));
-
-	const met = (a, b, c = zero) =>
-	  b.eq(zero)
-	  ? c
-	  : met(a, rsh(a, one, b), c.add(one));
-
-	const end = (a, b, c) =>
-	  c.mod(bex(bex(a).mul(b)));
-
-	/**
-	 * Convert a number to a @p-encoded string.
-	 *
-	 * @param  {String, Number, BN}  arg
-	 * @return  {String}
-	 */
-	const patp = (arg) => {
-	  const n = new bn(arg);
-
-	  const sxz = ob$1.feen(n);
-	  const dyy = met(four, sxz);
-
-	  const loop = (tsxz, timp, trep) => {
-	    const log = end(four, one, tsxz);
-	    const pre = prefixes[rsh(three, one, log)];
-	    const suf = suffixes[end(three, one, log)];
-	    const etc =
-	      (timp.mod(four)).eq(zero)
-	        ? timp.eq(zero)
-	          ? ''
-	          : '--'
-	        : '-';
-
-	    const res = pre + suf + etc + trep;
-
-	    return timp.eq(dyy)
-	      ? trep
-	      : loop(rsh(four, one, tsxz), timp.add(one), res)
-	  };
-
-	  const dyx = met(three, sxz);
-
-	  return '~' +
-	    (dyx.lte(one)
-	    ? suffixes[sxz]
-	    : loop(sxz, zero, ''))
-	};
-
-	/**
-	 * Convert a hex-encoded string to a @p-encoded string.
-	 *
-	 * @param  {String}  hex
-	 * @return  {String}
-	 */
-	const hex2patp = (hex) =>
-	  patp(new bn(hex, 'hex'));
-
-	/**
-	 * Convert a @p-encoded string to a hex-encoded string.
-	 *
-	 * @param  {String}  name @p
-	 * @return  {String}
-	 */
-	const patp2hex = (name) => {
-	  if (isValidPat(name) === false) {
-	    throw new Error('patp2hex: not a valid @p')
-	  }
-	  const syls = patp2syls(name);
-
-	  const syl2bin = idx =>
-	    idx.toString(2).padStart(8, '0');
-
-	  const addr = lodash.reduce(syls, (acc, syl, idx) =>
-	    idx % 2 !== 0 || syls.length === 1
-	      ? acc + syl2bin(suffixes.indexOf(syl))
-	      : acc + syl2bin(prefixes.indexOf(syl)),
-	  '');
-
-	  const bn$1 = new bn(addr, 2);
-	  const hex = ob$1.fend(bn$1).toString('hex');
-	  return hex.length % 2 !== 0
-	    ? hex.padStart(hex.length + 1, '0')
-	    : hex
-	};
-
-	/**
-	 * Convert a @p-encoded string to a bignum.
-	 *
-	 * @param  {String}  name @p
-	 * @return  {BN}
-	 */
-	const patp2bn = name =>
-	  new bn(patp2hex(name), 'hex');
-
-	/**
-	 * Convert a @p-encoded string to a decimal-encoded string.
-	 *
-	 * @param  {String}  name @p
-	 * @return  {String}
-	 */
-	const patp2dec = name =>
-	  patp2bn(name).toString();
-
-	/**
-	 * Convert a number to a @q-encoded string.
-	 *
-	 * @param  {String, Number, BN}  arg
-	 * @return  {String}
-	 */
-	const patq = (arg) => {
-	  const bn$1 = new bn(arg);
-	  const buf = bn$1.toArrayLike(Buffer);
-	  return buf2patq(buf)
-	};
-
-	/**
-	 * Convert a Buffer into a @q-encoded string.
-	 *
-	 * @param  {Buffer}  buf
-	 * @return  {String}
-	 */
-	const buf2patq = buf => {
-	  const chunked =
-	    buf.length % 2 !== 0 && buf.length > 1
-	    ? lodash.concat([[buf[0]]], lodash.chunk(buf.slice(1), 2))
-	    : lodash.chunk(buf, 2);
-
-	  const prefixName = byts =>
-	    lodash.isUndefined(byts[1])
-	    ? prefixes[0] + suffixes[byts[0]]
-	    : prefixes[byts[0]] + suffixes[byts[1]];
-
-	  const name = byts =>
-	    lodash.isUndefined(byts[1])
-	    ? suffixes[byts[0]]
-	    : prefixes[byts[0]] + suffixes[byts[1]];
-
-	  const alg = pair =>
-	    pair.length % 2 !== 0 && chunked.length > 1
-	    ? prefixName(pair)
-	    : name(pair);
-
-	  return chunked.reduce((acc, elem) =>
-	    acc + (acc === '~' ? '' : '-') + alg(elem), '~')
-	};
-
-	/**
-	 * Convert a hex-encoded string to a @q-encoded string.
-	 *
-	 * Note that this preserves leading zero bytes.
-	 *
-	 * @param  {String}  hex
-	 * @return  {String}
-	 */
-	const hex2patq = arg => {
-	  const hex =
-	    arg.length % 2 !== 0
-	    ? arg.padStart(arg.length + 1, '0')
-	    : arg;
-
-	  const buf = Buffer.from(hex, 'hex');
-	  return buf2patq(buf)
-	};
-
-	/**
-	 * Convert a @q-encoded string to a hex-encoded string.
-	 *
-	 * Note that this preserves leading zero bytes.
-	 *
-	 * @param  {String}  name @q
-	 * @return  {String}
-	 */
-	const patq2hex = name => {
-	  if (isValidPat(name) === false) {
-	    throw new Error('patq2hex: not a valid @q')
-	  }
-	  const chunks = lodash.split(name.slice(1), '-');
-	  const dec2hex = dec =>
-	    dec.toString(16).padStart(2, '0');
-
-	  const splat = lodash.map(chunks, chunk => {
-	    let syls = splitAt(3, chunk);
-	    return syls[1] === ''
-	      ? dec2hex(suffixes.indexOf(syls[0]))
-	      : dec2hex(prefixes.indexOf(syls[0])) +
-	        dec2hex(suffixes.indexOf(syls[1]))
-	  });
-
-	  return name.length === 0
-	    ? '00'
-	    : splat.join('')
-	};
-
-	/**
-	 * Convert a @q-encoded string to a bignum.
-	 *
-	 * @param  {String}  name @q
-	 * @return  {BN}
-	 */
-	const patq2bn = name =>
-	  new bn(patq2hex(name), 'hex');
-
-	/**
-	 * Convert a @q-encoded string to a decimal-encoded string.
-	 *
-	 * @param  {String}  name @q
-	 * @return  {String}
-	 */
-	const patq2dec = name =>
-	  patq2bn(name).toString();
-
-	/**
-	 * Determine the ship class of a @p value.
-	 *
-	 * @param  {String}  @p
-	 * @return  {String}
-	 */
-	const clan = who => {
-	  const name = patp2bn(who);
-	  const wid = met(three, name);
-	  return wid.lte(one)
-	    ? 'galaxy'
-	    : wid.eq(two)
-	    ? 'star'
-	    : wid.lte(four)
-	    ? 'planet'
-	    : wid.lte(new bn(8))
-	    ? 'moon'
-	    : 'comet'
-	};
-
-	/**
-	 * Determine the parent of a @p value.
-	 *
-	 * @param  {String}  @p
-	 * @return  {String}
-	 */
-	const sein = (name) => {
-	  const mir = clan(name);
-	  const who = patp2bn(name);
-	  const res =
-	    mir === 'galaxy'
-	    ? who
-	    : mir === 'star'
-	    ? end(three, one, who)
-	    : mir === 'planet'
-	    ? end(four, one, who)
-	    : mir === 'moon'
-	    ? end(five, one, who)
-	    : zero;
-	  return patp(res)
-	};
-
-	/**
-	 * Weakly check if a string is a valid @p or @q value.
-	 *
-	 * This is, at present, a pretty weak sanity check.  It doesn't confirm the
-	 * structure precisely (e.g. dashes), and for @q, it's required that q values
-	 * of (greater than one) odd bytelength have been zero-padded.  So, for
-	 * example, '~doznec-binwod' will be considered a valid @q, but '~nec-binwod'
-	 * will not.
-	 *
-	 * @param  {String}  name a @p or @q value
-	 * @return  {String}
-	 */
-	const isValidPat = name => {
-	  const syls = patp2syls(name);
-
-	  const leadingTilde = name.slice(0, 1) === '~';
-
-	  if (leadingTilde === false) {
-	    return false
-	  } else {
-	    const wrongLength = syls.length % 2 !== 0 && syls.length !== 1;
-	    const sylsExist = lodash.reduce(syls, (acc, syl, index) =>
-	      acc &&
-	        (index % 2 !== 0 || syls.length === 1
-	          ? suffixes.includes(syl)
-	          : prefixes.includes(syl)),
-	      true);
-
-	    return !wrongLength && sylsExist
-	  }
-	};
-
-	/**
-	 * Remove all leading zero bytes from a sliceable value.
-	 * @param  {String, Buffer, Array}
-	 * @return  {String}
-	 */
-	const removeLeadingZeroBytes = str =>
-	  str.slice(0, 2) === '00'
-	  ? removeLeadingZeroBytes(str.slice(2))
-	  : str;
-
-	/**
-	 * Equality comparison, modulo leading zero bytes.
-	 * @param  {String, Buffer, Array}
-	 * @param  {String, Buffer, Array}
-	 * @return  {Bool}
-	 */
-	const eqModLeadingZeroBytes = (s, t) =>
-	  lodash.isEqual(removeLeadingZeroBytes(s), removeLeadingZeroBytes(t));
-
-	/**
-	 * Equality comparison on @q values.
-	 * @param  {String}  p a @q-encoded string
-	 * @param  {String}  q a @q-encoded string
-	 * @return  {Bool}
-	 */
-	const eqPatq = (p, q) => {
-	  const phex = patq2hex(p);
-	  const qhex = patq2hex(q);
-	  return eqModLeadingZeroBytes(phex, qhex)
-	};
-
-	var co = {
-	  patp,
-	  patp2hex,
-	  hex2patp,
-	  patp2dec,
-	  patq,
-	  patq2hex,
-	  hex2patq,
-	  patq2dec,
-	  clan,
-	  sein,
-	  eqPatq,
-	  isValidPatq: isValidPat, // reserving for diff impls in future
-	  isValidPatp: isValidPat
-	};
-
-	var src = Object.assign(
-	  co,
-	  ob$1
-	);
-
 	function uuid() {
 	  let str = "0v";
 	  str += Math.ceil(Math.random()*8)+".";
@@ -51554,6 +45487,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  return str.slice(0,-1);
+	}
+
+	function deSig(ship) {
+	  return ship.replace('~', '');
 	}
 
 	// shorten comet names
@@ -51678,7 +45615,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	  if (typeof ret === "undefined") {
 	    ret = {type: "unknown"};
-	    console.log("ASSERT: unknown message type on ", msg);
+	    console.error("ASSERT: unknown message type on ", msg);
 	  }
 
 	  return ret;
@@ -51876,7 +45813,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  reduceMessages(messages, state) {
-	    console.log(messages);
 	    if (messages && messages.circle in state.messages) {
 	      let station = state.messages[messages.circle];
 	      if (
@@ -56484,17 +50420,27 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  render() {
 	    const { props } = this;
 
+	    let unreadElem = !!props.unread ? (
+	      react.createElement('div', {
+	        className: "bg-nice-green dib mr2"  ,
+	        style: { borderRadius: 6, width: 12, height: 12 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 15}}
+	      )
+	    ) : (
+	      react.createElement('div', { className: "dib", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 20}})
+	    );
+
 	    let selectedCss = !!props.selected ? 'bg-light-gray' : 'bg-white pointer';
 	    return (
-	      react.createElement('div', { className: 'pa3 ' + selectedCss, onClick: this.onClick.bind(this), __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 16}}
-	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 17}}
-	          , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 18}}, props.title)
+	      react.createElement('div', { className: 'pa3 ' + selectedCss, onClick: this.onClick.bind(this), __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 25}}
+	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 26}}
+	          , unreadElem
+	          , react.createElement('p', { className: "dib body-regular" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 28}}, props.title)
 	        )
-	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 20}}
-	          , react.createElement('p', { className: "dib gray label-small-mono mr3"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 21}}, props.ship)
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 22}}, props.datetime)
+	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 30}}
+	          , react.createElement('p', { className: "dib gray label-small-mono mr3"   , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 31}}, props.ship)
+	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 32}}, props.datetime)
 	        )
-	        , react.createElement('p', { className: "body-regular-400 gray" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 24}}, props.description)
+	        , react.createElement('p', { className: "body-regular-400 gray" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 34}}, props.description)
 	      )
 	    )
 	  }
@@ -56635,6 +50581,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	            datetime: obj.datetime,
 	            ship: obj.aut,
 	            selected: obj.selected,
+	            unread: props.unreads[obj.cir],
 	            history: props.history, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 48}}
 	          )
 	        );
@@ -56656,20 +50603,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return !(msg.uid in filterInvites);
 	    }).map((inv) => {
 	      return (
-	        react.createElement(SidebarInvite, { key: inv.uid, msg: inv, api: props.api, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 77}} )
+	        react.createElement(SidebarInvite, { key: inv.uid, msg: inv, api: props.api, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 78}} )
 	      );
 	    });
 
 	    return (
 
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 83}}
-	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 84}}
-	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 85}}, "Chat")
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 84}}
+	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 85}}
+	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 86}}, "Chat")
 	          , react.createElement('a', {
 	            className: "dib tr w-50 pointer plus-font"    ,
-	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 86}}, "+")
+	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 87}}, "+")
 	        )
-	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 90}}
+	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 91}}
 	          , inviteItems
 	          , sidebarItems
 	        )
@@ -56678,7 +50625,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 	}
 
-	function _defineProperty(a,t,e){return t in a?Object.defineProperty(a,t,{value:e,enumerable:!0,configurable:!0,writable:!0}):a[t]=e,a}function _objectSpread(a){for(var t=1;t<arguments.length;t++){var e=null!=arguments[t]?arguments[t]:{},r=Object.keys(e);"function"==typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(e).filter(function(a){return Object.getOwnPropertyDescriptor(e,a).enumerable}))),r.forEach(function(t){_defineProperty(a,t,e[t]);});}return a}function _toConsumableArray(a){return _arrayWithoutHoles(a)||_iterableToArray(a)||_nonIterableSpread()}function _arrayWithoutHoles(a){if(Array.isArray(a)){for(var t=0,e=new Array(a.length);t<a.length;t++)e[t]=a[t];return e}}function _iterableToArray(a){if(Symbol.iterator in Object(a)||"[object Arguments]"===Object.prototype.toString.call(a))return Array.from(a)}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function createCommonjsModule$1(a,t){return t={exports:{}},a(t,t.exports),t.exports}function getRawTag(a){var t=hasOwnProperty$1.call(a,symToStringTag$1),e=a[symToStringTag$1];try{a[symToStringTag$1]=void 0;var r=!0;}catch(a){}var b=nativeObjectToString.call(a);return r&&(t?a[symToStringTag$1]=e:delete a[symToStringTag$1]),b}function objectToString(a){return nativeObjectToString$1.call(a)}function baseGetTag(a){return null==a?void 0===a?undefinedTag:nullTag:symToStringTag&&symToStringTag in Object(a)?_getRawTag(a):_objectToString(a)}function isObjectLike(a){return null!=a&&"object"==typeof a}function isSymbol(a){return "symbol"==typeof a||isObjectLike_1(a)&&_baseGetTag(a)==symbolTag}function isKey(a,t){if(isArray_1(a))return !1;var e=typeof a;return !("number"!=e&&"symbol"!=e&&"boolean"!=e&&null!=a&&!isSymbol_1(a))||(reIsPlainProp.test(a)||!reIsDeepProp.test(a)||null!=t&&a in Object(t))}function isObject(a){var t=typeof a;return null!=a&&("object"==t||"function"==t)}function isFunction(a){if(!isObject_1(a))return !1;var t=_baseGetTag(a);return t==funcTag||t==genTag||t==asyncTag||t==proxyTag}function isMasked(a){return !!maskSrcKey&&maskSrcKey in a}function toSource(a){if(null!=a){try{return funcToString$1.call(a)}catch(a){}try{return a+""}catch(a){}}return ""}function baseIsNative(a){return !(!isObject_1(a)||_isMasked(a))&&(isFunction_1(a)?reIsNative:reIsHostCtor).test(_toSource(a))}function getValue(a,t){return null==a?void 0:a[t]}function getNative(a,t){var e=_getValue(a,t);return _baseIsNative(e)?e:void 0}function hashClear(){this.__data__=_nativeCreate?_nativeCreate(null):{},this.size=0;}function hashDelete(a){var t=this.has(a)&&delete this.__data__[a];return this.size-=t?1:0,t}function hashGet(a){var t=this.__data__;if(_nativeCreate){var e=t[a];return e===HASH_UNDEFINED?void 0:e}return hasOwnProperty$2.call(t,a)?t[a]:void 0}function hashHas(a){var t=this.__data__;return _nativeCreate?void 0!==t[a]:hasOwnProperty$3.call(t,a)}function hashSet(a,t){var e=this.__data__;return this.size+=this.has(a)?0:1,e[a]=_nativeCreate&&void 0===t?HASH_UNDEFINED$1:t,this}function Hash(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function listCacheClear(){this.__data__=[],this.size=0;}function eq(a,t){return a===t||a!==a&&t!==t}function assocIndexOf(a,t){for(var e=a.length;e--;)if(eq_1(a[e][0],t))return e;return -1}function listCacheDelete(a){var t=this.__data__,e=_assocIndexOf(t,a);return !(e<0)&&(e==t.length-1?t.pop():splice.call(t,e,1),--this.size,!0)}function listCacheGet(a){var t=this.__data__,e=_assocIndexOf(t,a);return e<0?void 0:t[e][1]}function listCacheHas(a){return _assocIndexOf(this.__data__,a)>-1}function listCacheSet(a,t){var e=this.__data__,r=_assocIndexOf(e,a);return r<0?(++this.size,e.push([a,t])):e[r][1]=t,this}function ListCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function mapCacheClear(){this.size=0,this.__data__={hash:new _Hash,map:new(_Map||_ListCache),string:new _Hash};}function isKeyable(a){var t=typeof a;return "string"==t||"number"==t||"symbol"==t||"boolean"==t?"__proto__"!==a:null===a}function getMapData(a,t){var e=a.__data__;return _isKeyable(t)?e["string"==typeof t?"string":"hash"]:e.map}function mapCacheDelete(a){var t=_getMapData(this,a).delete(a);return this.size-=t?1:0,t}function mapCacheGet(a){return _getMapData(this,a).get(a)}function mapCacheHas(a){return _getMapData(this,a).has(a)}function mapCacheSet(a,t){var e=_getMapData(this,a),r=e.size;return e.set(a,t),this.size+=e.size==r?0:1,this}function MapCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function memoize(a,t){if("function"!=typeof a||null!=t&&"function"!=typeof t)throw new TypeError(FUNC_ERROR_TEXT);var e=function(){var r=arguments,b=t?t.apply(this,r):r[0],s=e.cache;if(s.has(b))return s.get(b);var d=a.apply(this,r);return e.cache=s.set(b,d)||s,d};return e.cache=new(memoize.Cache||_MapCache),e}function memoizeCapped(a){var t=memoize_1(a,function(a){return e.size===MAX_MEMOIZE_SIZE&&e.clear(),a}),e=t.cache;return t}function arrayMap(a,t){for(var e=-1,r=null==a?0:a.length,b=Array(r);++e<r;)b[e]=t(a[e],e,a);return b}function baseToString(a){if("string"==typeof a)return a;if(isArray_1(a))return _arrayMap(a,baseToString)+"";if(isSymbol_1(a))return symbolToString?symbolToString.call(a):"";var t=a+"";return "0"==t&&1/a==-INFINITY?"-0":t}function toString$1(a){return null==a?"":_baseToString(a)}function castPath(a,t){return isArray_1(a)?a:_isKey(a,t)?[a]:_stringToPath(toString_1(a))}function toKey(a){if("string"==typeof a||isSymbol_1(a))return a;var t=a+"";return "0"==t&&1/a==-INFINITY$1?"-0":t}function baseGet(a,t){for(var e=0,r=(t=_castPath(t,a)).length;null!=a&&e<r;)a=a[_toKey(t[e++])];return e&&e==r?a:void 0}function get(a,t,e){var r=null==a?void 0:_baseGet(a,t);return void 0===r?e:r}function stackClear(){this.__data__=new _ListCache,this.size=0;}function stackDelete(a){var t=this.__data__,e=t.delete(a);return this.size=t.size,e}function stackGet(a){return this.__data__.get(a)}function stackHas(a){return this.__data__.has(a)}function stackSet(a,t){var e=this.__data__;if(e instanceof _ListCache){var r=e.__data__;if(!_Map||r.length<LARGE_ARRAY_SIZE-1)return r.push([a,t]),this.size=++e.size,this;e=this.__data__=new _MapCache(r);}return e.set(a,t),this.size=e.size,this}function Stack(a){var t=this.__data__=new _ListCache(a);this.size=t.size;}function arrayEach(a,t){for(var e=-1,r=null==a?0:a.length;++e<r&&!1!==t(a[e],e,a););return a}function baseAssignValue(a,t,e){"__proto__"==t&&_defineProperty$1?_defineProperty$1(a,t,{configurable:!0,enumerable:!0,value:e,writable:!0}):a[t]=e;}function assignValue(a,t,e){var r=a[t];hasOwnProperty$4.call(a,t)&&eq_1(r,e)&&(void 0!==e||t in a)||_baseAssignValue(a,t,e);}function copyObject(a,t,e,r){var b=!e;e||(e={});for(var s=-1,d=t.length;++s<d;){var c=t[s],o=r?r(e[c],a[c],c,e,a):void 0;void 0===o&&(o=a[c]),b?_baseAssignValue(e,c,o):_assignValue(e,c,o);}return e}function baseTimes(a,t){for(var e=-1,r=Array(a);++e<a;)r[e]=t(e);return r}function baseIsArguments(a){return isObjectLike_1(a)&&_baseGetTag(a)==argsTag$1}function stubFalse(){return !1}function isIndex(a,t){var e=typeof a;return !!(t=null==t?MAX_SAFE_INTEGER:t)&&("number"==e||"symbol"!=e&&reIsUint.test(a))&&a>-1&&a%1==0&&a<t}function isLength(a){return "number"==typeof a&&a>-1&&a%1==0&&a<=MAX_SAFE_INTEGER$1}function baseIsTypedArray(a){return isObjectLike_1(a)&&isLength_1(a.length)&&!!typedArrayTags[_baseGetTag(a)]}function baseUnary(a){return function(t){return a(t)}}function arrayLikeKeys(a,t){var e=isArray_1(a),r=!e&&isArguments_1(a),b=!e&&!r&&isBuffer_1(a),s=!e&&!r&&!b&&isTypedArray_1(a),d=e||r||b||s,c=d?_baseTimes(a.length,String):[],o=c.length;for(var n in a)!t&&!hasOwnProperty$5.call(a,n)||d&&("length"==n||b&&("offset"==n||"parent"==n)||s&&("buffer"==n||"byteLength"==n||"byteOffset"==n)||_isIndex(n,o))||c.push(n);return c}function isPrototype(a){var t=a&&a.constructor;return a===("function"==typeof t&&t.prototype||objectProto$9)}function overArg(a,t){return function(e){return a(t(e))}}function baseKeys(a){if(!_isPrototype(a))return _nativeKeys(a);var t=[];for(var e in Object(a))hasOwnProperty$7.call(a,e)&&"constructor"!=e&&t.push(e);return t}function isArrayLike(a){return null!=a&&isLength_1(a.length)&&!isFunction_1(a)}function keys(a){return isArrayLike_1(a)?_arrayLikeKeys(a):_baseKeys(a)}function baseAssign(a,t){return a&&_copyObject(t,keys_1(t),a)}function nativeKeysIn(a){var t=[];if(null!=a)for(var e in Object(a))t.push(e);return t}function baseKeysIn(a){if(!isObject_1(a))return _nativeKeysIn(a);var t=_isPrototype(a),e=[];for(var r in a)("constructor"!=r||!t&&hasOwnProperty$8.call(a,r))&&e.push(r);return e}function keysIn$1(a){return isArrayLike_1(a)?_arrayLikeKeys(a,!0):_baseKeysIn(a)}function baseAssignIn(a,t){return a&&_copyObject(t,keysIn_1(t),a)}function copyArray(a,t){var e=-1,r=a.length;for(t||(t=Array(r));++e<r;)t[e]=a[e];return t}function arrayFilter(a,t){for(var e=-1,r=null==a?0:a.length,b=0,s=[];++e<r;){var d=a[e];t(d,e,a)&&(s[b++]=d);}return s}function stubArray(){return []}function copySymbols(a,t){return _copyObject(a,_getSymbols(a),t)}function arrayPush(a,t){for(var e=-1,r=t.length,b=a.length;++e<r;)a[b+e]=t[e];return a}function copySymbolsIn(a,t){return _copyObject(a,_getSymbolsIn(a),t)}function baseGetAllKeys(a,t,e){var r=t(a);return isArray_1(a)?r:_arrayPush(r,e(a))}function getAllKeys(a){return _baseGetAllKeys(a,keys_1,_getSymbols)}function getAllKeysIn(a){return _baseGetAllKeys(a,keysIn_1,_getSymbolsIn)}function initCloneArray(a){var t=a.length,e=new a.constructor(t);return t&&"string"==typeof a[0]&&hasOwnProperty$9.call(a,"index")&&(e.index=a.index,e.input=a.input),e}function cloneArrayBuffer(a){var t=new a.constructor(a.byteLength);return new _Uint8Array(t).set(new _Uint8Array(a)),t}function cloneDataView(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.byteLength)}function cloneRegExp(a){var t=new a.constructor(a.source,reFlags.exec(a));return t.lastIndex=a.lastIndex,t}function cloneSymbol(a){return symbolValueOf?Object(symbolValueOf.call(a)):{}}function cloneTypedArray(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.length)}function initCloneByTag(a,t,e){var r=a.constructor;switch(t){case arrayBufferTag$2:return _cloneArrayBuffer(a);case boolTag$2:case dateTag$2:return new r(+a);case dataViewTag$3:return _cloneDataView(a,e);case float32Tag$2:case float64Tag$2:case int8Tag$2:case int16Tag$2:case int32Tag$2:case uint8Tag$2:case uint8ClampedTag$2:case uint16Tag$2:case uint32Tag$2:return _cloneTypedArray(a,e);case mapTag$3:return new r;case numberTag$2:case stringTag$2:return new r(a);case regexpTag$2:return _cloneRegExp(a);case setTag$3:return new r;case symbolTag$2:return _cloneSymbol(a)}}function initCloneObject(a){return "function"!=typeof a.constructor||_isPrototype(a)?{}:_baseCreate(_getPrototype(a))}function baseIsMap(a){return isObjectLike_1(a)&&_getTag(a)==mapTag$4}function baseIsSet(a){return isObjectLike_1(a)&&_getTag(a)==setTag$4}function baseClone(a,t,e,r,b,s){var d,c=t&CLONE_DEEP_FLAG$1,o=t&CLONE_FLAT_FLAG,n=t&CLONE_SYMBOLS_FLAG$1;if(e&&(d=b?e(a,r,b,s):e(a)),void 0!==d)return d;if(!isObject_1(a))return a;var i=isArray_1(a);if(i){if(d=_initCloneArray(a),!c)return _copyArray(a,d)}else{var f=_getTag(a),l=f==funcTag$1||f==genTag$1;if(isBuffer_1(a))return _cloneBuffer(a,c);if(f==objectTag||f==argsTag||l&&!b){if(d=o||l?{}:_initCloneObject(a),!c)return o?_copySymbolsIn(a,_baseAssignIn(d,a)):_copySymbols(a,_baseAssign(d,a))}else{if(!cloneableTags[f])return b?a:{};d=_initCloneByTag(a,f,c);}}s||(s=new _Stack);var g=s.get(a);if(g)return g;if(s.set(a,d),isSet_1(a))return a.forEach(function(r){d.add(baseClone(r,t,e,r,a,s));}),d;if(isMap_1(a))return a.forEach(function(r,b){d.set(b,baseClone(r,t,e,b,a,s));}),d;var m=n?o?_getAllKeysIn:_getAllKeys:o?keysIn:keys_1,h=i?void 0:m(a);return _arrayEach(h||a,function(r,b){h&&(r=a[b=r]),_assignValue(d,b,baseClone(r,t,e,b,a,s));}),d}function cloneDeep(a){return _baseClone(a,CLONE_DEEP_FLAG|CLONE_SYMBOLS_FLAG)}function isUndefined(a){return void 0===a}function isString(a){return "string"==typeof a||!isArray_1(a)&&isObjectLike_1(a)&&_baseGetTag(a)==stringTag$3}function isUndefined$1(a){return void 0===a}function translate(a){return {a:1,c:0,e:a,b:0,d:1,f:arguments.length>1&&void 0!==arguments[1]?arguments[1]:0}}function _toConsumableArray$1(a){if(Array.isArray(a)){for(var t=0,e=Array(a.length);t<a.length;t++)e[t]=a[t];return e}return Array.from(a)}function _toArray$1(a){return Array.isArray(a)?a:Array.from(a)}function transform(){for(var a=arguments.length,t=Array(a),e=0;e<a;e++)t[e]=arguments[e];var r=function(a,t){return {a:a.a*t.a+a.c*t.b,c:a.a*t.c+a.c*t.d,e:a.a*t.e+a.c*t.f+a.e,b:a.b*t.a+a.d*t.b,d:a.b*t.c+a.d*t.d,f:a.b*t.e+a.d*t.f+a.f}};switch((t=Array.isArray(t[0])?t[0]:t).length){case 0:throw new Error("no matrices provided");case 1:return t[0];case 2:return r(t[0],t[1]);default:var b=_toArray$1(t),s=b[0],d=b[1],c=b.slice(2),o=r(s,d);return transform.apply(void 0,[o].concat(_toConsumableArray$1(c)))}}function scale(a){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return isUndefined$1(t)&&(t=a),{a:a,c:0,e:0,b:0,d:t,f:0}}function toSVG(a){return toString$2(a)}function toString$2(a){return "matrix("+a.a+","+a.b+","+a.c+","+a.d+","+a.e+","+a.f+")"}var isArray$1=Array.isArray,isArray_1=isArray$1,commonjsGlobal$1="undefined"!=typeof window?window:"undefined"!=typeof global$2?global$2:"undefined"!=typeof self?self:{},freeGlobal="object"==typeof commonjsGlobal$1&&commonjsGlobal$1&&commonjsGlobal$1.Object===Object&&commonjsGlobal$1,_freeGlobal=freeGlobal,freeSelf="object"==typeof self&&self&&self.Object===Object&&self,root=_freeGlobal||freeSelf||Function("return this")(),_root=root,Symbol$1=_root.Symbol,_Symbol=Symbol$1,objectProto=Object.prototype,hasOwnProperty$1=objectProto.hasOwnProperty,nativeObjectToString=objectProto.toString,symToStringTag$1=_Symbol?_Symbol.toStringTag:void 0,_getRawTag=getRawTag,objectProto$1=Object.prototype,nativeObjectToString$1=objectProto$1.toString,_objectToString=objectToString,nullTag="[object Null]",undefinedTag="[object Undefined]",symToStringTag=_Symbol?_Symbol.toStringTag:void 0,_baseGetTag=baseGetTag,isObjectLike_1=isObjectLike,symbolTag="[object Symbol]",isSymbol_1=isSymbol,reIsDeepProp=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,reIsPlainProp=/^\w*$/,_isKey=isKey,isObject_1=isObject,asyncTag="[object AsyncFunction]",funcTag="[object Function]",genTag="[object GeneratorFunction]",proxyTag="[object Proxy]",isFunction_1=isFunction,coreJsData=_root["__core-js_shared__"],_coreJsData=coreJsData,maskSrcKey=function(){var a=/[^.]+$/.exec(_coreJsData&&_coreJsData.keys&&_coreJsData.keys.IE_PROTO||"");return a?"Symbol(src)_1."+a:""}(),_isMasked=isMasked,funcProto$1=Function.prototype,funcToString$1=funcProto$1.toString,_toSource=toSource,reRegExpChar=/[\\^$.*+?()[\]{}|]/g,reIsHostCtor=/^\[object .+?Constructor\]$/,funcProto=Function.prototype,objectProto$2=Object.prototype,funcToString=funcProto.toString,hasOwnProperty$1$1=objectProto$2.hasOwnProperty,reIsNative=RegExp("^"+funcToString.call(hasOwnProperty$1$1).replace(reRegExpChar,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_baseIsNative=baseIsNative,_getValue=getValue,_getNative=getNative,nativeCreate=_getNative(Object,"create"),_nativeCreate=nativeCreate,_hashClear=hashClear,_hashDelete=hashDelete,HASH_UNDEFINED="__lodash_hash_undefined__",objectProto$3=Object.prototype,hasOwnProperty$2=objectProto$3.hasOwnProperty,_hashGet=hashGet,objectProto$4=Object.prototype,hasOwnProperty$3=objectProto$4.hasOwnProperty,_hashHas=hashHas,HASH_UNDEFINED$1="__lodash_hash_undefined__",_hashSet=hashSet;Hash.prototype.clear=_hashClear,Hash.prototype.delete=_hashDelete,Hash.prototype.get=_hashGet,Hash.prototype.has=_hashHas,Hash.prototype.set=_hashSet;var _Hash=Hash,_listCacheClear=listCacheClear,eq_1=eq,_assocIndexOf=assocIndexOf,arrayProto=Array.prototype,splice=arrayProto.splice,_listCacheDelete=listCacheDelete,_listCacheGet=listCacheGet,_listCacheHas=listCacheHas,_listCacheSet=listCacheSet;ListCache.prototype.clear=_listCacheClear,ListCache.prototype.delete=_listCacheDelete,ListCache.prototype.get=_listCacheGet,ListCache.prototype.has=_listCacheHas,ListCache.prototype.set=_listCacheSet;var _ListCache=ListCache,Map$1=_getNative(_root,"Map"),_Map=Map$1,_mapCacheClear=mapCacheClear,_isKeyable=isKeyable,_getMapData=getMapData,_mapCacheDelete=mapCacheDelete,_mapCacheGet=mapCacheGet,_mapCacheHas=mapCacheHas,_mapCacheSet=mapCacheSet;MapCache.prototype.clear=_mapCacheClear,MapCache.prototype.delete=_mapCacheDelete,MapCache.prototype.get=_mapCacheGet,MapCache.prototype.has=_mapCacheHas,MapCache.prototype.set=_mapCacheSet;var _MapCache=MapCache,FUNC_ERROR_TEXT="Expected a function";memoize.Cache=_MapCache;var memoize_1=memoize,MAX_MEMOIZE_SIZE=500,_memoizeCapped=memoizeCapped,rePropName=/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,reEscapeChar=/\\(\\)?/g,stringToPath=_memoizeCapped(function(a){var t=[];return 46===a.charCodeAt(0)&&t.push(""),a.replace(rePropName,function(a,e,r,b){t.push(r?b.replace(reEscapeChar,"$1"):e||a);}),t}),_stringToPath=stringToPath,_arrayMap=arrayMap,INFINITY=1/0,symbolProto=_Symbol?_Symbol.prototype:void 0,symbolToString=symbolProto?symbolProto.toString:void 0,_baseToString=baseToString,toString_1=toString$1,_castPath=castPath,INFINITY$1=1/0,_toKey=toKey,_baseGet=baseGet,get_1$1=get,_stackClear=stackClear,_stackDelete=stackDelete,_stackGet=stackGet,_stackHas=stackHas,LARGE_ARRAY_SIZE=200,_stackSet=stackSet;Stack.prototype.clear=_stackClear,Stack.prototype.delete=_stackDelete,Stack.prototype.get=_stackGet,Stack.prototype.has=_stackHas,Stack.prototype.set=_stackSet;var _Stack=Stack,_arrayEach=arrayEach,defineProperty=function(){try{var a=_getNative(Object,"defineProperty");return a({},"",{}),a}catch(a){}}(),_defineProperty$1=defineProperty,_baseAssignValue=baseAssignValue,objectProto$5=Object.prototype,hasOwnProperty$4=objectProto$5.hasOwnProperty,_assignValue=assignValue,_copyObject=copyObject,_baseTimes=baseTimes,argsTag$1="[object Arguments]",_baseIsArguments=baseIsArguments,objectProto$7=Object.prototype,hasOwnProperty$6=objectProto$7.hasOwnProperty,propertyIsEnumerable=objectProto$7.propertyIsEnumerable,isArguments=_baseIsArguments(function(){return arguments}())?_baseIsArguments:function(a){return isObjectLike_1(a)&&hasOwnProperty$6.call(a,"callee")&&!propertyIsEnumerable.call(a,"callee")},isArguments_1=isArguments,stubFalse_1=stubFalse,isBuffer_1=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e?_root.Buffer:void 0,s=(b?b.isBuffer:void 0)||stubFalse_1;a.exports=s;}),MAX_SAFE_INTEGER=9007199254740991,reIsUint=/^(?:0|[1-9]\d*)$/,_isIndex=isIndex,MAX_SAFE_INTEGER$1=9007199254740991,isLength_1=isLength,argsTag$2="[object Arguments]",arrayTag$1="[object Array]",boolTag$1="[object Boolean]",dateTag$1="[object Date]",errorTag$1="[object Error]",funcTag$2="[object Function]",mapTag$1="[object Map]",numberTag$1="[object Number]",objectTag$1="[object Object]",regexpTag$1="[object RegExp]",setTag$1="[object Set]",stringTag$1="[object String]",weakMapTag$1="[object WeakMap]",arrayBufferTag$1="[object ArrayBuffer]",dataViewTag$1="[object DataView]",float32Tag$1="[object Float32Array]",float64Tag$1="[object Float64Array]",int8Tag$1="[object Int8Array]",int16Tag$1="[object Int16Array]",int32Tag$1="[object Int32Array]",uint8Tag$1="[object Uint8Array]",uint8ClampedTag$1="[object Uint8ClampedArray]",uint16Tag$1="[object Uint16Array]",uint32Tag$1="[object Uint32Array]",typedArrayTags={};typedArrayTags[float32Tag$1]=typedArrayTags[float64Tag$1]=typedArrayTags[int8Tag$1]=typedArrayTags[int16Tag$1]=typedArrayTags[int32Tag$1]=typedArrayTags[uint8Tag$1]=typedArrayTags[uint8ClampedTag$1]=typedArrayTags[uint16Tag$1]=typedArrayTags[uint32Tag$1]=!0,typedArrayTags[argsTag$2]=typedArrayTags[arrayTag$1]=typedArrayTags[arrayBufferTag$1]=typedArrayTags[boolTag$1]=typedArrayTags[dataViewTag$1]=typedArrayTags[dateTag$1]=typedArrayTags[errorTag$1]=typedArrayTags[funcTag$2]=typedArrayTags[mapTag$1]=typedArrayTags[numberTag$1]=typedArrayTags[objectTag$1]=typedArrayTags[regexpTag$1]=typedArrayTags[setTag$1]=typedArrayTags[stringTag$1]=typedArrayTags[weakMapTag$1]=!1;var _baseIsTypedArray=baseIsTypedArray,_baseUnary=baseUnary,_nodeUtil=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e&&_freeGlobal.process,s=function(){try{var a=r&&r.require&&r.require("util").types;return a||b&&b.binding&&b.binding("util")}catch(a){}}();a.exports=s;}),nodeIsTypedArray=_nodeUtil&&_nodeUtil.isTypedArray,isTypedArray=nodeIsTypedArray?_baseUnary(nodeIsTypedArray):_baseIsTypedArray,isTypedArray_1=isTypedArray,objectProto$6=Object.prototype,hasOwnProperty$5=objectProto$6.hasOwnProperty,_arrayLikeKeys=arrayLikeKeys,objectProto$9=Object.prototype,_isPrototype=isPrototype,_overArg=overArg,nativeKeys=_overArg(Object.keys,Object),_nativeKeys=nativeKeys,objectProto$8=Object.prototype,hasOwnProperty$7=objectProto$8.hasOwnProperty,_baseKeys=baseKeys,isArrayLike_1=isArrayLike,keys_1=keys,_baseAssign=baseAssign,_nativeKeysIn=nativeKeysIn,objectProto$10=Object.prototype,hasOwnProperty$8=objectProto$10.hasOwnProperty,_baseKeysIn=baseKeysIn,keysIn_1=keysIn$1,_baseAssignIn=baseAssignIn,_cloneBuffer=createCommonjsModule$1(function(a,t){function e(a,t){if(t)return a.slice();var e=a.length,r=d?d(e):new a.constructor(e);return a.copy(r),r}var r=t&&!t.nodeType&&t,b=r&&!0&&a&&!a.nodeType&&a,s=b&&b.exports===r?_root.Buffer:void 0,d=s?s.allocUnsafe:void 0;a.exports=e;}),_copyArray=copyArray,_arrayFilter=arrayFilter,stubArray_1=stubArray,objectProto$11=Object.prototype,propertyIsEnumerable$1=objectProto$11.propertyIsEnumerable,nativeGetSymbols=Object.getOwnPropertySymbols,getSymbols=nativeGetSymbols?function(a){return null==a?[]:(a=Object(a),_arrayFilter(nativeGetSymbols(a),function(t){return propertyIsEnumerable$1.call(a,t)}))}:stubArray_1,_getSymbols=getSymbols,_copySymbols=copySymbols,_arrayPush=arrayPush,getPrototype=_overArg(Object.getPrototypeOf,Object),_getPrototype=getPrototype,nativeGetSymbols$1=Object.getOwnPropertySymbols,getSymbolsIn=nativeGetSymbols$1?function(a){for(var t=[];a;)_arrayPush(t,_getSymbols(a)),a=_getPrototype(a);return t}:stubArray_1,_getSymbolsIn=getSymbolsIn,_copySymbolsIn=copySymbolsIn,_baseGetAllKeys=baseGetAllKeys,_getAllKeys=getAllKeys,_getAllKeysIn=getAllKeysIn,DataView=_getNative(_root,"DataView"),_DataView=DataView,Promise$1=_getNative(_root,"Promise"),_Promise=Promise$1,Set$1=_getNative(_root,"Set"),_Set=Set$1,WeakMap$1=_getNative(_root,"WeakMap"),_WeakMap=WeakMap$1,mapTag$2="[object Map]",objectTag$2="[object Object]",promiseTag="[object Promise]",setTag$2="[object Set]",weakMapTag$2="[object WeakMap]",dataViewTag$2="[object DataView]",dataViewCtorString=_toSource(_DataView),mapCtorString=_toSource(_Map),promiseCtorString=_toSource(_Promise),setCtorString=_toSource(_Set),weakMapCtorString=_toSource(_WeakMap),getTag$1=_baseGetTag;(_DataView&&getTag$1(new _DataView(new ArrayBuffer(1)))!=dataViewTag$2||_Map&&getTag$1(new _Map)!=mapTag$2||_Promise&&getTag$1(_Promise.resolve())!=promiseTag||_Set&&getTag$1(new _Set)!=setTag$2||_WeakMap&&getTag$1(new _WeakMap)!=weakMapTag$2)&&(getTag$1=function(a){var t=_baseGetTag(a),e=t==objectTag$2?a.constructor:void 0,r=e?_toSource(e):"";if(r)switch(r){case dataViewCtorString:return dataViewTag$2;case mapCtorString:return mapTag$2;case promiseCtorString:return promiseTag;case setCtorString:return setTag$2;case weakMapCtorString:return weakMapTag$2}return t});var _getTag=getTag$1,objectProto$12=Object.prototype,hasOwnProperty$9=objectProto$12.hasOwnProperty,_initCloneArray=initCloneArray,Uint8Array$1=_root.Uint8Array,_Uint8Array=Uint8Array$1,_cloneArrayBuffer=cloneArrayBuffer,_cloneDataView=cloneDataView,reFlags=/\w*$/,_cloneRegExp=cloneRegExp,symbolProto$1=_Symbol?_Symbol.prototype:void 0,symbolValueOf=symbolProto$1?symbolProto$1.valueOf:void 0,_cloneSymbol=cloneSymbol,_cloneTypedArray=cloneTypedArray,boolTag$2="[object Boolean]",dateTag$2="[object Date]",mapTag$3="[object Map]",numberTag$2="[object Number]",regexpTag$2="[object RegExp]",setTag$3="[object Set]",stringTag$2="[object String]",symbolTag$2="[object Symbol]",arrayBufferTag$2="[object ArrayBuffer]",dataViewTag$3="[object DataView]",float32Tag$2="[object Float32Array]",float64Tag$2="[object Float64Array]",int8Tag$2="[object Int8Array]",int16Tag$2="[object Int16Array]",int32Tag$2="[object Int32Array]",uint8Tag$2="[object Uint8Array]",uint8ClampedTag$2="[object Uint8ClampedArray]",uint16Tag$2="[object Uint16Array]",uint32Tag$2="[object Uint32Array]",_initCloneByTag=initCloneByTag,objectCreate=Object.create,baseCreate=function(){function a(){}return function(t){if(!isObject_1(t))return {};if(objectCreate)return objectCreate(t);a.prototype=t;var e=new a;return a.prototype=void 0,e}}(),_baseCreate=baseCreate,_initCloneObject=initCloneObject,mapTag$4="[object Map]",_baseIsMap=baseIsMap,nodeIsMap=_nodeUtil&&_nodeUtil.isMap,isMap=nodeIsMap?_baseUnary(nodeIsMap):_baseIsMap,isMap_1=isMap,setTag$4="[object Set]",_baseIsSet=baseIsSet,nodeIsSet=_nodeUtil&&_nodeUtil.isSet,isSet=nodeIsSet?_baseUnary(nodeIsSet):_baseIsSet,isSet_1=isSet,CLONE_DEEP_FLAG$1=1,CLONE_FLAT_FLAG=2,CLONE_SYMBOLS_FLAG$1=4,argsTag="[object Arguments]",arrayTag="[object Array]",boolTag="[object Boolean]",dateTag="[object Date]",errorTag="[object Error]",funcTag$1="[object Function]",genTag$1="[object GeneratorFunction]",mapTag="[object Map]",numberTag="[object Number]",objectTag="[object Object]",regexpTag="[object RegExp]",setTag="[object Set]",stringTag="[object String]",symbolTag$1="[object Symbol]",weakMapTag="[object WeakMap]",arrayBufferTag="[object ArrayBuffer]",dataViewTag="[object DataView]",float32Tag="[object Float32Array]",float64Tag="[object Float64Array]",int8Tag="[object Int8Array]",int16Tag="[object Int16Array]",int32Tag="[object Int32Array]",uint8Tag="[object Uint8Array]",uint8ClampedTag="[object Uint8ClampedArray]",uint16Tag="[object Uint16Array]",uint32Tag="[object Uint32Array]",cloneableTags={};cloneableTags[argsTag]=cloneableTags[arrayTag]=cloneableTags[arrayBufferTag]=cloneableTags[dataViewTag]=cloneableTags[boolTag]=cloneableTags[dateTag]=cloneableTags[float32Tag]=cloneableTags[float64Tag]=cloneableTags[int8Tag]=cloneableTags[int16Tag]=cloneableTags[int32Tag]=cloneableTags[mapTag]=cloneableTags[numberTag]=cloneableTags[objectTag]=cloneableTags[regexpTag]=cloneableTags[setTag]=cloneableTags[stringTag]=cloneableTags[symbolTag$1]=cloneableTags[uint8Tag]=cloneableTags[uint8ClampedTag]=cloneableTags[uint16Tag]=cloneableTags[uint32Tag]=!0,cloneableTags[errorTag]=cloneableTags[funcTag$1]=cloneableTags[weakMapTag]=!1;var _baseClone=baseClone,CLONE_DEEP_FLAG=1,CLONE_SYMBOLS_FLAG=4,cloneDeep_1$1=cloneDeep,isUndefined_1$1=isUndefined,stringTag$3="[object String]",isString_1$1=isString,symbols={48176644:{meta:{setID:"48176644",set:["48176644"],setBaseIDs:["d.cq.2.bbbb.0"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"48176644"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.0",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},54112535:{meta:{setID:"54112535",set:["54112535"],setBaseIDs:["d.bd.2.abbb.0"],rootBaseID:"d.bd.2.abbb",rootIDHash:"54112535"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.0",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bd",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},62519049:{meta:{setID:"62519049",set:["62519049"],setBaseIDs:["d.dk.4.bbbb.0"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"62519049"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.0",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},83023171:{meta:{setID:"83023171",set:["83023171"],setBaseIDs:["d.dw.4.abba.270"],rootBaseID:"d.dw.4.abba",rootIDHash:"83023171"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.270",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3621cc2:{meta:{setID:"e3621cc2",set:["e3621cc2"],setBaseIDs:["g.aa.4.abba.90"],rootBaseID:"g.aa.4.abba",rootIDHash:"e3621cc2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.90",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7faaca8c":{meta:{setID:"7faaca8c",set:["7faaca8c"],setBaseIDs:["d.bj.2.bbbb.0"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"7faaca8c"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.0",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"36a4b4a8":{meta:{setID:"36a4b4a8",set:["36a4b4a8"],setBaseIDs:["d.bh.1.bbbb.0"],rootBaseID:"d.bh.1.bbbb",rootIDHash:"36a4b4a8"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,56,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bh.1.bbbb.0",baseID:"d.bh.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bh",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5dfed122":{meta:{setID:"5dfed122",set:["5dfed122"],setBaseIDs:["d.bi.1.bbbb.0"],rootBaseID:"d.bi.1.bbbb",rootIDHash:"5dfed122"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bi.1.bbbb.0",baseID:"d.bi.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"bi",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},de3bc3d1:{meta:{setID:"de3bc3d1",set:["de3bc3d1"],setBaseIDs:["g.ab.2.bbbb.0"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"de3bc3d1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.0",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"FG",key:"ab",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"587b58fb":{meta:{setID:"587b58fb",set:["587b58fb"],setBaseIDs:["d.bz.4.bbbb.180"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"587b58fb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.180",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"63454c71":{meta:{setID:"63454c71",set:["63454c71"],setBaseIDs:["d.el.4.abba.90"],rootBaseID:"d.el.4.abba",rootIDHash:"63454c71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.90",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66b0fffd":{meta:{setID:"66b0fffd",set:["66b0fffd"],setBaseIDs:["d.bk.4.bbbb.0"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"66b0fffd"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.0",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7a365cc2":{meta:{setID:"7a365cc2",set:["7a365cc2"],setBaseIDs:["g.ad.1.bbbb.0"],rootBaseID:"g.ad.1.bbbb",rootIDHash:"7a365cc2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 64 C 0 28.65378189086914 28.65378189086914 0 64 0 C 99.34622192382812 0 128 28.65378189086914 128 64 C 128 99.34622192382812 99.34622192382812 128 64 128 C 28.65378189086914 128 0 99.34622192382812 0 64 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ad.1.bbbb.0",baseID:"g.ad.1.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"ad",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2befa75a":{meta:{setID:"2befa75a",set:["2befa75a"],setBaseIDs:["d.bv.1.bbbb.0"],rootBaseID:"d.bv.1.bbbb",rootIDHash:"2befa75a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,55,55)"},children:[{attr:{d:"M 9 2 C 5.134006977081299 2 2 5.134006977081299 2 9 C 2 12.86599349975586 5.134006977081299 16 9 16 C 12.86599349975586 16 16 12.86599349975586 16 9 C 16 5.134006977081299 12.86599349975586 2 9 2 Z M 0 9 C 0 4.029437065124512 4.029437065124512 0 9 0 C 13.970562934875488 0 18 4.029437065124512 18 9 C 18 13.970562934875488 13.970562934875488 18 9 18 C 4.029437065124512 18 0 13.970562934875488 0 9 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bv.1.bbbb.0",baseID:"d.bv.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adfbec3:{meta:{setID:"adfbec3",set:["adfbec3"],setBaseIDs:["d.bq.4.abbb.0"],rootBaseID:"d.bq.4.abbb",rootIDHash:"adfbec3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.0",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bq",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a5c31631:{meta:{setID:"a5c31631",set:["a5c31631"],setBaseIDs:["g.aa.4.abba.270"],rootBaseID:"g.aa.4.abba",rootIDHash:"a5c31631"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.270",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b7b090cf:{meta:{setID:"b7b090cf",set:["b7b090cf"],setBaseIDs:["d.bm.1.bbbb.0"],rootBaseID:"d.bm.1.bbbb",rootIDHash:"b7b090cf"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.836585998535156 24.836563110351562 32 16 32 C 7.1634368896484375 32 0 24.836585998535156 0 16 C 0 7.163410186767578 7.1634368896484375 0 16 0 C 24.836563110351562 0 32 7.163410186767578 32 16 Z M 16 24 C 20.41828155517578 24 24 20.41828155517578 24 16 C 24 11.581722259521484 20.41828155517578 8 16 8 C 11.581722259521484 8 8 11.581722259521484 8 16 C 8 20.41828155517578 11.581722259521484 24 16 24 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bm.1.bbbb.0",baseID:"d.bm.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"362aae07":{meta:{setID:"362aae07",set:["362aae07"],setBaseIDs:["g.ab.2.bbbb.90"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"362aae07"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.90",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"FG",key:"ab",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b193cb04:{meta:{setID:"b193cb04",set:["b193cb04"],setBaseIDs:["d.bb.1.bbbb.0"],rootBaseID:"d.bb.1.bbbb",rootIDHash:"b193cb04"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,31)"},children:[{attr:{d:"M 33 64 C 50.120826721191406 64 64 50.120826721191406 64 33 C 64 15.879173278808594 50.120826721191406 2 33 2 C 15.879173278808594 2 2 15.879173278808594 2 33 C 2 50.120826721191406 15.879173278808594 64 33 64 Z M 33 66 C 51.22539520263672 66 66 51.22539520263672 66 33 C 66 14.774604797363281 51.22539520263672 0 33 0 C 14.774604797363281 0 0 14.774604797363281 0 33 C 0 51.22539520263672 14.774604797363281 66 33 66 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bb.1.bbbb.0",baseID:"d.bb.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bb",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fbf3a00b:{meta:{setID:"fbf3a00b",set:["fbf3a00b"],setBaseIDs:["g.af.1.aaaa.0"],rootBaseID:"g.af.1.aaaa",rootIDHash:"fbf3a00b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.af.1.aaaa.0",baseID:"g.af.1.aaaa",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"af",edgemap:["a","a","a","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b0aeb7df:{meta:{setID:"b0aeb7df",set:["b0aeb7df"],setBaseIDs:["d.cj.4.bbbb.0"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"b0aeb7df"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.0",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82ff5e94":{meta:{setID:"82ff5e94",set:["82ff5e94"],setBaseIDs:["g.aa.4.abba.180"],rootBaseID:"g.aa.4.abba",rootIDHash:"82ff5e94"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.180",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"92e85004":{meta:{setID:"92e85004",set:["92e85004"],setBaseIDs:["d.dj.4.bbbb.180"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"92e85004"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.180",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"19634ad2":{meta:{setID:"19634ad2",set:["19634ad2"],setBaseIDs:["g.ac.4.bbba.0"],rootBaseID:"g.ac.4.bbba",rootIDHash:"19634ad2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.0",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"ac",edgemap:["b","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"42b4e3a3":{meta:{setID:"42b4e3a3",set:["42b4e3a3"],setBaseIDs:["d.cv.2.bbbb.0"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"42b4e3a3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.0",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"335e8694":{meta:{setID:"335e8694",set:["335e8694"],setBaseIDs:["d.dj.4.bbbb.270"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"335e8694"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.270",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2f5059f3":{meta:{setID:"2f5059f3",set:["2f5059f3"],setBaseIDs:["d.do.4.bbbb.180"],rootBaseID:"d.do.4.bbbb",rootIDHash:"2f5059f3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.180",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4d0779c1":{meta:{setID:"4d0779c1",set:["4d0779c1"],setBaseIDs:["d.di.4.bbbb.90"],rootBaseID:"d.di.4.bbbb",rootIDHash:"4d0779c1"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.90",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"869bd8d8":{meta:{setID:"869bd8d8",set:["869bd8d8"],setBaseIDs:["d.bf.2.bbbb.90"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"869bd8d8"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.90",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bf",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"57ed51b0":{meta:{setID:"57ed51b0",set:["57ed51b0"],setBaseIDs:["d.dv.4.abba.90"],rootBaseID:"d.dv.4.abba",rootIDHash:"57ed51b0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.90",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b0ac0b82:{meta:{setID:"b0ac0b82",set:["b0ac0b82"],setBaseIDs:["g.ac.4.bbba.180"],rootBaseID:"g.ac.4.bbba",rootIDHash:"b0ac0b82"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.180",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"10545ed3":{meta:{setID:"10545ed3",set:["10545ed3"],setBaseIDs:["d.do.4.bbbb.0"],rootBaseID:"d.do.4.bbbb",rootIDHash:"10545ed3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.0",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"do",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fd1b186c:{meta:{setID:"fd1b186c",set:["fd1b186c"],setBaseIDs:["d.bl.2.bbbb.90"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"fd1b186c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.90",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e5fae2fb:{meta:{setID:"e5fae2fb",set:["e5fae2fb"],setBaseIDs:["d.bj.2.bbbb.90"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"e5fae2fb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.90",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bddfa3f3:{meta:{setID:"bddfa3f3",set:["bddfa3f3"],setBaseIDs:["d.ba.1.bbbb.0"],rootBaseID:"d.ba.1.bbbb",rootIDHash:"bddfa3f3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.83655548095703 24.83655548095703 32 16 32 C 7.163444519042969 32 0 24.83655548095703 0 16 C 0 7.163444519042969 7.163444519042969 0 16 0 C 24.83655548095703 0 32 7.163444519042969 32 16 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ba.1.bbbb.0",baseID:"d.ba.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ba",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82610c41":{meta:{setID:"82610c41",set:["82610c41"],setBaseIDs:["d.ea.1.abba.0"],rootBaseID:"d.ea.1.abba",rootIDHash:"82610c41"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,15)"},children:[{attr:{d:"M 49 2 C 23.042621612548828 2 2 23.042621612548828 2 49 C 2 74.95738220214844 23.042621612548828 96 49 96 C 74.95738220214844 96 96 74.95738220214844 96 49 C 96 23.042621612548828 74.95738220214844 2 49 2 Z M 0 49 C 0 21.938051223754883 21.938051223754883 0 49 0 C 76.06195068359375 0 98 21.938051223754883 98 49 C 98 76.06195068359375 76.06195068359375 98 49 98 C 21.938051223754883 98 0 76.06195068359375 0 49 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ea.1.abba.0",baseID:"d.ea.1.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ea",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"613cb28b":{meta:{setID:"613cb28b",set:["613cb28b"],setBaseIDs:["d.bq.4.abbb.90"],rootBaseID:"d.bq.4.abbb",rootIDHash:"613cb28b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.90",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc65290b:{meta:{setID:"fc65290b",set:["fc65290b"],setBaseIDs:["d.cp.4.bbbb.180"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"fc65290b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.180",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"952f1d85":{meta:{setID:"952f1d85",set:["952f1d85"],setBaseIDs:["d.ef.4.abba.90"],rootBaseID:"d.ef.4.abba",rootIDHash:"952f1d85"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.90",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb9b5189:{meta:{setID:"cb9b5189",set:["cb9b5189"],setBaseIDs:["d.dt.4.abba.90"],rootBaseID:"d.dt.4.abba",rootIDHash:"cb9b5189"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,46,0)"},children:[{attr:{d:"M 2 0 C 2 8.836556434631348 9.163443565368652 16 18 16 C 26.836557388305664 16 34 8.836556434631348 34 0 L 36 0 C 36 9.941126823425293 27.941125869750977 18 18 18 C 8.058874130249023 18 0 9.941126823425293 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dt.4.abba.90",baseID:"d.dt.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"462c645e":{meta:{setID:"462c645e",set:["462c645e"],setBaseIDs:["d.dl.4.bbbb.180"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"462c645e"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.180",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d1fb16cc:{meta:{setID:"d1fb16cc",set:["d1fb16cc"],setBaseIDs:["d.cz.4.bbbb.0"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"d1fb16cc"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.0",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cb74008":{meta:{setID:"6cb74008",set:["6cb74008"],setBaseIDs:["g.aa.4.abba.0"],rootBaseID:"g.aa.4.abba",rootIDHash:"6cb74008"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.0",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"aa",edgemap:["a","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2639d7d4":{meta:{setID:"2639d7d4",set:["2639d7d4"],setBaseIDs:["d.bo.4.bbba.90"],rootBaseID:"d.bo.4.bbba",rootIDHash:"2639d7d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.90",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bo",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},c7af9494:{meta:{setID:"c7af9494",set:["c7af9494"],setBaseIDs:["d.dk.4.bbbb.270"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"c7af9494"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.270",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7210b66f":{meta:{setID:"7210b66f",set:["7210b66f"],setBaseIDs:["d.bo.4.bbba.0"],rootBaseID:"d.bo.4.bbba",rootIDHash:"7210b66f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.0",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bo",edgemap:["b","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"18f6b23e":{meta:{setID:"18f6b23e",set:["18f6b23e"],setBaseIDs:["d.cp.4.bbbb.0"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"18f6b23e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.0",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"13446f50":{meta:{setID:"13446f50",set:["13446f50"],setBaseIDs:["d.el.4.abba.0"],rootBaseID:"d.el.4.abba",rootIDHash:"13446f50"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.0",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"el",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2b187d87":{meta:{setID:"2b187d87",set:["2b187d87"],setBaseIDs:["d.bg.2.bbbb.0"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"2b187d87"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.0",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bg",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1c9d4f11":{meta:{setID:"1c9d4f11",set:["1c9d4f11"],setBaseIDs:["d.do.4.bbbb.270"],rootBaseID:"d.do.4.bbbb",rootIDHash:"1c9d4f11"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.270",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"69daeb1a":{meta:{setID:"69daeb1a",set:["69daeb1a"],setBaseIDs:["d.da.2.bbbb.90"],rootBaseID:"d.da.2.bbbb",rootIDHash:"69daeb1a"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.90",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"da",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe5cf0f4:{meta:{setID:"fe5cf0f4",set:["fe5cf0f4"],setBaseIDs:["d.bf.2.bbbb.0"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"fe5cf0f4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.0",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bf",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9e7ddd3d":{meta:{setID:"9e7ddd3d",set:["9e7ddd3d"],setBaseIDs:["d.cs.2.bbbb.0"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"9e7ddd3d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.0",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cs",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3cdcdb8c":{meta:{setID:"3cdcdb8c",set:["3cdcdb8c"],setBaseIDs:["d.dr.8.abba.90"],rootBaseID:"d.dr.8.abba",rootIDHash:"3cdcdb8c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 105.84061431884766 18.159381866455078 C 94.62081909179688 6.939587593078613 79.1208267211914 0 62 0 C 27.75835418701172 0 0 27.75835418701172 0 62 C 0 79.1208267211914 6.939587593078613 94.62081909179688 18.159381866455078 105.84061431884766 L 105.84061431884766 18.159381866455078 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dr.8.abba.90",baseID:"d.dr.8.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:8,paint:"BG",key:"dr",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},acc8c8fb:{meta:{setID:"acc8c8fb",set:["acc8c8fb"],setBaseIDs:["d.ef.4.abba.0"],rootBaseID:"d.ef.4.abba",rootIDHash:"acc8c8fb"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.0",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ef",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4dae70af":{meta:{setID:"4dae70af",set:["4dae70af"],setBaseIDs:["d.dl.4.bbbb.0"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4dae70af"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.0",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f0d5fe71:{meta:{setID:"f0d5fe71",set:["f0d5fe71"],setBaseIDs:["d.cz.4.bbbb.180"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"f0d5fe71"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.180",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb81c430:{meta:{setID:"cb81c430",set:["cb81c430"],setBaseIDs:["d.dj.4.bbbb.0"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"cb81c430"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.0",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},efa22418:{meta:{setID:"efa22418",set:["efa22418"],setBaseIDs:["d.el.4.abba.180"],rootBaseID:"d.el.4.abba",rootIDHash:"efa22418"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.180",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66fbf43f":{meta:{setID:"66fbf43f",set:["66fbf43f"],setBaseIDs:["d.bz.4.bbbb.0"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"66fbf43f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.0",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6245af61":{meta:{setID:"6245af61",set:["6245af61"],setBaseIDs:["d.di.4.bbbb.0"],rootBaseID:"d.di.4.bbbb",rootIDHash:"6245af61"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.0",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"di",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d93ccb2:{meta:{setID:"d93ccb2",set:["d93ccb2"],setBaseIDs:["g.ac.4.bbba.90"],rootBaseID:"g.ac.4.bbba",rootIDHash:"d93ccb2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.90",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7191ec30":{meta:{setID:"7191ec30",set:["7191ec30"],setBaseIDs:["d.do.4.bbbb.90"],rootBaseID:"d.do.4.bbbb",rootIDHash:"7191ec30"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.90",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},faa6eb0:{meta:{setID:"faa6eb0",set:["faa6eb0"],setBaseIDs:["d.bg.2.bbbb.90"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"faa6eb0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.90",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a0991dbc:{meta:{setID:"a0991dbc",set:["a0991dbc"],setBaseIDs:["d.cf.4.bbbb.90"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"a0991dbc"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.90",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"cf",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},c3bebfe6:{meta:{setID:"c3bebfe6",set:["c3bebfe6"],setBaseIDs:["d.dm.4.bbbb.90"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"c3bebfe6"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.90",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"87cb2bff":{meta:{setID:"87cb2bff",set:["87cb2bff"],setBaseIDs:["d.dd.4.bbbb.0"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"87cb2bff"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.0",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dd",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"603da034":{meta:{setID:"603da034",set:["603da034"],setBaseIDs:["d.dv.4.abba.0"],rootBaseID:"d.dv.4.abba",rootIDHash:"603da034"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.0",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dv",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f3633360:{meta:{setID:"f3633360",set:["f3633360"],setBaseIDs:["d.dw.4.abba.0"],rootBaseID:"d.dw.4.abba",rootIDHash:"f3633360"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.0",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dw",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6acd7409":{meta:{setID:"6acd7409",set:["6acd7409"],setBaseIDs:["d.dv.4.abba.180"],rootBaseID:"d.dv.4.abba",rootIDHash:"6acd7409"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.180",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad7dd51b:{meta:{setID:"ad7dd51b",set:["ad7dd51b"],setBaseIDs:["d.ds.4.abba.270"],rootBaseID:"d.ds.4.abba",rootIDHash:"ad7dd51b"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.270",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6615d02d":{meta:{setID:"6615d02d",set:["6615d02d"],setBaseIDs:["d.bq.4.abbb.180"],rootBaseID:"d.bq.4.abbb",rootIDHash:"6615d02d"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.180",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5ba1ba9b":{meta:{setID:"5ba1ba9b",set:["5ba1ba9b"],setBaseIDs:["d.dp.1.bbbb.0"],rootBaseID:"d.dp.1.bbbb",rootIDHash:"5ba1ba9b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z M 48 88 C 70.09139251708984 88 88 70.09139251708984 88 48 C 88 25.908611297607422 70.09139251708984 8 48 8 C 25.908611297607422 8 8 25.908611297607422 8 48 C 8 70.09139251708984 25.908611297607422 88 48 88 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dp.1.bbbb.0",baseID:"d.dp.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf0f809a:{meta:{setID:"cf0f809a",set:["cf0f809a"],setBaseIDs:["d.dq.1.bbbb.0"],rootBaseID:"d.dq.1.bbbb",rootIDHash:"cf0f809a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z M 32 56 C 45.25483703613281 56 56 45.25483703613281 56 32 C 56 18.745166778564453 45.25483703613281 8 32 8 C 18.745166778564453 8 8 18.745166778564453 8 32 C 8 45.25483703613281 18.745166778564453 56 32 56 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dq.1.bbbb.0",baseID:"d.dq.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9ebd20ff":{meta:{setID:"9ebd20ff",set:["9ebd20ff"],setBaseIDs:["d.cp.4.bbbb.270"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"9ebd20ff"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.270",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5e841ec3":{meta:{setID:"5e841ec3",set:["5e841ec3"],setBaseIDs:["d.ef.4.abba.270"],rootBaseID:"d.ef.4.abba",rootIDHash:"5e841ec3"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.270",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},afc30081:{meta:{setID:"afc30081",set:["afc30081"],setBaseIDs:["d.bk.4.bbbb.270"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"afc30081"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.270",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c4076d5":{meta:{setID:"4c4076d5",set:["4c4076d5"],setBaseIDs:["d.cu.2.bbbb.90"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"4c4076d5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.90",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cu",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d6753be3:{meta:{setID:"d6753be3",set:["d6753be3"],setBaseIDs:["d.dd.4.bbbb.180"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"d6753be3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.180",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b788c92f:{meta:{setID:"b788c92f",set:["b788c92f"],setBaseIDs:["d.de.2.bbbb.0"],rootBaseID:"d.de.2.bbbb",rootIDHash:"b788c92f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.0",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"de",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a4ed278a:{meta:{setID:"a4ed278a",set:["a4ed278a"],setBaseIDs:["d.cj.4.bbbb.180"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"a4ed278a"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.180",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},eb608ee5:{meta:{setID:"eb608ee5",set:["eb608ee5"],setBaseIDs:["d.bk.4.bbbb.90"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"eb608ee5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.90",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"52a6a74c":{meta:{setID:"52a6a74c",set:["52a6a74c"],setBaseIDs:["d.ct.2.bbbb.90"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"52a6a74c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.90",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ct",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e2f4d6e2:{meta:{setID:"e2f4d6e2",set:["e2f4d6e2"],setBaseIDs:["d.ct.2.bbbb.0"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"e2f4d6e2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.0",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ct",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e6117eb6:{meta:{setID:"e6117eb6",set:["e6117eb6"],setBaseIDs:["d.dd.4.bbbb.270"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"e6117eb6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.270",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b397af9f:{meta:{setID:"b397af9f",set:["b397af9f"],setBaseIDs:["d.cz.4.bbbb.270"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"b397af9f"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.270",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"427a1751":{meta:{setID:"427a1751",set:["427a1751"],setBaseIDs:["d.dn.4.bbbb.0"],rootBaseID:"d.dn.4.bbbb",rootIDHash:"427a1751"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,47)"},children:[{attr:{d:"M 17 17 C 17 7.6111602783203125 9.388839721679688 0 0 0 L 0 2 C 8.284271240234375 2 15 8.715728759765625 15 17 L 17 17 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dn.4.bbbb.0",baseID:"d.dn.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1735a791":{meta:{setID:"1735a791",set:["1735a791"],setBaseIDs:["d.by.1.bbbb.0"],rootBaseID:"d.by.1.bbbb",rootIDHash:"1735a791"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,47)"},children:[{attr:{d:"M 17 2 C 8.715728759765625 2 2 8.715728759765625 2 17 C 2 25.284271240234375 8.715728759765625 32 17 32 C 25.284271240234375 32 32 25.284271240234375 32 17 C 32 8.715728759765625 25.284271240234375 2 17 2 Z M 0 17 C 0 7.6111602783203125 7.6111602783203125 0 17 0 C 26.388839721679688 0 34 7.6111602783203125 34 17 C 34 26.388839721679688 26.388839721679688 34 17 34 C 7.6111602783203125 34 0 26.388839721679688 0 17 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.by.1.bbbb.0",baseID:"d.by.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"by",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"28b33136":{meta:{setID:"28b33136",set:["28b33136"],setBaseIDs:["g.ac.4.bbba.270"],rootBaseID:"g.ac.4.bbba",rootIDHash:"28b33136"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.270",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"672fdf93":{meta:{setID:"672fdf93",set:["672fdf93"],setBaseIDs:["d.eg.4.abba.0"],rootBaseID:"d.eg.4.abba",rootIDHash:"672fdf93"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.0",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"eg",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f49b158d:{meta:{setID:"f49b158d",set:["f49b158d"],setBaseIDs:["d.cf.4.bbbb.0"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"f49b158d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.0",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"cf",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cf35bfb":{meta:{setID:"6cf35bfb",set:["6cf35bfb"],setBaseIDs:["d.de.2.bbbb.90"],rootBaseID:"d.de.2.bbbb",rootIDHash:"6cf35bfb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.90",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"de",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c1ac47d":{meta:{setID:"4c1ac47d",set:["4c1ac47d"],setBaseIDs:["d.cn.1.bbbb.0"],rootBaseID:"d.cn.1.bbbb",rootIDHash:"4c1ac47d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cn.1.bbbb.0",baseID:"d.cn.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9b3aa0b1":{meta:{setID:"9b3aa0b1",set:["9b3aa0b1"],setBaseIDs:["d.cu.2.bbbb.0"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"9b3aa0b1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.0",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cu",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf042a60:{meta:{setID:"cf042a60",set:["cf042a60"],setBaseIDs:["d.bn.4.abba.0"],rootBaseID:"d.bn.4.abba",rootIDHash:"cf042a60"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.0",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bn",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"44e1402d":{meta:{setID:"44e1402d",set:["44e1402d"],setBaseIDs:["d.da.2.bbbb.0"],rootBaseID:"d.da.2.bbbb",rootIDHash:"44e1402d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.0",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"da",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e53a31b5:{meta:{setID:"e53a31b5",set:["e53a31b5"],setBaseIDs:["d.cl.1.bbbb.0"],rootBaseID:"d.cl.1.bbbb",rootIDHash:"e53a31b5"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,40,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cl.1.bbbb.0",baseID:"d.cl.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2ab4bc02":{meta:{setID:"2ab4bc02",set:["2ab4bc02"],setBaseIDs:["d.dw.4.abba.90"],rootBaseID:"d.dw.4.abba",rootIDHash:"2ab4bc02"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.90",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4456d619":{meta:{setID:"4456d619",set:["4456d619"],setBaseIDs:["d.dl.4.bbbb.90"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4456d619"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.90",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adafc09c:{meta:{setID:"adafc09c",set:["adafc09c"],setBaseIDs:["d.cp.4.bbbb.90"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"adafc09c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.90",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d7e0d9e:{meta:{setID:"d7e0d9e",set:["d7e0d9e"],setBaseIDs:["d.di.4.bbbb.270"],rootBaseID:"d.di.4.bbbb",rootIDHash:"d7e0d9e"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.270",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1d989f87":{meta:{setID:"1d989f87",set:["1d989f87"],setBaseIDs:["d.cz.4.bbbb.90"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"1d989f87"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.90",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b09cf4ef:{meta:{setID:"b09cf4ef",set:["b09cf4ef"],setBaseIDs:["d.cw.4.bbbb.270"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b09cf4ef"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.270",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"510344a7":{meta:{setID:"510344a7",set:["510344a7"],setBaseIDs:["d.cj.4.bbbb.270"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"510344a7"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.270",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ae1e4f7:{meta:{setID:"ae1e4f7",set:["ae1e4f7"],setBaseIDs:["d.dk.4.bbbb.180"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"ae1e4f7"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.180",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb651938:{meta:{setID:"fb651938",set:["fb651938"],setBaseIDs:["d.dw.4.abba.180"],rootBaseID:"d.dw.4.abba",rootIDHash:"fb651938"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.180",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d560b8b":{meta:{setID:"8d560b8b",set:["8d560b8b"],setBaseIDs:["d.dx.4.abba.0"],rootBaseID:"d.dx.4.abba",rootIDHash:"8d560b8b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-5.665972113147108e-14,33)"},children:[{attr:{d:"M 21.40327262878418 118.3283462524414 C 25.199352264404297 124.80017852783203 29.149702072143555 127.96875 33 127.96875 L 33 130 C 28.013748168945312 130 23.54582405090332 125.95003509521484 19.68505096435547 119.367919921875 C 15.785710334777832 112.72005462646484 12.309096336364746 103.16806030273438 9.4028959274292 91.453857421875 C 3.5866384506225586 68.00990295410156 0 35.67653274536133 0 0 L 2 0 C 2 35.55952072143555 5.576811790466309 67.71833801269531 11.342279434204102 90.95755767822266 C 14.226941108703613 102.58494567871094 17.64575958251953 111.92227935791016 21.40327262878418 118.3283462524414 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dx.4.abba.0",baseID:"d.dx.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dx",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f3841fc":{meta:{setID:"9f3841fc",set:["9f3841fc"],setBaseIDs:["d.dv.4.abba.270"],rootBaseID:"d.dv.4.abba",rootIDHash:"9f3841fc"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.270",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"59d9e201":{meta:{setID:"59d9e201",set:["59d9e201"],setBaseIDs:["d.dd.4.bbbb.90"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"59d9e201"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.90",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad042183:{meta:{setID:"ad042183",set:["ad042183"],setBaseIDs:["d.cq.2.bbbb.90"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"ad042183"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.90",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1b1fba11":{meta:{setID:"1b1fba11",set:["1b1fba11"],setBaseIDs:["d.bd.2.abbb.90"],rootBaseID:"d.bd.2.abbb",rootIDHash:"1b1fba11"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.90",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cbdce7a4:{meta:{setID:"cbdce7a4",set:["cbdce7a4"],setBaseIDs:["d.bl.2.bbbb.0"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"cbdce7a4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.0",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bfc8669e:{meta:{setID:"bfc8669e",set:["bfc8669e"],setBaseIDs:["d.cj.4.bbbb.90"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"bfc8669e"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.90",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"81113d71":{meta:{setID:"81113d71",set:["81113d71"],setBaseIDs:["d.dh.4.bbbb.90"],rootBaseID:"d.dh.4.bbbb",rootIDHash:"81113d71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 29.9384765625 C 16.08001708984375 28.94677734375 28.94690704345703 16.080078125 29.938514709472656 0 L 0 0 L 0 29.9384765625 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dh.4.bbbb.90",baseID:"d.dh.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dh",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f6bb8637:{meta:{setID:"f6bb8637",set:["f6bb8637"],setBaseIDs:["d.cx.4.bbbb.90"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"f6bb8637"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.90",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cx",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a2880ff1:{meta:{setID:"a2880ff1",set:["a2880ff1"],setBaseIDs:["d.dm.4.bbbb.0"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"a2880ff1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.0",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5a85e6f7":{meta:{setID:"5a85e6f7",set:["5a85e6f7"],setBaseIDs:["d.cv.2.bbbb.90"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"5a85e6f7"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.90",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8c89b36e":{meta:{setID:"8c89b36e",set:["8c89b36e"],setBaseIDs:["d.ds.4.abba.0"],rootBaseID:"d.ds.4.abba",rootIDHash:"8c89b36e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.0",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ds",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"824e5e1f":{meta:{setID:"824e5e1f",set:["824e5e1f"],setBaseIDs:["d.ef.4.abba.180"],rootBaseID:"d.ef.4.abba",rootIDHash:"824e5e1f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.180",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"83856b0b":{meta:{setID:"83856b0b",set:["83856b0b"],setBaseIDs:["d.ds.4.abba.90"],rootBaseID:"d.ds.4.abba",rootIDHash:"83856b0b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.90",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1e0083d1":{meta:{setID:"1e0083d1",set:["1e0083d1"],setBaseIDs:["d.el.4.abba.270"],rootBaseID:"d.el.4.abba",rootIDHash:"1e0083d1"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.270",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4b097186":{meta:{setID:"4b097186",set:["4b097186"],setBaseIDs:["d.eg.4.abba.90"],rootBaseID:"d.eg.4.abba",rootIDHash:"4b097186"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.90",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3f1ef01:{meta:{setID:"e3f1ef01",set:["e3f1ef01"],setBaseIDs:["d.bn.4.abba.180"],rootBaseID:"d.bn.4.abba",rootIDHash:"e3f1ef01"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.180",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"372ac81b":{meta:{setID:"372ac81b",set:["372ac81b"],setBaseIDs:["d.bk.4.bbbb.180"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"372ac81b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.180",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"387e568f":{meta:{setID:"387e568f",set:["387e568f"],setBaseIDs:["d.di.4.bbbb.180"],rootBaseID:"d.di.4.bbbb",rootIDHash:"387e568f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.180",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc9ea1e2:{meta:{setID:"fc9ea1e2",set:["fc9ea1e2"],setBaseIDs:["d.bn.4.abba.90"],rootBaseID:"d.bn.4.abba",rootIDHash:"fc9ea1e2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.90",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7d18e429":{meta:{setID:"7d18e429",set:["7d18e429"],setBaseIDs:["d.ci.4.bbbb.180"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"7d18e429"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.180",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d842a67d:{meta:{setID:"d842a67d",set:["d842a67d"],setBaseIDs:["d.ec.2.abba.0"],rootBaseID:"d.ec.2.abba",rootIDHash:"d842a67d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.0",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ec",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe4199fc:{meta:{setID:"fe4199fc",set:["fe4199fc"],setBaseIDs:["d.dm.4.bbbb.180"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"fe4199fc"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.180",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"975397b2":{meta:{setID:"975397b2",set:["975397b2"],setBaseIDs:["d.eg.4.abba.270"],rootBaseID:"d.eg.4.abba",rootIDHash:"975397b2"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.270",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b645c8d3:{meta:{setID:"b645c8d3",set:["b645c8d3"],setBaseIDs:["d.cw.4.bbbb.0"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b645c8d3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.0",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cw",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d8261d6":{meta:{setID:"8d8261d6",set:["8d8261d6"],setBaseIDs:["d.bn.4.abba.270"],rootBaseID:"d.bn.4.abba",rootIDHash:"8d8261d6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.270",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ab99a1a:{meta:{setID:"ab99a1a",set:["ab99a1a"],setBaseIDs:["d.em.4.abba.0"],rootBaseID:"d.em.4.abba",rootIDHash:"ab99a1a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,57.359375)"},children:[{attr:{d:"M 54.359222412109375 0 C 40.325164794921875 13.78662109375 21.164825439453125 22.3719482421875 0 22.634521484375 L 0 68.6251220703125 C 34.000030517578125 68.0960693359375 64.73162841796875 54.0999755859375 87.095458984375 31.7362060546875 L 54.359222412109375 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.em.4.abba.0",baseID:"d.em.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"em",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"20fd4083":{meta:{setID:"20fd4083",set:["20fd4083"],setBaseIDs:["d.bq.4.abbb.270"],rootBaseID:"d.bq.4.abbb",rootIDHash:"20fd4083"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.270",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7fcb0d8f":{meta:{setID:"7fcb0d8f",set:["7fcb0d8f"],setBaseIDs:["d.cw.4.bbbb.90"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"7fcb0d8f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.90",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6e9d4a77":{meta:{setID:"6e9d4a77",set:["6e9d4a77"],setBaseIDs:["d.dj.4.bbbb.90"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"6e9d4a77"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.90",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82e8305":{meta:{setID:"82e8305",set:["82e8305"],setBaseIDs:["d.ec.2.abba.90"],rootBaseID:"d.ec.2.abba",rootIDHash:"82e8305"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.90",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ec",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a9e89fe4:{meta:{setID:"a9e89fe4",set:["a9e89fe4"],setBaseIDs:["d.cw.4.bbbb.180"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"a9e89fe4"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.180",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d24107f2:{meta:{setID:"d24107f2",set:["d24107f2"],setBaseIDs:["d.ds.4.abba.180"],rootBaseID:"d.ds.4.abba",rootIDHash:"d24107f2"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.180",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb44703d:{meta:{setID:"cb44703d",set:["cb44703d"],setBaseIDs:["d.ci.4.bbbb.90"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"cb44703d"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.90",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6b5e126b":{meta:{setID:"6b5e126b",set:["6b5e126b"],setBaseIDs:["d.ee.4.abba.180"],rootBaseID:"d.ee.4.abba",rootIDHash:"6b5e126b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,-2)"},children:[{attr:{d:"M 31 33.5 C 31 16.152257919311523 17.135732650756836 2.0615384578704834 0 2.0615384578704834 L 0 0 C 18.210493087768555 0 33 14.983217239379883 33 33.5 C 33 52.016780853271484 18.210493087768555 67 0 67 L 0 64.93846130371094 C 17.135732650756836 64.93846130371094 31 50.84773635864258 31 33.5 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ee.4.abba.180",baseID:"d.ee.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ee",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3d22f9b0":{meta:{setID:"3d22f9b0",set:["3d22f9b0"],setBaseIDs:["d.dl.4.bbbb.270"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"3d22f9b0"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.270",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb5ca265:{meta:{setID:"fb5ca265",set:["fb5ca265"],setBaseIDs:["d.cs.2.bbbb.90"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"fb5ca265"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.90",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cs",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ec96cafb:{meta:{setID:"ec96cafb",set:["ec96cafb"],setBaseIDs:["d.bt.4.bbbb.180"],rootBaseID:"d.bt.4.bbbb",rootIDHash:"ec96cafb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.5299989581108093,0.847998321056366,-0.847998321056366,0.5299989581108093,1.269600510597229,-0.7934557199478149)"},children:[{attr:{d:"M 150.94369506835938 1.9943454265594482 L 0 1.9943454265594482 L 0 0 L 150.94369506835938 0 L 150.94369506835938 1.9943454265594482 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bt.4.bbbb.180",baseID:"d.bt.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f680a2b":{meta:{setID:"9f680a2b",set:["9f680a2b"],setBaseIDs:["d.ce.1.bbbb.0"],rootBaseID:"d.ce.1.bbbb",rootIDHash:"9f680a2b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ce.1.bbbb.0",baseID:"d.ce.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ce",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b46295d4:{meta:{setID:"b46295d4",set:["b46295d4"],setBaseIDs:["d.bz.4.bbbb.90"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"b46295d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.90",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2d91e72f":{meta:{setID:"2d91e72f",set:["2d91e72f"],setBaseIDs:["d.dk.4.bbbb.90"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"2d91e72f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.90",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"55d21172":{meta:{setID:"55d21172",set:["55d21172"],setBaseIDs:["d.cx.4.bbbb.0"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"55d21172"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.0",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cx",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6f23470b":{meta:{setID:"6f23470b",set:["6f23470b"],setBaseIDs:["d.ca.4.bbbb.180"],rootBaseID:"d.ca.4.bbbb",rootIDHash:"6f23470b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0.8699696660041809,0.8699747920036316)"},children:[{attr:{d:"M 112.12674713134766 0 C 111.66136932373047 61.71796417236328 61.71796798706055 111.66136932373047 0 112.12674713134766 C 0.07810759544372559 111.4577407836914 0.161374032497406 110.79031372070312 0.24975842237472534 110.12449645996094 C 60.66484069824219 109.52742767333984 109.52742767333984 60.66484069824219 110.12449645996094 0.2497583031654358 C 110.79031372070312 0.16137391328811646 111.4577407836914 0.07810753583908081 112.12674713134766 0 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 96.05703735351562 2.9277095794677734 C 94.11087036132812 53.479217529296875 53.47922134399414 94.11087799072266 2.92771053314209 96.05703735351562 C 3.0964479446411133 95.3803939819336 3.2705700397491455 94.70587921142578 3.450028657913208 94.0335464477539 C 52.480045318603516 91.8392105102539 91.8392105102539 52.480045318603516 94.0335464477539 3.4500277042388916 C 94.70587921142578 3.270569086074829 95.3803939819336 3.096446990966797 96.05703735351562 2.9277095794677734 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 8.235589027404785 79.62393188476562 C 45.69525909423828 75.4333724975586 75.4333724975586 45.69525909423828 79.62393188476562 8.235587120056152 C 78.9149169921875 8.519139289855957 78.20903015136719 8.808850288391113 77.50634002685547 9.104653358459473 C 73.0142822265625 44.75928497314453 44.75929260253906 73.0142822265625 9.104655265808105 77.50634002685547 C 8.808852195739746 78.20903015136719 8.51914119720459 78.9149169921875 8.235589027404785 79.62393188476562 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 17.15437126159668 61.59848403930664 C 38.56138610839844 55.43290328979492 55.43291091918945 38.56138610839844 61.59849166870117 17.15437126159668 C 60.73215103149414 17.67171287536621 59.8724365234375 18.198997497558594 59.019508361816406 18.736074447631836 C 52.795589447021484 37.75990295410156 37.75990295410156 52.79558563232422 18.73607635498047 59.01950454711914 C 18.198999404907227 59.872432708740234 17.67171287536621 60.73214340209961 17.15437126159668 61.59848403930664 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ca.4.bbbb.180",baseID:"d.ca.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ca",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"235d50bf":{meta:{setID:"235d50bf",set:["235d50bf"],setBaseIDs:["d.ci.4.bbbb.270"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"235d50bf"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.270",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b3ae909c:{meta:{setID:"b3ae909c",set:["b3ae909c"],setBaseIDs:["d.dm.4.bbbb.270"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"b3ae909c"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.270",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"}},mapping={bac:"e3621cc2:7faaca8c:36a4b4a8:5dfed122",bal:"de3bc3d1:587b58fb:63454c71",ban:"e3621cc2:66b0fffd",bar:"7a365cc2:2befa75a:7faaca8c",bat:"e3621cc2:adfbec3",bec:"a5c31631:7faaca8c:b7b090cf",bel:"362aae07:b193cb04",ben:"fbf3a00b:2befa75a:b0aeb7df",bep:"82ff5e94:92e85004",ber:"19634ad2:42b4e3a3",bes:"a5c31631:7faaca8c:335e8694",bet:"7a365cc2:2f5059f3",bex:"19634ad2:2f5059f3:b7b090cf",bic:"e3621cc2:4d0779c1",bid:"e3621cc2:869bd8d8:57ed51b0",bil:"b0ac0b82:10545ed3:b7b090cf",bin:"fbf3a00b",bis:"e3621cc2:869bd8d8:fd1b186c",bit:"de3bc3d1:e5fae2fb:bddfa3f3",bol:"7a365cc2:869bd8d8:82610c41",bon:"82ff5e94:613cb28b",bor:"b0ac0b82:7faaca8c:fc65290b",bos:"e3621cc2:7faaca8c:952f1d85",bot:"b0ac0b82:36a4b4a8:cb9b5189",bud:"a5c31631:462c645e:d1fb16cc",bur:"6cb74008:2639d7d4:5dfed122",bus:"a5c31631:7faaca8c:c7af9494",byl:"6cb74008:7210b66f:5dfed122",byn:"6cb74008:18f6b23e",byr:"362aae07:7faaca8c:13446f50",byt:"19634ad2:869bd8d8:82610c41:2b187d87",dab:"e3621cc2:1c9d4f11:5dfed122",dac:"e3621cc2:e5fae2fb:869bd8d8:69daeb1a",dal:"de3bc3d1:587b58fb:7faaca8c",dan:"b0ac0b82:fe5cf0f4:2befa75a:9e7ddd3d",dap:"e3621cc2:10545ed3:bddfa3f3",dar:"7a365cc2:3cdcdb8c:acc8c8fb",das:"fbf3a00b:fe5cf0f4:b7b090cf",dat:"e3621cc2:613cb28b",dav:"b0ac0b82:869bd8d8:4dae70af:f0d5fe71",deb:"fbf3a00b:cb81c430",dec:"a5c31631:efa22418",def:"de3bc3d1:66fbf43f:5dfed122",deg:"fbf3a00b:335e8694",del:"362aae07:acc8c8fb",dem:"7a365cc2:7faaca8c:6245af61",den:"fbf3a00b:7faaca8c:6245af61",dep:"82ff5e94:fc65290b",der:"d93ccb2:42b4e3a3",des:"82ff5e94:42b4e3a3",det:"7a365cc2:7191ec30",dev:"19634ad2:36a4b4a8",dex:"19634ad2:fe5cf0f4:b7b090cf",dib:"7a365cc2:869bd8d8:faa6eb0",dif:"e3621cc2:2639d7d4:a0991dbc",dig:"b0ac0b82:fe5cf0f4:2befa75a:2f5059f3",dil:"b0ac0b82:e5fae2fb:10545ed3",din:"fbf3a00b:42b4e3a3",dir:"e3621cc2:2befa75a:2f5059f3:c3bebfe6",dis:"82ff5e94:7faaca8c:87cb2bff",div:"fbf3a00b:fe5cf0f4:603da034:f3633360",doc:"362aae07:2befa75a:fe5cf0f4:6acd7409",dol:"7a365cc2:869bd8d8:ad7dd51b",don:"82ff5e94:6615d02d",dop:"7a365cc2:36a4b4a8:869bd8d8:5ba1ba9b",dor:"b0ac0b82:869bd8d8",dos:"e3621cc2:7faaca8c:cf0f809a",dot:"b0ac0b82:36a4b4a8",dov:"fbf3a00b:e5fae2fb:9ebd20ff",doz:"7a365cc2:3cdcdb8c",duc:"a5c31631:869bd8d8:faa6eb0",dul:"7a365cc2:36a4b4a8:4dae70af",dun:"19634ad2:4dae70af",dur:"d93ccb2",dus:"a5c31631:e5fae2fb:4d0779c1",dut:"fbf3a00b:5e841ec3",dux:"6cb74008:afc30081",dyl:"a5c31631:66b0fffd",dyn:"6cb74008:4c4076d5",dyr:"362aae07:7faaca8c:d6753be3",dys:"a5c31631:adfbec3",dyt:"19634ad2:869bd8d8:b193cb04:b0aeb7df",fab:"e3621cc2:e5fae2fb:36a4b4a8:5dfed122",fad:"6cb74008:b788c92f",fal:"362aae07:e5fae2fb:9ebd20ff",fam:"b0ac0b82:869bd8d8:36a4b4a8:fe5cf0f4",fan:"b0ac0b82:fe5cf0f4:2befa75a:e5fae2fb",fas:"fbf3a00b:b193cb04:a4ed278a",feb:"fbf3a00b:eb608ee5",fed:"7a365cc2:36a4b4a8:52a6a74c",fel:"362aae07:1c9d4f11",fen:"fbf3a00b:7faaca8c:fc65290b",fep:"a5c31631:e5fae2fb",fer:"19634ad2:fe5cf0f4",fes:"82ff5e94:e2f4d6e2",fet:"7a365cc2:e5fae2fb",fex:"19634ad2:1c9d4f11:b7b090cf",fid:"e3621cc2:7faaca8c:e6117eb6",fig:"b0ac0b82:fe5cf0f4:2befa75a:b193cb04",fil:"b0ac0b82:869bd8d8:48176644",fin:"fbf3a00b:9e7ddd3d",fip:"b0ac0b82:7faaca8c:82610c41:b397af9f",fir:"e3621cc2:2befa75a:1c9d4f11:427a1751",fit:"de3bc3d1:e5fae2fb:4dae70af",fod:"b0ac0b82:b7b090cf",fog:"82ff5e94:7faaca8c:2befa75a:1735a791",fol:"7a365cc2:869bd8d8:1735a791",fon:"82ff5e94:7faaca8c",fop:"7a365cc2:7faaca8c:462c645e:d1fb16cc",for:"b0ac0b82:36a4b4a8:9e7ddd3d",fos:"6cb74008:7faaca8c:cf0f809a",fot:"b0ac0b82:36a4b4a8:7191ec30",ful:"7a365cc2:5ba1ba9b",fun:"28b33136:7faaca8c:7191ec30:672fdf93",fur:"6cb74008:2befa75a:e5fae2fb:cf0f809a",fus:"a5c31631:e5fae2fb:c7af9494",fyl:"6cb74008:7210b66f:f49b158d",fyn:"6cb74008:e5fae2fb",fyr:"362aae07:7faaca8c:1c9d4f11",hab:"e3621cc2:e5fae2fb:5dfed122",hac:"e3621cc2:e5fae2fb:2befa75a:b193cb04",had:"6cb74008:6cf35bfb",hal:"362aae07:fe5cf0f4:83023171",han:"6cb74008:66b0fffd",hap:"7a365cc2:82610c41:7faaca8c:4c1ac47d",har:"7a365cc2:2befa75a:fe5cf0f4",has:"fbf3a00b:b193cb04:b0aeb7df",hat:"e3621cc2:2639d7d4",hav:"e3621cc2:42b4e3a3",heb:"fbf3a00b:66b0fffd",hec:"a5c31631:e6117eb6",hep:"a5c31631:7faaca8c",hes:"82ff5e94:9b3aa0b1",het:"7a365cc2:42b4e3a3",hex:"19634ad2:e5fae2fb:b7b090cf",hid:"e3621cc2:7faaca8c:cf042a60",hil:"b0ac0b82:fe5cf0f4:44e1402d",hin:"fbf3a00b:9b3aa0b1",hob:"28b33136:869bd8d8",hoc:"b0ac0b82:1c9d4f11:bddfa3f3",hod:"b0ac0b82:54112535",hol:"7a365cc2:869bd8d8:2befa75a",hop:"7a365cc2:36a4b4a8:869bd8d8:cf0f809a",hos:"e3621cc2:7faaca8c:e53a31b5",hul:"7a365cc2:82610c41:b0aeb7df",hus:"a5c31631:7faaca8c:36a4b4a8",hut:"fbf3a00b:6cf35bfb",lab:"82ff5e94:7faaca8c:1c9d4f11:5dfed122",lac:"e3621cc2:869bd8d8:57ed51b0:2ab4bc02",lad:"82ff5e94:b788c92f",lag:"b0ac0b82:4456d619",lan:"b0ac0b82:fe5cf0f4:2befa75a:9b3aa0b1",lap:"e3621cc2:4dae70af:f0d5fe71",lar:"7a365cc2:2befa75a:869bd8d8",las:"fbf3a00b:82610c41:d1fb16cc",lat:"e3621cc2:cf042a60",lav:"82ff5e94:adafc09c",leb:"fbf3a00b:d7e0d9e",lec:"a5c31631:7faaca8c:bddfa3f3",led:"7a365cc2:1d989f87",leg:"fbf3a00b:b09cf4ef",len:"fbf3a00b:82610c41:510344a7",lep:"82ff5e94:ae1e4f7",ler:"19634ad2:2b187d87",let:"7a365cc2:fe5cf0f4",lev:"19634ad2:bddfa3f3",lex:"19634ad2:7faaca8c:7191ec30:b7b090cf",lib:"7a365cc2:869bd8d8:fb651938",lid:"e3621cc2:e5fae2fb:2f5059f3",lig:"7a365cc2:82610c41",lin:"fbf3a00b:54112535",lis:"a5c31631:869bd8d8:f3633360",lit:"de3bc3d1:7faaca8c:18f6b23e",liv:"fbf3a00b:fe5cf0f4:603da034:8d560b8b",loc:"de3bc3d1:869bd8d8:9f3841fc",lod:"b0ac0b82:462c645e",lom:"fbf3a00b:59d9e201",lon:"82ff5e94:cf042a60",lop:"7a365cc2:36a4b4a8:869bd8d8:ad042183",lor:"b0ac0b82:fe5cf0f4",los:"e3621cc2:7faaca8c:5e841ec3",luc:"a5c31631:869bd8d8:1b1fba11",lud:"a5c31631:869bd8d8:cbdce7a4",lug:"19634ad2",lun:"7a365cc2:b193cb04",lup:"19634ad2:869bd8d8:5ba1ba9b",lur:"a5c31631:fe5cf0f4:cbdce7a4",lus:"a5c31631:e5fae2fb:5e841ec3",lut:"fbf3a00b:d1fb16cc",lux:"6cb74008:b7b090cf",lyd:"de3bc3d1:7faaca8c:b193cb04:bfc8669e",lyn:"6cb74008:9b3aa0b1",lyr:"362aae07:7faaca8c:efa22418",lys:"a5c31631:bddfa3f3",lyt:"19634ad2:e5fae2fb:2befa75a:10545ed3",lyx:"6cb74008:7faaca8c:952f1d85",mac:"e3621cc2:5dfed122",mag:"b0ac0b82:869bd8d8:82610c41:510344a7",mal:"de3bc3d1:10545ed3:5dfed122",map:"82ff5e94:10545ed3:bddfa3f3",mar:"7a365cc2:3cdcdb8c:fe5cf0f4",mas:"fbf3a00b:b193cb04:b7b090cf",mat:"e3621cc2:81113d71",meb:"fbf3a00b:4d0779c1",mec:"a5c31631:10545ed3:bddfa3f3",med:"7a365cc2:f0d5fe71",meg:"fbf3a00b:92e85004",mel:"362aae07:7191ec30",mep:"82ff5e94:fd1b186c",mer:"19634ad2:9b3aa0b1",mes:"a5c31631:7faaca8c:7191ec30",met:"7a365cc2:9b3aa0b1",mev:"19634ad2:1735a791",mex:"19634ad2:7faaca8c:b7b090cf",mic:"a5c31631:335e8694",mid:"e3621cc2:869bd8d8:fb651938",mig:"b0ac0b82:fe5cf0f4:2befa75a:10545ed3",mil:"b0ac0b82:869bd8d8:fd1b186c",min:"fbf3a00b:7faaca8c",mip:"82ff5e94:2befa75a:fe5cf0f4:f6bb8637",mir:"e3621cc2:2befa75a:2f5059f3:a2880ff1",mis:"82ff5e94:7faaca8c:92e85004",mit:"de3bc3d1:e5fae2fb:87cb2bff",moc:"de3bc3d1:869bd8d8:5a85e6f7",mod:"b0ac0b82:1b1fba11",mog:"82ff5e94:b193cb04:7faaca8c:1735a791",mol:"7a365cc2:869bd8d8:8c89b36e",mon:"82ff5e94:b7b090cf",mop:"7a365cc2:7faaca8c:82610c41:b0aeb7df",mor:"b0ac0b82:36a4b4a8:2f5059f3",mos:"e3621cc2:e5fae2fb:824e5e1f",mot:"b0ac0b82:36a4b4a8:83856b0b",mud:"a5c31631:7faaca8c:1e0083d1",mug:"19634ad2:cf0f809a",mul:"7a365cc2:10545ed3:4dae70af",mun:"7a365cc2:bddfa3f3",mur:"a5c31631:869bd8d8:36a4b4a8:b0aeb7df",mus:"a5c31631:e5fae2fb:d7e0d9e",mut:"fbf3a00b:824e5e1f",myl:"6cb74008:2f5059f3:4b097186",myn:"6cb74008:e3f1ef01",myr:"362aae07:7faaca8c:e6117eb6",nac:"e3621cc2:2befa75a:5dfed122",nal:"de3bc3d1:7faaca8c:cf042a60",nam:"b0ac0b82:869bd8d8:36a4b4a8:a4ed278a",nap:"82ff5e94:fe5cf0f4:bddfa3f3",nar:"7a365cc2:2befa75a:b193cb04",nat:"e3621cc2:372ac81b",nav:"e3621cc2:adafc09c",neb:"fbf3a00b:387e568f",nec:"a5c31631:6cf35bfb",ned:"7a365cc2:36a4b4a8",nel:"362aae07:7faaca8c:6245af61",nem:"7a365cc2:7faaca8c:92e85004",nep:"a5c31631:fc9ea1e2",ner:"19634ad2:54112535",nes:"82ff5e94:fe5cf0f4",net:"7a365cc2:7d18e429",nev:"19634ad2:2befa75a",nex:"19634ad2:10545ed3:b7b090cf",nib:"7a365cc2:869bd8d8:5a85e6f7",nid:"e3621cc2:869bd8d8:2ab4bc02",nil:"b0ac0b82:869bd8d8:ad042183",nim:"28b33136:e2f4d6e2",nis:"82ff5e94:7faaca8c:387e568f",noc:"b0ac0b82:fe5cf0f4:bddfa3f3",nod:"b0ac0b82:d842a67d",nol:"7a365cc2:869bd8d8:510344a7",nom:"fbf3a00b:d6753be3",nop:"7a365cc2:7faaca8c:1c9d4f11:bddfa3f3",nor:"b0ac0b82:36a4b4a8:fe4199fc",nos:"e3621cc2:e5fae2fb:952f1d85",nov:"fbf3a00b:7faaca8c:cf042a60",nub:"a5c31631:869bd8d8",nul:"7a365cc2:b193cb04:d1fb16cc",num:"a5c31631:e5fae2fb:59d9e201",nup:"19634ad2:5ba1ba9b",nus:"a5c31631:7210b66f:f49b158d",nut:"fbf3a00b:975397b2",nux:"a5c31631:869bd8d8:fd1b186c",nyd:"de3bc3d1:7faaca8c:b193cb04:1735a791",nyl:"a5c31631:7faaca8c:fc65290b",nym:"6cb74008:cbdce7a4",nyr:"362aae07:7faaca8c:18f6b23e",nys:"a5c31631:672fdf93",nyt:"19634ad2:869bd8d8:a2880ff1:4dae70af",nyx:"6cb74008:7faaca8c:b7b090cf",pac:"e3621cc2:e5fae2fb:2befa75a:1d989f87",pad:"e3621cc2:b788c92f",pag:"b0ac0b82:7191ec30",pal:"de3bc3d1:e5fae2fb:adafc09c",pan:"e3621cc2:e5fae2fb",par:"7a365cc2:2befa75a:e5fae2fb",pas:"fbf3a00b:fe5cf0f4:cbdce7a4",pat:"e3621cc2:fc9ea1e2",pec:"a5c31631:e5fae2fb:13446f50",ped:"7a365cc2:d1fb16cc",peg:"fbf3a00b:b645c8d3",pel:"362aae07:4c1ac47d",pem:"7a365cc2:7faaca8c:335e8694",pen:"fbf3a00b:7faaca8c:8c89b36e",per:"d93ccb2:fe5cf0f4",pes:"82ff5e94:7faaca8c:4456d619",pet:"7a365cc2:10545ed3",pex:"19634ad2:b193cb04:b7b090cf",pic:"a5c31631:8d8261d6",pid:"e3621cc2:7faaca8c:5dfed122",pil:"b0ac0b82:e5fae2fb:5e841ec3",pin:"fbf3a00b:2b187d87",pit:"de3bc3d1:e5fae2fb:5dfed122",poc:"de3bc3d1:fe5cf0f4:42b4e3a3",pod:"b0ac0b82:5a85e6f7",pol:"7a365cc2:82610c41:4c4076d5",pon:"82ff5e94",pos:"e3621cc2:7faaca8c:824e5e1f",pub:"a5c31631:9b3aa0b1",pun:"7a365cc2:4dae70af:a2880ff1:427a1751",pur:"6cb74008:ab99a1a",put:"fbf3a00b:13446f50",pyl:"a5c31631:20fd4083",pyx:"6cb74008:7faaca8c:824e5e1f",rab:"82ff5e94:7faaca8c:7191ec30:5dfed122",rac:"de3bc3d1:5dfed122",rad:"a5c31631:b788c92f",rag:"b0ac0b82:2f5059f3",ral:"de3bc3d1:2befa75a:b193cb04",ram:"b0ac0b82:fe5cf0f4:2befa75a:b7b090cf",ran:"b0ac0b82:fe5cf0f4:2befa75a:7faaca8c",rap:"e3621cc2:fe5cf0f4:f0d5fe71",rav:"e3621cc2:4c4076d5",reb:"fbf3a00b:372ac81b",rec:"a5c31631:d6753be3",red:"7a365cc2:b397af9f",ref:"de3bc3d1:7faaca8c:5dfed122",reg:"fbf3a00b:7fcb0d8f",rel:"362aae07:fd1b186c",rem:"7a365cc2:7faaca8c:6e9d4a77",ren:"fbf3a00b:2befa75a:10545ed3",rep:"82ff5e94:387e568f",res:"82ff5e94:10545ed3",ret:"7a365cc2:869bd8d8",rev:"19634ad2:b7b090cf",rex:"19634ad2:869bd8d8:b7b090cf",rib:"7a365cc2:869bd8d8:e2f4d6e2",ric:"a5c31631:d7e0d9e",rid:"e3621cc2:fe5cf0f4:54112535",rig:"7a365cc2:82e8305",ril:"b0ac0b82:e5fae2fb:824e5e1f",rin:"fbf3a00b:48176644",rip:"b0ac0b82:7faaca8c:4dae70af:f0d5fe71",ris:"82ff5e94:7faaca8c:18f6b23e",rit:"de3bc3d1:e5fae2fb:b7b090cf",riv:"fbf3a00b:fe5cf0f4:b193cb04:82610c41",roc:"de3bc3d1:869bd8d8:57ed51b0",rol:"7a365cc2:869bd8d8:cf0f809a",ron:"82ff5e94:66b0fffd",rop:"7a365cc2:7faaca8c:10545ed3:4dae70af",ros:"e3621cc2:e5fae2fb:5e841ec3",rov:"fbf3a00b:7faaca8c:18f6b23e",ruc:"a5c31631:869bd8d8:4c4076d5",rud:"a5c31631:869bd8d8:48176644",rul:"7a365cc2:10545ed3:b7b090cf",rum:"6cb74008:62519049",run:"19634ad2:cbdce7a4",rup:"19634ad2:b193cb04:fe5cf0f4:5ba1ba9b",rus:"a5c31631:e5fae2fb:335e8694",rut:"fbf3a00b:952f1d85",rux:"a5c31631:869bd8d8:fe4199fc",ryc:"a5c31631:5a85e6f7",ryd:"de3bc3d1:7faaca8c:2f5059f3:c3bebfe6",ryg:"6cb74008",ryl:"e3621cc2:e5fae2fb:adafc09c",rym:"6cb74008:5a85e6f7",ryn:"6cb74008:eb608ee5",ryp:"6cb74008:7faaca8c",rys:"a5c31631:6245af61",ryt:"19634ad2:e5fae2fb:82610c41:1735a791",ryx:"6cb74008:2befa75a:e5fae2fb",sab:"e3621cc2:7faaca8c:1c9d4f11:5dfed122",sal:"de3bc3d1:e5fae2fb:9ebd20ff",sam:"b0ac0b82:fe5cf0f4:82610c41:b7b090cf",san:"e3621cc2:7faaca8c",sap:"e3621cc2:869bd8d8:f0d5fe71",sar:"7a365cc2:82610c41:fe5cf0f4",sat:"e3621cc2:afc30081",sav:"b0ac0b82:e5fae2fb:4dae70af:1d989f87",seb:"fbf3a00b:6e9d4a77",sec:"a5c31631:952f1d85",sed:"7a365cc2:36a4b4a8:a4ed278a",sef:"de3bc3d1:36a4b4a8:5dfed122",seg:"fbf3a00b:a9e89fe4",sel:"362aae07:2befa75a",sem:"7a365cc2:7faaca8c:cb81c430",sen:"fbf3a00b:fe5cf0f4:36a4b4a8:d24107f2",sep:"82ff5e94:cbdce7a4",ser:"d93ccb2:9b3aa0b1",set:"7a365cc2:cb44703d",sev:"19634ad2:82610c41",sib:"7a365cc2:e5fae2fb:4d0779c1",sic:"e3621cc2:4dae70af",sid:"e3621cc2:869bd8d8:6b5e126b",sig:"7a365cc2:d842a67d",sil:"b0ac0b82:e5fae2fb:2f5059f3",sim:"28b33136:48176644",sip:"fbf3a00b:fe5cf0f4:3d22f9b0:d1fb16cc",sit:"de3bc3d1:2befa75a:b7b090cf",siv:"fbf3a00b:fe5cf0f4:36a4b4a8:fb5ca265",soc:"362aae07:2befa75a:fe5cf0f4:603da034",sog:"82ff5e94:2befa75a:e5fae2fb:cf0f809a",sol:"7a365cc2:869bd8d8:b193cb04",som:"fbf3a00b:e6117eb6",son:"82ff5e94:ec96cafb",sop:"7a365cc2:7faaca8c:b193cb04:1d989f87",sor:"b0ac0b82:7faaca8c:18f6b23e",sov:"fbf3a00b:e5fae2fb:adafc09c",sub:"a5c31631:fe5cf0f4",sud:"a5c31631:869bd8d8:b7b090cf",sug:"19634ad2:d842a67d",sul:"7a365cc2:cf0f809a",sum:"6cb74008:cb81c430",sun:"7a365cc2:9f680a2b",sup:"19634ad2:36a4b4a8:869bd8d8:5ba1ba9b",sur:"a5c31631:7faaca8c:ab99a1a",sut:"fbf3a00b:b788c92f",syd:"de3bc3d1:7faaca8c:2f5059f3:3d22f9b0",syl:"6cb74008:7faaca8c:d6753be3",sym:"6cb74008:42b4e3a3",syn:"6cb74008:9ebd20ff",syp:"6cb74008:7faaca8c:cb81c430",syr:"362aae07:7faaca8c:59d9e201",syt:"19634ad2:e5fae2fb:82610c41:b193cb04",syx:"6cb74008:7faaca8c:fc65290b",tab:"e3621cc2:7faaca8c:2befa75a:5dfed122",tac:"e3621cc2:e5fae2fb:2befa75a:f0d5fe71",tad:"e3621cc2:6cf35bfb",tag:"b0ac0b82:10545ed3",tal:"de3bc3d1:e5fae2fb:d7e0d9e",tam:"b0ac0b82:869bd8d8:36a4b4a8:52a6a74c",tan:"e3621cc2:8d8261d6",tap:"7a365cc2:82610c41:869bd8d8:4c1ac47d",tar:"7a365cc2:82610c41:d1fb16cc",tas:"fbf3a00b:fe5cf0f4:cf0f809a",teb:"fbf3a00b:6245af61",tec:"a5c31631:10545ed3:b7b090cf",ted:"7a365cc2:acc8c8fb",teg:"fbf3a00b:f6bb8637",tel:"362aae07:b46295d4:672fdf93",tem:"7a365cc2:7faaca8c:387e568f",ten:"fbf3a00b:e53a31b5",tep:"82ff5e94:6245af61",ter:"d93ccb2:54112535",tes:"82ff5e94:54112535",tev:"19634ad2:b193cb04",tex:"19634ad2:7191ec30:b7b090cf",tic:"e3621cc2:2d91e72f",tid:"e3621cc2:fe5cf0f4:42b4e3a3",til:"b0ac0b82:10545ed3:bddfa3f3",tim:"28b33136:7faaca8c",tin:"fbf3a00b:e2f4d6e2",tip:"82ff5e94:2befa75a:fe5cf0f4:b7b090cf",tir:"e3621cc2:2befa75a:b193cb04:7faaca8c",tob:"28b33136:5a85e6f7",toc:"de3bc3d1:2befa75a:5a85e6f7",tod:"b0ac0b82:82e8305",tog:"82ff5e94:2befa75a:e5fae2fb:fe4199fc",tol:"7a365cc2:869bd8d8:d24107f2",tom:"fbf3a00b:87cb2bff",ton:"82ff5e94:e3f1ef01",top:"7a365cc2:7faaca8c:2befa75a:b193cb04",tor:"b0ac0b82:36a4b4a8:b193cb04",tuc:"a5c31631:869bd8d8:5a85e6f7",tud:"a5c31631:869bd8d8:d1fb16cc",tug:"19634ad2:ad042183",tul:"7a365cc2:b7b090cf",tun:"28b33136:7faaca8c:36a4b4a8:82610c41",tus:"a5c31631:e5fae2fb:952f1d85",tux:"a5c31631:869bd8d8:510344a7",tyc:"a5c31631:b7b090cf",tyd:"de3bc3d1:7faaca8c:7191ec30:bddfa3f3",tyl:"a5c31631:eb608ee5",tyn:"6cb74008:372ac81b",typ:"6cb74008:7faaca8c:6245af61",tyr:"362aae07:7faaca8c:4456d619",tyv:"362aae07:b193cb04:e5fae2fb:87cb2bff",wac:"e3621cc2:869bd8d8:36a4b4a8:5dfed122",wal:"362aae07:fe5cf0f4:9b3aa0b1",wan:"e3621cc2",wat:"e3621cc2:b7b090cf",web:"fbf3a00b:afc30081",wed:"7a365cc2:952f1d85",weg:"fbf3a00b:55d21172",wel:"362aae07:6f23470b",wen:"fbf3a00b:7faaca8c:cb81c430",wep:"82ff5e94:6cf35bfb",wer:"d93ccb2:2b187d87",wes:"82ff5e94:10545ed3:975397b2",wet:"7a365cc2:235d50bf",wex:"19634ad2:2befa75a:b7b090cf",wic:"82ff5e94:87cb2bff",wid:"e3621cc2:7191ec30:b7b090cf",win:"fbf3a00b:fe5cf0f4",wis:"e3621cc2:869bd8d8:ad042183",wit:"362aae07:cbdce7a4",wol:"7a365cc2:869bd8d8:83856b0b",wor:"b0ac0b82:36a4b4a8:1c9d4f11",wyc:"a5c31631",wyd:"de3bc3d1:7faaca8c:2f5059f3:b3ae909c",wyl:"a5c31631:6615d02d",wyn:"6cb74008:cf042a60",wyt:"19634ad2:e5fae2fb:82610c41:b0aeb7df",wyx:"6cb74008:7faaca8c:87cb2bff",zod:"7a365cc2"},sylgraphjson={symbols:symbols,mapping:mapping},last=function(a){return a[a.length-1]},patpStrToArr=function(a){return a.replace(/[\^~-]/g,"").match(/.{1,3}/g)},_pour=function(a){var t=a.patp,e=a.renderer,r=a.sylgraph,b=a.size,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;t=isString_1$1(t)?patpStrToArr(t):t,d=isUndefined_1$1(d)?lookup$1(t,r):d;var n=grid({length:d.length,margin:c,size:b}),i=knoll(d,n),f=dyes({tag:"svg",meta:{},attr:{width:b,height:b},children:[baseRectangle(b,o)].concat(_toConsumableArray(i))},t,s);return isUndefined_1$1(e)?f:e.svg(f)},lookup$1=function(a,t){if(isUndefined_1$1(a))throw new Error("Missing patp argument to pour()");return a.map(function(a){var e=t.mapping[a];return isUndefined_1$1(e)?DEFAULT_SYMBOL:{attr:{},meta:{},tag:"g",children:e.split(":").map(function(a){var e=t.symbols[a];return isUndefined_1$1(e)?DEFAULT_ELEM:e})}})},knoll=function(a,t){return a.map(function(a,e){var r=cloneDeep_1$1(a),b=t.grid[e],s=transform(translate(b.x,b.y),scale(t.scale,t.scale));return isUndefined_1$1(r.attr)&&(r.attr={}),r.attr.transform=toSVG(s),r})},baseRectangle=function(a,t){return {tag:"rect",meta:!0===t?{style:{fill:"FG",stroke:"NO"},bg:!0}:{style:{fill:"BG",stroke:"NO"},bg:!0},attr:{width:a,height:a,x:0,y:0}}},DEFAULT_ELEM={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},DEFAULT_SYMBOL={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},pour=function(a){var t=a.patp,e=a.renderer,r=a.size,b=a.sylgraph,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;return b=isUndefined_1$1(b)?sylgraphjson:b,_pour({patp:t,sylgraph:b,renderer:e,size:r,colorway:s,symbols:d,margin:c,ignoreColorway:o})},grid=function(a){var t=a.length,e=a.margin,r=a.size;2*e>r&&console.warn("sigil-js: margin cannot be larger than sigil size");var b=isNotMarginMode(e),s=b?.08*r:e,d=r-2*s,c=b||t>1?d/2:d,o={le:t,mm:b,tw:r,sw:c,rm:s,rp:c/128*2},n={1:[{x:dc$1(o),y:dc$1(o)}],2:[{x:d1(o),y:dc$1(o)},{x:d2(o),y:dc$1(o)}],4:[{x:d1(o),y:d1(o)},{x:d2(o),y:d1(o)},{x:d1(o),y:d2(o)},{x:d2(o),y:d2(o)}]};return _objectSpread({},o,{scale:o.sw/128,grid:n[t]})},isNotMarginMode=function(a){return "auto"===a||void 0===a},dc$1=function(a){var t=a.le,e=a.mm,r=a.tw,b=a.sw,s=a.rm;return t>1||!0===e?r-1.5*b-s:s},d1=function(a){a.tw,a.sw;return a.rm-a.rp/2},d2=function(a){return a.tw-a.sw-a.rm+a.rp/2},CW=[["#fff","#000000"]],prism=function(a,t){return t[0]},dyes=function(a,t,e){return isUndefined_1$1(e)?(e=isUndefined_1$1(t)?CW[0]:prism(t,CW),wash(a,e)):wash(a,e)},applyColor=function(a,t){return "FG"===a?t[0]:"BG"===a?t[1]:"TC"===a?t[2]:"NC"===a?"grey":last(t)},applyStyleAttrs=function(a,t){var e=a.fill;return {fill:applyColor(e,t)}},wash=function a(t,e){var r=get_1$1(t,["meta","style"],!1),b=get_1$1(t,"children",[]),s=get_1$1(t,"attr",{});return _objectSpread({},t,{attr:!1!==r?_objectSpread({},s,applyStyleAttrs(r,e)):_objectSpread({},s),children:b.map(function(t){return a(t,e)})})};var symbolProto$2=_Symbol?_Symbol.prototype:void 0,symbolValueOf$1=symbolProto$2?symbolProto$2.valueOf:void 0;
+	var global$2 = (typeof global !== "undefined" ? global :
+	            typeof self !== "undefined" ? self :
+	            typeof window !== "undefined" ? window : {});
+
+	function _defineProperty(a,t,e){return t in a?Object.defineProperty(a,t,{value:e,enumerable:!0,configurable:!0,writable:!0}):a[t]=e,a}function _objectSpread(a){for(var t=1;t<arguments.length;t++){var e=null!=arguments[t]?arguments[t]:{},r=Object.keys(e);"function"==typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(e).filter(function(a){return Object.getOwnPropertyDescriptor(e,a).enumerable}))),r.forEach(function(t){_defineProperty(a,t,e[t]);});}return a}function _toConsumableArray(a){return _arrayWithoutHoles(a)||_iterableToArray(a)||_nonIterableSpread()}function _arrayWithoutHoles(a){if(Array.isArray(a)){for(var t=0,e=new Array(a.length);t<a.length;t++)e[t]=a[t];return e}}function _iterableToArray(a){if(Symbol.iterator in Object(a)||"[object Arguments]"===Object.prototype.toString.call(a))return Array.from(a)}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function createCommonjsModule$1(a,t){return t={exports:{}},a(t,t.exports),t.exports}function getRawTag(a){var t=hasOwnProperty$1.call(a,symToStringTag$1),e=a[symToStringTag$1];try{a[symToStringTag$1]=void 0;var r=!0;}catch(a){}var b=nativeObjectToString.call(a);return r&&(t?a[symToStringTag$1]=e:delete a[symToStringTag$1]),b}function objectToString(a){return nativeObjectToString$1.call(a)}function baseGetTag(a){return null==a?void 0===a?undefinedTag:nullTag:symToStringTag&&symToStringTag in Object(a)?_getRawTag(a):_objectToString(a)}function isObjectLike(a){return null!=a&&"object"==typeof a}function isSymbol(a){return "symbol"==typeof a||isObjectLike_1(a)&&_baseGetTag(a)==symbolTag}function isKey(a,t){if(isArray_1(a))return !1;var e=typeof a;return !("number"!=e&&"symbol"!=e&&"boolean"!=e&&null!=a&&!isSymbol_1(a))||(reIsPlainProp.test(a)||!reIsDeepProp.test(a)||null!=t&&a in Object(t))}function isObject(a){var t=typeof a;return null!=a&&("object"==t||"function"==t)}function isFunction(a){if(!isObject_1(a))return !1;var t=_baseGetTag(a);return t==funcTag||t==genTag||t==asyncTag||t==proxyTag}function isMasked(a){return !!maskSrcKey&&maskSrcKey in a}function toSource(a){if(null!=a){try{return funcToString$1.call(a)}catch(a){}try{return a+""}catch(a){}}return ""}function baseIsNative(a){return !(!isObject_1(a)||_isMasked(a))&&(isFunction_1(a)?reIsNative:reIsHostCtor).test(_toSource(a))}function getValue(a,t){return null==a?void 0:a[t]}function getNative(a,t){var e=_getValue(a,t);return _baseIsNative(e)?e:void 0}function hashClear(){this.__data__=_nativeCreate?_nativeCreate(null):{},this.size=0;}function hashDelete(a){var t=this.has(a)&&delete this.__data__[a];return this.size-=t?1:0,t}function hashGet(a){var t=this.__data__;if(_nativeCreate){var e=t[a];return e===HASH_UNDEFINED?void 0:e}return hasOwnProperty$2.call(t,a)?t[a]:void 0}function hashHas(a){var t=this.__data__;return _nativeCreate?void 0!==t[a]:hasOwnProperty$3.call(t,a)}function hashSet(a,t){var e=this.__data__;return this.size+=this.has(a)?0:1,e[a]=_nativeCreate&&void 0===t?HASH_UNDEFINED$1:t,this}function Hash(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function listCacheClear(){this.__data__=[],this.size=0;}function eq(a,t){return a===t||a!==a&&t!==t}function assocIndexOf(a,t){for(var e=a.length;e--;)if(eq_1(a[e][0],t))return e;return -1}function listCacheDelete(a){var t=this.__data__,e=_assocIndexOf(t,a);return !(e<0)&&(e==t.length-1?t.pop():splice.call(t,e,1),--this.size,!0)}function listCacheGet(a){var t=this.__data__,e=_assocIndexOf(t,a);return e<0?void 0:t[e][1]}function listCacheHas(a){return _assocIndexOf(this.__data__,a)>-1}function listCacheSet(a,t){var e=this.__data__,r=_assocIndexOf(e,a);return r<0?(++this.size,e.push([a,t])):e[r][1]=t,this}function ListCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function mapCacheClear(){this.size=0,this.__data__={hash:new _Hash,map:new(_Map||_ListCache),string:new _Hash};}function isKeyable(a){var t=typeof a;return "string"==t||"number"==t||"symbol"==t||"boolean"==t?"__proto__"!==a:null===a}function getMapData(a,t){var e=a.__data__;return _isKeyable(t)?e["string"==typeof t?"string":"hash"]:e.map}function mapCacheDelete(a){var t=_getMapData(this,a).delete(a);return this.size-=t?1:0,t}function mapCacheGet(a){return _getMapData(this,a).get(a)}function mapCacheHas(a){return _getMapData(this,a).has(a)}function mapCacheSet(a,t){var e=_getMapData(this,a),r=e.size;return e.set(a,t),this.size+=e.size==r?0:1,this}function MapCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function memoize(a,t){if("function"!=typeof a||null!=t&&"function"!=typeof t)throw new TypeError(FUNC_ERROR_TEXT);var e=function(){var r=arguments,b=t?t.apply(this,r):r[0],s=e.cache;if(s.has(b))return s.get(b);var d=a.apply(this,r);return e.cache=s.set(b,d)||s,d};return e.cache=new(memoize.Cache||_MapCache),e}function memoizeCapped(a){var t=memoize_1(a,function(a){return e.size===MAX_MEMOIZE_SIZE&&e.clear(),a}),e=t.cache;return t}function arrayMap(a,t){for(var e=-1,r=null==a?0:a.length,b=Array(r);++e<r;)b[e]=t(a[e],e,a);return b}function baseToString(a){if("string"==typeof a)return a;if(isArray_1(a))return _arrayMap(a,baseToString)+"";if(isSymbol_1(a))return symbolToString?symbolToString.call(a):"";var t=a+"";return "0"==t&&1/a==-INFINITY?"-0":t}function toString(a){return null==a?"":_baseToString(a)}function castPath(a,t){return isArray_1(a)?a:_isKey(a,t)?[a]:_stringToPath(toString_1(a))}function toKey(a){if("string"==typeof a||isSymbol_1(a))return a;var t=a+"";return "0"==t&&1/a==-INFINITY$1?"-0":t}function baseGet(a,t){for(var e=0,r=(t=_castPath(t,a)).length;null!=a&&e<r;)a=a[_toKey(t[e++])];return e&&e==r?a:void 0}function get(a,t,e){var r=null==a?void 0:_baseGet(a,t);return void 0===r?e:r}function stackClear(){this.__data__=new _ListCache,this.size=0;}function stackDelete(a){var t=this.__data__,e=t.delete(a);return this.size=t.size,e}function stackGet(a){return this.__data__.get(a)}function stackHas(a){return this.__data__.has(a)}function stackSet(a,t){var e=this.__data__;if(e instanceof _ListCache){var r=e.__data__;if(!_Map||r.length<LARGE_ARRAY_SIZE-1)return r.push([a,t]),this.size=++e.size,this;e=this.__data__=new _MapCache(r);}return e.set(a,t),this.size=e.size,this}function Stack(a){var t=this.__data__=new _ListCache(a);this.size=t.size;}function arrayEach(a,t){for(var e=-1,r=null==a?0:a.length;++e<r&&!1!==t(a[e],e,a););return a}function baseAssignValue(a,t,e){"__proto__"==t&&_defineProperty$1?_defineProperty$1(a,t,{configurable:!0,enumerable:!0,value:e,writable:!0}):a[t]=e;}function assignValue(a,t,e){var r=a[t];hasOwnProperty$4.call(a,t)&&eq_1(r,e)&&(void 0!==e||t in a)||_baseAssignValue(a,t,e);}function copyObject(a,t,e,r){var b=!e;e||(e={});for(var s=-1,d=t.length;++s<d;){var c=t[s],o=r?r(e[c],a[c],c,e,a):void 0;void 0===o&&(o=a[c]),b?_baseAssignValue(e,c,o):_assignValue(e,c,o);}return e}function baseTimes(a,t){for(var e=-1,r=Array(a);++e<a;)r[e]=t(e);return r}function baseIsArguments(a){return isObjectLike_1(a)&&_baseGetTag(a)==argsTag$1}function stubFalse(){return !1}function isIndex(a,t){var e=typeof a;return !!(t=null==t?MAX_SAFE_INTEGER:t)&&("number"==e||"symbol"!=e&&reIsUint.test(a))&&a>-1&&a%1==0&&a<t}function isLength(a){return "number"==typeof a&&a>-1&&a%1==0&&a<=MAX_SAFE_INTEGER$1}function baseIsTypedArray(a){return isObjectLike_1(a)&&isLength_1(a.length)&&!!typedArrayTags[_baseGetTag(a)]}function baseUnary(a){return function(t){return a(t)}}function arrayLikeKeys(a,t){var e=isArray_1(a),r=!e&&isArguments_1(a),b=!e&&!r&&isBuffer_1(a),s=!e&&!r&&!b&&isTypedArray_1(a),d=e||r||b||s,c=d?_baseTimes(a.length,String):[],o=c.length;for(var n in a)!t&&!hasOwnProperty$5.call(a,n)||d&&("length"==n||b&&("offset"==n||"parent"==n)||s&&("buffer"==n||"byteLength"==n||"byteOffset"==n)||_isIndex(n,o))||c.push(n);return c}function isPrototype(a){var t=a&&a.constructor;return a===("function"==typeof t&&t.prototype||objectProto$9)}function overArg(a,t){return function(e){return a(t(e))}}function baseKeys(a){if(!_isPrototype(a))return _nativeKeys(a);var t=[];for(var e in Object(a))hasOwnProperty$7.call(a,e)&&"constructor"!=e&&t.push(e);return t}function isArrayLike(a){return null!=a&&isLength_1(a.length)&&!isFunction_1(a)}function keys(a){return isArrayLike_1(a)?_arrayLikeKeys(a):_baseKeys(a)}function baseAssign(a,t){return a&&_copyObject(t,keys_1(t),a)}function nativeKeysIn(a){var t=[];if(null!=a)for(var e in Object(a))t.push(e);return t}function baseKeysIn(a){if(!isObject_1(a))return _nativeKeysIn(a);var t=_isPrototype(a),e=[];for(var r in a)("constructor"!=r||!t&&hasOwnProperty$8.call(a,r))&&e.push(r);return e}function keysIn$1(a){return isArrayLike_1(a)?_arrayLikeKeys(a,!0):_baseKeysIn(a)}function baseAssignIn(a,t){return a&&_copyObject(t,keysIn_1(t),a)}function copyArray(a,t){var e=-1,r=a.length;for(t||(t=Array(r));++e<r;)t[e]=a[e];return t}function arrayFilter(a,t){for(var e=-1,r=null==a?0:a.length,b=0,s=[];++e<r;){var d=a[e];t(d,e,a)&&(s[b++]=d);}return s}function stubArray(){return []}function copySymbols(a,t){return _copyObject(a,_getSymbols(a),t)}function arrayPush(a,t){for(var e=-1,r=t.length,b=a.length;++e<r;)a[b+e]=t[e];return a}function copySymbolsIn(a,t){return _copyObject(a,_getSymbolsIn(a),t)}function baseGetAllKeys(a,t,e){var r=t(a);return isArray_1(a)?r:_arrayPush(r,e(a))}function getAllKeys(a){return _baseGetAllKeys(a,keys_1,_getSymbols)}function getAllKeysIn(a){return _baseGetAllKeys(a,keysIn_1,_getSymbolsIn)}function initCloneArray(a){var t=a.length,e=new a.constructor(t);return t&&"string"==typeof a[0]&&hasOwnProperty$9.call(a,"index")&&(e.index=a.index,e.input=a.input),e}function cloneArrayBuffer(a){var t=new a.constructor(a.byteLength);return new _Uint8Array(t).set(new _Uint8Array(a)),t}function cloneDataView(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.byteLength)}function cloneRegExp(a){var t=new a.constructor(a.source,reFlags.exec(a));return t.lastIndex=a.lastIndex,t}function cloneSymbol(a){return symbolValueOf?Object(symbolValueOf.call(a)):{}}function cloneTypedArray(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.length)}function initCloneByTag(a,t,e){var r=a.constructor;switch(t){case arrayBufferTag$2:return _cloneArrayBuffer(a);case boolTag$2:case dateTag$2:return new r(+a);case dataViewTag$3:return _cloneDataView(a,e);case float32Tag$2:case float64Tag$2:case int8Tag$2:case int16Tag$2:case int32Tag$2:case uint8Tag$2:case uint8ClampedTag$2:case uint16Tag$2:case uint32Tag$2:return _cloneTypedArray(a,e);case mapTag$3:return new r;case numberTag$2:case stringTag$2:return new r(a);case regexpTag$2:return _cloneRegExp(a);case setTag$3:return new r;case symbolTag$2:return _cloneSymbol(a)}}function initCloneObject(a){return "function"!=typeof a.constructor||_isPrototype(a)?{}:_baseCreate(_getPrototype(a))}function baseIsMap(a){return isObjectLike_1(a)&&_getTag(a)==mapTag$4}function baseIsSet(a){return isObjectLike_1(a)&&_getTag(a)==setTag$4}function baseClone(a,t,e,r,b,s){var d,c=t&CLONE_DEEP_FLAG$1,o=t&CLONE_FLAT_FLAG,n=t&CLONE_SYMBOLS_FLAG$1;if(e&&(d=b?e(a,r,b,s):e(a)),void 0!==d)return d;if(!isObject_1(a))return a;var i=isArray_1(a);if(i){if(d=_initCloneArray(a),!c)return _copyArray(a,d)}else{var f=_getTag(a),l=f==funcTag$1||f==genTag$1;if(isBuffer_1(a))return _cloneBuffer(a,c);if(f==objectTag||f==argsTag||l&&!b){if(d=o||l?{}:_initCloneObject(a),!c)return o?_copySymbolsIn(a,_baseAssignIn(d,a)):_copySymbols(a,_baseAssign(d,a))}else{if(!cloneableTags[f])return b?a:{};d=_initCloneByTag(a,f,c);}}s||(s=new _Stack);var g=s.get(a);if(g)return g;if(s.set(a,d),isSet_1(a))return a.forEach(function(r){d.add(baseClone(r,t,e,r,a,s));}),d;if(isMap_1(a))return a.forEach(function(r,b){d.set(b,baseClone(r,t,e,b,a,s));}),d;var m=n?o?_getAllKeysIn:_getAllKeys:o?keysIn:keys_1,h=i?void 0:m(a);return _arrayEach(h||a,function(r,b){h&&(r=a[b=r]),_assignValue(d,b,baseClone(r,t,e,b,a,s));}),d}function cloneDeep(a){return _baseClone(a,CLONE_DEEP_FLAG|CLONE_SYMBOLS_FLAG)}function isUndefined(a){return void 0===a}function isString(a){return "string"==typeof a||!isArray_1(a)&&isObjectLike_1(a)&&_baseGetTag(a)==stringTag$3}function isUndefined$1(a){return void 0===a}function translate(a){return {a:1,c:0,e:a,b:0,d:1,f:arguments.length>1&&void 0!==arguments[1]?arguments[1]:0}}function _toConsumableArray$1(a){if(Array.isArray(a)){for(var t=0,e=Array(a.length);t<a.length;t++)e[t]=a[t];return e}return Array.from(a)}function _toArray$1(a){return Array.isArray(a)?a:Array.from(a)}function transform(){for(var a=arguments.length,t=Array(a),e=0;e<a;e++)t[e]=arguments[e];var r=function(a,t){return {a:a.a*t.a+a.c*t.b,c:a.a*t.c+a.c*t.d,e:a.a*t.e+a.c*t.f+a.e,b:a.b*t.a+a.d*t.b,d:a.b*t.c+a.d*t.d,f:a.b*t.e+a.d*t.f+a.f}};switch((t=Array.isArray(t[0])?t[0]:t).length){case 0:throw new Error("no matrices provided");case 1:return t[0];case 2:return r(t[0],t[1]);default:var b=_toArray$1(t),s=b[0],d=b[1],c=b.slice(2),o=r(s,d);return transform.apply(void 0,[o].concat(_toConsumableArray$1(c)))}}function scale(a){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return isUndefined$1(t)&&(t=a),{a:a,c:0,e:0,b:0,d:t,f:0}}function toSVG(a){return toString$2(a)}function toString$2(a){return "matrix("+a.a+","+a.b+","+a.c+","+a.d+","+a.e+","+a.f+")"}var isArray=Array.isArray,isArray_1=isArray,commonjsGlobal$1="undefined"!=typeof window?window:"undefined"!=typeof global$2?global$2:"undefined"!=typeof self?self:{},freeGlobal="object"==typeof commonjsGlobal$1&&commonjsGlobal$1&&commonjsGlobal$1.Object===Object&&commonjsGlobal$1,_freeGlobal=freeGlobal,freeSelf="object"==typeof self&&self&&self.Object===Object&&self,root=_freeGlobal||freeSelf||Function("return this")(),_root=root,Symbol$1=_root.Symbol,_Symbol=Symbol$1,objectProto=Object.prototype,hasOwnProperty$1=objectProto.hasOwnProperty,nativeObjectToString=objectProto.toString,symToStringTag$1=_Symbol?_Symbol.toStringTag:void 0,_getRawTag=getRawTag,objectProto$1=Object.prototype,nativeObjectToString$1=objectProto$1.toString,_objectToString=objectToString,nullTag="[object Null]",undefinedTag="[object Undefined]",symToStringTag=_Symbol?_Symbol.toStringTag:void 0,_baseGetTag=baseGetTag,isObjectLike_1=isObjectLike,symbolTag="[object Symbol]",isSymbol_1=isSymbol,reIsDeepProp=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,reIsPlainProp=/^\w*$/,_isKey=isKey,isObject_1=isObject,asyncTag="[object AsyncFunction]",funcTag="[object Function]",genTag="[object GeneratorFunction]",proxyTag="[object Proxy]",isFunction_1=isFunction,coreJsData=_root["__core-js_shared__"],_coreJsData=coreJsData,maskSrcKey=function(){var a=/[^.]+$/.exec(_coreJsData&&_coreJsData.keys&&_coreJsData.keys.IE_PROTO||"");return a?"Symbol(src)_1."+a:""}(),_isMasked=isMasked,funcProto$1=Function.prototype,funcToString$1=funcProto$1.toString,_toSource=toSource,reRegExpChar=/[\\^$.*+?()[\]{}|]/g,reIsHostCtor=/^\[object .+?Constructor\]$/,funcProto=Function.prototype,objectProto$2=Object.prototype,funcToString=funcProto.toString,hasOwnProperty$1$1=objectProto$2.hasOwnProperty,reIsNative=RegExp("^"+funcToString.call(hasOwnProperty$1$1).replace(reRegExpChar,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_baseIsNative=baseIsNative,_getValue=getValue,_getNative=getNative,nativeCreate=_getNative(Object,"create"),_nativeCreate=nativeCreate,_hashClear=hashClear,_hashDelete=hashDelete,HASH_UNDEFINED="__lodash_hash_undefined__",objectProto$3=Object.prototype,hasOwnProperty$2=objectProto$3.hasOwnProperty,_hashGet=hashGet,objectProto$4=Object.prototype,hasOwnProperty$3=objectProto$4.hasOwnProperty,_hashHas=hashHas,HASH_UNDEFINED$1="__lodash_hash_undefined__",_hashSet=hashSet;Hash.prototype.clear=_hashClear,Hash.prototype.delete=_hashDelete,Hash.prototype.get=_hashGet,Hash.prototype.has=_hashHas,Hash.prototype.set=_hashSet;var _Hash=Hash,_listCacheClear=listCacheClear,eq_1=eq,_assocIndexOf=assocIndexOf,arrayProto=Array.prototype,splice=arrayProto.splice,_listCacheDelete=listCacheDelete,_listCacheGet=listCacheGet,_listCacheHas=listCacheHas,_listCacheSet=listCacheSet;ListCache.prototype.clear=_listCacheClear,ListCache.prototype.delete=_listCacheDelete,ListCache.prototype.get=_listCacheGet,ListCache.prototype.has=_listCacheHas,ListCache.prototype.set=_listCacheSet;var _ListCache=ListCache,Map$1=_getNative(_root,"Map"),_Map=Map$1,_mapCacheClear=mapCacheClear,_isKeyable=isKeyable,_getMapData=getMapData,_mapCacheDelete=mapCacheDelete,_mapCacheGet=mapCacheGet,_mapCacheHas=mapCacheHas,_mapCacheSet=mapCacheSet;MapCache.prototype.clear=_mapCacheClear,MapCache.prototype.delete=_mapCacheDelete,MapCache.prototype.get=_mapCacheGet,MapCache.prototype.has=_mapCacheHas,MapCache.prototype.set=_mapCacheSet;var _MapCache=MapCache,FUNC_ERROR_TEXT="Expected a function";memoize.Cache=_MapCache;var memoize_1=memoize,MAX_MEMOIZE_SIZE=500,_memoizeCapped=memoizeCapped,rePropName=/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,reEscapeChar=/\\(\\)?/g,stringToPath=_memoizeCapped(function(a){var t=[];return 46===a.charCodeAt(0)&&t.push(""),a.replace(rePropName,function(a,e,r,b){t.push(r?b.replace(reEscapeChar,"$1"):e||a);}),t}),_stringToPath=stringToPath,_arrayMap=arrayMap,INFINITY=1/0,symbolProto=_Symbol?_Symbol.prototype:void 0,symbolToString=symbolProto?symbolProto.toString:void 0,_baseToString=baseToString,toString_1=toString,_castPath=castPath,INFINITY$1=1/0,_toKey=toKey,_baseGet=baseGet,get_1$1=get,_stackClear=stackClear,_stackDelete=stackDelete,_stackGet=stackGet,_stackHas=stackHas,LARGE_ARRAY_SIZE=200,_stackSet=stackSet;Stack.prototype.clear=_stackClear,Stack.prototype.delete=_stackDelete,Stack.prototype.get=_stackGet,Stack.prototype.has=_stackHas,Stack.prototype.set=_stackSet;var _Stack=Stack,_arrayEach=arrayEach,defineProperty=function(){try{var a=_getNative(Object,"defineProperty");return a({},"",{}),a}catch(a){}}(),_defineProperty$1=defineProperty,_baseAssignValue=baseAssignValue,objectProto$5=Object.prototype,hasOwnProperty$4=objectProto$5.hasOwnProperty,_assignValue=assignValue,_copyObject=copyObject,_baseTimes=baseTimes,argsTag$1="[object Arguments]",_baseIsArguments=baseIsArguments,objectProto$7=Object.prototype,hasOwnProperty$6=objectProto$7.hasOwnProperty,propertyIsEnumerable=objectProto$7.propertyIsEnumerable,isArguments=_baseIsArguments(function(){return arguments}())?_baseIsArguments:function(a){return isObjectLike_1(a)&&hasOwnProperty$6.call(a,"callee")&&!propertyIsEnumerable.call(a,"callee")},isArguments_1=isArguments,stubFalse_1=stubFalse,isBuffer_1=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e?_root.Buffer:void 0,s=(b?b.isBuffer:void 0)||stubFalse_1;a.exports=s;}),MAX_SAFE_INTEGER=9007199254740991,reIsUint=/^(?:0|[1-9]\d*)$/,_isIndex=isIndex,MAX_SAFE_INTEGER$1=9007199254740991,isLength_1=isLength,argsTag$2="[object Arguments]",arrayTag$1="[object Array]",boolTag$1="[object Boolean]",dateTag$1="[object Date]",errorTag$1="[object Error]",funcTag$2="[object Function]",mapTag$1="[object Map]",numberTag$1="[object Number]",objectTag$1="[object Object]",regexpTag$1="[object RegExp]",setTag$1="[object Set]",stringTag$1="[object String]",weakMapTag$1="[object WeakMap]",arrayBufferTag$1="[object ArrayBuffer]",dataViewTag$1="[object DataView]",float32Tag$1="[object Float32Array]",float64Tag$1="[object Float64Array]",int8Tag$1="[object Int8Array]",int16Tag$1="[object Int16Array]",int32Tag$1="[object Int32Array]",uint8Tag$1="[object Uint8Array]",uint8ClampedTag$1="[object Uint8ClampedArray]",uint16Tag$1="[object Uint16Array]",uint32Tag$1="[object Uint32Array]",typedArrayTags={};typedArrayTags[float32Tag$1]=typedArrayTags[float64Tag$1]=typedArrayTags[int8Tag$1]=typedArrayTags[int16Tag$1]=typedArrayTags[int32Tag$1]=typedArrayTags[uint8Tag$1]=typedArrayTags[uint8ClampedTag$1]=typedArrayTags[uint16Tag$1]=typedArrayTags[uint32Tag$1]=!0,typedArrayTags[argsTag$2]=typedArrayTags[arrayTag$1]=typedArrayTags[arrayBufferTag$1]=typedArrayTags[boolTag$1]=typedArrayTags[dataViewTag$1]=typedArrayTags[dateTag$1]=typedArrayTags[errorTag$1]=typedArrayTags[funcTag$2]=typedArrayTags[mapTag$1]=typedArrayTags[numberTag$1]=typedArrayTags[objectTag$1]=typedArrayTags[regexpTag$1]=typedArrayTags[setTag$1]=typedArrayTags[stringTag$1]=typedArrayTags[weakMapTag$1]=!1;var _baseIsTypedArray=baseIsTypedArray,_baseUnary=baseUnary,_nodeUtil=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e&&_freeGlobal.process,s=function(){try{var a=r&&r.require&&r.require("util").types;return a||b&&b.binding&&b.binding("util")}catch(a){}}();a.exports=s;}),nodeIsTypedArray=_nodeUtil&&_nodeUtil.isTypedArray,isTypedArray=nodeIsTypedArray?_baseUnary(nodeIsTypedArray):_baseIsTypedArray,isTypedArray_1=isTypedArray,objectProto$6=Object.prototype,hasOwnProperty$5=objectProto$6.hasOwnProperty,_arrayLikeKeys=arrayLikeKeys,objectProto$9=Object.prototype,_isPrototype=isPrototype,_overArg=overArg,nativeKeys=_overArg(Object.keys,Object),_nativeKeys=nativeKeys,objectProto$8=Object.prototype,hasOwnProperty$7=objectProto$8.hasOwnProperty,_baseKeys=baseKeys,isArrayLike_1=isArrayLike,keys_1=keys,_baseAssign=baseAssign,_nativeKeysIn=nativeKeysIn,objectProto$10=Object.prototype,hasOwnProperty$8=objectProto$10.hasOwnProperty,_baseKeysIn=baseKeysIn,keysIn_1=keysIn$1,_baseAssignIn=baseAssignIn,_cloneBuffer=createCommonjsModule$1(function(a,t){function e(a,t){if(t)return a.slice();var e=a.length,r=d?d(e):new a.constructor(e);return a.copy(r),r}var r=t&&!t.nodeType&&t,b=r&&!0&&a&&!a.nodeType&&a,s=b&&b.exports===r?_root.Buffer:void 0,d=s?s.allocUnsafe:void 0;a.exports=e;}),_copyArray=copyArray,_arrayFilter=arrayFilter,stubArray_1=stubArray,objectProto$11=Object.prototype,propertyIsEnumerable$1=objectProto$11.propertyIsEnumerable,nativeGetSymbols=Object.getOwnPropertySymbols,getSymbols=nativeGetSymbols?function(a){return null==a?[]:(a=Object(a),_arrayFilter(nativeGetSymbols(a),function(t){return propertyIsEnumerable$1.call(a,t)}))}:stubArray_1,_getSymbols=getSymbols,_copySymbols=copySymbols,_arrayPush=arrayPush,getPrototype=_overArg(Object.getPrototypeOf,Object),_getPrototype=getPrototype,nativeGetSymbols$1=Object.getOwnPropertySymbols,getSymbolsIn=nativeGetSymbols$1?function(a){for(var t=[];a;)_arrayPush(t,_getSymbols(a)),a=_getPrototype(a);return t}:stubArray_1,_getSymbolsIn=getSymbolsIn,_copySymbolsIn=copySymbolsIn,_baseGetAllKeys=baseGetAllKeys,_getAllKeys=getAllKeys,_getAllKeysIn=getAllKeysIn,DataView=_getNative(_root,"DataView"),_DataView=DataView,Promise$1=_getNative(_root,"Promise"),_Promise=Promise$1,Set$1=_getNative(_root,"Set"),_Set=Set$1,WeakMap$1=_getNative(_root,"WeakMap"),_WeakMap=WeakMap$1,mapTag$2="[object Map]",objectTag$2="[object Object]",promiseTag="[object Promise]",setTag$2="[object Set]",weakMapTag$2="[object WeakMap]",dataViewTag$2="[object DataView]",dataViewCtorString=_toSource(_DataView),mapCtorString=_toSource(_Map),promiseCtorString=_toSource(_Promise),setCtorString=_toSource(_Set),weakMapCtorString=_toSource(_WeakMap),getTag$1=_baseGetTag;(_DataView&&getTag$1(new _DataView(new ArrayBuffer(1)))!=dataViewTag$2||_Map&&getTag$1(new _Map)!=mapTag$2||_Promise&&getTag$1(_Promise.resolve())!=promiseTag||_Set&&getTag$1(new _Set)!=setTag$2||_WeakMap&&getTag$1(new _WeakMap)!=weakMapTag$2)&&(getTag$1=function(a){var t=_baseGetTag(a),e=t==objectTag$2?a.constructor:void 0,r=e?_toSource(e):"";if(r)switch(r){case dataViewCtorString:return dataViewTag$2;case mapCtorString:return mapTag$2;case promiseCtorString:return promiseTag;case setCtorString:return setTag$2;case weakMapCtorString:return weakMapTag$2}return t});var _getTag=getTag$1,objectProto$12=Object.prototype,hasOwnProperty$9=objectProto$12.hasOwnProperty,_initCloneArray=initCloneArray,Uint8Array$1=_root.Uint8Array,_Uint8Array=Uint8Array$1,_cloneArrayBuffer=cloneArrayBuffer,_cloneDataView=cloneDataView,reFlags=/\w*$/,_cloneRegExp=cloneRegExp,symbolProto$1=_Symbol?_Symbol.prototype:void 0,symbolValueOf=symbolProto$1?symbolProto$1.valueOf:void 0,_cloneSymbol=cloneSymbol,_cloneTypedArray=cloneTypedArray,boolTag$2="[object Boolean]",dateTag$2="[object Date]",mapTag$3="[object Map]",numberTag$2="[object Number]",regexpTag$2="[object RegExp]",setTag$3="[object Set]",stringTag$2="[object String]",symbolTag$2="[object Symbol]",arrayBufferTag$2="[object ArrayBuffer]",dataViewTag$3="[object DataView]",float32Tag$2="[object Float32Array]",float64Tag$2="[object Float64Array]",int8Tag$2="[object Int8Array]",int16Tag$2="[object Int16Array]",int32Tag$2="[object Int32Array]",uint8Tag$2="[object Uint8Array]",uint8ClampedTag$2="[object Uint8ClampedArray]",uint16Tag$2="[object Uint16Array]",uint32Tag$2="[object Uint32Array]",_initCloneByTag=initCloneByTag,objectCreate=Object.create,baseCreate=function(){function a(){}return function(t){if(!isObject_1(t))return {};if(objectCreate)return objectCreate(t);a.prototype=t;var e=new a;return a.prototype=void 0,e}}(),_baseCreate=baseCreate,_initCloneObject=initCloneObject,mapTag$4="[object Map]",_baseIsMap=baseIsMap,nodeIsMap=_nodeUtil&&_nodeUtil.isMap,isMap=nodeIsMap?_baseUnary(nodeIsMap):_baseIsMap,isMap_1=isMap,setTag$4="[object Set]",_baseIsSet=baseIsSet,nodeIsSet=_nodeUtil&&_nodeUtil.isSet,isSet=nodeIsSet?_baseUnary(nodeIsSet):_baseIsSet,isSet_1=isSet,CLONE_DEEP_FLAG$1=1,CLONE_FLAT_FLAG=2,CLONE_SYMBOLS_FLAG$1=4,argsTag="[object Arguments]",arrayTag="[object Array]",boolTag="[object Boolean]",dateTag="[object Date]",errorTag="[object Error]",funcTag$1="[object Function]",genTag$1="[object GeneratorFunction]",mapTag="[object Map]",numberTag="[object Number]",objectTag="[object Object]",regexpTag="[object RegExp]",setTag="[object Set]",stringTag="[object String]",symbolTag$1="[object Symbol]",weakMapTag="[object WeakMap]",arrayBufferTag="[object ArrayBuffer]",dataViewTag="[object DataView]",float32Tag="[object Float32Array]",float64Tag="[object Float64Array]",int8Tag="[object Int8Array]",int16Tag="[object Int16Array]",int32Tag="[object Int32Array]",uint8Tag="[object Uint8Array]",uint8ClampedTag="[object Uint8ClampedArray]",uint16Tag="[object Uint16Array]",uint32Tag="[object Uint32Array]",cloneableTags={};cloneableTags[argsTag]=cloneableTags[arrayTag]=cloneableTags[arrayBufferTag]=cloneableTags[dataViewTag]=cloneableTags[boolTag]=cloneableTags[dateTag]=cloneableTags[float32Tag]=cloneableTags[float64Tag]=cloneableTags[int8Tag]=cloneableTags[int16Tag]=cloneableTags[int32Tag]=cloneableTags[mapTag]=cloneableTags[numberTag]=cloneableTags[objectTag]=cloneableTags[regexpTag]=cloneableTags[setTag]=cloneableTags[stringTag]=cloneableTags[symbolTag$1]=cloneableTags[uint8Tag]=cloneableTags[uint8ClampedTag]=cloneableTags[uint16Tag]=cloneableTags[uint32Tag]=!0,cloneableTags[errorTag]=cloneableTags[funcTag$1]=cloneableTags[weakMapTag]=!1;var _baseClone=baseClone,CLONE_DEEP_FLAG=1,CLONE_SYMBOLS_FLAG=4,cloneDeep_1$1=cloneDeep,isUndefined_1$1=isUndefined,stringTag$3="[object String]",isString_1$1=isString,symbols={48176644:{meta:{setID:"48176644",set:["48176644"],setBaseIDs:["d.cq.2.bbbb.0"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"48176644"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.0",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},54112535:{meta:{setID:"54112535",set:["54112535"],setBaseIDs:["d.bd.2.abbb.0"],rootBaseID:"d.bd.2.abbb",rootIDHash:"54112535"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.0",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bd",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},62519049:{meta:{setID:"62519049",set:["62519049"],setBaseIDs:["d.dk.4.bbbb.0"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"62519049"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.0",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},83023171:{meta:{setID:"83023171",set:["83023171"],setBaseIDs:["d.dw.4.abba.270"],rootBaseID:"d.dw.4.abba",rootIDHash:"83023171"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.270",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3621cc2:{meta:{setID:"e3621cc2",set:["e3621cc2"],setBaseIDs:["g.aa.4.abba.90"],rootBaseID:"g.aa.4.abba",rootIDHash:"e3621cc2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.90",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7faaca8c":{meta:{setID:"7faaca8c",set:["7faaca8c"],setBaseIDs:["d.bj.2.bbbb.0"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"7faaca8c"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.0",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"36a4b4a8":{meta:{setID:"36a4b4a8",set:["36a4b4a8"],setBaseIDs:["d.bh.1.bbbb.0"],rootBaseID:"d.bh.1.bbbb",rootIDHash:"36a4b4a8"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,56,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bh.1.bbbb.0",baseID:"d.bh.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bh",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5dfed122":{meta:{setID:"5dfed122",set:["5dfed122"],setBaseIDs:["d.bi.1.bbbb.0"],rootBaseID:"d.bi.1.bbbb",rootIDHash:"5dfed122"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bi.1.bbbb.0",baseID:"d.bi.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"bi",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},de3bc3d1:{meta:{setID:"de3bc3d1",set:["de3bc3d1"],setBaseIDs:["g.ab.2.bbbb.0"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"de3bc3d1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.0",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"FG",key:"ab",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"587b58fb":{meta:{setID:"587b58fb",set:["587b58fb"],setBaseIDs:["d.bz.4.bbbb.180"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"587b58fb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.180",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"63454c71":{meta:{setID:"63454c71",set:["63454c71"],setBaseIDs:["d.el.4.abba.90"],rootBaseID:"d.el.4.abba",rootIDHash:"63454c71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.90",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66b0fffd":{meta:{setID:"66b0fffd",set:["66b0fffd"],setBaseIDs:["d.bk.4.bbbb.0"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"66b0fffd"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.0",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7a365cc2":{meta:{setID:"7a365cc2",set:["7a365cc2"],setBaseIDs:["g.ad.1.bbbb.0"],rootBaseID:"g.ad.1.bbbb",rootIDHash:"7a365cc2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 64 C 0 28.65378189086914 28.65378189086914 0 64 0 C 99.34622192382812 0 128 28.65378189086914 128 64 C 128 99.34622192382812 99.34622192382812 128 64 128 C 28.65378189086914 128 0 99.34622192382812 0 64 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ad.1.bbbb.0",baseID:"g.ad.1.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"ad",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2befa75a":{meta:{setID:"2befa75a",set:["2befa75a"],setBaseIDs:["d.bv.1.bbbb.0"],rootBaseID:"d.bv.1.bbbb",rootIDHash:"2befa75a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,55,55)"},children:[{attr:{d:"M 9 2 C 5.134006977081299 2 2 5.134006977081299 2 9 C 2 12.86599349975586 5.134006977081299 16 9 16 C 12.86599349975586 16 16 12.86599349975586 16 9 C 16 5.134006977081299 12.86599349975586 2 9 2 Z M 0 9 C 0 4.029437065124512 4.029437065124512 0 9 0 C 13.970562934875488 0 18 4.029437065124512 18 9 C 18 13.970562934875488 13.970562934875488 18 9 18 C 4.029437065124512 18 0 13.970562934875488 0 9 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bv.1.bbbb.0",baseID:"d.bv.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adfbec3:{meta:{setID:"adfbec3",set:["adfbec3"],setBaseIDs:["d.bq.4.abbb.0"],rootBaseID:"d.bq.4.abbb",rootIDHash:"adfbec3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.0",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bq",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a5c31631:{meta:{setID:"a5c31631",set:["a5c31631"],setBaseIDs:["g.aa.4.abba.270"],rootBaseID:"g.aa.4.abba",rootIDHash:"a5c31631"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.270",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b7b090cf:{meta:{setID:"b7b090cf",set:["b7b090cf"],setBaseIDs:["d.bm.1.bbbb.0"],rootBaseID:"d.bm.1.bbbb",rootIDHash:"b7b090cf"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.836585998535156 24.836563110351562 32 16 32 C 7.1634368896484375 32 0 24.836585998535156 0 16 C 0 7.163410186767578 7.1634368896484375 0 16 0 C 24.836563110351562 0 32 7.163410186767578 32 16 Z M 16 24 C 20.41828155517578 24 24 20.41828155517578 24 16 C 24 11.581722259521484 20.41828155517578 8 16 8 C 11.581722259521484 8 8 11.581722259521484 8 16 C 8 20.41828155517578 11.581722259521484 24 16 24 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bm.1.bbbb.0",baseID:"d.bm.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"362aae07":{meta:{setID:"362aae07",set:["362aae07"],setBaseIDs:["g.ab.2.bbbb.90"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"362aae07"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.90",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"FG",key:"ab",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b193cb04:{meta:{setID:"b193cb04",set:["b193cb04"],setBaseIDs:["d.bb.1.bbbb.0"],rootBaseID:"d.bb.1.bbbb",rootIDHash:"b193cb04"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,31)"},children:[{attr:{d:"M 33 64 C 50.120826721191406 64 64 50.120826721191406 64 33 C 64 15.879173278808594 50.120826721191406 2 33 2 C 15.879173278808594 2 2 15.879173278808594 2 33 C 2 50.120826721191406 15.879173278808594 64 33 64 Z M 33 66 C 51.22539520263672 66 66 51.22539520263672 66 33 C 66 14.774604797363281 51.22539520263672 0 33 0 C 14.774604797363281 0 0 14.774604797363281 0 33 C 0 51.22539520263672 14.774604797363281 66 33 66 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bb.1.bbbb.0",baseID:"d.bb.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bb",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fbf3a00b:{meta:{setID:"fbf3a00b",set:["fbf3a00b"],setBaseIDs:["g.af.1.aaaa.0"],rootBaseID:"g.af.1.aaaa",rootIDHash:"fbf3a00b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.af.1.aaaa.0",baseID:"g.af.1.aaaa",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"af",edgemap:["a","a","a","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b0aeb7df:{meta:{setID:"b0aeb7df",set:["b0aeb7df"],setBaseIDs:["d.cj.4.bbbb.0"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"b0aeb7df"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.0",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82ff5e94":{meta:{setID:"82ff5e94",set:["82ff5e94"],setBaseIDs:["g.aa.4.abba.180"],rootBaseID:"g.aa.4.abba",rootIDHash:"82ff5e94"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.180",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"92e85004":{meta:{setID:"92e85004",set:["92e85004"],setBaseIDs:["d.dj.4.bbbb.180"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"92e85004"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.180",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"19634ad2":{meta:{setID:"19634ad2",set:["19634ad2"],setBaseIDs:["g.ac.4.bbba.0"],rootBaseID:"g.ac.4.bbba",rootIDHash:"19634ad2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.0",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"ac",edgemap:["b","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"42b4e3a3":{meta:{setID:"42b4e3a3",set:["42b4e3a3"],setBaseIDs:["d.cv.2.bbbb.0"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"42b4e3a3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.0",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"335e8694":{meta:{setID:"335e8694",set:["335e8694"],setBaseIDs:["d.dj.4.bbbb.270"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"335e8694"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.270",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2f5059f3":{meta:{setID:"2f5059f3",set:["2f5059f3"],setBaseIDs:["d.do.4.bbbb.180"],rootBaseID:"d.do.4.bbbb",rootIDHash:"2f5059f3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.180",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4d0779c1":{meta:{setID:"4d0779c1",set:["4d0779c1"],setBaseIDs:["d.di.4.bbbb.90"],rootBaseID:"d.di.4.bbbb",rootIDHash:"4d0779c1"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.90",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"869bd8d8":{meta:{setID:"869bd8d8",set:["869bd8d8"],setBaseIDs:["d.bf.2.bbbb.90"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"869bd8d8"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.90",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bf",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"57ed51b0":{meta:{setID:"57ed51b0",set:["57ed51b0"],setBaseIDs:["d.dv.4.abba.90"],rootBaseID:"d.dv.4.abba",rootIDHash:"57ed51b0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.90",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b0ac0b82:{meta:{setID:"b0ac0b82",set:["b0ac0b82"],setBaseIDs:["g.ac.4.bbba.180"],rootBaseID:"g.ac.4.bbba",rootIDHash:"b0ac0b82"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.180",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"10545ed3":{meta:{setID:"10545ed3",set:["10545ed3"],setBaseIDs:["d.do.4.bbbb.0"],rootBaseID:"d.do.4.bbbb",rootIDHash:"10545ed3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.0",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"do",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fd1b186c:{meta:{setID:"fd1b186c",set:["fd1b186c"],setBaseIDs:["d.bl.2.bbbb.90"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"fd1b186c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.90",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e5fae2fb:{meta:{setID:"e5fae2fb",set:["e5fae2fb"],setBaseIDs:["d.bj.2.bbbb.90"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"e5fae2fb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.90",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bddfa3f3:{meta:{setID:"bddfa3f3",set:["bddfa3f3"],setBaseIDs:["d.ba.1.bbbb.0"],rootBaseID:"d.ba.1.bbbb",rootIDHash:"bddfa3f3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.83655548095703 24.83655548095703 32 16 32 C 7.163444519042969 32 0 24.83655548095703 0 16 C 0 7.163444519042969 7.163444519042969 0 16 0 C 24.83655548095703 0 32 7.163444519042969 32 16 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ba.1.bbbb.0",baseID:"d.ba.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ba",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82610c41":{meta:{setID:"82610c41",set:["82610c41"],setBaseIDs:["d.ea.1.abba.0"],rootBaseID:"d.ea.1.abba",rootIDHash:"82610c41"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,15)"},children:[{attr:{d:"M 49 2 C 23.042621612548828 2 2 23.042621612548828 2 49 C 2 74.95738220214844 23.042621612548828 96 49 96 C 74.95738220214844 96 96 74.95738220214844 96 49 C 96 23.042621612548828 74.95738220214844 2 49 2 Z M 0 49 C 0 21.938051223754883 21.938051223754883 0 49 0 C 76.06195068359375 0 98 21.938051223754883 98 49 C 98 76.06195068359375 76.06195068359375 98 49 98 C 21.938051223754883 98 0 76.06195068359375 0 49 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ea.1.abba.0",baseID:"d.ea.1.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ea",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"613cb28b":{meta:{setID:"613cb28b",set:["613cb28b"],setBaseIDs:["d.bq.4.abbb.90"],rootBaseID:"d.bq.4.abbb",rootIDHash:"613cb28b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.90",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc65290b:{meta:{setID:"fc65290b",set:["fc65290b"],setBaseIDs:["d.cp.4.bbbb.180"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"fc65290b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.180",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"952f1d85":{meta:{setID:"952f1d85",set:["952f1d85"],setBaseIDs:["d.ef.4.abba.90"],rootBaseID:"d.ef.4.abba",rootIDHash:"952f1d85"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.90",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb9b5189:{meta:{setID:"cb9b5189",set:["cb9b5189"],setBaseIDs:["d.dt.4.abba.90"],rootBaseID:"d.dt.4.abba",rootIDHash:"cb9b5189"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,46,0)"},children:[{attr:{d:"M 2 0 C 2 8.836556434631348 9.163443565368652 16 18 16 C 26.836557388305664 16 34 8.836556434631348 34 0 L 36 0 C 36 9.941126823425293 27.941125869750977 18 18 18 C 8.058874130249023 18 0 9.941126823425293 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dt.4.abba.90",baseID:"d.dt.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"462c645e":{meta:{setID:"462c645e",set:["462c645e"],setBaseIDs:["d.dl.4.bbbb.180"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"462c645e"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.180",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d1fb16cc:{meta:{setID:"d1fb16cc",set:["d1fb16cc"],setBaseIDs:["d.cz.4.bbbb.0"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"d1fb16cc"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.0",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cb74008":{meta:{setID:"6cb74008",set:["6cb74008"],setBaseIDs:["g.aa.4.abba.0"],rootBaseID:"g.aa.4.abba",rootIDHash:"6cb74008"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.0",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"aa",edgemap:["a","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2639d7d4":{meta:{setID:"2639d7d4",set:["2639d7d4"],setBaseIDs:["d.bo.4.bbba.90"],rootBaseID:"d.bo.4.bbba",rootIDHash:"2639d7d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.90",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bo",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},c7af9494:{meta:{setID:"c7af9494",set:["c7af9494"],setBaseIDs:["d.dk.4.bbbb.270"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"c7af9494"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.270",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7210b66f":{meta:{setID:"7210b66f",set:["7210b66f"],setBaseIDs:["d.bo.4.bbba.0"],rootBaseID:"d.bo.4.bbba",rootIDHash:"7210b66f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.0",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bo",edgemap:["b","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"18f6b23e":{meta:{setID:"18f6b23e",set:["18f6b23e"],setBaseIDs:["d.cp.4.bbbb.0"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"18f6b23e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.0",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"13446f50":{meta:{setID:"13446f50",set:["13446f50"],setBaseIDs:["d.el.4.abba.0"],rootBaseID:"d.el.4.abba",rootIDHash:"13446f50"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.0",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"el",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2b187d87":{meta:{setID:"2b187d87",set:["2b187d87"],setBaseIDs:["d.bg.2.bbbb.0"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"2b187d87"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.0",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bg",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1c9d4f11":{meta:{setID:"1c9d4f11",set:["1c9d4f11"],setBaseIDs:["d.do.4.bbbb.270"],rootBaseID:"d.do.4.bbbb",rootIDHash:"1c9d4f11"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.270",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"69daeb1a":{meta:{setID:"69daeb1a",set:["69daeb1a"],setBaseIDs:["d.da.2.bbbb.90"],rootBaseID:"d.da.2.bbbb",rootIDHash:"69daeb1a"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.90",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"da",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe5cf0f4:{meta:{setID:"fe5cf0f4",set:["fe5cf0f4"],setBaseIDs:["d.bf.2.bbbb.0"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"fe5cf0f4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.0",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bf",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9e7ddd3d":{meta:{setID:"9e7ddd3d",set:["9e7ddd3d"],setBaseIDs:["d.cs.2.bbbb.0"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"9e7ddd3d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.0",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cs",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3cdcdb8c":{meta:{setID:"3cdcdb8c",set:["3cdcdb8c"],setBaseIDs:["d.dr.8.abba.90"],rootBaseID:"d.dr.8.abba",rootIDHash:"3cdcdb8c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 105.84061431884766 18.159381866455078 C 94.62081909179688 6.939587593078613 79.1208267211914 0 62 0 C 27.75835418701172 0 0 27.75835418701172 0 62 C 0 79.1208267211914 6.939587593078613 94.62081909179688 18.159381866455078 105.84061431884766 L 105.84061431884766 18.159381866455078 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dr.8.abba.90",baseID:"d.dr.8.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:8,paint:"BG",key:"dr",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},acc8c8fb:{meta:{setID:"acc8c8fb",set:["acc8c8fb"],setBaseIDs:["d.ef.4.abba.0"],rootBaseID:"d.ef.4.abba",rootIDHash:"acc8c8fb"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.0",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ef",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4dae70af":{meta:{setID:"4dae70af",set:["4dae70af"],setBaseIDs:["d.dl.4.bbbb.0"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4dae70af"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.0",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f0d5fe71:{meta:{setID:"f0d5fe71",set:["f0d5fe71"],setBaseIDs:["d.cz.4.bbbb.180"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"f0d5fe71"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.180",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb81c430:{meta:{setID:"cb81c430",set:["cb81c430"],setBaseIDs:["d.dj.4.bbbb.0"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"cb81c430"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.0",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},efa22418:{meta:{setID:"efa22418",set:["efa22418"],setBaseIDs:["d.el.4.abba.180"],rootBaseID:"d.el.4.abba",rootIDHash:"efa22418"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.180",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66fbf43f":{meta:{setID:"66fbf43f",set:["66fbf43f"],setBaseIDs:["d.bz.4.bbbb.0"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"66fbf43f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.0",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6245af61":{meta:{setID:"6245af61",set:["6245af61"],setBaseIDs:["d.di.4.bbbb.0"],rootBaseID:"d.di.4.bbbb",rootIDHash:"6245af61"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.0",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"di",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d93ccb2:{meta:{setID:"d93ccb2",set:["d93ccb2"],setBaseIDs:["g.ac.4.bbba.90"],rootBaseID:"g.ac.4.bbba",rootIDHash:"d93ccb2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.90",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7191ec30":{meta:{setID:"7191ec30",set:["7191ec30"],setBaseIDs:["d.do.4.bbbb.90"],rootBaseID:"d.do.4.bbbb",rootIDHash:"7191ec30"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.90",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},faa6eb0:{meta:{setID:"faa6eb0",set:["faa6eb0"],setBaseIDs:["d.bg.2.bbbb.90"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"faa6eb0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.90",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a0991dbc:{meta:{setID:"a0991dbc",set:["a0991dbc"],setBaseIDs:["d.cf.4.bbbb.90"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"a0991dbc"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.90",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"cf",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},c3bebfe6:{meta:{setID:"c3bebfe6",set:["c3bebfe6"],setBaseIDs:["d.dm.4.bbbb.90"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"c3bebfe6"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.90",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"87cb2bff":{meta:{setID:"87cb2bff",set:["87cb2bff"],setBaseIDs:["d.dd.4.bbbb.0"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"87cb2bff"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.0",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dd",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"603da034":{meta:{setID:"603da034",set:["603da034"],setBaseIDs:["d.dv.4.abba.0"],rootBaseID:"d.dv.4.abba",rootIDHash:"603da034"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.0",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dv",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f3633360:{meta:{setID:"f3633360",set:["f3633360"],setBaseIDs:["d.dw.4.abba.0"],rootBaseID:"d.dw.4.abba",rootIDHash:"f3633360"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.0",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dw",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6acd7409":{meta:{setID:"6acd7409",set:["6acd7409"],setBaseIDs:["d.dv.4.abba.180"],rootBaseID:"d.dv.4.abba",rootIDHash:"6acd7409"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.180",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad7dd51b:{meta:{setID:"ad7dd51b",set:["ad7dd51b"],setBaseIDs:["d.ds.4.abba.270"],rootBaseID:"d.ds.4.abba",rootIDHash:"ad7dd51b"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.270",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6615d02d":{meta:{setID:"6615d02d",set:["6615d02d"],setBaseIDs:["d.bq.4.abbb.180"],rootBaseID:"d.bq.4.abbb",rootIDHash:"6615d02d"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.180",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5ba1ba9b":{meta:{setID:"5ba1ba9b",set:["5ba1ba9b"],setBaseIDs:["d.dp.1.bbbb.0"],rootBaseID:"d.dp.1.bbbb",rootIDHash:"5ba1ba9b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z M 48 88 C 70.09139251708984 88 88 70.09139251708984 88 48 C 88 25.908611297607422 70.09139251708984 8 48 8 C 25.908611297607422 8 8 25.908611297607422 8 48 C 8 70.09139251708984 25.908611297607422 88 48 88 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dp.1.bbbb.0",baseID:"d.dp.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf0f809a:{meta:{setID:"cf0f809a",set:["cf0f809a"],setBaseIDs:["d.dq.1.bbbb.0"],rootBaseID:"d.dq.1.bbbb",rootIDHash:"cf0f809a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z M 32 56 C 45.25483703613281 56 56 45.25483703613281 56 32 C 56 18.745166778564453 45.25483703613281 8 32 8 C 18.745166778564453 8 8 18.745166778564453 8 32 C 8 45.25483703613281 18.745166778564453 56 32 56 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dq.1.bbbb.0",baseID:"d.dq.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9ebd20ff":{meta:{setID:"9ebd20ff",set:["9ebd20ff"],setBaseIDs:["d.cp.4.bbbb.270"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"9ebd20ff"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.270",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5e841ec3":{meta:{setID:"5e841ec3",set:["5e841ec3"],setBaseIDs:["d.ef.4.abba.270"],rootBaseID:"d.ef.4.abba",rootIDHash:"5e841ec3"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.270",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},afc30081:{meta:{setID:"afc30081",set:["afc30081"],setBaseIDs:["d.bk.4.bbbb.270"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"afc30081"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.270",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c4076d5":{meta:{setID:"4c4076d5",set:["4c4076d5"],setBaseIDs:["d.cu.2.bbbb.90"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"4c4076d5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.90",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cu",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d6753be3:{meta:{setID:"d6753be3",set:["d6753be3"],setBaseIDs:["d.dd.4.bbbb.180"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"d6753be3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.180",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b788c92f:{meta:{setID:"b788c92f",set:["b788c92f"],setBaseIDs:["d.de.2.bbbb.0"],rootBaseID:"d.de.2.bbbb",rootIDHash:"b788c92f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.0",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"de",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a4ed278a:{meta:{setID:"a4ed278a",set:["a4ed278a"],setBaseIDs:["d.cj.4.bbbb.180"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"a4ed278a"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.180",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},eb608ee5:{meta:{setID:"eb608ee5",set:["eb608ee5"],setBaseIDs:["d.bk.4.bbbb.90"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"eb608ee5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.90",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"52a6a74c":{meta:{setID:"52a6a74c",set:["52a6a74c"],setBaseIDs:["d.ct.2.bbbb.90"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"52a6a74c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.90",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ct",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e2f4d6e2:{meta:{setID:"e2f4d6e2",set:["e2f4d6e2"],setBaseIDs:["d.ct.2.bbbb.0"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"e2f4d6e2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.0",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ct",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e6117eb6:{meta:{setID:"e6117eb6",set:["e6117eb6"],setBaseIDs:["d.dd.4.bbbb.270"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"e6117eb6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.270",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b397af9f:{meta:{setID:"b397af9f",set:["b397af9f"],setBaseIDs:["d.cz.4.bbbb.270"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"b397af9f"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.270",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"427a1751":{meta:{setID:"427a1751",set:["427a1751"],setBaseIDs:["d.dn.4.bbbb.0"],rootBaseID:"d.dn.4.bbbb",rootIDHash:"427a1751"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,47)"},children:[{attr:{d:"M 17 17 C 17 7.6111602783203125 9.388839721679688 0 0 0 L 0 2 C 8.284271240234375 2 15 8.715728759765625 15 17 L 17 17 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dn.4.bbbb.0",baseID:"d.dn.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1735a791":{meta:{setID:"1735a791",set:["1735a791"],setBaseIDs:["d.by.1.bbbb.0"],rootBaseID:"d.by.1.bbbb",rootIDHash:"1735a791"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,47)"},children:[{attr:{d:"M 17 2 C 8.715728759765625 2 2 8.715728759765625 2 17 C 2 25.284271240234375 8.715728759765625 32 17 32 C 25.284271240234375 32 32 25.284271240234375 32 17 C 32 8.715728759765625 25.284271240234375 2 17 2 Z M 0 17 C 0 7.6111602783203125 7.6111602783203125 0 17 0 C 26.388839721679688 0 34 7.6111602783203125 34 17 C 34 26.388839721679688 26.388839721679688 34 17 34 C 7.6111602783203125 34 0 26.388839721679688 0 17 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.by.1.bbbb.0",baseID:"d.by.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"by",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"28b33136":{meta:{setID:"28b33136",set:["28b33136"],setBaseIDs:["g.ac.4.bbba.270"],rootBaseID:"g.ac.4.bbba",rootIDHash:"28b33136"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.270",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"672fdf93":{meta:{setID:"672fdf93",set:["672fdf93"],setBaseIDs:["d.eg.4.abba.0"],rootBaseID:"d.eg.4.abba",rootIDHash:"672fdf93"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.0",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"eg",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f49b158d:{meta:{setID:"f49b158d",set:["f49b158d"],setBaseIDs:["d.cf.4.bbbb.0"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"f49b158d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.0",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"cf",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cf35bfb":{meta:{setID:"6cf35bfb",set:["6cf35bfb"],setBaseIDs:["d.de.2.bbbb.90"],rootBaseID:"d.de.2.bbbb",rootIDHash:"6cf35bfb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.90",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"de",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c1ac47d":{meta:{setID:"4c1ac47d",set:["4c1ac47d"],setBaseIDs:["d.cn.1.bbbb.0"],rootBaseID:"d.cn.1.bbbb",rootIDHash:"4c1ac47d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cn.1.bbbb.0",baseID:"d.cn.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9b3aa0b1":{meta:{setID:"9b3aa0b1",set:["9b3aa0b1"],setBaseIDs:["d.cu.2.bbbb.0"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"9b3aa0b1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.0",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cu",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf042a60:{meta:{setID:"cf042a60",set:["cf042a60"],setBaseIDs:["d.bn.4.abba.0"],rootBaseID:"d.bn.4.abba",rootIDHash:"cf042a60"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.0",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bn",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"44e1402d":{meta:{setID:"44e1402d",set:["44e1402d"],setBaseIDs:["d.da.2.bbbb.0"],rootBaseID:"d.da.2.bbbb",rootIDHash:"44e1402d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.0",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"da",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e53a31b5:{meta:{setID:"e53a31b5",set:["e53a31b5"],setBaseIDs:["d.cl.1.bbbb.0"],rootBaseID:"d.cl.1.bbbb",rootIDHash:"e53a31b5"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,40,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cl.1.bbbb.0",baseID:"d.cl.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2ab4bc02":{meta:{setID:"2ab4bc02",set:["2ab4bc02"],setBaseIDs:["d.dw.4.abba.90"],rootBaseID:"d.dw.4.abba",rootIDHash:"2ab4bc02"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.90",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4456d619":{meta:{setID:"4456d619",set:["4456d619"],setBaseIDs:["d.dl.4.bbbb.90"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4456d619"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.90",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adafc09c:{meta:{setID:"adafc09c",set:["adafc09c"],setBaseIDs:["d.cp.4.bbbb.90"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"adafc09c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.90",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d7e0d9e:{meta:{setID:"d7e0d9e",set:["d7e0d9e"],setBaseIDs:["d.di.4.bbbb.270"],rootBaseID:"d.di.4.bbbb",rootIDHash:"d7e0d9e"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.270",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1d989f87":{meta:{setID:"1d989f87",set:["1d989f87"],setBaseIDs:["d.cz.4.bbbb.90"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"1d989f87"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.90",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b09cf4ef:{meta:{setID:"b09cf4ef",set:["b09cf4ef"],setBaseIDs:["d.cw.4.bbbb.270"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b09cf4ef"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.270",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"510344a7":{meta:{setID:"510344a7",set:["510344a7"],setBaseIDs:["d.cj.4.bbbb.270"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"510344a7"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.270",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ae1e4f7:{meta:{setID:"ae1e4f7",set:["ae1e4f7"],setBaseIDs:["d.dk.4.bbbb.180"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"ae1e4f7"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.180",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb651938:{meta:{setID:"fb651938",set:["fb651938"],setBaseIDs:["d.dw.4.abba.180"],rootBaseID:"d.dw.4.abba",rootIDHash:"fb651938"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.180",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d560b8b":{meta:{setID:"8d560b8b",set:["8d560b8b"],setBaseIDs:["d.dx.4.abba.0"],rootBaseID:"d.dx.4.abba",rootIDHash:"8d560b8b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-5.665972113147108e-14,33)"},children:[{attr:{d:"M 21.40327262878418 118.3283462524414 C 25.199352264404297 124.80017852783203 29.149702072143555 127.96875 33 127.96875 L 33 130 C 28.013748168945312 130 23.54582405090332 125.95003509521484 19.68505096435547 119.367919921875 C 15.785710334777832 112.72005462646484 12.309096336364746 103.16806030273438 9.4028959274292 91.453857421875 C 3.5866384506225586 68.00990295410156 0 35.67653274536133 0 0 L 2 0 C 2 35.55952072143555 5.576811790466309 67.71833801269531 11.342279434204102 90.95755767822266 C 14.226941108703613 102.58494567871094 17.64575958251953 111.92227935791016 21.40327262878418 118.3283462524414 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dx.4.abba.0",baseID:"d.dx.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dx",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f3841fc":{meta:{setID:"9f3841fc",set:["9f3841fc"],setBaseIDs:["d.dv.4.abba.270"],rootBaseID:"d.dv.4.abba",rootIDHash:"9f3841fc"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.270",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"59d9e201":{meta:{setID:"59d9e201",set:["59d9e201"],setBaseIDs:["d.dd.4.bbbb.90"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"59d9e201"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.90",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad042183:{meta:{setID:"ad042183",set:["ad042183"],setBaseIDs:["d.cq.2.bbbb.90"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"ad042183"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.90",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1b1fba11":{meta:{setID:"1b1fba11",set:["1b1fba11"],setBaseIDs:["d.bd.2.abbb.90"],rootBaseID:"d.bd.2.abbb",rootIDHash:"1b1fba11"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.90",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cbdce7a4:{meta:{setID:"cbdce7a4",set:["cbdce7a4"],setBaseIDs:["d.bl.2.bbbb.0"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"cbdce7a4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.0",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bfc8669e:{meta:{setID:"bfc8669e",set:["bfc8669e"],setBaseIDs:["d.cj.4.bbbb.90"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"bfc8669e"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.90",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"81113d71":{meta:{setID:"81113d71",set:["81113d71"],setBaseIDs:["d.dh.4.bbbb.90"],rootBaseID:"d.dh.4.bbbb",rootIDHash:"81113d71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 29.9384765625 C 16.08001708984375 28.94677734375 28.94690704345703 16.080078125 29.938514709472656 0 L 0 0 L 0 29.9384765625 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dh.4.bbbb.90",baseID:"d.dh.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dh",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f6bb8637:{meta:{setID:"f6bb8637",set:["f6bb8637"],setBaseIDs:["d.cx.4.bbbb.90"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"f6bb8637"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.90",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cx",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a2880ff1:{meta:{setID:"a2880ff1",set:["a2880ff1"],setBaseIDs:["d.dm.4.bbbb.0"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"a2880ff1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.0",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5a85e6f7":{meta:{setID:"5a85e6f7",set:["5a85e6f7"],setBaseIDs:["d.cv.2.bbbb.90"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"5a85e6f7"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.90",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8c89b36e":{meta:{setID:"8c89b36e",set:["8c89b36e"],setBaseIDs:["d.ds.4.abba.0"],rootBaseID:"d.ds.4.abba",rootIDHash:"8c89b36e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.0",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ds",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"824e5e1f":{meta:{setID:"824e5e1f",set:["824e5e1f"],setBaseIDs:["d.ef.4.abba.180"],rootBaseID:"d.ef.4.abba",rootIDHash:"824e5e1f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.180",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"83856b0b":{meta:{setID:"83856b0b",set:["83856b0b"],setBaseIDs:["d.ds.4.abba.90"],rootBaseID:"d.ds.4.abba",rootIDHash:"83856b0b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.90",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1e0083d1":{meta:{setID:"1e0083d1",set:["1e0083d1"],setBaseIDs:["d.el.4.abba.270"],rootBaseID:"d.el.4.abba",rootIDHash:"1e0083d1"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.270",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4b097186":{meta:{setID:"4b097186",set:["4b097186"],setBaseIDs:["d.eg.4.abba.90"],rootBaseID:"d.eg.4.abba",rootIDHash:"4b097186"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.90",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3f1ef01:{meta:{setID:"e3f1ef01",set:["e3f1ef01"],setBaseIDs:["d.bn.4.abba.180"],rootBaseID:"d.bn.4.abba",rootIDHash:"e3f1ef01"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.180",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"372ac81b":{meta:{setID:"372ac81b",set:["372ac81b"],setBaseIDs:["d.bk.4.bbbb.180"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"372ac81b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.180",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"387e568f":{meta:{setID:"387e568f",set:["387e568f"],setBaseIDs:["d.di.4.bbbb.180"],rootBaseID:"d.di.4.bbbb",rootIDHash:"387e568f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.180",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc9ea1e2:{meta:{setID:"fc9ea1e2",set:["fc9ea1e2"],setBaseIDs:["d.bn.4.abba.90"],rootBaseID:"d.bn.4.abba",rootIDHash:"fc9ea1e2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.90",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7d18e429":{meta:{setID:"7d18e429",set:["7d18e429"],setBaseIDs:["d.ci.4.bbbb.180"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"7d18e429"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.180",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d842a67d:{meta:{setID:"d842a67d",set:["d842a67d"],setBaseIDs:["d.ec.2.abba.0"],rootBaseID:"d.ec.2.abba",rootIDHash:"d842a67d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.0",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ec",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe4199fc:{meta:{setID:"fe4199fc",set:["fe4199fc"],setBaseIDs:["d.dm.4.bbbb.180"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"fe4199fc"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.180",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"975397b2":{meta:{setID:"975397b2",set:["975397b2"],setBaseIDs:["d.eg.4.abba.270"],rootBaseID:"d.eg.4.abba",rootIDHash:"975397b2"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.270",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b645c8d3:{meta:{setID:"b645c8d3",set:["b645c8d3"],setBaseIDs:["d.cw.4.bbbb.0"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b645c8d3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.0",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cw",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d8261d6":{meta:{setID:"8d8261d6",set:["8d8261d6"],setBaseIDs:["d.bn.4.abba.270"],rootBaseID:"d.bn.4.abba",rootIDHash:"8d8261d6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.270",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ab99a1a:{meta:{setID:"ab99a1a",set:["ab99a1a"],setBaseIDs:["d.em.4.abba.0"],rootBaseID:"d.em.4.abba",rootIDHash:"ab99a1a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,57.359375)"},children:[{attr:{d:"M 54.359222412109375 0 C 40.325164794921875 13.78662109375 21.164825439453125 22.3719482421875 0 22.634521484375 L 0 68.6251220703125 C 34.000030517578125 68.0960693359375 64.73162841796875 54.0999755859375 87.095458984375 31.7362060546875 L 54.359222412109375 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.em.4.abba.0",baseID:"d.em.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"em",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"20fd4083":{meta:{setID:"20fd4083",set:["20fd4083"],setBaseIDs:["d.bq.4.abbb.270"],rootBaseID:"d.bq.4.abbb",rootIDHash:"20fd4083"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.270",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7fcb0d8f":{meta:{setID:"7fcb0d8f",set:["7fcb0d8f"],setBaseIDs:["d.cw.4.bbbb.90"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"7fcb0d8f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.90",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6e9d4a77":{meta:{setID:"6e9d4a77",set:["6e9d4a77"],setBaseIDs:["d.dj.4.bbbb.90"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"6e9d4a77"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.90",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82e8305":{meta:{setID:"82e8305",set:["82e8305"],setBaseIDs:["d.ec.2.abba.90"],rootBaseID:"d.ec.2.abba",rootIDHash:"82e8305"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.90",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ec",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a9e89fe4:{meta:{setID:"a9e89fe4",set:["a9e89fe4"],setBaseIDs:["d.cw.4.bbbb.180"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"a9e89fe4"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.180",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d24107f2:{meta:{setID:"d24107f2",set:["d24107f2"],setBaseIDs:["d.ds.4.abba.180"],rootBaseID:"d.ds.4.abba",rootIDHash:"d24107f2"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.180",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb44703d:{meta:{setID:"cb44703d",set:["cb44703d"],setBaseIDs:["d.ci.4.bbbb.90"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"cb44703d"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.90",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6b5e126b":{meta:{setID:"6b5e126b",set:["6b5e126b"],setBaseIDs:["d.ee.4.abba.180"],rootBaseID:"d.ee.4.abba",rootIDHash:"6b5e126b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,-2)"},children:[{attr:{d:"M 31 33.5 C 31 16.152257919311523 17.135732650756836 2.0615384578704834 0 2.0615384578704834 L 0 0 C 18.210493087768555 0 33 14.983217239379883 33 33.5 C 33 52.016780853271484 18.210493087768555 67 0 67 L 0 64.93846130371094 C 17.135732650756836 64.93846130371094 31 50.84773635864258 31 33.5 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ee.4.abba.180",baseID:"d.ee.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ee",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3d22f9b0":{meta:{setID:"3d22f9b0",set:["3d22f9b0"],setBaseIDs:["d.dl.4.bbbb.270"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"3d22f9b0"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.270",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb5ca265:{meta:{setID:"fb5ca265",set:["fb5ca265"],setBaseIDs:["d.cs.2.bbbb.90"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"fb5ca265"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.90",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cs",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ec96cafb:{meta:{setID:"ec96cafb",set:["ec96cafb"],setBaseIDs:["d.bt.4.bbbb.180"],rootBaseID:"d.bt.4.bbbb",rootIDHash:"ec96cafb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.5299989581108093,0.847998321056366,-0.847998321056366,0.5299989581108093,1.269600510597229,-0.7934557199478149)"},children:[{attr:{d:"M 150.94369506835938 1.9943454265594482 L 0 1.9943454265594482 L 0 0 L 150.94369506835938 0 L 150.94369506835938 1.9943454265594482 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bt.4.bbbb.180",baseID:"d.bt.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f680a2b":{meta:{setID:"9f680a2b",set:["9f680a2b"],setBaseIDs:["d.ce.1.bbbb.0"],rootBaseID:"d.ce.1.bbbb",rootIDHash:"9f680a2b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ce.1.bbbb.0",baseID:"d.ce.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ce",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b46295d4:{meta:{setID:"b46295d4",set:["b46295d4"],setBaseIDs:["d.bz.4.bbbb.90"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"b46295d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.90",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2d91e72f":{meta:{setID:"2d91e72f",set:["2d91e72f"],setBaseIDs:["d.dk.4.bbbb.90"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"2d91e72f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.90",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"55d21172":{meta:{setID:"55d21172",set:["55d21172"],setBaseIDs:["d.cx.4.bbbb.0"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"55d21172"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.0",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cx",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6f23470b":{meta:{setID:"6f23470b",set:["6f23470b"],setBaseIDs:["d.ca.4.bbbb.180"],rootBaseID:"d.ca.4.bbbb",rootIDHash:"6f23470b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0.8699696660041809,0.8699747920036316)"},children:[{attr:{d:"M 112.12674713134766 0 C 111.66136932373047 61.71796417236328 61.71796798706055 111.66136932373047 0 112.12674713134766 C 0.07810759544372559 111.4577407836914 0.161374032497406 110.79031372070312 0.24975842237472534 110.12449645996094 C 60.66484069824219 109.52742767333984 109.52742767333984 60.66484069824219 110.12449645996094 0.2497583031654358 C 110.79031372070312 0.16137391328811646 111.4577407836914 0.07810753583908081 112.12674713134766 0 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 96.05703735351562 2.9277095794677734 C 94.11087036132812 53.479217529296875 53.47922134399414 94.11087799072266 2.92771053314209 96.05703735351562 C 3.0964479446411133 95.3803939819336 3.2705700397491455 94.70587921142578 3.450028657913208 94.0335464477539 C 52.480045318603516 91.8392105102539 91.8392105102539 52.480045318603516 94.0335464477539 3.4500277042388916 C 94.70587921142578 3.270569086074829 95.3803939819336 3.096446990966797 96.05703735351562 2.9277095794677734 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 8.235589027404785 79.62393188476562 C 45.69525909423828 75.4333724975586 75.4333724975586 45.69525909423828 79.62393188476562 8.235587120056152 C 78.9149169921875 8.519139289855957 78.20903015136719 8.808850288391113 77.50634002685547 9.104653358459473 C 73.0142822265625 44.75928497314453 44.75929260253906 73.0142822265625 9.104655265808105 77.50634002685547 C 8.808852195739746 78.20903015136719 8.51914119720459 78.9149169921875 8.235589027404785 79.62393188476562 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 17.15437126159668 61.59848403930664 C 38.56138610839844 55.43290328979492 55.43291091918945 38.56138610839844 61.59849166870117 17.15437126159668 C 60.73215103149414 17.67171287536621 59.8724365234375 18.198997497558594 59.019508361816406 18.736074447631836 C 52.795589447021484 37.75990295410156 37.75990295410156 52.79558563232422 18.73607635498047 59.01950454711914 C 18.198999404907227 59.872432708740234 17.67171287536621 60.73214340209961 17.15437126159668 61.59848403930664 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ca.4.bbbb.180",baseID:"d.ca.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ca",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"235d50bf":{meta:{setID:"235d50bf",set:["235d50bf"],setBaseIDs:["d.ci.4.bbbb.270"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"235d50bf"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.270",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b3ae909c:{meta:{setID:"b3ae909c",set:["b3ae909c"],setBaseIDs:["d.dm.4.bbbb.270"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"b3ae909c"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.270",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"}},mapping={bac:"e3621cc2:7faaca8c:36a4b4a8:5dfed122",bal:"de3bc3d1:587b58fb:63454c71",ban:"e3621cc2:66b0fffd",bar:"7a365cc2:2befa75a:7faaca8c",bat:"e3621cc2:adfbec3",bec:"a5c31631:7faaca8c:b7b090cf",bel:"362aae07:b193cb04",ben:"fbf3a00b:2befa75a:b0aeb7df",bep:"82ff5e94:92e85004",ber:"19634ad2:42b4e3a3",bes:"a5c31631:7faaca8c:335e8694",bet:"7a365cc2:2f5059f3",bex:"19634ad2:2f5059f3:b7b090cf",bic:"e3621cc2:4d0779c1",bid:"e3621cc2:869bd8d8:57ed51b0",bil:"b0ac0b82:10545ed3:b7b090cf",bin:"fbf3a00b",bis:"e3621cc2:869bd8d8:fd1b186c",bit:"de3bc3d1:e5fae2fb:bddfa3f3",bol:"7a365cc2:869bd8d8:82610c41",bon:"82ff5e94:613cb28b",bor:"b0ac0b82:7faaca8c:fc65290b",bos:"e3621cc2:7faaca8c:952f1d85",bot:"b0ac0b82:36a4b4a8:cb9b5189",bud:"a5c31631:462c645e:d1fb16cc",bur:"6cb74008:2639d7d4:5dfed122",bus:"a5c31631:7faaca8c:c7af9494",byl:"6cb74008:7210b66f:5dfed122",byn:"6cb74008:18f6b23e",byr:"362aae07:7faaca8c:13446f50",byt:"19634ad2:869bd8d8:82610c41:2b187d87",dab:"e3621cc2:1c9d4f11:5dfed122",dac:"e3621cc2:e5fae2fb:869bd8d8:69daeb1a",dal:"de3bc3d1:587b58fb:7faaca8c",dan:"b0ac0b82:fe5cf0f4:2befa75a:9e7ddd3d",dap:"e3621cc2:10545ed3:bddfa3f3",dar:"7a365cc2:3cdcdb8c:acc8c8fb",das:"fbf3a00b:fe5cf0f4:b7b090cf",dat:"e3621cc2:613cb28b",dav:"b0ac0b82:869bd8d8:4dae70af:f0d5fe71",deb:"fbf3a00b:cb81c430",dec:"a5c31631:efa22418",def:"de3bc3d1:66fbf43f:5dfed122",deg:"fbf3a00b:335e8694",del:"362aae07:acc8c8fb",dem:"7a365cc2:7faaca8c:6245af61",den:"fbf3a00b:7faaca8c:6245af61",dep:"82ff5e94:fc65290b",der:"d93ccb2:42b4e3a3",des:"82ff5e94:42b4e3a3",det:"7a365cc2:7191ec30",dev:"19634ad2:36a4b4a8",dex:"19634ad2:fe5cf0f4:b7b090cf",dib:"7a365cc2:869bd8d8:faa6eb0",dif:"e3621cc2:2639d7d4:a0991dbc",dig:"b0ac0b82:fe5cf0f4:2befa75a:2f5059f3",dil:"b0ac0b82:e5fae2fb:10545ed3",din:"fbf3a00b:42b4e3a3",dir:"e3621cc2:2befa75a:2f5059f3:c3bebfe6",dis:"82ff5e94:7faaca8c:87cb2bff",div:"fbf3a00b:fe5cf0f4:603da034:f3633360",doc:"362aae07:2befa75a:fe5cf0f4:6acd7409",dol:"7a365cc2:869bd8d8:ad7dd51b",don:"82ff5e94:6615d02d",dop:"7a365cc2:36a4b4a8:869bd8d8:5ba1ba9b",dor:"b0ac0b82:869bd8d8",dos:"e3621cc2:7faaca8c:cf0f809a",dot:"b0ac0b82:36a4b4a8",dov:"fbf3a00b:e5fae2fb:9ebd20ff",doz:"7a365cc2:3cdcdb8c",duc:"a5c31631:869bd8d8:faa6eb0",dul:"7a365cc2:36a4b4a8:4dae70af",dun:"19634ad2:4dae70af",dur:"d93ccb2",dus:"a5c31631:e5fae2fb:4d0779c1",dut:"fbf3a00b:5e841ec3",dux:"6cb74008:afc30081",dyl:"a5c31631:66b0fffd",dyn:"6cb74008:4c4076d5",dyr:"362aae07:7faaca8c:d6753be3",dys:"a5c31631:adfbec3",dyt:"19634ad2:869bd8d8:b193cb04:b0aeb7df",fab:"e3621cc2:e5fae2fb:36a4b4a8:5dfed122",fad:"6cb74008:b788c92f",fal:"362aae07:e5fae2fb:9ebd20ff",fam:"b0ac0b82:869bd8d8:36a4b4a8:fe5cf0f4",fan:"b0ac0b82:fe5cf0f4:2befa75a:e5fae2fb",fas:"fbf3a00b:b193cb04:a4ed278a",feb:"fbf3a00b:eb608ee5",fed:"7a365cc2:36a4b4a8:52a6a74c",fel:"362aae07:1c9d4f11",fen:"fbf3a00b:7faaca8c:fc65290b",fep:"a5c31631:e5fae2fb",fer:"19634ad2:fe5cf0f4",fes:"82ff5e94:e2f4d6e2",fet:"7a365cc2:e5fae2fb",fex:"19634ad2:1c9d4f11:b7b090cf",fid:"e3621cc2:7faaca8c:e6117eb6",fig:"b0ac0b82:fe5cf0f4:2befa75a:b193cb04",fil:"b0ac0b82:869bd8d8:48176644",fin:"fbf3a00b:9e7ddd3d",fip:"b0ac0b82:7faaca8c:82610c41:b397af9f",fir:"e3621cc2:2befa75a:1c9d4f11:427a1751",fit:"de3bc3d1:e5fae2fb:4dae70af",fod:"b0ac0b82:b7b090cf",fog:"82ff5e94:7faaca8c:2befa75a:1735a791",fol:"7a365cc2:869bd8d8:1735a791",fon:"82ff5e94:7faaca8c",fop:"7a365cc2:7faaca8c:462c645e:d1fb16cc",for:"b0ac0b82:36a4b4a8:9e7ddd3d",fos:"6cb74008:7faaca8c:cf0f809a",fot:"b0ac0b82:36a4b4a8:7191ec30",ful:"7a365cc2:5ba1ba9b",fun:"28b33136:7faaca8c:7191ec30:672fdf93",fur:"6cb74008:2befa75a:e5fae2fb:cf0f809a",fus:"a5c31631:e5fae2fb:c7af9494",fyl:"6cb74008:7210b66f:f49b158d",fyn:"6cb74008:e5fae2fb",fyr:"362aae07:7faaca8c:1c9d4f11",hab:"e3621cc2:e5fae2fb:5dfed122",hac:"e3621cc2:e5fae2fb:2befa75a:b193cb04",had:"6cb74008:6cf35bfb",hal:"362aae07:fe5cf0f4:83023171",han:"6cb74008:66b0fffd",hap:"7a365cc2:82610c41:7faaca8c:4c1ac47d",har:"7a365cc2:2befa75a:fe5cf0f4",has:"fbf3a00b:b193cb04:b0aeb7df",hat:"e3621cc2:2639d7d4",hav:"e3621cc2:42b4e3a3",heb:"fbf3a00b:66b0fffd",hec:"a5c31631:e6117eb6",hep:"a5c31631:7faaca8c",hes:"82ff5e94:9b3aa0b1",het:"7a365cc2:42b4e3a3",hex:"19634ad2:e5fae2fb:b7b090cf",hid:"e3621cc2:7faaca8c:cf042a60",hil:"b0ac0b82:fe5cf0f4:44e1402d",hin:"fbf3a00b:9b3aa0b1",hob:"28b33136:869bd8d8",hoc:"b0ac0b82:1c9d4f11:bddfa3f3",hod:"b0ac0b82:54112535",hol:"7a365cc2:869bd8d8:2befa75a",hop:"7a365cc2:36a4b4a8:869bd8d8:cf0f809a",hos:"e3621cc2:7faaca8c:e53a31b5",hul:"7a365cc2:82610c41:b0aeb7df",hus:"a5c31631:7faaca8c:36a4b4a8",hut:"fbf3a00b:6cf35bfb",lab:"82ff5e94:7faaca8c:1c9d4f11:5dfed122",lac:"e3621cc2:869bd8d8:57ed51b0:2ab4bc02",lad:"82ff5e94:b788c92f",lag:"b0ac0b82:4456d619",lan:"b0ac0b82:fe5cf0f4:2befa75a:9b3aa0b1",lap:"e3621cc2:4dae70af:f0d5fe71",lar:"7a365cc2:2befa75a:869bd8d8",las:"fbf3a00b:82610c41:d1fb16cc",lat:"e3621cc2:cf042a60",lav:"82ff5e94:adafc09c",leb:"fbf3a00b:d7e0d9e",lec:"a5c31631:7faaca8c:bddfa3f3",led:"7a365cc2:1d989f87",leg:"fbf3a00b:b09cf4ef",len:"fbf3a00b:82610c41:510344a7",lep:"82ff5e94:ae1e4f7",ler:"19634ad2:2b187d87",let:"7a365cc2:fe5cf0f4",lev:"19634ad2:bddfa3f3",lex:"19634ad2:7faaca8c:7191ec30:b7b090cf",lib:"7a365cc2:869bd8d8:fb651938",lid:"e3621cc2:e5fae2fb:2f5059f3",lig:"7a365cc2:82610c41",lin:"fbf3a00b:54112535",lis:"a5c31631:869bd8d8:f3633360",lit:"de3bc3d1:7faaca8c:18f6b23e",liv:"fbf3a00b:fe5cf0f4:603da034:8d560b8b",loc:"de3bc3d1:869bd8d8:9f3841fc",lod:"b0ac0b82:462c645e",lom:"fbf3a00b:59d9e201",lon:"82ff5e94:cf042a60",lop:"7a365cc2:36a4b4a8:869bd8d8:ad042183",lor:"b0ac0b82:fe5cf0f4",los:"e3621cc2:7faaca8c:5e841ec3",luc:"a5c31631:869bd8d8:1b1fba11",lud:"a5c31631:869bd8d8:cbdce7a4",lug:"19634ad2",lun:"7a365cc2:b193cb04",lup:"19634ad2:869bd8d8:5ba1ba9b",lur:"a5c31631:fe5cf0f4:cbdce7a4",lus:"a5c31631:e5fae2fb:5e841ec3",lut:"fbf3a00b:d1fb16cc",lux:"6cb74008:b7b090cf",lyd:"de3bc3d1:7faaca8c:b193cb04:bfc8669e",lyn:"6cb74008:9b3aa0b1",lyr:"362aae07:7faaca8c:efa22418",lys:"a5c31631:bddfa3f3",lyt:"19634ad2:e5fae2fb:2befa75a:10545ed3",lyx:"6cb74008:7faaca8c:952f1d85",mac:"e3621cc2:5dfed122",mag:"b0ac0b82:869bd8d8:82610c41:510344a7",mal:"de3bc3d1:10545ed3:5dfed122",map:"82ff5e94:10545ed3:bddfa3f3",mar:"7a365cc2:3cdcdb8c:fe5cf0f4",mas:"fbf3a00b:b193cb04:b7b090cf",mat:"e3621cc2:81113d71",meb:"fbf3a00b:4d0779c1",mec:"a5c31631:10545ed3:bddfa3f3",med:"7a365cc2:f0d5fe71",meg:"fbf3a00b:92e85004",mel:"362aae07:7191ec30",mep:"82ff5e94:fd1b186c",mer:"19634ad2:9b3aa0b1",mes:"a5c31631:7faaca8c:7191ec30",met:"7a365cc2:9b3aa0b1",mev:"19634ad2:1735a791",mex:"19634ad2:7faaca8c:b7b090cf",mic:"a5c31631:335e8694",mid:"e3621cc2:869bd8d8:fb651938",mig:"b0ac0b82:fe5cf0f4:2befa75a:10545ed3",mil:"b0ac0b82:869bd8d8:fd1b186c",min:"fbf3a00b:7faaca8c",mip:"82ff5e94:2befa75a:fe5cf0f4:f6bb8637",mir:"e3621cc2:2befa75a:2f5059f3:a2880ff1",mis:"82ff5e94:7faaca8c:92e85004",mit:"de3bc3d1:e5fae2fb:87cb2bff",moc:"de3bc3d1:869bd8d8:5a85e6f7",mod:"b0ac0b82:1b1fba11",mog:"82ff5e94:b193cb04:7faaca8c:1735a791",mol:"7a365cc2:869bd8d8:8c89b36e",mon:"82ff5e94:b7b090cf",mop:"7a365cc2:7faaca8c:82610c41:b0aeb7df",mor:"b0ac0b82:36a4b4a8:2f5059f3",mos:"e3621cc2:e5fae2fb:824e5e1f",mot:"b0ac0b82:36a4b4a8:83856b0b",mud:"a5c31631:7faaca8c:1e0083d1",mug:"19634ad2:cf0f809a",mul:"7a365cc2:10545ed3:4dae70af",mun:"7a365cc2:bddfa3f3",mur:"a5c31631:869bd8d8:36a4b4a8:b0aeb7df",mus:"a5c31631:e5fae2fb:d7e0d9e",mut:"fbf3a00b:824e5e1f",myl:"6cb74008:2f5059f3:4b097186",myn:"6cb74008:e3f1ef01",myr:"362aae07:7faaca8c:e6117eb6",nac:"e3621cc2:2befa75a:5dfed122",nal:"de3bc3d1:7faaca8c:cf042a60",nam:"b0ac0b82:869bd8d8:36a4b4a8:a4ed278a",nap:"82ff5e94:fe5cf0f4:bddfa3f3",nar:"7a365cc2:2befa75a:b193cb04",nat:"e3621cc2:372ac81b",nav:"e3621cc2:adafc09c",neb:"fbf3a00b:387e568f",nec:"a5c31631:6cf35bfb",ned:"7a365cc2:36a4b4a8",nel:"362aae07:7faaca8c:6245af61",nem:"7a365cc2:7faaca8c:92e85004",nep:"a5c31631:fc9ea1e2",ner:"19634ad2:54112535",nes:"82ff5e94:fe5cf0f4",net:"7a365cc2:7d18e429",nev:"19634ad2:2befa75a",nex:"19634ad2:10545ed3:b7b090cf",nib:"7a365cc2:869bd8d8:5a85e6f7",nid:"e3621cc2:869bd8d8:2ab4bc02",nil:"b0ac0b82:869bd8d8:ad042183",nim:"28b33136:e2f4d6e2",nis:"82ff5e94:7faaca8c:387e568f",noc:"b0ac0b82:fe5cf0f4:bddfa3f3",nod:"b0ac0b82:d842a67d",nol:"7a365cc2:869bd8d8:510344a7",nom:"fbf3a00b:d6753be3",nop:"7a365cc2:7faaca8c:1c9d4f11:bddfa3f3",nor:"b0ac0b82:36a4b4a8:fe4199fc",nos:"e3621cc2:e5fae2fb:952f1d85",nov:"fbf3a00b:7faaca8c:cf042a60",nub:"a5c31631:869bd8d8",nul:"7a365cc2:b193cb04:d1fb16cc",num:"a5c31631:e5fae2fb:59d9e201",nup:"19634ad2:5ba1ba9b",nus:"a5c31631:7210b66f:f49b158d",nut:"fbf3a00b:975397b2",nux:"a5c31631:869bd8d8:fd1b186c",nyd:"de3bc3d1:7faaca8c:b193cb04:1735a791",nyl:"a5c31631:7faaca8c:fc65290b",nym:"6cb74008:cbdce7a4",nyr:"362aae07:7faaca8c:18f6b23e",nys:"a5c31631:672fdf93",nyt:"19634ad2:869bd8d8:a2880ff1:4dae70af",nyx:"6cb74008:7faaca8c:b7b090cf",pac:"e3621cc2:e5fae2fb:2befa75a:1d989f87",pad:"e3621cc2:b788c92f",pag:"b0ac0b82:7191ec30",pal:"de3bc3d1:e5fae2fb:adafc09c",pan:"e3621cc2:e5fae2fb",par:"7a365cc2:2befa75a:e5fae2fb",pas:"fbf3a00b:fe5cf0f4:cbdce7a4",pat:"e3621cc2:fc9ea1e2",pec:"a5c31631:e5fae2fb:13446f50",ped:"7a365cc2:d1fb16cc",peg:"fbf3a00b:b645c8d3",pel:"362aae07:4c1ac47d",pem:"7a365cc2:7faaca8c:335e8694",pen:"fbf3a00b:7faaca8c:8c89b36e",per:"d93ccb2:fe5cf0f4",pes:"82ff5e94:7faaca8c:4456d619",pet:"7a365cc2:10545ed3",pex:"19634ad2:b193cb04:b7b090cf",pic:"a5c31631:8d8261d6",pid:"e3621cc2:7faaca8c:5dfed122",pil:"b0ac0b82:e5fae2fb:5e841ec3",pin:"fbf3a00b:2b187d87",pit:"de3bc3d1:e5fae2fb:5dfed122",poc:"de3bc3d1:fe5cf0f4:42b4e3a3",pod:"b0ac0b82:5a85e6f7",pol:"7a365cc2:82610c41:4c4076d5",pon:"82ff5e94",pos:"e3621cc2:7faaca8c:824e5e1f",pub:"a5c31631:9b3aa0b1",pun:"7a365cc2:4dae70af:a2880ff1:427a1751",pur:"6cb74008:ab99a1a",put:"fbf3a00b:13446f50",pyl:"a5c31631:20fd4083",pyx:"6cb74008:7faaca8c:824e5e1f",rab:"82ff5e94:7faaca8c:7191ec30:5dfed122",rac:"de3bc3d1:5dfed122",rad:"a5c31631:b788c92f",rag:"b0ac0b82:2f5059f3",ral:"de3bc3d1:2befa75a:b193cb04",ram:"b0ac0b82:fe5cf0f4:2befa75a:b7b090cf",ran:"b0ac0b82:fe5cf0f4:2befa75a:7faaca8c",rap:"e3621cc2:fe5cf0f4:f0d5fe71",rav:"e3621cc2:4c4076d5",reb:"fbf3a00b:372ac81b",rec:"a5c31631:d6753be3",red:"7a365cc2:b397af9f",ref:"de3bc3d1:7faaca8c:5dfed122",reg:"fbf3a00b:7fcb0d8f",rel:"362aae07:fd1b186c",rem:"7a365cc2:7faaca8c:6e9d4a77",ren:"fbf3a00b:2befa75a:10545ed3",rep:"82ff5e94:387e568f",res:"82ff5e94:10545ed3",ret:"7a365cc2:869bd8d8",rev:"19634ad2:b7b090cf",rex:"19634ad2:869bd8d8:b7b090cf",rib:"7a365cc2:869bd8d8:e2f4d6e2",ric:"a5c31631:d7e0d9e",rid:"e3621cc2:fe5cf0f4:54112535",rig:"7a365cc2:82e8305",ril:"b0ac0b82:e5fae2fb:824e5e1f",rin:"fbf3a00b:48176644",rip:"b0ac0b82:7faaca8c:4dae70af:f0d5fe71",ris:"82ff5e94:7faaca8c:18f6b23e",rit:"de3bc3d1:e5fae2fb:b7b090cf",riv:"fbf3a00b:fe5cf0f4:b193cb04:82610c41",roc:"de3bc3d1:869bd8d8:57ed51b0",rol:"7a365cc2:869bd8d8:cf0f809a",ron:"82ff5e94:66b0fffd",rop:"7a365cc2:7faaca8c:10545ed3:4dae70af",ros:"e3621cc2:e5fae2fb:5e841ec3",rov:"fbf3a00b:7faaca8c:18f6b23e",ruc:"a5c31631:869bd8d8:4c4076d5",rud:"a5c31631:869bd8d8:48176644",rul:"7a365cc2:10545ed3:b7b090cf",rum:"6cb74008:62519049",run:"19634ad2:cbdce7a4",rup:"19634ad2:b193cb04:fe5cf0f4:5ba1ba9b",rus:"a5c31631:e5fae2fb:335e8694",rut:"fbf3a00b:952f1d85",rux:"a5c31631:869bd8d8:fe4199fc",ryc:"a5c31631:5a85e6f7",ryd:"de3bc3d1:7faaca8c:2f5059f3:c3bebfe6",ryg:"6cb74008",ryl:"e3621cc2:e5fae2fb:adafc09c",rym:"6cb74008:5a85e6f7",ryn:"6cb74008:eb608ee5",ryp:"6cb74008:7faaca8c",rys:"a5c31631:6245af61",ryt:"19634ad2:e5fae2fb:82610c41:1735a791",ryx:"6cb74008:2befa75a:e5fae2fb",sab:"e3621cc2:7faaca8c:1c9d4f11:5dfed122",sal:"de3bc3d1:e5fae2fb:9ebd20ff",sam:"b0ac0b82:fe5cf0f4:82610c41:b7b090cf",san:"e3621cc2:7faaca8c",sap:"e3621cc2:869bd8d8:f0d5fe71",sar:"7a365cc2:82610c41:fe5cf0f4",sat:"e3621cc2:afc30081",sav:"b0ac0b82:e5fae2fb:4dae70af:1d989f87",seb:"fbf3a00b:6e9d4a77",sec:"a5c31631:952f1d85",sed:"7a365cc2:36a4b4a8:a4ed278a",sef:"de3bc3d1:36a4b4a8:5dfed122",seg:"fbf3a00b:a9e89fe4",sel:"362aae07:2befa75a",sem:"7a365cc2:7faaca8c:cb81c430",sen:"fbf3a00b:fe5cf0f4:36a4b4a8:d24107f2",sep:"82ff5e94:cbdce7a4",ser:"d93ccb2:9b3aa0b1",set:"7a365cc2:cb44703d",sev:"19634ad2:82610c41",sib:"7a365cc2:e5fae2fb:4d0779c1",sic:"e3621cc2:4dae70af",sid:"e3621cc2:869bd8d8:6b5e126b",sig:"7a365cc2:d842a67d",sil:"b0ac0b82:e5fae2fb:2f5059f3",sim:"28b33136:48176644",sip:"fbf3a00b:fe5cf0f4:3d22f9b0:d1fb16cc",sit:"de3bc3d1:2befa75a:b7b090cf",siv:"fbf3a00b:fe5cf0f4:36a4b4a8:fb5ca265",soc:"362aae07:2befa75a:fe5cf0f4:603da034",sog:"82ff5e94:2befa75a:e5fae2fb:cf0f809a",sol:"7a365cc2:869bd8d8:b193cb04",som:"fbf3a00b:e6117eb6",son:"82ff5e94:ec96cafb",sop:"7a365cc2:7faaca8c:b193cb04:1d989f87",sor:"b0ac0b82:7faaca8c:18f6b23e",sov:"fbf3a00b:e5fae2fb:adafc09c",sub:"a5c31631:fe5cf0f4",sud:"a5c31631:869bd8d8:b7b090cf",sug:"19634ad2:d842a67d",sul:"7a365cc2:cf0f809a",sum:"6cb74008:cb81c430",sun:"7a365cc2:9f680a2b",sup:"19634ad2:36a4b4a8:869bd8d8:5ba1ba9b",sur:"a5c31631:7faaca8c:ab99a1a",sut:"fbf3a00b:b788c92f",syd:"de3bc3d1:7faaca8c:2f5059f3:3d22f9b0",syl:"6cb74008:7faaca8c:d6753be3",sym:"6cb74008:42b4e3a3",syn:"6cb74008:9ebd20ff",syp:"6cb74008:7faaca8c:cb81c430",syr:"362aae07:7faaca8c:59d9e201",syt:"19634ad2:e5fae2fb:82610c41:b193cb04",syx:"6cb74008:7faaca8c:fc65290b",tab:"e3621cc2:7faaca8c:2befa75a:5dfed122",tac:"e3621cc2:e5fae2fb:2befa75a:f0d5fe71",tad:"e3621cc2:6cf35bfb",tag:"b0ac0b82:10545ed3",tal:"de3bc3d1:e5fae2fb:d7e0d9e",tam:"b0ac0b82:869bd8d8:36a4b4a8:52a6a74c",tan:"e3621cc2:8d8261d6",tap:"7a365cc2:82610c41:869bd8d8:4c1ac47d",tar:"7a365cc2:82610c41:d1fb16cc",tas:"fbf3a00b:fe5cf0f4:cf0f809a",teb:"fbf3a00b:6245af61",tec:"a5c31631:10545ed3:b7b090cf",ted:"7a365cc2:acc8c8fb",teg:"fbf3a00b:f6bb8637",tel:"362aae07:b46295d4:672fdf93",tem:"7a365cc2:7faaca8c:387e568f",ten:"fbf3a00b:e53a31b5",tep:"82ff5e94:6245af61",ter:"d93ccb2:54112535",tes:"82ff5e94:54112535",tev:"19634ad2:b193cb04",tex:"19634ad2:7191ec30:b7b090cf",tic:"e3621cc2:2d91e72f",tid:"e3621cc2:fe5cf0f4:42b4e3a3",til:"b0ac0b82:10545ed3:bddfa3f3",tim:"28b33136:7faaca8c",tin:"fbf3a00b:e2f4d6e2",tip:"82ff5e94:2befa75a:fe5cf0f4:b7b090cf",tir:"e3621cc2:2befa75a:b193cb04:7faaca8c",tob:"28b33136:5a85e6f7",toc:"de3bc3d1:2befa75a:5a85e6f7",tod:"b0ac0b82:82e8305",tog:"82ff5e94:2befa75a:e5fae2fb:fe4199fc",tol:"7a365cc2:869bd8d8:d24107f2",tom:"fbf3a00b:87cb2bff",ton:"82ff5e94:e3f1ef01",top:"7a365cc2:7faaca8c:2befa75a:b193cb04",tor:"b0ac0b82:36a4b4a8:b193cb04",tuc:"a5c31631:869bd8d8:5a85e6f7",tud:"a5c31631:869bd8d8:d1fb16cc",tug:"19634ad2:ad042183",tul:"7a365cc2:b7b090cf",tun:"28b33136:7faaca8c:36a4b4a8:82610c41",tus:"a5c31631:e5fae2fb:952f1d85",tux:"a5c31631:869bd8d8:510344a7",tyc:"a5c31631:b7b090cf",tyd:"de3bc3d1:7faaca8c:7191ec30:bddfa3f3",tyl:"a5c31631:eb608ee5",tyn:"6cb74008:372ac81b",typ:"6cb74008:7faaca8c:6245af61",tyr:"362aae07:7faaca8c:4456d619",tyv:"362aae07:b193cb04:e5fae2fb:87cb2bff",wac:"e3621cc2:869bd8d8:36a4b4a8:5dfed122",wal:"362aae07:fe5cf0f4:9b3aa0b1",wan:"e3621cc2",wat:"e3621cc2:b7b090cf",web:"fbf3a00b:afc30081",wed:"7a365cc2:952f1d85",weg:"fbf3a00b:55d21172",wel:"362aae07:6f23470b",wen:"fbf3a00b:7faaca8c:cb81c430",wep:"82ff5e94:6cf35bfb",wer:"d93ccb2:2b187d87",wes:"82ff5e94:10545ed3:975397b2",wet:"7a365cc2:235d50bf",wex:"19634ad2:2befa75a:b7b090cf",wic:"82ff5e94:87cb2bff",wid:"e3621cc2:7191ec30:b7b090cf",win:"fbf3a00b:fe5cf0f4",wis:"e3621cc2:869bd8d8:ad042183",wit:"362aae07:cbdce7a4",wol:"7a365cc2:869bd8d8:83856b0b",wor:"b0ac0b82:36a4b4a8:1c9d4f11",wyc:"a5c31631",wyd:"de3bc3d1:7faaca8c:2f5059f3:b3ae909c",wyl:"a5c31631:6615d02d",wyn:"6cb74008:cf042a60",wyt:"19634ad2:e5fae2fb:82610c41:b0aeb7df",wyx:"6cb74008:7faaca8c:87cb2bff",zod:"7a365cc2"},sylgraphjson={symbols:symbols,mapping:mapping},last=function(a){return a[a.length-1]},patpStrToArr=function(a){return a.replace(/[\^~-]/g,"").match(/.{1,3}/g)},_pour=function(a){var t=a.patp,e=a.renderer,r=a.sylgraph,b=a.size,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;t=isString_1$1(t)?patpStrToArr(t):t,d=isUndefined_1$1(d)?lookup(t,r):d;var n=grid({length:d.length,margin:c,size:b}),i=knoll(d,n),f=dyes({tag:"svg",meta:{},attr:{width:b,height:b},children:[baseRectangle(b,o)].concat(_toConsumableArray(i))},t,s);return isUndefined_1$1(e)?f:e.svg(f)},lookup=function(a,t){if(isUndefined_1$1(a))throw new Error("Missing patp argument to pour()");return a.map(function(a){var e=t.mapping[a];return isUndefined_1$1(e)?DEFAULT_SYMBOL:{attr:{},meta:{},tag:"g",children:e.split(":").map(function(a){var e=t.symbols[a];return isUndefined_1$1(e)?DEFAULT_ELEM:e})}})},knoll=function(a,t){return a.map(function(a,e){var r=cloneDeep_1$1(a),b=t.grid[e],s=transform(translate(b.x,b.y),scale(t.scale,t.scale));return isUndefined_1$1(r.attr)&&(r.attr={}),r.attr.transform=toSVG(s),r})},baseRectangle=function(a,t){return {tag:"rect",meta:!0===t?{style:{fill:"FG",stroke:"NO"},bg:!0}:{style:{fill:"BG",stroke:"NO"},bg:!0},attr:{width:a,height:a,x:0,y:0}}},DEFAULT_ELEM={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},DEFAULT_SYMBOL={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},pour=function(a){var t=a.patp,e=a.renderer,r=a.size,b=a.sylgraph,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;return b=isUndefined_1$1(b)?sylgraphjson:b,_pour({patp:t,sylgraph:b,renderer:e,size:r,colorway:s,symbols:d,margin:c,ignoreColorway:o})},grid=function(a){var t=a.length,e=a.margin,r=a.size;2*e>r&&console.warn("sigil-js: margin cannot be larger than sigil size");var b=isNotMarginMode(e),s=b?.08*r:e,d=r-2*s,c=b||t>1?d/2:d,o={le:t,mm:b,tw:r,sw:c,rm:s,rp:c/128*2},n={1:[{x:dc$1(o),y:dc$1(o)}],2:[{x:d1(o),y:dc$1(o)},{x:d2(o),y:dc$1(o)}],4:[{x:d1(o),y:d1(o)},{x:d2(o),y:d1(o)},{x:d1(o),y:d2(o)},{x:d2(o),y:d2(o)}]};return _objectSpread({},o,{scale:o.sw/128,grid:n[t]})},isNotMarginMode=function(a){return "auto"===a||void 0===a},dc$1=function(a){var t=a.le,e=a.mm,r=a.tw,b=a.sw,s=a.rm;return t>1||!0===e?r-1.5*b-s:s},d1=function(a){a.tw,a.sw;return a.rm-a.rp/2},d2=function(a){return a.tw-a.sw-a.rm+a.rp/2},CW=[["#fff","#000000"]],prism=function(a,t){return t[0]},dyes=function(a,t,e){return isUndefined_1$1(e)?(e=isUndefined_1$1(t)?CW[0]:prism(t,CW),wash(a,e)):wash(a,e)},applyColor=function(a,t){return "FG"===a?t[0]:"BG"===a?t[1]:"TC"===a?t[2]:"NC"===a?"grey":last(t)},applyStyleAttrs=function(a,t){var e=a.fill;return {fill:applyColor(e,t)}},wash=function a(t,e){var r=get_1$1(t,["meta","style"],!1),b=get_1$1(t,"children",[]),s=get_1$1(t,"attr",{});return _objectSpread({},t,{attr:!1!==r?_objectSpread({},s,applyStyleAttrs(r,e)):_objectSpread({},s),children:b.map(function(t){return a(t,e)})})};var symbolProto$2=_Symbol?_Symbol.prototype:void 0,symbolValueOf$1=symbolProto$2?symbolProto$2.valueOf:void 0;
 
 	const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/seal-dict.js";
 	const ReactSVGComponents = {
@@ -56983,7 +50934,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    let uid = uuid();
 	    let aut = window.ship;
 
-	    let config = this.props.configs[this.state.station];
+	    let config = this.props.configs[this.props.station];
 
 	    aud = [this.props.station];
 	    if (isUrl(this.state.message)) {
@@ -57007,8 +50958,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      sep,
 	    };
 
-	    this.props.api.hall({
-	      convey: [message]
+	    this.props.api.chat({
+	      actions: {
+	        lis: [
+	          {
+	            read: {
+	              nom: this.props.circle,
+	              red: config.red + 1
+	            }
+	          },
+	          {
+	            convey: [message],
+	          }
+	        ]
+	      }
 	    });
 
 	    this.setState({
@@ -57054,19 +51017,19 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 
 	    return (
-	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 145}}
-	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 146}}
-	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 147}} )
+	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 157}}
+	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 158}}
+	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 159}} )
 	        )
-	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 149}}
+	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 161}}
 	          , react.createElement('input', { className: "ml2 bn" ,
 	            style: { flexGrow: 1 },
 	            ref: this.textareaRef,
 	            placeholder: props.placeholder,
 	            value: state.message,
-	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 150}} )
-	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 156}}
-	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 157}} )
+	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 162}} )
+	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 168}}
+	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 169}} )
 	          )
 	        )
 	      )
@@ -57152,8 +51115,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    let lastMsgNum = (messages.length > 0) ?
 	      messages[messages.length - 1].num : 0;
 
-	    if (config && config.red > lastMsgNum) {
-	      props.api.read(circle, lastMsgNum);
+	    if (config && config.red < lastMsgNum) {
+	      props.api.read(state.circle, lastMsgNum);
 	    }
 	  }
 
@@ -57243,6 +51206,6075 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 	}
 
+	var lookup$1 = [];
+	var revLookup = [];
+	var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
+	var inited = false;
+	function init () {
+	  inited = true;
+	  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+	  for (var i = 0, len = code.length; i < len; ++i) {
+	    lookup$1[i] = code[i];
+	    revLookup[code.charCodeAt(i)] = i;
+	  }
+
+	  revLookup['-'.charCodeAt(0)] = 62;
+	  revLookup['_'.charCodeAt(0)] = 63;
+	}
+
+	function toByteArray (b64) {
+	  if (!inited) {
+	    init();
+	  }
+	  var i, j, l, tmp, placeHolders, arr;
+	  var len = b64.length;
+
+	  if (len % 4 > 0) {
+	    throw new Error('Invalid string. Length must be a multiple of 4')
+	  }
+
+	  // the number of equal signs (place holders)
+	  // if there are two placeholders, than the two characters before it
+	  // represent one byte
+	  // if there is only one, then the three characters before it represent 2 bytes
+	  // this is just a cheap hack to not do indexOf twice
+	  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
+
+	  // base64 is 4/3 + up to two characters of the original data
+	  arr = new Arr(len * 3 / 4 - placeHolders);
+
+	  // if there are placeholders, only get up to the last complete 4 chars
+	  l = placeHolders > 0 ? len - 4 : len;
+
+	  var L = 0;
+
+	  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+	    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)];
+	    arr[L++] = (tmp >> 16) & 0xFF;
+	    arr[L++] = (tmp >> 8) & 0xFF;
+	    arr[L++] = tmp & 0xFF;
+	  }
+
+	  if (placeHolders === 2) {
+	    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4);
+	    arr[L++] = tmp & 0xFF;
+	  } else if (placeHolders === 1) {
+	    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2);
+	    arr[L++] = (tmp >> 8) & 0xFF;
+	    arr[L++] = tmp & 0xFF;
+	  }
+
+	  return arr
+	}
+
+	function tripletToBase64 (num) {
+	  return lookup$1[num >> 18 & 0x3F] + lookup$1[num >> 12 & 0x3F] + lookup$1[num >> 6 & 0x3F] + lookup$1[num & 0x3F]
+	}
+
+	function encodeChunk (uint8, start, end) {
+	  var tmp;
+	  var output = [];
+	  for (var i = start; i < end; i += 3) {
+	    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2]);
+	    output.push(tripletToBase64(tmp));
+	  }
+	  return output.join('')
+	}
+
+	function fromByteArray (uint8) {
+	  if (!inited) {
+	    init();
+	  }
+	  var tmp;
+	  var len = uint8.length;
+	  var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
+	  var output = '';
+	  var parts = [];
+	  var maxChunkLength = 16383; // must be multiple of 3
+
+	  // go through the array every three bytes, we'll deal with trailing stuff later
+	  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+	    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)));
+	  }
+
+	  // pad the end with zeros, but make sure to not forget the extra bytes
+	  if (extraBytes === 1) {
+	    tmp = uint8[len - 1];
+	    output += lookup$1[tmp >> 2];
+	    output += lookup$1[(tmp << 4) & 0x3F];
+	    output += '==';
+	  } else if (extraBytes === 2) {
+	    tmp = (uint8[len - 2] << 8) + (uint8[len - 1]);
+	    output += lookup$1[tmp >> 10];
+	    output += lookup$1[(tmp >> 4) & 0x3F];
+	    output += lookup$1[(tmp << 2) & 0x3F];
+	    output += '=';
+	  }
+
+	  parts.push(output);
+
+	  return parts.join('')
+	}
+
+	function read (buffer, offset, isLE, mLen, nBytes) {
+	  var e, m;
+	  var eLen = nBytes * 8 - mLen - 1;
+	  var eMax = (1 << eLen) - 1;
+	  var eBias = eMax >> 1;
+	  var nBits = -7;
+	  var i = isLE ? (nBytes - 1) : 0;
+	  var d = isLE ? -1 : 1;
+	  var s = buffer[offset + i];
+
+	  i += d;
+
+	  e = s & ((1 << (-nBits)) - 1);
+	  s >>= (-nBits);
+	  nBits += eLen;
+	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+	  m = e & ((1 << (-nBits)) - 1);
+	  e >>= (-nBits);
+	  nBits += mLen;
+	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+	  if (e === 0) {
+	    e = 1 - eBias;
+	  } else if (e === eMax) {
+	    return m ? NaN : ((s ? -1 : 1) * Infinity)
+	  } else {
+	    m = m + Math.pow(2, mLen);
+	    e = e - eBias;
+	  }
+	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+	}
+
+	function write (buffer, value, offset, isLE, mLen, nBytes) {
+	  var e, m, c;
+	  var eLen = nBytes * 8 - mLen - 1;
+	  var eMax = (1 << eLen) - 1;
+	  var eBias = eMax >> 1;
+	  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0);
+	  var i = isLE ? 0 : (nBytes - 1);
+	  var d = isLE ? 1 : -1;
+	  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+	  value = Math.abs(value);
+
+	  if (isNaN(value) || value === Infinity) {
+	    m = isNaN(value) ? 1 : 0;
+	    e = eMax;
+	  } else {
+	    e = Math.floor(Math.log(value) / Math.LN2);
+	    if (value * (c = Math.pow(2, -e)) < 1) {
+	      e--;
+	      c *= 2;
+	    }
+	    if (e + eBias >= 1) {
+	      value += rt / c;
+	    } else {
+	      value += rt * Math.pow(2, 1 - eBias);
+	    }
+	    if (value * c >= 2) {
+	      e++;
+	      c /= 2;
+	    }
+
+	    if (e + eBias >= eMax) {
+	      m = 0;
+	      e = eMax;
+	    } else if (e + eBias >= 1) {
+	      m = (value * c - 1) * Math.pow(2, mLen);
+	      e = e + eBias;
+	    } else {
+	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+	      e = 0;
+	    }
+	  }
+
+	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+	  e = (e << mLen) | m;
+	  eLen += mLen;
+	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+	  buffer[offset + i - d] |= s * 128;
+	}
+
+	var toString$1 = {}.toString;
+
+	var isArray$1 = Array.isArray || function (arr) {
+	  return toString$1.call(arr) == '[object Array]';
+	};
+
+	var INSPECT_MAX_BYTES = 50;
+
+	/**
+	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
+	 *   === true    Use Uint8Array implementation (fastest)
+	 *   === false   Use Object implementation (most compatible, even IE6)
+	 *
+	 * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+	 * Opera 11.6+, iOS 4.2+.
+	 *
+	 * Due to various browser bugs, sometimes the Object implementation will be used even
+	 * when the browser supports typed arrays.
+	 *
+	 * Note:
+	 *
+	 *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+	 *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+	 *
+	 *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+	 *
+	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+	 *     incorrect length in some situations.
+
+	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+	 * get the Object implementation, which is slower but behaves correctly.
+	 */
+	Buffer.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global$2.TYPED_ARRAY_SUPPORT
+	  : true;
+
+	/*
+	 * Export kMaxLength after typed array support is determined.
+	 */
+	var _kMaxLength = kMaxLength();
+
+	function kMaxLength () {
+	  return Buffer.TYPED_ARRAY_SUPPORT
+	    ? 0x7fffffff
+	    : 0x3fffffff
+	}
+
+	function createBuffer (that, length) {
+	  if (kMaxLength() < length) {
+	    throw new RangeError('Invalid typed array length')
+	  }
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    that = new Uint8Array(length);
+	    that.__proto__ = Buffer.prototype;
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    if (that === null) {
+	      that = new Buffer(length);
+	    }
+	    that.length = length;
+	  }
+
+	  return that
+	}
+
+	/**
+	 * The Buffer constructor returns instances of `Uint8Array` that have their
+	 * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+	 * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+	 * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+	 * returns a single octet.
+	 *
+	 * The `Uint8Array` prototype remains unmodified.
+	 */
+
+	function Buffer (arg, encodingOrOffset, length) {
+	  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+	    return new Buffer(arg, encodingOrOffset, length)
+	  }
+
+	  // Common case.
+	  if (typeof arg === 'number') {
+	    if (typeof encodingOrOffset === 'string') {
+	      throw new Error(
+	        'If encoding is specified then the first argument must be a string'
+	      )
+	    }
+	    return allocUnsafe(this, arg)
+	  }
+	  return from(this, arg, encodingOrOffset, length)
+	}
+
+	Buffer.poolSize = 8192; // not used by this implementation
+
+	// TODO: Legacy, not needed anymore. Remove in next major version.
+	Buffer._augment = function (arr) {
+	  arr.__proto__ = Buffer.prototype;
+	  return arr
+	};
+
+	function from (that, value, encodingOrOffset, length) {
+	  if (typeof value === 'number') {
+	    throw new TypeError('"value" argument must not be a number')
+	  }
+
+	  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+	    return fromArrayBuffer(that, value, encodingOrOffset, length)
+	  }
+
+	  if (typeof value === 'string') {
+	    return fromString(that, value, encodingOrOffset)
+	  }
+
+	  return fromObject(that, value)
+	}
+
+	/**
+	 * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+	 * if value is a number.
+	 * Buffer.from(str[, encoding])
+	 * Buffer.from(array)
+	 * Buffer.from(buffer)
+	 * Buffer.from(arrayBuffer[, byteOffset[, length]])
+	 **/
+	Buffer.from = function (value, encodingOrOffset, length) {
+	  return from(null, value, encodingOrOffset, length)
+	};
+
+	if (Buffer.TYPED_ARRAY_SUPPORT) {
+	  Buffer.prototype.__proto__ = Uint8Array.prototype;
+	  Buffer.__proto__ = Uint8Array;
+	}
+
+	function assertSize (size) {
+	  if (typeof size !== 'number') {
+	    throw new TypeError('"size" argument must be a number')
+	  } else if (size < 0) {
+	    throw new RangeError('"size" argument must not be negative')
+	  }
+	}
+
+	function alloc (that, size, fill, encoding) {
+	  assertSize(size);
+	  if (size <= 0) {
+	    return createBuffer(that, size)
+	  }
+	  if (fill !== undefined) {
+	    // Only pay attention to encoding if it's a string. This
+	    // prevents accidentally sending in a number that would
+	    // be interpretted as a start offset.
+	    return typeof encoding === 'string'
+	      ? createBuffer(that, size).fill(fill, encoding)
+	      : createBuffer(that, size).fill(fill)
+	  }
+	  return createBuffer(that, size)
+	}
+
+	/**
+	 * Creates a new filled Buffer instance.
+	 * alloc(size[, fill[, encoding]])
+	 **/
+	Buffer.alloc = function (size, fill, encoding) {
+	  return alloc(null, size, fill, encoding)
+	};
+
+	function allocUnsafe (that, size) {
+	  assertSize(size);
+	  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+	    for (var i = 0; i < size; ++i) {
+	      that[i] = 0;
+	    }
+	  }
+	  return that
+	}
+
+	/**
+	 * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+	 * */
+	Buffer.allocUnsafe = function (size) {
+	  return allocUnsafe(null, size)
+	};
+	/**
+	 * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+	 */
+	Buffer.allocUnsafeSlow = function (size) {
+	  return allocUnsafe(null, size)
+	};
+
+	function fromString (that, string, encoding) {
+	  if (typeof encoding !== 'string' || encoding === '') {
+	    encoding = 'utf8';
+	  }
+
+	  if (!Buffer.isEncoding(encoding)) {
+	    throw new TypeError('"encoding" must be a valid string encoding')
+	  }
+
+	  var length = byteLength(string, encoding) | 0;
+	  that = createBuffer(that, length);
+
+	  var actual = that.write(string, encoding);
+
+	  if (actual !== length) {
+	    // Writing a hex string, for example, that contains invalid characters will
+	    // cause everything after the first invalid character to be ignored. (e.g.
+	    // 'abxxcd' will be treated as 'ab')
+	    that = that.slice(0, actual);
+	  }
+
+	  return that
+	}
+
+	function fromArrayLike (that, array) {
+	  var length = array.length < 0 ? 0 : checked(array.length) | 0;
+	  that = createBuffer(that, length);
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255;
+	  }
+	  return that
+	}
+
+	function fromArrayBuffer (that, array, byteOffset, length) {
+	  array.byteLength; // this throws if `array` is not a valid ArrayBuffer
+
+	  if (byteOffset < 0 || array.byteLength < byteOffset) {
+	    throw new RangeError('\'offset\' is out of bounds')
+	  }
+
+	  if (array.byteLength < byteOffset + (length || 0)) {
+	    throw new RangeError('\'length\' is out of bounds')
+	  }
+
+	  if (byteOffset === undefined && length === undefined) {
+	    array = new Uint8Array(array);
+	  } else if (length === undefined) {
+	    array = new Uint8Array(array, byteOffset);
+	  } else {
+	    array = new Uint8Array(array, byteOffset, length);
+	  }
+
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    that = array;
+	    that.__proto__ = Buffer.prototype;
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    that = fromArrayLike(that, array);
+	  }
+	  return that
+	}
+
+	function fromObject (that, obj) {
+	  if (internalIsBuffer(obj)) {
+	    var len = checked(obj.length) | 0;
+	    that = createBuffer(that, len);
+
+	    if (that.length === 0) {
+	      return that
+	    }
+
+	    obj.copy(that, 0, 0, len);
+	    return that
+	  }
+
+	  if (obj) {
+	    if ((typeof ArrayBuffer !== 'undefined' &&
+	        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+	      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+	        return createBuffer(that, 0)
+	      }
+	      return fromArrayLike(that, obj)
+	    }
+
+	    if (obj.type === 'Buffer' && isArray$1(obj.data)) {
+	      return fromArrayLike(that, obj.data)
+	    }
+	  }
+
+	  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+	}
+
+	function checked (length) {
+	  // Note: cannot use `length < kMaxLength()` here because that fails when
+	  // length is NaN (which is otherwise coerced to zero.)
+	  if (length >= kMaxLength()) {
+	    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+	                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+	  }
+	  return length | 0
+	}
+
+	function SlowBuffer (length) {
+	  if (+length != length) { // eslint-disable-line eqeqeq
+	    length = 0;
+	  }
+	  return Buffer.alloc(+length)
+	}
+	Buffer.isBuffer = isBuffer;
+	function internalIsBuffer (b) {
+	  return !!(b != null && b._isBuffer)
+	}
+
+	Buffer.compare = function compare (a, b) {
+	  if (!internalIsBuffer(a) || !internalIsBuffer(b)) {
+	    throw new TypeError('Arguments must be Buffers')
+	  }
+
+	  if (a === b) return 0
+
+	  var x = a.length;
+	  var y = b.length;
+
+	  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+	    if (a[i] !== b[i]) {
+	      x = a[i];
+	      y = b[i];
+	      break
+	    }
+	  }
+
+	  if (x < y) return -1
+	  if (y < x) return 1
+	  return 0
+	};
+
+	Buffer.isEncoding = function isEncoding (encoding) {
+	  switch (String(encoding).toLowerCase()) {
+	    case 'hex':
+	    case 'utf8':
+	    case 'utf-8':
+	    case 'ascii':
+	    case 'latin1':
+	    case 'binary':
+	    case 'base64':
+	    case 'ucs2':
+	    case 'ucs-2':
+	    case 'utf16le':
+	    case 'utf-16le':
+	      return true
+	    default:
+	      return false
+	  }
+	};
+
+	Buffer.concat = function concat (list, length) {
+	  if (!isArray$1(list)) {
+	    throw new TypeError('"list" argument must be an Array of Buffers')
+	  }
+
+	  if (list.length === 0) {
+	    return Buffer.alloc(0)
+	  }
+
+	  var i;
+	  if (length === undefined) {
+	    length = 0;
+	    for (i = 0; i < list.length; ++i) {
+	      length += list[i].length;
+	    }
+	  }
+
+	  var buffer = Buffer.allocUnsafe(length);
+	  var pos = 0;
+	  for (i = 0; i < list.length; ++i) {
+	    var buf = list[i];
+	    if (!internalIsBuffer(buf)) {
+	      throw new TypeError('"list" argument must be an Array of Buffers')
+	    }
+	    buf.copy(buffer, pos);
+	    pos += buf.length;
+	  }
+	  return buffer
+	};
+
+	function byteLength (string, encoding) {
+	  if (internalIsBuffer(string)) {
+	    return string.length
+	  }
+	  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+	      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+	    return string.byteLength
+	  }
+	  if (typeof string !== 'string') {
+	    string = '' + string;
+	  }
+
+	  var len = string.length;
+	  if (len === 0) return 0
+
+	  // Use a for loop to avoid recursion
+	  var loweredCase = false;
+	  for (;;) {
+	    switch (encoding) {
+	      case 'ascii':
+	      case 'latin1':
+	      case 'binary':
+	        return len
+	      case 'utf8':
+	      case 'utf-8':
+	      case undefined:
+	        return utf8ToBytes(string).length
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return len * 2
+	      case 'hex':
+	        return len >>> 1
+	      case 'base64':
+	        return base64ToBytes(string).length
+	      default:
+	        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+	        encoding = ('' + encoding).toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	}
+	Buffer.byteLength = byteLength;
+
+	function slowToString (encoding, start, end) {
+	  var loweredCase = false;
+
+	  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+	  // property of a typed array.
+
+	  // This behaves neither like String nor Uint8Array in that we set start/end
+	  // to their upper/lower bounds if the value passed is out of range.
+	  // undefined is handled specially as per ECMA-262 6th Edition,
+	  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+	  if (start === undefined || start < 0) {
+	    start = 0;
+	  }
+	  // Return early if start > this.length. Done here to prevent potential uint32
+	  // coercion fail below.
+	  if (start > this.length) {
+	    return ''
+	  }
+
+	  if (end === undefined || end > this.length) {
+	    end = this.length;
+	  }
+
+	  if (end <= 0) {
+	    return ''
+	  }
+
+	  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+	  end >>>= 0;
+	  start >>>= 0;
+
+	  if (end <= start) {
+	    return ''
+	  }
+
+	  if (!encoding) encoding = 'utf8';
+
+	  while (true) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexSlice(this, start, end)
+
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Slice(this, start, end)
+
+	      case 'ascii':
+	        return asciiSlice(this, start, end)
+
+	      case 'latin1':
+	      case 'binary':
+	        return latin1Slice(this, start, end)
+
+	      case 'base64':
+	        return base64Slice(this, start, end)
+
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return utf16leSlice(this, start, end)
+
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+	        encoding = (encoding + '').toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	}
+
+	// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+	// Buffer instances.
+	Buffer.prototype._isBuffer = true;
+
+	function swap (b, n, m) {
+	  var i = b[n];
+	  b[n] = b[m];
+	  b[m] = i;
+	}
+
+	Buffer.prototype.swap16 = function swap16 () {
+	  var len = this.length;
+	  if (len % 2 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 16-bits')
+	  }
+	  for (var i = 0; i < len; i += 2) {
+	    swap(this, i, i + 1);
+	  }
+	  return this
+	};
+
+	Buffer.prototype.swap32 = function swap32 () {
+	  var len = this.length;
+	  if (len % 4 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 32-bits')
+	  }
+	  for (var i = 0; i < len; i += 4) {
+	    swap(this, i, i + 3);
+	    swap(this, i + 1, i + 2);
+	  }
+	  return this
+	};
+
+	Buffer.prototype.swap64 = function swap64 () {
+	  var len = this.length;
+	  if (len % 8 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 64-bits')
+	  }
+	  for (var i = 0; i < len; i += 8) {
+	    swap(this, i, i + 7);
+	    swap(this, i + 1, i + 6);
+	    swap(this, i + 2, i + 5);
+	    swap(this, i + 3, i + 4);
+	  }
+	  return this
+	};
+
+	Buffer.prototype.toString = function toString () {
+	  var length = this.length | 0;
+	  if (length === 0) return ''
+	  if (arguments.length === 0) return utf8Slice(this, 0, length)
+	  return slowToString.apply(this, arguments)
+	};
+
+	Buffer.prototype.equals = function equals (b) {
+	  if (!internalIsBuffer(b)) throw new TypeError('Argument must be a Buffer')
+	  if (this === b) return true
+	  return Buffer.compare(this, b) === 0
+	};
+
+	Buffer.prototype.inspect = function inspect () {
+	  var str = '';
+	  var max = INSPECT_MAX_BYTES;
+	  if (this.length > 0) {
+	    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
+	    if (this.length > max) str += ' ... ';
+	  }
+	  return '<Buffer ' + str + '>'
+	};
+
+	Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+	  if (!internalIsBuffer(target)) {
+	    throw new TypeError('Argument must be a Buffer')
+	  }
+
+	  if (start === undefined) {
+	    start = 0;
+	  }
+	  if (end === undefined) {
+	    end = target ? target.length : 0;
+	  }
+	  if (thisStart === undefined) {
+	    thisStart = 0;
+	  }
+	  if (thisEnd === undefined) {
+	    thisEnd = this.length;
+	  }
+
+	  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+	    throw new RangeError('out of range index')
+	  }
+
+	  if (thisStart >= thisEnd && start >= end) {
+	    return 0
+	  }
+	  if (thisStart >= thisEnd) {
+	    return -1
+	  }
+	  if (start >= end) {
+	    return 1
+	  }
+
+	  start >>>= 0;
+	  end >>>= 0;
+	  thisStart >>>= 0;
+	  thisEnd >>>= 0;
+
+	  if (this === target) return 0
+
+	  var x = thisEnd - thisStart;
+	  var y = end - start;
+	  var len = Math.min(x, y);
+
+	  var thisCopy = this.slice(thisStart, thisEnd);
+	  var targetCopy = target.slice(start, end);
+
+	  for (var i = 0; i < len; ++i) {
+	    if (thisCopy[i] !== targetCopy[i]) {
+	      x = thisCopy[i];
+	      y = targetCopy[i];
+	      break
+	    }
+	  }
+
+	  if (x < y) return -1
+	  if (y < x) return 1
+	  return 0
+	};
+
+	// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+	// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+	//
+	// Arguments:
+	// - buffer - a Buffer to search
+	// - val - a string, Buffer, or number
+	// - byteOffset - an index into `buffer`; will be clamped to an int32
+	// - encoding - an optional encoding, relevant is val is a string
+	// - dir - true for indexOf, false for lastIndexOf
+	function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+	  // Empty buffer means no match
+	  if (buffer.length === 0) return -1
+
+	  // Normalize byteOffset
+	  if (typeof byteOffset === 'string') {
+	    encoding = byteOffset;
+	    byteOffset = 0;
+	  } else if (byteOffset > 0x7fffffff) {
+	    byteOffset = 0x7fffffff;
+	  } else if (byteOffset < -0x80000000) {
+	    byteOffset = -0x80000000;
+	  }
+	  byteOffset = +byteOffset;  // Coerce to Number.
+	  if (isNaN(byteOffset)) {
+	    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+	    byteOffset = dir ? 0 : (buffer.length - 1);
+	  }
+
+	  // Normalize byteOffset: negative offsets start from the end of the buffer
+	  if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
+	  if (byteOffset >= buffer.length) {
+	    if (dir) return -1
+	    else byteOffset = buffer.length - 1;
+	  } else if (byteOffset < 0) {
+	    if (dir) byteOffset = 0;
+	    else return -1
+	  }
+
+	  // Normalize val
+	  if (typeof val === 'string') {
+	    val = Buffer.from(val, encoding);
+	  }
+
+	  // Finally, search either indexOf (if dir is true) or lastIndexOf
+	  if (internalIsBuffer(val)) {
+	    // Special case: looking for empty string/buffer always fails
+	    if (val.length === 0) {
+	      return -1
+	    }
+	    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+	  } else if (typeof val === 'number') {
+	    val = val & 0xFF; // Search for a byte value [0-255]
+	    if (Buffer.TYPED_ARRAY_SUPPORT &&
+	        typeof Uint8Array.prototype.indexOf === 'function') {
+	      if (dir) {
+	        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+	      } else {
+	        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+	      }
+	    }
+	    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+	  }
+
+	  throw new TypeError('val must be string, number or Buffer')
+	}
+
+	function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+	  var indexSize = 1;
+	  var arrLength = arr.length;
+	  var valLength = val.length;
+
+	  if (encoding !== undefined) {
+	    encoding = String(encoding).toLowerCase();
+	    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+	        encoding === 'utf16le' || encoding === 'utf-16le') {
+	      if (arr.length < 2 || val.length < 2) {
+	        return -1
+	      }
+	      indexSize = 2;
+	      arrLength /= 2;
+	      valLength /= 2;
+	      byteOffset /= 2;
+	    }
+	  }
+
+	  function read (buf, i) {
+	    if (indexSize === 1) {
+	      return buf[i]
+	    } else {
+	      return buf.readUInt16BE(i * indexSize)
+	    }
+	  }
+
+	  var i;
+	  if (dir) {
+	    var foundIndex = -1;
+	    for (i = byteOffset; i < arrLength; i++) {
+	      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+	        if (foundIndex === -1) foundIndex = i;
+	        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+	      } else {
+	        if (foundIndex !== -1) i -= i - foundIndex;
+	        foundIndex = -1;
+	      }
+	    }
+	  } else {
+	    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
+	    for (i = byteOffset; i >= 0; i--) {
+	      var found = true;
+	      for (var j = 0; j < valLength; j++) {
+	        if (read(arr, i + j) !== read(val, j)) {
+	          found = false;
+	          break
+	        }
+	      }
+	      if (found) return i
+	    }
+	  }
+
+	  return -1
+	}
+
+	Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+	  return this.indexOf(val, byteOffset, encoding) !== -1
+	};
+
+	Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+	  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+	};
+
+	Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+	  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+	};
+
+	function hexWrite (buf, string, offset, length) {
+	  offset = Number(offset) || 0;
+	  var remaining = buf.length - offset;
+	  if (!length) {
+	    length = remaining;
+	  } else {
+	    length = Number(length);
+	    if (length > remaining) {
+	      length = remaining;
+	    }
+	  }
+
+	  // must be an even number of digits
+	  var strLen = string.length;
+	  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+	  if (length > strLen / 2) {
+	    length = strLen / 2;
+	  }
+	  for (var i = 0; i < length; ++i) {
+	    var parsed = parseInt(string.substr(i * 2, 2), 16);
+	    if (isNaN(parsed)) return i
+	    buf[offset + i] = parsed;
+	  }
+	  return i
+	}
+
+	function utf8Write (buf, string, offset, length) {
+	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+	}
+
+	function asciiWrite (buf, string, offset, length) {
+	  return blitBuffer(asciiToBytes(string), buf, offset, length)
+	}
+
+	function latin1Write (buf, string, offset, length) {
+	  return asciiWrite(buf, string, offset, length)
+	}
+
+	function base64Write (buf, string, offset, length) {
+	  return blitBuffer(base64ToBytes(string), buf, offset, length)
+	}
+
+	function ucs2Write (buf, string, offset, length) {
+	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+	}
+
+	Buffer.prototype.write = function write (string, offset, length, encoding) {
+	  // Buffer#write(string)
+	  if (offset === undefined) {
+	    encoding = 'utf8';
+	    length = this.length;
+	    offset = 0;
+	  // Buffer#write(string, encoding)
+	  } else if (length === undefined && typeof offset === 'string') {
+	    encoding = offset;
+	    length = this.length;
+	    offset = 0;
+	  // Buffer#write(string, offset[, length][, encoding])
+	  } else if (isFinite(offset)) {
+	    offset = offset | 0;
+	    if (isFinite(length)) {
+	      length = length | 0;
+	      if (encoding === undefined) encoding = 'utf8';
+	    } else {
+	      encoding = length;
+	      length = undefined;
+	    }
+	  // legacy write(string, encoding, offset, length) - remove in v0.13
+	  } else {
+	    throw new Error(
+	      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+	    )
+	  }
+
+	  var remaining = this.length - offset;
+	  if (length === undefined || length > remaining) length = remaining;
+
+	  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+	    throw new RangeError('Attempt to write outside buffer bounds')
+	  }
+
+	  if (!encoding) encoding = 'utf8';
+
+	  var loweredCase = false;
+	  for (;;) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexWrite(this, string, offset, length)
+
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Write(this, string, offset, length)
+
+	      case 'ascii':
+	        return asciiWrite(this, string, offset, length)
+
+	      case 'latin1':
+	      case 'binary':
+	        return latin1Write(this, string, offset, length)
+
+	      case 'base64':
+	        // Warning: maxLength not taken into account in base64Write
+	        return base64Write(this, string, offset, length)
+
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return ucs2Write(this, string, offset, length)
+
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+	        encoding = ('' + encoding).toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	};
+
+	Buffer.prototype.toJSON = function toJSON () {
+	  return {
+	    type: 'Buffer',
+	    data: Array.prototype.slice.call(this._arr || this, 0)
+	  }
+	};
+
+	function base64Slice (buf, start, end) {
+	  if (start === 0 && end === buf.length) {
+	    return fromByteArray(buf)
+	  } else {
+	    return fromByteArray(buf.slice(start, end))
+	  }
+	}
+
+	function utf8Slice (buf, start, end) {
+	  end = Math.min(buf.length, end);
+	  var res = [];
+
+	  var i = start;
+	  while (i < end) {
+	    var firstByte = buf[i];
+	    var codePoint = null;
+	    var bytesPerSequence = (firstByte > 0xEF) ? 4
+	      : (firstByte > 0xDF) ? 3
+	      : (firstByte > 0xBF) ? 2
+	      : 1;
+
+	    if (i + bytesPerSequence <= end) {
+	      var secondByte, thirdByte, fourthByte, tempCodePoint;
+
+	      switch (bytesPerSequence) {
+	        case 1:
+	          if (firstByte < 0x80) {
+	            codePoint = firstByte;
+	          }
+	          break
+	        case 2:
+	          secondByte = buf[i + 1];
+	          if ((secondByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F);
+	            if (tempCodePoint > 0x7F) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	          break
+	        case 3:
+	          secondByte = buf[i + 1];
+	          thirdByte = buf[i + 2];
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F);
+	            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	          break
+	        case 4:
+	          secondByte = buf[i + 1];
+	          thirdByte = buf[i + 2];
+	          fourthByte = buf[i + 3];
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F);
+	            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	      }
+	    }
+
+	    if (codePoint === null) {
+	      // we did not generate a valid codePoint so insert a
+	      // replacement char (U+FFFD) and advance only 1 byte
+	      codePoint = 0xFFFD;
+	      bytesPerSequence = 1;
+	    } else if (codePoint > 0xFFFF) {
+	      // encode to utf16 (surrogate pair dance)
+	      codePoint -= 0x10000;
+	      res.push(codePoint >>> 10 & 0x3FF | 0xD800);
+	      codePoint = 0xDC00 | codePoint & 0x3FF;
+	    }
+
+	    res.push(codePoint);
+	    i += bytesPerSequence;
+	  }
+
+	  return decodeCodePointsArray(res)
+	}
+
+	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+	// the lowest limit is Chrome, with 0x10000 args.
+	// We go 1 magnitude less, for safety
+	var MAX_ARGUMENTS_LENGTH = 0x1000;
+
+	function decodeCodePointsArray (codePoints) {
+	  var len = codePoints.length;
+	  if (len <= MAX_ARGUMENTS_LENGTH) {
+	    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+	  }
+
+	  // Decode in chunks to avoid "call stack size exceeded".
+	  var res = '';
+	  var i = 0;
+	  while (i < len) {
+	    res += String.fromCharCode.apply(
+	      String,
+	      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+	    );
+	  }
+	  return res
+	}
+
+	function asciiSlice (buf, start, end) {
+	  var ret = '';
+	  end = Math.min(buf.length, end);
+
+	  for (var i = start; i < end; ++i) {
+	    ret += String.fromCharCode(buf[i] & 0x7F);
+	  }
+	  return ret
+	}
+
+	function latin1Slice (buf, start, end) {
+	  var ret = '';
+	  end = Math.min(buf.length, end);
+
+	  for (var i = start; i < end; ++i) {
+	    ret += String.fromCharCode(buf[i]);
+	  }
+	  return ret
+	}
+
+	function hexSlice (buf, start, end) {
+	  var len = buf.length;
+
+	  if (!start || start < 0) start = 0;
+	  if (!end || end < 0 || end > len) end = len;
+
+	  var out = '';
+	  for (var i = start; i < end; ++i) {
+	    out += toHex(buf[i]);
+	  }
+	  return out
+	}
+
+	function utf16leSlice (buf, start, end) {
+	  var bytes = buf.slice(start, end);
+	  var res = '';
+	  for (var i = 0; i < bytes.length; i += 2) {
+	    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
+	  }
+	  return res
+	}
+
+	Buffer.prototype.slice = function slice (start, end) {
+	  var len = this.length;
+	  start = ~~start;
+	  end = end === undefined ? len : ~~end;
+
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) start = 0;
+	  } else if (start > len) {
+	    start = len;
+	  }
+
+	  if (end < 0) {
+	    end += len;
+	    if (end < 0) end = 0;
+	  } else if (end > len) {
+	    end = len;
+	  }
+
+	  if (end < start) end = start;
+
+	  var newBuf;
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    newBuf = this.subarray(start, end);
+	    newBuf.__proto__ = Buffer.prototype;
+	  } else {
+	    var sliceLen = end - start;
+	    newBuf = new Buffer(sliceLen, undefined);
+	    for (var i = 0; i < sliceLen; ++i) {
+	      newBuf[i] = this[i + start];
+	    }
+	  }
+
+	  return newBuf
+	};
+
+	/*
+	 * Need to make sure that buffer isn't trying to write out of bounds.
+	 */
+	function checkOffset (offset, ext, length) {
+	  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+	}
+
+	Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+	  var val = this[offset];
+	  var mul = 1;
+	  var i = 0;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul;
+	  }
+
+	  return val
+	};
+
+	Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    checkOffset(offset, byteLength, this.length);
+	  }
+
+	  var val = this[offset + --byteLength];
+	  var mul = 1;
+	  while (byteLength > 0 && (mul *= 0x100)) {
+	    val += this[offset + --byteLength] * mul;
+	  }
+
+	  return val
+	};
+
+	Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length);
+	  return this[offset]
+	};
+
+	Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  return this[offset] | (this[offset + 1] << 8)
+	};
+
+	Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  return (this[offset] << 8) | this[offset + 1]
+	};
+
+	Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+
+	  return ((this[offset]) |
+	      (this[offset + 1] << 8) |
+	      (this[offset + 2] << 16)) +
+	      (this[offset + 3] * 0x1000000)
+	};
+
+	Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+
+	  return (this[offset] * 0x1000000) +
+	    ((this[offset + 1] << 16) |
+	    (this[offset + 2] << 8) |
+	    this[offset + 3])
+	};
+
+	Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+	  var val = this[offset];
+	  var mul = 1;
+	  var i = 0;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul;
+	  }
+	  mul *= 0x80;
+
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+	  return val
+	};
+
+	Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+
+	  var i = byteLength;
+	  var mul = 1;
+	  var val = this[offset + --i];
+	  while (i > 0 && (mul *= 0x100)) {
+	    val += this[offset + --i] * mul;
+	  }
+	  mul *= 0x80;
+
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+
+	  return val
+	};
+
+	Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length);
+	  if (!(this[offset] & 0x80)) return (this[offset])
+	  return ((0xff - this[offset] + 1) * -1)
+	};
+
+	Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  var val = this[offset] | (this[offset + 1] << 8);
+	  return (val & 0x8000) ? val | 0xFFFF0000 : val
+	};
+
+	Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  var val = this[offset + 1] | (this[offset] << 8);
+	  return (val & 0x8000) ? val | 0xFFFF0000 : val
+	};
+
+	Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+
+	  return (this[offset]) |
+	    (this[offset + 1] << 8) |
+	    (this[offset + 2] << 16) |
+	    (this[offset + 3] << 24)
+	};
+
+	Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+
+	  return (this[offset] << 24) |
+	    (this[offset + 1] << 16) |
+	    (this[offset + 2] << 8) |
+	    (this[offset + 3])
+	};
+
+	Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	  return read(this, offset, true, 23, 4)
+	};
+
+	Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	  return read(this, offset, false, 23, 4)
+	};
+
+	Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length);
+	  return read(this, offset, true, 52, 8)
+	};
+
+	Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length);
+	  return read(this, offset, false, 52, 8)
+	};
+
+	function checkInt (buf, value, offset, ext, max, min) {
+	  if (!internalIsBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+	  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+	}
+
+	Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+	    checkInt(this, value, offset, byteLength, maxBytes, 0);
+	  }
+
+	  var mul = 1;
+	  var i = 0;
+	  this[offset] = value & 0xFF;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    this[offset + i] = (value / mul) & 0xFF;
+	  }
+
+	  return offset + byteLength
+	};
+
+	Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+	    checkInt(this, value, offset, byteLength, maxBytes, 0);
+	  }
+
+	  var i = byteLength - 1;
+	  var mul = 1;
+	  this[offset + i] = value & 0xFF;
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    this[offset + i] = (value / mul) & 0xFF;
+	  }
+
+	  return offset + byteLength
+	};
+
+	Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+	  this[offset] = (value & 0xff);
+	  return offset + 1
+	};
+
+	function objectWriteUInt16 (buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffff + value + 1;
+	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+	    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+	      (littleEndian ? i : 1 - i) * 8;
+	  }
+	}
+
+	Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff);
+	    this[offset + 1] = (value >>> 8);
+	  } else {
+	    objectWriteUInt16(this, value, offset, true);
+	  }
+	  return offset + 2
+	};
+
+	Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 8);
+	    this[offset + 1] = (value & 0xff);
+	  } else {
+	    objectWriteUInt16(this, value, offset, false);
+	  }
+	  return offset + 2
+	};
+
+	function objectWriteUInt32 (buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffffffff + value + 1;
+	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+	    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff;
+	  }
+	}
+
+	Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset + 3] = (value >>> 24);
+	    this[offset + 2] = (value >>> 16);
+	    this[offset + 1] = (value >>> 8);
+	    this[offset] = (value & 0xff);
+	  } else {
+	    objectWriteUInt32(this, value, offset, true);
+	  }
+	  return offset + 4
+	};
+
+	Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 24);
+	    this[offset + 1] = (value >>> 16);
+	    this[offset + 2] = (value >>> 8);
+	    this[offset + 3] = (value & 0xff);
+	  } else {
+	    objectWriteUInt32(this, value, offset, false);
+	  }
+	  return offset + 4
+	};
+
+	Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1);
+
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+	  }
+
+	  var i = 0;
+	  var mul = 1;
+	  var sub = 0;
+	  this[offset] = value & 0xFF;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+	      sub = 1;
+	    }
+	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
+	  }
+
+	  return offset + byteLength
+	};
+
+	Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1);
+
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+	  }
+
+	  var i = byteLength - 1;
+	  var mul = 1;
+	  var sub = 0;
+	  this[offset + i] = value & 0xFF;
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+	      sub = 1;
+	    }
+	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF;
+	  }
+
+	  return offset + byteLength
+	};
+
+	Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+	  if (value < 0) value = 0xff + value + 1;
+	  this[offset] = (value & 0xff);
+	  return offset + 1
+	};
+
+	Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff);
+	    this[offset + 1] = (value >>> 8);
+	  } else {
+	    objectWriteUInt16(this, value, offset, true);
+	  }
+	  return offset + 2
+	};
+
+	Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 8);
+	    this[offset + 1] = (value & 0xff);
+	  } else {
+	    objectWriteUInt16(this, value, offset, false);
+	  }
+	  return offset + 2
+	};
+
+	Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value & 0xff);
+	    this[offset + 1] = (value >>> 8);
+	    this[offset + 2] = (value >>> 16);
+	    this[offset + 3] = (value >>> 24);
+	  } else {
+	    objectWriteUInt32(this, value, offset, true);
+	  }
+	  return offset + 4
+	};
+
+	Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+	  if (value < 0) value = 0xffffffff + value + 1;
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = (value >>> 24);
+	    this[offset + 1] = (value >>> 16);
+	    this[offset + 2] = (value >>> 8);
+	    this[offset + 3] = (value & 0xff);
+	  } else {
+	    objectWriteUInt32(this, value, offset, false);
+	  }
+	  return offset + 4
+	};
+
+	function checkIEEE754 (buf, value, offset, ext, max, min) {
+	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+	  if (offset < 0) throw new RangeError('Index out of range')
+	}
+
+	function writeFloat (buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38);
+	  }
+	  write(buf, value, offset, littleEndian, 23, 4);
+	  return offset + 4
+	}
+
+	Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+	  return writeFloat(this, value, offset, true, noAssert)
+	};
+
+	Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+	  return writeFloat(this, value, offset, false, noAssert)
+	};
+
+	function writeDouble (buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308);
+	  }
+	  write(buf, value, offset, littleEndian, 52, 8);
+	  return offset + 8
+	}
+
+	Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+	  return writeDouble(this, value, offset, true, noAssert)
+	};
+
+	Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+	  return writeDouble(this, value, offset, false, noAssert)
+	};
+
+	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+	Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+	  if (!start) start = 0;
+	  if (!end && end !== 0) end = this.length;
+	  if (targetStart >= target.length) targetStart = target.length;
+	  if (!targetStart) targetStart = 0;
+	  if (end > 0 && end < start) end = start;
+
+	  // Copy 0 bytes; we're done
+	  if (end === start) return 0
+	  if (target.length === 0 || this.length === 0) return 0
+
+	  // Fatal error conditions
+	  if (targetStart < 0) {
+	    throw new RangeError('targetStart out of bounds')
+	  }
+	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+	  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+	  // Are we oob?
+	  if (end > this.length) end = this.length;
+	  if (target.length - targetStart < end - start) {
+	    end = target.length - targetStart + start;
+	  }
+
+	  var len = end - start;
+	  var i;
+
+	  if (this === target && start < targetStart && targetStart < end) {
+	    // descending copy from end
+	    for (i = len - 1; i >= 0; --i) {
+	      target[i + targetStart] = this[i + start];
+	    }
+	  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+	    // ascending copy from start
+	    for (i = 0; i < len; ++i) {
+	      target[i + targetStart] = this[i + start];
+	    }
+	  } else {
+	    Uint8Array.prototype.set.call(
+	      target,
+	      this.subarray(start, start + len),
+	      targetStart
+	    );
+	  }
+
+	  return len
+	};
+
+	// Usage:
+	//    buffer.fill(number[, offset[, end]])
+	//    buffer.fill(buffer[, offset[, end]])
+	//    buffer.fill(string[, offset[, end]][, encoding])
+	Buffer.prototype.fill = function fill (val, start, end, encoding) {
+	  // Handle string cases:
+	  if (typeof val === 'string') {
+	    if (typeof start === 'string') {
+	      encoding = start;
+	      start = 0;
+	      end = this.length;
+	    } else if (typeof end === 'string') {
+	      encoding = end;
+	      end = this.length;
+	    }
+	    if (val.length === 1) {
+	      var code = val.charCodeAt(0);
+	      if (code < 256) {
+	        val = code;
+	      }
+	    }
+	    if (encoding !== undefined && typeof encoding !== 'string') {
+	      throw new TypeError('encoding must be a string')
+	    }
+	    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+	      throw new TypeError('Unknown encoding: ' + encoding)
+	    }
+	  } else if (typeof val === 'number') {
+	    val = val & 255;
+	  }
+
+	  // Invalid ranges are not set to a default, so can range check early.
+	  if (start < 0 || this.length < start || this.length < end) {
+	    throw new RangeError('Out of range index')
+	  }
+
+	  if (end <= start) {
+	    return this
+	  }
+
+	  start = start >>> 0;
+	  end = end === undefined ? this.length : end >>> 0;
+
+	  if (!val) val = 0;
+
+	  var i;
+	  if (typeof val === 'number') {
+	    for (i = start; i < end; ++i) {
+	      this[i] = val;
+	    }
+	  } else {
+	    var bytes = internalIsBuffer(val)
+	      ? val
+	      : utf8ToBytes(new Buffer(val, encoding).toString());
+	    var len = bytes.length;
+	    for (i = 0; i < end - start; ++i) {
+	      this[i + start] = bytes[i % len];
+	    }
+	  }
+
+	  return this
+	};
+
+	// HELPER FUNCTIONS
+	// ================
+
+	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g;
+
+	function base64clean (str) {
+	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+	  str = stringtrim(str).replace(INVALID_BASE64_RE, '');
+	  // Node converts strings with length < 2 to ''
+	  if (str.length < 2) return ''
+	  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+	  while (str.length % 4 !== 0) {
+	    str = str + '=';
+	  }
+	  return str
+	}
+
+	function stringtrim (str) {
+	  if (str.trim) return str.trim()
+	  return str.replace(/^\s+|\s+$/g, '')
+	}
+
+	function toHex (n) {
+	  if (n < 16) return '0' + n.toString(16)
+	  return n.toString(16)
+	}
+
+	function utf8ToBytes (string, units) {
+	  units = units || Infinity;
+	  var codePoint;
+	  var length = string.length;
+	  var leadSurrogate = null;
+	  var bytes = [];
+
+	  for (var i = 0; i < length; ++i) {
+	    codePoint = string.charCodeAt(i);
+
+	    // is surrogate component
+	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+	      // last char was a lead
+	      if (!leadSurrogate) {
+	        // no lead yet
+	        if (codePoint > 0xDBFF) {
+	          // unexpected trail
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	          continue
+	        } else if (i + 1 === length) {
+	          // unpaired lead
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	          continue
+	        }
+
+	        // valid lead
+	        leadSurrogate = codePoint;
+
+	        continue
+	      }
+
+	      // 2 leads in a row
+	      if (codePoint < 0xDC00) {
+	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	        leadSurrogate = codePoint;
+	        continue
+	      }
+
+	      // valid surrogate pair
+	      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000;
+	    } else if (leadSurrogate) {
+	      // valid bmp char, but last char was a lead
+	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	    }
+
+	    leadSurrogate = null;
+
+	    // encode utf8
+	    if (codePoint < 0x80) {
+	      if ((units -= 1) < 0) break
+	      bytes.push(codePoint);
+	    } else if (codePoint < 0x800) {
+	      if ((units -= 2) < 0) break
+	      bytes.push(
+	        codePoint >> 0x6 | 0xC0,
+	        codePoint & 0x3F | 0x80
+	      );
+	    } else if (codePoint < 0x10000) {
+	      if ((units -= 3) < 0) break
+	      bytes.push(
+	        codePoint >> 0xC | 0xE0,
+	        codePoint >> 0x6 & 0x3F | 0x80,
+	        codePoint & 0x3F | 0x80
+	      );
+	    } else if (codePoint < 0x110000) {
+	      if ((units -= 4) < 0) break
+	      bytes.push(
+	        codePoint >> 0x12 | 0xF0,
+	        codePoint >> 0xC & 0x3F | 0x80,
+	        codePoint >> 0x6 & 0x3F | 0x80,
+	        codePoint & 0x3F | 0x80
+	      );
+	    } else {
+	      throw new Error('Invalid code point')
+	    }
+	  }
+
+	  return bytes
+	}
+
+	function asciiToBytes (str) {
+	  var byteArray = [];
+	  for (var i = 0; i < str.length; ++i) {
+	    // Node's code seems to be doing this and not & 0x7F..
+	    byteArray.push(str.charCodeAt(i) & 0xFF);
+	  }
+	  return byteArray
+	}
+
+	function utf16leToBytes (str, units) {
+	  var c, hi, lo;
+	  var byteArray = [];
+	  for (var i = 0; i < str.length; ++i) {
+	    if ((units -= 2) < 0) break
+
+	    c = str.charCodeAt(i);
+	    hi = c >> 8;
+	    lo = c % 256;
+	    byteArray.push(lo);
+	    byteArray.push(hi);
+	  }
+
+	  return byteArray
+	}
+
+
+	function base64ToBytes (str) {
+	  return toByteArray(base64clean(str))
+	}
+
+	function blitBuffer (src, dst, offset, length) {
+	  for (var i = 0; i < length; ++i) {
+	    if ((i + offset >= dst.length) || (i >= src.length)) break
+	    dst[i + offset] = src[i];
+	  }
+	  return i
+	}
+
+	function isnan (val) {
+	  return val !== val // eslint-disable-line no-self-compare
+	}
+
+
+	// the following is from is-buffer, also by Feross Aboukhadijeh and with same lisence
+	// The _isBuffer check is for Safari 5-7 support, because it's missing
+	// Object.prototype.constructor. Remove this eventually
+	function isBuffer(obj) {
+	  return obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
+	}
+
+	function isFastBuffer (obj) {
+	  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+	}
+
+	// For Node v0.10 support. Remove this eventually.
+	function isSlowBuffer (obj) {
+	  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
+	}
+
+	var bufferEs6 = /*#__PURE__*/Object.freeze({
+		INSPECT_MAX_BYTES: INSPECT_MAX_BYTES,
+		kMaxLength: _kMaxLength,
+		Buffer: Buffer,
+		SlowBuffer: SlowBuffer,
+		isBuffer: isBuffer
+	});
+
+	var require$$0 = getCjsExportFromNamespace(bufferEs6);
+
+	var bn = createCommonjsModule(function (module) {
+	(function (module, exports) {
+
+	  // Utils
+	  function assert (val, msg) {
+	    if (!val) throw new Error(msg || 'Assertion failed');
+	  }
+
+	  // Could use `inherits` module, but don't want to move from single file
+	  // architecture yet.
+	  function inherits (ctor, superCtor) {
+	    ctor.super_ = superCtor;
+	    var TempCtor = function () {};
+	    TempCtor.prototype = superCtor.prototype;
+	    ctor.prototype = new TempCtor();
+	    ctor.prototype.constructor = ctor;
+	  }
+
+	  // BN
+
+	  function BN (number, base, endian) {
+	    if (BN.isBN(number)) {
+	      return number;
+	    }
+
+	    this.negative = 0;
+	    this.words = null;
+	    this.length = 0;
+
+	    // Reduction context
+	    this.red = null;
+
+	    if (number !== null) {
+	      if (base === 'le' || base === 'be') {
+	        endian = base;
+	        base = 10;
+	      }
+
+	      this._init(number || 0, base || 10, endian || 'be');
+	    }
+	  }
+	  if (typeof module === 'object') {
+	    module.exports = BN;
+	  } else {
+	    exports.BN = BN;
+	  }
+
+	  BN.BN = BN;
+	  BN.wordSize = 26;
+
+	  var Buffer;
+	  try {
+	    Buffer = require$$0.Buffer;
+	  } catch (e) {
+	  }
+
+	  BN.isBN = function isBN (num) {
+	    if (num instanceof BN) {
+	      return true;
+	    }
+
+	    return num !== null && typeof num === 'object' &&
+	      num.constructor.wordSize === BN.wordSize && Array.isArray(num.words);
+	  };
+
+	  BN.max = function max (left, right) {
+	    if (left.cmp(right) > 0) return left;
+	    return right;
+	  };
+
+	  BN.min = function min (left, right) {
+	    if (left.cmp(right) < 0) return left;
+	    return right;
+	  };
+
+	  BN.prototype._init = function init (number, base, endian) {
+	    if (typeof number === 'number') {
+	      return this._initNumber(number, base, endian);
+	    }
+
+	    if (typeof number === 'object') {
+	      return this._initArray(number, base, endian);
+	    }
+
+	    if (base === 'hex') {
+	      base = 16;
+	    }
+	    assert(base === (base | 0) && base >= 2 && base <= 36);
+
+	    number = number.toString().replace(/\s+/g, '');
+	    var start = 0;
+	    if (number[0] === '-') {
+	      start++;
+	    }
+
+	    if (base === 16) {
+	      this._parseHex(number, start);
+	    } else {
+	      this._parseBase(number, base, start);
+	    }
+
+	    if (number[0] === '-') {
+	      this.negative = 1;
+	    }
+
+	    this.strip();
+
+	    if (endian !== 'le') return;
+
+	    this._initArray(this.toArray(), base, endian);
+	  };
+
+	  BN.prototype._initNumber = function _initNumber (number, base, endian) {
+	    if (number < 0) {
+	      this.negative = 1;
+	      number = -number;
+	    }
+	    if (number < 0x4000000) {
+	      this.words = [ number & 0x3ffffff ];
+	      this.length = 1;
+	    } else if (number < 0x10000000000000) {
+	      this.words = [
+	        number & 0x3ffffff,
+	        (number / 0x4000000) & 0x3ffffff
+	      ];
+	      this.length = 2;
+	    } else {
+	      assert(number < 0x20000000000000); // 2 ^ 53 (unsafe)
+	      this.words = [
+	        number & 0x3ffffff,
+	        (number / 0x4000000) & 0x3ffffff,
+	        1
+	      ];
+	      this.length = 3;
+	    }
+
+	    if (endian !== 'le') return;
+
+	    // Reverse the bytes
+	    this._initArray(this.toArray(), base, endian);
+	  };
+
+	  BN.prototype._initArray = function _initArray (number, base, endian) {
+	    // Perhaps a Uint8Array
+	    assert(typeof number.length === 'number');
+	    if (number.length <= 0) {
+	      this.words = [ 0 ];
+	      this.length = 1;
+	      return this;
+	    }
+
+	    this.length = Math.ceil(number.length / 3);
+	    this.words = new Array(this.length);
+	    for (var i = 0; i < this.length; i++) {
+	      this.words[i] = 0;
+	    }
+
+	    var j, w;
+	    var off = 0;
+	    if (endian === 'be') {
+	      for (i = number.length - 1, j = 0; i >= 0; i -= 3) {
+	        w = number[i] | (number[i - 1] << 8) | (number[i - 2] << 16);
+	        this.words[j] |= (w << off) & 0x3ffffff;
+	        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
+	        off += 24;
+	        if (off >= 26) {
+	          off -= 26;
+	          j++;
+	        }
+	      }
+	    } else if (endian === 'le') {
+	      for (i = 0, j = 0; i < number.length; i += 3) {
+	        w = number[i] | (number[i + 1] << 8) | (number[i + 2] << 16);
+	        this.words[j] |= (w << off) & 0x3ffffff;
+	        this.words[j + 1] = (w >>> (26 - off)) & 0x3ffffff;
+	        off += 24;
+	        if (off >= 26) {
+	          off -= 26;
+	          j++;
+	        }
+	      }
+	    }
+	    return this.strip();
+	  };
+
+	  function parseHex (str, start, end) {
+	    var r = 0;
+	    var len = Math.min(str.length, end);
+	    for (var i = start; i < len; i++) {
+	      var c = str.charCodeAt(i) - 48;
+
+	      r <<= 4;
+
+	      // 'a' - 'f'
+	      if (c >= 49 && c <= 54) {
+	        r |= c - 49 + 0xa;
+
+	      // 'A' - 'F'
+	      } else if (c >= 17 && c <= 22) {
+	        r |= c - 17 + 0xa;
+
+	      // '0' - '9'
+	      } else {
+	        r |= c & 0xf;
+	      }
+	    }
+	    return r;
+	  }
+
+	  BN.prototype._parseHex = function _parseHex (number, start) {
+	    // Create possibly bigger array to ensure that it fits the number
+	    this.length = Math.ceil((number.length - start) / 6);
+	    this.words = new Array(this.length);
+	    for (var i = 0; i < this.length; i++) {
+	      this.words[i] = 0;
+	    }
+
+	    var j, w;
+	    // Scan 24-bit chunks and add them to the number
+	    var off = 0;
+	    for (i = number.length - 6, j = 0; i >= start; i -= 6) {
+	      w = parseHex(number, i, i + 6);
+	      this.words[j] |= (w << off) & 0x3ffffff;
+	      // NOTE: `0x3fffff` is intentional here, 26bits max shift + 24bit hex limb
+	      this.words[j + 1] |= w >>> (26 - off) & 0x3fffff;
+	      off += 24;
+	      if (off >= 26) {
+	        off -= 26;
+	        j++;
+	      }
+	    }
+	    if (i + 6 !== start) {
+	      w = parseHex(number, start, i + 6);
+	      this.words[j] |= (w << off) & 0x3ffffff;
+	      this.words[j + 1] |= w >>> (26 - off) & 0x3fffff;
+	    }
+	    this.strip();
+	  };
+
+	  function parseBase (str, start, end, mul) {
+	    var r = 0;
+	    var len = Math.min(str.length, end);
+	    for (var i = start; i < len; i++) {
+	      var c = str.charCodeAt(i) - 48;
+
+	      r *= mul;
+
+	      // 'a'
+	      if (c >= 49) {
+	        r += c - 49 + 0xa;
+
+	      // 'A'
+	      } else if (c >= 17) {
+	        r += c - 17 + 0xa;
+
+	      // '0' - '9'
+	      } else {
+	        r += c;
+	      }
+	    }
+	    return r;
+	  }
+
+	  BN.prototype._parseBase = function _parseBase (number, base, start) {
+	    // Initialize as zero
+	    this.words = [ 0 ];
+	    this.length = 1;
+
+	    // Find length of limb in base
+	    for (var limbLen = 0, limbPow = 1; limbPow <= 0x3ffffff; limbPow *= base) {
+	      limbLen++;
+	    }
+	    limbLen--;
+	    limbPow = (limbPow / base) | 0;
+
+	    var total = number.length - start;
+	    var mod = total % limbLen;
+	    var end = Math.min(total, total - mod) + start;
+
+	    var word = 0;
+	    for (var i = start; i < end; i += limbLen) {
+	      word = parseBase(number, i, i + limbLen, base);
+
+	      this.imuln(limbPow);
+	      if (this.words[0] + word < 0x4000000) {
+	        this.words[0] += word;
+	      } else {
+	        this._iaddn(word);
+	      }
+	    }
+
+	    if (mod !== 0) {
+	      var pow = 1;
+	      word = parseBase(number, i, number.length, base);
+
+	      for (i = 0; i < mod; i++) {
+	        pow *= base;
+	      }
+
+	      this.imuln(pow);
+	      if (this.words[0] + word < 0x4000000) {
+	        this.words[0] += word;
+	      } else {
+	        this._iaddn(word);
+	      }
+	    }
+	  };
+
+	  BN.prototype.copy = function copy (dest) {
+	    dest.words = new Array(this.length);
+	    for (var i = 0; i < this.length; i++) {
+	      dest.words[i] = this.words[i];
+	    }
+	    dest.length = this.length;
+	    dest.negative = this.negative;
+	    dest.red = this.red;
+	  };
+
+	  BN.prototype.clone = function clone () {
+	    var r = new BN(null);
+	    this.copy(r);
+	    return r;
+	  };
+
+	  BN.prototype._expand = function _expand (size) {
+	    while (this.length < size) {
+	      this.words[this.length++] = 0;
+	    }
+	    return this;
+	  };
+
+	  // Remove leading `0` from `this`
+	  BN.prototype.strip = function strip () {
+	    while (this.length > 1 && this.words[this.length - 1] === 0) {
+	      this.length--;
+	    }
+	    return this._normSign();
+	  };
+
+	  BN.prototype._normSign = function _normSign () {
+	    // -0 = 0
+	    if (this.length === 1 && this.words[0] === 0) {
+	      this.negative = 0;
+	    }
+	    return this;
+	  };
+
+	  BN.prototype.inspect = function inspect () {
+	    return (this.red ? '<BN-R: ' : '<BN: ') + this.toString(16) + '>';
+	  };
+
+	  /*
+
+	  var zeros = [];
+	  var groupSizes = [];
+	  var groupBases = [];
+
+	  var s = '';
+	  var i = -1;
+	  while (++i < BN.wordSize) {
+	    zeros[i] = s;
+	    s += '0';
+	  }
+	  groupSizes[0] = 0;
+	  groupSizes[1] = 0;
+	  groupBases[0] = 0;
+	  groupBases[1] = 0;
+	  var base = 2 - 1;
+	  while (++base < 36 + 1) {
+	    var groupSize = 0;
+	    var groupBase = 1;
+	    while (groupBase < (1 << BN.wordSize) / base) {
+	      groupBase *= base;
+	      groupSize += 1;
+	    }
+	    groupSizes[base] = groupSize;
+	    groupBases[base] = groupBase;
+	  }
+
+	  */
+
+	  var zeros = [
+	    '',
+	    '0',
+	    '00',
+	    '000',
+	    '0000',
+	    '00000',
+	    '000000',
+	    '0000000',
+	    '00000000',
+	    '000000000',
+	    '0000000000',
+	    '00000000000',
+	    '000000000000',
+	    '0000000000000',
+	    '00000000000000',
+	    '000000000000000',
+	    '0000000000000000',
+	    '00000000000000000',
+	    '000000000000000000',
+	    '0000000000000000000',
+	    '00000000000000000000',
+	    '000000000000000000000',
+	    '0000000000000000000000',
+	    '00000000000000000000000',
+	    '000000000000000000000000',
+	    '0000000000000000000000000'
+	  ];
+
+	  var groupSizes = [
+	    0, 0,
+	    25, 16, 12, 11, 10, 9, 8,
+	    8, 7, 7, 7, 7, 6, 6,
+	    6, 6, 6, 6, 6, 5, 5,
+	    5, 5, 5, 5, 5, 5, 5,
+	    5, 5, 5, 5, 5, 5, 5
+	  ];
+
+	  var groupBases = [
+	    0, 0,
+	    33554432, 43046721, 16777216, 48828125, 60466176, 40353607, 16777216,
+	    43046721, 10000000, 19487171, 35831808, 62748517, 7529536, 11390625,
+	    16777216, 24137569, 34012224, 47045881, 64000000, 4084101, 5153632,
+	    6436343, 7962624, 9765625, 11881376, 14348907, 17210368, 20511149,
+	    24300000, 28629151, 33554432, 39135393, 45435424, 52521875, 60466176
+	  ];
+
+	  BN.prototype.toString = function toString (base, padding) {
+	    base = base || 10;
+	    padding = padding | 0 || 1;
+
+	    var out;
+	    if (base === 16 || base === 'hex') {
+	      out = '';
+	      var off = 0;
+	      var carry = 0;
+	      for (var i = 0; i < this.length; i++) {
+	        var w = this.words[i];
+	        var word = (((w << off) | carry) & 0xffffff).toString(16);
+	        carry = (w >>> (24 - off)) & 0xffffff;
+	        if (carry !== 0 || i !== this.length - 1) {
+	          out = zeros[6 - word.length] + word + out;
+	        } else {
+	          out = word + out;
+	        }
+	        off += 2;
+	        if (off >= 26) {
+	          off -= 26;
+	          i--;
+	        }
+	      }
+	      if (carry !== 0) {
+	        out = carry.toString(16) + out;
+	      }
+	      while (out.length % padding !== 0) {
+	        out = '0' + out;
+	      }
+	      if (this.negative !== 0) {
+	        out = '-' + out;
+	      }
+	      return out;
+	    }
+
+	    if (base === (base | 0) && base >= 2 && base <= 36) {
+	      // var groupSize = Math.floor(BN.wordSize * Math.LN2 / Math.log(base));
+	      var groupSize = groupSizes[base];
+	      // var groupBase = Math.pow(base, groupSize);
+	      var groupBase = groupBases[base];
+	      out = '';
+	      var c = this.clone();
+	      c.negative = 0;
+	      while (!c.isZero()) {
+	        var r = c.modn(groupBase).toString(base);
+	        c = c.idivn(groupBase);
+
+	        if (!c.isZero()) {
+	          out = zeros[groupSize - r.length] + r + out;
+	        } else {
+	          out = r + out;
+	        }
+	      }
+	      if (this.isZero()) {
+	        out = '0' + out;
+	      }
+	      while (out.length % padding !== 0) {
+	        out = '0' + out;
+	      }
+	      if (this.negative !== 0) {
+	        out = '-' + out;
+	      }
+	      return out;
+	    }
+
+	    assert(false, 'Base should be between 2 and 36');
+	  };
+
+	  BN.prototype.toNumber = function toNumber () {
+	    var ret = this.words[0];
+	    if (this.length === 2) {
+	      ret += this.words[1] * 0x4000000;
+	    } else if (this.length === 3 && this.words[2] === 0x01) {
+	      // NOTE: at this stage it is known that the top bit is set
+	      ret += 0x10000000000000 + (this.words[1] * 0x4000000);
+	    } else if (this.length > 2) {
+	      assert(false, 'Number can only safely store up to 53 bits');
+	    }
+	    return (this.negative !== 0) ? -ret : ret;
+	  };
+
+	  BN.prototype.toJSON = function toJSON () {
+	    return this.toString(16);
+	  };
+
+	  BN.prototype.toBuffer = function toBuffer (endian, length) {
+	    assert(typeof Buffer !== 'undefined');
+	    return this.toArrayLike(Buffer, endian, length);
+	  };
+
+	  BN.prototype.toArray = function toArray (endian, length) {
+	    return this.toArrayLike(Array, endian, length);
+	  };
+
+	  BN.prototype.toArrayLike = function toArrayLike (ArrayType, endian, length) {
+	    var byteLength = this.byteLength();
+	    var reqLength = length || Math.max(1, byteLength);
+	    assert(byteLength <= reqLength, 'byte array longer than desired length');
+	    assert(reqLength > 0, 'Requested array length <= 0');
+
+	    this.strip();
+	    var littleEndian = endian === 'le';
+	    var res = new ArrayType(reqLength);
+
+	    var b, i;
+	    var q = this.clone();
+	    if (!littleEndian) {
+	      // Assume big-endian
+	      for (i = 0; i < reqLength - byteLength; i++) {
+	        res[i] = 0;
+	      }
+
+	      for (i = 0; !q.isZero(); i++) {
+	        b = q.andln(0xff);
+	        q.iushrn(8);
+
+	        res[reqLength - i - 1] = b;
+	      }
+	    } else {
+	      for (i = 0; !q.isZero(); i++) {
+	        b = q.andln(0xff);
+	        q.iushrn(8);
+
+	        res[i] = b;
+	      }
+
+	      for (; i < reqLength; i++) {
+	        res[i] = 0;
+	      }
+	    }
+
+	    return res;
+	  };
+
+	  if (Math.clz32) {
+	    BN.prototype._countBits = function _countBits (w) {
+	      return 32 - Math.clz32(w);
+	    };
+	  } else {
+	    BN.prototype._countBits = function _countBits (w) {
+	      var t = w;
+	      var r = 0;
+	      if (t >= 0x1000) {
+	        r += 13;
+	        t >>>= 13;
+	      }
+	      if (t >= 0x40) {
+	        r += 7;
+	        t >>>= 7;
+	      }
+	      if (t >= 0x8) {
+	        r += 4;
+	        t >>>= 4;
+	      }
+	      if (t >= 0x02) {
+	        r += 2;
+	        t >>>= 2;
+	      }
+	      return r + t;
+	    };
+	  }
+
+	  BN.prototype._zeroBits = function _zeroBits (w) {
+	    // Short-cut
+	    if (w === 0) return 26;
+
+	    var t = w;
+	    var r = 0;
+	    if ((t & 0x1fff) === 0) {
+	      r += 13;
+	      t >>>= 13;
+	    }
+	    if ((t & 0x7f) === 0) {
+	      r += 7;
+	      t >>>= 7;
+	    }
+	    if ((t & 0xf) === 0) {
+	      r += 4;
+	      t >>>= 4;
+	    }
+	    if ((t & 0x3) === 0) {
+	      r += 2;
+	      t >>>= 2;
+	    }
+	    if ((t & 0x1) === 0) {
+	      r++;
+	    }
+	    return r;
+	  };
+
+	  // Return number of used bits in a BN
+	  BN.prototype.bitLength = function bitLength () {
+	    var w = this.words[this.length - 1];
+	    var hi = this._countBits(w);
+	    return (this.length - 1) * 26 + hi;
+	  };
+
+	  function toBitArray (num) {
+	    var w = new Array(num.bitLength());
+
+	    for (var bit = 0; bit < w.length; bit++) {
+	      var off = (bit / 26) | 0;
+	      var wbit = bit % 26;
+
+	      w[bit] = (num.words[off] & (1 << wbit)) >>> wbit;
+	    }
+
+	    return w;
+	  }
+
+	  // Number of trailing zero bits
+	  BN.prototype.zeroBits = function zeroBits () {
+	    if (this.isZero()) return 0;
+
+	    var r = 0;
+	    for (var i = 0; i < this.length; i++) {
+	      var b = this._zeroBits(this.words[i]);
+	      r += b;
+	      if (b !== 26) break;
+	    }
+	    return r;
+	  };
+
+	  BN.prototype.byteLength = function byteLength () {
+	    return Math.ceil(this.bitLength() / 8);
+	  };
+
+	  BN.prototype.toTwos = function toTwos (width) {
+	    if (this.negative !== 0) {
+	      return this.abs().inotn(width).iaddn(1);
+	    }
+	    return this.clone();
+	  };
+
+	  BN.prototype.fromTwos = function fromTwos (width) {
+	    if (this.testn(width - 1)) {
+	      return this.notn(width).iaddn(1).ineg();
+	    }
+	    return this.clone();
+	  };
+
+	  BN.prototype.isNeg = function isNeg () {
+	    return this.negative !== 0;
+	  };
+
+	  // Return negative clone of `this`
+	  BN.prototype.neg = function neg () {
+	    return this.clone().ineg();
+	  };
+
+	  BN.prototype.ineg = function ineg () {
+	    if (!this.isZero()) {
+	      this.negative ^= 1;
+	    }
+
+	    return this;
+	  };
+
+	  // Or `num` with `this` in-place
+	  BN.prototype.iuor = function iuor (num) {
+	    while (this.length < num.length) {
+	      this.words[this.length++] = 0;
+	    }
+
+	    for (var i = 0; i < num.length; i++) {
+	      this.words[i] = this.words[i] | num.words[i];
+	    }
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.ior = function ior (num) {
+	    assert((this.negative | num.negative) === 0);
+	    return this.iuor(num);
+	  };
+
+	  // Or `num` with `this`
+	  BN.prototype.or = function or (num) {
+	    if (this.length > num.length) return this.clone().ior(num);
+	    return num.clone().ior(this);
+	  };
+
+	  BN.prototype.uor = function uor (num) {
+	    if (this.length > num.length) return this.clone().iuor(num);
+	    return num.clone().iuor(this);
+	  };
+
+	  // And `num` with `this` in-place
+	  BN.prototype.iuand = function iuand (num) {
+	    // b = min-length(num, this)
+	    var b;
+	    if (this.length > num.length) {
+	      b = num;
+	    } else {
+	      b = this;
+	    }
+
+	    for (var i = 0; i < b.length; i++) {
+	      this.words[i] = this.words[i] & num.words[i];
+	    }
+
+	    this.length = b.length;
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.iand = function iand (num) {
+	    assert((this.negative | num.negative) === 0);
+	    return this.iuand(num);
+	  };
+
+	  // And `num` with `this`
+	  BN.prototype.and = function and (num) {
+	    if (this.length > num.length) return this.clone().iand(num);
+	    return num.clone().iand(this);
+	  };
+
+	  BN.prototype.uand = function uand (num) {
+	    if (this.length > num.length) return this.clone().iuand(num);
+	    return num.clone().iuand(this);
+	  };
+
+	  // Xor `num` with `this` in-place
+	  BN.prototype.iuxor = function iuxor (num) {
+	    // a.length > b.length
+	    var a;
+	    var b;
+	    if (this.length > num.length) {
+	      a = this;
+	      b = num;
+	    } else {
+	      a = num;
+	      b = this;
+	    }
+
+	    for (var i = 0; i < b.length; i++) {
+	      this.words[i] = a.words[i] ^ b.words[i];
+	    }
+
+	    if (this !== a) {
+	      for (; i < a.length; i++) {
+	        this.words[i] = a.words[i];
+	      }
+	    }
+
+	    this.length = a.length;
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.ixor = function ixor (num) {
+	    assert((this.negative | num.negative) === 0);
+	    return this.iuxor(num);
+	  };
+
+	  // Xor `num` with `this`
+	  BN.prototype.xor = function xor (num) {
+	    if (this.length > num.length) return this.clone().ixor(num);
+	    return num.clone().ixor(this);
+	  };
+
+	  BN.prototype.uxor = function uxor (num) {
+	    if (this.length > num.length) return this.clone().iuxor(num);
+	    return num.clone().iuxor(this);
+	  };
+
+	  // Not ``this`` with ``width`` bitwidth
+	  BN.prototype.inotn = function inotn (width) {
+	    assert(typeof width === 'number' && width >= 0);
+
+	    var bytesNeeded = Math.ceil(width / 26) | 0;
+	    var bitsLeft = width % 26;
+
+	    // Extend the buffer with leading zeroes
+	    this._expand(bytesNeeded);
+
+	    if (bitsLeft > 0) {
+	      bytesNeeded--;
+	    }
+
+	    // Handle complete words
+	    for (var i = 0; i < bytesNeeded; i++) {
+	      this.words[i] = ~this.words[i] & 0x3ffffff;
+	    }
+
+	    // Handle the residue
+	    if (bitsLeft > 0) {
+	      this.words[i] = ~this.words[i] & (0x3ffffff >> (26 - bitsLeft));
+	    }
+
+	    // And remove leading zeroes
+	    return this.strip();
+	  };
+
+	  BN.prototype.notn = function notn (width) {
+	    return this.clone().inotn(width);
+	  };
+
+	  // Set `bit` of `this`
+	  BN.prototype.setn = function setn (bit, val) {
+	    assert(typeof bit === 'number' && bit >= 0);
+
+	    var off = (bit / 26) | 0;
+	    var wbit = bit % 26;
+
+	    this._expand(off + 1);
+
+	    if (val) {
+	      this.words[off] = this.words[off] | (1 << wbit);
+	    } else {
+	      this.words[off] = this.words[off] & ~(1 << wbit);
+	    }
+
+	    return this.strip();
+	  };
+
+	  // Add `num` to `this` in-place
+	  BN.prototype.iadd = function iadd (num) {
+	    var r;
+
+	    // negative + positive
+	    if (this.negative !== 0 && num.negative === 0) {
+	      this.negative = 0;
+	      r = this.isub(num);
+	      this.negative ^= 1;
+	      return this._normSign();
+
+	    // positive + negative
+	    } else if (this.negative === 0 && num.negative !== 0) {
+	      num.negative = 0;
+	      r = this.isub(num);
+	      num.negative = 1;
+	      return r._normSign();
+	    }
+
+	    // a.length > b.length
+	    var a, b;
+	    if (this.length > num.length) {
+	      a = this;
+	      b = num;
+	    } else {
+	      a = num;
+	      b = this;
+	    }
+
+	    var carry = 0;
+	    for (var i = 0; i < b.length; i++) {
+	      r = (a.words[i] | 0) + (b.words[i] | 0) + carry;
+	      this.words[i] = r & 0x3ffffff;
+	      carry = r >>> 26;
+	    }
+	    for (; carry !== 0 && i < a.length; i++) {
+	      r = (a.words[i] | 0) + carry;
+	      this.words[i] = r & 0x3ffffff;
+	      carry = r >>> 26;
+	    }
+
+	    this.length = a.length;
+	    if (carry !== 0) {
+	      this.words[this.length] = carry;
+	      this.length++;
+	    // Copy the rest of the words
+	    } else if (a !== this) {
+	      for (; i < a.length; i++) {
+	        this.words[i] = a.words[i];
+	      }
+	    }
+
+	    return this;
+	  };
+
+	  // Add `num` to `this`
+	  BN.prototype.add = function add (num) {
+	    var res;
+	    if (num.negative !== 0 && this.negative === 0) {
+	      num.negative = 0;
+	      res = this.sub(num);
+	      num.negative ^= 1;
+	      return res;
+	    } else if (num.negative === 0 && this.negative !== 0) {
+	      this.negative = 0;
+	      res = num.sub(this);
+	      this.negative = 1;
+	      return res;
+	    }
+
+	    if (this.length > num.length) return this.clone().iadd(num);
+
+	    return num.clone().iadd(this);
+	  };
+
+	  // Subtract `num` from `this` in-place
+	  BN.prototype.isub = function isub (num) {
+	    // this - (-num) = this + num
+	    if (num.negative !== 0) {
+	      num.negative = 0;
+	      var r = this.iadd(num);
+	      num.negative = 1;
+	      return r._normSign();
+
+	    // -this - num = -(this + num)
+	    } else if (this.negative !== 0) {
+	      this.negative = 0;
+	      this.iadd(num);
+	      this.negative = 1;
+	      return this._normSign();
+	    }
+
+	    // At this point both numbers are positive
+	    var cmp = this.cmp(num);
+
+	    // Optimization - zeroify
+	    if (cmp === 0) {
+	      this.negative = 0;
+	      this.length = 1;
+	      this.words[0] = 0;
+	      return this;
+	    }
+
+	    // a > b
+	    var a, b;
+	    if (cmp > 0) {
+	      a = this;
+	      b = num;
+	    } else {
+	      a = num;
+	      b = this;
+	    }
+
+	    var carry = 0;
+	    for (var i = 0; i < b.length; i++) {
+	      r = (a.words[i] | 0) - (b.words[i] | 0) + carry;
+	      carry = r >> 26;
+	      this.words[i] = r & 0x3ffffff;
+	    }
+	    for (; carry !== 0 && i < a.length; i++) {
+	      r = (a.words[i] | 0) + carry;
+	      carry = r >> 26;
+	      this.words[i] = r & 0x3ffffff;
+	    }
+
+	    // Copy rest of the words
+	    if (carry === 0 && i < a.length && a !== this) {
+	      for (; i < a.length; i++) {
+	        this.words[i] = a.words[i];
+	      }
+	    }
+
+	    this.length = Math.max(this.length, i);
+
+	    if (a !== this) {
+	      this.negative = 1;
+	    }
+
+	    return this.strip();
+	  };
+
+	  // Subtract `num` from `this`
+	  BN.prototype.sub = function sub (num) {
+	    return this.clone().isub(num);
+	  };
+
+	  function smallMulTo (self, num, out) {
+	    out.negative = num.negative ^ self.negative;
+	    var len = (self.length + num.length) | 0;
+	    out.length = len;
+	    len = (len - 1) | 0;
+
+	    // Peel one iteration (compiler can't do it, because of code complexity)
+	    var a = self.words[0] | 0;
+	    var b = num.words[0] | 0;
+	    var r = a * b;
+
+	    var lo = r & 0x3ffffff;
+	    var carry = (r / 0x4000000) | 0;
+	    out.words[0] = lo;
+
+	    for (var k = 1; k < len; k++) {
+	      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
+	      // note that ncarry could be >= 0x3ffffff
+	      var ncarry = carry >>> 26;
+	      var rword = carry & 0x3ffffff;
+	      var maxJ = Math.min(k, num.length - 1);
+	      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
+	        var i = (k - j) | 0;
+	        a = self.words[i] | 0;
+	        b = num.words[j] | 0;
+	        r = a * b + rword;
+	        ncarry += (r / 0x4000000) | 0;
+	        rword = r & 0x3ffffff;
+	      }
+	      out.words[k] = rword | 0;
+	      carry = ncarry | 0;
+	    }
+	    if (carry !== 0) {
+	      out.words[k] = carry | 0;
+	    } else {
+	      out.length--;
+	    }
+
+	    return out.strip();
+	  }
+
+	  // TODO(indutny): it may be reasonable to omit it for users who don't need
+	  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
+	  // multiplication (like elliptic secp256k1).
+	  var comb10MulTo = function comb10MulTo (self, num, out) {
+	    var a = self.words;
+	    var b = num.words;
+	    var o = out.words;
+	    var c = 0;
+	    var lo;
+	    var mid;
+	    var hi;
+	    var a0 = a[0] | 0;
+	    var al0 = a0 & 0x1fff;
+	    var ah0 = a0 >>> 13;
+	    var a1 = a[1] | 0;
+	    var al1 = a1 & 0x1fff;
+	    var ah1 = a1 >>> 13;
+	    var a2 = a[2] | 0;
+	    var al2 = a2 & 0x1fff;
+	    var ah2 = a2 >>> 13;
+	    var a3 = a[3] | 0;
+	    var al3 = a3 & 0x1fff;
+	    var ah3 = a3 >>> 13;
+	    var a4 = a[4] | 0;
+	    var al4 = a4 & 0x1fff;
+	    var ah4 = a4 >>> 13;
+	    var a5 = a[5] | 0;
+	    var al5 = a5 & 0x1fff;
+	    var ah5 = a5 >>> 13;
+	    var a6 = a[6] | 0;
+	    var al6 = a6 & 0x1fff;
+	    var ah6 = a6 >>> 13;
+	    var a7 = a[7] | 0;
+	    var al7 = a7 & 0x1fff;
+	    var ah7 = a7 >>> 13;
+	    var a8 = a[8] | 0;
+	    var al8 = a8 & 0x1fff;
+	    var ah8 = a8 >>> 13;
+	    var a9 = a[9] | 0;
+	    var al9 = a9 & 0x1fff;
+	    var ah9 = a9 >>> 13;
+	    var b0 = b[0] | 0;
+	    var bl0 = b0 & 0x1fff;
+	    var bh0 = b0 >>> 13;
+	    var b1 = b[1] | 0;
+	    var bl1 = b1 & 0x1fff;
+	    var bh1 = b1 >>> 13;
+	    var b2 = b[2] | 0;
+	    var bl2 = b2 & 0x1fff;
+	    var bh2 = b2 >>> 13;
+	    var b3 = b[3] | 0;
+	    var bl3 = b3 & 0x1fff;
+	    var bh3 = b3 >>> 13;
+	    var b4 = b[4] | 0;
+	    var bl4 = b4 & 0x1fff;
+	    var bh4 = b4 >>> 13;
+	    var b5 = b[5] | 0;
+	    var bl5 = b5 & 0x1fff;
+	    var bh5 = b5 >>> 13;
+	    var b6 = b[6] | 0;
+	    var bl6 = b6 & 0x1fff;
+	    var bh6 = b6 >>> 13;
+	    var b7 = b[7] | 0;
+	    var bl7 = b7 & 0x1fff;
+	    var bh7 = b7 >>> 13;
+	    var b8 = b[8] | 0;
+	    var bl8 = b8 & 0x1fff;
+	    var bh8 = b8 >>> 13;
+	    var b9 = b[9] | 0;
+	    var bl9 = b9 & 0x1fff;
+	    var bh9 = b9 >>> 13;
+
+	    out.negative = self.negative ^ num.negative;
+	    out.length = 19;
+	    /* k = 0 */
+	    lo = Math.imul(al0, bl0);
+	    mid = Math.imul(al0, bh0);
+	    mid = (mid + Math.imul(ah0, bl0)) | 0;
+	    hi = Math.imul(ah0, bh0);
+	    var w0 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w0 >>> 26)) | 0;
+	    w0 &= 0x3ffffff;
+	    /* k = 1 */
+	    lo = Math.imul(al1, bl0);
+	    mid = Math.imul(al1, bh0);
+	    mid = (mid + Math.imul(ah1, bl0)) | 0;
+	    hi = Math.imul(ah1, bh0);
+	    lo = (lo + Math.imul(al0, bl1)) | 0;
+	    mid = (mid + Math.imul(al0, bh1)) | 0;
+	    mid = (mid + Math.imul(ah0, bl1)) | 0;
+	    hi = (hi + Math.imul(ah0, bh1)) | 0;
+	    var w1 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w1 >>> 26)) | 0;
+	    w1 &= 0x3ffffff;
+	    /* k = 2 */
+	    lo = Math.imul(al2, bl0);
+	    mid = Math.imul(al2, bh0);
+	    mid = (mid + Math.imul(ah2, bl0)) | 0;
+	    hi = Math.imul(ah2, bh0);
+	    lo = (lo + Math.imul(al1, bl1)) | 0;
+	    mid = (mid + Math.imul(al1, bh1)) | 0;
+	    mid = (mid + Math.imul(ah1, bl1)) | 0;
+	    hi = (hi + Math.imul(ah1, bh1)) | 0;
+	    lo = (lo + Math.imul(al0, bl2)) | 0;
+	    mid = (mid + Math.imul(al0, bh2)) | 0;
+	    mid = (mid + Math.imul(ah0, bl2)) | 0;
+	    hi = (hi + Math.imul(ah0, bh2)) | 0;
+	    var w2 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w2 >>> 26)) | 0;
+	    w2 &= 0x3ffffff;
+	    /* k = 3 */
+	    lo = Math.imul(al3, bl0);
+	    mid = Math.imul(al3, bh0);
+	    mid = (mid + Math.imul(ah3, bl0)) | 0;
+	    hi = Math.imul(ah3, bh0);
+	    lo = (lo + Math.imul(al2, bl1)) | 0;
+	    mid = (mid + Math.imul(al2, bh1)) | 0;
+	    mid = (mid + Math.imul(ah2, bl1)) | 0;
+	    hi = (hi + Math.imul(ah2, bh1)) | 0;
+	    lo = (lo + Math.imul(al1, bl2)) | 0;
+	    mid = (mid + Math.imul(al1, bh2)) | 0;
+	    mid = (mid + Math.imul(ah1, bl2)) | 0;
+	    hi = (hi + Math.imul(ah1, bh2)) | 0;
+	    lo = (lo + Math.imul(al0, bl3)) | 0;
+	    mid = (mid + Math.imul(al0, bh3)) | 0;
+	    mid = (mid + Math.imul(ah0, bl3)) | 0;
+	    hi = (hi + Math.imul(ah0, bh3)) | 0;
+	    var w3 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w3 >>> 26)) | 0;
+	    w3 &= 0x3ffffff;
+	    /* k = 4 */
+	    lo = Math.imul(al4, bl0);
+	    mid = Math.imul(al4, bh0);
+	    mid = (mid + Math.imul(ah4, bl0)) | 0;
+	    hi = Math.imul(ah4, bh0);
+	    lo = (lo + Math.imul(al3, bl1)) | 0;
+	    mid = (mid + Math.imul(al3, bh1)) | 0;
+	    mid = (mid + Math.imul(ah3, bl1)) | 0;
+	    hi = (hi + Math.imul(ah3, bh1)) | 0;
+	    lo = (lo + Math.imul(al2, bl2)) | 0;
+	    mid = (mid + Math.imul(al2, bh2)) | 0;
+	    mid = (mid + Math.imul(ah2, bl2)) | 0;
+	    hi = (hi + Math.imul(ah2, bh2)) | 0;
+	    lo = (lo + Math.imul(al1, bl3)) | 0;
+	    mid = (mid + Math.imul(al1, bh3)) | 0;
+	    mid = (mid + Math.imul(ah1, bl3)) | 0;
+	    hi = (hi + Math.imul(ah1, bh3)) | 0;
+	    lo = (lo + Math.imul(al0, bl4)) | 0;
+	    mid = (mid + Math.imul(al0, bh4)) | 0;
+	    mid = (mid + Math.imul(ah0, bl4)) | 0;
+	    hi = (hi + Math.imul(ah0, bh4)) | 0;
+	    var w4 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w4 >>> 26)) | 0;
+	    w4 &= 0x3ffffff;
+	    /* k = 5 */
+	    lo = Math.imul(al5, bl0);
+	    mid = Math.imul(al5, bh0);
+	    mid = (mid + Math.imul(ah5, bl0)) | 0;
+	    hi = Math.imul(ah5, bh0);
+	    lo = (lo + Math.imul(al4, bl1)) | 0;
+	    mid = (mid + Math.imul(al4, bh1)) | 0;
+	    mid = (mid + Math.imul(ah4, bl1)) | 0;
+	    hi = (hi + Math.imul(ah4, bh1)) | 0;
+	    lo = (lo + Math.imul(al3, bl2)) | 0;
+	    mid = (mid + Math.imul(al3, bh2)) | 0;
+	    mid = (mid + Math.imul(ah3, bl2)) | 0;
+	    hi = (hi + Math.imul(ah3, bh2)) | 0;
+	    lo = (lo + Math.imul(al2, bl3)) | 0;
+	    mid = (mid + Math.imul(al2, bh3)) | 0;
+	    mid = (mid + Math.imul(ah2, bl3)) | 0;
+	    hi = (hi + Math.imul(ah2, bh3)) | 0;
+	    lo = (lo + Math.imul(al1, bl4)) | 0;
+	    mid = (mid + Math.imul(al1, bh4)) | 0;
+	    mid = (mid + Math.imul(ah1, bl4)) | 0;
+	    hi = (hi + Math.imul(ah1, bh4)) | 0;
+	    lo = (lo + Math.imul(al0, bl5)) | 0;
+	    mid = (mid + Math.imul(al0, bh5)) | 0;
+	    mid = (mid + Math.imul(ah0, bl5)) | 0;
+	    hi = (hi + Math.imul(ah0, bh5)) | 0;
+	    var w5 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w5 >>> 26)) | 0;
+	    w5 &= 0x3ffffff;
+	    /* k = 6 */
+	    lo = Math.imul(al6, bl0);
+	    mid = Math.imul(al6, bh0);
+	    mid = (mid + Math.imul(ah6, bl0)) | 0;
+	    hi = Math.imul(ah6, bh0);
+	    lo = (lo + Math.imul(al5, bl1)) | 0;
+	    mid = (mid + Math.imul(al5, bh1)) | 0;
+	    mid = (mid + Math.imul(ah5, bl1)) | 0;
+	    hi = (hi + Math.imul(ah5, bh1)) | 0;
+	    lo = (lo + Math.imul(al4, bl2)) | 0;
+	    mid = (mid + Math.imul(al4, bh2)) | 0;
+	    mid = (mid + Math.imul(ah4, bl2)) | 0;
+	    hi = (hi + Math.imul(ah4, bh2)) | 0;
+	    lo = (lo + Math.imul(al3, bl3)) | 0;
+	    mid = (mid + Math.imul(al3, bh3)) | 0;
+	    mid = (mid + Math.imul(ah3, bl3)) | 0;
+	    hi = (hi + Math.imul(ah3, bh3)) | 0;
+	    lo = (lo + Math.imul(al2, bl4)) | 0;
+	    mid = (mid + Math.imul(al2, bh4)) | 0;
+	    mid = (mid + Math.imul(ah2, bl4)) | 0;
+	    hi = (hi + Math.imul(ah2, bh4)) | 0;
+	    lo = (lo + Math.imul(al1, bl5)) | 0;
+	    mid = (mid + Math.imul(al1, bh5)) | 0;
+	    mid = (mid + Math.imul(ah1, bl5)) | 0;
+	    hi = (hi + Math.imul(ah1, bh5)) | 0;
+	    lo = (lo + Math.imul(al0, bl6)) | 0;
+	    mid = (mid + Math.imul(al0, bh6)) | 0;
+	    mid = (mid + Math.imul(ah0, bl6)) | 0;
+	    hi = (hi + Math.imul(ah0, bh6)) | 0;
+	    var w6 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w6 >>> 26)) | 0;
+	    w6 &= 0x3ffffff;
+	    /* k = 7 */
+	    lo = Math.imul(al7, bl0);
+	    mid = Math.imul(al7, bh0);
+	    mid = (mid + Math.imul(ah7, bl0)) | 0;
+	    hi = Math.imul(ah7, bh0);
+	    lo = (lo + Math.imul(al6, bl1)) | 0;
+	    mid = (mid + Math.imul(al6, bh1)) | 0;
+	    mid = (mid + Math.imul(ah6, bl1)) | 0;
+	    hi = (hi + Math.imul(ah6, bh1)) | 0;
+	    lo = (lo + Math.imul(al5, bl2)) | 0;
+	    mid = (mid + Math.imul(al5, bh2)) | 0;
+	    mid = (mid + Math.imul(ah5, bl2)) | 0;
+	    hi = (hi + Math.imul(ah5, bh2)) | 0;
+	    lo = (lo + Math.imul(al4, bl3)) | 0;
+	    mid = (mid + Math.imul(al4, bh3)) | 0;
+	    mid = (mid + Math.imul(ah4, bl3)) | 0;
+	    hi = (hi + Math.imul(ah4, bh3)) | 0;
+	    lo = (lo + Math.imul(al3, bl4)) | 0;
+	    mid = (mid + Math.imul(al3, bh4)) | 0;
+	    mid = (mid + Math.imul(ah3, bl4)) | 0;
+	    hi = (hi + Math.imul(ah3, bh4)) | 0;
+	    lo = (lo + Math.imul(al2, bl5)) | 0;
+	    mid = (mid + Math.imul(al2, bh5)) | 0;
+	    mid = (mid + Math.imul(ah2, bl5)) | 0;
+	    hi = (hi + Math.imul(ah2, bh5)) | 0;
+	    lo = (lo + Math.imul(al1, bl6)) | 0;
+	    mid = (mid + Math.imul(al1, bh6)) | 0;
+	    mid = (mid + Math.imul(ah1, bl6)) | 0;
+	    hi = (hi + Math.imul(ah1, bh6)) | 0;
+	    lo = (lo + Math.imul(al0, bl7)) | 0;
+	    mid = (mid + Math.imul(al0, bh7)) | 0;
+	    mid = (mid + Math.imul(ah0, bl7)) | 0;
+	    hi = (hi + Math.imul(ah0, bh7)) | 0;
+	    var w7 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w7 >>> 26)) | 0;
+	    w7 &= 0x3ffffff;
+	    /* k = 8 */
+	    lo = Math.imul(al8, bl0);
+	    mid = Math.imul(al8, bh0);
+	    mid = (mid + Math.imul(ah8, bl0)) | 0;
+	    hi = Math.imul(ah8, bh0);
+	    lo = (lo + Math.imul(al7, bl1)) | 0;
+	    mid = (mid + Math.imul(al7, bh1)) | 0;
+	    mid = (mid + Math.imul(ah7, bl1)) | 0;
+	    hi = (hi + Math.imul(ah7, bh1)) | 0;
+	    lo = (lo + Math.imul(al6, bl2)) | 0;
+	    mid = (mid + Math.imul(al6, bh2)) | 0;
+	    mid = (mid + Math.imul(ah6, bl2)) | 0;
+	    hi = (hi + Math.imul(ah6, bh2)) | 0;
+	    lo = (lo + Math.imul(al5, bl3)) | 0;
+	    mid = (mid + Math.imul(al5, bh3)) | 0;
+	    mid = (mid + Math.imul(ah5, bl3)) | 0;
+	    hi = (hi + Math.imul(ah5, bh3)) | 0;
+	    lo = (lo + Math.imul(al4, bl4)) | 0;
+	    mid = (mid + Math.imul(al4, bh4)) | 0;
+	    mid = (mid + Math.imul(ah4, bl4)) | 0;
+	    hi = (hi + Math.imul(ah4, bh4)) | 0;
+	    lo = (lo + Math.imul(al3, bl5)) | 0;
+	    mid = (mid + Math.imul(al3, bh5)) | 0;
+	    mid = (mid + Math.imul(ah3, bl5)) | 0;
+	    hi = (hi + Math.imul(ah3, bh5)) | 0;
+	    lo = (lo + Math.imul(al2, bl6)) | 0;
+	    mid = (mid + Math.imul(al2, bh6)) | 0;
+	    mid = (mid + Math.imul(ah2, bl6)) | 0;
+	    hi = (hi + Math.imul(ah2, bh6)) | 0;
+	    lo = (lo + Math.imul(al1, bl7)) | 0;
+	    mid = (mid + Math.imul(al1, bh7)) | 0;
+	    mid = (mid + Math.imul(ah1, bl7)) | 0;
+	    hi = (hi + Math.imul(ah1, bh7)) | 0;
+	    lo = (lo + Math.imul(al0, bl8)) | 0;
+	    mid = (mid + Math.imul(al0, bh8)) | 0;
+	    mid = (mid + Math.imul(ah0, bl8)) | 0;
+	    hi = (hi + Math.imul(ah0, bh8)) | 0;
+	    var w8 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w8 >>> 26)) | 0;
+	    w8 &= 0x3ffffff;
+	    /* k = 9 */
+	    lo = Math.imul(al9, bl0);
+	    mid = Math.imul(al9, bh0);
+	    mid = (mid + Math.imul(ah9, bl0)) | 0;
+	    hi = Math.imul(ah9, bh0);
+	    lo = (lo + Math.imul(al8, bl1)) | 0;
+	    mid = (mid + Math.imul(al8, bh1)) | 0;
+	    mid = (mid + Math.imul(ah8, bl1)) | 0;
+	    hi = (hi + Math.imul(ah8, bh1)) | 0;
+	    lo = (lo + Math.imul(al7, bl2)) | 0;
+	    mid = (mid + Math.imul(al7, bh2)) | 0;
+	    mid = (mid + Math.imul(ah7, bl2)) | 0;
+	    hi = (hi + Math.imul(ah7, bh2)) | 0;
+	    lo = (lo + Math.imul(al6, bl3)) | 0;
+	    mid = (mid + Math.imul(al6, bh3)) | 0;
+	    mid = (mid + Math.imul(ah6, bl3)) | 0;
+	    hi = (hi + Math.imul(ah6, bh3)) | 0;
+	    lo = (lo + Math.imul(al5, bl4)) | 0;
+	    mid = (mid + Math.imul(al5, bh4)) | 0;
+	    mid = (mid + Math.imul(ah5, bl4)) | 0;
+	    hi = (hi + Math.imul(ah5, bh4)) | 0;
+	    lo = (lo + Math.imul(al4, bl5)) | 0;
+	    mid = (mid + Math.imul(al4, bh5)) | 0;
+	    mid = (mid + Math.imul(ah4, bl5)) | 0;
+	    hi = (hi + Math.imul(ah4, bh5)) | 0;
+	    lo = (lo + Math.imul(al3, bl6)) | 0;
+	    mid = (mid + Math.imul(al3, bh6)) | 0;
+	    mid = (mid + Math.imul(ah3, bl6)) | 0;
+	    hi = (hi + Math.imul(ah3, bh6)) | 0;
+	    lo = (lo + Math.imul(al2, bl7)) | 0;
+	    mid = (mid + Math.imul(al2, bh7)) | 0;
+	    mid = (mid + Math.imul(ah2, bl7)) | 0;
+	    hi = (hi + Math.imul(ah2, bh7)) | 0;
+	    lo = (lo + Math.imul(al1, bl8)) | 0;
+	    mid = (mid + Math.imul(al1, bh8)) | 0;
+	    mid = (mid + Math.imul(ah1, bl8)) | 0;
+	    hi = (hi + Math.imul(ah1, bh8)) | 0;
+	    lo = (lo + Math.imul(al0, bl9)) | 0;
+	    mid = (mid + Math.imul(al0, bh9)) | 0;
+	    mid = (mid + Math.imul(ah0, bl9)) | 0;
+	    hi = (hi + Math.imul(ah0, bh9)) | 0;
+	    var w9 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w9 >>> 26)) | 0;
+	    w9 &= 0x3ffffff;
+	    /* k = 10 */
+	    lo = Math.imul(al9, bl1);
+	    mid = Math.imul(al9, bh1);
+	    mid = (mid + Math.imul(ah9, bl1)) | 0;
+	    hi = Math.imul(ah9, bh1);
+	    lo = (lo + Math.imul(al8, bl2)) | 0;
+	    mid = (mid + Math.imul(al8, bh2)) | 0;
+	    mid = (mid + Math.imul(ah8, bl2)) | 0;
+	    hi = (hi + Math.imul(ah8, bh2)) | 0;
+	    lo = (lo + Math.imul(al7, bl3)) | 0;
+	    mid = (mid + Math.imul(al7, bh3)) | 0;
+	    mid = (mid + Math.imul(ah7, bl3)) | 0;
+	    hi = (hi + Math.imul(ah7, bh3)) | 0;
+	    lo = (lo + Math.imul(al6, bl4)) | 0;
+	    mid = (mid + Math.imul(al6, bh4)) | 0;
+	    mid = (mid + Math.imul(ah6, bl4)) | 0;
+	    hi = (hi + Math.imul(ah6, bh4)) | 0;
+	    lo = (lo + Math.imul(al5, bl5)) | 0;
+	    mid = (mid + Math.imul(al5, bh5)) | 0;
+	    mid = (mid + Math.imul(ah5, bl5)) | 0;
+	    hi = (hi + Math.imul(ah5, bh5)) | 0;
+	    lo = (lo + Math.imul(al4, bl6)) | 0;
+	    mid = (mid + Math.imul(al4, bh6)) | 0;
+	    mid = (mid + Math.imul(ah4, bl6)) | 0;
+	    hi = (hi + Math.imul(ah4, bh6)) | 0;
+	    lo = (lo + Math.imul(al3, bl7)) | 0;
+	    mid = (mid + Math.imul(al3, bh7)) | 0;
+	    mid = (mid + Math.imul(ah3, bl7)) | 0;
+	    hi = (hi + Math.imul(ah3, bh7)) | 0;
+	    lo = (lo + Math.imul(al2, bl8)) | 0;
+	    mid = (mid + Math.imul(al2, bh8)) | 0;
+	    mid = (mid + Math.imul(ah2, bl8)) | 0;
+	    hi = (hi + Math.imul(ah2, bh8)) | 0;
+	    lo = (lo + Math.imul(al1, bl9)) | 0;
+	    mid = (mid + Math.imul(al1, bh9)) | 0;
+	    mid = (mid + Math.imul(ah1, bl9)) | 0;
+	    hi = (hi + Math.imul(ah1, bh9)) | 0;
+	    var w10 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w10 >>> 26)) | 0;
+	    w10 &= 0x3ffffff;
+	    /* k = 11 */
+	    lo = Math.imul(al9, bl2);
+	    mid = Math.imul(al9, bh2);
+	    mid = (mid + Math.imul(ah9, bl2)) | 0;
+	    hi = Math.imul(ah9, bh2);
+	    lo = (lo + Math.imul(al8, bl3)) | 0;
+	    mid = (mid + Math.imul(al8, bh3)) | 0;
+	    mid = (mid + Math.imul(ah8, bl3)) | 0;
+	    hi = (hi + Math.imul(ah8, bh3)) | 0;
+	    lo = (lo + Math.imul(al7, bl4)) | 0;
+	    mid = (mid + Math.imul(al7, bh4)) | 0;
+	    mid = (mid + Math.imul(ah7, bl4)) | 0;
+	    hi = (hi + Math.imul(ah7, bh4)) | 0;
+	    lo = (lo + Math.imul(al6, bl5)) | 0;
+	    mid = (mid + Math.imul(al6, bh5)) | 0;
+	    mid = (mid + Math.imul(ah6, bl5)) | 0;
+	    hi = (hi + Math.imul(ah6, bh5)) | 0;
+	    lo = (lo + Math.imul(al5, bl6)) | 0;
+	    mid = (mid + Math.imul(al5, bh6)) | 0;
+	    mid = (mid + Math.imul(ah5, bl6)) | 0;
+	    hi = (hi + Math.imul(ah5, bh6)) | 0;
+	    lo = (lo + Math.imul(al4, bl7)) | 0;
+	    mid = (mid + Math.imul(al4, bh7)) | 0;
+	    mid = (mid + Math.imul(ah4, bl7)) | 0;
+	    hi = (hi + Math.imul(ah4, bh7)) | 0;
+	    lo = (lo + Math.imul(al3, bl8)) | 0;
+	    mid = (mid + Math.imul(al3, bh8)) | 0;
+	    mid = (mid + Math.imul(ah3, bl8)) | 0;
+	    hi = (hi + Math.imul(ah3, bh8)) | 0;
+	    lo = (lo + Math.imul(al2, bl9)) | 0;
+	    mid = (mid + Math.imul(al2, bh9)) | 0;
+	    mid = (mid + Math.imul(ah2, bl9)) | 0;
+	    hi = (hi + Math.imul(ah2, bh9)) | 0;
+	    var w11 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w11 >>> 26)) | 0;
+	    w11 &= 0x3ffffff;
+	    /* k = 12 */
+	    lo = Math.imul(al9, bl3);
+	    mid = Math.imul(al9, bh3);
+	    mid = (mid + Math.imul(ah9, bl3)) | 0;
+	    hi = Math.imul(ah9, bh3);
+	    lo = (lo + Math.imul(al8, bl4)) | 0;
+	    mid = (mid + Math.imul(al8, bh4)) | 0;
+	    mid = (mid + Math.imul(ah8, bl4)) | 0;
+	    hi = (hi + Math.imul(ah8, bh4)) | 0;
+	    lo = (lo + Math.imul(al7, bl5)) | 0;
+	    mid = (mid + Math.imul(al7, bh5)) | 0;
+	    mid = (mid + Math.imul(ah7, bl5)) | 0;
+	    hi = (hi + Math.imul(ah7, bh5)) | 0;
+	    lo = (lo + Math.imul(al6, bl6)) | 0;
+	    mid = (mid + Math.imul(al6, bh6)) | 0;
+	    mid = (mid + Math.imul(ah6, bl6)) | 0;
+	    hi = (hi + Math.imul(ah6, bh6)) | 0;
+	    lo = (lo + Math.imul(al5, bl7)) | 0;
+	    mid = (mid + Math.imul(al5, bh7)) | 0;
+	    mid = (mid + Math.imul(ah5, bl7)) | 0;
+	    hi = (hi + Math.imul(ah5, bh7)) | 0;
+	    lo = (lo + Math.imul(al4, bl8)) | 0;
+	    mid = (mid + Math.imul(al4, bh8)) | 0;
+	    mid = (mid + Math.imul(ah4, bl8)) | 0;
+	    hi = (hi + Math.imul(ah4, bh8)) | 0;
+	    lo = (lo + Math.imul(al3, bl9)) | 0;
+	    mid = (mid + Math.imul(al3, bh9)) | 0;
+	    mid = (mid + Math.imul(ah3, bl9)) | 0;
+	    hi = (hi + Math.imul(ah3, bh9)) | 0;
+	    var w12 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w12 >>> 26)) | 0;
+	    w12 &= 0x3ffffff;
+	    /* k = 13 */
+	    lo = Math.imul(al9, bl4);
+	    mid = Math.imul(al9, bh4);
+	    mid = (mid + Math.imul(ah9, bl4)) | 0;
+	    hi = Math.imul(ah9, bh4);
+	    lo = (lo + Math.imul(al8, bl5)) | 0;
+	    mid = (mid + Math.imul(al8, bh5)) | 0;
+	    mid = (mid + Math.imul(ah8, bl5)) | 0;
+	    hi = (hi + Math.imul(ah8, bh5)) | 0;
+	    lo = (lo + Math.imul(al7, bl6)) | 0;
+	    mid = (mid + Math.imul(al7, bh6)) | 0;
+	    mid = (mid + Math.imul(ah7, bl6)) | 0;
+	    hi = (hi + Math.imul(ah7, bh6)) | 0;
+	    lo = (lo + Math.imul(al6, bl7)) | 0;
+	    mid = (mid + Math.imul(al6, bh7)) | 0;
+	    mid = (mid + Math.imul(ah6, bl7)) | 0;
+	    hi = (hi + Math.imul(ah6, bh7)) | 0;
+	    lo = (lo + Math.imul(al5, bl8)) | 0;
+	    mid = (mid + Math.imul(al5, bh8)) | 0;
+	    mid = (mid + Math.imul(ah5, bl8)) | 0;
+	    hi = (hi + Math.imul(ah5, bh8)) | 0;
+	    lo = (lo + Math.imul(al4, bl9)) | 0;
+	    mid = (mid + Math.imul(al4, bh9)) | 0;
+	    mid = (mid + Math.imul(ah4, bl9)) | 0;
+	    hi = (hi + Math.imul(ah4, bh9)) | 0;
+	    var w13 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w13 >>> 26)) | 0;
+	    w13 &= 0x3ffffff;
+	    /* k = 14 */
+	    lo = Math.imul(al9, bl5);
+	    mid = Math.imul(al9, bh5);
+	    mid = (mid + Math.imul(ah9, bl5)) | 0;
+	    hi = Math.imul(ah9, bh5);
+	    lo = (lo + Math.imul(al8, bl6)) | 0;
+	    mid = (mid + Math.imul(al8, bh6)) | 0;
+	    mid = (mid + Math.imul(ah8, bl6)) | 0;
+	    hi = (hi + Math.imul(ah8, bh6)) | 0;
+	    lo = (lo + Math.imul(al7, bl7)) | 0;
+	    mid = (mid + Math.imul(al7, bh7)) | 0;
+	    mid = (mid + Math.imul(ah7, bl7)) | 0;
+	    hi = (hi + Math.imul(ah7, bh7)) | 0;
+	    lo = (lo + Math.imul(al6, bl8)) | 0;
+	    mid = (mid + Math.imul(al6, bh8)) | 0;
+	    mid = (mid + Math.imul(ah6, bl8)) | 0;
+	    hi = (hi + Math.imul(ah6, bh8)) | 0;
+	    lo = (lo + Math.imul(al5, bl9)) | 0;
+	    mid = (mid + Math.imul(al5, bh9)) | 0;
+	    mid = (mid + Math.imul(ah5, bl9)) | 0;
+	    hi = (hi + Math.imul(ah5, bh9)) | 0;
+	    var w14 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w14 >>> 26)) | 0;
+	    w14 &= 0x3ffffff;
+	    /* k = 15 */
+	    lo = Math.imul(al9, bl6);
+	    mid = Math.imul(al9, bh6);
+	    mid = (mid + Math.imul(ah9, bl6)) | 0;
+	    hi = Math.imul(ah9, bh6);
+	    lo = (lo + Math.imul(al8, bl7)) | 0;
+	    mid = (mid + Math.imul(al8, bh7)) | 0;
+	    mid = (mid + Math.imul(ah8, bl7)) | 0;
+	    hi = (hi + Math.imul(ah8, bh7)) | 0;
+	    lo = (lo + Math.imul(al7, bl8)) | 0;
+	    mid = (mid + Math.imul(al7, bh8)) | 0;
+	    mid = (mid + Math.imul(ah7, bl8)) | 0;
+	    hi = (hi + Math.imul(ah7, bh8)) | 0;
+	    lo = (lo + Math.imul(al6, bl9)) | 0;
+	    mid = (mid + Math.imul(al6, bh9)) | 0;
+	    mid = (mid + Math.imul(ah6, bl9)) | 0;
+	    hi = (hi + Math.imul(ah6, bh9)) | 0;
+	    var w15 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w15 >>> 26)) | 0;
+	    w15 &= 0x3ffffff;
+	    /* k = 16 */
+	    lo = Math.imul(al9, bl7);
+	    mid = Math.imul(al9, bh7);
+	    mid = (mid + Math.imul(ah9, bl7)) | 0;
+	    hi = Math.imul(ah9, bh7);
+	    lo = (lo + Math.imul(al8, bl8)) | 0;
+	    mid = (mid + Math.imul(al8, bh8)) | 0;
+	    mid = (mid + Math.imul(ah8, bl8)) | 0;
+	    hi = (hi + Math.imul(ah8, bh8)) | 0;
+	    lo = (lo + Math.imul(al7, bl9)) | 0;
+	    mid = (mid + Math.imul(al7, bh9)) | 0;
+	    mid = (mid + Math.imul(ah7, bl9)) | 0;
+	    hi = (hi + Math.imul(ah7, bh9)) | 0;
+	    var w16 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w16 >>> 26)) | 0;
+	    w16 &= 0x3ffffff;
+	    /* k = 17 */
+	    lo = Math.imul(al9, bl8);
+	    mid = Math.imul(al9, bh8);
+	    mid = (mid + Math.imul(ah9, bl8)) | 0;
+	    hi = Math.imul(ah9, bh8);
+	    lo = (lo + Math.imul(al8, bl9)) | 0;
+	    mid = (mid + Math.imul(al8, bh9)) | 0;
+	    mid = (mid + Math.imul(ah8, bl9)) | 0;
+	    hi = (hi + Math.imul(ah8, bh9)) | 0;
+	    var w17 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w17 >>> 26)) | 0;
+	    w17 &= 0x3ffffff;
+	    /* k = 18 */
+	    lo = Math.imul(al9, bl9);
+	    mid = Math.imul(al9, bh9);
+	    mid = (mid + Math.imul(ah9, bl9)) | 0;
+	    hi = Math.imul(ah9, bh9);
+	    var w18 = (((c + lo) | 0) + ((mid & 0x1fff) << 13)) | 0;
+	    c = (((hi + (mid >>> 13)) | 0) + (w18 >>> 26)) | 0;
+	    w18 &= 0x3ffffff;
+	    o[0] = w0;
+	    o[1] = w1;
+	    o[2] = w2;
+	    o[3] = w3;
+	    o[4] = w4;
+	    o[5] = w5;
+	    o[6] = w6;
+	    o[7] = w7;
+	    o[8] = w8;
+	    o[9] = w9;
+	    o[10] = w10;
+	    o[11] = w11;
+	    o[12] = w12;
+	    o[13] = w13;
+	    o[14] = w14;
+	    o[15] = w15;
+	    o[16] = w16;
+	    o[17] = w17;
+	    o[18] = w18;
+	    if (c !== 0) {
+	      o[19] = c;
+	      out.length++;
+	    }
+	    return out;
+	  };
+
+	  // Polyfill comb
+	  if (!Math.imul) {
+	    comb10MulTo = smallMulTo;
+	  }
+
+	  function bigMulTo (self, num, out) {
+	    out.negative = num.negative ^ self.negative;
+	    out.length = self.length + num.length;
+
+	    var carry = 0;
+	    var hncarry = 0;
+	    for (var k = 0; k < out.length - 1; k++) {
+	      // Sum all words with the same `i + j = k` and accumulate `ncarry`,
+	      // note that ncarry could be >= 0x3ffffff
+	      var ncarry = hncarry;
+	      hncarry = 0;
+	      var rword = carry & 0x3ffffff;
+	      var maxJ = Math.min(k, num.length - 1);
+	      for (var j = Math.max(0, k - self.length + 1); j <= maxJ; j++) {
+	        var i = k - j;
+	        var a = self.words[i] | 0;
+	        var b = num.words[j] | 0;
+	        var r = a * b;
+
+	        var lo = r & 0x3ffffff;
+	        ncarry = (ncarry + ((r / 0x4000000) | 0)) | 0;
+	        lo = (lo + rword) | 0;
+	        rword = lo & 0x3ffffff;
+	        ncarry = (ncarry + (lo >>> 26)) | 0;
+
+	        hncarry += ncarry >>> 26;
+	        ncarry &= 0x3ffffff;
+	      }
+	      out.words[k] = rword;
+	      carry = ncarry;
+	      ncarry = hncarry;
+	    }
+	    if (carry !== 0) {
+	      out.words[k] = carry;
+	    } else {
+	      out.length--;
+	    }
+
+	    return out.strip();
+	  }
+
+	  function jumboMulTo (self, num, out) {
+	    var fftm = new FFTM();
+	    return fftm.mulp(self, num, out);
+	  }
+
+	  BN.prototype.mulTo = function mulTo (num, out) {
+	    var res;
+	    var len = this.length + num.length;
+	    if (this.length === 10 && num.length === 10) {
+	      res = comb10MulTo(this, num, out);
+	    } else if (len < 63) {
+	      res = smallMulTo(this, num, out);
+	    } else if (len < 1024) {
+	      res = bigMulTo(this, num, out);
+	    } else {
+	      res = jumboMulTo(this, num, out);
+	    }
+
+	    return res;
+	  };
+
+	  // Cooley-Tukey algorithm for FFT
+	  // slightly revisited to rely on looping instead of recursion
+
+	  function FFTM (x, y) {
+	    this.x = x;
+	    this.y = y;
+	  }
+
+	  FFTM.prototype.makeRBT = function makeRBT (N) {
+	    var t = new Array(N);
+	    var l = BN.prototype._countBits(N) - 1;
+	    for (var i = 0; i < N; i++) {
+	      t[i] = this.revBin(i, l, N);
+	    }
+
+	    return t;
+	  };
+
+	  // Returns binary-reversed representation of `x`
+	  FFTM.prototype.revBin = function revBin (x, l, N) {
+	    if (x === 0 || x === N - 1) return x;
+
+	    var rb = 0;
+	    for (var i = 0; i < l; i++) {
+	      rb |= (x & 1) << (l - i - 1);
+	      x >>= 1;
+	    }
+
+	    return rb;
+	  };
+
+	  // Performs "tweedling" phase, therefore 'emulating'
+	  // behaviour of the recursive algorithm
+	  FFTM.prototype.permute = function permute (rbt, rws, iws, rtws, itws, N) {
+	    for (var i = 0; i < N; i++) {
+	      rtws[i] = rws[rbt[i]];
+	      itws[i] = iws[rbt[i]];
+	    }
+	  };
+
+	  FFTM.prototype.transform = function transform (rws, iws, rtws, itws, N, rbt) {
+	    this.permute(rbt, rws, iws, rtws, itws, N);
+
+	    for (var s = 1; s < N; s <<= 1) {
+	      var l = s << 1;
+
+	      var rtwdf = Math.cos(2 * Math.PI / l);
+	      var itwdf = Math.sin(2 * Math.PI / l);
+
+	      for (var p = 0; p < N; p += l) {
+	        var rtwdf_ = rtwdf;
+	        var itwdf_ = itwdf;
+
+	        for (var j = 0; j < s; j++) {
+	          var re = rtws[p + j];
+	          var ie = itws[p + j];
+
+	          var ro = rtws[p + j + s];
+	          var io = itws[p + j + s];
+
+	          var rx = rtwdf_ * ro - itwdf_ * io;
+
+	          io = rtwdf_ * io + itwdf_ * ro;
+	          ro = rx;
+
+	          rtws[p + j] = re + ro;
+	          itws[p + j] = ie + io;
+
+	          rtws[p + j + s] = re - ro;
+	          itws[p + j + s] = ie - io;
+
+	          /* jshint maxdepth : false */
+	          if (j !== l) {
+	            rx = rtwdf * rtwdf_ - itwdf * itwdf_;
+
+	            itwdf_ = rtwdf * itwdf_ + itwdf * rtwdf_;
+	            rtwdf_ = rx;
+	          }
+	        }
+	      }
+	    }
+	  };
+
+	  FFTM.prototype.guessLen13b = function guessLen13b (n, m) {
+	    var N = Math.max(m, n) | 1;
+	    var odd = N & 1;
+	    var i = 0;
+	    for (N = N / 2 | 0; N; N = N >>> 1) {
+	      i++;
+	    }
+
+	    return 1 << i + 1 + odd;
+	  };
+
+	  FFTM.prototype.conjugate = function conjugate (rws, iws, N) {
+	    if (N <= 1) return;
+
+	    for (var i = 0; i < N / 2; i++) {
+	      var t = rws[i];
+
+	      rws[i] = rws[N - i - 1];
+	      rws[N - i - 1] = t;
+
+	      t = iws[i];
+
+	      iws[i] = -iws[N - i - 1];
+	      iws[N - i - 1] = -t;
+	    }
+	  };
+
+	  FFTM.prototype.normalize13b = function normalize13b (ws, N) {
+	    var carry = 0;
+	    for (var i = 0; i < N / 2; i++) {
+	      var w = Math.round(ws[2 * i + 1] / N) * 0x2000 +
+	        Math.round(ws[2 * i] / N) +
+	        carry;
+
+	      ws[i] = w & 0x3ffffff;
+
+	      if (w < 0x4000000) {
+	        carry = 0;
+	      } else {
+	        carry = w / 0x4000000 | 0;
+	      }
+	    }
+
+	    return ws;
+	  };
+
+	  FFTM.prototype.convert13b = function convert13b (ws, len, rws, N) {
+	    var carry = 0;
+	    for (var i = 0; i < len; i++) {
+	      carry = carry + (ws[i] | 0);
+
+	      rws[2 * i] = carry & 0x1fff; carry = carry >>> 13;
+	      rws[2 * i + 1] = carry & 0x1fff; carry = carry >>> 13;
+	    }
+
+	    // Pad with zeroes
+	    for (i = 2 * len; i < N; ++i) {
+	      rws[i] = 0;
+	    }
+
+	    assert(carry === 0);
+	    assert((carry & ~0x1fff) === 0);
+	  };
+
+	  FFTM.prototype.stub = function stub (N) {
+	    var ph = new Array(N);
+	    for (var i = 0; i < N; i++) {
+	      ph[i] = 0;
+	    }
+
+	    return ph;
+	  };
+
+	  FFTM.prototype.mulp = function mulp (x, y, out) {
+	    var N = 2 * this.guessLen13b(x.length, y.length);
+
+	    var rbt = this.makeRBT(N);
+
+	    var _ = this.stub(N);
+
+	    var rws = new Array(N);
+	    var rwst = new Array(N);
+	    var iwst = new Array(N);
+
+	    var nrws = new Array(N);
+	    var nrwst = new Array(N);
+	    var niwst = new Array(N);
+
+	    var rmws = out.words;
+	    rmws.length = N;
+
+	    this.convert13b(x.words, x.length, rws, N);
+	    this.convert13b(y.words, y.length, nrws, N);
+
+	    this.transform(rws, _, rwst, iwst, N, rbt);
+	    this.transform(nrws, _, nrwst, niwst, N, rbt);
+
+	    for (var i = 0; i < N; i++) {
+	      var rx = rwst[i] * nrwst[i] - iwst[i] * niwst[i];
+	      iwst[i] = rwst[i] * niwst[i] + iwst[i] * nrwst[i];
+	      rwst[i] = rx;
+	    }
+
+	    this.conjugate(rwst, iwst, N);
+	    this.transform(rwst, iwst, rmws, _, N, rbt);
+	    this.conjugate(rmws, _, N);
+	    this.normalize13b(rmws, N);
+
+	    out.negative = x.negative ^ y.negative;
+	    out.length = x.length + y.length;
+	    return out.strip();
+	  };
+
+	  // Multiply `this` by `num`
+	  BN.prototype.mul = function mul (num) {
+	    var out = new BN(null);
+	    out.words = new Array(this.length + num.length);
+	    return this.mulTo(num, out);
+	  };
+
+	  // Multiply employing FFT
+	  BN.prototype.mulf = function mulf (num) {
+	    var out = new BN(null);
+	    out.words = new Array(this.length + num.length);
+	    return jumboMulTo(this, num, out);
+	  };
+
+	  // In-place Multiplication
+	  BN.prototype.imul = function imul (num) {
+	    return this.clone().mulTo(num, this);
+	  };
+
+	  BN.prototype.imuln = function imuln (num) {
+	    assert(typeof num === 'number');
+	    assert(num < 0x4000000);
+
+	    // Carry
+	    var carry = 0;
+	    for (var i = 0; i < this.length; i++) {
+	      var w = (this.words[i] | 0) * num;
+	      var lo = (w & 0x3ffffff) + (carry & 0x3ffffff);
+	      carry >>= 26;
+	      carry += (w / 0x4000000) | 0;
+	      // NOTE: lo is 27bit maximum
+	      carry += lo >>> 26;
+	      this.words[i] = lo & 0x3ffffff;
+	    }
+
+	    if (carry !== 0) {
+	      this.words[i] = carry;
+	      this.length++;
+	    }
+
+	    return this;
+	  };
+
+	  BN.prototype.muln = function muln (num) {
+	    return this.clone().imuln(num);
+	  };
+
+	  // `this` * `this`
+	  BN.prototype.sqr = function sqr () {
+	    return this.mul(this);
+	  };
+
+	  // `this` * `this` in-place
+	  BN.prototype.isqr = function isqr () {
+	    return this.imul(this.clone());
+	  };
+
+	  // Math.pow(`this`, `num`)
+	  BN.prototype.pow = function pow (num) {
+	    var w = toBitArray(num);
+	    if (w.length === 0) return new BN(1);
+
+	    // Skip leading zeroes
+	    var res = this;
+	    for (var i = 0; i < w.length; i++, res = res.sqr()) {
+	      if (w[i] !== 0) break;
+	    }
+
+	    if (++i < w.length) {
+	      for (var q = res.sqr(); i < w.length; i++, q = q.sqr()) {
+	        if (w[i] === 0) continue;
+
+	        res = res.mul(q);
+	      }
+	    }
+
+	    return res;
+	  };
+
+	  // Shift-left in-place
+	  BN.prototype.iushln = function iushln (bits) {
+	    assert(typeof bits === 'number' && bits >= 0);
+	    var r = bits % 26;
+	    var s = (bits - r) / 26;
+	    var carryMask = (0x3ffffff >>> (26 - r)) << (26 - r);
+	    var i;
+
+	    if (r !== 0) {
+	      var carry = 0;
+
+	      for (i = 0; i < this.length; i++) {
+	        var newCarry = this.words[i] & carryMask;
+	        var c = ((this.words[i] | 0) - newCarry) << r;
+	        this.words[i] = c | carry;
+	        carry = newCarry >>> (26 - r);
+	      }
+
+	      if (carry) {
+	        this.words[i] = carry;
+	        this.length++;
+	      }
+	    }
+
+	    if (s !== 0) {
+	      for (i = this.length - 1; i >= 0; i--) {
+	        this.words[i + s] = this.words[i];
+	      }
+
+	      for (i = 0; i < s; i++) {
+	        this.words[i] = 0;
+	      }
+
+	      this.length += s;
+	    }
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.ishln = function ishln (bits) {
+	    // TODO(indutny): implement me
+	    assert(this.negative === 0);
+	    return this.iushln(bits);
+	  };
+
+	  // Shift-right in-place
+	  // NOTE: `hint` is a lowest bit before trailing zeroes
+	  // NOTE: if `extended` is present - it will be filled with destroyed bits
+	  BN.prototype.iushrn = function iushrn (bits, hint, extended) {
+	    assert(typeof bits === 'number' && bits >= 0);
+	    var h;
+	    if (hint) {
+	      h = (hint - (hint % 26)) / 26;
+	    } else {
+	      h = 0;
+	    }
+
+	    var r = bits % 26;
+	    var s = Math.min((bits - r) / 26, this.length);
+	    var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
+	    var maskedWords = extended;
+
+	    h -= s;
+	    h = Math.max(0, h);
+
+	    // Extended mode, copy masked part
+	    if (maskedWords) {
+	      for (var i = 0; i < s; i++) {
+	        maskedWords.words[i] = this.words[i];
+	      }
+	      maskedWords.length = s;
+	    }
+
+	    if (s === 0) ; else if (this.length > s) {
+	      this.length -= s;
+	      for (i = 0; i < this.length; i++) {
+	        this.words[i] = this.words[i + s];
+	      }
+	    } else {
+	      this.words[0] = 0;
+	      this.length = 1;
+	    }
+
+	    var carry = 0;
+	    for (i = this.length - 1; i >= 0 && (carry !== 0 || i >= h); i--) {
+	      var word = this.words[i] | 0;
+	      this.words[i] = (carry << (26 - r)) | (word >>> r);
+	      carry = word & mask;
+	    }
+
+	    // Push carried bits as a mask
+	    if (maskedWords && carry !== 0) {
+	      maskedWords.words[maskedWords.length++] = carry;
+	    }
+
+	    if (this.length === 0) {
+	      this.words[0] = 0;
+	      this.length = 1;
+	    }
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.ishrn = function ishrn (bits, hint, extended) {
+	    // TODO(indutny): implement me
+	    assert(this.negative === 0);
+	    return this.iushrn(bits, hint, extended);
+	  };
+
+	  // Shift-left
+	  BN.prototype.shln = function shln (bits) {
+	    return this.clone().ishln(bits);
+	  };
+
+	  BN.prototype.ushln = function ushln (bits) {
+	    return this.clone().iushln(bits);
+	  };
+
+	  // Shift-right
+	  BN.prototype.shrn = function shrn (bits) {
+	    return this.clone().ishrn(bits);
+	  };
+
+	  BN.prototype.ushrn = function ushrn (bits) {
+	    return this.clone().iushrn(bits);
+	  };
+
+	  // Test if n bit is set
+	  BN.prototype.testn = function testn (bit) {
+	    assert(typeof bit === 'number' && bit >= 0);
+	    var r = bit % 26;
+	    var s = (bit - r) / 26;
+	    var q = 1 << r;
+
+	    // Fast case: bit is much higher than all existing words
+	    if (this.length <= s) return false;
+
+	    // Check bit and return
+	    var w = this.words[s];
+
+	    return !!(w & q);
+	  };
+
+	  // Return only lowers bits of number (in-place)
+	  BN.prototype.imaskn = function imaskn (bits) {
+	    assert(typeof bits === 'number' && bits >= 0);
+	    var r = bits % 26;
+	    var s = (bits - r) / 26;
+
+	    assert(this.negative === 0, 'imaskn works only with positive numbers');
+
+	    if (this.length <= s) {
+	      return this;
+	    }
+
+	    if (r !== 0) {
+	      s++;
+	    }
+	    this.length = Math.min(s, this.length);
+
+	    if (r !== 0) {
+	      var mask = 0x3ffffff ^ ((0x3ffffff >>> r) << r);
+	      this.words[this.length - 1] &= mask;
+	    }
+
+	    return this.strip();
+	  };
+
+	  // Return only lowers bits of number
+	  BN.prototype.maskn = function maskn (bits) {
+	    return this.clone().imaskn(bits);
+	  };
+
+	  // Add plain number `num` to `this`
+	  BN.prototype.iaddn = function iaddn (num) {
+	    assert(typeof num === 'number');
+	    assert(num < 0x4000000);
+	    if (num < 0) return this.isubn(-num);
+
+	    // Possible sign change
+	    if (this.negative !== 0) {
+	      if (this.length === 1 && (this.words[0] | 0) < num) {
+	        this.words[0] = num - (this.words[0] | 0);
+	        this.negative = 0;
+	        return this;
+	      }
+
+	      this.negative = 0;
+	      this.isubn(num);
+	      this.negative = 1;
+	      return this;
+	    }
+
+	    // Add without checks
+	    return this._iaddn(num);
+	  };
+
+	  BN.prototype._iaddn = function _iaddn (num) {
+	    this.words[0] += num;
+
+	    // Carry
+	    for (var i = 0; i < this.length && this.words[i] >= 0x4000000; i++) {
+	      this.words[i] -= 0x4000000;
+	      if (i === this.length - 1) {
+	        this.words[i + 1] = 1;
+	      } else {
+	        this.words[i + 1]++;
+	      }
+	    }
+	    this.length = Math.max(this.length, i + 1);
+
+	    return this;
+	  };
+
+	  // Subtract plain number `num` from `this`
+	  BN.prototype.isubn = function isubn (num) {
+	    assert(typeof num === 'number');
+	    assert(num < 0x4000000);
+	    if (num < 0) return this.iaddn(-num);
+
+	    if (this.negative !== 0) {
+	      this.negative = 0;
+	      this.iaddn(num);
+	      this.negative = 1;
+	      return this;
+	    }
+
+	    this.words[0] -= num;
+
+	    if (this.length === 1 && this.words[0] < 0) {
+	      this.words[0] = -this.words[0];
+	      this.negative = 1;
+	    } else {
+	      // Carry
+	      for (var i = 0; i < this.length && this.words[i] < 0; i++) {
+	        this.words[i] += 0x4000000;
+	        this.words[i + 1] -= 1;
+	      }
+	    }
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.addn = function addn (num) {
+	    return this.clone().iaddn(num);
+	  };
+
+	  BN.prototype.subn = function subn (num) {
+	    return this.clone().isubn(num);
+	  };
+
+	  BN.prototype.iabs = function iabs () {
+	    this.negative = 0;
+
+	    return this;
+	  };
+
+	  BN.prototype.abs = function abs () {
+	    return this.clone().iabs();
+	  };
+
+	  BN.prototype._ishlnsubmul = function _ishlnsubmul (num, mul, shift) {
+	    var len = num.length + shift;
+	    var i;
+
+	    this._expand(len);
+
+	    var w;
+	    var carry = 0;
+	    for (i = 0; i < num.length; i++) {
+	      w = (this.words[i + shift] | 0) + carry;
+	      var right = (num.words[i] | 0) * mul;
+	      w -= right & 0x3ffffff;
+	      carry = (w >> 26) - ((right / 0x4000000) | 0);
+	      this.words[i + shift] = w & 0x3ffffff;
+	    }
+	    for (; i < this.length - shift; i++) {
+	      w = (this.words[i + shift] | 0) + carry;
+	      carry = w >> 26;
+	      this.words[i + shift] = w & 0x3ffffff;
+	    }
+
+	    if (carry === 0) return this.strip();
+
+	    // Subtraction overflow
+	    assert(carry === -1);
+	    carry = 0;
+	    for (i = 0; i < this.length; i++) {
+	      w = -(this.words[i] | 0) + carry;
+	      carry = w >> 26;
+	      this.words[i] = w & 0x3ffffff;
+	    }
+	    this.negative = 1;
+
+	    return this.strip();
+	  };
+
+	  BN.prototype._wordDiv = function _wordDiv (num, mode) {
+	    var shift = this.length - num.length;
+
+	    var a = this.clone();
+	    var b = num;
+
+	    // Normalize
+	    var bhi = b.words[b.length - 1] | 0;
+	    var bhiBits = this._countBits(bhi);
+	    shift = 26 - bhiBits;
+	    if (shift !== 0) {
+	      b = b.ushln(shift);
+	      a.iushln(shift);
+	      bhi = b.words[b.length - 1] | 0;
+	    }
+
+	    // Initialize quotient
+	    var m = a.length - b.length;
+	    var q;
+
+	    if (mode !== 'mod') {
+	      q = new BN(null);
+	      q.length = m + 1;
+	      q.words = new Array(q.length);
+	      for (var i = 0; i < q.length; i++) {
+	        q.words[i] = 0;
+	      }
+	    }
+
+	    var diff = a.clone()._ishlnsubmul(b, 1, m);
+	    if (diff.negative === 0) {
+	      a = diff;
+	      if (q) {
+	        q.words[m] = 1;
+	      }
+	    }
+
+	    for (var j = m - 1; j >= 0; j--) {
+	      var qj = (a.words[b.length + j] | 0) * 0x4000000 +
+	        (a.words[b.length + j - 1] | 0);
+
+	      // NOTE: (qj / bhi) is (0x3ffffff * 0x4000000 + 0x3ffffff) / 0x2000000 max
+	      // (0x7ffffff)
+	      qj = Math.min((qj / bhi) | 0, 0x3ffffff);
+
+	      a._ishlnsubmul(b, qj, j);
+	      while (a.negative !== 0) {
+	        qj--;
+	        a.negative = 0;
+	        a._ishlnsubmul(b, 1, j);
+	        if (!a.isZero()) {
+	          a.negative ^= 1;
+	        }
+	      }
+	      if (q) {
+	        q.words[j] = qj;
+	      }
+	    }
+	    if (q) {
+	      q.strip();
+	    }
+	    a.strip();
+
+	    // Denormalize
+	    if (mode !== 'div' && shift !== 0) {
+	      a.iushrn(shift);
+	    }
+
+	    return {
+	      div: q || null,
+	      mod: a
+	    };
+	  };
+
+	  // NOTE: 1) `mode` can be set to `mod` to request mod only,
+	  //       to `div` to request div only, or be absent to
+	  //       request both div & mod
+	  //       2) `positive` is true if unsigned mod is requested
+	  BN.prototype.divmod = function divmod (num, mode, positive) {
+	    assert(!num.isZero());
+
+	    if (this.isZero()) {
+	      return {
+	        div: new BN(0),
+	        mod: new BN(0)
+	      };
+	    }
+
+	    var div, mod, res;
+	    if (this.negative !== 0 && num.negative === 0) {
+	      res = this.neg().divmod(num, mode);
+
+	      if (mode !== 'mod') {
+	        div = res.div.neg();
+	      }
+
+	      if (mode !== 'div') {
+	        mod = res.mod.neg();
+	        if (positive && mod.negative !== 0) {
+	          mod.iadd(num);
+	        }
+	      }
+
+	      return {
+	        div: div,
+	        mod: mod
+	      };
+	    }
+
+	    if (this.negative === 0 && num.negative !== 0) {
+	      res = this.divmod(num.neg(), mode);
+
+	      if (mode !== 'mod') {
+	        div = res.div.neg();
+	      }
+
+	      return {
+	        div: div,
+	        mod: res.mod
+	      };
+	    }
+
+	    if ((this.negative & num.negative) !== 0) {
+	      res = this.neg().divmod(num.neg(), mode);
+
+	      if (mode !== 'div') {
+	        mod = res.mod.neg();
+	        if (positive && mod.negative !== 0) {
+	          mod.isub(num);
+	        }
+	      }
+
+	      return {
+	        div: res.div,
+	        mod: mod
+	      };
+	    }
+
+	    // Both numbers are positive at this point
+
+	    // Strip both numbers to approximate shift value
+	    if (num.length > this.length || this.cmp(num) < 0) {
+	      return {
+	        div: new BN(0),
+	        mod: this
+	      };
+	    }
+
+	    // Very short reduction
+	    if (num.length === 1) {
+	      if (mode === 'div') {
+	        return {
+	          div: this.divn(num.words[0]),
+	          mod: null
+	        };
+	      }
+
+	      if (mode === 'mod') {
+	        return {
+	          div: null,
+	          mod: new BN(this.modn(num.words[0]))
+	        };
+	      }
+
+	      return {
+	        div: this.divn(num.words[0]),
+	        mod: new BN(this.modn(num.words[0]))
+	      };
+	    }
+
+	    return this._wordDiv(num, mode);
+	  };
+
+	  // Find `this` / `num`
+	  BN.prototype.div = function div (num) {
+	    return this.divmod(num, 'div', false).div;
+	  };
+
+	  // Find `this` % `num`
+	  BN.prototype.mod = function mod (num) {
+	    return this.divmod(num, 'mod', false).mod;
+	  };
+
+	  BN.prototype.umod = function umod (num) {
+	    return this.divmod(num, 'mod', true).mod;
+	  };
+
+	  // Find Round(`this` / `num`)
+	  BN.prototype.divRound = function divRound (num) {
+	    var dm = this.divmod(num);
+
+	    // Fast case - exact division
+	    if (dm.mod.isZero()) return dm.div;
+
+	    var mod = dm.div.negative !== 0 ? dm.mod.isub(num) : dm.mod;
+
+	    var half = num.ushrn(1);
+	    var r2 = num.andln(1);
+	    var cmp = mod.cmp(half);
+
+	    // Round down
+	    if (cmp < 0 || r2 === 1 && cmp === 0) return dm.div;
+
+	    // Round up
+	    return dm.div.negative !== 0 ? dm.div.isubn(1) : dm.div.iaddn(1);
+	  };
+
+	  BN.prototype.modn = function modn (num) {
+	    assert(num <= 0x3ffffff);
+	    var p = (1 << 26) % num;
+
+	    var acc = 0;
+	    for (var i = this.length - 1; i >= 0; i--) {
+	      acc = (p * acc + (this.words[i] | 0)) % num;
+	    }
+
+	    return acc;
+	  };
+
+	  // In-place division by number
+	  BN.prototype.idivn = function idivn (num) {
+	    assert(num <= 0x3ffffff);
+
+	    var carry = 0;
+	    for (var i = this.length - 1; i >= 0; i--) {
+	      var w = (this.words[i] | 0) + carry * 0x4000000;
+	      this.words[i] = (w / num) | 0;
+	      carry = w % num;
+	    }
+
+	    return this.strip();
+	  };
+
+	  BN.prototype.divn = function divn (num) {
+	    return this.clone().idivn(num);
+	  };
+
+	  BN.prototype.egcd = function egcd (p) {
+	    assert(p.negative === 0);
+	    assert(!p.isZero());
+
+	    var x = this;
+	    var y = p.clone();
+
+	    if (x.negative !== 0) {
+	      x = x.umod(p);
+	    } else {
+	      x = x.clone();
+	    }
+
+	    // A * x + B * y = x
+	    var A = new BN(1);
+	    var B = new BN(0);
+
+	    // C * x + D * y = y
+	    var C = new BN(0);
+	    var D = new BN(1);
+
+	    var g = 0;
+
+	    while (x.isEven() && y.isEven()) {
+	      x.iushrn(1);
+	      y.iushrn(1);
+	      ++g;
+	    }
+
+	    var yp = y.clone();
+	    var xp = x.clone();
+
+	    while (!x.isZero()) {
+	      for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+	      if (i > 0) {
+	        x.iushrn(i);
+	        while (i-- > 0) {
+	          if (A.isOdd() || B.isOdd()) {
+	            A.iadd(yp);
+	            B.isub(xp);
+	          }
+
+	          A.iushrn(1);
+	          B.iushrn(1);
+	        }
+	      }
+
+	      for (var j = 0, jm = 1; (y.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
+	      if (j > 0) {
+	        y.iushrn(j);
+	        while (j-- > 0) {
+	          if (C.isOdd() || D.isOdd()) {
+	            C.iadd(yp);
+	            D.isub(xp);
+	          }
+
+	          C.iushrn(1);
+	          D.iushrn(1);
+	        }
+	      }
+
+	      if (x.cmp(y) >= 0) {
+	        x.isub(y);
+	        A.isub(C);
+	        B.isub(D);
+	      } else {
+	        y.isub(x);
+	        C.isub(A);
+	        D.isub(B);
+	      }
+	    }
+
+	    return {
+	      a: C,
+	      b: D,
+	      gcd: y.iushln(g)
+	    };
+	  };
+
+	  // This is reduced incarnation of the binary EEA
+	  // above, designated to invert members of the
+	  // _prime_ fields F(p) at a maximal speed
+	  BN.prototype._invmp = function _invmp (p) {
+	    assert(p.negative === 0);
+	    assert(!p.isZero());
+
+	    var a = this;
+	    var b = p.clone();
+
+	    if (a.negative !== 0) {
+	      a = a.umod(p);
+	    } else {
+	      a = a.clone();
+	    }
+
+	    var x1 = new BN(1);
+	    var x2 = new BN(0);
+
+	    var delta = b.clone();
+
+	    while (a.cmpn(1) > 0 && b.cmpn(1) > 0) {
+	      for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+	      if (i > 0) {
+	        a.iushrn(i);
+	        while (i-- > 0) {
+	          if (x1.isOdd()) {
+	            x1.iadd(delta);
+	          }
+
+	          x1.iushrn(1);
+	        }
+	      }
+
+	      for (var j = 0, jm = 1; (b.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
+	      if (j > 0) {
+	        b.iushrn(j);
+	        while (j-- > 0) {
+	          if (x2.isOdd()) {
+	            x2.iadd(delta);
+	          }
+
+	          x2.iushrn(1);
+	        }
+	      }
+
+	      if (a.cmp(b) >= 0) {
+	        a.isub(b);
+	        x1.isub(x2);
+	      } else {
+	        b.isub(a);
+	        x2.isub(x1);
+	      }
+	    }
+
+	    var res;
+	    if (a.cmpn(1) === 0) {
+	      res = x1;
+	    } else {
+	      res = x2;
+	    }
+
+	    if (res.cmpn(0) < 0) {
+	      res.iadd(p);
+	    }
+
+	    return res;
+	  };
+
+	  BN.prototype.gcd = function gcd (num) {
+	    if (this.isZero()) return num.abs();
+	    if (num.isZero()) return this.abs();
+
+	    var a = this.clone();
+	    var b = num.clone();
+	    a.negative = 0;
+	    b.negative = 0;
+
+	    // Remove common factor of two
+	    for (var shift = 0; a.isEven() && b.isEven(); shift++) {
+	      a.iushrn(1);
+	      b.iushrn(1);
+	    }
+
+	    do {
+	      while (a.isEven()) {
+	        a.iushrn(1);
+	      }
+	      while (b.isEven()) {
+	        b.iushrn(1);
+	      }
+
+	      var r = a.cmp(b);
+	      if (r < 0) {
+	        // Swap `a` and `b` to make `a` always bigger than `b`
+	        var t = a;
+	        a = b;
+	        b = t;
+	      } else if (r === 0 || b.cmpn(1) === 0) {
+	        break;
+	      }
+
+	      a.isub(b);
+	    } while (true);
+
+	    return b.iushln(shift);
+	  };
+
+	  // Invert number in the field F(num)
+	  BN.prototype.invm = function invm (num) {
+	    return this.egcd(num).a.umod(num);
+	  };
+
+	  BN.prototype.isEven = function isEven () {
+	    return (this.words[0] & 1) === 0;
+	  };
+
+	  BN.prototype.isOdd = function isOdd () {
+	    return (this.words[0] & 1) === 1;
+	  };
+
+	  // And first word and num
+	  BN.prototype.andln = function andln (num) {
+	    return this.words[0] & num;
+	  };
+
+	  // Increment at the bit position in-line
+	  BN.prototype.bincn = function bincn (bit) {
+	    assert(typeof bit === 'number');
+	    var r = bit % 26;
+	    var s = (bit - r) / 26;
+	    var q = 1 << r;
+
+	    // Fast case: bit is much higher than all existing words
+	    if (this.length <= s) {
+	      this._expand(s + 1);
+	      this.words[s] |= q;
+	      return this;
+	    }
+
+	    // Add bit and propagate, if needed
+	    var carry = q;
+	    for (var i = s; carry !== 0 && i < this.length; i++) {
+	      var w = this.words[i] | 0;
+	      w += carry;
+	      carry = w >>> 26;
+	      w &= 0x3ffffff;
+	      this.words[i] = w;
+	    }
+	    if (carry !== 0) {
+	      this.words[i] = carry;
+	      this.length++;
+	    }
+	    return this;
+	  };
+
+	  BN.prototype.isZero = function isZero () {
+	    return this.length === 1 && this.words[0] === 0;
+	  };
+
+	  BN.prototype.cmpn = function cmpn (num) {
+	    var negative = num < 0;
+
+	    if (this.negative !== 0 && !negative) return -1;
+	    if (this.negative === 0 && negative) return 1;
+
+	    this.strip();
+
+	    var res;
+	    if (this.length > 1) {
+	      res = 1;
+	    } else {
+	      if (negative) {
+	        num = -num;
+	      }
+
+	      assert(num <= 0x3ffffff, 'Number is too big');
+
+	      var w = this.words[0] | 0;
+	      res = w === num ? 0 : w < num ? -1 : 1;
+	    }
+	    if (this.negative !== 0) return -res | 0;
+	    return res;
+	  };
+
+	  // Compare two numbers and return:
+	  // 1 - if `this` > `num`
+	  // 0 - if `this` == `num`
+	  // -1 - if `this` < `num`
+	  BN.prototype.cmp = function cmp (num) {
+	    if (this.negative !== 0 && num.negative === 0) return -1;
+	    if (this.negative === 0 && num.negative !== 0) return 1;
+
+	    var res = this.ucmp(num);
+	    if (this.negative !== 0) return -res | 0;
+	    return res;
+	  };
+
+	  // Unsigned comparison
+	  BN.prototype.ucmp = function ucmp (num) {
+	    // At this point both numbers have the same sign
+	    if (this.length > num.length) return 1;
+	    if (this.length < num.length) return -1;
+
+	    var res = 0;
+	    for (var i = this.length - 1; i >= 0; i--) {
+	      var a = this.words[i] | 0;
+	      var b = num.words[i] | 0;
+
+	      if (a === b) continue;
+	      if (a < b) {
+	        res = -1;
+	      } else if (a > b) {
+	        res = 1;
+	      }
+	      break;
+	    }
+	    return res;
+	  };
+
+	  BN.prototype.gtn = function gtn (num) {
+	    return this.cmpn(num) === 1;
+	  };
+
+	  BN.prototype.gt = function gt (num) {
+	    return this.cmp(num) === 1;
+	  };
+
+	  BN.prototype.gten = function gten (num) {
+	    return this.cmpn(num) >= 0;
+	  };
+
+	  BN.prototype.gte = function gte (num) {
+	    return this.cmp(num) >= 0;
+	  };
+
+	  BN.prototype.ltn = function ltn (num) {
+	    return this.cmpn(num) === -1;
+	  };
+
+	  BN.prototype.lt = function lt (num) {
+	    return this.cmp(num) === -1;
+	  };
+
+	  BN.prototype.lten = function lten (num) {
+	    return this.cmpn(num) <= 0;
+	  };
+
+	  BN.prototype.lte = function lte (num) {
+	    return this.cmp(num) <= 0;
+	  };
+
+	  BN.prototype.eqn = function eqn (num) {
+	    return this.cmpn(num) === 0;
+	  };
+
+	  BN.prototype.eq = function eq (num) {
+	    return this.cmp(num) === 0;
+	  };
+
+	  //
+	  // A reduce context, could be using montgomery or something better, depending
+	  // on the `m` itself.
+	  //
+	  BN.red = function red (num) {
+	    return new Red(num);
+	  };
+
+	  BN.prototype.toRed = function toRed (ctx) {
+	    assert(!this.red, 'Already a number in reduction context');
+	    assert(this.negative === 0, 'red works only with positives');
+	    return ctx.convertTo(this)._forceRed(ctx);
+	  };
+
+	  BN.prototype.fromRed = function fromRed () {
+	    assert(this.red, 'fromRed works only with numbers in reduction context');
+	    return this.red.convertFrom(this);
+	  };
+
+	  BN.prototype._forceRed = function _forceRed (ctx) {
+	    this.red = ctx;
+	    return this;
+	  };
+
+	  BN.prototype.forceRed = function forceRed (ctx) {
+	    assert(!this.red, 'Already a number in reduction context');
+	    return this._forceRed(ctx);
+	  };
+
+	  BN.prototype.redAdd = function redAdd (num) {
+	    assert(this.red, 'redAdd works only with red numbers');
+	    return this.red.add(this, num);
+	  };
+
+	  BN.prototype.redIAdd = function redIAdd (num) {
+	    assert(this.red, 'redIAdd works only with red numbers');
+	    return this.red.iadd(this, num);
+	  };
+
+	  BN.prototype.redSub = function redSub (num) {
+	    assert(this.red, 'redSub works only with red numbers');
+	    return this.red.sub(this, num);
+	  };
+
+	  BN.prototype.redISub = function redISub (num) {
+	    assert(this.red, 'redISub works only with red numbers');
+	    return this.red.isub(this, num);
+	  };
+
+	  BN.prototype.redShl = function redShl (num) {
+	    assert(this.red, 'redShl works only with red numbers');
+	    return this.red.shl(this, num);
+	  };
+
+	  BN.prototype.redMul = function redMul (num) {
+	    assert(this.red, 'redMul works only with red numbers');
+	    this.red._verify2(this, num);
+	    return this.red.mul(this, num);
+	  };
+
+	  BN.prototype.redIMul = function redIMul (num) {
+	    assert(this.red, 'redMul works only with red numbers');
+	    this.red._verify2(this, num);
+	    return this.red.imul(this, num);
+	  };
+
+	  BN.prototype.redSqr = function redSqr () {
+	    assert(this.red, 'redSqr works only with red numbers');
+	    this.red._verify1(this);
+	    return this.red.sqr(this);
+	  };
+
+	  BN.prototype.redISqr = function redISqr () {
+	    assert(this.red, 'redISqr works only with red numbers');
+	    this.red._verify1(this);
+	    return this.red.isqr(this);
+	  };
+
+	  // Square root over p
+	  BN.prototype.redSqrt = function redSqrt () {
+	    assert(this.red, 'redSqrt works only with red numbers');
+	    this.red._verify1(this);
+	    return this.red.sqrt(this);
+	  };
+
+	  BN.prototype.redInvm = function redInvm () {
+	    assert(this.red, 'redInvm works only with red numbers');
+	    this.red._verify1(this);
+	    return this.red.invm(this);
+	  };
+
+	  // Return negative clone of `this` % `red modulo`
+	  BN.prototype.redNeg = function redNeg () {
+	    assert(this.red, 'redNeg works only with red numbers');
+	    this.red._verify1(this);
+	    return this.red.neg(this);
+	  };
+
+	  BN.prototype.redPow = function redPow (num) {
+	    assert(this.red && !num.red, 'redPow(normalNum)');
+	    this.red._verify1(this);
+	    return this.red.pow(this, num);
+	  };
+
+	  // Prime numbers with efficient reduction
+	  var primes = {
+	    k256: null,
+	    p224: null,
+	    p192: null,
+	    p25519: null
+	  };
+
+	  // Pseudo-Mersenne prime
+	  function MPrime (name, p) {
+	    // P = 2 ^ N - K
+	    this.name = name;
+	    this.p = new BN(p, 16);
+	    this.n = this.p.bitLength();
+	    this.k = new BN(1).iushln(this.n).isub(this.p);
+
+	    this.tmp = this._tmp();
+	  }
+
+	  MPrime.prototype._tmp = function _tmp () {
+	    var tmp = new BN(null);
+	    tmp.words = new Array(Math.ceil(this.n / 13));
+	    return tmp;
+	  };
+
+	  MPrime.prototype.ireduce = function ireduce (num) {
+	    // Assumes that `num` is less than `P^2`
+	    // num = HI * (2 ^ N - K) + HI * K + LO = HI * K + LO (mod P)
+	    var r = num;
+	    var rlen;
+
+	    do {
+	      this.split(r, this.tmp);
+	      r = this.imulK(r);
+	      r = r.iadd(this.tmp);
+	      rlen = r.bitLength();
+	    } while (rlen > this.n);
+
+	    var cmp = rlen < this.n ? -1 : r.ucmp(this.p);
+	    if (cmp === 0) {
+	      r.words[0] = 0;
+	      r.length = 1;
+	    } else if (cmp > 0) {
+	      r.isub(this.p);
+	    } else {
+	      r.strip();
+	    }
+
+	    return r;
+	  };
+
+	  MPrime.prototype.split = function split (input, out) {
+	    input.iushrn(this.n, 0, out);
+	  };
+
+	  MPrime.prototype.imulK = function imulK (num) {
+	    return num.imul(this.k);
+	  };
+
+	  function K256 () {
+	    MPrime.call(
+	      this,
+	      'k256',
+	      'ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff fffffffe fffffc2f');
+	  }
+	  inherits(K256, MPrime);
+
+	  K256.prototype.split = function split (input, output) {
+	    // 256 = 9 * 26 + 22
+	    var mask = 0x3fffff;
+
+	    var outLen = Math.min(input.length, 9);
+	    for (var i = 0; i < outLen; i++) {
+	      output.words[i] = input.words[i];
+	    }
+	    output.length = outLen;
+
+	    if (input.length <= 9) {
+	      input.words[0] = 0;
+	      input.length = 1;
+	      return;
+	    }
+
+	    // Shift by 9 limbs
+	    var prev = input.words[9];
+	    output.words[output.length++] = prev & mask;
+
+	    for (i = 10; i < input.length; i++) {
+	      var next = input.words[i] | 0;
+	      input.words[i - 10] = ((next & mask) << 4) | (prev >>> 22);
+	      prev = next;
+	    }
+	    prev >>>= 22;
+	    input.words[i - 10] = prev;
+	    if (prev === 0 && input.length > 10) {
+	      input.length -= 10;
+	    } else {
+	      input.length -= 9;
+	    }
+	  };
+
+	  K256.prototype.imulK = function imulK (num) {
+	    // K = 0x1000003d1 = [ 0x40, 0x3d1 ]
+	    num.words[num.length] = 0;
+	    num.words[num.length + 1] = 0;
+	    num.length += 2;
+
+	    // bounded at: 0x40 * 0x3ffffff + 0x3d0 = 0x100000390
+	    var lo = 0;
+	    for (var i = 0; i < num.length; i++) {
+	      var w = num.words[i] | 0;
+	      lo += w * 0x3d1;
+	      num.words[i] = lo & 0x3ffffff;
+	      lo = w * 0x40 + ((lo / 0x4000000) | 0);
+	    }
+
+	    // Fast length reduction
+	    if (num.words[num.length - 1] === 0) {
+	      num.length--;
+	      if (num.words[num.length - 1] === 0) {
+	        num.length--;
+	      }
+	    }
+	    return num;
+	  };
+
+	  function P224 () {
+	    MPrime.call(
+	      this,
+	      'p224',
+	      'ffffffff ffffffff ffffffff ffffffff 00000000 00000000 00000001');
+	  }
+	  inherits(P224, MPrime);
+
+	  function P192 () {
+	    MPrime.call(
+	      this,
+	      'p192',
+	      'ffffffff ffffffff ffffffff fffffffe ffffffff ffffffff');
+	  }
+	  inherits(P192, MPrime);
+
+	  function P25519 () {
+	    // 2 ^ 255 - 19
+	    MPrime.call(
+	      this,
+	      '25519',
+	      '7fffffffffffffff ffffffffffffffff ffffffffffffffff ffffffffffffffed');
+	  }
+	  inherits(P25519, MPrime);
+
+	  P25519.prototype.imulK = function imulK (num) {
+	    // K = 0x13
+	    var carry = 0;
+	    for (var i = 0; i < num.length; i++) {
+	      var hi = (num.words[i] | 0) * 0x13 + carry;
+	      var lo = hi & 0x3ffffff;
+	      hi >>>= 26;
+
+	      num.words[i] = lo;
+	      carry = hi;
+	    }
+	    if (carry !== 0) {
+	      num.words[num.length++] = carry;
+	    }
+	    return num;
+	  };
+
+	  // Exported mostly for testing purposes, use plain name instead
+	  BN._prime = function prime (name) {
+	    // Cached version of prime
+	    if (primes[name]) return primes[name];
+
+	    var prime;
+	    if (name === 'k256') {
+	      prime = new K256();
+	    } else if (name === 'p224') {
+	      prime = new P224();
+	    } else if (name === 'p192') {
+	      prime = new P192();
+	    } else if (name === 'p25519') {
+	      prime = new P25519();
+	    } else {
+	      throw new Error('Unknown prime ' + name);
+	    }
+	    primes[name] = prime;
+
+	    return prime;
+	  };
+
+	  //
+	  // Base reduction engine
+	  //
+	  function Red (m) {
+	    if (typeof m === 'string') {
+	      var prime = BN._prime(m);
+	      this.m = prime.p;
+	      this.prime = prime;
+	    } else {
+	      assert(m.gtn(1), 'modulus must be greater than 1');
+	      this.m = m;
+	      this.prime = null;
+	    }
+	  }
+
+	  Red.prototype._verify1 = function _verify1 (a) {
+	    assert(a.negative === 0, 'red works only with positives');
+	    assert(a.red, 'red works only with red numbers');
+	  };
+
+	  Red.prototype._verify2 = function _verify2 (a, b) {
+	    assert((a.negative | b.negative) === 0, 'red works only with positives');
+	    assert(a.red && a.red === b.red,
+	      'red works only with red numbers');
+	  };
+
+	  Red.prototype.imod = function imod (a) {
+	    if (this.prime) return this.prime.ireduce(a)._forceRed(this);
+	    return a.umod(this.m)._forceRed(this);
+	  };
+
+	  Red.prototype.neg = function neg (a) {
+	    if (a.isZero()) {
+	      return a.clone();
+	    }
+
+	    return this.m.sub(a)._forceRed(this);
+	  };
+
+	  Red.prototype.add = function add (a, b) {
+	    this._verify2(a, b);
+
+	    var res = a.add(b);
+	    if (res.cmp(this.m) >= 0) {
+	      res.isub(this.m);
+	    }
+	    return res._forceRed(this);
+	  };
+
+	  Red.prototype.iadd = function iadd (a, b) {
+	    this._verify2(a, b);
+
+	    var res = a.iadd(b);
+	    if (res.cmp(this.m) >= 0) {
+	      res.isub(this.m);
+	    }
+	    return res;
+	  };
+
+	  Red.prototype.sub = function sub (a, b) {
+	    this._verify2(a, b);
+
+	    var res = a.sub(b);
+	    if (res.cmpn(0) < 0) {
+	      res.iadd(this.m);
+	    }
+	    return res._forceRed(this);
+	  };
+
+	  Red.prototype.isub = function isub (a, b) {
+	    this._verify2(a, b);
+
+	    var res = a.isub(b);
+	    if (res.cmpn(0) < 0) {
+	      res.iadd(this.m);
+	    }
+	    return res;
+	  };
+
+	  Red.prototype.shl = function shl (a, num) {
+	    this._verify1(a);
+	    return this.imod(a.ushln(num));
+	  };
+
+	  Red.prototype.imul = function imul (a, b) {
+	    this._verify2(a, b);
+	    return this.imod(a.imul(b));
+	  };
+
+	  Red.prototype.mul = function mul (a, b) {
+	    this._verify2(a, b);
+	    return this.imod(a.mul(b));
+	  };
+
+	  Red.prototype.isqr = function isqr (a) {
+	    return this.imul(a, a.clone());
+	  };
+
+	  Red.prototype.sqr = function sqr (a) {
+	    return this.mul(a, a);
+	  };
+
+	  Red.prototype.sqrt = function sqrt (a) {
+	    if (a.isZero()) return a.clone();
+
+	    var mod3 = this.m.andln(3);
+	    assert(mod3 % 2 === 1);
+
+	    // Fast case
+	    if (mod3 === 3) {
+	      var pow = this.m.add(new BN(1)).iushrn(2);
+	      return this.pow(a, pow);
+	    }
+
+	    // Tonelli-Shanks algorithm (Totally unoptimized and slow)
+	    //
+	    // Find Q and S, that Q * 2 ^ S = (P - 1)
+	    var q = this.m.subn(1);
+	    var s = 0;
+	    while (!q.isZero() && q.andln(1) === 0) {
+	      s++;
+	      q.iushrn(1);
+	    }
+	    assert(!q.isZero());
+
+	    var one = new BN(1).toRed(this);
+	    var nOne = one.redNeg();
+
+	    // Find quadratic non-residue
+	    // NOTE: Max is such because of generalized Riemann hypothesis.
+	    var lpow = this.m.subn(1).iushrn(1);
+	    var z = this.m.bitLength();
+	    z = new BN(2 * z * z).toRed(this);
+
+	    while (this.pow(z, lpow).cmp(nOne) !== 0) {
+	      z.redIAdd(nOne);
+	    }
+
+	    var c = this.pow(z, q);
+	    var r = this.pow(a, q.addn(1).iushrn(1));
+	    var t = this.pow(a, q);
+	    var m = s;
+	    while (t.cmp(one) !== 0) {
+	      var tmp = t;
+	      for (var i = 0; tmp.cmp(one) !== 0; i++) {
+	        tmp = tmp.redSqr();
+	      }
+	      assert(i < m);
+	      var b = this.pow(c, new BN(1).iushln(m - i - 1));
+
+	      r = r.redMul(b);
+	      c = b.redSqr();
+	      t = t.redMul(c);
+	      m = i;
+	    }
+
+	    return r;
+	  };
+
+	  Red.prototype.invm = function invm (a) {
+	    var inv = a._invmp(this.m);
+	    if (inv.negative !== 0) {
+	      inv.negative = 0;
+	      return this.imod(inv).redNeg();
+	    } else {
+	      return this.imod(inv);
+	    }
+	  };
+
+	  Red.prototype.pow = function pow (a, num) {
+	    if (num.isZero()) return new BN(1).toRed(this);
+	    if (num.cmpn(1) === 0) return a.clone();
+
+	    var windowSize = 4;
+	    var wnd = new Array(1 << windowSize);
+	    wnd[0] = new BN(1).toRed(this);
+	    wnd[1] = a;
+	    for (var i = 2; i < wnd.length; i++) {
+	      wnd[i] = this.mul(wnd[i - 1], a);
+	    }
+
+	    var res = wnd[0];
+	    var current = 0;
+	    var currentLen = 0;
+	    var start = num.bitLength() % 26;
+	    if (start === 0) {
+	      start = 26;
+	    }
+
+	    for (i = num.length - 1; i >= 0; i--) {
+	      var word = num.words[i];
+	      for (var j = start - 1; j >= 0; j--) {
+	        var bit = (word >> j) & 1;
+	        if (res !== wnd[0]) {
+	          res = this.sqr(res);
+	        }
+
+	        if (bit === 0 && current === 0) {
+	          currentLen = 0;
+	          continue;
+	        }
+
+	        current <<= 1;
+	        current |= bit;
+	        currentLen++;
+	        if (currentLen !== windowSize && (i !== 0 || j !== 0)) continue;
+
+	        res = this.mul(res, wnd[current]);
+	        currentLen = 0;
+	        current = 0;
+	      }
+	      start = 26;
+	    }
+
+	    return res;
+	  };
+
+	  Red.prototype.convertTo = function convertTo (num) {
+	    var r = num.umod(this.m);
+
+	    return r === num ? r.clone() : r;
+	  };
+
+	  Red.prototype.convertFrom = function convertFrom (num) {
+	    var res = num.clone();
+	    res.red = null;
+	    return res;
+	  };
+
+	  //
+	  // Montgomery method engine
+	  //
+
+	  BN.mont = function mont (num) {
+	    return new Mont(num);
+	  };
+
+	  function Mont (m) {
+	    Red.call(this, m);
+
+	    this.shift = this.m.bitLength();
+	    if (this.shift % 26 !== 0) {
+	      this.shift += 26 - (this.shift % 26);
+	    }
+
+	    this.r = new BN(1).iushln(this.shift);
+	    this.r2 = this.imod(this.r.sqr());
+	    this.rinv = this.r._invmp(this.m);
+
+	    this.minv = this.rinv.mul(this.r).isubn(1).div(this.m);
+	    this.minv = this.minv.umod(this.r);
+	    this.minv = this.r.sub(this.minv);
+	  }
+	  inherits(Mont, Red);
+
+	  Mont.prototype.convertTo = function convertTo (num) {
+	    return this.imod(num.ushln(this.shift));
+	  };
+
+	  Mont.prototype.convertFrom = function convertFrom (num) {
+	    var r = this.imod(num.mul(this.rinv));
+	    r.red = null;
+	    return r;
+	  };
+
+	  Mont.prototype.imul = function imul (a, b) {
+	    if (a.isZero() || b.isZero()) {
+	      a.words[0] = 0;
+	      a.length = 1;
+	      return a;
+	    }
+
+	    var t = a.imul(b);
+	    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
+	    var u = t.isub(c).iushrn(this.shift);
+	    var res = u;
+
+	    if (u.cmp(this.m) >= 0) {
+	      res = u.isub(this.m);
+	    } else if (u.cmpn(0) < 0) {
+	      res = u.iadd(this.m);
+	    }
+
+	    return res._forceRed(this);
+	  };
+
+	  Mont.prototype.mul = function mul (a, b) {
+	    if (a.isZero() || b.isZero()) return new BN(0)._forceRed(this);
+
+	    var t = a.mul(b);
+	    var c = t.maskn(this.shift).mul(this.minv).imaskn(this.shift).mul(this.m);
+	    var u = t.isub(c).iushrn(this.shift);
+	    var res = u;
+	    if (u.cmp(this.m) >= 0) {
+	      res = u.isub(this.m);
+	    } else if (u.cmpn(0) < 0) {
+	      res = u.iadd(this.m);
+	    }
+
+	    return res._forceRed(this);
+	  };
+
+	  Mont.prototype.invm = function invm (a) {
+	    // (AR)^-1 * R^2 = (A^-1 * R^-1) * R^2 = A^-1 * R
+	    var res = this.imod(a._invmp(this.m).mul(this.r2));
+	    return res._forceRed(this);
+	  };
+	})(module, commonjsGlobal);
+	});
+
+	// ++  muk
+	//
+	// See arvo/sys/hoon.hoon.
+
+
+
+	const ux_FF = new bn(0xFF);
+	const ux_FF00 = new bn(0xFF00);
+	const u_256 = new bn(256);
+
+	/**
+	 * Standard murmur3.
+	 *
+	 * @param  {Number}  syd
+	 * @param  {Number}  len
+	 * @param  {BN}  key
+	 * @return  {BN}
+	 */
+	const muk = (syd, len, key) => {
+	  const lo = key.and(ux_FF).toNumber();
+	  const hi = key.and(ux_FF00).div(u_256).toNumber();
+	  const kee = String.fromCharCode(lo) + String.fromCharCode(hi);
+	  return new bn(murmurhash3_32_gc(kee, syd))
+	};
+
+	// see: https://github.com/garycourt/murmurhash-js
+	//
+	// Copyright (c) 2011 Gary Court
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a copy of
+	// this software and associated documentation files (the "Software"), to deal in
+	// the Software without restriction, including without limitation the rights to
+	// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+	// of the Software, and to permit persons to whom the Software is furnished to do
+	// so, subject to the following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included in all
+	// copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	// SOFTWARE.
+
+	/**
+	 * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
+	 *
+	 * @author <a href="mailto:gary.court@gmail.com">Gary Court</a>
+	 * @see http://github.com/garycourt/murmurhash-js
+	 * @author <a href="mailto:aappleby@gmail.com">Austin Appleby</a>
+	 * @see http://sites.google.com/site/murmurhash/
+	 *
+	 * @param {string} key ASCII only
+	 * @param {number} seed Positive integer only
+	 * @return {number} 32-bit positive integer hash
+	 **/
+	const murmurhash3_32_gc = (key, seed) => {
+	  let remainder, bytes, h1, h1b, c1, c2, k1, i;
+
+	  remainder = key.length & 3; // key.length % 4
+	  bytes = key.length - remainder;
+	  h1 = seed;
+	  c1 = 0xcc9e2d51;
+	  c2 = 0x1b873593;
+	  i = 0;
+
+	  while (i < bytes) {
+	      k1 =
+	        ((key.charCodeAt(i) & 0xff)) |
+	        ((key.charCodeAt(++i) & 0xff) << 8) |
+	        ((key.charCodeAt(++i) & 0xff) << 16) |
+	        ((key.charCodeAt(++i) & 0xff) << 24);
+	    ++i;
+
+	    k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+	    k1 = (k1 << 15) | (k1 >>> 17);
+	    k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+
+	    h1 ^= k1;
+	        h1 = (h1 << 13) | (h1 >>> 19);
+	    h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+	    h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+	  }
+
+	  k1 = 0;
+
+	  switch (remainder) {
+	    case 3: k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+	    case 2: k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+	    case 1: k1 ^= (key.charCodeAt(i) & 0xff);
+
+	    k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+	    k1 = (k1 << 15) | (k1 >>> 17);
+	    k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+	    h1 ^= k1;
+	  }
+
+	  h1 ^= key.length;
+
+	  h1 ^= h1 >>> 16;
+	  h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+	  h1 ^= h1 >>> 13;
+	  h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+	  h1 ^= h1 >>> 16;
+
+	  return h1 >>> 0;
+	};
+
+	var muk_1 = {
+	  muk
+	};
+
+	// ++  ob
+	//
+	// See arvo/sys/hoon.hoon.
+
+
+	const { muk: muk$1 } = muk_1;
+
+	const ux_1_0000 = new bn('10000', 'hex');
+	const ux_ffff_ffff = new bn('ffffffff', 'hex');
+	const ux_1_0000_0000 = new bn('100000000', 'hex');
+	const ux_ffff_ffff_ffff_ffff = new bn('ffffffffffffffff', 'hex');
+	const ux_ffff_ffff_0000_0000 = new bn('ffffffff00000000', 'hex');
+
+	const u_65535 = new bn('65535');
+	const u_65536 = new bn('65536');
+
+	/**
+	 * Conceal structure v2.
+	 *
+	 * @param  {String, Number, BN}  pyn
+	 * @return  {BN}
+	 */
+	const feen = (arg) => {
+	  const loop = (pyn) => {
+	    const lo = pyn.and(ux_ffff_ffff);
+	    const hi = pyn.and(ux_ffff_ffff_0000_0000);
+
+	    return pyn.gte(ux_1_0000) && pyn.lte(ux_ffff_ffff)
+	      ? ux_1_0000.add(fice(pyn.sub(ux_1_0000)))
+	      : pyn.gte(ux_1_0000_0000) && pyn.lte(ux_ffff_ffff_ffff_ffff)
+	      ? hi.or(loop(lo))
+	      : pyn
+	  };
+
+	  return loop(new bn(arg))
+	};
+
+	/**
+	 * Restore structure v2.
+	 *
+	 * @param  {String, Number, BN}  pyn
+	 * @return  {BN}
+	 */
+	const fend = (arg) => {
+	  const loop = (cry) => {
+	    const lo = cry.and(ux_ffff_ffff);
+	    const hi = cry.and(ux_ffff_ffff_0000_0000);
+
+	    return cry.gte(ux_1_0000) && cry.lte(ux_ffff_ffff)
+	      ? ux_1_0000.add(teil(cry.sub(ux_1_0000)))
+	      : cry.gte(ux_1_0000_0000) && cry.lte(ux_ffff_ffff_ffff_ffff)
+	      ? hi.or(loop(lo))
+	      : cry
+	  };
+
+	  return loop(new bn(arg))
+	};
+
+	/**
+	 * Adapted from Black and Rogaway "Ciphers with arbitrary finite domains",
+	 * 2002.
+	 *
+	 * @param  {String, Number, BN}
+	 * @return  {BN}
+	 */
+	const fice = (arg) => {
+	  const nor = new bn(arg);
+
+	  const sel =
+	    rynd(3,
+	    rynd(2,
+	    rynd(1,
+	    rynd(0, [ nor.mod(u_65535), nor.div(u_65535) ]))));
+
+	  return (u_65535.mul(sel[0])).add(sel[1])
+	};
+
+	/**
+	 * Reverse fice.
+	 *
+	 * @param  {String}  vip
+	 * @return  {BN}
+	 */
+	const teil = (arg) => {
+	  const vip = new bn(arg);
+
+	  const sel =
+	    rund(0,
+	    rund(1,
+	    rund(2,
+	    rund(3, [ vip.mod(u_65535), vip.div(u_65535) ]))));
+
+	  return (u_65535.mul(sel[0])).add(sel[1])
+	};
+
+	/**
+	 * Feistel round.
+	 *
+	 * @param  {Number}  n
+	 * @param  {Array<BN>}  [l, r]
+	 * @return  {Array<BN>}
+	 */
+	const rynd = (n, arr) => {
+	  const l = arr[0];
+	  const r = arr[1];
+	  const p = n % 2 === 0 ? u_65535 : u_65536;
+	  return [ r, l.add(muk$1(raku[n], 2, r)).mod(p) ]
+	};
+
+	/**
+	 * Reverse round.
+	 *
+	 * @param  {Number}  n
+	 * @param  {Array<BN>}  [l, r]
+	 * @return  {Array<BN>}
+	 */
+	const rund = (n, arr) => {
+	  const l = arr[0];
+	  const r = arr[1];
+	  const p = n % 2 === 0 ? u_65535 : u_65536;
+	  return [ r, l.add(p).sub(muk$1(raku[n], 2, r).mod(p)).mod(p) ]
+	};
+
+	const raku = [
+	  0xb76d5eed,
+	  0xee281300,
+	  0x85bcae01,
+	  0x4b387af7,
+	];
+
+	var ob$1 = {
+	  feen,
+	  fend,
+	  fice,
+	  teil,
+	  rynd,
+	  rund,
+	  raku
+	};
+
+	// ++  co
+	//
+	// See arvo/sys/hoon.hoon.
+
+
+
+
+
+
+	const zero = new bn(0);
+	const one = new bn(1);
+	const two = new bn(2);
+	const three = new bn(3);
+	const four = new bn(4);
+	const five = new bn(5);
+
+	const pre = `
+dozmarbinwansamlitsighidfidlissogdirwacsabwissib\
+rigsoldopmodfoglidhopdardorlorhodfolrintogsilmir\
+holpaslacrovlivdalsatlibtabhanticpidtorbolfosdot\
+losdilforpilramtirwintadbicdifrocwidbisdasmidlop\
+rilnardapmolsanlocnovsitnidtipsicropwitnatpanmin\
+ritpodmottamtolsavposnapnopsomfinfonbanmorworsip\
+ronnorbotwicsocwatdolmagpicdavbidbaltimtasmallig\
+sivtagpadsaldivdactansidfabtarmonranniswolmispal\
+lasdismaprabtobrollatlonnodnavfignomnibpagsopral\
+bilhaddocridmocpacravripfaltodtiltinhapmicfanpat\
+taclabmogsimsonpinlomrictapfirhasbosbatpochactid\
+havsaplindibhosdabbitbarracparloddosbortochilmac\
+tomdigfilfasmithobharmighinradmashalraglagfadtop\
+mophabnilnosmilfopfamdatnoldinhatnacrisfotribhoc\
+nimlarfitwalrapsarnalmoslandondanladdovrivbacpol\
+laptalpitnambonrostonfodponsovnocsorlavmatmipfip\
+`;
+
+	const suf = `
+zodnecbudwessevpersutletfulpensytdurwepserwylsun\
+rypsyxdyrnuphebpeglupdepdysputlughecryttyvsydnex\
+lunmeplutseppesdelsulpedtemledtulmetwenbynhexfeb\
+pyldulhetmevruttylwydtepbesdexsefwycburderneppur\
+rysrebdennutsubpetrulsynregtydsupsemwynrecmegnet\
+secmulnymtevwebsummutnyxrextebfushepbenmuswyxsym\
+selrucdecwexsyrwetdylmynmesdetbetbeltuxtugmyrpel\
+syptermebsetdutdegtexsurfeltudnuxruxrenwytnubmed\
+lytdusnebrumtynseglyxpunresredfunrevrefmectedrus\
+bexlebduxrynnumpyxrygryxfeptyrtustyclegnemfermer\
+tenlusnussyltecmexpubrymtucfyllepdebbermughuttun\
+bylsudpemdevlurdefbusbeprunmelpexdytbyttyplevmyl\
+wedducfurfexnulluclennerlexrupnedlecrydlydfenwel\
+nydhusrelrudneshesfetdesretdunlernyrsebhulryllud\
+remlysfynwerrycsugnysnyllyndyndemluxfedsedbecmun\
+lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
+`;
+
+	const patp2syls = name =>
+	  name.replace(/[\^~-]/g,'').match(/.{1,3}/g);
+
+	const splitAt = (index, str) => [str.slice(0, index), str.slice(index)];
+
+	const prefixes = pre.match(/.{1,3}/g);
+
+	const suffixes = suf.match(/.{1,3}/g);
+
+	const bex = (n) =>
+	  two.pow(n);
+
+	const rsh = (a, b, c) =>
+	  c.div(bex(bex(a).mul(b)));
+
+	const met = (a, b, c = zero) =>
+	  b.eq(zero)
+	  ? c
+	  : met(a, rsh(a, one, b), c.add(one));
+
+	const end = (a, b, c) =>
+	  c.mod(bex(bex(a).mul(b)));
+
+	/**
+	 * Convert a number to a @p-encoded string.
+	 *
+	 * @param  {String, Number, BN}  arg
+	 * @return  {String}
+	 */
+	const patp = (arg) => {
+	  const n = new bn(arg);
+
+	  const sxz = ob$1.feen(n);
+	  const dyy = met(four, sxz);
+
+	  const loop = (tsxz, timp, trep) => {
+	    const log = end(four, one, tsxz);
+	    const pre = prefixes[rsh(three, one, log)];
+	    const suf = suffixes[end(three, one, log)];
+	    const etc =
+	      (timp.mod(four)).eq(zero)
+	        ? timp.eq(zero)
+	          ? ''
+	          : '--'
+	        : '-';
+
+	    const res = pre + suf + etc + trep;
+
+	    return timp.eq(dyy)
+	      ? trep
+	      : loop(rsh(four, one, tsxz), timp.add(one), res)
+	  };
+
+	  const dyx = met(three, sxz);
+
+	  return '~' +
+	    (dyx.lte(one)
+	    ? suffixes[sxz]
+	    : loop(sxz, zero, ''))
+	};
+
+	/**
+	 * Convert a hex-encoded string to a @p-encoded string.
+	 *
+	 * @param  {String}  hex
+	 * @return  {String}
+	 */
+	const hex2patp = (hex) =>
+	  patp(new bn(hex, 'hex'));
+
+	/**
+	 * Convert a @p-encoded string to a hex-encoded string.
+	 *
+	 * @param  {String}  name @p
+	 * @return  {String}
+	 */
+	const patp2hex = (name) => {
+	  if (isValidPat(name) === false) {
+	    throw new Error('patp2hex: not a valid @p')
+	  }
+	  const syls = patp2syls(name);
+
+	  const syl2bin = idx =>
+	    idx.toString(2).padStart(8, '0');
+
+	  const addr = lodash.reduce(syls, (acc, syl, idx) =>
+	    idx % 2 !== 0 || syls.length === 1
+	      ? acc + syl2bin(suffixes.indexOf(syl))
+	      : acc + syl2bin(prefixes.indexOf(syl)),
+	  '');
+
+	  const bn$1 = new bn(addr, 2);
+	  const hex = ob$1.fend(bn$1).toString('hex');
+	  return hex.length % 2 !== 0
+	    ? hex.padStart(hex.length + 1, '0')
+	    : hex
+	};
+
+	/**
+	 * Convert a @p-encoded string to a bignum.
+	 *
+	 * @param  {String}  name @p
+	 * @return  {BN}
+	 */
+	const patp2bn = name =>
+	  new bn(patp2hex(name), 'hex');
+
+	/**
+	 * Convert a @p-encoded string to a decimal-encoded string.
+	 *
+	 * @param  {String}  name @p
+	 * @return  {String}
+	 */
+	const patp2dec = name =>
+	  patp2bn(name).toString();
+
+	/**
+	 * Convert a number to a @q-encoded string.
+	 *
+	 * @param  {String, Number, BN}  arg
+	 * @return  {String}
+	 */
+	const patq = (arg) => {
+	  const bn$1 = new bn(arg);
+	  const buf = bn$1.toArrayLike(Buffer);
+	  return buf2patq(buf)
+	};
+
+	/**
+	 * Convert a Buffer into a @q-encoded string.
+	 *
+	 * @param  {Buffer}  buf
+	 * @return  {String}
+	 */
+	const buf2patq = buf => {
+	  const chunked =
+	    buf.length % 2 !== 0 && buf.length > 1
+	    ? lodash.concat([[buf[0]]], lodash.chunk(buf.slice(1), 2))
+	    : lodash.chunk(buf, 2);
+
+	  const prefixName = byts =>
+	    lodash.isUndefined(byts[1])
+	    ? prefixes[0] + suffixes[byts[0]]
+	    : prefixes[byts[0]] + suffixes[byts[1]];
+
+	  const name = byts =>
+	    lodash.isUndefined(byts[1])
+	    ? suffixes[byts[0]]
+	    : prefixes[byts[0]] + suffixes[byts[1]];
+
+	  const alg = pair =>
+	    pair.length % 2 !== 0 && chunked.length > 1
+	    ? prefixName(pair)
+	    : name(pair);
+
+	  return chunked.reduce((acc, elem) =>
+	    acc + (acc === '~' ? '' : '-') + alg(elem), '~')
+	};
+
+	/**
+	 * Convert a hex-encoded string to a @q-encoded string.
+	 *
+	 * Note that this preserves leading zero bytes.
+	 *
+	 * @param  {String}  hex
+	 * @return  {String}
+	 */
+	const hex2patq = arg => {
+	  const hex =
+	    arg.length % 2 !== 0
+	    ? arg.padStart(arg.length + 1, '0')
+	    : arg;
+
+	  const buf = Buffer.from(hex, 'hex');
+	  return buf2patq(buf)
+	};
+
+	/**
+	 * Convert a @q-encoded string to a hex-encoded string.
+	 *
+	 * Note that this preserves leading zero bytes.
+	 *
+	 * @param  {String}  name @q
+	 * @return  {String}
+	 */
+	const patq2hex = name => {
+	  if (isValidPat(name) === false) {
+	    throw new Error('patq2hex: not a valid @q')
+	  }
+	  const chunks = lodash.split(name.slice(1), '-');
+	  const dec2hex = dec =>
+	    dec.toString(16).padStart(2, '0');
+
+	  const splat = lodash.map(chunks, chunk => {
+	    let syls = splitAt(3, chunk);
+	    return syls[1] === ''
+	      ? dec2hex(suffixes.indexOf(syls[0]))
+	      : dec2hex(prefixes.indexOf(syls[0])) +
+	        dec2hex(suffixes.indexOf(syls[1]))
+	  });
+
+	  return name.length === 0
+	    ? '00'
+	    : splat.join('')
+	};
+
+	/**
+	 * Convert a @q-encoded string to a bignum.
+	 *
+	 * @param  {String}  name @q
+	 * @return  {BN}
+	 */
+	const patq2bn = name =>
+	  new bn(patq2hex(name), 'hex');
+
+	/**
+	 * Convert a @q-encoded string to a decimal-encoded string.
+	 *
+	 * @param  {String}  name @q
+	 * @return  {String}
+	 */
+	const patq2dec = name =>
+	  patq2bn(name).toString();
+
+	/**
+	 * Determine the ship class of a @p value.
+	 *
+	 * @param  {String}  @p
+	 * @return  {String}
+	 */
+	const clan = who => {
+	  const name = patp2bn(who);
+	  const wid = met(three, name);
+	  return wid.lte(one)
+	    ? 'galaxy'
+	    : wid.eq(two)
+	    ? 'star'
+	    : wid.lte(four)
+	    ? 'planet'
+	    : wid.lte(new bn(8))
+	    ? 'moon'
+	    : 'comet'
+	};
+
+	/**
+	 * Determine the parent of a @p value.
+	 *
+	 * @param  {String}  @p
+	 * @return  {String}
+	 */
+	const sein = (name) => {
+	  const mir = clan(name);
+	  const who = patp2bn(name);
+	  const res =
+	    mir === 'galaxy'
+	    ? who
+	    : mir === 'star'
+	    ? end(three, one, who)
+	    : mir === 'planet'
+	    ? end(four, one, who)
+	    : mir === 'moon'
+	    ? end(five, one, who)
+	    : zero;
+	  return patp(res)
+	};
+
+	/**
+	 * Weakly check if a string is a valid @p or @q value.
+	 *
+	 * This is, at present, a pretty weak sanity check.  It doesn't confirm the
+	 * structure precisely (e.g. dashes), and for @q, it's required that q values
+	 * of (greater than one) odd bytelength have been zero-padded.  So, for
+	 * example, '~doznec-binwod' will be considered a valid @q, but '~nec-binwod'
+	 * will not.
+	 *
+	 * @param  {String}  name a @p or @q value
+	 * @return  {String}
+	 */
+	const isValidPat = name => {
+	  const syls = patp2syls(name);
+
+	  const leadingTilde = name.slice(0, 1) === '~';
+
+	  if (leadingTilde === false) {
+	    return false
+	  } else {
+	    const wrongLength = syls.length % 2 !== 0 && syls.length !== 1;
+	    const sylsExist = lodash.reduce(syls, (acc, syl, index) =>
+	      acc &&
+	        (index % 2 !== 0 || syls.length === 1
+	          ? suffixes.includes(syl)
+	          : prefixes.includes(syl)),
+	      true);
+
+	    return !wrongLength && sylsExist
+	  }
+	};
+
+	/**
+	 * Remove all leading zero bytes from a sliceable value.
+	 * @param  {String, Buffer, Array}
+	 * @return  {String}
+	 */
+	const removeLeadingZeroBytes = str =>
+	  str.slice(0, 2) === '00'
+	  ? removeLeadingZeroBytes(str.slice(2))
+	  : str;
+
+	/**
+	 * Equality comparison, modulo leading zero bytes.
+	 * @param  {String, Buffer, Array}
+	 * @param  {String, Buffer, Array}
+	 * @return  {Bool}
+	 */
+	const eqModLeadingZeroBytes = (s, t) =>
+	  lodash.isEqual(removeLeadingZeroBytes(s), removeLeadingZeroBytes(t));
+
+	/**
+	 * Equality comparison on @q values.
+	 * @param  {String}  p a @q-encoded string
+	 * @param  {String}  q a @q-encoded string
+	 * @return  {Bool}
+	 */
+	const eqPatq = (p, q) => {
+	  const phex = patq2hex(p);
+	  const qhex = patq2hex(q);
+	  return eqModLeadingZeroBytes(phex, qhex)
+	};
+
+	var co = {
+	  patp,
+	  patp2hex,
+	  hex2patp,
+	  patp2dec,
+	  patq,
+	  patq2hex,
+	  hex2patq,
+	  patq2dec,
+	  clan,
+	  sein,
+	  eqPatq,
+	  isValidPatq: isValidPat, // reserving for diff impls in future
+	  isValidPatp: isValidPat
+	};
+
+	var src = Object.assign(
+	  co,
+	  ob$1
+	);
+
 	const _jsxFileName$b = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/member-element.js";
 
 	class MemberElement extends react_1 {
@@ -57295,16 +57327,31 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      station: props.match.params.ship + "/" + props.match.params.station,
 	      circle: props.match.params.station,
 	      host: props.match.params.ship,
-	      invMembers: ''
+	      invMembers: '',
+	      error: false
 	    };
 
 	  }
 
 	  inviteMembers() {
 	    const { props, state } = this;
-	    let sis = state.invMembers.trim().split(',');
-	    console.log(sis);
-	    props.api.permit(state.circle, sis, true);
+	    let sis = state.invMembers.split(',')
+	      .map((mem) => mem.trim())
+	      .map(deSig);
+
+	    let isValid = true;
+	    sis.forEach((mem) => {
+	      if (!src.isValidPatp(`~${mem}`)) {
+	        isValid = false;
+	      }
+	    });
+
+	    if (isValid) {
+	      props.api.permit(state.circle, sis, true);
+	      this.setState({ error: false });
+	    } else {
+	      this.setState({ error: true });
+	    }
 	  }
 
 	  inviteMembersChange(e) {
@@ -57321,34 +57368,40 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return (
 	        react.createElement(MemberElement, { 
 	          key: mem, 
-	          isHost:  props.ship === state.host ,
+	          isHost:  `~${mem}` === state.host ,
 	          ship: mem,
 	          circle: state.circle,
-	          api: props.api, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 39}} )
+	          api: props.api, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 56}} )
 	      );
 	    });
 
+	    let errorElem = !!this.state.error ? (
+	      react.createElement('p', { className: "pa2 nice-red label-regular"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 66}}, "Invalid ship name."  )
+	    ) : (
+	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 68}})
+	    );
+
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 49}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 50}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 51}}, state.circle)
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 72}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 73}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 74}}, state.circle)
 	          , react.createElement(ChatTabBar, {
 	            ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 52}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 75}} )
 	        )
-	        , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 57}}
-	          , react.createElement('div', { className: "w-50 fl pa2"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 58}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 59}}, "Members")
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 60}}, "Everyone subscribed to this chat."
+	        , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 80}}
+	          , react.createElement('div', { className: "w-50 fl pa2"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 81}}
+	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 82}}, "Members")
+	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 83}}, "Everyone subscribed to this chat."
 
 	            )
 	            , listMembers
 	          )
 	          ,  `~${window.ship}` === state.host ? (
-	            react.createElement('div', { className: "w-50 fr pa2"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 66}}
-	              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 67}}, "Invite")
-	              , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 68}}, "Invite new participants to this chat."
+	            react.createElement('div', { className: "w-50 fr pa2"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 89}}
+	              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 90}}, "Invite")
+	              , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 91}}, "Invite new participants to this chat."
 
 	              )
 	              , react.createElement('textarea', { 
@@ -57357,12 +57410,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                  resize: 'none',
 	                  height: 150
 	                },
-	                onChange: this.inviteMembersChange.bind(this), __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 71}})
-	              , react.createElement('a', { 
+	                onChange: this.inviteMembersChange.bind(this), __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 94}})
+	              , react.createElement('button', {
 	                onClick: this.inviteMembers.bind(this),
-	                className: "label-regular underline gray btn-font"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 78}}, "Invite"
+	                className: "label-regular underline gray btn-font pointer"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 101}}, "Invite"
 
 	              )
+	              , errorElem
 	            )
 	          ) : null 
 	        )
@@ -57421,20 +57475,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        , react.createElement('div', { className: "w-100 cf pa3"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 52}}
 	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 53}}, "Settings")
 	          , react.createElement('div', { className: "w-50 fl pr2 mt3"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 54}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 55}}, "Rename")
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 56}}, "Change the name of this chat."
-
-	            )
-	            , react.createElement('p', { className: "label-small-mono inter" , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 59}}, "Chat Name" )
-	            , react.createElement('input', { type: "text", className: "ba gray pa2 w-80"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 60}} )
 	          )
-	          , react.createElement('div', { className: "w-50 fr pl2 mt3"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 62}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 63}}, "Delete Chat" )
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 64}}, "Permanently delete this chat."
+	          , react.createElement('div', { className: "w-50 fr pl2 mt3"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 56}}
+	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 57}}, "Delete Chat" )
+	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 58}}, "Permanently delete this chat."
 
 	            )
 	            , react.createElement('a', { onClick: this.deleteChat.bind(this),
-	              className: "pointer btn-font underline nice-red"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 67}}, "-> Delete" )
+	              className: "pointer btn-font underline nice-red"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 61}}, "-> Delete" )
 	          )
 	        )
 	      )
@@ -57586,6 +57634,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      }
 	    });
 
+	    let unreads = {};
+	    circles.forEach((cir) => {
+	      if (cir in messagePreviews) {
+	        unreads[cir] = state.configs[cir].red < messagePreviews[cir].num;
+	      } else {
+	        unreads[cir] = false;
+	      }
+	    });
+
 	    let invites = lodash.get(state, 'messages', {});
 	    if (`~${window.ship}/i` in invites) {
 	      invites = invites[`~${window.ship}/i`];
@@ -57594,8 +57651,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    }
 
 	    return (
-	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 61}}
-	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 62}}
+	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 70}}
+	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 71}}
 	        , react.createElement(Route, { exact: true, path: "/~chat",
 	          render:  (props) => {
 	            return (
@@ -57605,20 +57662,21 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    circles: circles,
 	                    messagePreviews: messagePreviews,
 	                    invites: invites,
+	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 68}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 77}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 66}}
-	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 76}}
-	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 77}}
-	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 78}}
-	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 79}}, "Cmd + N to start a new chat"       )
+	                , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 75}}
+	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 86}}
+	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 87}}
+	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 88}}
+	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 89}}, "Cmd + N to start a new chat"       )
 	                    )
 	                  )
 	                )
 	              )
 	            );
-	          }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 63}} )
+	          }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 72}} )
 	        , react.createElement(Route, { exact: true, path: "/~chat/new",
 	          render:  (props) => {
 	            return (
@@ -57628,17 +57686,18 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    circles: circles,
 	                    messagePreviews: messagePreviews,
 	                    invites: invites,
+	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 91}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 101}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 89}}
+	                , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 99}}
 	                , react.createElement(NewScreen, { 
 	                  api: api,
-	                  ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 99}}
+	                  ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 110}}
 	                )
 	              )
 	            );
-	         }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 86}} )
+	         }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 96}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station",
 	           render:  (props) => {
 	             return (
@@ -57648,20 +57707,21 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    circles: circles,
 	                    messagePreviews: messagePreviews,
 	                    invites: invites,
+	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 111}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 122}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 109}}
+	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 120}}
 	                 , react.createElement(ChatScreen, {
 	                   api: api,
 	                   configs: configs,
 	                   messages: state.messages,
 	                   peers: state.peers,
-	                   ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 119}}
+	                   ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 131}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 106}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 117}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/members",
 	           render:  (props) => {
 	             return (
@@ -57671,18 +57731,19 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    circles: circles,
 	                    messagePreviews: messagePreviews,
 	                    invites: invites,
+	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 134}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 146}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 132}}
+	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 144}}
 	                 , react.createElement(MemberScreen, {
 	                   ...props, 
 	                   api: api,
-	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 142}}
+	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 155}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 129}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 141}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/settings",
 	           render:  (props) => {
 	             return (
@@ -57692,18 +57753,19 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    circles: circles,
 	                    messagePreviews: messagePreviews,
 	                    invites: invites,
+	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 155}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 168}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 153}}
+	                 , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 166}}
 	                 , react.createElement(SettingsScreen, { 
 	                   ...props,
 	                   api: api,
 	                   peers: state.peers,
-	                   store: store, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 163}} )
+	                   store: store, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 177}} )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 150}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 163}} )
 	        )
 	      )
 	    )

@@ -22,7 +22,6 @@ class Store {
       this.state = JSON.parse(state);
       // TODO: wtf???
       delete this.state.messages[undefined];
-      console.log(this.state);
       this.state.local = true;
     }
 

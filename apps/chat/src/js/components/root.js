@@ -50,6 +50,15 @@ export class Root extends Component {
       }
     });
 
+    let unreads = {};
+    circles.forEach((cir) => {
+      if (cir in messagePreviews) {
+        unreads[cir] = state.configs[cir].red < messagePreviews[cir].num;
+      } else {
+        unreads[cir] = false;
+      }
+    });
+
     let invites = _.get(state, 'messages', {});
     if (`~${window.ship}/i` in invites) {
       invites = invites[`~${window.ship}/i`];
@@ -69,6 +78,7 @@ export class Root extends Component {
                     circles={circles}
                     messagePreviews={messagePreviews}
                     invites={invites}
+                    unreads={unreads}
                     api={api}
                     {...props}
                   />
@@ -92,6 +102,7 @@ export class Root extends Component {
                     circles={circles}
                     messagePreviews={messagePreviews}
                     invites={invites}
+                    unreads={unreads}
                     api={api}
                     {...props}
                   />
@@ -112,6 +123,7 @@ export class Root extends Component {
                     circles={circles}
                     messagePreviews={messagePreviews}
                     invites={invites}
+                    unreads={unreads}
                     api={api}
                     {...props}
                   />
@@ -135,6 +147,7 @@ export class Root extends Component {
                     circles={circles}
                     messagePreviews={messagePreviews}
                     invites={invites}
+                    unreads={unreads}
                     api={api}
                     {...props}
                   />
@@ -156,6 +169,7 @@ export class Root extends Component {
                     circles={circles}
                     messagePreviews={messagePreviews}
                     invites={invites}
+                    unreads={unreads}
                     api={api}
                     {...props}
                   />

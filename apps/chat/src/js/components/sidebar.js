@@ -53,6 +53,7 @@ export class Sidebar extends Component {
             datetime={obj.datetime}
             ship={obj.aut}
             selected={obj.selected}
+            unread={props.unreads[obj.cir]}
             history={props.history}
           />
         );

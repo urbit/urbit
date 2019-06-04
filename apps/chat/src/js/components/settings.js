@@ -52,12 +52,6 @@ export class SettingsScreen extends Component {
         <div className="w-100 cf pa3">
           <h2>Settings</h2>
           <div className="w-50 fl pr2 mt3">
-            <p className="body-regular">Rename</p>
-            <p className="label-regular gray mb3">
-              Change the name of this chat.
-            </p>
-            <p className="label-small-mono inter">Chat Name</p>
-            <input type="text" className="ba gray pa2 w-80" />
           </div>
           <div className="w-50 fr pl2 mt3">
             <p className="body-regular">Delete Chat</p>
