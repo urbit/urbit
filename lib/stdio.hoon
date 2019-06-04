@@ -238,7 +238,8 @@
   |=  [[her=ship app=term] =poke-data]
   =/  m  (async ,~)
   ^-  form:m
-  (send-effect %poke / [her app] poke-data)
+  =/  =wire  /(scot %p her)/[app]
+  (send-effect %poke wire [her app] poke-data)
 ::
 ++  peer-app
   |=  [[her=ship app=term] =path]

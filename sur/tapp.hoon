@@ -18,7 +18,10 @@
 ::
 +$  sign
   $%  [%sigh =httr:eyre]
-      [%wake (unit tang)]
+      [%wake error=(unit tang)]
+      [%coup =dock error=(unit tang)]
+      [%quit =dock =path]
+      [%reap =dock =path error=(unit tang)]
   ==
 ::
 ::  Outstanding contracts

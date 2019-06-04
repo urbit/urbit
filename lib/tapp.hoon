@@ -98,7 +98,20 @@
     |=(* (async-fail:async-lib %no-diff-handler ~))
   ::
   ++  handle-take
-    |=(* (async-fail:async-lib %no-take-handler ~))
+    =>  |%
+        ++  print-if-error
+          |=  [msg=tape error=(unit tang)]
+          %.  *form:tapp-async
+          ?~  error
+            same
+          (slog [leaf+msg u.error])
+        --
+    |=  =sign
+    ?:  ?=(%coup -.sign)
+      (print-if-error "poke failed" error.sign)
+    ?:  ?=(%reap -.sign)
+      (print-if-error "peer {<path.sign>} failed" error.sign)
+    (async-fail:async-lib %no-take-handler ~)
   --
 ::
 ::  The form of a tapp that only handles pokes
@@ -234,6 +247,24 @@
       `this-tapp
     start-async
   ::
+  ::  Receive acknowledgement of outgoing poke
+  ::
+  ::    XX these can be distinguished by dock, but, without a wire or
+  ::    some alternative, that's not very useful if you poke the same
+  ::    dock multiple times. %poke wires are not currently exposed ...
+  ::    Wat do?
+  ::
+  ++  coup
+    |=  [=wire error=(unit tang)]
+    ^-  (quip move _this-tapp)
+    ?>  ?=([@ @ *] wire)
+    =/  her  (slav %p i.wire)
+    =*  app  i.t.wire
+    =.  waiting  (~(put to waiting) %take %coup [her app] error)
+    ?^  active
+      `this-tapp
+    start-async
+  ::
   ::  Read from tapp state
   ::
   ++  peek
@@ -256,6 +287,34 @@
     |=  =path
     ^-  (quip move _this-tapp)
     =.  waiting  (~(put to waiting) %peer path)
+    ?^  active
+      `this-tapp
+    start-async
+  ::
+  ::  Receive (involuntary) unsubscription
+  ::
+  ++  quit
+    |=  =wire
+    ^-  (quip move _this-tapp)
+    ?>  ?=([@ @ *] wire)
+    =/  her  (slav %p i.wire)
+    =*  app  i.t.wire
+    =*  pax  t.t.wire
+    =.  waiting  (~(put to waiting) %take %quit [her app] pax)
+    ?^  active
+      `this-tapp
+    start-async
+  ::
+  ::  Receive acknowledgement of outgoing subscription request
+  ::
+  ++  reap
+    |=  [=wire error=(unit tang)]
+    ^-  (quip move _this-tapp)
+    ?>  ?=([@ @ *] wire)
+    =/  her  (slav %p i.wire)
+    =*  app  i.t.wire
+    =*  pax  t.t.wire
+    =.  waiting  (~(put to waiting) %take %reap [her app] pax error)
     ?^  active
       `this-tapp
     start-async
@@ -288,12 +347,16 @@
     ^-  (quip move _this-tapp)
     (oob-fail-async %failed-sigh tang)
   ::
+  ::  Pass timer to async, or fail
+  ::
   ++  wake-note
     |=  [=wire error=(unit tang)]
     ^-  (quip move _this-tapp)
     ?^  error
       (oob-fail-async %timer-fire-failed u.error)
     (take-async bowl `[wire %wake ~])
+  ::
+  ::  Enqueue timer transaction
   ::
   ++  wake-effect
     |=  [=wire error=(unit tang)]
