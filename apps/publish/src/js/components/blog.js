@@ -35,7 +35,7 @@ export class Blog extends Component {
     return {
       postTitle: pos.info.title,
       postName:  post,
-      postSnippet: "body snippet",
+      postBody: pos.body,
       numComments: com.length,
       collectionTitle: col.title,
       collectionName:  coll,

@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { dateToDa } from '/lib/util';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { PostSnippet } from '/components/post-snippet';
 
 
 export class PostPreview extends Component {
@@ -51,9 +52,9 @@ export class PostPreview extends Component {
           <p className="body-large b">
             {this.props.post.postTitle}
           </p>
-          <p className="body-regular-400">
-            {this.props.post.postSnippet}
-          </p>
+          <PostSnippet
+            body={this.props.post.postBody}
+          />
         </Link>
         <p className="label-small gray-50">
           {authorDate}
