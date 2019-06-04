@@ -10,6 +10,7 @@ import { Recent } from '/components/recent';
 import { Header } from '/components/header';
 import { Blog } from '/components/blog';
 import { Post } from '/components/post';
+import { HeaderBar } from '/components/lib/header-bar';
 
 export class Root extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ export class Root extends Component {
   render() {
     return (
       <div className="fl w-100">
+        <HeaderBar />
         <BrowserRouter>
           <Header {...this.state} />
           <Route exact path="/~publish/recent"
