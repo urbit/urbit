@@ -28,11 +28,13 @@ export class ChatScreen extends Component {
 
   componentDidMount() {
     this.updateNumPeople();
-    this.scrollElement.scrollIntoView(false);
+    if (this.scrollElement) {
+      this.scrollElement.scrollIntoView(false);
+    }
   }
 
   scrollToBottom() {
-    if (!this.state.scrollLocked) {
+    if (!this.state.scrollLocked && this.scrollElement) {
       this.scrollElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
@@ -45,7 +47,9 @@ export class ChatScreen extends Component {
         numPages: this.state.numPages + 1,
         scrollLocked: true
       }, () => {
-        this.topMessage[1].scrollIntoView(true);
+        if (this.topMessage && this.topMessage[1]) {
+          this.topMessage[1].scrollIntoView(true);
+        } 
       });
     } else if (
         (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===

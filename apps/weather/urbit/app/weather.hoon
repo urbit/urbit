@@ -2,7 +2,10 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/weather/js/tile  /js/
+  /:  /===/app/weather/js/tile
+  /|  /js/
+      /~  ~
+  ==
 /=  weather-png
   /^  (map knot @)
   /:  /===/app/weather/img  /_  /png/
@@ -44,7 +47,7 @@
   ^-  (quip move _this)
   =/  lismov/(list move)  %+  weld
     `(list move)`[ost.bol %connect / [~ /'~weather'] %weather]~
-    `(list move)`[ost.bol %poke /weather [our.bol %home] [%noun [%weather /tile]]]~
+    `(list move)`[ost.bol %poke /weather [our.bol %launch] [%noun [%weather /tile]]]~
   :-  lismov
   ?~  old
     this

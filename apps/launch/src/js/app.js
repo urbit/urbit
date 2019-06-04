@@ -18,7 +18,7 @@ export default class App extends Component {
     return (
        <BrowserRouter>
          <div>
-          <Route exact path="/~launch" 
+          <Route exact path="/" 
             render={ (props) => {
               return (
                 <Home 

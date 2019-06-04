@@ -48,7 +48,7 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    [ost.bol %connect / [~ /'~launch'] %launch]~
+    [ost.bol %connect / [~ /] %launch]~
   [~ this(sta u.old)]
 ::
 ++  bound
@@ -90,6 +90,10 @@
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)
+  =/  site  (flop site.request-line)
+  ?~  site
+    :_  this
+    [ost.bol %http-response (html-response:app index)]~
   ?+  site.request-line
     :_  this
     [ost.bol %http-response not-found:app]~
@@ -105,12 +109,6 @@
       [%'~launch' %js %index ~]
     :_  this
     [ost.bol %http-response (js-response:app script)]~
-  ::
-  ::  inbox page
-  ::
-     [%'~launch' *]
-    :_  this
-    [ost.bol %http-response (html-response:app index)]~
   ==
 ::
 --

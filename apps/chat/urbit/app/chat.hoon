@@ -167,8 +167,6 @@
 ::        %circle
       ?>  ?=(%circle -.piz)
       =/  circle/circle:hall  [our.bol &3:wir]
-      ~&  circle
-
       ?:  =(circle [our.bol %inbox])
     ::
     ::  fill inbox config and remote configs with prize data
@@ -204,8 +202,6 @@
             |=  [shp=@p stat=status:hall]
             shp
           (~(put by acc) cir newset)
-        ~&  peers251+peers
-        ~&  localpeers252+localpeers
         ::
         :-
           %+  turn  ~(tap in (~(del in (silt circles)) [our.bol %inbox]))
@@ -226,7 +222,6 @@
     ::
       =*  messages  messages.str.sta
       =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-      ~&  circle
       =/  localpeers/(set @p)  
         %-  silt  %+  turn  ~(tap by loc.pes.piz)
         |=  [shp=@p stat=status:hall]
@@ -241,8 +236,6 @@
           |=  [shp=@p stat=status:hall]
           shp
         (~(put by acc) cir newset)
-      ~&  peers286+peers
-      ~&  localpeers287+localpeers
       :-  ~
       %=  this
         messages.str.sta  (~(put by messages) circle nes.piz)
@@ -255,7 +248,6 @@
 ++  diff-hall-rumor
   |=  [wir=wire rum=rumor:hall]
   ^-  (quip move _this)
-  ~&  rum
   ?~  wir
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ?+  i.wir
@@ -294,7 +286,6 @@
     =*  messages  messages.str.sta
     =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
     =/  nes/(list envelope:hall)  (~(got by messages) circle)
-    ~&  nes
     :-  (send-chat-update [%message circle nev.sto])
     %=  this
       messages.str.sta  (~(put by messages) circle (snoc nes nev.sto))
@@ -304,8 +295,6 @@
     ::
       %status
     ?>  ?=(%status -.sto)
-    ~&  sto
-    ~&  peers.str.sta
     =/  upeers/(unit (set @p))  (~(get by peers.str.sta) cir.sto)
     ?~  upeers
       [~ this]

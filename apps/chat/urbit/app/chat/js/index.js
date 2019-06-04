@@ -17,10 +17,6 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
-	function getCjsExportFromNamespace (n) {
-		return n && n.default || n;
-	}
-
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -51058,11 +51054,13 @@
 
 	  componentDidMount() {
 	    this.updateNumPeople();
-	    this.scrollElement.scrollIntoView(false);
+	    if (this.scrollElement) {
+	      this.scrollElement.scrollIntoView(false);
+	    }
 	  }
 
 	  scrollToBottom() {
-	    if (!this.state.scrollLocked) {
+	    if (!this.state.scrollLocked && this.scrollElement) {
 	      this.scrollElement.scrollIntoView({ behavior: 'smooth' });
 	    }
 	  }
@@ -51075,7 +51073,9 @@
 	        numPages: this.state.numPages + 1,
 	        scrollLocked: true
 	      }, () => {
-	        this.topMessage[1].scrollIntoView(true);
+	        if (this.topMessage && this.topMessage[1]) {
+	          this.topMessage[1].scrollIntoView(true);
+	        } 
 	      });
 	    } else if (
 	        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
@@ -51147,7 +51147,7 @@
 	      return (
 	        react.createElement('a', { 
 	          className: "vanilla hoverline text-600 text-mono"   , 
-	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 118}}
+	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 122}}
 	          , prettyShip(`~${msg.gam.aut}`)[0]
 	        )
 	      );
@@ -51156,13 +51156,13 @@
 	    if (index % 50 === 0) {
 	      let pageNum = index / 50;
 	      return (
-	        react.createElement('div', { key: msg.gam.uid,ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 129}}
-	          , react.createElement(Message, { msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 130}} )
+	        react.createElement('div', { key: msg.gam.uid,ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 133}}
+	          , react.createElement(Message, { msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 134}} )
 	        )
 	      );
 	    } else {
 	      return (
-	        react.createElement(Message, { key: msg.gam.uid, msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 135}} )
+	        react.createElement(Message, { key: msg.gam.uid, msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 139}} )
 	      );
 	    }
 	  }
@@ -51181,26 +51181,26 @@
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 154}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 155}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 156}}, state.circle)
+	      react.createElement('div', { className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 158}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 159}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 160}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 157}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 161}} )
 	        )
 	        , react.createElement('div', {
 	          className: "overflow-y-scroll",
 	          style: { flexGrow: 1 },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 161}}
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 165}}
 	          , chatMessages
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 166}})
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 170}})
 	        )
 	        , react.createElement(ChatInput, { 
 	          api: props.api,
 	          configs: props.configs,
 	          station: state.station,
 	          circle: state.circle,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 168}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 172}} )
 	      )
 	    )
 	  }
@@ -53187,8 +53187,6 @@
 		isBuffer: isBuffer
 	});
 
-	var require$$0 = getCjsExportFromNamespace(bufferEs6);
-
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -53241,7 +53239,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = require$$0.Buffer;
+	    Buffer = bufferEs6.Buffer;
 	  } catch (e) {
 	  }
 

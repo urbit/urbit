@@ -2,7 +2,10 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/timer/js/tile  /js/
+  /:  /===/app/timer/js/tile
+  /|  /js/
+      /~  ~
+  ==
 /=  timer-png
   /^  (map knot @)
   /:  /===/app/timer/img  /_  /png/
@@ -41,7 +44,6 @@
 ++  prep
   |=  old=(unit tim=@da)
   ^-  (quip move _this)
-  ~&  'prep timer'
   =/  lismov/(list move)  %+  weld
     `(list move)`[ost.bol %connect / [~ /'~timer'] %timer]~
     `(list move)`[ost.bol %poke /timer [our.bol %launch] [%noun [%timer /tile]]]~

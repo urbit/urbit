@@ -2202,7 +2202,7 @@
             }());
             });
 
-            const _jsxFileName = "/Users/logan/Dev/apps/tiles-max/clock/tile/tile.js";
+            const _jsxFileName = "/Users/logan/Dev/interface/apps/clock/tile/tile.js";
             const outerSize = 234; //tile size
             const innerSize = 218; //clock size
 
