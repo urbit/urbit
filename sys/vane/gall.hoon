@@ -734,7 +734,7 @@
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
       =/  subscriber=(unit (pair ship path))
-         (~(get by sup.ged) ost)
+        (~(get by sup.ged) ost)
       ?:  ?&  =(20 suy)
               ?|  ?=(~ subscriber)
                   !=(our p.u.subscriber)
