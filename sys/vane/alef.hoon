@@ -468,13 +468,22 @@
       live=(tree [live-packet-key live-packet-val])
       metrics=pump-metrics
   ==
+::  $pump-metrics: congestion control statistics for the |pump-gauge
+::
+::    num-live: number of sent packets in flight
+::    num-lost: number of expired packets
+::    last-sent-at: last date at which we sent a packet
+::    last-dead-at: most recently packet expiry
+::    rtt: roundtrip time estimate
+::    max-live: current window size
+::
 +$  pump-metrics
   $:  num-live=@ud
       num-lost=@ud
       last-sent-at=@da
       last-dead-at=@da
       rtt=@dr
-      max-live=@ud
+      max-live=_7
   ==
 +$  live-packet-key  [=message-num =fragment-num]
 +$  live-packet-val
@@ -1338,7 +1347,7 @@
   ++  next-expiry
     ^-  @da
     ::
-    (add now ~s2)
+    (add now ~s5)
   ::  +next-retry-expiry: when should a resent packet time out?
   ::
   ++  next-retry-expiry
@@ -1390,7 +1399,7 @@
   ++  on-resent
     |=  sent-packet-state
     ^-  pump-metrics
-    metrics(num-live +(num-live))
+    metrics
   --
 ::
 ::
