@@ -20,6 +20,9 @@
   /|  /css/
       /~  ~
   ==
+/=  launch-png
+  /^  (map knot @)
+  /:  /===/app/launch/img  /_  /png/
 ::
 |%
 ::
@@ -90,6 +93,11 @@
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)
+  =/  name=@t
+    =+  back-path=(flop site.request-line)
+    ?~  back-path
+      ''
+    i.back-path
   =/  site  (flop site.request-line)
   ?~  site
     :_  this
@@ -109,6 +117,13 @@
       [%'~launch' %js %index ~]
     :_  this
     [ost.bol %http-response (js-response:app script)]~
+  ::
+  ::  images
+  ::
+      [%'~launch' %img *]
+    =/  img  (as-octs:mimes:html (~(got by launch-png) `@ta`name))
+    :_  this
+    [ost.bol %http-response (png-response:app img)]~
   ==
 ::
 --
