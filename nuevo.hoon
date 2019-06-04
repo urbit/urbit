@@ -416,10 +416,16 @@
 ::
 ::  Example 1: Boot flow and reboot flow with the HTTP server
 ::
+::  [Step zero]: The +brass lifecycle is set up mostly as it is today. We end
+::  up with a nuevo kernel ready to apply events to. This is basically
+::  unchanged.
 ::
-::  [Step one]: process:/ is launched as part of the boot sequence. We're
-::  passed the first program which we're going to run, along with its initial
-::  state.
+::  [Step one]: We send the first identifying event to nuevo, which is a
+::  combination of the current `module-ova` and userspace parts of the boot
+::  sequence. This gives the uninitialized nuevo kernel its identity, along
+::  with its process. We now have the identity `process:/`, and are passed the
+::  first program, everything else as state, and references to external io
+::  drivers.
 ::
 ::  The interesting thing to note is that this is a nuevo level [%init ...]
 ::  which contains a user level [%init ...] message. The nuevo %init message
@@ -430,7 +436,7 @@
 ::  [%init connection=[%top ~]
 ::         name=/
 ::         program=<userboot vase>
-::         state=~
+::         state={[/ <initial userboot state>] ...}
 ::         sent-over=[%pipe 0 [%process / 1] [%top ~]]
 ::         sent-over-type=[recv=<xtyp> send=<xtype>]
 ::         message= :-  [[[%io %http 0] [<xtype> <xtype>]] ~]
@@ -459,6 +465,12 @@
 ::  an %init. Since logged=%.y, the events on this instance of nuevo go into
 ::  the event log and are replayable.
 ::
+::  From a nock point of view, vere takes the nuevo instance which called %fork
+::  and makes a copy of it, adding it as a new entry to vere's process identity
+::  machinery. This copy becomes the nuevo instance to receive the %init, and
+::  that event clears the old identity and state, giving it new identity and
+::  state.
+::
 ::  {process:/http}
 ::  [%init connection=[%process / 1]
 ::         name=/http
@@ -468,7 +480,7 @@
 ::         sent-over-type=[<recv> <send>]
 ::         message=  :-  [[[%io %http 0] [<type> <type>]] ~]
 ::                   [%start ~]
-::  ===> We're starting a new process here. Like the userboot process, we now
+::  ===> We're starting a new process here. Unlike the userboot process, we now
 ::       are starting up from initial state, and the system will now
 ::       initialize stuff.
 ::  -->  [%send [%io http 0] message=[~ [%start-http-thing port=80]]]
@@ -828,7 +840,9 @@
 ::  {process:/gall/ourapp}
 ::  [%terminate ~]
 ::  -->  :~  ::  Nuevo automatically closes handles and does the other stuff
-::           ::  from Example 3.
+::           ::  from Example 3. There is no generic way to ensure a program's
+::           ::  subscriptions are handles are valid across an upgrade so all
+::           ::  that state is closed before upgrading.
 ::           ::
 ::           [%close ...]
 ::           ::  It also terminates itself
