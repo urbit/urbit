@@ -28,50 +28,19 @@ export default class WeatherTile extends Component {
     let api = window.api;
 
     this.state = {
-      location: '',
       latlng: ''
     };
   }
 
-  locationChange(e) {
-    this.setState({
-      location: e.target.value
-    });
-  }
-
-  firstSubmit() {
-    if (!this.state.location) {
-      return;
-    }
-
-    this.askForLatLong(this.state.location)
-  }
-
   locationSubmit() {
-    if (!this.state.location) {
-      return;
-    }
-
-    api.action('weather', 'json', this.state.latlng);
-  }
-
-  askForLatLong(place) {
-    let url = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
-    let key = '&key=AIzaSyDawAoOCGSB6nzge6J9yPnnZH2VUFuG24E';
-    fetch(url + encodeURI(place) + key)
-      .then((obj) => {
-        return obj.json();
-      }).then((json) => {
-        console.log(json);
-        if (json && json.results && json.results.length > 0) {
-          this.setState({
-            latlng: 
-              json.results[0].geometry.location.lat
-              + ',' 
-              + json.results[0].geometry.location.lng
-          });
-        }
+    navigator.geolocation.getCurrentPosition((res) => {
+      console.log(res);
+      let latlng = `${res.coords.latitude},${res.coords.longitude}`;
+      this.setState({
+        latlng
       });
+      api.action('weather', 'json', latlng);
+    });
   }
 
   renderWrapper(child) {
@@ -86,10 +55,7 @@ export default class WeatherTile extends Component {
     return this.renderWrapper((
       <div>
         <p className="white sans-serif">Weather</p>
-        <input type="text" onChange={this.locationChange.bind(this)} />
-        {this.state.latlng}
-        <button onClick={this.firstSubmit.bind(this)}>Submit</button>
-        <button onClick={this.locationSubmit.bind(this)}>Go</button>
+        <button onClick={this.locationSubmit.bind(this)}>Set location</button>
       </div>
     ));
   }
