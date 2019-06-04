@@ -59,6 +59,11 @@
     ^-  http-event:http
     [%start [200 ['content-type' 'text/css']~] [~ oct-css] %.y]
   ::
+  ++  manx-response
+    |=  man=manx
+    ^-  http-event:http
+    [%start [200 ['content-type' 'text/html']~] [~ (manx-to-octs man)] %.y]
+  ::
   ++  png-response
     |=  oct-png=octs
     ^-  http-event:http
