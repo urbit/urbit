@@ -40,7 +40,10 @@ export default class Home extends Component {
 
   render() {
     let keys = [...this.props.keys];
+    console.log(keys);
     let tileElems = keys.map((tile) => {
+      console.log(tile);
+      console.log(this.props.data[tile]);
       return (
         <Tile key={tile} type={tile} data={this.props.data[tile]} />
       );

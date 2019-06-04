@@ -49175,16 +49175,19 @@
 
 	  render() {
 	    let keys = [...this.props.keys];
+	    console.log(keys);
 	    let tileElems = keys.map((tile) => {
+	      console.log(tile);
+	      console.log(this.props.data[tile]);
 	      return (
-	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 45}} )
+	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 48}} )
 	      );
 	    });
 	    
 	    return (
-	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 50}}
-	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 51}} )
-	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 52}}
+	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 53}}
+	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 54}} )
+	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 55}}
 	          , tileElems
 	        )
 	      )

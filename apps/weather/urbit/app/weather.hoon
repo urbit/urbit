@@ -47,7 +47,7 @@
   ^-  (quip move _this)
   =/  lismov/(list move)  %+  weld
     `(list move)`[ost.bol %connect / [~ /'~weather'] %weather]~
-    `(list move)`[ost.bol %poke /weather [our.bol %launch] [%noun [%weather /tile]]]~
+    `(list move)`[ost.bol %poke /weather [our.bol %launch] [%noun [%weather /weathertile]]]~
   :-  lismov
   ?~  old
     this
@@ -56,7 +56,7 @@
     time  time.u.old
   ==
 ::
-++  peer-tile
+++  peer-weathertile
   |=  pax=path
   ^-  (quip move _this)
   [[ost.bol %diff %json data]~ this]
@@ -95,7 +95,7 @@
 ++  send-tile-diff
   |=  jon=json
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /tile bol)
+  %+  turn  (prey:pubsub:userlib /weathertile bol)
   |=  [=bone ^]
   [bone %diff %json jon]
 ::

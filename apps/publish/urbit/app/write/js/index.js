@@ -26,10 +26,6 @@
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
   }
 
-  function getCjsExportFromNamespace (n) {
-  	return n && n.default || n;
-  }
-
   /*
   object-assign
   (c) Sindre Sorhus
@@ -47471,8 +47467,6 @@
     isBuffer: isBuffer
   });
 
-  var require$$0 = getCjsExportFromNamespace(bufferEs6);
-
   var bn = createCommonjsModule(function (module) {
   (function (module, exports) {
 
@@ -47525,7 +47519,7 @@
 
     var Buffer;
     try {
-      Buffer = require$$0.Buffer;
+      Buffer = bufferEs6.Buffer;
     } catch (e) {
     }
 
@@ -52140,1677 +52134,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   let store = new Store();
   window.store = store;
 
-  // shim for using process in browser
-  // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
-
-  function defaultSetTimout() {
-      throw new Error('setTimeout has not been defined');
-  }
-  function defaultClearTimeout () {
-      throw new Error('clearTimeout has not been defined');
-  }
-  var cachedSetTimeout = defaultSetTimout;
-  var cachedClearTimeout = defaultClearTimeout;
-  if (typeof global$2.setTimeout === 'function') {
-      cachedSetTimeout = setTimeout;
-  }
-  if (typeof global$2.clearTimeout === 'function') {
-      cachedClearTimeout = clearTimeout;
-  }
-
-  function runTimeout(fun) {
-      if (cachedSetTimeout === setTimeout) {
-          //normal enviroments in sane situations
-          return setTimeout(fun, 0);
-      }
-      // if setTimeout wasn't available but was latter defined
-      if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-          cachedSetTimeout = setTimeout;
-          return setTimeout(fun, 0);
-      }
-      try {
-          // when when somebody has screwed with setTimeout but no I.E. maddness
-          return cachedSetTimeout(fun, 0);
-      } catch(e){
-          try {
-              // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-              return cachedSetTimeout.call(null, fun, 0);
-          } catch(e){
-              // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-              return cachedSetTimeout.call(this, fun, 0);
-          }
-      }
-
-
-  }
-  function runClearTimeout(marker) {
-      if (cachedClearTimeout === clearTimeout) {
-          //normal enviroments in sane situations
-          return clearTimeout(marker);
-      }
-      // if clearTimeout wasn't available but was latter defined
-      if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-          cachedClearTimeout = clearTimeout;
-          return clearTimeout(marker);
-      }
-      try {
-          // when when somebody has screwed with setTimeout but no I.E. maddness
-          return cachedClearTimeout(marker);
-      } catch (e){
-          try {
-              // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-              return cachedClearTimeout.call(null, marker);
-          } catch (e){
-              // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-              // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-              return cachedClearTimeout.call(this, marker);
-          }
-      }
-
-
-
-  }
-  var queue = [];
-  var draining = false;
-  var currentQueue;
-  var queueIndex = -1;
-
-  function cleanUpNextTick() {
-      if (!draining || !currentQueue) {
-          return;
-      }
-      draining = false;
-      if (currentQueue.length) {
-          queue = currentQueue.concat(queue);
-      } else {
-          queueIndex = -1;
-      }
-      if (queue.length) {
-          drainQueue();
-      }
-  }
-
-  function drainQueue() {
-      if (draining) {
-          return;
-      }
-      var timeout = runTimeout(cleanUpNextTick);
-      draining = true;
-
-      var len = queue.length;
-      while(len) {
-          currentQueue = queue;
-          queue = [];
-          while (++queueIndex < len) {
-              if (currentQueue) {
-                  currentQueue[queueIndex].run();
-              }
-          }
-          queueIndex = -1;
-          len = queue.length;
-      }
-      currentQueue = null;
-      draining = false;
-      runClearTimeout(timeout);
-  }
-  function nextTick(fun) {
-      var args = new Array(arguments.length - 1);
-      if (arguments.length > 1) {
-          for (var i = 1; i < arguments.length; i++) {
-              args[i - 1] = arguments[i];
-          }
-      }
-      queue.push(new Item(fun, args));
-      if (queue.length === 1 && !draining) {
-          runTimeout(drainQueue);
-      }
-  }
-  // v8 likes predictible objects
-  function Item(fun, array) {
-      this.fun = fun;
-      this.array = array;
-  }
-  Item.prototype.run = function () {
-      this.fun.apply(null, this.array);
-  };
-  var title = 'browser';
-  var platform = 'browser';
-  var browser = true;
-  var env = {};
-  var argv = [];
-  var version = ''; // empty string to avoid regexp issues
-  var versions = {};
-  var release = {};
-  var config = {};
-
-  function noop$1() {}
-
-  var on = noop$1;
-  var addListener = noop$1;
-  var once = noop$1;
-  var off = noop$1;
-  var removeListener = noop$1;
-  var removeAllListeners = noop$1;
-  var emit = noop$1;
-
-  function binding(name) {
-      throw new Error('process.binding is not supported');
-  }
-
-  function cwd () { return '/' }
-  function chdir (dir) {
-      throw new Error('process.chdir is not supported');
-  }function umask() { return 0; }
-
-  // from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-  var performance$1 = global$2.performance || {};
-  var performanceNow =
-    performance$1.now        ||
-    performance$1.mozNow     ||
-    performance$1.msNow      ||
-    performance$1.oNow       ||
-    performance$1.webkitNow  ||
-    function(){ return (new Date()).getTime() };
-
-  // generate timestamp or delta
-  // see http://nodejs.org/api/process.html#process_process_hrtime
-  function hrtime(previousTimestamp){
-    var clocktime = performanceNow.call(performance$1)*1e-3;
-    var seconds = Math.floor(clocktime);
-    var nanoseconds = Math.floor((clocktime%1)*1e9);
-    if (previousTimestamp) {
-      seconds = seconds - previousTimestamp[0];
-      nanoseconds = nanoseconds - previousTimestamp[1];
-      if (nanoseconds<0) {
-        seconds--;
-        nanoseconds += 1e9;
-      }
-    }
-    return [seconds,nanoseconds]
-  }
-
-  var startTime = new Date();
-  function uptime() {
-    var currentTime = new Date();
-    var dif = currentTime - startTime;
-    return dif / 1000;
-  }
-
-  var process = {
-    nextTick: nextTick,
-    title: title,
-    browser: browser,
-    env: env,
-    argv: argv,
-    version: version,
-    versions: versions,
-    on: on,
-    addListener: addListener,
-    once: once,
-    off: off,
-    removeListener: removeListener,
-    removeAllListeners: removeAllListeners,
-    emit: emit,
-    binding: binding,
-    cwd: cwd,
-    chdir: chdir,
-    umask: umask,
-    hrtime: hrtime,
-    platform: platform,
-    release: release,
-    config: config,
-    uptime: uptime
-  };
-
-  var performanceNow$1 = createCommonjsModule(function (module) {
-  // Generated by CoffeeScript 1.12.2
-  (function() {
-    var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
-
-    if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
-      module.exports = function() {
-        return performance.now();
-      };
-    } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
-      module.exports = function() {
-        return (getNanoSeconds() - nodeLoadTime) / 1e6;
-      };
-      hrtime = process.hrtime;
-      getNanoSeconds = function() {
-        var hr;
-        hr = hrtime();
-        return hr[0] * 1e9 + hr[1];
-      };
-      moduleLoadTime = getNanoSeconds();
-      upTime = process.uptime() * 1e9;
-      nodeLoadTime = moduleLoadTime - upTime;
-    } else if (Date.now) {
-      module.exports = function() {
-        return Date.now() - loadTime;
-      };
-      loadTime = Date.now();
-    } else {
-      module.exports = function() {
-        return new Date().getTime() - loadTime;
-      };
-      loadTime = new Date().getTime();
-    }
-
-  }).call(commonjsGlobal);
-
-  //# sourceMappingURL=performance-now.js.map
-  });
-
-  var root = typeof window === 'undefined' ? commonjsGlobal : window
-    , vendors = ['moz', 'webkit']
-    , suffix = 'AnimationFrame'
-    , raf = root['request' + suffix]
-    , caf = root['cancel' + suffix] || root['cancelRequest' + suffix];
-
-  for(var i = 0; !raf && i < vendors.length; i++) {
-    raf = root[vendors[i] + 'Request' + suffix];
-    caf = root[vendors[i] + 'Cancel' + suffix]
-        || root[vendors[i] + 'CancelRequest' + suffix];
-  }
-
-  // Some versions of FF have rAF but not cAF
-  if(!raf || !caf) {
-    var last = 0
-      , id$1 = 0
-      , queue$1 = []
-      , frameDuration = 1000 / 60;
-
-    raf = function(callback) {
-      if(queue$1.length === 0) {
-        var _now = performanceNow$1()
-          , next = Math.max(0, frameDuration - (_now - last));
-        last = next + _now;
-        setTimeout(function() {
-          var cp = queue$1.slice(0);
-          // Clear queue here to prevent
-          // callbacks from appending listeners
-          // to the current frame's queue
-          queue$1.length = 0;
-          for(var i = 0; i < cp.length; i++) {
-            if(!cp[i].cancelled) {
-              try{
-                cp[i].callback(last);
-              } catch(e) {
-                setTimeout(function() { throw e }, 0);
-              }
-            }
-          }
-        }, Math.round(next));
-      }
-      queue$1.push({
-        handle: ++id$1,
-        callback: callback,
-        cancelled: false
-      });
-      return id$1
-    };
-
-    caf = function(handle) {
-      for(var i = 0; i < queue$1.length; i++) {
-        if(queue$1[i].handle === handle) {
-          queue$1[i].cancelled = true;
-        }
-      }
-    };
-  }
-
-  var raf_1 = function(fn) {
-    // Wrap in a new function to prevent
-    // `cancel` potentially being assigned
-    // to the native rAF function
-    return raf.call(root, fn)
-  };
-  var cancel = function() {
-    caf.apply(root, arguments);
-  };
-  var polyfill = function(object) {
-    if (!object) {
-      object = root;
-    }
-    object.requestAnimationFrame = raf;
-    object.cancelAnimationFrame = caf;
-  };
-  raf_1.cancel = cancel;
-  raf_1.polyfill = polyfill;
-
-  var div = null;
-  var prefixes$1 = [ 'Webkit', 'Moz', 'O', 'ms' ];
-
-  var prefixStyle = function prefixStyle (prop) {
-    // re-use a dummy div
-    if (!div) {
-      div = document.createElement('div');
-    }
-
-    var style = div.style;
-
-    // prop exists without prefix
-    if (prop in style) {
-      return prop
-    }
-
-    // borderRadius -> BorderRadius
-    var titleCase = prop.charAt(0).toUpperCase() + prop.slice(1);
-
-    // find the vendor-prefixed prop
-    for (var i = prefixes$1.length; i >= 0; i--) {
-      var name = prefixes$1[i] + titleCase;
-      // e.g. WebkitBorderRadius or webkitBorderRadius
-      if (name in style) {
-        return name
-      }
-    }
-
-    return false
-  };
-
-  /**
-   * Export.
-   */
-
-  var toNoCase_1 = toNoCase;
-
-  /**
-   * Test whether a string is camel-case.
-   */
-
-  var hasSpace = /\s/;
-  var hasSeparator = /(_|-|\.|:)/;
-  var hasCamel = /([a-z][A-Z]|[A-Z][a-z])/;
-
-  /**
-   * Remove any starting case from a `string`, like camel or snake, but keep
-   * spaces and punctuation that may be important otherwise.
-   *
-   * @param {String} string
-   * @return {String}
-   */
-
-  function toNoCase(string) {
-    if (hasSpace.test(string)) return string.toLowerCase()
-    if (hasSeparator.test(string)) return (unseparate(string) || string).toLowerCase()
-    if (hasCamel.test(string)) return uncamelize(string).toLowerCase()
-    return string.toLowerCase()
-  }
-
-  /**
-   * Separator splitter.
-   */
-
-  var separatorSplitter = /[\W_]+(.|$)/g;
-
-  /**
-   * Un-separate a `string`.
-   *
-   * @param {String} string
-   * @return {String}
-   */
-
-  function unseparate(string) {
-    return string.replace(separatorSplitter, function (m, next) {
-      return next ? ' ' + next : ''
-    })
-  }
-
-  /**
-   * Camelcase splitter.
-   */
-
-  var camelSplitter = /(.)([A-Z]+)/g;
-
-  /**
-   * Un-camelcase a `string`.
-   *
-   * @param {String} string
-   * @return {String}
-   */
-
-  function uncamelize(string) {
-    return string.replace(camelSplitter, function (m, previous, uppers) {
-      return previous + ' ' + uppers.toLowerCase().split('').join(' ')
-    })
-  }
-
-  /**
-   * Export.
-   */
-
-  var toSpaceCase_1 = toSpaceCase;
-
-  /**
-   * Convert a `string` to space case.
-   *
-   * @param {String} string
-   * @return {String}
-   */
-
-  function toSpaceCase(string) {
-    return toNoCase_1(string).replace(/[\W_]+(.|$)/g, function (matches, match) {
-      return match ? ' ' + match : ''
-    }).trim()
-  }
-
-  /**
-   * Export.
-   */
-
-  var toCamelCase_1 = toCamelCase;
-
-  /**
-   * Convert a `string` to camel case.
-   *
-   * @param {String} string
-   * @return {String}
-   */
-
-  function toCamelCase(string) {
-    return toSpaceCase_1(string).replace(/\s(\w)/g, function (matches, letter) {
-      return letter.toUpperCase()
-    })
-  }
-
-  /* The following list is defined in React's core */
-  var IS_UNITLESS = {
-    animationIterationCount: true,
-    boxFlex: true,
-    boxFlexGroup: true,
-    boxOrdinalGroup: true,
-    columnCount: true,
-    flex: true,
-    flexGrow: true,
-    flexPositive: true,
-    flexShrink: true,
-    flexNegative: true,
-    flexOrder: true,
-    gridRow: true,
-    gridColumn: true,
-    fontWeight: true,
-    lineClamp: true,
-    lineHeight: true,
-    opacity: true,
-    order: true,
-    orphans: true,
-    tabSize: true,
-    widows: true,
-    zIndex: true,
-    zoom: true,
-
-    // SVG-related properties
-    fillOpacity: true,
-    stopOpacity: true,
-    strokeDashoffset: true,
-    strokeOpacity: true,
-    strokeWidth: true
-  };
-
-  var addPxToStyle = function(name, value) {
-    if(typeof value === 'number' && !IS_UNITLESS[ name ]) {
-      return value + 'px';
-    } else {
-      return value;
-    }
-  };
-
-  var cache$2 = { 'float': 'cssFloat' };
-
-
-  function style (element, property, value) {
-    var camel = cache$2[property];
-    if (typeof camel === 'undefined') {
-      camel = detect(property);
-    }
-
-    // may be false if CSS prop is unsupported
-    if (camel) {
-      if (value === undefined) {
-        return element.style[camel]
-      }
-
-      element.style[camel] = addPxToStyle(camel, value);
-    }
-  }
-
-  function each (element, properties) {
-    for (var k in properties) {
-      if (properties.hasOwnProperty(k)) {
-        style(element, k, properties[k]);
-      }
-    }
-  }
-
-  function detect (cssProp) {
-    var camel = toCamelCase_1(cssProp);
-    var result = prefixStyle(camel);
-    cache$2[camel] = cache$2[cssProp] = cache$2[result] = result;
-    return result
-  }
-
-  function set () {
-    if (arguments.length === 2) {
-      if (typeof arguments[1] === 'string') {
-        arguments[0].style.cssText = arguments[1];
-      } else {
-        each(arguments[0], arguments[1]);
-      }
-    } else {
-      style(arguments[0], arguments[1], arguments[2]);
-    }
-  }
-
-  var domCss = set;
-  var set_1 = set;
-
-  var get = function (element, properties) {
-    if (Array.isArray(properties)) {
-      return properties.reduce(function (obj, prop) {
-        obj[prop] = style(element, prop || '');
-        return obj
-      }, {})
-    } else {
-      return style(element, properties || '')
-    }
-  };
-  domCss.set = set_1;
-  domCss.get = get;
-
-  var isString_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  exports["default"] = isString;
-  function isString(maybe) {
-      return typeof maybe === 'string';
-  }
-  });
-
-  unwrapExports(isString_1);
-
-  var getScrollbarWidth_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  exports["default"] = getScrollbarWidth;
-
-
-
-  var _domCss2 = _interopRequireDefault(domCss);
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-  var scrollbarWidth = false;
-
-  function getScrollbarWidth() {
-      if (scrollbarWidth !== false) return scrollbarWidth;
-      /* istanbul ignore else */
-      if (typeof document !== 'undefined') {
-          var div = document.createElement('div');
-          (0, _domCss2["default"])(div, {
-              width: 100,
-              height: 100,
-              position: 'absolute',
-              top: -9999,
-              overflow: 'scroll',
-              MsOverflowStyle: 'scrollbar'
-          });
-          document.body.appendChild(div);
-          scrollbarWidth = div.offsetWidth - div.clientWidth;
-          document.body.removeChild(div);
-      } else {
-          scrollbarWidth = 0;
-      }
-      return scrollbarWidth || 0;
-  }
-  });
-
-  unwrapExports(getScrollbarWidth_1);
-
-  var returnFalse_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  exports["default"] = returnFalse;
-  function returnFalse() {
-      return false;
-  }
-  });
-
-  unwrapExports(returnFalse_1);
-
-  var getInnerWidth_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  exports["default"] = getInnerWidth;
-  function getInnerWidth(el) {
-      var clientWidth = el.clientWidth;
-
-      var _getComputedStyle = getComputedStyle(el),
-          paddingLeft = _getComputedStyle.paddingLeft,
-          paddingRight = _getComputedStyle.paddingRight;
-
-      return clientWidth - parseFloat(paddingLeft) - parseFloat(paddingRight);
-  }
-  });
-
-  unwrapExports(getInnerWidth_1);
-
-  var getInnerHeight_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  exports["default"] = getInnerHeight;
-  function getInnerHeight(el) {
-      var clientHeight = el.clientHeight;
-
-      var _getComputedStyle = getComputedStyle(el),
-          paddingTop = _getComputedStyle.paddingTop,
-          paddingBottom = _getComputedStyle.paddingBottom;
-
-      return clientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom);
-  }
-  });
-
-  unwrapExports(getInnerHeight_1);
-
-  var styles = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-  var containerStyleDefault = exports.containerStyleDefault = {
-      position: 'relative',
-      overflow: 'hidden',
-      width: '100%',
-      height: '100%'
-  };
-
-  // Overrides containerStyleDefault properties
-  var containerStyleAutoHeight = exports.containerStyleAutoHeight = {
-      height: 'auto'
-  };
-
-  var viewStyleDefault = exports.viewStyleDefault = {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      overflow: 'scroll',
-      WebkitOverflowScrolling: 'touch'
-  };
-
-  // Overrides viewStyleDefault properties
-  var viewStyleAutoHeight = exports.viewStyleAutoHeight = {
-      position: 'relative',
-      top: undefined,
-      left: undefined,
-      right: undefined,
-      bottom: undefined
-  };
-
-  var viewStyleUniversalInitial = exports.viewStyleUniversalInitial = {
-      overflow: 'hidden',
-      marginRight: 0,
-      marginBottom: 0
-  };
-
-  var trackHorizontalStyleDefault = exports.trackHorizontalStyleDefault = {
-      position: 'absolute',
-      height: 6
-  };
-
-  var trackVerticalStyleDefault = exports.trackVerticalStyleDefault = {
-      position: 'absolute',
-      width: 6
-  };
-
-  var thumbHorizontalStyleDefault = exports.thumbHorizontalStyleDefault = {
-      position: 'relative',
-      display: 'block',
-      height: '100%'
-  };
-
-  var thumbVerticalStyleDefault = exports.thumbVerticalStyleDefault = {
-      position: 'relative',
-      display: 'block',
-      width: '100%'
-  };
-
-  var disableSelectStyle = exports.disableSelectStyle = {
-      userSelect: 'none'
-  };
-
-  var disableSelectStyleReset = exports.disableSelectStyleReset = {
-      userSelect: ''
-  };
-  });
-
-  unwrapExports(styles);
-  var styles_1 = styles.containerStyleDefault;
-  var styles_2 = styles.containerStyleAutoHeight;
-  var styles_3 = styles.viewStyleDefault;
-  var styles_4 = styles.viewStyleAutoHeight;
-  var styles_5 = styles.viewStyleUniversalInitial;
-  var styles_6 = styles.trackHorizontalStyleDefault;
-  var styles_7 = styles.trackVerticalStyleDefault;
-  var styles_8 = styles.thumbHorizontalStyleDefault;
-  var styles_9 = styles.thumbVerticalStyleDefault;
-  var styles_10 = styles.disableSelectStyle;
-  var styles_11 = styles.disableSelectStyleReset;
-
-  var defaultRenderElements = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  exports.renderViewDefault = renderViewDefault;
-  exports.renderTrackHorizontalDefault = renderTrackHorizontalDefault;
-  exports.renderTrackVerticalDefault = renderTrackVerticalDefault;
-  exports.renderThumbHorizontalDefault = renderThumbHorizontalDefault;
-  exports.renderThumbVerticalDefault = renderThumbVerticalDefault;
-
-
-
-  var _react2 = _interopRequireDefault(react);
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-  function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-  /* eslint-disable react/prop-types */
-
-  function renderViewDefault(props) {
-      return _react2["default"].createElement('div', props);
-  }
-
-  function renderTrackHorizontalDefault(_ref) {
-      var style = _ref.style,
-          props = _objectWithoutProperties(_ref, ['style']);
-
-      var finalStyle = _extends({}, style, {
-          right: 2,
-          bottom: 2,
-          left: 2,
-          borderRadius: 3
-      });
-      return _react2["default"].createElement('div', _extends({ style: finalStyle }, props));
-  }
-
-  function renderTrackVerticalDefault(_ref2) {
-      var style = _ref2.style,
-          props = _objectWithoutProperties(_ref2, ['style']);
-
-      var finalStyle = _extends({}, style, {
-          right: 2,
-          bottom: 2,
-          top: 2,
-          borderRadius: 3
-      });
-      return _react2["default"].createElement('div', _extends({ style: finalStyle }, props));
-  }
-
-  function renderThumbHorizontalDefault(_ref3) {
-      var style = _ref3.style,
-          props = _objectWithoutProperties(_ref3, ['style']);
-
-      var finalStyle = _extends({}, style, {
-          cursor: 'pointer',
-          borderRadius: 'inherit',
-          backgroundColor: 'rgba(0,0,0,.2)'
-      });
-      return _react2["default"].createElement('div', _extends({ style: finalStyle }, props));
-  }
-
-  function renderThumbVerticalDefault(_ref4) {
-      var style = _ref4.style,
-          props = _objectWithoutProperties(_ref4, ['style']);
-
-      var finalStyle = _extends({}, style, {
-          cursor: 'pointer',
-          borderRadius: 'inherit',
-          backgroundColor: 'rgba(0,0,0,.2)'
-      });
-      return _react2["default"].createElement('div', _extends({ style: finalStyle }, props));
-  }
-  });
-
-  unwrapExports(defaultRenderElements);
-  var defaultRenderElements_1 = defaultRenderElements.renderViewDefault;
-  var defaultRenderElements_2 = defaultRenderElements.renderTrackHorizontalDefault;
-  var defaultRenderElements_3 = defaultRenderElements.renderTrackVerticalDefault;
-  var defaultRenderElements_4 = defaultRenderElements.renderThumbHorizontalDefault;
-  var defaultRenderElements_5 = defaultRenderElements.renderThumbVerticalDefault;
-
-  var Scrollbars_1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-      value: true
-  });
-
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-
-
-  var _raf3 = _interopRequireDefault(raf_1);
-
-
-
-  var _domCss2 = _interopRequireDefault(domCss);
-
-
-
-
-
-  var _propTypes2 = _interopRequireDefault(propTypes);
-
-
-
-  var _isString2 = _interopRequireDefault(isString_1);
-
-
-
-  var _getScrollbarWidth2 = _interopRequireDefault(getScrollbarWidth_1);
-
-
-
-  var _returnFalse2 = _interopRequireDefault(returnFalse_1);
-
-
-
-  var _getInnerWidth2 = _interopRequireDefault(getInnerWidth_1);
-
-
-
-  var _getInnerHeight2 = _interopRequireDefault(getInnerHeight_1);
-
-
-
-
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-  function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-  function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-  var Scrollbars = function (_Component) {
-      _inherits(Scrollbars, _Component);
-
-      function Scrollbars(props) {
-          var _ref;
-
-          _classCallCheck(this, Scrollbars);
-
-          for (var _len = arguments.length, rest = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-              rest[_key - 1] = arguments[_key];
-          }
-
-          var _this = _possibleConstructorReturn(this, (_ref = Scrollbars.__proto__ || Object.getPrototypeOf(Scrollbars)).call.apply(_ref, [this, props].concat(rest)));
-
-          _this.getScrollLeft = _this.getScrollLeft.bind(_this);
-          _this.getScrollTop = _this.getScrollTop.bind(_this);
-          _this.getScrollWidth = _this.getScrollWidth.bind(_this);
-          _this.getScrollHeight = _this.getScrollHeight.bind(_this);
-          _this.getClientWidth = _this.getClientWidth.bind(_this);
-          _this.getClientHeight = _this.getClientHeight.bind(_this);
-          _this.getValues = _this.getValues.bind(_this);
-          _this.getThumbHorizontalWidth = _this.getThumbHorizontalWidth.bind(_this);
-          _this.getThumbVerticalHeight = _this.getThumbVerticalHeight.bind(_this);
-          _this.getScrollLeftForOffset = _this.getScrollLeftForOffset.bind(_this);
-          _this.getScrollTopForOffset = _this.getScrollTopForOffset.bind(_this);
-
-          _this.scrollLeft = _this.scrollLeft.bind(_this);
-          _this.scrollTop = _this.scrollTop.bind(_this);
-          _this.scrollToLeft = _this.scrollToLeft.bind(_this);
-          _this.scrollToTop = _this.scrollToTop.bind(_this);
-          _this.scrollToRight = _this.scrollToRight.bind(_this);
-          _this.scrollToBottom = _this.scrollToBottom.bind(_this);
-
-          _this.handleTrackMouseEnter = _this.handleTrackMouseEnter.bind(_this);
-          _this.handleTrackMouseLeave = _this.handleTrackMouseLeave.bind(_this);
-          _this.handleHorizontalTrackMouseDown = _this.handleHorizontalTrackMouseDown.bind(_this);
-          _this.handleVerticalTrackMouseDown = _this.handleVerticalTrackMouseDown.bind(_this);
-          _this.handleHorizontalThumbMouseDown = _this.handleHorizontalThumbMouseDown.bind(_this);
-          _this.handleVerticalThumbMouseDown = _this.handleVerticalThumbMouseDown.bind(_this);
-          _this.handleWindowResize = _this.handleWindowResize.bind(_this);
-          _this.handleScroll = _this.handleScroll.bind(_this);
-          _this.handleDrag = _this.handleDrag.bind(_this);
-          _this.handleDragEnd = _this.handleDragEnd.bind(_this);
-
-          _this.state = {
-              didMountUniversal: false
-          };
-          return _this;
-      }
-
-      _createClass(Scrollbars, [{
-          key: 'componentDidMount',
-          value: function componentDidMount() {
-              this.addListeners();
-              this.update();
-              this.componentDidMountUniversal();
-          }
-      }, {
-          key: 'componentDidMountUniversal',
-          value: function componentDidMountUniversal() {
-              // eslint-disable-line react/sort-comp
-              var universal = this.props.universal;
-
-              if (!universal) return;
-              this.setState({ didMountUniversal: true });
-          }
-      }, {
-          key: 'componentDidUpdate',
-          value: function componentDidUpdate() {
-              this.update();
-          }
-      }, {
-          key: 'componentWillUnmount',
-          value: function componentWillUnmount() {
-              this.removeListeners();
-              (0, raf_1.cancel)(this.requestFrame);
-              clearTimeout(this.hideTracksTimeout);
-              clearInterval(this.detectScrollingInterval);
-          }
-      }, {
-          key: 'getScrollLeft',
-          value: function getScrollLeft() {
-              if (!this.view) return 0;
-              return this.view.scrollLeft;
-          }
-      }, {
-          key: 'getScrollTop',
-          value: function getScrollTop() {
-              if (!this.view) return 0;
-              return this.view.scrollTop;
-          }
-      }, {
-          key: 'getScrollWidth',
-          value: function getScrollWidth() {
-              if (!this.view) return 0;
-              return this.view.scrollWidth;
-          }
-      }, {
-          key: 'getScrollHeight',
-          value: function getScrollHeight() {
-              if (!this.view) return 0;
-              return this.view.scrollHeight;
-          }
-      }, {
-          key: 'getClientWidth',
-          value: function getClientWidth() {
-              if (!this.view) return 0;
-              return this.view.clientWidth;
-          }
-      }, {
-          key: 'getClientHeight',
-          value: function getClientHeight() {
-              if (!this.view) return 0;
-              return this.view.clientHeight;
-          }
-      }, {
-          key: 'getValues',
-          value: function getValues() {
-              var _ref2 = this.view || {},
-                  _ref2$scrollLeft = _ref2.scrollLeft,
-                  scrollLeft = _ref2$scrollLeft === undefined ? 0 : _ref2$scrollLeft,
-                  _ref2$scrollTop = _ref2.scrollTop,
-                  scrollTop = _ref2$scrollTop === undefined ? 0 : _ref2$scrollTop,
-                  _ref2$scrollWidth = _ref2.scrollWidth,
-                  scrollWidth = _ref2$scrollWidth === undefined ? 0 : _ref2$scrollWidth,
-                  _ref2$scrollHeight = _ref2.scrollHeight,
-                  scrollHeight = _ref2$scrollHeight === undefined ? 0 : _ref2$scrollHeight,
-                  _ref2$clientWidth = _ref2.clientWidth,
-                  clientWidth = _ref2$clientWidth === undefined ? 0 : _ref2$clientWidth,
-                  _ref2$clientHeight = _ref2.clientHeight,
-                  clientHeight = _ref2$clientHeight === undefined ? 0 : _ref2$clientHeight;
-
-              return {
-                  left: scrollLeft / (scrollWidth - clientWidth) || 0,
-                  top: scrollTop / (scrollHeight - clientHeight) || 0,
-                  scrollLeft: scrollLeft,
-                  scrollTop: scrollTop,
-                  scrollWidth: scrollWidth,
-                  scrollHeight: scrollHeight,
-                  clientWidth: clientWidth,
-                  clientHeight: clientHeight
-              };
-          }
-      }, {
-          key: 'getThumbHorizontalWidth',
-          value: function getThumbHorizontalWidth() {
-              var _props = this.props,
-                  thumbSize = _props.thumbSize,
-                  thumbMinSize = _props.thumbMinSize;
-              var _view = this.view,
-                  scrollWidth = _view.scrollWidth,
-                  clientWidth = _view.clientWidth;
-
-              var trackWidth = (0, _getInnerWidth2["default"])(this.trackHorizontal);
-              var width = Math.ceil(clientWidth / scrollWidth * trackWidth);
-              if (trackWidth === width) return 0;
-              if (thumbSize) return thumbSize;
-              return Math.max(width, thumbMinSize);
-          }
-      }, {
-          key: 'getThumbVerticalHeight',
-          value: function getThumbVerticalHeight() {
-              var _props2 = this.props,
-                  thumbSize = _props2.thumbSize,
-                  thumbMinSize = _props2.thumbMinSize;
-              var _view2 = this.view,
-                  scrollHeight = _view2.scrollHeight,
-                  clientHeight = _view2.clientHeight;
-
-              var trackHeight = (0, _getInnerHeight2["default"])(this.trackVertical);
-              var height = Math.ceil(clientHeight / scrollHeight * trackHeight);
-              if (trackHeight === height) return 0;
-              if (thumbSize) return thumbSize;
-              return Math.max(height, thumbMinSize);
-          }
-      }, {
-          key: 'getScrollLeftForOffset',
-          value: function getScrollLeftForOffset(offset) {
-              var _view3 = this.view,
-                  scrollWidth = _view3.scrollWidth,
-                  clientWidth = _view3.clientWidth;
-
-              var trackWidth = (0, _getInnerWidth2["default"])(this.trackHorizontal);
-              var thumbWidth = this.getThumbHorizontalWidth();
-              return offset / (trackWidth - thumbWidth) * (scrollWidth - clientWidth);
-          }
-      }, {
-          key: 'getScrollTopForOffset',
-          value: function getScrollTopForOffset(offset) {
-              var _view4 = this.view,
-                  scrollHeight = _view4.scrollHeight,
-                  clientHeight = _view4.clientHeight;
-
-              var trackHeight = (0, _getInnerHeight2["default"])(this.trackVertical);
-              var thumbHeight = this.getThumbVerticalHeight();
-              return offset / (trackHeight - thumbHeight) * (scrollHeight - clientHeight);
-          }
-      }, {
-          key: 'scrollLeft',
-          value: function scrollLeft() {
-              var left = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-
-              if (!this.view) return;
-              this.view.scrollLeft = left;
-          }
-      }, {
-          key: 'scrollTop',
-          value: function scrollTop() {
-              var top = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-
-              if (!this.view) return;
-              this.view.scrollTop = top;
-          }
-      }, {
-          key: 'scrollToLeft',
-          value: function scrollToLeft() {
-              if (!this.view) return;
-              this.view.scrollLeft = 0;
-          }
-      }, {
-          key: 'scrollToTop',
-          value: function scrollToTop() {
-              if (!this.view) return;
-              this.view.scrollTop = 0;
-          }
-      }, {
-          key: 'scrollToRight',
-          value: function scrollToRight() {
-              if (!this.view) return;
-              this.view.scrollLeft = this.view.scrollWidth;
-          }
-      }, {
-          key: 'scrollToBottom',
-          value: function scrollToBottom() {
-              if (!this.view) return;
-              this.view.scrollTop = this.view.scrollHeight;
-          }
-      }, {
-          key: 'addListeners',
-          value: function addListeners() {
-              /* istanbul ignore if */
-              if (typeof document === 'undefined' || !this.view) return;
-              var view = this.view,
-                  trackHorizontal = this.trackHorizontal,
-                  trackVertical = this.trackVertical,
-                  thumbHorizontal = this.thumbHorizontal,
-                  thumbVertical = this.thumbVertical;
-
-              view.addEventListener('scroll', this.handleScroll);
-              if (!(0, _getScrollbarWidth2["default"])()) return;
-              trackHorizontal.addEventListener('mouseenter', this.handleTrackMouseEnter);
-              trackHorizontal.addEventListener('mouseleave', this.handleTrackMouseLeave);
-              trackHorizontal.addEventListener('mousedown', this.handleHorizontalTrackMouseDown);
-              trackVertical.addEventListener('mouseenter', this.handleTrackMouseEnter);
-              trackVertical.addEventListener('mouseleave', this.handleTrackMouseLeave);
-              trackVertical.addEventListener('mousedown', this.handleVerticalTrackMouseDown);
-              thumbHorizontal.addEventListener('mousedown', this.handleHorizontalThumbMouseDown);
-              thumbVertical.addEventListener('mousedown', this.handleVerticalThumbMouseDown);
-              window.addEventListener('resize', this.handleWindowResize);
-          }
-      }, {
-          key: 'removeListeners',
-          value: function removeListeners() {
-              /* istanbul ignore if */
-              if (typeof document === 'undefined' || !this.view) return;
-              var view = this.view,
-                  trackHorizontal = this.trackHorizontal,
-                  trackVertical = this.trackVertical,
-                  thumbHorizontal = this.thumbHorizontal,
-                  thumbVertical = this.thumbVertical;
-
-              view.removeEventListener('scroll', this.handleScroll);
-              if (!(0, _getScrollbarWidth2["default"])()) return;
-              trackHorizontal.removeEventListener('mouseenter', this.handleTrackMouseEnter);
-              trackHorizontal.removeEventListener('mouseleave', this.handleTrackMouseLeave);
-              trackHorizontal.removeEventListener('mousedown', this.handleHorizontalTrackMouseDown);
-              trackVertical.removeEventListener('mouseenter', this.handleTrackMouseEnter);
-              trackVertical.removeEventListener('mouseleave', this.handleTrackMouseLeave);
-              trackVertical.removeEventListener('mousedown', this.handleVerticalTrackMouseDown);
-              thumbHorizontal.removeEventListener('mousedown', this.handleHorizontalThumbMouseDown);
-              thumbVertical.removeEventListener('mousedown', this.handleVerticalThumbMouseDown);
-              window.removeEventListener('resize', this.handleWindowResize);
-              // Possibly setup by `handleDragStart`
-              this.teardownDragging();
-          }
-      }, {
-          key: 'handleScroll',
-          value: function handleScroll(event) {
-              var _this2 = this;
-
-              var _props3 = this.props,
-                  onScroll = _props3.onScroll,
-                  onScrollFrame = _props3.onScrollFrame;
-
-              if (onScroll) onScroll(event);
-              this.update(function (values) {
-                  var scrollLeft = values.scrollLeft,
-                      scrollTop = values.scrollTop;
-
-                  _this2.viewScrollLeft = scrollLeft;
-                  _this2.viewScrollTop = scrollTop;
-                  if (onScrollFrame) onScrollFrame(values);
-              });
-              this.detectScrolling();
-          }
-      }, {
-          key: 'handleScrollStart',
-          value: function handleScrollStart() {
-              var onScrollStart = this.props.onScrollStart;
-
-              if (onScrollStart) onScrollStart();
-              this.handleScrollStartAutoHide();
-          }
-      }, {
-          key: 'handleScrollStartAutoHide',
-          value: function handleScrollStartAutoHide() {
-              var autoHide = this.props.autoHide;
-
-              if (!autoHide) return;
-              this.showTracks();
-          }
-      }, {
-          key: 'handleScrollStop',
-          value: function handleScrollStop() {
-              var onScrollStop = this.props.onScrollStop;
-
-              if (onScrollStop) onScrollStop();
-              this.handleScrollStopAutoHide();
-          }
-      }, {
-          key: 'handleScrollStopAutoHide',
-          value: function handleScrollStopAutoHide() {
-              var autoHide = this.props.autoHide;
-
-              if (!autoHide) return;
-              this.hideTracks();
-          }
-      }, {
-          key: 'handleWindowResize',
-          value: function handleWindowResize() {
-              this.update();
-          }
-      }, {
-          key: 'handleHorizontalTrackMouseDown',
-          value: function handleHorizontalTrackMouseDown(event) {
-              event.preventDefault();
-              var target = event.target,
-                  clientX = event.clientX;
-
-              var _target$getBoundingCl = target.getBoundingClientRect(),
-                  targetLeft = _target$getBoundingCl.left;
-
-              var thumbWidth = this.getThumbHorizontalWidth();
-              var offset = Math.abs(targetLeft - clientX) - thumbWidth / 2;
-              this.view.scrollLeft = this.getScrollLeftForOffset(offset);
-          }
-      }, {
-          key: 'handleVerticalTrackMouseDown',
-          value: function handleVerticalTrackMouseDown(event) {
-              event.preventDefault();
-              var target = event.target,
-                  clientY = event.clientY;
-
-              var _target$getBoundingCl2 = target.getBoundingClientRect(),
-                  targetTop = _target$getBoundingCl2.top;
-
-              var thumbHeight = this.getThumbVerticalHeight();
-              var offset = Math.abs(targetTop - clientY) - thumbHeight / 2;
-              this.view.scrollTop = this.getScrollTopForOffset(offset);
-          }
-      }, {
-          key: 'handleHorizontalThumbMouseDown',
-          value: function handleHorizontalThumbMouseDown(event) {
-              event.preventDefault();
-              this.handleDragStart(event);
-              var target = event.target,
-                  clientX = event.clientX;
-              var offsetWidth = target.offsetWidth;
-
-              var _target$getBoundingCl3 = target.getBoundingClientRect(),
-                  left = _target$getBoundingCl3.left;
-
-              this.prevPageX = offsetWidth - (clientX - left);
-          }
-      }, {
-          key: 'handleVerticalThumbMouseDown',
-          value: function handleVerticalThumbMouseDown(event) {
-              event.preventDefault();
-              this.handleDragStart(event);
-              var target = event.target,
-                  clientY = event.clientY;
-              var offsetHeight = target.offsetHeight;
-
-              var _target$getBoundingCl4 = target.getBoundingClientRect(),
-                  top = _target$getBoundingCl4.top;
-
-              this.prevPageY = offsetHeight - (clientY - top);
-          }
-      }, {
-          key: 'setupDragging',
-          value: function setupDragging() {
-              (0, _domCss2["default"])(document.body, styles.disableSelectStyle);
-              document.addEventListener('mousemove', this.handleDrag);
-              document.addEventListener('mouseup', this.handleDragEnd);
-              document.onselectstart = _returnFalse2["default"];
-          }
-      }, {
-          key: 'teardownDragging',
-          value: function teardownDragging() {
-              (0, _domCss2["default"])(document.body, styles.disableSelectStyleReset);
-              document.removeEventListener('mousemove', this.handleDrag);
-              document.removeEventListener('mouseup', this.handleDragEnd);
-              document.onselectstart = undefined;
-          }
-      }, {
-          key: 'handleDragStart',
-          value: function handleDragStart(event) {
-              this.dragging = true;
-              event.stopImmediatePropagation();
-              this.setupDragging();
-          }
-      }, {
-          key: 'handleDrag',
-          value: function handleDrag(event) {
-              if (this.prevPageX) {
-                  var clientX = event.clientX;
-
-                  var _trackHorizontal$getB = this.trackHorizontal.getBoundingClientRect(),
-                      trackLeft = _trackHorizontal$getB.left;
-
-                  var thumbWidth = this.getThumbHorizontalWidth();
-                  var clickPosition = thumbWidth - this.prevPageX;
-                  var offset = -trackLeft + clientX - clickPosition;
-                  this.view.scrollLeft = this.getScrollLeftForOffset(offset);
-              }
-              if (this.prevPageY) {
-                  var clientY = event.clientY;
-
-                  var _trackVertical$getBou = this.trackVertical.getBoundingClientRect(),
-                      trackTop = _trackVertical$getBou.top;
-
-                  var thumbHeight = this.getThumbVerticalHeight();
-                  var _clickPosition = thumbHeight - this.prevPageY;
-                  var _offset = -trackTop + clientY - _clickPosition;
-                  this.view.scrollTop = this.getScrollTopForOffset(_offset);
-              }
-              return false;
-          }
-      }, {
-          key: 'handleDragEnd',
-          value: function handleDragEnd() {
-              this.dragging = false;
-              this.prevPageX = this.prevPageY = 0;
-              this.teardownDragging();
-              this.handleDragEndAutoHide();
-          }
-      }, {
-          key: 'handleDragEndAutoHide',
-          value: function handleDragEndAutoHide() {
-              var autoHide = this.props.autoHide;
-
-              if (!autoHide) return;
-              this.hideTracks();
-          }
-      }, {
-          key: 'handleTrackMouseEnter',
-          value: function handleTrackMouseEnter() {
-              this.trackMouseOver = true;
-              this.handleTrackMouseEnterAutoHide();
-          }
-      }, {
-          key: 'handleTrackMouseEnterAutoHide',
-          value: function handleTrackMouseEnterAutoHide() {
-              var autoHide = this.props.autoHide;
-
-              if (!autoHide) return;
-              this.showTracks();
-          }
-      }, {
-          key: 'handleTrackMouseLeave',
-          value: function handleTrackMouseLeave() {
-              this.trackMouseOver = false;
-              this.handleTrackMouseLeaveAutoHide();
-          }
-      }, {
-          key: 'handleTrackMouseLeaveAutoHide',
-          value: function handleTrackMouseLeaveAutoHide() {
-              var autoHide = this.props.autoHide;
-
-              if (!autoHide) return;
-              this.hideTracks();
-          }
-      }, {
-          key: 'showTracks',
-          value: function showTracks() {
-              clearTimeout(this.hideTracksTimeout);
-              (0, _domCss2["default"])(this.trackHorizontal, { opacity: 1 });
-              (0, _domCss2["default"])(this.trackVertical, { opacity: 1 });
-          }
-      }, {
-          key: 'hideTracks',
-          value: function hideTracks() {
-              var _this3 = this;
-
-              if (this.dragging) return;
-              if (this.scrolling) return;
-              if (this.trackMouseOver) return;
-              var autoHideTimeout = this.props.autoHideTimeout;
-
-              clearTimeout(this.hideTracksTimeout);
-              this.hideTracksTimeout = setTimeout(function () {
-                  (0, _domCss2["default"])(_this3.trackHorizontal, { opacity: 0 });
-                  (0, _domCss2["default"])(_this3.trackVertical, { opacity: 0 });
-              }, autoHideTimeout);
-          }
-      }, {
-          key: 'detectScrolling',
-          value: function detectScrolling() {
-              var _this4 = this;
-
-              if (this.scrolling) return;
-              this.scrolling = true;
-              this.handleScrollStart();
-              this.detectScrollingInterval = setInterval(function () {
-                  if (_this4.lastViewScrollLeft === _this4.viewScrollLeft && _this4.lastViewScrollTop === _this4.viewScrollTop) {
-                      clearInterval(_this4.detectScrollingInterval);
-                      _this4.scrolling = false;
-                      _this4.handleScrollStop();
-                  }
-                  _this4.lastViewScrollLeft = _this4.viewScrollLeft;
-                  _this4.lastViewScrollTop = _this4.viewScrollTop;
-              }, 100);
-          }
-      }, {
-          key: 'raf',
-          value: function raf(callback) {
-              var _this5 = this;
-
-              if (this.requestFrame) _raf3["default"].cancel(this.requestFrame);
-              this.requestFrame = (0, _raf3["default"])(function () {
-                  _this5.requestFrame = undefined;
-                  callback();
-              });
-          }
-      }, {
-          key: 'update',
-          value: function update(callback) {
-              var _this6 = this;
-
-              this.raf(function () {
-                  return _this6._update(callback);
-              });
-          }
-      }, {
-          key: '_update',
-          value: function _update(callback) {
-              var _props4 = this.props,
-                  onUpdate = _props4.onUpdate,
-                  hideTracksWhenNotNeeded = _props4.hideTracksWhenNotNeeded;
-
-              var values = this.getValues();
-              if ((0, _getScrollbarWidth2["default"])()) {
-                  var scrollLeft = values.scrollLeft,
-                      clientWidth = values.clientWidth,
-                      scrollWidth = values.scrollWidth;
-
-                  var trackHorizontalWidth = (0, _getInnerWidth2["default"])(this.trackHorizontal);
-                  var thumbHorizontalWidth = this.getThumbHorizontalWidth();
-                  var thumbHorizontalX = scrollLeft / (scrollWidth - clientWidth) * (trackHorizontalWidth - thumbHorizontalWidth);
-                  var thumbHorizontalStyle = {
-                      width: thumbHorizontalWidth,
-                      transform: 'translateX(' + thumbHorizontalX + 'px)'
-                  };
-                  var scrollTop = values.scrollTop,
-                      clientHeight = values.clientHeight,
-                      scrollHeight = values.scrollHeight;
-
-                  var trackVerticalHeight = (0, _getInnerHeight2["default"])(this.trackVertical);
-                  var thumbVerticalHeight = this.getThumbVerticalHeight();
-                  var thumbVerticalY = scrollTop / (scrollHeight - clientHeight) * (trackVerticalHeight - thumbVerticalHeight);
-                  var thumbVerticalStyle = {
-                      height: thumbVerticalHeight,
-                      transform: 'translateY(' + thumbVerticalY + 'px)'
-                  };
-                  if (hideTracksWhenNotNeeded) {
-                      var trackHorizontalStyle = {
-                          visibility: scrollWidth > clientWidth ? 'visible' : 'hidden'
-                      };
-                      var trackVerticalStyle = {
-                          visibility: scrollHeight > clientHeight ? 'visible' : 'hidden'
-                      };
-                      (0, _domCss2["default"])(this.trackHorizontal, trackHorizontalStyle);
-                      (0, _domCss2["default"])(this.trackVertical, trackVerticalStyle);
-                  }
-                  (0, _domCss2["default"])(this.thumbHorizontal, thumbHorizontalStyle);
-                  (0, _domCss2["default"])(this.thumbVertical, thumbVerticalStyle);
-              }
-              if (onUpdate) onUpdate(values);
-              if (typeof callback !== 'function') return;
-              callback(values);
-          }
-      }, {
-          key: 'render',
-          value: function render() {
-              var _this7 = this;
-
-              var scrollbarWidth = (0, _getScrollbarWidth2["default"])();
-              /* eslint-disable no-unused-vars */
-
-              var _props5 = this.props,
-                  onScroll = _props5.onScroll,
-                  onScrollFrame = _props5.onScrollFrame,
-                  onScrollStart = _props5.onScrollStart,
-                  onScrollStop = _props5.onScrollStop,
-                  onUpdate = _props5.onUpdate,
-                  renderView = _props5.renderView,
-                  renderTrackHorizontal = _props5.renderTrackHorizontal,
-                  renderTrackVertical = _props5.renderTrackVertical,
-                  renderThumbHorizontal = _props5.renderThumbHorizontal,
-                  renderThumbVertical = _props5.renderThumbVertical,
-                  tagName = _props5.tagName,
-                  hideTracksWhenNotNeeded = _props5.hideTracksWhenNotNeeded,
-                  autoHide = _props5.autoHide,
-                  autoHideTimeout = _props5.autoHideTimeout,
-                  autoHideDuration = _props5.autoHideDuration,
-                  thumbSize = _props5.thumbSize,
-                  thumbMinSize = _props5.thumbMinSize,
-                  universal = _props5.universal,
-                  autoHeight = _props5.autoHeight,
-                  autoHeightMin = _props5.autoHeightMin,
-                  autoHeightMax = _props5.autoHeightMax,
-                  style = _props5.style,
-                  children = _props5.children,
-                  props = _objectWithoutProperties(_props5, ['onScroll', 'onScrollFrame', 'onScrollStart', 'onScrollStop', 'onUpdate', 'renderView', 'renderTrackHorizontal', 'renderTrackVertical', 'renderThumbHorizontal', 'renderThumbVertical', 'tagName', 'hideTracksWhenNotNeeded', 'autoHide', 'autoHideTimeout', 'autoHideDuration', 'thumbSize', 'thumbMinSize', 'universal', 'autoHeight', 'autoHeightMin', 'autoHeightMax', 'style', 'children']);
-              /* eslint-enable no-unused-vars */
-
-              var didMountUniversal = this.state.didMountUniversal;
-
-
-              var containerStyle = _extends({}, styles.containerStyleDefault, autoHeight && _extends({}, styles.containerStyleAutoHeight, {
-                  minHeight: autoHeightMin,
-                  maxHeight: autoHeightMax
-              }), style);
-
-              var viewStyle = _extends({}, styles.viewStyleDefault, {
-                  // Hide scrollbars by setting a negative margin
-                  marginRight: scrollbarWidth ? -scrollbarWidth : 0,
-                  marginBottom: scrollbarWidth ? -scrollbarWidth : 0
-              }, autoHeight && _extends({}, styles.viewStyleAutoHeight, {
-                  // Add scrollbarWidth to autoHeight in order to compensate negative margins
-                  minHeight: (0, _isString2["default"])(autoHeightMin) ? 'calc(' + autoHeightMin + ' + ' + scrollbarWidth + 'px)' : autoHeightMin + scrollbarWidth,
-                  maxHeight: (0, _isString2["default"])(autoHeightMax) ? 'calc(' + autoHeightMax + ' + ' + scrollbarWidth + 'px)' : autoHeightMax + scrollbarWidth
-              }), autoHeight && universal && !didMountUniversal && {
-                  minHeight: autoHeightMin,
-                  maxHeight: autoHeightMax
-              }, universal && !didMountUniversal && styles.viewStyleUniversalInitial);
-
-              var trackAutoHeightStyle = {
-                  transition: 'opacity ' + autoHideDuration + 'ms',
-                  opacity: 0
-              };
-
-              var trackHorizontalStyle = _extends({}, styles.trackHorizontalStyleDefault, autoHide && trackAutoHeightStyle, (!scrollbarWidth || universal && !didMountUniversal) && {
-                  display: 'none'
-              });
-
-              var trackVerticalStyle = _extends({}, styles.trackVerticalStyleDefault, autoHide && trackAutoHeightStyle, (!scrollbarWidth || universal && !didMountUniversal) && {
-                  display: 'none'
-              });
-
-              return (0, react.createElement)(tagName, _extends({}, props, { style: containerStyle, ref: function ref(_ref3) {
-                      _this7.container = _ref3;
-                  } }), [(0, react.cloneElement)(renderView({ style: viewStyle }), { key: 'view', ref: function ref(_ref4) {
-                      _this7.view = _ref4;
-                  } }, children), (0, react.cloneElement)(renderTrackHorizontal({ style: trackHorizontalStyle }), { key: 'trackHorizontal', ref: function ref(_ref5) {
-                      _this7.trackHorizontal = _ref5;
-                  } }, (0, react.cloneElement)(renderThumbHorizontal({ style: styles.thumbHorizontalStyleDefault }), { ref: function ref(_ref6) {
-                      _this7.thumbHorizontal = _ref6;
-                  } })), (0, react.cloneElement)(renderTrackVertical({ style: trackVerticalStyle }), { key: 'trackVertical', ref: function ref(_ref7) {
-                      _this7.trackVertical = _ref7;
-                  } }, (0, react.cloneElement)(renderThumbVertical({ style: styles.thumbVerticalStyleDefault }), { ref: function ref(_ref8) {
-                      _this7.thumbVertical = _ref8;
-                  } }))]);
-          }
-      }]);
-
-      return Scrollbars;
-  }(react.Component);
-
-  exports["default"] = Scrollbars;
-
-
-  Scrollbars.propTypes = {
-      onScroll: _propTypes2["default"].func,
-      onScrollFrame: _propTypes2["default"].func,
-      onScrollStart: _propTypes2["default"].func,
-      onScrollStop: _propTypes2["default"].func,
-      onUpdate: _propTypes2["default"].func,
-      renderView: _propTypes2["default"].func,
-      renderTrackHorizontal: _propTypes2["default"].func,
-      renderTrackVertical: _propTypes2["default"].func,
-      renderThumbHorizontal: _propTypes2["default"].func,
-      renderThumbVertical: _propTypes2["default"].func,
-      tagName: _propTypes2["default"].string,
-      thumbSize: _propTypes2["default"].number,
-      thumbMinSize: _propTypes2["default"].number,
-      hideTracksWhenNotNeeded: _propTypes2["default"].bool,
-      autoHide: _propTypes2["default"].bool,
-      autoHideTimeout: _propTypes2["default"].number,
-      autoHideDuration: _propTypes2["default"].number,
-      autoHeight: _propTypes2["default"].bool,
-      autoHeightMin: _propTypes2["default"].oneOfType([_propTypes2["default"].number, _propTypes2["default"].string]),
-      autoHeightMax: _propTypes2["default"].oneOfType([_propTypes2["default"].number, _propTypes2["default"].string]),
-      universal: _propTypes2["default"].bool,
-      style: _propTypes2["default"].object,
-      children: _propTypes2["default"].node
-  };
-
-  Scrollbars.defaultProps = {
-      renderView: defaultRenderElements.renderViewDefault,
-      renderTrackHorizontal: defaultRenderElements.renderTrackHorizontalDefault,
-      renderTrackVertical: defaultRenderElements.renderTrackVerticalDefault,
-      renderThumbHorizontal: defaultRenderElements.renderThumbHorizontalDefault,
-      renderThumbVertical: defaultRenderElements.renderThumbVerticalDefault,
-      tagName: 'div',
-      thumbMinSize: 30,
-      hideTracksWhenNotNeeded: false,
-      autoHide: false,
-      autoHideTimeout: 1000,
-      autoHideDuration: 200,
-      autoHeight: false,
-      autoHeightMin: 0,
-      autoHeightMax: 200,
-      universal: false
-  };
-  });
-
-  unwrapExports(Scrollbars_1);
-
-  var lib$1 = createCommonjsModule(function (module, exports) {
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.Scrollbars = undefined;
-
-
-
-  var _Scrollbars2 = _interopRequireDefault(Scrollbars_1);
-
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-  exports["default"] = _Scrollbars2["default"];
-  exports.Scrollbars = _Scrollbars2["default"];
-  });
-
-  unwrapExports(lib$1);
-  var lib_1 = lib$1.Scrollbars;
-
   var moment = createCommonjsModule(function (module, exports) {
   (function (global, factory) {
       module.exports = factory();
@@ -58411,7 +56734,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   })));
   });
 
-  const _jsxFileName = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/post-preview.js";
+  const _jsxFileName = "/Users/logan/Dev/interface/apps/publish/src/js/components/post-preview.js";
 
   class PostPreview extends react_1 {
     constructor(props) {
@@ -58441,8 +56764,102 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
 
     render() {
+      let comments = this.props.post.numComments == 1
+        ? '1 comment'
+        : `${this.props.post.numComments} comments`;
+      let date = moment(this.props.post.date).fromNow();
+      let authorDate = `~${this.props.post.author} • ${date}`;
+      let collLink = "/~publish/~" + 
+        this.props.post.author + "/" +
+        this.props.post.collectionName;
+      let postLink = collLink + "/" + this.props.post.postName;
 
-      console.log(this.props);
+  //    let postTitle = 
+
+      return (
+        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
+          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 51}}
+            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 52}}
+              , this.props.post.postTitle
+            )
+            , react.createElement(PostSnippet, {
+              body: this.props.post.postBody, __self: this, __source: {fileName: _jsxFileName, lineNumber: 55}}
+            )
+          )
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 59}}
+            , authorDate
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/publish/src/js/components/post-snippet.js";
+
+  class PostSnippet extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+    render() {
+      let elem = this.props.body.c.find((elem) => {
+        return elem.gn === "p" &&
+          typeof(elem.c[0]) === "string";
+      });
+
+      let string = elem.c[0];
+      let words = string.split(" ");
+
+      let snip = new String(string);
+
+      if (words.length > 0 && words[0].length > 280) {
+        snip = words[0].slice(0, 280).trim() + " [...]";
+      } else if (snip.length > 280){
+        while (snip.length > 280) {
+          snip = snip.split(" ").slice(0, -1).join(" ");
+        }
+        snip += " [...]";
+      }
+
+
+      return (
+        react.createElement('p', { className: "body-regular-400", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 35}}
+          , snip
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/publish/src/js/components/recent-preview.js";
+
+  class RecentPreview extends react_1 {
+    constructor(props) {
+      super(props);
+
+      moment.updateLocale('en', {
+        relativeTime: {
+          past: function(input) {
+            return input === 'just now'
+              ? input
+              : input + ' ago'
+          },
+          s : 'just now',
+          future : 'in %s',
+          m  : '1m',
+          mm : '%dm',
+          h  : '1h',
+          hh : '%dh',
+          d  : '1d',
+          dd : '%dd',
+          M  : '1 month',
+          MM : '%d months',
+          y  : '1 year',
+          yy : '%d years',
+        }
+      });
+    }
+
+    render() {
       let comments = this.props.post.numComments == 1
         ? '1 comment'
         : `${this.props.post.numComments} comments`;
@@ -58454,24 +56871,24 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let postLink = collLink + "/" + this.props.post.postName;
 
       return (
-        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}
-          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
-            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 51}}
+        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}
+          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 49}}
+            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 50}}
               , this.props.post.postTitle
             )
-            , react.createElement('p', { className: "body-regular-400", __self: this, __source: {fileName: _jsxFileName, lineNumber: 54}}
-              , this.props.post.postSnippet
+            , react.createElement(PostSnippet, {
+              body: this.props.post.postBody, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 53}}
             )
           )
-          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 58}}
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 57}}
             , comments
           )
-          , react.createElement(Link, { to: collLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 61}}
-            , react.createElement('p', { className: "body-regular gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 62}}
+          , react.createElement(Link, { to: collLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 60}}
+            , react.createElement('p', { className: "body-regular gray-50" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 61}}
               , this.props.post.collectionTitle
             )
           )
-          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 66}}
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 65}}
             , authorDate
           )
         )
@@ -58479,12 +56896,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$1 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/recent.js";
+  const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/publish/src/js/components/recent.js";
 
   class Recent extends react_1 {
     constructor(props){
       super(props);
-      console.log("recent props", props);
     }
 
     buildRecent() {
@@ -58537,7 +56953,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       return {
         postTitle: pos.info.title,
         postName:  post,
-        postSnippet: "body snippet",
+        postBody: pos.body,
         numComments: com.length,
         collectionTitle: col.title,
         collectionName:  coll,
@@ -58592,8 +57008,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     dateLabel(d) {
       let today = new Date();
 
-      console.log("today", today);
-
       let yesterday = new Date(today.getTime() - (1000*60*60*24));
       if (this.sameDay(d, today)) {
         return "Today";
@@ -58615,26 +57029,23 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     render() {
       let recent = this.buildRecent();
 
-      console.log("recent", recent);
-
-
       let body = recent.map((group) => {
         let posts = group.posts.map((post) => {
           return (
-            react.createElement(PostPreview, {
-              post: post, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 146}}
+            react.createElement(RecentPreview, {
+              post: post, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 140}}
             )
           );
         });
         let date = this.dateLabel(group.date);
         return (
-          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 153}}
-            , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 154}}
-              , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 155}}
+          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 147}}
+            , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 148}}
+              , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 149}}
                 , date
               )
             )
-            , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 159}}
+            , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 153}}
               , posts
             )
           )
@@ -58643,19 +57054,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 
       return (
-        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 168}}
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 162}}
           , body
         )
       );
     }
   }
 
-  const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/header.js";
+  const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/publish/src/js/components/header.js";
   class Header extends react_1 {
     constructor(props) {
       super(props);
-
-      console.log("header.props", props);
     }
 
     retrievePost(post, coll, who) {
@@ -58684,122 +57093,122 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
     render() {
       return (
-        react.createElement('div', { className: "cf w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 39}}
-          , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 40}}
-            , react.createElement('p', { className: "fl body-large b gray-50 publish"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 41}}, "Publish")
-            , react.createElement('p', { className: "label-regular b fr"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 42}}, "+ Create" )
+        react.createElement('div', { className: "cf w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 37}}
+          , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 38}}
+            , react.createElement('p', { className: "fl body-large b gray-50 publish"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 39}}, "Publish")
+            , react.createElement('p', { className: "label-regular b fr"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 40}}, "+ Create" )
           )
 
           , react.createElement(Route, { exact: true, path: "/~publish/recent",
             render:  (props) => {
               return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 48}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 49}}
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 46}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 47}}
                   )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 51}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 52}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 53}}, "Recent"
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 49}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 50}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 51}}, "Recent"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 58}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 56}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 60}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 61}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 62}}, "Subscriptions"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 58}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 59}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 60}}, "Subscriptions"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 67}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 65}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 69}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 70}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 71}}, "My Blogs"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 67}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 68}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 69}}, "My Blogs"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 76}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 74}}
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 45}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 43}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/subs",
             render:  (props) => {
               return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 85}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 86}}
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 83}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 84}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 88}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 89}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 90}}, "Recent"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 86}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 87}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 88}}, "Recent"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 95}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 93}}
                   )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 97}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 98}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 99}}, "Subscriptions"
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 95}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 96}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 97}}, "Subscriptions"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 104}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 102}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 106}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 107}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 108}}, "My Blogs"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 104}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 105}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 106}}, "My Blogs"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 113}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 111}}
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 82}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 80}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/pubs",
             render:  (props) => {
               return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 122}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 123}}
+                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 120}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 121}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 125}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 126}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 127}}, "Recent"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 123}}
+                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 124}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 125}}, "Recent"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 132}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 130}}
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 134}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 135}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 136}}, "Subscriptions"
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 132}}
+                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 133}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 134}}, "Subscriptions"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 141}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 139}}
                   )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 143}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 144}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 145}}, "My Blogs"
+                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 141}}
+                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 142}}
+                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 143}}, "My Blogs"
 
                       )
                     )
                   )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 150}}
+                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 148}}
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 119}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 117}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
             render:  (props) => {
@@ -58811,23 +57220,23 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               let blogName = blog.title;
 
               return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 166}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 167}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 168}}, "Home"
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 164}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 165}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 166}}, "Home"
 
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 172}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 170}}, "->"
 
                   )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 175}}
-                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 176}}
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 173}}
+                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 174}}
                       , blogName
                     )
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 156}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 154}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
             render:  (props) => {
@@ -58844,50 +57253,50 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               let postName = post.info.title;
 
               return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 199}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 200}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 201}}, "Home"
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 197}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 198}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 199}}, "Home"
 
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 205}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 203}}, "->"
 
                   )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 208}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 209}}
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 206}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 207}}
                       , blogName
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 213}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 211}}, "->"
 
                   )
-                  , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 216}}
-                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 217}}
+                  , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 214}}
+                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 215}}
                       , postName
                     )
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 184}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 182}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/new",
             render:  (props) => {
               return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 228}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 229}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 230}}, "Home"
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 226}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 227}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 228}}, "Home"
 
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 234}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 232}}, "->"
 
                   )
-                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 237}}, "New"
+                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 235}}, "New"
 
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 225}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 223}} )
 
           , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/new",
             render:  (props) => {
@@ -58899,35 +57308,397 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
               let blogName = blog.title;
 
               return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 254}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 255}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 256}}, "Home"
+                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 252}}
+                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 253}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 254}}, "Home"
 
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 260}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 258}}, "->"
 
                   )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 263}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 264}}
+                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 261}}
+                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 262}}
                       , blogName
                     )
                   )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 268}}, "->"
+                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 266}}, "->"
 
                   )
-                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 271}}, "New Post"
+                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 269}}, "New Post"
 
                   )
                 )
               );
-            }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 244}} )
+            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 242}} )
         )
       );
     }
   }
 
-  const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/root.js";
+  const _jsxFileName$5 = "/Users/logan/Dev/interface/apps/publish/src/js/components/blog.js";
+
+  class Blog extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+
+    buildPosts(){
+      let blogId = this.props.blogId;
+      let ship = this.props.ship;
+      let blog = this.retrieveColl(blogId, ship);
+
+      console.log("buildposts", blog);
+
+      let pinProps = blog.order.pin.map((post) => {
+        return this.buildPostPreviewProps(post, blogId, ship, true);
+      });
+
+      let unpinProps = blog.order.unpin.map((post) => {
+        return this.buildPostPreviewProps(post, blogId, ship, false);
+      });
+
+      return pinProps.concat(unpinProps);
+    }
+
+    buildPostPreviewProps(post, coll, who, pinned){
+      let pos = this.retrievePost(post, coll, who);
+      let col = this.retrieveColl(coll, who);
+      let com = this.retrieveComments(post, coll, who);
+
+      return {
+        postTitle: pos.info.title,
+        postName:  post,
+        postBody: pos.body,
+        numComments: com.length,
+        collectionTitle: col.title,
+        collectionName:  coll,
+        author: who,
+        date: pos.info["date-created"],
+        pinned: pinned,
+      }
+
+    }
+
+    retrievePost(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].post;
+      } else {
+        return this.props.subs[who][coll].posts[post].post;
+      }
+    }
+
+    retrieveComments(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].comments;
+      } else {
+        return this.props.subs[who][coll].posts[post].comments;
+      }
+    }
+
+    retrieveColl(coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll];
+      } else {
+        return this.props.subs[who][coll];
+      }
+    }
+
+    render() {
+      let blog = this.retrieveColl(this.props.blogId, this.props.ship);
+      let postProps = this.buildPosts();
+      let posts = postProps.map((post) => {
+        return (
+          react.createElement(PostPreview, {
+            post: post, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 78}}
+          )
+        );
+      });
+
+      let host = blog.info.owner;
+      let contributers = host + " and X others";       // XX backend work
+      let subscribers = "~bitpyx-dildus and X others"; // XX backend work
+
+      return (
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 89}}
+          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 90}}, blog.info.title)
+          , react.createElement('div', { className: "flex", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}}
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 92}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 93}}, "Host")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 94}}, host)
+            )
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 96}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 97}}, "Contributors")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 98}}, contributers)
+            )
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 100}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 101}}, "Subscribers")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 102}}, subscribers)
+            )
+          )
+          , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 105}}
+            , posts
+          )
+        )
+      );
+    }
+  }
+
+  class PostBody extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+    renderA(what, node, attr) {
+      let aStyle = { textDecorationLine: "underline" };
+      let children = what.map((item, key) => {
+        if (typeof(item) === 'string') {
+          return item;
+        } else {
+          let newAttr = Object.assign({style: aStyle, key: key}, item.ga);
+          return this.parseContent(item.c, item.gn, newAttr);
+        }
+      });
+      const element = react.createElement(node, Object.assign({style: aStyle}, attr), children);
+      return element;
+    }
+
+
+    renderIMG(what, node, attr) {
+      let imgStyle = {
+        width: "100%",
+        height: "auto"
+      };
+      let newAttr = Object.assign({style: imgStyle}, attr);
+      const element = react.createElement(node, newAttr);
+      return element;
+    }
+
+    renderDefault(what, node, attr) {
+      let children = what.map((item, key) => {
+        if (typeof(item) === 'string') {
+          return item;
+        } else {
+          let newAttr = Object.assign({key: key}, item.ga);
+          return this.parseContent(item.c, item.gn, newAttr);
+        }
+      });
+      const element = react.createElement(node, attr, children);
+      return element;
+    }
+
+    parseContent(what, node, attr) {
+      switch (node) {
+        case "a":
+          return this.renderA(what, node, attr);
+        case "img":
+          return this.renderIMG(what, node, attr);
+        default:
+          return this.renderDefault(what, node, attr);
+      }
+    }
+
+
+    render() {
+      let page = this.parseContent(this.props.body.c, this.props.body.gn, this.props.body.ga); 
+      return page;
+    }
+  }
+
+  const _jsxFileName$6 = "/Users/logan/Dev/interface/apps/publish/src/js/components/post.js";
+  class Post extends react_1 {
+    constructor(props){
+      super(props);
+
+      moment.updateLocale('en', {
+        relativeTime: {
+          past: function(input) {
+            return input === 'just now'
+              ? input
+              : input + ' ago'
+          },
+          s : 'just now',
+          future : 'in %s',
+          m  : '1m',
+          mm : '%dm',
+          h  : '1h',
+          hh : '%dh',
+          d  : '1d',
+          dd : '%dd',
+          M  : '1 month',
+          MM : '%d months',
+          y  : '1 year',
+          yy : '%d years',
+        }
+      });
+    }
+
+
+    buildPosts(){
+      let blogId = this.props.blogId;
+      let ship = this.props.ship;
+      let blog = this.retrieveColl(blogId, ship);
+
+      console.log("buildposts", blog);
+
+      let pinProps = blog.order.pin.map((post) => {
+        return this.buildPostPreviewProps(post, blogId, ship, true);
+      });
+
+      let unpinProps = blog.order.unpin.map((post) => {
+        return this.buildPostPreviewProps(post, blogId, ship, false);
+      });
+
+      return pinProps.concat(unpinProps);
+    }
+
+    buildPostPreviewProps(post, coll, who, pinned){
+      let pos = this.retrievePost(post, coll, who);
+      let col = this.retrieveColl(coll, who);
+      let com = this.retrieveComments(post, coll, who);
+
+      return {
+        postTitle: pos.info.title,
+        postName:  post,
+        postSnippet: "body snippet",
+        numComments: com.length,
+        collectionTitle: col.title,
+        collectionName:  coll,
+        author: who,
+        date: pos.info["date-created"],
+        pinned: pinned,
+      }
+
+    }
+
+    retrievePost(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].post;
+      } else {
+        return this.props.subs[who][coll].posts[post].post;
+      }
+    }
+
+    retrieveComments(post, coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll].posts[post].comments;
+      } else {
+        return this.props.subs[who][coll].posts[post].comments;
+      }
+    }
+
+    retrieveColl(coll, who) {
+      if (who === window.ship) {
+        return this.props.pubs[coll];
+      } else {
+        return this.props.subs[who][coll];
+      }
+    }
+
+    render() {
+      let ship = this.props.ship;
+      let blog = this.retrieveColl(this.props.blogId, this.props.ship);
+      let post = this.retrievePost(this.props.postId, this.props.blogId, this.props.ship);
+      let comments = this.retrieveComments(this.props.postId, this.props.blogId, this.props.ship);
+
+      let blogLink = `/~publish/~${this.props.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${blog.info.title}`;
+
+      let editLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${this.props.postId}/edit`;
+
+      let date = moment(post.info["date-created"]).fromNow();
+      let authorDate = `${post.info.creator} • ${date}`;
+
+      // change unpin to concatenation of pinned and unpinned
+      let morePosts = blog.order.unpin.slice(0,10).map((pid) => {
+
+        let p = this.retrievePost(pid, this.props.blogId, this.props.ship);
+        let color = (pid == this.props.postId) ? "black" : "gray-50";
+        let postLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${pid}`;
+        return (
+          react.createElement(Link, { to: postLink, className: "label-regular", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 118}}
+            , react.createElement('p', { className: color, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 119}}, p.info.title)
+          )
+        );
+      });
+
+      return (
+        react.createElement('div', { className: "w-688 flex-col center mt4"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 125}}
+          , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 126}}
+            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 127}}
+              , blogLinkText
+            )
+          )
+
+          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 132}}, post.info.title)
+
+          , react.createElement('div', { className: "mb4", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 134}}
+            , react.createElement('p', { className: "fl label-small gray-50"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 135}}, authorDate)
+            , react.createElement(Link, { to: editLink, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 136}}
+              , react.createElement('p', { className: "label-regular gray-50 fr"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 137}}, "Edit")
+            )
+          )
+
+          , react.createElement('div', { className: "cb", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 141}}
+            , react.createElement(PostBody, {
+              body: post.body, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 142}} 
+            )
+          )
+
+          , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 147}})
+
+          , react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}
+            , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 150}}
+              , comments.length
+              , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 152}}, "\u0002Comments"
+
+              )
+            )
+            , react.createElement('p', { className: "cl body-regular" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 156}}, "↓ Show Comments"
+
+            )
+          )
+
+          , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 161}})
+
+          , react.createElement('div', { className: "cb flex-col" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 163}}
+            , react.createElement('p', { className: "label-regular b mb1"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 164}}, blog.info.title)
+            , react.createElement('p', { className: "label-regular gray-30 mb2"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 165}}, "Hosted by "  , blog.info.owner)
+            , morePosts
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$7 = "/Users/logan/Dev/interface/apps/publish/src/js/components/lib/icons/icon-home.js";
+  class IconHome extends react_1 {
+    render() {
+      return (
+        react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 6}} )
+      );
+    }
+  }
+
+  const _jsxFileName$8 = "/Users/logan/Dev/interface/apps/publish/src/js/components/lib/header-bar.js";
+
+  class HeaderBar extends react_1 {
+
+    render() {
+      return (
+        react.createElement('div', { className: "bg-black w-100" , style: { height: 48, padding: 8 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 11}}
+          , react.createElement('a', { className: "db",
+            style: { background: '#1A1A1A', borderRadius: 16, width: 32, height: 32 },
+            href: "/", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 12}}
+            , react.createElement(IconHome, {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 15}} )
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$9 = "/Users/logan/Dev/interface/apps/publish/src/js/components/root.js";
   class Root extends react_1 {
     constructor(props) {
       super(props);
@@ -58940,57 +57711,68 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
     render() {
       return (
-        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 27}}
-          , react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}
-            , react.createElement(Header, { ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 29}} )
+        react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 27}}
+          , react.createElement(HeaderBar, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 28}} )
+          , react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 29}}
+            , react.createElement(Header, { ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 30}} )
             , react.createElement(Route, { exact: true, path: "/~publish/recent",
               render:  (props) => {
                 return (
-                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 33}}
-                      , react.createElement(Recent, {
-                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 34}}
-                      )
+                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}
+                    , react.createElement(Recent, {
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
                     )
+                  )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 30}} )
+             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 31}} )
             , react.createElement(Route, { exact: true, path: "/~publish/subs",
               render:  (props) => {
                 return (
-                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 43}}
-                      , react.createElement(Recent, {
-                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 44}}
-                      )
+                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 44}}
+                    , react.createElement(Recent, {
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 45}}
                     )
+                  )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 40}} )
+             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}} )
             , react.createElement(Route, { exact: true, path: "/~publish/pubs",
               render:  (props) => {
                 return (
-                    react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 53}}
-                      , react.createElement(Recent, {
-                        ...this.state, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 54}}
-                      )
+                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 54}}
+                    , react.createElement(Recent, {
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 55}}
                     )
+                  )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 50}} )
+             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}} )
 
             , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
               render:  (props) => {
                 return (
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 64}}, "blog page"
-
+                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 65}}
+                    , react.createElement(Blog, {
+                      blogId :  props.match.params.blog,
+                      ship :  props.match.params.ship.slice(1),
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 66}}
+                    )
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 61}} )
+             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 62}} )
 
             , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
               render:  (props) => {
                 return (
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 73}}, "post page"
-
+                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 78}}
+                    , react.createElement(Post, {
+                      blogId :  props.match.params.blog,
+                      postId :  props.match.params.post,
+                      ship :  props.match.params.ship.slice(1),
+                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 79}}
+                    )
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 70}} )
+             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 75}} )
+
           )
         )
       );
@@ -59049,7 +57831,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   let subscription = new Subscription();
 
-  const _jsxFileName$4 = "/Users/isaac/urbit/projects/interface/apps/publish/src/index.js";
+  const _jsxFileName$a = "/Users/logan/Dev/interface/apps/publish/src/index.js";
   console.log('app running');
 
   /*
@@ -59070,7 +57852,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   window._ = lodash;
 
   reactDom.render((
-    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$4, lineNumber: 32}} )
+    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$a, lineNumber: 32}} )
   ), document.querySelectorAll("#root")[0]);
 
 }));

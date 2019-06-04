@@ -443,7 +443,7 @@
 
 
 
-            {
+            if (process.env.NODE_ENV !== "production") {
               (function() {
 
             var _assign = objectAssign;

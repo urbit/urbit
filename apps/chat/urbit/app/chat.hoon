@@ -63,14 +63,14 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /tile]]]
+        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /tile]]]~
+  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]~
   this(sta u.old)
 ::
 ::
 ::
-++  peer-tile
+++  peer-chattile
   |=  wir=wire
   ^-  (quip move _this)
   [~ this]
