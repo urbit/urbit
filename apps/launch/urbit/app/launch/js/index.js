@@ -49208,7 +49208,7 @@
 	    return (
 	       react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 19}}
 	         , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}}
-	          , react.createElement(Route, { exact: true, path: "/~launch", 
+	          , react.createElement(Route, { exact: true, path: "/", 
 	            render:  (props) => {
 	              return (
 	                react.createElement(Home, { 

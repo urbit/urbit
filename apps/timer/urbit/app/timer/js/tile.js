@@ -2242,7 +2242,7 @@
 
             var api = new Api();
 
-            const _jsxFileName = "/Users/logan/Dev/apps/tiles-max/timer/tile/components/volume-icon.js";
+            const _jsxFileName = "/Users/logan/Dev/interface/apps/timer/tile/components/volume-icon.js";
             class VolumeIcon extends react_1 {
 
               constructor(props) {
@@ -2279,7 +2279,7 @@
 
             }
 
-            const _jsxFileName$1 = "/Users/logan/Dev/apps/tiles-max/timer/tile/components/flashing.js";
+            const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/timer/tile/components/flashing.js";
             class Flashing extends react_1 {
               constructor(props) {
                 super(props);
@@ -2306,7 +2306,7 @@
               }
             }
 
-            const _jsxFileName$2 = "/Users/logan/Dev/apps/tiles-max/timer/tile/tile.js";
+            const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/timer/tile/tile.js";
             const timerLength = 10000;
             const outerSize = 234; //size of tile itself
             const innerSize = 200; //diameter of pomodoro

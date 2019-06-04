@@ -2,7 +2,10 @@
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /:  /===/app/clock/js/tile  /js/
+  /:  /===/app/clock/js/tile
+  /|  /js/
+      /~  ~
+  ==
 =,  format
 ::
 |%
