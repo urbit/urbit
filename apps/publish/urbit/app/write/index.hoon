@@ -10,7 +10,7 @@
       =content  "width=device-width, initial-scale=1, shrink-to-fit=no";
     ;link(rel "stylesheet", href "/~publish/index.css");
     ;script@"/~/channel/channel.js";
-    ;script@"/session.js";
+    ;script@"/~modulo/session.js";
     ;script: window.injectedState = {(en-json:html inject)}
   ==
 ::
