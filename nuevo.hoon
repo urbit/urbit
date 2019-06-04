@@ -19,10 +19,11 @@
 ::  represents communication with their parent. In the case of the top process,
 ::  this connection is conceptually with vere.
 ::
-::  Nuevo processes have no actual relation to OS processes and an implementer
-::  should feel free to do any mapping that is semantically equivalent, which
-::  includes both performing no actual parallelism in practice and running all
-::  processes on a single event queue, and complicated green thread solutions.
+::  Nuevo processes have no actual relation to OS processes and a vere
+::  implementer should feel free to do any mapping that is semantically
+::  equivalent, which includes both running all processes on a single event
+::  queue performing no actual parallelism, and complicated green thread
+::  solutions.
 ::
 ::  This leaves us with a set of design goals:
 ::
@@ -35,7 +36,8 @@
 ::
 ::  - Individual programs can and will screw up and crash. Part of the point of
 ::    Nuevo is to gracefully handle this, ensuring that a program's
-::    counterparties are notified.
+::    counterparties are notified. But also, we must provide a way for a
+::    program to clear out bad state which caused the crash on crash.
 ::
 |%
 ::  Processes in Nuevo form a strict DAG, with the "root" process being special
@@ -80,8 +82,9 @@
       ::
       ::    Two pipes are the same if they have the same :id and
       ::    :creator. :counterparty is the connection which owns the other side
-      ::    of the pipe. Note that the two :counterparty s which end up with the
-      ::    pipe may be different from the :creator.
+      ::    of the pipe. Note that the two :counterparty s which end up with
+      ::    the pipe may be different from the :creator, as handles can be
+      ::    passed between processes.
       ::
       [%pipe id=@u creator=connection counterparty=connection]
       ::  An io is a handle which communicates with a toplevel io driver
@@ -104,11 +107,12 @@
       send=xtype
   ==
 ::
-::  Pipe handles understand which connection it is attached to, which is part
-::  of why we want Nuevo to maintain a mapping from a handle to a bone, an
-::  opaque type which represents a handle so that a program can't inspect the
-::  handle itself. It's just an integer, but we make it entirely untyped
-::  because the user program shouldn't be introspecting on it.
+::  Pipe handles understand which connection it is attached to, but we don't
+::  want to leak this information into the user program. Thus, Nuevo maintains
+::  a mapping from a handle to a bone, an opaque type which represents a
+::  handle. It is a bone which is passed into the user program. It's just an
+::  integer, but we make it entirely untyped because the user program shouldn't
+::  be introspecting on it.
 ::
 +$  bone
   *
@@ -365,8 +369,8 @@
 ::
 ::  While this entire sketch of Nuevo will need significant revision when we
 ::  get support from the language, the user level specification here suffers
-::  from this extremely. For now, we'll specify what a program that works on
-::  top of Nuevo looks like in the old notation in the old inside out
+::  from this extremely. For now, we'll vaguely gesture what a program that
+::  works on top of Nuevo looks like in the old notation in the old inside out
 ::  state-machine.
 ::
 ::  The main problem we have at the user layer is that it is entirely
@@ -682,11 +686,11 @@
 ::  {process:/foo}
 ::  [%closed [%process /bar 7] [<pipes 5 and 6> ~]]
 ::  ==> Program reacts to the remote crash.
-
+::
 ::  We'll elaborate on the full crashing semantics in Example 3.
 ::
-::::  The remaining question in this example is how are new handles allocated
-::::  at the user program level.
+::::  TODO: The remaining question in this example is how are new handles
+::::  allocated at the user program level.
 ::
 ::  ==========
 ::
@@ -710,8 +714,8 @@
 ::  ===>  A long running transaction has completed! We're sending off a message
 ::        on a UDP port. Because we still haven't fixed the sequence number
 ::        issue in this example, it is time to commit our permanent state! The
-::        process emits a [%commit ...] effect...but this causes no nuevo level
-::        effects to be emitted!
+::        user program emits a user level [%commit ...] effect...but this causes
+::        no nuevo level effects to be emitted!
 ::  -->  ~[%send [%io udp 23] [~ [%send-data ...]]]
 ::
 ::
@@ -889,6 +893,9 @@
       state=(map path vase)
       ::  the next bone id to assign to the incoming handle
       ::
+      ::    If we wanted to get really fancy, our bones wouldn't be
+      ::    sequentially assigned, but would be random 64-bit integers.
+      ::
       next-bone=@bone
       ::  mappings between bones and handles
       ::
@@ -905,9 +912,8 @@
       ::
       outstanding-async-tasks=(set @async)
       ::
-      ::
-      ::  TODO: There's a lot more here, but I feel like I should send this
-      ::  out.
+      ::  TODO: Timer state if we add timers directly to a nuevo instance,
+      ::  which we probably want to do.
   ==
 ::
 
@@ -916,11 +922,3 @@
 ::  how Erlang handled some of these process related issues before I finalize
 ::  the design; they have 20 years of experience doing this sort of process
 ::  oriented message passing and we should learn from them.
-
-
-::  TODO: How are handle names picked for being unique in a multiprocess system?
-
-::  TODO: Thing about race condition between sending a process shutting down
-::  and receiving a shutdown message. Do we just drop messages? I suspect
-::  that's what we do. But this requires individual processes to have unique
-::  identifiers across instances.
