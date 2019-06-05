@@ -34,19 +34,29 @@
 ::  A question is either a select as many as you want %check or select one %radio
 ::
 ++  question
-  $%  [%check preamble=tape vote=(list tape)]
-      [%radio preamble=tape votes=(list tape)]
+  $%  [%check preamble=tape descriptions=(list tape)]
+      [%radio preamble=tape descriptions=(list tape)]
   ==
-::  A vote is a set of answers to questions on a ballot
+::  An individual answer to a question
+::
+++  answer
+  $%  [%check checked=(list @u)]
+      [%radio checked=@u]
+  ==
+::  A vote is a list of answers to questions on a ballot
 ::
 ++  vote
-  (list @ud)
+  (list answer)
 ::  A unique id which is used as linkage scope on signatures to votes
 ::
 ++  id
   $:  host=@p
       election-num=@u
   ==
+::  A running count of the state of the election
+::
++$  tally
+  (list (map index=@u count=@u))
 ::  +election contains all the state of an election, and is releasable during
 ::  and after the fact
 ::
@@ -66,9 +76,9 @@
       ::  cast votes, sorted on linkage tag
       ::
       cast=(map ring-tag [=ring-signature =vote])
-      ::  the current TODO TODO TODO
+      ::  the current running tally of the results
       ::
-      tally=(list (map index=@u count=@u))
+      =tally
   ==
 ::  +election-diff: a series of events which rebuilds an +election object
 ::

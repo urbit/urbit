@@ -32,6 +32,73 @@
   ++  tapp   (^tapp state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
+=>
+  |%
+  ::  validates that all answers are valid to the selected questions
+  ::
+  ++  valid-vote
+    |=  [questions=(list question) =vote]
+    ^-  ?
+    ::
+    ?:  &(=(~ questions) =(~ vote))
+      %.y
+    ::
+    ?~  questions
+      %.n
+    ?~  vote
+      %.n
+    ::
+    =/  current-valid=?
+      ?-    -.i.vote
+          %check
+        ?&  ?=(%check -.i.questions)
+        ::
+            =/  len  (lent descriptions.i.questions)
+            (levy checked.i.vote |=(a=@u (lth a len)))
+        ==
+      ::
+          %radio
+        ?&  ?=(%radio -.i.questions)
+            (lth checked.i.vote (lent descriptions.i.questions))
+        ==
+      ==
+    ::
+    ?:  =(%.n current-valid)
+      %.n
+    ::
+    $(questions t.questions, vote t.vote)
+  ::  adds the :vote to the running :tally
+  ::
+  ++  update-tally
+    |=  [=tally =vote]
+    ^+  tally
+    ::
+    ?~  tally
+      ~
+    ?~  vote
+      tally
+    ::
+    :_  $(tally t.tally, vote t.vote)
+    ::
+    =/  answers=(list @u)
+      ?-  -.i.vote
+        %check  checked.i.vote
+        %radio  [checked.i.vote ~]
+      ==
+    ::
+    |-
+    ?~  answers
+      i.tally
+    ::
+    =.  i.tally
+      %+  ~(put by i.tally)  i.answers
+      ::
+      ?~  previous-tally=(~(get by i.tally) i.answers)
+        1
+      +(u.previous-tally)
+    ::
+    $(answers t.answers)
+  --
 =,  async=async:tapp
 =,  tapp-async=tapp-async:tapp
 =,  stdio
@@ -72,6 +139,11 @@
     ?:  (~(has by cast.u.election) ring-tag.ring-signature.in-poke-data)
       ~&  [%attempting-to-vote-twice ring-tag.ring-signature.in-poke-data]
       (pure:m state)
+    ::  is this a valid ballot?
+    ::
+    ?.  (valid-vote questions.ballot.u.election vote.in-poke-data)
+      ~&  [%invalid-ballot ring-tag.ring-signature.in-poke-data]
+      (pure:m state)
     ::  we have a valid vote. make it part of our state.
     ::
     =.  open-elections.state
@@ -81,6 +153,9 @@
           cast
         %+  ~(put by cast.election)  ring-tag.ring-signature.in-poke-data
         [ring-signature.in-poke-data vote.in-poke-data]
+      ::
+          tally
+        (update-tally tally.election vote.in-poke-data)
       ==
     ::
     =/  election-path=path  /(scot %u election-num.id.in-poke-data)
@@ -108,6 +183,7 @@
       ::
       =/  election
         (~(got by open-elections.state) id.in-poke-data)
+      ~&  [%election-results tally.election]
       =.  open-elections.state
         (~(del by open-elections.state) id.in-poke-data)
       =.  closed-elections.state
@@ -131,7 +207,7 @@
           ballot.in-poke-data
           closes.in-poke-data
           cast=~
-          tally=~
+          tally=(reap (lent questions.ballot.in-poke-data) ~)
       ==
     ::  todo: figure out how to set a timer so we can close an election on a
     ::  timer.
