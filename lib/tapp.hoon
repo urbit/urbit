@@ -25,9 +25,13 @@
 ::
 +$  move  (pair bone card)
 ++  tapp-async  (async state-type)
-+$  tapp-state
-  $:  waiting=(qeu command)
++$  tapp-internal-state
+  $:  %0
+      waiting=(qeu command)
       active=(unit eval-form:eval:tapp-async)
+  ==
++$  tapp-state
+  $:  tapp-internal-state
       app-state=state-type
   ==
 +$  tapp-peek
@@ -229,20 +233,39 @@
   |=  handler=tapp-core-all
   |_  [=bowl:gall tapp-state]
   ++  this-tapp  .
+  ::
+  ::  Initialize or upgrade tapp
+  ::
+  ::    If state is upgraded incompatibly, hard-reset and cancel if active.
+  ::    Otherwise, upgrade, cancel and restart if active.
+  ::
   ++  prep
-    |=  old-state=(unit)
+    |=  $=  old-state
+        %-  unit
+        $:  =tapp-internal-state
+            app-state=*
+        ==
     ^-  (quip move _this-tapp)
     ?~  old-state
       ~&  [%tapp-init dap.bowl]
       =.  waiting  (~(put to waiting) %init ~)
       start-async
     ::
-    =/  old  ((soft tapp-state) u.old-state)
-    ?~  old
+    =*  internal  tapp-internal-state.u.old-state
+    =/  old-app   ((soft state-type) app-state.u.old-state)
+    ?~  old-app
       ~&  [%tapp-reset dap.bowl]
-      `this-tapp
+      =.  +<+.this-tapp  [internal *state-type]
+      ?^  active.internal
+        (oob-fail-async %reset ~)
+      [~ this-tapp]
+    ::
     ~&  [%tapp-loaded dap.bowl]
-    `this-tapp(+<+ u.old)
+    =.  +<+.this-tapp  [internal u.old-app]
+    ?^  active.internal
+      =.  waiting  (~(put to waiting) (need ~(top to waiting)))
+      (oob-fail-async %reset-restart ~)
+    [~ this-tapp]
   ::
   ::  Start a command
   ::
