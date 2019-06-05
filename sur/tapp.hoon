@@ -12,6 +12,7 @@
       [%diff out-peer-data]
       [%request wire request:http outbound-config:http-client]
       [%cancel-request wire ~]
+      [%rule wire %turf %put turf]
   ==
 ::
 ::  Possible async responses

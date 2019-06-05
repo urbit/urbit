@@ -9,7 +9,7 @@
         [arg=$@(~ [addr=@if ~])]
         ~
     ==
-^-  (sole-result [%dns-command command])
+^-  (sole-result [%dns-address address])
 =*  our  p.bec
 =-  ?~  arg  -
     (fun.q.q addr.arg)
@@ -22,4 +22,4 @@
   =/  msg  "unable to bind reserved ipv4 address {(scow %if addr)}"
   (print leaf+msg no-product)
 %-  produce
-[%dns-command %ip %if addr]
+[%dns-address %if addr]

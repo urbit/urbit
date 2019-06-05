@@ -320,4 +320,14 @@
     (pure:m ~)
   ;<  ~  bind:m  (send-effect-on-bone i.bones %diff out-peer-data)
   loop(bones t.bones)
+::
+::    ----
+::
+::  Handle domains
+::
+++  install-domain
+  |=  =turf
+  =/  m  (async ,~)
+  ^-  form:m
+  (send-effect %rule / %turf %put turf)
 --
