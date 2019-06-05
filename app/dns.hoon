@@ -32,26 +32,33 @@
     ::  +backoff: exponential backoff timer
     ::
     ++  backoff
-      |=  try=@ud
+      |=  [try=@ud limit=@dr]
       =/  m  (async:stdio ,~)
       ^-  form:m
       ;<  eny=@uvJ  bind:m  get-entropy:stdio
       ;<  now=@da   bind:m  get-time:stdio
       %-  wait:stdio
-      %+  add
-        now
+      %+  add  now
+      %+  min  limit
       ?:  =(0 try)  ~s0
       %+  add
         (mul ~s1 (bex (dec try)))
       (mul ~s0..0001 (~(rad og eny) 1.000))
-    ::      
+    ::
+    ++  request
+      |=  =hiss:eyre
+      =/  m  (async:stdio httr:eyre)
+      ^-  form:m
+      ;<  ~  bind:m  (send-hiss:stdio hiss)
+      take-sigh:stdio
+    ::
     ::  +self-check-http: confirm our availability at .host on port 80
     ::
     ++  self-check-http
       |=  [=host:eyre max=@ud]
       =/  m  (async:stdio ?)
       ^-  form:m
-      =/  req=hiss:eyre
+      =/  =hiss:eyre
         =/  url=purl:eyre
           [[sec=| por=~ host] [ext=`~.udon path=/static] query=~]
         [url %get ~ ~]
@@ -60,9 +67,8 @@
       =*  loop  $
       ?:  =(try max)
         (pure:m |)
-      ;<  ~           bind:m  (backoff try)
-      ;<  ~           bind:m  (send-hiss:stdio req)
-      ;<  =httr:eyre  bind:m  take-sigh:stdio
+      ;<  ~           bind:m  (backoff try ~h1)
+      ;<  =httr:eyre  bind:m  (request hiss)
       ::  XX needs a better predicate. LTE will make this easier
       ::
       ?:  =(200 p.httr)
