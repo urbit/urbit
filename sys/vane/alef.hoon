@@ -801,57 +801,8 @@
     ::
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
-    ::  dispatch to .rcv or .snd based on .meat tag of fragment or ack
     ::
-    ?:  ?=(%& -.meat.shut-packet)
-      ::  inflate |message-still on this .bone to handle fragment
-      ::
-      %+  on-hear-fragment
-        %-  fall  :_  *message-still-state
-        (~(get by rcv.peer-state) bone.shut-packet)
-      [channel lane shut-packet]
-    ::  inflate |message-pump on this .bone to handle acknowledgment
-    ::
-    %+  on-hear-ack
-      %-  fall  :_  *message-pump-state
-      (~(get by snd.peer-state) bone.shut-packet)
-    [channel lane shut-packet]
-  ::  +on-hear-ack: handle receipt of ack on packet or message, from unix
-  ::
-  ++  on-hear-ack
-    |=  [=message-pump-state =channel =lane =shut-packet]
-    ^+  event-core
-    ::
-    =/  message-pump  (make-message-pump message-pump-state channel)
-    ::  distinguish ack on single packet from ack on whole message
-    ::
-    =/  task=message-pump-task
-      ?>  ?=(%| -.meat.shut-packet)
-      ?:  ?=(%& -.p.meat.shut-packet)
-        [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
-      [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
-    ::  pass ack to the |message-pump
-    ::
-    =^  pump-gifts  message-pump-state  (work:message-pump task)
-    ::  apply .message-pump-state mutations to permanent state
-    ::
-    =.  peers.ames-state
-      %+  ~(jab by peers.ames-state)  her.channel
-      |=  =ship-state
-      ?>  ?=(%known -.ship-state)
-      =/  =peer-state  +.ship-state
-      =.  snd.peer-state
-        (~(put by snd.peer-state) bone.shut-packet message-pump-state)
-      [%known peer-state]
-    ::
-    (process-message-pump-gifts pump-gifts)
-  ::  +process-message-pump-gifts: handle |message-pump effects
-  ::
-  ++  process-message-pump-gifts
-    |=  pump-gifts=(list message-pump-gift)
-    ^+  event-core
-    ::
-    !!
+    abet:(on-hear-packet:(make-peer-core peer-state channel) lane shut-packet)
   ::  +on-hear-fragment: handle receipt of message fragment, from unix
   ::
   ++  on-hear-fragment
@@ -908,6 +859,116 @@
       (emit duct %pass /alien %j %pubs sndr.packet)
     ::
     event-core
+  ::
+  ++  make-peer-core
+    |=  [=peer-state =channel]
+    |%
+    ++  peer-core  .
+    ++  emit  |=(move peer-core(event-core (^emit +<)))
+    ++  abet
+      ^+  event-core
+      ::
+      =.  peers.ames-state
+        (~(put by peers.ames-state) her.channel %known peer-state)
+      ::
+      event-core
+    ::
+    ++  on-hear-packet
+      |=  [=lane =shut-packet]
+      ^+  peer-core
+      ::
+      ?:  ?=(%& -.meat.shut-packet)
+        %+  on-hear-fragment
+          %-  fall  :_  *message-still-state
+          (~(get by rcv.peer-state) bone.shut-packet)
+        [lane shut-packet]
+      ::
+      %+  on-hear-ack
+        %-  fall  :_  *message-pump-state
+        (~(get by snd.peer-state) bone.shut-packet)
+      [lane shut-packet]
+    ::  +on-hear-ack: handle receipt of ack on packet or message, from unix
+    ::
+    ++  on-hear-ack
+      |=  [=message-pump-state =lane =shut-packet]
+      ^+  peer-core
+      ::
+      =/  message-pump  (make-message-pump message-pump-state channel)
+      ::  distinguish ack on single packet from ack on whole message
+      ::
+      ::    TODO: move conditional to message pump?
+      ::
+      =/  task=message-pump-task
+        ?>  ?=(%| -.meat.shut-packet)
+        ?:  ?=(%& -.p.meat.shut-packet)
+          [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
+        [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
+      ::  pass ack to the |message-pump
+      ::
+      =^  pump-gifts  message-pump-state  (work:message-pump task)
+      ::  apply .message-pump-state mutations to permanent state
+      ::
+      =.  peers.ames-state
+        %+  ~(jab by peers.ames-state)  her.channel
+        |=  =ship-state
+        ?>  ?=(%known -.ship-state)
+        =/  peer-state  +.ship-state
+        =.  snd.peer-state
+          (~(put by snd.peer-state) bone.shut-packet message-pump-state)
+        [%known peer-state]
+      ::
+      =/  client-duct=^duct
+        (~(got by by-bone.ossuary.peer-state) bone.shut-packet)
+      ::  process effects from |message-pump
+      ::
+      |-  ^+  peer-core
+      ?~  pump-gifts  peer-core
+      ::
+      =*  gift  i.pump-gifts
+      =.  peer-core
+        ?-    -.gift
+            %ack-message
+          ?:  ok.gift
+            (emit client-duct %give %rest ~)
+          ::  nack; look up naxplanation or enqueue
+          ::
+          =/  nax-key       [bone message-num]:shut-packet
+          =/  naxplanation  (~(get by nax.peer-state) nax-key)
+          ?~  naxplanation
+            ::  no naxplanation yet; enqueue
+            ::
+            =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
+            peer-core
+          ::  |message-pump should never emit duplicate message acks
+          ::
+          ?>  ?=(^ u.naxplanation)
+          ::  we have both nack packet and naxplanation; emit and clear
+          ::
+          =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
+          (emit client-duct %give %rest u.naxplanation)
+        ::
+            %send  !!
+            %wait
+          %-  emit
+          :^  client-duct  %pass
+            (pump-timer-wire her.channel bone.shut-packet)
+          [%b %wait date.gift]
+        ::
+            %rest
+          %-  emit
+          :^  client-duct  %pass
+            (pump-timer-wire her.channel bone.shut-packet)
+          [%b %rest date.gift]
+        ==
+      $(pump-gifts t.pump-gifts)
+    ::  +on-hear-fragment: handle receipt of message fragment, from unix
+    ::
+    ++  on-hear-fragment
+      |=  [=message-still-state =lane =shut-packet]
+      ^+  peer-core
+      ::
+      !!
+    --
   --
 ::  +make-message-pump: constructor for |message-pump
 ::
@@ -1432,6 +1493,12 @@
     ::
     !!
   --
+::
+::
+++  pump-timer-wire
+  |=  [her=ship =bone]
+  ^-  wire
+  /pump/(scot %p her)/(scot %ud bone)
 ::  +encrypt: encrypt $shut-packet into atomic packet content
 ::
 ++  encrypt
