@@ -49,23 +49,11 @@
       dep=(jar ship (pair ship target))
       pen=(map ship target)
   ==
-::  +relay: a good parent keeps track
-::
-+$  relay
-  $:  wen=@da
-      wer=(unit @if)
-      ::  XX track bound state per domain
-      ::
-      dom=(unit turf)
-      tar=target
-  ==
 ::  +command: top-level app actions
 ::
 +$  command
   $%  [%authority aut=authority]
       [%bind for=ship him=ship tar=target]
       [%bond for=ship him=ship dom=turf]
-      [%ip %if addr=@if]
-      [%meet him=ship]
   ==
 --

@@ -20,13 +20,7 @@
 ::  +state: complete app state
 ::
 +$  state
-  $:  :: dom: the set of our bindings
-      ::
-      dom=(set turf)
-      :: per: per-dependent ips &c
-      ::
-      per=(map ship relay)
-      :: nem: authoritative state
+  $:  :: nem: authoritative state
       ::
       nem=(unit nameserver)
   ==
@@ -580,13 +574,6 @@
     ?:  ?=(%cancel -.response)
       (~(http-cancel bind u.nem) t.wire)
     (~(http-response bind u.nem) t.wire (to-httr:http-client +.response))
-  ::
-      [%relay %him @ *]
-    =/  him=ship  (slav %p i.t.t.wire)
-    =<  abet
-    ?:  ?=(%cancel -.response)
-      (http-cancel:(tell him) t.t.t.wire)
-    (http-response:(tell him) t.t.t.wire (to-httr:http-client +.response))
   ==
 ::
 ++  poke-handle-http-request
@@ -619,17 +606,14 @@
       ~&  [%not-an-authority %wake wire]
       [~ this]
     abet:(~(retry bind u.nem) t.wire)
-  ::
-      [%relay %him @ *]
-    =/  him=ship  (slav %p i.t.t.wire)
-    abet:(retry:(tell him) t.t.t.wire)
   ==
 ::  +poke-dns-command: act on command
 ::
 ++  poke-dns-command
   |=  com=command
   ^-  (quip move _this)
-  ?-  -.com
+  ?+  -.com
+    ~|  [%dns %unsupported -.com]  !!
   ::  configure self as an authority
   ::
   ::    [%authority authority]
@@ -650,52 +634,9 @@
             ?=(%indirect -.tar.com)
         ==
       ~|(%bind-indirect-star !!)
-    ::  always forward, there may be multiple authorities
-    ::
-    =^  zom=(list move)  ..this
-      abet:(forward:(tell him.com) [for tar]:com)
-    =^  zam=(list move)  ..this
-      ?~  nem  [~ this]
-      abet:(~(create bind u.nem) [for him tar]:com)
-    [(weld zom zam) this]
-  ::  process established dns binding
-  ::
-  ::    [%bond for=ship him=ship turf]
-  ::
-      %bond
-    ?:  ?&  =(our.bow for.com)
-            !=(our.bow src.bow)
-        ==
-      abet:(learn:(tell him.com) dom.com)
-    ::
-    ?:  =(our.bow him.com)
-      =/  msg
-        (cat 3 'domain name established at ' (en-turf:html dom.com))
-      :_  this(dom (~(put in dom) dom.com))
-      :~  [ost.bow (notify our.bow msg ~)]
-          [ost.bow %rule /bound %turf %put dom.com]
-      ==
-    ::
-    ~&  [%strange-bond com]
-    [~ this]
-  ::  manually set our ip, request direct binding
-  ::
-  ::    [%ip %if addr=@if]
-  ::
-      %ip
-    ?.  =(our.bow src.bow)
-      ~&  %dns-ip-no-foreign
+    ?~  nem
       [~ this]
-    abet:(hear:(tell our.bow) `addr.com)
-  ::  meet sponsee, request indirect binding
-  ::
-  ::    [%meet him=ship]
-  ::
-      %meet
-    ?.  =(our.bow (sein:title our.bow now.bow him.com))
-      ~&  [%dns-meet-not-sponsored him.com]
-      [~ this]
-    abet:(hear:(tell him.com) ~)
+    abet:(~(create bind u.nem) [for him tar]:com)
   ==
 ::  +coup: general poke acknowledgement or error
 ::
@@ -706,8 +647,8 @@
   [((slog u.saw) ~) this]
 ::  +prep: adapt state
 ::
-::  ++  prep  _[~ this]
-++  prep
+++  prep  _[~ this]
+++  prep1
   |=  old=(unit state)
   ^-  (quip move _this)
   ?^  old
@@ -769,7 +710,7 @@
     |=  [=wire =hiss:eyre]
     ^-  card
     [%request wire (hiss-to-request:html hiss) *outbound-config:http-client]
-  ::  +http-wire: build a wire for a |tell request
+  ::  +http-wire: build a wire for a |bind request
   ::
   ++  http-wire
     |=  [try=@ud =wire]
@@ -1102,245 +1043,5 @@
     =/  com=command
       [%bond for him dom]
     (emit [%poke wir [for dap.bow] %dns-command com])
-  --
-::  |tell: acting as planet parent or relay
-::
-++  tell
-  |=  him=ship
-  =|  moz=(list move)
-  =/  rel=(unit relay)  (~(get by per) him)
-  |%
-  ++  this  .
-  ::  +abet: finalize state changes, produce moves
-  ::
-  ++  abet
-    ^-  (quip move _^this)
-    :-  (flop moz)
-    =?  per  ?=(^ rel)
-      (~(put by per) him u.rel)
-    ^this
-  ::  +emit: emit a move
-  ::
-  ++  emit
-    |=  car=card
-    ^+  this
-    this(moz [[ost.bow car] moz])
-  :: +request: unauthenticated http request
-  ::
-  ++  request
-    |=  [=wire =hiss:eyre]
-    ^-  card
-    [%request wire (hiss-to-request:html hiss) *outbound-config:http-client]
-  ::  +http-wire: build a wire for a |tell request
-  ::
-  ++  http-wire
-    |=  [try=@ud act=@tas]
-    ^-  wire
-    /relay/him/(scot %p him)/try/(scot %ud try)/[act]
-  ::  +http-cancel: retry canceled http request
-  ::
-  ++  http-cancel
-    |=  =wire
-    ^+  this
-    ?>  ?=([%try @ @ ~] wire)
-    =/  try  (slav %ud i.t.wire)
-    =*  act  i.t.t.wire
-    ?+  act
-      ~&([%tell %unknown-crash act] this)
-    ::
-        %check-before
-      =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (min ~h1 (backoff try))))
-    ::
-        %check-after
-      =.  try  +(try)
-      (emit (wait (http-wire try %check-after) (min ~h1 (backoff try))))
-    ==
-  ::  +http-response: handle http response
-  ::
-  ++  http-response
-    |=  [=wire rep=httr:eyre]
-    ^+  this
-    ?>  ?=([%try @ @ ~] wire)
-    =/  try  (slav %ud i.t.wire)
-    =*  act  i.t.t.wire
-    ?+  act
-      ~&([%tell %unknown-response act rep] this)
-    ::  validating a binding target
-    ::
-        %check-before
-      ?:  |(=(200 p.rep) =(307 p.rep))
-        bind
-      ?:  (gth try 10)
-        (fail %check-before [(sell !>(rep)) ~])
-      =.  try  +(try)
-      (emit (wait (http-wire try %check-before) (min ~h1 (backoff try))))
-    ::  validating an established binding
-    ::
-        %check-after
-      ?:  |(=(200 p.rep) =(307 p.rep))
-        bake
-      ::  no max retries, the binding has been created
-      ::  XX notify after some number of failures
-      ::
-      =.  try  +(try)
-      (emit (wait (http-wire try %check-after) (min ~h1 (backoff try))))
-    ==
-  ::  +retry: re-attempt http request after timer
-  ::
-  ++  retry
-    |=  =wire
-    ^+  this
-    ?>  ?=([%try @ @ ~] wire)
-    =/  try  (slav %ud i.t.wire)
-    =*  act  i.t.t.wire
-    ?+    act
-        ~&([%tell %unknown-wake act] this)
-      %check-before  (check-before try)
-      %check-after   (check-after try)
-    ==
-  ::  +hear: hear ip address, maybe emit binding request
-  ::
-  ++  hear
-    |=  addr=(unit @if)
-    ^+  this
-    =/  tar=target
-      ?:  |(?=(~ addr) ?=(%duke (clan:title him)))
-        [%indirect our.bow]
-      [%direct %if u.addr]
-    ::  re-notify if binding already exists
-    ::
-    ::    XX deduplicate with +bake:tell and +bond:bind
-    ::
-    ?:  ?&  ?=(^ rel)
-            ?=(^ dom.u.rel)
-            =(tar tar.u.rel)
-        ==
-      =/  wir=wire
-        /bound/(scot %p him)/for/(scot %p our.bow)
-      =/  com=command
-        [%bond our.bow him u.dom.u.rel]
-      (emit [%poke wir [him dap.bow] %dns-command com])
-    ::  check binding target validity, store and forward
-    ::
-    =.  rel  `[wen=now.bow addr dom=~ tar]
-    ?:  ?=(%indirect -.tar)
-      bind
-    (check-before 1)
-  ::  +check-before: confirm %direct target is accessible
-  ::
-  ++  check-before
-    |=  try=@ud
-    ^+  this
-    ?>  ?=(^ rel)
-    ?>  ?=(%direct -.tar.u.rel)
-    ?:  (reserved:eyre p.tar.u.rel)
-      (fail %reserved-ip ~)
-    =/  =wire  (http-wire try %check-before)
-    =/  url=purl:eyre
-      :-  [sec=| por=~ host=[%| `@if`p.tar.u.rel]]
-      [[ext=`~.udon path=/static] query=~]
-    (emit (request wire url %get ~ ~))
-  ::  +fail: %direct target is invalid or inaccessible
-  ::
-  ++  fail
-    |=  [err=@tas =tang]
-    ^+  this
-    ?>  ?=(^ rel)
-    ::  XX add failure-specific messages
-    ::
-    =/  msg
-      ?+  err
-          'dns binding failed'
-      ::
-          %check-before
-        ?>  ?=(%direct -.tar.u.rel)
-        =/  addr  (scot %if p.tar.u.rel)
-        %+  rap  3
-        :~  'dns binding failed: '
-            'unable to reach you at '  addr  ' on port 80, '
-            'please confirm or correct your ipv4 address '
-            'and re-enter it with :dns|ip'
-        ==
-      ::
-          %reserved-ip
-        ?>  ?=(%direct -.tar.u.rel)
-        =/  addr  (scot %if p.tar.u.rel)
-        (cat 3 'unable to create dns binding for reserved ip address' addr)
-      ==
-    ::  XX save failed bindings somewhere?
-    ::
-    %-  =<  emit(rel ~)
-        (emit (notify him msg ~))
-    (notify our.bow (rap 3 (scot %p him) ' fail: ' err ~) tang)
-  ::  +bind: request binding for target
-  ::
-  ::    Since we may be an authority, we poke ourselves.
-  ::
-  ++  bind
-    ^+  this
-    ?>  ?=(^ rel)
-    ::  XX save binding request state?
-    ::
-    =/  wir=wire
-      /bind/(scot %p him)/for/(scot %p our.bow)
-    =/  com=command
-      [%bind our.bow him tar.u.rel]
-    (emit [%poke wir [our.bow dap.bow] %dns-command com])
-  ::  +learn: of new binding
-  ::
-  ++  learn
-    |=  dom=turf
-    ^+  this
-    ?>  ?=(^ rel)
-    ::  XX track bound-state per-domain
-    ::
-    (check-after(dom.u.rel `dom) 1)
-  ::  +check-after: confirm binding propagation
-  ::
-  ++  check-after
-    |=  try=@ud
-    ^+  this
-    ?>  ?&  ?=(^ rel)
-            ?=(^ dom.u.rel)
-        ==
-    =*  dom  u.dom.u.rel
-    =/  =wire  (http-wire try %check-after)
-    =/  url=purl:eyre
-      :-  [sec=| por=~ host=[%& dom]]
-      [[ext=`~.udon path=/static] query=~]
-    (emit (request wire url %get ~ ~))
-  ::  +bake: successfully bound
-  ::
-  ++  bake
-    ^+  this
-    ?>  ?=(^ rel)
-    ?>  ?=(^ dom.u.rel)
-    =/  wir=wire
-      /forward/bound/(scot %p him)/for/(scot %p our.bow)
-    =*  dom  u.dom.u.rel
-    =/  com=command
-      [%bond our.bow him dom]
-    =/  msg
-      (cat 3 'relaying new dns binding: ' (en-turf:html dom))
-    ::  XX save notification state?
-    ::
-    %-  emit:(emit (notify our.bow msg ~))
-    [%poke wir [him dap.bow] %dns-command com]
-  ::  +forward: sending binding request up the network
-  ::
-  ++  forward
-    |=  [for=ship tar=target]
-    ^+  this
-    ?:  ?=(%~zod our.bow)
-      this
-    =/  wir=wire
-      /forward/bind/(scot %p him)/for/(scot %p for)
-    =/  com=command
-      [%bind for him tar]
-    =/  to=ship
-      ?:  ?=(%czar (clan:title our.bow))  ~zod
-      (sein:title [our now our]:bow)
-    (emit [%poke wir [to dap.bow] %dns-command com])
   --
 --
