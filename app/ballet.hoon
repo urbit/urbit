@@ -82,11 +82,38 @@
         %+  ~(put by cast.election)  ring-tag.ring-signature.in-poke-data
         [ring-signature.in-poke-data vote.in-poke-data]
       ==
+    ::
+    =/  election-path=path  /(scot %u election-num.id.in-poke-data)
     ::  broadcast this valid vote to the world
     ::
     ;<  ~  bind:m
       =,  in-poke-data
-      (give-result `path`/(scot %u election-num.id) `election-diff`[%vote ring-signature vote])
+      (give-result election-path `election-diff`[%vote ring-signature vote])
+    ::
+    =/  =^election  (~(got by open-elections.state) id.in-poke-data)
+    ::  if everyone has voted, this election is over.
+    ::
+    ?:  =(~(wyt in electorate.election) ~(wyt by cast.election))
+      ::  todo: trying to separate this into its own helper function nest-fails
+      ::  at the |_ state?
+      ::
+      ::  notify everyone that the election is over.
+      ::
+      ;<  ~  bind:m
+        (give-result election-path [%election-completed ~])
+      ~&  [%election-closed id.in-poke-data]
+      ::  todo: can't quit a wire in the current stdio?
+      ::
+      ::  move the election state from open to closed
+      ::
+      =/  election
+        (~(got by open-elections.state) id.in-poke-data)
+      =.  open-elections.state
+        (~(del by open-elections.state) id.in-poke-data)
+      =.  closed-elections.state
+        (~(put by closed-elections.state) id.in-poke-data election)
+      ::
+      (pure:m state)
     ::
     (pure:m state)
   ::
@@ -106,6 +133,8 @@
           cast=~
           tally=~
       ==
+    ::  todo: figure out how to set a timer so we can close an election on a
+    ::  timer.
     ::
     (pure:m state)
   ==
