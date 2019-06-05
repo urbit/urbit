@@ -83,7 +83,7 @@
 ::  +election-diff: a series of events which rebuilds an +election object
 ::
 ++  election-diff
-  $%  [%snapshot =id =election]
+  $%  [%snapshot =election]
       [%vote =ring-signature =vote]
       [%election-completed ~]
   ==

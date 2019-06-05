@@ -26,7 +26,7 @@
   +$  out-peer-data
     ::  For observers, our wire interface is:
     ::
-    ::    /[election-num]
+    ::    /[election-num]  <- subscribes to the results of a specific election
     ::
     election-diff
   ++  tapp   (^tapp state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
@@ -220,5 +220,39 @@
   =/  m  tapp-async
   ^-  form:m
   ~&  [%tapp-fetch-take-peer path]
+  ::
+  ?.  ?=([@ ~] path)
+    ~&  [%bad-path path]
+    (pure:m state)
+  ::
+  ?~  election-id=(slaw %ud i.path)
+    ~&  [%unparsable-election-id i.path]
+    (pure:m state)
+  ::
+  ?^  election=(~(get by open-elections.state) u.election-id)
+    ::  send the current state of the election as the opening statement
+    ::
+    ;<  ~  bind:m
+      (give-result path [%snapshot u.election])
+    ::
+    (pure:m state)
+  ::
+  ?^  election=(~(get by closed-elections.state) u.election-id)
+    ::  send the completed election
+    ::
+    ;<  ~  bind:m
+      (give-result path [%snapshot u.election])
+    ::  send the election completed message
+    ::
+    ;<  ~  bind:m
+      (give-result path [%election-completed ~])
+    ::
+    ::  todo: also close the path.
+    ::
+    (pure:m state)
+  ::
+  ~&  [%invalid-electin-id u.election-id]
+  ::  todo: close the invalid subscription
+  ::
   (pure:m state)
 --
