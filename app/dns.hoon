@@ -1,4 +1,4 @@
-/-  dns
+/-  dns, hall
 /+  tapp, stdio
 ::
 ::  tapp types and boilerplate
@@ -17,6 +17,7 @@
       ==
     +$  out-poke-data
       $%  [%dns-address =address:dns]
+          [%hall-action %phrase audience:hall (list speech:hall)]
       ==
     +$  in-peer-data
       $%  [%dns-binding =binding:dns]
@@ -74,6 +75,19 @@
       ?:  =(200 p.httr)
         (pure:m &)
       loop(try +(try))
+    ::
+    ++  hall-app-message
+      |=  [app=term =cord =tang]
+      =/  m  (async:stdio ,~)
+      ^-  form:m
+      =/  msg=speech:hall
+        :+  %app  app
+        =/  line  [%lin & cord]
+        ?~(tang line [%fat [%tank tang] line])
+      ;<  our=@p  bind:m  get-identity:stdio
+      =/  act
+        [%phrase (sy [our %inbox] ~) [msg ~]]
+      (poke-app:stdio [our %hall] %hall-action act)
     --
 ::
 ::  application actions
@@ -106,7 +120,15 @@
         (pure:m ~)
       =/  =turf
         (weld i.ames-domains /(crip +:(scow %p our)))
-      ;<  ?  bind:m  (turf-confirm-install turf)
+      ;<  good=?   bind:m  (turf-confirm-install turf)
+      =/  msg=(pair cord tang)
+        ?:  good
+          [(cat 3 'confirmed access via ' (en-turf:html turf)) ~]
+        :-  (cat 3 'unable to access via ' (en-turf:html turf))
+        :~  leaf+"XX check via nslookup"
+            leaf+"XX confirm port 80"
+        ==
+      ;<  ~        bind:m  (hall-app-message %dns msg)
       loop(ames-domains t.ames-domains)
     ::
     ::  +request-by-ip
@@ -183,9 +205,17 @@
       ~|  %unexpected-binding-wat-do  !!
     ?.  =(u.requested.state address.binding)
       ~|  %mismatch-binding-wat-do  !!
-    ;<  installed=?  bind:m  (turf-confirm-install turf.binding)
-    =?  completed.state  installed  (some binding)
-    ::  XX save failure?
+    ;<  good=?  bind:m  (turf-confirm-install turf.binding)
+    =/  msg=(pair cord tang)
+      ?:  good
+        [(cat 3 'confirmed access via ' (en-turf:html turf.binding)) ~]
+      :-  (cat 3 'unable to access via ' (en-turf:html turf.binding))
+      :~  leaf+"XX check via nslookup"
+          leaf+"XX confirm port 80"
+      ==
+    ;<  ~       bind:m  (hall-app-message %dns msg)
+    =?  completed.state  good  (some binding)
+    ::  XX save failure?s
     ::  XX unsubscribe?
     (pure:m state)
   ==
@@ -199,7 +229,12 @@
   ::  print %poke nacks
   ::
       %coup
+    ?.  =(collector-app dock.sign)
+      (pure:m state)
     ?~  error.sign
+      =/  msg=cord
+        (cat 3 'request for DNS sent to ' (scot %p p:collector-app))
+      ;<  ~  bind:m  (hall-app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-ip-request-failed
@@ -218,6 +253,9 @@
     ?.  =(path.sign /(scot %p our.bowl))
       ~|  [%unexpected-reap-path-wat-do path.sign]  !!
     ?~  error.sign
+      =/  msg=cord
+        (cat 3 'awaiting response from ' (scot %p p:collector-app))
+      ;<  ~  bind:m  (hall-app-message %dns msg ~)
       (pure:m state)
     ::  XX details
     ~&  %dns-domain-subscription-failed
