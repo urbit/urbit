@@ -409,7 +409,13 @@
           wire.u.in.async-input
       !!
     =^  r=[moves=(list move) =eval-result:eval:m]  u.active
-      (take:eval:m u.active ost.bowl async-input)
+      =/  out
+        %-  mule  |.
+        (take:eval:m u.active ost.bowl async-input)
+      ?-  -.out
+        %&  p.out
+        %|  [[~ [%fail contracts.u.active %crash p.out]] u.active]
+      ==
     =>  .(active `(unit eval-form:eval:tapp-async)`active)  :: TMI
     =^  moves=(list move)  this-tapp
       ?-  -.eval-result.r
@@ -469,12 +475,19 @@
       :-  ~
       %-  from-form:eval:tapp-async
       ^-  form:tapp-async
-      ?-  -.u.next
-        %init  ~(handle-init handler bowl app-state)
-        %poke  (~(handle-poke handler bowl app-state) +.u.next)
-        %peer  (~(handle-peer handler bowl app-state) +.u.next)
-        %diff  (~(handle-diff handler bowl app-state) +.u.next)
-        %take  (~(handle-take handler bowl app-state) +.u.next)
+      =/  out
+        %-  mule  |.
+        ?-  -.u.next
+          %init  ~(handle-init handler bowl app-state)
+          %poke  (~(handle-poke handler bowl app-state) +.u.next)
+          %peer  (~(handle-peer handler bowl app-state) +.u.next)
+          %diff  (~(handle-diff handler bowl app-state) +.u.next)
+          %take  (~(handle-take handler bowl app-state) +.u.next)
+        ==
+      ?-  -.out
+        %&  p.out
+        %|  |=  async-input:async-lib
+            [~ ~ ~ %fail %crash p.out]
       ==
     (take-async bowl ~)
   ::
