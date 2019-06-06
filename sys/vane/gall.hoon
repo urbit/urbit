@@ -733,8 +733,13 @@
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      =/  subscriber-ship  p:(~(got by sup.ged) ost)
-      ?:  &(=(20 suy) !=(our subscriber-ship))
+      =/  subscriber=(unit (pair ship path))
+        (~(get by sup.ged) ost)
+      ?:  ?&  =(20 suy)
+              ?|  ?=(~ subscriber)
+                  !=(our p.u.subscriber)
+              ==
+          ==
         ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
         [%| ..ap-fill]
       ::  ~&  :*  %gall-pushing-20
