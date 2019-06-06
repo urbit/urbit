@@ -48,12 +48,15 @@
     ::
     ++  request
       |=  =hiss:eyre
-      =/  m  (async:stdio httr:eyre)
+      =/  m  (async:stdio (unit httr:eyre))
       ^-  form:m
       ;<  ~  bind:m  (send-hiss:stdio hiss)
-      take-sigh:stdio
+      take-maybe-sigh:stdio
     ::
     ::  +self-check-http: confirm our availability at .host on port 80
+    ::
+    ::    XX needs better success/failure predicates
+    ::    XX bind route to self and handle request inside tx?
     ::
     ++  self-check-http
       |=  [=host:eyre max=@ud]
@@ -70,12 +73,16 @@
       =*  loop  $
       ?:  =(try max)
         (pure:m |)
-      ;<  ~           bind:m  (backoff try ~h1)
-      ;<  =httr:eyre  bind:m  (request hiss)
-      ::  XX needs a better predicate. LTE will make this easier
-      ::
-      ?:  =(200 p.httr)
+      ;<  ~                     bind:m  (backoff try ~h1)
+      ;<  rep=(unit httr:eyre)  bind:m  (request hiss)
+      ?:  ?&  ?=(^ rep)
+              |(=(200 p.u.rep) =(307 p.u.rep))
+          ==
         (pure:m &)
+      ?.  ?|  ?=(~ rep)
+              =(504 p.u.rep)
+          ==
+        (pure:m |)
       loop(try +(try))
     ::
     ++  hall-app-message
