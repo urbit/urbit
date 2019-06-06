@@ -18,6 +18,7 @@
 ::
 +$  sign
   $%  [%sigh =httr:eyre]
+      [%sigh-tang =tang]
       [%wake error=(unit tang)]
       [%coup =dock error=(unit tang)]
       [%quit =dock =path]

@@ -71,27 +71,44 @@
   ;<  ~  bind:m  (send-raw-card %hiss / ~ %httr %hiss hiss)
   (set-raw-contract & %hiss ~)
 ::
-::  Wait until we get an HTTP response
+::  Wait until we get an HTTP response or error
 ::
 ++  take-sigh-raw
-  =/  m  (async ,httr:eyre)
+  =/  m  (async (each httr:eyre tang))
   ^-  form:m
   |=  =async-input
   :^  ~  ~  ~
   ?~  in.async-input
     [%wait ~]
-  ?.  ?=(%sigh -.sign.u.in.async-input)
-    [%fail %expected-sigh >got=-.sign.u.in.async-input< ~]
-  [%done httr.sign.u.in.async-input]
+  =*  sign  sign.u.in.async-input
+  ?:  ?=(%sigh -.sign)
+    [%done %& httr.sign]
+  ?:  ?=(%sigh-tang -.sign)
+    [%done %| tang.sign]
+  [%fail %expected-sigh >got=-.sign< ~]
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
 ++  take-sigh
   =/  m  (async ,httr:eyre)
   ^-  form:m
-  ;<  =httr:eyre  bind:m  take-sigh-raw
-  ;<  ~           bind:m  (set-raw-contract | %hiss ~)
-  (pure:m httr)
+  ;<  rep=(each httr:eyre tang)  bind:m  take-sigh-raw
+  ;<  ~                          bind:m  (set-raw-contract | %hiss ~)
+  ?-  -.rep
+    %&  (pure:m p.rep)
+  ::
+    %|  |=  =async-input
+        [~ ~ ~ %fail %sigh-tang p.rep]
+  ==
+::
+::  Wait until we get an HTTP response or error and unset contract
+::
+++  take-sigh-each
+  =/  m  (async (each httr:eyre tang))
+  ^-  form:m
+  ;<  rep=(each httr:eyre tang)  bind:m  take-sigh-raw
+  ;<  ~                          bind:m  (set-raw-contract | %hiss ~)
+  (pure:m rep)
 ::
 ::  Extract body from raw httr
 ::

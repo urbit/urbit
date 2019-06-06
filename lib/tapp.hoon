@@ -389,7 +389,7 @@
   ++  sigh-tang
     |=  [=wire =tang]
     ^-  (quip move _this-tapp)
-    (oob-fail-async %failed-sigh tang)
+    (take-async bowl `[wire %sigh-tang tang])
   ::
   ::  Pass timer to async, or fail
   ::
