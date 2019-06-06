@@ -147,10 +147,8 @@
   ?~  link-scope
     ~
   ::
-  ~&  %generating-linkage
   =+  [data=@ h=point]=(generate-public-linkage u.link-scope)
   =/  y=point  (point-mul my-private-key h)
-  ~&  %finished-generating-linkage
   [~ data h y]
 ::  +generate-challenge: generate challenge from a given message
 ::
@@ -194,7 +192,6 @@
     %+  point-add
       (point-mul prev-s ecc-g)
     (point-mul prev-ch (snag prev-k public-keys))
-  ~&  [%added prev-k=prev-k a=[prev-s=prev-s 'ecc-g'] b=[prev-ch=prev-ch pubkey=(snag prev-k public-keys)] gs=gs]
   ::
   =/  hs=(unit point)
     ?~  link-state
@@ -207,7 +204,6 @@
   ::
   =/  ch=@
     (generate-challenge message gs link-state hs)
-  ~&  [%challenge-for prev-k=prev-k ch]
   ::
   ?~  ss
     [ch challenges]
@@ -278,7 +274,6 @@
       =/  k=@u
         ~|  [%couldnt-find my-public-key in=anonymity-list]
         (need (find [my-public-key ~] anonymity-list))
-      ~&  [%our-position-k k]
       ::  Generate linkage information if given
       ::
       =/  linkage=(unit [data=@ h=point y=point])
@@ -298,7 +293,6 @@
         =^  v=@  rand  (rads:rand ecc-n)
         $(count (add 1 count), random-s-values [v random-s-values])
       ::
-      ~&  [%random-sk-values random-s-values]
       ?>  ?=(^ random-s-values)
       =/  sk1=@  i.random-s-values
       =/  sk2-to-prev-sk=(list @)  t.random-s-values
@@ -306,7 +300,6 @@
       ::
       =^  u=@  rand
         (rads:rand ecc-n)
-      ~&  [%random-u u]
       ::  Compute challenge at k + 1
       ::
       =/  chk1=@
@@ -316,7 +309,6 @@
           linkage
           (point-mul-h u linkage)
         ==
-      ~&  [%chk1 chk1]
       ::  Generate challenges for [ck, ..., c1, c0, ... ck + 2, ck + 1]
       ::
       =/  reversed-chk-to-chk1=(list @)
@@ -332,8 +324,6 @@
           [chk1 ~]
         ==
       =/  chk=@  (head reversed-chk-to-chk1)
-      ~&  [%chk-for-sk chk]
-      ~&  [%my-private-key my-private-key]
       ::  Compute s = u - x * c mod n
       ::
       ::    TODO: I believe this part is wrong and that this is what is
@@ -350,32 +340,12 @@
       ::    line up with the rest of the ring.
       ::
       =/  sk=@  (~(dif fo ecc-n) u (mul my-private-key chk))
-      ~&  [%sk sk]
-      ~&  [%u-ecc-g (point-mul u ecc-g)]
       ::
       =/  ordered-challenges=(list @)
         (order-challenges k (flop reversed-chk-to-chk1))
       ::
       =/  ordered-ss=(list @)  (order-ss k [sk sk1 sk2-to-prev-sk])
       =/  ch0  (head ordered-challenges)
-      ::
-      ::::
-      ::  TODO: Debuging cruft.
-      ::
-      ::    :final-linkage should actually be equal to ch0, but isn't. The
-      ::    :final-gs point should have a different sk so that :final-linkage
-      ::    does equal :ch0; I don't believe that chk or `(snag k
-      ::    anonymity-list)` are wrong or editable.
-      ::
-      =/  final-gs=point
-        %+  point-add
-          (point-mul sk ecc-g)
-        (point-mul chk (snag k anonymity-list))
-      ~&  [%final-gs final-gs]
-      =/  final-linkage
-        (generate-challenge message final-gs ~ ~)
-      ~&  [%final-linkage final-linkage]
-      ::::
       ::
       [ch0 ordered-ss ?~(linkage ~ `y.u.linkage)]
   ::
@@ -427,7 +397,6 @@
       (point-mul s0 ecc-g)
     ::
     (point-mul ch0.signature (head anonymity-list))
-  ~&  [%added a=[s0=s0 'ecc-g'] b=[ch0sig=ch0.signature pubkey-head=(head anonymity-list)] z0p=z0p]
   ::  generate the linkage using public data, and the y point from the signature
   ::
   =/  linkage=(unit [data=@ h=point y=point])
@@ -448,7 +417,6 @@
   ::
   =/  ch1=@
     (generate-challenge message z0p linkage z0pp)
-  ~&  [%ch1-from-z0p ch1]
   ::
   =/  challenges
     %-  generate-challenges  :*
@@ -462,9 +430,6 @@
       ch1
       [ch1 ~]
     ==
-  ::
-  ~&  [%sig-ch0 ch0.signature]
-  ~&  [%challenges challenges]
   ::
   =(ch0.signature (head challenges))
 --
@@ -484,16 +449,17 @@
   =|  keys=(list [pk=point sk=@])
   ::
   |-
-  ?:  =(count 4)
+  ?:  =(count 3)
     keys
   ::
-  =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
-  =/  pk=point  (need (deco:ed (puck:ed:crypto sk)))
+  ::  In the end, what was the problem with the key generation was that
+  ::  etch/scam/deco/puck don't return things in the real format we need. The
+  ::  math above assumes that the public key above is priv-key * G. 
   ::
-  ::  TODO: My understanding is that when we're using these things as points
-  ::  and scalars, the scalar of my private key is the thing I originally
-  ::  multiplied by the curve's g parameter. (But I tried it the other way just
-  ::  in case.)
+  ::  =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
+  ::  =/  pk=point  (need (deco:ed (puck:ed:crypto sk)))
+  =/  pk=point  (point-base-mul key-num)
+  ::
   ::
   $(keys [[pk key-num] keys], count +(count), key-num +(key-num))
 ::  create the key set the interface expects
@@ -508,8 +474,8 @@
 ~&  %start----------signing
 ::
 =/  message  "blah"
-::=/  scope  [~ [%link-scope 52]]
-=/  scope  ~
+=/  scope  [~ [%link-scope 52]]
+::  =/  scope  ~
 ::
 =/  signature
   (sign message scope key-set my-public-key my-private-key eny)
