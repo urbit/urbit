@@ -12,7 +12,13 @@
 ++  card  card:tapp-sur
 ++  sign  sign:tapp-sur
 ++  contract  contract:tapp-sur
-++  command
++$  tapp-admin-in-poke-data
+  [%tapp-admin tapp-admin=?(%cancel %restart)]
++$  tapp-in-poke-data
+  $%  tapp-admin-in-poke-data
+      in-poke-data
+  ==
++$  command
   $%  [%init ~]
       [%poke =in-poke-data]
       [%peer =path]
@@ -264,9 +270,22 @@
   ::  Start a command
   ::
   ++  poke
-    |=  =in-poke-data
+    |=  =tapp-in-poke-data
     ^-  (quip move _this-tapp)
-    =.  waiting  (~(put to waiting) %poke in-poke-data)
+    ?:  ?=(tapp-admin-in-poke-data tapp-in-poke-data)
+      ?~  active
+        ~&  [%tapp-admin-idle dap.bowl]
+        `this-tapp
+      ?-  tapp-admin.tapp-in-poke-data
+          %cancel
+        (oob-fail-async %tapp-admin-cancel ~)
+      ::
+          %restart
+        =.  waiting  (~(put to waiting) (need ~(top to waiting)))
+        (oob-fail-async %tapp-admin-restart ~)
+      ==
+    ::
+    =.  waiting  (~(put to waiting) %poke tapp-in-poke-data)
     ?^  active
       ~&  [%waiting-until-current-async-finishes waiting]
       `this-tapp
@@ -436,9 +455,8 @@
     |=  [contracts=(set contract) err=(pair term tang)]
     ^-  (quip move _this-tapp)
     %-  %-  slog
-        :*  leaf+(trip dap.bowl)
-            leaf+"tapp command failed"
-            leaf+(trip p.err)
+        :*  leaf+(weld "tapp command failed in app/" (trip dap.bowl))
+            leaf+(weld "  %" (trip p.err))
             q.err
         ==
     (finish-async contracts)
