@@ -25,13 +25,9 @@
 ::
 +$  move  (pair bone card)
 ++  tapp-async  (async state-type)
-+$  tapp-internal-state
-  $:  %0
-      waiting=(qeu command)
-      active=(unit eval-form:eval:tapp-async)
-  ==
 +$  tapp-state
-  $:  tapp-internal-state
+  $:  waiting=(qeu command)
+      active=(unit eval-form:eval:tapp-async)
       app-state=state-type
   ==
 +$  tapp-peek
@@ -240,32 +236,30 @@
   ::    Otherwise, upgrade, cancel and restart if active.
   ::
   ++  prep
-    |=  $=  old-state
-        %-  unit
-        $:  =tapp-internal-state
-            app-state=*
-        ==
+    |=  old-state=(unit)
     ^-  (quip move _this-tapp)
     ?~  old-state
       ~&  [%tapp-init dap.bowl]
       =.  waiting  (~(put to waiting) %init ~)
       start-async
     ::
-    =*  internal  tapp-internal-state.u.old-state
-    =/  old-app   ((soft state-type) app-state.u.old-state)
-    ?~  old-app
+    =/  old   ((soft tapp-state) u.old-state)
+    ?~  old
       ~&  [%tapp-reset dap.bowl]
-      =.  +<+.this-tapp  [internal *state-type]
-      ?^  active.internal
-        (oob-fail-async %reset ~)
-      [~ this-tapp]
+      ::  XX may break contracts!
+      ::  XX if active clam contracts only to abort transaction?
+      ::
+      `this-tapp
+    ::
+    ::  because the clam replaces the active continuation with
+    ::  the bunt of its mold, we must fail the transaction
     ::
     ~&  [%tapp-loaded dap.bowl]
-    =.  +<+.this-tapp  [internal u.old-app]
-    ?^  active.internal
+    =.  +<+.this-tapp  u.old
+    ?^  active
       =.  waiting  (~(put to waiting) (need ~(top to waiting)))
       (oob-fail-async %reset-restart ~)
-    [~ this-tapp]
+    `this-tapp
   ::
   ::  Start a command
   ::
