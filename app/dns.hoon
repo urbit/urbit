@@ -59,6 +59,8 @@
       |=  [=host:eyre max=@ud]
       =/  m  (async:stdio ?)
       ^-  form:m
+      ::  XX also scry into eyre
+      ::  q:.^(hart:eyre %e /(scot %p our)/host/real)
       =/  =hiss:eyre
         =/  url=purl:eyre
           [[sec=| por=~ host] [ext=`~.udon path=/static] query=~]
@@ -183,7 +185,13 @@
   ::  manual dns binding -- by explicit ipv4
   ::
       %dns-address
-    ;<  requested=?  bind:m  (request-by-ip if.address.in-poke-data)
+    =*  adr  address.in-poke-data
+    =/  rac  (clan:title our.bowl)
+    ?.  ?=(?(%king %duke) rac)
+      ~|  [%dns-collector-bind-invalid rac]  !!
+    ?:  (reserved:eyre if.adr)
+      ~|  [%dns-collector-reserved-address if.adr]  !!
+    ;<  requested=?  bind:m  (request-by-ip if.adr)
     ::  XX save failure?
     =?  requested.state   requested
       (some address.in-poke-data)

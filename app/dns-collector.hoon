@@ -43,9 +43,11 @@
     =*  adr  address.in-poke-data
     =/  rac  (clan:title who)
     ?.  ?=(?(%king %duke) rac)
-      ~|  [%dns-collector-bind-invalid rac]  !!
+      ~&  [%dns-collector-bind-invalid who]
+      (pure:m state)
     ?:  (reserved:eyre if.adr)
-      ~|  [%reserved-address if.adr]  !!
+      ~&  [%dns-collector-reserved-address who if.adr]
+      (pure:m state)
     ::
     =/  req=(unit address:dns)  (~(get by requested.state) who)
     =/  dun=(unit binding:dns)  (~(get by completed.state) who)
@@ -60,6 +62,8 @@
     (pure:m state)
   ::
       %dns-complete
+    ::  XX or confirm valid binding?
+    ::
     ?.  (team:title [our src]:bowl)
       ~|  %complete-yoself  !!
     =*  who  ship.in-poke-data
