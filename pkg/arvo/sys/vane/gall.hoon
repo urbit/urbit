@@ -1660,19 +1660,19 @@
       %_    ap-state
           +12.q.running-state.sat
         ^-   bowl
-        :*  :*  our                               ::  host
-                attributing.routes.agent-privilege            ::  guest
-                agent-name                               ::  agent
-            ==                                    ::
-            :*  wex=~                             ::  outgoing
-                sup=incoming.subscribers.sat      ::  incoming
-            ==                                    ::
-            :*  agent-bone=agent-bone                           ::  cause
-                act=change.stats.sat              ::  tick
-                eny=eny.stats.sat                 ::  nonce
-                now=time.stats.sat                ::  time
-                byk=beak.sat                      ::  source
-        ==  ==                                    ::
+        :*  :*  our                                 ::  host
+                attributing.routes.agent-privilege  ::  guest
+                agent-name                          ::  agent
+            ==                                      ::
+            :*  wex=~                               ::  outgoing
+                sup=incoming.subscribers.sat        ::  incoming
+            ==                                      ::
+            :*  agent-bone=agent-bone               ::  cause
+                act=change.stats.sat                ::  tick
+                eny=eny.stats.sat                   ::  nonce
+                now=time.stats.sat                  ::  time
+                byk=beak.sat                        ::  source
+        ==  ==                                      ::
       ==
     ::
     ::  +ap-move: process each move.
