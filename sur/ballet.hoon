@@ -1,24 +1,6 @@
+/-  ring
 ::  /sour/ballot
 ::
-::  TODO: ring signature stuff should be provided by their own sur files, this is just
-::  stubs for now.
-::
-|%
-++  ring-tag
-  ::  TODO: the ring-tag is really supposed to be a point on a elliptic curve:
-  ::  [@ @]. But to make sure we have ring-tag uniqueness for now, just make
-  ::  the structure a ship name.
-  ::
-  @p
-+$  ring-signature
-  [@ (list @) =ring-tag]
-++  verify-signature
-  |=  [=ring-signature linkage-tag=(unit *) data=*]
-  ^-  ?
-  ~&  %verify-signature-is-a-stub
-  ::
-  %.y
---
 |%
 ::  The electorate is the set of people who may vote in an election. This is
 ::  set during the creation of the election
@@ -75,7 +57,10 @@
       closes=@da
       ::  cast votes, sorted on linkage tag
       ::
-      cast=(map ring-tag [=ring-signature =vote])
+      ::    A ring tag is the :y point in a ring-signature, and is unique for
+      ::    every pair of private key/election id.
+      ::
+      cast=(map point:ring [=ring-signature:ring =vote])
       ::  the current running tally of the results
       ::
       =tally
@@ -84,7 +69,7 @@
 ::
 ++  election-diff
   $%  [%snapshot =election]
-      [%vote =ring-signature =vote]
+      [%vote =ring-signature:ring =vote]
       [%election-completed ~]
   ==
 --

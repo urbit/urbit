@@ -1,3 +1,4 @@
+/-  *ring
 ::  ring signatures over the edwards curve
 ::
 |%
@@ -89,10 +90,6 @@
     =+  bby=(pro.fq 4 (inv.fq 5))
     [(xrec bby) bby]
   --
-::  +point: point on the ed25519 curve
-::
-+$  point
-  [@ @]
 ::  +ecc-n: order of the elliptic group curve ed25519
 ::
 ++  ecc-n
@@ -234,21 +231,6 @@
   %+  weld
     (slag i l)
   (scag i l)
-::  +ring-signature: types of a ring signature
-::
-++  ring-signature
-  $:  ch0=@
-      ::
-      s=(list @)
-      ::  linked ring signature tag
-      ::
-      ::    Two linked ring signatures with the same link scope can be shown to
-      ::    have been made by the same private key, leading to Sybil
-      ::    resistance...but if your private keys are compromised, your
-      ::    adversary can determine which signatures you made.
-      ::
-      y=(unit point)
-  ==
 --
 ::  Signature interface
 ::
@@ -268,7 +250,11 @@
           eny=@uvJ
       ==
   ^-  ring-signature
-  |^  ~&  [%anonymity-list anonymity-list]
+  |^  ~&  [%message message]
+      ~&  [%scope link-scope]
+      ~&  [%anonymity-list anonymity-list]
+      ~&  [%my-public-key my-public-key]
+      ~&  [%my-private-key my-private-key]
       ::  k: our public-key's position in :anonymity-list
       ::
       =/  k=@u
@@ -387,6 +373,12 @@
   ::
   =/  anonymity-list=(list point)
     ~(tap in anonymity-set)
+
+  ~&  [%message message]
+  ~&  [%scope link-scope]
+  ~&  [%anonymity-list anonymity-list]
+  ~&  [%signature signature]
+
   ::  participants: length of :anonymity-list
   ::
   =/  participants=@u
@@ -432,4 +424,14 @@
     ==
   ::
   =(ch0.signature (head challenges))
+::  +public-key-for-ship: 
+::
+::    TODO: We should go talk to Azimuth to get the ship's real public key. But
+::    for now, we need to 
+::
+++  public-key-for-ship
+  |=  p=@p
+  ^-  point
+  ::
+  (point-base-mul p)
 --

@@ -1,5 +1,5 @@
-/-  *ballet
-/+  tapp, stdio
+/-  *ballet, *ring
+/+  tapp, stdio, *ring
 ::
 ::  Preamble
 ::
@@ -127,22 +127,32 @@
       (pure:m state)
     ::  verify ballot has a valid signature
     ::
-    ::    TODO: Right now, this is a no-op until the ring signature library is
-    ::    completed.
+    =/  electorate-keys
+      (~(run in electorate.u.election) public-key-for-ship)
+    ::  TODO: OK, so this is now erroring with invalid signature. 
     ::
-    ?.  =,  in-poke-data
-        (verify-signature ring-signature `[%election id] vote)
+    ?.  %-  verify  :*
+          vote.in-poke-data
+          `[%election id]
+          electorate-keys
+          ring-signature.in-poke-data
+        ==
       ~&  [%invalid-signature ~]
+      (pure:m state)
+    ::  the signature must have a ring tag
+    ::
+    ?:  ?=(~ y.ring-signature.in-poke-data)
+      ~&  [%missing-ring-tag ~]
       (pure:m state)
     ::  is this person trying to vote twice?
     ::
-    ?:  (~(has by cast.u.election) ring-tag.ring-signature.in-poke-data)
-      ~&  [%attempting-to-vote-twice ring-tag.ring-signature.in-poke-data]
+    ?:  (~(has by cast.u.election) u.y.ring-signature.in-poke-data)
+      ~&  [%attempting-to-vote-twice u.y.ring-signature.in-poke-data]
       (pure:m state)
     ::  is this a valid ballot?
     ::
     ?.  (valid-vote questions.ballot.u.election vote.in-poke-data)
-      ~&  [%invalid-ballot ring-tag.ring-signature.in-poke-data]
+      ~&  [%invalid-ballot u.y.ring-signature.in-poke-data]
       (pure:m state)
     ::  we have a valid vote. make it part of our state.
     ::
@@ -151,7 +161,7 @@
       |=  =^election
       %_    election
           cast
-        %+  ~(put by cast.election)  ring-tag.ring-signature.in-poke-data
+        %+  ~(put by cast.election)  u.y.ring-signature.in-poke-data
         [ring-signature.in-poke-data vote.in-poke-data]
       ::
           tally
