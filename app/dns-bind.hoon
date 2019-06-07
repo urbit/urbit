@@ -20,6 +20,7 @@
     +$  out-poke-data
       $%  [%dns-bind =ship =target]
           [%dns-complete =ship =binding:dns]
+          [%drum-unlink =dock]
       ==
     ::  XX %requests from collector
     +$  in-peer-data  ~
@@ -665,9 +666,20 @@
 ::  the app itself
 ::
 =*  default-tapp  default-tapp:tapp
-%-  create-tapp-poke:tapp
-^-  tapp-core-poke:tapp
+%-  create-tapp-all:tapp
+^-  tapp-core-all:tapp
 |_  [=bowl:gall state=app-state]
+::
+++  handle-peek  handle-peek:default-tapp
+++  handle-peer  handle-peer:default-tapp
+++  handle-diff  handle-diff:default-tapp
+++  handle-take  handle-take:default-tapp
+::
+++  handle-init
+  =/  m  tapp-async
+  ^-  form:m
+  ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
+  (pure:m state)
 ::
 ++  handle-poke
   |=  =in-poke-data
