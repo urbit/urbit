@@ -14,7 +14,9 @@
       $%  [%dns-address =address:dns]
           [%dns-complete =ship =binding:dns]
       ==
-    +$  out-poke-data  ~
+    +$  out-poke-data
+      $%  [%drum-unlink =dock]
+      ==
     +$  in-peer-data   ~
     +$  out-peer-data
       $%  [%dns-binding =binding:dns]
@@ -30,9 +32,14 @@
 ^-  tapp-core-all:tapp
 |_  [=bowl:gall state=app-state]
 ::
-++  handle-init  handle-init:default-tapp
 ++  handle-diff  handle-diff:default-tapp
 ++  handle-take  handle-take:default-tapp
+::
+++  handle-init
+  =/  m  tapp-async
+  ^-  form:m
+  ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
+  (pure:m state)
 ::
 ++  handle-poke
   |=  =in-poke-data
