@@ -22,8 +22,9 @@
           [%dns-complete =ship =binding:dns]
           [%drum-unlink =dock]
       ==
-    ::  XX %requests from collector
-    +$  in-peer-data  ~
+    +$  in-peer-data
+      $%  [%dns-request =request:dns]
+      ==
     +$  out-peer-data  ~
     ++  tapp
       %:  ^tapp
@@ -643,6 +644,10 @@
       ;<  existing=(map ship bound)  bind:m  (retrieve-existing aut)
       =.  bon.nam  (~(uni by bon.nam) existing)
       =.  nem.state  (some nam)
+      ::
+      ::  XX wait-effect
+      ::
+      ;<  ~       bind:m  (peer-app:stdio collector-app /requests)
       (pure:m state)
     --
 ::
@@ -672,8 +677,6 @@
 ::
 ++  handle-peek  handle-peek:default-tapp
 ++  handle-peer  handle-peer:default-tapp
-++  handle-diff  handle-diff:default-tapp
-++  handle-take  handle-take:default-tapp
 ::
 ++  handle-init
   =/  m  tapp-async
@@ -843,4 +846,33 @@
       (pure:m state)
     ==
   ==
+::
+++  handle-diff
+  |=  [=dock =path =in-peer-data]
+  =/  m  tapp-async
+  ^-  form:m
+  ?.  =(dock collector-app)
+    (pure:m state)
+  =*  req  request.in-peer-data
+  =/  =target  [%direct address.req]
+  ;<  ~  bind:m  (poke-app:stdio [our dap]:bowl [%dns-bind ship.req target])
+  (pure:m state)
+::
+++  handle-take
+  |=  =sign:tapp
+  =/  m  tapp-async
+  ^-  form:m
+  ?.  ?=(%quit -.sign)
+    ::  XX handle stuff
+    ::
+    (pure:m state)
+  ::
+  ?.  ?&  =(dock.sign collector-app)
+          =(path.sign /requests)
+      ==
+    ~&  [%unexpected-quit-wat-do [dock path]:sign]
+    (pure:m state)
+  ::
+  ;<  ~  bind:m  (peer-app:stdio collector-app /requests)
+  (pure:m state)
 --
