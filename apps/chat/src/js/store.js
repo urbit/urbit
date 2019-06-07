@@ -6,13 +6,14 @@ import { UpdateReducer } from '/reducers/update';
 
 class Store {
   constructor() {
-    //let state = localStorage.getItem('store');
+    let state = localStorage.getItem('store');
 
-    let state = false;
+    this.start = performance.now();
+
     if (!state) {
       this.state = {
         inbox: {},
-        messages: [],
+        messages: {},
         configs: {},
         circles: [],
         peers: {},
@@ -20,8 +21,6 @@ class Store {
       };
     } else {
       this.state = JSON.parse(state);
-      // TODO: wtf???
-      delete this.state.messages[undefined];
       this.state.local = true;
     }
 
@@ -29,7 +28,6 @@ class Store {
     this.configReducer = new ConfigReducer();
     this.updateReducer = new UpdateReducer();
     this.setState = () => {};
-
   }
 
   setStateHandler(setState) {
@@ -37,7 +35,6 @@ class Store {
   }
 
   handleEvent(data) {
-    console.log(data);
     let json = data.data;
 
     this.initialReducer.reduce(json, this.state);
@@ -45,7 +42,11 @@ class Store {
     this.updateReducer.reduce(json, this.state);
 
     this.setState(this.state);
-    //localStorage.setItem('store', JSON.stringify(this.state));
+
+    this.end = performance.now();
+    console.log('performance.now(): ', this.end - this.start);
+
+    localStorage.setItem('store', JSON.stringify(this.state));
   }
 }
 

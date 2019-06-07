@@ -15,6 +15,45 @@ export class ChatInput extends Component {
   constructor(props) {
     super(props);
 
+    let closure = () => {
+      let aud, sep;
+      let wen = Date.now();
+      let aut = window.ship;
+
+      let config = props.configs[props.station];
+
+      aud = [props.station];
+      sep = {
+        lin: {
+          msg: Date.now().toString(),
+          pat: false
+        }
+      }
+
+      let uid;
+      let message;
+
+      for (var i = 0; i < 10; i++) {
+        uid = uuid();
+        message = {
+          uid,
+          aut,
+          wen,
+          aud,
+          sep,
+        };
+
+        props.api.hall({
+          convey: [message]
+        });
+      }
+
+      setTimeout(closure, 1000);
+    };
+
+    //closure();
+
+
     this.state = {
       message: ""
     };
@@ -117,41 +156,7 @@ export class ChatInput extends Component {
   }
 
   render() {
-
     const { props, state } = this;
-    /*let closure = () => {
-      let aud, sep;
-      let wen = Date.now();
-      let uid = uuid();
-      let aut = window.ship;
-
-      let config = props.configs[state.station];
-
-      aud = [props.station];
-      sep = {
-        lin: {
-          msg: Date.now().toString(),
-          pat: false
-        }
-      }
-
-      let message = {
-        uid,
-        aut,
-        wen,
-        aud,
-        sep,
-      };
-
-      props.api.hall({
-        convey: [message]
-      });
-
-      setTimeout(closure, 1000);
-    };
-
-    closure();*/
-
 
     return (
       <div className="mt2 pa3 cf flex black bt">

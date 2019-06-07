@@ -9,6 +9,7 @@ export class ConfigReducer {
       state.configs = data.configs;
       state.circles = data.circles;
       state.peers = data.peers;
+      state.messages = state.messages || {};
     }
   }
 }

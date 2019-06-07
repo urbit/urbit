@@ -21,8 +21,13 @@ export class Root extends Component {
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
 
-    Mousetrap.bind(["mod+n"], () => {
+    Mousetrap.bind(["command+c"], () => {
       props.history.push('/~chat/new');
+      return false;
+    });
+
+    Mousetrap.bind(["command+h"], () => {
+      window.location.replace('/');
       return false;
     });
   }

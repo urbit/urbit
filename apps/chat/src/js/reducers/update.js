@@ -29,17 +29,22 @@ export class UpdateReducer {
   }
 
   reduceMessages(messages, state) {
-    if (messages && messages.circle in state.messages) {
+    if (messages) {
       let station = state.messages[messages.circle];
-      if (
-        station.length > 0 &&
-        station[station.length - 1].num === station.length - 1  &&
-        messages.start === station.length
-      ) {
-        state.messages[messages.circle] = 
-          state.messages[messages.circle].concat(messages.envelopes);
+      if (messages.circle in state.messages) {
+        if (
+          station[station.length - 1].num === station.length - 1 &&
+          messages.start === station.length
+        ) {
+          state.messages[messages.circle] = 
+            state.messages[messages.circle].concat(messages.envelopes);
+        } else if (station.length === 0) {
+          state.messages[messages.circle] = messages.envelopes;
+        } else {
+          console.error('%messages has indices inconsistent with localStorage');
+        }
       } else {
-        console.error('%messages has indices inconsistent with localStorage');
+        state.messages[messages.circle] = messages.envelopes;
       }
     }
   }

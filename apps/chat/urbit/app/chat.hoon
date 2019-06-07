@@ -51,6 +51,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
+  ~&  %we-prepping
   ?~  old
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
@@ -78,43 +79,56 @@
 ::  +peer-messages: subscribe to subset of messages and updates
 ::
 ::
+
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  =/  indices  (generate-circle-indices wir)
-  ?~  indices
-    :_  this
-    [ost.bol %diff %chat-initial str.sta]~
+  =/  lisval=(list [@t @])
+    %+  turn  (generate-circle-indices wir)
+    |=  [cir=circle:hall ind=@]
+    ^-  [@t @]
+    [(crip (circ:en-tape:hall-json cir)) ind]
+  ::?~  lisval
+  ::  :_  this
+  ::  [ost.bol %diff %chat-initial str.sta]~
+  =/  indices/(map @t @)  (molt lisval)
   =*  messages  messages.str.sta
-  =/  lisunitmov/(list (unit move)) 
-    %+  turn  indices
-      |=  [cir=circle:hall start=@ud]
-      ^-  (unit move)
-      =/  wholelist/(unit (list envelope:hall))  (~(get by messages) cir)
-      ?~  wholelist
-        ~
-      =/  end/@  (lent u.wholelist)
-      ?:  (gte start end)
-        ~
+  =/  lisunitmov=(list (unit move))
+    %+  turn  ~(tap by messages)
+    |=  [cir=circle:hall lis=(list envelope:hall)]
+    ^-  (unit move)
+    =/  pattcir/@t  (crip (circ:en-tape:hall-json cir))
+    =/  index  (~(get by indices) pattcir)
+    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    ?~  envs
+      ~
+    ?~  index
       :-  ~
       :*  ost.bol
           %diff
           %chat-update
-          [%messages cir start end (swag [start end] u.wholelist)]
+          [%messages cir 0 (lent u.envs) u.envs]
       ==
-  =/  lismov/(list move)
-    %+  turn
-    %+  skim  lisunitmov
+    =/  start/@  u.index
+    =/  end/@  (lent u.envs)
+    ?:  (gte start end)
+      ~
+    :-  ~
+    :*  ost.bol
+        %diff
+        %chat-update
+        [%messages cir start end (swag [start end] u.envs)]
+    ==
+  :_  this
+  %+  weld
+    [ost.bol %diff %chat-config str.sta]~
+  %+  turn  %+  skim  lisunitmov
     |=  umov=(unit move)
     ^-  ?
     ?~  umov
       %.n
     %.y
     need
-  :_  this
-  %+  weld
-  [ost.bol %diff %chat-config str.sta]~
-  lismov
 ::
 ++  peer-updates
   |=  wir=wire

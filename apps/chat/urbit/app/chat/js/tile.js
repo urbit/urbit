@@ -2206,31 +2206,20 @@
 
             class ChatTile extends react_1 {
 
-              constructor(props) {
-                super(props);
-              }
-
-
-              renderWrapper(child) {
+              render() {
                 return (
-                  react.createElement('div', { className: "bg-dark-gray w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 14}}
-                    , child
+                  react.createElement('div', { className: "bg-dark-gray w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 9}}
+                    , react.createElement('a', { className: "w-100 h-100 db"  , style: {
+                      paddingTop: 68,
+                      paddingBottom: 68,
+                      paddingLeft: 64,
+                      paddingRight: 64
+                    },
+                       href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 10}}
+                       , react.createElement('img', { src: "/~chat/img/Tile.png", width: 106, height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 17}} )
+                    )
                   )
                 );
-              }
-
-              render() {
-                return this.renderWrapper((
-                  react.createElement('a', { className: "w-100 h-100 db"  , style: {
-                    paddingTop: 68,
-                    paddingBottom: 68,
-                    paddingLeft: 64,
-                    paddingRight: 64
-                  },
-                     href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 22}}
-                     , react.createElement('img', { src: "/~chat/img/Tile.png", width: 106, height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 29}} )
-                  )
-                ));
               }
 
             }
