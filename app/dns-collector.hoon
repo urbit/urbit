@@ -18,6 +18,7 @@
     +$  in-peer-data   ~
     +$  out-peer-data
       $%  [%dns-binding =binding:dns]
+          [%dns-request =request:dns]
       ==
     ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
     ++  stdio  (^stdio out-poke-data out-peer-data)
@@ -58,7 +59,9 @@
     ?:  &(?=(^ req) =(adr u.req))
       (pure:m state)
     ::  XX check address?
-    =.  requested.state  (~(put by requested.state) who adr)
+    =/  =request:dns  [who adr]
+    =.  requested.state  (~(put by requested.state) request)
+    ;<  ~  bind:m  (give-result:stdio /requests %dns-request request)
     (pure:m state)
   ::
       %dns-complete
@@ -100,6 +103,15 @@
     ~|  %default-tapp-no-sole  !!
   ?.  ?=([@ ~] path)
     ~|  %invalid-path  !!
+  ?:  ?=(%requests i.path)
+    =/  requests  ~(tap by requested.state)
+    |-  ^-  form:m
+    =*  loop  $
+    ?~  requests
+      (pure:m state)
+    ;<  ~  bind:m  (give-result:stdio path %dns-request i.requests)
+    loop(requests t.requests)
+  ::
   =/  who  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
