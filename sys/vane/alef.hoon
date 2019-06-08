@@ -914,8 +914,6 @@
           (emit client-duct %give %rest u.naxplanation)
         ::
             %send
-          ?>  ?=(^ route.peer-state)
-          ::
           =/  pak=^shut-packet
             :*  our-life.channel
                 her-life.channel
@@ -927,13 +925,35 @@
           =/  content  (encrypt symmetric-key.channel pak)
           =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
           =/  =blob    (encode-packet packet)
+          ::  send to .her and her sponsors until we find a direct lane
           ::
-          ?:  direct.u.route.peer-state
-            %^  emit  unix-duct.ames-state  %give
-            [%send lane.u.route.peer-state blob]
-          ::  send to .her and her sponsors
+          =/  lanes=(list ^lane)
+            =/  rcvrs=(list ship)  [her her-sponsors]:channel
+            |-  ^-  (list ^lane)
+            ?~  rcvrs  ~
+            ::
+            =/  peer  (~(get by peers.ames-state) i.rcvrs)
+            ::
+            ?.  ?=([~ %known *] peer)
+              $(rcvrs t.rcvrs)
+            ::
+            =/  route  route.+.u.peer
+            ::
+            ?~  route
+              $(rcvrs t.rcvrs)
+            ::
+            :-  lane.u.route
+            ?:  direct.u.route
+              ~
+            $(rcvrs t.rcvrs)
           ::
-          !!
+          |-  ^+  peer-core
+          ?~  lanes  peer-core
+          ::
+          =.  peer-core
+            (emit unix-duct.ames-state %give %send i.lanes blob)
+          ::
+          $(lanes t.lanes)
         ::
             %wait
           %-  emit
