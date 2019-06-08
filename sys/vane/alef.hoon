@@ -344,6 +344,7 @@
 ::
 +$  ames-state
   $:  peers=(map ship ship-state)
+      =unix=duct
       =life
       crypto-core=acru:ames
   ==
@@ -381,6 +382,8 @@
 ::         information completes the packet+naxplanation, we remove the
 ::         entry and emit a nack to the local vane that asked us to send
 ::         the message.
+::
+::    TODO: should .route be a unit, or do we always need a lane?
 ::
 +$  peer-state
   $:  $:  =symmetric-key
@@ -792,7 +795,7 @@
     ::    and their public key using elliptic curve Diffie-Hellman.
     ::
     =/  =peer-state   +.u.sndr-state
-    =/  =channel      [[our sndr.packet] now +.ames-state -.peer-state]
+    =/  =channel      [[our sndr.packet] now +>.ames-state -.peer-state]
     =/  =shut-packet  (decrypt symmetric-key.channel content.packet)
     ::  ward against replay attacks
     ::
@@ -905,12 +908,33 @@
           ::  |message-pump should never emit duplicate message acks
           ::
           ?>  ?=(^ u.naxplanation)
-          ::  we have both nack packet and naxplanation; emit and clear
+          ::  we have both nack packet and naxplanation; unqueue and emit
           ::
           =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
           (emit client-duct %give %rest u.naxplanation)
         ::
-            %send  !!
+            %send
+          ?>  ?=(^ route.peer-state)
+          ::
+          =/  pak=^shut-packet
+            :*  our-life.channel
+                her-life.channel
+                (mix 1 bone.shut-packet)
+                message-num.static-fragment.gift
+                %&  +.static-fragment.gift
+            ==
+          ::
+          =/  content  (encrypt symmetric-key.channel pak)
+          =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
+          =/  =blob    (encode-packet packet)
+          ::
+          ?:  direct.u.route.peer-state
+            %^  emit  unix-duct.ames-state  %give
+            [%send lane.u.route.peer-state blob]
+          ::  send to .her and her sponsors
+          ::
+          !!
+        ::
             %wait
           %-  emit
           :^  client-duct  %pass
