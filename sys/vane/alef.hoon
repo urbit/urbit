@@ -927,33 +927,25 @@
           =/  =blob    (encode-packet packet)
           ::  send to .her and her sponsors until we find a direct lane
           ::
-          =/  lanes=(list ^lane)
-            =/  rcvrs=(list ship)  [her her-sponsors]:channel
-            |-  ^-  (list ^lane)
-            ?~  rcvrs  ~
-            ::
-            =/  peer  (~(get by peers.ames-state) i.rcvrs)
-            ::
-            ?.  ?=([~ %known *] peer)
-              $(rcvrs t.rcvrs)
-            ::
-            =/  route  route.+.u.peer
-            ::
-            ?~  route
-              $(rcvrs t.rcvrs)
-            ::
-            :-  lane.u.route
-            ?:  direct.u.route
-              ~
-            $(rcvrs t.rcvrs)
+          =/  rcvrs=(list ship)  [her her-sponsors]:channel
           ::
           |-  ^+  peer-core
-          ?~  lanes  peer-core
+          ?~  rcvrs  peer-core
+          ::
+          =/  peer  (~(get by peers.ames-state) i.rcvrs)
+          ::
+          ?.  ?=([~ %known *] peer)
+            $(rcvrs t.rcvrs)
+          ::
+          ?~  route=route.u.+.peer
+            $(rcvrs t.rcvrs)
           ::
           =.  peer-core
-            (emit unix-duct.ames-state %give %send i.lanes blob)
+            (emit unix-duct.ames-state %give %send lane.u.route blob)
           ::
-          $(lanes t.lanes)
+          ?:  direct.u.route
+            peer-core
+          $(rcvrs t.rcvrs)
         ::
             %wait
           %-  emit
