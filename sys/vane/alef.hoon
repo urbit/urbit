@@ -803,35 +803,6 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::
     abet:(on-hear-packet:(make-peer-core peer-state channel) lane shut-packet)
-  ::  +on-hear-fragment: handle receipt of message fragment, from unix
-  ::
-  ++  on-hear-fragment
-    |=  [=message-still-state =channel =lane =shut-packet]
-    ^+  event-core
-    ::
-    =/  still  (make-message-still message-still-state channel)
-    ::  pass fragment to the |message-still for assembly into message
-    ::
-    =^  still-gifts  message-still-state  (work:still %hear lane shut-packet)
-    ::  apply .message-still-state mutations to permanent state
-    ::
-    =.  peers.ames-state
-      %+  ~(jab by peers.ames-state)  her.channel
-      |=  =ship-state
-      ?>  ?=(%known -.ship-state)
-      =/  =peer-state  +.ship-state
-      =.  rcv.peer-state
-        (~(put by rcv.peer-state) bone.shut-packet message-still-state)
-      [%known peer-state]
-    ::
-    (process-still-gifts still-gifts)
-  ::  +process-still-gifts: handle |message-still effects
-  ::
-  ++  process-still-gifts
-    |=  still-gifts=(list message-still-gift)
-    ^+  event-core
-    ::
-    !!
   ::  +enqueue-alien-packet: store packet from untrusted source
   ::
   ::    Also requests key and life from Jael on first contact.
@@ -906,16 +877,8 @@
       ::  pass ack to the |message-pump
       ::
       =^  pump-gifts  message-pump-state  (work:message-pump task)
-      ::  apply .message-pump-state mutations to permanent state
-      ::
-      =.  peers.ames-state
-        %+  ~(jab by peers.ames-state)  her.channel
-        |=  =ship-state
-        ?>  ?=(%known -.ship-state)
-        =/  peer-state  +.ship-state
-        =.  snd.peer-state
-          (~(put by snd.peer-state) bone.shut-packet message-pump-state)
-        [%known peer-state]
+      =.  snd.peer-state
+        (~(put by snd.peer-state) bone.shut-packet message-pump-state)
       ::
       =/  client-duct=^duct
         (~(got by by-bone.ossuary.peer-state) bone.shut-packet)
@@ -966,8 +929,32 @@
     ++  on-hear-fragment
       |=  [=message-still-state =lane =shut-packet]
       ^+  peer-core
+      ::  pass fragment to the |message-still for assembly into message
       ::
-      !!
+      =/  message-still  (make-message-still message-still-state channel)
+      ::
+      =^  still-gifts  message-still-state
+        (work:message-still %hear lane shut-packet)
+      ::
+      =.  rcv.peer-state
+        (~(put by rcv.peer-state) bone.shut-packet message-still-state)
+      ::
+      |-  ^+  peer-core
+      ?~  still-gifts  peer-core
+      ::
+      =*  gift  i.still-gifts
+      =.  peer-core
+        ?-    -.gift
+            %hear-message
+          !!
+        ::
+            %ack-fragment
+          !!
+        ::
+            %ack-message
+          !!
+        ==
+      $(still-gifts t.still-gifts)
     --
   --
 ::  +make-message-pump: constructor for |message-pump
