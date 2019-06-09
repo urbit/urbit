@@ -1129,7 +1129,7 @@
     ::  clear and print .unsent-fragments if nonempty
     ::
     =?    unsent-fragments.state
-        &(=(current next):state ?=(^ unsent-fragments.state))
+        &(=(current next) ?=(^ unsent-fragments)):state
       ::
       ~&  %early-message-ack^ok^her.channel
       ~
