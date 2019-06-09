@@ -666,13 +666,11 @@
 ::
 ::    %hear-message: $message assembled from received packets, to be
 ::                   sent to a local vane for processing
-::    %ack-fragment: emit ack in response to heard fragment
-::    %ack-message: emit ack in response to message processing
+::    %send-ack: emit an ack packet
 ::
 +$  message-still-gift
   $%  [%hear-message =message]
-      [%ack-fragment =message-num =fragment-num]
-      [%ack-message =message-num ok=? lag=@dr]
+      [%send-ack =message-num =ack-meat]
   ==
 --
 ::  external vane interface
@@ -979,38 +977,13 @@
         ::
         ::    XOR .bone with 1 just before sending. TODO: bone docs
         ::
-        =/  pak=shut-packet
-          :*  our-life.channel
-              her-life.channel
-              (mix 1 bone)
-              message-num.static-fragment
-              %&  +.static-fragment
-          ==
-        ::
-        =/  content  (encrypt symmetric-key.channel pak)
-        =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
-        =/  =blob    (encode-packet packet)
-        ::  send to .her and her sponsors until we find a direct lane
-        ::
-        =/  rcvrs=(list ship)  [her her-sponsors]:channel
-        ::
-        |-  ^+  peer-core
-        ?~  rcvrs  peer-core
-        ::
-        =/  peer  (~(get by peers.ames-state) i.rcvrs)
-        ::
-        ?.  ?=([~ %known *] peer)
-          $(rcvrs t.rcvrs)
-        ::
-        ?~  route=route.u.+.peer
-          $(rcvrs t.rcvrs)
-        ::
-        =.  peer-core
-          (emit unix-duct.ames-state %give %send lane.u.route blob)
-        ::
-        ?:  direct.u.route
-          peer-core
-        $(rcvrs t.rcvrs)
+        %-  send-shut-packet  :*
+          our-life.channel
+          her-life.channel
+          (mix 1 bone)
+          message-num.static-fragment
+          %&  +.static-fragment
+        ==
       ::
       ++  process-wait
         |=  date=@da
@@ -1050,11 +1023,16 @@
             %hear-message
           !!
         ::
-            %ack-fragment
-          !!
-        ::
-            %ack-message
-          !!
+            ::  TODO special-case nack?
+            ::
+            %send-ack
+          %-  send-shut-packet  :*
+            our-life.channel
+            her-life.channel
+            (mix 1 bone.shut-packet)
+            message-num.gift
+            %|  ack-meat.gift
+          ==
         ==
       $(still-gifts t.still-gifts)
     ::  +on-west: handle request to send message
@@ -1066,6 +1044,35 @@
       =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
       ::
       (run-message-pump bone %send message)
+    ::
+    ++  send-shut-packet
+      |=  =shut-packet
+      ^+  peer-core
+      ::
+      =/  content  (encrypt symmetric-key.channel shut-packet)
+      =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
+      =/  =blob    (encode-packet packet)
+      ::  send to .her and her sponsors until we find a direct lane
+      ::
+      =/  rcvrs=(list ship)  [her her-sponsors]:channel
+      ::
+      |-  ^+  peer-core
+      ?~  rcvrs  peer-core
+      ::
+      =/  peer  (~(get by peers.ames-state) i.rcvrs)
+      ::
+      ?.  ?=([~ %known *] peer)
+        $(rcvrs t.rcvrs)
+      ::
+      ?~  route=route.u.+.peer
+        $(rcvrs t.rcvrs)
+      ::
+      =.  peer-core
+        (emit unix-duct.ames-state %give %send lane.u.route blob)
+      ::
+      ?:  direct.u.route
+        peer-core
+      $(rcvrs t.rcvrs)
     --
   --
 ::  +make-message-pump: constructor for |message-pump
