@@ -707,7 +707,7 @@
       %sunk  !!
       %vega  !!
       %wegh  !!
-      %west  !!
+      %west  (on-west:event-core [ship message]:task)
     ==
   ::
   [moves ames-gate]
@@ -833,6 +833,49 @@
       (emit duct %pass /alien %j %pubs sndr.packet)
     ::
     event-core
+  ::  +enqueue-alien-message: store message to untrusted source
+  ::
+  ::    Also requests key and life from Jael on first contact.
+  ::
+  ++  enqueue-alien-message
+    |=  [=ship =message]
+    ^+  event-core
+    ::
+    =/  rcvr-state  (~(get by peers.ames-state) ship)
+    ::  create a default $pending-requests on first contact
+    ::
+    =+  ^-  [already-pending=? todos=pending-requests]
+        ?~  rcvr-state
+          [%.n *pending-requests]
+        [%.y ?>(?=(%alien -.u.rcvr-state) +.u.rcvr-state)]
+    ::  enqueue unsent message and apply to permanent state
+    ::
+    =.  snd-messages.todos  [[duct message] snd-messages.todos]
+    ::
+    =.  peers.ames-state
+      (~(put by peers.ames-state) ship %alien todos)
+    ::  ask jael for .ship life and keys on first contact
+    ::
+    =?  event-core  !already-pending
+      (emit duct %pass /alien %j %pubs ship)
+    ::
+    event-core
+  ::  +on-west: handle request to send message
+  ::
+  ++  on-west
+    |=  [=ship =message]
+    ^+  event-core
+    ::
+    =/  rcvr-state  (~(get by peers.ames-state) ship)
+    ::
+    ?.  ?=([~ %known *] rcvr-state)
+      (enqueue-alien-message ship message)
+    ::
+    =/  =peer-state  +.u.rcvr-state
+    =/  =channel     [[our ship] now +>.ames-state -.peer-state]
+    ::
+    abet:(on-west:(make-peer-core peer-state channel) message)
+  ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
     |=  [=peer-state =channel]
@@ -846,6 +889,7 @@
         (~(put by peers.ames-state) her.channel %known peer-state)
       ::
       event-core
+    ::  +on-hear-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-packet
       |=  [=lane =shut-packet]
@@ -857,17 +901,12 @@
           (~(get by rcv.peer-state) bone.shut-packet)
         [lane shut-packet]
       ::
-      %+  on-hear-ack
-        %-  fall  :_  *message-pump-state
-        (~(get by snd.peer-state) bone.shut-packet)
-      [lane shut-packet]
+      (on-hear-ack lane shut-packet)
     ::  +on-hear-ack: handle receipt of ack on packet or message, from unix
     ::
     ++  on-hear-ack
-      |=  [=message-pump-state =lane =shut-packet]
+      |=  [=lane =shut-packet]
       ^+  peer-core
-      ::
-      =/  message-pump  (make-message-pump message-pump-state channel)
       ::  distinguish ack on single packet from ack on whole message
       ::
       ::    TODO: move conditional to message pump?
@@ -877,89 +916,116 @@
         ?:  ?=(%& -.p.meat.shut-packet)
           [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
         [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
-      ::  pass ack to the |message-pump
+      ::  TODO: is it correct to (mix 1 bone) here?
       ::
-      =^  pump-gifts  message-pump-state  (work:message-pump task)
-      =.  snd.peer-state
-        (~(put by snd.peer-state) bone.shut-packet message-pump-state)
+      (run-message-pump (mix 1 bone.shut-packet) task)
+    ::  +run-message-pump: process a $message-pump-task and its effects
+    ::
+    ++  run-message-pump
+      |=  [=bone task=message-pump-task]
+      ^+  peer-core
+      ::  pass .task to the |message-pump and apply state mutations
       ::
-      =/  client-duct=^duct
-        (~(got by by-bone.ossuary.peer-state) bone.shut-packet)
+      =/  =message-pump-state
+        (fall (~(get by snd.peer-state) bone) *message-pump-state)
+      ::
+      =/  message-pump    (make-message-pump message-pump-state channel)
+      =^  pump-gifts      message-pump-state  (work:message-pump task)
+      =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
+      ::
+      =/  client-duct=^duct  (~(got by by-bone.ossuary.peer-state) bone)
       ::  process effects from |message-pump
       ::
-      |-  ^+  peer-core
-      ?~  pump-gifts  peer-core
-      ::
-      =*  gift  i.pump-gifts
-      =.  peer-core
-        ?-    -.gift
-            %ack-message
-          ?:  ok.gift
-            (emit client-duct %give %rest ~)
-          ::  nack; look up naxplanation or enqueue
-          ::
-          =/  nax-key       [bone message-num]:shut-packet
-          =/  naxplanation  (~(get by nax.peer-state) nax-key)
-          ?~  naxplanation
-            ::  no naxplanation yet; enqueue
-            ::
-            =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
-            peer-core
-          ::  |message-pump should never emit duplicate message acks
-          ::
-          ?>  ?=(^ u.naxplanation)
-          ::  we have both nack packet and naxplanation; unqueue and emit
-          ::
-          =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
-          (emit client-duct %give %rest u.naxplanation)
-        ::
-            %send
-          =/  pak=^shut-packet
-            :*  our-life.channel
-                her-life.channel
-                (mix 1 bone.shut-packet)
-                message-num.static-fragment.gift
-                %&  +.static-fragment.gift
-            ==
-          ::
-          =/  content  (encrypt symmetric-key.channel pak)
-          =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
-          =/  =blob    (encode-packet packet)
-          ::  send to .her and her sponsors until we find a direct lane
-          ::
-          =/  rcvrs=(list ship)  [her her-sponsors]:channel
-          ::
-          |-  ^+  peer-core
-          ?~  rcvrs  peer-core
-          ::
-          =/  peer  (~(get by peers.ames-state) i.rcvrs)
-          ::
-          ?.  ?=([~ %known *] peer)
-            $(rcvrs t.rcvrs)
-          ::
-          ?~  route=route.u.+.peer
-            $(rcvrs t.rcvrs)
-          ::
+      |^  ^+  peer-core
+          ?~  pump-gifts  peer-core
+          =*  gift  i.pump-gifts
           =.  peer-core
-            (emit unix-duct.ames-state %give %send lane.u.route blob)
+            ?-  -.gift
+              %ack-message  (process-ack-message [message-num ok]:gift)
+              %send         (process-send static-fragment.gift)
+              %wait         (process-wait date.gift)
+              %rest         (process-rest date.gift)
+            ==
+          $(pump-gifts t.pump-gifts)
+      ::
+      ++  process-ack-message
+        |=  [=message-num ok=?]
+        ^+  peer-core
+        ::  positive ack gets emitted trivially
+        ::
+        ?:  ok
+          (emit client-duct %give %rest ~)
+        ::  nack; look up naxplanation or enqueue
+        ::
+        =/  nax-key  [bone message-num]
+        ::
+        ?~  naxplanation=(~(get by nax.peer-state) nax-key)
+          ::  no naxplanation yet; enqueue
           ::
-          ?:  direct.u.route
-            peer-core
+          =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
+          peer-core
+        ::  |message-pump should never emit duplicate message acks
+        ::
+        ?>  ?=(^ u.naxplanation)
+        ::  we have both nack packet and naxplanation; unqueue and emit
+        ::
+        =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
+        (emit client-duct %give %rest u.naxplanation)
+      ::
+      ++  process-send
+        |=  =static-fragment
+        ^+  peer-core
+        ::  encrypt and encode .static-fragment to .blob bitstream
+        ::
+        ::    XOR .bone with 1 just before sending. TODO: bone docs
+        ::
+        =/  pak=shut-packet
+          :*  our-life.channel
+              her-life.channel
+              (mix 1 bone)
+              message-num.static-fragment
+              %&  +.static-fragment
+          ==
+        ::
+        =/  content  (encrypt symmetric-key.channel pak)
+        =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
+        =/  =blob    (encode-packet packet)
+        ::  send to .her and her sponsors until we find a direct lane
+        ::
+        =/  rcvrs=(list ship)  [her her-sponsors]:channel
+        ::
+        |-  ^+  peer-core
+        ?~  rcvrs  peer-core
+        ::
+        =/  peer  (~(get by peers.ames-state) i.rcvrs)
+        ::
+        ?.  ?=([~ %known *] peer)
           $(rcvrs t.rcvrs)
         ::
-            %wait
-          %-  emit
-          :^  client-duct  %pass
-            (pump-timer-wire her.channel bone.shut-packet)
-          [%b %wait date.gift]
+        ?~  route=route.u.+.peer
+          $(rcvrs t.rcvrs)
         ::
-            %rest
-          %-  emit
-          :^  client-duct  %pass
-            (pump-timer-wire her.channel bone.shut-packet)
-          [%b %rest date.gift]
-        ==
-      $(pump-gifts t.pump-gifts)
+        =.  peer-core
+          (emit unix-duct.ames-state %give %send lane.u.route blob)
+        ::
+        ?:  direct.u.route
+          peer-core
+        $(rcvrs t.rcvrs)
+      ::
+      ++  process-wait
+        |=  date=@da
+        ^+  peer-core
+        ::
+        =/  =wire  (pump-timer-wire her.channel bone)
+        (emit client-duct %pass wire %b %wait date)
+      ::
+      ++  process-rest
+        |=  date=@da
+        ^+  peer-core
+        ::
+        =/  =wire  (pump-timer-wire her.channel bone)
+        (emit client-duct %pass wire %b %rest date)
+      --
     ::  +on-hear-fragment: handle receipt of message fragment, from unix
     ::
     ++  on-hear-fragment
@@ -991,6 +1057,15 @@
           !!
         ==
       $(still-gifts t.still-gifts)
+    ::  +on-west: handle request to send message
+    ::
+    ++  on-west
+      |=  =message
+      ^+  peer-core
+      ::
+      =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
+      ::
+      (run-message-pump bone %send message)
     --
   --
 ::  +make-message-pump: constructor for |message-pump
@@ -1516,6 +1591,19 @@
     ::
     !!
   --
+::  +get-bone: find or make new bone for .duct in .ossuary
+::
+++  get-bone
+  |=  [=ossuary =duct]
+  ^+  [next-bone.ossuary ossuary]
+  ::
+  ?^  existing=(~(get by by-duct.ossuary) duct)
+    [u.existing ossuary]
+  ::
+  :-  next-bone.ossuary
+  :+  (add 2 next-bone.ossuary)
+    (~(put by by-duct.ossuary) duct next-bone.ossuary)
+  (~(put by by-bone.ossuary) next-bone.ossuary duct)
 ::
 ::
 ++  pump-timer-wire
