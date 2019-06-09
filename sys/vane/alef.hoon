@@ -1020,7 +1020,13 @@
       =*  gift  i.still-gifts
       =.  peer-core
         ?-    -.gift
+            ::  TODO: WTF ducts and bones
+            ::
             %hear-message
+          =/  =path  path.message.gift
+          ?>  ?=([@ *] path)
+          ?>  ?=(?(%a %c %e %g %j) i.path)
+          ::
           !!
         ::
             ::  TODO special-case nack?
@@ -1570,14 +1576,16 @@
 ::
 ::
 ++  make-message-still
-  |=  [=message-still-state =channel]
+  |=  [state=message-still-state =channel]
   =|  gifts=(list message-still-gift)
   |%
+  ++  message-still  .
+  ++  give  |=(message-still-gift message-still(gifts [+< gifts]))
   ++  work
     |=  task=message-still-task
-    ^+  [gifts message-still-state]
+    ^+  [gifts state]
     ::
-    =-  [(flop -.-) +.-]
+    =-  [(flop gifts) state]
     ::
     ?-  -.task
       %hear  (on-hear [lane shut-packet]:task)
@@ -1587,17 +1595,139 @@
   ::
   ++  on-hear
     |=  [=lane =shut-packet]
-    ^+  [gifts message-still-state]
+    ^+  message-still
+    ::  we know this is a fragment, not an ack; expose into namespace
     ::
-    !!
+    ?>  ?=(%& -.meat.shut-packet)
+    =+  [num-fragments fragment-num fragment]=+.meat.shut-packet
+    ::  seq: message sequence number, for convenience
+    ::
+    =/  seq  message-num.shut-packet
+    ::  ignore messages from far future; limit to 10 in progress
+    ::
+    ?:  (gte seq (add 10 last-acked.state))
+      message-still
+    ::
+    =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
+    ::  always ack a dupe!
+    ::
+    ?:  (lte seq last-acked.state)
+      ?.  is-last-fragment
+        ::  single packet ack
+        ::
+        (give %send-ack seq %& fragment-num)
+      ::  whole message (n)ack  TODO nack lookup
+      ::
+      !!
+    ::  last-acked<seq<=last-heard; heard message, unprocessed
+    ::
+    ?:  (lte seq last-heard.state)
+      ?:  is-last-fragment
+        ::  drop last packet since we don't know whether to ack or nack
+        ::
+        message-still
+      ::  ack all other packets
+      ::
+      (give %send-ack seq %& fragment-num)
+    ::  last-heard<seq<10+last-heard; this is a packet in a live message
+    ::
+    =/  =partial-rcv-message
+      ::  create default if first fragment
+      ::
+      ?~  existing=(~(get by live-messages.state) seq)
+        [num-fragments num-received=0 fragments=~]
+      ::  we have an existing partial message; check parameters match
+      ::
+      ?>  (gth num-fragments.u.existing fragment-num)
+      ?>  =(num-fragments.u.existing num-fragments)
+      ::
+      u.existing
+    ::
+    =/  already-heard=?  (~(has by fragments.partial-rcv-message) seq)
+    ::  ack dupes except for the last fragment, in which case drop
+    ::
+    ?:  already-heard
+      ?:  is-last-fragment
+        message-still
+      (give %send-ack seq %& fragment-num)
+    ::  new fragment; store in state and check if message is done
+    ::
+    =.  num-received.partial-rcv-message
+      +(num-received.partial-rcv-message)
+    ::
+    =.  fragments.partial-rcv-message
+      (~(put by fragments.partial-rcv-message) fragment-num fragment)
+    ::
+    =.  live-messages.state
+      (~(put by live-messages.state) seq partial-rcv-message)
+    ::  ack any packet other than the last one, and continue either way
+    ::
+    =?  message-still  !is-last-fragment
+      (give %send-ack seq %& fragment-num)
+    ::  enqueue all completed messages starting at +(last-heard.state)
+    ::
+    |-  ^+  message-still
+    ::  if this is not the next message to ack, we're done
+    ::
+    ?.  =(seq +(last-heard.state))
+      message-still
+    ::  if we haven't heard anything from this message, we're done
+    ::
+    ?~  live=(~(get by live-messages.state) seq)
+      message-still
+    ::  if the message isn't done yet, we're done
+    ::
+    ?.  =(num-received num-fragments):u.live
+      message-still
+    ::  we have whole message; update state, assemble, and send to vane
+    ::
+    =.  last-heard.state     +(last-heard.state)
+    =.  live-messages.state  (~(del by live-messages.state) seq)
+    ::
+    =/  =message  (assemble-fragments [num-fragments fragments]:u.live)
+    =.  message-still  (enqueue-to-vane seq message)
+    ::
+    $(seq +(seq))
+  ::
+  ::
+  ++  enqueue-to-vane
+    |=  [seq=message-num =message]
+    ^+  message-still
+    ::
+    =/  empty=?  =(~ pending-vane-ack.state)
+    ::
+    =.  pending-vane-ack.state  (~(put to pending-vane-ack.state) seq message)
+    ::
+    ?.  empty
+      message-still
+    (give %hear-message message)
   ::
   ::
   ++  on-done
     |=  [=message-num error=(unit error)]
-    ^+  [gifts message-still-state]
+    ^+  message-still
     ::
     !!
   --
+::  +assemble-fragments: concatenate fragments into a $message
+::
+++  assemble-fragments
+  |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
+  ^-  message
+  ::
+  =|  sorted=(list fragment)
+  =.  sorted
+    =/  index=fragment-num  0
+    |-  ^+  sorted
+    ?:  =(index num-fragments)
+      sorted
+    $(index +(index), sorted [(~(got by fragments) index) sorted])
+  ::
+  ;;  message
+  %-  cue
+  %+  can   13
+  %+  turn  (flop sorted)
+  |=(a=@ [1 a])
 ::  +get-bone: find or make new bone for .duct in .ossuary
 ::
 ++  get-bone
