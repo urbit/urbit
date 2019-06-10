@@ -121,6 +121,11 @@ export class Root extends Component {
          }} />
          <Route exact path="/~chat/:ship/:station"
            render={ (props) => {
+             let station = 
+               props.match.params.ship
+               + "/" +
+               props.match.params.station;
+             let messages = state.messages[station] || [];
              return (
                <Skeleton
                  sidebar={
@@ -136,7 +141,7 @@ export class Root extends Component {
                  <ChatScreen
                    api={api}
                    configs={configs}
-                   messages={state.messages}
+                   messages={messages}
                    peers={state.peers}
                    {...props}
                  />

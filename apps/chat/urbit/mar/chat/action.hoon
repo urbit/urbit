@@ -11,7 +11,7 @@
 ::
 ++  grab
   |%
-  ++  noun  streams:chat
+  ++  noun  action:chat
   ++  json
     |=  jon=^json
     =<  (parse-chat-action jon)

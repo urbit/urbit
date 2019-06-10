@@ -6,23 +6,23 @@ import { UpdateReducer } from '/reducers/update';
 
 class Store {
   constructor() {
-    let state = localStorage.getItem('store');
+    //let state = localStorage.getItem('store');
 
     this.start = performance.now();
 
-    if (!state) {
-      this.state = {
-        inbox: {},
-        messages: {},
-        configs: {},
-        circles: [],
-        peers: {},
-        local: false
-      };
-    } else {
+    //if (!state) {
+    this.state = {
+      inbox: {},
+      messages: {},
+      configs: {},
+      circles: [],
+      peers: {},
+      local: false
+    };
+    /*    } else {
       this.state = JSON.parse(state);
       this.state.local = true;
-    }
+    }*/
 
     this.initialReducer = new InitialReducer();
     this.configReducer = new ConfigReducer();
@@ -46,7 +46,7 @@ class Store {
     this.end = performance.now();
     console.log('performance.now(): ', this.end - this.start);
 
-    localStorage.setItem('store', JSON.stringify(this.state));
+    //localStorage.setItem('store', JSON.stringify(this.state));
   }
 }
 

@@ -28,25 +28,31 @@ export class UpdateReducer {
     }
   }
 
-  reduceMessages(messages, state) {
-    if (messages) {
-      let station = state.messages[messages.circle];
-      if (messages.circle in state.messages) {
-        if (
-          station[station.length - 1].num === station.length - 1 &&
-          messages.start === station.length
-        ) {
-          state.messages[messages.circle] = 
-            state.messages[messages.circle].concat(messages.envelopes);
-        } else if (station.length === 0) {
-          state.messages[messages.circle] = messages.envelopes;
+  reduceMessages(msgs, state) {
+    if (msgs) {
+
+      let staMsgs = state.messages[msgs.circle];
+      if (msgs.circle in state.messages) {
+        console.log('new messages object: ', msgs);
+        console.log('lowest num in store: ', staMsgs[0].num);
+        console.log('highest num in store: ', staMsgs[staMsgs.length - 1].num);
+
+        if (staMsgs.length > 0 && staMsgs[0].num - 1 === msgs.end) {
+          state.messages[msgs.circle] = msgs.envelopes.concat(staMsgs);
+
+        } else if (staMsgs.length === 0) {
+          state.messages[msgs.circle] = msgs.envelopes;
+
         } else {
-          console.error('%messages has indices inconsistent with localStorage');
+          console.error('%messages has inconsistent indices');
+
         }
+
       } else {
-        state.messages[messages.circle] = messages.envelopes;
+        state.messages[msgs.circle] = msgs.envelopes;
       }
     }
+
   }
 
   reduceConfig(config, state) {

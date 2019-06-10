@@ -1,4 +1,5 @@
 /-  hall
+/+  hall-json
 |%
 ::
 +$  move  [bone card]
@@ -57,17 +58,20 @@
       [%peers cir=circle:hall per=(set @p)]
   ==
 ::
-+$  action  [%actions lis=(list action:hall)]
-
-+$  pareto-mark
-  $%
-    [%json pax=path name=@t jon=json]
-    [%path name=@t obj=(map @t json)]
-  ==
++$  command  [%messages cir=circle:hall start=@ud end=@ud]
 ::
++$  action  [%actions lis=(list action:hall)]
 ::
 ::
 ::  +utilities
+::
+++  parse-chat-command
+  =,  dejs:format
+  =,  dejs:hall-json
+  %-  of
+  :~
+    [%messages (ot circle+circ start+ni end+ni ~)]
+  ==
 ::
 +$  indices-internal-state
   $:  

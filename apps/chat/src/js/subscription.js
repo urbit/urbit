@@ -15,7 +15,7 @@ export class Subscription {
   }
 
   initializeChat() {
-    if (store.state.local) {
+    /*    if (store.state.local) {
       let path = [];
       let msg = Object.keys(store.state.messages);
       for (let i = 0; i < msg.length; i++) {
@@ -43,16 +43,16 @@ export class Subscription {
       api.bind(path, 'PUT', api.authTokens.ship, 'chat',
         this.handleEvent.bind(this),
         this.handleError.bind(this));
-    } else {
+    } else {*/
       console.log('primary');
       api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
         this.handleEvent.bind(this),
         this.handleError.bind(this));
-    }
+    //}
 
-    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
+/*    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));
+      this.handleError.bind(this));*/
   }
 
   handleEvent(diff) {

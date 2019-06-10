@@ -18,9 +18,10 @@ export class ChatScreen extends Component {
       host: props.match.params.ship,
       numPeople: 0,
       numPages: 1,
-      scrollLocked: false
+      scrollLocked: false,
     };
 
+    this.hasAskedForMessages = false;
     this.topMessage = {};
     this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
@@ -33,6 +34,61 @@ export class ChatScreen extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { props } = this;
+
+    if (prevProps.messages.length < props.messages.length - 300) {
+      this.hasAskedForMessages = false;
+      this.forceUpdate();
+      this.topMessage = {};
+    } else if (prevProps.match.params.ship !== props.match.params.ship ||
+              prevProps.match.params.station !== props.match.params.station
+    ) {
+      this.setState({
+        station: props.match.params.ship + "/" + props.match.params.station,
+        circle: props.match.params.station,
+        host: props.match.params.ship,
+        numPeople: 0,
+        scrollLocked: false
+      });
+
+      this.topMessage = {};
+      this.forceUpdate();
+    }
+
+    this.updateReadNumber();
+    this.updateNumPeople();
+    this.updateNumMessagesLoaded(prevProps, prevState);
+    this.scrollToBottom();
+  }
+
+  askForMessages() {
+    const { props, state } = this;
+    let messages = props.messages;
+
+    if (state.numPages * 50 < props.messages.length - 200 || 
+        this.hasAskedForMessages) {
+      return;
+    }
+
+    if (messages.length > 0) {
+      let end = messages[0].num;
+      if (end > 0) {
+        let start = ((end - 400) > 0) ? end - 400 : 0;
+
+        this.hasAskedForMessages = true;
+
+        props.api.chatCommand({
+          messages: {
+            circle: state.station,
+            start,
+            end: end - 1 
+          }
+        });
+      }
+    }
+  }
+
   scrollToBottom() {
     if (!this.state.scrollLocked && this.scrollElement) {
       this.scrollElement.scrollIntoView({ behavior: 'smooth' });
@@ -40,14 +96,14 @@ export class ChatScreen extends Component {
   }
 
   onScroll(e) {
-    if (e.target.scrollTop === 0) {
-      let topMessage = this.topMessage;
-
+    if (e.target.scrollTop === 0
+      && this.state.numPages * 50 <= this.props.messages.length) {
       this.setState({
         numPages: this.state.numPages + 1,
         scrollLocked: true
       }, () => {
         if (this.topMessage && this.topMessage[1]) {
+          this.askForMessages();
           this.topMessage[1].scrollIntoView(true);
         } 
       });
@@ -62,23 +118,6 @@ export class ChatScreen extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { props } = this;
-
-    if (prevProps !== props) {
-      this.setState({
-        station: props.match.params.ship + "/" + props.match.params.station,
-        circle: props.match.params.station,
-        host: props.match.params.ship,
-        numPeople: 0
-      });
-    }
-
-    this.updateReadNumber();
-    this.updateNumPeople();
-    this.updateNumMessagesLoaded(prevProps, prevState);
-    this.scrollToBottom();
-  }
 
   updateReadNumber() {
     const { props, state } = this;
@@ -130,13 +169,18 @@ export class ChatScreen extends Component {
     if (index % 50 === 0) {
       let pageNum = index / 50;
       return (
-        <div key={msg.gam.uid}ref={ el => { this.topMessage[pageNum] = el; }}>
+        <div
+          key={msg.gam.uid + "key" + Math.random() + "key" + msg.num}
+          ref={ el => { this.topMessage[pageNum] = el; }}>
           <Message msg={msg.gam} details={details} />
         </div>
       );
     } else {
       return (
-        <Message key={msg.gam.uid} msg={msg.gam} details={details} />
+        <Message
+          key={msg.gam.uid + Math.random()} 
+          msg={msg.gam} 
+          details={details} />
       );
     }
   }
@@ -144,7 +188,7 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
     
-    let messages = props.messages[state.station] || [];
+    let messages = props.messages;
 
     if (messages.length > 50 * state.numPages) {
       messages = messages
@@ -155,7 +199,8 @@ export class ChatScreen extends Component {
     let peers = props.peers[state.station] || [window.ship];
 
     return (
-      <div className="h-100 w-100 overflow-hidden flex flex-column">
+      <div key={state.station} 
+        className="h-100 w-100 overflow-hidden flex flex-column">
         <div className='pl2 pt2 bb mb3'>
           <h2>{state.circle}</h2>
           <ChatTabBar {...props}

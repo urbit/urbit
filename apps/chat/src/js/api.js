@@ -39,6 +39,10 @@ class UrbitApi {
     this.action("chat", "chat-action", data);
   }
 
+  chatCommand(data) {
+    this.action("chat", "json", data);
+  }
+
   action(appl, mark, data) {
     return new Promise((resolve, reject) => {
       window.urb.poke(ship, appl, mark, data,
