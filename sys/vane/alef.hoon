@@ -893,18 +893,10 @@
       |=  [=lane =shut-packet]
       ^+  peer-core
       ::
-      ?:  ?=(%& -.meat.shut-packet)
-        %+  on-hear-fragment
-          %-  fall  :_  *message-still-state
-          (~(get by rcv.peer-state) bone.shut-packet)
-        [lane shut-packet]
+      =/  =bone  (mix 1 bone.shut-packet)
       ::
-      (on-hear-ack lane shut-packet)
-    ::  +on-hear-ack: handle receipt of ack on packet or message, from unix
-    ::
-    ++  on-hear-ack
-      |=  [=lane =shut-packet]
-      ^+  peer-core
+      ?:  ?=(%& -.meat.shut-packet)
+        (run-message-still bone %hear lane shut-packet)
       ::  distinguish ack on single packet from ack on whole message
       ::
       ::    TODO: move conditional to message pump?
@@ -916,8 +908,8 @@
         [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
       ::  TODO: is it correct to (mix 1 bone) here?
       ::
-      (run-message-pump (mix 1 bone.shut-packet) task)
-    ::  +run-message-pump: process a $message-pump-task and its effects
+      (run-message-pump bone task)
+    ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
       |=  [=bone task=message-pump-task]
@@ -999,20 +991,20 @@
         =/  =wire  (pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %rest date)
       --
-    ::  +on-hear-fragment: handle receipt of message fragment, from unix
+    ::  +run-message-still: process $message-still-task and its effects
     ::
-    ++  on-hear-fragment
-      |=  [=message-still-state =lane =shut-packet]
+    ++  run-message-still
+      |=  [=bone task=message-still-task]
       ^+  peer-core
-      ::  pass fragment to the |message-still for assembly into message
+      ::  pass .task to the |message-still and apply state mutations
       ::
-      =/  message-still  (make-message-still message-still-state channel)
+      =/  =message-still-state
+        (fall (~(get by rcv.peer-state) bone) *message-still-state)
       ::
-      =^  still-gifts  message-still-state
-        (work:message-still %hear lane shut-packet)
-      ::
-      =.  rcv.peer-state
-        (~(put by rcv.peer-state) bone.shut-packet message-still-state)
+      =/  message-still   (make-message-still message-still-state channel)
+      =^  still-gifts     message-still-state  (work:message-still task)
+      =.  rcv.peer-state  (~(put by rcv.peer-state) bone message-still-state)
+      ::  process effects from |message-still
       ::
       |-  ^+  peer-core
       ?~  still-gifts  peer-core
@@ -1030,12 +1022,13 @@
           !!
         ::
             ::  TODO special-case nack?
+            ::  TODO mix 1 bone?
             ::
             %send-ack
           %-  send-shut-packet  :*
             our-life.channel
             her-life.channel
-            (mix 1 bone.shut-packet)
+            bone
             message-num.gift
             %|  ack-meat.gift
           ==
