@@ -605,14 +605,12 @@
 ::  $message-pump-task: job for |message-pump
 ::
 ::    %send: packetize and send application-level message
-::    %hear-fragment-ack: deal with a packet acknowledgment
-::    %hear-message-ack: deal with message negative acknowledgment
+::    %hear-ack: handle receipt of ack on fragment or message
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
   $%  [%send =message]
-      [%hear-fragment-ack =message-num =fragment-num]
-      [%hear-message-ack =message-num ok=? lag=@dr]
+      [%hear-ack =message-num =ack-meat]
       [%wake ~]
   ==
 ::  $message-pump-gift: effect from |message-pump
@@ -803,7 +801,8 @@
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::
-    abet:(on-hear-packet:(make-peer-core peer-state channel) lane shut-packet)
+    =/  peer-core  (make-peer-core peer-state channel)
+    abet:(on-hear-shut-packet:peer-core lane shut-packet)
   ::  +enqueue-alien-packet: store packet from untrusted source
   ::
   ::    Also requests key and life from Jael on first contact.
@@ -887,28 +886,18 @@
         (~(put by peers.ames-state) her.channel %known peer-state)
       ::
       event-core
-    ::  +on-hear-packet: handle receipt of ack or message fragment
+    ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
-    ++  on-hear-packet
+    ++  on-hear-shut-packet
       |=  [=lane =shut-packet]
       ^+  peer-core
+      ::  TODO: is it correct to (mix 1 bone) here?
       ::
       =/  =bone  (mix 1 bone.shut-packet)
       ::
       ?:  ?=(%& -.meat.shut-packet)
         (run-message-still bone %hear lane shut-packet)
-      ::  distinguish ack on single packet from ack on whole message
-      ::
-      ::    TODO: move conditional to message pump?
-      ::
-      =/  task=message-pump-task
-        ?>  ?=(%| -.meat.shut-packet)
-        ?:  ?=(%& -.p.meat.shut-packet)
-          [%hear-fragment-ack message-num.shut-packet p.p.meat.shut-packet]
-        [%hear-message-ack message-num.shut-packet p.p.meat.shut-packet]
-      ::  TODO: is it correct to (mix 1 bone) here?
-      ::
-      (run-message-pump bone task)
+      (run-message-pump bone %hear-ack [message-num +.meat]:shut-packet)
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
@@ -1092,14 +1081,17 @@
     ^+  [gifts state]
     ::
     =~  ?-  -.task
+            %hear-ack
+          ?-  -.ack-meat.task
+              %&
+            (on-hear-fragment-ack [message-num fragment-num=p.ack-meat]:task)
+          ::
+              %|
+            (on-hear-message-ack [message-num [ok lag]:p.ack-meat]:task)
+          ==
+        ::
             %send  (on-send message.task)
-            %hear-fragment-ack
-          (on-hear-fragment-ack [message-num fragment-num]:task)
-        ::
-            %hear-message-ack
-          (on-hear-message-ack [message-num ok lag]:task)
-        ::
-            *  (run-packet-pump task)
+            %wake  (run-packet-pump task)
         ==
         feed-packets
         (run-packet-pump %finalize ~)
