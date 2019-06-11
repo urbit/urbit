@@ -129,32 +129,6 @@
         [%hall-action hac]
     ==
 ::
-++  poke-json
-  |=  jon=json
-  ^-  (quip move _this)
-  =/  com/(unit command:chat)  (parse-chat-command jon)
-  ?~  com
-    [~ this]
-  =*  messages  messages.str.sta
-  =/  envs/(unit (list envelope:hall))  (~(get by messages) cir.u.com)
-  ?~  envs
-    [~ this]
-  ?:  (gte start.u.com (lent u.envs))
-    [~ this]
-  =/  end/@
-    ?:  (gte end.u.com (lent u.envs))
-      (dec (lent u.envs))
-    end.u.com
-  =/  offset  (sub end start.u.com)
-  :_  this
-  %-  send-chat-update
-  :*  %messages
-      cir.u.com
-      start.u.com
-      end
-      (swag [start.u.com offset] u.envs)
-  ==
-::
 ::  +send-chat-update: utility func for sending updates to all our subscribers
 ::
 ++  send-chat-update
@@ -162,6 +136,7 @@
   ^-  (list move)
   %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
+  ~&  bone
   [bone %diff %chat-update upd]
 ::
 ::
@@ -470,6 +445,34 @@
     =/  img  (as-octs:mimes:html (~(got by chat-png) `@ta`name))
     :_  this
     [ost.bol %http-response (png-response:app img)]~
+  ::
+  ::  paginated message data
+  ::
+      [%'~chat' %scroll @t @t @t @t ~]
+    =/  cir/circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
+    =/  start/@ud  (need (rush &5:site.request-line dem))
+    =/  parsedend/@ud  (need (rush &6:site.request-line dem))
+    =*  messages  messages.str.sta
+    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    ?~  envs
+      [~ this]
+    ?:  (gte start (lent u.envs))
+      [~ this]
+    =/  end/@
+      ?:  (gte parsedend (lent u.envs))
+        (dec (lent u.envs))
+      parsedend
+    =/  offset  (sub end start)
+    =/  jon/json  %-  msg-to-json
+    :*  %messages
+        cir
+        start
+        end
+        (swag [start offset] u.envs)
+    ==
+    :_  this
+    [ost.bol %http-response (json-response:app (json-to-octs jon))]~
+  ::
   ::
   ::  inbox page
   ::

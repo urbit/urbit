@@ -30,7 +30,7 @@ export class ChatScreen extends Component {
   componentDidMount() {
     this.updateNumPeople();
     if (this.scrollElement) {
-      this.scrollElement.scrollIntoView(false);
+      this.scrollElement.scrollIntoView(false, { block: 'end' });
     }
   }
 
@@ -44,6 +44,7 @@ export class ChatScreen extends Component {
     } else if (prevProps.match.params.ship !== props.match.params.ship ||
               prevProps.match.params.station !== props.match.params.station
     ) {
+      console.log('switched circle');
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
         circle: props.match.params.station,
@@ -52,6 +53,7 @@ export class ChatScreen extends Component {
         scrollLocked: false
       });
 
+      this.hasAskedForMessages = false;
       this.topMessage = {};
       this.forceUpdate();
     }
@@ -78,13 +80,7 @@ export class ChatScreen extends Component {
 
         this.hasAskedForMessages = true;
 
-        props.api.chatCommand({
-          messages: {
-            circle: state.station,
-            start,
-            end: end - 1 
-          }
-        });
+        props.subscription.fetchMessages(state.station, start, end - 1);
       }
     }
   }

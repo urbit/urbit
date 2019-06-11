@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 
 import { api } from '/api';
+import { subscription } from '/subscription';
 import { store } from '/store';
 import { Skeleton } from '/components/skeleton';
 import { Sidebar } from '/components/sidebar';
@@ -143,6 +144,7 @@ export class Root extends Component {
                    configs={configs}
                    messages={messages}
                    peers={state.peers}
+                   subscription={subscription}
                    {...props}
                  />
                </Skeleton>

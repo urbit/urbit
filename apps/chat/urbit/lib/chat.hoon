@@ -58,12 +58,28 @@
       [%peers cir=circle:hall per=(set @p)]
   ==
 ::
-+$  command  [%messages cir=circle:hall start=@ud end=@ud]
-::
 +$  action  [%actions lis=(list action:hall)]
 ::
 ::
 ::  +utilities
+::
+++  msg-to-json
+  =,  enjs:format
+  |=  upd=update
+  ^-  json
+  ?>  ?=(%messages -.upd)
+  %+  frond  %update
+  %-  pairs
+  :~
+    :-  %messages
+    %-  pairs
+    :~
+      [%circle (circ:enjs:hall-json cir.upd)]
+      [%start (numb start.upd)]
+      [%end (numb end.upd)]
+      [%envelopes [%a (turn env.upd enve:enjs:hall-json)]]
+    ==
+  ==
 ::
 ++  parse-chat-command
   =,  dejs:format

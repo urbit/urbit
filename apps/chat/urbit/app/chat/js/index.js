@@ -45659,10 +45659,6 @@
 	    this.action("chat", "chat-action", data);
 	  }
 
-	  chatCommand(data) {
-	    this.action("chat", "json", data);
-	  }
-
 	  action(appl, mark, data) {
 	    return new Promise((resolve, reject) => {
 	      window.urb.poke(ship, appl, mark, data,
@@ -45896,6 +45892,8 @@
 
 	  handleEvent(data) {
 	    let json = data.data;
+	    console.log(data);
+	    console.log(json);
 
 	    this.initialReducer.reduce(json, this.state);
 	    this.configReducer.reduce(json, this.state);
@@ -45913,5374 +45911,11 @@
 	let store = new Store();
 	window.store = store;
 
-	const _jsxFileName = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/icon-home.js";
-	class IconHome extends react_1 {
-	  render() {
-	    return (
-	      react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName, lineNumber: 6}} )
-	    );
-	  }
-	}
-
-	const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/header-bar.js";
-
-	class HeaderBar extends react_1 {
-
-	  render() {
-	    return (
-	      react.createElement('div', { className: "bg-black w-100" , style: { height: 48, padding: 8 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 11}}
-	        , react.createElement('a', { className: "db",
-	          style: { background: '#1A1A1A', borderRadius: 16, width: 32, height: 32 },
-	          href: "/", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 12}}
-	          , react.createElement(IconHome, {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 15}} )
-	        )
-	      )
-	    );
-	  }
-	}
-
-	const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/chat/src/js/components/skeleton.js";
-	class Skeleton extends react_1 {
-	  render() {
-	    return (
-	      react.createElement('div', { className: "h-100 w-100 absolute"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 9}}
-	        , react.createElement(HeaderBar, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 10}} )
-	        , react.createElement('div', { className: "cf w-100 absolute flex"   ,
-	          style: {
-	            height: 'calc(100% - 48px)' 
-	          }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 11}}
-	          , react.createElement('div', { className: "fl h-100 br overflow-x-hidden"   , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 15}}
-	            , this.props.sidebar
-	          )
-	          , react.createElement('div', { className: "h-100 fr" , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 18}}
-	            , this.props.children
-	          )
-	        )
-	      )
-	    );
-	  }
-	}
-
-	var moment = createCommonjsModule(function (module, exports) {
-	(function (global, factory) {
-	    module.exports = factory();
-	}(commonjsGlobal, (function () {
-	    var hookCallback;
-
-	    function hooks () {
-	        return hookCallback.apply(null, arguments);
-	    }
-
-	    // This is done to register the method called with moment()
-	    // without creating circular dependencies.
-	    function setHookCallback (callback) {
-	        hookCallback = callback;
-	    }
-
-	    function isArray(input) {
-	        return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
-	    }
-
-	    function isObject(input) {
-	        // IE8 will treat undefined and null as object if it wasn't for
-	        // input != null
-	        return input != null && Object.prototype.toString.call(input) === '[object Object]';
-	    }
-
-	    function isObjectEmpty(obj) {
-	        if (Object.getOwnPropertyNames) {
-	            return (Object.getOwnPropertyNames(obj).length === 0);
-	        } else {
-	            var k;
-	            for (k in obj) {
-	                if (obj.hasOwnProperty(k)) {
-	                    return false;
-	                }
-	            }
-	            return true;
-	        }
-	    }
-
-	    function isUndefined(input) {
-	        return input === void 0;
-	    }
-
-	    function isNumber(input) {
-	        return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';
-	    }
-
-	    function isDate(input) {
-	        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
-	    }
-
-	    function map(arr, fn) {
-	        var res = [], i;
-	        for (i = 0; i < arr.length; ++i) {
-	            res.push(fn(arr[i], i));
-	        }
-	        return res;
-	    }
-
-	    function hasOwnProp(a, b) {
-	        return Object.prototype.hasOwnProperty.call(a, b);
-	    }
-
-	    function extend(a, b) {
-	        for (var i in b) {
-	            if (hasOwnProp(b, i)) {
-	                a[i] = b[i];
-	            }
-	        }
-
-	        if (hasOwnProp(b, 'toString')) {
-	            a.toString = b.toString;
-	        }
-
-	        if (hasOwnProp(b, 'valueOf')) {
-	            a.valueOf = b.valueOf;
-	        }
-
-	        return a;
-	    }
-
-	    function createUTC (input, format, locale, strict) {
-	        return createLocalOrUTC(input, format, locale, strict, true).utc();
-	    }
-
-	    function defaultParsingFlags() {
-	        // We need to deep clone this object.
-	        return {
-	            empty           : false,
-	            unusedTokens    : [],
-	            unusedInput     : [],
-	            overflow        : -2,
-	            charsLeftOver   : 0,
-	            nullInput       : false,
-	            invalidMonth    : null,
-	            invalidFormat   : false,
-	            userInvalidated : false,
-	            iso             : false,
-	            parsedDateParts : [],
-	            meridiem        : null,
-	            rfc2822         : false,
-	            weekdayMismatch : false
-	        };
-	    }
-
-	    function getParsingFlags(m) {
-	        if (m._pf == null) {
-	            m._pf = defaultParsingFlags();
-	        }
-	        return m._pf;
-	    }
-
-	    var some;
-	    if (Array.prototype.some) {
-	        some = Array.prototype.some;
-	    } else {
-	        some = function (fun) {
-	            var t = Object(this);
-	            var len = t.length >>> 0;
-
-	            for (var i = 0; i < len; i++) {
-	                if (i in t && fun.call(this, t[i], i, t)) {
-	                    return true;
-	                }
-	            }
-
-	            return false;
-	        };
-	    }
-
-	    function isValid(m) {
-	        if (m._isValid == null) {
-	            var flags = getParsingFlags(m);
-	            var parsedParts = some.call(flags.parsedDateParts, function (i) {
-	                return i != null;
-	            });
-	            var isNowValid = !isNaN(m._d.getTime()) &&
-	                flags.overflow < 0 &&
-	                !flags.empty &&
-	                !flags.invalidMonth &&
-	                !flags.invalidWeekday &&
-	                !flags.weekdayMismatch &&
-	                !flags.nullInput &&
-	                !flags.invalidFormat &&
-	                !flags.userInvalidated &&
-	                (!flags.meridiem || (flags.meridiem && parsedParts));
-
-	            if (m._strict) {
-	                isNowValid = isNowValid &&
-	                    flags.charsLeftOver === 0 &&
-	                    flags.unusedTokens.length === 0 &&
-	                    flags.bigHour === undefined;
-	            }
-
-	            if (Object.isFrozen == null || !Object.isFrozen(m)) {
-	                m._isValid = isNowValid;
-	            }
-	            else {
-	                return isNowValid;
-	            }
-	        }
-	        return m._isValid;
-	    }
-
-	    function createInvalid (flags) {
-	        var m = createUTC(NaN);
-	        if (flags != null) {
-	            extend(getParsingFlags(m), flags);
-	        }
-	        else {
-	            getParsingFlags(m).userInvalidated = true;
-	        }
-
-	        return m;
-	    }
-
-	    // Plugins that add properties should also add the key here (null value),
-	    // so we can properly clone ourselves.
-	    var momentProperties = hooks.momentProperties = [];
-
-	    function copyConfig(to, from) {
-	        var i, prop, val;
-
-	        if (!isUndefined(from._isAMomentObject)) {
-	            to._isAMomentObject = from._isAMomentObject;
-	        }
-	        if (!isUndefined(from._i)) {
-	            to._i = from._i;
-	        }
-	        if (!isUndefined(from._f)) {
-	            to._f = from._f;
-	        }
-	        if (!isUndefined(from._l)) {
-	            to._l = from._l;
-	        }
-	        if (!isUndefined(from._strict)) {
-	            to._strict = from._strict;
-	        }
-	        if (!isUndefined(from._tzm)) {
-	            to._tzm = from._tzm;
-	        }
-	        if (!isUndefined(from._isUTC)) {
-	            to._isUTC = from._isUTC;
-	        }
-	        if (!isUndefined(from._offset)) {
-	            to._offset = from._offset;
-	        }
-	        if (!isUndefined(from._pf)) {
-	            to._pf = getParsingFlags(from);
-	        }
-	        if (!isUndefined(from._locale)) {
-	            to._locale = from._locale;
-	        }
-
-	        if (momentProperties.length > 0) {
-	            for (i = 0; i < momentProperties.length; i++) {
-	                prop = momentProperties[i];
-	                val = from[prop];
-	                if (!isUndefined(val)) {
-	                    to[prop] = val;
-	                }
-	            }
-	        }
-
-	        return to;
-	    }
-
-	    var updateInProgress = false;
-
-	    // Moment prototype object
-	    function Moment(config) {
-	        copyConfig(this, config);
-	        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
-	        if (!this.isValid()) {
-	            this._d = new Date(NaN);
-	        }
-	        // Prevent infinite loop in case updateOffset creates new moment
-	        // objects.
-	        if (updateInProgress === false) {
-	            updateInProgress = true;
-	            hooks.updateOffset(this);
-	            updateInProgress = false;
-	        }
-	    }
-
-	    function isMoment (obj) {
-	        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
-	    }
-
-	    function absFloor (number) {
-	        if (number < 0) {
-	            // -0 -> 0
-	            return Math.ceil(number) || 0;
-	        } else {
-	            return Math.floor(number);
-	        }
-	    }
-
-	    function toInt(argumentForCoercion) {
-	        var coercedNumber = +argumentForCoercion,
-	            value = 0;
-
-	        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
-	            value = absFloor(coercedNumber);
-	        }
-
-	        return value;
-	    }
-
-	    // compare two arrays, return the number of differences
-	    function compareArrays(array1, array2, dontConvert) {
-	        var len = Math.min(array1.length, array2.length),
-	            lengthDiff = Math.abs(array1.length - array2.length),
-	            diffs = 0,
-	            i;
-	        for (i = 0; i < len; i++) {
-	            if ((dontConvert && array1[i] !== array2[i]) ||
-	                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
-	                diffs++;
-	            }
-	        }
-	        return diffs + lengthDiff;
-	    }
-
-	    function warn(msg) {
-	        if (hooks.suppressDeprecationWarnings === false &&
-	                (typeof console !==  'undefined') && console.warn) {
-	            console.warn('Deprecation warning: ' + msg);
-	        }
-	    }
-
-	    function deprecate(msg, fn) {
-	        var firstTime = true;
-
-	        return extend(function () {
-	            if (hooks.deprecationHandler != null) {
-	                hooks.deprecationHandler(null, msg);
-	            }
-	            if (firstTime) {
-	                var args = [];
-	                var arg;
-	                for (var i = 0; i < arguments.length; i++) {
-	                    arg = '';
-	                    if (typeof arguments[i] === 'object') {
-	                        arg += '\n[' + i + '] ';
-	                        for (var key in arguments[0]) {
-	                            arg += key + ': ' + arguments[0][key] + ', ';
-	                        }
-	                        arg = arg.slice(0, -2); // Remove trailing comma and space
-	                    } else {
-	                        arg = arguments[i];
-	                    }
-	                    args.push(arg);
-	                }
-	                warn(msg + '\nArguments: ' + Array.prototype.slice.call(args).join('') + '\n' + (new Error()).stack);
-	                firstTime = false;
-	            }
-	            return fn.apply(this, arguments);
-	        }, fn);
-	    }
-
-	    var deprecations = {};
-
-	    function deprecateSimple(name, msg) {
-	        if (hooks.deprecationHandler != null) {
-	            hooks.deprecationHandler(name, msg);
-	        }
-	        if (!deprecations[name]) {
-	            warn(msg);
-	            deprecations[name] = true;
-	        }
-	    }
-
-	    hooks.suppressDeprecationWarnings = false;
-	    hooks.deprecationHandler = null;
-
-	    function isFunction(input) {
-	        return input instanceof Function || Object.prototype.toString.call(input) === '[object Function]';
-	    }
-
-	    function set (config) {
-	        var prop, i;
-	        for (i in config) {
-	            prop = config[i];
-	            if (isFunction(prop)) {
-	                this[i] = prop;
-	            } else {
-	                this['_' + i] = prop;
-	            }
-	        }
-	        this._config = config;
-	        // Lenient ordinal parsing accepts just a number in addition to
-	        // number + (possibly) stuff coming from _dayOfMonthOrdinalParse.
-	        // TODO: Remove "ordinalParse" fallback in next major release.
-	        this._dayOfMonthOrdinalParseLenient = new RegExp(
-	            (this._dayOfMonthOrdinalParse.source || this._ordinalParse.source) +
-	                '|' + (/\d{1,2}/).source);
-	    }
-
-	    function mergeConfigs(parentConfig, childConfig) {
-	        var res = extend({}, parentConfig), prop;
-	        for (prop in childConfig) {
-	            if (hasOwnProp(childConfig, prop)) {
-	                if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
-	                    res[prop] = {};
-	                    extend(res[prop], parentConfig[prop]);
-	                    extend(res[prop], childConfig[prop]);
-	                } else if (childConfig[prop] != null) {
-	                    res[prop] = childConfig[prop];
-	                } else {
-	                    delete res[prop];
-	                }
-	            }
-	        }
-	        for (prop in parentConfig) {
-	            if (hasOwnProp(parentConfig, prop) &&
-	                    !hasOwnProp(childConfig, prop) &&
-	                    isObject(parentConfig[prop])) {
-	                // make sure changes to properties don't modify parent config
-	                res[prop] = extend({}, res[prop]);
-	            }
-	        }
-	        return res;
-	    }
-
-	    function Locale(config) {
-	        if (config != null) {
-	            this.set(config);
-	        }
-	    }
-
-	    var keys;
-
-	    if (Object.keys) {
-	        keys = Object.keys;
-	    } else {
-	        keys = function (obj) {
-	            var i, res = [];
-	            for (i in obj) {
-	                if (hasOwnProp(obj, i)) {
-	                    res.push(i);
-	                }
-	            }
-	            return res;
-	        };
-	    }
-
-	    var defaultCalendar = {
-	        sameDay : '[Today at] LT',
-	        nextDay : '[Tomorrow at] LT',
-	        nextWeek : 'dddd [at] LT',
-	        lastDay : '[Yesterday at] LT',
-	        lastWeek : '[Last] dddd [at] LT',
-	        sameElse : 'L'
-	    };
-
-	    function calendar (key, mom, now) {
-	        var output = this._calendar[key] || this._calendar['sameElse'];
-	        return isFunction(output) ? output.call(mom, now) : output;
-	    }
-
-	    var defaultLongDateFormat = {
-	        LTS  : 'h:mm:ss A',
-	        LT   : 'h:mm A',
-	        L    : 'MM/DD/YYYY',
-	        LL   : 'MMMM D, YYYY',
-	        LLL  : 'MMMM D, YYYY h:mm A',
-	        LLLL : 'dddd, MMMM D, YYYY h:mm A'
-	    };
-
-	    function longDateFormat (key) {
-	        var format = this._longDateFormat[key],
-	            formatUpper = this._longDateFormat[key.toUpperCase()];
-
-	        if (format || !formatUpper) {
-	            return format;
-	        }
-
-	        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
-	            return val.slice(1);
-	        });
-
-	        return this._longDateFormat[key];
-	    }
-
-	    var defaultInvalidDate = 'Invalid date';
-
-	    function invalidDate () {
-	        return this._invalidDate;
-	    }
-
-	    var defaultOrdinal = '%d';
-	    var defaultDayOfMonthOrdinalParse = /\d{1,2}/;
-
-	    function ordinal (number) {
-	        return this._ordinal.replace('%d', number);
-	    }
-
-	    var defaultRelativeTime = {
-	        future : 'in %s',
-	        past   : '%s ago',
-	        s  : 'a few seconds',
-	        ss : '%d seconds',
-	        m  : 'a minute',
-	        mm : '%d minutes',
-	        h  : 'an hour',
-	        hh : '%d hours',
-	        d  : 'a day',
-	        dd : '%d days',
-	        M  : 'a month',
-	        MM : '%d months',
-	        y  : 'a year',
-	        yy : '%d years'
-	    };
-
-	    function relativeTime (number, withoutSuffix, string, isFuture) {
-	        var output = this._relativeTime[string];
-	        return (isFunction(output)) ?
-	            output(number, withoutSuffix, string, isFuture) :
-	            output.replace(/%d/i, number);
-	    }
-
-	    function pastFuture (diff, output) {
-	        var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
-	        return isFunction(format) ? format(output) : format.replace(/%s/i, output);
-	    }
-
-	    var aliases = {};
-
-	    function addUnitAlias (unit, shorthand) {
-	        var lowerCase = unit.toLowerCase();
-	        aliases[lowerCase] = aliases[lowerCase + 's'] = aliases[shorthand] = unit;
-	    }
-
-	    function normalizeUnits(units) {
-	        return typeof units === 'string' ? aliases[units] || aliases[units.toLowerCase()] : undefined;
-	    }
-
-	    function normalizeObjectUnits(inputObject) {
-	        var normalizedInput = {},
-	            normalizedProp,
-	            prop;
-
-	        for (prop in inputObject) {
-	            if (hasOwnProp(inputObject, prop)) {
-	                normalizedProp = normalizeUnits(prop);
-	                if (normalizedProp) {
-	                    normalizedInput[normalizedProp] = inputObject[prop];
-	                }
-	            }
-	        }
-
-	        return normalizedInput;
-	    }
-
-	    var priorities = {};
-
-	    function addUnitPriority(unit, priority) {
-	        priorities[unit] = priority;
-	    }
-
-	    function getPrioritizedUnits(unitsObj) {
-	        var units = [];
-	        for (var u in unitsObj) {
-	            units.push({unit: u, priority: priorities[u]});
-	        }
-	        units.sort(function (a, b) {
-	            return a.priority - b.priority;
-	        });
-	        return units;
-	    }
-
-	    function zeroFill(number, targetLength, forceSign) {
-	        var absNumber = '' + Math.abs(number),
-	            zerosToFill = targetLength - absNumber.length,
-	            sign = number >= 0;
-	        return (sign ? (forceSign ? '+' : '') : '-') +
-	            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
-	    }
-
-	    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
-
-	    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
-
-	    var formatFunctions = {};
-
-	    var formatTokenFunctions = {};
-
-	    // token:    'M'
-	    // padded:   ['MM', 2]
-	    // ordinal:  'Mo'
-	    // callback: function () { this.month() + 1 }
-	    function addFormatToken (token, padded, ordinal, callback) {
-	        var func = callback;
-	        if (typeof callback === 'string') {
-	            func = function () {
-	                return this[callback]();
-	            };
-	        }
-	        if (token) {
-	            formatTokenFunctions[token] = func;
-	        }
-	        if (padded) {
-	            formatTokenFunctions[padded[0]] = function () {
-	                return zeroFill(func.apply(this, arguments), padded[1], padded[2]);
-	            };
-	        }
-	        if (ordinal) {
-	            formatTokenFunctions[ordinal] = function () {
-	                return this.localeData().ordinal(func.apply(this, arguments), token);
-	            };
-	        }
-	    }
-
-	    function removeFormattingTokens(input) {
-	        if (input.match(/\[[\s\S]/)) {
-	            return input.replace(/^\[|\]$/g, '');
-	        }
-	        return input.replace(/\\/g, '');
-	    }
-
-	    function makeFormatFunction(format) {
-	        var array = format.match(formattingTokens), i, length;
-
-	        for (i = 0, length = array.length; i < length; i++) {
-	            if (formatTokenFunctions[array[i]]) {
-	                array[i] = formatTokenFunctions[array[i]];
-	            } else {
-	                array[i] = removeFormattingTokens(array[i]);
-	            }
-	        }
-
-	        return function (mom) {
-	            var output = '', i;
-	            for (i = 0; i < length; i++) {
-	                output += isFunction(array[i]) ? array[i].call(mom, format) : array[i];
-	            }
-	            return output;
-	        };
-	    }
-
-	    // format date using native date object
-	    function formatMoment(m, format) {
-	        if (!m.isValid()) {
-	            return m.localeData().invalidDate();
-	        }
-
-	        format = expandFormat(format, m.localeData());
-	        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
-
-	        return formatFunctions[format](m);
-	    }
-
-	    function expandFormat(format, locale) {
-	        var i = 5;
-
-	        function replaceLongDateFormatTokens(input) {
-	            return locale.longDateFormat(input) || input;
-	        }
-
-	        localFormattingTokens.lastIndex = 0;
-	        while (i >= 0 && localFormattingTokens.test(format)) {
-	            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
-	            localFormattingTokens.lastIndex = 0;
-	            i -= 1;
-	        }
-
-	        return format;
-	    }
-
-	    var match1         = /\d/;            //       0 - 9
-	    var match2         = /\d\d/;          //      00 - 99
-	    var match3         = /\d{3}/;         //     000 - 999
-	    var match4         = /\d{4}/;         //    0000 - 9999
-	    var match6         = /[+-]?\d{6}/;    // -999999 - 999999
-	    var match1to2      = /\d\d?/;         //       0 - 99
-	    var match3to4      = /\d\d\d\d?/;     //     999 - 9999
-	    var match5to6      = /\d\d\d\d\d\d?/; //   99999 - 999999
-	    var match1to3      = /\d{1,3}/;       //       0 - 999
-	    var match1to4      = /\d{1,4}/;       //       0 - 9999
-	    var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
-
-	    var matchUnsigned  = /\d+/;           //       0 - inf
-	    var matchSigned    = /[+-]?\d+/;      //    -inf - inf
-
-	    var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
-	    var matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi; // +00 -00 +00:00 -00:00 +0000 -0000 or Z
-
-	    var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
-
-	    // any word (or two) characters or numbers including two/three word month in arabic.
-	    // includes scottish gaelic two word and hyphenated months
-	    var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
-
-	    var regexes = {};
-
-	    function addRegexToken (token, regex, strictRegex) {
-	        regexes[token] = isFunction(regex) ? regex : function (isStrict, localeData) {
-	            return (isStrict && strictRegex) ? strictRegex : regex;
-	        };
-	    }
-
-	    function getParseRegexForToken (token, config) {
-	        if (!hasOwnProp(regexes, token)) {
-	            return new RegExp(unescapeFormat(token));
-	        }
-
-	        return regexes[token](config._strict, config._locale);
-	    }
-
-	    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
-	    function unescapeFormat(s) {
-	        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
-	            return p1 || p2 || p3 || p4;
-	        }));
-	    }
-
-	    function regexEscape(s) {
-	        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-	    }
-
-	    var tokens = {};
-
-	    function addParseToken (token, callback) {
-	        var i, func = callback;
-	        if (typeof token === 'string') {
-	            token = [token];
-	        }
-	        if (isNumber(callback)) {
-	            func = function (input, array) {
-	                array[callback] = toInt(input);
-	            };
-	        }
-	        for (i = 0; i < token.length; i++) {
-	            tokens[token[i]] = func;
-	        }
-	    }
-
-	    function addWeekParseToken (token, callback) {
-	        addParseToken(token, function (input, array, config, token) {
-	            config._w = config._w || {};
-	            callback(input, config._w, config, token);
-	        });
-	    }
-
-	    function addTimeToArrayFromToken(token, input, config) {
-	        if (input != null && hasOwnProp(tokens, token)) {
-	            tokens[token](input, config._a, config, token);
-	        }
-	    }
-
-	    var YEAR = 0;
-	    var MONTH = 1;
-	    var DATE = 2;
-	    var HOUR = 3;
-	    var MINUTE = 4;
-	    var SECOND = 5;
-	    var MILLISECOND = 6;
-	    var WEEK = 7;
-	    var WEEKDAY = 8;
-
-	    // FORMATTING
-
-	    addFormatToken('Y', 0, 0, function () {
-	        var y = this.year();
-	        return y <= 9999 ? '' + y : '+' + y;
-	    });
-
-	    addFormatToken(0, ['YY', 2], 0, function () {
-	        return this.year() % 100;
-	    });
-
-	    addFormatToken(0, ['YYYY',   4],       0, 'year');
-	    addFormatToken(0, ['YYYYY',  5],       0, 'year');
-	    addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
-
-	    // ALIASES
-
-	    addUnitAlias('year', 'y');
-
-	    // PRIORITIES
-
-	    addUnitPriority('year', 1);
-
-	    // PARSING
-
-	    addRegexToken('Y',      matchSigned);
-	    addRegexToken('YY',     match1to2, match2);
-	    addRegexToken('YYYY',   match1to4, match4);
-	    addRegexToken('YYYYY',  match1to6, match6);
-	    addRegexToken('YYYYYY', match1to6, match6);
-
-	    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
-	    addParseToken('YYYY', function (input, array) {
-	        array[YEAR] = input.length === 2 ? hooks.parseTwoDigitYear(input) : toInt(input);
-	    });
-	    addParseToken('YY', function (input, array) {
-	        array[YEAR] = hooks.parseTwoDigitYear(input);
-	    });
-	    addParseToken('Y', function (input, array) {
-	        array[YEAR] = parseInt(input, 10);
-	    });
-
-	    // HELPERS
-
-	    function daysInYear(year) {
-	        return isLeapYear(year) ? 366 : 365;
-	    }
-
-	    function isLeapYear(year) {
-	        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-	    }
-
-	    // HOOKS
-
-	    hooks.parseTwoDigitYear = function (input) {
-	        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
-	    };
-
-	    // MOMENTS
-
-	    var getSetYear = makeGetSet('FullYear', true);
-
-	    function getIsLeapYear () {
-	        return isLeapYear(this.year());
-	    }
-
-	    function makeGetSet (unit, keepTime) {
-	        return function (value) {
-	            if (value != null) {
-	                set$1(this, unit, value);
-	                hooks.updateOffset(this, keepTime);
-	                return this;
-	            } else {
-	                return get(this, unit);
-	            }
-	        };
-	    }
-
-	    function get (mom, unit) {
-	        return mom.isValid() ?
-	            mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]() : NaN;
-	    }
-
-	    function set$1 (mom, unit, value) {
-	        if (mom.isValid() && !isNaN(value)) {
-	            if (unit === 'FullYear' && isLeapYear(mom.year()) && mom.month() === 1 && mom.date() === 29) {
-	                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value, mom.month(), daysInMonth(value, mom.month()));
-	            }
-	            else {
-	                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
-	            }
-	        }
-	    }
-
-	    // MOMENTS
-
-	    function stringGet (units) {
-	        units = normalizeUnits(units);
-	        if (isFunction(this[units])) {
-	            return this[units]();
-	        }
-	        return this;
-	    }
-
-
-	    function stringSet (units, value) {
-	        if (typeof units === 'object') {
-	            units = normalizeObjectUnits(units);
-	            var prioritized = getPrioritizedUnits(units);
-	            for (var i = 0; i < prioritized.length; i++) {
-	                this[prioritized[i].unit](units[prioritized[i].unit]);
-	            }
-	        } else {
-	            units = normalizeUnits(units);
-	            if (isFunction(this[units])) {
-	                return this[units](value);
-	            }
-	        }
-	        return this;
-	    }
-
-	    function mod(n, x) {
-	        return ((n % x) + x) % x;
-	    }
-
-	    var indexOf;
-
-	    if (Array.prototype.indexOf) {
-	        indexOf = Array.prototype.indexOf;
-	    } else {
-	        indexOf = function (o) {
-	            // I know
-	            var i;
-	            for (i = 0; i < this.length; ++i) {
-	                if (this[i] === o) {
-	                    return i;
-	                }
-	            }
-	            return -1;
-	        };
-	    }
-
-	    function daysInMonth(year, month) {
-	        if (isNaN(year) || isNaN(month)) {
-	            return NaN;
-	        }
-	        var modMonth = mod(month, 12);
-	        year += (month - modMonth) / 12;
-	        return modMonth === 1 ? (isLeapYear(year) ? 29 : 28) : (31 - modMonth % 7 % 2);
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('M', ['MM', 2], 'Mo', function () {
-	        return this.month() + 1;
-	    });
-
-	    addFormatToken('MMM', 0, 0, function (format) {
-	        return this.localeData().monthsShort(this, format);
-	    });
-
-	    addFormatToken('MMMM', 0, 0, function (format) {
-	        return this.localeData().months(this, format);
-	    });
-
-	    // ALIASES
-
-	    addUnitAlias('month', 'M');
-
-	    // PRIORITY
-
-	    addUnitPriority('month', 8);
-
-	    // PARSING
-
-	    addRegexToken('M',    match1to2);
-	    addRegexToken('MM',   match1to2, match2);
-	    addRegexToken('MMM',  function (isStrict, locale) {
-	        return locale.monthsShortRegex(isStrict);
-	    });
-	    addRegexToken('MMMM', function (isStrict, locale) {
-	        return locale.monthsRegex(isStrict);
-	    });
-
-	    addParseToken(['M', 'MM'], function (input, array) {
-	        array[MONTH] = toInt(input) - 1;
-	    });
-
-	    addParseToken(['MMM', 'MMMM'], function (input, array, config, token) {
-	        var month = config._locale.monthsParse(input, token, config._strict);
-	        // if we didn't find a month name, mark the date as invalid.
-	        if (month != null) {
-	            array[MONTH] = month;
-	        } else {
-	            getParsingFlags(config).invalidMonth = input;
-	        }
-	    });
-
-	    // LOCALES
-
-	    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/;
-	    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
-	    function localeMonths (m, format) {
-	        if (!m) {
-	            return isArray(this._months) ? this._months :
-	                this._months['standalone'];
-	        }
-	        return isArray(this._months) ? this._months[m.month()] :
-	            this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format) ? 'format' : 'standalone'][m.month()];
-	    }
-
-	    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
-	    function localeMonthsShort (m, format) {
-	        if (!m) {
-	            return isArray(this._monthsShort) ? this._monthsShort :
-	                this._monthsShort['standalone'];
-	        }
-	        return isArray(this._monthsShort) ? this._monthsShort[m.month()] :
-	            this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
-	    }
-
-	    function handleStrictParse(monthName, format, strict) {
-	        var i, ii, mom, llc = monthName.toLocaleLowerCase();
-	        if (!this._monthsParse) {
-	            // this is not used
-	            this._monthsParse = [];
-	            this._longMonthsParse = [];
-	            this._shortMonthsParse = [];
-	            for (i = 0; i < 12; ++i) {
-	                mom = createUTC([2000, i]);
-	                this._shortMonthsParse[i] = this.monthsShort(mom, '').toLocaleLowerCase();
-	                this._longMonthsParse[i] = this.months(mom, '').toLocaleLowerCase();
-	            }
-	        }
-
-	        if (strict) {
-	            if (format === 'MMM') {
-	                ii = indexOf.call(this._shortMonthsParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else {
-	                ii = indexOf.call(this._longMonthsParse, llc);
-	                return ii !== -1 ? ii : null;
-	            }
-	        } else {
-	            if (format === 'MMM') {
-	                ii = indexOf.call(this._shortMonthsParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._longMonthsParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else {
-	                ii = indexOf.call(this._longMonthsParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._shortMonthsParse, llc);
-	                return ii !== -1 ? ii : null;
-	            }
-	        }
-	    }
-
-	    function localeMonthsParse (monthName, format, strict) {
-	        var i, mom, regex;
-
-	        if (this._monthsParseExact) {
-	            return handleStrictParse.call(this, monthName, format, strict);
-	        }
-
-	        if (!this._monthsParse) {
-	            this._monthsParse = [];
-	            this._longMonthsParse = [];
-	            this._shortMonthsParse = [];
-	        }
-
-	        // TODO: add sorting
-	        // Sorting makes sure if one month (or abbr) is a prefix of another
-	        // see sorting in computeMonthsParse
-	        for (i = 0; i < 12; i++) {
-	            // make the regex if we don't have it already
-	            mom = createUTC([2000, i]);
-	            if (strict && !this._longMonthsParse[i]) {
-	                this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
-	                this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
-	            }
-	            if (!strict && !this._monthsParse[i]) {
-	                regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
-	                this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
-	            }
-	            // test the regex
-	            if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
-	                return i;
-	            } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
-	                return i;
-	            } else if (!strict && this._monthsParse[i].test(monthName)) {
-	                return i;
-	            }
-	        }
-	    }
-
-	    // MOMENTS
-
-	    function setMonth (mom, value) {
-	        var dayOfMonth;
-
-	        if (!mom.isValid()) {
-	            // No op
-	            return mom;
-	        }
-
-	        if (typeof value === 'string') {
-	            if (/^\d+$/.test(value)) {
-	                value = toInt(value);
-	            } else {
-	                value = mom.localeData().monthsParse(value);
-	                // TODO: Another silent failure?
-	                if (!isNumber(value)) {
-	                    return mom;
-	                }
-	            }
-	        }
-
-	        dayOfMonth = Math.min(mom.date(), daysInMonth(mom.year(), value));
-	        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
-	        return mom;
-	    }
-
-	    function getSetMonth (value) {
-	        if (value != null) {
-	            setMonth(this, value);
-	            hooks.updateOffset(this, true);
-	            return this;
-	        } else {
-	            return get(this, 'Month');
-	        }
-	    }
-
-	    function getDaysInMonth () {
-	        return daysInMonth(this.year(), this.month());
-	    }
-
-	    var defaultMonthsShortRegex = matchWord;
-	    function monthsShortRegex (isStrict) {
-	        if (this._monthsParseExact) {
-	            if (!hasOwnProp(this, '_monthsRegex')) {
-	                computeMonthsParse.call(this);
-	            }
-	            if (isStrict) {
-	                return this._monthsShortStrictRegex;
-	            } else {
-	                return this._monthsShortRegex;
-	            }
-	        } else {
-	            if (!hasOwnProp(this, '_monthsShortRegex')) {
-	                this._monthsShortRegex = defaultMonthsShortRegex;
-	            }
-	            return this._monthsShortStrictRegex && isStrict ?
-	                this._monthsShortStrictRegex : this._monthsShortRegex;
-	        }
-	    }
-
-	    var defaultMonthsRegex = matchWord;
-	    function monthsRegex (isStrict) {
-	        if (this._monthsParseExact) {
-	            if (!hasOwnProp(this, '_monthsRegex')) {
-	                computeMonthsParse.call(this);
-	            }
-	            if (isStrict) {
-	                return this._monthsStrictRegex;
-	            } else {
-	                return this._monthsRegex;
-	            }
-	        } else {
-	            if (!hasOwnProp(this, '_monthsRegex')) {
-	                this._monthsRegex = defaultMonthsRegex;
-	            }
-	            return this._monthsStrictRegex && isStrict ?
-	                this._monthsStrictRegex : this._monthsRegex;
-	        }
-	    }
-
-	    function computeMonthsParse () {
-	        function cmpLenRev(a, b) {
-	            return b.length - a.length;
-	        }
-
-	        var shortPieces = [], longPieces = [], mixedPieces = [],
-	            i, mom;
-	        for (i = 0; i < 12; i++) {
-	            // make the regex if we don't have it already
-	            mom = createUTC([2000, i]);
-	            shortPieces.push(this.monthsShort(mom, ''));
-	            longPieces.push(this.months(mom, ''));
-	            mixedPieces.push(this.months(mom, ''));
-	            mixedPieces.push(this.monthsShort(mom, ''));
-	        }
-	        // Sorting makes sure if one month (or abbr) is a prefix of another it
-	        // will match the longer piece.
-	        shortPieces.sort(cmpLenRev);
-	        longPieces.sort(cmpLenRev);
-	        mixedPieces.sort(cmpLenRev);
-	        for (i = 0; i < 12; i++) {
-	            shortPieces[i] = regexEscape(shortPieces[i]);
-	            longPieces[i] = regexEscape(longPieces[i]);
-	        }
-	        for (i = 0; i < 24; i++) {
-	            mixedPieces[i] = regexEscape(mixedPieces[i]);
-	        }
-
-	        this._monthsRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
-	        this._monthsShortRegex = this._monthsRegex;
-	        this._monthsStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
-	        this._monthsShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
-	    }
-
-	    function createDate (y, m, d, h, M, s, ms) {
-	        // can't just apply() to create a date:
-	        // https://stackoverflow.com/q/181348
-	        var date = new Date(y, m, d, h, M, s, ms);
-
-	        // the date constructor remaps years 0-99 to 1900-1999
-	        if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
-	            date.setFullYear(y);
-	        }
-	        return date;
-	    }
-
-	    function createUTCDate (y) {
-	        var date = new Date(Date.UTC.apply(null, arguments));
-
-	        // the Date.UTC function remaps years 0-99 to 1900-1999
-	        if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
-	            date.setUTCFullYear(y);
-	        }
-	        return date;
-	    }
-
-	    // start-of-first-week - start-of-year
-	    function firstWeekOffset(year, dow, doy) {
-	        var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
-	            fwd = 7 + dow - doy,
-	            // first-week day local weekday -- which local weekday is fwd
-	            fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
-
-	        return -fwdlw + fwd - 1;
-	    }
-
-	    // https://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
-	    function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
-	        var localWeekday = (7 + weekday - dow) % 7,
-	            weekOffset = firstWeekOffset(year, dow, doy),
-	            dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
-	            resYear, resDayOfYear;
-
-	        if (dayOfYear <= 0) {
-	            resYear = year - 1;
-	            resDayOfYear = daysInYear(resYear) + dayOfYear;
-	        } else if (dayOfYear > daysInYear(year)) {
-	            resYear = year + 1;
-	            resDayOfYear = dayOfYear - daysInYear(year);
-	        } else {
-	            resYear = year;
-	            resDayOfYear = dayOfYear;
-	        }
-
-	        return {
-	            year: resYear,
-	            dayOfYear: resDayOfYear
-	        };
-	    }
-
-	    function weekOfYear(mom, dow, doy) {
-	        var weekOffset = firstWeekOffset(mom.year(), dow, doy),
-	            week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1,
-	            resWeek, resYear;
-
-	        if (week < 1) {
-	            resYear = mom.year() - 1;
-	            resWeek = week + weeksInYear(resYear, dow, doy);
-	        } else if (week > weeksInYear(mom.year(), dow, doy)) {
-	            resWeek = week - weeksInYear(mom.year(), dow, doy);
-	            resYear = mom.year() + 1;
-	        } else {
-	            resYear = mom.year();
-	            resWeek = week;
-	        }
-
-	        return {
-	            week: resWeek,
-	            year: resYear
-	        };
-	    }
-
-	    function weeksInYear(year, dow, doy) {
-	        var weekOffset = firstWeekOffset(year, dow, doy),
-	            weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
-	        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('w', ['ww', 2], 'wo', 'week');
-	    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
-
-	    // ALIASES
-
-	    addUnitAlias('week', 'w');
-	    addUnitAlias('isoWeek', 'W');
-
-	    // PRIORITIES
-
-	    addUnitPriority('week', 5);
-	    addUnitPriority('isoWeek', 5);
-
-	    // PARSING
-
-	    addRegexToken('w',  match1to2);
-	    addRegexToken('ww', match1to2, match2);
-	    addRegexToken('W',  match1to2);
-	    addRegexToken('WW', match1to2, match2);
-
-	    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
-	        week[token.substr(0, 1)] = toInt(input);
-	    });
-
-	    // HELPERS
-
-	    // LOCALES
-
-	    function localeWeek (mom) {
-	        return weekOfYear(mom, this._week.dow, this._week.doy).week;
-	    }
-
-	    var defaultLocaleWeek = {
-	        dow : 0, // Sunday is the first day of the week.
-	        doy : 6  // The week that contains Jan 1st is the first week of the year.
-	    };
-
-	    function localeFirstDayOfWeek () {
-	        return this._week.dow;
-	    }
-
-	    function localeFirstDayOfYear () {
-	        return this._week.doy;
-	    }
-
-	    // MOMENTS
-
-	    function getSetWeek (input) {
-	        var week = this.localeData().week(this);
-	        return input == null ? week : this.add((input - week) * 7, 'd');
-	    }
-
-	    function getSetISOWeek (input) {
-	        var week = weekOfYear(this, 1, 4).week;
-	        return input == null ? week : this.add((input - week) * 7, 'd');
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('d', 0, 'do', 'day');
-
-	    addFormatToken('dd', 0, 0, function (format) {
-	        return this.localeData().weekdaysMin(this, format);
-	    });
-
-	    addFormatToken('ddd', 0, 0, function (format) {
-	        return this.localeData().weekdaysShort(this, format);
-	    });
-
-	    addFormatToken('dddd', 0, 0, function (format) {
-	        return this.localeData().weekdays(this, format);
-	    });
-
-	    addFormatToken('e', 0, 0, 'weekday');
-	    addFormatToken('E', 0, 0, 'isoWeekday');
-
-	    // ALIASES
-
-	    addUnitAlias('day', 'd');
-	    addUnitAlias('weekday', 'e');
-	    addUnitAlias('isoWeekday', 'E');
-
-	    // PRIORITY
-	    addUnitPriority('day', 11);
-	    addUnitPriority('weekday', 11);
-	    addUnitPriority('isoWeekday', 11);
-
-	    // PARSING
-
-	    addRegexToken('d',    match1to2);
-	    addRegexToken('e',    match1to2);
-	    addRegexToken('E',    match1to2);
-	    addRegexToken('dd',   function (isStrict, locale) {
-	        return locale.weekdaysMinRegex(isStrict);
-	    });
-	    addRegexToken('ddd',   function (isStrict, locale) {
-	        return locale.weekdaysShortRegex(isStrict);
-	    });
-	    addRegexToken('dddd',   function (isStrict, locale) {
-	        return locale.weekdaysRegex(isStrict);
-	    });
-
-	    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config, token) {
-	        var weekday = config._locale.weekdaysParse(input, token, config._strict);
-	        // if we didn't get a weekday name, mark the date as invalid
-	        if (weekday != null) {
-	            week.d = weekday;
-	        } else {
-	            getParsingFlags(config).invalidWeekday = input;
-	        }
-	    });
-
-	    addWeekParseToken(['d', 'e', 'E'], function (input, week, config, token) {
-	        week[token] = toInt(input);
-	    });
-
-	    // HELPERS
-
-	    function parseWeekday(input, locale) {
-	        if (typeof input !== 'string') {
-	            return input;
-	        }
-
-	        if (!isNaN(input)) {
-	            return parseInt(input, 10);
-	        }
-
-	        input = locale.weekdaysParse(input);
-	        if (typeof input === 'number') {
-	            return input;
-	        }
-
-	        return null;
-	    }
-
-	    function parseIsoWeekday(input, locale) {
-	        if (typeof input === 'string') {
-	            return locale.weekdaysParse(input) % 7 || 7;
-	        }
-	        return isNaN(input) ? null : input;
-	    }
-
-	    // LOCALES
-
-	    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
-	    function localeWeekdays (m, format) {
-	        if (!m) {
-	            return isArray(this._weekdays) ? this._weekdays :
-	                this._weekdays['standalone'];
-	        }
-	        return isArray(this._weekdays) ? this._weekdays[m.day()] :
-	            this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
-	    }
-
-	    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
-	    function localeWeekdaysShort (m) {
-	        return (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
-	    }
-
-	    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
-	    function localeWeekdaysMin (m) {
-	        return (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
-	    }
-
-	    function handleStrictParse$1(weekdayName, format, strict) {
-	        var i, ii, mom, llc = weekdayName.toLocaleLowerCase();
-	        if (!this._weekdaysParse) {
-	            this._weekdaysParse = [];
-	            this._shortWeekdaysParse = [];
-	            this._minWeekdaysParse = [];
-
-	            for (i = 0; i < 7; ++i) {
-	                mom = createUTC([2000, 1]).day(i);
-	                this._minWeekdaysParse[i] = this.weekdaysMin(mom, '').toLocaleLowerCase();
-	                this._shortWeekdaysParse[i] = this.weekdaysShort(mom, '').toLocaleLowerCase();
-	                this._weekdaysParse[i] = this.weekdays(mom, '').toLocaleLowerCase();
-	            }
-	        }
-
-	        if (strict) {
-	            if (format === 'dddd') {
-	                ii = indexOf.call(this._weekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else if (format === 'ddd') {
-	                ii = indexOf.call(this._shortWeekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else {
-	                ii = indexOf.call(this._minWeekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            }
-	        } else {
-	            if (format === 'dddd') {
-	                ii = indexOf.call(this._weekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._shortWeekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._minWeekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else if (format === 'ddd') {
-	                ii = indexOf.call(this._shortWeekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._weekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._minWeekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            } else {
-	                ii = indexOf.call(this._minWeekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._weekdaysParse, llc);
-	                if (ii !== -1) {
-	                    return ii;
-	                }
-	                ii = indexOf.call(this._shortWeekdaysParse, llc);
-	                return ii !== -1 ? ii : null;
-	            }
-	        }
-	    }
-
-	    function localeWeekdaysParse (weekdayName, format, strict) {
-	        var i, mom, regex;
-
-	        if (this._weekdaysParseExact) {
-	            return handleStrictParse$1.call(this, weekdayName, format, strict);
-	        }
-
-	        if (!this._weekdaysParse) {
-	            this._weekdaysParse = [];
-	            this._minWeekdaysParse = [];
-	            this._shortWeekdaysParse = [];
-	            this._fullWeekdaysParse = [];
-	        }
-
-	        for (i = 0; i < 7; i++) {
-	            // make the regex if we don't have it already
-
-	            mom = createUTC([2000, 1]).day(i);
-	            if (strict && !this._fullWeekdaysParse[i]) {
-	                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\\.?') + '$', 'i');
-	                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\\.?') + '$', 'i');
-	                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\\.?') + '$', 'i');
-	            }
-	            if (!this._weekdaysParse[i]) {
-	                regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
-	                this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
-	            }
-	            // test the regex
-	            if (strict && format === 'dddd' && this._fullWeekdaysParse[i].test(weekdayName)) {
-	                return i;
-	            } else if (strict && format === 'ddd' && this._shortWeekdaysParse[i].test(weekdayName)) {
-	                return i;
-	            } else if (strict && format === 'dd' && this._minWeekdaysParse[i].test(weekdayName)) {
-	                return i;
-	            } else if (!strict && this._weekdaysParse[i].test(weekdayName)) {
-	                return i;
-	            }
-	        }
-	    }
-
-	    // MOMENTS
-
-	    function getSetDayOfWeek (input) {
-	        if (!this.isValid()) {
-	            return input != null ? this : NaN;
-	        }
-	        var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
-	        if (input != null) {
-	            input = parseWeekday(input, this.localeData());
-	            return this.add(input - day, 'd');
-	        } else {
-	            return day;
-	        }
-	    }
-
-	    function getSetLocaleDayOfWeek (input) {
-	        if (!this.isValid()) {
-	            return input != null ? this : NaN;
-	        }
-	        var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
-	        return input == null ? weekday : this.add(input - weekday, 'd');
-	    }
-
-	    function getSetISODayOfWeek (input) {
-	        if (!this.isValid()) {
-	            return input != null ? this : NaN;
-	        }
-
-	        // behaves the same as moment#day except
-	        // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
-	        // as a setter, sunday should belong to the previous week.
-
-	        if (input != null) {
-	            var weekday = parseIsoWeekday(input, this.localeData());
-	            return this.day(this.day() % 7 ? weekday : weekday - 7);
-	        } else {
-	            return this.day() || 7;
-	        }
-	    }
-
-	    var defaultWeekdaysRegex = matchWord;
-	    function weekdaysRegex (isStrict) {
-	        if (this._weekdaysParseExact) {
-	            if (!hasOwnProp(this, '_weekdaysRegex')) {
-	                computeWeekdaysParse.call(this);
-	            }
-	            if (isStrict) {
-	                return this._weekdaysStrictRegex;
-	            } else {
-	                return this._weekdaysRegex;
-	            }
-	        } else {
-	            if (!hasOwnProp(this, '_weekdaysRegex')) {
-	                this._weekdaysRegex = defaultWeekdaysRegex;
-	            }
-	            return this._weekdaysStrictRegex && isStrict ?
-	                this._weekdaysStrictRegex : this._weekdaysRegex;
-	        }
-	    }
-
-	    var defaultWeekdaysShortRegex = matchWord;
-	    function weekdaysShortRegex (isStrict) {
-	        if (this._weekdaysParseExact) {
-	            if (!hasOwnProp(this, '_weekdaysRegex')) {
-	                computeWeekdaysParse.call(this);
-	            }
-	            if (isStrict) {
-	                return this._weekdaysShortStrictRegex;
-	            } else {
-	                return this._weekdaysShortRegex;
-	            }
-	        } else {
-	            if (!hasOwnProp(this, '_weekdaysShortRegex')) {
-	                this._weekdaysShortRegex = defaultWeekdaysShortRegex;
-	            }
-	            return this._weekdaysShortStrictRegex && isStrict ?
-	                this._weekdaysShortStrictRegex : this._weekdaysShortRegex;
-	        }
-	    }
-
-	    var defaultWeekdaysMinRegex = matchWord;
-	    function weekdaysMinRegex (isStrict) {
-	        if (this._weekdaysParseExact) {
-	            if (!hasOwnProp(this, '_weekdaysRegex')) {
-	                computeWeekdaysParse.call(this);
-	            }
-	            if (isStrict) {
-	                return this._weekdaysMinStrictRegex;
-	            } else {
-	                return this._weekdaysMinRegex;
-	            }
-	        } else {
-	            if (!hasOwnProp(this, '_weekdaysMinRegex')) {
-	                this._weekdaysMinRegex = defaultWeekdaysMinRegex;
-	            }
-	            return this._weekdaysMinStrictRegex && isStrict ?
-	                this._weekdaysMinStrictRegex : this._weekdaysMinRegex;
-	        }
-	    }
-
-
-	    function computeWeekdaysParse () {
-	        function cmpLenRev(a, b) {
-	            return b.length - a.length;
-	        }
-
-	        var minPieces = [], shortPieces = [], longPieces = [], mixedPieces = [],
-	            i, mom, minp, shortp, longp;
-	        for (i = 0; i < 7; i++) {
-	            // make the regex if we don't have it already
-	            mom = createUTC([2000, 1]).day(i);
-	            minp = this.weekdaysMin(mom, '');
-	            shortp = this.weekdaysShort(mom, '');
-	            longp = this.weekdays(mom, '');
-	            minPieces.push(minp);
-	            shortPieces.push(shortp);
-	            longPieces.push(longp);
-	            mixedPieces.push(minp);
-	            mixedPieces.push(shortp);
-	            mixedPieces.push(longp);
-	        }
-	        // Sorting makes sure if one weekday (or abbr) is a prefix of another it
-	        // will match the longer piece.
-	        minPieces.sort(cmpLenRev);
-	        shortPieces.sort(cmpLenRev);
-	        longPieces.sort(cmpLenRev);
-	        mixedPieces.sort(cmpLenRev);
-	        for (i = 0; i < 7; i++) {
-	            shortPieces[i] = regexEscape(shortPieces[i]);
-	            longPieces[i] = regexEscape(longPieces[i]);
-	            mixedPieces[i] = regexEscape(mixedPieces[i]);
-	        }
-
-	        this._weekdaysRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
-	        this._weekdaysShortRegex = this._weekdaysRegex;
-	        this._weekdaysMinRegex = this._weekdaysRegex;
-
-	        this._weekdaysStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
-	        this._weekdaysShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
-	        this._weekdaysMinStrictRegex = new RegExp('^(' + minPieces.join('|') + ')', 'i');
-	    }
-
-	    // FORMATTING
-
-	    function hFormat() {
-	        return this.hours() % 12 || 12;
-	    }
-
-	    function kFormat() {
-	        return this.hours() || 24;
-	    }
-
-	    addFormatToken('H', ['HH', 2], 0, 'hour');
-	    addFormatToken('h', ['hh', 2], 0, hFormat);
-	    addFormatToken('k', ['kk', 2], 0, kFormat);
-
-	    addFormatToken('hmm', 0, 0, function () {
-	        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2);
-	    });
-
-	    addFormatToken('hmmss', 0, 0, function () {
-	        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2) +
-	            zeroFill(this.seconds(), 2);
-	    });
-
-	    addFormatToken('Hmm', 0, 0, function () {
-	        return '' + this.hours() + zeroFill(this.minutes(), 2);
-	    });
-
-	    addFormatToken('Hmmss', 0, 0, function () {
-	        return '' + this.hours() + zeroFill(this.minutes(), 2) +
-	            zeroFill(this.seconds(), 2);
-	    });
-
-	    function meridiem (token, lowercase) {
-	        addFormatToken(token, 0, 0, function () {
-	            return this.localeData().meridiem(this.hours(), this.minutes(), lowercase);
-	        });
-	    }
-
-	    meridiem('a', true);
-	    meridiem('A', false);
-
-	    // ALIASES
-
-	    addUnitAlias('hour', 'h');
-
-	    // PRIORITY
-	    addUnitPriority('hour', 13);
-
-	    // PARSING
-
-	    function matchMeridiem (isStrict, locale) {
-	        return locale._meridiemParse;
-	    }
-
-	    addRegexToken('a',  matchMeridiem);
-	    addRegexToken('A',  matchMeridiem);
-	    addRegexToken('H',  match1to2);
-	    addRegexToken('h',  match1to2);
-	    addRegexToken('k',  match1to2);
-	    addRegexToken('HH', match1to2, match2);
-	    addRegexToken('hh', match1to2, match2);
-	    addRegexToken('kk', match1to2, match2);
-
-	    addRegexToken('hmm', match3to4);
-	    addRegexToken('hmmss', match5to6);
-	    addRegexToken('Hmm', match3to4);
-	    addRegexToken('Hmmss', match5to6);
-
-	    addParseToken(['H', 'HH'], HOUR);
-	    addParseToken(['k', 'kk'], function (input, array, config) {
-	        var kInput = toInt(input);
-	        array[HOUR] = kInput === 24 ? 0 : kInput;
-	    });
-	    addParseToken(['a', 'A'], function (input, array, config) {
-	        config._isPm = config._locale.isPM(input);
-	        config._meridiem = input;
-	    });
-	    addParseToken(['h', 'hh'], function (input, array, config) {
-	        array[HOUR] = toInt(input);
-	        getParsingFlags(config).bigHour = true;
-	    });
-	    addParseToken('hmm', function (input, array, config) {
-	        var pos = input.length - 2;
-	        array[HOUR] = toInt(input.substr(0, pos));
-	        array[MINUTE] = toInt(input.substr(pos));
-	        getParsingFlags(config).bigHour = true;
-	    });
-	    addParseToken('hmmss', function (input, array, config) {
-	        var pos1 = input.length - 4;
-	        var pos2 = input.length - 2;
-	        array[HOUR] = toInt(input.substr(0, pos1));
-	        array[MINUTE] = toInt(input.substr(pos1, 2));
-	        array[SECOND] = toInt(input.substr(pos2));
-	        getParsingFlags(config).bigHour = true;
-	    });
-	    addParseToken('Hmm', function (input, array, config) {
-	        var pos = input.length - 2;
-	        array[HOUR] = toInt(input.substr(0, pos));
-	        array[MINUTE] = toInt(input.substr(pos));
-	    });
-	    addParseToken('Hmmss', function (input, array, config) {
-	        var pos1 = input.length - 4;
-	        var pos2 = input.length - 2;
-	        array[HOUR] = toInt(input.substr(0, pos1));
-	        array[MINUTE] = toInt(input.substr(pos1, 2));
-	        array[SECOND] = toInt(input.substr(pos2));
-	    });
-
-	    // LOCALES
-
-	    function localeIsPM (input) {
-	        // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
-	        // Using charAt should be more compatible.
-	        return ((input + '').toLowerCase().charAt(0) === 'p');
-	    }
-
-	    var defaultLocaleMeridiemParse = /[ap]\.?m?\.?/i;
-	    function localeMeridiem (hours, minutes, isLower) {
-	        if (hours > 11) {
-	            return isLower ? 'pm' : 'PM';
-	        } else {
-	            return isLower ? 'am' : 'AM';
-	        }
-	    }
-
-
-	    // MOMENTS
-
-	    // Setting the hour should keep the time, because the user explicitly
-	    // specified which hour they want. So trying to maintain the same hour (in
-	    // a new timezone) makes sense. Adding/subtracting hours does not follow
-	    // this rule.
-	    var getSetHour = makeGetSet('Hours', true);
-
-	    var baseConfig = {
-	        calendar: defaultCalendar,
-	        longDateFormat: defaultLongDateFormat,
-	        invalidDate: defaultInvalidDate,
-	        ordinal: defaultOrdinal,
-	        dayOfMonthOrdinalParse: defaultDayOfMonthOrdinalParse,
-	        relativeTime: defaultRelativeTime,
-
-	        months: defaultLocaleMonths,
-	        monthsShort: defaultLocaleMonthsShort,
-
-	        week: defaultLocaleWeek,
-
-	        weekdays: defaultLocaleWeekdays,
-	        weekdaysMin: defaultLocaleWeekdaysMin,
-	        weekdaysShort: defaultLocaleWeekdaysShort,
-
-	        meridiemParse: defaultLocaleMeridiemParse
-	    };
-
-	    // internal storage for locale config files
-	    var locales = {};
-	    var localeFamilies = {};
-	    var globalLocale;
-
-	    function normalizeLocale(key) {
-	        return key ? key.toLowerCase().replace('_', '-') : key;
-	    }
-
-	    // pick the locale from the array
-	    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
-	    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
-	    function chooseLocale(names) {
-	        var i = 0, j, next, locale, split;
-
-	        while (i < names.length) {
-	            split = normalizeLocale(names[i]).split('-');
-	            j = split.length;
-	            next = normalizeLocale(names[i + 1]);
-	            next = next ? next.split('-') : null;
-	            while (j > 0) {
-	                locale = loadLocale(split.slice(0, j).join('-'));
-	                if (locale) {
-	                    return locale;
-	                }
-	                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
-	                    //the next array item is better than a shallower substring of this one
-	                    break;
-	                }
-	                j--;
-	            }
-	            i++;
-	        }
-	        return globalLocale;
-	    }
-
-	    function loadLocale(name) {
-	        var oldLocale = null;
-	        // TODO: Find a better way to register and load all the locales in Node
-	        if (!locales[name] && ('object' !== 'undefined') &&
-	                module && module.exports) {
-	            try {
-	                oldLocale = globalLocale._abbr;
-	                var aliasedRequire = commonjsRequire;
-	                aliasedRequire('./locale/' + name);
-	                getSetGlobalLocale(oldLocale);
-	            } catch (e) {}
-	        }
-	        return locales[name];
-	    }
-
-	    // This function will load locale and then set the global locale.  If
-	    // no arguments are passed in, it will simply return the current global
-	    // locale key.
-	    function getSetGlobalLocale (key, values) {
-	        var data;
-	        if (key) {
-	            if (isUndefined(values)) {
-	                data = getLocale(key);
-	            }
-	            else {
-	                data = defineLocale(key, values);
-	            }
-
-	            if (data) {
-	                // moment.duration._locale = moment._locale = data;
-	                globalLocale = data;
-	            }
-	            else {
-	                if ((typeof console !==  'undefined') && console.warn) {
-	                    //warn user if arguments are passed but the locale could not be set
-	                    console.warn('Locale ' + key +  ' not found. Did you forget to load it?');
-	                }
-	            }
-	        }
-
-	        return globalLocale._abbr;
-	    }
-
-	    function defineLocale (name, config) {
-	        if (config !== null) {
-	            var locale, parentConfig = baseConfig;
-	            config.abbr = name;
-	            if (locales[name] != null) {
-	                deprecateSimple('defineLocaleOverride',
-	                        'use moment.updateLocale(localeName, config) to change ' +
-	                        'an existing locale. moment.defineLocale(localeName, ' +
-	                        'config) should only be used for creating a new locale ' +
-	                        'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.');
-	                parentConfig = locales[name]._config;
-	            } else if (config.parentLocale != null) {
-	                if (locales[config.parentLocale] != null) {
-	                    parentConfig = locales[config.parentLocale]._config;
-	                } else {
-	                    locale = loadLocale(config.parentLocale);
-	                    if (locale != null) {
-	                        parentConfig = locale._config;
-	                    } else {
-	                        if (!localeFamilies[config.parentLocale]) {
-	                            localeFamilies[config.parentLocale] = [];
-	                        }
-	                        localeFamilies[config.parentLocale].push({
-	                            name: name,
-	                            config: config
-	                        });
-	                        return null;
-	                    }
-	                }
-	            }
-	            locales[name] = new Locale(mergeConfigs(parentConfig, config));
-
-	            if (localeFamilies[name]) {
-	                localeFamilies[name].forEach(function (x) {
-	                    defineLocale(x.name, x.config);
-	                });
-	            }
-
-	            // backwards compat for now: also set the locale
-	            // make sure we set the locale AFTER all child locales have been
-	            // created, so we won't end up with the child locale set.
-	            getSetGlobalLocale(name);
-
-
-	            return locales[name];
-	        } else {
-	            // useful for testing
-	            delete locales[name];
-	            return null;
-	        }
-	    }
-
-	    function updateLocale(name, config) {
-	        if (config != null) {
-	            var locale, tmpLocale, parentConfig = baseConfig;
-	            // MERGE
-	            tmpLocale = loadLocale(name);
-	            if (tmpLocale != null) {
-	                parentConfig = tmpLocale._config;
-	            }
-	            config = mergeConfigs(parentConfig, config);
-	            locale = new Locale(config);
-	            locale.parentLocale = locales[name];
-	            locales[name] = locale;
-
-	            // backwards compat for now: also set the locale
-	            getSetGlobalLocale(name);
-	        } else {
-	            // pass null for config to unupdate, useful for tests
-	            if (locales[name] != null) {
-	                if (locales[name].parentLocale != null) {
-	                    locales[name] = locales[name].parentLocale;
-	                } else if (locales[name] != null) {
-	                    delete locales[name];
-	                }
-	            }
-	        }
-	        return locales[name];
-	    }
-
-	    // returns locale data
-	    function getLocale (key) {
-	        var locale;
-
-	        if (key && key._locale && key._locale._abbr) {
-	            key = key._locale._abbr;
-	        }
-
-	        if (!key) {
-	            return globalLocale;
-	        }
-
-	        if (!isArray(key)) {
-	            //short-circuit everything else
-	            locale = loadLocale(key);
-	            if (locale) {
-	                return locale;
-	            }
-	            key = [key];
-	        }
-
-	        return chooseLocale(key);
-	    }
-
-	    function listLocales() {
-	        return keys(locales);
-	    }
-
-	    function checkOverflow (m) {
-	        var overflow;
-	        var a = m._a;
-
-	        if (a && getParsingFlags(m).overflow === -2) {
-	            overflow =
-	                a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
-	                a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
-	                a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
-	                a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
-	                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
-	                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
-	                -1;
-
-	            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
-	                overflow = DATE;
-	            }
-	            if (getParsingFlags(m)._overflowWeeks && overflow === -1) {
-	                overflow = WEEK;
-	            }
-	            if (getParsingFlags(m)._overflowWeekday && overflow === -1) {
-	                overflow = WEEKDAY;
-	            }
-
-	            getParsingFlags(m).overflow = overflow;
-	        }
-
-	        return m;
-	    }
-
-	    // Pick the first defined of two or three arguments.
-	    function defaults(a, b, c) {
-	        if (a != null) {
-	            return a;
-	        }
-	        if (b != null) {
-	            return b;
-	        }
-	        return c;
-	    }
-
-	    function currentDateArray(config) {
-	        // hooks is actually the exported moment object
-	        var nowValue = new Date(hooks.now());
-	        if (config._useUTC) {
-	            return [nowValue.getUTCFullYear(), nowValue.getUTCMonth(), nowValue.getUTCDate()];
-	        }
-	        return [nowValue.getFullYear(), nowValue.getMonth(), nowValue.getDate()];
-	    }
-
-	    // convert an array to a date.
-	    // the array should mirror the parameters below
-	    // note: all values past the year are optional and will default to the lowest possible value.
-	    // [year, month, day , hour, minute, second, millisecond]
-	    function configFromArray (config) {
-	        var i, date, input = [], currentDate, expectedWeekday, yearToUse;
-
-	        if (config._d) {
-	            return;
-	        }
-
-	        currentDate = currentDateArray(config);
-
-	        //compute day of the year from weeks and weekdays
-	        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
-	            dayOfYearFromWeekInfo(config);
-	        }
-
-	        //if the day of the year is set, figure out what it is
-	        if (config._dayOfYear != null) {
-	            yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
-
-	            if (config._dayOfYear > daysInYear(yearToUse) || config._dayOfYear === 0) {
-	                getParsingFlags(config)._overflowDayOfYear = true;
-	            }
-
-	            date = createUTCDate(yearToUse, 0, config._dayOfYear);
-	            config._a[MONTH] = date.getUTCMonth();
-	            config._a[DATE] = date.getUTCDate();
-	        }
-
-	        // Default to current date.
-	        // * if no year, month, day of month are given, default to today
-	        // * if day of month is given, default month and year
-	        // * if month is given, default only year
-	        // * if year is given, don't default anything
-	        for (i = 0; i < 3 && config._a[i] == null; ++i) {
-	            config._a[i] = input[i] = currentDate[i];
-	        }
-
-	        // Zero out whatever was not defaulted, including time
-	        for (; i < 7; i++) {
-	            config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
-	        }
-
-	        // Check for 24:00:00.000
-	        if (config._a[HOUR] === 24 &&
-	                config._a[MINUTE] === 0 &&
-	                config._a[SECOND] === 0 &&
-	                config._a[MILLISECOND] === 0) {
-	            config._nextDay = true;
-	            config._a[HOUR] = 0;
-	        }
-
-	        config._d = (config._useUTC ? createUTCDate : createDate).apply(null, input);
-	        expectedWeekday = config._useUTC ? config._d.getUTCDay() : config._d.getDay();
-
-	        // Apply timezone offset from input. The actual utcOffset can be changed
-	        // with parseZone.
-	        if (config._tzm != null) {
-	            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
-	        }
-
-	        if (config._nextDay) {
-	            config._a[HOUR] = 24;
-	        }
-
-	        // check for mismatching day of week
-	        if (config._w && typeof config._w.d !== 'undefined' && config._w.d !== expectedWeekday) {
-	            getParsingFlags(config).weekdayMismatch = true;
-	        }
-	    }
-
-	    function dayOfYearFromWeekInfo(config) {
-	        var w, weekYear, week, weekday, dow, doy, temp, weekdayOverflow;
-
-	        w = config._w;
-	        if (w.GG != null || w.W != null || w.E != null) {
-	            dow = 1;
-	            doy = 4;
-
-	            // TODO: We need to take the current isoWeekYear, but that depends on
-	            // how we interpret now (local, utc, fixed offset). So create
-	            // a now version of current config (take local/utc/offset flags, and
-	            // create now).
-	            weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(createLocal(), 1, 4).year);
-	            week = defaults(w.W, 1);
-	            weekday = defaults(w.E, 1);
-	            if (weekday < 1 || weekday > 7) {
-	                weekdayOverflow = true;
-	            }
-	        } else {
-	            dow = config._locale._week.dow;
-	            doy = config._locale._week.doy;
-
-	            var curWeek = weekOfYear(createLocal(), dow, doy);
-
-	            weekYear = defaults(w.gg, config._a[YEAR], curWeek.year);
-
-	            // Default to current week.
-	            week = defaults(w.w, curWeek.week);
-
-	            if (w.d != null) {
-	                // weekday -- low day numbers are considered next week
-	                weekday = w.d;
-	                if (weekday < 0 || weekday > 6) {
-	                    weekdayOverflow = true;
-	                }
-	            } else if (w.e != null) {
-	                // local weekday -- counting starts from begining of week
-	                weekday = w.e + dow;
-	                if (w.e < 0 || w.e > 6) {
-	                    weekdayOverflow = true;
-	                }
-	            } else {
-	                // default to begining of week
-	                weekday = dow;
-	            }
-	        }
-	        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
-	            getParsingFlags(config)._overflowWeeks = true;
-	        } else if (weekdayOverflow != null) {
-	            getParsingFlags(config)._overflowWeekday = true;
-	        } else {
-	            temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
-	            config._a[YEAR] = temp.year;
-	            config._dayOfYear = temp.dayOfYear;
-	        }
-	    }
-
-	    // iso 8601 regex
-	    // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
-	    var extendedIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
-	    var basicIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
-
-	    var tzRegex = /Z|[+-]\d\d(?::?\d\d)?/;
-
-	    var isoDates = [
-	        ['YYYYYY-MM-DD', /[+-]\d{6}-\d\d-\d\d/],
-	        ['YYYY-MM-DD', /\d{4}-\d\d-\d\d/],
-	        ['GGGG-[W]WW-E', /\d{4}-W\d\d-\d/],
-	        ['GGGG-[W]WW', /\d{4}-W\d\d/, false],
-	        ['YYYY-DDD', /\d{4}-\d{3}/],
-	        ['YYYY-MM', /\d{4}-\d\d/, false],
-	        ['YYYYYYMMDD', /[+-]\d{10}/],
-	        ['YYYYMMDD', /\d{8}/],
-	        // YYYYMM is NOT allowed by the standard
-	        ['GGGG[W]WWE', /\d{4}W\d{3}/],
-	        ['GGGG[W]WW', /\d{4}W\d{2}/, false],
-	        ['YYYYDDD', /\d{7}/]
-	    ];
-
-	    // iso time formats and regexes
-	    var isoTimes = [
-	        ['HH:mm:ss.SSSS', /\d\d:\d\d:\d\d\.\d+/],
-	        ['HH:mm:ss,SSSS', /\d\d:\d\d:\d\d,\d+/],
-	        ['HH:mm:ss', /\d\d:\d\d:\d\d/],
-	        ['HH:mm', /\d\d:\d\d/],
-	        ['HHmmss.SSSS', /\d\d\d\d\d\d\.\d+/],
-	        ['HHmmss,SSSS', /\d\d\d\d\d\d,\d+/],
-	        ['HHmmss', /\d\d\d\d\d\d/],
-	        ['HHmm', /\d\d\d\d/],
-	        ['HH', /\d\d/]
-	    ];
-
-	    var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
-
-	    // date from iso format
-	    function configFromISO(config) {
-	        var i, l,
-	            string = config._i,
-	            match = extendedIsoRegex.exec(string) || basicIsoRegex.exec(string),
-	            allowTime, dateFormat, timeFormat, tzFormat;
-
-	        if (match) {
-	            getParsingFlags(config).iso = true;
-
-	            for (i = 0, l = isoDates.length; i < l; i++) {
-	                if (isoDates[i][1].exec(match[1])) {
-	                    dateFormat = isoDates[i][0];
-	                    allowTime = isoDates[i][2] !== false;
-	                    break;
-	                }
-	            }
-	            if (dateFormat == null) {
-	                config._isValid = false;
-	                return;
-	            }
-	            if (match[3]) {
-	                for (i = 0, l = isoTimes.length; i < l; i++) {
-	                    if (isoTimes[i][1].exec(match[3])) {
-	                        // match[2] should be 'T' or space
-	                        timeFormat = (match[2] || ' ') + isoTimes[i][0];
-	                        break;
-	                    }
-	                }
-	                if (timeFormat == null) {
-	                    config._isValid = false;
-	                    return;
-	                }
-	            }
-	            if (!allowTime && timeFormat != null) {
-	                config._isValid = false;
-	                return;
-	            }
-	            if (match[4]) {
-	                if (tzRegex.exec(match[4])) {
-	                    tzFormat = 'Z';
-	                } else {
-	                    config._isValid = false;
-	                    return;
-	                }
-	            }
-	            config._f = dateFormat + (timeFormat || '') + (tzFormat || '');
-	            configFromStringAndFormat(config);
-	        } else {
-	            config._isValid = false;
-	        }
-	    }
-
-	    // RFC 2822 regex: For details see https://tools.ietf.org/html/rfc2822#section-3.3
-	    var rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/;
-
-	    function extractFromRFC2822Strings(yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
-	        var result = [
-	            untruncateYear(yearStr),
-	            defaultLocaleMonthsShort.indexOf(monthStr),
-	            parseInt(dayStr, 10),
-	            parseInt(hourStr, 10),
-	            parseInt(minuteStr, 10)
-	        ];
-
-	        if (secondStr) {
-	            result.push(parseInt(secondStr, 10));
-	        }
-
-	        return result;
-	    }
-
-	    function untruncateYear(yearStr) {
-	        var year = parseInt(yearStr, 10);
-	        if (year <= 49) {
-	            return 2000 + year;
-	        } else if (year <= 999) {
-	            return 1900 + year;
-	        }
-	        return year;
-	    }
-
-	    function preprocessRFC2822(s) {
-	        // Remove comments and folding whitespace and replace multiple-spaces with a single space
-	        return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-	    }
-
-	    function checkWeekday(weekdayStr, parsedInput, config) {
-	        if (weekdayStr) {
-	            // TODO: Replace the vanilla JS Date object with an indepentent day-of-week check.
-	            var weekdayProvided = defaultLocaleWeekdaysShort.indexOf(weekdayStr),
-	                weekdayActual = new Date(parsedInput[0], parsedInput[1], parsedInput[2]).getDay();
-	            if (weekdayProvided !== weekdayActual) {
-	                getParsingFlags(config).weekdayMismatch = true;
-	                config._isValid = false;
-	                return false;
-	            }
-	        }
-	        return true;
-	    }
-
-	    var obsOffsets = {
-	        UT: 0,
-	        GMT: 0,
-	        EDT: -4 * 60,
-	        EST: -5 * 60,
-	        CDT: -5 * 60,
-	        CST: -6 * 60,
-	        MDT: -6 * 60,
-	        MST: -7 * 60,
-	        PDT: -7 * 60,
-	        PST: -8 * 60
-	    };
-
-	    function calculateOffset(obsOffset, militaryOffset, numOffset) {
-	        if (obsOffset) {
-	            return obsOffsets[obsOffset];
-	        } else if (militaryOffset) {
-	            // the only allowed military tz is Z
-	            return 0;
-	        } else {
-	            var hm = parseInt(numOffset, 10);
-	            var m = hm % 100, h = (hm - m) / 100;
-	            return h * 60 + m;
-	        }
-	    }
-
-	    // date and time from ref 2822 format
-	    function configFromRFC2822(config) {
-	        var match = rfc2822.exec(preprocessRFC2822(config._i));
-	        if (match) {
-	            var parsedArray = extractFromRFC2822Strings(match[4], match[3], match[2], match[5], match[6], match[7]);
-	            if (!checkWeekday(match[1], parsedArray, config)) {
-	                return;
-	            }
-
-	            config._a = parsedArray;
-	            config._tzm = calculateOffset(match[8], match[9], match[10]);
-
-	            config._d = createUTCDate.apply(null, config._a);
-	            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
-
-	            getParsingFlags(config).rfc2822 = true;
-	        } else {
-	            config._isValid = false;
-	        }
-	    }
-
-	    // date from iso format or fallback
-	    function configFromString(config) {
-	        var matched = aspNetJsonRegex.exec(config._i);
-
-	        if (matched !== null) {
-	            config._d = new Date(+matched[1]);
-	            return;
-	        }
-
-	        configFromISO(config);
-	        if (config._isValid === false) {
-	            delete config._isValid;
-	        } else {
-	            return;
-	        }
-
-	        configFromRFC2822(config);
-	        if (config._isValid === false) {
-	            delete config._isValid;
-	        } else {
-	            return;
-	        }
-
-	        // Final attempt, use Input Fallback
-	        hooks.createFromInputFallback(config);
-	    }
-
-	    hooks.createFromInputFallback = deprecate(
-	        'value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' +
-	        'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' +
-	        'discouraged and will be removed in an upcoming major release. Please refer to ' +
-	        'http://momentjs.com/guides/#/warnings/js-date/ for more info.',
-	        function (config) {
-	            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
-	        }
-	    );
-
-	    // constant that refers to the ISO standard
-	    hooks.ISO_8601 = function () {};
-
-	    // constant that refers to the RFC 2822 form
-	    hooks.RFC_2822 = function () {};
-
-	    // date from string and format string
-	    function configFromStringAndFormat(config) {
-	        // TODO: Move this to another part of the creation flow to prevent circular deps
-	        if (config._f === hooks.ISO_8601) {
-	            configFromISO(config);
-	            return;
-	        }
-	        if (config._f === hooks.RFC_2822) {
-	            configFromRFC2822(config);
-	            return;
-	        }
-	        config._a = [];
-	        getParsingFlags(config).empty = true;
-
-	        // This array is used to make a Date, either with `new Date` or `Date.UTC`
-	        var string = '' + config._i,
-	            i, parsedInput, tokens, token, skipped,
-	            stringLength = string.length,
-	            totalParsedInputLength = 0;
-
-	        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
-
-	        for (i = 0; i < tokens.length; i++) {
-	            token = tokens[i];
-	            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
-	            // console.log('token', token, 'parsedInput', parsedInput,
-	            //         'regex', getParseRegexForToken(token, config));
-	            if (parsedInput) {
-	                skipped = string.substr(0, string.indexOf(parsedInput));
-	                if (skipped.length > 0) {
-	                    getParsingFlags(config).unusedInput.push(skipped);
-	                }
-	                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
-	                totalParsedInputLength += parsedInput.length;
-	            }
-	            // don't parse if it's not a known token
-	            if (formatTokenFunctions[token]) {
-	                if (parsedInput) {
-	                    getParsingFlags(config).empty = false;
-	                }
-	                else {
-	                    getParsingFlags(config).unusedTokens.push(token);
-	                }
-	                addTimeToArrayFromToken(token, parsedInput, config);
-	            }
-	            else if (config._strict && !parsedInput) {
-	                getParsingFlags(config).unusedTokens.push(token);
-	            }
-	        }
-
-	        // add remaining unparsed input length to the string
-	        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
-	        if (string.length > 0) {
-	            getParsingFlags(config).unusedInput.push(string);
-	        }
-
-	        // clear _12h flag if hour is <= 12
-	        if (config._a[HOUR] <= 12 &&
-	            getParsingFlags(config).bigHour === true &&
-	            config._a[HOUR] > 0) {
-	            getParsingFlags(config).bigHour = undefined;
-	        }
-
-	        getParsingFlags(config).parsedDateParts = config._a.slice(0);
-	        getParsingFlags(config).meridiem = config._meridiem;
-	        // handle meridiem
-	        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
-
-	        configFromArray(config);
-	        checkOverflow(config);
-	    }
-
-
-	    function meridiemFixWrap (locale, hour, meridiem) {
-	        var isPm;
-
-	        if (meridiem == null) {
-	            // nothing to do
-	            return hour;
-	        }
-	        if (locale.meridiemHour != null) {
-	            return locale.meridiemHour(hour, meridiem);
-	        } else if (locale.isPM != null) {
-	            // Fallback
-	            isPm = locale.isPM(meridiem);
-	            if (isPm && hour < 12) {
-	                hour += 12;
-	            }
-	            if (!isPm && hour === 12) {
-	                hour = 0;
-	            }
-	            return hour;
-	        } else {
-	            // this is not supposed to happen
-	            return hour;
-	        }
-	    }
-
-	    // date from string and array of format strings
-	    function configFromStringAndArray(config) {
-	        var tempConfig,
-	            bestMoment,
-
-	            scoreToBeat,
-	            i,
-	            currentScore;
-
-	        if (config._f.length === 0) {
-	            getParsingFlags(config).invalidFormat = true;
-	            config._d = new Date(NaN);
-	            return;
-	        }
-
-	        for (i = 0; i < config._f.length; i++) {
-	            currentScore = 0;
-	            tempConfig = copyConfig({}, config);
-	            if (config._useUTC != null) {
-	                tempConfig._useUTC = config._useUTC;
-	            }
-	            tempConfig._f = config._f[i];
-	            configFromStringAndFormat(tempConfig);
-
-	            if (!isValid(tempConfig)) {
-	                continue;
-	            }
-
-	            // if there is any input that was not parsed add a penalty for that format
-	            currentScore += getParsingFlags(tempConfig).charsLeftOver;
-
-	            //or tokens
-	            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
-
-	            getParsingFlags(tempConfig).score = currentScore;
-
-	            if (scoreToBeat == null || currentScore < scoreToBeat) {
-	                scoreToBeat = currentScore;
-	                bestMoment = tempConfig;
-	            }
-	        }
-
-	        extend(config, bestMoment || tempConfig);
-	    }
-
-	    function configFromObject(config) {
-	        if (config._d) {
-	            return;
-	        }
-
-	        var i = normalizeObjectUnits(config._i);
-	        config._a = map([i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond], function (obj) {
-	            return obj && parseInt(obj, 10);
-	        });
-
-	        configFromArray(config);
-	    }
-
-	    function createFromConfig (config) {
-	        var res = new Moment(checkOverflow(prepareConfig(config)));
-	        if (res._nextDay) {
-	            // Adding is smart enough around DST
-	            res.add(1, 'd');
-	            res._nextDay = undefined;
-	        }
-
-	        return res;
-	    }
-
-	    function prepareConfig (config) {
-	        var input = config._i,
-	            format = config._f;
-
-	        config._locale = config._locale || getLocale(config._l);
-
-	        if (input === null || (format === undefined && input === '')) {
-	            return createInvalid({nullInput: true});
-	        }
-
-	        if (typeof input === 'string') {
-	            config._i = input = config._locale.preparse(input);
-	        }
-
-	        if (isMoment(input)) {
-	            return new Moment(checkOverflow(input));
-	        } else if (isDate(input)) {
-	            config._d = input;
-	        } else if (isArray(format)) {
-	            configFromStringAndArray(config);
-	        } else if (format) {
-	            configFromStringAndFormat(config);
-	        }  else {
-	            configFromInput(config);
-	        }
-
-	        if (!isValid(config)) {
-	            config._d = null;
-	        }
-
-	        return config;
-	    }
-
-	    function configFromInput(config) {
-	        var input = config._i;
-	        if (isUndefined(input)) {
-	            config._d = new Date(hooks.now());
-	        } else if (isDate(input)) {
-	            config._d = new Date(input.valueOf());
-	        } else if (typeof input === 'string') {
-	            configFromString(config);
-	        } else if (isArray(input)) {
-	            config._a = map(input.slice(0), function (obj) {
-	                return parseInt(obj, 10);
-	            });
-	            configFromArray(config);
-	        } else if (isObject(input)) {
-	            configFromObject(config);
-	        } else if (isNumber(input)) {
-	            // from milliseconds
-	            config._d = new Date(input);
-	        } else {
-	            hooks.createFromInputFallback(config);
-	        }
-	    }
-
-	    function createLocalOrUTC (input, format, locale, strict, isUTC) {
-	        var c = {};
-
-	        if (locale === true || locale === false) {
-	            strict = locale;
-	            locale = undefined;
-	        }
-
-	        if ((isObject(input) && isObjectEmpty(input)) ||
-	                (isArray(input) && input.length === 0)) {
-	            input = undefined;
-	        }
-	        // object construction must be done this way.
-	        // https://github.com/moment/moment/issues/1423
-	        c._isAMomentObject = true;
-	        c._useUTC = c._isUTC = isUTC;
-	        c._l = locale;
-	        c._i = input;
-	        c._f = format;
-	        c._strict = strict;
-
-	        return createFromConfig(c);
-	    }
-
-	    function createLocal (input, format, locale, strict) {
-	        return createLocalOrUTC(input, format, locale, strict, false);
-	    }
-
-	    var prototypeMin = deprecate(
-	        'moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/',
-	        function () {
-	            var other = createLocal.apply(null, arguments);
-	            if (this.isValid() && other.isValid()) {
-	                return other < this ? this : other;
-	            } else {
-	                return createInvalid();
-	            }
-	        }
-	    );
-
-	    var prototypeMax = deprecate(
-	        'moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/',
-	        function () {
-	            var other = createLocal.apply(null, arguments);
-	            if (this.isValid() && other.isValid()) {
-	                return other > this ? this : other;
-	            } else {
-	                return createInvalid();
-	            }
-	        }
-	    );
-
-	    // Pick a moment m from moments so that m[fn](other) is true for all
-	    // other. This relies on the function fn to be transitive.
-	    //
-	    // moments should either be an array of moment objects or an array, whose
-	    // first element is an array of moment objects.
-	    function pickBy(fn, moments) {
-	        var res, i;
-	        if (moments.length === 1 && isArray(moments[0])) {
-	            moments = moments[0];
-	        }
-	        if (!moments.length) {
-	            return createLocal();
-	        }
-	        res = moments[0];
-	        for (i = 1; i < moments.length; ++i) {
-	            if (!moments[i].isValid() || moments[i][fn](res)) {
-	                res = moments[i];
-	            }
-	        }
-	        return res;
-	    }
-
-	    // TODO: Use [].sort instead?
-	    function min () {
-	        var args = [].slice.call(arguments, 0);
-
-	        return pickBy('isBefore', args);
-	    }
-
-	    function max () {
-	        var args = [].slice.call(arguments, 0);
-
-	        return pickBy('isAfter', args);
-	    }
-
-	    var now = function () {
-	        return Date.now ? Date.now() : +(new Date());
-	    };
-
-	    var ordering = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'];
-
-	    function isDurationValid(m) {
-	        for (var key in m) {
-	            if (!(indexOf.call(ordering, key) !== -1 && (m[key] == null || !isNaN(m[key])))) {
-	                return false;
-	            }
-	        }
-
-	        var unitHasDecimal = false;
-	        for (var i = 0; i < ordering.length; ++i) {
-	            if (m[ordering[i]]) {
-	                if (unitHasDecimal) {
-	                    return false; // only allow non-integers for smallest unit
-	                }
-	                if (parseFloat(m[ordering[i]]) !== toInt(m[ordering[i]])) {
-	                    unitHasDecimal = true;
-	                }
-	            }
-	        }
-
-	        return true;
-	    }
-
-	    function isValid$1() {
-	        return this._isValid;
-	    }
-
-	    function createInvalid$1() {
-	        return createDuration(NaN);
-	    }
-
-	    function Duration (duration) {
-	        var normalizedInput = normalizeObjectUnits(duration),
-	            years = normalizedInput.year || 0,
-	            quarters = normalizedInput.quarter || 0,
-	            months = normalizedInput.month || 0,
-	            weeks = normalizedInput.week || 0,
-	            days = normalizedInput.day || 0,
-	            hours = normalizedInput.hour || 0,
-	            minutes = normalizedInput.minute || 0,
-	            seconds = normalizedInput.second || 0,
-	            milliseconds = normalizedInput.millisecond || 0;
-
-	        this._isValid = isDurationValid(normalizedInput);
-
-	        // representation for dateAddRemove
-	        this._milliseconds = +milliseconds +
-	            seconds * 1e3 + // 1000
-	            minutes * 6e4 + // 1000 * 60
-	            hours * 1000 * 60 * 60; //using 1000 * 60 * 60 instead of 36e5 to avoid floating point rounding errors https://github.com/moment/moment/issues/2978
-	        // Because of dateAddRemove treats 24 hours as different from a
-	        // day when working around DST, we need to store them separately
-	        this._days = +days +
-	            weeks * 7;
-	        // It is impossible to translate months into days without knowing
-	        // which months you are are talking about, so we have to store
-	        // it separately.
-	        this._months = +months +
-	            quarters * 3 +
-	            years * 12;
-
-	        this._data = {};
-
-	        this._locale = getLocale();
-
-	        this._bubble();
-	    }
-
-	    function isDuration (obj) {
-	        return obj instanceof Duration;
-	    }
-
-	    function absRound (number) {
-	        if (number < 0) {
-	            return Math.round(-1 * number) * -1;
-	        } else {
-	            return Math.round(number);
-	        }
-	    }
-
-	    // FORMATTING
-
-	    function offset (token, separator) {
-	        addFormatToken(token, 0, 0, function () {
-	            var offset = this.utcOffset();
-	            var sign = '+';
-	            if (offset < 0) {
-	                offset = -offset;
-	                sign = '-';
-	            }
-	            return sign + zeroFill(~~(offset / 60), 2) + separator + zeroFill(~~(offset) % 60, 2);
-	        });
-	    }
-
-	    offset('Z', ':');
-	    offset('ZZ', '');
-
-	    // PARSING
-
-	    addRegexToken('Z',  matchShortOffset);
-	    addRegexToken('ZZ', matchShortOffset);
-	    addParseToken(['Z', 'ZZ'], function (input, array, config) {
-	        config._useUTC = true;
-	        config._tzm = offsetFromString(matchShortOffset, input);
-	    });
-
-	    // HELPERS
-
-	    // timezone chunker
-	    // '+10:00' > ['10',  '00']
-	    // '-1530'  > ['-15', '30']
-	    var chunkOffset = /([\+\-]|\d\d)/gi;
-
-	    function offsetFromString(matcher, string) {
-	        var matches = (string || '').match(matcher);
-
-	        if (matches === null) {
-	            return null;
-	        }
-
-	        var chunk   = matches[matches.length - 1] || [];
-	        var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
-	        var minutes = +(parts[1] * 60) + toInt(parts[2]);
-
-	        return minutes === 0 ?
-	          0 :
-	          parts[0] === '+' ? minutes : -minutes;
-	    }
-
-	    // Return a moment from input, that is local/utc/zone equivalent to model.
-	    function cloneWithOffset(input, model) {
-	        var res, diff;
-	        if (model._isUTC) {
-	            res = model.clone();
-	            diff = (isMoment(input) || isDate(input) ? input.valueOf() : createLocal(input).valueOf()) - res.valueOf();
-	            // Use low-level api, because this fn is low-level api.
-	            res._d.setTime(res._d.valueOf() + diff);
-	            hooks.updateOffset(res, false);
-	            return res;
-	        } else {
-	            return createLocal(input).local();
-	        }
-	    }
-
-	    function getDateOffset (m) {
-	        // On Firefox.24 Date#getTimezoneOffset returns a floating point.
-	        // https://github.com/moment/moment/pull/1871
-	        return -Math.round(m._d.getTimezoneOffset() / 15) * 15;
-	    }
-
-	    // HOOKS
-
-	    // This function will be called whenever a moment is mutated.
-	    // It is intended to keep the offset in sync with the timezone.
-	    hooks.updateOffset = function () {};
-
-	    // MOMENTS
-
-	    // keepLocalTime = true means only change the timezone, without
-	    // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
-	    // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
-	    // +0200, so we adjust the time as needed, to be valid.
-	    //
-	    // Keeping the time actually adds/subtracts (one hour)
-	    // from the actual represented time. That is why we call updateOffset
-	    // a second time. In case it wants us to change the offset again
-	    // _changeInProgress == true case, then we have to adjust, because
-	    // there is no such time in the given timezone.
-	    function getSetOffset (input, keepLocalTime, keepMinutes) {
-	        var offset = this._offset || 0,
-	            localAdjust;
-	        if (!this.isValid()) {
-	            return input != null ? this : NaN;
-	        }
-	        if (input != null) {
-	            if (typeof input === 'string') {
-	                input = offsetFromString(matchShortOffset, input);
-	                if (input === null) {
-	                    return this;
-	                }
-	            } else if (Math.abs(input) < 16 && !keepMinutes) {
-	                input = input * 60;
-	            }
-	            if (!this._isUTC && keepLocalTime) {
-	                localAdjust = getDateOffset(this);
-	            }
-	            this._offset = input;
-	            this._isUTC = true;
-	            if (localAdjust != null) {
-	                this.add(localAdjust, 'm');
-	            }
-	            if (offset !== input) {
-	                if (!keepLocalTime || this._changeInProgress) {
-	                    addSubtract(this, createDuration(input - offset, 'm'), 1, false);
-	                } else if (!this._changeInProgress) {
-	                    this._changeInProgress = true;
-	                    hooks.updateOffset(this, true);
-	                    this._changeInProgress = null;
-	                }
-	            }
-	            return this;
-	        } else {
-	            return this._isUTC ? offset : getDateOffset(this);
-	        }
-	    }
-
-	    function getSetZone (input, keepLocalTime) {
-	        if (input != null) {
-	            if (typeof input !== 'string') {
-	                input = -input;
-	            }
-
-	            this.utcOffset(input, keepLocalTime);
-
-	            return this;
-	        } else {
-	            return -this.utcOffset();
-	        }
-	    }
-
-	    function setOffsetToUTC (keepLocalTime) {
-	        return this.utcOffset(0, keepLocalTime);
-	    }
-
-	    function setOffsetToLocal (keepLocalTime) {
-	        if (this._isUTC) {
-	            this.utcOffset(0, keepLocalTime);
-	            this._isUTC = false;
-
-	            if (keepLocalTime) {
-	                this.subtract(getDateOffset(this), 'm');
-	            }
-	        }
-	        return this;
-	    }
-
-	    function setOffsetToParsedOffset () {
-	        if (this._tzm != null) {
-	            this.utcOffset(this._tzm, false, true);
-	        } else if (typeof this._i === 'string') {
-	            var tZone = offsetFromString(matchOffset, this._i);
-	            if (tZone != null) {
-	                this.utcOffset(tZone);
-	            }
-	            else {
-	                this.utcOffset(0, true);
-	            }
-	        }
-	        return this;
-	    }
-
-	    function hasAlignedHourOffset (input) {
-	        if (!this.isValid()) {
-	            return false;
-	        }
-	        input = input ? createLocal(input).utcOffset() : 0;
-
-	        return (this.utcOffset() - input) % 60 === 0;
-	    }
-
-	    function isDaylightSavingTime () {
-	        return (
-	            this.utcOffset() > this.clone().month(0).utcOffset() ||
-	            this.utcOffset() > this.clone().month(5).utcOffset()
-	        );
-	    }
-
-	    function isDaylightSavingTimeShifted () {
-	        if (!isUndefined(this._isDSTShifted)) {
-	            return this._isDSTShifted;
-	        }
-
-	        var c = {};
-
-	        copyConfig(c, this);
-	        c = prepareConfig(c);
-
-	        if (c._a) {
-	            var other = c._isUTC ? createUTC(c._a) : createLocal(c._a);
-	            this._isDSTShifted = this.isValid() &&
-	                compareArrays(c._a, other.toArray()) > 0;
-	        } else {
-	            this._isDSTShifted = false;
-	        }
-
-	        return this._isDSTShifted;
-	    }
-
-	    function isLocal () {
-	        return this.isValid() ? !this._isUTC : false;
-	    }
-
-	    function isUtcOffset () {
-	        return this.isValid() ? this._isUTC : false;
-	    }
-
-	    function isUtc () {
-	        return this.isValid() ? this._isUTC && this._offset === 0 : false;
-	    }
-
-	    // ASP.NET json date format regex
-	    var aspNetRegex = /^(\-|\+)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/;
-
-	    // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
-	    // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
-	    // and further modified to allow for strings containing both week and day
-	    var isoRegex = /^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;
-
-	    function createDuration (input, key) {
-	        var duration = input,
-	            // matching against regexp is expensive, do it on demand
-	            match = null,
-	            sign,
-	            ret,
-	            diffRes;
-
-	        if (isDuration(input)) {
-	            duration = {
-	                ms : input._milliseconds,
-	                d  : input._days,
-	                M  : input._months
-	            };
-	        } else if (isNumber(input)) {
-	            duration = {};
-	            if (key) {
-	                duration[key] = input;
-	            } else {
-	                duration.milliseconds = input;
-	            }
-	        } else if (!!(match = aspNetRegex.exec(input))) {
-	            sign = (match[1] === '-') ? -1 : 1;
-	            duration = {
-	                y  : 0,
-	                d  : toInt(match[DATE])                         * sign,
-	                h  : toInt(match[HOUR])                         * sign,
-	                m  : toInt(match[MINUTE])                       * sign,
-	                s  : toInt(match[SECOND])                       * sign,
-	                ms : toInt(absRound(match[MILLISECOND] * 1000)) * sign // the millisecond decimal point is included in the match
-	            };
-	        } else if (!!(match = isoRegex.exec(input))) {
-	            sign = (match[1] === '-') ? -1 : (match[1] === '+') ? 1 : 1;
-	            duration = {
-	                y : parseIso(match[2], sign),
-	                M : parseIso(match[3], sign),
-	                w : parseIso(match[4], sign),
-	                d : parseIso(match[5], sign),
-	                h : parseIso(match[6], sign),
-	                m : parseIso(match[7], sign),
-	                s : parseIso(match[8], sign)
-	            };
-	        } else if (duration == null) {// checks for null or undefined
-	            duration = {};
-	        } else if (typeof duration === 'object' && ('from' in duration || 'to' in duration)) {
-	            diffRes = momentsDifference(createLocal(duration.from), createLocal(duration.to));
-
-	            duration = {};
-	            duration.ms = diffRes.milliseconds;
-	            duration.M = diffRes.months;
-	        }
-
-	        ret = new Duration(duration);
-
-	        if (isDuration(input) && hasOwnProp(input, '_locale')) {
-	            ret._locale = input._locale;
-	        }
-
-	        return ret;
-	    }
-
-	    createDuration.fn = Duration.prototype;
-	    createDuration.invalid = createInvalid$1;
-
-	    function parseIso (inp, sign) {
-	        // We'd normally use ~~inp for this, but unfortunately it also
-	        // converts floats to ints.
-	        // inp may be undefined, so careful calling replace on it.
-	        var res = inp && parseFloat(inp.replace(',', '.'));
-	        // apply sign while we're at it
-	        return (isNaN(res) ? 0 : res) * sign;
-	    }
-
-	    function positiveMomentsDifference(base, other) {
-	        var res = {milliseconds: 0, months: 0};
-
-	        res.months = other.month() - base.month() +
-	            (other.year() - base.year()) * 12;
-	        if (base.clone().add(res.months, 'M').isAfter(other)) {
-	            --res.months;
-	        }
-
-	        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
-
-	        return res;
-	    }
-
-	    function momentsDifference(base, other) {
-	        var res;
-	        if (!(base.isValid() && other.isValid())) {
-	            return {milliseconds: 0, months: 0};
-	        }
-
-	        other = cloneWithOffset(other, base);
-	        if (base.isBefore(other)) {
-	            res = positiveMomentsDifference(base, other);
-	        } else {
-	            res = positiveMomentsDifference(other, base);
-	            res.milliseconds = -res.milliseconds;
-	            res.months = -res.months;
-	        }
-
-	        return res;
-	    }
-
-	    // TODO: remove 'name' arg after deprecation is removed
-	    function createAdder(direction, name) {
-	        return function (val, period) {
-	            var dur, tmp;
-	            //invert the arguments, but complain about it
-	            if (period !== null && !isNaN(+period)) {
-	                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period). ' +
-	                'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.');
-	                tmp = val; val = period; period = tmp;
-	            }
-
-	            val = typeof val === 'string' ? +val : val;
-	            dur = createDuration(val, period);
-	            addSubtract(this, dur, direction);
-	            return this;
-	        };
-	    }
-
-	    function addSubtract (mom, duration, isAdding, updateOffset) {
-	        var milliseconds = duration._milliseconds,
-	            days = absRound(duration._days),
-	            months = absRound(duration._months);
-
-	        if (!mom.isValid()) {
-	            // No op
-	            return;
-	        }
-
-	        updateOffset = updateOffset == null ? true : updateOffset;
-
-	        if (months) {
-	            setMonth(mom, get(mom, 'Month') + months * isAdding);
-	        }
-	        if (days) {
-	            set$1(mom, 'Date', get(mom, 'Date') + days * isAdding);
-	        }
-	        if (milliseconds) {
-	            mom._d.setTime(mom._d.valueOf() + milliseconds * isAdding);
-	        }
-	        if (updateOffset) {
-	            hooks.updateOffset(mom, days || months);
-	        }
-	    }
-
-	    var add      = createAdder(1, 'add');
-	    var subtract = createAdder(-1, 'subtract');
-
-	    function getCalendarFormat(myMoment, now) {
-	        var diff = myMoment.diff(now, 'days', true);
-	        return diff < -6 ? 'sameElse' :
-	                diff < -1 ? 'lastWeek' :
-	                diff < 0 ? 'lastDay' :
-	                diff < 1 ? 'sameDay' :
-	                diff < 2 ? 'nextDay' :
-	                diff < 7 ? 'nextWeek' : 'sameElse';
-	    }
-
-	    function calendar$1 (time, formats) {
-	        // We want to compare the start of today, vs this.
-	        // Getting start-of-today depends on whether we're local/utc/offset or not.
-	        var now = time || createLocal(),
-	            sod = cloneWithOffset(now, this).startOf('day'),
-	            format = hooks.calendarFormat(this, sod) || 'sameElse';
-
-	        var output = formats && (isFunction(formats[format]) ? formats[format].call(this, now) : formats[format]);
-
-	        return this.format(output || this.localeData().calendar(format, this, createLocal(now)));
-	    }
-
-	    function clone () {
-	        return new Moment(this);
-	    }
-
-	    function isAfter (input, units) {
-	        var localInput = isMoment(input) ? input : createLocal(input);
-	        if (!(this.isValid() && localInput.isValid())) {
-	            return false;
-	        }
-	        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
-	        if (units === 'millisecond') {
-	            return this.valueOf() > localInput.valueOf();
-	        } else {
-	            return localInput.valueOf() < this.clone().startOf(units).valueOf();
-	        }
-	    }
-
-	    function isBefore (input, units) {
-	        var localInput = isMoment(input) ? input : createLocal(input);
-	        if (!(this.isValid() && localInput.isValid())) {
-	            return false;
-	        }
-	        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
-	        if (units === 'millisecond') {
-	            return this.valueOf() < localInput.valueOf();
-	        } else {
-	            return this.clone().endOf(units).valueOf() < localInput.valueOf();
-	        }
-	    }
-
-	    function isBetween (from, to, units, inclusivity) {
-	        inclusivity = inclusivity || '()';
-	        return (inclusivity[0] === '(' ? this.isAfter(from, units) : !this.isBefore(from, units)) &&
-	            (inclusivity[1] === ')' ? this.isBefore(to, units) : !this.isAfter(to, units));
-	    }
-
-	    function isSame (input, units) {
-	        var localInput = isMoment(input) ? input : createLocal(input),
-	            inputMs;
-	        if (!(this.isValid() && localInput.isValid())) {
-	            return false;
-	        }
-	        units = normalizeUnits(units || 'millisecond');
-	        if (units === 'millisecond') {
-	            return this.valueOf() === localInput.valueOf();
-	        } else {
-	            inputMs = localInput.valueOf();
-	            return this.clone().startOf(units).valueOf() <= inputMs && inputMs <= this.clone().endOf(units).valueOf();
-	        }
-	    }
-
-	    function isSameOrAfter (input, units) {
-	        return this.isSame(input, units) || this.isAfter(input,units);
-	    }
-
-	    function isSameOrBefore (input, units) {
-	        return this.isSame(input, units) || this.isBefore(input,units);
-	    }
-
-	    function diff (input, units, asFloat) {
-	        var that,
-	            zoneDelta,
-	            output;
-
-	        if (!this.isValid()) {
-	            return NaN;
-	        }
-
-	        that = cloneWithOffset(input, this);
-
-	        if (!that.isValid()) {
-	            return NaN;
-	        }
-
-	        zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
-
-	        units = normalizeUnits(units);
-
-	        switch (units) {
-	            case 'year': output = monthDiff(this, that) / 12; break;
-	            case 'month': output = monthDiff(this, that); break;
-	            case 'quarter': output = monthDiff(this, that) / 3; break;
-	            case 'second': output = (this - that) / 1e3; break; // 1000
-	            case 'minute': output = (this - that) / 6e4; break; // 1000 * 60
-	            case 'hour': output = (this - that) / 36e5; break; // 1000 * 60 * 60
-	            case 'day': output = (this - that - zoneDelta) / 864e5; break; // 1000 * 60 * 60 * 24, negate dst
-	            case 'week': output = (this - that - zoneDelta) / 6048e5; break; // 1000 * 60 * 60 * 24 * 7, negate dst
-	            default: output = this - that;
-	        }
-
-	        return asFloat ? output : absFloor(output);
-	    }
-
-	    function monthDiff (a, b) {
-	        // difference in months
-	        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
-	            // b is in (anchor - 1 month, anchor + 1 month)
-	            anchor = a.clone().add(wholeMonthDiff, 'months'),
-	            anchor2, adjust;
-
-	        if (b - anchor < 0) {
-	            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
-	            // linear across the month
-	            adjust = (b - anchor) / (anchor - anchor2);
-	        } else {
-	            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
-	            // linear across the month
-	            adjust = (b - anchor) / (anchor2 - anchor);
-	        }
-
-	        //check for negative zero, return zero if negative zero
-	        return -(wholeMonthDiff + adjust) || 0;
-	    }
-
-	    hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
-	    hooks.defaultFormatUtc = 'YYYY-MM-DDTHH:mm:ss[Z]';
-
-	    function toString () {
-	        return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-	    }
-
-	    function toISOString(keepOffset) {
-	        if (!this.isValid()) {
-	            return null;
-	        }
-	        var utc = keepOffset !== true;
-	        var m = utc ? this.clone().utc() : this;
-	        if (m.year() < 0 || m.year() > 9999) {
-	            return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
-	        }
-	        if (isFunction(Date.prototype.toISOString)) {
-	            // native implementation is ~50x faster, use it when we can
-	            if (utc) {
-	                return this.toDate().toISOString();
-	            } else {
-	                return new Date(this.valueOf() + this.utcOffset() * 60 * 1000).toISOString().replace('Z', formatMoment(m, 'Z'));
-	            }
-	        }
-	        return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
-	    }
-
-	    /**
-	     * Return a human readable representation of a moment that can
-	     * also be evaluated to get a new moment which is the same
-	     *
-	     * @link https://nodejs.org/dist/latest/docs/api/util.html#util_custom_inspect_function_on_objects
-	     */
-	    function inspect () {
-	        if (!this.isValid()) {
-	            return 'moment.invalid(/* ' + this._i + ' */)';
-	        }
-	        var func = 'moment';
-	        var zone = '';
-	        if (!this.isLocal()) {
-	            func = this.utcOffset() === 0 ? 'moment.utc' : 'moment.parseZone';
-	            zone = 'Z';
-	        }
-	        var prefix = '[' + func + '("]';
-	        var year = (0 <= this.year() && this.year() <= 9999) ? 'YYYY' : 'YYYYYY';
-	        var datetime = '-MM-DD[T]HH:mm:ss.SSS';
-	        var suffix = zone + '[")]';
-
-	        return this.format(prefix + year + datetime + suffix);
-	    }
-
-	    function format (inputString) {
-	        if (!inputString) {
-	            inputString = this.isUtc() ? hooks.defaultFormatUtc : hooks.defaultFormat;
-	        }
-	        var output = formatMoment(this, inputString);
-	        return this.localeData().postformat(output);
-	    }
-
-	    function from (time, withoutSuffix) {
-	        if (this.isValid() &&
-	                ((isMoment(time) && time.isValid()) ||
-	                 createLocal(time).isValid())) {
-	            return createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
-	        } else {
-	            return this.localeData().invalidDate();
-	        }
-	    }
-
-	    function fromNow (withoutSuffix) {
-	        return this.from(createLocal(), withoutSuffix);
-	    }
-
-	    function to (time, withoutSuffix) {
-	        if (this.isValid() &&
-	                ((isMoment(time) && time.isValid()) ||
-	                 createLocal(time).isValid())) {
-	            return createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
-	        } else {
-	            return this.localeData().invalidDate();
-	        }
-	    }
-
-	    function toNow (withoutSuffix) {
-	        return this.to(createLocal(), withoutSuffix);
-	    }
-
-	    // If passed a locale key, it will set the locale for this
-	    // instance.  Otherwise, it will return the locale configuration
-	    // variables for this instance.
-	    function locale (key) {
-	        var newLocaleData;
-
-	        if (key === undefined) {
-	            return this._locale._abbr;
-	        } else {
-	            newLocaleData = getLocale(key);
-	            if (newLocaleData != null) {
-	                this._locale = newLocaleData;
-	            }
-	            return this;
-	        }
-	    }
-
-	    var lang = deprecate(
-	        'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
-	        function (key) {
-	            if (key === undefined) {
-	                return this.localeData();
-	            } else {
-	                return this.locale(key);
-	            }
-	        }
-	    );
-
-	    function localeData () {
-	        return this._locale;
-	    }
-
-	    function startOf (units) {
-	        units = normalizeUnits(units);
-	        // the following switch intentionally omits break keywords
-	        // to utilize falling through the cases.
-	        switch (units) {
-	            case 'year':
-	                this.month(0);
-	                /* falls through */
-	            case 'quarter':
-	            case 'month':
-	                this.date(1);
-	                /* falls through */
-	            case 'week':
-	            case 'isoWeek':
-	            case 'day':
-	            case 'date':
-	                this.hours(0);
-	                /* falls through */
-	            case 'hour':
-	                this.minutes(0);
-	                /* falls through */
-	            case 'minute':
-	                this.seconds(0);
-	                /* falls through */
-	            case 'second':
-	                this.milliseconds(0);
-	        }
-
-	        // weeks are a special case
-	        if (units === 'week') {
-	            this.weekday(0);
-	        }
-	        if (units === 'isoWeek') {
-	            this.isoWeekday(1);
-	        }
-
-	        // quarters are also special
-	        if (units === 'quarter') {
-	            this.month(Math.floor(this.month() / 3) * 3);
-	        }
-
-	        return this;
-	    }
-
-	    function endOf (units) {
-	        units = normalizeUnits(units);
-	        if (units === undefined || units === 'millisecond') {
-	            return this;
-	        }
-
-	        // 'date' is an alias for 'day', so it should be considered as such.
-	        if (units === 'date') {
-	            units = 'day';
-	        }
-
-	        return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
-	    }
-
-	    function valueOf () {
-	        return this._d.valueOf() - ((this._offset || 0) * 60000);
-	    }
-
-	    function unix () {
-	        return Math.floor(this.valueOf() / 1000);
-	    }
-
-	    function toDate () {
-	        return new Date(this.valueOf());
-	    }
-
-	    function toArray () {
-	        var m = this;
-	        return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
-	    }
-
-	    function toObject () {
-	        var m = this;
-	        return {
-	            years: m.year(),
-	            months: m.month(),
-	            date: m.date(),
-	            hours: m.hours(),
-	            minutes: m.minutes(),
-	            seconds: m.seconds(),
-	            milliseconds: m.milliseconds()
-	        };
-	    }
-
-	    function toJSON () {
-	        // new Date(NaN).toJSON() === null
-	        return this.isValid() ? this.toISOString() : null;
-	    }
-
-	    function isValid$2 () {
-	        return isValid(this);
-	    }
-
-	    function parsingFlags () {
-	        return extend({}, getParsingFlags(this));
-	    }
-
-	    function invalidAt () {
-	        return getParsingFlags(this).overflow;
-	    }
-
-	    function creationData() {
-	        return {
-	            input: this._i,
-	            format: this._f,
-	            locale: this._locale,
-	            isUTC: this._isUTC,
-	            strict: this._strict
-	        };
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken(0, ['gg', 2], 0, function () {
-	        return this.weekYear() % 100;
-	    });
-
-	    addFormatToken(0, ['GG', 2], 0, function () {
-	        return this.isoWeekYear() % 100;
-	    });
-
-	    function addWeekYearFormatToken (token, getter) {
-	        addFormatToken(0, [token, token.length], 0, getter);
-	    }
-
-	    addWeekYearFormatToken('gggg',     'weekYear');
-	    addWeekYearFormatToken('ggggg',    'weekYear');
-	    addWeekYearFormatToken('GGGG',  'isoWeekYear');
-	    addWeekYearFormatToken('GGGGG', 'isoWeekYear');
-
-	    // ALIASES
-
-	    addUnitAlias('weekYear', 'gg');
-	    addUnitAlias('isoWeekYear', 'GG');
-
-	    // PRIORITY
-
-	    addUnitPriority('weekYear', 1);
-	    addUnitPriority('isoWeekYear', 1);
-
-
-	    // PARSING
-
-	    addRegexToken('G',      matchSigned);
-	    addRegexToken('g',      matchSigned);
-	    addRegexToken('GG',     match1to2, match2);
-	    addRegexToken('gg',     match1to2, match2);
-	    addRegexToken('GGGG',   match1to4, match4);
-	    addRegexToken('gggg',   match1to4, match4);
-	    addRegexToken('GGGGG',  match1to6, match6);
-	    addRegexToken('ggggg',  match1to6, match6);
-
-	    addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
-	        week[token.substr(0, 2)] = toInt(input);
-	    });
-
-	    addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
-	        week[token] = hooks.parseTwoDigitYear(input);
-	    });
-
-	    // MOMENTS
-
-	    function getSetWeekYear (input) {
-	        return getSetWeekYearHelper.call(this,
-	                input,
-	                this.week(),
-	                this.weekday(),
-	                this.localeData()._week.dow,
-	                this.localeData()._week.doy);
-	    }
-
-	    function getSetISOWeekYear (input) {
-	        return getSetWeekYearHelper.call(this,
-	                input, this.isoWeek(), this.isoWeekday(), 1, 4);
-	    }
-
-	    function getISOWeeksInYear () {
-	        return weeksInYear(this.year(), 1, 4);
-	    }
-
-	    function getWeeksInYear () {
-	        var weekInfo = this.localeData()._week;
-	        return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
-	    }
-
-	    function getSetWeekYearHelper(input, week, weekday, dow, doy) {
-	        var weeksTarget;
-	        if (input == null) {
-	            return weekOfYear(this, dow, doy).year;
-	        } else {
-	            weeksTarget = weeksInYear(input, dow, doy);
-	            if (week > weeksTarget) {
-	                week = weeksTarget;
-	            }
-	            return setWeekAll.call(this, input, week, weekday, dow, doy);
-	        }
-	    }
-
-	    function setWeekAll(weekYear, week, weekday, dow, doy) {
-	        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy),
-	            date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
-
-	        this.year(date.getUTCFullYear());
-	        this.month(date.getUTCMonth());
-	        this.date(date.getUTCDate());
-	        return this;
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('Q', 0, 'Qo', 'quarter');
-
-	    // ALIASES
-
-	    addUnitAlias('quarter', 'Q');
-
-	    // PRIORITY
-
-	    addUnitPriority('quarter', 7);
-
-	    // PARSING
-
-	    addRegexToken('Q', match1);
-	    addParseToken('Q', function (input, array) {
-	        array[MONTH] = (toInt(input) - 1) * 3;
-	    });
-
-	    // MOMENTS
-
-	    function getSetQuarter (input) {
-	        return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('D', ['DD', 2], 'Do', 'date');
-
-	    // ALIASES
-
-	    addUnitAlias('date', 'D');
-
-	    // PRIORITY
-	    addUnitPriority('date', 9);
-
-	    // PARSING
-
-	    addRegexToken('D',  match1to2);
-	    addRegexToken('DD', match1to2, match2);
-	    addRegexToken('Do', function (isStrict, locale) {
-	        // TODO: Remove "ordinalParse" fallback in next major release.
-	        return isStrict ?
-	          (locale._dayOfMonthOrdinalParse || locale._ordinalParse) :
-	          locale._dayOfMonthOrdinalParseLenient;
-	    });
-
-	    addParseToken(['D', 'DD'], DATE);
-	    addParseToken('Do', function (input, array) {
-	        array[DATE] = toInt(input.match(match1to2)[0]);
-	    });
-
-	    // MOMENTS
-
-	    var getSetDayOfMonth = makeGetSet('Date', true);
-
-	    // FORMATTING
-
-	    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
-
-	    // ALIASES
-
-	    addUnitAlias('dayOfYear', 'DDD');
-
-	    // PRIORITY
-	    addUnitPriority('dayOfYear', 4);
-
-	    // PARSING
-
-	    addRegexToken('DDD',  match1to3);
-	    addRegexToken('DDDD', match3);
-	    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
-	        config._dayOfYear = toInt(input);
-	    });
-
-	    // HELPERS
-
-	    // MOMENTS
-
-	    function getSetDayOfYear (input) {
-	        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
-	        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
-	    }
-
-	    // FORMATTING
-
-	    addFormatToken('m', ['mm', 2], 0, 'minute');
-
-	    // ALIASES
-
-	    addUnitAlias('minute', 'm');
-
-	    // PRIORITY
-
-	    addUnitPriority('minute', 14);
-
-	    // PARSING
-
-	    addRegexToken('m',  match1to2);
-	    addRegexToken('mm', match1to2, match2);
-	    addParseToken(['m', 'mm'], MINUTE);
-
-	    // MOMENTS
-
-	    var getSetMinute = makeGetSet('Minutes', false);
-
-	    // FORMATTING
-
-	    addFormatToken('s', ['ss', 2], 0, 'second');
-
-	    // ALIASES
-
-	    addUnitAlias('second', 's');
-
-	    // PRIORITY
-
-	    addUnitPriority('second', 15);
-
-	    // PARSING
-
-	    addRegexToken('s',  match1to2);
-	    addRegexToken('ss', match1to2, match2);
-	    addParseToken(['s', 'ss'], SECOND);
-
-	    // MOMENTS
-
-	    var getSetSecond = makeGetSet('Seconds', false);
-
-	    // FORMATTING
-
-	    addFormatToken('S', 0, 0, function () {
-	        return ~~(this.millisecond() / 100);
-	    });
-
-	    addFormatToken(0, ['SS', 2], 0, function () {
-	        return ~~(this.millisecond() / 10);
-	    });
-
-	    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
-	    addFormatToken(0, ['SSSS', 4], 0, function () {
-	        return this.millisecond() * 10;
-	    });
-	    addFormatToken(0, ['SSSSS', 5], 0, function () {
-	        return this.millisecond() * 100;
-	    });
-	    addFormatToken(0, ['SSSSSS', 6], 0, function () {
-	        return this.millisecond() * 1000;
-	    });
-	    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
-	        return this.millisecond() * 10000;
-	    });
-	    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
-	        return this.millisecond() * 100000;
-	    });
-	    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
-	        return this.millisecond() * 1000000;
-	    });
-
-
-	    // ALIASES
-
-	    addUnitAlias('millisecond', 'ms');
-
-	    // PRIORITY
-
-	    addUnitPriority('millisecond', 16);
-
-	    // PARSING
-
-	    addRegexToken('S',    match1to3, match1);
-	    addRegexToken('SS',   match1to3, match2);
-	    addRegexToken('SSS',  match1to3, match3);
-
-	    var token;
-	    for (token = 'SSSS'; token.length <= 9; token += 'S') {
-	        addRegexToken(token, matchUnsigned);
-	    }
-
-	    function parseMs(input, array) {
-	        array[MILLISECOND] = toInt(('0.' + input) * 1000);
-	    }
-
-	    for (token = 'S'; token.length <= 9; token += 'S') {
-	        addParseToken(token, parseMs);
-	    }
-	    // MOMENTS
-
-	    var getSetMillisecond = makeGetSet('Milliseconds', false);
-
-	    // FORMATTING
-
-	    addFormatToken('z',  0, 0, 'zoneAbbr');
-	    addFormatToken('zz', 0, 0, 'zoneName');
-
-	    // MOMENTS
-
-	    function getZoneAbbr () {
-	        return this._isUTC ? 'UTC' : '';
-	    }
-
-	    function getZoneName () {
-	        return this._isUTC ? 'Coordinated Universal Time' : '';
-	    }
-
-	    var proto = Moment.prototype;
-
-	    proto.add               = add;
-	    proto.calendar          = calendar$1;
-	    proto.clone             = clone;
-	    proto.diff              = diff;
-	    proto.endOf             = endOf;
-	    proto.format            = format;
-	    proto.from              = from;
-	    proto.fromNow           = fromNow;
-	    proto.to                = to;
-	    proto.toNow             = toNow;
-	    proto.get               = stringGet;
-	    proto.invalidAt         = invalidAt;
-	    proto.isAfter           = isAfter;
-	    proto.isBefore          = isBefore;
-	    proto.isBetween         = isBetween;
-	    proto.isSame            = isSame;
-	    proto.isSameOrAfter     = isSameOrAfter;
-	    proto.isSameOrBefore    = isSameOrBefore;
-	    proto.isValid           = isValid$2;
-	    proto.lang              = lang;
-	    proto.locale            = locale;
-	    proto.localeData        = localeData;
-	    proto.max               = prototypeMax;
-	    proto.min               = prototypeMin;
-	    proto.parsingFlags      = parsingFlags;
-	    proto.set               = stringSet;
-	    proto.startOf           = startOf;
-	    proto.subtract          = subtract;
-	    proto.toArray           = toArray;
-	    proto.toObject          = toObject;
-	    proto.toDate            = toDate;
-	    proto.toISOString       = toISOString;
-	    proto.inspect           = inspect;
-	    proto.toJSON            = toJSON;
-	    proto.toString          = toString;
-	    proto.unix              = unix;
-	    proto.valueOf           = valueOf;
-	    proto.creationData      = creationData;
-	    proto.year       = getSetYear;
-	    proto.isLeapYear = getIsLeapYear;
-	    proto.weekYear    = getSetWeekYear;
-	    proto.isoWeekYear = getSetISOWeekYear;
-	    proto.quarter = proto.quarters = getSetQuarter;
-	    proto.month       = getSetMonth;
-	    proto.daysInMonth = getDaysInMonth;
-	    proto.week           = proto.weeks        = getSetWeek;
-	    proto.isoWeek        = proto.isoWeeks     = getSetISOWeek;
-	    proto.weeksInYear    = getWeeksInYear;
-	    proto.isoWeeksInYear = getISOWeeksInYear;
-	    proto.date       = getSetDayOfMonth;
-	    proto.day        = proto.days             = getSetDayOfWeek;
-	    proto.weekday    = getSetLocaleDayOfWeek;
-	    proto.isoWeekday = getSetISODayOfWeek;
-	    proto.dayOfYear  = getSetDayOfYear;
-	    proto.hour = proto.hours = getSetHour;
-	    proto.minute = proto.minutes = getSetMinute;
-	    proto.second = proto.seconds = getSetSecond;
-	    proto.millisecond = proto.milliseconds = getSetMillisecond;
-	    proto.utcOffset            = getSetOffset;
-	    proto.utc                  = setOffsetToUTC;
-	    proto.local                = setOffsetToLocal;
-	    proto.parseZone            = setOffsetToParsedOffset;
-	    proto.hasAlignedHourOffset = hasAlignedHourOffset;
-	    proto.isDST                = isDaylightSavingTime;
-	    proto.isLocal              = isLocal;
-	    proto.isUtcOffset          = isUtcOffset;
-	    proto.isUtc                = isUtc;
-	    proto.isUTC                = isUtc;
-	    proto.zoneAbbr = getZoneAbbr;
-	    proto.zoneName = getZoneName;
-	    proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
-	    proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
-	    proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
-	    proto.zone   = deprecate('moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/', getSetZone);
-	    proto.isDSTShifted = deprecate('isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information', isDaylightSavingTimeShifted);
-
-	    function createUnix (input) {
-	        return createLocal(input * 1000);
-	    }
-
-	    function createInZone () {
-	        return createLocal.apply(null, arguments).parseZone();
-	    }
-
-	    function preParsePostFormat (string) {
-	        return string;
-	    }
-
-	    var proto$1 = Locale.prototype;
-
-	    proto$1.calendar        = calendar;
-	    proto$1.longDateFormat  = longDateFormat;
-	    proto$1.invalidDate     = invalidDate;
-	    proto$1.ordinal         = ordinal;
-	    proto$1.preparse        = preParsePostFormat;
-	    proto$1.postformat      = preParsePostFormat;
-	    proto$1.relativeTime    = relativeTime;
-	    proto$1.pastFuture      = pastFuture;
-	    proto$1.set             = set;
-
-	    proto$1.months            =        localeMonths;
-	    proto$1.monthsShort       =        localeMonthsShort;
-	    proto$1.monthsParse       =        localeMonthsParse;
-	    proto$1.monthsRegex       = monthsRegex;
-	    proto$1.monthsShortRegex  = monthsShortRegex;
-	    proto$1.week = localeWeek;
-	    proto$1.firstDayOfYear = localeFirstDayOfYear;
-	    proto$1.firstDayOfWeek = localeFirstDayOfWeek;
-
-	    proto$1.weekdays       =        localeWeekdays;
-	    proto$1.weekdaysMin    =        localeWeekdaysMin;
-	    proto$1.weekdaysShort  =        localeWeekdaysShort;
-	    proto$1.weekdaysParse  =        localeWeekdaysParse;
-
-	    proto$1.weekdaysRegex       =        weekdaysRegex;
-	    proto$1.weekdaysShortRegex  =        weekdaysShortRegex;
-	    proto$1.weekdaysMinRegex    =        weekdaysMinRegex;
-
-	    proto$1.isPM = localeIsPM;
-	    proto$1.meridiem = localeMeridiem;
-
-	    function get$1 (format, index, field, setter) {
-	        var locale = getLocale();
-	        var utc = createUTC().set(setter, index);
-	        return locale[field](utc, format);
-	    }
-
-	    function listMonthsImpl (format, index, field) {
-	        if (isNumber(format)) {
-	            index = format;
-	            format = undefined;
-	        }
-
-	        format = format || '';
-
-	        if (index != null) {
-	            return get$1(format, index, field, 'month');
-	        }
-
-	        var i;
-	        var out = [];
-	        for (i = 0; i < 12; i++) {
-	            out[i] = get$1(format, i, field, 'month');
-	        }
-	        return out;
-	    }
-
-	    // ()
-	    // (5)
-	    // (fmt, 5)
-	    // (fmt)
-	    // (true)
-	    // (true, 5)
-	    // (true, fmt, 5)
-	    // (true, fmt)
-	    function listWeekdaysImpl (localeSorted, format, index, field) {
-	        if (typeof localeSorted === 'boolean') {
-	            if (isNumber(format)) {
-	                index = format;
-	                format = undefined;
-	            }
-
-	            format = format || '';
-	        } else {
-	            format = localeSorted;
-	            index = format;
-	            localeSorted = false;
-
-	            if (isNumber(format)) {
-	                index = format;
-	                format = undefined;
-	            }
-
-	            format = format || '';
-	        }
-
-	        var locale = getLocale(),
-	            shift = localeSorted ? locale._week.dow : 0;
-
-	        if (index != null) {
-	            return get$1(format, (index + shift) % 7, field, 'day');
-	        }
-
-	        var i;
-	        var out = [];
-	        for (i = 0; i < 7; i++) {
-	            out[i] = get$1(format, (i + shift) % 7, field, 'day');
-	        }
-	        return out;
-	    }
-
-	    function listMonths (format, index) {
-	        return listMonthsImpl(format, index, 'months');
-	    }
-
-	    function listMonthsShort (format, index) {
-	        return listMonthsImpl(format, index, 'monthsShort');
-	    }
-
-	    function listWeekdays (localeSorted, format, index) {
-	        return listWeekdaysImpl(localeSorted, format, index, 'weekdays');
-	    }
-
-	    function listWeekdaysShort (localeSorted, format, index) {
-	        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysShort');
-	    }
-
-	    function listWeekdaysMin (localeSorted, format, index) {
-	        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysMin');
-	    }
-
-	    getSetGlobalLocale('en', {
-	        dayOfMonthOrdinalParse: /\d{1,2}(th|st|nd|rd)/,
-	        ordinal : function (number) {
-	            var b = number % 10,
-	                output = (toInt(number % 100 / 10) === 1) ? 'th' :
-	                (b === 1) ? 'st' :
-	                (b === 2) ? 'nd' :
-	                (b === 3) ? 'rd' : 'th';
-	            return number + output;
-	        }
-	    });
-
-	    // Side effect imports
-
-	    hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', getSetGlobalLocale);
-	    hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', getLocale);
-
-	    var mathAbs = Math.abs;
-
-	    function abs () {
-	        var data           = this._data;
-
-	        this._milliseconds = mathAbs(this._milliseconds);
-	        this._days         = mathAbs(this._days);
-	        this._months       = mathAbs(this._months);
-
-	        data.milliseconds  = mathAbs(data.milliseconds);
-	        data.seconds       = mathAbs(data.seconds);
-	        data.minutes       = mathAbs(data.minutes);
-	        data.hours         = mathAbs(data.hours);
-	        data.months        = mathAbs(data.months);
-	        data.years         = mathAbs(data.years);
-
-	        return this;
-	    }
-
-	    function addSubtract$1 (duration, input, value, direction) {
-	        var other = createDuration(input, value);
-
-	        duration._milliseconds += direction * other._milliseconds;
-	        duration._days         += direction * other._days;
-	        duration._months       += direction * other._months;
-
-	        return duration._bubble();
-	    }
-
-	    // supports only 2.0-style add(1, 's') or add(duration)
-	    function add$1 (input, value) {
-	        return addSubtract$1(this, input, value, 1);
-	    }
-
-	    // supports only 2.0-style subtract(1, 's') or subtract(duration)
-	    function subtract$1 (input, value) {
-	        return addSubtract$1(this, input, value, -1);
-	    }
-
-	    function absCeil (number) {
-	        if (number < 0) {
-	            return Math.floor(number);
-	        } else {
-	            return Math.ceil(number);
-	        }
-	    }
-
-	    function bubble () {
-	        var milliseconds = this._milliseconds;
-	        var days         = this._days;
-	        var months       = this._months;
-	        var data         = this._data;
-	        var seconds, minutes, hours, years, monthsFromDays;
-
-	        // if we have a mix of positive and negative values, bubble down first
-	        // check: https://github.com/moment/moment/issues/2166
-	        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
-	                (milliseconds <= 0 && days <= 0 && months <= 0))) {
-	            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
-	            days = 0;
-	            months = 0;
-	        }
-
-	        // The following code bubbles up values, see the tests for
-	        // examples of what that means.
-	        data.milliseconds = milliseconds % 1000;
-
-	        seconds           = absFloor(milliseconds / 1000);
-	        data.seconds      = seconds % 60;
-
-	        minutes           = absFloor(seconds / 60);
-	        data.minutes      = minutes % 60;
-
-	        hours             = absFloor(minutes / 60);
-	        data.hours        = hours % 24;
-
-	        days += absFloor(hours / 24);
-
-	        // convert days to months
-	        monthsFromDays = absFloor(daysToMonths(days));
-	        months += monthsFromDays;
-	        days -= absCeil(monthsToDays(monthsFromDays));
-
-	        // 12 months -> 1 year
-	        years = absFloor(months / 12);
-	        months %= 12;
-
-	        data.days   = days;
-	        data.months = months;
-	        data.years  = years;
-
-	        return this;
-	    }
-
-	    function daysToMonths (days) {
-	        // 400 years have 146097 days (taking into account leap year rules)
-	        // 400 years have 12 months === 4800
-	        return days * 4800 / 146097;
-	    }
-
-	    function monthsToDays (months) {
-	        // the reverse of daysToMonths
-	        return months * 146097 / 4800;
-	    }
-
-	    function as (units) {
-	        if (!this.isValid()) {
-	            return NaN;
-	        }
-	        var days;
-	        var months;
-	        var milliseconds = this._milliseconds;
-
-	        units = normalizeUnits(units);
-
-	        if (units === 'month' || units === 'year') {
-	            days   = this._days   + milliseconds / 864e5;
-	            months = this._months + daysToMonths(days);
-	            return units === 'month' ? months : months / 12;
-	        } else {
-	            // handle milliseconds separately because of floating point math errors (issue #1867)
-	            days = this._days + Math.round(monthsToDays(this._months));
-	            switch (units) {
-	                case 'week'   : return days / 7     + milliseconds / 6048e5;
-	                case 'day'    : return days         + milliseconds / 864e5;
-	                case 'hour'   : return days * 24    + milliseconds / 36e5;
-	                case 'minute' : return days * 1440  + milliseconds / 6e4;
-	                case 'second' : return days * 86400 + milliseconds / 1000;
-	                // Math.floor prevents floating point math errors here
-	                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
-	                default: throw new Error('Unknown unit ' + units);
-	            }
-	        }
-	    }
-
-	    // TODO: Use this.as('ms')?
-	    function valueOf$1 () {
-	        if (!this.isValid()) {
-	            return NaN;
-	        }
-	        return (
-	            this._milliseconds +
-	            this._days * 864e5 +
-	            (this._months % 12) * 2592e6 +
-	            toInt(this._months / 12) * 31536e6
-	        );
-	    }
-
-	    function makeAs (alias) {
-	        return function () {
-	            return this.as(alias);
-	        };
-	    }
-
-	    var asMilliseconds = makeAs('ms');
-	    var asSeconds      = makeAs('s');
-	    var asMinutes      = makeAs('m');
-	    var asHours        = makeAs('h');
-	    var asDays         = makeAs('d');
-	    var asWeeks        = makeAs('w');
-	    var asMonths       = makeAs('M');
-	    var asYears        = makeAs('y');
-
-	    function clone$1 () {
-	        return createDuration(this);
-	    }
-
-	    function get$2 (units) {
-	        units = normalizeUnits(units);
-	        return this.isValid() ? this[units + 's']() : NaN;
-	    }
-
-	    function makeGetter(name) {
-	        return function () {
-	            return this.isValid() ? this._data[name] : NaN;
-	        };
-	    }
-
-	    var milliseconds = makeGetter('milliseconds');
-	    var seconds      = makeGetter('seconds');
-	    var minutes      = makeGetter('minutes');
-	    var hours        = makeGetter('hours');
-	    var days         = makeGetter('days');
-	    var months       = makeGetter('months');
-	    var years        = makeGetter('years');
-
-	    function weeks () {
-	        return absFloor(this.days() / 7);
-	    }
-
-	    var round = Math.round;
-	    var thresholds = {
-	        ss: 44,         // a few seconds to seconds
-	        s : 45,         // seconds to minute
-	        m : 45,         // minutes to hour
-	        h : 22,         // hours to day
-	        d : 26,         // days to month
-	        M : 11          // months to year
-	    };
-
-	    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
-	    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
-	        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
-	    }
-
-	    function relativeTime$1 (posNegDuration, withoutSuffix, locale) {
-	        var duration = createDuration(posNegDuration).abs();
-	        var seconds  = round(duration.as('s'));
-	        var minutes  = round(duration.as('m'));
-	        var hours    = round(duration.as('h'));
-	        var days     = round(duration.as('d'));
-	        var months   = round(duration.as('M'));
-	        var years    = round(duration.as('y'));
-
-	        var a = seconds <= thresholds.ss && ['s', seconds]  ||
-	                seconds < thresholds.s   && ['ss', seconds] ||
-	                minutes <= 1             && ['m']           ||
-	                minutes < thresholds.m   && ['mm', minutes] ||
-	                hours   <= 1             && ['h']           ||
-	                hours   < thresholds.h   && ['hh', hours]   ||
-	                days    <= 1             && ['d']           ||
-	                days    < thresholds.d   && ['dd', days]    ||
-	                months  <= 1             && ['M']           ||
-	                months  < thresholds.M   && ['MM', months]  ||
-	                years   <= 1             && ['y']           || ['yy', years];
-
-	        a[2] = withoutSuffix;
-	        a[3] = +posNegDuration > 0;
-	        a[4] = locale;
-	        return substituteTimeAgo.apply(null, a);
-	    }
-
-	    // This function allows you to set the rounding function for relative time strings
-	    function getSetRelativeTimeRounding (roundingFunction) {
-	        if (roundingFunction === undefined) {
-	            return round;
-	        }
-	        if (typeof(roundingFunction) === 'function') {
-	            round = roundingFunction;
-	            return true;
-	        }
-	        return false;
-	    }
-
-	    // This function allows you to set a threshold for relative time strings
-	    function getSetRelativeTimeThreshold (threshold, limit) {
-	        if (thresholds[threshold] === undefined) {
-	            return false;
-	        }
-	        if (limit === undefined) {
-	            return thresholds[threshold];
-	        }
-	        thresholds[threshold] = limit;
-	        if (threshold === 's') {
-	            thresholds.ss = limit - 1;
-	        }
-	        return true;
-	    }
-
-	    function humanize (withSuffix) {
-	        if (!this.isValid()) {
-	            return this.localeData().invalidDate();
-	        }
-
-	        var locale = this.localeData();
-	        var output = relativeTime$1(this, !withSuffix, locale);
-
-	        if (withSuffix) {
-	            output = locale.pastFuture(+this, output);
-	        }
-
-	        return locale.postformat(output);
-	    }
-
-	    var abs$1 = Math.abs;
-
-	    function sign(x) {
-	        return ((x > 0) - (x < 0)) || +x;
-	    }
-
-	    function toISOString$1() {
-	        // for ISO strings we do not use the normal bubbling rules:
-	        //  * milliseconds bubble up until they become hours
-	        //  * days do not bubble at all
-	        //  * months bubble up until they become years
-	        // This is because there is no context-free conversion between hours and days
-	        // (think of clock changes)
-	        // and also not between days and months (28-31 days per month)
-	        if (!this.isValid()) {
-	            return this.localeData().invalidDate();
-	        }
-
-	        var seconds = abs$1(this._milliseconds) / 1000;
-	        var days         = abs$1(this._days);
-	        var months       = abs$1(this._months);
-	        var minutes, hours, years;
-
-	        // 3600 seconds -> 60 minutes -> 1 hour
-	        minutes           = absFloor(seconds / 60);
-	        hours             = absFloor(minutes / 60);
-	        seconds %= 60;
-	        minutes %= 60;
-
-	        // 12 months -> 1 year
-	        years  = absFloor(months / 12);
-	        months %= 12;
-
-
-	        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-	        var Y = years;
-	        var M = months;
-	        var D = days;
-	        var h = hours;
-	        var m = minutes;
-	        var s = seconds ? seconds.toFixed(3).replace(/\.?0+$/, '') : '';
-	        var total = this.asSeconds();
-
-	        if (!total) {
-	            // this is the same as C#'s (Noda) and python (isodate)...
-	            // but not other JS (goog.date)
-	            return 'P0D';
-	        }
-
-	        var totalSign = total < 0 ? '-' : '';
-	        var ymSign = sign(this._months) !== sign(total) ? '-' : '';
-	        var daysSign = sign(this._days) !== sign(total) ? '-' : '';
-	        var hmsSign = sign(this._milliseconds) !== sign(total) ? '-' : '';
-
-	        return totalSign + 'P' +
-	            (Y ? ymSign + Y + 'Y' : '') +
-	            (M ? ymSign + M + 'M' : '') +
-	            (D ? daysSign + D + 'D' : '') +
-	            ((h || m || s) ? 'T' : '') +
-	            (h ? hmsSign + h + 'H' : '') +
-	            (m ? hmsSign + m + 'M' : '') +
-	            (s ? hmsSign + s + 'S' : '');
-	    }
-
-	    var proto$2 = Duration.prototype;
-
-	    proto$2.isValid        = isValid$1;
-	    proto$2.abs            = abs;
-	    proto$2.add            = add$1;
-	    proto$2.subtract       = subtract$1;
-	    proto$2.as             = as;
-	    proto$2.asMilliseconds = asMilliseconds;
-	    proto$2.asSeconds      = asSeconds;
-	    proto$2.asMinutes      = asMinutes;
-	    proto$2.asHours        = asHours;
-	    proto$2.asDays         = asDays;
-	    proto$2.asWeeks        = asWeeks;
-	    proto$2.asMonths       = asMonths;
-	    proto$2.asYears        = asYears;
-	    proto$2.valueOf        = valueOf$1;
-	    proto$2._bubble        = bubble;
-	    proto$2.clone          = clone$1;
-	    proto$2.get            = get$2;
-	    proto$2.milliseconds   = milliseconds;
-	    proto$2.seconds        = seconds;
-	    proto$2.minutes        = minutes;
-	    proto$2.hours          = hours;
-	    proto$2.days           = days;
-	    proto$2.weeks          = weeks;
-	    proto$2.months         = months;
-	    proto$2.years          = years;
-	    proto$2.humanize       = humanize;
-	    proto$2.toISOString    = toISOString$1;
-	    proto$2.toString       = toISOString$1;
-	    proto$2.toJSON         = toISOString$1;
-	    proto$2.locale         = locale;
-	    proto$2.localeData     = localeData;
-
-	    proto$2.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', toISOString$1);
-	    proto$2.lang = lang;
-
-	    // Side effect imports
-
-	    // FORMATTING
-
-	    addFormatToken('X', 0, 0, 'unix');
-	    addFormatToken('x', 0, 0, 'valueOf');
-
-	    // PARSING
-
-	    addRegexToken('x', matchSigned);
-	    addRegexToken('X', matchTimestamp);
-	    addParseToken('X', function (input, array, config) {
-	        config._d = new Date(parseFloat(input, 10) * 1000);
-	    });
-	    addParseToken('x', function (input, array, config) {
-	        config._d = new Date(toInt(input));
-	    });
-
-	    // Side effect imports
-
-
-	    hooks.version = '2.22.2';
-
-	    setHookCallback(createLocal);
-
-	    hooks.fn                    = proto;
-	    hooks.min                   = min;
-	    hooks.max                   = max;
-	    hooks.now                   = now;
-	    hooks.utc                   = createUTC;
-	    hooks.unix                  = createUnix;
-	    hooks.months                = listMonths;
-	    hooks.isDate                = isDate;
-	    hooks.locale                = getSetGlobalLocale;
-	    hooks.invalid               = createInvalid;
-	    hooks.duration              = createDuration;
-	    hooks.isMoment              = isMoment;
-	    hooks.weekdays              = listWeekdays;
-	    hooks.parseZone             = createInZone;
-	    hooks.localeData            = getLocale;
-	    hooks.isDuration            = isDuration;
-	    hooks.monthsShort           = listMonthsShort;
-	    hooks.weekdaysMin           = listWeekdaysMin;
-	    hooks.defineLocale          = defineLocale;
-	    hooks.updateLocale          = updateLocale;
-	    hooks.locales               = listLocales;
-	    hooks.weekdaysShort         = listWeekdaysShort;
-	    hooks.normalizeUnits        = normalizeUnits;
-	    hooks.relativeTimeRounding  = getSetRelativeTimeRounding;
-	    hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
-	    hooks.calendarFormat        = getCalendarFormat;
-	    hooks.prototype             = proto;
-
-	    // currently HTML5 input type only supports 24-hour formats
-	    hooks.HTML5_FMT = {
-	        DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
-	        DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
-	        DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
-	        DATE: 'YYYY-MM-DD',                             // <input type="date" />
-	        TIME: 'HH:mm',                                  // <input type="time" />
-	        TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
-	        TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
-	        WEEK: 'YYYY-[W]WW',                             // <input type="week" />
-	        MONTH: 'YYYY-MM'                                // <input type="month" />
-	    };
-
-	    return hooks;
-
-	})));
-	});
-
-	const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/sidebar-item.js";
-	class SidebarItem extends react_1 {
-
-	  onClick() {
-	    const { props } = this;
-	    props.history.push('/~chat/' + props.cir);
-	  }
-
-	  render() {
-	    const { props } = this;
-
-	    let unreadElem = !!props.unread ? (
-	      react.createElement('div', {
-	        className: "bg-nice-green dib mr2"  ,
-	        style: { borderRadius: 6, width: 12, height: 12 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
-	      )
-	    ) : (
-	      react.createElement('div', { className: "dib", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 20}})
-	    );
-
-	    let selectedCss = !!props.selected ? 'bg-light-gray' : 'bg-white pointer';
-	    return (
-	      react.createElement('div', { className: 'pa3 ' + selectedCss, onClick: this.onClick.bind(this), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 25}}
-	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 26}}
-	          , unreadElem
-	          , react.createElement('p', { className: "dib body-regular" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}, props.title)
-	        )
-	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 30}}
-	          , react.createElement('p', { className: "dib gray label-small-mono mr3"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 31}}, props.ship)
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 32}}, props.datetime)
-	        )
-	        , react.createElement('p', { className: "body-regular-400 gray" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 34}}, props.description)
-	      )
-	    )
-	  }
-	}
-
-	const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/sidebar-invite.js";
-	class SidebarInvite extends react_1 {
-
-	  onAccept() {
-	    const { props } = this;
-	    let msg = props.msg;
-	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
-	    if (!cir) {
-	      return;
-	    }
-
-	    this.updateInvite(msg.uid, cir, true);
-	  }
-
-	  onReject() {
-	    const { props } = this;
-	    let msg = props.msg;
-	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
-	    if (!cir) {
-	      return;
-	    }
-	    
-	    this.updateInvite(msg.uid, cir, false);
-	  }
-
-	  updateInvite(uid, cir, resp) {
-	    let tagstring = resp ? "Accept" : "Reject";
-
-	    let msg = {
-	      aud: [`~${window.ship}/i`],
-	      ses: [{
-	        ire: {
-	          top: uid,
-	          sep: {
-	            lin: {
-	              msg: `${tagstring} ${cir}`,
-	              pat: false
-	            }
-	          }
-	        }
-	      }]
-	    };
-
-	    this.props.api.hall({
-	      phrase: msg
-	    });
-
-	    this.props.api.source(cir, resp);
-	  }
-
-	  render() {
-	    const { props } = this;
-
-	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
-	    let aut = lodash.get(props, 'msg.aut', false);
-
-	    if (!aut || !cir) {
-	      return (
-	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 62}})
-	      );
-	    }
-
-	    cir = cir.split('/')[1];
-
-	    return (
-	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 69}}
-	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 70}}
-	          , react.createElement('div', { className: "dib mr2 bg-nice-green"  , style: {
-	            borderRadius: 12,
-	            width: 12,
-	            height: 12
-	          }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 71}})
-	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 76}}, "Invite to "
-	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 77}}
-	              , cir
-	            )
-	          )
-	        )
-	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 82}}
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 83}}, "Hosted by "  , aut)
-	        )
-	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 85}}, "Accept")
-	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 86}}, "Reject")
-	      )
-	    )
-	  }
-	}
-
-	const _jsxFileName$5 = "/Users/logan/Dev/interface/apps/chat/src/js/components/sidebar.js";
-
-	class Sidebar extends react_1 {
-
-	  onClickNew() {
-	    this.props.history.push('/~chat/new');
-	  }
-
-	  render() {
-	    const { props } = this;
-	    let station = props.match.params.ship + '/' + props.match.params.station;
-	    
-	    let sidebarItems = props.circles.map((cir) => {
-	      let msg = props.messagePreviews[cir];
-	      let parsed = !!msg ? getMessageContent(msg.gam) : {
-	        content: 'No messages yet'
-	      };
-	      let aut = !!msg ? msg.gam.aut : '';
-	      let wen = !!msg ? msg.gam.wen : 0;
-	      let datetime = 
-	        !!msg ? 
-	          moment.unix(wen / 1000).from(moment.utc()) 
-	        : '';
-	      return {
-	        msg,
-	        datetime,
-	        wen,
-	        aut,
-	        parsed,
-	        cir,
-	        title: cir.split('/')[1],
-	        selected: station === cir
-	      };
-	    })
-	      .sort((a, b) => {
-	        return b.wen - a.wen;
-	      })
-	      .map((obj) => {
-	        return (
-	          react.createElement(SidebarItem, {
-	            key: obj.cir,
-	            title: obj.title,
-	            description: obj.parsed.content,
-	            cir: obj.cir,
-	            datetime: obj.datetime,
-	            ship: obj.aut,
-	            selected: obj.selected,
-	            unread: props.unreads[obj.cir],
-	            history: props.history, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 48}}
-	          )
-	        );
-	      });
-
-	    let invites = [];
-
-	    let filterInvites = {};
-	    props.invites.forEach((msg) => {
-	      let uid = lodash.get(msg, 'gam.sep.ire.top', false);
-	      if (!uid) {
-	        invites.push(msg.gam);
-	      } else {
-	        filterInvites[uid] = true;
-	      }
-	    });
-
-	    let inviteItems = invites.filter((msg) => {
-	      return !(msg.uid in filterInvites);
-	    }).map((inv) => {
-	      return (
-	        react.createElement(SidebarInvite, { key: inv.uid, msg: inv, api: props.api, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 78}} )
-	      );
-	    });
-
-	    return (
-
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 84}}
-	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 85}}
-	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 86}}, "Chat")
-	          , react.createElement('a', {
-	            className: "dib tr w-50 pointer plus-font"    ,
-	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 87}}, "+")
-	        )
-	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}}
-	          , inviteItems
-	          , sidebarItems
-	        )
-	      )
-	    )
-	  }
-	}
-
 	var global$2 = (typeof global !== "undefined" ? global :
 	            typeof self !== "undefined" ? self :
 	            typeof window !== "undefined" ? window : {});
 
-	function _defineProperty(a,t,e){return t in a?Object.defineProperty(a,t,{value:e,enumerable:!0,configurable:!0,writable:!0}):a[t]=e,a}function _objectSpread(a){for(var t=1;t<arguments.length;t++){var e=null!=arguments[t]?arguments[t]:{},r=Object.keys(e);"function"==typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(e).filter(function(a){return Object.getOwnPropertyDescriptor(e,a).enumerable}))),r.forEach(function(t){_defineProperty(a,t,e[t]);});}return a}function _toConsumableArray(a){return _arrayWithoutHoles(a)||_iterableToArray(a)||_nonIterableSpread()}function _arrayWithoutHoles(a){if(Array.isArray(a)){for(var t=0,e=new Array(a.length);t<a.length;t++)e[t]=a[t];return e}}function _iterableToArray(a){if(Symbol.iterator in Object(a)||"[object Arguments]"===Object.prototype.toString.call(a))return Array.from(a)}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function createCommonjsModule$1(a,t){return t={exports:{}},a(t,t.exports),t.exports}function getRawTag(a){var t=hasOwnProperty$1.call(a,symToStringTag$1),e=a[symToStringTag$1];try{a[symToStringTag$1]=void 0;var r=!0;}catch(a){}var b=nativeObjectToString.call(a);return r&&(t?a[symToStringTag$1]=e:delete a[symToStringTag$1]),b}function objectToString(a){return nativeObjectToString$1.call(a)}function baseGetTag(a){return null==a?void 0===a?undefinedTag:nullTag:symToStringTag&&symToStringTag in Object(a)?_getRawTag(a):_objectToString(a)}function isObjectLike(a){return null!=a&&"object"==typeof a}function isSymbol(a){return "symbol"==typeof a||isObjectLike_1(a)&&_baseGetTag(a)==symbolTag}function isKey(a,t){if(isArray_1(a))return !1;var e=typeof a;return !("number"!=e&&"symbol"!=e&&"boolean"!=e&&null!=a&&!isSymbol_1(a))||(reIsPlainProp.test(a)||!reIsDeepProp.test(a)||null!=t&&a in Object(t))}function isObject(a){var t=typeof a;return null!=a&&("object"==t||"function"==t)}function isFunction(a){if(!isObject_1(a))return !1;var t=_baseGetTag(a);return t==funcTag||t==genTag||t==asyncTag||t==proxyTag}function isMasked(a){return !!maskSrcKey&&maskSrcKey in a}function toSource(a){if(null!=a){try{return funcToString$1.call(a)}catch(a){}try{return a+""}catch(a){}}return ""}function baseIsNative(a){return !(!isObject_1(a)||_isMasked(a))&&(isFunction_1(a)?reIsNative:reIsHostCtor).test(_toSource(a))}function getValue(a,t){return null==a?void 0:a[t]}function getNative(a,t){var e=_getValue(a,t);return _baseIsNative(e)?e:void 0}function hashClear(){this.__data__=_nativeCreate?_nativeCreate(null):{},this.size=0;}function hashDelete(a){var t=this.has(a)&&delete this.__data__[a];return this.size-=t?1:0,t}function hashGet(a){var t=this.__data__;if(_nativeCreate){var e=t[a];return e===HASH_UNDEFINED?void 0:e}return hasOwnProperty$2.call(t,a)?t[a]:void 0}function hashHas(a){var t=this.__data__;return _nativeCreate?void 0!==t[a]:hasOwnProperty$3.call(t,a)}function hashSet(a,t){var e=this.__data__;return this.size+=this.has(a)?0:1,e[a]=_nativeCreate&&void 0===t?HASH_UNDEFINED$1:t,this}function Hash(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function listCacheClear(){this.__data__=[],this.size=0;}function eq(a,t){return a===t||a!==a&&t!==t}function assocIndexOf(a,t){for(var e=a.length;e--;)if(eq_1(a[e][0],t))return e;return -1}function listCacheDelete(a){var t=this.__data__,e=_assocIndexOf(t,a);return !(e<0)&&(e==t.length-1?t.pop():splice.call(t,e,1),--this.size,!0)}function listCacheGet(a){var t=this.__data__,e=_assocIndexOf(t,a);return e<0?void 0:t[e][1]}function listCacheHas(a){return _assocIndexOf(this.__data__,a)>-1}function listCacheSet(a,t){var e=this.__data__,r=_assocIndexOf(e,a);return r<0?(++this.size,e.push([a,t])):e[r][1]=t,this}function ListCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function mapCacheClear(){this.size=0,this.__data__={hash:new _Hash,map:new(_Map||_ListCache),string:new _Hash};}function isKeyable(a){var t=typeof a;return "string"==t||"number"==t||"symbol"==t||"boolean"==t?"__proto__"!==a:null===a}function getMapData(a,t){var e=a.__data__;return _isKeyable(t)?e["string"==typeof t?"string":"hash"]:e.map}function mapCacheDelete(a){var t=_getMapData(this,a).delete(a);return this.size-=t?1:0,t}function mapCacheGet(a){return _getMapData(this,a).get(a)}function mapCacheHas(a){return _getMapData(this,a).has(a)}function mapCacheSet(a,t){var e=_getMapData(this,a),r=e.size;return e.set(a,t),this.size+=e.size==r?0:1,this}function MapCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function memoize(a,t){if("function"!=typeof a||null!=t&&"function"!=typeof t)throw new TypeError(FUNC_ERROR_TEXT);var e=function(){var r=arguments,b=t?t.apply(this,r):r[0],s=e.cache;if(s.has(b))return s.get(b);var d=a.apply(this,r);return e.cache=s.set(b,d)||s,d};return e.cache=new(memoize.Cache||_MapCache),e}function memoizeCapped(a){var t=memoize_1(a,function(a){return e.size===MAX_MEMOIZE_SIZE&&e.clear(),a}),e=t.cache;return t}function arrayMap(a,t){for(var e=-1,r=null==a?0:a.length,b=Array(r);++e<r;)b[e]=t(a[e],e,a);return b}function baseToString(a){if("string"==typeof a)return a;if(isArray_1(a))return _arrayMap(a,baseToString)+"";if(isSymbol_1(a))return symbolToString?symbolToString.call(a):"";var t=a+"";return "0"==t&&1/a==-INFINITY?"-0":t}function toString(a){return null==a?"":_baseToString(a)}function castPath(a,t){return isArray_1(a)?a:_isKey(a,t)?[a]:_stringToPath(toString_1(a))}function toKey(a){if("string"==typeof a||isSymbol_1(a))return a;var t=a+"";return "0"==t&&1/a==-INFINITY$1?"-0":t}function baseGet(a,t){for(var e=0,r=(t=_castPath(t,a)).length;null!=a&&e<r;)a=a[_toKey(t[e++])];return e&&e==r?a:void 0}function get(a,t,e){var r=null==a?void 0:_baseGet(a,t);return void 0===r?e:r}function stackClear(){this.__data__=new _ListCache,this.size=0;}function stackDelete(a){var t=this.__data__,e=t.delete(a);return this.size=t.size,e}function stackGet(a){return this.__data__.get(a)}function stackHas(a){return this.__data__.has(a)}function stackSet(a,t){var e=this.__data__;if(e instanceof _ListCache){var r=e.__data__;if(!_Map||r.length<LARGE_ARRAY_SIZE-1)return r.push([a,t]),this.size=++e.size,this;e=this.__data__=new _MapCache(r);}return e.set(a,t),this.size=e.size,this}function Stack(a){var t=this.__data__=new _ListCache(a);this.size=t.size;}function arrayEach(a,t){for(var e=-1,r=null==a?0:a.length;++e<r&&!1!==t(a[e],e,a););return a}function baseAssignValue(a,t,e){"__proto__"==t&&_defineProperty$1?_defineProperty$1(a,t,{configurable:!0,enumerable:!0,value:e,writable:!0}):a[t]=e;}function assignValue(a,t,e){var r=a[t];hasOwnProperty$4.call(a,t)&&eq_1(r,e)&&(void 0!==e||t in a)||_baseAssignValue(a,t,e);}function copyObject(a,t,e,r){var b=!e;e||(e={});for(var s=-1,d=t.length;++s<d;){var c=t[s],o=r?r(e[c],a[c],c,e,a):void 0;void 0===o&&(o=a[c]),b?_baseAssignValue(e,c,o):_assignValue(e,c,o);}return e}function baseTimes(a,t){for(var e=-1,r=Array(a);++e<a;)r[e]=t(e);return r}function baseIsArguments(a){return isObjectLike_1(a)&&_baseGetTag(a)==argsTag$1}function stubFalse(){return !1}function isIndex(a,t){var e=typeof a;return !!(t=null==t?MAX_SAFE_INTEGER:t)&&("number"==e||"symbol"!=e&&reIsUint.test(a))&&a>-1&&a%1==0&&a<t}function isLength(a){return "number"==typeof a&&a>-1&&a%1==0&&a<=MAX_SAFE_INTEGER$1}function baseIsTypedArray(a){return isObjectLike_1(a)&&isLength_1(a.length)&&!!typedArrayTags[_baseGetTag(a)]}function baseUnary(a){return function(t){return a(t)}}function arrayLikeKeys(a,t){var e=isArray_1(a),r=!e&&isArguments_1(a),b=!e&&!r&&isBuffer_1(a),s=!e&&!r&&!b&&isTypedArray_1(a),d=e||r||b||s,c=d?_baseTimes(a.length,String):[],o=c.length;for(var n in a)!t&&!hasOwnProperty$5.call(a,n)||d&&("length"==n||b&&("offset"==n||"parent"==n)||s&&("buffer"==n||"byteLength"==n||"byteOffset"==n)||_isIndex(n,o))||c.push(n);return c}function isPrototype(a){var t=a&&a.constructor;return a===("function"==typeof t&&t.prototype||objectProto$9)}function overArg(a,t){return function(e){return a(t(e))}}function baseKeys(a){if(!_isPrototype(a))return _nativeKeys(a);var t=[];for(var e in Object(a))hasOwnProperty$7.call(a,e)&&"constructor"!=e&&t.push(e);return t}function isArrayLike(a){return null!=a&&isLength_1(a.length)&&!isFunction_1(a)}function keys(a){return isArrayLike_1(a)?_arrayLikeKeys(a):_baseKeys(a)}function baseAssign(a,t){return a&&_copyObject(t,keys_1(t),a)}function nativeKeysIn(a){var t=[];if(null!=a)for(var e in Object(a))t.push(e);return t}function baseKeysIn(a){if(!isObject_1(a))return _nativeKeysIn(a);var t=_isPrototype(a),e=[];for(var r in a)("constructor"!=r||!t&&hasOwnProperty$8.call(a,r))&&e.push(r);return e}function keysIn$1(a){return isArrayLike_1(a)?_arrayLikeKeys(a,!0):_baseKeysIn(a)}function baseAssignIn(a,t){return a&&_copyObject(t,keysIn_1(t),a)}function copyArray(a,t){var e=-1,r=a.length;for(t||(t=Array(r));++e<r;)t[e]=a[e];return t}function arrayFilter(a,t){for(var e=-1,r=null==a?0:a.length,b=0,s=[];++e<r;){var d=a[e];t(d,e,a)&&(s[b++]=d);}return s}function stubArray(){return []}function copySymbols(a,t){return _copyObject(a,_getSymbols(a),t)}function arrayPush(a,t){for(var e=-1,r=t.length,b=a.length;++e<r;)a[b+e]=t[e];return a}function copySymbolsIn(a,t){return _copyObject(a,_getSymbolsIn(a),t)}function baseGetAllKeys(a,t,e){var r=t(a);return isArray_1(a)?r:_arrayPush(r,e(a))}function getAllKeys(a){return _baseGetAllKeys(a,keys_1,_getSymbols)}function getAllKeysIn(a){return _baseGetAllKeys(a,keysIn_1,_getSymbolsIn)}function initCloneArray(a){var t=a.length,e=new a.constructor(t);return t&&"string"==typeof a[0]&&hasOwnProperty$9.call(a,"index")&&(e.index=a.index,e.input=a.input),e}function cloneArrayBuffer(a){var t=new a.constructor(a.byteLength);return new _Uint8Array(t).set(new _Uint8Array(a)),t}function cloneDataView(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.byteLength)}function cloneRegExp(a){var t=new a.constructor(a.source,reFlags.exec(a));return t.lastIndex=a.lastIndex,t}function cloneSymbol(a){return symbolValueOf?Object(symbolValueOf.call(a)):{}}function cloneTypedArray(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.length)}function initCloneByTag(a,t,e){var r=a.constructor;switch(t){case arrayBufferTag$2:return _cloneArrayBuffer(a);case boolTag$2:case dateTag$2:return new r(+a);case dataViewTag$3:return _cloneDataView(a,e);case float32Tag$2:case float64Tag$2:case int8Tag$2:case int16Tag$2:case int32Tag$2:case uint8Tag$2:case uint8ClampedTag$2:case uint16Tag$2:case uint32Tag$2:return _cloneTypedArray(a,e);case mapTag$3:return new r;case numberTag$2:case stringTag$2:return new r(a);case regexpTag$2:return _cloneRegExp(a);case setTag$3:return new r;case symbolTag$2:return _cloneSymbol(a)}}function initCloneObject(a){return "function"!=typeof a.constructor||_isPrototype(a)?{}:_baseCreate(_getPrototype(a))}function baseIsMap(a){return isObjectLike_1(a)&&_getTag(a)==mapTag$4}function baseIsSet(a){return isObjectLike_1(a)&&_getTag(a)==setTag$4}function baseClone(a,t,e,r,b,s){var d,c=t&CLONE_DEEP_FLAG$1,o=t&CLONE_FLAT_FLAG,n=t&CLONE_SYMBOLS_FLAG$1;if(e&&(d=b?e(a,r,b,s):e(a)),void 0!==d)return d;if(!isObject_1(a))return a;var i=isArray_1(a);if(i){if(d=_initCloneArray(a),!c)return _copyArray(a,d)}else{var f=_getTag(a),l=f==funcTag$1||f==genTag$1;if(isBuffer_1(a))return _cloneBuffer(a,c);if(f==objectTag||f==argsTag||l&&!b){if(d=o||l?{}:_initCloneObject(a),!c)return o?_copySymbolsIn(a,_baseAssignIn(d,a)):_copySymbols(a,_baseAssign(d,a))}else{if(!cloneableTags[f])return b?a:{};d=_initCloneByTag(a,f,c);}}s||(s=new _Stack);var g=s.get(a);if(g)return g;if(s.set(a,d),isSet_1(a))return a.forEach(function(r){d.add(baseClone(r,t,e,r,a,s));}),d;if(isMap_1(a))return a.forEach(function(r,b){d.set(b,baseClone(r,t,e,b,a,s));}),d;var m=n?o?_getAllKeysIn:_getAllKeys:o?keysIn:keys_1,h=i?void 0:m(a);return _arrayEach(h||a,function(r,b){h&&(r=a[b=r]),_assignValue(d,b,baseClone(r,t,e,b,a,s));}),d}function cloneDeep(a){return _baseClone(a,CLONE_DEEP_FLAG|CLONE_SYMBOLS_FLAG)}function isUndefined(a){return void 0===a}function isString(a){return "string"==typeof a||!isArray_1(a)&&isObjectLike_1(a)&&_baseGetTag(a)==stringTag$3}function isUndefined$1(a){return void 0===a}function translate(a){return {a:1,c:0,e:a,b:0,d:1,f:arguments.length>1&&void 0!==arguments[1]?arguments[1]:0}}function _toConsumableArray$1(a){if(Array.isArray(a)){for(var t=0,e=Array(a.length);t<a.length;t++)e[t]=a[t];return e}return Array.from(a)}function _toArray$1(a){return Array.isArray(a)?a:Array.from(a)}function transform(){for(var a=arguments.length,t=Array(a),e=0;e<a;e++)t[e]=arguments[e];var r=function(a,t){return {a:a.a*t.a+a.c*t.b,c:a.a*t.c+a.c*t.d,e:a.a*t.e+a.c*t.f+a.e,b:a.b*t.a+a.d*t.b,d:a.b*t.c+a.d*t.d,f:a.b*t.e+a.d*t.f+a.f}};switch((t=Array.isArray(t[0])?t[0]:t).length){case 0:throw new Error("no matrices provided");case 1:return t[0];case 2:return r(t[0],t[1]);default:var b=_toArray$1(t),s=b[0],d=b[1],c=b.slice(2),o=r(s,d);return transform.apply(void 0,[o].concat(_toConsumableArray$1(c)))}}function scale(a){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return isUndefined$1(t)&&(t=a),{a:a,c:0,e:0,b:0,d:t,f:0}}function toSVG(a){return toString$2(a)}function toString$2(a){return "matrix("+a.a+","+a.b+","+a.c+","+a.d+","+a.e+","+a.f+")"}var isArray=Array.isArray,isArray_1=isArray,commonjsGlobal$1="undefined"!=typeof window?window:"undefined"!=typeof global$2?global$2:"undefined"!=typeof self?self:{},freeGlobal="object"==typeof commonjsGlobal$1&&commonjsGlobal$1&&commonjsGlobal$1.Object===Object&&commonjsGlobal$1,_freeGlobal=freeGlobal,freeSelf="object"==typeof self&&self&&self.Object===Object&&self,root=_freeGlobal||freeSelf||Function("return this")(),_root=root,Symbol$1=_root.Symbol,_Symbol=Symbol$1,objectProto=Object.prototype,hasOwnProperty$1=objectProto.hasOwnProperty,nativeObjectToString=objectProto.toString,symToStringTag$1=_Symbol?_Symbol.toStringTag:void 0,_getRawTag=getRawTag,objectProto$1=Object.prototype,nativeObjectToString$1=objectProto$1.toString,_objectToString=objectToString,nullTag="[object Null]",undefinedTag="[object Undefined]",symToStringTag=_Symbol?_Symbol.toStringTag:void 0,_baseGetTag=baseGetTag,isObjectLike_1=isObjectLike,symbolTag="[object Symbol]",isSymbol_1=isSymbol,reIsDeepProp=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,reIsPlainProp=/^\w*$/,_isKey=isKey,isObject_1=isObject,asyncTag="[object AsyncFunction]",funcTag="[object Function]",genTag="[object GeneratorFunction]",proxyTag="[object Proxy]",isFunction_1=isFunction,coreJsData=_root["__core-js_shared__"],_coreJsData=coreJsData,maskSrcKey=function(){var a=/[^.]+$/.exec(_coreJsData&&_coreJsData.keys&&_coreJsData.keys.IE_PROTO||"");return a?"Symbol(src)_1."+a:""}(),_isMasked=isMasked,funcProto$1=Function.prototype,funcToString$1=funcProto$1.toString,_toSource=toSource,reRegExpChar=/[\\^$.*+?()[\]{}|]/g,reIsHostCtor=/^\[object .+?Constructor\]$/,funcProto=Function.prototype,objectProto$2=Object.prototype,funcToString=funcProto.toString,hasOwnProperty$1$1=objectProto$2.hasOwnProperty,reIsNative=RegExp("^"+funcToString.call(hasOwnProperty$1$1).replace(reRegExpChar,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_baseIsNative=baseIsNative,_getValue=getValue,_getNative=getNative,nativeCreate=_getNative(Object,"create"),_nativeCreate=nativeCreate,_hashClear=hashClear,_hashDelete=hashDelete,HASH_UNDEFINED="__lodash_hash_undefined__",objectProto$3=Object.prototype,hasOwnProperty$2=objectProto$3.hasOwnProperty,_hashGet=hashGet,objectProto$4=Object.prototype,hasOwnProperty$3=objectProto$4.hasOwnProperty,_hashHas=hashHas,HASH_UNDEFINED$1="__lodash_hash_undefined__",_hashSet=hashSet;Hash.prototype.clear=_hashClear,Hash.prototype.delete=_hashDelete,Hash.prototype.get=_hashGet,Hash.prototype.has=_hashHas,Hash.prototype.set=_hashSet;var _Hash=Hash,_listCacheClear=listCacheClear,eq_1=eq,_assocIndexOf=assocIndexOf,arrayProto=Array.prototype,splice=arrayProto.splice,_listCacheDelete=listCacheDelete,_listCacheGet=listCacheGet,_listCacheHas=listCacheHas,_listCacheSet=listCacheSet;ListCache.prototype.clear=_listCacheClear,ListCache.prototype.delete=_listCacheDelete,ListCache.prototype.get=_listCacheGet,ListCache.prototype.has=_listCacheHas,ListCache.prototype.set=_listCacheSet;var _ListCache=ListCache,Map$1=_getNative(_root,"Map"),_Map=Map$1,_mapCacheClear=mapCacheClear,_isKeyable=isKeyable,_getMapData=getMapData,_mapCacheDelete=mapCacheDelete,_mapCacheGet=mapCacheGet,_mapCacheHas=mapCacheHas,_mapCacheSet=mapCacheSet;MapCache.prototype.clear=_mapCacheClear,MapCache.prototype.delete=_mapCacheDelete,MapCache.prototype.get=_mapCacheGet,MapCache.prototype.has=_mapCacheHas,MapCache.prototype.set=_mapCacheSet;var _MapCache=MapCache,FUNC_ERROR_TEXT="Expected a function";memoize.Cache=_MapCache;var memoize_1=memoize,MAX_MEMOIZE_SIZE=500,_memoizeCapped=memoizeCapped,rePropName=/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,reEscapeChar=/\\(\\)?/g,stringToPath=_memoizeCapped(function(a){var t=[];return 46===a.charCodeAt(0)&&t.push(""),a.replace(rePropName,function(a,e,r,b){t.push(r?b.replace(reEscapeChar,"$1"):e||a);}),t}),_stringToPath=stringToPath,_arrayMap=arrayMap,INFINITY=1/0,symbolProto=_Symbol?_Symbol.prototype:void 0,symbolToString=symbolProto?symbolProto.toString:void 0,_baseToString=baseToString,toString_1=toString,_castPath=castPath,INFINITY$1=1/0,_toKey=toKey,_baseGet=baseGet,get_1$1=get,_stackClear=stackClear,_stackDelete=stackDelete,_stackGet=stackGet,_stackHas=stackHas,LARGE_ARRAY_SIZE=200,_stackSet=stackSet;Stack.prototype.clear=_stackClear,Stack.prototype.delete=_stackDelete,Stack.prototype.get=_stackGet,Stack.prototype.has=_stackHas,Stack.prototype.set=_stackSet;var _Stack=Stack,_arrayEach=arrayEach,defineProperty=function(){try{var a=_getNative(Object,"defineProperty");return a({},"",{}),a}catch(a){}}(),_defineProperty$1=defineProperty,_baseAssignValue=baseAssignValue,objectProto$5=Object.prototype,hasOwnProperty$4=objectProto$5.hasOwnProperty,_assignValue=assignValue,_copyObject=copyObject,_baseTimes=baseTimes,argsTag$1="[object Arguments]",_baseIsArguments=baseIsArguments,objectProto$7=Object.prototype,hasOwnProperty$6=objectProto$7.hasOwnProperty,propertyIsEnumerable=objectProto$7.propertyIsEnumerable,isArguments=_baseIsArguments(function(){return arguments}())?_baseIsArguments:function(a){return isObjectLike_1(a)&&hasOwnProperty$6.call(a,"callee")&&!propertyIsEnumerable.call(a,"callee")},isArguments_1=isArguments,stubFalse_1=stubFalse,isBuffer_1=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e?_root.Buffer:void 0,s=(b?b.isBuffer:void 0)||stubFalse_1;a.exports=s;}),MAX_SAFE_INTEGER=9007199254740991,reIsUint=/^(?:0|[1-9]\d*)$/,_isIndex=isIndex,MAX_SAFE_INTEGER$1=9007199254740991,isLength_1=isLength,argsTag$2="[object Arguments]",arrayTag$1="[object Array]",boolTag$1="[object Boolean]",dateTag$1="[object Date]",errorTag$1="[object Error]",funcTag$2="[object Function]",mapTag$1="[object Map]",numberTag$1="[object Number]",objectTag$1="[object Object]",regexpTag$1="[object RegExp]",setTag$1="[object Set]",stringTag$1="[object String]",weakMapTag$1="[object WeakMap]",arrayBufferTag$1="[object ArrayBuffer]",dataViewTag$1="[object DataView]",float32Tag$1="[object Float32Array]",float64Tag$1="[object Float64Array]",int8Tag$1="[object Int8Array]",int16Tag$1="[object Int16Array]",int32Tag$1="[object Int32Array]",uint8Tag$1="[object Uint8Array]",uint8ClampedTag$1="[object Uint8ClampedArray]",uint16Tag$1="[object Uint16Array]",uint32Tag$1="[object Uint32Array]",typedArrayTags={};typedArrayTags[float32Tag$1]=typedArrayTags[float64Tag$1]=typedArrayTags[int8Tag$1]=typedArrayTags[int16Tag$1]=typedArrayTags[int32Tag$1]=typedArrayTags[uint8Tag$1]=typedArrayTags[uint8ClampedTag$1]=typedArrayTags[uint16Tag$1]=typedArrayTags[uint32Tag$1]=!0,typedArrayTags[argsTag$2]=typedArrayTags[arrayTag$1]=typedArrayTags[arrayBufferTag$1]=typedArrayTags[boolTag$1]=typedArrayTags[dataViewTag$1]=typedArrayTags[dateTag$1]=typedArrayTags[errorTag$1]=typedArrayTags[funcTag$2]=typedArrayTags[mapTag$1]=typedArrayTags[numberTag$1]=typedArrayTags[objectTag$1]=typedArrayTags[regexpTag$1]=typedArrayTags[setTag$1]=typedArrayTags[stringTag$1]=typedArrayTags[weakMapTag$1]=!1;var _baseIsTypedArray=baseIsTypedArray,_baseUnary=baseUnary,_nodeUtil=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e&&_freeGlobal.process,s=function(){try{var a=r&&r.require&&r.require("util").types;return a||b&&b.binding&&b.binding("util")}catch(a){}}();a.exports=s;}),nodeIsTypedArray=_nodeUtil&&_nodeUtil.isTypedArray,isTypedArray=nodeIsTypedArray?_baseUnary(nodeIsTypedArray):_baseIsTypedArray,isTypedArray_1=isTypedArray,objectProto$6=Object.prototype,hasOwnProperty$5=objectProto$6.hasOwnProperty,_arrayLikeKeys=arrayLikeKeys,objectProto$9=Object.prototype,_isPrototype=isPrototype,_overArg=overArg,nativeKeys=_overArg(Object.keys,Object),_nativeKeys=nativeKeys,objectProto$8=Object.prototype,hasOwnProperty$7=objectProto$8.hasOwnProperty,_baseKeys=baseKeys,isArrayLike_1=isArrayLike,keys_1=keys,_baseAssign=baseAssign,_nativeKeysIn=nativeKeysIn,objectProto$10=Object.prototype,hasOwnProperty$8=objectProto$10.hasOwnProperty,_baseKeysIn=baseKeysIn,keysIn_1=keysIn$1,_baseAssignIn=baseAssignIn,_cloneBuffer=createCommonjsModule$1(function(a,t){function e(a,t){if(t)return a.slice();var e=a.length,r=d?d(e):new a.constructor(e);return a.copy(r),r}var r=t&&!t.nodeType&&t,b=r&&!0&&a&&!a.nodeType&&a,s=b&&b.exports===r?_root.Buffer:void 0,d=s?s.allocUnsafe:void 0;a.exports=e;}),_copyArray=copyArray,_arrayFilter=arrayFilter,stubArray_1=stubArray,objectProto$11=Object.prototype,propertyIsEnumerable$1=objectProto$11.propertyIsEnumerable,nativeGetSymbols=Object.getOwnPropertySymbols,getSymbols=nativeGetSymbols?function(a){return null==a?[]:(a=Object(a),_arrayFilter(nativeGetSymbols(a),function(t){return propertyIsEnumerable$1.call(a,t)}))}:stubArray_1,_getSymbols=getSymbols,_copySymbols=copySymbols,_arrayPush=arrayPush,getPrototype=_overArg(Object.getPrototypeOf,Object),_getPrototype=getPrototype,nativeGetSymbols$1=Object.getOwnPropertySymbols,getSymbolsIn=nativeGetSymbols$1?function(a){for(var t=[];a;)_arrayPush(t,_getSymbols(a)),a=_getPrototype(a);return t}:stubArray_1,_getSymbolsIn=getSymbolsIn,_copySymbolsIn=copySymbolsIn,_baseGetAllKeys=baseGetAllKeys,_getAllKeys=getAllKeys,_getAllKeysIn=getAllKeysIn,DataView=_getNative(_root,"DataView"),_DataView=DataView,Promise$1=_getNative(_root,"Promise"),_Promise=Promise$1,Set$1=_getNative(_root,"Set"),_Set=Set$1,WeakMap$1=_getNative(_root,"WeakMap"),_WeakMap=WeakMap$1,mapTag$2="[object Map]",objectTag$2="[object Object]",promiseTag="[object Promise]",setTag$2="[object Set]",weakMapTag$2="[object WeakMap]",dataViewTag$2="[object DataView]",dataViewCtorString=_toSource(_DataView),mapCtorString=_toSource(_Map),promiseCtorString=_toSource(_Promise),setCtorString=_toSource(_Set),weakMapCtorString=_toSource(_WeakMap),getTag$1=_baseGetTag;(_DataView&&getTag$1(new _DataView(new ArrayBuffer(1)))!=dataViewTag$2||_Map&&getTag$1(new _Map)!=mapTag$2||_Promise&&getTag$1(_Promise.resolve())!=promiseTag||_Set&&getTag$1(new _Set)!=setTag$2||_WeakMap&&getTag$1(new _WeakMap)!=weakMapTag$2)&&(getTag$1=function(a){var t=_baseGetTag(a),e=t==objectTag$2?a.constructor:void 0,r=e?_toSource(e):"";if(r)switch(r){case dataViewCtorString:return dataViewTag$2;case mapCtorString:return mapTag$2;case promiseCtorString:return promiseTag;case setCtorString:return setTag$2;case weakMapCtorString:return weakMapTag$2}return t});var _getTag=getTag$1,objectProto$12=Object.prototype,hasOwnProperty$9=objectProto$12.hasOwnProperty,_initCloneArray=initCloneArray,Uint8Array$1=_root.Uint8Array,_Uint8Array=Uint8Array$1,_cloneArrayBuffer=cloneArrayBuffer,_cloneDataView=cloneDataView,reFlags=/\w*$/,_cloneRegExp=cloneRegExp,symbolProto$1=_Symbol?_Symbol.prototype:void 0,symbolValueOf=symbolProto$1?symbolProto$1.valueOf:void 0,_cloneSymbol=cloneSymbol,_cloneTypedArray=cloneTypedArray,boolTag$2="[object Boolean]",dateTag$2="[object Date]",mapTag$3="[object Map]",numberTag$2="[object Number]",regexpTag$2="[object RegExp]",setTag$3="[object Set]",stringTag$2="[object String]",symbolTag$2="[object Symbol]",arrayBufferTag$2="[object ArrayBuffer]",dataViewTag$3="[object DataView]",float32Tag$2="[object Float32Array]",float64Tag$2="[object Float64Array]",int8Tag$2="[object Int8Array]",int16Tag$2="[object Int16Array]",int32Tag$2="[object Int32Array]",uint8Tag$2="[object Uint8Array]",uint8ClampedTag$2="[object Uint8ClampedArray]",uint16Tag$2="[object Uint16Array]",uint32Tag$2="[object Uint32Array]",_initCloneByTag=initCloneByTag,objectCreate=Object.create,baseCreate=function(){function a(){}return function(t){if(!isObject_1(t))return {};if(objectCreate)return objectCreate(t);a.prototype=t;var e=new a;return a.prototype=void 0,e}}(),_baseCreate=baseCreate,_initCloneObject=initCloneObject,mapTag$4="[object Map]",_baseIsMap=baseIsMap,nodeIsMap=_nodeUtil&&_nodeUtil.isMap,isMap=nodeIsMap?_baseUnary(nodeIsMap):_baseIsMap,isMap_1=isMap,setTag$4="[object Set]",_baseIsSet=baseIsSet,nodeIsSet=_nodeUtil&&_nodeUtil.isSet,isSet=nodeIsSet?_baseUnary(nodeIsSet):_baseIsSet,isSet_1=isSet,CLONE_DEEP_FLAG$1=1,CLONE_FLAT_FLAG=2,CLONE_SYMBOLS_FLAG$1=4,argsTag="[object Arguments]",arrayTag="[object Array]",boolTag="[object Boolean]",dateTag="[object Date]",errorTag="[object Error]",funcTag$1="[object Function]",genTag$1="[object GeneratorFunction]",mapTag="[object Map]",numberTag="[object Number]",objectTag="[object Object]",regexpTag="[object RegExp]",setTag="[object Set]",stringTag="[object String]",symbolTag$1="[object Symbol]",weakMapTag="[object WeakMap]",arrayBufferTag="[object ArrayBuffer]",dataViewTag="[object DataView]",float32Tag="[object Float32Array]",float64Tag="[object Float64Array]",int8Tag="[object Int8Array]",int16Tag="[object Int16Array]",int32Tag="[object Int32Array]",uint8Tag="[object Uint8Array]",uint8ClampedTag="[object Uint8ClampedArray]",uint16Tag="[object Uint16Array]",uint32Tag="[object Uint32Array]",cloneableTags={};cloneableTags[argsTag]=cloneableTags[arrayTag]=cloneableTags[arrayBufferTag]=cloneableTags[dataViewTag]=cloneableTags[boolTag]=cloneableTags[dateTag]=cloneableTags[float32Tag]=cloneableTags[float64Tag]=cloneableTags[int8Tag]=cloneableTags[int16Tag]=cloneableTags[int32Tag]=cloneableTags[mapTag]=cloneableTags[numberTag]=cloneableTags[objectTag]=cloneableTags[regexpTag]=cloneableTags[setTag]=cloneableTags[stringTag]=cloneableTags[symbolTag$1]=cloneableTags[uint8Tag]=cloneableTags[uint8ClampedTag]=cloneableTags[uint16Tag]=cloneableTags[uint32Tag]=!0,cloneableTags[errorTag]=cloneableTags[funcTag$1]=cloneableTags[weakMapTag]=!1;var _baseClone=baseClone,CLONE_DEEP_FLAG=1,CLONE_SYMBOLS_FLAG=4,cloneDeep_1$1=cloneDeep,isUndefined_1$1=isUndefined,stringTag$3="[object String]",isString_1$1=isString,symbols={48176644:{meta:{setID:"48176644",set:["48176644"],setBaseIDs:["d.cq.2.bbbb.0"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"48176644"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.0",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},54112535:{meta:{setID:"54112535",set:["54112535"],setBaseIDs:["d.bd.2.abbb.0"],rootBaseID:"d.bd.2.abbb",rootIDHash:"54112535"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.0",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bd",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},62519049:{meta:{setID:"62519049",set:["62519049"],setBaseIDs:["d.dk.4.bbbb.0"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"62519049"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.0",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},83023171:{meta:{setID:"83023171",set:["83023171"],setBaseIDs:["d.dw.4.abba.270"],rootBaseID:"d.dw.4.abba",rootIDHash:"83023171"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.270",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3621cc2:{meta:{setID:"e3621cc2",set:["e3621cc2"],setBaseIDs:["g.aa.4.abba.90"],rootBaseID:"g.aa.4.abba",rootIDHash:"e3621cc2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.90",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7faaca8c":{meta:{setID:"7faaca8c",set:["7faaca8c"],setBaseIDs:["d.bj.2.bbbb.0"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"7faaca8c"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.0",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"36a4b4a8":{meta:{setID:"36a4b4a8",set:["36a4b4a8"],setBaseIDs:["d.bh.1.bbbb.0"],rootBaseID:"d.bh.1.bbbb",rootIDHash:"36a4b4a8"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,56,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bh.1.bbbb.0",baseID:"d.bh.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bh",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5dfed122":{meta:{setID:"5dfed122",set:["5dfed122"],setBaseIDs:["d.bi.1.bbbb.0"],rootBaseID:"d.bi.1.bbbb",rootIDHash:"5dfed122"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bi.1.bbbb.0",baseID:"d.bi.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"bi",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},de3bc3d1:{meta:{setID:"de3bc3d1",set:["de3bc3d1"],setBaseIDs:["g.ab.2.bbbb.0"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"de3bc3d1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.0",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"FG",key:"ab",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"587b58fb":{meta:{setID:"587b58fb",set:["587b58fb"],setBaseIDs:["d.bz.4.bbbb.180"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"587b58fb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.180",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"63454c71":{meta:{setID:"63454c71",set:["63454c71"],setBaseIDs:["d.el.4.abba.90"],rootBaseID:"d.el.4.abba",rootIDHash:"63454c71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.90",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66b0fffd":{meta:{setID:"66b0fffd",set:["66b0fffd"],setBaseIDs:["d.bk.4.bbbb.0"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"66b0fffd"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.0",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7a365cc2":{meta:{setID:"7a365cc2",set:["7a365cc2"],setBaseIDs:["g.ad.1.bbbb.0"],rootBaseID:"g.ad.1.bbbb",rootIDHash:"7a365cc2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 64 C 0 28.65378189086914 28.65378189086914 0 64 0 C 99.34622192382812 0 128 28.65378189086914 128 64 C 128 99.34622192382812 99.34622192382812 128 64 128 C 28.65378189086914 128 0 99.34622192382812 0 64 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ad.1.bbbb.0",baseID:"g.ad.1.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"ad",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2befa75a":{meta:{setID:"2befa75a",set:["2befa75a"],setBaseIDs:["d.bv.1.bbbb.0"],rootBaseID:"d.bv.1.bbbb",rootIDHash:"2befa75a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,55,55)"},children:[{attr:{d:"M 9 2 C 5.134006977081299 2 2 5.134006977081299 2 9 C 2 12.86599349975586 5.134006977081299 16 9 16 C 12.86599349975586 16 16 12.86599349975586 16 9 C 16 5.134006977081299 12.86599349975586 2 9 2 Z M 0 9 C 0 4.029437065124512 4.029437065124512 0 9 0 C 13.970562934875488 0 18 4.029437065124512 18 9 C 18 13.970562934875488 13.970562934875488 18 9 18 C 4.029437065124512 18 0 13.970562934875488 0 9 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bv.1.bbbb.0",baseID:"d.bv.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adfbec3:{meta:{setID:"adfbec3",set:["adfbec3"],setBaseIDs:["d.bq.4.abbb.0"],rootBaseID:"d.bq.4.abbb",rootIDHash:"adfbec3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.0",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bq",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a5c31631:{meta:{setID:"a5c31631",set:["a5c31631"],setBaseIDs:["g.aa.4.abba.270"],rootBaseID:"g.aa.4.abba",rootIDHash:"a5c31631"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.270",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b7b090cf:{meta:{setID:"b7b090cf",set:["b7b090cf"],setBaseIDs:["d.bm.1.bbbb.0"],rootBaseID:"d.bm.1.bbbb",rootIDHash:"b7b090cf"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.836585998535156 24.836563110351562 32 16 32 C 7.1634368896484375 32 0 24.836585998535156 0 16 C 0 7.163410186767578 7.1634368896484375 0 16 0 C 24.836563110351562 0 32 7.163410186767578 32 16 Z M 16 24 C 20.41828155517578 24 24 20.41828155517578 24 16 C 24 11.581722259521484 20.41828155517578 8 16 8 C 11.581722259521484 8 8 11.581722259521484 8 16 C 8 20.41828155517578 11.581722259521484 24 16 24 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bm.1.bbbb.0",baseID:"d.bm.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"362aae07":{meta:{setID:"362aae07",set:["362aae07"],setBaseIDs:["g.ab.2.bbbb.90"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"362aae07"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.90",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"FG",key:"ab",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b193cb04:{meta:{setID:"b193cb04",set:["b193cb04"],setBaseIDs:["d.bb.1.bbbb.0"],rootBaseID:"d.bb.1.bbbb",rootIDHash:"b193cb04"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,31)"},children:[{attr:{d:"M 33 64 C 50.120826721191406 64 64 50.120826721191406 64 33 C 64 15.879173278808594 50.120826721191406 2 33 2 C 15.879173278808594 2 2 15.879173278808594 2 33 C 2 50.120826721191406 15.879173278808594 64 33 64 Z M 33 66 C 51.22539520263672 66 66 51.22539520263672 66 33 C 66 14.774604797363281 51.22539520263672 0 33 0 C 14.774604797363281 0 0 14.774604797363281 0 33 C 0 51.22539520263672 14.774604797363281 66 33 66 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bb.1.bbbb.0",baseID:"d.bb.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bb",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fbf3a00b:{meta:{setID:"fbf3a00b",set:["fbf3a00b"],setBaseIDs:["g.af.1.aaaa.0"],rootBaseID:"g.af.1.aaaa",rootIDHash:"fbf3a00b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.af.1.aaaa.0",baseID:"g.af.1.aaaa",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"af",edgemap:["a","a","a","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b0aeb7df:{meta:{setID:"b0aeb7df",set:["b0aeb7df"],setBaseIDs:["d.cj.4.bbbb.0"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"b0aeb7df"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.0",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82ff5e94":{meta:{setID:"82ff5e94",set:["82ff5e94"],setBaseIDs:["g.aa.4.abba.180"],rootBaseID:"g.aa.4.abba",rootIDHash:"82ff5e94"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.180",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"92e85004":{meta:{setID:"92e85004",set:["92e85004"],setBaseIDs:["d.dj.4.bbbb.180"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"92e85004"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.180",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"19634ad2":{meta:{setID:"19634ad2",set:["19634ad2"],setBaseIDs:["g.ac.4.bbba.0"],rootBaseID:"g.ac.4.bbba",rootIDHash:"19634ad2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.0",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"ac",edgemap:["b","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"42b4e3a3":{meta:{setID:"42b4e3a3",set:["42b4e3a3"],setBaseIDs:["d.cv.2.bbbb.0"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"42b4e3a3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.0",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"335e8694":{meta:{setID:"335e8694",set:["335e8694"],setBaseIDs:["d.dj.4.bbbb.270"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"335e8694"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.270",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2f5059f3":{meta:{setID:"2f5059f3",set:["2f5059f3"],setBaseIDs:["d.do.4.bbbb.180"],rootBaseID:"d.do.4.bbbb",rootIDHash:"2f5059f3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.180",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4d0779c1":{meta:{setID:"4d0779c1",set:["4d0779c1"],setBaseIDs:["d.di.4.bbbb.90"],rootBaseID:"d.di.4.bbbb",rootIDHash:"4d0779c1"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.90",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"869bd8d8":{meta:{setID:"869bd8d8",set:["869bd8d8"],setBaseIDs:["d.bf.2.bbbb.90"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"869bd8d8"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.90",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bf",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"57ed51b0":{meta:{setID:"57ed51b0",set:["57ed51b0"],setBaseIDs:["d.dv.4.abba.90"],rootBaseID:"d.dv.4.abba",rootIDHash:"57ed51b0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.90",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b0ac0b82:{meta:{setID:"b0ac0b82",set:["b0ac0b82"],setBaseIDs:["g.ac.4.bbba.180"],rootBaseID:"g.ac.4.bbba",rootIDHash:"b0ac0b82"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.180",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"10545ed3":{meta:{setID:"10545ed3",set:["10545ed3"],setBaseIDs:["d.do.4.bbbb.0"],rootBaseID:"d.do.4.bbbb",rootIDHash:"10545ed3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.0",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"do",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fd1b186c:{meta:{setID:"fd1b186c",set:["fd1b186c"],setBaseIDs:["d.bl.2.bbbb.90"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"fd1b186c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.90",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e5fae2fb:{meta:{setID:"e5fae2fb",set:["e5fae2fb"],setBaseIDs:["d.bj.2.bbbb.90"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"e5fae2fb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.90",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bddfa3f3:{meta:{setID:"bddfa3f3",set:["bddfa3f3"],setBaseIDs:["d.ba.1.bbbb.0"],rootBaseID:"d.ba.1.bbbb",rootIDHash:"bddfa3f3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.83655548095703 24.83655548095703 32 16 32 C 7.163444519042969 32 0 24.83655548095703 0 16 C 0 7.163444519042969 7.163444519042969 0 16 0 C 24.83655548095703 0 32 7.163444519042969 32 16 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ba.1.bbbb.0",baseID:"d.ba.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ba",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82610c41":{meta:{setID:"82610c41",set:["82610c41"],setBaseIDs:["d.ea.1.abba.0"],rootBaseID:"d.ea.1.abba",rootIDHash:"82610c41"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,15)"},children:[{attr:{d:"M 49 2 C 23.042621612548828 2 2 23.042621612548828 2 49 C 2 74.95738220214844 23.042621612548828 96 49 96 C 74.95738220214844 96 96 74.95738220214844 96 49 C 96 23.042621612548828 74.95738220214844 2 49 2 Z M 0 49 C 0 21.938051223754883 21.938051223754883 0 49 0 C 76.06195068359375 0 98 21.938051223754883 98 49 C 98 76.06195068359375 76.06195068359375 98 49 98 C 21.938051223754883 98 0 76.06195068359375 0 49 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ea.1.abba.0",baseID:"d.ea.1.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ea",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"613cb28b":{meta:{setID:"613cb28b",set:["613cb28b"],setBaseIDs:["d.bq.4.abbb.90"],rootBaseID:"d.bq.4.abbb",rootIDHash:"613cb28b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.90",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc65290b:{meta:{setID:"fc65290b",set:["fc65290b"],setBaseIDs:["d.cp.4.bbbb.180"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"fc65290b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.180",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"952f1d85":{meta:{setID:"952f1d85",set:["952f1d85"],setBaseIDs:["d.ef.4.abba.90"],rootBaseID:"d.ef.4.abba",rootIDHash:"952f1d85"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.90",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb9b5189:{meta:{setID:"cb9b5189",set:["cb9b5189"],setBaseIDs:["d.dt.4.abba.90"],rootBaseID:"d.dt.4.abba",rootIDHash:"cb9b5189"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,46,0)"},children:[{attr:{d:"M 2 0 C 2 8.836556434631348 9.163443565368652 16 18 16 C 26.836557388305664 16 34 8.836556434631348 34 0 L 36 0 C 36 9.941126823425293 27.941125869750977 18 18 18 C 8.058874130249023 18 0 9.941126823425293 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dt.4.abba.90",baseID:"d.dt.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"462c645e":{meta:{setID:"462c645e",set:["462c645e"],setBaseIDs:["d.dl.4.bbbb.180"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"462c645e"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.180",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d1fb16cc:{meta:{setID:"d1fb16cc",set:["d1fb16cc"],setBaseIDs:["d.cz.4.bbbb.0"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"d1fb16cc"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.0",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cb74008":{meta:{setID:"6cb74008",set:["6cb74008"],setBaseIDs:["g.aa.4.abba.0"],rootBaseID:"g.aa.4.abba",rootIDHash:"6cb74008"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.0",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"aa",edgemap:["a","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2639d7d4":{meta:{setID:"2639d7d4",set:["2639d7d4"],setBaseIDs:["d.bo.4.bbba.90"],rootBaseID:"d.bo.4.bbba",rootIDHash:"2639d7d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.90",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bo",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},c7af9494:{meta:{setID:"c7af9494",set:["c7af9494"],setBaseIDs:["d.dk.4.bbbb.270"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"c7af9494"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.270",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7210b66f":{meta:{setID:"7210b66f",set:["7210b66f"],setBaseIDs:["d.bo.4.bbba.0"],rootBaseID:"d.bo.4.bbba",rootIDHash:"7210b66f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.0",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bo",edgemap:["b","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"18f6b23e":{meta:{setID:"18f6b23e",set:["18f6b23e"],setBaseIDs:["d.cp.4.bbbb.0"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"18f6b23e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.0",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"13446f50":{meta:{setID:"13446f50",set:["13446f50"],setBaseIDs:["d.el.4.abba.0"],rootBaseID:"d.el.4.abba",rootIDHash:"13446f50"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.0",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"el",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2b187d87":{meta:{setID:"2b187d87",set:["2b187d87"],setBaseIDs:["d.bg.2.bbbb.0"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"2b187d87"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.0",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bg",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1c9d4f11":{meta:{setID:"1c9d4f11",set:["1c9d4f11"],setBaseIDs:["d.do.4.bbbb.270"],rootBaseID:"d.do.4.bbbb",rootIDHash:"1c9d4f11"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.270",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"69daeb1a":{meta:{setID:"69daeb1a",set:["69daeb1a"],setBaseIDs:["d.da.2.bbbb.90"],rootBaseID:"d.da.2.bbbb",rootIDHash:"69daeb1a"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.90",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"da",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe5cf0f4:{meta:{setID:"fe5cf0f4",set:["fe5cf0f4"],setBaseIDs:["d.bf.2.bbbb.0"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"fe5cf0f4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.0",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bf",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9e7ddd3d":{meta:{setID:"9e7ddd3d",set:["9e7ddd3d"],setBaseIDs:["d.cs.2.bbbb.0"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"9e7ddd3d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.0",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cs",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3cdcdb8c":{meta:{setID:"3cdcdb8c",set:["3cdcdb8c"],setBaseIDs:["d.dr.8.abba.90"],rootBaseID:"d.dr.8.abba",rootIDHash:"3cdcdb8c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 105.84061431884766 18.159381866455078 C 94.62081909179688 6.939587593078613 79.1208267211914 0 62 0 C 27.75835418701172 0 0 27.75835418701172 0 62 C 0 79.1208267211914 6.939587593078613 94.62081909179688 18.159381866455078 105.84061431884766 L 105.84061431884766 18.159381866455078 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dr.8.abba.90",baseID:"d.dr.8.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:8,paint:"BG",key:"dr",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},acc8c8fb:{meta:{setID:"acc8c8fb",set:["acc8c8fb"],setBaseIDs:["d.ef.4.abba.0"],rootBaseID:"d.ef.4.abba",rootIDHash:"acc8c8fb"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.0",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ef",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4dae70af":{meta:{setID:"4dae70af",set:["4dae70af"],setBaseIDs:["d.dl.4.bbbb.0"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4dae70af"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.0",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f0d5fe71:{meta:{setID:"f0d5fe71",set:["f0d5fe71"],setBaseIDs:["d.cz.4.bbbb.180"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"f0d5fe71"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.180",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb81c430:{meta:{setID:"cb81c430",set:["cb81c430"],setBaseIDs:["d.dj.4.bbbb.0"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"cb81c430"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.0",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},efa22418:{meta:{setID:"efa22418",set:["efa22418"],setBaseIDs:["d.el.4.abba.180"],rootBaseID:"d.el.4.abba",rootIDHash:"efa22418"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.180",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66fbf43f":{meta:{setID:"66fbf43f",set:["66fbf43f"],setBaseIDs:["d.bz.4.bbbb.0"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"66fbf43f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.0",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6245af61":{meta:{setID:"6245af61",set:["6245af61"],setBaseIDs:["d.di.4.bbbb.0"],rootBaseID:"d.di.4.bbbb",rootIDHash:"6245af61"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.0",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"di",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d93ccb2:{meta:{setID:"d93ccb2",set:["d93ccb2"],setBaseIDs:["g.ac.4.bbba.90"],rootBaseID:"g.ac.4.bbba",rootIDHash:"d93ccb2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.90",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7191ec30":{meta:{setID:"7191ec30",set:["7191ec30"],setBaseIDs:["d.do.4.bbbb.90"],rootBaseID:"d.do.4.bbbb",rootIDHash:"7191ec30"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.90",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},faa6eb0:{meta:{setID:"faa6eb0",set:["faa6eb0"],setBaseIDs:["d.bg.2.bbbb.90"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"faa6eb0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.90",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a0991dbc:{meta:{setID:"a0991dbc",set:["a0991dbc"],setBaseIDs:["d.cf.4.bbbb.90"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"a0991dbc"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.90",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"cf",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},c3bebfe6:{meta:{setID:"c3bebfe6",set:["c3bebfe6"],setBaseIDs:["d.dm.4.bbbb.90"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"c3bebfe6"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.90",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"87cb2bff":{meta:{setID:"87cb2bff",set:["87cb2bff"],setBaseIDs:["d.dd.4.bbbb.0"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"87cb2bff"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.0",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dd",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"603da034":{meta:{setID:"603da034",set:["603da034"],setBaseIDs:["d.dv.4.abba.0"],rootBaseID:"d.dv.4.abba",rootIDHash:"603da034"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.0",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dv",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f3633360:{meta:{setID:"f3633360",set:["f3633360"],setBaseIDs:["d.dw.4.abba.0"],rootBaseID:"d.dw.4.abba",rootIDHash:"f3633360"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.0",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dw",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6acd7409":{meta:{setID:"6acd7409",set:["6acd7409"],setBaseIDs:["d.dv.4.abba.180"],rootBaseID:"d.dv.4.abba",rootIDHash:"6acd7409"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.180",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad7dd51b:{meta:{setID:"ad7dd51b",set:["ad7dd51b"],setBaseIDs:["d.ds.4.abba.270"],rootBaseID:"d.ds.4.abba",rootIDHash:"ad7dd51b"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.270",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6615d02d":{meta:{setID:"6615d02d",set:["6615d02d"],setBaseIDs:["d.bq.4.abbb.180"],rootBaseID:"d.bq.4.abbb",rootIDHash:"6615d02d"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.180",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5ba1ba9b":{meta:{setID:"5ba1ba9b",set:["5ba1ba9b"],setBaseIDs:["d.dp.1.bbbb.0"],rootBaseID:"d.dp.1.bbbb",rootIDHash:"5ba1ba9b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z M 48 88 C 70.09139251708984 88 88 70.09139251708984 88 48 C 88 25.908611297607422 70.09139251708984 8 48 8 C 25.908611297607422 8 8 25.908611297607422 8 48 C 8 70.09139251708984 25.908611297607422 88 48 88 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dp.1.bbbb.0",baseID:"d.dp.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf0f809a:{meta:{setID:"cf0f809a",set:["cf0f809a"],setBaseIDs:["d.dq.1.bbbb.0"],rootBaseID:"d.dq.1.bbbb",rootIDHash:"cf0f809a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z M 32 56 C 45.25483703613281 56 56 45.25483703613281 56 32 C 56 18.745166778564453 45.25483703613281 8 32 8 C 18.745166778564453 8 8 18.745166778564453 8 32 C 8 45.25483703613281 18.745166778564453 56 32 56 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dq.1.bbbb.0",baseID:"d.dq.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9ebd20ff":{meta:{setID:"9ebd20ff",set:["9ebd20ff"],setBaseIDs:["d.cp.4.bbbb.270"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"9ebd20ff"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.270",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5e841ec3":{meta:{setID:"5e841ec3",set:["5e841ec3"],setBaseIDs:["d.ef.4.abba.270"],rootBaseID:"d.ef.4.abba",rootIDHash:"5e841ec3"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.270",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},afc30081:{meta:{setID:"afc30081",set:["afc30081"],setBaseIDs:["d.bk.4.bbbb.270"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"afc30081"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.270",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c4076d5":{meta:{setID:"4c4076d5",set:["4c4076d5"],setBaseIDs:["d.cu.2.bbbb.90"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"4c4076d5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.90",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cu",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d6753be3:{meta:{setID:"d6753be3",set:["d6753be3"],setBaseIDs:["d.dd.4.bbbb.180"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"d6753be3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.180",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b788c92f:{meta:{setID:"b788c92f",set:["b788c92f"],setBaseIDs:["d.de.2.bbbb.0"],rootBaseID:"d.de.2.bbbb",rootIDHash:"b788c92f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.0",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"de",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a4ed278a:{meta:{setID:"a4ed278a",set:["a4ed278a"],setBaseIDs:["d.cj.4.bbbb.180"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"a4ed278a"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.180",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},eb608ee5:{meta:{setID:"eb608ee5",set:["eb608ee5"],setBaseIDs:["d.bk.4.bbbb.90"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"eb608ee5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.90",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"52a6a74c":{meta:{setID:"52a6a74c",set:["52a6a74c"],setBaseIDs:["d.ct.2.bbbb.90"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"52a6a74c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.90",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ct",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e2f4d6e2:{meta:{setID:"e2f4d6e2",set:["e2f4d6e2"],setBaseIDs:["d.ct.2.bbbb.0"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"e2f4d6e2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.0",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ct",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e6117eb6:{meta:{setID:"e6117eb6",set:["e6117eb6"],setBaseIDs:["d.dd.4.bbbb.270"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"e6117eb6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.270",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b397af9f:{meta:{setID:"b397af9f",set:["b397af9f"],setBaseIDs:["d.cz.4.bbbb.270"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"b397af9f"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.270",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"427a1751":{meta:{setID:"427a1751",set:["427a1751"],setBaseIDs:["d.dn.4.bbbb.0"],rootBaseID:"d.dn.4.bbbb",rootIDHash:"427a1751"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,47)"},children:[{attr:{d:"M 17 17 C 17 7.6111602783203125 9.388839721679688 0 0 0 L 0 2 C 8.284271240234375 2 15 8.715728759765625 15 17 L 17 17 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dn.4.bbbb.0",baseID:"d.dn.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1735a791":{meta:{setID:"1735a791",set:["1735a791"],setBaseIDs:["d.by.1.bbbb.0"],rootBaseID:"d.by.1.bbbb",rootIDHash:"1735a791"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,47)"},children:[{attr:{d:"M 17 2 C 8.715728759765625 2 2 8.715728759765625 2 17 C 2 25.284271240234375 8.715728759765625 32 17 32 C 25.284271240234375 32 32 25.284271240234375 32 17 C 32 8.715728759765625 25.284271240234375 2 17 2 Z M 0 17 C 0 7.6111602783203125 7.6111602783203125 0 17 0 C 26.388839721679688 0 34 7.6111602783203125 34 17 C 34 26.388839721679688 26.388839721679688 34 17 34 C 7.6111602783203125 34 0 26.388839721679688 0 17 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.by.1.bbbb.0",baseID:"d.by.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"by",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"28b33136":{meta:{setID:"28b33136",set:["28b33136"],setBaseIDs:["g.ac.4.bbba.270"],rootBaseID:"g.ac.4.bbba",rootIDHash:"28b33136"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.270",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"672fdf93":{meta:{setID:"672fdf93",set:["672fdf93"],setBaseIDs:["d.eg.4.abba.0"],rootBaseID:"d.eg.4.abba",rootIDHash:"672fdf93"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.0",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"eg",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f49b158d:{meta:{setID:"f49b158d",set:["f49b158d"],setBaseIDs:["d.cf.4.bbbb.0"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"f49b158d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.0",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"cf",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cf35bfb":{meta:{setID:"6cf35bfb",set:["6cf35bfb"],setBaseIDs:["d.de.2.bbbb.90"],rootBaseID:"d.de.2.bbbb",rootIDHash:"6cf35bfb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.90",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"de",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c1ac47d":{meta:{setID:"4c1ac47d",set:["4c1ac47d"],setBaseIDs:["d.cn.1.bbbb.0"],rootBaseID:"d.cn.1.bbbb",rootIDHash:"4c1ac47d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cn.1.bbbb.0",baseID:"d.cn.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9b3aa0b1":{meta:{setID:"9b3aa0b1",set:["9b3aa0b1"],setBaseIDs:["d.cu.2.bbbb.0"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"9b3aa0b1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.0",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cu",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf042a60:{meta:{setID:"cf042a60",set:["cf042a60"],setBaseIDs:["d.bn.4.abba.0"],rootBaseID:"d.bn.4.abba",rootIDHash:"cf042a60"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.0",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bn",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"44e1402d":{meta:{setID:"44e1402d",set:["44e1402d"],setBaseIDs:["d.da.2.bbbb.0"],rootBaseID:"d.da.2.bbbb",rootIDHash:"44e1402d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.0",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"da",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e53a31b5:{meta:{setID:"e53a31b5",set:["e53a31b5"],setBaseIDs:["d.cl.1.bbbb.0"],rootBaseID:"d.cl.1.bbbb",rootIDHash:"e53a31b5"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,40,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cl.1.bbbb.0",baseID:"d.cl.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2ab4bc02":{meta:{setID:"2ab4bc02",set:["2ab4bc02"],setBaseIDs:["d.dw.4.abba.90"],rootBaseID:"d.dw.4.abba",rootIDHash:"2ab4bc02"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.90",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4456d619":{meta:{setID:"4456d619",set:["4456d619"],setBaseIDs:["d.dl.4.bbbb.90"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4456d619"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.90",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adafc09c:{meta:{setID:"adafc09c",set:["adafc09c"],setBaseIDs:["d.cp.4.bbbb.90"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"adafc09c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.90",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d7e0d9e:{meta:{setID:"d7e0d9e",set:["d7e0d9e"],setBaseIDs:["d.di.4.bbbb.270"],rootBaseID:"d.di.4.bbbb",rootIDHash:"d7e0d9e"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.270",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1d989f87":{meta:{setID:"1d989f87",set:["1d989f87"],setBaseIDs:["d.cz.4.bbbb.90"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"1d989f87"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.90",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b09cf4ef:{meta:{setID:"b09cf4ef",set:["b09cf4ef"],setBaseIDs:["d.cw.4.bbbb.270"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b09cf4ef"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.270",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"510344a7":{meta:{setID:"510344a7",set:["510344a7"],setBaseIDs:["d.cj.4.bbbb.270"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"510344a7"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.270",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ae1e4f7:{meta:{setID:"ae1e4f7",set:["ae1e4f7"],setBaseIDs:["d.dk.4.bbbb.180"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"ae1e4f7"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.180",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb651938:{meta:{setID:"fb651938",set:["fb651938"],setBaseIDs:["d.dw.4.abba.180"],rootBaseID:"d.dw.4.abba",rootIDHash:"fb651938"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.180",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d560b8b":{meta:{setID:"8d560b8b",set:["8d560b8b"],setBaseIDs:["d.dx.4.abba.0"],rootBaseID:"d.dx.4.abba",rootIDHash:"8d560b8b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-5.665972113147108e-14,33)"},children:[{attr:{d:"M 21.40327262878418 118.3283462524414 C 25.199352264404297 124.80017852783203 29.149702072143555 127.96875 33 127.96875 L 33 130 C 28.013748168945312 130 23.54582405090332 125.95003509521484 19.68505096435547 119.367919921875 C 15.785710334777832 112.72005462646484 12.309096336364746 103.16806030273438 9.4028959274292 91.453857421875 C 3.5866384506225586 68.00990295410156 0 35.67653274536133 0 0 L 2 0 C 2 35.55952072143555 5.576811790466309 67.71833801269531 11.342279434204102 90.95755767822266 C 14.226941108703613 102.58494567871094 17.64575958251953 111.92227935791016 21.40327262878418 118.3283462524414 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dx.4.abba.0",baseID:"d.dx.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dx",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f3841fc":{meta:{setID:"9f3841fc",set:["9f3841fc"],setBaseIDs:["d.dv.4.abba.270"],rootBaseID:"d.dv.4.abba",rootIDHash:"9f3841fc"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.270",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"59d9e201":{meta:{setID:"59d9e201",set:["59d9e201"],setBaseIDs:["d.dd.4.bbbb.90"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"59d9e201"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.90",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad042183:{meta:{setID:"ad042183",set:["ad042183"],setBaseIDs:["d.cq.2.bbbb.90"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"ad042183"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.90",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1b1fba11":{meta:{setID:"1b1fba11",set:["1b1fba11"],setBaseIDs:["d.bd.2.abbb.90"],rootBaseID:"d.bd.2.abbb",rootIDHash:"1b1fba11"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.90",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cbdce7a4:{meta:{setID:"cbdce7a4",set:["cbdce7a4"],setBaseIDs:["d.bl.2.bbbb.0"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"cbdce7a4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.0",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bfc8669e:{meta:{setID:"bfc8669e",set:["bfc8669e"],setBaseIDs:["d.cj.4.bbbb.90"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"bfc8669e"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.90",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"81113d71":{meta:{setID:"81113d71",set:["81113d71"],setBaseIDs:["d.dh.4.bbbb.90"],rootBaseID:"d.dh.4.bbbb",rootIDHash:"81113d71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 29.9384765625 C 16.08001708984375 28.94677734375 28.94690704345703 16.080078125 29.938514709472656 0 L 0 0 L 0 29.9384765625 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dh.4.bbbb.90",baseID:"d.dh.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dh",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f6bb8637:{meta:{setID:"f6bb8637",set:["f6bb8637"],setBaseIDs:["d.cx.4.bbbb.90"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"f6bb8637"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.90",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cx",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a2880ff1:{meta:{setID:"a2880ff1",set:["a2880ff1"],setBaseIDs:["d.dm.4.bbbb.0"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"a2880ff1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.0",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5a85e6f7":{meta:{setID:"5a85e6f7",set:["5a85e6f7"],setBaseIDs:["d.cv.2.bbbb.90"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"5a85e6f7"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.90",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8c89b36e":{meta:{setID:"8c89b36e",set:["8c89b36e"],setBaseIDs:["d.ds.4.abba.0"],rootBaseID:"d.ds.4.abba",rootIDHash:"8c89b36e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.0",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ds",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"824e5e1f":{meta:{setID:"824e5e1f",set:["824e5e1f"],setBaseIDs:["d.ef.4.abba.180"],rootBaseID:"d.ef.4.abba",rootIDHash:"824e5e1f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.180",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"83856b0b":{meta:{setID:"83856b0b",set:["83856b0b"],setBaseIDs:["d.ds.4.abba.90"],rootBaseID:"d.ds.4.abba",rootIDHash:"83856b0b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.90",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1e0083d1":{meta:{setID:"1e0083d1",set:["1e0083d1"],setBaseIDs:["d.el.4.abba.270"],rootBaseID:"d.el.4.abba",rootIDHash:"1e0083d1"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.270",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4b097186":{meta:{setID:"4b097186",set:["4b097186"],setBaseIDs:["d.eg.4.abba.90"],rootBaseID:"d.eg.4.abba",rootIDHash:"4b097186"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.90",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3f1ef01:{meta:{setID:"e3f1ef01",set:["e3f1ef01"],setBaseIDs:["d.bn.4.abba.180"],rootBaseID:"d.bn.4.abba",rootIDHash:"e3f1ef01"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.180",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"372ac81b":{meta:{setID:"372ac81b",set:["372ac81b"],setBaseIDs:["d.bk.4.bbbb.180"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"372ac81b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.180",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"387e568f":{meta:{setID:"387e568f",set:["387e568f"],setBaseIDs:["d.di.4.bbbb.180"],rootBaseID:"d.di.4.bbbb",rootIDHash:"387e568f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.180",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc9ea1e2:{meta:{setID:"fc9ea1e2",set:["fc9ea1e2"],setBaseIDs:["d.bn.4.abba.90"],rootBaseID:"d.bn.4.abba",rootIDHash:"fc9ea1e2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.90",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7d18e429":{meta:{setID:"7d18e429",set:["7d18e429"],setBaseIDs:["d.ci.4.bbbb.180"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"7d18e429"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.180",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d842a67d:{meta:{setID:"d842a67d",set:["d842a67d"],setBaseIDs:["d.ec.2.abba.0"],rootBaseID:"d.ec.2.abba",rootIDHash:"d842a67d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.0",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ec",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe4199fc:{meta:{setID:"fe4199fc",set:["fe4199fc"],setBaseIDs:["d.dm.4.bbbb.180"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"fe4199fc"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.180",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"975397b2":{meta:{setID:"975397b2",set:["975397b2"],setBaseIDs:["d.eg.4.abba.270"],rootBaseID:"d.eg.4.abba",rootIDHash:"975397b2"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.270",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b645c8d3:{meta:{setID:"b645c8d3",set:["b645c8d3"],setBaseIDs:["d.cw.4.bbbb.0"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b645c8d3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.0",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cw",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d8261d6":{meta:{setID:"8d8261d6",set:["8d8261d6"],setBaseIDs:["d.bn.4.abba.270"],rootBaseID:"d.bn.4.abba",rootIDHash:"8d8261d6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.270",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ab99a1a:{meta:{setID:"ab99a1a",set:["ab99a1a"],setBaseIDs:["d.em.4.abba.0"],rootBaseID:"d.em.4.abba",rootIDHash:"ab99a1a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,57.359375)"},children:[{attr:{d:"M 54.359222412109375 0 C 40.325164794921875 13.78662109375 21.164825439453125 22.3719482421875 0 22.634521484375 L 0 68.6251220703125 C 34.000030517578125 68.0960693359375 64.73162841796875 54.0999755859375 87.095458984375 31.7362060546875 L 54.359222412109375 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.em.4.abba.0",baseID:"d.em.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"em",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"20fd4083":{meta:{setID:"20fd4083",set:["20fd4083"],setBaseIDs:["d.bq.4.abbb.270"],rootBaseID:"d.bq.4.abbb",rootIDHash:"20fd4083"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.270",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7fcb0d8f":{meta:{setID:"7fcb0d8f",set:["7fcb0d8f"],setBaseIDs:["d.cw.4.bbbb.90"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"7fcb0d8f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.90",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6e9d4a77":{meta:{setID:"6e9d4a77",set:["6e9d4a77"],setBaseIDs:["d.dj.4.bbbb.90"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"6e9d4a77"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.90",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82e8305":{meta:{setID:"82e8305",set:["82e8305"],setBaseIDs:["d.ec.2.abba.90"],rootBaseID:"d.ec.2.abba",rootIDHash:"82e8305"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.90",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ec",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a9e89fe4:{meta:{setID:"a9e89fe4",set:["a9e89fe4"],setBaseIDs:["d.cw.4.bbbb.180"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"a9e89fe4"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.180",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d24107f2:{meta:{setID:"d24107f2",set:["d24107f2"],setBaseIDs:["d.ds.4.abba.180"],rootBaseID:"d.ds.4.abba",rootIDHash:"d24107f2"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.180",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb44703d:{meta:{setID:"cb44703d",set:["cb44703d"],setBaseIDs:["d.ci.4.bbbb.90"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"cb44703d"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.90",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6b5e126b":{meta:{setID:"6b5e126b",set:["6b5e126b"],setBaseIDs:["d.ee.4.abba.180"],rootBaseID:"d.ee.4.abba",rootIDHash:"6b5e126b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,-2)"},children:[{attr:{d:"M 31 33.5 C 31 16.152257919311523 17.135732650756836 2.0615384578704834 0 2.0615384578704834 L 0 0 C 18.210493087768555 0 33 14.983217239379883 33 33.5 C 33 52.016780853271484 18.210493087768555 67 0 67 L 0 64.93846130371094 C 17.135732650756836 64.93846130371094 31 50.84773635864258 31 33.5 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ee.4.abba.180",baseID:"d.ee.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ee",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3d22f9b0":{meta:{setID:"3d22f9b0",set:["3d22f9b0"],setBaseIDs:["d.dl.4.bbbb.270"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"3d22f9b0"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.270",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb5ca265:{meta:{setID:"fb5ca265",set:["fb5ca265"],setBaseIDs:["d.cs.2.bbbb.90"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"fb5ca265"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.90",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cs",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ec96cafb:{meta:{setID:"ec96cafb",set:["ec96cafb"],setBaseIDs:["d.bt.4.bbbb.180"],rootBaseID:"d.bt.4.bbbb",rootIDHash:"ec96cafb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.5299989581108093,0.847998321056366,-0.847998321056366,0.5299989581108093,1.269600510597229,-0.7934557199478149)"},children:[{attr:{d:"M 150.94369506835938 1.9943454265594482 L 0 1.9943454265594482 L 0 0 L 150.94369506835938 0 L 150.94369506835938 1.9943454265594482 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bt.4.bbbb.180",baseID:"d.bt.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f680a2b":{meta:{setID:"9f680a2b",set:["9f680a2b"],setBaseIDs:["d.ce.1.bbbb.0"],rootBaseID:"d.ce.1.bbbb",rootIDHash:"9f680a2b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ce.1.bbbb.0",baseID:"d.ce.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ce",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b46295d4:{meta:{setID:"b46295d4",set:["b46295d4"],setBaseIDs:["d.bz.4.bbbb.90"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"b46295d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.90",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2d91e72f":{meta:{setID:"2d91e72f",set:["2d91e72f"],setBaseIDs:["d.dk.4.bbbb.90"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"2d91e72f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.90",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"55d21172":{meta:{setID:"55d21172",set:["55d21172"],setBaseIDs:["d.cx.4.bbbb.0"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"55d21172"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.0",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cx",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6f23470b":{meta:{setID:"6f23470b",set:["6f23470b"],setBaseIDs:["d.ca.4.bbbb.180"],rootBaseID:"d.ca.4.bbbb",rootIDHash:"6f23470b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0.8699696660041809,0.8699747920036316)"},children:[{attr:{d:"M 112.12674713134766 0 C 111.66136932373047 61.71796417236328 61.71796798706055 111.66136932373047 0 112.12674713134766 C 0.07810759544372559 111.4577407836914 0.161374032497406 110.79031372070312 0.24975842237472534 110.12449645996094 C 60.66484069824219 109.52742767333984 109.52742767333984 60.66484069824219 110.12449645996094 0.2497583031654358 C 110.79031372070312 0.16137391328811646 111.4577407836914 0.07810753583908081 112.12674713134766 0 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 96.05703735351562 2.9277095794677734 C 94.11087036132812 53.479217529296875 53.47922134399414 94.11087799072266 2.92771053314209 96.05703735351562 C 3.0964479446411133 95.3803939819336 3.2705700397491455 94.70587921142578 3.450028657913208 94.0335464477539 C 52.480045318603516 91.8392105102539 91.8392105102539 52.480045318603516 94.0335464477539 3.4500277042388916 C 94.70587921142578 3.270569086074829 95.3803939819336 3.096446990966797 96.05703735351562 2.9277095794677734 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 8.235589027404785 79.62393188476562 C 45.69525909423828 75.4333724975586 75.4333724975586 45.69525909423828 79.62393188476562 8.235587120056152 C 78.9149169921875 8.519139289855957 78.20903015136719 8.808850288391113 77.50634002685547 9.104653358459473 C 73.0142822265625 44.75928497314453 44.75929260253906 73.0142822265625 9.104655265808105 77.50634002685547 C 8.808852195739746 78.20903015136719 8.51914119720459 78.9149169921875 8.235589027404785 79.62393188476562 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 17.15437126159668 61.59848403930664 C 38.56138610839844 55.43290328979492 55.43291091918945 38.56138610839844 61.59849166870117 17.15437126159668 C 60.73215103149414 17.67171287536621 59.8724365234375 18.198997497558594 59.019508361816406 18.736074447631836 C 52.795589447021484 37.75990295410156 37.75990295410156 52.79558563232422 18.73607635498047 59.01950454711914 C 18.198999404907227 59.872432708740234 17.67171287536621 60.73214340209961 17.15437126159668 61.59848403930664 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ca.4.bbbb.180",baseID:"d.ca.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ca",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"235d50bf":{meta:{setID:"235d50bf",set:["235d50bf"],setBaseIDs:["d.ci.4.bbbb.270"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"235d50bf"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.270",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b3ae909c:{meta:{setID:"b3ae909c",set:["b3ae909c"],setBaseIDs:["d.dm.4.bbbb.270"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"b3ae909c"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.270",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"}},mapping={bac:"e3621cc2:7faaca8c:36a4b4a8:5dfed122",bal:"de3bc3d1:587b58fb:63454c71",ban:"e3621cc2:66b0fffd",bar:"7a365cc2:2befa75a:7faaca8c",bat:"e3621cc2:adfbec3",bec:"a5c31631:7faaca8c:b7b090cf",bel:"362aae07:b193cb04",ben:"fbf3a00b:2befa75a:b0aeb7df",bep:"82ff5e94:92e85004",ber:"19634ad2:42b4e3a3",bes:"a5c31631:7faaca8c:335e8694",bet:"7a365cc2:2f5059f3",bex:"19634ad2:2f5059f3:b7b090cf",bic:"e3621cc2:4d0779c1",bid:"e3621cc2:869bd8d8:57ed51b0",bil:"b0ac0b82:10545ed3:b7b090cf",bin:"fbf3a00b",bis:"e3621cc2:869bd8d8:fd1b186c",bit:"de3bc3d1:e5fae2fb:bddfa3f3",bol:"7a365cc2:869bd8d8:82610c41",bon:"82ff5e94:613cb28b",bor:"b0ac0b82:7faaca8c:fc65290b",bos:"e3621cc2:7faaca8c:952f1d85",bot:"b0ac0b82:36a4b4a8:cb9b5189",bud:"a5c31631:462c645e:d1fb16cc",bur:"6cb74008:2639d7d4:5dfed122",bus:"a5c31631:7faaca8c:c7af9494",byl:"6cb74008:7210b66f:5dfed122",byn:"6cb74008:18f6b23e",byr:"362aae07:7faaca8c:13446f50",byt:"19634ad2:869bd8d8:82610c41:2b187d87",dab:"e3621cc2:1c9d4f11:5dfed122",dac:"e3621cc2:e5fae2fb:869bd8d8:69daeb1a",dal:"de3bc3d1:587b58fb:7faaca8c",dan:"b0ac0b82:fe5cf0f4:2befa75a:9e7ddd3d",dap:"e3621cc2:10545ed3:bddfa3f3",dar:"7a365cc2:3cdcdb8c:acc8c8fb",das:"fbf3a00b:fe5cf0f4:b7b090cf",dat:"e3621cc2:613cb28b",dav:"b0ac0b82:869bd8d8:4dae70af:f0d5fe71",deb:"fbf3a00b:cb81c430",dec:"a5c31631:efa22418",def:"de3bc3d1:66fbf43f:5dfed122",deg:"fbf3a00b:335e8694",del:"362aae07:acc8c8fb",dem:"7a365cc2:7faaca8c:6245af61",den:"fbf3a00b:7faaca8c:6245af61",dep:"82ff5e94:fc65290b",der:"d93ccb2:42b4e3a3",des:"82ff5e94:42b4e3a3",det:"7a365cc2:7191ec30",dev:"19634ad2:36a4b4a8",dex:"19634ad2:fe5cf0f4:b7b090cf",dib:"7a365cc2:869bd8d8:faa6eb0",dif:"e3621cc2:2639d7d4:a0991dbc",dig:"b0ac0b82:fe5cf0f4:2befa75a:2f5059f3",dil:"b0ac0b82:e5fae2fb:10545ed3",din:"fbf3a00b:42b4e3a3",dir:"e3621cc2:2befa75a:2f5059f3:c3bebfe6",dis:"82ff5e94:7faaca8c:87cb2bff",div:"fbf3a00b:fe5cf0f4:603da034:f3633360",doc:"362aae07:2befa75a:fe5cf0f4:6acd7409",dol:"7a365cc2:869bd8d8:ad7dd51b",don:"82ff5e94:6615d02d",dop:"7a365cc2:36a4b4a8:869bd8d8:5ba1ba9b",dor:"b0ac0b82:869bd8d8",dos:"e3621cc2:7faaca8c:cf0f809a",dot:"b0ac0b82:36a4b4a8",dov:"fbf3a00b:e5fae2fb:9ebd20ff",doz:"7a365cc2:3cdcdb8c",duc:"a5c31631:869bd8d8:faa6eb0",dul:"7a365cc2:36a4b4a8:4dae70af",dun:"19634ad2:4dae70af",dur:"d93ccb2",dus:"a5c31631:e5fae2fb:4d0779c1",dut:"fbf3a00b:5e841ec3",dux:"6cb74008:afc30081",dyl:"a5c31631:66b0fffd",dyn:"6cb74008:4c4076d5",dyr:"362aae07:7faaca8c:d6753be3",dys:"a5c31631:adfbec3",dyt:"19634ad2:869bd8d8:b193cb04:b0aeb7df",fab:"e3621cc2:e5fae2fb:36a4b4a8:5dfed122",fad:"6cb74008:b788c92f",fal:"362aae07:e5fae2fb:9ebd20ff",fam:"b0ac0b82:869bd8d8:36a4b4a8:fe5cf0f4",fan:"b0ac0b82:fe5cf0f4:2befa75a:e5fae2fb",fas:"fbf3a00b:b193cb04:a4ed278a",feb:"fbf3a00b:eb608ee5",fed:"7a365cc2:36a4b4a8:52a6a74c",fel:"362aae07:1c9d4f11",fen:"fbf3a00b:7faaca8c:fc65290b",fep:"a5c31631:e5fae2fb",fer:"19634ad2:fe5cf0f4",fes:"82ff5e94:e2f4d6e2",fet:"7a365cc2:e5fae2fb",fex:"19634ad2:1c9d4f11:b7b090cf",fid:"e3621cc2:7faaca8c:e6117eb6",fig:"b0ac0b82:fe5cf0f4:2befa75a:b193cb04",fil:"b0ac0b82:869bd8d8:48176644",fin:"fbf3a00b:9e7ddd3d",fip:"b0ac0b82:7faaca8c:82610c41:b397af9f",fir:"e3621cc2:2befa75a:1c9d4f11:427a1751",fit:"de3bc3d1:e5fae2fb:4dae70af",fod:"b0ac0b82:b7b090cf",fog:"82ff5e94:7faaca8c:2befa75a:1735a791",fol:"7a365cc2:869bd8d8:1735a791",fon:"82ff5e94:7faaca8c",fop:"7a365cc2:7faaca8c:462c645e:d1fb16cc",for:"b0ac0b82:36a4b4a8:9e7ddd3d",fos:"6cb74008:7faaca8c:cf0f809a",fot:"b0ac0b82:36a4b4a8:7191ec30",ful:"7a365cc2:5ba1ba9b",fun:"28b33136:7faaca8c:7191ec30:672fdf93",fur:"6cb74008:2befa75a:e5fae2fb:cf0f809a",fus:"a5c31631:e5fae2fb:c7af9494",fyl:"6cb74008:7210b66f:f49b158d",fyn:"6cb74008:e5fae2fb",fyr:"362aae07:7faaca8c:1c9d4f11",hab:"e3621cc2:e5fae2fb:5dfed122",hac:"e3621cc2:e5fae2fb:2befa75a:b193cb04",had:"6cb74008:6cf35bfb",hal:"362aae07:fe5cf0f4:83023171",han:"6cb74008:66b0fffd",hap:"7a365cc2:82610c41:7faaca8c:4c1ac47d",har:"7a365cc2:2befa75a:fe5cf0f4",has:"fbf3a00b:b193cb04:b0aeb7df",hat:"e3621cc2:2639d7d4",hav:"e3621cc2:42b4e3a3",heb:"fbf3a00b:66b0fffd",hec:"a5c31631:e6117eb6",hep:"a5c31631:7faaca8c",hes:"82ff5e94:9b3aa0b1",het:"7a365cc2:42b4e3a3",hex:"19634ad2:e5fae2fb:b7b090cf",hid:"e3621cc2:7faaca8c:cf042a60",hil:"b0ac0b82:fe5cf0f4:44e1402d",hin:"fbf3a00b:9b3aa0b1",hob:"28b33136:869bd8d8",hoc:"b0ac0b82:1c9d4f11:bddfa3f3",hod:"b0ac0b82:54112535",hol:"7a365cc2:869bd8d8:2befa75a",hop:"7a365cc2:36a4b4a8:869bd8d8:cf0f809a",hos:"e3621cc2:7faaca8c:e53a31b5",hul:"7a365cc2:82610c41:b0aeb7df",hus:"a5c31631:7faaca8c:36a4b4a8",hut:"fbf3a00b:6cf35bfb",lab:"82ff5e94:7faaca8c:1c9d4f11:5dfed122",lac:"e3621cc2:869bd8d8:57ed51b0:2ab4bc02",lad:"82ff5e94:b788c92f",lag:"b0ac0b82:4456d619",lan:"b0ac0b82:fe5cf0f4:2befa75a:9b3aa0b1",lap:"e3621cc2:4dae70af:f0d5fe71",lar:"7a365cc2:2befa75a:869bd8d8",las:"fbf3a00b:82610c41:d1fb16cc",lat:"e3621cc2:cf042a60",lav:"82ff5e94:adafc09c",leb:"fbf3a00b:d7e0d9e",lec:"a5c31631:7faaca8c:bddfa3f3",led:"7a365cc2:1d989f87",leg:"fbf3a00b:b09cf4ef",len:"fbf3a00b:82610c41:510344a7",lep:"82ff5e94:ae1e4f7",ler:"19634ad2:2b187d87",let:"7a365cc2:fe5cf0f4",lev:"19634ad2:bddfa3f3",lex:"19634ad2:7faaca8c:7191ec30:b7b090cf",lib:"7a365cc2:869bd8d8:fb651938",lid:"e3621cc2:e5fae2fb:2f5059f3",lig:"7a365cc2:82610c41",lin:"fbf3a00b:54112535",lis:"a5c31631:869bd8d8:f3633360",lit:"de3bc3d1:7faaca8c:18f6b23e",liv:"fbf3a00b:fe5cf0f4:603da034:8d560b8b",loc:"de3bc3d1:869bd8d8:9f3841fc",lod:"b0ac0b82:462c645e",lom:"fbf3a00b:59d9e201",lon:"82ff5e94:cf042a60",lop:"7a365cc2:36a4b4a8:869bd8d8:ad042183",lor:"b0ac0b82:fe5cf0f4",los:"e3621cc2:7faaca8c:5e841ec3",luc:"a5c31631:869bd8d8:1b1fba11",lud:"a5c31631:869bd8d8:cbdce7a4",lug:"19634ad2",lun:"7a365cc2:b193cb04",lup:"19634ad2:869bd8d8:5ba1ba9b",lur:"a5c31631:fe5cf0f4:cbdce7a4",lus:"a5c31631:e5fae2fb:5e841ec3",lut:"fbf3a00b:d1fb16cc",lux:"6cb74008:b7b090cf",lyd:"de3bc3d1:7faaca8c:b193cb04:bfc8669e",lyn:"6cb74008:9b3aa0b1",lyr:"362aae07:7faaca8c:efa22418",lys:"a5c31631:bddfa3f3",lyt:"19634ad2:e5fae2fb:2befa75a:10545ed3",lyx:"6cb74008:7faaca8c:952f1d85",mac:"e3621cc2:5dfed122",mag:"b0ac0b82:869bd8d8:82610c41:510344a7",mal:"de3bc3d1:10545ed3:5dfed122",map:"82ff5e94:10545ed3:bddfa3f3",mar:"7a365cc2:3cdcdb8c:fe5cf0f4",mas:"fbf3a00b:b193cb04:b7b090cf",mat:"e3621cc2:81113d71",meb:"fbf3a00b:4d0779c1",mec:"a5c31631:10545ed3:bddfa3f3",med:"7a365cc2:f0d5fe71",meg:"fbf3a00b:92e85004",mel:"362aae07:7191ec30",mep:"82ff5e94:fd1b186c",mer:"19634ad2:9b3aa0b1",mes:"a5c31631:7faaca8c:7191ec30",met:"7a365cc2:9b3aa0b1",mev:"19634ad2:1735a791",mex:"19634ad2:7faaca8c:b7b090cf",mic:"a5c31631:335e8694",mid:"e3621cc2:869bd8d8:fb651938",mig:"b0ac0b82:fe5cf0f4:2befa75a:10545ed3",mil:"b0ac0b82:869bd8d8:fd1b186c",min:"fbf3a00b:7faaca8c",mip:"82ff5e94:2befa75a:fe5cf0f4:f6bb8637",mir:"e3621cc2:2befa75a:2f5059f3:a2880ff1",mis:"82ff5e94:7faaca8c:92e85004",mit:"de3bc3d1:e5fae2fb:87cb2bff",moc:"de3bc3d1:869bd8d8:5a85e6f7",mod:"b0ac0b82:1b1fba11",mog:"82ff5e94:b193cb04:7faaca8c:1735a791",mol:"7a365cc2:869bd8d8:8c89b36e",mon:"82ff5e94:b7b090cf",mop:"7a365cc2:7faaca8c:82610c41:b0aeb7df",mor:"b0ac0b82:36a4b4a8:2f5059f3",mos:"e3621cc2:e5fae2fb:824e5e1f",mot:"b0ac0b82:36a4b4a8:83856b0b",mud:"a5c31631:7faaca8c:1e0083d1",mug:"19634ad2:cf0f809a",mul:"7a365cc2:10545ed3:4dae70af",mun:"7a365cc2:bddfa3f3",mur:"a5c31631:869bd8d8:36a4b4a8:b0aeb7df",mus:"a5c31631:e5fae2fb:d7e0d9e",mut:"fbf3a00b:824e5e1f",myl:"6cb74008:2f5059f3:4b097186",myn:"6cb74008:e3f1ef01",myr:"362aae07:7faaca8c:e6117eb6",nac:"e3621cc2:2befa75a:5dfed122",nal:"de3bc3d1:7faaca8c:cf042a60",nam:"b0ac0b82:869bd8d8:36a4b4a8:a4ed278a",nap:"82ff5e94:fe5cf0f4:bddfa3f3",nar:"7a365cc2:2befa75a:b193cb04",nat:"e3621cc2:372ac81b",nav:"e3621cc2:adafc09c",neb:"fbf3a00b:387e568f",nec:"a5c31631:6cf35bfb",ned:"7a365cc2:36a4b4a8",nel:"362aae07:7faaca8c:6245af61",nem:"7a365cc2:7faaca8c:92e85004",nep:"a5c31631:fc9ea1e2",ner:"19634ad2:54112535",nes:"82ff5e94:fe5cf0f4",net:"7a365cc2:7d18e429",nev:"19634ad2:2befa75a",nex:"19634ad2:10545ed3:b7b090cf",nib:"7a365cc2:869bd8d8:5a85e6f7",nid:"e3621cc2:869bd8d8:2ab4bc02",nil:"b0ac0b82:869bd8d8:ad042183",nim:"28b33136:e2f4d6e2",nis:"82ff5e94:7faaca8c:387e568f",noc:"b0ac0b82:fe5cf0f4:bddfa3f3",nod:"b0ac0b82:d842a67d",nol:"7a365cc2:869bd8d8:510344a7",nom:"fbf3a00b:d6753be3",nop:"7a365cc2:7faaca8c:1c9d4f11:bddfa3f3",nor:"b0ac0b82:36a4b4a8:fe4199fc",nos:"e3621cc2:e5fae2fb:952f1d85",nov:"fbf3a00b:7faaca8c:cf042a60",nub:"a5c31631:869bd8d8",nul:"7a365cc2:b193cb04:d1fb16cc",num:"a5c31631:e5fae2fb:59d9e201",nup:"19634ad2:5ba1ba9b",nus:"a5c31631:7210b66f:f49b158d",nut:"fbf3a00b:975397b2",nux:"a5c31631:869bd8d8:fd1b186c",nyd:"de3bc3d1:7faaca8c:b193cb04:1735a791",nyl:"a5c31631:7faaca8c:fc65290b",nym:"6cb74008:cbdce7a4",nyr:"362aae07:7faaca8c:18f6b23e",nys:"a5c31631:672fdf93",nyt:"19634ad2:869bd8d8:a2880ff1:4dae70af",nyx:"6cb74008:7faaca8c:b7b090cf",pac:"e3621cc2:e5fae2fb:2befa75a:1d989f87",pad:"e3621cc2:b788c92f",pag:"b0ac0b82:7191ec30",pal:"de3bc3d1:e5fae2fb:adafc09c",pan:"e3621cc2:e5fae2fb",par:"7a365cc2:2befa75a:e5fae2fb",pas:"fbf3a00b:fe5cf0f4:cbdce7a4",pat:"e3621cc2:fc9ea1e2",pec:"a5c31631:e5fae2fb:13446f50",ped:"7a365cc2:d1fb16cc",peg:"fbf3a00b:b645c8d3",pel:"362aae07:4c1ac47d",pem:"7a365cc2:7faaca8c:335e8694",pen:"fbf3a00b:7faaca8c:8c89b36e",per:"d93ccb2:fe5cf0f4",pes:"82ff5e94:7faaca8c:4456d619",pet:"7a365cc2:10545ed3",pex:"19634ad2:b193cb04:b7b090cf",pic:"a5c31631:8d8261d6",pid:"e3621cc2:7faaca8c:5dfed122",pil:"b0ac0b82:e5fae2fb:5e841ec3",pin:"fbf3a00b:2b187d87",pit:"de3bc3d1:e5fae2fb:5dfed122",poc:"de3bc3d1:fe5cf0f4:42b4e3a3",pod:"b0ac0b82:5a85e6f7",pol:"7a365cc2:82610c41:4c4076d5",pon:"82ff5e94",pos:"e3621cc2:7faaca8c:824e5e1f",pub:"a5c31631:9b3aa0b1",pun:"7a365cc2:4dae70af:a2880ff1:427a1751",pur:"6cb74008:ab99a1a",put:"fbf3a00b:13446f50",pyl:"a5c31631:20fd4083",pyx:"6cb74008:7faaca8c:824e5e1f",rab:"82ff5e94:7faaca8c:7191ec30:5dfed122",rac:"de3bc3d1:5dfed122",rad:"a5c31631:b788c92f",rag:"b0ac0b82:2f5059f3",ral:"de3bc3d1:2befa75a:b193cb04",ram:"b0ac0b82:fe5cf0f4:2befa75a:b7b090cf",ran:"b0ac0b82:fe5cf0f4:2befa75a:7faaca8c",rap:"e3621cc2:fe5cf0f4:f0d5fe71",rav:"e3621cc2:4c4076d5",reb:"fbf3a00b:372ac81b",rec:"a5c31631:d6753be3",red:"7a365cc2:b397af9f",ref:"de3bc3d1:7faaca8c:5dfed122",reg:"fbf3a00b:7fcb0d8f",rel:"362aae07:fd1b186c",rem:"7a365cc2:7faaca8c:6e9d4a77",ren:"fbf3a00b:2befa75a:10545ed3",rep:"82ff5e94:387e568f",res:"82ff5e94:10545ed3",ret:"7a365cc2:869bd8d8",rev:"19634ad2:b7b090cf",rex:"19634ad2:869bd8d8:b7b090cf",rib:"7a365cc2:869bd8d8:e2f4d6e2",ric:"a5c31631:d7e0d9e",rid:"e3621cc2:fe5cf0f4:54112535",rig:"7a365cc2:82e8305",ril:"b0ac0b82:e5fae2fb:824e5e1f",rin:"fbf3a00b:48176644",rip:"b0ac0b82:7faaca8c:4dae70af:f0d5fe71",ris:"82ff5e94:7faaca8c:18f6b23e",rit:"de3bc3d1:e5fae2fb:b7b090cf",riv:"fbf3a00b:fe5cf0f4:b193cb04:82610c41",roc:"de3bc3d1:869bd8d8:57ed51b0",rol:"7a365cc2:869bd8d8:cf0f809a",ron:"82ff5e94:66b0fffd",rop:"7a365cc2:7faaca8c:10545ed3:4dae70af",ros:"e3621cc2:e5fae2fb:5e841ec3",rov:"fbf3a00b:7faaca8c:18f6b23e",ruc:"a5c31631:869bd8d8:4c4076d5",rud:"a5c31631:869bd8d8:48176644",rul:"7a365cc2:10545ed3:b7b090cf",rum:"6cb74008:62519049",run:"19634ad2:cbdce7a4",rup:"19634ad2:b193cb04:fe5cf0f4:5ba1ba9b",rus:"a5c31631:e5fae2fb:335e8694",rut:"fbf3a00b:952f1d85",rux:"a5c31631:869bd8d8:fe4199fc",ryc:"a5c31631:5a85e6f7",ryd:"de3bc3d1:7faaca8c:2f5059f3:c3bebfe6",ryg:"6cb74008",ryl:"e3621cc2:e5fae2fb:adafc09c",rym:"6cb74008:5a85e6f7",ryn:"6cb74008:eb608ee5",ryp:"6cb74008:7faaca8c",rys:"a5c31631:6245af61",ryt:"19634ad2:e5fae2fb:82610c41:1735a791",ryx:"6cb74008:2befa75a:e5fae2fb",sab:"e3621cc2:7faaca8c:1c9d4f11:5dfed122",sal:"de3bc3d1:e5fae2fb:9ebd20ff",sam:"b0ac0b82:fe5cf0f4:82610c41:b7b090cf",san:"e3621cc2:7faaca8c",sap:"e3621cc2:869bd8d8:f0d5fe71",sar:"7a365cc2:82610c41:fe5cf0f4",sat:"e3621cc2:afc30081",sav:"b0ac0b82:e5fae2fb:4dae70af:1d989f87",seb:"fbf3a00b:6e9d4a77",sec:"a5c31631:952f1d85",sed:"7a365cc2:36a4b4a8:a4ed278a",sef:"de3bc3d1:36a4b4a8:5dfed122",seg:"fbf3a00b:a9e89fe4",sel:"362aae07:2befa75a",sem:"7a365cc2:7faaca8c:cb81c430",sen:"fbf3a00b:fe5cf0f4:36a4b4a8:d24107f2",sep:"82ff5e94:cbdce7a4",ser:"d93ccb2:9b3aa0b1",set:"7a365cc2:cb44703d",sev:"19634ad2:82610c41",sib:"7a365cc2:e5fae2fb:4d0779c1",sic:"e3621cc2:4dae70af",sid:"e3621cc2:869bd8d8:6b5e126b",sig:"7a365cc2:d842a67d",sil:"b0ac0b82:e5fae2fb:2f5059f3",sim:"28b33136:48176644",sip:"fbf3a00b:fe5cf0f4:3d22f9b0:d1fb16cc",sit:"de3bc3d1:2befa75a:b7b090cf",siv:"fbf3a00b:fe5cf0f4:36a4b4a8:fb5ca265",soc:"362aae07:2befa75a:fe5cf0f4:603da034",sog:"82ff5e94:2befa75a:e5fae2fb:cf0f809a",sol:"7a365cc2:869bd8d8:b193cb04",som:"fbf3a00b:e6117eb6",son:"82ff5e94:ec96cafb",sop:"7a365cc2:7faaca8c:b193cb04:1d989f87",sor:"b0ac0b82:7faaca8c:18f6b23e",sov:"fbf3a00b:e5fae2fb:adafc09c",sub:"a5c31631:fe5cf0f4",sud:"a5c31631:869bd8d8:b7b090cf",sug:"19634ad2:d842a67d",sul:"7a365cc2:cf0f809a",sum:"6cb74008:cb81c430",sun:"7a365cc2:9f680a2b",sup:"19634ad2:36a4b4a8:869bd8d8:5ba1ba9b",sur:"a5c31631:7faaca8c:ab99a1a",sut:"fbf3a00b:b788c92f",syd:"de3bc3d1:7faaca8c:2f5059f3:3d22f9b0",syl:"6cb74008:7faaca8c:d6753be3",sym:"6cb74008:42b4e3a3",syn:"6cb74008:9ebd20ff",syp:"6cb74008:7faaca8c:cb81c430",syr:"362aae07:7faaca8c:59d9e201",syt:"19634ad2:e5fae2fb:82610c41:b193cb04",syx:"6cb74008:7faaca8c:fc65290b",tab:"e3621cc2:7faaca8c:2befa75a:5dfed122",tac:"e3621cc2:e5fae2fb:2befa75a:f0d5fe71",tad:"e3621cc2:6cf35bfb",tag:"b0ac0b82:10545ed3",tal:"de3bc3d1:e5fae2fb:d7e0d9e",tam:"b0ac0b82:869bd8d8:36a4b4a8:52a6a74c",tan:"e3621cc2:8d8261d6",tap:"7a365cc2:82610c41:869bd8d8:4c1ac47d",tar:"7a365cc2:82610c41:d1fb16cc",tas:"fbf3a00b:fe5cf0f4:cf0f809a",teb:"fbf3a00b:6245af61",tec:"a5c31631:10545ed3:b7b090cf",ted:"7a365cc2:acc8c8fb",teg:"fbf3a00b:f6bb8637",tel:"362aae07:b46295d4:672fdf93",tem:"7a365cc2:7faaca8c:387e568f",ten:"fbf3a00b:e53a31b5",tep:"82ff5e94:6245af61",ter:"d93ccb2:54112535",tes:"82ff5e94:54112535",tev:"19634ad2:b193cb04",tex:"19634ad2:7191ec30:b7b090cf",tic:"e3621cc2:2d91e72f",tid:"e3621cc2:fe5cf0f4:42b4e3a3",til:"b0ac0b82:10545ed3:bddfa3f3",tim:"28b33136:7faaca8c",tin:"fbf3a00b:e2f4d6e2",tip:"82ff5e94:2befa75a:fe5cf0f4:b7b090cf",tir:"e3621cc2:2befa75a:b193cb04:7faaca8c",tob:"28b33136:5a85e6f7",toc:"de3bc3d1:2befa75a:5a85e6f7",tod:"b0ac0b82:82e8305",tog:"82ff5e94:2befa75a:e5fae2fb:fe4199fc",tol:"7a365cc2:869bd8d8:d24107f2",tom:"fbf3a00b:87cb2bff",ton:"82ff5e94:e3f1ef01",top:"7a365cc2:7faaca8c:2befa75a:b193cb04",tor:"b0ac0b82:36a4b4a8:b193cb04",tuc:"a5c31631:869bd8d8:5a85e6f7",tud:"a5c31631:869bd8d8:d1fb16cc",tug:"19634ad2:ad042183",tul:"7a365cc2:b7b090cf",tun:"28b33136:7faaca8c:36a4b4a8:82610c41",tus:"a5c31631:e5fae2fb:952f1d85",tux:"a5c31631:869bd8d8:510344a7",tyc:"a5c31631:b7b090cf",tyd:"de3bc3d1:7faaca8c:7191ec30:bddfa3f3",tyl:"a5c31631:eb608ee5",tyn:"6cb74008:372ac81b",typ:"6cb74008:7faaca8c:6245af61",tyr:"362aae07:7faaca8c:4456d619",tyv:"362aae07:b193cb04:e5fae2fb:87cb2bff",wac:"e3621cc2:869bd8d8:36a4b4a8:5dfed122",wal:"362aae07:fe5cf0f4:9b3aa0b1",wan:"e3621cc2",wat:"e3621cc2:b7b090cf",web:"fbf3a00b:afc30081",wed:"7a365cc2:952f1d85",weg:"fbf3a00b:55d21172",wel:"362aae07:6f23470b",wen:"fbf3a00b:7faaca8c:cb81c430",wep:"82ff5e94:6cf35bfb",wer:"d93ccb2:2b187d87",wes:"82ff5e94:10545ed3:975397b2",wet:"7a365cc2:235d50bf",wex:"19634ad2:2befa75a:b7b090cf",wic:"82ff5e94:87cb2bff",wid:"e3621cc2:7191ec30:b7b090cf",win:"fbf3a00b:fe5cf0f4",wis:"e3621cc2:869bd8d8:ad042183",wit:"362aae07:cbdce7a4",wol:"7a365cc2:869bd8d8:83856b0b",wor:"b0ac0b82:36a4b4a8:1c9d4f11",wyc:"a5c31631",wyd:"de3bc3d1:7faaca8c:2f5059f3:b3ae909c",wyl:"a5c31631:6615d02d",wyn:"6cb74008:cf042a60",wyt:"19634ad2:e5fae2fb:82610c41:b0aeb7df",wyx:"6cb74008:7faaca8c:87cb2bff",zod:"7a365cc2"},sylgraphjson={symbols:symbols,mapping:mapping},last=function(a){return a[a.length-1]},patpStrToArr=function(a){return a.replace(/[\^~-]/g,"").match(/.{1,3}/g)},_pour=function(a){var t=a.patp,e=a.renderer,r=a.sylgraph,b=a.size,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;t=isString_1$1(t)?patpStrToArr(t):t,d=isUndefined_1$1(d)?lookup(t,r):d;var n=grid({length:d.length,margin:c,size:b}),i=knoll(d,n),f=dyes({tag:"svg",meta:{},attr:{width:b,height:b},children:[baseRectangle(b,o)].concat(_toConsumableArray(i))},t,s);return isUndefined_1$1(e)?f:e.svg(f)},lookup=function(a,t){if(isUndefined_1$1(a))throw new Error("Missing patp argument to pour()");return a.map(function(a){var e=t.mapping[a];return isUndefined_1$1(e)?DEFAULT_SYMBOL:{attr:{},meta:{},tag:"g",children:e.split(":").map(function(a){var e=t.symbols[a];return isUndefined_1$1(e)?DEFAULT_ELEM:e})}})},knoll=function(a,t){return a.map(function(a,e){var r=cloneDeep_1$1(a),b=t.grid[e],s=transform(translate(b.x,b.y),scale(t.scale,t.scale));return isUndefined_1$1(r.attr)&&(r.attr={}),r.attr.transform=toSVG(s),r})},baseRectangle=function(a,t){return {tag:"rect",meta:!0===t?{style:{fill:"FG",stroke:"NO"},bg:!0}:{style:{fill:"BG",stroke:"NO"},bg:!0},attr:{width:a,height:a,x:0,y:0}}},DEFAULT_ELEM={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},DEFAULT_SYMBOL={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},pour=function(a){var t=a.patp,e=a.renderer,r=a.size,b=a.sylgraph,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;return b=isUndefined_1$1(b)?sylgraphjson:b,_pour({patp:t,sylgraph:b,renderer:e,size:r,colorway:s,symbols:d,margin:c,ignoreColorway:o})},grid=function(a){var t=a.length,e=a.margin,r=a.size;2*e>r&&console.warn("sigil-js: margin cannot be larger than sigil size");var b=isNotMarginMode(e),s=b?.08*r:e,d=r-2*s,c=b||t>1?d/2:d,o={le:t,mm:b,tw:r,sw:c,rm:s,rp:c/128*2},n={1:[{x:dc$1(o),y:dc$1(o)}],2:[{x:d1(o),y:dc$1(o)},{x:d2(o),y:dc$1(o)}],4:[{x:d1(o),y:d1(o)},{x:d2(o),y:d1(o)},{x:d1(o),y:d2(o)},{x:d2(o),y:d2(o)}]};return _objectSpread({},o,{scale:o.sw/128,grid:n[t]})},isNotMarginMode=function(a){return "auto"===a||void 0===a},dc$1=function(a){var t=a.le,e=a.mm,r=a.tw,b=a.sw,s=a.rm;return t>1||!0===e?r-1.5*b-s:s},d1=function(a){a.tw,a.sw;return a.rm-a.rp/2},d2=function(a){return a.tw-a.sw-a.rm+a.rp/2},CW=[["#fff","#000000"]],prism=function(a,t){return t[0]},dyes=function(a,t,e){return isUndefined_1$1(e)?(e=isUndefined_1$1(t)?CW[0]:prism(t,CW),wash(a,e)):wash(a,e)},applyColor=function(a,t){return "FG"===a?t[0]:"BG"===a?t[1]:"TC"===a?t[2]:"NC"===a?"grey":last(t)},applyStyleAttrs=function(a,t){var e=a.fill;return {fill:applyColor(e,t)}},wash=function a(t,e){var r=get_1$1(t,["meta","style"],!1),b=get_1$1(t,"children",[]),s=get_1$1(t,"attr",{});return _objectSpread({},t,{attr:!1!==r?_objectSpread({},s,applyStyleAttrs(r,e)):_objectSpread({},s),children:b.map(function(t){return a(t,e)})})};var symbolProto$2=_Symbol?_Symbol.prototype:void 0,symbolValueOf$1=symbolProto$2?symbolProto$2.valueOf:void 0;
-
-	const _jsxFileName$6 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/seal-dict.js";
-	const ReactSVGComponents = {
-	  svg: p => {
-	    return (
-	      react.createElement('svg', { key: Math.random(), 
-	        version: '1.1',
-	        xmlns: 'http://www.w3.org/2000/svg',
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 8}}
-	       ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  circle: p => {
-	    return (
-	      react.createElement('circle', { 
-	        key: Math.random(), ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 18}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  rect: p => {
-	    return (
-	      react.createElement('rect', { 
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 26}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  path: p => {
-	    return (
-	      react.createElement('path', {
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 35}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  g: p => {
-	    return (
-	      react.createElement('g', {
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 44}}
-	        ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  polygon: p => {
-	    return (
-	      react.createElement('polygon', {
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 53}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  line: p => {
-	    return (
-	      react.createElement('line', {
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 62}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  },
-	  polyline: p => {
-	    return (
-	      react.createElement('polyline', {
-	        key: Math.random(), 
-	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 71}}
-	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
-	      )
-	    )
-	  }
-	};
-
-	class SealDict {
-	  constructor() {
-	    this.dict = {};
-	  }
-
-	  getPrefix(patp) {
-	    return patp.length === 3 ? patp : patp.substr(0, 3);
-	  }
-
-	  getSeal(patp, size, prefix) {
-	    if (patp.length > 13) {
-	      patp = "tiz";
-	    }
-
-	    let sigilShip = prefix ? this.getPrefix(patp) : patp;
-	    let key = `${sigilShip}+${size}`;
-
-	    if (!this.dict[key]) {
-	      this.dict[key] = pour({size: size, patp: sigilShip, renderer: ReactSVGComponents, margin: 0, colorway: ["#fff", "#000"]});
-	    }
-
-	    return this.dict[key];
-	  }
-	}
-
-	const sealDict = new SealDict;
-
-	const _jsxFileName$7 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/sigil.js";
-
-	class Sigil extends react_1 {
-	  render() {
-	    let prefix = this.props.prefix ? JSON.parse(this.props.prefix) : false;
-
-	    return (
-	      react.createElement('div', { 
-	        className: "bg-black", 
-	        style: { flexBasis: 35, padding: 4, paddingBottom: 0 }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 10}}
-	      , 
-	        sealDict.getSeal(this.props.ship, this.props.size, prefix)
-	      
-	      )
-	    );
-	  }
-	}
-
-	const _jsxFileName$8 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/message.js";
-	class Message extends react_1 {
-	  renderContent(type) {
-	    if (type === "url") {
-	        if (/(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF)$/.exec(this.props.details.content)) {
-	          return (
-	            react.createElement('img', { src: this.props.details.content, style: {width:"30%"}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 12}})
-	          )
-	        } else {
-	          return (
-	            react.createElement('a', { className: "body-regular",
-	              href: this.props.details.content,
-	              target: "_blank", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 16}}, this.props.details.content)
-	          )
-	        }
-	    } else if (type === "exp") {
-	      return (
-	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 23}}
-	          , react.createElement('div', { className: "label-small-mono", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 24}}, this.props.details.content)
-	          , react.createElement('pre', { className: "label-small-mono mt-0" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 25}}, this.props.details.res)
-	        )
-	      )
-	    } else if (['new item', 'edited item'].includes(type)) {
-	      return react.createElement('span', { className: "text-body", dangerouslySetInnerHTML: {__html: this.props.details.snip}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 29}})
-	    } else if (type === "lin") {
-	      return (
-	        react.createElement('p', { className: "body-regular-400 v-top" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 32}}, this.props.details.content)
-	      );
-	    } else {
-	      return react.createElement('span', { className: "label-small-mono", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 35}}, '<unknown message type>');
-	    }
-	  }
-
-	  render() {
-	    let pending = !!this.props.msg.pending ? ' o-80' : '';
-	    
-	    return (
-	      react.createElement('div', { className: "w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 43}}
-	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 44}}
-	          , react.createElement(Sigil, { ship: this.props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 45}} )
-	        )
-	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 47}}
-	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 48}}
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 49}}, "~", this.props.msg.aut)
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 50}}, moment.unix(this.props.msg.wen).format('hh:mm'))
-	          )
-	          , this.renderContent(this.props.details.type)
-	        )
-	      )
-	    );
-	  }
-	}
-
-	const _jsxFileName$9 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/chat-tabbar.js";
-
-	class ChatTabBar extends react_1 {
-
-	  render() {
-	    let toBaseLink = '/~chat/' + this.props.station;
-
-	    let bbStream = '',
-	      bbMembers = '',
-	      bbSettings = '';
-
-	    let strColor = '',
-	      memColor = '',
-	      setColor = '';
-
-	    if (this.props.location.pathname.includes('/settings')) {
-	      bbSettings = ' bb';
-	      strColor = 'gray';
-	      memColor =  'gray';
-	      setColor = 'black';
-	    } else if (this.props.location.pathname.includes('/members')) {
-	      bbMembers = ' bb';
-	      strColor = 'gray';
-	      memColor =  'black';
-	      setColor = 'gray';
-	    } else {
-	      bbStream = ' bb';
-	      strColor = 'black';
-	      memColor =  'gray';
-	      setColor = 'gray';
-	    }
-
-	    let membersText = this.props.numPeers === 1 
-	      ? '1 Member' : `${this.props.numPeers} Members`;
-
-	    return (
-	      react.createElement('div', { className: "w-100", style: { height:28 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 40}}
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbStream, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}}
-	          , react.createElement(Link, { 
-	            className: 'no-underline label-regular v-mid ' + strColor,
-	            to: toBaseLink, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}}, "Stream")
-	        )
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbMembers, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 46}}
-	          , react.createElement(Link, {
-	            className: 'no-underline label-regular v-mid ' + memColor,
-	            to: toBaseLink + '/members', __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 47}}, membersText)
-	        )
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbSettings, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}}
-	          , react.createElement(Link, {
-	            className: 'no-underline label-regular v-mid ' + setColor,
-	            to: toBaseLink + '/settings', __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 52}}, "Settings")
-	        )
-	      )
-	    );
-	  }
-	}
-
-	const _jsxFileName$a = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/icon-send.js";
-	class IconSend extends react_1 {
-	  render() {
-	    return (
-	      react.createElement('img', { src: "/~chat/img/Send.png", width: 40, height: 40, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 6}} )
-	    );
-	  }
-	}
-
-	const _jsxFileName$b = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/chat-input.js";
-
-	class ChatInput extends react_1 {
-
-	  constructor(props) {
-	    super(props);
-
-	    //closure();
-
-
-	    this.state = {
-	      message: ""
-	    };
-
-	    this.textareaRef = react.createRef();
-
-	    this.messageSubmit = this.messageSubmit.bind(this);
-	    this.messageChange = this.messageChange.bind(this);
-
-	    moment.updateLocale('en', {
-	        relativeTime : {
-	            past: function(input) {
-	              return input === 'just now'
-	                ? input
-	                : input + ' ago'
-	            },
-	            s  : 'just now',
-	            future: "in %s",
-	            ss : '%d sec',
-	            m:  "a minute",
-	            mm: "%d min",
-	            h:  "an hr",
-	            hh: "%d hrs",
-	            d:  "a day",
-	            dd: "%d days",
-	            M:  "a month",
-	            MM: "%d months",
-	            y:  "a year",
-	            yy: "%d years"
-	        }
-	    });
-	  }
-
-	  componentDidMount() {
-	    this.bindShortcuts();
-	  }
-
-	  bindShortcuts() {
-	    mousetrap(this.textareaRef.current).bind('enter', e => {
-	      e.preventDefault();
-	      e.stopPropagation();
-
-	      this.messageSubmit(e);
-	    });
-	  }
-
-	  messageChange(event) {
-	    this.setState({message: event.target.value});
-	  }
-
-	  messageSubmit() {
-	    let aud, sep;
-	    let wen = Date.now();
-	    let uid = uuid();
-	    let aut = window.ship;
-
-	    let config = this.props.configs[this.props.station];
-
-	    aud = [this.props.station];
-	    if (isUrl(this.state.message)) {
-	      sep = {
-	        url: this.state.message
-	      };
-	    } else {
-	      sep = {
-	        lin: {
-	          msg: this.state.message,
-	          pat: false
-	        }
-	      };
-	    }
-
-	    let message = {
-	      uid,
-	      aut,
-	      wen,
-	      aud,
-	      sep,
-	    };
-
-	    this.props.api.chat({
-	      actions: {
-	        lis: [
-	          {
-	            read: {
-	              nom: this.props.circle,
-	              red: config.red + 1
-	            }
-	          },
-	          {
-	            convey: [message],
-	          }
-	        ]
-	      }
-	    });
-
-	    this.setState({
-	      message: ""
-	    });
-	  }
-
-	  render() {
-	    const { props, state } = this;
-
-	    return (
-	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 162}}
-	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 163}}
-	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 164}} )
-	        )
-	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 166}}
-	          , react.createElement('input', { className: "ml2 bn" ,
-	            style: { flexGrow: 1 },
-	            ref: this.textareaRef,
-	            placeholder: props.placeholder,
-	            value: state.message,
-	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 167}} )
-	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 173}}
-	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 174}} )
-	          )
-	        )
-	      )
-	    );
-	  }
-	}
-
-	const _jsxFileName$c = "/Users/logan/Dev/interface/apps/chat/src/js/components/chat.js";
-	class ChatScreen extends react_1 {
-	  constructor(props) {
-	    super(props);
-
-	    this.state = {
-	      station: props.match.params.ship + "/" + props.match.params.station,
-	      circle: props.match.params.station,
-	      host: props.match.params.ship,
-	      numPeople: 0,
-	      numPages: 1,
-	      scrollLocked: false,
-	    };
-
-	    this.hasAskedForMessages = false;
-	    this.topMessage = {};
-	    this.buildMessage = this.buildMessage.bind(this);
-	    this.onScroll = this.onScroll.bind(this);
-	  }
-
-	  componentDidMount() {
-	    this.updateNumPeople();
-	    if (this.scrollElement) {
-	      this.scrollElement.scrollIntoView(false);
-	    }
-	  }
-
-	  componentDidUpdate(prevProps, prevState) {
-	    const { props } = this;
-
-	    if (prevProps.messages.length < props.messages.length - 300) {
-	      this.hasAskedForMessages = false;
-	      this.forceUpdate();
-	      this.topMessage = {};
-	    } else if (prevProps.match.params.ship !== props.match.params.ship ||
-	              prevProps.match.params.station !== props.match.params.station
-	    ) {
-	      this.setState({
-	        station: props.match.params.ship + "/" + props.match.params.station,
-	        circle: props.match.params.station,
-	        host: props.match.params.ship,
-	        numPeople: 0,
-	        scrollLocked: false
-	      });
-
-	      this.topMessage = {};
-	      this.forceUpdate();
-	    }
-
-	    this.updateReadNumber();
-	    this.updateNumPeople();
-	    this.updateNumMessagesLoaded(prevProps, prevState);
-	    this.scrollToBottom();
-	  }
-
-	  askForMessages() {
-	    const { props, state } = this;
-	    let messages = props.messages;
-
-	    if (state.numPages * 50 < props.messages.length - 200 || 
-	        this.hasAskedForMessages) {
-	      return;
-	    }
-
-	    if (messages.length > 0) {
-	      let end = messages[0].num;
-	      if (end > 0) {
-	        let start = ((end - 400) > 0) ? end - 400 : 0;
-
-	        this.hasAskedForMessages = true;
-
-	        props.api.chatCommand({
-	          messages: {
-	            circle: state.station,
-	            start,
-	            end: end - 1 
-	          }
-	        });
-	      }
-	    }
-	  }
-
-	  scrollToBottom() {
-	    if (!this.state.scrollLocked && this.scrollElement) {
-	      this.scrollElement.scrollIntoView({ behavior: 'smooth' });
-	    }
-	  }
-
-	  onScroll(e) {
-	    if (e.target.scrollTop === 0
-	      && this.state.numPages * 50 <= this.props.messages.length) {
-	      this.setState({
-	        numPages: this.state.numPages + 1,
-	        scrollLocked: true
-	      }, () => {
-	        if (this.topMessage && this.topMessage[1]) {
-	          this.askForMessages();
-	          this.topMessage[1].scrollIntoView(true);
-	        } 
-	      });
-	    } else if (
-	        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
-	      e.target.clientHeight
-	    ) {
-	      this.setState({
-	        numPages: 1,
-	        scrollLocked: false
-	      });
-	    }
-	  }
-
-
-	  updateReadNumber() {
-	    const { props, state } = this;
-	    
-	    let messages = props.messages[state.station] || [];
-	    let config = props.configs[state.station] || false;
-
-	    let lastMsgNum = (messages.length > 0) ?
-	      messages[messages.length - 1].num : 0;
-
-	    if (config && config.red < lastMsgNum) {
-	      props.api.read(state.circle, lastMsgNum);
-	    }
-	  }
-
-	  updateNumPeople() {
-	    let conf = this.props.configs[this.state.station] || {};
-	    let sis = lodash.get(conf, 'con.sis');
-	    let numPeople = !!sis ? sis.length : 0;
-	    if (numPeople !== this.state.numPeople) {
-	      this.setState({ numPeople });
-	    }
-	  }
-
-	  updateNumMessagesLoaded(prevProps, prevState) {
-	    let station = prevProps.messages[this.state.station] || [];
-	    let numMessages = station.length;
-
-	    if (numMessages > prevState.numMessages) {
-	      this.setState({
-	        numMessages: numMessages
-	      });
-	    }
-	  }
-
-	  buildMessage(msg, index) {
-	    let details = msg.printship ? null : getMessageContent(msg.gam);
-
-	    if (msg.printship) {
-	      return (
-	        react.createElement('a', { 
-	          className: "vanilla hoverline text-600 text-mono"   , 
-	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 161}}
-	          , prettyShip(`~${msg.gam.aut}`)[0]
-	        )
-	      );
-	    }
-
-	    if (index % 50 === 0) {
-	      let pageNum = index / 50;
-	      return (
-	        react.createElement('div', {
-	          key: msg.gam.uid + "key" + Math.random() + "key" + msg.num,
-	          ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 172}}
-	          , react.createElement(Message, { msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 175}} )
-	        )
-	      );
-	    } else {
-	      return (
-	        react.createElement(Message, {
-	          key: msg.gam.uid + Math.random(), 
-	          msg: msg.gam, 
-	          details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 180}} )
-	      );
-	    }
-	  }
-
-	  render() {
-	    const { props, state } = this;
-	    
-	    let messages = props.messages;
-
-	    if (messages.length > 50 * state.numPages) {
-	      messages = messages
-	        .slice(messages.length - (50 * state.numPages), messages.length);
-	    }
-
-	    let chatMessages = messages.map(this.buildMessage);
-	    let peers = props.peers[state.station] || [window.ship];
-
-	    return (
-	      react.createElement('div', { key: state.station, 
-	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 202}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 204}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 205}}, state.circle)
-	          , react.createElement(ChatTabBar, { ...props,
-	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 206}} )
-	        )
-	        , react.createElement('div', {
-	          className: "overflow-y-scroll",
-	          style: { flexGrow: 1 },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 210}}
-	          , chatMessages
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 215}})
-	        )
-	        , react.createElement(ChatInput, { 
-	          api: props.api,
-	          configs: props.configs,
-	          station: state.station,
-	          circle: state.circle,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 217}} )
-	      )
-	    )
-	  }
-	}
-
-	var lookup$1 = [];
+	var lookup = [];
 	var revLookup = [];
 	var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
 	var inited = false;
@@ -51288,7 +45923,7 @@
 	  inited = true;
 	  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	  for (var i = 0, len = code.length; i < len; ++i) {
-	    lookup$1[i] = code[i];
+	    lookup[i] = code[i];
 	    revLookup[code.charCodeAt(i)] = i;
 	  }
 
@@ -51342,7 +45977,7 @@
 	}
 
 	function tripletToBase64 (num) {
-	  return lookup$1[num >> 18 & 0x3F] + lookup$1[num >> 12 & 0x3F] + lookup$1[num >> 6 & 0x3F] + lookup$1[num & 0x3F]
+	  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
 	}
 
 	function encodeChunk (uint8, start, end) {
@@ -51374,14 +46009,14 @@
 	  // pad the end with zeros, but make sure to not forget the extra bytes
 	  if (extraBytes === 1) {
 	    tmp = uint8[len - 1];
-	    output += lookup$1[tmp >> 2];
-	    output += lookup$1[(tmp << 4) & 0x3F];
+	    output += lookup[tmp >> 2];
+	    output += lookup[(tmp << 4) & 0x3F];
 	    output += '==';
 	  } else if (extraBytes === 2) {
 	    tmp = (uint8[len - 2] << 8) + (uint8[len - 1]);
-	    output += lookup$1[tmp >> 10];
-	    output += lookup$1[(tmp >> 4) & 0x3F];
-	    output += lookup$1[(tmp << 2) & 0x3F];
+	    output += lookup[tmp >> 10];
+	    output += lookup[(tmp >> 4) & 0x3F];
+	    output += lookup[(tmp << 2) & 0x3F];
 	    output += '=';
 	  }
 
@@ -51475,10 +46110,10 @@
 	  buffer[offset + i - d] |= s * 128;
 	}
 
-	var toString$1 = {}.toString;
+	var toString = {}.toString;
 
-	var isArray$1 = Array.isArray || function (arr) {
-	  return toString$1.call(arr) == '[object Array]';
+	var isArray = Array.isArray || function (arr) {
+	  return toString.call(arr) == '[object Array]';
 	};
 
 	var INSPECT_MAX_BYTES = 50;
@@ -51750,7 +46385,7 @@
 	      return fromArrayLike(that, obj)
 	    }
 
-	    if (obj.type === 'Buffer' && isArray$1(obj.data)) {
+	    if (obj.type === 'Buffer' && isArray(obj.data)) {
 	      return fromArrayLike(that, obj.data)
 	    }
 	  }
@@ -51822,7 +46457,7 @@
 	};
 
 	Buffer.concat = function concat (list, length) {
-	  if (!isArray$1(list)) {
+	  if (!isArray(list)) {
 	    throw new TypeError('"list" argument must be an Array of Buffers')
 	  }
 
@@ -57349,6 +51984,5405 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  ob$1
 	);
 
+	class Subscription {
+	  start() {
+	    if (api.authTokens) {
+	      this.initializeChat();
+	    } else {
+	      console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
+	    }
+	  }
+
+	  initializeChat() {
+	    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
+	      this.handleEvent.bind(this),
+	      this.handleError.bind(this));
+	  }
+
+	  fetchMessages(circle, start, end) {
+	    fetch(`/~chat/scroll/${circle}/${start}/${end}`)
+	      .then((response) => response.json())
+	      .then((json) => {
+	        console.log('handled', json);
+	        store.handleEvent({
+	          data: json
+	        });
+	      });
+	  }
+
+	  handleEvent(diff) {
+	    store.handleEvent(diff);
+	  }
+
+	  handleError(err) {
+	    console.error(err);
+	    api.bind('/', "PUT", api.authTokens.ship, 'chat',
+	      this.handleEvent.bind(this),
+	      this.handleError.bind(this));
+	  }
+	}
+
+	let subscription = new Subscription();
+
+	const _jsxFileName = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/icon-home.js";
+	class IconHome extends react_1 {
+	  render() {
+	    return (
+	      react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName, lineNumber: 6}} )
+	    );
+	  }
+	}
+
+	const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/header-bar.js";
+
+	class HeaderBar extends react_1 {
+
+	  render() {
+	    return (
+	      react.createElement('div', { className: "bg-black w-100" , style: { height: 48, padding: 8 }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 11}}
+	        , react.createElement('a', { className: "db",
+	          style: { background: '#1A1A1A', borderRadius: 16, width: 32, height: 32 },
+	          href: "/", __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 12}}
+	          , react.createElement(IconHome, {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 15}} )
+	        )
+	      )
+	    );
+	  }
+	}
+
+	const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/chat/src/js/components/skeleton.js";
+	class Skeleton extends react_1 {
+	  render() {
+	    return (
+	      react.createElement('div', { className: "h-100 w-100 absolute"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 9}}
+	        , react.createElement(HeaderBar, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 10}} )
+	        , react.createElement('div', { className: "cf w-100 absolute flex"   ,
+	          style: {
+	            height: 'calc(100% - 48px)' 
+	          }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 11}}
+	          , react.createElement('div', { className: "fl h-100 br overflow-x-hidden"   , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 15}}
+	            , this.props.sidebar
+	          )
+	          , react.createElement('div', { className: "h-100 fr" , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 18}}
+	            , this.props.children
+	          )
+	        )
+	      )
+	    );
+	  }
+	}
+
+	var moment = createCommonjsModule(function (module, exports) {
+	(function (global, factory) {
+	    module.exports = factory();
+	}(commonjsGlobal, (function () {
+	    var hookCallback;
+
+	    function hooks () {
+	        return hookCallback.apply(null, arguments);
+	    }
+
+	    // This is done to register the method called with moment()
+	    // without creating circular dependencies.
+	    function setHookCallback (callback) {
+	        hookCallback = callback;
+	    }
+
+	    function isArray(input) {
+	        return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
+	    }
+
+	    function isObject(input) {
+	        // IE8 will treat undefined and null as object if it wasn't for
+	        // input != null
+	        return input != null && Object.prototype.toString.call(input) === '[object Object]';
+	    }
+
+	    function isObjectEmpty(obj) {
+	        if (Object.getOwnPropertyNames) {
+	            return (Object.getOwnPropertyNames(obj).length === 0);
+	        } else {
+	            var k;
+	            for (k in obj) {
+	                if (obj.hasOwnProperty(k)) {
+	                    return false;
+	                }
+	            }
+	            return true;
+	        }
+	    }
+
+	    function isUndefined(input) {
+	        return input === void 0;
+	    }
+
+	    function isNumber(input) {
+	        return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';
+	    }
+
+	    function isDate(input) {
+	        return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+	    }
+
+	    function map(arr, fn) {
+	        var res = [], i;
+	        for (i = 0; i < arr.length; ++i) {
+	            res.push(fn(arr[i], i));
+	        }
+	        return res;
+	    }
+
+	    function hasOwnProp(a, b) {
+	        return Object.prototype.hasOwnProperty.call(a, b);
+	    }
+
+	    function extend(a, b) {
+	        for (var i in b) {
+	            if (hasOwnProp(b, i)) {
+	                a[i] = b[i];
+	            }
+	        }
+
+	        if (hasOwnProp(b, 'toString')) {
+	            a.toString = b.toString;
+	        }
+
+	        if (hasOwnProp(b, 'valueOf')) {
+	            a.valueOf = b.valueOf;
+	        }
+
+	        return a;
+	    }
+
+	    function createUTC (input, format, locale, strict) {
+	        return createLocalOrUTC(input, format, locale, strict, true).utc();
+	    }
+
+	    function defaultParsingFlags() {
+	        // We need to deep clone this object.
+	        return {
+	            empty           : false,
+	            unusedTokens    : [],
+	            unusedInput     : [],
+	            overflow        : -2,
+	            charsLeftOver   : 0,
+	            nullInput       : false,
+	            invalidMonth    : null,
+	            invalidFormat   : false,
+	            userInvalidated : false,
+	            iso             : false,
+	            parsedDateParts : [],
+	            meridiem        : null,
+	            rfc2822         : false,
+	            weekdayMismatch : false
+	        };
+	    }
+
+	    function getParsingFlags(m) {
+	        if (m._pf == null) {
+	            m._pf = defaultParsingFlags();
+	        }
+	        return m._pf;
+	    }
+
+	    var some;
+	    if (Array.prototype.some) {
+	        some = Array.prototype.some;
+	    } else {
+	        some = function (fun) {
+	            var t = Object(this);
+	            var len = t.length >>> 0;
+
+	            for (var i = 0; i < len; i++) {
+	                if (i in t && fun.call(this, t[i], i, t)) {
+	                    return true;
+	                }
+	            }
+
+	            return false;
+	        };
+	    }
+
+	    function isValid(m) {
+	        if (m._isValid == null) {
+	            var flags = getParsingFlags(m);
+	            var parsedParts = some.call(flags.parsedDateParts, function (i) {
+	                return i != null;
+	            });
+	            var isNowValid = !isNaN(m._d.getTime()) &&
+	                flags.overflow < 0 &&
+	                !flags.empty &&
+	                !flags.invalidMonth &&
+	                !flags.invalidWeekday &&
+	                !flags.weekdayMismatch &&
+	                !flags.nullInput &&
+	                !flags.invalidFormat &&
+	                !flags.userInvalidated &&
+	                (!flags.meridiem || (flags.meridiem && parsedParts));
+
+	            if (m._strict) {
+	                isNowValid = isNowValid &&
+	                    flags.charsLeftOver === 0 &&
+	                    flags.unusedTokens.length === 0 &&
+	                    flags.bigHour === undefined;
+	            }
+
+	            if (Object.isFrozen == null || !Object.isFrozen(m)) {
+	                m._isValid = isNowValid;
+	            }
+	            else {
+	                return isNowValid;
+	            }
+	        }
+	        return m._isValid;
+	    }
+
+	    function createInvalid (flags) {
+	        var m = createUTC(NaN);
+	        if (flags != null) {
+	            extend(getParsingFlags(m), flags);
+	        }
+	        else {
+	            getParsingFlags(m).userInvalidated = true;
+	        }
+
+	        return m;
+	    }
+
+	    // Plugins that add properties should also add the key here (null value),
+	    // so we can properly clone ourselves.
+	    var momentProperties = hooks.momentProperties = [];
+
+	    function copyConfig(to, from) {
+	        var i, prop, val;
+
+	        if (!isUndefined(from._isAMomentObject)) {
+	            to._isAMomentObject = from._isAMomentObject;
+	        }
+	        if (!isUndefined(from._i)) {
+	            to._i = from._i;
+	        }
+	        if (!isUndefined(from._f)) {
+	            to._f = from._f;
+	        }
+	        if (!isUndefined(from._l)) {
+	            to._l = from._l;
+	        }
+	        if (!isUndefined(from._strict)) {
+	            to._strict = from._strict;
+	        }
+	        if (!isUndefined(from._tzm)) {
+	            to._tzm = from._tzm;
+	        }
+	        if (!isUndefined(from._isUTC)) {
+	            to._isUTC = from._isUTC;
+	        }
+	        if (!isUndefined(from._offset)) {
+	            to._offset = from._offset;
+	        }
+	        if (!isUndefined(from._pf)) {
+	            to._pf = getParsingFlags(from);
+	        }
+	        if (!isUndefined(from._locale)) {
+	            to._locale = from._locale;
+	        }
+
+	        if (momentProperties.length > 0) {
+	            for (i = 0; i < momentProperties.length; i++) {
+	                prop = momentProperties[i];
+	                val = from[prop];
+	                if (!isUndefined(val)) {
+	                    to[prop] = val;
+	                }
+	            }
+	        }
+
+	        return to;
+	    }
+
+	    var updateInProgress = false;
+
+	    // Moment prototype object
+	    function Moment(config) {
+	        copyConfig(this, config);
+	        this._d = new Date(config._d != null ? config._d.getTime() : NaN);
+	        if (!this.isValid()) {
+	            this._d = new Date(NaN);
+	        }
+	        // Prevent infinite loop in case updateOffset creates new moment
+	        // objects.
+	        if (updateInProgress === false) {
+	            updateInProgress = true;
+	            hooks.updateOffset(this);
+	            updateInProgress = false;
+	        }
+	    }
+
+	    function isMoment (obj) {
+	        return obj instanceof Moment || (obj != null && obj._isAMomentObject != null);
+	    }
+
+	    function absFloor (number) {
+	        if (number < 0) {
+	            // -0 -> 0
+	            return Math.ceil(number) || 0;
+	        } else {
+	            return Math.floor(number);
+	        }
+	    }
+
+	    function toInt(argumentForCoercion) {
+	        var coercedNumber = +argumentForCoercion,
+	            value = 0;
+
+	        if (coercedNumber !== 0 && isFinite(coercedNumber)) {
+	            value = absFloor(coercedNumber);
+	        }
+
+	        return value;
+	    }
+
+	    // compare two arrays, return the number of differences
+	    function compareArrays(array1, array2, dontConvert) {
+	        var len = Math.min(array1.length, array2.length),
+	            lengthDiff = Math.abs(array1.length - array2.length),
+	            diffs = 0,
+	            i;
+	        for (i = 0; i < len; i++) {
+	            if ((dontConvert && array1[i] !== array2[i]) ||
+	                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
+	                diffs++;
+	            }
+	        }
+	        return diffs + lengthDiff;
+	    }
+
+	    function warn(msg) {
+	        if (hooks.suppressDeprecationWarnings === false &&
+	                (typeof console !==  'undefined') && console.warn) {
+	            console.warn('Deprecation warning: ' + msg);
+	        }
+	    }
+
+	    function deprecate(msg, fn) {
+	        var firstTime = true;
+
+	        return extend(function () {
+	            if (hooks.deprecationHandler != null) {
+	                hooks.deprecationHandler(null, msg);
+	            }
+	            if (firstTime) {
+	                var args = [];
+	                var arg;
+	                for (var i = 0; i < arguments.length; i++) {
+	                    arg = '';
+	                    if (typeof arguments[i] === 'object') {
+	                        arg += '\n[' + i + '] ';
+	                        for (var key in arguments[0]) {
+	                            arg += key + ': ' + arguments[0][key] + ', ';
+	                        }
+	                        arg = arg.slice(0, -2); // Remove trailing comma and space
+	                    } else {
+	                        arg = arguments[i];
+	                    }
+	                    args.push(arg);
+	                }
+	                warn(msg + '\nArguments: ' + Array.prototype.slice.call(args).join('') + '\n' + (new Error()).stack);
+	                firstTime = false;
+	            }
+	            return fn.apply(this, arguments);
+	        }, fn);
+	    }
+
+	    var deprecations = {};
+
+	    function deprecateSimple(name, msg) {
+	        if (hooks.deprecationHandler != null) {
+	            hooks.deprecationHandler(name, msg);
+	        }
+	        if (!deprecations[name]) {
+	            warn(msg);
+	            deprecations[name] = true;
+	        }
+	    }
+
+	    hooks.suppressDeprecationWarnings = false;
+	    hooks.deprecationHandler = null;
+
+	    function isFunction(input) {
+	        return input instanceof Function || Object.prototype.toString.call(input) === '[object Function]';
+	    }
+
+	    function set (config) {
+	        var prop, i;
+	        for (i in config) {
+	            prop = config[i];
+	            if (isFunction(prop)) {
+	                this[i] = prop;
+	            } else {
+	                this['_' + i] = prop;
+	            }
+	        }
+	        this._config = config;
+	        // Lenient ordinal parsing accepts just a number in addition to
+	        // number + (possibly) stuff coming from _dayOfMonthOrdinalParse.
+	        // TODO: Remove "ordinalParse" fallback in next major release.
+	        this._dayOfMonthOrdinalParseLenient = new RegExp(
+	            (this._dayOfMonthOrdinalParse.source || this._ordinalParse.source) +
+	                '|' + (/\d{1,2}/).source);
+	    }
+
+	    function mergeConfigs(parentConfig, childConfig) {
+	        var res = extend({}, parentConfig), prop;
+	        for (prop in childConfig) {
+	            if (hasOwnProp(childConfig, prop)) {
+	                if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
+	                    res[prop] = {};
+	                    extend(res[prop], parentConfig[prop]);
+	                    extend(res[prop], childConfig[prop]);
+	                } else if (childConfig[prop] != null) {
+	                    res[prop] = childConfig[prop];
+	                } else {
+	                    delete res[prop];
+	                }
+	            }
+	        }
+	        for (prop in parentConfig) {
+	            if (hasOwnProp(parentConfig, prop) &&
+	                    !hasOwnProp(childConfig, prop) &&
+	                    isObject(parentConfig[prop])) {
+	                // make sure changes to properties don't modify parent config
+	                res[prop] = extend({}, res[prop]);
+	            }
+	        }
+	        return res;
+	    }
+
+	    function Locale(config) {
+	        if (config != null) {
+	            this.set(config);
+	        }
+	    }
+
+	    var keys;
+
+	    if (Object.keys) {
+	        keys = Object.keys;
+	    } else {
+	        keys = function (obj) {
+	            var i, res = [];
+	            for (i in obj) {
+	                if (hasOwnProp(obj, i)) {
+	                    res.push(i);
+	                }
+	            }
+	            return res;
+	        };
+	    }
+
+	    var defaultCalendar = {
+	        sameDay : '[Today at] LT',
+	        nextDay : '[Tomorrow at] LT',
+	        nextWeek : 'dddd [at] LT',
+	        lastDay : '[Yesterday at] LT',
+	        lastWeek : '[Last] dddd [at] LT',
+	        sameElse : 'L'
+	    };
+
+	    function calendar (key, mom, now) {
+	        var output = this._calendar[key] || this._calendar['sameElse'];
+	        return isFunction(output) ? output.call(mom, now) : output;
+	    }
+
+	    var defaultLongDateFormat = {
+	        LTS  : 'h:mm:ss A',
+	        LT   : 'h:mm A',
+	        L    : 'MM/DD/YYYY',
+	        LL   : 'MMMM D, YYYY',
+	        LLL  : 'MMMM D, YYYY h:mm A',
+	        LLLL : 'dddd, MMMM D, YYYY h:mm A'
+	    };
+
+	    function longDateFormat (key) {
+	        var format = this._longDateFormat[key],
+	            formatUpper = this._longDateFormat[key.toUpperCase()];
+
+	        if (format || !formatUpper) {
+	            return format;
+	        }
+
+	        this._longDateFormat[key] = formatUpper.replace(/MMMM|MM|DD|dddd/g, function (val) {
+	            return val.slice(1);
+	        });
+
+	        return this._longDateFormat[key];
+	    }
+
+	    var defaultInvalidDate = 'Invalid date';
+
+	    function invalidDate () {
+	        return this._invalidDate;
+	    }
+
+	    var defaultOrdinal = '%d';
+	    var defaultDayOfMonthOrdinalParse = /\d{1,2}/;
+
+	    function ordinal (number) {
+	        return this._ordinal.replace('%d', number);
+	    }
+
+	    var defaultRelativeTime = {
+	        future : 'in %s',
+	        past   : '%s ago',
+	        s  : 'a few seconds',
+	        ss : '%d seconds',
+	        m  : 'a minute',
+	        mm : '%d minutes',
+	        h  : 'an hour',
+	        hh : '%d hours',
+	        d  : 'a day',
+	        dd : '%d days',
+	        M  : 'a month',
+	        MM : '%d months',
+	        y  : 'a year',
+	        yy : '%d years'
+	    };
+
+	    function relativeTime (number, withoutSuffix, string, isFuture) {
+	        var output = this._relativeTime[string];
+	        return (isFunction(output)) ?
+	            output(number, withoutSuffix, string, isFuture) :
+	            output.replace(/%d/i, number);
+	    }
+
+	    function pastFuture (diff, output) {
+	        var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
+	        return isFunction(format) ? format(output) : format.replace(/%s/i, output);
+	    }
+
+	    var aliases = {};
+
+	    function addUnitAlias (unit, shorthand) {
+	        var lowerCase = unit.toLowerCase();
+	        aliases[lowerCase] = aliases[lowerCase + 's'] = aliases[shorthand] = unit;
+	    }
+
+	    function normalizeUnits(units) {
+	        return typeof units === 'string' ? aliases[units] || aliases[units.toLowerCase()] : undefined;
+	    }
+
+	    function normalizeObjectUnits(inputObject) {
+	        var normalizedInput = {},
+	            normalizedProp,
+	            prop;
+
+	        for (prop in inputObject) {
+	            if (hasOwnProp(inputObject, prop)) {
+	                normalizedProp = normalizeUnits(prop);
+	                if (normalizedProp) {
+	                    normalizedInput[normalizedProp] = inputObject[prop];
+	                }
+	            }
+	        }
+
+	        return normalizedInput;
+	    }
+
+	    var priorities = {};
+
+	    function addUnitPriority(unit, priority) {
+	        priorities[unit] = priority;
+	    }
+
+	    function getPrioritizedUnits(unitsObj) {
+	        var units = [];
+	        for (var u in unitsObj) {
+	            units.push({unit: u, priority: priorities[u]});
+	        }
+	        units.sort(function (a, b) {
+	            return a.priority - b.priority;
+	        });
+	        return units;
+	    }
+
+	    function zeroFill(number, targetLength, forceSign) {
+	        var absNumber = '' + Math.abs(number),
+	            zerosToFill = targetLength - absNumber.length,
+	            sign = number >= 0;
+	        return (sign ? (forceSign ? '+' : '') : '-') +
+	            Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
+	    }
+
+	    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+
+	    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
+
+	    var formatFunctions = {};
+
+	    var formatTokenFunctions = {};
+
+	    // token:    'M'
+	    // padded:   ['MM', 2]
+	    // ordinal:  'Mo'
+	    // callback: function () { this.month() + 1 }
+	    function addFormatToken (token, padded, ordinal, callback) {
+	        var func = callback;
+	        if (typeof callback === 'string') {
+	            func = function () {
+	                return this[callback]();
+	            };
+	        }
+	        if (token) {
+	            formatTokenFunctions[token] = func;
+	        }
+	        if (padded) {
+	            formatTokenFunctions[padded[0]] = function () {
+	                return zeroFill(func.apply(this, arguments), padded[1], padded[2]);
+	            };
+	        }
+	        if (ordinal) {
+	            formatTokenFunctions[ordinal] = function () {
+	                return this.localeData().ordinal(func.apply(this, arguments), token);
+	            };
+	        }
+	    }
+
+	    function removeFormattingTokens(input) {
+	        if (input.match(/\[[\s\S]/)) {
+	            return input.replace(/^\[|\]$/g, '');
+	        }
+	        return input.replace(/\\/g, '');
+	    }
+
+	    function makeFormatFunction(format) {
+	        var array = format.match(formattingTokens), i, length;
+
+	        for (i = 0, length = array.length; i < length; i++) {
+	            if (formatTokenFunctions[array[i]]) {
+	                array[i] = formatTokenFunctions[array[i]];
+	            } else {
+	                array[i] = removeFormattingTokens(array[i]);
+	            }
+	        }
+
+	        return function (mom) {
+	            var output = '', i;
+	            for (i = 0; i < length; i++) {
+	                output += isFunction(array[i]) ? array[i].call(mom, format) : array[i];
+	            }
+	            return output;
+	        };
+	    }
+
+	    // format date using native date object
+	    function formatMoment(m, format) {
+	        if (!m.isValid()) {
+	            return m.localeData().invalidDate();
+	        }
+
+	        format = expandFormat(format, m.localeData());
+	        formatFunctions[format] = formatFunctions[format] || makeFormatFunction(format);
+
+	        return formatFunctions[format](m);
+	    }
+
+	    function expandFormat(format, locale) {
+	        var i = 5;
+
+	        function replaceLongDateFormatTokens(input) {
+	            return locale.longDateFormat(input) || input;
+	        }
+
+	        localFormattingTokens.lastIndex = 0;
+	        while (i >= 0 && localFormattingTokens.test(format)) {
+	            format = format.replace(localFormattingTokens, replaceLongDateFormatTokens);
+	            localFormattingTokens.lastIndex = 0;
+	            i -= 1;
+	        }
+
+	        return format;
+	    }
+
+	    var match1         = /\d/;            //       0 - 9
+	    var match2         = /\d\d/;          //      00 - 99
+	    var match3         = /\d{3}/;         //     000 - 999
+	    var match4         = /\d{4}/;         //    0000 - 9999
+	    var match6         = /[+-]?\d{6}/;    // -999999 - 999999
+	    var match1to2      = /\d\d?/;         //       0 - 99
+	    var match3to4      = /\d\d\d\d?/;     //     999 - 9999
+	    var match5to6      = /\d\d\d\d\d\d?/; //   99999 - 999999
+	    var match1to3      = /\d{1,3}/;       //       0 - 999
+	    var match1to4      = /\d{1,4}/;       //       0 - 9999
+	    var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
+
+	    var matchUnsigned  = /\d+/;           //       0 - inf
+	    var matchSigned    = /[+-]?\d+/;      //    -inf - inf
+
+	    var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+	    var matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi; // +00 -00 +00:00 -00:00 +0000 -0000 or Z
+
+	    var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
+
+	    // any word (or two) characters or numbers including two/three word month in arabic.
+	    // includes scottish gaelic two word and hyphenated months
+	    var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
+
+	    var regexes = {};
+
+	    function addRegexToken (token, regex, strictRegex) {
+	        regexes[token] = isFunction(regex) ? regex : function (isStrict, localeData) {
+	            return (isStrict && strictRegex) ? strictRegex : regex;
+	        };
+	    }
+
+	    function getParseRegexForToken (token, config) {
+	        if (!hasOwnProp(regexes, token)) {
+	            return new RegExp(unescapeFormat(token));
+	        }
+
+	        return regexes[token](config._strict, config._locale);
+	    }
+
+	    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+	    function unescapeFormat(s) {
+	        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+	            return p1 || p2 || p3 || p4;
+	        }));
+	    }
+
+	    function regexEscape(s) {
+	        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+	    }
+
+	    var tokens = {};
+
+	    function addParseToken (token, callback) {
+	        var i, func = callback;
+	        if (typeof token === 'string') {
+	            token = [token];
+	        }
+	        if (isNumber(callback)) {
+	            func = function (input, array) {
+	                array[callback] = toInt(input);
+	            };
+	        }
+	        for (i = 0; i < token.length; i++) {
+	            tokens[token[i]] = func;
+	        }
+	    }
+
+	    function addWeekParseToken (token, callback) {
+	        addParseToken(token, function (input, array, config, token) {
+	            config._w = config._w || {};
+	            callback(input, config._w, config, token);
+	        });
+	    }
+
+	    function addTimeToArrayFromToken(token, input, config) {
+	        if (input != null && hasOwnProp(tokens, token)) {
+	            tokens[token](input, config._a, config, token);
+	        }
+	    }
+
+	    var YEAR = 0;
+	    var MONTH = 1;
+	    var DATE = 2;
+	    var HOUR = 3;
+	    var MINUTE = 4;
+	    var SECOND = 5;
+	    var MILLISECOND = 6;
+	    var WEEK = 7;
+	    var WEEKDAY = 8;
+
+	    // FORMATTING
+
+	    addFormatToken('Y', 0, 0, function () {
+	        var y = this.year();
+	        return y <= 9999 ? '' + y : '+' + y;
+	    });
+
+	    addFormatToken(0, ['YY', 2], 0, function () {
+	        return this.year() % 100;
+	    });
+
+	    addFormatToken(0, ['YYYY',   4],       0, 'year');
+	    addFormatToken(0, ['YYYYY',  5],       0, 'year');
+	    addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
+
+	    // ALIASES
+
+	    addUnitAlias('year', 'y');
+
+	    // PRIORITIES
+
+	    addUnitPriority('year', 1);
+
+	    // PARSING
+
+	    addRegexToken('Y',      matchSigned);
+	    addRegexToken('YY',     match1to2, match2);
+	    addRegexToken('YYYY',   match1to4, match4);
+	    addRegexToken('YYYYY',  match1to6, match6);
+	    addRegexToken('YYYYYY', match1to6, match6);
+
+	    addParseToken(['YYYYY', 'YYYYYY'], YEAR);
+	    addParseToken('YYYY', function (input, array) {
+	        array[YEAR] = input.length === 2 ? hooks.parseTwoDigitYear(input) : toInt(input);
+	    });
+	    addParseToken('YY', function (input, array) {
+	        array[YEAR] = hooks.parseTwoDigitYear(input);
+	    });
+	    addParseToken('Y', function (input, array) {
+	        array[YEAR] = parseInt(input, 10);
+	    });
+
+	    // HELPERS
+
+	    function daysInYear(year) {
+	        return isLeapYear(year) ? 366 : 365;
+	    }
+
+	    function isLeapYear(year) {
+	        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+	    }
+
+	    // HOOKS
+
+	    hooks.parseTwoDigitYear = function (input) {
+	        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+	    };
+
+	    // MOMENTS
+
+	    var getSetYear = makeGetSet('FullYear', true);
+
+	    function getIsLeapYear () {
+	        return isLeapYear(this.year());
+	    }
+
+	    function makeGetSet (unit, keepTime) {
+	        return function (value) {
+	            if (value != null) {
+	                set$1(this, unit, value);
+	                hooks.updateOffset(this, keepTime);
+	                return this;
+	            } else {
+	                return get(this, unit);
+	            }
+	        };
+	    }
+
+	    function get (mom, unit) {
+	        return mom.isValid() ?
+	            mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]() : NaN;
+	    }
+
+	    function set$1 (mom, unit, value) {
+	        if (mom.isValid() && !isNaN(value)) {
+	            if (unit === 'FullYear' && isLeapYear(mom.year()) && mom.month() === 1 && mom.date() === 29) {
+	                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value, mom.month(), daysInMonth(value, mom.month()));
+	            }
+	            else {
+	                mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+	            }
+	        }
+	    }
+
+	    // MOMENTS
+
+	    function stringGet (units) {
+	        units = normalizeUnits(units);
+	        if (isFunction(this[units])) {
+	            return this[units]();
+	        }
+	        return this;
+	    }
+
+
+	    function stringSet (units, value) {
+	        if (typeof units === 'object') {
+	            units = normalizeObjectUnits(units);
+	            var prioritized = getPrioritizedUnits(units);
+	            for (var i = 0; i < prioritized.length; i++) {
+	                this[prioritized[i].unit](units[prioritized[i].unit]);
+	            }
+	        } else {
+	            units = normalizeUnits(units);
+	            if (isFunction(this[units])) {
+	                return this[units](value);
+	            }
+	        }
+	        return this;
+	    }
+
+	    function mod(n, x) {
+	        return ((n % x) + x) % x;
+	    }
+
+	    var indexOf;
+
+	    if (Array.prototype.indexOf) {
+	        indexOf = Array.prototype.indexOf;
+	    } else {
+	        indexOf = function (o) {
+	            // I know
+	            var i;
+	            for (i = 0; i < this.length; ++i) {
+	                if (this[i] === o) {
+	                    return i;
+	                }
+	            }
+	            return -1;
+	        };
+	    }
+
+	    function daysInMonth(year, month) {
+	        if (isNaN(year) || isNaN(month)) {
+	            return NaN;
+	        }
+	        var modMonth = mod(month, 12);
+	        year += (month - modMonth) / 12;
+	        return modMonth === 1 ? (isLeapYear(year) ? 29 : 28) : (31 - modMonth % 7 % 2);
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('M', ['MM', 2], 'Mo', function () {
+	        return this.month() + 1;
+	    });
+
+	    addFormatToken('MMM', 0, 0, function (format) {
+	        return this.localeData().monthsShort(this, format);
+	    });
+
+	    addFormatToken('MMMM', 0, 0, function (format) {
+	        return this.localeData().months(this, format);
+	    });
+
+	    // ALIASES
+
+	    addUnitAlias('month', 'M');
+
+	    // PRIORITY
+
+	    addUnitPriority('month', 8);
+
+	    // PARSING
+
+	    addRegexToken('M',    match1to2);
+	    addRegexToken('MM',   match1to2, match2);
+	    addRegexToken('MMM',  function (isStrict, locale) {
+	        return locale.monthsShortRegex(isStrict);
+	    });
+	    addRegexToken('MMMM', function (isStrict, locale) {
+	        return locale.monthsRegex(isStrict);
+	    });
+
+	    addParseToken(['M', 'MM'], function (input, array) {
+	        array[MONTH] = toInt(input) - 1;
+	    });
+
+	    addParseToken(['MMM', 'MMMM'], function (input, array, config, token) {
+	        var month = config._locale.monthsParse(input, token, config._strict);
+	        // if we didn't find a month name, mark the date as invalid.
+	        if (month != null) {
+	            array[MONTH] = month;
+	        } else {
+	            getParsingFlags(config).invalidMonth = input;
+	        }
+	    });
+
+	    // LOCALES
+
+	    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/;
+	    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
+	    function localeMonths (m, format) {
+	        if (!m) {
+	            return isArray(this._months) ? this._months :
+	                this._months['standalone'];
+	        }
+	        return isArray(this._months) ? this._months[m.month()] :
+	            this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format) ? 'format' : 'standalone'][m.month()];
+	    }
+
+	    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
+	    function localeMonthsShort (m, format) {
+	        if (!m) {
+	            return isArray(this._monthsShort) ? this._monthsShort :
+	                this._monthsShort['standalone'];
+	        }
+	        return isArray(this._monthsShort) ? this._monthsShort[m.month()] :
+	            this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
+	    }
+
+	    function handleStrictParse(monthName, format, strict) {
+	        var i, ii, mom, llc = monthName.toLocaleLowerCase();
+	        if (!this._monthsParse) {
+	            // this is not used
+	            this._monthsParse = [];
+	            this._longMonthsParse = [];
+	            this._shortMonthsParse = [];
+	            for (i = 0; i < 12; ++i) {
+	                mom = createUTC([2000, i]);
+	                this._shortMonthsParse[i] = this.monthsShort(mom, '').toLocaleLowerCase();
+	                this._longMonthsParse[i] = this.months(mom, '').toLocaleLowerCase();
+	            }
+	        }
+
+	        if (strict) {
+	            if (format === 'MMM') {
+	                ii = indexOf.call(this._shortMonthsParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else {
+	                ii = indexOf.call(this._longMonthsParse, llc);
+	                return ii !== -1 ? ii : null;
+	            }
+	        } else {
+	            if (format === 'MMM') {
+	                ii = indexOf.call(this._shortMonthsParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._longMonthsParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else {
+	                ii = indexOf.call(this._longMonthsParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._shortMonthsParse, llc);
+	                return ii !== -1 ? ii : null;
+	            }
+	        }
+	    }
+
+	    function localeMonthsParse (monthName, format, strict) {
+	        var i, mom, regex;
+
+	        if (this._monthsParseExact) {
+	            return handleStrictParse.call(this, monthName, format, strict);
+	        }
+
+	        if (!this._monthsParse) {
+	            this._monthsParse = [];
+	            this._longMonthsParse = [];
+	            this._shortMonthsParse = [];
+	        }
+
+	        // TODO: add sorting
+	        // Sorting makes sure if one month (or abbr) is a prefix of another
+	        // see sorting in computeMonthsParse
+	        for (i = 0; i < 12; i++) {
+	            // make the regex if we don't have it already
+	            mom = createUTC([2000, i]);
+	            if (strict && !this._longMonthsParse[i]) {
+	                this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+	                this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+	            }
+	            if (!strict && !this._monthsParse[i]) {
+	                regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
+	                this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
+	            }
+	            // test the regex
+	            if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+	                return i;
+	            } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+	                return i;
+	            } else if (!strict && this._monthsParse[i].test(monthName)) {
+	                return i;
+	            }
+	        }
+	    }
+
+	    // MOMENTS
+
+	    function setMonth (mom, value) {
+	        var dayOfMonth;
+
+	        if (!mom.isValid()) {
+	            // No op
+	            return mom;
+	        }
+
+	        if (typeof value === 'string') {
+	            if (/^\d+$/.test(value)) {
+	                value = toInt(value);
+	            } else {
+	                value = mom.localeData().monthsParse(value);
+	                // TODO: Another silent failure?
+	                if (!isNumber(value)) {
+	                    return mom;
+	                }
+	            }
+	        }
+
+	        dayOfMonth = Math.min(mom.date(), daysInMonth(mom.year(), value));
+	        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
+	        return mom;
+	    }
+
+	    function getSetMonth (value) {
+	        if (value != null) {
+	            setMonth(this, value);
+	            hooks.updateOffset(this, true);
+	            return this;
+	        } else {
+	            return get(this, 'Month');
+	        }
+	    }
+
+	    function getDaysInMonth () {
+	        return daysInMonth(this.year(), this.month());
+	    }
+
+	    var defaultMonthsShortRegex = matchWord;
+	    function monthsShortRegex (isStrict) {
+	        if (this._monthsParseExact) {
+	            if (!hasOwnProp(this, '_monthsRegex')) {
+	                computeMonthsParse.call(this);
+	            }
+	            if (isStrict) {
+	                return this._monthsShortStrictRegex;
+	            } else {
+	                return this._monthsShortRegex;
+	            }
+	        } else {
+	            if (!hasOwnProp(this, '_monthsShortRegex')) {
+	                this._monthsShortRegex = defaultMonthsShortRegex;
+	            }
+	            return this._monthsShortStrictRegex && isStrict ?
+	                this._monthsShortStrictRegex : this._monthsShortRegex;
+	        }
+	    }
+
+	    var defaultMonthsRegex = matchWord;
+	    function monthsRegex (isStrict) {
+	        if (this._monthsParseExact) {
+	            if (!hasOwnProp(this, '_monthsRegex')) {
+	                computeMonthsParse.call(this);
+	            }
+	            if (isStrict) {
+	                return this._monthsStrictRegex;
+	            } else {
+	                return this._monthsRegex;
+	            }
+	        } else {
+	            if (!hasOwnProp(this, '_monthsRegex')) {
+	                this._monthsRegex = defaultMonthsRegex;
+	            }
+	            return this._monthsStrictRegex && isStrict ?
+	                this._monthsStrictRegex : this._monthsRegex;
+	        }
+	    }
+
+	    function computeMonthsParse () {
+	        function cmpLenRev(a, b) {
+	            return b.length - a.length;
+	        }
+
+	        var shortPieces = [], longPieces = [], mixedPieces = [],
+	            i, mom;
+	        for (i = 0; i < 12; i++) {
+	            // make the regex if we don't have it already
+	            mom = createUTC([2000, i]);
+	            shortPieces.push(this.monthsShort(mom, ''));
+	            longPieces.push(this.months(mom, ''));
+	            mixedPieces.push(this.months(mom, ''));
+	            mixedPieces.push(this.monthsShort(mom, ''));
+	        }
+	        // Sorting makes sure if one month (or abbr) is a prefix of another it
+	        // will match the longer piece.
+	        shortPieces.sort(cmpLenRev);
+	        longPieces.sort(cmpLenRev);
+	        mixedPieces.sort(cmpLenRev);
+	        for (i = 0; i < 12; i++) {
+	            shortPieces[i] = regexEscape(shortPieces[i]);
+	            longPieces[i] = regexEscape(longPieces[i]);
+	        }
+	        for (i = 0; i < 24; i++) {
+	            mixedPieces[i] = regexEscape(mixedPieces[i]);
+	        }
+
+	        this._monthsRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+	        this._monthsShortRegex = this._monthsRegex;
+	        this._monthsStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
+	        this._monthsShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
+	    }
+
+	    function createDate (y, m, d, h, M, s, ms) {
+	        // can't just apply() to create a date:
+	        // https://stackoverflow.com/q/181348
+	        var date = new Date(y, m, d, h, M, s, ms);
+
+	        // the date constructor remaps years 0-99 to 1900-1999
+	        if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
+	            date.setFullYear(y);
+	        }
+	        return date;
+	    }
+
+	    function createUTCDate (y) {
+	        var date = new Date(Date.UTC.apply(null, arguments));
+
+	        // the Date.UTC function remaps years 0-99 to 1900-1999
+	        if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
+	            date.setUTCFullYear(y);
+	        }
+	        return date;
+	    }
+
+	    // start-of-first-week - start-of-year
+	    function firstWeekOffset(year, dow, doy) {
+	        var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+	            fwd = 7 + dow - doy,
+	            // first-week day local weekday -- which local weekday is fwd
+	            fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
+
+	        return -fwdlw + fwd - 1;
+	    }
+
+	    // https://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+	    function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
+	        var localWeekday = (7 + weekday - dow) % 7,
+	            weekOffset = firstWeekOffset(year, dow, doy),
+	            dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
+	            resYear, resDayOfYear;
+
+	        if (dayOfYear <= 0) {
+	            resYear = year - 1;
+	            resDayOfYear = daysInYear(resYear) + dayOfYear;
+	        } else if (dayOfYear > daysInYear(year)) {
+	            resYear = year + 1;
+	            resDayOfYear = dayOfYear - daysInYear(year);
+	        } else {
+	            resYear = year;
+	            resDayOfYear = dayOfYear;
+	        }
+
+	        return {
+	            year: resYear,
+	            dayOfYear: resDayOfYear
+	        };
+	    }
+
+	    function weekOfYear(mom, dow, doy) {
+	        var weekOffset = firstWeekOffset(mom.year(), dow, doy),
+	            week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1,
+	            resWeek, resYear;
+
+	        if (week < 1) {
+	            resYear = mom.year() - 1;
+	            resWeek = week + weeksInYear(resYear, dow, doy);
+	        } else if (week > weeksInYear(mom.year(), dow, doy)) {
+	            resWeek = week - weeksInYear(mom.year(), dow, doy);
+	            resYear = mom.year() + 1;
+	        } else {
+	            resYear = mom.year();
+	            resWeek = week;
+	        }
+
+	        return {
+	            week: resWeek,
+	            year: resYear
+	        };
+	    }
+
+	    function weeksInYear(year, dow, doy) {
+	        var weekOffset = firstWeekOffset(year, dow, doy),
+	            weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
+	        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('w', ['ww', 2], 'wo', 'week');
+	    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+
+	    // ALIASES
+
+	    addUnitAlias('week', 'w');
+	    addUnitAlias('isoWeek', 'W');
+
+	    // PRIORITIES
+
+	    addUnitPriority('week', 5);
+	    addUnitPriority('isoWeek', 5);
+
+	    // PARSING
+
+	    addRegexToken('w',  match1to2);
+	    addRegexToken('ww', match1to2, match2);
+	    addRegexToken('W',  match1to2);
+	    addRegexToken('WW', match1to2, match2);
+
+	    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
+	        week[token.substr(0, 1)] = toInt(input);
+	    });
+
+	    // HELPERS
+
+	    // LOCALES
+
+	    function localeWeek (mom) {
+	        return weekOfYear(mom, this._week.dow, this._week.doy).week;
+	    }
+
+	    var defaultLocaleWeek = {
+	        dow : 0, // Sunday is the first day of the week.
+	        doy : 6  // The week that contains Jan 1st is the first week of the year.
+	    };
+
+	    function localeFirstDayOfWeek () {
+	        return this._week.dow;
+	    }
+
+	    function localeFirstDayOfYear () {
+	        return this._week.doy;
+	    }
+
+	    // MOMENTS
+
+	    function getSetWeek (input) {
+	        var week = this.localeData().week(this);
+	        return input == null ? week : this.add((input - week) * 7, 'd');
+	    }
+
+	    function getSetISOWeek (input) {
+	        var week = weekOfYear(this, 1, 4).week;
+	        return input == null ? week : this.add((input - week) * 7, 'd');
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('d', 0, 'do', 'day');
+
+	    addFormatToken('dd', 0, 0, function (format) {
+	        return this.localeData().weekdaysMin(this, format);
+	    });
+
+	    addFormatToken('ddd', 0, 0, function (format) {
+	        return this.localeData().weekdaysShort(this, format);
+	    });
+
+	    addFormatToken('dddd', 0, 0, function (format) {
+	        return this.localeData().weekdays(this, format);
+	    });
+
+	    addFormatToken('e', 0, 0, 'weekday');
+	    addFormatToken('E', 0, 0, 'isoWeekday');
+
+	    // ALIASES
+
+	    addUnitAlias('day', 'd');
+	    addUnitAlias('weekday', 'e');
+	    addUnitAlias('isoWeekday', 'E');
+
+	    // PRIORITY
+	    addUnitPriority('day', 11);
+	    addUnitPriority('weekday', 11);
+	    addUnitPriority('isoWeekday', 11);
+
+	    // PARSING
+
+	    addRegexToken('d',    match1to2);
+	    addRegexToken('e',    match1to2);
+	    addRegexToken('E',    match1to2);
+	    addRegexToken('dd',   function (isStrict, locale) {
+	        return locale.weekdaysMinRegex(isStrict);
+	    });
+	    addRegexToken('ddd',   function (isStrict, locale) {
+	        return locale.weekdaysShortRegex(isStrict);
+	    });
+	    addRegexToken('dddd',   function (isStrict, locale) {
+	        return locale.weekdaysRegex(isStrict);
+	    });
+
+	    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config, token) {
+	        var weekday = config._locale.weekdaysParse(input, token, config._strict);
+	        // if we didn't get a weekday name, mark the date as invalid
+	        if (weekday != null) {
+	            week.d = weekday;
+	        } else {
+	            getParsingFlags(config).invalidWeekday = input;
+	        }
+	    });
+
+	    addWeekParseToken(['d', 'e', 'E'], function (input, week, config, token) {
+	        week[token] = toInt(input);
+	    });
+
+	    // HELPERS
+
+	    function parseWeekday(input, locale) {
+	        if (typeof input !== 'string') {
+	            return input;
+	        }
+
+	        if (!isNaN(input)) {
+	            return parseInt(input, 10);
+	        }
+
+	        input = locale.weekdaysParse(input);
+	        if (typeof input === 'number') {
+	            return input;
+	        }
+
+	        return null;
+	    }
+
+	    function parseIsoWeekday(input, locale) {
+	        if (typeof input === 'string') {
+	            return locale.weekdaysParse(input) % 7 || 7;
+	        }
+	        return isNaN(input) ? null : input;
+	    }
+
+	    // LOCALES
+
+	    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
+	    function localeWeekdays (m, format) {
+	        if (!m) {
+	            return isArray(this._weekdays) ? this._weekdays :
+	                this._weekdays['standalone'];
+	        }
+	        return isArray(this._weekdays) ? this._weekdays[m.day()] :
+	            this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
+	    }
+
+	    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
+	    function localeWeekdaysShort (m) {
+	        return (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
+	    }
+
+	    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
+	    function localeWeekdaysMin (m) {
+	        return (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
+	    }
+
+	    function handleStrictParse$1(weekdayName, format, strict) {
+	        var i, ii, mom, llc = weekdayName.toLocaleLowerCase();
+	        if (!this._weekdaysParse) {
+	            this._weekdaysParse = [];
+	            this._shortWeekdaysParse = [];
+	            this._minWeekdaysParse = [];
+
+	            for (i = 0; i < 7; ++i) {
+	                mom = createUTC([2000, 1]).day(i);
+	                this._minWeekdaysParse[i] = this.weekdaysMin(mom, '').toLocaleLowerCase();
+	                this._shortWeekdaysParse[i] = this.weekdaysShort(mom, '').toLocaleLowerCase();
+	                this._weekdaysParse[i] = this.weekdays(mom, '').toLocaleLowerCase();
+	            }
+	        }
+
+	        if (strict) {
+	            if (format === 'dddd') {
+	                ii = indexOf.call(this._weekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else if (format === 'ddd') {
+	                ii = indexOf.call(this._shortWeekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else {
+	                ii = indexOf.call(this._minWeekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            }
+	        } else {
+	            if (format === 'dddd') {
+	                ii = indexOf.call(this._weekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._shortWeekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._minWeekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else if (format === 'ddd') {
+	                ii = indexOf.call(this._shortWeekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._weekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._minWeekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            } else {
+	                ii = indexOf.call(this._minWeekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._weekdaysParse, llc);
+	                if (ii !== -1) {
+	                    return ii;
+	                }
+	                ii = indexOf.call(this._shortWeekdaysParse, llc);
+	                return ii !== -1 ? ii : null;
+	            }
+	        }
+	    }
+
+	    function localeWeekdaysParse (weekdayName, format, strict) {
+	        var i, mom, regex;
+
+	        if (this._weekdaysParseExact) {
+	            return handleStrictParse$1.call(this, weekdayName, format, strict);
+	        }
+
+	        if (!this._weekdaysParse) {
+	            this._weekdaysParse = [];
+	            this._minWeekdaysParse = [];
+	            this._shortWeekdaysParse = [];
+	            this._fullWeekdaysParse = [];
+	        }
+
+	        for (i = 0; i < 7; i++) {
+	            // make the regex if we don't have it already
+
+	            mom = createUTC([2000, 1]).day(i);
+	            if (strict && !this._fullWeekdaysParse[i]) {
+	                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\\.?') + '$', 'i');
+	                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\\.?') + '$', 'i');
+	                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\\.?') + '$', 'i');
+	            }
+	            if (!this._weekdaysParse[i]) {
+	                regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
+	                this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
+	            }
+	            // test the regex
+	            if (strict && format === 'dddd' && this._fullWeekdaysParse[i].test(weekdayName)) {
+	                return i;
+	            } else if (strict && format === 'ddd' && this._shortWeekdaysParse[i].test(weekdayName)) {
+	                return i;
+	            } else if (strict && format === 'dd' && this._minWeekdaysParse[i].test(weekdayName)) {
+	                return i;
+	            } else if (!strict && this._weekdaysParse[i].test(weekdayName)) {
+	                return i;
+	            }
+	        }
+	    }
+
+	    // MOMENTS
+
+	    function getSetDayOfWeek (input) {
+	        if (!this.isValid()) {
+	            return input != null ? this : NaN;
+	        }
+	        var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
+	        if (input != null) {
+	            input = parseWeekday(input, this.localeData());
+	            return this.add(input - day, 'd');
+	        } else {
+	            return day;
+	        }
+	    }
+
+	    function getSetLocaleDayOfWeek (input) {
+	        if (!this.isValid()) {
+	            return input != null ? this : NaN;
+	        }
+	        var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
+	        return input == null ? weekday : this.add(input - weekday, 'd');
+	    }
+
+	    function getSetISODayOfWeek (input) {
+	        if (!this.isValid()) {
+	            return input != null ? this : NaN;
+	        }
+
+	        // behaves the same as moment#day except
+	        // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
+	        // as a setter, sunday should belong to the previous week.
+
+	        if (input != null) {
+	            var weekday = parseIsoWeekday(input, this.localeData());
+	            return this.day(this.day() % 7 ? weekday : weekday - 7);
+	        } else {
+	            return this.day() || 7;
+	        }
+	    }
+
+	    var defaultWeekdaysRegex = matchWord;
+	    function weekdaysRegex (isStrict) {
+	        if (this._weekdaysParseExact) {
+	            if (!hasOwnProp(this, '_weekdaysRegex')) {
+	                computeWeekdaysParse.call(this);
+	            }
+	            if (isStrict) {
+	                return this._weekdaysStrictRegex;
+	            } else {
+	                return this._weekdaysRegex;
+	            }
+	        } else {
+	            if (!hasOwnProp(this, '_weekdaysRegex')) {
+	                this._weekdaysRegex = defaultWeekdaysRegex;
+	            }
+	            return this._weekdaysStrictRegex && isStrict ?
+	                this._weekdaysStrictRegex : this._weekdaysRegex;
+	        }
+	    }
+
+	    var defaultWeekdaysShortRegex = matchWord;
+	    function weekdaysShortRegex (isStrict) {
+	        if (this._weekdaysParseExact) {
+	            if (!hasOwnProp(this, '_weekdaysRegex')) {
+	                computeWeekdaysParse.call(this);
+	            }
+	            if (isStrict) {
+	                return this._weekdaysShortStrictRegex;
+	            } else {
+	                return this._weekdaysShortRegex;
+	            }
+	        } else {
+	            if (!hasOwnProp(this, '_weekdaysShortRegex')) {
+	                this._weekdaysShortRegex = defaultWeekdaysShortRegex;
+	            }
+	            return this._weekdaysShortStrictRegex && isStrict ?
+	                this._weekdaysShortStrictRegex : this._weekdaysShortRegex;
+	        }
+	    }
+
+	    var defaultWeekdaysMinRegex = matchWord;
+	    function weekdaysMinRegex (isStrict) {
+	        if (this._weekdaysParseExact) {
+	            if (!hasOwnProp(this, '_weekdaysRegex')) {
+	                computeWeekdaysParse.call(this);
+	            }
+	            if (isStrict) {
+	                return this._weekdaysMinStrictRegex;
+	            } else {
+	                return this._weekdaysMinRegex;
+	            }
+	        } else {
+	            if (!hasOwnProp(this, '_weekdaysMinRegex')) {
+	                this._weekdaysMinRegex = defaultWeekdaysMinRegex;
+	            }
+	            return this._weekdaysMinStrictRegex && isStrict ?
+	                this._weekdaysMinStrictRegex : this._weekdaysMinRegex;
+	        }
+	    }
+
+
+	    function computeWeekdaysParse () {
+	        function cmpLenRev(a, b) {
+	            return b.length - a.length;
+	        }
+
+	        var minPieces = [], shortPieces = [], longPieces = [], mixedPieces = [],
+	            i, mom, minp, shortp, longp;
+	        for (i = 0; i < 7; i++) {
+	            // make the regex if we don't have it already
+	            mom = createUTC([2000, 1]).day(i);
+	            minp = this.weekdaysMin(mom, '');
+	            shortp = this.weekdaysShort(mom, '');
+	            longp = this.weekdays(mom, '');
+	            minPieces.push(minp);
+	            shortPieces.push(shortp);
+	            longPieces.push(longp);
+	            mixedPieces.push(minp);
+	            mixedPieces.push(shortp);
+	            mixedPieces.push(longp);
+	        }
+	        // Sorting makes sure if one weekday (or abbr) is a prefix of another it
+	        // will match the longer piece.
+	        minPieces.sort(cmpLenRev);
+	        shortPieces.sort(cmpLenRev);
+	        longPieces.sort(cmpLenRev);
+	        mixedPieces.sort(cmpLenRev);
+	        for (i = 0; i < 7; i++) {
+	            shortPieces[i] = regexEscape(shortPieces[i]);
+	            longPieces[i] = regexEscape(longPieces[i]);
+	            mixedPieces[i] = regexEscape(mixedPieces[i]);
+	        }
+
+	        this._weekdaysRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+	        this._weekdaysShortRegex = this._weekdaysRegex;
+	        this._weekdaysMinRegex = this._weekdaysRegex;
+
+	        this._weekdaysStrictRegex = new RegExp('^(' + longPieces.join('|') + ')', 'i');
+	        this._weekdaysShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')', 'i');
+	        this._weekdaysMinStrictRegex = new RegExp('^(' + minPieces.join('|') + ')', 'i');
+	    }
+
+	    // FORMATTING
+
+	    function hFormat() {
+	        return this.hours() % 12 || 12;
+	    }
+
+	    function kFormat() {
+	        return this.hours() || 24;
+	    }
+
+	    addFormatToken('H', ['HH', 2], 0, 'hour');
+	    addFormatToken('h', ['hh', 2], 0, hFormat);
+	    addFormatToken('k', ['kk', 2], 0, kFormat);
+
+	    addFormatToken('hmm', 0, 0, function () {
+	        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2);
+	    });
+
+	    addFormatToken('hmmss', 0, 0, function () {
+	        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2) +
+	            zeroFill(this.seconds(), 2);
+	    });
+
+	    addFormatToken('Hmm', 0, 0, function () {
+	        return '' + this.hours() + zeroFill(this.minutes(), 2);
+	    });
+
+	    addFormatToken('Hmmss', 0, 0, function () {
+	        return '' + this.hours() + zeroFill(this.minutes(), 2) +
+	            zeroFill(this.seconds(), 2);
+	    });
+
+	    function meridiem (token, lowercase) {
+	        addFormatToken(token, 0, 0, function () {
+	            return this.localeData().meridiem(this.hours(), this.minutes(), lowercase);
+	        });
+	    }
+
+	    meridiem('a', true);
+	    meridiem('A', false);
+
+	    // ALIASES
+
+	    addUnitAlias('hour', 'h');
+
+	    // PRIORITY
+	    addUnitPriority('hour', 13);
+
+	    // PARSING
+
+	    function matchMeridiem (isStrict, locale) {
+	        return locale._meridiemParse;
+	    }
+
+	    addRegexToken('a',  matchMeridiem);
+	    addRegexToken('A',  matchMeridiem);
+	    addRegexToken('H',  match1to2);
+	    addRegexToken('h',  match1to2);
+	    addRegexToken('k',  match1to2);
+	    addRegexToken('HH', match1to2, match2);
+	    addRegexToken('hh', match1to2, match2);
+	    addRegexToken('kk', match1to2, match2);
+
+	    addRegexToken('hmm', match3to4);
+	    addRegexToken('hmmss', match5to6);
+	    addRegexToken('Hmm', match3to4);
+	    addRegexToken('Hmmss', match5to6);
+
+	    addParseToken(['H', 'HH'], HOUR);
+	    addParseToken(['k', 'kk'], function (input, array, config) {
+	        var kInput = toInt(input);
+	        array[HOUR] = kInput === 24 ? 0 : kInput;
+	    });
+	    addParseToken(['a', 'A'], function (input, array, config) {
+	        config._isPm = config._locale.isPM(input);
+	        config._meridiem = input;
+	    });
+	    addParseToken(['h', 'hh'], function (input, array, config) {
+	        array[HOUR] = toInt(input);
+	        getParsingFlags(config).bigHour = true;
+	    });
+	    addParseToken('hmm', function (input, array, config) {
+	        var pos = input.length - 2;
+	        array[HOUR] = toInt(input.substr(0, pos));
+	        array[MINUTE] = toInt(input.substr(pos));
+	        getParsingFlags(config).bigHour = true;
+	    });
+	    addParseToken('hmmss', function (input, array, config) {
+	        var pos1 = input.length - 4;
+	        var pos2 = input.length - 2;
+	        array[HOUR] = toInt(input.substr(0, pos1));
+	        array[MINUTE] = toInt(input.substr(pos1, 2));
+	        array[SECOND] = toInt(input.substr(pos2));
+	        getParsingFlags(config).bigHour = true;
+	    });
+	    addParseToken('Hmm', function (input, array, config) {
+	        var pos = input.length - 2;
+	        array[HOUR] = toInt(input.substr(0, pos));
+	        array[MINUTE] = toInt(input.substr(pos));
+	    });
+	    addParseToken('Hmmss', function (input, array, config) {
+	        var pos1 = input.length - 4;
+	        var pos2 = input.length - 2;
+	        array[HOUR] = toInt(input.substr(0, pos1));
+	        array[MINUTE] = toInt(input.substr(pos1, 2));
+	        array[SECOND] = toInt(input.substr(pos2));
+	    });
+
+	    // LOCALES
+
+	    function localeIsPM (input) {
+	        // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
+	        // Using charAt should be more compatible.
+	        return ((input + '').toLowerCase().charAt(0) === 'p');
+	    }
+
+	    var defaultLocaleMeridiemParse = /[ap]\.?m?\.?/i;
+	    function localeMeridiem (hours, minutes, isLower) {
+	        if (hours > 11) {
+	            return isLower ? 'pm' : 'PM';
+	        } else {
+	            return isLower ? 'am' : 'AM';
+	        }
+	    }
+
+
+	    // MOMENTS
+
+	    // Setting the hour should keep the time, because the user explicitly
+	    // specified which hour they want. So trying to maintain the same hour (in
+	    // a new timezone) makes sense. Adding/subtracting hours does not follow
+	    // this rule.
+	    var getSetHour = makeGetSet('Hours', true);
+
+	    var baseConfig = {
+	        calendar: defaultCalendar,
+	        longDateFormat: defaultLongDateFormat,
+	        invalidDate: defaultInvalidDate,
+	        ordinal: defaultOrdinal,
+	        dayOfMonthOrdinalParse: defaultDayOfMonthOrdinalParse,
+	        relativeTime: defaultRelativeTime,
+
+	        months: defaultLocaleMonths,
+	        monthsShort: defaultLocaleMonthsShort,
+
+	        week: defaultLocaleWeek,
+
+	        weekdays: defaultLocaleWeekdays,
+	        weekdaysMin: defaultLocaleWeekdaysMin,
+	        weekdaysShort: defaultLocaleWeekdaysShort,
+
+	        meridiemParse: defaultLocaleMeridiemParse
+	    };
+
+	    // internal storage for locale config files
+	    var locales = {};
+	    var localeFamilies = {};
+	    var globalLocale;
+
+	    function normalizeLocale(key) {
+	        return key ? key.toLowerCase().replace('_', '-') : key;
+	    }
+
+	    // pick the locale from the array
+	    // try ['en-au', 'en-gb'] as 'en-au', 'en-gb', 'en', as in move through the list trying each
+	    // substring from most specific to least, but move to the next array item if it's a more specific variant than the current root
+	    function chooseLocale(names) {
+	        var i = 0, j, next, locale, split;
+
+	        while (i < names.length) {
+	            split = normalizeLocale(names[i]).split('-');
+	            j = split.length;
+	            next = normalizeLocale(names[i + 1]);
+	            next = next ? next.split('-') : null;
+	            while (j > 0) {
+	                locale = loadLocale(split.slice(0, j).join('-'));
+	                if (locale) {
+	                    return locale;
+	                }
+	                if (next && next.length >= j && compareArrays(split, next, true) >= j - 1) {
+	                    //the next array item is better than a shallower substring of this one
+	                    break;
+	                }
+	                j--;
+	            }
+	            i++;
+	        }
+	        return globalLocale;
+	    }
+
+	    function loadLocale(name) {
+	        var oldLocale = null;
+	        // TODO: Find a better way to register and load all the locales in Node
+	        if (!locales[name] && ('object' !== 'undefined') &&
+	                module && module.exports) {
+	            try {
+	                oldLocale = globalLocale._abbr;
+	                var aliasedRequire = commonjsRequire;
+	                aliasedRequire('./locale/' + name);
+	                getSetGlobalLocale(oldLocale);
+	            } catch (e) {}
+	        }
+	        return locales[name];
+	    }
+
+	    // This function will load locale and then set the global locale.  If
+	    // no arguments are passed in, it will simply return the current global
+	    // locale key.
+	    function getSetGlobalLocale (key, values) {
+	        var data;
+	        if (key) {
+	            if (isUndefined(values)) {
+	                data = getLocale(key);
+	            }
+	            else {
+	                data = defineLocale(key, values);
+	            }
+
+	            if (data) {
+	                // moment.duration._locale = moment._locale = data;
+	                globalLocale = data;
+	            }
+	            else {
+	                if ((typeof console !==  'undefined') && console.warn) {
+	                    //warn user if arguments are passed but the locale could not be set
+	                    console.warn('Locale ' + key +  ' not found. Did you forget to load it?');
+	                }
+	            }
+	        }
+
+	        return globalLocale._abbr;
+	    }
+
+	    function defineLocale (name, config) {
+	        if (config !== null) {
+	            var locale, parentConfig = baseConfig;
+	            config.abbr = name;
+	            if (locales[name] != null) {
+	                deprecateSimple('defineLocaleOverride',
+	                        'use moment.updateLocale(localeName, config) to change ' +
+	                        'an existing locale. moment.defineLocale(localeName, ' +
+	                        'config) should only be used for creating a new locale ' +
+	                        'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.');
+	                parentConfig = locales[name]._config;
+	            } else if (config.parentLocale != null) {
+	                if (locales[config.parentLocale] != null) {
+	                    parentConfig = locales[config.parentLocale]._config;
+	                } else {
+	                    locale = loadLocale(config.parentLocale);
+	                    if (locale != null) {
+	                        parentConfig = locale._config;
+	                    } else {
+	                        if (!localeFamilies[config.parentLocale]) {
+	                            localeFamilies[config.parentLocale] = [];
+	                        }
+	                        localeFamilies[config.parentLocale].push({
+	                            name: name,
+	                            config: config
+	                        });
+	                        return null;
+	                    }
+	                }
+	            }
+	            locales[name] = new Locale(mergeConfigs(parentConfig, config));
+
+	            if (localeFamilies[name]) {
+	                localeFamilies[name].forEach(function (x) {
+	                    defineLocale(x.name, x.config);
+	                });
+	            }
+
+	            // backwards compat for now: also set the locale
+	            // make sure we set the locale AFTER all child locales have been
+	            // created, so we won't end up with the child locale set.
+	            getSetGlobalLocale(name);
+
+
+	            return locales[name];
+	        } else {
+	            // useful for testing
+	            delete locales[name];
+	            return null;
+	        }
+	    }
+
+	    function updateLocale(name, config) {
+	        if (config != null) {
+	            var locale, tmpLocale, parentConfig = baseConfig;
+	            // MERGE
+	            tmpLocale = loadLocale(name);
+	            if (tmpLocale != null) {
+	                parentConfig = tmpLocale._config;
+	            }
+	            config = mergeConfigs(parentConfig, config);
+	            locale = new Locale(config);
+	            locale.parentLocale = locales[name];
+	            locales[name] = locale;
+
+	            // backwards compat for now: also set the locale
+	            getSetGlobalLocale(name);
+	        } else {
+	            // pass null for config to unupdate, useful for tests
+	            if (locales[name] != null) {
+	                if (locales[name].parentLocale != null) {
+	                    locales[name] = locales[name].parentLocale;
+	                } else if (locales[name] != null) {
+	                    delete locales[name];
+	                }
+	            }
+	        }
+	        return locales[name];
+	    }
+
+	    // returns locale data
+	    function getLocale (key) {
+	        var locale;
+
+	        if (key && key._locale && key._locale._abbr) {
+	            key = key._locale._abbr;
+	        }
+
+	        if (!key) {
+	            return globalLocale;
+	        }
+
+	        if (!isArray(key)) {
+	            //short-circuit everything else
+	            locale = loadLocale(key);
+	            if (locale) {
+	                return locale;
+	            }
+	            key = [key];
+	        }
+
+	        return chooseLocale(key);
+	    }
+
+	    function listLocales() {
+	        return keys(locales);
+	    }
+
+	    function checkOverflow (m) {
+	        var overflow;
+	        var a = m._a;
+
+	        if (a && getParsingFlags(m).overflow === -2) {
+	            overflow =
+	                a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
+	                a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
+	                a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
+	                a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
+	                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
+	                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
+	                -1;
+
+	            if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+	                overflow = DATE;
+	            }
+	            if (getParsingFlags(m)._overflowWeeks && overflow === -1) {
+	                overflow = WEEK;
+	            }
+	            if (getParsingFlags(m)._overflowWeekday && overflow === -1) {
+	                overflow = WEEKDAY;
+	            }
+
+	            getParsingFlags(m).overflow = overflow;
+	        }
+
+	        return m;
+	    }
+
+	    // Pick the first defined of two or three arguments.
+	    function defaults(a, b, c) {
+	        if (a != null) {
+	            return a;
+	        }
+	        if (b != null) {
+	            return b;
+	        }
+	        return c;
+	    }
+
+	    function currentDateArray(config) {
+	        // hooks is actually the exported moment object
+	        var nowValue = new Date(hooks.now());
+	        if (config._useUTC) {
+	            return [nowValue.getUTCFullYear(), nowValue.getUTCMonth(), nowValue.getUTCDate()];
+	        }
+	        return [nowValue.getFullYear(), nowValue.getMonth(), nowValue.getDate()];
+	    }
+
+	    // convert an array to a date.
+	    // the array should mirror the parameters below
+	    // note: all values past the year are optional and will default to the lowest possible value.
+	    // [year, month, day , hour, minute, second, millisecond]
+	    function configFromArray (config) {
+	        var i, date, input = [], currentDate, expectedWeekday, yearToUse;
+
+	        if (config._d) {
+	            return;
+	        }
+
+	        currentDate = currentDateArray(config);
+
+	        //compute day of the year from weeks and weekdays
+	        if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
+	            dayOfYearFromWeekInfo(config);
+	        }
+
+	        //if the day of the year is set, figure out what it is
+	        if (config._dayOfYear != null) {
+	            yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
+
+	            if (config._dayOfYear > daysInYear(yearToUse) || config._dayOfYear === 0) {
+	                getParsingFlags(config)._overflowDayOfYear = true;
+	            }
+
+	            date = createUTCDate(yearToUse, 0, config._dayOfYear);
+	            config._a[MONTH] = date.getUTCMonth();
+	            config._a[DATE] = date.getUTCDate();
+	        }
+
+	        // Default to current date.
+	        // * if no year, month, day of month are given, default to today
+	        // * if day of month is given, default month and year
+	        // * if month is given, default only year
+	        // * if year is given, don't default anything
+	        for (i = 0; i < 3 && config._a[i] == null; ++i) {
+	            config._a[i] = input[i] = currentDate[i];
+	        }
+
+	        // Zero out whatever was not defaulted, including time
+	        for (; i < 7; i++) {
+	            config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
+	        }
+
+	        // Check for 24:00:00.000
+	        if (config._a[HOUR] === 24 &&
+	                config._a[MINUTE] === 0 &&
+	                config._a[SECOND] === 0 &&
+	                config._a[MILLISECOND] === 0) {
+	            config._nextDay = true;
+	            config._a[HOUR] = 0;
+	        }
+
+	        config._d = (config._useUTC ? createUTCDate : createDate).apply(null, input);
+	        expectedWeekday = config._useUTC ? config._d.getUTCDay() : config._d.getDay();
+
+	        // Apply timezone offset from input. The actual utcOffset can be changed
+	        // with parseZone.
+	        if (config._tzm != null) {
+	            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+	        }
+
+	        if (config._nextDay) {
+	            config._a[HOUR] = 24;
+	        }
+
+	        // check for mismatching day of week
+	        if (config._w && typeof config._w.d !== 'undefined' && config._w.d !== expectedWeekday) {
+	            getParsingFlags(config).weekdayMismatch = true;
+	        }
+	    }
+
+	    function dayOfYearFromWeekInfo(config) {
+	        var w, weekYear, week, weekday, dow, doy, temp, weekdayOverflow;
+
+	        w = config._w;
+	        if (w.GG != null || w.W != null || w.E != null) {
+	            dow = 1;
+	            doy = 4;
+
+	            // TODO: We need to take the current isoWeekYear, but that depends on
+	            // how we interpret now (local, utc, fixed offset). So create
+	            // a now version of current config (take local/utc/offset flags, and
+	            // create now).
+	            weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(createLocal(), 1, 4).year);
+	            week = defaults(w.W, 1);
+	            weekday = defaults(w.E, 1);
+	            if (weekday < 1 || weekday > 7) {
+	                weekdayOverflow = true;
+	            }
+	        } else {
+	            dow = config._locale._week.dow;
+	            doy = config._locale._week.doy;
+
+	            var curWeek = weekOfYear(createLocal(), dow, doy);
+
+	            weekYear = defaults(w.gg, config._a[YEAR], curWeek.year);
+
+	            // Default to current week.
+	            week = defaults(w.w, curWeek.week);
+
+	            if (w.d != null) {
+	                // weekday -- low day numbers are considered next week
+	                weekday = w.d;
+	                if (weekday < 0 || weekday > 6) {
+	                    weekdayOverflow = true;
+	                }
+	            } else if (w.e != null) {
+	                // local weekday -- counting starts from begining of week
+	                weekday = w.e + dow;
+	                if (w.e < 0 || w.e > 6) {
+	                    weekdayOverflow = true;
+	                }
+	            } else {
+	                // default to begining of week
+	                weekday = dow;
+	            }
+	        }
+	        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
+	            getParsingFlags(config)._overflowWeeks = true;
+	        } else if (weekdayOverflow != null) {
+	            getParsingFlags(config)._overflowWeekday = true;
+	        } else {
+	            temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
+	            config._a[YEAR] = temp.year;
+	            config._dayOfYear = temp.dayOfYear;
+	        }
+	    }
+
+	    // iso 8601 regex
+	    // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+	    var extendedIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+	    var basicIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+
+	    var tzRegex = /Z|[+-]\d\d(?::?\d\d)?/;
+
+	    var isoDates = [
+	        ['YYYYYY-MM-DD', /[+-]\d{6}-\d\d-\d\d/],
+	        ['YYYY-MM-DD', /\d{4}-\d\d-\d\d/],
+	        ['GGGG-[W]WW-E', /\d{4}-W\d\d-\d/],
+	        ['GGGG-[W]WW', /\d{4}-W\d\d/, false],
+	        ['YYYY-DDD', /\d{4}-\d{3}/],
+	        ['YYYY-MM', /\d{4}-\d\d/, false],
+	        ['YYYYYYMMDD', /[+-]\d{10}/],
+	        ['YYYYMMDD', /\d{8}/],
+	        // YYYYMM is NOT allowed by the standard
+	        ['GGGG[W]WWE', /\d{4}W\d{3}/],
+	        ['GGGG[W]WW', /\d{4}W\d{2}/, false],
+	        ['YYYYDDD', /\d{7}/]
+	    ];
+
+	    // iso time formats and regexes
+	    var isoTimes = [
+	        ['HH:mm:ss.SSSS', /\d\d:\d\d:\d\d\.\d+/],
+	        ['HH:mm:ss,SSSS', /\d\d:\d\d:\d\d,\d+/],
+	        ['HH:mm:ss', /\d\d:\d\d:\d\d/],
+	        ['HH:mm', /\d\d:\d\d/],
+	        ['HHmmss.SSSS', /\d\d\d\d\d\d\.\d+/],
+	        ['HHmmss,SSSS', /\d\d\d\d\d\d,\d+/],
+	        ['HHmmss', /\d\d\d\d\d\d/],
+	        ['HHmm', /\d\d\d\d/],
+	        ['HH', /\d\d/]
+	    ];
+
+	    var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
+
+	    // date from iso format
+	    function configFromISO(config) {
+	        var i, l,
+	            string = config._i,
+	            match = extendedIsoRegex.exec(string) || basicIsoRegex.exec(string),
+	            allowTime, dateFormat, timeFormat, tzFormat;
+
+	        if (match) {
+	            getParsingFlags(config).iso = true;
+
+	            for (i = 0, l = isoDates.length; i < l; i++) {
+	                if (isoDates[i][1].exec(match[1])) {
+	                    dateFormat = isoDates[i][0];
+	                    allowTime = isoDates[i][2] !== false;
+	                    break;
+	                }
+	            }
+	            if (dateFormat == null) {
+	                config._isValid = false;
+	                return;
+	            }
+	            if (match[3]) {
+	                for (i = 0, l = isoTimes.length; i < l; i++) {
+	                    if (isoTimes[i][1].exec(match[3])) {
+	                        // match[2] should be 'T' or space
+	                        timeFormat = (match[2] || ' ') + isoTimes[i][0];
+	                        break;
+	                    }
+	                }
+	                if (timeFormat == null) {
+	                    config._isValid = false;
+	                    return;
+	                }
+	            }
+	            if (!allowTime && timeFormat != null) {
+	                config._isValid = false;
+	                return;
+	            }
+	            if (match[4]) {
+	                if (tzRegex.exec(match[4])) {
+	                    tzFormat = 'Z';
+	                } else {
+	                    config._isValid = false;
+	                    return;
+	                }
+	            }
+	            config._f = dateFormat + (timeFormat || '') + (tzFormat || '');
+	            configFromStringAndFormat(config);
+	        } else {
+	            config._isValid = false;
+	        }
+	    }
+
+	    // RFC 2822 regex: For details see https://tools.ietf.org/html/rfc2822#section-3.3
+	    var rfc2822 = /^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/;
+
+	    function extractFromRFC2822Strings(yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr) {
+	        var result = [
+	            untruncateYear(yearStr),
+	            defaultLocaleMonthsShort.indexOf(monthStr),
+	            parseInt(dayStr, 10),
+	            parseInt(hourStr, 10),
+	            parseInt(minuteStr, 10)
+	        ];
+
+	        if (secondStr) {
+	            result.push(parseInt(secondStr, 10));
+	        }
+
+	        return result;
+	    }
+
+	    function untruncateYear(yearStr) {
+	        var year = parseInt(yearStr, 10);
+	        if (year <= 49) {
+	            return 2000 + year;
+	        } else if (year <= 999) {
+	            return 1900 + year;
+	        }
+	        return year;
+	    }
+
+	    function preprocessRFC2822(s) {
+	        // Remove comments and folding whitespace and replace multiple-spaces with a single space
+	        return s.replace(/\([^)]*\)|[\n\t]/g, ' ').replace(/(\s\s+)/g, ' ').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+	    }
+
+	    function checkWeekday(weekdayStr, parsedInput, config) {
+	        if (weekdayStr) {
+	            // TODO: Replace the vanilla JS Date object with an indepentent day-of-week check.
+	            var weekdayProvided = defaultLocaleWeekdaysShort.indexOf(weekdayStr),
+	                weekdayActual = new Date(parsedInput[0], parsedInput[1], parsedInput[2]).getDay();
+	            if (weekdayProvided !== weekdayActual) {
+	                getParsingFlags(config).weekdayMismatch = true;
+	                config._isValid = false;
+	                return false;
+	            }
+	        }
+	        return true;
+	    }
+
+	    var obsOffsets = {
+	        UT: 0,
+	        GMT: 0,
+	        EDT: -4 * 60,
+	        EST: -5 * 60,
+	        CDT: -5 * 60,
+	        CST: -6 * 60,
+	        MDT: -6 * 60,
+	        MST: -7 * 60,
+	        PDT: -7 * 60,
+	        PST: -8 * 60
+	    };
+
+	    function calculateOffset(obsOffset, militaryOffset, numOffset) {
+	        if (obsOffset) {
+	            return obsOffsets[obsOffset];
+	        } else if (militaryOffset) {
+	            // the only allowed military tz is Z
+	            return 0;
+	        } else {
+	            var hm = parseInt(numOffset, 10);
+	            var m = hm % 100, h = (hm - m) / 100;
+	            return h * 60 + m;
+	        }
+	    }
+
+	    // date and time from ref 2822 format
+	    function configFromRFC2822(config) {
+	        var match = rfc2822.exec(preprocessRFC2822(config._i));
+	        if (match) {
+	            var parsedArray = extractFromRFC2822Strings(match[4], match[3], match[2], match[5], match[6], match[7]);
+	            if (!checkWeekday(match[1], parsedArray, config)) {
+	                return;
+	            }
+
+	            config._a = parsedArray;
+	            config._tzm = calculateOffset(match[8], match[9], match[10]);
+
+	            config._d = createUTCDate.apply(null, config._a);
+	            config._d.setUTCMinutes(config._d.getUTCMinutes() - config._tzm);
+
+	            getParsingFlags(config).rfc2822 = true;
+	        } else {
+	            config._isValid = false;
+	        }
+	    }
+
+	    // date from iso format or fallback
+	    function configFromString(config) {
+	        var matched = aspNetJsonRegex.exec(config._i);
+
+	        if (matched !== null) {
+	            config._d = new Date(+matched[1]);
+	            return;
+	        }
+
+	        configFromISO(config);
+	        if (config._isValid === false) {
+	            delete config._isValid;
+	        } else {
+	            return;
+	        }
+
+	        configFromRFC2822(config);
+	        if (config._isValid === false) {
+	            delete config._isValid;
+	        } else {
+	            return;
+	        }
+
+	        // Final attempt, use Input Fallback
+	        hooks.createFromInputFallback(config);
+	    }
+
+	    hooks.createFromInputFallback = deprecate(
+	        'value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), ' +
+	        'which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are ' +
+	        'discouraged and will be removed in an upcoming major release. Please refer to ' +
+	        'http://momentjs.com/guides/#/warnings/js-date/ for more info.',
+	        function (config) {
+	            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+	        }
+	    );
+
+	    // constant that refers to the ISO standard
+	    hooks.ISO_8601 = function () {};
+
+	    // constant that refers to the RFC 2822 form
+	    hooks.RFC_2822 = function () {};
+
+	    // date from string and format string
+	    function configFromStringAndFormat(config) {
+	        // TODO: Move this to another part of the creation flow to prevent circular deps
+	        if (config._f === hooks.ISO_8601) {
+	            configFromISO(config);
+	            return;
+	        }
+	        if (config._f === hooks.RFC_2822) {
+	            configFromRFC2822(config);
+	            return;
+	        }
+	        config._a = [];
+	        getParsingFlags(config).empty = true;
+
+	        // This array is used to make a Date, either with `new Date` or `Date.UTC`
+	        var string = '' + config._i,
+	            i, parsedInput, tokens, token, skipped,
+	            stringLength = string.length,
+	            totalParsedInputLength = 0;
+
+	        tokens = expandFormat(config._f, config._locale).match(formattingTokens) || [];
+
+	        for (i = 0; i < tokens.length; i++) {
+	            token = tokens[i];
+	            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+	            // console.log('token', token, 'parsedInput', parsedInput,
+	            //         'regex', getParseRegexForToken(token, config));
+	            if (parsedInput) {
+	                skipped = string.substr(0, string.indexOf(parsedInput));
+	                if (skipped.length > 0) {
+	                    getParsingFlags(config).unusedInput.push(skipped);
+	                }
+	                string = string.slice(string.indexOf(parsedInput) + parsedInput.length);
+	                totalParsedInputLength += parsedInput.length;
+	            }
+	            // don't parse if it's not a known token
+	            if (formatTokenFunctions[token]) {
+	                if (parsedInput) {
+	                    getParsingFlags(config).empty = false;
+	                }
+	                else {
+	                    getParsingFlags(config).unusedTokens.push(token);
+	                }
+	                addTimeToArrayFromToken(token, parsedInput, config);
+	            }
+	            else if (config._strict && !parsedInput) {
+	                getParsingFlags(config).unusedTokens.push(token);
+	            }
+	        }
+
+	        // add remaining unparsed input length to the string
+	        getParsingFlags(config).charsLeftOver = stringLength - totalParsedInputLength;
+	        if (string.length > 0) {
+	            getParsingFlags(config).unusedInput.push(string);
+	        }
+
+	        // clear _12h flag if hour is <= 12
+	        if (config._a[HOUR] <= 12 &&
+	            getParsingFlags(config).bigHour === true &&
+	            config._a[HOUR] > 0) {
+	            getParsingFlags(config).bigHour = undefined;
+	        }
+
+	        getParsingFlags(config).parsedDateParts = config._a.slice(0);
+	        getParsingFlags(config).meridiem = config._meridiem;
+	        // handle meridiem
+	        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
+
+	        configFromArray(config);
+	        checkOverflow(config);
+	    }
+
+
+	    function meridiemFixWrap (locale, hour, meridiem) {
+	        var isPm;
+
+	        if (meridiem == null) {
+	            // nothing to do
+	            return hour;
+	        }
+	        if (locale.meridiemHour != null) {
+	            return locale.meridiemHour(hour, meridiem);
+	        } else if (locale.isPM != null) {
+	            // Fallback
+	            isPm = locale.isPM(meridiem);
+	            if (isPm && hour < 12) {
+	                hour += 12;
+	            }
+	            if (!isPm && hour === 12) {
+	                hour = 0;
+	            }
+	            return hour;
+	        } else {
+	            // this is not supposed to happen
+	            return hour;
+	        }
+	    }
+
+	    // date from string and array of format strings
+	    function configFromStringAndArray(config) {
+	        var tempConfig,
+	            bestMoment,
+
+	            scoreToBeat,
+	            i,
+	            currentScore;
+
+	        if (config._f.length === 0) {
+	            getParsingFlags(config).invalidFormat = true;
+	            config._d = new Date(NaN);
+	            return;
+	        }
+
+	        for (i = 0; i < config._f.length; i++) {
+	            currentScore = 0;
+	            tempConfig = copyConfig({}, config);
+	            if (config._useUTC != null) {
+	                tempConfig._useUTC = config._useUTC;
+	            }
+	            tempConfig._f = config._f[i];
+	            configFromStringAndFormat(tempConfig);
+
+	            if (!isValid(tempConfig)) {
+	                continue;
+	            }
+
+	            // if there is any input that was not parsed add a penalty for that format
+	            currentScore += getParsingFlags(tempConfig).charsLeftOver;
+
+	            //or tokens
+	            currentScore += getParsingFlags(tempConfig).unusedTokens.length * 10;
+
+	            getParsingFlags(tempConfig).score = currentScore;
+
+	            if (scoreToBeat == null || currentScore < scoreToBeat) {
+	                scoreToBeat = currentScore;
+	                bestMoment = tempConfig;
+	            }
+	        }
+
+	        extend(config, bestMoment || tempConfig);
+	    }
+
+	    function configFromObject(config) {
+	        if (config._d) {
+	            return;
+	        }
+
+	        var i = normalizeObjectUnits(config._i);
+	        config._a = map([i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond], function (obj) {
+	            return obj && parseInt(obj, 10);
+	        });
+
+	        configFromArray(config);
+	    }
+
+	    function createFromConfig (config) {
+	        var res = new Moment(checkOverflow(prepareConfig(config)));
+	        if (res._nextDay) {
+	            // Adding is smart enough around DST
+	            res.add(1, 'd');
+	            res._nextDay = undefined;
+	        }
+
+	        return res;
+	    }
+
+	    function prepareConfig (config) {
+	        var input = config._i,
+	            format = config._f;
+
+	        config._locale = config._locale || getLocale(config._l);
+
+	        if (input === null || (format === undefined && input === '')) {
+	            return createInvalid({nullInput: true});
+	        }
+
+	        if (typeof input === 'string') {
+	            config._i = input = config._locale.preparse(input);
+	        }
+
+	        if (isMoment(input)) {
+	            return new Moment(checkOverflow(input));
+	        } else if (isDate(input)) {
+	            config._d = input;
+	        } else if (isArray(format)) {
+	            configFromStringAndArray(config);
+	        } else if (format) {
+	            configFromStringAndFormat(config);
+	        }  else {
+	            configFromInput(config);
+	        }
+
+	        if (!isValid(config)) {
+	            config._d = null;
+	        }
+
+	        return config;
+	    }
+
+	    function configFromInput(config) {
+	        var input = config._i;
+	        if (isUndefined(input)) {
+	            config._d = new Date(hooks.now());
+	        } else if (isDate(input)) {
+	            config._d = new Date(input.valueOf());
+	        } else if (typeof input === 'string') {
+	            configFromString(config);
+	        } else if (isArray(input)) {
+	            config._a = map(input.slice(0), function (obj) {
+	                return parseInt(obj, 10);
+	            });
+	            configFromArray(config);
+	        } else if (isObject(input)) {
+	            configFromObject(config);
+	        } else if (isNumber(input)) {
+	            // from milliseconds
+	            config._d = new Date(input);
+	        } else {
+	            hooks.createFromInputFallback(config);
+	        }
+	    }
+
+	    function createLocalOrUTC (input, format, locale, strict, isUTC) {
+	        var c = {};
+
+	        if (locale === true || locale === false) {
+	            strict = locale;
+	            locale = undefined;
+	        }
+
+	        if ((isObject(input) && isObjectEmpty(input)) ||
+	                (isArray(input) && input.length === 0)) {
+	            input = undefined;
+	        }
+	        // object construction must be done this way.
+	        // https://github.com/moment/moment/issues/1423
+	        c._isAMomentObject = true;
+	        c._useUTC = c._isUTC = isUTC;
+	        c._l = locale;
+	        c._i = input;
+	        c._f = format;
+	        c._strict = strict;
+
+	        return createFromConfig(c);
+	    }
+
+	    function createLocal (input, format, locale, strict) {
+	        return createLocalOrUTC(input, format, locale, strict, false);
+	    }
+
+	    var prototypeMin = deprecate(
+	        'moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/',
+	        function () {
+	            var other = createLocal.apply(null, arguments);
+	            if (this.isValid() && other.isValid()) {
+	                return other < this ? this : other;
+	            } else {
+	                return createInvalid();
+	            }
+	        }
+	    );
+
+	    var prototypeMax = deprecate(
+	        'moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/',
+	        function () {
+	            var other = createLocal.apply(null, arguments);
+	            if (this.isValid() && other.isValid()) {
+	                return other > this ? this : other;
+	            } else {
+	                return createInvalid();
+	            }
+	        }
+	    );
+
+	    // Pick a moment m from moments so that m[fn](other) is true for all
+	    // other. This relies on the function fn to be transitive.
+	    //
+	    // moments should either be an array of moment objects or an array, whose
+	    // first element is an array of moment objects.
+	    function pickBy(fn, moments) {
+	        var res, i;
+	        if (moments.length === 1 && isArray(moments[0])) {
+	            moments = moments[0];
+	        }
+	        if (!moments.length) {
+	            return createLocal();
+	        }
+	        res = moments[0];
+	        for (i = 1; i < moments.length; ++i) {
+	            if (!moments[i].isValid() || moments[i][fn](res)) {
+	                res = moments[i];
+	            }
+	        }
+	        return res;
+	    }
+
+	    // TODO: Use [].sort instead?
+	    function min () {
+	        var args = [].slice.call(arguments, 0);
+
+	        return pickBy('isBefore', args);
+	    }
+
+	    function max () {
+	        var args = [].slice.call(arguments, 0);
+
+	        return pickBy('isAfter', args);
+	    }
+
+	    var now = function () {
+	        return Date.now ? Date.now() : +(new Date());
+	    };
+
+	    var ordering = ['year', 'quarter', 'month', 'week', 'day', 'hour', 'minute', 'second', 'millisecond'];
+
+	    function isDurationValid(m) {
+	        for (var key in m) {
+	            if (!(indexOf.call(ordering, key) !== -1 && (m[key] == null || !isNaN(m[key])))) {
+	                return false;
+	            }
+	        }
+
+	        var unitHasDecimal = false;
+	        for (var i = 0; i < ordering.length; ++i) {
+	            if (m[ordering[i]]) {
+	                if (unitHasDecimal) {
+	                    return false; // only allow non-integers for smallest unit
+	                }
+	                if (parseFloat(m[ordering[i]]) !== toInt(m[ordering[i]])) {
+	                    unitHasDecimal = true;
+	                }
+	            }
+	        }
+
+	        return true;
+	    }
+
+	    function isValid$1() {
+	        return this._isValid;
+	    }
+
+	    function createInvalid$1() {
+	        return createDuration(NaN);
+	    }
+
+	    function Duration (duration) {
+	        var normalizedInput = normalizeObjectUnits(duration),
+	            years = normalizedInput.year || 0,
+	            quarters = normalizedInput.quarter || 0,
+	            months = normalizedInput.month || 0,
+	            weeks = normalizedInput.week || 0,
+	            days = normalizedInput.day || 0,
+	            hours = normalizedInput.hour || 0,
+	            minutes = normalizedInput.minute || 0,
+	            seconds = normalizedInput.second || 0,
+	            milliseconds = normalizedInput.millisecond || 0;
+
+	        this._isValid = isDurationValid(normalizedInput);
+
+	        // representation for dateAddRemove
+	        this._milliseconds = +milliseconds +
+	            seconds * 1e3 + // 1000
+	            minutes * 6e4 + // 1000 * 60
+	            hours * 1000 * 60 * 60; //using 1000 * 60 * 60 instead of 36e5 to avoid floating point rounding errors https://github.com/moment/moment/issues/2978
+	        // Because of dateAddRemove treats 24 hours as different from a
+	        // day when working around DST, we need to store them separately
+	        this._days = +days +
+	            weeks * 7;
+	        // It is impossible to translate months into days without knowing
+	        // which months you are are talking about, so we have to store
+	        // it separately.
+	        this._months = +months +
+	            quarters * 3 +
+	            years * 12;
+
+	        this._data = {};
+
+	        this._locale = getLocale();
+
+	        this._bubble();
+	    }
+
+	    function isDuration (obj) {
+	        return obj instanceof Duration;
+	    }
+
+	    function absRound (number) {
+	        if (number < 0) {
+	            return Math.round(-1 * number) * -1;
+	        } else {
+	            return Math.round(number);
+	        }
+	    }
+
+	    // FORMATTING
+
+	    function offset (token, separator) {
+	        addFormatToken(token, 0, 0, function () {
+	            var offset = this.utcOffset();
+	            var sign = '+';
+	            if (offset < 0) {
+	                offset = -offset;
+	                sign = '-';
+	            }
+	            return sign + zeroFill(~~(offset / 60), 2) + separator + zeroFill(~~(offset) % 60, 2);
+	        });
+	    }
+
+	    offset('Z', ':');
+	    offset('ZZ', '');
+
+	    // PARSING
+
+	    addRegexToken('Z',  matchShortOffset);
+	    addRegexToken('ZZ', matchShortOffset);
+	    addParseToken(['Z', 'ZZ'], function (input, array, config) {
+	        config._useUTC = true;
+	        config._tzm = offsetFromString(matchShortOffset, input);
+	    });
+
+	    // HELPERS
+
+	    // timezone chunker
+	    // '+10:00' > ['10',  '00']
+	    // '-1530'  > ['-15', '30']
+	    var chunkOffset = /([\+\-]|\d\d)/gi;
+
+	    function offsetFromString(matcher, string) {
+	        var matches = (string || '').match(matcher);
+
+	        if (matches === null) {
+	            return null;
+	        }
+
+	        var chunk   = matches[matches.length - 1] || [];
+	        var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
+	        var minutes = +(parts[1] * 60) + toInt(parts[2]);
+
+	        return minutes === 0 ?
+	          0 :
+	          parts[0] === '+' ? minutes : -minutes;
+	    }
+
+	    // Return a moment from input, that is local/utc/zone equivalent to model.
+	    function cloneWithOffset(input, model) {
+	        var res, diff;
+	        if (model._isUTC) {
+	            res = model.clone();
+	            diff = (isMoment(input) || isDate(input) ? input.valueOf() : createLocal(input).valueOf()) - res.valueOf();
+	            // Use low-level api, because this fn is low-level api.
+	            res._d.setTime(res._d.valueOf() + diff);
+	            hooks.updateOffset(res, false);
+	            return res;
+	        } else {
+	            return createLocal(input).local();
+	        }
+	    }
+
+	    function getDateOffset (m) {
+	        // On Firefox.24 Date#getTimezoneOffset returns a floating point.
+	        // https://github.com/moment/moment/pull/1871
+	        return -Math.round(m._d.getTimezoneOffset() / 15) * 15;
+	    }
+
+	    // HOOKS
+
+	    // This function will be called whenever a moment is mutated.
+	    // It is intended to keep the offset in sync with the timezone.
+	    hooks.updateOffset = function () {};
+
+	    // MOMENTS
+
+	    // keepLocalTime = true means only change the timezone, without
+	    // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
+	    // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
+	    // +0200, so we adjust the time as needed, to be valid.
+	    //
+	    // Keeping the time actually adds/subtracts (one hour)
+	    // from the actual represented time. That is why we call updateOffset
+	    // a second time. In case it wants us to change the offset again
+	    // _changeInProgress == true case, then we have to adjust, because
+	    // there is no such time in the given timezone.
+	    function getSetOffset (input, keepLocalTime, keepMinutes) {
+	        var offset = this._offset || 0,
+	            localAdjust;
+	        if (!this.isValid()) {
+	            return input != null ? this : NaN;
+	        }
+	        if (input != null) {
+	            if (typeof input === 'string') {
+	                input = offsetFromString(matchShortOffset, input);
+	                if (input === null) {
+	                    return this;
+	                }
+	            } else if (Math.abs(input) < 16 && !keepMinutes) {
+	                input = input * 60;
+	            }
+	            if (!this._isUTC && keepLocalTime) {
+	                localAdjust = getDateOffset(this);
+	            }
+	            this._offset = input;
+	            this._isUTC = true;
+	            if (localAdjust != null) {
+	                this.add(localAdjust, 'm');
+	            }
+	            if (offset !== input) {
+	                if (!keepLocalTime || this._changeInProgress) {
+	                    addSubtract(this, createDuration(input - offset, 'm'), 1, false);
+	                } else if (!this._changeInProgress) {
+	                    this._changeInProgress = true;
+	                    hooks.updateOffset(this, true);
+	                    this._changeInProgress = null;
+	                }
+	            }
+	            return this;
+	        } else {
+	            return this._isUTC ? offset : getDateOffset(this);
+	        }
+	    }
+
+	    function getSetZone (input, keepLocalTime) {
+	        if (input != null) {
+	            if (typeof input !== 'string') {
+	                input = -input;
+	            }
+
+	            this.utcOffset(input, keepLocalTime);
+
+	            return this;
+	        } else {
+	            return -this.utcOffset();
+	        }
+	    }
+
+	    function setOffsetToUTC (keepLocalTime) {
+	        return this.utcOffset(0, keepLocalTime);
+	    }
+
+	    function setOffsetToLocal (keepLocalTime) {
+	        if (this._isUTC) {
+	            this.utcOffset(0, keepLocalTime);
+	            this._isUTC = false;
+
+	            if (keepLocalTime) {
+	                this.subtract(getDateOffset(this), 'm');
+	            }
+	        }
+	        return this;
+	    }
+
+	    function setOffsetToParsedOffset () {
+	        if (this._tzm != null) {
+	            this.utcOffset(this._tzm, false, true);
+	        } else if (typeof this._i === 'string') {
+	            var tZone = offsetFromString(matchOffset, this._i);
+	            if (tZone != null) {
+	                this.utcOffset(tZone);
+	            }
+	            else {
+	                this.utcOffset(0, true);
+	            }
+	        }
+	        return this;
+	    }
+
+	    function hasAlignedHourOffset (input) {
+	        if (!this.isValid()) {
+	            return false;
+	        }
+	        input = input ? createLocal(input).utcOffset() : 0;
+
+	        return (this.utcOffset() - input) % 60 === 0;
+	    }
+
+	    function isDaylightSavingTime () {
+	        return (
+	            this.utcOffset() > this.clone().month(0).utcOffset() ||
+	            this.utcOffset() > this.clone().month(5).utcOffset()
+	        );
+	    }
+
+	    function isDaylightSavingTimeShifted () {
+	        if (!isUndefined(this._isDSTShifted)) {
+	            return this._isDSTShifted;
+	        }
+
+	        var c = {};
+
+	        copyConfig(c, this);
+	        c = prepareConfig(c);
+
+	        if (c._a) {
+	            var other = c._isUTC ? createUTC(c._a) : createLocal(c._a);
+	            this._isDSTShifted = this.isValid() &&
+	                compareArrays(c._a, other.toArray()) > 0;
+	        } else {
+	            this._isDSTShifted = false;
+	        }
+
+	        return this._isDSTShifted;
+	    }
+
+	    function isLocal () {
+	        return this.isValid() ? !this._isUTC : false;
+	    }
+
+	    function isUtcOffset () {
+	        return this.isValid() ? this._isUTC : false;
+	    }
+
+	    function isUtc () {
+	        return this.isValid() ? this._isUTC && this._offset === 0 : false;
+	    }
+
+	    // ASP.NET json date format regex
+	    var aspNetRegex = /^(\-|\+)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)(\.\d*)?)?$/;
+
+	    // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+	    // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
+	    // and further modified to allow for strings containing both week and day
+	    var isoRegex = /^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;
+
+	    function createDuration (input, key) {
+	        var duration = input,
+	            // matching against regexp is expensive, do it on demand
+	            match = null,
+	            sign,
+	            ret,
+	            diffRes;
+
+	        if (isDuration(input)) {
+	            duration = {
+	                ms : input._milliseconds,
+	                d  : input._days,
+	                M  : input._months
+	            };
+	        } else if (isNumber(input)) {
+	            duration = {};
+	            if (key) {
+	                duration[key] = input;
+	            } else {
+	                duration.milliseconds = input;
+	            }
+	        } else if (!!(match = aspNetRegex.exec(input))) {
+	            sign = (match[1] === '-') ? -1 : 1;
+	            duration = {
+	                y  : 0,
+	                d  : toInt(match[DATE])                         * sign,
+	                h  : toInt(match[HOUR])                         * sign,
+	                m  : toInt(match[MINUTE])                       * sign,
+	                s  : toInt(match[SECOND])                       * sign,
+	                ms : toInt(absRound(match[MILLISECOND] * 1000)) * sign // the millisecond decimal point is included in the match
+	            };
+	        } else if (!!(match = isoRegex.exec(input))) {
+	            sign = (match[1] === '-') ? -1 : (match[1] === '+') ? 1 : 1;
+	            duration = {
+	                y : parseIso(match[2], sign),
+	                M : parseIso(match[3], sign),
+	                w : parseIso(match[4], sign),
+	                d : parseIso(match[5], sign),
+	                h : parseIso(match[6], sign),
+	                m : parseIso(match[7], sign),
+	                s : parseIso(match[8], sign)
+	            };
+	        } else if (duration == null) {// checks for null or undefined
+	            duration = {};
+	        } else if (typeof duration === 'object' && ('from' in duration || 'to' in duration)) {
+	            diffRes = momentsDifference(createLocal(duration.from), createLocal(duration.to));
+
+	            duration = {};
+	            duration.ms = diffRes.milliseconds;
+	            duration.M = diffRes.months;
+	        }
+
+	        ret = new Duration(duration);
+
+	        if (isDuration(input) && hasOwnProp(input, '_locale')) {
+	            ret._locale = input._locale;
+	        }
+
+	        return ret;
+	    }
+
+	    createDuration.fn = Duration.prototype;
+	    createDuration.invalid = createInvalid$1;
+
+	    function parseIso (inp, sign) {
+	        // We'd normally use ~~inp for this, but unfortunately it also
+	        // converts floats to ints.
+	        // inp may be undefined, so careful calling replace on it.
+	        var res = inp && parseFloat(inp.replace(',', '.'));
+	        // apply sign while we're at it
+	        return (isNaN(res) ? 0 : res) * sign;
+	    }
+
+	    function positiveMomentsDifference(base, other) {
+	        var res = {milliseconds: 0, months: 0};
+
+	        res.months = other.month() - base.month() +
+	            (other.year() - base.year()) * 12;
+	        if (base.clone().add(res.months, 'M').isAfter(other)) {
+	            --res.months;
+	        }
+
+	        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
+
+	        return res;
+	    }
+
+	    function momentsDifference(base, other) {
+	        var res;
+	        if (!(base.isValid() && other.isValid())) {
+	            return {milliseconds: 0, months: 0};
+	        }
+
+	        other = cloneWithOffset(other, base);
+	        if (base.isBefore(other)) {
+	            res = positiveMomentsDifference(base, other);
+	        } else {
+	            res = positiveMomentsDifference(other, base);
+	            res.milliseconds = -res.milliseconds;
+	            res.months = -res.months;
+	        }
+
+	        return res;
+	    }
+
+	    // TODO: remove 'name' arg after deprecation is removed
+	    function createAdder(direction, name) {
+	        return function (val, period) {
+	            var dur, tmp;
+	            //invert the arguments, but complain about it
+	            if (period !== null && !isNaN(+period)) {
+	                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period). ' +
+	                'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.');
+	                tmp = val; val = period; period = tmp;
+	            }
+
+	            val = typeof val === 'string' ? +val : val;
+	            dur = createDuration(val, period);
+	            addSubtract(this, dur, direction);
+	            return this;
+	        };
+	    }
+
+	    function addSubtract (mom, duration, isAdding, updateOffset) {
+	        var milliseconds = duration._milliseconds,
+	            days = absRound(duration._days),
+	            months = absRound(duration._months);
+
+	        if (!mom.isValid()) {
+	            // No op
+	            return;
+	        }
+
+	        updateOffset = updateOffset == null ? true : updateOffset;
+
+	        if (months) {
+	            setMonth(mom, get(mom, 'Month') + months * isAdding);
+	        }
+	        if (days) {
+	            set$1(mom, 'Date', get(mom, 'Date') + days * isAdding);
+	        }
+	        if (milliseconds) {
+	            mom._d.setTime(mom._d.valueOf() + milliseconds * isAdding);
+	        }
+	        if (updateOffset) {
+	            hooks.updateOffset(mom, days || months);
+	        }
+	    }
+
+	    var add      = createAdder(1, 'add');
+	    var subtract = createAdder(-1, 'subtract');
+
+	    function getCalendarFormat(myMoment, now) {
+	        var diff = myMoment.diff(now, 'days', true);
+	        return diff < -6 ? 'sameElse' :
+	                diff < -1 ? 'lastWeek' :
+	                diff < 0 ? 'lastDay' :
+	                diff < 1 ? 'sameDay' :
+	                diff < 2 ? 'nextDay' :
+	                diff < 7 ? 'nextWeek' : 'sameElse';
+	    }
+
+	    function calendar$1 (time, formats) {
+	        // We want to compare the start of today, vs this.
+	        // Getting start-of-today depends on whether we're local/utc/offset or not.
+	        var now = time || createLocal(),
+	            sod = cloneWithOffset(now, this).startOf('day'),
+	            format = hooks.calendarFormat(this, sod) || 'sameElse';
+
+	        var output = formats && (isFunction(formats[format]) ? formats[format].call(this, now) : formats[format]);
+
+	        return this.format(output || this.localeData().calendar(format, this, createLocal(now)));
+	    }
+
+	    function clone () {
+	        return new Moment(this);
+	    }
+
+	    function isAfter (input, units) {
+	        var localInput = isMoment(input) ? input : createLocal(input);
+	        if (!(this.isValid() && localInput.isValid())) {
+	            return false;
+	        }
+	        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
+	        if (units === 'millisecond') {
+	            return this.valueOf() > localInput.valueOf();
+	        } else {
+	            return localInput.valueOf() < this.clone().startOf(units).valueOf();
+	        }
+	    }
+
+	    function isBefore (input, units) {
+	        var localInput = isMoment(input) ? input : createLocal(input);
+	        if (!(this.isValid() && localInput.isValid())) {
+	            return false;
+	        }
+	        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
+	        if (units === 'millisecond') {
+	            return this.valueOf() < localInput.valueOf();
+	        } else {
+	            return this.clone().endOf(units).valueOf() < localInput.valueOf();
+	        }
+	    }
+
+	    function isBetween (from, to, units, inclusivity) {
+	        inclusivity = inclusivity || '()';
+	        return (inclusivity[0] === '(' ? this.isAfter(from, units) : !this.isBefore(from, units)) &&
+	            (inclusivity[1] === ')' ? this.isBefore(to, units) : !this.isAfter(to, units));
+	    }
+
+	    function isSame (input, units) {
+	        var localInput = isMoment(input) ? input : createLocal(input),
+	            inputMs;
+	        if (!(this.isValid() && localInput.isValid())) {
+	            return false;
+	        }
+	        units = normalizeUnits(units || 'millisecond');
+	        if (units === 'millisecond') {
+	            return this.valueOf() === localInput.valueOf();
+	        } else {
+	            inputMs = localInput.valueOf();
+	            return this.clone().startOf(units).valueOf() <= inputMs && inputMs <= this.clone().endOf(units).valueOf();
+	        }
+	    }
+
+	    function isSameOrAfter (input, units) {
+	        return this.isSame(input, units) || this.isAfter(input,units);
+	    }
+
+	    function isSameOrBefore (input, units) {
+	        return this.isSame(input, units) || this.isBefore(input,units);
+	    }
+
+	    function diff (input, units, asFloat) {
+	        var that,
+	            zoneDelta,
+	            output;
+
+	        if (!this.isValid()) {
+	            return NaN;
+	        }
+
+	        that = cloneWithOffset(input, this);
+
+	        if (!that.isValid()) {
+	            return NaN;
+	        }
+
+	        zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
+
+	        units = normalizeUnits(units);
+
+	        switch (units) {
+	            case 'year': output = monthDiff(this, that) / 12; break;
+	            case 'month': output = monthDiff(this, that); break;
+	            case 'quarter': output = monthDiff(this, that) / 3; break;
+	            case 'second': output = (this - that) / 1e3; break; // 1000
+	            case 'minute': output = (this - that) / 6e4; break; // 1000 * 60
+	            case 'hour': output = (this - that) / 36e5; break; // 1000 * 60 * 60
+	            case 'day': output = (this - that - zoneDelta) / 864e5; break; // 1000 * 60 * 60 * 24, negate dst
+	            case 'week': output = (this - that - zoneDelta) / 6048e5; break; // 1000 * 60 * 60 * 24 * 7, negate dst
+	            default: output = this - that;
+	        }
+
+	        return asFloat ? output : absFloor(output);
+	    }
+
+	    function monthDiff (a, b) {
+	        // difference in months
+	        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
+	            // b is in (anchor - 1 month, anchor + 1 month)
+	            anchor = a.clone().add(wholeMonthDiff, 'months'),
+	            anchor2, adjust;
+
+	        if (b - anchor < 0) {
+	            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+	            // linear across the month
+	            adjust = (b - anchor) / (anchor - anchor2);
+	        } else {
+	            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+	            // linear across the month
+	            adjust = (b - anchor) / (anchor2 - anchor);
+	        }
+
+	        //check for negative zero, return zero if negative zero
+	        return -(wholeMonthDiff + adjust) || 0;
+	    }
+
+	    hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+	    hooks.defaultFormatUtc = 'YYYY-MM-DDTHH:mm:ss[Z]';
+
+	    function toString () {
+	        return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+	    }
+
+	    function toISOString(keepOffset) {
+	        if (!this.isValid()) {
+	            return null;
+	        }
+	        var utc = keepOffset !== true;
+	        var m = utc ? this.clone().utc() : this;
+	        if (m.year() < 0 || m.year() > 9999) {
+	            return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
+	        }
+	        if (isFunction(Date.prototype.toISOString)) {
+	            // native implementation is ~50x faster, use it when we can
+	            if (utc) {
+	                return this.toDate().toISOString();
+	            } else {
+	                return new Date(this.valueOf() + this.utcOffset() * 60 * 1000).toISOString().replace('Z', formatMoment(m, 'Z'));
+	            }
+	        }
+	        return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
+	    }
+
+	    /**
+	     * Return a human readable representation of a moment that can
+	     * also be evaluated to get a new moment which is the same
+	     *
+	     * @link https://nodejs.org/dist/latest/docs/api/util.html#util_custom_inspect_function_on_objects
+	     */
+	    function inspect () {
+	        if (!this.isValid()) {
+	            return 'moment.invalid(/* ' + this._i + ' */)';
+	        }
+	        var func = 'moment';
+	        var zone = '';
+	        if (!this.isLocal()) {
+	            func = this.utcOffset() === 0 ? 'moment.utc' : 'moment.parseZone';
+	            zone = 'Z';
+	        }
+	        var prefix = '[' + func + '("]';
+	        var year = (0 <= this.year() && this.year() <= 9999) ? 'YYYY' : 'YYYYYY';
+	        var datetime = '-MM-DD[T]HH:mm:ss.SSS';
+	        var suffix = zone + '[")]';
+
+	        return this.format(prefix + year + datetime + suffix);
+	    }
+
+	    function format (inputString) {
+	        if (!inputString) {
+	            inputString = this.isUtc() ? hooks.defaultFormatUtc : hooks.defaultFormat;
+	        }
+	        var output = formatMoment(this, inputString);
+	        return this.localeData().postformat(output);
+	    }
+
+	    function from (time, withoutSuffix) {
+	        if (this.isValid() &&
+	                ((isMoment(time) && time.isValid()) ||
+	                 createLocal(time).isValid())) {
+	            return createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+	        } else {
+	            return this.localeData().invalidDate();
+	        }
+	    }
+
+	    function fromNow (withoutSuffix) {
+	        return this.from(createLocal(), withoutSuffix);
+	    }
+
+	    function to (time, withoutSuffix) {
+	        if (this.isValid() &&
+	                ((isMoment(time) && time.isValid()) ||
+	                 createLocal(time).isValid())) {
+	            return createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
+	        } else {
+	            return this.localeData().invalidDate();
+	        }
+	    }
+
+	    function toNow (withoutSuffix) {
+	        return this.to(createLocal(), withoutSuffix);
+	    }
+
+	    // If passed a locale key, it will set the locale for this
+	    // instance.  Otherwise, it will return the locale configuration
+	    // variables for this instance.
+	    function locale (key) {
+	        var newLocaleData;
+
+	        if (key === undefined) {
+	            return this._locale._abbr;
+	        } else {
+	            newLocaleData = getLocale(key);
+	            if (newLocaleData != null) {
+	                this._locale = newLocaleData;
+	            }
+	            return this;
+	        }
+	    }
+
+	    var lang = deprecate(
+	        'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
+	        function (key) {
+	            if (key === undefined) {
+	                return this.localeData();
+	            } else {
+	                return this.locale(key);
+	            }
+	        }
+	    );
+
+	    function localeData () {
+	        return this._locale;
+	    }
+
+	    function startOf (units) {
+	        units = normalizeUnits(units);
+	        // the following switch intentionally omits break keywords
+	        // to utilize falling through the cases.
+	        switch (units) {
+	            case 'year':
+	                this.month(0);
+	                /* falls through */
+	            case 'quarter':
+	            case 'month':
+	                this.date(1);
+	                /* falls through */
+	            case 'week':
+	            case 'isoWeek':
+	            case 'day':
+	            case 'date':
+	                this.hours(0);
+	                /* falls through */
+	            case 'hour':
+	                this.minutes(0);
+	                /* falls through */
+	            case 'minute':
+	                this.seconds(0);
+	                /* falls through */
+	            case 'second':
+	                this.milliseconds(0);
+	        }
+
+	        // weeks are a special case
+	        if (units === 'week') {
+	            this.weekday(0);
+	        }
+	        if (units === 'isoWeek') {
+	            this.isoWeekday(1);
+	        }
+
+	        // quarters are also special
+	        if (units === 'quarter') {
+	            this.month(Math.floor(this.month() / 3) * 3);
+	        }
+
+	        return this;
+	    }
+
+	    function endOf (units) {
+	        units = normalizeUnits(units);
+	        if (units === undefined || units === 'millisecond') {
+	            return this;
+	        }
+
+	        // 'date' is an alias for 'day', so it should be considered as such.
+	        if (units === 'date') {
+	            units = 'day';
+	        }
+
+	        return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+	    }
+
+	    function valueOf () {
+	        return this._d.valueOf() - ((this._offset || 0) * 60000);
+	    }
+
+	    function unix () {
+	        return Math.floor(this.valueOf() / 1000);
+	    }
+
+	    function toDate () {
+	        return new Date(this.valueOf());
+	    }
+
+	    function toArray () {
+	        var m = this;
+	        return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
+	    }
+
+	    function toObject () {
+	        var m = this;
+	        return {
+	            years: m.year(),
+	            months: m.month(),
+	            date: m.date(),
+	            hours: m.hours(),
+	            minutes: m.minutes(),
+	            seconds: m.seconds(),
+	            milliseconds: m.milliseconds()
+	        };
+	    }
+
+	    function toJSON () {
+	        // new Date(NaN).toJSON() === null
+	        return this.isValid() ? this.toISOString() : null;
+	    }
+
+	    function isValid$2 () {
+	        return isValid(this);
+	    }
+
+	    function parsingFlags () {
+	        return extend({}, getParsingFlags(this));
+	    }
+
+	    function invalidAt () {
+	        return getParsingFlags(this).overflow;
+	    }
+
+	    function creationData() {
+	        return {
+	            input: this._i,
+	            format: this._f,
+	            locale: this._locale,
+	            isUTC: this._isUTC,
+	            strict: this._strict
+	        };
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken(0, ['gg', 2], 0, function () {
+	        return this.weekYear() % 100;
+	    });
+
+	    addFormatToken(0, ['GG', 2], 0, function () {
+	        return this.isoWeekYear() % 100;
+	    });
+
+	    function addWeekYearFormatToken (token, getter) {
+	        addFormatToken(0, [token, token.length], 0, getter);
+	    }
+
+	    addWeekYearFormatToken('gggg',     'weekYear');
+	    addWeekYearFormatToken('ggggg',    'weekYear');
+	    addWeekYearFormatToken('GGGG',  'isoWeekYear');
+	    addWeekYearFormatToken('GGGGG', 'isoWeekYear');
+
+	    // ALIASES
+
+	    addUnitAlias('weekYear', 'gg');
+	    addUnitAlias('isoWeekYear', 'GG');
+
+	    // PRIORITY
+
+	    addUnitPriority('weekYear', 1);
+	    addUnitPriority('isoWeekYear', 1);
+
+
+	    // PARSING
+
+	    addRegexToken('G',      matchSigned);
+	    addRegexToken('g',      matchSigned);
+	    addRegexToken('GG',     match1to2, match2);
+	    addRegexToken('gg',     match1to2, match2);
+	    addRegexToken('GGGG',   match1to4, match4);
+	    addRegexToken('gggg',   match1to4, match4);
+	    addRegexToken('GGGGG',  match1to6, match6);
+	    addRegexToken('ggggg',  match1to6, match6);
+
+	    addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
+	        week[token.substr(0, 2)] = toInt(input);
+	    });
+
+	    addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
+	        week[token] = hooks.parseTwoDigitYear(input);
+	    });
+
+	    // MOMENTS
+
+	    function getSetWeekYear (input) {
+	        return getSetWeekYearHelper.call(this,
+	                input,
+	                this.week(),
+	                this.weekday(),
+	                this.localeData()._week.dow,
+	                this.localeData()._week.doy);
+	    }
+
+	    function getSetISOWeekYear (input) {
+	        return getSetWeekYearHelper.call(this,
+	                input, this.isoWeek(), this.isoWeekday(), 1, 4);
+	    }
+
+	    function getISOWeeksInYear () {
+	        return weeksInYear(this.year(), 1, 4);
+	    }
+
+	    function getWeeksInYear () {
+	        var weekInfo = this.localeData()._week;
+	        return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+	    }
+
+	    function getSetWeekYearHelper(input, week, weekday, dow, doy) {
+	        var weeksTarget;
+	        if (input == null) {
+	            return weekOfYear(this, dow, doy).year;
+	        } else {
+	            weeksTarget = weeksInYear(input, dow, doy);
+	            if (week > weeksTarget) {
+	                week = weeksTarget;
+	            }
+	            return setWeekAll.call(this, input, week, weekday, dow, doy);
+	        }
+	    }
+
+	    function setWeekAll(weekYear, week, weekday, dow, doy) {
+	        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy),
+	            date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
+
+	        this.year(date.getUTCFullYear());
+	        this.month(date.getUTCMonth());
+	        this.date(date.getUTCDate());
+	        return this;
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('Q', 0, 'Qo', 'quarter');
+
+	    // ALIASES
+
+	    addUnitAlias('quarter', 'Q');
+
+	    // PRIORITY
+
+	    addUnitPriority('quarter', 7);
+
+	    // PARSING
+
+	    addRegexToken('Q', match1);
+	    addParseToken('Q', function (input, array) {
+	        array[MONTH] = (toInt(input) - 1) * 3;
+	    });
+
+	    // MOMENTS
+
+	    function getSetQuarter (input) {
+	        return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('D', ['DD', 2], 'Do', 'date');
+
+	    // ALIASES
+
+	    addUnitAlias('date', 'D');
+
+	    // PRIORITY
+	    addUnitPriority('date', 9);
+
+	    // PARSING
+
+	    addRegexToken('D',  match1to2);
+	    addRegexToken('DD', match1to2, match2);
+	    addRegexToken('Do', function (isStrict, locale) {
+	        // TODO: Remove "ordinalParse" fallback in next major release.
+	        return isStrict ?
+	          (locale._dayOfMonthOrdinalParse || locale._ordinalParse) :
+	          locale._dayOfMonthOrdinalParseLenient;
+	    });
+
+	    addParseToken(['D', 'DD'], DATE);
+	    addParseToken('Do', function (input, array) {
+	        array[DATE] = toInt(input.match(match1to2)[0]);
+	    });
+
+	    // MOMENTS
+
+	    var getSetDayOfMonth = makeGetSet('Date', true);
+
+	    // FORMATTING
+
+	    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
+
+	    // ALIASES
+
+	    addUnitAlias('dayOfYear', 'DDD');
+
+	    // PRIORITY
+	    addUnitPriority('dayOfYear', 4);
+
+	    // PARSING
+
+	    addRegexToken('DDD',  match1to3);
+	    addRegexToken('DDDD', match3);
+	    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
+	        config._dayOfYear = toInt(input);
+	    });
+
+	    // HELPERS
+
+	    // MOMENTS
+
+	    function getSetDayOfYear (input) {
+	        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
+	        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+	    }
+
+	    // FORMATTING
+
+	    addFormatToken('m', ['mm', 2], 0, 'minute');
+
+	    // ALIASES
+
+	    addUnitAlias('minute', 'm');
+
+	    // PRIORITY
+
+	    addUnitPriority('minute', 14);
+
+	    // PARSING
+
+	    addRegexToken('m',  match1to2);
+	    addRegexToken('mm', match1to2, match2);
+	    addParseToken(['m', 'mm'], MINUTE);
+
+	    // MOMENTS
+
+	    var getSetMinute = makeGetSet('Minutes', false);
+
+	    // FORMATTING
+
+	    addFormatToken('s', ['ss', 2], 0, 'second');
+
+	    // ALIASES
+
+	    addUnitAlias('second', 's');
+
+	    // PRIORITY
+
+	    addUnitPriority('second', 15);
+
+	    // PARSING
+
+	    addRegexToken('s',  match1to2);
+	    addRegexToken('ss', match1to2, match2);
+	    addParseToken(['s', 'ss'], SECOND);
+
+	    // MOMENTS
+
+	    var getSetSecond = makeGetSet('Seconds', false);
+
+	    // FORMATTING
+
+	    addFormatToken('S', 0, 0, function () {
+	        return ~~(this.millisecond() / 100);
+	    });
+
+	    addFormatToken(0, ['SS', 2], 0, function () {
+	        return ~~(this.millisecond() / 10);
+	    });
+
+	    addFormatToken(0, ['SSS', 3], 0, 'millisecond');
+	    addFormatToken(0, ['SSSS', 4], 0, function () {
+	        return this.millisecond() * 10;
+	    });
+	    addFormatToken(0, ['SSSSS', 5], 0, function () {
+	        return this.millisecond() * 100;
+	    });
+	    addFormatToken(0, ['SSSSSS', 6], 0, function () {
+	        return this.millisecond() * 1000;
+	    });
+	    addFormatToken(0, ['SSSSSSS', 7], 0, function () {
+	        return this.millisecond() * 10000;
+	    });
+	    addFormatToken(0, ['SSSSSSSS', 8], 0, function () {
+	        return this.millisecond() * 100000;
+	    });
+	    addFormatToken(0, ['SSSSSSSSS', 9], 0, function () {
+	        return this.millisecond() * 1000000;
+	    });
+
+
+	    // ALIASES
+
+	    addUnitAlias('millisecond', 'ms');
+
+	    // PRIORITY
+
+	    addUnitPriority('millisecond', 16);
+
+	    // PARSING
+
+	    addRegexToken('S',    match1to3, match1);
+	    addRegexToken('SS',   match1to3, match2);
+	    addRegexToken('SSS',  match1to3, match3);
+
+	    var token;
+	    for (token = 'SSSS'; token.length <= 9; token += 'S') {
+	        addRegexToken(token, matchUnsigned);
+	    }
+
+	    function parseMs(input, array) {
+	        array[MILLISECOND] = toInt(('0.' + input) * 1000);
+	    }
+
+	    for (token = 'S'; token.length <= 9; token += 'S') {
+	        addParseToken(token, parseMs);
+	    }
+	    // MOMENTS
+
+	    var getSetMillisecond = makeGetSet('Milliseconds', false);
+
+	    // FORMATTING
+
+	    addFormatToken('z',  0, 0, 'zoneAbbr');
+	    addFormatToken('zz', 0, 0, 'zoneName');
+
+	    // MOMENTS
+
+	    function getZoneAbbr () {
+	        return this._isUTC ? 'UTC' : '';
+	    }
+
+	    function getZoneName () {
+	        return this._isUTC ? 'Coordinated Universal Time' : '';
+	    }
+
+	    var proto = Moment.prototype;
+
+	    proto.add               = add;
+	    proto.calendar          = calendar$1;
+	    proto.clone             = clone;
+	    proto.diff              = diff;
+	    proto.endOf             = endOf;
+	    proto.format            = format;
+	    proto.from              = from;
+	    proto.fromNow           = fromNow;
+	    proto.to                = to;
+	    proto.toNow             = toNow;
+	    proto.get               = stringGet;
+	    proto.invalidAt         = invalidAt;
+	    proto.isAfter           = isAfter;
+	    proto.isBefore          = isBefore;
+	    proto.isBetween         = isBetween;
+	    proto.isSame            = isSame;
+	    proto.isSameOrAfter     = isSameOrAfter;
+	    proto.isSameOrBefore    = isSameOrBefore;
+	    proto.isValid           = isValid$2;
+	    proto.lang              = lang;
+	    proto.locale            = locale;
+	    proto.localeData        = localeData;
+	    proto.max               = prototypeMax;
+	    proto.min               = prototypeMin;
+	    proto.parsingFlags      = parsingFlags;
+	    proto.set               = stringSet;
+	    proto.startOf           = startOf;
+	    proto.subtract          = subtract;
+	    proto.toArray           = toArray;
+	    proto.toObject          = toObject;
+	    proto.toDate            = toDate;
+	    proto.toISOString       = toISOString;
+	    proto.inspect           = inspect;
+	    proto.toJSON            = toJSON;
+	    proto.toString          = toString;
+	    proto.unix              = unix;
+	    proto.valueOf           = valueOf;
+	    proto.creationData      = creationData;
+	    proto.year       = getSetYear;
+	    proto.isLeapYear = getIsLeapYear;
+	    proto.weekYear    = getSetWeekYear;
+	    proto.isoWeekYear = getSetISOWeekYear;
+	    proto.quarter = proto.quarters = getSetQuarter;
+	    proto.month       = getSetMonth;
+	    proto.daysInMonth = getDaysInMonth;
+	    proto.week           = proto.weeks        = getSetWeek;
+	    proto.isoWeek        = proto.isoWeeks     = getSetISOWeek;
+	    proto.weeksInYear    = getWeeksInYear;
+	    proto.isoWeeksInYear = getISOWeeksInYear;
+	    proto.date       = getSetDayOfMonth;
+	    proto.day        = proto.days             = getSetDayOfWeek;
+	    proto.weekday    = getSetLocaleDayOfWeek;
+	    proto.isoWeekday = getSetISODayOfWeek;
+	    proto.dayOfYear  = getSetDayOfYear;
+	    proto.hour = proto.hours = getSetHour;
+	    proto.minute = proto.minutes = getSetMinute;
+	    proto.second = proto.seconds = getSetSecond;
+	    proto.millisecond = proto.milliseconds = getSetMillisecond;
+	    proto.utcOffset            = getSetOffset;
+	    proto.utc                  = setOffsetToUTC;
+	    proto.local                = setOffsetToLocal;
+	    proto.parseZone            = setOffsetToParsedOffset;
+	    proto.hasAlignedHourOffset = hasAlignedHourOffset;
+	    proto.isDST                = isDaylightSavingTime;
+	    proto.isLocal              = isLocal;
+	    proto.isUtcOffset          = isUtcOffset;
+	    proto.isUtc                = isUtc;
+	    proto.isUTC                = isUtc;
+	    proto.zoneAbbr = getZoneAbbr;
+	    proto.zoneName = getZoneName;
+	    proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
+	    proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
+	    proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
+	    proto.zone   = deprecate('moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/', getSetZone);
+	    proto.isDSTShifted = deprecate('isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information', isDaylightSavingTimeShifted);
+
+	    function createUnix (input) {
+	        return createLocal(input * 1000);
+	    }
+
+	    function createInZone () {
+	        return createLocal.apply(null, arguments).parseZone();
+	    }
+
+	    function preParsePostFormat (string) {
+	        return string;
+	    }
+
+	    var proto$1 = Locale.prototype;
+
+	    proto$1.calendar        = calendar;
+	    proto$1.longDateFormat  = longDateFormat;
+	    proto$1.invalidDate     = invalidDate;
+	    proto$1.ordinal         = ordinal;
+	    proto$1.preparse        = preParsePostFormat;
+	    proto$1.postformat      = preParsePostFormat;
+	    proto$1.relativeTime    = relativeTime;
+	    proto$1.pastFuture      = pastFuture;
+	    proto$1.set             = set;
+
+	    proto$1.months            =        localeMonths;
+	    proto$1.monthsShort       =        localeMonthsShort;
+	    proto$1.monthsParse       =        localeMonthsParse;
+	    proto$1.monthsRegex       = monthsRegex;
+	    proto$1.monthsShortRegex  = monthsShortRegex;
+	    proto$1.week = localeWeek;
+	    proto$1.firstDayOfYear = localeFirstDayOfYear;
+	    proto$1.firstDayOfWeek = localeFirstDayOfWeek;
+
+	    proto$1.weekdays       =        localeWeekdays;
+	    proto$1.weekdaysMin    =        localeWeekdaysMin;
+	    proto$1.weekdaysShort  =        localeWeekdaysShort;
+	    proto$1.weekdaysParse  =        localeWeekdaysParse;
+
+	    proto$1.weekdaysRegex       =        weekdaysRegex;
+	    proto$1.weekdaysShortRegex  =        weekdaysShortRegex;
+	    proto$1.weekdaysMinRegex    =        weekdaysMinRegex;
+
+	    proto$1.isPM = localeIsPM;
+	    proto$1.meridiem = localeMeridiem;
+
+	    function get$1 (format, index, field, setter) {
+	        var locale = getLocale();
+	        var utc = createUTC().set(setter, index);
+	        return locale[field](utc, format);
+	    }
+
+	    function listMonthsImpl (format, index, field) {
+	        if (isNumber(format)) {
+	            index = format;
+	            format = undefined;
+	        }
+
+	        format = format || '';
+
+	        if (index != null) {
+	            return get$1(format, index, field, 'month');
+	        }
+
+	        var i;
+	        var out = [];
+	        for (i = 0; i < 12; i++) {
+	            out[i] = get$1(format, i, field, 'month');
+	        }
+	        return out;
+	    }
+
+	    // ()
+	    // (5)
+	    // (fmt, 5)
+	    // (fmt)
+	    // (true)
+	    // (true, 5)
+	    // (true, fmt, 5)
+	    // (true, fmt)
+	    function listWeekdaysImpl (localeSorted, format, index, field) {
+	        if (typeof localeSorted === 'boolean') {
+	            if (isNumber(format)) {
+	                index = format;
+	                format = undefined;
+	            }
+
+	            format = format || '';
+	        } else {
+	            format = localeSorted;
+	            index = format;
+	            localeSorted = false;
+
+	            if (isNumber(format)) {
+	                index = format;
+	                format = undefined;
+	            }
+
+	            format = format || '';
+	        }
+
+	        var locale = getLocale(),
+	            shift = localeSorted ? locale._week.dow : 0;
+
+	        if (index != null) {
+	            return get$1(format, (index + shift) % 7, field, 'day');
+	        }
+
+	        var i;
+	        var out = [];
+	        for (i = 0; i < 7; i++) {
+	            out[i] = get$1(format, (i + shift) % 7, field, 'day');
+	        }
+	        return out;
+	    }
+
+	    function listMonths (format, index) {
+	        return listMonthsImpl(format, index, 'months');
+	    }
+
+	    function listMonthsShort (format, index) {
+	        return listMonthsImpl(format, index, 'monthsShort');
+	    }
+
+	    function listWeekdays (localeSorted, format, index) {
+	        return listWeekdaysImpl(localeSorted, format, index, 'weekdays');
+	    }
+
+	    function listWeekdaysShort (localeSorted, format, index) {
+	        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysShort');
+	    }
+
+	    function listWeekdaysMin (localeSorted, format, index) {
+	        return listWeekdaysImpl(localeSorted, format, index, 'weekdaysMin');
+	    }
+
+	    getSetGlobalLocale('en', {
+	        dayOfMonthOrdinalParse: /\d{1,2}(th|st|nd|rd)/,
+	        ordinal : function (number) {
+	            var b = number % 10,
+	                output = (toInt(number % 100 / 10) === 1) ? 'th' :
+	                (b === 1) ? 'st' :
+	                (b === 2) ? 'nd' :
+	                (b === 3) ? 'rd' : 'th';
+	            return number + output;
+	        }
+	    });
+
+	    // Side effect imports
+
+	    hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', getSetGlobalLocale);
+	    hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', getLocale);
+
+	    var mathAbs = Math.abs;
+
+	    function abs () {
+	        var data           = this._data;
+
+	        this._milliseconds = mathAbs(this._milliseconds);
+	        this._days         = mathAbs(this._days);
+	        this._months       = mathAbs(this._months);
+
+	        data.milliseconds  = mathAbs(data.milliseconds);
+	        data.seconds       = mathAbs(data.seconds);
+	        data.minutes       = mathAbs(data.minutes);
+	        data.hours         = mathAbs(data.hours);
+	        data.months        = mathAbs(data.months);
+	        data.years         = mathAbs(data.years);
+
+	        return this;
+	    }
+
+	    function addSubtract$1 (duration, input, value, direction) {
+	        var other = createDuration(input, value);
+
+	        duration._milliseconds += direction * other._milliseconds;
+	        duration._days         += direction * other._days;
+	        duration._months       += direction * other._months;
+
+	        return duration._bubble();
+	    }
+
+	    // supports only 2.0-style add(1, 's') or add(duration)
+	    function add$1 (input, value) {
+	        return addSubtract$1(this, input, value, 1);
+	    }
+
+	    // supports only 2.0-style subtract(1, 's') or subtract(duration)
+	    function subtract$1 (input, value) {
+	        return addSubtract$1(this, input, value, -1);
+	    }
+
+	    function absCeil (number) {
+	        if (number < 0) {
+	            return Math.floor(number);
+	        } else {
+	            return Math.ceil(number);
+	        }
+	    }
+
+	    function bubble () {
+	        var milliseconds = this._milliseconds;
+	        var days         = this._days;
+	        var months       = this._months;
+	        var data         = this._data;
+	        var seconds, minutes, hours, years, monthsFromDays;
+
+	        // if we have a mix of positive and negative values, bubble down first
+	        // check: https://github.com/moment/moment/issues/2166
+	        if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
+	                (milliseconds <= 0 && days <= 0 && months <= 0))) {
+	            milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
+	            days = 0;
+	            months = 0;
+	        }
+
+	        // The following code bubbles up values, see the tests for
+	        // examples of what that means.
+	        data.milliseconds = milliseconds % 1000;
+
+	        seconds           = absFloor(milliseconds / 1000);
+	        data.seconds      = seconds % 60;
+
+	        minutes           = absFloor(seconds / 60);
+	        data.minutes      = minutes % 60;
+
+	        hours             = absFloor(minutes / 60);
+	        data.hours        = hours % 24;
+
+	        days += absFloor(hours / 24);
+
+	        // convert days to months
+	        monthsFromDays = absFloor(daysToMonths(days));
+	        months += monthsFromDays;
+	        days -= absCeil(monthsToDays(monthsFromDays));
+
+	        // 12 months -> 1 year
+	        years = absFloor(months / 12);
+	        months %= 12;
+
+	        data.days   = days;
+	        data.months = months;
+	        data.years  = years;
+
+	        return this;
+	    }
+
+	    function daysToMonths (days) {
+	        // 400 years have 146097 days (taking into account leap year rules)
+	        // 400 years have 12 months === 4800
+	        return days * 4800 / 146097;
+	    }
+
+	    function monthsToDays (months) {
+	        // the reverse of daysToMonths
+	        return months * 146097 / 4800;
+	    }
+
+	    function as (units) {
+	        if (!this.isValid()) {
+	            return NaN;
+	        }
+	        var days;
+	        var months;
+	        var milliseconds = this._milliseconds;
+
+	        units = normalizeUnits(units);
+
+	        if (units === 'month' || units === 'year') {
+	            days   = this._days   + milliseconds / 864e5;
+	            months = this._months + daysToMonths(days);
+	            return units === 'month' ? months : months / 12;
+	        } else {
+	            // handle milliseconds separately because of floating point math errors (issue #1867)
+	            days = this._days + Math.round(monthsToDays(this._months));
+	            switch (units) {
+	                case 'week'   : return days / 7     + milliseconds / 6048e5;
+	                case 'day'    : return days         + milliseconds / 864e5;
+	                case 'hour'   : return days * 24    + milliseconds / 36e5;
+	                case 'minute' : return days * 1440  + milliseconds / 6e4;
+	                case 'second' : return days * 86400 + milliseconds / 1000;
+	                // Math.floor prevents floating point math errors here
+	                case 'millisecond': return Math.floor(days * 864e5) + milliseconds;
+	                default: throw new Error('Unknown unit ' + units);
+	            }
+	        }
+	    }
+
+	    // TODO: Use this.as('ms')?
+	    function valueOf$1 () {
+	        if (!this.isValid()) {
+	            return NaN;
+	        }
+	        return (
+	            this._milliseconds +
+	            this._days * 864e5 +
+	            (this._months % 12) * 2592e6 +
+	            toInt(this._months / 12) * 31536e6
+	        );
+	    }
+
+	    function makeAs (alias) {
+	        return function () {
+	            return this.as(alias);
+	        };
+	    }
+
+	    var asMilliseconds = makeAs('ms');
+	    var asSeconds      = makeAs('s');
+	    var asMinutes      = makeAs('m');
+	    var asHours        = makeAs('h');
+	    var asDays         = makeAs('d');
+	    var asWeeks        = makeAs('w');
+	    var asMonths       = makeAs('M');
+	    var asYears        = makeAs('y');
+
+	    function clone$1 () {
+	        return createDuration(this);
+	    }
+
+	    function get$2 (units) {
+	        units = normalizeUnits(units);
+	        return this.isValid() ? this[units + 's']() : NaN;
+	    }
+
+	    function makeGetter(name) {
+	        return function () {
+	            return this.isValid() ? this._data[name] : NaN;
+	        };
+	    }
+
+	    var milliseconds = makeGetter('milliseconds');
+	    var seconds      = makeGetter('seconds');
+	    var minutes      = makeGetter('minutes');
+	    var hours        = makeGetter('hours');
+	    var days         = makeGetter('days');
+	    var months       = makeGetter('months');
+	    var years        = makeGetter('years');
+
+	    function weeks () {
+	        return absFloor(this.days() / 7);
+	    }
+
+	    var round = Math.round;
+	    var thresholds = {
+	        ss: 44,         // a few seconds to seconds
+	        s : 45,         // seconds to minute
+	        m : 45,         // minutes to hour
+	        h : 22,         // hours to day
+	        d : 26,         // days to month
+	        M : 11          // months to year
+	    };
+
+	    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
+	    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
+	        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+	    }
+
+	    function relativeTime$1 (posNegDuration, withoutSuffix, locale) {
+	        var duration = createDuration(posNegDuration).abs();
+	        var seconds  = round(duration.as('s'));
+	        var minutes  = round(duration.as('m'));
+	        var hours    = round(duration.as('h'));
+	        var days     = round(duration.as('d'));
+	        var months   = round(duration.as('M'));
+	        var years    = round(duration.as('y'));
+
+	        var a = seconds <= thresholds.ss && ['s', seconds]  ||
+	                seconds < thresholds.s   && ['ss', seconds] ||
+	                minutes <= 1             && ['m']           ||
+	                minutes < thresholds.m   && ['mm', minutes] ||
+	                hours   <= 1             && ['h']           ||
+	                hours   < thresholds.h   && ['hh', hours]   ||
+	                days    <= 1             && ['d']           ||
+	                days    < thresholds.d   && ['dd', days]    ||
+	                months  <= 1             && ['M']           ||
+	                months  < thresholds.M   && ['MM', months]  ||
+	                years   <= 1             && ['y']           || ['yy', years];
+
+	        a[2] = withoutSuffix;
+	        a[3] = +posNegDuration > 0;
+	        a[4] = locale;
+	        return substituteTimeAgo.apply(null, a);
+	    }
+
+	    // This function allows you to set the rounding function for relative time strings
+	    function getSetRelativeTimeRounding (roundingFunction) {
+	        if (roundingFunction === undefined) {
+	            return round;
+	        }
+	        if (typeof(roundingFunction) === 'function') {
+	            round = roundingFunction;
+	            return true;
+	        }
+	        return false;
+	    }
+
+	    // This function allows you to set a threshold for relative time strings
+	    function getSetRelativeTimeThreshold (threshold, limit) {
+	        if (thresholds[threshold] === undefined) {
+	            return false;
+	        }
+	        if (limit === undefined) {
+	            return thresholds[threshold];
+	        }
+	        thresholds[threshold] = limit;
+	        if (threshold === 's') {
+	            thresholds.ss = limit - 1;
+	        }
+	        return true;
+	    }
+
+	    function humanize (withSuffix) {
+	        if (!this.isValid()) {
+	            return this.localeData().invalidDate();
+	        }
+
+	        var locale = this.localeData();
+	        var output = relativeTime$1(this, !withSuffix, locale);
+
+	        if (withSuffix) {
+	            output = locale.pastFuture(+this, output);
+	        }
+
+	        return locale.postformat(output);
+	    }
+
+	    var abs$1 = Math.abs;
+
+	    function sign(x) {
+	        return ((x > 0) - (x < 0)) || +x;
+	    }
+
+	    function toISOString$1() {
+	        // for ISO strings we do not use the normal bubbling rules:
+	        //  * milliseconds bubble up until they become hours
+	        //  * days do not bubble at all
+	        //  * months bubble up until they become years
+	        // This is because there is no context-free conversion between hours and days
+	        // (think of clock changes)
+	        // and also not between days and months (28-31 days per month)
+	        if (!this.isValid()) {
+	            return this.localeData().invalidDate();
+	        }
+
+	        var seconds = abs$1(this._milliseconds) / 1000;
+	        var days         = abs$1(this._days);
+	        var months       = abs$1(this._months);
+	        var minutes, hours, years;
+
+	        // 3600 seconds -> 60 minutes -> 1 hour
+	        minutes           = absFloor(seconds / 60);
+	        hours             = absFloor(minutes / 60);
+	        seconds %= 60;
+	        minutes %= 60;
+
+	        // 12 months -> 1 year
+	        years  = absFloor(months / 12);
+	        months %= 12;
+
+
+	        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+	        var Y = years;
+	        var M = months;
+	        var D = days;
+	        var h = hours;
+	        var m = minutes;
+	        var s = seconds ? seconds.toFixed(3).replace(/\.?0+$/, '') : '';
+	        var total = this.asSeconds();
+
+	        if (!total) {
+	            // this is the same as C#'s (Noda) and python (isodate)...
+	            // but not other JS (goog.date)
+	            return 'P0D';
+	        }
+
+	        var totalSign = total < 0 ? '-' : '';
+	        var ymSign = sign(this._months) !== sign(total) ? '-' : '';
+	        var daysSign = sign(this._days) !== sign(total) ? '-' : '';
+	        var hmsSign = sign(this._milliseconds) !== sign(total) ? '-' : '';
+
+	        return totalSign + 'P' +
+	            (Y ? ymSign + Y + 'Y' : '') +
+	            (M ? ymSign + M + 'M' : '') +
+	            (D ? daysSign + D + 'D' : '') +
+	            ((h || m || s) ? 'T' : '') +
+	            (h ? hmsSign + h + 'H' : '') +
+	            (m ? hmsSign + m + 'M' : '') +
+	            (s ? hmsSign + s + 'S' : '');
+	    }
+
+	    var proto$2 = Duration.prototype;
+
+	    proto$2.isValid        = isValid$1;
+	    proto$2.abs            = abs;
+	    proto$2.add            = add$1;
+	    proto$2.subtract       = subtract$1;
+	    proto$2.as             = as;
+	    proto$2.asMilliseconds = asMilliseconds;
+	    proto$2.asSeconds      = asSeconds;
+	    proto$2.asMinutes      = asMinutes;
+	    proto$2.asHours        = asHours;
+	    proto$2.asDays         = asDays;
+	    proto$2.asWeeks        = asWeeks;
+	    proto$2.asMonths       = asMonths;
+	    proto$2.asYears        = asYears;
+	    proto$2.valueOf        = valueOf$1;
+	    proto$2._bubble        = bubble;
+	    proto$2.clone          = clone$1;
+	    proto$2.get            = get$2;
+	    proto$2.milliseconds   = milliseconds;
+	    proto$2.seconds        = seconds;
+	    proto$2.minutes        = minutes;
+	    proto$2.hours          = hours;
+	    proto$2.days           = days;
+	    proto$2.weeks          = weeks;
+	    proto$2.months         = months;
+	    proto$2.years          = years;
+	    proto$2.humanize       = humanize;
+	    proto$2.toISOString    = toISOString$1;
+	    proto$2.toString       = toISOString$1;
+	    proto$2.toJSON         = toISOString$1;
+	    proto$2.locale         = locale;
+	    proto$2.localeData     = localeData;
+
+	    proto$2.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', toISOString$1);
+	    proto$2.lang = lang;
+
+	    // Side effect imports
+
+	    // FORMATTING
+
+	    addFormatToken('X', 0, 0, 'unix');
+	    addFormatToken('x', 0, 0, 'valueOf');
+
+	    // PARSING
+
+	    addRegexToken('x', matchSigned);
+	    addRegexToken('X', matchTimestamp);
+	    addParseToken('X', function (input, array, config) {
+	        config._d = new Date(parseFloat(input, 10) * 1000);
+	    });
+	    addParseToken('x', function (input, array, config) {
+	        config._d = new Date(toInt(input));
+	    });
+
+	    // Side effect imports
+
+
+	    hooks.version = '2.22.2';
+
+	    setHookCallback(createLocal);
+
+	    hooks.fn                    = proto;
+	    hooks.min                   = min;
+	    hooks.max                   = max;
+	    hooks.now                   = now;
+	    hooks.utc                   = createUTC;
+	    hooks.unix                  = createUnix;
+	    hooks.months                = listMonths;
+	    hooks.isDate                = isDate;
+	    hooks.locale                = getSetGlobalLocale;
+	    hooks.invalid               = createInvalid;
+	    hooks.duration              = createDuration;
+	    hooks.isMoment              = isMoment;
+	    hooks.weekdays              = listWeekdays;
+	    hooks.parseZone             = createInZone;
+	    hooks.localeData            = getLocale;
+	    hooks.isDuration            = isDuration;
+	    hooks.monthsShort           = listMonthsShort;
+	    hooks.weekdaysMin           = listWeekdaysMin;
+	    hooks.defineLocale          = defineLocale;
+	    hooks.updateLocale          = updateLocale;
+	    hooks.locales               = listLocales;
+	    hooks.weekdaysShort         = listWeekdaysShort;
+	    hooks.normalizeUnits        = normalizeUnits;
+	    hooks.relativeTimeRounding  = getSetRelativeTimeRounding;
+	    hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
+	    hooks.calendarFormat        = getCalendarFormat;
+	    hooks.prototype             = proto;
+
+	    // currently HTML5 input type only supports 24-hour formats
+	    hooks.HTML5_FMT = {
+	        DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
+	        DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
+	        DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
+	        DATE: 'YYYY-MM-DD',                             // <input type="date" />
+	        TIME: 'HH:mm',                                  // <input type="time" />
+	        TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
+	        TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
+	        WEEK: 'YYYY-[W]WW',                             // <input type="week" />
+	        MONTH: 'YYYY-MM'                                // <input type="month" />
+	    };
+
+	    return hooks;
+
+	})));
+	});
+
+	const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/sidebar-item.js";
+	class SidebarItem extends react_1 {
+
+	  onClick() {
+	    const { props } = this;
+	    props.history.push('/~chat/' + props.cir);
+	  }
+
+	  render() {
+	    const { props } = this;
+
+	    let unreadElem = !!props.unread ? (
+	      react.createElement('div', {
+	        className: "bg-nice-green dib mr2"  ,
+	        style: { borderRadius: 6, width: 12, height: 12 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
+	      )
+	    ) : (
+	      react.createElement('div', { className: "dib", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 20}})
+	    );
+
+	    let selectedCss = !!props.selected ? 'bg-light-gray' : 'bg-white pointer';
+	    return (
+	      react.createElement('div', { className: 'pa3 ' + selectedCss, onClick: this.onClick.bind(this), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 25}}
+	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 26}}
+	          , unreadElem
+	          , react.createElement('p', { className: "dib body-regular" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}, props.title)
+	        )
+	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 30}}
+	          , react.createElement('p', { className: "dib gray label-small-mono mr3"   , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 31}}, props.ship)
+	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 32}}, props.datetime)
+	        )
+	        , react.createElement('p', { className: "body-regular-400 gray" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 34}}, props.description)
+	      )
+	    )
+	  }
+	}
+
+	const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/sidebar-invite.js";
+	class SidebarInvite extends react_1 {
+
+	  onAccept() {
+	    const { props } = this;
+	    let msg = props.msg;
+	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
+	    if (!cir) {
+	      return;
+	    }
+
+	    this.updateInvite(msg.uid, cir, true);
+	  }
+
+	  onReject() {
+	    const { props } = this;
+	    let msg = props.msg;
+	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
+	    if (!cir) {
+	      return;
+	    }
+	    
+	    this.updateInvite(msg.uid, cir, false);
+	  }
+
+	  updateInvite(uid, cir, resp) {
+	    let tagstring = resp ? "Accept" : "Reject";
+
+	    let msg = {
+	      aud: [`~${window.ship}/i`],
+	      ses: [{
+	        ire: {
+	          top: uid,
+	          sep: {
+	            lin: {
+	              msg: `${tagstring} ${cir}`,
+	              pat: false
+	            }
+	          }
+	        }
+	      }]
+	    };
+
+	    this.props.api.hall({
+	      phrase: msg
+	    });
+
+	    this.props.api.source(cir, resp);
+	  }
+
+	  render() {
+	    const { props } = this;
+
+	    let cir = lodash.get(props, 'msg.sep.inv.cir', false);
+	    let aut = lodash.get(props, 'msg.aut', false);
+
+	    if (!aut || !cir) {
+	      return (
+	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 62}})
+	      );
+	    }
+
+	    cir = cir.split('/')[1];
+
+	    return (
+	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 69}}
+	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 70}}
+	          , react.createElement('div', { className: "dib mr2 bg-nice-green"  , style: {
+	            borderRadius: 12,
+	            width: 12,
+	            height: 12
+	          }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 71}})
+	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 76}}, "Invite to "
+	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 77}}
+	              , cir
+	            )
+	          )
+	        )
+	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 82}}
+	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 83}}, "Hosted by "  , aut)
+	        )
+	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 85}}, "Accept")
+	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 86}}, "Reject")
+	      )
+	    )
+	  }
+	}
+
+	const _jsxFileName$5 = "/Users/logan/Dev/interface/apps/chat/src/js/components/sidebar.js";
+
+	class Sidebar extends react_1 {
+
+	  onClickNew() {
+	    this.props.history.push('/~chat/new');
+	  }
+
+	  render() {
+	    const { props } = this;
+	    let station = props.match.params.ship + '/' + props.match.params.station;
+	    
+	    let sidebarItems = props.circles.map((cir) => {
+	      let msg = props.messagePreviews[cir];
+	      let parsed = !!msg ? getMessageContent(msg.gam) : {
+	        content: 'No messages yet'
+	      };
+	      let aut = !!msg ? msg.gam.aut : '';
+	      let wen = !!msg ? msg.gam.wen : 0;
+	      let datetime = 
+	        !!msg ? 
+	          moment.unix(wen / 1000).from(moment.utc()) 
+	        : '';
+	      return {
+	        msg,
+	        datetime,
+	        wen,
+	        aut,
+	        parsed,
+	        cir,
+	        title: cir.split('/')[1],
+	        selected: station === cir
+	      };
+	    })
+	      .sort((a, b) => {
+	        return b.wen - a.wen;
+	      })
+	      .map((obj) => {
+	        return (
+	          react.createElement(SidebarItem, {
+	            key: obj.cir,
+	            title: obj.title,
+	            description: obj.parsed.content,
+	            cir: obj.cir,
+	            datetime: obj.datetime,
+	            ship: obj.aut,
+	            selected: obj.selected,
+	            unread: props.unreads[obj.cir],
+	            history: props.history, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 48}}
+	          )
+	        );
+	      });
+
+	    let invites = [];
+
+	    let filterInvites = {};
+	    props.invites.forEach((msg) => {
+	      let uid = lodash.get(msg, 'gam.sep.ire.top', false);
+	      if (!uid) {
+	        invites.push(msg.gam);
+	      } else {
+	        filterInvites[uid] = true;
+	      }
+	    });
+
+	    let inviteItems = invites.filter((msg) => {
+	      return !(msg.uid in filterInvites);
+	    }).map((inv) => {
+	      return (
+	        react.createElement(SidebarInvite, { key: inv.uid, msg: inv, api: props.api, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 78}} )
+	      );
+	    });
+
+	    return (
+
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 84}}
+	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 85}}
+	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 86}}, "Chat")
+	          , react.createElement('a', {
+	            className: "dib tr w-50 pointer plus-font"    ,
+	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 87}}, "+")
+	        )
+	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}}
+	          , inviteItems
+	          , sidebarItems
+	        )
+	      )
+	    )
+	  }
+	}
+
+	function _defineProperty(a,t,e){return t in a?Object.defineProperty(a,t,{value:e,enumerable:!0,configurable:!0,writable:!0}):a[t]=e,a}function _objectSpread(a){for(var t=1;t<arguments.length;t++){var e=null!=arguments[t]?arguments[t]:{},r=Object.keys(e);"function"==typeof Object.getOwnPropertySymbols&&(r=r.concat(Object.getOwnPropertySymbols(e).filter(function(a){return Object.getOwnPropertyDescriptor(e,a).enumerable}))),r.forEach(function(t){_defineProperty(a,t,e[t]);});}return a}function _toConsumableArray(a){return _arrayWithoutHoles(a)||_iterableToArray(a)||_nonIterableSpread()}function _arrayWithoutHoles(a){if(Array.isArray(a)){for(var t=0,e=new Array(a.length);t<a.length;t++)e[t]=a[t];return e}}function _iterableToArray(a){if(Symbol.iterator in Object(a)||"[object Arguments]"===Object.prototype.toString.call(a))return Array.from(a)}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function createCommonjsModule$1(a,t){return t={exports:{}},a(t,t.exports),t.exports}function getRawTag(a){var t=hasOwnProperty$1.call(a,symToStringTag$1),e=a[symToStringTag$1];try{a[symToStringTag$1]=void 0;var r=!0;}catch(a){}var b=nativeObjectToString.call(a);return r&&(t?a[symToStringTag$1]=e:delete a[symToStringTag$1]),b}function objectToString(a){return nativeObjectToString$1.call(a)}function baseGetTag(a){return null==a?void 0===a?undefinedTag:nullTag:symToStringTag&&symToStringTag in Object(a)?_getRawTag(a):_objectToString(a)}function isObjectLike(a){return null!=a&&"object"==typeof a}function isSymbol(a){return "symbol"==typeof a||isObjectLike_1(a)&&_baseGetTag(a)==symbolTag}function isKey(a,t){if(isArray_1(a))return !1;var e=typeof a;return !("number"!=e&&"symbol"!=e&&"boolean"!=e&&null!=a&&!isSymbol_1(a))||(reIsPlainProp.test(a)||!reIsDeepProp.test(a)||null!=t&&a in Object(t))}function isObject(a){var t=typeof a;return null!=a&&("object"==t||"function"==t)}function isFunction(a){if(!isObject_1(a))return !1;var t=_baseGetTag(a);return t==funcTag||t==genTag||t==asyncTag||t==proxyTag}function isMasked(a){return !!maskSrcKey&&maskSrcKey in a}function toSource(a){if(null!=a){try{return funcToString$1.call(a)}catch(a){}try{return a+""}catch(a){}}return ""}function baseIsNative(a){return !(!isObject_1(a)||_isMasked(a))&&(isFunction_1(a)?reIsNative:reIsHostCtor).test(_toSource(a))}function getValue(a,t){return null==a?void 0:a[t]}function getNative(a,t){var e=_getValue(a,t);return _baseIsNative(e)?e:void 0}function hashClear(){this.__data__=_nativeCreate?_nativeCreate(null):{},this.size=0;}function hashDelete(a){var t=this.has(a)&&delete this.__data__[a];return this.size-=t?1:0,t}function hashGet(a){var t=this.__data__;if(_nativeCreate){var e=t[a];return e===HASH_UNDEFINED?void 0:e}return hasOwnProperty$2.call(t,a)?t[a]:void 0}function hashHas(a){var t=this.__data__;return _nativeCreate?void 0!==t[a]:hasOwnProperty$3.call(t,a)}function hashSet(a,t){var e=this.__data__;return this.size+=this.has(a)?0:1,e[a]=_nativeCreate&&void 0===t?HASH_UNDEFINED$1:t,this}function Hash(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function listCacheClear(){this.__data__=[],this.size=0;}function eq(a,t){return a===t||a!==a&&t!==t}function assocIndexOf(a,t){for(var e=a.length;e--;)if(eq_1(a[e][0],t))return e;return -1}function listCacheDelete(a){var t=this.__data__,e=_assocIndexOf(t,a);return !(e<0)&&(e==t.length-1?t.pop():splice.call(t,e,1),--this.size,!0)}function listCacheGet(a){var t=this.__data__,e=_assocIndexOf(t,a);return e<0?void 0:t[e][1]}function listCacheHas(a){return _assocIndexOf(this.__data__,a)>-1}function listCacheSet(a,t){var e=this.__data__,r=_assocIndexOf(e,a);return r<0?(++this.size,e.push([a,t])):e[r][1]=t,this}function ListCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function mapCacheClear(){this.size=0,this.__data__={hash:new _Hash,map:new(_Map||_ListCache),string:new _Hash};}function isKeyable(a){var t=typeof a;return "string"==t||"number"==t||"symbol"==t||"boolean"==t?"__proto__"!==a:null===a}function getMapData(a,t){var e=a.__data__;return _isKeyable(t)?e["string"==typeof t?"string":"hash"]:e.map}function mapCacheDelete(a){var t=_getMapData(this,a).delete(a);return this.size-=t?1:0,t}function mapCacheGet(a){return _getMapData(this,a).get(a)}function mapCacheHas(a){return _getMapData(this,a).has(a)}function mapCacheSet(a,t){var e=_getMapData(this,a),r=e.size;return e.set(a,t),this.size+=e.size==r?0:1,this}function MapCache(a){var t=-1,e=null==a?0:a.length;for(this.clear();++t<e;){var r=a[t];this.set(r[0],r[1]);}}function memoize(a,t){if("function"!=typeof a||null!=t&&"function"!=typeof t)throw new TypeError(FUNC_ERROR_TEXT);var e=function(){var r=arguments,b=t?t.apply(this,r):r[0],s=e.cache;if(s.has(b))return s.get(b);var d=a.apply(this,r);return e.cache=s.set(b,d)||s,d};return e.cache=new(memoize.Cache||_MapCache),e}function memoizeCapped(a){var t=memoize_1(a,function(a){return e.size===MAX_MEMOIZE_SIZE&&e.clear(),a}),e=t.cache;return t}function arrayMap(a,t){for(var e=-1,r=null==a?0:a.length,b=Array(r);++e<r;)b[e]=t(a[e],e,a);return b}function baseToString(a){if("string"==typeof a)return a;if(isArray_1(a))return _arrayMap(a,baseToString)+"";if(isSymbol_1(a))return symbolToString?symbolToString.call(a):"";var t=a+"";return "0"==t&&1/a==-INFINITY?"-0":t}function toString$1(a){return null==a?"":_baseToString(a)}function castPath(a,t){return isArray_1(a)?a:_isKey(a,t)?[a]:_stringToPath(toString_1(a))}function toKey(a){if("string"==typeof a||isSymbol_1(a))return a;var t=a+"";return "0"==t&&1/a==-INFINITY$1?"-0":t}function baseGet(a,t){for(var e=0,r=(t=_castPath(t,a)).length;null!=a&&e<r;)a=a[_toKey(t[e++])];return e&&e==r?a:void 0}function get(a,t,e){var r=null==a?void 0:_baseGet(a,t);return void 0===r?e:r}function stackClear(){this.__data__=new _ListCache,this.size=0;}function stackDelete(a){var t=this.__data__,e=t.delete(a);return this.size=t.size,e}function stackGet(a){return this.__data__.get(a)}function stackHas(a){return this.__data__.has(a)}function stackSet(a,t){var e=this.__data__;if(e instanceof _ListCache){var r=e.__data__;if(!_Map||r.length<LARGE_ARRAY_SIZE-1)return r.push([a,t]),this.size=++e.size,this;e=this.__data__=new _MapCache(r);}return e.set(a,t),this.size=e.size,this}function Stack(a){var t=this.__data__=new _ListCache(a);this.size=t.size;}function arrayEach(a,t){for(var e=-1,r=null==a?0:a.length;++e<r&&!1!==t(a[e],e,a););return a}function baseAssignValue(a,t,e){"__proto__"==t&&_defineProperty$1?_defineProperty$1(a,t,{configurable:!0,enumerable:!0,value:e,writable:!0}):a[t]=e;}function assignValue(a,t,e){var r=a[t];hasOwnProperty$4.call(a,t)&&eq_1(r,e)&&(void 0!==e||t in a)||_baseAssignValue(a,t,e);}function copyObject(a,t,e,r){var b=!e;e||(e={});for(var s=-1,d=t.length;++s<d;){var c=t[s],o=r?r(e[c],a[c],c,e,a):void 0;void 0===o&&(o=a[c]),b?_baseAssignValue(e,c,o):_assignValue(e,c,o);}return e}function baseTimes(a,t){for(var e=-1,r=Array(a);++e<a;)r[e]=t(e);return r}function baseIsArguments(a){return isObjectLike_1(a)&&_baseGetTag(a)==argsTag$1}function stubFalse(){return !1}function isIndex(a,t){var e=typeof a;return !!(t=null==t?MAX_SAFE_INTEGER:t)&&("number"==e||"symbol"!=e&&reIsUint.test(a))&&a>-1&&a%1==0&&a<t}function isLength(a){return "number"==typeof a&&a>-1&&a%1==0&&a<=MAX_SAFE_INTEGER$1}function baseIsTypedArray(a){return isObjectLike_1(a)&&isLength_1(a.length)&&!!typedArrayTags[_baseGetTag(a)]}function baseUnary(a){return function(t){return a(t)}}function arrayLikeKeys(a,t){var e=isArray_1(a),r=!e&&isArguments_1(a),b=!e&&!r&&isBuffer_1(a),s=!e&&!r&&!b&&isTypedArray_1(a),d=e||r||b||s,c=d?_baseTimes(a.length,String):[],o=c.length;for(var n in a)!t&&!hasOwnProperty$5.call(a,n)||d&&("length"==n||b&&("offset"==n||"parent"==n)||s&&("buffer"==n||"byteLength"==n||"byteOffset"==n)||_isIndex(n,o))||c.push(n);return c}function isPrototype(a){var t=a&&a.constructor;return a===("function"==typeof t&&t.prototype||objectProto$9)}function overArg(a,t){return function(e){return a(t(e))}}function baseKeys(a){if(!_isPrototype(a))return _nativeKeys(a);var t=[];for(var e in Object(a))hasOwnProperty$7.call(a,e)&&"constructor"!=e&&t.push(e);return t}function isArrayLike(a){return null!=a&&isLength_1(a.length)&&!isFunction_1(a)}function keys(a){return isArrayLike_1(a)?_arrayLikeKeys(a):_baseKeys(a)}function baseAssign(a,t){return a&&_copyObject(t,keys_1(t),a)}function nativeKeysIn(a){var t=[];if(null!=a)for(var e in Object(a))t.push(e);return t}function baseKeysIn(a){if(!isObject_1(a))return _nativeKeysIn(a);var t=_isPrototype(a),e=[];for(var r in a)("constructor"!=r||!t&&hasOwnProperty$8.call(a,r))&&e.push(r);return e}function keysIn$1(a){return isArrayLike_1(a)?_arrayLikeKeys(a,!0):_baseKeysIn(a)}function baseAssignIn(a,t){return a&&_copyObject(t,keysIn_1(t),a)}function copyArray(a,t){var e=-1,r=a.length;for(t||(t=Array(r));++e<r;)t[e]=a[e];return t}function arrayFilter(a,t){for(var e=-1,r=null==a?0:a.length,b=0,s=[];++e<r;){var d=a[e];t(d,e,a)&&(s[b++]=d);}return s}function stubArray(){return []}function copySymbols(a,t){return _copyObject(a,_getSymbols(a),t)}function arrayPush(a,t){for(var e=-1,r=t.length,b=a.length;++e<r;)a[b+e]=t[e];return a}function copySymbolsIn(a,t){return _copyObject(a,_getSymbolsIn(a),t)}function baseGetAllKeys(a,t,e){var r=t(a);return isArray_1(a)?r:_arrayPush(r,e(a))}function getAllKeys(a){return _baseGetAllKeys(a,keys_1,_getSymbols)}function getAllKeysIn(a){return _baseGetAllKeys(a,keysIn_1,_getSymbolsIn)}function initCloneArray(a){var t=a.length,e=new a.constructor(t);return t&&"string"==typeof a[0]&&hasOwnProperty$9.call(a,"index")&&(e.index=a.index,e.input=a.input),e}function cloneArrayBuffer(a){var t=new a.constructor(a.byteLength);return new _Uint8Array(t).set(new _Uint8Array(a)),t}function cloneDataView(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.byteLength)}function cloneRegExp(a){var t=new a.constructor(a.source,reFlags.exec(a));return t.lastIndex=a.lastIndex,t}function cloneSymbol(a){return symbolValueOf?Object(symbolValueOf.call(a)):{}}function cloneTypedArray(a,t){var e=t?_cloneArrayBuffer(a.buffer):a.buffer;return new a.constructor(e,a.byteOffset,a.length)}function initCloneByTag(a,t,e){var r=a.constructor;switch(t){case arrayBufferTag$2:return _cloneArrayBuffer(a);case boolTag$2:case dateTag$2:return new r(+a);case dataViewTag$3:return _cloneDataView(a,e);case float32Tag$2:case float64Tag$2:case int8Tag$2:case int16Tag$2:case int32Tag$2:case uint8Tag$2:case uint8ClampedTag$2:case uint16Tag$2:case uint32Tag$2:return _cloneTypedArray(a,e);case mapTag$3:return new r;case numberTag$2:case stringTag$2:return new r(a);case regexpTag$2:return _cloneRegExp(a);case setTag$3:return new r;case symbolTag$2:return _cloneSymbol(a)}}function initCloneObject(a){return "function"!=typeof a.constructor||_isPrototype(a)?{}:_baseCreate(_getPrototype(a))}function baseIsMap(a){return isObjectLike_1(a)&&_getTag(a)==mapTag$4}function baseIsSet(a){return isObjectLike_1(a)&&_getTag(a)==setTag$4}function baseClone(a,t,e,r,b,s){var d,c=t&CLONE_DEEP_FLAG$1,o=t&CLONE_FLAT_FLAG,n=t&CLONE_SYMBOLS_FLAG$1;if(e&&(d=b?e(a,r,b,s):e(a)),void 0!==d)return d;if(!isObject_1(a))return a;var i=isArray_1(a);if(i){if(d=_initCloneArray(a),!c)return _copyArray(a,d)}else{var f=_getTag(a),l=f==funcTag$1||f==genTag$1;if(isBuffer_1(a))return _cloneBuffer(a,c);if(f==objectTag||f==argsTag||l&&!b){if(d=o||l?{}:_initCloneObject(a),!c)return o?_copySymbolsIn(a,_baseAssignIn(d,a)):_copySymbols(a,_baseAssign(d,a))}else{if(!cloneableTags[f])return b?a:{};d=_initCloneByTag(a,f,c);}}s||(s=new _Stack);var g=s.get(a);if(g)return g;if(s.set(a,d),isSet_1(a))return a.forEach(function(r){d.add(baseClone(r,t,e,r,a,s));}),d;if(isMap_1(a))return a.forEach(function(r,b){d.set(b,baseClone(r,t,e,b,a,s));}),d;var m=n?o?_getAllKeysIn:_getAllKeys:o?keysIn:keys_1,h=i?void 0:m(a);return _arrayEach(h||a,function(r,b){h&&(r=a[b=r]),_assignValue(d,b,baseClone(r,t,e,b,a,s));}),d}function cloneDeep(a){return _baseClone(a,CLONE_DEEP_FLAG|CLONE_SYMBOLS_FLAG)}function isUndefined(a){return void 0===a}function isString(a){return "string"==typeof a||!isArray_1(a)&&isObjectLike_1(a)&&_baseGetTag(a)==stringTag$3}function isUndefined$1(a){return void 0===a}function translate(a){return {a:1,c:0,e:a,b:0,d:1,f:arguments.length>1&&void 0!==arguments[1]?arguments[1]:0}}function _toConsumableArray$1(a){if(Array.isArray(a)){for(var t=0,e=Array(a.length);t<a.length;t++)e[t]=a[t];return e}return Array.from(a)}function _toArray$1(a){return Array.isArray(a)?a:Array.from(a)}function transform(){for(var a=arguments.length,t=Array(a),e=0;e<a;e++)t[e]=arguments[e];var r=function(a,t){return {a:a.a*t.a+a.c*t.b,c:a.a*t.c+a.c*t.d,e:a.a*t.e+a.c*t.f+a.e,b:a.b*t.a+a.d*t.b,d:a.b*t.c+a.d*t.d,f:a.b*t.e+a.d*t.f+a.f}};switch((t=Array.isArray(t[0])?t[0]:t).length){case 0:throw new Error("no matrices provided");case 1:return t[0];case 2:return r(t[0],t[1]);default:var b=_toArray$1(t),s=b[0],d=b[1],c=b.slice(2),o=r(s,d);return transform.apply(void 0,[o].concat(_toConsumableArray$1(c)))}}function scale(a){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:void 0;return isUndefined$1(t)&&(t=a),{a:a,c:0,e:0,b:0,d:t,f:0}}function toSVG(a){return toString$2(a)}function toString$2(a){return "matrix("+a.a+","+a.b+","+a.c+","+a.d+","+a.e+","+a.f+")"}var isArray$1=Array.isArray,isArray_1=isArray$1,commonjsGlobal$1="undefined"!=typeof window?window:"undefined"!=typeof global$2?global$2:"undefined"!=typeof self?self:{},freeGlobal="object"==typeof commonjsGlobal$1&&commonjsGlobal$1&&commonjsGlobal$1.Object===Object&&commonjsGlobal$1,_freeGlobal=freeGlobal,freeSelf="object"==typeof self&&self&&self.Object===Object&&self,root=_freeGlobal||freeSelf||Function("return this")(),_root=root,Symbol$1=_root.Symbol,_Symbol=Symbol$1,objectProto=Object.prototype,hasOwnProperty$1=objectProto.hasOwnProperty,nativeObjectToString=objectProto.toString,symToStringTag$1=_Symbol?_Symbol.toStringTag:void 0,_getRawTag=getRawTag,objectProto$1=Object.prototype,nativeObjectToString$1=objectProto$1.toString,_objectToString=objectToString,nullTag="[object Null]",undefinedTag="[object Undefined]",symToStringTag=_Symbol?_Symbol.toStringTag:void 0,_baseGetTag=baseGetTag,isObjectLike_1=isObjectLike,symbolTag="[object Symbol]",isSymbol_1=isSymbol,reIsDeepProp=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,reIsPlainProp=/^\w*$/,_isKey=isKey,isObject_1=isObject,asyncTag="[object AsyncFunction]",funcTag="[object Function]",genTag="[object GeneratorFunction]",proxyTag="[object Proxy]",isFunction_1=isFunction,coreJsData=_root["__core-js_shared__"],_coreJsData=coreJsData,maskSrcKey=function(){var a=/[^.]+$/.exec(_coreJsData&&_coreJsData.keys&&_coreJsData.keys.IE_PROTO||"");return a?"Symbol(src)_1."+a:""}(),_isMasked=isMasked,funcProto$1=Function.prototype,funcToString$1=funcProto$1.toString,_toSource=toSource,reRegExpChar=/[\\^$.*+?()[\]{}|]/g,reIsHostCtor=/^\[object .+?Constructor\]$/,funcProto=Function.prototype,objectProto$2=Object.prototype,funcToString=funcProto.toString,hasOwnProperty$1$1=objectProto$2.hasOwnProperty,reIsNative=RegExp("^"+funcToString.call(hasOwnProperty$1$1).replace(reRegExpChar,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),_baseIsNative=baseIsNative,_getValue=getValue,_getNative=getNative,nativeCreate=_getNative(Object,"create"),_nativeCreate=nativeCreate,_hashClear=hashClear,_hashDelete=hashDelete,HASH_UNDEFINED="__lodash_hash_undefined__",objectProto$3=Object.prototype,hasOwnProperty$2=objectProto$3.hasOwnProperty,_hashGet=hashGet,objectProto$4=Object.prototype,hasOwnProperty$3=objectProto$4.hasOwnProperty,_hashHas=hashHas,HASH_UNDEFINED$1="__lodash_hash_undefined__",_hashSet=hashSet;Hash.prototype.clear=_hashClear,Hash.prototype.delete=_hashDelete,Hash.prototype.get=_hashGet,Hash.prototype.has=_hashHas,Hash.prototype.set=_hashSet;var _Hash=Hash,_listCacheClear=listCacheClear,eq_1=eq,_assocIndexOf=assocIndexOf,arrayProto=Array.prototype,splice=arrayProto.splice,_listCacheDelete=listCacheDelete,_listCacheGet=listCacheGet,_listCacheHas=listCacheHas,_listCacheSet=listCacheSet;ListCache.prototype.clear=_listCacheClear,ListCache.prototype.delete=_listCacheDelete,ListCache.prototype.get=_listCacheGet,ListCache.prototype.has=_listCacheHas,ListCache.prototype.set=_listCacheSet;var _ListCache=ListCache,Map$1=_getNative(_root,"Map"),_Map=Map$1,_mapCacheClear=mapCacheClear,_isKeyable=isKeyable,_getMapData=getMapData,_mapCacheDelete=mapCacheDelete,_mapCacheGet=mapCacheGet,_mapCacheHas=mapCacheHas,_mapCacheSet=mapCacheSet;MapCache.prototype.clear=_mapCacheClear,MapCache.prototype.delete=_mapCacheDelete,MapCache.prototype.get=_mapCacheGet,MapCache.prototype.has=_mapCacheHas,MapCache.prototype.set=_mapCacheSet;var _MapCache=MapCache,FUNC_ERROR_TEXT="Expected a function";memoize.Cache=_MapCache;var memoize_1=memoize,MAX_MEMOIZE_SIZE=500,_memoizeCapped=memoizeCapped,rePropName=/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,reEscapeChar=/\\(\\)?/g,stringToPath=_memoizeCapped(function(a){var t=[];return 46===a.charCodeAt(0)&&t.push(""),a.replace(rePropName,function(a,e,r,b){t.push(r?b.replace(reEscapeChar,"$1"):e||a);}),t}),_stringToPath=stringToPath,_arrayMap=arrayMap,INFINITY=1/0,symbolProto=_Symbol?_Symbol.prototype:void 0,symbolToString=symbolProto?symbolProto.toString:void 0,_baseToString=baseToString,toString_1=toString$1,_castPath=castPath,INFINITY$1=1/0,_toKey=toKey,_baseGet=baseGet,get_1$1=get,_stackClear=stackClear,_stackDelete=stackDelete,_stackGet=stackGet,_stackHas=stackHas,LARGE_ARRAY_SIZE=200,_stackSet=stackSet;Stack.prototype.clear=_stackClear,Stack.prototype.delete=_stackDelete,Stack.prototype.get=_stackGet,Stack.prototype.has=_stackHas,Stack.prototype.set=_stackSet;var _Stack=Stack,_arrayEach=arrayEach,defineProperty=function(){try{var a=_getNative(Object,"defineProperty");return a({},"",{}),a}catch(a){}}(),_defineProperty$1=defineProperty,_baseAssignValue=baseAssignValue,objectProto$5=Object.prototype,hasOwnProperty$4=objectProto$5.hasOwnProperty,_assignValue=assignValue,_copyObject=copyObject,_baseTimes=baseTimes,argsTag$1="[object Arguments]",_baseIsArguments=baseIsArguments,objectProto$7=Object.prototype,hasOwnProperty$6=objectProto$7.hasOwnProperty,propertyIsEnumerable=objectProto$7.propertyIsEnumerable,isArguments=_baseIsArguments(function(){return arguments}())?_baseIsArguments:function(a){return isObjectLike_1(a)&&hasOwnProperty$6.call(a,"callee")&&!propertyIsEnumerable.call(a,"callee")},isArguments_1=isArguments,stubFalse_1=stubFalse,isBuffer_1=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e?_root.Buffer:void 0,s=(b?b.isBuffer:void 0)||stubFalse_1;a.exports=s;}),MAX_SAFE_INTEGER=9007199254740991,reIsUint=/^(?:0|[1-9]\d*)$/,_isIndex=isIndex,MAX_SAFE_INTEGER$1=9007199254740991,isLength_1=isLength,argsTag$2="[object Arguments]",arrayTag$1="[object Array]",boolTag$1="[object Boolean]",dateTag$1="[object Date]",errorTag$1="[object Error]",funcTag$2="[object Function]",mapTag$1="[object Map]",numberTag$1="[object Number]",objectTag$1="[object Object]",regexpTag$1="[object RegExp]",setTag$1="[object Set]",stringTag$1="[object String]",weakMapTag$1="[object WeakMap]",arrayBufferTag$1="[object ArrayBuffer]",dataViewTag$1="[object DataView]",float32Tag$1="[object Float32Array]",float64Tag$1="[object Float64Array]",int8Tag$1="[object Int8Array]",int16Tag$1="[object Int16Array]",int32Tag$1="[object Int32Array]",uint8Tag$1="[object Uint8Array]",uint8ClampedTag$1="[object Uint8ClampedArray]",uint16Tag$1="[object Uint16Array]",uint32Tag$1="[object Uint32Array]",typedArrayTags={};typedArrayTags[float32Tag$1]=typedArrayTags[float64Tag$1]=typedArrayTags[int8Tag$1]=typedArrayTags[int16Tag$1]=typedArrayTags[int32Tag$1]=typedArrayTags[uint8Tag$1]=typedArrayTags[uint8ClampedTag$1]=typedArrayTags[uint16Tag$1]=typedArrayTags[uint32Tag$1]=!0,typedArrayTags[argsTag$2]=typedArrayTags[arrayTag$1]=typedArrayTags[arrayBufferTag$1]=typedArrayTags[boolTag$1]=typedArrayTags[dataViewTag$1]=typedArrayTags[dateTag$1]=typedArrayTags[errorTag$1]=typedArrayTags[funcTag$2]=typedArrayTags[mapTag$1]=typedArrayTags[numberTag$1]=typedArrayTags[objectTag$1]=typedArrayTags[regexpTag$1]=typedArrayTags[setTag$1]=typedArrayTags[stringTag$1]=typedArrayTags[weakMapTag$1]=!1;var _baseIsTypedArray=baseIsTypedArray,_baseUnary=baseUnary,_nodeUtil=createCommonjsModule$1(function(a,t){var e=t&&!t.nodeType&&t,r=e&&!0&&a&&!a.nodeType&&a,b=r&&r.exports===e&&_freeGlobal.process,s=function(){try{var a=r&&r.require&&r.require("util").types;return a||b&&b.binding&&b.binding("util")}catch(a){}}();a.exports=s;}),nodeIsTypedArray=_nodeUtil&&_nodeUtil.isTypedArray,isTypedArray=nodeIsTypedArray?_baseUnary(nodeIsTypedArray):_baseIsTypedArray,isTypedArray_1=isTypedArray,objectProto$6=Object.prototype,hasOwnProperty$5=objectProto$6.hasOwnProperty,_arrayLikeKeys=arrayLikeKeys,objectProto$9=Object.prototype,_isPrototype=isPrototype,_overArg=overArg,nativeKeys=_overArg(Object.keys,Object),_nativeKeys=nativeKeys,objectProto$8=Object.prototype,hasOwnProperty$7=objectProto$8.hasOwnProperty,_baseKeys=baseKeys,isArrayLike_1=isArrayLike,keys_1=keys,_baseAssign=baseAssign,_nativeKeysIn=nativeKeysIn,objectProto$10=Object.prototype,hasOwnProperty$8=objectProto$10.hasOwnProperty,_baseKeysIn=baseKeysIn,keysIn_1=keysIn$1,_baseAssignIn=baseAssignIn,_cloneBuffer=createCommonjsModule$1(function(a,t){function e(a,t){if(t)return a.slice();var e=a.length,r=d?d(e):new a.constructor(e);return a.copy(r),r}var r=t&&!t.nodeType&&t,b=r&&!0&&a&&!a.nodeType&&a,s=b&&b.exports===r?_root.Buffer:void 0,d=s?s.allocUnsafe:void 0;a.exports=e;}),_copyArray=copyArray,_arrayFilter=arrayFilter,stubArray_1=stubArray,objectProto$11=Object.prototype,propertyIsEnumerable$1=objectProto$11.propertyIsEnumerable,nativeGetSymbols=Object.getOwnPropertySymbols,getSymbols=nativeGetSymbols?function(a){return null==a?[]:(a=Object(a),_arrayFilter(nativeGetSymbols(a),function(t){return propertyIsEnumerable$1.call(a,t)}))}:stubArray_1,_getSymbols=getSymbols,_copySymbols=copySymbols,_arrayPush=arrayPush,getPrototype=_overArg(Object.getPrototypeOf,Object),_getPrototype=getPrototype,nativeGetSymbols$1=Object.getOwnPropertySymbols,getSymbolsIn=nativeGetSymbols$1?function(a){for(var t=[];a;)_arrayPush(t,_getSymbols(a)),a=_getPrototype(a);return t}:stubArray_1,_getSymbolsIn=getSymbolsIn,_copySymbolsIn=copySymbolsIn,_baseGetAllKeys=baseGetAllKeys,_getAllKeys=getAllKeys,_getAllKeysIn=getAllKeysIn,DataView=_getNative(_root,"DataView"),_DataView=DataView,Promise$1=_getNative(_root,"Promise"),_Promise=Promise$1,Set$1=_getNative(_root,"Set"),_Set=Set$1,WeakMap$1=_getNative(_root,"WeakMap"),_WeakMap=WeakMap$1,mapTag$2="[object Map]",objectTag$2="[object Object]",promiseTag="[object Promise]",setTag$2="[object Set]",weakMapTag$2="[object WeakMap]",dataViewTag$2="[object DataView]",dataViewCtorString=_toSource(_DataView),mapCtorString=_toSource(_Map),promiseCtorString=_toSource(_Promise),setCtorString=_toSource(_Set),weakMapCtorString=_toSource(_WeakMap),getTag$1=_baseGetTag;(_DataView&&getTag$1(new _DataView(new ArrayBuffer(1)))!=dataViewTag$2||_Map&&getTag$1(new _Map)!=mapTag$2||_Promise&&getTag$1(_Promise.resolve())!=promiseTag||_Set&&getTag$1(new _Set)!=setTag$2||_WeakMap&&getTag$1(new _WeakMap)!=weakMapTag$2)&&(getTag$1=function(a){var t=_baseGetTag(a),e=t==objectTag$2?a.constructor:void 0,r=e?_toSource(e):"";if(r)switch(r){case dataViewCtorString:return dataViewTag$2;case mapCtorString:return mapTag$2;case promiseCtorString:return promiseTag;case setCtorString:return setTag$2;case weakMapCtorString:return weakMapTag$2}return t});var _getTag=getTag$1,objectProto$12=Object.prototype,hasOwnProperty$9=objectProto$12.hasOwnProperty,_initCloneArray=initCloneArray,Uint8Array$1=_root.Uint8Array,_Uint8Array=Uint8Array$1,_cloneArrayBuffer=cloneArrayBuffer,_cloneDataView=cloneDataView,reFlags=/\w*$/,_cloneRegExp=cloneRegExp,symbolProto$1=_Symbol?_Symbol.prototype:void 0,symbolValueOf=symbolProto$1?symbolProto$1.valueOf:void 0,_cloneSymbol=cloneSymbol,_cloneTypedArray=cloneTypedArray,boolTag$2="[object Boolean]",dateTag$2="[object Date]",mapTag$3="[object Map]",numberTag$2="[object Number]",regexpTag$2="[object RegExp]",setTag$3="[object Set]",stringTag$2="[object String]",symbolTag$2="[object Symbol]",arrayBufferTag$2="[object ArrayBuffer]",dataViewTag$3="[object DataView]",float32Tag$2="[object Float32Array]",float64Tag$2="[object Float64Array]",int8Tag$2="[object Int8Array]",int16Tag$2="[object Int16Array]",int32Tag$2="[object Int32Array]",uint8Tag$2="[object Uint8Array]",uint8ClampedTag$2="[object Uint8ClampedArray]",uint16Tag$2="[object Uint16Array]",uint32Tag$2="[object Uint32Array]",_initCloneByTag=initCloneByTag,objectCreate=Object.create,baseCreate=function(){function a(){}return function(t){if(!isObject_1(t))return {};if(objectCreate)return objectCreate(t);a.prototype=t;var e=new a;return a.prototype=void 0,e}}(),_baseCreate=baseCreate,_initCloneObject=initCloneObject,mapTag$4="[object Map]",_baseIsMap=baseIsMap,nodeIsMap=_nodeUtil&&_nodeUtil.isMap,isMap=nodeIsMap?_baseUnary(nodeIsMap):_baseIsMap,isMap_1=isMap,setTag$4="[object Set]",_baseIsSet=baseIsSet,nodeIsSet=_nodeUtil&&_nodeUtil.isSet,isSet=nodeIsSet?_baseUnary(nodeIsSet):_baseIsSet,isSet_1=isSet,CLONE_DEEP_FLAG$1=1,CLONE_FLAT_FLAG=2,CLONE_SYMBOLS_FLAG$1=4,argsTag="[object Arguments]",arrayTag="[object Array]",boolTag="[object Boolean]",dateTag="[object Date]",errorTag="[object Error]",funcTag$1="[object Function]",genTag$1="[object GeneratorFunction]",mapTag="[object Map]",numberTag="[object Number]",objectTag="[object Object]",regexpTag="[object RegExp]",setTag="[object Set]",stringTag="[object String]",symbolTag$1="[object Symbol]",weakMapTag="[object WeakMap]",arrayBufferTag="[object ArrayBuffer]",dataViewTag="[object DataView]",float32Tag="[object Float32Array]",float64Tag="[object Float64Array]",int8Tag="[object Int8Array]",int16Tag="[object Int16Array]",int32Tag="[object Int32Array]",uint8Tag="[object Uint8Array]",uint8ClampedTag="[object Uint8ClampedArray]",uint16Tag="[object Uint16Array]",uint32Tag="[object Uint32Array]",cloneableTags={};cloneableTags[argsTag]=cloneableTags[arrayTag]=cloneableTags[arrayBufferTag]=cloneableTags[dataViewTag]=cloneableTags[boolTag]=cloneableTags[dateTag]=cloneableTags[float32Tag]=cloneableTags[float64Tag]=cloneableTags[int8Tag]=cloneableTags[int16Tag]=cloneableTags[int32Tag]=cloneableTags[mapTag]=cloneableTags[numberTag]=cloneableTags[objectTag]=cloneableTags[regexpTag]=cloneableTags[setTag]=cloneableTags[stringTag]=cloneableTags[symbolTag$1]=cloneableTags[uint8Tag]=cloneableTags[uint8ClampedTag]=cloneableTags[uint16Tag]=cloneableTags[uint32Tag]=!0,cloneableTags[errorTag]=cloneableTags[funcTag$1]=cloneableTags[weakMapTag]=!1;var _baseClone=baseClone,CLONE_DEEP_FLAG=1,CLONE_SYMBOLS_FLAG=4,cloneDeep_1$1=cloneDeep,isUndefined_1$1=isUndefined,stringTag$3="[object String]",isString_1$1=isString,symbols={48176644:{meta:{setID:"48176644",set:["48176644"],setBaseIDs:["d.cq.2.bbbb.0"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"48176644"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.0",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},54112535:{meta:{setID:"54112535",set:["54112535"],setBaseIDs:["d.bd.2.abbb.0"],rootBaseID:"d.bd.2.abbb",rootIDHash:"54112535"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.0",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bd",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},62519049:{meta:{setID:"62519049",set:["62519049"],setBaseIDs:["d.dk.4.bbbb.0"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"62519049"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.0",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},83023171:{meta:{setID:"83023171",set:["83023171"],setBaseIDs:["d.dw.4.abba.270"],rootBaseID:"d.dw.4.abba",rootIDHash:"83023171"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.270",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3621cc2:{meta:{setID:"e3621cc2",set:["e3621cc2"],setBaseIDs:["g.aa.4.abba.90"],rootBaseID:"g.aa.4.abba",rootIDHash:"e3621cc2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.90",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7faaca8c":{meta:{setID:"7faaca8c",set:["7faaca8c"],setBaseIDs:["d.bj.2.bbbb.0"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"7faaca8c"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.0",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"36a4b4a8":{meta:{setID:"36a4b4a8",set:["36a4b4a8"],setBaseIDs:["d.bh.1.bbbb.0"],rootBaseID:"d.bh.1.bbbb",rootIDHash:"36a4b4a8"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,56,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bh.1.bbbb.0",baseID:"d.bh.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bh",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5dfed122":{meta:{setID:"5dfed122",set:["5dfed122"],setBaseIDs:["d.bi.1.bbbb.0"],rootBaseID:"d.bi.1.bbbb",rootIDHash:"5dfed122"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bi.1.bbbb.0",baseID:"d.bi.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"bi",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},de3bc3d1:{meta:{setID:"de3bc3d1",set:["de3bc3d1"],setBaseIDs:["g.ab.2.bbbb.0"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"de3bc3d1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.0",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"FG",key:"ab",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"587b58fb":{meta:{setID:"587b58fb",set:["587b58fb"],setBaseIDs:["d.bz.4.bbbb.180"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"587b58fb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.180",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"63454c71":{meta:{setID:"63454c71",set:["63454c71"],setBaseIDs:["d.el.4.abba.90"],rootBaseID:"d.el.4.abba",rootIDHash:"63454c71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.90",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66b0fffd":{meta:{setID:"66b0fffd",set:["66b0fffd"],setBaseIDs:["d.bk.4.bbbb.0"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"66b0fffd"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.0",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bk",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7a365cc2":{meta:{setID:"7a365cc2",set:["7a365cc2"],setBaseIDs:["g.ad.1.bbbb.0"],rootBaseID:"g.ad.1.bbbb",rootIDHash:"7a365cc2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 64 C 0 28.65378189086914 28.65378189086914 0 64 0 C 99.34622192382812 0 128 28.65378189086914 128 64 C 128 99.34622192382812 99.34622192382812 128 64 128 C 28.65378189086914 128 0 99.34622192382812 0 64 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ad.1.bbbb.0",baseID:"g.ad.1.bbbb",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"ad",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2befa75a":{meta:{setID:"2befa75a",set:["2befa75a"],setBaseIDs:["d.bv.1.bbbb.0"],rootBaseID:"d.bv.1.bbbb",rootIDHash:"2befa75a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,55,55)"},children:[{attr:{d:"M 9 2 C 5.134006977081299 2 2 5.134006977081299 2 9 C 2 12.86599349975586 5.134006977081299 16 9 16 C 12.86599349975586 16 16 12.86599349975586 16 9 C 16 5.134006977081299 12.86599349975586 2 9 2 Z M 0 9 C 0 4.029437065124512 4.029437065124512 0 9 0 C 13.970562934875488 0 18 4.029437065124512 18 9 C 18 13.970562934875488 13.970562934875488 18 9 18 C 4.029437065124512 18 0 13.970562934875488 0 9 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bv.1.bbbb.0",baseID:"d.bv.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adfbec3:{meta:{setID:"adfbec3",set:["adfbec3"],setBaseIDs:["d.bq.4.abbb.0"],rootBaseID:"d.bq.4.abbb",rootIDHash:"adfbec3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.0",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bq",edgemap:["a","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a5c31631:{meta:{setID:"a5c31631",set:["a5c31631"],setBaseIDs:["g.aa.4.abba.270"],rootBaseID:"g.aa.4.abba",rootIDHash:"a5c31631"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.270",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b7b090cf:{meta:{setID:"b7b090cf",set:["b7b090cf"],setBaseIDs:["d.bm.1.bbbb.0"],rootBaseID:"d.bm.1.bbbb",rootIDHash:"b7b090cf"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.836585998535156 24.836563110351562 32 16 32 C 7.1634368896484375 32 0 24.836585998535156 0 16 C 0 7.163410186767578 7.1634368896484375 0 16 0 C 24.836563110351562 0 32 7.163410186767578 32 16 Z M 16 24 C 20.41828155517578 24 24 20.41828155517578 24 16 C 24 11.581722259521484 20.41828155517578 8 16 8 C 11.581722259521484 8 8 11.581722259521484 8 16 C 8 20.41828155517578 11.581722259521484 24 16 24 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bm.1.bbbb.0",baseID:"d.bm.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"362aae07":{meta:{setID:"362aae07",set:["362aae07"],setBaseIDs:["g.ab.2.bbbb.90"],rootBaseID:"g.ab.2.bbbb",rootIDHash:"362aae07"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 C 70.69239807128906 0 128 57.30760192871094 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ab.2.bbbb.90",baseID:"g.ab.2.bbbb",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"FG",key:"ab",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b193cb04:{meta:{setID:"b193cb04",set:["b193cb04"],setBaseIDs:["d.bb.1.bbbb.0"],rootBaseID:"d.bb.1.bbbb",rootIDHash:"b193cb04"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,31)"},children:[{attr:{d:"M 33 64 C 50.120826721191406 64 64 50.120826721191406 64 33 C 64 15.879173278808594 50.120826721191406 2 33 2 C 15.879173278808594 2 2 15.879173278808594 2 33 C 2 50.120826721191406 15.879173278808594 64 33 64 Z M 33 66 C 51.22539520263672 66 66 51.22539520263672 66 33 C 66 14.774604797363281 51.22539520263672 0 33 0 C 14.774604797363281 0 0 14.774604797363281 0 33 C 0 51.22539520263672 14.774604797363281 66 33 66 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bb.1.bbbb.0",baseID:"d.bb.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"bb",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fbf3a00b:{meta:{setID:"fbf3a00b",set:["fbf3a00b"],setBaseIDs:["g.af.1.aaaa.0"],rootBaseID:"g.af.1.aaaa",rootIDHash:"fbf3a00b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.af.1.aaaa.0",baseID:"g.af.1.aaaa",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"FG",key:"af",edgemap:["a","a","a","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},b0aeb7df:{meta:{setID:"b0aeb7df",set:["b0aeb7df"],setBaseIDs:["d.cj.4.bbbb.0"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"b0aeb7df"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.0",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82ff5e94":{meta:{setID:"82ff5e94",set:["82ff5e94"],setBaseIDs:["g.aa.4.abba.180"],rootBaseID:"g.aa.4.abba",rootIDHash:"82ff5e94"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.180",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"aa",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"92e85004":{meta:{setID:"92e85004",set:["92e85004"],setBaseIDs:["d.dj.4.bbbb.180"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"92e85004"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.180",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"19634ad2":{meta:{setID:"19634ad2",set:["19634ad2"],setBaseIDs:["g.ac.4.bbba.0"],rootBaseID:"g.ac.4.bbba",rootIDHash:"19634ad2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.0",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"ac",edgemap:["b","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"42b4e3a3":{meta:{setID:"42b4e3a3",set:["42b4e3a3"],setBaseIDs:["d.cv.2.bbbb.0"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"42b4e3a3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.0",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cv",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"335e8694":{meta:{setID:"335e8694",set:["335e8694"],setBaseIDs:["d.dj.4.bbbb.270"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"335e8694"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.270",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2f5059f3":{meta:{setID:"2f5059f3",set:["2f5059f3"],setBaseIDs:["d.do.4.bbbb.180"],rootBaseID:"d.do.4.bbbb",rootIDHash:"2f5059f3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.180",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4d0779c1":{meta:{setID:"4d0779c1",set:["4d0779c1"],setBaseIDs:["d.di.4.bbbb.90"],rootBaseID:"d.di.4.bbbb",rootIDHash:"4d0779c1"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.90",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"869bd8d8":{meta:{setID:"869bd8d8",set:["869bd8d8"],setBaseIDs:["d.bf.2.bbbb.90"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"869bd8d8"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.90",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bf",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"57ed51b0":{meta:{setID:"57ed51b0",set:["57ed51b0"],setBaseIDs:["d.dv.4.abba.90"],rootBaseID:"d.dv.4.abba",rootIDHash:"57ed51b0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.90",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b0ac0b82:{meta:{setID:"b0ac0b82",set:["b0ac0b82"],setBaseIDs:["g.ac.4.bbba.180"],rootBaseID:"g.ac.4.bbba",rootIDHash:"b0ac0b82"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.180",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"10545ed3":{meta:{setID:"10545ed3",set:["10545ed3"],setBaseIDs:["d.do.4.bbbb.0"],rootBaseID:"d.do.4.bbbb",rootIDHash:"10545ed3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.0",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"do",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fd1b186c:{meta:{setID:"fd1b186c",set:["fd1b186c"],setBaseIDs:["d.bl.2.bbbb.90"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"fd1b186c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.90",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e5fae2fb:{meta:{setID:"e5fae2fb",set:["e5fae2fb"],setBaseIDs:["d.bj.2.bbbb.90"],rootBaseID:"d.bj.2.bbbb",rootIDHash:"e5fae2fb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,0.7090948224067688,-0.7035711407661438)"},children:[{attr:{d:"M 0 0 L 180.90365600585938 0 L 180.90365600585938 1.997485876083374 L 0 1.997485876083374 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bj.2.bbbb.90",baseID:"d.bj.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bddfa3f3:{meta:{setID:"bddfa3f3",set:["bddfa3f3"],setBaseIDs:["d.ba.1.bbbb.0"],rootBaseID:"d.ba.1.bbbb",rootIDHash:"bddfa3f3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48,48)"},children:[{attr:{d:"M 32 16 C 32 24.83655548095703 24.83655548095703 32 16 32 C 7.163444519042969 32 0 24.83655548095703 0 16 C 0 7.163444519042969 7.163444519042969 0 16 0 C 24.83655548095703 0 32 7.163444519042969 32 16 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ba.1.bbbb.0",baseID:"d.ba.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ba",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82610c41":{meta:{setID:"82610c41",set:["82610c41"],setBaseIDs:["d.ea.1.abba.0"],rootBaseID:"d.ea.1.abba",rootIDHash:"82610c41"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,15)"},children:[{attr:{d:"M 49 2 C 23.042621612548828 2 2 23.042621612548828 2 49 C 2 74.95738220214844 23.042621612548828 96 49 96 C 74.95738220214844 96 96 74.95738220214844 96 49 C 96 23.042621612548828 74.95738220214844 2 49 2 Z M 0 49 C 0 21.938051223754883 21.938051223754883 0 49 0 C 76.06195068359375 0 98 21.938051223754883 98 49 C 98 76.06195068359375 76.06195068359375 98 49 98 C 21.938051223754883 98 0 76.06195068359375 0 49 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ea.1.abba.0",baseID:"d.ea.1.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ea",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"613cb28b":{meta:{setID:"613cb28b",set:["613cb28b"],setBaseIDs:["d.bq.4.abbb.90"],rootBaseID:"d.bq.4.abbb",rootIDHash:"613cb28b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.90",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc65290b:{meta:{setID:"fc65290b",set:["fc65290b"],setBaseIDs:["d.cp.4.bbbb.180"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"fc65290b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.180",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"952f1d85":{meta:{setID:"952f1d85",set:["952f1d85"],setBaseIDs:["d.ef.4.abba.90"],rootBaseID:"d.ef.4.abba",rootIDHash:"952f1d85"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.90",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb9b5189:{meta:{setID:"cb9b5189",set:["cb9b5189"],setBaseIDs:["d.dt.4.abba.90"],rootBaseID:"d.dt.4.abba",rootIDHash:"cb9b5189"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,46,0)"},children:[{attr:{d:"M 2 0 C 2 8.836556434631348 9.163443565368652 16 18 16 C 26.836557388305664 16 34 8.836556434631348 34 0 L 36 0 C 36 9.941126823425293 27.941125869750977 18 18 18 C 8.058874130249023 18 0 9.941126823425293 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dt.4.abba.90",baseID:"d.dt.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"462c645e":{meta:{setID:"462c645e",set:["462c645e"],setBaseIDs:["d.dl.4.bbbb.180"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"462c645e"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.180",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d1fb16cc:{meta:{setID:"d1fb16cc",set:["d1fb16cc"],setBaseIDs:["d.cz.4.bbbb.0"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"d1fb16cc"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.0",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cb74008":{meta:{setID:"6cb74008",set:["6cb74008"],setBaseIDs:["g.aa.4.abba.0"],rootBaseID:"g.aa.4.abba",rootIDHash:"6cb74008"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,0,128)"},children:[{attr:{d:"M 0 0 L 128 0 L 128 128 C 57.30760192871094 128 0 70.69239807128906 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.aa.4.abba.0",baseID:"g.aa.4.abba",type:"g",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"aa",edgemap:["a","b","b","a"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"2639d7d4":{meta:{setID:"2639d7d4",set:["2639d7d4"],setBaseIDs:["d.bo.4.bbba.90"],rootBaseID:"d.bo.4.bbba",rootIDHash:"2639d7d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.90",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bo",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},c7af9494:{meta:{setID:"c7af9494",set:["c7af9494"],setBaseIDs:["d.dk.4.bbbb.270"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"c7af9494"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.270",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7210b66f":{meta:{setID:"7210b66f",set:["7210b66f"],setBaseIDs:["d.bo.4.bbba.0"],rootBaseID:"d.bo.4.bbba",rootIDHash:"7210b66f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 0 L 0 123.984375 C 34.000030517578125 123.455322265625 64.73161315917969 109.459228515625 87.09544372558594 87.095458984375 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bo.4.bbba.0",baseID:"d.bo.4.bbba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bo",edgemap:["b","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"18f6b23e":{meta:{setID:"18f6b23e",set:["18f6b23e"],setBaseIDs:["d.cp.4.bbbb.0"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"18f6b23e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.0",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"13446f50":{meta:{setID:"13446f50",set:["13446f50"],setBaseIDs:["d.el.4.abba.0"],rootBaseID:"d.el.4.abba",rootIDHash:"13446f50"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.0",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"el",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2b187d87":{meta:{setID:"2b187d87",set:["2b187d87"],setBaseIDs:["d.bg.2.bbbb.0"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"2b187d87"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.0",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bg",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1c9d4f11":{meta:{setID:"1c9d4f11",set:["1c9d4f11"],setBaseIDs:["d.do.4.bbbb.270"],rootBaseID:"d.do.4.bbbb",rootIDHash:"1c9d4f11"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.270",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"69daeb1a":{meta:{setID:"69daeb1a",set:["69daeb1a"],setBaseIDs:["d.da.2.bbbb.90"],rootBaseID:"d.da.2.bbbb",rootIDHash:"69daeb1a"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.90",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"da",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe5cf0f4:{meta:{setID:"fe5cf0f4",set:["fe5cf0f4"],setBaseIDs:["d.bf.2.bbbb.0"],rootBaseID:"d.bf.2.bbbb",rootIDHash:"fe5cf0f4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bf.2.bbbb.0",baseID:"d.bf.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bf",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9e7ddd3d":{meta:{setID:"9e7ddd3d",set:["9e7ddd3d"],setBaseIDs:["d.cs.2.bbbb.0"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"9e7ddd3d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.0",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cs",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3cdcdb8c":{meta:{setID:"3cdcdb8c",set:["3cdcdb8c"],setBaseIDs:["d.dr.8.abba.90"],rootBaseID:"d.dr.8.abba",rootIDHash:"3cdcdb8c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 105.84061431884766 18.159381866455078 C 94.62081909179688 6.939587593078613 79.1208267211914 0 62 0 C 27.75835418701172 0 0 27.75835418701172 0 62 C 0 79.1208267211914 6.939587593078613 94.62081909179688 18.159381866455078 105.84061431884766 L 105.84061431884766 18.159381866455078 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dr.8.abba.90",baseID:"d.dr.8.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:8,paint:"BG",key:"dr",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},acc8c8fb:{meta:{setID:"acc8c8fb",set:["acc8c8fb"],setBaseIDs:["d.ef.4.abba.0"],rootBaseID:"d.ef.4.abba",rootIDHash:"acc8c8fb"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.0",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ef",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4dae70af":{meta:{setID:"4dae70af",set:["4dae70af"],setBaseIDs:["d.dl.4.bbbb.0"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4dae70af"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.0",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f0d5fe71:{meta:{setID:"f0d5fe71",set:["f0d5fe71"],setBaseIDs:["d.cz.4.bbbb.180"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"f0d5fe71"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.180",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb81c430:{meta:{setID:"cb81c430",set:["cb81c430"],setBaseIDs:["d.dj.4.bbbb.0"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"cb81c430"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.0",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dj",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},efa22418:{meta:{setID:"efa22418",set:["efa22418"],setBaseIDs:["d.el.4.abba.180"],rootBaseID:"d.el.4.abba",rootIDHash:"efa22418"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.180",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"66fbf43f":{meta:{setID:"66fbf43f",set:["66fbf43f"],setBaseIDs:["d.bz.4.bbbb.0"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"66fbf43f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.0",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bz",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6245af61":{meta:{setID:"6245af61",set:["6245af61"],setBaseIDs:["d.di.4.bbbb.0"],rootBaseID:"d.di.4.bbbb",rootIDHash:"6245af61"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.0",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"di",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d93ccb2:{meta:{setID:"d93ccb2",set:["d93ccb2"],setBaseIDs:["g.ac.4.bbba.90"],rootBaseID:"g.ac.4.bbba",rootIDHash:"d93ccb2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.90",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"7191ec30":{meta:{setID:"7191ec30",set:["7191ec30"],setBaseIDs:["d.do.4.bbbb.90"],rootBaseID:"d.do.4.bbbb",rootIDHash:"7191ec30"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(0.7071067690849304,0.7071067690849304,-0.7071067690849304,0.7071067690849304,81.38351440429688,79.96847534179688)"},children:[{attr:{d:"M 43.37837600708008 2.001432180404663 L 0 2.001432180404663 L 0 0 L 43.37837600708008 0 L 43.37837600708008 2.001432180404663 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.do.4.bbbb.90",baseID:"d.do.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"do",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},faa6eb0:{meta:{setID:"faa6eb0",set:["faa6eb0"],setBaseIDs:["d.bg.2.bbbb.90"],rootBaseID:"d.bg.2.bbbb",rootIDHash:"faa6eb0"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bg.2.bbbb.90",baseID:"d.bg.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a0991dbc:{meta:{setID:"a0991dbc",set:["a0991dbc"],setBaseIDs:["d.cf.4.bbbb.90"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"a0991dbc"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.90",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"FG",key:"cf",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},c3bebfe6:{meta:{setID:"c3bebfe6",set:["c3bebfe6"],setBaseIDs:["d.dm.4.bbbb.90"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"c3bebfe6"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.90",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"87cb2bff":{meta:{setID:"87cb2bff",set:["87cb2bff"],setBaseIDs:["d.dd.4.bbbb.0"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"87cb2bff"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.0",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dd",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"603da034":{meta:{setID:"603da034",set:["603da034"],setBaseIDs:["d.dv.4.abba.0"],rootBaseID:"d.dv.4.abba",rootIDHash:"603da034"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.0",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dv",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f3633360:{meta:{setID:"f3633360",set:["f3633360"],setBaseIDs:["d.dw.4.abba.0"],rootBaseID:"d.dw.4.abba",rootIDHash:"f3633360"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.0",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dw",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6acd7409":{meta:{setID:"6acd7409",set:["6acd7409"],setBaseIDs:["d.dv.4.abba.180"],rootBaseID:"d.dv.4.abba",rootIDHash:"6acd7409"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.180",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad7dd51b:{meta:{setID:"ad7dd51b",set:["ad7dd51b"],setBaseIDs:["d.ds.4.abba.270"],rootBaseID:"d.ds.4.abba",rootIDHash:"ad7dd51b"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.270",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6615d02d":{meta:{setID:"6615d02d",set:["6615d02d"],setBaseIDs:["d.bq.4.abbb.180"],rootBaseID:"d.bq.4.abbb",rootIDHash:"6615d02d"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.180",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5ba1ba9b":{meta:{setID:"5ba1ba9b",set:["5ba1ba9b"],setBaseIDs:["d.dp.1.bbbb.0"],rootBaseID:"d.dp.1.bbbb",rootIDHash:"5ba1ba9b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z M 48 88 C 70.09139251708984 88 88 70.09139251708984 88 48 C 88 25.908611297607422 70.09139251708984 8 48 8 C 25.908611297607422 8 8 25.908611297607422 8 48 C 8 70.09139251708984 25.908611297607422 88 48 88 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dp.1.bbbb.0",baseID:"d.dp.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dp",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf0f809a:{meta:{setID:"cf0f809a",set:["cf0f809a"],setBaseIDs:["d.dq.1.bbbb.0"],rootBaseID:"d.dq.1.bbbb",rootIDHash:"cf0f809a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z M 32 56 C 45.25483703613281 56 56 45.25483703613281 56 32 C 56 18.745166778564453 45.25483703613281 8 32 8 C 18.745166778564453 8 8 18.745166778564453 8 32 C 8 45.25483703613281 18.745166778564453 56 32 56 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dq.1.bbbb.0",baseID:"d.dq.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"dq",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9ebd20ff":{meta:{setID:"9ebd20ff",set:["9ebd20ff"],setBaseIDs:["d.cp.4.bbbb.270"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"9ebd20ff"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.270",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5e841ec3":{meta:{setID:"5e841ec3",set:["5e841ec3"],setBaseIDs:["d.ef.4.abba.270"],rootBaseID:"d.ef.4.abba",rootIDHash:"5e841ec3"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.270",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},afc30081:{meta:{setID:"afc30081",set:["afc30081"],setBaseIDs:["d.bk.4.bbbb.270"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"afc30081"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.270",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c4076d5":{meta:{setID:"4c4076d5",set:["4c4076d5"],setBaseIDs:["d.cu.2.bbbb.90"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"4c4076d5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.90",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cu",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d6753be3:{meta:{setID:"d6753be3",set:["d6753be3"],setBaseIDs:["d.dd.4.bbbb.180"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"d6753be3"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.180",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b788c92f:{meta:{setID:"b788c92f",set:["b788c92f"],setBaseIDs:["d.de.2.bbbb.0"],rootBaseID:"d.de.2.bbbb",rootIDHash:"b788c92f"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.0",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"de",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a4ed278a:{meta:{setID:"a4ed278a",set:["a4ed278a"],setBaseIDs:["d.cj.4.bbbb.180"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"a4ed278a"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.180",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},eb608ee5:{meta:{setID:"eb608ee5",set:["eb608ee5"],setBaseIDs:["d.bk.4.bbbb.90"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"eb608ee5"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.90",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"52a6a74c":{meta:{setID:"52a6a74c",set:["52a6a74c"],setBaseIDs:["d.ct.2.bbbb.90"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"52a6a74c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.90",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ct",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e2f4d6e2:{meta:{setID:"e2f4d6e2",set:["e2f4d6e2"],setBaseIDs:["d.ct.2.bbbb.0"],rootBaseID:"d.ct.2.bbbb",rootIDHash:"e2f4d6e2"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ct.2.bbbb.0",baseID:"d.ct.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ct",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e6117eb6:{meta:{setID:"e6117eb6",set:["e6117eb6"],setBaseIDs:["d.dd.4.bbbb.270"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"e6117eb6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.270",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b397af9f:{meta:{setID:"b397af9f",set:["b397af9f"],setBaseIDs:["d.cz.4.bbbb.270"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"b397af9f"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.270",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"427a1751":{meta:{setID:"427a1751",set:["427a1751"],setBaseIDs:["d.dn.4.bbbb.0"],rootBaseID:"d.dn.4.bbbb",rootIDHash:"427a1751"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,47)"},children:[{attr:{d:"M 17 17 C 17 7.6111602783203125 9.388839721679688 0 0 0 L 0 2 C 8.284271240234375 2 15 8.715728759765625 15 17 L 17 17 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dn.4.bbbb.0",baseID:"d.dn.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1735a791":{meta:{setID:"1735a791",set:["1735a791"],setBaseIDs:["d.by.1.bbbb.0"],rootBaseID:"d.by.1.bbbb",rootIDHash:"1735a791"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,47,47)"},children:[{attr:{d:"M 17 2 C 8.715728759765625 2 2 8.715728759765625 2 17 C 2 25.284271240234375 8.715728759765625 32 17 32 C 25.284271240234375 32 32 25.284271240234375 32 17 C 32 8.715728759765625 25.284271240234375 2 17 2 Z M 0 17 C 0 7.6111602783203125 7.6111602783203125 0 17 0 C 26.388839721679688 0 34 7.6111602783203125 34 17 C 34 26.388839721679688 26.388839721679688 34 17 34 C 7.6111602783203125 34 0 26.388839721679688 0 17 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.by.1.bbbb.0",baseID:"d.by.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"by",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"28b33136":{meta:{setID:"28b33136",set:["28b33136"],setBaseIDs:["g.ac.4.bbba.270"],rootBaseID:"g.ac.4.bbba",rootIDHash:"28b33136"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8356867592648655e-16,-1,1,-1.838254724932924e-16,0,128)"},children:[{attr:{d:"M 64 0 L 128 0 L 128 64 C 128 99.3466796875 99.34600067138672 128 64 128 C 28.65380096435547 128 0 99.3466796875 0 64 L 0 0 L 64 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"g.ac.4.bbba.270",baseID:"g.ac.4.bbba",type:"g",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"FG",key:"ac",style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"672fdf93":{meta:{setID:"672fdf93",set:["672fdf93"],setBaseIDs:["d.eg.4.abba.0"],rootBaseID:"d.eg.4.abba",rootIDHash:"672fdf93"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.0",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"eg",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f49b158d:{meta:{setID:"f49b158d",set:["f49b158d"],setBaseIDs:["d.cf.4.bbbb.0"],rootBaseID:"d.cf.4.bbbb",rootIDHash:"f49b158d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,4,47)"},children:[{attr:{d:"M 57 28.5 C 57 44.240116119384766 44.240116119384766 57 28.5 57 C 12.759885787963867 57 0 44.240116119384766 0 28.5 C 0 12.759885787963867 12.759885787963867 0 28.5 0 C 44.240116119384766 0 57 12.759885787963867 57 28.5 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cf.4.bbbb.0",baseID:"d.cf.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"FG",key:"cf",edgemap:["b","b","b","b"],style:{fill:"FG",stroke:"NO"}},tag:"g"}],tag:"g"},"6cf35bfb":{meta:{setID:"6cf35bfb",set:["6cf35bfb"],setBaseIDs:["d.de.2.bbbb.90"],rootBaseID:"d.de.2.bbbb",rootIDHash:"6cf35bfb"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.de.2.bbbb.90",baseID:"d.de.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"de",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4c1ac47d":{meta:{setID:"4c1ac47d",set:["4c1ac47d"],setBaseIDs:["d.cn.1.bbbb.0"],rootBaseID:"d.cn.1.bbbb",rootIDHash:"4c1ac47d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32,32)"},children:[{attr:{d:"M 64 32 C 64 49.67311096191406 49.67311096191406 64 32 64 C 14.326889038085938 64 0 49.67311096191406 0 32 C 0 14.326889038085938 14.326889038085938 0 32 0 C 49.67311096191406 0 64 14.326889038085938 64 32 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cn.1.bbbb.0",baseID:"d.cn.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cn",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9b3aa0b1":{meta:{setID:"9b3aa0b1",set:["9b3aa0b1"],setBaseIDs:["d.cu.2.bbbb.0"],rootBaseID:"d.cu.2.bbbb",rootIDHash:"9b3aa0b1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cu.2.bbbb.0",baseID:"d.cu.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"cu",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cf042a60:{meta:{setID:"cf042a60",set:["cf042a60"],setBaseIDs:["d.bn.4.abba.0"],rootBaseID:"d.bn.4.abba",rootIDHash:"cf042a60"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.0",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"bn",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"44e1402d":{meta:{setID:"44e1402d",set:["44e1402d"],setBaseIDs:["d.da.2.bbbb.0"],rootBaseID:"d.da.2.bbbb",rootIDHash:"44e1402d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1,-8.742277657347586e-8,8.742277657347586e-8,-1,128,65.00000762939453)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.da.2.bbbb.0",baseID:"d.da.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"da",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e53a31b5:{meta:{setID:"e53a31b5",set:["e53a31b5"],setBaseIDs:["d.cl.1.bbbb.0"],rootBaseID:"d.cl.1.bbbb",rootIDHash:"e53a31b5"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,40,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,72,40)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cl.1.bbbb.0",baseID:"d.cl.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"cl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2ab4bc02":{meta:{setID:"2ab4bc02",set:["2ab4bc02"],setBaseIDs:["d.dw.4.abba.90"],rootBaseID:"d.dw.4.abba",rootIDHash:"2ab4bc02"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.90",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4456d619":{meta:{setID:"4456d619",set:["4456d619"],setBaseIDs:["d.dl.4.bbbb.90"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"4456d619"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.90",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},adafc09c:{meta:{setID:"adafc09c",set:["adafc09c"],setBaseIDs:["d.cp.4.bbbb.90"],rootBaseID:"d.cp.4.bbbb",rootIDHash:"adafc09c"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,10.606582641601562,0)"},children:[{attr:{d:"M 69.29649353027344 79.903076171875 C 89.74546813964844 59.4541015625 102.39341735839844 31.2041015625 102.39341735839844 0 L 100.39341735839844 0 C 100.39341735839844 30.65185546875 87.96931457519531 58.40185546875 67.88227844238281 78.48876953125 L 69.29649353027344 79.903076171875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 57.98277282714844 68.58935546875 C 75.53633117675781 51.035888671875 86.39341735839844 26.785888671875 86.39341735839844 0 L 84.39341735839844 0 C 84.39341735839844 26.2333984375 73.76017761230469 49.9833984375 56.56855773925781 67.175048828125 L 57.98277282714844 68.58935546875 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 46.6690673828125 57.275634765625 C 61.32719421386719 42.617431640625 70.39341735839844 22.367431640625 70.39341735839844 0 L 68.39341735839844 0 C 68.39341735839844 21.815185546875 59.55104064941406 41.565185546875 45.25483703613281 55.861328125 L 46.6690673828125 57.275634765625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 35.3553466796875 45.9619140625 C 47.1180419921875 34.19921875 54.39341735839844 17.94921875 54.39341735839844 0 L 52.39341735839844 0 C 52.39341735839844 17.39697265625 45.34190368652344 33.14697265625 33.94114685058594 44.5478515625 L 35.3553466796875 45.9619140625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 24.041656494140625 34.648193359375 C 32.908905029296875 25.781005859375 38.39341735839844 13.531005859375 38.39341735839844 0 L 36.39341735839844 0 C 36.39341735839844 12.978759765625 31.13275146484375 24.728515625 22.627410888671875 33.23388671875 L 24.041656494140625 34.648193359375 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 12.727935791015625 23.33447265625 C 18.69976806640625 17.362548828125 22.393417358398438 9.11279296875 22.393417358398438 0 L 20.393417358398438 0 C 20.393417358398438 8.560302734375 16.923629760742188 16.310546875 11.313735961914062 21.92041015625 L 12.727935791015625 23.33447265625 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 1.41424560546875 12.020751953125 C 4.490631103515625 8.9443359375 6.3934173583984375 4.6943359375 6.3934173583984375 0 L 4.3934173583984375 0 C 4.3934173583984375 4.14208984375 2.7144775390625 7.89208984375 0 10.606689453125 L 1.41424560546875 12.020751953125 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cp.4.bbbb.90",baseID:"d.cp.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cp",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d7e0d9e:{meta:{setID:"d7e0d9e",set:["d7e0d9e"],setBaseIDs:["d.di.4.bbbb.270"],rootBaseID:"d.di.4.bbbb",rootIDHash:"d7e0d9e"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.270",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1d989f87":{meta:{setID:"1d989f87",set:["1d989f87"],setBaseIDs:["d.cz.4.bbbb.90"],rootBaseID:"d.cz.4.bbbb",rootIDHash:"1d989f87"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cz.4.bbbb.90",baseID:"d.cz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b09cf4ef:{meta:{setID:"b09cf4ef",set:["b09cf4ef"],setBaseIDs:["d.cw.4.bbbb.270"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b09cf4ef"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.270",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"510344a7":{meta:{setID:"510344a7",set:["510344a7"],setBaseIDs:["d.cj.4.bbbb.270"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"510344a7"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.270",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ae1e4f7:{meta:{setID:"ae1e4f7",set:["ae1e4f7"],setBaseIDs:["d.dk.4.bbbb.180"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"ae1e4f7"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.180",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb651938:{meta:{setID:"fb651938",set:["fb651938"],setBaseIDs:["d.dw.4.abba.180"],rootBaseID:"d.dw.4.abba",rootIDHash:"fb651938"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 20.63819122314453 90.74864959716797 C 32.164886474609375 113.97933197021484 47.90560531616211 127.96875 65 127.96875 L 65 130 C 46.74819564819336 130 30.48891258239746 115.1152572631836 18.85215950012207 91.66275787353516 C 7.186376571655273 68.15177154541016 0 35.742618560791016 0 0 L 2 0 C 2 35.493431091308594 9.140524864196777 67.57646942138672 20.63819122314453 90.74864959716797 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dw.4.abba.180",baseID:"d.dw.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d560b8b":{meta:{setID:"8d560b8b",set:["8d560b8b"],setBaseIDs:["d.dx.4.abba.0"],rootBaseID:"d.dx.4.abba",rootIDHash:"8d560b8b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-5.665972113147108e-14,33)"},children:[{attr:{d:"M 21.40327262878418 118.3283462524414 C 25.199352264404297 124.80017852783203 29.149702072143555 127.96875 33 127.96875 L 33 130 C 28.013748168945312 130 23.54582405090332 125.95003509521484 19.68505096435547 119.367919921875 C 15.785710334777832 112.72005462646484 12.309096336364746 103.16806030273438 9.4028959274292 91.453857421875 C 3.5866384506225586 68.00990295410156 0 35.67653274536133 0 0 L 2 0 C 2 35.55952072143555 5.576811790466309 67.71833801269531 11.342279434204102 90.95755767822266 C 14.226941108703613 102.58494567871094 17.64575958251953 111.92227935791016 21.40327262878418 118.3283462524414 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dx.4.abba.0",baseID:"d.dx.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dx",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f3841fc":{meta:{setID:"9f3841fc",set:["9f3841fc"],setBaseIDs:["d.dv.4.abba.270"],rootBaseID:"d.dv.4.abba",rootIDHash:"9f3841fc"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,-1.135031399922791e-13,97)"},children:[{attr:{d:"M 29.915496826171875 90.59327697753906 C 47.14462661743164 113.74211120605469 70.87230682373047 127.96875 97 127.96875 L 97 130 C 70.1083984375 130 45.83607482910156 115.35247039794922 28.320030212402344 91.81814575195312 C 10.80441665649414 68.28438568115234 0 35.818397521972656 0 0 L 2 0 C 2 35.41765594482422 12.685934066772461 67.44385528564453 29.915496826171875 90.59327697753906 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dv.4.abba.270",baseID:"d.dv.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"59d9e201":{meta:{setID:"59d9e201",set:["59d9e201"],setBaseIDs:["d.dd.4.bbbb.90"],rootBaseID:"d.dd.4.bbbb",rootIDHash:"59d9e201"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,104,8)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dd.4.bbbb.90",baseID:"d.dd.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ad042183:{meta:{setID:"ad042183",set:["ad042183"],setBaseIDs:["d.cq.2.bbbb.90"],rootBaseID:"d.cq.2.bbbb",rootIDHash:"ad042183"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,65,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,49,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,33,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,17,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cq.2.bbbb.90",baseID:"d.cq.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1b1fba11":{meta:{setID:"1b1fba11",set:["1b1fba11"],setBaseIDs:["d.bd.2.abbb.90"],rootBaseID:"d.bd.2.abbb",rootIDHash:"1b1fba11"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bd.2.abbb.90",baseID:"d.bd.2.abbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"bd",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cbdce7a4:{meta:{setID:"cbdce7a4",set:["cbdce7a4"],setBaseIDs:["d.bl.2.bbbb.0"],rootBaseID:"d.bl.2.bbbb",rootIDHash:"cbdce7a4"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,15,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,47,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,63,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,79,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,95,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bl.2.bbbb.0",baseID:"d.bl.2.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"bl",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},bfc8669e:{meta:{setID:"bfc8669e",set:["bfc8669e"],setBaseIDs:["d.cj.4.bbbb.90"],rootBaseID:"d.cj.4.bbbb",rootIDHash:"bfc8669e"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cj.4.bbbb.90",baseID:"d.cj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"81113d71":{meta:{setID:"81113d71",set:["81113d71"],setBaseIDs:["d.dh.4.bbbb.90"],rootBaseID:"d.dh.4.bbbb",rootIDHash:"81113d71"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,2)"},children:[{attr:{d:"M 0 29.9384765625 C 16.08001708984375 28.94677734375 28.94690704345703 16.080078125 29.938514709472656 0 L 0 0 L 0 29.9384765625 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dh.4.bbbb.90",baseID:"d.dh.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dh",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},f6bb8637:{meta:{setID:"f6bb8637",set:["f6bb8637"],setBaseIDs:["d.cx.4.bbbb.90"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"f6bb8637"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.90",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cx",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a2880ff1:{meta:{setID:"a2880ff1",set:["a2880ff1"],setBaseIDs:["d.dm.4.bbbb.0"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"a2880ff1"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.0",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"dm",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"5a85e6f7":{meta:{setID:"5a85e6f7",set:["5a85e6f7"],setBaseIDs:["d.cv.2.bbbb.90"],rootBaseID:"d.cv.2.bbbb",rootIDHash:"5a85e6f7"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(6.123234262925839e-17,1,-1,6.123234262925839e-17,97,0)"},children:[{attr:{d:"M 128 2 L 0 2 L 0 0 L 128 0 L 128 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cv.2.bbbb.90",baseID:"d.cv.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cv",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8c89b36e":{meta:{setID:"8c89b36e",set:["8c89b36e"],setBaseIDs:["d.ds.4.abba.0"],rootBaseID:"d.ds.4.abba",rootIDHash:"8c89b36e"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.0",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"ds",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"824e5e1f":{meta:{setID:"824e5e1f",set:["824e5e1f"],setBaseIDs:["d.ef.4.abba.180"],rootBaseID:"d.ef.4.abba",rootIDHash:"824e5e1f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,24,88)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ef.4.abba.180",baseID:"d.ef.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ef",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"83856b0b":{meta:{setID:"83856b0b",set:["83856b0b"],setBaseIDs:["d.ds.4.abba.90"],rootBaseID:"d.ds.4.abba",rootIDHash:"83856b0b"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.90",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"1e0083d1":{meta:{setID:"1e0083d1",set:["1e0083d1"],setBaseIDs:["d.el.4.abba.270"],rootBaseID:"d.el.4.abba",rootIDHash:"1e0083d1"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,40,72)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.el.4.abba.270",baseID:"d.el.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"el",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"4b097186":{meta:{setID:"4b097186",set:["4b097186"],setBaseIDs:["d.eg.4.abba.90"],rootBaseID:"d.eg.4.abba",rootIDHash:"4b097186"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.90",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},e3f1ef01:{meta:{setID:"e3f1ef01",set:["e3f1ef01"],setBaseIDs:["d.bn.4.abba.180"],rootBaseID:"d.bn.4.abba",rootIDHash:"e3f1ef01"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.180",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"372ac81b":{meta:{setID:"372ac81b",set:["372ac81b"],setBaseIDs:["d.bk.4.bbbb.180"],rootBaseID:"d.bk.4.bbbb",rootIDHash:"372ac81b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-4.371138828673793e-8,-1,1,-4.371138828673793e-8,0,130)"},children:[{attr:{d:"M 2 0 C 2 70.69239807128906 59.30760192871094 128 130 128 L 130 130 C 58.203033447265625 130 0 71.79696655273438 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bk.4.bbbb.180",baseID:"d.bk.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"387e568f":{meta:{setID:"387e568f",set:["387e568f"],setBaseIDs:["d.di.4.bbbb.180"],rootBaseID:"d.di.4.bbbb",rootIDHash:"387e568f"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,97)"},children:[{attr:{d:"M 2 0 C 2 52.46701431274414 44.53298568725586 95 97 95 L 97 97 C 43.42841720581055 97 0 53.57158279418945 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.di.4.bbbb.180",baseID:"d.di.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"di",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fc9ea1e2:{meta:{setID:"fc9ea1e2",set:["fc9ea1e2"],setBaseIDs:["d.bn.4.abba.90"],rootBaseID:"d.bn.4.abba",rootIDHash:"fc9ea1e2"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.90",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7d18e429":{meta:{setID:"7d18e429",set:["7d18e429"],setBaseIDs:["d.ci.4.bbbb.180"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"7d18e429"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.180",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d842a67d:{meta:{setID:"d842a67d",set:["d842a67d"],setBaseIDs:["d.ec.2.abba.0"],rootBaseID:"d.ec.2.abba",rootIDHash:"d842a67d"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.0",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:2,paint:"BG",key:"ec",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fe4199fc:{meta:{setID:"fe4199fc",set:["fe4199fc"],setBaseIDs:["d.dm.4.bbbb.180"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"fe4199fc"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.180",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"975397b2":{meta:{setID:"975397b2",set:["975397b2"],setBaseIDs:["d.eg.4.abba.270"],rootBaseID:"d.eg.4.abba",rootIDHash:"975397b2"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,8,104)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.eg.4.abba.270",baseID:"d.eg.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"eg",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b645c8d3:{meta:{setID:"b645c8d3",set:["b645c8d3"],setBaseIDs:["d.cw.4.bbbb.0"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"b645c8d3"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.0",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cw",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"8d8261d6":{meta:{setID:"8d8261d6",set:["8d8261d6"],setBaseIDs:["d.bn.4.abba.270"],rootBaseID:"d.bn.4.abba",rootIDHash:"8d8261d6"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 111 C 61.303611755371094 111 111 61.303611755371094 111 0 L 113 0 C 113 62.408180236816406 62.408180236816406 113 0 113 L 0 111 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 94.99999237060547 C 52.46704864501953 94.99999237060547 94.99999237060547 52.46704864501953 94.99999237060547 0 L 96.99999237060547 0 C 96.99999237060547 53.571617126464844 53.571617126464844 96.99999237060547 0 96.99999237060547 L 0 94.99999237060547 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 79 C 43.6304931640625 79 79 43.6304931640625 79 0 L 81 0 C 81 44.73506164550781 44.73506164550781 81 0 81 L 0 79 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 63 C 34.793941497802734 63 63 34.793941497802734 63 0 L 65 0 C 65 35.89850997924805 35.89850997924805 65 0 65 L 0 63 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 31 C 17.12082862854004 31 31 17.12082862854004 31 0 L 33 0 C 33 18.22539710998535 18.22539710998535 33 0 33 L 0 31 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 15 C 8.284271240234375 15 15 8.284271240234375 15 0 L 17 0 C 17 9.38884162902832 9.38884162902832 17 0 17 L 0 15 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{d:"M 0 46.999996185302734 C 25.957382202148438 46.999996185302734 46.999996185302734 25.957382202148438 46.999996185302734 0 L 48.999996185302734 0 C 48.999996185302734 27.06195068359375 27.06195068359375 48.999996185302734 0 48.999996185302734 L 0 46.999996185302734 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bn.4.abba.270",baseID:"d.bn.4.abba",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bn",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ab99a1a:{meta:{setID:"ab99a1a",set:["ab99a1a"],setBaseIDs:["d.em.4.abba.0"],rootBaseID:"d.em.4.abba",rootIDHash:"ab99a1a"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,2,57.359375)"},children:[{attr:{d:"M 54.359222412109375 0 C 40.325164794921875 13.78662109375 21.164825439453125 22.3719482421875 0 22.634521484375 L 0 68.6251220703125 C 34.000030517578125 68.0960693359375 64.73162841796875 54.0999755859375 87.095458984375 31.7362060546875 L 54.359222412109375 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.em.4.abba.0",baseID:"d.em.4.abba",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"em",edgemap:["a","b","b","a"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"20fd4083":{meta:{setID:"20fd4083",set:["20fd4083"],setBaseIDs:["d.bq.4.abbb.270"],rootBaseID:"d.bq.4.abbb",rootIDHash:"20fd4083"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,-2,0)"},children:[{attr:{d:"M 2 0 C 2 35.34622573852539 30.65377426147461 64 66 64 C 101.34622955322266 64 130 35.34622573852539 130 0 L 132 0 C 132 36.4507942199707 102.45079803466797 66 66 66 C 29.549205780029297 66 0 36.4507942199707 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bq.4.abbb.270",baseID:"d.bq.4.abbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"bq",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"7fcb0d8f":{meta:{setID:"7fcb0d8f",set:["7fcb0d8f"],setBaseIDs:["d.cw.4.bbbb.90"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"7fcb0d8f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.90",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6e9d4a77":{meta:{setID:"6e9d4a77",set:["6e9d4a77"],setBaseIDs:["d.dj.4.bbbb.90"],rootBaseID:"d.dj.4.bbbb",rootIDHash:"6e9d4a77"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,65)"},children:[{attr:{d:"M 2 0 C 2 34.793914794921875 30.206085205078125 63 65 63 L 65 65 C 29.101516723632812 65 0 35.89848327636719 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dj.4.bbbb.90",baseID:"d.dj.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dj",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"82e8305":{meta:{setID:"82e8305",set:["82e8305"],setBaseIDs:["d.ec.2.abba.90"],rootBaseID:"d.ec.2.abba",rootIDHash:"82e8305"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,24,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"},{attr:{transform:"matrix(1,0,0,1,88,56)"},children:[{attr:{d:"M 16 8 C 16 12.418277740478516 12.418277740478516 16 8 16 C 3.5817220211029053 16 0 12.418277740478516 0 8 C 0 3.5817220211029053 3.5817220211029053 0 8 0 C 12.418277740478516 0 16 3.5817220211029053 16 8 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ec.2.abba.90",baseID:"d.ec.2.abba",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"ec",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},a9e89fe4:{meta:{setID:"a9e89fe4",set:["a9e89fe4"],setBaseIDs:["d.cw.4.bbbb.180"],rootBaseID:"d.cw.4.bbbb",rootIDHash:"a9e89fe4"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,32.06146240234375,2)"},children:[{attr:{d:"M 0 0 C 1.03240966796875 16.741455078125 14.9371337890625 30 31.93853759765625 30 C 48.93994140625 30 62.84466552734375 16.741455078125 63.8770751953125 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cw.4.bbbb.180",baseID:"d.cw.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"cw",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},d24107f2:{meta:{setID:"d24107f2",set:["d24107f2"],setBaseIDs:["d.ds.4.abba.180"],rootBaseID:"d.ds.4.abba",rootIDHash:"d24107f2"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,31,0)"},children:[{attr:{d:"M 1.941176414489746 0 C 1.941176414489746 17.1533145904541 15.846684455871582 31.058822631835938 33 31.058822631835938 C 50.153316497802734 31.058822631835938 64.05882263183594 17.1533145904541 64.05882263183594 0 L 66 0 C 66 18.22539520263672 51.22539520263672 33 33 33 C 14.774600982666016 33 0 18.22539520263672 0 0 L 1.941176414489746 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ds.4.abba.180",baseID:"d.ds.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ds",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},cb44703d:{meta:{setID:"cb44703d",set:["cb44703d"],setBaseIDs:["d.ci.4.bbbb.90"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"cb44703d"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.90",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6b5e126b":{meta:{setID:"6b5e126b",set:["6b5e126b"],setBaseIDs:["d.ee.4.abba.180"],rootBaseID:"d.ee.4.abba",rootIDHash:"6b5e126b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0,-2)"},children:[{attr:{d:"M 31 33.5 C 31 16.152257919311523 17.135732650756836 2.0615384578704834 0 2.0615384578704834 L 0 0 C 18.210493087768555 0 33 14.983217239379883 33 33.5 C 33 52.016780853271484 18.210493087768555 67 0 67 L 0 64.93846130371094 C 17.135732650756836 64.93846130371094 31 50.84773635864258 31 33.5 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ee.4.abba.180",baseID:"d.ee.4.abba",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ee",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"3d22f9b0":{meta:{setID:"3d22f9b0",set:["3d22f9b0"],setBaseIDs:["d.dl.4.bbbb.270"],rootBaseID:"d.dl.4.bbbb",rootIDHash:"3d22f9b0"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,15)"},children:[{attr:{d:"M 49 49 C 49 21.938051223754883 27.06195068359375 0 0 0 L 0 2 C 25.957382202148438 2 47 23.042621612548828 47 49 L 49 49 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dl.4.bbbb.270",baseID:"d.dl.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dl",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},fb5ca265:{meta:{setID:"fb5ca265",set:["fb5ca265"],setBaseIDs:["d.cs.2.bbbb.90"],rootBaseID:"d.cs.2.bbbb",rootIDHash:"fb5ca265"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,111,0)"},children:[{attr:{d:"M 0 0 L 2 0 L 2 128 L 0 128 L 0 0 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.cs.2.bbbb.90",baseID:"d.cs.2.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:2,paint:"BG",key:"cs",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},ec96cafb:{meta:{setID:"ec96cafb",set:["ec96cafb"],setBaseIDs:["d.bt.4.bbbb.180"],rootBaseID:"d.bt.4.bbbb",rootIDHash:"ec96cafb"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(0.5299989581108093,0.847998321056366,-0.847998321056366,0.5299989581108093,1.269600510597229,-0.7934557199478149)"},children:[{attr:{d:"M 150.94369506835938 1.9943454265594482 L 0 1.9943454265594482 L 0 0 L 150.94369506835938 0 L 150.94369506835938 1.9943454265594482 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.bt.4.bbbb.180",baseID:"d.bt.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"bt",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"9f680a2b":{meta:{setID:"9f680a2b",set:["9f680a2b"],setBaseIDs:["d.ce.1.bbbb.0"],rootBaseID:"d.ce.1.bbbb",rootIDHash:"9f680a2b"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,16,16)"},children:[{attr:{d:"M 0 48 C 0 21.490337371826172 21.490337371826172 0 48 0 C 74.5096664428711 0 96 21.490337371826172 96 48 C 96 74.5096664428711 74.5096664428711 96 48 96 C 21.490337371826172 96 0 74.5096664428711 0 48 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ce.1.bbbb.0",baseID:"d.ce.1.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:1,paint:"BG",key:"ce",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b46295d4:{meta:{setID:"b46295d4",set:["b46295d4"],setBaseIDs:["d.bz.4.bbbb.90"],rootBaseID:"d.bz.4.bbbb",rootIDHash:"b46295d4"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(1,0,0,1,3.0040283203125,3.004150390625)"},children:[{attr:{d:"M 35.03544616699219 84.578857421875 C 13.582061767578125 62.77294921875 0.26544189453125 32.942138671875 0 0 C 32.942420959472656 0.265380859375 62.77324676513672 13.58203125 84.57886505126953 35.03515625 L 35.03544616699219 84.578857421875 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.bz.4.bbbb.90",baseID:"d.bz.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"bz",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"2d91e72f":{meta:{setID:"2d91e72f",set:["2d91e72f"],setBaseIDs:["d.dk.4.bbbb.90"],rootBaseID:"d.dk.4.bbbb",rootIDHash:"2d91e72f"},children:[{attr:{transform:"matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,128,0)"},children:[{attr:{transform:"matrix(-1.8369702788777518e-16,-1,1,-1.8369702788777518e-16,1.8369702788777518e-16,33)"},children:[{attr:{d:"M 2 0 C 2 17.12081527709961 15.87918472290039 31 33 31 L 33 33 C 14.774616241455078 33 0 18.225383758544922 0 0 L 2 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.dk.4.bbbb.90",baseID:"d.dk.4.bbbb",type:"d",relativeTransform:{a:6.123233995736766e-17,c:-1,e:128,b:1,d:6.123233995736766e-17,f:0},rotations:4,paint:"BG",key:"dk",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"55d21172":{meta:{setID:"55d21172",set:["55d21172"],setBaseIDs:["d.cx.4.bbbb.0"],rootBaseID:"d.cx.4.bbbb",rootIDHash:"55d21172"},children:[{attr:{transform:"matrix(1,0,0,1,0,0)"},children:[{attr:{transform:"matrix(1,0,0,1,48.123779296875,2)"},children:[{attr:{d:"M 0 0 C 0.98419189453125 7.892822265625 7.71697998046875 14 15.876220703125 14 C 24.03546142578125 14 30.76824951171875 7.892822265625 31.75244140625 0 L 0 0 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.cx.4.bbbb.0",baseID:"d.cx.4.bbbb",type:"d",relativeTransform:{a:1,c:0,e:0,b:0,d:1,f:0},rotations:4,paint:"BG",key:"cx",edgemap:["b","b","b","b"],style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"6f23470b":{meta:{setID:"6f23470b",set:["6f23470b"],setBaseIDs:["d.ca.4.bbbb.180"],rootBaseID:"d.ca.4.bbbb",rootIDHash:"6f23470b"},children:[{attr:{transform:"matrix(-1,1.2246467991473532e-16,-1.2246467991473532e-16,-1,128,128)"},children:[{attr:{transform:"matrix(1,0,0,1,0.8699696660041809,0.8699747920036316)"},children:[{attr:{d:"M 112.12674713134766 0 C 111.66136932373047 61.71796417236328 61.71796798706055 111.66136932373047 0 112.12674713134766 C 0.07810759544372559 111.4577407836914 0.161374032497406 110.79031372070312 0.24975842237472534 110.12449645996094 C 60.66484069824219 109.52742767333984 109.52742767333984 60.66484069824219 110.12449645996094 0.2497583031654358 C 110.79031372070312 0.16137391328811646 111.4577407836914 0.07810753583908081 112.12674713134766 0 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 96.05703735351562 2.9277095794677734 C 94.11087036132812 53.479217529296875 53.47922134399414 94.11087799072266 2.92771053314209 96.05703735351562 C 3.0964479446411133 95.3803939819336 3.2705700397491455 94.70587921142578 3.450028657913208 94.0335464477539 C 52.480045318603516 91.8392105102539 91.8392105102539 52.480045318603516 94.0335464477539 3.4500277042388916 C 94.70587921142578 3.270569086074829 95.3803939819336 3.096446990966797 96.05703735351562 2.9277095794677734 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 8.235589027404785 79.62393188476562 C 45.69525909423828 75.4333724975586 75.4333724975586 45.69525909423828 79.62393188476562 8.235587120056152 C 78.9149169921875 8.519139289855957 78.20903015136719 8.808850288391113 77.50634002685547 9.104653358459473 C 73.0142822265625 44.75928497314453 44.75929260253906 73.0142822265625 9.104655265808105 77.50634002685547 C 8.808852195739746 78.20903015136719 8.51914119720459 78.9149169921875 8.235589027404785 79.62393188476562 Z",fillRule:"NONZERO"},tag:"path"},{attr:{d:"M 17.15437126159668 61.59848403930664 C 38.56138610839844 55.43290328979492 55.43291091918945 38.56138610839844 61.59849166870117 17.15437126159668 C 60.73215103149414 17.67171287536621 59.8724365234375 18.198997497558594 59.019508361816406 18.736074447631836 C 52.795589447021484 37.75990295410156 37.75990295410156 52.79558563232422 18.73607635498047 59.01950454711914 C 18.198999404907227 59.872432708740234 17.67171287536621 60.73214340209961 17.15437126159668 61.59848403930664 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.ca.4.bbbb.180",baseID:"d.ca.4.bbbb",type:"d",relativeTransform:{a:-1,c:-1.2246467991473532e-16,e:128,b:1.2246467991473532e-16,d:-1,f:128},rotations:4,paint:"BG",key:"ca",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},"235d50bf":{meta:{setID:"235d50bf",set:["235d50bf"],setBaseIDs:["d.ci.4.bbbb.270"],rootBaseID:"d.ci.4.bbbb",rootIDHash:"235d50bf"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(5.551115123125783e-17,-1,1,5.551115123125783e-17,63,64)"},children:[{attr:{d:"M 64 2 L 0 2 L 0 0 L 64 0 L 64 2 Z",fillRule:"EVENODD"},tag:"path"}],tag:"g"}],meta:{id:"d.ci.4.bbbb.270",baseID:"d.ci.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"ci",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"},b3ae909c:{meta:{setID:"b3ae909c",set:["b3ae909c"],setBaseIDs:["d.dm.4.bbbb.270"],rootBaseID:"d.dm.4.bbbb",rootIDHash:"b3ae909c"},children:[{attr:{transform:"matrix(-1.8369701987210297e-16,-1,1,-1.8369701987210297e-16,1.4210854715202004e-14,128)"},children:[{attr:{transform:"matrix(1,0,0,1,64,31)"},children:[{attr:{d:"M 33 33 C 33 14.774604797363281 18.22539520263672 0 0 0 L 0 2 C 17.120826721191406 2 31 15.879173278808594 31 33 L 33 33 Z",fillRule:"NONZERO"},tag:"path"}],tag:"g"}],meta:{id:"d.dm.4.bbbb.270",baseID:"d.dm.4.bbbb",type:"d",relativeTransform:{a:-1.8369701987210297e-16,c:1,e:1.4210854715202004e-14,b:-1,d:-1.8369701987210297e-16,f:128},rotations:4,paint:"BG",key:"dm",style:{fill:"BG",stroke:"NO"}},tag:"g"}],tag:"g"}},mapping={bac:"e3621cc2:7faaca8c:36a4b4a8:5dfed122",bal:"de3bc3d1:587b58fb:63454c71",ban:"e3621cc2:66b0fffd",bar:"7a365cc2:2befa75a:7faaca8c",bat:"e3621cc2:adfbec3",bec:"a5c31631:7faaca8c:b7b090cf",bel:"362aae07:b193cb04",ben:"fbf3a00b:2befa75a:b0aeb7df",bep:"82ff5e94:92e85004",ber:"19634ad2:42b4e3a3",bes:"a5c31631:7faaca8c:335e8694",bet:"7a365cc2:2f5059f3",bex:"19634ad2:2f5059f3:b7b090cf",bic:"e3621cc2:4d0779c1",bid:"e3621cc2:869bd8d8:57ed51b0",bil:"b0ac0b82:10545ed3:b7b090cf",bin:"fbf3a00b",bis:"e3621cc2:869bd8d8:fd1b186c",bit:"de3bc3d1:e5fae2fb:bddfa3f3",bol:"7a365cc2:869bd8d8:82610c41",bon:"82ff5e94:613cb28b",bor:"b0ac0b82:7faaca8c:fc65290b",bos:"e3621cc2:7faaca8c:952f1d85",bot:"b0ac0b82:36a4b4a8:cb9b5189",bud:"a5c31631:462c645e:d1fb16cc",bur:"6cb74008:2639d7d4:5dfed122",bus:"a5c31631:7faaca8c:c7af9494",byl:"6cb74008:7210b66f:5dfed122",byn:"6cb74008:18f6b23e",byr:"362aae07:7faaca8c:13446f50",byt:"19634ad2:869bd8d8:82610c41:2b187d87",dab:"e3621cc2:1c9d4f11:5dfed122",dac:"e3621cc2:e5fae2fb:869bd8d8:69daeb1a",dal:"de3bc3d1:587b58fb:7faaca8c",dan:"b0ac0b82:fe5cf0f4:2befa75a:9e7ddd3d",dap:"e3621cc2:10545ed3:bddfa3f3",dar:"7a365cc2:3cdcdb8c:acc8c8fb",das:"fbf3a00b:fe5cf0f4:b7b090cf",dat:"e3621cc2:613cb28b",dav:"b0ac0b82:869bd8d8:4dae70af:f0d5fe71",deb:"fbf3a00b:cb81c430",dec:"a5c31631:efa22418",def:"de3bc3d1:66fbf43f:5dfed122",deg:"fbf3a00b:335e8694",del:"362aae07:acc8c8fb",dem:"7a365cc2:7faaca8c:6245af61",den:"fbf3a00b:7faaca8c:6245af61",dep:"82ff5e94:fc65290b",der:"d93ccb2:42b4e3a3",des:"82ff5e94:42b4e3a3",det:"7a365cc2:7191ec30",dev:"19634ad2:36a4b4a8",dex:"19634ad2:fe5cf0f4:b7b090cf",dib:"7a365cc2:869bd8d8:faa6eb0",dif:"e3621cc2:2639d7d4:a0991dbc",dig:"b0ac0b82:fe5cf0f4:2befa75a:2f5059f3",dil:"b0ac0b82:e5fae2fb:10545ed3",din:"fbf3a00b:42b4e3a3",dir:"e3621cc2:2befa75a:2f5059f3:c3bebfe6",dis:"82ff5e94:7faaca8c:87cb2bff",div:"fbf3a00b:fe5cf0f4:603da034:f3633360",doc:"362aae07:2befa75a:fe5cf0f4:6acd7409",dol:"7a365cc2:869bd8d8:ad7dd51b",don:"82ff5e94:6615d02d",dop:"7a365cc2:36a4b4a8:869bd8d8:5ba1ba9b",dor:"b0ac0b82:869bd8d8",dos:"e3621cc2:7faaca8c:cf0f809a",dot:"b0ac0b82:36a4b4a8",dov:"fbf3a00b:e5fae2fb:9ebd20ff",doz:"7a365cc2:3cdcdb8c",duc:"a5c31631:869bd8d8:faa6eb0",dul:"7a365cc2:36a4b4a8:4dae70af",dun:"19634ad2:4dae70af",dur:"d93ccb2",dus:"a5c31631:e5fae2fb:4d0779c1",dut:"fbf3a00b:5e841ec3",dux:"6cb74008:afc30081",dyl:"a5c31631:66b0fffd",dyn:"6cb74008:4c4076d5",dyr:"362aae07:7faaca8c:d6753be3",dys:"a5c31631:adfbec3",dyt:"19634ad2:869bd8d8:b193cb04:b0aeb7df",fab:"e3621cc2:e5fae2fb:36a4b4a8:5dfed122",fad:"6cb74008:b788c92f",fal:"362aae07:e5fae2fb:9ebd20ff",fam:"b0ac0b82:869bd8d8:36a4b4a8:fe5cf0f4",fan:"b0ac0b82:fe5cf0f4:2befa75a:e5fae2fb",fas:"fbf3a00b:b193cb04:a4ed278a",feb:"fbf3a00b:eb608ee5",fed:"7a365cc2:36a4b4a8:52a6a74c",fel:"362aae07:1c9d4f11",fen:"fbf3a00b:7faaca8c:fc65290b",fep:"a5c31631:e5fae2fb",fer:"19634ad2:fe5cf0f4",fes:"82ff5e94:e2f4d6e2",fet:"7a365cc2:e5fae2fb",fex:"19634ad2:1c9d4f11:b7b090cf",fid:"e3621cc2:7faaca8c:e6117eb6",fig:"b0ac0b82:fe5cf0f4:2befa75a:b193cb04",fil:"b0ac0b82:869bd8d8:48176644",fin:"fbf3a00b:9e7ddd3d",fip:"b0ac0b82:7faaca8c:82610c41:b397af9f",fir:"e3621cc2:2befa75a:1c9d4f11:427a1751",fit:"de3bc3d1:e5fae2fb:4dae70af",fod:"b0ac0b82:b7b090cf",fog:"82ff5e94:7faaca8c:2befa75a:1735a791",fol:"7a365cc2:869bd8d8:1735a791",fon:"82ff5e94:7faaca8c",fop:"7a365cc2:7faaca8c:462c645e:d1fb16cc",for:"b0ac0b82:36a4b4a8:9e7ddd3d",fos:"6cb74008:7faaca8c:cf0f809a",fot:"b0ac0b82:36a4b4a8:7191ec30",ful:"7a365cc2:5ba1ba9b",fun:"28b33136:7faaca8c:7191ec30:672fdf93",fur:"6cb74008:2befa75a:e5fae2fb:cf0f809a",fus:"a5c31631:e5fae2fb:c7af9494",fyl:"6cb74008:7210b66f:f49b158d",fyn:"6cb74008:e5fae2fb",fyr:"362aae07:7faaca8c:1c9d4f11",hab:"e3621cc2:e5fae2fb:5dfed122",hac:"e3621cc2:e5fae2fb:2befa75a:b193cb04",had:"6cb74008:6cf35bfb",hal:"362aae07:fe5cf0f4:83023171",han:"6cb74008:66b0fffd",hap:"7a365cc2:82610c41:7faaca8c:4c1ac47d",har:"7a365cc2:2befa75a:fe5cf0f4",has:"fbf3a00b:b193cb04:b0aeb7df",hat:"e3621cc2:2639d7d4",hav:"e3621cc2:42b4e3a3",heb:"fbf3a00b:66b0fffd",hec:"a5c31631:e6117eb6",hep:"a5c31631:7faaca8c",hes:"82ff5e94:9b3aa0b1",het:"7a365cc2:42b4e3a3",hex:"19634ad2:e5fae2fb:b7b090cf",hid:"e3621cc2:7faaca8c:cf042a60",hil:"b0ac0b82:fe5cf0f4:44e1402d",hin:"fbf3a00b:9b3aa0b1",hob:"28b33136:869bd8d8",hoc:"b0ac0b82:1c9d4f11:bddfa3f3",hod:"b0ac0b82:54112535",hol:"7a365cc2:869bd8d8:2befa75a",hop:"7a365cc2:36a4b4a8:869bd8d8:cf0f809a",hos:"e3621cc2:7faaca8c:e53a31b5",hul:"7a365cc2:82610c41:b0aeb7df",hus:"a5c31631:7faaca8c:36a4b4a8",hut:"fbf3a00b:6cf35bfb",lab:"82ff5e94:7faaca8c:1c9d4f11:5dfed122",lac:"e3621cc2:869bd8d8:57ed51b0:2ab4bc02",lad:"82ff5e94:b788c92f",lag:"b0ac0b82:4456d619",lan:"b0ac0b82:fe5cf0f4:2befa75a:9b3aa0b1",lap:"e3621cc2:4dae70af:f0d5fe71",lar:"7a365cc2:2befa75a:869bd8d8",las:"fbf3a00b:82610c41:d1fb16cc",lat:"e3621cc2:cf042a60",lav:"82ff5e94:adafc09c",leb:"fbf3a00b:d7e0d9e",lec:"a5c31631:7faaca8c:bddfa3f3",led:"7a365cc2:1d989f87",leg:"fbf3a00b:b09cf4ef",len:"fbf3a00b:82610c41:510344a7",lep:"82ff5e94:ae1e4f7",ler:"19634ad2:2b187d87",let:"7a365cc2:fe5cf0f4",lev:"19634ad2:bddfa3f3",lex:"19634ad2:7faaca8c:7191ec30:b7b090cf",lib:"7a365cc2:869bd8d8:fb651938",lid:"e3621cc2:e5fae2fb:2f5059f3",lig:"7a365cc2:82610c41",lin:"fbf3a00b:54112535",lis:"a5c31631:869bd8d8:f3633360",lit:"de3bc3d1:7faaca8c:18f6b23e",liv:"fbf3a00b:fe5cf0f4:603da034:8d560b8b",loc:"de3bc3d1:869bd8d8:9f3841fc",lod:"b0ac0b82:462c645e",lom:"fbf3a00b:59d9e201",lon:"82ff5e94:cf042a60",lop:"7a365cc2:36a4b4a8:869bd8d8:ad042183",lor:"b0ac0b82:fe5cf0f4",los:"e3621cc2:7faaca8c:5e841ec3",luc:"a5c31631:869bd8d8:1b1fba11",lud:"a5c31631:869bd8d8:cbdce7a4",lug:"19634ad2",lun:"7a365cc2:b193cb04",lup:"19634ad2:869bd8d8:5ba1ba9b",lur:"a5c31631:fe5cf0f4:cbdce7a4",lus:"a5c31631:e5fae2fb:5e841ec3",lut:"fbf3a00b:d1fb16cc",lux:"6cb74008:b7b090cf",lyd:"de3bc3d1:7faaca8c:b193cb04:bfc8669e",lyn:"6cb74008:9b3aa0b1",lyr:"362aae07:7faaca8c:efa22418",lys:"a5c31631:bddfa3f3",lyt:"19634ad2:e5fae2fb:2befa75a:10545ed3",lyx:"6cb74008:7faaca8c:952f1d85",mac:"e3621cc2:5dfed122",mag:"b0ac0b82:869bd8d8:82610c41:510344a7",mal:"de3bc3d1:10545ed3:5dfed122",map:"82ff5e94:10545ed3:bddfa3f3",mar:"7a365cc2:3cdcdb8c:fe5cf0f4",mas:"fbf3a00b:b193cb04:b7b090cf",mat:"e3621cc2:81113d71",meb:"fbf3a00b:4d0779c1",mec:"a5c31631:10545ed3:bddfa3f3",med:"7a365cc2:f0d5fe71",meg:"fbf3a00b:92e85004",mel:"362aae07:7191ec30",mep:"82ff5e94:fd1b186c",mer:"19634ad2:9b3aa0b1",mes:"a5c31631:7faaca8c:7191ec30",met:"7a365cc2:9b3aa0b1",mev:"19634ad2:1735a791",mex:"19634ad2:7faaca8c:b7b090cf",mic:"a5c31631:335e8694",mid:"e3621cc2:869bd8d8:fb651938",mig:"b0ac0b82:fe5cf0f4:2befa75a:10545ed3",mil:"b0ac0b82:869bd8d8:fd1b186c",min:"fbf3a00b:7faaca8c",mip:"82ff5e94:2befa75a:fe5cf0f4:f6bb8637",mir:"e3621cc2:2befa75a:2f5059f3:a2880ff1",mis:"82ff5e94:7faaca8c:92e85004",mit:"de3bc3d1:e5fae2fb:87cb2bff",moc:"de3bc3d1:869bd8d8:5a85e6f7",mod:"b0ac0b82:1b1fba11",mog:"82ff5e94:b193cb04:7faaca8c:1735a791",mol:"7a365cc2:869bd8d8:8c89b36e",mon:"82ff5e94:b7b090cf",mop:"7a365cc2:7faaca8c:82610c41:b0aeb7df",mor:"b0ac0b82:36a4b4a8:2f5059f3",mos:"e3621cc2:e5fae2fb:824e5e1f",mot:"b0ac0b82:36a4b4a8:83856b0b",mud:"a5c31631:7faaca8c:1e0083d1",mug:"19634ad2:cf0f809a",mul:"7a365cc2:10545ed3:4dae70af",mun:"7a365cc2:bddfa3f3",mur:"a5c31631:869bd8d8:36a4b4a8:b0aeb7df",mus:"a5c31631:e5fae2fb:d7e0d9e",mut:"fbf3a00b:824e5e1f",myl:"6cb74008:2f5059f3:4b097186",myn:"6cb74008:e3f1ef01",myr:"362aae07:7faaca8c:e6117eb6",nac:"e3621cc2:2befa75a:5dfed122",nal:"de3bc3d1:7faaca8c:cf042a60",nam:"b0ac0b82:869bd8d8:36a4b4a8:a4ed278a",nap:"82ff5e94:fe5cf0f4:bddfa3f3",nar:"7a365cc2:2befa75a:b193cb04",nat:"e3621cc2:372ac81b",nav:"e3621cc2:adafc09c",neb:"fbf3a00b:387e568f",nec:"a5c31631:6cf35bfb",ned:"7a365cc2:36a4b4a8",nel:"362aae07:7faaca8c:6245af61",nem:"7a365cc2:7faaca8c:92e85004",nep:"a5c31631:fc9ea1e2",ner:"19634ad2:54112535",nes:"82ff5e94:fe5cf0f4",net:"7a365cc2:7d18e429",nev:"19634ad2:2befa75a",nex:"19634ad2:10545ed3:b7b090cf",nib:"7a365cc2:869bd8d8:5a85e6f7",nid:"e3621cc2:869bd8d8:2ab4bc02",nil:"b0ac0b82:869bd8d8:ad042183",nim:"28b33136:e2f4d6e2",nis:"82ff5e94:7faaca8c:387e568f",noc:"b0ac0b82:fe5cf0f4:bddfa3f3",nod:"b0ac0b82:d842a67d",nol:"7a365cc2:869bd8d8:510344a7",nom:"fbf3a00b:d6753be3",nop:"7a365cc2:7faaca8c:1c9d4f11:bddfa3f3",nor:"b0ac0b82:36a4b4a8:fe4199fc",nos:"e3621cc2:e5fae2fb:952f1d85",nov:"fbf3a00b:7faaca8c:cf042a60",nub:"a5c31631:869bd8d8",nul:"7a365cc2:b193cb04:d1fb16cc",num:"a5c31631:e5fae2fb:59d9e201",nup:"19634ad2:5ba1ba9b",nus:"a5c31631:7210b66f:f49b158d",nut:"fbf3a00b:975397b2",nux:"a5c31631:869bd8d8:fd1b186c",nyd:"de3bc3d1:7faaca8c:b193cb04:1735a791",nyl:"a5c31631:7faaca8c:fc65290b",nym:"6cb74008:cbdce7a4",nyr:"362aae07:7faaca8c:18f6b23e",nys:"a5c31631:672fdf93",nyt:"19634ad2:869bd8d8:a2880ff1:4dae70af",nyx:"6cb74008:7faaca8c:b7b090cf",pac:"e3621cc2:e5fae2fb:2befa75a:1d989f87",pad:"e3621cc2:b788c92f",pag:"b0ac0b82:7191ec30",pal:"de3bc3d1:e5fae2fb:adafc09c",pan:"e3621cc2:e5fae2fb",par:"7a365cc2:2befa75a:e5fae2fb",pas:"fbf3a00b:fe5cf0f4:cbdce7a4",pat:"e3621cc2:fc9ea1e2",pec:"a5c31631:e5fae2fb:13446f50",ped:"7a365cc2:d1fb16cc",peg:"fbf3a00b:b645c8d3",pel:"362aae07:4c1ac47d",pem:"7a365cc2:7faaca8c:335e8694",pen:"fbf3a00b:7faaca8c:8c89b36e",per:"d93ccb2:fe5cf0f4",pes:"82ff5e94:7faaca8c:4456d619",pet:"7a365cc2:10545ed3",pex:"19634ad2:b193cb04:b7b090cf",pic:"a5c31631:8d8261d6",pid:"e3621cc2:7faaca8c:5dfed122",pil:"b0ac0b82:e5fae2fb:5e841ec3",pin:"fbf3a00b:2b187d87",pit:"de3bc3d1:e5fae2fb:5dfed122",poc:"de3bc3d1:fe5cf0f4:42b4e3a3",pod:"b0ac0b82:5a85e6f7",pol:"7a365cc2:82610c41:4c4076d5",pon:"82ff5e94",pos:"e3621cc2:7faaca8c:824e5e1f",pub:"a5c31631:9b3aa0b1",pun:"7a365cc2:4dae70af:a2880ff1:427a1751",pur:"6cb74008:ab99a1a",put:"fbf3a00b:13446f50",pyl:"a5c31631:20fd4083",pyx:"6cb74008:7faaca8c:824e5e1f",rab:"82ff5e94:7faaca8c:7191ec30:5dfed122",rac:"de3bc3d1:5dfed122",rad:"a5c31631:b788c92f",rag:"b0ac0b82:2f5059f3",ral:"de3bc3d1:2befa75a:b193cb04",ram:"b0ac0b82:fe5cf0f4:2befa75a:b7b090cf",ran:"b0ac0b82:fe5cf0f4:2befa75a:7faaca8c",rap:"e3621cc2:fe5cf0f4:f0d5fe71",rav:"e3621cc2:4c4076d5",reb:"fbf3a00b:372ac81b",rec:"a5c31631:d6753be3",red:"7a365cc2:b397af9f",ref:"de3bc3d1:7faaca8c:5dfed122",reg:"fbf3a00b:7fcb0d8f",rel:"362aae07:fd1b186c",rem:"7a365cc2:7faaca8c:6e9d4a77",ren:"fbf3a00b:2befa75a:10545ed3",rep:"82ff5e94:387e568f",res:"82ff5e94:10545ed3",ret:"7a365cc2:869bd8d8",rev:"19634ad2:b7b090cf",rex:"19634ad2:869bd8d8:b7b090cf",rib:"7a365cc2:869bd8d8:e2f4d6e2",ric:"a5c31631:d7e0d9e",rid:"e3621cc2:fe5cf0f4:54112535",rig:"7a365cc2:82e8305",ril:"b0ac0b82:e5fae2fb:824e5e1f",rin:"fbf3a00b:48176644",rip:"b0ac0b82:7faaca8c:4dae70af:f0d5fe71",ris:"82ff5e94:7faaca8c:18f6b23e",rit:"de3bc3d1:e5fae2fb:b7b090cf",riv:"fbf3a00b:fe5cf0f4:b193cb04:82610c41",roc:"de3bc3d1:869bd8d8:57ed51b0",rol:"7a365cc2:869bd8d8:cf0f809a",ron:"82ff5e94:66b0fffd",rop:"7a365cc2:7faaca8c:10545ed3:4dae70af",ros:"e3621cc2:e5fae2fb:5e841ec3",rov:"fbf3a00b:7faaca8c:18f6b23e",ruc:"a5c31631:869bd8d8:4c4076d5",rud:"a5c31631:869bd8d8:48176644",rul:"7a365cc2:10545ed3:b7b090cf",rum:"6cb74008:62519049",run:"19634ad2:cbdce7a4",rup:"19634ad2:b193cb04:fe5cf0f4:5ba1ba9b",rus:"a5c31631:e5fae2fb:335e8694",rut:"fbf3a00b:952f1d85",rux:"a5c31631:869bd8d8:fe4199fc",ryc:"a5c31631:5a85e6f7",ryd:"de3bc3d1:7faaca8c:2f5059f3:c3bebfe6",ryg:"6cb74008",ryl:"e3621cc2:e5fae2fb:adafc09c",rym:"6cb74008:5a85e6f7",ryn:"6cb74008:eb608ee5",ryp:"6cb74008:7faaca8c",rys:"a5c31631:6245af61",ryt:"19634ad2:e5fae2fb:82610c41:1735a791",ryx:"6cb74008:2befa75a:e5fae2fb",sab:"e3621cc2:7faaca8c:1c9d4f11:5dfed122",sal:"de3bc3d1:e5fae2fb:9ebd20ff",sam:"b0ac0b82:fe5cf0f4:82610c41:b7b090cf",san:"e3621cc2:7faaca8c",sap:"e3621cc2:869bd8d8:f0d5fe71",sar:"7a365cc2:82610c41:fe5cf0f4",sat:"e3621cc2:afc30081",sav:"b0ac0b82:e5fae2fb:4dae70af:1d989f87",seb:"fbf3a00b:6e9d4a77",sec:"a5c31631:952f1d85",sed:"7a365cc2:36a4b4a8:a4ed278a",sef:"de3bc3d1:36a4b4a8:5dfed122",seg:"fbf3a00b:a9e89fe4",sel:"362aae07:2befa75a",sem:"7a365cc2:7faaca8c:cb81c430",sen:"fbf3a00b:fe5cf0f4:36a4b4a8:d24107f2",sep:"82ff5e94:cbdce7a4",ser:"d93ccb2:9b3aa0b1",set:"7a365cc2:cb44703d",sev:"19634ad2:82610c41",sib:"7a365cc2:e5fae2fb:4d0779c1",sic:"e3621cc2:4dae70af",sid:"e3621cc2:869bd8d8:6b5e126b",sig:"7a365cc2:d842a67d",sil:"b0ac0b82:e5fae2fb:2f5059f3",sim:"28b33136:48176644",sip:"fbf3a00b:fe5cf0f4:3d22f9b0:d1fb16cc",sit:"de3bc3d1:2befa75a:b7b090cf",siv:"fbf3a00b:fe5cf0f4:36a4b4a8:fb5ca265",soc:"362aae07:2befa75a:fe5cf0f4:603da034",sog:"82ff5e94:2befa75a:e5fae2fb:cf0f809a",sol:"7a365cc2:869bd8d8:b193cb04",som:"fbf3a00b:e6117eb6",son:"82ff5e94:ec96cafb",sop:"7a365cc2:7faaca8c:b193cb04:1d989f87",sor:"b0ac0b82:7faaca8c:18f6b23e",sov:"fbf3a00b:e5fae2fb:adafc09c",sub:"a5c31631:fe5cf0f4",sud:"a5c31631:869bd8d8:b7b090cf",sug:"19634ad2:d842a67d",sul:"7a365cc2:cf0f809a",sum:"6cb74008:cb81c430",sun:"7a365cc2:9f680a2b",sup:"19634ad2:36a4b4a8:869bd8d8:5ba1ba9b",sur:"a5c31631:7faaca8c:ab99a1a",sut:"fbf3a00b:b788c92f",syd:"de3bc3d1:7faaca8c:2f5059f3:3d22f9b0",syl:"6cb74008:7faaca8c:d6753be3",sym:"6cb74008:42b4e3a3",syn:"6cb74008:9ebd20ff",syp:"6cb74008:7faaca8c:cb81c430",syr:"362aae07:7faaca8c:59d9e201",syt:"19634ad2:e5fae2fb:82610c41:b193cb04",syx:"6cb74008:7faaca8c:fc65290b",tab:"e3621cc2:7faaca8c:2befa75a:5dfed122",tac:"e3621cc2:e5fae2fb:2befa75a:f0d5fe71",tad:"e3621cc2:6cf35bfb",tag:"b0ac0b82:10545ed3",tal:"de3bc3d1:e5fae2fb:d7e0d9e",tam:"b0ac0b82:869bd8d8:36a4b4a8:52a6a74c",tan:"e3621cc2:8d8261d6",tap:"7a365cc2:82610c41:869bd8d8:4c1ac47d",tar:"7a365cc2:82610c41:d1fb16cc",tas:"fbf3a00b:fe5cf0f4:cf0f809a",teb:"fbf3a00b:6245af61",tec:"a5c31631:10545ed3:b7b090cf",ted:"7a365cc2:acc8c8fb",teg:"fbf3a00b:f6bb8637",tel:"362aae07:b46295d4:672fdf93",tem:"7a365cc2:7faaca8c:387e568f",ten:"fbf3a00b:e53a31b5",tep:"82ff5e94:6245af61",ter:"d93ccb2:54112535",tes:"82ff5e94:54112535",tev:"19634ad2:b193cb04",tex:"19634ad2:7191ec30:b7b090cf",tic:"e3621cc2:2d91e72f",tid:"e3621cc2:fe5cf0f4:42b4e3a3",til:"b0ac0b82:10545ed3:bddfa3f3",tim:"28b33136:7faaca8c",tin:"fbf3a00b:e2f4d6e2",tip:"82ff5e94:2befa75a:fe5cf0f4:b7b090cf",tir:"e3621cc2:2befa75a:b193cb04:7faaca8c",tob:"28b33136:5a85e6f7",toc:"de3bc3d1:2befa75a:5a85e6f7",tod:"b0ac0b82:82e8305",tog:"82ff5e94:2befa75a:e5fae2fb:fe4199fc",tol:"7a365cc2:869bd8d8:d24107f2",tom:"fbf3a00b:87cb2bff",ton:"82ff5e94:e3f1ef01",top:"7a365cc2:7faaca8c:2befa75a:b193cb04",tor:"b0ac0b82:36a4b4a8:b193cb04",tuc:"a5c31631:869bd8d8:5a85e6f7",tud:"a5c31631:869bd8d8:d1fb16cc",tug:"19634ad2:ad042183",tul:"7a365cc2:b7b090cf",tun:"28b33136:7faaca8c:36a4b4a8:82610c41",tus:"a5c31631:e5fae2fb:952f1d85",tux:"a5c31631:869bd8d8:510344a7",tyc:"a5c31631:b7b090cf",tyd:"de3bc3d1:7faaca8c:7191ec30:bddfa3f3",tyl:"a5c31631:eb608ee5",tyn:"6cb74008:372ac81b",typ:"6cb74008:7faaca8c:6245af61",tyr:"362aae07:7faaca8c:4456d619",tyv:"362aae07:b193cb04:e5fae2fb:87cb2bff",wac:"e3621cc2:869bd8d8:36a4b4a8:5dfed122",wal:"362aae07:fe5cf0f4:9b3aa0b1",wan:"e3621cc2",wat:"e3621cc2:b7b090cf",web:"fbf3a00b:afc30081",wed:"7a365cc2:952f1d85",weg:"fbf3a00b:55d21172",wel:"362aae07:6f23470b",wen:"fbf3a00b:7faaca8c:cb81c430",wep:"82ff5e94:6cf35bfb",wer:"d93ccb2:2b187d87",wes:"82ff5e94:10545ed3:975397b2",wet:"7a365cc2:235d50bf",wex:"19634ad2:2befa75a:b7b090cf",wic:"82ff5e94:87cb2bff",wid:"e3621cc2:7191ec30:b7b090cf",win:"fbf3a00b:fe5cf0f4",wis:"e3621cc2:869bd8d8:ad042183",wit:"362aae07:cbdce7a4",wol:"7a365cc2:869bd8d8:83856b0b",wor:"b0ac0b82:36a4b4a8:1c9d4f11",wyc:"a5c31631",wyd:"de3bc3d1:7faaca8c:2f5059f3:b3ae909c",wyl:"a5c31631:6615d02d",wyn:"6cb74008:cf042a60",wyt:"19634ad2:e5fae2fb:82610c41:b0aeb7df",wyx:"6cb74008:7faaca8c:87cb2bff",zod:"7a365cc2"},sylgraphjson={symbols:symbols,mapping:mapping},last=function(a){return a[a.length-1]},patpStrToArr=function(a){return a.replace(/[\^~-]/g,"").match(/.{1,3}/g)},_pour=function(a){var t=a.patp,e=a.renderer,r=a.sylgraph,b=a.size,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;t=isString_1$1(t)?patpStrToArr(t):t,d=isUndefined_1$1(d)?lookup$1(t,r):d;var n=grid({length:d.length,margin:c,size:b}),i=knoll(d,n),f=dyes({tag:"svg",meta:{},attr:{width:b,height:b},children:[baseRectangle(b,o)].concat(_toConsumableArray(i))},t,s);return isUndefined_1$1(e)?f:e.svg(f)},lookup$1=function(a,t){if(isUndefined_1$1(a))throw new Error("Missing patp argument to pour()");return a.map(function(a){var e=t.mapping[a];return isUndefined_1$1(e)?DEFAULT_SYMBOL:{attr:{},meta:{},tag:"g",children:e.split(":").map(function(a){var e=t.symbols[a];return isUndefined_1$1(e)?DEFAULT_ELEM:e})}})},knoll=function(a,t){return a.map(function(a,e){var r=cloneDeep_1$1(a),b=t.grid[e],s=transform(translate(b.x,b.y),scale(t.scale,t.scale));return isUndefined_1$1(r.attr)&&(r.attr={}),r.attr.transform=toSVG(s),r})},baseRectangle=function(a,t){return {tag:"rect",meta:!0===t?{style:{fill:"FG",stroke:"NO"},bg:!0}:{style:{fill:"BG",stroke:"NO"},bg:!0},attr:{width:a,height:a,x:0,y:0}}},DEFAULT_ELEM={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},DEFAULT_SYMBOL={tag:"g",attr:{},children:[{tag:"path",meta:{style:{fill:"FG",stroke:"NO"}},attr:{d:"M64 128C99.3462 128 128 99.3462 128 64C128 28.6538 99.3462 0 64 0C28.6538 0 0 28.6538 0 64C0 99.3462 28.6538 128 64 128ZM81.2255 35.9706L92.5392 47.2843L75.5686 64.2549L92.5392 81.2253L81.2255 92.5391L64.2549 75.5685L47.2843 92.5391L35.9706 81.2253L52.9412 64.2549L35.9706 47.2843L47.2843 35.9706L64.2549 52.9412L81.2255 35.9706Z"}}]},pour=function(a){var t=a.patp,e=a.renderer,r=a.size,b=a.sylgraph,s=a.colorway,d=a.symbols,c=a.margin,o=a.ignoreColorway;return b=isUndefined_1$1(b)?sylgraphjson:b,_pour({patp:t,sylgraph:b,renderer:e,size:r,colorway:s,symbols:d,margin:c,ignoreColorway:o})},grid=function(a){var t=a.length,e=a.margin,r=a.size;2*e>r&&console.warn("sigil-js: margin cannot be larger than sigil size");var b=isNotMarginMode(e),s=b?.08*r:e,d=r-2*s,c=b||t>1?d/2:d,o={le:t,mm:b,tw:r,sw:c,rm:s,rp:c/128*2},n={1:[{x:dc$1(o),y:dc$1(o)}],2:[{x:d1(o),y:dc$1(o)},{x:d2(o),y:dc$1(o)}],4:[{x:d1(o),y:d1(o)},{x:d2(o),y:d1(o)},{x:d1(o),y:d2(o)},{x:d2(o),y:d2(o)}]};return _objectSpread({},o,{scale:o.sw/128,grid:n[t]})},isNotMarginMode=function(a){return "auto"===a||void 0===a},dc$1=function(a){var t=a.le,e=a.mm,r=a.tw,b=a.sw,s=a.rm;return t>1||!0===e?r-1.5*b-s:s},d1=function(a){a.tw,a.sw;return a.rm-a.rp/2},d2=function(a){return a.tw-a.sw-a.rm+a.rp/2},CW=[["#fff","#000000"]],prism=function(a,t){return t[0]},dyes=function(a,t,e){return isUndefined_1$1(e)?(e=isUndefined_1$1(t)?CW[0]:prism(t,CW),wash(a,e)):wash(a,e)},applyColor=function(a,t){return "FG"===a?t[0]:"BG"===a?t[1]:"TC"===a?t[2]:"NC"===a?"grey":last(t)},applyStyleAttrs=function(a,t){var e=a.fill;return {fill:applyColor(e,t)}},wash=function a(t,e){var r=get_1$1(t,["meta","style"],!1),b=get_1$1(t,"children",[]),s=get_1$1(t,"attr",{});return _objectSpread({},t,{attr:!1!==r?_objectSpread({},s,applyStyleAttrs(r,e)):_objectSpread({},s),children:b.map(function(t){return a(t,e)})})};var symbolProto$2=_Symbol?_Symbol.prototype:void 0,symbolValueOf$1=symbolProto$2?symbolProto$2.valueOf:void 0;
+
+	const _jsxFileName$6 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/seal-dict.js";
+	const ReactSVGComponents = {
+	  svg: p => {
+	    return (
+	      react.createElement('svg', { key: Math.random(), 
+	        version: '1.1',
+	        xmlns: 'http://www.w3.org/2000/svg',
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 8}}
+	       ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  circle: p => {
+	    return (
+	      react.createElement('circle', { 
+	        key: Math.random(), ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 18}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  rect: p => {
+	    return (
+	      react.createElement('rect', { 
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 26}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  path: p => {
+	    return (
+	      react.createElement('path', {
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 35}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  g: p => {
+	    return (
+	      react.createElement('g', {
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 44}}
+	        ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  polygon: p => {
+	    return (
+	      react.createElement('polygon', {
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 53}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  line: p => {
+	    return (
+	      react.createElement('line', {
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 62}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  },
+	  polyline: p => {
+	    return (
+	      react.createElement('polyline', {
+	        key: Math.random(), 
+	        ...p.attr, __self: undefined, __source: {fileName: _jsxFileName$6, lineNumber: 71}}
+	      ,  lodash.map(lodash.get(p, 'children', []), child => ReactSVGComponents[child.tag](child)) 
+	      )
+	    )
+	  }
+	};
+
+	class SealDict {
+	  constructor() {
+	    this.dict = {};
+	  }
+
+	  getPrefix(patp) {
+	    return patp.length === 3 ? patp : patp.substr(0, 3);
+	  }
+
+	  getSeal(patp, size, prefix) {
+	    if (patp.length > 13) {
+	      patp = "tiz";
+	    }
+
+	    let sigilShip = prefix ? this.getPrefix(patp) : patp;
+	    let key = `${sigilShip}+${size}`;
+
+	    if (!this.dict[key]) {
+	      this.dict[key] = pour({size: size, patp: sigilShip, renderer: ReactSVGComponents, margin: 0, colorway: ["#fff", "#000"]});
+	    }
+
+	    return this.dict[key];
+	  }
+	}
+
+	const sealDict = new SealDict;
+
+	const _jsxFileName$7 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/sigil.js";
+
+	class Sigil extends react_1 {
+	  render() {
+	    let prefix = this.props.prefix ? JSON.parse(this.props.prefix) : false;
+
+	    return (
+	      react.createElement('div', { 
+	        className: "bg-black", 
+	        style: { flexBasis: 35, padding: 4, paddingBottom: 0 }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 10}}
+	      , 
+	        sealDict.getSeal(this.props.ship, this.props.size, prefix)
+	      
+	      )
+	    );
+	  }
+	}
+
+	const _jsxFileName$8 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/message.js";
+	class Message extends react_1 {
+	  renderContent(type) {
+	    if (type === "url") {
+	        if (/(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF)$/.exec(this.props.details.content)) {
+	          return (
+	            react.createElement('img', { src: this.props.details.content, style: {width:"30%"}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 12}})
+	          )
+	        } else {
+	          return (
+	            react.createElement('a', { className: "body-regular",
+	              href: this.props.details.content,
+	              target: "_blank", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 16}}, this.props.details.content)
+	          )
+	        }
+	    } else if (type === "exp") {
+	      return (
+	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 23}}
+	          , react.createElement('div', { className: "label-small-mono", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 24}}, this.props.details.content)
+	          , react.createElement('pre', { className: "label-small-mono mt-0" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 25}}, this.props.details.res)
+	        )
+	      )
+	    } else if (['new item', 'edited item'].includes(type)) {
+	      return react.createElement('span', { className: "text-body", dangerouslySetInnerHTML: {__html: this.props.details.snip}, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 29}})
+	    } else if (type === "lin") {
+	      return (
+	        react.createElement('p', { className: "body-regular-400 v-top" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 32}}, this.props.details.content)
+	      );
+	    } else {
+	      return react.createElement('span', { className: "label-small-mono", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 35}}, '<unknown message type>');
+	    }
+	  }
+
+	  render() {
+	    let pending = !!this.props.msg.pending ? ' o-80' : '';
+	    
+	    return (
+	      react.createElement('div', { className: "w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 43}}
+	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 44}}
+	          , react.createElement(Sigil, { ship: this.props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 45}} )
+	        )
+	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 47}}
+	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 48}}
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 49}}, "~", this.props.msg.aut)
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 50}}, moment.unix(this.props.msg.wen).format('hh:mm'))
+	          )
+	          , this.renderContent(this.props.details.type)
+	        )
+	      )
+	    );
+	  }
+	}
+
+	const _jsxFileName$9 = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/chat-tabbar.js";
+
+	class ChatTabBar extends react_1 {
+
+	  render() {
+	    let toBaseLink = '/~chat/' + this.props.station;
+
+	    let bbStream = '',
+	      bbMembers = '',
+	      bbSettings = '';
+
+	    let strColor = '',
+	      memColor = '',
+	      setColor = '';
+
+	    if (this.props.location.pathname.includes('/settings')) {
+	      bbSettings = ' bb';
+	      strColor = 'gray';
+	      memColor =  'gray';
+	      setColor = 'black';
+	    } else if (this.props.location.pathname.includes('/members')) {
+	      bbMembers = ' bb';
+	      strColor = 'gray';
+	      memColor =  'black';
+	      setColor = 'gray';
+	    } else {
+	      bbStream = ' bb';
+	      strColor = 'black';
+	      memColor =  'gray';
+	      setColor = 'gray';
+	    }
+
+	    let membersText = this.props.numPeers === 1 
+	      ? '1 Member' : `${this.props.numPeers} Members`;
+
+	    return (
+	      react.createElement('div', { className: "w-100", style: { height:28 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 40}}
+	        , react.createElement('div', { className: "dib w-20 h-100" + bbStream, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}}
+	          , react.createElement(Link, { 
+	            className: 'no-underline label-regular v-mid ' + strColor,
+	            to: toBaseLink, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 42}}, "Stream")
+	        )
+	        , react.createElement('div', { className: "dib w-20 h-100" + bbMembers, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 46}}
+	          , react.createElement(Link, {
+	            className: 'no-underline label-regular v-mid ' + memColor,
+	            to: toBaseLink + '/members', __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 47}}, membersText)
+	        )
+	        , react.createElement('div', { className: "dib w-20 h-100" + bbSettings, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}}
+	          , react.createElement(Link, {
+	            className: 'no-underline label-regular v-mid ' + setColor,
+	            to: toBaseLink + '/settings', __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 52}}, "Settings")
+	        )
+	      )
+	    );
+	  }
+	}
+
+	const _jsxFileName$a = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/icons/icon-send.js";
+	class IconSend extends react_1 {
+	  render() {
+	    return (
+	      react.createElement('img', { src: "/~chat/img/Send.png", width: 40, height: 40, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 6}} )
+	    );
+	  }
+	}
+
+	const _jsxFileName$b = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/chat-input.js";
+
+	class ChatInput extends react_1 {
+
+	  constructor(props) {
+	    super(props);
+
+	    //closure();
+
+
+	    this.state = {
+	      message: ""
+	    };
+
+	    this.textareaRef = react.createRef();
+
+	    this.messageSubmit = this.messageSubmit.bind(this);
+	    this.messageChange = this.messageChange.bind(this);
+
+	    moment.updateLocale('en', {
+	        relativeTime : {
+	            past: function(input) {
+	              return input === 'just now'
+	                ? input
+	                : input + ' ago'
+	            },
+	            s  : 'just now',
+	            future: "in %s",
+	            ss : '%d sec',
+	            m:  "a minute",
+	            mm: "%d min",
+	            h:  "an hr",
+	            hh: "%d hrs",
+	            d:  "a day",
+	            dd: "%d days",
+	            M:  "a month",
+	            MM: "%d months",
+	            y:  "a year",
+	            yy: "%d years"
+	        }
+	    });
+	  }
+
+	  componentDidMount() {
+	    this.bindShortcuts();
+	  }
+
+	  bindShortcuts() {
+	    mousetrap(this.textareaRef.current).bind('enter', e => {
+	      e.preventDefault();
+	      e.stopPropagation();
+
+	      this.messageSubmit(e);
+	    });
+	  }
+
+	  messageChange(event) {
+	    this.setState({message: event.target.value});
+	  }
+
+	  messageSubmit() {
+	    let aud, sep;
+	    let wen = Date.now();
+	    let uid = uuid();
+	    let aut = window.ship;
+
+	    let config = this.props.configs[this.props.station];
+
+	    aud = [this.props.station];
+	    if (isUrl(this.state.message)) {
+	      sep = {
+	        url: this.state.message
+	      };
+	    } else {
+	      sep = {
+	        lin: {
+	          msg: this.state.message,
+	          pat: false
+	        }
+	      };
+	    }
+
+	    let message = {
+	      uid,
+	      aut,
+	      wen,
+	      aud,
+	      sep,
+	    };
+
+	    this.props.api.chat({
+	      actions: {
+	        lis: [
+	          {
+	            read: {
+	              nom: this.props.circle,
+	              red: config.red + 1
+	            }
+	          },
+	          {
+	            convey: [message],
+	          }
+	        ]
+	      }
+	    });
+
+	    this.setState({
+	      message: ""
+	    });
+	  }
+
+	  render() {
+	    const { props, state } = this;
+
+	    return (
+	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 162}}
+	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 163}}
+	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 164}} )
+	        )
+	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 166}}
+	          , react.createElement('input', { className: "ml2 bn" ,
+	            style: { flexGrow: 1 },
+	            ref: this.textareaRef,
+	            placeholder: props.placeholder,
+	            value: state.message,
+	            onChange: this.messageChange, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 167}} )
+	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 173}}
+	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 174}} )
+	          )
+	        )
+	      )
+	    );
+	  }
+	}
+
+	const _jsxFileName$c = "/Users/logan/Dev/interface/apps/chat/src/js/components/chat.js";
+	class ChatScreen extends react_1 {
+	  constructor(props) {
+	    super(props);
+
+	    this.state = {
+	      station: props.match.params.ship + "/" + props.match.params.station,
+	      circle: props.match.params.station,
+	      host: props.match.params.ship,
+	      numPeople: 0,
+	      numPages: 1,
+	      scrollLocked: false,
+	    };
+
+	    this.hasAskedForMessages = false;
+	    this.topMessage = {};
+	    this.buildMessage = this.buildMessage.bind(this);
+	    this.onScroll = this.onScroll.bind(this);
+	  }
+
+	  componentDidMount() {
+	    this.updateNumPeople();
+	    if (this.scrollElement) {
+	      this.scrollElement.scrollIntoView(false, { block: 'end' });
+	    }
+	  }
+
+	  componentDidUpdate(prevProps, prevState) {
+	    const { props } = this;
+
+	    if (prevProps.messages.length < props.messages.length - 300) {
+	      this.hasAskedForMessages = false;
+	      this.forceUpdate();
+	      this.topMessage = {};
+	    } else if (prevProps.match.params.ship !== props.match.params.ship ||
+	              prevProps.match.params.station !== props.match.params.station
+	    ) {
+	      console.log('switched circle');
+	      this.setState({
+	        station: props.match.params.ship + "/" + props.match.params.station,
+	        circle: props.match.params.station,
+	        host: props.match.params.ship,
+	        numPeople: 0,
+	        scrollLocked: false
+	      });
+
+	      this.hasAskedForMessages = false;
+	      this.topMessage = {};
+	      this.forceUpdate();
+	    }
+
+	    this.updateReadNumber();
+	    this.updateNumPeople();
+	    this.updateNumMessagesLoaded(prevProps, prevState);
+	    this.scrollToBottom();
+	  }
+
+	  askForMessages() {
+	    const { props, state } = this;
+	    let messages = props.messages;
+
+	    if (state.numPages * 50 < props.messages.length - 200 || 
+	        this.hasAskedForMessages) {
+	      return;
+	    }
+
+	    if (messages.length > 0) {
+	      let end = messages[0].num;
+	      if (end > 0) {
+	        let start = ((end - 400) > 0) ? end - 400 : 0;
+
+	        this.hasAskedForMessages = true;
+
+	        props.subscription.fetchMessages(state.station, start, end - 1);
+	      }
+	    }
+	  }
+
+	  scrollToBottom() {
+	    if (!this.state.scrollLocked && this.scrollElement) {
+	      this.scrollElement.scrollIntoView({ behavior: 'smooth' });
+	    }
+	  }
+
+	  onScroll(e) {
+	    if (e.target.scrollTop === 0
+	      && this.state.numPages * 50 <= this.props.messages.length) {
+	      this.setState({
+	        numPages: this.state.numPages + 1,
+	        scrollLocked: true
+	      }, () => {
+	        if (this.topMessage && this.topMessage[1]) {
+	          this.askForMessages();
+	          this.topMessage[1].scrollIntoView(true);
+	        } 
+	      });
+	    } else if (
+	        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
+	      e.target.clientHeight
+	    ) {
+	      this.setState({
+	        numPages: 1,
+	        scrollLocked: false
+	      });
+	    }
+	  }
+
+
+	  updateReadNumber() {
+	    const { props, state } = this;
+	    
+	    let messages = props.messages[state.station] || [];
+	    let config = props.configs[state.station] || false;
+
+	    let lastMsgNum = (messages.length > 0) ?
+	      messages[messages.length - 1].num : 0;
+
+	    if (config && config.red < lastMsgNum) {
+	      props.api.read(state.circle, lastMsgNum);
+	    }
+	  }
+
+	  updateNumPeople() {
+	    let conf = this.props.configs[this.state.station] || {};
+	    let sis = lodash.get(conf, 'con.sis');
+	    let numPeople = !!sis ? sis.length : 0;
+	    if (numPeople !== this.state.numPeople) {
+	      this.setState({ numPeople });
+	    }
+	  }
+
+	  updateNumMessagesLoaded(prevProps, prevState) {
+	    let station = prevProps.messages[this.state.station] || [];
+	    let numMessages = station.length;
+
+	    if (numMessages > prevState.numMessages) {
+	      this.setState({
+	        numMessages: numMessages
+	      });
+	    }
+	  }
+
+	  buildMessage(msg, index) {
+	    let details = msg.printship ? null : getMessageContent(msg.gam);
+
+	    if (msg.printship) {
+	      return (
+	        react.createElement('a', { 
+	          className: "vanilla hoverline text-600 text-mono"   , 
+	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 157}}
+	          , prettyShip(`~${msg.gam.aut}`)[0]
+	        )
+	      );
+	    }
+
+	    if (index % 50 === 0) {
+	      let pageNum = index / 50;
+	      return (
+	        react.createElement('div', {
+	          key: msg.gam.uid + "key" + Math.random() + "key" + msg.num,
+	          ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 168}}
+	          , react.createElement(Message, { msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 171}} )
+	        )
+	      );
+	    } else {
+	      return (
+	        react.createElement(Message, {
+	          key: msg.gam.uid + Math.random(), 
+	          msg: msg.gam, 
+	          details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 176}} )
+	      );
+	    }
+	  }
+
+	  render() {
+	    const { props, state } = this;
+	    
+	    let messages = props.messages;
+
+	    if (messages.length > 50 * state.numPages) {
+	      messages = messages
+	        .slice(messages.length - (50 * state.numPages), messages.length);
+	    }
+
+	    let chatMessages = messages.map(this.buildMessage);
+	    let peers = props.peers[state.station] || [window.ship];
+
+	    return (
+	      react.createElement('div', { key: state.station, 
+	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 198}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 200}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 201}}, state.circle)
+	          , react.createElement(ChatTabBar, { ...props,
+	            station: state.station,
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 202}} )
+	        )
+	        , react.createElement('div', {
+	          className: "overflow-y-scroll",
+	          style: { flexGrow: 1 },
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 206}}
+	          , chatMessages
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 211}})
+	        )
+	        , react.createElement(ChatInput, { 
+	          api: props.api,
+	          configs: props.configs,
+	          station: state.station,
+	          circle: state.circle,
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 213}} )
+	      )
+	    )
+	  }
+	}
+
 	const _jsxFileName$d = "/Users/logan/Dev/interface/apps/chat/src/js/components/lib/member-element.js";
 
 	class MemberElement extends react_1 {
@@ -57730,8 +57764,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    }
 
 	    return (
-	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 75}}
-	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 76}}
+	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 76}}
+	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 77}}
 	        , react.createElement(Route, { exact: true, path: "/~chat",
 	          render:  (props) => {
 	            return (
@@ -57743,19 +57777,19 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    invites: invites,
 	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 82}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 83}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 80}}
-	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 91}}
-	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 92}}
-	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 93}}
-	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 94}}, "Cmd + N to start a new chat"       )
+	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 81}}
+	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 92}}
+	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 93}}
+	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 94}}
+	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 95}}, "Cmd + N to start a new chat"       )
 	                    )
 	                  )
 	                )
 	              )
 	            );
-	          }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 77}} )
+	          }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 78}} )
 	        , react.createElement(Route, { exact: true, path: "/~chat/new",
 	          render:  (props) => {
 	            return (
@@ -57767,16 +57801,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    invites: invites,
 	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 106}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 107}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 104}}
+	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 105}}
 	                , react.createElement(NewScreen, { 
 	                  api: api,
-	                  ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 115}}
+	                  ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 116}}
 	                )
 	              )
 	            );
-	         }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 101}} )
+	         }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 102}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station",
 	           render:  (props) => {
 	             let station = 
@@ -57793,19 +57827,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    invites: invites,
 	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 132}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 133}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 130}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 131}}
 	                 , react.createElement(ChatScreen, {
 	                   api: api,
 	                   configs: configs,
 	                   messages: messages,
 	                   peers: state.peers,
-	                   ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 141}}
+	                   subscription: subscription,
+	                   ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 142}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 122}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 123}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/members",
 	           render:  (props) => {
 	             return (
@@ -57817,17 +57852,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    invites: invites,
 	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 156}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 158}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 154}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 156}}
 	                 , react.createElement(MemberScreen, {
 	                   ...props, 
 	                   api: api,
-	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 165}}
+	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 167}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 151}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 153}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/settings",
 	           render:  (props) => {
 	             return (
@@ -57839,86 +57874,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    invites: invites,
 	                    unreads: unreads,
 	                    api: api,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 178}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 180}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 176}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 178}}
 	                 , react.createElement(SettingsScreen, { 
 	                   ...props,
 	                   api: api,
 	                   peers: state.peers,
-	                   store: store, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 187}} )
+	                   store: store, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 189}} )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 173}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 175}} )
 	        )
 	      )
 	    )
 	  }
 	}
-
-	class Subscription {
-	  start() {
-	    if (api.authTokens) {
-	      this.initializeChat();
-	    } else {
-	      console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
-	    }
-	  }
-
-	  initializeChat() {
-	    /*    if (store.state.local) {
-	      let path = [];
-	      let msg = Object.keys(store.state.messages);
-	      for (let i = 0; i < msg.length; i++) {
-	        let cir = msg[i].split('/');
-	        if (cir.length > 1) {
-	          let hos = cir[0];
-	          if (urbitOb.isValidPatp(hos)) {
-	            let nom = cir[1];
-	            let len = 0;
-	            if (msg[i] in store.state.messages) {
-	              len = store.state.messages[msg[i]].length;
-	            }
-	            path.push(`${hos}/${nom}/${len}`);
-	          }
-	        } 
-	      }
-
-	      if (path.length <= 0) {
-	        path = '/primary';
-	      } else {
-	        path = '/primary/' + path.join('/');
-	      }
-	      console.log(path);
-
-	      api.bind(path, 'PUT', api.authTokens.ship, 'chat',
-	        this.handleEvent.bind(this),
-	        this.handleError.bind(this));
-	    } else {*/
-	      console.log('primary');
-	      api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
-	        this.handleEvent.bind(this),
-	        this.handleError.bind(this));
-	    //}
-
-	/*    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
-	      this.handleEvent.bind(this),
-	      this.handleError.bind(this));*/
-	  }
-
-	  handleEvent(diff) {
-	    store.handleEvent(diff);
-	  }
-
-	  handleError(err) {
-	    console.error(err);
-	    api.bind('/', "PUT", api.authTokens.ship, 'chat',
-	      this.handleEvent.bind(this),
-	      this.handleError.bind(this));
-	  }
-	}
-
-	let subscription = new Subscription();
 
 	const _jsxFileName$i = "/Users/logan/Dev/interface/apps/chat/src/index.js";
 	api.setAuthTokens({

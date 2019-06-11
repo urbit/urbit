@@ -15,44 +15,20 @@ export class Subscription {
   }
 
   initializeChat() {
-    /*    if (store.state.local) {
-      let path = [];
-      let msg = Object.keys(store.state.messages);
-      for (let i = 0; i < msg.length; i++) {
-        let cir = msg[i].split('/');
-        if (cir.length > 1) {
-          let hos = cir[0];
-          if (urbitOb.isValidPatp(hos)) {
-            let nom = cir[1];
-            let len = 0;
-            if (msg[i] in store.state.messages) {
-              len = store.state.messages[msg[i]].length;
-            }
-            path.push(`${hos}/${nom}/${len}`);
-          }
-        } 
-      }
-
-      if (path.length <= 0) {
-        path = '/primary';
-      } else {
-        path = '/primary/' + path.join('/');
-      }
-      console.log(path);
-
-      api.bind(path, 'PUT', api.authTokens.ship, 'chat',
-        this.handleEvent.bind(this),
-        this.handleError.bind(this));
-    } else {*/
-      console.log('primary');
-      api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
-        this.handleEvent.bind(this),
-        this.handleError.bind(this));
-    //}
-
-/*    api.bind('/updates', 'PUT', api.authTokens.ship, 'chat',
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
       this.handleEvent.bind(this),
-      this.handleError.bind(this));*/
+      this.handleError.bind(this));
+  }
+
+  fetchMessages(circle, start, end) {
+    fetch(`/~chat/scroll/${circle}/${start}/${end}`)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log('handled', json);
+        store.handleEvent({
+          data: json
+        });
+      });
   }
 
   handleEvent(diff) {
