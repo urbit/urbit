@@ -136,7 +136,9 @@ jets_e_ed_src = [
 'jets/e/ed_puck.c',
 'jets/e/ed_sign.c',
 'jets/e/ed_veri.c',
-'jets/e/ed_shar.c'
+'jets/e/ed_shar.c',
+'jets/e/ed_scalarmult_base.c',
+'jets/e/ed_double_scalarmult.c'
 ]
 
 jets_f_src = [
