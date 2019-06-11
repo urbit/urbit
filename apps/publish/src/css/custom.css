@@ -11,7 +11,31 @@ a {
 
 textarea, select, input, button { outline: none; }
 
+h1 {
+  font-size: 48px;
+  line-height: 64px;
+  font-weight: bold;
+}
+
 h2 {
+  font-size: 32px;
+  line-height: 48px;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: bold;
+}
+
+.header-2 {
   font-size: 32px;
   line-height: 48px;
   font-weight: bold;
@@ -79,25 +103,88 @@ h2 {
   width: 688px;
 }
 
+.mw-688 {
+  max-width: 688px;
+}
+
 .w-680 {
   width: 680px;
+}
+
+.w-16 {
+  width: 16px;
+}
+
+.mb-33 {
+  width: 33px;
 }
 
 .h-80 {
   height: 80px;
 }
 
-.publish {
-  margin-left: 16px;
-  margin-top: 16px;
-  margin-bottom: 8px;
-  padding: 0;
-}
-
-
-
 .b-gray-30 {
   border-color: #B1B2B3;
 }
 
+.header-menu-item {
+  float: left;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: #B1B2B3;
+  color: #B1B2B3;
+  flex-basis: 148px;
+  padding-bottom: 3px;
+  vertical-align: middle;
+  font-size: 14px;
+  line-height: 24px;
+}
 
+.publish {
+  float: left;
+  vertical-align: middle;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: bold;
+  color: #7F7F7F;
+  margin-left: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.create {
+  float: right;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+  text-align: right;
+  margin-right: 16px;
+  margin-top: 22px;
+}
+
+.path-control {
+  width: 100%;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: #B1B2B3;
+  height: 28px;
+  clear: both;
+}
+
+.h-modulo-header {
+  height: 48px;
+}
+
+.h-publish-header {
+  height: 76px;
+  top: 48px;
+}
+
+.h-inner {
+  height: calc(100% - 124px);
+  top: 124px;
+}
+
+::placeholder {
+  color: #B1B2B3;
+}
