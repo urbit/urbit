@@ -1,4 +1,5 @@
 /-  hall
+/+  hall-json
 |%
 ::
 +$  move  [bone card]
@@ -58,16 +59,35 @@
   ==
 ::
 +$  action  [%actions lis=(list action:hall)]
-
-+$  pareto-mark
-  $%
-    [%json pax=path name=@t jon=json]
-    [%path name=@t obj=(map @t json)]
-  ==
-::
 ::
 ::
 ::  +utilities
+::
+++  msg-to-json
+  =,  enjs:format
+  |=  upd=update
+  ^-  json
+  ?>  ?=(%messages -.upd)
+  %+  frond  %update
+  %-  pairs
+  :~
+    :-  %messages
+    %-  pairs
+    :~
+      [%circle (circ:enjs:hall-json cir.upd)]
+      [%start (numb start.upd)]
+      [%end (numb end.upd)]
+      [%envelopes [%a (turn env.upd enve:enjs:hall-json)]]
+    ==
+  ==
+::
+++  parse-chat-command
+  =,  dejs:format
+  =,  dejs:hall-json
+  %-  of
+  :~
+    [%messages (ot circle+circ start+ni end+ni ~)]
+  ==
 ::
 +$  indices-internal-state
   $:  

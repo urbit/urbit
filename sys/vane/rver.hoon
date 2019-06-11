@@ -581,7 +581,6 @@
         //
         var x = JSON.stringify(
           [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
-        console.log(x, this.lastEventId);
         req.send(x);
 
         this.lastEventId = this.lastAcknowledgedEventId;
@@ -620,22 +619,17 @@
           //
           var funcs = this.outstandingSubscriptions.get(obj.id);
           if (obj.hasOwnProperty("err")) {
+            console.log(obj);
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
-          } else {
-            console.log("Subscription establisthed");
           }
         } else if (obj.response == "diff") {
-          console.log("Diff: ", obj);
-
           var funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["event"](obj.json);
-
         } else if (obj.response == "quit") {
           var funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["quit"](obj.err);
           this.outstandingSubscriptions.delete(obj.id);
-
         } else {
           console.log("Unrecognized response: ", e);
         }

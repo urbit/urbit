@@ -81,51 +81,37 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  =/  indices  (generate-circle-indices wir)
-  ?~  indices
-    :_  this
-    [ost.bol %diff %chat-initial str.sta]~
   =*  messages  messages.str.sta
-  =/  lisunitmov/(list (unit move)) 
-    %+  turn  indices
-      |=  [cir=circle:hall start=@ud]
-      ^-  (unit move)
-      =/  wholelist/(unit (list envelope:hall))  (~(get by messages) cir)
-      ?~  wholelist
-        ~
-      =/  end/@  (lent u.wholelist)
-      ?:  (gte start end)
-        ~
-      :-  ~
-      :*  ost.bol
-          %diff
-          %chat-update
-          [%messages cir start end (swag [start end] u.wholelist)]
-      ==
-  =/  lismov/(list move)
-    %+  turn
-    %+  skim  lisunitmov
+  =/  lisunitmov=(list (unit move))
+    %+  turn  ~(tap by messages)
+    |=  [cir=circle:hall lis=(list envelope:hall)]
+    ^-  (unit move)
+    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    ?~  envs
+      ~
+    =/  length/@  (lent u.envs)
+    =/  start/@  
+      ?:  (gte length 100)
+        (sub length 100)
+      0
+    =/  end/@  length
+    =/  offset/@  (sub end start)
+    :-  ~
+    :*  ost.bol
+        %diff
+        %chat-update
+        [%messages cir start end (swag [start offset] u.envs)]
+    ==
+  :_  this
+  %+  weld
+    [ost.bol %diff %chat-config str.sta]~
+  %+  turn  %+  skim  lisunitmov
     |=  umov=(unit move)
     ^-  ?
     ?~  umov
       %.n
     %.y
     need
-  :_  this
-  %+  weld
-  [ost.bol %diff %chat-config str.sta]~
-  lismov
-::
-++  peer-updates
-  |=  wir=wire
-  ^-  (quip move _this)
-  [~ this]
-::
-++  poke-noun
-  |=  a=*
-  ^-  (quip move _this)
-  ~&  sta
-  [~ this]
 ::
 ::  +poke-chat: send us an action
 ::
@@ -148,8 +134,9 @@
 ++  send-chat-update
   |=  upd=update
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /updates bol)
+  %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
+  ~&  bone
   [bone %diff %chat-update upd]
 ::
 ::
@@ -458,6 +445,34 @@
     =/  img  (as-octs:mimes:html (~(got by chat-png) `@ta`name))
     :_  this
     [ost.bol %http-response (png-response:app img)]~
+  ::
+  ::  paginated message data
+  ::
+      [%'~chat' %scroll @t @t @t @t ~]
+    =/  cir/circle:hall  [(slav %p &3:site.request-line) &4:site.request-line]
+    =/  start/@ud  (need (rush &5:site.request-line dem))
+    =/  parsedend/@ud  (need (rush &6:site.request-line dem))
+    =*  messages  messages.str.sta
+    =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
+    ?~  envs
+      [~ this]
+    ?:  (gte start (lent u.envs))
+      [~ this]
+    =/  end/@
+      ?:  (gte parsedend (lent u.envs))
+        (dec (lent u.envs))
+      parsedend
+    =/  offset  (sub end start)
+    =/  jon/json  %-  msg-to-json
+    :*  %messages
+        cir
+        start
+        end
+        (swag [start offset] u.envs)
+    ==
+    :_  this
+    [ost.bol %http-response (json-response:app (json-to-octs jon))]~
+  ::
   ::
   ::  inbox page
   ::
