@@ -1,7 +1,6 @@
 /-  dns
-/+  tapp, stdio
 ::
-::  tapp types and boilerplate
+::  app types and boilerplate
 ::
 =>  |%
     +$  app-state
@@ -17,59 +16,89 @@
     +$  out-poke-data
       $%  [%drum-unlink =dock]
       ==
-    +$  in-peer-data   ~
     +$  out-peer-data
       $%  [%dns-binding =binding:dns]
           [%dns-request =request:dns]
       ==
-    ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
-    ++  stdio  (^stdio out-poke-data out-peer-data)
+    +$  card
+      $%  [%diff out-peer-data]
+          [%poke wire =dock out-poke-data]
+      ==
+    +$  move  [bone card]
     --
 ::
-=*  tapp-async    tapp-async:tapp
-=*  default-tapp  default-tapp:tapp
-%-  create-tapp-all:tapp
-^-  tapp-core-all:tapp
+=|  moves=(list move)
 |_  [=bowl:gall state=app-state]
 ::
-++  handle-diff  handle-diff:default-tapp
-++  handle-take  handle-take:default-tapp
+++  this  .
 ::
-++  handle-init
-  =/  m  tapp-async
-  ^-  form:m
-  ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
-  (pure:m state)
+++  abet
+  ^-  (quip move _this)
+  [(flop moves) this(moves ~)]
 ::
-++  handle-poke
+++  emit
+  |=  mov=move
+  ^+  this
+  this(moves [mov moves])
+::
+++  emil
+  |=  moz=(list move)
+  |-  ^+  this
+  ?~  moz
+    this
+  $(moz t.moz, ..this (emit i.moz))
+::
+++  poke-app
+  |=  [=wire =dock =out-poke-data]
+  ^+  this
+  (emit [ost.bowl %poke wire dock out-poke-data])
+::
+++  give-result
+  |=  [=the=path =out-peer-data]
+  ^+  this
+  %-  emil
+  %+  turn
+    ^-  (list bone)
+    %+  murn  ~(tap by sup.bowl)
+    |=  [ost=bone =ship =sub=path]
+    `(unit bone)`?.(=(the-path sub-path) ~ (some ost))
+  |=  =bone
+  [bone %diff out-peer-data]
+::
+++  prep
+  |=  old=(unit app-state)
+  ^-  (quip move _this)
+  =<  abet
+  ?~  old
+    (poke-app /unlink [[our %hood] [%drum-unlink our dap]]:bowl)
+  this(state u.old)
+::
+++  poke
   |=  =in-poke-data
-  =/  m  tapp-async
-  ^-  form:m
+  ^-  (quip move _this)
+  =<  abet
   ?-  -.in-poke-data
       %dns-address
     =*  who  src.bowl
     =*  adr  address.in-poke-data
     =/  rac  (clan:title who)
     ?.  ?=(?(%king %duke) rac)
-      ~&  [%dns-collector-bind-invalid who]
-      (pure:m state)
+      ~|  [%dns-collector-bind-invalid who]  !!
     ?:  (reserved:eyre if.adr)
-      ~&  [%dns-collector-reserved-address who if.adr]
-      (pure:m state)
+      ~|  [%dns-collector-reserved-address who if.adr]  !!
     ::
     =/  req=(unit address:dns)  (~(get by requested.state) who)
     =/  dun=(unit binding:dns)  (~(get by completed.state) who)
     ?:  &(?=(^ dun) =(adr address.u.dun))
-      ;<  ~  bind:m  (give-result:stdio /(scot %p who) %dns-binding u.dun)
       =.  requested.state  (~(del by requested.state) who)
-      (pure:m state)
+      (give-result /(scot %p who) %dns-binding u.dun)
+    ::
     ?:  &(?=(^ req) =(adr u.req))
-      (pure:m state)
+      this
     ::  XX check address?
     =/  =request:dns  [who adr]
     =.  requested.state  (~(put by requested.state) request)
-    ;<  ~  bind:m  (give-result:stdio /requests %dns-request request)
-    (pure:m state)
+    (give-result /requests %dns-request request)
   ::
       %dns-complete
     ::  XX or confirm valid binding?
@@ -85,15 +114,14 @@
     ?:  ?&  ?=(^ req)
             !=(adr u.req)
         ==
-      (pure:m state)
+      this
     =:  requested.state  (~(del by requested.state) who)
         completed.state  (~(put by completed.state) who [adr tuf])
       ==
-    ;<  ~  bind:m  (give-result:stdio /(scot %p who) %dns-binding adr tuf)
-    (pure:m state)
+    (give-result /(scot %p who) %dns-binding adr tuf)
   ==
 ::
-++  handle-peek
+++  peek
   |=  =path
   ^-  (unit (unit peek-data))
   ~&  path
@@ -102,28 +130,29 @@
     [~ ~ %noun ~(tap by requested.state)]
   ==
 ::
-++  handle-peer
+++  peer
   |=  =path
-  =/  m  tapp-async
-  ^-  form:m
+  ^-  (quip move _this)
+  =<  abet
+  ::  will be immediately unlinked, see +prep
+  ::
   ?:  ?=([%sole *] path)
-    ~|  %default-tapp-no-sole  !!
+    this
   ?.  ?=([@ ~] path)
     ~|  %invalid-path  !!
   ?:  ?=(%requests i.path)
     =/  requests  ~(tap by requested.state)
-    |-  ^-  form:m
+    |-  ^+  this
     =*  loop  $
     ?~  requests
-      (pure:m state)
-    ;<  ~  bind:m  (give-result:stdio path %dns-request i.requests)
+      this
+    =.  ..this  (give-result path %dns-request i.requests)
     loop(requests t.requests)
   ::
   =/  who  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
   ?~  dun=(~(get by completed.state) who)
-    (pure:m state)
-  ;<  ~  bind:m  (give-result:stdio path %dns-binding u.dun)
-  (pure:m state)
+    this
+  (give-result path %dns-binding u.dun)
 --
