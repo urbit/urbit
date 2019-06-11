@@ -250,6 +250,7 @@
 +$  fragment-num   @udfragmentnum
 +$  lane           @uxlane
 +$  message-num    @udmessagenum
++$  private-key    @uwprivatekey
 +$  public-key     @uwpublickey
 +$  signature      @uwsignature
 +$  symmetric-key  @uwsymmetrickey
@@ -400,7 +401,7 @@
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
 +$  ossuary
-  $:  =next=bone
+  $:  next-bone=_`bone`2
       by-duct=(map duct bone)
       by-bone=(map bone duct)
   ==
@@ -453,7 +454,7 @@
 ::
 +$  message-pump-state
   $:  current=message-num
-      next=message-num
+      next=_`message-num`1
       unsent-messages=(qeu message)
       unsent-fragments=(list static-fragment)
       queued-message-acks=(map message-num ok=?)
@@ -891,9 +892,8 @@
     ++  on-hear-shut-packet
       |=  [=lane =shut-packet]
       ^+  peer-core
-      ::  TODO: is it correct to (mix 1 bone) here?
       ::
-      =/  =bone  (mix 1 bone.shut-packet)
+      =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
         (run-message-still bone %hear lane shut-packet)
@@ -1006,9 +1006,21 @@
             %hear-message
           =/  =path  path.message.gift
           ?>  ?=([@ *] path)
-          ?>  ?=(?(%a %c %e %g %j) i.path)
+          ?>  ?=(?(%a %c %g %j) i.path)
           ::
-          !!
+          ?:  =(0 (end 0 1 bone))
+            ::  even bone means backward flow; ack automatically
+            ::
+            !!
+          ::  odd bone, forward flow; wait for local vane to ack it
+          ::
+          =/  =wire  path
+          ?-  i.path
+            %a  !!
+            %c  (emit duct %pass wire %c %west her.channel message.gift)
+            %g  (emit duct %pass wire %g %west her.channel message.gift)
+            %j  (emit duct %pass wire %j %west her.channel message.gift)
+          ==
         ::
             ::  TODO special-case nack?
             ::  TODO mix 1 bone?
@@ -1576,7 +1588,7 @@
       %done  (on-done error.task)
       %hear  (on-hear [lane shut-packet]:task)
     ==
-  ::
+  ::  +on-hear: receive message fragment, possibly completing message
   ::
   ++  on-hear
     |=  [=lane =shut-packet]
@@ -1603,7 +1615,7 @@
         (give %send-ack seq %& fragment-num)
       ::  whole message (n)ack  TODO nack lookup
       ::
-      !!
+      (give %send-ack seq %| ok=%.y lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
     ?:  (lte seq last-heard.state)
@@ -1739,6 +1751,21 @@
   |=  [her=ship =bone]
   ^-  wire
   /pump/(scot %p her)/(scot %ud bone)
+::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
+::
+::    Assumes keys have a tag on them like the result of the |ex:crub core.
+::
+++  derive-symmetric-key
+  |=  [=public-key =private-key]
+  ^-  symmetric-key
+  ::
+  ?>  =('b' (end 3 1 public-key))
+  =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
+  ::
+  ?>  =('B' (end 3 1 private-key))
+  =.  private-key  (rsh 8 1 (rsh 3 1 private-key))
+  ::
+  `@`(shar:ed:crypto public-key private-key)
 ::  +encrypt: encrypt $shut-packet into atomic packet content
 ::
 ++  encrypt
