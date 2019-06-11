@@ -14,7 +14,7 @@ export class Blog extends Component {
     let ship = this.props.ship;
     let blog = this.retrieveColl(blogId, ship);
 
-    console.log("buildposts", blog);
+    console.log("buildPosts", blog);
 
     let pinProps = blog.order.pin.map((post) => {
       return this.buildPostPreviewProps(post, blogId, ship, true);
@@ -73,10 +73,11 @@ export class Blog extends Component {
   render() {
     let blog = this.retrieveColl(this.props.blogId, this.props.ship);
     let postProps = this.buildPosts();
-    let posts = postProps.map((post) => {
+    let posts = postProps.map((post, key) => {
       return (
         <PostPreview
           post={post}
+          key={key}
         />
       );
     });

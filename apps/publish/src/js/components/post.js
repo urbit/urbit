@@ -109,20 +109,20 @@ export class Post extends Component {
     let authorDate = `${post.info.creator} • ${date}`;
 
     // change unpin to concatenation of pinned and unpinned
-    let morePosts = blog.order.unpin.slice(0,10).map((pid) => {
+    let morePosts = blog.order.unpin.slice(0,10).map((pid, i) => {
 
       let p = this.retrievePost(pid, this.props.blogId, this.props.ship);
       let color = (pid == this.props.postId) ? "black" : "gray-50";
       let postLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${pid}`;
       return (
-        <Link to={postLink} className="label-regular">
+        <Link to={postLink} className="label-regular" key={i}>
           <p className={color}>{p.info.title}</p>
         </Link>
       );
     });
 
     return (
-      <div className="w-688 flex-col center mt4">
+      <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
         <Link to={blogLink}>
           <p className="body-regular">
             {blogLinkText}

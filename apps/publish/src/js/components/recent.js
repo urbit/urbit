@@ -134,17 +134,18 @@ export class Recent extends Component {
   render() {
     let recent = this.buildRecent();
 
-    let body = recent.map((group) => {
-      let posts = group.posts.map((post) => {
+    let body = recent.map((group, i) => {
+      let posts = group.posts.map((post, j) => {
         return (
           <RecentPreview
             post={post}
+            key={j}
           />
         );
       });
       let date = this.dateLabel(group.date);
       return (
-        <div>
+        <div key={i}>
           <div className="w-100 h-80">
             <h2 className="gray-50">
               {date}
