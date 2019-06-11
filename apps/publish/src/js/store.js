@@ -1,7 +1,14 @@
+import { UpdateReducer } from '/reducers/update';
+
 class Store {
   constructor() {
-    this.state = window.injectedState;
+    this.state = {
+      ...window.injectedState,
+    }
     console.log("store.state", this.state);
+
+    this.updateReducer = new UpdateReducer();
+
     this.setState = () => {};
   }
 
@@ -11,6 +18,8 @@ class Store {
 
   handleEvent(data) {
     console.log("store.handleEvent", data);
+    this.updateReducer.reduce(data.data, this.state);
+    this.setState(this.state);
   }
 
 }
