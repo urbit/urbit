@@ -229,6 +229,8 @@
     %-  call:alice-core
     [~[/alice] *type %west ~doznec-doznec /g/talk [%first %post]]
   ::
+  ~&  res1=-.res1
+  ::
   =+  ^-  [=lane:alef =blob:alef]
       =-  ?>  ?=([%give %send *] ->)
           [lane blob]:->+>
@@ -244,6 +246,7 @@
     %-  call:bob-core
     [~[/bob] *type %hear lane blob]
   ::
-  ~&  -.res2
+  ~&  res2=-.res2
+  ::
   ~
 --

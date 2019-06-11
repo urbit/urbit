@@ -668,7 +668,7 @@
 ::    %send-ack: emit an ack packet
 ::
 +$  message-still-gift
-  $%  [%hear-message =message]
+  $%  [%hear-message =message-num =message]
       [%send-ack =message-num =ack-meat]
   ==
 --
@@ -1011,7 +1011,13 @@
           ?:  =(0 (end 0 1 bone))
             ::  even bone means backward flow; ack automatically
             ::
-            !!
+            %-  send-shut-packet  :*
+              our-life.channel
+              her-life.channel
+              bone
+              message-num.gift
+              %|  %|  ok=%.y  lag=`@dr`0
+            ==
           ::  odd bone, forward flow; wait for local vane to ack it
           ::
           =/  =wire  path
@@ -1697,7 +1703,7 @@
     ::
     ?.  empty
       message-still
-    (give %hear-message message)
+    (give %hear-message seq message)
   ::  +on-done: handle confirmation of message processing from vane
   ::
   ++  on-done
