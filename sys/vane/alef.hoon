@@ -956,12 +956,10 @@
         ^+  peer-core
         ::  encrypt and encode .static-fragment to .blob bitstream
         ::
-        ::    XOR .bone with 1 just before sending. TODO: bone docs
-        ::
         %-  send-shut-packet  :*
           our-life.channel
           her-life.channel
-          (mix 1 bone)
+          bone
           message-num.static-fragment
           %&  +.static-fragment
         ==
@@ -1029,7 +1027,6 @@
           ==
         ::
             ::  TODO special-case nack?
-            ::  TODO mix 1 bone?
             ::
             %send-ack
           %-  send-shut-packet  :*
@@ -1050,10 +1047,14 @@
       =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
       ::
       (run-message-pump bone %send message)
+    ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
     ::
     ++  send-shut-packet
       |=  =shut-packet
       ^+  peer-core
+      ::  swizzle bone just before sending; TODO document
+      ::
+      =.  bone.shut-packet  (mix 1 bone.shut-packet)
       ::
       =/  content  (encrypt symmetric-key.channel shut-packet)
       =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
