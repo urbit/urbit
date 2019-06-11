@@ -400,6 +400,8 @@
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
+::    The first bone is 2, since bone 0 is reserved for naxplanations.
+::
 +$  ossuary
   $:  next-bone=_`bone`2
       by-duct=(map duct bone)
@@ -444,6 +446,9 @@
 ::    |packet-pump, which can trigger a timer to be set or cleared based
 ::    on congestion control calculations. When it fires, the timer will
 ::    generally cause one or more packets to be resent.
+::
+::    Message sequence numbers start at 1 so the first message will be
+::    greater than .last-acked.message-still-state on the receiver.
 ::
 ::    current: sequence number of message being sent
 ::    next: sequence number of next message to send
