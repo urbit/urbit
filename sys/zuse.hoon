@@ -3126,6 +3126,38 @@
       --  ::
     ~%  %ed  +  ~
     |%
+    ::
+    ++  scalarmult-base
+      ~/  %scalarmult-base
+      |=  scalar=@udscalar
+      ^-  @udpoint
+      %-  etch
+      (scam bb scalar)
+    ::
+    ++  double-scalarmult
+      ~/  %double-scalarmult
+      |=  [a=@udscalar a-point=@udpoint b=@udscalar]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      ::
+      %-  etch
+      %+  ward
+        (scam bb b)
+      (scam a-point-decoded a)
+    ::
+    ++  double-mult
+      ~/  %double-mult
+      |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco:ed a-point))
+      =/  b-point-decoded=[@ @]  (need (deco:ed b-point))
+      ::
+      %-  etch:ed:crypto
+      %+  ward:ed
+        (scam:ed a-point-decoded a)
+      (scam:ed b-point-decoded b)
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  public key
       ~/  %puck

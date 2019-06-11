@@ -2,123 +2,23 @@
 ::  ring signatures over the edwards curve
 ::
 |%
-::  an ugly copy/paste of the private parts of +ed:crypto here
-::
-++  ed
-  =+  ~+
-      ::  q: prime modulus of field
-      ::
-      =+  [b=256 q=(sub (bex 255) 19)]
-      =+  fq=~(. fo q)
-      ::  l: prime order
-      ::
-      =+  ^=  l
-           %+  add
-             (bex 252)
-           27.742.317.777.372.353.535.851.937.790.883.648.493
-      =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
-      =+  ii=(exp.fq (div (dec q) 4) 2)
-      [b=b q=q fq=fq l=l d=d ii=ii]
-  ::
-  |%
-  ::                                                ::  ++norm:ed:crypto
-  ++  norm                                          ::
-    |=(x/@ ?:(=(0 (mod x 2)) x (sub q x)))
-  ::                                                ::  ++xrec:ed:crypto
-  ++  xrec                                          ::  recover x-coord
-    |=  y/@  ^-  @
-    =+  ^=  xx
-        %+  mul  (dif.fq (mul y y) 1)
-                 (inv.fq +(:(mul d y y)))
-    =+  x=(exp.fq (div (add 3 q) 8) xx)
-    ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
-      (norm (pro.fq x ii))
-    (norm x)
-  ::
-  ++  ward                                          ::  edwards multiply
-    |=  {pp/{@ @} qq/{@ @}}  ^-  {@ @}
-    =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
-    =+  ^=  xt
-        %+  pro.fq
-          %+  sum.fq
-            (pro.fq -.pp +.qq)
-          (pro.fq -.qq +.pp)
-        (inv.fq (sum.fq 1 dp))
-    =+  ^=  yt
-        %+  pro.fq
-          %+  sum.fq
-            (pro.fq +.pp +.qq)
-          (pro.fq -.pp -.qq)
-        (inv.fq (dif.fq 1 dp))
-    [xt yt]
-  ::                                                ::  ++scam:ed:crypto
-  ++  scam                                          ::  scalar multiply
-    |=  {pp/{@ @} e/@}  ^-  {@ @}
-    ?:  =(0 e)
-      [0 1]
-    =+  qq=$(e (div e 2))
-    =>  .(qq (ward qq qq))
-    ?:  =(1 (dis 1 e))
-      (ward qq pp)
-    qq
-  ::                                                ::  ++curv:ed:crypto
-  ++  curv                                          ::  point on curve?
-    |=  {x/@ y/@}  ^-  ?
-    .=  0
-        %+  dif.fq
-          %+  sum.fq
-            (pro.fq (sub q (sit.fq x)) x)
-          (pro.fq y y)
-        (sum.fq 1 :(pro.fq d x x y y))
-  ::                                                ::  ++deco:ed:crypto
-  ++  deco                                          ::  decode point
-    |=  s/@  ^-  (unit {@ @})
-    =+  y=(cut 0 [0 (dec b)] s)
-    =+  si=(cut 0 [(dec b) 1] s)
-    =+  x=(xrec y)
-    =>  .(x ?:(!=(si (dis 1 x)) (sub q x) x))
-    =+  pp=[x y]
-    ?.  (curv pp)
-      ~
-    [~ pp]
-  ::  +prime-order: the prime order of the edwards curve
-  ::
-  ++  l
-    ^l
-  ::                                                ::  ++bb:ed:crypto
-  ++  bb                                            ::
-    =+  bby=(pro.fq 4 (inv.fq 5))
-    [(xrec bby) bby]
-  --
-::  +ecc-n: order of the elliptic group curve ed25519
-::
-++  ecc-n
-  ~+
-  l:ed
-::  +ecc-g: the curve base point of ed25519
-::
-++  ecc-g
-  ~+
-  bb:ed
-::  +point-mul: scalar multiplication (module operation on elliptic curve)
-::
-++  point-mul
-  |=  [scalar=@ =point]
-  (scam:ed point scalar)
-::  +point-add: addition (group operation on elliptic curve)
-::
-++  point-add
-  ward:ed
-::  +point-base-mul: scalar multiplication over the base point
-::
-++  point-base-mul
-  |=  scalar=@
-  (point-mul scalar ecc-g)
 ::  +oracle: deterministic random response on input
 ::
 ++  oracle
   |=  input=*
-  (mod (shaz (jam input)) ecc-n)
+  :: l:ed is ecc-n
+  (mod (shaz (jam input)) l:ed:crypto)
+::  TODO: naked +point-mul needs to be jetted, but for now I want to just see
+::  how fast things are.
+::
+++  point-mul
+  |=  [s=@udscalar p=@udpoint]
+  ^-  @udpoint
+  ::
+  %-  etch:ed:crypto
+  %+  scam:ed:crypto
+    (need (deco:ed:crypto p))
+  s
 ::
 ::::
 ::
@@ -126,10 +26,10 @@
 ::
 ++  generate-public-linkage
   |=  link-scope=*
-  ^-  [data=@ h=point]
+  ^-  [data=@ h=@udpoint]
   ::
   =/  data=@   (oracle link-scope)
-  =/  h=point  (point-base-mul data)
+  =/  h=@udpoint  (scalarmult-base:ed:crypto data)
   [data h]
 
 ::  +generate-linkage: generates linkage information from scope and private key
@@ -139,13 +39,13 @@
 ::    y:    y = [x] * h
 ++  generate-linkage
   |=  [link-scope=(unit *) my-private-key=@]
-  ^-  (unit [data=@ h=point y=point])
+  ^-  (unit [data=@ h=@udpoint y=@udpoint])
   ::
   ?~  link-scope
     ~
   ::
-  =+  [data=@ h=point]=(generate-public-linkage u.link-scope)
-  =/  y=point  (point-mul my-private-key h)
+  =+  [data=@ h=@udpoint]=(generate-public-linkage u.link-scope)
+  =/  y=@udpoint  (point-mul my-private-key h)
   [~ data h y]
 ::  +generate-challenge: generate challenge from a given message
 ::
@@ -156,13 +56,13 @@
 ++  generate-challenge
   |=  $:  ::  common to both linked and unlinked
           message=*
-          g=point
+          g=@udpoint
           ::  high level universal state
           ::
-          link-state=(unit [data=@ h=point y=point])
+          link-state=(unit [data=@ h=@udpoint y=@udpoint])
           ::  point to include in challenge when link-state isn't ~
           ::
-          h=(unit point)
+          h=(unit @udpoint)
       ==
   ^-  @
   ::
@@ -173,9 +73,9 @@
 ::  +generate-challenges: generates the full list of challenges
 ::
 ++  generate-challenges
-  |=  $:  link-state=(unit [data=@ h=point y=point])
+  |=  $:  link-state=(unit [data=@ h=@udpoint y=@udpoint])
           message=*
-          public-keys=(list point)
+          public-keys=(list @udpoint)
           ss=(list @)
       ::
           prev-k=@u
@@ -185,19 +85,17 @@
       ==
   ^-  (list @)
   ::
-  =/  gs=point
-    %+  point-add
-      (point-mul prev-s ecc-g)
-    (point-mul prev-ch (snag prev-k public-keys))
+  =/  gs=@udpoint
+    (double-scalarmult:ed:crypto prev-ch (snag prev-k public-keys) prev-s)
   ::
-  =/  hs=(unit point)
-    ?~  link-state
+  =/  hs=(unit @udpoint)
+    ::  ?~  link-state
       ~
-    ::
-    :-  ~
-    %+  point-add
-      (point-mul prev-s h.u.link-state)
-    (point-mul prev-ch y.u.link-state)
+    ::  ::
+    ::  :-  ~
+    ::  %+  point-add
+    ::    (point-mul prev-s h.u.link-state)
+    ::  (point-mul prev-ch y.u.link-state)
   ::
   =/  ch=@
     (generate-challenge message gs link-state hs)
@@ -219,8 +117,8 @@
 ::    to generate the (unit point) consumed by +generate-challenge.
 ::
 ++  point-mul-h
-  |=  [u=@ linkage=(unit [data=@ h=point y=point])]
-  ^-  (unit point)
+  |=  [u=@ linkage=(unit [data=@ h=@udpoint y=@udpoint])]
+  ^-  (unit @udpoint)
   ?~  linkage
     ~
   [~ (point-mul u h.u.linkage)]
@@ -243,9 +141,9 @@
   |=  $:  message=*
           link-scope=(unit *)
       ::
-          anonymity-set=(set point)
-          my-public-key=point
-          my-private-key=@
+          anonymity-set=(set @udpoint)
+          my-public-key=@udpoint
+          my-private-key=@udscalar
       ::
           eny=@uvJ
       ==
@@ -262,7 +160,7 @@
         (need (find [my-public-key ~] anonymity-list))
       ::  Generate linkage information if given
       ::
-      =/  linkage=(unit [data=@ h=point y=point])
+      =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
         (generate-linkage link-scope my-private-key)
       ::  initialize our random number generator from entropy
       ::
@@ -276,7 +174,7 @@
         ?:  =(count (sub participants 1))
           [random-s-values rand]
         ::
-        =^  v=@  rand  (rads:rand ecc-n)
+        =^  v=@  rand  (rads:rand l:ed:crypto)
         $(count (add 1 count), random-s-values [v random-s-values])
       ::
       ?>  ?=(^ random-s-values)
@@ -285,13 +183,13 @@
       ::  Pick a random :u
       ::
       =^  u=@  rand
-        (rads:rand ecc-n)
+        (rads:rand l:ed:crypto)
       ::  Compute challenge at k + 1
       ::
       =/  chk1=@
         %-  generate-challenge  :*
           message
-          (point-mul u ecc-g)
+          (scalarmult-base:ed:crypto u)
           linkage
           (point-mul-h u linkage)
         ==
@@ -325,7 +223,7 @@
       ::    But I must be doing something wrong here because this sk doesn't
       ::    line up with the rest of the ring.
       ::
-      =/  sk=@  (~(dif fo ecc-n) u (mul my-private-key chk))
+      =/  sk=@  (~(dif fo l:ed:crypto) u (mul my-private-key chk))
       ::
       =/  ordered-challenges=(list @)
         (order-challenges k (flop reversed-chk-to-chk1))
@@ -355,7 +253,7 @@
   |=  $:  message=*
           link-scope=(unit *)
       ::
-          anonymity-set=(set point)
+          anonymity-set=(set @udpoint)
           signature=ring-signature
       ==
   ^-  ?
@@ -371,7 +269,7 @@
   =/  s2-to-end=(list @)  t.t.s.signature
   ::  anonymity-list: set of public keys listified in ring order
   ::
-  =/  anonymity-list=(list point)
+  =/  anonymity-list=(list @udpoint)
     ~(tap in anonymity-set)
 
   ~&  [%message message]
@@ -384,27 +282,24 @@
   =/  participants=@u
     (lent anonymity-list)
   ::
-  =/  z0p=point
-    %+  point-add
-      (point-mul s0 ecc-g)
-    ::
-    (point-mul ch0.signature (head anonymity-list))
+  =/  z0p=@udpoint
+    (double-scalarmult:ed:crypto ch0.signature (head anonymity-list) s0)
   ::  generate the linkage using public data, and the y point from the signature
   ::
-  =/  linkage=(unit [data=@ h=point y=point])
+  =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
     ?~  link-scope
       ~
-    =+  [data=@ h=point]=(generate-public-linkage u.link-scope)
+    =+  [data=@ h=@udpoint]=(generate-public-linkage u.link-scope)
     :-  ~
     [data h (need y.signature)]
   ::
-  =/  z0pp=(unit point)
-    ?~  linkage
+  =/  z0pp=(unit @udpoint)
+    ::  ?~  linkage
       ~
-    :-  ~
-    %+  point-add
-      (point-mul s0 h.u.linkage)
-    (point-mul ch0.signature y.u.linkage)
+    ::  :-  ~
+    ::  %+  point-add
+    ::    (point-mul s0 h.u.linkage)
+    ::  (point-mul ch0.signature y.u.linkage)
   ::  initial challenge
   ::
   =/  ch1=@
@@ -424,6 +319,7 @@
     ==
   ::
   =(ch0.signature (head challenges))
+
 ::  +public-key-for-ship: 
 ::
 ::    TODO: We should go talk to Azimuth to get the ship's real public key. But
@@ -431,7 +327,7 @@
 ::
 ++  public-key-for-ship
   |=  p=@p
-  ^-  point
+  ^-  @udpoint
   ::
-  (point-base-mul p)
+  (scalarmult-base:ed:crypto `@udscalar`p)
 --

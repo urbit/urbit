@@ -9,40 +9,34 @@
 =/  key-num=@  2
 ::  create a list of public/private keypairs
 ::
-=/  keys=(list [pk=point sk=@])
+=/  keys=(list [pk=@udpoint sk=@udscalar])
   =|  count=@
-  =|  keys=(list [pk=point sk=@])
+  =|  keys=(list [pk=@udpoint sk=@udscalar])
   ::
   |-
-  ?:  =(count 3)
+  ?:  =(count 58)
     keys
+  ::  using key-num as our "secret" key.
   ::
-  ::  In the end, what was the problem with the key generation was that
-  ::  etch/scam/deco/puck don't return things in the real format we need. The
-  ::  math above assumes that the public key above is priv-key * G. 
-  ::
-  ::  =/  sk=@  (etch:ed:crypto (scam:ed:crypto bb:ed:crypto key-num))
-  ::  =/  pk=point  (need (deco:ed (puck:ed:crypto sk)))
-  =/  pk=point  (point-base-mul key-num)
-  ::
+  =/  pk=@udpoint  (scalarmult-base:ed:crypto key-num)
   ::
   $(keys [[pk key-num] keys], count +(count), key-num +(key-num))
 ::  create the key set the interface expects
 ::
-=/  key-set=(set point)
+=/  key-set=(set @udpoint)
   (sy (turn keys head))
 ::
-=/  my-key  (snag 0 keys)
-=/  my-public-key=point  (head my-key)
-=/  my-private-key=@  (tail my-key)
+=/  my-key  (snag 13 keys)
+=/  my-public-key=@udpoint  (head my-key)
+=/  my-private-key=@udscalar  (tail my-key)
 ::
 ~&  %start----------signing
 ::
 =/  message  "blah"
-=/  scope  [~ [%link-scope 52]]
-::  =/  scope  ~
+::=/  scope  [~ [%link-scope 52]]
+=/  scope  ~
 ::
-=/  signature
+=/  signature=ring-signature
   (sign message scope key-set my-public-key my-private-key eny)
 ~&  [%signature signature]
 ::
