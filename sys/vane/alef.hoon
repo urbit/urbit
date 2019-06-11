@@ -652,13 +652,13 @@
   ==
 ::  $message-still-task: job for |message-still
 ::
-::    %hear: handle receiving a message fragment packet
 ::    %done: receive confirmation from vane of processing completion or
 ::           failure with diagnostic
+::    %hear: handle receiving a message fragment packet
 ::
 +$  message-still-task
-  $%  [%hear =lane =shut-packet]
-      [%done =message-num error=(unit error)]
+  $%  [%done error=(unit error)]
+      [%hear =lane =shut-packet]
   ==
 ::  $message-still-gift: effect from |message-still
 ::
@@ -1573,8 +1573,8 @@
     =-  [(flop gifts) state]
     ::
     ?-  -.task
+      %done  (on-done error.task)
       %hear  (on-hear [lane shut-packet]:task)
-      %done  (on-done [message-num error]:task)
     ==
   ::
   ::
@@ -1686,13 +1686,20 @@
     ?.  empty
       message-still
     (give %hear-message message)
-  ::
+  ::  +on-done: handle confirmation of message processing from vane
   ::
   ++  on-done
-    |=  [=message-num error=(unit error)]
+    |=  error=(unit error)
     ^+  message-still
     ::
-    !!
+    =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
+    =.  last-acked.state                 +(last-acked.state)
+    =/  =message-num                     message-num.p.pending
+    ::  TODO nacks, naxplanations
+    ::
+    ?~  error
+      (give %send-ack message-num %| ok=%.y lag=`@dr`0)
+    (give %send-ack message-num %| ok=%.n lag=`@dr`0)
   --
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
