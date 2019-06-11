@@ -219,6 +219,7 @@
   ++  da-change
     |=  del=delta
     ^+  da-this
+    ~&  da-change+-.del
     ?-  -.del
     ::
         %collection
@@ -249,7 +250,7 @@
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =?  da-this  ?=(~ old)
+      =.  da-this
         (da-insert who.del col.del pos.del)
       (da-emil (affection del))
     ::
@@ -406,6 +407,7 @@
 ++  made
   |=  [wir=wire wen=@da mad=made-result:ford]
   ^-  (quip move _this)
+  ~&  made+wir
   ?+  wir
     [~ this]
   ::
@@ -879,6 +881,30 @@
   ::  published
   ::
       [[~ [%'~publish' %pubs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new
+  ::
+      [[~ [%'~publish' @t @t %new ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new
+  ::
+      [[~ [%'~publish' %new ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new post
+  ::
+      [[~ [%'~publish' %new %post ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new blog
+  ::
+      [[~ [%'~publish' %new %blog ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
