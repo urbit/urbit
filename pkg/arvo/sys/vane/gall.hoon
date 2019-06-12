@@ -156,6 +156,7 @@
       running=(map term agent)
       ::  waiting queue
       ::
+      ::  FIXME rename to blocked
       waiting=(map term blocked)
   ==
 ::
@@ -317,7 +318,10 @@
 ::
 ++  gall-payload  +
 ::
-::  +mo: move handling.
+::  +mo: Arvo-level move handling.
+::
+::  An outer core responsible for routing moves to and from Arvo; it calls
+::  an inner core, +ap, to route internal moves to and from agents.
 ::
 ++  mo
   ~%  %gall-mo  +>  ~
@@ -330,7 +334,7 @@
   ::
   ++  mo-state  .
   ::
-  ::  +mo-abed: initialise engine with the provided duct.
+  ::  +mo-abed: initialise state with the provided duct.
   ::
   ++  mo-abed
     |=  =duct
@@ -346,7 +350,7 @@
     =/  resolved  (flop moves)
     [resolved gall-payload]
   ::
-  ::  +mo-boot: pass a %build move to %ford.
+  ::  +mo-boot: ask %ford to build us a core.
   ::
   ++  mo-boot
     |=  [=term =ship =desk]
@@ -360,15 +364,13 @@
       /sys/core/[term]/[ship]/[desk]/[case]
     ::
     =/  =note-arvo
-      =/  disc  [ship desk]
-      =/  spur  /hoon/[term]/app
-      =/  =schematic:ford  [%core disc spur]
+      =/  =schematic:ford  [%core [ship desk] /hoon/[term]/app]
       [%f %build live=%.y schematic]
     ::
     =/  pass  [path note-arvo]
     (mo-pass pass)
   ::
-  ::  +mo-pass: prepend a standard %pass move to the move state.
+  ::  +mo-pass: prepend a standard %pass move to the current list of moves.
   ::
   ++  mo-pass
     |=  pass=(pair path note-arvo)
@@ -377,7 +379,7 @@
     =/  =move  [hen [%pass pass]]
     mo-state(moves [move moves])
   ::
-  ::  +mo-give: prepend a standard %give move to the move state.
+  ::  +mo-give: prepend a standard %give move to the current list of moves.
   ::
   ++  mo-give
     |=  =gift:able
@@ -386,7 +388,10 @@
     =/  =move  [hen [%give gift]]
     mo-state(moves [move moves])
   ::
-  :: +mo-contains-valid-bowl: check that a vase contains a valid bowl.
+  ::  +mo-contains-valid-bowl: check that a vase contains a valid bowl.
+  ::
+  ::  The vase is expected to contain a bowl at +12, so we just check that the
+  ::  type of the thing there nests under that of bowl.
   ::
   ++  mo-contains-valid-bowl
     ~/  %mo-contains-valid-bowl
@@ -401,10 +406,20 @@
     =/  =type  p.u.maybe-vase
     (~(nest ut type) %.n inferred)
   ::
-  ::  +mo-receive-core: receives an app core built by %ford.
+  ::  +mo-handle-received-core: receives an app core built by %ford.
   ::
-  ++  mo-receive-core
-    ~/  %mo-receive-core
+  ::  Presuming we receive a good core, we first check to see if the agent
+  ::  is already running.  If so, we update its beak in %gall's state,
+  ::  initialise an +ap core for the agent, install the core we got from
+  ::  ford, and then resolve any moves associated with it.
+  ::
+  ::  If we're dealing with a new agent, we create one using the result we got
+  ::  from ford, add it to the collection of agents %gall is keeping track of,
+  ::  and then do more or less the same procedure as we did for the running
+  ::  agent case.
+  ::
+  ++  mo-handle-received-core
+    ~/  %mo-handle-received-core
     |=  [=term =beak =made-result:ford]
     ^+  mo-state
     ::
@@ -419,18 +434,14 @@
     =/  =cage  (result-to-cage:ford build-result)
     =/  result-vase  q.cage
     ::
-    =/  app-data=(unit agent)
+    =/  maybe-agent=(unit agent)
       (~(get by running.agents.gall) term)
     ::
-    ?^  app-data
-      ::  update the path
-      ::
-      =/  updated  u.app-data(beak beak)
+    ?^  maybe-agent
+      =/  agent  u.maybe-agent(beak beak)
       ::
       =.  running.agents.gall
-        (~(put by running.agents.gall) term updated)
-      ::
-      ::  magic update string from the old +mo-boon, "complete old boot"
+        (~(put by running.agents.gall) term agent)
       ::
       =/  =privilege
         =/  =routes  [disclosing=~ attributing=our]
@@ -439,7 +450,6 @@
       =/  app  (ap-abed:ap term privilege)
       =.  app  (ap-reinstall:app result-vase)
       ap-abet:app
-    ::  first install of the app
     ::
     ?.  (mo-contains-valid-bowl result-vase)
       =/  err  [[%leaf "{<term>}: bogus core"] ~]
@@ -468,7 +478,10 @@
     =/  =suss  [term %boot now]
     (mo-give %onto [%.y suss])
   ::
-  ::  +mo-new-agent: create a new agent and add it to state.
+  ::  +mo-new-agent: create a new agent and add it to %gall's state.
+  ::
+  ::  %gall maintains a collection of running agents.  This gate creates a
+  ::  new one with the provided name, beak, and state (held in a vase).
   ::
   ++  mo-new-agent
     |=  [=term =beak =vase]
@@ -488,10 +501,13 @@
         ducts           ducts
       ==
     ::
-    =/  running  (~(put by running.agents.gall) term agent)
-    mo-state(running.agents.gall running)
+    %_  mo-state
+      running.agents.gall  (~(put by running.agents.gall) term agent)
+    ==
   ::
-  :: +mo-handle-foreign-request: handle a foreign request.
+  ::  +mo-handle-foreign-request: handle a foreign request.
+  ::
+  ::  Handles tasks received on a +call that have come from another ship.
   ::
   ++  mo-handle-foreign-request
     ~/  %mo-handle-foreign-request
@@ -540,6 +556,8 @@
   ::
   ::  +mo-handle-foreign-response: handle foreign response.
   ::
+  ::  Handle a received %woot from %ames.
+  ::
   ++  mo-handle-foreign-response
     |=  [=foreign-response art=(unit ares)]
     ^+  mo-state
@@ -564,7 +582,10 @@
       %pull  mo-state
     ==
   ::
-  ::  +mo-assign-bone: assign an out bone.
+  ::  +mo-assign-bone: assign an out bone to a ship.
+  ::
+  ::  If we know about the ship, we simply use its existing bone.  Otherwise
+  ::  we register a new entry for the ship, and use a default bone for it.
   ::
   ++  mo-assign-bone
     |=  =ship
@@ -590,23 +611,20 @@
         ==
       (~(put by contacts.agents.gall) ship new-foreign)
     ::
-    =/  next
-      %_  mo-state
-        contacts.agents.gall  contacts
-      ==
-    ::
+    =/  next  mo-state(contacts.agents.gall contacts)
     [index next]
   ::
-  ::  +mo-retrieve-bone: retrieve an out bone by index.
+  ::  +mo-retrieve-duct: retrieve a duct by index.
   ::
-  ++  mo-retrieve-bone
+  ::  FIXME index vs bone
+  ++  mo-retrieve-duct
     |=  [=ship index=@ud]
     ^-  duct
     ::
     =/  =foreign  (~(got by contacts.agents.gall) ship)
     (~(got by duct-map.foreign) index)
   ::
-  ::  +mo-handle-sys-core: receive a core.
+  ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
     |=  [=path =sign-arvo]
@@ -623,9 +641,13 @@
       =/  =case  [%da (slav %da i.t.t.beak-path)]
       [ship desk case]
     ::
-    (mo-receive-core i.t.path beak result.sign-arvo)
+    (mo-handle-received-core i.t.path beak result.sign-arvo)
   ::
   ::  +mo-handle-sys-pel: translated peer.
+  ::
+  ::  Expects an appropriate +sign from %ford and simply gives its payload.
+  ::
+  ::  FIXME better name
   ::
   ++  mo-handle-sys-pel
     |=  [=path =sign-arvo]
@@ -648,6 +670,13 @@
     (mo-give %unto %diff cage)
   ::
   ::  +mo-handle-sys-red: diff ack.
+  ::
+  ::  Expects an appropriate +sign from %ames.  If the +sign doesn't wrap
+  ::  any errors, then it simply passes a %pump acknowledgement internally;
+  ::  otherwise it passes both an internal unsubscribing %pull, plus a %want to
+  ::  %ames, before complaining about a bad message acknowledgment.
+  ::
+  ::  FIXME better name
   ::
   ++  mo-handle-sys-red
     |=  [=path =sign-arvo]
@@ -672,15 +701,15 @@
     ?~  coop
       =/  =note-arvo
         =/  =sock  [him our]
-        =/  =cush  [dap %pump ~]
-        =/  =task:able  [%deal sock cush]
+        =/  =internal-task  [dap %pump ~]
+        =/  =task:able  [%deal sock internal-task]
         [%g task]
       (mo-pass sys-path note-arvo)
     ::
     =/  gall-move=note-arvo
       =/  =sock  [him our]
-      =/  =cush  [dap %pull ~]
-      =/  =task:able  [%deal sock cush]
+      =/  =internal-task  [dap %pull ~]
+      =/  =task:able  [%deal sock internal-task]
       [%g task]
     ::
     =/  ames-move=note-arvo
@@ -701,6 +730,11 @@
     (print mo-state)
   ::
   ::  +mo-handle-sys-rep: reverse request.
+  ::
+  ::  On receipt of a valid +sign from %ford, sets state to the appropriate
+  ::  duct and gives an internal %diff containing the +sign payload.
+  ::
+  ::  FIXME better name, docs
   ::
   ++  mo-handle-sys-rep
     |=  [=path =sign-arvo]
@@ -727,7 +761,7 @@
     ::  XX pump should ack
     =.  mo-state  (mo-give %mack ~)
     ::
-    =/  duct  (mo-retrieve-bone him num)
+    =/  duct  (mo-retrieve-duct him num)
     ::
     =.  mo-state  (mo-abed duct)
     ::
@@ -737,6 +771,14 @@
     (mo-give move)
   ::
   ::  +mo-handle-sys-req: inbound request.
+  ::
+  ::  On receipt of an appropriate +sign from %ford, applies an action to the
+  ::  specified agent.
+  ::
+  ::  On receipt of an appropriate internal +gift, applies the appropriate
+  ::  action.
+  ::
+  ::  FIXME better name, docs; in particular seek to go higher level w/docs
   ::
   ++  mo-handle-sys-req
     |=  [=path =sign-arvo]
@@ -805,6 +847,11 @@
   ::
   ::  +mo-handle-sys-val: inbound validate.
   ::
+  ::  Validates an incoming +sign from %ford and applies it to the specified
+  ::  agent.
+  ::
+  ::  FIXME better name
+  ::
   ++  mo-handle-sys-val
     |=  [=path =sign-arvo]
     ^+  mo-state
@@ -835,6 +882,7 @@
   ::
   ::  +mo-handle-sys-way: outbound request.
   ::
+  :: FIXME better name, docs
   ++  mo-handle-sys-way
     |=  [=path =sign-arvo]
     ^+  mo-state
@@ -843,12 +891,13 @@
     ?>  ?=([@ @ ~] path)
     ::
     =/  =foreign-response  (foreign-response i.t.path)
-    =/  art  +>+.sign-arvo
+    =/  maybe-ares  +>+.sign-arvo
     ::
-    (mo-handle-foreign-response foreign-response art)
+    (mo-handle-foreign-response foreign-response maybe-ares)
   ::
-  ::  +mo-handle-sys: handle incoming on /sys.
+  ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
+  ::  FIXME better docs, potentially rename +mo-handle-sign or something
   ++  mo-handle-sys
     ~/  %mo-handle-sys
     |=  [=path =sign-arvo]
@@ -864,8 +913,12 @@
       %way   (mo-handle-sys-way path sign-arvo)
     ==
   ::
-  ::  +mo-handle-use: handle incoming on /use.
+  ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
+  ::  Initialises the specified agent and then performs an agent-level +take on
+  ::  the supplied +sign.
+  ::
+  ::  FIXME better name.
   ++  mo-handle-use
     ~/  %mo-handle-use
     |=  [=path hin=(hypo sign-arvo)]
@@ -922,6 +975,9 @@
   ::
   ::  +mo-clear-queue: clear blocked tasks.
   ::
+  ::  If the specified agent is running and has some tasks queued, make moves
+  ::  from them and add them to +mo-state.
+  ::
   ++  mo-clear-queue
     |=  =term
     ^+  mo-state
@@ -958,11 +1014,12 @@
     ::
     $(moves [move moves])
   ::
-  ::  +mo-beak: assemble a beak for the provided app.
+  ::  +mo-beak: assemble a beak for the specified agent.
   ::
   ++  mo-beak
     |=  =term
     ^-  beak
+    ::
     ?~  app-data=(~(get by running.agents.gall) term)
       ::
       ::  XX this fallback is necessary, as .term could be either the source
@@ -975,13 +1032,13 @@
   ::
   ++  mo-peek
     ~/  %mo-peek
-    |=  [dude=term =privilege =term =path]
+    |=  [agent=term =privilege =term =path]
     ^-  (unit (unit cage))
     ::
-    =/  app  (ap-abed:ap dude privilege)
+    =/  app  (ap-abed:ap agent privilege)
     (ap-peek:app term path)
   ::
-  ::  +mo-apply: apply action.
+  ::  +mo-apply: apply the supplied action to the specified agent.
   ::
   ++  mo-apply
     |=  [=term =privilege =agent-action]
@@ -1015,6 +1072,10 @@
   ::
   ::  +mo-handle-local: handle locally.
   ::
+  ::  If the agent is running or waiting, update it with the supplied +task
+  ::  and mark it as waiting.  Otherwise simply apply the action to the agent.
+  ::
+  ::  FIXME higher-level docs
   ++  mo-handle-local
     |=  [=ship =internal-task]
     ^+  mo-state
@@ -1037,16 +1098,15 @@
         =/  task  [hen privilege agent-action]
         (~(put to tasks) task)
       ::
-      =/  waiting  (~(put by waiting.agents.gall) term blocked)
-      ::
       %_  mo-state
-        waiting.agents.gall  waiting
+        waiting.agents.gall  (~(put by waiting.agents.gall) term blocked)
       ==
     ::
     (mo-apply term privilege agent-action)
   ::
   ::  +mo-handle-forward: ames forward.
   ::
+  ::  FIXME docs
   ++  mo-handle-forward
     |=  [=ship =term =bone =forward-ames]
     ^+  mo-state
@@ -1099,6 +1159,7 @@
   ::
   ::  +mo-handle-backward: ames backward.
   ::
+  ::  FIXME docs
   ++  mo-handle-backward
     |=  [=ship =term =bone =reverse-ames]
     ^+  mo-state
@@ -1126,7 +1187,7 @@
       =.  mo-state  (mo-give %mack ~)
       ::
       =/  initialised
-        =/  out  (mo-retrieve-bone ship bone)
+        =/  out  (mo-retrieve-duct ship bone)
         (mo-abed out)
       ::
       (mo-give:initialised %unto %quit ~)
@@ -1137,6 +1198,7 @@
   ++  ap
     ~%  %gall-ap  +>  ~
     ::
+    ::  FIXME i'd like to see this state refactored
     |_  $:  agent-name=term
             agent-privilege=privilege
             agent-bone=bone
@@ -1147,7 +1209,16 @@
     ::
     ++  ap-state  .
     ::
-    ::  +ap-abed: initialise the provided app with the supplied privilege.
+    ::  +ap-abed: initialise state for the specified agent, with the
+    ::  supplied privilege.
+    ::
+    ::  The agent must already be running in +gall -- here we simply update
+    ::  state to focus on it.
+    ::
+    ::  If the agent doesn't have a bone corresponding to the +mo control duct,
+    ::  we give it one, and update its bone- and duct-indexed correspondence
+    ::  maps in turn.  The agent's bone is also tracked in state under the
+    ::  agent-bone face.
     ::
     ++  ap-abed
       ~/  %ap-abed
@@ -1162,11 +1233,11 @@
           now
         running(stats stats)
       ::
-      =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
-      ::
       =.  agent-name  term
       =.  agent-privilege  privilege
       =.  sat  agent
+      ::
+      =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
       ::
       ?^  maybe-bone
         ap-state(agent-bone u.maybe-bone)
@@ -1177,8 +1248,8 @@
         (~(put by duct-map.ducts.agent) bone.ducts.agent hen)
       ::
       %_  ap-state
-        agent-bone        bone.ducts.agent
-        ducts.sat  ducts
+        agent-bone  bone.ducts.agent
+        ducts.sat   ducts
       ==
     ::
     ::  +ap-abet: resolve moves.
@@ -1198,10 +1269,21 @@
       ::
       %_  mo-state
         running.agents.gall  running
-        moves              moves
+        moves                moves
       ==
     ::
     ::  +ap-track-queue: track queue.
+    ::
+    ::  An agent, at any given time, may have some so-called internal moves
+    ::  associated with it.  These are analogous to Arvo moves, except they
+    ::  are routed by bone instead of duct.
+    ::
+    ::  If there are any currently-associated non-%give internal moves, we
+    ::  enqueue each along its associated bone.
+    ::
+    ::  When we've finished enqueuing them,
+    ::
+    ::  FIXME finish
     ::
     ++  ap-track-queue
       ^+  ap-state
@@ -1216,6 +1298,7 @@
           $(internal-moves t.internal-moves)
         ::
         =/  =internal-move  i.internal-moves
+        ::
         =^  filled  ap-state  ap-enqueue(agent-bone bone.internal-move)
         ::
         =/  new-bones
@@ -1225,24 +1308,28 @@
         ::
         $(internal-moves t.internal-moves, bones new-bones)
       ::
-      =/  boned  ~(tap in bones)
+      =/  bones  ~(tap in bones)
       ::
       |-  ^+  ap-state
       ::
-      ?~  boned
+      ?~  bones
         ap-state
       ::
-      =>  $(boned t.boned, agent-bone i.boned)
+      =>  $(bones t.bones, agent-bone i.bones)
       ::
-      =/  tib  (~(get by incoming.subscribers.sat) agent-bone)
+      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
       ::
-      ?~  tib
+      ?~  incoming
         ~&  [%ap-track-queue-bad-bone agent-name agent-bone]
         ap-state
       ::
-      ap-kill(attributing.routes.agent-privilege p.u.tib)
+      =/  =ship  p.u.incoming
+      ap-kill(attributing.routes.agent-privilege ship)
     ::
     ::  +ap-from-internal: internal move to move.
+    ::
+    ::  We convert from bone-indexed moves to duct-indexed moves when resolving
+    ::  them in Arvo.
     ::
     ++  ap-from-internal
       ~/  %ap-from-internal
@@ -1317,6 +1404,8 @@
     ::
     ::  +ap-call: call into server.
     ::
+    ::  FIXME docs
+    ::
     ++  ap-call
       ~/  %ap-call
       |=  [=term =vase]
@@ -1336,6 +1425,8 @@
     ::
     ::  +ap-peek: peek.
     ::
+    ::  FIXME docs
+    ::
     ++  ap-peek
       ~/  %ap-peek
       |=  [=term tyl=path]
@@ -1346,7 +1437,6 @@
           [mark=%$ tyl=tyl]
         ::
         =/  =path  (flop tyl)
-        ::
         ?>  ?=(^ path)
         [mark=i.path tyl=(flop t.path)]
       ::
@@ -1443,6 +1533,7 @@
     ::
     ::  +ap-diff: pour a diff.
     ::
+    ::  FIXME docs
     ++  ap-diff
       ~/  %ap-diff
       |=  [=ship =path =cage]
@@ -1492,6 +1583,8 @@
     ::
     ::  +ap-update-subscription: update subscription.
     ::
+    ::  FIXME docs
+    ::
     ++  ap-update-subscription
       ~/  %ap-update-subscription
       |=  [is-ok=? =ship =path]
@@ -1509,6 +1602,9 @@
     ::
     ::  +ap-dequeue: drop from queue.
     ::
+    ::  Dequeues along the current bone, deleting the queue entirely if it
+    ::  drops to zero.
+    ::
     ++  ap-dequeue
       ^+  ap-state
       ::
@@ -1524,17 +1620,14 @@
       ::
       ?:  =(0 u.level)
         =/  deleted  (~(del by meter.subscribers.sat) agent-bone)
-        %_  ap-state
-          meter.subscribers.sat  deleted
-        ==
+        ap-state(meter.subscribers.sat deleted)
       ::
-      =/  dropped  (~(put by meter.subscribers.sat) agent-bone u.level)
-      %_  ap-state
-        meter.subscribers.sat  dropped
-      ==
+      =/  dequeued  (~(put by meter.subscribers.sat) agent-bone u.level)
+      ap-state(meter.subscribers.sat dequeued)
     ::
     ::  +ap-produce-arm: produce arm.
     ::
+    ::  FIXME docs
     ++  ap-produce-arm
       ~/  %ap-produce-arm
       |=  =term
@@ -1564,13 +1657,19 @@
       ::
       =/  next
         =/  =worm  +>.virtual
-        %_  ap-state
-          cache.sat  worm
-        ==
+        ap-state(cache.sat worm)
       ::
       [possibly-vase next]
     ::
     ::  +ap-enqueue: add to queue.
+    ::
+    ::  Every agent has a 'meter', that tracks the number of incoming
+    ::  subscribers by bone.  We get both the meter and ship associated with
+    ::  the current bone; if the meter has hit twenty for another ship, we
+    ::  don't enqueue the subscriber.  Otherwise we increment the meter for
+    ::  the current bone and update the agent's state with it.
+    ::
+    ::  Returns a yes if the meter has been incremented, and no otherwise.
     ::
     ++  ap-enqueue
       ^-  [? _ap-state]
@@ -1579,27 +1678,28 @@
       =/  subscriber=(unit (pair ship path))
         (~(get by incoming.subscribers.sat) agent-bone)
       ::
-      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
-      =/  duct  (~(get by duct-map.ducts.sat) agent-bone)
-      ::
       ?:  ?&  =(20 meter)
               ?|  ?=(~ subscriber)
                   !=(our p.u.subscriber)
               ==
           ==
+        =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
+        =/  duct  (~(get by duct-map.ducts.sat) agent-bone)
         ~&  [%gall-pulling-20 agent-bone incoming duct]
         [%.n ap-state]
       ::
       =/  next
         =/  meter  (~(put by meter.subscribers.sat) agent-bone +(meter))
-        %_  ap-state
-          meter.subscribers.sat  meter
-        ==
+        ap-state(meter.subscribers.sat meter)
       ::
       [%.y next]
     ::
     ::  +ap-find-arm: general arm.
     ::
+    ::  If the arm exists in the running cache for the raw [term path] cell,
+    ::  returns that.  Otherwise we assemble
+    ::
+    ::  FIXME finish
     ++  ap-find-arm
       ~/  %ap-find-arm
       |=  [=term =path]
@@ -1629,7 +1729,7 @@
       ::
       [result ap-state]
     ::
-    ::  +ap-exists-arm: check for arm.
+    ::  +ap-exists-arm: check for an arm in the running agent state.
     ::
     ++  ap-exists-arm
       ~/  %ap-exists-arm
@@ -2482,7 +2582,7 @@
       ::
       =/  next
         %_  ap-state
-          agent-moves                (weld (flop internal-moves) agent-moves)
+          agent-moves        (weld (flop internal-moves) agent-moves)
           running-state.sat  p.possibly-vase
         ==
       ::
