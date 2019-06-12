@@ -20,8 +20,8 @@
 #     define c3_assert(x)                       \
         do {                                    \
           if (!(x)) {                           \
-            u3l_log("\rAssertion '%s' failed "  \
-                    "in %s:%d\n",               \
+            fprintf(stderr, "\rAssertion '%s' " \
+                    "failed in %s:%d\n",        \
                     #x, __FILE__, __LINE__);    \
             c3_cooked();                        \
             assert(x);                          \
