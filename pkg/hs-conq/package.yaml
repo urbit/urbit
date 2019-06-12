@@ -1,4 +1,4 @@
-name: urbit
+name: language-conq
 version: 0.1.0
 license: AGPL-3.0-only
 
@@ -11,32 +11,25 @@ library:
 dependencies:
   - async
   - base
-  - bytestring
   - case-insensitive
+  - chunked-data
   - classy-prelude
   - containers
   - data-fix
   - extra
-  - fixed-vector
   - flat
   - ghc-prim
-  - hashtables
   - http-client
   - http-types
   - integer-gmp
   - largeword
   - lens
-  - lmdb
   - megaparsec
   - mtl
   - multimap
   - para
   - pretty-show
-  - primitive
-  - process
   - QuickCheck
-  - sdl2
-  - sdl2-image
   - semigroups
   - smallcheck
   - stm
@@ -50,13 +43,9 @@ dependencies:
   - transformers
   - unordered-containers
   - vector
-  - wai
-  - warp
-  - warp-tls
 
 default-extensions:
   - ApplicativeDo
-  - DataKinds
   - BangPatterns
   - BlockArguments
   - DeriveAnyClass
@@ -82,7 +71,6 @@ default-extensions:
   - Rank2Types
   - RankNTypes
   - RecordWildCards
-  - StandaloneDeriving
   - ScopedTypeVariables
   - TemplateHaskell
   - TupleSections
