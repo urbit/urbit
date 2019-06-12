@@ -14,6 +14,8 @@ import { NewPost } from '/components/new-post';
 import { Skeleton } from '/components/skeleton';
 import { Blog } from '/components/blog';
 import { Post } from '/components/post';
+import { Subs } from '/components/subs';
+import { Pubs } from '/components/pubs';
 import { HeaderBar } from '/components/lib/header-bar';
 import { Switch } from 'react-router';
 
@@ -43,7 +45,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   children={
-                    <Recent {...this.state} />
+                    <Subs {...this.state} />
                   }
                 />
               );
@@ -53,7 +55,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   children={
-                    <Recent {...this.state} />
+                    <Pubs {...this.state} />
                   }
                 />
               );
