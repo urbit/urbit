@@ -331,12 +331,27 @@ _daemon_come(u3_noun star, u3_noun pill, u3_noun path)
   _daemon_dawn(u3_dawn_come(), pill, path);
 }
 
+static void
+_daemon_slog(u3_noun hod)
+{
+  u3_pier_tank(0, u3k(u3t(hod)));
+  u3z(hod);
+}
+
 /* _daemon_dawn(): boot from keys, validating
 */
 void
 _daemon_dawn(u3_noun seed, u3_noun pill, u3_noun path)
 {
+  // enable ivory slog printfs
+  //
+  u3C.slog_f = _daemon_slog;
+
   u3_pier_boot(sag_w, u3k(u3h(seed)), u3_dawn_vent(seed), pill, path);
+
+  // disable ivory slog printfs
+  //
+  u3C.slog_f = 0;
 }
 
 /* _daemon_exit(): exit parser
