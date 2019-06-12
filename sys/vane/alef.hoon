@@ -338,6 +338,9 @@
 ::    always zero.
 ::
 +$  ack-meat  (each fragment-num [ok=? lag=@dr])
+::  $naxplanation: reason for message failure, including metadata
+::
++$  naxplanation  [=bone =message-num =error]
 ::
 +|  %statics
 ::
@@ -670,10 +673,12 @@
 ::
 ::    %hear-message: $message assembled from received packets, to be
 ::                   sent to a local vane for processing
+::    %naxplain: enqueue a naxplanation to be sent as message
 ::    %send-ack: emit an ack packet
 ::
 +$  message-still-gift
   $%  [%hear-message =message-num =message]
+      [%naxplain =message-num =error]
       [%send-ack =message-num =ack-meat]
   ==
 --
@@ -1004,8 +1009,6 @@
       =*  gift  i.still-gifts
       =.  peer-core
         ?-    -.gift
-            ::  TODO: WTF ducts and bones
-            ::
             %hear-message
           =/  =path  path.message.gift
           ?>  ?=([@ *] path)
@@ -1021,18 +1024,47 @@
               message-num.gift
               %|  %|  ok=%.y  lag=`@dr`0
             ==
-          ::  odd bone, forward flow; wait for local vane to ack it
+          ::  if it's for ames, it's a naxplanation
+          ::
+          ?:  ?=(%a i.path)
+            ?>  =(`^path`/a/nax `^path`path)
+            ?>  =(bone 0)
+            =/  =naxplanation  ;;(naxplanation payload.message.gift)
+            =/  nax-key        [bone message-num]:naxplanation
+            ::  TODO WRONG: rethink control flow w.r.t %done and %naxplain
+            ::
+            ?~  existing=(~(get by nax.peer-state) nax-key)
+              ::  no nack packet has been received; enqueue
+              ::
+              =.  nax.peer-state
+                (~(put by nax.peer-state) nax-key `error.naxplanation)
+              ::
+              peer-core
+            ::  |message-still should never emit duplicate naxplanations
+            ::
+            ?>  ?=(~ u.existing)
+            ::  we have both nack packet and naxplanation; unqueue and emit
+            ::
+            =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
+            ::
+            =/  client-duct
+              (~(got by by-bone.ossuary.peer-state) bone.naxplanation)
+            ::
+            (emit client-duct %give %rest `error.naxplanation)
+          ::  message is for some other vane; relay it
           ::
           =/  =wire  path
           ?-  i.path
-            %a  !!
             %c  (emit duct %pass wire %c %west her.channel message.gift)
             %g  (emit duct %pass wire %g %west her.channel message.gift)
             %j  (emit duct %pass wire %j %west her.channel message.gift)
           ==
         ::
-            ::  TODO special-case nack?
-            ::
+            %naxplain
+          =/  =naxplanation  [bone [message-num error]:gift]
+          ::
+          (run-message-pump bone=0 %send /a/nax naxplanation)
+        ::
             %send-ack
           %-  send-shut-packet  :*
             our-life.channel
@@ -1719,11 +1751,13 @@
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
     =.  last-acked.state                 +(last-acked.state)
     =/  =message-num                     message-num.p.pending
-    ::  TODO nacks, naxplanations
     ::
     ?~  error
       (give %send-ack message-num %| ok=%.y lag=`@dr`0)
-    (give %send-ack message-num %| ok=%.n lag=`@dr`0)
+    ::
+    =.  message-still
+      (give %send-ack message-num %| ok=%.n lag=`@dr`0)
+    (give %naxplain message-num u.error)
   --
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
