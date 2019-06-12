@@ -175,6 +175,9 @@ static c3_c* _141_hex_coed__ed_shar_ha[] = {
   0
 };
 
+static u3j_harm _141_hex_coed__ed_add_a[] =
+    {{".2", u3wee_point_add}, {}};
+
 static u3j_harm _141_hex_coed__ed_double_scalarmult_a[] =
     {{".2", u3wee_double_scalarmult}, {}};
 
@@ -186,6 +189,7 @@ static u3j_core _141_hex_coed__ed_d[] =
     { "puck", 7, _141_hex_coed__ed_puck_a, 0, _141_hex_coed__ed_puck_ha },
     { "veri", 7, _141_hex_coed__ed_veri_a, 0, _141_hex_coed__ed_veri_ha },
     { "shar", 7, _141_hex_coed__ed_shar_a, 0, _141_hex_coed__ed_shar_ha },
+    { "add", 7, _141_hex_coed__ed_add_a, 0, 0 },
     { "scalarmult-base", 7, _141_hex_coed__ed_scalarmult_a, 0, 0 },
     { "double-scalarmult", 7, _141_hex_coed__ed_double_scalarmult_a, 0, 0 },
     {}

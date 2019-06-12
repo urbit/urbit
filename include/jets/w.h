@@ -155,6 +155,7 @@
     u3_noun u3wee_sign(u3_noun);
     u3_noun u3wee_veri(u3_noun);
     u3_noun u3wee_shar(u3_noun);
+    u3_noun u3wee_point_add(u3_noun);
     u3_noun u3wee_double_scalarmult(u3_noun);
     u3_noun u3wee_scalarmult_base(u3_noun);
 
