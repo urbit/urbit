@@ -14,7 +14,7 @@
   =|  keys=(list [pk=@udpoint sk=@udscalar])
   ::
   |-
-  ?:  =(count 58)
+  ?:  =(count 60)
     keys
   ::  using key-num as our "secret" key.
   ::
@@ -33,8 +33,8 @@
 ~&  %start----------signing
 ::
 =/  message  "blah"
-::=/  scope  [~ [%link-scope 52]]
-=/  scope  ~
+=/  scope  [~ [%link-scope 52]]
+::=/  scope  ~
 ::
 =/  signature=ring-signature
   (sign message scope key-set my-public-key my-private-key eny)

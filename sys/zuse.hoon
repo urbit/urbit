@@ -3127,6 +3127,27 @@
     ~%  %ed  +  ~
     |%
     ::
+    ++  add
+      ~/  %add
+      |=  [a-point=@udpoint b-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      =/  b-point-decoded=[@ @]  (need (deco b-point))
+      ::
+      %-  etch
+      (ward a-point-decoded b-point-decoded)
+    ::
+    ++  scalarmult
+      ~/  %scalarmult
+      |=  [a=@udscalar a-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      ::
+      %-  etch
+      (scam a-point-decoded a)
+    ::
     ++  scalarmult-base
       ~/  %scalarmult-base
       |=  scalar=@udscalar
@@ -3134,8 +3155,8 @@
       %-  etch
       (scam bb scalar)
     ::
-    ++  double-scalarmult
-      ~/  %double-scalarmult
+    ++  add-scalarmult-scalarmult-base
+      ~/  %add-scalarmult-scalarmult-base
       |=  [a=@udscalar a-point=@udpoint b=@udscalar]
       ^-  @udpoint
       ::
@@ -3146,18 +3167,18 @@
         (scam bb b)
       (scam a-point-decoded a)
     ::
-    ++  double-mult
-      ~/  %double-mult
+    ++  add-double-scalarmult
+      ~/  %add-double-scalarmult
       |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
       ^-  @udpoint
       ::
-      =/  a-point-decoded=[@ @]  (need (deco:ed a-point))
-      =/  b-point-decoded=[@ @]  (need (deco:ed b-point))
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      =/  b-point-decoded=[@ @]  (need (deco b-point))
       ::
-      %-  etch:ed:crypto
-      %+  ward:ed
-        (scam:ed a-point-decoded a)
-      (scam:ed b-point-decoded b)
+      %-  etch
+      %+  ward
+        (scam a-point-decoded a)
+      (scam b-point-decoded b)
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  public key
       ~/  %puck

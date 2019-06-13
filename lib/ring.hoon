@@ -8,17 +8,6 @@
   |=  input=*
   :: l:ed is ecc-n
   (mod (shaz (jam input)) l:ed:crypto)
-::  TODO: naked +point-mul needs to be jetted, but for now I want to just see
-::  how fast things are.
-::
-++  point-mul
-  |=  [s=@udscalar p=@udpoint]
-  ^-  @udpoint
-  ::
-  %-  etch:ed:crypto
-  %+  scam:ed:crypto
-    (need (deco:ed:crypto p))
-  s
 ::
 ::::
 ::
@@ -45,7 +34,7 @@
     ~
   ::
   =+  [data=@ h=@udpoint]=(generate-public-linkage u.link-scope)
-  =/  y=@udpoint  (point-mul my-private-key h)
+  =/  y=@udpoint  (scalarmult:ed:crypto my-private-key h)
   [~ data h y]
 ::  +generate-challenge: generate challenge from a given message
 ::
@@ -86,16 +75,23 @@
   ^-  (list @)
   ::
   =/  gs=@udpoint
-    (double-scalarmult:ed:crypto prev-ch (snag prev-k public-keys) prev-s)
+    %-  add-scalarmult-scalarmult-base:ed:crypto  :*
+      prev-ch
+      (snag prev-k public-keys)
+      prev-s
+    ==
   ::
   =/  hs=(unit @udpoint)
-    ::  ?~  link-state
+    ?~  link-state
       ~
-    ::  ::
-    ::  :-  ~
-    ::  %+  point-add
-    ::    (point-mul prev-s h.u.link-state)
-    ::  (point-mul prev-ch y.u.link-state)
+    ::
+    :-  ~
+    %-  add-double-scalarmult:ed:crypto  :*
+      prev-s
+      h.u.link-state
+      prev-ch
+      y.u.link-state
+    ==
   ::
   =/  ch=@
     (generate-challenge message gs link-state hs)
@@ -110,18 +106,18 @@
     ss          t.ss
     challenges  [ch challenges]
   ==
-::  +point-mul-h: maybe multiply u by h in linkage
+::  +scalarmult-h: maybe multiply u by h in linkage
 ::
 ::    Since linkage tags are optional, we need to be able to just do the math
-::    in case :linkage is set and fall through otherwise. +point-mul-h is used
+::    in case :linkage is set and fall through otherwise. +scalarmult-h is used
 ::    to generate the (unit point) consumed by +generate-challenge.
 ::
-++  point-mul-h
+++  scalarmult-h
   |=  [u=@ linkage=(unit [data=@ h=@udpoint y=@udpoint])]
   ^-  (unit @udpoint)
   ?~  linkage
     ~
-  [~ (point-mul u h.u.linkage)]
+  [~ (scalarmult:ed:crypto u h.u.linkage)]
 ::  +reorder: reorders a list so the ith element is first
 ::
 ++  reorder
@@ -191,7 +187,7 @@
           message
           (scalarmult-base:ed:crypto u)
           linkage
-          (point-mul-h u linkage)
+          (scalarmult-h u linkage)
         ==
       ::  Generate challenges for [ck, ..., c1, c0, ... ck + 2, ck + 1]
       ::
@@ -209,19 +205,6 @@
         ==
       =/  chk=@  (head reversed-chk-to-chk1)
       ::  Compute s = u - x * c mod n
-      ::
-      ::    TODO: I believe this part is wrong and that this is what is
-      ::    breaking the signature verification. For some reason, this doesn't
-      ::    result in . I must be screwing up the math here, but I don't
-      ::    understand how.
-      ::
-      ::    The aos implementation is "let sK = (u - ECDSA.private_d privKey *
-      ::    chK) `mod` n", and I believe the following is equivalent? At least
-      ::    with smaller prime numbers, testing it in both the dojo and ghci,
-      ::    they got the same results on simple things like `5 - 14 % 7`.
-      ::
-      ::    But I must be doing something wrong here because this sk doesn't
-      ::    line up with the rest of the ring.
       ::
       =/  sk=@  (~(dif fo l:ed:crypto) u (mul my-private-key chk))
       ::
@@ -283,7 +266,11 @@
     (lent anonymity-list)
   ::
   =/  z0p=@udpoint
-    (double-scalarmult:ed:crypto ch0.signature (head anonymity-list) s0)
+    %-  add-scalarmult-scalarmult-base:ed:crypto  :*
+       ch0.signature
+       (head anonymity-list)
+       s0
+    ==
   ::  generate the linkage using public data, and the y point from the signature
   ::
   =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
@@ -294,12 +281,15 @@
     [data h (need y.signature)]
   ::
   =/  z0pp=(unit @udpoint)
-    ::  ?~  linkage
+    ?~  linkage
       ~
-    ::  :-  ~
-    ::  %+  point-add
-    ::    (point-mul s0 h.u.linkage)
-    ::  (point-mul ch0.signature y.u.linkage)
+    :-  ~
+    %-  add-double-scalarmult:ed:crypto  :*
+      s0
+      h.u.linkage
+      ch0.signature
+      y.u.linkage
+    ==
   ::  initial challenge
   ::
   =/  ch1=@
