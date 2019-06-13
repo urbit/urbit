@@ -33,6 +33,7 @@
   ==
 ::
 ++  batch
+  $~  [%deed '{}']
   $%  ::  %single: execute a single ecliptic function call
       ::
       [%single =call]
@@ -45,6 +46,9 @@
       ::  %lock: put ships into lockup for the target address
       ::
       [%lock what=(list ship) to=address =lockup]
+      ::  %more: multiple batches sequentially
+      ::
+      [%more batches=(list batch)]
   ==
 ::
 ++  lockup
@@ -377,11 +381,29 @@
       %generate
     %+  write-file-transactions
       path.command
-    ?-  -.batch.command
-      %single     [(single nonce [network as +.batch]:command) ~]
-      %deed       (deed nonce [network as +.batch]:command)
-      %lock-prep  (lock-prep nonce [network as +.batch]:command)
-      %lock       (lock nonce [network as +.batch]:command)
+    (batch-to-transactions nonce [network as batch]:command)
+  ==
+::
+++  batch-to-transactions
+  |=  [nonce=@ud =network as=address =batch]
+  ^-  (list transaction)
+  ?-  -.batch
+    %single     [(single nonce network as +.batch) ~]
+    %deed       (deed nonce network as +.batch)
+    %lock-prep  (lock-prep nonce network as +.batch)
+    %lock       (lock nonce network as +.batch)
+    ::
+      %more
+    =|  txs=(list transaction)
+    =*  batches  batches.batch
+    |-
+    ?~  batches  txs
+    =/  new-txs=(list transaction)
+      ^$(batch i.batches)
+    %_  $
+      txs      (weld txs new-txs)
+      nonce    (add nonce (lent new-txs))
+      batches  t.batches
     ==
   ==
 ::
