@@ -11,9 +11,9 @@
 */
 
   u3_noun
-  u3qc_double_scalarmult(u3_atom a,
-                         u3_atom a_point,
-                         u3_atom b)
+  u3qc_add_scalarmult_scalarmult_base(u3_atom a,
+                                      u3_atom a_point,
+                                      u3_atom b)
   {
     c3_y met_w;
 
@@ -60,7 +60,7 @@
   }
 
   u3_noun
-  u3wee_double_scalarmult(u3_noun cor)
+  u3wee_add_scalarmult_scalarmult_base(u3_noun cor)
   {
     u3_noun a, b, c;
 
@@ -73,6 +73,6 @@
     {
       return u3m_bail(c3__exit);
     } else {
-      return u3qc_double_scalarmult(a, b, c);
+      return u3qc_add_scalarmult_scalarmult_base(a, b, c);
     }
   }
