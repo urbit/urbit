@@ -138,6 +138,7 @@ jets_e_ed_src = [
 'jets/e/ed_veri.c',
 'jets/e/ed_shar.c',
 'jets/e/ed_point_add.c',
+'jets/e/ed_scalarmult.c',
 'jets/e/ed_scalarmult_base.c',
 'jets/e/ed_double_scalarmult.c'
 ]
@@ -333,9 +334,27 @@ murmur3_dep = dependency('murmur3', version: '>=0.1.0', fallback: ['murmur3', 'm
 secp256k1_dep = dependency('libsecp256k1', version: '>=0.1.0', fallback: ['secp256k1', 'secp256k1_dep'])
 softfloat3_dep = dependency('softfloat3', version: '>=3.0.0', fallback: ['softfloat3', 'softfloat3_dep'])
 
+# Our ge additions must be in their own library because they cannot be compiled
+#  with '-funsigned-char' since they rely on signed characters.
+ge_additions_src = [
+  'jets/e/ge_additions.c',
+]
+
+ge_additions_include = include_directories('jets/e/')
+
+ge_additions_lib = static_library('ge-additions',
+sources: ge_additions_src,
+include_directories: ge_additions_include,
+c_args: ['-Wall'],
+dependencies: ed25519_dep,
+install: false)
+
+gd_additions_dep = declare_dependency(link_with : ge_additions_lib)
+
 deps = [argon2_dep,
         curl_dep,
         ed25519_dep,
+        gd_additions_dep,
         gmp_dep,
         libent_dep,
         libh2o_dep,
