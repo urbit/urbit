@@ -214,10 +214,26 @@
 |_  [=bowl:gall state]
 ++  this  .
 ::
+::  entrypoints
+::
 ++  prep
   |=  old=(unit *)
   ^-  (quip move _this)
   [~ ..prep]
+::
+++  poke-noun
+  |=  =command
+  ^-  (quip move _this)
+  ::  create active monad, store in state
+  ::
+  =.  inp
+    %-  some
+    :-  %command
+    %-  from-form:eval:null-glad
+    (deal-with-command command)
+  ::  kick off monad
+  ::
+  (take-command-sigh / ~)
 ::
 ++  sigh-tang-nonce
   |=  [=wire =tang]
@@ -260,6 +276,8 @@
     %done  (done-command value.eval-result.r)
   ==
 ::
+::  monadic helpers
+::
 ::  fail-command: handle fail of nonce-fetching monad
 ::
 ++  fail-command
@@ -277,23 +295,7 @@
   ~&  %command-done
   this(inp ~)
 ::
-++  poke-noun
-  |=  =command
-  ^-  (quip move _this)
-  ::  create active monad, store in state
-  ::
-  =.  inp
-    %-  some
-    :-  %command
-    %-  from-form:eval:null-glad
-    (deal-with-command command)
-  ::  kick off monad
-  ::
-  (take-command-sigh / ~)
-::
-::  monadic helpers
-::
-::  emit effects from monad without further processing
+::  just-do: emit effects from monad without further processing
 ::
 ++  just-do
   |=  =move
@@ -317,15 +319,6 @@
   %-  pure:m
   (rash p.json ;~(pfix (jest '0x') hex))
 ::
-++  do-hiss
-  |=  [=mark =hiss:eyre]
-  ^-  form:null-glad
-  |=  glad-input
-  ^-  output:null-glad
-  =-  [[[ost.bowl -] ~] %done ~]
-  ::TODO  wire in sample?
-  [%hiss /command ~ %json-rpc-response %hiss hiss]
-::
 ++  do-request
   |=  [rid=(unit @t) =request]
   %+  do-hiss  %json-rpc-response
@@ -334,6 +327,15 @@
     ::TODO  vary per network
     (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
   (request-to-json rid request)
+::
+++  do-hiss
+  |=  [=mark =hiss:eyre]
+  ^-  form:null-glad
+  |=  glad-input
+  ^-  output:null-glad
+  =-  [[[ost.bowl -] ~] %done ~]
+  ::TODO  wire in sample?
+  [%hiss /command ~ %json-rpc-response %hiss hiss]
 ::
 ++  expect-response
   =/  m  (glad response:rpc:jstd)
