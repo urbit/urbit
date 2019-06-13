@@ -45,7 +45,7 @@
       [%lock-prep what=(list ship)]
       ::  %lock: put ships into lockup for the target address
       ::
-      [%lock what=(list ship) to=address =lockup]
+      [%lock how=?(%spawn %transfer) what=(list ship) to=address =lockup]
       ::  %more: multiple batches sequentially
       ::
       [%more batches=(list batch)]
@@ -554,6 +554,7 @@
     =.  txs
       %-  do-here
       %+  transfer-ship:dat  i.what
+      ~&  %assuming-lockup-done-by-ceremony
       0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
     $(what t.what)
   ++  do-here
@@ -562,59 +563,92 @@
     (do network (add nonce (lent txs)) ecliptic dat)
   --
 ::
-::TODO  need secondary kind of lockup logic, where
-::      1) we need to batch-transfer stars to the ceremony
-::      2) (not forget to register and) deposit already-active stars
+::TODO  support distinguishing/switching between usable lockup methods
+::      automagically
 ++  lock
-  |=  [nonce=@ud =network as=address what=(list ship) to=address =lockup]
+  |=  $:  nonce=@ud
+          =network
+          as=address
+          how=?(%spawn %transfer)
+          what=(list ship)
+          to=address
+          =lockup
+      ==
   ^-  (list transaction)
-  ~&  %assuming-lockup-done-by-ceremony
-  ~&  %assuming-ceremony-controls-parents
-  =.  what  ::  expand galaxies into stars
+  ::  verify lockup sanity
+  ::
+  ~|  %invalid-lockup-ships
+  ?>  ?|  ?=(%linear -.lockup)
+          =(`@`(lent what) :(add b1.lockup b2.lockup b3.lockup))
+      ==
+  ::  expand galaxies into stars
+  ::
+  =.  what
     %-  zing
     %+  turn  what
     |=  s=ship
     ^-  (list ship)
     ?.  =(%czar (clan:title s))  [s]~
     (turn (gulf 1 255) |=(k=@ud (cat 3 s k)))
-  =/  parents
-    =-  ~(tap in -)
-    %+  roll  what
-    |=  [s=ship ss=(set ship)]
-    ?>  =(%king (clan:title s))
-    (~(put in ss) (^sein:title s))
-  ~|  %invalid-lockup-ships
-  ?>  ~|  %does-this-also-work
-      ?|  ?=(%linear -.lockup)
-          =(`@`(lent what) :(add b1.lockup b2.lockup b3.lockup))
-      ==
-  =/  contract=address
+  =/  lockup-contract=address
     ?-  -.lockup
       %linear       0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
       %conditional  0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
     ==
+  %-  flop
   =|  txs=(list transaction)
+  ^+  txs
   |^
-    ?^  parents
-      =.  txs
-        %-  do-here
-        (set-spawn-proxy:dat i.parents contract)
-      $(parents t.parents)
+    ::  registration
+    ::
     =.  txs
-      %-  do-here
+      %+  do-here  lockup-contract
       ?-  -.lockup
         %linear       (register-linear to (lent what) +.lockup)
         %conditional  (register-conditional to +.lockup)
       ==
-    |-
-    ?~  what  (flop txs)
+    ::  context-dependent setup
+    ::
     =.  txs
-      %-  do-here
+      ?-  how
+        ::  %spawn: set spawn proxy of parents
+        ::
+          %spawn
+        ~&  %assuming-ceremony-controls-parents
+        =/  parents
+          =-  ~(tap in -)
+          %+  roll  what
+          |=  [s=ship ss=(set ship)]
+          ?>  =(%king (clan:title s))
+          (~(put in ss) (^sein:title s))
+        |-
+        ?~  parents  txs
+        =.  txs
+          %+  do-here  ecliptic
+          (set-spawn-proxy:dat i.parents lockup-contract)
+        $(parents t.parents)
+      ::
+        ::  %transfer: set transfer proxy of stars
+        ::
+          %transfer
+        ~&  %assuming-ceremony-controls-stars
+        |-
+        ?~  what  txs
+        =.  txs
+          %+  do-here  ecliptic
+          (set-transfer-proxy:dat i.what lockup-contract)
+        $(what t.what)
+      ==
+    ::  depositing
+    ::
+    |-
+    ?~  what  txs
+    =.  txs
+      %+  do-here  lockup-contract
       (deposit:dat to i.what)
     $(what t.what)
-  ::TODO  maybe-do, take dat gat and unit argument
   ++  do-here
-    |=  dat=tape
+    |=  [contract=address dat=tape]
     :_  txs
     (do network (add nonce (lent txs)) contract dat)
   --
@@ -768,7 +802,6 @@
             rate-unit=@ud
         ==
     ^-  call-data
-    ~&  [%register-linear stars to]
     :-  'register(address,uint256,uint16,uint16,uint256)'
     :~  [%address to]
         [%uint windup]
