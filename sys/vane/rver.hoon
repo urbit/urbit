@@ -619,7 +619,6 @@
           //
           var funcs = this.outstandingSubscriptions.get(obj.id);
           if (obj.hasOwnProperty("err")) {
-            console.log(obj);
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
           }
