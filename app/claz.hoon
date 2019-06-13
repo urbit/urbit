@@ -33,8 +33,17 @@
   ==
 ::
 ++  batch
-  $%  [%single =call]
+  $%  ::  %single: execute a single ecliptic function call
+      ::
+      [%single =call]
+      ::  %deed: deed ships based on json, assumes spawnable
+      ::
       [%deed deeds-json=cord]
+      ::  %lock-prep: prepare for lockup by transfering ships to the ceremony address
+      ::
+      [%lock-prep what=(list ship)]
+      ::  %lock: put ships into lockup for the target address
+      ::
       [%lock what=(list ship) to=address =lockup]
   ==
 ::
@@ -369,9 +378,10 @@
     %+  write-file-transactions
       path.command
     ?-  -.batch.command
-      %single  [(single nonce [network as +.batch]:command) ~]
-      %deed    (deed nonce [network as +.batch]:command)
-      %lock    (lock nonce [network as +.batch]:command)
+      %single     [(single nonce [network as +.batch]:command) ~]
+      %deed       (deed nonce [network as +.batch]:command)
+      %lock-prep  (lock-prep nonce [network as +.batch]:command)
+      %lock       (lock nonce [network as +.batch]:command)
     ==
   ==
 ::
@@ -509,6 +519,26 @@
     %unit-address  ;~(pose (stag ~ adr) (cold ~ (jest '')))
     %key           ;~(pose (stag ~ hex) (cold ~ (jest '')))
   ==
+::
+++  lock-prep
+  |=  [nonce=@ud =network as=address what=(list ship)]
+  ^-  (list transaction)
+  =|  txs=(list transaction)
+  |^
+    ?~  what  (flop txs)
+    =.  txs
+      %-  do-here
+      (spawn:dat i.what as)
+    =.  txs
+      %-  do-here
+      %+  transfer-ship:dat  i.what
+      0x740d.6d74.1711.163d.3fca.cecf.1f11.b867.9a7c.7964
+    $(what t.what)
+  ++  do-here
+    |=  dat=tape
+    :_  txs
+    (do network (add nonce (lent txs)) ecliptic dat)
+  --
 ::
 ::TODO  need secondary kind of lockup logic, where
 ::      1) we need to batch-transfer stars to the ceremony
