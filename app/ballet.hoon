@@ -40,33 +40,33 @@
     |=  [questions=(list question) =vote]
     ^-  ?
     ::
-    ?:  &(=(~ questions) =(~ vote))
+    ?:  &(=(~ questions) =(~ answers.vote))
       %.y
     ::
     ?~  questions
       %.n
-    ?~  vote
+    ?~  answers.vote
       %.n
     ::
     =/  current-valid=?
-      ?-    -.i.vote
+      ?-    -.i.answers.vote
           %check
         ?&  ?=(%check -.i.questions)
         ::
             =/  len  (lent descriptions.i.questions)
-            (levy checked.i.vote |=(a=@u (lth a len)))
+            (levy checked.i.answers.vote |=(a=@u (lth a len)))
         ==
       ::
           %radio
         ?&  ?=(%radio -.i.questions)
-            (lth checked.i.vote (lent descriptions.i.questions))
+            (lth checked.i.answers.vote (lent descriptions.i.questions))
         ==
       ==
     ::
     ?:  =(%.n current-valid)
       %.n
     ::
-    $(questions t.questions, vote t.vote)
+    $(questions t.questions, answers.vote t.answers.vote)
   ::  adds the :vote to the running :tally
   ::
   ++  update-tally
@@ -75,15 +75,15 @@
     ::
     ?~  tally
       ~
-    ?~  vote
+    ?~  answers.vote
       tally
     ::
-    :_  $(tally t.tally, vote t.vote)
+    :_  $(tally t.tally, answers.vote t.answers.vote)
     ::
     =/  answers=(list @u)
-      ?-  -.i.vote
-        %check  checked.i.vote
-        %radio  [checked.i.vote ~]
+      ?-  -.i.answers.vote
+        %check  checked.i.answers.vote
+        %radio  [checked.i.answers.vote ~]
       ==
     ::
     |-
@@ -127,13 +127,12 @@
       (pure:m state)
     ::  verify ballot has a valid signature
     ::
-    =/  electorate-keys
+    =/  electorate-keys=(set @udpoint)
       (~(run in electorate.u.election) public-key-for-ship)
-    ::  TODO: OK, so this is now erroring with invalid signature. 
     ::
     ?.  %-  verify  :*
           vote.in-poke-data
-          `[%election id]
+          [~ [%election id.in-poke-data]]
           electorate-keys
           ring-signature.in-poke-data
         ==
@@ -159,6 +158,7 @@
     =.  open-elections.state
       %+  ~(jab by open-elections.state)  id.in-poke-data
       |=  =^election
+      ~&  [%recording-vote-by u.y.ring-signature.in-poke-data vote.in-poke-data]
       %_    election
           cast
         %+  ~(put by cast.election)  u.y.ring-signature.in-poke-data
@@ -206,7 +206,6 @@
       %ballot-create
     =/  election-num  next-election-num.state
     =/  =id  [our.bowl election-num]
-    ~&  [%this-ballot-id id]
     ::
     =.  next-election-num.state  +(next-election-num.state)
     =.  open-elections.state
@@ -219,6 +218,8 @@
           cast=~
           tally=(reap (lent questions.ballot.in-poke-data) ~)
       ==
+    ::
+    ~&  [%created-new-ballot id electorate.in-poke-data]
     ::  todo: figure out how to set a timer so we can close an election on a
     ::  timer.
     ::

@@ -14,7 +14,7 @@
   =|  keys=(list [pk=@udpoint sk=@udscalar])
   ::
   |-
-  ?:  =(count 60)
+  ?:  =(count 300)
     keys
   ::  using key-num as our "secret" key.
   ::

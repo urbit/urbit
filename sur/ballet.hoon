@@ -27,8 +27,11 @@
   ==
 ::  A vote is a list of answers to questions on a ballot
 ::
-++  vote
-  (list answer)
+::    We include the id in this structure because the vote is what gets signed
+::    and I'm paranoid about replay attacks.
+::
++$  vote
+  [=id answers=(list answer)]
 ::  A unique id which is used as linkage scope on signatures to votes
 ::
 ++  id
@@ -60,7 +63,7 @@
       ::    A ring tag is the :y point in a ring-signature, and is unique for
       ::    every pair of private key/election id.
       ::
-      cast=(map point:ring [=ring-signature:ring =vote])
+      cast=(map @udpoint [=ring-signature:ring =vote])
       ::  the current running tally of the results
       ::
       =tally

@@ -144,12 +144,7 @@
           eny=@uvJ
       ==
   ^-  ring-signature
-  |^  ~&  [%message message]
-      ~&  [%scope link-scope]
-      ~&  [%anonymity-list anonymity-list]
-      ~&  [%my-public-key my-public-key]
-      ~&  [%my-private-key my-private-key]
-      ::  k: our public-key's position in :anonymity-list
+  |^  ::  k: our public-key's position in :anonymity-list
       ::
       =/  k=@u
         ~|  [%couldnt-find my-public-key in=anonymity-list]
@@ -245,7 +240,6 @@
   ::
   ::  decompose the signature into [s0 s1 s2....]
   ::
-  ~!  s.signature
   ?>  ?=([@ @ *] s.signature)
   =/  s0=@  i.s.signature
   =/  s1=@  i.t.s.signature
@@ -254,12 +248,6 @@
   ::
   =/  anonymity-list=(list @udpoint)
     ~(tap in anonymity-set)
-
-  ~&  [%message message]
-  ~&  [%scope link-scope]
-  ~&  [%anonymity-list anonymity-list]
-  ~&  [%signature signature]
-
   ::  participants: length of :anonymity-list
   ::
   =/  participants=@u
