@@ -262,6 +262,9 @@
       ::  %unsubscribe: unsubscribes from an application path
       ::
       [%unsubscribe request-id=@ud subscription-id=@ud]
+      ::  %delete: kills a channel
+      ::
+      [%delete ~]
   ==
 ::  channel-timeout: the delay before a channel should be reaped
 ::
@@ -328,6 +331,8 @@
     %.  item
     %+  pe  %unsubscribe
     (ot id+ni subscription+ni ~)
+  ?:  =('delete' u.maybe-key)
+    `[%delete ~]
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
@@ -478,6 +483,7 @@
       //    the functions will be called, and the outstanding poke will be
       //    removed after calling the success or failure function.
       //
+      
       this.outstandingPokes = new Map();
 
       //  a registry of requestId to subscription functions.
@@ -489,6 +495,14 @@
       //    disconnect function may be called exactly once.
       //
       this.outstandingSubscriptions = new Map();
+
+      this.deleteOnUnload();
+    }
+
+    deleteOnUnload() {
+      window.addEventListener('beforeunload', (event) => {
+        this.delete();
+      });
     }
 
     //  sends a poke to an app on an urbit ship
@@ -528,6 +542,16 @@
       return id;
     }
 
+    //  quit the channel
+    //
+    delete() {
+      var id = this.nextId();
+      this.sendJSONToChannel({
+        "id": id,
+        "action": "delete"
+      }, false);
+    }
+
     //  unsubscribe to a specific subscription
     //
     unsubscribe(subscriptionId) {
@@ -536,12 +560,12 @@
           "id": id,
           "action": "unsubscribe",
           "subscription": subscriptionId
-        });
+      });
     }
 
     //  sends a JSON command command to the server.
     //
-    sendJSONToChannel(j) {
+    sendJSONToChannel(j, connectAgain = true) {
       var req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
@@ -563,7 +587,9 @@
         this.lastEventId = this.lastAcknowledgedEventId;
       }
 
-      this.connectIfDisconnected();
+      if (connectAgain) {
+        this.connectIfDisconnected();
+      }
     }
 
     //  connects to the EventSource if we are not currently connected
@@ -580,12 +606,13 @@
         var obj = JSON.parse(e.data);
         if (obj.response == "poke") {
           var funcs = this.outstandingPokes.get(obj.id);
-          if (obj.hasOwnProperty("ok"))
+          if (obj.hasOwnProperty("ok")) {
             funcs["success"]()
-          else if (obj.hasOwnProperty("err"))
+          } else if (obj.hasOwnProperty("err")) {
             funcs["fail"](obj.err)
-          else
+          } else {
             console.log("Invalid poke response: ", obj);
+          }
           this.outstandingPokes.delete(obj.id);
 
         } else if (obj.response == "subscribe") {
@@ -1307,6 +1334,27 @@
           channel(subscriptions (~(del by subscriptions.channel) channel-wire))
         ::
         $(requests t.requests)
+      ::
+          %delete
+        =/  session
+          (~(got by session.channel-state.state) channel-id)
+        ::
+        =.  session.channel-state.state
+          (~(del by session.channel-state.state) channel-id)
+        =.  gall-moves
+          %+  weld
+          gall-moves
+          ::
+          ::  produce a list of moves which cancels every gall subscription
+          ::
+          %+  turn  ~(tap by subscriptions.session)
+          |=  [channel-wire=path ship=@p app=term =path]
+          ^-  move
+          ::
+          [duct %pass channel-wire [%g %deal [our ship] app %pull ~]]
+        ::
+        $(requests t.requests)
+      ::
       ==
     ::  +on-gall-response: turns a gall response into an event
     ::
