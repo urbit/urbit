@@ -61,6 +61,6 @@ Contributions of any form are more than welcome! If something doesn't seem right
 If you're looking to make code contributions, there are a few things you can do:
 
 - Join the [urbit-dev](https://groups.google.com/a/urbit.org/forum/#!forum/dev) mailing list
-- [Sign up for Hoon School](mailto:support@urbit.org?subject=Hoon School), a course we run to teach the Hoon programming language and Urbit application development
+- [Ask us about Hoon School](mailto:support@urbit.org), a course we run to teach the Hoon programming language and Urbit application development
 - Check out [good contributor issues](https://github.com/urbit/arvo/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+contributor+issue%22)
 - Reach out to [support@urbit.org](mailto:support@urbit.org) to say hi and ask any questions you might have
