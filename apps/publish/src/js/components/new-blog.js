@@ -22,7 +22,6 @@ export class NewBlog extends Component {
   constructor(props){
     super(props);
 
-    console.log("new blog", this.props);
     this.state = {
       title: '',
       collaborators: [],
@@ -85,16 +84,12 @@ export class NewBlog extends Component {
       awaiting: blogId
     });
 
-    console.log("blogSubmit", data);
     this.props.api.action("write", "write-action", data);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("componentDidUpdate", this.state.awaiting, this.props.pubs);
     if (this.state.awaiting) {
-      console.log("awaiting", this.state.awaiting);
       if (this.props.pubs[this.state.awaiting]) {
-        console.log("transitioning");
         this.props.history.push(`/~publish/~${window.ship}/${this.state.awaiting}`);
       }
     }
@@ -113,12 +108,10 @@ export class NewBlog extends Component {
   }
 
   firstPost() {
-    console.log("action first post");
     this.blogSubmit();
   }
 
   addCollaborators() {
-    console.log("action add collaborators");
     this.setState({page: 'addCollab'});
   }
 

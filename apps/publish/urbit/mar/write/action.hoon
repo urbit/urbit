@@ -53,7 +53,8 @@
     ::
     ++  new-post
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  who+(su:dejs fed:ag)
+          coll+(su:dejs sym)
           name+(su:dejs sym)
           title+so:dejs
           comments+comment-config
@@ -63,7 +64,8 @@
     ::
     ++  new-comment
       %-  ot:dejs
-      :~  coll+(su:dejs sym)
+      :~  who+(su:dejs fed:ag)
+          coll+(su:dejs sym)
           name+(su:dejs sym)
           content+so:dejs
       ==
@@ -173,15 +175,3 @@
     --
   --
 --
-
-
-
-
-
-
-
-
-
-
-
-

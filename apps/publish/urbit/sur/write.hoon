@@ -15,6 +15,7 @@
       ==
   ::
       $:  %new-post 
+          who=@p
           coll=@tas
           name=@tas
           title=@t
@@ -23,7 +24,7 @@
           content=@t
       ==
   ::
-      [%new-comment coll=@tas post=@tas content=@t]
+      [%new-comment who=@p coll=@tas post=@tas content=@t]
   ::
       [%delete item-id]
   ::

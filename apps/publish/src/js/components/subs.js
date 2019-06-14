@@ -28,8 +28,6 @@ export class Subs extends Component {
   render() {
     let blogData = this.buildBlogData();
 
-    console.log("blogData", blogData);
-
     let blogs = this.buildBlogData().map( (data, i) => {
       let bg = (i % 2 == 0)
         ?  "bg-v-light-gray"

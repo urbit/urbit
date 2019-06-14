@@ -14,8 +14,6 @@ export class Blog extends Component {
     let ship = this.props.ship;
     let blog = this.retrieveColl(blogId, ship);
 
-    console.log("buildPosts", blog);
-
     let pinProps = blog.order.pin.map((post) => {
       return this.buildPostPreviewProps(post, blogId, ship, true);
     });
@@ -39,7 +37,8 @@ export class Blog extends Component {
       numComments: com.length,
       collectionTitle: col.title,
       collectionName:  coll,
-      author: who,
+      author: pos.info.creator.slice(1),
+      blogOwner: who,
       date: pos.info["date-created"],
       pinned: pinned,
     }

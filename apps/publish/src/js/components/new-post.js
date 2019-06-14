@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 
 class SideTab extends Component {
   constructor(props) {
@@ -29,12 +30,12 @@ export class NewPost extends Component {
   constructor(props){
     super(props);
 
-    console.log("new post", this.props);
-
     this.state = {
       title: "",
       body: "",
+      awaiting: false,
     };
+
     this.titleChange = this.titleChange.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
     this.postSubmit = this.postSubmit.bind(this);
@@ -92,6 +93,7 @@ export class NewPost extends Component {
 
     let data = {
       "new-post" : {
+        who: ship,
         coll: blogId,
         name: postId,
         title: postTitle,
@@ -101,10 +103,43 @@ export class NewPost extends Component {
       },
     };
 
-    console.log("postSubmit", data);
-    this.props.api.action("write", "write-action", data).then((foo) => {
-      console.log("foo", foo);
+    this.setState({
+      awaiting: {
+        ship: ship,
+        blogId: blogId,
+        postId: postId,
+      }
     });
+
+    this.props.api.action("write", "write-action", data);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.awaiting) {
+      let ship = this.state.awaiting.ship;
+      let blogId = this.state.awaiting.blogId;
+      let postId = this.state.awaiting.postId;
+
+      if (this.state.awaiting.ship == window.ship) {
+
+        let post = _.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
+        let comments = _.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
+        if (post && comments) {
+          let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
+          this.props.history.push(redirect);
+        }
+
+      } else {
+
+        let post = _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+        let comments = _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
+        if (post && comments) {
+          let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
+          this.props.history.push(redirect);
+        }
+
+      }
+    }
   }
 
   render() {

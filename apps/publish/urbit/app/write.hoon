@@ -270,10 +270,11 @@
       (da-emil (affection del))
     ::
         %total
+      ~&  da-change+del
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
-        (~(put by subs.sat) [who.del col.del] dat.del)
+        (~(put by subs.sat) [who.del col.del] dat.del(order [~ ~]))
       ::
       =/  posts=(list @tas)  ~(tap in ~(key by pos.dat.del))
       =.  da-this
@@ -290,6 +291,7 @@
   ::
   ++  da-insert
     |=  [who=@p coll=@tas post=@tas]
+    ~&  da-insert+[coll post]
     ^+  da-this
     ::  assume we've read our own posts
     ::
@@ -305,6 +307,8 @@
     |-
     ?~  suf
       (weld pre [who coll post]~)
+    ?:  =([who coll post] i.suf)
+      latest.sat
     =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
     ?:  (gte new-date i-date)
       (weld pre [[who coll post] suf])
@@ -327,6 +331,8 @@
     |-
     ?~  suf
       (snoc pre post)
+    ?:  =(post i.suf)
+      (weld pre suf)
     =/  i-date=@da  date-created:(need (get-post-by-index who coll i.suf))
     ?:  (gte date-created.new-post i-date)
       (weld pre [post suf])
@@ -339,6 +345,8 @@
       ?:  pinned.new-post
         [new-list unpin.order.col]
       [pin.order.col new-list]
+    ::
+    ~&  order+order.col
     ::
     =?  pubs.sat  =(our.bol who)
       (~(put by pubs.sat) coll col)
@@ -402,7 +410,7 @@
   ^-  (unit collection)
   ?:  =(our.bol who)
     (~(get by pubs.sat) coll)
-  (~(get by subs.sat) coll)
+  (~(get by subs.sat) who coll)
 ::
 ++  made
   |=  [wir=wire wen=@da mad=made-result:ford]
@@ -623,6 +631,9 @@
     ==
   ::
       %new-post
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
     ::  XX  check permissions of src.bol
     ::  XX  check if file already exists
     ::  XX  check if coll doesn't exist
@@ -665,6 +676,9 @@
     ==
   ::
       %new-comment
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
     ::  XX  check permissions of src.bol
     ::  XX  check if file already exists
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
@@ -803,6 +817,7 @@
   ::  %subscribe:
   ::
       %subscribe
+    ~&  write-action+act
     =/  wir=wire  /collection/[coll.act]
     :_  this
     [ost.bol %peer wir [who.act %write] wir]~

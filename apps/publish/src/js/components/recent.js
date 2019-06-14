@@ -26,25 +26,18 @@ export class Recent extends Component {
           date: this.roundDay(postDate),
           posts: [postProps],
         }
-
-        if (i == (this.props.latest.length - 1)) {
-          recent.push(Object.assign({}, group));
-        }
-
       } else if ( this.sameDay(group.date, postDate) ) {
         group.posts.push(postProps) ;
       } else {
         recent.push(Object.assign({}, group));
-
         group = {
           date: this.roundDay(postDate),
           posts: [postProps],
         }
+      }
 
-        if (i == (this.props.latest.length - 1)) {
-          recent.push(Object.assign({}, group));
-        }
-
+      if (i == (this.props.latest.length - 1)) {
+        recent.push(Object.assign({}, group));
       }
     }
     return recent;
@@ -62,7 +55,8 @@ export class Recent extends Component {
       numComments: com.length,
       collectionTitle: col.title,
       collectionName:  coll,
-      author: who,
+      author: pos.info.creator.slice(1),
+      blogOwner: who,
       date: pos.info["date-created"]
     }
 
