@@ -74,6 +74,10 @@ export class UpdateReducer {
     }
     let newDate = json.post.data.info["date-created"];
 
+    if (state.latest.indexOf(newIndex) != -1) {
+      return;
+    }
+
     for (var i=0; i<state.latest.length; i++) {
       let postId = state.latest[i].post;
       let blogId = state.latest[i].coll;
@@ -113,6 +117,10 @@ export class UpdateReducer {
       ?  blog.order.pin
       :  blog.order.unpin;
     let newDate = json.post.data.info["date-created"];
+
+    if (list.indexOf(json.post.post) != -1) {
+      return
+    }
 
     for (var i=0; i<list.length; i++) {
       let postId = list[i];

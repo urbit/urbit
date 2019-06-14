@@ -290,35 +290,38 @@
     ::
     ==
   ::
-  ++  da-insert
+  ++  da-insert-unread
     |=  [who=@p coll=@tas post=@tas]
-    ~&  da-insert+[who coll post]
     ^+  da-this
     ::  assume we've read our own posts
     ::
     =?  unread.sat  !=(who our.bol)
       (~(put in unread.sat) who coll post)
-    ::  insertion sort into latest
-    ::
+    da-this
+  ::
+  ++  da-insert-latest
+    |=  [who=@p coll=@tas post=@tas]
+    ^+  da-this
     =/  new-date=@da  date-created:(need (get-post-by-index who coll post))
     =/  pre=(list [@p @tas @tas])  ~
     =/  suf=(list [@p @tas @tas])  latest.sat
 
-    =.  latest.sat
-    |-
-    ?~  suf
-      (weld pre [who coll post]~)
-    ?:  =([who coll post] i.suf)
-      latest.sat
-    =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
-    ?:  (gte new-date i-date)
-      (weld pre [[who coll post] suf])
-    %=  $
-      suf  t.suf
-      pre  (snoc pre i.suf)
-    ==
-    ::  insertion sort into order
-    ::
+    =?  latest.sat  =(~ (find [who coll post]~ latest.sat))
+      |-
+      ?~  suf
+        (weld pre [who coll post]~)
+      =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
+      ?:  (gte new-date i-date)
+        (weld pre [[who coll post] suf])
+      %=  $
+        suf  t.suf
+        pre  (snoc pre i.suf)
+      ==
+    da-this
+  ::
+  ++  da-insert-order
+    |=  [who=@p coll=@tas post=@tas]
+    ^+  da-this
     =/  new-post=post-info  (need (get-post-by-index who coll post))
     =/  col=collection  (need (get-coll-by-index who coll))
     :: 
@@ -328,6 +331,8 @@
         pin.order.col
       unpin.order.col
     ::
+    ?:  ?=(^ (find [post]~ suf))
+      da-this
     =/  new-list=(list @tas)
     |-
     ?~  suf
@@ -347,12 +352,19 @@
         [new-list unpin.order.col]
       [pin.order.col new-list]
     ::
-    ~&  order+order.col
-    ::
     =?  pubs.sat  =(our.bol who)
       (~(put by pubs.sat) coll col)
     =?  subs.sat  !=(our.bol who)
       (~(put by subs.sat) [who coll] col)
+    da-this
+  ::
+  ++  da-insert
+    |=  [who=@p coll=@tas post=@tas]
+    ~&  da-insert+[who coll post]
+    ^+  da-this
+    =.  da-this  (da-insert-unread +<)
+    =.  da-this  (da-insert-latest +<)
+    =.  da-this  (da-insert-order +<)
     da-this
   --
 ::  +bake: apply delta
