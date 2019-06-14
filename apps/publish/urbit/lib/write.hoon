@@ -97,12 +97,13 @@
   (tang-to-json +.bud)
 ::
 ++  post-build-to-json
-  |=  bud=(each [post-info manx] tang)
+  |=  bud=(each [post-info manx @t] tang)
   ^-  json
   ?:  ?=(%.y -.bud)
     %-  pairs:enjs:format
     :~  info+(post-info-to-json +<.bud)
-        body+(elem-to-react-json +>.bud)
+        body+(elem-to-react-json +>-.bud)
+        raw+[%s +>+.bud]
     ==
   (tang-to-json +.bud)
 ::

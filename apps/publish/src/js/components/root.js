@@ -123,6 +123,7 @@ export class Root extends Component {
                       blogId = {props.match.params.blog}
                       postId = {props.match.params.post}
                       ship = {props.match.params.ship.slice(1)}
+                      api = {api}
                       {...this.state}
                     />
                   }

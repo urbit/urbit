@@ -122,6 +122,7 @@
   ?~  old
     :_  this
     [ost.bol %connect / [~ /'~publish'] %write]~
+::  [~ this(sat *state)] 
   [~ this(sat (state u.old))] 
 ::
 ++  poke-noun
@@ -145,7 +146,7 @@
           %bake
           %write-post
           *coin
-          [[our.bol q.byk.bol] /post-1/fora/write/web]
+          [[our.bol q.byk.bol] /first-post/fora/write/web]
       ==
     :_  this
     [ost.bol %build /test/build %.n schema]~
@@ -291,7 +292,7 @@
   ::
   ++  da-insert
     |=  [who=@p coll=@tas post=@tas]
-    ~&  da-insert+[coll post]
+    ~&  da-insert+[who coll post]
     ^+  da-this
     ::  assume we've read our own posts
     ::
@@ -399,7 +400,7 @@
       (~(get by pubs.sat) coll)
     (~(get by subs.sat) who coll)
   ?~  col  ~
-  =/  pos=(unit (each [post-info manx] tang))
+  =/  pos=(unit (each [post-info manx @t] tang))
     (~(get by pos.u.col) post)
   ?~  pos  ~
   ?:  ?=(%.n -.u.pos)  ~
@@ -417,6 +418,7 @@
   ^-  (quip move _this)
   ~&  made+wir
   ?+  wir
+    ~&  mad
     [~ this]
   ::
       [%collection @t ~]
@@ -482,14 +484,14 @@
     =/  pos=@tas  i.t.t.wir
     =/  awa  (~(get by awaiting.sat) col)
     ::
-    =/  dat=(each [post-info manx] tang)
+    =/  dat=(each [post-info manx @t] tang)
       ?:  ?=([%incomplete *] mad)
         [%.n tang.mad]
       ?:  ?=([%error *] build-result.mad)
         [%.n message.build-result.mad]
       ?>  ?=(%bake +<.build-result.mad)
       ?>  ?=(%write-post p.cage.build-result.mad)
-      [%.y (,[post-info manx] q.q.cage.build-result.mad)]
+      [%.y (,[post-info manx @t] q.q.cage.build-result.mad)]
     ::
     ?~  awa
       (bake [%post our.bol col pos dat])
@@ -704,7 +706,30 @@
     [~ this]
   ::
       %edit-post
-    [~ this]
+    ~&  poke+act
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
+    ::
+    =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
+    =/  front=(map knot cord)
+      %-  my
+      :~  [%creator (scot %p src.bol)]
+          [%title title.act]
+          [%collection coll.act]
+          [%filename name.act]
+          [%comments com.act]
+          [%date-created (scot %da now.bol)]
+          [%last-modified (scot %da now.bol)]
+          [%pinned %false]
+      ==
+    ::  XX  set permissions
+    ::  XX  add to set of builds
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    =/  out=@t    (update-udon-front front content.act)
+    ::
+    :_  this
+    [(write-file pax %udon !>(out))]~
   ::
       %edit-comment
     [~ this]
