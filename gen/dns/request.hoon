@@ -1,6 +1,6 @@
 ::  DNS: configure ip address
 ::
-::::  /hoon/authority/dns/gen
+::::  /hoon/request/dns/gen
   ::
 /-  *dns, *sole
 /+  *generators
@@ -12,13 +12,20 @@
 ^-  (sole-result [%dns-address address])
 =*  our  p.bec
 =/  rac  (clan:title our)
+::
 ?:  ?=(%czar rac)
-  :: XX what process?
-  =/  msg  "galaxy domain requests must be made out-of-band"
-  (print leaf+msg no-product)
+  =/  msg1  "galaxy domain requests must be made out-of-band"
+  =/  msg2  "use :dns|auto if you already have an urbit domain"
+  =/  msg3  "see XX for more details or to BYOD"
+  %+  print  leaf+msg3
+  %+  print  leaf+msg2
+  (print leaf+msg1 no-product)
+::
 ?:  ?=(?(%earl %pawn) rac)
-  =/  msg  "DNS for moons and comets is not supported"
-  (print leaf+msg no-product)
+  =/  msg1  "domain names are not provided for comets and moons"
+  =/  msg2  "see XX for BYOD"
+  %+  print  leaf+msg2
+  (print leaf+msg1 no-product)
 ::  invoke parser with arg if present
 ::
 =-  ?~  arg  -
