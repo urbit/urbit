@@ -1,6 +1,8 @@
-> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Sometime in the next few days, owners of Azimuth points will be able to boot Arvo, the Urbit OS, from their Azimuth point and request access to one of our ‘cities’: private communities for chat and discussion. These new cities use Landscape, a brand new UI for using Urbit in the browser.
+# Urbit
 
-# Install instructions
+> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Azimuth points can boot Arvo, the Urbit OS, with their Azimuth point.
+
+## Install instructions
 
 To install and run Urbit please follow the instructions at
 [urbit.org/docs/getting-started/](https://urbit.org/docs/getting-started/).
@@ -9,11 +11,11 @@ in a few minutes.
 
 If you're doing development on Urbit, keep reading.
 
-# Build instructions
+## Build instructions
 
 [![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
 
-## External dependencies
+### External dependencies
 
 `vere`, the Urbit virtual machine, depends on the following:
 
@@ -30,7 +32,7 @@ Most of these dependencies are unfortunate; we aim to drastically shrink the
 list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, libcurl, and
 libsigsegv.
 
-## Building
+### Building
 
 Urbit uses Meson build system.
 
@@ -44,7 +46,7 @@ Some libraries which are not found in major distributions:
 
 are included as git submodules. To build urbit from source, perform the following steps:
 
-## Configuration & compilation
+### Configuration & compilation
 (For instructions for legacy meson, also see below)
 
 1. Install all required dependencies.
@@ -52,7 +54,7 @@ are included as git submodules. To build urbit from source, perform the followin
 3. Run `./scripts/build`
 4. The executable should appear in `./build` directory.
 
-### Using meson & ninja
+#### Using meson & ninja
 
 To configure the project, enter the build directory and enter
 `meson configure -Dbuildtype=release`.  To compile a debug build of urbit, use
@@ -60,7 +62,7 @@ To configure the project, enter the build directory and enter
 To set a prefix for installation use
 `meson configure -Dprefix=/usr`.
 
-## Configuration & compilation for legacy meson
+### Configuration & compilation for legacy meson
 
 The syntax for legacy meson (Version `0.29`) is a bit different.
 
@@ -72,8 +74,15 @@ Once the project is configured, use `ninja` to build it.
 To install it into the default prefix, use `ninja install`.
 If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
 
-## Contact
+## Contributing
 
-We are using our new UI, Landscape to run a few experimental cities.
-If you have an Azimuth point, please send us your planet name at
-[support@urbit.org](mailto:support@urbit.org) to request access.
+Contributions of any form are more than welcome! If something doesn't seem right, and there is no issue about it yet, feel free to open one.
+
+If you're looking to get involved, there are a few things you can do:
+
+- Join the [urbit-dev](https://groups.google.com/a/urbit.org/forum/#!forum/dev) mailing list.
+- [Ask us about Hoon School](mailto:support@urbit.org), a course we run to teach the Hoon programming language and Urbit application development.
+- Check out [good contributor issues](https://github.com/urbit/urbit/labels/good%20contributor%20issue).
+- Reach out to [support@urbit.org](mailto:support@urbit.org) to say hi and ask any questions you might have.
+
+Once you've got your bearings, have a look at [CONTRIBUTING.md](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md) for some pointers on setting up your development environment.
