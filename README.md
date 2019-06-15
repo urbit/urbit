@@ -32,12 +32,6 @@ urbit -F zod -A /path/to/arvo -B /path/to.pill -c fakezod
 
 To run all tests in `/tests`, run `+test` in dojo. `+test /some/path` would only run all tests in `/tests/some/path`.
 
-## Contributing
-
-Contributions of any form are more than welcome! If something doesn't seem right, and there is no issue about it yet, feel free to open one.
-
-If you're looking to make code contributions, a good place to start might be the [good contributor issues](https://github.com/urbit/arvo/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+contributor+issue%22).
-
 ## Maintainers
 
 Most parts of Arvo have dedicated maintainers.
@@ -60,6 +54,13 @@ Most parts of Arvo have dedicated maintainers.
 * `/app/aqua`: @philipcmonk (~wicdev-wisryt)
 * `/lib/test`: @eglaysher (~littel-ponnys)
 
-## Contact
+## Contributing
 
-We are using our new UI, Landscape, to run a few experimental cities. If you have an Azimuth point, please send us your planet name at [support@urbit.org](mailto:support@urbit.org) to request access.
+Contributions of any form are more than welcome! If something doesn't seem right, and there is no issue about it yet, feel free to open one.
+
+If you're looking to make code contributions, there are a few things you can do:
+
+- Join the [urbit-dev](https://groups.google.com/a/urbit.org/forum/#!forum/dev) mailing list.
+- [Ask us about Hoon School](mailto:support@urbit.org), a course we run to teach the Hoon programming language and Urbit application development.
+- Check out [good contributor issues](https://github.com/urbit/arvo/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+contributor+issue%22).
+- Reach out to [support@urbit.org](mailto:support@urbit.org) to say hi and ask any questions you might have.
