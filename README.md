@@ -84,3 +84,5 @@ If you're looking to get involved, there are a few things you can do:
 - [Ask us about Hoon School](mailto:support@urbit.org), a course we run to teach the Hoon programming language and Urbit application development
 - Check out [good contributor issues](https://github.com/urbit/urbit/labels/good%20contributor%20issue)
 - Reach out to [support@urbit.org](mailto:support@urbit.org) to say hi and ask any questions you might have
+
+Once you've got your bearings, have a look at [CONTRIBUTING.md](https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md) for some pointers on setting up your development environment.
