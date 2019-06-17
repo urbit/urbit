@@ -1,14 +1,20 @@
 module Language.Conq where
 
-import ClassyPrelude hiding (pure, (<.>), Left, Right)
+import ClassyPrelude hiding ((<.>), Left, Right)
 import Data.Type.Equality
 import Type.Reflection
 import Data.Coerce
 import GHC.Natural
 import Control.Category
+import Control.Monad.State (State, get, put, evalState, runState)
+import Control.Monad.Except (ExceptT, runExceptT)
+import Control.Monad.Trans.Except (throwE)
 
+import Control.Lens ((&))
 import Data.Bits ((.|.), shiftL, shiftR)
 import Text.Show (showString, showParen)
+
+import qualified Prelude as P
 
 --------------------------------------------------------------------------------
 
@@ -75,6 +81,148 @@ valExp v    = EWith ENull (go v)
       V0 l    → EWith (go l) ELeft
       V1 r    → EWith (go r) EWrit
       VP x y  → ECons (go x) (go y)
+
+data TyExp
+  = TENil
+  | TESum TyExp TyExp
+  | TETup TyExp TyExp
+  | TEFor TyExp TyExp
+  | TEAll TyExp
+  | TEFix TyExp
+  | TERef Int
+
+data Ty
+  = TNil
+  | TSum Ty Ty
+  | TTup Ty Ty
+  | TFor Ty Ty
+  | TVar Int
+
+instance Show Ty where
+  show = \case
+    TNil     -> "~"
+    TSum x y -> "<" <> show x <> " " <> show y <> ">"
+    TTup x y -> "[" <> show x <> " " <> show y <> "]"
+    TFor x y -> "(" <> show x <> " => " <> show y <> ")"
+    TVar x   -> show x
+
+type Unique  = Int
+type Infer a = ExceptT () (State (Map Int Ty, Unique)) a
+type Unify a = Maybe a
+
+forAll :: Infer Ty
+forAll = do
+  (env, n) <- get
+  put (env, n+1)
+  pure (TVar n)
+
+varIs :: Int -> Ty -> Infer Ty
+varIs v (TVar x) | x==v = do
+  pure (TVar x)
+varIs v t = do
+  (env, n) <- get
+  put (insertMap v t env, n)
+  pure t
+
+finalize :: Ty -> Infer Ty
+finalize (TVar v) = resolve v >>= finalize'
+finalize t        = finalize' t
+
+finalize' :: Ty -> Infer Ty
+finalize' = \case
+  TNil     -> pure TNil
+  TVar x   -> pure (TVar x)
+  TSum x y -> TSum <$> finalize x <*> finalize y
+  TTup x y -> TTup <$> finalize x <*> finalize y
+  TFor x y -> TFor <$> finalize x <*> finalize y
+
+unify :: Ty -> Ty -> Infer Ty
+unify x y = do
+  x <- case x of { TVar v -> resolve v; x -> pure x }
+  y <- case y of { TVar v -> resolve v; y -> pure y }
+  unify' x y
+
+unify' :: Ty -> Ty -> Infer Ty
+unify' = curry \case
+  ( TNil,       TNil       ) -> pure TNil
+  ( TSum a1 b1, TSum a2 b2 ) -> TSum <$> unify a1 a2 <*> unify b1 b2
+  ( TTup a1 b1, TTup a2 b2 ) -> TTup <$> unify a1 a2 <*> unify b1 b2
+  ( TFor a1 b1, TFor a2 b2 ) -> TFor <$> unify a1 a2 <*> unify b1 b2
+  ( ty,         TVar x     ) -> varIs x ty
+  ( TVar x,     ty         ) -> varIs x ty
+  ( _x,         _y         ) -> throwE ()
+
+resolve :: Int -> Infer Ty
+resolve v = do
+  (env, _) <- get
+  lookup v env & \case
+    Nothing       -> pure (TVar v)
+    Just (TVar x) -> resolve x
+    Just x        -> pure x
+
+expectFor :: Ty -> Infer (Ty, Ty, Ty)
+expectFor = \case
+  ty@(TFor x y) -> pure (ty, x, y)
+  _             -> throwE ()
+
+eitherToMaybe :: Either a b -> Maybe b
+eitherToMaybe (P.Left _)  = Nothing
+eitherToMaybe (P.Right x) = Just x
+
+runInfer :: Infer a -> Maybe a
+runInfer = eitherToMaybe . flip evalState (mempty, 0) . runExceptT
+
+infer :: Exp -> Infer Ty
+infer = \case
+  ENull -> do
+    a <- forAll
+    pure (TFor a TNil)
+
+  ESubj -> do
+    a <- forAll
+    pure (TFor a a)
+
+  ELeft -> do
+    (a, b) <- (,) <$> forAll <*> forAll
+    pure (TFor a (TSum a b))
+
+  EWrit -> do
+    (a, b) <- (,) <$> forAll <*> forAll
+    pure (TFor b (TSum a b))
+
+  EHead -> do
+    (a, b) <- (,) <$> forAll <*> forAll
+    pure $ TFor (TTup a b) a
+
+  ETail -> do
+    (a, b) <- (,) <$> forAll <*> forAll
+    pure $ TFor (TTup a b) b
+
+  EDist -> do
+    (a, b, c) <- (,,) <$> forAll <*> forAll <*> forAll
+    pure $ TFor (TTup (TSum a b) c) (TSum (TTup a c) (TTup b c))
+
+  EEval -> do
+    (a, b) <- (,) <$> forAll <*> forAll
+    pure $ TFor (TTup a (TFor a b)) b
+
+  EWith x y -> do
+    (xt, xi, xo) <- infer x >>= expectFor
+    (yt, yi, yo) <- infer y >>= expectFor
+    unify xo yi
+    pure (TFor xi yo)
+
+  ECons x y -> do
+    (xt, xi, xo) <- infer x >>= expectFor
+    (yt, yi, yo) <- infer y >>= expectFor
+    unify xi yi
+    pure (TFor xi (TTup xo yo))
+
+  ECase p q -> do
+    (pt, pi, po) <- infer p >>= expectFor
+    (qt, qi, qo) <- infer q >>= expectFor
+    unify po qo
+    pure (TFor (TSum pi qi) po)
 
 data Exp
     = ESubj
