@@ -181,14 +181,14 @@
         a(val.n u.res)
       ::
       ..node
-    ::  +left: recurse on the left subtree, copying mutant back into .a
+    ::  +left: recurse on left subtree, copying mutant back into .l.a
     ::
     ++  left
       ^+  .
       ?~  a  .
       =/  lef  main(a l.a)
       lef(a a(l a.lef))
-    ::  +right: recurse on the right subtree, copying mutant back into .a
+    ::  +right: recurse on right subtree, copying mutant back into .r.a
     ::
     ++  right
       ^+  .
@@ -305,11 +305,15 @@
 +$  packet  [dyad encrypted=? origin=(unit lane) content=*]
 ::  $open-packet: unencrypted packet payload, for comet self-attestation
 ::
+::    The .signature applies to all other fields in this data structure.
+::
 +$  open-packet
   $:  =signature
+      =public-key
+      sndr=ship
       =sndr=life
-      =rcvr=life
       rcvr=ship
+      =rcvr=life
   ==
 ::  $shut-packet: encrypted packet payload
 ::
@@ -774,13 +778,58 @@
     ^+  event-core
     ::
     !!
-  ::
+  ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
     |=  [=lane =packet]
     ^+  event-core
+    ::  if we already know .sndr, ignore duplicate attestation
     ::
-    !!
+    =/  ship-state  (~(get by peers.ames-state) sndr.packet)
+    ?:  ?=([~ %known *] ship-state)
+      event-core
+    ::
+    =/  =open-packet  ;;(open-packet packet)
+    ::  TODO: does the comet actually need to know our life?
+    ::  assert .our and .her and lives match
+    ::
+    ?>  =(our rcvr.open-packet)
+    ?>  =(sndr.packet sndr.open-packet)
+    ?>  =(life.ames-state rcvr-life.open-packet)
+    ?>  =(1 sndr-life.open-packet)
+    ::  no ghost comets allowed
+    ::
+    ?>  (lte 256 (^sein:title sndr.packet))
+    ::  comet public-key must hash to its @p address
+    ::
+    ::    TODO how does this validation work elsewhere?
+    ::
+    ?>  =(`@`sndr.packet `@`(shaf %pawn public-key.open-packet))
+    ::  everything after .signature is signed
+    ::
+    ::    TODO: should this double-cue instead of re-jamming?
+    ::
+    =/  signed=@  (jam +.open-packet)
+    ?>  (verify-signature signed [public-key signature]:open-packet)
+    ::  store comet as peer in our state
+    ::
+    =.  peers.ames-state
+      %+  ~(put by peers.ames-state)  sndr.packet
+      ^-  ^ship-state
+      :-  %known
+      =|  ps=peer-state
+      =/  our-private-key  sec:ex:crypto-core.ames-state
+      =/  =symmetric-key
+        (derive-symmetric-key public-key.open-packet our-private-key)
+      ::
+      %_  ps
+        symmetric-key  symmetric-key
+        life           `life`sndr-life.open-packet
+        public-key     `public-key`public-key.open-packet
+        sponsors       `(list ship)`(get-comet-sponsors sndr.packet)
+      ==
+    ::
+    event-core
   ::
   ::
   ++  on-hear-shut
@@ -1797,6 +1846,23 @@
   |=  [her=ship =bone]
   ^-  wire
   /pump/(scot %p her)/(scot %ud bone)
+::  +get-comet-sponsors: a comet's star and galaxy
+::
+++  get-comet-sponsors
+  |=  comet=ship
+  ^-  (list ship)
+  ::
+  =/  star=ship    (^sein:title comet)
+  =/  galaxy=ship  (^sein:title star)
+  ::
+  ~[star galaxy]
+::  +verify-signature: use .public-key to verify .signature on .content
+::
+++  verify-signature
+  |=  [content=@ =public-key =signature]
+  ^-  ?
+  ::
+  (veri:ed:crypto signature content public-key)
 ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
 ::
 ::    Assumes keys have a tag on them like the result of the |ex:crub core.
