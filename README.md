@@ -27,7 +27,7 @@ If you're interested in Urbit development, keep reading.
 
 [![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
 
-Urbit uses [Nix][nix] to manage builds.  On Linux and OS X you can install Nix
+Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
 via:
 
 ```
