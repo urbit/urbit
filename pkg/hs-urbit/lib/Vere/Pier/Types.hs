@@ -45,4 +45,12 @@ data LogIdentity = LogIdentity
   { who     :: Noun
   , is_fake :: Noun
   , life    :: Noun
-  } deriving Show
+  } deriving (Show)
+
+instance ToNoun LogIdentity where
+  toNoun LogIdentity{..} = toNoun (who, is_fake, life)
+
+instance FromNoun LogIdentity where
+  parseNoun n = do
+    (who, is_fake, life) <- parseNoun n
+    pure (LogIdentity{..})

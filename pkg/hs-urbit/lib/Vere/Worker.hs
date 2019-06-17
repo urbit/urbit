@@ -14,10 +14,21 @@ import Data.Noun.Pill
 import Vere.Pier.Types
 import System.Process
 
+import Data.ByteString (hGet)
+import Data.ByteString.Unsafe (unsafeUseAsCString)
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (peek)
+
+import qualified Vere.Log as Log
+
 data Worker = Worker
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
+
+  , identity   :: LogIdentity
+  -- TODO: This shouldn't be here.
+  , wLogState  :: LogState
 
   -- , getInput   :: STM (Writ ())
   -- , onComputed :: Writ [Effect] -> STM ()
@@ -32,11 +43,11 @@ data Worker = Worker
 
 -- Think about how to handle process exit
 -- Tear down subprocess on exit? (terminiteProcess)
-start ::  IO Worker
-start =
+start :: LogIdentity -> LogState -> IO Worker
+start id s =
   do
     (Just i, Just o, _, p) <- createProcess pSpec
-    pure (Worker i o p)
+    pure (Worker i o p id s)
   where
     pSpec =
       (proc "urbit-worker" []) { std_in  = CreatePipe
@@ -97,8 +108,6 @@ instance FromNoun Plea where
 type CompletedEventId = Word64
 type NextEventId = Word64
 
-type LogState = Maybe EventId
-
 type WorkerState = (EventId, Mug)
 
 type ReplacementEv = (EventId, Mug, Job)
@@ -113,6 +122,9 @@ data WorkerExn
     | UnexpectedPlay EventId Play
     | BadPleaAtom Atom
     | BadPleaNoun Noun
+    | ReplacedEventDuringReplay EventId ReplacementEv
+    | WorkerConnectionClosed
+    | UnexpectedInitialPlea Plea
   deriving (Show)
 
 instance Exception WorkerExn
@@ -130,9 +142,6 @@ fromJustExn Nothing  exn = throwIO exn
 fromJustExn (Just x) exn = pure x
 
 --------------------------------------------------------------------------------
-
-boot :: a -> IO b
-boot = undefined
 
 sendAndRecv :: Worker -> EventId -> Atom -> IO WorkerResp
 sendAndRecv w eventId event =
@@ -159,8 +168,9 @@ sendAndRecv w eventId event =
       Slog _ pri t -> printTank pri t >> loop
 
 sendBootEvent :: Worker -> IO ()
-sendBootEvent = do
-  undefined
+sendBootEvent w = do
+  sendAtom w $ jam $ toNoun (Cord "boot", (identity w))
+
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
@@ -170,35 +180,46 @@ replay :: Worker -> WorkerState -> EventId
 replay w (wid, wmug) lastCommitedId getEvents = do
   when (wid == 1) (sendBootEvent w)
 
-  -- todo: we want to stream these in chunks
-  events <- getEvents wid (1 + lastCommitedId - wid)
-
-  for_ events $ \(eventId, event) -> do
-    (Right (i, mug, ovum)) <- sendAndRecv w eventId event
-    undefined
-
-    -- todo: these actually have to happen concurrently
-
-computeThread :: Worker -> IO ()
-computeThread w = start
+  loop wid
   where
-    start = do
-      Play p <- recvPlea w
-      let (eventId, mug) = playWorkerState p
-      -- fuck it, we'll do it liv_o
+    -- Replay events in batches of 1000.
+    loop curEvent = do
+      let toRead = min 1000 (1 + lastCommitedId - curEvent)
+      when (toRead > 0) do
+        events <- getEvents curEvent toRead
+
+        for_ events $ \(eventId, event) -> do
+          sendAndRecv w eventId event >>= \case
+            (Left ev) -> throwIO (ReplacedEventDuringReplay eventId ev)
+            (Right _) -> pure ()
+
+        loop (curEvent + toRead)
+
+startPier :: Worker -> IO (EventId)
+startPier w =
+  do
+    ws@(eventId, mug) <- recvPlea w >>= \case
+      Play Nil                -> pure (1, Mug 0)
+      Play (NotNil (e, m, _)) -> pure (e, m)
+      x                       -> throwIO (UnexpectedInitialPlea x)
+
+    logLatestEventNumber <- Log.latestEventNumber (wLogState w)
+
+    when (logLatestEventNumber == 0) $ do
+      -- todo: boot. we need a pill.
       undefined
 
-    boot :: WorkerState -> IO ()
-    boot workState = do
-      undefined
-      writ <- undefined -- getWrit w
-      sendAtom w (work (eventId writ) (event writ))
+    replay w ws logLatestEventNumber (Log.readEvents (wLogState w))
 
-    playWorkerState :: Play -> WorkerState
-    playWorkerState = \case
-      Nil              -> (1, Mug 0)
-      NotNil (e, m, _) -> (e, m)
+    requestSnapshot w
 
+    pure (logLatestEventNumber)
+
+workerThread :: Worker -> IO (Async ())
+workerThread w = undefined
+
+requestSnapshot :: Worker -> IO ()
+requestSnapshot w =  undefined
 
 -- The flow here is that we start the worker and then we receive a play event
 -- with the current worker state:
@@ -235,10 +256,15 @@ unpackAtom :: Atom -> ByteString
 unpackAtom = view atomBytes
 
 recvLen :: Worker -> IO Word64
-recvLen = undefined
+recvLen w = do
+  bs <- hGet (recvHandle w) 8
+  case length bs of
+    -- This is not big endian safe
+    8 -> unsafeUseAsCString bs (peek . castPtr)
+    _ -> throwIO WorkerConnectionClosed
 
 recvBytes :: Worker -> Word64 -> IO ByteString
-recvBytes = undefined
+recvBytes w = hGet (recvHandle w) . fromIntegral
 
 recvAtom :: Worker -> IO Atom
 recvAtom w = do
