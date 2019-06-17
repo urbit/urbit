@@ -1,5 +1,7 @@
 # Urbit
 
+A personal server operating function.
+
 > The Urbit address space, Azimuth, is now live on the Ethereum blockchain. You
 > can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`][azim] or
 > [`azimuth.eth`][aens]. Owners of Azimuth points (galaxies, stars, or planets)
@@ -11,15 +13,17 @@
 [brid]: https://github.com/urbit/bridge/releases
 [arvo]: https://github.com/urbit/arvo/
 
-## Install instructions
+## Install
 
-To install and run Urbit please follow the instructions at
-[urbit.org/docs/getting-started/][start].  Packages and source tarballs are
-available there. You'll be on the live network in a few minutes.
+To install and run Urbit, please follow the instructions at
+[urbit.org/docs/getting-started/][start].  You'll be on the live network in a
+few minutes.
+
+If you're interested in Urbit development, keep reading.
 
 [start]: https://urbit.org/docs/getting-started/
 
-## Build instructions
+## Development
 
 [![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
 
@@ -30,14 +34,21 @@ via:
 curl https://nixos.org/nix/install | sh
 ```
 
-Given a Nix installation, you can build Urbit with a simple:
+The Makefile in the project's root directory contains useful phony targets for
+building, installing, testing, and so on.  You can use it to avoid dealing with
+Nix explicitly.
+
+To build Urbit, for example, use:
 
 ```
-nix-build -A urbit --no-out-link
+make build
 ```
 
-The Makefile in the project's root directory contains several useful phony
-targets for building, installing, testing, and so on.
+The test suite can similarly be run via a simple:
+
+```
+make test
+```
 
 [trav]: https://github.com/urbit/urbit.git
 [nix]: https://nixos.org/nix/
