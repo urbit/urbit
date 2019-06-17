@@ -122,6 +122,7 @@
   ?~  old
     :_  this
     [ost.bol %connect / [~ /'~publish'] %write]~
+::  [~ this(sat *state)] 
   [~ this(sat (state u.old))] 
 ::
 ++  poke-noun
@@ -145,7 +146,7 @@
           %bake
           %write-post
           *coin
-          [[our.bol q.byk.bol] /post-1/fora/write/web]
+          [[our.bol q.byk.bol] /first-post/fora/write/web]
       ==
     :_  this
     [ost.bol %build /test/build %.n schema]~
@@ -219,6 +220,7 @@
   ++  da-change
     |=  del=delta
     ^+  da-this
+    ~&  da-change+-.del
     ?-  -.del
     ::
         %collection
@@ -249,7 +251,7 @@
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
         (~(put by subs.sat) [who.del col.del] new)
-      =?  da-this  ?=(~ old)
+      =.  da-this
         (da-insert who.del col.del pos.del)
       (da-emil (affection del))
     ::
@@ -269,10 +271,11 @@
       (da-emil (affection del))
     ::
         %total
+      ~&  da-change+del
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
-        (~(put by subs.sat) [who.del col.del] dat.del)
+        (~(put by subs.sat) [who.del col.del] dat.del(order [~ ~]))
       ::
       =/  posts=(list @tas)  ~(tap in ~(key by pos.dat.del))
       =.  da-this
@@ -287,32 +290,38 @@
     ::
     ==
   ::
-  ++  da-insert
+  ++  da-insert-unread
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
     ::  assume we've read our own posts
     ::
     =?  unread.sat  !=(who our.bol)
       (~(put in unread.sat) who coll post)
-    ::  insertion sort into latest
-    ::
+    da-this
+  ::
+  ++  da-insert-latest
+    |=  [who=@p coll=@tas post=@tas]
+    ^+  da-this
     =/  new-date=@da  date-created:(need (get-post-by-index who coll post))
     =/  pre=(list [@p @tas @tas])  ~
     =/  suf=(list [@p @tas @tas])  latest.sat
 
-    =.  latest.sat
-    |-
-    ?~  suf
-      (weld pre [who coll post]~)
-    =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
-    ?:  (gte new-date i-date)
-      (weld pre [[who coll post] suf])
-    %=  $
-      suf  t.suf
-      pre  (snoc pre i.suf)
-    ==
-    ::  insertion sort into order
-    ::
+    =?  latest.sat  =(~ (find [who coll post]~ latest.sat))
+      |-
+      ?~  suf
+        (weld pre [who coll post]~)
+      =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
+      ?:  (gte new-date i-date)
+        (weld pre [[who coll post] suf])
+      %=  $
+        suf  t.suf
+        pre  (snoc pre i.suf)
+      ==
+    da-this
+  ::
+  ++  da-insert-order
+    |=  [who=@p coll=@tas post=@tas]
+    ^+  da-this
     =/  new-post=post-info  (need (get-post-by-index who coll post))
     =/  col=collection  (need (get-coll-by-index who coll))
     :: 
@@ -322,10 +331,14 @@
         pin.order.col
       unpin.order.col
     ::
+    ?:  ?=(^ (find [post]~ suf))
+      da-this
     =/  new-list=(list @tas)
     |-
     ?~  suf
       (snoc pre post)
+    ?:  =(post i.suf)
+      (weld pre suf)
     =/  i-date=@da  date-created:(need (get-post-by-index who coll i.suf))
     ?:  (gte date-created.new-post i-date)
       (weld pre [post suf])
@@ -343,6 +356,15 @@
       (~(put by pubs.sat) coll col)
     =?  subs.sat  !=(our.bol who)
       (~(put by subs.sat) [who coll] col)
+    da-this
+  ::
+  ++  da-insert
+    |=  [who=@p coll=@tas post=@tas]
+    ~&  da-insert+[who coll post]
+    ^+  da-this
+    =.  da-this  (da-insert-unread +<)
+    =.  da-this  (da-insert-latest +<)
+    =.  da-this  (da-insert-order +<)
     da-this
   --
 ::  +bake: apply delta
@@ -390,7 +412,7 @@
       (~(get by pubs.sat) coll)
     (~(get by subs.sat) who coll)
   ?~  col  ~
-  =/  pos=(unit (each [post-info manx] tang))
+  =/  pos=(unit (each [post-info manx @t] tang))
     (~(get by pos.u.col) post)
   ?~  pos  ~
   ?:  ?=(%.n -.u.pos)  ~
@@ -401,12 +423,14 @@
   ^-  (unit collection)
   ?:  =(our.bol who)
     (~(get by pubs.sat) coll)
-  (~(get by subs.sat) coll)
+  (~(get by subs.sat) who coll)
 ::
 ++  made
   |=  [wir=wire wen=@da mad=made-result:ford]
   ^-  (quip move _this)
+  ~&  made+wir
   ?+  wir
+    ~&  mad
     [~ this]
   ::
       [%collection @t ~]
@@ -472,14 +496,14 @@
     =/  pos=@tas  i.t.t.wir
     =/  awa  (~(get by awaiting.sat) col)
     ::
-    =/  dat=(each [post-info manx] tang)
+    =/  dat=(each [post-info manx @t] tang)
       ?:  ?=([%incomplete *] mad)
         [%.n tang.mad]
       ?:  ?=([%error *] build-result.mad)
         [%.n message.build-result.mad]
       ?>  ?=(%bake +<.build-result.mad)
       ?>  ?=(%write-post p.cage.build-result.mad)
-      [%.y (,[post-info manx] q.q.cage.build-result.mad)]
+      [%.y (,[post-info manx @t] q.q.cage.build-result.mad)]
     ::
     ?~  awa
       (bake [%post our.bol col pos dat])
@@ -621,6 +645,9 @@
     ==
   ::
       %new-post
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
     ::  XX  check permissions of src.bol
     ::  XX  check if file already exists
     ::  XX  check if coll doesn't exist
@@ -663,6 +690,9 @@
     ==
   ::
       %new-comment
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
     ::  XX  check permissions of src.bol
     ::  XX  check if file already exists
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
@@ -688,7 +718,34 @@
     [~ this]
   ::
       %edit-post
-    [~ this]
+    ~&  poke+act
+    ?.  =(who.act our.bol)
+      :_  this
+      [ost.bol %poke /forward [who.act %write] %write-action act]~
+    ::
+    =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
+    ?~  pos
+      ~|  %editing-non-existent-post  !!
+    ::
+    =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
+    =/  front=(map knot cord)
+      %-  my
+      :~  [%creator (scot %p src.bol)]
+          [%title title.act]
+          [%collection coll.act]
+          [%filename name.act]
+          [%comments com.act]
+          [%date-created (scot %da date-created.u.pos)]
+          [%last-modified (scot %da now.bol)]
+          [%pinned ?:(pinned.u.pos %true %false)]
+      ==
+    ::  XX  set permissions
+    ::  XX  add to set of builds
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    =/  out=@t    (update-udon-front front content.act)
+    ::
+    :_  this
+    [(write-file pax %udon !>(out))]~
   ::
       %edit-comment
     [~ this]
@@ -801,6 +858,7 @@
   ::  %subscribe:
   ::
       %subscribe
+    ~&  write-action+act
     =/  wir=wire  /collection/[coll.act]
     :_  this
     [ost.bol %peer wir [who.act %write] wir]~
@@ -879,6 +937,30 @@
   ::  published
   ::
       [[~ [%'~publish' %pubs ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new
+  ::
+      [[~ [%'~publish' @t @t %new ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new
+  ::
+      [[~ [%'~publish' %new ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new post
+  ::
+      [[~ [%'~publish' %new %post ~]] ~]
+    =/  hym=manx  (index (state-to-json sat))
+    :_  this
+    [ost.bol %http-response (manx-response:app hym)]~
+  ::  new blog
+  ::
+      [[~ [%'~publish' %new %blog ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~

@@ -26376,6 +26376,35 @@
     return target;
   }
 
+  /**
+   * Copyright 2015, Yahoo! Inc.
+   * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+   */
+
+  var REACT_STATICS = {
+      childContextTypes: true,
+      contextType: true,
+      contextTypes: true,
+      defaultProps: true,
+      displayName: true,
+      getDefaultProps: true,
+      getDerivedStateFromError: true,
+      getDerivedStateFromProps: true,
+      mixins: true,
+      propTypes: true,
+      type: true
+  };
+
+  var KNOWN_STATICS = {
+      name: true,
+      length: true,
+      prototype: true,
+      caller: true,
+      callee: true,
+      arguments: true,
+      arity: true
+  };
+
   var FORWARD_REF_STATICS = {
       '$$typeof': true,
       render: true,
@@ -26384,8 +26413,70 @@
       propTypes: true
   };
 
+  var MEMO_STATICS = {
+      '$$typeof': true,
+      compare: true,
+      defaultProps: true,
+      displayName: true,
+      propTypes: true,
+      type: true
+  };
+
   var TYPE_STATICS = {};
   TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+
+  function getStatics(component) {
+      if (reactIs.isMemo(component)) {
+          return MEMO_STATICS;
+      }
+      return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+  }
+
+  var defineProperty = Object.defineProperty;
+  var getOwnPropertyNames = Object.getOwnPropertyNames;
+  var getOwnPropertySymbols$1 = Object.getOwnPropertySymbols;
+  var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  var getPrototypeOf = Object.getPrototypeOf;
+  var objectPrototype = Object.prototype;
+
+  function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
+      if (typeof sourceComponent !== 'string') {
+          // don't hoist over string (html) components
+
+          if (objectPrototype) {
+              var inheritedComponent = getPrototypeOf(sourceComponent);
+              if (inheritedComponent && inheritedComponent !== objectPrototype) {
+                  hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+              }
+          }
+
+          var keys = getOwnPropertyNames(sourceComponent);
+
+          if (getOwnPropertySymbols$1) {
+              keys = keys.concat(getOwnPropertySymbols$1(sourceComponent));
+          }
+
+          var targetStatics = getStatics(targetComponent);
+          var sourceStatics = getStatics(sourceComponent);
+
+          for (var i = 0; i < keys.length; ++i) {
+              var key = keys[i];
+              if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+                  var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+                  try {
+                      // Avoid failures from read-only properties
+                      defineProperty(targetComponent, key, descriptor);
+                  } catch (e) {}
+              }
+          }
+
+          return targetComponent;
+      }
+
+      return targetComponent;
+  }
+
+  var hoistNonReactStatics_cjs = hoistNonReactStatics;
 
   // TODO: Replace with React.createContext once we can assume React 16+
 
@@ -27039,6 +27130,36 @@
       warning$1(!(this.props.location && !prevProps.location), '<Switch> elements should not change from uncontrolled to controlled (or vice versa). You initially used no "location" prop and then provided one on a subsequent render.');
       warning$1(!(!this.props.location && prevProps.location), '<Switch> elements should not change from controlled to uncontrolled (or vice versa). You provided a "location" prop initially but omitted it on a subsequent render.');
     };
+  }
+
+  /**
+   * A public higher-order component to access the imperative API
+   */
+
+  function withRouter(Component) {
+    var C = function C(props) {
+      var wrappedComponentRef = props.wrappedComponentRef,
+          remainingProps = _objectWithoutPropertiesLoose(props, ["wrappedComponentRef"]);
+
+      return react.createElement(Route, {
+        children: function children(routeComponentProps) {
+          return react.createElement(Component, _extends({}, remainingProps, routeComponentProps, {
+            ref: wrappedComponentRef
+          }));
+        }
+      });
+    };
+
+    C.displayName = "withRouter(" + (Component.displayName || Component.name) + ")";
+    C.WrappedComponent = Component;
+
+    {
+      C.propTypes = {
+        wrappedComponentRef: propTypes.func
+      };
+    }
+
+    return hoistNonReactStatics_cjs(C, Component);
   }
 
   {
@@ -51935,9 +52056,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       this.bindPaths = [];
     }
 
-    // keep default bind to hall, since its bind procedure more complex for now AA
-    bind(path, method, ship = this.authTokens.ship, appl = "hall", success, fail) {
-      console.log('binding to ...', appl, ", path: ", path, ", as ship: ", ship, ", by method: ", method);
+    bind(path, method, ship = this.authTokens.ship, appl = "write", success, fail) {
       this.bindPaths = lodash.uniq([...this.bindPaths, path]);
 
       window.urb.subscribe(ship, appl, path, 
@@ -51955,19 +52074,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         },
         (err) => {
           fail(err);
-        });
-    }
-
-    hall(data) {
-      this.action("hall", "hall-action", data);
-    }
-
-    coll(data) {
-      this.action("collections", "collections-action", data);
-    }
-
-    setOnboardingBit(value) {
-      this.action("collections", "json", { onboard: value });
+        }
+      );
     }
 
     action(appl, mark, data) {
@@ -51975,149 +52083,226 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         window.urb.poke(ship, appl, mark, data,
           (json) => {
             resolve(json);
-          }, 
+          },
           (err) => {
             reject(err);
           });
       });
     }
+  }
 
-    /*
-      Special actions
-    */
+  let api$1 = new UrbitApi();
+  window.api = api$1;
 
-    permit(cir, aud, message) {
-      this.hall({
-        permit: {
-          nom: cir,
-          sis: aud,
-          inv: true
-        }
-      });
-
-      if (message) {
-        this.invite(cir, aud);
+  class UpdateReducer {
+    reduce(json, state){
+      console.log("update-reducer", json, state); 
+      if (json.collection) {
+        this.reduceCollection(json, state);
+      }
+      if (json.post) {
+        this.reducePost(json, state);
+      }
+      if (json.comments) {
+        this.reduceComments(json, state);
+      }
+      if (json.total) {
+        this.reduceTotal(json, state);
       }
     }
 
-    permitCol(cir, aud, message, nom) {
-      this.hall({
-        permit: {
-          nom: cir,
-          sis: aud,
-          inv: true
-        }
-      });
-
-      if (message) {
-        this.inviteCol(cir, aud, nom);
+    reduceCollection(json, state) {
+      if (json.collection.who === window.ship) {
+        state.pubs[json.collection.coll] = {
+          info: json.collection.data,
+          order: { pin: [], unpin: [] },
+          posts: {},
+        };
+      } else {
+        state.subs[json.collection.who][json.collection.coll] = {
+          info: json.collection.data,
+          order: { pin: [], unpin: [] },
+          posts: {},
+        };
       }
     }
 
-    invite(cir, aud) {
-      let audInboxes = aud.map((aud) => `~${aud}/i`);
-      let inviteMessage = {
-        aud: audInboxes,
-        ses: [{
-          inv: {
-            inv: true,
-            cir: `~${window.ship}/${cir}`
-          }
-        }]
-      };
+    reducePost(json, state) {
+      let who = json.post.who;
+      let coll = json.post.coll;
+      let post = json.post.post;
+      let data = json.post.data;
 
-      this.hall({
-        phrase: inviteMessage
-      });
-    }
-
-    inviteCol(cir, aud, nom) {
-      let audInboxes = aud.map((aud) => `~${aud}/i`);
-      let inviteMessage = {
-        aud: audInboxes,
-        ses: [{
-          app: {
-            app: nom,
-            sep: {
-              inv: {
-                inv: true,
-                cir: `~${window.ship}/${cir}`
-              }
-            }
-          }
-        }]
-      };
-
-      this.hall({
-        phrase: inviteMessage
-      });
-    }
-
-    message(aud, words) {
-      let msg = {
-        aud,
-        ses: [{
-          lin: {
-            msg: words,
-            pat: false
-          }
-        }]
-      };
-
-      this.hall({
-        phrase: msg
-      });
-    }
-
-    source(nom, sub) {
-      this.hall({
-        source: {
-          nom: "inbox",
-          sub: sub,
-          srs: [nom]
+      if (who === window.ship) {
+        if (state.pubs[coll].posts[post]) {
+          state.pubs[coll].posts[post].post = data;
+        } else {
+          state.pubs[coll].posts[post] = {
+            post: data,
+            comments: [],
+          };
         }
-      });
-    }
-
-    create(nom, priv) {
-      this.hall({
-        create: {
-          nom: nom,
-          des: "chatroom",
-          sec: priv ? "village" : "channel"
+      } else {
+        if (state.subs[who][coll].posts[post]) {
+          state.subs[who][coll].posts[post].post = data;
+        } else {
+          state.subs[who][coll].posts[post] = {
+            post: data,
+            comments: [],
+          };
         }
-      });
+      }
+
+      this.insertPost(json, state);
     }
 
-    ire(aud, uid, msg) {
-      let message = {
-        aud: aud,
-        ses: [{
-          ire: {
-            top: uid,
-            sep: {
-              lin: {
-                msg: msg,
-                pat: false
-              }
-            }
-          }
-        }]
-      };
+    insertPost(json, state) {
+      this.insertLatest(json, state); 
+      this.insertUnread(json, state);
+      this.insertOrder(json, state);
+    }
 
-      this.hall({
-        phrase: message
-      });
+    insertLatest(json, state) {
+      let newIndex = {
+        post: json.post.post,
+        coll: json.post.coll,
+        who: json.post.who,
+      };
+      let newDate = json.post.data.info["date-created"];
+
+      if (state.latest.indexOf(newIndex) != -1) {
+        return;
+      }
+
+      for (var i=0; i<state.latest.length; i++) {
+        let postId = state.latest[i].post;
+        let blogId = state.latest[i].coll;
+        let ship = state.latest[i].who;
+
+        if (newIndex.post == postId && newIndex.coll == blogId && newIndex.who == ship) {
+          break;
+        }
+
+        let idate = this.retrievePost(state, blogId, postId, ship).info["date-created"];
+
+        if (newDate >= idate) {
+          state.latest.splice(i, 0, newIndex);
+          break;
+        } else if (i == (state.latest.length - 1)) {
+          state.latest.push(newIndex);
+          break;
+        }
+      }
+    }
+
+    insertUnread(json, state) {
+      if (json.post.who != window.ship) {
+        state.unread.push({
+          post: json.post.post,
+          coll: json.post.coll,
+          who: json.post.who,
+        });
+      }
+    }
+
+    insertOrder(json, state) {
+      let blogId = json.post.coll;
+      let ship = json.post.who;
+      let blog = this.retrieveColl(state, blogId, ship);
+      let list = json.post.data.info.pinned
+        ?  blog.order.pin
+        :  blog.order.unpin;
+      let newDate = json.post.data.info["date-created"];
+
+      if (list.indexOf(json.post.post) != -1) {
+        return
+      }
+
+      for (var i=0; i<list.length; i++) {
+        let postId = list[i];
+        if (json.post.post === postId) {
+          break;
+        }
+
+        let idate = this.retrievePost(state, blogId, postId, ship).info["date-created"];
+
+        if (newDate >= idate) {
+          list.splice(i, 0, json.post.post);
+          break;
+        } else if (i == (state.latest.length - 1)) {
+          list.push(json.post.post);
+          break;
+        }
+      }
+
+      if (window.ship == ship) {
+        state.pubs[blogId].order = json.post.data.info.pinned
+          ?  {pin: list, unpin: blog.order.unpin}
+          :  {pin: blog.order.pin, unpin: list};
+      } else {
+        state.subs[ship][blogId].order = json.post.data.info.pinned
+          ?  {pin: list, unpin: blog.order.unpin}
+          :  {pin: blog.order.pin, unpin: list};
+      }
+    }
+
+    retrieveColl(state, coll, who) {
+      if (who === window.ship) {
+        return state.pubs[coll];
+      } else {
+        return state.subs[who][coll];
+      }
+    }
+
+    retrievePost(state, coll, post, who) {
+      if (who === window.ship) {
+        return state.pubs[coll].posts[post].post;
+      } else {
+        return state.subs[who][coll].posts[post].post;
+      }
+    }
+
+    reduceComments(json, state) {
+      let who = json.comments.who;
+      let coll = json.comments.coll;
+      let post = json.comments.post;
+      let data = json.comments.data;
+
+      if (who === window.ship) {
+        if (state.pubs[coll].posts[post]) {
+          state.pubs[coll].posts[post].comments = data;
+        } else {
+          state.pubs[coll].posts[post] = {
+            post: null,
+            comments: data,
+          };
+        }
+      } else {
+        if (state.subs[who][coll].posts[post]) {
+          state.subs[who][coll].posts[post].comments = data;
+        } else {
+          state.subs[who][coll].posts[post] = {
+            post: null,
+            comments: data,
+          };
+        }
+      }
+    }
+
+    reduceTotal(json, state) {
+      console.log("reduce total", json); // XX TODO
     }
   }
 
-  let api = new UrbitApi();
-  window.api = api;
-
   class Store {
     constructor() {
-      this.state = window.injectedState;
+      this.state = {
+        ...window.injectedState,
+      };
       console.log("store.state", this.state);
+
+      this.updateReducer = new UpdateReducer();
+
       this.setState = () => {};
     }
 
@@ -52127,6 +52312,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
     handleEvent(data) {
       console.log("store.handleEvent", data);
+      this.updateReducer.reduce(data.data, this.state);
+      this.setState(this.state);
     }
 
   }
@@ -56734,7 +56921,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   })));
   });
 
-  const _jsxFileName = "/Users/logan/Dev/interface/apps/publish/src/js/components/post-preview.js";
+  const _jsxFileName = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/post-preview.js";
 
   class PostPreview extends react_1 {
     constructor(props) {
@@ -56770,7 +56957,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let date = moment(this.props.post.date).fromNow();
       let authorDate = `~${this.props.post.author} • ${date}`;
       let collLink = "/~publish/~" + 
-        this.props.post.author + "/" +
+        this.props.post.blogOwner + "/" +
         this.props.post.collectionName;
       let postLink = collLink + "/" + this.props.post.postName;
 
@@ -56794,7 +56981,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/publish/src/js/components/post-snippet.js";
+  const _jsxFileName$1 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/post-snippet.js";
 
   class PostSnippet extends react_1 {
     constructor(props){
@@ -56830,7 +57017,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/publish/src/js/components/recent-preview.js";
+  const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/recent-preview.js";
 
   class RecentPreview extends react_1 {
     constructor(props) {
@@ -56866,7 +57053,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let date = moment(this.props.post.date).fromNow();
       let authorDate = `~${this.props.post.author} • ${date}`;
       let collLink = "/~publish/~" + 
-        this.props.post.author + "/" +
+        this.props.post.blogOwner + "/" +
         this.props.post.collectionName;
       let postLink = collLink + "/" + this.props.post.postName;
 
@@ -56896,7 +57083,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/publish/src/js/components/recent.js";
+  const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/recent.js";
 
   class Recent extends react_1 {
     constructor(props){
@@ -56921,25 +57108,18 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             date: this.roundDay(postDate),
             posts: [postProps],
           };
-
-          if (i == (this.props.latest.length - 1)) {
-            recent.push(Object.assign({}, group));
-          }
-
         } else if ( this.sameDay(group.date, postDate) ) {
           group.posts.push(postProps) ;
         } else {
           recent.push(Object.assign({}, group));
-
           group = {
             date: this.roundDay(postDate),
             posts: [postProps],
           };
+        }
 
-          if (i == (this.props.latest.length - 1)) {
-            recent.push(Object.assign({}, group));
-          }
-
+        if (i == (this.props.latest.length - 1)) {
+          recent.push(Object.assign({}, group));
         }
       }
       return recent;
@@ -56957,7 +57137,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         numComments: com.length,
         collectionTitle: col.title,
         collectionName:  coll,
-        author: who,
+        author: pos.info.creator.slice(1),
+        blogOwner: who,
         date: pos.info["date-created"]
       }
 
@@ -57027,25 +57208,29 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 
     render() {
+
+      console.log(this.props);
+
       let recent = this.buildRecent();
 
-      let body = recent.map((group) => {
-        let posts = group.posts.map((post) => {
+      let body = recent.map((group, i) => {
+        let posts = group.posts.map((post, j) => {
           return (
             react.createElement(RecentPreview, {
-              post: post, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 140}}
+              post: post,
+              key: j, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 137}}
             )
           );
         });
         let date = this.dateLabel(group.date);
         return (
-          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 147}}
-            , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 148}}
-              , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 149}}
+          react.createElement('div', { key: i, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 145}}
+            , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 146}}
+              , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 147}}
                 , date
               )
             )
-            , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 153}}
+            , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 151}}
               , posts
             )
           )
@@ -57054,32 +57239,116 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 
       return (
-        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 162}}
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 160}}
           , body
         )
       );
     }
   }
 
-  const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/publish/src/js/components/header.js";
-  class Header extends react_1 {
-    constructor(props) {
+  const _jsxFileName$4 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/lib/publish-create.js";
+  class PublishCreate extends react_1 {
+    constructor(props){
       super(props);
+    }
+
+    render () {
+      let link = {
+        pathname: "/~publish/new",
+        state: {
+          lastPath: this.props.location.pathname,
+          lastMatch: this.props.match.path,
+          lastParams: this.props.match.params,
+        },
+      };
+
+      return (
+        react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 23}}
+          , react.createElement('p', { className: "publish", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 24}}, "Publish")
+          , react.createElement(Link, { to: link, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 25}} 
+            , react.createElement('p', { className: "create", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 26}}, "+Create")
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$5 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/lib/header-menu.js";
+  const PC = withRouter(PublishCreate);
+
+  class HeaderMenu extends react_1 {
+    render () {
+      return (
+        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 12}}
+          , react.createElement(PC, {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 13}})
+          , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 14}}
+            , react.createElement('div', { className: "fl bb b-gray-30 w-16"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 15}} 
+            )
+
+            , react.createElement(NavLink, { exact: true, 
+              className: "header-menu-item",
+              to: "/~publish/recent",
+              activeStyle: {
+                color: "black",
+                borderColor: "black",
+              },
+              style: {flexBasis:148}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 18}}
+              , "Recent"
+
+            )
+
+            , react.createElement('div', { className: "fl bb b-gray-30 w-16"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 30}} 
+            )
+
+            , react.createElement(NavLink, { exact: true, 
+              className: "header-menu-item",
+              to: "/~publish/subs",
+              activeStyle: {
+                color: "black",
+                borderColor: "black",
+              },
+              style: {flexBasis:148}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 33}}
+              , "Subscriptions"
+
+            )
+
+            , react.createElement('div', { className: "fl bb b-gray-30 w-16"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 45}} 
+            )
+
+            , react.createElement(NavLink, { exact: true, 
+              className: "header-menu-item",
+              to: "/~publish/pubs",
+              activeStyle: {
+                color: "black",
+                borderColor: "black",
+              },
+              style: {flexBasis:148}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 48}}
+              , "My Blogs"
+
+            )
+
+            , react.createElement('div', { className: "fl bb b-gray-30 w-16"   , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 60}}
+            )
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$6 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/lib/path-control.js";
+  const PC$1 = withRouter(PublishCreate);
+
+  class PathControl extends react_1 {
+    constructor(props){
+      super(props);
+
     }
 
     retrievePost(post, coll, who) {
       if (who === window.ship) {
-        return this.props.pubs[coll].posts[post].post;
+        return this.props.pubs[coll].posts[post].post.info;
       } else {
-        return this.props.subs[who][coll].posts[post].post;
-      }
-    }
-
-    retrieveComments(post, coll, who) {
-      if (who === window.ship) {
-        return this.props.pubs[coll].posts[post].comments;
-      } else {
-        return this.props.subs[who][coll].posts[post].comments;
+        return this.props.subs[who][coll].posts[post].post.info;
       }
     }
 
@@ -57091,256 +57360,674 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
     }
 
-    render() {
-      return (
-        react.createElement('div', { className: "cf w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 37}}
-          , react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 38}}
-            , react.createElement('p', { className: "fl body-large b gray-50 publish"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 39}}, "Publish")
-            , react.createElement('p', { className: "label-regular b fr"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 40}}, "+ Create" )
+    buildPathData(){
+
+      let path = [
+        { text: "Home", url: "/~publish/recent" },
+      ];
+
+      let last = lodash.get(this.props, 'location.state', false);
+      let blogTitle = false;
+      let blogUrl   = false;
+      let finalUrl = this.props.location.pathname;
+
+      if (last) {
+        finalUrl = {
+          pathName: finalUrl,
+          state: last,
+        };
+
+        if ((last.lastMatch === '/~publish/:ship/:blog/:post') ||
+            (last.lastMatch === '/~publish/:ship/:blog')){
+          let blog = this.retrieveColl(last.lastParams.blog, last.lastParams.ship.slice(1));
+          blogTitle = blog.title, 
+          blogUrl = `/~publish/${blog.owner}/${blog.filename}`; 
+        }
+      }
+
+      if (this.props.location.pathname === '/~publish/new') {
+        if (blogTitle && blogUrl) {
+          path.push({text: blogTitle, url: blogUrl});
+        }
+        path.push(
+          { text: 'New', url: finalUrl }
+        );
+      } else if (this.props.location.pathname === '/~publish/new/blog') {
+        if (blogTitle && blogUrl) {
+          path.push({text: blogTitle, url: blogUrl});
+        }
+        path.push(
+          { text: 'New Blog', url: finalUrl }
+        );
+      } else if (this.props.location.pathname === '/~publish/new/post') {
+        if (blogTitle && blogUrl) {
+          path.push({text: blogTitle, url: blogUrl});
+        }
+        path.push(
+          { text: 'New Post', url: finalUrl }
+        );
+      } else if (this.props.match.path === '/~publish/:ship/:blog') {
+        let blogId = this.props.match.params.blog;
+        let postId = this.props.match.params.post;
+        let ship = this.props.match.params.ship.slice(1);
+        let blog = this.retrieveColl(blogId, ship);
+        path.push(
+          {text: blog.title, url: `/~publish/${blog.owner}/${blog.filename}` }
+        );
+
+      } else if (this.props.match.path === '/~publish/:ship/:blog/:post') {
+        let blogId = this.props.match.params.blog;
+        let postId = this.props.match.params.post;
+        let ship = this.props.match.params.ship.slice(1);
+        let blog = this.retrieveColl(blogId, ship);
+        let post = this.retrievePost(postId, blogId, ship);
+        path.push(
+          {text: blog.title, url: `/~publish/${blog.owner}/${blog.filename}` }
+        );
+        path.push(
+          {text: post.title, url: `/~publish/${blog.owner}/${blog.filename}/${post.filename}` }
+        );
+
+      }
+
+      return path;
+    }
+
+    render(){
+      let pathData = this.buildPathData();
+
+      let path = [];
+      let key = 0;
+
+      pathData.forEach((seg, i) => {
+        let style = (i == 0)
+          ?  {marginLeft: 16}
+          :  null;
+        style = (i == (pathData.length - 1))
+          ?  {color: "black"}
+          :  style;
+        path.push(
+          react.createElement(Link, { to: seg.url, key: key++, className: "fl gray-30 label-regular"  , style: style, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 119}}
+            , seg.text
           )
+        );
+        if (i < (pathData.length - 1)){
+          path.push(
+            react.createElement('p', { className: "fl gray-30 label-regular"  , key: key++, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 125}}, "->"
 
-          , react.createElement(Route, { exact: true, path: "/~publish/recent",
-            render:  (props) => {
-              return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 46}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 47}}
-                  )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 49}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 50}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 51}}, "Recent"
+            )
+          );
+        }
+      });
 
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 56}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 58}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 59}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 60}}, "Subscriptions"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 65}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 67}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 68}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 69}}, "My Blogs"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 74}}
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 43}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/subs",
-            render:  (props) => {
-              return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 83}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 84}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 86}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 87}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 88}}, "Recent"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 93}}
-                  )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 95}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 96}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 97}}, "Subscriptions"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 102}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 104}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 105}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 106}}, "My Blogs"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 111}}
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 80}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/pubs",
-            render:  (props) => {
-              return (
-                react.createElement('div', { className: "fl w-100 flex"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 120}}
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 121}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 123}}
-                    , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 124}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 125}}, "Recent"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 130}}
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 132}}
-                    , react.createElement(Link, { to: "/~publish/subs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 133}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular gray-30"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 134}}, "Subscriptions"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { width: 16 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 139}}
-                  )
-                  , react.createElement('div', { className: "fl bb" , style: { flexBasis: 148 }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 141}}
-                    , react.createElement(Link, { to: "/~publish/pubs", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 142}}
-                      , react.createElement('p', { className: "fl w-100 h2 label-regular"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 143}}, "My Blogs"
-
-                      )
-                    )
-                  )
-                  , react.createElement('div', { className: "fl bb b-gray-30"  , style: { flexGrow: 1}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 148}}
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 117}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
-            render:  (props) => {
-              let ship = props.match.params.ship.slice(1);
-              let blogId = props.match.params.blog;
-
-              let blogLink = `/~publish/~${ship}/${blogId}`;
-              let blog = this.retrieveColl(blogId, ship);
-              let blogName = blog.title;
-
-              return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 164}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 165}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 166}}, "Home"
-
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 170}}, "->"
-
-                  )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 173}}
-                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 174}}
-                      , blogName
-                    )
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 154}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
-            render:  (props) => {
-              let ship = props.match.params.ship.slice(1);
-              let blogId = props.match.params.blog;
-              let postId = props.match.params.post;
-
-              let blogLink = `/~publish/~${ship}/${blogId}`;
-              let blog = this.retrieveColl(blogId, ship);
-              let blogName = blog.title;
-
-              let postLink = `/~publish/~${ship}/${blogId}/${postId}`;
-              let post = this.retrievePost(postId, blogId, ship);
-              let postName = post.info.title;
-
-              return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 197}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 198}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 199}}, "Home"
-
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 203}}, "->"
-
-                  )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 206}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 207}}
-                      , blogName
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 211}}, "->"
-
-                  )
-                  , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 214}}
-                    , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 215}}
-                      , postName
-                    )
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 182}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/new",
-            render:  (props) => {
-              return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 226}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 227}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 228}}, "Home"
-
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 232}}, "->"
-
-                  )
-                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 235}}, "New"
-
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 223}} )
-
-          , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/new",
-            render:  (props) => {
-              let ship = props.match.params.ship.slice(1);
-              let blogId = props.match.params.blog;
-
-              let blogLink = `/~publish/~${ship}/${blogId}`;
-              let blog = this.retrieveColl(blogId, ship);
-              let blogName = blog.title;
-
-              return (
-                react.createElement('div', { className: "fl w-100 flex b-gray-30 bb"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 252}}
-                  , react.createElement(Link, { to: "/~publish/recent", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 253}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , style: { marginLeft: 16}, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 254}}, "Home"
-
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 258}}, "->"
-
-                  )
-                  , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 261}}
-                    , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 262}}
-                      , blogName
-                    )
-                  )
-                  , react.createElement('p', { className: "fl gray-30 label-regular"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 266}}, "->"
-
-                  )
-                  , react.createElement('p', { className: "fl label-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 269}}, "New Post"
-
-                  )
-                )
-              );
-            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 242}} )
+      return (
+        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 133}}
+          , react.createElement(PC$1, {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 134}})
+          , react.createElement('div', { className: "path-control", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 135}}
+            , path
+          )
         )
       );
     }
   }
 
-  const _jsxFileName$5 = "/Users/logan/Dev/interface/apps/publish/src/js/components/blog.js";
+  const _jsxFileName$7 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/header.js";
+  class Header extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+    render() {
+      return (
+        react.createElement('div', { className: "cf w-100 bg-white h-publish-header"   , __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 17}}
+          , react.createElement(Switch, {__self: this, __source: {fileName: _jsxFileName$7, lineNumber: 18}}
+            , react.createElement(Route, { exact: true, path: "/~publish/recent", component: HeaderMenu, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 19}})
+            , react.createElement(Route, { exact: true, path: "/~publish/subs", component: HeaderMenu, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 20}})
+            , react.createElement(Route, { exact: true, path: "/~publish/pubs", component: HeaderMenu, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 21}})
+
+            , react.createElement(Route, { exact: true, path: "/~publish/new", 
+              render:  (props) => {
+                return (
+                  react.createElement(PathControl, { ...this.props, ...props, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 26}})
+                )
+              }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 23}})
+            , react.createElement(Route, { exact: true, path: "/~publish/new/blog",
+              render:  (props) => {
+                return (
+                  react.createElement(PathControl, { ...this.props, ...props, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 32}})
+                )
+              }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 29}})
+            , react.createElement(Route, { exact: true, path: "/~publish/new/post",
+              render:  (props) => {
+                return (
+                  react.createElement(PathControl, { ...this.props, ...props, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 38}})
+                )
+              }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 35}})
+
+            , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
+              render:  (props) => {
+                return (
+                  react.createElement(PathControl, { ...this.props, ...props, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 45}})
+                )
+              }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 42}})
+            , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
+              render:  (props) => {
+                return (
+                  react.createElement(PathControl, { ...this.props, ...props, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 51}})
+                )
+              }, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 48}})
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$8 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/new.js"; 
+  class New extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+    render() {
+      let last = lodash.get(this.props, 'location.state', false);
+      let blogLink;
+      let postLink;
+
+      if (last) {
+        blogLink = {
+          pathname: "/~publish/new/blog",
+          state: last,
+        };
+        postLink = {
+          pathname: "/~publish/new/post",
+          state: last,
+        };
+      } else {
+        blogLink = "/~publish/new/blog";
+        postLink = "/~publish/new/post";
+      }
+
+      
+
+      return (
+        react.createElement('div', { className: "h-inner dt center mw-688 w-100"    , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 33}}
+          , react.createElement('div', { className: "flex-col dtc v-mid"  , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 34}}
+            , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 35}}
+              , react.createElement('h2', { className: "v-mid", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 36}}, "-> New Blog"  )
+            )
+            , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 38}})
+            , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 39}}
+              , react.createElement('h2', { className: "v-mid", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 40}}, "-> New Post"  )
+            )
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$9 = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/new-blog.js";
+  class FormLink extends react_1 {
+    render(props){
+      if (this.props.enabled) {
+        return (
+          react.createElement('p', { className: "body-large b z-2 pointer"   , onClick: this.props.action, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 9}}
+            , this.props.body
+          )
+        );
+      }
+      return (
+        react.createElement('p', { className: "gray-30 b body-large"  , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 15}}, this.props.body)
+      );
+    }
+  }
+
+
+  class NewBlog extends react_1 {
+    constructor(props){
+      super(props);
+
+      this.state = {
+        title: '',
+        collaborators: [],
+        page: 'main',
+        awaiting: false,
+      };
+      this.titleChange = this.titleChange.bind(this);
+      this.collaboratorChange = this.collaboratorChange.bind(this);
+      this.firstPost = this.firstPost.bind(this);
+      this.returnHome = this.returnHome.bind(this);
+      this.addCollaborators = this.addCollaborators.bind(this);
+      this.blogSubmit = this.blogSubmit.bind(this);
+    }
+
+    stringToSymbol(str){
+      let result = '';
+      for (var i=0; i<str.length; i++){
+        var n = str.charCodeAt(i);
+        if (( (n >= 97) && (n <= 122) ) ||
+            ( (n >= 48) && (n <= 57) ))
+        {
+          result += str[i];
+        } else if ( (n >= 65) &&  (n <= 90) ) 
+        {
+          result += String.fromCharCode(n + 32);
+        } else {
+          result += '-';
+        }
+      }
+      return result;
+    }
+
+    blogSubmit() {
+      let ship = window.ship;
+      let blogTitle = this.state.title;
+      let blogId = this.stringToSymbol(blogTitle);
+
+      let permissions = {
+        read: {
+          mod: 'black',
+          who: [],
+        },
+        write: {
+          mod: 'white',
+          who: this.state.collaborators,
+        }
+      };
+
+      let data = {
+        "new-collection" : {
+          name: blogId,
+          title: blogTitle,
+          comments: "open",
+          "allow-edit": "all",
+          perm: permissions,
+        },
+      };
+
+      this.setState({
+        awaiting: blogId
+      });
+
+      this.props.api.action("write", "write-action", data);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.awaiting) {
+        if (this.props.pubs[this.state.awaiting]) {
+          this.props.history.push(`/~publish/~${window.ship}/${this.state.awaiting}`);
+        }
+      }
+    }
+
+    titleChange(evt){
+      this.setState({title: evt.target.value});
+    }
+
+    collaboratorChange(evt){
+      let collaborators = evt.target.value
+        .trim()
+        .split(",")
+        .map(t => t.trim().substr(1));
+      this.setState({collaborators: collaborators});
+    }
+
+    firstPost() {
+      this.blogSubmit();
+    }
+
+    addCollaborators() {
+      this.setState({page: 'addCollab'});
+    }
+
+    returnHome() {
+      console.log("action return home");
+    }
+
+    render() {
+      if (this.state.page === 'main') {
+        return (
+          react.createElement('div', { className: "h-inner dt center mw-688 w-100"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 125}}
+             , react.createElement('div', { className: "flex-col dtc v-mid"  , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 126}}
+                , react.createElement('input', { autoFocus: true,
+                  className: "header-2 b--none" ,
+                  type: "text", 
+                  name: "blogName",
+                  placeholder: "Add a Title"  ,
+                  onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 127}}
+                )
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 135}})
+
+                , react.createElement(FormLink, {
+                  enabled: (this.state.title !== ''),
+                  action: this.firstPost,
+                  body: "-> Create a first post", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 137}}
+                )
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 143}})
+
+                , react.createElement(FormLink, {
+                  enabled: (this.state.title !== ''),
+                  action: this.addCollaborators,
+                  body: "-> Add Collaborators", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 145}}
+                )
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 151}})
+
+                , react.createElement(Link, { to: "/~publish/recent", className: "body-large b" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 153}}, "Cancel"
+
+                )
+             )
+          )
+        );
+      } else if (this.state.page === 'addCollab') {
+        return (
+          react.createElement('div', { className: "h-inner dt center mw-688 w-100"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 161}}
+             , react.createElement('div', { className: "flex-col dtc v-mid"  , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 162}}
+                , react.createElement('input', { autoFocus: true,
+                  className: "header-2 b--none" ,
+                  type: "text", 
+                  name: "blogName",
+                  placeholder: "Add a Title"  ,
+                  onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 163}}
+                )
+
+                , react.createElement('p', { className: "body-regular-400", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 171}}, "Who else can post to this blog?"
+
+                )
+
+                , react.createElement('input', { className: "body-regular-400 b--none w-100"  ,
+                  type: "text",
+                  name: "collaborators",
+                  placeholder: "~ship-name, ~ship-name" ,
+                  onChange: this.collaboratorChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 175}}
+                )
+
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 183}})
+
+                , react.createElement(FormLink, {
+                  enabled: (this.state.title !== ''),
+                  action: this.firstPost,
+                  body: "-> Save and create a first post", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 185}}
+                )
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 191}})
+
+                , react.createElement(FormLink, {
+                  enabled: (this.state.title !== ''),
+                  action: this.returnHome,
+                  body: "-> Save and return home", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 193}}
+                )
+
+                , react.createElement('hr', { className: "gray-30", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 199}})
+
+                , react.createElement(Link, { to: "/~publish/recent", className: "body-large b" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 201}}, "Cancel"
+
+                )
+             )
+          )
+        );
+
+      }
+    }
+  }
+
+  const _jsxFileName$a = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/new-post.js";
+  class SideTab extends react_1 {
+    constructor(props) {
+      super(props);
+    }
+
+    render(props) {
+      if (this.props.enabled){
+        return (
+          react.createElement('div', { className: "w1 z-2" ,
+            style: {
+              flexGrow:1,
+          }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 14}}
+            , react.createElement('p', { className: "pointer", onClick: this.props.postSubmit, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 18}}, "-> Post"
+
+            )
+            , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$a, lineNumber: 21}}, "Discard post" )
+          )
+        );
+      }
+      return null;
+    }
+  }
+   
+  class NewPost extends react_1 {
+    constructor(props){
+      super(props);
+
+      this.state = {
+        title: "",
+        body: "",
+        awaiting: false,
+      };
+
+      this.titleChange = this.titleChange.bind(this);
+      this.bodyChange = this.bodyChange.bind(this);
+      this.postSubmit = this.postSubmit.bind(this);
+    }
+
+    titleChange(evt){
+      this.setState({title: evt.target.value});
+    }
+
+    bodyChange(evt){
+      this.setState({body: evt.target.value});
+    }
+
+    stringToSymbol(str){
+      let result = '';
+      for (var i=0; i<str.length; i++){
+        var n = str.charCodeAt(i);
+        if (( (n >= 97) && (n <= 122) ) ||
+            ( (n >= 48) && (n <= 57) ))
+        {
+          result += str[i];
+        } else if ( (n >= 65) &&  (n <= 90) ) 
+        {
+          result += String.fromCharCode(n + 32);
+        } else {
+          result += '-';
+        }
+      }
+      return result;
+    }
+
+    postSubmit() {
+      let last = lodash.get(this.props, 'location.state', false);
+      let ship = window.ship;
+      let blogId = null;
+
+      if (last){
+        ship = last.lastParams.ship.slice(1); 
+        blogId = last.lastParams.blog;
+      }
+
+      let postTitle = this.state.title;
+      let postId = this.stringToSymbol(postTitle);
+      let permissions = {
+        read: {
+          mod: 'black',
+          who: [],
+        },
+        write: {
+          mod: 'white',
+          who: [],
+        }
+      };
+      let content = this.state.body;
+
+      let data = {
+        "new-post" : {
+          who: ship,
+          coll: blogId,
+          name: postId,
+          title: postTitle,
+          comments: "open",
+          perm: permissions,
+          content: content,
+        },
+      };
+
+      this.setState({
+        awaiting: {
+          ship: ship,
+          blogId: blogId,
+          postId: postId,
+        }
+      });
+
+      this.props.api.action("write", "write-action", data);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.awaiting) {
+        let ship = this.state.awaiting.ship;
+        let blogId = this.state.awaiting.blogId;
+        let postId = this.state.awaiting.postId;
+
+        if (this.state.awaiting.ship == window.ship) {
+
+          let post = lodash.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
+          let comments = lodash.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
+          if (post && comments) {
+            let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
+            this.props.history.push(redirect);
+          }
+
+        } else {
+
+          let post = lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+          let comments = lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
+          if (post && comments) {
+            let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
+            this.props.history.push(redirect);
+          }
+
+        }
+      }
+    }
+
+    render() {
+      let enabledTab = ((this.state.title !== "") && (this.state.body !== ""));
+
+      return (
+        react.createElement('div', { className: "w-100 relative" , style: {height: 2000, top: 'calc(50% - 124px)'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 149}}
+
+          , react.createElement('div', { className: "flex w-100 z-2"  , style: {position: "sticky", top:0}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 151}}
+            , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 152}}
+            )
+            , react.createElement('div', { className: "mw-688 w-100 z-0"  , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 154}}
+            )
+            , react.createElement(SideTab, { enabled: enabledTab, postSubmit: this.postSubmit, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 156}} )
+          )
+
+          , react.createElement('div', { className: "flex absolute w-100 z-0"   , style: {top:0}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 159}}
+            , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 160}}
+            )
+            , react.createElement('div', { className: "flex-col w-100 mw-688 w-100 z-1"    , __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 162}}
+              , react.createElement('input', { autoFocus: true,
+                className: "header-2 w-100 b--none"  ,
+                type: "text",
+                name: "postName",
+                placeholder: "Add a Title"  ,
+                onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 163}}
+              )
+              , react.createElement('textarea', { className: "body-regular-400 w-100 b--none"  ,
+                style: {resize:"none"},
+                type: "text",
+                name: "postBody",
+                placeholder: "And type away."  ,
+                onChange: this.bodyChange, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 170}}
+              )
+            )
+            , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 178}}
+            )
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$b = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/lib/icons/icon-home.js";
+  class IconHome extends react_1 {
+    render() {
+      return (
+        react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 6}} )
+      );
+    }
+  }
+
+  const _jsxFileName$c = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/lib/header-bar.js";
+
+  class HeaderBar extends react_1 {
+
+    render() {
+      return (
+        react.createElement('div', { className: "bg-black w-100" , style: { height: 48, padding: 8 }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 11}}
+          , react.createElement('a', { className: "db",
+            style: { background: '#1A1A1A', borderRadius: 16, width: 32, height: 32 },
+            href: "/", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 12}}
+            , react.createElement(IconHome, {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 15}} )
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$d = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/skeleton.js";
+
+  class Skeleton extends react_1 {
+    constructor(props){
+      super(props);
+    }
+
+    render() {
+      return (
+        react.createElement('div', { className: "h-100 w-100 absolute"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 15}}
+          , react.createElement(HeaderBar, {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 16}})
+          , react.createElement(Header, { ...this.props, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 17}})
+          , react.createElement('div', { className: "h-inner overflow-y-scroll" , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 18}}
+            , this.props.children
+          )
+        )
+      );
+    }
+  }
+
+  const _jsxFileName$e = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/blog.js";
 
   class Blog extends react_1 {
     constructor(props){
       super(props);
+    }
+
+    handleEvent(diff) {
+      console.log("handleEvent", diff);
+    }
+
+    handleError(err) {
+      console.log("handleError", err);
+    }
+
+    componentWillMount() {
+      if (this.props.ship != window.ship) {
+        let ship = this.props.ship;
+        let blogId = this.props.blogId;
+        let post = lodash.get(this.props,
+          `subs[${ship}][${blogId}]`, false);
+        if (!post) {
+          this.props.api.bind(`/collection/${blogId}`, "PUT", 
+            api.authTokens.ship, "write",
+            this.handleEvent.bind(this),
+            this.handleError.bind(this));
+        }
+      }
     }
 
 
@@ -57348,8 +58035,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let blogId = this.props.blogId;
       let ship = this.props.ship;
       let blog = this.retrieveColl(blogId, ship);
-
-      console.log("buildposts", blog);
 
       let pinProps = blog.order.pin.map((post) => {
         return this.buildPostPreviewProps(post, blogId, ship, true);
@@ -57374,7 +58059,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         numComments: com.length,
         collectionTitle: col.title,
         collectionName:  coll,
-        author: who,
+        author: pos.info.creator.slice(1),
+        blogOwner: who,
         date: pos.info["date-created"],
         pinned: pinned,
       }
@@ -57408,10 +58094,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     render() {
       let blog = this.retrieveColl(this.props.blogId, this.props.ship);
       let postProps = this.buildPosts();
-      let posts = postProps.map((post) => {
+      let posts = postProps.map((post, key) => {
         return (
           react.createElement(PostPreview, {
-            post: post, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 78}}
+            post: post,
+            key: key, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 101}}
           )
         );
       });
@@ -57421,23 +58108,23 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let subscribers = "~bitpyx-dildus and X others"; // XX backend work
 
       return (
-        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 89}}
-          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 90}}, blog.info.title)
-          , react.createElement('div', { className: "flex", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}}
-            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 92}}
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 93}}, "Host")
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 94}}, host)
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 113}}
+          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 114}}, blog.info.title)
+          , react.createElement('div', { className: "flex", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 115}}
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 116}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 117}}, "Host")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 118}}, host)
             )
-            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 96}}
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 97}}, "Contributors")
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 98}}, contributers)
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 120}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 121}}, "Contributors")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 122}}, contributers)
             )
-            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 100}}
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 101}}, "Subscribers")
-              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 102}}, subscribers)
+            , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 124}}
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 125}}, "Subscribers")
+              , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 126}}, subscribers)
             )
           )
-          , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 105}}
+          , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 129}}
             , posts
           )
         )
@@ -57506,7 +58193,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
   }
 
-  const _jsxFileName$6 = "/Users/logan/Dev/interface/apps/publish/src/js/components/post.js";
+  const _jsxFileName$f = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/post.js";
   class Post extends react_1 {
     constructor(props){
       super(props);
@@ -57532,6 +58219,28 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
           yy : '%d years',
         }
       });
+      let blog = this.retrieveColl(this.props.blogId, this.props.ship);
+      let post = this.retrievePost(this.props.postId, this.props.blogId, this.props.ship);
+      let comments = this.retrieveComments(this.props.postId, this.props.blogId, this.props.ship);
+
+      this.state = {
+        mode: 'view',
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        awaiting: false,
+        ship: this.props.ship,
+        blog: blog,
+        post: post,
+        comments: comments,
+      };
+
+      this.editPost = this.editPost.bind(this);
+      this.savePost = this.savePost.bind(this);
+      this.titleChange = this.titleChange.bind(this);
+      this.bodyChange = this.bodyChange.bind(this);
+
     }
 
 
@@ -57539,8 +58248,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let blogId = this.props.blogId;
       let ship = this.props.ship;
       let blog = this.retrieveColl(blogId, ship);
-
-      console.log("buildposts", blog);
 
       let pinProps = blog.order.pin.map((post) => {
         return this.buildPostPreviewProps(post, blogId, ship, true);
@@ -57569,8 +58276,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         date: pos.info["date-created"],
         pinned: pinned,
       }
-
     }
+    
 
     retrievePost(post, coll, who) {
       if (who === window.ship) {
@@ -57596,183 +58303,472 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       }
     }
 
+    editPost() {
+      this.setState({mode: 'edit'});
+    }
+    
+    savePost() {
+      if (this.state.title == this.state.titleOriginal &&
+          this.state.body == this.state.bodyOriginal) {
+        return;
+      }
+
+      let permissions = {
+        read: {
+          mod: 'black',
+          who: [],
+        },
+        write: {
+          mod: 'white',
+          who: [],
+        }
+      };
+      
+      let data = {
+        "edit-post": {
+          who: this.state.ship,
+          coll: this.props.blogId,
+          name: this.props.postId,
+          title: this.state.title,
+          comments: this.state.post.info.comments,
+          perm: permissions,
+          content: this.state.body,
+
+        },
+      };
+
+
+      this.setState({
+        awaiting: {
+          ship: this.state.ship,
+          blogId: this.props.blogId,
+          postId: this.props.postId,
+        }
+      });
+
+      this.props.api.action("write", "write-action", data);
+    }
+
+
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.awaiting) {
+        let ship = this.state.awaiting.ship;
+        let blogId = this.state.awaiting.blogId;
+        let postId = this.state.awaiting.postId;
+
+        if (this.state.awaiting.ship == window.ship) {
+          let oldPost = prevState.post;
+
+          let post = _.get(this.props,
+            `pubs[${blogId}].posts[${postId}].post`, false);
+
+          if ((post.info.title != oldPost.info.title) ||
+              (post.raw != oldPost.raw)) {
+
+            this.setState({
+              mode: 'view',
+              titleOriginal: post.info.title,
+              bodyOriginal: post.raw,
+              title: post.info.title,
+              body: post.raw,
+              awaiting: false,
+              post: post,
+            });
+          }
+        } else {
+
+          let oldPost = prevState.post;
+
+          let post = _.get(this.props,
+            `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+          
+          if ((post.info.title != oldPost.info.title) ||
+              (post.raw != oldPost.raw)) {
+            this.setState({
+              mode: 'view',
+              titleOriginal: post.info.title,
+              bodyOriginal: post.raw,
+              title: post.info.title,
+              body: post.raw,
+              awaiting: false,
+              post: post,
+            });
+          }
+        }
+      }
+    }
+
+
+    titleChange(evt){
+      this.setState({title: evt.target.value});
+    }
+
+    bodyChange(evt){
+      this.setState({body: evt.target.value});
+    }
+
     render() {
-      let ship = this.props.ship;
-      let blog = this.retrieveColl(this.props.blogId, this.props.ship);
-      let post = this.retrievePost(this.props.postId, this.props.blogId, this.props.ship);
-      let comments = this.retrieveComments(this.props.postId, this.props.blogId, this.props.ship);
+      let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
-      let blogLink = `/~publish/~${this.props.ship}/${this.props.blogId}`;
-      let blogLinkText = `<- Back to ${blog.info.title}`;
+      let date = moment(this.state.post.info["date-created"]).fromNow();
+      let authorDate = `${this.state.post.info.creator} • ${date}`;
 
-      let editLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${this.props.postId}/edit`;
 
-      let date = moment(post.info["date-created"]).fromNow();
-      let authorDate = `${post.info.creator} • ${date}`;
 
-      // change unpin to concatenation of pinned and unpinned
-      let morePosts = blog.order.unpin.slice(0,10).map((pid) => {
-
-        let p = this.retrievePost(pid, this.props.blogId, this.props.ship);
-        let color = (pid == this.props.postId) ? "black" : "gray-50";
-        let postLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${pid}`;
+      if (this.state.mode == 'view') {
         return (
-          react.createElement(Link, { to: postLink, className: "label-regular", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 118}}
-            , react.createElement('p', { className: color, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 119}}, p.info.title)
+          react.createElement('div', { className: "mw-688 center mt4 flex-col"   , style: {flexBasis: 688}, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 232}}
+            , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 233}}
+              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 234}}
+                , blogLinkText
+              )
+            )
+
+            , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 239}}, this.state.titleOriginal)
+
+            , react.createElement('div', { className: "mb4", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 241}}
+              , react.createElement('p', { className: "fl label-small gray-50"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 242}}, authorDate)
+              , react.createElement('p', { className: "label-regular gray-50 fr pointer"   ,
+                 onClick: this.editPost, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 243}}, "Edit"
+
+              )
+            )
+
+            , react.createElement('div', { className: "cb", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 249}}
+              , react.createElement(PostBody, {
+                body: this.state.post.body, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 250}} 
+              )
+            )
+
+            , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 255}})
+
+            , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 257}})
+
+            , react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 259}}
+              , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 260}}
+                , this.state.comments.length
+                , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 262}}, "\u0002Comments"
+
+                )
+              )
+              , react.createElement('p', { className: "cl body-regular" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 266}}, "+ Show Comments"
+
+              )
+            )
+          )
+        );
+
+      } else if (this.state.mode == 'edit') {
+        return (
+          react.createElement('div', { className: "mw-688 center mt4 flex-col"   , style: {flexBasis: 688}, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 275}}
+            , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 276}}
+              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 277}}
+                , blogLinkText
+              )
+            )
+
+            , react.createElement('input', { className: "header-2 w-100" ,
+              type: "text",
+              name: "postName",
+              defaultValue: this.state.titleOriginal,
+              onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 282}}
+            )
+
+            , react.createElement('div', { className: "mb4", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 289}}
+              , react.createElement('p', { className: "fl label-small gray-50"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 290}}, authorDate)
+              , react.createElement('p', { className: "label-regular gray-50 fr pointer"   ,
+                 onClick: this.savePost, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 291}}, "Save"
+
+              )
+            )
+
+            , react.createElement('textarea', { className: "cb body-regular-400 w-100 h5"   ,
+              style: {resize:"none"},
+              type: "text",
+              name: "postBody",
+              onChange: this.bodyChange,
+              defaultValue: this.state.bodyOriginal, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 297}}
+            )
+
+            , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 305}})
+
+            , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 307}})
+
+            , react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 309}}
+              , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 310}}
+                , this.state.comments.length
+                , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 312}}, "\u0002Comments"
+
+                )
+              )
+              , react.createElement('p', { className: "cl body-regular" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 316}}, "+ Show Comments"
+
+              )
+            )
+          )
+        );
+      }
+    }
+  }
+
+  const _jsxFileName$g = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/subs.js";
+  class Subs extends react_1 {
+    constructor(props) {
+      super(props);
+    }
+
+    buildBlogData() {
+      let data = Object.keys(this.props.subs).map((ship) => {
+        let perShip = Object.keys(this.props.subs[ship]).map((blogId) => {
+          let blog = this.props.subs[ship][blogId];
+          return {
+            url: `/~publish/${blog.info.owner}/${blogId}`,
+            title: blog.info.title,
+            host: blog.info.owner,
+            lastUpdated: "idk"
+          }
+        });
+        return perShip;
+      });
+      let merged = data.flat();
+      return merged;
+    }
+
+
+    render() {
+      let blogData = this.buildBlogData();
+
+      let blogs = this.buildBlogData().map( (data, i) => {
+        let bg = (i % 2 == 0)
+          ?  "bg-v-light-gray"
+          :  "bg-white";
+        let cls = "w-100 flex " + bg;
+        return (
+          react.createElement('div', { className: cls, key: i, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 37}}
+            , react.createElement('div', { className: "fl body-regular-400" , style: {flexBasis: 336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 38}}
+              , react.createElement(Link, { to: data.url, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 39}}
+                , data.title
+              )
+            )
+            , react.createElement('p', { className: "fl body-regular-400" , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 43}}
+              , data.host
+            )
+            , react.createElement('p', { className: "fl body-regular-400" , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 46}}
+              , data.lastUpdated
+            )
           )
         );
       });
 
+
       return (
-        react.createElement('div', { className: "w-688 flex-col center mt4"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 125}}
-          , react.createElement(Link, { to: blogLink, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 126}}
-            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 127}}
-              , blogLinkText
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 55}}
+          , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 56}}
+            , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 57}}, "Subscriptions")
+          )
+          , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 59}}
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 60}}, "Title"
+
+            )
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 63}}, "Host"
+
+            )
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 66}}, "Last Updated"
+
             )
           )
 
-          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$6, lineNumber: 132}}, post.info.title)
+          , blogs
+        )
 
-          , react.createElement('div', { className: "mb4", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 134}}
-            , react.createElement('p', { className: "fl label-small gray-50"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 135}}, authorDate)
-            , react.createElement(Link, { to: editLink, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 136}}
-              , react.createElement('p', { className: "label-regular gray-50 fr"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 137}}, "Edit")
-            )
-          )
+      );
+    }
+  }
 
-          , react.createElement('div', { className: "cb", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 141}}
-            , react.createElement(PostBody, {
-              body: post.body, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 142}} 
-            )
-          )
+  const _jsxFileName$h = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/pubs.js";
+  class Pubs extends react_1 {
+    constructor(props) {
+      super(props);
+    }
 
-          , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 147}})
+    buildBlogData() {
+      let data = Object.keys(this.props.pubs).map((blogId) => {
+        let blog = this.props.pubs[blogId];
+        return {
+          url: `/~publish/${blog.info.owner}/${blogId}`,
+          title: blog.info.title,
+          host: blog.info.owner,
+          lastUpdated: "idk"
+        }
+      });
+      return data;
+    }
 
-          , react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}
-            , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 150}}
-              , comments.length
-              , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 152}}, "\u0002Comments"
 
+    render() {
+      let blogData = this.buildBlogData();
+
+      let blogs = this.buildBlogData().map( (data, i) => {
+        let bg = (i % 2 == 0)
+          ?  "bg-v-light-gray"
+          :  "bg-white";
+        let cls = "w-100 flex " + bg;
+        return (
+          react.createElement('div', { className: cls, key: i, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 33}}
+            , react.createElement('div', { className: "fl body-regular-400" , style: {flexBasis: 336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 34}}
+              , react.createElement(Link, { to: data.url, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 35}}
+                , data.title
               )
             )
-            , react.createElement('p', { className: "cl body-regular" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 156}}, "↓ Show Comments"
+            , react.createElement('p', { className: "fl body-regular-400" , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 39}}
+              , data.host
+            )
+            , react.createElement('p', { className: "fl body-regular-400" , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 42}}
+              , data.lastUpdated
+            )
+          )
+        );
+      });
+
+
+      return (
+        react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 51}}
+          , react.createElement('div', { className: "w-100 h-80" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 52}}
+            , react.createElement('h2', { className: "gray-50", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 53}}, "My Blogs" )
+          )
+          , react.createElement('div', { className: "w-100 flex" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 55}}
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 56}}, "Title"
+
+            )
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 59}}, "Host"
+
+            )
+            , react.createElement('p', { className: "fl gray-50 body-regular-400"  , style: {flexBasis:336}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 62}}, "Last Updated"
 
             )
           )
 
-          , react.createElement('hr', { className: "gray-50 w-680" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 161}})
-
-          , react.createElement('div', { className: "cb flex-col" , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 163}}
-            , react.createElement('p', { className: "label-regular b mb1"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 164}}, blog.info.title)
-            , react.createElement('p', { className: "label-regular gray-30 mb2"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 165}}, "Hosted by "  , blog.info.owner)
-            , morePosts
-          )
+          , blogs
         )
+
       );
     }
   }
 
-  const _jsxFileName$7 = "/Users/logan/Dev/interface/apps/publish/src/js/components/lib/icons/icon-home.js";
-  class IconHome extends react_1 {
-    render() {
-      return (
-        react.createElement('img', { src: "/~launch/img/Home.png", width: 32, height: 32, __self: this, __source: {fileName: _jsxFileName$7, lineNumber: 6}} )
-      );
-    }
-  }
-
-  const _jsxFileName$8 = "/Users/logan/Dev/interface/apps/publish/src/js/components/lib/header-bar.js";
-
-  class HeaderBar extends react_1 {
-
-    render() {
-      return (
-        react.createElement('div', { className: "bg-black w-100" , style: { height: 48, padding: 8 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 11}}
-          , react.createElement('a', { className: "db",
-            style: { background: '#1A1A1A', borderRadius: 16, width: 32, height: 32 },
-            href: "/", __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 12}}
-            , react.createElement(IconHome, {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 15}} )
-          )
-        )
-      );
-    }
-  }
-
-  const _jsxFileName$9 = "/Users/logan/Dev/interface/apps/publish/src/js/components/root.js";
+  const _jsxFileName$i = "/Users/isaac/urbit/projects/interface/apps/publish/src/js/components/root.js";
   class Root extends react_1 {
     constructor(props) {
       super(props);
       this.state = store.state;
-
-      console.log("root.state", this.state);
-
       store.setStateHandler(this.setState.bind(this));
     }
 
     render() {
       return (
-        react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 27}}
-          , react.createElement(HeaderBar, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 28}} )
-          , react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 29}}
-            , react.createElement(Header, { ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 30}} )
+        react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$i, lineNumber: 31}}
+          , react.createElement(Switch, {__self: this, __source: {fileName: _jsxFileName$i, lineNumber: 32}}
             , react.createElement(Route, { exact: true, path: "/~publish/recent",
               render:  (props) => {
                 return (
-                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 34}}
-                    , react.createElement(Recent, {
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
-                    )
+                  react.createElement(Skeleton, {
+                    children: 
+                      react.createElement(Recent, { ...this.state, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 38}} )
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 36}}
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 31}} )
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 33}} )
             , react.createElement(Route, { exact: true, path: "/~publish/subs",
               render:  (props) => {
                 return (
-                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 44}}
-                    , react.createElement(Recent, {
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 45}}
-                    )
+                  react.createElement(Skeleton, {
+                    children: 
+                      react.createElement(Subs, { ...this.state, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 48}} )
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 46}}
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 41}} )
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 43}} )
             , react.createElement(Route, { exact: true, path: "/~publish/pubs",
               render:  (props) => {
                 return (
-                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 54}}
-                    , react.createElement(Recent, {
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 55}}
-                    )
+                  react.createElement(Skeleton, {
+                    children: 
+                      react.createElement(Pubs, { ...this.state, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 58}} )
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 56}}
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 51}} )
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 53}} )
+
+            , react.createElement(Route, { exact: true, path: "/~publish/new",
+              render:  (props) => {
+                return (
+                  react.createElement(Skeleton, {
+                    ...this.state,
+                    children: 
+                      react.createElement(New, { api: api$1, ...this.state, ...props, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 70}})
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 67}}
+                  )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 64}} )
+
+            , react.createElement(Route, { exact: true, path: "/~publish/new/blog",
+              render:  (props) => {
+                return (
+                  react.createElement(Skeleton, {
+                    ...this.state,
+                    children: 
+                      react.createElement(NewBlog, { api: api$1, ...this.state, ...props, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 82}})
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 79}}
+                  )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 76}} )
+
+            , react.createElement(Route, { exact: true, path: "/~publish/new/post",
+              render:  (props) => {
+                return (
+                  react.createElement(Skeleton, {
+                    ...this.state,
+                    children: 
+                      react.createElement(NewPost, { api: api$1, ...this.state, ...props, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 94}})
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 91}}
+                  )
+                );
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 88}} )
 
             , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog",
               render:  (props) => {
                 return (
-                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 65}}
-                    , react.createElement(Blog, {
-                      blogId :  props.match.params.blog,
-                      ship :  props.match.params.ship.slice(1),
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 66}}
-                    )
+                  react.createElement(Skeleton, {
+                    ...this.state,
+                    children: 
+                      react.createElement(Blog, {
+                        blogId :  props.match.params.blog,
+                        ship :  props.match.params.ship.slice(1),
+                        api :  api$1,
+                        ...this.state, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 106}}
+                      )
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 103}}
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 62}} )
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 100}} )
 
             , react.createElement(Route, { exact: true, path: "/~publish/:ship/:blog/:post",
               render:  (props) => {
                 return (
-                  react.createElement('div', { className: "fl w-100" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 78}}
-                    , react.createElement(Post, {
-                      blogId :  props.match.params.blog,
-                      postId :  props.match.params.post,
-                      ship :  props.match.params.ship.slice(1),
-                      ...this.state, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 79}}
-                    )
+                  react.createElement(Skeleton, {
+                    ...this.state,
+                    children: 
+                      react.createElement(Post, {
+                        blogId :  props.match.params.blog,
+                        postId :  props.match.params.post,
+                        ship :  props.match.params.ship.slice(1),
+                        api :  api$1,
+                        ...this.state, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 123}}
+                      )
+                    , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 120}}
                   )
                 );
-             }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 75}} )
-
+             }, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 117}} )
           )
         )
       );
@@ -57781,49 +58777,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   class Subscription {
     start() {
-      if (api.authTokens) {
-        console.log("subscription.start", window.injectedState);
-        this.initializeLandscape();
-        this.setCleanupTasks();
+      if (api$1.authTokens) {
+        this.initializePublish();
       } else {
         console.error("~~~ ERROR: Must set api.authTokens before operation ~~~");
       }
     }
 
-    setCleanupTasks() {
-      window.addEventListener("beforeunload", e => {
-        api.bindPaths.forEach(p => {
-          this.wipeSubscription(p);
-        });
-      });
-    }
-
-    wipeSubscription(path) {
-      api.hall({
-        wipe: {
-          sub: [{
-            hos: api.authTokens.ship,
-            pax: path
-          }]
-        }
-      });
-    }
-
-
-    initializeLandscape() {
-      api.bind(`/primary`, "PUT", api.authTokens.ship, 'write',
+    initializePublish() {
+      api$1.bind(`/primary`, "PUT", api$1.authTokens.ship, 'write',
         this.handleEvent.bind(this),
         this.handleError.bind(this));
     }
 
     handleEvent(diff) {
-      console.log("subscription.handleEvent", diff);
       store.handleEvent(diff);
     }
 
     handleError(err) {
       console.error(err);
-      api.bind(`/primary`, "PUT", api.authTokens.ship, 'write',
+      api$1.bind(`/primary`, "PUT", api$1.authTokens.ship, 'write',
         this.handleEvent.bind(this),
         this.handleError.bind(this));
     }
@@ -57831,7 +58804,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
   let subscription = new Subscription();
 
-  const _jsxFileName$a = "/Users/logan/Dev/interface/apps/publish/src/index.js";
+  const _jsxFileName$j = "/Users/isaac/urbit/projects/interface/apps/publish/src/index.js";
   console.log('app running');
 
   /*
@@ -57842,7 +58815,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     host    :    zod
   */
 
-  api.setAuthTokens({
+  api$1.setAuthTokens({
     ship: window.ship
   });
 
@@ -57852,7 +58825,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   window._ = lodash;
 
   reactDom.render((
-    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$a, lineNumber: 32}} )
+    react.createElement(Root, {__self: undefined, __source: {fileName: _jsxFileName$j, lineNumber: 32}} )
   ), document.querySelectorAll("#root")[0]);
 
 }));

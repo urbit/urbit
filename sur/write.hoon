@@ -15,6 +15,7 @@
       ==
   ::
       $:  %new-post 
+          who=@p
           coll=@tas
           name=@tas
           title=@t
@@ -23,7 +24,7 @@
           content=@t
       ==
   ::
-      [%new-comment coll=@tas post=@tas content=@t]
+      [%new-comment who=@p coll=@tas post=@tas content=@t]
   ::
       [%delete item-id]
   ::
@@ -36,6 +37,7 @@
       ==
   ::
       $:  %edit-post
+          who=@p
           coll=@tas
           name=@tas
           title=@t
@@ -102,7 +104,7 @@
 ::
 +$  collection
   $:  col=(each collection-info tang)
-      pos=(map @tas (each [post-info manx] tang))
+      pos=(map @tas (each [post-info manx @t] tang))
       com=(map @tas (each (list [comment-info manx]) tang))
       order=[pin=(list @tas) unpin=(list @tas)]
   ==
@@ -117,7 +119,7 @@
 ::
 +$  delta
   $%  [%collection who=@p col=@tas dat=(each collection-info tang)]
-      [%post who=@p col=@tas pos=@tas dat=(each [post-info manx] tang)]
+      [%post who=@p col=@tas pos=@tas dat=(each [post-info manx @t] tang)]
       [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info manx]) tang)]
       [%total who=@p col=@tas dat=collection]
   ==
