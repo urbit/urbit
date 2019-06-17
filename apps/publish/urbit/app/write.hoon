@@ -723,6 +723,10 @@
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
     ::
+    =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
+    ?~  pos
+      ~|  %editing-non-existent-post  !!
+    ::
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
       %-  my
@@ -731,9 +735,9 @@
           [%collection coll.act]
           [%filename name.act]
           [%comments com.act]
-          [%date-created (scot %da now.bol)]
+          [%date-created (scot %da date-created.u.pos)]
           [%last-modified (scot %da now.bol)]
-          [%pinned %false]
+          [%pinned ?:(pinned.u.pos %true %false)]
       ==
     ::  XX  set permissions
     ::  XX  add to set of builds
