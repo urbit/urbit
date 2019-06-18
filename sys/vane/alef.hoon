@@ -804,11 +804,11 @@
   =^  moves  ames-state
     =<  abet
     ?-  sign
-      [%b %wake *]  !!
+      [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%c %aver *]  (on-aver:event-core error.sign)
-      [%g %aver *]  (on-aver:event-core error.sign)
-      [%j %aver *]  (on-aver:event-core error.sign)
+      [%c %aver *]  (on-aver:event-core wire error.sign)
+      [%g %aver *]  (on-aver:event-core wire error.sign)
+      [%j %aver *]  (on-aver:event-core wire error.sign)
     ::
       [%c %buzz *]  (on-take-buzz:event-core wire message.sign)
       [%g %buzz *]  (on-take-buzz:event-core wire message.sign)
@@ -849,7 +849,7 @@
   ::
   ::
   ++  on-aver
-    |=  error=(unit error)
+    |=  [=wire error=(unit error)]
     ^+  event-core
     ::
     !!
@@ -1039,6 +1039,13 @@
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
     abet:(on-buzz:(make-peer-core peer-state channel) message)
+  ::  +on-take-wake: receive wakeup or error notification from behn
+  ::
+  ++  on-take-wake
+    |=  [=wire error=(unit tang)]
+    ^+  event-core
+    ::
+    !!
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
@@ -1131,14 +1138,14 @@
         |=  date=@da
         ^+  peer-core
         ::
-        =/  =wire  (pump-timer-wire her.channel bone)
+        =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %wait date)
       ::
       ++  process-rest
         |=  date=@da
         ^+  peer-core
         ::
-        =/  =wire  (pump-timer-wire her.channel bone)
+        =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %rest date)
       --
     ::  +run-message-still: process $message-still-task and its effects
@@ -1944,12 +1951,20 @@
   :+  (add 4 next-bone.ossuary)
     (~(put by by-duct.ossuary) duct next-bone.ossuary)
   (~(put by by-bone.ossuary) next-bone.ossuary duct)
+::  +make-pump-timer-wire: construct wire for |packet-pump timer
 ::
-::
-++  pump-timer-wire
+++  make-pump-timer-wire
   |=  [her=ship =bone]
   ^-  wire
   /pump/(scot %p her)/(scot %ud bone)
+::  +parse-pump-timer-wire: parse .her and .bone from |packet-pump wire
+::
+++  parse-pump-timer-wire
+  |=  =wire
+  ^-  [her=ship =bone]
+  ::
+  ?>  ?=([%pump @ @ ~] wire)
+  [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
 ::  +get-comet-sponsors: a comet's star and galaxy
 ::
 ++  get-comet-sponsors
