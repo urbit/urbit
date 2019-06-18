@@ -579,7 +579,7 @@
 ::    %rest: notify vane that peer (n)acked our message
 ::
 +$  gift
-  $%  [%east payload=*]
+  $%  [%east =message]
       [%send =lane =blob]
       [%rest error=(unit error)]
   ==
@@ -610,8 +610,15 @@
   $%  $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
+      $:  %c
+      $%  [%echo error=(unit error)]
+      ==  ==
+      $:  %g
+      $%  [%echo error=(unit error)]
+      ==  ==
       $:  %j
-      $%  [%pubs public:able:jael]
+      $%  [%echo error=(unit error)]
+          [%pubs public:able:jael]
           [%turf turf=(list turf)]
           [%vein =life vein=(map life ring)]
   ==  ==  ==
@@ -665,24 +672,21 @@
   ==
 ::  $message-still-task: job for |message-still
 ::
-::    %done: receive confirmation from vane of processing completion or
-::           failure with diagnostic
+::    %done: receive confirmation from vane of processing or failure
 ::    %hear: handle receiving a message fragment packet
 ::
 +$  message-still-task
-  $%  [%done error=(unit error)]
+  $%  [%done ok=?]
       [%hear =lane =shut-packet]
   ==
 ::  $message-still-gift: effect from |message-still
 ::
 ::    %hear-message: $message assembled from received packets, to be
 ::                   sent to a local vane for processing
-::    %naxplain: enqueue a naxplanation to be sent as message
 ::    %send-ack: emit an ack packet
 ::
 +$  message-still-gift
   $%  [%hear-message =message-num =message]
-      [%naxplain =message-num =error]
       [%send-ack =message-num =ack-meat]
   ==
 --
@@ -728,7 +732,21 @@
   |=  [=wire =duct type=* =sign]
   ^-  [(list move) _ames-gate]
   ::
-  !!
+  =/  event-core  (per-event [our eny now scry-gate] duct ames-state)
+  ::
+  =^  moves  ames-state
+    =<  abet
+    ?-  sign
+      [%b %wake *]  !!
+      [%c %echo *]  (on-echo:event-core error.sign)
+      [%g %echo *]  (on-echo:event-core error.sign)
+      [%j %echo *]  (on-echo:event-core error.sign)
+      [%j %pubs *]  !!
+      [%j %turf *]  !!
+      [%j %vein *]  !!
+    ==
+  ::
+  [moves ames-gate]
 ::  +stay: extract state before reload
 ::
 ++  stay  ames-state
@@ -755,6 +773,13 @@
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
+  ::
+  ::
+  ++  on-echo
+    |=  error=(unit error)
+    ^+  event-core
+    ::
+    !!
   ::
   ::
   ++  on-hear
@@ -992,23 +1017,14 @@
         ::  positive ack gets emitted trivially
         ::
         ?:  ok
-          (emit client-duct %give %rest ~)
-        ::  nack; look up naxplanation or enqueue
+          (emit client-duct %give %rest error=~)
+        ::  nack; enqueue, pending naxplanation message
         ::
         =/  nax-key  [bone message-num]
+        ?<  (~(has by nax.peer-state) nax-key)
+        =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
         ::
-        ?~  naxplanation=(~(get by nax.peer-state) nax-key)
-          ::  no naxplanation yet; enqueue
-          ::
-          =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
-          peer-core
-        ::  |message-pump should never emit duplicate message acks
-        ::
-        ?>  ?=(^ u.naxplanation)
-        ::  we have both nack packet and naxplanation; unqueue and emit
-        ::
-        =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
-        (emit client-duct %give %rest u.naxplanation)
+        peer-core
       ::
       ++  process-send
         |=  =static-fragment
@@ -1059,60 +1075,62 @@
       =.  peer-core
         ?-    -.gift
             %hear-message
-          =/  =path  path.message.gift
-          ?>  ?=([@ *] path)
-          ?>  ?=(?(%a %c %g %j) i.path)
+          =/  msg-path=path  path.message.gift
+          ?>  ?=([?(%a %c %g %j) *] msg-path)
+          ::  odd .bone; "request" message to pass to vane before acking
           ::
-          ?:  =(0 (end 0 1 bone))
-            ::  even bone means backward flow; ack automatically
-            ::
-            %-  send-shut-packet  :*
-              our-life.channel
-              her-life.channel
-              bone
-              message-num.gift
-              %|  %|  ok=%.y  lag=`@dr`0
+          ?:  =(1 (end 0 1 bone))
+            =/  =wire  msg-path
+            ?-  i.msg-path
+              %a  ~|  %pass-to-ames^her.channel  !!
+              %c  (emit duct %pass wire %c %west her.channel message.gift)
+              %g  (emit duct %pass wire %g %west her.channel message.gift)
+              %j  (emit duct %pass wire %j %west her.channel message.gift)
             ==
-          ::  if it's for ames, it's a naxplanation
+          ::  even bone means backward flow; ack automatically
           ::
-          ?:  ?=(%a i.path)
-            ?>  =(`^path`/a/nax `^path`path)
-            ?>  =(bone 0)
-            =/  =naxplanation  ;;(naxplanation payload.message.gift)
-            =/  nax-key        [bone message-num]:naxplanation
-            ::  TODO WRONG: rethink control flow w.r.t %done and %naxplain
-            ::
-            ?~  existing=(~(get by nax.peer-state) nax-key)
-              ::  no nack packet has been received; enqueue
-              ::
-              =.  nax.peer-state
-                (~(put by nax.peer-state) nax-key `error.naxplanation)
-              ::
-              peer-core
-            ::  |message-still should never emit duplicate naxplanations
-            ::
-            ?>  ?=(~ u.existing)
-            ::  we have both nack packet and naxplanation; unqueue and emit
-            ::
-            =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
-            ::
-            =/  client-duct
-              (~(got by by-bone.ossuary.peer-state) bone.naxplanation)
-            ::
-            (emit client-duct %give %rest `error.naxplanation)
-          ::  message is for some other vane; relay it
+          ::    Only messages from forward flows can be nacked.
+          ::    Note: reentrant.
           ::
-          =/  =wire  path
-          ?-  i.path
-            %c  (emit duct %pass wire %c %west her.channel message.gift)
-            %g  (emit duct %pass wire %g %west her.channel message.gift)
-            %j  (emit duct %pass wire %j %west her.channel message.gift)
-          ==
-        ::
-            %naxplain
-          =/  =naxplanation  [bone [message-num error]:gift]
+          =.  peer-core  (run-message-still bone %done ok=%.y)
+          ::  is .bone a naxplanation flow? check the second bit
           ::
-          (run-message-pump bone=0 %send /a/nax naxplanation)
+          ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+            ::  not a naxplanation; give message to local "subscriber" vane
+            ::
+            =/  client-duct  (~(got by by-bone.ossuary.peer-state) bone)
+            ::
+            (emit client-duct %give %east message.gift)
+          ::  .bone is a naxplanation; validate message
+          ::
+          ?>  =(/a/nax `path`msg-path)
+          =+  ;;  [=message-num =error]  payload.message.gift
+          ::  flip .bone's second bit to find referenced flow
+          ::
+          =/  target-bone=^bone  (mix 0b10 bone)
+          =/  nax-key  [target-bone message-num]
+          ::  if we haven't heard a message nack, pretend we have
+          ::
+          ::    The naxplanation message counts as a valid message
+          ::    nack on the original failed message.
+          ::
+          ::    This prevents us from having to wait for a message
+          ::    nack packet, which would mean we couldn't immediately
+          ::    ack the naxplanation message, which would in turn
+          ::    violate the semantics of backward flows.
+          ::
+          =?  peer-core  !(~(has by nax.peer-state) nax-key)
+            %-  run-message-pump
+            [target-bone %hear-ack message-num %| ok=%.n lag=`@dr`0]
+          ::  clear the nack from our state and relay to vane
+          ::
+          =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
+          ::
+          =/  target-duct
+            (~(got by by-bone.ossuary.peer-state) target-bone)
+          ::  TODO: rename %rest move and other moves
+          ::
+          (emit target-duct %give %rest `error)
         ::
             %send-ack
           %-  send-shut-packet  :*
@@ -1678,7 +1696,7 @@
     =-  [(flop gifts) state]
     ::
     ?-  -.task
-      %done  (on-done error.task)
+      %done  (on-done ok.task)
       %hear  (on-hear [lane shut-packet]:task)
     ==
   ::  +on-hear: receive message fragment, possibly completing message
@@ -1794,19 +1812,14 @@
   ::  +on-done: handle confirmation of message processing from vane
   ::
   ++  on-done
-    |=  error=(unit error)
+    |=  ok=?
     ^+  message-still
     ::
     =^  pending  pending-vane-ack.state  ~(get to pending-vane-ack.state)
     =.  last-acked.state                 +(last-acked.state)
     =/  =message-num                     message-num.p.pending
     ::
-    ?~  error
-      (give %send-ack message-num %| ok=%.y lag=`@dr`0)
-    ::
-    =.  message-still
-      (give %send-ack message-num %| ok=%.n lag=`@dr`0)
-    (give %naxplain message-num u.error)
+    (give %send-ack message-num %| ok lag=`@dr`0)
   --
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
