@@ -810,9 +810,9 @@
       [%g %aver *]  (on-aver:event-core error.sign)
       [%j %aver *]  (on-aver:event-core error.sign)
     ::
-      [%c %buzz *]  !!
-      [%g %buzz *]  !!
-      [%j %buzz *]  !!
+      [%c %buzz *]  (on-take-buzz:event-core wire message.sign)
+      [%g %buzz *]  (on-take-buzz:event-core wire message.sign)
+      [%j %buzz *]  (on-take-buzz:event-core wire message.sign)
     ::
       [%j %pubs *]  !!
       [%j %turf *]  !!
@@ -1015,6 +1015,15 @@
       (emit duct %pass /alien %j %pubs ship)
     ::
     event-core
+  ::  +on-take-buzz: receive request to give message to peer
+  ::
+  ++  on-take-buzz
+    |=  [=wire =message]
+    ^+  event-core
+    ::
+    =/  =ship  ?>(?=([@ *] wire) `@p`(slav %p i.wire))
+    ::
+    (on-buzz ship message)
   ::  +on-buzz: handle request to send message
   ::
   ++  on-buzz
