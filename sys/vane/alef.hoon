@@ -404,10 +404,13 @@
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
-::    The first bone is 2, since bone 0 is reserved for nack-traces.
+::    The first bone is 0. They increment by 4, since each flow includes
+::    a bit for each message determining forward vs. backward and a
+::    second bit for whether the message is on the normal flow or the
+::    associated diagnostic flow (for nack-traces).
 ::
 +$  ossuary
-  $:  next-bone=_`bone`2
+  $:  =next=bone
       by-duct=(map duct bone)
       by-bone=(map bone duct)
   ==
@@ -1929,7 +1932,7 @@
     [u.existing ossuary]
   ::
   :-  next-bone.ossuary
-  :+  (add 2 next-bone.ossuary)
+  :+  (add 4 next-bone.ossuary)
     (~(put by by-duct.ossuary) duct next-bone.ossuary)
   (~(put by by-bone.ossuary) next-bone.ossuary duct)
 ::
