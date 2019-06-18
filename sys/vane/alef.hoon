@@ -400,7 +400,7 @@
       =ossuary
       snd=(map bone message-pump-state)
       rcv=(map bone message-still-state)
-      nax=(map [=bone =message-num] (unit error))
+      nax=(set [=bone =message-num])
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
@@ -1097,8 +1097,8 @@
         ::    heard the nack-trace, that should have cleared this
         ::    message from the pump.
         ::
-        ?<  (~(has by nax.peer-state) nax-key)
-        =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
+        ?<  (~(has in nax.peer-state) nax-key)
+        =.  nax.peer-state  (~(put in nax.peer-state) nax-key)
         ::
         peer-core
       ::
@@ -1195,12 +1195,12 @@
           ::    nack-trace message, which would in turn violate the
           ::    semantics of backward flows.
           ::
-          =?  peer-core  !(~(has by nax.peer-state) nax-key)
+          =?  peer-core  !(~(has in nax.peer-state) nax-key)
             %-  run-message-pump
             [target-bone %hear-ack message-num %| ok=%.n lag=`@dr`0]
           ::  clear the nack from our state and relay to vane
           ::
-          =.  nax.peer-state  (~(del by nax.peer-state) nax-key)
+          =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
           ::
           =/  target-duct
             (~(got by by-bone.ossuary.peer-state) target-bone)

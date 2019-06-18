@@ -203,7 +203,7 @@
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
-        *(map [bone:alef message-num:alef] (unit error:alef))
+        *(set [bone:alef message-num:alef])
     ==
   ::
   =.  life.ames-state.bob  3
@@ -220,7 +220,7 @@
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
-        *(map [bone:alef message-num:alef] (unit error:alef))
+        *(set [bone:alef message-num:alef])
     ==
   ::
   =/  alice-core  (alice ~nec 0xdead.beef ~2222.2.2 *sley)
