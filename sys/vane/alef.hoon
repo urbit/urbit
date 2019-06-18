@@ -1270,31 +1270,35 @@
   |%
   ++  message-pump  .
   ++  give  |=(gift=message-pump-gift message-pump(gifts [gift gifts]))
-  ++  packet-pump
-    (make-packet-pump packet-pump-state.state channel)
+  ++  packet-pump  (make-packet-pump packet-pump-state.state channel)
   ::  +work: handle a $message-pump-task
   ::
   ++  work
     |=  task=message-pump-task
     ^+  [gifts state]
     ::
-    =~  ?-  -.task
-            %hear-ack
-          ?-  -.ack-meat.task
-              %&
-            (on-hear-fragment-ack [message-num fragment-num=p.ack-meat]:task)
-          ::
-              %|
-            (on-hear-message-ack [message-num [ok lag]:p.ack-meat]:task)
-          ==
-        ::
-            %send  (on-send message.task)
-            %wake  (run-packet-pump task)
-        ==
+    =~  (dispatch-task task)
         feed-packets
         (run-packet-pump %finalize ~)
         [(flop gifts) state]
     ==
+  ::  +dispatch-task: perform task-specific processing
+  ::
+  ++  dispatch-task
+    |=  task=message-pump-task
+    ^+  message-pump
+    ::
+    ?-  -.task
+      %send  (on-send message.task)
+      %wake  (run-packet-pump task)
+      %hear-ack
+        ?-  -.ack-meat.task
+          %&  %-  on-hear-fragment-ack
+              [message-num fragment-num=p.ack-meat]:task
+        ::
+          %|  %-  on-hear-message-ack
+              [message-num [ok lag]:p.ack-meat]:task
+    ==  ==
   ::  +on-send: handle request to send a message
   ::
   ++  on-send
