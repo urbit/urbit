@@ -227,7 +227,7 @@
   ::
   =/  res1
     %-  call:alice-core
-    [~[/alice] *type %west ~doznec-doznec /g/talk [%first %post]]
+    [~[/alice] *type %buzz ~doznec-doznec /g/talk [%first %post]]
   ::
   ~&  res1=-.res1
   ::

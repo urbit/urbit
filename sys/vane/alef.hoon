@@ -342,9 +342,6 @@
 ::    always zero.
 ::
 +$  ack-meat  (each fragment-num [ok=? lag=@dr])
-::  $naxplanation: reason for message failure, including metadata
-::
-+$  naxplanation  [=bone =message-num =error]
 ::
 +|  %statics
 ::
@@ -382,12 +379,12 @@
 ::    rcv: per-bone message stills to assemble messages from fragments
 ::    nax: unprocessed nacks (negative acknowledgments)
 ::         Each value is ~ when we've received the ack packet but not a
-::         naxplanation, or an error when we've received a naxplanation
-::         but not the ack packet.
+::         nack-trace, or an error when we've received a nack-trace but
+::         not the ack packet.
 ::
 ::         When we hear a nack packet or an explanation, if there's no
 ::         entry in .nax, we make a new entry. Otherwise, if this new
-::         information completes the packet+naxplanation, we remove the
+::         information completes the packet+nack-trace, we remove the
 ::         entry and emit a nack to the local vane that asked us to send
 ::         the message.
 ::
@@ -407,7 +404,7 @@
   ==
 ::  $ossuary: bone<->duct bijection and .next-bone to map to a duct
 ::
-::    The first bone is 2, since bone 0 is reserved for naxplanations.
+::    The first bone is 2, since bone 0 is reserved for nack-traces.
 ::
 +$  ossuary
   $:  next-bone=_`bone`2
@@ -559,7 +556,7 @@
 ::    %sunk: a ship breached and has a new .rift
 ::    %vega: kernel reload notification
 ::    %wegh: request for memory usage report
-::    %west: request to send message
+::    %buzz: request to send message
 ::
 +$  task
   $%  [%born ~]
@@ -570,22 +567,79 @@
       [%sunk =ship =rift]
       [%vega ~]
       [%wegh ~]
-      [%west =ship =message]
+      [%buzz =ship =message]
   ==
 ::  $gift: effect from ames
 ::
-::    %east: message to vane from peer
+::    Ames extends Arvo's %pass/%give move semantics across the network.
+::
+::    A "forward flow" message, which is like a request, is passed to
+::    Ames from a local vane.  Ames transmits the message to the peer's
+::    Ames, which passes the message to the destination vane.
+::
+::    Once the peer has processed the "forward flow" message, it sends a
+::    message acknowledgment over the wire back to the local Ames.  This
+::    ack can either be positive or negative, in which case we call it a
+::    "nack".  (Don't confuse Ames nacks with TCP nacks, which are a
+::    different concept).
+::
+::    When the local Ames receives either a positive message ack or a
+::    combination of a nack and nack-trace (explained in more detail
+::    below), it gives an %aver move to the local vane that had
+::    requested the original "forward flow" message be sent.
+::
+::    A "backward flow" message, which is similar to a response or a
+::    subscription update, is given to Ames from a local vane.  Ames
+::    transmits the message to the peer's Ames, which gives the message
+::    to the destination vane.
+::
+::    Ames will give a %buzz to a vane upon hearing the message from a
+::    remote. This message is a "backward flow" message, forming one of
+::    potentially many responses to a "forward flow" message that a
+::    local vane had passed to our local Ames, and which local Ames had
+::    relayed to the remote.  Ames gives the %buzz on the same duct the
+::    local vane had originally used to pass Ames the "forward flow"
+::    message.
+::
+::    Backward flow messages are acked automatically by the receiver.
+::    They cannot be nacked, and Ames only uses the ack internally,
+::    without notifying the client vane.
+::
+::    Forward flow messages can be nacked, in which case the peer will
+::    send both a message-nack packet and a nack-trace message, which is
+::    sent on a special diagnostic flow so as not to interfere with
+::    normal operation.  The nack-trace is sent as a full Ames message,
+::    instead of just a packet, because the contained error information
+::    can be arbitrarily large.
+::
+::    Once the local Ames has received the nack-trace, it knows the peer
+::    has received the full message and failed to process it.  This
+::    means if we later hear an ack packet on the failed message, we can
+::    ignore it.
+::
+::    Also, due to Ames's exactly-once delivery semantics, we know that
+::    when we receive a nack-trace for message n, we know the peer has
+::    positively acked all messages m+1 through n-1, where m is the last
+::    message for which we heard a nack-trace.  If we haven't heard acks
+::    on all those messages, we apply positive acks when we hear the
+::    nack-trace.
+::
+::    %buzz: message to vane from peer
 ::    %send: packet to unix
-::    %rest: notify vane that peer (n)acked our message
+::    %aver: notify vane that peer (n)acked our message
 ::
 +$  gift
-  $%  [%east =message]
+  $%  [%buzz =message]
       [%send =lane =blob]
-      [%rest error=(unit error)]
+      [%aver error=(unit error)]
   ==
 ::  $note: request to other vane
 ::
 ::    TODO: specialize gall interface for subscription management
+::
+::    Ames passes a %buzz note to another vane when it receives a
+::    message on a "forward flow" from a peer, originally passed from
+::    one of the peer's vanes to the peer's Ames.
 ::
 +$  note
   $%  $:  %b
@@ -593,31 +647,41 @@
           [%rest date=@da]
       ==  ==
       $:  %c
-      $%  [%west =ship =message]
+      $%  [%buzz =ship =message]
       ==  ==
       $:  %g
-      $%  [%west =ship =message]
+      $%  [%buzz =ship =message]
       ==  ==
       $:  %j
-      $%  [%pubs =ship]
+      $%  [%buzz =ship =message]
+          [%pubs =ship]
           [%turf ~]
-          [%west =ship =message]
           [%vein ~]
   ==  ==  ==
 ::  $sign: response from other vane
+::
+::    A vane gives a %buzz sign to Ames on a duct on which it had
+::    previously received a message on a "forward flow".  Ames will
+::    transmit the message to the peer that had originally sent the
+::    message on the forward flow.  The peer's Ames will then give the
+::    message to the remote vane from which the forward flow message
+::    originated.
 ::
 +$  sign
   $%  $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
       $:  %c
-      $%  [%echo error=(unit error)]
+      $%  [%aver error=(unit error)]
+          [%buzz =message]
       ==  ==
       $:  %g
-      $%  [%echo error=(unit error)]
+      $%  [%aver error=(unit error)]
+          [%buzz =message]
       ==  ==
       $:  %j
-      $%  [%echo error=(unit error)]
+      $%  [%aver error=(unit error)]
+          [%buzz =message]
           [%pubs public:able:jael]
           [%turf turf=(list turf)]
           [%vein =life vein=(map life ring)]
@@ -722,7 +786,7 @@
       %sunk  !!
       %vega  !!
       %wegh  !!
-      %west  (on-west:event-core [ship message]:task)
+      %buzz  (on-buzz:event-core [ship message]:task)
     ==
   ::
   [moves ames-gate]
@@ -738,9 +802,15 @@
     =<  abet
     ?-  sign
       [%b %wake *]  !!
-      [%c %echo *]  (on-echo:event-core error.sign)
-      [%g %echo *]  (on-echo:event-core error.sign)
-      [%j %echo *]  (on-echo:event-core error.sign)
+    ::
+      [%c %aver *]  (on-aver:event-core error.sign)
+      [%g %aver *]  (on-aver:event-core error.sign)
+      [%j %aver *]  (on-aver:event-core error.sign)
+    ::
+      [%c %buzz *]  !!
+      [%g %buzz *]  !!
+      [%j %buzz *]  !!
+    ::
       [%j %pubs *]  !!
       [%j %turf *]  !!
       [%j %vein *]  !!
@@ -775,7 +845,7 @@
   ++  emit  |=(=move event-core(moves [move moves]))
   ::
   ::
-  ++  on-echo
+  ++  on-aver
     |=  error=(unit error)
     ^+  event-core
     ::
@@ -942,9 +1012,9 @@
       (emit duct %pass /alien %j %pubs ship)
     ::
     event-core
-  ::  +on-west: handle request to send message
+  ::  +on-buzz: handle request to send message
   ::
-  ++  on-west
+  ++  on-buzz
     |=  [=ship =message]
     ^+  event-core
     ::
@@ -956,7 +1026,7 @@
     =/  =peer-state  +.u.rcvr-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
-    abet:(on-west:(make-peer-core peer-state channel) message)
+    abet:(on-buzz:(make-peer-core peer-state channel) message)
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
@@ -1017,10 +1087,16 @@
         ::  positive ack gets emitted trivially
         ::
         ?:  ok
-          (emit client-duct %give %rest error=~)
-        ::  nack; enqueue, pending naxplanation message
+          (emit client-duct %give %aver error=~)
+        ::  nack; enqueue, pending nack-trace message
         ::
         =/  nax-key  [bone message-num]
+        ::  sanity check
+        ::
+        ::    The pump must never emit duplicate acks, and if we've
+        ::    heard the nack-trace, that should have cleared this
+        ::    message from the pump.
+        ::
         ?<  (~(has by nax.peer-state) nax-key)
         =.  nax.peer-state  (~(put by nax.peer-state) nax-key ~)
         ::
@@ -1083,9 +1159,9 @@
             =/  =wire  msg-path
             ?-  i.msg-path
               %a  ~|  %pass-to-ames^her.channel  !!
-              %c  (emit duct %pass wire %c %west her.channel message.gift)
-              %g  (emit duct %pass wire %g %west her.channel message.gift)
-              %j  (emit duct %pass wire %j %west her.channel message.gift)
+              %c  (emit duct %pass wire %c %buzz her.channel message.gift)
+              %g  (emit duct %pass wire %g %buzz her.channel message.gift)
+              %j  (emit duct %pass wire %j %buzz her.channel message.gift)
             ==
           ::  even bone means backward flow; ack automatically
           ::
@@ -1093,15 +1169,15 @@
           ::    Note: reentrant.
           ::
           =.  peer-core  (run-message-still bone %done ok=%.y)
-          ::  is .bone a naxplanation flow? check the second bit
+          ::  is .bone a nack-trace flow? check the second bit
           ::
           ?:  =(0 (end 0 1 (rsh 0 1 bone)))
-            ::  not a naxplanation; give message to local "subscriber" vane
+            ::  not a nack-trace; give message to local "subscriber" vane
             ::
             =/  client-duct  (~(got by by-bone.ossuary.peer-state) bone)
             ::
-            (emit client-duct %give %east message.gift)
-          ::  .bone is a naxplanation; validate message
+            (emit client-duct %give %buzz message.gift)
+          ::  .bone is a nack-trace; validate message
           ::
           ?>  =(/a/nax `path`msg-path)
           =+  ;;  [=message-num =error]  payload.message.gift
@@ -1111,13 +1187,13 @@
           =/  nax-key  [target-bone message-num]
           ::  if we haven't heard a message nack, pretend we have
           ::
-          ::    The naxplanation message counts as a valid message
-          ::    nack on the original failed message.
+          ::    The nack-trace message counts as a valid message nack on
+          ::    the original failed message.
           ::
-          ::    This prevents us from having to wait for a message
-          ::    nack packet, which would mean we couldn't immediately
-          ::    ack the naxplanation message, which would in turn
-          ::    violate the semantics of backward flows.
+          ::    This prevents us from having to wait for a message nack
+          ::    packet, which would mean we couldn't immediately ack the
+          ::    nack-trace message, which would in turn violate the
+          ::    semantics of backward flows.
           ::
           =?  peer-core  !(~(has by nax.peer-state) nax-key)
             %-  run-message-pump
@@ -1128,9 +1204,8 @@
           ::
           =/  target-duct
             (~(got by by-bone.ossuary.peer-state) target-bone)
-          ::  TODO: rename %rest move and other moves
           ::
-          (emit target-duct %give %rest `error)
+          (emit target-duct %give %aver `error)
         ::
             %send-ack
           %-  send-shut-packet  :*
@@ -1142,9 +1217,9 @@
           ==
         ==
       $(still-gifts t.still-gifts)
-    ::  +on-west: handle request to send message
+    ::  +on-buzz: handle request to send message
     ::
-    ++  on-west
+    ++  on-buzz
       |=  =message
       ^+  peer-core
       ::
