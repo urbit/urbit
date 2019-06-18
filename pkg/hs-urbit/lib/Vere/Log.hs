@@ -21,6 +21,7 @@ import Data.Void
 import Database.LMDB.Raw
 import Foreign.Ptr
 import Foreign.Marshal.Alloc
+import Vere
 import Vere.Pier.Types
 
 import Control.Lens     ((^.))
@@ -34,7 +35,7 @@ import qualified Data.Vector.Mutable    as MV
 --------------------------------------------------------------------------------
 
 -- TODO: Handle throws on the async
-init :: FilePath -> TQueue (Writ [Effect]) -> (Writ [Effect] -> STM ())
+init :: FilePath -> TQueue (Writ [Eff]) -> (Writ [Eff] -> STM ())
      -> IO LogState
 init dir inp cb = do
   env <- mdb_env_create
@@ -130,8 +131,8 @@ withWordPtr w cb = do
 -- TODO: We need to be able to send back an exception to the main thread on an
 -- exception on the persistence thread.
 persistThread :: MDB_env
-              -> TQueue (Writ [Effect])
-              -> (Writ [Effect] -> STM ())
+              -> TQueue (Writ [Eff])
+              -> (Writ [Eff] -> STM ())
               -> IO (Async ())
 persistThread env inputQueue onPersist = asyncBound $
   forever do

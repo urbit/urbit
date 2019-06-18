@@ -26,10 +26,6 @@ data Worker = Worker
   , recvHandle :: Handle
   , process    :: ProcessHandle
 
-  , identity   :: LogIdentity
-  -- TODO: This shouldn't be here.
-  , wLogState  :: LogState
-
   -- , getInput   :: STM (Writ ())
   -- , onComputed :: Writ [Effect] -> STM ()
 
@@ -43,11 +39,11 @@ data Worker = Worker
 
 -- Think about how to handle process exit
 -- Tear down subprocess on exit? (terminiteProcess)
-start :: LogIdentity -> LogState -> IO Worker
-start id s =
+startWorkerProcess :: IO Worker
+startWorkerProcess =
   do
     (Just i, Just o, _, p) <- createProcess pSpec
-    pure (Worker i o p id s)
+    pure (Worker i o p)
   where
     pSpec =
       (proc "urbit-worker" []) { std_in  = CreatePipe
@@ -124,7 +120,8 @@ data WorkerExn
     | BadPleaNoun Noun
     | ReplacedEventDuringReplay EventId ReplacementEv
     | WorkerConnectionClosed
-    | UnexpectedInitialPlea Plea
+    | UnexpectedPleaOnNewShip Plea
+    | InvalidInitialPlea Plea
   deriving (Show)
 
 instance Exception WorkerExn
@@ -167,18 +164,21 @@ sendAndRecv w eventId event =
       Stdr _ cord  -> print cord >> loop
       Slog _ pri t -> printTank pri t >> loop
 
-sendBootEvent :: Worker -> IO ()
-sendBootEvent w = do
-  sendAtom w $ jam $ toNoun (Cord "boot", (identity w))
+sendBootEvent :: LogIdentity -> Worker -> IO ()
+sendBootEvent id w = do
+  sendAtom w $ jam $ toNoun (Cord "boot", id)
 
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
-replay :: Worker -> WorkerState -> EventId
+replay :: Worker
+       -> WorkerState
+       -> LogIdentity
+       -> EventId
        -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
        -> IO ()
-replay w (wid, wmug) lastCommitedId getEvents = do
-  when (wid == 1) (sendBootEvent w)
+replay w (wid, wmug) identity lastCommitedId getEvents = do
+  when (wid == 1) (sendBootEvent identity w)
 
   loop wid
   where
@@ -195,25 +195,44 @@ replay w (wid, wmug) lastCommitedId getEvents = do
 
         loop (curEvent + toRead)
 
-startPier :: Worker -> IO (EventId)
-startPier w =
+
+bootWorker :: Worker
+           -> LogIdentity
+           -> Pill
+           -> IO ()
+bootWorker w identity pill =
+  do
+    recvPlea w >>= \case
+      Play Nil   -> pure ()
+      x@(Play _) -> throwIO (UnexpectedPleaOnNewShip x)
+      x          -> throwIO (InvalidInitialPlea x)
+
+    -- TODO: actually boot the pill
+    undefined
+
+    requestSnapshot w
+
+    -- Maybe return the current event id ? But we'll have to figure that out
+    -- later.
+    pure ()
+
+resumeWorker :: Worker
+             -> LogIdentity
+             -> EventId
+             -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
+             -> IO ()
+resumeWorker w identity logLatestEventNumber eventFetcher =
   do
     ws@(eventId, mug) <- recvPlea w >>= \case
       Play Nil                -> pure (1, Mug 0)
       Play (NotNil (e, m, _)) -> pure (e, m)
-      x                       -> throwIO (UnexpectedInitialPlea x)
+      x                       -> throwIO (InvalidInitialPlea x)
 
-    logLatestEventNumber <- Log.latestEventNumber (wLogState w)
-
-    when (logLatestEventNumber == 0) $ do
-      -- todo: boot. we need a pill.
-      undefined
-
-    replay w ws logLatestEventNumber (Log.readEvents (wLogState w))
+    replay w ws identity logLatestEventNumber eventFetcher
 
     requestSnapshot w
 
-    pure (logLatestEventNumber)
+    pure ()
 
 workerThread :: Worker -> IO (Async ())
 workerThread w = undefined

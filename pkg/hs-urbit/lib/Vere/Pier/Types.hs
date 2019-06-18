@@ -7,8 +7,8 @@ import Data.Noun.Atom
 import Data.Noun.Poet
 import Database.LMDB.Raw
 import Urbit.Time
+import Vere
 
-data Effect
 newtype Ovum = Ovum Void
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
@@ -25,10 +25,12 @@ data Writ a = Writ
   }
 
 data Pier = Pier
-  { computeQueue :: TQueue (Writ Word)
-  , persistQueue :: TQueue (Writ [Effect])
-  , releaseQueue :: TQueue (Writ [Effect])
+  { computeQueue :: TQueue Noun
+  , persistQueue :: TQueue (Writ [Eff])
+  , releaseQueue :: TQueue (Writ [Eff])
   , logState :: LogState
+  , driverThreads :: [(Async (), Perform)]
+  , portingThread :: Async ()
   }
 
 -- TODO: We are uncertain about q's type. There's some serious entanglement
@@ -36,8 +38,8 @@ data Pier = Pier
 -- away with anything less than passing the full u3_writ around.
 data LogState = LogState
   { env        :: MDB_env
-  , inputQueue :: TQueue (Writ [Effect])
-  , onPersist  :: Writ [Effect] -> STM ()
+  , inputQueue :: TQueue (Writ [Eff])
+  , onPersist  :: Writ [Eff] -> STM ()
   , writer     :: Async ()
   }
 
