@@ -31,7 +31,7 @@
 ::
 ++  body
   |%
-  +$  acct  [id=@t wen=@t sas=@t]
+  +$  acct  [wen=@t sas=@t]
   ::
   +$  order
     $:  exp=@t
@@ -82,7 +82,7 @@
     ^-  $-(json acct:body)
     ::  ignoring key, contact, initialIp
     ::
-    (ot 'id'^no 'createdAt'^json-date 'status'^so ~)
+    (ot 'createdAt'^json-date 'status'^so ~)
   ::  +order: parse certificate order
   ::
   ++  order
