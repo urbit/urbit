@@ -1127,11 +1127,19 @@
       ++  process-ack-message
         |=  [=message-num ok=?]
         ^+  peer-core
-        ::  is this bone a nack-trace bone?
+        ::  if even bone, ack is on "subscription update" message; no-op
+        ::
+        ?:  =(0 (end 0 1 bone))
+          peer-core
+        ::  odd bone; is this bone a nack-trace bone?
         ::
         ?:  =(1 (end 0 1 (rsh 0 1 bone)))
-          !!
-        ::  positive ack gets emitted trivially
+          ::  nack-trace bone; assume .ok, clear nack from |message-still
+          ::
+          =/  target-bone=^bone  (mix 0b10 bone)
+          ::
+          (run-message-still target-bone %forget-nack message-num)
+        ::  not a nack-trace bone; positive ack gets emitted trivially
         ::
         ?:  ok
           (emit client-duct %give %aver error=~)
