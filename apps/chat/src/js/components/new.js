@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { uuid } from '/lib/util';
 
 
 export class NewScreen extends Component {

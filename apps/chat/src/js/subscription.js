@@ -18,6 +18,17 @@ export class Subscription {
     api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
+
+    /*window.addEventListener('beforeunload', (event) => {
+      // Cancel the event as stated by the standard.
+      event.preventDefault();
+      // Chrome requires returnValue to be set.
+      event.returnValue = '';
+
+      if (window.subscriptionId) {
+        window.urb.unsubscribe(window.subscriptionId);
+      }
+    });*/
   }
 
   fetchMessages(circle, start, end) {

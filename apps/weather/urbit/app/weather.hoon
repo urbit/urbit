@@ -26,7 +26,7 @@
       [%wait wire @da]
   ==
 +$  poke
-  $%  [%noun [@tas path]]
+  $%  [%noun [@tas path @t]]
   ==
 +$  state
   $%  [%0 data=json time=@da location=@t timer=(unit @da)]
@@ -45,10 +45,11 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  =/  lismov/(list move)  %+  weld
-    `(list move)`[ost.bol %connect / [~ /'~weather'] %weather]~
-    `(list move)`[ost.bol %poke /weather [our.bol %launch] [%noun [%weather /weathertile]]]~
-  :-  lismov
+  :-
+  :~
+    [ost.bol %connect / [~ /'~weather'] %weather]
+    [ost.bol %poke /weather [our.bol %launch] [%noun [%weather /weathertile '/~weather/js/tile.js']]]
+  ==
   ?~  old
     this
   %=  this
