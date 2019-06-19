@@ -36,8 +36,7 @@ export class PathControl extends Component {
     ];
 
     let last = _.get(this.props, 'location.state', false);
-    let blogTitle = false;
-    let blogUrl   = false;
+    let blog = false;
     let finalUrl = this.props.location.pathname;
 
     if (last) {
@@ -48,63 +47,51 @@ export class PathControl extends Component {
 
       if ((last.lastMatch === '/~publish/:ship/:blog/:post') ||
           (last.lastMatch === '/~publish/:ship/:blog')){
-        let blog = this.retrieveColl(last.lastParams.blog, last.lastParams.ship.slice(1));
-        blogTitle = blog.title, 
-        blogUrl = `/~publish/${blog.owner}/${blog.filename}` 
+        let blog = (last.lastParams.ship.slice(1) == window.ship)
+          ?  _.get(this.props, `pubs[${last.lastParams.blog}]`, false)
+          :  _.get(this.props, 
+            `subs[${last.lastParams.ship.slice(1)}][${last.lastParams.blog}]`, false);
       }
     }
 
     if (this.props.location.pathname === '/~publish/new') {
-      if (blogTitle && blogUrl) {
-        path.push({text: blogTitle, url: blogUrl});
+      if (blog) {
+        path.push({
+          text: blog.info.title,
+          url: `/~publish/${blog.info.owner}/${blog.info.filename}`,
+        });
       }
       path.push(
         { text: 'New', url: finalUrl }
       );
     } else if (this.props.location.pathname === '/~publish/new/blog') {
-      if (blogTitle && blogUrl) {
-        path.push({text: blogTitle, url: blogUrl});
+      if (blog) {
+        path.push({
+          text: blog.info.title,
+          url: `/~publish/${blog.info.owner}/${blog.info.filename}`,
+        });
       }
       path.push(
         { text: 'New Blog', url: finalUrl }
       );
     } else if (this.props.location.pathname === '/~publish/new/post') {
-      if (blogTitle && blogUrl) {
-        path.push({text: blogTitle, url: blogUrl});
+      if (blog) {
+        path.push({
+          text: blog.info.title,
+          url: `/~publish/${blog.info.owner}/${blog.info.filename}`,
+        });
       }
       path.push(
         { text: 'New Post', url: finalUrl }
       );
-    } else if (this.props.match.path === '/~publish/:ship/:blog') {
-      let blogId = this.props.match.params.blog;
-      let postId = this.props.match.params.post;
-      let ship = this.props.match.params.ship.slice(1);
-      let blog = this.retrieveColl(blogId, ship);
-      path.push(
-        {text: blog.title, url: `/~publish/${blog.owner}/${blog.filename}` }
-      );
-
-    } else if (this.props.match.path === '/~publish/:ship/:blog/:post') {
-      let blogId = this.props.match.params.blog;
-      let postId = this.props.match.params.post;
-      let ship = this.props.match.params.ship.slice(1);
-      let blog = this.retrieveColl(blogId, ship);
-      let post = this.retrievePost(postId, blogId, ship);
-      path.push(
-        {text: blog.title, url: `/~publish/${blog.owner}/${blog.filename}` }
-      );
-      path.push(
-        {text: post.title, url: `/~publish/${blog.owner}/${blog.filename}/${post.filename}` }
-      );
-
     }
-
     return path;
   }
 
   render(){
-    let pathData = this.buildPathData();
-
+    let pathData = (this.props.pathData)
+      ?  this.props.pathData
+      :  this.buildPathData();
     let path = [];
     let key = 0;
 

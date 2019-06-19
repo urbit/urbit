@@ -220,7 +220,6 @@
   ++  da-change
     |=  del=delta
     ^+  da-this
-    ~&  da-change+-.del
     ?-  -.del
     ::
         %collection
@@ -271,7 +270,6 @@
       (da-emil (affection del))
     ::
         %total
-      ~&  da-change+del
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
@@ -360,7 +358,6 @@
   ::
   ++  da-insert
     |=  [who=@p coll=@tas post=@tas]
-    ~&  da-insert+[who coll post]
     ^+  da-this
     =.  da-this  (da-insert-unread +<)
     =.  da-this  (da-insert-latest +<)
@@ -979,16 +976,14 @@
     =/  blog=@tas      i.t.t.site.request-line
     =/  post=@tas      i.t.t.t.site.request-line
     ::
-    ?~  who  [[ost.bol %http-response not-found:app]~ this]
-    =/  col=(unit collection)
-      ?:  =(u.who our.bol)
-        (~(get by pubs.sat) blog)
-      (~(get by subs.sat) u.who blog)
-    ?~  col  [[ost.bol %http-response not-found:app]~ this]
-    =/  pos  (~(get by pos.u.col) post)
-    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
-    
-
+::    ?~  who  [[ost.bol %http-response not-found:app]~ this]
+::    =/  col=(unit collection)
+::      ?:  =(u.who our.bol)
+::        (~(get by pubs.sat) blog)
+::      (~(get by subs.sat) u.who blog)
+::    ?~  col  [[ost.bol %http-response not-found:app]~ this]
+::    =/  pos  (~(get by pos.u.col) post)
+::    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
@@ -997,6 +992,7 @@
 ::
 ++  peer-primary
   |=  wir=wire
+  ~&  peer-primary+wir
   ^-  (quip move _this)
   ?.  =(our.bol src.bol)
     ::  only we are allowed to subscribe on primary
@@ -1012,6 +1008,7 @@
 ::
 ++  peer-collection
   |=  wir=wire
+  ~&  peer-collection+wir
   ^-  (quip move _this)
   ?.  ?=([@tas ~] wir)
     [~ this]

@@ -74,6 +74,11 @@ export class UpdateReducer {
     }
     let newDate = json.post.data.info["date-created"];
 
+    if (state.latest.length == 0) {
+      state.latest.push(newIndex);
+      return;
+    }
+
     if (state.latest.indexOf(newIndex) != -1) {
       return;
     }
@@ -118,8 +123,12 @@ export class UpdateReducer {
       :  blog.order.unpin;
     let newDate = json.post.data.info["date-created"];
 
+    if (list.length == 0) {
+      list.push(json.post.post);
+    }
+
     if (list.indexOf(json.post.post) != -1) {
-      return
+      return;
     }
 
     for (var i=0; i<list.length; i++) {
@@ -194,6 +203,24 @@ export class UpdateReducer {
   }
 
   reduceTotal(json, state) {
-    console.log("reduce total", json); // XX TODO
+    if (json.total.who == window.ship) {
+      state.pubs[json.total.coll] = json.total.data
+    } else {
+      state.subs[json.total.who] = {
+        [json.total.coll] : json.total.data
+      }
+    }
+    let posts = Object.keys(json.total.data.posts);
+    for (var i=0; i<posts.length; i++) {
+      let post = {
+        post: {
+          coll: json.total.coll,
+          post: posts[i],
+          who: json.total.who,
+          data: json.total.data.posts[posts[i]].post,
+        }
+      };
+      this.insertPost(post, state);
+    }
   }
 }

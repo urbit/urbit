@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
+import { PathControl } from '/components/lib/path-control';
+import { withRouter } from 'react-router';
+
+const PC = withRouter(PathControl);
 
 class FormLink extends Component {
   render(props){
@@ -51,7 +55,7 @@ export class NewBlog extends Component {
         result += '-';
       }
     }
-    return result;
+    return result.replace(/^\-+|\-+$/g, '');
   }
 
   blogSubmit() {
@@ -122,86 +126,96 @@ export class NewBlog extends Component {
   render() {
     if (this.state.page === 'main') {
       return (
-        <div className="h-inner dt center mw-688 w-100">
-           <div className="flex-col dtc v-mid">
-              <input autoFocus
-                className="header-2 b--none"
-                type="text" 
-                name="blogName"
-                placeholder="Add a Title"
-                onChange={this.titleChange}
-              />
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PC pathData={false} {...this.props}/>
+          </div>
+          <div className="h-inner dt center mw-688 w-100">
+             <div className="flex-col dtc v-mid">
+                <input autoFocus
+                  className="header-2 b--none"
+                  type="text" 
+                  name="blogName"
+                  placeholder="Add a Title"
+                  onChange={this.titleChange}
+                />
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <FormLink
-                enabled={(this.state.title !== '')}
-                action={this.firstPost}
-                body={"-> Create a first post"}
-              />
+                <FormLink
+                  enabled={(this.state.title !== '')}
+                  action={this.firstPost}
+                  body={"-> Create a first post"}
+                />
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <FormLink
-                enabled={(this.state.title !== '')}
-                action={this.addCollaborators}
-                body={"-> Add Collaborators"}
-              />
+                <FormLink
+                  enabled={(this.state.title !== '')}
+                  action={this.addCollaborators}
+                  body={"-> Add Collaborators"}
+                />
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <Link to="/~publish/recent" className="body-large b">
-                Cancel
-              </Link>
-           </div>
+                <Link to="/~publish/recent" className="body-large b">
+                  Cancel
+                </Link>
+             </div>
+          </div>
         </div>
       );
     } else if (this.state.page === 'addCollab') {
       return (
-        <div className="h-inner dt center mw-688 w-100">
-           <div className="flex-col dtc v-mid">
-              <input autoFocus
-                className="header-2 b--none"
-                type="text" 
-                name="blogName"
-                placeholder="Add a Title"
-                onChange={this.titleChange}
-              />
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PC pathData={false} {...this.props}/>
+          </div>
+          <div className="h-inner dt center mw-688 w-100">
+             <div className="flex-col dtc v-mid">
+                <input autoFocus
+                  className="header-2 b--none"
+                  type="text" 
+                  name="blogName"
+                  placeholder="Add a Title"
+                  onChange={this.titleChange}
+                />
 
-              <p className="body-regular-400">
-                Who else can post to this blog?
-              </p>
+                <p className="body-regular-400">
+                  Who else can post to this blog?
+                </p>
 
-              <input className="body-regular-400 b--none w-100"
-                type="text"
-                name="collaborators"
-                placeholder="~ship-name, ~ship-name"
-                onChange={this.collaboratorChange}
-              />
-                
+                <input className="body-regular-400 b--none w-100"
+                  type="text"
+                  name="collaborators"
+                  placeholder="~ship-name, ~ship-name"
+                  onChange={this.collaboratorChange}
+                />
+                  
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <FormLink
-                enabled={(this.state.title !== '')}
-                action={this.firstPost}
-                body={"-> Save and create a first post"}
-              />
+                <FormLink
+                  enabled={(this.state.title !== '')}
+                  action={this.firstPost}
+                  body={"-> Save and create a first post"}
+                />
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <FormLink
-                enabled={(this.state.title !== '')}
-                action={this.returnHome}
-                body={"-> Save and return home"}
-              />
+                <FormLink
+                  enabled={(this.state.title !== '')}
+                  action={this.returnHome}
+                  body={"-> Save and return home"}
+                />
 
-              <hr className="gray-30"/>
+                <hr className="gray-30"/>
 
-              <Link to="/~publish/recent" className="body-large b">
-                Cancel
-              </Link>
-           </div>
+                <Link to="/~publish/recent" className="body-large b">
+                  Cancel
+                </Link>
+             </div>
+          </div>
         </div>
       );
 

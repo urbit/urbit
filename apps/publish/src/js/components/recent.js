@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { RecentPreview } from '/components/recent-preview';
+import { withRouter } from 'react-router';
+import { HeaderMenu } from '/components/lib/header-menu';
 
+const HM = withRouter(HeaderMenu);
 
 export class Recent extends Component {
   constructor(props){
@@ -157,8 +160,13 @@ export class Recent extends Component {
 
 
     return (
-      <div className="flex-col">
-        {body} 
+      <div>
+        <div className="cf w-100 bg-white h-publish-header">
+          <HM/>
+        </div>
+        <div className="flex-col">
+          {body} 
+        </div>
       </div>
     );
   }

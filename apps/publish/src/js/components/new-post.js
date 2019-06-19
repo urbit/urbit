@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
+import { PathControl } from '/components/lib/path-control';
+import { withRouter } from 'react-router';
+
+const PC = withRouter(PathControl);
 
 class SideTab extends Component {
   constructor(props) {
@@ -64,7 +68,7 @@ export class NewPost extends Component {
         result += '-';
       }
     }
-    return result;
+    return result.replace(/^\-+|\-+$/g, '');
   }
 
   postSubmit() {
@@ -146,36 +150,44 @@ export class NewPost extends Component {
     let enabledTab = ((this.state.title !== "") && (this.state.body !== ""));
 
     return (
-      <div className="w-100 relative" style={{height: 2000, top: 'calc(50% - 124px)'}}>
-
-        <div className="flex w-100 z-2" style={{position: "sticky", top:0}}> 
-          <div className="w1 z-0" style={{flexGrow:1}}>
-          </div>
-          <div className="mw-688 w-100 z-0">
-          </div>
-          <SideTab enabled={enabledTab} postSubmit={this.postSubmit} />
+      <div className="relative w-100" style={{height: 'calc(100% - 124px)'}}>
+        <div className="cf w-100 bg-white h-publish-header fixed">
+          <PC pathData={false} {...this.props}/>
         </div>
+        <div className="w-100 relative" 
+          style={{
+            top: 'calc(50% + 48px)'
+          }}>
 
-        <div className="flex absolute w-100 z-0" style={{top:0}}>
-          <div className="w1 z-0" style={{flexGrow:1}}>
+          <div className="flex w-100 z-2" style={{position: "sticky", top:0}}> 
+            <div className="w1 z-0" style={{flexGrow:1}}>
+            </div>
+            <div className="mw-688 w-100 z-0">
+            </div>
+            <SideTab enabled={enabledTab} postSubmit={this.postSubmit} />
           </div>
-          <div className="flex-col w-100 mw-688 w-100 z-1">
-            <input autoFocus
-              className="header-2 w-100 b--none"
-              type="text"
-              name="postName"
-              placeholder="Add a Title"
-              onChange={this.titleChange}
-            />
-            <textarea className="body-regular-400 w-100 b--none"
-              style={{resize:"none"}}
-              type="text"
-              name="postBody"
-              placeholder="And type away."
-              onChange={this.bodyChange}>
-            </textarea>
-          </div>
-          <div className="w1 z-0" style={{flexGrow:1}}>
+
+          <div className="flex absolute w-100 z-0" style={{top:0}}>
+            <div className="w1 z-0" style={{flexGrow:1}}>
+            </div>
+            <div className="flex-col w-100 mw-688 w-100 z-1">
+              <input autoFocus
+                className="header-2 w-100 b--none"
+                type="text"
+                name="postName"
+                placeholder="Add a Title"
+                onChange={this.titleChange}
+              />
+              <textarea className="body-regular-400 w-100 b--none"
+                style={{resize:"none"}}
+                type="text"
+                name="postBody"
+                placeholder="And type away."
+                onChange={this.bodyChange}>
+              </textarea>
+            </div>
+            <div className="w1 z-0" style={{flexGrow:1}}>
+            </div>
           </div>
         </div>
       </div>

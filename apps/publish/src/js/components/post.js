@@ -4,6 +4,8 @@ import { PostPreview } from '/components/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { PostBody } from '/components/post-body';
+import { PathControl } from '/components/lib/path-control';
+import _ from 'lodash';
 
 export class Post extends Component {
   constructor(props){
@@ -30,21 +32,23 @@ export class Post extends Component {
         yy : '%d years',
       }
     });
-    let blog = this.retrieveColl(this.props.blogId, this.props.ship);
-    let post = this.retrievePost(this.props.postId, this.props.blogId, this.props.ship);
-    let comments = this.retrieveComments(this.props.postId, this.props.blogId, this.props.ship);
 
     this.state = {
       mode: 'view',
-      titleOriginal: post.info.title,
-      bodyOriginal: post.raw,
-      title: post.info.title,
-      body: post.raw,
-      awaiting: false,
+      titleOriginal: '',
+      bodyOriginal: '',
+      title: '',
+      body: '',
+      awaitingEdit: false,
+      awaitingLoad: false,
       ship: this.props.ship,
-      blog: blog,
-      post: post,
-      comments: comments,
+      blogId: this.props.blogId,
+      postId: this.props.postId,
+      blog: null,
+      post: null,
+      comments: null,
+      pathData: [],
+      temporary: false,
     }
 
     this.editPost = this.editPost.bind(this);
@@ -52,66 +56,6 @@ export class Post extends Component {
     this.titleChange = this.titleChange.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
 
-  }
-
-
-  buildPosts(){
-    let blogId = this.props.blogId;
-    let ship = this.props.ship;
-    let blog = this.retrieveColl(blogId, ship);
-
-    let pinProps = blog.order.pin.map((post) => {
-      return this.buildPostPreviewProps(post, blogId, ship, true);
-    });
-
-    let unpinProps = blog.order.unpin.map((post) => {
-      return this.buildPostPreviewProps(post, blogId, ship, false);
-    });
-
-    return pinProps.concat(unpinProps);
-  }
-
-  buildPostPreviewProps(post, coll, who, pinned){
-    let pos = this.retrievePost(post, coll, who);
-    let col = this.retrieveColl(coll, who);
-    let com = this.retrieveComments(post, coll, who);
-
-    return {
-      postTitle: pos.info.title,
-      postName:  post,
-      postSnippet: "body snippet",
-      numComments: com.length,
-      collectionTitle: col.title,
-      collectionName:  coll,
-      author: who,
-      date: pos.info["date-created"],
-      pinned: pinned,
-    }
-  }
-  
-
-  retrievePost(post, coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].posts[post].post;
-    } else {
-      return this.props.subs[who][coll].posts[post].post;
-    }
-  }
-
-  retrieveComments(post, coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].posts[post].comments;
-    } else {
-      return this.props.subs[who][coll].posts[post].comments;
-    }
-  }
-
-  retrieveColl(coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll];
-    } else {
-      return this.props.subs[who][coll];
-    }
   }
 
   editPost() {
@@ -150,7 +94,7 @@ export class Post extends Component {
 
 
     this.setState({
-      awaiting: {
+      awaitingEdit: {
         ship: this.state.ship,
         blogId: this.props.blogId,
         postId: this.props.postId,
@@ -160,14 +104,114 @@ export class Post extends Component {
     this.props.api.action("write", "write-action", data);
   }
 
+  componentWillMount() {
+    let ship = this.props.ship;
+    let blogId = this.props.blogId;
+    let postId = this.props.postId;
+
+    if (ship != window.ship) {
+      
+      let blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
+
+      if (blog) {
+        let post = _.get(blog, `posts[${postId}].post`, false);
+        let comments = _.get(blog, `posts[${postId}].comments`, false);
+        let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+        let postUrl = `${blogUrl}/${post.info.filename}`;
+
+        this.setState({
+          titleOriginal: post.info.title,
+          bodyOriginal: post.raw,
+          title: post.info.title,
+          body: post.raw,
+          blog: blog,
+          post: post,
+          comments: comments,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, url: blogUrl },
+            { text: post.info.title, url: postUrl },
+          ],
+        });
+
+      } else {
+        this.setState({
+          awaitingLoad: {
+            ship: ship,
+            blogId: blogId,
+            postId: postId,
+            temporary: true,
+          },
+        });
+        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+          this.handleEvent.bind(this),
+          this.handleError.bind(this));
+      }
+    } else {
+      let blog = _.get(this.props, `pubs[${blogId}]`, false);
+      let post = _.get(blog, `posts[${postId}].post`, false);
+      let comments = _.get(blog, `posts[${postId}].comments`, false);
+      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+      let postUrl = `${blogUrl}/${post.info.filename}`;
+
+      this.setState({
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        blog: blog,
+        post: post,
+        comments: comments,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, url: blogUrl },
+          { text: post.info.title, url: postUrl },
+        ],
+      });
+    }
+  }
+
+  //
+
+  handleEvent(diff) {
+    console.log("handle event", diff);
+
+    if (diff.data.total) {
+      let blog = diff.data.total.data;
+      let post = blog.posts[this.state.postId].post;
+      let comments = blog.posts[this.state.postId].comments;
+      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+      let postUrl = `${blogUrl}/${post.info.filename}`;
+
+      this.setState({
+        awaitingLoad: false,
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        blog: blog,
+        post: post,
+        comments: comments,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, url: blogUrl },
+          { text: post.info.title, url: postUrl },
+        ],
+      });
+    }
+  }
+
+  handleError() {
+    console.log("handle error");
+  }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.awaiting) {
-      let ship = this.state.awaiting.ship;
-      let blogId = this.state.awaiting.blogId;
-      let postId = this.state.awaiting.postId;
+    if (this.state.awaitingEdit) {
+      let ship = this.state.awaitingEdit.ship;
+      let blogId = this.state.awaitingEdit.blogId;
+      let postId = this.state.awaitingEdit.postId;
 
-      if (this.state.awaiting.ship == window.ship) {
+      if (this.state.awaitingEdit.ship == window.ship) {
         let oldPost = prevState.post;
 
         let post = _.get(this.props,
@@ -182,7 +226,7 @@ export class Post extends Component {
             bodyOriginal: post.raw,
             title: post.info.title,
             body: post.raw,
-            awaiting: false,
+            awaitingEdit: false,
             post: post,
           });
         }
@@ -201,7 +245,7 @@ export class Post extends Component {
             bodyOriginal: post.raw,
             title: post.info.title,
             body: post.raw,
-            awaiting: false,
+            awaitingEdit: false,
             post: post,
           });
         }
@@ -219,103 +263,130 @@ export class Post extends Component {
   }
 
   render() {
-    let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
-    let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
-
-    let date = moment(this.state.post.info["date-created"]).fromNow();
-    let authorDate = `${this.state.post.info.creator} • ${date}`;
+    console.log("post", this.props);
 
 
-
-    if (this.state.mode == 'view') {
+    if (this.state.awaitingLoad) {
       return (
-        <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-          <Link to={blogLink}>
-            <p className="body-regular">
-              {blogLinkText}
-            </p>
-          </Link>
+        <div>
+          Loading
+        </div>
+      );
+    } else if (this.state.awaitingEdit) {
+      return (
+        <div>
+          Saving Edit
+        </div>
+      );
+    } else if (this.state.mode == 'view') {
+      let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
-          <h2>{this.state.titleOriginal}</h2>
-
-          <div className="mb4">
-            <p className="fl label-small gray-50">{authorDate}</p>
-            <p className="label-regular gray-50 fr pointer"
-               onClick={this.editPost}>
-              Edit
-            </p>
+      let date = moment(this.state.post.info["date-created"]).fromNow();
+      let authorDate = `${this.state.post.info.creator} • ${date}`;
+      return (
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PathControl pathData={this.state.pathData}/>
           </div>
+          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+            <Link to={blogLink}>
+              <p className="body-regular">
+                {blogLinkText}
+              </p>
+            </Link>
 
-          <div className="cb">
-            <PostBody
-              body={this.state.post.body} 
-            />
-          </div>
+            <h2>{this.state.titleOriginal}</h2>
 
-          <hr className="gray-50 w-680"/>
-        
-          <hr className="gray-50 w-680"/>
+            <div className="mb4">
+              <p className="fl label-small gray-50">{authorDate}</p>
+              <p className="label-regular gray-50 fr pointer"
+                 onClick={this.editPost}>
+                Edit
+              </p>
+            </div>
 
-          <div className="cb mt3 mb4">
-            <p className="gray-50 body-large b">
-              {this.state.comments.length}
-              <span className="black">
-                Comments
-              </span>
-            </p>
-            <p className="cl body-regular">
-              + Show Comments
-            </p>
+            <div className="cb">
+              <PostBody
+                body={this.state.post.body} 
+              />
+            </div>
+
+            <hr className="gray-50 w-680"/>
+          
+            <hr className="gray-50 w-680"/>
+
+            <div className="cb mt3 mb4">
+              <p className="gray-50 body-large b">
+                {this.state.comments.length}
+                <span className="black">
+                  Comments
+                </span>
+              </p>
+              <p className="cl body-regular">
+                + Show Comments
+              </p>
+            </div>
           </div>
         </div>
       );
 
     } else if (this.state.mode == 'edit') {
+      let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
+
+      let date = moment(this.state.post.info["date-created"]).fromNow();
+      let authorDate = `${this.state.post.info.creator} • ${date}`;
       return (
-        <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-          <Link to={blogLink}>
-            <p className="body-regular">
-              {blogLinkText}
-            </p>
-          </Link>
-
-          <input className="header-2 w-100"
-            type="text"
-            name="postName"
-            defaultValue={this.state.titleOriginal}
-            onChange={this.titleChange}
-          />
-
-          <div className="mb4">
-            <p className="fl label-small gray-50">{authorDate}</p>
-            <p className="label-regular gray-50 fr pointer"
-               onClick={this.savePost}>
-              Save
-            </p>
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PathControl pathData={this.state.pathData}/>
           </div>
+          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+            <Link to={blogLink}>
+              <p className="body-regular">
+                {blogLinkText}
+              </p>
+            </Link>
 
-          <textarea className="cb body-regular-400 w-100 h5"
-            style={{resize:"none"}}
-            type="text"
-            name="postBody"
-            onChange={this.bodyChange}
-            defaultValue={this.state.bodyOriginal}>
-          </textarea>
+            <input className="header-2 w-100"
+              type="text"
+              name="postName"
+              defaultValue={this.state.titleOriginal}
+              onChange={this.titleChange}
+            />
 
-          <hr className="gray-50 w-680"/>
-        
-          <hr className="gray-50 w-680"/>
+            <div className="mb4">
+              <p className="fl label-small gray-50">{authorDate}</p>
+              <p className="label-regular gray-50 fr pointer"
+                 onClick={this.savePost}>
+                Save
+              </p>
+            </div>
 
-          <div className="cb mt3 mb4">
-            <p className="gray-50 body-large b">
-              {this.state.comments.length}
-              <span className="black">
-                Comments
-              </span>
-            </p>
-            <p className="cl body-regular">
-              + Show Comments
-            </p>
+            <textarea className="cb body-regular-400 w-100 h5"
+              style={{resize:"none"}}
+              type="text"
+              name="postBody"
+              onChange={this.bodyChange}
+              defaultValue={this.state.bodyOriginal}>
+            </textarea>
+
+            <hr className="gray-50 w-680"/>
+          
+            <hr className="gray-50 w-680"/>
+
+            <div className="cb mt3 mb4">
+              <p className="gray-50 body-large b">
+                {this.state.comments.length}
+                <span className="black">
+                  Comments
+                </span>
+              </p>
+              <p className="cl body-regular">
+                + Show Comments
+              </p>
+            </div>
           </div>
         </div>
       );

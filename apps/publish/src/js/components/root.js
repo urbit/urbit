@@ -106,6 +106,7 @@ export class Root extends Component {
                     <Blog
                       blogId = {props.match.params.blog}
                       ship = {props.match.params.ship.slice(1)}
+                      api = {api}
                       {...this.state}
                     />
                   }
