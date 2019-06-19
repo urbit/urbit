@@ -629,11 +629,11 @@ u3m_bail(u3_noun how)
       str_c[2] = ((how >> 16) & 0xff);
       str_c[3] = ((how >> 24) & 0xff);
       str_c[4] = 0;
-      u3l_log("\r\nbail: %s\r\n", str_c);
+      fprintf(stderr, "\r\nbail: %s\r\n", str_c);
     }
     else {
       c3_assert(_(u3ud(u3h(how))));
-      u3l_log("\r\nbail: %d\r\n", u3h(how));
+      fprintf(stderr, "\r\nbail: %d\r\n", u3h(how));
     }
   }
 
@@ -643,7 +643,7 @@ u3m_bail(u3_noun how)
     }
 
     case c3__meme: {
-      u3l_log("bailing out\r\n");
+      fprintf(stderr, "bailing out\r\n");
       abort();
     }
     case c3__exit: {
@@ -659,7 +659,7 @@ u3m_bail(u3_noun how)
     }
     case c3__foul:
     case c3__oops:
-      u3l_log("bailing out\r\n");
+      fprintf(stderr, "bailing out\r\n");
       assert(0);
   }
 

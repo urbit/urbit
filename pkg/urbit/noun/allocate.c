@@ -370,15 +370,18 @@ u3a_reflux(void)
 void
 u3a_reclaim(void)
 {
+  //  XX u3l_log avoid here, as it can
+  //  cause problems when handling errors
+
   if ( (0 == u3R->cax.har_p) ||
        (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) )
   {
-    u3l_log("allocate: reclaim: memo cache: empty\r\n");
+    fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
     u3m_bail(c3__meme);
   }
 
 #if 1
-  u3l_log("allocate: reclaim: half of %d entries\r\n",
+  fprintf(stderr, "allocate: reclaim: half of %d entries\r\n",
           u3to(u3h_root, u3R->cax.har_p)->use_w);
 
   u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);

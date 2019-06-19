@@ -1,79 +1,76 @@
-> The Urbit address space is now live on the Ethereum blockchain. We’re calling it ‘Azimuth’ and you can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`](https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb) or [`azimuth.eth`](https://etherscan.io/address/azimuth.eth). Owners of Azimuth ‘points’ (galaxies, stars or planets) can use [Bridge](https://github.com/urbit/bridge/releases) to manage them and view their balance now. Sometime in the next few days, owners of Azimuth points will be able to boot Arvo, the Urbit OS, from their Azimuth point and request access to one of our ‘cities’: private communities for chat and discussion. These new cities use Landscape, a brand new UI for using Urbit in the browser.
+# Urbit
 
-# Install instructions
+A personal server operating function.
 
-To install and run Urbit please follow the instructions at
-[urbit.org/docs/getting-started/](https://urbit.org/docs/getting-started/).
-Packages and source tarballs are available there. You'll be on the live network
-in a few minutes.
+> The Urbit address space, Azimuth, is now live on the Ethereum blockchain. You
+> can find it at [`0x223c067f8cf28ae173ee5cafea60ca44c335fecb`][azim] or
+> [`azimuth.eth`][aens]. Owners of Azimuth points (galaxies, stars, or planets)
+> can view or manage them using [Bridge][brid], and can also use them to boot
+> [Arvo][arvo], the Urbit OS.
 
-If you're doing development on Urbit, keep reading.
+[azim]: https://etherscan.io/address/0x223c067f8cf28ae173ee5cafea60ca44c335fecb
+[aens]: https://etherscan.io/address/azimuth.eth
+[brid]: https://github.com/urbit/bridge/releases
+[arvo]: https://github.com/urbit/arvo/
 
-# Build instructions
+## Install
 
-[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)](https://travis-ci.org/urbit/urbit)
+To install and run Urbit, please follow the instructions at
+[urbit.org/docs/getting-started/][start].  You'll be on the live network in a
+few minutes.
 
-## External dependencies
+If you're interested in Urbit development, keep reading.
 
-`vere`, the Urbit virtual machine, depends on the following:
+[start]: https://urbit.org/docs/getting-started/
 
-- C compiler ([gcc](https://gcc.gnu.org) or [clang](http://clang.llvm.org))
-- [Meson](http://mesonbuild.com/)
-- [GMP](https://gmplib.org)
-- [OpenSSL](https://www.openssl.org)
-- [libsigsegv](https://www.gnu.org/software/libsigsegv/)
-- [libcurl](https://curl.haxx.se/libcurl/)
-- [libuv](http://libuv.org)
-- curses implementation (ncurses on Linux distributions, OS curses otherwise)
+## Development
 
-Most of these dependencies are unfortunate; we aim to drastically shrink the
-list in upcoming versions. `vere` proper makes use of GMP, OpenSSL, libcurl, and
-libsigsegv.
+[![Build Status](https://travis-ci.org/urbit/urbit.svg?branch=master)][trav]
 
-## Building
+Urbit uses [Nix][nix] to manage builds.  On Linux and macOS you can install Nix
+via:
 
-Urbit uses Meson build system.
+```
+curl https://nixos.org/nix/install | sh
+```
 
-Some libraries which are not found in major distributions:
+The Makefile in the project's root directory contains useful phony targets for
+building, installing, testing, and so on.  You can use it to avoid dealing with
+Nix explicitly.
 
-- ed25519
-- libh2o
-- murmur3
-- softfloat3
-- scrypt
+To build Urbit, for example, use:
 
-are included as git submodules. To build urbit from source, perform the following steps:
+```
+make build
+```
 
-## Configuration & compilation
-(For instructions for legacy meson, also see below)
+The test suite can similarly be run via a simple:
 
-1. Install all required dependencies.
-2. Run `./scripts/bootstrap`
-3. Run `./scripts/build`
-4. The executable should appear in `./build` directory.
+```
+make test
+```
 
-### Using meson & ninja
+[trav]: https://github.com/urbit/urbit.git
+[nix]: https://nixos.org/nix/
 
-To configure the project, enter the build directory and enter
-`meson configure -Dbuildtype=release`.  To compile a debug build of urbit, use
-`meson configure -Dbuildtype=debug`.
-To set a prefix for installation use
-`meson configure -Dprefix=/usr`.
+## Contributing
 
-## Configuration & compilation for legacy meson
+Contributions of any form are more than welcome! If something doesn't seem
+right, and there is no issue about it yet, feel free to open one.
 
-The syntax for legacy meson (Version `0.29`) is a bit different.
+If you're looking to get involved, there are a few things you can do:
 
-1. Manually create `build` directory and invoke meson as `meson . ./build`
-2. If you want to set options, this is done in one step.
-   Use `meson -D [options] . ./build` to prepare customized build.
+- Join the [urbit-dev][list] mailing list.
+- [Ask us about Hoon School][mail], a course we run to teach the Hoon
+  programming language and Urbit application development.
+- Check out [good contributor issues][good].
+- Reach out to [support@urbit.org][mail] to say hi and ask any questions you
+  might have.
 
-Once the project is configured, use `ninja` to build it.
-To install it into the default prefix, use `ninja install`.
-If you want to specify custom `DESTDIR`, use `DESTDIR=... ninja install`.
+Once you've got your bearings, have a look at [CONTRIBUTING.md][cont] for some
+pointers on setting up your development environment.
 
-## Contact
-
-We are using our new UI, Landscape to run a few experimental cities.
-If you have an Azimuth point, please send us your planet name at
-[support@urbit.org](mailto:support@urbit.org) to request access.
+[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
+[mail]: mailto:support@urbit.org
+[good]: https://github.com/urbit/urbit/labels/good%20contributor%20issue
+[cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md

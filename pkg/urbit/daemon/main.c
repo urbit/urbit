@@ -212,13 +212,16 @@ _main_getopt(c3_i argc, c3_c** argv)
     u3_Host.ops_u.nuu = c3y;
   }
 
-  if ( argc != (optind + 1) && u3_Host.ops_u.who_c != 0 ) {
-    u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
-  }
-
   if ( argc != (optind + 1) ) {
-    return u3_Host.dir_c ? c3y : c3n;
-  } else {
+    if ( u3_Host.ops_u.who_c != 0 ) {
+      u3_Host.dir_c = strdup(1 + u3_Host.ops_u.who_c);
+    }
+    else {
+      //  XX not sure how this might be reachable
+      return c3n;
+    }
+  }
+  else {
     {
       c3_c* ash_c;
 
