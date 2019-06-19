@@ -1384,7 +1384,7 @@
             ['id' (numb request-id)]
             :-  'json'
             ?>  =(%json p.p.cuft)
-            ((hard json) q.q.p.cuft)
+            ;;(json q.q.p.cuft)
           ==
         ::
         (emit-event channel-id [(en-json:html json)]~)
@@ -1520,7 +1520,7 @@
     ::
     =/  =cage  (result-to-cage:ford build-result.made-result)
     ::
-    =/  result=simple-payload:http  ((hard simple-payload:http) q.q.cage)
+    =/  result=simple-payload:http  ;;(simple-payload:http q.q.cage)
     ::  ensure we have a valid content-length header
     ::
     ::    We pass on the response and the headers the generator produces, but
@@ -1777,7 +1777,7 @@
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
     ~|  [%p-wrapped-task p.wrapped-task]
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)

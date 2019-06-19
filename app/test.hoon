@@ -60,7 +60,7 @@
   %-  (slog (report-error spur head.build-result.res))
   =/  nex=(list ^spur)
     =<  p
-    ;;  ,[%success %$ %cont * p=(list ^spur)]
+    ;;  [%success %$ %cont * p=(list ^spur)]
     tail.build-result.res
   ?~  nex  ~&(%cores-tested ~)
   [ost (build-core nex)]~
@@ -90,7 +90,7 @@
   %-  (slog (report-error /[ren]/ren head.build-result.res))
   =/  nex=(list term)
     =<  p
-    ;;  ,[%success %$ %cont * p=(list term)]
+    ;;  [%success %$ %cont * p=(list term)]
     tail.build-result.res
   ?~  nex  ~&(%rens-tested ~)
   [ost (build-rend nex)]~

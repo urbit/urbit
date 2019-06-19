@@ -308,7 +308,7 @@
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
     ~|  [%p-wrapped-task p.wrapped-task]
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::  %crud: notifies us of an event failure
   ::
   ?:  ?=(%crud -.task)

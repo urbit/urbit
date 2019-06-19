@@ -1154,7 +1154,7 @@
   ::  request nonce if expired-invalid
   ::
   ?:  (bad-nonce rep)
-    (nonce:effect spur)
+    (nonce:effect [act spur])
   ::  XX replace with :hall notification
   ::
   ~|  [%http-response-fail wire]

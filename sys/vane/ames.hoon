@@ -8,7 +8,56 @@
 ::
 =+  protocol-version=3
 |%
-+=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %d                                            ::    to %dill
+          $>(%flog task:able:dill)                      ::  log output
+      ==                                                ::
+      $:  %j                                            ::    to %jael
+          $>  $?  %meet                                 ::  neighbor
+                  %pubs                                 ::  view public keys
+                  %turf                                 ::  view domains
+                  %vein                                 ::  view private keys
+              ==                                        ::
+          task:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    to %gall
+          $>(%deal task:able:gall)                      ::  interact with apps
+      ==                                                ::
+      $:  @tas                                          ::    to any
+          $>(%west task:able)                           ::  deliver message
+  ==  ==                                                ::
++$  sign                                                ::  in result _<-
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %b                                            ::    from %behn
+          $>(%wake gift:able:behn)                      ::  timer activate
+      ==                                                ::
+      $:  %j                                            ::    from %jael
+          $>  $?  %pubs                                 ::  public keys
+                  %turf                                 ::  bind to domains
+                  %vein                                 ::  private keys
+              ==                                        ::
+          gift:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    from %gall
+          $%  [%mean p=ares]                            ::  XX obsolete
+              [%nice ~]                                 ::  XX obsolete
+              $>(%unto gift:able:gall)                  ::  application ack
+      ==  ==                                            ::
+      $:  @tas                                          ::    from any
+          $%  $>(%crud vane-task)                       ::  XX strange
+              $>  $?  %mack                             ::  message ack
+                      %woot                             ::  reaction message
+                  ==                                    ::
+              gift:able                                 ::
+  ==  ==  ==                                            ::
 ::  |pact: internal packet structures
 ::
 ++  pact
@@ -908,7 +957,7 @@
                   %none
                 ::  ~&  %chew-none
                 =.  puz  (bilk:puz now)
-                (chow ((hard meal) (cue msg)))
+                (chow ;;(meal (cue msg)))
               ::
                   %fast
                 ::  ~&  %chew-fast
@@ -919,24 +968,24 @@
                 ?~  dey  +>.$
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
-                (chow(aut sin) ((hard meal) (cue (dy:cub:sen:gus key bod))))
+                (chow(aut sin) ;;(meal (cue (dy:cub:sen:gus key bod))))
               ::
                   %full
                 ::  ~&  %chew-full
-                =/  mex  ((hard full:pact) (cue msg))
+                =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
-                =/  mes  ((hard (pair @ @)) (cue sem))
+                =/  mes  ;;((pair @ @) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
-                =/  mex  ((hard open:pact) (cue msg))
+                =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
@@ -1269,7 +1318,7 @@
       =/  task=task:able
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
-        ((hard task:able) p.wrapped-task)
+        ;;(task:able p.wrapped-task)
       =.  any.ton.fox  eny
       =^  duy  ..knob  (knob hen task)
       [duy ..^$]
@@ -1294,7 +1343,7 @@
     ++  stay  fox
     ++  take                                            ::  accept response
       ~/  %take
-      |=  [tea=wire hen=duct hin=(hypo sign:able)]
+      |=  [tea=wire hen=duct hin=(hypo sign)]
       ^-  [(list move) _..^$]
       =.  any.ton.fox  eny
       =^  duy  ..knap
@@ -1402,7 +1451,7 @@
   ::
   ++  knap
     ~/  %knap
-    |=  [tea=wire hen=duct sih=sign:able]
+    |=  [tea=wire hen=duct sih=sign]
     ^-  [(list move) _+>]
     ::  if we got an error from behn, report it to %dill; TODO handle errors
     ::

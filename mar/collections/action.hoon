@@ -18,7 +18,7 @@
   ++  noun  action:collections
   ++  json
     |=  jon=^json
-    %-  (hard action:collections)
+    ;;  action:collections
     =<  (action jon)
     |%
     ++  action
@@ -68,7 +68,7 @@
       |=  jon=^json
       ^-  (set whom:clay)
       =/  x  ((ar:dejs (su:dejs fed:ag)) jon)
-      %-  (hard (set whom:clay))
+      ;;  (set whom:clay)
       %-  ~(run in (sy x))
       |=(w=@ [& w])
     --

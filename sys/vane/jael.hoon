@@ -94,10 +94,40 @@
       [%vent-result p=vent-result]                      ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
-  (wind note:able gift)                                 ::
+  (wind note gift)                                      ::
 ::                                                      ::
 ++  move                                                ::  output
   {p/duct q/card}                                       ::
+::                                                      ::
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %a                                            ::    to %ames
+          $>(%want task:able:ames)                      ::  send message
+      ==                                                ::
+      $:  %j                                            ::    to self
+          $>(%look task)                                ::  set ethereum source
+      ==                                                ::
+      $:  %l                                            ::    to %lient
+          $>(%request task:able:http-client)            ::  http request
+      ==                                                ::
+      $:  @tas                                          ::
+  $%  $>(%init vane-task)                               ::  report install
+      $>(%sunk vane-task)                               ::  report death
+  ==  ==  ==                                            ::
+::                                                      ::
++$  sign                                                ::  in result $<-
+  $~  [%b %wake ~]                                      ::
+  $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
+      [%j $>(%vent gift)]                               ::  ethereum changes
+      [%a $>(%woot gift:able:ames)]                     ::  message result
+      [%l $>(%http-response gift:able:http-client)]     ::  http response
+  ==                                                    ::
 --  ::
 ::                                                      ::::
 ::::                    # light                         ::  light cores
@@ -1130,7 +1160,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::
   ++  extract-snap                                    ::  extract rewind point
@@ -1450,6 +1480,7 @@
                    net:(fall (~(get by pos.eth) who) *point)
                  *[life pass continuity-number=@ud [? @p] (unit @p)]
                %+  weld
+                 ::  %-  flop
                  ^-  (list move)
                  :~  [hen %slip %a %sunk who rit]
                      [hen %slip %c %sunk who rit]
@@ -1713,7 +1744,7 @@
   ::  +wrap-note: %pass a note using a made-up duct
   ::
   ++  wrap-note
-    |=  [wir=wire not=note:able]
+    |=  [wir=wire not=note]
     ^-  move
     :-  [/jael/eth-logic ~ ~]
     [%pass (weld /(scot %p our) wir) not]
@@ -1947,7 +1978,7 @@
       ~&  [%yikes cuz]
       +>.$
     ?>  ?=(%httr mar)
-    =+  raw-rep=~|(res ((hard httr:eyre) q.res))
+    =+  raw-rep=~|(res ;;(httr:eyre q.res))
     =+  rep=(httr-to-rpc-response raw-rep)
     (complete-with-rpc-response cuz rep)
   ::
@@ -2236,7 +2267,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   --
