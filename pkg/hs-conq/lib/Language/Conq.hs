@@ -18,85 +18,75 @@ import qualified Prelude as P
 
 --------------------------------------------------------------------------------
 
+--------------------------------------------------------------------------------
+
 type Tup a b = (a, b)
+
 data Sum a b = L a | R b
   deriving (Eq, Ord)
 
-instance (Show a, Show b) => Show (Sum a b) where
-  show (L x) = case show x of { "()" → "0"; xs → "0" <> xs }
-  show (R x) = case show x of { "()" → "1"; xs → "1" <> xs }
-
---------------------------------------------------------------------------------
-
-data Lit
-    = Nil
-    | LTup Lit Lit
-    | LLef Lit
-    | LRit Lit
-  deriving (Eq, Ord)
-
-instance Show Lit where
-  show = \case
-    Nil      -> "~"
-    LTup x y -> "[" <> show x <> " " <> show y <> "]"
-    LLef Nil -> "1"
-    LRit Nil -> "0"
-    LLef l   -> "<l " <> show l <> ">"
-    LRit r   -> "<r " <> show r <> ">"
-
---------------------------------------------------------------------------------
-
-class ToLit a where
-  toLit :: a -> Lit
-
-instance ToLit () where
-  toLit () = Nil
-
-instance (ToLit a, ToLit b) => ToLit (Sum a b) where
-  toLit (L l) = LLef (toLit l)
-  toLit (R r) = LRit (toLit r)
-
-instance (ToLit a, ToLit b) => ToLit (Tup a b) where
-  toLit (l, r) = LTup (toLit l) (toLit r)
-
---------------------------------------------------------------------------------
-
 data Val
-  = VN
-  | V0 Val
-  | V1 Val
-  | VP Val Val
+    = VV          --  Void
+    | VN          --  Null
+    | V0 Val      --  Left
+    | V1 Val      --  Right
+    | VP Val Val  --  Pair
+  deriving (Eq, Ord)
 
 instance Show Val where
   show = show . valExp
 
+crash :: Exp
+crash = EWith ENull (EWith EEval EEval)
+
 valExp :: Val -> Exp
-valExp VN = ENull
-valExp v    = EWith ENull (go v)
+valExp VN           = ENull
+valExp VV           = crash
+valExp v            = EWith ENull (go v)
   where
     go = \case
+      VV      → crash
       VN      → ENull
-      V0 VN → ELeft
-      V1 VN → EWrit
+      V0 VN   → ELeft
+      V1 VN   → EWrit
       V0 l    → EWith (go l) ELeft
       V1 r    → EWith (go r) EWrit
       VP x y  → ECons (go x) (go y)
 
 data TyExp
-  = TENil
-  | TESum TyExp TyExp
-  | TETup TyExp TyExp
-  | TEFor TyExp TyExp
-  | TEAll TyExp
-  | TEFix TyExp
-  | TERef Int
+    = TENil
+    | TESum TyExp TyExp
+    | TETup TyExp TyExp
+    | TEFor TyExp TyExp
+    | TEAll TyExp
+    | TEFix TyExp
+    | TERef Int
+  deriving (Eq, Ord)
+
+instance Show TyExp where
+  show = \case
+    TESum TENil TENil -> "?"
+    TENil             -> "~"
+    TESum x y         -> "<" <> show x <> " " <> show y <> ">"
+    TETup x y         -> "(" <> show x <> " " <> show y <> ")"
+    TEFor x y         -> "[" <> show x <> " " <> show y <> "]"
+    TEAll x           -> "A" <> show x
+    TEFix x           -> "F" <> show x
+    TERef x           -> show x
 
 data Ty
-  = TNil
-  | TSum Ty Ty
-  | TTup Ty Ty
-  | TFor Ty Ty
-  | TVar Int
+    = TNil
+    | TSum Ty Ty
+    | TTup Ty Ty
+    | TFor Ty Ty
+    | TVar Int
+  deriving (Eq, Ord)
+
+tBit :: TyExp
+tBit = TESum TENil TENil
+
+tBitOp :: TyExp
+tBitOp = TEFor tBit tBit
 
 instance Show Ty where
   show = \case
@@ -106,15 +96,41 @@ instance Show Ty where
     TFor x y -> "(" <> show x <> " => " <> show y <> ")"
     TVar x   -> show x
 
+tyExpTy :: TyExp -> Infer Ty
+tyExpTy = go []
+  where
+    go :: [Int] -> TyExp -> Infer Ty
+    go t = \case
+      TENil     -> pure TNil
+      TESum x y -> TSum <$> go t x <*> go t y
+      TETup x y -> TTup <$> go t x <*> go t y
+      TEFor x y -> TFor <$> go t x <*> go t y
+      TEAll x   -> do t' <- (:t) <$> mkTVar
+                      go t' x
+      TEFix x   -> do t' <- (:t) <$> mkTVar
+                      go t' x
+      TERef i   -> pure $ TVar (t P.!! i)
+
+declare :: Ty -> TyExp -> Infer Ty
+declare t e = do
+  te <- tyExpTy e
+  unify t te
+
+checkType :: Exp -> Either Text Ty
+checkType e = runInfer (infer e >>= finalize)
+
 type Unique  = Int
-type Infer a = ExceptT () (State (Map Int Ty, Unique)) a
+type Infer a = ExceptT Text (State (Map Int Ty, Unique)) a
 type Unify a = Maybe a
 
-forAll :: Infer Ty
-forAll = do
+mkTVar :: Infer Int
+mkTVar = do
   (env, n) <- get
   put (env, n+1)
-  pure (TVar n)
+  pure n
+
+forAll :: Infer Ty
+forAll = TVar <$> mkTVar
 
 varIs :: Int -> Ty -> Infer Ty
 varIs v (TVar x) | x==v = do
@@ -138,19 +154,21 @@ finalize' = \case
 
 unify :: Ty -> Ty -> Infer Ty
 unify x y = do
+  -- traceM $ "UNIFY " <> show x <> " " <> show y
   x <- case x of { TVar v -> resolve v; x -> pure x }
   y <- case y of { TVar v -> resolve v; y -> pure y }
   unify' x y
 
 unify' :: Ty -> Ty -> Infer Ty
 unify' = curry \case
-  ( TNil,       TNil       ) -> pure TNil
-  ( TSum a1 b1, TSum a2 b2 ) -> TSum <$> unify a1 a2 <*> unify b1 b2
-  ( TTup a1 b1, TTup a2 b2 ) -> TTup <$> unify a1 a2 <*> unify b1 b2
-  ( TFor a1 b1, TFor a2 b2 ) -> TFor <$> unify a1 a2 <*> unify b1 b2
-  ( ty,         TVar x     ) -> varIs x ty
-  ( TVar x,     ty         ) -> varIs x ty
-  ( _x,         _y         ) -> throwE ()
+  ( TNil,       TNil       ) → pure TNil
+  ( TSum a1 b1, TSum a2 b2 ) → TSum <$> unify a1 a2 <*> unify b1 b2
+  ( TTup a1 b1, TTup a2 b2 ) → TTup <$> unify a1 a2 <*> unify b1 b2
+  ( TFor a1 b1, TFor a2 b2 ) → TFor <$> unify a1 a2 <*> unify b1 b2
+  ( ty,         TVar x     ) → varIs x ty
+  ( TVar x,     ty         ) → varIs x ty
+  ( x,          y          ) → throwE
+                             $ "Bad unify: " <> tshow x <> " " <> tshow y
 
 resolve :: Int -> Infer Ty
 resolve v = do
@@ -163,14 +181,10 @@ resolve v = do
 expectFor :: Ty -> Infer (Ty, Ty, Ty)
 expectFor = \case
   ty@(TFor x y) -> pure (ty, x, y)
-  _             -> throwE ()
+  t             -> throwE ("Not a formula: " <> tshow t)
 
-eitherToMaybe :: Either a b -> Maybe b
-eitherToMaybe (P.Left _)  = Nothing
-eitherToMaybe (P.Right x) = Just x
-
-runInfer :: Infer a -> Maybe a
-runInfer = eitherToMaybe . flip evalState (mempty, 0) . runExceptT
+runInfer :: Infer a -> Either Text a
+runInfer = flip evalState (mempty, 0) . runExceptT
 
 infer :: Exp -> Infer Ty
 infer = \case
@@ -224,6 +238,10 @@ infer = \case
     unify po qo
     pure (TFor (TSum pi qi) po)
 
+  EType t -> do
+    tt <- tyExpTy t
+    pure (TFor tt tt)
+
 data Exp
     = ESubj
     | ENull
@@ -236,6 +254,7 @@ data Exp
     | EWith Exp Exp
     | ECons Exp Exp
     | ECase Exp Exp
+    | EType TyExp
   deriving (Eq, Ord)
 
 runExp :: Val -> Exp -> Val
@@ -280,49 +299,51 @@ forVal = \e ->
       EDist     -> V1 $ V1 $ V0 $ V1 VN
       ECase x y -> V1 $ V1 $ V1 $ V0 $ VP (forVal x) (forVal y)
       ECons x y -> V1 $ V1 $ V1 $ V1 $ VP (forVal x) (forVal y)
+      EType _   -> V1 $ V0 $ V1 VN -- Subj
 
 
 valFor :: Val -> Exp
-valFor (V0 l)          = valOpk l
+valFor (V0 l)        = valOpk l
 valFor (V1 (VP x y)) = EWith (valOpk x) (valFor y)
-valFor _                 = ENull
+valFor _             = ENull
 
 valOpk :: Val -> Exp
-valOpk (V0 (V0 x))        = valDir x
-valOpk (V0 (V1 x))        = valGet x
-valOpk (V1 (V0 x))        = valSim x
+valOpk (V0 (V0 x))      = valDir x
+valOpk (V0 (V1 x))      = valGet x
+valOpk (V1 (V0 x))      = valSim x
 valOpk (V1 (V1 (V0 x))) = valOtr x
 valOpk (V1 (V1 (V1 x))) = valPlx x
-valOpk _                      = ENull
+valOpk _                = ENull
 
 valDir :: Val -> Exp
 valDir (V0 VN) = ELeft
 valDir (V1 VN) = EWrit
-valDir _           = ENull
+valDir _       = ENull
 
 valGet :: Val -> Exp
 valGet (V0 VN) = EHead
 valGet (V1 VN) = ETail
-valGet _           = ENull
+valGet _       = ENull
 
 valSim :: Val -> Exp
 valSim (V0 VN) = ENull
 valSim (V1 VN) = ESubj
-valSim _           = ENull
+valSim _       = ENull
 
 valOtr :: Val -> Exp
 valOtr (V0 VN) = EEval
 valOtr (V1 VN) = EDist
-valOtr _           = ENull
+valOtr _       = ENull
 
 valPlx :: Val -> Exp
 valPlx (V0 (VP x y)) = ECase (valFor x) (valFor y)
 valPlx (V1 (VP x y)) = ECons (valFor x) (valFor y)
-valPlx _                 = ENull
+valPlx _             = ENull
 
 -- Small-Step Interpreter ------------------------------------------------------
 
 step :: Val -> Exp -> (Val, Exp)
+step VV = const (VV, ESubj)
 step s = \case
   ENull             -> (VN, ESubj)
   ESubj             -> (s, ESubj)
@@ -332,56 +353,43 @@ step s = \case
                          (s', x'   ) -> (s', EWith x' y)
   EEval             -> case s of
                          VP s' f' -> (s', valFor f')
-                         _          -> (VN, ESubj)
+                         _        -> (VV, ESubj)
   ECons ESubj ESubj -> (VP s s, ESubj)
   ECons x y         -> (VP (runExp s x) (runExp s y), ESubj)
   ELeft             -> (V0 s, ESubj)
   EWrit             -> (V1 s, ESubj)
   EHead             -> case s of
                          VP x _ -> (x,    ESubj)
-                         _        -> (VN, ESubj)
+                         _      -> (VV, ESubj)
   ETail             -> case s of
                          VP _ y -> (y,    ESubj)
-                         _        -> (VN, ESubj)
+                         _        -> (VV, ESubj)
   EDist             -> case s of
                          VP (V0 l) x -> (V0 (VP l x), ESubj)
                          VP (V1 r) x -> (V1 (VP r x), ESubj)
-                         _               -> (VN, ESubj)
+                         _           -> (VV, ESubj)
   ECase p q         -> case s of
                          V0 l -> (l, p)
                          V1 r -> (r, q)
-                         _      -> (VN, ESubj)
+                         _    -> (VV, ESubj)
+  EType _           -> (s, ESubj)
 
 displayExp :: Exp -> String
 displayExp (EWith x y) = displayExp x <> "\n" <> displayExp y
 displayExp x           = "\t" <> show x
 
-traceRunExp :: Val -> Exp -> IO ()
+traceRunExp :: Val -> Exp -> IO Val
 traceRunExp s e = do
   putStrLn (tshow (valExp s))
   putStrLn (pack $ displayExp e)
   void getLine
   case e of
-    ESubj -> putStrLn "DONE"
+    ESubj -> do putStrLn "DONE"
+                pure s
     _     -> uncurry traceRunExp (step s e)
 
-traceRun :: Conq () r -> IO ()
+traceRun :: Conq () r -> IO Val
 traceRun = traceRunExp VN . toExp
-
-{-
-run sut = \case
-  Null     -> ()
-  Subj     -> sut
-  With x y -> run (run sut x) y
-  Eval     -> case sut of (s,f) -> run s f
-  Cons x y -> (run sut x, run sut y)
-  Left     -> L sut
-  Writ     -> R sut
-  Head     -> fst sut
-  Tail     -> snd sut
-  Dist     -> case sut of { (L l,x) -> L (l,x); (R r,x) -> R (r,x); }
-  Case p q -> case sut of { L l     -> run l p; R r     -> run r q; }
--}
 
 flattenCons :: Exp -> Exp -> [Exp]
 flattenCons = \x -> go [x]
@@ -402,23 +410,64 @@ instance Show Exp where
     EWith x y -> show y <> show x
     ECons x y -> "(" <> show x <> " " <> show y <> ")"
     ECase x y -> "<" <> show x <> " " <> show y <> ">"
+    EType t   -> "{" <> show t <> "}"
 
---------------------------------------------------------------------------------
+parseSimpl :: String -> Maybe (Exp, String)
+parseSimpl = \case
+  '.' : xs -> pure (ESubj, xs)
+  '~' : xs -> pure (ENull, xs)
+  '!' : xs -> pure (EEval, xs)
+  '0' : xs -> pure (ELeft, xs)
+  '1' : xs -> pure (EWrit, xs)
+  '-' : xs -> pure (EHead, xs)
+  '+' : xs -> pure (ETail, xs)
+  '%' : xs -> pure (EDist, xs)
+  _        -> Nothing
 
-class ToConq a s r where
-  toConq :: a -> Conq s r
+parseExp :: String -> Either String (Exp, String)
+parseExp str = do
+  case parseSimpl str of
+    Just (e, xs) -> pure (e, xs)
+    Nothing ->
+      case str of
+        '(':xs -> parseTwo ECons ')' xs
+        '<':xs -> parseTwo ECase '>' xs
+        '`':xs -> parseSeq '`' xs <&> \(e,cs) -> (valExp (forVal e), cs)
+        _      -> P.Left "bad"
 
-instance ToConq (Conq s a, Conq a r) s r where
-  toConq (x,y) = With x y
+repl :: IO ()
+repl = go VN
+  where
+    go sut = do
+      ln               <- unpack <$> getLine
+      P.Right (exp,"") <- pure (parseSeq '\n' ln)
+      sut              <- pure (runExp sut exp)
+      putStrLn ("-> " <> tshow sut)
+      putStrLn ""
+      go sut
 
-instance ToConq (Conq s a, Conq a b, Conq b r) s r where
-  toConq (x,y,z) = With (toConq (x,y)) z
+parseSeq :: Char -> String -> Either String (Exp, String)
+parseSeq end = go >=> \case
+                 (Just x,  buf) -> pure (x, buf)
+                 (Nothing, buf) -> P.Left "empty sequence"
+  where
+    go :: String -> Either String (Maybe Exp, String)
+    go = \case
+      []                -> pure (Nothing, [])
+      c : cd | c == end -> pure (Nothing, cd)
+      cs                -> do
+        (x, buf) <- parseExp cs
+        (y, buf) <- go buf
+        case y of
+          Nothing -> pure (Just x, buf)
+          Just y  -> pure (Just (EWith y x), buf)
 
-instance ToConq (Conq s a, Conq a b, Conq b c, Conq c r) s r where
-  toConq (x,y,z,p) = With (toConq (x,y,z)) p
-
-instance ToConq (Conq s a, Conq a b, Conq b c, Conq c d, Conq d r) s r where
-  toConq (x,y,z,p,q) = With (toConq (x,y,z,p)) q
+parseTwo :: (Exp -> Exp -> Exp) -> Char -> String
+         -> Either String (Exp, String)
+parseTwo cntr end buf = do
+  (xs, buf) <- parseSeq ' ' buf
+  (ys, buf) <- parseSeq end buf
+  pure (cntr xs ys, buf)
 
 --------------------------------------------------------------------------------
 
@@ -429,11 +478,11 @@ data Conq s r where
   Writ :: Conq b (Sum a b)
   Head :: Conq (Tup a b) a
   Tail :: Conq (Tup a b) b
-  Cons :: Conq s a -> Conq s b -> Conq s (a, b)
+  Cons :: Conq s a -> Conq s b -> Conq s (Tup a b)
   Case :: Conq a r -> Conq b r -> Conq (Sum a b) r
-  Dist :: Conq (Sum a b,s) (Sum (a,s) (b,s))
-  With :: Conq s a -> Conq a r -> Conq s r
-  Eval :: Conq (a, Conq a r) r
+  Dist :: Conq (Tup (Sum a b) s) (Sum (Tup a s) (Tup b s))
+  With :: (Conq s a) -> ((Conq a r) -> (Conq s r))
+  Eval :: Conq (Tup a (Conq a r)) r
 
 instance Category Conq where
   id  = Subj
@@ -455,8 +504,8 @@ run sut = \case
   Writ     -> R sut
   Head     -> fst sut
   Tail     -> snd sut
-  Dist     -> case sut of { (L l,x) -> L (l,x); (R r,x) -> R (r,x); }
-  Case p q -> case sut of { L l     -> run l p; R r     -> run r q; }
+  Dist     -> case sut of (L l, x) -> L (l, x); (R r, x) -> R (r, x)
+  Case p q -> case sut of L l -> run l p; R r -> run r q
 
 times :: Int -> Conq s s -> Conq s s
 times 0 _ = id
@@ -493,7 +542,7 @@ fromExp = \case
   ESubj ->
     case testEquality (typeRep @s) (typeRep @r) of
       Just Refl -> Just (coerce Subj)
-      Nothing   -> Nothing
+      Nothing -> Nothing
 
   _ ->
     Nothing
@@ -804,6 +853,16 @@ n10 = Writ . n9
 
 --------------------------------------------------------------------------------
 
+type Tramp c a r = Conq (a,c) (Sum a r)
+
+spinTr :: Tramp c a ()
+spinTr = Left . Head
+
+
+-- ((arg (ctx for)) fireTramp) -> <fireTramp ->%(!((arg ctx) for) (ctx for))
+-- fireTramp = Payload
+-- fireTramp = undefined
+
 -- ctx for -> (ctx for)
 gate :: Val -> Exp -> Val
 gate v e = VP v (forVal e)
@@ -875,7 +934,7 @@ fireRit = EWith (toExp reOrg) EEval
 
 type Payload = (Val, Exp)
 
-demo :: Payload -> IO ()
+demo :: Payload -> IO Val
 demo (s,f) = traceRunExp s f
 
 dumbLoop :: Exp
@@ -884,13 +943,13 @@ dumbLoop = EWith (ECons ESubj ESubj) EEval
 dumbLoopP :: Payload
 dumbLoopP = (forVal dumbLoop, dumbLoop)
 
-demo_dumb_loop :: IO ()
+demo_dumb_loop :: IO Val
 demo_dumb_loop = demo dumbLoopP
 
-demo_duo_overflow :: IO ()
+demo_duo_overflow :: IO Val
 demo_duo_overflow = traceRun (duo_incer . times 3 (eat . duo_incer) . duo_zero)
 
-demo_nat_constr :: IO ()
+demo_nat_constr :: IO Val
 demo_nat_constr = traceRun n10
 
 -- [[-e +] +]!
@@ -905,7 +964,7 @@ natOverflow = EWith (ECons (ECons (EWith EHead EWrit) ETail) ETail) EEval
 natOverflowPay :: Payload
 natOverflowPay = fix (V0 VN) EWrit
 
-demo_nat_inc_loop :: IO ()
+demo_nat_inc_loop :: IO Val
 demo_nat_inc_loop = demo natOverflowPay
 
 duo_zero_val :: Val
@@ -914,5 +973,5 @@ duo_zero_val = VP (V0 VN) (V0 (VN))
 short_zero_val :: Val
 short_zero_val = runExp VN (toExp short_zero)
 
-short_inc_loop :: IO ()
+short_inc_loop :: IO Val
 short_inc_loop = demo $ fix (V0 short_zero_val) (toExp (short_incer . eat))
