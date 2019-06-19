@@ -21,11 +21,13 @@ type ConnectionId = Word
 type RequestId = Word
 
 data Eff = Eff ServerId ConnectionId RequestId ServerRequest
+  deriving (Eq, Ord, Show)
 
 -- | An http server effect is configuration, or it sends an outbound response
 data ServerRequest
   = SetConfig Config
   | Response Event
+  deriving (Eq, Ord, Show)
 
 data Config = Config
   { secure :: Maybe (Key, Cert)
@@ -33,14 +35,17 @@ data Config = Config
   , log :: Bool
   , redirect :: Bool
   }
+  deriving (Eq, Ord, Show)
+
 
 -- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
 -- from Wain
-newtype Key = Key PEM
-newtype Cert = Cert PEM
+type Key = PEM
+type Cert = PEM
 data Wain = Wain [Text]
 
 newtype PEM = PEM ByteString
+  deriving newtype (Eq, Ord, Show)
 
 data ClientResponse
   = Progress ResponseHeader Int (Maybe Int) (Maybe ByteString)
@@ -80,7 +85,7 @@ startServer :: State -> Config -> IO ()
 startServer s c = do
   tls <- case (secure c) of
     Nothing -> error "no wai"
-    Just (Key (PEM key), Cert (PEM cert)) ->
+    Just (PEM key, PEM cert) ->
       pure (W.tlsSettingsMemory cert key)
 
   -- we need to do the dance where we do the socket checking dance. or shove a

@@ -7,15 +7,57 @@ import Data.Noun.Atom
 import Data.Noun.Poet
 import Database.LMDB.Raw
 import Urbit.Time
-import Vere
 
-newtype Ovum = Ovum Void
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+import qualified Vere.Http.Server as Server
+import qualified Vere.Http.Client as Client
+
+data WTFIsThis
+  = WTFIsThis (Maybe Varience) Eff
+
+data Event
+  = BehnBorn
+  | HttpBorn
+  | CttpBorn
+  deriving (Eq, Ord, Show)
+
+data Eff
+  = HttpServer Server.Eff
+  | HttpClient Client.Eff
+  | Behn Void
+  | Clay Void
+  | Boat Void
+  | Sync Void
+  | Newt Void
+  | Ames Void
+  | Init Void
+  | Term Void
+  deriving (Eq, Ord, Show)
+
+instance ToNoun Eff where
+
+instance FromNoun Eff where
+
+
+data Varience = Gold | Iron | Lead
+
+type Perform = Eff -> IO ()
+
+newtype Path = Path [Text]
+  deriving (Eq, Ord, Show)
+
+data Ovum = Ovum Path Event
+  deriving (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype Mug = Mug Word32
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype Jam = Jam Atom
+
+data IODriver = IODriver
+  { bornEvent   :: IO Ovum
+  , startDriver :: (Ovum -> STM ()) -> IO (Async (), Perform)
+  }
+
 
 data Writ a = Writ
   { eventId          :: Word64
@@ -25,7 +67,7 @@ data Writ a = Writ
   }
 
 data Pier = Pier
-  { computeQueue :: TQueue Noun
+  { computeQueue :: TQueue Ovum
   , persistQueue :: TQueue (Writ [Eff])
   , releaseQueue :: TQueue (Writ [Eff])
   , logState :: LogState

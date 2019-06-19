@@ -14,6 +14,8 @@ import Data.Noun.Pill
 import Vere.Pier.Types
 import System.Process
 
+import qualified Urbit.Time as Time
+
 import Data.ByteString (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Ptr (castPtr)
@@ -76,7 +78,7 @@ type Play = Nullable (EventId, Mug, ShipId)
 data Plea
     = Play Play
     | Work EventId Mug Job
-    | Done EventId Mug [Ovum]
+    | Done EventId Mug [Eff]
     | Stdr EventId Cord
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
@@ -107,7 +109,7 @@ type NextEventId = Word64
 type WorkerState = (EventId, Mug)
 
 type ReplacementEv = (EventId, Mug, Job)
-type WorkResult    = (EventId, Mug, [Ovum])
+type WorkResult    = (EventId, Mug, [Eff])
 type WorkerResp    = (Either ReplacementEv WorkResult)
 
 -- Exceptions ------------------------------------------------------------------
@@ -176,24 +178,26 @@ replay :: Worker
        -> LogIdentity
        -> EventId
        -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
-       -> IO ()
+       -> IO (EventId, Mug)
 replay w (wid, wmug) identity lastCommitedId getEvents = do
   when (wid == 1) (sendBootEvent identity w)
 
-  loop wid
+  vLast <- newIORef (wid, wmug)
+  loop vLast wid
+  readIORef vLast
   where
     -- Replay events in batches of 1000.
-    loop curEvent = do
+    loop vLast curEvent = do
       let toRead = min 1000 (1 + lastCommitedId - curEvent)
       when (toRead > 0) do
         events <- getEvents curEvent toRead
 
         for_ events $ \(eventId, event) -> do
           sendAndRecv w eventId event >>= \case
-            (Left ev) -> throwIO (ReplacedEventDuringReplay eventId ev)
-            (Right _) -> pure ()
+            Left ev -> throwIO (ReplacedEventDuringReplay eventId ev)
+            Right (id, mug, _) -> writeIORef vLast (id, mug)
 
-        loop (curEvent + toRead)
+        loop vLast (curEvent + toRead)
 
 
 bootWorker :: Worker
@@ -220,7 +224,7 @@ resumeWorker :: Worker
              -> LogIdentity
              -> EventId
              -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
-             -> IO ()
+             -> IO (EventId, Mug)
 resumeWorker w identity logLatestEventNumber eventFetcher =
   do
     ws@(eventId, mug) <- recvPlea w >>= \case
@@ -228,14 +232,28 @@ resumeWorker w identity logLatestEventNumber eventFetcher =
       Play (NotNil (e, m, _)) -> pure (e, m)
       x                       -> throwIO (InvalidInitialPlea x)
 
-    replay w ws identity logLatestEventNumber eventFetcher
+    r <- replay w ws identity logLatestEventNumber eventFetcher
 
     requestSnapshot w
 
-    pure ()
+    pure r
 
-workerThread :: Worker -> IO (Async ())
-workerThread w = undefined
+workerThread :: Worker -> STM Ovum -> (EventId, Mug) -> IO (Async ())
+workerThread w getEvent (evendId, mug) = async $ forever do
+  ovum <- atomically $ getEvent
+
+  currentDate <- Time.now
+
+  let mat = jam (undefined (mug, currentDate, ovum))
+
+  undefined
+  
+  -- Writ (eventId + 1) Nothing mat
+  -- -- assign a new event id.
+  -- -- assign a date
+  -- -- get current mug state
+  -- -- (jam [mug event])
+  -- sendAndRecv 
 
 requestSnapshot :: Worker -> IO ()
 requestSnapshot w =  undefined

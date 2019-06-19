@@ -67,7 +67,7 @@ runPierFromDisk top = do
 
 
 performCommonPierStartup :: Worker.Worker
-                         -> TQueue Noun
+                         -> TQueue Ovum
                          -> TQueue (Writ [Eff])
                          -> TQueue (Writ [Eff])
                          -> LogState
@@ -88,6 +88,6 @@ performCommonPierStartup workerState computeQueue persistQueue releaseQueue logS
         for_ (payload r) $ \eff ->
           k eff
 
-  Worker.workerThread workerState
+  Worker.workerThread workerState (readTQueue computeQueue) undefined
 
   pure (Pier{..})

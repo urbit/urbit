@@ -21,6 +21,7 @@ data Ev = Receive ReqId Event -- [%receive @ todo]
 data Eff
   = NewReq ReqId Request -- [%request @ todo]
   | CancelReq ReqId      -- [%cancel-request @]
+  deriving (Eq, Ord, Show)
 
 data State = State
   { sManager :: H.Manager
