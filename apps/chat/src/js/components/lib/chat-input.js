@@ -48,10 +48,13 @@ export class ChatInput extends Component {
         });
       }
 
-      setTimeout(closure, 1000);
+      //setTimeout(closure, 2000);
+      setTimeout(() => {
+        window.location.reload(false);
+      }, 1000);
     };
 
-    //closure();
+    //setTimeout(closure, 2000);
 
 
     this.state = {

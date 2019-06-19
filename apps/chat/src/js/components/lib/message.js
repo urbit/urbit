@@ -38,6 +38,11 @@ export class Message extends Component {
 
   render() {
     let pending = !!this.props.msg.pending ? ' o-80' : '';
+
+    let timestamp = moment.unix(this.props.msg.wen / 1000).format('hh:mm');
+    window.timestamp = timestamp;
+    window.wen = this.props.msg.wen;
+    window.moment = moment;
     
     return (
       <div className={"w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending}>
@@ -47,7 +52,7 @@ export class Message extends Component {
         <div className="fr" style={{ flexGrow: 1, marginTop: -4 }}>
           <div>
             <p className="v-top label-small-mono gray dib mr3">~{this.props.msg.aut}</p>
-            <p className="v-top label-small-mono gray dib">{moment.unix(this.props.msg.wen).format('hh:mm')}</p>
+            <p className="v-top label-small-mono gray dib">{timestamp}</p>
           </div>
           {this.renderContent(this.props.details.type)}
         </div>

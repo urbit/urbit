@@ -14,7 +14,6 @@
   /|  /js/
       /~  ~
   ==
-
 /=  script
   /^  octs
   /;  as-octs:mimes:html
@@ -63,9 +62,9 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]
+        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]~
+  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]~
   this(sta u.old)
 ::
 ::
@@ -73,7 +72,16 @@
 ++  peer-chattile
   |=  wir=wire
   ^-  (quip move _this)
-  [~ this]
+  =/  numbers/(list [circle:hall @ud])
+    %+  turn  ~(tap by messages.str.sta)
+      |=  [cir=circle:hall lis=(list envelope:hall)]
+      ^-  [circle:hall @ud]
+      [cir (lent lis)]
+  :_  this
+  :~
+    [ost.bol %diff %json (config-to-json str.sta)]
+    [ost.bol %diff %json (numbers-to-json numbers)]
+  ==
 ::
 ::  +peer-messages: subscribe to subset of messages and updates
 ::
@@ -81,6 +89,7 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
+  ~&  (lent (prey:pubsub:userlib /primary bol))
   =*  messages  messages.str.sta
   =/  lisunitmov=(list (unit move))
     %+  turn  ~(tap by messages)
@@ -134,9 +143,13 @@
 ++  send-chat-update
   |=  upd=update
   ^-  (list move)
+  %+  weld
   %+  turn  (prey:pubsub:userlib /primary bol)
   |=  [=bone *]
-  ~&  bone
+  [bone %diff %chat-update upd]
+  ::
+  %+  turn  (prey:pubsub:userlib /chattile bol)
+  |=  [=bone *]
   [bone %diff %chat-update upd]
 ::
 ::
