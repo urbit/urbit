@@ -26,13 +26,15 @@
           new-post+new-post
           new-comment+new-comment
       ::
-          delete+item-id
+          delete-collection+delete-collection
+          delete-post+delete-post
+          delete-comment+delete-comment
       ::
           edit-collection+edit-collection
           edit-post+edit-post
-          edit-comment+edit-comment
       ::
           invite+invite
+          reject-invite+reject-invite
       ::
           serve+serve
           unserve+unserve
@@ -68,6 +70,21 @@
           coll+(su:dejs sym)
           name+(su:dejs sym)
           content+so:dejs
+      ==
+    ::
+    ++  delete-collection  (of:dejs coll+(su:dejs sym) ~)
+    ::
+    ++  delete-post
+      %-  ot:dejs
+        coll+(su:dejs sym)
+        post+(su:dejs sym)
+      ==
+    ::
+    ++  delete-comment
+      %-  ot:dejs
+        coll+(su:dejs sym)
+        post+(su:dejs sym)
+        comment+(su:dejs sym)
       ==
     ::
     ++  edit-collection
@@ -149,6 +166,12 @@
       %-  ot:dejs
       :~  coll+(su:dejs sym)
           who+(ar:dejs (su:dejs fed:ag))
+      ==
+    ::
+    ++  reject-invite
+      %-  ot:dejs
+      :~  coll+(su:dejs sym)
+          who+(su:dejs fed:ag)
       ==
     ::
     ++  serve

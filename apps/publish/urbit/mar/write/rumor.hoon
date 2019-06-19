@@ -41,6 +41,13 @@
           [%who (ship who.rum)]
           [%data (total-build-to-json dat.rum)]
       ==
+    ::
+        %remove
+      =/  suf=(list [@tas json])
+      %-  pairs
+      :~  [%coll s+col.rum]
+          [%post ?~(pos.rum ~ s+u.pos.rum)]
+      ==
     ==
     ::
   --

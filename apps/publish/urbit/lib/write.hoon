@@ -108,16 +108,16 @@
   (tang-to-json +.bud)
 ::
 ++  comment-build-to-json
-  |=  bud=(each (list [comment-info manx]) tang)
+  |=  bud=(each (list [comment-info @t]) tang)
   ^-  json
   ?:  ?=(%.y -.bud)
     :-  %a
     %+  turn  p.bud
-    |=  [com=comment-info man=manx]
+    |=  [com=comment-info bod=@t]
     ^-  json
     %-  pairs:enjs:format
     :~  info+(comment-info-to-json com)
-        body+(elem-to-react-json man)
+        body+s+bod
     ==
   (tang-to-json +.bud)
 ::
@@ -146,7 +146,19 @@
     :~  pin+a+(turn pin.order.col |=(s=@tas [%s s]))
         unpin+a+(turn unpin.order.col |=(s=@tas [%s s]))
     ==
-
+  ::
+    :+  %contributors
+      %a
+    %+  turn  ~(tap in contributors.col)
+    |=  who=@p
+    (ship:enjs:format who)
+  ::
+    :+  %subscribers
+      %a
+    %+  turn  ~(tap in subscribers.col)
+    |=  who=@p
+    ^-  json
+    (ship:enjs:format who)
   ==
 ::
 ++  state-to-json
@@ -198,6 +210,16 @@
       :~  who+(ship:enjs:format who)
           coll+s+coll
           post+s+post
+      ==
+  ::
+      :+  %invites
+        %a
+      %+  turn  ~(tap in invites.sat)
+      |=  [[who=@p coll=@tas] title=@t]
+      %-  pairs:enjs:format
+      :~  who+(ship:enjs:format who)
+          coll+s+coll
+          title+s+title
       ==
   ==
 ::
