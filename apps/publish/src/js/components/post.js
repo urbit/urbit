@@ -4,6 +4,8 @@ import { PostPreview } from '/components/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { PostBody } from '/components/post-body';
+import { PathControl } from '/components/lib/path-control';
+import _ from 'lodash';
 
 export class Post extends Component {
   constructor(props){
@@ -30,143 +32,365 @@ export class Post extends Component {
         yy : '%d years',
       }
     });
+
+    this.state = {
+      mode: 'view',
+      titleOriginal: '',
+      bodyOriginal: '',
+      title: '',
+      body: '',
+      awaitingEdit: false,
+      awaitingLoad: false,
+      ship: this.props.ship,
+      blogId: this.props.blogId,
+      postId: this.props.postId,
+      blog: null,
+      post: null,
+      comments: null,
+      pathData: [],
+      temporary: false,
+    }
+
+    this.editPost = this.editPost.bind(this);
+    this.savePost = this.savePost.bind(this);
+    this.titleChange = this.titleChange.bind(this);
+    this.bodyChange = this.bodyChange.bind(this);
+
   }
 
+  editPost() {
+    this.setState({mode: 'edit'});
+  }
+  
+  savePost() {
+    if (this.state.title == this.state.titleOriginal &&
+        this.state.body == this.state.bodyOriginal) {
+      return;
+    }
 
-  buildPosts(){
-    let blogId = this.props.blogId;
+    let permissions = {
+      read: {
+        mod: 'black',
+        who: [],
+      },
+      write: {
+        mod: 'white',
+        who: [],
+      }
+    };
+    
+    let data = {
+      "edit-post": {
+        who: this.state.ship,
+        coll: this.props.blogId,
+        name: this.props.postId,
+        title: this.state.title,
+        comments: this.state.post.info.comments,
+        perm: permissions,
+        content: this.state.body,
+
+      },
+    };
+
+
+    this.setState({
+      awaitingEdit: {
+        ship: this.state.ship,
+        blogId: this.props.blogId,
+        postId: this.props.postId,
+      }
+    });
+
+    this.props.api.action("write", "write-action", data);
+  }
+
+  componentWillMount() {
     let ship = this.props.ship;
-    let blog = this.retrieveColl(blogId, ship);
+    let blogId = this.props.blogId;
+    let postId = this.props.postId;
 
-    console.log("buildposts", blog);
+    if (ship != window.ship) {
+      
+      let blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
-    let pinProps = blog.order.pin.map((post) => {
-      return this.buildPostPreviewProps(post, blogId, ship, true);
-    });
+      if (blog) {
+        let post = _.get(blog, `posts[${postId}].post`, false);
+        let comments = _.get(blog, `posts[${postId}].comments`, false);
+        let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+        let postUrl = `${blogUrl}/${post.info.filename}`;
 
-    let unpinProps = blog.order.unpin.map((post) => {
-      return this.buildPostPreviewProps(post, blogId, ship, false);
-    });
+        this.setState({
+          titleOriginal: post.info.title,
+          bodyOriginal: post.raw,
+          title: post.info.title,
+          body: post.raw,
+          blog: blog,
+          post: post,
+          comments: comments,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, url: blogUrl },
+            { text: post.info.title, url: postUrl },
+          ],
+        });
 
-    return pinProps.concat(unpinProps);
-  }
-
-  buildPostPreviewProps(post, coll, who, pinned){
-    let pos = this.retrievePost(post, coll, who);
-    let col = this.retrieveColl(coll, who);
-    let com = this.retrieveComments(post, coll, who);
-
-    return {
-      postTitle: pos.info.title,
-      postName:  post,
-      postSnippet: "body snippet",
-      numComments: com.length,
-      collectionTitle: col.title,
-      collectionName:  coll,
-      author: who,
-      date: pos.info["date-created"],
-      pinned: pinned,
-    }
-
-  }
-
-  retrievePost(post, coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].posts[post].post;
+      } else {
+        this.setState({
+          awaitingLoad: {
+            ship: ship,
+            blogId: blogId,
+            postId: postId,
+            temporary: true,
+          },
+        });
+        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+          this.handleEvent.bind(this),
+          this.handleError.bind(this));
+      }
     } else {
-      return this.props.subs[who][coll].posts[post].post;
+      let blog = _.get(this.props, `pubs[${blogId}]`, false);
+      let post = _.get(blog, `posts[${postId}].post`, false);
+      let comments = _.get(blog, `posts[${postId}].comments`, false);
+      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+      let postUrl = `${blogUrl}/${post.info.filename}`;
+
+      this.setState({
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        blog: blog,
+        post: post,
+        comments: comments,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, url: blogUrl },
+          { text: post.info.title, url: postUrl },
+        ],
+      });
     }
   }
 
-  retrieveComments(post, coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].posts[post].comments;
-    } else {
-      return this.props.subs[who][coll].posts[post].comments;
+  //
+
+  handleEvent(diff) {
+    console.log("handle event", diff);
+
+    if (diff.data.total) {
+      let blog = diff.data.total.data;
+      let post = blog.posts[this.state.postId].post;
+      let comments = blog.posts[this.state.postId].comments;
+      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+      let postUrl = `${blogUrl}/${post.info.filename}`;
+
+      this.setState({
+        awaitingLoad: false,
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        blog: blog,
+        post: post,
+        comments: comments,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, url: blogUrl },
+          { text: post.info.title, url: postUrl },
+        ],
+      });
     }
   }
 
-  retrieveColl(coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll];
-    } else {
-      return this.props.subs[who][coll];
+  handleError() {
+    console.log("handle error");
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.awaitingEdit) {
+      let ship = this.state.awaitingEdit.ship;
+      let blogId = this.state.awaitingEdit.blogId;
+      let postId = this.state.awaitingEdit.postId;
+
+      if (this.state.awaitingEdit.ship == window.ship) {
+        let oldPost = prevState.post;
+
+        let post = _.get(this.props,
+          `pubs[${blogId}].posts[${postId}].post`, false);
+
+        if ((post.info.title != oldPost.info.title) ||
+            (post.raw != oldPost.raw)) {
+
+          this.setState({
+            mode: 'view',
+            titleOriginal: post.info.title,
+            bodyOriginal: post.raw,
+            title: post.info.title,
+            body: post.raw,
+            awaitingEdit: false,
+            post: post,
+          });
+        }
+      } else {
+
+        let oldPost = prevState.post;
+
+        let post = _.get(this.props,
+          `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+        
+        if ((post.info.title != oldPost.info.title) ||
+            (post.raw != oldPost.raw)) {
+          this.setState({
+            mode: 'view',
+            titleOriginal: post.info.title,
+            bodyOriginal: post.raw,
+            title: post.info.title,
+            body: post.raw,
+            awaitingEdit: false,
+            post: post,
+          });
+        }
+      }
     }
+  }
+
+
+  titleChange(evt){
+    this.setState({title: evt.target.value});
+  }
+
+  bodyChange(evt){
+    this.setState({body: evt.target.value});
   }
 
   render() {
-    let ship = this.props.ship;
-    let blog = this.retrieveColl(this.props.blogId, this.props.ship);
-    let post = this.retrievePost(this.props.postId, this.props.blogId, this.props.ship);
-    let comments = this.retrieveComments(this.props.postId, this.props.blogId, this.props.ship);
+    console.log("post", this.props);
 
-    let blogLink = `/~publish/~${this.props.ship}/${this.props.blogId}`;
-    let blogLinkText = `<- Back to ${blog.info.title}`;
 
-    let editLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${this.props.postId}/edit`;
-
-    let date = moment(post.info["date-created"]).fromNow();
-    let authorDate = `${post.info.creator} • ${date}`;
-
-    // change unpin to concatenation of pinned and unpinned
-    let morePosts = blog.order.unpin.slice(0,10).map((pid) => {
-
-      let p = this.retrievePost(pid, this.props.blogId, this.props.ship);
-      let color = (pid == this.props.postId) ? "black" : "gray-50";
-      let postLink = `/~publish/~${this.props.ship}/${this.props.blogId}/${pid}`;
+    if (this.state.awaitingLoad) {
       return (
-        <Link to={postLink} className="label-regular">
-          <p className={color}>{p.info.title}</p>
-        </Link>
+        <div>
+          Loading
+        </div>
       );
-    });
-
-    return (
-      <div className="w-688 flex-col center mt4">
-        <Link to={blogLink}>
-          <p className="body-regular">
-            {blogLinkText}
-          </p>
-        </Link>
-
-        <h2>{post.info.title}</h2>
-
-        <div className="mb4">
-          <p className="fl label-small gray-50">{authorDate}</p>
-          <Link to={editLink}>
-            <p className="label-regular gray-50 fr">Edit</p>
-          </Link>
+    } else if (this.state.awaitingEdit) {
+      return (
+        <div>
+          Saving Edit
         </div>
+      );
+    } else if (this.state.mode == 'view') {
+      let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
-        <div className="cb">
-          <PostBody
-            body={post.body} 
-          />
+      let date = moment(this.state.post.info["date-created"]).fromNow();
+      let authorDate = `${this.state.post.info.creator} • ${date}`;
+      return (
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PathControl pathData={this.state.pathData}/>
+          </div>
+          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+            <Link to={blogLink}>
+              <p className="body-regular">
+                {blogLinkText}
+              </p>
+            </Link>
+
+            <h2>{this.state.titleOriginal}</h2>
+
+            <div className="mb4">
+              <p className="fl label-small gray-50">{authorDate}</p>
+              <p className="label-regular gray-50 fr pointer"
+                 onClick={this.editPost}>
+                Edit
+              </p>
+            </div>
+
+            <div className="cb">
+              <PostBody
+                body={this.state.post.body} 
+              />
+            </div>
+
+            <hr className="gray-50 w-680"/>
+          
+            <hr className="gray-50 w-680"/>
+
+            <div className="cb mt3 mb4">
+              <p className="gray-50 body-large b">
+                {this.state.comments.length}
+                <span className="black">
+                  Comments
+                </span>
+              </p>
+              <p className="cl body-regular">
+                + Show Comments
+              </p>
+            </div>
+          </div>
         </div>
+      );
 
-        <hr className="gray-50 w-680"/>
+    } else if (this.state.mode == 'edit') {
+      let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
+      let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
-        <div className="cb mt3 mb4">
-          <p className="gray-50 body-large b">
-            {comments.length}
-            <span className="black">
-              Comments
-            </span>
-          </p>
-          <p className="cl body-regular">
-            ↓ Show Comments
-          </p>
+      let date = moment(this.state.post.info["date-created"]).fromNow();
+      let authorDate = `${this.state.post.info.creator} • ${date}`;
+      return (
+        <div>
+          <div className="cf w-100 bg-white h-publish-header">
+            <PathControl pathData={this.state.pathData}/>
+          </div>
+          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+            <Link to={blogLink}>
+              <p className="body-regular">
+                {blogLinkText}
+              </p>
+            </Link>
+
+            <input className="header-2 w-100"
+              type="text"
+              name="postName"
+              defaultValue={this.state.titleOriginal}
+              onChange={this.titleChange}
+            />
+
+            <div className="mb4">
+              <p className="fl label-small gray-50">{authorDate}</p>
+              <p className="label-regular gray-50 fr pointer"
+                 onClick={this.savePost}>
+                Save
+              </p>
+            </div>
+
+            <textarea className="cb body-regular-400 w-100 h5"
+              style={{resize:"none"}}
+              type="text"
+              name="postBody"
+              onChange={this.bodyChange}
+              defaultValue={this.state.bodyOriginal}>
+            </textarea>
+
+            <hr className="gray-50 w-680"/>
+          
+            <hr className="gray-50 w-680"/>
+
+            <div className="cb mt3 mb4">
+              <p className="gray-50 body-large b">
+                {this.state.comments.length}
+                <span className="black">
+                  Comments
+                </span>
+              </p>
+              <p className="cl body-regular">
+                + Show Comments
+              </p>
+            </div>
+          </div>
         </div>
-
-        <hr className="gray-50 w-680"/>
-
-        <div className="cb flex-col">
-          <p className="label-regular b mb1">{blog.info.title}</p>
-          <p className="label-regular gray-30 mb2">Hosted by {blog.info.owner}</p>
-          {morePosts}
-        </div>
-      </div>
-    );
+      );
+    }
   }
 }
 

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { RecentPreview } from '/components/recent-preview';
+import { withRouter } from 'react-router';
+import { HeaderMenu } from '/components/lib/header-menu';
 
+const HM = withRouter(HeaderMenu);
 
 export class Recent extends Component {
   constructor(props){
@@ -26,25 +29,18 @@ export class Recent extends Component {
           date: this.roundDay(postDate),
           posts: [postProps],
         }
-
-        if (i == (this.props.latest.length - 1)) {
-          recent.push(Object.assign({}, group));
-        }
-
       } else if ( this.sameDay(group.date, postDate) ) {
         group.posts.push(postProps) ;
       } else {
         recent.push(Object.assign({}, group));
-
         group = {
           date: this.roundDay(postDate),
           posts: [postProps],
         }
+      }
 
-        if (i == (this.props.latest.length - 1)) {
-          recent.push(Object.assign({}, group));
-        }
-
+      if (i == (this.props.latest.length - 1)) {
+        recent.push(Object.assign({}, group));
       }
     }
     return recent;
@@ -62,7 +58,8 @@ export class Recent extends Component {
       numComments: com.length,
       collectionTitle: col.title,
       collectionName:  coll,
-      author: who,
+      author: pos.info.creator.slice(1),
+      blogOwner: who,
       date: pos.info["date-created"]
     }
 
@@ -132,19 +129,23 @@ export class Recent extends Component {
 
 
   render() {
+
+    console.log(this.props);
+
     let recent = this.buildRecent();
 
-    let body = recent.map((group) => {
-      let posts = group.posts.map((post) => {
+    let body = recent.map((group, i) => {
+      let posts = group.posts.map((post, j) => {
         return (
           <RecentPreview
             post={post}
+            key={j}
           />
         );
       });
       let date = this.dateLabel(group.date);
       return (
-        <div>
+        <div key={i}>
           <div className="w-100 h-80">
             <h2 className="gray-50">
               {date}
@@ -159,8 +160,13 @@ export class Recent extends Component {
 
 
     return (
-      <div className="flex-col">
-        {body} 
+      <div>
+        <div className="cf w-100 bg-white h-publish-header">
+          <HM/>
+        </div>
+        <div className="flex-col">
+          {body} 
+        </div>
       </div>
     );
   }

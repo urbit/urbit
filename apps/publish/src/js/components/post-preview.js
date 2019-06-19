@@ -38,9 +38,9 @@ export class PostPreview extends Component {
       ? '1 comment'
       : `${this.props.post.numComments} comments`
     let date = moment(this.props.post.date).fromNow();
-    let authorDate = `~${this.props.post.author} • ${date}`
-    let collLink = "/~publish/~" + 
-      this.props.post.author + "/" +
+    let authorDate = `${this.props.post.author} • ${date}`
+    let collLink = "/~publish/" + 
+      this.props.post.blogOwner + "/" +
       this.props.post.collectionName;
     let postLink = collLink + "/" + this.props.post.postName;
 
