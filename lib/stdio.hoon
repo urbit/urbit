@@ -68,46 +68,57 @@
   |=  =hiss:eyre
   =/  m  (async ,~)
   ^-  form:m
-  ;<  ~  bind:m  (send-raw-card %hiss / ~ %httr %hiss hiss)
-  (set-raw-contract & %hiss ~)
+  =/  =card
+    [%request / (hiss-to-request:html hiss) *outbound-config:http-client]
+  ;<  ~  bind:m  (send-raw-card card)
+  (set-raw-contract & %request ~)
 ::
-::  Wait until we get an HTTP response or error
+::  Wait until we get an HTTP response or cancelation
 ::
 ++  take-sigh-raw
-  =/  m  (async (each httr:eyre tang))
+  =/  m  (async (unit httr:eyre))
   ^-  form:m
   |=  =async-input
   :^  ~  ~  ~
   ?~  in.async-input
     [%wait ~]
   =*  sign  sign.u.in.async-input
-  ?:  ?=(%sigh -.sign)
-    [%done %& httr.sign]
-  ?:  ?=(%sigh-tang -.sign)
-    [%done %| tang.sign]
-  [%fail %expected-sigh >got=-.sign< ~]
+  ::  fail on anything other than an http-response
+  ::
+  ?.  ?=(%http-response -.sign)
+    [%fail %expected-http-response >got=-.sign< ~]
+  ?-  -.response.sign
+  ::  ignore progress notifications
+  ::
+      %progress
+    [%wait ~]
+  ::
+      %cancel
+    [%done ~]
+  ::
+      %finished
+    [%done (some (to-httr:http-client +.response.sign))]
+  ==
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
 ++  take-sigh
   =/  m  (async ,httr:eyre)
   ^-  form:m
-  ;<  rep=(each httr:eyre tang)  bind:m  take-sigh-raw
-  ;<  ~                          bind:m  (set-raw-contract | %hiss ~)
-  ?-  -.rep
-    %&  (pure:m p.rep)
-  ::
-    %|  |=  =async-input
-        [~ ~ ~ %fail %sigh-tang p.rep]
-  ==
+  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
+  ;<  ~                     bind:m  (set-raw-contract | %request ~)
+  ?^  rep
+    (pure:m u.rep)
+  |=  =async-input
+  [~ ~ ~ %fail %http-canceled ~]
 ::
-::  Wait until we get an HTTP response or error and unset contract
+::  Wait until we get an HTTP response or cancelation and unset contract
 ::
-++  take-sigh-each
-  =/  m  (async (each httr:eyre tang))
+++  take-maybe-sigh
+  =/  m  (async (unit httr:eyre))
   ^-  form:m
-  ;<  rep=(each httr:eyre tang)  bind:m  take-sigh-raw
-  ;<  ~                          bind:m  (set-raw-contract | %hiss ~)
+  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
+  ;<  ~                     bind:m  (set-raw-contract | %request ~)
   (pure:m rep)
 ::
 ::  Extract body from raw httr

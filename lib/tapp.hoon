@@ -379,17 +379,10 @@
   ::
   ::  Pass response to async
   ::
-  ++  sigh-httr
-    |=  [=wire =httr:eyre]
+  ++  http-response
+    |=  [=wire response=client-response:http-client]
     ^-  (quip move _this-tapp)
-    (take-async bowl `[wire %sigh httr])
-  ::
-  ::  Failed http request
-  ::
-  ++  sigh-tang
-    |=  [=wire =tang]
-    ^-  (quip move _this-tapp)
-    (take-async bowl `[wire %sigh-tang tang])
+    (take-async bowl `[wire %http-response response])
   ::
   ::  Pass timer to async, or fail
   ::
@@ -417,11 +410,6 @@
     ^-  (quip move _this-tapp)
     =/  m  tapp-async
     ?~  active
-      ::  Can't cancel HTTP requests, so we might get answers after end
-      ::  of computation
-      ::
-      ?:  ?=([~ @ %sigh *] in.async-input)
-        `this-tapp
       ~|  %no-active-async
       ~|  ?~  in.async-input
             ~
@@ -522,8 +510,8 @@
     |=  [=contract =bone]
     ^-  (list move)
     ?-  -.contract
-      %wait  [bone %rest /note/(scot %da at.contract) at.contract]~
-      %hiss  ~  ::  can't cancel; will ignore response
+      %wait     [bone %rest /note/(scot %da at.contract) at.contract]~
+      %request  [bone %cancel-request / ~]~
     ==
   --
 --
