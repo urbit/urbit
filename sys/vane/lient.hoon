@@ -281,9 +281,11 @@
   ++  cleanup-connection
     |=  id=@ud
     ^-  ^state
+    ?~  con=(~(get by connection-by-id.state) id)
+      state
     %_    state
       connection-by-id    (~(del by connection-by-id.state) id)
-      connection-by-duct  (~(del by connection-by-duct.state) duct)
+      connection-by-duct  (~(del by connection-by-duct.state) duct.u.con)
     ==
   --
 --
