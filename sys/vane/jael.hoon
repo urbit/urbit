@@ -2481,6 +2481,19 @@
       snap.snap
     $
   ::
+      %vein
+    ~&  [%vein tyl]
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our))
+      [~ ~]
+    =/  lyf  (slaw %ud i.tyl)
+    ?~  lyf  [~ ~]
+    ::
+    ?~  r=(~(get by jaw.own.sub.lex) u.lyf)
+      [~ ~]
+    ::
+    [~ ~ %noun !>(u.r)]
+  ::
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.sub.lex)]
