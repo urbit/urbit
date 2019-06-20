@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 
 export default class ChatTile extends Component {
@@ -7,35 +8,86 @@ export default class ChatTile extends Component {
   constructor(props) {
     super(props);
 
+    let numbers = _.get(props, 'data.numbers.chat.numbers', false);
+    let configs = _.get(props, 'data.config.chat.configs', false);
+
     this.state = {
-      configs: null,
-      messages: null,
-      message: null
+      configs,
+      numbers
     };
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { props, state } = this;
     if (prevProps !== props) {
-
-      // TODO: reducer logic :(
-     
-      this.setState(props);
+      let numbers = _.get(props, 'data.numbers.chat.numbers', false);
+      let configs = _.get(props, 'data.config.chat.configs', false);
+      
+      this.setState({
+        configs,
+        numbers
+      });
     }
   }
 
   render() {
-    console.log(this.state);
+    const { state } = this;
+
+    let inviteNum = 0;
+    let msgNum = 0;
+    let inviteCircle = `~${window.ship}/i`;
+
+    if (state.numbers && state.configs) {
+      let numbers = {};
+
+      state.numbers.forEach((num) => {
+        numbers[num.circle] = num.length;
+      });
+
+      Object.keys(state.configs).forEach((key) => {
+        let con = state.configs[key];
+
+        if (key in numbers) {
+          console.log(key, con.red, numbers[key]);
+          if (key === inviteCircle) {
+            if (con.red < numbers[key]) {
+              inviteNum = msgNum + numbers[key] - con.red;
+            }
+          } else {
+            if (con.red < numbers[key]) {
+              msgNum = msgNum + numbers[key] - con.red;
+            }
+          }
+        }
+      }); 
+    }
+
     return (
-      <div className="bg-dark-gray w-100 h-100">
-        <a className="w-100 h-100 db" style={{
-          paddingTop: 68,
-          paddingBottom: 68,
-          paddingLeft: 64,
-          paddingRight: 64
-        }}
-           href="/~chat">
-           <img src="/~chat/img/Tile.png" width={106} height={98} />
+      <div className="w-100 h-100 relative" style={{ background: '#1a1a1a' }}>
+        <a className="w-100 h-100 db pa2 no-underline" href="/~chat">
+           <p className="gray">Chat</p>
+           <img
+             className="absolute"
+             style={{ left: 68, top: 65 }}
+             src="/~chat/img/Tile.png"
+             width={106}
+             height={98} />
+           <p 
+             className="absolute white"
+             style={{
+               top: 180,
+               fontWeight: 600,
+               fontSize: 16,
+               lineHeight: '20px'
+             }}>{inviteNum} invites</p>
+           <p 
+             className="absolute white"
+             style={{
+               top: 207,
+               fontWeight: 600,
+               fontSize: 16,
+               lineHeight: '20px'
+             }}>{msgNum} new messages</p>
         </a>
       </div>
     );
