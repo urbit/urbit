@@ -11,12 +11,13 @@ library:
 dependencies:
   - async
   - base
+  - base58-bytestring
+  - bytestring
   - case-insensitive
   - chunked-data
   - classy-prelude
   - containers
   - cryptohash
-  - base58-bytestring
   - data-fix
   - extra
   - flat

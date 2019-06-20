@@ -7,6 +7,8 @@ import Data.Coerce
 import GHC.Natural
 import Control.Category
 import Data.Flat
+import Data.Bits
+import Data.Vector (generate)
 
 import Control.Lens               ((&))
 import Control.Monad.Except       (ExceptT, runExceptT)
@@ -19,6 +21,8 @@ import Text.Show                  (showString, showParen)
 import qualified Prelude                as P
 import qualified Crypto.Hash.SHA256     as SHA256
 import qualified Data.ByteString.Base58 as Base58
+import qualified Data.ByteString        as B
+import qualified Data.ByteString.Unsafe as B
 
 --------------------------------------------------------------------------------
 
@@ -343,12 +347,13 @@ runExp s e     = uncurry runExp (step s e)
 {-
     for = <opk [opk for]>
     opk = <<dir get> <<sim hin> <otr plx>>
+    opk-alt = <dir <get <<sim hin> <otr plx>>>
     dir = <L R>
     get = <- +>
     sim = <~ .>
-    hin = <<? *> <@ ^>>
     otr = <! %>
-    plx = <@ :>
+    plx = <◆ ●>
+    hin = <<? *> <@ <^ |>>>
 -}
 
 flattenExp :: Exp -> Exp
@@ -376,8 +381,8 @@ forVal = \e ->
       EPush     -> V1 $ V0 $ V1 $ V0 $ V0 VN
       EPull     -> V1 $ V0 $ V1 $ V0 $ V1 VN
       EHash     -> V1 $ V0 $ V1 $ V1 $ V0 VN
-      EFall     -> V1 $ V0 $ V1 $ V1 $ V1 $ V0 VN
-      ETent ref -> V1 $ V0 $ V1 $ V1 $ V1 $ V1 (hashToVal ref)
+      EFall     -> V1 $ V0 $ V1 $ V1 $ V1 VN
+      ETent ref -> VR ref
       EEval     -> V1 $ V1 $ V0 $ V0 VN
       EDist     -> V1 $ V1 $ V0 $ V1 VN
       ECase x y -> V1 $ V1 $ V1 $ V0 $ VP (forVal x) (forVal y)
@@ -387,6 +392,7 @@ forVal = \e ->
 
 valFor :: Val -> Exp
 valFor (V0 l)        = valOpk l
+valFor (VR r)        = ETent r
 valFor (V1 (VP x y)) = EWith (valOpk x) (valFor y)
 valFor _             = ENull
 
@@ -426,20 +432,89 @@ valPlx _             = ENull
 
 valHin :: Val -> Exp
 valHin = \case
-  V0 (V0 VN)      -> EPush
-  V0 (V1 VN)      -> EPull
-  V1 (V0 VN)      -> EHash
-  V1 (V1 (V0 VN)) -> EFall
-  V1 (V1 (V1 hv)) -> ETent (valHash hv)
-  _               -> crash
+  V0 (V0 VN) -> EPush
+  V0 (V1 VN) -> EPull
+  V1 (V0 VN) -> EHash
+  V1 (V1 VN) -> EFall
+  _          -> crash
 
 --------------------------------------------------------------------------------
 
-valHash :: Val -> SHA256
-valHash = error "valHash"
+-- tag :: Bool -> Val -> Val
+-- tag False = V0
+-- tag True  = V1
 
-hashToVal :: SHA256 -> Val
-hashToVal = error "hashToVal"
+-- unTag :: Val -> (Bool, Val)
+-- unTag (V0 x) = (False, x)
+-- unTag (V1 x) = (True, x)
+-- unTag _      = error "unTag"
+
+-- toBits :: (Bits b, FiniteBits b) => b -> Vector Bool
+-- toBits b =
+--   generate (finiteBitSize b) (testBit b)
+
+-- byteVal :: Word8 -> Val
+-- byteVal b =
+--   foldl' (flip tag) VN (toBits b)
+
+-- valByte :: Val -> Word8
+-- valByte v = runIdentity $ do
+--   (a, v) <- pure $ unTag v
+--   (b, v) <- pure $ unTag v
+--   (c, v) <- pure $ unTag v
+--   (d, v) <- pure $ unTag v
+--   (e, v) <- pure $ unTag v
+--   (f, v) <- pure $ unTag v
+--   (g, v) <- pure $ unTag v
+--   (h, v) <- pure $ unTag v
+--   let bits = [a, b, c, d, e, f, g, h]
+--   unless (VN == v) (error "valByte: bad byte")
+--   pure $ foldl' (\acc (i, x) -> if x then setBit acc (7-i) else acc)
+--                 0
+--                 (zip [0..] bits)
+
+-- data Pair a = Pair a a
+--   deriving (Functor)
+
+-- data Quad a = Quad (Pair a) (Pair a)
+--   deriving (Functor)
+
+-- data Oct a  = Oct  (Quad a) (Quad a)
+--   deriving (Functor)
+
+-- pairVal :: Pair Val -> Val
+-- pairVal (Pair x y) = VP x y
+
+-- quadVal :: Quad Val -> Val
+-- quadVal (Quad x y) = VP (pairVal x) (pairVal y)
+
+-- octVal :: Oct Val -> Val
+-- octVal (Oct x y) = VP (quadVal x) (quadVal y)
+
+-- -- Needs to be four times as big -- This throws away data
+-- hashOct :: SHA256 -> Oct Word8
+-- hashOct (SHA256 bs) =
+--     Oct (Quad (Pair a b) (Pair c d))
+--         (Quad (Pair e f) (Pair g h))
+--   where
+--     a = B.unsafeIndex bs 0
+--     b = B.unsafeIndex bs 1
+--     c = B.unsafeIndex bs 2
+--     d = B.unsafeIndex bs 3
+--     e = B.unsafeIndex bs 4
+--     f = B.unsafeIndex bs 5
+--     g = B.unsafeIndex bs 6
+--     h = B.unsafeIndex bs 7
+
+-- valHash :: Val -> SHA256
+-- valHash = \case
+--   VP (VP (VP a b) (VP c d)) (VP (VP e f) (VP g h)) ->
+--     SHA256 (B.pack $ valByte <$> [a, b, c, d, e, f, g, h])
+--   _ ->
+--     SHA256 ""
+
+-- hashToVal :: SHA256 -> Val
+-- hashToVal = octVal . fmap byteVal . hashOct
 
 
 -- Small-Step Interpreter ------------------------------------------------------
@@ -574,18 +649,31 @@ parseExp str = do
         _      -> P.Left "bad"
 
 repl :: IO ()
-repl = go VN
+repl = r VN
   where
-    go sut = do
-      ln  <- unpack <$> getLine
-      exp <- parseSeq '\n' ln & \case
-               P.Right (e,"") -> pure e
-               P.Right (e,_)  -> trace "extra chars" (pure e)
-               P.Left msg     -> error msg
-      sut <- pure (runExp sut exp)
-      putStrLn ("-> " <> tshow sut)
-      putStrLn ""
-      go sut
+    r sut = do
+      ln <- unpack <$> getLine
+      parseSeq '\n' ln & \case
+        P.Right (e,"") -> do
+          epl sut e
+        P.Right (e,cs) -> do
+          traceM ("ignoring trailing chars: " <> cs)
+          epl sut e
+        P.Left msg     -> do
+          traceM msg
+          traceM "Try again\n"
+          r sut
+
+    epl sut exp = do
+      sut' <- pure (runExp sut exp)
+      if (sut' == VV)
+        then do
+          putStrLn "Crash! Try again\n"
+          r sut
+        else do
+          putStrLn ("-> " <> tshow sut')
+          putStrLn ""
+          r sut'
 
 parseSeq :: Char -> String -> Either String (Exp, String)
 parseSeq end = go >=> \case
