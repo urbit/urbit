@@ -229,7 +229,7 @@
     %-  call:alice-core
     [~[/alice] *type %buzz ~doznec-doznec /g/talk [%first %post]]
   ::
-  ~&  res1=-.res1
+  ::~&  res1=-.res1
   ::
   =+  ^-  [=lane:alef =blob:alef]
       =-  ?>  ?=([%give %send *] ->)
@@ -246,7 +246,37 @@
     %-  call:bob-core
     [~[/bob] *type %hear lane blob]
   ::
-  ~&  res2=-.res2
+  ::~&  res2=-.res2
   ::
-  ~
+  =.  bob-core  (+.res2 ~doznec-doznec 0xbeef.dead ~2222.2.4 *sley)
+  ::
+  =/  res3
+    %-  take:bob-core
+    [/bone/~nec/1 ~[/bob] ** %g %aver ~]
+  ::
+  ::~&  res3=-.res3
+  ::
+  =.  alice-core  (+.res1 ~nec 0xdead.beef ~2222.2.5 *sley)
+  ::
+  =+  ^-  [=lane:alef =blob:alef]
+      =-  ?>  ?=([%give %send *] ->)
+          [lane blob]:->+>
+      %+  snag  0
+      %+  skim  -.res3
+      |=  [duct card=*]
+      ^-  ?
+      ?=([%give %send *] card)
+  ::
+  =/  res4
+    %-  call:alice-core
+    [~[/alice] *type %hear lane blob]
+  ::
+  ~&  res4=-.res4
+  ::
+  %+  expect-eq
+    !>  :~  :+  ~[/alice]  %give  [%aver error=~]
+            :+  ~[/alice]  %pass
+            [/pump/~doznec-doznec/0 %b %rest ~2222.2.2..00.00.05]
+        ==
+    !>  -.res4
 --
