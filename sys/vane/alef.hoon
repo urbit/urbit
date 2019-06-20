@@ -1117,15 +1117,15 @@
           =*  gift  i.pump-gifts
           =.  peer-core
             ?-  -.gift
-              %done  (process-done [message-num ok]:gift)
-              %send  (process-send static-fragment.gift)
-              %wait  (process-wait date.gift)
-              %rest  (process-rest date.gift)
+              %done  (on-pump-done [message-num ok]:gift)
+              %send  (on-pump-send static-fragment.gift)
+              %wait  (on-pump-wait date.gift)
+              %rest  (on-pump-rest date.gift)
             ==
           $(pump-gifts t.pump-gifts)
-      ::  +process-done: handle |message-pump's report of message (n)ack
+      ::  +on-pump-done: handle |message-pump's report of message (n)ack
       ::
-      ++  process-done
+      ++  on-pump-done
         |=  [=message-num ok=?]
         ^+  peer-core
         ::  if odd bone, ack is on "subscription update" message; no-op
@@ -1157,9 +1157,9 @@
         =.  nax.peer-state  (~(put in nax.peer-state) nax-key)
         ::
         peer-core
-      ::  +process-send: emit ack packet requested by |message-pump
+      ::  +on-pump-send: emit ack packet requested by |message-pump
       ::
-      ++  process-send
+      ++  on-pump-send
         |=  =static-fragment
         ^+  peer-core
         ::  encrypt and encode .static-fragment to .blob bitstream
@@ -1171,17 +1171,17 @@
           message-num.static-fragment
           %&  +.static-fragment
         ==
-      ::  +process-wait: relay |message-pump's set-timer request
+      ::  +on-pump-wait: relay |message-pump's set-timer request
       ::
-      ++  process-wait
+      ++  on-pump-wait
         |=  date=@da
         ^+  peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %wait date)
-      ::  +process-rest: relay |message-pump's unset-timer request
+      ::  +on-pump-rest: relay |message-pump's unset-timer request
       ::
-      ++  process-rest
+      ++  on-pump-rest
         |=  date=@da
         ^+  peer-core
         ::
@@ -1203,84 +1203,88 @@
       =.  rcv.peer-state  (~(put by rcv.peer-state) bone message-still-state)
       ::  process effects from |message-still
       ::
-      |-  ^+  peer-core
-      ?~  still-gifts  peer-core
-      ::
-      =*  gift  i.still-gifts
-      =.  peer-core
-        ?-    -.gift
-            ::  %send: emit ack packet as requested by |message-still
-            ::
-            %send
-          %-  send-shut-packet  :*
-            our-life.channel
-            her-life.channel
-            bone
-            message-num.gift
-            %|  ack-meat.gift
-          ==
-        ::
-            ::  %memo: handle message received by |message-still
-            ::
-            %memo
-          =/  msg-path=path  path.message.gift
-          ?>  ?=([?(%a %c %g %j) *] msg-path)
-          ::  odd .bone; "request" message to pass to vane before acking
-          ::
-          ?:  =(1 (end 0 1 bone))
-            =/  =wire  (make-bone-wire her.channel bone)
-            ::
-            ?-  i.msg-path
-              %a  ~|  %pass-to-ames^her.channel  !!
-              %c  (emit duct %pass wire %c %memo her.channel message.gift)
-              %g  (emit duct %pass wire %g %memo her.channel message.gift)
-              %j  (emit duct %pass wire %j %memo her.channel message.gift)
+      |^  ^+  peer-core
+          ?~  still-gifts  peer-core
+          =*  gift  i.still-gifts
+          =.  peer-core
+            ?-  -.gift
+              %send  (on-still-send [message-num ack-meat]:gift)
+              %memo  (on-still-memo [message-num message]:gift)
             ==
-          ::  even bone means backward flow; ack automatically
-          ::
-          ::    Only messages from forward flows can be nacked.
-          ::    Note: reentrant.
-          ::
-          =.  peer-core  (run-message-still bone %done ok=%.y)
-          ::  is .bone a nack-trace flow? check the second bit
-          ::
-          ?:  =(0 (end 0 1 (rsh 0 1 bone)))
-            ::  not a nack-trace; give message to local "subscriber" vane
-            ::
-            =/  client-duct  (~(got by by-bone.ossuary.peer-state) bone)
-            ::
-            (emit client-duct %give %memo message.gift)
-          ::  .bone is a nack-trace; validate message
-          ::
-          ?>  =(/a/nax `path`msg-path)
-          =+  ;;  [=message-num =error]  payload.message.gift
-          ::  flip .bone's second bit to find referenced flow
-          ::
-          =/  target-bone=^bone  (mix 0b10 bone)
-          =/  nax-key  [target-bone message-num]
-          ::  if we haven't heard a message nack, pretend we have
-          ::
-          ::    The nack-trace message counts as a valid message nack on
-          ::    the original failed message.
-          ::
-          ::    This prevents us from having to wait for a message nack
-          ::    packet, which would mean we couldn't immediately ack the
-          ::    nack-trace message, which would in turn violate the
-          ::    semantics of backward flows.
-          ::
-          =?  peer-core  !(~(has in nax.peer-state) nax-key)
-            %-  run-message-pump
-            [target-bone %hear message-num %| ok=%.n lag=`@dr`0]
-          ::  clear the nack from our state and relay to vane
-          ::
-          =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
-          ::
-          =/  target-duct
-            (~(got by by-bone.ossuary.peer-state) target-bone)
-          ::
-          (emit target-duct %give %done `error)
+          $(still-gifts t.still-gifts)
+      ::  +on-still-send: emit ack packet as requested by |message-still
+      ::
+      ++  on-still-send
+        |=  [=message-num =ack-meat]
+        ^+  peer-core
+        ::
+        %-  send-shut-packet  :*
+          our-life.channel
+          her-life.channel
+          bone
+          message-num
+          %|  ack-meat
         ==
-      $(still-gifts t.still-gifts)
+      ::  +on-still-memo: handle message received by |message-still
+      ::
+      ++  on-still-memo
+        |=  [=message-num =message]
+        ^+  peer-core
+        ::
+        ?>  ?=([?(%a %c %g %j) *] path.message)
+        ::  odd .bone; "request" message to pass to vane before acking
+        ::
+        ?:  =(1 (end 0 1 bone))
+          =/  =wire  (make-bone-wire her.channel bone)
+          ::
+          ?-  i.path.message
+            %a  ~|  %pass-to-ames^her.channel  !!
+            %c  (emit duct %pass wire %c %memo her.channel message)
+            %g  (emit duct %pass wire %g %memo her.channel message)
+            %j  (emit duct %pass wire %j %memo her.channel message)
+          ==
+        ::  even bone means backward flow; ack automatically
+        ::
+        ::    Only messages from forward flows can be nacked.
+        ::    Note: reentrant.
+        ::
+        =.  peer-core  (run-message-still bone %done ok=%.y)
+        ::  is .bone a nack-trace flow? check the second bit
+        ::
+        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+          ::  not a nack-trace; give message to local "subscriber" vane
+          ::
+          =/  client-duct  (~(got by by-bone.ossuary.peer-state) bone)
+          ::
+          (emit client-duct %give %memo message)
+        ::  .bone is a nack-trace; validate message
+        ::
+        ?>  =(/a/nax `path`path.message)
+        =+  ;;  [=target=^message-num =error]  payload.message
+        ::  flip .bone's second bit to find referenced flow
+        ::
+        =/  target-bone=^bone  (mix 0b10 bone)
+        =/  nax-key            [target-bone target-message-num]
+        ::  if we haven't heard a message nack, pretend we have
+        ::
+        ::    The nack-trace message counts as a valid message nack on
+        ::    the original failed message.
+        ::
+        ::    This prevents us from having to wait for a message nack
+        ::    packet, which would mean we couldn't immediately ack the
+        ::    nack-trace message, which would in turn violate the
+        ::    semantics of backward flows.
+        ::
+        =?  peer-core  !(~(has in nax.peer-state) nax-key)
+          %-  run-message-pump
+          [target-bone %hear target-message-num %| ok=%.n lag=`@dr`0]
+        ::  clear the nack from our state and relay to vane
+        ::
+        =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
+        =/  target-duct     (~(got by by-bone.ossuary.peer-state) target-bone)
+        ::
+        (emit target-duct %give %done `error)
+      --
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
