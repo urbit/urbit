@@ -1095,6 +1095,15 @@
       ?:  ?=(%& -.meat.shut-packet)
         (run-message-still bone %hear lane shut-packet)
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
+    ::  +on-memo: handle request to send message
+    ::
+    ++  on-memo
+      |=  =message
+      ^+  peer-core
+      ::
+      =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
+      ::
+      (run-message-pump bone %send message)
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
@@ -1285,15 +1294,6 @@
         ::
         (emit target-duct %give %done `error)
       --
-    ::  +on-memo: handle request to send message
-    ::
-    ++  on-memo
-      |=  =message
-      ^+  peer-core
-      ::
-      =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
-      ::
-      (run-message-pump bone %send message)
     ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
     ::
     ++  send-shut-packet
