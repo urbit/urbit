@@ -809,9 +809,9 @@
     ?-  sign
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%c %done *]  (on-done:event-core wire error.sign)
-      [%g %done *]  (on-done:event-core wire error.sign)
-      [%j %done *]  (on-done:event-core wire error.sign)
+      [%c %done *]  (on-take-done:event-core wire error.sign)
+      [%g %done *]  (on-take-done:event-core wire error.sign)
+      [%j %done *]  (on-take-done:event-core wire error.sign)
     ::
       [%c %memo *]  (on-take-memo:event-core wire message.sign)
       [%g %memo *]  (on-take-memo:event-core wire message.sign)
@@ -849,9 +849,9 @@
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
   ++  emit  |=(=move event-core(moves [move moves]))
-  ::  +on-done: handle notice from vane that it processed a message
+  ::  +on-take-done: handle notice from vane that it processed a message
   ::
-  ++  on-done
+  ++  on-take-done
     |=  [=wire error=(unit error)]
     ^+  event-core
     ::
