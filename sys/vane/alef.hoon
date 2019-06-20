@@ -1466,18 +1466,7 @@
     =^  message  unsent-messages.state  ~(get to unsent-messages.state)
     ::  break .message into .chunks and set as .unsent-fragments
     ::
-    =.  unsent-fragments.state
-      ::
-      =/  chunks  (rip 13 (jam message))
-      =/  num-fragments=fragment-num  (lent chunks)
-      =|  counter=@
-      ::
-      |-  ^-  (list static-fragment)
-      ?~  chunks  ~
-      ::
-      :-  [message-num=next.state num-fragments counter i.chunks]
-      ::
-      $(chunks t.chunks, counter +(counter))
+    =.  unsent-fragments.state  (split-message next.state message)
     ::  try to feed packets from the next message
     ::
     =.  next.state  +(next.state)
@@ -1984,6 +1973,22 @@
     ::
     message-still
   --
+::  +split-message: split message into kilobyte-sized fragments
+::
+++  split-message
+  |=  [=message-num =message]
+  ^-  (list static-fragment)
+  ::
+  =/  fragments=(list fragment)   (rip 13 (jam message))
+  =/  num-fragments=fragment-num  (lent fragments)
+  =|  counter=@
+  ::
+  |-  ^-  (list static-fragment)
+  ?~  fragments  ~
+  ::
+  :-  [message-num num-fragments counter i.fragments]
+  ::
+  $(fragments t.fragments, counter +(counter))
 ::  +assemble-fragments: concatenate fragments into a $message
 ::
 ++  assemble-fragments
