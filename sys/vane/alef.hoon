@@ -1127,11 +1127,11 @@
       ++  process-ack-message
         |=  [=message-num ok=?]
         ^+  peer-core
-        ::  if even bone, ack is on "subscription update" message; no-op
+        ::  if odd bone, ack is on "subscription update" message; no-op
         ::
-        ?:  =(0 (end 0 1 bone))
+        ?:  =(1 (end 0 1 bone))
           peer-core
-        ::  odd bone; is this bone a nack-trace bone?
+        ::  even bone; is this bone a nack-trace bone?
         ::
         ?:  =(1 (end 0 1 (rsh 0 1 bone)))
           ::  nack-trace bone; assume .ok, clear nack from |message-still
