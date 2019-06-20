@@ -1,4 +1,5 @@
 import { UpdateReducer } from '/reducers/update';
+import { RumorReducer } from '/reducers/rumor';
 
 class Store {
   constructor() {
@@ -8,6 +9,7 @@ class Store {
     console.log("store.state", this.state);
 
     this.updateReducer = new UpdateReducer();
+    this.rumorReducer  = new RumorReducer();
 
     this.setState = () => {};
   }
@@ -19,6 +21,7 @@ class Store {
   handleEvent(data) {
     console.log("store.handleEvent", data);
     this.updateReducer.reduce(data.data, this.state);
+    this.rumorReducer.reduce(data.data, this.state);
     this.setState(this.state);
   }
 

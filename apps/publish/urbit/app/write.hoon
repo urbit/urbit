@@ -51,6 +51,7 @@
       [%json json]
       [%write-collection collection]
       [%write-rumor rumor]
+      [%write-update update]
   ==
 ::
 --
@@ -789,15 +790,24 @@
       |=  who=@p
       ^-  move
       [ost.bol %poke /forward [who %write] %write-action new-act]
-    :-  ~
-    this(invites.sat (~(put by invites.sat) [src.bol coll.act] title.act))
+    :_  this(invites.sat (~(put by invites.sat) [src.bol coll.act] title.act))
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %write-update %invite %.y src.bol coll.act title.act]
   ::
   ::  %reject-invite: remove invite from list, acceptance is handled by
   ::                  %subscribe action
   ::
       %reject-invite
-    :-  ~
-    this(invites.sat (~(del by invites.sat) [who.act coll.act]))
+    =/  title=(unit @t)   (~(get by invites.sat) [who.act coll.act])
+    ?~  title
+      [~ this]
+    :_  this(invites.sat (~(del by invites.sat) [who.act coll.act]))
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %write-update %invite %.n who.act coll.act u.title]
   ::
   ::  %serve:
   ::
@@ -906,8 +916,14 @@
       %subscribe
     ~&  write-action+act
     =/  wir=wire  /collection/[coll.act]
+    =/  title=(unit @t)  (~(get by invites.sat) [who.act coll.act])
     :_  this(invites.sat (~(del by invites.sat) [who.act coll.act]))
-    [ost.bol %peer wir [who.act %write] wir]~
+    %+  weld  [ost.bol %peer wir [who.act %write] wir]~
+    ?~  title  ~
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %write-update %invite %.n who.act coll.act u.title]
   ::
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
   ::
@@ -927,12 +943,16 @@
           =(coll coll.act)
       ==
     =/  wir=wire  /collection/[coll.act]
-    :-  [ost.bol %pull wir [who.act %write] ~]~
-    %=  this
+    :_  %=  this
       subs.sat    (~(del by subs.sat) who.act coll.act)
       latest.sat  new-latest
       unread.sat  new-unread
     ==
+    :-  [ost.bol %pull wir [who.act %write] ~]
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [b=bone *]
+    ^-  move
+    [b %diff %write-rumor %remove who.act coll.act ~]
   ::
   ==
 ::

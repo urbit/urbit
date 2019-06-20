@@ -12,7 +12,7 @@ class SideTab extends Component {
     super(props)
   }
 
-  render(props) {
+  render() {
     if (this.props.enabled){
       return (
         <div className="w1 z-2"

@@ -9,25 +9,73 @@ const HM = withRouter(HeaderMenu);
 export class Subs extends Component {
   constructor(props) {
     super(props)
+
+    this.accept = this.accept.bind(this);
+    this.reject = this.reject.bind(this);
+    this.unsubscribe = this.unsubscribe.bind(this);
   }
 
   buildBlogData() {
+    let invites = this.props.invites.map((inv) => {
+      return {
+        type: 'invite',
+        url: `/~publish/~${inv.who}/${inv.coll}`,
+        host: `~${inv.who}`,
+        title: inv.title,
+        blogId: inv.coll,
+      };
+    })
+
     let data = Object.keys(this.props.subs).map((ship) => {
       let perShip = Object.keys(this.props.subs[ship]).map((blogId) => {
         let blog = this.props.subs[ship][blogId];
         return {
+          type: 'regular',
           url: `/~publish/${blog.info.owner}/${blogId}`,
           title: blog.info.title,
           host: blog.info.owner,
-          lastUpdated: "idk"
+          lastUpdated: "idk",
+          blogId: blogId,
         }
       });
       return perShip;
     });
     let merged = data.flat();
-    return merged;
+    return invites.concat(merged);
   }
 
+  accept(host, blogId) {
+    console.log("accepted invitation", host, blogId);
+    let subscribe = {
+      subscribe: {
+        who: host.slice(1),
+        coll: blogId,
+      }
+    };
+    this.props.api.action("write", "write-action", subscribe);
+  }
+
+  reject(host, blogId) {
+    console.log("rejected invitation", host, blogId);
+    let reject = {
+      "reject-invite": {
+        who: host.slice(1),
+        coll: blogId,
+      }
+    };
+    this.props.api.action("write", "write-action", reject);
+  }
+
+  unsubscribe(host, blogId) {
+    console.log("unsubscribe", host, blogId);
+    let unsubscribe = {
+      unsubscribe: {
+        who: host.slice(1),
+        coll: blogId,
+      }
+    };
+    this.props.api.action("write", "write-action", unsubscribe);
+  }
 
   render() {
     let blogData = this.buildBlogData();
@@ -37,21 +85,56 @@ export class Subs extends Component {
         ?  "bg-v-light-gray"
         :  "bg-white";
       let cls = "w-100 flex " + bg;
-      return (
-        <div className={cls} key={i}>
-          <div className="fl body-regular-400" style={{flexBasis: 336}}>
-            <Link to={data.url}>
-              {data.title}
-            </Link>
+      if (data.type === 'regular') {
+        return (
+          <div className={cls} key={i}>
+            <div className="fl body-regular-400" style={{flexBasis: 336}}>
+              <Link to={data.url}>
+                 {data.title}
+              </Link>
+            </div>
+            <p className="fl body-regular-400" style={{flexBasis:336}}>
+              {data.host}
+            </p>
+            <p className="fl body-regular-400" style={{flexBasis:336}}>
+              {data.lastUpdated}
+            </p>
+            <p className="fl body-regular-400 pointer" 
+              style={{flexBasis:336}}
+              onClick={this.unsubscribe.bind(this, data.host, data.blogId)}>
+              Unsubscribe
+            </p>
           </div>
-          <p className="fl body-regular-400" style={{flexBasis:336}}>
-            {data.host}
-          </p>
-          <p className="fl body-regular-400" style={{flexBasis:336}}>
-            {data.lastUpdated}
-          </p>
-        </div>
-      );
+        );
+      } else if (data.type === 'invite') {
+        return (
+          <div className={cls} key={i}>
+            <div className="fl body-regular-400" style={{flexBasis: 336}}>
+              <Link to={data.url}>
+                <span className="body-large green-medium"> • </span>
+                <span className="body-regular-400">Invite to</span>
+                <span className="body-regular">{data.title}</span>
+              </Link>
+            </div>
+            <p className="fl body-regular-400" style={{flexBasis:336}}>
+              {data.host}
+            </p>
+            <p className="fl body-regular-400" style={{flexBasis:336}}>
+            </p>
+            <p className="fl body-regular-400" style={{flexBasis:336}}>
+              <span className="green underline pointer" 
+                onClick={this.accept.bind(this, data.host, data.blogId)}>
+                Accept
+              </span>
+              <span>   </span>
+              <span className="red underline pointer" 
+                onClick={this.reject.bind(this, data.host, data.blogId)}>
+                Reject
+              </span>
+            </p>
+          </div>
+        );
+      }
     });
 
 
@@ -66,13 +149,15 @@ export class Subs extends Component {
           </div>
           <div className="w-100 flex">
             <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-              Title
+               Title
             </p>
             <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
               Host
             </p>
             <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
               Last Updated
+            </p>
+            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
             </p>
           </div>
 

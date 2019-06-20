@@ -95,6 +95,18 @@ h4 {
   color: #B1B2B3;
 }
 
+.green {
+  color: #2AA779;
+}
+
+.green-medium {
+  color: #2ED196;
+}
+
+.red {
+  color: #EE5432;
+}
+
 .w-336 {
   width: 336px;
 }

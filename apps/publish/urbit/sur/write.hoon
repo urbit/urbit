@@ -44,7 +44,7 @@
       ==
   ::
       [%invite coll=@tas title=@t who=(list ship)]
-      [%reject-invite coll=@tas who=ship]
+      [%reject-invite who=@p coll=@tas]
   ::
       [%serve coll=@tas]
       [%unserve coll=@tas]
@@ -117,5 +117,9 @@
       [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info @t]) tang)]
       [%total who=@p col=@tas dat=collection]
       [%remove who=@p col=@tas pos=(unit @tas)]
+  ==
+::
++$  update
+  $%  [%invite add=? who=@p col=@tas title=@t]
   ==
 --
