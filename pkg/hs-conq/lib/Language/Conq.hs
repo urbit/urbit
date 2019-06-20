@@ -1,22 +1,24 @@
 module Language.Conq where
 
-import ClassyPrelude hiding ((<.>), Left, Right)
+import ClassyPrelude hiding ((<.>), Left, Right, hash)
 import Data.Type.Equality
 import Type.Reflection
 import Data.Coerce
 import GHC.Natural
 import Control.Category
-import Control.Monad.State (State, get, put, evalState, runState)
-import Control.Monad.Except (ExceptT, runExceptT)
+import Data.Flat
+
+import Control.Lens               ((&))
+import Control.Monad.Except       (ExceptT, runExceptT)
+import Control.Monad.State        (State, get, put, evalState, runState)
 import Control.Monad.Trans.Except (throwE)
+import Data.Bits                  ((.|.), shiftL, shiftR)
+import System.IO.Unsafe           (unsafePerformIO)
+import Text.Show                  (showString, showParen)
 
-import Control.Lens ((&))
-import Data.Bits ((.|.), shiftL, shiftR)
-import Text.Show (showString, showParen)
-
-import qualified Prelude as P
-
---------------------------------------------------------------------------------
+import qualified Prelude                as P
+import qualified Crypto.Hash.SHA256     as SHA256
+import qualified Data.ByteString.Base58 as Base58
 
 --------------------------------------------------------------------------------
 
@@ -25,13 +27,19 @@ type Tup a b = (a, b)
 data Sum a b = L a | R b
   deriving (Eq, Ord)
 
+-- SHA256
+newtype SHA256 = SHA256 { unSHA256 :: ByteString }
+  deriving newtype (Eq, Ord, Flat, Show, Hashable, NFData)
+
 data Val
-    = VV          --  Void
-    | VN          --  Null
-    | V0 Val      --  Left
-    | V1 Val      --  Right
-    | VP Val Val  --  Pair
-  deriving (Eq, Ord)
+    = VV                    --  Void
+    | VN                    --  Null
+    | V0 !Val               --  Left
+    | V1 !Val               --  Right
+    | VP !Val !Val          --  Pair
+    | VT !Val !Exp Val
+    | VR !SHA256
+  deriving (Eq, Ord, Generic, Flat)
 
 instance Show Val where
   show = show . valExp
@@ -39,19 +47,77 @@ instance Show Val where
 crash :: Exp
 crash = EWith ENull (EWith EEval EEval)
 
+grainery :: IORef (HashMap SHA256 ByteString)
+grainery = unsafePerformIO (newIORef grainsFromJets)
+
+grainsFromJets :: HashMap SHA256 ByteString
+grainsFromJets = do
+  mapFromList $ jetReg <&> \(h,e,_) -> (h, flat (forVal e))
+
+jetReg :: [(SHA256, Exp, Val -> Val)]
+jetReg =
+  [ ( SHA256 (encodeBase58 "FWz5mTGmuVz2b4TLNa7yMjTKL7wihsEWakoUD2nzqP6q")
+    , ESubj
+    , id
+    )
+  ]
+
+jets :: HashMap SHA256 (Val -> Val)
+jets = mapFromList (jetReg <&> \(h,_,f) -> (h,f))
+
+runTent :: SHA256 -> Exp -> Val -> Val
+runTent k exp arg =
+  lookup k jets & \case
+    Nothing -> runExp arg exp
+    Just fn -> trace ("running jet " <> show (ETent k)) (fn arg)
+
+decodeBase58 :: ByteString -> Text
+decodeBase58 = decodeUtf8 . Base58.encodeBase58 Base58.bitcoinAlphabet
+
+fromJust (Just x) = x
+fromJust _        = error "fromJust: Nothing"
+
+encodeBase58 :: Text -> ByteString
+encodeBase58 = fromJust
+             . Base58.decodeBase58 Base58.bitcoinAlphabet
+             . encodeUtf8
+
+putGrain :: Val -> Val
+putGrain v = unsafePerformIO $ do
+  (bs, k) <- evaluate $ force (hashVal v)
+  traceM ("Putting Grain: " <> unpack (decodeBase58 $ unSHA256 k))
+  atomicModifyIORef' grainery (\t -> (insertMap k bs t, ()))
+  evaluate (VR k)
+
+getGrain :: SHA256 -> Val
+getGrain k = unsafePerformIO $ do
+  traceM ("Getting Grain: " <> unpack (decodeBase58 $ unSHA256 k))
+
+  t <- readIORef grainery
+
+  Just (P.Right v) <- pure (unflat <$> lookup k t)
+
+  pure v
+
 valExp :: Val -> Exp
 valExp VN           = ENull
 valExp VV           = crash
 valExp v            = EWith ENull (go v)
   where
     go = \case
-      VV      → crash
-      VN      → ENull
-      V0 VN   → ELeft
-      V1 VN   → EWrit
-      V0 l    → EWith (go l) ELeft
-      V1 r    → EWith (go r) EWrit
-      VP x y  → ECons (go x) (go y)
+      VV       → crash
+      VN       → ESubj
+      V0 VN    → ELeft
+      V1 VN    → EWrit
+      V0 l     → EWith (go l) ELeft
+      V1 r     → EWith (go r) EWrit
+      VP x y   → ECons (go x) (go y)
+      VT _ _ v → go v
+      VR k     → EWith (go (getGrain k)) EHash
+
+hashVal :: Val -> (ByteString, SHA256)
+hashVal x = (bs, SHA256 (SHA256.hash bs))
+  where bs = flat x
 
 data TyExp
     = TENil
@@ -61,7 +127,7 @@ data TyExp
     | TEAll TyExp
     | TEFix TyExp
     | TERef Int
-  deriving (Eq, Ord)
+  deriving (Eq, Ord, Generic, Flat)
 
 instance Show TyExp where
   show = \case
@@ -242,6 +308,12 @@ infer = \case
     tt <- tyExpTy t
     pure (TFor tt tt)
 
+  EPush   -> throwE "infer: EPush" -- TODO
+  EPull   -> throwE "infer: EPull" -- TODO
+  EHash   -> throwE "infer: EHash" -- TODO
+  EFall   -> throwE "infer: EFall" -- TODO
+  ETent _ -> throwE "infer: ETent" -- TODO
+
 data Exp
     = ESubj
     | ENull
@@ -255,7 +327,12 @@ data Exp
     | ECons Exp Exp
     | ECase Exp Exp
     | EType TyExp
-  deriving (Eq, Ord)
+    | ETent SHA256
+    | EPush
+    | EPull
+    | EHash
+    | EFall
+  deriving (Eq, Ord, Generic, Flat)
 
 runExp :: Val -> Exp -> Val
 runExp s ESubj = s
@@ -265,10 +342,11 @@ runExp s e     = uncurry runExp (step s e)
 
 {-
     for = <opk [opk for]>
-    opk = <<dir get> <sim <otr plx>>
+    opk = <<dir get> <<sim hin> <otr plx>>
     dir = <L R>
     get = <- +>
     sim = <~ .>
+    hin = <<? *> <@ ^>>
     otr = <! %>
     plx = <@ :>
 -}
@@ -293,13 +371,18 @@ forVal = \e ->
       EWrit     -> V0 $ V0 $ V1 VN
       EHead     -> V0 $ V1 $ V0 VN
       ETail     -> V0 $ V1 $ V1 VN
-      ENull     -> V1 $ V0 $ V0 VN
-      ESubj     -> V1 $ V0 $ V1 VN
+      ENull     -> V1 $ V0 $ V0 $ V0 VN
+      ESubj     -> V1 $ V0 $ V0 $ V1 VN
+      EPush     -> V1 $ V0 $ V1 $ V0 $ V0 VN
+      EPull     -> V1 $ V0 $ V1 $ V0 $ V1 VN
+      EHash     -> V1 $ V0 $ V1 $ V1 $ V0 VN
+      EFall     -> V1 $ V0 $ V1 $ V1 $ V1 $ V0 VN
+      ETent ref -> V1 $ V0 $ V1 $ V1 $ V1 $ V1 (hashToVal ref)
       EEval     -> V1 $ V1 $ V0 $ V0 VN
       EDist     -> V1 $ V1 $ V0 $ V1 VN
       ECase x y -> V1 $ V1 $ V1 $ V0 $ VP (forVal x) (forVal y)
       ECons x y -> V1 $ V1 $ V1 $ V1 $ VP (forVal x) (forVal y)
-      EType _   -> V1 $ V0 $ V1 VN -- Subj
+      EType _   -> opkVal ESubj
 
 
 valFor :: Val -> Exp
@@ -310,7 +393,8 @@ valFor _             = ENull
 valOpk :: Val -> Exp
 valOpk (V0 (V0 x))      = valDir x
 valOpk (V0 (V1 x))      = valGet x
-valOpk (V1 (V0 x))      = valSim x
+valOpk (V1 (V0 (V0 x))) = valSim x
+valOpk (V1 (V0 (V1 x))) = valHin x
 valOpk (V1 (V1 (V0 x))) = valOtr x
 valOpk (V1 (V1 (V1 x))) = valPlx x
 valOpk _                = ENull
@@ -340,6 +424,24 @@ valPlx (V0 (VP x y)) = ECase (valFor x) (valFor y)
 valPlx (V1 (VP x y)) = ECons (valFor x) (valFor y)
 valPlx _             = ENull
 
+valHin :: Val -> Exp
+valHin = \case
+  V0 (V0 VN)      -> EPush
+  V0 (V1 VN)      -> EPull
+  V1 (V0 VN)      -> EHash
+  V1 (V1 (V0 VN)) -> EFall
+  V1 (V1 (V1 hv)) -> ETent (valHash hv)
+  _               -> crash
+
+--------------------------------------------------------------------------------
+
+valHash :: Val -> SHA256
+valHash = error "valHash"
+
+hashToVal :: SHA256 -> Val
+hashToVal = error "hashToVal"
+
+
 -- Small-Step Interpreter ------------------------------------------------------
 
 step :: Val -> Exp -> (Val, Exp)
@@ -351,9 +453,15 @@ step s = \case
   EWith x y         -> case step s x of
                          (s', ESubj) -> (s', y)
                          (s', x'   ) -> (s', EWith x' y)
-  EEval             -> case s of
-                         VP s' f' -> (s', valFor f')
-                         _        -> (VV, ESubj)
+
+  ETent ref ->
+    (runTent ref (valFor (getGrain ref)) s, ESubj)
+
+  EEval ->
+    case s of
+      VP s' f' -> (s', valFor f')
+      _        -> (VV, ESubj)
+
   ECons ESubj ESubj -> (VP s s, ESubj)
   ECons x y         -> (VP (runExp s x) (runExp s y), ESubj)
   ELeft             -> (V0 s, ESubj)
@@ -373,6 +481,17 @@ step s = \case
                          V1 r -> (r, q)
                          _    -> (VV, ESubj)
   EType _           -> (s, ESubj)
+  EPush             -> case s of
+                         VP s' f' -> let e = valFor f'
+                                     in traceShowId (VT s' e (runExp s' e), ESubj)
+                         _        -> (VV, ESubj)
+  EPull             -> case s of
+                         VT _ _ x -> (x,  ESubj)
+                         _        -> (VV, ESubj)
+  EHash             -> (putGrain s, ESubj)
+  EFall             -> case s of
+                         VR k -> (getGrain k, ESubj)
+                         _    -> (VV, ESubj)
 
 displayExp :: Exp -> String
 displayExp (EWith x y) = displayExp x <> "\n" <> displayExp y
@@ -411,6 +530,11 @@ instance Show Exp where
     ECons x y -> "(" <> show x <> " " <> show y <> ")"
     ECase x y -> "<" <> show x <> " " <> show y <> ">"
     EType t   -> "{" <> show t <> "}"
+    EPush     -> "?"
+    EPull     -> "*"
+    EHash     -> "@"
+    EFall     -> "^"
+    ETent ref -> "|" <> take 8 (unpack $ decodeBase58 $ unSHA256 ref) <> "|"
 
 parseSimpl :: String -> Maybe (Exp, String)
 parseSimpl = \case
@@ -422,7 +546,18 @@ parseSimpl = \case
   '-' : xs -> pure (EHead, xs)
   '+' : xs -> pure (ETail, xs)
   '%' : xs -> pure (EDist, xs)
+  '?' : xs -> pure (EPush, xs)
+  '*' : xs -> pure (EPull, xs)
+  '@' : xs -> pure (EHash, xs)
+  '^' : xs -> pure (EFall, xs)
   _        -> Nothing
+
+parseHash :: String -> Either String (SHA256, String)
+parseHash b = do
+  let (h,r) = splitAt 44 b
+  let sha   = SHA256 (encodeBase58 $ pack h)
+  when (length h /= 44) (P.Left "short tent")
+  pure (sha, r)
 
 parseExp :: String -> Either String (Exp, String)
 parseExp str = do
@@ -433,15 +568,21 @@ parseExp str = do
         '(':xs -> parseTwo ECons ')' xs
         '<':xs -> parseTwo ECase '>' xs
         '`':xs -> parseSeq '`' xs <&> \(e,cs) -> (valExp (forVal e), cs)
+        '|':xs -> parseHash xs >>= \case
+                    (s, '|':xs) -> pure (ETent s, xs)
+                    (_, _     ) -> P.Left "bad tent"
         _      -> P.Left "bad"
 
 repl :: IO ()
 repl = go VN
   where
     go sut = do
-      ln               <- unpack <$> getLine
-      P.Right (exp,"") <- pure (parseSeq '\n' ln)
-      sut              <- pure (runExp sut exp)
+      ln  <- unpack <$> getLine
+      exp <- parseSeq '\n' ln & \case
+               P.Right (e,"") -> pure e
+               P.Right (e,_)  -> trace "extra chars" (pure e)
+               P.Left msg     -> error msg
+      sut <- pure (runExp sut exp)
       putStrLn ("-> " <> tshow sut)
       putStrLn ""
       go sut
@@ -469,6 +610,26 @@ parseTwo cntr end buf = do
   (ys, buf) <- parseSeq end buf
   pure (cntr xs ys, buf)
 
+-- Thunks are Easy -------------------------------------------------------------
+
+data Thunk a = forall s. Thunk !s !(Conq s a) a
+
+push :: s -> Conq s a -> Thunk a
+push s f = Thunk s f (run s f)
+
+pull :: Thunk a -> a
+pull (Thunk _ _ r) = r
+
+-- Refs need Serialization -----------------------------------------------------
+
+data Ref a = Ref Int a -- TODO s/Int/Sha256/
+
+hash :: a -> Ref a
+hash x = Ref 0 x
+
+fall :: Ref a -> a
+fall (Ref h x) = x
+
 --------------------------------------------------------------------------------
 
 data Conq s r where
@@ -483,6 +644,10 @@ data Conq s r where
   Dist :: Conq (Tup (Sum a b) s) (Sum (Tup a s) (Tup b s))
   With :: (Conq s a) -> ((Conq a r) -> (Conq s r))
   Eval :: Conq (Tup a (Conq a r)) r
+  Hash :: Conq a (Ref a)
+  Fall :: Conq (Ref a) a
+  Push :: Conq (Tup s (Conq s a)) (Thunk a)
+  Pull :: Conq (Thunk a) a
 
 instance Category Conq where
   id  = Subj
@@ -506,6 +671,10 @@ run sut = \case
   Tail     -> snd sut
   Dist     -> case sut of (L l, x) -> L (l, x); (R r, x) -> R (r, x)
   Case p q -> case sut of L l -> run l p; R r -> run r q
+  Push     -> uncurry push sut
+  Pull     -> pull sut
+  Hash     -> hash sut
+  Fall     -> fall sut
 
 times :: Int -> Conq s s -> Conq s s
 times 0 _ = id
@@ -534,6 +703,10 @@ toExp = \case
   Cons x y -> ECons (toExp x) (toExp y)
   Case l r -> ECase (toExp l) (toExp r)
   With x y -> EWith (toExp x) (toExp y)
+  Push     -> EPush
+  Pull     -> EPull
+  Hash     -> EHash
+  Fall     -> EFall
 
 --------------------------------------------------------------------------------
 
