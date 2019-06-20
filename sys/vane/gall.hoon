@@ -1342,7 +1342,8 @@
         %wind  `%j
         %wipe  `%f
       ::
-        %request     `%l
+        %request         `%l
+        %cancel-request  `%l
         %serve       `%r
         %connect     `%r
         %disconnect  `%r
