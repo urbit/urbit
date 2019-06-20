@@ -1378,6 +1378,18 @@
   ++  on-hear-message-ack
     |=  [=message-num ok=? lag=@dr]
     ^+  message-pump
+    ::  future nack implies positive ack on all earlier messages
+    ::
+    ?.  ok
+      |-  ^+  message-pump
+      ::  base case: current message got nacked; handle same as ack
+      ::
+      ?:  =(message-num current.state)
+        ^$(ok %.y)
+      ::  recursive case: future message got nacked
+      ::
+      =.  message-pump  ^$(ok %.y, message-num current.state)
+      $
     ::  ignore duplicate and future acks
     ::
     ?.  (is-message-num-in-range message-num)
