@@ -2052,15 +2052,16 @@
       ==
     ::
     ++  task
+      $~  [%vega ~]
       $%  ::  event failure notification
           ::
-          [%crud p=@tas q=(list tank)]
+          $>(%crud vane-task)
           ::  system started up; reset open connections
           ::
-          [%born ~]
+          $>(%born vane-task)
           ::  report upgrade
           ::
-          [%vega ~]
+          $>(%vega vane-task)
           ::  fetches a remote resource
           ::
           [%request =request:http =outbound-config]
@@ -2072,7 +2073,7 @@
           [%receive id=@ud =http-event:http]
           ::  memory usage request
           ::
-          [%wegh ~]
+          $>(%wegh vane-task)
       ==
     --
   ::  +client-response: one or more client responses given to the caller
@@ -2166,20 +2167,21 @@
       ==
     ::
     ++  task
+      $~  [%vega ~]
       $%  ::  event failure notification
           ::
-          [%crud p=@tas q=(list tank)]
+          $>(%crud vane-task)
           ::  initializes ourselves with an identity
           ::
-          ::    TODO: Remove this once we single home.
-          ::
-          [%init our=@p]
+          $>(%init vane-task)
           ::  new unix process
+          ::
+          ::    XX use +vane-task
           ::
           [%born p=(list host)]
           ::  report upgrade
           ::
-          [%vega ~]
+          $>(%vega vane-task)
           ::  notifies us of the ports of our live http servers
           ::
           [%live insecure=@ud secure=(unit @ud)]
@@ -2209,7 +2211,7 @@
           [%disconnect =binding]
           ::  memory usage request
           ::
-          [%wegh ~]
+          $>(%wegh vane-task)
       ==
     ::
     --
