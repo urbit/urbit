@@ -1045,9 +1045,15 @@
     |=  [=wire =message]
     ^+  event-core
     ::
-    =/  =ship  ?>(?=([@ *] wire) `@p`(slav %p i.wire))
+    =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
-    (on-memo ship message)
+    =/  =peer-state
+      =-  ?>(?=(%known -<) ->)
+      (~(got by peers.ames-state) her)
+    ::
+    =/  channel  [[our her] now +>.ames-state -.peer-state]
+    ::
+    abet:(on-memo:(make-peer-core peer-state channel) bone message)
   ::  +on-memo: handle request to send message
   ::
   ++  on-memo
@@ -1062,7 +1068,9 @@
     =/  =peer-state  +.u.rcvr-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) message)
+    =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
+    ::
+    abet:(on-memo:(make-peer-core peer-state channel) bone message)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1098,10 +1106,8 @@
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
-      |=  =message
+      |=  [=bone =message]
       ^+  peer-core
-      ::
-      =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
       ::
       (run-message-pump bone %send message)
     ::  +run-message-pump: process $message-pump-task and its effects
@@ -1117,8 +1123,6 @@
       =/  message-pump    (make-message-pump message-pump-state channel)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
-      ::
-      =/  client-duct=^duct  (~(got by by-bone.ossuary.peer-state) bone)
       ::  process effects from |message-pump
       ::
       |^  ^+  peer-core
@@ -1196,6 +1200,11 @@
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %rest date)
+      ::
+      ++  client-duct
+        ^-  ^duct
+        ~|  %bone^bone
+        (~(got by by-bone.ossuary.peer-state) bone)
       --
     ::  +run-message-still: process $message-still-task and its effects
     ::
@@ -1246,11 +1255,14 @@
         ?:  =(1 (end 0 1 bone))
           =/  =wire  (make-bone-wire her.channel bone)
           ::
+          =^  client-duct  ossuary.peer-state
+            (get-duct ossuary.peer-state bone duct)
+          ::
           ?-  i.path.message
             %a  ~|  %pass-to-ames^her.channel  !!
-            %c  (emit duct %pass wire %c %memo her.channel message)
-            %g  (emit duct %pass wire %g %memo her.channel message)
-            %j  (emit duct %pass wire %j %memo her.channel message)
+            %c  (emit client-duct %pass wire %c %memo her.channel message)
+            %g  (emit client-duct %pass wire %g %memo her.channel message)
+            %j  (emit client-duct %pass wire %j %memo her.channel message)
           ==
         ::  even bone means backward flow; ack automatically
         ::
@@ -2012,6 +2024,19 @@
   %+  can   13
   %+  turn  (flop sorted)
   |=(a=@ [1 a])
+::  +get-duct: find or make new duct for .bone in .ossuary
+::
+++  get-duct
+  |=  [=ossuary =bone =default=duct]
+  ^+  [default-duct ossuary]
+  ::
+  ?^  existing=(~(get by by-bone.ossuary) bone)
+    [u.existing ossuary]
+  ::
+  :-  default-duct
+  :+  next-bone.ossuary
+    (~(put by by-duct.ossuary) default-duct bone)
+  (~(put by by-bone.ossuary) bone default-duct)
 ::  +get-bone: find or make new bone for .duct in .ossuary
 ::
 ++  get-bone

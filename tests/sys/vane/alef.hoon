@@ -227,7 +227,7 @@
   ::
   =/  res1
     %-  call:alice-core
-    [~[/alice] *type %memo ~doznec-doznec /g/talk [%first %post]]
+    [~[/alice] ** %memo ~doznec-doznec /g/talk [%get %post]]
   ::
   ::~&  res1=-.res1
   ::
@@ -244,7 +244,7 @@
   ::
   =/  res2
     %-  call:bob-core
-    [~[/bob] *type %hear lane blob]
+    [~[/bob] ** %hear lane blob]
   ::
   ::~&  res2=-.res2
   ::
@@ -269,7 +269,15 @@
   ::
   =/  res4
     %-  call:alice-core
-    [~[/alice] *type %hear lane blob]
+    [~[/alice] ** %hear lane blob]
+  ::
+  =.  bob-core  (+.res3 ~doznec-doznec 0xbeef.dead ~2222.2.6 *sley)
+  ::
+  =/  res5
+    %-  take:bob-core
+    [/bone/~nec/1 ~[/bob] ** %g %memo /g/talk [%post 'first1!!']]
+  ::
+  ~&  res5=-.res5
   ::
   %+  expect-eq
     !>  :~  :+  ~[/alice]  %give  [%done error=~]
