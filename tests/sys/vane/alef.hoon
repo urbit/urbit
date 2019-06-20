@@ -279,6 +279,40 @@
   ::
   ~&  res5=-.res5
   ::
+  =.  alice-core  (+.res4 ~nec 0xdead.beef ~2222.2.7 *sley)
+  ::
+  =+  ^-  [=lane:alef =blob:alef]
+      =-  ?>  ?=([%give %send *] ->)
+          [lane blob]:->+>
+      %+  snag  0
+      %+  skim  -.res5
+      |=  [duct card=*]
+      ^-  ?
+      ?=([%give %send *] card)
+  ::
+  =/  res6
+    %-  call:alice-core
+    [~[/alice] ** %hear lane blob]
+  ::
+  ~&  res6=-.res6
+  ::
+  =.  bob-core  (+.res5 ~doznec-doznec 0xbeef.dead ~2222.2.8 *sley)
+  ::
+  =+  ^-  [=lane:alef =blob:alef]
+      =-  ?>  ?=([%give %send *] ->)
+          [lane blob]:->+>
+      %+  snag  0
+      %+  skim  -.res6
+      |=  [duct card=*]
+      ^-  ?
+      ?=([%give %send *] card)
+  ::
+  =/  res7
+    %-  call:bob-core
+    [~[/bob] ** %hear lane blob]
+  ::
+  ~&  res7=-.res7
+  ::
   %+  expect-eq
     !>  :~  :+  ~[/alice]  %give  [%done error=~]
             :+  ~[/alice]  %pass
