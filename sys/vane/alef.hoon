@@ -465,7 +465,7 @@
 ::    packet-pump-state: state of corresponding |packet-pump
 ::
 +$  message-pump-state
-  $:  current=message-num
+  $:  current=_`message-num`1
       next=_`message-num`1
       unsent-messages=(qeu message)
       unsent-fragments=(list static-fragment)
