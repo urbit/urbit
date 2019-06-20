@@ -17,7 +17,7 @@ export class Sidebar extends Component {
   render() {
     const { props } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
-    
+
     let sidebarItems = props.circles.map((cir) => {
       let msg = props.messagePreviews[cir];
       let parsed = !!msg ? getMessageContent(msg.gam) : {
@@ -75,12 +75,16 @@ export class Sidebar extends Component {
       return !(msg.uid in filterInvites);
     }).map((inv) => {
       return (
-        <SidebarInvite key={inv.uid} msg={inv} api={props.api} />
+        <SidebarInvite
+          key={inv.uid}
+          msg={inv}
+          api={props.api}
+          config={props.inviteConfig}
+        />
       );
     });
 
     return (
-
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className="pl3 pr3 pt3 pb3 cf">
           <p className="dib w-50 fw-bold body-large">Chat</p>

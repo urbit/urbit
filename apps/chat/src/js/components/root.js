@@ -37,6 +37,7 @@ export class Root extends Component {
     const { props, state } = this;
 
     let configs = !!state.configs ? state.configs : {};
+
     let circles = Object.keys(configs).filter((conf) => {
       if (!configs[conf]) {
         return false;
@@ -50,7 +51,7 @@ export class Root extends Component {
     Object.keys(messages).forEach((stat) => {
       let arr = messages[stat];
       if (arr.length === 0) {
-        messagePreviews[stat] = null;
+        messagePreviews[stat] = false;
       } else {
         messagePreviews[stat] = arr[arr.length - 1];
       }
@@ -58,7 +59,7 @@ export class Root extends Component {
 
     let unreads = {};
     circles.forEach((cir) => {
-      if (cir in messagePreviews) {
+      if (cir in messagePreviews && !!messagePreviews[cir]) {
         unreads[cir] = state.configs[cir].red < messagePreviews[cir].num;
       } else {
         unreads[cir] = false;
@@ -70,6 +71,11 @@ export class Root extends Component {
       invites = invites[`~${window.ship}/i`];
     } else {
       invites = [];
+    }
+
+    let inviteConfig = false;
+    if (`~${window.ship}/i` in configs) {
+      inviteConfig = configs[`~${window.ship}/i`];
     }
 
     return (
@@ -86,6 +92,7 @@ export class Root extends Component {
                     invites={invites}
                     unreads={unreads}
                     api={api}
+                    inviteConfig={inviteConfig}
                     {...props}
                   />
                 }>
@@ -110,6 +117,7 @@ export class Root extends Component {
                     invites={invites}
                     unreads={unreads}
                     api={api}
+                    inviteConfig={inviteConfig}
                     {...props}
                   />
                 }>
@@ -136,6 +144,7 @@ export class Root extends Component {
                     invites={invites}
                     unreads={unreads}
                     api={api}
+                    inviteConfig={inviteConfig}
                     {...props}
                   />
                  }>
@@ -161,6 +170,7 @@ export class Root extends Component {
                     invites={invites}
                     unreads={unreads}
                     api={api}
+                    inviteConfig={inviteConfig}
                     {...props}
                   />
                  }>
@@ -183,6 +193,7 @@ export class Root extends Component {
                     invites={invites}
                     unreads={unreads}
                     api={api}
+                    inviteConfig={inviteConfig}
                     {...props}
                   />
                  }>
