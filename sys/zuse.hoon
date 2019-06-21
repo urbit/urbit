@@ -1803,7 +1803,6 @@
     ::                                                  ::::
   ++  able  ^?
     =,  pki
-    =,  rights
     |%
     ::  %jael has two general kinds of task: changes
     ::  and change subscriptions.
@@ -1827,15 +1826,6 @@
     ++  logs                                            ::  on-chain changes
       %+  map  event-id:ethereum-types                  ::  per event log
       diff-azimuth:azimuth-types                        ::  the change
-    ++  action                                          ::  balance change
-      %+  pair  ship                                    ::  partner
-      %+  each  bump                                    ::  &/liability change
-      bump                                              ::  |/asset change
-    ::                                                  ::
-    ++  balance                                         ::  balance sheet
-      %+  pair                                          ::
-        (map ship safe)                                 ::  liabilities
-      (map ship safe)                                   ::  assets
     ::                                                  ::
     ++  vent-result                                     ::  %vent result
       $%  [%snap snap=snapshot:jael]                    ::  restore snapshot
@@ -1848,18 +1838,14 @@
     ++  change                                          ::  urbit change
       $%  [%ethe can=chain]                             ::  on-chain change
           [%meet who=ship =life =pass]                  ::  meet in new era
-          $:  %rite                                     ::  rights change
-              rex/ship                                  ::  issuer
-              pal/ship                                  ::  issued to
-              del/bump                                  ::  change
-      ==  ==                                            ::
+          [%priv =life =ring]                           ::  update private key
+      ==                                                ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
-          [%vest p=tally]                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
           [%vine p=(list change)]                       ::  all raw changes
           [%vent p=vent-result]                         ::  ethereum changes
@@ -1869,22 +1855,13 @@
       $:  life=life                                     ::  current key number
           pubs=(map life pass)                          ::  pubkeys by number
       ==                                                ::
-    ++  remote                                          ::  remote notification
-      %+  each  safe                                    ::  &/addition
-      safe                                              ::  |/replacement
     ::  +seed: private boot parameters
     ::
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
-    ++  tally                                           ::  balance update
-      %+  each  balance                                 ::  complete
-      action                                            ::  change
-    ::
     +=  task                                            ::  in request ->$
       $~  [%vega ~]                                     ::
-      $%  [%burn p=ship q=safe]                         ::  destroy rights
-          [%hail p=ship q=remote]                       ::  remote update
-          $:  %dawn                                     ::  boot from keys
+      $%  $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
               spon=ship                                 ::    sponsor
               czar=(map ship [=life =pass])             ::    galaxy table
@@ -1895,8 +1872,6 @@
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
           [%look src=(each ship purl:eyre)]             ::  set ethereum source
-          [%mint p=ship q=safe]                         ::  create rights
-          [%move p=ship q=ship r=safe]                  ::  transfer from=to
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
           [%pubs =ship]                                 ::  view public keys
@@ -1906,7 +1881,6 @@
           $>(%vega vane-task)                           ::  report upgrade
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
-          [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
@@ -1966,65 +1940,6 @@
     ++  name  (pair @ta @t)                             ::  ascii / unicode
     ++  oath  @                                         ::  signature
     --  ::  pki
-  ::                                                    ::
-  ::::                  ++rights:jael                   ::  (1h3) claims
-    ::                                                  ::::
-  ++  rights  ^?
-    =,  pki
-    |%
-    ::  %jael tracks promises (++rite) from ship to ship.
-    ::  a rite may be any right, badge, asset, secret, etc.
-    ::  un-shared secret or private asset is stored as a
-    ::  rite from self to self.
-    ::
-    ::  each rite is really a class of rights, and often
-    ::  has its own internal set or map structure.
-    ::
-    ::  present kinds of rite:
-    ::
-    ::    %apple: application secret for a web api.
-    ::    %block: the promisee is banned.
-    ::    %email: email tied to promissee's ship.
-    ::    %final: ship/ticket pair, ready to launch.
-    ::    %fungi: fungible, countable asset.
-    ::    %guest: permission to adopt foreign child.
-    ::    %hotel: block of unissued children.
-    ::    %jewel: urbit private keys.
-    ::    %login: user's login passcode.
-    ::    %pword: password for a website/api.
-    ::    %token: user access token for a web api.
-    ::    %urban: symmetric key for urbit networking.
-    ::
-    ::  %fungi keys can be anything, but don't reuse
-    ::  currency codes.  codes for urbit invitations:
-    ::  %ugl == galaxy, %usr == star, %upl == planet
-    ::
-    ::  you can think of [our her rite] as an rdf triple.
-    ::
-    ++  bill  (pair @da @)                              ::  expiring value
-    ++  bump                                            ::  rights change
-      $:  mor/safe                                      ::  add rights
-          les/safe                                      ::  lose rights
-      ==                                                ::
-    ++  dorm  (pair ship bloq)                          ::  issuing group
-    ++  pile  (tree (pair @ @))                         ::  efficient ship set
-    ++  rite                                            ::  urbit commitment
-      $%  {$apple p/(map site @)}                       ::  web api key
-          {$block ~}                                    ::  banned
-          {$email p/(set @t)}                           ::  email addresses
-          {$final p/(map ship @pG)}                     ::  ticketed ships
-          {$fungi p/(map term @ud)}                     ::  fungibles
-          {$guest ~}                                    ::  refugee visa
-          {$hotel p/(map dorm pile)}                    ::  reserved block
-          {$jewel p/(map life ring)}                    ::  private keyring
-          {$login p/(set @pG)}                          ::  login secret
-          {$pword p/(map site (map @t @t))}             ::  web passwd by user
-          {$token p/(map site (map @t @t))}             ::  app tokens by user
-          {$urban p/(map hand bill)}                    ::  urbit symmetric keys
-      ==                                                ::
-    ++  site  (list @ta)                                ::  [%com %yahoo %www ~]
-    ++  safe  (tree rite)                               ::  rights set
-    --  ::  rights
   --  ::  jael
 ::
 ++  http-client  ^?

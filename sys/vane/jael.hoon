@@ -17,7 +17,6 @@
 ::
 |=  pit/vase
 =,  pki:jael
-=,  rights:jael
 =,  able:jael
 =,  crypto
 =,  jael
@@ -30,12 +29,6 @@
 ::  the %jael state comes in two parts: absolute
 ::  and relative.
 ::
-::  ++state-absolute is objective -- defined without
-::  reference to our ship.  if you steal someone else's
-::  private keys, we have a place to put them.  when
-::  others make promises to us, we store them in the
-::  same structures we use to make promises to others.
-::
 ::  ++state-relative is subjective, denormalized and
 ::  derived.  it consists of all the state we need to
 ::  manage subscriptions efficiently.
@@ -44,16 +37,12 @@
 ++  state                                               ::  all vane state
   $:  ver=$0                                            ::  vane version
       yen=(set duct)                                    ::  raw observers
-      urb=state-absolute                                ::  all absolute state
       sub=state-relative                                ::  all relative state
       etn=state-eth-node                                ::  eth connection state
       sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
-  $:  $=  bal                                           ::  balance sheet (vest)
-        $:  yen=(set duct)                              ::  trackers
-        ==                                              ::
-      $=  own                                           ::  vault (vein)
+  $:  $=  own                                           ::  vault (vein)
         $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
@@ -77,9 +66,6 @@
             ::TODO  do we want (map ship diff-point) too?
         ==                                              ::
   ==                                                    ::
-++  state-absolute                                      ::  absolute urbit
-  $:  pry=(map ship (map ship safe))                    ::  promises
-  ==                                                    ::
 ++  state-snapshots                                     ::  rewind points
   $:  interval=_100                                     ::  block interval
       max-count=_10                                     ::  max snaps
@@ -88,15 +74,14 @@
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
 ++  message                                             ::  message to her jael
-  $%  [%hail p=remote]                                  ::  reset rights
-      [%nuke ~]                                         ::  cancel trackers
+  $%  [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum events
       [%vent-result p=vent-result]                      ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
   (wind note gift)                                      ::
 ::                                                      ::
-++  move                                                ::  output
++$  move                                                ::  output
   [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
@@ -133,450 +118,6 @@
 ::::                    # light                         ::  light cores
   ::                                                    ::::
 =>  |%
-::                                                      ::  ++py
-::::                    ## sparse/light                 ::  sparse range
-  ::                                                    ::::
-++  py
-  ::  because when you're a star with 2^16 unissued
-  ::  planets, a (set) is kind of lame...
-  ::
-  |_  a/pile
-  ::                                                    ::  ++dif:py
-  ++  dif                                               ::  add/remove a->b
-    |=  b/pile
-    ^-  (pair pile pile)
-    [(sub(a b) a) (sub b)]
-  ::                                                    ::  ++div:py
-  ++  div                                               ::  allocate
-    |=  b/@ud
-    ^-  (unit (pair pile pile))
-    =<  ?-(- %& [~ p], %| ~)
-    |-  ^-  (each (pair pile pile) @u)
-    ?:  =(0 b)
-      [%& ~ a]
-    ?~  a  [%| 0]
-    =/  al  $(a l.a)
-    ?-    -.al
-        %&  [%& p.p.al a(l q.p.al)]
-        %|
-      =.  b  (^sub b p.al)
-      =/  top  +((^sub q.n.a p.n.a))
-      ?:  =(b top)
-        [%& a(r ~) r.a]
-      ?:  (lth b top)
-        :+  %&  a(r ~, q.n (add p.n.a (dec b)))
-        =.  p.n.a  (add p.n.a b)
-        (uni(a r.a) [n.a ~ ~])
-      =/  ar  $(a r.a, b (^sub b top))
-      ?-    -.ar
-          %&  [%& a(r p.p.ar) q.p.ar]
-          %|  [%| :(add top p.al p.ar)]
-      ==
-    ==
-  ::
-  ++  gas                                               ::  ++gas:py
-    |=  b/(list @)  ^-  pile                            ::  insert list
-    ?~  b  a
-    $(b t.b, a (put i.b))
-  ::                                                    ::  ++gud:py
-  ++  gud                                               ::  validate
-    =|  {bot/(unit @) top/(unit @)}
-    |-  ^-  ?
-    ?~  a  &
-    ?&  (lte p.n.a q.n.a)
-        ?~(top & (lth +(q.n.a) u.top))
-        ?~(bot & (gth p.n.a +(u.bot)))
-    ::
-        ?~(l.a & (mor p.n.a p.n.l.a))
-        $(a l.a, top `p.n.a)
-    ::
-        ?~(l.a & (mor p.n.a p.n.l.a))
-        $(a r.a, bot `q.n.a)
-    ==
-  ::                                                    ::  ++int:py
-  ++  int                                               ::  intersection
-    |=  b/pile  ^-  pile
-    ?~  a  ~
-    ?~  b  ~
-    ?.  (mor p.n.a p.n.b)  $(a b, b a)
-    ?:  (gth p.n.a q.n.b)
-      (uni(a $(b r.b)) $(a l.a, r.b ~))
-    ?:  (lth q.n.a p.n.b)
-      (uni(a $(b l.b)) $(a r.a, l.b ~))
-    ?:  (gte p.n.a p.n.b)
-      ?:  (lte q.n.a q.n.b)
-        [n.a $(a l.a, r.b ~) $(a r.a, l.b ~)]
-      [n.a(q q.n.b) $(a l.a, r.b ~) $(l.a ~, b r.b)]
-    %-  uni(a $(r.a ~, b l.b))
-    ?:  (lte q.n.a q.n.b)
-      %-  uni(a $(l.b ~, a r.a))
-      [n.b(q q.n.a) ~ ~]
-    %-  uni(a $(l.a ~, b r.b))
-    [n.b ~ ~]
-  ::                                                    ::  ++put:py
-  ++  put                                               ::  insert
-    |=  b/@  ^-  pile
-    (uni [b b] ~ ~)
-  ::                                                    ::  ++sub:py
-  ++  sub                                               ::  subtract
-    |=  b/pile  ^-  pile
-    ?~  b  a
-    ?~  a  a
-    ?:  (gth p.n.a q.n.b)
-      $(b r.b, l.a $(a l.a, r.b ~))
-    ?:  (lth q.n.a p.n.b)
-      $(b l.b, r.a $(a r.a, l.b ~))
-    %-  uni(a $(a l.a, r.b ~))
-    %-  uni(a $(a r.a, l.b ~))
-    ?:  (gte p.n.a p.n.b)
-      ?:  (lte q.n.a q.n.b)
-        ~
-      $(b r.b, a [[+(q.n.b) q.n.a] ~ ~])
-    ?:  (lte q.n.a q.n.b)
-      $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
-    %-  uni(a $(b r.b, a [[+(q.n.b) q.n.a] ~ ~]))
-    $(b l.b, a [[n.a(q (min q.n.a (dec p.n.b)))] ~ ~])
-  ::                                                    ::  ++tap:py
-  ++  tap                                               ::  into full list
-    =|  out/(list @)
-    |-  ^+  out
-    ?~  a  out
-    $(a l.a, out (welp (gulf n.a) $(a r.a)))
-  ::                                                    ::  ++uni:py
-  ++  uni                                               ::  merge two piles
-    |=  b/pile
-    ^-  pile
-    ?~  b  a
-    ?~  a  b
-    ?.  (mor p.n.a p.n.b)  $(a b, b a)
-    ?:  (lth +(q.n.b) p.n.a)
-      $(b r.b, l.a $(a l.a, r.b ~))
-    ?:  (lth +(q.n.a) p.n.b)
-      $(b l.b, r.a $(a r.a, l.b ~))
-    ?:  =(n.a n.b)  [n.a $(a l.a, b l.b) $(a r.a, b r.b)]
-    ?:  (lth p.n.a p.n.b)
-      ?:  (gth q.n.a q.n.b)
-        $(b l.b, a $(b r.b))
-      $(b l.b, a $(b r.b, a $(b r.a, r.a ~, q.n.a q.n.b)))
-    ?:  (gth q.n.a q.n.b)
-      $(a l.a, b $(a r.a, b $(a r.b, r.b ~, q.n.b q.n.a)))
-    $(a l.a, b $(a r.a))
-  --  ::py
-::                                                      ::  ++ry
-::::                    ## rights/light                 ::  rights algebra
-  ::                                                    ::::
-++  ry
-  ::
-  ::  we need to be able to combine rights, and
-  ::  track changes by taking differences between them.
-  ::
-  ::  ++ry must always crash when you try to make it
-  ::  do something that makes no sense.
-  ::
-  ::  language compromises: the type system can't enforce
-  ::  that lef and ryt match, hence the asserts.
-  ::
-  =<  |_  $:  ::  lef: old right
-              ::  ryt: new right
-              ::
-              lef/rite
-              ryt/rite
-          ==
-      ::                                                ::  ++uni:ry
-      ++  uni  ~(sum +> lef ryt)                        ::  add rights
-      ::                                                ::  ++dif:ry
-      ++  dif                                           ::  r->l: {add remove}
-        ^-  (pair (unit rite) (unit rite))
-        [~(dif +> ryt lef) ~(dif +> lef ryt)]
-      ::                                                ::  ++sub:ry
-      ++  sub                                           ::  l - r
-        ^-  (unit rite)
-        =/  vid  dif
-        ~|  vid
-        ?>(?=($~ q.vid) p.vid)
-      --
-  |_  $:  ::  lef: old right
-          ::  ryt: new right
-          ::
-          lef/rite
-          ryt/rite
-      ==
-  ::                                                    ::  ++sub-by:py
-  ++  sub-by                                            ::  subtract elements
-    |*  {new/(map) old/(map) sub/$-(^ *)}  ^+  new
-    %-  ~(rep by new)
-    |*  {{key/* val/*} acc/_^+(new ~)}
-    =>  .(+<- [key val]=+<-)
-    =/  var  (~(get by old) key)
-    =.  val  ?~(var val (sub val u.var))
-    ?~  val  acc
-    (~(put by ,.acc) key val)
-  ::                                                    ::  ++dif:ry
-  ++  dif                                               ::  in r and not l
-    ^-  (unit rite)
-    |^  ?-  -.lef
-          $apple  ?>(?=($apple -.ryt) (table %apple p.lef p.ryt))
-          $block  ?>(?=($block -.ryt) ~)
-          $email  ?>(?=($email -.ryt) (sable %email p.lef p.ryt))
-          $final  ?>(?=($final -.ryt) (table %final p.lef p.ryt))
-          $fungi  ?>(?=($fungi -.ryt) (noble %fungi p.lef p.ryt))
-          $guest  ?>(?=($guest -.ryt) ~)
-          $hotel  ?>(?=($hotel -.ryt) (bible %hotel p.lef p.ryt))
-          $jewel  ?>(?=($jewel -.ryt) (table %jewel p.lef p.ryt))
-          $login  ?>(?=($login -.ryt) (sable %login p.lef p.ryt))
-          $pword  ?>(?=($pword -.ryt) (ruble %pword p.lef p.ryt))
-          $token  ?>(?=($token -.ryt) (ruble %token p.lef p.ryt))
-          $urban  ?>(?=($urban -.ryt) (table %urban p.lef p.ryt))
-        ==
-    ::                                                  ::  ++cable:dif:ry
-    ++  cable                                           ::  diff atom
-      |*  {nut/@tas new/@ old/@}
-      ^-  (unit rite)
-      ?:  =(new old)  ~
-      `[nut new]
-    ::                                                  ::  ++bible:dif:ry
-    ++  bible                                           ::  diff pile
-      |*  {nut/@tas old/(map dorm pile) new/(map dorm pile)}
-      ^-  (unit rite)
-      =;  mor/_new
-        ?~(mor ~ `[nut mor])
-      %^  sub-by  new  old
-      |=({a/pile b/pile} (~(sub py a) b))
-    ::                                                  ::  ++noble:dif:ry
-    ++  noble                                           ::  diff map of @ud
-      |*  {nut/@tas old/(map * @ud) new/(map * @ud)}
-      ^-  (unit rite)
-      =;  mor/_new
-        ?~(mor ~ `[nut mor])
-      %^  sub-by  new  old
-      |=({a/@u b/@u} (sub a (min a b)))
-    ::                                                  ::  ++ruble:dif:ry
-    ++  ruble                                           ::  diff map of maps
-      |*  {nut/@tas old/(map * (map)) new/(map * (map))}
-      ^-  (unit rite)
-      =;  mor/_new
-        ?~(mor ~ `[nut mor])
-      %^  sub-by  new  old
-      =*  valu  (~(got by new))
-      |=  {a/_^+(valu ~) b/_^+(valu ~)}  ^+  a
-      (sub-by a b |*({a2/* b2/*} a2))
-    ::                                                  ::  ++sable:dif:ry
-    ++  sable                                           ::  diff set
-      |*  {nut/@tas old/(set) new/(set)}
-      ^-  (unit rite)
-      =;  mor  ?~(mor ~ `[nut mor])
-      (~(dif in new) old)
-    ::                                                  ::  ++table:dif:ry
-    ++  table                                           ::  diff map
-      |*  {nut/@tas old/(map) new/(map)}
-      ^-  (unit rite)
-      =;  mor  ?~(mor ~ `[nut mor])
-      (sub-by new old |*({a/* b/*} a))
-    --  ::dif
-  ::                                                    ::  ++sum:ry
-  ++  sum                                               ::  lef new, ryt old
-    ^-  rite
-    |^  ?-  -.lef
-          $apple  ?>(?=($apple -.ryt) [%apple (table p.lef p.ryt)])
-          $block  ?>(?=($block -.ryt) [%block ~])
-          $email  ?>(?=($email -.ryt) [%email (sable p.lef p.ryt)])
-          $final  ?>(?=($final -.ryt) [%final (table p.lef p.ryt)])
-          $fungi  ?>(?=($fungi -.ryt) [%fungi (noble p.lef p.ryt)])
-          $guest  ?>(?=($guest -.ryt) [%guest ~])
-          $hotel  ?>(?=($hotel -.ryt) [%hotel (bible p.lef p.ryt)])
-          $jewel  ?>(?=($jewel -.ryt) [%jewel (table p.lef p.ryt)])
-          $login  ?>(?=($login -.ryt) [%login (sable p.lef p.ryt)])
-          $pword  ?>(?=($pword -.ryt) [%pword (ruble p.lef p.ryt)])
-          $token  ?>(?=($token -.ryt) [%token (ruble p.lef p.ryt)])
-          $urban  ?>(?=($urban -.ryt) [%urban (table p.lef p.ryt)])
-        ==
-    ::                                                  ::  ++bible:uni:ry
-    ++  bible                                           ::  union pile
-      |=  {new/(map dorm pile) old/(map dorm pile)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel dorm pile pile)
-      (~(uni py q) r)
-    ::                                                  ::  ++noble:uni:ry
-    ++  noble                                           ::  union map of @ud
-      |=  {new/(map term @ud) old/(map term @ud)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel term @ud @ud)
-      (add q r)
-    ::                                                  ::  ++ruble:uni:ry
-    ++  ruble                                           ::  union map of maps
-      |=  {new/(map site (map @t @t)) old/(map site (map @t @t))}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel site (map @t @t) (map @t @t))
-      %-  (~(uno by q) r)
-      |=  (trel @t @t @t)
-      ?>(=(q r) r)
-    ::                                                  ::  ++sable:uni:ry
-    ++  sable                                           ::  union set
-      |*  {new/(set) old/(set)}
-      ^+  new
-      (~(uni in old) new)
-    ::                                                  ::  ++table:uni:ry
-    ++  table                                           ::  union map
-      |*  {new/(map) old/(map)}
-      ^+  new
-      %-  (~(uno by old) new)
-      |=  (trel _p.-<.new _q.->.new _q.->.new)
-      ?>(=(q r) r)
-    --  ::uni
-  --  ::ry
-::                                                      ::  ++up
-::::                    ## wallet^light                 ::  wallet algebra
-  ::                                                    ::::
-++  up
-  ::  a set of rites is stored as a tree (++safe), sorted
-  ::  by ++gor on the stem, balanced by ++mor on the stem.
-  ::  (this is essentially a ++map with stem as key, but
-  ::  ++map doesn't know how to link stem and bulb types.)
-  ::  the goal of the design is to make it easy to add new
-  ::  kinds of rite without a state adapter.
-  ::
-  ::  wallet operations always crash if impossible;
-  ::  %jael has no concept of negative rights.
-  ::
-  ::  performance issues: ++differ and ++splice, naive.
-  ::
-  ::  external issues: much copy and paste from ++by.  it
-  ::  would be nice to resolve this somehow, but not urgent.
-  ::
-  ::  language issues: if hoon had an equality test
-  ::  that informed inference, ++expose could be
-  ::  properly inferred, eliminating the ?>.
-  ::
-  |_  pig/safe
-  ::                                                    ::  ++delete:up
-  ++  delete                                            ::  delete right
-    |=  ryt/rite
-    ^-  safe
-    ?~  pig
-      ~
-    ?.  =(-.ryt -.n.pig)
-      ?:  (gor -.ryt -.n.pig)
-        [n.pig $(pig l.pig) r.pig]
-      [n.pig l.pig $(pig r.pig)]
-    =/  dub  ~(sub ry n.pig ryt)
-    ?^  dub  [u.dub l.pig r.pig]
-    |-  ^-  safe
-    ?~  l.pig  r.pig
-    ?~  r.pig  l.pig
-    ?:  (mor -.n.l.pig -.n.r.pig)
-      [n.l.pig l.l.pig $(l.pig r.l.pig)]
-    [n.r.pig $(r.pig l.r.pig) r.r.pig]
-  ::                                                    ::  ++differ:up
-  ++  differ                                            ::  delta pig->gob
-    |=  gob/safe
-    ^-  bump
-    |^  [way way(pig gob, gob pig)]
-    ++  way
-      %-  intern(pig ~)
-      %+  skip  linear(pig gob)
-      |=(rite (~(has in pig) +<))
-    --
-  ::                                                    ::  ++exists:up
-  ++  exists                                            ::  test presence
-    |=  tag/@tas
-    !=(~ (expose tag))
-  ::                                                    ::  ++expose:up
-  ++  expose                                            ::  typed extract
-    |=  tag/@tas
-    ^-  (unit rite)
-    ?~  pig  ~
-    ?:  =(tag -.n.pig)
-      [~ u=n.pig]
-    ?:((gor tag -.n.pig) $(pig l.pig) $(pig r.pig))
-  ::                                                    ::  ++insert:up
-  ++  insert                                            ::  insert item
-    |=  ryt/rite
-    ^-  safe
-    ?~  pig
-      [ryt ~ ~]
-    ?:  =(-.ryt -.n.pig)
-      [~(uni ry ryt n.pig) l.pig r.pig]
-    ?:  (gor -.ryt -.n.pig)
-      =.  l.pig  $(pig l.pig)
-      ?>  ?=(^ l.pig)
-      ?:  (mor -.n.pig -.n.l.pig)
-        [n.pig l.pig r.pig]
-      [n.l.pig l.l.pig [n.pig r.l.pig r.pig]]
-    =.  r.pig  $(pig r.pig)
-    ?>  ?=(^ r.pig)
-    ?:  (mor -.n.pig -.n.r.pig)
-      [n.pig l.pig r.pig]
-    [n.r.pig [n.pig l.pig l.r.pig] r.r.pig]
-  ::                                                    ::  ++intern:up
-  ++  intern                                            ::  insert list
-    |=  lin/(list rite)
-    ^-  safe
-    ?~  lin  pig
-    =.  pig  $(lin t.lin)
-    (insert i.lin)
-  ::                                                    ::  ++linear:up
-  ++  linear                                            ::  convert to list
-    =|  lin/(list rite)
-    |-  ^+  lin
-    ?~  pig  ~
-    $(pig r.pig, lin [n.pig $(pig l.pig)])
-  ::                                                    ::  ++redact:up
-  ++  redact                                            ::  conceal secrets
-    |-  ^-  safe
-    ?~  pig  ~
-    :_  [$(pig l.pig) $(pig r.pig)]
-    =*  rys  n.pig
-    ^-  rite
-    ?+    -.rys  rys
-        $apple
-      [%apple (~(run by p.rys) |=(@ (shax +<)))]
-    ::
-        $final
-      [%final (~(run by p.rys) |=(@ (shax +<)))]
-    ::
-        $login
-      [%login ~]
-    ::
-        $pword
-      :-  %pword
-      %-  ~(run by p.rys)
-      |=  (map @ta @t)
-      (~(run by +<) |=(@t (fil 3 (met 3 +<) '*')))
-    ::
-        $jewel
-      [%jewel (~(run by p.rys) |=(@ (shax +<)))]
-    ::
-        $token
-      :-  %token
-      %-  ~(run by p.rys)
-      |=((map @ta @) (~(run by +<) |=(@ (shax +<))))
-    ::
-        $urban
-      [%urban (~(run by p.rys) |=({@da code:ames} [+<- (shax +<+)]))]
-    ==
-  ::                                                    ::  ++remove:up
-  ++  remove                                            ::  pig minus gob
-    |=  gob/safe
-    ^-  safe
-    =/  buv  ~(tap by gob)
-    |-  ?~  buv  pig
-        $(buv t.buv, pig (delete i.buv))
-  ::                                                    ::  ++splice:up
-  ++  splice                                            ::  pig plus gob
-    |=  gob/safe
-    ^-  safe
-    =/  buv  ~(tap by gob)
-    |-  ?~  buv  pig
-        $(buv t.buv, pig (insert i.buv))
-  ::                                                    ::  ++update:up
-  ++  update                                            ::  arbitrary change
-    |=  del/bump
-    ^-  safe
-    (splice(pig (remove les.del)) mor.del)
-  --
 ::                                                      ::  ++ez
 ::::                    ## ethereum^light               ::  wallet algebra
   ::                                                    ::::
@@ -610,12 +151,12 @@
   ::  this core handles all top-level %jael semantics,
   ::  changing state and recording moves.
   ::
-  ::  logically we could nest the ++su and ++ur cores
-  ::  within it, but we keep them separated for clarity.
-  ::  the ++curd and ++cure arms complete relative and
-  ::  absolute effects, respectively, at the top level.
+  ::  logically we could nest the ++su core within it, but
+  ::  we keep them separated for clarity.  the ++curd and
+  ::  ++cure arms complete relative and absolute effects,
+  ::  respectively, at the top level.
   ::
-  ::  a general pattern here is that we use the ++ur core
+  ::  a general pattern here is that we use the ++et core
   ::  to generate absolute effects (++change), then invoke
   ::  ++su to calculate the derived effect of these changes.
   ::
@@ -648,10 +189,6 @@
   ::                                                    ::  ++abet:of
   ++  abet                                              ::  resolve
     [(flop moz) lex]
-  ::                                                    ::  ++burb:of
-  ++  burb                                              ::  per ship
-    |=  who/ship
-    ~(able ~(ex ur urb) who)
   ::                                                    ::  ++scry:of
   ++  scry                                              ::  read
     |=  {syd/@tas pax/path}
@@ -686,13 +223,6 @@
         ==
     ^+  +>
     ?-    -.tac
-    ::
-    ::  destroy promises
-    ::    {$burn p/ship q/safe}
-    ::
-        $burn
-      %+  cure  hen
-      abet:abet:(deal:(burb our) p.tac [~ q.tac])
     ::
     ::  boot from keys
     ::    $:  $dawn
@@ -729,10 +259,10 @@
         %+  ~(put by kyz.puk.sub)
           our
         [lyf.seed.tac (my [lyf.seed.tac pub:ex:cub] ~)]
-      ::  our initial private key, as a +tree of +rite
+      ::  our initial private key
       ::
-      =/  rit  (sy [%jewel (my [lyf.seed.tac key.seed.tac] ~)] ~)
-      =.  +>.$  $(tac [%mint our rit])
+      =.  lyf.own.sub  lyf.seed.tac
+      =.  jaw.own.sub  (my [lyf.seed.tac key.seed.tac] ~)
       ::  our initial galaxy table as a +map from +life to +public
       ::
       =/  kyz
@@ -740,7 +270,7 @@
         |=([=life =pass] `public`[life (my [life pass] ~)])
       =.  +>.$
         %-  curd  =<  abet
-        (pubs:~(feel su hen our urb sub etn sap) kyz)
+        (pubs:~(feel su hen our sub etn sap) kyz)
       ::  XX save sponsor in .own.sub
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -789,13 +319,13 @@
       ::
       =.  kyz.puk.sub
         (~(put by kyz.puk.sub) our [1 (my [1 pub:ex:cub] ~)])
-      ::  our private key, as a +tree of +rite
+      ::  our private key
       ::
       ::    Private key updates are disallowed for fake ships,
       ::    so we do this first.
       ::
-      =/  rit  (sy [%jewel (my [1 sec:ex:cub] ~)] ~)
-      =.  +>.$  $(tac [%mint our rit])
+      =.  lyf.own.sub  1
+      =.  jaw.own.sub  (my [1 sec:ex:cub] ~)
       ::  set the fake bit
       ::
       =.  fak.own.sub  &
@@ -815,43 +345,12 @@
         ==
       +>.$
     ::
-    ::  remote update
-    ::    {$hail p/ship q/remote}
-    ::
-        $hail
-      %+  cure  hen
-      abet:abet:(hail:(burb our) p.tac q.tac)
-    ::
     ::  set ethereum source
     ::    [%look p=(each ship purl)]
     ::
         %look
       %+  cute  hen  =<  abet
-      (~(look et hen our now urb.lex sub.lex etn.lex sap.lex) src.tac)
-    ::
-    ::  create promises
-    ::    {$mint p/ship q/safe}
-    ::
-        $mint
-      ~|  %fake-jael
-      ?<  ?&  fak.own.sub
-              (~(exists up q.tac) %jewel)
-          ==
-      %+  cure  hen
-      abet:abet:(deal:(burb our) p.tac [q.tac ~])
-    ::
-    ::
-    ::  move promises
-    ::    {$move p/ship q/ship r/safe}
-    ::
-        $move
-      =.  +>
-        %+  cure  hen
-        abet:abet:(deal:(burb our) p.tac [~ r.tac])
-      =.  +>
-        %+  cure  hen
-        abet:abet:(deal:(burb our) q.tac [r.tac ~])
-      +>
+      (~(look et hen our now sub.lex etn.lex sap.lex) src.tac)
     ::
     ::  cancel all trackers from duct
     ::    {$nuke $~}
@@ -859,7 +358,6 @@
         $nuke
       %_  +>
         yen          (~(del in yen) hen)
-        yen.bal.sub  (~(del in yen.bal.sub) hen)
         yen.own.sub  (~(del in yen.own.sub) hen)
         yen.eth.sub  (~(del in yen.eth.sub) hen)
       ==
@@ -869,14 +367,14 @@
     ::
         %pubs
       %-  curd  =<  abet
-      (~(pubs ~(feed su hen our urb sub etn sap) hen) ship.tac)
+      (~(pubs ~(feed su hen our sub etn sap) hen) ship.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
     ::
         %meet
       %+  cure  hen
-      [[%meet ship.tac life.tac pass.tac]~ urb]
+      [%meet ship.tac life.tac pass.tac]~
     ::
     ::  restore snapshot
     ::    [%snap snap=snapshot kick=?]
@@ -905,20 +403,14 @@
     ::    {$vein $~}
     ::
         $vein
-      (curd abet:~(vein ~(feed su hen our urb sub etn sap) hen))
+      (curd abet:~(vein ~(feed su hen our sub etn sap) hen))
     ::
     ::  watch ethereum events
     ::    [%vent ~]
     ::
         %vent
       =.  moz  [[hen %give %mack ~] moz]
-      (curd abet:~(vent ~(feed su hen our urb sub etn sap) hen))
-    ::
-    ::  monitor assets
-    ::    {$vest $~}
-    ::
-        $vest
-      (curd abet:~(vest ~(feed su hen our urb sub etn sap) hen))
+      (curd abet:~(vent ~(feed su hen our sub etn sap) hen))
     ::
     ::  monitor all
     ::    {$vine $~}
@@ -935,7 +427,6 @@
         ^-  mass
         :+  %jael  %|
         :~  yen+&+yen
-            urb+&+urb
             sub+&+sub
             etn+&+etn
             sap+&+sap
@@ -950,13 +441,6 @@
       =*  her  p.tac
       =/  mes  (message r.tac)
       ?-    -.mes
-      ::
-      ::  reset remote rights
-      ::    [%hail p=remote]
-      ::
-          %hail
-        %+  cure  hen
-        abet:abet:(hail:(burb our) her p.mes)
       ::
       ::  cancel trackers
       ::    [%nuke ~]
@@ -977,7 +461,7 @@
           +>.$
         =.  moz  [[hen %give %mack ~] moz]
         %+  cute  hen  =<  abet
-        (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.mes)
+        (~(hear-vent et hen our now sub.lex etn.lex sap.lex) p.mes)
       ==
     ::
     ::  rewind to snapshot
@@ -1006,7 +490,7 @@
         +>.$
       ~!  hin
       %+  cute  hen  =<  abet
-      %^  ~(finished et hen our now urb.lex sub.lex etn.lex sap.lex)  wir
+      %^  ~(finished et hen our now sub.lex etn.lex sap.lex)  wir
         response-header.client-response.hin
       full-file.client-response.hin
     ::
@@ -1015,8 +499,8 @@
       ::  XX cleanup
       ::
       ?.  ?=([%init ~] wir)
-        abet:~(wake et hen our now urb.lex sub.lex etn.lex sap.lex)
-      abet:(~(init et hen our now [urb sub etn sap]:lex) our (sein our))
+        abet:~(wake et hen our now sub.lex etn.lex sap.lex)
+      abet:(~(init et hen our now [sub etn sap]:lex) our (sein our))
     ::
         [%b %wake ^]
       ::  TODO: handle behn error
@@ -1026,7 +510,7 @@
     ::
         [%j %vent *]
       %+  cute  hen  =<  abet
-      (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.hin)
+      (~(hear-vent et hen our now sub.lex etn.lex sap.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -1038,28 +522,25 @@
     +>(sub sub, etn etn, sap sap, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++cure:of
   ++  cure                                              ::  absolute edits
-    |=  [hen=duct hab=(list change) urb=state-absolute]
+    |=  [hen=duct hab=(list change)]
     ^+  +>
-    =.  ^urb  urb
-    (curd abet:(~(apex su hen our urb sub etn sap) hab))
+    (curd abet:(~(apex su hen our sub etn sap) hab))
   ::                                                    ::  ++cute:of
   ++  cute                                              ::  ethereum changes
     |=  $:  hen=duct
             mos=(list move)
             ven=chain
-            urb=state-absolute
             sub=state-relative
             etn=state-eth-node
             sap=state-snapshots
         ==
     ^+  +>
-    =:  ^urb  urb
-        ^sub  sub
+    =:  ^sub  sub
         ^etn  etn
         ^sap  sap
     ==
     %-  cure(moz (weld (flop mos) moz))
-    [hen abet:(link:(burb our) ven)]
+    [hen [%ethe ven]~]
   ::                                                    ::  ++wind:of
   ++  wind                                              ::  rewind to snap
     |=  [hen=duct block=@ud]
@@ -1077,12 +558,12 @@
   ++  restore-block                                     ::  rewind before block
     |=  [hen=duct block=@ud]
     %+  cute  hen  =<  abet
-    (~(restore-block et hen our now urb.lex sub.lex etn.lex sap.lex) block)
+    (~(restore-block et hen our now sub.lex etn.lex sap.lex) block)
   ::                                                    ::  ++restore-snap:of
   ++  restore-snap                                      ::  restore snapshot
     |=  [hen=duct snap=snapshot look=?]
     %+  cute  hen  =<  abet
-    %-  ~(restore-snap et hen our now urb.lex sub.lex etn.lex sap.lex)
+    %-  ~(restore-snap et hen our now sub.lex etn.lex sap.lex)
     [snap look]
   --
 ::                                                      ::  ++su
@@ -1101,23 +582,20 @@
       ::
       ::  ++form:su generates the actual report data.
       ::
-  =|  moz/(list move)
+  =|  moz=(list move)
   =|  evs=logs
   =|  $:  hen/duct
           our/ship
-          state-absolute
           state-relative
           state-eth-node
           state-snapshots
       ==
   ::  moz: moves in reverse order
-  ::  urb: absolute urbit state
   ::  sub: relative urbit state
   ::
-  =*  urb  ->+<
-  =*  sub  ->+>-
-  =*  etn  ->+>+<
-  =*  sap  ->+>+>
+  =*  sub  ->+<
+  =*  etn  ->+>-
+  =*  sap  ->+>+
   |%
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
@@ -1137,7 +615,7 @@
       ?-  -.i.hab
         %ethe  (file can.i.hab)
         %meet  (meet +.i.hab)
-        %rite  (paid +.i.hab)
+        %priv  !!  ::  update private key
       ==
     ==
   ::                                                    ::  ++exec:su
@@ -1192,12 +670,6 @@
       %_  ..feed
         moz      [[hen %give %vein [lyf jaw]:own] moz]
         yen.own  (~(put in yen.own) hen)
-      ==
-    ::                                                  ::  ++vest:feed:su
-    ++  vest                                            ::  balance
-      %_  ..feed
-        moz      [[hen %give %vest %& vest:form] moz]
-        yen.bal  (~(put in yen.bal) hen)
       ==
     ::
     ++  vent
@@ -1255,29 +727,6 @@
       =.  lyf.own  p.yam
       =.  jaw.own  q.yam
       (exec yen.own [%give %vein lyf.own jaw.own])
-    ::                                                  ::  ++vest:feel:su
-    ++  vest                                            ::  kick balance
-      |=  hug/action
-      ^+  ..feel
-      ?:  =([~ ~] +.q.hug)  ..feel
-      ::
-      ::  notify all local listeners
-      ::
-      =.  ..feel  (exec yen.bal [%give %vest %| p.hug q.hug])
-      ::
-      ::  pig: purse report for partner
-      ::
-      ?.  ?=(%| -.q.hug)  ..feel
-      =*  pig  (~(lawn ur urb) our p.hug)
-      %_    ..feel
-          moz
-        :_  moz
-        :^  *duct  %pass  /vest/(scot %p p.hug)
-        :+  %a  %want
-        :+  p.hug  /j
-        ^-  message
-        [%hail |+pig]
-      ==
     ::
     ++  vent
       |=  ver=vent-result
@@ -1292,66 +741,8 @@
     ::                                                  ::  ++vein:form:su
     ++  vein                                            ::  private key report
       ^-  (pair life (map life ring))
-      (~(lean ur urb) our)
-    ::                                                  ::  ++vest:form:su
-    ++  vest                                            ::  balance report
-      ^-  balance
-      :-  ::
-          ::  raw: all our liabilities by ship
-          ::  dud: delete liabilities to self
-          ::  cul: mask secrets
-          ::
-          =*  raw  =-(?~(- ~ u.-) (~(get by pry.urb) our))
-          =*  dud  (~(del by raw) our)
-          =*  cul  (~(run by dud) |=(safe ~(redact up +<)))
-          cul
-      ::
-      ::  fub: all assets by ship
-      ::  veg: all nontrivial assets, secrets masked
-      ::
-      =/  fub
-        ^-  (list (pair ship (unit safe)))
-        %+  turn
-          ~(tap by pry.urb)
-        |=  (pair ship (map ship safe))
-        [p (~(get by q) our)]
-      =*  veg
-        |-  ^-  (list (pair ship safe))
-        ?~  fub  ~
-        =+  $(fub t.fub)
-        ?~(q.i.fub - [[p.i.fub ~(redact up u.q.i.fub)] -])
-      ::
-      (~(gas by *(map ship safe)) veg)
+      !!
     --
-  ::                                                    ::  ++paid:su
-  ++  paid                                              ::  track asset change
-    |=  $:  ::  rex: promise from
-            ::  pal: promise to
-            ::  del: change to existing
-            ::
-            rex/ship
-            pal/ship
-            del/bump
-        ==
-    ^+  +>
-    ::  ignore empty delta; keep secrets out of metadata
-    ::
-    ?:  =([~ ~] del)  +>
-    =.  del  [~(redact up mor.del) ~(redact up les.del)]
-    ?.  =(our pal)
-      ::
-      ::  track promises we made to others
-      ::
-      ?.  =(our rex)  +>
-      ::
-      ::  track liabilities
-      ::
-      (vest:feel pal %& del)
-    ::
-    ::  track private keys
-    ::
-    ?.  (~(exists up mor.del) %jewel)  +>
-    vein:feel
   ::                                                    ::  ++meet:su
   ++  meet                                              ::  seen after breach
     |=  [who=ship =life =pass]
@@ -1556,114 +947,6 @@
       ..file
     --
   --
-::                                                      ::  ++ur
-::::                    ## absolute^heavy               ::  objective engine
-  ::                                                    ::::
-++  ur
-      ::  the ++ur core handles primary, absolute state.
-      ::  it is the best reference for the semantics of
-      ::  the urbit pki.
-      ::
-      ::  it is absolutely verboten to use [our] in ++ur.
-      ::
-  =|  hab/(list change)
-  =|  state-absolute
-  ::
-  ::  hab: side effects, reversed
-  ::  urb: all urbit state
-  ::
-  =*  urb  -
-  |%
-  ::                                                    ::  ++abet:ur
-  ++  abet                                              ::  resolve
-    [(flop hab) `state-absolute`urb]
-  ::
-  ++  link
-    |=  ven=chain
-    %_  +>
-      hab   [[%ethe ven] hab]
-    ==
-  ::                                                    ::  ++lawn:ur
-  ++  lawn                                              ::  debts, rex to pal
-    |=  {rex/ship pal/ship}
-    ^-  safe
-    (lawn:~(able ex rex) pal)
-  ::                                                    ::  ++lean:ur
-  ++  lean                                              ::  private keys
-    |=  rex/ship
-    ^-  (pair life (map life ring))
-    lean:~(able ex rex)
-  ::                                                    ::  ++ex:ur
-  ++  ex                                                ::  server engine
-    ::  shy: private state
-    ::  rug: domestic will
-    ::
-    =|  $:  shy/(map ship safe)
-        ==
-    =|  ::  rex: server ship
-        ::
-        rex/ship
-    |%
-    ::                                                  ::  ++abet:ex:ur
-    ++  abet                                            ::  resolve
-      %_  ..ex
-        pry  (~(put by pry) rex shy)
-      ==
-    ::                                                  ::  ++able:ex:ur
-    ++  able                                            ::  initialize
-      %_  .
-        shy  (fall (~(get by pry) rex) *(map ship safe))
-      ==
-    ::                                                  ::  ++deal:ex:ur
-    ++  deal                                            ::  alter rights
-      |=  {pal/ship del/bump}
-      ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *safe)
-      =*  hep  (~(update up gob) del)
-      %_  +>.$
-        shy  (~(put by shy) pal hep)
-        hab  [[%rite rex pal del] hab]
-      ==
-    ::
-    ++  hail                                            ::  ++hail:ex:ur
-      |=  {pal/ship rem/remote}                         ::  report rights
-      ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *safe)
-      ::  yer: pair of change and updated safe.
-      =/  yer  ^-  (pair bump safe)
-        ?-  -.rem
-          ::  change: add rem. result: old + rem.
-          %&  [[p.rem ~] (~(splice up gob) p.rem)]
-          ::  change: difference. result: rem.
-          %|  [(~(differ up gob) p.rem) p.rem]
-        ==
-      %_  +>.$
-        shy  (~(put by shy) pal q.yer)
-        hab  [[%rite rex pal p.yer] hab]
-      ==
-    ::                                                  ::  ++lean:ex:ur
-    ++  lean                                            ::  private keys
-      ^-  (pair life (map life ring))
-      ::
-      ::  par: promises by rex, to rex
-      ::  jel: %jewel rights
-      ::  lyf: latest life of
-      ::
-      =*  par  (~(got by shy) rex)
-      =/  jel=rite  (need (~(expose up par) %jewel))
-      ?>  ?=($jewel -.jel)
-      =;  lyf=life
-        [lyf p.jel]
-      %+  roll  ~(tap in ~(key by p.jel))
-      |=  [liv=life max=life]
-      ?:((gth liv max) liv max)
-    ::                                                  ::  ++lawn:ex:ur
-    ++  lawn                                            ::  liabilities to pal
-      |=  pal/ship
-      ^-  safe
-      =-(?~(- ~ u.-) (~(get by shy) pal))
-    --
-  --
 ::                                                      ::  ++et
 ::::                    ## ethereum^heavy               ::  ethereum engine
   ::                                                    ::::
@@ -1687,15 +970,13 @@
   =|  $:  hen=duct
           our=ship
           now=@da
-          state-absolute
           state-relative
           state-eth-node
           state-snapshots
       ==
-  =*  urb  ->+>-
-  =*  sub  ->+>+<
-  =*  etn  ->+>+>-
-  =*  sap  ->+>+>+
+  =*  sub  ->+>-
+  =*  etn  ->+>+<
+  =*  sap  ->+>+>
   ::
   ::  +|  outward
   |%
@@ -1703,7 +984,7 @@
   ::  +abet: produce results
   ::
   ++  abet
-    ^-  $:  (list move)  chain  state-absolute  state-relative
+    ^-  $:  (list move)  chain  state-relative
             state-eth-node  state-snapshots
         ==
     =.  .
@@ -1716,7 +997,7 @@
           changes  *logs
         ==
       (restore-block u.rewind-block)
-    [(flop moves) ?:(reset &+changes |+changes) urb sub etn sap]
+    [(flop moves) ?:(reset &+changes |+changes) sub etn sap]
   ::
   ::  +put-move: store side-effect
   ::
@@ -2342,9 +1623,7 @@
   ::
       %code
     ?.  ?=([@ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
@@ -2356,9 +1635,7 @@
   ::
       %life
     ?.  ?=([@ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
@@ -2374,9 +1651,7 @@
   ::
       %rift
     ?.  ?=([@ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
@@ -2437,9 +1712,7 @@
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     =/  lyf  (slaw %ud i.t.tyl)
@@ -2460,9 +1733,7 @@
   ::
       %sein
     ?.  ?=([@ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
@@ -2472,9 +1743,7 @@
   ::
       %saxo
     ?.  ?=([@ ~] tyl)  [~ ~]
-    ?.  ?&  ?=(%& -.why)
-            (~(has by pry.urb.lex) p.why)
-        ==
+    ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
     ?~  who  [~ ~]
