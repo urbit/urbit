@@ -15,7 +15,7 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path]]
+  $%  [%noun [@tas path @t]]
   ==
 ::
 +$  card
@@ -41,7 +41,7 @@
   ^-  (quip move _this)
   =/  lismov/(list move)  %+  weld
     `(list move)`[ost.bol %connect / [~ /'~clock'] %clock]~
-    `(list move)`[ost.bol %poke /clock [our.bol %launch] [%noun [%clock /tile]]]~
+    `(list move)`[ost.bol %poke /clock [our.bol %launch] [%noun [%clock /tile '/~clock/js/tile.js']]]~
   :-  lismov
   this
 ::

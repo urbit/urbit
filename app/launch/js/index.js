@@ -49126,7 +49126,7 @@
 
 	  render() {
 	    let SpecificTile = window[this.props.type + 'Tile'];
-	    console.log(this.props.type, this.props.data);
+
 	    return (
 	      react.createElement('div', { className: "fl ma2 bg-white overflow-hidden"   ,
 	           style: { height: '234px', width: '234px' }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 16}}
@@ -49141,53 +49141,26 @@
 	}
 
 	const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/launch/src/js/components/home.js";
-	const loadExternalScript = (ext, callback) => {
-	  const script = document.createElement('script');
-	  script.src = '/~' + ext + '/tile.js';
-	  script.id = ext;
-	  document.body.appendChild(script);
-
-	  script.onload = () => {
-	    console.log('callback');
-	    if (callback) callback();
-	  };
-	};
 
 	class Home extends react_1 {
 
 	  constructor(props) {
 	    super(props);
-
-	    this.loadedScripts = new Set();
 	    subscription.subscribe("/main");
-	  }
-
-	  componentDidUpdate(prevProps, prevState) {
-	    let difference = new Set(
-	      [...this.props.keys]
-	        .filter(x => !prevProps.keys.has(x))
-	    );
-
-	    difference.forEach((external) => {
-	      loadExternalScript(external, this.forceUpdate.bind(this));
-	    });
 	  }
 
 	  render() {
 	    let keys = [...this.props.keys];
-	    console.log(keys);
 	    let tileElems = keys.map((tile) => {
-	      console.log(tile);
-	      console.log(this.props.data[tile]);
 	      return (
-	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 48}} )
+	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 21}} )
 	      );
 	    });
-	    
+
 	    return (
-	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 53}}
-	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 54}} )
-	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 55}}
+	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 26}}
+	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 27}} )
+	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}
 	          , tileElems
 	        )
 	      )

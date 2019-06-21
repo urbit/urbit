@@ -14,7 +14,6 @@
   /|  /js/
       /~  ~
   ==
-
 /=  script
   /^  octs
   /;  as-octs:mimes:html
@@ -63,17 +62,39 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]
+        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile]]]~
+  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]~
   this(sta u.old)
+
+::
+++  poke-noun
+  |=  a=@
+  ~&  messages.str.sta
+  [~ this]
 ::
 ::
+::
+++  construct-tile-json
+  |=  str=streams
+  ^-  json
+  =/  numbers/(list [circle:hall @ud])
+    %+  turn  ~(tap by messages.str)
+      |=  [cir=circle:hall lis=(list envelope:hall)]
+      ^-  [circle:hall @ud]
+      [cir (lent lis)]
+  =/  maptjson  *(map @t json)
+  =.  maptjson
+    (~(put by maptjson) 'config' (config-to-json str))
+  =.  maptjson
+    (~(put by maptjson) 'numbers' (numbers-to-json numbers))
+  [%o maptjson]
 ::
 ++  peer-chattile
   |=  wir=wire
   ^-  (quip move _this)
-  [~ this]
+  :_  this
+  [ost.bol %diff %json (construct-tile-json str.sta)]~
 ::
 ::  +peer-messages: subscribe to subset of messages and updates
 ::
@@ -81,6 +102,7 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
+  ~&  (lent (prey:pubsub:userlib /primary bol))
   =*  messages  messages.str.sta
   =/  lisunitmov=(list (unit move))
     %+  turn  ~(tap by messages)
@@ -132,12 +154,21 @@
 ::  +send-chat-update: utility func for sending updates to all our subscribers
 ::
 ++  send-chat-update
-  |=  upd=update
+  |=  [upd=update str=streams]
   ^-  (list move)
-  %+  turn  (prey:pubsub:userlib /primary bol)
-  |=  [=bone *]
-  ~&  bone
-  [bone %diff %chat-update upd]
+  =/  updates/(list move)
+    %+  turn  (prey:pubsub:userlib /primary bol)
+    |=  [=bone *]
+    [bone %diff %chat-update upd]
+  ::
+  =/  tile-updates/(list move)
+    %+  turn  (prey:pubsub:userlib /chattile bol)
+    |=  [=bone *]
+    [bone %diff %json (construct-tile-json str)]
+  ::
+  %+  weld
+    updates
+    tile-updates
 ::
 ::
 ::  +hall arms
@@ -157,10 +188,11 @@
     ::
       %circles
     ?>  ?=(%circles -.piz)
-      :-  (send-chat-update [%circles cis.piz])
-      %=  this
-          circles.str.sta  cis.piz
+      =/  str  %=  str.sta
+        circles  cis.piz
       ==
+      :-  (send-chat-update [[%circles cis.piz] str])
+      this(str.sta str)
     ::
     ::  %circle wire
     ::
@@ -260,19 +292,19 @@
   ::  %circles
       %circles
     ?>  ?=(%circles -.rum)
-      ?:  add.rum
-        =/  cis  (~(put in circles.str.sta) cir.rum)
-        :-  (send-chat-update [%circles cis])
-        %=  this
-            circles.str.sta  cis
-            peers.str.sta  (~(put by peers.str.sta) [our.bol cir.rum] ~)
-        ==
-      =/  cis  (~(del in circles.str.sta) cir.rum)
-      :-  (send-chat-update [%circles cis])
-      %=  this
-          circles.str.sta  cis
-          peers.str.sta  (~(del by peers.str.sta) [our.bol cir.rum])
+      =/  cis
+        ?:  add.rum
+          (~(put in circles.str.sta) cir.rum)
+        (~(del in circles.str.sta) cir.rum)
+      =/  str  %=  str.sta
+          circles  cis
+          peers
+            ?:  add.rum
+              (~(put by peers.str.sta) [our.bol cir.rum] ~)
+            (~(del by peers.str.sta) [our.bol cir.rum])
       ==
+      :-  (send-chat-update [[%circles cis] str])
+      this(str.sta str)
   ::
   ::
   ::  %circle: fill remote configs with message data
@@ -290,10 +322,11 @@
     =*  messages  messages.str.sta
     =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
     =/  nes/(list envelope:hall)  (~(got by messages) circle)
-    :-  (send-chat-update [%message circle nev.sto])
-    %=  this
-      messages.str.sta  (~(put by messages) circle (snoc nes nev.sto))
+    =/  str  %=  str.sta
+      messages  (~(put by messages) circle (snoc nes nev.sto))
     ==
+    :-  (send-chat-update [[%message circle nev.sto] str])
+    this(str.sta str)
     ::
     ::  %status:
     ::
@@ -306,11 +339,12 @@
       ?:  =(%remove -.dif.sto)
         (~(del in u.upeers) who.sto)
       (~(put in u.upeers) who.sto)
-    :-  (send-chat-update [%peers cir.sto peers])
-    %=  this 
-      peers.str.sta  (~(put by peers.str.sta) cir.sto peers)
-    ==
-
+    =/  str
+      %=  str.sta
+        peers  (~(put by peers.str.sta) cir.sto peers)
+      ==
+    :-  (send-chat-update [[%peers cir.sto peers] str])
+    this(str.sta str)
     ::
     ::  %config: config has changed
     ::
@@ -324,10 +358,12 @@
       ::
           %full
         =*  conf  cof.dif.sto
-        :-  (send-chat-update [%config circ conf])
-        %=  this
-          configs.str.sta  (~(put by configs.str.sta) circ `conf)
-        ==
+        =/  str
+          %=  str.sta
+            configs  (~(put by configs.str.sta) circ `conf)
+          ==
+        :-  (send-chat-update [[%config circ conf] str])
+        this(str.sta str)
       ::
       ::  %read: the read count of one of our configs has changed
       ::
@@ -343,10 +379,12 @@
           %=  u.uconf
             red  red.dif.sto
           ==
-        :-  (send-chat-update [%config circ conf])
-        %=  this
-          configs.str.sta  (~(put by configs.str.sta) circ `conf)
-        ==
+        =/  str
+          %=  str.sta
+            configs  (~(put by configs.str.sta) circ `conf)
+          ==
+        :-  (send-chat-update [[%config circ conf] str])
+        this(str.sta str)
       ::
       ::  %source: the sources of our inbox have changed
       ::
@@ -364,33 +402,37 @@
           =/  newinbox  %=  inbox.str.sta
             src  (~(put in src.inbox.str.sta) src.dif.sto)
           ==
-          :-  
+          =/  str
+            %=  str.sta
+              inbox  newinbox
+              ::
+              configs
+                ?:  (~(has by configs.str.sta) affectedcir)
+                  configs.str.sta
+                (~(put by configs.str.sta) affectedcir ~)
+            ==
+          ::
+          :_  this(str.sta str)
           %+  weld
             [ost.bol %peer newwir [hos.affectedcir %hall] pat]~
-            (send-chat-update [%inbox newinbox])
-          %=  this
-            inbox.str.sta  newinbox
-          ::src.inbox.str.sta  (~(put in src.inbox.str.sta) src.dif.sto)
-          ::
-            configs.str.sta
-              ?:  (~(has by configs.str.sta) affectedcir)
-                configs.str.sta
-              (~(put by configs.str.sta) affectedcir ~)
-          ==
+            (send-chat-update [[%inbox newinbox] str])
+        ::
         =/  newinbox  %=  inbox.str.sta
           src  (~(del in src.inbox.str.sta) src.dif.sto)
         ==
         ::  we've removed a source from our inbox
         ::
-        :-  
+        =/  str
+          %=  str.sta
+            inbox  newinbox
+          ::
+            configs  (~(del by configs.str.sta) affectedcir)
+          ==
+        ::
+        :_  this(str.sta str)
         %+  weld
           [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
-          (send-chat-update [%inbox newinbox])
-        %=  this
-          src.inbox.str.sta  (~(del in src.inbox.str.sta) src.dif.sto)
-        ::
-          configs.str.sta  (~(del by configs.str.sta) affectedcir)
-        ==
+          (send-chat-update [[%inbox newinbox] str])
       ==
       ::  end of branching on dif.sto type
     ==

@@ -2769,6 +2769,7 @@
     ==
   ==
 ::
+::
 ++  affection
   ::    rumors to interested
   ::
@@ -2780,19 +2781,35 @@
   ^-  (list move)
   ::  cache results for paths.
   =|  res/(map path (list move))
-  %-  zing
-  %+  turn  ~(tap by sup.bol)
-  |=  {b/bone s/ship p/path}
-  ^-  (list move)
-  =+  mur=(~(get by res) p)
-  ?^  mur  u.mur
-  =-  =.  res  (~(put by res) p -)
-      -
-  =+  qer=(path-to-query p)
-  %+  welp
-    =+  rum=(feel qer det)
-    ?~  rum  ~
-    [b %diff %hall-rumor u.rum]~
+    %-  zing
+    %+  turn  ~(tap by sup.bol)
+      |=  {b/bone s/ship p/path}
+      ^-  (list move)
+      =+  mur=(~(get by res) p)
+      ?^  mur  u.mur
+      =-  =.  res  (~(put by res) p -)
+          -
+      =+  qer=(path-to-query p)
+      %+  welp
+        =+  rum=(feel qer det)
+        ?~  rum  ~
+        ?:  ?&
+          ?=(%burden -.u.rum)
+          ?=(%config -.rum.u.rum)
+          ?=(%read -.dif.rum.u.rum)
+        ==
+          :: don't send read burdens
+          ~
+        ?:  ?&
+          ?!(=(s our.bol))
+          ?=(%circle -.u.rum)
+          ?=(%config -.rum.u.rum)
+          ?=(%read -.dif.rum.u.rum)
+        ==
+          ::  don't send read circle events to other ships
+          ~
+        [b %diff %hall-rumor u.rum]~
+
   ?.  ?=($circle -.qer)  ~
   ::  kill the subscription if we forgot the story.
   ?.  (~(has by stories) nom.qer)  (gentle-quit b s qer)

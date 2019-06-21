@@ -18,7 +18,7 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path]]
+  $%  [%noun [@tas path @t]]
   ==
 ::
 +$  card
@@ -46,7 +46,7 @@
   ^-  (quip move _this)
   =/  lismov/(list move)  %+  weld
     `(list move)`[ost.bol %connect / [~ /'~timer'] %timer]~
-    `(list move)`[ost.bol %poke /timer [our.bol %launch] [%noun [%timer /tile]]]~
+    `(list move)`[ost.bol %poke /timer [our.bol %launch] [%noun [%timer /tile '/~timer/js/tile.js']]]~
   :-  lismov
   ?~  old
     this
@@ -71,7 +71,6 @@
 ++  poke-json
   |=  jon=json
   ^-  (quip move _this)
-  ~&  jon
   ?.  ?=(%s -.jon)
     [~ this]
   =/  str/@t  +.jon
@@ -100,13 +99,12 @@
       ''
     i.back-path
   ::
-  ~&  site.request-line
   ?+  site.request-line
     [[ost.bol %http-response not-found:app]~ this]
   ::
   ::  tile
   ::
-      [%'~timer' %tile ~]
+      [%'~timer' %js %tile ~]
     [[ost.bol %http-response (js-response:app tile-js)]~ this]
   ::
   ::  images
