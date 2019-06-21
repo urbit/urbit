@@ -796,7 +796,7 @@
       %hole  !!
       %init  !!
       %sunk  (on-sunk:event-core [ship rift]:task)
-      %vega  !!
+      %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
     ==
@@ -1149,6 +1149,9 @@
         peers-alien+&+alien
         dot+&+ames-state
     ==
+  ::  +on-vega: handle kernel reload
+  ::
+  ++  on-vega  event-core
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
