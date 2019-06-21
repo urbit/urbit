@@ -49027,48 +49027,7 @@
 	})));
 	});
 
-	const _jsxFileName = "/Users/isaac/urbit/projects/interface/apps/launch/src/js/components/dropdown.js";
-	let style = {
-	  circle: {
-	    width: '2em',
-	    height: '2em',
-	    background: '#000000',
-	    border: '4px solid #333333',
-	    'borderRadius': '2em'
-	  },
-	  triangle: {
-	    width: '0px',
-	    height: '0px',
-	    'borderTop': '8px solid #FFFFFF',
-	    'borderLeft': '8px solid transparent',
-	    'borderRight': '8px solid transparent',
-	    'fontSize': 0,
-	    'lineHeight': 0,
-	    'marginLeft': 'auto',
-	    'marginRight': 'auto',
-	  }
-	};
-
-
-	class Dropdown extends react_1 {
-
-	  constructor(props) {
-	    super(props);
-	  }
-
-	  render() {
-	    return (
-	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 36}}
-	        , react.createElement('div', { className: "ml2", style: style.circle, __self: this, __source: {fileName: _jsxFileName, lineNumber: 37}}
-	            , react.createElement('div', { className: "mt2", style: style.triangle, __self: this, __source: {fileName: _jsxFileName, lineNumber: 38}})
-	        )
-	      )
-	    );
-	  }
-
-	}
-
-	const _jsxFileName$1 = "/Users/isaac/urbit/projects/interface/apps/launch/src/js/components/header.js";
+	const _jsxFileName = "/Users/logan/Dev/interface/apps/launch/src/js/components/header.js";
 	class Header extends react_1 {
 
 	  constructor(props) {
@@ -49103,13 +49062,12 @@
 
 	  render() {
 	    return (
-	      react.createElement('header', { className: "w-100 h2 cf"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 43}}
-	        , react.createElement('div', { className: "fl h2 bg-black"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 44}}
-	          , react.createElement(Dropdown, {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 45}} )
+	      react.createElement('header', { className: "w-100 h2 cf"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 43}}
+	        , react.createElement('div', { className: "fl h2 bg-black"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 44}}
 	        )
-	        , react.createElement('div', { className: "fr h2 bg-black"  , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 47}}
-	          , react.createElement('p', { className: "white v-mid h2 sans-serif dtc pr2"     , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 48}}, this.state.moment.format("MMM DD"))
-	          , react.createElement('p', { className: "white v-mid h2 sans-serif dtc pr2"     , __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 49}}, this.state.moment.format("hh:mm a"))
+	        , react.createElement('div', { className: "fr h2 bg-black"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 46}}
+	          , react.createElement('p', { className: "white v-mid h2 sans-serif dtc pr2"     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 47}}, this.state.moment.format("MMM DD"))
+	          , react.createElement('p', { className: "white v-mid h2 sans-serif dtc pr2"     , __self: this, __source: {fileName: _jsxFileName, lineNumber: 48}}, this.state.moment.format("hh:mm a"))
 	        )
 	      )
 	    );
@@ -49117,7 +49075,7 @@
 
 	}
 
-	const _jsxFileName$2 = "/Users/isaac/urbit/projects/interface/apps/launch/src/js/components/tile.js";
+	const _jsxFileName$1 = "/Users/logan/Dev/interface/apps/launch/src/js/components/tile.js";
 	class Tile extends react_1 {
 
 	  constructor(props) {
@@ -49129,10 +49087,10 @@
 
 	    return (
 	      react.createElement('div', { className: "fl ma2 bg-white overflow-hidden"   ,
-	           style: { height: '234px', width: '234px' }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 16}}
+	           style: { height: '234px', width: '234px' }, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 16}}
 	        ,  !!SpecificTile ? 
-	          react.createElement(SpecificTile, { data: this.props.data, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 19}} )
-	          : react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 20}})
+	          react.createElement(SpecificTile, { data: this.props.data, __self: this, __source: {fileName: _jsxFileName$1, lineNumber: 19}} )
+	          : react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$1, lineNumber: 20}})
 	        
 	      )
 	    );
@@ -49140,7 +49098,7 @@
 
 	}
 
-	const _jsxFileName$3 = "/Users/isaac/urbit/projects/interface/apps/launch/src/js/components/home.js";
+	const _jsxFileName$2 = "/Users/logan/Dev/interface/apps/launch/src/js/components/home.js";
 
 	class Home extends react_1 {
 
@@ -49153,14 +49111,14 @@
 	    let keys = [...this.props.keys];
 	    let tileElems = keys.map((tile) => {
 	      return (
-	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 21}} )
+	        react.createElement(Tile, { key: tile, type: tile, data: this.props.data[tile], __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 21}} )
 	      );
 	    });
 
 	    return (
-	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 26}}
-	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 27}} )
-	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 28}}
+	      react.createElement('div', { className: "fl w-100 vh-100 bg-black center"    , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 26}}
+	        , react.createElement(Header, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 27}} )
+	        , react.createElement('div', { className: "v-mid pa2 dtc"  , __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 28}}
 	          , tileElems
 	        )
 	      )
@@ -49169,7 +49127,7 @@
 
 	}
 
-	const _jsxFileName$4 = "/Users/isaac/urbit/projects/interface/apps/launch/src/js/app.js";
+	const _jsxFileName$3 = "/Users/logan/Dev/interface/apps/launch/src/js/app.js";
 	class App extends react_1 {
 
 	  constructor() {
@@ -49182,18 +49140,18 @@
 
 	  render() {
 	    return (
-	       react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 19}}
-	         , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 20}}
+	       react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 19}}
+	         , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$3, lineNumber: 20}}
 	          , react.createElement(Route, { exact: true, path: "/", 
 	            render:  (props) => {
 	              return (
 	                react.createElement(Home, { 
 	                  ...props,
 	                  data: this.state, 
-	                  keys: new Set(Object.keys(this.state)), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 24}}
+	                  keys: new Set(Object.keys(this.state)), __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 24}}
 	                )
 	              );
-	            }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 21}}
+	            }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 21}}
 	          )
 	        )
 	      )
@@ -49203,12 +49161,12 @@
 
 	window.app = App;
 
-	const _jsxFileName$5 = "/Users/isaac/urbit/projects/interface/apps/launch/src/index.js";
+	const _jsxFileName$4 = "/Users/logan/Dev/interface/apps/launch/src/index.js";
 
 	subscription.setAuthTokens({
 	  ship: window.ship
 	});
 
-	reactDom.render(react.createElement(App, {__self: undefined, __source: {fileName: _jsxFileName$5, lineNumber: 12}} ), document.querySelectorAll("#root")[0]);
+	reactDom.render(react.createElement(App, {__self: undefined, __source: {fileName: _jsxFileName$4, lineNumber: 12}} ), document.querySelectorAll("#root")[0]);
 
 }));
