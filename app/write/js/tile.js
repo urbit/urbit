@@ -2202,7 +2202,7 @@
             }());
             });
 
-            const _jsxFileName = "/Users/isaac/urbit/projects/interface/apps/publish/tile/tile.js";
+            const _jsxFileName = "/Users/logan/Dev/interface/apps/publish/tile/tile.js";
 
             class PublishTile extends react_1 {
               constructor(props){
@@ -2239,7 +2239,7 @@
                 return (
                   react.createElement('div', { className: "w-100 h-100 relative"  , style: {background: "#1a1a1a"}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 38}}
                     , react.createElement('a', { className: "w-100 h-100 db no-underline"   , href: "/~publish", __self: this, __source: {fileName: _jsxFileName, lineNumber: 39}}
-                      , react.createElement('p', { className: "gray-30 label-regular b absolute"   ,
+                      , react.createElement('p', { className: "gray label-regular b absolute"   ,
                         style: {left: 8, top: 4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 40}}, "Publish"
 
                       )
