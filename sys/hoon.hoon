@@ -10544,10 +10544,12 @@
       |=  {mel/vair ram/vair}
       ^-  ?
       ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  |
-      ?:  ?=($lead mel)  &
-      ?:  ?=($gold mel)  meet
-      =+  vay=?-(mel $iron %rite, $zinc %read)
-      dext(sut (peek vay 2), ref (peek(sut ref) vay 2))
+      ?-  mel
+        %lead  &
+        %gold  meet
+        %iron  dext(sut (peek(sut ref) %rite 2), ref (peek %rite 2))
+        %zinc  dext(sut (peek %read 2), ref (peek(sut ref) %read 2))
+      ==
     ::
     ++  deep
       |=  $:  dom/(map term tome)
@@ -10593,7 +10595,7 @@
                    ==
         {$core *}  ?.  ?=({$core *} ref)  sint
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
-                   ?&  =(q.p.q.sut q.p.q.ref)
+                   ?&  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
                        meet(sut q.q.sut, ref p.sut)
                        dext(sut q.q.ref, ref p.ref)
                        (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
