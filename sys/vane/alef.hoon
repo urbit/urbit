@@ -631,11 +631,13 @@
 ::    %memo: message to vane from peer
 ::    %send: packet to unix
 ::    %done: notify vane that peer (n)acked our message
+::    %mass: memory usage report
 ::
 +$  gift
   $%  [%memo =message]
       [%send =lane =blob]
       [%done error=(unit error)]
+      [%mass mass]
   ==
 ::  $note: request to other vane
 ::
@@ -791,7 +793,7 @@
       %init  !!
       %sunk  !!
       %vega  !!
-      %wegh  !!
+      %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
     ==
   ::
@@ -1108,6 +1110,20 @@
     =/  =channel  [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
+  ::  +on-wegh: produce memory usage report
+  ::
+  ++  on-wegh
+    ^+  event-core
+    ::
+    =+  [known alien]=(skid ~(tap by peers.ames-state) |=(^ =(%known +<-)))
+    ::
+    %-  emit
+    :^  duct  %give  %mass
+    :+  %ames  %|
+    :~  peers-known+&+known
+        peers-alien+&+alien
+        dot+&+ames-state
+    ==
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
