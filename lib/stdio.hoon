@@ -35,8 +35,10 @@
   |=  [add=? =contract]
   =/  m  (async ,~)
   ^-  form:m
-  |=  async-input
-  [~ ~ (silt [add contract]~) %done ~]
+  |=  =async-input
+  =/  delta=contract-delta:async
+    ?.(add [%lose ~] [%gain ost.bowl.async-input])
+  [~ ~ (my [contract delta] ~) %done ~]
 ::
 ::  Send effect on current bone
 ::
@@ -224,7 +226,7 @@
   ?:  ?&  ?=([~ * %wake *] in.async-input)
           =(/(scot %da when) wire.u.in.async-input)
       ==
-    [~ ~ (silt [| %wait when]~) %fail %async-timeout ~]
+    [~ ~ (my [[%wait when] [%lose ~]] ~) %fail %async-timeout ~]
   =/  c-res  (computation async-input)
   ?.  ?=(%cont -.next.c-res)
     c-res

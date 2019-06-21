@@ -319,7 +319,7 @@
       [~ ~ %noun ?=(^ active)]
     ::
         [%x %tapp %contracts ~]
-      [~ ~ %noun ?~(active ~ contracts.u.active)]
+      [~ ~ %noun ?~(active ~ ~(key by contracts.u.active))]
     ::
         *
       (~(handle-peek handler bowl app-state) path)
@@ -452,7 +452,7 @@
   ::  Called on async failure
   ::
   ++  fail-async
-    |=  [contracts=(set contract) err=(pair term tang)]
+    |=  [contracts=(map contract bone) err=(pair term tang)]
     ^-  (quip move _this-tapp)
     %-  %-  slog
         :*  leaf+(weld "tapp command failed in app/" (trip dap.bowl))
@@ -464,7 +464,7 @@
   ::  Called on async success
   ::
   ++  done-async
-    |=  [contracts=(set contract) state=state-type]
+    |=  [contracts=(map contract bone) state=state-type]
     ^-  (quip move _this-tapp)
     =.  app-state  state
     (finish-async contracts)
@@ -472,7 +472,7 @@
   ::  Called whether async failed or succeeded
   ::
   ++  finish-async
-    |=  contracts=(set contract)
+    |=  contracts=(map contract bone)
     ^-  (quip move _this-tapp)
     =^  moves-1  this-tapp  (cancel-contracts contracts)
     =.  active   ~
@@ -512,17 +512,17 @@
   ::  Cancel outstanding contracts
   ::
   ++  cancel-contracts
-    |=  contracts=(set contract)
+    |=  contracts=(map contract bone)
     ^-  (quip move this-tapp)
-    [(zing (turn ~(tap in contracts) cancel-contract)) this-tapp]
+    [(zing (turn ~(tap by contracts) cancel-contract)) this-tapp]
   ::
   ::  Cancel individual contract
   ::
   ++  cancel-contract
-    |=  =contract
+    |=  [=contract =bone]
     ^-  (list move)
     ?-  -.contract
-      %wait  [ost.bowl %rest /note/(scot %da at.contract) at.contract]~
+      %wait  [bone %rest /note/(scot %da at.contract) at.contract]~
       %hiss  ~  ::  can't cancel; will ignore response
     ==
   --
