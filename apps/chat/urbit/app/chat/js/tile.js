@@ -19333,36 +19333,44 @@
 
                   state.numbers.forEach((num) => {
                     numbers[num.circle] = num.length;
+                    if (num.circle === inviteCircle) {
+                      inviteNum = inviteNum + num.length;
+                    } else {
+                      msgNum = msgNum + num.length;
+                    }
                   });
 
                   Object.keys(state.configs).forEach((key) => {
-                    let con = state.configs[key];
-
-                    if (key in numbers) {
-                      console.log(key, con.red, numbers[key]);
-                      if (key === inviteCircle) {
-                        if (con.red < numbers[key]) {
-                          inviteNum = msgNum + numbers[key] - con.red;
-                        }
-                      } else {
-                        if (con.red < numbers[key]) {
-                          msgNum = msgNum + numbers[key] - con.red;
-                        }
-                      }
+                    let host = key.split('/')[0];
+                    if (host !== `~${window.ship}`) { return; }
+                    if (!state.configs[key]) { return; }
+                    let red = state.configs[key].red;
+                    if (key === inviteCircle) {
+                      inviteNum = inviteNum - red;
+                    } else {
+                      msgNum = msgNum - red;
                     }
                   }); 
                 }
 
+                if (inviteNum === -1) {
+                  inviteNum = 0;
+                }
+
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 66}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 67}}
-                       , react.createElement('p', { className: "gray", __self: this, __source: {fileName: _jsxFileName, lineNumber: 68}}, "Chat")
+                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 70}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}
+                      , react.createElement('p', { className: "gray", style: {
+                        fontWeight: 'bold',
+                        fontSize: 14,
+                        lineHeight: '24px'
+                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 72}}, "Chat")
                        , react.createElement('img', {
                          className: "absolute",
                          style: { left: 68, top: 65 },
                          src: "/~chat/img/Tile.png",
                          width: 106,
-                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 69}} )
+                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 77}} )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19370,7 +19378,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}}, inviteNum, " invites" )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 83}}, inviteNum, " invites" )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19378,7 +19386,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 83}}, msgNum, " new messages"  )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 91}}, msgNum, " new messages"  )
                     )
                   )
                 );

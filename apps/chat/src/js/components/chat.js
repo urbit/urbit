@@ -21,10 +21,13 @@ export class ChatScreen extends Component {
       scrollLocked: false,
     };
 
+    this.messageLength = 0;
     this.hasAskedForMessages = false;
     this.topMessage = {};
     this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
+
+    this.scrollClosure = false;
   }
 
   componentDidMount() {
@@ -37,31 +40,26 @@ export class ChatScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { props } = this;
 
-    if (prevProps.messages.length < props.messages.length - 300) {
-      this.hasAskedForMessages = false;
-      this.forceUpdate();
-      this.topMessage = {};
-    } else if (prevProps.match.params.ship !== props.match.params.ship ||
+    if (prevProps.match.params.ship !== props.match.params.ship ||
               prevProps.match.params.station !== props.match.params.station
     ) {
       console.log('switched circle');
+      this.hasAskedForMessages = false;
+      this.scrollClosure = false;
+      this.topMessage = {};
+ 
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
         circle: props.match.params.station,
         host: props.match.params.ship,
         numPeople: 0,
         scrollLocked: false
+      }, () => {
+        this.updateReadNumber();
+        this.updateNumPeople();
+        this.scrollToBottom();
       });
-
-      this.hasAskedForMessages = false;
-      this.topMessage = {};
-      this.forceUpdate();
     }
-
-    this.updateReadNumber();
-    this.updateNumPeople();
-    this.updateNumMessagesLoaded(prevProps, prevState);
-    this.scrollToBottom();
   }
 
   askForMessages() {
@@ -114,18 +112,27 @@ export class ChatScreen extends Component {
     }
   }
 
-
   updateReadNumber() {
     const { props, state } = this;
-    
-    let messages = props.messages[state.station] || [];
-    let config = props.configs[state.station] || false;
+
+    let internalCircle = 'hall-internal-' + state.circle;
+    let internalStation = `~${window.ship}/${internalCircle}`;
+
+    let internalConfig = props.configs[internalStation] || false;
+    let regularConfig = props.configs[state.station] || false;
+
+    let config = internalConfig || regularConfig;
+    let messages = props.messages;
 
     let lastMsgNum = (messages.length > 0) ?
       messages[messages.length - 1].num : 0;
 
     if (config && config.red < lastMsgNum) {
-      props.api.read(state.circle, lastMsgNum);
+      if (internalConfig) {
+        props.api.read(internalCircle, lastMsgNum);
+      } else {
+        props.api.read(state.circle, lastMsgNum);
+      }
     }
   }
 
@@ -135,17 +142,6 @@ export class ChatScreen extends Component {
     let numPeople = !!sis ? sis.length : 0;
     if (numPeople !== this.state.numPeople) {
       this.setState({ numPeople });
-    }
-  }
-
-  updateNumMessagesLoaded(prevProps, prevState) {
-    let station = prevProps.messages[this.state.station] || [];
-    let numMessages = station.length;
-
-    if (numMessages > prevState.numMessages) {
-      this.setState({
-        numMessages: numMessages
-      });
     }
   }
 
@@ -184,8 +180,20 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
     
-    let messages = props.messages;
+    if (props.messages.length !== this.messageLength && !this.scrollClosure) {
+      this.scrollClosure = true;
+      setTimeout(() => {
+        this.scrollToBottom();
+        this.updateReadNumber();
+        this.scrollClosure = null;
+      }, 200);
+    }
+    this.messageLength = props.messages.length;
 
+    let lastMsgNum = (messages.length > 0) ?
+      messages[messages.length - 1].num : 0;
+
+    let messages = props.messages.slice(0);
     if (messages.length > 50 * state.numPages) {
       messages = messages
         .slice(messages.length - (50 * state.numPages), messages.length);
@@ -212,7 +220,7 @@ export class ChatScreen extends Component {
         </div>
         <ChatInput 
           api={props.api}
-          configs={props.configs}
+          numMsgs={lastMsgNum}
           station={state.station}
           circle={state.circle}
           placeholder='Message...' />

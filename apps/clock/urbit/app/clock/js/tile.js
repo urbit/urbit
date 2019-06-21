@@ -2351,7 +2351,11 @@
 
               renderWrapper(child) {
                 return (
-                  react.createElement('div', { className: "pa2 bg-dark-gray" , style: { width: outerSize, height: outerSize }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 152}}
+                  react.createElement('div', { className: "pa2", style: {
+                    width: outerSize,
+                    height: outerSize,
+                    background: '#1a1a1a'
+                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 152}}
                     , child
                   )
                 );
@@ -2361,7 +2365,7 @@
                 let data = !!this.props.data ? this.props.data : {};
 
                 return this.renderWrapper((
-                  react.createElement(Clock, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 162}})
+                  react.createElement(Clock, {__self: this, __source: {fileName: _jsxFileName, lineNumber: 166}})
                 ));
 
               }

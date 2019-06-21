@@ -29,39 +29,63 @@ export class SidebarInvite extends Component {
   updateInvite(uid, cir, resp) {
     let tagstring = resp ? "Accept" : "Reject";
 
-    console.log(this.props.config);
+    let circleName = cir.split('/')[1];
 
-    this.props.api.chat({
-      actions: {
-        lis: [{
+    let lis = [];
+
+    if (resp) {
+      lis = [
+        {
+          create: {
+            nom: 'hall-internal-' + circleName,
+            des: "chatroom",
+            sec: "channel"
+          }
+        },
+        {
           source: {
             nom: "inbox",
-            sub: resp,
+            sub: true,
             srs: [cir]
           }
         },
         {
-          phrase: {
-            aud: [`~${window.ship}/i`],
-            ses: [{
-              ire: {
-                top: uid,
-                sep: {
-                  lin: {
-                    msg: `${tagstring} ${cir}`,
-                    pat: false
+          source: {
+            nom: "inbox",
+            sub: true,
+            srs: [`~${window.ship}/hall-internal-${circleName}`]
+          }
+        }
+      ];
+
+    }
+
+    this.props.api.chat({
+      actions: {
+        lis: lis.concat([
+          {
+            phrase: {
+              aud: [`~${window.ship}/i`],
+              ses: [{
+                ire: {
+                  top: uid,
+                  sep: {
+                    lin: {
+                      msg: `${tagstring} ${cir}`,
+                      pat: false
+                    }
                   }
                 }
-              }
-            }]
+              }]
+            }
+          },
+          {
+            read: {
+              nom: 'i',
+              red: this.props.config.red + 2
+            }
           }
-        },
-        {
-          read: {
-            nom: 'i',
-            red: this.props.config.red + 2
-          }
-        }]
+        ])
       }
     });
   }

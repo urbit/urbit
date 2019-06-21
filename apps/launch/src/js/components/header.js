@@ -42,7 +42,6 @@ export default class Header extends Component {
     return (
       <header className="w-100 h2 cf">
         <div className="fl h2 bg-black">
-          <Dropdown />
         </div>
         <div className="fr h2 bg-black">
           <p className="white v-mid h2 sans-serif dtc pr2">{this.state.moment.format("MMM DD")}</p>

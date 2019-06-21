@@ -59,8 +59,14 @@ export class Root extends Component {
 
     let unreads = {};
     circles.forEach((cir) => {
-      if (cir in messagePreviews && !!messagePreviews[cir]) {
-        unreads[cir] = state.configs[cir].red < messagePreviews[cir].num;
+      if (cir in messages) {
+        if (messages[cir].length === 0) {
+          unreads[cir] = false;
+        } else {
+          unreads[cir] =
+            state.configs[cir].red <
+            messages[cir][messages[cir].length - 1].num;
+        }
       } else {
         unreads[cir] = false;
       }

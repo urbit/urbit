@@ -45,7 +45,11 @@ export default class WeatherTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2 bg-dark-gray" style={{ width: 234, height: 234 }}>
+      <div className="pa2" style={{
+        width: 234,
+        height: 234,
+        background: '#1a1a1a'
+      }}>
         {child}
       </div>
     );
@@ -68,7 +72,11 @@ export default class WeatherTile extends Component {
 
     return this.renderWrapper((
       <div>
-        <p className="white">Weather</p>
+          <p className="gray" style={{
+            fontWeight: 'bold',
+            fontSize: 14,
+            lineHeight: '24px'
+          }}>Weather</p>
         <div className="w-100 mb2 mt2">
           <img 
             src={'/~weather/img/' + c.icon + '.png'} 

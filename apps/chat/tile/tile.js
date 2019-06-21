@@ -42,30 +42,38 @@ export default class ChatTile extends Component {
 
       state.numbers.forEach((num) => {
         numbers[num.circle] = num.length;
+        if (num.circle === inviteCircle) {
+          inviteNum = inviteNum + num.length;
+        } else {
+          msgNum = msgNum + num.length;
+        }
       });
 
       Object.keys(state.configs).forEach((key) => {
-        let con = state.configs[key];
-
-        if (key in numbers) {
-          console.log(key, con.red, numbers[key]);
-          if (key === inviteCircle) {
-            if (con.red < numbers[key]) {
-              inviteNum = msgNum + numbers[key] - con.red;
-            }
-          } else {
-            if (con.red < numbers[key]) {
-              msgNum = msgNum + numbers[key] - con.red;
-            }
-          }
+        let host = key.split('/')[0];
+        if (host !== `~${window.ship}`) { return; }
+        if (!state.configs[key]) { return; }
+        let red = state.configs[key].red;
+        if (key === inviteCircle) {
+          inviteNum = inviteNum - red;
+        } else {
+          msgNum = msgNum - red;
         }
       }); 
+    }
+
+    if (inviteNum === -1) {
+      inviteNum = 0;
     }
 
     return (
       <div className="w-100 h-100 relative" style={{ background: '#1a1a1a' }}>
         <a className="w-100 h-100 db pa2 no-underline" href="/~chat">
-           <p className="gray">Chat</p>
+          <p className="gray" style={{
+            fontWeight: 'bold',
+            fontSize: 14,
+            lineHeight: '24px'
+          }}>Chat</p>
            <img
              className="absolute"
              style={{ left: 68, top: 65 }}

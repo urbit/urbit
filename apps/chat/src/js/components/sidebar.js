@@ -18,32 +18,44 @@ export class Sidebar extends Component {
     const { props } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
 
-    let sidebarItems = props.circles.map((cir) => {
-      let msg = props.messagePreviews[cir];
-      let parsed = !!msg ? getMessageContent(msg.gam) : {
-        content: 'No messages yet'
-      };
-      let aut = !!msg ? msg.gam.aut : '';
-      let wen = !!msg ? msg.gam.wen : 0;
-      let datetime = 
-        !!msg ? 
-          moment.unix(wen / 1000).from(moment.utc()) 
-        : '';
-      return {
-        msg,
-        datetime,
-        wen,
-        aut,
-        parsed,
-        cir,
-        title: cir.split('/')[1],
-        selected: station === cir
-      };
-    })
+    let sidebarItems = props.circles
+      .filter((cir) => {
+        return !cir.includes('hall-internal-');
+      })
+      .map((cir) => {
+        let msg = props.messagePreviews[cir];
+        let parsed = !!msg ? getMessageContent(msg.gam) : {
+          content: 'No messages yet'
+        };
+        let aut = !!msg ? msg.gam.aut : '';
+        let wen = !!msg ? msg.gam.wen : 0;
+        let datetime = 
+          !!msg ? 
+            moment.unix(wen / 1000).from(moment.utc()) 
+          : '';
+        return {
+          msg,
+          datetime,
+          wen,
+          aut,
+          parsed,
+          cir,
+          title: cir.split('/')[1],
+          selected: station === cir
+        };
+      })
       .sort((a, b) => {
         return b.wen - a.wen;
       })
       .map((obj) => {
+        let host = `~${window.ship}`;
+        let circle = obj.cir.split('/')[1];
+
+        let unread = props.unreads[obj.cir];
+        if (host + '/hall-internal-' + circle in props.unreads) {
+          unread = props.unreads[host + '/hall-internal-' + circle];
+        }
+
         return (
           <SidebarItem
             key={obj.cir}
@@ -53,7 +65,7 @@ export class Sidebar extends Component {
             datetime={obj.datetime}
             ship={obj.aut}
             selected={obj.selected}
-            unread={props.unreads[obj.cir]}
+            unread={unread}
             history={props.history}
           />
         );

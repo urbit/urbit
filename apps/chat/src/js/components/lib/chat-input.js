@@ -20,8 +20,6 @@ export class ChatInput extends Component {
       let wen = Date.now();
       let aut = window.ship;
 
-      let config = props.configs[props.station];
-
       aud = [props.station];
       sep = {
         lin: {
@@ -113,8 +111,6 @@ export class ChatInput extends Component {
     let uid = uuid();
     let aut = window.ship;
 
-    let config = this.props.configs[this.props.station];
-
     aud = [this.props.station];
     if (isUrl(this.state.message)) {
       sep = {
@@ -134,20 +130,25 @@ export class ChatInput extends Component {
       aut,
       wen,
       aud,
-      sep,
+      sep
     };
+
+    let readNom = this.props.circle;
+    if (this.props.host !== `~${window.ship}`) {
+      readNom = 'hall-internal-' + this.props.circle;
+    }
 
     this.props.api.chat({
       actions: {
         lis: [
           {
             read: {
-              nom: this.props.circle,
-              red: config.red + 1
+              nom: readNom,
+              red: this.props.numMsgs + 1
             }
           },
           {
-            convey: [message],
+            convey: [message]
           }
         ]
       }
@@ -172,7 +173,9 @@ export class ChatInput extends Component {
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}
-            onChange={this.messageChange} />
+            onChange={this.messageChange}
+            autoFocus={true}
+          />
           <div className="pointer" onClick={this.messageSubmit}>
             <IconSend />
           </div>

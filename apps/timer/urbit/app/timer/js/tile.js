@@ -2505,7 +2505,11 @@
 
               renderWrapper(child) {
                 return (
-                  react.createElement('div', { className: "bg-dark-gray", style: { width: outerSize, height: outerSize }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 206}}
+                  react.createElement('div', { style: {
+                    width: outerSize,
+                    height: outerSize,
+                    background: '#1a1a1a'
+                  }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 206}}
                     , child
                   )
                 );
@@ -2518,21 +2522,21 @@
                 var interaction;
                 var interactionStyle = "link underline black hover-white";
                 if(this.state.mode == "running") { 
-                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.stopTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 219}}, "Stop");
+                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.stopTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 223}}, "Stop");
                 }
                 else if(this.state.mode == "alarm") {
-                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.stopTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 222}}, "Shhh");
+                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.stopTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 226}}, "Shhh");
                 }
                 else {
-                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.startTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 225}}, "Start");
+                  interaction = react.createElement('a', { className: interactionStyle, onClick: this.startTimer, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 229}}, "Start");
 
                 }
                 
                 return this.renderWrapper((
                   react.createElement('div', { style: { position: "relative",
                     fontFamily: "-apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif"
-                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 230}}
-                    , react.createElement('canvas', { id: "timer-canvas", width: outerSize, height: outerSize, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 233}})
+                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 234}}
+                    , react.createElement('canvas', { id: "timer-canvas", width: outerSize, height: outerSize, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 237}})
 
                     , react.createElement('div', { id: "timer-display", style: {
                       width: "100%",
@@ -2542,15 +2546,15 @@
                       left: "0px",
                       fontSize:"28px",
                       fontWeight:"300"
-                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 235}}
+                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 239}}
                      , this.state.mode == "running" ? this.formatTime(this.state.time) : 
                       this.state.mode == "alarm" ?
-                      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 246}}
-                        , react.createElement(Flashing, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 247}}, "00:00")
+                      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 250}}
+                        , react.createElement(Flashing, {__self: this, __source: {fileName: _jsxFileName$2, lineNumber: 251}}, "00:00")
                         , 
                           this.state.playSound 
                           ?
-                          react.createElement('audio', { src: "http://maxwellsfoley.com/ding.mp3", loop: true, autoPlay: true, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 251}})
+                          react.createElement('audio', { src: "http://maxwellsfoley.com/ding.mp3", loop: true, autoPlay: true, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 255}})
                           :
                           null
                         
@@ -2565,15 +2569,15 @@
                       top: "170px",
                       left: "0px",
                       fontSize:"16px"
-                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 259}}
+                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 263}}
                       ,  interaction 
                     )
                     , react.createElement('div', { id: "volume-container", style: {
                       position: "absolute",
                       top: "200px",
                       left: "5px"
-                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 269}}
-                      , react.createElement(VolumeIcon, { parent: this, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 274}})
+                    }, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 273}}
+                      , react.createElement(VolumeIcon, { parent: this, __self: this, __source: {fileName: _jsxFileName$2, lineNumber: 278}})
                     )
                   )
                 ));

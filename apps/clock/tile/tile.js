@@ -149,7 +149,11 @@ export default class ClockTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2 bg-dark-gray" style={{ width: outerSize, height: outerSize }}>
+      <div className="pa2" style={{
+        width: outerSize,
+        height: outerSize,
+        background: '#1a1a1a'
+      }}>
         {child}
       </div>
     );

@@ -3,7 +3,6 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   margin-block-start: unset;
   -webkit-margin-before: unset;
   -webkit-margin-after: unset;
-
   font-family: Inter, sans-serif;
 }
 

@@ -203,7 +203,11 @@ export default class TimerTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="bg-dark-gray" style={{ width: outerSize, height: outerSize }}>
+      <div style={{
+        width: outerSize,
+        height: outerSize,
+        background: '#1a1a1a'
+      }}>
         {child}
       </div>
     );
