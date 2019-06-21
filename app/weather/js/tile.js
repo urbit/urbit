@@ -6852,7 +6852,11 @@
 
               renderWrapper(child) {
                 return (
-                  react.createElement('div', { className: "pa2 bg-dark-gray" , style: { width: 234, height: 234 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 48}}
+                  react.createElement('div', { className: "pa2", style: {
+                    width: 234,
+                    height: 234,
+                    background: '#1a1a1a'
+                  }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 48}}
                     , child
                   )
                 );
@@ -6860,9 +6864,9 @@
 
               renderNoData() {
                 return this.renderWrapper((
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 56}}
-                    , react.createElement('p', { className: "white sans-serif" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 57}}, "Weather")
-                    , react.createElement('button', { onClick: this.locationSubmit.bind(this), __self: this, __source: {fileName: _jsxFileName, lineNumber: 58}}, "Set location" )
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 60}}
+                    , react.createElement('p', { className: "white sans-serif" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 61}}, "Weather")
+                    , react.createElement('button', { onClick: this.locationSubmit.bind(this), __self: this, __source: {fileName: _jsxFileName, lineNumber: 62}}, "Set location" )
                   )
                 ));
               }
@@ -6874,45 +6878,45 @@
                 let da = moment.unix(d.sunsetTime).format('h:mm a') || '';
 
                 return this.renderWrapper((
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 70}}
-                    , react.createElement('p', { className: "white", __self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}, "Weather")
-                    , react.createElement('div', { className: "w-100 mb2 mt2"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 72}}
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 74}}
+                    , react.createElement('p', { className: "white", __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}}, "Weather")
+                    , react.createElement('div', { className: "w-100 mb2 mt2"  , __self: this, __source: {fileName: _jsxFileName, lineNumber: 76}}
                       , react.createElement('img', { 
                         src: '/~weather/img/' + c.icon + '.png', 
                         width: 64, 
                         height: 64,
-                        className: "dib", __self: this, __source: {fileName: _jsxFileName, lineNumber: 73}} )
+                        className: "dib", __self: this, __source: {fileName: _jsxFileName, lineNumber: 77}} )
                       , react.createElement('h2', { 
                         className: "dib ml2 white"  ,
                         style: {
                           fontSize: 72,
                           lineHeight: '64px',
                           fontWeight: 400
-                        }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 78}}
+                        }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 82}}
                         , Math.round(c.temperature), "°")
                     )
-                    , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 87}}
-                      , react.createElement('div', { className: "fl w-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 88}}
+                    , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 91}}
+                      , react.createElement('div', { className: "fl w-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 92}}
                         , react.createElement(IconWithData, { 
                           icon: "winddirection",
-                          text: c.windBearing + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 89}} )
+                          text: c.windBearing + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 93}} )
                         , react.createElement(IconWithData, { 
                           icon: "chancerain",
-                          text: c.precipProbability + '%', __self: this, __source: {fileName: _jsxFileName, lineNumber: 92}} )
+                          text: c.precipProbability + '%', __self: this, __source: {fileName: _jsxFileName, lineNumber: 96}} )
                         , react.createElement(IconWithData, { 
                           icon: "windspeed",
-                          text: Math.round(c.windSpeed) + ' mph', __self: this, __source: {fileName: _jsxFileName, lineNumber: 95}} )
+                          text: Math.round(c.windSpeed) + ' mph', __self: this, __source: {fileName: _jsxFileName, lineNumber: 99}} )
                       )
-                      , react.createElement('div', { className: "fr w-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 99}}
+                      , react.createElement('div', { className: "fr w-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 103}}
                         , react.createElement(IconWithData, { 
                           icon: "sunset",
-                          text: da, __self: this, __source: {fileName: _jsxFileName, lineNumber: 100}} )
+                          text: da, __self: this, __source: {fileName: _jsxFileName, lineNumber: 104}} )
                         , react.createElement(IconWithData, { 
                           icon: "low",
-                          text: Math.round(d.temperatureLow) + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 103}} )
+                          text: Math.round(d.temperatureLow) + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 107}} )
                         , react.createElement(IconWithData, { 
                           icon: "high",
-                          text: Math.round(d.temperatureHigh) + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 106}} )
+                          text: Math.round(d.temperatureHigh) + '°', __self: this, __source: {fileName: _jsxFileName, lineNumber: 110}} )
                       )
                     )
                   )
