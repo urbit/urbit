@@ -149,8 +149,8 @@ export class Post extends Component {
             ship: ship,
             blogId: blogId,
             postId: postId,
-            temporary: true,
           },
+          temporary: true,
         });
         this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
           this.handleEvent.bind(this),
@@ -181,8 +181,6 @@ export class Post extends Component {
   }
 
   handleEvent(diff) {
-    console.log("handle event", diff);
-
     if (diff.data.total) {
       let blog = diff.data.total.data;
       let post = blog.posts[this.state.postId].post;
@@ -225,7 +223,6 @@ export class Post extends Component {
   }
 
   handleError() {
-    console.log("handle error");
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -267,14 +264,16 @@ export class Post extends Component {
       });
     }
 
-    if (oldPost != post) {
-      this.setState({post: post});
-    }
-    if (oldComments != comments) {
-      this.setState({comments: comments});
-    }
-    if (oldBlog != blog) {
-      this.setState({blog: blog});
+    if (!this.state.temporary){
+      if (oldPost != post) {
+        this.setState({post: post});
+      }
+      if (oldComments != comments) {
+        this.setState({comments: comments});
+      }
+      if (oldBlog != blog) {
+        this.setState({blog: blog});
+      }
     }
   }
 
@@ -300,7 +299,6 @@ export class Post extends Component {
         </div>
       );
     } else if (this.state.mode == 'view') {
-      console.log(this.state);
       let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
       let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
