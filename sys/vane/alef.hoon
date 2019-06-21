@@ -898,6 +898,8 @@
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
+  ::    TODO: filter for transitive closure of sponsors/sponsees.
+  ::
   ++  on-hear-forward
     |=  [=lane =packet]
     ^+  event-core
@@ -968,7 +970,7 @@
       ==
     ::
     event-core
-  ::
+  ::  +on-hear-shut: handle receipt of encrypted packet
   ::
   ++  on-hear-shut
     |=  [=lane =packet]
@@ -1067,7 +1069,7 @@
       =-  ?>(?=(%known -<) ->)
       (~(got by peers.ames-state) her)
     ::
-    =/  channel  [[our her] now +>.ames-state -.peer-state]
+    =/  =channel  [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone message)
   ::  +on-memo: handle request to send message
@@ -1076,12 +1078,12 @@
     |=  [=ship =message]
     ^+  event-core
     ::
-    =/  rcvr-state  (~(get by peers.ames-state) ship)
+    =/  ship-state  (~(get by peers.ames-state) ship)
     ::
-    ?.  ?=([~ %known *] rcvr-state)
+    ?.  ?=([~ %known *] ship-state)
       (enqueue-alien-message ship message)
     ::
-    =/  =peer-state  +.u.rcvr-state
+    =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
@@ -1093,7 +1095,15 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
-    !!
+    =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
+    ::
+    =/  =peer-state
+      =-  ?>(?=(%known -<) ->)
+      (~(got by peers.ames-state) her)
+    ::
+    =/  =channel  [[our her] now +>.ames-state -.peer-state]
+    ::
+    abet:(on-wake:(make-peer-core peer-state channel) bone error)
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
@@ -1126,6 +1136,16 @@
       ^+  peer-core
       ::
       (run-message-pump bone %send message)
+    ::  +on-wake: handle timer expiration
+    ::
+    ++  on-wake
+      |=  [=bone error=(unit tang)]
+      ^+  peer-core
+      ::  TODO: handle error
+      ::
+      ?^  error
+        !!
+      (run-message-pump bone %wake ~)
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
@@ -1333,6 +1353,9 @@
       =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
       =/  =blob    (encode-packet packet)
       ::  send to .her and her sponsors until we find a direct lane
+      ::
+      ::    Skip receivers for whom we have no lane, possibly including
+      ::    .her.
       ::
       =/  rcvrs=(list ship)  [her her-sponsors]:channel
       ::
