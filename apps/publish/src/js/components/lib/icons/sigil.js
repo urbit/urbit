@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { sealDict } from '/components/lib/seal-dict';
 
+
 export class Sigil extends Component {
   render() {
     let prefix = this.props.prefix ? JSON.parse(this.props.prefix) : false;
@@ -8,7 +9,7 @@ export class Sigil extends Component {
     return (
       <div 
         className="bg-black" 
-        style={{ flexBasis: 48, padding: 4, paddingBottom: 0 }}>
+        style={{ flexBasis: 35, padding: 4}}>
       {
         sealDict.getSeal(this.props.ship, this.props.size, prefix)
       }
@@ -16,3 +17,4 @@ export class Sigil extends Component {
     );
   }
 }
+

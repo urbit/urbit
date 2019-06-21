@@ -45,7 +45,7 @@ export class Root extends Component {
               return (
                 <Skeleton
                   children={
-                    <Subs {...this.state} />
+                    <Subs {...this.state} api={api}/>
                   }
                 />
               );

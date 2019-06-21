@@ -43,11 +43,12 @@
       ==
     ::
         %remove
-      =/  suf=(list [@tas json])
       %-  pairs
-      :~  [%coll s+col.rum]
+      :~  [%who (ship who.rum)]
+          [%coll s+col.rum]
           [%post ?~(pos.rum ~ s+u.pos.rum)]
       ==
+    ::
     ==
     ::
   --

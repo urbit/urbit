@@ -9,14 +9,15 @@ export class Skeleton extends Component {
   constructor(props){
     super(props);
   }
-  //Header {...this.props}/>
 
   render() {
     return (
       <div className="h-100 w-100 absolute">
         <HeaderBar/>
-        <div className="h-inner overflow-y-scroll">
+        <div className="h-inner">
           {this.props.children}
+        </div>
+        <div className="h-footer">
         </div>
       </div>
     );

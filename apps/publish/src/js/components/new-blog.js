@@ -74,7 +74,7 @@ export class NewBlog extends Component {
       }
     }
 
-    let data = {
+    let makeBlog = {
       "new-collection" : {
         name: blogId,
         title: blogTitle,
@@ -84,11 +84,20 @@ export class NewBlog extends Component {
       },
     };
 
+    let sendInvites = {
+      invite: {
+        coll: blogId,
+        title: blogTitle,
+        who: this.state.collaborators,
+      }
+    }
+
     this.setState({
       awaiting: blogId
     });
 
-    this.props.api.action("write", "write-action", data);
+    this.props.api.action("write", "write-action", makeBlog);
+    this.props.api.action("write", "write-action", sendInvites);
   }
 
   componentDidUpdate(prevProps, prevState) {
