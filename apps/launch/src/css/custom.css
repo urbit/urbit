@@ -6,6 +6,10 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
+a:-webkit-any-link {
+  color: unset;
+}
+
 textarea, select, input, button { outline: none; }
 
 h2 {

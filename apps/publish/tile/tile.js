@@ -37,7 +37,7 @@ export default class PublishTile extends Component {
     return (
       <div className="w-100 h-100 relative" style={{background: "#1a1a1a"}}>
         <a className="w-100 h-100 db no-underline" href="/~publish">
-          <p className="gray-30 label-regular b absolute"
+          <p className="gray label-regular b absolute"
             style={{left: 8, top: 4}}>
             Publish
           </p>
