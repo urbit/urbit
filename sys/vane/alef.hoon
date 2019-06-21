@@ -957,16 +957,17 @@
       %+  ~(put by peers.ames-state)  sndr.packet
       ^-  ^ship-state
       :-  %known
-      =|  ps=peer-state
+      =|  =peer-state
       =/  our-private-key  sec:ex:crypto-core.ames-state
       =/  =symmetric-key
         (derive-symmetric-key public-key.open-packet our-private-key)
       ::
-      %_  ps
+      %_  peer-state
         symmetric-key  symmetric-key
-        life           `life`sndr-life.open-packet
-        public-key     `public-key`public-key.open-packet
-        sponsors       `(list ship)`(get-comet-sponsors sndr.packet)
+        life           sndr-life.open-packet
+        public-key     public-key.open-packet
+        sponsors       (get-comet-sponsors sndr.packet)
+        route          `[direct=%.y lane]
       ==
     ::
     event-core
@@ -1000,6 +1001,9 @@
     ::
     ?>  =(sndr-life.shut-packet her-life.channel)
     ?>  =(rcvr-life.shut-packet our-life.channel)
+    ::  set .lane as new route to peer since packet is valid
+    ::
+    =.  route.peer-state  `[direct=%.y lane]
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet)
