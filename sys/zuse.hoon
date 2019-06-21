@@ -895,34 +895,6 @@
   ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
-  :: +http-config: full http-server configuration
-  ::
-  +=  http-config
-    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
-        ::
-        secure=(unit [key=wain cert=wain])
-        :: proxy: reverse TCP proxy HTTP(s)
-        ::
-        proxy=?
-        :: log: keep HTTP(s) access logs
-        ::
-        log=?
-        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
-        ::
-        ::   Note: requires certificate.
-        ::
-        redirect=?
-    ==
-  :: +http-rule: update configuration
-  ::
-  +=  http-rule
-    $%  :: %cert: set or clear certificate and keypair
-        ::
-        [%cert cert=(unit [key=wain cert=wain])]
-        :: %turf: add or remove established dns binding
-        ::
-        [%turf action=?(%put %del) =turf]
-    ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
         q/@t                                            ::  unparsed url
@@ -2080,15 +2052,16 @@
       ==
     ::
     ++  task
+      $~  [%vega ~]
       $%  ::  event failure notification
           ::
-          [%crud p=@tas q=(list tank)]
+          $>(%crud vane-task)
           ::  system started up; reset open connections
           ::
-          [%born ~]
+          $>(%born vane-task)
           ::  report upgrade
           ::
-          [%vega ~]
+          $>(%vega vane-task)
           ::  fetches a remote resource
           ::
           [%request =request:http =outbound-config]
@@ -2100,7 +2073,7 @@
           [%receive id=@ud =http-event:http]
           ::  memory usage request
           ::
-          [%wegh ~]
+          $>(%wegh vane-task)
       ==
     --
   ::  +client-response: one or more client responses given to the caller
@@ -2194,26 +2167,27 @@
       ==
     ::
     ++  task
+      $~  [%vega ~]
       $%  ::  event failure notification
           ::
-          [%crud p=@tas q=(list tank)]
+          $>(%crud vane-task)
           ::  initializes ourselves with an identity
           ::
-          ::    TODO: Remove this once we single home.
-          ::
-          [%init our=@p]
+          $>(%init vane-task)
           ::  new unix process
+          ::
+          ::    XX use +vane-task
           ::
           [%born p=(list host)]
           ::  report upgrade
           ::
-          [%vega ~]
+          $>(%vega vane-task)
           ::  notifies us of the ports of our live http servers
           ::
           [%live insecure=@ud secure=(unit @ud)]
           ::  update http configuration
           ::
-          [%rule =http-rule:eyre]
+          [%rule =http-rule]
           ::  starts handling an inbound http request
           ::
           [%request secure=? =address =request:http]
@@ -2237,7 +2211,7 @@
           [%disconnect =binding]
           ::  memory usage request
           ::
-          [%wegh ~]
+          $>(%wegh vane-task)
       ==
     ::
     --
@@ -2289,7 +2263,7 @@
         secure=(unit [key=wain cert=wain])
         :: proxy: reverse TCP proxy HTTP(s)
         ::
-        proxy=?
+        proxy=_|
         :: log: keep HTTP(s) access logs
         ::
         log=?
@@ -2298,6 +2272,16 @@
         ::   Note: requires certificate.
         ::
         redirect=?
+    ==
+  :: +http-rule: update configuration
+  ::
+  +$  http-rule
+    $%  :: %cert: set or clear certificate and keypair
+        ::
+        [%cert cert=(unit [key=wain cert=wain])]
+        :: %turf: add or remove established dns binding
+        ::
+        [%turf action=?(%put %del) =turf]
     ==
   ::  +address: client IP address
   ::

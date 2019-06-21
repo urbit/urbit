@@ -35,8 +35,10 @@
   |=  [add=? =contract]
   =/  m  (async ,~)
   ^-  form:m
-  |=  async-input
-  [~ ~ (silt [add contract]~) %done ~]
+  |=  =async-input
+  =/  delta=contract-delta:async
+    ?.(add [%lose ~] [%gain ost.bowl.async-input])
+  [~ ~ (my [contract delta] ~) %done ~]
 ::
 ::  Send effect on current bone
 ::
@@ -66,30 +68,58 @@
   |=  =hiss:eyre
   =/  m  (async ,~)
   ^-  form:m
-  ;<  ~  bind:m  (send-raw-card %hiss / ~ %httr %hiss hiss)
-  (set-raw-contract & %hiss ~)
+  =/  =card
+    [%request / (hiss-to-request:html hiss) *outbound-config:http-client]
+  ;<  ~  bind:m  (send-raw-card card)
+  (set-raw-contract & %request ~)
 ::
-::  Wait until we get an HTTP response
+::  Wait until we get an HTTP response or cancelation
 ::
 ++  take-sigh-raw
-  =/  m  (async ,httr:eyre)
+  =/  m  (async (unit httr:eyre))
   ^-  form:m
   |=  =async-input
   :^  ~  ~  ~
   ?~  in.async-input
     [%wait ~]
-  ?.  ?=(%sigh -.sign.u.in.async-input)
-    [%fail %expected-sigh >got=-.sign.u.in.async-input< ~]
-  [%done httr.sign.u.in.async-input]
+  =*  sign  sign.u.in.async-input
+  ::  fail on anything other than an http-response
+  ::
+  ?.  ?=(%http-response -.sign)
+    [%fail %expected-http-response >got=-.sign< ~]
+  ?-  -.response.sign
+  ::  ignore progress notifications
+  ::
+      %progress
+    [%wait ~]
+  ::
+      %cancel
+    [%done ~]
+  ::
+      %finished
+    [%done (some (to-httr:http-client +.response.sign))]
+  ==
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
 ++  take-sigh
   =/  m  (async ,httr:eyre)
   ^-  form:m
-  ;<  =httr:eyre  bind:m  take-sigh-raw
-  ;<  ~           bind:m  (set-raw-contract | %hiss ~)
-  (pure:m httr)
+  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
+  ;<  ~                     bind:m  (set-raw-contract | %request ~)
+  ?^  rep
+    (pure:m u.rep)
+  |=  =async-input
+  [~ ~ ~ %fail %http-canceled ~]
+::
+::  Wait until we get an HTTP response or cancelation and unset contract
+::
+++  take-maybe-sigh
+  =/  m  (async (unit httr:eyre))
+  ^-  form:m
+  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
+  ;<  ~                     bind:m  (set-raw-contract | %request ~)
+  (pure:m rep)
 ::
 ::  Extract body from raw httr
 ::
@@ -130,6 +160,26 @@
   ;<  =httr:eyre  bind:m  take-sigh
   ;<  =cord       bind:m  (extract-httr-body httr)
   (parse-json cord)
+::
+::    ----
+::
+::  Identity is immutable
+::
+::    XX should be statefully cycled
+::
+++  get-identity
+  =/  m  (async ,@p)
+  ^-  form:m
+  |=  =async-input
+  [~ ~ ~ %done our.bowl.async-input]
+::
+::  Entropy is always increasing
+::
+++  get-entropy
+  =/  m  (async ,@uvJ)
+  ^-  form:m
+  |=  =async-input
+  [~ ~ ~ %done eny.bowl.async-input]
 ::
 ::    ----
 ::
@@ -206,7 +256,7 @@
   ?:  ?&  ?=([~ * %wake *] in.async-input)
           =(/(scot %da when) wire.u.in.async-input)
       ==
-    [~ ~ (silt [| %wait when]~) %fail %async-timeout ~]
+    [~ ~ (my [[%wait when] [%lose ~]] ~) %fail %async-timeout ~]
   =/  c-res  (computation async-input)
   ?.  ?=(%cont -.next.c-res)
     c-res
@@ -220,7 +270,8 @@
   |=  [[her=ship app=term] =poke-data]
   =/  m  (async ,~)
   ^-  form:m
-  (send-effect %poke / [her app] poke-data)
+  =/  =wire  /(scot %p her)/[app]
+  (send-effect %poke wire [her app] poke-data)
 ::
 ++  peer-app
   |=  [[her=ship app=term] =path]
