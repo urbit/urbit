@@ -2535,14 +2535,16 @@
     %+  murn  ~(tap by stories)
     |=  {n/name s/story}
     ^-  (unit (pair name burden))
+    ::  don't federate channels
+    ~
     ::  only auto-federate channels for now.
-    ?.  ?=($channel sec.con.shape.s)  ~
-    :+  ~  n
-    ::  share no more than the last 100, for performance reasons.
-    :+  ?:  (lte count.s 100)  grams.s
-        (slag (sub count.s 100) grams.s)
-      [shape.s mirrors.s]
-    [locals.s remotes.s]
+    ::?.  ?=($channel sec.con.shape.s)  ~
+    :::+  ~  n
+    ::::  share no more than the last 100, for performance reasons.
+    :::+  ?:  (lte count.s 100)  grams.s
+    ::    (slag (sub count.s 100) grams.s)
+    ::  [shape.s mirrors.s]
+    ::[locals.s remotes.s]
   ::
       $report
     ::TODO  gall note: need to be able to subscirbe to just changes... or just
