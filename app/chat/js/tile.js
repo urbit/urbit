@@ -19332,28 +19332,24 @@
                   let numbers = {};
 
                   state.numbers.forEach((num) => {
-                    console.log(num);
                     numbers[num.circle] = num.length;
                     if (num.circle === inviteCircle) {
                       inviteNum = inviteNum + num.length;
                     } else {
                       msgNum = msgNum + num.length;
                     }
-                    console.log(msgNum, inviteNum);
                   });
 
                   Object.keys(state.configs).forEach((key) => {
                     let host = key.split('/')[0];
                     if (host !== `~${window.ship}`) { return; }
                     if (!state.configs[key]) { return; }
-                    console.log(state.configs[key]);
                     let red = state.configs[key].red;
                     if (key === inviteCircle) {
                       inviteNum = inviteNum - red;
                     } else {
                       msgNum = msgNum - red;
                     }
-                    console.log(msgNum, inviteNum);
                   }); 
                 }
 
@@ -19362,9 +19358,13 @@
                 }
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 74}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}}
-                       , react.createElement('p', { className: "gray", __self: this, __source: {fileName: _jsxFileName, lineNumber: 76}}, "Chat")
+                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 70}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}
+                      , react.createElement('p', { className: "gray", style: {
+                        fontWeight: 'bold',
+                        fontSize: 14,
+                        lineHeight: '24px'
+                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 72}}, "Chat")
                        , react.createElement('img', {
                          className: "absolute",
                          style: { left: 68, top: 65 },
