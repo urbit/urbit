@@ -3127,8 +3127,8 @@
     ~%  %ed  +  ~
     |%
     ::
-    ++  add
-      ~/  %add
+    ++  point-add
+      ~/  %point-add
       |=  [a-point=@udpoint b-point=@udpoint]
       ^-  @udpoint
       ::

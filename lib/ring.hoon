@@ -5,17 +5,19 @@
 ::  +raw is the raw internal ring signature implementation. +raw does not deal
 ::  with urbit ship identities and is low level.
 ::
+::  This raw interface is vaguely modeled on the haskell aos-signature package,
+::  but is written in terms of ed25519 primitives instead of general ECC and
+::  changes how linkage tags are computed so that how linkage occurs is a
+::  client decision instead of hard coding the set of public keys as the
+::  linkage scope.
+::
 ++  raw
   |%
   ::  +oracle: deterministic random response on input
   ::
   ++  oracle
     |=  input=*
-    :: l:ed is ecc-n
     (mod (shaz (jam input)) l:ed:crypto)
-  ::
-  ::::
-  ::
   ::  +generate-public-linkage: generate public linkage information
   ::
   ++  generate-public-linkage
@@ -25,8 +27,7 @@
     =/  data=@   (oracle link-scope)
     =/  h=@udpoint  (scalarmult-base:ed:crypto data)
     [data h]
-
-  ::  +generate-linkage: generates linkage information from scope and private key
+  ::  +generate-linkage: linkage information from scope and private key
   ::
   ::    data: deterministically picked data point based off scope
   ::    h:    h = [data] * g
@@ -44,8 +45,8 @@
   ::  +generate-challenge: generate challenge from a given message
   ::
   ::    When :link-scope is ~ (ie, we're not building a linked ring signature),
-  ::    calculates just the hash of `[message g]`. Otherwise, weaves the linkage
-  ::    state into the challenge.
+  ::    calculates just the hash of `[message g]`. Otherwise, weaves the
+  ::    linkage state into the challenge.
   ::
   ++  generate-challenge
     |=  $:  ::  common to both linked and unlinked
@@ -114,8 +115,8 @@
   ::  +scalarmult-h: maybe multiply u by h in linkage
   ::
   ::    Since linkage tags are optional, we need to be able to just do the math
-  ::    in case :linkage is set and fall through otherwise. +scalarmult-h is used
-  ::    to generate the (unit point) consumed by +generate-challenge.
+  ::    in case :linkage is set and fall through otherwise. +scalarmult-h is
+  ::    used to generate the (unit point) consumed by +generate-challenge.
   ::
   ++  scalarmult-h
     |=  [u=@ linkage=(unit [data=@ h=@udpoint y=@udpoint])]
@@ -131,8 +132,6 @@
       (slag i l)
     (scag i l)
   ::  +sign: creates a ring signature on an ed25519 curve
-  ::
-  ::    Creates an optionally linkable ring signature on 
   ::
   ++  sign
     |=  $:  message=*
@@ -236,7 +235,14 @@
             signature=raw-ring-signature
         ==
     ^-  ?
-    ::  TODO: if our signature has a linking y, we must have a link-scope and
+    ::  if there's a linkage scope but no tag, fail
+    ::
+    ?:  &(?=(^ link-scope) ?=(~ y.signature))
+      %.n
+    ::  if there's no linkage scope but a tag, fail
+    ::
+    ?:  &(?=(~ link-scope) ?=(^ y.signature))
+      %.n
     ::  vice versa.
     ::
     ::  decompose the signature into [s0 s1 s2....]
@@ -260,7 +266,8 @@
          (head anonymity-list)
          s0
       ==
-    ::  generate the linkage using public data, and the y point from the signature
+    ::  generate the linkage using public data, and the y point from the
+    ::  signature
     ::
     =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
       ?~  link-scope
@@ -299,9 +306,19 @@
     ::
     =(ch0.signature (head challenges))
   --
-::  +detail: non-public details about figuring out keys
+::  +detail: details about getting keys from Azimuth
+::
 ++  detail
   |%
+  ::  +seed-to-private-key-scalar: keyfile form to scalar we can multiply with
+  ::
+  ++  seed-to-private-key-scalar
+    |=  sk/@I  ^-  @udscalar
+    ?:  (gth (met 3 sk) 32)  !!
+    =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
+    %+  add
+      (bex (sub b:ed:crypto 2))
+    (lsh 0 3 (cut 0 [3 (sub b:ed:crypto 5)] h))
   ::  +get-public-key-from-pass: decode the raw @ public key structure
   ::
   ++  get-public-key-from-pass
@@ -328,8 +345,8 @@
     ::
     =/  d=deed:ames
       .^(deed:ames j+/(scot %p our)/deed/(scot %da now)/(scot %p ship)/(scot %ud life))
-    ::  we have the deed which has pass, which is several numbers +cat-ed together;
-    ::  pull out the keys
+    ::  we have the deed which has pass, which is several numbers +cat-ed
+    ::  together; pull out the keys
     ::
     =/  x=[crypt=@ auth=@]  (get-public-key-from-pass pass.d)
     ::
@@ -378,17 +395,10 @@
     $(invited t.invited)
   --
 --
-|%
-::  +qfix is otherwise equivalent to +puck? +puck is jetted. is there a jet divergence?
+::  public interface
 ::
-++  seed-to-private-key-scalar
-  |=  sk/@I  ^-  @udscalar
-  ?:  (gth (met 3 sk) 32)  !!
-  =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
-  =/  x  (bex (sub b:ed:crypto 2))
-  =/  y  (lsh 0 3 (cut 0 [3 (sub b:ed:crypto 5)] h))
-  (add x y)
-::  signs a message on the current ship
+|%
+::  +sign: ring-signs a message using the current ship
 ::
 ++  sign
   |=  $:  our=@p
@@ -411,14 +421,14 @@
   ::
   =/  our-life=life
     .^(life %j /(scot %p our)/life/(scot %da now)/(scot %p our))
-  ::  get our ships' secret key
+  ::  get our ships' secret keyfile ring
   ::
   =/  secret-ring=ring
     .^(ring %j /(scot %p our)/vein/(scot %da now)/(scot %ud our-life))
+  ::  fetch the encoded auth seedd from the ring
   ::
-  ::
-  =/  secrets=[encrypt=@ auth=@]
-    (get-private-key-from-ring:detail secret-ring)
+  =/  secret-auth-seed=@
+    +:(get-private-key-from-ring:detail secret-ring)
   ::  get our ships' public key
   ::
   =/  public-key=@udpoint
@@ -426,15 +436,23 @@
   ::
   :-  participants.p
   :-  link-scope
-  (sign:raw message link-scope keys.p public-key (seed-to-private-key-scalar auth.secrets) eny)
-::  verifies a message 
+  %-  sign:raw  :*
+    message
+    link-scope
+    keys.p
+    public-key
+    (seed-to-private-key-scalar:detail secret-auth-seed)
+    eny
+  ==
+::  +verify: verifies a message against a ring signature
 ::
 ++  verify
   |=  [our=@p now=@da message=* =ring-signature]
   ^-  ?
   ::
   =/  keys=(set @udpoint)
-    (build-verifying-participants:detail our now ~(tap in participants.ring-signature))
+    %^  build-verifying-participants:detail  our  now
+    ~(tap in participants.ring-signature)
   ::
   (verify:raw message link-scope.ring-signature keys raw.ring-signature)
 --
