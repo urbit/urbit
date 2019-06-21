@@ -457,7 +457,7 @@
 ::    Message sequence numbers start at 1 so the first message will be
 ::    greater than .last-acked.message-still-state on the receiver.
 ::
-::    current: sequence number of message being sent
+::    current: sequence number of earliest message sent or being sent
 ::    next: sequence number of next message to send
 ::    unsent-messages: messages to be sent after current message
 ::    unsent-fragments: fragments of current message waiting for sending
@@ -1120,6 +1120,9 @@
       =/  =message-pump-state
         (fall (~(get by snd.peer-state) bone) *message-pump-state)
       ::
+      =^  client-duct  ossuary.peer-state
+        (get-duct ossuary.peer-state bone duct)
+      ::
       =/  message-pump    (make-message-pump message-pump-state channel)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
       =.  snd.peer-state  (~(put by snd.peer-state) bone message-pump-state)
@@ -1200,11 +1203,6 @@
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
         (emit client-duct %pass wire %b %rest date)
-      ::
-      ++  client-duct
-        ^-  ^duct
-        ~|  %bone^bone
-        (~(got by by-bone.ossuary.peer-state) bone)
       --
     ::  +run-message-still: process $message-still-task and its effects
     ::
@@ -1397,16 +1395,26 @@
   ::  +on-done: handle message acknowledgment
   ::
   ++  on-done
+    ::  check-old: loop terminator variable
+    ::
+    =/  check-old=?  %.y
     |=  [=message-num ok=? lag=@dr]
     ^+  message-pump
+    ::  unsent messages from the future should never get acked
+    ::
+    ?>  (lth message-num next.state)
+    ::  ignore duplicate message acks
+    ::
+    ?:  (lth message-num current.state)
+      message-pump
     ::  future nack implies positive ack on all earlier messages
     ::
-    ?.  ok
+    ?:  &(!ok check-old)
       |-  ^+  message-pump
       ::  base case: current message got nacked; handle same as ack
       ::
       ?:  =(message-num current.state)
-        ^$(ok %.y)
+        ^$(check-old %.n)
       ::  recursive case: future message got nacked
       ::
       =.  message-pump  ^$(ok %.y, message-num current.state)
