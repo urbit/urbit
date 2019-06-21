@@ -664,6 +664,7 @@
       ==  ==
       $:  %j
       $%  [%memo =ship =message]
+      ::
           [%pubs =ship]
           [%turf ~]
           [%vein ~]
@@ -692,6 +693,7 @@
       $:  %j
       $%  [%done error=(unit error)]
           [%memo =message]
+      ::
           [%pubs public:able:jael]
           [%turf turfs=(list turf)]
           [%vein =life vein=(map life ring)]
@@ -794,7 +796,7 @@
       %crud  !!
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
-      %init  !!
+      %init  (on-init:event-core ship.task)
       %sunk  (on-sunk:event-core [ship rift]:task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
@@ -1114,6 +1116,15 @@
     =/  =channel  [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
+  ::  +on-init: first boot; subscribe to our info from jael
+  ::
+  ++  on-init
+    |=  =ship
+    ^+  event-core
+    ::
+    =.  event-core  (emit duct %pass /init/pubs %j %pubs ship)
+    =.  event-core  (emit duct %pass /init/vein %j %vein ~)
+    event-core
   ::  +on-sunk: handle continuity breach of .ship; wipe its state
   ::
   ::    Abandon all pretense of continuity and delete all state
