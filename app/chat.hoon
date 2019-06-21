@@ -66,12 +66,6 @@
     ==
   :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]~
   this(sta u.old)
-
-::
-++  poke-noun
-  |=  a=@
-  ~&  messages.str.sta
-  [~ this]
 ::
 ::
 ::
@@ -82,7 +76,10 @@
     %+  turn  ~(tap by messages.str)
       |=  [cir=circle:hall lis=(list envelope:hall)]
       ^-  [circle:hall @ud]
-      [cir (lent lis)]
+      ?~  lis
+        [cir 0]
+      =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
+      [cir num.last]
   =/  maptjson  *(map @t json)
   =.  maptjson
     (~(put by maptjson) 'config' (config-to-json str))

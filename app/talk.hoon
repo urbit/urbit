@@ -1933,7 +1933,7 @@
         "cap: {(trip cap.dif)}"
       ::
           $read
-        "red: {(scow %ud red.dif)}"
+        ""
       ::
           $filter
         ;:  weld
