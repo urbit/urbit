@@ -22,6 +22,17 @@
       /~  ~
   ==
 ::
+/=  tile-js
+  /^  octs
+  /;  as-octs:mimes:html
+  /|  /:  /===/app/write/js/tile  /js/
+      /~  ~
+  ==
+::
+/=  images
+  /^  (map knot @)
+  /:  /===/app/write/img  /_  /png/
+::
 |%
 ::
 +$  move  [bone card]
@@ -44,6 +55,7 @@
 +$  poke
   $%  [%hall-action action:hall]
       [%write-action action]
+      [%noun @tas path @t]
   ==
 ::
 +$  diff
@@ -132,8 +144,13 @@
   ^-  (quip move _this)
   ~&  write-prep+act.bol
   ?~  old
-    :_  this
-    [ost.bol %connect / [~ /'~publish'] %write]~
+    :_  this(sat *state)
+    :~  [ost.bol %connect / [~ /'~publish'] %write]
+        :*  ost.bol  %poke  /publish  [our.bol %launch]
+            %noun  %write  /publishtile  '/~publish/tile.js'
+        ==
+    ==
+    ::
 ::  [~ this(sat *state)] 
   [~ this(sat (state u.old))] 
 ::
@@ -144,6 +161,18 @@
     [~ this]
   ?+  a
     [~ this]
+  ::
+      [%update-tile @ @]
+    :_  this
+    %+  turn  (prey:pubsub:userlib /publishtile bol)
+    |=  [b=bone *]
+    ^-  move
+    =/  jon=json
+      %-  pairs:enjs:format
+      :~  invites+(numb:enjs:format +<.a)
+          new+(numb:enjs:format +>.a)
+      ==
+    [b %diff %json jon]
   ::
       %test-build
     =/  schema=schematic:ford
@@ -972,6 +1001,16 @@
   ?+  request-line
     :_  this
     [ost.bol %http-response not-found:app]~
+  ::  images
+  ::
+      [[[~ %png] [%'~publish' @t ~]] ~]
+    =/  filename=@t  i.t.site.request-line
+    =/  img=(unit @t)  (~(get by images) filename)
+    ?~  img
+      :_  this
+      [ost.bol %http-response not-found:app]~
+    :_  this
+    [ost.bol %http-response (png-response:app (as-octs:mimes:html u.img))]~
   ::  styling
   ::
       [[[~ %css] [%'~publish' %index ~]] ~]
@@ -982,6 +1021,11 @@
       [[[~ %js] [%'~publish' %index ~]] ~]
     :_  this
     [ost.bol %http-response (js-response:app js)]~
+  ::  tile js
+  ::
+      [[[~ %js] [%'~publish' %tile ~]] ~]
+    :_  this
+    [ost.bol %http-response (js-response:app tile-js)]~
   ::  home page; redirect to recent
   ::
       [[~ [%'~publish' ~]] ~]
@@ -1058,6 +1102,18 @@
     [ost.bol %http-response (manx-response:app hym)]~
   ::
   ==
+::
+++  peer-publishtile
+  |=  wir=wire
+  ^-  (quip move _this)
+  ~&  %peer-tile
+  =/  jon=json
+    %-  pairs:enjs:format
+    :~  invites+(numb:enjs:format (lent invites.sat))
+        new+(numb:enjs:format ~(wyt in unread.sat))
+    ==
+  :_  this
+  [ost.bol %diff %json jon]~
 ::
 ++  peer-primary
   |=  wir=wire
