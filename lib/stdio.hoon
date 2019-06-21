@@ -165,6 +165,8 @@
 ::
 ::  Identity is immutable
 ::
+::    XX should be statefully cycled
+::
 ++  get-identity
   =/  m  (async ,@p)
   ^-  form:m
