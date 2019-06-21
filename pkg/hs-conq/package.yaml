@@ -12,6 +12,7 @@ dependencies:
   - async
   - base
   - base58-bytestring
+  - base-unicode-symbols
   - bytestring
   - case-insensitive
   - chunked-data

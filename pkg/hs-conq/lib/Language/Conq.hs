@@ -1,6 +1,6 @@
 module Language.Conq where
 
-import ClassyPrelude hiding ((<.>), Left, Right, hash)
+import ClassyPrelude hiding ((<.>), Left, Right, hash, cons)
 import Data.Type.Equality
 import Type.Reflection
 import Data.Coerce
@@ -9,6 +9,7 @@ import Control.Category
 import Data.Flat
 import Data.Bits
 import Data.Vector (generate)
+import Data.Monoid.Unicode ((∅))
 
 import Control.Lens               ((&))
 import Control.Monad.Except       (ExceptT, runExceptT)
@@ -49,7 +50,7 @@ instance Show Val where
   show = show . valExp
 
 crash :: Exp
-crash = EWith ENull (EWith EEval EEval)
+crash = EEval <> EEval <> ENull
 
 grainery :: IORef (HashMap SHA256 ByteString)
 grainery = unsafePerformIO (newIORef grainsFromJets)
@@ -106,18 +107,18 @@ getGrain k = unsafePerformIO $ do
 valExp :: Val -> Exp
 valExp VN           = ENull
 valExp VV           = crash
-valExp v            = EWith ENull (go v)
+valExp v            = go v <> ENull
   where
     go = \case
       VV       → crash
       VN       → ESubj
       V0 VN    → ELeft
       V1 VN    → EWrit
-      V0 l     → EWith (go l) ELeft
-      V1 r     → EWith (go r) EWrit
+      V0 l     → ELeft <> go l
+      V1 r     → EWrit <> go r
       VP x y   → ECons (go x) (go y)
       VT _ _ v → go v
-      VR k     → EWith (go (getGrain k)) EHash
+      VR k     → EHash <> go (getGrain k)
 
 hashVal :: Val -> (ByteString, SHA256)
 hashVal x = (bs, SHA256 (SHA256.hash bs))
@@ -138,8 +139,8 @@ instance Show TyExp where
     TESum TENil TENil -> "?"
     TENil             -> "~"
     TESum x y         -> "<" <> show x <> " " <> show y <> ">"
-    TETup x y         -> "(" <> show x <> " " <> show y <> ")"
-    TEFor x y         -> "[" <> show x <> " " <> show y <> "]"
+    TETup x y         -> "[" <> show x <> " " <> show y <> "]"
+    TEFor x y         -> "(" <> show x <> " " <> show y <> ")"
     TEAll x           -> "A" <> show x
     TEFix x           -> "F" <> show x
     TERef x           -> show x
@@ -254,7 +255,7 @@ expectFor = \case
   t             -> throwE ("Not a formula: " <> tshow t)
 
 runInfer :: Infer a -> Either Text a
-runInfer = flip evalState (mempty, 0) . runExceptT
+runInfer = flip evalState ((∅), 0) . runExceptT
 
 infer :: Exp -> Infer Ty
 infer = \case
@@ -337,6 +338,15 @@ data Exp
     | EHash
     | EFall
   deriving (Eq, Ord, Generic, Flat)
+
+instance Semigroup Exp where
+  ENull <> ESubj = ENull
+  x     <> ESubj = x
+  ESubj <> y     = y
+  x     <> y     = EWith y x
+
+instance Monoid Exp where
+  mempty = ESubj
 
 runExp :: Val -> Exp -> Val
 runExp s ESubj = s
@@ -602,7 +612,7 @@ instance Show Exp where
     ETail     -> "+"
     EDist     -> "%"
     EWith x y -> show y <> show x
-    ECons x y -> "(" <> show x <> " " <> show y <> ")"
+    ECons x y -> "[" <> show x <> " " <> show y <> "]"
     ECase x y -> "<" <> show x <> " " <> show y <> ">"
     EType t   -> "{" <> show t <> "}"
     EPush     -> "?"
@@ -640,9 +650,10 @@ parseExp str = do
     Just (e, xs) -> pure (e, xs)
     Nothing ->
       case str of
-        '(':xs -> parseTwo ECons ')' xs
+        '[':xs -> parseTwo ECons ']' xs
         '<':xs -> parseTwo ECase '>' xs
-        '`':xs -> parseSeq '`' xs <&> \(e,cs) -> (valExp (forVal e), cs)
+        '(':xs -> parseSeq ')' xs <&> \case
+                    (e,cs) -> (valExp (forVal e), cs)
         '|':xs -> parseHash xs >>= \case
                     (s, '|':xs) -> pure (ETent s, xs)
                     (_, _     ) -> P.Left "bad tent"
@@ -689,7 +700,7 @@ parseSeq end = go >=> \case
         (y, buf) <- go buf
         case y of
           Nothing -> pure (Just x, buf)
-          Just y  -> pure (Just (EWith y x), buf)
+          Just y  -> pure (Just (x <> y), buf)
 
 parseTwo :: (Exp -> Exp -> Exp) -> Char -> String
          -> Either String (Exp, String)
@@ -1114,15 +1125,17 @@ n10 = Writ . n9
 
 --------------------------------------------------------------------------------
 
-type Tramp c a r = Conq (a,c) (Sum a r)
-
-spinTr :: Tramp c a ()
-spinTr = Left . Head
-
-
 -- ((arg (ctx for)) fireTramp) -> <fireTramp ->%(!((arg ctx) for) (ctx for))
 -- fireTramp = Payload
 -- fireTramp = undefined
+
+-- [Lx y] -> R[x y]
+-- [R[x y] z] -> R[x (compose y z)]
+compose :: Exp
+compose = ECase EWrit (EWrit <> recur) <> EDist
+  where
+    recur = ECons (EHead <> EHead)
+              (ECons (ETail <> EHead) ETail)
 
 -- ctx for -> (ctx for)
 gate :: Val -> Exp -> Val
@@ -1136,16 +1149,32 @@ identFn = gate VN (toExp Head)
 spinFn :: Val
 spinFn = gate VN fire
 
+call :: Exp -> Exp -> Exp
+call g a = fire <> ECons a g
+
+spin :: Exp
+spin = call (valExp spinFn) ENull
+
 -- `$-((list a) @)`: List-Length
 lenFn :: Val
 lenFn = gate (V0 VN) lenFnBody
 
+caseHead x y = ECase x y <> EDist
+
+hep, lus :: Exp
+hep = EHead
+lus = ETail
+zer = ELeft
+one = EWrit
+
+cons :: Exp -> Exp -> Exp
+cons = ECons
+
 lenFnBody :: Exp
-lenFnBody = EWith EDist
-          $ ECase (EWith ETail EHead)
-          $ EWith (ECons (EWith EHead ETail)
-                         (EWith ETail (ECons (EWith EHead EWrit) ETail)))
-          $ fire
+lenFnBody = caseHead (hep <> lus)
+          $ (fire <>)
+          $ cons (lus <> hep)
+          $ cons (one<>hep) lus <> lus
 
 swapFn :: Val
 swapFn = gate VN (toExp swapFnBody)
@@ -1160,33 +1189,24 @@ coreTwo v l r = VP v (VP (forVal l) (forVal r))
 evenOddCore :: Val
 evenOddCore = coreTwo VN evArm odArm
 
-evArm :: Exp
-evArm = EWith EDist
-      $ ECase (toExp true)
-      $ fireRit
-
-odArm :: Exp
-odArm = EWith EDist
-      $ ECase (toExp false)
-      $ fireLef
+evArm, odArm  :: Exp
+evArm = caseHead (toExp true)  fireRit
+odArm = caseHead (toExp false) fireLef
 
 -- (arg (ctx for)) -> ((arg (ctx for)) for)!
 fire :: Exp
-fire = EWith (toExp reOrg) EEval
-  where
-  reOrg :: Conq (a,(c,f)) ((a,(c,f)),f)
-  reOrg = Cons Subj (Tail . Tail)
+fire = EEval <> cons (∅) (lus <> lus)
 
 -- (arg (ctx (lfor rfor))) -> ((arg (ctx (lfor rfor))) lfor)!
 fireLef :: Exp
-fireLef = EWith (toExp reOrg) EEval
+fireLef = EEval <> toExp reOrg
   where
   reOrg :: Conq (a,(c,(l,r))) ((a,(c,(l,r))),l)
   reOrg = Cons Subj (Head . Tail . Tail)
 
 -- (arg (ctx (lfor rfor))) -> ((arg (ctx (lfor rfor))) rfor)!
 fireRit :: Exp
-fireRit = EWith (toExp reOrg) EEval
+fireRit = EEval <> toExp reOrg
   where
   reOrg :: Conq (a,(c,(l,r))) ((a,(c,(l,r))),r)
   reOrg = Cons Subj (Tail . Tail . Tail)
@@ -1199,7 +1219,7 @@ demo :: Payload -> IO Val
 demo (s,f) = traceRunExp s f
 
 dumbLoop :: Exp
-dumbLoop = EWith (ECons ESubj ESubj) EEval
+dumbLoop = EEval <> ECons (∅) (∅)
 
 dumbLoopP :: Payload
 dumbLoopP = (forVal dumbLoop, dumbLoop)
@@ -1217,10 +1237,10 @@ demo_nat_constr = traceRun n10
 fix :: Val -> Exp -> Payload
 fix x e = (VP x (forVal fe), fe)
   where
-    fe = EWith (ECons (ECons (EWith EHead e) ETail) ETail) EEval
+    fe = EEval <> cons (cons (e <> hep) lus) lus
 
 natOverflow :: Exp
-natOverflow = EWith (ECons (ECons (EWith EHead EWrit) ETail) ETail) EEval
+natOverflow = EEval <> cons (cons (one <> hep) lus) lus
 
 natOverflowPay :: Payload
 natOverflowPay = fix (V0 VN) EWrit
