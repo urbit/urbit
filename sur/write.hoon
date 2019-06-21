@@ -1,9 +1,4 @@
 |%
-+$  item-id
-  $?  coll=@tas
-      [coll=@tas post=@tas]
-      [coll=@tas post=@tas comment=@tas]
-  ==
 ::
 +$  action
   $%  $:  %new-collection  
@@ -26,7 +21,9 @@
   ::
       [%new-comment who=@p coll=@tas post=@tas content=@t]
   ::
-      [%delete item-id]
+      [%delete-collection coll=@tas]
+      [%delete-post coll=@tas post=@tas]
+      [%delete-comment coll=@tas post=@tas comment=@tas]
   ::
       $:  %edit-collection
           name=@tas
@@ -46,9 +43,8 @@
           content=@t
       ==
   ::
-      [%edit-comment coll=@tas post=@tas id=@tas content=@t]
-  ::
-      [%invite coll=@tas who=(list ship)]
+      [%invite coll=@tas title=@t who=(list ship)]
+      [%reject-invite who=@p coll=@tas]
   ::
       [%serve coll=@tas]
       [%unserve coll=@tas]
@@ -56,6 +52,7 @@
       [%subscribe who=@p coll=@tas]
       [%unsubscribe who=@p coll=@tas]
   ::
+      [%read who=@p coll=@tas post=@tas]
   ==
 ::
 +$  collection-info
@@ -96,17 +93,14 @@
 +$  edit-config     $?(%post %comment %all %none)
 ::
 +$  rumor  delta
-::  $%  [%collection who=@p col=@tas dat=(each collection-info tang)]
-::      [%post who=@p col=@tas pos=@tas dat=(each [post-info manx] tang)]
-::      [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info manx]) tang)]
-::      [%serve who=@p nom=@tas col=collection]
-::  ==
 ::
 +$  collection
   $:  col=(each collection-info tang)
       pos=(map @tas (each [post-info manx @t] tang))
-      com=(map @tas (each (list [comment-info manx]) tang))
+      com=(map @tas (each (list [comment-info @t]) tang))
       order=[pin=(list @tas) unpin=(list @tas)]
+      contributors=(set @p)
+      subscribers=(set @p)
   ==
 ::
 +$  state
@@ -115,12 +109,18 @@
       awaiting=(map @tas [builds=(set wire) partial=(unit delta)])
       latest=(list [who=ship coll=@tas post=@tas])
       unread=(set [who=ship coll=@tas post=@tas])
+      invites=(map [who=ship coll=@tas] title=@t)
   ==
 ::
 +$  delta
   $%  [%collection who=@p col=@tas dat=(each collection-info tang)]
       [%post who=@p col=@tas pos=@tas dat=(each [post-info manx @t] tang)]
-      [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info manx]) tang)]
+      [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info @t]) tang)]
       [%total who=@p col=@tas dat=collection]
+      [%remove who=@p col=@tas pos=(unit @tas)]
+  ==
+::
++$  update
+  $%  [%invite add=? who=@p col=@tas title=@t]
   ==
 --

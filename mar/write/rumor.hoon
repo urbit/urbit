@@ -41,6 +41,14 @@
           [%who (ship who.rum)]
           [%data (total-build-to-json dat.rum)]
       ==
+    ::
+        %remove
+      %-  pairs
+      :~  [%who (ship who.rum)]
+          [%coll s+col.rum]
+          [%post ?~(pos.rum ~ s+u.pos.rum)]
+      ==
+    ::
     ==
     ::
   --
