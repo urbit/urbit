@@ -792,7 +792,7 @@
   =^  moves  ames-state
     =<  abet
     ?-  -.task
-      %born  !!
+      %born  on-born:event-core
       %crud  !!
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
@@ -1160,6 +1160,9 @@
         peers-alien+&+alien
         dot+&+ames-state
     ==
+  ::  +on-born: handle unix process restart
+  ::
+  ++  on-born  event-core
   ::  +on-vega: handle kernel reload
   ::
   ++  on-vega  event-core
