@@ -42,6 +42,7 @@
           subscribe+subscribe
           unsubscribe+unsubscribe
       ::
+          read+read
       ==
     ::
     ++  new-collection
@@ -177,6 +178,13 @@
       %-  ot:dejs
       :~  who+(su:dejs fed:ag)
           coll+(su:dejs sym)
+      ==
+    ::
+    ++  read
+      %-  ot:dejs
+      :~  who+(su:dejs fed:ag)
+          coll+(su:dejs sym)
+          post+(su:dejs sym)
       ==
     ::
     --

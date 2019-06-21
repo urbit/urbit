@@ -52,6 +52,7 @@
       [%subscribe who=@p coll=@tas]
       [%unsubscribe who=@p coll=@tas]
   ::
+      [%read who=@p coll=@tas post=@tas]
   ==
 ::
 +$  collection-info

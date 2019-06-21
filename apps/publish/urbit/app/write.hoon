@@ -162,17 +162,8 @@
   ?+  a
     [~ this]
   ::
-      [%update-tile @ @]
-    :_  this
-    %+  turn  (prey:pubsub:userlib /publishtile bol)
-    |=  [b=bone *]
-    ^-  move
-    =/  jon=json
-      %-  pairs:enjs:format
-      :~  invites+(numb:enjs:format +<.a)
-          new+(numb:enjs:format +>.a)
-      ==
-    [b %diff %json jon]
+      %update-tile
+    [make-tile-moves this]
   ::
       %test-build
     =/  schema=schematic:ford
@@ -339,7 +330,7 @@
     ::
     =?  unread.sat  !=(who our.bol)
       (~(put in unread.sat) who coll post)
-    da-this
+    (da-emil make-tile-moves)
   ::
   ++  da-insert-latest
     |=  [who=@p coll=@tas post=@tas]
@@ -668,6 +659,7 @@
 ++  poke-write-action
   |=  act=action
   ^-  (quip move _this)
+  ~&  poke+act
   ?-  -.act
   ::
       %new-collection
@@ -819,10 +811,12 @@
       |=  who=@p
       ^-  move
       [ost.bol %poke /forward [who %write] %write-action new-act]
-    :_  this(invites.sat (~(put by invites.sat) [src.bol coll.act] title.act))
+    =.  invites.sat  (~(put by invites.sat) [src.bol coll.act] title.act)
+    :_  this
+    %+  welp  make-tile-moves
+    ::
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
-    ^-  move
     [b %diff %write-update %invite %.y src.bol coll.act title.act]
   ::
   ::  %reject-invite: remove invite from list, acceptance is handled by
@@ -832,7 +826,10 @@
     =/  title=(unit @t)   (~(get by invites.sat) [who.act coll.act])
     ?~  title
       [~ this]
-    :_  this(invites.sat (~(del by invites.sat) [who.act coll.act]))
+    =.  invites.sat  (~(del by invites.sat) [who.act coll.act])
+    :_  this
+    %+  welp  make-tile-moves
+    ::
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
     ^-  move
@@ -924,7 +921,8 @@
           =(coll coll.act)
       ==
     ::
-    =/  new-unread=(set [@p @tas @tas])
+    =.  unread.sat
+      ^-  (set [@p @tas @tas])
       %-  sy
       %+  skip  ~(tap in unread.sat)
       |=  [who=@p coll=@tas post=@tas]
@@ -932,12 +930,13 @@
           =(coll coll.act)
       ==
     ::
-    :-  [[ost.bol %kill /collection/[coll.act] ~] kills]
+    :-  %+  welp
+      make-tile-moves
+      [[ost.bol %kill /collection/[coll.act] ~] kills]
     %=  this
       pubs.sat      (~(del by pubs.sat) coll.act)
       awaiting.sat  (~(del by awaiting.sat) coll.act)
       latest.sat    new-latest
-      unread.sat    new-unread
     ==
   ::
   ::  %subscribe: sub to a foreign blog; remove invites for that blog
@@ -946,13 +945,17 @@
     ~&  write-action+act
     =/  wir=wire  /collection/[coll.act]
     =/  title=(unit @t)  (~(get by invites.sat) [who.act coll.act])
-    :_  this(invites.sat (~(del by invites.sat) [who.act coll.act]))
-    %+  weld  [ost.bol %peer wir [who.act %write] wir]~
-    ?~  title  ~
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [b=bone *]
-    ^-  move
-    [b %diff %write-update %invite %.n who.act coll.act u.title]
+    =.  invites.sat  (~(del by invites.sat) [who.act coll.act])
+    :_  this
+    ;:  welp  
+      make-tile-moves
+      [ost.bol %peer wir [who.act %write] wir]~
+      ?~  title  ~
+      %+  turn  (prey:pubsub:userlib /primary bol)
+      |=  [b=bone *]
+      ^-  move
+      [b %diff %write-update %invite %.n who.act coll.act u.title]
+    ==
   ::
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
   ::
@@ -964,7 +967,8 @@
           =(coll coll.act)
       ==
     ::
-    =/  new-unread=(set [@p @tas @tas])
+    =.  unread.sat
+      ^-  (set [@p @tas @tas])
       %-  sy
       %+  skim  ~(tap in unread.sat)
       |=  [who=@p coll=@tas post=@tas]
@@ -975,13 +979,19 @@
     :_  %=  this
       subs.sat    (~(del by subs.sat) who.act coll.act)
       latest.sat  new-latest
-      unread.sat  new-unread
     ==
     :-  [ost.bol %pull wir [who.act %write] ~]
+    %+  welp  make-tile-moves
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
     ^-  move
     [b %diff %write-rumor %remove who.act coll.act ~]
+  ::
+  ::  %read: notify that we've seen a post
+  ::
+      %read
+    =.  unread.sat  (~(del in unread.sat) who.act coll.act post.act)
+    [make-tile-moves this]
   ::
   ==
 ::
@@ -1103,17 +1113,25 @@
   ::
   ==
 ::
+++  make-tile-moves
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib /publishtile bol)
+  |=  [b=bone *]
+  ^-  move
+  [b %diff %json make-tile-json]
+::
+++  make-tile-json
+  ^-  json
+  %-  pairs:enjs:format
+  :~  invites+(numb:enjs:format ~(wyt by invites.sat))
+      new+(numb:enjs:format ~(wyt in unread.sat))
+  ==
+::
 ++  peer-publishtile
   |=  wir=wire
   ^-  (quip move _this)
-  ~&  %peer-tile
-  =/  jon=json
-    %-  pairs:enjs:format
-    :~  invites+(numb:enjs:format (lent invites.sat))
-        new+(numb:enjs:format ~(wyt in unread.sat))
-    ==
   :_  this
-  [ost.bol %diff %json jon]~
+  [ost.bol %diff %json make-tile-json]~
 ::
 ++  peer-primary
   |=  wir=wire

@@ -134,6 +134,15 @@ export class Post extends Component {
           ],
         });
 
+        let read = {
+          read: {
+            who: ship,
+            coll: blogId,
+            post: postId,
+          }
+        };
+        this.props.api.action("write", "write-action", read);
+
       } else {
         this.setState({
           awaitingLoad: {
