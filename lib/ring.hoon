@@ -381,8 +381,8 @@
 |%
 ::  +qfix is otherwise equivalent to +puck? +puck is jetted. is there a jet divergence?
 ::
-++  qfix
-  |=  sk/@I  ^-  @
+++  seed-to-private-key-scalar
+  |=  sk/@I  ^-  @udscalar
   ?:  (gth (met 3 sk) 32)  !!
   =+  h=(shal (rsh 0 3 b:ed:crypto) sk)
   =/  x  (bex (sub b:ed:crypto 2))
@@ -419,18 +419,14 @@
   ::
   =/  secrets=[encrypt=@ auth=@]
     (get-private-key-from-ring:detail secret-ring)
-  ~&  [%secrets secrets]
   ::  get our ships' public key
   ::
   =/  public-key=@udpoint
     (ship-life-to-pubid:detail our now our our-life)
   ::
-  =/  x  (puck:ed:crypto auth.secrets)
-  ?>  =(public-key (scalarmult-base:ed:crypto (qfix auth.secrets)))
-  ::
   :-  participants.p
   :-  link-scope
-  (sign:raw message link-scope keys.p public-key (qfix auth.secrets) eny)
+  (sign:raw message link-scope keys.p public-key (seed-to-private-key-scalar auth.secrets) eny)
 ::  verifies a message 
 ::
 ++  verify

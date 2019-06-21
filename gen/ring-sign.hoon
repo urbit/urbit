@@ -3,7 +3,7 @@
 :-  %say
 |=  [{now/@da eny/@uvJ bec/beak} [invited=(list @p) ~] ~]
 :-  %noun
-=/  s  (sign:ring p.bec now eny "Hello World" `[%scope 5] (sy invited))
-~&  [%signature s]
-=/  v  (verify:ring p.bec now "Hello World" s)
+=/  s1  (sign:ring p.bec now eny "Hello Worldd" `[%scope 6] (sy invited))
+~&  [%signature-1 s1]
+=/  v  (verify:ring p.bec now "Hello Worldd" s1)
 v
