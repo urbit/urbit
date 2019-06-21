@@ -791,7 +791,7 @@
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
       %init  !!
-      %sunk  !!
+      %sunk  (on-sunk:event-core [ship rift]:task)
       %vega  !!
       %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
@@ -1110,6 +1110,20 @@
     =/  =channel  [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
+  ::  +on-sunk: handle continuity breach of .ship; wipe its state
+  ::
+  ::    Abandon all pretense of continuity and delete all state
+  ::    associated with .ship, including sent and unsent messages.
+  ::
+  ::    TODO: cancel all timers? otherwise we'll get spurious firings
+  ::    from behn
+  ::
+  ++  on-sunk
+    |=  [=ship =rift]
+    ^+  event-core
+    ::
+    =.  peers.ames-state  (~(del by peers.ames-state) ship)
+    event-core
   ::  +on-wegh: produce memory usage report
   ::
   ++  on-wegh
