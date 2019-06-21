@@ -1124,6 +1124,7 @@
     ::
     =.  event-core  (emit duct %pass /init/pubs %j %pubs ship)
     =.  event-core  (emit duct %pass /init/vein %j %vein ~)
+    =.  event-core  (emit duct %pass /init/turf %j %turf ~)
     event-core
   ::  +on-sunk: handle continuity breach of .ship; wipe its state
   ::
