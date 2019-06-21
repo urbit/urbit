@@ -2,12 +2,12 @@
 ::
 =/  eny=@uvJ               `@`0xdead.beef
 ::
-=/  hello-world            "Hello World"
-=/  not-hello-world        "Goodbye World"
+=/  hello-world            (shaz (jam "Hello World"))
+=/  not-hello-world        (shaz (jam "Goodbye World"))
 ::
-=/  empty-scope            ~
-=/  test-scope             `[%scope 5]
-=/  test-scope-2           `[%scope 6]
+=/  empty-scope=(unit @)   ~
+=/  test-scope=(unit @)    `(shaz (jam [%scope 5]))
+=/  test-scope-2=(unit @)  `(shaz (jam [%scope 6]))
 ::
 =/  our-privkey=@udscalar  3
 =/  our-pubkey=@udpoint    (scalarmult-base:ed:crypto our-privkey)

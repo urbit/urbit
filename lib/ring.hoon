@@ -3,7 +3,8 @@
 ::
 |%
 ::  +raw is the raw internal ring signature implementation. +raw does not deal
-::  with urbit ship identities and is low level.
+::  with urbit ship identities or urbit nouns and is low level. It only deals
+::  with ed25519 keys and message digests.
 ::
 ::  This raw interface is vaguely modeled on the haskell aos-signature package,
 ::  but is written in terms of ed25519 primitives instead of general ECC and
@@ -13,18 +14,13 @@
 ::
 ++  raw
   |%
-  ::  +oracle: deterministic random response on input
-  ::
-  ++  oracle
-    |=  input=*
-    (mod (shaz (jam input)) l:ed:crypto)
   ::  +generate-public-linkage: generate public linkage information
   ::
   ++  generate-public-linkage
-    |=  link-scope=*
+    |=  link-scope=@
     ^-  [data=@ h=@udpoint]
     ::
-    =/  data=@   (oracle link-scope)
+    =/  data=@   (mod link-scope l:ed:crypto)
     =/  h=@udpoint  (scalarmult-base:ed:crypto data)
     [data h]
   ::  +generate-linkage: linkage information from scope and private key
@@ -33,7 +29,7 @@
   ::    h:    h = [data] * g
   ::    y:    y = [x] * h
   ++  generate-linkage
-    |=  [link-scope=(unit *) my-private-key=@]
+    |=  [link-scope=(unit @) my-private-key=@]
     ^-  (unit [data=@ h=@udpoint y=@udpoint])
     ::
     ?~  link-scope
@@ -50,7 +46,7 @@
   ::
   ++  generate-challenge
     |=  $:  ::  common to both linked and unlinked
-            message=*
+            message=@
             g=@udpoint
             ::  high level universal state
             ::
@@ -60,16 +56,26 @@
             h=(unit @udpoint)
         ==
     ^-  @
+    ::  concatenate and reduce our message down to a 512-bit hash
+    =/  concatenated
+      ?~  link-state
+        (shal 96 (can 3 ~[[64 message] [32 g]]))
+      ::
+      %+  shal  192
+      %+  can  3
+      :~  [64 message]
+          [32 g]
+          [32 data.u.link-state]
+          [32 y.u.link-state]
+          [32 (need h)]
+      ==
     ::
-    %-  oracle
-    ?~  link-state
-      [message g]
-    [data.u.link-state y.u.link-state message g (need h)]
+    (mod concatenated l:ed:crypto)
   ::  +generate-challenges: generates the full list of challenges
   ::
   ++  generate-challenges
     |=  $:  link-state=(unit [data=@ h=@udpoint y=@udpoint])
-            message=*
+            message=@
             public-keys=(list @udpoint)
             ss=(list @)
         ::
@@ -134,8 +140,8 @@
   ::  +sign: creates a ring signature on an ed25519 curve
   ::
   ++  sign
-    |=  $:  message=*
-            link-scope=(unit *)
+    |=  $:  message=@
+            link-scope=(unit @)
         ::
             anonymity-set=(set @udpoint)
             my-public-key=@udpoint
@@ -228,8 +234,8 @@
   ::  +verify: verify signature
   ::
   ++  verify
-    |=  $:  message=*
-            link-scope=(unit *)
+    |=  $:  message=@
+            link-scope=(unit @)
         ::
             anonymity-set=(set @udpoint)
             signature=raw-ring-signature
@@ -413,6 +419,9 @@
   ::  if our is not in @p, we must be in @p.
   ::
   =.  anonymity-set  (~(put in anonymity-set) our)
+  ::
+  =/  msg-hash=@  (shaz (jam message))
+  =/  link-hash=(unit @)  (bind link-scope |=(a=* (shaz (jam a))))
   ::  get everyone's public keys
   ::
   =/  p=[participants=(set [ship=@p =life]) keys=(set @udpoint)]
@@ -437,8 +446,8 @@
   :-  participants.p
   :-  link-scope
   %-  sign:raw  :*
-    message
-    link-scope
+    msg-hash
+    link-hash
     keys.p
     public-key
     (seed-to-private-key-scalar:detail secret-auth-seed)
@@ -454,5 +463,8 @@
     %^  build-verifying-participants:detail  our  now
     ~(tap in participants.ring-signature)
   ::
-  (verify:raw message link-scope.ring-signature keys raw.ring-signature)
+  =/  msg-hash=@  (shaz (jam message))
+  =/  link-hash=(unit @)  (bind link-scope.ring-signature |=(a=* (shaz (jam a))))
+  ::
+  (verify:raw msg-hash link-hash keys raw.ring-signature)
 --
