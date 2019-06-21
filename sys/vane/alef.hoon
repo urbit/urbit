@@ -877,11 +877,14 @@
     =.  peer-core              (make-peer-core peer-state channel)
     ::
     abet:(run-message-pump:peer-core nack-trace-bone %send /a/nax error)
-  ::
+  ::  +on-hear: handle packet receipt
   ::
   ++  on-hear
     |=  [=lane =blob]
     ^+  event-core
+    ::  register this duct as our new .unix-duct
+    ::
+    =.  unix-duct.ames-state  duct
     ::
     =/  =packet  (decode-packet blob)
     ::
@@ -893,13 +896,26 @@
     ?:  encrypted.packet
       on-hear-shut
     on-hear-open
-  ::
+  ::  +on-hear-forward: maybe forward a packet to someone else
   ::
   ++  on-hear-forward
     |=  [=lane =packet]
     ^+  event-core
     ::
-    !!
+    =/  ship-state  (~(get by peers.ames-state) rcvr.packet)
+    ::  ignore packets to unfamiliar ships
+    ::
+    ?.  ?=([~ %known *] ship-state)
+      event-core
+    ::  if we don't have a lane to .rcvr, give up
+    ::
+    ?~  rcvr-lane=route.+.u.ship-state
+      event-core
+    ::  set .origin.packet, re-encode, and send
+    ::
+    =/  =blob  (encode-packet packet(origin `lane))
+    ::
+    (emit unix-duct.ames-state %give %send lane.u.rcvr-lane blob)
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
