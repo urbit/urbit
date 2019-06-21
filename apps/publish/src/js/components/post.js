@@ -4,6 +4,7 @@ import { PostPreview } from '/components/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { PostBody } from '/components/post-body';
+import { Comments } from '/components/comments';
 import { PathControl } from '/components/lib/path-control';
 import _ from 'lodash';
 
@@ -92,7 +93,6 @@ export class Post extends Component {
       },
     };
 
-
     this.setState({
       awaitingEdit: {
         ship: this.state.ship,
@@ -171,8 +171,6 @@ export class Post extends Component {
     }
   }
 
-  //
-
   handleEvent(diff) {
     console.log("handle event", diff);
 
@@ -198,6 +196,22 @@ export class Post extends Component {
           { text: post.info.title, url: postUrl },
         ],
       });
+    } else if (diff.data.collection) {
+      let newBlog = this.state.blog;
+      newBlog.info = diff.data.collection.data;
+      this.setState({
+        blog: newBlog,
+      });
+    } else if (diff.data.post) {
+      this.setState({
+        post: diff.data.post.data,
+      });
+    } else if (diff.data.comments) {
+      this.setState({
+        comments: diff.data.comments.data,
+      });
+    } else if (diff.data.remove) {
+      // XX TODO Handle this properly
     }
   }
 
@@ -206,53 +220,54 @@ export class Post extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.awaitingEdit) {
-      let ship = this.state.awaitingEdit.ship;
-      let blogId = this.state.awaitingEdit.blogId;
-      let postId = this.state.awaitingEdit.postId;
+    let ship   = this.props.ship;
+    let blogId = this.props.blogId;
+    let postId = this.props.postId;
 
-      if (this.state.awaitingEdit.ship == window.ship) {
-        let oldPost = prevState.post;
+    let oldPost = prevState.post;
+    let oldComments = prevState.comments;
+    let oldBlog = prevState.blog;
 
-        let post = _.get(this.props,
-          `pubs[${blogId}].posts[${postId}].post`, false);
+    let post;
+    let comments;
+    let blog;
 
-        if ((post.info.title != oldPost.info.title) ||
-            (post.raw != oldPost.raw)) {
+    if (ship === window.ship) {
+      blog = _.get(this.props, `pubs[${blogId}]`, false);
+      post = _.get(blog, `posts[${postId}].post`, false);
+      comments = _.get(blog, `posts[${postId}].comments`, false);
+    } else {
+      blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
+      post = _.get(blog, `posts[${postId}].post`, false);
+      comments = _.get(blog, `posts[${postId}].comments`, false);
+    }
 
-          this.setState({
-            mode: 'view',
-            titleOriginal: post.info.title,
-            bodyOriginal: post.raw,
-            title: post.info.title,
-            body: post.raw,
-            awaitingEdit: false,
-            post: post,
-          });
-        }
-      } else {
 
-        let oldPost = prevState.post;
+    if (this.state.awaitingEdit &&
+       ((post.info.title != oldPost.info.title) ||
+        (post.raw != oldPost.raw))) {
 
-        let post = _.get(this.props,
-          `subs[${ship}][${blogId}].posts[${postId}].post`, false);
-        
-        if ((post.info.title != oldPost.info.title) ||
-            (post.raw != oldPost.raw)) {
-          this.setState({
-            mode: 'view',
-            titleOriginal: post.info.title,
-            bodyOriginal: post.raw,
-            title: post.info.title,
-            body: post.raw,
-            awaitingEdit: false,
-            post: post,
-          });
-        }
-      }
+      this.setState({
+        mode: 'view',
+        titleOriginal: post.info.title,
+        bodyOriginal: post.raw,
+        title: post.info.title,
+        body: post.raw,
+        awaitingEdit: false,
+        post: post,
+      });
+    }
+
+    if (oldPost != post) {
+      this.setState({post: post});
+    }
+    if (oldComments != comments) {
+      this.setState({comments: comments});
+    }
+    if (oldBlog != blog) {
+      this.setState({blog: blog});
     }
   }
-
 
   titleChange(evt){
     this.setState({title: evt.target.value});
@@ -263,9 +278,6 @@ export class Post extends Component {
   }
 
   render() {
-    console.log("post", this.props);
-
-
     if (this.state.awaitingLoad) {
       return (
         <div>
@@ -279,6 +291,7 @@ export class Post extends Component {
         </div>
       );
     } else if (this.state.mode == 'view') {
+      console.log(this.state);
       let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
       let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
@@ -315,18 +328,12 @@ export class Post extends Component {
             <hr className="gray-50 w-680"/>
           
             <hr className="gray-50 w-680"/>
-
-            <div className="cb mt3 mb4">
-              <p className="gray-50 body-large b">
-                {this.state.comments.length}
-                <span className="black">
-                  Comments
-                </span>
-              </p>
-              <p className="cl body-regular">
-                + Show Comments
-              </p>
-            </div>
+            <Comments comments={this.state.comments} 
+              api={this.props.api}
+              ship={this.props.ship}
+              blogId={this.props.blogId}
+              postId={this.props.postId}
+            />
           </div>
         </div>
       );
@@ -375,18 +382,12 @@ export class Post extends Component {
             <hr className="gray-50 w-680"/>
           
             <hr className="gray-50 w-680"/>
-
-            <div className="cb mt3 mb4">
-              <p className="gray-50 body-large b">
-                {this.state.comments.length}
-                <span className="black">
-                  Comments
-                </span>
-              </p>
-              <p className="cl body-regular">
-                + Show Comments
-              </p>
-            </div>
+            <Comments comments={this.state.comments} 
+              api={this.props.api}
+              ship={this.props.ship}
+              blogId={this.props.blogId}
+              postId={this.props.postId}
+            />
           </div>
         </div>
       );

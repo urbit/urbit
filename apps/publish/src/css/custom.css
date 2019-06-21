@@ -194,7 +194,11 @@ h4 {
 
 .h-inner {
   height: calc(100% - 124px);
-  top: 124px;
+  top: 48px;
+}
+
+.h-footer {
+  height: 76px;
 }
 
 ::placeholder {

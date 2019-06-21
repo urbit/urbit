@@ -11,12 +11,14 @@
           ~
       ==
       ^-  (list [comment-info:write @t])
-::      XX  sort this list
-      %+  turn  ~(tap by comments)
-      |=  [fil=knot front=(map knot cord) content=wain ~]
-      ^-  [comment-info:write @t]
-      :-  (front-to-comment-info:write front) 
-      (of-wain:format (slag 8 content))
+      %+  sort
+        %+  turn  ~(tap by comments)
+        |=  [fil=knot front=(map knot cord) content=wain ~]
+        ^-  [comment-info:write @t]
+        :-  (front-to-comment-info:write front) 
+        (of-wain:format (slag 8 content))
+      |=  [a=[com=comment-info:write @t] b=[com=comment-info:write @t]]
+      (lte date-created.com.a date-created.com.b)
 ::
   /_  
   /.  /&front&/udon/
