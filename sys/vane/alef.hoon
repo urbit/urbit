@@ -631,13 +631,17 @@
 ::    %memo: message to vane from peer
 ::    %send: packet to unix
 ::    %done: notify vane that peer (n)acked our message
+::
 ::    %mass: memory usage report
+::    %turf: domain report, relayed from jael
 ::
 +$  gift
   $%  [%memo =message]
       [%send =lane =blob]
       [%done error=(unit error)]
+  ::
       [%mass mass]
+      [%turf turfs=(list turf)]
   ==
 ::  $note: request to other vane
 ::
@@ -689,7 +693,7 @@
       $%  [%done error=(unit error)]
           [%memo =message]
           [%pubs public:able:jael]
-          [%turf turf=(list turf)]
+          [%turf turfs=(list turf)]
           [%vein =life vein=(map life ring)]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
@@ -820,7 +824,7 @@
       [%j %memo *]  (on-take-memo:event-core wire message.sign)
     ::
       [%j %pubs *]  !!
-      [%j %turf *]  !!
+      [%j %turf *]  (on-take-turf:event-core turfs.sign)
       [%j %vein *]  !!
     ==
   ::
@@ -1124,6 +1128,13 @@
     ::
     =.  peers.ames-state  (~(del by peers.ames-state) ship)
     event-core
+  ::  +on-take-turf: relay %turf move from jael to unix
+  ::
+  ++  on-take-turf
+    |=  turfs=(list turf)
+    ^+  event-core
+    ::
+    (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-wegh: produce memory usage report
   ::
   ++  on-wegh
