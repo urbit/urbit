@@ -42,28 +42,28 @@
 ::
 =>  |%
 ++  state                                               ::  all vane state
-  $:  ver/$0                                            ::  vane version
-      yen/(set duct)                                    ::  raw observers
-      urb/state-absolute                                ::  all absolute state
-      sub/state-relative                                ::  all relative state
+  $:  ver=$0                                            ::  vane version
+      yen=(set duct)                                    ::  raw observers
+      urb=state-absolute                                ::  all absolute state
+      sub=state-relative                                ::  all relative state
       etn=state-eth-node                                ::  eth connection state
       sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
   $:  $=  bal                                           ::  balance sheet (vest)
-        $:  yen/(set duct)                              ::  trackers
+        $:  yen=(set duct)                              ::  trackers
         ==                                              ::
       $=  own                                           ::  vault (vein)
-        $:  yen/(set duct)                              ::  trackers
+        $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
             tuf=(list turf)                             ::  domains
             :: XX use for eth replay                    ::
             boq=@ud                                     ::  boot block
             nod=(unit purl:eyre)                        ::  eth gateway
-            fak/_|                                      ::  fake keys
-            lyf/life                                    ::  version
-            jaw/(map life ring)                         ::  private keys
+            fak=_|                                      ::  fake keys
+            lyf=life                                    ::  version
+            jaw=(map life ring)                         ::  private keys
         ==                                              ::
       $=  puk                                           ::  public keys (pubs)
         $:  yen=(jug ship duct)                         ::  trackers
@@ -78,7 +78,7 @@
         ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
-  $:  pry/(map ship (map ship safe))                    ::  promises
+  $:  pry=(map ship (map ship safe))                    ::  promises
   ==                                                    ::
 ++  state-snapshots                                     ::  rewind points
   $:  interval=_100                                     ::  block interval
@@ -87,7 +87,7 @@
       last-block=@ud                                    ::  number of last snap
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
-++  message                                             ::  p2p message
+++  message                                             ::  message to her jael
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum events
@@ -97,7 +97,7 @@
   (wind note gift)                                      ::
 ::                                                      ::
 ++  move                                                ::  output
-  {p/duct q/card}                                       ::
+  [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::

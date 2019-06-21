@@ -1859,9 +1859,9 @@
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
-          {$vest p/tally}                               ::  balance update
+          [%vest p=tally]                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
-          {$vine p/(list change)}                       ::  all raw changes
+          [%vine p=(list change)]                       ::  all raw changes
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
@@ -2326,7 +2326,7 @@
     ++  task                                            ::  in request ->$
       $%  {$hear p/lane q/@}                            ::
           {$mess p/ship q/path r/*}                     ::  send message
-          {$wake ~}                                    ::
+          {$wake ~}                                     ::
       ==                                                ::
     ++  card                                            ::  out cards
       $%  {$west p/ship q/path r/*}                     ::  network request
