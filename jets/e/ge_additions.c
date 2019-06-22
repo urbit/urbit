@@ -4,11 +4,11 @@
 // ref10 SUPERCOP public domain implementation. That implementation doesn't
 // contain several functions needed for ring signatures.
 //
-// This file is does. The providence of this code starts with Adam Langley
-// taking the SUPERCOP C implementation and producing an ed25519 implementation
-// for in golang (https://godoc.org/golang.org/x/crypto/ed25519). (If you look
-// at the go code, you'll see the comments are the same as the comments in the
-// C implementation.)
+// This file does. The providence of this code starts with Adam Langley taking
+// the SUPERCOP C implementation and producing an ed25519 implementation for it
+// in golang (https://godoc.org/golang.org/x/crypto/ed25519). (If you look at
+// the go code, you'll see the comments are the same as the comments in the C
+// implementation.)
 //
 // From there, the DEDIS group from ETH Zurich took that implementation and
 // added the additional methods to make a generalized ECC point library. While
