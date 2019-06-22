@@ -434,7 +434,7 @@
   ::
   =/  secret-ring=ring
     .^(ring %j /(scot %p our)/vein/(scot %da now)/(scot %ud our-life))
-  ::  fetch the encoded auth seedd from the ring
+  ::  fetch the encoded auth seed from the ring
   ::
   =/  secret-auth-seed=@
     +:(get-private-key-from-ring:detail secret-ring)
