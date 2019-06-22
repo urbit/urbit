@@ -244,11 +244,11 @@
 ::
 +|  %atomics
 ::
++$  address        @uxaddress
 +$  blob           @uxblob
 +$  bone           @udbone
 +$  fragment       @uwfragment
 +$  fragment-num   @udfragmentnum
-+$  lane           @uxlane
 +$  message-num    @udmessagenum
 +$  private-key    @uwprivatekey
 +$  public-key     @uwpublickey
@@ -280,13 +280,19 @@
       $:  =symmetric-key
           =her=life
           =her=public-key
-          her-sponsors=(list ship)
+          her-sponsor=ship
   ==  ==
 ::  $dyad: pair of sender and receiver ships
 ::
 +$  dyad  [sndr=ship rcvr=ship]
 ::
 +$  error  [tag=@tas =tang]
+::  $lane: ship transport address; either opaque $address or galaxy
+::
+::    The runtime knows how to look up galaxies, so we don't need to
+::    know their transport addresses.
+::
++$  lane  (each @pC address)
 ::  $message: application-level message
 ::
 ::    path: internal route on the receiving ship
@@ -370,6 +376,7 @@
 +$  pending-requests
   $:  rcv-packets=(list [=lane =packet])
       snd-messages=(list [=duct =message])
+      snd-packets=(set =blob)
   ==
 ::  $peer-state: state for a peer with known life and keys
 ::
@@ -394,7 +401,7 @@
   $:  $:  =symmetric-key
           =life
           =public-key
-          sponsors=(list ship)
+          sponsor=ship
       ==
       route=(unit [direct=? =lane])
       =ossuary
@@ -974,7 +981,7 @@
         symmetric-key  symmetric-key
         life           sndr-life.open-packet
         public-key     public-key.open-packet
-        sponsors       (get-comet-sponsors sndr.packet)
+        sponsor        (^sein:title sndr.packet)
         route          `[direct=%.y lane]
       ==
     ::
@@ -992,7 +999,7 @@
     ::  if we don't know them, enqueue the packet to be handled later
     ::
     ?.  ?=([~ %known *] sndr-state)
-      (enqueue-alien-packet lane packet)
+      (enqueue-alien-rcv-packet lane packet)
     ::  decrypt packet contents using symmetric-key.channel
     ::
     ::    If we know them, we have a $channel with them, which we've
@@ -1015,60 +1022,57 @@
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet)
-  ::  +enqueue-alien-packet: store packet from untrusted source
+  ::  +enqueue-alien-rcv-packet: store packet from untrusted source
   ::
-  ::    Also requests key and life from Jael on first contact.
-  ::
-  ++  enqueue-alien-packet
+  ++  enqueue-alien-rcv-packet
     |=  [=lane =packet]
     ^+  event-core
     ::
-    =/  sndr-state  (~(get by peers.ames-state) sndr.packet)
-    ::  create a default $pending-requests on first contact
-    ::
-    =+  ^-  [already-pending=? todos=pending-requests]
-        ?~  sndr-state
-          [%.n *pending-requests]
-        [%.y ?>(?=(%alien -.u.sndr-state) +.u.sndr-state)]
-    ::  enqueue unprocessed packet and apply to permanent state
-    ::
-    =.  rcv-packets.todos  [[lane packet] rcv-packets.todos]
-    ::
-    =.  peers.ames-state
-      (~(put by peers.ames-state) sndr.packet %alien todos)
-    ::  ask jael for .sndr life and keys on first contact
-    ::
-    =?  event-core  !already-pending
-      (emit duct %pass /alien %j %pubs sndr.packet)
-    ::
-    event-core
-  ::  +enqueue-alien-message: store message to untrusted source
+    %+  enqueue-alien-todo  sndr.packet
+    |=  todos=pending-requests
+    todos(rcv-packets [[lane packet] rcv-packets.todos])
+  ::  +enqueue-alien-snd-packet: store packet to send to unknown
   ::
-  ::    Also requests key and life from Jael on first contact.
+  ++  enqueue-alien-snd-packet
+    |=  [=ship =blob]
+    ^+  event-core
+    ::
+    %+  enqueue-alien-todo  ship
+    |=  todos=pending-requests
+    todos(snd-packets (~(put in snd-packets.todos) blob))
+  ::  +enqueue-alien-message: store message to untrusted source
   ::
   ++  enqueue-alien-message
     |=  [=ship =message]
     ^+  event-core
     ::
-    =/  rcvr-state  (~(get by peers.ames-state) ship)
+    %+  enqueue-alien-todo  ship
+    |=  todos=pending-requests
+    todos(snd-messages [[duct message] snd-messages.todos])
+  ::  +enqueue-alien-todo: helper to enqueue a pending request
+  ::
+  ::    Also requests key and life from Jael on first contact.
+  ::
+  ++  enqueue-alien-todo
+    |=  [=ship mutate=$-(pending-requests pending-requests)]
+    ^+  event-core
+    ::
+    =/  ship-state  (~(get by peers.ames-state) ship)
     ::  create a default $pending-requests on first contact
     ::
     =+  ^-  [already-pending=? todos=pending-requests]
-        ?~  rcvr-state
+        ?~  ship-state
           [%.n *pending-requests]
-        [%.y ?>(?=(%alien -.u.rcvr-state) +.u.rcvr-state)]
-    ::  enqueue unsent message and apply to permanent state
+        [%.y ?>(?=(%alien -.u.ship-state) +.u.ship-state)]
+    ::  mutate .todos and apply to permanent state
     ::
-    =.  snd-messages.todos  [[duct message] snd-messages.todos]
+    =.  todos             (mutate todos)
+    =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
+    ::  ask jael for .sndr life and keys on first contact
     ::
-    =.  peers.ames-state
-      (~(put by peers.ames-state) ship %alien todos)
-    ::  ask jael for .ship life and keys on first contact
-    ::
-    =?  event-core  !already-pending
-      (emit duct %pass /alien %j %pubs ship)
-    ::
-    event-core
+    ?:  already-pending
+      event-core
+    (emit duct %pass /alien %j %pubs ship)
   ::  +on-take-memo: receive request to give message to peer
   ::
   ++  on-take-memo
@@ -1162,11 +1166,41 @@
         dot+&+ames-state
     ==
   ::  +on-born: handle unix process restart
-  ::
-  ++  on-born  event-core
   ::  +on-vega: handle kernel reload
   ::
+  ++  on-born  event-core
   ++  on-vega  event-core
+  ::  +send-blob: fire packet at .ship and maybe sponsors
+  ::
+  ::    Send to .ship and sponsors until we find a direct lane.
+  ::    If we have no PKI data for a recipient, enqueue the packet and
+  ::    request the information from Jael if we haven't already.
+  ::
+  ++  send-blob
+    |=  [=ship =blob]
+    ^+  event-core
+    ::
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ::
+    ?.  ?=([~ %known *] ship-state)
+      (enqueue-alien-snd-packet ship blob)
+    ::
+    =/  =peer-state  +.u.ship-state
+    =/  =channel     [[our ship] now +>.ames-state -.peer-state]
+    ::
+    ?~  route=route.peer-state
+      ?:  =(ship her-sponsor.channel)
+        event-core
+      $(ship her-sponsor.channel)
+    ::
+    =.  event-core
+      (emit unix-duct.ames-state %give %send lane.u.route blob)
+    ::
+    ?:  direct.u.route
+      event-core
+    ?:  =(ship her-sponsor.channel)
+      event-core
+    $(ship her-sponsor.channel)
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
@@ -1415,30 +1449,9 @@
       =/  content  (encrypt symmetric-key.channel shut-packet)
       =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
       =/  =blob    (encode-packet packet)
-      ::  send to .her and her sponsors until we find a direct lane
       ::
-      ::    Skip receivers for whom we have no lane, possibly including
-      ::    .her.
-      ::
-      =/  rcvrs=(list ship)  [her her-sponsors]:channel
-      ::
-      |-  ^+  peer-core
-      ?~  rcvrs  peer-core
-      ::
-      =/  peer  (~(get by peers.ames-state) i.rcvrs)
-      ::
-      ?.  ?=([~ %known *] peer)
-        $(rcvrs t.rcvrs)
-      ::
-      ?~  route=route.u.+.peer
-        $(rcvrs t.rcvrs)
-      ::
-      =.  peer-core
-        (emit unix-duct.ames-state %give %send lane.u.route blob)
-      ::
-      ?:  direct.u.route
-        peer-core
-      $(rcvrs t.rcvrs)
+      =.  event-core  (send-blob her.channel blob)
+      peer-core
     --
   --
 ::  +make-message-pump: constructor for |message-pump
@@ -2189,16 +2202,6 @@
   ::
   ?>  ?=([%pump @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
-::  +get-comet-sponsors: a comet's star and galaxy
-::
-++  get-comet-sponsors
-  |=  comet=ship
-  ^-  (list ship)
-  ::
-  =/  star=ship    (^sein:title comet)
-  =/  galaxy=ship  (^sein:title star)
-  ::
-  ~[star galaxy]
 ::  +verify-signature: use .public-key to verify .signature on .content
 ::
 ++  verify-signature
@@ -2298,7 +2301,7 @@
     :-  sndr=(end 3 sndr-size body)
     rcvr=(cut 3 [sndr-size rcvr-size] body)
   ::
-  =+  ;;  [origin=(unit @uxlane) content=*]
+  =+  ;;  [origin=(unit lane) content=*]
       %-  cue
       (rsh 3 (add rcvr-size sndr-size) body)
   ::

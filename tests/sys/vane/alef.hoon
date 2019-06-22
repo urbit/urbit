@@ -3,7 +3,6 @@
           /!noun/
 ::
 =/  vane  (alef !>(..zuse))
-=/  lane-foo=lane:alef  `@uxlane``@`'lane-foo'
 ::
 =/  items-from-keys
   |=  keys=(list @ud)
@@ -172,6 +171,8 @@
   =/  event-args
     [our=~doznec-doznec eny=0xdead.beef now=~2222.2.2 *sley]
   ::
+  =/  lane-foo=lane:alef  [%| `@ux``@`%lane-foo]
+  ::
   =/  res
     (call:(vane event-args) ~[//unix] *type %hear lane-foo blob)
   ::
@@ -181,7 +182,7 @@
       !>  -.res
   ::
     %+  expect-eq
-      !>  [%alien [lane-foo packet]~ ~]
+      !>  [%alien [lane-foo packet]~ ~ ~]
       !>  (~(got by peers.ames-state.+.res) ~nec)
   ==
 ::
@@ -211,9 +212,9 @@
     :-  :*  symmetric-key=bob-sym
             life=3
             public-key=bob-pub
-            sponsors=~
+            sponsor=~marzod
         ==
-    :*  [~ direct=%.y `lane:alef``@`%lane-foo]
+    :*  [~ direct=%.y `lane:alef`[%& ~nec]]
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
@@ -228,9 +229,9 @@
     :-  :*  symmetric-key=alice-sym
             life=2
             public-key=alice-pub
-            sponsors=~
+            sponsor=~nec
         ==
-    :*  [~ direct=%.y `lane:alef``@`%lane-bar]
+    :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
@@ -360,9 +361,9 @@
     :-  :*  symmetric-key=bob-sym
             life=3
             public-key=bob-pub
-            sponsors=~
+            sponsor=~marzod
         ==
-    :*  [~ direct=%.y `lane:alef``@`%lane-foo]
+    :*  [~ direct=%.y `lane:alef`[%& ~nec]]
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
@@ -377,9 +378,9 @@
     :-  :*  symmetric-key=alice-sym
             life=2
             public-key=alice-pub
-            sponsors=~
+            sponsor=~nec
         ==
-    :*  [~ direct=%.y `lane:alef``@`%lane-bar]
+    :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
         *ossuary:alef
         *(map bone:alef message-pump-state:alef)
         *(map bone:alef message-still-state:alef)
