@@ -605,7 +605,6 @@
       [%hear =lane =blob]
       [%hole =lane =blob]
       [%init =ship]
-      [%sunk =ship =rift]
       [%vega ~]
       [%wegh ~]
       [%memo =ship =message]
@@ -853,7 +852,6 @@
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
       %init  (on-init:event-core ship.task)
-      %sunk  (on-sunk:event-core [ship rift]:task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
@@ -1130,20 +1128,6 @@
         (emit duct %pass /init/private-keys %j %private-keys ~)
         (emit duct %pass /init/turf %j %turf ~)
     ==
-  ::  +on-sunk: handle continuity breach of .ship; wipe its state
-  ::
-  ::    Abandon all pretense of continuity and delete all state
-  ::    associated with .ship, including sent and unsent messages.
-  ::
-  ::    TODO: cancel all timers? otherwise we'll get spurious firings
-  ::    from behn
-  ::
-  ++  on-sunk
-    |=  [=ship =rift]
-    ^+  event-core
-    ::
-    =.  peers.ames-state  (~(del by peers.ames-state) ship)
-    event-core
   ::  +on-priv: set our private key to jael's response
   ::
   ++  on-priv
@@ -1173,12 +1157,20 @@
         ::
             [%full *]  (on-publ-full points.vent-result)
         ==
+    ::  +on-publ-breach: handle continuity breach of .ship; wipe its state
+    ::
+    ::    Abandon all pretense of continuity and delete all state
+    ::    associated with .ship, including sent and unsent messages.
+    ::
+    ::    TODO: cancel all timers? otherwise we'll get spurious firings
+    ::    from behn
     ::
     ++  on-publ-breach
       |=  [=ship =rift]
       ^+  event-core
       ::
-      !!
+      =.  peers.ames-state  (~(del by peers.ames-state) ship)
+      event-core
     ::
     ++  on-publ-rekey
       |=  $:  =ship
