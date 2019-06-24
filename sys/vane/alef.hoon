@@ -660,8 +660,14 @@
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
 ::
+::    Ames passes a %memo to itself to trigger a heartbeat message to
+::    our sponsor.
+::
 +$  note
-  $%  $:  %b
+  $%  $:  %a
+      $%  [%memo sponsor=ship message=_[/a/ping ~]]
+      ==  ==
+      $:  %b
       $%  [%wait date=@da]
           [%rest date=@da]
       ==  ==
@@ -687,8 +693,15 @@
 ::    message to the remote vane from which the forward flow message
 ::    originated.
 ::
+::    Ames gives a %done sign to itself when our sponsor acks a
+::    heartbeat message we sent it. This triggers a timer, which then
+::    triggers the next heartbeat message to be sent.
+::
 +$  sign
-  $%  $:  %b
+  $%  $:  %a
+      $%  [%done error=(unit error)]
+      ==  ==
+      $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
       $:  %c
@@ -708,6 +721,8 @@
           [%vein =life vein=(map life ring)]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
+::
+::    TODO: rename %send to %memo
 ::
 ::    %send: packetize and send application-level message
 ::    %hear: handle receipt of ack on fragment or message
@@ -826,6 +841,7 @@
     ?-  sign
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
+      [%a %done *]  (on-take-done:event-core wire error.sign)
       [%c %done *]  (on-take-done:event-core wire error.sign)
       [%g %done *]  (on-take-done:event-core wire error.sign)
       [%j %done *]  (on-take-done:event-core wire error.sign)
@@ -871,6 +887,9 @@
   ++  on-take-done
     |=  [=wire error=(unit error)]
     ^+  event-core
+    ::
+    ?:  =(/ping wire)
+      set-sponsor-heartbeat-timer
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
@@ -1060,7 +1079,7 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
-    ?:  =(/a/ping wire)
+    ?:  =(/ping wire)
       ping-sponsor
     ::
     =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
@@ -1143,9 +1162,18 @@
     ?:  already-pending
       event-core
     (emit duct %pass /alien %j %pubs ship)
+  ::  +set-sponsor-heartbeat-timer: trigger sponsor ping after timeout
+  ::
+  ++  set-sponsor-heartbeat-timer
+    ^+  event-core
+    ::
+    (emit duct %pass /ping %b %wait `@da`(add now ~m1))
   ::  +ping-sponsor: message our sponsor so they know our lane
   ::
-  ++  ping-sponsor  (on-memo sponsor.ames-state /a/ping ~)
+  ++  ping-sponsor
+    ^+  event-core
+    ::
+    (emit duct %pass /ping %a %memo sponsor.ames-state /a/ping ~)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane.
@@ -1383,12 +1411,16 @@
         ::
         ?:  =(1 (end 0 1 bone))
           =/  =wire  (make-bone-wire her.channel bone)
+          ::  /a/ping means sponsor ping timer; no-op
+          ::
+          ?:  =(`path`/a/ping path.message)
+            peer-core
           ::
           =^  client-duct  ossuary.peer-state
             (get-duct ossuary.peer-state bone duct)
           ::
           ?-  i.path.message
-            %a  ~|  %pass-to-ames^her.channel  !!
+            %a  ~|  %bad-ames-message^path.message^her.channel  !!
             %c  (emit client-duct %pass wire %c %memo her.channel message)
             %g  (emit client-duct %pass wire %g %memo her.channel message)
             %j  (emit client-duct %pass wire %j %memo her.channel message)
