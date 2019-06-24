@@ -6651,6 +6651,23 @@
         (stag %| ;~(plug apat yque))
       ==
     --  ::de-purl
+  ::  +en-turf: encode +turf as a TLD-last domain string
+  ::
+  ++  en-turf
+    |=  =turf
+    ^-  @t
+    (rap 3 (flop (join '.' turf)))
+  ::  +de-turf: parse a TLD-last domain string into a TLD first +turf
+  ::
+  ++  de-turf
+    |=  host=@t
+    ^-  (unit turf)
+    %+  rush  host
+    %+  sear
+      |=  =host:eyre
+      ?.(?=(%& -.host) ~ (some p.host))
+    thos:de-purl:html
+  ::
   ::  MOVEME
   ::                                                    ::  ++fuel:html
   ++  fuel                                              ::  parse urbit fcgi
