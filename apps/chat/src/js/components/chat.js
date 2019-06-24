@@ -190,7 +190,6 @@ export class ChatScreen extends Component {
 
   render() {
     const { props, state } = this;
-    
 
     let messages = props.messages.slice(0);
 
@@ -208,15 +207,15 @@ export class ChatScreen extends Component {
     return (
       <div key={state.station} 
         className="h-100 w-100 overflow-hidden flex flex-column">
-        <div className='pl2 pt2 bb mb3'>
+        <div className='pl2 pt2 bb'>
           <h2>{state.circle}</h2>
           <ChatTabBar {...props}
             station={state.station}
             numPeers={peers.length} />
         </div>
         <div
-          className="overflow-y-scroll"
-          style={{ flexGrow: 1 }}
+          className="overflow-y-scroll pt3"
+          style={{ height: 'calc(100% - 157px)' }}
           onScroll={this.onScroll}>
           {chatMessages}
           <div ref={ el => { this.scrollElement = el; }}></div>

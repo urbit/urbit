@@ -57428,7 +57428,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	  render() {
 	    const { props, state } = this;
-	    
 
 	    let messages = props.messages.slice(0);
 
@@ -57445,26 +57444,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    return (
 	      react.createElement('div', { key: state.station, 
-	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 209}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 211}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 212}}, state.circle)
+	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 208}}
+	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 210}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 211}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 213}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 212}} )
 	        )
 	        , react.createElement('div', {
-	          className: "overflow-y-scroll",
-	          style: { flexGrow: 1 },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 217}}
+	          className: "overflow-y-scroll pt3" ,
+	          style: { height: 'calc(100% - 157px)' },
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 216}}
 	          , chatMessages
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 222}})
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 221}})
 	        )
 	        , react.createElement(ChatInput, { 
 	          api: props.api,
 	          numMsgs: lastMsgNum,
 	          station: state.station,
 	          circle: state.circle,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 224}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 223}} )
 	      )
 	    )
 	  }
