@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+case $# in
+  0) ship=zod; target=./zod;;
+  1) ship=$1; target=./$1;;
+  2) ship=$1; target=$2;;
+  *) echo "Usage: $0 [ship] [target-dir]" >&2
+     exit 1;;
+esac
+
+if [ -e "$target" ]
+then echo "Target directory '$target' already exists." >&2
+     exit 1
+fi
+
+pkg=$(nix-build nix/ops/boot-ship.nix --arg ship "\"$ship\"" --no-out-link)
+
+mkdir -p "$(dirname "$target")"
+cp -r $pkg/ $target
+chmod -R u+rw $target

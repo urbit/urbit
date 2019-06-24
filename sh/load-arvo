@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -ex
+
+test $# -eq 1
+
+ship=$1
+
+# Is a running ship
+test -d $ship/.urb
+test -f $ship/.vere.lock
+
+herb $ship -p hood -d '+hood/autoload |'
+
+herb $ship -p hood -d "+hood/mount %"
+
+rm -r $ship/home
+
+cp -r pkg/arvo $ship/home
+
+herb $ship -p hood -d "+hood/commit %home"
