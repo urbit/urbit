@@ -1242,6 +1242,16 @@
       ::
       ?^  error
         !!
+      ::  expire direct route
+      ::
+      ::    Since a packet's timer expired, mark the .lane.route as
+      ::    indirect.  The next packets we emit will be sent to the
+      ::    receiver's sponsorship chain in case the receiver's
+      ::    transport address has changed and this lane is no longer
+      ::    valid.
+      ::
+      =.  route.peer-state  `[direct=%.n lane:(need route.peer-state)]
+      ::
       (run-message-pump bone %wake ~)
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
