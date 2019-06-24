@@ -1158,19 +1158,20 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
-    ?~  route=route.peer-state
+    =*  try-next-sponsor
       ?:  =(ship her-sponsor.channel)
         event-core
       $(ship her-sponsor.channel)
+    ::
+    ?~  route=route.peer-state
+      try-next-sponsor
     ::
     =.  event-core
       (emit unix-duct.ames-state %give %send lane.u.route blob)
     ::
     ?:  direct.u.route
       event-core
-    ?:  =(ship her-sponsor.channel)
-      event-core
-    $(ship her-sponsor.channel)
+    try-next-sponsor
   ::  +got-peer-state: lookup .her state or crash
   ::
   ++  got-peer-state
