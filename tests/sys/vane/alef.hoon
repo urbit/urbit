@@ -178,7 +178,7 @@
   ::
   ;:  weld
     %+  expect-eq
-      !>  [~[//unix] %pass /alien %j %pubs ~nec]~
+      !>  [~[//unix] %pass /alien %j %public-keys ~nec]~
       !>  -.res
   ::
     %+  expect-eq

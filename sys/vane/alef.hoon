@@ -265,6 +265,34 @@
 ::
 +|  %kinetics
 ::
+::  $point: TODO move to jael
+::
++$  point
+  $:  =rift
+      =life
+      crypto-suite=@ud
+      encryption-key=pass
+      authentication-key=pass
+      sponsor=(unit @p)
+  ==
+::  $diff-point: TODO move to jael
+::
++$  diff-point
+  $%  [%changed-continuity rift=@ud]
+      $:  %changed-keys
+          =life
+          crypto-suite=@ud
+          continuity-number=@ud
+          encryption-key=@ud
+      ==
+      [%new-sponsor sponsor=(unit @p)]
+  ==
+::  $vent-result: TODO move to jael
+::
++$  vent-result
+  $%  [%full points=(map ship point)]
+      [%diff =ship diff-point]
+  ==
 ::  $channel: combined sender and receiver identifying data
 ::
 +$  channel
@@ -663,6 +691,10 @@
 ::    Ames passes a %memo to itself to trigger a heartbeat message to
 ::    our sponsor.
 ::
+::    Ames passes a %private-keys to Jael to request our private keys.
+::    Ames passes a %public-keys to Jael to request a peer's public
+::    keys.
+::
 +$  note
   $%  $:  %a
       $%  [%memo sponsor=ship message=_[/a/ping ~]]
@@ -680,9 +712,9 @@
       $:  %j
       $%  [%memo =ship =message]
       ::
-          [%pubs =ship]
+          [%private-keys ~]
+          [%public-keys =ship]
           [%turf ~]
-          [%vein ~]
   ==  ==  ==
 ::  $sign: response from other vane
 ::
@@ -716,9 +748,9 @@
       $%  [%done error=(unit error)]
           [%memo =message]
       ::
-          [%pubs public:able:jael]
+          [%private-keys =life =private-key]
+          [%public-keys =vent-result]
           [%turf turfs=(list turf)]
-          [%vein =life vein=(map life ring)]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
@@ -850,9 +882,9 @@
       [%g %memo *]  (on-take-memo:event-core wire message.sign)
       [%j %memo *]  (on-take-memo:event-core wire message.sign)
     ::
-      [%j %pubs *]  !!
-      [%j %turf *]  (on-take-turf:event-core turfs.sign)
-      [%j %vein *]  !!
+      [%j %private-keys *]  (on-priv:event-core [life private-key]:sign)
+      [%j %public-keys *]   (on-publ:event-core wire vent-result.sign)
+      [%j %turf *]          (on-take-turf:event-core turfs.sign)
     ==
   ::
   [moves ames-gate]
@@ -1091,11 +1123,11 @@
   ::  +on-init: first boot; subscribe to our info from jael
   ::
   ++  on-init
-    |=  =ship
+    |=  our=ship
     ^+  event-core
     ::
-    =~  (emit duct %pass /init/pubs %j %pubs ship)
-        (emit duct %pass /init/vein %j %vein ~)
+    =~  (emit duct %pass /init/public-keys %j %public-keys our)
+        (emit duct %pass /init/private-keys %j %private-keys ~)
         (emit duct %pass /init/turf %j %turf ~)
     ==
   ::  +on-sunk: handle continuity breach of .ship; wipe its state
@@ -1112,6 +1144,65 @@
     ::
     =.  peers.ames-state  (~(del by peers.ames-state) ship)
     event-core
+  ::  +on-priv: set our private key to jael's response
+  ::
+  ++  on-priv
+    |=  [=life =private-key]
+    ^+  event-core
+    ::
+    =.  life.ames-state         life
+    =.  crypto-core.ames-state  (nol:nu:crub:crypto private-key)
+    ::
+    event-core
+  ::  +on-publ: update pki data for peer or self
+  ::
+  ++  on-publ
+    |=  [=wire =vent-result]
+    ^+  event-core
+    ::
+    |^  ^+  event-core
+        ?-    vent-result
+            [%diff @ %changed-continuity *]
+          (on-publ-breach [ship rift]:vent-result)
+        ::
+            [%diff @ %changed-keys *]
+          (on-publ-rekey [ship +>+]:vent-result)
+        ::
+            [%diff @ %new-sponsor *]
+          (on-publ-sponsor [ship sponsor]:vent-result)
+        ::
+            [%full *]  (on-publ-full points.vent-result)
+        ==
+    ::
+    ++  on-publ-breach
+      |=  [=ship =rift]
+      ^+  event-core
+      ::
+      !!
+    ::
+    ++  on-publ-rekey
+      |=  $:  =ship
+              =life
+              crypto-suite=@ud
+              continuity-number=@ud
+              encryption-key=@ud
+          ==
+      ^+  event-core
+      ::
+      !!
+    ::
+    ++  on-publ-sponsor
+      |=  [=ship sponsor=(unit ship)]
+      ^+  event-core
+      ::
+      !!
+    ::
+    ++  on-publ-full
+      |=  points=(map ship point)
+      ^+  event-core
+      ::
+      !!
+    --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
   ++  on-take-turf
@@ -1161,7 +1252,7 @@
     ::
     ?:  already-pending
       event-core
-    (emit duct %pass /alien %j %pubs ship)
+    (emit duct %pass /alien %j %public-keys ship)
   ::  +set-sponsor-heartbeat-timer: trigger sponsor ping after timeout
   ::
   ++  set-sponsor-heartbeat-timer
