@@ -19,7 +19,7 @@
 
     c3_w met_w = u3r_met(3, scalar);
     if ( met_w > 32 ) {
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
 
     c3_y scalar_y[32];

@@ -19,7 +19,7 @@
 
     met_w = u3r_met(3, a);
     if (met_w > 32) {
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
     c3_y a_y[32];
     memset(a_y, 0, 32);
@@ -27,7 +27,7 @@
 
     met_w = u3r_met(3, a_point);
     if (met_w > 32) {
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
     c3_y a_point_y[32];
     memset(a_point_y, 0, 32);
@@ -35,7 +35,7 @@
 
     met_w = u3r_met(3, b);
     if (met_w > 32) {
-      return u3m_bail(c3__exit);
+      return u3m_bail(c3__fail);
     }
     c3_y b_y[32];
     memset(b_y, 0, 32);
