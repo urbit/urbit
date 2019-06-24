@@ -2,7 +2,7 @@
 
 env.make_derivation rec {
   name    = "ge-additions";
-  builder = ./builder.sh;
+  builder = ./release.sh;
   src     = ../../../pkg/ge-additions;
 
   cross_inputs = [ deps.ed25519 ];
