@@ -999,7 +999,9 @@
     ::  if we don't know them, enqueue the packet to be handled later
     ::
     ?.  ?=([~ %known *] sndr-state)
-      (enqueue-alien-rcv-packet lane packet)
+      %+  enqueue-alien-todo  sndr.packet
+      |=  todos=pending-requests
+      todos(rcv-packets [[lane packet] rcv-packets.todos])
     ::  decrypt packet contents using symmetric-key.channel
     ::
     ::    If we know them, we have a $channel with them, which we've
@@ -1022,57 +1024,6 @@
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet)
-  ::  +enqueue-alien-rcv-packet: store packet from untrusted source
-  ::
-  ++  enqueue-alien-rcv-packet
-    |=  [=lane =packet]
-    ^+  event-core
-    ::
-    %+  enqueue-alien-todo  sndr.packet
-    |=  todos=pending-requests
-    todos(rcv-packets [[lane packet] rcv-packets.todos])
-  ::  +enqueue-alien-snd-packet: store packet to send to unknown
-  ::
-  ++  enqueue-alien-snd-packet
-    |=  [=ship =blob]
-    ^+  event-core
-    ::
-    %+  enqueue-alien-todo  ship
-    |=  todos=pending-requests
-    todos(snd-packets (~(put in snd-packets.todos) blob))
-  ::  +enqueue-alien-message: store message to untrusted source
-  ::
-  ++  enqueue-alien-message
-    |=  [=ship =message]
-    ^+  event-core
-    ::
-    %+  enqueue-alien-todo  ship
-    |=  todos=pending-requests
-    todos(snd-messages [[duct message] snd-messages.todos])
-  ::  +enqueue-alien-todo: helper to enqueue a pending request
-  ::
-  ::    Also requests key and life from Jael on first contact.
-  ::
-  ++  enqueue-alien-todo
-    |=  [=ship mutate=$-(pending-requests pending-requests)]
-    ^+  event-core
-    ::
-    =/  ship-state  (~(get by peers.ames-state) ship)
-    ::  create a default $pending-requests on first contact
-    ::
-    =+  ^-  [already-pending=? todos=pending-requests]
-        ?~  ship-state
-          [%.n *pending-requests]
-        [%.y ?>(?=(%alien -.u.ship-state) +.u.ship-state)]
-    ::  mutate .todos and apply to permanent state
-    ::
-    =.  todos             (mutate todos)
-    =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
-    ::  ask jael for .sndr life and keys on first contact
-    ::
-    ?:  already-pending
-      event-core
-    (emit duct %pass /alien %j %pubs ship)
   ::  +on-take-memo: receive request to give message to peer
   ::
   ++  on-take-memo
@@ -1097,7 +1048,9 @@
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
-      (enqueue-alien-message ship message)
+      %+  enqueue-alien-todo  ship
+      |=  todos=pending-requests
+      todos(snd-messages [[duct message] snd-messages.todos])
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
@@ -1170,6 +1123,30 @@
   ::
   ++  on-born  event-core
   ++  on-vega  event-core
+  ::  +enqueue-alien-todo: helper to enqueue a pending request
+  ::
+  ::    Also requests key and life from Jael on first contact.
+  ::
+  ++  enqueue-alien-todo
+    |=  [=ship mutate=$-(pending-requests pending-requests)]
+    ^+  event-core
+    ::
+    =/  ship-state  (~(get by peers.ames-state) ship)
+    ::  create a default $pending-requests on first contact
+    ::
+    =+  ^-  [already-pending=? todos=pending-requests]
+        ?~  ship-state
+          [%.n *pending-requests]
+        [%.y ?>(?=(%alien -.u.ship-state) +.u.ship-state)]
+    ::  mutate .todos and apply to permanent state
+    ::
+    =.  todos             (mutate todos)
+    =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
+    ::  ask jael for .sndr life and keys on first contact
+    ::
+    ?:  already-pending
+      event-core
+    (emit duct %pass /alien %j %pubs ship)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane.
@@ -1183,7 +1160,9 @@
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
-      (enqueue-alien-snd-packet ship blob)
+      %+  enqueue-alien-todo  ship
+      |=  todos=pending-requests
+      todos(snd-packets (~(put in snd-packets.todos) blob))
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
