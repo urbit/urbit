@@ -273,6 +273,7 @@
       ::  our data, common to all dyads
       ::
       $:  =our=life
+          our-sponsor=ship
           crypto-core=acru:ames
       ==
       ::  her data, specific to this dyad
@@ -357,6 +358,7 @@
   $:  peers=(map ship ship-state)
       =unix=duct
       =life
+      sponsor=ship
       crypto-core=acru:ames
   ==
 ::  $ship-state: all we know about a peer
@@ -1058,6 +1060,9 @@
     |=  [=wire error=(unit tang)]
     ^+  event-core
     ::
+    ?:  =(/a/ping wire)
+      ping-sponsor
+    ::
     =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
     ::
     =/  =peer-state  (got-peer-state her)
@@ -1138,6 +1143,9 @@
     ?:  already-pending
       event-core
     (emit duct %pass /alien %j %pubs ship)
+  ::  +ping-sponsor: message our sponsor so they know our lane
+  ::
+  ++  ping-sponsor  (on-memo sponsor.ames-state /a/ping ~)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane.
