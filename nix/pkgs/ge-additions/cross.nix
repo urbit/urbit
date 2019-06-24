@@ -5,7 +5,7 @@ env.make_derivation rec {
   builder = ./builder.sh;
   src     = ../../../pkg/ge-additions;
 
-  nativeBuildInputs = [ deps.ed25519 ];
+  cross_inputs = [ deps.ed25519 ];
 
   CC = "${env.host}-gcc";
   AR = "${env.host}-ar";
