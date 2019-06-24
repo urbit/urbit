@@ -872,13 +872,10 @@
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
-    =/  =peer-state
-      =-  ?>(?=(%known -<) ->)
-      (~(got by peers.ames-state) her)
-    ::
-    =/  =channel   [[our her] now +>.ames-state -.peer-state]
-    =/  peer-core  (make-peer-core peer-state channel)
-    =/  ok=?       ?=(~ error)
+    =/  =peer-state  (got-peer-state her)
+    =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    =/  peer-core    (make-peer-core peer-state channel)
+    =/  ok=?         ?=(~ error)
     ::  send message (n)ack packet
     ::
     =.  event-core  abet:(run-message-still:peer-core bone %done ok)
@@ -1032,11 +1029,8 @@
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
     ::
-    =/  =peer-state
-      =-  ?>(?=(%known -<) ->)
-      (~(got by peers.ames-state) her)
-    ::
-    =/  =channel  [[our her] now +>.ames-state -.peer-state]
+    =/  =peer-state  (got-peer-state her)
+    =/  =channel     [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone message)
   ::  +on-memo: handle request to send message
@@ -1066,11 +1060,8 @@
     ::
     =+  ^-  [her=ship =bone]  (parse-pump-timer-wire wire)
     ::
-    =/  =peer-state
-      =-  ?>(?=(%known -<) ->)
-      (~(got by peers.ames-state) her)
-    ::
-    =/  =channel  [[our her] now +>.ames-state -.peer-state]
+    =/  =peer-state  (got-peer-state her)
+    =/  =channel     [[our her] now +>.ames-state -.peer-state]
     ::
     abet:(on-wake:(make-peer-core peer-state channel) bone error)
   ::  +on-init: first boot; subscribe to our info from jael
@@ -1180,6 +1171,15 @@
     ?:  =(ship her-sponsor.channel)
       event-core
     $(ship her-sponsor.channel)
+  ::  +got-peer-state: lookup .her state or crash
+  ::
+  ++  got-peer-state
+    |=  her=ship
+    ^-  peer-state
+    ::
+    ~|  %freaky-alien^her
+    =-  ?>(?=(%known -<) ->)
+    (~(got by peers.ames-state) her)
   ::  +make-peer-core: create nested |peer-core for per-peer processing
   ::
   ++  make-peer-core
