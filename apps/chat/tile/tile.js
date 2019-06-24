@@ -40,30 +40,28 @@ export default class ChatTile extends Component {
     if (state.numbers && state.configs) {
       let numbers = {};
 
-      state.numbers.forEach((num) => {
+      for (let i = 0; i < state.numbers.length; i++) {
+        let num = state.numbers[i];
         numbers[num.circle] = num.length;
-        if (num.circle === inviteCircle) {
-          inviteNum = inviteNum + num.length;
-        } else {
-          msgNum = msgNum + num.length;
-        }
-      });
+      }
 
-      Object.keys(state.configs).forEach((key) => {
+      let configs = Object.keys(state.configs);
+      for (let i = 0; i < configs.length; i++) {
+        let key = configs[i];
         let host = key.split('/')[0];
-        if (host !== `~${window.ship}`) { return; }
-        if (!state.configs[key]) { return; }
-        let red = state.configs[key].red;
-        if (key === inviteCircle) {
-          inviteNum = inviteNum - red;
-        } else {
-          msgNum = msgNum - red;
-        }
-      }); 
-    }
 
-    if (inviteNum === -1) {
-      inviteNum = 0;
+        if (!state.configs[key]) { break; }
+
+        let red = state.configs[key].red;
+
+        if (key === inviteCircle) {
+          inviteNum = inviteNum - red + numbers[key];
+        } else if (host === `~${window.ship}`) {
+          msgNum = msgNum - red + numbers[key];
+        } else {
+          msgNum = msgNum + numbers[key];
+        }
+      } 
     }
 
     return (

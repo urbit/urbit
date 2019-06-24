@@ -78,12 +78,6 @@ export class SidebarInvite extends Component {
                 }
               }]
             }
-          },
-          {
-            read: {
-              nom: 'i',
-              red: this.props.config.red + 2
-            }
           }
         ])
       }

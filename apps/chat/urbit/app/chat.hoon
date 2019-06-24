@@ -79,7 +79,7 @@
       ?~  lis
         [cir 0]
       =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
-      [cir num.last]
+      [cir (add num.last 1)]
   =/  maptjson  *(map @t json)
   =.  maptjson
     (~(put by maptjson) 'config' (config-to-json str))

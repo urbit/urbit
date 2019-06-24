@@ -21,19 +21,31 @@ export class ChatScreen extends Component {
       scrollLocked: false,
     };
 
-    this.messageLength = 0;
     this.hasAskedForMessages = false;
     this.topMessage = {};
     this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
 
     this.scrollClosure = false;
+
+    this.updateReadInterval = setInterval(
+      this.updateReadNumber.bind(this),
+      1000
+    );
+
   }
 
   componentDidMount() {
     this.updateNumPeople();
     if (this.scrollElement) {
       this.scrollElement.scrollIntoView(false, { block: 'end' });
+    }
+  }
+
+  componentWillUnMount() {
+    if (this.updateReadInterval) {
+      clearInterval(this.updateReadInterval);
+      this.updateReadInterval = null;
     }
   }
 
@@ -55,13 +67,36 @@ export class ChatScreen extends Component {
         numPeople: 0,
         scrollLocked: false
       }, () => {
-        this.updateReadNumber();
         this.updateNumPeople();
         this.scrollToBottom();
       });
     }
   }
 
+  updateReadNumber() {
+    const { props, state } = this;
+
+    let internalCircle = 'hall-internal-' + state.circle;
+    let internalStation = `~${window.ship}/${internalCircle}`;
+
+    let internalConfig = props.configs[internalStation] || false;
+    let regularConfig = props.configs[state.station] || false;
+
+    let config = internalConfig || regularConfig;
+    let messages = props.messages;
+
+    let lastMsgNum = (messages.length > 0) ?
+      ( messages[messages.length - 1].num + 1 ) : 0;
+
+    if (config && config.red < lastMsgNum) {
+      if (internalConfig) {
+        props.api.read(internalCircle, lastMsgNum);
+      } else {
+        props.api.read(state.circle, lastMsgNum);
+      }
+    }
+  }
+  
   askForMessages() {
     const { props, state } = this;
     let messages = props.messages;
@@ -112,30 +147,6 @@ export class ChatScreen extends Component {
     }
   }
 
-  updateReadNumber() {
-    const { props, state } = this;
-
-    let internalCircle = 'hall-internal-' + state.circle;
-    let internalStation = `~${window.ship}/${internalCircle}`;
-
-    let internalConfig = props.configs[internalStation] || false;
-    let regularConfig = props.configs[state.station] || false;
-
-    let config = internalConfig || regularConfig;
-    let messages = props.messages;
-
-    let lastMsgNum = (messages.length > 0) ?
-      messages[messages.length - 1].num : 0;
-
-    if (config && config.red < lastMsgNum) {
-      if (internalConfig) {
-        props.api.read(internalCircle, lastMsgNum);
-      } else {
-        props.api.read(state.circle, lastMsgNum);
-      }
-    }
-  }
-
   updateNumPeople() {
     let conf = this.props.configs[this.state.station] || {};
     let sis = _.get(conf, 'con.sis');
@@ -180,20 +191,12 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
     
-    if (props.messages.length !== this.messageLength && !this.scrollClosure) {
-      this.scrollClosure = true;
-      setTimeout(() => {
-        this.scrollToBottom();
-        this.updateReadNumber();
-        this.scrollClosure = null;
-      }, 200);
-    }
-    this.messageLength = props.messages.length;
+
+    let messages = props.messages.slice(0);
 
     let lastMsgNum = (messages.length > 0) ?
       messages[messages.length - 1].num : 0;
 
-    let messages = props.messages.slice(0);
     if (messages.length > 50 * state.numPages) {
       messages = messages
         .slice(messages.length - (50 * state.numPages), messages.length);
