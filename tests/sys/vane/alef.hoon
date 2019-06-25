@@ -34,34 +34,30 @@
   %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
   :-  %known
   ^-  peer-state:alef
-  :-  :*  symmetric-key=bob-sym
-          life=3
-          public-key=bob-pub
-          sponsor=~marzod
-      ==
-  :*  [~ direct=%.y `lane:alef`[%& ~nec]]
-      *ossuary:alef
-      *(map bone:alef message-pump-state:alef)
-      *(map bone:alef message-still-state:alef)
-      *(set [bone:alef message-num:alef])
-  ==
+  =|  =peer-state:alef
+  =.  -.peer-state
+    :*  symmetric-key=bob-sym
+        life=3
+        public-key=bob-pub
+        sponsor=~marzod
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:alef`[%& ~nec]]
+  peer-state
 ::
 =.  life.ames-state.bob  3
 =.  peers.ames-state.bob
   %+  ~(put by peers.ames-state.bob)  ~nec
   :-  %known
   ^-  peer-state:alef
-  :-  :*  symmetric-key=alice-sym
-          life=2
-          public-key=alice-pub
-          sponsor=~nec
-      ==
-  :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
-      *ossuary:alef
-      *(map bone:alef message-pump-state:alef)
-      *(map bone:alef message-still-state:alef)
-      *(set [bone:alef message-num:alef])
-  ==
+  =|  =peer-state:alef
+  =.  -.peer-state
+    :*  symmetric-key=alice-sym
+        life=2
+        public-key=alice-pub
+        sponsor=~nec
+    ==
+  =.  route.peer-state  `[direct=%.y `lane:alef`[%| `@`%lane-bar]]
+  peer-state
 ::
 |%
 ++  move-to-packet
