@@ -1278,7 +1278,7 @@
         |=  [=ship =point =peer-state]
         ^+  event-core
         ::
-        !!
+        (insert-peer-state ship peer-state [life `@`encryption-key]:point)
       --
     ::
     ++  insert-peer-state
