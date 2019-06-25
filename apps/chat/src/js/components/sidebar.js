@@ -10,6 +10,34 @@ import { SidebarInvite } from '/components/lib/sidebar-invite';
 
 export class Sidebar extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.setInvitesToReadInterval = setInterval(
+      this.setInvitesToRead.bind(this),
+      1000
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.setInvitesToReadInterval) {
+      clearInterval(this.setInvitesToReadInterval);
+      this.setInvitesToReadInterval = null;
+    }
+  }
+
+  setInvitesToRead() {
+    const { props } = this;
+    if (
+      props.inviteConfig &&
+      'red' in props.inviteConfig &&
+      props.invites.length > 0 &&
+      props.inviteConfig.red < (props.invites[props.invites.length - 1].num + 1)
+    ) {
+      props.api.read('i', props.invites[props.invites.length - 1].num + 1);
+    }
+  }
+
   onClickNew() {
     this.props.history.push('/~chat/new');
   }
@@ -48,13 +76,7 @@ export class Sidebar extends Component {
         return b.wen - a.wen;
       })
       .map((obj) => {
-        let host = `~${window.ship}`;
-        let circle = obj.cir.split('/')[1];
-
         let unread = props.unreads[obj.cir];
-        if (host + '/hall-internal-' + circle in props.unreads) {
-          unread = props.unreads[host + '/hall-internal-' + circle];
-        }
 
         return (
           <SidebarItem

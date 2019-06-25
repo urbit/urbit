@@ -15,7 +15,8 @@ export class MemberScreen extends Component {
       circle: props.match.params.station,
       host: props.match.params.ship,
       invMembers: '',
-      error: false
+      error: false,
+      success: false
     };
 
   }
@@ -35,9 +36,16 @@ export class MemberScreen extends Component {
 
     if (isValid) {
       props.api.permit(state.circle, sis, true);
-      this.setState({ error: false });
+      if (this.textarea) {
+        this.textarea.value = '';
+      }
+      this.setState({
+        error: false,
+        success: true,
+        invMembers: ''
+      });
     } else {
-      this.setState({ error: true });
+      this.setState({ error: true, success: false });
     }
   }
 
@@ -68,6 +76,18 @@ export class MemberScreen extends Component {
       <div></div>
     );
 
+    let successElem = !!this.state.success ? (
+      <p className="pa2 nice-green label-regular">Sent invites!</p>
+    ) : (
+      <div></div>
+    );
+
+
+    let inviteButtonClasses = "label-regular underline gray btn-font pointer";
+    if (!this.state.error) {
+      inviteButtonClasses = inviteButtonClasses + ' black';
+    }
+
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
         <div className='pl2 pt2 bb mb3'>
@@ -91,7 +111,8 @@ export class MemberScreen extends Component {
               <p className="label-regular gray mb3">
                 Invite new participants to this chat.
               </p>
-              <textarea 
+              <textarea
+                ref={ e => { this.textarea = e; } }
                 className="w-80 db ba overflow-y-hidden gray mb2"
                 style={{ 
                   resize: 'none',
@@ -100,10 +121,11 @@ export class MemberScreen extends Component {
                 onChange={this.inviteMembersChange.bind(this)}></textarea>
               <button
                 onClick={this.inviteMembers.bind(this)}
-                className="label-regular underline gray btn-font pointer">
+                className={inviteButtonClasses}>
                 Invite
               </button>
               {errorElem}
+              {successElem}
             </div>
           ) : null }
         </div>

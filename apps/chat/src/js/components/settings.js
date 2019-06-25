@@ -17,23 +17,29 @@ export class SettingsScreen extends Component {
 
   deleteChat() {
     const { props, state } = this;
-    props.api.delete(state.circle);
+    if (state.host === `~${window.ship}`) {
+      props.api.delete(state.circle);
+    } else {
+      let internalCircle = 'hall-internal-' + state.circle;
 
-    if (state.station in props.store.state.messages) {
-      delete props.store.state.messages[state.station];
+      props.api.chat([
+        {
+          source: {
+            nom: 'inbox',
+            sub: false,
+            srs: [state.station]
+          }
+        },
+        {
+          delete: {
+            nom: internalCircle,
+            why: ''
+          }
+        }
+      ]);
     }
-
-    if (state.station in props.store.state.configs) {
-      delete props.store.state.configs[state.station];
-    }
-
-    props.store.state.circles = props.store.state.circles
-      .filter((elem) => {
-        return elem !== state.circle;
-      });
 
     props.history.push('/~chat');
-    props.store.setState(props.store.state);
   }
 
   render() {
@@ -51,9 +57,7 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>
-          <div className="w-50 fl pr2 mt3">
-          </div>
-          <div className="w-50 fr pl2 mt3">
+          <div className="w-50 fl pl2 mt3">
             <p className="body-regular">Delete Chat</p>
             <p className="label-regular gray mb3">
               Permanently delete this chat.
@@ -61,6 +65,9 @@ export class SettingsScreen extends Component {
             <a onClick={this.deleteChat.bind(this)}
               className="pointer btn-font underline nice-red">-> Delete</a>
           </div>
+          <div className="w-50 fr pr2 mt3">
+          </div>
+
         </div>
       </div>
     )

@@ -11,6 +11,7 @@ export class UpdateReducer {
       this.reduceConfig(_.get(data, 'config', false), state);
       this.reduceCircles(_.get(data, 'circles', false), state);
       this.reducePeers(_.get(data, 'peers', false), state);
+      this.reduceDelete(_.get(data, 'delete', false), state);
     }
   }
 
@@ -39,13 +40,10 @@ export class UpdateReducer {
 
         if (staMsgs.length > 0 && staMsgs[0].num - 1 === msgs.end) {
           state.messages[msgs.circle] = msgs.envelopes.concat(staMsgs);
-
         } else if (staMsgs.length === 0) {
           state.messages[msgs.circle] = msgs.envelopes;
-
         } else {
           console.error('%messages has inconsistent indices');
-
         }
 
       } else {
@@ -70,6 +68,13 @@ export class UpdateReducer {
   reducePeers(peers, state) {
     if (peers) {
       state.peers[peers.circle] = peers.peers;
+    }
+  }
+
+  reduceDelete(del, state) {
+    if (del) {
+      delete state.configs[del.circle];
+      state.messages[del.circle] = [];
     }
   }
 

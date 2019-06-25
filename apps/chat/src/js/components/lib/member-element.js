@@ -19,24 +19,27 @@ export class MemberElement extends Component {
           Host
         </p>
       );
-    } else {
+    } else if (window.ship !== props.ship) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
            className="w-40 dib underline black btn-font">
            Remove
         </a>
       );
+    } else {
+      actionElem = (
+        <span></span>
+      );
     }
 
     return (
       <div>
-        <a
+        <p
           className={
-            "w-60 dib underline black pr3 mb2 label-small-mono label-regular"
-          }
-          href={`/~profile/${props.ship}`}>
+            "w-60 dib black pr3 mb2 label-small-mono label-regular"
+          }>
           {props.ship}
-        </a>
+        </p>
         {actionElem}
       </div>
     );

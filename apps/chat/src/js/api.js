@@ -35,8 +35,12 @@ class UrbitApi {
     this.action("hall", "hall-action", data);
   }
 
-  chat(data) {
-    this.action("chat", "chat-action", data);
+  chat(lis) {
+    this.action("chat", "chat-action", {
+      actions: {
+        lis
+      }
+    });
   }
 
   action(appl, mark, data) {

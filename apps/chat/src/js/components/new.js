@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { uuid } from '/lib/util';
+import { uuid, isPatTa } from '/lib/util';
 
 
 export class NewScreen extends Component {
@@ -10,7 +10,8 @@ export class NewScreen extends Component {
 
     this.state = {
       idName: '',
-      invites: ''
+      invites: '',
+      showNameError: false
     };
 
     this.idChange = this.idChange.bind(this);
@@ -18,7 +19,10 @@ export class NewScreen extends Component {
   }
 
   idChange(event) {
-    this.setState({idName: event.target.value});
+    this.setState({
+      idName: event.target.value,
+      showNameError: !isPatTa(event.target.value)
+    });
   }
 
   invChange(event) {
@@ -26,13 +30,14 @@ export class NewScreen extends Component {
   }
 
   onClickCreate() {
-    if (!this.state.idName) { return; }
+    const { props, state } = this;
+    if (!state.idName || !!state.showNameError) { return; }
 
-    let station = `~${this.props.api.authTokens.ship}/${this.state.idName}`;
+    let station = `~${props.api.authTokens.ship}/${state.idName}`;
     let actions = [
       {
         create: {
-          nom: this.state.idName,
+          nom: state.idName,
           des: "chatroom",
           sec: "channel"
         }
@@ -46,15 +51,15 @@ export class NewScreen extends Component {
       }
     ];
 
-    if (this.state.invites.length > 0) {
-      let aud = this.state.invites
+    if (state.invites.length > 0) {
+      let aud = state.invites
         .trim()
         .split(",")
         .map(t => t.trim().substr(1));
 
       actions.push({
         permit: {
-          nom: this.state.idName,
+          nom: state.idName,
           sis: aud,
           inv: true
         }
@@ -73,16 +78,22 @@ export class NewScreen extends Component {
       });
     }
 
-    this.props.api.chat({
-      actions: {
-        lis: actions
-      }
-    });
-    
-    this.props.history.push('/~chat/' + station);
+    props.api.chat(actions);
+    props.history.push('/~chat/' + station);
   }
 
   render() {
+    let nameErrorElem = this.state.showNameError ? (
+      <p className="nice-red label-regular">Chat names may contain alphabetical characters, numbers, dots, or dashes.</p>
+    ) : (
+      <div></div>
+    );
+
+    let createClasses = "label-regular btn-font pointer underline bn";
+    if (!this.state.idName || !!this.state.showNameError) {
+      createClasses = createClasses + ' gray';
+    }
+
     return (
       <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
         <h2 className="mb3">Create a New Chat</h2>
@@ -92,6 +103,7 @@ export class NewScreen extends Component {
             className="body-large bn pa2 pl0 mb2 w-50"
             placeholder="secret-chat"
             onChange={this.idChange} />
+          { nameErrorElem }
           <p className="label-regular fw-bold">Invites</p>
           <input 
             className="body-large bn pa2 pl0 mb2 w-50"
@@ -100,7 +112,9 @@ export class NewScreen extends Component {
           <br />
           <button
             onClick={this.onClickCreate.bind(this)}
-            className="body-large pointer underline bn">-> Create</button>
+            className={createClasses}
+            style={{ fontSize: '18px' }}
+          >-> Create</button>
         </div>
       </div>
     );
