@@ -426,13 +426,35 @@
           ::
             configs  (~(del by configs.str.sta) affectedcir)
           ==
+        =/  fakecir/circle:hall
+          :-  our.bol
+          %-  crip
+          %+  weld  (trip 'hall-internal-')  (trip nom.affectedcir)
         ::
-        :_  this(str.sta str)
-        %+  weld
-          [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
-        %+  weld
-          (send-chat-update [[%inbox newinbox] str])
-          (send-chat-update [[%delete affectedcir] str])
+        ?~  (~(get by configs.str) fakecir)
+          ::  just forward the delete to our clients
+          ::
+          :_  this(str.sta str)
+          %+  weld
+            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
+          %+  weld
+            (send-chat-update [[%inbox newinbox] str])
+            (send-chat-update [[%delete affectedcir] str])
+        ::  if we get a delete from another ship, delete our fake circle copy
+        ::
+        ~&  %deletefake
+        =/  deletefake/poke
+          :-  %hall-action
+              [%delete nom.fakecir ~]
+          :_  this(str.sta str)
+          %+  weld
+            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
+          %+  weld
+            [ost.bol %poke /fake [our.bol %hall] deletefake]~
+          %+  weld
+            (send-chat-update [[%inbox newinbox] str])
+            (send-chat-update [[%delete affectedcir] str])
+        ::
       ==
       ::  end of branching on dif.sto type
     ==
