@@ -63,9 +63,23 @@ export class Root extends Component {
         if (messages[cir].length === 0) {
           unreads[cir] = false;
         } else {
-          unreads[cir] =
-            state.configs[cir].red <
-            messages[cir][messages[cir].length - 1].num;
+          let host = `~${window.ship}`;
+          let circle = cir.split('/')[1];
+          let internalStation = host + '/hall-internal-' + circle;
+
+          if (internalStation in state.configs) {
+            console.log(state.configs[internalStation].red, messages[cir]);
+
+            unreads[cir] = 
+              state.configs[internalStation].red <=
+              messages[cir][messages[cir].length - 1].num;
+          } else {
+            console.log(cir, messages[cir], state.configs[cir].red);
+
+            unreads[cir] =
+              state.configs[cir].red <=
+              messages[cir][messages[cir].length - 1].num;
+          }
         }
       } else {
         unreads[cir] = false;

@@ -76,13 +76,7 @@ export class Sidebar extends Component {
         return b.wen - a.wen;
       })
       .map((obj) => {
-        let host = `~${window.ship}`;
-        let circle = obj.cir.split('/')[1];
-
         let unread = props.unreads[obj.cir];
-        if (host + '/hall-internal-' + circle in props.unreads) {
-          unread = props.unreads[host + '/hall-internal-' + circle];
-        }
 
         return (
           <SidebarItem
