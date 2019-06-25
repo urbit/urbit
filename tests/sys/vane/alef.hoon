@@ -32,8 +32,6 @@
 =.  life.ames-state.alice  2
 =.  peers.ames-state.alice
   %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
-  :-  %known
-  ^-  peer-state:alef
   =|  =peer-state:alef
   =.  -.peer-state
     :*  symmetric-key=bob-sym
@@ -42,13 +40,11 @@
         sponsor=~marzod
     ==
   =.  route.peer-state  `[direct=%.y `lane:alef`[%& ~nec]]
-  peer-state
+  [%known peer-state]
 ::
 =.  life.ames-state.bob  3
 =.  peers.ames-state.bob
   %+  ~(put by peers.ames-state.bob)  ~nec
-  :-  %known
-  ^-  peer-state:alef
   =|  =peer-state:alef
   =.  -.peer-state
     :*  symmetric-key=alice-sym
@@ -57,7 +53,7 @@
         sponsor=~nec
     ==
   =.  route.peer-state  `[direct=%.y `lane:alef`[%| `@`%lane-bar]]
-  peer-state
+  [%known peer-state]
 ::
 |%
 ++  move-to-packet
