@@ -217,7 +217,7 @@
     $(b t.b, a (put a i.b))
   ::  +uni: unify two ordered maps
   ::
-  ::    TODO: document a/b precedence or disjointness constraint
+  ::    .b takes precedence over .a if keys overlap.
   ::
   ++  uni
     |=  [a=(tree item) b=(tree item)]
@@ -424,8 +424,6 @@
 ::         information completes the packet+nack-trace, we remove the
 ::         entry and emit a nack to the local vane that asked us to send
 ::         the message.
-::
-::    TODO: should .route be a unit, or do we always need a lane?
 ::
 +$  peer-state
   $:  $:  =symmetric-key
@@ -753,14 +751,12 @@
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
-::    TODO: rename %send to %memo
-::
-::    %send: packetize and send application-level message
+::    %memo: packetize and send application-level message
 ::    %hear: handle receipt of ack on fragment or message
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
-  $%  [%send =message]
+  $%  [%memo =message]
       [%hear =message-num =ack-meat]
       [%wake ~]
   ==
@@ -939,7 +935,7 @@
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
     =.  peer-core              (make-peer-core peer-state channel)
     ::
-    abet:(run-message-pump:peer-core nack-trace-bone %send /a/nax error)
+    abet:(run-message-pump:peer-core nack-trace-bone %memo /a/nax error)
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
@@ -1000,13 +996,12 @@
       event-core
     ::
     =/  =open-packet  ;;(open-packet packet)
-    ::  TODO: does the comet actually need to know our life?
     ::  assert .our and .her and lives match
     ::
-    ?>  =(our rcvr.open-packet)
-    ?>  =(sndr.packet sndr.open-packet)
-    ?>  =(life.ames-state rcvr-life.open-packet)
-    ?>  =(1 sndr-life.open-packet)
+    ?>  .=       sndr.open-packet  sndr.packet
+    ?>  .=       rcvr.open-packet  our
+    ?>  .=  sndr-life.open-packet  1
+    ?>  .=  rcvr-life.open-packet  life.ames-state
     ::  no ghost comets allowed
     ::
     ?>  (lte 256 (^sein:title sndr.packet))
@@ -1433,7 +1428,7 @@
       |=  [=bone =message]
       ^+  peer-core
       ::
-      (run-message-pump bone %send message)
+      (run-message-pump bone %memo message)
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -1697,7 +1692,7 @@
     ^+  message-pump
     ::
     ?-  -.task
-      %send  (on-send message.task)
+      %memo  (on-send message.task)
       %wake  (run-packet-pump task)
       %hear
         ?-  -.ack-meat.task
