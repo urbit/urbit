@@ -24,7 +24,6 @@ export class Subscription {
     fetch(`/~chat/scroll/${circle}/${start}/${end}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log('handled', json);
         store.handleEvent({
           data: json
         });

@@ -40,13 +40,10 @@ export class UpdateReducer {
 
         if (staMsgs.length > 0 && staMsgs[0].num - 1 === msgs.end) {
           state.messages[msgs.circle] = msgs.envelopes.concat(staMsgs);
-
         } else if (staMsgs.length === 0) {
           state.messages[msgs.circle] = msgs.envelopes;
-
         } else {
           console.error('%messages has inconsistent indices');
-
         }
 
       } else {

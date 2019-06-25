@@ -68,14 +68,10 @@ export class Root extends Component {
           let internalStation = host + '/hall-internal-' + circle;
 
           if (internalStation in state.configs) {
-            console.log(state.configs[internalStation].red, messages[cir]);
-
             unreads[cir] = 
               state.configs[internalStation].red <=
               messages[cir][messages[cir].length - 1].num;
           } else {
-            console.log(cir, messages[cir], state.configs[cir].red);
-
             unreads[cir] =
               state.configs[cir].red <=
               messages[cir][messages[cir].length - 1].num;
@@ -220,8 +216,7 @@ export class Root extends Component {
                  <SettingsScreen 
                    {...props}
                    api={api}
-                   peers={state.peers}
-                   store={store} />
+                   peers={state.peers}  />
                </Skeleton>
              );
            }} />
