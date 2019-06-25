@@ -16,6 +16,14 @@
   |=  =move:alef
   ^-  ?
   ?=([%give %send *] card.move)
+::
+++  snag-packet
+  |=  [index=@ud moves=(list move:alef)]
+  ^-  [=lane:alef =blob:alef]
+  ::
+  %-  move-to-packet
+  %+  snag  index
+  (skim moves is-move-send)
 --
 |%
 ++  test-packet-encoding  ^-  tang
@@ -122,20 +130,11 @@
   ::
   ::~&  res1=-.res1
   ::
-  =+  ^-  [=lane:alef =blob:alef]
-      =-  ?>  ?=([%give %send *] ->)
-          [lane blob]:->+>
-      %+  snag  0
-      %+  skim  -.res1
-      |=  [duct card=*]
-      ^-  ?
-      ?=([%give %send *] card)
-  ::
   =/  bob-core  (bob ~doznec-doznec 0xbeef.dead ~2222.2.3 *sley)
   ::
   =/  res2
     %-  call:bob-core
-    [~[/bob] ** %hear lane blob]
+    [~[/bob] ** %hear (snag-packet 0 -.res1)]
   ::
   ::~&  res2=-.res2
   ::
@@ -149,18 +148,9 @@
   ::
   =.  alice-core  (+.res1 ~nec 0xdead.beef ~2222.2.5 *sley)
   ::
-  =+  ^-  [=lane:alef =blob:alef]
-      =-  ?>  ?=([%give %send *] ->)
-          [lane blob]:->+>
-      %+  snag  0
-      %+  skim  -.res3
-      |=  [duct card=*]
-      ^-  ?
-      ?=([%give %send *] card)
-  ::
   =/  res4
     %-  call:alice-core
-    [~[/alice] ** %hear lane blob]
+    [~[/alice] ** %hear (snag-packet 0 -.res3)]
   ::
   =.  bob-core  (+.res3 ~doznec-doznec 0xbeef.dead ~2222.2.6 *sley)
   ::
@@ -168,41 +158,23 @@
     %-  take:bob-core
     [/bone/~nec/1 ~[/bob] ** %g %memo /g/talk [%post 'first1!!']]
   ::
-  ~&  res5=-.res5
+  ::~&  res5=-.res5
   ::
   =.  alice-core  (+.res4 ~nec 0xdead.beef ~2222.2.7 *sley)
   ::
-  =+  ^-  [=lane:alef =blob:alef]
-      =-  ?>  ?=([%give %send *] ->)
-          [lane blob]:->+>
-      %+  snag  0
-      %+  skim  -.res5
-      |=  [duct card=*]
-      ^-  ?
-      ?=([%give %send *] card)
-  ::
   =/  res6
     %-  call:alice-core
-    [~[/alice] ** %hear lane blob]
+    [~[/alice] ** %hear (snag-packet 0 -.res5)]
   ::
-  ~&  res6=-.res6
+  ::~&  res6=-.res6
   ::
   =.  bob-core  (+.res5 ~doznec-doznec 0xbeef.dead ~2222.2.8 *sley)
   ::
-  =+  ^-  [=lane:alef =blob:alef]
-      =-  ?>  ?=([%give %send *] ->)
-          [lane blob]:->+>
-      %+  snag  0
-      %+  skim  -.res6
-      |=  [duct card=*]
-      ^-  ?
-      ?=([%give %send *] card)
-  ::
   =/  res7
     %-  call:bob-core
-    [~[/bob] ** %hear lane blob]
+    [~[/bob] ** %hear (snag-packet 0 -.res6)]
   ::
-  ~&  res7=-.res7
+  ::~&  res7=-.res7
   ::
   %+  expect-eq
     !>  :~  :+  ~[/alice]  %give  [%done error=~]
@@ -271,16 +243,11 @@
   ::
   ::~&  res1=-.res1
   ::
-  =+  ^-  [=lane:alef =blob:alef]
-      %-  move-to-packet
-      %+  snag  0
-      (skim -.res1 is-move-send)
-  ::
   =/  bob-core  (bob ~doznec-doznec 0xbeef.dead ~2222.2.3 *sley)
   ::
   =/  res2
     %-  call:bob-core
-    [~[/bob] ** %hear lane blob]
+    [~[/bob] ** %hear (snag-packet 0 -.res1)]
   ::
   ::~&  res2=-.res2
   ::
@@ -292,46 +259,33 @@
     %-  take:bob-core
     [/bone/~nec/1 ~[/bob] ** %g %done `error]
   ::
-  ~&  res3=-.res3
-  ::
-  =/  pac3-0
-    %-  move-to-packet
-    %+  snag  0
-    (skim -.res3 is-move-send)
-  ::
-  =/  pac3-1
-    %-  move-to-packet
-    %+  snag  1
-    (skim -.res3 is-move-send)
+  ::~&  res3=-.res3
   ::
   =.  alice-core  (+.res1 ~nec 0xdead.beef ~2222.2.5 *sley)
+  ::  process first (nack) packet
   ::
   =/  res4
     %-  call:alice-core
-    [~[/alice] ** %hear pac3-0]
+    [~[/alice] ** %hear (snag-packet 0 -.res3)]
   ::
-  ~&  res4=-.res4
+  ::~&  res4=-.res4
   ::
   =.  alice-core  (+.res4 ~nec 0xdead.beef ~2222.2.6 *sley)
+  ::  process second (naxplanation message) packet
   ::
   =/  res5
     %-  call:alice-core
-    [~[/alice] ** %hear pac3-1]
+    [~[/alice] ** %hear (snag-packet 1 -.res3)]
   ::
-  ~&  res5=-.res5
+  ::~&  res5=-.res5
   ::
   =.  bob-core  (+.res3 ~doznec-doznec 0xbeef.dead ~2222.2.7 *sley)
   ::
-  =/  pac5
-    %-  move-to-packet
-    %+  snag  0
-    (skim -.res5 is-move-send)
-  ::
   =/  res6
     %-  call:bob-core
-    [~[/bob] ** %hear pac5]
+    [~[/bob] ** %hear (snag-packet 0 -.res5)]
   ::
-  ~&  res6=-.res6
+  ::~&  res6=-.res6
   ::
   ~
 --
