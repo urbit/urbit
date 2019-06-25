@@ -10,7 +10,7 @@ textarea, select, input, button {
   outline: none; 
   -webkit-appearance: none;
   border: none;
-  background-color:none;
+  background-color: #fff;
 }
 
 

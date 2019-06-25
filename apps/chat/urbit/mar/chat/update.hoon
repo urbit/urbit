@@ -75,6 +75,15 @@
           [%peers [%a (turn ~(tap in per.upd) ship:enjs:format)]]
         ==
       ::
+      ::  %delete
+      ?:  =(%delete -.upd)
+        ?>  ?=(%delete -.upd)
+        :-  %delete
+        %-  pairs
+        :~
+          [%circle (circ:enjs:hall-json cir.upd)]
+        ==
+      ::
       ::  %noop
       [*@t *^json]
     ==

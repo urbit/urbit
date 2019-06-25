@@ -429,7 +429,9 @@
         :_  this(str.sta str)
         %+  weld
           [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
+        %+  weld
           (send-chat-update [[%inbox newinbox] str])
+          (send-chat-update [[%delete affectedcir] str])
       ==
       ::  end of branching on dif.sto type
     ==

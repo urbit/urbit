@@ -31,10 +31,27 @@ export class SidebarInvite extends Component {
 
     let circleName = cir.split('/')[1];
 
-    let lis = [];
+    let actions = [
+      {
+        phrase: {
+          aud: [`~${window.ship}/i`],
+          ses: [{
+            ire: {
+              top: uid,
+              sep: {
+                lin: {
+                  msg: `${tagstring} ${cir}`,
+                  pat: false
+                }
+              }
+            }
+          }]
+        }
+      }
+    ];
 
     if (resp) {
-      lis = [
+      actions = actions.concat([
         {
           create: {
             nom: 'hall-internal-' + circleName,
@@ -56,32 +73,10 @@ export class SidebarInvite extends Component {
             srs: [`~${window.ship}/hall-internal-${circleName}`]
           }
         }
-      ];
-
+      ]);
     }
 
-    this.props.api.chat({
-      actions: {
-        lis: lis.concat([
-          {
-            phrase: {
-              aud: [`~${window.ship}/i`],
-              ses: [{
-                ire: {
-                  top: uid,
-                  sep: {
-                    lin: {
-                      msg: `${tagstring} ${cir}`,
-                      pat: false
-                    }
-                  }
-                }
-              }]
-            }
-          }
-        ])
-      }
-    });
+    this.props.api.chat(actions);
   }
 
   render() {

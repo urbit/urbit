@@ -138,21 +138,11 @@ export class ChatInput extends Component {
       readNom = 'hall-internal-' + this.props.circle;
     }
 
-    this.props.api.chat({
-      actions: {
-        lis: [
-          {
-            read: {
-              nom: readNom,
-              red: this.props.numMsgs + 1
-            }
-          },
-          {
-            convey: [message]
-          }
-        ]
+    this.props.api.hall(
+      {
+        convey: [message]
       }
-    });
+    );
 
     this.setState({
       message: ""

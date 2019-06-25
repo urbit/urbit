@@ -45489,6 +45489,11 @@
 	  return str.slice(0,-1);
 	}
 
+	function isPatTa(str) {
+	  const r = /^[a-z,0-9,\-,\.,_,~]+$/.exec(str);
+	  return !!r;
+	}
+
 	function deSig(ship) {
 	  return ship.replace('~', '');
 	}
@@ -45655,8 +45660,12 @@
 	    this.action("hall", "hall-action", data);
 	  }
 
-	  chat(data) {
-	    this.action("chat", "chat-action", data);
+	  chat(lis) {
+	    this.action("chat", "chat-action", {
+	      actions: {
+	        lis
+	      }
+	    });
 	  }
 
 	  action(appl, mark, data) {
@@ -45796,6 +45805,7 @@
 	      this.reduceConfig(lodash.get(data, 'config', false), state);
 	      this.reduceCircles(lodash.get(data, 'circles', false), state);
 	      this.reducePeers(lodash.get(data, 'peers', false), state);
+	      this.reduceDelete(lodash.get(data, 'delete', false), state);
 	    }
 	  }
 
@@ -45858,6 +45868,13 @@
 	    }
 	  }
 
+	  reduceDelete(del, state) {
+	    if (del) {
+	      delete state.configs[del.circle];
+	      state.messages[del.circle] = [];
+	    }
+	  }
+
 	}
 
 	class Store {
@@ -45885,6 +45902,8 @@
 
 	  handleEvent(data) {
 	    let json = data.data;
+
+	    console.log(json);
 
 	    this.initialReducer.reduce(json, this.state);
 	    this.configReducer.reduce(json, this.state);
@@ -56632,10 +56651,27 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    let circleName = cir.split('/')[1];
 
-	    let lis = [];
+	    let actions = [
+	      {
+	        phrase: {
+	          aud: [`~${window.ship}/i`],
+	          ses: [{
+	            ire: {
+	              top: uid,
+	              sep: {
+	                lin: {
+	                  msg: `${tagstring} ${cir}`,
+	                  pat: false
+	                }
+	              }
+	            }
+	          }]
+	        }
+	      }
+	    ];
 
 	    if (resp) {
-	      lis = [
+	      actions = actions.concat([
 	        {
 	          create: {
 	            nom: 'hall-internal-' + circleName,
@@ -56657,32 +56693,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	            srs: [`~${window.ship}/hall-internal-${circleName}`]
 	          }
 	        }
-	      ];
-
+	      ]);
 	    }
 
-	    this.props.api.chat({
-	      actions: {
-	        lis: lis.concat([
-	          {
-	            phrase: {
-	              aud: [`~${window.ship}/i`],
-	              ses: [{
-	                ire: {
-	                  top: uid,
-	                  sep: {
-	                    lin: {
-	                      msg: `${tagstring} ${cir}`,
-	                      pat: false
-	                    }
-	                  }
-	                }
-	              }]
-	            }
-	          }
-	        ])
-	      }
-	    });
+	    this.props.api.chat(actions);
 	  }
 
 	  render() {
@@ -56693,31 +56707,31 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    if (!aut || !cir || !props.config) {
 	      return (
-	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 95}})
+	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$4, lineNumber: 90}})
 	      );
 	    }
 
 	    cir = cir.split('/')[1];
 
 	    return (
-	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 102}}
-	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 103}}
+	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 97}}
+	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 98}}
 	          , react.createElement('div', { className: "dib mr2 bg-nice-green"  , style: {
 	            borderRadius: 12,
 	            width: 12,
 	            height: 12
-	          }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 104}})
-	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 109}}, "Invite to "
-	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 110}}
+	          }, __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 99}})
+	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 104}}, "Invite to "
+	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 105}}
 	              , cir
 	            )
 	          )
 	        )
-	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 115}}
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 116}}, "Hosted by "  , aut)
+	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 110}}
+	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 111}}, "Hosted by "  , aut)
 	        )
-	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 118}}, "Accept")
-	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 119}}, "Reject")
+	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 113}}, "Accept")
+	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 114}}, "Reject")
 	      )
 	    )
 	  }
@@ -57198,21 +57212,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      readNom = 'hall-internal-' + this.props.circle;
 	    }
 
-	    this.props.api.chat({
-	      actions: {
-	        lis: [
-	          {
-	            read: {
-	              nom: readNom,
-	              red: this.props.numMsgs + 1
-	            }
-	          },
-	          {
-	            convey: [message]
-	          }
-	        ]
+	    this.props.api.hall(
+	      {
+	        convey: [message]
 	      }
-	    });
+	    );
 
 	    this.setState({
 	      message: ""
@@ -57223,21 +57227,21 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    const { props, state } = this;
 
 	    return (
-	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 166}}
-	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 167}}
-	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 168}} )
+	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 156}}
+	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 157}}
+	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 158}} )
 	        )
-	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 170}}
+	        , react.createElement('div', { className: "fr h-100 flex"  , style: { flexGrow: 1, height: 40 }, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 160}}
 	          , react.createElement('input', { className: "ml2 bn" ,
 	            style: { flexGrow: 1 },
 	            ref: this.textareaRef,
 	            placeholder: props.placeholder,
 	            value: state.message,
 	            onChange: this.messageChange,
-	            autoFocus: true, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 171}}
+	            autoFocus: true, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 161}}
 	          )
-	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 179}}
-	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 180}} )
+	          , react.createElement('div', { className: "pointer", onClick: this.messageSubmit, __self: this, __source: {fileName: _jsxFileName$b, lineNumber: 169}}
+	            , react.createElement(IconSend, {__self: this, __source: {fileName: _jsxFileName$b, lineNumber: 170}} )
 	          )
 	        )
 	      )
@@ -57525,7 +57529,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      circle: props.match.params.station,
 	      host: props.match.params.ship,
 	      invMembers: '',
-	      error: false
+	      error: false,
+	      success: false
 	    };
 
 	  }
@@ -57545,9 +57550,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    if (isValid) {
 	      props.api.permit(state.circle, sis, true);
-	      this.setState({ error: false });
+	      if (this.textarea) {
+	        this.textarea.value = '';
+	      }
+	      this.setState({
+	        error: false,
+	        success: true,
+	        invMembers: ''
+	      });
 	    } else {
-	      this.setState({ error: true });
+	      this.setState({ error: true, success: false });
 	    }
 	  }
 
@@ -57568,52 +57580,66 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          isHost:  `~${mem}` === state.host ,
 	          ship: mem,
 	          circle: state.circle,
-	          api: props.api, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 56}} )
+	          api: props.api, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 64}} )
 	      );
 	    });
 
 	    let errorElem = !!this.state.error ? (
-	      react.createElement('p', { className: "pa2 nice-red label-regular"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 66}}, "Invalid ship name."  )
+	      react.createElement('p', { className: "pa2 nice-red label-regular"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 74}}, "Invalid ship name."  )
 	    ) : (
-	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 68}})
+	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 76}})
 	    );
 
+	    let successElem = !!this.state.success ? (
+	      react.createElement('p', { className: "pa2 nice-green label-regular"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 80}}, "Sent invites!" )
+	    ) : (
+	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 82}})
+	    );
+
+
+	    let inviteButtonClasses = "label-regular underline gray btn-font pointer";
+	    if (!this.state.error) {
+	      inviteButtonClasses = inviteButtonClasses + ' black';
+	    }
+
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 72}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 73}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 74}}, state.circle)
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 92}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 93}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 94}}, state.circle)
 	          , react.createElement(ChatTabBar, {
 	            ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 75}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 95}} )
 	        )
-	        , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 80}}
-	          , react.createElement('div', { className: "w-50 fl pa2"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 81}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 82}}, "Members")
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 83}}, "Everyone subscribed to this chat."
+	        , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 100}}
+	          , react.createElement('div', { className: "w-50 fl pa2"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 101}}
+	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 102}}, "Members")
+	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 103}}, "Everyone subscribed to this chat."
 
 	            )
 	            , listMembers
 	          )
 	          ,  `~${window.ship}` === state.host ? (
-	            react.createElement('div', { className: "w-50 fr pa2"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 89}}
-	              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 90}}, "Invite")
-	              , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 91}}, "Invite new participants to this chat."
+	            react.createElement('div', { className: "w-50 fr pa2"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 109}}
+	              , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 110}}, "Invite")
+	              , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 111}}, "Invite new participants to this chat."
 
 	              )
-	              , react.createElement('textarea', { 
+	              , react.createElement('textarea', {
+	                ref:  e => { this.textarea = e; } ,
 	                className: "w-80 db ba overflow-y-hidden gray mb2"     ,
 	                style: { 
 	                  resize: 'none',
 	                  height: 150
 	                },
-	                onChange: this.inviteMembersChange.bind(this), __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 94}})
+	                onChange: this.inviteMembersChange.bind(this), __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 114}})
 	              , react.createElement('button', {
 	                onClick: this.inviteMembers.bind(this),
-	                className: "label-regular underline gray btn-font pointer"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 101}}, "Invite"
+	                className: inviteButtonClasses, __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 122}}, "Invite"
 
 	              )
 	              , errorElem
+	              , successElem
 	            )
 	          ) : null 
 	        )
@@ -57637,23 +57663,29 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	  deleteChat() {
 	    const { props, state } = this;
-	    props.api.delete(state.circle);
+	    if (state.host === `~${window.ship}`) {
+	      props.api.delete(state.circle);
+	    } else {
+	      let internalCircle = 'hall-internal-' + state.circle;
 
-	    if (state.station in props.store.state.messages) {
-	      delete props.store.state.messages[state.station];
+	      props.api.chat([
+	        {
+	          source: {
+	            nom: 'inbox',
+	            sub: false,
+	            srs: [state.station]
+	          }
+	        },
+	        {
+	          delete: {
+	            nom: internalCircle,
+	            why: ''
+	          }
+	        }
+	      ]);
 	    }
-
-	    if (state.station in props.store.state.configs) {
-	      delete props.store.state.configs[state.station];
-	    }
-
-	    props.store.state.circles = props.store.state.circles
-	      .filter((elem) => {
-	        return elem !== state.circle;
-	      });
 
 	    props.history.push('/~chat');
-	    props.store.setState(props.store.state);
 	  }
 
 	  render() {
@@ -57661,26 +57693,27 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 44}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 45}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 46}}, state.circle)
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 50}}
+	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 51}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 52}}, state.circle)
 	          , react.createElement(ChatTabBar, { 
 	            ...props,
 	            station: state.station, 
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 47}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 53}} )
 	        )
-	        , react.createElement('div', { className: "w-100 cf pa3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 52}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 53}}, "Settings")
-	          , react.createElement('div', { className: "w-50 fl pr2 mt3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 54}}
-	          )
-	          , react.createElement('div', { className: "w-50 fr pl2 mt3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 56}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 57}}, "Delete Chat" )
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 58}}, "Permanently delete this chat."
+	        , react.createElement('div', { className: "w-100 cf pa3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 58}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 59}}, "Settings")
+	          , react.createElement('div', { className: "w-50 fl pl2 mt3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 60}}
+	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 61}}, "Delete Chat" )
+	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 62}}, "Permanently delete this chat."
 
 	            )
 	            , react.createElement('a', { onClick: this.deleteChat.bind(this),
-	              className: "pointer btn-font underline nice-red"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 61}}, "-> Delete" )
+	              className: "pointer btn-font underline nice-red"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 65}}, "-> Delete" )
 	          )
+	          , react.createElement('div', { className: "w-50 fr pr2 mt3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 68}}
+	          )
+
 	        )
 	      )
 	    )
@@ -57696,7 +57729,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    this.state = {
 	      idName: '',
-	      invites: ''
+	      invites: '',
+	      showNameError: false
 	    };
 
 	    this.idChange = this.idChange.bind(this);
@@ -57704,7 +57738,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  idChange(event) {
-	    this.setState({idName: event.target.value});
+	    this.setState({
+	      idName: event.target.value,
+	      showNameError: !isPatTa(event.target.value)
+	    });
 	  }
 
 	  invChange(event) {
@@ -57712,13 +57749,14 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  onClickCreate() {
-	    if (!this.state.idName) { return; }
+	    const { props, state } = this;
+	    if (!state.idName || !!state.showNameError) { return; }
 
-	    let station = `~${this.props.api.authTokens.ship}/${this.state.idName}`;
+	    let station = `~${props.api.authTokens.ship}/${state.idName}`;
 	    let actions = [
 	      {
 	        create: {
-	          nom: this.state.idName,
+	          nom: state.idName,
 	          des: "chatroom",
 	          sec: "channel"
 	        }
@@ -57732,15 +57770,15 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      }
 	    ];
 
-	    if (this.state.invites.length > 0) {
-	      let aud = this.state.invites
+	    if (state.invites.length > 0) {
+	      let aud = state.invites
 	        .trim()
 	        .split(",")
 	        .map(t => t.trim().substr(1));
 
 	      actions.push({
 	        permit: {
-	          nom: this.state.idName,
+	          nom: state.idName,
 	          sis: aud,
 	          inv: true
 	        }
@@ -57759,34 +57797,43 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      });
 	    }
 
-	    this.props.api.chat({
-	      actions: {
-	        lis: actions
-	      }
-	    });
-	    
-	    this.props.history.push('/~chat/' + station);
+	    props.api.chat(actions);
+	    props.history.push('/~chat/' + station);
 	  }
 
 	  render() {
+	    let nameErrorElem = this.state.showNameError ? (
+	      react.createElement('p', { className: "nice-red label-regular" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 87}}, "Chat names may contain alphabetical characters, numbers, dots, or dashes."         )
+	    ) : (
+	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 89}})
+	    );
+
+	    let createClasses = "label-regular btn-font pointer underline bn";
+	    if (!this.state.idName || !!this.state.showNameError) {
+	      createClasses = createClasses + ' gray';
+	    }
+
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column"      , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 87}}
-	        , react.createElement('h2', { className: "mb3", __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 88}}, "Create a New Chat"   )
-	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 89}}
-	          , react.createElement('p', { className: "label-regular fw-bold" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 90}}, "Name")
+	      react.createElement('div', { className: "h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column"      , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 98}}
+	        , react.createElement('h2', { className: "mb3", __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 99}}, "Create a New Chat"   )
+	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 100}}
+	          , react.createElement('p', { className: "label-regular fw-bold" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 101}}, "Name")
 	          , react.createElement('input', { 
 	            className: "body-large bn pa2 pl0 mb2 w-50"     ,
 	            placeholder: "secret-chat",
-	            onChange: this.idChange, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 91}} )
-	          , react.createElement('p', { className: "label-regular fw-bold" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 95}}, "Invites")
+	            onChange: this.idChange, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 102}} )
+	          ,  nameErrorElem 
+	          , react.createElement('p', { className: "label-regular fw-bold" , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 107}}, "Invites")
 	          , react.createElement('input', { 
 	            className: "body-large bn pa2 pl0 mb2 w-50"     ,
 	            placeholder: "~zod, ~bus" ,
-	            onChange: this.invChange, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 96}} )
-	          , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 100}} )
+	            onChange: this.invChange, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 108}} )
+	          , react.createElement('br', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 112}} )
 	          , react.createElement('button', {
 	            onClick: this.onClickCreate.bind(this),
-	            className: "body-large pointer underline bn"   , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 101}}, "-> Create" )
+	            className: createClasses,
+	            style: { fontSize: '18px' }, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 113}}
+	          , "-> Create" )
 	        )
 	      )
 	    );

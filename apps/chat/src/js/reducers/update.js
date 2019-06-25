@@ -11,6 +11,7 @@ export class UpdateReducer {
       this.reduceConfig(_.get(data, 'config', false), state);
       this.reduceCircles(_.get(data, 'circles', false), state);
       this.reducePeers(_.get(data, 'peers', false), state);
+      this.reduceDelete(_.get(data, 'delete', false), state);
     }
   }
 
@@ -70,6 +71,13 @@ export class UpdateReducer {
   reducePeers(peers, state) {
     if (peers) {
       state.peers[peers.circle] = peers.peers;
+    }
+  }
+
+  reduceDelete(del, state) {
+    if (del) {
+      delete state.configs[del.circle];
+      state.messages[del.circle] = [];
     }
   }
 
