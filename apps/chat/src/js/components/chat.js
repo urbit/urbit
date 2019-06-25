@@ -22,7 +22,6 @@ export class ChatScreen extends Component {
     };
 
     this.hasAskedForMessages = false;
-    this.topMessage = {};
     this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
 
@@ -37,9 +36,6 @@ export class ChatScreen extends Component {
 
   componentDidMount() {
     this.updateNumPeople();
-    if (this.scrollElement) {
-      this.scrollElement.scrollIntoView(false, { block: 'end' });
-    }
   }
 
   componentWillUnMount() {
@@ -58,7 +54,6 @@ export class ChatScreen extends Component {
       console.log('switched circle');
       this.hasAskedForMessages = false;
       this.scrollClosure = false;
-      this.topMessage = {};
  
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
@@ -125,24 +120,20 @@ export class ChatScreen extends Component {
   }
 
   onScroll(e) {
-    if (e.target.scrollTop === 0
-      && this.state.numPages * 50 <= this.props.messages.length) {
-      this.setState({
-        numPages: this.state.numPages + 1,
-        scrollLocked: true
-      }, () => {
-        if (this.topMessage && this.topMessage[1]) {
-          this.askForMessages();
-          this.topMessage[1].scrollIntoView(true);
-        } 
-      });
-    } else if (
-        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
-      e.target.clientHeight
-    ) {
+    if (e.target.scrollTop === 0) {
       this.setState({
         numPages: 1,
         scrollLocked: false
+      });
+    } else if (
+        (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
+        e.target.clientHeight
+    ) {
+       this.setState({
+        numPages: this.state.numPages + 1,
+        scrollLocked: true
+      }, () => {
+        this.askForMessages();
       });
     }
   }
@@ -169,23 +160,12 @@ export class ChatScreen extends Component {
       );
     }
 
-    if (index % 50 === 0) {
-      let pageNum = index / 50;
-      return (
-        <div
-          key={msg.gam.uid + "key" + Math.random() + "key" + msg.num}
-          ref={ el => { this.topMessage[pageNum] = el; }}>
-          <Message msg={msg.gam} details={details} />
-        </div>
-      );
-    } else {
-      return (
+    return (
         <Message
           key={msg.gam.uid + Math.random()} 
           msg={msg.gam} 
           details={details} />
       );
-    }
   }
 
   render() {
@@ -217,8 +197,8 @@ export class ChatScreen extends Component {
           className="overflow-y-scroll pt3 flex flex-column-reverse"
           style={{ height: 'calc(100% - 157px)' }}
           onScroll={this.onScroll}>
-          {chatMessages}
           <div ref={ el => { this.scrollElement = el; }}></div>
+          {chatMessages}
         </div>
         <ChatInput 
           api={props.api}
