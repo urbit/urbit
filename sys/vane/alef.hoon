@@ -1193,14 +1193,22 @@
       =.  symmetric-key.peer-state  symmetric-key
       ::
       =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
-      ::
       event-core
     ::
     ++  on-publ-sponsor
       |=  [=ship sponsor=(unit ship)]
       ^+  event-core
       ::
-      !!
+      =/  =peer-state         (got-peer-state ship)
+      ::  TODO: handle sponsor loss
+      ::
+      ?~  sponsor
+        ~|  %lost-sponsor^ship  !!
+      ::
+      =.  sponsor.peer-state  u.sponsor
+      ::
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      event-core
     ::
     ++  on-publ-full
       |=  points=(map ship point)
