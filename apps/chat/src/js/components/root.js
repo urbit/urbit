@@ -216,7 +216,9 @@ export class Root extends Component {
                  <SettingsScreen 
                    {...props}
                    api={api}
-                   peers={state.peers}  />
+                   peers={state.peers}
+                   circles={state.circles}
+                 />
                </Skeleton>
              );
            }} />

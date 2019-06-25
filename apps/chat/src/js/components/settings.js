@@ -12,6 +12,7 @@ export class SettingsScreen extends Component {
       station: props.match.params.ship + "/" + props.match.params.station,
       circle: props.match.params.station,
       host: props.match.params.ship,
+      isLoading: false
     };
   }
 
@@ -39,12 +40,37 @@ export class SettingsScreen extends Component {
       ]);
     }
 
-    props.history.push('/~chat');
+    this.setState({
+      isLoading: true
+    });
   }
 
   render() {
     const { props, state } = this;
     let peers = props.peers[state.station] || [window.ship];
+
+    if (!!state.isLoading) {
+      console.log(props.circles);
+
+      if (!props.circles.contains(state.station)) {
+        props.history.push('/~chat');
+      }
+
+      return (
+        <div className="h-100 w-100 overflow-x-hidden flex flex-column">
+          <div className='pl2 pt2 bb mb3'>
+            <h2>{state.circle}</h2>
+            <ChatTabBar 
+              {...props}
+              station={state.station} 
+              numPeers={peers.length} />
+          </div>
+          <div className="w-100 cf pa3">
+            <h2>Deleting...</h2>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">

@@ -46,7 +46,7 @@ export class ChatScreen extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { props } = this;
+    const { props, state } = this;
 
     if (prevProps.match.params.ship !== props.match.params.ship ||
               prevProps.match.params.station !== props.match.params.station
@@ -65,6 +65,8 @@ export class ChatScreen extends Component {
         this.updateNumPeople();
         this.scrollToBottom();
       });
+    } else if (!(state.station in props.configs)) {
+      props.history.push('/~chat');
     }
   }
 
