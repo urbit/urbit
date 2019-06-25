@@ -11711,8 +11711,7 @@
    ^-  state
    |-
    ?~  xs  st
-   =.  st  (f st i.xs)
-   $(xs t.xs, st st)
+   $(xs t.xs, st (f st i.xs))
 ::
 ::  This is basically a `mapM` over a list using the State monad.
 ::
