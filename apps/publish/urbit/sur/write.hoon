@@ -86,18 +86,16 @@
 ::
 +$  perm-config  [read=rule:clay write=rule:clay]
 ::
-::
 +$  comment-config  $?(%open %closed %none)
-::
 ::
 +$  edit-config     $?(%post %comment %all %none)
 ::
 +$  rumor  delta
 ::
 +$  collection
-  $:  col=(each collection-info tang)
-      pos=(map @tas (each [post-info manx @t] tang))
-      com=(map @tas (each (list [comment-info @t]) tang))
+  $:  col=[=bone dat=(each collection-info tang)]
+      pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])
+      com=(map @tas [=bone dat=(each (list [comment-info @t]) tang)])
       order=[pin=(list @tas) unpin=(list @tas)]
       contributors=(set @p)
       subscribers=(set @p)
