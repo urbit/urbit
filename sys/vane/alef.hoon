@@ -1138,6 +1138,22 @@
     ::
     =.  life.ames-state         life
     =.  crypto-core.ames-state  (nol:nu:crub:crypto private-key)
+    ::  recalculate each peer's symmetric key
+    ::
+    =/  our-private-key  sec:ex:crypto-core.ames-state
+    =.  peers.ames-state
+      %-  ~(run by peers.ames-state)
+      |=  =ship-state
+      ^+  ship-state
+      ::
+      ?.  ?=(%known -.ship-state)
+        ship-state
+      ::
+      =/  =peer-state  +.ship-state
+      =.  symmetric-key.peer-state
+        (derive-symmetric-key public-key.+.ship-state our-private-key)
+      ::
+      [%known peer-state]
     ::
     event-core
   ::  +on-publ: update pki data for peer or self
@@ -1187,13 +1203,17 @@
       ^+  event-core
       ::
       (insert-peer-state ship (got-peer-state ship) life `@`encryption-key)
-    ::  +on-publ-sponsor: handle new or lost sponsor for peer
+    ::  +on-publ-sponsor: handle new or lost sponsor for self or peer
     ::
     ::    TODO: handle sponsor loss
     ::
     ++  on-publ-sponsor
       |=  [=ship sponsor=(unit ship)]
       ^+  event-core
+      ::
+      ?:  =(our ship)
+        =.  sponsor.ames-state  ship
+        ping-sponsor
       ::
       =/  =peer-state  (got-peer-state ship)
       ::
