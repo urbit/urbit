@@ -1194,13 +1194,15 @@
       ::
       =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
       event-core
+    ::  +on-publ-sponsor: handle new or lost sponsor for peer
+    ::
+    ::    TODO: handle sponsor loss
     ::
     ++  on-publ-sponsor
       |=  [=ship sponsor=(unit ship)]
       ^+  event-core
       ::
-      =/  =peer-state         (got-peer-state ship)
-      ::  TODO: handle sponsor loss
+      =/  =peer-state  (got-peer-state ship)
       ::
       ?~  sponsor
         ~|  %lost-sponsor^ship  !!
@@ -1209,12 +1211,59 @@
       ::
       =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
       event-core
+    ::  +on-publ-full: handle new pki data for peer(s)
     ::
     ++  on-publ-full
       |=  points=(map ship point)
       ^+  event-core
       ::
-      !!
+      =>  .(points ~(tap by points))
+      |^  ^+  event-core
+          ?~  points  event-core
+          ::
+          =+  [ship point]=i.points
+          ::
+          =.  event-core
+            ?~  ship-state=(~(get by peers.ames-state) ship)
+              (fresh-peer ship point)
+            ::
+            ?:  ?=([~ %alien *] ship-state)
+              (meet-alien ship point +.u.ship-state)
+            (update-known ship point +.u.ship-state)
+          ::
+          $(points t.points)
+      ::
+      ++  fresh-peer
+        |=  [=ship =point]
+        ^+  event-core
+        ::
+        =/  =private-key  sec:ex:crypto-core.ames-state
+        =/  =symmetric-key
+          (derive-symmetric-key `@`encryption-key.point private-key)
+        ::
+        =|  =peer-state
+        ::
+        =.  life.peer-state          life.point
+        =.  public-key.peer-state    `@`encryption-key.point
+        =.  symmetric-key.peer-state  symmetric-key
+        ::
+        =.  peers.ames-state
+          (~(put by peers.ames-state) ship %known peer-state)
+        ::
+        event-core
+      ::
+      ++  meet-alien
+        |=  [=ship =point todos=pending-requests]
+        ^+  event-core
+        ::
+        !!
+      ::
+      ++  update-known
+        |=  [=ship =point =peer-state]
+        ^+  event-core
+        ::
+        !!
+      --
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
