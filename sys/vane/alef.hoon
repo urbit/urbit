@@ -940,7 +940,7 @@
     =.  peer-core              (make-peer-core peer-state channel)
     ::
     abet:(run-message-pump:peer-core nack-trace-bone %send /a/nax error)
-  ::  +on-hear: handle packet receipt
+  ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
     |=  [=lane =blob]
@@ -950,6 +950,13 @@
     =.  unix-duct.ames-state  duct
     ::
     =/  =packet  (decode-packet blob)
+    ::
+    (on-hear-packet lane packet)
+  ::  +on-hear-packet: handle mildly processed packet receipt
+  ::
+  ++  on-hear-packet
+    |=  [=lane =packet]
+    ^+  event-core
     ::
     %.  [lane packet]
     ::
@@ -1184,16 +1191,7 @@
           ==
       ^+  event-core
       ::
-      =/  =peer-state     (got-peer-state ship)
-      =/  =private-key    sec:ex:crypto-core.ames-state
-      =/  =symmetric-key  (derive-symmetric-key `@`encryption-key private-key)
-      ::
-      =.  life.peer-state           life
-      =.  public-key.peer-state     `@`encryption-key
-      =.  symmetric-key.peer-state  symmetric-key
-      ::
-      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
-      event-core
+      (insert-peer-state ship (got-peer-state ship) life `@`encryption-key)
     ::  +on-publ-sponsor: handle new or lost sponsor for peer
     ::
     ::    TODO: handle sponsor loss
@@ -1237,26 +1235,44 @@
         |=  [=ship =point]
         ^+  event-core
         ::
-        =/  =private-key  sec:ex:crypto-core.ames-state
-        =/  =symmetric-key
-          (derive-symmetric-key `@`encryption-key.point private-key)
-        ::
-        =|  =peer-state
-        ::
-        =.  life.peer-state          life.point
-        =.  public-key.peer-state    `@`encryption-key.point
-        =.  symmetric-key.peer-state  symmetric-key
-        ::
-        =.  peers.ames-state
-          (~(put by peers.ames-state) ship %known peer-state)
-        ::
-        event-core
+        (insert-peer-state ship *peer-state [life `@`encryption-key]:point)
       ::
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
         ::
-        !!
+        =.  event-core
+          (insert-peer-state ship *peer-state [life `@`encryption-key]:point)
+        ::  apply incoming packets
+        ::
+        =.  event-core
+          |-  ^+  event-core
+          ?~  rcv-packets.todos  event-core
+          ::
+          =.  event-core  (on-hear-packet i.rcv-packets.todos)
+          $(rcv-packets.todos t.rcv-packets.todos)
+        ::  apply outgoing messages
+        ::
+        =.  event-core
+          |-  ^+  event-core
+          ?~  snd-messages.todos  event-core
+          ::
+          =.  event-core
+            %-  on-memo(duct duct.i.snd-messages.todos)
+            [ship message.i.snd-messages.todos]
+          ::
+          $(snd-messages.todos t.snd-messages.todos)
+        ::  apply outgoing packet blob
+        ::
+        =.  event-core
+          =/  blobs  ~(tap in snd-packets.todos)
+          |-  ^+  event-core
+          ?~  blobs  event-core
+          ::
+          =.  event-core  (send-blob ship i.blobs)
+          $(blobs t.blobs)
+        ::
+        event-core
       ::
       ++  update-known
         |=  [=ship =point =peer-state]
@@ -1264,6 +1280,22 @@
         ::
         !!
       --
+    ::
+    ++  insert-peer-state
+      |=  [=ship =peer-state =life =public-key]
+      ^+  event-core
+      ::
+      =/  =private-key    sec:ex:crypto-core.ames-state
+      =/  =symmetric-key  (derive-symmetric-key public-key private-key)
+      ::
+      =.  life.peer-state           life
+      =.  public-key.peer-state     public-key
+      =.  symmetric-key.peer-state  symmetric-key
+      ::
+      =.  peers.ames-state
+        (~(put by peers.ames-state) ship %known peer-state)
+      ::
+      event-core
     --
   ::  +on-take-turf: relay %turf move from jael to unix
   ::
