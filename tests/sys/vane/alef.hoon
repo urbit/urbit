@@ -1,8 +1,59 @@
 /+  *test
 /=  alef  /:  /===/sys/vane/alef
           /!noun/
+::  construct some test fixtures
 ::
 =/  vane  (alef !>(..zuse))
+::
+=/  alice  vane
+=/  bob    vane
+::
+=.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
+=.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
+::
+=/  alice-pub  pub:ex:crypto-core.ames-state.alice
+=/  alice-sec  sec:ex:crypto-core.ames-state.alice
+=/  bob-pub    pub:ex:crypto-core.ames-state.bob
+=/  bob-sec    sec:ex:crypto-core.ames-state.bob
+::
+=/  alice-sym  (derive-symmetric-key:alef bob-pub alice-sec)
+=/  bob-sym    (derive-symmetric-key:alef alice-pub bob-sec)
+::
+?>  =(alice-sym bob-sym)
+::
+=.  life.ames-state.alice  2
+=.  peers.ames-state.alice
+  %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
+  :-  %known
+  ^-  peer-state:alef
+  :-  :*  symmetric-key=bob-sym
+          life=3
+          public-key=bob-pub
+          sponsor=~marzod
+      ==
+  :*  [~ direct=%.y `lane:alef`[%& ~nec]]
+      *ossuary:alef
+      *(map bone:alef message-pump-state:alef)
+      *(map bone:alef message-still-state:alef)
+      *(set [bone:alef message-num:alef])
+  ==
+::
+=.  life.ames-state.bob  3
+=.  peers.ames-state.bob
+  %+  ~(put by peers.ames-state.bob)  ~nec
+  :-  %known
+  ^-  peer-state:alef
+  :-  :*  symmetric-key=alice-sym
+          life=2
+          public-key=alice-pub
+          sponsor=~nec
+      ==
+  :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
+      *ossuary:alef
+      *(map bone:alef message-pump-state:alef)
+      *(map bone:alef message-still-state:alef)
+      *(set [bone:alef message-num:alef])
+  ==
 ::
 |%
 ++  move-to-packet
@@ -72,56 +123,6 @@
 ::
 ++  test-send-rcv-message  ^-  tang
   ::
-  =/  alice  vane
-  =/  bob    vane
-  ::
-  =.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
-  =.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
-  ::
-  =/  alice-pub  pub:ex:crypto-core.ames-state.alice
-  =/  alice-sec  sec:ex:crypto-core.ames-state.alice
-  =/  bob-pub    pub:ex:crypto-core.ames-state.bob
-  =/  bob-sec    sec:ex:crypto-core.ames-state.bob
-  ::
-  =/  alice-sym  (derive-symmetric-key:alef bob-pub alice-sec)
-  =/  bob-sym    (derive-symmetric-key:alef alice-pub bob-sec)
-  ::
-  ?>  =(alice-sym bob-sym)
-  ::
-  =.  life.ames-state.alice  2
-  =.  peers.ames-state.alice
-    %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
-    :-  %known
-    ^-  peer-state:alef
-    :-  :*  symmetric-key=bob-sym
-            life=3
-            public-key=bob-pub
-            sponsor=~marzod
-        ==
-    :*  [~ direct=%.y `lane:alef`[%& ~nec]]
-        *ossuary:alef
-        *(map bone:alef message-pump-state:alef)
-        *(map bone:alef message-still-state:alef)
-        *(set [bone:alef message-num:alef])
-    ==
-  ::
-  =.  life.ames-state.bob  3
-  =.  peers.ames-state.bob
-    %+  ~(put by peers.ames-state.bob)  ~nec
-    :-  %known
-    ^-  peer-state:alef
-    :-  :*  symmetric-key=alice-sym
-            life=2
-            public-key=alice-pub
-            sponsor=~nec
-        ==
-    :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
-        *ossuary:alef
-        *(map bone:alef message-pump-state:alef)
-        *(map bone:alef message-still-state:alef)
-        *(set [bone:alef message-num:alef])
-    ==
-  ::
   =/  alice-core  (alice ~nec 0xdead.beef ~2222.2.2 *sley)
   ::
   =/  res1
@@ -184,56 +185,6 @@
     !>  -.res4
 ::
 ++  test-nack  ^-  tang
-  ::
-  =/  alice  vane
-  =/  bob    vane
-  ::
-  =.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
-  =.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
-  ::
-  =/  alice-pub  pub:ex:crypto-core.ames-state.alice
-  =/  alice-sec  sec:ex:crypto-core.ames-state.alice
-  =/  bob-pub    pub:ex:crypto-core.ames-state.bob
-  =/  bob-sec    sec:ex:crypto-core.ames-state.bob
-  ::
-  =/  alice-sym  (derive-symmetric-key:alef bob-pub alice-sec)
-  =/  bob-sym    (derive-symmetric-key:alef alice-pub bob-sec)
-  ::
-  ?>  =(alice-sym bob-sym)
-  ::
-  =.  life.ames-state.alice  2
-  =.  peers.ames-state.alice
-    %+  ~(put by peers.ames-state.alice)  ~doznec-doznec
-    :-  %known
-    ^-  peer-state:alef
-    :-  :*  symmetric-key=bob-sym
-            life=3
-            public-key=bob-pub
-            sponsor=~marzod
-        ==
-    :*  [~ direct=%.y `lane:alef`[%& ~nec]]
-        *ossuary:alef
-        *(map bone:alef message-pump-state:alef)
-        *(map bone:alef message-still-state:alef)
-        *(set [bone:alef message-num:alef])
-    ==
-  ::
-  =.  life.ames-state.bob  3
-  =.  peers.ames-state.bob
-    %+  ~(put by peers.ames-state.bob)  ~nec
-    :-  %known
-    ^-  peer-state:alef
-    :-  :*  symmetric-key=alice-sym
-            life=2
-            public-key=alice-pub
-            sponsor=~nec
-        ==
-    :*  [~ direct=%.y `lane:alef`[%| `@`%lane-bar]]
-        *ossuary:alef
-        *(map bone:alef message-pump-state:alef)
-        *(map bone:alef message-still-state:alef)
-        *(set [bone:alef message-num:alef])
-    ==
   ::
   =/  alice-core  (alice ~nec 0xdead.beef ~2222.2.2 *sley)
   ::
