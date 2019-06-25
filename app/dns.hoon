@@ -35,20 +35,6 @@
 ::  oauth2 implementation, and helpers
 ::
 |%
-::  +join: join list of cords with separator
-::
-::    XX move to zuse?
-::    XX dedup with lib/pkcs
-::
-++  join
-  |=  [sep=@t hot=(list @t)]
-  ^-  @t
-  =|  out=(list @t)
-  ?>  ?=(^ hot)
-  |-  ^-  @t
-  ?~  t.hot
-    (rap 3 [i.hot out])
-  $(out [sep i.hot out], hot t.hot)
 ::  +local-uri: XX
 ::
 ++  local-uri
@@ -103,7 +89,7 @@
           ['prompt' 'consent']
           ['client_id' client-id:oauth2-secrets]
           ['redirect_uri' redirect-uri]
-          ['scope' (join ' ' scopes.config)]
+          ['scope' (rap 3 (join ' ' scopes.config))]
           r.url
       ==
     (crip (en-purl:html url))
@@ -150,12 +136,12 @@
 ::
 ++  name
   |=  [=ship =turf]
-  (cat 3 (join '.' (weld turf /(crip +:(scow %p ship)))) '.')
+  (cat 3 (en-turf:html (weld turf /(crip +:(scow %p ship)))) '.')
 ::  +lame: domain name for :ship (without trailing '.')
 ::
 ++  lame
   |=  [=ship =turf]
-  (join '.' (weld turf /(crip +:(scow %p ship))))
+  (en-turf:html (weld turf /(crip +:(scow %p ship))))
 ::  +endpoint: append :path to :purl
 ::
 ++  endpoint
@@ -684,7 +670,7 @@
     ::
     ?:  =(our.bow him.com)
       =/  msg
-        (cat 3 'domain name established at ' (join '.' dom.com))
+        (cat 3 'domain name established at ' (en-turf:html dom.com))
       :_  this(dom (~(put in dom) dom.com))
       :~  [ost.bow (notify our.bow msg ~)]
           [ost.bow %rule /bound %turf %put dom.com]
@@ -1336,7 +1322,7 @@
     =/  com=command
       [%bond our.bow him dom]
     =/  msg
-      (cat 3 'relaying new dns binding: ' (join '.' dom))
+      (cat 3 'relaying new dns binding: ' (en-turf:html dom))
     ::  XX save notification state?
     ::
     %-  emit:(emit (notify our.bow msg ~))
