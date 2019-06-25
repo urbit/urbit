@@ -38,6 +38,7 @@ export class NewPost extends Component {
       title: "",
       body: "",
       awaiting: false,
+      error: false,
     };
 
     this.titleChange = this.titleChange.bind(this);
@@ -92,7 +93,7 @@ export class NewPost extends Component {
         mod: 'white',
         who: [],
       }
-    }
+    };
     let content = this.state.body;
 
     let data = {
@@ -124,24 +125,31 @@ export class NewPost extends Component {
       let blogId = this.state.awaiting.blogId;
       let postId = this.state.awaiting.postId;
 
+      let post;
+      let comments;
+
       if (this.state.awaiting.ship == window.ship) {
-
-        let post = _.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
-        let comments = _.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
-        if (post && comments) {
-          let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
-          this.props.history.push(redirect);
-        }
-
+        post =
+          _.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
+        comments =
+          _.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
       } else {
+        post =
+          _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+        comments =
+          _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
+      }
 
-        let post = _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
-        let comments = _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
-        if (post && comments) {
+      if (post && comments) {
+        if (typeof(post) === 'String') {
+          this.setState({
+            error: post,
+            awaiting: false,
+          });
+        } else {
           let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
           this.props.history.push(redirect);
         }
-
       }
     }
   }
