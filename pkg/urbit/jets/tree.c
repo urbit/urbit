@@ -188,11 +188,33 @@ static c3_c* _141_hex_coed__ed_shar_ha[] = {
   0
 };
 
+static u3j_harm _141_hex_coed__ed_point_add_a[] =
+    {{".2", u3wee_point_add}, {}};
+
+static u3j_harm _141_hex_coed__ed_scalarmult_a[] =
+    {{".2", u3wee_scalarmult}, {}};
+
+static u3j_harm _141_hex_coed__ed_scalarmult_base_a[] =
+    {{".2", u3wee_scalarmult_base}, {}};
+
+static u3j_harm _141_hex_coed__ed_add_scalarmult_scalarmult_base_a[] =
+    {{".2", u3wee_add_scalarmult_scalarmult_base}, {}};
+
+static u3j_harm _141_hex_coed__ed_add_double_scalarmult_a[] =
+    {{".2", u3wee_add_double_scalarmult}, {}};
+
 static u3j_core _141_hex_coed__ed_d[] =
   { { "sign", 7, _141_hex_coed__ed_sign_a, 0, _141_hex_coed__ed_sign_ha },
     { "puck", 7, _141_hex_coed__ed_puck_a, 0, _141_hex_coed__ed_puck_ha },
     { "veri", 7, _141_hex_coed__ed_veri_a, 0, _141_hex_coed__ed_veri_ha },
     { "shar", 7, _141_hex_coed__ed_shar_a, 0, _141_hex_coed__ed_shar_ha },
+    { "point-add", 7, _141_hex_coed__ed_point_add_a, 0, 0 },
+    { "scalarmult", 7, _141_hex_coed__ed_scalarmult_a, 0, 0 },
+    { "scalarmult-base", 7, _141_hex_coed__ed_scalarmult_base_a, 0, 0 },
+    { "add-scalarmult-scalarmult-base", 7,
+      _141_hex_coed__ed_add_scalarmult_scalarmult_base_a, 0, 0 },
+    { "add-double-scalarmult", 7,
+      _141_hex_coed__ed_add_double_scalarmult_a, 0, 0 },
     {}
   };
 static c3_c* _141_hex_coed__ed_ha[] = {

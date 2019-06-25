@@ -1,7 +1,7 @@
 {
   pkgs,
   debug,
-  argon2, ed25519, ent, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv
+  argon2, ed25519, ent, ge-additions, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv
 }:
 
 let
@@ -14,7 +14,7 @@ let
     [ curl gmp libsigsegv ncurses openssl zlib lmdb ];
 
   vendor =
-    [ argon2 softfloat3 ed25519 ent h2o scrypt uv murmur3 secp256k1 sni ];
+    [ argon2 softfloat3 ed25519 ent ge-additions h2o scrypt uv murmur3 secp256k1 sni ];
 
 in
 

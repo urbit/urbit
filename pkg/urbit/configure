@@ -6,7 +6,7 @@ URBIT_VERSION=0.8.0
 
 deps="                                                                    \
   curl gmp sigsegv argon2 ed25519 ent h2o scrypt sni uv murmur3 secp256k1 \
-  softfloat3 ncurses ssl crypto z lmdb                                    \
+  softfloat3 ncurses ssl crypto z lmdb ge-additions                       \
 "
 
 echo '#pragma once' >include/config.h
