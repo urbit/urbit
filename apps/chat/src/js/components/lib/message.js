@@ -45,7 +45,10 @@ export class Message extends Component {
     window.moment = moment;
     
     return (
-      <div className={"w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending}>
+      <div className={"w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending}
+        style={{
+          minHeight: 'min-content'
+        }}>
         <div className="fl mr2">
           <Sigil ship={this.props.msg.aut} size={32} />
         </div>
