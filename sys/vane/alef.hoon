@@ -1692,16 +1692,16 @@
     ^+  message-pump
     ::
     ?-  -.task
-      %memo  (on-send message.task)
+      %memo  (on-memo message.task)
       %wake  (run-packet-pump task)
       %hear
         ?-  -.ack-meat.task
           %&  (on-hear [message-num fragment-num=p.ack-meat]:task)
           %|  (on-done [message-num [ok lag]:p.ack-meat]:task)
     ==  ==
-  ::  +on-send: handle request to send a message
+  ::  +on-memo: handle request to send a message
   ::
-  ++  on-send
+  ++  on-memo
     |=  =message
     ^+  message-pump
     ::
