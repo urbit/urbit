@@ -121,7 +121,7 @@
       !>  (~(got by peers.ames-state.+.res) ~nec)
   ==
 ::
-++  test-send-rcv-message  ^-  tang
+++  test-message-flow  ^-  tang
   ::
   =^  moves1  alice
     (call alice ~[/alice] %memo ~doznec-doznec /g/talk [%get %post])
@@ -135,12 +135,18 @@
   =^  moves6  alice  (call alice ~[/alice] %hear (snag-packet 0 moves5))
   =^  moves7  bob    (call bob ~[/bob] %hear (snag-packet 0 moves6))
   ::
-  %+  expect-eq
-    !>  :~  :+  ~[/alice]  %give  [%done error=~]
-            :+  ~[/alice]  %pass
-            [/pump/~doznec-doznec/0 %b %rest ~1111.1.1..00.00.06]
-        ==
-    !>  moves4
+  ;:  weld
+    %+  expect-eq
+      !>  :~  :+  ~[/alice]  %give  [%done error=~]
+              :+  ~[/alice]  %pass
+              [/pump/~doznec-doznec/0 %b %rest ~1111.1.1..00.00.06]
+          ==
+      !>  moves4
+  ::
+    %+  expect-eq
+      !>  [~[/alice] %give %memo /g/talk %post 'first1!!']
+      !>  (snag 1 `(list move:alef)`moves6)
+  ==
 ::
 ++  test-nack  ^-  tang
   =^  moves1  alice
