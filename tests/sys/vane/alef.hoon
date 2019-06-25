@@ -159,7 +159,9 @@
   =^  moves5  alice  (call alice ~[/alice] %hear (snag-packet 1 moves3))
   =^  moves6  bob    (call bob ~[/bob] %hear (snag-packet 0 moves5))
   ::
-  ~
+  %+  expect-eq
+    !>  [~[/alice] %give %done `error]
+    !>  (snag 1 `(list move:alef)`moves5)
 ::
 ++  call
   |=  [vane=_alice =duct =task:alef]
