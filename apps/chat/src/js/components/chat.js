@@ -201,7 +201,7 @@ export class ChatScreen extends Component {
         .slice(messages.length - (50 * state.numPages), messages.length);
     }
 
-    let chatMessages = messages.map(this.buildMessage);
+    let chatMessages = messages.reverse().map(this.buildMessage);
     let peers = props.peers[state.station] || [window.ship];
 
     return (
@@ -214,7 +214,7 @@ export class ChatScreen extends Component {
             numPeers={peers.length} />
         </div>
         <div
-          className="overflow-y-scroll pt3"
+          className="overflow-y-scroll pt3 flex flex-column-reverse"
           style={{ height: 'calc(100% - 157px)' }}
           onScroll={this.onScroll}>
           {chatMessages}
