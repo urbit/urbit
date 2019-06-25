@@ -1171,6 +1171,9 @@
       ::
       =.  peers.ames-state  (~(del by peers.ames-state) ship)
       event-core
+    ::  +on-publ-rekey: handle new key for peer
+    ::
+    ::    TODO: assert .crypto-suite compatibility
     ::
     ++  on-publ-rekey
       |=  $:  =ship
@@ -1181,7 +1184,17 @@
           ==
       ^+  event-core
       ::
-      !!
+      =/  =peer-state     (got-peer-state ship)
+      =/  =private-key    sec:ex:crypto-core.ames-state
+      =/  =symmetric-key  (derive-symmetric-key `@`encryption-key private-key)
+      ::
+      =.  life.peer-state           life
+      =.  public-key.peer-state     `@`encryption-key
+      =.  symmetric-key.peer-state  symmetric-key
+      ::
+      =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer-state)
+      ::
+      event-core
     ::
     ++  on-publ-sponsor
       |=  [=ship sponsor=(unit ship)]
