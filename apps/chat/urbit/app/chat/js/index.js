@@ -56807,13 +56807,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        return b.wen - a.wen;
 	      })
 	      .map((obj) => {
-	        let host = `~${window.ship}`;
-	        let circle = obj.cir.split('/')[1];
-
 	        let unread = props.unreads[obj.cir];
-	        if (host + '/hall-internal-' + circle in props.unreads) {
-	          unread = props.unreads[host + '/hall-internal-' + circle];
-	        }
 
 	        return (
 	          react.createElement(SidebarItem, {
@@ -56825,7 +56819,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	            ship: obj.aut,
 	            selected: obj.selected,
 	            unread: unread,
-	            history: props.history, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 88}}
+	            history: props.history, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 82}}
 	          )
 	        );
 	      });
@@ -56850,20 +56844,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          key: inv.uid,
 	          msg: inv,
 	          api: props.api,
-	          config: props.inviteConfig, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 118}}
+	          config: props.inviteConfig, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 112}}
 	        )
 	      );
 	    });
 
 	    return (
-	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 128}}
-	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 129}}
-	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 130}}, "Chat")
+	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 122}}
+	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 123}}
+	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 124}}, "Chat")
 	          , react.createElement('a', {
 	            className: "dib tr w-50 pointer plus-font"    ,
-	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 131}}, "+")
+	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 125}}, "+")
 	        )
-	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 135}}
+	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 129}}
 	          , inviteItems
 	          , sidebarItems
 	        )
@@ -57037,14 +57031,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    window.moment = moment;
 	    
 	    return (
-	      react.createElement('div', { className: "w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 48}}
-	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 49}}
-	          , react.createElement(Sigil, { ship: this.props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 50}} )
+	      react.createElement('div', { className: "w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending,
+	        style: {
+	          minHeight: 'min-content'
+	        }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 48}}
+	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 52}}
+	          , react.createElement(Sigil, { ship: this.props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 53}} )
 	        )
-	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 52}}
-	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 53}}
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 54}}, "~", this.props.msg.aut)
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 55}}, timestamp)
+	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 55}}
+	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$8, lineNumber: 56}}
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 57}}, "~", this.props.msg.aut)
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$8, lineNumber: 58}}, timestamp)
 	          )
 	          , this.renderContent(this.props.details.type)
 	        )
@@ -57264,7 +57261,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    };
 
 	    this.hasAskedForMessages = false;
-	    this.topMessage = {};
 	    this.buildMessage = this.buildMessage.bind(this);
 	    this.onScroll = this.onScroll.bind(this);
 
@@ -57279,9 +57275,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	  componentDidMount() {
 	    this.updateNumPeople();
-	    if (this.scrollElement) {
-	      this.scrollElement.scrollIntoView(false, { block: 'end' });
-	    }
 	  }
 
 	  componentWillUnMount() {
@@ -57300,7 +57293,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      console.log('switched circle');
 	      this.hasAskedForMessages = false;
 	      this.scrollClosure = false;
-	      this.topMessage = {};
 	 
 	      this.setState({
 	        station: props.match.params.ship + "/" + props.match.params.station,
@@ -57367,24 +57359,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  onScroll(e) {
-	    if (e.target.scrollTop === 0
-	      && this.state.numPages * 50 <= this.props.messages.length) {
-	      this.setState({
-	        numPages: this.state.numPages + 1,
-	        scrollLocked: true
-	      }, () => {
-	        if (this.topMessage && this.topMessage[1]) {
-	          this.askForMessages();
-	          this.topMessage[1].scrollIntoView(true);
-	        } 
-	      });
-	    } else if (
-	        (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
-	      e.target.clientHeight
-	    ) {
+	    if (e.target.scrollTop === 0) {
 	      this.setState({
 	        numPages: 1,
 	        scrollLocked: false
+	      });
+	    } else if (
+	        (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
+	        e.target.clientHeight
+	    ) {
+	       this.setState({
+	        numPages: this.state.numPages + 1,
+	        scrollLocked: true
+	      }, () => {
+	        this.askForMessages();
 	      });
 	    }
 	  }
@@ -57405,29 +57393,18 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return (
 	        react.createElement('a', { 
 	          className: "vanilla hoverline text-600 text-mono"   , 
-	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 164}}
+	          href: prettyShip(msg.gam.aut)[1], __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 155}}
 	          , prettyShip(`~${msg.gam.aut}`)[0]
 	        )
 	      );
 	    }
 
-	    if (index % 50 === 0) {
-	      let pageNum = index / 50;
-	      return (
-	        react.createElement('div', {
-	          key: msg.gam.uid + "key" + Math.random() + "key" + msg.num,
-	          ref:  el => { this.topMessage[pageNum] = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 175}}
-	          , react.createElement(Message, { msg: msg.gam, details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 178}} )
-	        )
-	      );
-	    } else {
-	      return (
+	    return (
 	        react.createElement(Message, {
 	          key: msg.gam.uid + Math.random(), 
 	          msg: msg.gam, 
-	          details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 183}} )
+	          details: details, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 164}} )
 	      );
-	    }
 	  }
 
 	  render() {
@@ -57443,31 +57420,31 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        .slice(messages.length - (50 * state.numPages), messages.length);
 	    }
 
-	    let chatMessages = messages.map(this.buildMessage);
+	    let chatMessages = messages.reverse().map(this.buildMessage);
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
 	      react.createElement('div', { key: state.station, 
-	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 208}}
-	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 210}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 211}}, state.circle)
+	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 188}}
+	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 190}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$c, lineNumber: 191}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 212}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 192}} )
 	        )
 	        , react.createElement('div', {
-	          className: "overflow-y-scroll pt3" ,
+	          className: "overflow-y-scroll pt3 flex flex-column-reverse"   ,
 	          style: { height: 'calc(100% - 157px)' },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 216}}
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 196}}
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 200}})
 	          , chatMessages
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 221}})
 	        )
 	        , react.createElement(ChatInput, { 
 	          api: props.api,
 	          numMsgs: lastMsgNum,
 	          station: state.station,
 	          circle: state.circle,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 223}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 203}} )
 	      )
 	    )
 	  }
@@ -57890,9 +57867,23 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        if (messages[cir].length === 0) {
 	          unreads[cir] = false;
 	        } else {
-	          unreads[cir] =
-	            state.configs[cir].red <
-	            messages[cir][messages[cir].length - 1].num;
+	          let host = `~${window.ship}`;
+	          let circle = cir.split('/')[1];
+	          let internalStation = host + '/hall-internal-' + circle;
+
+	          if (internalStation in state.configs) {
+	            console.log(state.configs[internalStation].red, messages[cir]);
+
+	            unreads[cir] = 
+	              state.configs[internalStation].red <=
+	              messages[cir][messages[cir].length - 1].num;
+	          } else {
+	            console.log(cir, messages[cir], state.configs[cir].red);
+
+	            unreads[cir] =
+	              state.configs[cir].red <=
+	              messages[cir][messages[cir].length - 1].num;
+	          }
 	        }
 	      } else {
 	        unreads[cir] = false;
@@ -57912,8 +57903,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    }
 
 	    return (
-	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 88}}
-	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 89}}
+	      react.createElement(BrowserRouter, {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 102}}
+	        , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$h, lineNumber: 103}}
 	        , react.createElement(Route, { exact: true, path: "/~chat",
 	          render:  (props) => {
 	            return (
@@ -57926,19 +57917,19 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    unreads: unreads,
 	                    api: api,
 	                    inviteConfig: inviteConfig,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 95}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 109}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 93}}
-	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 105}}
-	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 106}}
-	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 107}}
-	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 108}}, "Cmd + N to start a new chat"       )
+	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 107}}
+	                , react.createElement('div', { className: "w-100 h-100 fr"  , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 119}}
+	                  , react.createElement('div', { className: "dt w-100 h-100"  , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 120}}
+	                    , react.createElement('div', { className: "dtc center v-mid w-100 h-100 bg-white"     , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 121}}
+	                      , react.createElement('p', { className: "tc", __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 122}}, "Cmd + N to start a new chat"       )
 	                    )
 	                  )
 	                )
 	              )
 	            );
-	          }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 90}} )
+	          }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 104}} )
 	        , react.createElement(Route, { exact: true, path: "/~chat/new",
 	          render:  (props) => {
 	            return (
@@ -57951,16 +57942,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    unreads: unreads,
 	                    api: api,
 	                    inviteConfig: inviteConfig,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 120}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 134}}
 	                  )
-	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 118}}
+	                , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 132}}
 	                , react.createElement(NewScreen, { 
 	                  api: api,
-	                  ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 130}}
+	                  ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 144}}
 	                )
 	              )
 	            );
-	         }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 115}} )
+	         }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 129}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station",
 	           render:  (props) => {
 	             let station = 
@@ -57978,20 +57969,20 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    unreads: unreads,
 	                    api: api,
 	                    inviteConfig: inviteConfig,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 147}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 161}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 145}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 159}}
 	                 , react.createElement(ChatScreen, {
 	                   api: api,
 	                   configs: configs,
 	                   messages: messages,
 	                   peers: state.peers,
 	                   subscription: subscription,
-	                   ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 157}}
+	                   ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 171}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 137}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 151}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/members",
 	           render:  (props) => {
 	             return (
@@ -58004,17 +57995,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    unreads: unreads,
 	                    api: api,
 	                    inviteConfig: inviteConfig,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 173}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 187}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 171}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 185}}
 	                 , react.createElement(MemberScreen, {
 	                   ...props, 
 	                   api: api,
-	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 183}}
+	                   peers: state.peers, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 197}}
 	                 )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 168}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 182}} )
 	         , react.createElement(Route, { exact: true, path: "/~chat/:ship/:station/settings",
 	           render:  (props) => {
 	             return (
@@ -58027,17 +58018,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	                    unreads: unreads,
 	                    api: api,
 	                    inviteConfig: inviteConfig,
-	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 196}}
+	                    ...props, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 210}}
 	                  )
-	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 194}}
+	                 , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 208}}
 	                 , react.createElement(SettingsScreen, { 
 	                   ...props,
 	                   api: api,
 	                   peers: state.peers,
-	                   store: store, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 206}} )
+	                   store: store, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 220}} )
 	               )
 	             );
-	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 191}} )
+	           }, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 205}} )
 	        )
 	      )
 	    )

@@ -50,6 +50,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
+  =/  launchnoun  [%noun [%chat /chattile '/~chat/js/tile.js']]
   ?~  old
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
@@ -62,9 +63,9 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]
+        [ost.bol %poke /chat [our.bol %launch] launchnoun]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]~
+  :-  [ost.bol %poke /chat [our.bol %launch] launchnoun]~
   this(sta u.old)
 ::
 ::

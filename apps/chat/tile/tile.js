@@ -53,6 +53,7 @@ export default class ChatTile extends Component {
         if (!state.configs[key]) { break; }
 
         let red = state.configs[key].red;
+        console.log(key, red, numbers[key]);
 
         if (key === inviteCircle) {
           inviteNum = inviteNum - red + numbers[key];
