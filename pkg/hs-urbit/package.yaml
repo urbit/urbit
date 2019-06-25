@@ -35,6 +35,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - rio
   - sdl2
   - sdl2-image
   - semigroups

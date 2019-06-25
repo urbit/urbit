@@ -33,10 +33,10 @@ newtype Tour = Tour [Char]
   deriving (Eq, Ord, Show)
 
 newtype Tape = Tape ByteString
-  deriving (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 newtype Cord = Cord ByteString
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, IsString)
 
 type Tang = [Tank]
 
@@ -357,10 +357,10 @@ instance FromNoun Plum where
   parseNoun = undefined
 
 instance ToNoun Tank where
-  toNoun = undefined
+  toNoun = pure (Atom 0)
 
 instance FromNoun Tank where
-  parseNoun = undefined
+  parseNoun _ = pure (TLeaf (Tape "TODO: Tank Parsing"))
 
 
 -- Pair Conversion -------------------------------------------------------------

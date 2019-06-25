@@ -4,8 +4,6 @@ import ClassyPrelude
 import Control.Lens
 import Data.Void
 
-import System.Exit (ExitCode)
-
 import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Jam
@@ -14,27 +12,33 @@ import Data.Noun.Pill
 import Vere.Pier.Types
 import System.Process
 
-import qualified Urbit.Time as Time
-
+import Foreign.Marshal.Alloc (alloca)
+import System.Exit (ExitCode)
 import Data.ByteString (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Ptr (castPtr)
-import Foreign.Storable (peek)
+import Foreign.Storable (poke, peek)
 
-import qualified Vere.Log as Log
+import qualified Data.ByteString.Unsafe as BS
+import qualified Urbit.Time             as Time
+import qualified Vere.Log               as Log
 
+
+--------------------------------------------------------------------------------
+
+
+{-
+    TODO:
+      - getInput   :: STM (Writ ())
+      - onComputed :: Writ [Effect] -> STM ()
+      - onExit     :: Serf -> IO ()
+      - task       :: Async ()
+-}
 data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
-
-  -- , getInput   :: STM (Writ ())
-  -- , onComputed :: Writ [Effect] -> STM ()
-
---  , onExit :: Serf -> IO ()
---  , task       :: Async ()
   }
-
 
 
 --------------------------------------------------------------------------------
@@ -85,18 +89,23 @@ type Play = Maybe (EventId, Mug, ShipId)
 data Plea
     = Play Play
     | Work EventId Mug Job
-    | Done EventId Mug [Eff]
+    | Done EventId Mug [Either Text (Path, Eff)]
     | Stdr EventId Cord
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
+
+fromRight (Right x) = x
 
 instance ToNoun Plea where
   toNoun = \case
     Play p     -> toNoun (Cord "play", p)
     Work i m j -> toNoun (Cord "work", i, m, j)
-    Done i m o -> toNoun (Cord "done", i, m, o)
+    Done i m o -> toNoun (Cord "done", i, m, fromRight <$> o)
     Stdr i msg -> toNoun (Cord "stdr", i, msg)
     Slog i p t -> toNoun (Cord "slog", i, p, t)
+
+instance FromNoun (Either Text (Path, Eff)) where
+  parseNoun = pure . fromNounErr
 
 instance FromNoun Plea where
   parseNoun n =
@@ -116,7 +125,7 @@ type NextEventId = Word64
 type SerfState = (EventId, Mug)
 
 type ReplacementEv = (EventId, Mug, Job)
-type WorkResult  = (EventId, Mug, [Eff])
+type WorkResult  = (EventId, Mug, [Either Text (Path, Eff)])
 type SerfResp    = (Either ReplacementEv WorkResult)
 
 -- Exceptions ------------------------------------------------------------------
@@ -138,7 +147,7 @@ instance Exception SerfExn
 -- Utils -----------------------------------------------------------------------
 
 printTank :: Word32 -> Tank -> IO ()
-printTank pri t = print "tank"
+printTank pri t = print "[SERF] tank"
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
@@ -157,19 +166,20 @@ sendAndRecv :: Serf -> EventId -> Atom -> IO SerfResp
 sendAndRecv w eventId event =
   do
     traceM ("sendAndRecv: " <> show eventId)
+    traceM (show (cue event))
     sendAtom w $ work eventId (Jam event)
     res <- loop
-    traceM "sendAndRecv.done"
+    traceM ("sendAndRecv.done " <> show res)
     pure res
   where
     produce :: WorkResult -> IO SerfResp
     produce (i, m, o) = do
-      guardExn (i /= eventId) (BadComputeId eventId (i, m, o))
+      guardExn (i == eventId) (BadComputeId eventId (i, m, o))
       pure $ Right (i, m, o)
 
     replace :: ReplacementEv -> IO SerfResp
     replace (i, m, j) = do
-      guardExn (i /= eventId) (BadReplacementId eventId (i, m, j))
+      guardExn (i == eventId) (BadReplacementId eventId (i, m, j))
       pure (Left (i, m, j))
 
     loop :: IO SerfResp
@@ -177,7 +187,7 @@ sendAndRecv w eventId event =
       Play p       -> throwIO (UnexpectedPlay eventId p)
       Done i m o   -> produce (i, m, o)
       Work i m j   -> replace (i, m, j)
-      Stdr _ cord  -> print cord >> loop
+      Stdr _ cord  -> putStrLn (pack ("[SERF] " <> cordString cord)) >> loop
       Slog _ pri t -> printTank pri t >> loop
 
 sendBootEvent :: LogIdentity -> Serf -> IO ()
@@ -296,11 +306,27 @@ requestSnapshot w =  undefined
 
 -- Basic Send and Receive Operations -------------------------------------------
 
+withWord64AsByteString :: Word64 -> (ByteString -> IO a) -> IO a
+withWord64AsByteString w k = do
+  alloca $ \wp -> do
+    poke wp w
+    bs <- BS.unsafePackCStringLen (castPtr wp, 8)
+    k bs
+
+sendLen :: Serf -> Int -> IO ()
+sendLen s i = do
+  traceM "sendLen.put"
+  w <- evaluate (fromIntegral i :: Word64)
+  withWord64AsByteString (fromIntegral i) (hPut (sendHandle s))
+  traceM "sendLen.done"
+
 sendAtom :: Serf -> Atom -> IO ()
-sendAtom w a = do
+sendAtom s a = do
   traceM "sendAtom"
-  hPut (sendHandle w) (unpackAtom a)
-  hFlush (sendHandle w)
+  let bs = unpackAtom a
+  sendLen s (length bs)
+  hPut (sendHandle s) bs
+  hFlush (sendHandle s)
   traceM "sendAtom.return ()"
 
 atomBytes :: Iso' Atom ByteString
@@ -350,5 +376,5 @@ recvPlea w = do
 
   -- TODO Hack!
   case p of
-    Stdr e msg -> traceM (cordString msg) >> recvPlea w
+    Stdr e msg -> traceM ("[SERF] " <> cordString msg) >> recvPlea w
     _          -> pure p

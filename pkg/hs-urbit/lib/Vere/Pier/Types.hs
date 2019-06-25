@@ -8,6 +8,8 @@ import Data.Noun.Poet
 import Database.LMDB.Raw
 import Urbit.Time
 
+import RIO (decodeUtf8Lenient)
+
 import qualified Vere.Http.Server as Server
 import qualified Vere.Http.Client as Client
 
@@ -20,6 +22,16 @@ data Event
   | CttpBorn
   deriving (Eq, Ord, Show)
 
+data PutDel = Put | Del
+  deriving (Eq, Ord, Show)
+
+instance FromNoun PutDel where
+  parseNoun n = do
+    parseNoun n >>= \case
+      Cord "put" -> pure Put
+      Cord "del" -> pure Del
+      Cord cord  -> fail ("Invalid turf operation: " <> show cord)
+
 data Eff
   = HttpServer Server.Eff
   | HttpClient Client.Eff
@@ -31,19 +43,73 @@ data Eff
   | Ames Void
   | Init Void
   | Term Void
+  | Hill [Term]
+  | Turf (Maybe (PutDel, [Text])) -- TODO Unsure
   deriving (Eq, Ord, Show)
 
 instance ToNoun Eff where
+  toNoun = const (Atom 0)
 
 instance FromNoun Eff where
+  parseNoun = \case
+    Atom _ ->
+      fail "Eff: Expecting cell, but got an atom"
+    Cell h t ->
+      parseNoun h >>= \case
+        Cord "hill" -> do
+          paths <- parseNoun t
+          pure (Hill paths)
+        Cord "turf" -> do
+          arg <- parseNoun t
+          pure (Turf arg)
+        Cord nm -> do
+          fail ("Eff: unknown effect " <> unpack (decodeUtf8Lenient nm))
 
+--------------------------------------------------------------------------------
+
+instance ToNoun Text where -- XX op args)TODO
+  toNoun t = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Text where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (decodeUtf8Lenient c)
+
+
+--------------------------------------------------------------------------------
+
+newtype Term = MkTerm Text
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Term where -- XX TODO
+  toNoun (MkTerm t) = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Term where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (MkTerm (decodeUtf8Lenient c))
+
+--------------------------------------------------------------------------------
+
+newtype Knot = MkKnot Text
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Knot where -- XX TODO
+  toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Knot where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (MkKnot (decodeUtf8Lenient c))
+
+--------------------------------------------------------------------------------
 
 data Varience = Gold | Iron | Lead
 
 type Perform = Eff -> IO ()
 
-newtype Path = Path [Text]
-  deriving (Eq, Ord, Show)
+newtype Path = Path [Knot]
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Ovum = Ovum Path Event
   deriving (Eq, Ord, Show, ToNoun, FromNoun)
