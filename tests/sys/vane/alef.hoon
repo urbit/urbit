@@ -8,6 +8,14 @@
 =/  alice  vane
 =/  bob    vane
 ::
+=.  our.alice  ~nec
+=.  now.alice  ~1111.1.1
+=.  eny.alice  0xdead.beef
+::
+=.  our.bob    ~doznec-doznec
+=.  now.bob    ~1111.1.1
+=.  eny.bob    0xbeef.dead
+::
 =.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
 =.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
 ::
@@ -123,120 +131,51 @@
 ::
 ++  test-send-rcv-message  ^-  tang
   ::
-  =/  alice-core  (alice ~nec 0xdead.beef ~2222.2.2 *sley)
+  =^  moves1  alice
+    (call alice ~[/alice] %memo ~doznec-doznec /g/talk [%get %post])
   ::
-  =/  res1
-    %-  call:alice-core
-    [~[/alice] ** %memo ~doznec-doznec /g/talk [%get %post]]
+  =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
+  =^  moves3  bob    (take bob /bone/~nec/1 ~[/bob] %g %done ~)
+  =^  moves4  alice  (call alice ~[/alice] %hear (snag-packet 0 moves3))
+  =^  moves5  bob
+    (take bob /bone/~nec/1 ~[/bob] %g %memo /g/talk [%post 'first1!!'])
   ::
-  ::~&  res1=-.res1
-  ::
-  =/  bob-core  (bob ~doznec-doznec 0xbeef.dead ~2222.2.3 *sley)
-  ::
-  =/  res2
-    %-  call:bob-core
-    [~[/bob] ** %hear (snag-packet 0 -.res1)]
-  ::
-  ::~&  res2=-.res2
-  ::
-  =.  bob-core  (+.res2 ~doznec-doznec 0xbeef.dead ~2222.2.4 *sley)
-  ::
-  =/  res3
-    %-  take:bob-core
-    [/bone/~nec/1 ~[/bob] ** %g %done ~]
-  ::
-  ::~&  res3=-.res3
-  ::
-  =.  alice-core  (+.res1 ~nec 0xdead.beef ~2222.2.5 *sley)
-  ::
-  =/  res4
-    %-  call:alice-core
-    [~[/alice] ** %hear (snag-packet 0 -.res3)]
-  ::
-  =.  bob-core  (+.res3 ~doznec-doznec 0xbeef.dead ~2222.2.6 *sley)
-  ::
-  =/  res5
-    %-  take:bob-core
-    [/bone/~nec/1 ~[/bob] ** %g %memo /g/talk [%post 'first1!!']]
-  ::
-  ::~&  res5=-.res5
-  ::
-  =.  alice-core  (+.res4 ~nec 0xdead.beef ~2222.2.7 *sley)
-  ::
-  =/  res6
-    %-  call:alice-core
-    [~[/alice] ** %hear (snag-packet 0 -.res5)]
-  ::
-  ::~&  res6=-.res6
-  ::
-  =.  bob-core  (+.res5 ~doznec-doznec 0xbeef.dead ~2222.2.8 *sley)
-  ::
-  =/  res7
-    %-  call:bob-core
-    [~[/bob] ** %hear (snag-packet 0 -.res6)]
-  ::
-  ::~&  res7=-.res7
+  =^  moves6  alice  (call alice ~[/alice] %hear (snag-packet 0 moves5))
+  =^  moves7  bob    (call bob ~[/bob] %hear (snag-packet 0 moves6))
   ::
   %+  expect-eq
     !>  :~  :+  ~[/alice]  %give  [%done error=~]
             :+  ~[/alice]  %pass
-            [/pump/~doznec-doznec/0 %b %rest ~2222.2.2..00.00.05]
+            [/pump/~doznec-doznec/0 %b %rest ~1111.1.1..00.00.06]
         ==
-    !>  -.res4
+    !>  moves4
 ::
 ++  test-nack  ^-  tang
+  =^  moves1  alice
+    (call alice ~[/alice] %memo ~doznec-doznec /g/talk [%get %post])
   ::
-  =/  alice-core  (alice ~nec 0xdead.beef ~2222.2.2 *sley)
-  ::
-  =/  res1
-    %-  call:alice-core
-    [~[/alice] ** %memo ~doznec-doznec /g/talk [%get %post]]
-  ::
-  ::~&  res1=-.res1
-  ::
-  =/  bob-core  (bob ~doznec-doznec 0xbeef.dead ~2222.2.3 *sley)
-  ::
-  =/  res2
-    %-  call:bob-core
-    [~[/bob] ** %hear (snag-packet 0 -.res1)]
-  ::
-  ::~&  res2=-.res2
-  ::
-  =.  bob-core  (+.res2 ~doznec-doznec 0xbeef.dead ~2222.2.4 *sley)
-  ::
-  =/  =error:alef  [%flub [%leaf "sinusoidal repleneration"]~]
-  ::
-  =/  res3
-    %-  take:bob-core
-    [/bone/~nec/1 ~[/bob] ** %g %done `error]
-  ::
-  ::~&  res3=-.res3
-  ::
-  =.  alice-core  (+.res1 ~nec 0xdead.beef ~2222.2.5 *sley)
-  ::  process first (nack) packet
-  ::
-  =/  res4
-    %-  call:alice-core
-    [~[/alice] ** %hear (snag-packet 0 -.res3)]
-  ::
-  ::~&  res4=-.res4
-  ::
-  =.  alice-core  (+.res4 ~nec 0xdead.beef ~2222.2.6 *sley)
-  ::  process second (naxplanation message) packet
-  ::
-  =/  res5
-    %-  call:alice-core
-    [~[/alice] ** %hear (snag-packet 1 -.res3)]
-  ::
-  ::~&  res5=-.res5
-  ::
-  =.  bob-core  (+.res3 ~doznec-doznec 0xbeef.dead ~2222.2.7 *sley)
-  ::
-  =/  res6
-    %-  call:bob-core
-    [~[/bob] ** %hear (snag-packet 0 -.res5)]
-  ::
-  ::~&  res6=-.res6
+  =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
+  =/  =error:alef    [%flub [%leaf "sinusoidal repleneration"]~]
+  =^  moves3  bob    (take bob /bone/~nec/1 ~[/bob] %g %done `error)
+  =^  moves4  alice  (call alice ~[/alice] %hear (snag-packet 0 moves3))
+  =^  moves5  alice  (call alice ~[/alice] %hear (snag-packet 1 moves3))
+  =^  moves6  bob    (call bob ~[/bob] %hear (snag-packet 0 moves5))
   ::
   ~
+::
+++  call
+  |=  [vane=_alice =duct =task:alef]
+  ^-  [moves=(list move:alef) _alice]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (call:vane-core duct ** task)
+::
+++  take
+  |=  [vane=_alice =wire =duct =sign:alef]
+  ^-  [moves=(list move:alef) _alice]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (take:vane-core wire duct ** sign)
 --
