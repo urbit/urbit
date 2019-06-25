@@ -1047,10 +1047,10 @@ _pier_work_create(u3_pier* pir_u)
 
     sprintf(wag_c, "%u", pir_u->wag_w);
 
-    arg_c[0] = bin_c;                   //  executable
-    arg_c[1] = pax_c;                   //  path to checkpoint directory
-    arg_c[2] = key_c;                   //  disk key
-    arg_c[3] = wag_c;                   //  runtime config
+    arg_c[0] = bin_c;  //  executable
+    arg_c[1] = pax_c;  //  path to checkpoint directory (might be the pier, might be $pier/chk)
+    arg_c[2] = key_c;  //  disk key (ignored)
+    arg_c[3] = wag_c;  //  runtime config
     arg_c[4] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);

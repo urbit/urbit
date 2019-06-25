@@ -75,6 +75,8 @@ data Pier = Pier
   , portingThread :: Async ()
   }
 
+newtype EventLog = EventLog MDB_env
+
 -- TODO: We are uncertain about q's type. There's some serious entanglement
 -- with u3_pier in this logic in the C code, and you might not be able to get
 -- away with anything less than passing the full u3_writ around.

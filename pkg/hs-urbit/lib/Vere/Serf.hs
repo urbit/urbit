@@ -1,4 +1,4 @@
-module Vere.Worker where
+module Vere.Serf where
 
 import ClassyPrelude
 import Control.Lens
@@ -23,7 +23,7 @@ import Foreign.Storable (peek)
 
 import qualified Vere.Log as Log
 
-data Worker = Worker
+data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
@@ -31,7 +31,7 @@ data Worker = Worker
   -- , getInput   :: STM (Writ ())
   -- , onComputed :: Writ [Effect] -> STM ()
 
---  , onExit :: Worker -> IO ()
+--  , onExit :: Serf -> IO ()
 --  , task       :: Async ()
   }
 
@@ -39,20 +39,27 @@ data Worker = Worker
 
 --------------------------------------------------------------------------------
 
--- Think about how to handle process exit
--- Tear down subprocess on exit? (terminiteProcess)
-startWorkerProcess :: IO Worker
-startWorkerProcess =
+{-
+    TODO Think about how to handle process exit
+    TODO Tear down subprocess on exit? (terminiteProcess)
+    TODO `config` is a stub, fill it in.
+-}
+startSerfProcess :: FilePath -> IO Serf
+startSerfProcess pier =
   do
     (Just i, Just o, _, p) <- createProcess pSpec
-    pure (Worker i o p)
+    pure (Serf i o p)
   where
-    pSpec =
-      (proc "urbit-worker" []) { std_in  = CreatePipe
-                               , std_out = CreatePipe
-                               }
+    chkDir  = traceShowId pier
+    diskKey = ""
+    config  = "0"
+    args    = [chkDir, diskKey, config]
+    pSpec   = (proc "urbit-worker" args)
+                { std_in = CreatePipe
+                , std_out = CreatePipe
+                }
 
-kill :: Worker -> IO ExitCode
+kill :: Serf -> IO ExitCode
 kill w = do
   terminateProcess (process w)
   waitForProcess (process w)
@@ -73,7 +80,7 @@ newtype ShipId = ShipId (Ship, Bool)
 
 --------------------------------------------------------------------------------
 
-type Play = Nullable (EventId, Mug, ShipId)
+type Play = Maybe (EventId, Mug, ShipId)
 
 data Plea
     = Play Play
@@ -106,27 +113,27 @@ instance FromNoun Plea where
 type CompletedEventId = Word64
 type NextEventId = Word64
 
-type WorkerState = (EventId, Mug)
+type SerfState = (EventId, Mug)
 
 type ReplacementEv = (EventId, Mug, Job)
-type WorkResult    = (EventId, Mug, [Eff])
-type WorkerResp    = (Either ReplacementEv WorkResult)
+type WorkResult  = (EventId, Mug, [Eff])
+type SerfResp    = (Either ReplacementEv WorkResult)
 
 -- Exceptions ------------------------------------------------------------------
 
-data WorkerExn
+data SerfExn
     = BadComputeId EventId WorkResult
     | BadReplacementId EventId ReplacementEv
     | UnexpectedPlay EventId Play
     | BadPleaAtom Atom
-    | BadPleaNoun Noun
+    | BadPleaNoun Noun Text
     | ReplacedEventDuringReplay EventId ReplacementEv
-    | WorkerConnectionClosed
+    | SerfConnectionClosed
     | UnexpectedPleaOnNewShip Plea
     | InvalidInitialPlea Plea
   deriving (Show)
 
-instance Exception WorkerExn
+instance Exception SerfExn
 
 -- Utils -----------------------------------------------------------------------
 
@@ -140,25 +147,32 @@ fromJustExn :: Exception e => Maybe a -> e -> IO a
 fromJustExn Nothing  exn = throwIO exn
 fromJustExn (Just x) exn = pure x
 
+fromRightExn :: Exception e => Either Text a -> (Text -> e) -> IO a
+fromRightExn (Left m)  exn = throwIO (exn m)
+fromRightExn (Right x) _   = pure x
+
 --------------------------------------------------------------------------------
 
-sendAndRecv :: Worker -> EventId -> Atom -> IO WorkerResp
+sendAndRecv :: Serf -> EventId -> Atom -> IO SerfResp
 sendAndRecv w eventId event =
   do
+    traceM ("sendAndRecv: " <> show eventId)
     sendAtom w $ work eventId (Jam event)
-    loop
+    res <- loop
+    traceM "sendAndRecv.done"
+    pure res
   where
-    produce :: WorkResult -> IO WorkerResp
+    produce :: WorkResult -> IO SerfResp
     produce (i, m, o) = do
       guardExn (i /= eventId) (BadComputeId eventId (i, m, o))
       pure $ Right (i, m, o)
 
-    replace :: ReplacementEv -> IO WorkerResp
+    replace :: ReplacementEv -> IO SerfResp
     replace (i, m, j) = do
       guardExn (i /= eventId) (BadReplacementId eventId (i, m, j))
       pure (Left (i, m, j))
 
-    loop :: IO WorkerResp
+    loop :: IO SerfResp
     loop = recvPlea w >>= \case
       Play p       -> throwIO (UnexpectedPlay eventId p)
       Done i m o   -> produce (i, m, o)
@@ -166,31 +180,42 @@ sendAndRecv w eventId event =
       Stdr _ cord  -> print cord >> loop
       Slog _ pri t -> printTank pri t >> loop
 
-sendBootEvent :: LogIdentity -> Worker -> IO ()
+sendBootEvent :: LogIdentity -> Serf -> IO ()
 sendBootEvent id w = do
   sendAtom w $ jam $ toNoun (Cord "boot", id)
 
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
-replay :: Worker
-       -> WorkerState
-       -> LogIdentity
-       -> EventId
-       -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
-       -> IO (EventId, Mug)
-replay w (wid, wmug) identity lastCommitedId getEvents = do
+replayEvents :: Serf
+             -> SerfState
+             -> LogIdentity
+             -> EventId
+             -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
+             -> IO (EventId, Mug)
+replayEvents w (wid, wmug) identity lastCommitedId getEvents = do
+  traceM ("replayEvents: " <> show wid <> " " <> show wmug)
+
   when (wid == 1) (sendBootEvent identity w)
 
   vLast <- newIORef (wid, wmug)
   loop vLast wid
-  readIORef vLast
+
+  res <- readIORef vLast
+  traceM ("replayEvents.return " <> show res)
+  pure res
+
   where
     -- Replay events in batches of 1000.
     loop vLast curEvent = do
+      traceM ("replayEvents.loop: " <> show curEvent)
       let toRead = min 1000 (1 + lastCommitedId - curEvent)
       when (toRead > 0) do
+        traceM ("replayEvents.loop.getEvents " <> show toRead)
+
         events <- getEvents curEvent toRead
+
+        traceM ("got events " <> show (length events))
 
         for_ events $ \(eventId, event) -> do
           sendAndRecv w eventId event >>= \case
@@ -200,45 +225,35 @@ replay w (wid, wmug) identity lastCommitedId getEvents = do
         loop vLast (curEvent + toRead)
 
 
-bootWorker :: Worker
-           -> LogIdentity
-           -> Pill
-           -> IO ()
-bootWorker w identity pill =
+bootSerf :: Serf -> LogIdentity -> Pill -> IO (EventId, Mug)
+bootSerf w ident pill =
   do
     recvPlea w >>= \case
-      Play Nil   -> pure ()
-      x@(Play _) -> throwIO (UnexpectedPleaOnNewShip x)
-      x          -> throwIO (InvalidInitialPlea x)
+      Play Nothing -> pure ()
+      x@(Play _)   -> throwIO (UnexpectedPleaOnNewShip x)
+      x            -> throwIO (InvalidInitialPlea x)
 
     -- TODO: actually boot the pill
     undefined
 
-    requestSnapshot w
-
     -- Maybe return the current event id ? But we'll have to figure that out
     -- later.
-    pure ()
+    pure undefined
 
-resumeWorker :: Worker
-             -> LogIdentity
-             -> EventId
-             -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
-             -> IO (EventId, Mug)
-resumeWorker w identity logLatestEventNumber eventFetcher =
-  do
+type GetEvents = EventId -> Word64 -> IO (Vector (EventId, Atom))
+
+replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO (EventId, Mug)
+replay w ident lastEv getEvents = do
     ws@(eventId, mug) <- recvPlea w >>= \case
-      Play Nil                -> pure (1, Mug 0)
-      Play (NotNil (e, m, _)) -> pure (e, m)
-      x                       -> throwIO (InvalidInitialPlea x)
+      Play Nothing          -> pure (1, Mug 0)
+      Play (Just (e, m, _)) -> pure (e, m)
+      x                     -> throwIO (InvalidInitialPlea x)
 
-    r <- replay w ws identity logLatestEventNumber eventFetcher
+    traceM ("got plea! " <> show eventId <> " " <> show mug)
 
-    requestSnapshot w
+    replayEvents w ws ident lastEv getEvents
 
-    pure r
-
-workerThread :: Worker -> STM Ovum -> (EventId, Mug) -> IO (Async ())
+workerThread :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
 workerThread w getEvent (evendId, mug) = async $ forever do
   ovum <- atomically $ getEvent
 
@@ -247,15 +262,15 @@ workerThread w getEvent (evendId, mug) = async $ forever do
   let mat = jam (undefined (mug, currentDate, ovum))
 
   undefined
-  
+
   -- Writ (eventId + 1) Nothing mat
   -- -- assign a new event id.
   -- -- assign a date
   -- -- get current mug state
   -- -- (jam [mug event])
-  -- sendAndRecv 
+  -- sendAndRecv
 
-requestSnapshot :: Worker -> IO ()
+requestSnapshot :: Serf -> IO ()
 requestSnapshot w =  undefined
 
 -- The flow here is that we start the worker and then we receive a play event
@@ -263,7 +278,7 @@ requestSnapshot w =  undefined
 --
 --  <- [%play ...]
 --
--- Base on this, the main flow is 
+-- Base on this, the main flow is
 --
 
   --  [%work ] ->
@@ -281,8 +296,12 @@ requestSnapshot w =  undefined
 
 -- Basic Send and Receive Operations -------------------------------------------
 
-sendAtom :: Worker -> Atom -> IO ()
-sendAtom w a = hPut (sendHandle w) (unpackAtom a)
+sendAtom :: Serf -> Atom -> IO ()
+sendAtom w a = do
+  traceM "sendAtom"
+  hPut (sendHandle w) (unpackAtom a)
+  hFlush (sendHandle w)
+  traceM "sendAtom.return ()"
 
 atomBytes :: Iso' Atom ByteString
 atomBytes = pill . pillBS
@@ -292,26 +311,44 @@ packAtom = view (from atomBytes)
 unpackAtom :: Atom -> ByteString
 unpackAtom = view atomBytes
 
-recvLen :: Worker -> IO Word64
+recvLen :: Serf -> IO Word64
 recvLen w = do
+  traceM "recvLen.wait"
   bs <- hGet (recvHandle w) 8
+  traceM "recvLen.got"
   case length bs of
     -- This is not big endian safe
     8 -> unsafeUseAsCString bs (peek . castPtr)
-    _ -> throwIO WorkerConnectionClosed
+    _ -> throwIO SerfConnectionClosed
 
-recvBytes :: Worker -> Word64 -> IO ByteString
-recvBytes w = hGet (recvHandle w) . fromIntegral
+recvBytes :: Serf -> Word64 -> IO ByteString
+recvBytes w = do
+  traceM "recvBytes"
+  hGet (recvHandle w) . fromIntegral
 
-recvAtom :: Worker -> IO Atom
+recvAtom :: Serf -> IO Atom
 recvAtom w = do
+  traceM "recvAtom"
   len <- recvLen w
   bs <- recvBytes w len
   pure (packAtom bs)
 
-recvPlea :: Worker -> IO Plea
+cordString :: Cord -> String
+cordString (Cord bs) = unpack $ decodeUtf8 bs
+
+recvPlea :: Serf -> IO Plea
 recvPlea w = do
+  traceM "recvPlea"
+
   a <- recvAtom w
+  traceM ("recvPlea.cue " <> show (length $ a ^. atomBytes))
   n <- fromJustExn (cue a)      (BadPleaAtom a)
-  p <- fromJustExn (fromNoun n) (BadPleaNoun n)
-  pure p
+  traceM "recvPlea.doneCue"
+  p <- fromRightExn (fromNounErr n) (BadPleaNoun n)
+
+  traceM "recvPlea.done"
+
+  -- TODO Hack!
+  case p of
+    Stdr e msg -> traceM (cordString msg) >> recvPlea w
+    _          -> pure p

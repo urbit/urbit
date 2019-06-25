@@ -79,7 +79,7 @@ instance Applicative IResult where
     (<*>) = ap
 
 instance Fail.MonadFail IResult where
-    fail err = IError [] err
+    fail err = traceM ("!" <> err <> "!") >> IError [] err
 
 instance Monad IResult where
     return = pure
@@ -203,6 +203,12 @@ fromNoun n = runParser (parseNoun n) [] onFail onSuccess
     onFail p m  = Nothing
     onSuccess x = Just x
 
+fromNounErr :: FromNoun a => Noun -> Either Text a
+fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
+  where
+    onFail p m  = Left (pack m)
+    onSuccess x = Right x
+
 _Poet :: (ToNoun a, FromNoun a) => Prism' Noun a
 _Poet = prism' toNoun fromNoun
 
@@ -287,7 +293,7 @@ instance ToNoun a => ToNoun (Nullable a) where
 
 instance FromNoun a => FromNoun (Nullable a) where
   parseNoun (Atom 0) = pure Nil
-  parseNoun (Atom n) = fail ("Expected ?@(~ ^), but got " <> show n)
+  parseNoun (Atom n) = fail ("Nullable: expected ?@(~ ^), but got " <> show n)
   parseNoun n        = NotNil <$> parseNoun n
 
 

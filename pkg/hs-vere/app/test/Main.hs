@@ -2,45 +2,78 @@ module Main where
 
 import ClassyPrelude
 import Vere.Pier.Types
-import Data.Noun.Jam hiding (main)
-import qualified Vere.Log as Log
+
+import Data.Noun.Jam ()
+
+import qualified Vere.Log     as Log
+import qualified Vere.Persist as Persist
+import qualified Vere.Pier    as Pier
+
+
+--------------------------------------------------------------------------------
 
 main :: IO ()
 main = do
-  let logPath = "/Users/erg/src/urbit/zod/.urb/falselog/"
+  (s,l,e,m) <- Pier.resume "/home/benjamin/r/urbit/zod/"
+
+  putStrLn "Resumed!"
+
+  pure ()
+
+--------------------------------------------------------------------------------
+
+tryCopyLog :: IO ()
+tryCopyLog = do
+  let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"
       falselogPath = "/Users/erg/src/urbit/zod/.urb/falselog2/"
 
-  -- junk
-  persistQueue <- newTQueueIO
-  releaseQueue <- newTQueueIO
-  logState <- Log.init logPath persistQueue (writeTQueue releaseQueue)
+  ----------------------------------------
 
-  -- 
-  logId <- Log.readLogIdentity logState
-  print logId
+  persistQ <- newTQueueIO
+  releaseQ <- newTQueueIO
+  log      <- Log.open logPath
+  persist  <- Persist.start log persistQ (writeTQueue releaseQ)
+  ident    <- Log.readIdent log
 
-  --
-  latestEvent <- Log.latestEventNumber logState
-  print latestEvent
+  ----------------------------------------
 
-  --
-  events <- Log.readEvents logState 1 3142
-  --print $ cue . snd <$> events
+  lastEv <- Log.latestEventNumber log
+  events <- Log.readEvents log 1 3142
 
-  --
-  persistQueue2 <- newTQueueIO
-  releaseQueue2 <- newTQueueIO
-  falseLogState <- Log.init falselogPath persistQueue2 (writeTQueue releaseQueue2)
+  ----------------------------------------
 
-  Log.writeLogIdentity falseLogState logId
+  print ident
+  print lastEv
+  print (length events)
+
+  ----------------------------------------
+
+  persistQ2 <- newTQueueIO
+  releaseQ2 <- newTQueueIO
+  log2      <- Log.open falselogPath
+  persist2  <- Persist.start log2 persistQ2 (writeTQueue releaseQ2)
+
+  ----------------------------------------
+
+  Log.writeIdent log2 ident
 
   let writs = events <&> \(id, a) ->
-        Writ id Nothing (Jam a) []
+                Writ id Nothing (Jam a) []
+
+  ----------------------------------------
 
   print "About to write"
-  for_ writs $ \w -> atomically $ writeTQueue persistQueue2 w
+
+  for_ writs $ \w ->
+    atomically (writeTQueue persistQ2 w)
+
+  ----------------------------------------
 
   print "About to wait"
 
-  replicateM_ 100 $ atomically $ readTQueue releaseQueue2
+  replicateM_ 100 $ do
+    atomically $ readTQueue releaseQ2
+
+  ----------------------------------------
+
   print "Done"
