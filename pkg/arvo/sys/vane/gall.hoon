@@ -156,8 +156,7 @@
       running=(map term agent)
       ::  waiting queue
       ::
-      ::  FIXME rename to blocked
-      waiting=(map term blocked)
+      blocked=(map term blocked)
   ==
 ::
 ::  +routes: new cuff.
@@ -406,7 +405,7 @@
     =/  =type  p.u.maybe-vase
     (~(nest ut type) %.n inferred)
   ::
-  ::  +mo-handle-received-core: receives an app core built by %ford.
+  ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::  Presuming we receive a good core, we first check to see if the agent
   ::  is already running.  If so, we update its beak in %gall's state,
@@ -418,8 +417,8 @@
   ::  and then do more or less the same procedure as we did for the running
   ::  agent case.
   ::
-  ++  mo-handle-received-core
-    ~/  %mo-handle-received-core
+  ++  mo-receive-core
+    ~/  %mo-receive-core
     |=  [=term =beak =made-result:ford]
     ^+  mo-state
     ::
@@ -624,6 +623,23 @@
     =/  =foreign  (~(got by contacts.agents.gall) ship)
     (~(got by duct-map.foreign) index)
   ::
+  ::  +mo-handle-sys: handle a +sign incoming over /sys.
+  ::
+  ++  mo-handle-sys
+    ~/  %mo-handle-sys
+    |=  [=path =sign-arvo]
+    ^+  mo-state
+    ::
+    ?+  -.path  !!
+      %core  (mo-handle-sys-core path sign-arvo)
+      %pel   (mo-handle-sys-pel path sign-arvo)
+      %red   (mo-handle-sys-red path sign-arvo)
+      %rep   (mo-handle-sys-rep path sign-arvo)
+      %req   (mo-handle-sys-req path sign-arvo)
+      %val   (mo-handle-sys-val path sign-arvo)
+      %way   (mo-handle-sys-way path sign-arvo)
+    ==
+  ::
   ::  +mo-handle-sys-core: receive a core from %ford.
   ::
   ++  mo-handle-sys-core
@@ -641,7 +657,7 @@
       =/  =case  [%da (slav %da i.t.t.beak-path)]
       [ship desk case]
     ::
-    (mo-handle-received-core i.t.path beak result.sign-arvo)
+    (mo-receive-core i.t.path beak result.sign-arvo)
   ::
   ::  +mo-handle-sys-pel: translated peer.
   ::
@@ -895,24 +911,6 @@
     ::
     (mo-handle-foreign-response foreign-response maybe-ares)
   ::
-  ::  +mo-handle-sys: handle a +sign incoming over /sys.
-  ::
-  ::  FIXME better docs, potentially rename +mo-handle-sign or something
-  ++  mo-handle-sys
-    ~/  %mo-handle-sys
-    |=  [=path =sign-arvo]
-    ^+  mo-state
-    ::
-    ?+  -.path  !!
-      %core  (mo-handle-sys-core path sign-arvo)
-      %pel   (mo-handle-sys-pel path sign-arvo)
-      %red   (mo-handle-sys-red path sign-arvo)
-      %rep   (mo-handle-sys-rep path sign-arvo)
-      %req   (mo-handle-sys-req path sign-arvo)
-      %val   (mo-handle-sys-val path sign-arvo)
-      %way   (mo-handle-sys-way path sign-arvo)
-    ==
-  ::
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
   ::  Initialises the specified agent and then performs an agent-level +take on
@@ -985,7 +983,7 @@
     ?.  (~(has by running.agents.gall) term)
       mo-state
     ::
-    =/  maybe-blocked  (~(get by waiting.agents.gall) term)
+    =/  maybe-blocked  (~(get by blocked.agents.gall) term)
     ::
     ?~  maybe-blocked
       mo-state
@@ -995,9 +993,9 @@
     |-  ^+  mo-state
     ::
     ?:  =(~ blocked)
-      =/  waiting   (~(del by waiting.agents.gall) term)
+      =/  blocked   (~(del by blocked.agents.gall) term)
       %_  mo-state
-        waiting.agents.gall  waiting
+        blocked.agents.gall  blocked
       ==
     ::
     =^  task  blocked  [p q]:~(get to blocked)
@@ -1088,18 +1086,18 @@
     =/  =agent-action  q.internal-task
     ::
     =/  is-running  (~(has by running.agents.gall) term)
-    =/  is-waiting  (~(has by waiting.agents.gall) term)
+    =/  is-blocked  (~(has by blocked.agents.gall) term)
     ::
-    ?:  |(!is-running is-waiting)
+    ?:  |(!is-running is-blocked)
       ::
       =/  =blocked
-        =/  waiting  (~(get by waiting.agents.gall) term)
+        =/  waiting  (~(get by blocked.agents.gall) term)
         =/  tasks  (fall waiting *blocked)
         =/  task  [hen privilege agent-action]
         (~(put to tasks) task)
       ::
       %_  mo-state
-        waiting.agents.gall  (~(put by waiting.agents.gall) term blocked)
+        blocked.agents.gall  (~(put by blocked.agents.gall) term blocked)
       ==
     ::
     (mo-apply term privilege agent-action)
@@ -2798,8 +2796,8 @@
       ::
       %wegh
       ::
-    =/  waiting
-      =/  queued  (~(run by waiting.agents.gall) |=(blocked [%.y +<]))
+    =/  blocked
+      =/  queued  (~(run by blocked.agents.gall) |=(blocked [%.y +<]))
       (sort ~(tap by queued) aor)
     ::
     =/  running
@@ -2809,7 +2807,7 @@
     =/  =mass
       :+  %gall  %.n
       :~  [%foreign %.y contacts.agents.gall]
-          [%blocked %.n waiting]
+          [%blocked %.n blocked]
           [%active %.n running]
           [%dot %.y gall]
       ==
