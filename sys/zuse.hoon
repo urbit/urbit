@@ -2099,7 +2099,7 @@
           [%fake =ship]                                 ::  fake boot
           [%look whos=(set ship) =source]               ::  set ethereum source
           ::TODO  %next for generating/putting new private key
-          [%nuke ~]                                     ::  cancel tracker from
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
           [%public-keys ships=(set ship)]               ::  sub to publics
           [%sources ~]

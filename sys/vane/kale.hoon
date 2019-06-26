@@ -67,8 +67,8 @@
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
 +$  message                                             ::  message to her kale
-  $%  [%nuke ~]                                         ::  cancel trackers
-      [%public-keys whos=(set ship)]                   ::  view ethereum events
+  $%  [%nuke whos=(set ship)]                           ::  cancel trackers
+      [%public-keys whos=(set ship)]                    ::  view ethereum events
       [%public-keys-result who=ship =vent-result]       ::  tmp workaround
   ==                                                    ::
 +$  card                                                ::  i/o action
@@ -333,26 +333,31 @@
     ::    [%look p=(each ship purl)]
     ::
         %look
-      ::  XX cancel previous sub
-      ::  XX if ship, subscribe to ship
-      ::
       %-  curd  =<  abet
       (sources:~(feel su hen our pki etn sap) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
-    ::    {$nuke $~}
+    ::    {$nuke whos=(set ship)}
     ::
         $nuke
+      =/  ships=(list ship)
+        %~  tap  in
+        %-  ~(int in whos.tac)
+        (~(get ju yen.zim.pki) hen)
       =.  ney.zim.pki
-        =/  ships=(list ship)
-          ~(tap in (~(get ju yen.zim.pki) hen))
         |-  ^-  (jug ship duct)
         ?~  ships
           ney.zim.pki
         (~(del ju $(ships t.ships)) i.ships hen)
-      %_  +>
+      =.  yen.zim.pki
+        |-  ^-  (jug duct ship)
+        ?~  ships
+          yen.zim.pki
+        (~(del ju $(ships t.ships)) hen i.ships)
+      ?^  whos.tac
+        +>.$
+      %_  +>.$
         yen.own.pki  (~(del in yen.own.pki) hen)
-        yen.zim.pki  (~(del by yen.zim.pki) hen)
         yen.etn      (~(del in yen.etn) hen)
       ==
     ::
@@ -437,7 +442,7 @@
       ?-    -.mes
       ::
       ::  cancel trackers
-      ::    [%nuke ~]
+      ::    [%nuke whos=(set ship)]
       ::
           %nuke
         =.  moz  [[hen %give %mack ~] moz]
@@ -448,7 +453,7 @@
       ::
           %public-keys
         =.  moz  [[hen %give %mack ~] moz]
-        $(tac [%public-keys whos.mes])
+        $(tac mes)
       ::
       ::  receive keys result
       ::    [%public-keys-result =vent-result]
@@ -737,20 +742,13 @@
     ++  sources
       |=  [whos=(set ship) =source]
       ^+  ..feel
-      ::  XX cancel old subscriptions for whos
       ?:  ?=(%& -.source)
-        =/  =message  [%public-keys whos]
-        =/  =move
-          :*  hen
-              %pass
-              /public-keys
-              %a
-              %want
-              p.source
-              /k/public-keys
-              message
-          ==
-        (emit move)
+        =/  send-message
+          |=  =message
+          [hen %pass /public-keys %a %want p.source /k/public-keys message]
+        =.  ..feel
+          (emit (send-message %nuke whos))
+        (emit (send-message %public-keys whos))
       =^  =source-id  this-su  (get-source-id source)
       =.  ..feed
         ?~  whos
