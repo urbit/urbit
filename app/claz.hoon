@@ -437,7 +437,7 @@
   |=  [=network nonce=@ud to=address dat=$@(@ux tape)]
   ^-  transaction
   :*  nonce
-      8.000.000.000.000  ::TODO  global config
+      8.000.000.000  ::TODO  global config
       600.000  ::TODO  global config
       to
       0
