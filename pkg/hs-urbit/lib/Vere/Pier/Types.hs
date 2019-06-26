@@ -5,6 +5,7 @@ import Data.Void
 import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Poet
+import Data.Noun.Poet.TH
 import Database.LMDB.Raw
 import Urbit.Time
 
@@ -19,17 +20,23 @@ data Event
     = BehnBorn
     | HttpBorn
     | CttpBorn
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''Event
 
 data PutDel = Put | Del
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
 
-instance FromNoun PutDel where
-  parseNoun n = do
-    parseNoun n >>= \case
-      Cord "put" -> pure Put
-      Cord "del" -> pure Del
-      Cord cord  -> fail ("Invalid turf operation: " <> show cord)
+deriveNoun ''PutDel
+
+{-
+    instance FromNoun PutDel where
+      parseNoun n = do
+        parseNoun n >>= \case
+          Cord "put" -> pure Put
+          Cord "del" -> pure Del
+          Cord cord  -> fail ("Invalid turf operation: " <> show cord)
+-}
 
 data Eff
     = HttpServer Server.Eff
