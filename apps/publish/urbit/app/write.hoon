@@ -83,6 +83,33 @@
   ^-  whom:clay
   [%.y who]
 ::
+++  get-contributors
+  |=  coll=@tas
+  ^-  [mod=?(%white %black) who=(set @p)]
+  =/  pax  (weld our-beak /web/write/[coll])
+  =/  pem=[r=dict:clay w=dict:clay]  .^([dict:clay dict:clay] %cp pax)
+  :-  mod.rul.w.pem
+  (resolve-real rul.w.pem)
+::
+++  resolve-real
+  |=  rel=real:clay
+  ^-  (set @p)
+  %-  ~(uni in p.who.rel)
+  %-  (set @p)
+  %-  ~(rep by q.who.rel)
+  |=  [[@ta cru=crew:clay] out=(set @p)]
+  ^-  (set @p)
+  (~(uni in out) cru)
+::
+++  whom-to-ships
+  |=  whoms=(set whom:clay)
+  ^-  (set @p)
+  %-  ~(rep in whoms)
+  |=  [who=whom:clay out=(set @p)]
+  ?:  ?=(%.y -.who)
+    (~(put in out) p.who)
+  out
+::
 ++  allowed
   |=  [who=@p mod=?(%read %write) pax=path]
   ^-  ?
@@ -177,6 +204,10 @@
     [~ this]
   ::
       %test
+    =/  whoms  (ships-to-whom (sy ~zod ~bus ~marzod ~binzod ~))
+    =/  ships  (whom-to-ships whoms)
+    ~&  whoms
+    ~&  ships
     [~ this]
   ::
       %update-tile
@@ -224,8 +255,12 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[ost.bol dat.del] ~ ~ [~ ~] ~ ~]
+          [[ost.bol dat.del] ~ ~ [~ ~] [%white ~] ~]
         u.old(col [ost.bol dat.del])
+      ~&  [our.bol who.del]
+      =?  contributors.new  =(our.bol who.del)
+        ~&  %should-set-contributors
+        (get-contributors col.del)
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -239,7 +274,7 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] (my [pos.del ost.bol dat.del] ~) ~ [~ ~] ~ ~]
+          [[0 %.n ~] (my [pos.del ost.bol dat.del] ~) ~ [~ ~] [%white ~] ~]
         u.old(pos (~(put by pos.u.old) pos.del [ost.bol dat.del]))
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
@@ -256,7 +291,7 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] ~ (my [pos.del ost.bol dat.del] ~) [~ ~] ~ ~]
+          [[0 %.n ~] ~ (my [pos.del ost.bol dat.del] ~) [~ ~] [%white ~] ~]
         u.old(com (~(put by com.u.old) pos.del [ost.bol dat.del]))
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
@@ -265,6 +300,9 @@
       (da-emil (affection del))
     ::
         %total
+      ~&  del
+      =?  contributors.dat.del  =(our.bol who.del)
+        (get-contributors col.del)
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
@@ -565,7 +603,10 @@
         (bake [%collection our.bol col dat])
       ::  1st part of multi-part, store partial delta and don't process it
       ::
-      =/  del=delta  [%total our.bol col [ost.bol dat] ~ ~ [~ ~] ~ ~]
+      =/  del=delta
+        :*  %total  our.bol  col  [ost.bol dat] 
+            ~  ~  [~ ~]  [%white ~]  ~
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -581,7 +622,7 @@
             pos.dat.u.partial.u.awa
             com.dat.u.partial.u.awa
             [~ ~]
-            ~
+            [%white ~]
             ~
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
@@ -597,7 +638,7 @@
           pos.dat.u.partial.u.awa
           com.dat.u.partial.u.awa
           [~ ~]
-          ~
+          [%white ~]
           ~
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
@@ -629,7 +670,9 @@
       ::  1st part of multi-part, store partial delta and don't process it
       ::
       =/  del=delta
-        [%total our.bol col [0 %.n ~] (my [pos ost.bol dat] ~) ~ [~ ~] ~ ~]
+        :*  %total  our.bol  col  [0 %.n ~]  (my [pos ost.bol dat] ~)
+            ~  [~ ~]  [%white ~]  ~
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -645,7 +688,7 @@
             (~(put by pos.dat.u.partial.u.awa) pos [ost.bol dat])
             com.dat.u.partial.u.awa
             [~ ~]
-            ~
+            [%white ~]
             ~
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
@@ -661,7 +704,7 @@
           (~(put by pos.dat.u.partial.u.awa) pos [ost.bol dat])
           com.dat.u.partial.u.awa
           [~ ~]
-          ~
+          [%white ~]
           ~
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
@@ -693,7 +736,9 @@
       ::  1st part of multi-part, store partial delta and don't process it
       ::
       =/  del=delta
-        [%total our.bol col [0 %.n ~] ~ (my [pos ost.bol dat] ~) [~ ~] ~ ~]
+        :*  %total  our.bol  col  [0 %.n ~]  ~  (my [pos ost.bol dat] ~)
+            [~ ~]  [%white ~]  ~
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -709,7 +754,7 @@
             pos.dat.u.partial.u.awa
             (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
             [~ ~]
-            ~
+            [%white ~]
             ~
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
@@ -725,7 +770,7 @@
           pos.dat.u.partial.u.awa
           (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
           [~ ~]
-          ~
+          [%white ~]
           ~
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
@@ -817,9 +862,9 @@
       ==
     :_  this
     :~  (write-file pax %write-info !>(conf))
-        [ost.bol %build wir %.y schema]
         [ost.bol blog-perms]
         [ost.bol info-perms]
+        [ost.bol %build wir %.y schema]
     ==
   ::
       %new-post
@@ -876,10 +921,10 @@
       ==
     :_  this
     :~  (write-file pax %udon !>(out))
-        [ost.bol %build comments-wir %.y comments-schema]
-        [ost.bol %build post-wir %.y post-schema]
         [ost.bol post-perms]
         [ost.bol comment-perms]
+        [ost.bol %build comments-wir %.y comments-schema]
+        [ost.bol %build post-wir %.y post-schema]
     ==
   ::
       %new-comment
@@ -1322,7 +1367,19 @@
 ++  pull
   |=  wir=wire
   ^-  (quip move _this)
-  [~ this]
+  ?+  wir
+    [~ this]
+  ::
+      [%collection @t ~]
+    =/  coll=@tas  i.wir
+    =/  col=(unit collection)  (~(get by pubs.sat) coll)
+    ?~  col
+      [~ this]
+    =/  new=collection
+      u.col(subscribers (~(del in subscribers.u.col) src.bol))
+    [~ this(pubs.sat (~(put by pubs.sat) coll new))]
+  ::
+  ==
 ::
 ++  peer-collection
   |=  wir=wire
@@ -1337,10 +1394,13 @@
   ::
   =/  col=(unit collection)  (~(get by pubs.sat) coll)
   ?~  col
-    [~ this]
+    :_  this
+    [ost.bol %quit ~]~
+  =/  new=collection
+    u.col(subscribers (~(put in subscribers.u.col) src.bol))
   =/  rum=rumor
     [%total our.bol coll u.col]
-  :_  this
+  :_  this(pubs.sat (~(put by pubs.sat) coll new))
   [ost.bol %diff %write-rumor rum]~
 ::
 ++  diff-write-rumor

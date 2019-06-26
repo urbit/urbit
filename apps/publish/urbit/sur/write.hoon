@@ -97,7 +97,7 @@
       pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])
       com=(map @tas [=bone dat=(each (list [comment-info @t]) tang)])
       order=[pin=(list @tas) unpin=(list @tas)]
-      contributors=(set @p)
+      contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
   ==
 ::
