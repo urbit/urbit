@@ -681,6 +681,9 @@
 ++  handle-init
   =/  m  tapp-async
   ^-  form:m
+  ;<  success=?  bind:m  (bind-route:stdio [~ /dns/oauth] dap.bowl)
+  ~|  %dns-unable-to-bind-route
+  ?>  success
   ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
   (pure:m state)
 ::
