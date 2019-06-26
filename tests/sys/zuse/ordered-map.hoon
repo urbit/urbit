@@ -64,34 +64,6 @@
   ::
   =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
          :*  a
-             start=`3
-             state=~
-             ::
-             |=  [s=(list [@ud @tas]) k=@ud v=@tas]
-             :+  ?:  =(3 k)
-                   ~
-                 [~ `@tas`+(v)]
-               =(5 k)
-             [[k v] s]
-         ==
-  ::
-  ;:  weld
-    %+  expect-eq
-      !>  (gas:atom-map ~ ~[[0^%a] [1^%b] [2^%c] [4^%f] [5^%g] [6^%g]])
-      !>  +.b
-  ::
-    %+  expect-eq
-      !>  ~[[5^%f] [4^%e] [3^%d]]
-      !>  -.b
-  ==
-::
-++  test-ordered-map-traverse-null-start  ^-  tang
-  ::
-  =/  a=(tree [@ud @tas])  (gas:atom-map ~ test-items)
-  ::
-  =/  b  %-  (traverse:atom-map ,(list [@ud @tas]))
-         :*  a
-             start=~
              state=~
              ::
              |=  [s=(list [@ud @tas]) k=@ud v=@tas]

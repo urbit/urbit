@@ -127,7 +127,6 @@
   ++  traverse
     |*  state=mold
     |=  $:  a=(tree item)
-            start=(unit key)
             =state
             f=$-([state item] [(unit val) ? state])
         ==
@@ -149,10 +148,6 @@
       ::
       ?~  a  .
       ?:  stop.acc  .
-      ::  if nonempty .start, while we're left of .start, move right
-      ::
-      ?:  &(?=(^ start) !(compare u.start key.n.a))
-        right
       ::  inorder traversal: left -> node -> right, until .f sets .stop
       ::
       =>  left
@@ -1918,11 +1913,7 @@
     ::
     ^+  [acc live=live.state]
     ::
-    %-  (traverse:packet-queue _acc)
-    ::
-    :^    live.state
-        start=~
-      acc
+    %^  (traverse:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2032,11 +2023,7 @@
     ::
     =/  acc=[found=? metrics=pump-metrics]  [%.n metrics.state]
     ::
-    %-  (traverse:packet-queue _acc)
-    ::
-    :^    live.state
-        start=~
-      acc
+    %^  (traverse:packet-queue _acc)  live.state  acc
     |=  $:  acc=_acc
             key=live-packet-key
             val=live-packet-val
@@ -2072,11 +2059,7 @@
             live=(tree [live-packet-key live-packet-val])
         ==
     ::
-    %-  (traverse:packet-queue pump-metrics)
-    ::
-    :^    live.state
-        start=~
-      acc=metrics.state
+    %^  (traverse:packet-queue pump-metrics)  live.state  acc=metrics.state
     |=  $:  metrics=pump-metrics
             key=live-packet-key
             val=live-packet-val
