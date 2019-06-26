@@ -750,6 +750,9 @@
     loop(dep t.dep)
   ::
       %handle-http-request
+    ::  always stash request bone for giving response
+    ::
+    =/  =bone  ost.bowl
     ::  XX maybe always (set-raw-contract %request) so transaction failure is captured?
     ::
     =*  inbound-request  inbound-request.in-poke-data
@@ -759,7 +762,8 @@
               =>  inbound-request
               [authenticated secure address [method url]:request]
           ==
-      ;<  ~  bind:m  (send-effect:stdio [%http-response %start [%403 ~] ~ %.y])
+      ;<  ~  bind:m
+        (send-effect-on-bone:stdio bone [%http-response %start [%403 ~] ~ %.y])
       (pure:m state)
     ::
     =*  nam  u.nem.state
@@ -777,7 +781,8 @@
     =*  params  q.u.parsed
   ::
     ?+  url
-      ;<  ~  bind:m  (send-effect:stdio [%http-response %start [%404 ~] ~ %.y])
+      ;<  ~  bind:m
+        (send-effect-on-bone:stdio bone [%http-response %start [%404 ~] ~ %.y])
       (pure:m state)
     ::
         [%dns %oauth ~]
@@ -797,7 +802,8 @@
             ;a(href link):  {link}
           ==
         ==
-      ;<  ~  bind:m  (send-effect:stdio [%http-response %start [%200 ~] bod %.y])
+      ;<  ~  bind:m
+        (send-effect-on-bone:stdio bone [%http-response %start [%200 ~] bod %.y])
       (pure:m state)
     ::
         [%dns %oauth %result ~]
@@ -823,7 +829,8 @@
       ::
       ::  XX may need to send this as a card so we don't wait
       ::
-      ;<  ~  bind:m  (send-effect:stdio [%http-response %start [%301 hed] ~ %.y])
+      ;<  ~  bind:m
+        (send-effect-on-bone:stdio bone [%http-response %start [%301 hed] ~ %.y])
       (initialize-authority aut.nam state)
     ::
         [%dns %oauth %success ~]
