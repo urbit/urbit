@@ -77,17 +77,49 @@ deriveToNoun tyName = do
 --------------------------------------------------------------------------------
 
 deriveFromNoun :: Name -> Q [Dec]
-deriveFromNoun tyName =
-    [d|
-        instance FromNoun $t where
-            parseNoun = $body
-    |]
-  where
-    t = conT tyName
+deriveFromNoun tyName = do
+    body <- typeShape tyName <&> \case Tup con  -> tupFromNoun con
+                                       Enu cons -> enumFromAtom cons
+                                       Sum cons -> sumFromNoun cons
 
-    body = [| \_ -> fail "unimplemented" |]
+
+    [d|
+        instance FromNoun $(conT tyName) where
+            parseNoun = $(pure body)
+      |]
+
+enumFromAtom :: [Name] -> Exp
+enumFromAtom nms = LamE [VarP n] body
+  where
+    n         = mkName "n"
+    c         = mkName "c"
+    getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE n)
+    examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
+    matches   = mkMatch <$> nms
+    fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
+    body      = DoE [getCord, examine]
+    matchFail = LitE $ StringL ("Expected one of: " <> possible)
+    possible  = intercalate " " (('%':) . tagString <$> nms)
+    mkMatch n = Match (ConP 'Cord [LitP (tagLit n)])
+                  (NormalB $ AppE (VarE 'pure) (ConE n))
+                  []
+
+tupFromNoun :: ConInfo -> Exp
+tupFromNoun _ = VarE 'undefined
+
+sumFromNoun :: [ConInfo] -> Exp
+sumFromNoun _ = VarE 'undefined
 
 --------------------------------------------------------------------------------
+
+tagString :: Name -> String
+tagString = hsToHoon . nameStr
+  where
+    nameStr :: Name -> String
+    nameStr (Name (OccName n) _) = n
+
+tagLit :: Name -> Lit
+tagLit = StringL . tagString
 
 tagNoun :: Name -> Exp
 tagNoun = AppE (VarE 'toNoun)
