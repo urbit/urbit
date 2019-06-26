@@ -97,15 +97,38 @@
   ::
   =/  lane-foo=lane:alef  [%| `@ux``@`%lane-foo]
   ::
+  =/  =message:alef  [/g/talk [%first %post]]
+  ::
+  =/  =shut-packet:alef
+    :*  sndr-life=4
+        rcvr-life=3
+        bone=1
+        message-num=1
+        [%& num-fragments=1 fragment-num=0 (jam message)]
+    ==
+  ::
   =/  =packet:alef
     :*  [sndr=~bus rcvr=~doznec-doznec]
         encrypted=%.y
         origin=~
-        content=%double-secret
+        content=(encrypt:alef alice-sym shut-packet)
     ==
   ::
   =/  =blob:alef   (encode-packet:alef packet)
   =^  moves1  bob  (call bob ~[//unix] %hear lane-foo blob)
+  =^  moves2  bob
+    =/  =point:alef
+      :*  rift=1
+          life=4
+          crypto-suite=1
+          encryption-key=`@`alice-pub
+          authentication-key=`@`0
+          sponsor=`~bus
+      ==
+    %-  take
+    :^  bob  /alien  ~[//unix]
+    ^-  sign:alef
+    [%j %public-keys %full [n=[~bus point] ~ ~]]
   ::
   ;:  weld
     %+  expect-eq
@@ -113,8 +136,8 @@
       !>  moves1
   ::
     %+  expect-eq
-      !>  [%alien [lane-foo packet]~ ~ ~]
-      !>  (~(got by peers.ames-state.bob) ~bus)
+      !>  [~[//unix] %pass /bone/~bus/1 %g %memo ~bus /g/talk [%first %post]]~
+      !>  moves2
   ==
 ::
 ++  test-message-flow  ^-  tang
