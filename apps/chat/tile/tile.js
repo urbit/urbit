@@ -57,10 +57,13 @@ export default class ChatTile extends Component {
 
         if (key === inviteCircle) {
           inviteNum = inviteNum - red + numbers[key];
+          console.log('case 1', inviteNum);
         } else if (host === `~${window.ship}`) {
           msgNum = msgNum - red + numbers[key];
+          console.log('case 2', msgNum);
         } else {
           msgNum = msgNum + numbers[key];
+          console.log('case 3', msgNum);
         }
       } 
     }

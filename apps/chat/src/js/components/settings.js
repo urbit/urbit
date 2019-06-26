@@ -16,6 +16,17 @@ export class SettingsScreen extends Component {
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { props, state } = this;
+    if (!!state.isLoading && !props.circles.includes(state.station)) {
+      this.setState({
+        isLoading: false
+      }, () => {
+        props.history.push('/~chat');
+      });
+    }
+  }
+
   deleteChat() {
     const { props, state } = this;
     if (state.host === `~${window.ship}`) {
@@ -50,12 +61,6 @@ export class SettingsScreen extends Component {
     let peers = props.peers[state.station] || [window.ship];
 
     if (!!state.isLoading) {
-      console.log(props.circles);
-
-      if (!props.circles.contains(state.station)) {
-        props.history.push('/~chat');
-      }
-
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column">
           <div className='pl2 pt2 bb mb3'>
