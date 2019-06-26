@@ -2053,40 +2053,33 @@
     ::  should probably be bound to a whitelisted duct set.
     ::  (all secrets are redacted from %vest gifts.)
     ::
-    ::  %kale only talks to %ames and %behn.  we send messages
-    ::  through %ames and use %behn timers.
+    ::  %kale only talks to %ames and itself.
     ::
-    ++  logs                                            ::  on-chain changes
-      %+  map  event-id:ethereum-types                  ::  per event log
-      diff-azimuth:azimuth-types                        ::  the change
+    ++  point
+      $:  =rift
+          =life
+          keys=(map life [crypto-suite=@ud =pass])
+          sponsor=(unit @p)
+      ==
+    +$  point-diff
+      $%  [%changed-continuity =rift]
+          [%changed-keys =life crypto-suite=@ud =pass]
+          [%new-sponsor sponsor=(unit @p)]
+      ==
+    ::
+    +$  vent-result
+      $%  [%full points=(map ship point)]
+          [%diff =ship =point-diff]
+      ==
     ::                                                  ::
-    ++  vent-result                                     ::  %vent result
-      $%  [%snap snap=snapshot:kale]                    ::  restore snapshot
-          [%chain can=chain]                            ::  get new events
-      ==                                                ::
-    ::                                                  ::
-    ++  chain                                           ::  batch of changes
-      %+  each  logs                                    ::  & all events
-      logs                                              ::  | new events
-    ++  change                                          ::  urbit change
-      $%  [%ethe can=chain]                             ::  on-chain change
-          [%meet who=ship =life =pass]                  ::  meet in new era
-          [%priv =life =ring]                           ::  update private key
-      ==                                                ::
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
-          [%pubs public]                                ::  public keys
+          [%source whos=(set ship) src=source]          ::
           [%turf turf=(list turf)]                      ::  domains
-          [%vein =life vein=(map life ring)]            ::  private keys
-          [%vine p=(list change)]                       ::  all raw changes
-          [%vent p=vent-result]                         ::  ethereum changes
-      ==                                                ::
-    ::                                                  ::
-    ++  public                                          ::  public key state
-      $:  life=life                                     ::  current key number
-          pubs=(map life pass)                          ::  pubkeys by number
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys p=vent-result]                  ::  ethereum changes
       ==                                                ::
     ::  +seed: private boot parameters
     ::
@@ -2104,17 +2097,17 @@
               snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
-          [%look src=(each ship purl:eyre)]             ::  set ethereum source
+          [%look whos=(set ship) =source]               ::  set ethereum source
           ::TODO  %next for generating/putting new private key
           [%nuke ~]                                     ::  cancel tracker from
-          [%pubs =ship]                                 ::  view public keys
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%sources ~]
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
+          [%vent-update who=ship =point-diff]           ::  update from app
           $>(%vega vane-task)                           ::  report upgrade
-          [%vein ~]                                     ::  view signing keys
-          [%vent ~]                                     ::  view ethereum events
-          [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
@@ -2123,32 +2116,26 @@
   ::                                                    ::
   ::::                                                  ::
     ::                                                  ::
-  ++  node-src                                          ::  ethereum node comms
+  +$  node-src                                          ::  ethereum node comms
     $:  node=purl:eyre                                  ::  node url
         filter-id=@ud                                   ::  current filter
         poll-timer=@da                                  ::  next filter poll
     ==                                                  ::
-  ++  snapshot                                          ::  rewind point
-    =,  azimuth-types                                   ::
-    $:  kyz=(map ship public:able)                      ::  public key state
-        $=  eth                                         ::
-          $:  dns=dnses                                 ::  on-chain dns state
-              pos=(map ship point)                      ::  on-chain ship state
-        ==                                              ::
-        eth-bookmark
-    ==
-  ::  +eth-bookmark: cursor into the ethereum chain
   ::
-  ++  eth-bookmark
-    $:  heard=(set event-id:ethereum-types)
-        latest-block=@ud
-    ==
+  +$  source  (each ship node-src)
+  +$  source-id  @udsourceid
+  +$  snapshot  ~
+  ::
   ::  +state-eth-node: state of a connection to an ethereum node
   ::
-  ++  state-eth-node                                    ::  node config + meta
-    $:  source=(each ship node-src)                     ::  learning from
-        foreign-block=@ud                               ::  node's latest block
-        eth-bookmark
+  +$  state-eth-node                                    ::  node config + meta
+    $:  yen=(set duct)
+        top-source-id=source-id
+        sources=(map source-id source)
+        sources-reverse=(map source source-id)
+        default-source=source-id
+        ship-sources=(map ship source-id)
+        ship-sources-reverse=(jug source-id ship)
     ==                                                  ::
   ::                                                    ::
   ::::                  ++pki:kale                      ::  (1h2) certificates
@@ -7683,19 +7670,6 @@
               %address        ::  spawnProxy
               %address        ::  votingProxy
               %address        ::  transferProxy
-          ==
-        --
-      ::
-      ++  kale-noun
-        |%
-        ++  point
-          $:  crypto-suite=@ud
-              key-revision=@ud
-              continuity-number=@ud
-              encryption-key=octs
-              authentication-key=octs
-              has-sponsor=?
-              sponsor=@ud
           ==
         --
       ::
