@@ -2,6 +2,24 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
 
+class PostButton extends Component {
+  render() {
+    if (this.props.enabled) {
+      return (
+        <p className="body-regular pointer" onClick={this.props.post}>
+          -> Post
+        </p>
+      );
+    } else {
+      return (
+        <p className="body-regular gray-30">
+          -> Post
+        </p>
+      );
+    }
+  }
+}
+
 export class CommentBox extends Component {
   constructor(props){
     super(props);
@@ -16,49 +34,31 @@ export class CommentBox extends Component {
   }
 
   render() {
-    if (this.props.enabled) {
-      return (
-        <div className="cb w-100 flex" 
-          style={{paddingBottom: 8, marginTop: 32}}>
-          <div className="fl" style={{marginRight: 10}}>
-            <Sigil ship={this.props.our} size={36}/>
-          </div>
-          <div className="flex-col w-100">
-            <textarea className="body-regular-400 w-100"
-              ref={(el) => {this.textarea = el}}
-              style={{resize: "none"}}
-              type="text"
-              name="commentBody"
-              defaultValue=''
-              onChange={this.props.action}>
-            </textarea>
-            <p className="body-regular pointer" onClick={this.props.post}>
-              -> Post
-            </p>
-          </div>
+    let textClass = (this.props.enabled)
+      ?  "body-regular-400 w-100"
+      :  "body-regular-400 w-100 gray-30";
+    return (
+      <div className="cb w-100 flex" 
+        style={{paddingBottom: 8, marginTop: 32}}>
+        <div className="fl" style={{marginRight: 10}}>
+          <Sigil ship={this.props.our} size={36}/>
         </div>
-      );
-    } else {
-      return (
-        <div className="cb w-100 flex" 
-          style={{paddingBottom: 8, marginTop: 32}}>
-          <div className="fl" style={{marginRight: 10}}>
-            <Sigil ship={this.props.our} size={36}/>
-          </div>
-          <div className="flex-col w-100">
-            <textarea className="body-regular-400 w-100"
-              ref={(el) => {this.textarea = el}}
-              style={{resize: "none"}}
-              type="text"
-              name="commentBody"
-              disabled={true}>
-            </textarea>
-            <p className="body-regular gray-50">
-              -> Post
-            </p>
-          </div>
+        <div className="flex-col w-100">
+          <textarea className={textClass}
+            ref={(el) => {this.textarea = el}}
+            style={{resize: "none"}}
+            type="text"
+            name="commentBody"
+            defaultValue=''
+            onChange={this.props.action}
+            disabled={(!this.props.enabled)}>
+          </textarea>
+          <PostButton 
+            post={this.props.post} 
+            enabled={(Boolean(this.props.content) && this.props.enabled)}
+          /> 
         </div>
-      );
-    }
+      </div>
+    );
   }
 }

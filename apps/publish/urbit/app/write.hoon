@@ -320,7 +320,6 @@
       |-
       ?~  posts
         da-this
-      ~&  -.i.posts
       ?.  +>-.i.posts
         $(posts t.posts)
       %=  $
@@ -582,7 +581,6 @@
 ++  made
   |=  [wir=wire wen=@da mad=made-result:ford]
   ^-  (quip move _this)
-  ~&  made+wir
   ?+  wir
     ~&  mad
     [~ this]
@@ -815,7 +813,6 @@
 ++  poke-write-action
   |=  act=action
   ^-  (quip move _this)
-  ~&  poke+act
   ?-  -.act
   ::
       %new-collection
@@ -957,7 +954,6 @@
     [~ this]
   ::
       %edit-post
-    ~&  poke+act
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
@@ -1108,7 +1104,6 @@
   ::  %subscribe: sub to a foreign blog; remove invites for that blog
   ::
       %subscribe
-    ~&  write-action+act
     =/  wir=wire  /collection/[coll.act]
     =/  title=(unit @t)  (~(get by invites.sat) [who.act coll.act])
     =.  invites.sat  (~(del by invites.sat) [who.act coll.act])
@@ -1301,7 +1296,6 @@
 ::
 ++  peer-primary
   |=  wir=wire
-  ~&  peer-primary+wir
   ^-  (quip move _this)
   ?.  =(our.bol src.bol)
     ::  only we are allowed to subscribe on primary
@@ -1317,7 +1311,6 @@
 ::
 ++  peer-collection
   |=  wir=wire
-  ~&  peer-collection+wir
   ^-  (quip move _this)
   ?.  ?=([@tas ~] wir)
     [~ this]

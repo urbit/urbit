@@ -7,7 +7,6 @@ import { withRouter } from 'react-router';
 
 const PC = withRouter(PathControl);
 
-
 export class Blog extends Component {
   constructor(props){
     super(props);
@@ -18,6 +17,7 @@ export class Blog extends Component {
       blogTitle: '',
       blogHost: '',
       pathData: [],
+      temporary: false,
     };
   }
 
@@ -28,6 +28,7 @@ export class Blog extends Component {
       let blog = diff.data.total.data;
       this.setState({
         postProps: this.buildPosts(blog),
+        blog: blog,
         blogTitle: blog.info.title,
         blogHost: blog.info.owner,
         awaiting: false,
@@ -45,52 +46,26 @@ export class Blog extends Component {
   }
 
   componentWillMount() {
-    if (this.props.ship != window.ship) {
-      let ship = this.props.ship;
-      let blogId = this.props.blogId;
-      let blog = _.get(this.props,
-        `subs[${ship}][${blogId}]`, false);
+    let ship = this.props.ship;
+    let blogId = this.props.blogId;
+    let blog = (ship == window.ship)
+      ?  _.get(this.props, `pubs[${blogId}]`, false)
+      :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
-      if (blog) {
-        this.setState({
-          postProps: this.buildPosts(blog),
-          blogTitle: blog.info.title,
-          blogHost: blog.info.owner,
-          awaiting: false,
-          pathData: [
-            { text: "Home", url: "/~publish/recent" },
-            { text: blog.info.title, 
-              url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
-          ],
-        });
-      } else {
-        this.setState({
-          awaiting: {
-            ship: ship,
-            blogId: blogId,
-          }
-        });
+    let temporary = (!(blog) && (ship != window.ship));
 
-        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
-          this.handleEvent.bind(this),
-          this.handleError.bind(this));
-      }
-    } else {
-      let ship = this.props.ship;
-      let blogId = this.props.blogId;
-      let blog = _.get(this.props,
-        `pubs[${blogId}]`, false);
+    if (temporary) {
       this.setState({
-        postProps: this.buildPosts(blog),
-        blogTitle: blog.info.title,
-        blogHost: blog.info.owner,
-        awaiting: false,
-        pathData: [
-          { text: "Home", url: "/~publish/recent" },
-          { text: blog.info.title, 
-            url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
-        ],
+        awaiting: {
+          ship: ship,
+          blogId: blogId,
+        },
+        temporary: true,
       });
+
+      this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+        this.handleEvent.bind(this),
+        this.handleError.bind(this));
     }
   }
 
@@ -122,11 +97,38 @@ export class Blog extends Component {
       date: post.post.info["date-created"],
       pinned: pinned,
     }
+  }
 
+  buildData(){
+    let blog = (this.props.ship == window.ship)
+      ?  _.get(this.props, `pubs[${this.props.blogId}]`, false)
+      :  _.get(this.props, `subs[${this.props.ship}][${this.props.blogId}]`, false);
+
+    if (this.state.temporary) {
+      return {
+        postProps: this.state.postProps,
+        blogTitle: this.state.blogTitle,
+        blogHost: this.state.blogHost,
+        pathData: this.state.pathData,
+      };
+    } else {
+      return {
+        postProps: this.buildPosts(blog),
+        blogTitle: blog.info.title,
+        blogHost: blog.info.owner,
+        pathData: [
+          { text: "Home", url: "/~publish/recent" },
+          { text: blog.info.title, 
+            url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
+        ],
+      };
+    }
   }
 
   render() {
-    let posts = this.state.postProps.map((post, key) => {
+    let data = this.buildData();
+
+    let posts = data.postProps.map((post, key) => {
       return (
         <PostPreview
           post={post}
@@ -148,14 +150,14 @@ export class Blog extends Component {
       return (
         <div>
           <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={this.state.pathData}/>
+            <PathControl pathData={data.pathData}/>
           </div>
           <div className="flex-col">
-            <h2>{this.state.blogTitle}</h2>
+            <h2>{data.blogTitle}</h2>
             <div className="flex">
               <div style={{flexBasis: 350}}>
                 <p>Host</p>
-                <p>{this.state.blogHost}</p>
+                <p>{data.blogHost}</p>
               </div>
               <div style={{flexBasis: 350}}>
                 <p>Contributors</p>

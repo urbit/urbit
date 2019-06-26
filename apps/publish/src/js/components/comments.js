@@ -83,6 +83,7 @@ export class Comments extends Component {
           <CommentBox our={our}
             action={this.commentChange}
             enabled={!(Boolean(this.state.awaiting))}
+            content={this.state.commentBody}
             post={this.postComment}/>
 
 

@@ -44,8 +44,6 @@ export class PostPreview extends Component {
       this.props.post.collectionName;
     let postLink = collLink + "/" + this.props.post.postName;
 
-//    let postTitle = 
-
     return (
       <div className="w-336 ma2">
         <Link to={postLink}>
