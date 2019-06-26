@@ -46,14 +46,6 @@
 +$  nameserver
   $:  aut=authority
       bon=(map ship bound)
-      dep=(jar ship (pair ship target))
-      pen=(map ship target)
-  ==
-::  +command: top-level app actions
-::
-+$  command
-  $%  [%authority aut=authority]
-      [%bind for=ship him=ship tar=target]
-      [%bond for=ship him=ship dom=turf]
+      dep=(jug ship (pair ship target))
   ==
 --
