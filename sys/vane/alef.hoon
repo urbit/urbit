@@ -1261,6 +1261,10 @@
           ::
           =.  event-core  (on-hear-packet i.rcv-packets.todos)
           $(rcv-packets.todos t.rcv-packets.todos)
+        ::  we're a comet; send self-attestation packet first
+        ::
+        =?  event-core  =(%pawn (clan:title our))
+          (send-blob ship (attestation-packet ship life.point))
         ::  apply outgoing messages
         ::
         =.  event-core
@@ -1272,7 +1276,7 @@
             [ship message.i.snd-messages.todos]
           ::
           $(snd-messages.todos t.snd-messages.todos)
-        ::  apply outgoing packet blob
+        ::  apply outgoing packet blobs
         ::
         =.  event-core
           =/  blobs  ~(tap in snd-packets.todos)
@@ -1283,6 +1287,26 @@
           $(blobs t.blobs)
         ::
         event-core
+      ::  +attestation-packet: generate signed self-attestation for .her
+      ::
+      ++  attestation-packet
+        |=  [her=ship =her=life]
+        ^-  blob
+        ::
+        =/  signed=_+:*open-packet
+          :*  ^=  public-key  pub:ex:crypto-core.ames-state
+              ^=        sndr  our
+              ^=   sndr-life  life.ames-state
+              ^=        rcvr  her
+              ^=   rcvr-life  her-life
+          ==
+        ::
+        =/  =private-key  sec:ex:crypto-core.ames-state
+        =/  =signature    (sign-open-packet private-key signed)
+        =/  =open-packet  [signature signed]
+        =/  =packet       [[our her] encrypted=%.n origin=~ open-packet]
+        ::
+        (encode-packet packet)
       ::
       ++  update-known
         |=  [=ship =point =peer-state]
@@ -1335,7 +1359,8 @@
   ++  on-vega  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
-  ::    Also requests key and life from Jael on first contact.
+  ::    Also requests key and life from Jael on first request.
+  ::    On a comet, enqueues self-attestation packet on first request.
   ::
   ++  enqueue-alien-todo
     |=  [=ship mutate=$-(pending-requests pending-requests)]
@@ -2415,6 +2440,13 @@
   ::
   ?>  ?=([%pump @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
+::  +sign-open-packet: sign the contents of an $open-packet
+::
+++  sign-open-packet
+  |=  [=private-key signed=_+:*open-packet]
+  ^-  signature
+  ::
+  (sign:ed:crypto private-key (jam signed))
 ::  +verify-signature: use .public-key to verify .signature on .content
 ::
 ++  verify-signature
