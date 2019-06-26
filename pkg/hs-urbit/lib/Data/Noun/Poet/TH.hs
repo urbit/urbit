@@ -91,8 +91,7 @@ deriveFromNoun tyName = do
 enumFromAtom :: [Name] -> Exp
 enumFromAtom nms = LamE [VarP n] body
   where
-    n         = mkName "n"
-    c         = mkName "c"
+    (n, c)    = (mkName "n", mkName "c")
     getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE n)
     examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
     matches   = mkMatch <$> nms
@@ -104,8 +103,18 @@ enumFromAtom nms = LamE [VarP n] body
                   (NormalB $ AppE (VarE 'pure) (ConE n))
                   []
 
+applyE :: Exp -> [Exp] -> Exp
+applyE e []     = e
+applyE e (a:as) = applyE (AppE e a) as
+
 tupFromNoun :: ConInfo -> Exp
-tupFromNoun _ = VarE 'undefined
+tupFromNoun (n, tys) = LamE [VarP x] body
+  where
+    x       = mkName "x"
+    vars    = mkName . singleton . fst <$> zip ['a'..] tys
+    body    = DoE [getTup, convert]
+    convert = NoBindS $ AppE (VarE 'pure) $ applyE (ConE n) (VarE <$> vars)
+    getTup  = BindS (TupP $ VarP <$> vars) $ AppE (VarE 'parseNoun) (VarE x)
 
 sumFromNoun :: [ConInfo] -> Exp
 sumFromNoun _ = VarE 'undefined

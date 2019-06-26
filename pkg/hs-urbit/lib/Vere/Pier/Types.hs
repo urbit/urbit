@@ -34,21 +34,14 @@ data EffBs
     | EBLolr Word Word
 
 data RecEx = RE Word Word
+  deriving (Eq, Ord, Show)
 
 data NewtEx = NE Word
+  deriving (Eq, Ord, Show)
 
 deriveNoun ''EffBs
 deriveNoun ''RecEx
 deriveNoun ''NewtEx
-
-{-
-    instance FromNoun PutDel where
-      parseNoun n = do
-        parseNoun n >>= \case
-          Cord "put" -> pure Put
-          Cord "del" -> pure Del
-          Cord cord  -> fail ("Invalid turf operation: " <> show cord)
--}
 
 data Eff
     = HttpServer Server.Eff
