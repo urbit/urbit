@@ -32,7 +32,7 @@
 +$  move  (pair bone card)
 ++  tapp-async  (async state-type)
 +$  tapp-state
-  $:  waiting=(qeu command)
+  $:  waiting=(qeu [=bone command])
       active=(unit eval-form:eval:tapp-async)
       app-state=state-type
   ==
@@ -246,7 +246,7 @@
     ^-  (quip move _this-tapp)
     ?~  old-state
       ~&  [%tapp-init dap.bowl]
-      =.  waiting  (~(put to waiting) %init ~)
+      =.  waiting  (~(put to waiting) ost.bowl [%init ~])
       start-async
     ::
     =/  old   ((soft tapp-state) u.old-state)
@@ -285,7 +285,7 @@
         (oob-fail-async %tapp-admin-restart ~)
       ==
     ::
-    =.  waiting  (~(put to waiting) %poke tapp-in-poke-data)
+    =.  waiting  (~(put to waiting) ost.bowl [%poke tapp-in-poke-data])
     ?^  active
       ~&  [%waiting-until-current-async-finishes waiting]
       `this-tapp
@@ -304,7 +304,7 @@
     ?>  ?=([@ @ *] wire)
     =/  her  (slav %p i.wire)
     =*  app  i.t.wire
-    =.  waiting  (~(put to waiting) %take %coup [her app] error)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %coup [her app] error])
     ?^  active
       `this-tapp
     start-async
@@ -330,7 +330,7 @@
   ++  peer
     |=  =path
     ^-  (quip move _this-tapp)
-    =.  waiting  (~(put to waiting) %peer path)
+    =.  waiting  (~(put to waiting) ost.bowl [%peer path])
     ?^  active
       `this-tapp
     start-async
@@ -344,7 +344,7 @@
     =/  her  (slav %p i.wire)
     =*  app  i.t.wire
     =*  pax  t.t.wire
-    =.  waiting  (~(put to waiting) %take %quit [her app] pax)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %quit [her app] pax])
     ?^  active
       `this-tapp
     start-async
@@ -358,7 +358,7 @@
     =/  her  (slav %p i.wire)
     =*  app  i.t.wire
     =*  pax  t.t.wire
-    =.  waiting  (~(put to waiting) %take %reap [her app] pax error)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %reap [her app] pax error])
     ?^  active
       `this-tapp
     start-async
@@ -372,7 +372,7 @@
     =/  her  (slav %p i.wire)
     =*  app  i.t.wire
     =*  pax  t.t.wire
-    =.  waiting  (~(put to waiting) %diff [her app] pax in-peer-data)
+    =.  waiting  (~(put to waiting) ost.bowl [%diff [her app] pax in-peer-data])
     ?^  active
       `this-tapp
     start-async
@@ -398,7 +398,7 @@
   ++  wake-effect
     |=  [=wire error=(unit tang)]
     ^-  (quip move _this-tapp)
-    =.  waiting  (~(put to waiting) %take %wake error)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %wake error])
     ?^  active
       `this-tapp
     start-async
@@ -481,7 +481,7 @@
     ^-  (quip move _this-tapp)
     ?.  =(~ active)
       ~|  %async-already-active  !!
-    =/  next=(unit command)  ~(top to waiting)
+    =/  next=(unit [=bone =command])  ~(top to waiting)
     ?~  next
       `this-tapp
     =.  active
@@ -490,12 +490,14 @@
       ^-  form:tapp-async
       =/  out
         %-  mule  |.
-        ?-  -.u.next
+        =.  ost.bowl  bone.u.next
+        =*  input  +.command.u.next
+        ?-  -.command.u.next
           %init  ~(handle-init handler bowl app-state)
-          %poke  (~(handle-poke handler bowl app-state) +.u.next)
-          %peer  (~(handle-peer handler bowl app-state) +.u.next)
-          %diff  (~(handle-diff handler bowl app-state) +.u.next)
-          %take  (~(handle-take handler bowl app-state) +.u.next)
+          %poke  (~(handle-poke handler bowl app-state) input)
+          %peer  (~(handle-peer handler bowl app-state) input)
+          %diff  (~(handle-diff handler bowl app-state) input)
+          %take  (~(handle-take handler bowl app-state) input)
         ==
       ?-  -.out
         %&  p.out
