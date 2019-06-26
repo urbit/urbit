@@ -64,6 +64,7 @@ export class ChatScreen extends Component {
       }, () => {
         this.updateNumPeople();
         this.scrollToBottom();
+        this.updateReadNumber();
       });
     } else if (!(state.station in props.configs)) {
       props.history.push('/~chat');

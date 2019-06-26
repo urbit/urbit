@@ -61,7 +61,7 @@ export class UpdateReducer {
 
   reduceCircles(circles, state) {
     if (circles) {
-      state.circles = circles;
+      state.circles = circles.circles;
     }
   }
 
@@ -74,7 +74,8 @@ export class UpdateReducer {
   reduceDelete(del, state) {
     if (del) {
       delete state.configs[del.circle];
-      state.messages[del.circle] = [];
+      delete state.messages[del.circle];
+      delete state.peers[del.circle];
     }
   }
 
