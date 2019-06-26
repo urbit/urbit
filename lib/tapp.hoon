@@ -403,6 +403,13 @@
       `this-tapp
     start-async
   ::
+  ::  Receive route binding notification
+  ::
+  ++  bound
+    |=  [=wire success=? =binding:http-server]
+    ^-  (quip move _this-tapp)
+    (take-async bowl `[wire %bound success binding])
+  ::
   ::  Continue computing async
   ::
   ++  take-async

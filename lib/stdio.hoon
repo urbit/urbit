@@ -195,6 +195,35 @@
 ::
 ::    ----
 ::
+::  Incoming HTTP requests
+::
+++  bind-route-raw
+  |=  [=binding:http-server =term]
+  =/  m  (async ,~)
+  ^-  form:m
+  (send-raw-card [%connect / binding term])
+::
+++  take-bound
+  =/  m  (async ?)
+  ^-  form:m
+  |=  =async-input
+  :^  ~  ~  ~
+  ?~  in.async-input
+    [%wait ~]
+  =*  sign  sign.u.in.async-input
+  ?.  ?=(%bound -.sign)
+    [%fail %expected-bound >got=-.sign< ~]
+  [%done success.sign]
+::
+++  bind-route
+  |=  [=binding:http-server =term]
+  =/  m  (async ?)
+  ^-  form:m
+  ;<  ~  bind:m  (bind-route-raw binding term)
+  take-bound
+::
+::    ----
+::
 ::  Identity is immutable
 ::
 ::    XX should be statefully cycled
