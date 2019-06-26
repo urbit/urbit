@@ -163,6 +163,8 @@
     |=  who=@p
     ^-  json
     (ship:enjs:format who)
+  ::
+    [%last-update (time:enjs:format last-update.col)]
   ==
 ::
 ++  state-to-json

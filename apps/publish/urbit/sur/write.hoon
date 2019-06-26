@@ -99,6 +99,7 @@
       order=[pin=(list @tas) unpin=(list @tas)]
       contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
+      last-update=@da
   ==
 ::
 +$  state
@@ -108,6 +109,7 @@
       latest=(list [who=ship coll=@tas post=@tas])
       unread=(set [who=ship coll=@tas post=@tas])
       invites=(map [who=ship coll=@tas] title=@t)
+      outgoing=(map path bone)
   ==
 ::
 +$  delta

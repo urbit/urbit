@@ -210,6 +210,10 @@
     ~&  ships
     [~ this]
   ::
+      %print-bowl
+    ~&  bol
+    [~ this]
+  ::
       %update-tile
     [make-tile-moves this]
   ::
@@ -255,11 +259,9 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[ost.bol dat.del] ~ ~ [~ ~] [%white ~] ~]
-        u.old(col [ost.bol dat.del])
-      ~&  [our.bol who.del]
+          [[ost.bol dat.del] ~ ~ [~ ~] [%white ~] ~ now.bol]
+        u.old(col [ost.bol dat.del], last-update now.bol)
       =?  contributors.new  =(our.bol who.del)
-        ~&  %should-set-contributors
         (get-contributors col.del)
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
@@ -274,8 +276,13 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] (my [pos.del ost.bol dat.del] ~) ~ [~ ~] [%white ~] ~]
-        u.old(pos (~(put by pos.u.old) pos.del [ost.bol dat.del]))
+          :*  [0 %.n ~]  (my [pos.del ost.bol dat.del] ~)  ~ 
+              [~ ~]  [%white ~]  ~  now.bol
+          ==
+        %=  u.old
+          pos          (~(put by pos.u.old) pos.del [ost.bol dat.del])
+          last-update  now.bol
+        ==
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -291,8 +298,13 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] ~ (my [pos.del ost.bol dat.del] ~) [~ ~] [%white ~] ~]
-        u.old(com (~(put by com.u.old) pos.del [ost.bol dat.del]))
+          :*  [0 %.n ~]  ~  (my [pos.del ost.bol dat.del] ~)
+              [~ ~]  [%white ~]  ~  now.bol
+          ==
+        %=  u.old
+          com          (~(put by com.u.old) pos.del [ost.bol dat.del])
+          last-update  now.bol
+        ==
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -300,9 +312,9 @@
       (da-emil (affection del))
     ::
         %total
-      ~&  del
       =?  contributors.dat.del  =(our.bol who.del)
         (get-contributors col.del)
+      =.  last-update.dat.del  now.bol
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
@@ -576,7 +588,6 @@
   |=  [wir=wire wen=@da mad=made-result:ford]
   ^-  (quip move _this)
   ?+  wir
-    ~&  mad
     [~ this]
   ::
       [%collection @t ~]
@@ -605,7 +616,7 @@
       ::
       =/  del=delta
         :*  %total  our.bol  col  [ost.bol dat] 
-            ~  ~  [~ ~]  [%white ~]  ~
+            ~  ~  [~ ~]  [%white ~]  ~  now.bol
         ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
@@ -624,6 +635,7 @@
             [~ ~]
             [%white ~]
             ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -640,6 +652,7 @@
           [~ ~]
           [%white ~]
           ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -671,7 +684,7 @@
       ::
       =/  del=delta
         :*  %total  our.bol  col  [0 %.n ~]  (my [pos ost.bol dat] ~)
-            ~  [~ ~]  [%white ~]  ~
+            ~  [~ ~]  [%white ~]  ~  now.bol
         ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
@@ -690,6 +703,7 @@
             [~ ~]
             [%white ~]
             ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -706,6 +720,7 @@
           [~ ~]
           [%white ~]
           ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -737,7 +752,7 @@
       ::
       =/  del=delta
         :*  %total  our.bol  col  [0 %.n ~]  ~  (my [pos ost.bol dat] ~)
-            [~ ~]  [%white ~]  ~
+            [~ ~]  [%white ~]  ~  now.bol
         ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
@@ -756,6 +771,7 @@
             [~ ~]
             [%white ~]
             ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -772,6 +788,7 @@
           [~ ~]
           [%white ~]
           ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -1167,8 +1184,8 @@
     =/  wir=wire  /collection/[coll.act]
     =/  title=(unit @t)  (~(get by invites.sat) [who.act coll.act])
     =.  invites.sat  (~(del by invites.sat) [who.act coll.act])
-    :_  this
-    ;:  welp  
+    :_  this(outgoing.sat (~(put by outgoing.sat) wir ost.bol))
+    ;:  welp
       make-tile-moves
       [ost.bol %peer wir [who.act %write] wir]~
       ?~  title  ~
@@ -1181,6 +1198,10 @@
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
   ::
       %unsubscribe
+    =/  wir=wire  /collection/[coll.act]
+    =/  bon=(unit bone)  (~(get by outgoing.sat) wir)
+    ?~  bon
+      ~|  %nonexistent-subscription^wir  !!
     =/  new-latest=(list [@p @tas @tas])
       %+  skim  latest.sat
       |=  [who=@p coll=@tas post=@tas]
@@ -1196,12 +1217,12 @@
       ?&  =(who our.bol)
           =(coll coll.act)
       ==
-    =/  wir=wire  /collection/[coll.act]
     :_  %=  this
-      subs.sat    (~(del by subs.sat) who.act coll.act)
-      latest.sat  new-latest
+      subs.sat      (~(del by subs.sat) who.act coll.act)
+      latest.sat    new-latest
+      outgoing.sat  (~(del by outgoing.sat) wir)
     ==
-    :-  [ost.bol %pull wir [who.act %write] ~]
+    :-  [u.bon %pull wir [who.act %write] ~]
     %+  welp  make-tile-moves
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
@@ -1371,7 +1392,7 @@
     [~ this]
   ::
       [%collection @t ~]
-    =/  coll=@tas  i.wir
+    =/  coll=@tas  i.t.wir
     =/  col=(unit collection)  (~(get by pubs.sat) coll)
     ?~  col
       [~ this]
@@ -1399,7 +1420,7 @@
   =/  new=collection
     u.col(subscribers (~(put in subscribers.u.col) src.bol))
   =/  rum=rumor
-    [%total our.bol coll u.col]
+    [%total our.bol coll new]
   :_  this(pubs.sat (~(put by pubs.sat) coll new))
   [ost.bol %diff %write-rumor rum]~
 ::
