@@ -56,6 +56,7 @@
       [%config cir=circle:hall con=config:hall]
       [%circles cir=(set name:hall)]
       [%peers cir=circle:hall per=(set @p)]
+      [%delete cir=circle:hall]
   ==
 ::
 +$  action  [%actions lis=(list action:hall)]

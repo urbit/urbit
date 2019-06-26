@@ -50,6 +50,7 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
+  =/  launchnoun  [%noun [%chat /chattile '/~chat/js/tile.js']]
   ?~  old
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
@@ -62,9 +63,9 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]
+        [ost.bol %poke /chat [our.bol %launch] launchnoun]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] [%noun [%chat /chattile '/~chat/js/tile.js']]]~
+  :-  [ost.bol %poke /chat [our.bol %launch] launchnoun]~
   this(sta u.old)
 ::
 ::
@@ -79,7 +80,7 @@
       ?~  lis
         [cir 0]
       =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
-      [cir num.last]
+      [cir (add num.last 1)]
   =/  maptjson  *(map @t json)
   =.  maptjson
     (~(put by maptjson) 'config' (config-to-json str))
@@ -425,11 +426,35 @@
           ::
             configs  (~(del by configs.str.sta) affectedcir)
           ==
+        =/  fakecir/circle:hall
+          :-  our.bol
+          %-  crip
+          %+  weld  (trip 'hall-internal-')  (trip nom.affectedcir)
         ::
-        :_  this(str.sta str)
-        %+  weld
-          [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
-          (send-chat-update [[%inbox newinbox] str])
+        ?~  (~(get by configs.str) fakecir)
+          ::  just forward the delete to our clients
+          ::
+          :_  this(str.sta str)
+          %+  weld
+            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
+          %+  weld
+            (send-chat-update [[%inbox newinbox] str])
+            (send-chat-update [[%delete affectedcir] str])
+        ::  if we get a delete from another ship, delete our fake circle copy
+        ::
+        ~&  %deletefake
+        =/  deletefake/poke
+          :-  %hall-action
+              [%delete nom.fakecir ~]
+          :_  this(str.sta str)
+          %+  weld
+            [ost.bol %pull newwir [hos.affectedcir %hall] ~]~
+          %+  weld
+            [ost.bol %poke /fake [our.bol %hall] deletefake]~
+          %+  weld
+            (send-chat-update [[%inbox newinbox] str])
+            (send-chat-update [[%delete affectedcir] str])
+        ::
       ==
       ::  end of branching on dif.sto type
     ==

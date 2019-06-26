@@ -148,14 +148,14 @@
   [~ this]
 ::
 ++  wake
-  |=  [wir=wire ~]
+  |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
   =/  req/request:http  (request-darksky location)
   =/  lismov/(list move)
     `(list move)`[ost.bol %request /[(scot %da now.bol)] req *outbound-config:http-client]~
   ?~  timer
-    :-  (weld lismov `(list move)`[ost.bol %wait /timer (add now.bol ~d1)]~)
-    this(timer `(add now.bol ~d1))
+    :-  (weld lismov `(list move)`[ost.bol %wait /timer (add now.bol ~h3)]~)
+    this(timer `(add now.bol ~h3))
   [lismov this]
 ::
 --
