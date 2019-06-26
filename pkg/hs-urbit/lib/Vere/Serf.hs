@@ -166,7 +166,7 @@ sendAndRecv :: Serf -> EventId -> Atom -> IO SerfResp
 sendAndRecv w eventId event =
   do
     traceM ("sendAndRecv: " <> show eventId)
-    traceM (show (cue event))
+    traceM (maybe "bad cue" showNoun $ cue event)
     sendAtom w $ work eventId (Jam event)
     res <- loop
     traceM ("sendAndRecv.done " <> show res)

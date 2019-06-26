@@ -13,17 +13,16 @@ import RIO (decodeUtf8Lenient)
 import qualified Vere.Http.Server as Server
 import qualified Vere.Http.Client as Client
 
-data WTFIsThis
-  = WTFIsThis (Maybe Varience) Eff
+--------------------------------------------------------------------------------
 
 data Event
-  = BehnBorn
-  | HttpBorn
-  | CttpBorn
-  deriving (Eq, Ord, Show)
+    = BehnBorn
+    | HttpBorn
+    | CttpBorn
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 data PutDel = Put | Del
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 instance FromNoun PutDel where
   parseNoun n = do
@@ -33,22 +32,19 @@ instance FromNoun PutDel where
       Cord cord  -> fail ("Invalid turf operation: " <> show cord)
 
 data Eff
-  = HttpServer Server.Eff
-  | HttpClient Client.Eff
-  | Behn Void
-  | Clay Void
-  | Boat Void
-  | Sync Void
-  | Newt Void
-  | Ames Void
-  | Init Void
-  | Term Void
-  | Hill [Term]
-  | Turf (Maybe (PutDel, [Text])) -- TODO Unsure
-  deriving (Eq, Ord, Show)
-
-instance ToNoun Eff where
-  toNoun = const (Atom 0)
+    = HttpServer Server.Eff
+    | HttpClient Client.Eff
+    | Behn Void
+    | Clay Void
+    | Boat Void
+    | Sync Void
+    | Newt Void
+    | Ames Void
+    | Init Void
+    | Term Void
+    | Hill [Term]
+    | Turf (Maybe (PutDel, [Text])) -- TODO Unsure
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 instance FromNoun Eff where
   parseNoun = \case
@@ -65,45 +61,6 @@ instance FromNoun Eff where
         Cord nm -> do
           fail ("Eff: unknown effect " <> unpack (decodeUtf8Lenient nm))
 
---------------------------------------------------------------------------------
-
-instance ToNoun Text where -- XX op args)TODO
-  toNoun t = toNoun (Cord (encodeUtf8 t))
-
-instance FromNoun Text where -- XX TODO
-  parseNoun n = do
-    Cord c <- parseNoun n
-    pure (decodeUtf8Lenient c)
-
-
---------------------------------------------------------------------------------
-
-newtype Term = MkTerm Text
-  deriving newtype (Eq, Ord, Show)
-
-instance ToNoun Term where -- XX TODO
-  toNoun (MkTerm t) = toNoun (Cord (encodeUtf8 t))
-
-instance FromNoun Term where -- XX TODO
-  parseNoun n = do
-    Cord c <- parseNoun n
-    pure (MkTerm (decodeUtf8Lenient c))
-
---------------------------------------------------------------------------------
-
-newtype Knot = MkKnot Text
-  deriving newtype (Eq, Ord, Show)
-
-instance ToNoun Knot where -- XX TODO
-  toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
-
-instance FromNoun Knot where -- XX TODO
-  parseNoun n = do
-    Cord c <- parseNoun n
-    pure (MkKnot (decodeUtf8Lenient c))
-
---------------------------------------------------------------------------------
-
 data Varience = Gold | Iron | Lead
 
 type Perform = Eff -> IO ()
@@ -112,7 +69,7 @@ newtype Path = Path [Knot]
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Ovum = Ovum Path Event
-  deriving (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 newtype Mug = Mug Word32
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)

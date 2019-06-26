@@ -420,18 +420,7 @@ u3_reck_kick(u3_pier* pir_u, u3_noun ovo)
   if ( (c3n == _reck_kick_spec(pir_u, u3k(u3h(ovo)), u3k(u3t(ovo)))) &&
        (c3n == _reck_kick_norm(pir_u, u3k(u3h(ovo)), u3k(u3t(ovo)))) )
   {
-#if 0
-    if ( (c3__warn != u3h(u3t(ovo))) &&
-         (c3__text != u3h(u3t(ovo))) &&
-         (c3__note != u3h(u3t(ovo))) )
-#endif
-#if 1
     if ( (c3__crud == u3h(u3t(ovo))) )
-#if 0
-         (c3__talk == u3h(u3t(ovo))) ||
-         (c3__helo == u3h(u3t(ovo))) ||
-         (c3__init == u3h(u3t(ovo))) )
-#endif
     {
       u3_pier_work(pir_u,
                    u3nt(u3_blip, c3__term, u3_nul),
@@ -443,13 +432,7 @@ u3_reck_kick(u3_pier* pir_u, u3_noun ovo)
               u3r_string(u3h(u3t(ovo))),
               u3r_string(tox));
       u3z(tox);
-#if 0
-      if ( c3__hear == u3h(u3t(ovo)) ) {
-        c3_assert(0);
-      }
-#endif
     }
-#endif
   }
   u3z(ovo);
 }

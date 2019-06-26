@@ -7,10 +7,12 @@ module Vere.Http.Client where
 
 import ClassyPrelude
 import Vere.Http
+import Data.Noun.Poet
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types as HT
 import qualified Network.HTTP.Client as H
+
 
 --------------------------------------------------------------------------------
 
@@ -19,9 +21,9 @@ type ReqId = Word
 data Ev = Receive ReqId Event -- [%receive @ todo]
 
 data Eff
-  = NewReq ReqId Request -- [%request @ todo]
-  | CancelReq ReqId      -- [%cancel-request @]
-  deriving (Eq, Ord, Show)
+    = NewReq ReqId Request -- [%request @ todo]
+    | CancelReq ReqId      -- [%cancel-request @]
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 data State = State
   { sManager :: H.Manager
@@ -46,7 +48,7 @@ cvtReq r =
 
 cvtRespHeaders :: H.Response a -> ResponseHeader
 cvtRespHeaders resp =
-  ResponseHeader (HT.statusCode (H.responseStatus resp)) heads
+    ResponseHeader (fromIntegral $ HT.statusCode (H.responseStatus resp)) heads
   where
     heads = convertHeaders (H.responseHeaders resp)
 

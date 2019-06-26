@@ -5,6 +5,7 @@ module Vere.Http.Server where
 import ClassyPrelude
 import Vere.Http
 import Data.Noun.Atom
+import Data.Noun.Poet
 import Control.Lens
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
@@ -20,22 +21,24 @@ type ServerId = Word
 type ConnectionId = Word
 type RequestId = Word
 
+data Foo = A | B | C
+
 data Eff = Eff ServerId ConnectionId RequestId ServerRequest
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 -- | An http server effect is configuration, or it sends an outbound response
 data ServerRequest
   = SetConfig Config
   | Response Event
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 data Config = Config
-  { secure :: Maybe (Key, Cert)
-  , proxy :: Bool
-  , log :: Bool
-  , redirect :: Bool
-  }
-  deriving (Eq, Ord, Show)
+    { secure   :: Maybe (Key, Cert)
+    , proxy    :: Bool
+    , log      :: Bool
+    , redirect :: Bool
+    }
+  deriving (Eq, Ord, Show, Generic, ToNoun)
 
 
 -- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
@@ -44,8 +47,8 @@ type Key = PEM
 type Cert = PEM
 data Wain = Wain [Text]
 
-newtype PEM = PEM ByteString
-  deriving newtype (Eq, Ord, Show)
+newtype PEM = PEM Cord
+  deriving newtype (Eq, Ord, Show, ToNoun)
 
 data ClientResponse
   = Progress ResponseHeader Int (Maybe Int) (Maybe ByteString)
@@ -86,7 +89,7 @@ startServer s c = do
   tls <- case (secure c) of
     Nothing -> error "no wai"
     Just (PEM key, PEM cert) ->
-      pure (W.tlsSettingsMemory cert key)
+      pure (W.tlsSettingsMemory (unCord cert) (unCord key))
 
   -- we need to do the dance where we do the socket checking dance. or shove a
   -- socket into it.

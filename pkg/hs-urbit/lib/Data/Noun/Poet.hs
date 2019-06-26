@@ -1,3 +1,6 @@
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DefaultSignatures #-}
+
 module Data.Noun.Poet where
 
 import ClassyPrelude hiding (fromList)
@@ -11,10 +14,14 @@ import Data.Noun.Pill
 import Data.Void
 import Data.Word
 import GHC.Natural
+import GHC.Generics hiding (from)
 
-import Data.List      (intercalate)
-import Data.Typeable  (Typeable)
+import qualified GHC.Generics as GHC
 
+import Data.Typeable (Typeable)
+import RIO           (decodeUtf8Lenient)
+
+import qualified Data.Char          as C
 import qualified Control.Monad.Fail as Fail
 
 
@@ -35,8 +42,11 @@ newtype Tour = Tour [Char]
 newtype Tape = Tape ByteString
   deriving newtype (Eq, Ord, Show, IsString)
 
-newtype Cord = Cord ByteString
+newtype Cord = Cord { unCord :: ByteString }
   deriving newtype (Eq, Ord, Show, IsString)
+
+
+-- Pretty Printing -------------------------------------------------------------
 
 type Tang = [Tank]
 
@@ -196,6 +206,123 @@ class FromNoun a where
 
 class ToNoun a where
   toNoun :: a -> Noun
+
+  default toNoun :: (Generic a, GToNoun (Rep a)) => a -> Noun
+  toNoun = genericToNoun
+
+
+-- Generic Deriving ToNoun -----------------------------------------------------
+
+-- TODO Handle enums
+
+class GToNoun f where
+  gToNoun :: f a -> Noun
+
+genericToNoun :: (Generic a, GToNoun (Rep a)) => a -> Noun
+genericToNoun = gToNoun . GHC.from
+
+--------------------------------------------------------------------------------
+
+instance GToNoun V1 where gToNoun _  = undefined
+instance GToNoun U1 where gToNoun U1 = Atom 0
+
+instance ToNoun a => GToNoun (K1 i a) where
+    gToNoun = toNoun . unK1
+
+instance (GToNoun a, GToNoun b) => GToNoun (a :*: b) where
+    gToNoun (x :*: y) = Cell (gToNoun x) (gToNoun y)
+
+instance (GToNoun a, GToNoun b) => GToNoun (a :+: b) where
+    gToNoun (L1 x) = gToNoun x
+    gToNoun (R1 x) = gToNoun x
+
+instance GToNoun a => GToNoun (S1 c a) where
+    gToNoun x = gToNoun (unM1 x)
+
+instance GToNoun a => GToNoun (D1 c a) where
+    gToNoun x = gToNoun (unM1 x)
+
+instance (GToNoun f, Constructor c) => GToNoun (C1 c f) where
+    gToNoun x = Cell tag val
+                  where tag = toNoun (hsToHoon $ conName x)
+                        val = gToNoun (unM1 x)
+
+--------------------------------------------------------------------------------
+
+hsToHoon :: String -> Text
+hsToHoon = go []
+  where
+    go acc []     = pack $ intercalate "-" $ reverse acc
+    go acc (c:cs) = go (elem:acc) remain
+      where
+        head           = C.toLower c
+        (tail, remain) = break C.isUpper cs
+        elem           = head:tail
+
+-- Copy-Pasta ------------------------------------------------------------------
+
+class HasConstructor (f :: * -> *) where
+  gConsName :: f x -> String
+
+instance HasConstructor f => HasConstructor (D1 c f) where
+  gConsName (M1 x) = gConsName x
+
+instance (HasConstructor x, HasConstructor y) => HasConstructor (x :+: y) where
+  gConsName (L1 l) = gConsName l
+  gConsName (R1 r) = gConsName r
+
+instance Constructor c => HasConstructor (C1 c f) where
+  gConsName x = conName x
+
+consName :: (HasConstructor (Rep a), Generic a) => a -> String
+consName = gConsName . GHC.from
+
+--------------------------------------------------------------------------------
+
+int2Word :: Int -> Word
+int2Word = fromIntegral
+
+instance ToNoun ByteString where
+  toNoun bs = toNoun (int2Word (length bs), bs ^. from (pill . pillBS))
+
+instance ToNoun Text where -- XX TODO
+  toNoun t = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Text where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (decodeUtf8Lenient c)
+
+
+--------------------------------------------------------------------------------
+
+newtype Term = MkTerm Text
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Term where -- XX TODO
+  toNoun (MkTerm t) = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Term where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (MkTerm (decodeUtf8Lenient c))
+
+--------------------------------------------------------------------------------
+
+newtype Knot = MkKnot Text
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Knot where -- XX TODO
+  toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
+
+instance FromNoun Knot where -- XX TODO
+  parseNoun n = do
+    Cord c <- parseNoun n
+    pure (MkKnot (decodeUtf8Lenient c))
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
 
 fromNoun :: FromNoun a => Noun -> Maybe a
 fromNoun n = runParser (parseNoun n) [] onFail onSuccess
@@ -427,3 +554,33 @@ instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e,FromNoun f)
     (p, tail)       <- parseNoun n
     (q, r, s, t, u) <- parseNoun tail
     pure (p, q, r, s, t, u)
+
+
+-- This Shouldn't Be Here ------------------------------------------------------
+
+showAtom :: Atom -> String
+showAtom 0 = "0"
+showAtom a =
+  let mTerm = do
+        t <- fromNoun (Atom a)
+        let ok = \x -> (x=='-' || C.isAlphaNum x)
+        guard (all ok (t :: Text))
+        pure ("%" <> unpack t)
+
+  in case mTerm of
+       Nothing -> show a
+       Just st -> st
+
+showNoun :: Noun -> String
+showNoun = \case
+    Atom a   -> showAtom a
+    Cell x y -> fmtCell (showNoun <$> (x : toTuple y))
+  where
+    fmtCell :: [String] -> String
+    fmtCell xs = "[" <> intercalate " " xs <> "]"
+
+pPrintAtom :: Atom -> IO ()
+pPrintAtom = putStrLn . pack . showAtom
+
+pPrintNoun :: Noun -> IO ()
+pPrintNoun = putStrLn . pack . showNoun
