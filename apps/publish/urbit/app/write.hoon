@@ -75,6 +75,13 @@
 ::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
+++  ships-to-whom
+  |=  ships=(set @p)
+  ^-  (set whom:clay)
+  %-  ~(run in ships)
+  |=  who=@p
+  ^-  whom:clay
+  [%.y who]
 ::
 ++  allowed
   |=  [who=@p mod=?(%read %write) pax=path]
@@ -169,62 +176,11 @@
   ?+  a
     [~ this]
   ::
-      %update-tile
-    [make-tile-moves this]
-  ::
-      %test-build
-    =/  schema=schematic:ford
-      :-
-      :*  
-          %bake
-          %write-info
-          *coin
-          [[our.bol q.byk.bol] /fora/write/web]
-      ==
-      :*  
-          %bake
-          %write-post
-          *coin
-          [[our.bol q.byk.bol] /first-post/fora/write/web]
-      ==
-    :_  this
-    [ost.bol %build /test/build %.n schema]~
-  ::
-      %print-subs
-    ~&  sup.bol
+      %test
     [~ this]
   ::
-      %kill-all-builds
-    :_  this
-    :~  [ost.bol %kill /collection/fora ~]
-        [ost.bol %kill /post/fora/post-1 ~]
-        [ost.bol %kill /comments/fora/post-1 ~]
-        [ost.bol %kill /post/fora/post-2 ~]
-        [ost.bol %kill /comments/fora/post-2 ~]
-        [ost.bol %kill /post/fora/post-3 ~]
-        [ost.bol %kill /comments/fora/post-3 ~]
-    ==
-  ::
-  ::
-      %send-diff
-    =/  rum=json  (frond:enjs:format %poke-noun ~)
-    =/  mov=(list move)
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [=bone *]
-    [bone %diff %json rum]
-    ~&  mov+mov
-    [mov this]
-  ::
-      %peer
-    ~&  %peer
-    :_  this
-    [ost.bol %peer /collection/fora [~zod %write] /collection/fora]~
-  ::
-      %pull
-    ~&  %pull
-    =/  wir=wire  /collection/fora
-    :_  this
-    [ost.bol %pull wir [~zod %write] ~]~
+      %update-tile
+    [make-tile-moves this]
   ::
       %flush-state
     [~ this(sat *state)]
@@ -810,14 +766,27 @@
   ^-  move
   (delete-file pax)
 ::
+++  mack
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  %-  (slog u.err)
+  [~ this]
+::
 ++  poke-write-action
   |=  act=action
   ^-  (quip move _this)
   ?-  -.act
   ::
       %new-collection
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
+    ?.  =(our.bol src.bol)
+      ::  no one else is permitted to create blogs
+      ::
+      [~ this]
+    ?:  (~(has by pubs.sat) name.act)
+      [~ this]
+    ::
     =/  conf=collection-info
       :*  our.bol
           title.act
@@ -827,10 +796,17 @@
           now.bol
           now.bol
       ==
-    ::  XX  set permissions
-    ::  XX  automatically serve collection
-    ::      (add to set of builds)
     =/  pax=path  /web/write/[name.act]/write-info
+    =/  blog-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[name.act] 
+          %rw  `read.perm.act  `write.perm.act
+      ==
+    =/  info-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[name.act]/write-info
+          %rw  `*rule:clay  `*rule:clay
+      ==
     ::
     =/  wir=wire  /collection/[name.act]
     =/  schema=schematic:ford
@@ -842,15 +818,22 @@
     :_  this
     :~  (write-file pax %write-info !>(conf))
         [ost.bol %build wir %.y schema]
+        [ost.bol blog-perms]
+        [ost.bol info-perms]
     ==
   ::
       %new-post
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
-    ::  XX  check if coll doesn't exist
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?:  (~(has by pos.u.col) name.act)
+      [~ this]
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
       %-  my
@@ -863,10 +846,7 @@
           [%last-modified (scot %da now.bol)]
           [%pinned %false]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
-    =/  out=@t    (update-udon-front front content.act)
+    =/  out=@t  (update-udon-front front content.act)
     ::
     =/  post-wir=wire  /post/[coll.act]/[name.act]
     =/  post-schema=schematic:ford
@@ -883,18 +863,38 @@
           *coin
           [[our.bol q.byk.bol] /[name.act]/[coll.act]/write/web]
       ==
+    ::
+    =/  post-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[coll.act]/[name.act]/udon
+          %w  `[%white (ships-to-whom (sy src.bol ~))]
+      ==
+    =/  comment-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[coll.act]/[name.act]
+          %w  `[%black ~]
+      ==
     :_  this
     :~  (write-file pax %udon !>(out))
         [ost.bol %build comments-wir %.y comments-schema]
         [ost.bol %build post-wir %.y post-schema]
+        [ost.bol post-perms]
+        [ost.bol comment-perms]
     ==
   ::
       %new-comment
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
+    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?.  (~(has by pos.u.col) post.act)
+      [~ this]
+    ::
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
       %-  my
@@ -904,12 +904,17 @@
           [%date-created (scot %da now.bol)]
           [%last-modified (scot %da now.bol)]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
     =/  out=@t    (update-udon-front front content.act)
+    ::
+    =/  comment-perms=card
+      :*  %perm  /perms  q.byk.bol  pax
+          %w  `[%white ~]
+      ==
+    ::
     :_  this
-    [(write-file pax %udon !>(out))]~
+    :~  (write-file pax %udon !>(out))
+        [ost.bol comment-perms]
+    ==
   ::
       %delete-collection
     ?.  =(src.bol our.bol)
@@ -947,16 +952,29 @@
     ==
   ::
       %delete-comment
+    ?.  =(src.bol our.bol)
+      [~ this]
     :_  this
     [(delete-file /web/write/[coll.act]/[post.act]/[comment.act]/udon)]~
   ::
       %edit-collection
+    ?.  =(src.bol our.bol)
+      [~ this]
     [~ this]
   ::
       %edit-post
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
+    ::
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?.  (~(has by pos.u.col) name.act)
+      [~ this]
     ::
     =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
     ?~  pos
@@ -974,10 +992,7 @@
           [%last-modified (scot %da now.bol)]
           [%pinned ?:(pinned.u.pos %true %false)]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
-    =/  out=@t    (update-udon-front front content.act)
+    =/  out=@t  (update-udon-front front content.act)
     ::
     :_  this
     [(write-file pax %udon !>(out))]~
@@ -1314,9 +1329,12 @@
   ^-  (quip move _this)
   ?.  ?=([@tas ~] wir)
     [~ this]
-  ::  XX handle permissions for foreign subscriptions
-  ::
   =/  coll=@tas  i.wir
+  =/  pax  /web/write/[coll]
+  ?.  (allowed src.bol %read pax)
+    :_  this
+    [ost.bol %quit ~]~
+  ::
   =/  col=(unit collection)  (~(get by pubs.sat) coll)
   ?~  col
     [~ this]
