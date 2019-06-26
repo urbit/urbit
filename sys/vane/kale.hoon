@@ -68,8 +68,8 @@
   ==                                                    ::
 +$  message                                             ::  message to her kale
   $%  [%nuke ~]                                         ::  cancel trackers
-      [%public-keys ~]                                  ::  view ethereum events
-      [%public-keys-result p=vent-result]               ::  tmp workaround
+      [%public-keys whos=(set ship)]                   ::  view ethereum events
+      [%public-keys-result who=ship =vent-result]       ::  tmp workaround
   ==                                                    ::
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
@@ -78,7 +78,7 @@
   [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
-  $~  [%a %want *ship *path **]                                   ::
+  $~  [%a %want *ship *path **]                         ::
   $%  $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
@@ -91,8 +91,7 @@
 ::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %woot *ship ~]                                ::
-  $%  [%k $>(%public-keys gift)]                        ::  ethereum changes
-      [%a $>(%woot gift:able:ames)]                     ::  message result
+  $%  [%a $>(%woot gift:able:ames)]                     ::  message result
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -240,20 +239,26 @@
       ::
       =.  lyf.own.pki  lyf.seed.tac
       =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
-      ::  our initial galaxy table as a +map from +life to +public
-      ::
-      =/  kyz
-        %-  ~(run by czar.tac)
-        |=([=life =pass] `point-diff`[%changed-keys life 1 pass])
-      ::  XX file point-diff
-      ::  =.  +>.$
-      ::    %-  curd  =<  abet
-      ::    (pubs:~(feel su hen our pki etn sap) kyz)
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
       ::
       =.  tuf.own.pki  turf.tac
+      ::  our initial galaxy table as a +map from +life to +public
+      ::
+      =/  point-diffs=(list [who=ship =point-diff])
+        %~  tap  by
+        %-  ~(run by czar.tac)
+        |=([=life =pass] `point-diff`[%changed-keys life 1 pass])
+      =.  +>.$
+        |-  ^+  +>.^$
+        ?~  point-diffs
+          +>.^$
+        =.  +>.^$
+          %-  curd  =<  abet
+          %-  public-keys:~(feel su hen our pki etn sap)
+          [%diff who point-diff]:i.point-diffs
+        $(point-diffs t.point-diffs)
       ::
       =.  moz
         %+  weld  moz
@@ -390,11 +395,11 @@
       +>.$(moz [[hen %give %turf tuf.own.pki] moz])
     ::
     ::  Update from app
-    ::    [%vent-update =block-id who=ship =point-diff]
+    ::    [%vent-update =vent-result]
     ::
         %vent-update
       %-  curd  =<  abet
-      (public-keys:~(feel su hen our pki etn sap) [who point-diff]:tac)
+      (public-keys:~(feel su hen our pki etn sap) vent-result.tac)
     ::
     ::  learn of kernel upgrade
     ::    [%vega ~]
@@ -435,19 +440,22 @@
       ::    [%nuke ~]
       ::
           %nuke
+        =.  moz  [[hen %give %mack ~] moz]
         $(tac mes)
       ::
       ::  view ethereum events
-      ::    [%public-keys ~]
+      ::    [%public-keys whos=(set ship)]
       ::
           %public-keys
         =.  moz  [[hen %give %mack ~] moz]
-        $(tac [%public-keys ~])
+        $(tac [%public-keys whos.mes])
       ::
       ::  receive keys result
+      ::    [%public-keys-result =vent-result]
       ::
           %public-keys-result
-        !!
+        =.  moz  [[hen %give %mack ~] moz]
+        $(tac [%vent-update vent-result.mes])
       ==
     ::
     ::  rewind to snapshot
@@ -470,12 +478,6 @@
       ~_  q.u.u.q.hin
       ::TODO  fail:et
       +>.$
-    ::
-        [%k %public-keys *]
-      !!
-      ::  %+  cute  hen  =<  abet
-      ::  XX
-      ::  (~(hear-vent et hen our now sub.lex etn.lex sap.lex) p.hin)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -536,33 +538,39 @@
   ++  this-su  .
   ::                                                    ::  ++abet:su
   ++  abet                                              ::  resolve
-    ::TODO  we really want to just send the %give, but ames is being a pain.
-    :: =>  (exec yen.eth [%give %vent |+evs])
-    ::  =>  ?~  evs  .
-    ::      (vent-pass yen.eth chain+|+evs)
     [(flop moz) pki etn sap]
   ::                                                    ::  ++exec:su
+  ++  emit
+    |=  =move
+    +>.$(moz [move moz])
+  ::
   ++  exec                                              ::  mass gift
     |=  {yen/(set duct) cad/card}
     =/  noy  ~(tap in yen)
-    |-  ^+  ..exec
-    ?~  noy  ..exec
+    |-  ^+  this-su
+    ?~  noy  this-su
     $(noy t.noy, moz [[i.noy cad] moz])
   ::
-  ++  vent-pass
-    |=  [yen=(set duct) res=vent-result]
+  ++  vent-give
+    |=  [yen=(set duct) =vent-result]
     =+  yez=~(tap in yen)
-    |-  ^+  ..vent-pass
-    ?~  yez  ..vent-pass
+    |-  ^+  this-su
+    ?~  yez  this-su
     =*  d  i.yez
-    ?>  ?=([[%a @ @ *] *] d)
-    =+  our=(slav %p i.t.i.d)
-    =+  who=(slav %p i.t.t.i.d)
-    %+  exec  [d ~ ~]
-    :+  %pass
-      /(scot %p our)/vent-result
-    ^-  note
-    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    ?.  ?=([[%a @ @ *] *] d)
+      %-  emit
+      [d %give %public-keys vent-result]
+    =/  our  (slav %p i.t.i.d)
+    =/  who  (slav %p i.t.t.i.d)
+    =/  =message  [%public-keys-result who vent-result]
+    =.  this-su
+      %-  emit
+      :^    d
+          %pass
+        /public-keys-result
+      ^-  note
+      [%a %want who /k/public-keys-result message]
+    $(yez t.yez)
   ::
   ++  get-source
     |=  who=@p
@@ -606,11 +614,7 @@
         ?~  whol
           ney.zim
         (~(put ju $(whol t.whol)) i.whol hen)
-      %_    ..feed
-          yen.zim  (~(put by yen.zim) hen whos)
-          moz
-        :_  moz
-        :^  hen  %give  %public-keys
+      =/  =vent-result
         :-  %full
         ?:  =(~ whos)
           pos.zim
@@ -623,7 +627,13 @@
         ?~  pub  ~
         ?:  =(0 life.u.pub)  ~
         `[who u.pub]
-      ==
+      =.  yen.zim
+        %-  ~(gas ju yen.zim)
+        %+  turn  ~(tap in whos)
+        |=  who=ship
+        [hen who]
+      =.  ..feed  (vent-give (sy hen ~) vent-result)
+      ..feed
     ::
     ++  private-keys                                            ::  private keys
       %_  ..feed
@@ -666,7 +676,7 @@
           ..feel
         =.  ..feel
           %-  public-keys:feel
-          [who.i.passes %changed-keys 1 1 pass.i.passes]
+          [%diff who.i.passes %changed-keys 1 1 pass.i.passes]
         $(passes t.passes)
       --
     --
@@ -675,8 +685,20 @@
     |%
     ::                                                  ::  ++pubs:feel:su
     ++  public-keys
-      |=  [who=ship =point-diff]
+      |=  =vent-result
       ^+  ..feel
+      ?:  ?=(%full -.vent-result)
+        =.  pos.zim  (~(uni by pos.zim) points.vent-result)
+        =/  pointl=(list [who=ship =point])
+          ~(tap by points.vent-result)
+        |-  ^+  ..feel
+        ?~  pointl
+          ..feel
+        %+  vent-give
+          (~(get ju ney.zim) who.i.pointl)
+        [%full (my i.pointl ~)]
+      =*  who  who.vent-result
+      =*  point-diff  point-diff.vent-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
       =.  point
@@ -697,9 +719,8 @@
           ==
         ==
       =.  pos.zim  (~(put by pos.zim) who point)
-      %+  exec
+      %+  vent-give
         (~(get ju ney.zim) who)
-      :+  %give  %public-keys
       ?~  maybe-point
         [%full (my [who point]~)]
       [%diff who point-diff]
@@ -716,6 +737,20 @@
     ++  sources
       |=  [whos=(set ship) =source]
       ^+  ..feel
+      ::  XX cancel old subscriptions for whos
+      ?:  ?=(%& -.source)
+        =/  =message  [%public-keys whos]
+        =/  =move
+          :*  hen
+              %pass
+              /public-keys
+              %a
+              %want
+              p.source
+              /k/public-keys
+              message
+          ==
+        (emit move)
       =^  =source-id  this-su  (get-source-id source)
       =.  ..feed
         ?~  whos

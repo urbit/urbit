@@ -2069,7 +2069,7 @@
     ::
     +$  vent-result
       $%  [%full points=(map ship point)]
-          [%diff =ship =point-diff]
+          [%diff who=ship =point-diff]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -2106,7 +2106,7 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
-          [%vent-update who=ship =point-diff]           ::  update from app
+          [%vent-update =vent-result]                   ::  update from app
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
