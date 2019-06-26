@@ -74,6 +74,7 @@
       [%set-spawn-proxy who=ship proxy=address]
       [%transfer-ship who=ship to=address]
       [%set-transfer-proxy who=ship proxy=address]
+      [%adopt who=ship]
   ==
 ::
 ::  monadic structures
@@ -462,6 +463,7 @@
     %set-spawn-proxy  (set-spawn-proxy:dat +.call)
     %transfer-ship  (transfer-ship:dat +.call)
     %set-transfer-proxy  (set-transfer-proxy:dat +.call)
+    %adopt  (adopt:dat +.call)
   ==
 ::
 ++  deed
@@ -689,6 +691,7 @@
   ++  set-dns-domains         (enc set-dns-domains:cal)
   ++  upgrade-to              (enc upgrade-to:cal)
   ++  transfer-ownership      (enc transfer-ownership:cal)
+  ++  adopt                  (enc adopt:cal)
   ++  register-linear         (enc register-linear:cal)
   ++  register-conditional    (enc register-conditional:cal)
   ++  deposit                 (enc deposit:cal)
@@ -791,6 +794,13 @@
     ^-  call-data
     :-  'transferOwnership(address)'
     :~  [%address to]
+    ==
+  ::
+  ++  adopt
+    |=  who=ship
+    ^-  call-data
+    :-  'adopt(uint32)'
+    :~  [%uint `@`who]
     ==
   ::
   ::
