@@ -95,30 +95,26 @@
 ::
 ++  test-alien-encounter  ^-  tang
   ::
+  =/  lane-foo=lane:alef  [%| `@ux``@`%lane-foo]
+  ::
   =/  =packet:alef
-    :*  [sndr=~nec rcvr=~doznec-doznec]
+    :*  [sndr=~bus rcvr=~doznec-doznec]
         encrypted=%.y
         origin=~
         content=%double-secret
     ==
-  =/  =blob:alef  (encode-packet:alef packet)
   ::
-  =/  event-args
-    [our=~doznec-doznec eny=0xdead.beef now=~2222.2.2 *sley]
-  ::
-  =/  lane-foo=lane:alef  [%| `@ux``@`%lane-foo]
-  ::
-  =/  res
-    (call:(vane event-args) ~[//unix] *type %hear lane-foo blob)
+  =/  =blob:alef   (encode-packet:alef packet)
+  =^  moves1  bob  (call bob ~[//unix] %hear lane-foo blob)
   ::
   ;:  weld
     %+  expect-eq
-      !>  [~[//unix] %pass /alien %j %public-keys ~nec]~
-      !>  -.res
+      !>  [~[//unix] %pass /alien %j %public-keys ~bus]~
+      !>  moves1
   ::
     %+  expect-eq
       !>  [%alien [lane-foo packet]~ ~ ~]
-      !>  (~(got by peers.ames-state.+.res) ~nec)
+      !>  (~(got by peers.ames-state.bob) ~bus)
   ==
 ::
 ++  test-message-flow  ^-  tang
