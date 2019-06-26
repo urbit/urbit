@@ -29,6 +29,18 @@ data PutDel = Put | Del
 
 deriveNoun ''PutDel
 
+data EffBs
+    = EBAsdf Word
+    | EBLolr Word Word
+
+data RecEx = RE Word Word
+
+data NewtEx = NE Word
+
+deriveNoun ''EffBs
+deriveNoun ''RecEx
+deriveNoun ''NewtEx
+
 {-
     instance FromNoun PutDel where
       parseNoun n = do

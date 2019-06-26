@@ -58,9 +58,10 @@ dependencies:
 
 default-extensions:
   - ApplicativeDo
-  - DataKinds
   - BangPatterns
   - BlockArguments
+  - DataKinds
+  - DefaultSignatures
   - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
@@ -84,11 +85,12 @@ default-extensions:
   - Rank2Types
   - RankNTypes
   - RecordWildCards
-  - StandaloneDeriving
   - ScopedTypeVariables
+  - StandaloneDeriving
   - TemplateHaskell
   - TupleSections
   - TypeApplications
   - TypeFamilies
+  - TypeOperators
   - UnicodeSyntax
   - ViewPatterns
