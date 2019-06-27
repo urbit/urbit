@@ -23,7 +23,15 @@
       $%  [%dns-binding =binding:dns]
       ==
     +$  out-peer-data  ~
-    ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
+    ++  tapp
+      %:  ^tapp
+        app-state
+        peek-data
+        in-poke-data
+        out-poke-data
+        in-peer-data
+        out-peer-data
+      ==
     ++  stdio  (^stdio out-poke-data out-peer-data)
     --
 ::
