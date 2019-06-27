@@ -12,7 +12,10 @@
     ~|  hit
     ?:  ?=($2 (div p.hit 100))
       =,  html
-      (json (need (de-json q:(need r.hit))))
+      %-  json
+      ?~  r.hit
+        a+~
+      (need (de-json q:u.r.hit))
     fail+hit
   ++  json                                              ::  from json
     =,  dejs-soft:format
