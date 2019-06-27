@@ -682,12 +682,17 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>(`path`+.pax) !>(cag)]
+            [!>(`path`+.pax) (ap-cage cag)]
           [!>((slag (dec p.u.cug) `path`+.pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
       (ap-pump & her pax)
+    ::
+    ++  ap-cage                                         ::  cage to tagged vase
+      |=  cag/cage
+      ^-  vase
+      (slop `vase`[[%atom %tas `p.cag] p.cag] q.cag)
     ::
     ++  ap-pump                                         ::  update subscription
       ~/  %ap-pump
@@ -728,8 +733,13 @@
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      =/  subscriber-ship  p:(~(got by sup.ged) ost)
-      ?:  &(=(20 suy) !=(our subscriber-ship))
+      =/  subscriber=(unit (pair ship path))
+        (~(get by sup.ged) ost)
+      ?:  ?&  =(20 suy)
+              ?|  ?=(~ subscriber)
+                  !=(our p.u.subscriber)
+              ==
+          ==
         ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
         [%| ..ap-fill]
       ::  ~&  :*  %gall-pushing-20
@@ -1094,7 +1104,7 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>(`path`pax) !>(cag)]
+            [!>(`path`pax) (ap-cage cag)]
           [!>((slag (dec p.u.cug) `path`pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   (ap-lame q.u.cug u.cam)
