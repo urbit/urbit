@@ -109,9 +109,10 @@ export class PathControl extends Component {
       );
       if (i < (pathData.length - 1)){
         path.push(
-          <p className="fl gray-30 label-regular" key={key++}>
-            ->
-          </p>
+          <img src="/~publish/arrow.png"
+          className="fl ml1 mr1 relative"
+          style={{top: 5}}
+          key={key++}/>
         );
       }
     });
