@@ -60,7 +60,7 @@
       $:  %b
           ::
           ::
-          $%  [%wake ~]
+          $%  [%wake error=(unit tang)]
       ==  ==
       ::  %f: from ford
       ::
@@ -245,7 +245,7 @@
       ::    We maintain a list of subscriptions so if a channel times out, we
       ::    can cancel all the subscriptions we've made.
       ::
-      subscriptions=(map wire [ship=@p app=term =path])
+      subscriptions=(map wire [ship=@p app=term =path duc=duct])
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -581,7 +581,6 @@
         //
         var x = JSON.stringify(
           [{"action": "ack", "event-id": parseInt(this.lastEventId)}, j])
-        console.log(x, this.lastEventId);
         req.send(x);
 
         this.lastEventId = this.lastAcknowledgedEventId;
@@ -622,20 +621,14 @@
           if (obj.hasOwnProperty("err")) {
             funcs["err"](obj.err);
             this.outstandingSubscriptions.delete(obj.id);
-          } else {
-            console.log("Subscription establisthed");
           }
         } else if (obj.response == "diff") {
-          console.log("Diff: ", obj);
-
           var funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["event"](obj.json);
-
         } else if (obj.response == "quit") {
           var funcs = this.outstandingSubscriptions.get(obj.id);
           funcs["quit"](obj.err);
           this.outstandingSubscriptions.delete(obj.id);
-
         } else {
           console.log("Unrecognized response: ", e);
         }
@@ -1303,7 +1296,7 @@
           %+  ~(jab by session.channel-state.state)  channel-id
           |=  =channel
           =,  i.requests
-          channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path]))
+          channel(subscriptions (~(put by subscriptions.channel) channel-wire [ship app path duct]))
         ::
         $(requests t.requests)
       ::
@@ -1324,7 +1317,7 @@
         =.  gall-moves
           :_  gall-moves
           ^-  move
-          :^  duct  %pass  channel-wire
+          :^  duc.u.maybe-subscription  %pass  channel-wire
           =,  u.maybe-subscription
           [%g %deal [our ship] `cush:gall`[app %pull ~]]
         ::
@@ -1336,22 +1329,41 @@
         $(requests t.requests)
       ::
           %delete
-        =/  session
-          (~(got by session.channel-state.state) channel-id)
+        =/  unitsession
+          (~(get by session.channel-state.state) channel-id)
         ::
+        ?~  unitsession
+          $(requests t.requests)
+        ::
+        =/  session  u.unitsession
         =.  session.channel-state.state
           (~(del by session.channel-state.state) channel-id)
+        ::
         =.  gall-moves
-          %+  weld
-          gall-moves
+          %+  weld  gall-moves
+            ::
+            ::  produce a list of moves which cancels every gall subscription
+            ::
+            %+  turn  ~(tap by subscriptions.session)
+            |=  [channel-wire=path ship=@p app=term =path duc=^duct]
+            ^-  move
+            ::
+            [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
+        ::
+        ?:  ?=([%& *] state.session)
+          =.  gall-moves
+            :_  gall-moves
+            ::
+            ^-  move
+            ?>  ?=([%& *] state.session)
+            :^  duct.p.state.session  %pass  /channel/timeout/[channel-id]
+            [%b %rest date.p.state.session]
           ::
-          ::  produce a list of moves which cancels every gall subscription
+          $(requests t.requests)
           ::
-          %+  turn  ~(tap by subscriptions.session)
-          |=  [channel-wire=path ship=@p app=term =path]
-          ^-  move
-          ::
-          [duct %pass channel-wire [%g %deal [our ship] app %pull ~]]
+        ?>  ?=([%| *] state.session)
+        =.  duct-to-key.channel-state.state
+          (~(del by duct-to-key.channel-state.state) p.state.session)
         ::
         $(requests t.requests)
       ::
@@ -1487,10 +1499,10 @@
       ::  produce a list of moves which cancels every gall subscription
       ::
       %+  turn  ~(tap by subscriptions.session)
-      |=  [channel-wire=path ship=@p app=term =path]
+      |=  [channel-wire=path ship=@p app=term =path duc=^duct]
       ^-  move
       ::
-      [duct %pass channel-wire [%g %deal [our ship] app %pull ~]]
+      [duc %pass channel-wire [%g %deal [our ship] app %pull ~]]
     --
   ::  +handle-ford-response: translates a ford response for the outside world
   ::
@@ -1985,6 +1997,9 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
+      ?>  ?=([%b %wake *] sign)
+      ?^  error.sign
+        [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  on-channel-timeout
         on-channel-timeout:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
