@@ -1859,9 +1859,9 @@
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
-          {$vest p/tally}                               ::  balance update
+          [%vest p=tally]                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
-          {$vine p/(list change)}                       ::  all raw changes
+          [%vine p=(list change)]                       ::  all raw changes
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
@@ -2026,6 +2026,141 @@
     ++  safe  (tree rite)                               ::  rights set
     --  ::  rights
   --  ::  jael
+::                                                      ::::
+::::                    ++kale                          ::  (1h) security
+  ::                                                    ::::
+++  kale  ^?
+  |%
+  ::                                                    ::
+  ::::                  ++able:kale                     ::  (1h1) arvo moves
+    ::                                                  ::::
+  ++  able  ^?
+    =,  pki
+    |%
+    ::  %kale has two general kinds of task: changes
+    ::  and change subscriptions.
+    ::
+    ::  change tasks are designed to match high-level
+    ::  operations - for instance, we have %burn, %mint,
+    ::  and %move, not just a single delta operation.
+    ::  more of these operations will probably be added,
+    ::  and invariants enforced at transaction end.
+    ::
+    ::  subscriptions are also user-focused - for instance,
+    ::  %vein sends all the information needed to maintain
+    ::  the secure channel, both rights and certificates.
+    ::  the security-critical tasks (%veil, %vein, %vine)
+    ::  should probably be bound to a whitelisted duct set.
+    ::  (all secrets are redacted from %vest gifts.)
+    ::
+    ::  %kale only talks to %ames and itself.
+    ::
+    ++  point
+      $:  =rift
+          =life
+          keys=(map life [crypto-suite=@ud =pass])
+          sponsor=(unit @p)
+      ==
+    +$  point-diff
+      $%  [%changed-continuity =rift]
+          [%changed-keys =life crypto-suite=@ud =pass]
+          [%new-sponsor sponsor=(unit @p)]
+      ==
+    ::
+    +$  vent-result
+      $%  [%full points=(map ship point)]
+          [%diff who=ship =point-diff]
+      ==
+    ::                                                  ::
+    ++  gift                                            ::  out result <-$
+      $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
+          [%mack p=(unit tang)]                         ::  message n/ack
+          [%source whos=(set ship) src=source]          ::
+          [%turf turf=(list turf)]                      ::  domains
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys p=vent-result]                  ::  ethereum changes
+      ==                                                ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
+    +=  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
+      $%  $:  %dawn                                     ::  boot from keys
+              =seed:able:kale                           ::    identity params
+              spon=ship                                 ::    sponsor
+              czar=(map ship [=life =pass])             ::    galaxy table
+              turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
+          ==                                            ::
+          [%fake =ship]                                 ::  fake boot
+          [%look whos=(set ship) =source]               ::  set ethereum source
+          ::TODO  %next for generating/putting new private key
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%sources ~]
+          [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
+          [%turf ~]                                     ::  view domains
+          [%vent-update =vent-result]                   ::  update from app
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%wegh vane-task)                           ::  memory usage request
+          $>(%west vane-task)                           ::  remote request
+          [%wind p=@ud]                                 ::  rewind before block
+      ==                                                ::
+    --                                                  ::
+  ::                                                    ::
+  ::::                                                  ::
+    ::                                                  ::
+  +$  node-src                                          ::  ethereum node comms
+    $:  node=purl:eyre                                  ::  node url
+        filter-id=@ud                                   ::  current filter
+        poll-timer=@da                                  ::  next filter poll
+    ==                                                  ::
+  ::
+  +$  source  (each ship node-src)
+  +$  source-id  @udsourceid
+  +$  snapshot  ~
+  ::
+  ::  +state-eth-node: state of a connection to an ethereum node
+  ::
+  +$  state-eth-node                                    ::  node config + meta
+    $:  yen=(set duct)
+        top-source-id=source-id
+        sources=(map source-id source)
+        sources-reverse=(map source source-id)
+        default-source=source-id
+        ship-sources=(map ship source-id)
+        ship-sources-reverse=(jug source-id ship)
+    ==                                                  ::
+  ::                                                    ::
+  ::::                  ++pki:kale                      ::  (1h2) certificates
+    ::                                                  ::::
+  ++  pki  ^?
+    |%
+    ::TODO  update to fit azimuth-style keys
+    ::  the urbit meta-certificate (++will) is a sequence
+    ::  of certificates (++cert).  each cert in a will
+    ::  revokes and replaces the previous cert.  the
+    ::  version number of a ship is a ++life.
+    ::
+    ::  the deed contains an ++arms, a definition
+    ::  of cosmetic identity; a semi-trusted parent,
+    ::  which signs the initial certificate and provides
+    ::  routing services; and a dirty bit.  if the dirty
+    ::  bit is set, the new life of this ship may have
+    ::  lost information that the old life had.
+    ::
+    ++  hand  @uvH                                      ::  128-bit hash
+    ++  mind  {who/ship lyf/life}                       ::  key identifier
+    ++  name  (pair @ta @t)                             ::  ascii / unicode
+    ++  oath  @                                         ::  signature
+    --  ::  pki
+  --  ::  kale
 ::
 ++  http-client  ^?
   |%
@@ -2326,7 +2461,7 @@
     ++  task                                            ::  in request ->$
       $%  {$hear p/lane q/@}                            ::
           {$mess p/ship q/path r/*}                     ::  send message
-          {$wake ~}                                    ::
+          {$wake ~}                                     ::
       ==                                                ::
     ++  card                                            ::  out cards
       $%  {$west p/ship q/path r/*}                     ::  network request
