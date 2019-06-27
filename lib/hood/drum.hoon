@@ -79,13 +79,25 @@
   =+  myr=(clan:title our)
   ::
   ?:  ?=($pawn myr)
-    [[%base %collections] [%base %hall] [%base %talk] [%base %dojo] ~]
-  :~  [%home %collections]
+  :~  [%home %lens]
+      [%base %hall]
+      [%base %talk]
+      [%base %dojo]
+      [%base %modulo]
+  ==
+  :~  [%home %lens]
       [%home %acme]
       [%home %dns]
       [%home %dojo]
       [%home %hall]
       [%home %talk]
+      [%home %modulo]
+      [%home %launch]
+      [%home %chat]
+      [%home %write]
+      [%home %timer]
+      [%home %clock]
+      [%home %weather]
   ==
 ::
 ++  deft-fish                                           ::  default connects

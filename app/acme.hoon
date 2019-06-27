@@ -12,6 +12,14 @@
 ::
 ++  de-base64url
   ~(de base64 | &)
+::  +join-turf
+::
+++  join-turf
+  |=  hot=(list turf)
+  ^-  cord
+  %+  rap  3
+  %-  (bake join ,[cord wain])
+  [', ' (turn hot en-turf:html)]
 ::  |octn: encode/decode unsigned atoms as big-endian octet stream
 ::
 ++  octn
@@ -23,7 +31,7 @@
 ::
 ++  body
   |%
-  +$  acct  [id=@t wen=@t sas=@t]
+  +$  acct  [wen=@t sas=@t]
   ::
   +$  order
     $:  exp=@t
@@ -74,7 +82,7 @@
     ^-  $-(json acct:body)
     ::  ignoring key, contact, initialIp
     ::
-    (ot 'id'^no 'createdAt'^json-date 'status'^so ~)
+    (ot 'createdAt'^json-date 'status'^so ~)
   ::  +order: parse certificate order
   ::
   ++  order
@@ -139,11 +147,12 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%hiss wire ~ %httr %hiss hiss:eyre]
+  $%  [%connect wire =binding:http-server app=term]
+      [%http-response =http-event:http]
       [%poke wire dock poke]
+      [%request wire request:http outbound-config:http-client]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
-      [%well wire path (unit mime)]
   ==
 ::  +poke: outgoing app pokes
 ::
@@ -385,7 +394,7 @@
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%hiss wir ~ %httr %hiss req]
+  [%request wir (hiss-to-request:html req) *outbound-config:http-client]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -456,8 +465,8 @@
           ?~  rod
             ::  XX shouldn't happen
             ::
-            (join '.' /network/arvo/(crip +:(scow %p our.bow)))
-          (join ', ' (turn ~(tap in dom.u.rod) |=(a=turf (join '.' a))))
+            (en-turf:html /network/arvo/(crip +:(scow %p our.bow)))
+          (join-turf ~(tap in dom.u.rod))
           '. retrying in ~d7.'
       ==
     (emit (notify msg ~))
@@ -473,7 +482,7 @@
           ' too many certificates issued for '
           ::  XX get from detail
           ::
-          (join '.' /network/arvo)
+          (en-turf:html /network/arvo)
           '. retrying in '
           (scot %dr lul)  '.'
       ==
@@ -587,7 +596,7 @@
         :-  %a
         %+  turn
           ~(tap in ~(key by `(map turf *)`u.next-order))
-        |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
+        |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -678,28 +687,6 @@
     (emit (request wire i.pending.aut.u.rod %get ~ ~))
   ::  XX check/finalize-authz ??
   ::
-  ::  +save-trial: save ACME domain validation challenge to /.well-known/
-  ::
-  ++  save-trial
-    ^+  this
-    ~|  %save-trial-effect-fail
-    ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=(^ rod)      ~|(%no-active-order !!)
-    ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
-    ::  XX revisit wrt rate limits
-    ::
-    ?>  ?=(%wake sas.u.rod)
-    =*  aut  u.active.aut.u.rod
-    %-  emit
-    :^    %well
-        ::  XX idx in wire?
-        ::
-        /acme/save-trial/(scot %da now.bow)
-      /acme-challenge/[tok.cal.aut]
-    :+  ~
-      /text/plain
-    %-  as-octs:mimes:html
-    (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
   ::  +test-trial: confirm that ACME domain validation challenge is available
   ::
   ++  test-trial
@@ -764,7 +751,7 @@
     ?.  ?=(^ next-order)
       this
     =/  idx  (slav %ud i.t.wire)
-    =/  valid  =(200 p.rep)
+    =/  valid  |(=(200 p.rep) =(307 p.rep))
     =/  item=(list [=turf idx=@ud valid=?])
       (skim ~(tap by u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
     ?.  ?&  ?=([^ ~] item)
@@ -783,7 +770,7 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to reach '  (scot %p our.bow)
-            ' via http at '  (join '.' turf.i.item)  ':80'
+            ' via http at '  (en-turf:html turf.i.item)  ':80'
         ==
       (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
@@ -802,7 +789,7 @@
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
-  ::    Nonce has already been saved in +sigh-httr. The next effect
+  ::    Nonce has already been saved in +http-response. The next effect
   ::    is specified in the wire.
   ::
   ++  nonce
@@ -978,7 +965,7 @@
     =>  =/  msg=cord
           %+  rap  3
           :~  'received https certificate for '
-              (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+              (join-turf ~(tap in dom.u.liv))
           ==
         (emit (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
@@ -1029,13 +1016,10 @@
         pending  t.pending.aut.u.rod
         active   `[idx tau]
       ==
-    =<  test-trial:effect
-    save-trial:effect(aut.u.rod rod-aut)
+    test-trial:effect(aut.u.rod rod-aut)
   ::  XX check/finalize-authz ??
   ::
   ::  +test-trial: accept response from challenge test
-  ::
-  ::    Note that +save-trial:effect has no corresponding event.
   ::
   ++  test-trial
     |=  [wir=wire rep=httr]
@@ -1053,7 +1037,7 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to retrieve self-hosted domain validation token '
-            'via '  (join '.' dom.aut)  '. '
+            'via '  (en-turf:html dom.aut)  '. '
             'please confirm your urbit has network connectivity.'
         ==
       (emit (notify msg [(sell !>(rep)) ~]))
@@ -1063,7 +1047,6 @@
     ?.  ?&  ?=(^ r.rep)
             =(bod u.r.rep)
         ==
-      ::  XX save-trial again?
       ::  XX probably a DNS misconfiguration
       ::
       =/  =tang
@@ -1147,36 +1130,21 @@
       %finalize-trial  finalize-trial:fec
     ==
   --
-::  +sigh-tang: handle http request failure
-::
-++  sigh-tang
-  |=  [=wire =tang]
+++  http-response
+  |=  [=wire response=client-response:http-client]
   ^-  (quip move _this)
-  ?>  ?=([%acme ^] wire)
-  ::  XX may God forgive me for this
+  ::  ignore progress reports
   ::
-  =<  abet
-  =-  ?:(?=(%& -.-) p.- this)
-  %-  mule  |.
-  (retry:event t.wire)
-::  +sigh-recoverable-error: handle http rate-limit response
-::
-::    XX we won't receive this unless we request a
-::    mark conversion and it fails
-::
-++  sigh-recoverable-error
-  |=  [=wire %429 %rate-limit lim=(unit @da)]
-  ^-  (quip move _this)
-  ~&  [%sigh-recoverable wire lim]
-  ?>  ?=([%acme ^] wire)
-  abet:(retry:event t.wire)
-::  +sigh-httr: accept http response
-::
-++  sigh-httr
-  |=  [=wire rep=httr]
-  ^-  (quip move _this)
+  ?:  ?=(%progress -.response)
+    [~ this]
+  ::
   ?>  ?=([%acme ^] wire)
   =<  abet
+  ::
+  ?:  ?=(%cancel -.response)
+    (retry:event t.wire)
+  ::
+  =/  rep=httr  (to-httr:http-client +.response)
   ::  add nonce to pool, if present
   ::
   =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
@@ -1197,7 +1165,7 @@
     (nonce:effect [act spur])
   ::  XX replace with :hall notification
   ::
-  ~|  [%sigh-fail wire]
+  ~|  [%http-response-fail wire]
   %.  [spur rep]
   ?+  act
       ~&([%unknown-http-response act] !!)
@@ -1220,6 +1188,49 @@
     ::  XX delete-trial?
     ::
   ==
+::  +poke-handle-http-request: receive incoming http request
+::
+::    Used to serve the domain validation challenge
+::
+++  poke-handle-http-request
+  |=  =inbound-request:http-server
+  ^-  (quip move _this)
+  ~&  [%handle-http +<]
+  =/  url=(unit (pair pork:eyre quay:eyre))
+    %+  rush
+      url.request.inbound-request
+    ;~(plug ;~(pose apat:de-purl:html (easy *pork:eyre)) yque:de-purl:html)
+  ::
+  ?.  ?=(^ url)
+    ~|  [%invalid-url url.request.inbound-request]  !!
+  ?.  ?=([%'.well-known' %acme-challenge @ ~] q.p.u.url)
+    ~|  [%unknown-url url.request.inbound-request]  !!
+  ::
+  ::  XX these crashes should be restored
+  ::  but %rver doesn't get an error notification from %gall
+  ::
+  :: ?.  ?=(^ reg.act)  ~|(%no-account !!)
+  :: ?.  ?=(^ rod)      ~|(%no-active-order !!)
+  :: ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
+  ?.  ?&  ?=(^ reg.act)
+          ?=(^ rod)
+          ?=(^ active.aut.u.rod)
+      ==
+    =/  =move  [ost.bow %http-response %start [%500 ~] ~ %.y]
+    [[move ~] this]
+  ::
+  =/  challenge  i.t.t.q.p.u.url
+  =*  aut  u.active.aut.u.rod
+  ?.  =(tok.cal.aut challenge)
+    =/  =move  [ost.bow %http-response %start [%404 ~] ~ %.y]
+    [[move ~] this]
+  =/  =move
+    =/  hed  ['content-type' '/text/plain']~
+    =/  bod
+      %-  some  %-  as-octs:mimes:html
+      (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
+    [ost.bow %http-response %start [%200 hed] bod %.y]
+  [[move ~] this]
 ::  +wake: timer wakeup event
 ::
 ++  wake
@@ -1257,7 +1268,7 @@
     ~&  [%cert `wain`cer.u.liv]
     ~&  [%expires exp.u.liv]
     ~&  :-  %domains
-        (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+        (join-turf ~(tap in dom.u.liv))
     this
   ::
       %dbug-history
@@ -1297,8 +1308,20 @@
   |=  old=(unit acme)
   ^-  (quip move _this)
   ?~  old
-    [~ this]
+    =/  =move
+      [ost.bow %connect /acme [~ /'.well-known'/acme-challenge] %acme]
+    [[move ~] this]
   [~ this(+<+ u.old)]
+::  +bound: response to %connect binding request
+::
+++  bound
+  |=  [=wire accepted=? =binding:http-server]
+  ?:  accepted
+    [~ this]
+  ::  XX better error message
+  ::
+  ~&  [%acme-http-path-binding-failed +<]
+  [~ this]
 ::  +rekey: create new 2.048 bit RSA key
 ::
 ::    XX do something about this iteration
@@ -1367,7 +1390,7 @@
     =/  msg=cord
       %+  rap  3
       :~  'requesting an https certificate for '
-          (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
+          (join-turf ~(tap in dom))
       ==
     (emit (notify msg ~))
   ::  if registered, create order

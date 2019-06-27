@@ -37,7 +37,7 @@
   ^-  move
   [ost.bol %poke / [our.bol %hall] %hall-action a]
 ::
-++  ra-base-hart  .^(hart:eyre %e /(scot %p our.bol)/host/(scot %da now.bol))
+++  ra-base-hart  .^(hart:eyre %r /(scot %p our.bol)/host/(scot %da now.bol))
 ::
 ++  poke-fora-post
   |=  {pax/path sup/spur hed/@t txt/@t}

@@ -1,5 +1,6 @@
 !:  ::  %gall, agent execution
 !?  163
+!:
 ::::
 |=  pit/vase
 =,  gall
@@ -24,7 +25,7 @@
 ++  cote                                                ::  ++ap note
   $%  {$meta p/@tas q/vase}                             ::
       {$send p/ship q/cush}                             ::
-      {$hiss p/(unit knot) q/mark r/cage}               ::
+::      {$hiss p/(unit knot) q/mark r/cage}               ::
   ==                                                    ::
 ++  cove  (pair bone (wind cote cuft))                  ::  internal move
 ++  move  {p/duct q/(wind note-arvo gift-arvo)}         ::  typed move
@@ -398,6 +399,9 @@
         $quit  %+  mo-pass  [%sys pax]
                [%a %want him [%g %gh dap ~] [num %x ~]]
         $reap  (mo-give %mack p.cuf)
+        ::  we send http-responses, we don't receive them.
+        ::
+        $http-response  !!
       ==
     ::
         %val                                            ::  inbound validate
@@ -439,11 +443,11 @@
     =+  vax=(slot 3 `vase`hin)
     ?-  i.t.t.pax
       $inn  ap-abet:(ap-pour:pap t.t.t.pax (slot 3 `vase`hin))
-      $cay  ?.  ?=({$e $sigh *} q.hin)
+      $cay  ::?.  ?=({$e $sigh *} q.hin)
               ~&  [%mo-cook-weird q.hin]
               ~&  [%mo-cook-weird-path pax]
               +>.$
-            ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
+            ::ap-abet:(ap-purr:pap +<.q.hin t.t.t.pax +>.q.hin)
     ::
       $out  ?.  ?=({$g $unto *} q.hin)
               ~&  [%mo-cook-weird q.hin]
@@ -609,10 +613,15 @@
           $pass
         :+  %pass  `path`[%use dap p.q.cov]
         ?-  -.q.q.cov
-          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
+::          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
           $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
+::          $response  `note-arvo`[%l %response raw-http-response.q.q.cov]
         ==
+        ::
+        :: I'm sort of stumped on how to get a %give out of the above; it's
+        :: just turning %cove into a %pass instead.
+        ::
       ==
     ::
     ++  ap-avid                                         ::  onto results
@@ -819,13 +828,16 @@
       ?+  +<.q.vax
                (ap-move-pass -.q.vax +<.q.vax cav)
         $diff  (ap-move-diff -.q.vax cav)
-        $hiss  (ap-move-hiss -.q.vax cav)
+        ::  $hiss  (ap-move-hiss -.q.vax cav)
         $peel  (ap-move-peel -.q.vax cav)
         $peer  (ap-move-peer -.q.vax cav)
         $pull  (ap-move-pull -.q.vax cav)
         $poke  (ap-move-poke -.q.vax cav)
         $send  (ap-move-send -.q.vax cav)
         $quit  (ap-move-quit -.q.vax cav)
+      ::
+        ::  $connect  (ap-move-connect -.q.vax cav)
+        $http-response  (ap-move-http-response -.q.vax cav)
       ==
     ::
     ++  ap-move-quit                                    ::  give quit move
@@ -846,29 +858,53 @@
       =^  tel  vel  (~(slot wa vel) 3 pec)
       :_(+>.$ [%& sto %give %diff `cage`[-.q.pec tel]])
     ::
-    ++  ap-move-hiss                                    ::  pass %hiss
-      ~/  %hiss
-      |=  {sto/bone vax/vase}
-      ^-  {(each cove tang) _+>}
-      ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
-        =+  args="[%hiss wire (unit knot) mark cage]"
-        :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
-      =^  gaw  vel  (~(slot wa vel) 15 vax)
-      ?.  &(?=({p/@ *} q.gaw) ((sane %tas) p.q.gaw))
-        :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
-      =^  paw  vel  (~(stop wa vel) 3 gaw)
-      =+  usr=((soft (unit knot)) q.q.vax)
-      ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
-        :_(+>.$ [%| (ap-suck "hiss: malformed (unit knot)")])
-      =+  pux=((soft path) p.q.vax)
-      ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
-        :_(+>.$ [%| (ap-suck "hiss: malformed path")])
+    ++  ap-move-http-response
+      |=  [sto=bone vax=vase]
+      ^-  [(each cove tang) _+>]
+      ::
+      ::  TODO: Magic vase validation. I have no idea how malformed checking works.
+      ::
+      ::  This should be moved into +cote instead of the rest of 
+      ::
       :_  +>.$
-      :^  %&  sto  %pass
-      :-  [(scot %p q.q.pry) %cay u.pux]
-      ~!  *cote
-      =-  ~!  -  `cote`-
-      [%hiss u.usr r.q.vax [p.q.gaw paw]]
+      [%& sto %give %http-response ;;(http-event:http q.vax)]
+    ::
+    ::  ++  ap-move-request
+    ::    |=  [sto=bone vax=vase]
+    ::    ^-  [(each cove tang) _+>]
+    ::    ::
+    ::    ::  TODO: Magic vase validation
+    ::    ::
+    ::    :_  +>.$
+    ::    :^  %&  sto  %pass
+    ::    :-  [(scot %p q.q.pry) %cay u.pux]
+    ::    ~!  *cote
+    ::    =-  ~!  -  `cote`-
+    ::    [%hiss u.usr r.q.vax [p.q.gaw paw]]
+    ::
+    ::  ++  ap-move-hiss                                    ::  pass %hiss
+    ::    ~/  %hiss
+    ::    |=  {sto/bone vax/vase}
+    ::    ^-  {(each cove tang) _+>}
+    ::    ?.  &(?=({p/* q/* r/@ s/{p/@ *}} q.vax) ((sane %tas) r.q.vax))
+    ::      =+  args="[%hiss wire (unit knot) mark cage]"
+    ::      :_(+>.$ [%| (ap-suck "hiss: bad hiss ask.{args}")])
+    ::    =^  gaw  vel  (~(slot wa vel) 15 vax)
+    ::    ?.  &(?=({p/@ *} q.gaw) ((sane %tas) p.q.gaw))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed cage")])
+    ::    =^  paw  vel  (~(stop wa vel) 3 gaw)
+    ::    =+  usr=((soft (unit knot)) q.q.vax)
+    ::    ?.  &(?=(^ usr) ?~(u.usr & ((sane %ta) u.u.usr)))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed (unit knot)")])
+    ::    =+  pux=((soft path) p.q.vax)
+    ::    ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+    ::      :_(+>.$ [%| (ap-suck "hiss: malformed path")])
+    ::    :_  +>.$
+    ::    :^  %&  sto  %pass
+    ::    :-  [(scot %p q.q.pry) %cay u.pux]
+    ::    ~!  *cote
+    ::    =-  ~!  -  `cote`-
+    ::    [%hiss u.usr r.q.vax [p.q.gaw paw]]
     ::
     ++  ap-move-mess                                    ::  extract path, target
       ~/  %mess
@@ -892,6 +928,7 @@
         :_(+>.$ [%| (ap-suck "pass: malformed card")])
       =+  pux=((soft path) -.q.vax)
       ?.  &(?=(^ pux) (levy u.pux (sane %ta)))
+        ~&  [%bad-path pux]
         :_(+>.$ [%| (ap-suck "pass: malformed path")])
       =+  huj=(ap-vain wut)
       ?~  huj  :_(+>.$ [%| (ap-suck "move: unknown note {(trip wut)}")])
@@ -1118,6 +1155,8 @@
         $diff  (ap-diff q.q.pry pax p.cuf)
         $quit  (ap-take q.q.pry %quit +.pax ~)
         $reap  (ap-take q.q.pry %reap +.pax `!>(p.cuf))
+        ::  ???
+        $http-response  !!
       ==
     ::
     ++  ap-prep                                         ::  install
@@ -1296,17 +1335,19 @@
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %rule  `%e
-        %serv  `%e
         %snap  `%j
-        %them  `%e
         %wait  `%b
         %want  `%a
         %warp  `%c
-        %well  `%e
-        %well  `%e
         %wind  `%j
         %wipe  `%f
+      ::
+        %request         `%l
+        %cancel-request  `%l
+        %serve       `%r
+        %connect     `%r
+        %disconnect  `%r
+        %rule        `%r
       ==
     --
   --

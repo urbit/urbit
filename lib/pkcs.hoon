@@ -3,20 +3,6 @@
 =*  rsa  primitive-rsa
 ::::  %/lib/pkcs
 |%
-::  +join: join list of cords with separator
-::
-::   XX move to zuse?
-::
-++  join
-  |=  [sep=@t hot=(list @t)]
-  ^-  @t
-  =|  out=(list @t)
-  ?>  ?=(^ hot)
-  |-  ^-  @t
-  ?~  t.hot
-    (rap 3 [i.hot out])
-  $(out [sep i.hot out], hot t.hot)
-::
 ::  +rs256: RSA signatures over a sha-256 digest
 ::
 ++  rs256
@@ -312,7 +298,7 @@
   =>  |%
       ::  +csr:pkcs10: certificate request
       ::
-      +=  csr  [key=key:rsa hot=(list (list @t))]
+      +$  csr  [key=key:rsa hot=(list turf)]
       --
   |%
   ::  |spec:pkcs10: ASN.1 specs for certificate signing requests
@@ -362,13 +348,13 @@
       ::  +san:en:spec:pkcs10: subject-alternate-names
       ::
       ++  san
-        |=  hot=(list (list @t))
+        |=  hot=(list turf)
         ^-  spec:asn1
         :-  %seq
         %+  turn  hot
         :: implicit, context-specific tag #2 (IA5String)
         :: XX sanitize string?
-        |=(h=(list @t) [%con `bespoke:asn1`[& 2] (rip 3 (join '.' h))])
+        |=(=turf [%con `bespoke:asn1`[& 2] (trip (en-turf:html turf))])
       --
     ::  |de:spec:pkcs10: ASN.1 decoding for certificate signing requests
     ++  de  !!

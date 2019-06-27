@@ -72,6 +72,10 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
+::  
+::
+::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
+::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
 ::+|
@@ -213,6 +217,154 @@
       [%west p=ship q=path r=*]
   ==
 ::                                                      ::::
+::::                      ++http                        ::  
+  ::                                                    ::::
+::  http: shared representations of http concepts
+::
+++  http  ^?
+  |%
+  ::  +header-list: an ordered list of http headers
+  ::
+  +$  header-list
+    (list [key=@t value=@t])
+  ::  +method: exhaustive list of http verbs
+  ::
+  +$  method
+    $?  %'CONNECT'
+        %'DELETE'
+        %'GET'
+        %'HEAD'
+        %'OPTIONS'
+        %'POST'
+        %'PUT'
+        %'TRACE'
+    ==
+  ::  +request: a single http request
+  ::
+  +$  request
+    $:  ::  method: http method
+        ::
+        method=method
+        ::  url: the url requested
+        ::
+        ::    The url is not escaped. There is no escape.
+        ::
+        url=@t
+        ::  header-list: headers to pass with this request
+        ::
+        =header-list
+        ::  body: optionally, data to send with this request
+        ::
+        body=(unit octs)
+    ==
+  ::  +response-header: the status code and header list on an http request
+  ::
+  ::    We separate these away from the body data because we may not wait for
+  ::    the entire body before we send a %progress to the caller.
+  ::
+  +$  response-header
+    $:  ::  status: http status code
+        ::
+        status-code=@ud
+        ::  headers: http headers
+        ::
+        headers=header-list
+    ==
+  ::  +http-event: packetized http
+  ::
+  ::    Urbit treats Earth's HTTP servers as pipes, where Urbit sends or
+  ::    receives one or more %http-events. The first of these will always be a
+  ::    %start or an %error, and the last will always be %cancel or will have
+  ::    :complete set to %.y to finish the connection.
+  ::
+  ::    Calculation of control headers such as 'Content-Length' or
+  ::    'Transfer-Encoding' should be performed at a higher level; this structure
+  ::    is merely for what gets sent to or received from Earth.
+  ::
+  +$  http-event
+    $%  ::  %start: the first packet in a response
+        ::
+        $:  %start
+            ::  response-header: first event information
+            ::
+            =response-header
+            ::  data: data to pass to the pipe
+            ::
+            data=(unit octs)
+            ::  whether this completes the request
+            ::
+            complete=?
+        ==
+        ::  %continue: every subsequent packet
+        ::
+        $:  %continue
+            ::  data: data to pass to the pipe
+            ::
+            data=(unit octs)
+            ::  complete: whether this completes the request
+            ::
+            complete=?
+        ==
+        ::  %cancel: represents unsuccessful termination
+        ::
+        [%cancel ~]
+    ==
+  ::  +get-header: returns the value for :header, if it exists in :header-list
+  ::
+  ++  get-header
+    |=  [header=@t =header-list]
+    ^-  (unit @t)
+    ::
+    ?~  header-list
+      ~
+    ::
+    ?:  =(key.i.header-list header)
+      `value.i.header-list
+    ::
+    $(header-list t.header-list)
+  ::  +set-header: sets the value of an item in the header list
+  ::
+  ::    This adds to the end if it doesn't exist.
+  ::
+  ++  set-header
+    |=  [header=@t value=@t =header-list]
+    ^-  ^header-list
+    ::
+    ?~  header-list
+      ::  we didn't encounter the value, add it to the end
+      ::
+      [[header value] ~]
+    ::
+    ?:  =(key.i.header-list header)
+      [[header value] t.header-list]
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +delete-header: removes the first instance of a header from the list
+  ::
+  ++  delete-header
+    |=  [header=@t =header-list]
+    ^-  ^header-list
+    ::
+    ?~  header-list
+      ~
+    ::  if we see it in the list, remove it
+    ::
+    ?:  =(key.i.header-list header)
+      t.header-list
+    ::
+    [i.header-list $(header-list t.header-list)]
+  ::  +simple-payload: a simple, one event response used for generators
+  ::
+  +$  simple-payload
+    $:  ::  response-header: status code, etc
+        ::
+        =response-header
+        ::  data: the data returned as the body
+        ::
+        data=(unit octs)
+    ==
+  --
+::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
 ++  ames  ^?
@@ -227,6 +379,7 @@
           {$mass p/mass}                                ::  memory usage
           {$send p/lane q/@}                            ::  transmit packet
           {$turf p/(list turf)}                         ::  bind to domains
+          $>(%west vane-task)                           ::  for the outside
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
     ++  task                                            ::  in request ->$
@@ -715,47 +868,6 @@
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  ::                                                    ::
-  ::::                  ++able:eyre                     ::  (1e1) arvo moves
-    ::                                                  ::::
-  ++  able  ^?
-    |%
-    +=  gift                                            ::  out result <-$
-      $%  [%form p=http-config]                         ::  configuration
-          [%mass p=mass]                                ::  memory usage
-          [%mack p=(unit tang)]                         ::  message ack
-          [%sigh p=cage]                                ::  marked http response
-          [%that p=@p q=prox]                           ::  get proxied request
-          [%thou p=httr]                                ::  raw http response
-          [%thus p=@ud q=(unit hiss)]                   ::  http request+cancel
-          [%veer p=@ta q=path r=@t]                     ::  drop-through
-          [%vega p=@t q=@t]                             ::  drop-through
-      ==                                                ::
-    +=  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  [%born p=(list host)]                         ::  XX vane-task
-          $>(%crud vane-task)                           ::  XX rethink
-          [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-          $>(%init vane-task)                           ::  report install
-          [%live p=@ud q=(unit @ud)]                    ::  http/s ports
-          [%rule p=http-rule]                           ::  update config
-          [%serv p=$@(desk beam)]                       ::  set serving root
-          $>(%sunk vane-task)                           ::  report death
-          [%them p=(unit hiss)]                         ::  outbound request
-          [%they p=@ud q=httr]                          ::  inbound response
-          [%chis p=? q=clip r=httq]                     ::  IPC inbound request
-          [%this p=? q=clip r=httq]                     ::  inbound request
-          [%thud ~]                                     ::  inbound cancel
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  report memory
-          [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          $>(%west vane-task)                           ::  network request
-          [%wise p=ship q=prox]                         ::  proxy notification
-      ==                                                ::
-    --  ::able
-  ::
-  ::::                                                  ::  (1e2)
-    ::
   ++  bale                                              ::  driver state
     |*  a/_*                                            ::  %jael keys type
     $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
@@ -763,7 +875,6 @@
         key/a                                           ::  secrets from %jael
     ==                                                  ::
   ::
-  ++  clip  (each @if @is)                              ::  client IP
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
         aut/(jug @tas @t)                               ::  client identities
@@ -777,56 +888,13 @@
         ced/cred                                        ::  client credentials
         bem/beam                                        ::  original path
     ==                                                  ::
-  ++  gram                                              ::  inter-ship message
-    $%  [%lon p=hole]                                   ::  login request
-        [%aut p=hole]                                   ::  login reply
-        [%hat p=hole q=hart]                            ::  login redirect
-        [%get p=@uvH q=[? clip httq]]                   ::  remote request
-        [%got p=@uvH q=httr]                            ::  remote response
-        [%gib p=@uvH]                                   ::  remote cancel
-      ::
-        [%get-inner p=@uvH q=mark r=coin s=beam]        ::TODO details?
-        [%got-inner p=@uvH q=(each (cask) tang)]        ::TODO details?
-      ::
-        [%not p=prox]                                   ::  proxy notification
-    ==                                                  ::
+  ::
   ++  hart  {p/? q/(unit @ud) r/host}                   ::  http sec+port+host
   ++  hate  {p/purl q/@p r/moth}                        ::  semi-cooked request
-  ++  heir  {p/@ud q/mess r/(unit love)}                ::  status+headers+data
   ++  hiss  {p/purl q/moth}                             ::  outbound request
-  ++  hole  @t                                          ::  session identity
-  ++  hort  {p/(unit @ud) q/host}                       ::  http port+host
   ++  host  (each turf @if)                             ::  http host
   ++  hoke  %+  each   {$localhost ~}                  ::  local host
             ?($.0.0.0.0 $.127.0.0.1)                    ::
-  :: +http-config: full http-server configuration
-  ::
-  +=  http-config
-    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
-        ::
-        secure=(unit [key=wain cert=wain])
-        :: proxy: reverse TCP proxy HTTP(s)
-        ::
-        proxy=?
-        :: log: keep HTTP(s) access logs
-        ::
-        log=?
-        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
-        ::
-        ::   Note: requires certificate.
-        ::
-        redirect=?
-    ==
-  :: +http-rule: update configuration
-  ::
-  +=  http-rule
-    $%  :: %cert: set or clear certificate and keypair
-        ::
-        [%cert p=(unit [key=wain cert=wain])]
-        :: %turf: add or remove established dns binding
-        ::
-        [%turf p=?(%put %del) q=turf]
-    ==
   ++  httq                                              ::  raw http request
     $:  p/meth                                          ::  method
         q/@t                                            ::  unparsed url
@@ -834,19 +902,6 @@
         s/(unit octs)                                   ::  body
     ==                                                  ::
   ++  httr  {p/@ud q/mess r/(unit octs)}                ::  raw http response
-  ++  httx                                              ::  encapsulated http
-    $:  p/?                                             ::  https?
-        q/clip                                          ::  source IP
-        r/httq                                          ::
-    ==                                                  ::
-  ++  user  knot                                        ::  username
-  ++  love                                              ::  http response
-    $%  {$ham p/manx}                                   ::  html node
-        {$mid p/mite q/octs}                            ::  mime-typed data
-        {$raw p/httr}                                   ::  raw http response
-        {$wan p/wain}                                   ::  text lines
-        {$zap p/@ud q/(list tank)}                      ::  status+error
-    ==                                                  ::
   ++  math  (map @t (list @t))                          ::  semiparsed headers
   ++  mess  (list {p/@t q/@t})                          ::  raw http headers
   ++  meth                                              ::  http methods
@@ -946,6 +1001,7 @@
         {$give p/httr}                                  ::  respond immediately
         {$redo ~}                                      ::  restart request qeu
     ==                                                  ::
+  ++  user  knot                                        ::  username
   --  ::eyre
 ::                                                      ::::
 ::::                    ++ford                            ::  (1f) build
@@ -1717,6 +1773,7 @@
         {$diff p/cage}                                  ::  subscription output
         {$quit ~}                                      ::  close subscription
         {$reap p/(unit tang)}                           ::  peer result
+        [%http-response =http-event:http]              ::  serve http result
     ==                                                  ::
   ++  culm                                              ::  config action
     $%  {$load p/scup}                                  ::  load+reload
@@ -1802,9 +1859,9 @@
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
           [%turf turf=(list turf)]                      ::  domains
-          {$vest p/tally}                               ::  balance update
+          [%vest p=tally]                               ::  balance update
           [%vein =life vein=(map life ring)]            ::  private keys
-          {$vine p/(list change)}                       ::  all raw changes
+          [%vine p=(list change)]                       ::  all raw changes
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
@@ -1970,6 +2027,422 @@
     --  ::  rights
   --  ::  jael
 ::                                                      ::::
+::::                    ++kale                          ::  (1h) security
+  ::                                                    ::::
+++  kale  ^?
+  |%
+  ::                                                    ::
+  ::::                  ++able:kale                     ::  (1h1) arvo moves
+    ::                                                  ::::
+  ++  able  ^?
+    =,  pki
+    |%
+    ::  %kale has two general kinds of task: changes
+    ::  and change subscriptions.
+    ::
+    ::  change tasks are designed to match high-level
+    ::  operations - for instance, we have %burn, %mint,
+    ::  and %move, not just a single delta operation.
+    ::  more of these operations will probably be added,
+    ::  and invariants enforced at transaction end.
+    ::
+    ::  subscriptions are also user-focused - for instance,
+    ::  %vein sends all the information needed to maintain
+    ::  the secure channel, both rights and certificates.
+    ::  the security-critical tasks (%veil, %vein, %vine)
+    ::  should probably be bound to a whitelisted duct set.
+    ::  (all secrets are redacted from %vest gifts.)
+    ::
+    ::  %kale only talks to %ames and itself.
+    ::
+    ++  point
+      $:  =rift
+          =life
+          keys=(map life [crypto-suite=@ud =pass])
+          sponsor=(unit @p)
+      ==
+    +$  point-diff
+      $%  [%changed-continuity =rift]
+          [%changed-keys =life crypto-suite=@ud =pass]
+          [%new-sponsor sponsor=(unit @p)]
+      ==
+    ::
+    +$  vent-result
+      $%  [%full points=(map ship point)]
+          [%diff who=ship =point-diff]
+      ==
+    ::                                                  ::
+    ++  gift                                            ::  out result <-$
+      $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
+          [%mack p=(unit tang)]                         ::  message n/ack
+          [%source whos=(set ship) src=source]          ::
+          [%turf turf=(list turf)]                      ::  domains
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys p=vent-result]                  ::  ethereum changes
+      ==                                                ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
+    +=  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
+      $%  $:  %dawn                                     ::  boot from keys
+              =seed:able:kale                           ::    identity params
+              spon=ship                                 ::    sponsor
+              czar=(map ship [=life =pass])             ::    galaxy table
+              turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
+          ==                                            ::
+          [%fake =ship]                                 ::  fake boot
+          [%look whos=(set ship) =source]               ::  set ethereum source
+          ::TODO  %next for generating/putting new private key
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%sources ~]
+          [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
+          [%turf ~]                                     ::  view domains
+          [%vent-update =vent-result]                   ::  update from app
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%wegh vane-task)                           ::  memory usage request
+          $>(%west vane-task)                           ::  remote request
+          [%wind p=@ud]                                 ::  rewind before block
+      ==                                                ::
+    --                                                  ::
+  ::                                                    ::
+  ::::                                                  ::
+    ::                                                  ::
+  +$  node-src                                          ::  ethereum node comms
+    $:  node=purl:eyre                                  ::  node url
+        filter-id=@ud                                   ::  current filter
+        poll-timer=@da                                  ::  next filter poll
+    ==                                                  ::
+  ::
+  +$  source  (each ship node-src)
+  +$  source-id  @udsourceid
+  +$  snapshot  ~
+  ::
+  ::  +state-eth-node: state of a connection to an ethereum node
+  ::
+  +$  state-eth-node                                    ::  node config + meta
+    $:  yen=(set duct)
+        top-source-id=source-id
+        sources=(map source-id source)
+        sources-reverse=(map source source-id)
+        default-source=source-id
+        ship-sources=(map ship source-id)
+        ship-sources-reverse=(jug source-id ship)
+    ==                                                  ::
+  ::                                                    ::
+  ::::                  ++pki:kale                      ::  (1h2) certificates
+    ::                                                  ::::
+  ++  pki  ^?
+    |%
+    ::TODO  update to fit azimuth-style keys
+    ::  the urbit meta-certificate (++will) is a sequence
+    ::  of certificates (++cert).  each cert in a will
+    ::  revokes and replaces the previous cert.  the
+    ::  version number of a ship is a ++life.
+    ::
+    ::  the deed contains an ++arms, a definition
+    ::  of cosmetic identity; a semi-trusted parent,
+    ::  which signs the initial certificate and provides
+    ::  routing services; and a dirty bit.  if the dirty
+    ::  bit is set, the new life of this ship may have
+    ::  lost information that the old life had.
+    ::
+    ++  hand  @uvH                                      ::  128-bit hash
+    ++  mind  {who/ship lyf/life}                       ::  key identifier
+    ++  name  (pair @ta @t)                             ::  ascii / unicode
+    ++  oath  @                                         ::  signature
+    --  ::  pki
+  --  ::  kale
+::
+++  http-client  ^?
+  |%
+  ++  able
+    |%
+    ::  +gift: effects the client can emit
+    ::
+    ++  gift
+      $%  ::  %request: outbound http-request to earth
+          ::
+          ::    TODO: id is sort of wrong for this interface; the duct should
+          ::    be enough to identify which request we're talking about?
+          ::
+          [%request id=@ud request=request:http]
+          ::  %cancel-request: tell earth to cancel a previous %request
+          ::
+          [%cancel-request id=@ud]
+          ::  %response: response to the caller
+          ::
+          [%http-response =client-response]
+          ::  memory usage report
+          ::
+          [%mass p=mass]
+      ==
+    ::
+    ++  task
+      $~  [%vega ~]
+      $%  ::  event failure notification
+          ::
+          $>(%crud vane-task)
+          ::  system started up; reset open connections
+          ::
+          $>(%born vane-task)
+          ::  report upgrade
+          ::
+          $>(%vega vane-task)
+          ::  fetches a remote resource
+          ::
+          [%request =request:http =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-request ~]
+          ::  receives http data from outside
+          ::
+          [%receive id=@ud =http-event:http]
+          ::  memory usage request
+          ::
+          $>(%wegh vane-task)
+      ==
+    --
+  ::  +client-response: one or more client responses given to the caller
+  ::
+  +$  client-response
+    $%  ::  periodically sent as an update on the duct that sent %fetch
+        ::
+        $:  %progress
+            ::  http-response-header: full transaction header
+            ::
+            ::    In case of a redirect chain, this is the target of the
+            ::    final redirect.
+            ::
+            =response-header:http
+            ::  bytes-read: bytes fetched so far
+            ::
+            bytes-read=@ud
+            ::  expected-size: the total size if response had a content-length
+            ::
+            expected-size=(unit @ud)
+            ::  incremental: data received since the last %http-progress
+            ::
+            incremental=(unit octs)
+        ==
+        ::  final response of a download, parsed as mime-data if successful
+        ::
+        [%finished =response-header:http full-file=(unit mime-data)]
+        ::  canceled by the runtime system
+        ::
+        [%cancel ~]
+    ==
+  ::  mime-data: externally received but unvalidated mimed data
+  ::
+  +$  mime-data
+    [type=@t data=octs]
+  ::  +outbound-config: configuration for outbound http requests
+  ::
+  +$  outbound-config
+    $:  ::  number of times to follow a 300 redirect before erroring
+        ::
+        ::    Common values for this will be 3 (the limit most browsers use), 5
+        ::    (the limit recommended by the http standard), or 0 (let the
+        ::    requester deal with 300 redirects).
+        ::
+        redirects=_5
+        ::  number of times to retry before failing
+        ::
+        ::    When we retry, we'll automatically try to use the 'Range' header
+        ::    to resume the download where we left off if we have the
+        ::    'Accept-Range: bytes' in the original response.
+        ::
+        retries=_3
+    ==
+  ::  +to-httr: adapts to old eyre interface
+  ::
+  ++  to-httr
+    |=  [header=response-header:http full-file=(unit mime-data)]
+    ^-  httr:eyre
+    ::
+    =/  data=(unit octs)
+      ?~(full-file ~ `data.u.full-file)
+    ::
+    [status-code.header headers.header data]
+  --
+::
+::::
+  ::
+++  http-server  ^?
+  |%
+  ++  able
+    |%
+    ++  gift
+      $%  ::  set-config: configures the external http server
+          ::
+          ::    TODO: We need to actually return a (map (unit @t) http-config)
+          ::    so we can apply configurations on a per-site basis
+          ::
+          [%set-config =http-config]
+          ::  response: response to an event from earth
+          ::
+          [%response =http-event:http]
+          ::  response to a %connect or %serve
+          ::
+          ::    :accepted is whether :binding was valid. Duplicate bindings are
+          ::    not allowed.
+          ::
+          [%bound accepted=? =binding]
+          ::  memory usage report
+          ::
+          [%mass p=mass]
+      ==
+    ::
+    ++  task
+      $~  [%vega ~]
+      $%  ::  event failure notification
+          ::
+          $>(%crud vane-task)
+          ::  initializes ourselves with an identity
+          ::
+          $>(%init vane-task)
+          ::  new unix process
+          ::
+          ::    XX use +vane-task
+          ::
+          [%born p=(list host)]
+          ::  report upgrade
+          ::
+          $>(%vega vane-task)
+          ::  notifies us of the ports of our live http servers
+          ::
+          [%live insecure=@ud secure=(unit @ud)]
+          ::  update http configuration
+          ::
+          [%rule =http-rule]
+          ::  starts handling an inbound http request
+          ::
+          [%request secure=? =address =request:http]
+          ::  starts handling an backdoor http request
+          ::
+          [%request-local secure=? =address =request:http]
+          ::  cancels a previous request
+          ::
+          [%cancel-request ~]
+          ::  connects a binding to an app
+          ::
+          [%connect =binding app=term]
+          ::  connects a binding to a generator
+          ::
+          [%serve =binding =generator]
+          ::  disconnects a binding
+          ::
+          ::    This must be called with the same duct that made the binding in
+          ::    the first place.
+          ::
+          [%disconnect =binding]
+          ::  memory usage request
+          ::
+          $>(%wegh vane-task)
+      ==
+    ::
+    --
+  ::  +binding: A rule to match a path.
+  ::
+  ::    A +binding is a system unique mapping for a path to match. A +binding
+  ::    must be system unique because we don't want two handlers for a path;
+  ::    what happens if there are two different actions for [~ /]?
+  ::
+  +$  binding
+    $:  ::  site: the site to match.
+        ::
+        ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
+        ::    other value will match a domain literal.
+        ::
+        site=(unit @t)
+        ::  path: matches this prefix path
+        ::
+        ::    /~myapp will match /~myapp or /~myapp/longer/path
+        ::
+        path=(list @t)
+    ==
+  ::  +generator: a generator on the local ship that handles requests
+  ::
+  ::    This refers to a generator on the local ship, run with a set of
+  ::    arguments. Since http requests are time sensitive, we require that the
+  ::    generator be on the current ship.
+  ::
+  +$  generator
+    $:  ::  desk: desk on current ship that contains the generator
+        ::
+        =desk
+        ::  path: path on :desk to the generator's hoon file
+        ::
+        path=(list @t)
+        ::  args: arguments passed to the gate
+        ::
+        args=*
+    ==
+  ::  +host: http host
+  ::
+  +$  host
+    (each (list @t) @if)
+  :: +http-config: full http-server configuration
+  ::
+  +$  http-config
+    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
+        ::
+        secure=(unit [key=wain cert=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=_|
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
+  :: +http-rule: update configuration
+  ::
+  +$  http-rule
+    $%  :: %cert: set or clear certificate and keypair
+        ::
+        [%cert cert=(unit [key=wain cert=wain])]
+        :: %turf: add or remove established dns binding
+        ::
+        [%turf action=?(%put %del) =turf]
+    ==
+  ::  +address: client IP address
+  ::
+  +$  address
+    $%  [%ipv4 @if]
+        [%ipv6 @is]
+        ::  [%ames @p]
+    ==
+  ::  +inbound-request: +http-request and metadata
+  ::
+  +$  inbound-request
+    $:  ::  authenticated: has a valid session cookie
+        ::
+        authenticated=?
+        ::  secure: whether this request was encrypted (https)
+        ::
+        secure=?
+        ::  address: the source address of this request
+        ::
+        =address
+        ::  request: the http-request itself
+        ::
+        =request:http
+    ==
+  --
+::                                                      ::::
 ::::                    ++xmas                            ::  (1i) new network
   ::                                                    ::::
 ++  xmas  ^?
@@ -1988,7 +2461,7 @@
     ++  task                                            ::  in request ->$
       $%  {$hear p/lane q/@}                            ::
           {$mess p/ship q/path r/*}                     ::  send message
-          {$wake ~}                                    ::
+          {$wake ~}                                     ::
       ==                                                ::
     ++  card                                            ::  out cards
       $%  {$west p/ship q/path r/*}                     ::  network request
@@ -6366,6 +6839,23 @@
         (stag %| ;~(plug apat yque))
       ==
     --  ::de-purl
+  ::  +en-turf: encode +turf as a TLD-last domain string
+  ::
+  ++  en-turf
+    |=  =turf
+    ^-  @t
+    (rap 3 (flop (join '.' turf)))
+  ::  +de-turf: parse a TLD-last domain string into a TLD first +turf
+  ::
+  ++  de-turf
+    |=  host=@t
+    ^-  (unit turf)
+    %+  rush  host
+    %+  sear
+      |=  =host:eyre
+      ?.(?=(%& -.host) ~ (some p.host))
+    thos:de-purl:html
+  ::
   ::  MOVEME
   ::                                                    ::  ++fuel:html
   ++  fuel                                              ::  parse urbit fcgi
@@ -6373,6 +6863,34 @@
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
       [(malt qix) ;;(cred ced) bem]
+  ::
+  ++  hiss-to-request
+    |=  =hiss
+    ^-  request:http
+    ::
+    :*  ?-  p.q.hiss
+          %conn  %'CONNECT'
+          %delt  %'DELETE'
+          %get   %'GET'
+          %head  %'HEAD'
+          %opts  %'OPTIONS'
+          %post  %'POST'
+          %put   %'PUT'
+          %trac  %'TRACE'
+        ==
+    ::
+      (crip (en-purl:html p.hiss))
+    ::
+      ^-  header-list:http
+      ~!  q.q.hiss
+      %+  turn  ~(tap by q.q.hiss)
+      |=  [a=@t b=(list @t)]
+      ^-  [@t @t]
+      ?>  ?=(^ b)
+      [a i.b]
+    ::
+      r.q.hiss
+    ==
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
@@ -7082,20 +7600,22 @@
       gift:able:behn
       gift:able:clay
       gift:able:dill
-      gift:able:eyre
       gift:able:ford
       gift:able:gall
       gift:able:jael
+      gift:able:http-client
+      gift:able:http-server
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
       task:able:clay
       task:able:behn
       task:able:dill
-      task:able:eyre
       task:able:ford
       task:able:gall
       task:able:jael
+      task:able:http-client
+      task:able:http-server
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%a %wake ~]
@@ -7103,10 +7623,11 @@
       {$b task:able:behn}
       {$c task:able:clay}
       {$d task:able:dill}
-      {$e task:able:eyre}
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
+      [%l task:able:http-client]
+      [%r task:able:http-server]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7118,10 +7639,11 @@
       ==
       {$c gift:able:clay}
       {$d gift:able:dill}
-      {$e gift:able:eyre}
       {$f gift:able:ford}
       {$g gift:able:gall}
       {$j gift:able:jael}
+      [%l gift:able:http-client]
+      [%r gift:able:http-server]
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -7138,11 +7660,14 @@
       ::  %clay: new process
       ::
       $>(%boat task:able:clay)
-      ::  %behn/%eyre: new process
+      ::  %behn/%lient/%rver: new process
       ::
-      ::    XX %eyre includes payload
+      ::    XX %rver includes payload
       ::
       $>(%born vane-task)
+      ::  %rver: cancel request
+      ::
+      [%cancel-request ~]
       ::  any vane: error report
       ::
       $>(%crud vane-task)
@@ -7158,21 +7683,24 @@
       ::  %clay: external edit
       ::
       $>(%into task:able:clay)
-      ::  %eyre: learn ports of live http servers
+      ::  %rver: learn ports of live http servers
       ::
-      $>(%live task:able:eyre)
-      ::  %eyre: hear http response
+      $>(%live task:able:http-server)
+      ::  %lient: hear (partial) http response
       ::
-      $>(%they task:able:eyre)
-      ::  %eyre: hear http request
+      $>(%receive task:able:http-client)
+      ::  %rver: starts handling an inbound http request
       ::
-      $>(%this task:able:eyre)
-      ::  %eyre: hear http request cancellation
+      $>(%request task:able:http-server)
+      ::  %rver: starts handling an backdoor http request
       ::
-      $>(%thud task:able:eyre)
+      $>(%request-local task:able:http-server)
       ::  %behn: wakeup
       ::
       $>(%wake task:able:behn)
+      ::  %ames: send message
+      ::
+      $>(%want task:able:ames)
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
@@ -8063,6 +8591,20 @@
         %-  ~(gas in *math)
         ~['Content-Type'^['application/json']~]
       (some (as-octt (en-json:html jon)))
+    ::  +light-json-request: like json-request, but for %l
+    ::
+    ::    TODO: Exorcising +purl from our system is a much longer term effort;
+    ::    get the current output types for now.
+    ::
+    ++  light-json-request
+      |=  [url=purl:eyre jon=json]
+      ^-  request:http
+      ::
+      :*  %'POST'
+          (crip (en-purl:html url))
+          ~[['content-type' 'application/json']]
+          (some (as-octt (en-json:html jon)))
+      ==
     ::
     ++  batch-read-request
       |=  req=(list proto-read-request)

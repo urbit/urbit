@@ -17,12 +17,17 @@
 ::  fail:      abort computation; don't send effects
 ::  done:      finish computation; send effects
 ::
++$  contract-delta
+  $%  [%gain =bone]
+      [%lose ~]
+  ==
+::
 ++  async-output-raw
   |*  a=mold
   $~  [~ ~ ~ %done *a]
   $:  cards=(list card-type)
       effects=(list async-move)
-      contracts=(set [add=? contract=contract-type])
+      contracts=(map contract-type contract-delta)
       $=  next
       $%  [%wait ~]
           [%cont self=(async-form-raw a)]
@@ -94,7 +99,7 @@
     ::
     +$  eval-form
       $:  effects=(list async-move)
-          contracts=(set contract-type)
+          contracts=(map contract-type bone)
           =form
       ==
     ::
@@ -109,8 +114,8 @@
     ::
     +$  eval-result
       $%  [%next ~]
-          [%fail contracts=(set contract-type) err=(pair term tang)]
-          [%done contracts=(set contract-type) value=a]
+          [%fail contracts=(map contract-type bone) err=(pair term tang)]
+          [%done contracts=(map contract-type bone) value=a]
       ==
     ::
     ::  Take a new sign and run the async against it
@@ -140,30 +145,39 @@
         (weld effects.eval-form effects.output)
       ::  add or remove contracts
       ::
-      =.  .
+      =>
         =*  loop-result  .
-        =/  new=(list [add=? contract=contract-type])
-          ~(tap in contracts.output)
+        =/  new=(list [contract=contract-type delta=contract-delta])
+          ~(tap by contracts.output)
         |-  ^+  loop-result
         =*  loop  $
         ?~  new
           loop-result
-        ?:  add.i.new
-          ?:  (~(has in contracts.eval-form) contract.i.new)
+        =/  exists=?
+          (~(has by contracts.eval-form) contract.i.new)
+        ?-  -.delta.i.new
+        ::  add contract and bone
+        ::
+            %gain
+          ?:  exists
             %=  loop-result
               next.output  [%fail %contract-already-exists >contract.i.new< ~]
             ==
           %=  loop
-            contracts.eval-form  (~(put in contracts.eval-form) contract.i.new)
+            contracts.eval-form  (~(put by contracts.eval-form) [contract bone.delta]:i.new)
             new                  t.new
           ==
-        ?:  (~(has in contracts.eval-form) contract.i.new)
-          %=  loop
-            contracts.eval-form  (~(del in contracts.eval-form) contract.i.new)
-            new                  t.new
+        ::  remove contract
+        ::
+            %lose
+          ?:  exists
+            %=  loop
+              contracts.eval-form  (~(del by contracts.eval-form) contract.i.new)
+              new                  t.new
+            ==
+          %=  loop-result
+            next.output  [%fail %contract-doesnt-exist >contract.i.new< ~]
           ==
-        %=  loop-result
-          next.output  [%fail %contract-doesnt-exist >contract.i.new< ~]
         ==
       ::  if done, produce effects
       ::

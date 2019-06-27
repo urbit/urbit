@@ -11,7 +11,7 @@
 ::
 ++  grab                                                ::  convert from
   |%
-  ++  noun  mime                                  ::  clam from %noun
+  +$  noun  mime                                  ::  clam from %noun
   ++  tape
     |=(a/_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
   --

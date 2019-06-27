@@ -42,7 +42,7 @@
           {$flog wire flog:dill}                        ::
           [%mint wire p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
-          {$serv wire ?(desk beam)}                     ::
+          [%serve wire binding:http-server generator:http-server]
           {$poke wire dock pear}                        ::
           {$rest wire @da}                              ::
           {$wait wire @da}                              ::
@@ -135,10 +135,6 @@
   |=  mel/cord
   abet
 ::
-++  poke-serve
-  |=  top/?(desk beam)  =<  abet
-  (emit %serv /helm/serv top)
-::
 ++  poke-hi
   |=  mes/@t
   ~|  %poke-hi-fail
@@ -220,6 +216,14 @@
 ++  take-woot                                         ::  result of %want
   |=  {way/wire her/ship cop/coop}  =<  abet
   (emit %flog ~ %text "woot: {<[way cop]>}")
+::
+++  poke-serve
+  |=  [=binding:http-server =generator:http-server]  =<  abet
+  (emit %serve /helm/serv binding generator)
+::
+++  take-bound
+  |=  [wir=wire success=? binding=binding:http-server]  =<  abet
+  (emit %flog ~ %text "bound: {<success>}")
 ::
 ++  poke-tlon-init-stream
   ::  creates stream channel and makes it pull from

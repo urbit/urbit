@@ -30,7 +30,7 @@
             [hen %slip %c %init ~nul]
             [hen %slip %g %init ~nul]
             [hen %slip %d %init ~nul]
-            [hen %slip %e %init ~nul]
+            [hen %slip %r %init ~nul]
             [hen %give %init ~nul]
             [hen %pass /~nul/init %b %wait +(~1234.5.6)]
     ==  ==
@@ -55,28 +55,30 @@
     ==  ==
   ::
   =^  results3  jael-gate
-    =/  hiss-httr=hiss:eyre
-      %+  json-request:rpc:ethereum
+    ::
+    =/  request=request:http
+      %+  light-json-request:rpc:ethereum
         (need url)
       %+  request-to-json:rpc:ethereum
         `'block number'
       [%eth-block-number ~]
+    ::
     %-  jael-take-with-comparator  :*
       jael-gate
       now=(add ~s2 ~1234.5.6)
       take-args=[wire=/~nul/init duct=[/ /term/1 ~] type=*type %b %wake ~]
       ^=  comparator
         |=  moves=(list move:jael-gate)
+        ?>  ?=(^ moves)
+        ?>  ?=([* %pass * %l %request *] i.moves)
         ;:  weld
           %+  expect-eq
             !>  1
             !>  (lent moves)
         ::
           %+  expect-eq
-            !>  hiss-httr
-            ?>  ?=(^ moves)
-            ?>  ?=([* %pass * %e %hiss *] i.moves)
-            q.r.q.q.i.moves
+            !>  request
+            !>  request.q.q.i.moves
     ==  ==
   ::
   :(weld results1 results2 results3)

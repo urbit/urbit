@@ -134,9 +134,13 @@
   (pure:m top-comments)
 ::
 ++  handle-take
-  |=  sign:tapp
+  |=  =sign:tapp
   =/  m  tapp-async
   ^-  form:m
+  ::  ignore %poke/peer acknowledgements
+  ::
+  ?.  ?=(%wake -.sign)
+    (pure:m top-comments)
   ;<  =state  bind:m  (handle-poke %noun 'fetch')
   =.  top-comments  state
   (pure:m top-comments)

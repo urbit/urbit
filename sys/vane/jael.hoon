@@ -42,28 +42,28 @@
 ::
 =>  |%
 ++  state                                               ::  all vane state
-  $:  ver/$0                                            ::  vane version
-      yen/(set duct)                                    ::  raw observers
-      urb/state-absolute                                ::  all absolute state
-      sub/state-relative                                ::  all relative state
+  $:  ver=$0                                            ::  vane version
+      yen=(set duct)                                    ::  raw observers
+      urb=state-absolute                                ::  all absolute state
+      sub=state-relative                                ::  all relative state
       etn=state-eth-node                                ::  eth connection state
       sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
 ++  state-relative                                      ::  urbit metadata
   $:  $=  bal                                           ::  balance sheet (vest)
-        $:  yen/(set duct)                              ::  trackers
+        $:  yen=(set duct)                              ::  trackers
         ==                                              ::
       $=  own                                           ::  vault (vein)
-        $:  yen/(set duct)                              ::  trackers
+        $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
             :: XX reconcile with .dns.eth               ::
             tuf=(list turf)                             ::  domains
             :: XX use for eth replay                    ::
             boq=@ud                                     ::  boot block
             nod=(unit purl:eyre)                        ::  eth gateway
-            fak/_|                                      ::  fake keys
-            lyf/life                                    ::  version
-            jaw/(map life ring)                         ::  private keys
+            fak=_|                                      ::  fake keys
+            lyf=life                                    ::  version
+            jaw=(map life ring)                         ::  private keys
         ==                                              ::
       $=  puk                                           ::  public keys (pubs)
         $:  yen=(jug ship duct)                         ::  trackers
@@ -78,7 +78,7 @@
         ==                                              ::
   ==                                                    ::
 ++  state-absolute                                      ::  absolute urbit
-  $:  pry/(map ship (map ship safe))                    ::  promises
+  $:  pry=(map ship (map ship safe))                    ::  promises
   ==                                                    ::
 ++  state-snapshots                                     ::  rewind points
   $:  interval=_100                                     ::  block interval
@@ -87,7 +87,7 @@
       last-block=@ud                                    ::  number of last snap
       snaps=(qeu [block-number=@ud snap=snapshot])      ::  old states
   ==                                                    ::
-++  message                                             ::  p2p message
+++  message                                             ::  message to her jael
   $%  [%hail p=remote]                                  ::  reset rights
       [%nuke ~]                                         ::  cancel trackers
       [%vent ~]                                         ::  view ethereum events
@@ -96,8 +96,8 @@
 ++  card                                                ::  i/o action
   (wind note gift)                                      ::
 ::                                                      ::
-++  move                                                ::  output
-  {p/duct q/card}                                       ::
++$  move                                                ::  output
+  [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
@@ -107,14 +107,14 @@
               ==                                        ::
           task:able:behn                                ::
       ==                                                ::
-      $:  %e                                            ::    to %eyre
-          $>(%hiss task:able:eyre)                      ::  http request
-      ==                                                ::
       $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%look task)                                ::  set ethereum source
+      ==                                                ::
+      $:  %l                                            ::    to %lient
+          $>(%request task:able:http-client)            ::  http request
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -124,9 +124,9 @@
 +$  sign                                                ::  in result $<-
   $~  [%b %wake ~]                                      ::
   $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
-      [%e $>(%sigh gift:able:eyre)]                     ::  marked http response
       [%j $>(%vent gift)]                               ::  ethereum changes
       [%a $>(%woot gift:able:ames)]                     ::  message result
+      [%l $>(%http-response gift:able:http-client)]     ::  http response
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -758,7 +758,7 @@
         ^-  (list move)
         :~  [hen %pass /(scot %p our)/init %b %wait +(now)]
             [hen %give %init our]
-            [hen %slip %e %init our]
+            [hen %slip %r %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]
@@ -807,7 +807,7 @@
         %+  weld  moz
         ^-  (list move)
         :~  [hen %give %init our]
-            [hen %slip %e %init our]
+            [hen %slip %r %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]
@@ -1001,9 +1001,14 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%e %sigh *]
+        [%l %http-response *]
+      ?.  ?=(%finished -.client-response.hin)
+        +>.$
+      ~!  hin
       %+  cute  hen  =<  abet
-      (~(sigh et hen our now urb.lex sub.lex etn.lex sap.lex) wir p.hin)
+      %^  ~(finished et hen our now urb.lex sub.lex etn.lex sap.lex)  wir
+        response-header.client-response.hin
+      full-file.client-response.hin
     ::
         [%b %wake ~]
       %+  cute  hen
@@ -1480,7 +1485,6 @@
                  :~  [hen %slip %a %sunk who rit]
                      [hen %slip %c %sunk who rit]
                      [hen %slip %d %sunk who rit]
-                     [hen %slip %e %sunk who rit]
                      [hen %slip %f %sunk who rit]
                      [hen %slip %g %sunk who rit]
                  ==
@@ -1745,16 +1749,17 @@
     :-  [/jael/eth-logic ~ ~]
     [%pass (weld /(scot %p our) wir) not]
   ::
+  ::
   ::  +rpc-hiss: make an http request to our ethereum rpc source
   ::
   ++  rpc-hiss
     |=  [wir=wire jon=json]
     ^-  move
     %+  wrap-note  wir
-    :^  %e  %hiss  ~
-    :+  %httr  %hiss
-    ?>  ?=(%| -.source)
-    !>  (json-request node.p.source jon)
+    :^  %l  %request
+      ?>  ?=(%| -.source)
+      (light-json-request node.p.source jon)
+    *outbound-config:http-client
   ::
   ::  +|  source-operations
   ::
@@ -1975,6 +1980,20 @@
     ?>  ?=(%httr mar)
     =+  raw-rep=~|(res ;;(httr:eyre q.res))
     =+  rep=(httr-to-rpc-response raw-rep)
+    (complete-with-rpc-response cuz rep)
+  ::
+  ++  finished
+    |=  [cuz=wire =response-header:http full-file=(unit mime-data:http-client)]
+    ^+  +>
+    ?:  ?=(%& -.source)  +>
+    ::
+    =+  rep=(httr-to-rpc-response (to-httr:http-client response-header full-file))
+    (complete-with-rpc-response cuz rep)
+  ::
+  ++  complete-with-rpc-response
+    |=  [cuz=wire rep=response:rpc:jstd]
+    ^+  +>
+    ::
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
         ~&  'HTTP 405 error (expected if using infura)'
@@ -1983,7 +2002,7 @@
         ~&  [%http-error hit.rep]
         +>.$
       ?+  cuz
-        ~&  [%retrying-node ((soft tang) q.res)]
+        :: ~&  [%retrying-node ((soft tang) q.res)]
         wait-poll
           [%catch-up %step @ta @ta ~]
         ~&  %retrying-catch-up

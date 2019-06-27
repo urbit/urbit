@@ -116,7 +116,7 @@
       %cores  [ost (build-core [- +]:(list-hoons p.a skip=(sy /sys /ren /tests ~)))]~
       %names  ~&((list-names p.a) ~)
       %marks  ~|(%stub !!) ::TODO restore historical handler
-      %renders  [ost (build-rend [- +]:(list-names (weld /ren p.a)))]~
+      %renders   ~&(%all-renderers-are-disabled ~)
   ==
 ::
 ++  list-names
@@ -156,6 +156,7 @@
     :-  /ren/js             "not meant to be called outside /web/pack"
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
     :-  /ren/collections    "temporarily disabled"
+    :-  /ren/rss-xml        "scrys into eyre"
     :-  /ren/test-gen       "temporarily disabled"
     :-  /ren/urb            "temporarily disabled"
     :-  /ren/x-urb          "temporarily disabled"

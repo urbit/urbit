@@ -1,3 +1,4 @@
+!:
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -164,7 +165,7 @@
     =+  syg=(slym rev arg)
     ::  update the vane itself
     ::
-    ::    We don't cache the +slap/+slam types because they're only used once
+    ::    We don't cache the n+slap/+slam types because they're only used once
     ::    right here; they'll never be used again.
     ::
     =.  vase.vane
@@ -242,6 +243,12 @@
     ++  slur-g  ~/(%slur-g |=({gat/vase hil/mill} =+(%g (slur gat hil))))
     ++  slur-j  ~/(%slur-j |=({gat/vase hil/mill} =+(%j (slur gat hil))))
     ++  slur-z  ~/(%slur-z |=({gat/vase hil/mill} =+(%z (slur gat hil))))
+    ++  slur-r
+      ~/  %slur-r
+      |=({gat/vase hil/mill} =+(%r (slur gat hil)))
+    ++  slur-l
+      ~/  %slur-l
+      |=({gat/vase hil/mill} =+(%l (slur gat hil)))
     ::
     ++  slur-pro                                        ::  profiling slur
       ~/  %slur-pro
@@ -255,6 +262,9 @@
         $f  (slur-f gat hil)
         $g  (slur-g gat hil)
         $j  (slur-j gat hil)
+      ::
+        %l  (slur-l gat hil)
+        %r  (slur-r gat hil)
       ==
     ::
     ++  song                                            ::  reduce metacard
@@ -456,7 +466,8 @@
       {@ $newt *}  %a
       {@ $sync *}  %c
       {@ $term *}  %d
-      {@ $http *}  %e
+      {@ $http-client *}  %l
+      {@ $http-server *}  %r
       {@ $behn *}  %b
     ==
   ::
@@ -495,6 +506,7 @@
     |-  ^-  {{p/(list ovum) q/(list muse)} _vanes}
     ?~  naf  [[~ ~] ~]
     ?.  =(lal label.i.naf)
+      ~|  [%lal lal label.i.naf]
       =+  tuh=$(naf t.naf)
       [-.tuh [+<.tuh [i.naf +>.tuh]]]
     ::

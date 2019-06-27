@@ -71,19 +71,9 @@
   %+  each  (unit out)                                  ::  ~ is abort
   (pair sole-prompt (sole-dialog out))                  ::  ask and continue
 ::                                                      ::
-++  sole-request                                         ::  scraper result
-  |*  out/$-(* *)                                       ::  output structure
-  %+  pair  (list tank)                                 ::
-  %+  each  (unit out)                                  ::  ~ is abort
-  %^    trel                                            ::  fetch and continue
-      (unit knot)
-    hiss:eyre
-  $-(httr:eyre (sole-request out))
-::                                                      ::
 ++  sole-gen                                            ::  XX virtual type
   $%  {$say $-((sole-args) (cask))}                     ::  direct noun
       {$ask $-((sole-args) (sole-product (cask)))}      ::  dialog
-      {$get $-((sole-args) (sole-request (cask)))}      ::  scraper
   ==                                                    ::
 ++  sole-args                                           ::  generator arguments
   |*  _[* *]                                            ::

@@ -48,8 +48,7 @@
           {$file p/beam}                                ::  save to clay
           $:  $http                                     ::  http outbound
               p/?($post $put)
-              q/(unit knot)
-              r/purl:eyre
+              r/@t
           ==
           {$poke p/goal}                                ::  poke app
           {$show p/?($0 $1 $2 $3 $4 $5)}                ::  val/type/hoon/xray
@@ -61,7 +60,7 @@
       ==                                                ::
     ++  dojo-build                                      ::  one arvo step
       $~  [%ex *hoon]
-      $%  {$ur p/(unit knot) q/purl:eyre}               ::  http GET request
+      $%  {$ur p/@t}                                    ::  http GET request
           {$ge p/dojo-model}                            ::  generator
           {$dv p/path}                                  ::  core from source
           {$ex p/hoon}                                  ::  hoon expression
@@ -107,12 +106,7 @@
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
-          $:  $hiss
-              wire
-              (unit knot)
-              mark
-              {$hiss hiss:eyre}
-          ==
+          [%request wire request:http outbound-config:http-client]  ::  %l
           [%build wire ? schematic:ford]
           [%kill wire ~]
           {$deal wire sock term club}                   ::
@@ -211,8 +205,8 @@
       ;~(plug (cold %file tar) parse-beam)
       ;~(plug (cold %flat vat) (most net sym))
       ;~(plug (cold %pill dot) (most net sym))
-      ;~(plug (cold %http lus) (stag %post parse-iden-url))
-      ;~(plug (cold %http hep) (stag %put parse-iden-url))
+      ;~(plug (cold %http lus) (stag %post parse-url))
+      ;~(plug (cold %http hep) (stag %put parse-url))
       (stag %show (cook $?($1 $2 $3 $4 $5) (cook lent (stun [1 5] wut))))
     ==
   ::
@@ -245,7 +239,7 @@
   ++  parse-build
       %+  knee  *dojo-build  |.  ~+
       ;~  pose
-        ;~(plug (cold %ur lus) parse-iden-url)
+        ;~(plug (cold %ur lus) parse-url)
         ;~(plug (cold %ge lus) parse-model)
         ;~(plug (cold %as pad) sym ;~(pfix ace parse-source))
         ;~(plug (cold %do cab) parse-hoon ;~(pfix ace parse-source))
@@ -285,7 +279,12 @@
     %+  cook
       |=([a=(unit knot) b=purl:eyre] [`(fall a *knot) b])
     auru:de-purl:html
-    ::
+  ::
+  ++  parse-url
+    %+  cook
+      |=(a=purl:eyre (crip (en-purl:html a)))
+    auri:de-purl:html
+  ::
   ++  parse-model   ;~(plug parse-server parse-config)
   ++  parse-server  (stag 0 (most net sym))
   ++  parse-hoon    tall:hoon-parser
@@ -360,11 +359,11 @@
       ::
       (he-card(poy `+>+<(pux `way)) %build way live=%.n schematic)
     ::
-    ++  dy-eyre                                         ::  send work to eyre
-      |=  {way/wire usr/(unit knot) req/hiss:eyre}
+    ++  dy-request
+      |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %hiss way usr %httr %hiss req)
+      (he-card(poy `+>+<(pux `way)) %request way request *outbound-config:http-client)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -592,8 +591,12 @@
           $http
         ?>  ?=($mime p.cay)
         =+  mim=;;(mime q.q.cay)
-        =+  maf=(~(add ja *math:eyre) %content-type (en-mite:mimes:html p.mim))
-        (dy-eyre /show q.p.mad [r.p.mad p.p.mad maf ~ q.mim])
+        %+  dy-request  /show
+        :*  ?:(=(%put p.p.mad) %'PUT' %'POST')
+            r.p.mad
+            ~[['content-type' (en-mite:mimes:html p.mim)]]
+            `q.mim
+        ==
       ::
           $show
         |^  (prnt cay note)
@@ -702,7 +705,6 @@
       :-  ?+  -.q.q.cay  ~|(%bad-gen ~_((sell (slot 2 q.cay)) !!))
             $say  /gent
             $ask  /dial
-            $get  /scar
           ==
       =+  gat=(slot 3 q.cay)
       :+  %call  [%$ %noun gat]
@@ -756,37 +758,6 @@
         [%pro pom(cad [':' ' ' cad.pom])]
       ==
     ::
-    ++  dy-made-scar                                    ::  scraper product
-      |=  cag/cage
-      ^+  +>+>
-      ?.  ?=(^ q.q.cag)
-        (dy-errd ~ q.q.cag)
-      =+  tan=((list tank) +2.q.q.cag)
-      =.  +>+>.$  (he-diff %tan tan)
-      =+  vax=(sped (slot 3 q.cag))
-      ~_  (sell q.cag)
-      ?+    -.q.vax  !!
-          %&
-        ?~  +.q.vax
-          ~&  %dy-made-scar-abort
-          (dy-rash %bel ~)
-        (dy-meal (slot 7 vax))
-      ::
-          %|
-        =>  .(vax (slap vax !,(*hoon ?>(?=(%| -) .))))  :: XX working sped  #72
-        =+  typ={%| (unit knot) hiss:eyre *}
-        =+  [* usr hiz *]=((dy-cast typ !>($:typ)) vax)
-        =.  ..dy  (he-diff %tan leaf+"< {(en-purl:html p.hiz)}" ~)
-        (dy-eyre(pro `(slap (slot 15 vax) limb+%r)) /scar usr hiz)
-      ==
-    ::
-    ++  dy-sigh-scar                                    ::  scraper result
-      |=  dat/cage
-      ?~  pro
-        ~&  %dy-no-scraper
-        (dy-show dat)
-      (dy-slam(pux ~) /scar u.pro q.dat)
-    ::
     ++  dy-made-gent                                    ::  generator product
       |=  cag/cage
       (dy-meal q.cag)
@@ -800,7 +771,7 @@
       ?>  ?=(^ cud)
       =+  bil=q.u.cud                 ::  XX =*
       ?:  ?=($ur -.bil)
-        (dy-eyre /hand p.bil [q.bil %get ~ ~])
+        (dy-request /hand `request:http`[%'GET' p.bil ~ ~])
       %-  dy-ford
       ^-  [path schematic:ford]
       ?-  -.bil
@@ -961,26 +932,12 @@
           {$dial ~}  dy-made-dial:dye
           {$gent ~}  dy-made-gent:dye
           {$noun ~}  dy-made-noun:dye
-          {$scar ~}  dy-made-scar:dye
           {$edit ~}  dy-made-edit:dye
         ==
       ::
           %error
         (he-diff(poy ~) %tan message.build-result.result)
     ==  ==
-  ::
-  ++  he-sigh                                           ::  result from eyre
-    |=  {way/wire hit/httr:eyre}
-    ^+  +>
-    ?>  ?=(^ poy)
-    =<  he-pine
-    %.  [%httr !>(hit)]
-    =+  dye=~(. dy u.poy(pux ~))
-    ?+  way  !!
-      {$hand ~}  dy-hand:dye
-      {$show ~}  dy-show:dye
-      {$scar ~}  dy-sigh-scar:dye
-    ==
   ::
   ++  he-unto                                           ::  result from behn
     |=  {way/wire cit/cuft:gall}
@@ -991,6 +948,24 @@
     ?~  p.cit
       (he-diff %txt ">=")
     (he-diff %tan u.p.cit)
+  ::  +he-http-response: result from http-client
+  ::
+  ++  he-http-response
+    |=  [way=wire response=client-response:http-client]
+    ^+  +>
+    ?>  ?=(^ poy)
+    =<  he-pine
+    ?.  ?=(%finished -.response)
+      ~&  %dojo-received-http-progress
+      +>
+    ::
+    ~!  response
+    %.  [%httr !>((to-httr:http-client response-header.response full-file.response))]
+    =+  dye=~(. dy u.poy(pux ~))
+    ?+  way  !!
+      {$hand ~}  dy-hand:dye
+      {$show ~}  dy-show:dye
+    ==
   ::
   ++  he-lens
     |=  com/command:lens
@@ -1028,7 +1003,7 @@
           %+  rash  pax.source.com
           rood:(vang | /(scot %p our.hid)/home/(scot %da now.hid))
         ::
-            $url         [%ur `~. url.source.com]
+            $url         [%ur (crip (en-purl:html url.source.com))]
             $api         !!
             $get-api
           :-  %ex
@@ -1071,7 +1046,7 @@
           $output-file  $(sink.com [%command (cat 3 '@' pax.sink.com)])
           $output-pill  $(sink.com [%command (cat 3 '.' pax.sink.com)])
           $output-clay  [%file (need (de-beam:format pax.sink.com))]
-          $url          [%http %post `~. url.sink.com]
+          $url          [%http %post (crip (en-purl:html url.sink.com))]
           $to-api       !!
           $send-api     [%poke our.hid api.sink.com]
           $command      (rash command.sink.com parse-sink:he-parser)
@@ -1211,8 +1186,7 @@
   [~ +>.$]
 ::
 ++  made       (wrap he-made):arm
-++  sigh-httr  (wrap he-sigh):arm
-++  sigh-tang  |=({a/wire b/tang} ~|(`term`(cat 3 'sigh-' -.a) (mean b)))
+++  http-response   (wrap he-http-response):arm
 ++  lame       (wrap he-lame):arm
 ++  unto       (wrap he-unto):arm
 ++  pull
