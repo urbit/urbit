@@ -40,7 +40,7 @@
       $%  [%bonk wire ~]                                ::
           {$conf wire dock $load ship term}             ::
           {$flog wire flog:dill}                        ::
-          [%mint wire our=ship p=ship q=safe:rights:jael]
+          [%mint wire p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
           {$serv wire ?(desk beam)}                     ::
           {$poke wire dock pear}                        ::
@@ -87,7 +87,7 @@
   ::  our new private key, as a +tree of +rite
   ::
   =/  rit  (sy [%jewel (my [lyf.u.sed key.u.sed] ~)] ~)
-  (emit %mint / our our rit)
+  (emit %mint / our rit)
 ::
 ++  poke-nuke                                         ::  initialize
   |=  him/ship  =<  abet
@@ -114,7 +114,11 @@
   abet:(emit %bonk /bonk ~)
 ::
 ++  take-wake-automass
-  |=  [way=wire ~]
+  |=  [way=wire error=(unit tang)]
+  ?^  error
+    %-  (slog u.error)
+    ~&  %helm-wake-automass-fail
+    abet
   =.  nex.mass-timer.sez  (add now tim.mass-timer.sez)
   =<  abet
   %-  emil

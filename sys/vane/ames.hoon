@@ -6,9 +6,58 @@
 =,  ames
 ::  this number needs to be below 8
 ::
-=+  protocol-version=2
+=+  protocol-version=3
 |%
-+=  move  [p=duct q=(wind note:able gift:able)]         ::  local move
++$  move  [p=duct q=(wind note gift:able)]              ::  local move
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %d                                            ::    to %dill
+          $>(%flog task:able:dill)                      ::  log output
+      ==                                                ::
+      $:  %j                                            ::    to %jael
+          $>  $?  %meet                                 ::  neighbor
+                  %pubs                                 ::  view public keys
+                  %turf                                 ::  view domains
+                  %vein                                 ::  view private keys
+              ==                                        ::
+          task:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    to %gall
+          $>(%deal task:able:gall)                      ::  interact with apps
+      ==                                                ::
+      $:  @tas                                          ::    to any
+          $>(%west task:able)                           ::  deliver message
+  ==  ==                                                ::
++$  sign                                                ::  in result _<-
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %b                                            ::    from %behn
+          $>(%wake gift:able:behn)                      ::  timer activate
+      ==                                                ::
+      $:  %j                                            ::    from %jael
+          $>  $?  %pubs                                 ::  public keys
+                  %turf                                 ::  bind to domains
+                  %vein                                 ::  private keys
+              ==                                        ::
+          gift:able:jael                                ::
+      ==                                                ::
+      $:  %g                                            ::    from %gall
+          $%  [%mean p=ares]                            ::  XX obsolete
+              [%nice ~]                                 ::  XX obsolete
+              $>(%unto gift:able:gall)                  ::  application ack
+      ==  ==                                            ::
+      $:  @tas                                          ::    from any
+          $%  $>(%crud vane-task)                       ::  XX strange
+              $>  $?  %mack                             ::  message ack
+                      %woot                             ::  reaction message
+                  ==                                    ::
+              gift:able                                 ::
+  ==  ==  ==                                            ::
 ::  |pact: internal packet structures
 ::
 ++  pact
@@ -26,7 +75,8 @@
   ::
   |%
   ++  bite                                              ::  packet to cake
-    |=  pac=rock  ^-  cake
+    |=  pac=rock
+    ^-  (unit cake)
     =+  [mag=(end 5 1 pac) bod=(rsh 5 1 pac)]
     =+  :*  vez=(end 0 3 mag)                           ::  protocol version
             chk=(cut 0 [3 20] mag)                      ::  checksum
@@ -34,8 +84,12 @@
             vix=(bex +((cut 0 [25 2] mag)))             ::  width of sender
             tay=(cut 0 [27 5] mag)                      ::  message type
         ==
-    ?>  =(protocol-version vez)
-    ?>  =(chk (end 0 20 (mug bod)))
+    ::  XX  these packets should be firewalled in vere so that they don't
+    ::      make it into the event log
+    ::
+    ?.  =(protocol-version vez)      ~
+    ?.  =(chk (end 0 20 (mug bod)))  ~
+    %-  some
     :+  [(end 3 wix bod) (cut 3 [wix vix] bod)]
       (kins tay)
     (rsh 3 (add wix vix) bod)
@@ -554,6 +608,14 @@
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %saxo da+now /(scot %p who)]
+    ::  +turf-scry: for network domains
+    ::
+    ++  turf-scry
+      ~/  %turf
+      ;;  (list turf)
+      %-  need  %-  need
+      %-  (sloy-light ski)
+      [[151 %noun] %j our %turf da+now ~]
     ::
     ++  vein                                            ::    vein:am
       ~/  %vein
@@ -598,19 +660,19 @@
       ~/  %gnaw
       |=  [kay=cape ryn=lane pac=rock]                  ::  process packet
       ^-  [p=(list boon) q=fort]
-      ?.  =(protocol-version (end 0 3 pac))  [~ fox]
-      =+  kec=(bite pac)
-      ?:  (goop p.p.kec)
+      =/  kec=(unit cake)  (bite pac)
+      ?~  kec  [~ fox]
+      ?:  (goop p.p.u.kec)
         [~ fox]
-      ?.  =(our q.p.kec)
+      ?.  =(our q.p.u.kec)
         [~ fox]
       =;  zap=[p=(list boon) q=fort]
         [(weld p.zap next) q.zap]
       =<  zork
       =<  zank
-      ::  ~&  [%hear p.p.kec ryn `@p`(mug (shaf %flap pac))]
-      %-  ~(chew la:(ho:um p.p.kec) kay ryn %none (shaf %flap pac))
-      [q.kec r.kec]
+      ::  ~&  [%hear p.p.u.kec ryn `@p`(mug (shaf %flap pac))]
+      %-  ~(chew la:(ho:um p.p.u.kec) kay ryn %none (shaf %flap pac))
+      [q.u.kec r.u.kec]
     ::
     ++  goop                                            ::  blacklist
       |=  him=ship
@@ -895,7 +957,7 @@
                   %none
                 ::  ~&  %chew-none
                 =.  puz  (bilk:puz now)
-                (chow ((hard meal) (cue msg)))
+                (chow ;;(meal (cue msg)))
               ::
                   %fast
                 ::  ~&  %chew-fast
@@ -906,24 +968,24 @@
                 ?~  dey  +>.$
                 =.  puz  (bilk:puz now)
                 =^  key  diz  u.dey
-                (chow(aut sin) ((hard meal) (cue (dy:cub:sen:gus key bod))))
+                (chow(aut sin) ;;(meal (cue (dy:cub:sen:gus key bod))))
               ::
                   %full
                 ::  ~&  %chew-full
-                =/  mex  ((hard full:pact) (cue msg))
+                =/  mex  ;;(full:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
                 =/  gey  (sev:gus to.lyf.mex)
                 =/  sem  (need (tear:as:q.gey pub:ex:cub.wug txt.mex))
-                =/  mes  ((hard (pair @ @)) (cue sem))
+                =/  mes  ;;((pair @ @) (cue sem))
                 =.  diz  (wasc:diz p.mes)
                 =.  puz  (bilk:puz now)
                 (west(msg q.mes))
               ::
                   %open
                 ::  ~&  %chew-open
-                =/  mex  ((hard open:pact) (cue msg))
+                =/  mex  ;;(open:pact (cue msg))
                 =.  diz  (deng law.mex)
                 =/  wug  cluy:diz
                 ?>  =(lyf.wug from.lyf.mex)
@@ -1256,7 +1318,7 @@
       =/  task=task:able
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
-        ((hard task:able) p.wrapped-task)
+        ;;(task:able p.wrapped-task)
       =.  any.ton.fox  eny
       =^  duy  ..knob  (knob hen task)
       [duy ..^$]
@@ -1281,7 +1343,7 @@
     ++  stay  fox
     ++  take                                            ::  accept response
       ~/  %take
-      |=  [tea=wire hen=duct hin=(hypo sign:able)]
+      |=  [tea=wire hen=duct hin=(hypo sign)]
       ^-  [(list move) _..^$]
       =.  any.ton.fox  eny
       =^  duy  ..knap
@@ -1300,7 +1362,14 @@
       :_  fox  [hen [%pass wire %j %pubs p.bon]]~
     ::
         %bock
-      :_  fox  [hen %give %turf tuf.fox]~
+      ::  ignore %turf if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox]
+      :_  fox
+      [gad.fox %give %turf tuf.fox]~
     ::
         %brew
       :_  fox  [hen [%pass / %j %turf ~]]~
@@ -1323,9 +1392,13 @@
       :_  fox  [hen %pass wire i.q.q.bon %west p.bon t.q.q.bon r.bon]~
     ::
         %ouzo
+      ::  drop packet if we haven't yet learned a unix duct
+      ::
+      ::     Only happens during first boot.
+      ::
+      ?~  gad.fox
+        [~ fox]
       ::  ~&  [%send now p.bon `@p`(mug (shaf %flap q.bon))]
-      ~|  [%ames-bad-duct duct=gad.fox lane=p.bon]
-      ?>  ?=(^ gad.fox)
       :_  fox
       [[gad.fox [%give %send p.bon q.bon]] ~]
     ::
@@ -1333,6 +1406,12 @@
       :_  fox(tim `p.bon)
       %-  flop
       ^-  (list move)
+      ::  XX should this be the unix duct (gad.fox)?
+      ::
+      ::    It seems far more important that the duct be always
+      ::    predictable than that it be the unix duct, which
+      ::    may change, or be unset during first boot.
+      ::
       :-  [gad.fox %pass /ames %b %wait p.bon]
       ?~  tim.fox  ~
       [gad.fox %pass /ames %b %rest u.tim.fox]~
@@ -1372,17 +1451,19 @@
   ::
   ++  knap
     ~/  %knap
-    |=  [tea=wire hen=duct sih=sign:able]
+    |=  [tea=wire hen=duct sih=sign]
     ^-  [(list move) _+>]
+    ::  if we got an error from behn, report it to %dill; TODO handle errors
+    ::
+    ?:  ?=([%wake ^] +.sih)
+      =/  =flog:dill  [%crud %wake u.error.sih]
+      [[hen %slip %d %flog flog]~ +>.$]
+    ::
     ?-  +<.sih
         %crud  [[[hen [%slip %d %flog +.sih]] ~] +>]
     ::
         %mack  ?~  +>.sih  $(sih [%g %nice ~])          ::  XX using old code
                $(sih [%g %mean `[%mack +>+.sih]])
-    ::
-        %turf
-      =.  tuf.fox  turf.sih
-      [~ +>.$]
     ::
         %pubs
       ?.  ?=([%pubs @ ~] tea)
@@ -1421,8 +1502,16 @@
         ^-  [p=(list boon) q=fort]
         ?-  +<.sih
         ::
+            ::  only handles the non-error %wake case; error case above
+            ::
             %wake
           (~(wake am [our now fox ski]) hen)
+        ::
+            %turf
+          ?:  =(tuf.fox turf.sih)
+            [~ fox]
+          =.  tuf.fox  turf.sih
+          [[%bock ~]~ fox]
         ::
             ?(%mean %nice)                              ::  XX obsolete
           ?:  ?=([%ye ~] tea)
@@ -1461,8 +1550,10 @@
         ^-  [p=(list boon) q=fort]
         ?-    -.kyz
             %barn
-          :_  fox(gad hen)
-          [%bock ~]~
+          =:  gad.fox  hen
+              tuf.fox  ~(turf-scry am [our now fox ski])
+            ==
+          [[%bock ~]~ fox]
         ::
             %bonk
           :_  fox

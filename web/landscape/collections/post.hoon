@@ -11,7 +11,7 @@
 ^-  manx
 ;div
   ;div
-    =urb-component  "TopicCreatePage" 
+    =urb-component  "TopicCreatePage"
     =urb-ship   "{(scow %p p.bem.gas)}"
     =urb-claypath  "{<pax>}"
     =urb-content    "{(trip body)}"

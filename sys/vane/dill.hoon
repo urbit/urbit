@@ -35,104 +35,97 @@
   $%  {$dill-belt p/(hypo dill-belt)}                   ::
   ==                                                    ::
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
-++  note-ames                                           ::  weird ames move
-  $%  {$wegh $~}                                        ::
-  ==                                                    ::
-++  note-behn                                           ::
-  $%  {$wegh $~}                                        ::
-  ==                                                    ::
-++  note-clay                                           ::
-  $%  {$merg p/@tas q/@p r/@tas s/case t/germ:clay}     ::  merge desks
-      {$warp p/ship q/riff:clay}                        ::  wait for clay hack
-      {$wegh $~}                                        ::
-      {$perm p/desk q/path r/rite:clay}                 ::  change permissions
-  ==                                                    ::
-++  note-dill                                           ::  note to self, odd
-  $%  {$crud p/@tas q/(list tank)}                      ::
-      {$heft $~}                                        ::
-      {$init p/ship}                                    ::
-      {$lyra p/@t q/@t}                                 ::  upgrade kernel
-      {$text p/tape}                                    ::
-      {$veer p/@ta q/path r/@t}                         ::  install vane
-      {$verb $~}                                        ::  verbose mode
-  ==                                                    ::
-++  note-eyre                                           ::
-  $%  {$wegh $~}                                        ::
-  ==                                                    ::
-++  note-ford                                           ::
-  $%  {$wegh $~}                                        ::
-  ==                                                    ::
-++  note-gall                                           ::
-  $%  {$conf dock $load ship desk}                      ::
-      {$deal p/sock q/cush:gall}                        ::
-      {$wegh $~}                                        ::
-  ==                                                    ::
-++  note-jael                                           ::
-  $%  $:  %dawn                                         ::  boot from keys
-          =seed:able:jael                               ::    identity params
-          spon=ship                                     ::    sponsor
-          czar=(map ship [=life =pass])                 ::    galaxy table
-          turf=(list turf)                              ::    domains
-          bloq=@ud                                      ::    block number
-          node=(unit purl:eyre)                         ::    gateway url
-          snap=(unit snapshot:jael)                     ::    head start
-      ==                                                ::
-      [%fake our=ship]                                  ::  boot fake
-      [%wegh ~]
-  ==                                                    ::
 ++  note                                                ::  out request $->
-  $%  {$a note-ames}                                    ::
-      {$b note-behn}                                    ::
-      {$c note-clay}                                    ::
-      {$d note-dill}                                    ::
-      {$e note-eyre}                                    ::
-      {$f note-ford}                                    ::
-      {$g note-gall}                                    ::
-      {$j note-jael}                                    ::
-  ==                                                    ::
-++  sign-ames                                           ::
-  $%  {$nice $~}                                        ::
-      {$send p/lane:ames q/@}                           ::
-      {$mass p/mass}                                    ::
-  ==                                                    ::
-++  sign-behn                                           ::
-  $%  {$mass p/mass}                                    ::
-  ==                                                    ::
-++  sign-clay                                           ::
-  $%  {$mere p/(each (set path) (pair term tang))}      ::
-      {$note p/@tD q/tank}                              ::
-      {$writ p/riot:clay}                               ::
-      {$mass p/mass}                                    ::
-      {$mack p/(unit tang)}                             ::
-  ==                                                    ::
-++  sign-dill                                           ::
-  $%  {$blit p/(list blit)}                             ::
-  ==                                                    ::
-++  sign-eyre                                           ::
-  $%  {$mass p/mass}                                    ::
-  ==                                                    ::
-++  sign-ford                                           ::
-  $%  {$mass p/mass}                                    ::
-  ==                                                    ::
-++  sign-gall                                           ::
-  $%  {$onto p/(each suss:gall tang)}                   ::
-      {$unto p/cuft:gall}                               ::
-      {$mass p/mass}                                    ::
-  ==                                                    ::
-++  sign-jael                                           ::
-  $%  [%init p=ship]                                    ::
-      [%mass p=mass]
-  ==                                                    ::
+  $~  [%d %verb ~]                                      ::
+  $%  $:  %a                                            ::
+          $>(%wegh task:able:ames)                      ::
+      ==                                                ::
+      $:  %b                                            ::
+          $>(%wegh task:able:behn)                      ::
+      ==                                                ::
+      $:  %c                                            ::
+          $>  $?  %merg                                 ::  merge desks
+                  %perm                                 ::  change permissions
+                  %warp                                 ::  wait for clay hack
+                  %wegh                                 ::  memory measure
+              ==                                        ::
+          task:able:clay                                ::
+      ==                                                ::
+      $:  %d                                            ::
+          $>  $?  %crud                                 ::
+                  %heft                                 ::
+                  %init                                 ::  XX obsolete?
+                  %lyra                                 ::
+                  %text                                 ::
+                  %veer                                 ::
+                  %verb                                 ::
+              ==                                        ::
+          task:able:dill                                ::
+      ==                                                ::
+      $:  %e                                            ::
+          $>(%wegh task:able:eyre)                      ::
+      ==                                                ::
+      $:  %f                                            ::
+          $>(%wegh task:able:ford)                      ::
+      ==                                                ::
+      $:  %g                                            ::
+          $>  $?  %conf                                 ::
+                  %deal                                 ::
+                  %wegh                                 ::
+              ==                                        ::
+          task:able:gall                                ::
+      ==                                                ::
+      $:  %j                                            ::
+          $>  $?  %dawn                                 ::
+                  %fake                                 ::
+                  %wegh                                 ::
+              ==                                        ::
+          task:able:jael                                ::
+  ==  ==                                                ::
 ++  sign                                                ::  in result $<-
-  $%  {$a sign-ames}                                    ::
-      {$b sign-behn}                                    ::
-      {$c sign-clay}                                    ::
-      {$d sign-dill}                                    ::
-      {$e sign-eyre}                                    ::
-      {$f sign-ford}                                    ::
-      {$g sign-gall}                                    ::
-      {%j sign-jael}                                    ::
-  ==
+  $~  [%j %init *@p]                                    ::
+  $%  $:  %a                                            ::
+          $%  [%nice ~]                                 ::  XX obsolete
+              $>  $?  %mass                             ::
+                      %send                             ::  XX strange
+                  ==                                    ::
+              gift:able:ames                            ::
+      ==  ==                                            ::
+      $:  %b                                            ::
+          $%  $>(%mass gift:able:behn)                  ::
+              $>(%writ gift:able:clay)                  ::  XX %slip
+      ==  ==                                            ::
+      $:  %c                                            ::
+          $>  $?  %mack                                 ::  XX strange
+                  %mass                                 ::
+                  %mere                                 ::
+                  %note                                 ::
+                  %writ                                 ::
+              ==                                        ::
+          gift:able:clay                                ::
+      ==                                                ::
+      $:  %d                                            ::
+          $>(%blit gift:able:dill)                      ::
+      ==                                                ::
+      $:  %e                                            ::
+          $>(%mass gift:able:eyre)                      ::
+      ==                                                ::
+      $:  %f                                            ::
+          $>(%mass gift:able:ford)                      ::
+      ==                                                ::
+      $:  %g                                            ::
+          $>  $?  %mass                                 ::
+                  %onto                                 ::
+                  %unto                                 ::
+              ==                                        ::
+          gift:able:gall                                ::
+      ==                                                ::
+      $:  %j                                            ::
+          $>  $?  %init                                 ::
+                  %mass                                 ::
+              ==                                        ::
+          gift:able:jael                                ::
+  ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
 =|  all/axle
@@ -166,7 +159,7 @@
       ++  crud
         |=  {err/@tas tac/(list tank)}
         =+  ^=  wol  ^-  wall
-            :-  (trip err)
+            :-  :(weld "%" (trip err) " event failed:")
             (zing (turn (flop tac) |=(a/tank (~(win re a) [0 wid]))))
         |-  ^+  +>.^$
         ?~  wol  +>.^$
@@ -298,10 +291,17 @@
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
         ^+  .
-        =/  myt  (flop (need tem))
+        =.  moz
+          :_  moz
+          [hen %pass /merg/home %c %merg %home our %base da+now %init]
+        .
+      ::
+      ++  mere                                          ::  continue init
+        ~&  [%dill-mere our ram]
+        ^+  .
+        =/  myt  (flop (fall tem ~))
         =/  can  (clan:title our)
         =.  tem  ~
-        =.  moz  :_(moz [hen %pass / %c %merg %home our %base da+now %init])
         =.  moz  :_(moz [hen %pass ~ %g %conf [[our ram] %load our %home]])
         =.  +>  (sync %home our %base)
         =.  +>  ?:  ?=(?($czar $pawn) can)  +>
@@ -392,11 +392,6 @@
             {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
-            {$c $mere *}
-          ?:  ?=(%& -.p.sih)
-            +>.$
-          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
-        ::
             {$g $onto *}
           ::  ~&  [%take-gall-onto +>.sih]
           ?-  -.+>.sih
@@ -412,14 +407,19 @@
             $reap  ?~  p.p.+>.sih
                      +>.$
                    (dump:(crud %reap u.p.p.+>.sih) %logo ~)
-            $diff  pump:(from ((hard dill-blit) q:`vase`+>+>.sih))
+            $diff  pump:(from ;;(dill-blit q:`vase`+>+>.sih))
           ==
         ::
             {$c $note *}
           (from %out (tuba p.sih ' ' ~(ram re q.sih)))
         ::
-            {$c $writ *}
+            {?($b $c) $writ *}
           init
+        ::
+            {$c $mere *}
+          ?:  ?=(%& -.p.sih)
+            mere
+          (mean >%dill-mere-fail< >p.p.p.sih< q.p.p.sih)
         ::
             {$c $mack *}
           ?~  p.sih  +>.$
@@ -493,14 +493,15 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
     ?>  ?=(?(%dawn %fake) -.p.task)
     ?>  =(~ hey.all)
     =.  hey.all  `hen
-    =/  boot  ((soft note-jael) p.task)
+    =/  boot
+      ((soft $>($?(%dawn %fake) task:able:jael)) p.task)
     ?~  boot
       ~|  invalid-boot-event+hen  !!
     :_(..^$ [hen %pass / %j u.boot]~)

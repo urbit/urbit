@@ -94,10 +94,40 @@
       [%vent-result p=vent-result]                      ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
-  (wind note:able gift)                                 ::
+  (wind note gift)                                      ::
 ::                                                      ::
 ++  move                                                ::  output
   {p/duct q/card}                                       ::
+::                                                      ::
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %e                                            ::    to %eyre
+          $>(%hiss task:able:eyre)                      ::  http request
+      ==                                                ::
+      $:  %a                                            ::    to %ames
+          $>(%want task:able:ames)                      ::  send message
+      ==                                                ::
+      $:  %j                                            ::    to self
+          $>(%look task)                                ::  set ethereum source
+      ==                                                ::
+      $:  @tas                                          ::
+  $%  $>(%init vane-task)                               ::  report install
+      $>(%sunk vane-task)                               ::  report death
+  ==  ==  ==                                            ::
+::                                                      ::
++$  sign                                                ::  in result $<-
+  $~  [%b %wake ~]                                      ::
+  $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
+      [%e $>(%sigh gift:able:eyre)]                     ::  marked http response
+      [%j $>(%vent gift)]                               ::  ethereum changes
+      [%a $>(%woot gift:able:ames)]                     ::  message result
+  ==                                                    ::
 --  ::
 ::                                                      ::::
 ::::                    # light                         ::  light cores
@@ -983,6 +1013,12 @@
         abet:~(wake et hen our now urb.lex sub.lex etn.lex sap.lex)
       abet:(~(init et hen our now [urb sub etn sap]:lex) our (sein our))
     ::
+        [%b %wake ^]
+      ::  TODO: handle behn error
+      ::
+      ~&  %jael-wake-bad^u.error.hin
+      +>.$
+    ::
         [%j %vent *]
       %+  cute  hen  =<  abet
       (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.hin)
@@ -1119,7 +1155,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::
   ++  extract-snap                                    ::  extract rewind point
@@ -1432,20 +1468,23 @@
         ::
         :-  (file-discontinuity who)
         %=  ..file
-          ::  these must be appended here; +abet flops them
-          ::
-          moz  =/  lyf=life
+          moz  =/  rit=rift
                  ~|  sunk-unknown+who
-                 life:(~(got by kyz.puk))
-               %+  weld  moz
-               ^-  (list move)
-               :~  [hen %slip %a %sunk who lyf]
-                   [hen %slip %c %sunk who lyf]
-                   [hen %slip %d %sunk who lyf]
-                   [hen %slip %e %sunk who lyf]
-                   [hen %slip %f %sunk who lyf]
-                   [hen %slip %g %sunk who lyf]
-               ==
+                 =<  continuity-number
+                 %+  fall
+                   net:(fall (~(get by pos.eth) who) *point)
+                 *[life pass continuity-number=@ud [? @p] (unit @p)]
+               %+  weld
+                 ::  %-  flop
+                 ^-  (list move)
+                 :~  [hen %slip %a %sunk who rit]
+                     [hen %slip %c %sunk who rit]
+                     [hen %slip %d %sunk who rit]
+                     [hen %slip %e %sunk who rit]
+                     [hen %slip %f %sunk who rit]
+                     [hen %slip %g %sunk who rit]
+                 ==
+               moz
         ==
       ::  pon: updated point
       ::  new: new keypair or "kept continuity?" (yes is no-op)
@@ -1701,7 +1740,7 @@
   ::  +wrap-note: %pass a note using a made-up duct
   ::
   ++  wrap-note
-    |=  [wir=wire not=note:able]
+    |=  [wir=wire not=note]
     ^-  move
     :-  [/jael/eth-logic ~ ~]
     [%pass (weld /(scot %p our) wir) not]
@@ -1934,7 +1973,7 @@
       ~&  [%yikes cuz]
       +>.$
     ?>  ?=(%httr mar)
-    =+  raw-rep=~|(res ((hard httr:eyre) q.res))
+    =+  raw-rep=~|(res ;;(httr:eyre q.res))
     =+  rep=(httr-to-rpc-response raw-rep)
     ?:  ?=(%fail -.rep)
       ?:  =(405 p.hit.rep)
@@ -2209,7 +2248,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   --
@@ -2232,6 +2271,7 @@
         eny=@uvJ
         ski=sley
     ==
+^?
 |%
 ::                                                      ::  ++call
 ++  call                                                ::  request
@@ -2312,6 +2352,23 @@
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
     ?~  pub  ~
     ``[%atom !>(life.u.pub)]
+  ::
+      %rift
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  ?&  ?=(%& -.why)
+            (~(has by pry.urb.lex) p.why)
+        ==
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who  [~ ~]
+    ::  fake ships always have rift=1
+    ::
+    ?:  fak.own.sub.lex
+      ``[%atom !>(1)]
+    =/  pos  (~(get by pos.eth.sub.lex) u.who)
+    ?~  pos  ~
+    ?~  net.u.pos  ~
+    ``[%atom !>(continuity-number.u.net.u.pos)]
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
@@ -2423,6 +2480,22 @@
     ?:  =(~ snaps.sap.lex)
       snap.snap
     $
+  ::
+      %vein
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our))
+      [~ ~]
+    =/  lyf  (slaw %ud i.tyl)
+    ?~  lyf  [~ ~]
+    ::
+    ?~  r=(~(get by jaw.own.sub.lex) u.lyf)
+      [~ ~]
+    ::
+    [~ ~ %noun !>(u.r)]
+  ::
+      %turf
+    ?.  ?=(~ tyl)  [~ ~]
+    [~ ~ %noun !>(tuf.own.sub.lex)]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

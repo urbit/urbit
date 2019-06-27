@@ -5,13 +5,30 @@
 =,  behn
 |=  pit=vase
 =>  |%
-    +$  move  [p=duct q=(wind note:able gift:able)]
-    +$  sign  ~
+    +$  move  [p=duct q=(wind note gift:able)]
+    +$  note                                            ::  out request $->
+      $~  [%b %wait *@da]                               ::
+      $%  $:  %b                                        ::   to self
+              $>(%wait task:able)                       ::  set timer
+          ==                                            ::
+          $:  %d                                        ::    to %dill
+              $>(%flog task:able:dill)                  ::  log output
+      ==  ==                                            ::
+    +$  sign
+      $~  [%b %wake ~]
+      $%  [%b $>(%wake gift:able)]
+      ==
     ::
     +$  behn-state
       $:  timers=(list timer)
           unix-duct=duct
           next-wake=(unit @da)
+          drips=drip-manager
+      ==
+    ::
+    +$  drip-manager
+      $:  count=@ud
+          movs=(map @ud vase)
       ==
     ::
     +$  timer  [date=@da =duct]
@@ -28,26 +45,69 @@
   ::  +born: urbit restarted; refresh :next-wake and store wakeup timer duct
   ::
   ++  born  set-unix-wake(next-wake.state ~, unix-duct.state duct)
-  ::  +crud: error report; hand off to %dill to be printed
+  ::  +crud: handle failure of previous arvo event
   ::
   ++  crud
-    |=  [p=@tas q=tang]
+    |=  [tag=@tas error=tang]
     ^+  [moves state]
-    [[duct %slip %d %flog %crud p q]~ state]
+    ::  behn must get activated before other vanes in a %wake
+    ::
+    ::    TODO: uncomment this case after switching %crud tags
+    ::
+    ::    We don't know how to handle other errors, so relay them to %dill
+    ::    to be printed and don't treat them as timer failures.
+    ::
+    ::  ?.  =(%wake tag)
+    ::    ~&  %behn-crud-not-first-activation^tag
+    ::    [[duct %slip %d %flog %crud tag error]~ state]
+    ::
+    ?:  =(~ timers.state)  ~|  %behn-crud-no-timer^tag^error  !!
+    ::
+    (wake `error)
   ::  +rest: cancel the timer at :date, then adjust unix wakeup
   ::  +wait: set a new timer at :date, then adjust unix wakeup
   ::
   ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
   ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
+  ::  +drip:  XX
+  ::
+  ++  drip
+    |=  mov=vase
+    =<  [moves state]
+    ^+  event-core
+    =.  moves
+      [duct %pass /drip/(scot %ud count.drips.state) %b %wait +(now)]~
+    =.  movs.drips.state
+      (~(put by movs.drips.state) count.drips.state mov)
+    =.  count.drips.state  +(count.drips.state)
+    event-core
+  ::  +take-drip:  XX
+  ::
+  ++  take-drip
+    |=  [num=@ud error=(unit tang)]
+    =<  [moves state]
+    ^+  event-core
+    =/  drip  (~(got by movs.drips.state) num)
+    =.  movs.drips.state  (~(del by movs.drips.state) num)
+    ?^  error
+      ::  if we errored, drop it
+      event-core
+    event-core(moves [duct %give %meta drip]~)
   ::  +vega: learn of a kernel upgrade
   ::
   ++  vega  [moves state]
   ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
   ::
   ++  wake
+    |=  error=(unit tang)
     ^+  [moves state]
     ::
-    ?~  timers.state  ~|(%behn-wake-no-timer !!)
+    ?~  timers.state  ~|  %behn-wake-no-timer^error  !!
+    ::  if we errored, pop the timer and notify the client vane of the error
+    ::
+    ?^  error
+      =<  set-unix-wake
+      (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state error)
     ::  if unix woke us too early, retry by resetting the unix wakeup timer
     ::
     ?:  (gth date.i.timers.state now)
@@ -56,7 +116,7 @@
     ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
     ::
     =<  set-unix-wake
-    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state)
+    (emit-vane-wake(timers.state t.timers.state) duct.i.timers.state ~)
   ::  +wegh: produce memory usage report for |mass
   ::
   ++  wegh
@@ -74,7 +134,9 @@
   ++  event-core  .
   ::  +emit-vane-wake: produce a move to wake a vane; assumes no prior moves
   ::
-  ++  emit-vane-wake  |=(=^duct event-core(moves [duct %give %wake ~]~))
+  ++  emit-vane-wake
+    |=  [=^duct error=(unit tang)]
+    event-core(moves [duct %give %wake error]~)
   ::  +emit-doze: set new unix wakeup timer in state and emit move to unix
   ::
   ::    We prepend the unix %doze event so that it is handled first. Arvo must
@@ -88,6 +150,10 @@
   ++  emit-doze
     |=  =date=(unit @da)
     ^+  event-core
+    ::  no-op if .unix-duct has not yet been set
+    ::
+    ?~  unix-duct.state
+      event-core
     ::  make sure we don't try to wake up in the past
     ::
     =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
@@ -175,7 +241,7 @@
   =/  =task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   =/  event-core  (per-event [our now hen] state)
   ::
@@ -184,9 +250,10 @@
       %born  born:event-core
       %crud  (crud:event-core [p q]:task)
       %rest  (rest:event-core date=p.task)
+      %drip  (drip:event-core move=p.task)
       %vega  vega:event-core
       %wait  (wait:event-core date=p.task)
-      %wake  wake:event-core
+      %wake  (wake:event-core error=~)
       %wegh  wegh:event-core
     ==
   [moves behn-gate]
@@ -215,7 +282,10 @@
 ++  take
   |=  [tea=wire hen=duct hin=(hypo sign)]
   ^-  [(list move) _behn-gate]
-  ~|  %behn-take-not-implemented
-  !!
+  ?>  ?=([%drip @ ~] tea)
+  =/  event-core  (per-event [our now hen] state)
+  =^  moves  state
+    (take-drip:event-core (slav %ud i.t.tea) error.q.hin)
+  [moves behn-gate]
 --
 

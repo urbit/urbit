@@ -69,7 +69,8 @@
     ==
 ::
 ++  coop  (unit ares)                                   ::  possible error
-++  life  @ud                                           ::  ship version
+++  life  @ud                                           ::  ship key revision
+++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -186,6 +187,31 @@
         [%transfer-proxy new=address]               ::  ChangedTransferProxy
     ==
   --
+::  +vane-task: general tasks shared across vanes
+::
++$  vane-task
+  $%  ::  i/o device replaced (reset state)
+      ::
+      [%born ~]
+      ::  error report
+      ::
+      [%crud p=@tas q=(list tank)]
+      ::  boot completed (XX legacy)
+      ::
+      [%init p=ship]
+      ::  peer discontinuity
+      ::
+      [%sunk p=ship q=rift]
+      ::  kernel upgraded
+      ::
+      [%vega ~]
+      ::  produce labeled state (for memory measurement)
+      ::
+      [%wegh ~]
+      ::  receive message via %ames
+      ::
+      [%west p=ship q=path r=*]
+  ==
 ::                                                      ::::
 ::::                      ++ames                          ::  (1a) network
   ::                                                    ::::
@@ -196,26 +222,6 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  note                                            ::  out request $->
-      $%  $:  $b                                        ::  to %behn
-      $%  {$rest p/@da}                                 ::  cancel timer
-          {$wait p/@da}                                 ::  set timer
-      ==  ==                                            ::
-          $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
-      ==  ==                                            ::
-          $:  %j                                        ::  to %jael
-      $%  [%meet =ship =life =pass]                     ::  neighbor
-          [%pubs =ship]                                 ::  view public keys
-          [%turf ~]                                     ::  view domains
-          [%vein ~]                                     ::  view private keys
-      ==  ==                                            ::
-          $:  $g                                        ::  to %gall
-      $%  {$deal p/sock q/cush:gall}                    ::
-      ==  ==                                            ::
-          $:  @tas                                      ::  to any
-      $%  {$west p/ship q/path r/*}                     ::
-      ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
       $%  {$mack p/(unit tang)}                         ::  acknowledgement
           {$mass p/mass}                                ::  memory usage
@@ -223,40 +229,22 @@
           {$turf p/(list turf)}                         ::  bind to domains
           {$woot p/ship q/coop}                         ::  reaction message
       ==                                                ::
-    ++  sign                                            ::  in result _<-
-      $%  $:  $b                                        ::  to %behn
-      $%  {$wake ~}                                     ::  timer activate
-      ==  ==                                            ::
-          $:  %j                                        ::  from %jael
-      $%  [%pubs public:able:jael]                      ::  public keys
-          [%turf turf=(list turf)]                      ::  bind to domains
-          [%vein =life vein=(map life ring)]            ::  private keys
-      ==  ==                                            ::
-          $:  $g                                        ::  from %gall
-      $%  {$unto p/cuft:gall}                           ::
-          {$mean p/ares}                                ::  XX old clean up
-          {$nice ~}                                    ::
-      ==  ==                                            ::
-          $:  @tas                                      ::
-      $%  {$crud p/@tas q/(list tank)}                  ::  by any
-          {$mack p/(unit tang)}                         ::  message ack
-          {$woot p/ship q/coop}                         ::  reaction message
-      ==  ==  ==                                        ::
     ++  task                                            ::  in request ->$
-      $%  {$barn ~}                                    ::  new unix process
+      $~  [%vega ~]                                     ::
+      $%  {$barn ~}                                     ::  new unix process
           {$bonk ~}                                     ::  reset the timer
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
+          $>(%crud vane-task)                           ::  error with trace
           {$hear p/lane q/@}                            ::  receive packet
           {$halo p/lane q/@ r/ares}                     ::  hole with trace
           {$hole p/lane q/@}                            ::  packet failed
-          [%init p=ship]                                ::  report install
+          $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          {$sunk p=ship q=life}                         ::  report death
-          {$vega ~}                                     ::  report upgrade
+          $>(%sunk vane-task)                           ::  report death
+          $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
-          {$wegh ~}                                     ::  report memory
-          {$west p/ship q/path r/*}                     ::  network request
+          $>(%wegh vane-task)                           ::  report memory
+          $>(%west vane-task)                           ::  network request
           {$want p/ship q/path r/*}                     ::  forward message
       ==                                                ::
     --  ::able
@@ -422,24 +410,23 @@
     ::                                                  ::::
   ++  able  ^?
     |%
-    ++  note                                            ::  out request $->
-      $%  $:  $d                                        ::  to %dill
-      $%  {$flog p/flog:dill}                           ::
-      ==  ==  ==                                        ::
     ++  gift                                            ::  out result <-$
-      $%  {$doze p/(unit @da)}                          ::  next alarm
-          {$mass p/mass}                                ::  memory usage
-          {$wake ~}                                    ::  wakeup
-      ==                                                ::
+      $%  [%doze p=(unit @da)]                          ::  next alarm
+          [%mass p=mass]                                ::  memory usage
+          [%wake error=(unit tang)]                     ::  wakeup or failed
+          [%meta p=vase]
+      ==
     ++  task                                            ::  in request ->$
-      $%  {$born ~}                                     ::  new unix process
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
-          {$rest p/@da}                                 ::  cancel alarm
-          {$vega ~}                                     ::  report upgrade
-          {$wait p/@da}                                 ::  set alarm
-          {$wake ~}                                    ::  timer activate
-          {$wegh ~}                                    ::  report memory
-      ==                                                ::
+      $~  [%vega ~]                                     ::
+      $%  $>(%born vane-task)                           ::  new unix process
+          $>(%crud vane-task)                           ::  error with trace
+          [%rest p=@da]                                 ::  cancel alarm
+          [%drip p=vase]                                ::  give in next event
+          $>(%vega vane-task)                           ::  report upgrade
+          [%wait p=@da]                                 ::  set alarm
+          [%wake ~]                                     ::  timer activate
+          $>(%wegh vane-task)                           ::  report memory
+      ==
     --  ::able
   --  ::behn
 ::                                                      ::::
@@ -469,14 +456,15 @@
           {$wris p/{$da p/@da} q/(set (pair care path))}  ::  many changes
       ==                                                ::
     ++  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
       $%  {$boat ~}                                     ::  pier rebooted
           {$cred nom/@ta cew/crew}                      ::  set permission group
           {$crew ~}                                     ::  permission groups
           {$crow nom/@ta}                               ::  group usage
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
+          $>(%crud vane-task)                           ::  error with trace
           {$drop des/desk}                              ::  cancel pending merge
           {$info des/desk dit/nori}                     ::  internal edit
-          {$init our/@p}                                ::  report install
+          $>(%init vane-task)                           ::  report install
           {$into des/desk all/? fis/mode}               ::  external edit
           $:  $merg                                     ::  merge desks
               des/desk                                  ::  target
@@ -487,12 +475,12 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          {$sunk p=ship q=life}                         ::  report death
-          {$vega ~}                                     ::  report upgrade
+          $>(%sunk vane-task)                           ::  report death
+          $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
-          {$wegh ~}                                     ::  report memory
-          {$west wer/ship pax/path res/*}               ::  network request
+          $>(%wegh vane-task)                           ::  report memory
+          $>(%west vane-task)                           ::  network request
       ==                                                ::
     --  ::able
   ::
@@ -543,22 +531,22 @@
   ++  lobe  @uvI                                        ::  blob ref
   ++  maki  {p/@ta q/@ta r/@ta s/path}                  ::
   ++  miso                                              ::  ankh delta
-    $%  {$del ~}                                       ::  delete
+    $%  {$del ~}                                        ::  delete
         {$ins p/cage}                                   ::  insert
         {$dif p/cage}                                   ::  mutate from diff
         {$mut p/cage}                                   ::  mutate from raw
     ==                                                  ::
   ++  misu                                              ::  computed delta
-    $%  {$del ~}                                       ::  delete
+    $%  {$del ~}                                        ::  delete
         {$ins p/cage}                                   ::  insert
         {$dif p/lobe q/cage}                            ::  mutate from diff
     ==                                                  ::
   ++  mizu  {p/@u q/(map @ud tako) r/rang}              ::  new state
   ++  moar  {p/@ud q/@ud}                               ::  normal change range
-  ++  moat  {p/case q/case r/path}                      ::  change range
+  +$  moat  [from=case to=case =path]                   ::  change range
   ++  mode  (list {path (unit mime)})                   ::  external files
-  ++  mood  {p/care q/case r/path}                      ::  request in desk
-  ++  mool  {p/case q/(set (pair care path))}           ::  requests in desk
+  +$  mood  [=care =case =path]                         ::  request in desk
+  +$  mool  [=case paths=(set (pair care path))]        ::  requests in desk
   ++  nori                                              ::  repository action
     $%  {%& p/soba}                                     ::  delta
         {%| p/@tas}                                     ::  label
@@ -579,10 +567,10 @@
         r/cage                                          ::  data
     ==                                                  ::
   ++  rave                                              ::  general request
-    $%  {$sing p/mood}                                  ::  single request
-        {$next p/mood}                                  ::  await next version
-        {$mult p/mool}                                  ::  next version of any
-        {$many p/? q/moat}                              ::  track range
+    $%  [%sing =mood]                                   ::  single request
+        [%next =mood]                                   ::  await next version
+        [%mult =mool]                                   ::  next version of any
+        [%many track=? =moat]                           ::  track range
     ==                                                  ::
   ++  real                                              ::  resolved permissions
     $:  mod/?($black $white)                            ::
@@ -640,24 +628,25 @@
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
     ++  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
       $%  {$belt p/belt}                                ::  terminal input
           {$blew p/blew}                                ::  terminal config
           {$boot p/*}                                   ::  weird %dill boot
-          {$crud p/@tas q/(list tank)}                  ::  error with trace
+          $>(%crud vane-task)                           ::  error with trace
           {$flog p/flog}                                ::  wrapped error
           {$flow p/@tas q/(list gill:gall)}             ::  terminal config
           {$hail ~}                                     ::  terminal refresh
           {$heft ~}                                     ::  memory report
           {$hook ~}                                     ::  this term hung up
           {$harm ~}                                     ::  all terms hung up
-          {$init p/ship}                                ::  after gall ready
+          $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
-          {$sunk p=ship q=life}                         ::  report death
+          $>(%sunk vane-task)                           ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
-          {$vega ~}                                     ::  report upgrade
+          $>(%vega vane-task)                           ::  report upgrade
           {$verb ~}                                     ::  verbose mode
       ==                                                ::
     --  ::able
@@ -743,23 +732,24 @@
           [%vega p=@t q=@t]                             ::  drop-through
       ==                                                ::
     +=  task                                            ::  in request ->$
-      $%  [%born p=(list host)]                         ::  new unix process
-          [%crud p=@tas q=(list tank)]                  ::  XX rethink
+      $~  [%vega ~]                                     ::
+      $%  [%born p=(list host)]                         ::  XX vane-task
+          $>(%crud vane-task)                           ::  XX rethink
           [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-          [%init p=@p]                                  ::  report install
+          $>(%init vane-task)                           ::  report install
           [%live p=@ud q=(unit @ud)]                    ::  http/s ports
           [%rule p=http-rule]                           ::  update config
           [%serv p=$@(desk beam)]                       ::  set serving root
-          [%sunk p=ship q=life]                         ::  report death
+          $>(%sunk vane-task)                           ::  report death
           [%them p=(unit hiss)]                         ::  outbound request
           [%they p=@ud q=httr]                          ::  inbound response
           [%chis p=? q=clip r=httq]                     ::  IPC inbound request
           [%this p=? q=clip r=httq]                     ::  inbound request
           [%thud ~]                                     ::  inbound cancel
-          [%vega ~]                                     ::  report upgrade
-          [%wegh ~]                                     ::  report memory
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%wegh vane-task)                           ::  report memory
           [%well p=path q=(unit mime)]                  ::  put/del .well-known
-          [%west p=ship q=[path *]]                     ::  network request
+          $>(%west vane-task)                           ::  network request
           [%wise p=ship q=prox]                         ::  proxy notification
       ==                                                ::
     --  ::able
@@ -971,6 +961,7 @@
     ::  +task:able:ford: requests to ford
     ::
     +=  task
+      $~  [%vega ~]
       $%  ::  %build: perform a build, either live or once
           ::
           $:  %build
@@ -992,13 +983,13 @@
           [%kill ~]
           ::  %sunk: receive a report that a foreign ship has lost continuity
           ::
-          [%sunk =ship =life]
+          $>(%sunk vane-task)
           ::  %vega: report kernel upgrade
           ::
-          [%vega ~]
+          $>(%vega vane-task)
           ::  %wegh: produce memory usage information
           ::
-          [%wegh ~]
+          $>(%wegh vane-task)
           ::  %wipe: wipes stored builds
           ::
           [%wipe percent-to-remove=@ud]
@@ -1683,13 +1674,14 @@
           {$mack p/(unit tang)}                         ::  message ack
       ==                                                ::
     ++  task                                            ::  incoming request
+      $~  [%vega ~]                                     ::
       $%  {$conf p/dock q/culm}                         ::  configure app
-          {$init p/ship}                                ::  set owner
+          $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          {$sunk p=ship q/life}                         ::  report death
-          {$vega ~}                                     ::  report upgrade
-          {$west p/ship q/path r/*}                     ::  network request
-          {$wegh ~}                                     ::  report memory
+          $>(%sunk vane-task)                           ::  report death
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%west vane-task)                           ::  network request
+          $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
   ++  bitt  (map bone (pair ship path))                 ::  incoming subs
@@ -1816,26 +1808,6 @@
           [%vent p=vent-result]                         ::  ethereum changes
       ==                                                ::
     ::                                                  ::
-    ++  note                                            ::  out request $->
-      =,  eyre                                          ::
-      $%  $:  %b                                        ::
-      $%  [%rest p=@da]                                 ::  cancel timer
-          [%wait p=@da]                                 ::  wait until
-      ==  ==                                            ::
-          $:  %e                                        ::
-      $%  [%hiss p=(unit user) q=mark r=cage]           ::  outbound user req
-      ==  ==                                            ::
-          $:  %a                                        ::
-      $%  [%want p=ship q=path r=*]                     ::  send message
-      ==  ==                                            ::
-          $:  %j                                        ::
-      $%  [%vent-result p=vent-result]                  ::  tmp workaround
-          [%look src=(each ship purl:eyre)]             ::
-      ==  ==                                            ::
-          $:  @tas                                      ::
-      $%  [%init p=ship]                                ::  report install
-          [%sunk p=ship q=life]                         ::  report death
-      ==  ==  ==                                        ::
     ++  public                                          ::  public key state
       $:  life=life                                     ::  current key number
           pubs=(map life pass)                          ::  pubkeys by number
@@ -1847,17 +1819,12 @@
     ::
     +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
     ::
-    ++  sign                                            ::  in result $<-
-      $%  {$b $wake ~}                                  ::  wakeup
-          [%e %sigh p=cage]                             ::  marked http response
-          [%j %vent p=vent-result]                      ::  ethereum changes
-          [%a %woot p=ship q=coop]                      ::  message result
-      ==                                                ::
     ++  tally                                           ::  balance update
       %+  each  balance                                 ::  complete
       action                                            ::  change
     ::
     +=  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
       $%  [%burn p=ship q=safe]                         ::  destroy rights
           [%hail p=ship q=remote]                       ::  remote update
           $:  %dawn                                     ::  boot from keys
@@ -1879,13 +1846,13 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
-          [%vega ~]                                     ::  report upgrade
+          $>(%vega vane-task)                           ::  report upgrade
           [%vein ~]                                     ::  view signing keys
           [%vent ~]                                     ::  view ethereum events
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
-          [%wegh ~]                                     ::  memory usage request
-          [%west p=ship q=path r=*]                     ::  remote request
+          $>(%wegh vane-task)                           ::  memory usage request
+          $>(%west vane-task)                           ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::
@@ -3159,6 +3126,59 @@
       --  ::
     ~%  %ed  +  ~
     |%
+    ::
+    ++  point-add
+      ~/  %point-add
+      |=  [a-point=@udpoint b-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      =/  b-point-decoded=[@ @]  (need (deco b-point))
+      ::
+      %-  etch
+      (ward a-point-decoded b-point-decoded)
+    ::
+    ++  scalarmult
+      ~/  %scalarmult
+      |=  [a=@udscalar a-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      ::
+      %-  etch
+      (scam a-point-decoded a)
+    ::
+    ++  scalarmult-base
+      ~/  %scalarmult-base
+      |=  scalar=@udscalar
+      ^-  @udpoint
+      %-  etch
+      (scam bb scalar)
+    ::
+    ++  add-scalarmult-scalarmult-base
+      ~/  %add-scalarmult-scalarmult-base
+      |=  [a=@udscalar a-point=@udpoint b=@udscalar]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      ::
+      %-  etch
+      %+  ward
+        (scam bb b)
+      (scam a-point-decoded a)
+    ::
+    ++  add-double-scalarmult
+      ~/  %add-double-scalarmult
+      |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
+      ^-  @udpoint
+      ::
+      =/  a-point-decoded=[@ @]  (need (deco a-point))
+      =/  b-point-decoded=[@ @]  (need (deco b-point))
+      ::
+      %-  etch
+      %+  ward
+        (scam a-point-decoded a)
+      (scam b-point-decoded b)
     ::                                                  ::  ++puck:ed:crypto
     ++  puck                                            ::  public key
       ~/  %puck
@@ -3461,7 +3481,7 @@
       ++  sure                                          ::
         |=  txt=@
         ^-  (unit @ux)
-        =+  ((hard {sig/@ msg/@}) (cue txt))
+        =+  ;;({sig/@ msg/@} (cue txt))
         ?.  (veri:ed sig msg sgn.pub)  ~
         (some msg)
       ::                                                ::  ++seal:as:crub:
@@ -3482,7 +3502,7 @@
         ?>  =('b' (end 3 1 bpk))
         =+  pk=(rsh 8 1 (rsh 3 1 bpk))
         =+  shar=(shax (shar:ed pk cry.u.sek))
-        =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+        =+  ;;({iv/@ len/@ cph/@} (cue txt))
         =+  try=(~(de siva:aes shar ~) iv len cph)
         ?~  try  ~
         (sure:as:(com:nu:crub bpk) u.try)
@@ -3491,7 +3511,7 @@
     ++  de                                              ::  decrypt
       |=  {key/@J txt/@}
       ^-  (unit @ux)
-      =+  ((hard {iv/@ len/@ cph/@}) (cue txt))
+      =+  ;;({iv/@ len/@ cph/@} (cue txt))
       %^    ~(de sivc:aes (shaz key) ~)
           iv
         len
@@ -6352,7 +6372,7 @@
       |=  {bem/beam ced/noun:cred quy/quer}
       ^-  epic
       =+  qix=|-(`quay`?~(quy quy [[p q]:quy $(quy t.quy)]))
-      [(malt qix) ((hard cred) ced) bem]
+      [(malt qix) ;;(cred ced) bem]
   --  ::eyre
 ::                                                      ::
 ::::                      ++wired                       ::  wire formatting
@@ -6882,28 +6902,33 @@
       ::                                                ::  ++lef:yu:chrono:
       ++  lef                                           ::  leapsecond dates
         ^-  (list @da)
-        :~  ~2015.6.30..23.59.59   ~2012.6.30..23.59.59
-            ~2008.12.31..23.59.58  ~2005.12.31..23.59.57
-            ~1998.12.31..23.59.56  ~1997.6.30..23.59.55
-            ~1995.12.31..23.59.54  ~1994.6.30..23.59.53
-            ~1993.6.30..23.59.52   ~1992.6.30..23.59.51
-            ~1990.12.31..23.59.50  ~1989.12.31..23.59.49
-            ~1987.12.31..23.59.48  ~1985.6.30..23.59.47
-            ~1983.6.30..23.59.46   ~1982.6.30..23.59.45
-            ~1981.6.30..23.59.44   ~1979.12.31..23.59.43
-            ~1978.12.31..23.59.42  ~1977.12.31..23.59.41
-            ~1976.12.31..23.59.40  ~1975.12.31..23.59.39
-            ~1974.12.31..23.59.38  ~1973.12.31..23.59.37
-            ~1972.12.31..23.59.36  ~1972.6.30..23.59.35
+        :~  ~2016.12.31..23.59.59   ~2015.6.30..23.59.59
+            ~2012.6.30..23.59.59    ~2008.12.31..23.59.58
+            ~2005.12.31..23.59.57   ~1998.12.31..23.59.56
+            ~1997.6.30..23.59.55    ~1995.12.31..23.59.54
+            ~1994.6.30..23.59.53    ~1993.6.30..23.59.52
+            ~1992.6.30..23.59.51    ~1990.12.31..23.59.50
+            ~1989.12.31..23.59.49   ~1987.12.31..23.59.48
+            ~1985.6.30..23.59.47    ~1983.6.30..23.59.46
+            ~1982.6.30..23.59.45    ~1981.6.30..23.59.44
+            ~1979.12.31..23.59.43   ~1978.12.31..23.59.42
+            ~1977.12.31..23.59.41   ~1976.12.31..23.59.40
+            ~1975.12.31..23.59.39   ~1974.12.31..23.59.38
+            ~1973.12.31..23.59.37   ~1972.12.31..23.59.36
+            ~1972.6.30..23.59.35
         ==
-      ::                                                ::  ++les:yu:chrono:
-      ++  les                                           ::  leapsecond days
+      ::
+      ::  +les:yu:chrono: leapsecond days
+      ::
+      ::    https://www.ietf.org/timezones/data/leap-seconds.list
+      ::
+      ++  les
         ^-  (list @da)
-        :~  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1  ~1997.7.1
-            ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1  ~1990.1.1
-            ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1  ~1980.1.1
-            ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1  ~1974.1.1
-            ~1973.1.1  ~1972.7.1
+        :~  ~2017.1.1  ~2015.7.1  ~2012.7.1  ~2009.1.1  ~2006.1.1  ~1999.1.1
+            ~1997.7.1  ~1996.1.1  ~1994.7.1  ~1993.7.1  ~1992.7.1  ~1991.1.1
+            ~1990.1.1  ~1988.1.1  ~1985.7.1  ~1983.7.1  ~1982.7.1  ~1981.7.1
+            ~1980.1.1  ~1979.1.1  ~1978.1.1  ~1977.1.1  ~1976.1.1  ~1975.1.1
+            ~1974.1.1  ~1973.1.1  ~1972.7.1
         ==
       --  ::yu
     --  ::chrono
@@ -7086,7 +7111,11 @@
   ==
 ++  sign-arvo                                           ::  in result $<-
   $%  {$a gift:able:ames}
-      {$b gift:able:behn}
+      $:  $b
+          $%  gift:able:behn
+              [%writ riot:clay]
+          ==
+      ==
       {$c gift:able:clay}
       {$d gift:able:dill}
       {$e gift:able:eyre}
@@ -7095,19 +7124,55 @@
       {$j gift:able:jael}
   ==
 ::
-++  unix-task                                           ::  input from unix
-  $%  {$belt p/belt:dill}                               ::  dill: keyboard
-      {$blew p/blew:dill}                               ::  dill: configure
-      {$boat ~}                                        ::  clay: reboot
-      {$born ~}                                        ::  eyre: new process
-      {$hail ~}                                        ::  dill: refresh
-      {$hear p/lane:ames q/@}                           ::  ames: input packet
-      {$hook ~}                                        ::  dill: hangup
-      {$into p/desk q/? r/mode:clay}                    ::  clay: external edit
-      {$they p/@ud q/httr:eyre}                         ::  eyre: in response
-      {$this p/? q/clip:eyre r/httq:eyre}               ::  eyre: in request
-      {$thud ~}                                        ::  eyre: in cancel
-      {$wake ~}                                        ::  behn: wakeup
++$  unix-task                                           ::  input from unix
+  $~  [%wake ~]
+  $%  ::  %ames: new process
+      ::
+      $>(%barn task:able:ames)
+      ::  %dill: keyboard input
+      ::
+      $>(%belt task:able:dill)
+      ::  %dill: configure terminal (resized)
+      ::
+      $>(%blew task:able:dill)
+      ::  %clay: new process
+      ::
+      $>(%boat task:able:clay)
+      ::  %behn/%eyre: new process
+      ::
+      ::    XX %eyre includes payload
+      ::
+      $>(%born vane-task)
+      ::  any vane: error report
+      ::
+      $>(%crud vane-task)
+      ::  %dill: reset terminal configuration
+      ::
+      $>(%hail task:able:dill)
+      ::  %ames: hear packet
+      ::
+      $>(%hear task:able:ames)
+      ::  %dill: hangup
+      ::
+      $>(%hook task:able:dill)
+      ::  %clay: external edit
+      ::
+      $>(%into task:able:clay)
+      ::  %eyre: learn ports of live http servers
+      ::
+      $>(%live task:able:eyre)
+      ::  %eyre: hear http response
+      ::
+      $>(%they task:able:eyre)
+      ::  %eyre: hear http request
+      ::
+      $>(%this task:able:eyre)
+      ::  %eyre: hear http request cancellation
+      ::
+      $>(%thud task:able:eyre)
+      ::  %behn: wakeup
+      ::
+      $>(%wake task:able:behn)
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth
@@ -7198,8 +7263,9 @@
         |%
         ::  azimuth: data contract
         ::
-        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
         ++  azimuth  0x223c.067f.8cf2.8ae1.73ee.5caf.ea60.ca44.c335.fecb  ::  mainnet
+        ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
+        ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
         ++  linear-star-release
           0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
@@ -7910,6 +7976,8 @@
                   top=(list ?(@ux (list @ux)))
               ==
               [%eth-get-filter-changes fid=@ud]
+              [%eth-get-transaction-count adr=address]
+              [%eth-get-transaction-receipt txh=@ux]
               [%eth-send-raw-transaction dat=@ux]
           ==
         ::
@@ -8095,6 +8163,12 @@
           %eth-get-filter-changes
         ['eth_getFilterChanges' (tape (num-to-hex fid.req)) ~]
       ::
+          %eth-get-transaction-count
+        ['eth_getTransactionCount' (tape (address-to-hex adr.req)) ~]
+      ::
+          %eth-get-transaction-receipt
+        ['eth_getTransactionReceipt' (tape (transaction-to-hex txh.req)) ~]
+      ::
           %eth-send-raw-transaction
         ['eth_sendRawTransaction' (tape (num-to-hex dat.req)) ~]
       ==
@@ -8204,6 +8278,8 @@
     |=  n=@
     ^-  tape
     %-  prefix-hex
+    ?:  =(0 n)
+      "0"
     %-  render-hex-bytes
     (as-octs:mimes:html n)
   ::
@@ -8212,6 +8288,12 @@
     ^-  tape
     %-  prefix-hex
     (render-hex-bytes 20 `@`a)
+  ::
+  ++  transaction-to-hex
+    |=  h=@
+    ^-  tape
+    %-  prefix-hex
+    (render-hex-bytes 32 h)
   ::
   ++  prefix-hex
     |=  a=tape

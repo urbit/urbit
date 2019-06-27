@@ -74,7 +74,8 @@
   ^-  {cid/@t cis/@t ~}
   ?.  =(~ `@`key)
     ~|  %oauth-bad-keys
-    ((hard {cid/@t cis/@t ~}) (to-wain key))
+    ;;  {cid/@t cis/@t ~}
+    (to-wain key)
   %+  mean-wall  %oauth-no-keys
   """
   Run |init-oauth2 {<`path`dom>}

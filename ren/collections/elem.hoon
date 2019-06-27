@@ -30,7 +30,7 @@
           ;div.row
             ;div.flex-col-2;
             ;div.flex-col-x
-              ;div.collection-index
+              ;div
                 ;+  (meta-to-elem itm sho)
                 ;+  (collection-to-elem col.itm)
               ==
@@ -46,7 +46,7 @@
           ;div.row
             ;div.flex-col-2;
             ;div.flex-col-x
-              ;div.collection-index
+              ;div
                 ;+  (meta-to-elem itm sho)
                 ;+  (collection-post ~ (flop s.bem.gas))
               ==
@@ -63,7 +63,7 @@
           ;div.row
             ;div.flex-col-2;
             ;div.flex-col-x
-              ;div.collection-index
+              ;div
                 ;+  (meta-to-elem itm sho)
                 ;+  (both-to-elem col.itm raw.itm)
               ==
@@ -75,7 +75,7 @@
           ;div.row
             ;div.flex-col-2;
             ;div.flex-col-x
-              ;div.collection-index
+              ;div
                 ;+  (meta-to-elem itm sho)
                 ;+  (collection-post `raw.itm (flop s.bem.gas))
               ==
@@ -150,7 +150,7 @@
                 =urb-component  "Sigil"
                 =urb-ship       "{(trip author)}"
                 =urb-size       "18"
-                =urb-suffix     "true";
+                =urb-prefix     "true";
               ;div
                 ;a.vanilla.text-mono.text-small.text-700.mr-4
                   =href  "/~~/{(trip host)}/==/web/landscape/profile"

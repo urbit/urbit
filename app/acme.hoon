@@ -1194,7 +1194,7 @@
   ::  request nonce if expired-invalid
   ::
   ?:  (bad-nonce rep)
-    (nonce:effect spur)
+    (nonce:effect [act spur])
   ::  XX replace with :hall notification
   ::
   ~|  [%sigh-fail wire]
@@ -1223,8 +1223,11 @@
 ::  +wake: timer wakeup event
 ::
 ++  wake
-  |=  [wir=wire ~]
+  |=  [wir=wire error=(unit tang)]
   ^-  (quip move _this)
+  ?^  error
+    %-  (slog u.error)
+    abet
   ?>  ?=([%acme *] wir)
   abet:(retry:event t.wir)
 ::  +poke-acme-order: create new order for a set of domains
@@ -1262,6 +1265,15 @@
     ~&  [%config-history fig.hit]
     ~&  [%failed-order-history fal.hit]
     this
+  ::
+    ::  install privkey and cert .pem from /=home=/acme, ignores app state
+    ::TODO  refactor this out of %acme, see also arvo#1151
+    ::
+      %install-from-clay
+    =/  bas=path  /(scot %p our.bow)/home/(scot %da now.bow)/acme
+    =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
+    =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
+    (emit %rule /install %cert `[key cer])
   ::
       %init
     init

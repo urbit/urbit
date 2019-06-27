@@ -682,12 +682,17 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>(`path`+.pax) !>(cag)]
+            [!>(`path`+.pax) (ap-cage cag)]
           [!>((slag (dec p.u.cug) `path`+.pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam
         (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
       (ap-pump & her pax)
+    ::
+    ++  ap-cage                                         ::  cage to tagged vase
+      |=  cag/cage
+      ^-  vase
+      (slop `vase`[[%atom %tas `p.cag] p.cag] q.cag)
     ::
     ++  ap-pump                                         ::  update subscription
       ~/  %ap-pump
@@ -728,10 +733,21 @@
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
       =+  suy=(fall (~(get by qel.ged) ost) 0)
-      ?:  =(20 suy)
-        [%| +]
-      ::  ~?  !=(20 suy)  [%ap-fill-add [[our dap] q.q.pry ost] +(suy)]
-      [%& +(qel.ged (~(put by qel.ged) ost +(suy)))]
+      =/  subscriber=(unit (pair ship path))
+        (~(get by sup.ged) ost)
+      ?:  ?&  =(20 suy)
+              ?|  ?=(~ subscriber)
+                  !=(our p.u.subscriber)
+              ==
+          ==
+        ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
+        [%| ..ap-fill]
+      ::  ~&  :*  %gall-pushing-20
+      ::          ost
+      ::          suy=suy
+      ::          (~(get by r.zam) ost)
+      ::      ==
+      [%& ..ap-fill(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
       ~/  %ap-find
@@ -1088,7 +1104,7 @@
       =+  ^=  arg  ^-  vase
           %-  slop
           ?:  =(0 p.u.cug)
-            [!>(`path`pax) !>(cag)]
+            [!>(`path`pax) (ap-cage cag)]
           [!>((slag (dec p.u.cug) `path`pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
       ?^  cam   (ap-lame q.u.cug u.cam)
@@ -1258,39 +1274,39 @@
       ^-  (unit @tas)
       ?+  sep  ~&  [%ap-vain sep]
                ~
-        $bonk  `%a
-        $build  `%f
-        $cash  `%a
-        $conf  `%g
-        $cred  `%c
-        $crew  `%c
-        $crow  `%c
-        $deal  `%g
-        $dirk  `%c
-        $drop  `%c
-        $flog  `%d
-        $info  `%c
-        $keep  `%f
-        $kill  `%f
-        $look  `%j
-        $merg  `%c
-        $mint  `%j
-        $mont  `%c
-        $nuke  `%a
-        $ogre  `%c
-        $perm  `%c
-        $rest  `%b
-        $rule  `%e
-        $serv  `%e
-        $snap  `%j
-        $them  `%e
-        $wait  `%b
-        $want  `%a
-        $warp  `%c
-        $well  `%e
-        $well  `%e
-        $wind  `%j
-        $wipe  `%f
+        %bonk  `%a
+        %build  `%f
+        %cash  `%a
+        %conf  `%g
+        %cred  `%c
+        %crew  `%c
+        %crow  `%c
+        %deal  `%g
+        %dirk  `%c
+        %drop  `%c
+        %flog  `%d
+        %info  `%c
+        %keep  `%f
+        %kill  `%f
+        %look  `%j
+        %merg  `%c
+        %mint  `%j
+        %mont  `%c
+        %nuke  `%a
+        %ogre  `%c
+        %perm  `%c
+        %rest  `%b
+        %rule  `%e
+        %serv  `%e
+        %snap  `%j
+        %them  `%e
+        %wait  `%b
+        %want  `%a
+        %warp  `%c
+        %well  `%e
+        %well  `%e
+        %wind  `%j
+        %wipe  `%f
       ==
     --
   --
@@ -1298,7 +1314,7 @@
   ~%  %gall-call  +>   ~
   |=  {hen/duct hic/(hypo (hobo task:able))}
   ^+  [*(list move) ..^$]
-  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ((hard task:able) p.q.hic)))
+  =>  .(q.hic ?.(?=($soft -.q.hic) q.hic ;;(task:able p.q.hic)))
   ?-    -.q.hic
       $conf
     ?.  =(our p.p.q.hic)
@@ -1325,10 +1341,10 @@
     =*  dap  i.t.q.q.hic
     =*  him  p.q.hic
     ?:  ?=($ge i.q.q.hic)
-      =+  mes=((hard {@ud rook}) r.q.hic)
+      =+  mes=;;({@ud rook} r.q.hic)
       =<  mo-abet
       (mo-gawk:(mo-abed:mo hen) him dap mes)
-    =+  mes=((hard {@ud roon}) r.q.hic)
+    =+  mes=;;({@ud roon} r.q.hic)
     =<  mo-abet
     (mo-gawd:(mo-abed:mo hen) him dap mes)
   ::
@@ -1363,9 +1379,8 @@
           =(~ tyl)
           =([%$ %da now] lot)
           =(our his)
-          (~(has by bum.mast.all) syd)
       ==
-    ``[%null !>(~)]
+    ``[%noun !>((~(has by bum.mast.all) syd))]
   ?.  =(our his)
     ~
   ?.  =([%$ %da now] lot)

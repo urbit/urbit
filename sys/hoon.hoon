@@ -209,10 +209,9 @@
   |=  a=@
   ^-  @
   ?-  a
-    $1   !!
-    $2   1
-    $3   1
-    *    (add (mod a 2) (mul $(a (div a 2)) 2))
+    ?(%2 %3)  1
+    ?(%0 %1)  !!
+    *         (add (mod a 2) (mul $(a (div a 2)) 2))
   ==
 ::
 ++  peg
@@ -256,13 +255,6 @@
   --
 ::
 ++  fore  |*(a/$-(* *) |*(b/$-(* *) (pair a b)))        ::  pair before
-++  hard                                                ::  force remold
-  |*  han/$-(* *)
-  |=  fud/*  ^-  han
-  ~_  leaf+"hard"
-  =+  gol=(han fud)
-  ?>(=(gol fud) gol)
-::
 ::
 ++  head  |*(^ ,:+<-)                                   ::  get head
 ++  same  |*(* +<)                                      ::  identity
@@ -328,7 +320,7 @@
   ::  input if it fits or a default value if it doesn't.
   ::
   ::  examples: * @ud ,[p=time q=?(%a %b)]
-  _|~(* +<)
+  $~(* $-(* *))
 ::
 +*  pair  [head tail]
   ::    dual tuple
@@ -392,116 +384,6 @@
   ::  type that was passed in.
   ::
   $@(~ [~ u=item])
-::
-::                                                      ::
-::::  2o: containers                        ::
-  ::                                                    ::
-  ::
-+*  jar  [key value]  (map key (list value))            ::  map of lists
-+*  jug  [key value]  (map key (set value))             ::  map of sets
-+*  map  [key value]  (tree (pair key value))           ::  table
-+*  qeu  [item]       (tree item)                       ::  queue
-+*  set  [item]       (tree item)                       ::  set
-::
-::::  2q: molds and mold builders                       ::
-  ::                                                    ::
-  ::
-+$  axis  @                                             ::  tree address
-+$  bean  ?                                             ::  0=&=yes, 1=|=no
-+$  flag  ?
-+$  char  @t                                            ::  UTF8 byte
-+$  cord  @t                                            ::  UTF8, LSB first
-+$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
-+$  deco  ?($bl $br $un $~)                             ::  text decoration
-+$  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
-+$  knot  @ta                                           ::  ASCII text
-+$  noun  *                                             ::  any noun
-+$  path  (list knot)                                   ::  like unix path
-+$  stud                                                ::  standard name
-          $@  mark=@tas                                 ::  auth=urbit
-          $:  auth=@tas                                 ::  standards authority
-              type=path                                 ::  standard label
-          ==                                            ::
-+$  stub  (list (pair stye (list @c)))                  ::  styled unicode
-+$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
-+$  styl                                                ::  cascading style
-          %+  pair  (unit deco)                         ::
-          (pair (unit tint) (unit tint))                ::
-::                                                      ::
-+$  styx  (list $@(@t (pair styl styx)))                ::  styled text
-+$  tile  ::  XX: ?@(knot (pair styl knot))
-          ::
-          cord
-+$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
-::
-::  A `plum` is the intermediate representation for the pretty-printer. It
-::  encodes hoon-shaped data with the least amount of structured needed
-::  for formating.
-::
-::  A `plum` is either a
-::
-::  - `cord`: A simple cord
-::  - `[%para *]`: A wrappable paragraph.
-::  - `[%tree *]`: A formatted plum tree
-::  - `[%sbrk *]`: An indication of a nested subexpression.
-::
-::  The formatter will use the tall mode unless:
-::
-::    - A plum has only a `wide` style.
-::    - The plum is in `%sbrk` form and its subplum (`kid`), when
-::      formatted in wide mode, can fit on a single line.
-::
-+$  plum
-  $@  cord
-  $%  [%para prefix=tile lines=(list @t)]
-      [%tree fmt=plumfmt kids=(list plum)]
-      [%sbrk kid=plum]
-  ==
-::
-::  A `plumfmt` is a description of how to render a `plum`. A `plumfmt`
-::  must include a `wide`, a `tall`, or both.
-::
-::  A `wide` is a description of how to render a plum in a single
-::  line. The nested (`kids`) sub-plums will be interleaved with `delimit`
-::  strings, and, if `enclose` is set, then the output will be enclosed
-::  with `p.u.enclose` abnd `q.u.enclose`.
-::
-::  For example, to build a plumfmt for string literals, we could write:
-::
-::      [wide=[~ '' [~ '"' '"']] tall=~]
-::
-::  A `tall` is a description of how to render a plum across multiple
-::  lines. The output will be prefixed by `intro`, suffixed by
-::  `final.u.indef`, and each subplum prefixed by `sigil.u.indef`.
-::
-::  For example, to build a plumfmt for cores, we could write:
-::
-::      [wide=~ tall=`['' `['++' '--']]]
-::
-+$  plumfmt
-  $:  wide=(unit [delimit=tile enclose=(unit (pair tile tile))])
-      tall=(unit [intro=tile indef=(unit [sigil=tile final=tile])])
-  ==
-::
-++  tang  (list tank)                                   ::  bottom-first error
-++  tank  $~  [%leaf ~]                                 ::
-          $%  {$leaf p/tape}                            ::  printing formats
-              {$plum p/plum}                            ::
-              $:  $palm                                 ::  backstep list
-                  p/{p/tape q/tape r/tape s/tape}       ::
-                  q/(list tank)                         ::
-              ==                                        ::
-              $:  $rose                                 ::  flat list
-                  p/{p/tape q/tape r/tape}              ::  mid open close
-                  q/(list tank)                         ::
-              ==                                        ::
-          ==                                            ::
-++  tape  (list @tD)                                    ::  utf8 string as list
-++  tour  (list @c)                                     ::  utf32 clusters
-++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
-++  term  @tas                                          ::  ascii symbol
-++  wain  (list cord)                                   ::  text lines
-++  wall  (list tape)                                   ::  text lines
 --  =>
 ::                                                      ::
 ::::  2: layer two                                      ::
@@ -615,7 +497,7 @@
   ::                                                    ::
   ::                                                    ::
 ::
-::  +snoc Append an element to the end of a list.
+::  +snoc: append an element to the end of a list
 ::
 ++  snoc
   |*  [a/(list) b/*]
@@ -673,6 +555,13 @@
     |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
+::
+::  +bake: convert wet gate to dry gate by specifying argument mold
+::
+++  bake
+  |*  [f=gate a=mold]
+  |=  arg=a
+  (f arg)
 ::
 ++  lent                                                ::  length
   ~/  %lent
@@ -1833,6 +1722,14 @@
 ++  to                                                  ::  queue engine
   =|  a/(tree)  ::  (qeu)
   |@
+  ++  apt                                               ::  check correctness
+    ^-  ?
+    ?~  a  &
+    |-  ^-  ?
+    ?~  l.a  &
+    ?~  r.a  &
+    &((mor n.l.a n.r.a) $(a l.a) $(a r.a))
+  ::
   ++  bal
     |-  ^+  a
     ?~  a  ~
@@ -1899,7 +1796,25 @@
     ?~  a  ~
     ?~(r.a [~ n.a] $(a r.a))
   --
-::                                                      ::
+::
+::::  2o: containers                                    ::
+  ::                                                    ::
+  ::
++*  jar  [key value]  (map key (list value))            ::  map of lists
++*  jug  [key value]  (map key (set value))             ::  map of sets
+::
++*  map  [key value]                                    ::  table
+  $|  (tree (pair key value))
+  |=(a=(tree (pair)) ~(apt by a))
+::
++*  qeu  [item]                                         ::  queue
+  $|  (tree item)
+  |=(a=(tree) ~(apt to a))
+::
++*  set  [item]                                         ::  set
+  $|  (tree item)
+  |=(a=(tree) ~(apt in a))
+::
 ::::  2l: container from container                      ::
   ::                                                    ::
   ::
@@ -1964,6 +1879,106 @@
     ?~  a  b
     [i=i.a t=$(a t.a)]
   --
+::
+::::  2q: molds and mold builders                       ::
+  ::                                                    ::
+  ::
++$  axis  @                                             ::  tree address
++$  bean  ?                                             ::  0=&=yes, 1=|=no
++$  flag  ?
++$  char  @t                                            ::  UTF8 byte
++$  cord  @t                                            ::  UTF8, LSB first
++$  byts  [wid=@ud dat=@]                               ::  bytes, MSB first
++$  deco  ?($bl $br $un $~)                             ::  text decoration
++$  date  {{a/? y/@ud} m/@ud t/tarp}                    ::  parsed date
++$  knot  @ta                                           ::  ASCII text
++$  noun  *                                             ::  any noun
++$  path  (list knot)                                   ::  like unix path
++$  stud                                                ::  standard name
+          $@  mark=@tas                                 ::  auth=urbit
+          $:  auth=@tas                                 ::  standards authority
+              type=path                                 ::  standard label
+          ==                                            ::
++$  stub  (list (pair stye (list @c)))                  ::  styled unicode
++$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
++$  styl                                                ::  cascading style
+          %+  pair  (unit deco)                         ::
+          (pair (unit tint) (unit tint))                ::
+::                                                      ::
++$  styx  (list $@(@t (pair styl styx)))                ::  styled text
++$  tile  ::  XX: ?@(knot (pair styl knot))
+          ::
+          cord
++$  tint  ?($r $g $b $c $m $y $k $w $~)                 ::  text color
+::
+::  A `plum` is the intermediate representation for the pretty-printer. It
+::  encodes hoon-shaped data with the least amount of structured needed
+::  for formating.
+::
+::  A `plum` is either a
+::
+::  - `cord`: A simple cord
+::  - `[%para *]`: A wrappable paragraph.
+::  - `[%tree *]`: A formatted plum tree
+::  - `[%sbrk *]`: An indication of a nested subexpression.
+::
+::  The formatter will use the tall mode unless:
+::
+::    - A plum has only a `wide` style.
+::    - The plum is in `%sbrk` form and its subplum (`kid`), when
+::      formatted in wide mode, can fit on a single line.
+::
++$  plum
+  $@  cord
+  $%  [%para prefix=tile lines=(list @t)]
+      [%tree fmt=plumfmt kids=(list plum)]
+      [%sbrk kid=plum]
+  ==
+::
+::  A `plumfmt` is a description of how to render a `plum`. A `plumfmt`
+::  must include a `wide`, a `tall`, or both.
+::
+::  A `wide` is a description of how to render a plum in a single
+::  line. The nested (`kids`) sub-plums will be interleaved with `delimit`
+::  strings, and, if `enclose` is set, then the output will be enclosed
+::  with `p.u.enclose` abnd `q.u.enclose`.
+::
+::  For example, to build a plumfmt for string literals, we could write:
+::
+::      [wide=[~ '' [~ '"' '"']] tall=~]
+::
+::  A `tall` is a description of how to render a plum across multiple
+::  lines. The output will be prefixed by `intro`, suffixed by
+::  `final.u.indef`, and each subplum prefixed by `sigil.u.indef`.
+::
+::  For example, to build a plumfmt for cores, we could write:
+::
+::      [wide=~ tall=`['' `['++' '--']]]
+::
++$  plumfmt
+  $:  wide=(unit [delimit=tile enclose=(unit (pair tile tile))])
+      tall=(unit [intro=tile indef=(unit [sigil=tile final=tile])])
+  ==
+::
+++  tang  (list tank)                                   ::  bottom-first error
+++  tank  $~  [%leaf ~]                                 ::
+          $%  {$leaf p/tape}                            ::  printing formats
+              {$plum p/plum}                            ::
+              $:  $palm                                 ::  backstep list
+                  p/{p/tape q/tape r/tape s/tape}       ::
+                  q/(list tank)                         ::
+              ==                                        ::
+              $:  $rose                                 ::  flat list
+                  p/{p/tape q/tape r/tape}              ::  mid open close
+                  q/(list tank)                         ::
+              ==                                        ::
+          ==                                            ::
+++  tape  (list @tD)                                    ::  utf8 string as list
+++  tour  (list @c)                                     ::  utf32 clusters
+++  tarp  {d/@ud h/@ud m/@ud s/@ud f/(list @ux)}        ::  parsed time
+++  term  @tas                                          ::  ascii symbol
+++  wain  (list cord)                                   ::  text lines
+++  wall  (list tape)                                   ::  text lines
 ::
 ::::  2p: serialization                                 ::
   ::                                                    ::
@@ -3750,65 +3765,185 @@
 ::
 ++  ob
   |%
-  ++  feen                                              ::  conceal structure v2
+  ::  +fein: conceal structure, v3.
+  ::
+  ::    +fein conceals planet-sized atoms.  The idea is that it should not be
+  ::    trivial to tell which planet a star has spawned under.
+  ::
+  ++  fein
     |=  pyn/@  ^-  @
     ?:  &((gte pyn 0x1.0000) (lte pyn 0xffff.ffff))
-      (add 0x1.0000 (fice (sub pyn 0x1.0000)))
+      (add 0x1.0000 (feis (sub pyn 0x1.0000)))
     ?:  &((gte pyn 0x1.0000.0000) (lte pyn 0xffff.ffff.ffff.ffff))
-      =+  lo=(dis pyn 0xffff.ffff)
-      =+  hi=(dis pyn 0xffff.ffff.0000.0000)
+      =/  lo  (dis pyn 0xffff.ffff)
+      =/  hi  (dis pyn 0xffff.ffff.0000.0000)
       %+  con  hi
       $(pyn lo)
     pyn
   ::
-  ++  fend                                              ::  restore structure v2
+  ::  +fynd: restore structure, v3.
+  ::
+  ::    Restores obfuscated values that have been enciphered with +fein.
+  ::
+  ++  fynd
     |=  cry/@  ^-  @
     ?:  &((gte cry 0x1.0000) (lte cry 0xffff.ffff))
-      (add 0x1.0000 (teil (sub cry 0x1.0000)))
+      (add 0x1.0000 (tail (sub cry 0x1.0000)))
     ?:  &((gte cry 0x1.0000.0000) (lte cry 0xffff.ffff.ffff.ffff))
-      =+  lo=(dis cry 0xffff.ffff)
-      =+  hi=(dis cry 0xffff.ffff.0000.0000)
+      =/  lo  (dis cry 0xffff.ffff)
+      =/  hi  (dis cry 0xffff.ffff.0000.0000)
       %+  con  hi
       $(cry lo)
     cry
   ::
-  ++  fice                                              ::  adapted from
-    |=  nor/@                                           ::  black and rogaway
-    ^-  @                                               ::  "ciphers with
-    =+  ^=  sel                                         ::   arbitrary finite
-    %+  rynd  3                                         ::   domains", 2002
-    %+  rynd  2
-    %+  rynd  1
-    %+  rynd  0
-    [(mod nor 65.535) (div nor 65.535)]
-    (add (mul 65.535 -.sel) +.sel)
+  ::  +feis: a four-round generalised Feistel cipher over the domain
+  ::         [0, 2^32 - 2^16 - 1].
   ::
-  ++  teil                                              ::  reverse ++fice
-    |=  vip/@
+  ::    See: Black & Rogaway (2002), Ciphers for arbitrary finite domains.
+  ::
+  ++  feis
+    |=  m=@
     ^-  @
-    =+  ^=  sel
-    %+  rund  0
-    %+  rund  1
-    %+  rund  2
-    %+  rund  3
-    [(mod vip 65.535) (div vip 65.535)]
-    (add (mul 65.535 -.sel) +.sel)
+    (fee 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
   ::
-  ++  rynd                                              ::  feistel round
-    |=  {n/@ l/@ r/@}
-    ^-  {@ @}
-    :-  r
-    ?~  (mod n 2)
-      (~(sum fo 65.535) l (muk (snag n raku) 2 r))
-    (~(sum fo 65.536) l (muk (snag n raku) 2 r))
+  ::  +tail: reverse +feis.
   ::
-  ++  rund                                              ::  reverse round
-    |=  {n/@ l/@ r/@}
-    ^-  {@ @}
-    :-  r
-    ?~  (mod n 2)
-      (~(dif fo 65.535) l (muk (snag n raku) 2 r))
-    (~(dif fo 65.536) l (muk (snag n raku) 2 r))
+  ++  tail
+    |=  m=@
+    ^-  @
+    (feen 4 0xffff 0x1.0000 (mul 0xffff 0x1.0000) eff m)
+  ::
+  ::  +fee: "Fe" in B&R (2002).
+  ::
+  ::    A Feistel cipher given the following parameters:
+  ::
+  ::    r:    number of Feistel rounds
+  ::    a, b: parameters such that ab >= k
+  ::    k:    value such that the domain of the cipher is [0, k - 1]
+  ::    prf:  a gate denoting a family of pseudorandom functions indexed by
+  ::          its first argument and taking its second argument as input
+  ::    m:    an input value in the domain [0, k - 1]
+  ::
+  ++  fee
+    |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
+    ^-  @
+    =/  c  (fe r a b prf m)
+    ?:  (lth c k)
+      c
+    (fe r a b prf c)
+  ::
+  ::  +feen: "Fe^-1" in B&R (2002).
+  ::
+  ::    Reverses a Feistel cipher constructed with parameters as described in
+  ::    +fee.
+  ::
+  ++  feen
+    |=  [r=@ a=@ b=@ k=@ prf=$-([j=@ r=@] @) m=@]
+    ^-  @
+    =/  c  (fen r a b prf m)
+    ?:  (lth c k)
+      c
+    (fen r a b prf c)
+  ::
+  ::  +fe:  "fe" in B&R (2002).
+  ::
+  ::    An internal function to +fee.
+  ::
+  ::    Note that this implementation differs slightly from the reference paper
+  ::    to support some legacy behaviour.  See urbit/arvo#1105.
+  ::
+  ++  fe
+    |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
+    =/  j  1
+    =/  ell  (mod m a)
+    =/  arr  (div m a)
+    |-  ^-  @
+    ::
+    ?:  (gth j r)
+      ?.  =((mod r 2) 0)
+        (add (mul arr a) ell)
+      ::
+      :: Note that +fe differs from B&R (2002)'s "fe" below, as a previous
+      :: implementation of this cipher contained a bug such that certain inputs
+      :: could encipher to the same output.
+      ::
+      :: To correct these problem cases while also preserving the cipher's
+      :: legacy behaviour on most inputs, we check for a problem case (which
+      :: occurs when 'arr' is equal to 'a') and, if detected, use an alternate
+      :: permutation instead.
+      ::
+      ?:  =(arr a)
+        (add (mul arr a) ell)
+      (add (mul ell a) arr)
+    ::
+    =/  f  (prf (sub j 1) arr)
+    ::
+    =/  tmp
+      ?.  =((mod j 2) 0)
+        (mod (add f ell) a)
+      (mod (add f ell) b)
+    ::
+    $(j +(j), ell arr, arr tmp)
+  ::
+  ::  +fen:  "fe^-1" in B&R (2002).
+  ::
+  ::    Note that this implementation differs slightly from the reference paper
+  ::    to support some legacy behaviour.  See urbit/arvo#1105.
+  ::
+  ++  fen
+    |=  [r=@ a=@ b=@ prf=$-([j=@ r=@] @) m=@]
+    =/  j  r
+    ::
+    =/  ahh
+      ?.  =((mod r 2) 0)
+        (div m a)
+      (mod m a)
+    ::
+    =/  ale
+      ?.  =((mod r 2) 0)
+        (mod m a)
+      (div m a)
+    ::
+    :: Similar to the comment in +fe, +fen differs from B&R (2002)'s "fe^-1"
+    :: here in order to preserve the legacy cipher's behaviour on most inputs.
+    ::
+    :: Here problem cases can be identified by 'ahh' equating with 'a'; we
+    :: correct those cases by swapping the values of 'ahh' and 'ale'.
+    ::
+    =/  ell
+      ?:  =(ale a)
+        ahh
+      ale
+    ::
+    =/  arr
+      ?:  =(ale a)
+        ale
+      ahh
+    ::
+    |-  ^-  @
+    ?:  (lth j 1)
+      (add (mul arr a) ell)
+    =/  f  (prf (sub j 1) ell)
+    ::
+    ::  Note that there is a slight deviation here to avoid dealing with
+    ::  negative values.  We add 'a' or 'b' to arr as appropriate and reduce
+    ::  'f' modulo the same number before performing subtraction.
+    ::
+    =/  tmp
+      ?.  =((mod j 2) 0)
+        (mod (sub (add arr a) (mod f a)) a)
+      (mod (sub (add arr b) (mod f b)) b)
+    ::
+    $(j (sub j 1), ell tmp, arr ell)
+  ::
+  ::  +eff: a murmur3-based pseudorandom function.  'F' in B&R (2002).
+  ::
+  ++  eff
+    |=  [j=@ r=@]
+    ^-  @
+    (muk (snag j raku) 2 r)
+  ::
+  ::  +raku: seeds for eff.
   ::
   ++  raku
     ^-  (list @ux)
@@ -3817,6 +3952,7 @@
         0x85bc.ae01
         0x4b38.7af7
     ==
+  ::
   --
 ::
 ::::  3g: molds and mold builders
@@ -5617,7 +5753,7 @@
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
   ++  dum  (bass 10 (plus sid:ab))
-  ++  fed  %+  cook  fend:ob
+  ++  fed  %+  cook  fynd:ob
            ;~  pose
              %+  bass  0x1.0000.0000.0000.0000          ::  oversized
                ;~  plug
@@ -5729,7 +5865,7 @@
           ==
         ::
             $p
-          =+  sxz=(feen:ob q.p.lot)
+          =+  sxz=(fein:ob q.p.lot)
           =+  dyx=(met 3 sxz)
           :-  '~'
           ?:  (lte dyx 1)
@@ -6566,8 +6702,9 @@
     {$mcts p/marl:hoot}                                 ::  ;=  list templating
     {$mccl p/hoon q/(list hoon)}                        ::  ;:  binary to nary
     {$mcnt p/hoon}                                      ::  ;/  [%$ [%$ p ~] ~]
+    {$mcgl p/spec q/hoon r/hoon s/hoon}                 ::  ;<  bind
     {$mcsg p/hoon q/(list hoon)}                        ::  ;~  kleisli arrow
-    {$mcmc p/hoon q/hoon}                               ::  ;;  normalize
+    {$mcmc p/spec q/hoon}                               ::  ;;  normalize
   ::                                            ::::::  compositions
     {$tsbr p/spec q/hoon}                               ::  =|  push bunt
     {$tscl p/(list (pair wing hoon)) q/hoon}            ::  =:  q w/ p changes
@@ -8197,7 +8334,7 @@
       ::
           {$bsld *}
         :+  %tsls
-          relative
+          relative:clear(mod q.mod)
         :+  %wtld
           [%wtts [%over ~[&/3] p.mod] ~[&/4]]
         $/2
@@ -8206,7 +8343,7 @@
       ::
           {$bsbn *}
         :+  %tsls
-          relative
+          relative:clear(mod q.mod)
         :+  %wtbn
           [%wtts [%over ~[&/3] p.mod] ~[&/4]]
         $/2
@@ -8643,6 +8780,16 @@
       ==
     ::
         {$mcnt *}  =+(zoy=[%rock %ta %$] [%clsg [zoy [%clsg [zoy p.gen] ~]] ~])
+        {$mcgl *}
+      :^    %cnls
+          :+  %cnhp
+            q.gen
+          [%ktcl p.gen]
+        r.gen
+      :+  %brts
+        p.gen
+      s.gen
+    ::
         {$mcsg *}                                       ::                  ;~
       |-  ^-  hoon
       ?-  q.gen
@@ -8669,17 +8816,7 @@
       ==                                                ::
     ::
         {$mcmc *}                                       ::                  ;;
-      :+  %tsbn  [%ktts %v %$ 1]                        ::  =>  v=.
-      :+  %tsls  :+  %ktts  %a                          ::  =+  ^=  a
-                 [%tsbn [%limb %v] p.gen]               ::  =>(v {p.gen})
-      :+  %tsls  [%ktts %b [%tsbn [%limb %v] q.gen]]    ::  =+  b==>(v {q.gen})
-      :+  %tsls                                         ::  =+  c=(a b)
-        [%ktts %c [%cncl [%limb %a] [%limb %b] ~]]      ::
-      :+  %wtbn                                         ::  ?>(=(`*`c `*`b) c)
-        :+  %dtts                                       ::
-        [%kthp [%base %noun] [%limb %c]]                ::
-        [%kthp [%base %noun] [%limb %b]]                ::
-      [%limb %c]                                        ::
+      [%cnhp ~(factory ax fab p.gen) q.gen]
     ::
         {$tsbr *}
       [%tsls ~(example ax fab p.gen) q.gen]
@@ -10029,7 +10166,7 @@
     ~/  %mint
     |=  {gol/type gen/hoon}
     ^-  {p/type q/nock}
-    ~&  %pure-mint
+    ::~&  %pure-mint
     |^  ^-  {p/type q/nock}
     ?:  ?&(=(%void sut) !?=({$dbug *} gen))
       ?.  |(!vet ?=({$lost *} gen) ?=({$zpzp *} gen))
@@ -10407,10 +10544,12 @@
       |=  {mel/vair ram/vair}
       ^-  ?
       ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  |
-      ?:  ?=($lead mel)  &
-      ?:  ?=($gold mel)  meet
-      =+  vay=?-(mel $iron %rite, $zinc %read)
-      dext(sut (peek vay 2), ref (peek(sut ref) vay 2))
+      ?-  mel
+        %lead  &
+        %gold  meet
+        %iron  dext(sut (peek(sut ref) %rite 2), ref (peek %rite 2))
+        %zinc  dext(sut (peek %read 2), ref (peek(sut ref) %read 2))
+      ==
     ::
     ++  deep
       |=  $:  dom/(map term tome)
@@ -10456,7 +10595,7 @@
                    ==
         {$core *}  ?.  ?=({$core *} ref)  sint
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
-                   ?&  =(q.p.q.sut q.p.q.ref)
+                   ?&  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
                        meet(sut q.q.sut, ref p.sut)
                        dext(sut q.q.ref, ref p.ref)
                        (deem(sut q.q.sut, ref q.q.ref) r.p.q.sut r.p.q.ref)
@@ -11076,7 +11215,7 @@
         $type
       =+  tyr=|.((dial dole))
       =+  vol=tyr(sut lum)
-      =+  cis=((hard tank) .*(vol [%9 2 %0 1]))
+      =+  cis=;;(tank .*(vol [%9 2 %0 1]))
       :^  ~   %palm
         [~ ~ ~ ~]
       [[%leaf '#' 't' '/' ~] cis ~]
@@ -11088,7 +11227,7 @@
       |-  ^-  (list tank)
       ?~  lum  ~
       ?@  lum  !!
-      [[%leaf (trip ((hard @) -.lum))] $(lum +.lum)]
+      [[%leaf (trip ;;(@ -.lum))] $(lum +.lum)]
     ::
         $wool
       :-  ~
@@ -11572,8 +11711,7 @@
    ^-  state
    |-
    ?~  xs  st
-   =.  st  (f st i.xs)
-   $(xs t.xs, st st)
+   $(xs t.xs, st (f st i.xs))
 ::
 ::  This is basically a `mapM` over a list using the State monad.
 ::
@@ -13909,9 +14047,10 @@
         [%mcts *]  %ast-node-mcts
         [%mccl *]  (rune ';:' `'==' `[':(' spc ')'] (hoons [p q]:x))
         [%mcnt *]  (rune ';/' ~ ~ (hoons ~[p]:x))
+        [%mcgl *]  (rune ';<' ~ ~ (spec p.x) (hoons ~[q r s]:x))
         [%mcsg *]  (rune ';~' `'==' ~ (hoons [p q]:x))
-        [%mcmc *]  (rune ';;' ~ ~ (hoons ~[p q]:x))
-        [%tsbr *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
+        [%mcmc *]  (rune ';;' ~ ~ ~[(spec p.x) (hn q.x)])
+        [%tsbr *]  (rune '=|' ~ ~ ~[(spec p.x) (hn q.x)])
         [%tscl *]  (tiscol-to-plum p.x q.x)
         [%tsnt *]  (rune '=/' ~ ~ (skin p.x) (hn q.x) (hn r.x) ~)
         [%tsmc *]  (rune '=;' ~ ~ [(skin p.x) (hoons ~[q r]:x)])
@@ -14415,20 +14554,20 @@
       |=  [p=xpat n=*]
       ^-  plum
       ?-  p
-        %hoon      (hoon-to-plum 999 ((hard hoon) n))
-        %json      (json-to-plum ((hard json) n))
-        %manx      (manx-to-plum ((hard manx) n))
-        %nock      (nock-to-plum ((hard nock) n))
-        %path      (path-to-plum ((hard path) n))
-        %plum      ((hard plum) n)
-        %skin      (skin-to-plum ((hard skin) n))
-        %spec      (spec-to-plum ((hard spec) n))
-        %tape      (tape-to-plum ((hard tape) n))
-        %tour      (tour-to-plum ((hard tour) n))
+        %hoon      (hoon-to-plum 999 ;;(hoon n))
+        %json      (json-to-plum ;;(json n))
+        %manx      (manx-to-plum ;;(manx n))
+        %nock      (nock-to-plum ;;(nock n))
+        %path      (path-to-plum ;;(path n))
+        %plum      ;;(plum n)
+        %skin      (skin-to-plum ;;(skin n))
+        %spec      (spec-to-plum ;;(spec n))
+        %tape      (tape-to-plum ;;(tape n))
+        %tour      (tour-to-plum ;;(tour n))
         %type      =/  ttp  type-to-plum
-                   ((hard plum) .*(ttp(+< n) [9 2 0 1]))
+                   ;;(plum .*(ttp(+< n) [9 2 0 1]))
         %vase      =/  vtp  vase-to-plum
-                   =/  =plum  ((hard plum) .*(vtp(+< n) [9 2 0 1]))
+                   =/  =plum  ;;(plum .*(vtp(+< n) [9 2 0 1]))
                    (rune '!>' ~ ~ ~[plum])
         [%gate *]  (render-gate sample.p product.p)
         [%gear *]  '%gear'                              ::  XX TODO
@@ -15854,9 +15993,13 @@
         ::
           (stag %code (ifix [tec tec] (calf tec)))
         ::
-        ::  ++arm
+        ::  ++arm, +-arm, +$arm, +*arm, ++arm:core, ...
         ::
-          (stag %code ;~(plug lus lus low (star ;~(pose nud low hep))))
+          %+  stag  %code
+          ;~  plug
+            lus  ;~(pose lus hep bus tar)
+            low  (star ;~(pose nud low hep col))
+          ==
         ::
         ::  [arbitrary *content*](url)
         ::
@@ -16517,8 +16660,9 @@
               ^.  stet  ^.  limo
               :~  [':' (rune col %mccl expi)]
                   ['/' (rune net %mcnt expa)]
+                  ['<' (rune gal %mcgl exp1)]
                   ['~' (rune sig %mcsg expi)]
-                  [';' (rune mic %mcmc expb)]
+                  [';' (rune mic %mcmc exqc)]
               ==
             ==
           :-  '='
@@ -16603,21 +16747,19 @@
         %+  cook
           |=  [b=term c=(list term) e=spec]
           ^-  [term hoon]
-          :*  b
-              :+  %brtr
-                :-  %bscl
-                =-  ?>(?=(^ -) -)
-                %+  turn  c
-                |=  =term
-                ^-  spec
-                :+  %bsts
-                  term
-                [%bshp [%base %noun] [%base %noun]]
-              :-  %ktcl
-              :+  %made
-                [b c]
-              e
-          ==
+          :-  b
+          :+  %brtr
+            :-  %bscl
+            =-  ?>(?=(^ -) -)
+            ::  for each .term in .c, produce $=(term $~(* $-(* *)))
+            ::  ie {term}=mold
+            ::
+            %+  turn  c
+            |=  =term
+            ^-  spec
+            =/  tar  [%base %noun]
+            [%bsts term [%bssg tar [%bshp tar tar]]]
+          [%ktcl [%made [b c] e]]
         ;~  pfix  (jest '+*')
           ;~  plug
             ;~(pfix gap sym)
@@ -16787,6 +16929,7 @@
     ++  expx  |.(;~(gunk loaf wisp))                    ::  hoon and core tail
     ++  expy  |.(;~(gunk ropa loaf loaf))               ::  wings and two hoons
     ++  expz  |.(loaf(bug &))                           ::  hoon with tracing
+    ++  exp1  |.(;~(gunk loan loaf loaf loaf))          ::  spec and three hoons
     ::    spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one hoon
@@ -17055,7 +17198,7 @@
       ~&  %nest-failed
       =+  foo=(skol ref)
       =+  bar=(skol sut)
-      ~&  %nets-need
+      ~&  %nest-need
       ~>  %slog.[0 bar]
       ~&  %nest-have
       ~>  %slog.[0 foo]

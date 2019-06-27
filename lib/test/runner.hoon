@@ -55,8 +55,9 @@
   ^-  test-func
   ::
   |.
-  ^-  tang
-  ((hard tang) .*(test-core nock.run-arm))
+  ;;  tang
+  .*  test-core
+  nock.run-arm
 ::  +has-test-prefix: does the arm define a test we should run?
 ::
 ++  has-test-prefix

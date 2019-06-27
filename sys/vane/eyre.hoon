@@ -12,53 +12,61 @@
 |%                                                      ::  interfaces
 ++  move  {p/duct q/(wind note gift:able)}              ::  local move
 ++  note                                                ::  out request $->
-          $%  $:  $a                                    ::  to %ames
-          $%  {$want p/ship q/{path *}}                 ::
-          ==  ==                                        ::
-              $:  $b                                    ::  to  %behn
-          $%  {$wait p/@da}                             ::
-              {$rest p/@da}                             ::
-          ==  ==                                        ::
-              $:  $d                                    ::  to %dill
-          $%  {$flog p/{$crud p/@tas q/(list tank)}}    ::
-          ==  ==                                        ::
-              $:  $e                                    ::  to self
-          $%  {$thud ~}                                ::  proxied death
-              {$this p/? q/clip r/httq}                 ::  proxied request
-              {$meta vase}                              ::  type check
-          ==  ==                                        ::
-              $:  $f                                            ::
-          $%  [%build live=? schematic=schematic:ford]
-              [%kill ~]
-          ==  ==
-              $:  $g                                    ::  to %gall
-          $%  {$deal p/sock q/cush:gall}               ::  full transmission
-          ==  ==                                        ::
-              $:  %j                                    ::  to %jael
-          $%  [%turf ~]                                 ::  view domains
-          ==  ==  ==                                    ::
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %a                                            ::  to %ames
+          $>(%want task:able:ames)                      ::
+      ==                                                ::
+      $:  %b                                            ::  to  %behn
+          $>  $?  %rest                                 ::
+                  %wait                                 ::
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %d                                            ::  to %dill
+          $>(%flog task:able:dill)                      ::
+      ==                                                ::
+      $:  %e                                            ::  to self
+          $%  [%meta vase]                              ::  type check
+              $>  $?  %this                             ::  proxied request
+                      %thud                             ::  proxied death
+                  ==                                    ::
+              task:able                                 ::
+      ==  ==                                            ::
+      $:  %f                                            ::
+          $>  $?  %build                                ::
+                  %kill                                 ::
+              ==                                        ::
+          task:able:ford                                ::
+      ==                                                ::
+      $:  %g                                            ::  to %gall
+          $>(%deal task:able:gall)                      ::  full transmission
+      ==                                                ::
+      $:  %j                                            ::  to %jael
+          $>(%turf task:able:jael)                      ::  view domains
+  ==  ==                                                ::
 ++  sign                                                ::  in result $<-
-          $%  $:  $a                                    ::  by %ames
-          $%  {$woot p/ship q/coop}                     ::  acknowledgment
-          ==  ==                                        ::
-              $:  $b                                    ::  by %behn
-          $%  {$wake ~}                                ::  timer activate
-          ==  ==                                        ::
-              $:  $g                                    ::  by %gall
-          $%  {$unto p/cuft:gall}                      ::  within agent
-          ==  ==                                        ::
-              $:  $e                                    ::  by self
-          $%  {$thou p/httr}                            ::  response for proxy
-          ==  ==                                        ::
-              $:  $f
-          $%  [%made date=@da result=made-result:ford]  ::
-          ==  ==
-              $:  %j                                    ::  from %jael
-          $%  [%turf turf=(list turf)]                  ::  bind to domains
-          ==  ==                                        ::
-              $:  @tas                                  ::  by any
-          $%  {$crud p/@tas q/(list tank)}              ::
-          ==  ==  ==                                    ::
+  $~  [%b %wake ~]                                      ::
+  $%  $:  %a                                            ::  by %ames
+          $>(%woot gift:able:ames)                      ::  acknowledgment
+      ==                                                ::
+      $:  %b                                            ::  by %behn
+          $>(%wake gift:able:behn)                      ::  timer activate
+      ==                                                ::
+      $:  %g                                            ::  by %gall
+          $>(%unto gift:able:gall)                      ::  within agent
+      ==                                                ::
+      $:  %e                                            ::  by self
+          $>(%thou gift:able)                           ::  response for proxy
+      ==                                                ::
+      $:  %f                                            ::  by %ford
+          $>(%made gift:able:ford)                      ::  build result
+      ==                                                ::
+      $:  %j                                            ::  by %jael
+          $>(%turf gift:able:jael)                      ::  bind to domains
+      ==                                                ::
+      $:  @tas                                          ::  by any
+          $>(%crud vane-task)                           ::  XX strange
+  ==  ==                                                ::
 ++  ixor  @t                                            ::  oryx hash
 ++  whir  $@  ~                                        ::  wire subset
           $%  {$ac p/hole q/whir}                       ::  cookied
@@ -518,28 +526,52 @@
     ==
   ::
   ++  login-page
-    %+  titl  'Sign in - Urbit'
-    ;=  ;div.container.top
+    %+  titl  'Login - Landscape'
+    ;=
+    ;div.header-container.container
+      ;div.row
+        ;div.flex-col-x.header-breadcrumbs;
+      ==
+      ;div.row.align-center.header-mainrow
+        ;div.flex-col-2.justify-end;
+        ;h1.flex-col-x.header-title: Login
+      ==
+    ==
+    ;div.container
+      ;div.row
+        ;div.flex-col-2;
+        ;div.flex-col-x
+          ;div.row.mt-10
+            ;h3.col-md-12: Ship
+          ==
           ;div.row
-            ;div.col-md-4
-              ;h1.sign: Sign in
-            ==
-            ;div.col-md-8
-              ;p.ship
-                ;label.sig: ~
-                ;input#ship.mono(contenteditable "", placeholder "your-urbit");
-              ==
-              ;input#pass.mono(type "password", placeholder "passcode");
-              ;h2.advice: Type +{;code:("+code")} in your dojo for your passcode.
-              ;pre:code#err;
+            ;input#ship.col-md-10.h3.text-500.collection-title(placeholder "your-ship", contenteditable "");
+          ==
+          ;div.row.mt-5
+            ;h3.col-md-12
+              ; Type
+              ;span.text-mono.mr-1: +code
+              ; in your terminal and press enter
             ==
           ==
+          ;div.row
+            ;input#pass.col-md-10.h3.mono.text-500.collection-title(type "password", placeholder "passcode");
+          ==
+          ;div.row.mt-5
+            ;button#login.btn-primary.btn(disabled "true"): Login
+          ==
+          ;div.row.mt-5
+            ;pre#err;
+          ==
         ==
+      ==
+    ==
         ;script@"/~/at/~/auth.js";
         ;script:'''
                 $(function() {
                   $ship = $('#ship')
                   $pass = $('#pass')
+                  $login = $('#login')
                   $ship.on('keydown', function(e) {
                     if(e.keyCode === 13 || e.keyCode === 9) {
                       if(!urb.is_me($ship.val().toLowerCase()))
@@ -549,13 +581,22 @@
                       e.preventDefault()
                     }
                   })
-                  $ship.on('focus', function(e) {
-                    $pass.hide()
-                  })
-                  $pass.on('keydown', function(e) {
-                    if(e.keyCode === 13) {
-                      urb.submit($ship.val().toLowerCase(),$pass.val())
+                  $pass.on('keypress', function(e) {
+                    if($pass.val().length > -1) {
+                      $login.prop('disabled', false)
+                    } else {
+                      $login.prop('disabled', true)
                     }
+                  })
+                  $pass.on('paste', function(e) {
+                    if($pass.val().length > -1) {
+                      $login.prop('disabled', false)
+                    } else {
+                      $login.prop('disabled', true)
+                    }
+                  })
+                  $login.on('click', function(e) {
+                    urb.submit($ship.val().toLowerCase(),$pass.val())
                   })
                   if(window.ship) {
                     $ship.val(urb.ship)
@@ -605,8 +646,7 @@
         ;title:"{(trip a)}"
         ;script(type "text/javascript", src "//cdnjs.cloudflare.com/ajax/".
           "libs/jquery/2.1.1/jquery.min.js");
-        ;link(rel "stylesheet", href "/===/web/lib/css/fonts.css");
-        ;link(rel "stylesheet", href "/===/web/lib/css/bootstrap.css");
+        ;link(rel "stylesheet", href "/===/web/landscape/css/index.css");
       ==
       ;body:"*{b}"
     ==
@@ -996,6 +1036,11 @@
       ==
     ::
         $wake
+      ::  TODO: handle behn errors
+      ::
+      ?^  error.sih
+        +>.$(mow [[hen %slip %d %flog %crud %wake u.error.sih] mow])
+      ::
       ?>  ?=({?($of $ow) @ ~} tee)
       ?:  ?=($ow -.tee)
         abut:(ire-ix p.tee)
@@ -1026,7 +1071,7 @@
           (fail-turbo 404 message.build-result.result.sih)
         =/  cay=cage  (result-to-cage:ford build-result.result.sih)
         ?:  ?=($red-quri p.cay)
-          =+  url=(apex:en-purl ((hard quri) q.q.cay))
+          =+  url=(apex:en-purl ;;(quri q.q.cay))
           (give-thou 307 [location+(crip url)]~ ~)
           :: (give-html:abet 200 ~ (redir:xml url))
         ?.  ?=($mime p.cay)
@@ -1036,7 +1081,7 @@
           ::
           (exec-turbo-live tee-ses [%cast [p q]:bek %mime [%$ cay]])
         =+  cug=?~(ses ~ cug:(~(got by wup) u.ses))
-        =+  ((hard {mit/mite rez/octs}) q.q.cay)
+        =+  ;;({mit/mite rez/octs} q.q.cay)
         ::  TODO: This used to use dep for etag control.
         ::
         ::  =+  dep=(crip "W/{(en-json %s (scot %uv p.sih))}")
@@ -1052,7 +1097,7 @@
         ?:  =('~' p.tee)
           (eyre-them tee q.cay)
         =+  usr=(slav %ta p.tee)
-        =+  ((hard {pul/purl ^}) q.q.cay)
+        =+  ;;({pul/purl ^} q.q.cay)
         ?.  ?=(%& -.r.p.pul)
           ~&  [%auth-lost usr (head:en-purl p.pul)]
           (eyre-them tee q.cay)
@@ -1442,7 +1487,7 @@
         =*  pef  i.t.q.pok
         =+  but=t.t.q.pok                 ::  XX  =*
         ?+    pef  ~|(pfix-lost+`path`/~/[pef] !!)
-            $debug  ((hard perk) [%bugs but])
+            $debug  ;;(perk [%bugs but])
             $away  [%away ~]
             $ac
           ?~  but  ~|(no-host+`path`/~/[pef] !!)
@@ -1472,7 +1517,7 @@
             $on
           :-  %poll
           ?^  but  [(raid but %uv ~)]~
-          =+  dep=((hard (list {@ ~})) quy)
+          =+  dep=;;((list {@ ~}) quy)
           =<  ?~(. !! .)
           (turn dep |=({a/@tas ~} (slav %uv a)))
         ::
@@ -2291,7 +2336,7 @@
   =/  task=task:able
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
-    ((hard task:able) p.wrapped-task)
+    ;;(task:able p.wrapped-task)
   ::
   ^+  [*(list move) ..^$]
   ?:  ?=($wegh -.task)
