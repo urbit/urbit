@@ -7267,10 +7267,19 @@
         ::  ++  azimuth  0x308a.b6a6.024c.f198.b57e.008d.0ac9.ad02.1988.6579  ::  ropsten
         ::  ++  azimuth  0x863d.9c2e.5c4c.1335.96cf.ac29.d552.55f0.d0f8.6381  ::  local bridge
         ::
+        ++  linear-star-release
+          0x86cd.9cd0.992f.0423.1751.e376.1de4.5cec.ea5d.1801
+        ::
+        ++  conditional-star-release
+          0x8c24.1098.c3d3.498f.e126.1421.633f.d579.86d7.4aea
+        ::
         ::  launch: block number of azimuth deploy
         ::
-        ++  launch  6.784.800  ::  mainnet
-        ::  ++  launch  0  ::  local bridge
+        ++  launch  6.784.800
+        ::
+        ::  public: block number of azimuth becoming independent
+        ::
+        ++  public  7.033.765
         --
       ::
       ::  hashes of ship event signatures
