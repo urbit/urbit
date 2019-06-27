@@ -42,13 +42,6 @@
 ::  oauth2 implementation
 ::
 =>  |%
-    ::  +local-uri: XX
-    ::
-    ++  local-uri
-      |=  [our=ship =path]
-      ^-  @t
-      =/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
-      (crip (en-purl:html [hart [~ path] ~]))
     ::  +oauth2-config: as one would expect
     ::
     +$  oauth2-config
@@ -59,16 +52,25 @@
           redirect-path=path
           scopes=(list @t)
       ==
-    ::
     ::  +oauth2: library core
     ::
     ++  oauth2
-      |_  [our=@p now=@da config=oauth2-config]
+        |_  [our=@p now=@da config=oauth2-config code=@t =hart:eyre secrets=@t]
       ::
-      ++  code
+      ++  local-uri
+        |=  [our=ship =path]
         ^-  @t
-        %-  crip
-        +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
+        ::  XX can't scry in +mule
+        ::
+        :: =/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+        (crip (en-purl:html [hart [~ path] ~]))
+      ::
+      ::  XX can't scry in +mule
+      ::
+      :: ++  code
+      ::   ^-  @t
+      ::   %-  crip
+      ::   +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
       ::
       :: to initialize these values: |init-oauth2 /com/googleapis
       ::
@@ -82,7 +84,10 @@
         %-  need
         %+  de:crub:crypto  code
         %+  slav  %uw
-        .^(@ %cx :(weld /(scot %p our)/home/(scot %da now)/sec domain.config /atom))
+        ::  XX can't scry in +mule
+        ::
+        :: .^(@ %cx :(weld /(scot %p our)/home/(scot %da now)/sec domain.config /atom))
+        secrets
       ::
       ++  initial-uri  (local-uri our initial-path.config)
       ++  redirect-uri  (local-uri our redirect-path.config)
@@ -655,7 +660,7 @@
 ::
 =>  |%
     ++  oauth2-core
-      |=  =bowl:gall
+      |=  [=bowl:gall code=@t =hart:eyre secrets=@t]
       =/  =oauth2-config
         :*  auth-url='https://accounts.google.com/o/oauth2/v2/auth'
             exchange-url='https://www.googleapis.com/oauth2/v4/token'
@@ -665,7 +670,7 @@
             :~  'https://www.googleapis.com/auth/ndev.clouddns.readwrite'
                 'https://www.googleapis.com/auth/cloud-platform.read-only'
         ==  ==
-      ~(. oauth2 our.bowl now.bowl oauth2-config)
+      ~(. oauth2 our.bowl now.bowl oauth2-config code hart secrets)
     --
 ::
 ::  the app itself
@@ -707,7 +712,7 @@
             ?=(~ auth.pro.aut)
         ==
       ~&  %do-the-oauth-thing
-      ~&  initial-uri:(oauth2-core bowl)
+      ~&  initial-uri:(oauth2-core bowl scry.pro.aut)
       (pure:m state)
     ::
     (initialize-authority aut state)
@@ -749,6 +754,8 @@
     ;<  ~  bind:m  (poke-app:stdio [our dap]:bowl [%dns-bind ship target]:i.dep)
     loop(dep t.dep)
   ::
+  ::  XX need to %handle-http-cancel as well
+  ::
       %handle-http-request
     ::  always stash request bone for giving response
     ::
@@ -786,7 +793,7 @@
       (pure:m state)
     ::
         [%dns %oauth ~]
-      =/  link  (trip redirect-to-provider:(oauth2-core bowl))
+      =/  link  (trip redirect-to-provider:(oauth2-core bowl scry.pro.aut.nam))
       =/  bod=(unit octs)
         %-  some
         %-  as-octt:mimes:html
@@ -797,7 +804,7 @@
           ==
           ;body
             ;p  make sure that the oauth credential is configured
-                with a redirect uri of {(trip redirect-uri:(oauth2-core bowl))}
+                with a redirect uri of {(trip redirect-uri:(oauth2-core bowl scry.pro.aut.nam))}
             ==
             ;a(href link):  {link}
           ==
@@ -813,7 +820,7 @@
       =/  hed  [['Location' '/dns/oauth/success'] ~]
       ::
       ;<  ~                                       bind:m
-        (send-request:stdio (retrieve-access-token:(oauth2-core bowl) code))
+        (send-request:stdio (retrieve-access-token:(oauth2-core bowl scry.pro.aut.nam) code))
       ;<  rep=(unit client-response:http-client)  bind:m
         take-maybe-response:stdio
       ::  XX  retry

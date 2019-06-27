@@ -10,6 +10,18 @@
         ~
     ==
 ^-  (sole-result [%dns-authority authority])
+=*  our  p.bec
+::  XX must be evaluated outside tapp core due to +mule
+::
+=/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+::  XX terrible
+=/  domain  /com/googleapis
+=/  code
+  %-  crip
+  +:(scow %p .^(@p %j /(scot %p our)/code/(scot %da now)/(scot %p our)))
+=/  secrets
+  .^(@t %cx :(weld /(scot %p our)/home/(scot %da now)/sec domain /atom))
+::
 =-  ?~  arg  -
     (fun.q.q [%& dom.arg])
 %+  prompt
@@ -27,4 +39,4 @@
 %+  parse  urs:ab
 |=  zone=@ta
 %-  produce
-[%dns-authority [p.hot %gcloud project zone ~]]
+[%dns-authority [p.hot %gcloud project zone [code hart secrets] ~]]
