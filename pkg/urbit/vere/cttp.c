@@ -208,29 +208,23 @@ _cttp_hed_new(u3_atom nam, u3_atom val)
   return hed_u;
 }
 
-// XX vv similar to _http_heds_from_noun
-/* _cttp_heds_math(): create headers from +math
+// XX deduplicate with _http_heds_from_noun
+/* _cttp_heds_from_noun(): convert (list (pair @t @t)) to u3_hhed
 */
 static u3_hhed*
-_cttp_heds_math(u3_noun mah)
+_cttp_heds_from_noun(u3_noun hed)
 {
-  u3_noun hed = u3kdi_tap(mah);
   u3_noun deh = hed;
+  u3_noun i_hed;
 
   u3_hhed* hed_u = 0;
 
   while ( u3_nul != hed ) {
-    u3_noun nam = u3h(u3h(hed));
-    u3_noun lit = u3t(u3h(hed));
+    i_hed = u3h(hed);
+    u3_hhed* nex_u = _cttp_hed_new(u3h(i_hed), u3t(i_hed));
+    nex_u->nex_u = hed_u;
 
-    while ( u3_nul != lit ) {
-      u3_hhed* nex_u = _cttp_hed_new(nam, u3h(lit));
-      nex_u->nex_u = hed_u;
-
-      hed_u = nex_u;
-      lit = u3t(lit);
-    }
-
+    hed_u = nex_u;
     hed = u3t(hed);
   }
 
@@ -529,27 +523,42 @@ _cttp_creq_free(u3_creq* ceq_u)
 
   free(ceq_u->hot_c);
   free(ceq_u->por_c);
+  free(ceq_u->met_c);
   free(ceq_u->url_c);
   free(ceq_u->vec_u);
   free(ceq_u);
 }
 
-/* _cttp_creq_new(): create a request from a +hiss noun
-*/
+/* _cttp_creq_new(): create a u3_creq from an +http-request 
+ *
+ *   If we were rewriting all of this from scratch, this isn't how we'd do it.
+ *
+ *   We start with the (?? - JB)
+ */
 static u3_creq*
 _cttp_creq_new(c3_l num_l, u3_noun hes)
 {
   u3_creq* ceq_u = c3_calloc(sizeof(*ceq_u));
 
-  u3_noun pul = u3h(hes);      // +purl
+  u3_noun method, url, headers, body;
+  if (c3n == u3r_qual(hes, &method, &url, &headers, &body)) {
+    u3z(hes);
+    return 0;
+  }
+
+  // Parse the url out of the new style url passed to us.
+  u3_noun unit_pul = u3do("de-purl:html", u3k(url));
+  if (c3n == u3r_du(unit_pul)) {
+    u3l_log("cttp: url parsing failed\n");
+    u3z(hes);
+    return 0;
+  }
+  u3_noun pul = u3t(unit_pul);
+
   u3_noun hat = u3h(pul);      // +hart
   u3_noun sec = u3h(hat);
   u3_noun por = u3h(u3t(hat));
   u3_noun hot = u3t(u3t(hat)); // +host
-  u3_noun moh = u3t(hes);      // +moth
-  u3_noun met = u3h(moh);      // +meth
-  u3_noun mah = u3h(u3t(moh)); // +math
-  u3_noun bod = u3t(u3t(moh));
 
   ceq_u->sat_e = u3_csat_init;
   ceq_u->num_l = num_l;
@@ -567,17 +576,23 @@ _cttp_creq_new(c3_l num_l, u3_noun hes)
     ceq_u->por_c = _cttp_creq_port(ceq_u->por_s);
   }
 
-  ceq_u->met_m = met;
+  //  XX this should be checked against a whitelist
+  //
+  c3_assert( c3y == u3ud(method) );
+  ceq_u->met_c = u3r_string(method);
   ceq_u->url_c = _cttp_creq_url(u3k(pul));
-  ceq_u->hed_u = _cttp_heds_math(u3k(mah));
 
-  if ( u3_nul != bod ) {
-    ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(bod)));
+  ceq_u->hed_u = _cttp_heds_from_noun(u3k(headers));
+
+  if ( u3_nul != body ) {
+    ceq_u->bod_u = _cttp_bod_from_octs(u3k(u3t(body)));
   }
 
   _cttp_creq_link(ceq_u);
 
+  u3z(unit_pul);
   u3z(hes);
+
   return ceq_u;
 }
 
@@ -621,19 +636,15 @@ _cttp_creq_fire_heds(u3_creq* ceq_u, u3_hhed* hed_u)
 static void
 _cttp_creq_fire(u3_creq* ceq_u)
 {
-  switch ( ceq_u->met_m ) {
-    default: c3_assert(0);
-    case c3__get:   _cttp_creq_fire_str(ceq_u, "GET ");      break;
-    case c3__put:   _cttp_creq_fire_str(ceq_u, "PUT ");      break;
-    case c3__post:  _cttp_creq_fire_str(ceq_u, "POST ");     break;
-    case c3__head:  _cttp_creq_fire_str(ceq_u, "HEAD ");     break;
-    case c3__conn:  _cttp_creq_fire_str(ceq_u, "CONNECT ");  break;
-    case c3__delt:  _cttp_creq_fire_str(ceq_u, "DELETE ");   break;
-    case c3__opts:  _cttp_creq_fire_str(ceq_u, "OPTIONS ");  break;
-    case c3__trac:  _cttp_creq_fire_str(ceq_u, "TRACE ");    break;
+  {
+    c3_w  len_w = strlen(ceq_u->met_c) + 1 + strlen(ceq_u->url_c) + 12;
+    c3_c* lin_c = c3_malloc(len_w);
+
+    len_w = snprintf(lin_c, len_w, "%s %s HTTP/1.1\r\n",
+                                   ceq_u->met_c,
+                                   ceq_u->url_c);
+    _cttp_creq_fire_str(ceq_u, lin_c);
   }
-  _cttp_creq_fire_str(ceq_u, ceq_u->url_c);
-  _cttp_creq_fire_str(ceq_u, " HTTP/1.1\r\n");
 
   {
     c3_c* hot_c = ceq_u->hot_c ? ceq_u->hot_c : ceq_u->ipf_c;
@@ -687,18 +698,23 @@ _cttp_creq_quit(u3_creq* ceq_u)
   _cttp_creq_free(ceq_u);
 }
 
-/* _cttp_httr(): dispatch http response to %eyre
-*/
 static void
-_cttp_httr(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
+_cttp_http_client_receive(c3_l num_l, c3_w sas_w, u3_noun mes, u3_noun uct)
 {
-  u3_noun htr = u3nt(sas_w, mes, uct);
-  u3_noun pox = u3nt(u3_blip, c3__http, u3_nul);
+  // TODO: We want to eventually deal with partial responses, but I don't know
+  // how to get that working right now.
+  u3_noun pox = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
 
-  u3_pier_plan(pox, u3nt(c3__they, num_l, htr));
+  u3_pier_plan(pox,
+               u3nt(u3i_string("receive"),
+                    num_l,
+                    u3nq(u3i_string("start"),
+                         u3nc(sas_w, mes),
+                         uct,
+                         c3y)));
 }
 
-/* _cttp_creq_quit(): dispatch error response
+/* _cttp_creq_fail(): dispatch error response
 */
 static void
 _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
@@ -709,18 +725,18 @@ _cttp_creq_fail(u3_creq* ceq_u, const c3_c* err_c)
   u3l_log("http: fail (%d, %d): %s\r\n", ceq_u->num_l, cod_w, err_c);
 
   // XX include err_c as response body?
-  _cttp_httr(ceq_u->num_l, cod_w, u3_nul, u3_nul);
+  _cttp_http_client_receive(ceq_u->num_l, cod_w, u3_nul, u3_nul);
   _cttp_creq_free(ceq_u);
 }
 
-/* _cttp_creq_quit(): dispatch response
+/* _cttp_creq_respond(): dispatch response
 */
 static void
 _cttp_creq_respond(u3_creq* ceq_u)
 {
   u3_cres* res_u = ceq_u->res_u;
 
-  _cttp_httr(ceq_u->num_l, res_u->sas_w, res_u->hed,
+  _cttp_http_client_receive(ceq_u->num_l, res_u->sas_w, res_u->hed,
              ( !res_u->bod_u ) ? u3_nul :
              u3nc(u3_nul, _cttp_bods_to_octs(res_u->bod_u)));
 
@@ -748,6 +764,8 @@ _cttp_creq_on_body(h2o_http1client_t* cli_u, const c3_c* err_c)
     h2o_buffer_consume(&cli_u->sock->input, buf_u->size);
   }
 
+  // We're using the end of stream thing here to queue event to urbit. we'll
+  // need to separate this into our own timer for partial progress sends.
   if ( h2o_http1client_error_is_eos == err_c ) {
     _cttp_creq_respond(ceq_u);
   }
@@ -798,7 +816,7 @@ _cttp_creq_on_connect(h2o_http1client_t* cli_u, const c3_c* err_c,
     ceq_u->vec_u = _cttp_bods_to_vec(ceq_u->rub_u, &len_w);
     *vec_t = len_w;
     *vec_p = ceq_u->vec_u;
-    *hed_i = c3__head == ceq_u->met_m;
+    *hed_i = (0 == strcmp(ceq_u->met_c, "HEAD"));
   }
 
   return _cttp_creq_on_head;
@@ -945,26 +963,47 @@ _cttp_init_h2o()
   return ctx_u;
 };
 
-/* u3_cttp_ef_thus(): send %thus effect (outgoing request) to cttp.
+/* u3_cttp_ef_http_client(): send an %http-client (outgoing request) to cttp.
 */
 void
-u3_cttp_ef_thus(c3_l    num_l,
-                u3_noun cuq)
+u3_cttp_ef_http_client(u3_noun fav)
 {
   u3_creq* ceq_u;
 
-  if ( u3_nul == cuq ) {
-    ceq_u =_cttp_creq_find(num_l);
+  if ( c3y == u3rz_sing(u3i_string("request"), u3k(u3h(fav))) ) {
+    u3_noun p_fav, q_fav;
+    u3x_cell(u3t(fav), &p_fav, &q_fav);
+
+    ceq_u = _cttp_creq_new(u3r_word(0, p_fav), u3k(q_fav));
+
+    if ( ceq_u ) {
+      _cttp_creq_start(ceq_u);
+    }
+    else {
+      u3l_log("cttp: strange request (unparsable url)\n");
+    }
+  }
+  else if ( c3y == u3rz_sing(u3i_string("cancel-request"), u3k(u3h(fav))) ) {
+    ceq_u =_cttp_creq_find(u3r_word(0, u3t(fav)));
 
     if ( ceq_u ) {
       _cttp_creq_quit(ceq_u);
     }
   }
   else {
-    ceq_u = _cttp_creq_new(num_l, u3k(u3t(cuq)));
-    _cttp_creq_start(ceq_u);
+    u3l_log("cttp: strange request (unknown type)\n");
   }
-  u3z(cuq);
+
+  u3z(fav);
+}
+
+/* u3_cttp_ef_bake(): notify that we're live.
+*/
+void
+u3_cttp_ef_bake()
+{
+  u3_noun pax = u3nq(u3_blip, u3i_string("http-client"), u3k(u3A->sen), u3_nul);
+  u3_pier_plan(pax, u3nc(c3__born, u3_nul));
 }
 
 /* u3_cttp_io_init(): initialize http client I/O.
