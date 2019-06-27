@@ -18,8 +18,6 @@
 ::        ->  sigh-see
 ::        ->  apex
 ::
-/+  ceremony
-::
 |%
 ++  state
   $:  txs=(list @ux)
@@ -66,15 +64,7 @@
 ::    :send-txs [%send %/txs/txt 50]
 ::
 ++  poke-noun
-  |=  $%  $:  %gen
-              pax=path
-              net=?(%fake %main %ropsten)
-              nonce=@ud
-              gas-price=@ud
-              addr=@t
-          ==
-        ::
-          [%sign bout=path in=path key=path gasses=(list @ud)]
+  |=  $%  [%sign bout=path in=path key=path gasses=(list @ud)]
         ::
           [%read pax=path]
         ::
@@ -86,11 +76,6 @@
       ==
   ^-  [(list move) _this]
   ?-    +<-
-      %gen
-    =/  addr  (rash addr ;~(pfix (jest '0x') hex))
-    =/  tox  (sequence:ceremony now.bol net gas-price nonce addr)
-    [[(write-file-transactions pax tox) ~] this]
-  ::
       %sign
     :_  this
     %+  turn
@@ -105,8 +90,9 @@
       ?:  =(0 gas)  [(snag end bout) /txt]
       :_  /txt
       (cat 3 (snag end bout) (crip '-' ((d-co:co 1) gas)))
-    %-  sign:ceremony
-    :^  now.bol  in  key
+    ::
+    %-  sign
+    :+  in  key
     ::  modify tx gas if non-zero gwei specified
     ?:  =(0 gas)  ~
     `(mul gas 1.000.000.000)
@@ -140,13 +126,42 @@
       (slag (sub p.r first) (scag (sub +(q.r) first) tox))
     =.  txs
       %+  turn  tox
-      (cork trip tape-to-ux:ceremony)
+      (cork trip tape-to-ux)
     ~&  [(lent txs) 'loaded txs']
     ~&  [%clearing-see ~(wyt in see)]
     =.  see  ~
     =.  outstanding-send  |
     apex
   ==
+::
+++  get-file
+  |=  pax=path
+  ~|  pax
+  .^  (list cord)  %cx
+      (weld /(scot %p our.bol)/home/(scot %da now.bol) pax)
+  ==
+::
+::  sign pre-generated transactions
+++  sign
+  =,  rpc:ethereum
+  |=  [in=path key=path gas=(unit @ud)]
+  ^-  (list cord)
+  ?>  ?=([@ @ @ *] key)
+  =/  pkf  (get-file t.t.t.key)
+  ?>  ?=(^ pkf)
+  =/  pk  (rash i.pkf ;~(pfix (jest '0x') hex))
+  =/  txs  .^((list transaction) %cx in)
+  =/  enumerated
+    =/  n  1
+    |-  ^-  (list [@ud transaction])
+    ?~  txs
+      ~
+    [[n i.txs] $(n +(n), txs t.txs)]
+  %+  turn  enumerated
+  |=  [n=@ud tx=transaction]
+  ~?  =(0 (mod n 100))  [%signing n]
+  =?  gas-price.tx  ?=(^ gas)  u.gas
+  (crip '0' 'x' ((x-co:co 0) (sign-transaction:key:ethereum tx pk)))
 ::
 ++  read-nonces
   |=  tox=(list cord)
@@ -273,7 +288,7 @@
       !!
     ?>  ?=(%result -.r)
     :-  ~
-    %-  tape-to-ux:ceremony
+    %-  tape-to-ux
     (sa:dejs:format res.r)
   =.  outstanding-send  |
   ::  ~&  sigh-send-b=pretty-see
@@ -332,7 +347,7 @@
     ?<  ?=(%batch -.r)
     ?<  ?=(%fail -.r)
     ~|  [id.r res]
-    =+  txh=(tape-to-ux:ceremony (trip (rsh 3 4 id.r)))
+    =+  txh=(tape-to-ux (trip (rsh 3 4 id.r)))
     ::  ~&  see-tx=[(@p (mug txh)) `@ux`txh]
     =*  done  `txh
     =*  wait  ~
@@ -343,7 +358,7 @@
     ?~  res.r  wait
     ?>  ?=(%o -.res.r)
     =/  status
-      %-  tape-to-ux:ceremony
+      %-  tape-to-ux
       %-  sa:dejs:format
       (~(got by p.res.r) 'status')
     ?:  =(1 status)
@@ -360,4 +375,11 @@
   ?:  =(~ wen)  [~ this]
   =.  wen  `(add now.bol ~s30)
   [[ost.bol %wait /see (need wen)]~ this]
+::
+++  tape-to-ux
+  |=  t=tape
+  (scan t zero-ux)
+::
+++  zero-ux
+  ;~(pfix (jest '0x') hex)
 --
