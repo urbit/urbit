@@ -18,6 +18,17 @@ export class NewScreen extends Component {
     this.invChange = this.invChange.bind(this);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { props, state } = this;
+
+    if (prevProps.circles !== props.circles) {
+      let station = `~${window.ship}/${state.idName}`;
+      if (props.circles.includes(station)) {
+        props.history.push('/~chat/' + station);
+      }
+    }
+  }
+
   idChange(event) {
     this.setState({
       idName: event.target.value,
@@ -33,7 +44,7 @@ export class NewScreen extends Component {
     const { props, state } = this;
     if (!state.idName || !!state.showNameError) { return; }
 
-    let station = `~${props.api.authTokens.ship}/${state.idName}`;
+    let station = `~${window.ship}/${state.idName}`;
     let actions = [
       {
         create: {
@@ -79,7 +90,6 @@ export class NewScreen extends Component {
     }
 
     props.api.chat(actions);
-    props.history.push('/~chat/' + station);
   }
 
   render() {
