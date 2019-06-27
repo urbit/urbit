@@ -36,6 +36,7 @@ export class ChatScreen extends Component {
 
   componentDidMount() {
     this.updateNumPeople();
+    this.updateReadNumber();
   }
 
   componentWillUnMount() {

@@ -13,10 +13,45 @@ export class Sidebar extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      invites: []
+    };
+
     this.setInvitesToReadInterval = setInterval(
       this.setInvitesToRead.bind(this),
       1000
     );
+  }
+
+  componentDidMount() {
+    this.filterInvites();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps !== this.props) {
+      this.filterInvites();
+    }
+  }
+
+  filterInvites() {
+    const { props } = this;
+    let invites = [];
+
+    let filterInvites = {};
+    props.invites.forEach((msg) => {
+      let uid = _.get(msg, 'gam.sep.ire.top', false);
+      if (!uid) {
+        invites.push(msg.gam);
+      } else {
+        filterInvites[uid] = true;
+      }
+    });
+
+    invites = invites.filter((msg) => {
+      return !(msg.uid in filterInvites);
+    })
+
+    this.setState({ invites });
   }
 
   componentWillUnmount() {
@@ -27,14 +62,21 @@ export class Sidebar extends Component {
   }
 
   setInvitesToRead() {
-    const { props } = this;
+    const { props, state } = this;
+
     if (
       props.inviteConfig &&
       'red' in props.inviteConfig &&
-      props.invites.length > 0 &&
-      props.inviteConfig.red < (props.invites[props.invites.length - 1].num + 1)
+      props.invites.length > 0
     ) {
-      props.api.read('i', props.invites[props.invites.length - 1].num + 1);
+      let invNum = (props.invites[props.invites.length - 1].num + 1);
+
+      if (
+        props.inviteConfig.red < invNum &&
+        (invNum - props.inviteConfig.red) > state.invites.length
+      ) {
+        props.api.read('i', invNum - state.invites.length);
+      }
     }
   }
 
@@ -43,7 +85,7 @@ export class Sidebar extends Component {
   }
 
   render() {
-    const { props } = this;
+    const { props, state } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
 
     let sidebarItems = props.circles
@@ -93,21 +135,7 @@ export class Sidebar extends Component {
         );
       });
 
-    let invites = [];
-
-    let filterInvites = {};
-    props.invites.forEach((msg) => {
-      let uid = _.get(msg, 'gam.sep.ire.top', false);
-      if (!uid) {
-        invites.push(msg.gam);
-      } else {
-        filterInvites[uid] = true;
-      }
-    });
-
-    let inviteItems = invites.filter((msg) => {
-      return !(msg.uid in filterInvites);
-    }).map((inv) => {
+    let inviteItems = state.invites.map((inv) => {
       return (
         <SidebarInvite
           key={inv.uid}

@@ -329,7 +329,10 @@
     ?>  ?=(%gram -.sto)
     =*  messages  messages.str.sta
     =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-    =/  nes/(list envelope:hall)  (~(got by messages) circle)
+    =/  unes/(unit (list envelope:hall))  (~(get by messages) circle)
+    ?~  unes
+      [~ this]
+    =/  nes  u.unes
     =/  str  %=  str.sta
       messages  (~(put by messages) circle (snoc nes nev.sto))
     ==
