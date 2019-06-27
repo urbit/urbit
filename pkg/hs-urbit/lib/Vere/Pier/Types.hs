@@ -22,16 +22,13 @@ data Event
     | CttpBorn
   deriving (Eq, Ord, Show)
 
-deriveNoun ''Event
-
 data PutDel = Put | Del
   deriving (Eq, Ord, Show)
-
-deriveNoun ''PutDel
 
 data EffBs
     = EBAsdf Word
     | EBLolr Word Word
+  deriving (Eq, Ord, Show)
 
 data RecEx = RE Word Word
   deriving (Eq, Ord, Show)
@@ -39,6 +36,9 @@ data RecEx = RE Word Word
 data NewtEx = NE Word
   deriving (Eq, Ord, Show)
 
+
+deriveNoun ''Event
+deriveNoun ''PutDel
 deriveNoun ''EffBs
 deriveNoun ''RecEx
 deriveNoun ''NewtEx

@@ -89,10 +89,10 @@ deriveFromNoun tyName = do
       |]
 
 enumFromAtom :: [Name] -> Exp
-enumFromAtom nms = LamE [VarP n] body
+enumFromAtom nms = LamE [VarP x] body
   where
-    (n, c)    = (mkName "n", mkName "c")
-    getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE n)
+    (x, c)    = (mkName "x", mkName "c")
+    getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE x)
     examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
     matches   = mkMatch <$> nms
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
@@ -116,8 +116,35 @@ tupFromNoun (n, tys) = LamE [VarP x] body
     convert = NoBindS $ AppE (VarE 'pure) $ applyE (ConE n) (VarE <$> vars)
     getTup  = BindS (TupP $ VarP <$> vars) $ AppE (VarE 'parseNoun) (VarE x)
 
+{-
+unexpectedTag :: [Name] -> String -> String
+unexpectedTag expected got =
+    mconcat ["Expected one of: ", possible, " but got " <> showAtom
+  where
+    possible  = intercalate " " (('%':) . tagString <$> expected)
+-}
+
 sumFromNoun :: [ConInfo] -> Exp
-sumFromNoun _ = VarE 'undefined
+sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
+  where
+    (x, h, t, c) = (mkName "x", mkName "h", mkName "t", mkName "c")
+
+    getHead = BindS (TupP [VarP h, VarP t])
+            $ AppE (VarE 'parseNoun) (VarE x)
+
+    getTag = BindS (ConP 'Cord [VarP c])
+           $ AppE (VarE 'parseNoun) (VarE h)
+
+    examine = NoBindS
+            $ CaseE (VarE c) (matches ++ [fallback])
+
+    matches = mkMatch <$> cons
+    mkMatch = \(n, tys) -> let body = AppE (tupFromNoun (n, tys)) (VarE t)
+                           in Match (LitP $ tagLit n) (NormalB body) []
+
+    fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
+    matchFail = LitE $ StringL ("Expected one of: " <> possible)
+    possible  = intercalate " " (('%':) . tagString . fst <$> cons)
 
 --------------------------------------------------------------------------------
 
