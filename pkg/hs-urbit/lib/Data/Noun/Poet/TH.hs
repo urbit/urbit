@@ -7,9 +7,10 @@ module Data.Noun.Poet.TH where
 import ClassyPrelude hiding (fromList)
 import Control.Lens
 import Data.Noun.Poet hiding (hsToHoon)
-
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
+
+import RIO (decodeUtf8Lenient)
 
 import qualified Data.Char as C
 
@@ -116,13 +117,12 @@ tupFromNoun (n, tys) = LamE [VarP x] body
     convert = NoBindS $ AppE (VarE 'pure) $ applyE (ConE n) (VarE <$> vars)
     getTup  = BindS (TupP $ VarP <$> vars) $ AppE (VarE 'parseNoun) (VarE x)
 
-{-
-unexpectedTag :: [Name] -> String -> String
+unexpectedTag :: [Name] -> Exp -> Exp
 unexpectedTag expected got =
-    mconcat ["Expected one of: ", possible, " but got " <> showAtom
+    applyE (VarE 'mappend) [LitE (StringL prefix), got]
   where
     possible  = intercalate " " (('%':) . tagString <$> expected)
--}
+    prefix    = "Expected one of: " <> possible <> " but got %"
 
 sumFromNoun :: [ConInfo] -> Exp
 sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
@@ -143,8 +143,10 @@ sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
                            in Match (LitP $ tagLit n) (NormalB body) []
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
-    matchFail = LitE $ StringL ("Expected one of: " <> possible)
-    possible  = intercalate " " (('%':) . tagString . fst <$> cons)
+    matchFail = unexpectedTag (fst <$> cons)
+              $ AppE (VarE 'unpack)
+              $ AppE (VarE 'decodeUtf8Lenient)
+              $ VarE c
 
 --------------------------------------------------------------------------------
 

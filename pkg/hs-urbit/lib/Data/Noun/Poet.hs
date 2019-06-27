@@ -43,8 +43,17 @@ newtype Tape = Tape ByteString
   deriving newtype (Eq, Ord, Show, IsString)
 
 newtype Cord = Cord { unCord :: ByteString }
-  deriving newtype (Eq, Ord, Show, IsString)
+  deriving newtype (Eq, Ord, Show, IsString, NFData)
 
+-- Chars -----------------------------------------------------------------------
+
+instance ToNoun Char where
+  toNoun = toNoun . (fromIntegral :: Int -> Word32) . C.ord
+
+instance FromNoun Char where
+  parseNoun n = do
+    w :: Word32 <- parseNoun n
+    pure $ C.chr $ fromIntegral w
 
 -- Pretty Printing -------------------------------------------------------------
 
@@ -282,6 +291,9 @@ consName = gConsName . GHC.from
 int2Word :: Int -> Word
 int2Word = fromIntegral
 
+word2Int :: Word -> Int
+word2Int = fromIntegral
+
 instance ToNoun ByteString where
   toNoun bs = toNoun (int2Word (length bs), bs ^. from (pill . pillBS))
 
@@ -293,6 +305,14 @@ instance FromNoun Text where -- XX TODO
     Cord c <- parseNoun n
     pure (decodeUtf8Lenient c)
 
+instance FromNoun ByteString where
+  parseNoun x = do
+    (word2Int -> len, atom) <- parseNoun x
+    let bs = atom ^. pill . pillBS
+    pure $ case compare (length bs) len of
+      EQ -> bs
+      LT -> bs <> replicate (len - length bs) 0
+      GT -> take len bs
 
 --------------------------------------------------------------------------------
 
@@ -460,7 +480,10 @@ instance ToNoun Cord where
 instance FromNoun Cord where
   parseNoun n = do
     atom <- parseNoun n
-    pure $ Cord (atom ^. pill . pillBS)
+    traceM "Parsing cord"
+    let res@(Cord _) = force $ Cord (atom ^. pill . pillBS)
+    traceM "Done parsing cord"
+    pure res
 
 
 -- Tank and Plum Conversion ----------------------------------------------------
@@ -491,6 +514,13 @@ instance FromNoun Tank where
 
 
 -- Pair Conversion -------------------------------------------------------------
+
+instance ToNoun () where
+  toNoun () = Atom 0
+
+instance FromNoun () where
+  parseNoun (Atom 0) = pure ()
+  parseNoun x        = fail ("expecting `~`, but got " <> showNoun x)
 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
   toNoun (x, y) = Cell (toNoun x) (toNoun y)

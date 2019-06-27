@@ -158,9 +158,12 @@ bytesBS = iso to from
   where
     to :: VP.Vector Word8 -> ByteString
     to (VP.Vector off sz buf) =
-        BS.copy $ BS.drop off $ unsafePerformIO $ BU.unsafePackAddressLen sz ptr
-      where
-        Prim.Addr ptr = Prim.byteArrayContents buf
+        -- TODO This still has a (small) risk of segfaulting. is still Manually copy the data onto the C heap, setup the
+        -- finalizers, and make a bytestring from that.
+        unsafePerformIO $ do
+          Prim.Addr ptr <- evaluate $ Prim.byteArrayContents buf
+          bs <- BU.unsafePackAddressLen sz ptr
+          evaluate $ force $ BS.copy $ BS.drop off bs
 
     from :: ByteString -> VP.Vector Word8
     from bs = VP.generate (length bs) (BS.index bs)

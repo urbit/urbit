@@ -6,6 +6,7 @@ import ClassyPrelude
 import Vere.Http
 import Data.Noun.Atom
 import Data.Noun.Poet
+import Data.Noun.Poet.TH
 import Control.Lens
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
@@ -24,13 +25,13 @@ type RequestId = Word
 data Foo = A | B | C
 
 data Eff = Eff ServerId ConnectionId RequestId ServerRequest
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
 
 -- | An http server effect is configuration, or it sends an outbound response
 data ServerRequest
   = SetConfig Config
   | Response Event
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
 
 data Config = Config
     { secure   :: Maybe (Key, Cert)
@@ -38,17 +39,21 @@ data Config = Config
     , log      :: Bool
     , redirect :: Bool
     }
-  deriving (Eq, Ord, Show, Generic, ToNoun)
-
+  deriving (Eq, Ord, Show)
 
 -- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
 -- from Wain
 type Key = PEM
 type Cert = PEM
-data Wain = Wain [Text]
+newtype Wain = Wain [Text]
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype PEM = PEM Cord
-  deriving newtype (Eq, Ord, Show, ToNoun)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+deriveNoun ''ServerRequest
+deriveNoun ''Config
+deriveNoun ''Eff
 
 data ClientResponse
   = Progress ResponseHeader Int (Maybe Int) (Maybe ByteString)

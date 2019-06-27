@@ -8,13 +8,14 @@ module Vere.Http.Client where
 import ClassyPrelude
 import Vere.Http
 import Data.Noun.Poet
+import Data.Noun.Poet.TH
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types as HT
 import qualified Network.HTTP.Client as H
 
 
---------------------------------------------------------------------------------
+-- Types -----------------------------------------------------------------------
 
 type ReqId = Word
 
@@ -23,13 +24,19 @@ data Ev = Receive ReqId Event -- [%receive @ todo]
 data Eff
     = NewReq ReqId Request -- [%request @ todo]
     | CancelReq ReqId      -- [%cancel-request @]
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
 
 data State = State
   { sManager :: H.Manager
   , sLive    :: TVar (Map ReqId (Async ()))
   , sChan    :: MVar Ev
   }
+
+
+-- Instances -------------------------------------------------------------------
+
+deriveNoun ''Eff
+
 
 --------------------------------------------------------------------------------
 

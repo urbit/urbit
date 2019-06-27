@@ -11,8 +11,8 @@ import Urbit.Time
 
 import RIO (decodeUtf8Lenient)
 
-import qualified Vere.Http.Server as Server
 import qualified Vere.Http.Client as Client
+import qualified Vere.Http.Server as Server
 
 --------------------------------------------------------------------------------
 
@@ -36,13 +36,6 @@ data RecEx = RE Word Word
 data NewtEx = NE Word
   deriving (Eq, Ord, Show)
 
-
-deriveNoun ''Event
-deriveNoun ''PutDel
-deriveNoun ''EffBs
-deriveNoun ''RecEx
-deriveNoun ''NewtEx
-
 data Eff
     = HttpServer Server.Eff
     | HttpClient Client.Eff
@@ -54,31 +47,36 @@ data Eff
     | Ames Void
     | Init Void
     | Term Void
+    | Blit [Blit]
     | Hill [Term]
     | Turf (Maybe (PutDel, [Text])) -- TODO Unsure
-  deriving (Eq, Ord, Show, Generic, ToNoun)
+  deriving (Eq, Ord, Show)
 
-instance FromNoun Eff where
-  parseNoun = \case
-    Atom _ ->
-      fail "Eff: Expecting cell, but got an atom"
-    Cell h t ->
-      parseNoun h >>= \case
-        Cord "hill" -> do
-          paths <- parseNoun t
-          pure (Hill paths)
-        Cord "turf" -> do
-          arg <- parseNoun t
-          pure (Turf arg)
-        Cord nm -> do
-          fail ("Eff: unknown effect " <> unpack (decodeUtf8Lenient nm))
+newtype Path = Path [Knot]
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+data Blit
+    = Bel
+    | Clr
+    | Hop Word64
+    | Lin [Char]
+    | Mor
+    | Sag Path Noun
+    | Sav Path Atom
+    | Url Text
+  deriving (Eq, Ord, Show)
+
+deriveNoun ''Blit
+deriveNoun ''Eff
+deriveNoun ''Event
+deriveNoun ''PutDel
+deriveNoun ''EffBs
+deriveNoun ''RecEx
+deriveNoun ''NewtEx
 
 data Varience = Gold | Iron | Lead
 
 type Perform = Eff -> IO ()
-
-newtype Path = Path [Knot]
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Ovum = Ovum Path Event
   deriving (Eq, Ord, Show, Generic, ToNoun)

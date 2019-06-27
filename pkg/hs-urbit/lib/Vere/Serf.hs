@@ -89,23 +89,18 @@ type Play = Maybe (EventId, Mug, ShipId)
 data Plea
     = Play Play
     | Work EventId Mug Job
-    | Done EventId Mug [Either Text (Path, Eff)]
+    | Done EventId Mug [(Path, Eff)]
     | Stdr EventId Cord
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
-
-fromRight (Right x) = x
 
 instance ToNoun Plea where
   toNoun = \case
     Play p     -> toNoun (Cord "play", p)
     Work i m j -> toNoun (Cord "work", i, m, j)
-    Done i m o -> toNoun (Cord "done", i, m, fromRight <$> o)
+    Done i m o -> toNoun (Cord "done", i, m, o)
     Stdr i msg -> toNoun (Cord "stdr", i, msg)
     Slog i p t -> toNoun (Cord "slog", i, p, t)
-
-instance FromNoun (Either Text (Path, Eff)) where
-  parseNoun = pure . fromNounErr
 
 instance FromNoun Plea where
   parseNoun n =
@@ -125,7 +120,7 @@ type NextEventId = Word64
 type SerfState = (EventId, Mug)
 
 type ReplacementEv = (EventId, Mug, Job)
-type WorkResult  = (EventId, Mug, [Either Text (Path, Eff)])
+type WorkResult  = (EventId, Mug, [(Path, Eff)])
 type SerfResp    = (Either ReplacementEv WorkResult)
 
 -- Exceptions ------------------------------------------------------------------
