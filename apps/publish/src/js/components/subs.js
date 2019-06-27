@@ -3,16 +3,39 @@ import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { HeaderMenu } from '/components/lib/header-menu';
+import moment from 'moment';
 
 const HM = withRouter(HeaderMenu);
 
 export class Subs extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.accept = this.accept.bind(this);
     this.reject = this.reject.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
+
+    moment.updateLocale('en', {
+      relativeTime: {
+        past: function(input) {
+          return input === 'just now'
+            ? input
+            : input + ' ago'
+        },
+        s : 'just now',
+        future : 'in %s',
+        m  : '1m',
+        mm : '%dm',
+        h  : '1h',
+        hh : '%dh',
+        d  : '1d',
+        dd : '%dd',
+        M  : '1 month',
+        MM : '%d months',
+        y  : '1 year',
+        yy : '%d years',
+      }
+    });
   }
 
   buildBlogData() {
@@ -34,7 +57,7 @@ export class Subs extends Component {
           url: `/~publish/${blog.info.owner}/${blogId}`,
           title: blog.info.title,
           host: blog.info.owner,
-          lastUpdated: "idk",
+          lastUpdated: moment(blog["last-update"]).fromNow(),
           blogId: blogId,
         }
       });
