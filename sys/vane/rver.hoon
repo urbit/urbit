@@ -1997,13 +1997,13 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
+      ?>  ?=([%b %wake *] sign)
+      ?^  error.sign
+        [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
       =/  on-channel-timeout
         on-channel-timeout:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
         (on-channel-timeout i.t.t.wire)
-      ?>  ?=([%b %wake *] sign)
-      =?  moves  ?=(^ error.sign)
-        [[duct %slip %d %flog %crud %wake u.error.sign] moves]
       [moves http-server-gate]
     ::
         ?(%poke %subscription)
