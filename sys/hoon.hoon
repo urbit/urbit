@@ -555,6 +555,17 @@
     |@  ++  $  ?:(*? ~ [i=(snag 0 a) t=$])
     --
   a
+::  +join: construct a new list, placing .sep between every pair in .lit
+::
+++  join
+  |*  [sep=* lit=(list)]
+  =.  sep  `_?>(?=(^ lit) i.lit)`sep
+  ?~  lit  ~
+  =|  out=(list _?>(?=(^ lit) i.lit))
+  |-  ^+  out
+  ?~  t.lit
+    (flop [i.lit out])
+  $(out [sep i.lit out], lit t.lit)
 ::
 ::  +bake: convert wet gate to dry gate by specifying argument mold
 ::

@@ -62,21 +62,27 @@
 ::
 ::    ----
 ::
-::  HTTP requests
+::  Outgoing HTTP requests
+::
+++  send-request
+  |=  =request:http
+  =/  m  (async ,~)
+  ^-  form:m
+  =/  =card
+    [%request / request *outbound-config:http-client]
+  ;<  ~  bind:m  (send-raw-card card)
+  (set-raw-contract & %request ~)
 ::
 ++  send-hiss
   |=  =hiss:eyre
   =/  m  (async ,~)
   ^-  form:m
-  =/  =card
-    [%request / (hiss-to-request:html hiss) *outbound-config:http-client]
-  ;<  ~  bind:m  (send-raw-card card)
-  (set-raw-contract & %request ~)
+  (send-request (hiss-to-request:html hiss))
 ::
 ::  Wait until we get an HTTP response or cancelation
 ::
-++  take-sigh-raw
-  =/  m  (async (unit httr:eyre))
+++  take-response-raw
+  =/  m  (async (unit client-response:http-client))
   ^-  form:m
   |=  =async-input
   :^  ~  ~  ~
@@ -97,18 +103,27 @@
     [%done ~]
   ::
       %finished
-    [%done (some (to-httr:http-client +.response.sign))]
+    [%done (some response.sign)]
   ==
+::  Wait until we get an HTTP response or cancelation and unset contract
+::
+++  take-maybe-response
+  =/  m  (async (unit client-response:http-client))
+  ^-  form:m
+  ;<  rep=(unit client-response:http-client)  bind:m
+    take-response-raw
+  ;<  ~  bind:m  (set-raw-contract | %request ~)
+  (pure:m rep)
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
-++  take-sigh
-  =/  m  (async ,httr:eyre)
+++  take-response
+  =/  m  (async (unit client-response:http-client))
   ^-  form:m
-  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
-  ;<  ~                     bind:m  (set-raw-contract | %request ~)
+  ;<  rep=(unit client-response:http-client)  bind:m
+    take-maybe-response
   ?^  rep
-    (pure:m u.rep)
+    (pure:m rep)
   |=  =async-input
   [~ ~ ~ %fail %http-canceled ~]
 ::
@@ -117,9 +132,26 @@
 ++  take-maybe-sigh
   =/  m  (async (unit httr:eyre))
   ^-  form:m
-  ;<  rep=(unit httr:eyre)  bind:m  take-sigh-raw
-  ;<  ~                     bind:m  (set-raw-contract | %request ~)
-  (pure:m rep)
+  ;<  rep=(unit client-response:http-client)  bind:m
+    take-maybe-response
+  ?~  rep
+    (pure:m ~)
+  ::  XX s/b impossible
+  ::
+  ?.  ?=(%finished -.u.rep)
+    (pure:m ~)
+  (pure:m (some (to-httr:http-client +.u.rep)))
+::
+::  Wait until we get an HTTP response and unset contract
+::
+++  take-sigh
+  =/  m  (async ,httr:eyre)
+  ^-  form:m
+  ;<  rep=(unit httr:eyre)  bind:m  take-maybe-sigh
+  ?^  rep
+    (pure:m u.rep)
+  |=  =async-input
+  [~ ~ ~ %fail %http-canceled ~]
 ::
 ::  Extract body from raw httr
 ::
@@ -160,6 +192,35 @@
   ;<  =httr:eyre  bind:m  take-sigh
   ;<  =cord       bind:m  (extract-httr-body httr)
   (parse-json cord)
+::
+::    ----
+::
+::  Incoming HTTP requests
+::
+++  bind-route-raw
+  |=  [=binding:http-server =term]
+  =/  m  (async ,~)
+  ^-  form:m
+  (send-raw-card [%connect / binding term])
+::
+++  take-bound
+  =/  m  (async ?)
+  ^-  form:m
+  |=  =async-input
+  :^  ~  ~  ~
+  ?~  in.async-input
+    [%wait ~]
+  =*  sign  sign.u.in.async-input
+  ?.  ?=(%bound -.sign)
+    [%fail %expected-bound >got=-.sign< ~]
+  [%done success.sign]
+::
+++  bind-route
+  |=  [=binding:http-server =term]
+  =/  m  (async ?)
+  ^-  form:m
+  ;<  ~  bind:m  (bind-route-raw binding term)
+  take-bound
 ::
 ::    ----
 ::
@@ -320,4 +381,14 @@
     (pure:m ~)
   ;<  ~  bind:m  (send-effect-on-bone i.bones %diff out-peer-data)
   loop(bones t.bones)
+::
+::    ----
+::
+::  Handle domains
+::
+++  install-domain
+  |=  =turf
+  =/  m  (async ,~)
+  ^-  form:m
+  (send-effect %rule / %turf %put turf)
 --

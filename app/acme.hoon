@@ -12,6 +12,14 @@
 ::
 ++  de-base64url
   ~(de base64 | &)
+::  +join-turf
+::
+++  join-turf
+  |=  hot=(list turf)
+  ^-  cord
+  %+  rap  3
+  %-  (bake join ,[cord wain])
+  [', ' (turn hot en-turf:html)]
 ::  |octn: encode/decode unsigned atoms as big-endian octet stream
 ::
 ++  octn
@@ -23,7 +31,7 @@
 ::
 ++  body
   |%
-  +$  acct  [id=@t wen=@t sas=@t]
+  +$  acct  [wen=@t sas=@t]
   ::
   +$  order
     $:  exp=@t
@@ -74,7 +82,7 @@
     ^-  $-(json acct:body)
     ::  ignoring key, contact, initialIp
     ::
-    (ot 'id'^no 'createdAt'^json-date 'status'^so ~)
+    (ot 'createdAt'^json-date 'status'^so ~)
   ::  +order: parse certificate order
   ::
   ++  order
@@ -457,8 +465,8 @@
           ?~  rod
             ::  XX shouldn't happen
             ::
-            (join '.' /network/arvo/(crip +:(scow %p our.bow)))
-          (join ', ' (turn ~(tap in dom.u.rod) |=(a=turf (join '.' a))))
+            (en-turf:html /network/arvo/(crip +:(scow %p our.bow)))
+          (join-turf ~(tap in dom.u.rod))
           '. retrying in ~d7.'
       ==
     (emit (notify msg ~))
@@ -474,7 +482,7 @@
           ' too many certificates issued for '
           ::  XX get from detail
           ::
-          (join '.' /network/arvo)
+          (en-turf:html /network/arvo)
           '. retrying in '
           (scot %dr lul)  '.'
       ==
@@ -588,7 +596,7 @@
         :-  %a
         %+  turn
           ~(tap in ~(key by `(map turf *)`u.next-order))
-        |=(a=turf [%o (my type+s+'dns' value+s+(join '.' a) ~)])
+        |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -762,7 +770,7 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to reach '  (scot %p our.bow)
-            ' via http at '  (join '.' turf.i.item)  ':80'
+            ' via http at '  (en-turf:html turf.i.item)  ':80'
         ==
       (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
     ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
@@ -957,7 +965,7 @@
     =>  =/  msg=cord
           %+  rap  3
           :~  'received https certificate for '
-              (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+              (join-turf ~(tap in dom.u.liv))
           ==
         (emit (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
@@ -1029,7 +1037,7 @@
       =/  msg=cord
         %+  rap  3
         :~  'unable to retrieve self-hosted domain validation token '
-            'via '  (join '.' dom.aut)  '. '
+            'via '  (en-turf:html dom.aut)  '. '
             'please confirm your urbit has network connectivity.'
         ==
       (emit (notify msg [(sell !>(rep)) ~]))
@@ -1260,7 +1268,7 @@
     ~&  [%cert `wain`cer.u.liv]
     ~&  [%expires exp.u.liv]
     ~&  :-  %domains
-        (join ', ' (turn ~(tap in dom.u.liv) |=(a=turf (join '.' a))))
+        (join-turf ~(tap in dom.u.liv))
     this
   ::
       %dbug-history
@@ -1382,7 +1390,7 @@
     =/  msg=cord
       %+  rap  3
       :~  'requesting an https certificate for '
-          (join ', ' (turn ~(tap in dom) |=(a=turf (join '.' a))))
+          (join-turf ~(tap in dom))
       ==
     (emit (notify msg ~))
   ::  if registered, create order
