@@ -270,11 +270,21 @@
           |=  [shp=@p stat=status:hall]
           shp
         (~(put by acc) cir newset)
-      :-  ~
-      %=  this
-        messages.str.sta  (~(put by messages) circle nes.piz)
-        peers.str.sta  (~(uni by peers.str.sta) (~(put by peers) circle localpeers))
-      ==
+      ~&  nes.piz
+      =/  str
+        %=  str.sta
+          messages  (~(put by messages) circle nes.piz)
+          peers  (~(uni by peers.str.sta) (~(put by peers) circle localpeers))
+        ==
+      =/  messageupdate/update
+        :*  %messages
+            circle
+            0
+            (lent messages)
+            nes.piz
+        ==
+      :-  (send-chat-update [messageupdate str])
+      this(str.sta str)
   ==
 ::
 ::  +diff-hall-rumor: handle updates to hall state
@@ -319,7 +329,10 @@
     ?>  ?=(%gram -.sto)
     =*  messages  messages.str.sta
     =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-    =/  nes/(list envelope:hall)  (~(got by messages) circle)
+    =/  unes/(unit (list envelope:hall))  (~(get by messages) circle)
+    ?~  unes
+      [~ this]
+    =/  nes  u.unes
     =/  str  %=  str.sta
       messages  (~(put by messages) circle (snoc nes nev.sto))
     ==
@@ -392,8 +405,8 @@
           [~ this]
         =*  affectedcir  cir.src.dif.sto
         =/  newwir/wire
-          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/config/group
-        =/  pat/path  /circle/[nom.affectedcir]/grams/config/group
+          /circle/[(scot %p hos.affectedcir)]/[nom.affectedcir]/grams/0/config/group
+        =/  pat/path  /circle/[nom.affectedcir]/grams/0/config/group
         ::  we've added a source to our inbox
         ::
         ?:  add.dif.sto
@@ -424,7 +437,9 @@
           %=  str.sta
             inbox  newinbox
           ::
-            configs  (~(del by configs.str.sta) affectedcir)
+            configs   (~(del by configs.str.sta) affectedcir)
+            messages  (~(del by messages.str.sta) affectedcir)
+            peers     (~(del by peers.str.sta) affectedcir)
           ==
         =/  fakecir/circle:hall
           :-  our.bol
