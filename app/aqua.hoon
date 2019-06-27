@@ -378,9 +378,12 @@
   ::
       [%swap-files ~]
     =.  userspace-ova.pil
+      =/  slim-dirs
+        `(list path)`~[/app /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
       :_  ~
       %-  unix-event
-      (file-ovum:pill-lib /(scot %p our.hid)/home/(scot %da now.hid))
+      %-  %*(. file-ovum:pill-lib directories slim-dirs)
+      /(scot %p our.hid)/home/(scot %da now.hid)
     =^  ms  this  (poke-pill pil)
     (emit-moves ms)
   ::
@@ -527,7 +530,6 @@
     ~
   =/  who  (slav %p i.pax)
   =/  pier  (~(get by piers) who)
-  =/  ren  i.t.t.t.t.pax
   ?~  pier
     ~
   :^  ~  ~  %noun

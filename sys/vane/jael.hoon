@@ -94,10 +94,40 @@
       [%vent-result p=vent-result]                      ::  tmp workaround
   ==                                                    ::
 ++  card                                                ::  i/o action
-  (wind note:able gift)                                 ::
+  (wind note gift)                                      ::
 ::                                                      ::
 ++  move                                                ::  output
   {p/duct q/card}                                       ::
+::                                                      ::
++$  note                                                ::  out request $->
+  $~  [%b %wait *@da]                                   ::
+  $%  $:  %b                                            ::    to %behn
+          $>  $?  %rest                                 ::  cancel timer
+                  %wait                                 ::  set timer
+              ==                                        ::
+          task:able:behn                                ::
+      ==                                                ::
+      $:  %e                                            ::    to %eyre
+          $>(%hiss task:able:eyre)                      ::  http request
+      ==                                                ::
+      $:  %a                                            ::    to %ames
+          $>(%want task:able:ames)                      ::  send message
+      ==                                                ::
+      $:  %j                                            ::    to self
+          $>(%look task)                                ::  set ethereum source
+      ==                                                ::
+      $:  @tas                                          ::
+  $%  $>(%init vane-task)                               ::  report install
+      $>(%sunk vane-task)                               ::  report death
+  ==  ==  ==                                            ::
+::                                                      ::
++$  sign                                                ::  in result $<-
+  $~  [%b %wake ~]                                      ::
+  $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
+      [%e $>(%sigh gift:able:eyre)]                     ::  marked http response
+      [%j $>(%vent gift)]                               ::  ethereum changes
+      [%a $>(%woot gift:able:ames)]                     ::  message result
+  ==                                                    ::
 --  ::
 ::                                                      ::::
 ::::                    # light                         ::  light cores
@@ -1125,7 +1155,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::
   ++  extract-snap                                    ::  extract rewind point
@@ -1710,7 +1740,7 @@
   ::  +wrap-note: %pass a note using a made-up duct
   ::
   ++  wrap-note
-    |=  [wir=wire not=note:able]
+    |=  [wir=wire not=note]
     ^-  move
     :-  [/jael/eth-logic ~ ~]
     [%pass (weld /(scot %p our) wir) not]
@@ -2218,7 +2248,7 @@
     %+  exec  [d ~ ~]
     :+  %pass
       /(scot %p our)/vent-result
-    ^-  note:able
+    ^-  note
     [%a %want who /j/(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   --
@@ -2450,6 +2480,18 @@
     ?:  =(~ snaps.sap.lex)
       snap.snap
     $
+  ::
+      %vein
+    ?.  ?=([@ ~] tyl)  [~ ~]
+    ?.  &(?=(%& -.why) =(p.why our))
+      [~ ~]
+    =/  lyf  (slaw %ud i.tyl)
+    ?~  lyf  [~ ~]
+    ::
+    ?~  r=(~(get by jaw.own.sub.lex) u.lyf)
+      [~ ~]
+    ::
+    [~ ~ %noun !>(u.r)]
   ::
       %turf
     ?.  ?=(~ tyl)  [~ ~]

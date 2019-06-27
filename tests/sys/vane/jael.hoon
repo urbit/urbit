@@ -121,7 +121,7 @@
 ++  jael-take
   |=  $:  jael-gate=_jael-gate
           now=@da
-          take-args=[=wire =duct wrapped-task=(hypo sign:able:jael-gate)]
+          take-args=[=wire =duct wrapped-task=(hypo sign:jael-gate)]
           expected-moves=(list move:jael-gate)
       ==
   ^-  [tang _jael-gate]
@@ -141,7 +141,7 @@
 ++  jael-take-with-comparator
   |=  $:  jael-gate=_jael-gate
           now=@da
-          take-args=[=wire =duct wrapped-task=(hypo sign:able:jael-gate)]
+          take-args=[=wire =duct wrapped-task=(hypo sign:jael-gate)]
           move-comparator=$-((list move:jael-gate) tang)
       ==
   ^-  [tang _jael-gate]
