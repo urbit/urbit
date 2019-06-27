@@ -1997,6 +1997,9 @@
         ~|([%bad-channel-wire wire] !!)
     ::
         %timeout
+      ?>  ?=([%b %wake *] sign)
+      =?  moves  ?=(^ error.sign)
+        [[duct %d %flog %crud %wake error.sign] moves]
       =/  on-channel-timeout
         on-channel-timeout:by-channel:(per-server-event event-args)
       =^  moves  server-state.ax
