@@ -90,7 +90,10 @@
       [task=%hiss knot=(unit knot) =mark =cage]
   ==
 ::
-::  +internal-move: internal move.
+::  +internal-move: agent-level move.
+::
+::  Analogous to an Arvo move, except these are routed by bone, instead of
+::  duct.
 ::
 ++  internal-move
   $:
@@ -98,7 +101,7 @@
     move=(wind internal-note internal-gift)
   ==
 ::
-::  +move: typed move.
+::  +move: Arvo-level move.
 ::
 ++  move  (pair duct (wind note-arvo gift-arvo))
 --
@@ -349,7 +352,7 @@
     =/  resolved  (flop moves)
     [resolved gall-payload]
   ::
-  ::  +mo-boot: ask %ford to build us a core.
+  ::  +mo-boot: ask %ford to build us a core for the specified agent.
   ::
   ++  mo-boot
     |=  [=term =ship =desk]
@@ -615,7 +618,6 @@
   ::
   ::  +mo-retrieve-duct: retrieve a duct by index.
   ::
-  ::  FIXME index vs bone
   ++  mo-retrieve-duct
     |=  [=ship index=@ud]
     ^-  duct
@@ -624,6 +626,8 @@
     (~(got by duct-map.foreign) index)
   ::
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
+  ::
+  ::  Note that /sys implies the +sign should be routed to a vane.
   ::
   ++  mo-handle-sys
     ~/  %mo-handle-sys
@@ -661,9 +665,7 @@
   ::
   ::  +mo-handle-sys-pel: translated peer.
   ::
-  ::  Expects an appropriate +sign from %ford and simply gives its payload.
-  ::
-  ::  FIXME better name
+  ::  Validates a received %ford result and %gives an internal %diff.
   ::
   ++  mo-handle-sys-pel
     |=  [=path =sign-arvo]
@@ -687,12 +689,10 @@
   ::
   ::  +mo-handle-sys-red: diff ack.
   ::
-  ::  Expects an appropriate +sign from %ames.  If the +sign doesn't wrap
-  ::  any errors, then it simply passes a %pump acknowledgement internally;
-  ::  otherwise it passes both an internal unsubscribing %pull, plus a %want to
-  ::  %ames, before complaining about a bad message acknowledgment.
-  ::
-  ::  FIXME better name
+  ::  On receipt of a valid +sign from %ames, it simply passes a %pump
+  ::  acknowledgement internally; otherwise it passes both an internal
+  ::  unsubscribing %pull, plus a %want to %ames, before complaining about a
+  ::  bad message acknowledgment.
   ::
   ++  mo-handle-sys-red
     |=  [=path =sign-arvo]
@@ -750,8 +750,6 @@
   ::  On receipt of a valid +sign from %ford, sets state to the appropriate
   ::  duct and gives an internal %diff containing the +sign payload.
   ::
-  ::  FIXME better name, docs
-  ::
   ++  mo-handle-sys-rep
     |=  [=path =sign-arvo]
     ^+  mo-state
@@ -786,15 +784,7 @@
     ::
     (mo-give move)
   ::
-  ::  +mo-handle-sys-req: inbound request.
-  ::
-  ::  On receipt of an appropriate +sign from %ford, applies an action to the
-  ::  specified agent.
-  ::
-  ::  On receipt of an appropriate internal +gift, applies the appropriate
-  ::  action.
-  ::
-  ::  FIXME better name, docs; in particular seek to go higher level w/docs
+  ::  +mo-handle-sys-req: process an inbound request.
   ::
   ++  mo-handle-sys-req
     |=  [=path =sign-arvo]
@@ -817,9 +807,10 @@
         =/  err  (some message.build-result)
         (mo-give %mack err)
       ::
-      =/  =cage  (result-to-cage:ford build-result)
       =/  sys-path  [%sys path]
-      =/  =note-arvo  [%g %deal [him our] i.t.t.path %poke cage]
+      =/  =note-arvo
+        =/  =cage  (result-to-cage:ford build-result)
+        [%g %deal [him our] i.t.t.path %poke cage]
       ::
       (mo-pass sys-path note-arvo)
     ::
@@ -866,8 +857,6 @@
   ::  Validates an incoming +sign from %ford and applies it to the specified
   ::  agent.
   ::
-  ::  FIXME better name
-  ::
   ++  mo-handle-sys-val
     |=  [=path =sign-arvo]
     ^+  mo-state
@@ -898,7 +887,6 @@
   ::
   ::  +mo-handle-sys-way: outbound request.
   ::
-  :: FIXME better name, docs
   ++  mo-handle-sys-way
     |=  [=path =sign-arvo]
     ^+  mo-state
@@ -913,10 +901,11 @@
   ::
   ::  +mo-handle-use: handle a typed +sign incoming on /use.
   ::
+  ::  Note that /use implies the +sign should be routed to an agent.
+  ::
   ::  Initialises the specified agent and then performs an agent-level +take on
   ::  the supplied +sign.
   ::
-  ::  FIXME better name.
   ++  mo-handle-use
     ~/  %mo-handle-use
     |=  [=path hin=(hypo sign-arvo)]
@@ -971,10 +960,7 @@
       ap-abet:app
     ==
   ::
-  ::  +mo-clear-queue: clear blocked tasks.
-  ::
-  ::  If the specified agent is running and has some tasks queued, make moves
-  ::  from them and add them to +mo-state.
+  ::  +mo-clear-queue: clear blocked tasks from the specified running agent.
   ::
   ++  mo-clear-queue
     |=  =term
@@ -1070,10 +1056,9 @@
   ::
   ::  +mo-handle-local: handle locally.
   ::
-  ::  If the agent is running or waiting, update it with the supplied +task
-  ::  and mark it as waiting.  Otherwise simply apply the action to the agent.
+  ::  If the agent is running or blocked, assign it the supplied +task.
+  ::  Otherwise simply apply the action to the agent.
   ::
-  ::  FIXME higher-level docs
   ++  mo-handle-local
     |=  [=ship =internal-task]
     ^+  mo-state
@@ -1102,9 +1087,8 @@
     ::
     (mo-apply term privilege agent-action)
   ::
-  ::  +mo-handle-forward: ames forward.
+  ::  +mo-handle-forward: handle forward %ames message.
   ::
-  ::  FIXME docs
   ++  mo-handle-forward
     |=  [=ship =term =bone =forward-ames]
     ^+  mo-state
@@ -1155,9 +1139,8 @@
     ::
     (mo-pass path note-arvo)
   ::
-  ::  +mo-handle-backward: ames backward.
+  ::  +mo-handle-backward: handle reverse %ames message.
   ::
-  ::  FIXME docs
   ++  mo-handle-backward
     |=  [=ship =term =bone =reverse-ames]
     ^+  mo-state
@@ -1196,7 +1179,6 @@
   ++  ap
     ~%  %gall-ap  +>  ~
     ::
-    ::  FIXME i'd like to see this state refactored
     |_  $:  agent-name=term
             agent-privilege=privilege
             agent-bone=bone
@@ -1273,8 +1255,7 @@
     ::  +ap-track-queue: track queue.
     ::
     ::  An agent, at any given time, may have some so-called internal moves
-    ::  associated with it.  These are analogous to Arvo moves, except they
-    ::  are routed by bone instead of duct.
+    ::  associated with it.
     ::
     ::  If there are any currently-associated non-%give internal moves, we
     ::  enqueue each along its associated bone.
@@ -2404,7 +2385,7 @@
       =/  next
         %=  ap-state
           misvale.sat     new-misvale-data
-          agent-config             new-agent-config
+          agent-config    new-agent-config
           arm-cache.sat   ~
         ==
       ::
