@@ -439,7 +439,7 @@
 
 
 
-            if (process.env.NODE_ENV !== "production") {
+            {
               (function() {
 
             var _assign = objectAssign;
@@ -19323,7 +19323,6 @@
 
               render() {
                 const { state } = this;
-
                 let inviteNum = 0;
                 let msgNum = 0;
                 let inviteCircle = `~${window.ship}/i`;
@@ -19342,37 +19341,34 @@
                     let host = key.split('/')[0];
 
                     if (!state.configs[key]) { break; }
+                    if (!(key in numbers)) { break; }
 
                     let red = state.configs[key].red;
-                    console.log(key, red, numbers[key]);
 
                     if (key === inviteCircle) {
                       inviteNum = inviteNum - red + numbers[key];
-                      console.log('case 1', inviteNum);
                     } else if (host === `~${window.ship}`) {
                       msgNum = msgNum - red + numbers[key];
-                      console.log('case 2', msgNum);
                     } else {
                       msgNum = msgNum + numbers[key];
-                      console.log('case 3', msgNum);
                     }
                   } 
                 }
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 72}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 73}}
+                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 68}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 69}}
                       , react.createElement('p', { className: "gray", style: {
                         fontWeight: 'bold',
                         fontSize: 14,
                         lineHeight: '24px'
-                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 74}}, "Chat")
+                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 70}}, "Chat")
                        , react.createElement('img', {
                          className: "absolute",
                          style: { left: 68, top: 65 },
                          src: "/~chat/img/Tile.png",
                          width: 106,
-                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 79}} )
+                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}} )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19380,7 +19376,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 85}}, inviteNum, " invites" )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 81}}, inviteNum, " invites" )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19388,7 +19384,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 93}}, msgNum, " new messages"  )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 89}}, msgNum, " new messages"  )
                     )
                   )
                 );

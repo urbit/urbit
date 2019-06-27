@@ -45901,8 +45901,6 @@
 	  handleEvent(data) {
 	    let json = data.data;
 
-	    console.log(json);
-
 	    this.initialReducer.reduce(json, this.state);
 	    this.configReducer.reduce(json, this.state);
 	    this.updateReducer.reduce(json, this.state);
