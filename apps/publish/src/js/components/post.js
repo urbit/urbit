@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { PostBody } from '/components/post-body';
 import { Comments } from '/components/comments';
 import { PathControl } from '/components/lib/path-control';
+import { NextPrev } from '/components/lib/next-prev';
 import _ from 'lodash';
 
 export class Post extends Component {
@@ -266,7 +267,11 @@ export class Post extends Component {
 
     if (!this.state.temporary){
       if (oldPost != post) {
-        this.setState({post: post});
+        this.setState({
+          titleOriginal: post.info.title,
+          bodyOriginal: post.raw,
+          post: post,
+        });
       }
       if (oldComments != comments) {
         this.setState({comments: comments});
@@ -332,9 +337,9 @@ export class Post extends Component {
               />
             </div>
 
-            <hr className="gray-50 w-680"/>
+            <hr className="gray-50 w-680 mt4"/>
+            <NextPrev blog={this.state.blog} postId={this.props.postId} />
           
-            <hr className="gray-50 w-680"/>
             <Comments comments={this.state.comments} 
               api={this.props.api}
               ship={this.props.ship}
@@ -386,9 +391,9 @@ export class Post extends Component {
               defaultValue={this.state.bodyOriginal}>
             </textarea>
 
-            <hr className="gray-50 w-680"/>
+            <hr className="gray-50 w-680 mt4"/>
+            <NextPrev blog={this.state.blog} postId={this.props.postId} />
           
-            <hr className="gray-50 w-680"/>
             <Comments comments={this.state.comments} 
               api={this.props.api}
               ship={this.props.ship}
