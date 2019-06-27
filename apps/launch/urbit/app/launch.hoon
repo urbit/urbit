@@ -79,10 +79,12 @@
   =/  data/(unit [json url=@t])  (~(get by data.sta) name)
   ?~  data
     [~ this]
+  ::
   :-
   %+  turn  (prey:pubsub:userlib /main bol)
-    |=  [=bone *]
-    [bone %diff %json (frond:enjs:format name jon)]
+  |=  [=bone *]
+  [bone %diff %json (frond:enjs:format name jon)]
+  ::
   %=  this
     data.sta  (~(put by data.sta) name [jon url.u.data])
   ==
@@ -102,9 +104,9 @@
   |=  data=tile-data
   ^-  marl
   %+  turn  ~(tap by data)
-    |=  [key=@tas [jon=json url=@t]]
-    ^-  manx
-    ;script@"{(trip url)}";
+  |=  [key=@tas [jon=json url=@t]]
+  ^-  manx
+  ;script@"{(trip url)}";
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
