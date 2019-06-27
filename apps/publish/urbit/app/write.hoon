@@ -75,6 +75,40 @@
 ::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
 ::
+++  ships-to-whom
+  |=  ships=(set @p)
+  ^-  (set whom:clay)
+  %-  ~(run in ships)
+  |=  who=@p
+  ^-  whom:clay
+  [%.y who]
+::
+++  get-contributors
+  |=  coll=@tas
+  ^-  [mod=?(%white %black) who=(set @p)]
+  =/  pax  (weld our-beak /web/write/[coll])
+  =/  pem=[r=dict:clay w=dict:clay]  .^([dict:clay dict:clay] %cp pax)
+  :-  mod.rul.w.pem
+  (resolve-real rul.w.pem)
+::
+++  resolve-real
+  |=  rel=real:clay
+  ^-  (set @p)
+  %-  ~(uni in p.who.rel)
+  %-  (set @p)
+  %-  ~(rep by q.who.rel)
+  |=  [[@ta cru=crew:clay] out=(set @p)]
+  ^-  (set @p)
+  (~(uni in out) cru)
+::
+++  whom-to-ships
+  |=  whoms=(set whom:clay)
+  ^-  (set @p)
+  %-  ~(rep in whoms)
+  |=  [who=whom:clay out=(set @p)]
+  ?:  ?=(%.y -.who)
+    (~(put in out) p.who)
+  out
 ::
 ++  allowed
   |=  [who=@p mod=?(%read %write) pax=path]
@@ -169,62 +203,19 @@
   ?+  a
     [~ this]
   ::
-      %update-tile
-    [make-tile-moves this]
-  ::
-      %test-build
-    =/  schema=schematic:ford
-      :-
-      :*  
-          %bake
-          %write-info
-          *coin
-          [[our.bol q.byk.bol] /fora/write/web]
-      ==
-      :*  
-          %bake
-          %write-post
-          *coin
-          [[our.bol q.byk.bol] /first-post/fora/write/web]
-      ==
-    :_  this
-    [ost.bol %build /test/build %.n schema]~
-  ::
-      %print-subs
-    ~&  sup.bol
+      %test
+    =/  whoms  (ships-to-whom (sy ~zod ~bus ~marzod ~binzod ~))
+    =/  ships  (whom-to-ships whoms)
+    ~&  whoms
+    ~&  ships
     [~ this]
   ::
-      %kill-all-builds
-    :_  this
-    :~  [ost.bol %kill /collection/fora ~]
-        [ost.bol %kill /post/fora/post-1 ~]
-        [ost.bol %kill /comments/fora/post-1 ~]
-        [ost.bol %kill /post/fora/post-2 ~]
-        [ost.bol %kill /comments/fora/post-2 ~]
-        [ost.bol %kill /post/fora/post-3 ~]
-        [ost.bol %kill /comments/fora/post-3 ~]
-    ==
+      %print-bowl
+    ~&  bol
+    [~ this]
   ::
-  ::
-      %send-diff
-    =/  rum=json  (frond:enjs:format %poke-noun ~)
-    =/  mov=(list move)
-    %+  turn  (prey:pubsub:userlib /primary bol)
-    |=  [=bone *]
-    [bone %diff %json rum]
-    ~&  mov+mov
-    [mov this]
-  ::
-      %peer
-    ~&  %peer
-    :_  this
-    [ost.bol %peer /collection/fora [~zod %write] /collection/fora]~
-  ::
-      %pull
-    ~&  %pull
-    =/  wir=wire  /collection/fora
-    :_  this
-    [ost.bol %pull wir [~zod %write] ~]~
+      %update-tile
+    [make-tile-moves this]
   ::
       %flush-state
     [~ this(sat *state)]
@@ -268,8 +259,10 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[ost.bol dat.del] ~ ~ [~ ~] ~ ~]
-        u.old(col [ost.bol dat.del])
+          [[ost.bol dat.del] ~ ~ [~ ~] [%white ~] ~ now.bol]
+        u.old(col [ost.bol dat.del], last-update now.bol)
+      =?  contributors.new  =(our.bol who.del)
+        (get-contributors col.del)
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -283,8 +276,13 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] (my [pos.del ost.bol dat.del] ~) ~ [~ ~] ~ ~]
-        u.old(pos (~(put by pos.u.old) pos.del [ost.bol dat.del]))
+          :*  [0 %.n ~]  (my [pos.del ost.bol dat.del] ~)  ~ 
+              [~ ~]  [%white ~]  ~  now.bol
+          ==
+        %=  u.old
+          pos          (~(put by pos.u.old) pos.del [ost.bol dat.del])
+          last-update  now.bol
+        ==
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -300,8 +298,13 @@
         (~(get by subs.sat) who.del col.del)
       =/  new=collection
         ?~  old
-          [[0 %.n ~] ~ (my [pos.del ost.bol dat.del] ~) [~ ~] ~ ~]
-        u.old(com (~(put by com.u.old) pos.del [ost.bol dat.del]))
+          :*  [0 %.n ~]  ~  (my [pos.del ost.bol dat.del] ~)
+              [~ ~]  [%white ~]  ~  now.bol
+          ==
+        %=  u.old
+          com          (~(put by com.u.old) pos.del [ost.bol dat.del])
+          last-update  now.bol
+        ==
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del new)
       =?  subs.sat  !=(our.bol who.del)
@@ -309,6 +312,9 @@
       (da-emil (affection del))
     ::
         %total
+      =?  contributors.dat.del  =(our.bol who.del)
+        (get-contributors col.del)
+      =.  last-update.dat.del  now.bol
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
@@ -582,7 +588,6 @@
   |=  [wir=wire wen=@da mad=made-result:ford]
   ^-  (quip move _this)
   ?+  wir
-    ~&  mad
     [~ this]
   ::
       [%collection @t ~]
@@ -609,7 +614,10 @@
         (bake [%collection our.bol col dat])
       ::  1st part of multi-part, store partial delta and don't process it
       ::
-      =/  del=delta  [%total our.bol col [ost.bol dat] ~ ~ [~ ~] ~ ~]
+      =/  del=delta
+        :*  %total  our.bol  col  [ost.bol dat] 
+            ~  ~  [~ ~]  [%white ~]  ~  now.bol
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -625,8 +633,9 @@
             pos.dat.u.partial.u.awa
             com.dat.u.partial.u.awa
             [~ ~]
+            [%white ~]
             ~
-            ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -641,8 +650,9 @@
           pos.dat.u.partial.u.awa
           com.dat.u.partial.u.awa
           [~ ~]
+          [%white ~]
           ~
-          ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -673,7 +683,9 @@
       ::  1st part of multi-part, store partial delta and don't process it
       ::
       =/  del=delta
-        [%total our.bol col [0 %.n ~] (my [pos ost.bol dat] ~) ~ [~ ~] ~ ~]
+        :*  %total  our.bol  col  [0 %.n ~]  (my [pos ost.bol dat] ~)
+            ~  [~ ~]  [%white ~]  ~  now.bol
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -689,8 +701,9 @@
             (~(put by pos.dat.u.partial.u.awa) pos [ost.bol dat])
             com.dat.u.partial.u.awa
             [~ ~]
+            [%white ~]
             ~
-            ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -705,8 +718,9 @@
           (~(put by pos.dat.u.partial.u.awa) pos [ost.bol dat])
           com.dat.u.partial.u.awa
           [~ ~]
+          [%white ~]
           ~
-          ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -737,7 +751,9 @@
       ::  1st part of multi-part, store partial delta and don't process it
       ::
       =/  del=delta
-        [%total our.bol col [0 %.n ~] ~ (my [pos ost.bol dat] ~) [~ ~] ~ ~]
+        :*  %total  our.bol  col  [0 %.n ~]  ~  (my [pos ost.bol dat] ~)
+            [~ ~]  [%white ~]  ~  now.bol
+        ==
       =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
       [~ this]
     ::
@@ -753,8 +769,9 @@
             pos.dat.u.partial.u.awa
             (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
             [~ ~]
+            [%white ~]
             ~
-            ~
+            now.bol
         ==
       =.  awaiting.sat  (~(del by awaiting.sat) col)
       (bake del)
@@ -769,8 +786,9 @@
           pos.dat.u.partial.u.awa
           (~(put by com.dat.u.partial.u.awa) pos [ost.bol dat])
           [~ ~]
+          [%white ~]
           ~
-          ~
+          now.bol
       ==
     =.  awaiting.sat  (~(put by awaiting.sat) col builds.u.awa `del)
     [~ this]
@@ -810,14 +828,27 @@
   ^-  move
   (delete-file pax)
 ::
+++  mack
+  |=  [wir=wire err=(unit tang)]
+  ^-  (quip move _this)
+  ?~  err
+    [~ this]
+  %-  (slog u.err)
+  [~ this]
+::
 ++  poke-write-action
   |=  act=action
   ^-  (quip move _this)
   ?-  -.act
   ::
       %new-collection
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
+    ?.  =(our.bol src.bol)
+      ::  no one else is permitted to create blogs
+      ::
+      [~ this]
+    ?:  (~(has by pubs.sat) name.act)
+      [~ this]
+    ::
     =/  conf=collection-info
       :*  our.bol
           title.act
@@ -827,10 +858,17 @@
           now.bol
           now.bol
       ==
-    ::  XX  set permissions
-    ::  XX  automatically serve collection
-    ::      (add to set of builds)
     =/  pax=path  /web/write/[name.act]/write-info
+    =/  blog-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[name.act] 
+          %rw  `read.perm.act  `write.perm.act
+      ==
+    =/  info-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[name.act]/write-info
+          %rw  `*rule:clay  `*rule:clay
+      ==
     ::
     =/  wir=wire  /collection/[name.act]
     =/  schema=schematic:ford
@@ -841,6 +879,8 @@
       ==
     :_  this
     :~  (write-file pax %write-info !>(conf))
+        [ost.bol blog-perms]
+        [ost.bol info-perms]
         [ost.bol %build wir %.y schema]
     ==
   ::
@@ -848,9 +888,14 @@
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
-    ::  XX  check if coll doesn't exist
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?:  (~(has by pos.u.col) name.act)
+      [~ this]
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
       %-  my
@@ -863,10 +908,7 @@
           [%last-modified (scot %da now.bol)]
           [%pinned %false]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
-    =/  out=@t    (update-udon-front front content.act)
+    =/  out=@t  (update-udon-front front content.act)
     ::
     =/  post-wir=wire  /post/[coll.act]/[name.act]
     =/  post-schema=schematic:ford
@@ -883,8 +925,21 @@
           *coin
           [[our.bol q.byk.bol] /[name.act]/[coll.act]/write/web]
       ==
+    ::
+    =/  post-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[coll.act]/[name.act]/udon
+          %w  `[%white (ships-to-whom (sy src.bol ~))]
+      ==
+    =/  comment-perms=card
+      :*  %perm  /perms  q.byk.bol
+          /web/write/[coll.act]/[name.act]
+          %w  `[%black ~]
+      ==
     :_  this
     :~  (write-file pax %udon !>(out))
+        [ost.bol post-perms]
+        [ost.bol comment-perms]
         [ost.bol %build comments-wir %.y comments-schema]
         [ost.bol %build post-wir %.y post-schema]
     ==
@@ -893,8 +948,15 @@
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    ::  XX  check permissions of src.bol
-    ::  XX  check if file already exists
+    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?.  (~(has by pos.u.col) post.act)
+      [~ this]
+    ::
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
       %-  my
@@ -904,12 +966,17 @@
           [%date-created (scot %da now.bol)]
           [%last-modified (scot %da now.bol)]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
     =/  out=@t    (update-udon-front front content.act)
+    ::
+    =/  comment-perms=card
+      :*  %perm  /perms  q.byk.bol  pax
+          %w  `[%white ~]
+      ==
+    ::
     :_  this
-    [(write-file pax %udon !>(out))]~
+    :~  (write-file pax %udon !>(out))
+        [ost.bol comment-perms]
+    ==
   ::
       %delete-collection
     ?.  =(src.bol our.bol)
@@ -947,16 +1014,29 @@
     ==
   ::
       %delete-comment
+    ?.  =(src.bol our.bol)
+      [~ this]
     :_  this
     [(delete-file /web/write/[coll.act]/[post.act]/[comment.act]/udon)]~
   ::
       %edit-collection
+    ?.  =(src.bol our.bol)
+      [~ this]
     [~ this]
   ::
       %edit-post
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
+    ::
+    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    ?.  (allowed src.bol %write pax)
+      [~ this]
+    =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
+    ?~  col
+      [~ this]
+    ?.  (~(has by pos.u.col) name.act)
+      [~ this]
     ::
     =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
     ?~  pos
@@ -974,10 +1054,7 @@
           [%last-modified (scot %da now.bol)]
           [%pinned ?:(pinned.u.pos %true %false)]
       ==
-    ::  XX  set permissions
-    ::  XX  add to set of builds
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
-    =/  out=@t    (update-udon-front front content.act)
+    =/  out=@t  (update-udon-front front content.act)
     ::
     :_  this
     [(write-file pax %udon !>(out))]~
@@ -1107,8 +1184,8 @@
     =/  wir=wire  /collection/[coll.act]
     =/  title=(unit @t)  (~(get by invites.sat) [who.act coll.act])
     =.  invites.sat  (~(del by invites.sat) [who.act coll.act])
-    :_  this
-    ;:  welp  
+    :_  this(outgoing.sat (~(put by outgoing.sat) wir ost.bol))
+    ;:  welp
       make-tile-moves
       [ost.bol %peer wir [who.act %write] wir]~
       ?~  title  ~
@@ -1121,6 +1198,10 @@
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
   ::
       %unsubscribe
+    =/  wir=wire  /collection/[coll.act]
+    =/  bon=(unit bone)  (~(get by outgoing.sat) wir)
+    ?~  bon
+      ~|  %nonexistent-subscription^wir  !!
     =/  new-latest=(list [@p @tas @tas])
       %+  skim  latest.sat
       |=  [who=@p coll=@tas post=@tas]
@@ -1136,12 +1217,12 @@
       ?&  =(who our.bol)
           =(coll coll.act)
       ==
-    =/  wir=wire  /collection/[coll.act]
     :_  %=  this
-      subs.sat    (~(del by subs.sat) who.act coll.act)
-      latest.sat  new-latest
+      subs.sat      (~(del by subs.sat) who.act coll.act)
+      latest.sat    new-latest
+      outgoing.sat  (~(del by outgoing.sat) wir)
     ==
-    :-  [ost.bol %pull wir [who.act %write] ~]
+    :-  [u.bon %pull wir [who.act %write] ~]
     %+  welp  make-tile-moves
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
@@ -1307,22 +1388,40 @@
 ++  pull
   |=  wir=wire
   ^-  (quip move _this)
-  [~ this]
+  ?+  wir
+    [~ this]
+  ::
+      [%collection @t ~]
+    =/  coll=@tas  i.t.wir
+    =/  col=(unit collection)  (~(get by pubs.sat) coll)
+    ?~  col
+      [~ this]
+    =/  new=collection
+      u.col(subscribers (~(del in subscribers.u.col) src.bol))
+    [~ this(pubs.sat (~(put by pubs.sat) coll new))]
+  ::
+  ==
 ::
 ++  peer-collection
   |=  wir=wire
   ^-  (quip move _this)
   ?.  ?=([@tas ~] wir)
     [~ this]
-  ::  XX handle permissions for foreign subscriptions
-  ::
   =/  coll=@tas  i.wir
+  =/  pax  /web/write/[coll]
+  ?.  (allowed src.bol %read pax)
+    :_  this
+    [ost.bol %quit ~]~
+  ::
   =/  col=(unit collection)  (~(get by pubs.sat) coll)
   ?~  col
-    [~ this]
+    :_  this
+    [ost.bol %quit ~]~
+  =/  new=collection
+    u.col(subscribers (~(put in subscribers.u.col) src.bol))
   =/  rum=rumor
-    [%total our.bol coll u.col]
-  :_  this
+    [%total our.bol coll new]
+  :_  this(pubs.sat (~(put by pubs.sat) coll new))
   [ost.bol %diff %write-rumor rum]~
 ::
 ++  diff-write-rumor

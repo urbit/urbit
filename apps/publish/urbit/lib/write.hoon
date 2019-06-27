@@ -147,11 +147,15 @@
         unpin+a+(turn unpin.order.col |=(s=@tas [%s s]))
     ==
   ::
-    :+  %contributors
-      %a
-    %+  turn  ~(tap in contributors.col)
-    |=  who=@p
-    (ship:enjs:format who)
+    :-  %contributors
+    %-  pairs:enjs:format
+    :~  mod+s+mod.contributors.col
+        :+  %who
+          %a
+        %+  turn  ~(tap in who.contributors.col)
+        |=  who=@p
+        (ship:enjs:format who)
+    ==
   ::
     :+  %subscribers
       %a
@@ -159,6 +163,8 @@
     |=  who=@p
     ^-  json
     (ship:enjs:format who)
+  ::
+    [%last-update (time:enjs:format last-update.col)]
   ==
 ::
 ++  state-to-json

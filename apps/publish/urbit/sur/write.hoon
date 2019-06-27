@@ -97,8 +97,9 @@
       pos=(map @tas [=bone dat=(each [post-info manx @t] tang)])
       com=(map @tas [=bone dat=(each (list [comment-info @t]) tang)])
       order=[pin=(list @tas) unpin=(list @tas)]
-      contributors=(set @p)
+      contributors=[mod=?(%white %black) who=(set @p)]
       subscribers=(set @p)
+      last-update=@da
   ==
 ::
 +$  state
@@ -108,6 +109,7 @@
       latest=(list [who=ship coll=@tas post=@tas])
       unread=(set [who=ship coll=@tas post=@tas])
       invites=(map [who=ship coll=@tas] title=@t)
+      outgoing=(map path bone)
   ==
 ::
 +$  delta
