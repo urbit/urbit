@@ -44,10 +44,12 @@
 ++  prep
   |=  old=(unit tim=@da)
   ^-  (quip move _this)
-  =/  lismov/(list move)  %+  weld
-    `(list move)`[ost.bol %connect / [~ /'~timer'] %timer]~
-    `(list move)`[ost.bol %poke /timer [our.bol %launch] [%noun [%timer /tile '/~timer/js/tile.js']]]~
-  :-  lismov
+  =/  launchnoun  [%noun [%timer /tile '/~timer/js/tile.js']]
+  :-
+  :~
+    [ost.bol %connect / [~ /'~timer'] %timer]
+    [ost.bol %poke /timer [our.bol %launch] launchnoun]
+  ==
   ?~  old
     this
   %=  this
@@ -76,25 +78,21 @@
   =/  str/@t  +.jon
   ?:  =(str 'start')
     =/  data/@da  (add now.bol ~s10)
-    :-  %+  weld
-      `(list move)`(send-tile-diff [%s (scot %da data)])
-      `(list move)`[ost.bol %wait /timer data]~
-    this(tim data)
+    :_  this(tim data)
+    [[ost.bol %wait /timer data] (send-tile-diff [%s (scot %da data)])]
   ?:  =(str 'stop')
-    :-  %+  weld
-      `(list move)`(send-tile-diff [%s ''])
-      `(list move)`[ost.bol %rest /timer tim]~
-    this(tim *@da)
+    :_  this(tim *@da)
+    [[ost.bol %rest /timer tim] (send-tile-diff [%s ''])]
   [~ this]
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
-  =+  request-line=(parse-request-line url.request.inbound-request)
-  =+  back-path=(flop site.request-line)
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  =/  back-path  (flop site.request-line)
   =/  name=@t
-    =+  back-path=(flop site.request-line)
+    =/  back-path  (flop site.request-line)
     ?~  back-path
       ''
     i.back-path
