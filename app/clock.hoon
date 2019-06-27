@@ -39,11 +39,12 @@
 ++  prep
   |=  old=(unit ~)
   ^-  (quip move _this)
-  =/  lismov/(list move)  %+  weld
-    `(list move)`[ost.bol %connect / [~ /'~clock'] %clock]~
-    `(list move)`[ost.bol %poke /clock [our.bol %launch] [%noun [%clock /tile '/~clock/js/tile.js']]]~
-  :-  lismov
-  this
+  =/  launchnoun  [%noun [%clock /tile '/~clock/js/tile.js']]
+  :_  this
+  :~
+    [ost.bol %connect / [~ /'~clock'] %clock]
+    [ost.bol %poke /clock [our.bol %launch] launchnoun]
+  ==
 ::
 ++  peer-tile
   |=  pax=path
@@ -61,10 +62,10 @@
   %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:http-server
   ^-  (quip move _this)
-  =+  request-line=(parse-request-line url.request.inbound-request)
-  =+  back-path=(flop site.request-line)
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  =/  back-path  (flop site.request-line)
   =/  name=@t
-    =+  back-path=(flop site.request-line)
+    =/  back-path  (flop site.request-line)
     ?~  back-path
       ''
     i.back-path
