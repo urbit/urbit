@@ -20,6 +20,7 @@ herb ./pier -p hood -d "+hood/mount /=stage="
 
 rm -r ./pier/stage
 cp -r $ARVO ./pier/stage
+chmod -R u+rw ./pier/stage
 
 herb ./pier -p hood -d "+hood/commit %stage"
 
