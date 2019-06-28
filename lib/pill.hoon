@@ -105,7 +105,9 @@
   ::  XX this serialization should use marks
   ::
   =?  hav  ?=(^ fil.lon)
-      ?.  ?=  ?($css $hoon $js $json $md $txt $udon $umd)
+      ::  XX  this whitelist needs to be reviewed
+      ::
+      ?.  ?=  ?($css $hoon $json $md $txt $udon $umd)
           -.tyl
         ::
         ::  install only files with whitelisted marks
