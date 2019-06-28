@@ -115,6 +115,12 @@ gulp.task('js-minify', function () {
     .pipe(gulp.dest('./urbit/app/chat/js/'));
 });
 
+gulp.task('tile-js-minify', function () {
+  return gulp.src('./urbit/app/chat/js/tile.js')
+    .pipe(minify())
+    .pipe(gulp.dest('./urbit/app/chat/js/'));
+});
+
 gulp.task('js-cachebust', function(cb) {
   return Promise.resolve(
     exec('git log', function (err, stdout, stderr) {
@@ -139,7 +145,9 @@ gulp.task('urbit-copy', function () {
 
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
 gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
-gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify', 'js-cachebust'))
+gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify'))
+gulp.task('tile-js-bundle-prod', 
+  gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
 gulp.task('bundle-dev',
   gulp.series(
@@ -156,7 +164,8 @@ gulp.task('bundle-prod',
   gulp.series(
     gulp.parallel(
       'css-bundle',
-      'js-bundle-prod'
+      'js-bundle-prod',
+      'tile-js-bundle-prod',
     ),
     'urbit-copy'
   )
