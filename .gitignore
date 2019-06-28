@@ -72,3 +72,13 @@ apps/*/dist/
 *.swo
 *.swp
 *.swn
+
+# built js and css files
+apps/publish/urbit/app/write/js/*
+apps/publish/urbit/app/write/css/*
+apps/chat/urbit/app/chat/js/*
+apps/chat/urbit/app/chat/css/*
+apps/clock/urbit/app/clock/js/*
+apps/launch/urbit/app/launch/js/*
+apps/timer/urbit/app/timer/js/*
+apps/weather/urbit/app/weather/js/*
