@@ -195,6 +195,7 @@
 ::  +vane-task: general tasks shared across vanes
 ::
 +$  vane-task
+  $~  [%born ~]
   $%  ::  i/o device replaced (reset state)
       ::
       [%born ~]
@@ -215,7 +216,7 @@
       [%wegh ~]
       ::  receive message via %ames
       ::
-      [%memo p=ship q=path r=*]
+      [%memo =ship =message:ames]
   ==
 ::                                                      ::::
 ::::                      ++http                        ::  

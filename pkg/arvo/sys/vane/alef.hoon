@@ -53,8 +53,12 @@
 ::
 ::  protocol-version: current version of the ames wire protocol
 ::
+!:
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
+=,  ames
+=,  able
 ::
+=>
 |%
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
@@ -847,7 +851,7 @@
       %crud  !!
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
-      %init  (on-init:event-core ship.task)
+      %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
