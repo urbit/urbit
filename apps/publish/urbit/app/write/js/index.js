@@ -57099,19 +57099,17 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         this.props.post.collectionName;
       let postLink = collLink + "/" + this.props.post.postName;
 
-  //    let postTitle = 
-
       return (
-        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
-          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 51}}
-            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 52}}
+        react.createElement('div', { className: "w-336 ma2" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 48}}
+          , react.createElement(Link, { to: postLink, __self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}
+            , react.createElement('p', { className: "body-large b" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
               , this.props.post.postTitle
             )
             , react.createElement(PostSnippet, {
-              body: this.props.post.postBody, __self: this, __source: {fileName: _jsxFileName, lineNumber: 55}}
+              body: this.props.post.postBody, __self: this, __source: {fileName: _jsxFileName, lineNumber: 53}}
             )
           )
-          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 59}}
+          , react.createElement('p', { className: "label-small gray-50" , __self: this, __source: {fileName: _jsxFileName, lineNumber: 57}}
             , authorDate
           )
         )
@@ -57894,6 +57892,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         title: "",
         body: "",
         awaiting: false,
+        error: false,
       };
 
       this.titleChange = this.titleChange.bind(this);
@@ -57980,24 +57979,31 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         let blogId = this.state.awaiting.blogId;
         let postId = this.state.awaiting.postId;
 
+        let post;
+        let comments;
+
         if (this.state.awaiting.ship == window.ship) {
-
-          let post = lodash.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
-          let comments = lodash.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
-          if (post && comments) {
-            let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
-            this.props.history.push(redirect);
-          }
-
+          post =
+            lodash.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
+          comments =
+            lodash.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
         } else {
+          post =
+            lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+          comments =
+            lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
+        }
 
-          let post = lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
-          let comments = lodash.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
-          if (post && comments) {
+        if (post && comments) {
+          if (typeof(post) === 'String') {
+            this.setState({
+              error: post,
+              awaiting: false,
+            });
+          } else {
             let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
             this.props.history.push(redirect);
           }
-
         }
       }
     }
@@ -58006,43 +58012,43 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
       let enabledTab = ((this.state.title !== "") && (this.state.body !== ""));
 
       return (
-        react.createElement('div', { className: "relative w-100" , style: {height: 'calc(100% - 124px)'}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 153}}
-          , react.createElement('div', { className: "cf w-100 bg-white h-publish-header fixed"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 154}}
-            , react.createElement(PC$4, { pathData: false, ...this.props, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 155}})
+        react.createElement('div', { className: "relative w-100" , style: {height: 'calc(100% - 124px)'}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 161}}
+          , react.createElement('div', { className: "cf w-100 bg-white h-publish-header fixed"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 162}}
+            , react.createElement(PC$4, { pathData: false, ...this.props, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 163}})
           )
           , react.createElement('div', { className: "w-100 relative" , 
             style: {
               top: 'calc(50% + 48px)'
-            }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 157}}
+            }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 165}}
 
-            , react.createElement('div', { className: "flex w-100 z-2"  , style: {position: "sticky", top:0}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 162}}
-              , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 163}}
-              )
-              , react.createElement('div', { className: "mw-688 w-100 z-0"  , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 165}}
-              )
-              , react.createElement(SideTab, { enabled: enabledTab, postSubmit: this.postSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 167}} )
-            )
-
-            , react.createElement('div', { className: "flex absolute w-100 z-0"   , style: {top:0}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 170}}
+            , react.createElement('div', { className: "flex w-100 z-2"  , style: {position: "sticky", top:0}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 170}}
               , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 171}}
               )
-              , react.createElement('div', { className: "flex-col w-100 mw-688 w-100 z-1"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 173}}
+              , react.createElement('div', { className: "mw-688 w-100 z-0"  , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 173}}
+              )
+              , react.createElement(SideTab, { enabled: enabledTab, postSubmit: this.postSubmit, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 175}} )
+            )
+
+            , react.createElement('div', { className: "flex absolute w-100 z-0"   , style: {top:0}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 178}}
+              , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 179}}
+              )
+              , react.createElement('div', { className: "flex-col w-100 mw-688 w-100 z-1"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 181}}
                 , react.createElement('input', { autoFocus: true,
                   className: "header-2 w-100 b--none"  ,
                   type: "text",
                   name: "postName",
                   placeholder: "Add a Title"  ,
-                  onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 174}}
+                  onChange: this.titleChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 182}}
                 )
                 , react.createElement('textarea', { className: "body-regular-400 w-100 b--none"  ,
                   style: {resize:"none"},
                   type: "text",
                   name: "postBody",
                   placeholder: "And type away."  ,
-                  onChange: this.bodyChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 181}}
+                  onChange: this.bodyChange, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 189}}
                 )
               )
-              , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 189}}
+              , react.createElement('div', { className: "w1 z-0" , style: {flexGrow:1}, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 197}}
               )
             )
           )
@@ -58101,7 +58107,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   const _jsxFileName$d = "/Users/logan/Dev/interface/apps/publish/src/js/components/blog.js";
   const PC$5 = withRouter(PathControl);
 
-
   class Blog extends react_1 {
     constructor(props){
       super(props);
@@ -58112,6 +58117,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         blogTitle: '',
         blogHost: '',
         pathData: [],
+        temporary: false,
       };
     }
 
@@ -58122,6 +58128,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         let blog = diff.data.total.data;
         this.setState({
           postProps: this.buildPosts(blog),
+          blog: blog,
           blogTitle: blog.info.title,
           blogHost: blog.info.owner,
           awaiting: false,
@@ -58139,52 +58146,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
 
     componentWillMount() {
-      if (this.props.ship != window.ship) {
-        let ship = this.props.ship;
-        let blogId = this.props.blogId;
-        let blog = lodash.get(this.props,
-          `subs[${ship}][${blogId}]`, false);
+      let ship = this.props.ship;
+      let blogId = this.props.blogId;
+      let blog = (ship == window.ship)
+        ?  lodash.get(this.props, `pubs[${blogId}]`, false)
+        :  lodash.get(this.props, `subs[${ship}][${blogId}]`, false);
 
-        if (blog) {
-          this.setState({
-            postProps: this.buildPosts(blog),
-            blogTitle: blog.info.title,
-            blogHost: blog.info.owner,
-            awaiting: false,
-            pathData: [
-              { text: "Home", url: "/~publish/recent" },
-              { text: blog.info.title, 
-                url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
-            ],
-          });
-        } else {
-          this.setState({
-            awaiting: {
-              ship: ship,
-              blogId: blogId,
-            }
-          });
+      let temporary = (!(blog) && (ship != window.ship));
 
-          this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
-            this.handleEvent.bind(this),
-            this.handleError.bind(this));
-        }
-      } else {
-        let ship = this.props.ship;
-        let blogId = this.props.blogId;
-        let blog = lodash.get(this.props,
-          `pubs[${blogId}]`, false);
+      if (temporary) {
         this.setState({
-          postProps: this.buildPosts(blog),
-          blogTitle: blog.info.title,
-          blogHost: blog.info.owner,
-          awaiting: false,
-          pathData: [
-            { text: "Home", url: "/~publish/recent" },
-            { text: blog.info.title, 
-              url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
-          ],
+          awaiting: {
+            ship: ship,
+            blogId: blogId,
+          },
+          temporary: true,
         });
+
+        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+          this.handleEvent.bind(this),
+          this.handleError.bind(this));
       }
     }
 
@@ -58216,15 +58197,42 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
         date: post.post.info["date-created"],
         pinned: pinned,
       }
+    }
 
+    buildData(){
+      let blog = (this.props.ship == window.ship)
+        ?  lodash.get(this.props, `pubs[${this.props.blogId}]`, false)
+        :  lodash.get(this.props, `subs[${this.props.ship}][${this.props.blogId}]`, false);
+
+      if (this.state.temporary) {
+        return {
+          postProps: this.state.postProps,
+          blogTitle: this.state.blogTitle,
+          blogHost: this.state.blogHost,
+          pathData: this.state.pathData,
+        };
+      } else {
+        return {
+          postProps: this.buildPosts(blog),
+          blogTitle: blog.info.title,
+          blogHost: blog.info.owner,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, 
+              url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
+          ],
+        };
+      }
     }
 
     render() {
-      let posts = this.state.postProps.map((post, key) => {
+      let data = this.buildData();
+
+      let posts = data.postProps.map((post, key) => {
         return (
           react.createElement(PostPreview, {
             post: post,
-            key: key, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 131}}
+            key: key, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 133}}
           )
         );
       });
@@ -58234,33 +58242,33 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
       if (this.state.awaiting) {
         return (
-          react.createElement('div', { className: "w-100 ba h-inner"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 143}}, "Loading"
+          react.createElement('div', { className: "w-100 ba h-inner"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 145}}, "Loading"
 
           )
         );
       } else {
         return (
-          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 149}}
-            , react.createElement('div', { className: "cf w-100 bg-white h-publish-header"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 150}}
-              , react.createElement(PathControl, { pathData: this.state.pathData, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 151}})
+          react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 151}}
+            , react.createElement('div', { className: "cf w-100 bg-white h-publish-header"   , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 152}}
+              , react.createElement(PathControl, { pathData: data.pathData, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 153}})
             )
-            , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 153}}
-              , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 154}}, this.state.blogTitle)
-              , react.createElement('div', { className: "flex", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 155}}
-                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 156}}
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 157}}, "Host")
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 158}}, this.state.blogHost)
+            , react.createElement('div', { className: "flex-col", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 155}}
+              , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 156}}, data.blogTitle)
+              , react.createElement('div', { className: "flex", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 157}}
+                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 158}}
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 159}}, "Host")
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 160}}, data.blogHost)
                 )
-                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 160}}
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 161}}, "Contributors")
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 162}}, contributers)
+                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 162}}
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 163}}, "Contributors")
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 164}}, contributers)
                 )
-                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 164}}
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 165}}, "Subscribers")
-                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 166}}, subscribers)
+                , react.createElement('div', { style: {flexBasis: 350}, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 166}}
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 167}}, "Subscribers")
+                  , react.createElement('p', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 168}}, subscribers)
                 )
               )
-              , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 169}}
+              , react.createElement('div', { className: "flex flex-wrap" , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 171}}
                 , posts
               )
             )
@@ -58510,6 +58518,24 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
   }
 
   const _jsxFileName$h = "/Users/logan/Dev/interface/apps/publish/src/js/components/lib/comment-box.js";
+  class PostButton extends react_1 {
+    render() {
+      if (this.props.enabled) {
+        return (
+          react.createElement('p', { className: "body-regular pointer" , onClick: this.props.post, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 9}}, "-> Post"
+
+          )
+        );
+      } else {
+        return (
+          react.createElement('p', { className: "body-regular gray-30" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 15}}, "-> Post"
+
+          )
+        );
+      }
+    }
+  }
+
   class CommentBox extends react_1 {
     constructor(props){
       super(props);
@@ -58524,50 +58550,32 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
     }
 
     render() {
-      if (this.props.enabled) {
-        return (
-          react.createElement('div', { className: "cb w-100 flex"  , 
-            style: {paddingBottom: 8, marginTop: 32}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 21}}
-            , react.createElement('div', { className: "fl", style: {marginRight: 10}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 23}}
-              , react.createElement(Sigil, { ship: this.props.our, size: 36, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 24}})
+      let textClass = (this.props.enabled)
+        ?  "body-regular-400 w-100"
+        :  "body-regular-400 w-100 gray-30";
+      return (
+        react.createElement('div', { className: "cb w-100 flex"  , 
+          style: {paddingBottom: 8, marginTop: 32}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 41}}
+          , react.createElement('div', { className: "fl", style: {marginRight: 10}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 43}}
+            , react.createElement(Sigil, { ship: this.props.our, size: 36, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 44}})
+          )
+          , react.createElement('div', { className: "flex-col w-100" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 46}}
+            , react.createElement('textarea', { className: textClass,
+              ref: (el) => {this.textarea = el;},
+              style: {resize: "none"},
+              type: "text",
+              name: "commentBody",
+              defaultValue: "",
+              onChange: this.props.action,
+              disabled: (!this.props.enabled), __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 47}}
             )
-            , react.createElement('div', { className: "flex-col w-100" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 26}}
-              , react.createElement('textarea', { className: "body-regular-400 w-100" ,
-                ref: (el) => {this.textarea = el;},
-                style: {resize: "none"},
-                type: "text",
-                name: "commentBody",
-                defaultValue: "",
-                onChange: this.props.action, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 27}}
-              )
-              , react.createElement('p', { className: "body-regular pointer" , onClick: this.props.post, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 35}}, "-> Post"
-
-              )
+            , react.createElement(PostButton, { 
+              post: this.props.post, 
+              enabled: (Boolean(this.props.content) && this.props.enabled), __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 56}}
             )
           )
-        );
-      } else {
-        return (
-          react.createElement('div', { className: "cb w-100 flex"  , 
-            style: {paddingBottom: 8, marginTop: 32}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 43}}
-            , react.createElement('div', { className: "fl", style: {marginRight: 10}, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 45}}
-              , react.createElement(Sigil, { ship: this.props.our, size: 36, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 46}})
-            )
-            , react.createElement('div', { className: "flex-col w-100" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 48}}
-              , react.createElement('textarea', { className: "body-regular-400 w-100" ,
-                ref: (el) => {this.textarea = el;},
-                style: {resize: "none"},
-                type: "text",
-                name: "commentBody",
-                disabled: true, __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 49}}
-              )
-              , react.createElement('p', { className: "body-regular gray-50" , __self: this, __source: {fileName: _jsxFileName$h, lineNumber: 56}}, "-> Post"
-
-              )
-            )
-          )
-        );
-      }
+        )
+      );
     }
   }
 
@@ -58651,24 +58659,25 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
             , react.createElement(CommentBox, { our: our,
               action: this.commentChange,
               enabled: !(Boolean(this.state.awaiting)),
+              content: this.state.commentBody,
               post: this.postComment, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 83}})
 
 
-            , react.createElement('div', { className: "flex-col", style: {marginTop: 32}, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 89}}
+            , react.createElement('div', { className: "flex-col", style: {marginTop: 32}, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 90}}
               , comments
             )
           )
         );
       } else {
         return (
-          react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 96}}
-            , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 97}}
+          react.createElement('div', { className: "cb mt3 mb4"  , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 97}}
+            , react.createElement('p', { className: "gray-50 body-large b"  , __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 98}}
               , this.props.comments.length
-              , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 99}}, "\u0002Comments"
+              , react.createElement('span', { className: "black", __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 100}}, "\u0002Comments"
 
               )
             )
-            , react.createElement('p', { className: "cl body-regular pointer"  , onClick: this.toggleDisplay, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 103}}, "+ Show Comments"
+            , react.createElement('p', { className: "cl body-regular pointer"  , onClick: this.toggleDisplay, __self: this, __source: {fileName: _jsxFileName$i, lineNumber: 104}}, "+ Show Comments"
 
             )
           )
