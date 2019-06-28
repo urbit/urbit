@@ -579,7 +579,12 @@
 ::  $move: output effect; either request or response
 ::
 +$  move  [=duct card=(wind note gift)]
+::  $queued-event: event to be handled after initial boot completes
 ::
++$  queued-event
+  $%  [%call =duct type=* wrapped-task=(hobo task)]
+      [%take =wire =duct type=* =sign]
+  ==
 ::  $task: job for ames
 ::
 ::    %born: process restart notification
@@ -688,25 +693,18 @@
 ::    keys.
 ::
 +$  note
-  $%  $:  %a
-      $%  [%memo sponsor=ship message=_[/a/ping ~]]
-      ==  ==
-      $:  %b
+  $~  [%b %wait *@da]
+  $%  $:  %b
       $%  [%wait date=@da]
           [%rest date=@da]
       ==  ==
-      $:  %c
-      $%  [%memo =ship =message]
-      ==  ==
-      $:  %g
-      $%  [%memo =ship =message]
-      ==  ==
       $:  %j
-      $%  [%memo =ship =message]
-      ::
-          [%private-keys ~]
+      $%  [%private-keys ~]
           [%public-keys =ship]
           [%turf ~]
+      ==  ==
+      $:  @tas
+      $%  [%memo =ship =message]
   ==  ==  ==
 ::  $sign: response from other vane
 ::
@@ -722,27 +720,18 @@
 ::    triggers the next heartbeat message to be sent.
 ::
 +$  sign
-  $%  $:  %a
-      $%  [%done error=(unit error)]
-      ==  ==
-      $:  %b
+  $~  [%b %wake ~]
+  $%  $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
-      $:  %c
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ==  ==
-      $:  %g
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ==  ==
       $:  %j
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ::
-          [%private-keys =life =private-key]
+      $%  [%private-keys =life =private-key]
           [%public-keys =vent-result]
           [%turf turfs=(list turf)]
+      ==  ==
+      $:  @tas
+      $%  [%done error=(unit error)]
+          [%memo =message]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
@@ -816,8 +805,79 @@
 --
 ::  external vane interface
 ::
-=<
 |=  pit=vase
+::  larval ames, before %born sets .unix-duct; wraps adult ames core
+::
+=<  =*  adult-gate  .
+    =|  queued-events=(qeu queued-event)
+    ::
+    |=  [our=ship eny=@ now=@da scry-gate=sley]
+    =*  larval-gate  .
+    =*  adult-core   (adult-gate +<)
+    |%
+    ::  +call: handle request $task
+    ::
+    ++  call
+      |=  [=duct type=* wrapped-task=(hobo task)]
+      ::  %born: set .unix-duct and start draining .queued-events
+      ::
+      ?:  ?=(%born -.wrapped-task)
+        ::  process %born using wrapped adult ames
+        ::
+        =^  moves  adult-gate  (call:adult-core duct type wrapped-task)
+        ::  if no events were queued up, metamorphose
+        ::
+        ?~  queued-events
+          [moves adult-gate]
+        ::  kick off a timer to process the first of .queued-events
+        ::
+        =.  moves  :_(moves [duct %pass /larva %b %wait now])
+        [moves larval-gate]
+      ::  any other event: enqueue it until we have a .unix-duct
+      ::
+      =.  queued-events  (~(put to queued-events) %call duct type wrapped-task)
+      [~ larval-gate]
+    ::  +take: handle response $sign
+    ::
+    ++  take
+      |=  [=wire =duct type=* =sign]
+      ::  enqueue event if not a larval drainage timer
+      ::
+      ?.  =(/larva wire)
+        =.  queued-events  (~(put to queued-events) %take wire duct type sign)
+        [~ larval-gate]
+      ::  larval event drainage timer; pop and process a queued event
+      ::
+      ?>  ?=(%wake -.sign)
+      =^  first-event  queued-events  ~(get to queued-events)
+      =^  moves  adult-gate
+        ?-  -.first-event
+          %call  (call:adult-core +.first-event)
+          %take  (take:adult-core +.first-event)
+        ==
+      ::  .queued-events has been cleared; metamorphose
+      ::
+      ?~  queued-events
+        [moves adult-gate]
+      ::  set timer to drain next event
+      ::
+      =.  moves  :_(moves [duct %pass /larva %b %wait now])
+      [moves larval-gate]
+    ::  lifecycle arms; mostly pass-throughs to the contained adult ames
+    ::
+    ++  scry  scry:adult-core
+    ++  stay  [queued-events stay:adult-core]
+    ++  load
+      |=  old=_[queued-events stay:adult-core]
+      ^+  larval-gate
+      ::
+      =.  queued-events  -.old
+      =.  adult-gate     (load:adult-core +.old)
+      larval-gate
+    --
+::  adult ames, after metamorphosis from larva
+::
+=<
 =|  =ames-state
 |=  [our=ship eny=@ now=@da scry-gate=sley]
 =*  ames-gate  .
@@ -860,16 +920,10 @@
   =^  moves  ames-state
     =<  abet
     ?-  sign
+      [@ %done *]   (on-take-done:event-core wire error.sign)
+      [@ %memo *]   (on-take-memo:event-core wire message.sign)
+    ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
-    ::
-      [%a %done *]  (on-take-done:event-core wire error.sign)
-      [%c %done *]  (on-take-done:event-core wire error.sign)
-      [%g %done *]  (on-take-done:event-core wire error.sign)
-      [%j %done *]  (on-take-done:event-core wire error.sign)
-    ::
-      [%c %memo *]  (on-take-memo:event-core wire message.sign)
-      [%g %memo *]  (on-take-memo:event-core wire message.sign)
-      [%j %memo *]  (on-take-memo:event-core wire message.sign)
     ::
       [%j %private-keys *]  (on-priv:event-core [life private-key]:sign)
       [%j %public-keys *]   (on-publ:event-core wire vent-result.sign)
@@ -936,13 +990,8 @@
   ++  on-hear
     |=  [=lane =blob]
     ^+  event-core
-    ::  register this duct as our new .unix-duct
     ::
-    =.  unix-duct.ames-state  duct
-    ::
-    =/  =packet  (decode-packet blob)
-    ::
-    (on-hear-packet lane packet)
+    (on-hear-packet lane (decode-packet blob))
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1355,7 +1404,7 @@
   ::  +on-born: handle unix process restart
   ::  +on-vega: handle kernel reload
   ::
-  ++  on-born  event-core
+  ++  on-born  event-core(unix-duct.ames-state duct)
   ++  on-vega  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::

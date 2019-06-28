@@ -24,8 +24,8 @@
 =/  bob-pub    pub:ex:crypto-core.ames-state.bob
 =/  bob-sec    sec:ex:crypto-core.ames-state.bob
 ::
-=/  alice-sym  (derive-symmetric-key:alef bob-pub alice-sec)
-=/  bob-sym    (derive-symmetric-key:alef alice-pub bob-sec)
+=/  alice-sym  (derive-symmetric-key:vane bob-pub alice-sec)
+=/  bob-sym    (derive-symmetric-key:vane alice-pub bob-sec)
 ::
 ?>  =(alice-sym bob-sym)
 ::
@@ -54,7 +54,13 @@
     ==
   =.  route.peer-state  `[direct=%.y `lane:alef`[%| `@`%lane-bar]]
   [%known peer-state]
+::  metamorphose
 ::
+=>  .(alice +:(call:(alice) ~[//unix] ** %born ~))
+=>  .(bob +:(call:(bob) ~[//unix] ** %born ~))
+::  helper core
+::
+=>
 |%
 ++  move-to-packet
   |=  =move:alef
@@ -75,7 +81,25 @@
   %-  move-to-packet
   %+  snag  index
   (skim moves is-move-send)
+::
+++  call
+  |=  [vane=_alice =duct =task:alef]
+  ^-  [moves=(list move:alef) _alice]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (call:vane-core duct ** task)
+::
+++  take
+  |=  [vane=_alice =wire =duct =sign:alef]
+  ^-  [moves=(list move:alef) _alice]
+  ::
+  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
+  ::
+  (take:vane-core wire duct ** sign)
 --
+::  test core
+::
 |%
 ++  test-packet-encoding  ^-  tang
   ::
@@ -86,8 +110,8 @@
         content=[12 13]
     ==
   ::
-  =/  encoded  (encode-packet:alef packet)
-  =/  decoded  (decode-packet:alef encoded)
+  =/  encoded  (encode-packet:vane packet)
+  =/  decoded  (decode-packet:vane encoded)
   ::
   %+  expect-eq
     !>  packet
@@ -111,10 +135,10 @@
     :*  [sndr=~bus rcvr=~doznec-doznec]
         encrypted=%.y
         origin=~
-        content=(encrypt:alef alice-sym shut-packet)
+        content=(encrypt:vane alice-sym shut-packet)
     ==
   ::
-  =/  =blob:alef   (encode-packet:alef packet)
+  =/  =blob:alef   (encode-packet:vane packet)
   =^  moves1  bob  (call bob ~[//unix] %hear lane-foo blob)
   =^  moves2  bob
     =/  =point:alef
@@ -181,20 +205,4 @@
   %+  expect-eq
     !>  [~[/alice] %give %done `error]
     !>  (snag 1 `(list move:alef)`moves5)
-::
-++  call
-  |=  [vane=_alice =duct =task:alef]
-  ^-  [moves=(list move:alef) _alice]
-  ::
-  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
-  ::
-  (call:vane-core duct ** task)
-::
-++  take
-  |=  [vane=_alice =wire =duct =sign:alef]
-  ^-  [moves=(list move:alef) _alice]
-  ::
-  =/  vane-core  (vane(now `@da`(add ~s1 now.vane)))
-  ::
-  (take:vane-core wire duct ** sign)
 --
