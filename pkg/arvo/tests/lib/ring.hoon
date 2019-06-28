@@ -17,7 +17,7 @@
 ::
 =/  public-key-set         (sy (turn (gulf 1 5) scalarmult-base:ed:crypto))
 |%
-++  disabled-test-basic-unlinked
+++  test-basic-unlinked
   =/  unlinked
     %-  sign:raw:ring  :*
       hello-world
@@ -32,7 +32,7 @@
     !>  %.y
     !>  (verify:raw:ring hello-world empty-scope public-key-set unlinked)
 ::
-++  disabled-test-linked-different-message-same-key-same-scope
+++  test-linked-different-message-same-key-same-scope
   =/  linked-hello-world
     %-  sign:raw:ring  :*
       hello-world
@@ -72,7 +72,7 @@
 ::  if we use the same key to sign the same message in two different scopes, we
 ::  must have different resulting linkage tags.
 ::
-++  disabled-test-linked-same-message-same-key-different-scope
+++  test-linked-same-message-same-key-different-scope
   =/  scope-one-hello-world
     %-  sign:raw:ring  :*
       hello-world
@@ -111,7 +111,7 @@
   ==
 ::  the same message signed by two different keys should have different linkage
 ::
-++  disabled-test-linked-same-message-different-key
+++  test-linked-same-message-different-key
   =/  our-hello-world
     %-  sign:raw:ring  :*
       hello-world
