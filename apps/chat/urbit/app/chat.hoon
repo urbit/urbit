@@ -81,11 +81,11 @@
         [cir 0]
       =/  last  (snag (dec (lent lis)) `(list envelope:hall)`lis)
       [cir (add num.last 1)]
-  =/  maptjson  *(map @t json)
-  =.  maptjson
-    (~(put by maptjson) 'config' (config-to-json str))
-  =.  maptjson
-    (~(put by maptjson) 'numbers' (numbers-to-json numbers))
+  =/  maptjson=(map @t json)
+    %-  my 
+    :~  ['config' (config-to-json str)] 
+        ['numbers' (numbers-to-json numbers)]
+    ==
   [%o maptjson]
 ::
 ++  peer-chattile
@@ -102,8 +102,8 @@
   ^-  (quip move _this)
   ~&  (lent (prey:pubsub:userlib /primary bol))
   =*  messages  messages.str.sta
-  =/  lisunitmov=(list (unit move))
-    %+  turn  ~(tap by messages)
+  =/  lismov/(list move)
+    %+  murn  ~(tap by messages)
     |=  [cir=circle:hall lis=(list envelope:hall)]
     ^-  (unit move)
     =/  envs/(unit (list envelope:hall))  (~(get by messages) cir)
@@ -123,15 +123,7 @@
         [%messages cir start end (swag [start offset] u.envs)]
     ==
   :_  this
-  %+  weld
-    [ost.bol %diff %chat-config str.sta]~
-  %+  turn  %+  skim  lisunitmov
-    |=  umov=(unit move)
-    ^-  ?
-    ?~  umov
-      %.n
-    %.y
-    need
+  [[ost.bol %diff %chat-config str.sta] lismov]
 ::
 ::  +poke-chat: send us an action
 ::
@@ -304,13 +296,14 @@
         ?:  add.rum
           (~(put in circles.str.sta) cir.rum)
         (~(del in circles.str.sta) cir.rum)
-      =/  str  %=  str.sta
+      =/  str
+        %=  str.sta
           circles  cis
           peers
             ?:  add.rum
               (~(put by peers.str.sta) [our.bol cir.rum] ~)
             (~(del by peers.str.sta) [our.bol cir.rum])
-      ==
+        ==
       :-  (send-chat-update [[%circles cis] str])
       this(str.sta str)
   ::
@@ -329,10 +322,14 @@
     ?>  ?=(%gram -.sto)
     =*  messages  messages.str.sta
     =/  circle/circle:hall  [`@p`(slav %p &2:wir) &3:wir]
-    =/  nes/(list envelope:hall)  (~(got by messages) circle)
-    =/  str  %=  str.sta
-      messages  (~(put by messages) circle (snoc nes nev.sto))
-    ==
+    =/  unes/(unit (list envelope:hall))  (~(get by messages) circle)
+    ?~  unes
+      [~ this]
+    =/  nes  u.unes
+    =/  str
+      %=  str.sta
+        messages  (~(put by messages) circle (snoc nes nev.sto))
+      ==
     :-  (send-chat-update [[%message circle nev.sto] str])
     this(str.sta str)
     ::
@@ -574,15 +571,15 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-      =/  shp/@p  (slav %p &2:wir)
-      =/  pat  /circle/[&3:wir]/config/group
-      ?:  =(&3:wir 'inbox')
-        :_  this
-        [ost.bol %peer wir [shp %hall] pat]~
-      ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
-        :_  this
-        [ost.bol %peer wir [shp %hall] pat]~
-      [~ this]
+    =/  shp/@p  (slav %p &2:wir)
+    =/  pat  /circle/[&3:wir]/config/group
+    ?:  =(&3:wir 'inbox')
+      :_  this
+      [ost.bol %peer wir [shp %hall] pat]~
+    ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
+      :_  this
+      [ost.bol %peer wir [shp %hall] pat]~
+    [~ this]
   ::
       %circles
     :_  this
@@ -600,15 +597,15 @@
     (mean [leaf+"invalid wire for diff: {(spud wir)}"]~)
   ::
       %circle
-      =/  shp/@p  (slav %p &2:wir)
-      =/  pat  /circle/[&3:wir]/config/group
-      ?:  =(&3:wir 'inbox')
-        :_  this
-        [ost.bol %peer wir [shp %hall] pat]~
-      ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
-        :_  this
-        [ost.bol %peer wir [shp %hall] pat]~
-      [~ this]
+    =/  shp/@p  (slav %p &2:wir)
+    =/  pat  /circle/[&3:wir]/config/group
+    ?:  =(&3:wir 'inbox')
+      :_  this
+      [ost.bol %peer wir [shp %hall] pat]~
+    ?:  (~(has in src.inbox.str.sta) [[shp &3:wir] ~])
+      :_  this
+      [ost.bol %peer wir [shp %hall] pat]~
+    [~ this]
   ::
       %circles
     :_  this

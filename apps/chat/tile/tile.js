@@ -32,7 +32,6 @@ export default class ChatTile extends Component {
 
   render() {
     const { state } = this;
-
     let inviteNum = 0;
     let msgNum = 0;
     let inviteCircle = `~${window.ship}/i`;
@@ -51,19 +50,16 @@ export default class ChatTile extends Component {
         let host = key.split('/')[0];
 
         if (!state.configs[key]) { break; }
+        if (!(key in numbers)) { break; }
 
         let red = state.configs[key].red;
-        console.log(key, red, numbers[key]);
 
         if (key === inviteCircle) {
           inviteNum = inviteNum - red + numbers[key];
-          console.log('case 1', inviteNum);
         } else if (host === `~${window.ship}`) {
           msgNum = msgNum - red + numbers[key];
-          console.log('case 2', msgNum);
         } else {
           msgNum = msgNum + numbers[key];
-          console.log('case 3', msgNum);
         }
       } 
     }

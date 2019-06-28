@@ -139,6 +139,7 @@ export class Root extends Component {
                 }>
                 <NewScreen 
                   api={api}
+                  circles={circles}
                   {...props}
                 />
               </Skeleton>
