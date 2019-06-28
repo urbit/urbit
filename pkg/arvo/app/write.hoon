@@ -55,7 +55,7 @@
 +$  poke
   $%  [%hall-action action:hall]
       [%write-action action]
-      [%noun @tas path @t]
+      [%launch-action @tas path @t]
   ==
 ::
 +$  diff
@@ -188,7 +188,7 @@
     :_  this(sat *state)
     :~  [ost.bol %connect / [~ /'~publish'] %write]
         :*  ost.bol  %poke  /publish  [our.bol %launch]
-            %noun  %write  /publishtile  '/~publish/tile.js'
+            %launch-action  %write  /publishtile  '/~publish/tile.js'
         ==
     ==
     ::
