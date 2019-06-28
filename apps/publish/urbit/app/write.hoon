@@ -1307,21 +1307,15 @@
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
-  ::  new
-  ::
-      [[~ [%'~publish' %new ~]] ~]
-    =/  hym=manx  (index (state-to-json sat))
-    :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
   ::  new post
   ::
-      [[~ [%'~publish' %new %post ~]] ~]
+      [[~ [%'~publish' %new-post ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
   ::  new blog
   ::
-      [[~ [%'~publish' %new %blog ~]] ~]
+      [[~ [%'~publish' %new-blog ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
@@ -1340,14 +1334,6 @@
     =/  blog=@tas      i.t.t.site.request-line
     =/  post=@tas      i.t.t.t.site.request-line
     ::
-::    ?~  who  [[ost.bol %http-response not-found:app]~ this]
-::    =/  col=(unit collection)
-::      ?:  =(u.who our.bol)
-::        (~(get by pubs.sat) blog)
-::      (~(get by subs.sat) u.who blog)
-::    ?~  col  [[ost.bol %http-response not-found:app]~ this]
-::    =/  pos  (~(get by pos.u.col) post)
-::    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~

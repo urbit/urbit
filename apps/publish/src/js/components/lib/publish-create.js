@@ -10,22 +10,46 @@ export class PublishCreate extends Component {
   }
 
   render () {
-    let link = {
-      pathname: "/~publish/new",
-      state: {
-        lastPath: this.props.location.pathname,
-        lastMatch: this.props.match.path,
-        lastParams: this.props.match.params,
-      },
-    };
-
-    return (
-      <div className="w-100">
-        <p className="publish">Publish</p>
-        <Link to={link} >
-          <p className="create">+Create</p>
-        </Link>
-      </div>
-    );
+    if (!this.props.create) {
+      return (
+        <div className="w-100">
+          <p className="publish">Publish</p>
+        </div>
+      );
+    } else if (this.props.create == 'blog') {
+      let link = {
+        pathname: "/~publish/new-blog",
+        state: {
+          lastPath: this.props.location.pathname,
+          lastMatch: this.props.match.path,
+          lastParams: this.props.match.params,
+        },
+      };
+      return (
+        <div className="w-100">
+          <p className="publish">Publish</p>
+          <Link to={link}>
+            <p className="create">+New Blog</p>
+          </Link>
+        </div>
+      );
+    } else if (this.props.create == 'post') {
+      let link = {
+        pathname: "/~publish/new-post",
+        state: {
+          lastPath: this.props.location.pathname,
+          lastMatch: this.props.match.path,
+          lastParams: this.props.match.params,
+        },
+      };
+      return (
+        <div className="w-100">
+          <p className="publish">Publish</p>
+          <Link to={link}>
+            <p className="create">+New Post</p>
+          </Link>
+        </div>
+      );
+    }
   }
 }

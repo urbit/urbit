@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
-import { PublishCreate } from '/components/lib/publish-create';
 import { HeaderMenu } from '/components/lib/header-menu';
 import { PathControl } from '/components/lib/path-control';
-import { Switch, withRouter } from 'react-router';
+import { Switch } from 'react-router';
 
 export class Header extends Component {
   constructor(props){

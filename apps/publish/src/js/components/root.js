@@ -61,19 +61,7 @@ export class Root extends Component {
               );
            }} />
 
-          <Route exact path="/~publish/new"
-            render={ (props) => {
-              return (
-                <Skeleton
-                  {...this.state}
-                  children={
-                    <New api={api} {...this.state} {...props}/>
-                  }
-                />
-              );
-           }} />
-
-          <Route exact path="/~publish/new/blog"
+          <Route exact path="/~publish/new-blog"
             render={ (props) => {
               return (
                 <Skeleton
@@ -85,7 +73,7 @@ export class Root extends Component {
               );
            }} />
 
-          <Route exact path="/~publish/new/post"
+          <Route exact path="/~publish/new-post"
             render={ (props) => {
               return (
                 <Skeleton

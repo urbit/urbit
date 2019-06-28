@@ -127,9 +127,7 @@ export class Recent extends Component {
     }
   }
 
-
   render() {
-
     console.log(this.props);
 
     let recent = this.buildRecent();
@@ -152,12 +150,11 @@ export class Recent extends Component {
             </h2>
           </div>
           <div className="flex flex-wrap">
-            {posts} 
+            {posts}
           </div>
         </div>
       );
     });
-
 
     return (
       <div>
@@ -165,10 +162,9 @@ export class Recent extends Component {
           <HM/>
         </div>
         <div className="flex-col">
-          {body} 
+          {body}
         </div>
       </div>
     );
   }
 }
-
