@@ -39,10 +39,18 @@ runNuevoFunction (oldState, NEvInit{..}) =
       }
 
 -- A recv takes a message and gives it to the program to make a list of effects
-runNuevoFunction (oldState, NEvRecv{..}) = undefined
-  -- (newState, effects)
-  -- where
-  --   newState = oldState
-  --     { 
+runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
+  (newNuevoState, nuevoEffects)
+  where
+    bone = nsSocketToBone B.! nevRecvSentOver
 
-  --     }
+    (newProgramState, programEffects) =
+      (nsProgram (nsProgramState, PEvRecv bone nevRecvMessage))
+
+    -- TODO: this depends on the effects; we may need to allocate new bones for
+    -- new sockets.
+    newNuevoState = oldNuevoState
+      { nsProgramState = newProgramState
+      }
+
+    nuevoEffects = undefined

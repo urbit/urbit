@@ -2,8 +2,6 @@ module Types where
 
 import ClassyPrelude
 
-import Data.Void
-
 import qualified Data.Bimap as B
 import qualified Data.Map as M
 
@@ -15,7 +13,7 @@ data Vase = Vase [Text]
 
 -- A list of path elements
 data Path = Path [Text]
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 
 -------------------------------------------------------------------------------
@@ -36,7 +34,7 @@ data VereEnv = VereEnv
 data Connection
   = TopConnection
   | ProcessConnection Path Int
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 -- | Was: "Handle"
 data Socket
@@ -51,7 +49,7 @@ data Socket
   , ioDriver :: Text
   }
 
-  deriving (Show, Eq)
+  deriving (Show, Eq, Ord)
 
 
 
@@ -94,14 +92,14 @@ type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
 -- Types for the program running under Nuevo
 
 data ProgramEvent
-  = PERecv
+  = PEvRecv
   { peRecvBone :: Int
   , peRecvMessage :: Text
   }
   deriving (Show, Eq)
 
 data ProgramEffect
-  = PESend
+  = PEfSend
   { peSendBone :: Int
   , peSendMessage :: Text
   }
