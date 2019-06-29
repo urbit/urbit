@@ -11,7 +11,7 @@
 ++  torc  $@(?($iron $gold) {$lead p/ship})             ::  security control
 ++  roon                                                ::  reverse ames msg
   $%  {$d p/mark q/*}                                   ::  diff (diff)
-      {$x ~}                                           ::
+      {$x ~}                                            ::  quit
   ==                                                    ::
 ++  rook                                                ::  forward ames msg
   $%  {$m p/mark q/*}                                   ::  message
@@ -42,7 +42,6 @@
 ++  gest                                                ::  subscriber data
   $:  sup/bitt                                          ::  incoming subscribers
       neb/boat                                          ::  outgoing subscribers
-      qel/(map bone @ud)                                ::  queue meter
   ==                                                    ::
 ++  mast                                                ::  ship state
   $:  mak/*                                             ::  (deprecated)
@@ -211,16 +210,6 @@
     ~/  %mo-away
     |=  {him/ship caz/cush}                             ::
     ^+  +>
-    ::  ~&  [%mo-away him caz]
-    ?:  ?=($pump -.q.caz)
-      ::
-      ::  you'd think this would send an ack for the diff
-      ::  that caused this pump.  it would, but we already
-      ::  sent it when we got the diff in ++mo-cyst.  then
-      ::  we'd have to save the network duct and connect it
-      ::  to this returning pump.
-      ::
-      +>
     ?:  ?=($peer-not -.q.caz)
       ::  short circuit error
       (mo-give %unto %reap (some p.q.caz))
@@ -235,25 +224,20 @@
           $peer  [%s p.q.caz]
         ==
     %+  mo-pass
-      [%sys %way -.q.caz ~]
-    `note-arvo`[%a %want him [%g %ge p.caz ~] [num roc]]
-  ::
-  ++  mo-baal                                           ::  error convert a
-    |=  art/(unit ares)
-    ^-  ares
-    ?~(art ~ ?~(u.art `[%blank ~] u.art))
+      [%sys %way (scot %p him) p.caz -.q.caz ~]
+    `note-arvo`[%a %memo him [%g %ge p.caz ~] [num roc]]
   ::
   ++  mo-baba                                           ::  error convert b
-    |=  ars/ares
+    |=  error=(unit error:ames)
     ^-  (unit tang)
-    ?~  ars  ~
-    `[[%leaf (trip p.u.ars)] q.u.ars]
+    ?~  error  ~
+    `[[%leaf (trip tag.u.error)] tang.u.error]
   ::
   ++  mo-awed                                           ::  foreign response
-    |=  {him/ship why/?($peer $peel $poke $pull) art/(unit ares)}
+    |=  {him/ship why/?($peer $peel $poke $pull) art/(unit error:ames)}
     ^+  +>
     ::  ~&  [%mo-awed him why art]
-    =+  tug=(mo-baba (mo-baal art))
+    =+  tug=(mo-baba art)
     ?-  why
       $peel  (mo-give %unto %reap tug)
       $peer  (mo-give %unto %reap tug)
@@ -277,6 +261,7 @@
         r  (~(put by r.sad) p.sad hen)
       ==
     ==
+  ::  TODO try to delete me
   ::
   ++  mo-ball                                           ::  outbone by index
     |=  {him/ship num/@ud}
@@ -326,28 +311,6 @@
       ::
       (mo-give %unto %diff (result-to-cage:ford build-result))
     ::
-        $red                                            ::  diff ack
-      ?>  ?=({@ @ @ ~} t.pax)
-      ?.  ?=({$a $woot *} sih)
-        ~&  [%red-went pax]
-        +>.$
-      =+  :*  him=(slav %p i.t.pax)
-              dap=i.t.t.pax
-              num=(slav %ud i.t.t.t.pax)
-          ==
-      =>  .(pax `path`[%req t.pax])
-      ?~  q.+>.sih
-        (mo-pass [%sys pax] %g %deal [him our] dap %pump ~)
-      :: should not happen (XX wat mean?)
-      ::
-      %-  ?.  ?=([~ ~ %mack *] q.+>.sih)
-            ~&  [%diff-bad-ack q.+>.sih]
-            same
-          ~&  [%diff-bad-ack %mack]
-          (slog (flop q.,.+>.q.+>.sih))
-      =.  +>.$  (mo-pass [%sys pax] %g %deal [him our] dap %pull ~)
-      (mo-pass [%sys pax] %a %want him [%g %gh dap ~] [num %x ~])
-    ::
         %rep                                            ::  reverse request
       ?>  ?=({@ @ @ ~} t.pax)
       ?>  ?=([%f %made *] sih)
@@ -358,18 +321,18 @@
       ::
       ?:  ?=([%incomplete *] result.sih)
         ::  "XX should crash"
-        (mo-give %mack `tang.result.sih)
+        %-  (slog >%gall-sys-rep-incomplete< tang.result.sih)
+        +>.$
       ::
       =/  build-result  build-result.result.sih
       ::
       ?:  ?=([%error *] build-result)
         ::  "XX should crash"
-        (mo-give %mack `message.build-result)
+        %-  (slog >%gall-sys-rep-error< message.build-result)
+        +>.$
       ::
-      ::  "XX pump should ack"
-      =.  +>.$  (mo-give %mack ~)
       =*  result-cage  (result-to-cage:ford build-result)
-      (mo-give(hen (mo-ball him num)) %unto %diff result-cage)
+      (mo-give %unto %diff result-cage)
     ::
         $req                                            ::  inbound request
       ?>  ?=({@ @ @ ~} t.pax)
@@ -377,28 +340,28 @@
               dap=i.t.t.pax
               num=(slav %ud i.t.t.t.pax)
           ==
+      ::  seems unreachable, probably delete
+      ::
       ?:  ?=({$f $made *} sih)
         ?:  ?=([%incomplete *] result.sih)
           ::  "XX should crash"
-          (mo-give %mack `tang.result.sih)
+          (mo-give %done `[%gall-ford-incomplete tang.result.sih])
         ::
         =/  build-result  build-result.result.sih
         ::
         ?:  ?=([%error *] build-result)
           ::  "XX should crash"
-          (mo-give %mack `message.build-result)
+          (mo-give %done `[%gall-ford-error message.build-result])
         =/  cay/cage  (result-to-cage:ford build-result)
         (mo-pass [%sys pax] %g %deal [him our] i.t.t.pax %poke cay)
-      ?:  ?=({$a $woot *} sih)  +>.$                    ::  quit ack, boring
+      ::
       ?>  ?=({$g $unto *} sih)
       =+  cuf=`cuft`+>.sih
       ?-    -.cuf
-        $coup  (mo-give %mack p.cuf)
-        $diff  %+  mo-pass  [%sys %red t.pax]
-               [%a %want him [%g %gh dap ~] [num %d p.p.cuf q.q.p.cuf]]
-        $quit  %+  mo-pass  [%sys pax]
-               [%a %want him [%g %gh dap ~] [num %x ~]]
-        $reap  (mo-give %mack p.cuf)
+        %coup  (mo-give %done ?~(p.cuf ~ `[%gall-coup u.p.cuf]))
+        %reap  (mo-give %done ?~(p.cuf ~ `[%gall-reap u.p.cuf]))
+        %diff  (mo-give %memo /remove-me num %d p.p.cuf q.q.p.cuf)
+        %quit  (mo-give %memo /remove-me num %x ~)
         ::  we send http-responses, we don't receive them.
         ::
         $http-response  !!
@@ -421,13 +384,18 @@
       (mo-clip dap `prey`[%high ~ him] [%poke result-cage])
     ::
         $way                                            ::  outbound request
-      ?>  ?=({$a $woot *} sih)
-      ?>  ?=({@ ~} t.pax)
-      %-  mo-awed
-      :*  `ship`p.+>.sih
-          ;;(?($peer $peel $poke $pull) i.t.pax)
-          +>+.sih
-      ==
+      ::
+      ?>  ?=([@ @ @ ~] t.pax)
+      =/  him  (slav %p i.t.pax)
+      =/  dap  i.t.t.pax
+      =/  cub  ;;(?($peer $peel $poke $pull) i.t.t.t.pax)
+      ::
+      ?:  ?=([%a %done *] sih)
+        (mo-awed him cub error.sih)
+      ::
+      ?>  ?=([%a %memo *] sih)
+      =+  mes=;;([@ud roon] payload.message.sih)
+      (mo-gawd:(mo-abed:mo hen) him dap mes)
     ==
   ::
   ++  mo-cook                                           ::  take in /use
@@ -510,7 +478,7 @@
   ::
   ++  mo-gawk                                           ::  ames forward
     |=  {him/@p dap/dude num/@ud rok/rook}
-    =.  +>  ?.(?=($u -.rok) +> (mo-give %mack ~))
+    =.  +>  ?.(?=($u -.rok) +> (mo-give %done ~))
     %+  mo-pass
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
@@ -525,13 +493,11 @@
   ++  mo-gawd                                           ::  ames backward
     |=  {him/@p dap/dude num/@ud ron/roon}
     ?-    -.ron
+        $x  (mo-give %unto %quit ~)
         $d
       %+  mo-pass
         [%sys %rep (scot %p him) dap (scot %ud num) ~]
       [%f %build live=%.n [%vale [p q]:(mo-beak dap) p.ron q.ron]]
-    ::
-        $x  =.  +>  (mo-give %mack ~)                  ::  XX should crash
-            (mo-give(hen (mo-ball him num)) %unto %quit ~)
     ==
   ::
   ++  ap                                                ::  agent engine
@@ -569,28 +535,10 @@
     ::
     ++  ap-abet                                         ::  resolve
       ^+  +>
-      =>  ap-abut
       %_  +>
         bum.mas  (~(put by bum.mas) dap +<+)
         moz  :(weld (turn zip ap-aver) (turn dub ap-avid) moz)
       ==
-    ::
-    ++  ap-abut                                         ::  track queue
-      ^+  .
-      =+  [pyz=zip ful=*(set bone)]
-      |-  ^+  +>
-      ?^  pyz
-        ?.  ?=({$give $diff *} q.i.pyz)
-          $(pyz t.pyz)
-        =^  vad  +>  ap-fill(ost p.i.pyz)
-        $(pyz t.pyz, ful ?:(vad ful (~(put in ful) p.i.pyz)))
-      =+  ded=~(tap in ful)
-      |-  ^+  +>.^$
-      ?~  ded  +>.^$
-      =>  %*(. $(ded t.ded) ost i.ded)
-      =+  tib=(~(get by sup.ged) ost)
-      ?~  tib  ~&([%ap-abut-bad-bone dap ost] ..ap-kill)
-      ap-kill(q.q.pry p.u.tib)
     ::
     ++  ap-aver                                         ::  cove to move
       ~/  %ap-aver
@@ -677,7 +625,6 @@
         $punk   !!
         $peer-not   !!
         $pull   ap-pull
-        $pump   ap-fall
       ==
     ::
     ++  ap-diff                                         ::  pour a diff
@@ -686,7 +633,7 @@
       ::  =.  q.cag  (sped q.cag)
       =^  cug  +>.$  (ap-find [%diff p.cag +.pax])
       ?~  cug
-        %.  [| her +.pax]
+        %.  [her +.pax]
         ap-pump:(ap-lame %diff (ap-suck "diff: no {<`path`[p.cag +.pax]>}"))
       =+  ^=  arg  ^-  vase
           %-  slop
@@ -694,9 +641,9 @@
             [!>(`path`+.pax) (ap-cage cag)]
           [!>((slag (dec p.u.cug) `path`+.pax)) q.cag]
       =^  cam  +>.$  (ap-call q.u.cug arg)
-      ?^  cam
-        (ap-pump:(ap-lame q.u.cug u.cam) | her pax)
-      (ap-pump & her pax)
+      ?~  cam
+        +>.$
+      (ap-pump:(ap-lame q.u.cug u.cam) her pax)
     ::
     ++  ap-cage                                         ::  cage to tagged vase
       |=  cag/cage
@@ -705,24 +652,9 @@
     ::
     ++  ap-pump                                         ::  update subscription
       ~/  %ap-pump
-      |=  {oak/? her/ship pax/path}
+      |=  [her/ship pax/path]
       =+  way=[(scot %p her) %out pax]
-      ?:  oak
-        (ap-pass way %send her -.pax %pump ~)
       (ap-pass:(ap-give %quit ~) way %send her -.pax %pull ~)
-    ::
-    ++  ap-fall                                         ::  drop from queue
-      ^+  .
-      ?.  (~(has by sup.ged) ost)  .
-      =+  soy=(~(get by qel.ged) ost)
-      ?:  |(?=(~ soy) =(0 u.soy))
-        ::  ~&  [%ap-fill-under [our dap] q.q.pry ost]
-        +
-      =.  u.soy  (dec u.soy)
-      ::  ~&  [%ap-fill-sub [[our dap] q.q.pry ost] u.soy]
-      ?:  =(0 u.soy)
-        +(qel.ged (~(del by qel.ged) ost))
-      +(qel.ged (~(put by qel.ged) ost u.soy))
     ::
     ++  ap-farm                                         ::  produce arm
       ~/  %ap-farm
@@ -738,25 +670,6 @@
         $1  [%| (turn p.ton |=(a/* (smyt (path a))))]
         $2  [%| p.ton]
       ==
-    ::
-    ++  ap-fill                                         ::  add to queue
-      ^-  {? _.}
-      =+  suy=(fall (~(get by qel.ged) ost) 0)
-      =/  subscriber=(unit (pair ship path))
-        (~(get by sup.ged) ost)
-      ?:  ?&  =(20 suy)
-              ?|  ?=(~ subscriber)
-                  !=(our p.u.subscriber)
-              ==
-          ==
-        ~&  [%gall-pulling-20 ost (~(get by sup.ged) ost) (~(get by r.zam) ost)]
-        [%| ..ap-fill]
-      ::  ~&  :*  %gall-pushing-20
-      ::          ost
-      ::          suy=suy
-      ::          (~(get by r.zam) ost)
-      ::      ==
-      [%& ..ap-fill(qel.ged (~(put by qel.ged) ost +(suy)))]
     ::
     ++  ap-find                                         ::  general arm
       ~/  %ap-find
@@ -1199,15 +1112,12 @@
       ?~  wim  +
       %_  +
         sup.ged  (~(del by sup.ged) ost)
-        qel.ged  (~(del by qel.ged) ost)
       ==
     ::
     ++  ap-pull                                         ::  load delete
       =+  wim=(~(get by sup.ged) ost)
       ?~  wim  +  ::  ~&(%ap-pull-none +)
-      =:  sup.ged  (~(del by sup.ged) ost)
-          qel.ged  (~(del by qel.ged) ost)
-        ==
+      =.  sup.ged  (~(del by sup.ged) ost)
       =^  cug  ..ap-pull  (ap-find %pull q.u.wim)
       ?~  cug  +>
       =^  cam  +>
@@ -1373,21 +1283,17 @@
       $init
     [~ ..^$(sys.mast.all hen)]
   ::
-      $sunk  [~ ..^$]
-  ::
-      $vega  [~ ..^$]
-  ::
-      $west
-    ?>  ?=({?($ge $gh) @ ~} q.q.hic)
-    =*  dap  i.t.q.q.hic
-    =*  him  p.q.hic
-    ?:  ?=($ge i.q.q.hic)
-      =+  mes=;;({@ud rook} r.q.hic)
-      =<  mo-abet
-      (mo-gawk:(mo-abed:mo hen) him dap mes)
-    =+  mes=;;({@ud roon} r.q.hic)
+      %memo
+    ?>  ?=([%ge @ ~] path.message.q.hic)
+    =/  him=ship  ship.q.hic
+    =*  dap  i.t.path.message.q.hic
+    ::
+    =+  mes=;;([@ud rook] payload.message.q.hic)
     =<  mo-abet
-    (mo-gawd:(mo-abed:mo hen) him dap mes)
+    (mo-gawk:(mo-abed:mo hen) him dap mes)
+  ::
+      $sunk  [~ ..^$]
+      $vega  [~ ..^$]
   ::
       $wegh
     =/  =mass
