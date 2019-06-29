@@ -70,6 +70,7 @@ data NuevoEvent
 data NuevoEffect
   = NEfFork
   | NEfTerminate
+  | NEfSend Socket Text
   deriving (Show, Eq)
 
 -- | Each instance of 
@@ -82,6 +83,17 @@ data NuevoState = NuevoState
   , nsNextBone :: Int
   , nsSocketToBone :: B.Bimap Socket Int
   }
+
+emptyNuevoState :: NuevoState
+emptyNuevoState = NuevoState
+  { nsParent = TopConnection
+  , nsName = Path []
+  , nsProgram = emptyProgram
+  , nsProgramState = M.empty
+  , nsNextBone = 1
+  , nsSocketToBone = B.empty
+  }
+
 
 --  Processes a single Nuevo event 
 type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
@@ -112,3 +124,6 @@ type ProgramState = M.Map Text Text
 -- -- The type of a program that nuevo runs.
 -- type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect)
 type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect])
+
+emptyProgram :: NuevoProgram
+emptyProgram (a, _) = (a, [])

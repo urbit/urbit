@@ -18,10 +18,6 @@ import qualified Data.Map as M
 --         , nsProgram = nevInitProgram
 --         }
 
-
-
-
-
 runNuevoFunction :: NuevoFunction
 
 -- The NEvInit function just changes the program identity and then 
@@ -53,4 +49,10 @@ runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
       { nsProgramState = newProgramState
       }
 
-    nuevoEffects = undefined
+    nuevoEffects = map (programEffectsToNuevoEffect newNuevoState) programEffects
+
+
+-- TODO: This is probably stateful to NuevoState?
+programEffectsToNuevoEffect :: NuevoState -> ProgramEffect -> NuevoEffect
+programEffectsToNuevoEffect NuevoState{..} = \case
+  PEfSend bone msg -> NEfSend (nsSocketToBone B.!> bone) msg
