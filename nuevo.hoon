@@ -922,3 +922,12 @@
 ::  how Erlang handled some of these process related issues before I finalize
 ::  the design; they have 20 years of experience doing this sort of process
 ::  oriented message passing and we should learn from them.
+
+
+
+::  Idea discussed with Ted: instead of having the permanent state handled as
+::  per above, have a datmoic style database at each node, where the pathing to
+::  these databases is by process path. Barrelfish OS supposedly splits its
+::  filesystem up amongst its different process, to colocate files that a
+::  process is going to use with that process.
+::
