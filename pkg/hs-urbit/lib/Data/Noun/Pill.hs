@@ -152,14 +152,18 @@ bsToWords bs =
   VP.generate (1 + length bs `div` 8) $ \i ->
     view packedWord (BS.drop (i*8) bs)
 
--- TODO Support Big-Endian
+{-
+    TODO Support Big-Endian
+    TODO This still has a (small) risk of segfaulting. The right thing to
+         do is to manually copy the data to the C heap, setup the
+         finalizers, and then manually construct a bytestring from
+         that pointer.  -- finalizers, and make a bytestring from that.
+-}
 bytesBS :: Iso' (VP.Vector Word8) ByteString
 bytesBS = iso to from
   where
     to :: VP.Vector Word8 -> ByteString
     to (VP.Vector off sz buf) =
-        -- TODO This still has a (small) risk of segfaulting. is still Manually copy the data onto the C heap, setup the
-        -- finalizers, and make a bytestring from that.
         unsafePerformIO $ do
           Prim.Addr ptr <- evaluate $ Prim.byteArrayContents buf
           bs <- BU.unsafePackAddressLen sz ptr

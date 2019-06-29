@@ -91,34 +91,23 @@ data IODriver = IODriver
   , startDriver :: (Ovum -> STM ()) -> IO (Async (), Perform)
   }
 
-
 data Writ a = Writ
-  { eventId          :: Word64
-  , timeout          :: Maybe Word
-  , event            :: Jam           -- mat
-  , payload          :: a
+  { eventId :: Word64
+  , timeout :: Maybe Word
+  , event   :: Jam -- mat
+  , payload :: a
   }
 
 data Pier = Pier
-  { computeQueue :: TQueue Ovum
-  , persistQueue :: TQueue (Writ [Eff])
-  , releaseQueue :: TQueue (Writ [Eff])
-  , logState :: LogState
+  { computeQueue  :: TQueue Ovum
+  , persistQueue  :: TQueue (Writ [Eff])
+  , releaseQueue  :: TQueue (Writ [Eff])
+  , log           :: EventLog
   , driverThreads :: [(Async (), Perform)]
   , portingThread :: Async ()
   }
 
 newtype EventLog = EventLog MDB_env
-
--- TODO: We are uncertain about q's type. There's some serious entanglement
--- with u3_pier in this logic in the C code, and you might not be able to get
--- away with anything less than passing the full u3_writ around.
-data LogState = LogState
-  { env        :: MDB_env
-  , inputQueue :: TQueue (Writ [Eff])
-  , onPersist  :: Writ [Eff] -> STM ()
-  , writer     :: Async ()
-  }
 
 data LogIdentity = LogIdentity
   { who     :: Noun

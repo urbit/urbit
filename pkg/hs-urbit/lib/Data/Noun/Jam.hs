@@ -150,8 +150,6 @@ jam = toAtom . fst . go 0 mempty
             where (Buf lSz lRes, lTbl) = go (off+2)   tbl  lef
                   (Buf rSz rRes, rTbl) = go (off+lSz) lTbl rit
 
-
-
 leadingZeros :: Cursor -> Maybe Int
 leadingZeros (Cursor idx buf) = go 0
   where wid  = bitWidth buf

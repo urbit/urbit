@@ -10,6 +10,7 @@ module Vere.Log ( open
                 , readIdent
                 , writeIdent
                 , putJam
+                , deleteEventAndEverythingAfterIt
                 ) where
 
 import ClassyPrelude hiding (init)
@@ -26,8 +27,9 @@ import Foreign.Marshal.Alloc
 import Vere
 import Vere.Pier.Types
 
-import Control.Lens     ((^.))
-import Foreign.Storable (peek, poke, sizeOf)
+import Control.Concurrent (runInBoundThread)
+import Control.Lens       ((^.))
+import Foreign.Storable   (peek, poke, sizeOf)
 
 import qualified Data.ByteString.Unsafe as BU
 import qualified Data.ByteString        as B
@@ -200,3 +202,21 @@ putJam flags txn db id (Jam atom) = do
     let !bs = atom ^. pill . pillBS
     byteStringAsMdbVal bs $ \mVal -> do
       putRaw flags txn db idVal mVal
+
+
+-- Event Pruning ---------------------------------------------------------------
+
+deleteEventAndEverythingAfterIt :: FilePath -> Word64 -> IO ()
+deleteEventAndEverythingAfterIt dir first =
+    runInBoundThread $ do
+        log@(EventLog env) <- open dir
+
+        last <- latestEventNumber log
+        txn  <- mdb_txn_begin env Nothing False
+        db   <- mdb_dbi_open txn (Just "EVENTS") [MDB_CREATE, MDB_INTEGERKEY]
+
+        for_ (reverse [first..last]) $ \i ->
+            withWord64AsMDBval i $ \val -> do
+                mdb_del txn db val Nothing
+
+        mdb_txn_commit txn

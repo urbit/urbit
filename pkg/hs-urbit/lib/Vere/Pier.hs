@@ -52,6 +52,41 @@ resume top = do
 
   pure (serf, log, e, m)
 
+
+-- Run Pier --------------------------------------------------------------------
+
+{-
+/* _pier_work_save(): tell worker to save checkpoint.
+*/
+static void
+_pier_work_save(u3_pier* pir_u)
+{
+  u3_controller* god_u = pir_u->god_u;
+  u3_disk* log_u = pir_u->log_u;
+  u3_save* sav_u = pir_u->sav_u;
+
+  c3_assert( god_u->dun_d == sav_u->req_d );
+  c3_assert( log_u->com_d >= god_u->dun_d );
+
+  {
+    u3_noun mat = u3ke_jam(u3nc(c3__save, u3i_chubs(1, &god_u->dun_d)));
+    u3_newt_write(&god_u->inn_u, mat, 0);
+
+    //  XX wait on some report of success before updating?
+    //
+    sav_u->dun_d = sav_u->req_d;
+  }
+
+  //  if we're gracefully shutting down, do so now
+  //
+  if ( u3_psat_done == pir_u->sat_e ) {
+    _pier_exit_done(pir_u);
+  }
+}
+-}
+
+
+
 {-
 performCommonPierStartup :: Serf.Serf
                          -> TQueue Ovum

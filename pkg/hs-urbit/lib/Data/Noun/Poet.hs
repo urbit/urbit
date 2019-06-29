@@ -480,10 +480,7 @@ instance ToNoun Cord where
 instance FromNoun Cord where
   parseNoun n = do
     atom <- parseNoun n
-    traceM "Parsing cord"
-    let res@(Cord _) = force $ Cord (atom ^. pill . pillBS)
-    traceM "Done parsing cord"
-    pure res
+    pure $ Cord (atom ^. pill . pillBS)
 
 
 -- Tank and Plum Conversion ----------------------------------------------------
@@ -577,13 +574,55 @@ instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f)
       => ToNoun (a, b, c, d, e, f) where
   toNoun (p, q, r, s, t, u) = toNoun (p, (q, r, s, t, u))
 
-instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e,FromNoun f)
+instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
+         , FromNoun f
+         )
       => FromNoun (a, b, c, d, e, f)
       where
   parseNoun n = do
     (p, tail)       <- parseNoun n
     (q, r, s, t, u) <- parseNoun tail
     pure (p, q, r, s, t, u)
+
+instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
+         , FromNoun f, FromNoun g
+         )
+      => FromNoun (a, b, c, d, e, f, g)
+      where
+  parseNoun n = do
+    (p, tail)          <- parseNoun n
+    (q, r, s, t, u, v) <- parseNoun tail
+    pure (p, q, r, s, t, u, v)
+
+instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
+         , FromNoun f, FromNoun g, FromNoun h
+         )
+      => FromNoun (a, b, c, d, e, f, g, h)
+      where
+  parseNoun n = do
+    (p, tail)             <- parseNoun n
+    (q, r, s, t, u, v, w) <- parseNoun tail
+    pure (p, q, r, s, t, u, v, w)
+
+instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
+         , FromNoun f, FromNoun g, FromNoun h, FromNoun i
+         )
+      => FromNoun (a, b, c, d, e, f, g, h, i)
+      where
+  parseNoun n = do
+    (p, tail)                <- parseNoun n
+    (q, r, s, t, u, v, w, x) <- parseNoun tail
+    pure (p, q, r, s, t, u, v, w, x)
+
+instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
+         , FromNoun f, FromNoun g, FromNoun h, FromNoun i, FromNoun j
+         )
+      => FromNoun (a, b, c, d, e, f, g, h, i, j)
+      where
+  parseNoun n = do
+    (p, tail)                   <- parseNoun n
+    (q, r, s, t, u, v, w, x, y) <- parseNoun tail
+    pure (p, q, r, s, t, u, v, w, x, y)
 
 
 -- This Shouldn't Be Here ------------------------------------------------------
