@@ -55,7 +55,7 @@
       [%fill file=tag]
       ::  %export: write export-file to path
       ::
-      [%export =path]
+      [%export =path which=(set tag)]
       ::  %import: replace state with export-file at path
       ::
       [%import =path]
@@ -266,6 +266,73 @@
     relation(they-since ~)
   ==
 ::
-::TODO  data interface
+::  data interface
 ::
+::    /peers/(filter)/(file)
+::      local-only, all peers that match optional filter and file
+::    /files/(tag)
+::      local-only, all files, or file with tag
+::    /peeps
+::      all of /peers/ours that are public
+::
+++  peers-result
+  |=  [=filter tag=(unit tag)]
+  ^+  peers
+  %-  ~(gas by *(map ship relation))
+  %+  skim  ~(tap by peers)
+  |=  [who=ship relation]
+  ?&  ?-  filter
+        %all      &
+        %ours     ?=(^ we-since)
+        %theirs   ?=(^ they-since)
+        %mutuals  &($(filter %ours) $(filter %theirs))
+        %none     |
+      ==
+    ::
+      ?|  ?=(~ tag)
+          (~(has ju files) u.tag who)
+  ==  ==
+::
+++  files-result
+  |=  tag=(unit tag)
+  ^+  files
+  ?~  tag  files
+  [u.tag^(~(get ju files) u.tag) ~ ~]
+::
+++  peeps-results
+  %-  ~(gas by *(map ship @da))
+  %+  murn  ~(tap by (peers-result %ours ~))
+  |=  [who=ship relation]
+  ^-  (unit [ship @da])
+  ?~  we-since  ~
+  ?.  public  ~
+  `[who u.we-since]
+::
+++  peek-x
+  |=  =path
+  ^-  (unit (unit [%noun noun]))
+  ?+  path  ~
+      [%peers ?(~ [@ ~] [@ @ ~])]
+    ?.  =(src.bowl our.bowl)  [~ ~]
+    :+  ~  ~
+    :-  %noun
+    =*  args  t.path
+    %-  peers-result
+    ?~  args  [%all ~]
+    ?.  ?=(filter i.args)  [%none ~]
+    :-  i.args
+    ?~  t.args  ~
+    `i.t.args
+  ::
+      [%files ?(~ [@ ~])]
+    ?.  =(src.bowl our.bowl)  [~ ~]
+    :+  ~  ~
+    :-  %noun
+    =*  args  t.path
+    %-  files-result
+    ?~(args ~ `i.args)
+  ::
+      [%peeps ~]
+    ``noun+peeps-results
+  ==
 --
