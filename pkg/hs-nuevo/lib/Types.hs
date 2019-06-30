@@ -3,16 +3,16 @@ module Types where
 import ClassyPrelude
 
 import qualified Data.Bimap as B
-import qualified Data.Map as M
+import qualified Data.Map   as M
 
 
 -- This entire prototype is only to show off the process model to reason about
 -- whether things just deadlock. So our "vase" is just a list of text
 -- fragments. Thats all you get on your typed channels.
-data Vase = Vase [Text]
+data Vase = Vase [String]
 
 -- A list of path elements
-data Path = Path [Text]
+data Path = Path [String]
   deriving (Show, Eq, Ord)
 
 
@@ -21,7 +21,7 @@ data Path = Path [Text]
 -- | A minimally simulated execution environment for Nuevo instances
 --
 -- This is not part of Nuevo proper, but is meant to be the Vere equivalent
--- which sends messages to each 
+-- which sends messages to each
 data VereEnv = VereEnv
   { instances :: M.Map Path NuevoState
 
@@ -30,7 +30,7 @@ data VereEnv = VereEnv
 
 -------------------------------------------------------------------------------
 
--- | 
+-- |
 data Connection
   = TopConnection
   | ProcessConnection Path Int
@@ -46,7 +46,7 @@ data Socket
 
   | IoSocket
   { ioId     :: Int
-  , ioDriver :: Text
+  , ioDriver :: String
   }
 
   deriving (Show, Eq, Ord)
@@ -59,28 +59,28 @@ data NuevoEvent
   , nevInitName       :: Path
   , nevInitProgram    :: NuevoProgram
   , nevInitSentOver   :: Socket
-  , nevInitMessage    :: Text
+  , nevInitMessage    :: String
   }
 
   | NEvRecv
-  { nevRecvSentOver   :: Socket
-  , nevRecvMessage    :: Text
+  { nevRecvSentOver :: Socket
+  , nevRecvMessage  :: String
   }
 
 data NuevoEffect
   = NEfFork
   | NEfTerminate
-  | NEfSend Socket Text
+  | NEfSend Socket String
   deriving (Show, Eq)
 
--- | Each instance of 
+-- | Each instance of
 data NuevoState = NuevoState
-  { nsParent   :: Connection
-  , nsName     :: Path
---  , nsChildren :: M.Map Text
-  , nsProgram :: NuevoProgram
+  { nsParent       :: Connection
+  , nsName         :: Path
+--  , nsChildren :: M.Map String
+  , nsProgram      :: NuevoProgram
   , nsProgramState :: ProgramState
-  , nsNextBone :: Int
+  , nsNextBone     :: Int
   , nsSocketToBone :: B.Bimap Socket Int
   }
 
@@ -95,7 +95,7 @@ emptyNuevoState = NuevoState
   }
 
 
---  Processes a single Nuevo event 
+--  Processes a single Nuevo event
 type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
 
 
@@ -105,21 +105,21 @@ type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
 
 data ProgramEvent
   = PEvRecv
-  { peRecvBone :: Int
-  , peRecvMessage :: Text
+  { peRecvBone    :: Int
+  , peRecvMessage :: String
   }
   deriving (Show, Eq)
 
 data ProgramEffect
   = PEfSend
-  { peSendBone :: Int
-  , peSendMessage :: Text
+  { peSendBone    :: Int
+  , peSendMessage :: String
   }
   deriving (Show, Eq)
 
 
 -- TODO: A realer state.
-type ProgramState = M.Map Text Text
+type ProgramState = M.Map String String
 
 -- -- The type of a program that nuevo runs.
 -- type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect)
@@ -127,3 +127,4 @@ type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffec
 
 emptyProgram :: NuevoProgram
 emptyProgram (a, _) = (a, [])
+

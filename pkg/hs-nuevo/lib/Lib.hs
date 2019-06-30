@@ -5,11 +5,11 @@ import ClassyPrelude
 import Types
 
 import qualified Data.Bimap as B
-import qualified Data.Map as M
+import qualified Data.Map   as M
 
 
--- spawn :: VereEnv -> NuevoState -> NuevoEvent -> 
--- spawn v oldNuevo init@NEvInit{..} = 
+-- spawn :: VereEnv -> NuevoState -> NuevoEvent ->
+-- spawn v oldNuevo init@NEvInit{..} =
 
 --   -- We are spawning a new copy of the kernel off an old copy of the kernel,
 --         oldNuevo
@@ -18,9 +18,24 @@ import qualified Data.Map as M
 --         , nsProgram = nevInitProgram
 --         }
 
+
+doIt :: IO ()
+doIt = do
+
+  let initEvent =
+        NEvInit TopConnection (Path []) unsafeMessagePrintingProgram (IoSocket 0 "base") "datum" :: NuevoEvent
+
+  let (newState, _) =
+        (runNuevoFunction (emptyNuevoState, initEvent))
+
+  print (nsProgramState newState)
+
+  pure()
+
+
 runNuevoFunction :: NuevoFunction
 
--- The NEvInit function just changes the program identity and then 
+-- The NEvInit function just changes the program identity and then
 runNuevoFunction (oldState, NEvInit{..}) =
   runNuevoFunction (newState, NEvRecv nevInitSentOver nevInitMessage)
   where
@@ -56,3 +71,9 @@ runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
 programEffectsToNuevoEffect :: NuevoState -> ProgramEffect -> NuevoEffect
 programEffectsToNuevoEffect NuevoState{..} = \case
   PEfSend bone msg -> NEfSend (nsSocketToBone B.!> bone) msg
+
+
+unsafeMessagePrintingProgram :: NuevoProgram
+unsafeMessagePrintingProgram (state, event) =
+  trace ("Prog: " ++ (peRecvMessage event))
+  (state, [])
