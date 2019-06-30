@@ -25,7 +25,7 @@ module Data.Noun.Pill where
 import ClassyPrelude
 import Data.Noun hiding (toList, fromList)
 import Data.Noun.Atom
-import Data.Noun.Jam hiding (main)
+-- import Data.Noun.Jam hiding (main)
 import Data.Flat hiding (from, to)
 import Control.Monad.Except
 import Control.Lens hiding (index, Index)
@@ -178,8 +178,8 @@ pillWords = iso toVec fromVec
     toVec   = view (pillBS . to bsToWords)
     fromVec = view (to wordsToBytes . bytesBS . from pillBS)
 
-_CueBytes :: Prism' ByteString Noun
-_CueBytes = from pillBS . from pill . _Cue
+-- _CueBytes :: Prism' ByteString Noun
+-- _CueBytes = from pillBS . from pill . _Cue
 
 --------------------------------------------------------------------------------
 
@@ -201,10 +201,13 @@ pill = iso toAtom fromPill
     toAtom   = view (atomNat . natWords . from pillWords)
     fromPill = view (pillBS . to bsToWords . from natWords . from atomNat)
 
+atomBS :: Iso' Atom ByteString
+atomBS = pill . pillBS
+
 --------------------------------------------------------------------------------
 
-_Cue :: Prism' Atom Noun
-_Cue = prism' jam cue
+-- _Cue :: Prism' Atom Noun
+-- _Cue = prism' jam cue
 
 _Tall :: Flat a => Prism' ByteString a
 _Tall = prism' flat (eitherToMaybe . unflat)
@@ -221,8 +224,8 @@ loadPill = fmap Pill . readFile
 loadAtom :: FilePath -> IO Atom
 loadAtom = fmap (view $ from pillBS . from pill) . readFile
 
-loadNoun :: FilePath -> IO (Maybe Noun)
-loadNoun = fmap (preview $ from pillBS . from pill . _Cue) . readFile
+-- loadNoun :: FilePath -> IO (Maybe Noun)
+-- loadNoun = fmap (preview $ from pillBS . from pill . _Cue) . readFile
 
 loadFlat :: Flat a => FilePath -> IO (Either Text a)
 loadFlat = fmap (mapLeft tshow . unflat) . readFile
@@ -235,8 +238,8 @@ dumpPill fp = writeFile fp . view pillBS
 dumpAtom :: FilePath -> Atom -> IO ()
 dumpAtom fp = writeFile fp . view (pill . pillBS)
 
-dumpJam :: FilePath -> Noun -> IO ()
-dumpJam fp = writeFile fp . view (re _Cue . pill . pillBS)
+-- dumpJam :: FilePath -> Noun -> IO ()
+-- dumpJam fp = writeFile fp . view (re _Cue . pill . pillBS)
 
 dumpFlat :: Flat a => FilePath -> a -> IO ()
 dumpFlat fp = writeFile fp . flat
@@ -265,11 +268,11 @@ tryPackPill pf = do
   atm <- tryLoadPill pf
   print $ length (atm ^. pill . pillBS)
 
-tryCuePill :: PillFile -> IO ()
-tryCuePill pill =
-    loadNoun (show pill) >>= \case Nothing       -> print "nil"
-                                   Just (Atom _) -> print "atom"
-                                   _             -> print "cell"
+-- tryCuePill :: PillFile -> IO ()
+-- tryCuePill pill =
+    -- loadNoun (show pill) >>= \case Nothing       -> print "nil"
+                                   -- Just (Atom _) -> print "atom"
+                                   -- _             -> print "cell"
 
 -- Tests -----------------------------------------------------------------------
 

@@ -21,7 +21,7 @@ import Data.Hashable (Hashable)
 --------------------------------------------------------------------------------
 
 newtype Atom = MkAtom { unAtom :: Natural }
-  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat, Hashable)
+  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat, Hashable, NFData)
 
 instance Show Atom where
   show (MkAtom a) = show a
@@ -109,6 +109,9 @@ instance IsAtom Integer where
 wordBitWidth# :: Word# -> Word#
 wordBitWidth# w = minusWord# 64## (clz# w)
 
+wordBitWidth :: Word -> Word
+wordBitWidth (W# w) = W# (wordBitWidth# w)
+
 bigNatBitWidth# :: BigNat -> Word#
 bigNatBitWidth# nat =
     lswBits `plusWord#` ((int2Word# lastIdx) `timesWord#` 64##)
@@ -141,24 +144,30 @@ instance IsAtom Cursor where
 
 --------------------------------------------------------------------------------
 
+{-# INLINE slice #-}
 slice :: (Atom, Atom) -> Atom -> Atom
 slice (offset, size) buf =
   fromSlice (Slice (fromAtom offset) (fromAtom size) buf)
 
+{-# INLINE fromSlice #-}
 fromSlice :: Slice -> Atom
-fromSlice (Slice off wid buf) = mask .&. (shiftR buf off)
-  where mask = shiftL (MkAtom 1) wid - 1
-
+fromSlice (Slice off wid buf) = takeBits wid (shiftR buf off)
 
 --------------------------------------------------------------------------------
 
+{-# INLINE takeBits #-}
 takeBits :: Int -> Atom -> Atom
-takeBits wid buf = mask .&. buf
-  where mask = shiftL (MkAtom 1) wid - 1
+takeBits wid buf = buf .&. (shiftL (MkAtom 1) wid - 1)
 
+{-# INLINE takeBitsWord #-}
+takeBitsWord :: Int -> Word -> Word
+takeBitsWord wid wor = wor .&. (shiftL 1 wid - 1)
+
+{-# INLINE bitIdx #-}
 bitIdx :: Int -> Atom -> Bool
 bitIdx idx buf = testBit buf idx
 
+{-# INLINE bitConcat #-}
 bitConcat :: Atom -> Atom -> Atom
 bitConcat x y = x .|. shiftL y (bitWidth x)
 

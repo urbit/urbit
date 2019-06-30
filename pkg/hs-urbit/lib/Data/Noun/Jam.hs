@@ -15,6 +15,9 @@ import Test.Tasty.TH
 import Test.Tasty.QuickCheck as QC
 import Test.QuickCheck
 
+import qualified Data.Noun.Jam.Put as Fast
+import qualified Data.Noun.Pill    as Pill
+
 
 -- Length-Encoded Atoms --------------------------------------------------------
 
@@ -51,7 +54,7 @@ jam' = toAtom . fst . go 0 mempty
   where
     insertNoun :: Noun -> Int -> Map Noun Int -> Map Noun Int
     insertNoun n i tbl = lookup n tbl
-                       & maybe tbl (const $ insertMap n i tbl)
+                       & maybe (insertMap n i tbl) (const tbl)
 
     go :: Int -> Map Noun Int -> Noun -> (Buf, Map Noun Int)
     go off oldTbl noun =
@@ -68,8 +71,8 @@ jam' = toAtom . fst . go 0 mempty
             where Buf sz res = mat' atm
         (Nothing, Cell lef rit) ->
           (Buf (2+lSz+rSz) (xor 1 (shiftL (lRes .|. shiftL rRes lSz) 2)), rTbl)
-            where (Buf lSz lRes, lTbl) = go (off+2)   tbl  lef
-                  (Buf rSz rRes, rTbl) = go (off+lSz) lTbl rit
+            where (Buf lSz lRes, lTbl) = go (off+2)     tbl  lef
+                  (Buf rSz rRes, rTbl) = go (off+2+lSz) lTbl rit
 
 cue' :: Atom -> Maybe Noun
 cue' buf = view _2 <$> go mempty 0
@@ -98,7 +101,7 @@ mat atm = Buf bufWid buffer
   where
     atmWid = bitWidth atm
     preWid = bitWidth (toAtom atmWid)
-    bufWid = preWid + preWid + atmWid
+    bufWid = 2*preWid + atmWid
     prefix = shiftL 1 preWid
     extras = takeBits (preWid-1) (toAtom atmWid)
     suffix = xor extras (shiftL atm (preWid-1))
@@ -114,9 +117,9 @@ rub slc@(Cursor idx buf) =
     prefix -> pure (Buf sz val)
       where
         widIdx = idx + 1 + prefix
-        width  = fromSlice (Slice widIdx (prefix - 1) buf)
+        extra  = fromSlice (Slice widIdx (prefix - 1) buf)
         datIdx = widIdx + (prefix-1)
-        datWid = fromIntegral $ 2^(prefix-1) + width
+        datWid = fromIntegral $ extra + 2^(prefix-1)
         sz     = datWid + (2*prefix)
         val    = fromSlice (Slice datIdx datWid buf)
 
@@ -130,7 +133,7 @@ jam = toAtom . fst . go 0 mempty
   where
     insertNoun :: Noun -> Int -> Map Noun Int -> Map Noun Int
     insertNoun n i tbl = lookup n tbl
-                       & maybe tbl (const $ insertMap n i tbl)
+                       & maybe (insertMap n i tbl) (const tbl)
 
     go :: Int -> Map Noun Int -> Noun -> (Buf, Map Noun Int)
     go off oldTbl noun =
@@ -148,7 +151,7 @@ jam = toAtom . fst . go 0 mempty
         (Nothing, Cell lef rit) ->
           (Buf (2+lSz+rSz) (xor 1 (shiftL (bitConcat lRes rRes) 2)), rTbl)
             where (Buf lSz lRes, lTbl) = go (off+2)   tbl  lef
-                  (Buf rSz rRes, rTbl) = go (off+lSz) lTbl rit
+                  (Buf rSz rRes, rTbl) = go (off+2+lSz) lTbl rit
 
 leadingZeros :: Cursor -> Maybe Int
 leadingZeros (Cursor idx buf) = go 0
@@ -163,17 +166,15 @@ cue buf = view _2 <$> go mempty 0
   where
     go :: Map Int Noun -> Int -> Maybe (Int, Noun, Map Int Noun)
     go tbl i =
-      -- trace ("go-" <> show i)
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub (Cursor (i+1) buf)
                               let r = Atom at
-                              pure (wid+1, r, insertMap i r tbl)
+                              pure (1+wid, r, insertMap i r tbl)
         (True,  False ) -> do (lSz,lef,tbl) <- go tbl (i+2)
                               (rSz,rit,tbl) <- go tbl (i+2+fromIntegral lSz)
                               let r = Cell lef rit
                               pure (2+lSz+rSz, r, insertMap i r tbl)
         (True,  True  ) -> do Buf wid at <- rub (Cursor (i+2) buf)
-                              -- traceM ("ref-" <> show at)
                               r <- lookup (fromIntegral at) tbl & \case
                                      Nothing -> error ("bad-ref-" <> show at)
                                      Just ix -> Just ix
@@ -181,6 +182,21 @@ cue buf = view _2 <$> go mempty 0
 
 
 -- Tests -----------------------------------------------------------------------
+
+a12 = Atom 12
+a36 = Atom 36
+a9  = Atom 9
+
+d12 = Cell a12 a12
+q12 = Cell d12 d12
+
+midleEx = Cell a36 $ Cell a9 $ Cell q12 q12
+
+smallEx = Cell (Cell (Atom 14) (Atom 8))
+        $ Cell (Atom 15) (Atom 15)
+
+smallEx2 = Cell (Cell (Atom 0) (Atom 0))
+         $ Cell (Atom 10) (Atom 10)
 
 pills :: [Atom]
 pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
@@ -192,6 +208,15 @@ cueTest = traverse cue pills
 
 jamTest :: Maybe [Atom]
 jamTest = fmap jam <$> cueTest
+
+prop_fastMatSlow :: Atom -> Bool
+prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
+
+prop_fastJamSlow :: Noun -> Bool
+prop_fastJamSlow n = jam n == Fast.jam n
+
+prop_fastJam :: Noun -> Bool
+prop_fastJam n = Just n == cue (Fast.jam n)
 
 prop_jamCue :: Noun -> Bool
 prop_jamCue n = Just n == cue (jam n)

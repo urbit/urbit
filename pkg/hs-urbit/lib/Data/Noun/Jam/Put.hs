@@ -7,16 +7,17 @@ import GHC.Prim
 import GHC.Natural
 import GHC.Integer.GMP.Internals
 
-import Control.Lens          (view)
+import Control.Lens          (view, to, from, (&))
 import Control.Monad         (guard)
 import Data.Bits             (shiftL, shiftR, setBit, clearBit, (.|.), (.&.))
 import Data.Map              (Map)
-import Data.Noun.Atom        (Atom(MkAtom), wordBitWidth#)
+import Data.Noun.Atom        ( Atom(MkAtom), wordBitWidth, wordBitWidth#
+                             , atomBitWidth#, takeBitsWord )
 import Data.Noun.Atom        (toAtom, takeBits, bitWidth)
 import Data.Noun             (Noun(Atom, Cell))
-import Data.Noun.Pill        (bigNatWords)
+import Data.Noun.Pill        (bigNatWords, atomBS)
 import Data.Vector.Primitive ((!))
-import Foreign.Marshal.Alloc (mallocBytes, free)
+import Foreign.Marshal.Alloc (callocBytes, free)
 import Foreign.Ptr           (Ptr, castPtr, plusPtr, ptrToWordPtr)
 import Foreign.Storable      (peek, poke)
 import GHC.Int               (Int(I#))
@@ -96,15 +97,16 @@ putS s = Put $ \tbl _ -> pure (PutResult s ())
 {-
     To write a bit:
 
-    | reg  |= 1 << regI
-    | regI <- (regI + 1) % 64
-    | if (!regI):
+    | reg  |= 1 << off
+    | off <- (off + 1) % 64
+    | if (!off):
     |     buf[w++] <- reg
     |     reg      <- 0
 -}
 {-# INLINE writeBit #-}
 writeBit :: Bool -> Put ()
 writeBit b = Put $ \tbl s@S{..} -> do
+  -- traceM ("writeBit: " <> show b)
   let s' = s { reg = (if b then setBit else clearBit) reg off
              , off = (off + 1) `mod` 64
              , pos = pos + 1
@@ -117,49 +119,60 @@ writeBit b = Put $ \tbl s@S{..} -> do
 {-
     To write a 64bit word:
 
-    | reg |= w << regI
+    | reg |= w << off
     | buf[bufI++] = reg
-    | reg = w >> (64 - regI)
+    | reg = w >> (64 - off)
 -}
 {-# INLINE writeWord #-}
 writeWord :: Word -> Put ()
 writeWord wor = do
+    -- traceM ("writeWord: " <> show wor)
     S{..} <- getS
     setReg (reg .|. shiftL wor off)
     flush
-    setReg (shiftR wor (64 - off))
+    update \s -> s { pos = 64 + pos
+                   , reg = shiftR wor (64 - off)
+                   }
 
 {-
     To write some bits (< 64) from a word:
 
-    | reg  |= wor << regI
-    | regI += wid
+    | wor = takeBits(wid, wor)
+    | reg = reg .|. (wor << off)
+    | off = (off + wid) % 64
     |
-    | if (regI >= 64)
-    |     regI -= 64
+    | if (off + wid >= 64)
     |     buf[w] = x
-    |     reg = wor >> (wid - regI)
+    |     reg    = wor >> (wid - off)
 -}
+
 {-# INLINE writeBitsFromWord #-}
 writeBitsFromWord :: Int -> Word -> Put ()
 writeBitsFromWord wid wor = do
-    s <- getS
+    wor <- pure (takeBitsWord wid wor)
 
-    let s' = s { reg = reg s .|. shiftL wor (off s)
-               , off = off s + wid
-               }
+    -- traceM ("writeBitsFromWord: " <> show wid <> ", " <> show wor)
 
-    if (off s' < 64)
-    then do putS s'
-    else do update (\s -> s { off = off s - 64 })
-            flush
-            setReg (shiftR wor (wid - off s'))
+    oldSt <- getS
+
+    let newSt = oldSt { reg = reg oldSt .|. shiftL wor (off oldSt)
+                      , off = (off oldSt + wid) `mod` 64
+                      , pos = fromIntegral wid + pos oldSt
+                      }
+
+    putS newSt
+
+    when (wid + off oldSt >= 64) $ do
+        flush
+        setReg (shiftR wor (wid - off newSt))
 {-
   Write all of the the signficant bits of a direct atom.
 -}
 {-# INLINE writeAtomWord# #-}
 writeAtomWord# :: Word# -> Put ()
-writeAtomWord# w = writeBitsFromWord (I# (word2Int# (wordBitWidth# w))) (W# w)
+writeAtomWord# w = do
+    -- traceM "writeAtomWord"
+    writeBitsFromWord (I# (word2Int# (wordBitWidth# w))) (W# w)
 
 {-# INLINE writeAtomWord #-}
 writeAtomWord :: Word -> Put ()
@@ -173,6 +186,7 @@ writeAtomWord (W# w) = writeAtomWord# w
 {-# INLINE writeAtomBigNat #-}
 writeAtomBigNat :: BigNat -> Put ()
 writeAtomBigNat (view bigNatWords -> words) = do
+  -- traceM "writeAtomBigNat"
   let lastIdx = VP.length words - 1
   for_ [0..(lastIdx-1)] \i ->
       writeWord (words ! i)
@@ -222,17 +236,22 @@ instance Monad Put where
 
 --------------------------------------------------------------------------------
 
-doPut :: Word64 -> Put () -> ByteString
+doPut :: Word -> Put () -> ByteString
 doPut sz m =
     unsafePerformIO $ do
         tbl <- H.new
-        buf <- mallocBytes (fromIntegral $ wordSz*8)
-        _   <- runPut m tbl (S buf 0 0 0)
-        BS.unsafePackCStringFinalizer (castPtr buf) byteSz (free buf)
+        buf <- callocBytes (fromIntegral $ 4 * wordSz*8)
+        _   <- runPut (m >> mbFlush) tbl (S buf 0 0 0)
+        BS.unsafePackCStringFinalizer (castPtr buf) (2*byteSz) (free buf)
   where
     wordSz = fromIntegral (sz `divUp` 64)
     byteSz = fromIntegral (sz `divUp` 8)
     divUp x y = (x `div` y) + (if x `mod` y == 0 then 0 else 1)
+
+    mbFlush :: Put ()
+    mbFlush = do
+      shouldFlush <- (/= 0) . off <$> getS
+      when shouldFlush flush
 
 
 --------------------------------------------------------------------------------
@@ -242,32 +261,38 @@ doPut sz m =
 -}
 writeNoun :: Noun -> Put ()
 writeNoun n = do
-  p    <- pos <$> getS
-  mRef <- getRef n
+    -- traceM "writeNoun"
 
-  case (mRef, n) of
-    (Nothing, Atom a)                 -> writeAtom a
-    (Nothing, Cell h t)               -> writeCell h t
-    (Just bk, Atom a) | a < toAtom bk -> writeAtom a
-    (Just bk, _)                      -> writeBackRef bk
+    p    <- pos <$> getS
+    mRef <- getRef n
 
-  insRef n p
+    case (mRef, n) of
+        (Nothing, Atom a)                                 -> writeAtom a
+        (Nothing, Cell h t)                               -> writeCell h t
+        (Just bk, Atom a) | bitWidth a <= wordBitWidth bk -> writeAtom a
+        (Just bk, _)                                      -> writeBackRef bk
+
+    when (mRef == Nothing) $
+        insRef n p
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
+writeMat 0 = do
+    -- traceM "writeMat: 0"
+    writeBit True
 writeMat atm = do
-    writeBitsFromWord (preWid+1) (shiftL (1 :: Word) preWid)
-    writeAtomBits extras
+    -- traceM ("writeMat: " <> show atm)
+    writeBitsFromWord (preWid+1) (shiftL 1 preWid)
+    writeBitsFromWord (preWid-1) atmWid
     writeAtomBits atm
   where
-    atmWid = bitWidth atm :: Atom
-    preWid = bitWidth atmWid :: Int
-    prefix = shiftL (1 :: Word) (fromIntegral preWid)
-    extras = takeBits (preWid-1) (toAtom atmWid)
+    atmWid = bitWidth atm
+    preWid = fromIntegral (wordBitWidth atmWid)
 
 {-# INLINE writeCell #-}
 writeCell :: Noun -> Noun -> Put ()
 writeCell h t = do
+    -- traceM "writeCell"
     writeBit True
     writeBit False
     writeNoun h
@@ -276,12 +301,68 @@ writeCell h t = do
 {-# INLINE writeAtom #-}
 writeAtom :: Atom -> Put ()
 writeAtom a = do
+    -- traceM "writeAtom"
     writeBit False
     writeMat a
 
 {-# INLINE writeBackRef #-}
 writeBackRef :: Word -> Put ()
 writeBackRef a = do
+    -- traceM ("writeBackRef: " <> show a)
     writeBit True
     writeBit True
     writeMat (toAtom a)
+
+--------------------------------------------------------------------------------
+
+jamBS :: Noun -> ByteString
+jamBS n = doPut (fst $ preJam n) (writeNoun n)
+
+jam :: Noun -> Atom
+jam = view (to jamBS . from atomBS)
+
+--------------------------------------------------------------------------------
+
+preJam :: Noun -> (Word, Map Noun Word)
+preJam = go 0 mempty
+  where
+    insertNoun :: Noun -> Word -> Map Noun Word -> Map Noun Word
+    insertNoun n i tbl = lookup n tbl
+                       & maybe (insertMap n i tbl) (const tbl)
+
+    go :: Word -> Map Noun Word -> Noun -> (Word, Map Noun Word)
+    go off oldTbl noun =
+      let tbl = insertNoun noun off oldTbl in
+      case lookup noun oldTbl of
+        Nothing ->
+          case noun of
+            Atom atm ->
+              (1 + W# (matSz# atm), tbl)
+            Cell l r ->
+              let (lSz, tbl') = go (2+off)     tbl l in
+              let (rSz, tbl'') = go (2+off+lSz) tbl' r in
+              (2 + lSz + rSz, tbl'')
+        Just (W# ref) ->
+          let refSz = W# (wordBitWidth# ref) in
+          case noun of
+            Atom atm ->
+              let worSz = W# (matSz# atm) in
+              if worSz > refSz
+              then (2 + refSz, oldTbl)
+              else (1 + worSz, tbl)
+            Cell _ _ ->
+              (2 + refSz, oldTbl)
+
+    matSz# :: Atom -> Word#
+    matSz# 0 = 1##
+    matSz# a = preW `plusWord#` preW `plusWord#` atmW
+      where
+        atmW = atomBitWidth# a
+        preW = wordBitWidth# atmW
+
+    refSz# :: Word# -> Word#
+    refSz# w = 2## `plusWord#` (matSz# (MkAtom (NatS# w)))
+
+    nounSz# :: Noun -> Word#
+    nounSz# (Atom a)   = 1## `plusWord#` (matSz# a)
+    nounSz# (Cell l r) = 2## `plusWord#` (nounSz# l) `plusWord#` (nounSz# r)
