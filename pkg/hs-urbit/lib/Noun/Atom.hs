@@ -13,25 +13,25 @@ module Noun.Atom
     ) where
 
 import ClassyPrelude
-import Control.Lens hiding (Index)
+import Control.Lens  hiding (Index)
 
 import Data.Bits                 (shiftL, shiftR, (.&.), (.|.))
 import GHC.Exts                  (sizeofByteArray#)
+import GHC.Int                   (Int(..))
 import GHC.Integer.GMP.Internals (BigNat(..), bigNatToWord, sizeofBigNat#)
 import GHC.Integer.GMP.Internals (indexBigNat#)
-import GHC.Integer.GMP.Internals (wordToBigNat, byteArrayToBigNat#, zeroBigNat)
-import GHC.Int                   (Int(..))
+import GHC.Integer.GMP.Internals (byteArrayToBigNat#, wordToBigNat, zeroBigNat)
 import GHC.Natural               (Natural(..))
-import GHC.Prim                  (plusWord#, clz#, minusWord#)
-import GHC.Prim                  (Word#, subIntC#, timesWord#, int2Word#)
+import GHC.Prim                  (clz#, minusWord#, plusWord#)
+import GHC.Prim                  (Word#, int2Word#, subIntC#, timesWord#)
 import GHC.Word                  (Word(..))
 import System.IO.Unsafe          (unsafePerformIO)
 
-import qualified Data.Primitive.Types     as Prim
-import qualified Data.Primitive.ByteArray as Prim
-import qualified Data.Vector.Primitive    as VP
 import qualified Data.ByteString          as BS
 import qualified Data.ByteString.Unsafe   as BU
+import qualified Data.Primitive.ByteArray as Prim
+import qualified Data.Primitive.Types     as Prim
+import qualified Data.Vector.Primitive    as VP
 
 
 -- Types -----------------------------------------------------------------------

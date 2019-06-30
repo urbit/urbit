@@ -1,16 +1,12 @@
-module Urbit.Timer ( Timer, init, stop, start
+module Urbit.Timer ( Timer(..), init, stop, start
                    , Sys.getSystemTime, sysTimeGapMicroSecs
                    ) where
 
-import Prelude hiding (init)
-import Control.Lens
 import Data.IORef
+import Prelude    hiding (init)
 
-import Control.Concurrent.MVar (MVar, takeMVar, newEmptyMVar, putMVar)
-import Control.Monad           (void, when)
-
-import qualified GHC.Event              as Ev
 import qualified Data.Time.Clock.System as Sys
+import qualified GHC.Event              as Ev
 
 
 -- Timer Stuff -----------------------------------------------------------------

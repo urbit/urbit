@@ -2,12 +2,12 @@ module Noun.Cue (cue, cueBS) where
 
 import ClassyPrelude
 
-import Noun.Core
 import Noun.Atom
+import Noun.Core
 
-import Control.Lens     (view, from)
-import Data.Bits        (shiftL, shiftR, (.|.), (.&.))
-import Foreign.Ptr      (Ptr, plusPtr, castPtr, ptrToWordPtr)
+import Control.Lens     (from, view)
+import Data.Bits        (shiftL, shiftR, (.&.), (.|.))
+import Foreign.Ptr      (Ptr, castPtr, plusPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
 import GHC.Prim         (ctz#)
 import GHC.Word         (Word(..))
@@ -75,7 +75,7 @@ newtype Get a = Get
 
 doGet :: Get a -> ByteString -> Either DecodeExn a
 doGet m bs =
-  unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs \(ptr, len) -> do
+  unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs $ \(ptr, len) -> do
     let endPtr = ptr `plusPtr` len
     let sz = max 50
            $ min 10_000_000
@@ -137,19 +137,19 @@ getPos = Get $ \_ _ s ->
   pure (GetResult s (pos s))
 
 insRef :: Word -> Noun -> Get ()
-insRef !pos !now = Get \_ tbl s -> do
+insRef !pos !now = Get $ \_ tbl s -> do
   H.insert tbl pos now
   pure $ GetResult s ()
 
 getRef :: Word -> Get Noun
-getRef !ref = Get \x tbl s -> do
+getRef !ref = Get $ \x tbl s -> do
   H.lookup tbl ref >>= \case
     Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
     Just no -> pure (GetResult s no)
 
 advance :: Word -> Get ()
 advance 0 = debugM "advance: 0" >> pure ()
-advance !n = Get \_ _ s -> do
+advance !n = Get $ \_ _ s -> do
   debugM ("advance: " <> show n)
   let newUsed = n + usedBits s
       newS    = s { pos      = pos s + n
@@ -164,7 +164,7 @@ advance !n = Get \_ _ s -> do
 
 -- TODO Should this be (>= end) or (> end)?
 peekCurWord :: Get Word
-peekCurWord = Get \end _ s -> do
+peekCurWord = Get $ \end _ s -> do
  debugMId "peekCurWord" $ do
   if ptrToWordPtr (currPtr s) >= ptrToWordPtr end
   then pure (GetResult s 0)
@@ -172,7 +172,7 @@ peekCurWord = Get \end _ s -> do
 
 -- TODO Same question as above.
 peekNextWord :: Get Word
-peekNextWord = Get \end _ s -> do
+peekNextWord = Get $ \end _ s -> do
  debugMId "peekNextWord" $ do
   let pTarget = currPtr s `plusPtr` 8
   if ptrToWordPtr pTarget >= ptrToWordPtr end
@@ -182,7 +182,7 @@ peekNextWord = Get \end _ s -> do
 peekUsedBits :: Get Word
 peekUsedBits =
  debugMId "peekUsedBits" $ do
-  Get \_ _ s -> pure (GetResult s (usedBits s))
+  Get $ \_ _ s -> pure (GetResult s (usedBits s))
 
 {-|
     Get a bit.
@@ -219,7 +219,7 @@ dAtomBits :: Word -> Get Atom
 dAtomBits !(fromIntegral -> bits) = do
     debugMId ("dAtomBits(" <> show bits <> ")") $ do
       fmap (view $ from atomWords) $
-        VP.generateM bufSize \i -> do
+        VP.generateM bufSize $ \i -> do
           debugM (show i)
           if (i == lastIdx && numExtraBits /= 0)
           then dWordBits (fromIntegral numExtraBits)

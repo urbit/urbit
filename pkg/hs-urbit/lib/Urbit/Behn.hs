@@ -16,18 +16,15 @@
     until a new time has been set.
 -}
 
-module Urbit.Behn (Behn, init, wait, doze) where
+module Urbit.Behn (Behn(..), init, wait, doze) where
 
-import Prelude hiding (init)
 import Control.Lens
+import Prelude      hiding (init)
 
-import Control.Concurrent.MVar (MVar, takeMVar, newEmptyMVar, putMVar)
-import Control.Monad           (void, when)
-import Data.IORef              (IORef, writeIORef, readIORef, newIORef)
+import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, takeMVar)
 
-import qualified Urbit.Timer as Timer
 import qualified Urbit.Time  as Time
-import qualified GHC.Event   as Ev
+import qualified Urbit.Timer as Timer
 
 
 -- Behn Stuff ------------------------------------------------------------------

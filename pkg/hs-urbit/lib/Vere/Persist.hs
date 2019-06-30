@@ -8,9 +8,9 @@ module Vere.Persist (start, stop) where
 
 import ClassyPrelude hiding (init)
 
+import Database.LMDB.Raw
 import Vere.Log
 import Vere.Pier.Types
-import Database.LMDB.Raw
 
 
 -- Types -----------------------------------------------------------------------
@@ -45,7 +45,7 @@ persistThread :: EventLog
               -> (Writ [Eff] -> STM ())
               -> IO ()
 persistThread (EventLog env) inputQueue onPersist =
-  forever do
+  forever $ do
     writs <- atomically $ readQueue inputQueue
     writeEvents writs
     atomically $ traverse_ onPersist writs

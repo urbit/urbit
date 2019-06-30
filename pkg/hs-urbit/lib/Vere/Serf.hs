@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 module Vere.Serf where
 
 import ClassyPrelude
@@ -12,12 +14,11 @@ import Data.ByteString        (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
-import Foreign.Storable       (poke, peek)
+import Foreign.Storable       (peek, poke)
 import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Urbit.Time             as Time
-import qualified Vere.Log               as Log
 
 
 --------------------------------------------------------------------------------
@@ -219,7 +220,7 @@ replayEvents w (wid, wmug) identity lastCommitedId getEvents = do
     loop vLast curEvent = do
       traceM ("replayEvents.loop: " <> show curEvent)
       let toRead = min 1000 (1 + lastCommitedId - curEvent)
-      when (toRead > 0) do
+      when (toRead > 0) $ do
         traceM ("replayEvents.loop.getEvents " <> show toRead)
 
         events <- getEvents curEvent toRead
@@ -263,12 +264,12 @@ replay w ident lastEv getEvents = do
     replayEvents w ws ident lastEv getEvents
 
 workerThread :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
-workerThread w getEvent (evendId, mug) = async $ forever do
+workerThread w getEvent (evendId, mug) = async $ forever $ do
   ovum <- atomically $ getEvent
 
   currentDate <- Time.now
 
-  let mat = jam (undefined (mug, currentDate, ovum))
+  let _mat = jam (undefined (mug, currentDate, ovum))
 
   undefined
 

@@ -12,12 +12,12 @@ module Noun
 import ClassyPrelude
 import Control.Lens
 
-import Noun.Core
-import Noun.Convert
-import Noun.Conversions
 import Noun.Atom
-import Noun.Jam
+import Noun.Conversions
+import Noun.Convert
+import Noun.Core
 import Noun.Cue
+import Noun.Jam
 import Noun.TH
 
 --------------------------------------------------------------------------------

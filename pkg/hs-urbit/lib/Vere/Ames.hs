@@ -4,10 +4,8 @@ import ClassyPrelude
 import Data.IP
 import Data.Void
 import Noun
-import Noun.TH
-import Control.Lens
 
-import qualified Urbit.Time  as Time
+import qualified Urbit.Time as Time
 
 type Packet = ByteString
 

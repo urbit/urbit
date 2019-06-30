@@ -16,11 +16,10 @@ module Vere.Log ( open
 import ClassyPrelude hiding (init)
 import Control.Lens  hiding ((<|))
 
-import Noun
-import Data.Void
 import Database.LMDB.Raw
-import Foreign.Ptr
 import Foreign.Marshal.Alloc
+import Foreign.Ptr
+import Noun
 import Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread)
@@ -28,9 +27,7 @@ import Control.Lens       ((^.))
 import Foreign.Storable   (peek, poke, sizeOf)
 
 import qualified Data.ByteString.Unsafe as BU
-import qualified Data.ByteString        as B
 import qualified Data.Vector            as V
-import qualified Data.Vector.Mutable    as MV
 
 
 -- Open/Close an Event Log -----------------------------------------------------
@@ -109,7 +106,7 @@ readEvents (EventLog env) first len =
     found <- mdb_cursor_get MDB_SET_KEY cur pKey pVal
     assertErr found "mdb could not read initial event of sequence"
 
-    vec <- V.generateM (int len) \i -> do
+    vec <- V.generateM (int len) $ \i -> do
       key <- peek pKey >>= mdbValToWord64
       val <- peek pVal >>= mdbValToAtom
 
@@ -117,7 +114,7 @@ readEvents (EventLog env) first len =
 
       assertErr (key == idx) ("missing event in database " <> (show idx))
 
-      when (i + 1 /= (int len)) do
+      when (i + 1 /= (int len)) $ do
         found <- mdb_cursor_get MDB_NEXT cur pKey pVal
         assertErr found "lmdb: next event not found"
 
@@ -144,7 +141,7 @@ maybeErr Nothing  msg = error msg
 
 byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
 byteStringAsMdbVal bs k =
-  BU.unsafeUseAsCStringLen bs \(ptr,sz) ->
+  BU.unsafeUseAsCStringLen bs $ \(ptr,sz) ->
     k (MDB_val (fromIntegral sz) (castPtr ptr))
 
 mdbValToWord64 :: MDB_val -> IO Word64
@@ -166,7 +163,7 @@ withWordPtr w cb = do
 
 get :: MDB_txn -> MDB_dbi -> ByteString -> IO Noun
 get txn db key =
-  byteStringAsMdbVal key \mKey ->
+  byteStringAsMdbVal key $ \mKey ->
   mdb_get txn db mKey >>= maybe (error "mdb bad get") mdbValToNoun
 
 mdbValToAtom :: MDB_val -> IO Atom

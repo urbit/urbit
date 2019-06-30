@@ -4,10 +4,9 @@ module Vere.Http where
 
 import ClassyPrelude
 import Noun
-import Noun.TH
 
-import qualified Data.CaseInsensitive as CI
-import qualified Network.HTTP.Types as HT
+import qualified Data.CaseInsensitive      as CI
+import qualified Network.HTTP.Types        as HT
 import qualified Network.HTTP.Types.Method as H
 
 --------------------------------------------------------------------------------
@@ -27,7 +26,7 @@ data Request = Request
 
 data ResponseHeader = ResponseHeader
      { statusCode :: Word
-     , headers :: [Header]
+     , headers    :: [Header]
      }
   deriving (Eq, Ord, Show)
 

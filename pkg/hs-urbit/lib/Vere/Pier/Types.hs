@@ -1,15 +1,11 @@
 module Vere.Pier.Types where
 
 import ClassyPrelude
-import Data.Void
-import Noun
-import Noun.TH
 import Database.LMDB.Raw
+import Noun
 import Urbit.Time
 
-import RIO (decodeUtf8Lenient)
-
-import qualified Vere.Ames as Ames
+import qualified Vere.Ames        as Ames
 import qualified Vere.Http.Client as Client
 import qualified Vere.Http.Server as Server
 
@@ -81,6 +77,16 @@ data Blit
     | Url Text
   deriving (Eq, Ord, Show)
 
+data Varience = Gold | Iron | Lead
+
+type Perform = Eff -> IO ()
+
+data Ovum = Ovum Path Event
+  deriving (Eq, Ord, Show)
+
+newtype Mug = Mug Word32
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
 deriveNoun ''Blit
 deriveNoun ''Eff
 deriveNoun ''Event
@@ -88,16 +94,7 @@ deriveNoun ''PutDel
 deriveNoun ''EffBs
 deriveNoun ''RecEx
 deriveNoun ''NewtEx
-
-data Varience = Gold | Iron | Lead
-
-type Perform = Eff -> IO ()
-
-data Ovum = Ovum Path Event
-  deriving (Eq, Ord, Show, Generic, ToNoun)
-
-newtype Mug = Mug Word32
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+deriveNoun ''Ovum
 
 newtype Jam = Jam Atom
 

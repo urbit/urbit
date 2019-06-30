@@ -7,9 +7,9 @@ module Noun.Convert
   ) where
 
 import ClassyPrelude hiding (hash)
-import Noun.Core
-import Noun.Atom
 import Control.Lens
+import Noun.Atom
+import Noun.Core
 
 import qualified Control.Monad.Fail as Fail
 

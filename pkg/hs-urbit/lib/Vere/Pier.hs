@@ -2,14 +2,12 @@ module Vere.Pier where
 
 import ClassyPrelude
 
-import Noun
 import Vere.Pier.Types
 
-import qualified Vere.Log     as Log
-import qualified Vere.Persist as Persist
-import qualified Vere.Serf    as Serf
+import qualified Vere.Log  as Log
+import qualified Vere.Serf as Serf
 
-import Vere.Serf (Serf, EventId)
+import Vere.Serf (EventId, Serf)
 
 
 --------------------------------------------------------------------------------

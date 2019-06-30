@@ -63,13 +63,13 @@ isContinue = maybe True (not . isQuitEvent)
 
 
 conditionallyRun :: (Monad m) => m a -> Bool -> m Bool
-conditionallyRun f True = True <$ f
+conditionallyRun f True  = True <$ f
 conditionallyRun _ False = pure False
 
 
 isQuitEvent :: SDL.Event -> Bool
 isQuitEvent (SDL.Event _t SDL.QuitEvent) = True
-isQuitEvent _ = False
+isQuitEvent _                            = False
 
 
 setHintQuality :: (MonadIO m) => m ()
