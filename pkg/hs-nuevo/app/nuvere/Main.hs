@@ -3,16 +3,18 @@ module Main where
 import ClassyPrelude
 
 import Types
-import Lib
+import Nuevo
+import Program
 
 main :: IO ()
 main = do
   let initEvent =
-        NEvInit TopConnection (Path []) unsafeMessagePrintingProgram (IoSocket 0 "base") "datum" :: NuevoEvent
+        NEvInit TopConnection (Path []) spawnsAnUnsafeMessagePrintingProgram (IoSocket 0 "base") "datum" :: NuevoEvent
 
-  let (newState, _) =
+  let (newState, effects) =
         (runNuevoFunction (emptyNuevoState, initEvent))
 
-  print (nsProgramState newState)
+  print ("state: " ++ (show (nsProgramState newState)))
+  print ("effects: " ++ (show effects))
 
   pure()

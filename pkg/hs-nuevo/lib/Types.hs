@@ -15,6 +15,11 @@ data Vase = Vase [String]
 data Path = Path [String]
   deriving (Show, Eq, Ord)
 
+-- The typed message data that goes on a handle. Currently unimplemented
+data HandleType = HandleType
+  deriving (Show)
+
+type Message = String
 
 -------------------------------------------------------------------------------
 
@@ -59,21 +64,21 @@ data NuevoEvent
   , nevInitName       :: Path
   , nevInitProgram    :: NuevoProgram
   , nevInitSentOver   :: Socket
-  , nevInitMessage    :: String
+  , nevInitMessage    :: Message
   }
 
   | NEvRecv
   { nevRecvSentOver :: Socket
-  , nevRecvMessage  :: String
+  , nevRecvMessage  :: Message
   }
 
 data NuevoEffect
-  = NEfFork
+  = NEfFork String Bool NuevoProgram HandleType Message
   | NEfTerminate
-  | NEfSend Socket String
-  deriving (Show, Eq)
+  | NEfSend Socket Message
+  deriving (Show)
 
--- | Each instance of
+-- | Each instance of a Nuevo kernel. 
 data NuevoState = NuevoState
   { nsParent       :: Connection
   , nsName         :: Path
@@ -106,17 +111,23 @@ type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
 data ProgramEvent
   = PEvRecv
   { peRecvBone    :: Int
-  , peRecvMessage :: String
+  , peRecvMessage :: Message
   }
   deriving (Show, Eq)
 
 data ProgramEffect
   = PEfSend
   { peSendBone    :: Int
-  , peSendMessage :: String
+  , peSendMessage :: Message
   }
-  deriving (Show, Eq)
-
+  | PEfFork
+  { peForkName    :: String
+  , peForkLogged  :: Bool
+  , peForkProgram :: NuevoProgram
+  , peForkHandle  :: HandleType
+  , peForkMessage :: Message
+  }
+  deriving (Show)
 
 -- TODO: A realer state.
 type ProgramState = M.Map String String
@@ -124,6 +135,9 @@ type ProgramState = M.Map String String
 -- -- The type of a program that nuevo runs.
 -- type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect)
 type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect])
+
+instance Show NuevoProgram where
+  show _ = "<nuevo program>"
 
 emptyProgram :: NuevoProgram
 emptyProgram (a, _) = (a, [])

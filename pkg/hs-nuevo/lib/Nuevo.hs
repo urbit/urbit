@@ -1,4 +1,4 @@
-module Lib where
+module Nuevo where
 
 import ClassyPrelude
 
@@ -8,16 +8,14 @@ import qualified Data.Bimap as B
 import qualified Data.Map   as M
 
 
--- spawn :: VereEnv -> NuevoState -> NuevoEvent ->
--- spawn v oldNuevo init@NEvInit{..} =
-
---   -- We are spawning a new copy of the kernel off an old copy of the kernel,
---         oldNuevo
---         { nsParent  = nevInitConnection
---         , nsName    = nevInitName
---         , nsProgram = nevInitProgram
---         }
-
+-- The next step here is figuring out flow control. So we can apply one
+-- manually created event to a NuevoState. This doesn't yet take the output
+-- NuevoEffects and apply them to the Vere structure, which then doesn't
+-- perform action based on them.
+--
+-- Vere should take the output NuevoEffects and then actually respond to
+-- them. We have the translation from internal programs to nuevo effects, but
+-- nothing then responds to those effects.
 
 runNuevoFunction :: NuevoFunction
 
@@ -39,6 +37,7 @@ runNuevoFunction (oldState, NEvInit{..}) =
 runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
   (newNuevoState, nuevoEffects)
   where
+    -- TODO: Check for invalid incoming sockets.
     bone = nsSocketToBone B.! nevRecvSentOver
 
     (newProgramState, programEffects) =
@@ -57,9 +56,4 @@ runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
 programEffectsToNuevoEffect :: NuevoState -> ProgramEffect -> NuevoEffect
 programEffectsToNuevoEffect NuevoState{..} = \case
   PEfSend bone msg -> NEfSend (nsSocketToBone B.!> bone) msg
-
-
-unsafeMessagePrintingProgram :: NuevoProgram
-unsafeMessagePrintingProgram (state, event) =
-  trace ("Prog trace: bone=" ++ (show (peRecvBone event)) ++ ", msg=" ++ (peRecvMessage event))
-  (state, [])
+  PEfFork n l p h m -> NEfFork n l p h m
