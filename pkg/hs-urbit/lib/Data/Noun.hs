@@ -2,18 +2,19 @@ module Data.Noun where
 
 import Prelude hiding (all)
 
-import ClassyPrelude (Text, all, unpack)
 import Control.Applicative
 import Control.Monad
-import Data.Noun.Atom (Atom)
 import Data.Bits
 import GHC.Generics
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
 import Data.Flat hiding (getSize)
 
-import Data.List     (intercalate)
-import Data.Typeable (Typeable)
+import ClassyPrelude  (Text, all, unpack)
+import Data.Hashable  (Hashable)
+import Data.List      (intercalate)
+import Data.Noun.Atom (Atom)
+import Data.Typeable  (Typeable)
 
 import qualified Control.Monad.Fail as Fail
 import qualified Data.Char          as C
@@ -28,7 +29,7 @@ data Noun
     = Atom !Atom
     | Cell !Noun !Noun
   deriving stock    (Eq, Ord, Generic)
-  deriving anyclass Flat
+  deriving anyclass (Flat, Hashable)
 
 data CellIdx = L | R
   deriving (Eq, Ord, Show)

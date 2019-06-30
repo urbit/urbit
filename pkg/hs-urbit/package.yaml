@@ -20,6 +20,7 @@ dependencies:
   - fixed-vector
   - flat
   - ghc-prim
+  - hashable
   - hashtables
   - http-client
   - http-types

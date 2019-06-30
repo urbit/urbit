@@ -16,10 +16,12 @@ import Test.QuickCheck.Gen
 import Text.Printf
 import Data.Flat
 
+import Data.Hashable (Hashable)
+
 --------------------------------------------------------------------------------
 
 newtype Atom = MkAtom { unAtom :: Natural }
-  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat)
+  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat, Hashable)
 
 instance Show Atom where
   show (MkAtom a) = show a
