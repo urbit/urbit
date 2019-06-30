@@ -10,18 +10,22 @@ import GHC.Natural
 import GHC.Integer.GMP.Internals
 import Data.Vector.Primitive ((!))
 
-import Control.Lens     (view)
-import Control.Monad    (guard)
-import Data.Bits        (shiftL, shiftR, setBit, clearBit, (.|.), (.&.))
-import Data.Map         (Map)
-import Data.Noun.Atom   (Atom(MkAtom), wordBitWidth#)
-import Data.Noun        (Noun)
-import Data.Noun.Pill   (bigNatWords)
-import Foreign.Ptr      (Ptr, plusPtr, ptrToWordPtr)
-import Foreign.Storable (peek, poke)
+import Control.Lens          (view)
+import Control.Monad         (guard)
+import Data.Bits             (shiftL, shiftR, setBit, clearBit, (.|.), (.&.))
+import Data.Map              (Map)
+import Data.Noun.Atom        (Atom(MkAtom), wordBitWidth#)
+import Data.Noun             (Noun(Atom, Cell))
+import Data.Noun.Pill        (bigNatWords)
+import Data.Noun.Atom        (toAtom, takeBits, bitWidth)
+import Foreign.Marshal.Alloc (mallocBytes, free)
+import Foreign.Ptr           (Ptr, castPtr, plusPtr, ptrToWordPtr)
+import Foreign.Storable      (peek, poke)
+import System.IO.Unsafe      (unsafePerformIO)
 
-import qualified Data.Vector.Primitive as VP
-import qualified Data.HashTable.IO as H
+import qualified Data.ByteString.Unsafe as BS
+import qualified Data.HashTable.IO      as H
+import qualified Data.Vector.Primitive  as VP
 
 
 -- Types -----------------------------------------------------------------------
@@ -162,9 +166,9 @@ writeAtomBigNat (view bigNatWords -> words) = do
       writeWord (words ! i)
   writeAtomWord (words ! lastIdx)
 
-writeAtom :: Atom -> Put ()
-writeAtom = \case MkAtom (NatS# wd) -> writeAtomWord# wd
-                  MkAtom (NatJ# bn) -> writeAtomBigNat bn
+writeAtomBits :: Atom -> Put ()
+writeAtomBits = \case MkAtom (NatS# wd) -> writeAtomWord# wd
+                      MkAtom (NatJ# bn) -> writeAtomBigNat bn
 
 --------------------------------------------------------------------------------
 
@@ -203,46 +207,50 @@ instance Monad Put where
 
 --------------------------------------------------------------------------------
 
-doPut :: (a -> Word64) -> (a -> Put ()) -> VP.Vector Word
-doPut = undefined
+doPut :: Word64 -> Put () -> ByteString
+doPut sz m =
+    unsafePerformIO $ do
+        tbl <- H.new
+        buf <- mallocBytes (fromIntegral $ wordSz*8)
+        _   <- runPut m tbl (S buf 0 0 0)
+        BS.unsafePackCStringFinalizer (castPtr buf) byteSz (free buf)
+  where
+    wordSz = fromIntegral (sz `divUp` 64)
+    byteSz = fromIntegral (sz `divUp` 8)
+    divUp x y = (x `div` y) + (if x `mod` y == 0 then 0 else 1)
 
-
+--------------------------------------------------------------------------------
 
 {-
-    How does this work?
-
-    Allocate a buffer of (jamSz/8) rounded up.
-
-    Traverse the structure.
-      Keep a table of backreferences (state monad)
-      If atom
-        if backreference exists
-          if backreference smaller
-            write backreference
-          else
-            write atom
-        else
-          write atom
-      if cell
-        write cell
-
-    To write backreference:
-      write `1`
-      write `1`
-      write mat
-
-    To write atom:
-      write `0`
-      write mat
-
-    To write a cell
-      write `1`
-      write `0`
-      write head
-      write tail
-
-    To write mat:
-      write prefix
-      write extra
-      write data
+    TODO Handle back references
 -}
+writeNoun :: Noun -> Put ()
+writeNoun = \case Atom a   -> writeAtom a
+                  Cell h t -> writeCell (h, t)
+
+writeMat :: Atom -> Put ()
+writeMat atm = do
+    writeBitsFromWord (preWid+1) (shiftL (1 :: Word) preWid)
+    writeAtomBits extras
+    writeAtomBits atm
+  where
+    atmWid = bitWidth atm :: Atom
+    preWid = bitWidth atmWid :: Int
+    prefix = shiftL (1 :: Word) (fromIntegral preWid)
+    extras = takeBits (preWid-1) (toAtom atmWid)
+
+writeCell :: (Noun, Noun) -> Put ()
+writeCell (h, t) = do
+    writeBit True
+    writeBit False
+    writeNoun h
+    writeNoun t
+
+writeAtom :: Atom -> Put ()
+writeAtom a = writeBit False >> writeMat a
+
+writeBackRef :: Atom -> Put ()
+writeBackRef a = do
+    writeBit True
+    writeBit True
+    writeMat a
