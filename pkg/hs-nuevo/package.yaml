@@ -2,6 +2,12 @@ name:                hs-nuevo
 version:             0.1.0.0
 license: AGPL-3.0-only
 
+executables:
+  nuvere:
+    main: Main.hs
+    source-dirs: app/nuvere
+    dependencies: hs-nuevo
+
 library:
   source-dirs: lib
   ghc-options:

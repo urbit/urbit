@@ -19,20 +19,6 @@ import qualified Data.Map   as M
 --         }
 
 
-doIt :: IO ()
-doIt = do
-
-  let initEvent =
-        NEvInit TopConnection (Path []) unsafeMessagePrintingProgram (IoSocket 0 "base") "datum" :: NuevoEvent
-
-  let (newState, _) =
-        (runNuevoFunction (emptyNuevoState, initEvent))
-
-  print (nsProgramState newState)
-
-  pure()
-
-
 runNuevoFunction :: NuevoFunction
 
 -- The NEvInit function just changes the program identity and then
@@ -75,5 +61,5 @@ programEffectsToNuevoEffect NuevoState{..} = \case
 
 unsafeMessagePrintingProgram :: NuevoProgram
 unsafeMessagePrintingProgram (state, event) =
-  trace ("Prog: " ++ (peRecvMessage event))
+  trace ("Prog trace: bone=" ++ (show (peRecvBone event)) ++ ", msg=" ++ (peRecvMessage event))
   (state, [])
