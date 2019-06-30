@@ -132,7 +132,7 @@
 ::::
   ::
 |=  {hid/bowl:gall part}                          ::  main drum work
-=+  (fall (~(get by bin) ost.hid) *source)
+=+  (~(gut by bin) ost.hid *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request

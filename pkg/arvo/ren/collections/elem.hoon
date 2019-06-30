@@ -17,7 +17,7 @@
   |=  itm=item:collections
   ^-  manx
   ?<  =(/collections/web s.bem.gas)
-  =/  sho  (fall (~(get by qix.gas) %show) %default)
+  =/  sho  (~(gut by qix.gas) %show %default)
   ;div.container
     ;+
       ?+    -.itm  !!
@@ -111,9 +111,9 @@
   ^-  manx
   =/  elm  elm:(static:cram (ream data.raw))
   =/  ht  (hedtal:collections +.elm)
-  =/  title  (fall (~(get by meta.raw) %name) -.s.bem.gas)
-  =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
-  =/  author  (fall (~(get by meta.raw) %author) 'anonymous')
+  =/  title  (~(gut by meta.raw) %name -.s.bem.gas)
+  =/  date   (~(gut by meta.raw) %date-created 'missing date')
+  =/  author  (~(gut by meta.raw) %author 'anonymous')
   ::
   ;div.mb-18.mt-4
     ;+  elm
@@ -141,9 +141,9 @@
           |=  [nom=knot ite=item:collections]
           ^-  manx
           ?>  ?=(%raw -.ite)
-          =/  author  (fall (~(get by meta.raw.ite) %author) 'anonymous')
-          =/  host  (fall (~(get by meta.raw.ite) %host) 'anonymous')
-          =/  date  (fall (~(get by meta.raw.ite) %date-created) 'missing date')
+          =/  author  (~(gut by meta.raw.ite) %author 'anonymous')
+          =/  host  (~(gut by meta.raw.ite) %host 'anonymous')
+          =/  date  (~(gut by meta.raw.ite) %date-created 'missing date')
           ;li.mb-6
             ;div.flex.align-center
               ;div.mr-2
@@ -225,9 +225,9 @@
   =/  ht  (hedtal:collections +.elm)
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
-  =/  title  (fall (~(get by meta.raw) %name) nom)
-  =/  date   (fall (~(get by meta.raw) %date-created) 'missing date')
-  =/  author  (fall (~(get by meta.raw) %author) 'anonymous')
+  =/  title  (~(gut by meta.raw) %name nom)
+  =/  date   (~(gut by meta.raw) %date-created 'missing date')
+  =/  author  (~(gut by meta.raw) %author 'anonymous')
   =/  lnk=tape
     "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::
@@ -251,7 +251,7 @@
   =/  ht  (hedtal:collections +.elm)
   =?  tal.ht  ?=(~ hed.ht)
     (scag 5 c.elm)
-  =/  title  (fall (~(get by meta.raw) %name) nom)
+  =/  title  (~(gut by meta.raw) %name nom)
   =/  lnk=tape
     "/~~/{(scow %p p.bem.gas)}/=={(spud (flop s.bem.gas))}/{(trip nom)}"
   ::

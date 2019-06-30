@@ -353,11 +353,11 @@
   ~/  %coll-item-notify
   |=  [pax=path raw=raw-item now=@da byk=beak]
   ^-  json
-  =/  author  (fall (~(get by meta.raw) %author) ~.anon)
-  =/  host  (fall (~(get by meta.raw) %host) ~.anon)
-  =/  dat    (fall (~(get by meta.raw) %last-modified) (scot %da now))
-  =/  nom    (fall (~(get by meta.raw) %name) ~.no-title)
-  =/  typ    (fall (~(get by meta.raw) %type) ~.no-type)
+  =/  author  (~(gut by meta.raw) %author ~.anon)
+  =/  host  (~(gut by meta.raw) %host ~.anon)
+  =/  dat    (~(gut by meta.raw) %last-modified (scot %da now))
+  =/  nom    (~(gut by meta.raw) %name ~.no-title)
+  =/  typ    (~(gut by meta.raw) %type ~.no-type)
   ::
   =/  elm=manx   elm:(static:cram (ream data.raw))
   =/  snip=marl  tal:(hedtal +.elm)
@@ -791,8 +791,8 @@
         (item-notify pax new now.bol byk.bol)
     ::
     =?  ta-this
-      ?&  =('.y' (fall (~(get by meta.new) %comments) '.n'))
-          =('.n' (fall (~(get by meta.old) %comments) '.n'))
+      ?&  =('.y' (~(gut by meta.new) %comments '.n'))
+          =('.n' (~(gut by meta.old) %comments '.n'))
       ==
       =/  author=(unit @ta)  (~(get by meta.new) %author)
       =/  author-p=@p
@@ -801,8 +801,8 @@
       (ta-generate-comments pax author-p)
     ::
     =?  ta-this
-      ?&  =('.n' (fall (~(get by meta.new) %comments) '.n'))
-          =('.y' (fall (~(get by meta.old) %comments) '.n'))
+      ?&  =('.n' (~(gut by meta.new) %comments '.n'))
+          =('.y' (~(gut by meta.old) %comments '.n'))
       ==
       ::  delete comments
       (ta-remove (weld pax /collections-config))

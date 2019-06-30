@@ -1497,7 +1497,7 @@
       ::  pass .task to the |message-pump and apply state mutations
       ::
       =/  =message-pump-state
-        (fall (~(get by snd.peer-state) bone) *message-pump-state)
+        (~(gut by snd.peer-state) bone *message-pump-state)
       ::
       =^  client-duct  ossuary.peer-state
         (get-duct ossuary.peer-state bone duct)
@@ -1591,7 +1591,7 @@
       ::  pass .task to the |message-still and apply state mutations
       ::
       =/  =message-still-state
-        (fall (~(get by rcv.peer-state) bone) *message-still-state)
+        (~(gut by rcv.peer-state) bone *message-still-state)
       ::
       =/  message-still   (make-message-still message-still-state channel)
       =^  still-gifts     message-still-state  (work:message-still task)
