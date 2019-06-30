@@ -1490,7 +1490,7 @@
       $(a l.a)
     $(a r.a)
   ::
-  ++  got
+  ++  got                                               ::  need value by key
     |*  b/*
     (need (get b))
   ::
