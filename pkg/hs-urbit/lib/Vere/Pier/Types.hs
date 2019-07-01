@@ -39,19 +39,33 @@ data NewtEx = NE Word
 data Eff
     = HttpServer Server.Eff
     | HttpClient Client.Eff
-    | Init
-    | Doze (Maybe Wen)
-    | Form Noun
-    | Behn Noun
-    | Clay Noun
-    | Boat Noun
-    | Sync Noun
-    | Newt Noun
     | Ames Noun
-    | Term Noun
+    | Bbye Noun
+    | Behn Noun
     | Blit [Blit]
+    | Boat Noun
+    | Clay Noun
+    | Crud Noun
+    | Dirk Noun
+    | Doze (Maybe Wen)
+    | Ergo Noun
+    | Exit Noun
+    | Flog Noun
+    | Form Noun
     | Hill [Term]
+    | Init
+    | Logo Noun
+    | Mass Noun
+    | Newt Noun
+    | Ogre Noun
+    | Send [Blit]
+    | Sync Noun
+    | Term Noun
+    | Thou Noun
     | Turf (Maybe (PutDel, [Text])) -- TODO Unsure
+    | Vega Noun
+    | West Noun
+    | Woot Noun
   deriving (Eq, Ord, Show)
 
 newtype Path = Path [Knot]
