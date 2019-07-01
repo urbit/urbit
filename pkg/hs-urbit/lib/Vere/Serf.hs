@@ -6,7 +6,8 @@ import Data.Void
 
 import Data.Noun
 import Data.Noun.Atom
-import Data.Noun.Jam
+import Data.Noun.Jam hiding (jam)
+import Data.Noun.Jam.Put (jam, jamBS)
 import Data.Noun.Poet
 import Data.Noun.Pill
 import Vere.Pier.Types
@@ -161,8 +162,16 @@ sendAndRecv :: Serf -> EventId -> Atom -> IO SerfResp
 sendAndRecv w eventId event =
   do
     traceM ("sendAndRecv: " <> show eventId)
-    traceM (maybe "bad cue" showNoun $ cue event)
-    sendAtom w $ work eventId (Jam event)
+
+    -- traceM ("<cue>")
+    -- traceM (maybe "bad cue" showNoun $ cue event)
+    -- traceM ("</cue>")
+
+    traceM ("<jam>")
+    wEv <- evaluate $ force $ work eventId (Jam event)
+    traceM ("</jam>")
+
+    sendAtom w wEv
     res <- loop
     traceM ("sendAndRecv.done " <> show res)
     pure res
@@ -365,7 +374,7 @@ recvPlea w = do
   traceM ("recvPlea.cue " <> show (length $ a ^. atomBytes))
   n <- fromJustExn (cue a)      (BadPleaAtom a)
   traceM "recvPlea.doneCue"
-  p <- fromRightExn (fromNounErr n) (BadPleaNoun n)
+  p <- fromRightExn (fromNounErr n) (BadPleaNoun (trace (showNoun n) n))
 
   traceM "recvPlea.done"
 

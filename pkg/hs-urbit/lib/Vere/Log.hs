@@ -20,6 +20,7 @@ import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Jam
 import Data.Noun.Pill
+import Data.Noun.Lens
 import Data.Void
 import Database.LMDB.Raw
 import Foreign.Ptr

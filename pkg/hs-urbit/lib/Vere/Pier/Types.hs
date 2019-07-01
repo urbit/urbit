@@ -39,14 +39,16 @@ data NewtEx = NE Word
 data Eff
     = HttpServer Server.Eff
     | HttpClient Client.Eff
-    | Behn Void
-    | Clay Void
-    | Boat Void
-    | Sync Void
-    | Newt Void
-    | Ames Void
-    | Init Void
-    | Term Void
+    | Init
+    | Doze (Maybe Wen)
+    | Form Noun
+    | Behn Noun
+    | Clay Noun
+    | Boat Noun
+    | Sync Noun
+    | Newt Noun
+    | Ames Noun
+    | Term Noun
     | Blit [Blit]
     | Hill [Term]
     | Turf (Maybe (PutDel, [Text])) -- TODO Unsure

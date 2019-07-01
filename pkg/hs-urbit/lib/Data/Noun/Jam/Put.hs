@@ -261,28 +261,10 @@ doPut tbl sz m =
 -}
 writeNoun :: Noun -> Put ()
 writeNoun n = do
-    p <- pos <$> getS
-    -- traceM ("writeNoun: " <> show p)
-    -- traceM ("\t" <> show n)
-
-    -- getRef >>= \case
-      -- Nothing -> pure ()
-      -- Just rf -> do
-        -- p <- pos <$> getS
-        -- traceM ("backref: " <> show p <> "-> " <> show rf)
-
-    -- case n of
-      -- Atom a   -> writeAtom a
-      -- Cell h t -> writeCell h t
-
     getRef >>= \case
-      Just bk -> do
-        p <- pos <$> getS
-        -- traceM $ mconcat (force ["backref: (", show p, " -> ", show bk, ")\n\t", show n])
-        writeBackRef bk
-      Nothing -> case n of
-        Atom a   -> writeAtom a
-        Cell h t -> writeCell h t
+      Just bk -> writeBackRef bk
+      Nothing -> case n of Atom a   -> writeAtom a
+                           Cell h t -> writeCell h t
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -409,19 +391,24 @@ instance Eq BigNoun where
   BigAtom s1 _ a1    == BigAtom s2 _ a2    = s1==s2 && a1==a2
   BigCell s1 _ h1 t1 == BigCell s2 _ h2 t2 = s1==s2 && h1==h2 && t1==t2
   _                  == _                  = False
+  {-# INLINE (==) #-}
 
+{-# INLINE toBigNoun #-}
 toBigNoun :: Noun -> BigNoun
-toBigNoun (Atom a)   = BigAtom (1 + matSz a) (Hash.hash a) a
-toBigNoun (Cell h t) = BigCell siz has hed tel
+toBigNoun = go
   where
-    hed = toBigNoun h
-    tel = toBigNoun t
-    siz = 2 + bSize hed + bSize tel
-    has = fromIntegral siz `combine` bHash hed `combine` bHash tel
+    go (Atom a)   = BigAtom (1 + matSz a) (Hash.hash a) a
+    go (Cell h t) = BigCell siz has hed tel
+      where
+        hed = toBigNoun h
+        tel = toBigNoun t
+        siz = 2 + bSize hed + bSize tel
+        has = fromIntegral siz `combine` bHash hed `combine` bHash tel
 
 
 -- Yet Another Fast Pre Jam ----------------------------------------------------
 
+{-# INLINE compress #-}
 compress :: BigNoun -> IO (Word, H.LinearHashTable Word Word)
 compress top = do
     nodes :: H.LinearHashTable BigNoun Word <- H.new

@@ -403,6 +403,12 @@ instance FromNoun Atom where
 instance ToNoun Natural   where toNoun    = toNoun . MkAtom
 instance FromNoun Natural where parseNoun = fmap unAtom . parseNoun
 
+instance ToNoun Integer   where
+    toNoun = toNoun . (fromIntegral :: Integer -> Natural)
+
+instance FromNoun Integer where
+    parseNoun = fmap ((fromIntegral :: Natural -> Integer) . unAtom) . parseNoun
+
 
 -- Word Conversion -------------------------------------------------------------
 

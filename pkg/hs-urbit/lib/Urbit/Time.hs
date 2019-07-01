@@ -12,18 +12,19 @@ import Data.Time.Clock        (DiffTime, UTCTime, picosecondsToDiffTime,
                                diffTimeToPicoseconds)
 import Data.Time.Clock.System (SystemTime(..), getSystemTime, utcToSystemTime,
                                systemToUTCTime)
+import Data.Noun.Poet         (FromNoun, ToNoun)
 
 
 -- Types -----------------------------------------------------------------------
 
 newtype Gap = Gap { _fractoSecs :: Integer }
-  deriving (Eq, Ord, Show, Num)
+  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 newtype Unix = Unix { _sinceUnixEpoch :: Gap }
-  deriving (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype Wen = Wen { _sinceUrbitEpoch :: Gap }
-  deriving (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 
 -- Lenses ----------------------------------------------------------------------
