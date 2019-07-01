@@ -116,7 +116,10 @@
 ++  wake
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  :-  (send-tile-diff [%s 'alarm'])
-  this(tim *@da)
+  ?~  err
+    :-  (send-tile-diff [%s 'alarm'])
+    this(tim *@da)
+  ~&  err
+  [~ this]
 ::
 --
