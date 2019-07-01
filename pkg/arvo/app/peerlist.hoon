@@ -160,7 +160,7 @@
     (~(del ju files) from-file who)
   ::  remove as peer
   ::
-  ~&  "droping {(scow %p who)}"
+  ~&  "dropping {(scow %p who)}"
   =?  peers  ?=(^ have)
     ?~  they-since.relation.u.have
       ::  if they don't care, remove relation
