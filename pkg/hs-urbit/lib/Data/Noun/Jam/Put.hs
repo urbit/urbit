@@ -9,7 +9,7 @@ import GHC.Integer.GMP.Internals
 
 import Control.Lens          (view, to, from, (&))
 import Control.Monad         (guard)
-import Data.Bits             (shiftL, shiftR, setBit, clearBit, (.|.), (.&.))
+import Data.Bits             (shiftL, shiftR, setBit, clearBit, xor, (.|.), (.&.))
 import Data.Map              (Map)
 import Data.Noun.Atom        ( Atom(MkAtom), wordBitWidth, wordBitWidth#
                              , atomBitWidth#, takeBitsWord )
@@ -24,6 +24,8 @@ import GHC.Int               (Int(I#))
 import GHC.Word              (Word(W#))
 import System.IO.Unsafe      (unsafePerformIO)
 
+import qualified Data.Hashable          as Hash
+import qualified Data.Map               as M
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.HashTable.IO      as H
 import qualified Data.Vector.Primitive  as VP
@@ -57,13 +59,15 @@ newtype Put a = Put
 
 --------------------------------------------------------------------------------
 
-{-# INLINE insRef #-}
-insRef :: Noun -> Word -> Put ()
-insRef n w = Put \tbl s -> PutResult s <$> H.insert tbl n w
-
 {-# INLINE getRef #-}
 getRef :: Noun -> Put (Maybe Word)
-getRef n = Put \tbl s -> PutResult s <$> H.lookup tbl n
+getRef n = Put \tbl s -> do
+    pos <- pure (pos s)
+    traceM ("getRef: " <> show n <> " @" <> show pos)
+    res <- H.lookup tbl n
+    pure $ PutResult s $ case res of
+                           Just w | w<pos -> Just w
+                           _              -> Nothing
 
 {-
   1. Write the register to the output, and increment the output pointer.
@@ -236,10 +240,10 @@ instance Monad Put where
 
 --------------------------------------------------------------------------------
 
-doPut :: Word -> Put () -> ByteString
-doPut sz m =
+doPut :: Map Noun Word -> Word -> Put () -> ByteString
+doPut tbl sz m =
     unsafePerformIO $ do
-        tbl <- H.new
+        tbl <- H.fromListWithSizeHint (M.size tbl) (mapToList tbl)
         buf <- callocBytes (fromIntegral $ 4 * wordSz*8)
         _   <- runPut (m >> mbFlush) tbl (S buf 0 0 0)
         BS.unsafePackCStringFinalizer (castPtr buf) (2*byteSz) (free buf)
@@ -263,7 +267,6 @@ writeNoun :: Noun -> Put ()
 writeNoun n = do
     -- traceM "writeNoun"
 
-    p    <- pos <$> getS
     mRef <- getRef n
 
     case (mRef, n) of
@@ -271,9 +274,6 @@ writeNoun n = do
         (Nothing, Cell h t)                               -> writeCell h t
         (Just bk, Atom a) | bitWidth a <= wordBitWidth bk -> writeAtom a
         (Just bk, _)                                      -> writeBackRef bk
-
-    when (mRef == Nothing) $
-        insRef n p
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -308,7 +308,8 @@ writeAtom a = do
 {-# INLINE writeBackRef #-}
 writeBackRef :: Word -> Put ()
 writeBackRef a = do
-    -- traceM ("writeBackRef: " <> show a)
+    p <- pos <$> getS
+    traceM ("writeBackRef: " <> show a <> " @" <> show p)
     writeBit True
     writeBit True
     writeMat (toAtom a)
@@ -316,12 +317,30 @@ writeBackRef a = do
 --------------------------------------------------------------------------------
 
 jamBS :: Noun -> ByteString
-jamBS n = doPut (fst $ preJam n) (writeNoun n)
+jamBS n = trace (show $ sort $ swap <$> mapToList tbl)
+        $ doPut tbl sz (writeNoun n)
+  where (sz, tbl) = preJam n
 
 jam :: Noun -> Atom
 jam = view (to jamBS . from atomBS)
 
 --------------------------------------------------------------------------------
+
+{-# INLINE matSz #-}
+matSz :: Atom -> Word
+matSz a = W# (matSz# a)
+
+{-# INLINE matSz# #-}
+matSz# :: Atom -> Word#
+matSz# 0 = 1##
+matSz# a = preW `plusWord#` preW `plusWord#` atmW
+  where
+    atmW = atomBitWidth# a
+    preW = wordBitWidth# atmW
+
+{-# INLINE refSz# #-}
+refSz# :: Word# -> Word#
+refSz# w = 2## `plusWord#` (matSz# (MkAtom (NatS# w)))
 
 preJam :: Noun -> (Word, Map Noun Word)
 preJam = go 0 mempty
@@ -332,37 +351,171 @@ preJam = go 0 mempty
 
     go :: Word -> Map Noun Word -> Noun -> (Word, Map Noun Word)
     go off oldTbl noun =
-      let tbl = insertNoun noun off oldTbl in
       case lookup noun oldTbl of
         Nothing ->
+          let tbl = insertNoun noun off oldTbl in
           case noun of
             Atom atm ->
-              (1 + W# (matSz# atm), tbl)
+              (1 + matSz atm, tbl)
             Cell l r ->
-              let (lSz, tbl') = go (2+off)     tbl l in
+              let (lSz, tbl')  = go (2+off)     tbl  l in
               let (rSz, tbl'') = go (2+off+lSz) tbl' r in
               (2 + lSz + rSz, tbl'')
         Just (W# ref) ->
           let refSz = W# (wordBitWidth# ref) in
           case noun of
             Atom atm ->
-              let worSz = W# (matSz# atm) in
+              let worSz = matSz atm in
               if worSz > refSz
               then (2 + refSz, oldTbl)
-              else (1 + worSz, tbl)
+              else (1 + worSz, oldTbl)
             Cell _ _ ->
               (2 + refSz, oldTbl)
 
-    matSz# :: Atom -> Word#
-    matSz# 0 = 1##
-    matSz# a = preW `plusWord#` preW `plusWord#` atmW
-      where
-        atmW = atomBitWidth# a
-        preW = wordBitWidth# atmW
 
-    refSz# :: Word# -> Word#
-    refSz# w = 2## `plusWord#` (matSz# (MkAtom (NatS# w)))
+-- Fast Pre-Jam ----------------------------------------------------------------
 
-    nounSz# :: Noun -> Word#
-    nounSz# (Atom a)   = 1## `plusWord#` (matSz# a)
-    nounSz# (Cell l r) = 2## `plusWord#` (nounSz# l) `plusWord#` (nounSz# r)
+{-
+    An `SHN` is a noun and some pre-computed information.
+
+    - `size` is the serialized size without backreferences, we use this
+      for fast equality checks.
+    - `jmSz` is the serialized size, we use this to allocate a buffer
+      at the end.
+    - `hash` is a precomputed noun hash. We use this to get better,
+      cheaper hashes for our hashtable.
+    - `noun` is the actual noun.
+-}
+data SHN = SHN
+    { size :: {-# UNPACK #-} !Word
+    , jmSz :: {-# UNPACK #-} !Word
+    , hash :: {-# UNPACK #-} !Int
+    , noun :: {-# UNPACK #-} !Noun
+    }
+  deriving (Show)
+
+instance Hashable SHN where
+  hash (SHN _ _ h _) = h
+  {-# INLINE hash #-}
+  hashWithSalt     = defaultHashWithSalt
+  {-# INLINE hashWithSalt #-}
+
+instance Eq SHN where
+  x == y = (size x == size y) && (noun x == noun y)
+
+preJam' :: Noun -> IO (SHN, H.LinearHashTable Word Word)
+preJam' top = do
+    nodes :: H.LinearHashTable SHN  Word <- H.new
+    backs :: H.LinearHashTable Word Word <- H.new
+
+    let goAtom :: Word -> Atom -> IO SHN
+        goAtom pos a@(MkAtom nat) = do
+            let atmSz = matSz a
+            let res   = SHN (1+atmSz) (1+atmSz) (Hash.hash nat) (Atom a)
+            H.lookup nodes res >>= \case
+                Nothing -> do
+                    H.insert nodes res pos
+                    pure (traceShowId res)
+                Just bak -> do
+                    let refSz = matSz (toAtom bak)
+                    if refSz < atmSz
+                    then do H.insert backs pos bak
+                            pure (traceShowId (res{jmSz=2+refSz}))
+                    else pure (traceShowId res)
+
+        goCell :: Word -> Noun -> Noun -> IO SHN
+        goCell pos h t = do
+            SHN hSz hJmSz hHash _ <- go (pos+2) h
+            SHN tSz tJmSz tHash _ <- go (pos+2+hSz) t
+            let sz   = 2+hSz+tSz
+            let jmSz = 2+hJmSz+tJmSz
+            let res  = SHN sz jmSz (combine hHash tHash) (Cell h t)
+            H.lookup nodes res >>= \case
+                Nothing -> do
+                    H.insert nodes res pos
+                    pure (traceShowId res)
+                Just bak -> do
+                    let refSz = matSz (toAtom bak)
+                    H.insert backs pos bak
+                    pure (traceShowId (res{jmSz=2+refSz}))
+
+        go :: Word -> Noun -> IO SHN
+        go p (Atom a)   = goAtom p a
+        go p (Cell h t) = goCell p h t
+
+    res <- go 0 top
+    pure (res, backs)
+
+-- Stolen from Hashable Library ------------------------------------------------
+
+{-# INLINE combine #-}
+combine :: Int -> Int -> Int
+combine h1 h2 = (h1 * 16777619) `xor` h2
+
+{-# INLINE defaultHashWithSalt #-}
+defaultHashWithSalt :: Hashable a => Int -> a -> Int
+defaultHashWithSalt salt x = salt `combine` Hash.hash x
+
+
+{-
+    I suspect that hashing these big atoms recursively is going to be the bottleneck:
+      Unless you have a good hashing system.
+        Which we totally do in the nock runtime.
+      Checking the hash for the top-level node precomputes the hashes for
+        everything else, recursively.
+      This is really smart.
+        Maybe I could implement this as well?
+          But hashing traverses the whole structure.
+        So, now we have
+          1. precompute hashes.
+          2. precompute size and backref table.
+          3. serialize
+        This seems excessive.
+          We insert into the backref table right away, but actually:
+            Backreferences can't exist until the whole node is processed.
+
+          Which implies a smarter algorithm:
+            - Setup a atom dup table
+                atoms :: Hashtable BigNum Word
+            - Setup a cell dup table
+                cells :: Hashtable (Noun, Noun) Word
+            - Setup a backref table (map from dup. pos to orig. pos)
+                backs :: Hashtable Word Word
+            - go :: Noun -> ST s (Hash, Word)
+              - If atom,
+                - Compute size and hash
+                - Check atom table for backref
+                - If atom in `atoms` table:
+                  - If backref smaller than atom
+                    - Insert (pos, bak) into `backs` table.
+                    - Return (backref size, atom hash)
+                  - If backref not smaller than atom
+                    - Return (atom size, atom hash)
+                - Otherwise:
+                  - Insert atom into `atoms` table.
+                  - Return (atom size, atom hash)
+              - If cell
+                - process head
+                - process tail
+                - produce size+hash from results
+                - Check cell table for backref
+                - If backref exists
+                  - Insert `(pos, bak)` into `backs` table
+                  - Return (backref size, cell hash)
+                - Else
+                  - Return (cell size, cell hash)
+
+          Then, to serialize:
+            - Allocate a buffer of `size` bits
+            - If current pos in `backs` table:
+              - Write `11`
+              - Write backref (mat)
+            - Otherwise:
+              - If Atom:
+                - Write `0`
+                - Write atom (mat)
+              - If Cell
+                - Write `10`
+                - Write head
+                - Write tail
+-}

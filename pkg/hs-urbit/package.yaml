@@ -21,6 +21,7 @@ dependencies:
   - flat
   - ghc-prim
   - hashable
+  - hashable
   - hashtables
   - http-client
   - http-types

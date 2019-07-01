@@ -7,8 +7,9 @@ import Data.Bits
 import Control.Lens
 import Text.Printf
 
-import Data.Map      (Map)
 import Control.Monad (guard)
+import Data.Map      (Map)
+import Text.Printf   (printf)
 
 import Test.Tasty
 import Test.Tasty.TH
@@ -169,11 +170,11 @@ cue buf = view _2 <$> go mempty 0
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub (Cursor (i+1) buf)
                               let r = Atom at
-                              pure (1+wid, r, insertMap i r tbl)
+                              pure (1+wid, r, trace (show ('c', i, r)) $ insertMap i r tbl)
         (True,  False ) -> do (lSz,lef,tbl) <- go tbl (i+2)
                               (rSz,rit,tbl) <- go tbl (i+2+fromIntegral lSz)
                               let r = Cell lef rit
-                              pure (2+lSz+rSz, r, insertMap i r tbl)
+                              pure (2+lSz+rSz, r, trace (show ('c', i, r)) $ insertMap i r tbl)
         (True,  True  ) -> do Buf wid at <- rub (Cursor (i+2) buf)
                               r <- lookup (fromIntegral at) tbl & \case
                                      Nothing -> error ("bad-ref-" <> show at)
@@ -203,38 +204,45 @@ pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
         , 0x3170_c7c1, 0x93_c7c1, 0xa_72e0, 0x1bd5_b7dd_e080
         ]
 
-cueTest :: Maybe [Noun]
-cueTest = traverse cue pills
+-- cueTest :: Maybe [Noun]
+-- cueTest = traverse cue pills
 
-jamTest :: Maybe [Atom]
-jamTest = fmap jam <$> cueTest
+-- jamTest :: Maybe [Atom]
+-- jamTest = fmap jam <$> cueTest
 
-prop_fastMatSlow :: Atom -> Bool
-prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
+-- prop_fastMatSlow :: Atom -> Bool
+-- prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
 
-prop_fastJamSlow :: Noun -> Bool
-prop_fastJamSlow n = jam n == Fast.jam n
+-- prop_fastJamSlow :: Noun -> Bool
+-- prop_fastJamSlow n = jam n == Fast.jam n
 
 prop_fastJam :: Noun -> Bool
 prop_fastJam n = Just n == cue (Fast.jam n)
 
-prop_jamCue :: Noun -> Bool
-prop_jamCue n = Just n == cue (jam n)
+-- prop_jamCue :: Noun -> Bool
+-- prop_jamCue n = Just n == cue (jam n)
 
-prop_matRub :: Atom -> Bool
-prop_matRub atm = matSz==rubSz && rubRes==atm
-  where
-    Buf matSz matBuf = mat atm
-    Buf rubSz rubRes = fromMaybe mempty (rub $ Cursor 0 matBuf)
+-- prop_matRub :: Atom -> Bool
+-- prop_matRub atm = matSz==rubSz && rubRes==atm
+  -- where
+    -- Buf matSz matBuf = mat atm
+    -- Buf rubSz rubRes = fromMaybe mempty (rub $ Cursor 0 matBuf)
 
-prop_jamCue' :: Noun -> Bool
-prop_jamCue' n = Just n == cue' (jam' n)
+-- prop_jamCue' :: Noun -> Bool
+-- prop_jamCue' n = Just n == cue' (jam' n)
 
-prop_matRub' :: Atom -> Bool
-prop_matRub' atm = matSz==rubSz && rubRes==atm
-  where
-    Buf matSz matBuf = mat' atm
-    Buf rubSz rubRes = fromMaybe mempty (rub' $ Cursor 0 matBuf)
+-- prop_matRub' :: Atom -> Bool
+-- prop_matRub' atm = matSz==rubSz && rubRes==atm
+  -- where
+    -- Buf matSz matBuf = mat' atm
+    -- Buf rubSz rubRes = fromMaybe mempty (rub' $ Cursor 0 matBuf)
 
 main :: IO ()
 main = $(defaultMainGenerator)
+
+matSz' :: Atom -> Int
+matSz' a = length s - 1
+  where
+    s :: String
+    s = printf "%b" $ fromIntegral @Atom @Integer $ jam $ Atom a
+
