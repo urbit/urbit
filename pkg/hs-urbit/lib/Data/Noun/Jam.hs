@@ -140,7 +140,7 @@ jam = toAtom . fst . go 0 mempty
     go off oldTbl noun =
       let tbl = insertNoun noun off oldTbl in
       case (lookup noun oldTbl, noun) of
-        (Just ref, Atom atm) | bitWidth atm <= bitWidth (toAtom ref) ->
+        (Just ref, Atom atm) | bitWidth atm <= (1+bitWidth (toAtom ref)) ->
           (Buf (1+sz) (shiftL res 1), tbl)
             where Buf sz res = mat atm
         (Just ref, _) ->
@@ -170,11 +170,11 @@ cue buf = view _2 <$> go mempty 0
       case (bitIdx i buf, bitIdx (i+1) buf) of
         (False, _     ) -> do Buf wid at <- rub (Cursor (i+1) buf)
                               let r = Atom at
-                              pure (1+wid, r, trace (show ('c', i, r)) $ insertMap i r tbl)
+                              pure (1+wid, r, insertMap i r tbl)
         (True,  False ) -> do (lSz,lef,tbl) <- go tbl (i+2)
                               (rSz,rit,tbl) <- go tbl (i+2+fromIntegral lSz)
                               let r = Cell lef rit
-                              pure (2+lSz+rSz, r, trace (show ('c', i, r)) $ insertMap i r tbl)
+                              pure (2+lSz+rSz, r, insertMap i r tbl)
         (True,  True  ) -> do Buf wid at <- rub (Cursor (i+2) buf)
                               r <- lookup (fromIntegral at) tbl & \case
                                      Nothing -> error ("bad-ref-" <> show at)
@@ -210,11 +210,13 @@ pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
 -- jamTest :: Maybe [Atom]
 -- jamTest = fmap jam <$> cueTest
 
--- prop_fastMatSlow :: Atom -> Bool
--- prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
+prop_fastMatSlow :: Atom -> Bool
+prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
 
--- prop_fastJamSlow :: Noun -> Bool
--- prop_fastJamSlow n = jam n == Fast.jam n
+prop_fastJamSlow :: Noun -> Bool
+prop_fastJamSlow n = x == y || (bitWidth y <= bitWidth x && cue y == cue x)
+  where x = jam n
+        y = Fast.jam n
 
 prop_fastJam :: Noun -> Bool
 prop_fastJam n = Just n == cue (Fast.jam n)

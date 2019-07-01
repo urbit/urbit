@@ -2,7 +2,7 @@
 
 module Data.Noun.Jam.Put where
 
-import ClassyPrelude
+import ClassyPrelude hiding (hash)
 import GHC.Prim
 import GHC.Natural
 import GHC.Integer.GMP.Internals
@@ -104,7 +104,7 @@ putS s = Put $ \tbl _ -> pure (PutResult s ())
 {-# INLINE writeBit #-}
 writeBit :: Bool -> Put ()
 writeBit b = Put $ \tbl s@S{..} -> do
-    traceM ("writeBit: " <> show b)
+    -- traceM ("writeBit: " <> show b)
     let s' = s { reg = (if b then setBit else clearBit) reg off
                , off = (off + 1) `mod` 64
                , pos = pos + 1
@@ -124,7 +124,7 @@ writeBit b = Put $ \tbl s@S{..} -> do
 {-# INLINE writeWord #-}
 writeWord :: Word -> Put ()
 writeWord wor = do
-    traceM ("writeWord: " <> show wor)
+    -- traceM ("writeWord: " <> show wor)
     S{..} <- getS
     setReg (reg .|. shiftL wor off)
     flush
@@ -149,7 +149,7 @@ writeBitsFromWord :: Int -> Word -> Put ()
 writeBitsFromWord wid wor = do
     wor <- pure (takeBitsWord wid wor)
 
-    traceM ("writeBitsFromWord: " <> show wid <> ", " <> show wor)
+    -- traceM ("writeBitsFromWord: " <> show wid <> ", " <> show wor)
 
     oldSt <- getS
 
@@ -169,7 +169,7 @@ writeBitsFromWord wid wor = do
 {-# INLINE writeAtomWord# #-}
 writeAtomWord# :: Word# -> Put ()
 writeAtomWord# w = do
-    traceM "writeAtomWord"
+    -- traceM "writeAtomWord"
     writeBitsFromWord (I# (word2Int# (wordBitWidth# w))) (W# w)
 
 {-# INLINE writeAtomWord #-}
@@ -237,9 +237,9 @@ instance Monad Put where
 doPut :: H.LinearHashTable Word Word -> Word -> Put () -> ByteString
 doPut tbl sz m =
     unsafePerformIO $ do
-        traceM ""
-        H.toList tbl >>= traceM . show . sort
-        traceM ""
+        -- traceM ""
+        -- H.toList tbl >>= traceM . show . sort
+        -- traceM ""
         buf <- callocBytes (fromIntegral $ 4 * wordSz*8)
         _   <- runPut (m >> mbFlush) tbl (S buf 0 0 0)
         BS.unsafePackCStringFinalizer (castPtr buf) (2*byteSz) (free buf)
@@ -262,8 +262,8 @@ doPut tbl sz m =
 writeNoun :: Noun -> Put ()
 writeNoun n = do
     p <- pos <$> getS
-    traceM ("writeNoun: " <> show p)
-    traceM ("\t" <> show n)
+    -- traceM ("writeNoun: " <> show p)
+    -- traceM ("\t" <> show n)
 
     -- getRef >>= \case
       -- Nothing -> pure ()
@@ -278,7 +278,7 @@ writeNoun n = do
     getRef >>= \case
       Just bk -> do
         p <- pos <$> getS
-        traceM $ mconcat (force ["backref: (", show p, " -> ", show bk, ")\n\t", show n])
+        -- traceM $ mconcat (force ["backref: (", show p, " -> ", show bk, ")\n\t", show n])
         writeBackRef bk
       Nothing -> case n of
         Atom a   -> writeAtom a
@@ -318,7 +318,7 @@ writeAtom a = do
 writeBackRef :: Word -> Put ()
 writeBackRef a = do
     p <- pos <$> getS
-    traceM ("writeBackRef: " <> show a <> " @" <> show p)
+    -- traceM ("writeBackRef: " <> show a <> " @" <> show p)
     writeBit True
     writeBit True
     writeMat (toAtom a)
@@ -326,11 +326,12 @@ writeBackRef a = do
 --------------------------------------------------------------------------------
 
 jamBS :: Noun -> ByteString
-jamBS n = trace (show $ sort $ swap <$> mapToList tbl)
+jamBS n = -- trace (show $ sort $ swap <$> mapToList tbl)
 --      $ trace (show $ sort $ swap <$> unsafePerformIO (H.toList ht))
-        $ doPut ht (size shn) (writeNoun n)
+          doPut bt sz' (writeNoun n)
   where (sz, tbl) = preJam n
         (shn, ht) = unsafePerformIO (preJam' n)
+        (sz', bt) = unsafePerformIO (compress $ toBigNoun n)
 
 jam :: Noun -> Atom
 jam = view (to jamBS . from atomBS)
@@ -383,6 +384,73 @@ preJam = go 0 mempty
             Cell _ _ ->
               (2 + refSz, oldTbl)
 
+
+-- Nouns with pre-computed size and hash ---------------------------------------
+
+data BigNoun
+    = BigCell { bSize :: {-# UNPACK #-} !Word
+              , bHash :: {-# UNPACK #-} !Int
+              , bHead :: BigNoun
+              , bTail :: BigNoun
+              }
+    | BigAtom { bSize :: {-# UNPACK #-} !Word
+              , bHash :: {-# UNPACK #-} !Int
+              , bAtom :: {-# UNPACK #-} !Atom
+              }
+  deriving (Show)
+
+instance Hashable BigNoun where
+  hash = bHash
+  {-# INLINE hash #-}
+  hashWithSalt = defaultHashWithSalt
+  {-# INLINE hashWithSalt #-}
+
+instance Eq BigNoun where
+  BigAtom s1 _ a1    == BigAtom s2 _ a2    = s1==s2 && a1==a2
+  BigCell s1 _ h1 t1 == BigCell s2 _ h2 t2 = s1==s2 && h1==h2 && t1==t2
+  _                  == _                  = False
+
+toBigNoun :: Noun -> BigNoun
+toBigNoun (Atom a)   = BigAtom (1 + matSz a) (Hash.hash a) a
+toBigNoun (Cell h t) = BigCell siz has hed tel
+  where
+    hed = toBigNoun h
+    tel = toBigNoun t
+    siz = 2 + bSize hed + bSize tel
+    has = fromIntegral siz `combine` bHash hed `combine` bHash tel
+
+
+-- Yet Another Fast Pre Jam ----------------------------------------------------
+
+compress :: BigNoun -> IO (Word, H.LinearHashTable Word Word)
+compress top = do
+    nodes :: H.LinearHashTable BigNoun Word <- H.new
+    backs :: H.LinearHashTable Word    Word <- H.new
+
+    let proc :: Word -> BigNoun -> IO Word
+        proc pos = \case
+            BigAtom _ _ a   -> pure (1 + matSz a)
+            BigCell _ _ h t -> do
+                hSz <- go (pos+2) h
+                tSz <- go (pos+2+hSz) t
+                pure (2+hSz+tSz)
+
+        go :: Word -> BigNoun -> IO Word
+        go p inp = do
+            H.lookup nodes inp >>= \case
+                Nothing -> do
+                    -- traceM ("inserting " <> show inp)
+                    H.insert nodes inp p
+                    proc p inp
+                Just bak -> do
+                    -- traceM ("found backref for " <> show inp)
+                    let refSz = 2 + matSz (toAtom bak)
+                    if (refSz < bSize inp)
+                    then H.insert backs p bak $> refSz
+                    else proc p inp
+
+    res <- go 0 top
+    pure (res, backs)
 
 -- Fast Pre-Jam ----------------------------------------------------------------
 

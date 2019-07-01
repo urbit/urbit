@@ -21,7 +21,9 @@ import Data.Hashable (Hashable)
 --------------------------------------------------------------------------------
 
 newtype Atom = MkAtom { unAtom :: Natural }
-  deriving newtype (Eq, Ord, Num, Bits, Enum, Real, Integral, Flat, Hashable, NFData)
+  deriving newtype ( Eq, Ord, Num, Bits, Enum, Real, Integral, Flat, Hashable
+                   , NFData
+                   )
 
 instance Show Atom where
   show (MkAtom a) = show a
