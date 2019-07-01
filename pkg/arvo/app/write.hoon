@@ -314,7 +314,6 @@
         %total
       =?  contributors.dat.del  =(our.bol who.del)
         (get-contributors col.del)
-      =.  last-update.dat.del  now.bol
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
