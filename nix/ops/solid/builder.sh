@@ -18,7 +18,7 @@ trap cleanup EXIT
 herb ./pier -p hood -d '+hood/merge %stage our %home'
 herb ./pier -p hood -d "+hood/mount /=stage="
 
-rm -r ./pier/stage
+rm -rf ./pier/stage
 cp -r $ARVO ./pier/stage
 chmod -R u+rw ./pier/stage
 
