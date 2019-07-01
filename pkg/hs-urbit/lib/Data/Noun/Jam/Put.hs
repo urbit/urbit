@@ -52,7 +52,7 @@ data PutResult a = PutResult {-# UNPACK #-} !S !a
   deriving Functor
 
 newtype Put a = Put
-  { runPut :: H.LinearHashTable Noun Word
+  { runPut :: H.LinearHashTable Word Word
            -> S
            -> IO (PutResult a)
   }
@@ -60,14 +60,8 @@ newtype Put a = Put
 --------------------------------------------------------------------------------
 
 {-# INLINE getRef #-}
-getRef :: Noun -> Put (Maybe Word)
-getRef n = Put \tbl s -> do
-    pos <- pure (pos s)
-    traceM ("getRef: " <> show n <> " @" <> show pos)
-    res <- H.lookup tbl n
-    pure $ PutResult s $ case res of
-                           Just w | w<pos -> Just w
-                           _              -> Nothing
+getRef :: Put (Maybe Word)
+getRef = Put \tbl s -> PutResult s <$> H.lookup tbl (pos s)
 
 {-
   1. Write the register to the output, and increment the output pointer.
@@ -110,15 +104,15 @@ putS s = Put $ \tbl _ -> pure (PutResult s ())
 {-# INLINE writeBit #-}
 writeBit :: Bool -> Put ()
 writeBit b = Put $ \tbl s@S{..} -> do
-  -- traceM ("writeBit: " <> show b)
-  let s' = s { reg = (if b then setBit else clearBit) reg off
-             , off = (off + 1) `mod` 64
-             , pos = pos + 1
-             }
+    traceM ("writeBit: " <> show b)
+    let s' = s { reg = (if b then setBit else clearBit) reg off
+               , off = (off + 1) `mod` 64
+               , pos = pos + 1
+               }
 
-  if off == 63
-  then runPut (flush >> setRegOff 0 0) tbl s'
-  else pure $ PutResult s' ()
+    if off == 63
+    then runPut (flush >> setRegOff 0 0) tbl s'
+    else pure $ PutResult s' ()
 
 {-
     To write a 64bit word:
@@ -130,7 +124,7 @@ writeBit b = Put $ \tbl s@S{..} -> do
 {-# INLINE writeWord #-}
 writeWord :: Word -> Put ()
 writeWord wor = do
-    -- traceM ("writeWord: " <> show wor)
+    traceM ("writeWord: " <> show wor)
     S{..} <- getS
     setReg (reg .|. shiftL wor off)
     flush
@@ -155,7 +149,7 @@ writeBitsFromWord :: Int -> Word -> Put ()
 writeBitsFromWord wid wor = do
     wor <- pure (takeBitsWord wid wor)
 
-    -- traceM ("writeBitsFromWord: " <> show wid <> ", " <> show wor)
+    traceM ("writeBitsFromWord: " <> show wid <> ", " <> show wor)
 
     oldSt <- getS
 
@@ -175,7 +169,7 @@ writeBitsFromWord wid wor = do
 {-# INLINE writeAtomWord# #-}
 writeAtomWord# :: Word# -> Put ()
 writeAtomWord# w = do
-    -- traceM "writeAtomWord"
+    traceM "writeAtomWord"
     writeBitsFromWord (I# (word2Int# (wordBitWidth# w))) (W# w)
 
 {-# INLINE writeAtomWord #-}
@@ -240,10 +234,12 @@ instance Monad Put where
 
 --------------------------------------------------------------------------------
 
-doPut :: Map Noun Word -> Word -> Put () -> ByteString
+doPut :: H.LinearHashTable Word Word -> Word -> Put () -> ByteString
 doPut tbl sz m =
     unsafePerformIO $ do
-        tbl <- H.fromListWithSizeHint (M.size tbl) (mapToList tbl)
+        traceM ""
+        H.toList tbl >>= traceM . show . sort
+        traceM ""
         buf <- callocBytes (fromIntegral $ 4 * wordSz*8)
         _   <- runPut (m >> mbFlush) tbl (S buf 0 0 0)
         BS.unsafePackCStringFinalizer (castPtr buf) (2*byteSz) (free buf)
@@ -265,15 +261,28 @@ doPut tbl sz m =
 -}
 writeNoun :: Noun -> Put ()
 writeNoun n = do
-    -- traceM "writeNoun"
+    p <- pos <$> getS
+    traceM ("writeNoun: " <> show p)
+    traceM ("\t" <> show n)
 
-    mRef <- getRef n
+    -- getRef >>= \case
+      -- Nothing -> pure ()
+      -- Just rf -> do
+        -- p <- pos <$> getS
+        -- traceM ("backref: " <> show p <> "-> " <> show rf)
 
-    case (mRef, n) of
-        (Nothing, Atom a)                                 -> writeAtom a
-        (Nothing, Cell h t)                               -> writeCell h t
-        (Just bk, Atom a) | bitWidth a <= wordBitWidth bk -> writeAtom a
-        (Just bk, _)                                      -> writeBackRef bk
+    -- case n of
+      -- Atom a   -> writeAtom a
+      -- Cell h t -> writeCell h t
+
+    getRef >>= \case
+      Just bk -> do
+        p <- pos <$> getS
+        traceM $ mconcat (force ["backref: (", show p, " -> ", show bk, ")\n\t", show n])
+        writeBackRef bk
+      Nothing -> case n of
+        Atom a   -> writeAtom a
+        Cell h t -> writeCell h t
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -318,8 +327,10 @@ writeBackRef a = do
 
 jamBS :: Noun -> ByteString
 jamBS n = trace (show $ sort $ swap <$> mapToList tbl)
-        $ doPut tbl sz (writeNoun n)
+--      $ trace (show $ sort $ swap <$> unsafePerformIO (H.toList ht))
+        $ doPut ht (size shn) (writeNoun n)
   where (sz, tbl) = preJam n
+        (shn, ht) = unsafePerformIO (preJam' n)
 
 jam :: Noun -> Atom
 jam = view (to jamBS . from atomBS)
@@ -403,6 +414,10 @@ instance Hashable SHN where
 instance Eq SHN where
   x == y = (size x == size y) && (noun x == noun y)
 
+{-
+    This is slightly different that the stock `jam`, since we use
+    backreferences if-and-only-if they save space.
+-}
 preJam' :: Noun -> IO (SHN, H.LinearHashTable Word Word)
 preJam' top = do
     nodes :: H.LinearHashTable SHN  Word <- H.new
@@ -410,38 +425,32 @@ preJam' top = do
 
     let goAtom :: Word -> Atom -> IO SHN
         goAtom pos a@(MkAtom nat) = do
-            let atmSz = matSz a
-            let res   = SHN (1+atmSz) (1+atmSz) (Hash.hash nat) (Atom a)
-            H.lookup nodes res >>= \case
-                Nothing -> do
-                    H.insert nodes res pos
-                    pure (traceShowId res)
-                Just bak -> do
-                    let refSz = matSz (toAtom bak)
-                    if refSz < atmSz
-                    then do H.insert backs pos bak
-                            pure (traceShowId (res{jmSz=2+refSz}))
-                    else pure (traceShowId res)
+            let atmSz = 1 + matSz a
+            pure $ SHN atmSz atmSz (Hash.hash nat) (Atom a)
 
         goCell :: Word -> Noun -> Noun -> IO SHN
         goCell pos h t = do
             SHN hSz hJmSz hHash _ <- go (pos+2) h
-            SHN tSz tJmSz tHash _ <- go (pos+2+hSz) t
+            SHN tSz tJmSz tHash _ <- go (pos+2+hJmSz) t
             let sz   = 2+hSz+tSz
             let jmSz = 2+hJmSz+tJmSz
-            let res  = SHN sz jmSz (combine hHash tHash) (Cell h t)
-            H.lookup nodes res >>= \case
-                Nothing -> do
-                    H.insert nodes res pos
-                    pure (traceShowId res)
-                Just bak -> do
-                    let refSz = matSz (toAtom bak)
-                    H.insert backs pos bak
-                    pure (traceShowId (res{jmSz=2+refSz}))
+            pure $ SHN sz jmSz (combine hHash tHash) (Cell h t)
 
         go :: Word -> Noun -> IO SHN
-        go p (Atom a)   = goAtom p a
-        go p (Cell h t) = goCell p h t
+        go p n = do
+            res <- case n of Atom a   -> goAtom p a
+                             Cell h t -> goCell p h t
+
+            H.lookup nodes res >>= \case
+                Nothing -> do
+                    H.insert nodes res p
+                    pure res
+                Just bak -> do
+                    let refSz = 2 + matSz (toAtom bak)
+                    if (refSz < jmSz res)
+                    then do H.insert backs p bak
+                            pure (res { jmSz = refSz })
+                    else pure res
 
     res <- go 0 top
     pure (res, backs)
