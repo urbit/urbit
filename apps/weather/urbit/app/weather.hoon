@@ -115,6 +115,10 @@
   ?~  ujon
      [~ this]
   ?>  ?=(%o -.u.ujon)
+  ?:  (gth 200 status-code.response-header.response)
+    ~&  weather+u.ujon
+    ~&  weather+location
+    [~ this]
   =/  jon/json  %-  pairs:enjs:format  :~
     currently+(~(got by p.u.ujon) 'currently')
     daily+(~(got by p.u.ujon) 'daily')
