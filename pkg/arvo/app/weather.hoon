@@ -72,15 +72,14 @@
   =/  str/@t  +.jon
   =/  req/request:http  (request-darksky str)
   =/  out  *outbound-config:iris
+  =/  lismov  [ost.bol %request /[(scot %da now.bol)] req out]~
   ?~  timer
-    :-  %+  weld
-      `(list move)`[ost.bol %wait /timer (add now.bol ~d1)]~
-      `(list move)`[ost.bol %request /[(scot %da now.bol)] req out]~
+    :-  [[ost.bol %wait /timer (add now.bol ~h3)] lismov]
     %=  this
       location  str
-      timer  `(add now.bol ~d1)
+      timer  `(add now.bol ~h3)
     ==
-  :-  [ost.bol %request /[(scot %da now.bol)] req out]~
+  :-  lismov
   %=  this
     location  str
   ==
@@ -112,17 +111,21 @@
   ?~  data
     :: data is null
     [~ this]
-  =/  jon/(unit json)  (de-json:html q.data.u.data)
-  ?~  jon
+  =/  ujon/(unit json)  (de-json:html q.data.u.data)
+  ?~  ujon
      [~ this]
-  ?>  ?=(%o -.u.jon)
-  =/  ayyy/json  %-  pairs:enjs:format  :~
-    currently+(~(got by p.u.jon) 'currently')
-    daily+(~(got by p.u.jon) 'daily')
+  ?>  ?=(%o -.u.ujon)
+  ?:  (gth 200 status-code.response-header.response)
+    ~&  weather+u.ujon
+    ~&  weather+location
+    [~ this]
+  =/  jon/json  %-  pairs:enjs:format  :~
+    currently+(~(got by p.u.ujon) 'currently')
+    daily+(~(got by p.u.ujon) 'daily')
   ==
-  :-  (send-tile-diff ayyy)
+  :-  (send-tile-diff jon)
   %=  this
-    data  ayyy
+    data  jon
     time  now.bol
   ==
 ::
@@ -130,10 +133,10 @@
   %-  (require-authorization:app ost.bol move this)
   |=  =inbound-request:eyre
   ^-  (quip move _this)
-  =+  request-line=(parse-request-line url.request.inbound-request)
-  =+  back-path=(flop site.request-line)
+  =/  request-line  (parse-request-line url.request.inbound-request)
+  =/  back-path  (flop site.request-line)
   =/  name=@t
-    =+  back-path=(flop site.request-line)
+    =/  back-path  (flop site.request-line)
     ?~  back-path
       ''
     i.back-path
@@ -152,12 +155,16 @@
 ++  wake
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  =/  req/request:http  (request-darksky location)
-  =/  lismov/(list move)
-    `(list move)`[ost.bol %request /[(scot %da now.bol)] req *outbound-config:iris]~
-  ?~  timer
-    :-  (weld lismov `(list move)`[ost.bol %wait /timer (add now.bol ~h3)]~)
-    this(timer `(add now.bol ~h3))
-  [lismov this]
+  ?~  err
+    =/  req/request:http  (request-darksky location)
+    =/  out  *outbound-config:iris
+    =/  lismov/(list move)
+      [ost.bol %request /[(scot %da now.bol)] req out]~
+    ?~  timer
+      :-  [[ost.bol %wait /timer (add now.bol ~h3)] lismov]
+      this(timer `(add now.bol ~h3))
+    [lismov this]
+  ~&  err
+  [~ this]
 ::
 --
