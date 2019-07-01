@@ -87,7 +87,6 @@
 ++  internal-note
   $%  [task=%meta =term =vase]
       [task=%send =ship =internal-task]
-      [task=%hiss knot=(unit knot) =mark =cage]
   ==
 ::
 ::  +internal-move: agent-level move.
@@ -1360,7 +1359,6 @@
           =/  =note-arvo
             ?-  task.internal-note
                 ::
-                ::
                 %send
                 ::
               =/  =task:able
@@ -1787,7 +1785,6 @@
       ::
       ?+  +<.noun  (ap-move-pass bone +<.noun vase)
         %diff  (ap-move-diff bone vase)
-        %hiss  (ap-move-hiss bone vase)
         %peel  (ap-move-peel bone vase)
         %peer  (ap-move-peer bone vase)
         %pull  (ap-move-pull bone vase)
