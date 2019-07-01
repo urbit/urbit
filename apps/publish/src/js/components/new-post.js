@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
+import { store } from '/store';
 
 const PC = withRouter(PathControl);
 
@@ -116,6 +117,12 @@ export class NewPost extends Component {
       }
     });
 
+    store.handleEvent({
+      data: {
+        spinner: true,
+      }
+    });
+
     this.props.api.action("write", "write-action", data);
   }
 
@@ -141,6 +148,11 @@ export class NewPost extends Component {
       }
 
       if (post && comments) {
+        store.handleEvent({
+          data: {
+            spinner: false,
+          }
+        });
         if (typeof(post) === 'String') {
           this.setState({
             error: post,
@@ -159,7 +171,7 @@ export class NewPost extends Component {
 
     return (
       <div className="relative w-100" style={{height: 'calc(100% - 124px)'}}>
-        <div className="cf w-100 bg-white h-publish-header fixed">
+        <div className="cf w-100 bg-white h-publish-header fixed z-4">
           <PC pathData={false} {...this.props}/>
         </div>
         <div className="w-100 relative" 

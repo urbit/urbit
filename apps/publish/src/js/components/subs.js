@@ -163,28 +163,28 @@ export class Subs extends Component {
 
     return (
       <div>
-        <div className="cf w-100 bg-white h-publish-header">
-          <HM/>
-        </div>
-        <div className="flex-col">
-          <div className="w-100 h-80">
-            <h2 className="gray-50">Subscriptions</h2>
-          </div>
-          <div className="w-100 flex">
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-               Title
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-              Host
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-              Last Updated
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-            </p>
-          </div>
+        <HM/>
+        <div className="absolute w-100" style={{top:124}}>
+          <div className="flex-col">
+            <div className="w-100 h-80">
+              <h2 className="gray-50">Subscriptions</h2>
+            </div>
+            <div className="w-100 flex">
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                 Title
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                Host
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                Last Updated
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+              </p>
+            </div>
 
-          {blogs}
+            {blogs}
+          </div>
         </div>
       </div>
     );

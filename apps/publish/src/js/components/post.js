@@ -8,6 +8,7 @@ import { Comments } from '/components/comments';
 import { PathControl } from '/components/lib/path-control';
 import { NextPrev } from '/components/lib/next-prev';
 import _ from 'lodash';
+import { store } from '/store';
 
 export class Post extends Component {
   constructor(props){
@@ -102,6 +103,12 @@ export class Post extends Component {
       }
     });
 
+    store.handleEvent({
+      data: {
+        spinner: true,
+      }
+    });
+
     this.props.api.action("write", "write-action", data);
   }
 
@@ -153,6 +160,13 @@ export class Post extends Component {
           },
           temporary: true,
         });
+
+        store.handleEvent({
+          data: {
+            spinner: true,
+          }
+        });
+
         this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
           this.handleEvent.bind(this),
           this.handleError.bind(this));
@@ -204,6 +218,13 @@ export class Post extends Component {
           { text: post.info.title, url: postUrl },
         ],
       });
+
+      store.handleEvent({
+        data: {
+          spinner: false,
+        }
+      });
+
     } else if (diff.data.collection) {
       let newBlog = this.state.blog;
       newBlog.info = diff.data.collection.data;
@@ -263,6 +284,12 @@ export class Post extends Component {
         awaitingEdit: false,
         post: post,
       });
+
+      store.handleEvent({
+        data: {
+          spinner: false,
+        }
+      });
     }
 
     if (!this.state.temporary){
@@ -292,17 +319,9 @@ export class Post extends Component {
 
   render() {
     if (this.state.awaitingLoad) {
-      return (
-        <div>
-          Loading
-        </div>
-      );
+      return null;
     } else if (this.state.awaitingEdit) {
-      return (
-        <div>
-          Saving Edit
-        </div>
-      );
+      return null;
     } else if (this.state.mode == 'view') {
       let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
       let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
@@ -311,41 +330,41 @@ export class Post extends Component {
       let authorDate = `${this.state.post.info.creator} • ${date}`;
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={this.state.pathData}/>
-          </div>
-          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-            <Link to={blogLink}>
-              <p className="body-regular">
-                {blogLinkText}
-              </p>
-            </Link>
+          <PathControl pathData={this.state.pathData}/>
+          <div className="absolute w-100" style={{top:124}}>
+            <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+              <Link to={blogLink}>
+                <p className="body-regular">
+                  {blogLinkText}
+                </p>
+              </Link>
 
-            <h2>{this.state.titleOriginal}</h2>
+              <h2>{this.state.titleOriginal}</h2>
 
-            <div className="mb4">
-              <p className="fl label-small gray-50">{authorDate}</p>
-              <p className="label-regular gray-50 fr pointer"
-                 onClick={this.editPost}>
-                Edit
-              </p>
-            </div>
+              <div className="mb4">
+                <p className="fl label-small gray-50">{authorDate}</p>
+                <p className="label-regular gray-50 fr pointer"
+                   onClick={this.editPost}>
+                  Edit
+                </p>
+              </div>
 
-            <div className="cb">
-              <PostBody
-                body={this.state.post.body} 
+              <div className="cb">
+                <PostBody
+                  body={this.state.post.body} 
+                />
+              </div>
+
+              <hr className="gray-50 w-680 mt4"/>
+              <NextPrev blog={this.state.blog} postId={this.props.postId} />
+            
+              <Comments comments={this.state.comments} 
+                api={this.props.api}
+                ship={this.props.ship}
+                blogId={this.props.blogId}
+                postId={this.props.postId}
               />
             </div>
-
-            <hr className="gray-50 w-680 mt4"/>
-            <NextPrev blog={this.state.blog} postId={this.props.postId} />
-          
-            <Comments comments={this.state.comments} 
-              api={this.props.api}
-              ship={this.props.ship}
-              blogId={this.props.blogId}
-              postId={this.props.postId}
-            />
           </div>
         </div>
       );
@@ -358,48 +377,48 @@ export class Post extends Component {
       let authorDate = `${this.state.post.info.creator} • ${date}`;
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={this.state.pathData}/>
-          </div>
-          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-            <Link to={blogLink}>
-              <p className="body-regular">
-                {blogLinkText}
-              </p>
-            </Link>
+          <PathControl pathData={this.state.pathData}/>
+          <div className="absolute w-100" style={{top:124}}>
+            <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+              <Link to={blogLink}>
+                <p className="body-regular">
+                  {blogLinkText}
+                </p>
+              </Link>
 
-            <input className="header-2 w-100"
-              type="text"
-              name="postName"
-              defaultValue={this.state.titleOriginal}
-              onChange={this.titleChange}
-            />
+              <input className="header-2 w-100"
+                type="text"
+                name="postName"
+                defaultValue={this.state.titleOriginal}
+                onChange={this.titleChange}
+              />
 
-            <div className="mb4">
-              <p className="fl label-small gray-50">{authorDate}</p>
-              <p className="label-regular gray-50 fr pointer"
-                 onClick={this.savePost}>
-                Save
-              </p>
+              <div className="mb4">
+                <p className="fl label-small gray-50">{authorDate}</p>
+                <p className="label-regular gray-50 fr pointer"
+                   onClick={this.savePost}>
+                  Save
+                </p>
+              </div>
+
+              <textarea className="cb body-regular-400 w-100 h5"
+                style={{resize:"none"}}
+                type="text"
+                name="postBody"
+                onChange={this.bodyChange}
+                defaultValue={this.state.bodyOriginal}>
+              </textarea>
+
+              <hr className="gray-50 w-680 mt4"/>
+              <NextPrev blog={this.state.blog} postId={this.props.postId} />
+            
+              <Comments comments={this.state.comments} 
+                api={this.props.api}
+                ship={this.props.ship}
+                blogId={this.props.blogId}
+                postId={this.props.postId}
+              />
             </div>
-
-            <textarea className="cb body-regular-400 w-100 h5"
-              style={{resize:"none"}}
-              type="text"
-              name="postBody"
-              onChange={this.bodyChange}
-              defaultValue={this.state.bodyOriginal}>
-            </textarea>
-
-            <hr className="gray-50 w-680 mt4"/>
-            <NextPrev blog={this.state.blog} postId={this.props.postId} />
-          
-            <Comments comments={this.state.comments} 
-              api={this.props.api}
-              ship={this.props.ship}
-              blogId={this.props.blogId}
-              postId={this.props.postId}
-            />
           </div>
         </div>
       );

@@ -25,7 +25,7 @@ export class PathControl extends Component {
       finalUrl = {
         pathName: finalUrl,
         state: last,
-      }
+      };
 
       if ((last.lastMatch === '/~publish/:ship/:blog/:post') ||
           (last.lastMatch === '/~publish/:ship/:blog')){
@@ -90,7 +90,8 @@ export class PathControl extends Component {
       :  'post';
 
     return (
-      <div>
+      <div className="fixed w-100 bg-white cf h-publish-header z-4"
+        style={{top: 48}}>
         <PC create={create}/>
         <div className="path-control">
           {path}

@@ -158,11 +158,11 @@ export class Recent extends Component {
 
     return (
       <div>
-        <div className="cf w-100 bg-white h-publish-header">
-          <HM/>
-        </div>
-        <div className="flex-col">
-          {body}
+        <HM/>
+        <div className="absolute w-100" style={{top:124}}>
+          <div className="flex-col">
+            {body}
+          </div>
         </div>
       </div>
     );

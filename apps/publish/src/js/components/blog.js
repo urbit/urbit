@@ -4,6 +4,7 @@ import { PostPreview } from '/components/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
+import { store } from '/store';
 
 const PC = withRouter(PathControl);
 
@@ -22,8 +23,6 @@ export class Blog extends Component {
   }
 
   handleEvent(diff) {
-    console.log("handleEvent", diff);
-
     if (diff.data.total) {
       let blog = diff.data.total.data;
       this.setState({
@@ -37,6 +36,12 @@ export class Blog extends Component {
           { text: blog.info.title, 
             url: `/~publish/${blog.info.owner}/${blog.info.filename}` }
         ],
+      });
+
+      store.handleEvent({
+        data: {
+          spinner: false,
+        }
       });
     }
   }
@@ -63,12 +68,17 @@ export class Blog extends Component {
         temporary: true,
       });
 
+      store.handleEvent({
+        data: {
+          spinner: true,
+        }
+      });
+
       this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
         this.handleEvent.bind(this),
         this.handleError.bind(this));
     }
   }
-
 
   buildPosts(blog){
     let pinProps = blog.order.pin.map((postId) => {
@@ -141,35 +151,31 @@ export class Blog extends Component {
     let subscribers = "~bitpyx-dildus and X others"; // XX backend work
 
     if (this.state.awaiting) {
-      return (
-        <div className="w-100 ba h-inner">
-          Loading
-        </div>
-      );
+      return null;
     } else {
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={data.pathData}/>
-          </div>
-          <div className="flex-col">
-            <h2>{data.blogTitle}</h2>
-            <div className="flex">
-              <div style={{flexBasis: 350}}>
-                <p>Host</p>
-                <p>{data.blogHost}</p>
+          <PathControl pathData={data.pathData}/>
+          <div className="absolute w-100" style={{top:124}}>
+            <div className="flex-col">
+              <h2>{data.blogTitle}</h2>
+              <div className="flex">
+                <div style={{flexBasis: 350}}>
+                  <p>Host</p>
+                  <p>{data.blogHost}</p>
+                </div>
+                <div style={{flexBasis: 350}}>
+                  <p>Contributors</p>
+                  <p>{contributers}</p>
+                </div>
+                <div style={{flexBasis: 350}}>
+                  <p>Subscribers</p>
+                  <p>{subscribers}</p>
+                </div>
               </div>
-              <div style={{flexBasis: 350}}>
-                <p>Contributors</p>
-                <p>{contributers}</p>
+              <div className="flex flex-wrap">
+                {posts}
               </div>
-              <div style={{flexBasis: 350}}>
-                <p>Subscribers</p>
-                <p>{subscribers}</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap">
-              {posts}
             </div>
           </div>
         </div>

@@ -16,7 +16,6 @@ import { Blog } from '/components/blog';
 import { Post } from '/components/post';
 import { Subs } from '/components/subs';
 import { Pubs } from '/components/pubs';
-import { HeaderBar } from '/components/lib/header-bar';
 import { Switch } from 'react-router';
 
 export class Root extends Component {
@@ -34,6 +33,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Recent {...this.state} />
                   }
@@ -44,6 +44,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Subs {...this.state} api={api}/>
                   }
@@ -54,6 +55,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Pubs {...this.state} />
                   }
@@ -65,6 +67,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   {...this.state}
                   children={
                     <NewBlog api={api} {...this.state} {...props}/>
@@ -77,6 +80,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   {...this.state}
                   children={
                     <NewPost api={api} {...this.state} {...props}/>
@@ -89,6 +93,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   {...this.state}
                   children={
                     <Blog
@@ -106,6 +111,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   {...this.state}
                   children={
                     <Post
