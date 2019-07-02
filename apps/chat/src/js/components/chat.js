@@ -175,6 +175,7 @@ export class ChatScreen extends Component {
   render() {
     const { props, state } = this;
 
+    let config = props.configs[state.station] || {};
     let messages = props.messages.slice(0);
 
     let lastMsgNum = (messages.length > 0) ?
@@ -209,6 +210,7 @@ export class ChatScreen extends Component {
           numMsgs={lastMsgNum}
           station={state.station}
           circle={state.circle}
+          security={config.con}
           placeholder='Message...' />
       </div>
     )

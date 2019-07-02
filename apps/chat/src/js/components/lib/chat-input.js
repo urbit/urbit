@@ -15,46 +15,6 @@ export class ChatInput extends Component {
   constructor(props) {
     super(props);
 
-    let closure = () => {
-      let aud, sep;
-      let wen = Date.now();
-      let aut = window.ship;
-
-      aud = [props.station];
-      sep = {
-        lin: {
-          msg: Date.now().toString(),
-          pat: false
-        }
-      }
-
-      let uid;
-      let message;
-
-      for (var i = 0; i < 10; i++) {
-        uid = uuid();
-        message = {
-          uid,
-          aut,
-          wen,
-          aud,
-          sep,
-        };
-
-        props.api.hall({
-          convey: [message]
-        });
-      }
-
-      //setTimeout(closure, 2000);
-      setTimeout(() => {
-        window.location.reload(false);
-      }, 1000);
-    };
-
-    //setTimeout(closure, 2000);
-
-
     this.state = {
       message: ""
     };
@@ -149,8 +109,26 @@ export class ChatInput extends Component {
     });
   }
 
+  readOnlyRender() {
+    return (
+      <div className="mt2 pa3 cf flex black bt o-50">
+        <div className="fl" style={{ flexBasis: 35, height: 40 }}>
+          <Sigil ship={window.ship} size={32} />
+        </div>
+        <div className="fr h-100 flex pa2" style={{ flexGrow: 1, height: 40 }}>
+          <p>This chat is read only and you cannot post.</p>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { props, state } = this;
+
+    if (props.security && props.security.sec !== 'channel' &&
+      !props.security.sis.includes(window.ship)) {
+      return this.readOnlyRender();    
+    }
 
     return (
       <div className="mt2 pa3 cf flex black bt">

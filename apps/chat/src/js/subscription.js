@@ -1,5 +1,4 @@
 import { api } from '/api';
-import _ from 'lodash';
 import { store } from '/store';
 
 import urbitOb from 'urbit-ob';
@@ -36,7 +35,7 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
-    api.bind('/primary', "PUT", api.authTokens.ship, 'chat',
+    api.bind('/primary', 'PUT', api.authTokens.ship, 'chat',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }

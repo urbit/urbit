@@ -13,6 +13,7 @@ import { ChatScreen } from '/components/chat';
 import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
 import { NewScreen } from '/components/new';
+import { LandingScreen } from '/components/landing';
 
 
 export class Root extends Component {
@@ -144,7 +145,30 @@ export class Root extends Component {
                 />
               </Skeleton>
             );
-         }} />
+          }} />
+        <Route exact path="/~chat/join/:ship/:station"
+          render={ (props) => {
+            return (
+              <Skeleton
+                sidebar={
+                 <Sidebar 
+                   circles={circles}
+                   messagePreviews={messagePreviews}
+                   invites={invites}
+                   unreads={unreads}
+                   api={api}
+                   inviteConfig={inviteConfig}
+                   {...props}
+                 />
+                }>
+                <LandingScreen
+                  api={api}
+                  configs={configs}
+                  {...props}
+                />
+              </Skeleton>
+            );
+           }} />
          <Route exact path="/~chat/:ship/:station"
            render={ (props) => {
              let station = 
