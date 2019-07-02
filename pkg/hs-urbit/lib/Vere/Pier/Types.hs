@@ -11,6 +11,7 @@ import Urbit.Time
 
 import RIO (decodeUtf8Lenient)
 
+import qualified Vere.Ames as Ames
 import qualified Vere.Http.Client as Client
 import qualified Vere.Http.Server as Server
 
@@ -39,7 +40,7 @@ data NewtEx = NE Word
 data Eff
     = HttpServer Server.Eff
     | HttpClient Client.Eff
-    | Ames Noun
+    | Ames Ames.Eff
     | Bbye Noun
     | Behn Noun
     | Blit [Blit]

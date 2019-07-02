@@ -26,12 +26,14 @@ dependencies:
   - http-client
   - http-types
   - integer-gmp
+  - iproute
   - largeword
   - lens
   - lmdb
   - megaparsec
   - mtl
   - multimap
+  - network
   - para
   - pretty-show
   - primitive
