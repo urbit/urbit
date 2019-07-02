@@ -72,9 +72,9 @@
 ++  life  @ud                                           ::  ship key revision
 ++  rift  @ud                                           ::  ship continuity
 ++  mime  {p/mite q/octs}                               ::  mimetyped data
-::  
 ::
-::    TODO: Rename to +mime once the current +mime and +mite are gone. The 
+::
+::    TODO: Rename to +mime once the current +mime and +mite are gone. The
 ::
 ++  octs  {p/@ud q/@t}                                  ::  octet-stream
 ++  sock  {p/ship q/ship}                               ::  outgoing [our his]
@@ -217,7 +217,7 @@
       [%west p=ship q=path r=*]
   ==
 ::                                                      ::::
-::::                      ++http                        ::  
+::::                      ++http                        ::
   ::                                                    ::::
 ::  http: shared representations of http concepts
 ::
