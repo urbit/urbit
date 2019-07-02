@@ -148,11 +148,11 @@ export class NewBlog extends Component {
     if (this.state.page === 'main') {
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PC pathData={false} {...this.props}/>
-          </div>
-          <div className="h-inner dt center mw-688 w-100">
-             <div className="flex-col dtc v-mid">
+          <PC pathData={false} {...this.props}/>
+          <div className="absolute w-100"
+               style={{height: 'calc(100% - 124px)', top: 124}}>
+            <div className="h-inner dt center mw-688 w-100">
+              <div className="flex-col dtc v-mid">
                 <input autoFocus
                   className="header-2 b--none"
                   type="text" 
@@ -182,7 +182,8 @@ export class NewBlog extends Component {
                 <Link to="/~publish/recent" className="body-large b">
                   Cancel
                 </Link>
-             </div>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -190,7 +191,8 @@ export class NewBlog extends Component {
       return (
         <div>
           <PC pathData={false} {...this.props}/>
-          <div className="absolute w-100" style={{top: 124}}>
+          <div className="absolute w-100"
+               style={{height: 'calc(100% - 124px)', top: 124}}>
             <div className="h-inner dt center mw-688 w-100">
               <div className="flex-col dtc v-mid">
                  <input autoFocus
