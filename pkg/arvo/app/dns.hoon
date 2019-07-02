@@ -12,7 +12,7 @@
       ==
     +$  peek-data  _!!
     +$  in-poke-data
-      $%  [%dns-auto ~]
+      $%  [%dns-auto ames-domains=(list turf)]
           [%dns-address =address:dns]
       ==
     +$  out-poke-data
@@ -125,12 +125,13 @@
     ::  +galaxy-domains
     ::
     ++  galaxy-domains
+      |=  ames-domains=(list turf)
       =/  m  (async:stdio ,~)
       ^-  form:m
       ;<  our=@p   bind:m  get-identity:stdio
-      ;<  now=@da  bind:m  get-time:stdio
-      =/  ames-domains=(list turf)
-        .^((list turf) %j /(scot %p our)/turf/(scot %da now))
+      :: ;<  now=@da  bind:m  get-time:stdio
+      :: =/  ames-domains=(list turf)
+      ::   .^((list turf) %j /(scot %p our)/turf/(scot %da now))
       |-  ^-  form:m
       =*  loop  $
       ?~  ames-domains
@@ -194,7 +195,7 @@
       ::
       ~&  %galaxy-only
       (pure:m state)
-    ;<  ~  bind:m  galaxy-domains
+    ;<  ~  bind:m  (galaxy-domains ames-domains.in-poke-data)
     (pure:m state)
   ::
   ::  manual dns binding -- by explicit ipv4
