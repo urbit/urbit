@@ -2,8 +2,8 @@ module Main where
 
 import ClassyPrelude
 import Control.Lens
-import Data.Noun.Pill hiding (main)
-import Data.Noun.Lens
+import Noun.Pill hiding (main)
+import Noun.Lens
 
 --------------------------------------------------------------------------------
 

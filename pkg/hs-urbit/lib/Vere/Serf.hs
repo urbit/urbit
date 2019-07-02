@@ -4,12 +4,12 @@ import ClassyPrelude
 import Control.Lens
 import Data.Void
 
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Jam hiding (jam)
-import Data.Noun.Jam.Fast (jam, jamBS)
-import Data.Noun.Poet
-import Data.Noun.Pill
+import Noun
+import Noun.Atom
+import Noun.Jam hiding (jam)
+import Noun.Jam.Fast (jam, jamBS)
+import Noun.Poet
+import Noun.Pill
 import Vere.Pier.Types
 import System.Process
 

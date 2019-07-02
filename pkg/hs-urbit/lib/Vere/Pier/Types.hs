@@ -2,10 +2,10 @@ module Vere.Pier.Types where
 
 import ClassyPrelude
 import Data.Void
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Poet
-import Data.Noun.Poet.TH
+import Noun
+import Noun.Atom
+import Noun.Poet
+import Noun.Poet.TH
 import Database.LMDB.Raw
 import Urbit.Time
 

@@ -2,9 +2,8 @@ module Vere.Pier where
 
 import ClassyPrelude
 
-import Data.Noun
-import Data.Noun.Pill
-import Vere
+import Noun
+import Noun.Pill
 import Vere.Pier.Types
 
 import qualified Vere.Log     as Log

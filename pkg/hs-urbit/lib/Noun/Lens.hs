@@ -1,14 +1,14 @@
 {-# LANGUAGE MagicHash #-}
 
-module Data.Noun.Lens where
+module Noun.Lens where
 
 import ClassyPrelude
-import Data.Noun.Pill
-import Data.Noun
-import Data.Noun.Atom
+import Noun.Pill
+import Noun
+import Noun.Atom
 import Control.Lens
-import Data.Noun.Jam.Fast (jam, jamBS)
-import Data.Noun.Jam (cue)
+import Noun.Jam.Fast (jam, jamBS)
+import Noun.Jam (cue)
 
 --------------------------------------------------------------------------------
 

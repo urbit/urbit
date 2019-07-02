@@ -1,16 +1,16 @@
 {-# LANGUAGE MagicHash #-}
 {-# OPTIONS_GHC -fwarn-unused-binds -fwarn-unused-imports #-}
 
-module Data.Noun.Jam.Fast (jam, jamBS) where
+module Noun.Jam.Fast (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
 
 import Control.Lens              (view, to, from)
 import Data.Bits                 (shiftL, shiftR, setBit, clearBit, xor, (.|.))
-import Data.Noun.Atom            (Atom(MkAtom), toAtom, bitWidth, takeBitsWord)
-import Data.Noun.Atom            (wordBitWidth, wordBitWidth# , atomBitWidth#)
-import Data.Noun                 (Noun(Atom, Cell))
-import Data.Noun.Pill            (bigNatWords, atomBS)
+import Noun.Atom                 (Atom(MkAtom), toAtom, bitWidth, takeBitsWord)
+import Noun.Atom                 (wordBitWidth, wordBitWidth# , atomBitWidth#)
+import Noun                      (Noun(Atom, Cell))
+import Noun.Pill                 (bigNatWords, atomBS)
 import Data.Vector.Primitive     ((!))
 import Foreign.Marshal.Alloc     (callocBytes, free)
 import Foreign.Ptr               (Ptr, castPtr, plusPtr)

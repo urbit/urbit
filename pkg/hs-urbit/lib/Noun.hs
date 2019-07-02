@@ -1,4 +1,4 @@
-module Data.Noun where
+module Noun where
 
 import Prelude hiding (all)
 
@@ -13,7 +13,7 @@ import Data.Flat hiding (getSize)
 import ClassyPrelude  (Text, all, unpack)
 import Data.Hashable  (Hashable)
 import Data.List      (intercalate)
-import Data.Noun.Atom (Atom)
+import Noun.Atom      (Atom)
 import Data.Typeable  (Typeable)
 
 import qualified Control.Monad.Fail as Fail

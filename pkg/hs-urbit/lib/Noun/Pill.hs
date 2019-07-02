@@ -20,12 +20,11 @@
         machines.
 -}
 
-module Data.Noun.Pill where
+module Noun.Pill where
 
 import ClassyPrelude
-import Data.Noun hiding (toList, fromList)
-import Data.Noun.Atom
--- import Data.Noun.Jam hiding (main)
+import Noun hiding (toList, fromList)
+import Noun.Atom
 import Data.Flat hiding (from, to)
 import Control.Monad.Except
 import Control.Lens hiding (index, Index)

@@ -3,10 +3,10 @@
 module Vere.Http where
 
 import ClassyPrelude
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Poet
-import Data.Noun.Poet.TH
+import Noun
+import Noun.Atom
+import Noun.Poet
+import Noun.Poet.TH
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types as HT

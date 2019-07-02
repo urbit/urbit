@@ -16,16 +16,15 @@ module Vere.Log ( open
 import ClassyPrelude hiding (init)
 import Control.Lens  hiding ((<|))
 
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Jam
-import Data.Noun.Pill
-import Data.Noun.Lens
+import Noun
+import Noun.Atom
+import Noun.Jam
+import Noun.Pill
+import Noun.Lens
 import Data.Void
 import Database.LMDB.Raw
 import Foreign.Ptr
 import Foreign.Marshal.Alloc
-import Vere
 import Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread)

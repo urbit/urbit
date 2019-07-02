@@ -1,6 +1,6 @@
 {-# LANGUAGE MagicHash, GeneralizedNewtypeDeriving, UnboxedTuples #-}
 
-module Data.Noun.Atom where
+module Noun.Atom where
 
 import ClassyPrelude
 import Control.Lens

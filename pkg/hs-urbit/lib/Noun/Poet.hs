@@ -1,16 +1,16 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
 
-module Data.Noun.Poet where
+module Noun.Poet where
 
 import ClassyPrelude hiding (fromList)
 import Control.Lens
 
 import Control.Applicative
 import Control.Monad
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Pill
+import Noun
+import Noun.Atom
+import Noun.Pill
 import Data.Void
 import Data.Word
 import GHC.Natural

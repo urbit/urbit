@@ -1,8 +1,8 @@
-module Data.Noun.Jam where
+module Noun.Jam where
 
 import ClassyPrelude
-import Data.Noun
-import Data.Noun.Atom
+import Noun
+import Noun.Atom
 import Data.Bits
 import Control.Lens
 import Text.Printf
@@ -16,8 +16,8 @@ import Test.Tasty.TH
 import Test.Tasty.QuickCheck as QC
 import Test.QuickCheck
 
-import qualified Data.Noun.Jam.Fast as Fast
-import qualified Data.Noun.Pill     as Pill
+import qualified Noun.Jam.Fast as Fast
+import qualified Noun.Pill     as Pill
 
 
 -- Length-Encoded Atoms --------------------------------------------------------

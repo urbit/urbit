@@ -3,8 +3,6 @@ module Main where
 import ClassyPrelude
 import Vere.Pier.Types
 
-import Data.Noun.Jam ()
-
 import qualified Vere.Log     as Log
 import qualified Vere.Persist as Persist
 import qualified Vere.Pier    as Pier

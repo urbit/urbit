@@ -4,13 +4,13 @@ module Vere.Http.Server where
 
 import ClassyPrelude
 import Vere.Http
-import Data.Noun.Atom
-import Data.Noun.Poet
-import Data.Noun.Poet.TH
+import Noun.Atom
+import Noun.Poet
+import Noun.Poet.TH
 import Control.Lens
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
-import Data.Noun.Pill     (pill, pillBS, Pill(..))
+import Noun.Pill          (pill, pillBS, Pill(..))
 
 import qualified Data.ByteString             as BS
 import qualified Network.HTTP.Types          as H

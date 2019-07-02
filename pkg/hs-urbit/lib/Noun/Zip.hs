@@ -2,25 +2,25 @@
   Can de-duplication be orthogonal to serialization?
 -}
 
-module Data.Noun.Zip where
+module Noun.Zip where
 
 import ClassyPrelude hiding (zip, unzip)
 
-import Control.Lens
-import Text.Printf
 import Control.Applicative
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Jam
+import Control.Lens
 import Data.Bits
-import GHC.Generics
-import Test.QuickCheck.Arbitrary
-import Test.QuickCheck.Gen
+import Data.Either.Extra
+import Data.Flat
 import Data.Flat
 import Data.Flat.Bits
-import Data.Either.Extra
+import GHC.Generics
 import GHC.Natural
-import Data.Flat
+import Noun
+import Noun.Atom
+import Noun.Jam
+import Test.QuickCheck.Arbitrary
+import Test.QuickCheck.Gen
+import Text.Printf
 
 import Data.Maybe    (fromJust)
 import Data.List     (intercalate)

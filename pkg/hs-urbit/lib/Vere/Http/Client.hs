@@ -7,8 +7,8 @@ module Vere.Http.Client where
 
 import ClassyPrelude
 import Vere.Http
-import Data.Noun.Poet
-import Data.Noun.Poet.TH
+import Noun.Poet
+import Noun.Poet.TH
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types as HT

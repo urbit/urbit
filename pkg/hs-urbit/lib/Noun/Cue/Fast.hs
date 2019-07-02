@@ -1,12 +1,12 @@
 {-# LANGUAGE MagicHash #-}
 
-module Data.Noun.Cue.Fast where
+module Noun.Cue.Fast where
 
 import ClassyPrelude
 import ClassyPrelude
-import Data.Noun
-import Data.Noun.Atom
-import Data.Noun.Poet
+import Noun
+import Noun.Atom
+import Noun.Poet
 import Data.Bits hiding (Bits)
 import Control.Lens
 import Text.Printf
@@ -16,7 +16,7 @@ import GHC.Natural
 import Foreign.Ptr
 
 import Foreign.Storable (peek)
-import Data.Noun        (Noun)
+import Noun             (Noun)
 import Data.Bits        (shiftR, (.|.), (.&.))
 import Foreign.Ptr      (Ptr, plusPtr, ptrToWordPtr)
 import Foreign.Storable (peek)

@@ -8,11 +8,11 @@ import Prelude
 import Control.Lens
 
 import Data.Bits              (shiftL, shiftR)
-import Data.Time.Clock        (DiffTime, UTCTime, picosecondsToDiffTime,
-                               diffTimeToPicoseconds)
-import Data.Time.Clock.System (SystemTime(..), getSystemTime, utcToSystemTime,
-                               systemToUTCTime)
-import Data.Noun.Poet         (FromNoun, ToNoun)
+import Data.Time.Clock        (DiffTime, UTCTime, picosecondsToDiffTime)
+import Data.Time.Clock        (picosecondsToDiffTime, diffTimeToPicoseconds)
+import Data.Time.Clock.System (SystemTime(..), getSystemTime)
+import Data.Time.Clock.System (utcToSystemTime, systemToUTCTime)
+import Noun.Poet              (FromNoun, ToNoun)
 
 
 -- Types -----------------------------------------------------------------------
