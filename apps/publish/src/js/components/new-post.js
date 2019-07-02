@@ -10,7 +10,7 @@ const PC = withRouter(PathControl);
 
 class SideTab extends Component {
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   render() {
@@ -45,15 +45,13 @@ export class NewPost extends Component {
     this.titleChange = this.titleChange.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
     this.postSubmit = this.postSubmit.bind(this);
+
+    this.windowHeight = window.innerHeight - 48 - 76;
+
+    this.bodyHeight = 54;
+    this.titleHeight = 102;
   }
 
-  titleChange(evt){
-    this.setState({title: evt.target.value});
-  }
-
-  bodyChange(evt){
-    this.setState({body: evt.target.value});
-  }
 
   stringToSymbol(str){
     let result = '';
@@ -166,49 +164,66 @@ export class NewPost extends Component {
     }
   }
 
+  titleChange(evt){
+    this.titleInput.style.height = 'auto';
+    this.titleInput.style.height = this.titleInput.scrollHeight+2+'px';
+    this.titleHeight = this.titleInput.style.height;
+
+    this.setState({title: evt.target.value});
+  }
+
+  bodyChange(evt){
+    this.bodyInput.style.height = 'auto';
+    this.bodyInput.style.height = this.bodyInput.scrollHeight+2+'px';
+    this.bodyHeight = this.bodyInput.style.height;
+
+    this.setState({body: evt.target.value});
+  }
+
   render() {
     let enabledTab = ((this.state.title !== "") && (this.state.body !== ""));
 
-    return (
-      <div className="relative w-100" style={{height: 'calc(100% - 124px)'}}>
-        <div className="cf w-100 bg-white h-publish-header fixed z-4">
-          <PC pathData={false} {...this.props}/>
-        </div>
-        <div className="w-100 relative" 
-          style={{
-            top: 'calc(50% + 48px)'
-          }}>
+    let mt = (this.windowHeight/2) - 96;
+    let mb = (this.windowHeight/2) - 42;
 
-          <div className="flex w-100 z-2" style={{position: "sticky", top:0}}> 
+    return (
+      <div className="relative w-100" style={{height: '100%', top:124}}>
+        <PC pathData={false} {...this.props}/>
+        <div className="w-100 absolute" style={{top: mt}}>
+
+          <div className="flex w-100 z-2 fixed" style={{top:132}}>
             <div className="w1 z-0" style={{flexGrow:1}}>
             </div>
-            <div className="mw-688 w-100 z-0">
+            <div className="mw-688 w-100 z-0" style={{pointerEvents:"none"}}>
             </div>
             <SideTab enabled={enabledTab} postSubmit={this.postSubmit} />
           </div>
 
-          <div className="flex absolute w-100 z-0" style={{top:0}}>
+          <div className="flex absolute w-100"
+            style={{top:0, marginBottom: mb}}
+            ref={(el) => {this.inputArea = el}}>
             <div className="w1 z-0" style={{flexGrow:1}}>
             </div>
-            <div className="flex-col w-100 mw-688 w-100 z-1">
-              <input autoFocus
-                className="header-2 w-100 b--none"
-                type="text"
-                name="postName"
+            <div className="flex-col w-100 mw-688 w-100 z-2">
+              <textarea autoFocus
+                className="header-2 w-100 b--none overflow-y-hidden"
+                ref={(el) => {this.titleInput = el}}
+                style={{resize:"none", marginBottom:8, height: this.titleHeight}}
                 placeholder="Add a Title"
-                onChange={this.titleChange}
-              />
-              <textarea className="body-regular-400 w-100 b--none"
-                style={{resize:"none"}}
-                type="text"
-                name="postBody"
+                onChange={this.titleChange.bind(this)}>
+              </textarea>
+              <textarea
+                className="body-regular-400 w-100 z-2 b--none overflow-y-hidden"
+                ref={(el) => {this.bodyInput = el}}
+                style={{resize:"none", height: this.bodyHeight}}
                 placeholder="And type away."
-                onChange={this.bodyChange}>
+                onChange={this.bodyChange.bind(this)}>
               </textarea>
             </div>
-            <div className="w1 z-0" style={{flexGrow:1}}>
+            <div className="w1 z-0" style={{flexGrow:1, pointerEvents: "none"}}>
             </div>
           </div>
+
         </div>
       </div>
     );
