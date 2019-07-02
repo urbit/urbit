@@ -7,7 +7,7 @@ import Data.Void
 import Data.Noun
 import Data.Noun.Atom
 import Data.Noun.Jam hiding (jam)
-import Data.Noun.Jam.Put (jam, jamBS)
+import Data.Noun.Jam.Fast (jam, jamBS)
 import Data.Noun.Poet
 import Data.Noun.Pill
 import Vere.Pier.Types

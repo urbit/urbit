@@ -7,7 +7,7 @@ import Data.Noun.Pill
 import Data.Noun
 import Data.Noun.Atom
 import Control.Lens
-import Data.Noun.Jam.Put (jam, jamBS)
+import Data.Noun.Jam.Fast (jam, jamBS)
 import Data.Noun.Jam (cue)
 
 --------------------------------------------------------------------------------

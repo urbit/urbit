@@ -1,7 +1,21 @@
-module Data.Noun.Jam.Get where
+{-# LANGUAGE MagicHash #-}
+
+module Data.Noun.Cue.Fast where
 
 import ClassyPrelude
+import ClassyPrelude
+import Data.Noun
+import Data.Noun.Atom
+import Data.Noun.Poet
+import Data.Bits hiding (Bits)
+import Control.Lens
+import Text.Printf
+import GHC.Prim
+import GHC.Word
+import GHC.Natural
+import Foreign.Ptr
 
+import Foreign.Storable (peek)
 import Data.Noun        (Noun)
 import Data.Bits        (shiftR, (.|.), (.&.))
 import Foreign.Ptr      (Ptr, plusPtr, ptrToWordPtr)
@@ -10,6 +24,11 @@ import Data.Map         (Map)
 import Control.Monad    (guard)
 
 import qualified Data.HashTable.IO as H
+
+import Test.Tasty
+import Test.Tasty.TH
+import qualified Test.Tasty.QuickCheck as QC
+import Test.QuickCheck hiding ((.&.))
 
 
 -- Types -----------------------------------------------------------------------
@@ -218,3 +237,64 @@ dWordBits n = do
   w <- peekWord
   advance n
   pure (takeLowBits n w)
+
+
+-- Fast Cue --------------------------------------------------------------------
+
+{-
+    Get the exponent-prefix of an atom:
+
+    - Peek at the next word.
+    - Calculate the number of least-significant bits in that word (there's
+      a primitive for this).
+    - Advance by that number of bits.
+    - Return the number of bits
+-}
+dExp :: Get Word
+dExp = do
+  W# w <- peekWord
+  let res = W# (ctz# w)
+  advance res
+  pure res
+
+dAtomLen :: Get Word
+dAtomLen = do
+  e <- dExp
+  p <- dWordBits (e-1)
+  pure (2^e .|. p)
+
+dRef :: Get Word
+dRef = dAtomLen >>= dWordBits
+
+dAtom :: Get Atom
+dAtom = do
+  n <- dAtomLen
+  b <- dBits n
+  pure (bitsToAtom b)
+
+bitsToAtom :: Bits -> Atom
+bitsToAtom = undefined
+
+dCell :: Get Noun
+dCell = Cell <$> dNoun <*> dNoun
+
+{-|
+    Get a Noun.
+
+    - Get a bit
+    - If it's zero, get an atom.
+    - Otherwise, get another bit.
+    - If it's zero, get a cell.
+    - If it's one, get an atom.
+-}
+dNoun :: Get Noun
+dNoun = do
+  p <- getPos
+
+  let yield r = insRef p r >> pure r
+
+  dBit >>= \case
+    False -> (Atom <$> dAtom) >>= yield
+    True  -> dBit >>= \case
+      False -> dCell >>= yield
+      True  -> dRef >>= getRef

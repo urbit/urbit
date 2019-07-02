@@ -16,8 +16,8 @@ import Test.Tasty.TH
 import Test.Tasty.QuickCheck as QC
 import Test.QuickCheck
 
-import qualified Data.Noun.Jam.Put as Fast
-import qualified Data.Noun.Pill    as Pill
+import qualified Data.Noun.Jam.Fast as Fast
+import qualified Data.Noun.Pill     as Pill
 
 
 -- Length-Encoded Atoms --------------------------------------------------------
