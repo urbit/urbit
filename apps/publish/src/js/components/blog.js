@@ -47,7 +47,6 @@ export class Blog extends Component {
   }
 
   handleError(err) {
-    console.log("handleError", err);
   }
 
   componentWillMount() {

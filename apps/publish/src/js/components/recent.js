@@ -128,8 +128,6 @@ export class Recent extends Component {
   }
 
   render() {
-    console.log(this.props);
-
     let recent = this.buildRecent();
 
     let body = recent.map((group, i) => {

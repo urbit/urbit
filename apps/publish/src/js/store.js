@@ -8,8 +8,6 @@ class Store {
       spinner: false,
       ...window.injectedState,
     }
-    console.log("store.state", this.state);
-
     this.updateReducer   = new UpdateReducer();
     this.rumorReducer    = new RumorReducer();
     this.spinnerReducer  = new SpinnerReducer();
@@ -22,7 +20,6 @@ class Store {
   }
 
   handleEvent(data) {
-    console.log("store.handleEvent", data);
     this.updateReducer.reduce(data.data, this.state);
     this.rumorReducer.reduce(data.data, this.state);
     this.spinnerReducer.reduce(data.data, this.state);

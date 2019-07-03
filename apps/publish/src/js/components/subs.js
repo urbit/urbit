@@ -68,7 +68,6 @@ export class Subs extends Component {
   }
 
   accept(host, blogId) {
-    console.log("accepted invitation", host, blogId);
     let subscribe = {
       subscribe: {
         who: host.slice(1),
@@ -79,7 +78,6 @@ export class Subs extends Component {
   }
 
   reject(host, blogId) {
-    console.log("rejected invitation", host, blogId);
     let reject = {
       "reject-invite": {
         who: host.slice(1),
@@ -90,7 +88,6 @@ export class Subs extends Component {
   }
 
   unsubscribe(host, blogId) {
-    console.log("unsubscribe", host, blogId);
     let unsubscribe = {
       unsubscribe: {
         who: host.slice(1),

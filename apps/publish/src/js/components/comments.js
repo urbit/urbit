@@ -36,7 +36,6 @@ export class Comments extends Component {
         content: this.state.commentBody,
       }
     };
-    console.log("post comment", comment);
 
     this.setState({
       awaiting: {

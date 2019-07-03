@@ -28,7 +28,6 @@ export class Root extends Component {
   }
 
   setSpinner(spinner) {
-    console.log("setSpinner", spinner);
     this.setState({
       spinner
     });
@@ -131,6 +130,7 @@ export class Root extends Component {
                       blogId = {props.match.params.blog}
                       postId = {props.match.params.post}
                       ship = {props.match.params.ship.slice(1)}
+                      setSpinner={this.setSpinner}
                       api = {api}
                       {...this.state}
                     />

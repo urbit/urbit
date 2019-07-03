@@ -124,8 +124,6 @@ export class NewPost extends Component {
       postId: postId,
     });
 
-    console.log("awaiting", awaiting);
-
     let permissions = {
       read: {
         mod: 'black',

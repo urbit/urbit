@@ -10,8 +10,6 @@ class Preview extends Component {
 
   buildProps(postId){
     let post = this.props.blog.posts[postId];
-    console.log("blog", this.props.blog);
-    console.log("post", postId, post);
     return {
       postTitle: post.post.info.title,
       postName: post.post.info.filename,
@@ -56,8 +54,6 @@ export class NextPrev extends Component {
 
 
   render() {
-    console.log(this.props);
-
     let posts = this.props.blog.order.unpin.slice().reverse();
     let postIdx = posts.indexOf(this.props.postId);
 

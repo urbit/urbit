@@ -12,7 +12,6 @@ import { secToString, esoo } from '/lib/util';
 export class Elapsed extends Component {
   constructor(props) {
     super(props);
-    // console.log('elapsed props...', props);
   }
 
   renderTime() {

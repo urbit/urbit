@@ -141,7 +141,6 @@ export class NewBlog extends Component {
   }
 
   returnHome() {
-    console.log("action return home");
   }
 
   render() {
