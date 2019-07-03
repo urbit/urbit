@@ -104,6 +104,12 @@ gulp.task('js-minify', function () {
     .pipe(gulp.dest('./urbit/app/clock/js/'));
 });
 
+gulp.task('tile-js-minify', function () {
+  return gulp.src('./urbit/app/clock/js/tile.js')
+    .pipe(minify())
+    .pipe(gulp.dest('./urbit/app/clock/js/'));
+});
+
 gulp.task('urbit-copy', function () {
   let ret = gulp.src('urbit/**/*');
 
@@ -115,6 +121,10 @@ gulp.task('urbit-copy', function () {
 });
 
 gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-imports'));
+gulp.task('tile-js-bundle-prod',
+  gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
+
+gulp.task('bundle-prod', gulp.series('tile-js-bundle-prod', 'urbit-copy'));
 
 gulp.task('default', gulp.series('tile-js-bundle-dev', 'urbit-copy'));
 gulp.task('watch', gulp.series('default', function() {

@@ -101,7 +101,7 @@ gulp.task('urbit-copy', function () {
 });
 
 gulp.task('js-bundle-dev', gulp.series('jsx-transform', 'js-imports'));
-gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify', 'js-cachebust'))
+gulp.task('js-bundle-prod', gulp.series('jsx-transform', 'js-imports', 'js-minify'))
 
 gulp.task('bundle-dev',
   gulp.series(
