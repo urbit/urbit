@@ -3,7 +3,6 @@
 module Noun.Cue.Fast where
 
 import ClassyPrelude
-import ClassyPrelude
 import Noun
 import Noun.Atom
 import Noun.Poet
@@ -44,6 +43,23 @@ cue :: Atom -> Either DecodeExn Noun
 cue = cueBS . view atomBS
 
 
+-- Debugging -------------------------------------------------------------------
+
+{-# INLINE debugM #-}
+debugM :: Monad m => String -> m ()
+debugM _ = pure ()
+
+{-# INLINE debugMId #-}
+debugMId :: (Monad m, Show a) => String -> m a -> m a
+debugMId _ a = a
+
+-- debugMId tag m = do
+  -- r <- m
+  -- debugM (tag <> ": " <> show r)
+  -- pure r
+
+
+
 -- Types -----------------------------------------------------------------------
 
 {-|
@@ -69,7 +85,7 @@ data DecodeExn
   deriving (Show, Eq, Ord)
 
 data GetResult a = GetResult {-# UNPACK #-} !S !a
-  deriving Functor
+  deriving (Show, Functor)
 
 newtype Get a = Get
   { runGet :: Ptr Word
@@ -125,7 +141,7 @@ instance Monad Get where
         runGet (f x') end tbl s'
     {-# INLINE (>>=) #-}
 
-    fail msg = Get $ \end tbl s ->
+    fail msg = Get $ \end tbl s -> do
       badEncoding end s msg
     {-# INLINE fail #-}
 
@@ -146,18 +162,20 @@ insRef pos now = Get \_ tbl s -> do
   pure $ GetResult s ()
 
 getRef :: Word -> Get Noun
-getRef ref = Get \_ tbl s -> do
+getRef ref = Get \x tbl s -> do
   H.lookup tbl ref >>= \case
-    Nothing -> fail "Invalid Reference"
+    Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
     Just no -> pure (GetResult s no)
 
 advance :: Word -> Get ()
+advance 0 = debugM "advance: 0" >> pure ()
 advance n = Get \_ _ s -> do
+  debugM ("advance: " <> show n)
   let newUsed = n + usedBits s
       newS    = s { pos      = pos s + n
                   , usedBits = newUsed `mod` 64
                   , currPtr  = plusPtr (currPtr s)
-                                 (fromIntegral $ newUsed `div` 64)
+                                 (8 * (fromIntegral (newUsed `div` 64)))
                   }
 
   pure (GetResult newS ())
@@ -166,20 +184,25 @@ advance n = Get \_ _ s -> do
 
 -- TODO Should this be (>= end) or (> end)?
 peekCurWord :: Get Word
-peekCurWord = Get \end _ s ->
+peekCurWord = Get \end _ s -> do
+ debugMId "peekCurWord" $ do
   if ptrToWordPtr (currPtr s) >= ptrToWordPtr end
   then pure (GetResult s 0)
   else GetResult s <$> peek (currPtr s)
 
 -- TODO Same question as above.
 peekNextWord :: Get Word
-peekNextWord = Get \end _ s ->
-  if ptrToWordPtr (currPtr s) > ptrToWordPtr end
+peekNextWord = Get \end _ s -> do
+ debugMId "peekNextWord" $ do
+  let pTarget = currPtr s `plusPtr` 8
+  if ptrToWordPtr pTarget >= ptrToWordPtr end
   then pure (GetResult s 0)
-  else GetResult s <$> peek (currPtr s `plusPtr` 1)
+  else GetResult s <$> peek pTarget
 
 peekUsedBits :: Get Word
-peekUsedBits = Get \_ _ s -> pure (GetResult s (usedBits s))
+peekUsedBits =
+ debugMId "peekUsedBits" $ do
+  Get \_ _ s -> pure (GetResult s (usedBits s))
 
 {-|
     Get a bit.
@@ -190,16 +213,18 @@ peekUsedBits = Get \_ _ s -> pure (GetResult s (usedBits s))
 -}
 dBit :: Get Bool
 dBit = do
-  wor <- peekCurWord
-  use <- fromIntegral <$> peekUsedBits
-  advance 1
-  pure (0 /= shiftR wor use .&. 1)
+  debugMId "dBit" $ do
+    wor <- peekCurWord
+    use <- fromIntegral <$> peekUsedBits
+    advance 1
+    pure (0 /= shiftR wor use .&. 1)
 
 dWord :: Get Word
 dWord = do
-  res <- peekWord
-  advance 64
-  pure res
+  debugMId "dWord" $ do
+    res <- peekWord
+    advance 64
+    pure res
 
 {-|
     Get n bits, where n > 64:
@@ -211,13 +236,14 @@ dWord = do
     - Construct a bit-vector using the buffer*length*offset.
 -}
 dAtomBits :: Word -> Get Atom
-dAtomBits (fromIntegral -> bits) =
-    fmap (view $ from atomWords) $
-      VP.generateM bufSize \i ->
-        if (i == lastIdx && numExtraBits /= 0)
-        then dWordBits (fromIntegral numExtraBits)
-        else dWord
-
+dAtomBits (fromIntegral -> bits) = do
+    debugMId ("dAtomBits(" <> show bits <> ")") $ do
+      fmap (view $ from atomWords) $
+        VP.generateM bufSize \i -> do
+          debugM (show i)
+          if (i == lastIdx && numExtraBits /= 0)
+          then dWordBits (fromIntegral numExtraBits)
+          else dWord
   where
     bufSize      = numFullWords + min 1 numExtraBits
     lastIdx      = bufSize - 1
@@ -241,26 +267,21 @@ dAtomBits (fromIntegral -> bits) =
 -}
 peekWord :: Get Word
 peekWord = do
+ debugMId "peekWord" $ do
   off <- peekUsedBits
   cur <- peekCurWord
-  if off == 0 then pure cur else
-    do
-      nex <- peekNextWord
-      advance 64
-      pure (dropLowBits off cur .|. dropHighBits off nex)
+  nex <- peekNextWord
+  let res = swiz off (cur, nex)
+  debugM ("\t" <> (take 10 $ reverse $ printf "%b" (fromIntegral res :: Integer)) <> "..")
+  pure res
 
-dropLowBits :: Word -> Word -> Word
-dropLowBits bits wor = shiftR wor (fromIntegral bits :: Int)
+swiz :: Word -> (Word, Word) -> Word
+swiz (fromIntegral -> off) (low, hig) =
+  (.|.) (shiftR low off) (shiftL hig (64-off))
 
 takeLowBits :: Word -> Word -> Word
 takeLowBits 64  wor = wor
 takeLowBits wid wor = (2^wid - 1) .&. wor
-
-takeHighBits :: Word -> Word -> Word
-takeHighBits off wor = dropLowBits (64-off) wor
-
-dropHighBits :: Word -> Word -> Word
-dropHighBits off wor = takeLowBits (64-off) wor
 
 {-|
   Make a word from the next n bits (where n <= 64).
@@ -272,8 +293,10 @@ dropHighBits off wor = takeLowBits (64-off) wor
 -}
 dWordBits :: Word -> Get Word
 dWordBits n = do
+ debugMId ("dWordBits(" <> show n <> ")") $ do
   w <- peekWord
   advance n
+  debugM ("dWordBits: " <> show (takeLowBits n w))
   pure (takeLowBits n w)
 
 
@@ -290,27 +313,32 @@ dWordBits n = do
 -}
 dExp :: Get Word
 dExp = do
+ debugMId "dExp" $ do
   W# w <- peekWord
   let res = W# (ctz# w)
-  advance res
+  advance (res+1)
   pure res
 
 dAtomLen :: Get Word
 dAtomLen = do
-  e <- dExp
-  p <- dWordBits (e-1)
-  pure (2^e .|. p)
+ debugMId "dAtomLen" $ do
+  dExp >>= \case
+    0 -> pure 0
+    e -> do p <- dWordBits (e-1)
+            pure (2^(e-1) .|. p)
 
 dRef :: Get Word
-dRef = dAtomLen >>= dWordBits
+dRef = debugMId "dRef" (dAtomLen >>= dWordBits)
 
 dAtom :: Get Atom
 dAtom = do
-  n <- dAtomLen
-  dAtomBits n
+ debugMId "dAtom" $ do
+  dAtomLen >>= \case
+    0 -> pure 0
+    n -> dAtomBits n
 
 dCell :: Get Noun
-dCell = Cell <$> dNoun <*> dNoun
+dCell = debugMId "dCell" $ Cell <$> dNoun <*> dNoun
 
 {-|
     Get a Noun.
@@ -323,12 +351,16 @@ dCell = Cell <$> dNoun <*> dNoun
 -}
 dNoun :: Get Noun
 dNoun = do
+ debugMId "dNoun" $ do
   p <- getPos
 
   let yield r = insRef p r >> pure r
 
   dBit >>= \case
-    False -> (Atom <$> dAtom) >>= yield
+    False -> do debugM "It's an atom"
+                (Atom <$> dAtom) >>= yield
     True  -> dBit >>= \case
-      False -> dCell >>= yield
-      True  -> dRef >>= getRef
+      False -> do debugM "It's a cell"
+                  dCell >>= yield
+      True  -> do debugM "It's a backref"
+                  dRef >>= getRef

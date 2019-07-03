@@ -222,6 +222,9 @@ prop_fastJamSlow n = x == y || (bitWidth y <= bitWidth x && cue y == cue x)
 prop_fastRub :: Atom -> Bool
 prop_fastRub a = Right (Atom a) == Cue.cue (jam (Atom a))
 
+prop_fastCue :: Noun -> Bool
+prop_fastCue n = Right n == Cue.cue (jam n)
+
 prop_fastJam :: Noun -> Bool
 prop_fastJam n = Just n == cue (Jam.jam n)
 
@@ -252,3 +255,9 @@ matSz' a = length s - 1
     s :: String
     s = printf "%b" $ fromIntegral @Atom @Integer $ jam $ Atom a
 
+(a, c) = (Atom, Cell)
+
+printJam :: Noun -> IO ()
+printJam n = do
+  j <- evaluate (force (fromIntegral $ jam n))
+  printf "0b%b\n" (j :: Integer)

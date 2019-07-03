@@ -9,20 +9,20 @@ import Noun.Lens
 
 main :: IO ()
 main = do
-  print "load brass" >> void getLine
+  print "load brass" -- void getLine
   tryLoadPill Brass
 
-  print "load ivory" >> void getLine
+  print "load ivory" -- void getLine
   tryLoadPill Ivory
 
-  print "load solid" >> void getLine
+  print "load solid" -- void getLine
   tryLoadPill Solid
 
-  print "cue brass" >> void getLine
-  tryCuePill Brass
+  print "cue brass" -- void getLine
+  tryCueJamPill Brass
 
-  print "cue ivory" >> void getLine
-  tryCuePill Ivory
+  print "cue ivory" -- void getLine
+  tryCueJamPill Ivory
 
-  print "cue solid" >> void getLine
-  tryCuePill Solid
+  print "cue solid" -- void getLine
+  tryCueJamPill Solid
