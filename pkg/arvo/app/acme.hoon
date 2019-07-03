@@ -1207,7 +1207,7 @@
     ~|  [%unknown-url url.request.inbound-request]  !!
   ::
   ::  XX these crashes should be restored
-  ::  but %rver doesn't get an error notification from %gall
+  ::  but %eyre doesn't get an error notification from %gall
   ::
   :: ?.  ?=(^ reg.act)  ~|(%no-account !!)
   :: ?.  ?=(^ rod)      ~|(%no-active-order !!)

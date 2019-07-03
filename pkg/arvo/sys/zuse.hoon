@@ -7600,21 +7600,21 @@
       gift:able:behn
       gift:able:clay
       gift:able:dill
+      gift:able:http-server
       gift:able:ford
       gift:able:gall
       gift:able:jael
       gift:able:http-client
-      gift:able:http-server
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
       task:able:clay
       task:able:behn
       task:able:dill
+      task:able:http-client
       task:able:ford
       task:able:gall
       task:able:jael
-      task:able:http-client
       task:able:http-server
   ==
 ++  note-arvo                                           ::  out request $->
@@ -7623,11 +7623,11 @@
       {$b task:able:behn}
       {$c task:able:clay}
       {$d task:able:dill}
+      [%e task:able:http-server]
       {$f task:able:ford}
       {$g task:able:gall}
       {$j task:able:jael}
       [%l task:able:http-client]
-      [%r task:able:http-server]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7640,10 +7640,10 @@
       {$c gift:able:clay}
       {$d gift:able:dill}
       {$f gift:able:ford}
+      [%e gift:able:http-server]
       {$g gift:able:gall}
       {$j gift:able:jael}
       [%l gift:able:http-client]
-      [%r gift:able:http-server]
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -7660,12 +7660,12 @@
       ::  %clay: new process
       ::
       $>(%boat task:able:clay)
-      ::  %behn/%lient/%rver: new process
+      ::  %behn/%lient/%eyre: new process
       ::
-      ::    XX %rver includes payload
+      ::    XX %eyre includes payload
       ::
       $>(%born vane-task)
-      ::  %rver: cancel request
+      ::  %eyre: cancel request
       ::
       [%cancel-request ~]
       ::  any vane: error report
@@ -7683,16 +7683,16 @@
       ::  %clay: external edit
       ::
       $>(%into task:able:clay)
-      ::  %rver: learn ports of live http servers
+      ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:able:http-server)
       ::  %lient: hear (partial) http response
       ::
       $>(%receive task:able:http-client)
-      ::  %rver: starts handling an inbound http request
+      ::  %eyre: starts handling an inbound http request
       ::
       $>(%request task:able:http-server)
-      ::  %rver: starts handling an backdoor http request
+      ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:able:http-server)
       ::  %behn: wakeup

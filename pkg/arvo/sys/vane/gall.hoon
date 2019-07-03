@@ -1344,10 +1344,10 @@
       ::
         %request         `%l
         %cancel-request  `%l
-        %serve       `%r
-        %connect     `%r
-        %disconnect  `%r
-        %rule        `%r
+        %serve       `%e
+        %connect     `%e
+        %disconnect  `%e
+        %rule        `%e
       ==
     --
   --

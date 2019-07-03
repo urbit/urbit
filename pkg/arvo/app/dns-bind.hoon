@@ -62,7 +62,7 @@
         ^-  @t
         ::  XX can't scry in +mule
         ::
-        :: =/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+        :: =/  =hart:eyre  .^(hart:eyre %e /(scot %p our)/host/real)
         (crip (en-purl:html [hart [~ path] ~]))
       ::
       ::  XX can't scry in +mule

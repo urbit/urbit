@@ -1922,7 +1922,7 @@
             %give
             %mass
             ^-  mass
-            :+  %rver  %|
+            :+  %eyre  %|
             :~  bindings+&+bindings.server-state.ax
                 auth+&+authentication-state.server-state.ax
                 connections+&+connections.server-state.ax

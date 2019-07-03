@@ -24,9 +24,6 @@
         ::  sys/vane/lient: http client
         ::
         [%l /vane/lient]
-        ::  sys/vane/rver: http server
-        ::
-        [%r /vane/rver]
         ::  sys/vane/ames: network
         ::
         [%a /vane/ames]
@@ -39,9 +36,9 @@
         ::  sys/vane/dill: console
         ::
         [%d /vane/dill]
-        ::  sys/vane/eyre: web
+        ::  sys/vane/eyre: http server
         ::
-        ::  [%e /vane/eyre]
+        [%e /vane/eyre]
         ::  sys/vane/ford: build
         ::
         [%f /vane/ford]

@@ -467,7 +467,7 @@
       {@ $sync *}  %c
       {@ $term *}  %d
       {@ $http-client *}  %l
-      {@ $http-server *}  %r
+      {@ $http-server *}  %e
       {@ $behn *}  %b
     ==
   ::
