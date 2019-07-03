@@ -16,7 +16,8 @@ import Test.Tasty.TH
 import Test.Tasty.QuickCheck as QC
 import Test.QuickCheck
 
-import qualified Noun.Jam.Fast as Fast
+import qualified Noun.Jam.Fast as Jam
+import qualified Noun.Cue.Fast as Cue
 import qualified Noun.Pill     as Pill
 
 
@@ -211,15 +212,18 @@ pills = [ 0x2, 0xc, 0x48, 0x29, 0xc9, 0x299
 -- jamTest = fmap jam <$> cueTest
 
 prop_fastMatSlow :: Atom -> Bool
-prop_fastMatSlow a = jam (Atom a) == Fast.jam (Atom a)
+prop_fastMatSlow a = jam (Atom a) == Jam.jam (Atom a)
 
 prop_fastJamSlow :: Noun -> Bool
 prop_fastJamSlow n = x == y || (bitWidth y <= bitWidth x && cue y == cue x)
   where x = jam n
-        y = Fast.jam n
+        y = Jam.jam n
+
+prop_fastRub :: Atom -> Bool
+prop_fastRub a = Right (Atom a) == Cue.cue (jam (Atom a))
 
 prop_fastJam :: Noun -> Bool
-prop_fastJam n = Just n == cue (Fast.jam n)
+prop_fastJam n = Just n == cue (Jam.jam n)
 
 -- prop_jamCue :: Noun -> Bool
 -- prop_jamCue n = Just n == cue (jam n)

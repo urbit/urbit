@@ -194,6 +194,9 @@ dumbPackAtom = go 0 0 . toList . view pillBS
 atomNat :: Iso' Atom Natural
 atomNat = iso unAtom MkAtom
 
+atomWords :: Iso' Atom (VP.Vector Word)
+atomWords = atomNat . natWords
+
 pill :: Iso' Atom Pill
 pill = iso toAtom fromPill
   where

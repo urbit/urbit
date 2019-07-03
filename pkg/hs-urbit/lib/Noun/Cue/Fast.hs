@@ -15,20 +15,33 @@ import GHC.Word
 import GHC.Natural
 import Foreign.Ptr
 
-import Foreign.Storable (peek)
-import Noun             (Noun)
+import Control.Monad    (guard)
 import Data.Bits        (shiftR, (.|.), (.&.))
+import Data.Map         (Map)
 import Foreign.Ptr      (Ptr, plusPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
-import Data.Map         (Map)
-import Control.Monad    (guard)
+import Foreign.Storable (peek)
+import Noun             (Noun)
+import Noun.Pill        (atomBS, atomWords)
+import System.IO.Unsafe (unsafePerformIO)
 
-import qualified Data.HashTable.IO as H
+import qualified Data.ByteString.Unsafe as BS
+import qualified Data.HashTable.IO      as H
+import qualified Data.Vector.Primitive  as VP
 
 import Test.Tasty
 import Test.Tasty.TH
 import qualified Test.Tasty.QuickCheck as QC
 import Test.QuickCheck hiding ((.&.))
+
+
+--------------------------------------------------------------------------------
+
+cueBS :: ByteString -> Either DecodeExn Noun
+cueBS = doGet dNoun
+
+cue :: Atom -> Either DecodeExn Noun
+cue = cueBS . view atomBS
 
 
 -- Types -----------------------------------------------------------------------
@@ -66,6 +79,14 @@ newtype Get a = Get
   }
 
 type Bits = Vector Bool
+
+doGet :: Get a -> ByteString -> Either DecodeExn a
+doGet m bs =
+  unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs \(ptr, len) -> do
+    let endPtr = ptr `plusPtr` len
+    tbl <- H.new
+    GetResult _ r <- runGet m endPtr tbl (S (castPtr ptr) 0 0)
+    pure r
 
 --------------------------------------------------------------------------------
 
@@ -174,6 +195,12 @@ dBit = do
   advance 1
   pure (0 /= shiftR wor use .&. 1)
 
+dWord :: Get Word
+dWord = do
+  res <- peekWord
+  advance 64
+  pure res
+
 {-|
     Get n bits, where n > 64:
 
@@ -183,8 +210,19 @@ dBit = do
     - Calculate the length (equal to n)
     - Construct a bit-vector using the buffer*length*offset.
 -}
-dBits :: Word -> Get Bits
-dBits = undefined
+dAtomBits :: Word -> Get Atom
+dAtomBits (fromIntegral -> bits) =
+    fmap (view $ from atomWords) $
+      VP.generateM bufSize \i ->
+        if (i == lastIdx && numExtraBits /= 0)
+        then dWordBits (fromIntegral numExtraBits)
+        else dWord
+
+  where
+    bufSize      = numFullWords + min 1 numExtraBits
+    lastIdx      = bufSize - 1
+    numFullWords = bits `div` 64
+    numExtraBits = bits `mod` 64
 
 {-|
     In order to peek at the next Word64:
@@ -269,11 +307,7 @@ dRef = dAtomLen >>= dWordBits
 dAtom :: Get Atom
 dAtom = do
   n <- dAtomLen
-  b <- dBits n
-  pure (bitsToAtom b)
-
-bitsToAtom :: Bits -> Atom
-bitsToAtom = undefined
+  dAtomBits n
 
 dCell :: Get Noun
 dCell = Cell <$> dNoun <*> dNoun
