@@ -15,6 +15,18 @@ cleanup () {
 
 trap cleanup EXIT
 
+# update pill strategy to ensure correct staging
+#
+herb ./pier -p hood -d "+hood/mount /=home="
+
+cp $ARVO/lib/pill.hoon ./pier/home/lib/
+chmod -R u+rw ./pier/home/lib/
+
+herb ./pier -p hood -d "+hood/commit %home"
+herb ./pier -p hood -d "+hood/unmount %home"
+
+# stage new desk for pill contents
+#
 herb ./pier -p hood -d '+hood/merge %stage our %home'
 herb ./pier -p hood -d "+hood/mount /=stage="
 
@@ -23,6 +35,7 @@ cp -r $ARVO ./pier/stage
 chmod -R u+rw ./pier/stage
 
 herb ./pier -p hood -d "+hood/commit %stage"
+herb ./pier -p hood -d "+hood/unmount %stage"
 
 herb ./pier -P solid.pill -d '+solid /=stage=/sys, =dub &'
 
