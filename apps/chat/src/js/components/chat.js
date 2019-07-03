@@ -6,7 +6,6 @@ import { Message } from '/components/lib/message';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
 
-import { prettyShip, getMessageContent } from '/lib/util';
 
 export class ChatScreen extends Component {
   constructor(props) {
@@ -151,25 +150,12 @@ export class ChatScreen extends Component {
     }
   }
 
-  buildMessage(msg, index) {
-    let details = msg.printship ? null : getMessageContent(msg.gam);
-
-    if (msg.printship) {
-      return (
-        <a 
-          className="vanilla hoverline text-600 text-mono" 
-          href={prettyShip(msg.gam.aut)[1]}>
-          {prettyShip(`~${msg.gam.aut}`)[0]}
-        </a>
-      );
-    }
-
+  buildMessage(msg) {
     return (
-        <Message
-          key={msg.gam.uid + Math.random()} 
-          msg={msg.gam} 
-          details={details} />
-      );
+      <Message
+        key={msg.gam.uid + Math.random()} 
+        msg={msg.gam} />
+    );
   }
 
   render() {

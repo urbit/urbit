@@ -8,6 +8,24 @@ export class LandingScreen extends Component {
     super(props);
   }
 
+  componentDidMount() {
+    const { props } = this;
+    let station = props.match.params.ship + '/' + props.match.params.station;
+
+    if (station in props.configs) {
+      props.history.push(`/~chat/${station}`);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { props } = this;
+    let station = props.match.params.ship + '/' + props.match.params.station;
+
+    if (station in props.configs) {
+      props.history.push(`/~chat/${station}`);
+    }
+  }
+
   onClickSubscribe() {
     let station = props.match.params.ship + '/' + props.match.params.station;
     this.props.api.source(station, true);
@@ -15,7 +33,6 @@ export class LandingScreen extends Component {
   }
 
   render() {
-
     const { props } = this;
     let station = props.match.params.ship + '/' + props.match.params.station;
 

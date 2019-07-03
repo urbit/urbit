@@ -66,39 +66,21 @@ export class ChatInput extends Component {
   }
 
   messageSubmit() {
-    let aud, sep;
-    let wen = Date.now();
-    let uid = uuid();
-    let aut = window.ship;
-
-    aud = [this.props.station];
-    if (isUrl(this.state.message)) {
-      sep = {
-        url: this.state.message
-      }
-    } else {
-      sep = {
+    const { props, state } = this;
+    let message = {
+      uid: uuid(),
+      aut: window.ship,
+      wen: Date.now(),
+      aud: [props.station],
+      sep: {
         lin: {
-          msg: this.state.message,
+          msg: state.message,
           pat: false
         }
       }
-    }
-
-    let message = {
-      uid,
-      aut,
-      wen,
-      aud,
-      sep
     };
 
-    let readNom = this.props.circle;
-    if (this.props.host !== `~${window.ship}`) {
-      readNom = 'hall-internal-' + this.props.circle;
-    }
-
-    this.props.api.hall(
+    props.api.hall(
       {
         convey: [message]
       }
