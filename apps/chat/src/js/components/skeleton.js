@@ -7,7 +7,7 @@ export class Skeleton extends Component {
   render() {
     return (
       <div className="h-100 w-100 absolute">
-        <HeaderBar />
+        <HeaderBar spinner={this.props.spinner}/>
         <div className="cf w-100 absolute flex"
           style={{
             height: 'calc(100% - 48px)' 

@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { Sigil } from '/components/lib/icons/sigil';
 import { IconSend } from '/components/lib/icons/icon-send';
 
-import { isUrl, uuid } from '/lib/util';
+import { uuid } from '/lib/util';
 
 
 export class ChatInput extends Component {

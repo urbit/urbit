@@ -24,7 +24,7 @@ export class Message extends Component {
       '<unknown message type>'
     );
 
-    if (isUrl(content)) {
+    if (this.isUrl(content)) {
       try {
        let url = new URL(content);
        let imgMatch = 

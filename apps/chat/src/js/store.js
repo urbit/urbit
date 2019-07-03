@@ -11,7 +11,7 @@ class Store {
       configs: {},
       circles: [],
       peers: {},
-      local: false
+      spinner: false
     };
 
     this.initialReducer = new InitialReducer();

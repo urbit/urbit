@@ -21,16 +21,12 @@ export class ChatScreen extends Component {
     };
 
     this.hasAskedForMessages = false;
-    this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
-
-    this.scrollClosure = false;
 
     this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
     );
-
   }
 
   componentDidMount() {
@@ -53,7 +49,6 @@ export class ChatScreen extends Component {
     ) {
       console.log('switched circle');
       this.hasAskedForMessages = false;
-      this.scrollClosure = false;
  
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
@@ -99,7 +94,7 @@ export class ChatScreen extends Component {
     const { props, state } = this;
     let messages = props.messages;
 
-    if (state.numPages * 50 < props.messages.length - 200 || 
+    if (state.numPages * 50 < props.messages.length - 200 ||
         this.hasAskedForMessages) {
       return;
     }
@@ -150,14 +145,6 @@ export class ChatScreen extends Component {
     }
   }
 
-  buildMessage(msg) {
-    return (
-      <Message
-        key={msg.gam.uid + Math.random()} 
-        msg={msg.gam} />
-    );
-  }
-
   render() {
     const { props, state } = this;
 
@@ -172,7 +159,13 @@ export class ChatScreen extends Component {
         .slice(messages.length - (50 * state.numPages), messages.length);
     }
 
-    let chatMessages = messages.reverse().map(this.buildMessage);
+    let chatMessages = messages.reverse().map((msg) => {
+      return (
+        <Message
+          key={msg.gam.uid + Math.random()} 
+          msg={msg.gam} />
+      );
+    });
     let peers = props.peers[state.station] || [window.ship];
 
     return (

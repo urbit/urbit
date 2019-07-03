@@ -89,6 +89,7 @@ export class NewScreen extends Component {
       });
     }
 
+    props.setSpinner(true);
     props.api.chat(actions);
   }
 
