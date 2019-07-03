@@ -129,6 +129,8 @@
       =/  m  (async:stdio ,~)
       ^-  form:m
       ;<  our=@p   bind:m  get-identity:stdio
+      :: XX urbit/urbit#1314
+      ::
       :: ;<  now=@da  bind:m  get-time:stdio
       :: =/  ames-domains=(list turf)
       ::   .^((list turf) %j /(scot %p our)/turf/(scot %da now))
