@@ -462,14 +462,14 @@
   ++  da-insert-latest
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    =/  new-date=@da  date-created:(need (get-post-by-index who coll post))
+    =/  new-date=@da  date-created:(need (get-post-info-by-index who coll post))
     =/  pre=(list [@p @tas @tas])  ~
     =/  suf=(list [@p @tas @tas])  latest.sat
     =?  latest.sat  =(~ (find [who coll post]~ latest.sat))
       |-
       ?~  suf
         (weld pre [who coll post]~)
-      =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
+      =/  i-date=@da  date-created:(need (get-post-info-by-index i.suf))
       ?:  (gte new-date i-date)
         (weld pre [[who coll post] suf])
       %=  $
@@ -481,7 +481,7 @@
   ++  da-insert-order
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    =/  new-post=post-info  (need (get-post-by-index who coll post))
+    =/  new-post=post-info  (need (get-post-info-by-index who coll post))
     =/  col=collection  (need (get-coll-by-index who coll))
     :: 
     =/  pre=(list @tas)  ~
@@ -498,7 +498,7 @@
       (snoc pre post)
     ?:  =(post i.suf)
       (weld pre suf)
-    =/  i-date=@da  date-created:(need (get-post-by-index who coll i.suf))
+    =/  i-date=@da  date-created:(need (get-post-info-by-index who coll i.suf))
     ?:  (gte date-created.new-post i-date)
       (weld pre [post suf])
     %=  $
@@ -563,6 +563,19 @@
   ==
 ::
 ++  get-post-by-index
+  |=  [who=@p coll=@tas post=@tas]
+  ^-  (unit (each [post-info manx @t] tang))
+  =/  col=(unit collection)
+    ?:  =(our.bol who)
+      (~(get by pubs.sat) coll)
+    (~(get by subs.sat) who coll)
+  ?~  col  ~
+  =/  pos=(unit [bone (each [post-info manx @t] tang)])
+    (~(get by pos.u.col) post)
+  ?~  pos  ~
+  [~ +.u.pos]
+::
+++  get-post-info-by-index
   |=  [who=@p coll=@tas post=@tas]
   ^-  (unit post-info)
   =/  col=(unit collection)
@@ -1037,9 +1050,14 @@
     ?.  (~(has by pos.u.col) name.act)
       [~ this]
     ::
-    =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
+    =/  pos=(unit (each [post-info manx @t] tang))
+      (get-post-by-index who.act coll.act name.act)
     ?~  pos
       ~|  %editing-non-existent-post  !!
+    =/  date-created=@da
+      ?:  ?=(%.y -.u.pos)
+        date-created.-.p.u.pos
+      now.bol
     ::
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
@@ -1049,9 +1067,9 @@
           [%collection coll.act]
           [%filename name.act]
           [%comments com.act]
-          [%date-created (scot %da date-created.u.pos)]
+          [%date-created (scot %da date-created)]
           [%last-modified (scot %da now.bol)]
-          [%pinned ?:(pinned.u.pos %true %false)]
+          [%pinned %false]
       ==
     =/  out=@t  (update-udon-front front content.act)
     ::
@@ -1298,12 +1316,6 @@
   ::  published
   ::
       [[~ [%'~publish' %pubs ~]] ~]
-    =/  hym=manx  (index (state-to-json sat))
-    :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
-  ::  new
-  ::
-      [[~ [%'~publish' @t @t %new ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~

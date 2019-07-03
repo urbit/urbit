@@ -27,7 +27,38 @@ class SideTab extends Component {
         </div>
       );
     }
-    return null;
+    return (
+      <div style={{flexGrow: 1, height:36}}></div>
+    );
+  }
+}
+
+class Error extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    if (this.props.error) {
+      let lines = this.props.error.split("\n").map((line, i) => {
+        return (<p key={i}>{line}</p>);
+      });
+
+      return (
+        <div className="w-100 flex-col">
+          <p className="w-100 bg-red label-regular pt2 pb2 pl3">
+            This post contains an error
+          </p>
+          <div className="label-regular-mono bg-v-light-gray pb3 pt3">
+            <div className="center mw-688 w-100">
+              {lines}
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
  
@@ -50,8 +81,11 @@ export class NewPost extends Component {
 
     this.bodyHeight = 54;
     this.titleHeight = 102;
-  }
 
+
+    this.post = false;
+    this.comments = false;
+  }
 
   stringToSymbol(str){
     let result = '';
@@ -77,12 +111,21 @@ export class NewPost extends Component {
     let blogId = null;
 
     if (last){
-      ship = last.lastParams.ship.slice(1); 
-      blogId = last.lastParams.blog;
+      ship = (' ' + last.lastParams.ship.slice(1)).slice(1);
+      blogId = (' ' + last.lastParams.blog).slice(1);
     }
 
     let postTitle = this.state.title;
     let postId = this.stringToSymbol(postTitle);
+
+    let awaiting = Object.assign({}, {
+      ship: ship,
+      blogId: blogId,
+      postId: postId,
+    });
+
+    console.log("awaiting", awaiting);
+
     let permissions = {
       read: {
         mod: 'black',
@@ -95,33 +138,48 @@ export class NewPost extends Component {
     };
     let content = this.state.body;
 
-    let data = {
-      "new-post" : {
-        who: ship,
-        coll: blogId,
-        name: postId,
-        title: postTitle,
-        comments: "open",
-        perm: permissions,
-        content: content,
-      },
-    };
+    if (!this.state.error) {
+      let newPost = {
+        "new-post" : {
+          who: ship,
+          coll: blogId,
+          name: postId,
+          title: postTitle,
+          comments: "open",
+          perm: permissions,
+          content: content,
+        },
+      };
 
-    this.setState({
-      awaiting: {
-        ship: ship,
-        blogId: blogId,
-        postId: postId,
-      }
-    });
+      this.props.setSpinner(true);
 
-    store.handleEvent({
-      data: {
-        spinner: true,
-      }
-    });
+      this.setState({
+        awaiting: awaiting,
+      }, () => {
+        this.props.api.action("write", "write-action", newPost);
+      });
 
-    this.props.api.action("write", "write-action", data);
+    } else {
+      let editPost = {
+        "edit-post" : {
+          who: ship,
+          coll: blogId,
+          name: postId,
+          title: postTitle,
+          comments: "open",
+          perm: permissions,
+          content: content,
+        },
+      };
+
+      this.props.setSpinner(true);
+
+      this.setState({
+        awaiting: awaiting,
+      }, () => {
+        this.props.api.action("write", "write-action", editPost);
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -133,33 +191,40 @@ export class NewPost extends Component {
       let post;
       let comments;
 
-      if (this.state.awaiting.ship == window.ship) {
+      if (ship == window.ship) {
         post =
-          _.get(this.props, `pubs[${blogId}].posts[${postId}].post`, false);
+          _.get(this.props,
+            `pubs[${blogId}].posts[${postId}].post`, false) || false;
         comments =
-          _.get(this.props, `pubs[${blogId}].posts[${postId}].comments`, false);
+          _.get(this.props,
+            `pubs[${blogId}].posts[${postId}].comments`, false) || false;
       } else {
         post =
-          _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].post`, false);
+          _.get(this.props,
+            `subs[${ship}][${blogId}].posts[${postId}].post`, false) || false;
         comments =
-          _.get(this.props, `subs[${ship}][${blogId}].posts[${postId}].comments`, false);
+          _.get(this.props,
+            `subs[${ship}][${blogId}].posts[${postId}].comments`, false) || false;
       }
 
-      if (post && comments) {
-        store.handleEvent({
-          data: {
-            spinner: false,
-          }
-        });
-        if (typeof(post) === 'String') {
+      if (!_.isEqual(this.post, post)) {
+        if (typeof(post) === 'string') {
+          this.props.setSpinner(false);
           this.setState({
-            error: post,
             awaiting: false,
+            error: post
           });
         } else {
+          this.props.setSpinner(false);
           let redirect = `/~publish/~${ship}/${blogId}/${postId}`;
           this.props.history.push(redirect);
         }
+      }
+      if (post) {
+        this.post = post;
+      }
+      if (comments) {
+        this.comments = comments;
       }
     }
   }
@@ -183,27 +248,24 @@ export class NewPost extends Component {
   render() {
     let enabledTab = ((this.state.title !== "") && (this.state.body !== ""));
 
-    let mt = (this.windowHeight/2) - 96;
-    let mb = (this.windowHeight/2) - 42;
+    let mt = (this.windowHeight/2) - 110;
+    let mb = (this.windowHeight/2) - 90;
 
     return (
-      <div className="relative w-100" style={{height: '100%', top:124}}>
+      <div className="relative w-100" style={{top:124}}>
         <PC pathData={false} {...this.props}/>
-        <div className="w-100 absolute" style={{top: mt}}>
+        <Error error={this.state.error}/>
+        <div>
+          <div className="w-100" style={{height: mt}}></div>
 
-          <div className="flex w-100 z-2 fixed" style={{top:132}}>
-            <div className="w1 z-0" style={{flexGrow:1}}>
-            </div>
-            <div className="mw-688 w-100 z-0" style={{pointerEvents:"none"}}>
-            </div>
-            <SideTab enabled={enabledTab} postSubmit={this.postSubmit} />
+          <div className="flex w-100 z-2" style={{position: 'sticky', top: 132}}>
+            <div className="w1 z-0" style={{flexGrow:1}}></div>
+            <div className="mw-688 w-100 z-0" style={{pointerEvents:'none'}}></div>
+            <SideTab enabled={enabledTab} postSubmit={this.postSubmit}/>
           </div>
 
-          <div className="flex absolute w-100"
-            style={{top:0, marginBottom: mb}}
-            ref={(el) => {this.inputArea = el}}>
-            <div className="w1 z-0" style={{flexGrow:1}}>
-            </div>
+          <div className="flex relative" style={{top:-74}}>
+            <div className="w1 z-0" style={{flexGrow:1}}></div>
             <div className="flex-col w-100 mw-688 w-100 z-2">
               <textarea autoFocus
                 className="header-2 w-100 b--none overflow-y-hidden"
@@ -220,10 +282,10 @@ export class NewPost extends Component {
                 onChange={this.bodyChange.bind(this)}>
               </textarea>
             </div>
-            <div className="w1 z-0" style={{flexGrow:1, pointerEvents: "none"}}>
-            </div>
+            <div className="w1 z-0" style={{flexGrow:1}}></div>
           </div>
 
+          <div className="w-100" style={{height: mb}}></div>
         </div>
       </div>
     );

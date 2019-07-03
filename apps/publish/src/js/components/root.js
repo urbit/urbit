@@ -23,9 +23,20 @@ export class Root extends Component {
     super(props);
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
+
+    this.setSpinner = this.setSpinner.bind(this);
+  }
+
+  setSpinner(spinner) {
+    console.log("setSpinner", spinner);
+    this.setState({
+      spinner
+    });
   }
 
   render() {
+
+
     return (
       <BrowserRouter>
         <Switch>
@@ -68,9 +79,11 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={this.state.spinner}
-                  {...this.state}
                   children={
-                    <NewBlog api={api} {...this.state} {...props}/>
+                    <NewBlog api={api} 
+                      {...this.state}
+                      setSpinner={this.setSpinner}
+                      {...props}/>
                   }
                 />
               );
@@ -81,9 +94,11 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={this.state.spinner}
-                  {...this.state}
                   children={
-                    <NewPost api={api} {...this.state} {...props}/>
+                    <NewPost api={api}
+                      setSpinner={this.setSpinner}
+                      {...this.state}
+                      {...props}/>
                   }
                 />
               );
@@ -94,7 +109,6 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={this.state.spinner}
-                  {...this.state}
                   children={
                     <Blog
                       blogId = {props.match.params.blog}
@@ -112,7 +126,6 @@ export class Root extends Component {
               return (
                 <Skeleton
                   spinner={this.state.spinner}
-                  {...this.state}
                   children={
                     <Post
                       blogId = {props.match.params.blog}

@@ -12,7 +12,7 @@ export class Skeleton extends Component {
 
   render() {
     return (
-      <div className="h-100 w-100 absolute">
+      <div className="h-100 w-100">
         <HeaderBar spinner={this.props.spinner}/>
         <div className="h-inner">
           {this.props.children}

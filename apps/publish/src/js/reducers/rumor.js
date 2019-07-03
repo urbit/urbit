@@ -143,6 +143,10 @@ export class RumorReducer {
   }
 
   insertPost(json, state) {
+    if (typeof(json.post.data) === 'string') {
+      return;
+    }
+
     this.insertLatest(json, state); 
     this.insertUnread(json, state);
     this.insertOrder(json, state);
