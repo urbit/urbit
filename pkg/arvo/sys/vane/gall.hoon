@@ -259,7 +259,7 @@
       beak=beak
       :: req'd translations
       ::
-      required-trans=(map bone mark)
+      marks=(map bone mark)
       :: opaque ducts
       ::
       ducts=ducts
@@ -1180,7 +1180,7 @@
             agent-bone=bone
             agent-moves=(list internal-move)
             agent-config=(list (each suss tang))
-            sat=agent
+            current-agent=agent
         ==
     ::
     ++  ap-state  .
@@ -1189,12 +1189,7 @@
     ::  supplied privilege.
     ::
     ::  The agent must already be running in +gall -- here we simply update
-    ::  state to focus on it.
-    ::
-    ::  If the agent doesn't have a bone corresponding to the +mo control duct,
-    ::  we give it one, and update its bone- and duct-indexed correspondence
-    ::  maps in turn.  The agent's bone is also tracked in state under the
-    ::  agent-bone face.
+    ::  +ap's state to focus on it.
     ::
     ++  ap-abed
       ~/  %ap-abed
@@ -1211,7 +1206,7 @@
       ::
       =.  agent-name  term
       =.  agent-privilege  privilege
-      =.  sat  agent
+      =.  current-agent  agent
       ::
       =/  maybe-bone  (~(get by bone-map.ducts.agent) hen)
       ::
@@ -1224,8 +1219,8 @@
         (~(put by duct-map.ducts.agent) bone.ducts.agent hen)
       ::
       %_  ap-state
-        agent-bone  bone.ducts.agent
-        ducts.sat   ducts
+        agent-bone           bone.ducts.agent
+        ducts.current-agent  ducts
       ==
     ::
     ::  +ap-abet: resolve moves.
@@ -1235,7 +1230,7 @@
       ::
       =>  ap-track-queue
       ::
-      =/  running  (~(put by running.agents.gall) agent-name sat)
+      =/  running  (~(put by running.agents.gall) agent-name current-agent)
       ::
       =/  moves
         =/  giver  |=(report=(each suss tang) [hen %give %onto report])
@@ -1254,11 +1249,10 @@
     ::  associated with it.
     ::
     ::  If there are any currently-associated non-%give internal moves, we
-    ::  enqueue each along its associated bone.
+    ::  enqueue each along its associated bone.  When we've finished enqueuing
+    ::  them, we iterate over the relevant bones and
     ::
-    ::  When we've finished enqueuing them,
-    ::
-    ::  FIXME finish
+    ::  FIXME finish when i understand +ap-kill and +ap-load-delete
     ::
     ++  ap-track-queue
       ^+  ap-state
@@ -1269,10 +1263,11 @@
       |-  ^+  ap-state
       ::
       ?^  internal-moves
-        ?.  ?=([%give %diff *] move.i.internal-moves)
-          $(internal-moves t.internal-moves)
         ::
         =/  =internal-move  i.internal-moves
+        ::
+        ?.  ?=([%give %diff *] move.internal-move)
+          $(internal-moves t.internal-moves)
         ::
         =^  filled  ap-state  ap-enqueue(agent-bone bone.internal-move)
         ::
@@ -1292,7 +1287,8 @@
       ::
       =>  $(bones t.bones, agent-bone i.bones)
       ::
-      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
+      =/  incoming
+        (~(get by incoming.subscribers.current-agent) agent-bone)
       ::
       ?~  incoming
         ~&  [%ap-track-queue-bad-bone agent-name agent-bone]
@@ -1306,14 +1302,16 @@
     ::  We convert from bone-indexed moves to duct-indexed moves when resolving
     ::  them in Arvo.
     ::
+    ::  FIXME too long; consider breaking into ap-from-give, ap-from-pass
     ++  ap-from-internal
       ~/  %ap-from-internal
       |=  =internal-move
       ^-  move
       ::
-      ~|  [%gall-from-internal-failed internal-move]
+      ~|  [%gall-move-conversion-failed internal-move]
       ::
-      =/  =duct  (~(got by duct-map.ducts.sat) bone.internal-move)
+      =/  =duct
+        (~(got by duct-map.ducts.current-agent) bone.internal-move)
       ::
       =/  card
         ?-    -.move.internal-move
@@ -1330,8 +1328,8 @@
           ::
           =/  =cage  p.internal-gift
           =/  =mark
-            =/  trans  (~(get by required-trans.sat) bone.internal-move)
-            (fall trans p.cage)
+            =/  mark  (~(get by marks.current-agent) bone.internal-move)
+            (fall mark p.cage)
           ::
           ?:  =(mark p.cage)
             [%give %unto internal-gift]
@@ -1378,7 +1376,7 @@
     ::
     ::  +ap-call: call into server.
     ::
-    ::  FIXME docs
+    ::  FIXME requires understanding of ap-produce-arm, etc.
     ::
     ++  ap-call
       ~/  %ap-call
@@ -1582,10 +1580,10 @@
     ++  ap-dequeue
       ^+  ap-state
       ::
-      ?.  (~(has by incoming.subscribers.sat) agent-bone)
+      ?.  (~(has by incoming.subscribers.current-agent) agent-bone)
         ap-state
       ::
-      =/  level  (~(get by meter.subscribers.sat) agent-bone)
+      =/  level  (~(get by meter.subscribers.current-agent) agent-bone)
       ::
       ?:  |(?=(~ level) =(0 u.level))
         ap-state
@@ -1593,11 +1591,11 @@
       =.  u.level  (dec u.level)
       ::
       ?:  =(0 u.level)
-        =/  deleted  (~(del by meter.subscribers.sat) agent-bone)
-        ap-state(meter.subscribers.sat deleted)
+        =/  deleted  (~(del by meter.subscribers.current-agent) agent-bone)
+        ap-state(meter.subscribers.current-agent deleted)
       ::
-      =/  dequeued  (~(put by meter.subscribers.sat) agent-bone u.level)
-      ap-state(meter.subscribers.sat dequeued)
+      =/  dequeued  (~(put by meter.subscribers.current-agent) agent-bone u.level)
+      ap-state(meter.subscribers.current-agent dequeued)
     ::
     ::  +ap-produce-arm: produce arm.
     ::
@@ -1608,9 +1606,9 @@
       ^-  [(each vase tang) _ap-state]
       ::
       =/  compiled
-        =/  =type  p.running-state.sat
+        =/  =type  p.running-state.current-agent
         =/  =hoon  [%limb term]
-        (~(mint wa cache.sat) type hoon)
+        (~(mint wa cache.current-agent) type hoon)
       ::
       =/  virtual
         =/  trap  |.(compiled)
@@ -1621,7 +1619,7 @@
         [[%.n tang] ap-state]
       ::
       =/  possibly-vase=(each vase tang)
-        =/  value  q.running-state.sat
+        =/  value  q.running-state.current-agent
         =/  ton  (mock [value q.+<.virtual] ap-namespace-view)
         ?-  -.ton
           %0  [%.y p.+<.virtual p.ton]
@@ -1631,7 +1629,7 @@
       ::
       =/  next
         =/  =worm  +>.virtual
-        ap-state(cache.sat worm)
+        ap-state(cache.current-agent worm)
       ::
       [possibly-vase next]
     ::
@@ -1648,23 +1646,23 @@
     ++  ap-enqueue
       ^-  [? _ap-state]
       ::
-      =/  meter  (~(gut by meter.subscribers.sat) agent-bone 0)
+      =/  meter  (~(gut by meter.subscribers.current-agent) agent-bone 0)
       =/  subscriber=(unit (pair ship path))
-        (~(get by incoming.subscribers.sat) agent-bone)
+        (~(get by incoming.subscribers.current-agent) agent-bone)
       ::
       ?:  ?&  =(20 meter)
               ?|  ?=(~ subscriber)
                   !=(our p.u.subscriber)
               ==
           ==
-        =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
-        =/  duct  (~(get by duct-map.ducts.sat) agent-bone)
+        =/  incoming  (~(get by incoming.subscribers.current-agent) agent-bone)
+        =/  duct  (~(get by duct-map.ducts.current-agent) agent-bone)
         ~&  [%gall-pulling-20 agent-bone incoming duct]
         [%.n ap-state]
       ::
       =/  next
-        =/  meter  (~(put by meter.subscribers.sat) agent-bone +(meter))
-        ap-state(meter.subscribers.sat meter)
+        =/  meter  (~(put by meter.subscribers.current-agent) agent-bone +(meter))
+        ap-state(meter.subscribers.current-agent meter)
       ::
       [%.y next]
     ::
@@ -1679,7 +1677,7 @@
       |=  [=term =path]
       ^-  [(unit (pair @ud @tas)) _ap-state]
       ::
-      =/  maybe-cached  (~(get by arm-cache.sat) [term path])
+      =/  maybe-cached  (~(get by arm-cache.current-agent) [term path])
       ?^  maybe-cached
         [u.maybe-cached ap-state]
       ::
@@ -1699,7 +1697,7 @@
           ~
         (some [dep term])
       ::
-      =.  arm-cache.sat  (~(put by arm-cache.sat) [term path] result)
+      =.  arm-cache.current-agent  (~(put by arm-cache.current-agent) [term path] result)
       ::
       [result ap-state]
     ::
@@ -1710,7 +1708,7 @@
       |=  =term
       ^-  ?
       ::
-      =/  =type  p.running-state.sat
+      =/  =type  p.running-state.current-agent
       (slob term type)
     ::
     ::  +ap-give: return result.
@@ -1732,20 +1730,20 @@
       ^+  ap-state
       ::
       %_    ap-state
-          +12.q.running-state.sat
+          +12.q.running-state.current-agent
         ^-   bowl
         :*  :*  our                                 ::  host
                 attributing.routes.agent-privilege  ::  guest
                 agent-name                          ::  agent
             ==                                      ::
             :*  wex=~                               ::  outgoing
-                sup=incoming.subscribers.sat        ::  incoming
+                sup=incoming.subscribers.current-agent        ::  incoming
             ==                                      ::
             :*  agent-bone=agent-bone               ::  cause
-                act=change.stats.sat                ::  tick
-                eny=eny.stats.sat                   ::  nonce
-                now=time.stats.sat                  ::  time
-                byk=beak.sat                        ::  source
+                act=change.stats.current-agent                ::  tick
+                eny=eny.stats.current-agent                   ::  nonce
+                now=time.stats.current-agent                  ::  time
+                byk=beak.current-agent                        ::  source
         ==  ==                                      ::
       ==
     ::
@@ -1771,14 +1769,14 @@
         [[%.n tang] ap-state]
       ::
       =/  =bone  -.noun
-      =/  has-duct  (~(has by duct-map.ducts.sat) bone)
+      =/  has-duct  (~(has by duct-map.ducts.current-agent) bone)
       ::
       ?.  &(has-duct !=(0 bone))
         =/  =tang  (ap-tang "move: invalid card (bone {<bone>})")
         [[%.n tang] ap-state]
       ::
-      =^  vase  cache.sat  (~(spot wa cache.sat) 3 vase)
-      =^  vase  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  vase  cache.current-agent  (~(spot wa cache.current-agent) 3 vase)
+      =^  vase  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       ::
       ?+  +<.noun  (ap-move-pass bone +<.noun vase)
         %diff  (ap-move-diff bone vase)
@@ -1811,9 +1809,9 @@
         [%.y internal-move]
       ::
       =/  next
-        =/  incoming  (~(del by incoming.subscribers.sat) bone)
+        =/  incoming  (~(del by incoming.subscribers.current-agent) bone)
         %_  ap-state
-          incoming.subscribers.sat  incoming
+          incoming.subscribers.current-agent  incoming
         ==
       ::
       [possibly-internal-move next]
@@ -1825,7 +1823,7 @@
       |=  [=bone =vase]
       ^-  [(each internal-move tang) _ap-state]
       ::
-      =^  vase  cache.sat  (~(sped wa cache.sat) vase)
+      =^  vase  cache.current-agent  (~(sped wa cache.current-agent) vase)
       ::
       =/  value  q.vase
       ::
@@ -1836,7 +1834,7 @@
         =/  =tang  (ap-tang "diff: improper give")
         [[%.n tang] ap-state]
       ::
-      =^  vase  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  vase  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       ::
       =/  =internal-move
         =/  =cage  [-.value vase]
@@ -1917,7 +1915,7 @@
       ::
       =/  vane  u.maybe-vane
       ::
-      =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  at-slot  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       ::
       =/  =internal-move
         =/  =path  [(scot %p attributing.routes.agent-privilege) %inn u.pax]
@@ -1941,7 +1939,7 @@
       ?:  ?=(%.n -.possibly-target)
         [possibly-target ap-state]
       ::
-      =^  at-slot  cache.sat  (~(slot wa cache.sat) 7 vase)
+      =^  at-slot  cache.current-agent  (~(slot wa cache.current-agent) 7 vase)
       ::
       ?.  ?&  ?=([p=@ q=*] q.at-slot)
               ((sane %tas) p.q.at-slot)
@@ -1949,7 +1947,7 @@
         =/  =tang  (ap-tang "poke: malformed cage")
         [[%.n tang] ap-state]
       ::
-      =^  specialised  cache.sat  (~(stop wa cache.sat) 3 at-slot)
+      =^  specialised  cache.current-agent  (~(stop wa cache.current-agent) 3 at-slot)
       ::
       =/  target  p.possibly-target
       =/  =path  p.target
@@ -1995,7 +1993,7 @@
         [[%.n tang] ap-state]
       ::
       =/  move
-        ?:  (~(has in misvale.sat) p.target)
+        ?:  (~(has in misvale.current-agent) p.target)
           =/  =internal-task
             =/  =tang  [[%leaf "peel: misvalidation encountered"] ~]
             =/  =agent-action  [%peer-not tang]
@@ -2038,7 +2036,7 @@
         [[%.n tang] ap-state]
       ::
       =/  move
-        ?:  (~(has in misvale.sat) p.target)
+        ?:  (~(has in misvale.current-agent) p.target)
           =/  err  [[%leaf "peer: misvalidation encountered"] ~]
           =/  =agent-action  [%peer-not err]
           =/  =internal-note  [%send ship term agent-action]
@@ -2104,7 +2102,7 @@
       ::
       ?:  ?=($poke s.q.vase)
         ::
-        =^  specialised  cache.sat  (~(spot wa cache.sat) 7 vase)
+        =^  specialised  cache.current-agent  (~(spot wa cache.current-agent) 7 vase)
         ::
         ?>  =(%poke -.q.specialised)
         ::
@@ -2114,8 +2112,8 @@
           =/  =tang  (ap-tang "send: malformed poke")
           [[%.n tang] ap-state]
         ::
-        =^  specialised  cache.sat  (~(spot wa cache.sat) 3 specialised)
-        =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 specialised)
+        =^  specialised  cache.current-agent  (~(spot wa cache.current-agent) 3 specialised)
+        =^  at-slot  cache.current-agent  (~(slot wa cache.current-agent) 3 specialised)
         ::
         =/  move
           =/  =agent-action  [%poke p.t.q.vase at-slot]
@@ -2162,8 +2160,8 @@
       ^+  ap-state
       ::
       =/  prep
-        =/  installed  ap-install(running-state.sat vase)
-        =/  running  (some running-state.sat)
+        =/  installed  ap-install(running-state.current-agent vase)
+        =/  running  (some running-state.current-agent)
         (installed running)
       ::
       =^  maybe-tang  ap-state  prep
@@ -2178,7 +2176,7 @@
       |=  [=mark =path]
       ^+  ap-state
       ::
-      =.  required-trans.sat  (~(put by required-trans.sat) agent-bone mark)
+      =.  marks.current-agent  (~(put by marks.current-agent) agent-bone mark)
       ::
       (ap-peer path)
     ::
@@ -2191,8 +2189,8 @@
       ::
       =/  incoming  [attributing.routes.agent-privilege pax]
       ::
-      =.  incoming.subscribers.sat
-        (~(put by incoming.subscribers.sat) agent-bone incoming)
+      =.  incoming.subscribers.current-agent
+        (~(put by incoming.subscribers.current-agent) agent-bone incoming)
       ::
       =^  maybe-arm  ap-state  (ap-find-arm %peer pax)
       ::
@@ -2275,8 +2273,8 @@
       ^+  ap-state
       ::
       ~&  [%ap-blocking-misvale wire]
-      =/  misvaled  (~(put in misvale.sat) wire)
-      ap-state(misvale.sat misvaled)
+      =/  misvaled  (~(put in misvale.current-agent) wire)
+      ap-state(misvale.current-agent misvaled)
     ::
     ::  +ap-generic-take: generic take.
     ::
@@ -2299,7 +2297,7 @@
       ::
       =/  arm  u.maybe-arm
       ::
-      =^  at-slot  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  at-slot  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       ::
       =/  vase  (slop !>((slag p.arm path)) at-slot)
       ::
@@ -2360,8 +2358,8 @@
       =^  maybe-tang  ap-state  (ap-prep maybe-vase)
       ::
       =/  new-misvale-data
-         ~?  !=(misvale.sat *misvale-data)
-           [%misvale-drop misvale.sat]
+         ~?  !=(misvale.current-agent *misvale-data)
+           [%misvale-drop misvale.current-agent]
          :: new app might mean new marks
          *misvale-data
       ::
@@ -2378,9 +2376,9 @@
       ::
       =/  next
         %=  ap-state
-          misvale.sat     new-misvale-data
+          misvale.current-agent     new-misvale-data
           agent-config    new-agent-config
-          arm-cache.sat   ~
+          arm-cache.current-agent   ~
         ==
       ::
       [maybe-tang next]
@@ -2397,7 +2395,7 @@
           [~ ap-state]
         ::
         =/  new-type
-          =/  new  (slot 13 running-state.sat)
+          =/  new  (slot 13 running-state.current-agent)
           p.new
         ::
         =/  old-type
@@ -2408,7 +2406,7 @@
           =/  =tang  (ap-tang "prep mismatch")
           [(some tang) ap-state]
         ::
-        =/  next  ap-state(+13.q.running-state.sat +13.q.u.maybe-vase)
+        =/  next  ap-state(+13.q.running-state.current-agent +13.q.u.maybe-vase)
         [~ next]
       ::
       =/  =vase
@@ -2423,13 +2421,13 @@
     ++  ap-silent-delete
       ^+  ap-state
       ::
-      =/  incoming  (~(get by incoming.subscribers.sat) agent-bone)
+      =/  incoming  (~(get by incoming.subscribers.current-agent) agent-bone)
       ?~  incoming
         ap-state
       ::
       %_  ap-state
-        incoming.subscribers.sat  (~(del by incoming.subscribers.sat) agent-bone)
-        meter.subscribers.sat     (~(del by meter.subscribers.sat) agent-bone)
+        incoming.subscribers.current-agent  (~(del by incoming.subscribers.current-agent) agent-bone)
+        meter.subscribers.current-agent     (~(del by meter.subscribers.current-agent) agent-bone)
       ==
     ::
     ::  +ap-load-delete: load delete.
@@ -2437,14 +2435,14 @@
     ++  ap-load-delete
       ^+  ap-state
       ::
-      =/  maybe-incoming  (~(get by incoming.subscribers.sat) agent-bone)
+      =/  maybe-incoming  (~(get by incoming.subscribers.current-agent) agent-bone)
       ?~  maybe-incoming
         ap-state
       ::
       =/  incoming  u.maybe-incoming
       ::
-      =:  incoming.subscribers.sat  (~(del by incoming.subscribers.sat) agent-bone)
-          meter.subscribers.sat     (~(del by meter.subscribers.sat) agent-bone)
+      =:  incoming.subscribers.current-agent  (~(del by incoming.subscribers.current-agent) agent-bone)
+          meter.subscribers.current-agent     (~(del by meter.subscribers.current-agent) agent-bone)
       ==
       ::
       =^  maybe-arm  ap-state  (ap-find-arm %pull q.incoming)
@@ -2508,7 +2506,7 @@
         =/  =tang  (ap-tang "move: malformed list")
         [[%.n tang] ap-state]
       ::
-      =^  hed  cache.sat  (~(slot wa cache.sat) 2 vase)
+      =^  hed  cache.current-agent  (~(slot wa cache.current-agent) 2 vase)
       =^  possibly-internal-move  ap-state  (ap-move hed)
       ::
       ?:  ?=(%.n -.possibly-internal-move)
@@ -2516,7 +2514,7 @@
       ::
       =/  =internal-move  p.possibly-internal-move
       ::
-      =^  tel  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  tel  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       =^  res  ap-state  $(vase tel)
       ::
       =/  possibly-internal-moves
@@ -2537,7 +2535,7 @@
         =/  =tang  (ap-tang "ap-handle-result: invalid product (atom)")
         [(some tang) ap-state]
       ::
-      =^  hed  cache.sat  (~(slot wa cache.sat) 2 vase)
+      =^  hed  cache.current-agent  (~(slot wa cache.current-agent) 2 vase)
       =^  possibly-internal-moves  ap-state  (ap-safe hed)
       ::
       ?:  ?=(%.n -.possibly-internal-moves)
@@ -2546,7 +2544,7 @@
       ::
       =/  internal-moves  p.possibly-internal-moves
       ::
-      =^  tel  cache.sat  (~(slot wa cache.sat) 3 vase)
+      =^  tel  cache.current-agent  (~(slot wa cache.current-agent) 3 vase)
       =^  possibly-vase  ap-state  (ap-verify-core tel)
       ::
       ?:  ?=(%.n -.possibly-vase)
@@ -2556,7 +2554,7 @@
       =/  next
         %_  ap-state
           agent-moves        (weld (flop internal-moves) agent-moves)
-          running-state.sat  p.possibly-vase
+          running-state.current-agent  p.possibly-vase
         ==
       ::
       [~ next]
@@ -2569,9 +2567,9 @@
       ^-  [(each vase tang) _ap-state]
       ::
       =/  received-type  p.vax
-      =/  running-type  p.running-state.sat
+      =/  running-type  p.running-state.current-agent
       ::
-      =^  nests  cache.sat  (~(nest wa cache.sat) running-type received-type)
+      =^  nests  cache.current-agent  (~(nest wa cache.current-agent) running-type received-type)
       ::
       =/  possibly-vase
         ?.  nests
@@ -2591,7 +2589,7 @@
       =/  compiled
         =/  =type  [%cell p.gat p.arg]
         =/  =hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
-        (~(mint wa cache.sat) type hoon)
+        (~(mint wa cache.current-agent) type hoon)
       ::
       =/  virtual
         =/  trap  |.(compiled)
@@ -2617,7 +2615,7 @@
           %2  [%.n p.ton]
         ==
       ::
-      =/  next  ap-state(cache.sat worm)
+      =/  next  ap-state(cache.current-agent worm)
       [possibly-vase next]
     ::
     ::  +ap-namespace-view: namespace view.
