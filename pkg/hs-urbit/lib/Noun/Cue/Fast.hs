@@ -1,9 +1,10 @@
 {-# LANGUAGE MagicHash #-}
 
-module Noun.Cue.Fast where
+module Noun.Cue.Fast (cueFatBS, cueFat, cueBS, cue) where
 
 import ClassyPrelude
 import Noun
+import Noun.Fat
 import Noun.Atom
 import Noun.Poet
 import Data.Bits hiding (Bits)
@@ -36,11 +37,17 @@ import Test.QuickCheck hiding ((.&.))
 
 --------------------------------------------------------------------------------
 
+cueFatBS :: ByteString -> Either DecodeExn FatNoun
+cueFatBS = doGet dNoun
+
+cueFat :: Atom -> Either DecodeExn FatNoun
+cueFat = cueFatBS . view atomBS
+
 cueBS :: ByteString -> Either DecodeExn Noun
-cueBS = doGet dNoun
+cueBS = fmap fromFatNoun . cueFatBS
 
 cue :: Atom -> Either DecodeExn Noun
-cue = cueBS . view atomBS
+cue = fmap fromFatNoun . cueFat
 
 
 -- Debugging -------------------------------------------------------------------
@@ -89,7 +96,7 @@ data GetResult a = GetResult {-# UNPACK #-} !S !a
 
 newtype Get a = Get
   { runGet :: Ptr Word
-           -> H.LinearHashTable Word Noun
+           -> H.BasicHashTable Word FatNoun
            -> S
            -> IO (GetResult a)
   }
@@ -100,7 +107,7 @@ doGet :: Get a -> ByteString -> Either DecodeExn a
 doGet m bs =
   unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs \(ptr, len) -> do
     let endPtr = ptr `plusPtr` len
-    tbl <- H.new
+    tbl <- H.newSized 1000000
     GetResult _ r <- runGet m endPtr tbl (S (castPtr ptr) 0 0)
     pure r
 
@@ -156,12 +163,12 @@ getPos :: Get Word
 getPos = Get $ \_ _ s ->
   pure (GetResult s (pos s))
 
-insRef :: Word -> Noun -> Get ()
+insRef :: Word -> FatNoun -> Get ()
 insRef pos now = Get \_ tbl s -> do
   H.insert tbl pos now
   pure $ GetResult s ()
 
-getRef :: Word -> Get Noun
+getRef :: Word -> Get FatNoun
 getRef ref = Get \x tbl s -> do
   H.lookup tbl ref >>= \case
     Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
@@ -337,8 +344,8 @@ dAtom = do
     0 -> pure 0
     n -> dAtomBits n
 
-dCell :: Get Noun
-dCell = debugMId "dCell" $ Cell <$> dNoun <*> dNoun
+dCell :: Get FatNoun
+dCell = debugMId "dCell" $ fatCell <$> dNoun <*> dNoun
 
 {-|
     Get a Noun.
@@ -349,7 +356,7 @@ dCell = debugMId "dCell" $ Cell <$> dNoun <*> dNoun
     - If it's zero, get a cell.
     - If it's one, get an atom.
 -}
-dNoun :: Get Noun
+dNoun :: Get FatNoun
 dNoun = do
  debugMId "dNoun" $ do
   p <- getPos
@@ -358,7 +365,7 @@ dNoun = do
 
   dBit >>= \case
     False -> do debugM "It's an atom"
-                (Atom <$> dAtom) >>= yield
+                (fatAtom <$> dAtom) >>= yield
     True  -> dBit >>= \case
       False -> do debugM "It's a cell"
                   dCell >>= yield
