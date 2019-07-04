@@ -8,18 +8,18 @@
   $:  ::  peers: all relations
       ::
       =peers
-      ::  files: locally defined clusters
+      ::  groups: locally defined clusters
       ::
-      =files
+      =groups
       ::  settings: behavior configuration
       ::
       =settings
   ==
 ::
-+$  peers  (map ship relation)
-+$  files  (map tag file)
-+$  tag    @ta
-+$  file   (set ship)
++$  peers   (map ship relation)
++$  groups  (map tag group)
++$  tag     @ta
++$  group   (set ship)
 ::
 +$  relation
   $:  ::  we-since: when we added them as a peer
@@ -40,23 +40,23 @@
   ==
 ::
 +$  local-pokes
-  $%  ::  %add: add `who` as a peer, and/or to `file`
+  $%  ::  %add: add `who` as a peer, and/or to `group`
       ::
-      ::    if the file doesn't exist, it is created
+      ::    if the group doesn't exist, it is created
       ::
-      [%add who=ship file=(unit tag)]
-      ::  %remove: remove `who` as a peer (& all files), or from `file`
+      [%add who=ship group=(unit tag)]
+      ::  %remove: remove `who` as a peer (& all groups), or from `group`
       ::
-      ::    if a file becomes empty, it's removed
+      ::    if a group becomes empty, it's removed
       ::
-      [%remove who=ship file=(unit tag)]
-      ::  %fill: add all peers to this file
+      [%remove who=ship group=(unit tag)]
+      ::  %fill: add all peers to this group
       ::
-      [%fill file=tag]
-      ::  %export: write export-file to path
+      [%fill group=tag]
+      ::  %export: write export-group to path
       ::
       [%export =path which=(set tag)]
-      ::  %import: replace state with export-file at path
+      ::  %import: replace state with export-group at path
       ::
       [%import =path]
       ::  %debug: helper
@@ -114,13 +114,13 @@
   |=  relation
   &(?=(^ we-since) ?=(^ they-since))
 ::
-++  files-with
+++  groups-with
   |=  who=ship
   %-  ~(gas in *(set tag))
-  %+  murn  ~(tap by files)
-  |=  [=tag =file]
+  %+  murn  ~(tap by groups)
+  |=  [=tag =group]
   ^-  (unit ^tag)
-  ?.  (~(has in file) who)  ~
+  ?.  (~(has in group) who)  ~
   `tag
 ::
 ++  fall-relation
@@ -131,7 +131,7 @@
 ::  management
 ::
 ++  do-add
-  |=  [who=ship file=(unit tag)]
+  |=  [who=ship group=(unit tag)]
   =/  old=relation
     %-  fall-relation
     (~(get by peers) who)
@@ -139,25 +139,25 @@
   =?  peers  new
     %+  ~(put by peers)  who
     old(we-since `now.bowl)
-  =?  files  ?=(^ file)
-    (~(put ju files) u.file who)
+  =?  groups  ?=(^ group)
+    (~(put ju groups) u.group who)
   :_  this
   ?.  new  ~
   [(peer who) ~]
 ::
 ++  do-remove
   |=  [who=ship from=(unit tag)]
-  =/  have=(unit [who=ship =relation files=(set tag)])
+  =/  have=(unit [who=ship =relation groups=(set tag)])
     =+  old=(~(get by peers) who)
     ?~  old  ~
-    `[who u.old (files-with who)]
+    `[who u.old (groups-with who)]
   ?^  from
-    ::  remove from one file
+    ::  remove from one group
     ::
     ~&  "removing {(scow %p who)} from %{(trip u.from)}"
-    =*  from-file=tag  u.from
-    =-  [~ this(files -)]
-    (~(del ju files) from-file who)
+    =*  from-group=tag  u.from
+    =-  [~ this(groups -)]
+    (~(del ju groups) from-group who)
   ::  remove as peer
   ::
   ~&  "dropping {(scow %p who)}"
@@ -170,14 +170,14 @@
     ::
     %+  ~(put by peers)  who
     relation.u.have(we-since ~)
-  ::  & remove from all files
+  ::  & remove from all groups
   ::
-  =.  files
-    %-  ~(gas by *^files)
-    %+  murn  ~(tap by files)
-    |=  [=tag =file]
+  =.  groups
+    %-  ~(gas by *^groups)
+    %+  murn  ~(tap by groups)
+    |=  [=tag =group]
     ^-  (unit _+<)
-    =+  (~(del in file) who)
+    =+  (~(del in group) who)
     ?:(=(~ -) ~ `[tag -])
   :_  this
   ::  only send drop poke if we used to care
@@ -189,11 +189,11 @@
   [(drop who) ~]
 ::
 ++  do-fill
-  |=  file=tag
-  =-  [~ this(files -)]
-  %+  ~(put by files)  file
+  |=  group=tag
+  =-  [~ this(groups -)]
+  %+  ~(put by groups)  group
   %-  ~(uni in ~(key by peers))
-  (fall (~(get by files) file) *^file)
+  (fall (~(get by groups) group) *^group)
 ::
 ::  move construction
 ::
@@ -238,7 +238,7 @@
   ::
       %debug
     ~&  peers+peers
-    ~&  files+files
+    ~&  groups+groups
     [~ this]
   ==
 ::
@@ -268,10 +268,10 @@
 ::
 ::  data interface
 ::
-::    /peers/(filter)/(file)
-::      local-only, all peers that match optional filter and file
-::    /files/(tag)
-::      local-only, all files, or file with tag
+::    /peers/(filter)/(group)
+::      local-only, all peers that match optional filter and group
+::    /groups/(tag)
+::      local-only, all groups, or group with tag
 ::    /peeps
 ::      all of /peers/ours that are public
 ::
@@ -290,14 +290,14 @@
       ==
     ::
       ?|  ?=(~ tag)
-          (~(has ju files) u.tag who)
+          (~(has ju groups) u.tag who)
   ==  ==
 ::
-++  files-result
+++  groups-result
   |=  tag=(unit tag)
-  ^+  files
-  ?~  tag  files
-  [u.tag^(~(get ju files) u.tag) ~ ~]
+  ^+  groups
+  ?~  tag  groups
+  [u.tag^(~(get ju groups) u.tag) ~ ~]
 ::
 ++  peeps-results
   %-  ~(gas by *(map ship @da))
@@ -324,12 +324,12 @@
     ?~  t.args  ~
     `i.t.args
   ::
-      [%files ?(~ [@ ~])]
+      [%groups ?(~ [@ ~])]
     ?.  =(src.bowl our.bowl)  [~ ~]
     :+  ~  ~
     :-  %noun
     =*  args  t.path
-    %-  files-result
+    %-  groups-result
     ?~(args ~ `i.args)
   ::
       [%peeps ~]
