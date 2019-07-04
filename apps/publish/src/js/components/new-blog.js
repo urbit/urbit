@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
-import { store } from '/store';
 
 const PC = withRouter(PathControl);
 
@@ -96,12 +95,8 @@ export class NewBlog extends Component {
     this.setState({
       awaiting: blogId
     });
-
-    store.handleEvent({
-      data: {
-        spinner: true,
-      }
-    });
+  
+    this.props.setSpinner(true);
 
     this.props.api.action("write", "write-action", makeBlog);
     this.props.api.action("write", "write-action", sendInvites);
@@ -110,11 +105,7 @@ export class NewBlog extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.awaiting) {
       if (this.props.pubs[this.state.awaiting]) {
-        store.handleEvent({
-          data: {
-            spinner: false,
-          }
-        });
+        this.props.setSpinner(false);
         this.props.history.push(`/~publish/~${window.ship}/${this.state.awaiting}`);
       }
     }

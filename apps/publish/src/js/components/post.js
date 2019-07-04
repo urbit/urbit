@@ -8,7 +8,6 @@ import { Comments } from '/components/lib/comments';
 import { PathControl } from '/components/lib/path-control';
 import { NextPrev } from '/components/lib/next-prev';
 import _ from 'lodash';
-import { store } from '/store';
 
 export class Post extends Component {
   constructor(props){
@@ -103,11 +102,7 @@ export class Post extends Component {
       }
     });
 
-    store.handleEvent({
-      data: {
-        spinner: true,
-      }
-    });
+    this.props.setSpinner(true);
 
     this.props.api.action("write", "write-action", data);
   }
@@ -161,11 +156,7 @@ export class Post extends Component {
           temporary: true,
         });
 
-        store.handleEvent({
-          data: {
-            spinner: true,
-          }
-        });
+        this.props.setSpinner(true);
 
         this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
           this.handleEvent.bind(this),
@@ -219,11 +210,7 @@ export class Post extends Component {
         ],
       });
 
-      store.handleEvent({
-        data: {
-          spinner: false,
-        }
-      });
+      this.props.setSpinner(false);
 
     } else if (diff.data.collection) {
       let newBlog = this.state.blog;
@@ -285,11 +272,7 @@ export class Post extends Component {
         post: post,
       });
 
-      store.handleEvent({
-        data: {
-          spinner: false,
-        }
-      });
+      this.props.setSpinner(false);
     }
 
     if (!this.state.temporary){

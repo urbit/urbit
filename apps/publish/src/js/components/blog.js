@@ -4,7 +4,6 @@ import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
-import { store } from '/store';
 
 const PC = withRouter(PathControl);
 
@@ -38,11 +37,7 @@ export class Blog extends Component {
         ],
       });
 
-      store.handleEvent({
-        data: {
-          spinner: false,
-        }
-      });
+      this.props.setSpinner(false);
     }
   }
 
@@ -67,11 +62,7 @@ export class Blog extends Component {
         temporary: true,
       });
 
-      store.handleEvent({
-        data: {
-          spinner: true,
-        }
-      });
+      this.props.setSpinner(true);
 
       this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
         this.handleEvent.bind(this),

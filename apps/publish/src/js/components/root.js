@@ -7,7 +7,6 @@ import _ from 'lodash';
 import { api } from '/api';
 import { store } from '/store';
 import { Recent } from '/components/recent';
-import { New } from '/components/new';
 import { NewBlog } from '/components/new-blog';
 import { NewPost } from '/components/new-post';
 import { Skeleton } from '/components/skeleton';
