@@ -106,9 +106,11 @@ type Bits = Vector Bool
 doGet :: Get a -> ByteString -> Either DecodeExn a
 doGet m bs =
   unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs \(ptr, len) -> do
-    -- traceM ("cue size: " <> show (length bs `div` 10))
     let endPtr = ptr `plusPtr` len
-    tbl <- H.newSized (length bs `div` 10)
+    let sz = max 50
+           $ min 10_000_000
+           $ length bs `div` 6
+    tbl <- H.newSized sz
     GetResult _ r <- runGet m endPtr tbl (S (castPtr ptr) 0 0)
     pure r
 

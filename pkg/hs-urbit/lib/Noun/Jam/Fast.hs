@@ -339,11 +339,9 @@ jamWordSz (W# w) = 1 + 2*(W# preW) + (W# atmW)
 
 compress :: FatNoun -> IO (Word, H.CuckooHashTable Word Word)
 compress top = do
-    -- traceM "<compress>"
-    let sz =  10 ^ (floor $ logBase 600 (fromIntegral $ fatSize top))
-
-    -- traceM ("inp(" <> show (fatSize top) <> ")")
-    -- traceM ("sz(" <> show sz <> ")")
+    let sz = max 50
+           $ min 10_000_000
+           $ 2 * (10 ^ (floor $ logBase 600 (fromIntegral $ fatSize top)))
 
     nodes :: H.BasicHashTable  FatNoun Word <- H.newSized sz
     backs :: H.CuckooHashTable Word    Word <- H.newSized sz
@@ -356,7 +354,6 @@ compress top = do
                 !hSz <- go (pos+2) h
                 !tSz <- go (pos+2+hSz) t
                 pure (2+hSz+tSz)
-
 
         go :: Word -> FatNoun -> IO Word
         go p inp = do
@@ -375,8 +372,7 @@ compress top = do
                         _                                            -> noRef
 
     res <- go 0 top
-    -- traceM "</compress>"
-    -- print res
+
     pure (res, backs)
 
 
