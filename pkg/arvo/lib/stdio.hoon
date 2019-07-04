@@ -198,7 +198,7 @@
 ::  Incoming HTTP requests
 ::
 ++  bind-route-raw
-  |=  [=binding:http-server =term]
+  |=  [=binding:eyre =term]
   =/  m  (async ,~)
   ^-  form:m
   (send-raw-card [%connect / binding term])
@@ -216,7 +216,7 @@
   [%done success.sign]
 ::
 ++  bind-route
-  |=  [=binding:http-server =term]
+  |=  [=binding:eyre =term]
   =/  m  (async ?)
   ^-  form:m
   ;<  ~  bind:m  (bind-route-raw binding term)

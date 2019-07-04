@@ -406,7 +406,7 @@
   ::  Receive route binding notification
   ::
   ++  bound
-    |=  [=wire success=? =binding:http-server]
+    |=  [=wire success=? =binding:eyre]
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
   ::

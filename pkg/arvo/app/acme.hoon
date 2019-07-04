@@ -147,7 +147,7 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire =binding:http-server app=term]
+  $%  [%connect wire =binding:eyre app=term]
       [%http-response =http-event:http]
       [%poke wire dock poke]
       [%request wire request:http outbound-config:http-client]
@@ -1193,7 +1193,7 @@
 ::    Used to serve the domain validation challenge
 ::
 ++  poke-handle-http-request
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ~&  [%handle-http +<]
   =/  url=(unit (pair pork:eyre quay:eyre))
@@ -1315,7 +1315,7 @@
 ::  +bound: response to %connect binding request
 ::
 ++  bound
-  |=  [=wire accepted=? =binding:http-server]
+  |=  [=wire accepted=? =binding:eyre]
   ?:  accepted
     [~ this]
   ::  XX better error message

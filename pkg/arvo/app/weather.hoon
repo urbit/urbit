@@ -21,7 +21,7 @@
   $%  [%poke wire dock poke]
       [%http-response =http-event:http]
       [%diff %json json]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%request wire request:http outbound-config:http-client]
       [%wait wire @da]
   ==
@@ -38,7 +38,7 @@
 ++  this  .
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -126,7 +126,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   =+  request-line=(parse-request-line url.request.inbound-request)
   =+  back-path=(flop site.request-line)

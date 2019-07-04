@@ -2,7 +2,7 @@
 ::  lighter than eyre
 ::
 |=  pit=vase
-=,  http-server
+=,  eyre
 ::  internal data structures
 ::
 =>  =~
@@ -1460,7 +1460,7 @@
         ^-  (list move)
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able:http-server
+        ^-  gift:able
         :*  %response  %continue
         ::
             ^=  data

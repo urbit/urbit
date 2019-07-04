@@ -64,7 +64,7 @@
           task:able:dill                                ::
       ==                                                ::
       $:  %e                                            ::
-          $>(%wegh task:able:http-server)               ::
+          $>(%wegh task:able:eyre)                      ::
       ==                                                ::
       $:  %f                                            ::
           $>(%wegh task:able:ford)                      ::
@@ -112,7 +112,7 @@
           $>(%blit gift:able:dill)                      ::
       ==                                                ::
       $:  %e                                            ::
-          $>(%mass gift:able:http-server)               ::
+          $>(%mass gift:able:eyre)                      ::
       ==                                                ::
       $:  %f                                            ::
           $>(%mass gift:able:ford)                      ::

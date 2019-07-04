@@ -15,7 +15,7 @@
     +$  in-poke-data
       $%  [%dns-authority =authority]
           [%dns-bind =ship =target]
-          [%handle-http-request =inbound-request:http-server]
+          [%handle-http-request =inbound-request:eyre]
       ==
     +$  out-poke-data
       $%  [%dns-bind =ship =target]

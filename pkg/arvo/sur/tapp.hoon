@@ -12,7 +12,7 @@
       [%diff out-peer-data]
       [%request wire request:http outbound-config:http-client]
       [%cancel-request wire ~]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%rule wire %turf %put turf]
   ==
@@ -24,7 +24,7 @@
       [%coup =dock error=(unit tang)]
       [%quit =dock =path]
       [%reap =dock =path error=(unit tang)]
-      [%bound success=? =binding:http-server]
+      [%bound success=? =binding:eyre]
       [%http-response response=client-response:http-client]
   ==
 ::
