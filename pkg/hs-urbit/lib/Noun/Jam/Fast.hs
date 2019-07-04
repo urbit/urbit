@@ -269,9 +269,9 @@ writeNoun :: FatNoun -> Put ()
 writeNoun n =
   getRef >>= \case
     Just bk -> writeBackRef bk
-    Nothing -> case n of FatAtom _ n    -> writeAtom (MkAtom $ NatJ# n)
-                         FatWord (W# w) -> writeAtom (MkAtom $ NatS# w)
-                         FatCell _ h t  -> writeCell h t
+    Nothing -> case n of FatAtom _ n     -> writeAtom (MkAtom $ NatJ# n)
+                         FatWord (W# w)  -> writeAtom (MkAtom $ NatS# w)
+                         FatCell _ _ h t -> writeCell h t
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -340,17 +340,23 @@ jamWordSz (W# w) = 1 + 2*(W# preW) + (W# atmW)
 compress :: FatNoun -> IO (Word, H.CuckooHashTable Word Word)
 compress top = do
     -- traceM "<compress>"
-    nodes :: H.BasicHashTable  FatNoun Word <- H.new -- Sized 1000000
-    backs :: H.CuckooHashTable Word    Word <- H.new -- Sized 1000000
+    let sz =  10 ^ (floor $ logBase 600 (fromIntegral $ fatSize top))
+
+    -- traceM ("inp(" <> show (fatSize top) <> ")")
+    -- traceM ("sz(" <> show sz <> ")")
+
+    nodes :: H.BasicHashTable  FatNoun Word <- H.newSized sz
+    backs :: H.CuckooHashTable Word    Word <- H.newSized sz
 
     let proc :: Word -> FatNoun -> IO Word
         proc pos = \case
             n@(FatAtom _ a) -> pure $ atomSz (MkAtom (NatJ# a))
             FatWord w       -> pure (jamWordSz w)
-            FatCell _ h t   -> do
+            FatCell _ _ h t -> do
                 !hSz <- go (pos+2) h
                 !tSz <- go (pos+2+hSz) t
                 pure (2+hSz+tSz)
+
 
         go :: Word -> FatNoun -> IO Word
         go p inp = do
@@ -363,7 +369,7 @@ compress top = do
                         doRef = H.insert backs p bak $> rs
                         noRef = proc p inp
                     case inp of
-                        FatCell _ _ _                                -> doRef
+                        FatCell _ _ _ _                              -> doRef
                         FatWord w   | rs < atomSz (fromIntegral w)   -> doRef
                         FatAtom _ a | rs < atomSz (MkAtom (NatJ# a)) -> doRef
                         _                                            -> noRef

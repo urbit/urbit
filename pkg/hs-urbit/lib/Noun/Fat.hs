@@ -6,7 +6,8 @@
 {-# OPTIONS_GHC -fwarn-unused-binds -fwarn-unused-imports #-}
 
 module Noun.Fat ( FatNoun(..)
-                , fatHash, fatCell, fatAtom
+                , fatSize, fatHash
+                , fatCell, fatAtom
                 , toFatNoun, fromFatNoun
                 ) where
 
@@ -26,6 +27,7 @@ import Noun                      (Noun(Atom, Cell))
 
 data FatNoun
     = FatCell {-# UNPACK #-} !Int
+              !Word
               !FatNoun
               !FatNoun
     | FatWord {-# UNPACK #-} !Word
@@ -50,8 +52,8 @@ instance Eq FatNoun where
                   w1==w2
               (FatAtom x1 a1,    FatAtom x2 a2   ) ->
                   x1==x2 && a1==a2
-              (FatCell x1 h1 t1, FatCell x2 h2 t2) ->
-                  x1==x2 && h1==h2 && t1==t2
+              (FatCell x1 s1 h1 t1, FatCell x2 s2 h2 t2) ->
+                  s1==s2 && x1==x2 && h1==h2 && t1==t2
               (_,                _               ) ->
                   False
   {-# INLINE (==) #-}
@@ -59,12 +61,17 @@ instance Eq FatNoun where
 
 --------------------------------------------------------------------------------
 
+fatSize :: FatNoun -> Word
+fatSize = \case
+  FatCell _ s _ _ -> s
+  _               -> 1
+
 {-# INLINE fatHash #-}
 fatHash :: FatNoun -> Int
 fatHash = \case
-  FatCell h _ _ -> h
-  FatAtom h _   -> h
-  FatWord w     -> hash w
+  FatCell h _ _ _ -> h
+  FatAtom h _     -> h
+  FatWord w       -> hash w
 
 {-# INLINE fatAtom #-}
 fatAtom :: Atom -> FatNoun
@@ -74,8 +81,9 @@ fatAtom = \case
 
 {-# INLINE fatCell #-}
 fatCell :: FatNoun -> FatNoun -> FatNoun
-fatCell h t = FatCell has h t
+fatCell h t = FatCell has siz h t
   where
+    siz = fatSize h + fatSize t
     has = fatHash h `combine` fatHash t
 
 {-# INLINE toFatNoun #-}
@@ -89,9 +97,9 @@ toFatNoun = go
 fromFatNoun :: FatNoun -> Noun
 fromFatNoun = go
   where go = \case
-          FatAtom _ a   -> Atom (MkAtom $ NatJ# a)
-          FatCell _ h t -> Cell (go h) (go t)
-          FatWord w     -> Atom (fromIntegral w)
+          FatAtom _ a     -> Atom (MkAtom $ NatJ# a)
+          FatCell _ _ h t -> Cell (go h) (go t)
+          FatWord w       -> Atom (fromIntegral w)
 
 
 -- Stolen from Hashable Library ------------------------------------------------
