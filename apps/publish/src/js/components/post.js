@@ -65,6 +65,7 @@ export class Post extends Component {
   }
   
   savePost() {
+    this.props.setSpinner(true);
     if (this.state.title == this.state.titleOriginal &&
         this.state.body == this.state.bodyOriginal) {
       return;
@@ -100,11 +101,9 @@ export class Post extends Component {
         blogId: this.props.blogId,
         postId: this.props.postId,
       }
+    }, () => {
+      this.props.api.action("write", "write-action", data)
     });
-
-    this.props.setSpinner(true);
-
-    this.props.api.action("write", "write-action", data);
   }
 
   componentWillMount() {
@@ -346,6 +345,7 @@ export class Post extends Component {
                 ship={this.props.ship}
                 blogId={this.props.blogId}
                 postId={this.props.postId}
+                setSpinner={this.props.setSpinner}
               />
             </div>
           </div>
@@ -400,6 +400,7 @@ export class Post extends Component {
                 ship={this.props.ship}
                 blogId={this.props.blogId}
                 postId={this.props.postId}
+                setSpinner={this.props.setSpinner}
               />
             </div>
           </div>
