@@ -466,7 +466,7 @@
       {@ $newt *}  %a
       {@ $sync *}  %c
       {@ $term *}  %d
-      {@ $http-client *}  %l
+      {@ $http-client *}  %i
       {@ $http-server *}  %e
       {@ $behn *}  %b
     ==

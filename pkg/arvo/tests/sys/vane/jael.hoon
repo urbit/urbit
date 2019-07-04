@@ -70,7 +70,7 @@
       ^=  comparator
         |=  moves=(list move:jael-gate)
         ?>  ?=(^ moves)
-        ?>  ?=([* %pass * %l %request *] i.moves)
+        ?>  ?=([* %pass * %i %request *] i.moves)
         ;:  weld
           %+  expect-eq
             !>  1

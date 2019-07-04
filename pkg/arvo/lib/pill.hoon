@@ -14,16 +14,6 @@
     :~  ::  sys/zuse: standard library
         ::
         [%$ /zuse]
-        ::  TODO: I really want these to be named http-client and http-server,
-        ::  but this interacts badly with every piece of the system which
-        ::  assumes that vane names are one letter, and that one letter is the
-        ::  first letter of the file. This assumption is threaded through way
-        ::  too many places in the entire system to modify it while doing
-        ::  something else.
-        ::
-        ::  sys/vane/lient: http client
-        ::
-        [%l /vane/lient]
         ::  sys/vane/ames: network
         ::
         [%a /vane/ames]
@@ -45,6 +35,9 @@
         ::  sys/vane/gall: applications
         ::
         [%g /vane/gall]
+        ::  sys/vane/iris: http client
+        ::
+        [%i /vane/iris]
         ::  sys/vane/jael: security
         ::
         [%j /vane/jael]

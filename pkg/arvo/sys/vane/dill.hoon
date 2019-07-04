@@ -19,8 +19,8 @@
           e/(unit mass)                                 ::
           f/(unit mass)                                 ::
           g/(unit mass)                                 ::
+          i/(unit mass)                                 ::
           j/(unit mass)                                 ::
-          l/(unit mass)                                 ::
       ==                                                ::
   ==                                                    ::
 ++  axon                                                ::  dill per duct
@@ -76,15 +76,15 @@
               ==                                        ::
           task:able:gall                                ::
       ==                                                ::
+      $:  %i                                            ::
+          $>(%wegh task:able:http-client)               ::
+      ==                                                ::
       $:  %j                                            ::
           $>  $?  %dawn                                 ::
                   %fake                                 ::
                   %wegh                                 ::
               ==                                        ::
           task:able:jael                                ::
-      ==                                                ::
-      $:  %l                                            ::
-          $>(%wegh task:able:http-client)               ::
   ==  ==                                                ::
 ++  sign                                                ::  in result $<-
   $~  [%j %init *@p]                                    ::
@@ -124,14 +124,14 @@
               ==                                        ::
           gift:able:gall                                ::
       ==                                                ::
+      $:  %i                                            ::
+          $>(%mass gift:able:http-client)               ::
+      ==                                                ::
       $:  %j                                            ::
           $>  $?  %init                                 ::
                   %mass                                 ::
               ==                                        ::
           gift:able:jael                                ::
-      ==                                                ::
-      $:  %l                                            ::
-          $>(%mass gift:able:http-client)               ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -282,8 +282,8 @@
               [hen %pass /heft/eyre %e %wegh ~]
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
+              [hen %pass /heft/iris %i %wegh ~]
               [hen %pass /heft/jael %j %wegh ~]
-              [hen %pass /heft/lient %l %wegh ~]
               moz
           ==
         ==
@@ -385,7 +385,7 @@
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g $j $l) $mass *}
+            {?($a $b $c $e $f $g $i $j) $mass *}
           (wegh -.sih p.sih)
         ::
             {$a $nice *}
@@ -440,7 +440,7 @@
       ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        |=  [lal=?(%a %b %c %e %f %g %j %l) mas=mass]
+        |=  [lal=?(%a %b %c %e %f %g %i %j) mas=mass]
         ^+  +>
         ::  update our listing of vane responses with this new one
         ::
@@ -452,8 +452,8 @@
             %e  ~?(?=(^ e.hef.all) %double-mass-e hef.all(e `mas))
             %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
+            %i  ~?(?=(^ i.hef.all) %double-mass-i hef.all(i `mas))
             %j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
-            %l  ~?(?=(^ l.hef.all) %double-mass-l hef.all(l `mas))
           ==
         ::  if not all vanes have responded yet, no-op
         ::
@@ -463,8 +463,8 @@
                 ?=(^ e.hef.all)
                 ?=(^ f.hef.all)
                 ?=(^ g.hef.all)
+                ?=(^ i.hef.all)
                 ?=(^ j.hef.all)
-                ?=(^ l.hef.all)
             ==
           +>.$
         ::  clear vane reports from our state before weighing ourself
@@ -472,7 +472,7 @@
         ::    Otherwise, the state of vanes printed after this one get absorbed
         ::    into Dill's %dot catchall report.
         ::
-        =/  ven=(list mass)  ~[u.a u.b u.c u.e u.f u.g u.j u.l]:hef.all
+        =/  ven=(list mass)  ~[u.a u.b u.c u.e u.f u.g u.i u.j]:hef.all
         =>  .(hef.all [~ ~ ~ ~ ~ ~ ~ ~])
         ::  wegh ourself now that our state doesn't include other masses
         ::

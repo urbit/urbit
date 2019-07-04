@@ -7603,8 +7603,8 @@
       gift:able:http-server
       gift:able:ford
       gift:able:gall
-      gift:able:jael
       gift:able:http-client
+      gift:able:jael
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
@@ -7614,8 +7614,8 @@
       task:able:http-client
       task:able:ford
       task:able:gall
-      task:able:jael
       task:able:http-server
+      task:able:jael
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%a %wake ~]
@@ -7626,8 +7626,8 @@
       [%e task:able:http-server]
       {$f task:able:ford}
       {$g task:able:gall}
+      [%i task:able:http-client]
       {$j task:able:jael}
-      [%l task:able:http-client]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7642,8 +7642,8 @@
       {$f gift:able:ford}
       [%e gift:able:http-server]
       {$g gift:able:gall}
+      [%i gift:able:http-client]
       {$j gift:able:jael}
-      [%l gift:able:http-client]
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -7660,7 +7660,7 @@
       ::  %clay: new process
       ::
       $>(%boat task:able:clay)
-      ::  %behn/%lient/%eyre: new process
+      ::  %behn/%eyre/%iris: new process
       ::
       ::    XX %eyre includes payload
       ::
@@ -7686,7 +7686,7 @@
       ::  %eyre: learn ports of live http servers
       ::
       $>(%live task:able:http-server)
-      ::  %lient: hear (partial) http response
+      ::  %iris: hear (partial) http response
       ::
       $>(%receive task:able:http-client)
       ::  %eyre: starts handling an inbound http request

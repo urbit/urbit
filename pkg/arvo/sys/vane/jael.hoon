@@ -110,11 +110,11 @@
       $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
+      $:  %i                                            ::    to %iris
+          $>(%request task:able:http-client)            ::  http request
+      ==                                                ::
       $:  %j                                            ::    to self
           $>(%look task)                                ::  set ethereum source
-      ==                                                ::
-      $:  %l                                            ::    to %lient
-          $>(%request task:able:http-client)            ::  http request
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -126,7 +126,7 @@
   $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
       [%j $>(%vent gift)]                               ::  ethereum changes
       [%a $>(%woot gift:able:ames)]                     ::  message result
-      [%l $>(%http-response gift:able:http-client)]     ::  http response
+      [%i $>(%http-response gift:able:http-client)]     ::  http response
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -1001,7 +1001,7 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%l %http-response *]
+        [%i %http-response *]
       ?.  ?=(%finished -.client-response.hin)
         +>.$
       ~!  hin
@@ -1756,7 +1756,7 @@
     |=  [wir=wire jon=json]
     ^-  move
     %+  wrap-note  wir
-    :^  %l  %request
+    :^  %i  %request
       ?>  ?=(%| -.source)
       (light-json-request node.p.source jon)
     *outbound-config:http-client
