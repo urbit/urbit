@@ -107,7 +107,7 @@ doGet :: Get a -> ByteString -> Either DecodeExn a
 doGet m bs =
   unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs \(ptr, len) -> do
     let endPtr = ptr `plusPtr` len
-    tbl <- H.newSized 1000000
+    tbl <- H.new -- Sized 1000000
     GetResult _ r <- runGet m endPtr tbl (S (castPtr ptr) 0 0)
     pure r
 
@@ -345,7 +345,7 @@ dAtom = do
     n -> dAtomBits n
 
 dCell :: Get FatNoun
-dCell = debugMId "dCell" $ fatCell <$> dNoun <*> dNoun
+dCell = fatCell <$> dNoun <*> dNoun
 
 {-|
     Get a Noun.
@@ -358,7 +358,6 @@ dCell = debugMId "dCell" $ fatCell <$> dNoun <*> dNoun
 -}
 dNoun :: Get FatNoun
 dNoun = do
- debugMId "dNoun" $ do
   p <- getPos
 
   let yield r = insRef p r >> pure r

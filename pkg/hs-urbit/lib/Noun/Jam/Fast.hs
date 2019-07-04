@@ -245,7 +245,7 @@ instance Monad Put where
 doPut :: H.CuckooHashTable Word Word -> Word -> Put () -> ByteString
 doPut tbl sz m =
     unsafePerformIO $ do
-        traceM "doPut"
+        -- traceM "doPut"
         buf <- callocBytes (fromIntegral (wordSz*8))
         _   <- runPut (m >> mbFlush) tbl (S buf 0 0 0)
         BS.unsafePackCStringFinalizer (castPtr buf) byteSz (free buf)
@@ -269,9 +269,9 @@ writeNoun :: FatNoun -> Put ()
 writeNoun n =
   getRef >>= \case
     Just bk -> writeBackRef bk
-    Nothing -> case n of FatAtom _ _ n   -> writeAtom (MkAtom $ NatJ# n)
-                         FatWord (W# w)  -> writeAtom (MkAtom $ NatS# w)
-                         FatCell _ _ h t -> writeCell h t
+    Nothing -> case n of FatAtom _ n    -> writeAtom (MkAtom $ NatJ# n)
+                         FatWord (W# w) -> writeAtom (MkAtom $ NatS# w)
+                         FatCell _ h t  -> writeCell h t
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -321,21 +321,33 @@ matSz# a = preW `plusWord#` preW `plusWord#` atmW
     atmW = atomBitWidth# a
     preW = wordBitWidth# atmW
 
+{-# INLINE atomSz #-}
+atomSz :: Atom -> Word
+atomSz = (1+) . matSz
+
 {-# INLINE refSz #-}
 refSz :: Word -> Word
-refSz w = 1 + (jamWordSz w)
+refSz = (1+) . jamWordSz
+
+{-# INLINE jamWordSz #-}
+jamWordSz :: Word -> Word
+jamWordSz 0      = 2
+jamWordSz (W# w) = 1 + 2*(W# preW) + (W# atmW)
+  where
+    atmW = wordBitWidth# w
+    preW = wordBitWidth# atmW
 
 compress :: FatNoun -> IO (Word, H.CuckooHashTable Word Word)
 compress top = do
-    traceM "<compress>"
-    nodes :: H.BasicHashTable  FatNoun Word <- H.newSized 1000000
-    backs :: H.CuckooHashTable Word    Word <- H.newSized 1000000
+    -- traceM "<compress>"
+    nodes :: H.BasicHashTable  FatNoun Word <- H.new -- Sized 1000000
+    backs :: H.CuckooHashTable Word    Word <- H.new -- Sized 1000000
 
     let proc :: Word -> FatNoun -> IO Word
         proc pos = \case
-            n@(FatAtom s _ _) -> pure s
-            FatWord w         -> pure (jamWordSz w)
-            FatCell _ _ h t   -> do
+            n@(FatAtom _ a) -> pure $ atomSz (MkAtom (NatJ# a))
+            FatWord w       -> pure (jamWordSz w)
+            FatCell _ h t   -> do
                 !hSz <- go (pos+2) h
                 !tSz <- go (pos+2+hSz) t
                 pure (2+hSz+tSz)
@@ -347,15 +359,18 @@ compress top = do
                     H.insert nodes inp p
                     proc p inp
                 Just bak -> do
-                    let rs = refSz bak
-                    if (rs < fatSize inp)
-                    then do H.insert backs p bak
-                            pure rs
-                    else proc p inp
+                    let rs    = refSz bak
+                        doRef = H.insert backs p bak $> rs
+                        noRef = proc p inp
+                    case inp of
+                        FatCell _ _ _                                -> doRef
+                        FatWord w   | rs < atomSz (fromIntegral w)   -> doRef
+                        FatAtom _ a | rs < atomSz (MkAtom (NatJ# a)) -> doRef
+                        _                                            -> noRef
 
     res <- go 0 top
-    traceM "</compress>"
-    print res
+    -- traceM "</compress>"
+    -- print res
     pure (res, backs)
 
 

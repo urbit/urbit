@@ -18,8 +18,8 @@ nix:
     - SDL2_image
     - zlib
 
-# ghc-options:
-#     urbit: '-fobject-code'
+ghc-options:
+    urbit: '-fobject-code'
 
 # build:
 #   executable-profiling: true
