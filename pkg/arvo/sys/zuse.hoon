@@ -901,9 +901,7 @@
           $>(%init vane-task)
           ::  new unix process
           ::
-          ::    XX use +vane-task
-          ::
-          [%born p=(list host)]
+          $>(%born vane-task)
           ::  report upgrade
           ::
           $>(%vega vane-task)
@@ -7640,8 +7638,6 @@
       ::
       $>(%boat task:able:clay)
       ::  %behn/%eyre/%iris: new process
-      ::
-      ::    XX %eyre includes payload
       ::
       $>(%born vane-task)
       ::  %eyre: cancel request
