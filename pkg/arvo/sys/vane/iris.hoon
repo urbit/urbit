@@ -2,7 +2,7 @@
 ::  http-client
 ::
 |=  pit=vase
-=,  http-client
+=,  iris
 ::
 ::
 ::  internal data structures
@@ -146,7 +146,7 @@
     ^-  [(list move) ^state]
     ::
     ?~  cancel-id=(~(get by connection-by-duct.state) duct)
-      ~&  %invalid-lient-cancel
+      ~&  %iris-invalid-cancel
       [~ state]
     ::
     :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
@@ -365,7 +365,7 @@
             %give
             %mass
             ^-  mass
-            :+  %lient  %|
+            :+  %iris  %|
             :~  nex+&+next-id.state.ax
                 outbound+&+outbound-duct.state.ax
                 by-id+&+connection-by-id.state.ax

@@ -47,7 +47,7 @@
                   %request
                   /acme/try/2/directory
                   [%'GET' (crip (en-purl:html directory-base:app)) ~ ~]
-                  *outbound-config:http-client
+                  *outbound-config:iris
           ==  ==
       !>  moves
 --

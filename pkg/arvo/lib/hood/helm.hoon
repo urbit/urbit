@@ -42,7 +42,7 @@
           {$flog wire flog:dill}                        ::
           [%mint wire p=ship q=safe:rights:jael]
           {$nuke wire ship}                             ::
-          [%serve wire binding:http-server generator:http-server]
+          [%serve wire binding:eyre generator:eyre]
           {$poke wire dock pear}                        ::
           {$rest wire @da}                              ::
           {$wait wire @da}                              ::
@@ -218,11 +218,11 @@
   (emit %flog ~ %text "woot: {<[way cop]>}")
 ::
 ++  poke-serve
-  |=  [=binding:http-server =generator:http-server]  =<  abet
+  |=  [=binding:eyre =generator:eyre]  =<  abet
   (emit %serve /helm/serv binding generator)
 ::
 ++  take-bound
-  |=  [wir=wire success=? binding=binding:http-server]  =<  abet
+  |=  [wir=wire success=? binding=binding:eyre]  =<  abet
   (emit %flog ~ %text "bound: {<success>}")
 ::
 ++  poke-tlon-init-stream

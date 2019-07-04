@@ -27,7 +27,7 @@
 ::
 +$  card
   $%  [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%peer wire dock path]
       [%diff %json json]
   ==
@@ -53,7 +53,7 @@
   [~ this(sta u.old)]
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -110,7 +110,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)
