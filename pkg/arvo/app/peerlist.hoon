@@ -3,6 +3,8 @@
 ::    a drop-in solution to peer discovery for peer-to-peer applications.
 ::    for usage, see +local-pokes.
 ::
+/-  *peerlist
+::
 |%
 +$  state
   $:  ::  peers: all relations
@@ -14,23 +16,6 @@
       ::  settings: behavior configuration
       ::
       =settings
-  ==
-::
-+$  peers   (map ship relation)
-+$  groups  (map tag group)
-+$  tag     @ta
-+$  group   (set ship)
-::
-+$  relation
-  $:  ::  we-since: when we added them as a peer
-      ::
-      we-since=(unit @da)
-      ::  they-since: when they added us as a peer
-      ::
-      they-since=(unit @da)
-      ::  public: visible to others
-      ::
-      public=?
   ==
 ::
 +$  settings
