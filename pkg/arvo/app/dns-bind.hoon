@@ -821,7 +821,7 @@
       ::
       ;<  ~                                       bind:m
         (send-request:stdio (retrieve-access-token:(oauth2-core bowl scry.pro.aut.nam) code))
-      ;<  rep=(unit client-response:http-client)  bind:m
+      ;<  rep=(unit client-response:iris)  bind:m
         take-maybe-response:stdio
       ::  XX  retry
       ::

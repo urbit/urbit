@@ -22,7 +22,7 @@
       [%http-response =http-event:http]
       [%diff %json json]
       [%connect wire binding:eyre term]
-      [%request wire request:http outbound-config:http-client]
+      [%request wire request:http outbound-config:iris]
       [%wait wire @da]
   ==
 +$  poke
@@ -69,7 +69,7 @@
     [~ this]
   =/  str/@t  +.jon
   =/  req/request:http  (request-darksky str)
-  =/  out  *outbound-config:http-client
+  =/  out  *outbound-config:iris
   ?~  timer
     :-  %+  weld
       `(list move)`[ost.bol %wait /timer (add now.bol ~d1)]~
@@ -101,12 +101,12 @@
   [bone %diff %json jon]
 ::
 ++  http-response
-  |=  [=wire response=client-response:http-client]
+  |=  [=wire response=client-response:iris]
   ^-  (quip move _this)
   ::  ignore all but %finished
   ?.  ?=(%finished -.response)
     [~ this]
-  =/  data/(unit mime-data:http-client)  full-file.response
+  =/  data/(unit mime-data:iris)  full-file.response
   ?~  data
     :: data is null
     [~ this]
@@ -152,7 +152,7 @@
   ^-  (quip move _this)
   =/  req/request:http  (request-darksky location)
   =/  lismov/(list move)
-    `(list move)`[ost.bol %request /[(scot %da now.bol)] req *outbound-config:http-client]~
+    `(list move)`[ost.bol %request /[(scot %da now.bol)] req *outbound-config:iris]~
   ?~  timer
     :-  (weld lismov `(list move)`[ost.bol %wait /timer (add now.bol ~h3)]~)
     this(timer `(add now.bol ~h3))

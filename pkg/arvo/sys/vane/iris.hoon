@@ -2,7 +2,7 @@
 ::  http-client
 ::
 |=  pit=vase
-=,  http-client
+=,  iris
 ::
 ::
 ::  internal data structures

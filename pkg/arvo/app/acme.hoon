@@ -150,7 +150,7 @@
   $%  [%connect wire =binding:eyre app=term]
       [%http-response =http-event:http]
       [%poke wire dock poke]
-      [%request wire request:http outbound-config:http-client]
+      [%request wire request:http outbound-config:iris]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
   ==
@@ -394,7 +394,7 @@
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%request wir (hiss-to-request:html req) *outbound-config:http-client]
+  [%request wir (hiss-to-request:html req) *outbound-config:iris]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -1131,7 +1131,7 @@
     ==
   --
 ++  http-response
-  |=  [=wire response=client-response:http-client]
+  |=  [=wire response=client-response:iris]
   ^-  (quip move _this)
   ::  ignore progress reports
   ::
@@ -1144,7 +1144,7 @@
   ?:  ?=(%cancel -.response)
     (retry:event t.wire)
   ::
-  =/  rep=httr  (to-httr:http-client +.response)
+  =/  rep=httr  (to-httr:iris +.response)
   ::  add nonce to pool, if present
   ::
   =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))

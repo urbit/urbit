@@ -1940,6 +1940,119 @@
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   --  ::gall
+::  %iris http-client interface
+::
+++  iris  ^?
+  |%
+  ++  able
+    |%
+    ::  +gift: effects the client can emit
+    ::
+    ++  gift
+      $%  ::  %request: outbound http-request to earth
+          ::
+          ::    TODO: id is sort of wrong for this interface; the duct should
+          ::    be enough to identify which request we're talking about?
+          ::
+          [%request id=@ud request=request:http]
+          ::  %cancel-request: tell earth to cancel a previous %request
+          ::
+          [%cancel-request id=@ud]
+          ::  %response: response to the caller
+          ::
+          [%http-response =client-response]
+          ::  memory usage report
+          ::
+          [%mass p=mass]
+      ==
+    ::
+    ++  task
+      $~  [%vega ~]
+      $%  ::  event failure notification
+          ::
+          $>(%crud vane-task)
+          ::  system started up; reset open connections
+          ::
+          $>(%born vane-task)
+          ::  report upgrade
+          ::
+          $>(%vega vane-task)
+          ::  fetches a remote resource
+          ::
+          [%request =request:http =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-request ~]
+          ::  receives http data from outside
+          ::
+          [%receive id=@ud =http-event:http]
+          ::  memory usage request
+          ::
+          $>(%wegh vane-task)
+      ==
+    --
+  ::  +client-response: one or more client responses given to the caller
+  ::
+  +$  client-response
+    $%  ::  periodically sent as an update on the duct that sent %fetch
+        ::
+        $:  %progress
+            ::  http-response-header: full transaction header
+            ::
+            ::    In case of a redirect chain, this is the target of the
+            ::    final redirect.
+            ::
+            =response-header:http
+            ::  bytes-read: bytes fetched so far
+            ::
+            bytes-read=@ud
+            ::  expected-size: the total size if response had a content-length
+            ::
+            expected-size=(unit @ud)
+            ::  incremental: data received since the last %http-progress
+            ::
+            incremental=(unit octs)
+        ==
+        ::  final response of a download, parsed as mime-data if successful
+        ::
+        [%finished =response-header:http full-file=(unit mime-data)]
+        ::  canceled by the runtime system
+        ::
+        [%cancel ~]
+    ==
+  ::  mime-data: externally received but unvalidated mimed data
+  ::
+  +$  mime-data
+    [type=@t data=octs]
+  ::  +outbound-config: configuration for outbound http requests
+  ::
+  +$  outbound-config
+    $:  ::  number of times to follow a 300 redirect before erroring
+        ::
+        ::    Common values for this will be 3 (the limit most browsers use), 5
+        ::    (the limit recommended by the http standard), or 0 (let the
+        ::    requester deal with 300 redirects).
+        ::
+        redirects=_5
+        ::  number of times to retry before failing
+        ::
+        ::    When we retry, we'll automatically try to use the 'Range' header
+        ::    to resume the download where we left off if we have the
+        ::    'Accept-Range: bytes' in the original response.
+        ::
+        retries=_3
+    ==
+  ::  +to-httr: adapts to old eyre interface
+  ::
+  ++  to-httr
+    |=  [header=response-header:http full-file=(unit mime-data)]
+    ^-  httr:eyre
+    ::
+    =/  data=(unit octs)
+      ?~(full-file ~ `data.u.full-file)
+    ::
+    [status-code.header headers.header data]
+  --
 ::                                                      ::::
 ::::                    ++jael                          ::  (1h) security
   ::                                                    ::::
@@ -2308,118 +2421,6 @@
     ++  oath  @                                         ::  signature
     --  ::  pki
   --  ::  kale
-::
-++  http-client  ^?
-  |%
-  ++  able
-    |%
-    ::  +gift: effects the client can emit
-    ::
-    ++  gift
-      $%  ::  %request: outbound http-request to earth
-          ::
-          ::    TODO: id is sort of wrong for this interface; the duct should
-          ::    be enough to identify which request we're talking about?
-          ::
-          [%request id=@ud request=request:http]
-          ::  %cancel-request: tell earth to cancel a previous %request
-          ::
-          [%cancel-request id=@ud]
-          ::  %response: response to the caller
-          ::
-          [%http-response =client-response]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
-      ==
-    ::
-    ++  task
-      $~  [%vega ~]
-      $%  ::  event failure notification
-          ::
-          $>(%crud vane-task)
-          ::  system started up; reset open connections
-          ::
-          $>(%born vane-task)
-          ::  report upgrade
-          ::
-          $>(%vega vane-task)
-          ::  fetches a remote resource
-          ::
-          [%request =request:http =outbound-config]
-          ::  cancels a previous fetch
-          ::
-          [%cancel-request ~]
-          ::  receives http data from outside
-          ::
-          [%receive id=@ud =http-event:http]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
-      ==
-    --
-  ::  +client-response: one or more client responses given to the caller
-  ::
-  +$  client-response
-    $%  ::  periodically sent as an update on the duct that sent %fetch
-        ::
-        $:  %progress
-            ::  http-response-header: full transaction header
-            ::
-            ::    In case of a redirect chain, this is the target of the
-            ::    final redirect.
-            ::
-            =response-header:http
-            ::  bytes-read: bytes fetched so far
-            ::
-            bytes-read=@ud
-            ::  expected-size: the total size if response had a content-length
-            ::
-            expected-size=(unit @ud)
-            ::  incremental: data received since the last %http-progress
-            ::
-            incremental=(unit octs)
-        ==
-        ::  final response of a download, parsed as mime-data if successful
-        ::
-        [%finished =response-header:http full-file=(unit mime-data)]
-        ::  canceled by the runtime system
-        ::
-        [%cancel ~]
-    ==
-  ::  mime-data: externally received but unvalidated mimed data
-  ::
-  +$  mime-data
-    [type=@t data=octs]
-  ::  +outbound-config: configuration for outbound http requests
-  ::
-  +$  outbound-config
-    $:  ::  number of times to follow a 300 redirect before erroring
-        ::
-        ::    Common values for this will be 3 (the limit most browsers use), 5
-        ::    (the limit recommended by the http standard), or 0 (let the
-        ::    requester deal with 300 redirects).
-        ::
-        redirects=_5
-        ::  number of times to retry before failing
-        ::
-        ::    When we retry, we'll automatically try to use the 'Range' header
-        ::    to resume the download where we left off if we have the
-        ::    'Accept-Range: bytes' in the original response.
-        ::
-        retries=_3
-    ==
-  ::  +to-httr: adapts to old eyre interface
-  ::
-  ++  to-httr
-    |=  [header=response-header:http full-file=(unit mime-data)]
-    ^-  httr:eyre
-    ::
-    =/  data=(unit octs)
-      ?~(full-file ~ `data.u.full-file)
-    ::
-    [status-code.header headers.header data]
-  --
 ::                                                      ::::
 ::::                    ++xmas                            ::  (1i) new network
   ::                                                    ::::
@@ -7581,7 +7582,7 @@
       gift:able:eyre
       gift:able:ford
       gift:able:gall
-      gift:able:http-client
+      gift:able:iris
       gift:able:jael
   ==
 ++  task-arvo                                           ::  in request ->$
@@ -7589,7 +7590,7 @@
       task:able:clay
       task:able:behn
       task:able:dill
-      task:able:http-client
+      task:able:iris
       task:able:ford
       task:able:gall
       task:able:eyre
@@ -7604,7 +7605,7 @@
       [%e task:able:eyre]
       {$f task:able:ford}
       {$g task:able:gall}
-      [%i task:able:http-client]
+      [%i task:able:iris]
       {$j task:able:jael}
       {@tas $meta vase}
   ==
@@ -7620,7 +7621,7 @@
       {$f gift:able:ford}
       [%e gift:able:eyre]
       {$g gift:able:gall}
-      [%i gift:able:http-client]
+      [%i gift:able:iris]
       {$j gift:able:jael}
   ==
 ::
@@ -7666,7 +7667,7 @@
       $>(%live task:able:eyre)
       ::  %iris: hear (partial) http response
       ::
-      $>(%receive task:able:http-client)
+      $>(%receive task:able:iris)
       ::  %eyre: starts handling an inbound http request
       ::
       $>(%request task:able:eyre)

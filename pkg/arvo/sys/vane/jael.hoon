@@ -111,7 +111,7 @@
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
       $:  %i                                            ::    to %iris
-          $>(%request task:able:http-client)            ::  http request
+          $>(%request task:able:iris)                   ::  http request
       ==                                                ::
       $:  %j                                            ::    to self
           $>(%look task)                                ::  set ethereum source
@@ -126,7 +126,7 @@
   $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
       [%j $>(%vent gift)]                               ::  ethereum changes
       [%a $>(%woot gift:able:ames)]                     ::  message result
-      [%i $>(%http-response gift:able:http-client)]     ::  http response
+      [%i $>(%http-response gift:able:iris)]            ::  http response
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -1759,7 +1759,7 @@
     :^  %i  %request
       ?>  ?=(%| -.source)
       (light-json-request node.p.source jon)
-    *outbound-config:http-client
+    *outbound-config:iris
   ::
   ::  +|  source-operations
   ::
@@ -1983,11 +1983,11 @@
     (complete-with-rpc-response cuz rep)
   ::
   ++  finished
-    |=  [cuz=wire =response-header:http full-file=(unit mime-data:http-client)]
+    |=  [cuz=wire =response-header:http full-file=(unit mime-data:iris)]
     ^+  +>
     ?:  ?=(%& -.source)  +>
     ::
-    =+  rep=(httr-to-rpc-response (to-httr:http-client response-header full-file))
+    =+  rep=(httr-to-rpc-response (to-httr:iris response-header full-file))
     (complete-with-rpc-response cuz rep)
   ::
   ++  complete-with-rpc-response

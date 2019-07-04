@@ -380,7 +380,7 @@
   ::  Pass response to async
   ::
   ++  http-response
-    |=  [=wire response=client-response:http-client]
+    |=  [=wire response=client-response:iris]
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %http-response response])
   ::

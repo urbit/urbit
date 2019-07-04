@@ -77,7 +77,7 @@
           task:able:gall                                ::
       ==                                                ::
       $:  %i                                            ::
-          $>(%wegh task:able:http-client)               ::
+          $>(%wegh task:able:iris)                      ::
       ==                                                ::
       $:  %j                                            ::
           $>  $?  %dawn                                 ::
@@ -125,7 +125,7 @@
           gift:able:gall                                ::
       ==                                                ::
       $:  %i                                            ::
-          $>(%mass gift:able:http-client)               ::
+          $>(%mass gift:able:iris)                      ::
       ==                                                ::
       $:  %j                                            ::
           $>  $?  %init                                 ::
