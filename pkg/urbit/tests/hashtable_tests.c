@@ -1,6 +1,7 @@
 #include "all.h"
 
 static void _setup(void);
+static void _test_bit_manipulation();
 static void _test_cache_replace_value(void);
 static void _test_cache_trimming(void);
 static void _test_no_cache(void);
@@ -16,7 +17,8 @@ int
 main(int argc, char* argv[])
 {
   _setup();
-
+ 
+  _test_bit_manipulation();
   _test_no_cache();
   _test_skip_slot();
   _test_cache_trimming();
@@ -31,7 +33,37 @@ static void
 _setup(void)
 {
   u3m_init();
-  u3m_pave(c3y, c3n);
+  u3m_pave(c3y, c3n); 
+}
+
+static void
+_test_bit_manipulation()    
+{
+  if (8 != sizeof(u3h_slot)){
+    printf("wrong size\n");
+  }
+
+  u3h_slot a = 0;
+
+  if (u3h_slot_is_null(a) != c3y){
+    printf("nullity\n");
+  }
+  
+  a = u3h_noun_be_warm(a);
+  if (u3h_slot_is_warm(a) != c3y){
+    printf("warmth\n");
+  }
+
+  if (u3h_slot_is_null(a) != c3n){
+    printf("nullity 2\n");
+  }
+  
+  a = u3h_noun_be_cold(a);
+  if (u3h_slot_is_warm(a) != c3n){
+    printf("coldness\n");
+  }
+
+  
 }
 
 /* _test_no_cache(): test a hashtable without caching.
@@ -40,12 +72,12 @@ static void
 _test_no_cache(void)
 {
   c3_w i_w;
-  c3_w max_w = 1000;
+  c3_w max_w = 3; // NOTFORCHECKIN
 
   u3p(u3h_root) har_p = u3h_new();
 
   for ( i_w = 0; i_w < max_w; i_w++ ) {
-    u3h_put(har_p, i_w, i_w + max_w);
+    u3h_put(har_p, i_w, i_w + max_w); 
   }
 
   for ( i_w = 0; i_w < max_w; i_w++ ) {
