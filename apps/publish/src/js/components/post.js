@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/post-preview';
+import { PostPreview } from '/components/lib/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { PostBody } from '/components/post-body';
-import { Comments } from '/components/comments';
+import { PostBody } from '/components/lib/post-body';
+import { Comments } from '/components/lib/comments';
 import { PathControl } from '/components/lib/path-control';
 import { NextPrev } from '/components/lib/next-prev';
 import _ from 'lodash';

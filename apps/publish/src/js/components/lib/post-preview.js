@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { dateToDa } from '/lib/util';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { PostSnippet } from '/components/post-snippet';
+import { PostSnippet } from '/components/lib/post-snippet';
 
 
 export class PostPreview extends Component {

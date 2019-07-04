@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { RecentPreview } from '/components/recent-preview';
+import { RecentPreview } from '/components/lib/recent-preview';
 import { withRouter } from 'react-router';
 import { HeaderMenu } from '/components/lib/header-menu';
 

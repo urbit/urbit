@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/post-preview';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-
 
 export class PostSnippet extends Component {
   constructor(props){
@@ -29,7 +25,6 @@ export class PostSnippet extends Component {
       }
       snip += " [...]";
     }
-
 
     return (
       <p className="body-regular-400">

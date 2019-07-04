@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/post-preview';
+import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
