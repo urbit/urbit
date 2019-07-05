@@ -248,7 +248,7 @@
       ~&  [%walk-loop number]
       ?:  (gth number number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
-        ;<  ~        bind:m  (wait:stdio (add now ~m1))
+        ;<  ~        bind:m  (wait:stdio (add now ~s10))
         poll-loop
       ;<  =block  bind:m  (get-block-by-number url.config number)
       ;<  [=new=^pending-udiffs new-blocks=(lest ^block)]  bind:m
@@ -263,8 +263,10 @@
       |=  [url=@ta =a=pending-udiffs =block blocks=(list block)]
       =/  m  (async:stdio ,[pending-udiffs (lest ^block)])
       ^-  form:m
+      ~&  [%taking id.block]
       ?:  &(?=(^ blocks) !=(parent-hash.block hash.id.i.blocks))
-        (rewind a-pending-udiffs block blocks)
+        ~&  %rewinding
+        (rewind url a-pending-udiffs block blocks)
       ;<  =b=pending-udiffs  bind:m
         (release-old-events a-pending-udiffs number.id.block)
       ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url hash.id.block)
@@ -282,19 +284,21 @@
       (pure:m (~(del by pending-udiffs) rel-number))
     ::
     ++  rewind
-      |=  [=pending-udiffs blocks=(lest block)]
-      =/  m  (async:stdio ,[^pending-udiffs (lest block)])
+      |=  [url=@ta =pending-udiffs =block blocks=(list block)]
+      =/  m  (async:stdio ,[^pending-udiffs (lest ^block)])
       |-  ^-  form:m
       =*  loop  $
-      ?~  t.blocks
-        (pure:m pending-udiffs blocks)
-      ?:  =(parent-hash.i.blocks hash.id.i.t.blocks)
-        (pure:m pending-udiffs blocks)
+      ~&  [%wind block ?~(blocks ~ i.blocks)]
+      ?~  blocks
+        (pure:m pending-udiffs block blocks)
+      ?:  =(parent-hash.block hash.id.i.blocks)
+        (pure:m pending-udiffs block blocks)
+      ;<  =next=^block  bind:m  (get-block-by-number url number.id.i.blocks)
       ?:  =(~ pending-udiffs)
-        ;<  ~  bind:m  (disavow i.blocks)
-        loop(blocks t.blocks)
-      =.  pending-udiffs  (~(del by pending-udiffs) number.id.i.blocks)
-      loop(blocks t.blocks)
+        ;<  ~  bind:m  (disavow block)
+        loop(block next-block, blocks t.blocks)
+      =.  pending-udiffs  (~(del by pending-udiffs) number.id.block)
+      loop(block next-block, blocks t.blocks)
     ::
     ++  disavow
       |=  =block
