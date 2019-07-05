@@ -79,8 +79,11 @@ export class Pubs extends Component {
         <HM/>
         <div className="absolute w-100" style={{top:124}}>
           <div className="flex-col">
-            <div className="w-100 h-80">
-              <h2 className="gray-50">My Blogs</h2>
+            <div className="w-100">
+              <h2 className="gray-50"
+                style={{marginLeft: 16, marginTop:32, marginBottom: 16}}>
+                My Blogs
+              </h2>
             </div>
             <div className="w-100 flex">
               <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
