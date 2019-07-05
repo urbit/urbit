@@ -24,7 +24,7 @@
 ::
 +$  poke
   $%  [%hall-action action:hall]
-      [%noun [@tas path @t]]
+      [%launch-action [@tas path @t]]
   ==
 ::
 +$  state

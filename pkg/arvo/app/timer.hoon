@@ -18,7 +18,7 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path @t]]
+  $%  [%launch-action [@tas path @t]]
   ==
 ::
 +$  card
@@ -44,11 +44,11 @@
 ++  prep
   |=  old=(unit tim=@da)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%timer /tile '/~timer/js/tile.js']]
+  =/  launcha  [%launch-action [%timer /tile '/~timer/js/tile.js']]
   :-
   :~
     [ost.bol %connect / [~ /'~timer'] %timer]
-    [ost.bol %poke /timer [our.bol %launch] launchnoun]
+    [ost.bol %poke /timer [our.bol %launch] launcha]
   ==
   ?~  old
     this
@@ -116,7 +116,10 @@
 ++  wake
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  :-  (send-tile-diff [%s 'alarm'])
-  this(tim *@da)
+  ?~  err
+    :-  (send-tile-diff [%s 'alarm'])
+    this(tim *@da)
+  ~&  err
+  [~ this]
 ::
 --
