@@ -74,6 +74,11 @@ h4 {
   line-height: 24px;
 }
 
+.label-small-2 {
+  font-size: 12px;
+  line-height: 16px;
+}
+
 .body-regular-400 {
   font-size: 16px;
   line-height: 24px;
@@ -217,4 +222,20 @@ h4 {
 
 .bg-gray-30 {
   background-color: #B1B2B3;
+}
+
+.title-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.body-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
 }

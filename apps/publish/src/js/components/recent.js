@@ -142,8 +142,8 @@ export class Recent extends Component {
       let date = this.dateLabel(group.date);
       return (
         <div key={i}>
-          <div className="w-100 h-80">
-            <h2 className="gray-50">
+          <div className="w-100">
+            <h2 className="gray-50" style={{marginBottom:8}}>
               {date}
             </h2>
           </div>
@@ -157,7 +157,8 @@ export class Recent extends Component {
     return (
       <div>
         <HM/>
-        <div className="absolute w-100" style={{top:124}}>
+        <div className="absolute w-100"
+          style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
           <div className="flex-col">
             {body}
           </div>

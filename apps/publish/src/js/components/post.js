@@ -321,7 +321,7 @@ export class Post extends Component {
                 </p>
               </Link>
 
-              <h2>{this.state.titleOriginal}</h2>
+              <h2 style={{wordWrap: "break-word"}}>{this.state.titleOriginal}</h2>
 
               <div className="mb4">
                 <p className="fl label-small gray-50">{authorDate}</p>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
-import { store } from '/store';
 
 const PC = withRouter(PathControl);
 

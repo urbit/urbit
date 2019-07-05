@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 
 export class PostSnippet extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
   }
 
   render() {
@@ -13,22 +13,11 @@ export class PostSnippet extends Component {
     });
 
     let string = elem.c[0];
-    let words = string.split(" ");
-
-    let snip = new String(string);
-
-    if (words.length > 0 && words[0].length > 280) {
-      snip = words[0].slice(0, 280).trim() + " [...]";
-    } else if (snip.length > 280){
-      while (snip.length > 280) {
-        snip = snip.split(" ").slice(0, -1).join(" ");
-      }
-      snip += " [...]";
-    }
 
     return (
-      <p className="body-regular-400">
-        {snip}
+      <p className="body-regular-400 body-preview"
+        style={{webkitBoxOrient: "vertical"}}>
+        {string}
       </p>
     );
   }

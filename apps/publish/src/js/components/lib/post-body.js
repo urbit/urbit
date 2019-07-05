@@ -10,7 +10,10 @@ export class PostBody extends Component {
   }
 
   renderA(what, node, attr) {
-    let aStyle = { textDecorationLine: "underline" };
+    let aStyle = {
+      textDecorationLine: "underline",
+      wordWrap: "break-word"
+    };
     let children = what.map((item, key) => {
       if (typeof(item) === 'string') {
         return item;
@@ -19,7 +22,8 @@ export class PostBody extends Component {
         return this.parseContent(item.c, item.gn, newAttr);
       }
     });
-    const element = React.createElement(node, Object.assign({style: aStyle}, attr), children);
+    const element =
+      React.createElement(node, Object.assign({style: aStyle}, attr), children);
     return element;
   }
 
@@ -35,6 +39,9 @@ export class PostBody extends Component {
   }
 
   renderDefault(what, node, attr) {
+    let dStyle = {
+      wordWrap: "break-word"
+    };
     let children = what.map((item, key) => {
       if (typeof(item) === 'string') {
         return item;
@@ -43,7 +50,8 @@ export class PostBody extends Component {
         return this.parseContent(item.c, item.gn, newAttr);
       }
     });
-    const element = React.createElement(node, attr, children);
+    const element =
+      React.createElement(node, Object.assign({style: dStyle}, attr), children);
     return element;
   }
 

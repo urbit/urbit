@@ -33,7 +33,6 @@ export class Root extends Component {
 
   render() {
 
-
     return (
       <BrowserRouter>
         <Switch>

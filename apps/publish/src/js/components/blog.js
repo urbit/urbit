@@ -137,7 +137,7 @@ export class Blog extends Component {
       );
     });
 
-    let contributers = " and X others";       // XX backend work
+    let contributors = " and X others";       // XX backend work
     let subscribers = "~bitpyx-dildus and X others"; // XX backend work
 
     if (this.state.awaiting) {
@@ -146,24 +146,26 @@ export class Blog extends Component {
       return (
         <div>
           <PathControl pathData={data.pathData}/>
-          <div className="absolute w-100" style={{top:124}}>
+          <div className="absolute"
+            style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
             <div className="flex-col">
               <h2>{data.blogTitle}</h2>
-              <div className="flex">
-                <div style={{flexBasis: 350}}>
-                  <p>Host</p>
-                  <p>{data.blogHost}</p>
+              <div className="flex" style={{marginTop: 22}}>
+                <div style={{flexBasis: 160, marginRight:16}}>
+                  <p className="gray-50 label-small-2 b">Host</p>
+                  <p className="label-small-2">{data.blogHost}</p>
                 </div>
-                <div style={{flexBasis: 350}}>
-                  <p>Contributors</p>
-                  <p>{contributers}</p>
+                <div style={{flexBasis: 160, marginRight:16}}>
+                  <p className="gray-50 label-small-2 b">Contributors</p>
+                  <p className="label-small-2">{contributors}</p>
                 </div>
-                <div style={{flexBasis: 350}}>
-                  <p>Subscribers</p>
-                  <p>{subscribers}</p>
+                <div style={{flexBasis: 160, marginRight: 16}}>
+                  <p className="gray-50 label-small-2 b">Subscribers</p>
+                  <p className="label-small-2">{subscribers}</p>
+                  <p className="label-small-2 b">Subscribe</p>
                 </div>
               </div>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap" style={{marginTop: 48}}>
                 {posts}
               </div>
             </div>
