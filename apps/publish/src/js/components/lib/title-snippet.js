@@ -9,7 +9,7 @@ export class TitleSnippet extends Component {
   render() {
     return (
       <p className="body-large b title-preview"
-        style={{webkitBoxOrient: "vertical"}}>
+        style={{WebkitBoxOrient: "vertical"}}>
         {this.props.title}
       </p>
     );
