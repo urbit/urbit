@@ -22,22 +22,6 @@
 ::
 =,  launch
 ::
-+$  move  [bone card]
-::
-+$  card
-  $%  [%http-response =http-event:http]
-      [%connect wire binding:eyre term]
-      [%peer wire dock path]
-      [%diff %json json]
-  ==
-+$  tile  [name=@tas subscribe=path]
-+$  tile-data  (map @tas [jon=json url=@t])
-+$  state
-  $%  [%0 tiles=(set tile) data=tile-data path-to-tile=(map path @tas)]
-  ==
-::
---
-::
 |_  [bol=bowl:gall sta=state]
 ::
 ++  this  .
@@ -142,7 +126,7 @@
   ==
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
