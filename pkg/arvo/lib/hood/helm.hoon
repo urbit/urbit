@@ -50,7 +50,6 @@
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
       $%  {$hood-unsync desk ship desk}                 ::
-          {$ask-mail cord}                              ::
           {$helm-hi cord}                               ::
           {$drum-start well:gall}                       ::
           {$hall-action action:hall}                    ::
@@ -131,9 +130,6 @@
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
 ::
-++  poke-send-ask
-  |=  mel/cord
-  abet
 ::
 ++  poke-hi
   |=  mes/@t
@@ -154,11 +150,6 @@
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
-::
-++  coup-ask
-  |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t ~} pax)
-  (emit %flog ~ %text "ask {<src>} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes

@@ -153,7 +153,6 @@
   ^~  ^-  (map path tape)
   %-  my  :~ ::TODO don't hardcode
     :-  /ren/run            "not meant to be called except on a (different) hoon file"
-    :-  /ren/rss-xml        "scrys into eyre"
     :-  /ren/test-gen       "temporarily disabled"
   ==
 ::

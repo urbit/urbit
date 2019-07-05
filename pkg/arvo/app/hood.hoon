@@ -129,7 +129,6 @@
   ::                                                    ::  ::
 ++  coup-drum-phat            (wrap take-coup-phat):from-drum
 ++  coup-helm-hi              (wrap coup-hi):from-helm
-++  coup-helm-ask             (wrap coup-ask):from-helm
 ++  coup-kiln-fancy           (wrap take-coup-fancy):from-kiln
 ++  coup-kiln-reload          (wrap take-coup-reload):from-kiln
 ++  coup-kiln-spam            (wrap take-coup-spam):from-kiln
@@ -160,7 +159,6 @@
 ++  poke-helm-reset           (wrap poke-reset):from-helm
 ++  poke-helm-serve           (wrap poke-serve):from-helm
 ++  poke-helm-send-hi         (wrap poke-send-hi):from-helm
-++  poke-helm-send-ask        (wrap poke-send-ask):from-helm
 ++  poke-helm-verb            (wrap poke-verb):from-helm
 ++  poke-helm-rekey           (wrap poke-rekey):from-helm
 ++  poke-helm-nuke            (wrap poke-nuke):from-helm
