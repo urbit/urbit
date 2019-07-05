@@ -59,14 +59,14 @@
             (request-to-json:rpc:ethereum id req)
         ==
       ;<  ~  bind:m  (send-request:stdio request)
-      ;<  rep=(unit client-response:http-client)  bind:m
+      ;<  rep=(unit client-response:iris)  bind:m
         take-maybe-response:stdio
       ?~  rep
         (pure:m ~)
       (parse-response u.rep)
       ::
       ++  parse-response
-        |=  =client-response:http-client
+        |=  =client-response:iris
         =/  m  (async:stdio ,(unit json))
         ^-  form:m
         ?>  ?=(%finished -.client-response)
