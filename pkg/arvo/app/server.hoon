@@ -92,8 +92,8 @@
 ::
 ++  require-authorization
   |*  [=bone move=mold this=*]
-  |=  handler=$-(inbound-request:http-server (quip move _this))
-  |=  =inbound-request:http-server
+  |=  handler=$-(inbound-request:eyre (quip move _this))
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   ?:  authenticated.inbound-request
@@ -128,7 +128,7 @@
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ~&  [%bound success]
   [~ this]
 ::
@@ -160,7 +160,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization ost.bow move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)
@@ -190,7 +190,7 @@
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::  the only long lived connections we keep state about are the stream ones.
   ::

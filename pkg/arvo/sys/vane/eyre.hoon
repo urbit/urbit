@@ -2,7 +2,7 @@
 ::  lighter than eyre
 ::
 |=  pit=vase
-=,  http-server
+=,  eyre
 ::  internal data structures
 ::
 =>  =~
@@ -1460,7 +1460,7 @@
         ^-  (list move)
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able:http-server
+        ^-  gift:able
         :*  %response  %continue
         ::
             ^=  data
@@ -1922,7 +1922,7 @@
             %give
             %mass
             ^-  mass
-            :+  %rver  %|
+            :+  %eyre  %|
             :~  bindings+&+bindings.server-state.ax
                 auth+&+authentication-state.server-state.ax
                 connections+&+connections.server-state.ax

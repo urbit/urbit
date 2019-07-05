@@ -15,7 +15,7 @@
     +$  in-poke-data
       $%  [%dns-authority =authority]
           [%dns-bind =ship =target]
-          [%handle-http-request =inbound-request:http-server]
+          [%handle-http-request =inbound-request:eyre]
       ==
     +$  out-poke-data
       $%  [%dns-bind =ship =target]
@@ -62,7 +62,7 @@
         ^-  @t
         ::  XX can't scry in +mule
         ::
-        :: =/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+        :: =/  =hart:eyre  .^(hart:eyre %e /(scot %p our)/host/real)
         (crip (en-purl:html [hart [~ path] ~]))
       ::
       ::  XX can't scry in +mule
@@ -821,7 +821,7 @@
       ::
       ;<  ~                                       bind:m
         (send-request:stdio (retrieve-access-token:(oauth2-core bowl scry.pro.aut.nam) code))
-      ;<  rep=(unit client-response:http-client)  bind:m
+      ;<  rep=(unit client-response:iris)  bind:m
         take-maybe-response:stdio
       ::  XX  retry
       ::

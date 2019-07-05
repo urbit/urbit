@@ -10,9 +10,9 @@
       [%peer wire dock path]
       [%pull wire dock ~]
       [%diff out-peer-data]
-      [%request wire request:http outbound-config:http-client]
+      [%request wire request:http outbound-config:iris]
       [%cancel-request wire ~]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%rule wire %turf %put turf]
   ==
@@ -24,8 +24,8 @@
       [%coup =dock error=(unit tang)]
       [%quit =dock =path]
       [%reap =dock =path error=(unit tang)]
-      [%bound success=? =binding:http-server]
-      [%http-response response=client-response:http-client]
+      [%bound success=? =binding:eyre]
+      [%http-response response=client-response:iris]
   ==
 ::
 ::  Outstanding contracts

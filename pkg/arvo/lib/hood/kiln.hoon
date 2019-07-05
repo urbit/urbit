@@ -196,7 +196,7 @@
   ++  emit  |=(a/card +>(..autoload (^emit a)))
   ++  tracked-vanes
     ^-  (list @tas)
-    ~[%ames %behn %clay %dill %ford %gall %jael %lient %rver]
+    ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))

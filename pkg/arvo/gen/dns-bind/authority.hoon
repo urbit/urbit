@@ -13,7 +13,7 @@
 =*  our  p.bec
 ::  XX must be evaluated outside tapp core due to +mule
 ::
-=/  =hart:eyre  .^(hart:eyre %r /(scot %p our)/host/real)
+=/  =hart:eyre  .^(hart:eyre %e /(scot %p our)/host/real)
 ::  XX terrible
 =/  domain  /com/googleapis
 =/  code

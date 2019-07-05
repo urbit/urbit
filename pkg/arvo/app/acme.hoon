@@ -147,10 +147,10 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire =binding:http-server app=term]
+  $%  [%connect wire =binding:eyre app=term]
       [%http-response =http-event:http]
       [%poke wire dock poke]
-      [%request wire request:http outbound-config:http-client]
+      [%request wire request:http outbound-config:iris]
       [%rule wire %cert (unit [wain wain])]
       [%wait wire @da]
   ==
@@ -394,7 +394,7 @@
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%request wir (hiss-to-request:html req) *outbound-config:http-client]
+  [%request wir (hiss-to-request:html req) *outbound-config:iris]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -1131,7 +1131,7 @@
     ==
   --
 ++  http-response
-  |=  [=wire response=client-response:http-client]
+  |=  [=wire response=client-response:iris]
   ^-  (quip move _this)
   ::  ignore progress reports
   ::
@@ -1144,7 +1144,7 @@
   ?:  ?=(%cancel -.response)
     (retry:event t.wire)
   ::
-  =/  rep=httr  (to-httr:http-client +.response)
+  =/  rep=httr  (to-httr:iris +.response)
   ::  add nonce to pool, if present
   ::
   =/  nonhed  (skim q.rep |=((pair @t @t) ?=(%replay-nonce p)))
@@ -1193,7 +1193,7 @@
 ::    Used to serve the domain validation challenge
 ::
 ++  poke-handle-http-request
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ~&  [%handle-http +<]
   =/  url=(unit (pair pork:eyre quay:eyre))
@@ -1207,7 +1207,7 @@
     ~|  [%unknown-url url.request.inbound-request]  !!
   ::
   ::  XX these crashes should be restored
-  ::  but %rver doesn't get an error notification from %gall
+  ::  but %eyre doesn't get an error notification from %gall
   ::
   :: ?.  ?=(^ reg.act)  ~|(%no-account !!)
   :: ?.  ?=(^ rod)      ~|(%no-active-order !!)
@@ -1315,7 +1315,7 @@
 ::  +bound: response to %connect binding request
 ::
 ++  bound
-  |=  [=wire accepted=? =binding:http-server]
+  |=  [=wire accepted=? =binding:eyre]
   ?:  accepted
     [~ this]
   ::  XX better error message
