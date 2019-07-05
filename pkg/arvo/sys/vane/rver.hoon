@@ -623,10 +623,10 @@
     //
     delete() {
       var id = this.nextId();
-      this.sendJSONToChannel({
+      navigator.sendBeacon(this.channelURL(), JSON.stringify([{
         "id": id,
         "action": "delete"
-      }, false);
+      }]));
     }
 
     //  unsubscribe to a specific subscription
@@ -642,7 +642,7 @@
 
     //  sends a JSON command command to the server.
     //
-    sendJSONToChannel(j, connectAgain = true) {
+    sendJSONToChannel(j) {
       var req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
@@ -663,9 +663,7 @@
         this.lastEventId = this.lastAcknowledgedEventId;
       }
 
-      if (connectAgain) {
-        this.connectIfDisconnected();
-      }
+      this.connectIfDisconnected();
     }
 
     //  connects to the EventSource if we are not currently connected
@@ -1109,6 +1107,9 @@
       ::
       ?:  =('GET' method.request)
         (on-get-request channel-id request)
+      ?:  =('POST' method.request)
+        ::  POST methods are used solely for deleting channels
+        (on-put-request channel-id request)
       ::
       ~&  %session-not-a-put
       [~ state]
