@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
+import urbitOb from 'urbit-ob';
 
 const PC = withRouter(PathControl);
 
@@ -21,22 +22,22 @@ class FormLink extends Component {
   }
 }
 
-
 export class NewBlog extends Component {
   constructor(props){
     super(props);
 
     this.state = {
       title: '',
-      collaborators: [],
+      invites: [],
       page: 'main',
       awaiting: false,
+      validInvites: true,
     };
     this.titleChange = this.titleChange.bind(this);
-    this.collaboratorChange = this.collaboratorChange.bind(this);
+    this.invitesChange = this.invitesChange.bind(this);
     this.firstPost = this.firstPost.bind(this);
     this.returnHome = this.returnHome.bind(this);
-    this.addCollaborators = this.addCollaborators.bind(this);
+    this.addInvites = this.addInvites.bind(this);
     this.blogSubmit = this.blogSubmit.bind(this);
   }
 
@@ -70,7 +71,7 @@ export class NewBlog extends Component {
       },
       write: {
         mod: 'white',
-        who: this.state.collaborators,
+        who: [],
       }
     }
 
@@ -88,7 +89,7 @@ export class NewBlog extends Component {
       invite: {
         coll: blogId,
         title: blogTitle,
-        who: this.state.collaborators,
+        who: this.state.invites,
       }
     }
 
@@ -106,7 +107,20 @@ export class NewBlog extends Component {
     if (this.state.awaiting) {
       if (this.props.pubs[this.state.awaiting]) {
         this.props.setSpinner(false);
-        this.props.history.push(`/~publish/~${window.ship}/${this.state.awaiting}`);
+        
+        if (this.state.redirect === 'new-post') {
+          this.props.history.push("/~publish/new-post",
+            {
+              lastParams: {
+                ship: `~${window.ship}`,
+                blog: this.state.awaiting,
+              }
+            }
+          );
+        } else if (this.state.redirect === 'home') {
+          this.props.history.push(
+            `/~publish/~${window.ship}/${this.state.awaiting}`);
+        }
       }
     }
   }
@@ -115,23 +129,38 @@ export class NewBlog extends Component {
     this.setState({title: evt.target.value});
   }
 
-  collaboratorChange(evt){
-    let collaborators = evt.target.value
+  invitesChange(evt){
+    let tokens = evt.target.value
       .trim()
-      .split(",")
-      .map(t => t.trim().substr(1));
-    this.setState({collaborators: collaborators});
+      .split(/[\s,]+/)
+      .map(t => t.trim());
+
+    let valid = tokens.reduce((valid, s) => 
+      valid && (((s !== '~') && urbitOb.isValidPatp(s) && s.includes('~')) ||
+        (s === '')), true);
+
+    if (valid) {
+      this.setState({
+        validInvites: true,
+        invites: tokens.map(t => t.slice(1)),
+      });
+    } else {
+      this.setState({validInvites: false});
+    }
   }
 
   firstPost() {
+    this.setState({redirect: "new-post"});
     this.blogSubmit();
   }
 
-  addCollaborators() {
-    this.setState({page: 'addCollab'});
+  addInvites() {
+    this.setState({page: 'addInvites'});
   }
 
   returnHome() {
+    this.setState({redirect: "home"});
+    this.blogSubmit();
   }
 
   render() {
@@ -163,8 +192,8 @@ export class NewBlog extends Component {
 
                 <FormLink
                   enabled={(this.state.title !== '')}
-                  action={this.addCollaborators}
-                  body={"-> Add Collaborators"}
+                  action={this.addInvites}
+                  body={"-> Send Invites"}
                 />
 
                 <hr className="gray-30"/>
@@ -177,7 +206,12 @@ export class NewBlog extends Component {
           </div>
         </div>
       );
-    } else if (this.state.page === 'addCollab') {
+    } else if (this.state.page === 'addInvites') {
+      let enableButtons = ((this.state.title !== '') && this.state.validInvites);
+      let invitesStyle = (this.state.validInvites)
+        ?  "body-regular-400 b--none w-100"
+        :  "body-regular-400 b--none w-100 red";
+
       return (
         <div>
           <PC pathData={false} {...this.props}/>
@@ -194,21 +228,21 @@ export class NewBlog extends Component {
                  />
 
                  <p className="body-regular-400">
-                   Who else can post to this blog?
+                   Who is invited to read this blog?
                  </p>
 
-                 <input className="body-regular-400 b--none w-100"
+                 <input className={invitesStyle}
+                   style={{caretColor: "black"}}
                    type="text"
-                   name="collaborators"
+                   name="invites"
                    placeholder="~ship-name, ~ship-name"
-                   onChange={this.collaboratorChange}
+                   onChange={this.invitesChange}
                  />
-                   
 
                  <hr className="gray-30"/>
 
                  <FormLink
-                   enabled={(this.state.title !== '')}
+                   enabled={enableButtons}
                    action={this.firstPost}
                    body={"-> Save and create a first post"}
                  />
@@ -216,7 +250,7 @@ export class NewBlog extends Component {
                  <hr className="gray-30"/>
 
                  <FormLink
-                   enabled={(this.state.title !== '')}
+                   enabled={enableButtons}
                    action={this.returnHome}
                    body={"-> Save and return home"}
                  />
