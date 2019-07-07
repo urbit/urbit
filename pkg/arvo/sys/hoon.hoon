@@ -4198,6 +4198,15 @@
 ::
 ++  crip  |=(a/tape `@t`(rap 3 a))                      ::  tape to cord
 ::
+::  +fuse: concat items in b, placing a in between
+::
+++  fuse
+  |=  [a=tape b=(list tape)]
+  ?~  b  ~
+  |-  ^-  tape
+  ?~  t.b  i.b
+  :(weld i.b a $(b t.b))
+::
 ++  mesc                                                ::  ctrl code escape
   |=  vib/tape
   ^-  tape
