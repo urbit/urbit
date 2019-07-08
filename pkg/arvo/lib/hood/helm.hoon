@@ -50,7 +50,6 @@
     ++  move  (pair bone card)                          ::  user-level move
     ++  pear                                            ::  poke fruit
       $%  {$hood-unsync desk ship desk}                 ::
-          {$ask-mail cord}                              ::
           {$helm-hi cord}                               ::
           {$drum-start well:gall}                       ::
           {$hall-action action:hall}                    ::
@@ -131,9 +130,6 @@
   %^  emit  %poke  /helm/hi/(scot %p her)
   [[her %hood] %helm-hi ?~(mes '' (crip u.mes))]
 ::
-++  poke-send-ask
-  |=  mel/cord
-  abet
 ::
 ++  poke-hi
   |=  mes/@t
@@ -154,11 +150,6 @@
   |=  {pax/path cop/(unit tang)}  =<  abet
   ?>  ?=({@t ~} pax)
   (emit %flog ~ %text "hi {(trip i.pax)} {?~(cop "" "un")}successful")
-::
-++  coup-ask
-  |=  {pax/path cop/(unit tang)}  =<  abet
-  ?>  ?=({@t ~} pax)
-  (emit %flog ~ %text "ask {<src>} {?~(cop "" "un")}successful")
 ::
 ++  poke-reload  |=(all/(list term) (poke-reload-desk %home all))
 ++  poke-reload-desk                                 ::  reload vanes
@@ -225,50 +216,4 @@
   |=  [wir=wire success=? binding=binding:eyre]  =<  abet
   (emit %flog ~ %text "bound: {<success>}")
 ::
-++  poke-tlon-init-stream
-  ::  creates stream channel and makes it pull from
-  ::  urbit-meta on {met}.
-  |=  met/ship  =<  abet
-  %-  emil
-  %-  flop
-  :~  ^-  card
-      :^  %poke  /helm/web/stream/create  [our %hall]
-      :-  %hall-action
-      :-  %create
-      [%stream 'stream relay channel' %channel]
-    ::
-      :^  %poke  /helm/web/stream/filter  [our %hall]
-      :-  %hall-action
-      :-  %filter
-      [%stream | |]
-    ::
-      :^  %poke  /helm/web/stream/source  [our %hall]
-      :-  %hall-action
-      :-  %source
-      [%stream & [[[met %urbit-meta] `[da+(sub now ~d1) ~]] ~ ~]]
-  ==
-::
-++  poke-tlon-add-fora
-  ::  makes the local urbit-meta pull from {for}'s fora
-  ::  notification channels.
-  |=  for/ship  =<  abet
-  %-  emil
-  :~  :^  %poke  /helm/web/fora/source  [our %hall]
-      :-  %hall-action
-      :-  %source
-      [%urbit-meta & [[[for %fora-posts] `[da+now ~]] ~ ~]]
-    ::
-      :^  %poke  /helm/web/fora/source  [our %hall]
-      :-  %hall-action
-      :-  %source
-      [%urbit-meta & [[[for %fora-comments] `[da+now ~]] ~ ~]]
-  ==
-::
-++  poke-tlon-add-stream
-  ::  makes the local urbit-meta pull from {web}'s stream.
-  |=  web/ship  =<  abet
-  %-  emit
-  :^  %poke  /helm/web/stream/source  [our %hall]
-  :+  %hall-action  %source
-  [%urbit-meta & [[[web %stream] `[da+now ~]] ~ ~]]
 --
