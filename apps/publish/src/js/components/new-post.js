@@ -15,14 +15,16 @@ class SideTab extends Component {
   render() {
     if (this.props.enabled){
       return (
-        <div className="w1 z-2"
+        <div className="w1 z-2 body-regular"
           style={{
             flexGrow:1,
         }}>
           <p className="pointer" onClick={this.props.postSubmit}>
             -> Post
           </p>
-          <p>Discard post</p>
+          <p className="pointer" onClick={this.props.discardPost}>
+            Discard post
+          </p>
         </div>
       );
     }
@@ -70,11 +72,13 @@ export class NewPost extends Component {
       body: "",
       awaiting: false,
       error: false,
+      posted: false,
     };
 
     this.titleChange = this.titleChange.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
     this.postSubmit = this.postSubmit.bind(this);
+    this.discardPost = this.discardPost.bind(this);
 
     this.windowHeight = window.innerHeight - 48 - 76;
 
@@ -152,6 +156,11 @@ export class NewPost extends Component {
 
       this.setState({
         awaiting: awaiting,
+        posted: {
+          ship: ship,
+          blogId: blogId,
+          postId: postId,
+        }
       }, () => {
         this.props.api.action("write", "write-action", newPost);
       });
@@ -226,6 +235,31 @@ export class NewPost extends Component {
     }
   }
 
+  discardPost() {
+    let last = _.get(this.props, 'location.state', false);
+    let ship = window.ship;
+    let blogId = null;
+
+    if (last){
+      ship = (' ' + last.lastParams.ship.slice(1)).slice(1);
+      blogId = (' ' + last.lastParams.blog).slice(1);
+    }
+
+    if (this.state.error && (ship === window.ship)) {
+      let del = {
+        "delete-post": {
+          coll: this.state.posted.blogId,
+          post: this.state.posted.postId,
+        }
+      };
+      
+      this.props.api.action("write", "write-action", del);
+    }
+
+    let redirect = `/~publish/~${ship}/${blogId}`;
+    this.props.history.push(redirect);
+  }
+
   titleChange(evt){
     this.titleInput.style.height = 'auto';
     this.titleInput.style.height = this.titleInput.scrollHeight+2+'px';
@@ -258,7 +292,11 @@ export class NewPost extends Component {
           <div className="flex w-100 z-2" style={{position: 'sticky', top: 132}}>
             <div className="w1 z-0" style={{flexGrow:1}}></div>
             <div className="mw-688 w-100 z-0" style={{pointerEvents:'none'}}></div>
-            <SideTab enabled={enabledTab} postSubmit={this.postSubmit}/>
+            <SideTab
+              enabled={enabledTab}
+              postSubmit={this.postSubmit}
+              discardPost={this.discardPost}
+            />
           </div>
 
           <div className="flex relative" style={{top:-74}}>
