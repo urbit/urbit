@@ -21,6 +21,7 @@ static        void _term_read_cb(uv_stream_t* tcp_u,
                                  const uv_buf_t *     buf_u);
 static inline void _term_suck(u3_utty*, const c3_y*, ssize_t);
 static u3_utty* _term_main();
+static c3_i _term_tcsetattr(int, int, const struct termios *);
 
 #define _SPIN_COOL_US 500000  //  spinner activation delay when cool
 #define _SPIN_WARM_US 50000   //  spinner activation delay when warm
@@ -245,7 +246,7 @@ u3_term_io_init()
     //  Start raw input.
     //
     {
-      if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->raw_u) ) {
+      if ( 0 != _term_tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->raw_u) ) {
         c3_assert(!"init-tcsetattr");
       }
       if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->nob_i) ) {
@@ -294,7 +295,7 @@ u3_term_io_exit(void)
 
     for ( uty_u = u3_Host.uty_u; uty_u; uty_u = uty_u->nex_u ) {
       if ( uty_u->fid_i == -1 ) { continue; }
-      if ( 0 != tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
+      if ( 0 != _term_tcsetattr(uty_u->fid_i, TCSADRAIN, &uty_u->bak_u) ) {
         c3_assert(!"exit-tcsetattr");
       }
       if ( -1 == fcntl(uty_u->fid_i, F_SETFL, uty_u->cug_i) ) {
@@ -323,6 +324,19 @@ u3_term_io_exit(void)
 #endif
     }
   }
+}
+
+/*  _term_tcsetattr(): tcsetattr w/retry on EINTR.
+*/
+static c3_i
+_term_tcsetattr(int fildes, int optional_actions,
+  const struct termios *termios_p)
+{
+  c3_i ret_i = 0;
+  do {
+    ret_i = tcsetattr(fildes, optional_actions, termios_p);
+  } while (-1 == ret_i && errno == EINTR);
+  return ret_i;
 }
 
 /* _term_it_buf(): create a data buffer.
@@ -1212,7 +1226,7 @@ u3_term_io_hija(void)
     }
     else {
       if ( c3n == u3_Host.ops_u.dem ) {
-        if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
+        if ( 0 != _term_tcsetattr(1, TCSADRAIN, &uty_u->bak_u) ) {
           perror("hija-tcsetattr-1");
           c3_assert(!"hija-tcsetattr");
         }
@@ -1220,7 +1234,7 @@ u3_term_io_hija(void)
           perror("hija-fcntl-1");
           c3_assert(!"hija-fcntl");
         }
-        if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
+        if ( 0 != _term_tcsetattr(0, TCSADRAIN, &uty_u->bak_u) ) {
           perror("hija-tcsetattr-0");
           c3_assert(!"hija-tcsetattr");
         }
@@ -1257,7 +1271,7 @@ u3_term_io_loja(int x)
         fflush(stdout);
       }
       else {
-        if ( 0 != tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
+        if ( 0 != _term_tcsetattr(1, TCSADRAIN, &uty_u->raw_u) ) {
           perror("loja-tcsetattr-1");
           c3_assert(!"loja-tcsetattr");
         }
@@ -1265,7 +1279,7 @@ u3_term_io_loja(int x)
           perror("hija-fcntl-1");
           c3_assert(!"loja-fcntl");
         }
-        if ( 0 != tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
+        if ( 0 != _term_tcsetattr(0, TCSADRAIN, &uty_u->raw_u) ) {
           perror("loja-tcsetattr-0");
           c3_assert(!"loja-tcsetattr");
         }
