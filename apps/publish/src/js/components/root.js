@@ -110,6 +110,7 @@ export class Root extends Component {
                       blogId = {props.match.params.blog}
                       ship = {props.match.params.ship.slice(1)}
                       api = {api}
+                      setSpinner={this.setSpinner}
                       {...this.state}
                       {...props}
                     />

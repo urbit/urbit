@@ -85,8 +85,6 @@ export class PathControl extends Component {
       }
     });
 
-    console.log("props", this.props);
-
     let create = ((window.location.pathname === '/~publish/new-blog') ||
       (window.location.pathname === '/~publish/new-post')) ||
       (this.props.create === false)

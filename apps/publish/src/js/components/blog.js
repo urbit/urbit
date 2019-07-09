@@ -7,6 +7,32 @@ import { withRouter } from 'react-router';
 
 const PC = withRouter(PathControl);
 
+class Subscribe extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    if (this.props.actionType === 'subscribe') {
+      return (
+        <p className="label-small-2 b pointer"
+          onClick={this.props.subscribe}>
+          Subscribe
+        </p>
+      );
+    } else if (this.props.actionType === 'unsubscribe') {
+      return (
+        <p className="label-small-2 b pointer"
+          onClick={this.props.unsubscribe}>
+          Unsubscribe
+        </p>
+      );
+    } else {
+      return null;
+    }
+  }
+}
+
 export class Blog extends Component {
   constructor(props){
     super(props);
@@ -18,7 +44,12 @@ export class Blog extends Component {
       blogHost: '',
       pathData: [],
       temporary: false,
+      awaitingSubscribe: false,
+      awaitingUnsubscribe: false,
     };
+
+    this.subscribe = this.subscribe.bind(this);
+    this.unsubscribe = this.unsubscribe.bind(this);
   }
 
   handleEvent(diff) {
@@ -42,6 +73,26 @@ export class Blog extends Component {
   }
 
   handleError(err) {
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let ship = this.props.ship;
+    let blogId = this.props.blogId;
+
+    let blog = (ship == window.ship)
+      ?  _.get(this.props, `pubs[${blogId}]`, false)
+      :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
+
+    if (this.state.awaitingSubscribe) {
+      if (blog) {
+        this.setState({
+          temporary: false,
+          awaitingSubscribe: false,
+        });
+
+        this.props.setSpinner(false);
+      }
+    }
   }
 
   componentWillMount() {
@@ -106,6 +157,7 @@ export class Blog extends Component {
 
     if (this.state.temporary) {
       return {
+        blog: this.state.blog,
         postProps: this.state.postProps,
         blogTitle: this.state.blogTitle,
         blogHost: this.state.blogHost,
@@ -113,6 +165,7 @@ export class Blog extends Component {
       };
     } else {
       return {
+        blog: blog,
         postProps: this.buildPosts(blog),
         blogTitle: blog.info.title,
         blogHost: blog.info.owner,
@@ -123,6 +176,30 @@ export class Blog extends Component {
         ],
       };
     }
+  }
+
+  subscribe() {
+    let sub = {
+      subscribe: {
+        who: this.props.ship,
+        coll: this.props.blogId,
+      }
+    }
+    this.props.setSpinner(true);
+    this.setState({awaitingSubscribe: true}, () => {
+      this.props.api.action("write", "write-action", sub);
+    });
+  }
+
+  unsubscribe() {
+    let unsub = {
+      unsubscribe: {
+        who: this.props.ship,
+        coll: this.props.blogId,
+      }
+    }
+    this.props.api.action("write", "write-action", unsub);
+    this.props.history.push("/~publish/recent");
   }
 
   render() {
@@ -137,13 +214,33 @@ export class Blog extends Component {
       );
     });
 
-    let contributors = " and X others";       // XX backend work
-    let subscribers = "~bitpyx-dildus and X others"; // XX backend work
+    let contributors = `~${this.props.ship}`;
 
     if (this.state.awaiting) {
       return null;
     } else {
       let create = (this.props.ship === window.ship);
+
+      let subscribers = 'None';
+      let subNum = data.blog.subscribers.length
+
+      if (subNum === 1) {
+        subscribers = `~${data.blog.subscribers[0]}`;
+      } else if (subNum === 2) {
+        subscribers = `~${data.blog.subscribers[0]} and 1 other`;
+      } else if (subNum > 2) {
+        subscribers = `~${data.blog.subscribers[0]} and ${subNum-1} others`;
+      }
+
+      let foreign = _.get(this.props,
+        `subs[${this.props.ship}][${this.props.blogId}]`, false);
+
+      let actionType = false;
+      if (this.state.temporary) {
+        actionType = 'subscribe';
+      } else if ((this.props.ship !== window.ship) && foreign) {
+        actionType = 'unsubscribe';
+      }
 
       return (
         <div>
@@ -164,7 +261,10 @@ export class Blog extends Component {
                 <div style={{flexBasis: 160, marginRight: 16}}>
                   <p className="gray-50 label-small-2 b">Subscribers</p>
                   <p className="label-small-2">{subscribers}</p>
-                  <p className="label-small-2 b">Subscribe</p>
+                  <Subscribe actionType={actionType}
+                    subscribe={this.subscribe}
+                    unsubscribe={this.unsubscribe}
+                  />
                 </div>
               </div>
               <div className="flex flex-wrap" style={{marginTop: 48}}>
