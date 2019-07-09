@@ -158,7 +158,7 @@ instance Monad Get where
 --------------------------------------------------------------------------------
 
 badEncoding :: Ptr Word -> S -> String -> IO a
-badEncoding endPtr s msg = throwIO $ BadEncoding (endPtr,s) msg
+badEncoding !endPtr s msg = throwIO $ BadEncoding (endPtr,s) msg
 
 --------------------------------------------------------------------------------
 
@@ -167,19 +167,19 @@ getPos = Get $ \_ _ s ->
   pure (GetResult s (pos s))
 
 insRef :: Word -> FatNoun -> Get ()
-insRef pos now = Get \_ tbl s -> do
+insRef !pos !now = Get \_ tbl s -> do
   H.insert tbl pos now
   pure $ GetResult s ()
 
 getRef :: Word -> Get FatNoun
-getRef ref = Get \x tbl s -> do
+getRef !ref = Get \x tbl s -> do
   H.lookup tbl ref >>= \case
     Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
     Just no -> pure (GetResult s no)
 
 advance :: Word -> Get ()
 advance 0 = debugM "advance: 0" >> pure ()
-advance n = Get \_ _ s -> do
+advance !n = Get \_ _ s -> do
   debugM ("advance: " <> show n)
   let newUsed = n + usedBits s
       newS    = s { pos      = pos s + n
@@ -246,7 +246,7 @@ dWord = do
     - Construct a bit-vector using the buffer*length*offset.
 -}
 dAtomBits :: Word -> Get Atom
-dAtomBits (fromIntegral -> bits) = do
+dAtomBits !(fromIntegral -> bits) = do
     debugMId ("dAtomBits(" <> show bits <> ")") $ do
       fmap (view $ from atomWords) $
         VP.generateM bufSize \i -> do
@@ -286,12 +286,12 @@ peekWord = do
   pure res
 
 swiz :: Word -> (Word, Word) -> Word
-swiz (fromIntegral -> off) (low, hig) =
+swiz !(fromIntegral -> off) (!low, !hig) =
   (.|.) (shiftR low off) (shiftL hig (64-off))
 
 takeLowBits :: Word -> Word -> Word
-takeLowBits 64  wor = wor
-takeLowBits wid wor = (2^wid - 1) .&. wor
+takeLowBits 64   !wor = wor
+takeLowBits !wid !wor = (2^wid - 1) .&. wor
 
 {-|
   Make a word from the next n bits (where n <= 64).
@@ -302,7 +302,7 @@ takeLowBits wid wor = (2^wid - 1) .&. wor
   - Return the word.
 -}
 dWordBits :: Word -> Get Word
-dWordBits n = do
+dWordBits !n = do
  debugMId ("dWordBits(" <> show n <> ")") $ do
   w <- peekWord
   advance n

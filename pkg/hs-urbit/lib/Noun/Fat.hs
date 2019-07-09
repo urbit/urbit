@@ -2,11 +2,12 @@
     Nouns with Pre-Computed Hash for each node.
 -}
 
-{-# LANGUAGE MagicHash #-}
+{-# LANGUAGE MagicHash, Strict #-}
 {-# OPTIONS_GHC -fwarn-unused-binds -fwarn-unused-imports #-}
+{-# OPTIONS_GHC -funbox-strict-fields #-}
 
-module Noun.Fat ( FatNoun(..)
-                , fatSize, fatHash
+module Noun.Fat ( FatNoun(..), FatAtom(..)
+                , fatSize
                 , fatCell, fatAtom
                 , toFatNoun, fromFatNoun
                 ) where
@@ -25,66 +26,85 @@ import Noun                      (Noun(Atom, Cell))
 
 --------------------------------------------------------------------------------
 
+data FatAtom
+    = FatWord !Word
+    | FatBigN !Int !BigNat
+
 data FatNoun
-    = FatCell {-# UNPACK #-} !Int
-              !Word
-              !FatNoun
-              !FatNoun
-    | FatWord {-# UNPACK #-} !Word
-    | FatAtom {-# UNPACK #-} !Int
-              {-# UNPACK #-} !BigNat
+    = FatCell !Int !Word !FatNoun !FatNoun
+    | FatAtom !FatAtom
 
 
 --------------------------------------------------------------------------------
 
-instance Hashable FatNoun where
-  hash = fatHash
+instance Hashable FatAtom where
+  hash = atomHash
   {-# INLINE hash #-}
   hashWithSalt = defaultHashWithSalt
   {-# INLINE hashWithSalt #-}
+
+instance Hashable FatNoun where
+  hash = nounHash
+  {-# INLINE hash #-}
+  hashWithSalt = defaultHashWithSalt
+  {-# INLINE hashWithSalt #-}
+
+instance Eq FatAtom where
+  (==) x y =
+    case reallyUnsafePtrEquality# x y of
+      1# -> True
+      _  -> case (x, y) of
+              (FatWord w1,    FatWord w2      ) -> w1==w2
+              (FatBigN x1 a1, FatBigN x2 a2   ) -> x1==x2 && a1==a2
+              _                                 -> False
+  {-# INLINE (==) #-}
 
 instance Eq FatNoun where
   (==) x y =
     case reallyUnsafePtrEquality# x y of
       1# -> True
       _  -> case (x, y) of
-              (FatWord w1,       FatWord w2      ) ->
-                  w1==w2
-              (FatAtom x1 a1,    FatAtom x2 a2   ) ->
-                  x1==x2 && a1==a2
+              (FatAtom a1, FatAtom a2) ->
+                  a1 == a2
               (FatCell x1 s1 h1 t1, FatCell x2 s2 h2 t2) ->
                   s1==s2 && x1==x2 && h1==h2 && t1==t2
-              (_,                _               ) ->
+              _ ->
                   False
   {-# INLINE (==) #-}
 
 
 --------------------------------------------------------------------------------
 
+{-# INLINE fatSize #-}
 fatSize :: FatNoun -> Word
 fatSize = \case
   FatCell _ s _ _ -> s
   _               -> 1
 
-{-# INLINE fatHash #-}
-fatHash :: FatNoun -> Int
-fatHash = \case
+{-# INLINE atomHash #-}
+atomHash :: FatAtom -> Int
+atomHash = \case
+  FatBigN h _ -> h
+  FatWord w   -> hash w
+
+{-# INLINE nounHash #-}
+nounHash :: FatNoun -> Int
+nounHash = \case
   FatCell h _ _ _ -> h
-  FatAtom h _     -> h
-  FatWord w       -> hash w
+  FatAtom a       -> hash a
 
 {-# INLINE fatAtom #-}
 fatAtom :: Atom -> FatNoun
 fatAtom = \case
-  MkAtom   (NatS# wd) -> FatWord (W# wd)
-  MkAtom n@(NatJ# bn) -> FatAtom (hash bn) bn
+  MkAtom   (NatS# wd) -> FatAtom $ FatWord (W# wd)
+  MkAtom n@(NatJ# bn) -> FatAtom $ FatBigN (hash bn) bn
 
 {-# INLINE fatCell #-}
 fatCell :: FatNoun -> FatNoun -> FatNoun
 fatCell h t = FatCell has siz h t
   where
     siz = fatSize h + fatSize t
-    has = fatHash h `combine` fatHash t
+    has = nounHash h `combine` nounHash t
 
 {-# INLINE toFatNoun #-}
 toFatNoun :: Noun -> FatNoun
@@ -97,9 +117,9 @@ toFatNoun = go
 fromFatNoun :: FatNoun -> Noun
 fromFatNoun = go
   where go = \case
-          FatAtom _ a     -> Atom (MkAtom $ NatJ# a)
-          FatCell _ _ h t -> Cell (go h) (go t)
-          FatWord w       -> Atom (fromIntegral w)
+          FatCell _ _ h t       -> Cell (go h) (go t)
+          FatAtom (FatBigN _ a) -> Atom (MkAtom $ NatJ# a)
+          FatAtom (FatWord w)   -> Atom (fromIntegral w)
 
 
 -- Stolen from Hashable Library ------------------------------------------------

@@ -38,16 +38,15 @@ dumpJam fp = writeFile fp . view (re _CueFatBytes)
 
 tryCuePill :: PillFile -> IO ()
 tryCuePill pill =
-    loadNoun (show pill) >>= \case Nothing            -> print "nil"
-                                   Just (FatAtom _ _) -> print "atom"
-                                   Just (FatWord _)   -> print "word"
-                                   _                  -> print "cell"
+    loadNoun (show pill) >>= \case Nothing          -> print "nil"
+                                   Just (FatAtom _) -> print "atom"
+                                   _                -> print "cell"
 
 tryCueJamPill :: PillFile -> IO ()
 tryCueJamPill pill = do
   n <- loadNoun (show pill) >>= \case
-         Nothing                  -> print "failure" >> pure (FatWord 0)
-         Just n@(FatAtom _ _)     -> print "atom"    >> pure n
+         Nothing                  -> print "failure" >> pure (FatAtom $ FatWord 0)
+         Just n@(FatAtom _)       -> print "atom"    >> pure n
          Just n@(FatCell _ _ _ _) -> print "cell"    >> pure n
 
   bs <- evaluate (force (jamFatBS n))
