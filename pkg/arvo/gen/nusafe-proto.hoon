@@ -38,7 +38,7 @@
       [%log private-event=vase return-event=vase]
       ::  creates a new node and re-dispatch the event to it
       ::
-      [%create id=@t child-event=vase]
+      [%create sub-id=@t child-event=vase]
       ::  returns a value upwards
       ::
       [%return return-event=vase]
@@ -216,6 +216,11 @@
     ::
     snapshot(posts [[user-event private] posts.snapshot])
   --
+::
+++  event-log-item
+  $%  [%log user-event=vase private-event=vase]
+      [%create sub-id=@t]
+  ==
 ::  currently a hack. to make this work really generically, we'll need to make
 ::  things sorta vase based where we connect types pulled out of the vases
 ::  instead of an each of the two types.
@@ -224,7 +229,7 @@
   $~  [*vase 1 ~ *vase *vase ~]
   $:  app-vase=vase
       next-event-id=@ud
-      event-log=(list [id=@ud user-event=vase private-event=vase])
+      event-log=(list [id=@ud =event-log-item])
       snapshot=vase
       private-state=vase
       children=(map @t node-state)
@@ -336,7 +341,10 @@
     =/  args  :(slop message private-event.response snapshot.state)
     =.  snapshot.state  (slam apply-event-to-snapshot args)
     ::
-    ::  TODO: Broadcast this to the 
+    ~&  [%log user-event=message private-event=private-event.response]
+    =.  event-log.state
+      [[next-event-id.state [%log message private-event.response]] event-log.state]
+    =.  next-event-id.state  +(next-event-id.state)
     ::
     [return-event.response state]
   ::
@@ -354,8 +362,12 @@
     ::
     =^  return  thread  (node-executor child-event.response / message thread)
     ::
-    ~&  [%saving id=id.response return=return]
-    [return state(children (~(put by children.state) id.response thread))]
+    ~&  [%created sub-id=sub-id.response return=return]
+    =.  children.state  (~(put by children.state) sub-id.response thread)
+    =.  event-log.state  [[next-event-id.state [%create sub-id.response]] event-log.state]
+    =.  next-event-id.state  +(next-event-id.state)
+    ::
+    [return state]
   ::
       %return
     ::  when we receive a %return value, we pass the value up to the callers
@@ -398,5 +410,5 @@
 ::
 =^  ret2  board  (node-executor !>(0) /1 !>([%new-post [0 'reply' 'text reply']]) board)
 ::
-~&  [%ret2 private-state.board]
+~&  [%board-private-state private-state.board]
 0
