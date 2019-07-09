@@ -29,7 +29,7 @@ class SideTab extends Component {
       );
     }
     return (
-      <div style={{flexGrow: 1, height:36}}></div>
+      <div style={{flexGrow: 1, height:48}}></div>
     );
   }
 }
@@ -66,6 +66,8 @@ class Error extends Component {
 export class NewPost extends Component {
   constructor(props){
     super(props);
+
+    console.log("props", this.props);
 
     this.state = {
       title: "",

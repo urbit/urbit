@@ -250,6 +250,7 @@
   ++  da-change
     |=  del=delta
     ^+  da-this
+    ~&  da-change+-.del
     ?-  -.del
     ::
         %collection
@@ -417,34 +418,40 @@
   ++  da-remove-order
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
+    ~&  da-remove-order+[who coll post]
     =/  col=(unit collection)  (get-coll-by-index who coll)
     ?~  col
       da-this
     =/  new=collection  u.col
-    =/  pin-ids=(list @)  (fand [post]~ pin.order.u.col)
-    =.  pin.order.u.col
+    =/  pin-ids=(list @)  (fand [post]~ pin.order.new)
+    =.  pin.order.new
     |-
     ?~  pin-ids
-      pin.order.u.col
+      pin.order.new
     %=  $
-      pin.order.u.col  (oust [i.pin-ids 1] pin.order.u.col)
+      pin.order.new  (oust [i.pin-ids 1] pin.order.new)
       pin-ids  t.pin-ids
     ==
     ::
-    =/  unpin-ids=(list @)  (fand [post]~ unpin.order.u.col)
-    =.  unpin.order.u.col
+    =/  unpin-ids=(list @)  (fand [post]~ unpin.order.new)
+    =.  unpin.order.new
     |-
     ?~  unpin-ids
-      unpin.order.u.col
+      unpin.order.new
     %=  $
-      unpin.order.u.col  (oust [i.unpin-ids 1] unpin.order.u.col)
+      unpin.order.new  (oust [i.unpin-ids 1] unpin.order.new)
       unpin-ids  t.unpin-ids
     ==
+    =?  pubs.sat  =(who our.bol)
+      (~(put by pubs.sat) coll new)
+    =?  subs.sat  !=(who our.bol)
+      (~(put by subs.sat) [who coll] new)
     (da-emil make-tile-moves)
   ::
   ++  da-remove
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
+    ~&  da-remove+[who coll post]
     =.  da-this  (da-remove-unread +<)
     =.  da-this  (da-remove-latest +<)
     =.  da-this  (da-remove-order +<)

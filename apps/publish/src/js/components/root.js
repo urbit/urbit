@@ -111,6 +111,7 @@ export class Root extends Component {
                       ship = {props.match.params.ship.slice(1)}
                       api = {api}
                       {...this.state}
+                      {...props}
                     />
                   }
                 />
@@ -130,6 +131,7 @@ export class Root extends Component {
                       setSpinner={this.setSpinner}
                       api = {api}
                       {...this.state}
+                      {...props}
                     />
                   }
                 />

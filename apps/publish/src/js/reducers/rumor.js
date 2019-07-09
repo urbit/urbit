@@ -70,8 +70,8 @@ export class RumorReducer {
   removeOrder(json, state) {
     if (json.who === window.ship) {
       if (state.pubs[json.coll]) {
-        let pinIdx   = _.findIndex(state.pubs[json.coll].order.pin, json.post);
-        let unpinIdx = _.findIndex(state.pubs[json.coll].order.unpin, json.post);
+        let pinIdx   = state.pubs[json.coll].order.pin.indexOf(json.post);
+        let unpinIdx = state.pubs[json.coll].order.unpin.indexOf(json.post);
         
         if (pinIdx != -1) {
           _.pullAt(state.pubs[json.coll].order.pin, [pinIdx]);
@@ -83,9 +83,9 @@ export class RumorReducer {
     } else {
       if (state.subs[json.who][json.coll]) {
         let pinIdx   = 
-          _.findIndex(state.subs[json.who][json.coll].order.pin, json.post);
+          state.subs[json.who][json.coll].order.pin.indexOf(json.post);
         let unpinIdx = 
-          _.findIndex(state.subs[json.who][json.coll].order.unpin, json.post);
+          state.subs[json.who][json.coll].order.unpin.indexOf(json.post);
         
         if (pinIdx != -1) {
           _.pullAt(state.subs[json.who][json.coll].order.pin, [pinIdx]);
