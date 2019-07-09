@@ -7,7 +7,11 @@ import { PostBody } from '/components/lib/post-body';
 import { Comments } from '/components/lib/comments';
 import { PathControl } from '/components/lib/path-control';
 import { NextPrev } from '/components/lib/next-prev';
+import { NotFound } from '/components/not-found';
+import { withRouter } from 'react-router';
 import _ from 'lodash';
+
+const NF = withRouter(NotFound);
 
 class Admin extends Component {
   constructor(props) {
@@ -90,6 +94,7 @@ export class Post extends Component {
       comments: null,
       pathData: [],
       temporary: false,
+      notFound: false,
     }
 
     this.editPost = this.editPost.bind(this);
@@ -152,7 +157,7 @@ export class Post extends Component {
     let blogId = this.props.blogId;
     let postId = this.props.postId;
 
-    if (ship != window.ship) {
+    if (ship !== window.ship) {
       
       let blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
@@ -206,23 +211,29 @@ export class Post extends Component {
       let blog = _.get(this.props, `pubs[${blogId}]`, false);
       let post = _.get(blog, `posts[${postId}].post`, false);
       let comments = _.get(blog, `posts[${postId}].comments`, false);
-      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
-      let postUrl = `${blogUrl}/${post.info.filename}`;
 
-      this.setState({
-        titleOriginal: post.info.title,
-        bodyOriginal: post.raw,
-        title: post.info.title,
-        body: post.raw,
-        blog: blog,
-        post: post,
-        comments: comments,
-        pathData: [
-          { text: "Home", url: "/~publish/recent" },
-          { text: blog.info.title, url: blogUrl },
-          { text: post.info.title, url: postUrl },
-        ],
-      });
+      if (!blog || !post) {
+        this.setState({notFound: true});
+
+      } else {
+        let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+        let postUrl = `${blogUrl}/${post.info.filename}`;
+
+        this.setState({
+          titleOriginal: post.info.title,
+          bodyOriginal: post.raw,
+          title: post.info.title,
+          body: post.raw,
+          blog: blog,
+          post: post,
+          comments: comments,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, url: blogUrl },
+            { text: post.info.title, url: postUrl },
+          ],
+        });
+      }
     }
   }
 
@@ -271,10 +282,14 @@ export class Post extends Component {
     }
   }
 
-  handleError() {
+  handleError(err) {
+    this.props.setSpinner(false);
+    this.setState({notFound: true});
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.state.notFound) return;
+
     let ship   = this.props.ship;
     let blogId = this.props.blogId;
     let postId = this.props.postId;
@@ -295,6 +310,10 @@ export class Post extends Component {
       blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
       post = _.get(blog, `posts[${postId}].post`, false);
       comments = _.get(blog, `posts[${postId}].comments`, false);
+    }
+
+    if (!blog || !post) {
+      this.setState({notFound: true});
     }
 
     if (this.state.awaitingDelete && (post === false) && oldPost) {
@@ -369,7 +388,11 @@ export class Post extends Component {
   render() {
     let adminEnabled = (this.props.ship === window.ship);
 
-    if (this.state.awaitingLoad) {
+    if (this.state.notFound) {
+      return (
+        <NF/>
+      );
+    } else if (this.state.awaitingLoad) {
       return null;
     } else if (this.state.awaitingEdit) {
       return null;

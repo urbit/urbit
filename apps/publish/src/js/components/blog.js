@@ -4,8 +4,10 @@ import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
+import { NotFound } from '/components/not-found';
 
 const PC = withRouter(PathControl);
+const NF = withRouter(NotFound);
 
 class Subscribe extends Component {
   constructor(props) {
@@ -46,6 +48,7 @@ export class Blog extends Component {
       temporary: false,
       awaitingSubscribe: false,
       awaitingUnsubscribe: false,
+      notFound: false,
     };
 
     this.subscribe = this.subscribe.bind(this);
@@ -73,6 +76,8 @@ export class Blog extends Component {
   }
 
   handleError(err) {
+    this.props.setSpinner(false);
+    this.setState({notFound: true});
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -101,6 +106,11 @@ export class Blog extends Component {
     let blog = (ship == window.ship)
       ?  _.get(this.props, `pubs[${blogId}]`, false)
       :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
+
+    if (!(blog) && (ship === window.ship)) {
+      this.setState({notFound: true});
+      return;
+    };
 
     let temporary = (!(blog) && (ship != window.ship));
 
@@ -203,6 +213,12 @@ export class Blog extends Component {
   }
 
   render() {
+    if (this.state.notFound) {
+      return (
+        <NF/>
+      );
+    }
+
     let data = this.buildData();
 
     let posts = data.postProps.map((post, key) => {

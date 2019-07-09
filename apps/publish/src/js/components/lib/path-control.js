@@ -65,10 +65,10 @@ export class PathControl extends Component {
     pathData.forEach((seg, i) => {
       let style = (i == 0)
         ?  {marginLeft: 16}
-        :  null;
-      style = (i == (pathData.length - 1))
-        ?  {color: "black"}
-        :  style;
+        :  {};
+      if (i === pathData.length - 1)
+        style.color = "black";
+
       path.push(
         <Link to={seg.url} key={key++}
           className="fl gray-30 label-regular" style={style}>
