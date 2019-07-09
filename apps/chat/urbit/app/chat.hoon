@@ -478,7 +478,7 @@
 ::  +bound: lient tells us we successfully bound our server to the ~chat url
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -486,7 +486,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)

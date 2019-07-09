@@ -6,7 +6,7 @@
 ::
 +$  card
   $%  [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%peer wire dock path]
       [%quit ~]
       [%poke wire dock poke]
