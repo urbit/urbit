@@ -218,7 +218,10 @@
   --
 ::
 ++  event-log-item
-  $%  [%log user-event=vase private-event=vase]
+  $%  ::  when sending across the wire, just send the value in the vase, not
+      ::  the type. the other side knows what app its for and at least for now,
+      ::  the remote will call the mold.
+      [%log user-event=vase private-event=vase]
       [%create sub-id=@t]
   ==
 ::  currently a hack. to make this work really generically, we'll need to make
@@ -283,8 +286,15 @@
 ::
 ::
 ++  node-executor
-  |=  [parent-event=vase route=path message=vase state=node-state]
+  |=  $:  parent-event=vase
+          route=path
+          full-path=path
+          message=vase
+          state=node-state
+      ==
   ^-  [vase _state]
+  ::
+  ~&  [%full-path full-path]
   ::  If we still have remaining path elements, dispatch on them.
   ::
   ?^  route
@@ -308,7 +318,7 @@
     =/  child-event=vase  (slot 3 raw-result)
     ::
     =^  return-value  u.sub-node
-      (node-executor child-event t.route message u.sub-node)
+      (node-executor child-event t.route full-path message u.sub-node)
     ::
     ::  what we want is to mandate a single return value instead of an
     ::  arbitrary list. this really requires that the types above line up
@@ -360,7 +370,7 @@
           ~
       ==
     ::
-    =^  return  thread  (node-executor child-event.response / message thread)
+    =^  return  thread  (node-executor child-event.response / (weld full-path [sub-id.response ~]) message thread)
     ::
     ~&  [%created sub-id=sub-id.response return=return]
     =.  children.state  (~(put by children.state) sub-id.response thread)
@@ -402,13 +412,10 @@
 =/  board=node-state  [!>(node-type-board) 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
 
 ~&  %start---post--a
-=^  returns  board  (node-executor !>(0) / !>([%new-post [0 'subject' 'text']]) board)
+=^  returns  board  (node-executor !>(0) / / !>([%new-post [0 'subject' 'text']]) board)
 ~&  %start---post--b
-::  TODO: This no longer crashes, but we need to first implement the return
-::  events above to increment the postid, and then we have to finish routing
-::  back to the post.
 ::
-=^  ret2  board  (node-executor !>(0) /1 !>([%new-post [0 'reply' 'text reply']]) board)
+=^  ret2  board  (node-executor !>(0) /1 /1 !>([%new-post [0 'reply' 'text reply']]) board)
 ::
 ~&  [%board-private-state private-state.board]
 0
