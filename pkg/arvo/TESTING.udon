@@ -55,4 +55,3 @@ I would like to get to a place where any direct scrying of the filesystem is dis
 Implicit in having a standard way to write tests and a standard `+test` runner is the idea that all functionality on the current desk should be tested.
 
 Let's say I'm shipping a program on Urbit and I use multiple third-party libraries. Each of those libraries should have their own test suites placed in `%/tests/`. When I `|merge` their desks into my application desk, having a standard test runner means that all their tests and all my application tests get run. If you're depending on a library, you want to make sure that the tests for your dependencies run when you test your application.
-

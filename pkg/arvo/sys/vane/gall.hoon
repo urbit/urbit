@@ -616,7 +616,7 @@
 ::          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
           $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
-::          $response  `note-arvo`[%l %response raw-http-response.q.q.cov]
+::          $response  `note-arvo`[%i %response raw-http-response.q.q.cov]
         ==
         ::
         :: I'm sort of stumped on how to get a %give out of the above; it's
@@ -1342,12 +1342,12 @@
         %wind  `%j
         %wipe  `%f
       ::
-        %request         `%l
-        %cancel-request  `%l
-        %serve       `%r
-        %connect     `%r
-        %disconnect  `%r
-        %rule        `%r
+        %request         `%i
+        %cancel-request  `%i
+        %serve       `%e
+        %connect     `%e
+        %disconnect  `%e
+        %rule        `%e
       ==
     --
   --

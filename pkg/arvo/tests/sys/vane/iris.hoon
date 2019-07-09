@@ -1,6 +1,6 @@
 /+  *test
 ::
-/=  http-client-raw  /:  /===/sys/vane/lient  /!noun/
+/=  http-client-raw  /:  /===/sys/vane/iris  /!noun/
 ::
 !:
 ::
@@ -39,7 +39,7 @@
         :*  duct=~[/http-get-request]  ~
             %request
             request
-            *outbound-config:http-client
+            *outbound-config:iris
         ==
       ^=  expected-moves
         ^-  (list move:http-client-gate)
@@ -61,7 +61,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -135,7 +135,7 @@
         :*  duct=~[/http-get-request]  ~
             %request
             request
-            *outbound-config:http-client
+            *outbound-config:iris
         ==
       ^=  expected-moves
         ^-  (list move:http-client-gate)
@@ -157,7 +157,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -194,7 +194,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -227,7 +227,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -292,7 +292,7 @@
         :*  duct=~[/http-get-request]  ~
             %request
             request
-            *outbound-config:http-client
+            *outbound-config:iris
         ==
       ^=  expected-moves
         ^-  (list move:http-client-gate)
@@ -314,7 +314,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -398,7 +398,7 @@
         :*  duct=~[/http-get-request]  ~
             %request
             request
-            *outbound-config:http-client
+            *outbound-config:iris
         ==
       ^=  expected-moves
         ^-  (list move:http-client-gate)
@@ -420,7 +420,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/initial-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %receive
             id=0
             ^-  http-event:http
@@ -471,7 +471,7 @@
         :*  duct=~[/http-get-request]  ~
             %request
             request
-            *outbound-config:http-client
+            *outbound-config:iris
         ==
       ^=  expected-moves
         ^-  (list move:http-client-gate)
@@ -492,7 +492,7 @@
       scry=*sley
       ^=  call-args
         :+  duct=~[/secondary-born-duct]  ~
-        ^-  task:able:http-client
+        ^-  task:able:iris
         :*  %born
             ~
         ==
@@ -515,7 +515,7 @@
   |=  $:  http-client-gate=_http-client-gate
           now=@da
           scry=sley
-          call-args=[=duct type=* wrapped-task=(hobo task:able:http-client)]
+          call-args=[=duct type=* wrapped-task=(hobo task:able:iris)]
           expected-moves=(list move:http-client-gate)
       ==
   ^-  [tang _http-client-gate]

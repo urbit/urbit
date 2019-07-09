@@ -1126,7 +1126,9 @@
                   ?|  bust:puz
                       ?=(~ rue.puz)
                       (gth now (add ~s32 u.rue.puz))
-                      (lth u.rue.puz hop.fox)
+                      ::  XX hop.fox is never set, nothing sends %kick
+                      ::
+                      :: (lth u.rue.puz hop.fox)
                   ==
               ==
             +>.$

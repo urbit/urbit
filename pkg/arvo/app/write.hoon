@@ -47,15 +47,15 @@
       [%diff diff]
       [%build wire ? schematic:ford]
       [%kill wire ~]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%http-response http-event:http]
-      [%disconnect binding:http-server]
+      [%disconnect binding:eyre]
   ==
 ::
 +$  poke
   $%  [%hall-action action:hall]
       [%write-action action]
-      [%noun @tas path @t]
+      [%launch-action @tas path @t]
   ==
 ::
 +$  diff
@@ -188,7 +188,7 @@
     :_  this(sat *state)
     :~  [ost.bol %connect / [~ /'~publish'] %write]
         :*  ost.bol  %poke  /publish  [our.bol %launch]
-            %noun  %write  /publishtile  '/~publish/tile.js'
+            %launch-action  %write  /publishtile  '/~publish/tile.js'
         ==
     ==
     ::
@@ -314,7 +314,6 @@
         %total
       =?  contributors.dat.del  =(our.bol who.del)
         (get-contributors col.del)
-      =.  last-update.dat.del  now.bol
       =?  pubs.sat  =(our.bol who.del)
         (~(put by pubs.sat) col.del dat.del)
       =?  subs.sat  !=(our.bol who.del)
@@ -1238,7 +1237,7 @@
   ==
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -1246,7 +1245,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =/  request-line  (parse-request-line url.request.inbound-request)
@@ -1432,7 +1431,7 @@
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   [~ this]
 ::

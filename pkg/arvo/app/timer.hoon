@@ -18,13 +18,13 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path @t]]
+  $%  [%launch-action [@tas path @t]]
   ==
 ::
 +$  card
   $%  [%poke wire dock poke]
       [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%diff %json json]
       [%wait wire @da]
       [%rest wire @da]
@@ -37,18 +37,18 @@
 ++  this  .
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
 ++  prep
   |=  old=(unit tim=@da)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%timer /tile '/~timer/js/tile.js']]
+  =/  launcha  [%launch-action [%timer /tile '/~timer/js/tile.js']]
   :-
   :~
     [ost.bol %connect / [~ /'~timer'] %timer]
-    [ost.bol %poke /timer [our.bol %launch] launchnoun]
+    [ost.bol %poke /timer [our.bol %launch] launcha]
   ==
   ?~  old
     this
@@ -87,7 +87,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)
@@ -116,7 +116,10 @@
 ++  wake
   |=  [wir=wire err=(unit tang)]
   ^-  (quip move _this)
-  :-  (send-tile-diff [%s 'alarm'])
-  this(tim *@da)
+  ?~  err
+    :-  (send-tile-diff [%s 'alarm'])
+    this(tim *@da)
+  ~&  err
+  [~ this]
 ::
 --

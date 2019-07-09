@@ -106,7 +106,7 @@
     ++  card                                            ::  general card
       $%  {$diff $sole-effect sole-effect}              ::
           {$send wire {ship term} clap}                 ::
-          [%request wire request:http outbound-config:http-client]  ::  %l
+          [%request wire request:http outbound-config:iris]  ::  %l
           [%build wire ? schematic:ford]
           [%kill wire ~]
           {$deal wire sock term club}                   ::
@@ -363,7 +363,7 @@
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
-      (he-card(poy `+>+<(pux `way)) %request way request *outbound-config:http-client)
+      (he-card(poy `+>+<(pux `way)) %request way request *outbound-config:iris)
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -951,7 +951,7 @@
   ::  +he-http-response: result from http-client
   ::
   ++  he-http-response
-    |=  [way=wire response=client-response:http-client]
+    |=  [way=wire response=client-response:iris]
     ^+  +>
     ?>  ?=(^ poy)
     =<  he-pine
@@ -960,7 +960,7 @@
       +>
     ::
     ~!  response
-    %.  [%httr !>((to-httr:http-client response-header.response full-file.response))]
+    %.  [%httr !>((to-httr:iris response-header.response full-file.response))]
     =+  dye=~(. dy u.poy(pux ~))
     ?+  way  !!
       {$hand ~}  dy-hand:dye

@@ -2,7 +2,7 @@
 ::  lighter than eyre
 ::
 |=  pit=vase
-=,  http-server
+=,  eyre
 ::  internal data structures
 ::
 =>  =~
@@ -339,7 +339,7 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  redirect-url=(unit @t)
+  |=  [redirect-url=(unit @t) our=@p]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
@@ -347,14 +347,91 @@
   %-  en-xml:html
   ;html
     ;head
+      ;meta(charset "utf-8");
       ;title:"Sign in"
+      ;style:'''
+             @import url("https://rsms.me/inter/inter.css");
+             @font-face {
+                 font-family: "Source Code Pro";
+                 src: url("https://storage.googleapis.com/media.urbit.org/fonts/scp-medium.woff");
+                 font-weight: 500
+             }
+             html, body {
+               font-family: Inter, sans-serif;
+               height: 100%;
+               margin: 0 !important;
+               width: 100%;
+               background: #000;
+               color: #fff;
+               display: table;
+             }
+             form {
+               margin: 0 !important;
+               display: flex;
+               flex-direction: column;
+               flex: 2;
+             }
+             #topborder {
+               border-top: 3px #fff solid;
+             }
+             h1 {
+               line-height: 77px;
+               font-size: 64px;
+               -webkit-margin-before: 0;
+               -webkit-margin-after: 0;
+               -webkit-margin-start: 0;
+               -webkit-margin-end: 0;
+               font-weight: 500;
+               flex: 1;
+               padding-top: 22px;
+               margin-bottom: 66px;
+             }
+             #main {
+               vertical-align: middle;
+               display: table-cell;
+             }
+             input {
+               display: block;
+               width: 100%;
+               font-size: 64px;
+               line-height: 77px;
+               color: #fff;
+               background: #000;
+               border: none;
+               flex: 1;
+               margin-bottom: 66px;
+               font-weight: 500;
+               font-family: 'Source Code Pro', monospace, sans-serif;
+             }
+             button {
+               background: #000;
+               border: none;
+               color: #fff;
+               line-height: 77px;
+               font-size: 64px;
+               text-align: left;
+               flex: 1;
+               font-weight: 500;
+             }
+             #inner {
+               width: 75%;
+               margin: 0 auto;
+               display: flex;
+               flex-direction: column;
+             }
+             '''
     ==
     ;body
-      ;h1:"Sign in"
-      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-        ;input(type "password", name "password", placeholder "passcode");
-        ;input(type "hidden", name "redirect", value redirect-str);
-        ;button(type "submit"):"Login"
+      ;div#main
+        ;div#inner
+          ;h1#topborder:"Modulo"
+          ;h1:"{(scow %p our)}"
+          ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+            ;input(type "password", name "password", placeholder "passcode", autofocus "true");
+            ;input(type "hidden", name "redirect", value redirect-str);
+            ;button(type "submit"):"→ Authenticate"
+          ==
+        ==
       ==
     ==
   ==
@@ -546,10 +623,10 @@
     //
     delete() {
       var id = this.nextId();
-      this.sendJSONToChannel({
+      navigator.sendBeacon(this.channelURL(), JSON.stringify([{
         "id": id,
         "action": "delete"
-      }, false);
+      }]));
     }
 
     //  unsubscribe to a specific subscription
@@ -565,7 +642,7 @@
 
     //  sends a JSON command command to the server.
     //
-    sendJSONToChannel(j, connectAgain = true) {
+    sendJSONToChannel(j) {
       var req = new XMLHttpRequest();
       req.open("PUT", this.channelURL());
       req.setRequestHeader("Content-Type", "application/json");
@@ -586,9 +663,7 @@
         this.lastEventId = this.lastAcknowledgedEventId;
       }
 
-      if (connectAgain) {
-        this.connectIfDisconnected();
-      }
+      this.connectIfDisconnected();
     }
 
     //  connects to the EventSource if we are not currently connected
@@ -879,27 +954,27 @@
         ::
         =+  request-line=(parse-request-line url.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page (get-header:http 'redirect' args.request-line))
+        (login-page (get-header:http 'redirect' args.request-line) our)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        (return-static-data-on-duct 400 'text/html' (login-page ~))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        (return-static-data-on-duct 400 'text/html' (login-page ~))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        (return-static-data-on-duct 400 'text/html' (login-page ~))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::
       ?~  password=(get-header:http 'password' u.parsed)
-        (return-static-data-on-duct 400 'text/html' (login-page ~))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        (return-static-data-on-duct 400 'text/html' (login-page ~))
+        (return-static-data-on-duct 400 'text/html' (login-page ~ our))
       ::  mint a unique session cookie
       ::
       =/  session=@uv
@@ -1032,6 +1107,9 @@
       ::
       ?:  =('GET' method.request)
         (on-get-request channel-id request)
+      ?:  =('POST' method.request)
+        ::  POST methods are used solely for deleting channels
+        (on-put-request channel-id request)
       ::
       ~&  %session-not-a-put
       [~ state]
@@ -1460,7 +1538,7 @@
         ^-  (list move)
         :_  moves
         :+  p.state.u.channel  %give
-        ^-  gift:able:http-server
+        ^-  gift:able
         :*  %response  %continue
         ::
             ^=  data
@@ -1922,7 +2000,7 @@
             %give
             %mass
             ^-  mass
-            :+  %rver  %|
+            :+  %eyre  %|
             :~  bindings+&+bindings.server-state.ax
                 auth+&+authentication-state.server-state.ax
                 connections+&+connections.server-state.ax

@@ -110,11 +110,11 @@
       $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
+      $:  %i                                            ::    to %iris
+          $>(%request task:able:iris)                   ::  http request
+      ==                                                ::
       $:  %j                                            ::    to self
           $>(%look task)                                ::  set ethereum source
-      ==                                                ::
-      $:  %l                                            ::    to %lient
-          $>(%request task:able:http-client)            ::  http request
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -126,7 +126,7 @@
   $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
       [%j $>(%vent gift)]                               ::  ethereum changes
       [%a $>(%woot gift:able:ames)]                     ::  message result
-      [%l $>(%http-response gift:able:http-client)]     ::  http response
+      [%i $>(%http-response gift:able:iris)]            ::  http response
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -758,7 +758,7 @@
         ^-  (list move)
         :~  [hen %pass /(scot %p our)/init %b %wait +(now)]
             [hen %give %init our]
-            [hen %slip %r %init our]
+            [hen %slip %e %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]
@@ -807,7 +807,7 @@
         %+  weld  moz
         ^-  (list move)
         :~  [hen %give %init our]
-            [hen %slip %r %init our]
+            [hen %slip %e %init our]
             [hen %slip %d %init our]
             [hen %slip %g %init our]
             [hen %slip %c %init our]
@@ -1001,7 +1001,7 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%l %http-response *]
+        [%i %http-response *]
       ?.  ?=(%finished -.client-response.hin)
         +>.$
       ~!  hin
@@ -1756,10 +1756,10 @@
     |=  [wir=wire jon=json]
     ^-  move
     %+  wrap-note  wir
-    :^  %l  %request
+    :^  %i  %request
       ?>  ?=(%| -.source)
       (light-json-request node.p.source jon)
-    *outbound-config:http-client
+    *outbound-config:iris
   ::
   ::  +|  source-operations
   ::
@@ -1983,11 +1983,11 @@
     (complete-with-rpc-response cuz rep)
   ::
   ++  finished
-    |=  [cuz=wire =response-header:http full-file=(unit mime-data:http-client)]
+    |=  [cuz=wire =response-header:http full-file=(unit mime-data:iris)]
     ^+  +>
     ?:  ?=(%& -.source)  +>
     ::
-    =+  rep=(httr-to-rpc-response (to-httr:http-client response-header full-file))
+    =+  rep=(httr-to-rpc-response (to-httr:iris response-header full-file))
     (complete-with-rpc-response cuz rep)
   ::
   ++  complete-with-rpc-response
