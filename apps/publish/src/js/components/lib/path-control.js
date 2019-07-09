@@ -10,6 +10,7 @@ const PC = withRouter(PublishCreate);
 export class PathControl extends Component {
   constructor(props){
     super(props);
+
   }
 
   buildPathData(){
@@ -84,8 +85,11 @@ export class PathControl extends Component {
       }
     });
 
-    let create = ((window.location.pathname == '/~publish/new-blog') ||
-                  (window.location.pathname == '/~publish/new-post'))
+    console.log("props", this.props);
+
+    let create = ((window.location.pathname === '/~publish/new-blog') ||
+      (window.location.pathname === '/~publish/new-post')) ||
+      (this.props.create === false)
       ?  false
       :  'post';
 

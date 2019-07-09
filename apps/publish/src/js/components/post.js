@@ -379,9 +379,10 @@ export class Post extends Component {
 
       let date = moment(this.state.post.info["date-created"]).fromNow();
       let authorDate = `${this.state.post.info.creator} • ${date}`;
+      let create = (this.props.ship === window.ship);
       return (
         <div>
-          <PathControl pathData={this.state.pathData}/>
+          <PathControl pathData={this.state.pathData} create={create}/>
           <div className="absolute w-100" style={{top:124}}>
             <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
               <Link to={blogLink}>
@@ -429,9 +430,10 @@ export class Post extends Component {
 
       let date = moment(this.state.post.info["date-created"]).fromNow();
       let authorDate = `${this.state.post.info.creator} • ${date}`;
+      let create = (this.props.ship === window.ship);
       return (
         <div>
-          <PathControl pathData={this.state.pathData}/>
+          <PathControl pathData={this.state.pathData} create={create}/>
           <div className="absolute w-100" style={{top:124}}>
             <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
               <Link to={blogLink}>

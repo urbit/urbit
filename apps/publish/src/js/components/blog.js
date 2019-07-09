@@ -143,9 +143,11 @@ export class Blog extends Component {
     if (this.state.awaiting) {
       return null;
     } else {
+      let create = (this.props.ship === window.ship);
+
       return (
         <div>
-          <PathControl pathData={data.pathData}/>
+          <PC pathData={data.pathData} create={create}/>
           <div className="absolute"
             style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
             <div className="flex-col">
