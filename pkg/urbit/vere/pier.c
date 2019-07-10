@@ -1393,7 +1393,7 @@ _pier_boot_vent(u3_boot* bot_u)
           if ( c3__into == u3h(u3t(ovo)) ) {
             c3_assert( 0 == len_w );
             len_w++;
-            ovo = u3k(u3t(pil_q));
+            ovo = u3t(pil_q);
           }
 
           new = u3nc(u3k(ovo), new);
