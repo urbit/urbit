@@ -180,7 +180,7 @@ export class NewBlog extends Component {
                   onChange={this.titleChange}
                 />
 
-                <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
                 <FormLink
                   enabled={(this.state.title !== '')}
@@ -188,7 +188,7 @@ export class NewBlog extends Component {
                   body={"-> Create a first post"}
                 />
 
-                <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
                 <FormLink
                   enabled={(this.state.title !== '')}
@@ -196,7 +196,7 @@ export class NewBlog extends Component {
                   body={"-> Send Invites"}
                 />
 
-                <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
                 <Link to="/~publish/recent" className="body-large b">
                   Cancel
@@ -219,47 +219,47 @@ export class NewBlog extends Component {
                style={{height: 'calc(100% - 124px)', top: 124}}>
             <div className="h-inner dt center mw-688 w-100">
               <div className="flex-col dtc v-mid">
-                 <input autoFocus
-                   className="header-2 b--none"
-                   type="text" 
-                   name="blogName"
-                   placeholder="Add a Title"
-                   onChange={this.titleChange}
-                 />
+                <input autoFocus
+                  className="header-2 b--none"
+                  type="text" 
+                  name="blogName"
+                  placeholder="Add a Title"
+                  onChange={this.titleChange}
+                />
 
-                 <p className="body-regular-400">
-                   Who is invited to read this blog?
-                 </p>
+                <p className="body-regular-400" style={{marginTop:25, marginBottom:27}}>
+                  Who is invited to read this blog?
+                </p>
 
-                 <input className={invitesStyle}
-                   style={{caretColor: "black"}}
-                   type="text"
-                   name="invites"
-                   placeholder="~ship-name, ~ship-name"
-                   onChange={this.invitesChange}
-                 />
+                <input className={invitesStyle}
+                  style={{caretColor: "black"}}
+                  type="text"
+                  name="invites"
+                  placeholder="~ship-name, ~ship-name"
+                  onChange={this.invitesChange}
+                />
 
-                 <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
-                 <FormLink
-                   enabled={enableButtons}
-                   action={this.firstPost}
-                   body={"-> Save and create a first post"}
-                 />
+                <FormLink
+                  enabled={enableButtons}
+                  action={this.firstPost}
+                  body={"-> Save and create a first post"}
+                />
 
-                 <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
-                 <FormLink
-                   enabled={enableButtons}
-                   action={this.returnHome}
-                   body={"-> Save and return home"}
-                 />
+                <FormLink
+                  enabled={enableButtons}
+                  action={this.returnHome}
+                  body={"-> Save and return home"}
+                />
 
-                 <hr className="gray-30"/>
+                <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
-                 <Link to="/~publish/recent" className="body-large b">
-                   Cancel
-                 </Link>
+                <Link to="/~publish/recent" className="body-large b">
+                  Cancel
+                </Link>
               </div>
             </div>
           </div>
