@@ -161,7 +161,7 @@ _daemon_defy_fate()
 void
 _daemon_fate(void *vod_p, u3_noun mat)
 {
-  u3_noun fate = u3ke_cue(u3k(mat));
+  u3_noun fate = u3ke_cue(mat);
   u3_noun load;
   void (*next)(u3_noun);
 
