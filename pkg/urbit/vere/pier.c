@@ -2080,7 +2080,7 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    pir_u->bot_u = _pier_boot_create(pir_u, u3k(pil), u3k(ven));
+    pir_u->bot_u = _pier_boot_create(pir_u, pil, ven);
 
     _pier_boot_set_ship(pir_u, u3k(who), ( c3__fake == u3h(ven) ) ? c3y : c3n);
   }
