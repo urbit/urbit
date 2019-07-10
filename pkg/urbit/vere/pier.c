@@ -2116,31 +2116,45 @@ c3_w
 u3_pier_mark(FILE* fil_u)
 {
   c3_w len_w = u3K.len_w;
-  c3_w tot_w = 0;
+  c3_w tot_w = 0, pir_w = 0;
   u3_pier* pir_u;
 
   while ( 0 < len_w ) {
     pir_u = u3K.tab_u[--len_w];
-    fprintf(fil_u, "pier: %u\r\n", len_w);
+    pir_w = 0;
+
+    if ( 1 < u3K.len_w ) {
+      fprintf(fil_u, "pier: %u\r\n", len_w);
+    }
 
     if ( 0 != pir_u->bot_u ) {
-      tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
-      tot_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
+      pir_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
+      pir_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
     }
 
     {
-      u3_writ* wit_u = pir_u->ent_u;
-      c3_w wit_w = 0;
+      u3_writ* wit_u = pir_u->ext_u;
+      c3_w len_w = 0, tim_w = 0, job_w = 0, mat_w = 0, act_w =0;
 
       while ( 0 != wit_u ) {
-        wit_w += u3a_mark_noun(wit_u->job);
-        wit_w += u3a_mark_noun(wit_u->now);
-        wit_w += u3a_mark_noun(wit_u->mat);
-        wit_w += u3a_mark_noun(wit_u->act);
+        tim_w += u3a_mark_noun(wit_u->now);
+        job_w += u3a_mark_noun(wit_u->job);
+        mat_w += u3a_mark_noun(wit_u->mat);
+        act_w += u3a_mark_noun(wit_u->act);
+        len_w++;
         wit_u = wit_u->nex_u;
       }
 
-      tot_w += u3a_maid(fil_u, "  writs", wit_w);
+      if ( 0 < len_w ) {
+        fprintf(fil_u, "  marked %u writs\r\n", len_w);
+      }
+
+      pir_w += u3a_maid(fil_u, "  timestamps", tim_w);
+      pir_w += u3a_maid(fil_u, "  events", job_w);
+      pir_w += u3a_maid(fil_u, "  encoded events", mat_w);
+      pir_w += u3a_maid(fil_u, "  pending effects", act_w);
+
+      tot_w += u3a_maid(fil_u, "total pier stuff", pir_w);
     }
   }
 
