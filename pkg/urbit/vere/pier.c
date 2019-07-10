@@ -193,6 +193,9 @@ _pier_db_read_header(u3_pier* pir_u)
   u3z(life);
 }
 
+/* _pier_db_on_commit_loaded(): lmdb read callback
+**  RETAIN mat
+*/
 static c3_o
 _pier_db_on_commit_loaded(u3_pier* pir_u,
                           c3_d id,
@@ -702,18 +705,17 @@ _pier_work_replace(u3_writ* wit_u,
     u3_pier_bail();
   }
 
-  /* move backward in work processing
-  */
+  //  move backward in work processing
+  //
   {
     u3z(wit_u->job);
+    u3z(wit_u->mat);
+    wit_u->mat = 0;
     wit_u->job = job;
 
-    u3z(wit_u->mat);
-    wit_u->mat = u3ke_jam(u3nc(wit_u->mug_l,
-                               u3k(wit_u->job)));
+    _pier_work_build(wit_u);
 
     wit_u->rep_d += 1ULL;
-
     god_u->sen_d -= 1ULL;
   }
 
@@ -1870,6 +1872,8 @@ u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav)
   struct timeval tim_tv;
 
   gettimeofday(&tim_tv, 0);
+  //  XX use wit_u->now (currently unused)
+  //
   now = u3_time_in_tv(&tim_tv);
 
   u3_pier_discover(pir_u, 0, u3nt(now, pax, fav));
