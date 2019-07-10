@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
 import { withRouter } from 'react-router';
 import { NotFound } from '/components/not-found';
+import { Link } from 'react-router-dom';
 
 const PC = withRouter(PathControl);
 const NF = withRouter(NotFound);
@@ -247,6 +248,27 @@ export class Blog extends Component {
         );
       });
 
+      if ((posts.length === 0) && (this.props.ship === window.ship)) {
+        let link = {
+          pathname: "/~publish/new-post",
+          state: {
+            lastPath: this.props.location.pathname,
+            lastMatch: this.props.match.path,
+            lastParams: this.props.match.params,
+          }
+        }
+        posts.push(
+          <div key={0} className="w-336 relative">
+            <hr className="gray-10" style={{marginBottom:18}}/>
+            <Link to={link}>
+              <p className="body-large b">
+                -> Create First Post
+              </p>
+            </Link>
+          </div>
+        );
+      }
+
       let contributors = `~${this.props.ship}`;
       let create = (this.props.ship === window.ship);
 
@@ -274,12 +296,12 @@ export class Blog extends Component {
       return (
         <div>
           <PC pathData={data.pathData} create={create}/>
-          <div className="absolute"
+          <div className="absolute w-100"
             style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
             <div className="flex-col">
               <h2>{data.blogTitle}</h2>
               <div className="flex" style={{marginTop: 22}}>
-                <div style={{flexBasis: 160, marginRight:16}}>
+                <div className="flex-col" style={{flexBasis: 160, marginRight:16}}>
                   <p className="gray-50 label-small-2 b">Host</p>
                   <p className="label-small-2">{data.blogHost}</p>
                 </div>
