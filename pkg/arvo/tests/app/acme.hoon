@@ -9,8 +9,8 @@
 ++  test-prep
   =^  moves  app  (~(prep app *bowl:gall *acme:app) ~)
   %+  expect-eq
-      !>  [[ost.bow.app %connect /acme [~ /'.well-known'/acme-challenge] %acme] ~]
-      !>  moves
+      !>  &
+      !>  ?=([[bone %serve *] ~] moves)
 ::  tests that acme inits on first order
 ::
 ++  test-first-order

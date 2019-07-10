@@ -147,7 +147,7 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire =binding:eyre app=term]
+  $%  [%serve wire =binding:eyre =generator:eyre]
       [%http-response =http-event:http]
       [%poke wire dock poke]
       [%request wire request:http outbound-config:iris]
@@ -332,6 +332,9 @@
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
+      ::  challenges: domain-validation challenge tokens
+      ::
+      challenges=(set @t)
   ==
 --
 ::
@@ -1016,6 +1019,9 @@
         pending  t.pending.aut.u.rod
         active   `[idx tau]
       ==
+    ::  XX space leak, should be pruned on order completion or timeout
+    ::
+    =.  challenges  (~(put in challenges) tok.cal)
     test-trial:effect(aut.u.rod rod-aut)
   ::  XX check/finalize-authz ??
   ::
@@ -1188,49 +1194,21 @@
     ::  XX delete-trial?
     ::
   ==
-::  +poke-handle-http-request: receive incoming http request
+::  +peek: read from app state
 ::
-::    Used to serve the domain validation challenge
-::
-++  poke-handle-http-request
-  |=  =inbound-request:eyre
-  ^-  (quip move _this)
-  ~&  [%handle-http +<]
-  =/  url=(unit (pair pork:eyre quay:eyre))
-    %+  rush
-      url.request.inbound-request
-    ;~(plug ;~(pose apat:de-purl:html (easy *pork:eyre)) yque:de-purl:html)
-  ::
-  ?.  ?=(^ url)
-    ~|  [%invalid-url url.request.inbound-request]  !!
-  ?.  ?=([%'.well-known' %acme-challenge @ ~] q.p.u.url)
-    ~|  [%unknown-url url.request.inbound-request]  !!
-  ::
-  ::  XX these crashes should be restored
-  ::  but %eyre doesn't get an error notification from %gall
-  ::
-  :: ?.  ?=(^ reg.act)  ~|(%no-account !!)
-  :: ?.  ?=(^ rod)      ~|(%no-active-order !!)
-  :: ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
-  ?.  ?&  ?=(^ reg.act)
-          ?=(^ rod)
-          ?=(^ active.aut.u.rod)
-      ==
-    =/  =move  [ost.bow %http-response %start [%500 ~] ~ %.y]
-    [[move ~] this]
-  ::
-  =/  challenge  i.t.t.q.p.u.url
-  =*  aut  u.active.aut.u.rod
-  ?.  =(tok.cal.aut challenge)
-    =/  =move  [ost.bow %http-response %start [%404 ~] ~ %.y]
-    [[move ~] this]
-  =/  =move
-    =/  hed  ['content-type' '/text/plain']~
-    =/  bod
-      %-  some  %-  as-octs:mimes:html
-      (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
-    [ost.bow %http-response %start [%200 hed] bod %.y]
-  [[move ~] this]
+++  peek
+    |=  =path
+    ^-  (unit (unit [%noun (unit @t)]))
+    ?+  path
+      ~
+    ::
+        [%x %domain-validation @t ~]
+      =*  token  i.t.t.path
+      :^  ~  ~  %noun
+      ?.  (~(has in challenges) token)
+        ~
+      (some (rap 3 [token '.' (pass:thumb:jwk key.act) ~]))
+    ==
 ::  +wake: timer wakeup event
 ::
 ++  wake
@@ -1308,11 +1286,15 @@
   |=  old=(unit acme)
   ^-  (quip move _this)
   ?~  old
+    =/  =binding:eyre
+      [~ /'.well-known'/acme-challenge]
+    =/  =generator:eyre
+      [q.byk.bow /gen/acme/domain-validation/hoon ~]
     =/  =move
-      [ost.bow %connect /acme [~ /'.well-known'/acme-challenge] %acme]
+      [ost.bow %serve /acme binding generator]
     [[move ~] this]
   [~ this(+<+ u.old)]
-::  +bound: response to %connect binding request
+::  +bound: response to %serve binding request
 ::
 ++  bound
   |=  [=wire accepted=? =binding:eyre]
