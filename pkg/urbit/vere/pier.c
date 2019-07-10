@@ -2121,7 +2121,7 @@ u3_pier_mark(FILE* fil_u)
 
   while ( 0 < len_w ) {
     pir_u = u3K.tab_u[--len_w];
-    u3l_log("pier: %u\r\n", len_w);
+    fprintf(fil_u, "pier: %u\r\n", len_w);
 
     if ( 0 != pir_u->bot_u ) {
       tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
