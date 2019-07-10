@@ -1,13 +1,17 @@
 {
   pkgs,
-  debug,
+  debug, testnet,
   argon2, ed25519, ent, ge-additions, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv
 }:
 
 let
 
   name =
-    if debug then "urbit-debug" else "urbit";
+    if   testnet
+    then "urbit-testnet"
+    else if debug
+         then "urbit-debug"
+         else "urbit";
 
   deps =
     with pkgs;
@@ -30,6 +34,7 @@ pkgs.stdenv.mkDerivation {
   hardeningDisable = if debug then [ "all" ] else [];
 
   CFLAGS           = if debug then "-O3 -g -Werror" else "-O3 -Werror";
+  MEMORY_LOG       = testnet;
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;

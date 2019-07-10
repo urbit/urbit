@@ -1,4 +1,4 @@
-.PHONY: build build-all install cross release test pills clean
+.PHONY: build build-all install testnet cross release test pills clean
 
 build:
 	nix-build -A urbit -A herb --no-out-link
@@ -8,6 +8,9 @@ build-all:
 
 install:
 	nix-env -f . -iA urbit -iA urbit-debug -iA herb
+
+testnet:
+	nix-env -f . -iA urbit-testnet
 
 cross:
 	sh/cross
