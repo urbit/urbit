@@ -68,12 +68,32 @@
 ::
 --
 ::
-|_  [bol=bowl:gall sat=state]
+|_  [bol=bowl:gall %0 sat=state]
 ::
 ++  this  .
 ::  +our-beak: beak for this app, with case set to current invocation date
 ::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
+::  +prep: set up eyre connection and modulo tile; adapt state
+::
+++  prep
+  =>  |%
+      ++  states
+        $%  [%0 s=state]
+        ==
+      --
+  |=  old=(unit states)
+  ^-  (quip move _this)
+  ?~  old
+    :_  this
+    :~  [ost.bol %connect / [~ /'~publish'] %write]
+        :*  ost.bol  %poke  /publish  [our.bol %launch]
+            %noun  %write  /publishtile  '/~publish/tile.js'
+        ==
+    ==
+  ?-  -.u.old
+    %0  [~ this(sat s.u.old)]
+  ==
 ::
 ++  ships-to-whom
   |=  ships=(set @p)
@@ -180,21 +200,6 @@
     ['    ==' ~]
   ==
 ::
-++  prep
-  |=  old=(unit *)
-  ^-  (quip move _this)
-  ~&  write-prep+act.bol
-  ?~  old
-    :_  this(sat *state)
-    :~  [ost.bol %connect / [~ /'~publish'] %write]
-        :*  ost.bol  %poke  /publish  [our.bol %launch]
-            %noun  %write  /publishtile  '/~publish/tile.js'
-        ==
-    ==
-    ::
-::  [~ this(sat *state)] 
-  [~ this(sat (state u.old))] 
-::
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
@@ -203,22 +208,9 @@
   ?+  a
     [~ this]
   ::
-      %test
-    =/  whoms  (ships-to-whom (sy ~zod ~bus ~marzod ~binzod ~))
-    =/  ships  (whom-to-ships whoms)
-    ~&  whoms
-    ~&  ships
-    [~ this]
-  ::
       %print-bowl
     ~&  bol
     [~ this]
-  ::
-      %update-tile
-    [make-tile-moves this]
-  ::
-      %flush-state
-    [~ this(sat *state)]
   ::
       %print-state
     ~&  sat
@@ -1421,7 +1413,6 @@
   |=  [wir=wire rum=rumor]
   ^-  (quip move _this)
   (bake rum)
-::
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
