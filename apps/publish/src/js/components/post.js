@@ -214,7 +214,7 @@ export class Post extends Component {
 
       if (!blog || !post) {
         this.setState({notFound: true});
-
+        return;
       } else {
         let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
         let postUrl = `${blogUrl}/${post.info.filename}`;
@@ -312,9 +312,6 @@ export class Post extends Component {
       comments = _.get(blog, `posts[${postId}].comments`, false);
     }
 
-    if (!blog || !post) {
-      this.setState({notFound: true});
-    }
 
     if (this.state.awaitingDelete && (post === false) && oldPost) {
       this.props.setSpinner(false);
@@ -323,6 +320,10 @@ export class Post extends Component {
       return;
     }
 
+    if (!blog || !post) {
+      this.setState({notFound: true});
+      return;
+    }
 
     if (this.state.awaitingEdit &&
        ((post.info.title != oldPost.info.title) ||

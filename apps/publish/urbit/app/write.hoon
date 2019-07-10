@@ -346,7 +346,7 @@
             ::
             =/  old=(unit collection)  (~(get by pubs.sat) col.del)
             ?~  old
-              ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+              [~ da-this]
             =.  pubs.sat  (~(del by pubs.sat) col.del)
             :-  ~(tap in ~(key by pos.u.old))
             (da-emil (affection del))
@@ -354,7 +354,7 @@
           ::
           =/  old=(unit collection)  (~(get by subs.sat) who.del col.del)
           ?~  old
-            ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+            [~ da-this]
           =.  subs.sat  (~(del by subs.sat) who.del col.del)
           :-  ~(tap in ~(key by pos.u.old))
           (da-emit [ost.bol %pull /collection/[col.del] [who.del %write] ~])
@@ -377,9 +377,9 @@
           (~(get by pubs.sat) col.del)
         (~(get by subs.sat) who.del col.del)
       ?~  old
-        ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+        da-this
       ?.  (~(has in ~(key by pos.u.old)) u.pos.del)
-        ~|([%cant-delete-nonexistent-post who.del col.del pos.del] !!)
+        da-this
       =/  new=collection 
         %=  u.old
           pos  (~(del by pos.u.old) u.pos.del)
@@ -543,6 +543,7 @@
 ++  affection
   |=  del=delta
   ^-  (list move)
+  =-  ~&  affection+-  -
   %-  zing
   %+  turn  ~(tap by sup.bol)
   |=  [b=bone s=ship p=path]
@@ -1391,6 +1392,7 @@
 ::
 ++  pull
   |=  wir=wire
+  ~&  pull+wir
   ^-  (quip move _this)
   ?+  wir
     [~ this]
@@ -1431,6 +1433,7 @@
 ++  diff-write-rumor
   |=  [wir=wire rum=rumor]
   ^-  (quip move _this)
+  ~&  diff+rum
   (bake rum)
 ::
 ::  +poke-handle-http-cancel: received when a connection was killed

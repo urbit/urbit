@@ -72,6 +72,9 @@ export class Blog extends Component {
       });
 
       this.props.setSpinner(false);
+    } else if (diff.data.remove) {
+      // XX TODO
+
     }
   }
 
@@ -81,22 +84,27 @@ export class Blog extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.state.notFound) return;
+
     let ship = this.props.ship;
     let blogId = this.props.blogId;
 
-    let blog = (ship == window.ship)
+    let blog = (ship === window.ship)
       ?  _.get(this.props, `pubs[${blogId}]`, false)
       :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
-    if (this.state.awaitingSubscribe) {
-      if (blog) {
-        this.setState({
-          temporary: false,
-          awaitingSubscribe: false,
-        });
+    if (!(blog) && (ship === window.ship)) {
+      this.setState({notFound: true});
+      return;
+    };
 
-        this.props.setSpinner(false);
-      }
+    if (this.state.awaitingSubscribe && blog) {
+      this.setState({
+        temporary: false,
+        awaitingSubscribe: false,
+      });
+
+      this.props.setSpinner(false);
     }
   }
 
@@ -111,6 +119,7 @@ export class Blog extends Component {
       this.setState({notFound: true});
       return;
     };
+
 
     let temporary = (!(blog) && (ship != window.ship));
 
@@ -132,6 +141,9 @@ export class Blog extends Component {
   }
 
   buildPosts(blog){
+    if (!blog) {
+      return [];
+    }
     let pinProps = blog.order.pin.map((postId) => {
       let post = blog.posts[postId];
       return this.buildPostPreviewProps(post, blog, true);
@@ -174,6 +186,9 @@ export class Blog extends Component {
         pathData: this.state.pathData,
       };
     } else {
+      if (!blog) {
+        return false;
+      }
       return {
         blog: blog,
         postProps: this.buildPosts(blog),
@@ -213,32 +228,30 @@ export class Blog extends Component {
   }
 
   render() {
+
     if (this.state.notFound) {
       return (
         <NF/>
       );
-    }
-
-    let data = this.buildData();
-
-    let posts = data.postProps.map((post, key) => {
-      return (
-        <PostPreview
-          post={post}
-          key={key}
-        />
-      );
-    });
-
-    let contributors = `~${this.props.ship}`;
-
-    if (this.state.awaiting) {
+    } else if (this.state.awaiting) {
       return null;
     } else {
+      let data = this.buildData();
+
+      let posts = data.postProps.map((post, key) => {
+        return (
+          <PostPreview
+            post={post}
+            key={key}
+          />
+        );
+      });
+
+      let contributors = `~${this.props.ship}`;
       let create = (this.props.ship === window.ship);
 
       let subscribers = 'None';
-      let subNum = data.blog.subscribers.length
+      let subNum = _.get(data.blog, 'subscribers.length', 0);
 
       if (subNum === 1) {
         subscribers = `~${data.blog.subscribers[0]}`;
