@@ -433,7 +433,7 @@
       (ta-open nev.rum)
     ::
         $config
-      =+  cur=(fall (~(get by mirrors) cir.rum) *config)
+      =+  cur=(~(gut by mirrors) cir.rum *config)
       =.  +>.$
         =<  sh-done
         %-  ~(sh-show-config sh cli)
@@ -477,8 +477,8 @@
       ==
     ::
         $status
-      =+  rem=(fall (~(get by remotes) cir.rum) *group)
-      =+  cur=(fall (~(get by rem) who.rum) *status)
+      =+  rem=(~(gut by remotes) cir.rum *group)
+      =+  cur=(~(gut by rem) who.rum *status)
       =.  +>.$
         =<  sh-done
         %-  ~(sh-show-status sh cli)
@@ -1212,7 +1212,7 @@
           %-  zing
           =/  sos
             =-  ~(tap in src:-)
-            (fall (~(get by mirrors) incir) *config)
+            (~(gut by mirrors) incir *config)
           %+  turn  ~(tap in pas)
           |=  c/circle
           %+  skim  sos
@@ -1373,7 +1373,7 @@
         =<  (sh-fact %mor (murn (sort ~(tap by remotes) aor) .))
         |=  {cir/circle gop/group}  ^-  (unit sole-effect:sole-sur)
         ?.  |(=(~ cis) (~(has in cis) cir))  ~
-        ?:  =(%mailbox sec.con:(fall (~(get by mirrors) cir) *config))  ~
+        ?:  =(%mailbox sec.con:(~(gut by mirrors) cir *config))  ~
         ?.  (~(has in sources) cir)  ~
         =-  `[%tan rose+[", " `~]^- leaf+~(cr-full cr cir) ~]
         =<  (murn (sort ~(tap by gop) aor) .)
@@ -1461,7 +1461,7 @@
         %+  turn
           ::  make sure to exclude {nom} itself.
           =-  ~(tap in (~(del in src:-) [cir ~]))
-          (fall (~(get by mirrors) cir) *config)
+          (~(gut by mirrors) cir *config)
         |=  s/^source
         ^-  sole-effect:sole-sur
         :-  %txt
@@ -2059,7 +2059,7 @@
       ?^  han  han
       =+  gop=(~(get by remotes) cir)
       ?~  gop  ~
-      han.man:(fall (~(get by u.gop) hos.one) *status)
+      han.man:(~(gut by u.gop) hos.one *status)
     ?~  nic  (cr-curt |)
     =+  raw=(scag 14 (trip u.nic))
     =+  len=(sub 14 (lent raw))

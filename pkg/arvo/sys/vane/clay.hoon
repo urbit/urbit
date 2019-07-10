@@ -2629,13 +2629,13 @@
         ::  no duct, foreign +rede or default
         ::
         :-  ~
-        =/  rus  rus:(fall (~(get by hoy.ruf) her) *rung)
-        %+  fall  (~(get by rus) syd)
+        =/  rus  rus:(~(gut by hoy.ruf) her *rung)
+        %+  ~(gut by rus)  syd
         [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~]
       ::  administrative duct, domestic +rede
       ::
       :-  `hun.rom.ruf
-      =/  jod  (fall (~(get by dos.rom.ruf) syd) *dojo)
+      =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
       [lim=now ref=~ [qyx dom per pew]:jod]
   ::
   =*  red=rede  ->
@@ -2647,7 +2647,7 @@
     ?.  =(our her)
       ::  save foreign +rede
       ::
-      =/  run  (fall (~(get by hoy.ruf) her) *rung)
+      =/  run  (~(gut by hoy.ruf) her *rung)
       =?  rit.run  =(0 rit.run)
         (fall (rift-scry her) *rift)
       =/  rug  (~(put by rus.run) syd red)
@@ -4075,7 +4075,7 @@
     ::    would make clay violate referential transparency.
     ::
     =/  =desk  des.req
-    =/  =dojo  (fall (~(get by dos.rom.ruf) desk) *dojo)
+    =/  =dojo  (~(gut by dos.rom.ruf) desk *dojo)
     ?:  =(0 let.dom.dojo)
       (handle-task hen req)
     =/  sutil  (state:util dom.dojo dom.dojo ran.ruf)
@@ -4149,7 +4149,7 @@
     ?:  =(%$ des.req)
       ~|(%info-no-desk !!)
     =.  act.ruf
-      =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
+      =/  =dojo  (~(gut by dos.rom.ruf) des.req *dojo)
       =/  writer=form:commit-clad
         %-  %-  commit
             :*  our
@@ -4205,7 +4205,7 @@
     ?:  =(%$ des.req)
       ~&(%merg-no-desk !!)
     =.  act.ruf
-      =/  =dojo  (fall (~(get by dos.rom.ruf) des.req) *dojo)
+      =/  =dojo  (~(gut by dos.rom.ruf) des.req *dojo)
       =/  writer=form:merge-clad
         %-  %-  merge
             :*  our
@@ -4229,7 +4229,7 @@
       %mont
     =.  hez.ruf  ?^(hez.ruf hez.ruf `[[%$ %sync ~] ~])
     =.  act.ruf
-      =/  =dojo  (fall (~(get by dos.rom.ruf) q.bem.req) *dojo)
+      =/  =dojo  (~(gut by dos.rom.ruf) q.bem.req *dojo)
       =/  writer=form:mount-clad
         %-  %-  mount
             :*  our

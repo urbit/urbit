@@ -34,7 +34,7 @@
 ::::                                                    ::  ::
   ::                                                    ::  ::
 |:  $:{bowl:gall part}                                  ::  main helm work
-=+  sez=(fall (~(get by hoc) ost) $:session)
+=+  sez=(~(gut by hoc) ost $:session)
 =>  |%                                                  ::  arvo structures
     ++  card                                            ::
       $%  [%bonk wire ~]                                ::
