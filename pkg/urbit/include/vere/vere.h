@@ -1276,7 +1276,7 @@
         void
         u3_daemon_bail(void);
 
-      /* u3_king_grab(): gc the daemon area
+      /* u3_daemon_grab(): gc the daemon
       */
         void
         u3_daemon_grab(void* vod_p);

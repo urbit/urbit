@@ -916,14 +916,11 @@ u3_daemon_bail(void)
   exit(1);
 }
 
-/* u3_daemon_grab(): gc the daemon area
+/* u3_daemon_grab(): gc the daemon
 */
 void
 u3_daemon_grab(void* vod_p)
 {
-  //  XX fix leaks and enable
-  //
-#if 0
   c3_w man_w = 0, pir_w = 0;
   FILE* fil_u = u3_term_io_hija();
 
@@ -938,5 +935,4 @@ u3_daemon_grab(void* vod_p)
   u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
   u3_term_io_loja(0);
-#endif
 }
