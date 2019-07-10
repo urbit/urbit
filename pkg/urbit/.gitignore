@@ -3,6 +3,7 @@
 #
 /config.mk
 include/config.h
+include/ca-bundle.h
 #
 # Build Outputs
 #

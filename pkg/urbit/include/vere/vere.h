@@ -699,6 +699,7 @@
       */
         typedef struct _u3_daemon {
           c3_c*     soc_c;                      //  socket name
+          c3_c*     certs_c;                    //  ssl certificate dump
           c3_w      len_w;                      //  number used
           c3_w      all_w;                      //  number allocated
           u3_pier** tab_u;                      //  pier table
