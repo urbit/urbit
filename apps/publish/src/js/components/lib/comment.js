@@ -32,7 +32,7 @@ export class Comment extends Component {
   }
 
   render(){
-    let body = this.props.body.split("\n").slice(0, -1).map((line, i) =>{
+    let body = this.props.body.split("\n").map((line, i) =>{
       return (<p key={i}>{line}</p>);
     });
 

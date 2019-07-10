@@ -250,7 +250,6 @@
   ++  da-change
     |=  del=delta
     ^+  da-this
-    ~&  da-change+-.del
     ?-  -.del
     ::
         %collection
@@ -418,7 +417,6 @@
   ++  da-remove-order
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    ~&  da-remove-order+[who coll post]
     =/  col=(unit collection)  (get-coll-by-index who coll)
     ?~  col
       da-this
@@ -451,7 +449,6 @@
   ++  da-remove
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    ~&  da-remove+[who coll post]
     =.  da-this  (da-remove-unread +<)
     =.  da-this  (da-remove-latest +<)
     =.  da-this  (da-remove-order +<)
@@ -543,7 +540,6 @@
 ++  affection
   |=  del=delta
   ^-  (list move)
-  =-  ~&  affection+-  -
   %-  zing
   %+  turn  ~(tap by sup.bol)
   |=  [b=bone s=ship p=path]
@@ -968,7 +964,7 @@
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
+    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/write-comment
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
@@ -976,17 +972,9 @@
       [~ this]
     ?.  (~(has by pos.u.col) post.act)
       [~ this]
-    ::
-    =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
-    =/  front=(map knot cord)
-      %-  my
-      :~  [%creator (scot %p src.bol)]
-          [%collection coll.act]
-          [%post post.act]
-          [%date-created (scot %da now.bol)]
-          [%last-modified (scot %da now.bol)]
-      ==
-    =/  out=@t    (update-udon-front front content.act)
+
+    =/  com=comment
+      [[src.bol coll.act post.act now.bol now.bol] content.act]
     ::
     =/  comment-perms=card
       :*  %perm  /perms  q.byk.bol  pax
@@ -994,7 +982,7 @@
       ==
     ::
     :_  this
-    :~  (write-file pax %udon !>(out))
+    :~  (write-file pax %write-comment !>(com))
         [ost.bol comment-perms]
     ==
   ::
@@ -1392,7 +1380,6 @@
 ::
 ++  pull
   |=  wir=wire
-  ~&  pull+wir
   ^-  (quip move _this)
   ?+  wir
     [~ this]
@@ -1433,7 +1420,6 @@
 ++  diff-write-rumor
   |=  [wir=wire rum=rumor]
   ^-  (quip move _this)
-  ~&  diff+rum
   (bake rum)
 ::
 ::  +poke-handle-http-cancel: received when a connection was killed

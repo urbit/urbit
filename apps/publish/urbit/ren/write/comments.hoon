@@ -1,27 +1,14 @@
 /-  write
-/+  write, cram, elem-to-react-json
-/=  args  /$  ,[beam *]
+/+  write
 /=  result
-  /^  (list [comment-info:write @t])
+  /^  (list comment:write)
   /;  
-  |=  $=  comments
-      %+  map  knot
-      $:  comment-front=(map knot cord)
-          comment-content=wain
-          ~
-      ==
-      ^-  (list [comment-info:write @t])
-      %+  sort
-        %+  turn  ~(tap by comments)
-        |=  [fil=knot front=(map knot cord) content=wain ~]
-        ^-  [comment-info:write @t]
-        :-  (front-to-comment-info:write front) 
-        (of-wain:format (slag 8 content))
-      |=  [a=[com=comment-info:write @t] b=[com=comment-info:write @t]]
-      (lte date-created.com.a date-created.com.b)
+  |=  comments=(map knot comment:write)
+  ^-  (list [comment-info:write @t])
+  %+  sort  ~(val by comments)
+  |=  [a=comment:write b=comment:write]
+  ^-  ?
+  (lte date-created.info.a date-created.info.b)
 ::
-  /_  
-  /.  /&front&/udon/
-      /&txt&/udon/
-  ==
+  /_  /write-comment/
 result
