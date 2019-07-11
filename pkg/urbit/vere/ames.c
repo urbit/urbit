@@ -366,15 +366,16 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 #if 0
       u3z(msg);
 #else
+      u3_lane lan_u;
       struct sockaddr_in* add_u = (struct sockaddr_in *)adr_u;
-      c3_s                por_s = ntohs(add_u->sin_port);
-      c3_w                pip_w = ntohl(add_u->sin_addr.s_addr);
+
+      lan_u.por_s = ntohs(add_u->sin_port);
+      lan_u.pip_w = ntohl(add_u->sin_addr.s_addr);
+      u3_noun lan = u3_ames_encode_lane(lan_u);
 
       u3_pier_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
-         u3nt(c3__hear,
-              u3nq(c3__if, u3k(u3A->now), por_s, u3i_words(1, &pip_w)),
-              msg));
+         u3nt(c3__hear, lan, msg));
 #endif
     }
     _ames_free(buf_u->base);
