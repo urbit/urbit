@@ -956,7 +956,8 @@
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %publish] %publish-action act]~
-    =/  pax=path  /web/publish/[coll.act]/[post.act]/(scot %da now.bol)/publish-comment
+    =/  pax=path
+      /web/publish/[coll.act]/[post.act]/(scot %da now.bol)/publish-comment
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)

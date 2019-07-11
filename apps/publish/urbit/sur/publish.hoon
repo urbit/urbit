@@ -117,7 +117,7 @@
 +$  delta
   $%  [%collection who=@p col=@tas dat=(each collection-info tang)]
       [%post who=@p col=@tas pos=@tas dat=(each [post-info manx @t] tang)]
-      [%comments who=@p col=@tas pos=@tas dat=(each (list [comment-info @t]) tang)]
+      [%comments who=@p col=@tas pos=@tas dat=(each (list comment) tang)]
       [%total who=@p col=@tas dat=collection]
       [%remove who=@p col=@tas pos=(unit @tas)]
   ==
