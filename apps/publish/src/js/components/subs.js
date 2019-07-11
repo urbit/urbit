@@ -74,7 +74,7 @@ export class Subs extends Component {
         coll: blogId,
       }
     };
-    this.props.api.action("write", "write-action", subscribe);
+    this.props.api.action("publish", "publish-action", subscribe);
   }
 
   reject(host, blogId) {
@@ -84,7 +84,7 @@ export class Subs extends Component {
         coll: blogId,
       }
     };
-    this.props.api.action("write", "write-action", reject);
+    this.props.api.action("publish", "publish-action", reject);
   }
 
   unsubscribe(host, blogId) {
@@ -94,7 +94,7 @@ export class Subs extends Component {
         coll: blogId,
       }
     };
-    this.props.api.action("write", "write-action", unsubscribe);
+    this.props.api.action("publish", "publish-action", unsubscribe);
   }
 
   render() {

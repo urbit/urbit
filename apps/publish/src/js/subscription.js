@@ -13,7 +13,7 @@ export class Subscription {
   }
 
   initializePublish() {
-    api.bind(`/primary`, "PUT", api.authTokens.ship, 'write',
+    api.bind(`/primary`, "PUT", api.authTokens.ship, 'publish',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }
@@ -24,7 +24,7 @@ export class Subscription {
 
   handleError(err) {
     console.error(err);
-    api.bind(`/primary`, "PUT", api.authTokens.ship, 'write',
+    api.bind(`/primary`, "PUT", api.authTokens.ship, 'publish',
       this.handleEvent.bind(this),
       this.handleError.bind(this));
   }

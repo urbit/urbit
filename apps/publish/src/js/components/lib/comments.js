@@ -45,7 +45,7 @@ export class Comments extends Component {
         postId: this.props.postId,
       }
     }, () => {
-      this.props.api.action("write", "write-action", comment)
+      this.props.api.action("publish", "publish-action", comment)
     });
 
   }

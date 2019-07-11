@@ -1,37 +1,37 @@
 ::
-::  /app/write.hoon
+::  /app/publish.hoon
 ::
-/-  hall, *write
-/+  *server, *write
+/-  hall, *publish
+/+  *server, *publish
 ::
 /=  index
   /^  $-(json manx)
-  /:  /===/app/write/index  /!noun/
+  /:  /===/app/publish/index  /!noun/
 ::
 /=  js
   /^  octs
   /;  as-octs:mimes:html
-  /|  /:  /===/app/write/js/index  /js/
+  /|  /:  /===/app/publish/js/index  /js/
       /~  ~
   ==
 ::
 /=  css
   /^  octs
   /;  as-octs:mimes:html
-  /|  /:  /===/app/write/css/index  /css/
+  /|  /:  /===/app/publish/css/index  /css/
       /~  ~
   ==
 ::
 /=  tile-js
   /^  octs
   /;  as-octs:mimes:html
-  /|  /:  /===/app/write/js/tile  /js/
+  /|  /:  /===/app/publish/js/tile  /js/
       /~  ~
   ==
 ::
 /=  images
   /^  (map knot @)
-  /:  /===/app/write/img  /_  /png/
+  /:  /===/app/publish/img  /_  /png/
 ::
 |%
 ::
@@ -54,16 +54,16 @@
 ::
 +$  poke
   $%  [%hall-action action:hall]
-      [%write-action action]
+      [%publish-action action]
       [%launch-action @tas path @t]
   ==
 ::
 +$  diff
   $%  [%hall-rumor rumor:hall]
       [%json json]
-      [%write-collection collection]
-      [%write-rumor rumor]
-      [%write-update update]
+      [%publish-collection collection]
+      [%publish-rumor rumor]
+      [%publish-update update]
   ==
 ::
 --
@@ -86,9 +86,9 @@
   ^-  (quip move _this)
   ?~  old
     :_  this
-    :~  [ost.bol %connect / [~ /'~publish'] %write]
+    :~  [ost.bol %connect / [~ /'~publish'] %publish]
         :*  ost.bol  %poke  /publish  [our.bol %launch]
-            %noun  %write  /publishtile  '/~publish/tile.js'
+            %launch-action  %publish  /publishtile  '/~publish/tile.js'
         ==
     ==
   ?-  -.u.old
@@ -106,7 +106,7 @@
 ++  get-contributors
   |=  coll=@tas
   ^-  [mod=?(%white %black) who=(set @p)]
-  =/  pax  (weld our-beak /web/write/[coll])
+  =/  pax  (weld our-beak /web/publish/[coll])
   =/  pem=[r=dict:clay w=dict:clay]  .^([dict:clay dict:clay] %cp pax)
   :-  mod.rul.w.pem
   (resolve-real rul.w.pem)
@@ -348,7 +348,7 @@
             [~ da-this]
           =.  subs.sat  (~(del by subs.sat) who.del col.del)
           :-  ~(tap in ~(key by pos.u.old))
-          (da-emit [ost.bol %pull /collection/[col.del] [who.del %write] ~])
+          (da-emit [ost.bol %pull /collection/[col.del] [who.del %publish] ~])
         ::  iterate through post ids collected before, removing each from
         ::  secondary indices in state
         ::
@@ -539,7 +539,7 @@
   =/  rum=(unit rumor)  (feel p del)
   ?~  rum
     ~
-  [b %diff %write-rumor u.rum]~
+  [b %diff %publish-rumor u.rum]~
 ::  +feel: delta to rumor
 ::
 ++  feel
@@ -608,7 +608,7 @@
       ?:  ?=([%error *] build-result.mad)
         [%.n message.build-result.mad]
       ?>  ?=(%bake +<.build-result.mad)
-      ?>  ?=(%write-info p.cage.build-result.mad)
+      ?>  ?=(%publish-info p.cage.build-result.mad)
       [%.y (collection-info q.q.cage.build-result.mad)]
     ::
     ?~  awa
@@ -676,7 +676,7 @@
       ?:  ?=([%error *] build-result.mad)
         [%.n message.build-result.mad]
       ?>  ?=(%bake +<.build-result.mad)
-      ?>  ?=(%write-post p.cage.build-result.mad)
+      ?>  ?=(%publish-post p.cage.build-result.mad)
       [%.y (,[post-info manx @t] q.q.cage.build-result.mad)]
     ::
     ?~  awa
@@ -744,7 +744,7 @@
       ?:  ?=([%error *] build-result.mad)
         [%.n message.build-result.mad]
       ?>  ?=(%bake +<.build-result.mad)
-      ?>  ?=(%write-comments p.cage.build-result.mad)
+      ?>  ?=(%publish-comments p.cage.build-result.mad)
       [%.y (,(list [comment-info @t]) q.q.cage.build-result.mad)]
     ::
     ?~  awa
@@ -829,8 +829,8 @@
   ^-  (list move)
   =/  files=(list path)
     ?~  post
-      .^((list path) %ct (weld our-beak /web/write/[coll]))
-    .^((list path) %ct (weld our-beak /web/write/[coll]/[u.post]))
+      .^((list path) %ct (weld our-beak /web/publish/[coll]))
+    .^((list path) %ct (weld our-beak /web/publish/[coll]/[u.post]))
   %+  turn  files
   |=  pax=path
   ^-  move
@@ -844,7 +844,7 @@
   %-  (slog u.err)
   [~ this]
 ::
-++  poke-write-action
+++  poke-publish-action
   |=  act=action
   ^-  (quip move _this)
   ?-  -.act
@@ -866,27 +866,27 @@
           now.bol
           now.bol
       ==
-    =/  pax=path  /web/write/[name.act]/write-info
+    =/  pax=path  /web/publish/[name.act]/publish-info
     =/  blog-perms=card
       :*  %perm  /perms  q.byk.bol
-          /web/write/[name.act] 
+          /web/publish/[name.act] 
           %rw  `read.perm.act  `write.perm.act
       ==
     =/  info-perms=card
       :*  %perm  /perms  q.byk.bol
-          /web/write/[name.act]/write-info
+          /web/publish/[name.act]/publish-info
           %rw  `*rule:clay  `*rule:clay
       ==
     ::
     =/  wir=wire  /collection/[name.act]
     =/  schema=schematic:ford
       :*  %bake
-          %write-info
+          %publish-info
           *coin
-          [[our.bol q.byk.bol] /[name.act]/write/web]
+          [[our.bol q.byk.bol] /[name.act]/publish/web]
       ==
     :_  this
-    :~  (write-file pax %write-info !>(conf))
+    :~  (write-file pax %publish-info !>(conf))
         [ost.bol blog-perms]
         [ost.bol info-perms]
         [ost.bol %build wir %.y schema]
@@ -895,8 +895,8 @@
       %new-post
     ?.  =(who.act our.bol)
       :_  this
-      [ost.bol %poke /forward [who.act %write] %write-action act]~
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+      [ost.bol %poke /forward [who.act %publish] %publish-action act]~
+    =/  pax=path  /web/publish/[coll.act]/[name.act]/udon
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
@@ -921,27 +921,27 @@
     =/  post-wir=wire  /post/[coll.act]/[name.act]
     =/  post-schema=schematic:ford
       :*  %bake
-          %write-post
+          %publish-post
           *coin
-          [[our.bol q.byk.bol] /[name.act]/[coll.act]/write/web]
+          [[our.bol q.byk.bol] /[name.act]/[coll.act]/publish/web]
       ==
     ::
     =/  comments-wir=wire  /comments/[coll.act]/[name.act]
     =/  comments-schema=schematic:ford
       :*  %bake
-          %write-comments
+          %publish-comments
           *coin
-          [[our.bol q.byk.bol] /[name.act]/[coll.act]/write/web]
+          [[our.bol q.byk.bol] /[name.act]/[coll.act]/publish/web]
       ==
     ::
     =/  post-perms=card
       :*  %perm  /perms  q.byk.bol
-          /web/write/[coll.act]/[name.act]/udon
+          /web/publish/[coll.act]/[name.act]/udon
           %w  `[%white (ships-to-whom (sy src.bol ~))]
       ==
     =/  comment-perms=card
       :*  %perm  /perms  q.byk.bol
-          /web/write/[coll.act]/[name.act]
+          /web/publish/[coll.act]/[name.act]
           %w  `[%black ~]
       ==
     :_  this
@@ -955,8 +955,8 @@
       %new-comment
     ?.  =(who.act our.bol)
       :_  this
-      [ost.bol %poke /forward [who.act %write] %write-action act]~
-    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/write-comment
+      [ost.bol %poke /forward [who.act %publish] %publish-action act]~
+    =/  pax=path  /web/publish/[coll.act]/[post.act]/(scot %da now.bol)/publish-comment
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
@@ -974,7 +974,7 @@
       ==
     ::
     :_  this
-    :~  (write-file pax %write-comment !>(com))
+    :~  (write-file pax %publish-comment !>(com))
         [ost.bol comment-perms]
     ==
   ::
@@ -1017,7 +1017,7 @@
     ?.  =(src.bol our.bol)
       [~ this]
     :_  this
-    [(delete-file /web/write/[coll.act]/[post.act]/[comment.act]/udon)]~
+    [(delete-file /web/publish/[coll.act]/[post.act]/[comment.act]/udon)]~
   ::
       %edit-collection
     ?.  =(src.bol our.bol)
@@ -1027,9 +1027,9 @@
       %edit-post
     ?.  =(who.act our.bol)
       :_  this
-      [ost.bol %poke /forward [who.act %write] %write-action act]~
+      [ost.bol %poke /forward [who.act %publish] %publish-action act]~
     ::
-    =/  pax=path  /web/write/[coll.act]/[name.act]/udon
+    =/  pax=path  /web/publish/[coll.act]/[name.act]/udon
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
@@ -1074,14 +1074,14 @@
       %+  turn  who.act
       |=  who=@p
       ^-  move
-      [ost.bol %poke /forward [who %write] %write-action new-act]
+      [ost.bol %poke /forward [who %publish] %publish-action new-act]
     =.  invites.sat  (~(put by invites.sat) [src.bol coll.act] title.act)
     :_  this
     %+  welp  make-tile-moves
     ::
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
-    [b %diff %write-update %invite %.y src.bol coll.act title.act]
+    [b %diff %publish-update %invite %.y src.bol coll.act title.act]
   ::
   ::  %reject-invite: remove invite from list, acceptance is handled by
   ::                  %subscribe action
@@ -1097,7 +1097,7 @@
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
     ^-  move
-    [b %diff %write-update %invite %.n who.act coll.act u.title]
+    [b %diff %publish-update %invite %.n who.act coll.act u.title]
   ::
   ::  %serve:
   ::
@@ -1106,44 +1106,44 @@
     ?:  (~(has by pubs.sat) coll.act)
       [~ this]
     =/  files=(list path)
-      .^((list path) %ct (weld our-beak /web/write/[coll.act]))
+      .^((list path) %ct (weld our-beak /web/publish/[coll.act]))
     =/  all=[moves=(list move) builds=(set wire)]
     %+  roll  files
     |=  [pax=path out=[moves=(list move) builds=(set wire)]]
     ?+  pax
       out
     ::
-      [%web %write @tas %write-info ~]
+      [%web %publish @tas %publish-info ~]
       ?>  =(coll.act i.t.t.pax)
       =/  wir=wire  /collection/[coll.act]
       =/  schema=schematic:ford
         :*  %bake
-            %write-info
+            %publish-info
             *coin
-            [[our.bol q.byk.bol] /[coll.act]/write/web]
+            [[our.bol q.byk.bol] /[coll.act]/publish/web]
         ==
       %=  out
         moves   [[ost.bol %build wir %.y schema] moves.out]
         builds  (~(put in builds.out) wir)
       ==
     ::
-      [%web %write @tas @tas %udon ~]
+      [%web %publish @tas @tas %udon ~]
       ?>  =(coll.act i.t.t.pax)
       =/  post  i.t.t.t.pax
       =/  post-wir=wire  /post/[coll.act]/[post]
       =/  post-schema=schematic:ford
         :*  %bake
-            %write-post
+            %publish-post
             *coin
-            [[our.bol q.byk.bol] /[post]/[coll.act]/write/web]
+            [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
         ==
       ::
       =/  comments-wir=wire  /comments/[coll.act]/[post]
       =/  comments-schema=schematic:ford
         :*  %bake
-            %write-comments
+            %publish-comments
             *coin
-            [[our.bol q.byk.bol] /[post]/[coll.act]/write/web]
+            [[our.bol q.byk.bol] /[post]/[coll.act]/publish/web]
         ==
       %=    out
           moves
@@ -1192,12 +1192,12 @@
     :_  this(outgoing.sat (~(put by outgoing.sat) wir ost.bol))
     ;:  welp
       make-tile-moves
-      [ost.bol %peer wir [who.act %write] wir]~
+      [ost.bol %peer wir [who.act %publish] wir]~
       ?~  title  ~
       %+  turn  (prey:pubsub:userlib /primary bol)
       |=  [b=bone *]
       ^-  move
-      [b %diff %write-update %invite %.n who.act coll.act u.title]
+      [b %diff %publish-update %invite %.n who.act coll.act u.title]
     ==
   ::
   ::  %unsubscribe: unsub from a foreign blog, delete all state related to it
@@ -1227,12 +1227,12 @@
       latest.sat    new-latest
       outgoing.sat  (~(del by outgoing.sat) wir)
     ==
-    :-  [u.bon %pull wir [who.act %write] ~]
+    :-  [u.bon %pull wir [who.act %publish] ~]
     %+  welp  make-tile-moves
     %+  turn  (prey:pubsub:userlib /primary bol)
     |=  [b=bone *]
     ^-  move
-    [b %diff %write-rumor %remove who.act coll.act ~]
+    [b %diff %publish-rumor %remove who.act coll.act ~]
   ::
   ::  %read: notify that we've seen a post
   ::
@@ -1393,7 +1393,7 @@
   ?.  ?=([@tas ~] wir)
     [~ this]
   =/  coll=@tas  i.wir
-  =/  pax  /web/write/[coll]
+  =/  pax  /web/publish/[coll]
   ?.  (allowed src.bol %read pax)
     :_  this
     [ost.bol %quit ~]~
@@ -1407,9 +1407,9 @@
   =/  rum=rumor
     [%total our.bol coll new]
   :_  this(pubs.sat (~(put by pubs.sat) coll new))
-  [ost.bol %diff %write-rumor rum]~
+  [ost.bol %diff %publish-rumor rum]~
 ::
-++  diff-write-rumor
+++  diff-publish-rumor
   |=  [wir=wire rum=rumor]
   ^-  (quip move _this)
   (bake rum)

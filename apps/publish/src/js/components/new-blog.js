@@ -99,8 +99,8 @@ export class NewBlog extends Component {
   
     this.props.setSpinner(true);
 
-    this.props.api.action("write", "write-action", makeBlog);
-    this.props.api.action("write", "write-action", sendInvites);
+    this.props.api.action("publish", "publish-action", makeBlog);
+    this.props.api.action("publish", "publish-action", sendInvites);
   }
 
   componentDidUpdate(prevProps, prevState) {
