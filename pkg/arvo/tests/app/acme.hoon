@@ -28,7 +28,7 @@
   ::
     %+  expect-eq
         !>  [~ dom]
-        !>  (some ~(key by (fall next-order.app ~)))
+        !>  ?~(next-order.app ~ (some ~(key by dom.u.next-order.app)))
   ::
     %+  expect-eq
         !>  &

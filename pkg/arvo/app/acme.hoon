@@ -328,7 +328,7 @@
       rod=(unit order)
       ::  next-order: queued domains for validation
       ::
-      next-order=(unit (map turf [idx=@ud valid=?]))
+      next-order=(unit [try=@ud dom=(map turf [idx=@ud valid=?])])
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -525,7 +525,7 @@
     ~|  %validate-domain-effect-fail
     ?.  ?=(^ next-order)  ~|(%no-next-order !!)
     =/  pending
-      (skip ~(tap by u.next-order) |=([turf @ud valid=?] valid))
+      (skip ~(tap by dom.u.next-order) |=([turf @ud valid=?] valid))
     ?:  =(~ pending)
       new-order:effect
     =/  next=[=turf idx=@ud valid=?]
@@ -585,7 +585,7 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ liv)      ~|(%no-live-config !!)
     =<  new-order:effect
-    (queue-next-order & dom.u.liv)
+    (queue-next-order 1 & dom.u.liv)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
@@ -598,7 +598,7 @@
         :-  %identifiers
         :-  %a
         %+  turn
-          ~(tap in ~(key by `(map turf *)`u.next-order))
+          ~(tap in ~(key by `(map turf *)`dom.u.next-order))
         |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
@@ -608,20 +608,19 @@
   ++  cancel-order
     ^+  this
     ~|  %cancel-order-effect-fail
-    :: ?>  ?=(^ rod)
-    ::  XX get failure reason
-    ::
-    =/  try=@ud  ?~(rod 1 try.u.rod)
+    =*  order  ?>(?=(^ rod) u.rod)  ::  XX TMI
     ::  backoff faster than usual
     ::
-    =/  lul=@dr  (min ~h1 (backoff (add 4 try)))
+    =/  lul=@dr  (min ~h1 (backoff (add 5 try.order)))
+    ::  XX get failure reason
+    ::
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
     =.  ..this  (emit (notify msg ~))
     =.  ..this  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
-    =.  ..this  (queue-next-order & ?>(?=(^ rod) dom.u.rod))
+    =.  ..this  (queue-next-order +(try.order) & dom.order)
     cancel-current-order
   ::  +finalize-order: finalize completed order
   ::
@@ -756,13 +755,13 @@
     =/  idx  (slav %ud i.t.wire)
     =/  valid  |(=(200 p.rep) =(307 p.rep))
     =/  item=(list [=turf idx=@ud valid=?])
-      (skim ~(tap by u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
+      (skim ~(tap by dom.u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
     ?.  ?&  ?=([^ ~] item)
             !valid.i.item
         ==
       this
-    =.  u.next-order
-      (~(put by u.next-order) turf.i.item [idx valid])
+    =.  dom.u.next-order
+      (~(put by dom.u.next-order) turf.i.item [idx valid])
     ?.  valid
       ?:  (lth try 10)
         =/  lul=@dr  (min ~h1 (backoff try))
@@ -776,7 +775,7 @@
             ' via http at '  (en-turf:html turf.i.item)  ':80'
         ==
       (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
-    ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
+    ?:  ?=(~ (skip ~(val by dom.u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
   ::  +directory: accept ACME service directory, trigger registration
@@ -863,12 +862,21 @@
     ::
     =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
-    =/  dom=(set turf)  ~(key by u.next-order)
+    =/  dom=(set turf)  ~(key by dom.u.next-order)
     ::  XX maybe generate key here?
     ::
     =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom))
     =/  dor=order
-      [dom try=1 sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
+      :*  dom
+          try.u.next-order
+          sas=%wake
+          exp.bod
+          ego
+          (need fin.bod)
+          cey
+          csr
+          [aut.bod ~ ~]
+      ==
     get-authz:effect(rod `dor, next-order ~)
   ::  +finalize-order: order finalized, poll for certificate
   ::
@@ -1333,10 +1341,11 @@
 ::  +queue-next-order: enqueue domains for validation
 ::
 ++  queue-next-order
-  |=  [valid=? dom=(set turf)]
+  |=  [try=@ud valid=? dom=(set turf)]
   ^+  this
   %=  this  next-order
-    :-  ~
+    :+  ~
+      try
     %+  roll
       ~(tap in dom)
     |=  [=turf state=(map turf [idx=@ud valid=?])]
@@ -1364,7 +1373,7 @@
     ~|(%acme-empty-certificate-order !!)
   ?:  ?=(?(%earl %pawn) (clan:title our.bow))
     this
-  =.  ..this  (queue-next-order | dom)
+  =.  ..this  (queue-next-order 1 | dom)
   =.  ..this  cancel-current-order
   ::  notify :hall
   ::
