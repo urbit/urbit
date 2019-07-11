@@ -47,9 +47,9 @@
       [%diff diff]
       [%build wire ? schematic:ford]
       [%kill wire ~]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%http-response http-event:http]
-      [%disconnect binding:http-server]
+      [%disconnect binding:eyre]
   ==
 ::
 +$  poke
@@ -1243,7 +1243,7 @@
   ==
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -1251,7 +1251,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =/  request-line  (parse-request-line url.request.inbound-request)
@@ -1416,7 +1416,7 @@
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   [~ this]
 ::
