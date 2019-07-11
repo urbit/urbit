@@ -1,12 +1,12 @@
-/-  write
+/-  publish
 !:
-|_  com=comment:write
+|_  com=comment:publish
 ::
 ::
 ++  grow
   |%
   ++  mime
-    :-  /text/x-write-comments
+    :-  /text/x-publish-comments
     (as-octs:mimes:html (of-wain:format txt))
   ++  txt
     ^-  wain
@@ -26,7 +26,7 @@
     (txt (to-wain:format q.p))
   ++  txt
     |=  txs=(pole @t)
-    ^-  comment:write
+    ^-  comment:publish
     ::  TODO: putting ~ instead of * breaks this but shouldn't
     ::
     ?>  ?=  $:  creator=@t
@@ -62,7 +62,7 @@
         ==
     ::
     ==
-  ++  noun  comment:write
+  ++  noun  comment:publish
   --
 ++  grad  %mime
 --

@@ -1,4 +1,4 @@
-/-  *write
+/-  *publish
 |_  upd=update
 ++  grab
   |%

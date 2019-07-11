@@ -1,5 +1,5 @@
-/-  *write
-/+  *write, elem-to-react-json
+/-  *publish
+/+  *publish
 |_  rum=rumor
 ++  grab
   |%
