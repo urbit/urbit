@@ -840,6 +840,7 @@ void
 _daemon_loop_exit()
 {
   unlink(u3K.soc_c);
+  unlink(u3K.certs_c);
 }
 
 /* u3_daemon_commence(): start the daemon
