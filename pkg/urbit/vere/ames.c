@@ -283,34 +283,6 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
   }
 }
 
-/* _ames_lane_ipv4(): IPv4 address from noun.
-*/
-u3_noun
-_ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
-{
-  switch ( u3h(lan) ) {
-    case c3__if: {
-      *por_s= (c3_s) u3h(u3t(u3t(lan)));
-      *pip_w = u3r_word(0, u3t(u3t(u3t(lan))));
-
-      return c3y;
-    } break;
-    case c3__is: {
-      u3_noun pq_lan = u3h(u3t(u3t(lan)));
-
-      if ( u3_nul == pq_lan ) return c3n;
-      else return _ames_lane_ip(u3t(pq_lan), por_s, pip_w);
-    } break;
-    case c3__ix: {
-      *por_s = (c3_s) u3h(u3t(u3t(lan)));
-      *pip_w = u3r_word(0, u3t(u3t(u3t(lan))));
-
-      return c3y;
-    } break;
-  }
-  return c3n;
-}
-
 /* u3_ames_ef_bake(): notify %ames that we're live.
 */
 void
@@ -326,44 +298,50 @@ u3_ames_ef_bake(u3_pier* pir_u)
 void
 u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
 {
-  u3_ames* sam_u = pir_u->sam_u;
-
   if ( u3_Host.ops_u.fuz_w && ((rand() % 100) < u3_Host.ops_u.fuz_w) ) {
     u3z(lan); u3z(pac);
     return;
   }
+  u3_ames* sam_u = pir_u->sam_u;
 
   u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
+  pac_u->len_w   = u3r_met(3, pac);
+  pac_u->hun_y   = c3_malloc(pac_u->len_w);
 
-  if ( c3y == _ames_lane_ip(lan, &pac_u->por_s, &pac_u->pip_w) ) {
-    pac_u->len_w = u3r_met(3, pac);
-    pac_u->hun_y = c3_malloc(pac_u->len_w);
+  u3_noun tag, val;
+  u3x_cell(lan, &tag, &val);
+  c3_assert( (c3y == tag) || (c3n == tag) );
 
-    u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
-
-    if ( 0 == pac_u->pip_w ) {
-      pac_u->pip_w = 0x7f000001;
-      pac_u->por_s = pir_u->por_s;
-    }
-
-    if ( (0 == (pac_u->pip_w >> 16)) && (1 == (pac_u->pip_w >> 8)) ) {
-      pac_u->imp_y = (pac_u->pip_w & 0xff);
-
-      _ames_czar(pac_u, sam_u->dns_c);
-    }
-    else if ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pac_u->pip_w) ) {
-      _ames_send(pac_u);
-    }
-    else {
-      // networking disabled
+  //  galaxy lane; do DNS lookup and send packet
+  //
+  if ( c3y == tag ) {
+    c3_assert( c3y == u3a_is_cat(val) );
+    c3_assert( val < 256 );
+    
+    _ames_czar(pac_u, sam_u->dns_c);
+  }
+  //  non-galaxy lane
+  //
+  else {
+    u3_lane lan_u = u3_ames_decode_lane(lan);
+    //  convert incoming localhost to outgoing localhost
+    //
+    lan_u.pip_w = ( 0 == lan_u.pip_w )? 0x7f000001 : lan_u.pip_w;
+    //  if in local-only mode, don't send remote packets
+    //
+    if ( (c3n == u3_Host.ops_u.net) && (0x7f000001 != lan_u.pip_w) ) {
       _ames_pact_free(pac_u);
     }
-  }
-  else {
-    _ames_pact_free(pac_u);
-  }
+    //  otherwise, mutate destination and send packet
+    //
+    else {
+      pac_u->pip_w = lan_u.pip_w;
+      pac_u->por_s = lan_u.por_s;
 
-  u3z(lan); u3z(pac);
+      _ames_send(pac_u);
+    }
+  }
+  u3z(tag); u3z(val);
 }
 
 /* _ames_recv_cb(): receive callback.
