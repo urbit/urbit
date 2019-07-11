@@ -248,6 +248,13 @@
         c3_c*            dns_c;             //  galaxy fqdn (optional)
       } u3_pact;
 
+    /* u3_lane: ames lane (IP address and port)
+    */
+      typedef struct _u3_lane {
+        c3_w             pip_w;             //  target IPv4 address
+        c3_s             por_s;             //  target port
+      } u3_lane;
+
     /* u3_poke: poke callback function.
     */
       typedef void (*u3_poke)(void*, u3_noun);
@@ -983,6 +990,15 @@
         void
         u3_ames_io_exit(u3_pier* pir_u);
 
+      /* u3_ames_decode_lane(): destructure lane from noun
+      */
+        u3_lane
+        u3_ames_decode_lane(u3_noun);
+
+      /* u3_ames_encode_lane(): encode lane as noun
+      */
+        u3_noun
+        u3_ames_encode_lane(u3_lane);
 
     /**  Autosave.
     **/

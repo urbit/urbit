@@ -1,7 +1,64 @@
+::    Ames extends Arvo's %pass/%give move semantics across the network.
+::
+::    A "forward flow" message, which is like a request, is passed to
+::    Ames from a local vane.  Ames transmits the message to the peer's
+::    Ames, which passes the message to the destination vane.
+::
+::    Once the peer has processed the "forward flow" message, it sends a
+::    message acknowledgment over the wire back to the local Ames.  This
+::    ack can either be positive or negative, in which case we call it a
+::    "nack".  (Don't confuse Ames nacks with TCP nacks, which are a
+::    different concept).
+::
+::    When the local Ames receives either a positive message ack or a
+::    combination of a nack and nack-trace (explained in more detail
+::    below), it gives an %done move to the local vane that had
+::    requested the original "forward flow" message be sent.
+::
+::    A "backward flow" message, which is similar to a response or a
+::    subscription update, is given to Ames from a local vane.  Ames
+::    transmits the message to the peer's Ames, which gives the message
+::    to the destination vane.
+::
+::    Ames will give a %memo to a vane upon hearing the message from a
+::    remote. This message is a "backward flow" message, forming one of
+::    potentially many responses to a "forward flow" message that a
+::    local vane had passed to our local Ames, and which local Ames had
+::    relayed to the remote.  Ames gives the %memo on the same duct the
+::    local vane had originally used to pass Ames the "forward flow"
+::    message.
+::
+::    Backward flow messages are acked automatically by the receiver.
+::    They cannot be nacked, and Ames only uses the ack internally,
+::    without notifying the client vane.
+::
+::    Forward flow messages can be nacked, in which case the peer will
+::    send both a message-nack packet and a nack-trace message, which is
+::    sent on a special diagnostic flow so as not to interfere with
+::    normal operation.  The nack-trace is sent as a full Ames message,
+::    instead of just a packet, because the contained error information
+::    can be arbitrarily large.
+::
+::    Once the local Ames has received the nack-trace, it knows the peer
+::    has received the full message and failed to process it.  This
+::    means if we later hear an ack packet on the failed message, we can
+::    ignore it.
+::
+::    Also, due to Ames's exactly-once delivery semantics, we know that
+::    when we receive a nack-trace for message n, we know the peer has
+::    positively acked all messages m+1 through n-1, where m is the last
+::    message for which we heard a nack-trace.  If we haven't heard acks
+::    on all those messages, we apply positive acks when we hear the
+::    nack-trace.
+::
 ::  protocol-version: current version of the ames wire protocol
 ::
+!:
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
+=,  ames
+=,  able
 ::
+=>
 |%
 +|  %generics
 ::  $mk-item: constructor for +ordered-map item type
@@ -239,8 +296,6 @@
 ::
 +|  %atomics
 ::
-+$  address        @uxaddress
-+$  blob           @uxblob
 +$  bone           @udbone
 +$  fragment       @uwfragment
 +$  fragment-num   @udfragmentnum
@@ -309,20 +364,6 @@
 ::  $dyad: pair of sender and receiver ships
 ::
 +$  dyad  [sndr=ship rcvr=ship]
-::
-+$  error  [tag=@tas =tang]
-::  $lane: ship transport address; either opaque $address or galaxy
-::
-::    The runtime knows how to look up galaxies, so we don't need to
-::    know their transport addresses.
-::
-+$  lane  (each @pC address)
-::  $message: application-level message
-::
-::    path: internal route on the receiving ship
-::    payload: semantic message contents
-::
-+$  message  [=path payload=*]
 ::  $packet: noun representation of an ames datagram packet
 ::
 ::    Roundtrips losslessly through atom encoding and decoding.
@@ -579,98 +620,11 @@
 ::  $move: output effect; either request or response
 ::
 +$  move  [=duct card=(wind note gift)]
+::  $queued-event: event to be handled after initial boot completes
 ::
-::  $task: job for ames
-::
-::    %born: process restart notification
-::    %crud: crash report
-::    %hear: packet from unix
-::    %hole: report that packet handling crashed
-::    %init: vane boot
-::    %sunk: a ship breached and has a new .rift
-::    %vega: kernel reload notification
-::    %wegh: request for memory usage report
-::    %memo: request to send message
-::
-+$  task
-  $%  [%born ~]
-      [%crud =error]
-      [%hear =lane =blob]
-      [%hole =lane =blob]
-      [%init =ship]
-      [%vega ~]
-      [%wegh ~]
-      [%memo =ship =message]
-  ==
-::  $gift: effect from ames
-::
-::    Ames extends Arvo's %pass/%give move semantics across the network.
-::
-::    A "forward flow" message, which is like a request, is passed to
-::    Ames from a local vane.  Ames transmits the message to the peer's
-::    Ames, which passes the message to the destination vane.
-::
-::    Once the peer has processed the "forward flow" message, it sends a
-::    message acknowledgment over the wire back to the local Ames.  This
-::    ack can either be positive or negative, in which case we call it a
-::    "nack".  (Don't confuse Ames nacks with TCP nacks, which are a
-::    different concept).
-::
-::    When the local Ames receives either a positive message ack or a
-::    combination of a nack and nack-trace (explained in more detail
-::    below), it gives an %done move to the local vane that had
-::    requested the original "forward flow" message be sent.
-::
-::    A "backward flow" message, which is similar to a response or a
-::    subscription update, is given to Ames from a local vane.  Ames
-::    transmits the message to the peer's Ames, which gives the message
-::    to the destination vane.
-::
-::    Ames will give a %memo to a vane upon hearing the message from a
-::    remote. This message is a "backward flow" message, forming one of
-::    potentially many responses to a "forward flow" message that a
-::    local vane had passed to our local Ames, and which local Ames had
-::    relayed to the remote.  Ames gives the %memo on the same duct the
-::    local vane had originally used to pass Ames the "forward flow"
-::    message.
-::
-::    Backward flow messages are acked automatically by the receiver.
-::    They cannot be nacked, and Ames only uses the ack internally,
-::    without notifying the client vane.
-::
-::    Forward flow messages can be nacked, in which case the peer will
-::    send both a message-nack packet and a nack-trace message, which is
-::    sent on a special diagnostic flow so as not to interfere with
-::    normal operation.  The nack-trace is sent as a full Ames message,
-::    instead of just a packet, because the contained error information
-::    can be arbitrarily large.
-::
-::    Once the local Ames has received the nack-trace, it knows the peer
-::    has received the full message and failed to process it.  This
-::    means if we later hear an ack packet on the failed message, we can
-::    ignore it.
-::
-::    Also, due to Ames's exactly-once delivery semantics, we know that
-::    when we receive a nack-trace for message n, we know the peer has
-::    positively acked all messages m+1 through n-1, where m is the last
-::    message for which we heard a nack-trace.  If we haven't heard acks
-::    on all those messages, we apply positive acks when we hear the
-::    nack-trace.
-::
-::    %memo: message to vane from peer
-::    %send: packet to unix
-::    %done: notify vane that peer (n)acked our message
-::
-::    %mass: memory usage report
-::    %turf: domain report, relayed from jael
-::
-+$  gift
-  $%  [%memo =message]
-      [%send =lane =blob]
-      [%done error=(unit error)]
-  ::
-      [%mass mass]
-      [%turf turfs=(list turf)]
++$  queued-event
+  $%  [%call =duct type=* wrapped-task=(hobo task)]
+      [%take =wire =duct type=* =sign]
   ==
 ::  $note: request to other vane
 ::
@@ -688,25 +642,18 @@
 ::    keys.
 ::
 +$  note
-  $%  $:  %a
-      $%  [%memo sponsor=ship message=_[/a/ping ~]]
-      ==  ==
-      $:  %b
+  $~  [%b %wait *@da]
+  $%  $:  %b
       $%  [%wait date=@da]
           [%rest date=@da]
       ==  ==
-      $:  %c
-      $%  [%memo =ship =message]
-      ==  ==
-      $:  %g
-      $%  [%memo =ship =message]
-      ==  ==
-      $:  %j
-      $%  [%memo =ship =message]
-      ::
-          [%private-keys ~]
-          [%public-keys =ship]
+      $:  %k
+      $%  [%private-keys ~]
+          [%public-keys ships=(set ship)]
           [%turf ~]
+      ==  ==
+      $:  @tas
+      $%  [%memo =ship =message]
   ==  ==  ==
 ::  $sign: response from other vane
 ::
@@ -722,27 +669,18 @@
 ::    triggers the next heartbeat message to be sent.
 ::
 +$  sign
-  $%  $:  %a
-      $%  [%done error=(unit error)]
-      ==  ==
-      $:  %b
+  $~  [%b %wake ~]
+  $%  $:  %b
       $%  [%wake error=(unit tang)]
       ==  ==
-      $:  %c
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ==  ==
-      $:  %g
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ==  ==
-      $:  %j
-      $%  [%done error=(unit error)]
-          [%memo =message]
-      ::
-          [%private-keys =life =private-key]
+      $:  %k
+      $%  [%private-keys =life =private-key]
           [%public-keys =vent-result]
           [%turf turfs=(list turf)]
+      ==  ==
+      $:  @tas
+      $%  [%done error=(unit error)]
+          [%memo =message]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
@@ -816,8 +754,79 @@
 --
 ::  external vane interface
 ::
-=<
 |=  pit=vase
+::  larval ames, before %born sets .unix-duct; wraps adult ames core
+::
+=<  =*  adult-gate  .
+    =|  queued-events=(qeu queued-event)
+    ::
+    |=  [our=ship eny=@ now=@da scry-gate=sley]
+    =*  larval-gate  .
+    =*  adult-core   (adult-gate +<)
+    |%
+    ::  +call: handle request $task
+    ::
+    ++  call
+      |=  [=duct type=* wrapped-task=(hobo task)]
+      ::  %born: set .unix-duct and start draining .queued-events
+      ::
+      ?:  ?=(%born -.wrapped-task)
+        ::  process %born using wrapped adult ames
+        ::
+        =^  moves  adult-gate  (call:adult-core duct type wrapped-task)
+        ::  if no events were queued up, metamorphose
+        ::
+        ?~  queued-events
+          [moves adult-gate]
+        ::  kick off a timer to process the first of .queued-events
+        ::
+        =.  moves  :_(moves [duct %pass /larva %b %wait now])
+        [moves larval-gate]
+      ::  any other event: enqueue it until we have a .unix-duct
+      ::
+      =.  queued-events  (~(put to queued-events) %call duct type wrapped-task)
+      [~ larval-gate]
+    ::  +take: handle response $sign
+    ::
+    ++  take
+      |=  [=wire =duct type=* =sign]
+      ::  enqueue event if not a larval drainage timer
+      ::
+      ?.  =(/larva wire)
+        =.  queued-events  (~(put to queued-events) %take wire duct type sign)
+        [~ larval-gate]
+      ::  larval event drainage timer; pop and process a queued event
+      ::
+      ?>  ?=(%wake -.sign)
+      =^  first-event  queued-events  ~(get to queued-events)
+      =^  moves  adult-gate
+        ?-  -.first-event
+          %call  (call:adult-core +.first-event)
+          %take  (take:adult-core +.first-event)
+        ==
+      ::  .queued-events has been cleared; metamorphose
+      ::
+      ?~  queued-events
+        [moves adult-gate]
+      ::  set timer to drain next event
+      ::
+      =.  moves  :_(moves [duct %pass /larva %b %wait now])
+      [moves larval-gate]
+    ::  lifecycle arms; mostly pass-throughs to the contained adult ames
+    ::
+    ++  scry  scry:adult-core
+    ++  stay  [queued-events stay:adult-core]
+    ++  load
+      |=  old=_[queued-events stay:adult-core]
+      ^+  larval-gate
+      ::
+      =.  queued-events  -.old
+      =.  adult-gate     (load:adult-core +.old)
+      larval-gate
+    --
+::  adult ames, after metamorphosis from larva
+::
+=<
 =|  =ames-state
 |=  [our=ship eny=@ now=@da scry-gate=sley]
 =*  ames-gate  .
@@ -842,7 +851,7 @@
       %crud  !!
       %hear  (on-hear:event-core [lane blob]:task)
       %hole  !!
-      %init  (on-init:event-core ship.task)
+      %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
       %memo  (on-memo:event-core [ship message]:task)
@@ -860,20 +869,14 @@
   =^  moves  ames-state
     =<  abet
     ?-  sign
+      [@ %done *]   (on-take-done:event-core wire error.sign)
+      [@ %memo *]   (on-take-memo:event-core wire message.sign)
+    ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%a %done *]  (on-take-done:event-core wire error.sign)
-      [%c %done *]  (on-take-done:event-core wire error.sign)
-      [%g %done *]  (on-take-done:event-core wire error.sign)
-      [%j %done *]  (on-take-done:event-core wire error.sign)
-    ::
-      [%c %memo *]  (on-take-memo:event-core wire message.sign)
-      [%g %memo *]  (on-take-memo:event-core wire message.sign)
-      [%j %memo *]  (on-take-memo:event-core wire message.sign)
-    ::
-      [%j %private-keys *]  (on-priv:event-core [life private-key]:sign)
-      [%j %public-keys *]   (on-publ:event-core wire vent-result.sign)
-      [%j %turf *]          (on-take-turf:event-core turfs.sign)
+      [%k %private-keys *]  (on-priv:event-core [life private-key]:sign)
+      [%k %public-keys *]   (on-publ:event-core wire vent-result.sign)
+      [%k %turf *]          (on-take-turf:event-core turfs.sign)
     ==
   ::
   [moves ames-gate]
@@ -936,13 +939,8 @@
   ++  on-hear
     |=  [=lane =blob]
     ^+  event-core
-    ::  register this duct as our new .unix-duct
     ::
-    =.  unix-duct.ames-state  duct
-    ::
-    =/  =packet  (decode-packet blob)
-    ::
-    (on-hear-packet lane packet)
+    (on-hear-packet lane (decode-packet blob))
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1121,9 +1119,9 @@
     |=  our=ship
     ^+  event-core
     ::
-    =~  (emit duct %pass /init/public-keys %j %public-keys our)
-        (emit duct %pass /init/private-keys %j %private-keys ~)
-        (emit duct %pass /init/turf %j %turf ~)
+    =~  (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
+        (emit duct %pass /private-keys %k %private-keys ~)
+        (emit duct %pass /turf %k %turf ~)
     ==
   ::  +on-priv: set our private key to jael's response
   ::
@@ -1355,7 +1353,7 @@
   ::  +on-born: handle unix process restart
   ::  +on-vega: handle kernel reload
   ::
-  ++  on-born  event-core
+  ++  on-born  event-core(unix-duct.ames-state duct)
   ++  on-vega  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
@@ -1381,7 +1379,7 @@
     ::
     ?:  already-pending
       event-core
-    (emit duct %pass /alien %j %public-keys ship)
+    (emit duct %pass /public-keys %k %public-keys [n=ship ~ ~])
   ::  +set-sponsor-heartbeat-timer: trigger sponsor ping after timeout
   ::
   ++  set-sponsor-heartbeat-timer
@@ -1626,7 +1624,7 @@
         |=  [=message-num =message]
         ^+  peer-core
         ::
-        ?>  ?=([?(%a %c %g %j) *] path.message)
+        ?>  ?=([?(%a %c %g %k) *] path.message)
         ::  odd .bone; "request" message to pass to vane before acking
         ::
         ?:  =(1 (end 0 1 bone))
@@ -1643,7 +1641,7 @@
             %a  ~|  %bad-ames-message^path.message^her.channel  !!
             %c  (emit client-duct %pass wire %c %memo her.channel message)
             %g  (emit client-duct %pass wire %g %memo her.channel message)
-            %j  (emit client-duct %pass wire %j %memo her.channel message)
+            %k  (emit client-duct %pass wire %k %memo her.channel message)
           ==
         ::  even bone means backward flow; ack automatically
         ::

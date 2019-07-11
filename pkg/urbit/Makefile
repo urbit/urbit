@@ -15,7 +15,7 @@ worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
-all_exes = ./mug_tests jam_tests ./hashtable_tests ./urbit ./urbit-worker
+all_exes = ./ames_tests ./mug_tests jam_tests ./hashtable_tests ./urbit ./urbit-worker
 
 
 # -Werror promotes all warnings that are enabled into errors (this is on)
@@ -29,9 +29,10 @@ CFLAGS := $(CFLAGS)
 
 ################################################################################
 
-all: urbit urbit-worker hashtable_tests jam_tests mug_tests
+all: urbit urbit-worker ames_tests hashtable_tests jam_tests mug_tests
 
-test: hashtable_tests jam_tests mug_tests
+test: ames_tests hashtable_tests jam_tests mug_tests
+	./ames_tests
 	./hashtable_tests
 	./jam_tests
 	./mug_tests
@@ -43,6 +44,10 @@ mrproper: clean
 	rm -f config.mk include/config.h
 
 ################################################################################
+
+ames_tests: $(common_objs) tests/ames_tests.o
+	@echo CC -o $@
+	@$(CC) $^ $(LDFLAGS) -o $@
 
 hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@
