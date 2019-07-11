@@ -15,7 +15,8 @@ worker_objs = $(shell echo $(worker) | sed 's/\.c/.o/g')
 
 all_objs = $(common_objs) $(daemon_objs) $(worker_objs)
 all_srcs = $(common) $(daemon) $(worker)
-all_exes = ./mug_tests jam_tests ./hashtable_tests ./urbit ./urbit-worker
+all_exes = ./build/mug_tests ./build/jam_tests ./build/hashtable_tests \
+    ./build/urbit ./build/urbit-worker
 
 
 # -Werror promotes all warnings that are enabled into errors (this is on)
@@ -32,12 +33,12 @@ endif
 
 ################################################################################
 
-all: urbit urbit-worker hashtable_tests jam_tests mug_tests
+all: $(all_exes)
 
-test: hashtable_tests jam_tests mug_tests
-	./hashtable_tests
-	./jam_tests
-	./mug_tests
+test: build/hashtable_tests build/jam_tests build/mug_tests
+	./build/hashtable_tests
+	./build/jam_tests
+	./build/mug_tests
 
 clean:
 	rm -f ./tags $(all_objs) $(all_exes)
@@ -53,24 +54,29 @@ include/ca-bundle.h:
 	@xxd -i include/ca-bundle.crt > include/ca-bundle.h
 	@rm include/ca-bundle.crt
 
-hashtable_tests: $(common_objs) tests/hashtable_tests.o
+build/hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@
+	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-jam_tests: $(common_objs) tests/jam_tests.o
+build/jam_tests: $(common_objs) tests/jam_tests.o
 	@echo CC -o $@
+	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-mug_tests: $(common_objs) tests/mug_tests.o
+build/mug_tests: $(common_objs) tests/mug_tests.o
 	@echo CC -o $@
+	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-urbit: $(common_objs) $(daemon_objs)
+build/urbit: $(common_objs) $(daemon_objs)
 	@echo CC -o $@
+	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
-urbit-worker: $(common_objs) $(worker_objs)
+build/urbit-worker: $(common_objs) $(worker_objs)
 	@echo CC -o $@
+	@mkdir -p ./build
 	@$(CC) $^ $(LDFLAGS) -o $@
 
 %.o: %.c $(headers)
