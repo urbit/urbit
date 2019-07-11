@@ -50,7 +50,8 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%chat /chattile '/~chat/js/tile.js']]
+  =/  launcha/poke
+    [%launch-action [%chat /chattile '/~chat/js/tile.js']]
   ?~  old
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
@@ -63,9 +64,9 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] launchnoun]
+        [ost.bol %poke /chat [our.bol %launch] launcha]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] launchnoun]~
+  :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
   this(sta u.old)
 ::
 ::
@@ -477,7 +478,7 @@
 ::  +bound: lient tells us we successfully bound our server to the ~chat url
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -485,7 +486,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)

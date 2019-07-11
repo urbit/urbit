@@ -15,7 +15,7 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path @t]]
+  $%  [%launch-action [@tas path @t]]
   ==
 ::
 +$  card
@@ -39,11 +39,12 @@
 ++  prep
   |=  old=(unit ~)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%clock /tile '/~clock/js/tile.js']]
+  =/  launcha
+    [%launch-action [%clock /tile '/~clock/js/tile.js']]
   :_  this
   :~
     [ost.bol %connect / [~ /'~clock'] %clock]
-    [ost.bol %poke /clock [our.bol %launch] launchnoun]
+    [ost.bol %poke /clock [our.bol %launch] launcha]
   ==
 ::
 ++  peer-tile

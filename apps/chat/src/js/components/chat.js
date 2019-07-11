@@ -6,7 +6,6 @@ import { Message } from '/components/lib/message';
 import { ChatTabBar } from '/components/lib/chat-tabbar';
 import { ChatInput } from '/components/lib/chat-input';
 
-import { prettyShip, getMessageContent } from '/lib/util';
 
 export class ChatScreen extends Component {
   constructor(props) {
@@ -22,16 +21,12 @@ export class ChatScreen extends Component {
     };
 
     this.hasAskedForMessages = false;
-    this.buildMessage = this.buildMessage.bind(this);
     this.onScroll = this.onScroll.bind(this);
-
-    this.scrollClosure = false;
 
     this.updateReadInterval = setInterval(
       this.updateReadNumber.bind(this),
       1000
     );
-
   }
 
   componentDidMount() {
@@ -54,7 +49,6 @@ export class ChatScreen extends Component {
     ) {
       console.log('switched circle');
       this.hasAskedForMessages = false;
-      this.scrollClosure = false;
  
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
@@ -100,7 +94,7 @@ export class ChatScreen extends Component {
     const { props, state } = this;
     let messages = props.messages;
 
-    if (state.numPages * 50 < props.messages.length - 200 || 
+    if (state.numPages * 50 < props.messages.length - 200 ||
         this.hasAskedForMessages) {
       return;
     }
@@ -151,30 +145,10 @@ export class ChatScreen extends Component {
     }
   }
 
-  buildMessage(msg, index) {
-    let details = msg.printship ? null : getMessageContent(msg.gam);
-
-    if (msg.printship) {
-      return (
-        <a 
-          className="vanilla hoverline text-600 text-mono" 
-          href={prettyShip(msg.gam.aut)[1]}>
-          {prettyShip(`~${msg.gam.aut}`)[0]}
-        </a>
-      );
-    }
-
-    return (
-        <Message
-          key={msg.gam.uid + Math.random()} 
-          msg={msg.gam} 
-          details={details} />
-      );
-  }
-
   render() {
     const { props, state } = this;
 
+    let config = props.configs[state.station] || {};
     let messages = props.messages.slice(0);
 
     let lastMsgNum = (messages.length > 0) ?
@@ -185,7 +159,13 @@ export class ChatScreen extends Component {
         .slice(messages.length - (50 * state.numPages), messages.length);
     }
 
-    let chatMessages = messages.reverse().map(this.buildMessage);
+    let chatMessages = messages.reverse().map((msg) => {
+      return (
+        <Message
+          key={msg.gam.uid + Math.random()} 
+          msg={msg.gam} />
+      );
+    });
     let peers = props.peers[state.station] || [window.ship];
 
     return (
@@ -209,6 +189,7 @@ export class ChatScreen extends Component {
           numMsgs={lastMsgNum}
           station={state.station}
           circle={state.circle}
+          security={config.con}
           placeholder='Message...' />
       </div>
     )

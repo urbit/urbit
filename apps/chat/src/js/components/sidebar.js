@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { getMessageContent } from '/lib/util';
 import { SidebarItem } from '/components/lib/sidebar-item';
 import { SidebarInvite } from '/components/lib/sidebar-invite';
 
@@ -94,9 +93,7 @@ export class Sidebar extends Component {
       })
       .map((cir) => {
         let msg = props.messagePreviews[cir];
-        let parsed = !!msg ? getMessageContent(msg.gam) : {
-          content: 'No messages yet'
-        };
+        let content = _.get(msg, 'gam.sep.lin.msg', 'No messages yet');
         let aut = !!msg ? msg.gam.aut : '';
         let wen = !!msg ? msg.gam.wen : 0;
         let datetime = 
@@ -108,7 +105,7 @@ export class Sidebar extends Component {
           datetime,
           wen,
           aut,
-          parsed,
+          content,
           cir,
           title: cir.split('/')[1],
           selected: station === cir
@@ -124,7 +121,7 @@ export class Sidebar extends Component {
           <SidebarItem
             key={obj.cir}
             title={obj.title}
-            description={obj.parsed.content}
+            description={obj.content}
             cir={obj.cir}
             datetime={obj.datetime}
             ship={obj.aut}

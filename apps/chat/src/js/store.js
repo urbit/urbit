@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { InitialReducer } from '/reducers/initial';
 import { ConfigReducer } from '/reducers/config';
 import { UpdateReducer } from '/reducers/update';
@@ -6,15 +5,13 @@ import { UpdateReducer } from '/reducers/update';
 
 class Store {
   constructor() {
-    this.start = performance.now();
-
     this.state = {
       inbox: {},
       messages: {},
       configs: {},
       circles: [],
       peers: {},
-      local: false
+      spinner: false
     };
 
     this.initialReducer = new InitialReducer();
@@ -35,9 +32,6 @@ class Store {
     this.updateReducer.reduce(json, this.state);
 
     this.setState(this.state);
-
-    this.end = performance.now();
-    console.log('performance.now(): ', this.end - this.start);
   }
 }
 

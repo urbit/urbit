@@ -55,7 +55,7 @@
 +$  poke
   $%  [%hall-action action:hall]
       [%write-action action]
-      [%noun @tas path @t]
+      [%launch-action @tas path @t]
   ==
 ::
 +$  diff

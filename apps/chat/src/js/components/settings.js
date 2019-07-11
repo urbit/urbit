@@ -51,6 +51,7 @@ export class SettingsScreen extends Component {
       ]);
     }
 
+    props.setSpinner(true);
     this.setState({
       isLoading: true
     });

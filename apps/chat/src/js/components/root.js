@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
-import Mousetrap from 'mousetrap';
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -13,6 +12,7 @@ import { ChatScreen } from '/components/chat';
 import { MemberScreen } from '/components/member';
 import { SettingsScreen } from '/components/settings';
 import { NewScreen } from '/components/new';
+import { LandingScreen } from '/components/landing';
 
 
 export class Root extends Component {
@@ -21,15 +21,12 @@ export class Root extends Component {
 
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
+    this.setSpinner = this.setSpinner.bind(this);
+  }
 
-    Mousetrap.bind(["command+c"], () => {
-      props.history.push('/~chat/new');
-      return false;
-    });
-
-    Mousetrap.bind(["command+h"], () => {
-      window.location.replace('/');
-      return false;
+  setSpinner(spinner) {
+    this.setState({
+      spinner
     });
   }
 
@@ -126,6 +123,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
+                spinner={this.state.spinner}
                 sidebar={
                   <Sidebar 
                     circles={circles}
@@ -138,13 +136,37 @@ export class Root extends Component {
                   />
                 }>
                 <NewScreen 
+                  setSpinner={this.setSpinner}
                   api={api}
                   circles={circles}
                   {...props}
                 />
               </Skeleton>
             );
-         }} />
+          }} />
+        <Route exact path="/~chat/join/:ship/:station"
+          render={ (props) => {
+            return (
+              <Skeleton
+                sidebar={
+                 <Sidebar 
+                   circles={circles}
+                   messagePreviews={messagePreviews}
+                   invites={invites}
+                   unreads={unreads}
+                   api={api}
+                   inviteConfig={inviteConfig}
+                   {...props}
+                 />
+                }>
+                <LandingScreen
+                  api={api}
+                  configs={configs}
+                  {...props}
+                />
+              </Skeleton>
+            );
+           }} />
          <Route exact path="/~chat/:ship/:station"
            render={ (props) => {
              let station = 
@@ -203,6 +225,7 @@ export class Root extends Component {
            render={ (props) => {
              return (
                <Skeleton
+                 spinner={this.state.spinner}
                  sidebar={
                   <Sidebar 
                     circles={circles}
@@ -216,6 +239,7 @@ export class Root extends Component {
                  }>
                  <SettingsScreen 
                    {...props}
+                   setSpinner={this.setSpinner}
                    api={api}
                    peers={state.peers}
                    circles={state.circles}
