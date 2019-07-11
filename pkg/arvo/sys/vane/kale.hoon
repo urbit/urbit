@@ -78,9 +78,9 @@
   [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
-  $~  [%a %want *ship *path **]                         ::
+  $~  [%a %memo *ship *message:ames]                    ::
   $%  $:  %a                                            ::    to %ames
-          $>(%want task:able:ames)                      ::  send message
+          $>(%memo task:able:ames)                      ::  send message
       ==                                                ::
       $:  %k                                            ::    to self
           $>(%look task)                                ::  set ethereum source
@@ -90,8 +90,9 @@
   ==  ==  ==                                            ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-
-  $~  [%a %woot *ship ~]                                ::
-  $%  [%a $>(%woot gift:able:ames)]                     ::  message result
+  $~  [%a %done ~]                                      ::
+  $%  [%a $>(%memo gift:able:ames)]                     ::  message result
+      [%a $>(%done gift:able:ames)]                     ::  message ack
   ==                                                    ::
 --  ::
 ::                                                      ::::
