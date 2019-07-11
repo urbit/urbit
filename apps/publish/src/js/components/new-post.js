@@ -164,7 +164,7 @@ export class NewPost extends Component {
           postId: postId,
         }
       }, () => {
-        this.props.api.action("write", "write-action", newPost);
+        this.props.api.action("publish", "publish-action", newPost);
       });
 
     } else {
@@ -185,7 +185,7 @@ export class NewPost extends Component {
       this.setState({
         awaiting: awaiting,
       }, () => {
-        this.props.api.action("write", "write-action", editPost);
+        this.props.api.action("publish", "publish-action", editPost);
       });
     }
   }
@@ -255,7 +255,7 @@ export class NewPost extends Component {
         }
       };
       
-      this.props.api.action("write", "write-action", del);
+      this.props.api.action("publish", "publish-action", del);
     }
 
     let redirect = `/~publish/~${ship}/${blogId}`;

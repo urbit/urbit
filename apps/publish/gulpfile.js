@@ -29,7 +29,7 @@ gulp.task('css-bundle', function() {
     .src('src/index.css')
     .pipe(cssimport())
     .pipe(cssnano())
-    .pipe(gulp.dest('./urbit/app/write/css'));
+    .pipe(gulp.dest('./urbit/app/publish/css'));
 });
 
 gulp.task('jsx-transform', function(cb) {
@@ -76,7 +76,7 @@ gulp.task('js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/write/js/'))
+    .pipe(gulp.dest('./urbit/app/publish/js/'))
     .on('end', cb);
 });
 
@@ -104,21 +104,21 @@ gulp.task('tile-js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/write/js/'))
+    .pipe(gulp.dest('./urbit/app/publish/js/'))
     .on('end', cb);
 });
 
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit/app/write/js/index.js')
+  return gulp.src('./urbit/app/publish/js/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/write/js/'));
+    .pipe(gulp.dest('./urbit/app/publish/js/'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('./urbit/app/write/js/tile.js')
+  return gulp.src('./urbit/app/publish/js/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/write/js/'));
+    .pipe(gulp.dest('./urbit/app/publish/js/'));
 });
 
 gulp.task('js-cachebust', function(cb) {
@@ -128,7 +128,7 @@ gulp.task('js-cachebust', function(cb) {
       let commitHash = firstLine.split(' ')[1].substr(0, 10);
       let newFilename = "index-" + commitHash + "-min.js";
 
-      exec('mv ./urbit/app/write/js/index-min.js ./urbit/app/write/js/' + newFilename);
+      exec('mv ./urbit/app/publish/js/index-min.js ./urbit/app/publish/js/' + newFilename);
     })
   );
 })

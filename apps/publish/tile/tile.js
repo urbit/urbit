@@ -57,4 +57,4 @@ export default class PublishTile extends Component {
   }
 }
 
-window.writeTile = PublishTile;
+window.publishTile = PublishTile;

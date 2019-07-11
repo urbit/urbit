@@ -148,7 +148,7 @@ export class Post extends Component {
         postId: this.props.postId,
       }
     }, () => {
-      this.props.api.action("write", "write-action", data)
+      this.props.api.action("publish", "publish-action", data)
     });
   }
 
@@ -189,7 +189,7 @@ export class Post extends Component {
             post: postId,
           }
         };
-        this.props.api.action("write", "write-action", read);
+        this.props.api.action("publish", "publish-action", read);
 
       } else {
         this.setState({
@@ -203,7 +203,7 @@ export class Post extends Component {
 
         this.props.setSpinner(true);
 
-        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+        this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "publish",
           this.handleEvent.bind(this),
           this.handleError.bind(this));
       }
@@ -374,7 +374,7 @@ export class Post extends Component {
         postId: this.props.postId,
       }
     }, () => {
-      this.props.api.action("write", "write-action", del);
+      this.props.api.action("publish", "publish-action", del);
     });
   }
 

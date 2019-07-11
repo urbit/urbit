@@ -135,7 +135,7 @@ export class Blog extends Component {
 
       this.props.setSpinner(true);
 
-      this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
+      this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "publish",
         this.handleEvent.bind(this),
         this.handleError.bind(this));
     }
@@ -213,7 +213,7 @@ export class Blog extends Component {
     }
     this.props.setSpinner(true);
     this.setState({awaitingSubscribe: true}, () => {
-      this.props.api.action("write", "write-action", sub);
+      this.props.api.action("publish", "publish-action", sub);
     });
   }
 
@@ -224,7 +224,7 @@ export class Blog extends Component {
         coll: this.props.blogId,
       }
     }
-    this.props.api.action("write", "write-action", unsub);
+    this.props.api.action("publish", "publish-action", unsub);
     this.props.history.push("/~publish/recent");
   }
 
