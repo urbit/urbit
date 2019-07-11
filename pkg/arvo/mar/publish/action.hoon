@@ -1,11 +1,11 @@
 ::
-::::  /hoon/action/write/mar
+::::  /hoon/action/publish/mar
   ::
 /?  309
-/-  write
+/-  publish
 =,  format
 ::
-|_  act=action:write
+|_  act=action:publish
 ::
 ++  grow
   |%
@@ -14,10 +14,10 @@
 ::
 ++  grab
   |%
-  ++  noun  action:write
+  ++  noun  action:publish
   ++  json
     |=  jon=^json
-    %-  action:write
+    %-  action:publish
     =<  (action jon)
     |%
     ++  action

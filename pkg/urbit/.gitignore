@@ -26,3 +26,5 @@ GTAGS
 *.swp
 hash_tests
 hashtable_tests
+mug_tests
+jam_tests
