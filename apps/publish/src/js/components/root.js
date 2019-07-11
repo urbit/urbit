@@ -7,8 +7,6 @@ import _ from 'lodash';
 import { api } from '/api';
 import { store } from '/store';
 import { Recent } from '/components/recent';
-import { Header } from '/components/header';
-import { New } from '/components/new';
 import { NewBlog } from '/components/new-blog';
 import { NewPost } from '/components/new-post';
 import { Skeleton } from '/components/skeleton';
@@ -16,7 +14,6 @@ import { Blog } from '/components/blog';
 import { Post } from '/components/post';
 import { Subs } from '/components/subs';
 import { Pubs } from '/components/pubs';
-import { HeaderBar } from '/components/lib/header-bar';
 import { Switch } from 'react-router';
 
 export class Root extends Component {
@@ -24,9 +21,18 @@ export class Root extends Component {
     super(props);
     this.state = store.state;
     store.setStateHandler(this.setState.bind(this));
+
+    this.setSpinner = this.setSpinner.bind(this);
+  }
+
+  setSpinner(spinner) {
+    this.setState({
+      spinner
+    });
   }
 
   render() {
+
     return (
       <BrowserRouter>
         <Switch>
@@ -34,6 +40,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Recent {...this.state} />
                   }
@@ -44,6 +51,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Subs {...this.state} api={api}/>
                   }
@@ -54,6 +62,7 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
+                  spinner={this.state.spinner}
                   children={
                     <Pubs {...this.state} />
                   }
@@ -61,37 +70,31 @@ export class Root extends Component {
               );
            }} />
 
-          <Route exact path="/~publish/new"
+          <Route exact path="/~publish/new-blog"
             render={ (props) => {
               return (
                 <Skeleton
-                  {...this.state}
+                  spinner={this.state.spinner}
                   children={
-                    <New api={api} {...this.state} {...props}/>
+                    <NewBlog api={api} 
+                      {...this.state}
+                      setSpinner={this.setSpinner}
+                      {...props}/>
                   }
                 />
               );
            }} />
 
-          <Route exact path="/~publish/new/blog"
+          <Route exact path="/~publish/new-post"
             render={ (props) => {
               return (
                 <Skeleton
-                  {...this.state}
+                  spinner={this.state.spinner}
                   children={
-                    <NewBlog api={api} {...this.state} {...props}/>
-                  }
-                />
-              );
-           }} />
-
-          <Route exact path="/~publish/new/post"
-            render={ (props) => {
-              return (
-                <Skeleton
-                  {...this.state}
-                  children={
-                    <NewPost api={api} {...this.state} {...props}/>
+                    <NewPost api={api}
+                      setSpinner={this.setSpinner}
+                      {...this.state}
+                      {...props}/>
                   }
                 />
               );
@@ -101,13 +104,15 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  {...this.state}
+                  spinner={this.state.spinner}
                   children={
                     <Blog
                       blogId = {props.match.params.blog}
                       ship = {props.match.params.ship.slice(1)}
                       api = {api}
+                      setSpinner={this.setSpinner}
                       {...this.state}
+                      {...props}
                     />
                   }
                 />
@@ -118,14 +123,16 @@ export class Root extends Component {
             render={ (props) => {
               return (
                 <Skeleton
-                  {...this.state}
+                  spinner={this.state.spinner}
                   children={
                     <Post
                       blogId = {props.match.params.blog}
                       postId = {props.match.params.post}
                       ship = {props.match.params.ship.slice(1)}
+                      setSpinner={this.setSpinner}
                       api = {api}
                       {...this.state}
+                      {...props}
                     />
                   }
                 />

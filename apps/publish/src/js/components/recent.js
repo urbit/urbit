@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { RecentPreview } from '/components/recent-preview';
+import { RecentPreview } from '/components/lib/recent-preview';
 import { withRouter } from 'react-router';
 import { HeaderMenu } from '/components/lib/header-menu';
 
@@ -127,11 +127,7 @@ export class Recent extends Component {
     }
   }
 
-
   render() {
-
-    console.log(this.props);
-
     let recent = this.buildRecent();
 
     let body = recent.map((group, i) => {
@@ -146,29 +142,28 @@ export class Recent extends Component {
       let date = this.dateLabel(group.date);
       return (
         <div key={i}>
-          <div className="w-100 h-80">
-            <h2 className="gray-50">
+          <div className="w-100">
+            <h2 className="gray-50" style={{marginBottom:8}}>
               {date}
             </h2>
           </div>
           <div className="flex flex-wrap">
-            {posts} 
+            {posts}
           </div>
         </div>
       );
     });
 
-
     return (
       <div>
-        <div className="cf w-100 bg-white h-publish-header">
-          <HM/>
-        </div>
-        <div className="flex-col">
-          {body} 
+        <HM/>
+        <div className="absolute w-100"
+          style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
+          <div className="flex-col">
+            {body}
+          </div>
         </div>
       </div>
     );
   }
 }
-

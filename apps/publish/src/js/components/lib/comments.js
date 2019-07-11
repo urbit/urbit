@@ -28,6 +28,7 @@ export class Comments extends Component {
   }
 
   postComment() {
+    this.props.setSpinner(true);
     let comment = {
       "new-comment": {
         who: this.props.ship,
@@ -36,7 +37,6 @@ export class Comments extends Component {
         content: this.state.commentBody,
       }
     };
-    console.log("post comment", comment);
 
     this.setState({
       awaiting: {
@@ -44,14 +44,16 @@ export class Comments extends Component {
         blogId: this.props.blogId,
         postId: this.props.postId,
       }
+    }, () => {
+      this.props.api.action("write", "write-action", comment)
     });
 
-    this.props.api.action("write", "write-action", comment);
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.awaiting) {
       if (prevProps.comments != this.props.comments) {
+        this.props.setSpinner(false);
         this.setState({awaiting: false, commentBody: ''});
       }
     }

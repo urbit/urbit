@@ -57,6 +57,12 @@ h4 {
   line-height: 24px;
 }
 
+.label-regular-mono {
+  font-size: 14px;
+  line-height: 24px;
+  font-family: "Source Code Pro", monospace;
+}
+
 .label-small-mono {
   font-size: 12px;
   line-height: 24px;
@@ -66,6 +72,11 @@ h4 {
 .label-small {
   font-size: 12px;
   line-height: 24px;
+}
+
+.label-small-2 {
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .body-regular-400 {
@@ -93,6 +104,10 @@ h4 {
 
 .gray-30 {
   color: #B1B2B3;
+}
+
+.gray-10 {
+  color: #E6E6E6;
 }
 
 .green {
@@ -203,4 +218,28 @@ h4 {
 
 ::placeholder {
   color: #B1B2B3;
+}
+
+.bg-red {
+  background-color: #EE5432;
+}
+
+.bg-gray-30 {
+  background-color: #B1B2B3;
+}
+
+.title-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.body-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
 }

@@ -1,17 +1,59 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { PostPreview } from '/components/post-preview';
+import { PostPreview } from '/components/lib/post-preview';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { PostBody } from '/components/post-body';
-import { Comments } from '/components/comments';
+import { PostBody } from '/components/lib/post-body';
+import { Comments } from '/components/lib/comments';
 import { PathControl } from '/components/lib/path-control';
 import { NextPrev } from '/components/lib/next-prev';
+import { NotFound } from '/components/not-found';
+import { withRouter } from 'react-router';
 import _ from 'lodash';
+
+const NF = withRouter(NotFound);
+
+class Admin extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    if (!this.props.enabled){
+      return null;
+    } else if (this.props.mode === 'view'){
+      return (
+        <div className="flex-col fr">
+          <p className="label-regular gray-50 pointer tr b"
+             onClick={this.props.editPost}>
+            Edit
+          </p>
+          <p className="label-regular red pointer tr b"
+             onClick={this.props.deletePost}>
+            Delete
+          </p>
+        </div>
+      );
+    } else if (this.props.mode === 'edit'){
+      return (
+        <div className="flex-col fr">
+          <p className="label-regular gray-50 pointer tr b"
+             onClick={this.props.savePost}>
+            Save
+          </p>
+          <p className="label-regular red pointer tr b"
+             onClick={this.props.deletePost}>
+            Delete
+          </p>
+        </div>
+      );
+    }
+  }
+}
 
 export class Post extends Component {
   constructor(props){
-    super(props)
+    super(props);
 
     moment.updateLocale('en', {
       relativeTime: {
@@ -43,6 +85,7 @@ export class Post extends Component {
       body: '',
       awaitingEdit: false,
       awaitingLoad: false,
+      awaitingDelete: false,
       ship: this.props.ship,
       blogId: this.props.blogId,
       postId: this.props.postId,
@@ -51,9 +94,11 @@ export class Post extends Component {
       comments: null,
       pathData: [],
       temporary: false,
+      notFound: false,
     }
 
     this.editPost = this.editPost.bind(this);
+    this.deletePost = this.deletePost.bind(this);
     this.savePost = this.savePost.bind(this);
     this.titleChange = this.titleChange.bind(this);
     this.bodyChange = this.bodyChange.bind(this);
@@ -67,9 +112,11 @@ export class Post extends Component {
   savePost() {
     if (this.state.title == this.state.titleOriginal &&
         this.state.body == this.state.bodyOriginal) {
+      this.setState({mode: 'view'});
       return;
     }
 
+    this.props.setSpinner(true);
     let permissions = {
       read: {
         mod: 'black',
@@ -100,9 +147,9 @@ export class Post extends Component {
         blogId: this.props.blogId,
         postId: this.props.postId,
       }
+    }, () => {
+      this.props.api.action("write", "write-action", data)
     });
-
-    this.props.api.action("write", "write-action", data);
   }
 
   componentWillMount() {
@@ -110,7 +157,7 @@ export class Post extends Component {
     let blogId = this.props.blogId;
     let postId = this.props.postId;
 
-    if (ship != window.ship) {
+    if (ship !== window.ship) {
       
       let blog = _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
@@ -153,6 +200,9 @@ export class Post extends Component {
           },
           temporary: true,
         });
+
+        this.props.setSpinner(true);
+
         this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "write",
           this.handleEvent.bind(this),
           this.handleError.bind(this));
@@ -161,23 +211,29 @@ export class Post extends Component {
       let blog = _.get(this.props, `pubs[${blogId}]`, false);
       let post = _.get(blog, `posts[${postId}].post`, false);
       let comments = _.get(blog, `posts[${postId}].comments`, false);
-      let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
-      let postUrl = `${blogUrl}/${post.info.filename}`;
 
-      this.setState({
-        titleOriginal: post.info.title,
-        bodyOriginal: post.raw,
-        title: post.info.title,
-        body: post.raw,
-        blog: blog,
-        post: post,
-        comments: comments,
-        pathData: [
-          { text: "Home", url: "/~publish/recent" },
-          { text: blog.info.title, url: blogUrl },
-          { text: post.info.title, url: postUrl },
-        ],
-      });
+      if (!blog || !post) {
+        this.setState({notFound: true});
+        return;
+      } else {
+        let blogUrl = `/~publish/${blog.info.owner}/${blog.info.filename}`;
+        let postUrl = `${blogUrl}/${post.info.filename}`;
+
+        this.setState({
+          titleOriginal: post.info.title,
+          bodyOriginal: post.raw,
+          title: post.info.title,
+          body: post.raw,
+          blog: blog,
+          post: post,
+          comments: comments,
+          pathData: [
+            { text: "Home", url: "/~publish/recent" },
+            { text: blog.info.title, url: blogUrl },
+            { text: post.info.title, url: postUrl },
+          ],
+        });
+      }
     }
   }
 
@@ -204,6 +260,9 @@ export class Post extends Component {
           { text: post.info.title, url: postUrl },
         ],
       });
+
+      this.props.setSpinner(false);
+
     } else if (diff.data.collection) {
       let newBlog = this.state.blog;
       newBlog.info = diff.data.collection.data;
@@ -223,10 +282,14 @@ export class Post extends Component {
     }
   }
 
-  handleError() {
+  handleError(err) {
+    this.props.setSpinner(false);
+    this.setState({notFound: true});
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (this.state.notFound) return;
+
     let ship   = this.props.ship;
     let blogId = this.props.blogId;
     let postId = this.props.postId;
@@ -250,6 +313,18 @@ export class Post extends Component {
     }
 
 
+    if (this.state.awaitingDelete && (post === false) && oldPost) {
+      this.props.setSpinner(false);
+      let redirect = `/~publish/~${this.props.ship}/${this.props.blogId}`;
+      this.props.history.push(redirect);
+      return;
+    }
+
+    if (!blog || !post) {
+      this.setState({notFound: true});
+      return;
+    }
+
     if (this.state.awaitingEdit &&
        ((post.info.title != oldPost.info.title) ||
         (post.raw != oldPost.raw))) {
@@ -263,6 +338,8 @@ export class Post extends Component {
         awaitingEdit: false,
         post: post,
       });
+
+      this.props.setSpinner(false);
     }
 
     if (!this.state.temporary){
@@ -282,6 +359,25 @@ export class Post extends Component {
     }
   }
 
+  deletePost(){
+    let del = {
+      "delete-post": {
+        coll: this.props.blogId,
+        post: this.props.postId,
+      }
+    };
+    this.props.setSpinner(true);
+    this.setState({
+      awaitingDelete: {
+        ship: this.props.ship,
+        blogId: this.props.blogId,
+        postId: this.props.postId,
+      }
+    }, () => {
+      this.props.api.action("write", "write-action", del);
+    });
+  }
+
   titleChange(evt){
     this.setState({title: evt.target.value});
   }
@@ -291,61 +387,63 @@ export class Post extends Component {
   }
 
   render() {
-    if (this.state.awaitingLoad) {
+    let adminEnabled = (this.props.ship === window.ship);
+
+    if (this.state.notFound) {
       return (
-        <div>
-          Loading
-        </div>
+        <NF/>
       );
+    } else if (this.state.awaitingLoad) {
+      return null;
     } else if (this.state.awaitingEdit) {
-      return (
-        <div>
-          Saving Edit
-        </div>
-      );
+      return null;
     } else if (this.state.mode == 'view') {
       let blogLink = `/~publish/~${this.state.ship}/${this.props.blogId}`;
       let blogLinkText = `<- Back to ${this.state.blog.info.title}`;
 
       let date = moment(this.state.post.info["date-created"]).fromNow();
       let authorDate = `${this.state.post.info.creator} • ${date}`;
+      let create = (this.props.ship === window.ship);
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={this.state.pathData}/>
-          </div>
-          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-            <Link to={blogLink}>
-              <p className="body-regular">
-                {blogLinkText}
-              </p>
-            </Link>
+          <PathControl pathData={this.state.pathData} create={create}/>
+          <div className="absolute w-100" style={{top:124}}>
+            <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+              <Link to={blogLink}>
+                <p className="body-regular">
+                  {blogLinkText}
+                </p>
+              </Link>
 
-            <h2>{this.state.titleOriginal}</h2>
+              <h2 style={{wordWrap: "break-word"}}>{this.state.titleOriginal}</h2>
 
-            <div className="mb4">
-              <p className="fl label-small gray-50">{authorDate}</p>
-              <p className="label-regular gray-50 fr pointer"
-                 onClick={this.editPost}>
-                Edit
-              </p>
-            </div>
+              <div className="mb4">
+                <p className="fl label-small gray-50">{authorDate}</p>
+                <Admin
+                  enabled={adminEnabled} 
+                  mode="view"
+                  editPost={this.editPost}
+                  deletePost={this.deletePost}
+                />
+              </div>
 
-            <div className="cb">
-              <PostBody
-                body={this.state.post.body} 
+              <div className="cb">
+                <PostBody
+                  body={this.state.post.body} 
+                />
+              </div>
+
+              <hr className="gray-50 w-680 mt4"/>
+              <NextPrev blog={this.state.blog} postId={this.props.postId} />
+            
+              <Comments comments={this.state.comments} 
+                api={this.props.api}
+                ship={this.props.ship}
+                blogId={this.props.blogId}
+                postId={this.props.postId}
+                setSpinner={this.props.setSpinner}
               />
             </div>
-
-            <hr className="gray-50 w-680 mt4"/>
-            <NextPrev blog={this.state.blog} postId={this.props.postId} />
-          
-            <Comments comments={this.state.comments} 
-              api={this.props.api}
-              ship={this.props.ship}
-              blogId={this.props.blogId}
-              postId={this.props.postId}
-            />
           </div>
         </div>
       );
@@ -356,50 +454,54 @@ export class Post extends Component {
 
       let date = moment(this.state.post.info["date-created"]).fromNow();
       let authorDate = `${this.state.post.info.creator} • ${date}`;
+      let create = (this.props.ship === window.ship);
       return (
         <div>
-          <div className="cf w-100 bg-white h-publish-header">
-            <PathControl pathData={this.state.pathData}/>
-          </div>
-          <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
-            <Link to={blogLink}>
-              <p className="body-regular">
-                {blogLinkText}
-              </p>
-            </Link>
+          <PathControl pathData={this.state.pathData} create={create}/>
+          <div className="absolute w-100" style={{top:124}}>
+            <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
+              <Link to={blogLink}>
+                <p className="body-regular">
+                  {blogLinkText}
+                </p>
+              </Link>
 
-            <input className="header-2 w-100"
-              type="text"
-              name="postName"
-              defaultValue={this.state.titleOriginal}
-              onChange={this.titleChange}
-            />
+              <input className="header-2 w-100"
+                type="text"
+                name="postName"
+                defaultValue={this.state.titleOriginal}
+                onChange={this.titleChange}
+              />
 
-            <div className="mb4">
-              <p className="fl label-small gray-50">{authorDate}</p>
-              <p className="label-regular gray-50 fr pointer"
-                 onClick={this.savePost}>
-                Save
-              </p>
+              <div className="mb4">
+                <p className="fl label-small gray-50">{authorDate}</p>
+                <Admin
+                  enabled={adminEnabled} 
+                  mode="edit"
+                  savePost={this.savePost}
+                  deletePost={this.deletePost}
+                />
+              </div>
+
+              <textarea className="cb body-regular-400 w-100 h5"
+                style={{resize:"none"}}
+                type="text"
+                name="postBody"
+                onChange={this.bodyChange}
+                defaultValue={this.state.bodyOriginal}>
+              </textarea>
+
+              <hr className="gray-50 w-680 mt4"/>
+              <NextPrev blog={this.state.blog} postId={this.props.postId} />
+            
+              <Comments comments={this.state.comments} 
+                api={this.props.api}
+                ship={this.props.ship}
+                blogId={this.props.blogId}
+                postId={this.props.postId}
+                setSpinner={this.props.setSpinner}
+              />
             </div>
-
-            <textarea className="cb body-regular-400 w-100 h5"
-              style={{resize:"none"}}
-              type="text"
-              name="postBody"
-              onChange={this.bodyChange}
-              defaultValue={this.state.bodyOriginal}>
-            </textarea>
-
-            <hr className="gray-50 w-680 mt4"/>
-            <NextPrev blog={this.state.blog} postId={this.props.postId} />
-          
-            <Comments comments={this.state.comments} 
-              api={this.props.api}
-              ship={this.props.ship}
-              blogId={this.props.blogId}
-              postId={this.props.postId}
-            />
           </div>
         </div>
       );

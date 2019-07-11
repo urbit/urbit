@@ -1,15 +1,16 @@
 import { UpdateReducer } from '/reducers/update';
 import { RumorReducer } from '/reducers/rumor';
+import { SpinnerReducer } from '/reducers/spinner';
 
 class Store {
   constructor() {
     this.state = {
+      spinner: false,
       ...window.injectedState,
     }
-    console.log("store.state", this.state);
-
-    this.updateReducer = new UpdateReducer();
-    this.rumorReducer  = new RumorReducer();
+    this.updateReducer   = new UpdateReducer();
+    this.rumorReducer    = new RumorReducer();
+    this.spinnerReducer  = new SpinnerReducer();
 
     this.setState = () => {};
   }
@@ -19,9 +20,9 @@ class Store {
   }
 
   handleEvent(data) {
-    console.log("store.handleEvent", data);
     this.updateReducer.reduce(data.data, this.state);
     this.rumorReducer.reduce(data.data, this.state);
+    this.spinnerReducer.reduce(data.data, this.state);
     this.setState(this.state);
   }
 

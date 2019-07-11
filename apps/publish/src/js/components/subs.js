@@ -68,7 +68,6 @@ export class Subs extends Component {
   }
 
   accept(host, blogId) {
-    console.log("accepted invitation", host, blogId);
     let subscribe = {
       subscribe: {
         who: host.slice(1),
@@ -79,7 +78,6 @@ export class Subs extends Component {
   }
 
   reject(host, blogId) {
-    console.log("rejected invitation", host, blogId);
     let reject = {
       "reject-invite": {
         who: host.slice(1),
@@ -90,7 +88,6 @@ export class Subs extends Component {
   }
 
   unsubscribe(host, blogId) {
-    console.log("unsubscribe", host, blogId);
     let unsubscribe = {
       unsubscribe: {
         who: host.slice(1),
@@ -163,28 +160,31 @@ export class Subs extends Component {
 
     return (
       <div>
-        <div className="cf w-100 bg-white h-publish-header">
-          <HM/>
-        </div>
-        <div className="flex-col">
-          <div className="w-100 h-80">
-            <h2 className="gray-50">Subscriptions</h2>
-          </div>
-          <div className="w-100 flex">
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-               Title
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-              Host
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-              Last Updated
-            </p>
-            <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-            </p>
-          </div>
+        <HM/>
+        <div className="absolute w-100" style={{top:124}}>
+          <div className="flex-col">
+            <div className="w-100">
+              <h2 className="gray-50"
+                style={{marginLeft: 16, marginTop: 32, marginBottom: 16}}>
+                Subscriptions
+              </h2>
+            </div>
+            <div className="w-100 flex">
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                 Title
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                Host
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+                Last Updated
+              </p>
+              <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
+              </p>
+            </div>
 
-          {blogs}
+            {blogs}
+          </div>
         </div>
       </div>
     );

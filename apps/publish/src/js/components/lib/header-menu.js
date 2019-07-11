@@ -9,8 +9,9 @@ const PC = withRouter(PublishCreate);
 export class HeaderMenu extends Component {
   render () {
     return (
-      <div>
-        <PC/>
+      <div className="fixed w-100 bg-white cf h-publish-header z-4"
+        style={{top:48}}>
+        <PC create={"blog"}/>
         <div className="w-100 flex">
           <div className="fl bb b-gray-30 w-16" >
           </div>
@@ -22,8 +23,7 @@ export class HeaderMenu extends Component {
               color: "black",
               borderColor: "black",
             }}
-            style={{flexBasis:148}}
-            >
+            style={{flexBasis:148}}>
             Recent
           </NavLink>
 
@@ -37,8 +37,7 @@ export class HeaderMenu extends Component {
               color: "black",
               borderColor: "black",
             }}
-            style={{flexBasis:148}}
-            >
+            style={{flexBasis:148}}>
             Subscriptions
           </NavLink>
 
@@ -52,8 +51,7 @@ export class HeaderMenu extends Component {
               color: "black",
               borderColor: "black",
             }}
-            style={{flexBasis:148}}
-            >
+            style={{flexBasis:148}}>
             My Blogs
           </NavLink>
 

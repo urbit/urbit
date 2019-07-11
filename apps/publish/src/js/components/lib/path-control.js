@@ -13,24 +13,7 @@ export class PathControl extends Component {
 
   }
 
-  retrievePost(post, coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].posts[post].post.info;
-    } else {
-      return this.props.subs[who][coll].posts[post].post.info;
-    }
-  }
-
-  retrieveColl(coll, who) {
-    if (who === window.ship) {
-      return this.props.pubs[coll].info;
-    } else {
-      return this.props.subs[who][coll].info;
-    }
-  }
-
   buildPathData(){
-
     let path = [
       { text: "Home", url: "/~publish/recent" },
     ];
@@ -43,38 +26,22 @@ export class PathControl extends Component {
       finalUrl = {
         pathName: finalUrl,
         state: last,
-      }
+      };
 
       if ((last.lastMatch === '/~publish/:ship/:blog/:post') ||
           (last.lastMatch === '/~publish/:ship/:blog')){
-        let blog = (last.lastParams.ship.slice(1) == window.ship)
+        blog = (last.lastParams.ship.slice(1) == window.ship)
           ?  _.get(this.props, `pubs[${last.lastParams.blog}]`, false)
           :  _.get(this.props, 
             `subs[${last.lastParams.ship.slice(1)}][${last.lastParams.blog}]`, false);
       }
     }
 
-    if (this.props.location.pathname === '/~publish/new') {
-      if (blog) {
-        path.push({
-          text: blog.info.title,
-          url: `/~publish/${blog.info.owner}/${blog.info.filename}`,
-        });
-      }
-      path.push(
-        { text: 'New', url: finalUrl }
-      );
-    } else if (this.props.location.pathname === '/~publish/new/blog') {
-      if (blog) {
-        path.push({
-          text: blog.info.title,
-          url: `/~publish/${blog.info.owner}/${blog.info.filename}`,
-        });
-      }
+    if (this.props.location.pathname === '/~publish/new-blog') {
       path.push(
         { text: 'New Blog', url: finalUrl }
       );
-    } else if (this.props.location.pathname === '/~publish/new/post') {
+    } else if (this.props.location.pathname === '/~publish/new-post') {
       if (blog) {
         path.push({
           text: blog.info.title,
@@ -88,7 +55,7 @@ export class PathControl extends Component {
     return path;
   }
 
-  render(){
+  render() {
     let pathData = (this.props.pathData)
       ?  this.props.pathData
       :  this.buildPathData();
@@ -98,16 +65,17 @@ export class PathControl extends Component {
     pathData.forEach((seg, i) => {
       let style = (i == 0)
         ?  {marginLeft: 16}
-        :  null;
-      style = (i == (pathData.length - 1))
-        ?  {color: "black"}
-        :  style;
+        :  {};
+      if (i === pathData.length - 1)
+        style.color = "black";
+
       path.push(
-        <Link to={seg.url} key={key++} className="fl gray-30 label-regular" style={style}>
+        <Link to={seg.url} key={key++}
+          className="fl gray-30 label-regular" style={style}>
           {seg.text}
         </Link>
       );
-      if (i < (pathData.length - 1)){
+      if (i < (pathData.length - 1)) {
         path.push(
           <img src="/~publish/arrow.png"
           className="fl ml1 mr1 relative"
@@ -117,9 +85,16 @@ export class PathControl extends Component {
       }
     });
 
+    let create = ((window.location.pathname === '/~publish/new-blog') ||
+      (window.location.pathname === '/~publish/new-post')) ||
+      (this.props.create === false)
+      ?  false
+      :  'post';
+
     return (
-      <div>
-        <PC/>
+      <div className="fixed w-100 bg-white cf h-publish-header z-4"
+        style={{top: 48}}>
+        <PC create={create}/>
         <div className="path-control">
           {path}
         </div>
