@@ -185,12 +185,15 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
   uv_freeaddrinfo(aif_u);
 }
 
+/* u3_ames_decode_lane(): deserialize noun to lane
+*/
 u3_lane
-u3_ames_decode_lane(u3_noun lan) {
-  u3_noun cud, pip, por;
+u3_ames_decode_lane(u3_atom lan) {
+  u3_noun cud, tag, pip, por;
 
   cud = u3ke_cue(lan);
-  u3x_cell(cud, &pip, &por);
+  u3x_trel(cud, &tag, &pip, &por);
+  c3_assert( c3__ipv4 == tag );
 
   u3_lane lan_u;
   lan_u.pip_w = u3r_word(0, pip);
@@ -200,11 +203,12 @@ u3_ames_decode_lane(u3_noun lan) {
   return lan_u;
 }
 
-u3_noun
+/* u3_ames_encode_lane(): serialize lane to jammed noun
+*/
+u3_atom
 u3_ames_encode_lane(u3_lane lan) {
-  return u3ke_jam(u3nc(u3i_words(1, &lan.pip_w), lan.por_s));
+  return u3ke_jam(u3nt(c3__ipv4, u3i_words(1, &lan.pip_w), lan.por_s));
 }
-
 
 /* _ames_czar(): galaxy address resolution.
 */
