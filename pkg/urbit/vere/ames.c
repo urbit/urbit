@@ -379,6 +379,15 @@ _ames_recv_cb(uv_udp_t*        wax_u,
   }
 }
 
+/* _ames_timer_cb(): wake up ames
+*/
+static void
+_ames_timer_cb(uv_timer_t* tim_u)
+{
+  u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul),
+               u3nc(c3__wake, u3_nul));
+}
+
 /* _ames_io_start(): initialize ames I/O.
 */
 static void
@@ -448,6 +457,8 @@ _ames_io_start(u3_pier* pir_u)
   sam_u->liv = c3y;
   u3z(rac);
   u3z(who);
+
+  uv_timer_start(&sam_u->tim_u, _ames_timer_cb, 300 * 1000, 300 * 1000);
 }
 
 /* _cttp_mcut_char(): measure/cut character.
@@ -540,6 +551,8 @@ u3_ames_io_init(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
   sam_u->liv = c3n;
+
+  uv_timer_init(u3L, &sam_u->tim_u);
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
@@ -560,4 +573,6 @@ u3_ames_io_exit(u3_pier* pir_u)
     // XX remove had_u/wax_u union, cast and close wax_u
     uv_close(&sam_u->had_u, 0);
   }
+
+  uv_close((uv_handle_t*)&sam_u->tim_u, 0);
 }
