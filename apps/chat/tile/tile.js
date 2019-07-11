@@ -5,54 +5,36 @@ import _ from 'lodash';
 
 export default class ChatTile extends Component {
 
-  constructor(props) {
-    super(props);
-
-    let numbers = _.get(props, 'data.numbers.chat.numbers', false);
-    let configs = _.get(props, 'data.config.chat.configs', false);
-
-    this.state = {
-      configs,
-      numbers
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { props, state } = this;
-    if (prevProps !== props) {
-      let numbers = _.get(props, 'data.numbers.chat.numbers', false);
-      let configs = _.get(props, 'data.config.chat.configs', false);
-      
-      this.setState({
-        configs,
-        numbers
-      });
-    }
-  }
-
   render() {
-    const { state } = this;
+    const { props } = this;
     let inviteNum = 0;
     let msgNum = 0;
     let inviteCircle = `~${window.ship}/i`;
 
-    if (state.numbers && state.configs) {
+    let propNumbers = _.get(props, 'data.numbers.chat.numbers', false);
+    let propConfigs = _.get(props, 'data.config.chat.configs', false);
+
+    if (propNumbers && propConfigs) {
       let numbers = {};
 
-      for (let i = 0; i < state.numbers.length; i++) {
-        let num = state.numbers[i];
+      for (let i = 0; i < propNumbers.length; i++) {
+        let num = propNumbers[i];
         numbers[num.circle] = num.length;
       }
 
-      let configs = Object.keys(state.configs);
+      let configs = Object.keys(propConfigs);
+
       for (let i = 0; i < configs.length; i++) {
         let key = configs[i];
         let host = key.split('/')[0];
 
-        if (!state.configs[key]) { break; }
+        if (!propConfigs[key]) { break; }
         if (!(key in numbers)) { break; }
 
-        let red = state.configs[key].red;
+        console.log(key);
+        let red = propConfigs[key].red;
+        console.log('red', red);
+        console.log('numbers', numbers[key]);
 
         if (key === inviteCircle) {
           inviteNum = inviteNum - red + numbers[key];

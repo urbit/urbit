@@ -439,7 +439,7 @@
 
 
 
-            if (process.env.NODE_ENV !== "production") {
+            {
               (function() {
 
             var _assign = objectAssign;
@@ -19296,54 +19296,36 @@
 
             class ChatTile extends react_1 {
 
-              constructor(props) {
-                super(props);
-
-                let numbers = lodash.get(props, 'data.numbers.chat.numbers', false);
-                let configs = lodash.get(props, 'data.config.chat.configs', false);
-
-                this.state = {
-                  configs,
-                  numbers
-                };
-              }
-
-              componentDidUpdate(prevProps, prevState) {
-                const { props, state } = this;
-                if (prevProps !== props) {
-                  let numbers = lodash.get(props, 'data.numbers.chat.numbers', false);
-                  let configs = lodash.get(props, 'data.config.chat.configs', false);
-                  
-                  this.setState({
-                    configs,
-                    numbers
-                  });
-                }
-              }
-
               render() {
-                const { state } = this;
+                const { props } = this;
                 let inviteNum = 0;
                 let msgNum = 0;
                 let inviteCircle = `~${window.ship}/i`;
 
-                if (state.numbers && state.configs) {
+                let propNumbers = lodash.get(props, 'data.numbers.chat.numbers', false);
+                let propConfigs = lodash.get(props, 'data.config.chat.configs', false);
+
+                if (propNumbers && propConfigs) {
                   let numbers = {};
 
-                  for (let i = 0; i < state.numbers.length; i++) {
-                    let num = state.numbers[i];
+                  for (let i = 0; i < propNumbers.length; i++) {
+                    let num = propNumbers[i];
                     numbers[num.circle] = num.length;
                   }
 
-                  let configs = Object.keys(state.configs);
+                  let configs = Object.keys(propConfigs);
+
                   for (let i = 0; i < configs.length; i++) {
                     let key = configs[i];
                     let host = key.split('/')[0];
 
-                    if (!state.configs[key]) { break; }
+                    if (!propConfigs[key]) { break; }
                     if (!(key in numbers)) { break; }
 
-                    let red = state.configs[key].red;
+                    console.log(key);
+                    let red = propConfigs[key].red;
+                    console.log('red', red);
+                    console.log('numbers', numbers[key]);
 
                     if (key === inviteCircle) {
                       inviteNum = inviteNum - red + numbers[key];
@@ -19356,19 +19338,19 @@
                 }
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 68}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 69}}
+                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 50}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 51}}
                       , react.createElement('p', { className: "gray", style: {
                         fontWeight: 'bold',
                         fontSize: 14,
                         lineHeight: '24px'
-                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 70}}, "Chat")
+                      }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 52}}, "Chat")
                        , react.createElement('img', {
                          className: "absolute",
                          style: { left: 68, top: 65 },
                          src: "/~chat/img/Tile.png",
                          width: 106,
-                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}} )
+                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 57}} )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19376,7 +19358,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 81}}, inviteNum, " invites" )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 63}}, inviteNum, " invites" )
                        , react.createElement('p', { 
                          className: "absolute white" ,
                          style: {
@@ -19384,7 +19366,7 @@
                            fontWeight: 600,
                            fontSize: 16,
                            lineHeight: '20px'
-                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 89}}, msgNum, " new messages"  )
+                         }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}, msgNum, " new messages"  )
                     )
                   )
                 );

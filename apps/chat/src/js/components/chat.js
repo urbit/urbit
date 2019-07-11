@@ -34,7 +34,7 @@ export class ChatScreen extends Component {
     this.updateReadNumber();
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     if (this.updateReadInterval) {
       clearInterval(this.updateReadInterval);
       this.updateReadInterval = null;
@@ -49,7 +49,9 @@ export class ChatScreen extends Component {
     ) {
       console.log('switched circle');
       this.hasAskedForMessages = false;
- 
+
+      clearInterval(this.updateReadInterval);
+
       this.setState({
         station: props.match.params.ship + "/" + props.match.params.station,
         circle: props.match.params.station,
@@ -59,6 +61,10 @@ export class ChatScreen extends Component {
       }, () => {
         this.updateNumPeople();
         this.scrollToBottom();
+        this.updateReadInterval = setInterval(
+          this.updateReadNumber.bind(this),
+          1000
+        );
         this.updateReadNumber();
       });
     } else if (!(state.station in props.configs)) {
