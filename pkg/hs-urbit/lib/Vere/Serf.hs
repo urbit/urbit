@@ -5,11 +5,10 @@ import Control.Lens
 import Data.Void
 
 import Noun
-import Noun.Atom
-import Noun.Jam hiding (jam)
-import Noun.Jam.Fast (jam, jamBS)
-import Noun.Poet
-import Noun.Pill
+import Atom
+import Jam (jam, jamBS)
+import Cue (cue, cueBS)
+import Pill
 import Vere.Pier.Types
 import System.Process
 
@@ -152,7 +151,7 @@ fromJustExn :: Exception e => Maybe a -> e -> IO a
 fromJustExn Nothing  exn = throwIO exn
 fromJustExn (Just x) exn = pure x
 
-fromRightExn :: Exception e => Either Text a -> (Text -> e) -> IO a
+fromRightExn :: Exception e => Either a b -> (a -> e) -> IO b
 fromRightExn (Left m)  exn = throwIO (exn m)
 fromRightExn (Right x) _   = pure x
 
@@ -372,9 +371,9 @@ recvPlea w = do
 
   a <- recvAtom w
   traceM ("recvPlea.cue " <> show (length $ a ^. atomBytes))
-  n <- fromJustExn (cue a)      (BadPleaAtom a)
+  n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   traceM "recvPlea.doneCue"
-  p <- fromRightExn (fromNounErr n) (BadPleaNoun (trace (showNoun n) n))
+  p <- fromRightExn (fromNounErr n) (BadPleaNoun $ traceShowId n)
 
   traceM "recvPlea.done"
 

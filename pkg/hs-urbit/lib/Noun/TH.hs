@@ -2,13 +2,13 @@
     Generate FromNoun and ToNoun instances.
 -}
 
-module Noun.Poet.TH where
+module Noun.TH where
 
 import ClassyPrelude hiding (fromList)
+import Noun
 import Control.Lens
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
-import Noun.Poet hiding (hsToHoon)
 
 import RIO (decodeUtf8Lenient)
 

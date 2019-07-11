@@ -17,9 +17,9 @@ import ClassyPrelude hiding (init)
 import Control.Lens  hiding ((<|))
 
 import Noun
-import Noun.Atom
-import Noun.Jam
-import Noun.Pill
+import Atom
+import Jam
+import Pill
 import Noun.Lens
 import Data.Void
 import Database.LMDB.Raw
@@ -181,7 +181,7 @@ mdbValToAtom (MDB_val sz ptr) = do
 mdbValToNoun :: MDB_val -> IO Noun
 mdbValToNoun (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  let res = (bs ^? from pillBS . from pill . _Cue)
+  let res = bs ^? from pillBS . from pill . _Cue
   maybeErr res "mdb bad cue"
 
 putRaw :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> MDB_val -> MDB_val -> IO ()

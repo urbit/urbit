@@ -3,9 +3,8 @@ module Vere.Pier.Types where
 import ClassyPrelude
 import Data.Void
 import Noun
-import Noun.Atom
-import Noun.Poet
-import Noun.Poet.TH
+import Atom
+import Noun.TH
 import Database.LMDB.Raw
 import Urbit.Time
 

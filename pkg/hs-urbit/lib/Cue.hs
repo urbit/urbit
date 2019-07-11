@@ -1,53 +1,31 @@
-{-# LANGUAGE MagicHash #-}
-
-module Noun.Cue.Fast (cueFatBS, cueFat, cueBS, cue) where
+module Cue (cue, cueBS) where
 
 import ClassyPrelude
 import Noun
-import Noun.Fat
-import Noun.Atom
-import Noun.Poet
-import Data.Bits hiding (Bits)
-import Control.Lens
-import Text.Printf
-import GHC.Prim
-import GHC.Word
-import GHC.Natural
-import Foreign.Ptr
 
-import Control.Monad    (guard)
-import Data.Bits        (shiftR, (.|.), (.&.))
-import Data.Map         (Map)
-import Foreign.Ptr      (Ptr, plusPtr, ptrToWordPtr)
+import Atom             (Atom(..))
+import Control.Lens     (view, from)
+import Data.Bits        (shiftL, shiftR, (.|.), (.&.))
+import Foreign.Ptr      (Ptr, plusPtr, castPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
-import Foreign.Storable (peek)
-import Noun             (Noun)
-import Noun.Pill        (atomBS, atomWords)
+import GHC.Prim         (ctz#)
+import GHC.Word         (Word(..))
+import Pill             (atomBS, atomWords)
 import System.IO.Unsafe (unsafePerformIO)
+import Text.Printf      (printf)
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.HashTable.IO      as H
 import qualified Data.Vector.Primitive  as VP
 
-import Test.Tasty
-import Test.Tasty.TH
-import qualified Test.Tasty.QuickCheck as QC
-import Test.QuickCheck hiding ((.&.))
-
 
 --------------------------------------------------------------------------------
 
-cueFatBS :: ByteString -> Either DecodeExn FatNoun
-cueFatBS = doGet dNoun
-
-cueFat :: Atom -> Either DecodeExn FatNoun
-cueFat = cueFatBS . view atomBS
-
 cueBS :: ByteString -> Either DecodeExn Noun
-cueBS = fmap fromFatNoun . cueFatBS
+cueBS = doGet dNoun
 
 cue :: Atom -> Either DecodeExn Noun
-cue = fmap fromFatNoun . cueFat
+cue = cueBS . view atomBS
 
 
 -- Debugging -------------------------------------------------------------------
@@ -96,12 +74,10 @@ data GetResult a = GetResult {-# UNPACK #-} !S !a
 
 newtype Get a = Get
   { runGet :: Ptr Word
-           -> H.BasicHashTable Word FatNoun
+           -> H.BasicHashTable Word Noun
            -> S
            -> IO (GetResult a)
   }
-
-type Bits = Vector Bool
 
 doGet :: Get a -> ByteString -> Either DecodeExn a
 doGet m bs =
@@ -166,12 +142,12 @@ getPos :: Get Word
 getPos = Get $ \_ _ s ->
   pure (GetResult s (pos s))
 
-insRef :: Word -> FatNoun -> Get ()
+insRef :: Word -> Noun -> Get ()
 insRef !pos !now = Get \_ tbl s -> do
   H.insert tbl pos now
   pure $ GetResult s ()
 
-getRef :: Word -> Get FatNoun
+getRef :: Word -> Get Noun
 getRef !ref = Get \x tbl s -> do
   H.lookup tbl ref >>= \case
     Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
@@ -347,8 +323,8 @@ dAtom = do
     0 -> pure 0
     n -> dAtomBits n
 
-dCell :: Get FatNoun
-dCell = fatCell <$> dNoun <*> dNoun
+dCell :: Get Noun
+dCell = Cell <$> dNoun <*> dNoun
 
 {-|
     Get a Noun.
@@ -359,7 +335,7 @@ dCell = fatCell <$> dNoun <*> dNoun
     - If it's zero, get a cell.
     - If it's one, get an atom.
 -}
-dNoun :: Get FatNoun
+dNoun :: Get Noun
 dNoun = do
   p <- getPos
 
@@ -367,7 +343,7 @@ dNoun = do
 
   dBit >>= \case
     False -> do debugM "It's an atom"
-                (fatAtom <$> dAtom) >>= yield
+                (Atom <$> dAtom) >>= yield
     True  -> dBit >>= \case
       False -> do debugM "It's a cell"
                   dCell >>= yield

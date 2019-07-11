@@ -1,5 +1,3 @@
-{-# LANGUAGE NumericUnderscores, GeneralizedNewtypeDeriving #-}
-
 -- TODO This is slow.
 
 module Urbit.Time where
@@ -7,12 +5,12 @@ module Urbit.Time where
 import Prelude
 import Control.Lens
 
+import Noun                   (FromNoun, ToNoun)
 import Data.Bits              (shiftL, shiftR)
 import Data.Time.Clock        (DiffTime, UTCTime, picosecondsToDiffTime)
 import Data.Time.Clock        (picosecondsToDiffTime, diffTimeToPicoseconds)
 import Data.Time.Clock.System (SystemTime(..), getSystemTime)
 import Data.Time.Clock.System (utcToSystemTime, systemToUTCTime)
-import Noun.Poet              (FromNoun, ToNoun)
 
 
 -- Types -----------------------------------------------------------------------

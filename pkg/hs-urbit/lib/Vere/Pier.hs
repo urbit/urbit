@@ -3,7 +3,7 @@ module Vere.Pier where
 import ClassyPrelude
 
 import Noun
-import Noun.Pill
+import Pill
 import Vere.Pier.Types
 
 import qualified Vere.Log     as Log

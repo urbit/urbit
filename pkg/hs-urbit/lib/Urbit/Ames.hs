@@ -4,7 +4,7 @@ import ClassyPrelude
 import Data.IP
 
 import Noun
-import Noun.Atom
+import Atom
 
 import Network.Socket
 

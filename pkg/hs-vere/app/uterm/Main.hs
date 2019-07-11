@@ -2,7 +2,7 @@ module Main where
 
 import ClassyPrelude
 import Control.Lens
-import Noun.Pill hiding (main)
+import Pill hiding (main)
 import Noun.Lens
 
 --------------------------------------------------------------------------------

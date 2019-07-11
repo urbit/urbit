@@ -1,5 +1,3 @@
-{-# LANGUAGE MagicHash #-}
-
 {-
     TODO Handle 32-bit architectures
     TODO Handle big-endian.
@@ -20,11 +18,12 @@
         machines.
 -}
 
-module Noun.Pill where
+module Pill
+  ( pill, pillBS, atomBS, bigNatWords, atomWords, PillFile(..), Pill(..)
+  ) where
 
 import ClassyPrelude
-import Noun hiding (toList, fromList)
-import Noun.Atom
+import Atom
 import Data.Flat hiding (from, to)
 import Control.Monad.Except
 import Control.Lens hiding (index, Index)

@@ -1,17 +1,12 @@
-{-# LANGUAGE MagicHash #-}
-{-# OPTIONS_GHC -fwarn-unused-binds -fwarn-unused-imports #-}
-
-module Noun.Jam.Fast (jam, jamBS, jamFat, jamFatBS) where
+module Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
-import Noun.Fat
+import Noun
 
-import Control.Lens              (view, to, from)
-import Data.Bits                 (shiftL, shiftR, setBit, clearBit, xor, (.|.))
-import Noun.Atom                 (Atom(MkAtom), toAtom, bitWidth, takeBitsWord)
-import Noun.Atom                 (wordBitWidth, wordBitWidth# , atomBitWidth#)
-import Noun                      (Noun(Atom, Cell))
-import Noun.Pill                 (bigNatWords, atomBS)
+import Atom                      (Atom(MkAtom), toAtom, bitWidth, takeBitsWord)
+import Atom                      (wordBitWidth, wordBitWidth# , atomBitWidth#)
+import Control.Lens              (view, from)
+import Data.Bits                 (shiftL, shiftR, setBit, clearBit, (.|.))
 import Data.Vector.Primitive     ((!))
 import Foreign.Marshal.Alloc     (callocBytes, free)
 import Foreign.Ptr               (Ptr, castPtr, plusPtr)
@@ -21,29 +16,23 @@ import GHC.Int                   (Int(I#))
 import GHC.Natural               (Natural(NatS#, NatJ#))
 import GHC.Prim                  (Word#, plusWord#, word2Int#)
 import GHC.Word                  (Word(W#))
+import Pill                      (bigNatWords, atomBS)
 import System.IO.Unsafe          (unsafePerformIO)
 
 import qualified Data.ByteString.Unsafe as BS
-import qualified Data.Hashable          as Hash
 import qualified Data.HashTable.IO      as H
 import qualified Data.Vector.Primitive  as VP
 
 
 -- Exports ---------------------------------------------------------------------
 
-jamFatBS :: FatNoun -> ByteString
-jamFatBS n = doPut bt sz (writeNoun n)
+jamBS :: Noun -> ByteString
+jamBS n = doPut bt sz (writeNoun n)
   where
     (sz, bt) = unsafePerformIO (compress n)
 
-jamFat :: FatNoun -> Atom
-jamFat = view (from atomBS) . jamFatBS
-
-jamBS :: Noun -> ByteString
-jamBS = jamFatBS . toFatNoun
-
 jam :: Noun -> Atom
-jam = jamFat . toFatNoun
+jam = view (from atomBS) . jamBS
 
 
 -- Types -----------------------------------------------------------------------
@@ -265,13 +254,12 @@ doPut !tbl !sz m =
 {-
     TODO Handle back references
 -}
-writeNoun :: FatNoun -> Put ()
+writeNoun :: Noun -> Put ()
 writeNoun !n =
   getRef >>= \case
     Just bk -> writeBackRef bk
-    Nothing -> case n of FatAtom (FatBigN _ n)    -> writeAtom(MkAtom $ NatJ# n)
-                         FatAtom (FatWord (W# w)) -> writeAtom(MkAtom $ NatS# w)
-                         FatCell _ _ h t          -> writeCell h t
+    Nothing -> case n of Atom a   -> writeAtom a
+                         Cell h t -> writeCell h t
 
 {-# INLINE writeMat #-}
 writeMat :: Atom -> Put ()
@@ -285,7 +273,7 @@ writeMat atm = do
     preWid = fromIntegral (wordBitWidth atmWid)
 
 {-# INLINE writeCell #-}
-writeCell :: FatNoun -> FatNoun -> Put ()
+writeCell :: Noun -> Noun -> Put ()
 writeCell !h !t = do
     writeBit True
     writeBit False
@@ -337,26 +325,23 @@ jamWordSz (W# w) = 1 + 2*(W# preW) + (W# atmW)
     atmW = wordBitWidth# w
     preW = wordBitWidth# atmW
 
-compress :: FatNoun -> IO (Word, H.CuckooHashTable Word Word)
+compress :: Noun -> IO (Word, H.CuckooHashTable Word Word)
 compress !top = do
     let sz = max 50
            $ min 10_000_000
-           $ (2*) $ (10^) $ floor $ logBase 600 $ fromIntegral $ fatSize top
+           $ (2*) $ (10^) $ floor $ logBase 600 $ fromIntegral $ nounSize top
 
-    nodes :: H.BasicHashTable  FatNoun Word <- H.newSized sz
-    backs :: H.CuckooHashTable Word    Word <- H.newSized sz
+    nodes :: H.BasicHashTable  Noun Word <- H.newSized sz
+    backs :: H.CuckooHashTable Word Word <- H.newSized sz
 
-    let proc :: Word -> FatNoun -> IO Word
+    let proc :: Word -> Noun -> IO Word
         proc !pos = \case
-            FatAtom atm -> case atm of
-                n@(FatBigN _ a) -> pure $ atomSz $ MkAtom $ NatJ# a
-                FatWord w       -> pure (jamWordSz w)
-            FatCell _ _ h t -> do
-                !hSz <- go (pos+2) h
-                !tSz <- go (pos+2+hSz) t
-                pure (2+hSz+tSz)
+            Atom a   -> pure (atomSz a)
+            Cell h t -> do !hSz <- go (pos+2) h
+                           !tSz <- go (pos+2+hSz) t
+                           pure (2+hSz+tSz)
 
-        go :: Word -> FatNoun -> IO Word
+        go :: Word -> Noun -> IO Word
         go !p !inp = do
             H.lookup nodes inp >>= \case
                 Nothing -> do
@@ -367,22 +352,10 @@ compress !top = do
                         doRef = H.insert backs p bak $> rs
                         noRef = proc p inp
                     case inp of
-                        FatCell _ _ _ _                                        -> doRef
-                        FatAtom (FatWord w)   | rs < atomSz (fromIntegral w)   -> doRef
-                        FatAtom (FatBigN _ a) | rs < atomSz (MkAtom (NatJ# a)) -> doRef
-                        _                                                      -> noRef
+                        Cell _ _                              -> doRef
+                        Atom a | rs < atomSz (fromIntegral a) -> doRef
+                        _                                     -> noRef
 
     res <- go 0 top
 
     pure (res, backs)
-
-
--- Stolen from Hashable Library ------------------------------------------------
-
-{-# INLINE combine #-}
-combine :: Int -> Int -> Int
-combine !h1 !h2 = (h1 * 16777619) `xor` h2
-
-{-# INLINE defaultHashWithSalt #-}
-defaultHashWithSalt :: Hashable a => Int -> a -> Int
-defaultHashWithSalt !salt !x = salt `combine` Hash.hash x

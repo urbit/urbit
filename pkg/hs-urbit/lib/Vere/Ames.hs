@@ -4,9 +4,8 @@ import ClassyPrelude
 import Data.IP
 import Data.Void
 import Noun
-import Noun.Atom
-import Noun.Poet
-import Noun.Poet.TH
+import Atom
+import Noun.TH
 import Control.Lens
 
 import qualified Urbit.Time  as Time

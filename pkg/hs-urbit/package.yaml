@@ -6,6 +6,8 @@ library:
   source-dirs: lib
   ghc-options:
     - -fwarn-incomplete-patterns
+    - -fwarn-unused-binds
+    - -fwarn-unused-imports
     - -O2
 
 dependencies:
@@ -79,12 +81,14 @@ default-extensions:
   - GADTs
   - GeneralizedNewtypeDeriving
   - LambdaCase
+  - MagicHash
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
   - NumericUnderscores
   - OverloadedStrings
   - PartialTypeSignatures
+  - PatternSynonyms
   - QuasiQuotes
   - Rank2Types
   - RankNTypes
@@ -96,5 +100,6 @@ default-extensions:
   - TypeApplications
   - TypeFamilies
   - TypeOperators
+  - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns

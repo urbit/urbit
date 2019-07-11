@@ -1,20 +1,17 @@
-{-# LANGUAGE MagicHash, GeneralizedNewtypeDeriving, UnboxedTuples #-}
-
-module Noun.Atom where
+module Atom where
 
 import ClassyPrelude
 import Control.Lens
--- import Prelude ((^))
+import Data.Bits
+import Data.Flat
+import GHC.Int
 import GHC.Integer.GMP.Internals
 import GHC.Natural
 import GHC.Prim
 import GHC.Word
-import GHC.Int
-import Data.Bits
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Gen
 import Text.Printf
-import Data.Flat
 
 import Data.Hashable (Hashable)
 
