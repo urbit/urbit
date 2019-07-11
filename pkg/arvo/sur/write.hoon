@@ -84,6 +84,8 @@
       last-modified=@da
   ==
 ::
++$  comment  [info=comment-info body=@t]
+::
 +$  perm-config  [read=rule:clay write=rule:clay]
 ::
 +$  comment-config  $?(%open %closed %none)

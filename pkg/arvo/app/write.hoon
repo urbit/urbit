@@ -68,12 +68,32 @@
 ::
 --
 ::
-|_  [bol=bowl:gall sat=state]
+|_  [bol=bowl:gall %0 sat=state]
 ::
 ++  this  .
 ::  +our-beak: beak for this app, with case set to current invocation date
 ::
 ++  our-beak  /(scot %p our.bol)/[q.byk.bol]/(scot %da now.bol)
+::  +prep: set up eyre connection and modulo tile; adapt state
+::
+++  prep
+  =>  |%
+      ++  states
+        $%  [%0 s=state]
+        ==
+      --
+  |=  old=(unit states)
+  ^-  (quip move _this)
+  ?~  old
+    :_  this
+    :~  [ost.bol %connect / [~ /'~publish'] %write]
+        :*  ost.bol  %poke  /publish  [our.bol %launch]
+            %launch-action  %write  /publishtile  '/~publish/tile.js'
+        ==
+    ==
+  ?-  -.u.old
+    %0  [~ this(sat s.u.old)]
+  ==
 ::
 ++  ships-to-whom
   |=  ships=(set @p)
@@ -180,21 +200,6 @@
     ['    ==' ~]
   ==
 ::
-++  prep
-  |=  old=(unit *)
-  ^-  (quip move _this)
-  ~&  write-prep+act.bol
-  ?~  old
-    :_  this(sat *state)
-    :~  [ost.bol %connect / [~ /'~publish'] %write]
-        :*  ost.bol  %poke  /publish  [our.bol %launch]
-            %launch-action  %write  /publishtile  '/~publish/tile.js'
-        ==
-    ==
-    ::
-::  [~ this(sat *state)] 
-  [~ this(sat (state u.old))] 
-::
 ++  poke-noun
   |=  a=*
   ^-  (quip move _this)
@@ -203,22 +208,9 @@
   ?+  a
     [~ this]
   ::
-      %test
-    =/  whoms  (ships-to-whom (sy ~zod ~bus ~marzod ~binzod ~))
-    =/  ships  (whom-to-ships whoms)
-    ~&  whoms
-    ~&  ships
-    [~ this]
-  ::
       %print-bowl
     ~&  bol
     [~ this]
-  ::
-      %update-tile
-    [make-tile-moves this]
-  ::
-      %flush-state
-    [~ this(sat *state)]
   ::
       %print-state
     ~&  sat
@@ -345,7 +337,7 @@
             ::
             =/  old=(unit collection)  (~(get by pubs.sat) col.del)
             ?~  old
-              ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+              [~ da-this]
             =.  pubs.sat  (~(del by pubs.sat) col.del)
             :-  ~(tap in ~(key by pos.u.old))
             (da-emil (affection del))
@@ -353,7 +345,7 @@
           ::
           =/  old=(unit collection)  (~(get by subs.sat) who.del col.del)
           ?~  old
-            ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+            [~ da-this]
           =.  subs.sat  (~(del by subs.sat) who.del col.del)
           :-  ~(tap in ~(key by pos.u.old))
           (da-emit [ost.bol %pull /collection/[col.del] [who.del %write] ~])
@@ -376,9 +368,9 @@
           (~(get by pubs.sat) col.del)
         (~(get by subs.sat) who.del col.del)
       ?~  old
-        ~|([%cant-delete-nonexistent-blog who.del col.del] !!)
+        da-this
       ?.  (~(has in ~(key by pos.u.old)) u.pos.del)
-        ~|([%cant-delete-nonexistent-post who.del col.del pos.del] !!)
+        da-this
       =/  new=collection 
         %=  u.old
           pos  (~(del by pos.u.old) u.pos.del)
@@ -421,25 +413,29 @@
     ?~  col
       da-this
     =/  new=collection  u.col
-    =/  pin-ids=(list @)  (fand [post]~ pin.order.u.col)
-    =.  pin.order.u.col
+    =/  pin-ids=(list @)  (fand [post]~ pin.order.new)
+    =.  pin.order.new
     |-
     ?~  pin-ids
-      pin.order.u.col
+      pin.order.new
     %=  $
-      pin.order.u.col  (oust [i.pin-ids 1] pin.order.u.col)
+      pin.order.new  (oust [i.pin-ids 1] pin.order.new)
       pin-ids  t.pin-ids
     ==
     ::
-    =/  unpin-ids=(list @)  (fand [post]~ unpin.order.u.col)
-    =.  unpin.order.u.col
+    =/  unpin-ids=(list @)  (fand [post]~ unpin.order.new)
+    =.  unpin.order.new
     |-
     ?~  unpin-ids
-      unpin.order.u.col
+      unpin.order.new
     %=  $
-      unpin.order.u.col  (oust [i.unpin-ids 1] unpin.order.u.col)
+      unpin.order.new  (oust [i.unpin-ids 1] unpin.order.new)
       unpin-ids  t.unpin-ids
     ==
+    =?  pubs.sat  =(who our.bol)
+      (~(put by pubs.sat) coll new)
+    =?  subs.sat  !=(who our.bol)
+      (~(put by subs.sat) [who coll] new)
     (da-emil make-tile-moves)
   ::
   ++  da-remove
@@ -462,14 +458,14 @@
   ++  da-insert-latest
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    =/  new-date=@da  date-created:(need (get-post-by-index who coll post))
+    =/  new-date=@da  date-created:(need (get-post-info-by-index who coll post))
     =/  pre=(list [@p @tas @tas])  ~
     =/  suf=(list [@p @tas @tas])  latest.sat
     =?  latest.sat  =(~ (find [who coll post]~ latest.sat))
       |-
       ?~  suf
         (weld pre [who coll post]~)
-      =/  i-date=@da  date-created:(need (get-post-by-index i.suf))
+      =/  i-date=@da  date-created:(need (get-post-info-by-index i.suf))
       ?:  (gte new-date i-date)
         (weld pre [[who coll post] suf])
       %=  $
@@ -481,7 +477,7 @@
   ++  da-insert-order
     |=  [who=@p coll=@tas post=@tas]
     ^+  da-this
-    =/  new-post=post-info  (need (get-post-by-index who coll post))
+    =/  new-post=post-info  (need (get-post-info-by-index who coll post))
     =/  col=collection  (need (get-coll-by-index who coll))
     :: 
     =/  pre=(list @tas)  ~
@@ -498,7 +494,7 @@
       (snoc pre post)
     ?:  =(post i.suf)
       (weld pre suf)
-    =/  i-date=@da  date-created:(need (get-post-by-index who coll i.suf))
+    =/  i-date=@da  date-created:(need (get-post-info-by-index who coll i.suf))
     ?:  (gte date-created.new-post i-date)
       (weld pre [post suf])
     %=  $
@@ -563,6 +559,19 @@
   ==
 ::
 ++  get-post-by-index
+  |=  [who=@p coll=@tas post=@tas]
+  ^-  (unit (each [post-info manx @t] tang))
+  =/  col=(unit collection)
+    ?:  =(our.bol who)
+      (~(get by pubs.sat) coll)
+    (~(get by subs.sat) who coll)
+  ?~  col  ~
+  =/  pos=(unit [bone (each [post-info manx @t] tang)])
+    (~(get by pos.u.col) post)
+  ?~  pos  ~
+  [~ +.u.pos]
+::
+++  get-post-info-by-index
   |=  [who=@p coll=@tas post=@tas]
   ^-  (unit post-info)
   =/  col=(unit collection)
@@ -947,7 +956,7 @@
     ?.  =(who.act our.bol)
       :_  this
       [ost.bol %poke /forward [who.act %write] %write-action act]~
-    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/udon
+    =/  pax=path  /web/write/[coll.act]/[post.act]/(scot %da now.bol)/write-comment
     ?.  (allowed src.bol %write pax)
       [~ this]
     =/  col=(unit collection)  (~(get by pubs.sat) coll.act)
@@ -955,17 +964,9 @@
       [~ this]
     ?.  (~(has by pos.u.col) post.act)
       [~ this]
-    ::
-    =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
-    =/  front=(map knot cord)
-      %-  my
-      :~  [%creator (scot %p src.bol)]
-          [%collection coll.act]
-          [%post post.act]
-          [%date-created (scot %da now.bol)]
-          [%last-modified (scot %da now.bol)]
-      ==
-    =/  out=@t    (update-udon-front front content.act)
+
+    =/  com=comment
+      [[src.bol coll.act post.act now.bol now.bol] content.act]
     ::
     =/  comment-perms=card
       :*  %perm  /perms  q.byk.bol  pax
@@ -973,7 +974,7 @@
       ==
     ::
     :_  this
-    :~  (write-file pax %udon !>(out))
+    :~  (write-file pax %write-comment !>(com))
         [ost.bol comment-perms]
     ==
   ::
@@ -1037,9 +1038,14 @@
     ?.  (~(has by pos.u.col) name.act)
       [~ this]
     ::
-    =/  pos=(unit post-info)  (get-post-by-index who.act coll.act name.act)
+    =/  pos=(unit (each [post-info manx @t] tang))
+      (get-post-by-index who.act coll.act name.act)
     ?~  pos
       ~|  %editing-non-existent-post  !!
+    =/  date-created=@da
+      ?:  ?=(%.y -.u.pos)
+        date-created.-.p.u.pos
+      now.bol
     ::
     =.  content.act  (cat 3 content.act '\0a')  :: XX fix udon parser
     =/  front=(map knot cord)
@@ -1049,9 +1055,9 @@
           [%collection coll.act]
           [%filename name.act]
           [%comments com.act]
-          [%date-created (scot %da date-created.u.pos)]
+          [%date-created (scot %da date-created)]
           [%last-modified (scot %da now.bol)]
-          [%pinned ?:(pinned.u.pos %true %false)]
+          [%pinned %false]
       ==
     =/  out=@t  (update-udon-front front content.act)
     ::
@@ -1301,27 +1307,15 @@
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
-  ::  new
-  ::
-      [[~ [%'~publish' @t @t %new ~]] ~]
-    =/  hym=manx  (index (state-to-json sat))
-    :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
-  ::  new
-  ::
-      [[~ [%'~publish' %new ~]] ~]
-    =/  hym=manx  (index (state-to-json sat))
-    :_  this
-    [ost.bol %http-response (manx-response:app hym)]~
   ::  new post
   ::
-      [[~ [%'~publish' %new %post ~]] ~]
+      [[~ [%'~publish' %new-post ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
   ::  new blog
   ::
-      [[~ [%'~publish' %new %blog ~]] ~]
+      [[~ [%'~publish' %new-blog ~]] ~]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
@@ -1340,14 +1334,6 @@
     =/  blog=@tas      i.t.t.site.request-line
     =/  post=@tas      i.t.t.t.site.request-line
     ::
-::    ?~  who  [[ost.bol %http-response not-found:app]~ this]
-::    =/  col=(unit collection)
-::      ?:  =(u.who our.bol)
-::        (~(get by pubs.sat) blog)
-::      (~(get by subs.sat) u.who blog)
-::    ?~  col  [[ost.bol %http-response not-found:app]~ this]
-::    =/  pos  (~(get by pos.u.col) post)
-::    ?~  pos  [[ost.bol %http-response not-found:app]~ this]
     =/  hym=manx  (index (state-to-json sat))
     :_  this
     [ost.bol %http-response (manx-response:app hym)]~
@@ -1427,7 +1413,6 @@
   |=  [wir=wire rum=rumor]
   ^-  (quip move _this)
   (bake rum)
-::
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
