@@ -69,8 +69,6 @@
   :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
   this(sta u.old)
 ::
-::
-::
 ++  construct-tile-json
   |=  str=streams
   ^-  json
@@ -101,7 +99,6 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  ~&  (lent (prey:pubsub:userlib /primary bol))
   =*  messages  messages.str.sta
   =/  lismov/(list move)
     %+  murn  ~(tap by messages)
@@ -152,10 +149,11 @@
     |=  [=bone *]
     [bone %diff %chat-update upd]
   ::
+  =/  jon/json  (construct-tile-json str)
   =/  tile-updates/(list move)
     %+  turn  (prey:pubsub:userlib /chattile bol)
     |=  [=bone *]
-    [bone %diff %json (construct-tile-json str)]
+    [bone %diff %json jon]
   ::
   %+  weld
     updates
@@ -263,7 +261,6 @@
           |=  [shp=@p stat=status:hall]
           shp
         (~(put by acc) cir newset)
-      ~&  nes.piz
       =/  str
         %=  str.sta
           messages  (~(put by messages) circle nes.piz)
@@ -452,7 +449,6 @@
             (send-chat-update [[%delete affectedcir] str])
         ::  if we get a delete from another ship, delete our fake circle copy
         ::
-        ~&  %deletefake
         =/  deletefake/poke
           :-  %hall-action
               [%delete nom.fakecir ~]
@@ -464,6 +460,18 @@
           %+  weld
             (send-chat-update [[%inbox newinbox] str])
             (send-chat-update [[%delete affectedcir] str])
+      ::
+      ::  %remove: remove a circle
+      ::
+          %remove
+        =/  str
+          %=  str.sta
+            configs   (~(del by configs.str.sta) circ)
+            messages  (~(del by messages.str.sta) circ)
+            peers     (~(del by peers.str.sta) circ)
+          ==
+        :-  (send-chat-update [[%delete circ] str])
+        this(str.sta str)
         ::
       ==
       ::  end of branching on dif.sto type
