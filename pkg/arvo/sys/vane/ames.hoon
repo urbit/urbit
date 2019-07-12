@@ -608,8 +608,9 @@
     ::  +turf-scry: for network domains
     ::
     ++  turf-scry
-      ~/  %turf
-      ;;  (list turf)
+      =<  $
+      ~%  %turf  +  ~
+      |.  ;;  (list turf)
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %turf da+now ~]
