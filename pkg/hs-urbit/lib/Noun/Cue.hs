@@ -1,16 +1,16 @@
-module Cue (cue, cueBS) where
+module Noun.Cue (cue, cueBS) where
 
 import ClassyPrelude
-import Noun
 
-import Atom             (Atom(..))
+import Noun.Core
+import Noun.Atom
+
 import Control.Lens     (view, from)
 import Data.Bits        (shiftL, shiftR, (.|.), (.&.))
 import Foreign.Ptr      (Ptr, plusPtr, castPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
 import GHC.Prim         (ctz#)
 import GHC.Word         (Word(..))
-import Pill             (atomBS, atomWords)
 import System.IO.Unsafe (unsafePerformIO)
 import Text.Printf      (printf)
 
@@ -25,7 +25,7 @@ cueBS :: ByteString -> Either DecodeExn Noun
 cueBS = doGet dNoun
 
 cue :: Atom -> Either DecodeExn Noun
-cue = cueBS . view atomBS
+cue = cueBS . view atomBytes
 
 
 -- Debugging -------------------------------------------------------------------
@@ -37,12 +37,6 @@ debugM _ = pure ()
 {-# INLINE debugMId #-}
 debugMId :: (Monad m, Show a) => String -> m a -> m a
 debugMId _ a = a
-
--- debugMId tag m = do
-  -- r <- m
-  -- debugM (tag <> ": " <> show r)
-  -- pure r
-
 
 
 -- Types -----------------------------------------------------------------------

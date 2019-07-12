@@ -1,17 +1,16 @@
 module Urbit.Ames where
 
 import ClassyPrelude
+
 import Data.IP
-
 import Noun
-import Atom
-
 import Network.Socket
 
 import qualified Data.Vector as V
-import qualified Urbit.Time as Time
+import qualified Urbit.Time  as Time
+import qualified Vere.Ames   as VA
 
-import qualified Vere.Ames as VA
+--------------------------------------------------------------------------------
 
 data GalaxyInfo = GalaxyInfo { ip :: IPv4, age :: Time.Unix }
 

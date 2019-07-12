@@ -17,10 +17,6 @@ import ClassyPrelude hiding (init)
 import Control.Lens  hiding ((<|))
 
 import Noun
-import Atom
-import Jam
-import Pill
-import Noun.Lens
 import Data.Void
 import Database.LMDB.Raw
 import Foreign.Ptr
@@ -176,12 +172,12 @@ get txn db key =
 mdbValToAtom :: MDB_val -> IO Atom
 mdbValToAtom (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  pure (bs ^. from (pill . pillBS))
+  pure (bs ^. from atomBytes)
 
 mdbValToNoun :: MDB_val -> IO Noun
 mdbValToNoun (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  let res = bs ^? from pillBS . from pill . _Cue
+  let res = bs ^? _Cue
   maybeErr res "mdb bad cue"
 
 putRaw :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> MDB_val -> MDB_val -> IO ()
@@ -193,13 +189,13 @@ putRaw flags txn db key val =
 putNoun :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> ByteString -> Noun -> IO ()
 putNoun flags txn db key val =
   byteStringAsMdbVal key $ \mKey ->
-  byteStringAsMdbVal (val ^. re _CueBytes) $ \mVal ->
+  byteStringAsMdbVal (val ^. re _Cue) $ \mVal ->
   putRaw flags txn db mKey mVal
 
 putJam :: MDB_WriteFlags -> MDB_txn -> MDB_dbi -> Word64 -> Jam -> IO ()
 putJam flags txn db id (Jam atom) = do
   withWord64AsMDBval id $ \idVal -> do
-    let !bs = atom ^. pill . pillBS
+    let !bs = atom ^. atomBytes
     byteStringAsMdbVal bs $ \mVal -> do
       putRaw flags txn db idVal mVal
 

@@ -1,10 +1,10 @@
-module Jam (jam, jamBS) where
+module Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
-import Noun
 
-import Atom                      (Atom(MkAtom), toAtom, bitWidth, takeBitsWord)
-import Atom                      (wordBitWidth, wordBitWidth# , atomBitWidth#)
+import Noun.Core
+import Noun.Atom
+
 import Control.Lens              (view, from)
 import Data.Bits                 (shiftL, shiftR, setBit, clearBit, (.|.))
 import Data.Vector.Primitive     ((!))
@@ -16,7 +16,6 @@ import GHC.Int                   (Int(I#))
 import GHC.Natural               (Natural(NatS#, NatJ#))
 import GHC.Prim                  (Word#, plusWord#, word2Int#)
 import GHC.Word                  (Word(W#))
-import Pill                      (bigNatWords, atomBS)
 import System.IO.Unsafe          (unsafePerformIO)
 
 import qualified Data.ByteString.Unsafe as BS
@@ -32,7 +31,7 @@ jamBS n = doPut bt sz (writeNoun n)
     (sz, bt) = unsafePerformIO (compress n)
 
 jam :: Noun -> Atom
-jam = view (from atomBS) . jamBS
+jam = view (from atomBytes) . jamBS
 
 
 -- Types -----------------------------------------------------------------------
@@ -189,8 +188,8 @@ writeAtomBigNat !(view bigNatWords -> words) = do
 
 {-# INLINE writeAtomBits #-}
 writeAtomBits :: Atom -> Put ()
-writeAtomBits = \case MkAtom (NatS# wd) -> writeAtomWord# wd
-                      MkAtom (NatJ# bn) -> writeAtomBigNat bn
+writeAtomBits = \case NatS# wd -> writeAtomWord# wd
+                      NatJ# bn -> writeAtomBigNat bn
 
 
 -- Put Instances ---------------------------------------------------------------
@@ -292,7 +291,7 @@ writeBackRef !a = do
     p <- pos <$> getS
     writeBit True
     writeBit True
-    writeMat (toAtom a)
+    writeMat (fromIntegral a)
 
 
 -- Calculate Jam Size and Backrefs ---------------------------------------------

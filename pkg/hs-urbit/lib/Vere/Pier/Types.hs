@@ -3,7 +3,6 @@ module Vere.Pier.Types where
 import ClassyPrelude
 import Data.Void
 import Noun
-import Atom
 import Noun.TH
 import Database.LMDB.Raw
 import Urbit.Time

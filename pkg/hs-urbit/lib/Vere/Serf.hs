@@ -2,22 +2,18 @@ module Vere.Serf where
 
 import ClassyPrelude
 import Control.Lens
+
 import Data.Void
-
 import Noun
-import Atom
-import Jam (jam, jamBS)
-import Cue (cue, cueBS)
-import Pill
-import Vere.Pier.Types
 import System.Process
+import Vere.Pier.Types
 
-import Foreign.Marshal.Alloc (alloca)
-import System.Exit (ExitCode)
-import Data.ByteString (hGet)
+import Data.ByteString        (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
-import Foreign.Ptr (castPtr)
-import Foreign.Storable (poke, peek)
+import Foreign.Marshal.Alloc  (alloca)
+import Foreign.Ptr            (castPtr)
+import Foreign.Storable       (poke, peek)
+import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Urbit.Time             as Time
@@ -238,7 +234,7 @@ replayEvents w (wid, wmug) identity lastCommitedId getEvents = do
         loop vLast (curEvent + toRead)
 
 
-bootSerf :: Serf -> LogIdentity -> Pill -> IO (EventId, Mug)
+bootSerf :: Serf -> LogIdentity -> ByteString -> IO (EventId, Mug)
 bootSerf w ident pill =
   do
     recvPlea w >>= \case
@@ -332,9 +328,7 @@ sendAtom s a = do
   hFlush (sendHandle s)
   traceM "sendAtom.return ()"
 
-atomBytes :: Iso' Atom ByteString
-atomBytes = pill . pillBS
-
+packAtom :: ByteString -> Atom
 packAtom = view (from atomBytes)
 
 unpackAtom :: Atom -> ByteString

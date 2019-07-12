@@ -2,11 +2,10 @@
     Generate FromNoun and ToNoun instances.
 -}
 
-module Noun.TH where
+module Noun.TH (deriveNoun) where
 
 import ClassyPrelude hiding (fromList)
-import Noun
-import Control.Lens
+import Noun.Convert
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
 

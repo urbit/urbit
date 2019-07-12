@@ -3,7 +3,6 @@ module Vere.Pier where
 import ClassyPrelude
 
 import Noun
-import Pill
 import Vere.Pier.Types
 
 import qualified Vere.Log     as Log
@@ -22,7 +21,8 @@ ioDrivers = [] :: [IODriver]
 
 -- This is called to make a freshly booted pier. It assigns an identity to an
 -- event log and takes a chill pill.
-boot :: Pill -> FilePath -> LogIdentity -> IO (Serf, EventLog, EventId, Mug)
+boot :: ByteString -> FilePath -> LogIdentity
+     -> IO (Serf, EventLog, EventId, Mug)
 boot pill top id = do
   let logPath = top <> "/log"
 

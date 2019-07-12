@@ -1,0 +1,189 @@
+module Noun.Convert
+  ( ToNoun(toNoun)
+  , FromNoun(parseNoun), fromNoun, fromNounErr
+  , Parser(..)
+  , CellIdx, NounPath
+  , Cord(..)
+  ) where
+
+import ClassyPrelude hiding (hash)
+import Noun.Core
+import Noun.Atom
+import Control.Lens
+
+import qualified Control.Monad.Fail as Fail
+
+
+-- Types -----------------------------------------------------------------------
+
+data CellIdx = L | R
+  deriving (Eq, Ord, Show)
+
+type NounPath = [CellIdx]
+
+
+-- IResult ---------------------------------------------------------------------
+
+data IResult a = IError NounPath String | ISuccess a
+  deriving (Eq, Show, Typeable, Functor, Foldable, Traversable)
+
+instance Applicative IResult where
+    pure  = ISuccess
+    (<*>) = ap
+
+instance Fail.MonadFail IResult where
+    fail err = IError [] err
+
+instance Monad IResult where
+    return = pure
+    fail   = Fail.fail
+    ISuccess a      >>= k = k a
+    IError path err >>= _ = IError path err
+
+instance MonadPlus IResult where
+    mzero = fail "mzero"
+    mplus a@(ISuccess _) _ = a
+    mplus _ b              = b
+
+instance Alternative IResult where
+    empty = mzero
+    (<|>) = mplus
+
+instance Semigroup (IResult a) where
+    (<>) = mplus
+
+instance Monoid (IResult a) where
+    mempty  = fail "mempty"
+    mappend = (<>)
+
+
+-- Result ----------------------------------------------------------------------
+
+data Result a = Error String | Success a
+  deriving (Eq, Show, Typeable, Functor, Foldable, Traversable)
+
+instance Applicative Result where
+    pure  = Success
+    (<*>) = ap
+
+instance Fail.MonadFail Result where
+    fail err = Error err
+
+instance Monad Result where
+    return = pure
+    fail   = Fail.fail
+
+    Success a >>= k = k a
+    Error err >>= _ = Error err
+
+instance MonadPlus Result where
+    mzero = fail "mzero"
+    mplus a@(Success _) _ = a
+    mplus _ b             = b
+
+instance Alternative Result where
+    empty = mzero
+    (<|>) = mplus
+
+instance Semigroup (Result a) where
+    (<>) = mplus
+    {-# INLINE (<>) #-}
+
+instance Monoid (Result a) where
+    mempty  = fail "mempty"
+    mappend = (<>)
+
+
+-- "Parser" --------------------------------------------------------------------
+
+type Failure f r   = NounPath -> String -> f r
+type Success a f r = a -> f r
+
+newtype Parser a = Parser {
+  runParser :: forall f r.  NounPath -> Failure f r -> Success a f r -> f r
+}
+
+instance Monad Parser where
+    m >>= g = Parser $ \path kf ks -> let ks' a = runParser (g a) path kf ks
+                                       in runParser m path kf ks'
+    return = pure
+    fail = Fail.fail
+
+instance Fail.MonadFail Parser where
+    fail msg = Parser $ \path kf _ks -> kf (reverse path) msg
+
+instance Functor Parser where
+    fmap f m = Parser $ \path kf ks -> let ks' a = ks (f a)
+                                        in runParser m path kf ks'
+
+apP :: Parser (a -> b) -> Parser a -> Parser b
+apP d e = do
+  b <- d
+  b <$> e
+
+instance Applicative Parser where
+    pure a = Parser $ \_path _kf ks -> ks a
+    (<*>) = apP
+
+instance Alternative Parser where
+    empty = fail "empty"
+    (<|>) = mplus
+
+instance MonadPlus Parser where
+    mzero = fail "mzero"
+    mplus a b = Parser $ \path kf ks -> let kf' _ _ = runParser b path kf ks
+                                         in runParser a path kf' ks
+
+instance Semigroup (Parser a) where
+    (<>) = mplus
+
+instance Monoid (Parser a) where
+    mempty  = fail "mempty"
+    mappend = (<>)
+
+
+-- Conversion ------------------------------------------------------------------
+
+class FromNoun a where
+  parseNoun :: Noun -> Parser a
+
+class ToNoun a where
+  toNoun :: a -> Noun
+
+--------------------------------------------------------------------------------
+
+fromNoun :: FromNoun a => Noun -> Maybe a
+fromNoun n = runParser (parseNoun n) [] onFail onSuccess
+  where
+    onFail p m  = Nothing
+    onSuccess x = Just x
+
+fromNounErr :: FromNoun a => Noun -> Either Text a
+fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
+  where
+    onFail p m  = Left (pack m)
+    onSuccess x = Right x
+
+
+-- Cord Conversions ------------------------------------------------------------
+
+newtype Cord = Cord { unCord :: ByteString }
+  deriving newtype (Eq, Ord, Show, IsString, NFData)
+
+instance ToNoun Cord where
+  toNoun (Cord bs) = Atom (bs ^. from atomBytes)
+
+instance FromNoun Cord where
+  parseNoun n = do
+    atom <- parseNoun n
+    pure $ Cord (atom ^. atomBytes)
+
+--- Atom Conversion ------------------------------------------------------------
+
+instance ToNoun Atom where
+  toNoun = Atom
+
+instance FromNoun Atom where
+  parseNoun = \case
+    Atom a   -> pure a
+    Cell _ _ -> fail "Expecting an atom, but got a cell"

@@ -8,6 +8,7 @@ library:
     - -fwarn-incomplete-patterns
     - -fwarn-unused-binds
     - -fwarn-unused-imports
+    # -Werror
     - -O2
 
 dependencies:

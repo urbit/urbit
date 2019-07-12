@@ -4,13 +4,11 @@ module Vere.Http.Server where
 
 import ClassyPrelude
 import Vere.Http
-import Atom
 import Noun
 import Noun.TH
 import Control.Lens
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
-import Pill               (pill, pillBS, Pill(..))
 
 import qualified Data.ByteString             as BS
 import qualified Network.HTTP.Types          as H
@@ -120,12 +118,12 @@ bsOcts = iso toOcts fromOcts
   where
     toOcts :: ByteString -> Octs
     toOcts bs =
-      Octs (fromIntegral (length bs)) (bs ^. from (pill . pillBS))
+      Octs (fromIntegral (length bs)) (bs ^. from atomBytes)
 
     fromOcts :: Octs -> ByteString
     fromOcts (Octs (fromIntegral -> len) atm) = bs <> pad
       where
-        bs  = atm ^. pill . pillBS
+        bs  = atm ^. atomBytes
         pad = BS.replicate (max 0 (len - length bs)) 0
 
 readEvents :: W.Request -> IO Request

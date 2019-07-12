@@ -4,7 +4,6 @@ import ClassyPrelude
 import Data.IP
 import Data.Void
 import Noun
-import Atom
 import Noun.TH
 import Control.Lens
 
