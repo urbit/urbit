@@ -50,7 +50,7 @@ cvtReq r =
       H.requestBody =
         H.RequestBodyBS $ case body r of
                             Nothing -> ""
-                            Just b -> b
+                            Just b  -> b
     }
 
 cvtRespHeaders :: H.Response a -> ResponseHeader

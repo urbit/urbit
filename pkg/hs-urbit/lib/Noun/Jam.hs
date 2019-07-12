@@ -2,18 +2,18 @@ module Noun.Jam (jam, jamBS) where
 
 import ClassyPrelude hiding (hash)
 
-import Noun.Core
 import Noun.Atom
+import Noun.Core
 
-import Control.Lens              (view, from)
-import Data.Bits                 (shiftL, shiftR, setBit, clearBit, (.|.))
+import Control.Lens              (from, view)
+import Data.Bits                 (clearBit, setBit, shiftL, shiftR, (.|.))
 import Data.Vector.Primitive     ((!))
 import Foreign.Marshal.Alloc     (callocBytes, free)
 import Foreign.Ptr               (Ptr, castPtr, plusPtr)
 import Foreign.Storable          (poke)
-import GHC.Integer.GMP.Internals (BigNat)
 import GHC.Int                   (Int(I#))
-import GHC.Natural               (Natural(NatS#, NatJ#))
+import GHC.Integer.GMP.Internals (BigNat)
+import GHC.Natural               (Natural(NatJ#, NatS#))
 import GHC.Prim                  (Word#, plusWord#, word2Int#)
 import GHC.Word                  (Word(W#))
 import System.IO.Unsafe          (unsafePerformIO)
@@ -64,7 +64,7 @@ newtype Put a = Put
 
 {-# INLINE getRef #-}
 getRef :: Put (Maybe Word)
-getRef = Put \tbl s -> PutResult s <$> H.lookup tbl (pos s)
+getRef = Put $ \tbl s -> PutResult s <$> H.lookup tbl (pos s)
 
 {-
   1. Write the register to the output, and increment the output pointer.
@@ -77,15 +77,15 @@ flush = Put $ \tbl s@S{..} -> do
 
 {-# INLINE update #-}
 update :: (S -> S) -> Put ()
-update f = Put \tbl s@S{..} -> pure (PutResult (f s) ())
+update f = Put $ \tbl s@S{..} -> pure (PutResult (f s) ())
 
 {-# INLINE setRegOff #-}
 setRegOff :: Word -> Int -> Put ()
-setRegOff r o = update \s@S{..} -> (s {reg=r, off=o})
+setRegOff r o = update $ \s@S{..} -> (s {reg=r, off=o})
 
 {-# INLINE setReg #-}
 setReg :: Word -> Put ()
-setReg r = update \s@S{..} -> (s { reg=r })
+setReg r = update $ \s@S{..} -> (s { reg=r })
 
 {-# INLINE getS #-}
 getS :: Put S
@@ -129,9 +129,9 @@ writeWord wor = do
     S{..} <- getS
     setReg (reg .|. shiftL wor off)
     flush
-    update \s -> s { pos = 64 + pos
-                   , reg = shiftR wor (64 - off)
-                   }
+    update $ \s -> s { pos = 64 + pos
+                     , reg = shiftR wor (64 - off)
+                     }
 
 {-
     To write some bits (< 64) from a word:
@@ -182,7 +182,7 @@ writeAtomWord (W# w) = writeAtomWord# w
 writeAtomBigNat :: BigNat -> Put ()
 writeAtomBigNat !(view bigNatWords -> words) = do
   let lastIdx = VP.length words - 1
-  for_ [0..(lastIdx-1)] \i ->
+  for_ [0..(lastIdx-1)] $ \i ->
       writeWord (words ! i)
   writeAtomWord (words ! lastIdx)
 

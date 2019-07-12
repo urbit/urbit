@@ -5,8 +5,8 @@ module Urbit.Ames where
 import ClassyPrelude
 
 import Data.IP
-import Noun
 import Network.Socket
+import Noun
 
 import qualified Data.Vector as V
 import qualified Urbit.Time  as Time
@@ -17,11 +17,11 @@ import qualified Vere.Ames   as VA
 data GalaxyInfo = GalaxyInfo { ip :: IPv4, age :: Time.Unix }
 
 data Ames = Ames
-  { live :: Bool  -- ^ whether the listener is on
-  , ourPort :: Maybe Int
+  { live         :: Bool  -- ^ whether the listener is on
+  , ourPort      :: Maybe Int
 --  , threadId :: Thread
   , globalDomain :: Maybe Text  -- ^ something like "urbit.org"
-  , imperial :: V.Vector (Maybe GalaxyInfo)
+  , imperial     :: V.Vector (Maybe GalaxyInfo)
   }
 
 init :: Ames
@@ -52,7 +52,7 @@ ioStart ames isLocal defaultPort (Atom who) = do
 
   -- TODO: set up another thread to own the recv socket, which makes the Ovums
   -- which get put into the computeQueue, like in _ames_recv_cb.
-  withSocketsDo do
+  withSocketsDo $ do
     s <- socket AF_INET Datagram 17
     -- bind s (SockAddrInet port )
     pure ()

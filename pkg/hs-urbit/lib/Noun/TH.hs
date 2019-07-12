@@ -4,10 +4,10 @@
 
 module Noun.TH (deriveNoun) where
 
-import ClassyPrelude hiding (fromList)
-import Noun.Convert
+import ClassyPrelude              hiding (fromList)
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
+import Noun.Convert
 
 import RIO (decodeUtf8Lenient)
 

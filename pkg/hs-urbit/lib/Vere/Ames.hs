@@ -5,7 +5,7 @@ import Data.IP
 import Data.Void
 import Noun
 
-import qualified Urbit.Time  as Time
+import qualified Urbit.Time as Time
 
 type Packet = ByteString
 

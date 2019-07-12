@@ -2,15 +2,15 @@
 
 module Urbit.Time where
 
-import Prelude
 import Control.Lens
+import Prelude
 
-import Noun                   (FromNoun, ToNoun)
 import Data.Bits              (shiftL, shiftR)
 import Data.Time.Clock        (DiffTime, UTCTime)
-import Data.Time.Clock        (picosecondsToDiffTime, diffTimeToPicoseconds)
+import Data.Time.Clock        (diffTimeToPicoseconds, picosecondsToDiffTime)
 import Data.Time.Clock.System (SystemTime(..), getSystemTime)
-import Data.Time.Clock.System (utcToSystemTime, systemToUTCTime)
+import Data.Time.Clock.System (systemToUTCTime, utcToSystemTime)
+import Noun                   (FromNoun, ToNoun)
 
 
 -- Types -----------------------------------------------------------------------

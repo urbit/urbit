@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
-{-# LANGUAGE Strict, StrictData #-}
+{-# LANGUAGE Strict     #-}
+{-# LANGUAGE StrictData #-}
 
 module Noun.Core
   ( Noun, pattern Cell, pattern Atom, nounSize
@@ -14,7 +15,7 @@ import Data.Hashable             (hash)
 import GHC.Natural               (Natural)
 import GHC.Prim                  (reallyUnsafePtrEquality#)
 import Test.QuickCheck.Arbitrary (Arbitrary(arbitrary))
-import Test.QuickCheck.Gen       (Gen, scale, resize, getSize)
+import Test.QuickCheck.Gen       (Gen, getSize, resize, scale)
 
 
 -- Types -----------------------------------------------------------------------

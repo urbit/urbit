@@ -1,11 +1,11 @@
 module Vere.Pier.Types where
 
 import ClassyPrelude
-import Noun
 import Database.LMDB.Raw
+import Noun
 import Urbit.Time
 
-import qualified Vere.Ames as Ames
+import qualified Vere.Ames        as Ames
 import qualified Vere.Http.Client as Client
 import qualified Vere.Http.Server as Server
 

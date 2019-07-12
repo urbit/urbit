@@ -8,7 +8,7 @@ import Control.Lens
 import Noun
 import Vere.Http
 
-import Control.Concurrent (ThreadId, killThread, forkIO)
+import Control.Concurrent (ThreadId, forkIO, killThread)
 
 import qualified Data.ByteString             as BS
 import qualified Network.HTTP.Types          as H
@@ -110,7 +110,7 @@ app s req respond = bracket_
 cookMeth :: W.Request -> Maybe Method
 cookMeth re =
   case H.parseMethod (W.requestMethod re) of
-    Left _ -> Nothing
+    Left _  -> Nothing
     Right m -> Just m
 
 data Octs = Octs Atom Atom
