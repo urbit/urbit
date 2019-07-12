@@ -69,7 +69,9 @@
 +$  message                                             ::  message to her kale
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
-      [%public-keys-result who=ship =vent-result]       ::  tmp workaround
+  ==                                                    ::
++$  message-response                                    ::  kale ames response
+  $%  [%public-keys-result =vent-result]                ::  tmp workaround
   ==                                                    ::
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
@@ -92,7 +94,7 @@
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
   $%  [%a $>(%memo gift:able:ames)]                     ::  message result
-      [%a $>(%done gift:able:ames)]                     ::  message ack
+      [%a $>(%done gift:able:ames)]                     ::  message (n)ack
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -435,33 +437,26 @@
       ==
     ::
     ::  authenticated remote request
-    ::    {$west p/ship q/path r/*}
+    ::    [%memo =ship =message:ames]
     ::
-        $west
-      =*  her  p.tac
-      =/  mes  (message r.tac)
+        %memo
+      =*  her  ship.tac
+      =/  mes  (message message.tac)
       ?-    -.mes
       ::
       ::  cancel trackers
       ::    [%nuke whos=(set ship)]
       ::
           %nuke
-        =.  moz  [[hen %give %mack ~] moz]
+        =.  moz  [[hen %give %done ~] moz]
         $(tac mes)
       ::
       ::  view ethereum events
       ::    [%public-keys whos=(set ship)]
       ::
           %public-keys
-        =.  moz  [[hen %give %mack ~] moz]
+        =.  moz  [[hen %give %done ~] moz]
         $(tac mes)
-      ::
-      ::  receive keys result
-      ::    [%public-keys-result =vent-result]
-      ::
-          %public-keys-result
-        =.  moz  [[hen %give %mack ~] moz]
-        $(tac [%vent-update vent-result.mes])
       ==
     ::
     ::  rewind to snapshot
@@ -476,14 +471,18 @@
     ^+  +>
     ?>  ?=([@ *] tea)
     =*  wir  t.tea
-    ?-  hin
-        [%a %woot *]
-      ?~  q.hin  +>.$
-      ?~  u.q.hin  ~&(%ares-fine +>.$)
-      ~&  [%woot-bad p.u.u.q.hin]
-      ~_  q.u.u.q.hin
+    ?-    hin
+        [%a %done *]
+      ?~  error.hin  +>.$
+      ~&  [%kale-ames-nack u.error.hin]
+      ~_  tang.u.error.hin
       ::TODO  fail:et
       +>.$
+    ::
+        [%a %memo *]
+      =.  moz  [[hen %give %done ~] moz]
+      =+  ;;  =message-response  message.hin
+      (call hen %vent-update vent-result.message)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -563,19 +562,12 @@
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
-    ?.  ?=([[%a @ @ *] *] d)
-      %-  emit
-      [d %give %public-keys vent-result]
-    =/  our  (slav %p i.t.i.d)
-    =/  who  (slav %p i.t.t.i.d)
-    =/  =message  [%public-keys-result who vent-result]
     =.  this-su
-      %-  emit
-      :^    d
-          %pass
-        /public-keys-result
-      ^-  note
-      [%a %want who /k/public-keys-result message]
+      ::  TODO: stop looking at the duct
+      ::
+      ?.  ?=([[%a *] *] d)
+        (emit d %give %public-keys vent-result)
+      (emit d %give %memo /k/remove-me %public-keys-result vent-result)
     $(yez t.yez)
   ::
   ++  get-source
@@ -746,7 +738,7 @@
       ?:  ?=(%& -.source)
         =/  send-message
           |=  =message
-          [hen %pass /public-keys %a %want p.source /k/public-keys message]
+          [hen %pass /public-keys %a %memo p.source /k/public-keys message]
         =.  ..feel
           (emit (send-message %nuke whos))
         (emit (send-message %public-keys whos))
