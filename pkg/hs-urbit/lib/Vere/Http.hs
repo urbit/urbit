@@ -4,7 +4,6 @@ module Vere.Http where
 
 import ClassyPrelude
 import Noun
-import Noun.TH
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types as HT

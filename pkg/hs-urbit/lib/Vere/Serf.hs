@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 module Vere.Serf where
 
 import ClassyPrelude
@@ -17,7 +19,6 @@ import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Urbit.Time             as Time
-import qualified Vere.Log               as Log
 
 
 --------------------------------------------------------------------------------
@@ -268,7 +269,7 @@ workerThread w getEvent (evendId, mug) = async $ forever do
 
   currentDate <- Time.now
 
-  let mat = jam (undefined (mug, currentDate, ovum))
+  let _mat = jam (undefined (mug, currentDate, ovum))
 
   undefined
 

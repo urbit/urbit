@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 module Urbit.Ames where
 
 import ClassyPrelude
@@ -41,12 +43,12 @@ data NetworkMode
   = LocalOnlyNetworking
   | GlobalNetworking
 
--- 
 ioStart :: Ames -> NetworkMode -> Int -> Noun -> IO Ames
+ioStart ames isLocal defaultPort (Cell _ _) = undefined
 ioStart ames isLocal defaultPort (Atom who) = do
-  let port = if who < 256
-             then computePort isLocal who
-             else defaultPort
+  let _port = if who < 256
+              then computePort isLocal who
+              else defaultPort
 
   -- TODO: set up another thread to own the recv socket, which makes the Ovums
   -- which get put into the computeQueue, like in _ames_recv_cb.

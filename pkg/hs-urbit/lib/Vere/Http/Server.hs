@@ -3,10 +3,10 @@
 module Vere.Http.Server where
 
 import ClassyPrelude
-import Vere.Http
-import Noun
-import Noun.TH
+
 import Control.Lens
+import Noun
+import Vere.Http
 
 import Control.Concurrent (ThreadId, killThread, forkIO)
 
@@ -15,6 +15,8 @@ import qualified Network.HTTP.Types          as H
 import qualified Network.Wai                 as W
 import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
+
+-- Types -----------------------------------------------------------------------
 
 type ServerId = Word
 type ConnectionId = Word
@@ -60,14 +62,14 @@ data ClientResponse
 
 data MimeData = MimeData Text ByteString
 
---
-
 data Ev
 
 data State = State
   { thread :: MVar (Maybe (Config, ThreadId))
   , sChan  :: MVar Ev
   }
+
+--------------------------------------------------------------------------------
 
 init :: IO State
 init =

@@ -6,13 +6,13 @@
 module Vere.Http.Client where
 
 import ClassyPrelude
-import Vere.Http
+
 import Noun
-import Noun.TH
+import Vere.Http
 
 import qualified Data.CaseInsensitive as CI
-import qualified Network.HTTP.Types as HT
-import qualified Network.HTTP.Client as H
+import qualified Network.HTTP.Client  as H
+import qualified Network.HTTP.Types   as HT
 
 
 -- Types -----------------------------------------------------------------------

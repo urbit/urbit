@@ -1,5 +1,5 @@
 module Noun.Conversions
-  ( Cord(..), Knot(..), Term(..), Tank(..), Tang, Plum(..)
+  ( Cord(..), Knot(..), Term(..), Tank(..), Tang, Plum(..), Nullable
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -125,14 +125,9 @@ instance FromNoun a => FromNoun [a] where
 
 -- Tape ------------------------------------------------------------------------
 
+-- TODO XX are these instances correct?
 newtype Tape = Tape [Char]
-  deriving newtype (Eq, Ord, Show)
-
-instance FromNoun Tape where
-  parseNoun = undefined
-
-instance ToNoun Tape where
-  toNoun = undefined
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 
 -- Pretty Printing -------------------------------------------------------------

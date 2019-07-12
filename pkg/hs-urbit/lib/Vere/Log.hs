@@ -16,11 +16,10 @@ module Vere.Log ( open
 import ClassyPrelude hiding (init)
 import Control.Lens  hiding ((<|))
 
-import Noun
-import Data.Void
 import Database.LMDB.Raw
-import Foreign.Ptr
 import Foreign.Marshal.Alloc
+import Foreign.Ptr
+import Noun
 import Vere.Pier.Types
 
 import Control.Concurrent (runInBoundThread)
@@ -28,9 +27,7 @@ import Control.Lens       ((^.))
 import Foreign.Storable   (peek, poke, sizeOf)
 
 import qualified Data.ByteString.Unsafe as BU
-import qualified Data.ByteString        as B
 import qualified Data.Vector            as V
-import qualified Data.Vector.Mutable    as MV
 
 
 -- Open/Close an Event Log -----------------------------------------------------

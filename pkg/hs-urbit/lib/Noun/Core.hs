@@ -23,9 +23,10 @@ data Noun
     = NCell Int Word Noun Noun
     | NAtom Int Atom
 
-{-# COMPLETE Cell, Atom #-}
 pattern Cell x y <- NCell _ _ x y where Cell = mkCell
 pattern Atom a   <- NAtom _ a     where Atom = mkAtom
+
+{-# COMPLETE Cell, Atom #-}
 
 
 --------------------------------------------------------------------------------

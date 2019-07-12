@@ -7,7 +7,7 @@ import Control.Lens
 
 import Noun                   (FromNoun, ToNoun)
 import Data.Bits              (shiftL, shiftR)
-import Data.Time.Clock        (DiffTime, UTCTime, picosecondsToDiffTime)
+import Data.Time.Clock        (DiffTime, UTCTime)
 import Data.Time.Clock        (picosecondsToDiffTime, diffTimeToPicoseconds)
 import Data.Time.Clock.System (SystemTime(..), getSystemTime)
 import Data.Time.Clock.System (utcToSystemTime, systemToUTCTime)
