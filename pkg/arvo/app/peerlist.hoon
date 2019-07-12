@@ -108,9 +108,7 @@
   ?.  (~(has in group) who)  ~
   `tag
 ::
-++  fall-relation
-  |=  f=(unit relation)
-  %+  fall  f
+++  default-relation
   %*(. *relation public default-public.settings)
 ::
 ::  management
@@ -118,8 +116,7 @@
 ++  do-add
   |=  [who=ship group=(unit tag)]
   =/  old=relation
-    %-  fall-relation
-    (~(get by peers) who)
+    (~(gut by peers) who default-relation)
   =/  new=?  ?=(~ we-since.old)
   =?  peers  new
     %+  ~(put by peers)  who
@@ -178,7 +175,7 @@
   =-  [~ this(groups -)]
   %+  ~(put by groups)  group
   %-  ~(uni in ~(key by peers))
-  (fall (~(get by groups) group) *^group)
+  (~(gut by groups) group *^group)
 ::
 ::  move construction
 ::
@@ -233,8 +230,7 @@
   ^-  [(list move) _this]
   =*  who=@p  src.bowl
   =/  =relation
-    %-  fall-relation
-    (~(get by peers) who)
+    (~(gut by peers) who default-relation)
   ?-  -.poke
       %peer
     ~&  "{(scow %p who)} added you as a peer"
