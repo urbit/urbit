@@ -11,6 +11,7 @@
   "devDependencies": {
     "@joseph184/rollup-plugin-node-builtins": "^2.1.4",
     "@sucrase/gulp-plugin": "^2.0.0",
+    "autoprefixer": "^9.6.1",
     "cssnano": "^4.1.10",
     "gulp": "^4.0.0",
     "gulp-better-rollup": "^4.0.1",
