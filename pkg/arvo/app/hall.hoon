@@ -827,7 +827,7 @@
       |-  ^+  ..ta-take
       ?~  sos  ..ta-take
       =.  ..ta-take
-        =+  (fall (~(get by stories) p.i.sos) *story)
+        =+  (~(gut by stories) p.i.sos *story)
         =>  (~(so-bear so p.i.sos ~ -) q.i.sos)
         =.  acs  (flop acs)
         |-  ^+  ..ta-take
@@ -838,7 +838,7 @@
       ::TODO  runtime error
       ::%+  roll  ~(tap by sos.piz)
       ::|=  {{n/name b/burden} _..ta-take}
-      ::=+  (fall (~(get by stories) n) *story)
+      ::=+  (~(gut by stories) n *story)
       ::so-done:(~(so-bear so n ~ -) b)
     ::
         $circle
@@ -870,7 +870,7 @@
           $new
         =?  +>  !(~(has by stories) nom.rum)
           (ta-delta %story +.rum)
-        =>  =+  (fall (~(get by stories) nom.rum) *story)
+        =>  =+  (~(gut by stories) nom.rum *story)
             %-  ~(so-bear so nom.rum ~ -)
             [~ [cof.rum.rum ~] [~ ~]]
         =.  acs  (flop acs)
@@ -880,7 +880,7 @@
         $(acs t.acs)
         ::TODO  runtime error
         ::=<  so-done
-        ::%-  ~(so-bear so nom.rum ~ (fall (~(get by stories) nom.rum) *story))
+        ::%-  ~(so-bear so nom.rum ~ (~(gut by stories) nom.rum *story))
         ::[~ [cof.rum.rum ~] [~ ~]]
       ==
     ::
@@ -1160,7 +1160,7 @@
         =/  old/(unit status)
           ?:  =(cir.rum so-cir)  (~(get by locals) who.rum)
           =-  (~(get by -) who.rum)
-          (fall (~(get by remotes) cir.rum) *group)
+          (~(gut by remotes) cir.rum *group)
         ::  ignore if it won't result in change.
         ?.  ?|  &(?=($remove -.dif.rum) ?=(^ old))
                 ?=(~ old)
@@ -1225,7 +1225,7 @@
         =?  deltas  !=(`gou (~(get by remotes) wer))
           %+  welp  deltas
           =+  gop=~(tap by gou)
-          =+  hav=(fall (~(get by remotes) wer) *group)
+          =+  hav=(~(gut by remotes) wer *group)
           =|  l/(list delta)
           |-  ^+  l
           ?~  gop  l
@@ -1617,7 +1617,7 @@
         %+  roll  nes
         |=  {nev/envelope max/@ud}
         ?:((gth num.nev max) num.nev max)
-      ?.  (gth num (fall (~(get by sequence) src) 0))
+      ?.  (gth num (~(gut by sequence) src 0))
         +>.$
       (so-delta-our %sequent src num)
     ::
@@ -1631,7 +1631,7 @@
       |=  {src/circle nev/envelope}
       ^+  +>
       =.  +>  (so-learn src gam.nev)
-      ?.  (gth num.nev (fall (~(get by sequence) src) 0))
+      ?.  (gth num.nev (~(gut by sequence) src 0))
         +>
       (so-delta-our %sequent src num.nev)
     ::
@@ -1719,7 +1719,7 @@
         $mailbox  !(~(has in sis.con.shape) her)        ::  author blacklist
         $custom                                         ::  custom rule
           =/  rul/$-({ship ?($r $w) bowl:gall} ?)
-            (fall (~(get by custom-rules) nom) |=(* |))
+            (~(gut by custom-rules) nom |=(* |))
           (rul her %w bol)
       ==
     ::
@@ -1736,7 +1736,7 @@
         $mailbox  (team:title our.bol her)              ::  our team
         $custom                                         ::  custom rule
           =/  rul/$-({ship ?($r $w) bowl:gall} ?)
-            (fall (~(get by custom-rules) nom) |=(* |))
+            (~(gut by custom-rules) nom |=(* |))
           (rul her %r bol)
       ==
     --
@@ -1877,7 +1877,7 @@
       %+  roll  ses
       |=  {s/serial o/_outbox}
       =?  o  ?=(~ o)  outbox
-      =+  t=(fall (~(get by o) s) *tracking)
+      =+  t=(~(gut by o) s *tracking)
       %+  ~(put by o)  s
       (~(put by t) cir %pending)
     %+  da-emit  ost.bol
@@ -1960,7 +1960,7 @@
     ?+  -.det
       =<  sa-done
       %.  det
-      =+  (fall (~(get by stories) nom) *story)
+      =+  (~(gut by stories) nom *story)
       ~(sa-change sa nom -)
     ::
       $new      (da-create nom +.det)
@@ -2134,7 +2134,7 @@
             (~(del by locals) who.det)
           %+  ~(put by locals)  who.det
           %+  change-status:hall-lib
-            (fall (~(get by locals) who.det) *status)
+            (~(gut by locals) who.det *status)
           dif.det
         ==
       ==
@@ -2149,7 +2149,7 @@
       |=  {src/circle num/@ud}
       ^+  +>
       =-  +>.$(sourced -)
-      =+  sed=(fall (~(get by sourced) src) ~)
+      =+  sed=(~(gut by sourced) src ~)
       ?^  (find ~[num] sed)  sourced
       (~(put by sourced) src [num sed])
     ::
@@ -2197,7 +2197,7 @@
           +>(mirrors (~(del by mirrors) cir.det))
         =/  new/config
           %+  change-config:hall-lib
-          (fall (~(get by mirrors) cir.det) *config)
+          (~(gut by mirrors) cir.det *config)
           dif.det
         +>.$(mirrors (~(put by mirrors) cir.det new))
       ::
@@ -2205,9 +2205,9 @@
         %_  +>.$
             remotes
           %+  ~(put by remotes)  cir.det
-          =+  ole=(fall (~(get by remotes) cir.det) *group)
+          =+  ole=(~(gut by remotes) cir.det *group)
           ?:  ?=($remove -.dif.det)  (~(del by ole) who.det)
-          =+  old=(fall (~(get by ole) who.det) *status)
+          =+  old=(~(gut by ole) who.det *status)
           (~(put by ole) who.det (change-status:hall-lib old dif.det))
         ==
       ==
@@ -3297,7 +3297,7 @@
         ?~  aud.t  ~&(%strange-aud [our.bol %inbox])
         n.aud.t
       %+  ~(put by s)  src
-      [c (fall (~(get by s) src) ~)]
+      [c (~(gut by s) src ~)]
     soy(count c, known k, sourced s)
   ?:  =(a 'refederate')
     ~&  'refederating. may take a while...'

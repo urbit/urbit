@@ -1431,103 +1431,15 @@ _http_release_ports_file(c3_c *pax_c)
   free(paf_c);
 }
 
-
-/* _http_czar_host(): galaxy hostname as (unit host:eyre)
-*/
-static u3_noun
-_http_czar_host(void)
-{
-  u3_noun dom = u3_nul;
-  return dom;
-
-  // XX revisit
-#if 0
-  if ( (0 == u3_Host.ops_u.imp_c) || (c3n == u3_Host.ops_u.net) ) {
-    return dom;
-  }
-
-  {
-    c3_c* dns_c = u3_Host.ops_u.dns_c;
-    c3_w  len_w = strlen(dns_c);
-    c3_w  dif_w;
-    c3_c* dom_c;
-    c3_c* dot_c;
-
-    while ( 0 != len_w ) {
-      if ( 0 == (dot_c = strchr(dns_c, '.'))) {
-        len_w = 0;
-        dom = u3nc(u3i_string(dns_c), dom);
-        break;
-      }
-      else {
-        dif_w = dot_c - dns_c;
-        dom_c = c3_malloc(1 + dif_w);
-        strncpy(dom_c, dns_c, dif_w);
-        dom_c[dif_w] = 0;
-
-        dom = u3nc(u3i_string(dom_c), dom);
-
-        // increment to skip leading '.'
-        dns_c = dot_c + 1;
-        free(dom_c);
-
-        // XX confirm that underflow is impossible here
-        len_w -= c3_min(dif_w, len_w);
-      }
-    }
-  }
-
-  if ( u3_nul == dom ) {
-    return dom;
-  }
-
-  // increment to skip '~'
-  dom = u3nc(u3i_string(u3_Host.ops_u.imp_c + 1), u3kb_flop(u3k(dom)));
-
-  return u3nt(u3_nul, c3y, u3kb_flop(u3k(dom)));
-#endif
-}
-
 /* u3_http_ef_bake(): notify %eyre that we're live
 */
 void
 u3_http_ef_bake(void)
 {
-  u3_noun ipf = u3_nul;
+  u3_noun pax = u3nq(u3_blip, u3i_string("http-server"),
+                     u3k(u3A->sen), u3_nul);
 
-  {
-    struct ifaddrs* iad_u;
-    getifaddrs(&iad_u);
-
-    struct ifaddrs* dia_u = iad_u;
-
-    while ( iad_u ) {
-      struct sockaddr_in* adr_u = (struct sockaddr_in *)iad_u->ifa_addr;
-
-      if ( (0 != adr_u) && (AF_INET == adr_u->sin_family) ) {
-        c3_w ipf_w = ntohl(adr_u->sin_addr.s_addr);
-
-        if ( INADDR_LOOPBACK != ipf_w ) {
-          ipf = u3nc(u3nc(c3n, u3i_words(1, &ipf_w)), ipf);
-        }
-      }
-
-      iad_u = iad_u->ifa_next;
-    }
-
-    freeifaddrs(dia_u);
-  }
-
-  u3_noun hot = _http_czar_host();
-
-  if ( u3_nul != hot ) {
-    ipf = u3nc(u3k(u3t(hot)), ipf);
-    u3z(hot);
-  }
-
-  u3_noun pax = u3nq(u3_blip, u3i_string("http-server"), u3k(u3A->sen), u3_nul);
-
-  u3_pier_plan(pax, u3nc(c3__born, ipf));
+  u3_pier_plan(pax, u3nc(c3__born, u3_nul));
 }
 
 static u3_hreq*

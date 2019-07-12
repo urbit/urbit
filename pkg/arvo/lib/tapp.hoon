@@ -380,7 +380,7 @@
   ::  Pass response to async
   ::
   ++  http-response
-    |=  [=wire response=client-response:http-client]
+    |=  [=wire response=client-response:iris]
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %http-response response])
   ::
@@ -406,7 +406,7 @@
   ::  Receive route binding notification
   ::
   ++  bound
-    |=  [=wire success=? =binding:http-server]
+    |=  [=wire success=? =binding:eyre]
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
   ::

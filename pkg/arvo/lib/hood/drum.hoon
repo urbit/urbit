@@ -94,7 +94,7 @@
       [%home %modulo]
       [%home %launch]
       [%home %chat]
-      [%home %write]
+      [%home %publish]
       [%home %timer]
       [%home %clock]
       [%home %weather]
@@ -132,7 +132,7 @@
 ::::
   ::
 |=  {hid/bowl:gall part}                          ::  main drum work
-=+  (fall (~(get by bin) ost.hid) *source)
+=+  (~(gut by bin) ost.hid *source)
 =*  dev  -
 =>  |%                                                ::  arvo structures
     ++  pear                                          ::  request

@@ -864,16 +864,167 @@
     ==                                                  ::
   --  ::dill
 ::                                                      ::::
-::::                    ++eyre                            ::  (1e) oldweb
+::::                    ++eyre                            ::  (1e) http-server
   ::                                                    ::::
 ++  eyre  ^?
   |%
-  ++  bale                                              ::  driver state
-    |*  a/_*                                            ::  %jael keys type
-    $:  {our/ship now/@da eny/@uvJ byk/beak}            ::  base info
-        {usr/user dom/(list @t)}                        ::  req user, domain
-        key/a                                           ::  secrets from %jael
-    ==                                                  ::
+  ++  able
+    |%
+    ++  gift
+      $%  ::  set-config: configures the external http server
+          ::
+          ::    TODO: We need to actually return a (map (unit @t) http-config)
+          ::    so we can apply configurations on a per-site basis
+          ::
+          [%set-config =http-config]
+          ::  response: response to an event from earth
+          ::
+          [%response =http-event:http]
+          ::  response to a %connect or %serve
+          ::
+          ::    :accepted is whether :binding was valid. Duplicate bindings are
+          ::    not allowed.
+          ::
+          [%bound accepted=? =binding]
+          ::  memory usage report
+          ::
+          [%mass p=mass]
+      ==
+    ::
+    ++  task
+      $~  [%vega ~]
+      $%  ::  event failure notification
+          ::
+          $>(%crud vane-task)
+          ::  initializes ourselves with an identity
+          ::
+          $>(%init vane-task)
+          ::  new unix process
+          ::
+          $>(%born vane-task)
+          ::  report upgrade
+          ::
+          $>(%vega vane-task)
+          ::  notifies us of the ports of our live http servers
+          ::
+          [%live insecure=@ud secure=(unit @ud)]
+          ::  update http configuration
+          ::
+          [%rule =http-rule]
+          ::  starts handling an inbound http request
+          ::
+          [%request secure=? =address =request:http]
+          ::  starts handling an backdoor http request
+          ::
+          [%request-local secure=? =address =request:http]
+          ::  cancels a previous request
+          ::
+          [%cancel-request ~]
+          ::  connects a binding to an app
+          ::
+          [%connect =binding app=term]
+          ::  connects a binding to a generator
+          ::
+          [%serve =binding =generator]
+          ::  disconnects a binding
+          ::
+          ::    This must be called with the same duct that made the binding in
+          ::    the first place.
+          ::
+          [%disconnect =binding]
+          ::  memory usage request
+          ::
+          $>(%wegh vane-task)
+      ==
+    ::
+    --
+  ::  +binding: A rule to match a path.
+  ::
+  ::    A +binding is a system unique mapping for a path to match. A +binding
+  ::    must be system unique because we don't want two handlers for a path;
+  ::    what happens if there are two different actions for [~ /]?
+  ::
+  +$  binding
+    $:  ::  site: the site to match.
+        ::
+        ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
+        ::    other value will match a domain literal.
+        ::
+        site=(unit @t)
+        ::  path: matches this prefix path
+        ::
+        ::    /~myapp will match /~myapp or /~myapp/longer/path
+        ::
+        path=(list @t)
+    ==
+  ::  +generator: a generator on the local ship that handles requests
+  ::
+  ::    This refers to a generator on the local ship, run with a set of
+  ::    arguments. Since http requests are time sensitive, we require that the
+  ::    generator be on the current ship.
+  ::
+  +$  generator
+    $:  ::  desk: desk on current ship that contains the generator
+        ::
+        =desk
+        ::  path: path on :desk to the generator's hoon file
+        ::
+        path=(list @t)
+        ::  args: arguments passed to the gate
+        ::
+        args=*
+    ==
+  :: +http-config: full http-server configuration
+  ::
+  +$  http-config
+    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
+        ::
+        secure=(unit [key=wain cert=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=_|
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
+  :: +http-rule: update configuration
+  ::
+  +$  http-rule
+    $%  :: %cert: set or clear certificate and keypair
+        ::
+        [%cert cert=(unit [key=wain cert=wain])]
+        :: %turf: add or remove established dns binding
+        ::
+        [%turf action=?(%put %del) =turf]
+    ==
+  ::  +address: client IP address
+  ::
+  +$  address
+    $%  [%ipv4 @if]
+        [%ipv6 @is]
+        ::  [%ames @p]
+    ==
+  ::  +inbound-request: +http-request and metadata
+  ::
+  +$  inbound-request
+    $:  ::  authenticated: has a valid session cookie
+        ::
+        authenticated=?
+        ::  secure: whether this request was encrypted (https)
+        ::
+        secure=?
+        ::  address: the source address of this request
+        ::
+        =address
+        ::  request: the http-request itself
+        ::
+        =request:http
+    ==
   ::
   ++  cred                                              ::  credential
     $:  hut/hart                                        ::  client host
@@ -995,12 +1146,6 @@
         (gte i.b 224)
     ==
   ++  rout  {p/(list host) q/path r/oryx s/path}        ::  http route (new)
-  ++  sec-move                                          ::  driver effect
-    $%  {$send p/hiss}                                  ::  http out
-        {$show p/purl}                                  ::  direct user to url
-        {$give p/httr}                                  ::  respond immediately
-        {$redo ~}                                      ::  restart request qeu
-    ==                                                  ::
   ++  user  knot                                        ::  username
   --  ::eyre
 ::                                                      ::::
@@ -1793,6 +1938,119 @@
   ++  suss  (trel dude @tas @da)                        ::  config report
   ++  well  (pair desk term)                            ::
   --  ::gall
+::  %iris http-client interface
+::
+++  iris  ^?
+  |%
+  ++  able
+    |%
+    ::  +gift: effects the client can emit
+    ::
+    ++  gift
+      $%  ::  %request: outbound http-request to earth
+          ::
+          ::    TODO: id is sort of wrong for this interface; the duct should
+          ::    be enough to identify which request we're talking about?
+          ::
+          [%request id=@ud request=request:http]
+          ::  %cancel-request: tell earth to cancel a previous %request
+          ::
+          [%cancel-request id=@ud]
+          ::  %response: response to the caller
+          ::
+          [%http-response =client-response]
+          ::  memory usage report
+          ::
+          [%mass p=mass]
+      ==
+    ::
+    ++  task
+      $~  [%vega ~]
+      $%  ::  event failure notification
+          ::
+          $>(%crud vane-task)
+          ::  system started up; reset open connections
+          ::
+          $>(%born vane-task)
+          ::  report upgrade
+          ::
+          $>(%vega vane-task)
+          ::  fetches a remote resource
+          ::
+          [%request =request:http =outbound-config]
+          ::  cancels a previous fetch
+          ::
+          [%cancel-request ~]
+          ::  receives http data from outside
+          ::
+          [%receive id=@ud =http-event:http]
+          ::  memory usage request
+          ::
+          $>(%wegh vane-task)
+      ==
+    --
+  ::  +client-response: one or more client responses given to the caller
+  ::
+  +$  client-response
+    $%  ::  periodically sent as an update on the duct that sent %fetch
+        ::
+        $:  %progress
+            ::  http-response-header: full transaction header
+            ::
+            ::    In case of a redirect chain, this is the target of the
+            ::    final redirect.
+            ::
+            =response-header:http
+            ::  bytes-read: bytes fetched so far
+            ::
+            bytes-read=@ud
+            ::  expected-size: the total size if response had a content-length
+            ::
+            expected-size=(unit @ud)
+            ::  incremental: data received since the last %http-progress
+            ::
+            incremental=(unit octs)
+        ==
+        ::  final response of a download, parsed as mime-data if successful
+        ::
+        [%finished =response-header:http full-file=(unit mime-data)]
+        ::  canceled by the runtime system
+        ::
+        [%cancel ~]
+    ==
+  ::  mime-data: externally received but unvalidated mimed data
+  ::
+  +$  mime-data
+    [type=@t data=octs]
+  ::  +outbound-config: configuration for outbound http requests
+  ::
+  +$  outbound-config
+    $:  ::  number of times to follow a 300 redirect before erroring
+        ::
+        ::    Common values for this will be 3 (the limit most browsers use), 5
+        ::    (the limit recommended by the http standard), or 0 (let the
+        ::    requester deal with 300 redirects).
+        ::
+        redirects=_5
+        ::  number of times to retry before failing
+        ::
+        ::    When we retry, we'll automatically try to use the 'Range' header
+        ::    to resume the download where we left off if we have the
+        ::    'Accept-Range: bytes' in the original response.
+        ::
+        retries=_3
+    ==
+  ::  +to-httr: adapts to old eyre interface
+  ::
+  ++  to-httr
+    |=  [header=response-header:http full-file=(unit mime-data)]
+    ^-  httr:eyre
+    ::
+    =/  data=(unit octs)
+      ?~(full-file ~ `data.u.full-file)
+    ::
+    [status-code.header headers.header data]
+  --
 ::                                                      ::::
 ::::                    ++jael                          ::  (1h) security
   ::                                                    ::::
@@ -2161,287 +2419,6 @@
     ++  oath  @                                         ::  signature
     --  ::  pki
   --  ::  kale
-::
-++  http-client  ^?
-  |%
-  ++  able
-    |%
-    ::  +gift: effects the client can emit
-    ::
-    ++  gift
-      $%  ::  %request: outbound http-request to earth
-          ::
-          ::    TODO: id is sort of wrong for this interface; the duct should
-          ::    be enough to identify which request we're talking about?
-          ::
-          [%request id=@ud request=request:http]
-          ::  %cancel-request: tell earth to cancel a previous %request
-          ::
-          [%cancel-request id=@ud]
-          ::  %response: response to the caller
-          ::
-          [%http-response =client-response]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
-      ==
-    ::
-    ++  task
-      $~  [%vega ~]
-      $%  ::  event failure notification
-          ::
-          $>(%crud vane-task)
-          ::  system started up; reset open connections
-          ::
-          $>(%born vane-task)
-          ::  report upgrade
-          ::
-          $>(%vega vane-task)
-          ::  fetches a remote resource
-          ::
-          [%request =request:http =outbound-config]
-          ::  cancels a previous fetch
-          ::
-          [%cancel-request ~]
-          ::  receives http data from outside
-          ::
-          [%receive id=@ud =http-event:http]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
-      ==
-    --
-  ::  +client-response: one or more client responses given to the caller
-  ::
-  +$  client-response
-    $%  ::  periodically sent as an update on the duct that sent %fetch
-        ::
-        $:  %progress
-            ::  http-response-header: full transaction header
-            ::
-            ::    In case of a redirect chain, this is the target of the
-            ::    final redirect.
-            ::
-            =response-header:http
-            ::  bytes-read: bytes fetched so far
-            ::
-            bytes-read=@ud
-            ::  expected-size: the total size if response had a content-length
-            ::
-            expected-size=(unit @ud)
-            ::  incremental: data received since the last %http-progress
-            ::
-            incremental=(unit octs)
-        ==
-        ::  final response of a download, parsed as mime-data if successful
-        ::
-        [%finished =response-header:http full-file=(unit mime-data)]
-        ::  canceled by the runtime system
-        ::
-        [%cancel ~]
-    ==
-  ::  mime-data: externally received but unvalidated mimed data
-  ::
-  +$  mime-data
-    [type=@t data=octs]
-  ::  +outbound-config: configuration for outbound http requests
-  ::
-  +$  outbound-config
-    $:  ::  number of times to follow a 300 redirect before erroring
-        ::
-        ::    Common values for this will be 3 (the limit most browsers use), 5
-        ::    (the limit recommended by the http standard), or 0 (let the
-        ::    requester deal with 300 redirects).
-        ::
-        redirects=_5
-        ::  number of times to retry before failing
-        ::
-        ::    When we retry, we'll automatically try to use the 'Range' header
-        ::    to resume the download where we left off if we have the
-        ::    'Accept-Range: bytes' in the original response.
-        ::
-        retries=_3
-    ==
-  ::  +to-httr: adapts to old eyre interface
-  ::
-  ++  to-httr
-    |=  [header=response-header:http full-file=(unit mime-data)]
-    ^-  httr:eyre
-    ::
-    =/  data=(unit octs)
-      ?~(full-file ~ `data.u.full-file)
-    ::
-    [status-code.header headers.header data]
-  --
-::
-::::
-  ::
-++  http-server  ^?
-  |%
-  ++  able
-    |%
-    ++  gift
-      $%  ::  set-config: configures the external http server
-          ::
-          ::    TODO: We need to actually return a (map (unit @t) http-config)
-          ::    so we can apply configurations on a per-site basis
-          ::
-          [%set-config =http-config]
-          ::  response: response to an event from earth
-          ::
-          [%response =http-event:http]
-          ::  response to a %connect or %serve
-          ::
-          ::    :accepted is whether :binding was valid. Duplicate bindings are
-          ::    not allowed.
-          ::
-          [%bound accepted=? =binding]
-          ::  memory usage report
-          ::
-          [%mass p=mass]
-      ==
-    ::
-    ++  task
-      $~  [%vega ~]
-      $%  ::  event failure notification
-          ::
-          $>(%crud vane-task)
-          ::  initializes ourselves with an identity
-          ::
-          $>(%init vane-task)
-          ::  new unix process
-          ::
-          ::    XX use +vane-task
-          ::
-          [%born p=(list host)]
-          ::  report upgrade
-          ::
-          $>(%vega vane-task)
-          ::  notifies us of the ports of our live http servers
-          ::
-          [%live insecure=@ud secure=(unit @ud)]
-          ::  update http configuration
-          ::
-          [%rule =http-rule]
-          ::  starts handling an inbound http request
-          ::
-          [%request secure=? =address =request:http]
-          ::  starts handling an backdoor http request
-          ::
-          [%request-local secure=? =address =request:http]
-          ::  cancels a previous request
-          ::
-          [%cancel-request ~]
-          ::  connects a binding to an app
-          ::
-          [%connect =binding app=term]
-          ::  connects a binding to a generator
-          ::
-          [%serve =binding =generator]
-          ::  disconnects a binding
-          ::
-          ::    This must be called with the same duct that made the binding in
-          ::    the first place.
-          ::
-          [%disconnect =binding]
-          ::  memory usage request
-          ::
-          $>(%wegh vane-task)
-      ==
-    ::
-    --
-  ::  +binding: A rule to match a path.
-  ::
-  ::    A +binding is a system unique mapping for a path to match. A +binding
-  ::    must be system unique because we don't want two handlers for a path;
-  ::    what happens if there are two different actions for [~ /]?
-  ::
-  +$  binding
-    $:  ::  site: the site to match.
-        ::
-        ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
-        ::    other value will match a domain literal.
-        ::
-        site=(unit @t)
-        ::  path: matches this prefix path
-        ::
-        ::    /~myapp will match /~myapp or /~myapp/longer/path
-        ::
-        path=(list @t)
-    ==
-  ::  +generator: a generator on the local ship that handles requests
-  ::
-  ::    This refers to a generator on the local ship, run with a set of
-  ::    arguments. Since http requests are time sensitive, we require that the
-  ::    generator be on the current ship.
-  ::
-  +$  generator
-    $:  ::  desk: desk on current ship that contains the generator
-        ::
-        =desk
-        ::  path: path on :desk to the generator's hoon file
-        ::
-        path=(list @t)
-        ::  args: arguments passed to the gate
-        ::
-        args=*
-    ==
-  ::  +host: http host
-  ::
-  +$  host
-    (each (list @t) @if)
-  :: +http-config: full http-server configuration
-  ::
-  +$  http-config
-    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
-        ::
-        secure=(unit [key=wain cert=wain])
-        :: proxy: reverse TCP proxy HTTP(s)
-        ::
-        proxy=_|
-        :: log: keep HTTP(s) access logs
-        ::
-        log=?
-        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
-        ::
-        ::   Note: requires certificate.
-        ::
-        redirect=?
-    ==
-  :: +http-rule: update configuration
-  ::
-  +$  http-rule
-    $%  :: %cert: set or clear certificate and keypair
-        ::
-        [%cert cert=(unit [key=wain cert=wain])]
-        :: %turf: add or remove established dns binding
-        ::
-        [%turf action=?(%put %del) =turf]
-    ==
-  ::  +address: client IP address
-  ::
-  +$  address
-    $%  [%ipv4 @if]
-        [%ipv6 @is]
-        ::  [%ames @p]
-    ==
-  ::  +inbound-request: +http-request and metadata
-  ::
-  +$  inbound-request
-    $:  ::  authenticated: has a valid session cookie
-        ::
-        authenticated=?
-        ::  secure: whether this request was encrypted (https)
-        ::
-        secure=?
-        ::  address: the source address of this request
-        ::
-        =address
-        ::  request: the http-request itself
-        ::
-        =request:http
-    ==
-  --
 ::                                                      ::::
 ::::                    ++xmas                            ::  (1i) new network
   ::                                                    ::::
@@ -7600,22 +7577,22 @@
       gift:able:behn
       gift:able:clay
       gift:able:dill
+      gift:able:eyre
       gift:able:ford
       gift:able:gall
+      gift:able:iris
       gift:able:jael
-      gift:able:http-client
-      gift:able:http-server
   ==
 ++  task-arvo                                           ::  in request ->$
   $%  task:able:ames
       task:able:clay
       task:able:behn
       task:able:dill
+      task:able:iris
       task:able:ford
       task:able:gall
+      task:able:eyre
       task:able:jael
-      task:able:http-client
-      task:able:http-server
   ==
 ++  note-arvo                                           ::  out request $->
   $~  [%a %wake ~]
@@ -7623,11 +7600,11 @@
       {$b task:able:behn}
       {$c task:able:clay}
       {$d task:able:dill}
+      [%e task:able:eyre]
       {$f task:able:ford}
       {$g task:able:gall}
+      [%i task:able:iris]
       {$j task:able:jael}
-      [%l task:able:http-client]
-      [%r task:able:http-server]
       {@tas $meta vase}
   ==
 ++  sign-arvo                                           ::  in result $<-
@@ -7640,10 +7617,10 @@
       {$c gift:able:clay}
       {$d gift:able:dill}
       {$f gift:able:ford}
+      [%e gift:able:eyre]
       {$g gift:able:gall}
+      [%i gift:able:iris]
       {$j gift:able:jael}
-      [%l gift:able:http-client]
-      [%r gift:able:http-server]
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -7660,12 +7637,10 @@
       ::  %clay: new process
       ::
       $>(%boat task:able:clay)
-      ::  %behn/%lient/%rver: new process
-      ::
-      ::    XX %rver includes payload
+      ::  %behn/%eyre/%iris: new process
       ::
       $>(%born vane-task)
-      ::  %rver: cancel request
+      ::  %eyre: cancel request
       ::
       [%cancel-request ~]
       ::  any vane: error report
@@ -7683,18 +7658,18 @@
       ::  %clay: external edit
       ::
       $>(%into task:able:clay)
-      ::  %rver: learn ports of live http servers
+      ::  %eyre: learn ports of live http servers
       ::
-      $>(%live task:able:http-server)
-      ::  %lient: hear (partial) http response
+      $>(%live task:able:eyre)
+      ::  %iris: hear (partial) http response
       ::
-      $>(%receive task:able:http-client)
-      ::  %rver: starts handling an inbound http request
+      $>(%receive task:able:iris)
+      ::  %eyre: starts handling an inbound http request
       ::
-      $>(%request task:able:http-server)
-      ::  %rver: starts handling an backdoor http request
+      $>(%request task:able:eyre)
+      ::  %eyre: starts handling an backdoor http request
       ::
-      $>(%request-local task:able:http-server)
+      $>(%request-local task:able:eyre)
       ::  %behn: wakeup
       ::
       $>(%wake task:able:behn)

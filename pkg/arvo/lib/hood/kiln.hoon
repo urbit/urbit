@@ -196,7 +196,7 @@
   ++  emit  |=(a/card +>(..autoload (^emit a)))
   ++  tracked-vanes
     ^-  (list @tas)
-    ~[%ames %behn %clay %dill %ford %gall %jael %lient %rver]
+    ~[%ames %behn %clay %dill %eyre %ford %gall %iris %jael]
   ::
   ++  our-home  /(scot %p our)/home/(scot %da now)
   ++  sys-hash  |=(pax/path .^(@uvI %cz :(welp our-home /sys pax)))
@@ -366,7 +366,7 @@
 ::
 ++  auto
   |=  kiln-sync
-  =+  (fall (~(get by syn) syd her sud) [let=*@ud ust=ost])
+  =+  (~(gut by syn) [syd her sud] [let=*@ud ust=ost])
   |%
   ++  abet
     ..auto(syn (~(put by syn) [syd her sud] let ust))
@@ -470,7 +470,7 @@
 ++  work                                              ::  state machine
   |=  syd/desk
   =+  ^-  per-desk
-      %+  fall  (~(get by rem) syd)
+      %+  ~(gut by rem)  syd
       =+  *per-desk
       %_(- cas [%da now])
   |%

@@ -1,4 +1,4 @@
-=,  http-server
+=,  eyre
 |%
 ::
 ::  +parse-request-line: take a cord and parse out a url
@@ -25,8 +25,8 @@
   ::
   ++  require-authorization
     |*  [=bone move=mold this=*]
-    |=  handler=$-(inbound-request:http-server (quip move _this))
-    |=  =inbound-request:http-server
+    |=  handler=$-(inbound-request:eyre (quip move _this))
+    |=  =inbound-request:eyre
     ^-  (quip move _this)
     ::
     ?:  authenticated.inbound-request
@@ -79,7 +79,7 @@
     [%start [404 ~] ~ %.y]
   ::
   ++  login-redirect
-    |=  =inbound-request:http-server
+    |=  =inbound-request:eyre
     ^-  http-event:http
     =/  redirect=cord
       %-  crip

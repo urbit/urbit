@@ -153,7 +153,7 @@
       =+  buh=(~(get by pol) p.p.kec)
       ?~  buh
         ~&  [%ames-from p.p.kec]
-        =+  nut=(fall (~(get by ech) p.p.kec) *mute)
+        =+  nut=(~(gut by ech) p.p.kec *mute)
         %_  +>.$
           fex  [[%veil p.p.kec] fex]
           ech  (~(put by ech) p.p.kec nut(inn [+.job inn.nut]))
@@ -164,7 +164,7 @@
       =+  buh=(~(get by pol) p.job)
       ?~  buh
         ~&  [%ames-unto p.job]
-        =+  nut=(fall (~(get by ech) p.job) *mute)
+        =+  nut=(~(gut by ech) p.job *mute)
         %_  +>.$
           fex  [[%veil p.job] fex]
           ech  (~(put by ech) p.job nut(out [+>.job out.nut]))
@@ -623,7 +623,7 @@
         ::  ~&  [%hy-carp-early liq laq]
         +>
       ::  neb: current incomplete message
-      =+  neb=`bait`(fall (~(get by nys) liq) [syn 0 [cnt ~]])
+      =+  neb=`bait`(~(gut by nys) liq [syn 0 [cnt ~]])
       ::  all fragments must agree on the message parameters
       ?>  &(=(p.neb syn) (gth p.r.neb p.far) =(p.r.neb cnt))
       =+  doy=(~(get by q.r.neb) p.far)

@@ -330,9 +330,9 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
+        uv_timer_t    tim_u;                //  XX temporary timer
         c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
-        c3_w          law_w;                //  last wakeup, unix time
         c3_s          por_s;                //  public IPv4 port
         c3_c*         dns_c;                //  domain XX multiple/fallback
         c3_w          imp_w[256];           //  imperial IPs
@@ -699,6 +699,7 @@
       */
         typedef struct _u3_daemon {
           c3_c*     soc_c;                      //  socket name
+          c3_c*     certs_c;                    //  ssl certificate dump
           c3_w      len_w;                      //  number used
           c3_w      all_w;                      //  number allocated
           u3_pier** tab_u;                      //  pier table
@@ -1276,7 +1277,7 @@
         void
         u3_daemon_bail(void);
 
-      /* u3_king_grab(): gc the daemon area
+      /* u3_daemon_grab(): gc the daemon
       */
         void
         u3_daemon_grab(void* vod_p);

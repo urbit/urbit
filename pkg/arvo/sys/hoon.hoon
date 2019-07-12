@@ -1490,9 +1490,13 @@
       $(a l.a)
     $(a r.a)
   ::
-  ++  got
+  ++  got                                               ::  need value by key
     |*  b/*
     (need (get b))
+  ::
+  ++  gut                                               ::  fall value by key
+    |*  [b=* c=*]
+    (fall (get b) c)
   ::
   ++  has                                               ::  key existence check
     ~/  %has
