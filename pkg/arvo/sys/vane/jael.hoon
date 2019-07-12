@@ -1153,15 +1153,17 @@
     =+  yez=~(tap in yen)
     |-  ^+  ..vent-pass
     ?~  yez  ..vent-pass
-    =*  d  i.yez
-    ?>  ?=([[%a @ @ *] *] d)
-    =+  our=(slav %p i.t.i.d)
-    =+  who=(slav %p i.t.t.i.d)
-    %+  exec  [d ~ ~]
-    :+  %pass
-      /(scot %p our)/vent-result
-    ^-  note
-    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    =.  ..vent-pass
+      =*  d  i.yez
+      ?>  ?=([[%a @ @ *] *] d)
+      =+  our=(slav %p i.t.i.d)
+      =+  who=(slav %p i.t.t.i.d)
+      %+  exec  [d ~ ~]
+      :+  %pass
+        /(scot %p our)/vent-result
+      ^-  note
+      [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    $(yez t.yez)
   ::
   ++  extract-snap                                    ::  extract rewind point
     ^-  snapshot

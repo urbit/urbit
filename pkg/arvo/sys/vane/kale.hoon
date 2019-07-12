@@ -562,13 +562,13 @@
     |-  ^+  this-su
     ?~  yez  this-su
     =*  d  i.yez
-    ?.  ?=([[%a @ @ *] *] d)
-      %-  emit
-      [d %give %public-keys vent-result]
-    =/  our  (slav %p i.t.i.d)
-    =/  who  (slav %p i.t.t.i.d)
-    =/  =message  [%public-keys-result who vent-result]
     =.  this-su
+      ?.  ?=([[%a @ @ *] *] d)
+        %-  emit
+        [d %give %public-keys vent-result]
+      =/  our  (slav %p i.t.i.d)
+      =/  who  (slav %p i.t.t.i.d)
+      =/  =message  [%public-keys-result who vent-result]
       %-  emit
       :^    d
           %pass
