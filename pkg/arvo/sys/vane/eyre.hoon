@@ -1098,7 +1098,7 @@
           ==
         ::  client is requesting the javascript shim
         ::
-        (return-static-data-on-duct 200 'application/javascript' channel-js)
+        (return-static-data-on-duct 200 'text/javascript' channel-js)
       ::
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
