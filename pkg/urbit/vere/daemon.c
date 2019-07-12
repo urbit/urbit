@@ -466,6 +466,7 @@ _daemon_get_atom(c3_c* url_c)
     exit(1);
   }
 
+  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _daemon_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -840,6 +841,7 @@ void
 _daemon_loop_exit()
 {
   unlink(u3K.soc_c);
+  unlink(u3K.certs_c);
 }
 
 /* u3_daemon_commence(): start the daemon

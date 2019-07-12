@@ -3,7 +3,7 @@
 ;html
 ::
   ;head
-    ;title: Write
+    ;title: Publish
     ;meta(charset "utf-8");
     ;meta
       =name     "viewport"

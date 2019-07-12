@@ -94,7 +94,7 @@
       [%home %modulo]
       [%home %launch]
       [%home %chat]
-      [%home %write]
+      [%home %publish]
       [%home %timer]
       [%home %clock]
       [%home %weather]

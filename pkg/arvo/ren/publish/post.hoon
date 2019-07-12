@@ -1,15 +1,15 @@
-/-  write
-/+  write, cram, elem-to-react-json
+/-  publish
+/+  publish, cram, elem-to-react-json
 /=  args  /$  ,[beam *]
 /=  result
-  /^  [post-info:write manx @t]
+  /^  [post-info:publish manx @t]
   /;  
   |=  $:  post-front=(map knot cord)
           post-content=manx
           post-raw=wain
           ~
       ==
-      :+  (front-to-post-info:write post-front)
+      :+  (front-to-post-info:publish post-front)
         post-content
       (of-wain:format (slag 11 post-raw))
 ::

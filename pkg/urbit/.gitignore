@@ -3,12 +3,12 @@
 #
 /config.mk
 include/config.h
+include/ca-bundle.h
 #
 # Build Outputs
 #
 *.o
-/urbit
-/urbit-worker
+/build/*
 /tags
 #
 # Editor Bullshit
@@ -23,5 +23,3 @@ GRTAGS
 GTAGS
 *.swo
 *.swp
-hash_tests
-hashtable_tests

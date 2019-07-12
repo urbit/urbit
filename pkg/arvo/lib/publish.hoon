@@ -1,4 +1,4 @@
-/-  *write
+/-  *publish
 /+  elem-to-react-json
 |%
 ::
