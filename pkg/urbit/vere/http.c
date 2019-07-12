@@ -514,14 +514,16 @@ _http_start_respond(u3_hreq* req_u,
                       "hosed";
 
   u3_hhed* hed_u = _http_heds_from_noun(u3k(headers));
-  int has_content_length = 0;
+
+  c3_i has_len_i = 0;
+
   while ( 0 != hed_u ) {
     h2o_add_header_by_str(&rec_u->pool, &rec_u->res.headers,
                           hed_u->nam_c, hed_u->nam_w, 0, 0,
                           hed_u->val_c, hed_u->val_w);
 
-    if (strncmp(hed_u->nam_c, "content-length", 14) == 0) {
-      has_content_length = 1;
+    if ( 0 == strncmp(hed_u->nam_c, "content-length", 14) ) {
+      has_len_i = 1;
     }
 
     hed_u = hed_u->nex_u;
@@ -538,8 +540,12 @@ _http_start_respond(u3_hreq* req_u,
   gen_u->hed_u = hed_u;
   gen_u->req_u = req_u;
 
-  if (has_content_length) {
-    rec_u->res.content_length = gen_u->bod_u ? gen_u->bod_u->len_w : 0;
+  //  if we don't explicitly set this field, h2o will send with
+  //  transfer-encoding: chunked
+  //
+  if ( 1 == has_len_i ) {
+    rec_u->res.content_length = ( 0 == gen_u->bod_u ) ?
+                                0 : gen_u->bod_u->len_w;
   }
 
   req_u->gen_u = gen_u;
