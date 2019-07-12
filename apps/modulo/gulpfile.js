@@ -1,7 +1,9 @@
 var gulp = require('gulp');
 var cssimport = require('gulp-cssimport');
-var cssnano = require('gulp-cssnano');
 var rollup = require('gulp-better-rollup');
+var cssnano = require('cssnano');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 
@@ -9,7 +11,7 @@ var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
 var replace = require('rollup-plugin-replace');
 var json = require('rollup-plugin-json');
-var builtins = require('rollup-plugin-node-builtins');
+var builtins = require('@joseph184/rollup-plugin-node-builtins');
 var rootImport = require('rollup-plugin-root-import');
 var globals = require('rollup-plugin-node-globals');
 
@@ -24,10 +26,14 @@ var urbitrc = require('./.urbitrc');
 ***/
 
 gulp.task('css-bundle', function() {
+  let plugins = [
+    autoprefixer({ browsers: ['last 1 version'] }),
+    cssnano()
+  ];
   return gulp
     .src('src/index-css.css')
     .pipe(cssimport())
-    .pipe(cssnano())
+    .pipe(postcss(plugins))
     .pipe(gulp.dest('./urbit/app/modulo'));
 });
 
