@@ -5,7 +5,7 @@ import api from './api';
 import VolumeIcon from './components/volume-icon';
 import Flashing from './components/flashing';
 
-const timerLength = 10000;
+const timerLength = 60 * 20000;
 const outerSize = 234; //size of tile itself
 const innerSize = 200; //diameter of pomodoro
 
@@ -212,8 +212,6 @@ export default class TimerTile extends Component {
       </div>
     );
   }
-
-
 
   render() {
 

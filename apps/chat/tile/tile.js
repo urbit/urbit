@@ -31,10 +31,7 @@ export default class ChatTile extends Component {
         if (!propConfigs[key]) { break; }
         if (!(key in numbers)) { break; }
 
-        console.log(key);
         let red = propConfigs[key].red;
-        console.log('red', red);
-        console.log('numbers', numbers[key]);
 
         if (key === inviteCircle) {
           inviteNum = inviteNum - red + numbers[key];
@@ -45,6 +42,33 @@ export default class ChatTile extends Component {
         }
       } 
     }
+
+    let numInvElem = (inviteNum > 0) ? (
+      <p className="absolute white"
+         style={{
+           top: 180,
+           fontWeight: 600,
+           fontSize: 16,
+           lineHeight: '20px'
+         }}>
+        <span className="nice-green">{inviteNum} </span>invites
+      </p>
+    ) : (
+      <div />
+    );
+    let numMsgElem = (msgNum > 0) ? (
+      <p className="absolute white"
+         style={{
+           top: 207,
+           fontWeight: 600,
+           fontSize: 16,
+           lineHeight: '20px'
+         }}>
+        <span className="nice-green">{msgNum} </span>new messages
+      </p>
+    ) : (
+      <div />
+    );
 
     return (
       <div className="w-100 h-100 relative" style={{ background: '#1a1a1a' }}>
@@ -60,22 +84,8 @@ export default class ChatTile extends Component {
              src="/~chat/img/Tile.png"
              width={106}
              height={98} />
-           <p 
-             className="absolute white"
-             style={{
-               top: 180,
-               fontWeight: 600,
-               fontSize: 16,
-               lineHeight: '20px'
-             }}>{inviteNum} invites</p>
-           <p 
-             className="absolute white"
-             style={{
-               top: 207,
-               fontWeight: 600,
-               fontSize: 16,
-               lineHeight: '20px'
-             }}>{msgNum} new messages</p>
+           {numInvElem}
+           {numMsgElem}
         </a>
       </div>
     );

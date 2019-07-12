@@ -21,8 +21,8 @@
   $%  [%poke wire dock poke]
       [%http-response =http-event:http]
       [%diff %json json]
-      [%connect wire binding:http-server term]
-      [%request wire request:http outbound-config:http-client]
+      [%connect wire binding:eyre term]
+      [%request wire request:http outbound-config:iris]
       [%wait wire @da]
   ==
 +$  poke
@@ -38,7 +38,7 @@
 ++  this  .
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -71,7 +71,7 @@
     [~ this]
   =/  str/@t  +.jon
   =/  req/request:http  (request-darksky str)
-  =/  out  *outbound-config:http-client
+  =/  out  *outbound-config:iris
   =/  lismov  [ost.bol %request /[(scot %da now.bol)] req out]~
   ?~  timer
     :-  [[ost.bol %wait /timer (add now.bol ~h3)] lismov]
@@ -102,12 +102,12 @@
   [bone %diff %json jon]
 ::
 ++  http-response
-  |=  [=wire response=client-response:http-client]
+  |=  [=wire response=client-response:iris]
   ^-  (quip move _this)
   ::  ignore all but %finished
   ?.  ?=(%finished -.response)
     [~ this]
-  =/  data/(unit mime-data:http-client)  full-file.response
+  =/  data/(unit mime-data:iris)  full-file.response
   ?~  data
     :: data is null
     [~ this]
@@ -131,7 +131,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)
@@ -157,7 +157,7 @@
   ^-  (quip move _this)
   ?~  err
     =/  req/request:http  (request-darksky location)
-    =/  out  *outbound-config:http-client
+    =/  out  *outbound-config:iris
     =/  lismov/(list move)
       [ost.bol %request /[(scot %da now.bol)] req out]~
     ?~  timer

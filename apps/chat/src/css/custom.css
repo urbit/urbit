@@ -13,6 +13,10 @@ textarea, select, input, button {
   background-color: #fff;
 }
 
+a {
+  color: #000 !important;
+  font-weight: 400 !important;
+}
 
 h2 {
   font-size: 32px;

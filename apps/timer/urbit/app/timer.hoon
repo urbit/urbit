@@ -24,7 +24,7 @@
 +$  card
   $%  [%poke wire dock poke]
       [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%diff %json json]
       [%wait wire @da]
       [%rest wire @da]
@@ -37,7 +37,7 @@
 ++  this  .
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -77,7 +77,7 @@
     [~ this]
   =/  str/@t  +.jon
   ?:  =(str 'start')
-    =/  data/@da  (add now.bol ~s10)
+    =/  data/@da  (add now.bol ~m20)
     :_  this(tim data)
     [[ost.bol %wait /timer data] (send-tile-diff [%s (scot %da data)])]
   ?:  =(str 'stop')
@@ -87,7 +87,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)
