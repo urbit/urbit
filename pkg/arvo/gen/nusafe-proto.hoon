@@ -38,7 +38,7 @@
       [%log private-event=vase return-event=vase]
       ::  creates a new node and re-dispatch the event to it
       ::
-      [%create sub-id=@t child-event=vase]
+      [%create sub-id=@t type=@t child-event=vase]
       ::  returns a value upwards
       ::
       [%return return-event=vase]
@@ -82,7 +82,7 @@
     ==
   ::
   +$  on-process-response
-    $:  [%create id=@t =child-event]
+    $:  [%create id=@t type=@t =child-event]
     ==
   ::  +on-route: called when we must route a message to our children
   ::
@@ -112,7 +112,7 @@
       =^  id  private-state
         [next-postid.private-state private-state(next-postid +(next-postid.private-state))]
       ::
-      [[%create (scot %ud id) id] private-state]
+      [[%create (scot %ud id) %thread id] private-state]
     ==
   ::  +apply-event-to-snapshot: called to replay the event log
   ::
@@ -222,15 +222,19 @@
       ::  the type. the other side knows what app its for and at least for now,
       ::  the remote will call the mold.
       [%log user-event=vase private-event=vase]
-      [%create sub-id=@t]
+      [%create sub-id=@t type=@t]
   ==
+::
+++  app-map
+  ^-  (map @t vase)
+  (my [[%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
 ::  currently a hack. to make this work really generically, we'll need to make
 ::  things sorta vase based where we connect types pulled out of the vases
 ::  instead of an each of the two types.
 ::
 ++  node-state
-  $~  [*vase 1 ~ *vase *vase ~]
-  $:  app-vase=vase
+  $~  [%board 1 ~ *vase *vase ~]
+  $:  app-type=@t
       next-event-id=@ud
       event-log=(list [id=@ud =event-log-item])
       snapshot=vase
@@ -253,13 +257,20 @@
   ::
       %create
     =/  id  (slot 6 wec)
-    =/  child-event  (slot 7 wec)
-    [%create ;;(@t q.id) child-event]
+    =/  type  (slot 14 wec)
+    =/  child-event  (slot 15 wec)
+    [%create ;;(@t q.id) ;;(@t q.type) child-event]
   ::
       %return
     =/  event  (slot 3 wec)
     [%return event]
   ==
+::  all hail joe for this
+::
+++  bunt-a-vase
+  |=  v=vase
+  ^-  vase
+  (slap v [%kttr [%like [[%& 1] ~] ~]])
 ::
 ::  +node-executor: applies a message to a node in a route
 ::
@@ -295,6 +306,8 @@
   ^-  [vase _state]
   ::
   ~&  [%full-path full-path]
+  ::
+  =/  app-vase=vase  (~(got by app-map) app-type.state)
   ::  If we still have remaining path elements, dispatch on them.
   ::
   ?^  route
@@ -305,7 +318,7 @@
       ~&  [%four-oh-four i.route]
       [!>(~) state]
     ::
-    =/  on-route=vase  (slap app-vase.state [%limb %on-route])
+    =/  on-route=vase  (slap app-vase [%limb %on-route])
     =/  args  :(slop !>(route) parent-event private-state.state)
     =/  raw-result  (slam on-route args)
     ::  raw-result is a (unit *), where we abort processing if we get a sig
@@ -324,7 +337,7 @@
     ::  arbitrary list. this really requires that the types above line up
     ::  differently.
     ::
-    =/  on-child-return=vase  (slap app-vase.state [%limb %on-child-return])
+    =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
     =.  args  :(slop return-value private-state.state)
     =/  raw-result  (slam on-child-return args)
     ::
@@ -335,7 +348,7 @@
     [return-event state]
   ::  we've reached the node we're trying to talk to.
   ::
-  =/  on-process-event=vase  (slap app-vase.state [%limb %on-process-event])
+  =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
   =/  args  :(slop parent-event message private-state.state)
   =/  raw-result  (slam on-process-event args)
   ::
@@ -347,7 +360,7 @@
     ::  when we receive a %log event, we commit this to the event log
     ::
     =/  apply-event-to-snapshot=vase
-      (slap app-vase.state [%limb %apply-event-to-snapshot])
+      (slap app-vase [%limb %apply-event-to-snapshot])
     =/  args  :(slop message private-event.response snapshot.state)
     =.  snapshot.state  (slam apply-event-to-snapshot args)
     ::
@@ -359,22 +372,29 @@
     [return-event.response state]
   ::
       %create
-    ::  we create a new thread and then give it the default types.
+    ::  w
+    ::
+    =/  new-item-vase=vase       (~(got by app-map) type.response)
+    ::
+    =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
+    =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
     ::
     =/  thread=node-state
-      :*  !>(node-type-thread)
+      :*  type.response
           1
           ~
-          !>(*snapshot:node-type-thread)
-          !>(*private-state:node-type-thread)
+          (bunt-a-vase snapshot-type)
+          (bunt-a-vase private-state-type)
           ~
       ==
     ::
-    =^  return  thread  (node-executor child-event.response / (weld full-path [sub-id.response ~]) message thread)
+    =^  return  thread
+      (node-executor child-event.response / (weld full-path [sub-id.response ~]) message thread)
     ::
     ~&  [%created sub-id=sub-id.response return=return]
     =.  children.state  (~(put by children.state) sub-id.response thread)
-    =.  event-log.state  [[next-event-id.state [%create sub-id.response]] event-log.state]
+    =.  event-log.state
+      [[next-event-id.state [%create sub-id.response app-type.state]] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
     ::
     [return state]
@@ -409,7 +429,7 @@
 ::  This works for the thread (sorta) but where does spawning behaviour come in?
 ::
 
-=/  board=node-state  [!>(node-type-board) 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
+=/  board=node-state  [%board 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
 
 ~&  %start---post--a
 =^  returns  board  (node-executor !>(0) / / !>([%new-post [0 'subject' 'text']]) board)
