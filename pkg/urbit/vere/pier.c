@@ -924,11 +924,13 @@ _pier_work_poke(void*   vod_p,
              (c3n == u3r_cell(entry, &mug, &job)) ||
              (c3n == u3ud(mug)) ||
              (1 < u3r_met(5, mug)) ) {
+          u3z(entry);
           goto error;
         }
 
         c3_l     mug_l = u3r_word(0, mug);
         if ( !wit_u || (mug_l && (mug_l != wit_u->mug_l)) ) {
+          u3z(entry);
           goto error;
         }
 #ifdef VERBOSE_EVENTS
@@ -936,6 +938,7 @@ _pier_work_poke(void*   vod_p,
 #endif
 
         _pier_work_replace(wit_u, u3k(job));
+        u3z(entry);
       }
       break;
     }
