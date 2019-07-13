@@ -13,6 +13,7 @@ library:
     
 dependencies:
   - base
+  - bimap
   - classy-prelude
   - containers
 

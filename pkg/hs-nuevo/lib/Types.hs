@@ -4,6 +4,7 @@ import ClassyPrelude
 
 import Data.Void
 
+import qualified Data.Bimap as B
 import qualified Data.Map as M
 
 
@@ -24,7 +25,7 @@ data Path = Path [Text]
 -- This is not part of Nuevo proper, but is meant to be the Vere equivalent
 -- which sends messages to each 
 data VereEnv = VereEnv
-  { instances :: M.Map Connection NuevoState
+  { instances :: M.Map Path NuevoState
 
   }
 
@@ -37,9 +38,36 @@ data Connection
   | ProcessConnection Path Int
   deriving (Show, Eq)
 
-data NuevoEvent
-  = NEvInit Int
+-- | Was: "Handle"
+data Socket
+  = PipeSocket
+  { pipeId           :: Int
+  , pipeCreator      :: Connection
+  , pipeCounterparty :: Connection
+  }
+
+  | IoSocket
+  { ioId     :: Int
+  , ioDriver :: Text
+  }
+
   deriving (Show, Eq)
+
+
+
+data NuevoEvent
+  = NEvInit
+  { nevInitConnection :: Connection
+  , nevInitName       :: Path
+  , nevInitProgram    :: NuevoProgram
+  , nevInitSentOver   :: Socket
+  , nevInitMessage    :: Text
+  }
+
+  | NEvRecv
+  { nevRecvSentOver   :: Socket
+  , nevRecvMessage    :: Text
+  }
 
 data NuevoEffect
   = NEfFork
@@ -48,14 +76,41 @@ data NuevoEffect
 
 -- | Each instance of 
 data NuevoState = NuevoState
-  { nsProgram :: NuevoProgram
+  { nsParent   :: Connection
+  , nsName     :: Path
+--  , nsChildren :: M.Map Text
+  , nsProgram :: NuevoProgram
+  , nsProgramState :: ProgramState
+  , nsNextBone :: Int
+  , nsSocketToBone :: B.Bimap Socket Int
+  }
+
+--  Processes a single Nuevo event 
+type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
+
+
+-------------------------------------------------------------------------------
+
+-- Types for the program running under Nuevo
+
+data ProgramEvent
+  = PERecv
+  { peRecvBone :: Int
+  , peRecvMessage :: Text
+  }
+  deriving (Show, Eq)
+
+data ProgramEffect
+  = PESend
+  { peSendBone :: Int
+  , peSendMessage :: Text
   }
   deriving (Show, Eq)
 
 
---  Processes a single Nuevo event 
-type NuevoFunction = (NuevoState,NuevoEvent) -> (NuevoState,[NuevoEffect])
+-- TODO: A realer state.
+type ProgramState = M.Map Text Text
 
-
--- The type of a program that nuevo runs.
-type NuevoProgram = Void
+-- -- The type of a program that nuevo runs.
+-- type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect)
+type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect])
