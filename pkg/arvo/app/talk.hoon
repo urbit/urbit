@@ -66,9 +66,9 @@
       ==                                                ::
     ++  work                                            ::  interface action
       $%  ::  circle management                         ::
-          {$join (map circle range)}                    ::  subscribe to
+          {$join (map circle range) (unit char)}        ::  subscribe to
           {$leave audience}                             ::  unsubscribe from
-          {$create security name cord}                  ::  create circle
+          {$create security name cord (unit char)}      ::  create circle
           {$delete name (unit cord)}                    ::  delete circle
           {$depict name cord}                           ::  change description
           {$filter name ? ?}                            ::  change message rules
@@ -838,7 +838,7 @@
         ::
           ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
-          ;~((glue ace) (perk %join ~) sorz)
+          ;~((glue ace) (perk %join ~) sorz (punt glyph))
         ::
           ;~((glue ace) (perk %leave ~) cirs)
         ::
@@ -846,6 +846,7 @@
             pore
             cire
             qut
+            (punt glyph)
           ==
         ::
           ;~  plug  (perk %delete ~)
@@ -1186,8 +1187,10 @@
         ::  change local mailbox config to include
         ::  subscriptions to {pas}.
         ::
-        |=  pos/(map circle range)
+        |=  {pos/(map circle range) gyf/(unit char)}
         ^+  ..sh-work
+        =?  ..sh-work  ?=(^ gyf)
+          (bind u.gyf `~(key by pos))
         =+  pas=~(key by pos)
         =.  ..sh-work
           sh-prod(active.she pas)
@@ -1226,11 +1229,11 @@
         ::
         ::  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/name txt/cord}
+        |=  {sec/security nom/name txt/cord gyf/(unit char)}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[self nom] ~] ~ ~])
+        (join [[[self nom] ~] ~ ~] gyf)
       ::
       ++  delete
         ::    %delete
