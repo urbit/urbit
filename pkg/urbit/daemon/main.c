@@ -472,7 +472,6 @@ static void
 report(void)
 {
   printf("urbit %s\n", URBIT_VERSION);
-  printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
   printf("sigsegv: %d.%d\n",
          (libsigsegv_version >> 8) & 0xff,
