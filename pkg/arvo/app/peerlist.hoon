@@ -252,10 +252,15 @@
 ::  data interface
 ::
 ::    /peers/(filter)/(group)
+::      %peerlist-peers
 ::      local-only, all peers that match optional filter and group
+::
 ::    /groups/(tag)
+::      %peerlist-groups
 ::      local-only, all groups, or group with tag
+::
 ::    /peeps
+::      %peerlist-peeps
 ::      all of /peers/ours that are public
 ::
 ++  peers-result
@@ -283,7 +288,7 @@
   [u.tag^(~(get ju groups) u.tag) ~ ~]
 ::
 ++  peeps-results
-  %-  ~(gas by *(map ship @da))
+  %-  ~(gas by *peeps)
   %+  murn  ~(tap by (peers-result %ours ~))
   |=  [who=ship relation]
   ^-  (unit [ship @da])
@@ -293,12 +298,12 @@
 ::
 ++  peek-x
   |=  =path
-  ^-  (unit (unit [%noun noun]))
+  ^-  (unit (unit [mark noun]))
   ?+  path  ~
       [%peers ?(~ [@ ~] [@ @ ~])]
     ?.  =(src.bowl our.bowl)  [~ ~]
     :+  ~  ~
-    :-  %noun
+    :-  %peerlist-peers
     =*  args  t.path
     %-  peers-result
     ?~  args  [%all ~]
@@ -310,12 +315,12 @@
       [%groups ?(~ [@ ~])]
     ?.  =(src.bowl our.bowl)  [~ ~]
     :+  ~  ~
-    :-  %noun
+    :-  %peerlist-groups
     =*  args  t.path
     %-  groups-result
     ?~(args ~ `i.args)
   ::
       [%peeps ~]
-    ``noun+peeps-results
+    ``peerlist-peeps+peeps-results
   ==
 --

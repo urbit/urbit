@@ -15,6 +15,7 @@
   ==
 ::
 +$  peers   (map ship relation)
++$  peeps   (map ship @da)
 +$  tag     @ta
 +$  group   (set ship)
 +$  groups  (map tag group)
