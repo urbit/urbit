@@ -50,6 +50,9 @@
       ::  %import: combine state with export-file at path (without mark)
       ::
       [%import =path]
+      ::  %settings: configure new settings
+      ::
+      [%settings =settings]
       ::  %debug: helper
       ::
       [%debug ~]
@@ -236,6 +239,10 @@
   =^  mon  this  (do-add [ship `tag]:i.load)
   $(moz (weld mon moz), load t.load)
 ::
+++  do-settings
+  |=  new=^settings
+  [~ this(settings new)]
+::
 ::  move construction
 ::
 ++  peer
@@ -255,14 +262,13 @@
   ^-  [(list move) _this]
   ~|  %weird-poke-data
   =/  poke  ;;($%(local-pokes foreign-pokes) poke)
-  ?-  -.poke
+  ?+  -.poke
+    ?.  =(src.bowl our.bowl)  [~ this]
+    (poke-local-poke poke)
+  ::
       ?(%peer %drop)
     ?:  =(src.bowl our.bowl)  [~ this]
     (poke-foreign-poke poke)
-  ::
-      ?(%add %remove %fill %clear %reset %export %import %debug)
-    ?.  =(src.bowl our.bowl)  [~ this]
-    (poke-local-poke poke)
   ==
 ::
 ++  poke-local-poke
@@ -271,13 +277,14 @@
   ~&  [%poked -.poke]
   ^-  [(list move) _this]
   ?-  -.poke
-    %add     (do-add +.poke)
-    %remove  (do-remove +.poke)
-    %fill    (do-fill +.poke)
-    %clear   (do-clear +.poke)
-    %reset   do-reset
-    %export  (do-export +.poke)
-    %import  (do-import +.poke)
+    %add       (do-add +.poke)
+    %remove    (do-remove +.poke)
+    %fill      (do-fill +.poke)
+    %clear     (do-clear +.poke)
+    %reset     do-reset
+    %export    (do-export +.poke)
+    %import    (do-import +.poke)
+    %settings  (do-settings +.poke)
   ::
       %debug
     ~&  peers+peers
