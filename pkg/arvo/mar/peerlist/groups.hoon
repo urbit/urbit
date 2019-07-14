@@ -6,6 +6,11 @@
   |%
   ++  noun  ^groups
   ::
+  ++  mime
+    |=  ^mime
+    ?>  ?=([%text %txt ~] p)
+    (txt (to-wain:format q.q))
+  ::
   ++  txt
     |=  lines=wain
     %-  ~(gas by *^groups)
@@ -32,6 +37,10 @@
 ++  grow
   |%
   ++  noun  groups
+  ::
+  ++  mime
+    :-  /text/txt
+    (as-octs:mimes:html (of-wain:format txt))
   ::
   ++  txt
     ^-  wain
