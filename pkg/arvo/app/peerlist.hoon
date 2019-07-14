@@ -38,10 +38,13 @@
       ::  %fill: add all peers to this group
       ::
       [%fill group=tag]
-      ::  %export: write export-group to path
+      ::  %clear: clear all peers from this group
+      ::
+      [%clear group=tag]
+      ::  %export: write export-file to path
       ::
       [%export =path which=(set tag)]
-      ::  %import: replace state with export-group at path
+      ::  %import: replace state with export-file at path
       ::
       [%import =path]
       ::  %debug: helper
@@ -171,11 +174,13 @@
   [(drop who) ~]
 ::
 ++  do-fill
-  |=  group=tag
+  |=  =tag
   =-  [~ this(groups -)]
-  %+  ~(put by groups)  group
-  %-  ~(uni in ~(key by peers))
-  (~(gut by groups) group *^group)
+  (~(put by groups) tag ~(key by peers))
+::
+++  do-clear
+  |=  =tag
+  [~ this(groups (~(del by groups) tag))]
 ::
 ::  move construction
 ::
@@ -201,7 +206,7 @@
     ?:  =(src.bowl our.bowl)  [~ this]
     (poke-foreign-poke poke)
   ::
-      ?(%add %remove %fill %export %import %debug)
+      ?(%add %remove %fill %clear %export %import %debug)
     ?.  =(src.bowl our.bowl)  [~ this]
     (poke-local-poke poke)
   ==
@@ -212,11 +217,12 @@
   ~&  [%poked -.poke]
   ^-  [(list move) _this]
   ?-  -.poke
-    %add  (do-add +.poke)
+    %add     (do-add +.poke)
     %remove  (do-remove +.poke)
-    %fill  (do-fill +.poke)
+    %fill    (do-fill +.poke)
     %export  !!
     %import  !!
+    %clear   (do-clear +.poke)
   ::
       %debug
     ~&  peers+peers
