@@ -58,9 +58,12 @@
 ::
 ++  do-add
   |=  [who=ship group=(unit tag)]
+  ^-  [(list move) _this]
   =/  old=relation
     (~(gut by peers) who default-relation)
   =/  new=?  ?=(~ we-since.old)
+  ~&  %+  weld  "adding {(scow %p who)}"
+      ?~(group ~ " to %{(trip u.group)}")
   =?  peers  new
     %+  ~(put by peers)  who
     old(we-since `now.bowl)
@@ -68,10 +71,11 @@
     (~(put ju groups) u.group who)
   :_  this
   ?.  new  ~
-  [(peer who) ~]
+  [(make-peer who) ~]
 ::
 ++  do-remove
   |=  [who=ship from=(unit tag)]
+  ^-  [(list move) _this]
   =/  have=(unit [who=ship =relation groups=(set tag)])
     =+  old=(~(get by peers) who)
     ?~  old  ~
@@ -111,7 +115,7 @@
           ?=(^ we-since.relation.u.have)
       ==
     ~
-  [(drop who) ~]
+  [(make-drop who) ~]
 ::
 ++  do-fill
   |=  =tag
@@ -125,13 +129,14 @@
 ++  do-reset
   =/  byes=(list ship)  ~(tap in ~(key by peers))
   =|  moz=(list move)
-  |-
+  |-  ^-  [(list move) _this]
   ?~  byes  [moz this]
   =^  mon  this  (do-remove i.byes ~)
   $(moz (weld mon moz), byes t.byes)
 ::
 ++  do-export
   |=  [=spur which=(set tag)]
+  ^-  [(list move) _this]
   =-  [[[ost.bowl %info [%export spur] -] ~] this]
   %+  foal:space:userlib
     :*  (scot %p our.bowl)
@@ -175,10 +180,10 @@
 ::
 ::  move construction
 ::
-++  peer
+++  make-peer
   (cury make-poke %peer now.bowl)
 ::
-++  drop
+++  make-drop
   (cury make-poke %drop ~)
 ::
 ++  make-poke
@@ -205,7 +210,6 @@
 ++  poke-peerlist-local-poke
   |=  poke=local-poke
   ?.  =(our.bowl src.bowl)  [~ this]
-  ~&  [%poked -.poke]
   ^-  [(list move) _this]
   ?-  -.poke
     %add       (do-add +.poke)
@@ -225,7 +229,6 @@
 ::
 ++  poke-peerlist-foreign-poke
   |=  poke=foreign-poke
-  ~&  [%foreign-poke src.bowl -.poke]
   ^-  [(list move) _this]
   =*  who=@p  src.bowl
   =/  =relation
