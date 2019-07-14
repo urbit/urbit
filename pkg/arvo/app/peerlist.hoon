@@ -1,7 +1,7 @@
 ::  peerlist: (manual) userspace peer discovery
 ::
 ::    a drop-in solution to peer discovery for peer-to-peer applications.
-::    for usage, see +local-pokes.
+::    for usage, see +local-poke.
 ::
 /-  *peerlist
 ::
@@ -16,55 +16,6 @@
       ::  settings: behavior configuration
       ::
       =settings
-  ==
-::
-+$  settings
-  $:  ::  default-public: public.relation is set to this on-creation
-      ::
-      default-public=_|
-  ==
-::
-+$  local-pokes
-  $%  ::  %add: add `who` as a peer, and/or to `group`
-      ::
-      ::    if the group doesn't exist, it is created
-      ::
-      [%add who=ship group=(unit tag)]
-      ::  %remove: remove `who` as a peer (& all groups), or from `group`
-      ::
-      ::    if a group becomes empty, it's removed
-      ::
-      [%remove who=ship group=(unit tag)]
-      ::  %fill: add all peers to this group
-      ::
-      [%fill group=tag]
-      ::  %clear: clear all peers from this group
-      ::
-      [%clear group=tag]
-      ::  %reset: clear all state
-      ::
-      [%reset ~]
-      ::  %export: write export-file to spur (without mark)
-      ::
-      [%export =spur which=(set tag)]
-      ::  %import: combine state with export-file at path (without mark)
-      ::
-      [%import =path]
-      ::  %settings: configure new settings
-      ::
-      [%settings =settings]
-      ::  %debug: helper
-      ::
-      [%debug ~]
-  ==
-::
-+$  foreign-pokes
-  $%  ::  %peer: `src.bowl` added you as a peer
-      ::
-      [%peer since=@da]
-      ::  %drop: `src.bowl` removed you as a peer
-      ::
-      [%drop ~]
   ==
 ::
 +$  filter
@@ -87,7 +38,7 @@
 ::
 +$  move  [bone card]
 +$  card
-  $%  [%poke wire dock %noun foreign-pokes]
+  $%  [%poke wire dock %peerlist-foreign-poke foreign-poke]
       [%info wire toro:clay]
   ==
 --
@@ -243,14 +194,15 @@
 ::  move construction
 ::
 ++  peer
-  |=  who=ship
-  ^-  move
-  [ost.bowl %poke / [who dap.bowl] %noun %peer now.bowl]
+  (cury make-poke %peer now.bowl)
 ::
 ++  drop
-  |=  who=ship
+  (cury make-poke %drop ~)
+::
+++  make-poke
+  |=  [poke=foreign-poke who=ship]
   ^-  move
-  [ost.bowl %poke / [who dap.bowl] %noun %drop ~]
+  [ost.bowl %poke / [who dap.bowl] %peerlist-foreign-poke poke]
 ::
 ::  interaction interface
 ::
@@ -258,18 +210,18 @@
   |=  poke=*
   ^-  [(list move) _this]
   ~|  %weird-poke-data
-  =/  poke  ;;($%(local-pokes foreign-pokes) poke)
+  =/  poke  ;;($%(local-poke foreign-poke) poke)
   ?+  -.poke
     ?.  =(src.bowl our.bowl)  [~ this]
-    (poke-local-poke poke)
+    (poke-peerlist-local-poke poke)
   ::
       ?(%peer %drop)
     ?:  =(src.bowl our.bowl)  [~ this]
-    (poke-foreign-poke poke)
+    (poke-peerlist-foreign-poke poke)
   ==
 ::
-++  poke-local-poke
-  |=  poke=local-pokes
+++  poke-peerlist-local-poke
+  |=  poke=local-poke
   ?.  =(our.bowl src.bowl)  [~ this]
   ~&  [%poked -.poke]
   ^-  [(list move) _this]
@@ -289,8 +241,8 @@
     [~ this]
   ==
 ::
-++  poke-foreign-poke
-  |=  poke=foreign-pokes
+++  poke-peerlist-foreign-poke
+  |=  poke=foreign-poke
   ~&  [%foreign-poke src.bowl -.poke]
   ^-  [(list move) _this]
   =*  who=@p  src.bowl
