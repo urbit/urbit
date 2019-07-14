@@ -27,6 +27,24 @@
 ::
 ::  interface
 ::
++$  filter
+  $%  ::  %all: all relations
+      ::
+      %all
+      ::  %ours: relations where ?=(^ we-since)
+      ::
+      %ours
+      ::  %theirs: relations where ?=(^ they-since)
+      ::
+      %theirs
+      ::  %mutuals: only mutual relations
+      ::
+      %mutuals
+      ::  %none: no relations
+      ::
+      %none
+  ==
+::
 +$  local-poke
   $%  ::  %add: add `who` as a peer, and/or to `group`
       ::

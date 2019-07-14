@@ -18,24 +18,6 @@
       =settings
   ==
 ::
-+$  filter
-  $%  ::  %all: all relations
-      ::
-      %all
-      ::  %ours: relations where ?=(^ we-since)
-      ::
-      %ours
-      ::  %theirs: relations where ?=(^ they-since)
-      ::
-      %theirs
-      ::  %mutuals: only mutual relations
-      ::
-      %mutuals
-      ::  %none: no relations
-      ::
-      %none
-  ==
-::
 +$  move  [bone card]
 +$  card
   $%  [%poke wire dock %peerlist-foreign-poke foreign-poke]
