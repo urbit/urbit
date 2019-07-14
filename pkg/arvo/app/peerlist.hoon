@@ -121,9 +121,6 @@
 ++  default-relation
   %*(. *relation public default-public.settings)
 ::
-++  export-mark
-  `mark`(cat 3 dap.bowl '-groups')
-::
 ::  management
 ::
 ++  do-add
@@ -207,9 +204,9 @@
     :*  (scot %p our.bowl)
         q.byk.bowl
         (scot %da now.bowl)
-        (weld spur /[export-mark])
+        (weld spur /peerlist-groups)
     ==
-  :-  export-mark
+  :-  %peerlist-groups
   !>
   ?~  which  groups
   %-  ~(gas by *^groups)
@@ -222,7 +219,7 @@
 ++  do-import
   |=  =path
   ^-  [(list move) _this]
-  =/  file  .^(^groups %cx (weld path /[export-mark]))
+  =/  file  .^(^groups %cx (weld path /peerlist-groups))
   =/  load=(list [=tag =ship])
     ::TODO  tap:ju
     %-  zing
