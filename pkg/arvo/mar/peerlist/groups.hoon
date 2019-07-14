@@ -42,7 +42,8 @@
     |=  [=tag =group]
     ^-  cord
     %-  crip
-    %+  fuse  ","
+    %-  zing
+    %+  join  ","
     :-  (scow %ta tag)
     %+  turn
       (sort ~(tap in group) lth)

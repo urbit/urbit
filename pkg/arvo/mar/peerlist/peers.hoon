@@ -50,7 +50,9 @@
     |=  [who=ship relation]
     ^-  cord
     %-  crip
-    %+  fuse  ","
+    %-  zing
+    %+  join  ","
+    ^-  (list tape)
     :~  (scow %p who)
         ?^(we-since (scow %da u.we-since) "")
         ?^(they-since (scow %da u.they-since) "")
