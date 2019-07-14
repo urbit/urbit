@@ -41,10 +41,10 @@
       ::  %clear: clear all peers from this group
       ::
       [%clear group=tag]
-      ::  %export: write export-file to path
+      ::  %export: write export-file to spur (without mark)
       ::
-      [%export =path which=(set tag)]
-      ::  %import: replace state with export-file at path
+      [%export =spur which=(set tag)]
+      ::  %import: combine state with export-file at path (without mark)
       ::
       [%import =path]
       ::  %debug: helper
@@ -82,6 +82,7 @@
 +$  move  [bone card]
 +$  card
   $%  [%poke wire dock %noun foreign-pokes]
+      [%info wire toro:clay]
   ==
 --
 ::
@@ -113,6 +114,9 @@
 ::
 ++  default-relation
   %*(. *relation public default-public.settings)
+::
+++  export-mark
+  `mark`(cat 3 dap.bowl '-groups')
 ::
 ::  management
 ::
@@ -182,6 +186,45 @@
   |=  =tag
   [~ this(groups (~(del by groups) tag))]
 ::
+++  do-export
+  |=  [=spur which=(set tag)]
+  =-  [[[ost.bowl %info [%export spur] -] ~] this]
+  %+  foal:space:userlib
+    :*  (scot %p our.bowl)
+        q.byk.bowl
+        (scot %da now.bowl)
+        (weld spur /[export-mark])
+    ==
+  :-  export-mark
+  !>
+  ?~  which  groups
+  %-  ~(gas by *^groups)
+  %+  skim  ~(tap by groups)
+  ::TODO  (cork head ~(has in `(set tag)`which))
+  |=  [=tag group]
+  ::NOTE  cast because tmi
+  (~(has in `(set ^tag)`which) tag)
+::
+++  do-import
+  |=  =path
+  ^-  [(list move) _this]
+  =/  file  .^(^groups %cx (weld path /[export-mark]))
+  =/  load=(list [=tag =ship])
+    ::TODO  tap:ju
+    %-  zing
+    %+  turn  ~(tap by file)
+    |=  [=tag =group]
+    ^-  (list [^tag ship])
+    %+  turn  ~(tap in group)
+    ::TODO  tack
+    |=(=ship [tag ship])
+  ::
+  =|  moz=(list move)
+  |-
+  ?~  load  [moz this]
+  =^  mon  this  (do-add [ship `tag]:i.load)
+  $(moz (weld mon moz), load t.load)
+::
 ::  move construction
 ::
 ++  peer
@@ -220,9 +263,9 @@
     %add     (do-add +.poke)
     %remove  (do-remove +.poke)
     %fill    (do-fill +.poke)
-    %export  !!
-    %import  !!
     %clear   (do-clear +.poke)
+    %export  (do-export +.poke)
+    %import  (do-import +.poke)
   ::
       %debug
     ~&  peers+peers
