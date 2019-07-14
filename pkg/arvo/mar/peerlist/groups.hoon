@@ -18,8 +18,7 @@
     |=  line=cord
     ^-  (pair tag group)
     %+  rash  line
-    |^  ;~((glue com) ta gr)
-    ++  ta  ;~(pfix ;~(plug sig dot) urs:ab)
+    |^  ;~(plug ;~(sfix urs:ab col) gr)
     ++  p   ;~(pfix sig fed:ag)
     ++  gr  (cook ~(gas in *group) (more com p))
     --
@@ -52,8 +51,8 @@
     ^-  cord
     %-  crip
     %-  zing
+    :+  (scow %tas tag)  ":"
     %+  join  ","
-    :-  (scow %ta tag)
     %+  turn
       (sort ~(tap in group) lth)
     (cury scow %p)
