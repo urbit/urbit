@@ -41,6 +41,9 @@
       ::  %clear: clear all peers from this group
       ::
       [%clear group=tag]
+      ::  %reset: clear all state
+      ::
+      [%reset ~]
       ::  %export: write export-file to spur (without mark)
       ::
       [%export =spur which=(set tag)]
@@ -186,6 +189,14 @@
   |=  =tag
   [~ this(groups (~(del by groups) tag))]
 ::
+++  do-reset
+  =/  byes=(list ship)  ~(tap in ~(key by peers))
+  =|  moz=(list move)
+  |-
+  ?~  byes  [moz this]
+  =^  mon  this  (do-remove i.byes ~)
+  $(moz (weld mon moz), byes t.byes)
+::
 ++  do-export
   |=  [=spur which=(set tag)]
   =-  [[[ost.bowl %info [%export spur] -] ~] this]
@@ -249,7 +260,7 @@
     ?:  =(src.bowl our.bowl)  [~ this]
     (poke-foreign-poke poke)
   ::
-      ?(%add %remove %fill %clear %export %import %debug)
+      ?(%add %remove %fill %clear %reset %export %import %debug)
     ?.  =(src.bowl our.bowl)  [~ this]
     (poke-local-poke poke)
   ==
@@ -264,6 +275,7 @@
     %remove  (do-remove +.poke)
     %fill    (do-fill +.poke)
     %clear   (do-clear +.poke)
+    %reset   do-reset
     %export  (do-export +.poke)
     %import  (do-import +.poke)
   ::
