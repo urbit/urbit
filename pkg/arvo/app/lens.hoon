@@ -61,6 +61,12 @@
   =/  com=command:lens
     (json:grab:lens-mark jon)
   :_  this(job.state (some [ost.bow com]))
+  ::
+  ?:  ?=(%export -.source.com)
+    ::  todo: send export commands
+    ~&  [%export app.source.com]
+    ~
+::    [ost.bow %peer /sole [our.bow app.source.com] /export]~
   [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
 ::
 ++  diff-lens-json

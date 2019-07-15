@@ -15,6 +15,7 @@
       {$hoon code/@t next/source}         ::  end since they
       {$tuple next/(list source)}         ::  don't bunt well
       {$listen-api api/term event/term}
+      {$export app/@t}
   ==
 ++  sink
   $%  {$stdout ~}
