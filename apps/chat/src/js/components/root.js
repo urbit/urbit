@@ -36,11 +36,7 @@ export class Root extends Component {
     let configs = !!state.configs ? state.configs : {};
 
     let circles = Object.keys(configs).filter((conf) => {
-      if (!configs[conf]) {
-        return false;
-      }
-      let cap = configs[conf].cap;
-      return cap === 'dm' || cap === 'chatroom';
+      return !!configs[conf] && conf.split('/')[1] !== 'i';
     });
 
     let messages = _.get(state, 'messages', {});
@@ -112,7 +108,6 @@ export class Root extends Component {
                 <div className="w-100 h-100 fr" style={{ flexGrow: 1 }}>
                   <div className="dt w-100 h-100">
                     <div className="dtc center v-mid w-100 h-100 bg-white">
-                      <p className="tc">Cmd + N to start a new chat</p>
                     </div>
                   </div>
                 </div>

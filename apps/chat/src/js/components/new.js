@@ -50,7 +50,7 @@ export class NewScreen extends Component {
         create: {
           nom: state.idName,
           des: "chatroom",
-          sec: "journal"
+          sec: "village"
         }
       },
       {
