@@ -2918,12 +2918,21 @@
       ?:  |(?=(%& -.w) (~(has by cez) p.w))  s
       (~(put in s) p.w)
     ?^  mis
+      ::  TODO remove this nasty hack
+      ::
+      ?.  ?=([[%a *] *] hen)
+        +>.$
       =-  (emit hen %give %done `[%perm-fail [%leaf "No such group(s): {-}"]~])
       %+  roll  ~(tap in `(set @ta)`mis)
       |=  {g/@ta t/tape}
       ?~  t  (trip g)
       :(weld t ", " (trip g))
-    =<  (emit hen %give %done ~)
+    ::  TODO remove this nasty hack
+    ::
+    =<  ?.  ?=([[%a *] *] hen)
+          .
+        (emit hen %give %done ~)
+    ::
     ?-  -.rit
       $r    wake(per (put-perm per pax red.rit))
       $w    wake(pew (put-perm pew pax wit.rit))

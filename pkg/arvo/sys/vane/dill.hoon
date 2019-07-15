@@ -377,16 +377,9 @@
             {?($a $b $c $e $f $g $i $k) $mass *}
           (wegh -.sih p.sih)
         ::
-            {$a $nice *}
-          ::  ~&  [%take-nice-ames sih]
-          +>
-        ::
             [%k %init *]
           ::  pass thru to unix
           ::
-          +>(moz :_(moz [hen %give +.sih]))
-        ::
-            {$a $send *}
           +>(moz :_(moz [hen %give +.sih]))
         ::
             {$g $onto *}
