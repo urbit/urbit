@@ -89,11 +89,7 @@
 ++  sign                                                ::  in result $<-
   $~  [%k %init *@p]                                    ::
   $%  $:  %a                                            ::
-          $%  [%nice ~]                                 ::  XX obsolete
-              $>  $?  %mass                             ::
-                      %send                             ::  XX strange
-                  ==                                    ::
-              gift:able:ames                            ::
+          $%  $>(%mass gift:able:ames)                  ::
       ==  ==                                            ::
       $:  %b                                            ::
           $%  $>(%mass gift:able:behn)                  ::
