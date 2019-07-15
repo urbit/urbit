@@ -2,9 +2,9 @@ module Main where
 
 import ClassyPrelude
 
-import Types
 import Nuevo
 import Program
+import Types
 
 main :: IO ()
 main = do
@@ -12,7 +12,7 @@ main = do
         NEvInit TopConnection (Path []) spawnsAnUnsafeMessagePrintingProgram (IoSocket 0 "base") "datum" :: NuevoEvent
 
   let (newState, effects) =
-        (runNuevoFunction (emptyNuevoState, initEvent))
+        (runNuevoFunction emptyNuevoState initEvent)
 
   print ("state: " ++ (show (nsProgramState newState)))
   print ("effects: " ++ (show effects))

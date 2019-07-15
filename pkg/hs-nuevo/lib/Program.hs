@@ -1,7 +1,6 @@
 module Program where
 
 import ClassyPrelude
-
 import Types
 
 unsafeMessagePrintingProgram :: NuevoProgram

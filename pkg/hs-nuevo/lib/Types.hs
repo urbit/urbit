@@ -5,7 +5,6 @@ import ClassyPrelude
 import qualified Data.Bimap as B
 import qualified Data.Map   as M
 
-
 -- This entire prototype is only to show off the process model to reason about
 -- whether things just deadlock. So our "vase" is just a list of text
 -- fragments. Thats all you get on your typed channels.
@@ -28,14 +27,27 @@ type Message = String
 -- This is not part of Nuevo proper, but is meant to be the Vere equivalent
 -- which sends messages to each
 data VereEnv = VereEnv
-  { instances :: M.Map Path NuevoState
+  { instances :: M.Map Connection InstanceThread
 
   }
 
 
+data InstanceThread = InstanceThread
+  -- TODO: eventually, event queue needs to be some sort of STMed thing between
+  -- threads. Right now, it is a list queue.
+  { itEventQueue :: [NuevoEvent]
+  , itNuevoState :: NuevoState
+  , itEventLog   :: [(Int,NuevoEvent)]
+  }
+
 -------------------------------------------------------------------------------
 
--- |
+-- | Represents a node in the Nuevo DAG
+--
+-- Nuevo instances form a DAG.
+--
+-- TODO: Connection is a terrible name since it is the identity of a node and
+-- "Connection" implies that it is an edge instead of a vertex.
 data Connection
   = TopConnection
   | ProcessConnection Path Int
@@ -73,12 +85,18 @@ data NuevoEvent
   }
 
 data NuevoEffect
-  = NEfFork String Bool NuevoProgram HandleType Message
-  | NEfTerminate
+  = NEfFork
+  { neForkName    :: String
+  , neForkLogged  :: Bool
+  , neForkProgram :: NuevoProgram
+  , neForkHandle  :: HandleType
+  , neForkMessage :: Message
+  }
+--  | NEfTerminate
   | NEfSend Socket Message
   deriving (Show)
 
--- | Each instance of a Nuevo kernel. 
+-- | Each instance of a Nuevo kernel.
 data NuevoState = NuevoState
   { nsParent       :: Connection
   , nsName         :: Path
@@ -101,7 +119,7 @@ emptyNuevoState = NuevoState
 
 
 --  Processes a single Nuevo event
-type NuevoFunction = (NuevoState, NuevoEvent) -> (NuevoState, [NuevoEffect])
+type NuevoFunction = NuevoState -> NuevoEvent -> (NuevoState, [NuevoEffect])
 
 
 -------------------------------------------------------------------------------
@@ -132,8 +150,7 @@ data ProgramEffect
 -- TODO: A realer state.
 type ProgramState = M.Map String String
 
--- -- The type of a program that nuevo runs.
--- type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect)
+-- | The type of a program that nuevo runs.
 type NuevoProgram = (ProgramState, ProgramEvent) -> (ProgramState, [ProgramEffect])
 
 instance Show NuevoProgram where

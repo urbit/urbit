@@ -22,6 +22,7 @@ dependencies:
   - bimap
   - classy-prelude
   - containers
+  - stm
 
 default-extensions:
   - ApplicativeDo

@@ -20,8 +20,8 @@ import qualified Data.Map   as M
 runNuevoFunction :: NuevoFunction
 
 -- The NEvInit function just changes the program identity and then
-runNuevoFunction (oldState, NEvInit{..}) =
-  runNuevoFunction (newState, NEvRecv nevInitSentOver nevInitMessage)
+runNuevoFunction oldState NEvInit{..} =
+  runNuevoFunction newState (NEvRecv nevInitSentOver nevInitMessage)
   where
     newState = oldState
       { nsParent  = nevInitConnection
@@ -34,7 +34,7 @@ runNuevoFunction (oldState, NEvInit{..}) =
       }
 
 -- A recv takes a message and gives it to the program to make a list of effects
-runNuevoFunction (oldNuevoState@NuevoState{..}, NEvRecv{..}) =
+runNuevoFunction oldNuevoState@NuevoState{..} NEvRecv{..} =
   (newNuevoState, nuevoEffects)
   where
     -- TODO: Check for invalid incoming sockets.

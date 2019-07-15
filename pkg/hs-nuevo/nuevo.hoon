@@ -933,3 +933,6 @@
 ::
 
 :: %cleario is unnecessary? (You can just close the handles directly?)
+
+:: One weird thing in the spec above is rolling the first message into the
+:: opening %init.
