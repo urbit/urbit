@@ -1,5 +1,5 @@
 /-  lens
-/+  *server
+/+  *server, base64
 /=  lens-mark  /:  /===/mar/lens/command
                    /!noun/
 =,  format
@@ -12,6 +12,7 @@
 +$  card
   $%  [%connect wire binding:eyre term]
       [%http-response =http-event:http]
+      [%peer wire dock path]
       [%peel wire dock mark path]
       [%poke wire dock poke]
       [%pull wire dock ~]
@@ -49,6 +50,7 @@
   %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:eyre
   ^-  (quip move _this)
+  ~&  %poke-handle-http-request-lens
   ?^  job.state
     :_  this
     [ost.bow %http-response %start [%500 ~] ~ %.y]~
@@ -65,8 +67,7 @@
   ?:  ?=(%export -.source.com)
     ::  todo: send export commands
     ~&  [%export app.source.com]
-    ~
-::    [ost.bow %peer /sole [our.bow app.source.com] /export]~
+    [ost.bow %peer /sole [our.bow app.source.com] /export]~
   [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
 ::
 ++  diff-lens-json
@@ -74,9 +75,39 @@
   ^-  (quip move _this)
   ?~  jon
     [~ this]
+  ~&  [%json jon]
   ?>  ?=(^ job.state)
   :_  this(job.state ~)
   [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
+::
+++  diff-export
+  |=  [=wire data=*]
+  ^-  (quip move _this)
+  ::
+  ?>  ?=(^ job.state)
+  ::  TOOD: the following isn't really good enough.
+  ::
+  ::    To have herb write a file to the cwd, you need to have an --output-pill
+  ::    blah.txt which gets turned into '/blah/txt' here. So we need to have
+  ::
+  ::    Thankfully, --output-pill is already so fragile it barely works on any
+  ::    paths that aren't referencing a file in the CWD.
+  ::
+  ?>  ?=(%output-pill -.sink.com.u.job.state)
+  =/  output=@t  '/myfile/txt' ::  pax.sink.com.u.job.state
+  ::(need (de-beam:format pax.sink.com.u.job.state))
+  ::
+  =/  jon=json
+    =/  =atom  (jam data)
+    =/  =octs  [(met 3 atom) atom]
+    =/  enc  (en:base64 octs)
+    (pairs:enjs:format file+s+output data+s+enc ~)
+  ::
+  ~&  [%jon jon]
+  ::
+  :_  this(job.state ~)
+  [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
+
 ::
 ++  quit
   |=  =wire
