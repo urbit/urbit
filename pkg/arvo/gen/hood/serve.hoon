@@ -7,12 +7,10 @@
 ::::
   ::
 :-  %say
-|=  $:  {now/@da eny/@uvJ bec/beak}
-        {{pax/$@(term {i/knot t/path}) ~} ~}
+|=  $:  [now=@da eny=@uvJ bec=beak]
+        [pax=path syd=desk gen=path ~]
+        ~
     ==
-:-  %helm-serve
-?@  pax  pax
-=+  bem=(need (de-beam:format pax))
-?.  =([%da now] r.bem)                :: XX actual sentinel
-  bem
-bem(r [%ud 0])
+:+  %helm-serve
+  `binding:eyre`[~ pax]
+`generator:eyre`[syd gen ~]

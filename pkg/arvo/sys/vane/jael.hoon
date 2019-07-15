@@ -1153,15 +1153,17 @@
     =+  yez=~(tap in yen)
     |-  ^+  ..vent-pass
     ?~  yez  ..vent-pass
-    =*  d  i.yez
-    ?>  ?=([[%a @ @ *] *] d)
-    =+  our=(slav %p i.t.i.d)
-    =+  who=(slav %p i.t.t.i.d)
-    %+  exec  [d ~ ~]
-    :+  %pass
-      /(scot %p our)/vent-result
-    ^-  note
-    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    =.  ..vent-pass
+      =*  d  i.yez
+      ?>  ?=([[%a @ @ *] *] d)
+      =+  our=(slav %p i.t.i.d)
+      =+  who=(slav %p i.t.t.i.d)
+      %+  exec  [d ~ ~]
+      :+  %pass
+        /(scot %p our)/vent-result
+      ^-  note
+      [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    $(yez t.yez)
   ::
   ++  extract-snap                                    ::  extract rewind point
     ^-  snapshot
@@ -1409,11 +1411,11 @@
     ++  get-public
       |=  who=ship
       ^-  public
-      %+  fall  (~(get by kyz) who)
+      %+  ~(gut by kyz)  who
       ::NOTE  we can only do this because ++pubs:feel
       ::      sends out entire new state, rather than
       ::      just the processed changes.
-      %+  fall  (~(get by kyz.puk) who)
+      %+  ~(gut by kyz.puk)  who
       *public
     ::
     ++  file-keys
@@ -1477,7 +1479,7 @@
                  ~|  sunk-unknown+who
                  =<  continuity-number
                  %+  fall
-                   net:(fall (~(get by pos.eth) who) *point)
+                   net:(~(gut by pos.eth) who *point)
                  *[life pass continuity-number=@ud [? @p] (unit @p)]
                %+  weld
                  ::  %-  flop
@@ -1493,7 +1495,7 @@
       ::  pon: updated point
       ::  new: new keypair or "kept continuity?" (yes is no-op)
       ^-  [pon=point new=(each (pair life pass) ?)]
-      =+  pot=(fall (~(get by pos.eth) who) *point)
+      =+  pot=(~(gut by pos.eth) who *point)
       ::
       ::  sanity checks, should never fail if we operate correctly
       ::
@@ -1612,13 +1614,13 @@
     ::                                                  ::  ++able:ex:ur
     ++  able                                            ::  initialize
       %_  .
-        shy  (fall (~(get by pry) rex) *(map ship safe))
+        shy  (~(gut by pry) rex *(map ship safe))
       ==
     ::                                                  ::  ++deal:ex:ur
     ++  deal                                            ::  alter rights
       |=  {pal/ship del/bump}
       ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *safe)
+      =/  gob  (~(gut by shy) pal *safe)
       =*  hep  (~(update up gob) del)
       %_  +>.$
         shy  (~(put by shy) pal hep)
@@ -1628,7 +1630,7 @@
     ++  hail                                            ::  ++hail:ex:ur
       |=  {pal/ship rem/remote}                         ::  report rights
       ^+  +>
-      =/  gob  (fall (~(get by shy) pal) *safe)
+      =/  gob  (~(gut by shy) pal *safe)
       ::  yer: pair of change and updated safe.
       =/  yer  ^-  (pair bump safe)
         ?-  -.rem
@@ -2224,7 +2226,7 @@
         ~(tap by yen.puk.sub)
       |-  ^+  +>.^$
       ?~  subs  +>.^$
-      =/  pub  (fall (~(get by kyz.snap) p.i.subs) *public)
+      =/  pub  (~(gut by kyz.snap) p.i.subs *public)
       =.  +>.^$  (exec q.i.subs [%give %pubs pub])
       $(subs t.subs)
     ::  update vent subscribers

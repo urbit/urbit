@@ -193,6 +193,9 @@ _pier_db_read_header(u3_pier* pir_u)
   u3z(life);
 }
 
+/* _pier_db_on_commit_loaded(): lmdb read callback
+**  RETAIN mat
+*/
 static c3_o
 _pier_db_on_commit_loaded(u3_pier* pir_u,
                           c3_d id,
@@ -702,18 +705,17 @@ _pier_work_replace(u3_writ* wit_u,
     u3_pier_bail();
   }
 
-  /* move backward in work processing
-  */
+  //  move backward in work processing
+  //
   {
     u3z(wit_u->job);
+    u3z(wit_u->mat);
+    wit_u->mat = 0;
     wit_u->job = job;
 
-    u3z(wit_u->mat);
-    wit_u->mat = u3ke_jam(u3nc(wit_u->mug_l,
-                               u3k(wit_u->job)));
+    _pier_work_build(wit_u);
 
     wit_u->rep_d += 1ULL;
-
     god_u->sen_d -= 1ULL;
   }
 
@@ -922,11 +924,13 @@ _pier_work_poke(void*   vod_p,
              (c3n == u3r_cell(entry, &mug, &job)) ||
              (c3n == u3ud(mug)) ||
              (1 < u3r_met(5, mug)) ) {
+          u3z(entry);
           goto error;
         }
 
         c3_l     mug_l = u3r_word(0, mug);
         if ( !wit_u || (mug_l && (mug_l != wit_u->mug_l)) ) {
+          u3z(entry);
           goto error;
         }
 #ifdef VERBOSE_EVENTS
@@ -934,6 +938,7 @@ _pier_work_poke(void*   vod_p,
 #endif
 
         _pier_work_replace(wit_u, u3k(job));
+        u3z(entry);
       }
       break;
     }
@@ -1391,7 +1396,7 @@ _pier_boot_vent(u3_boot* bot_u)
           if ( c3__into == u3h(u3t(ovo)) ) {
             c3_assert( 0 == len_w );
             len_w++;
-            ovo = u3k(u3t(pil_q));
+            ovo = u3t(pil_q);
           }
 
           new = u3nc(u3k(ovo), new);
@@ -1870,6 +1875,8 @@ u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav)
   struct timeval tim_tv;
 
   gettimeofday(&tim_tv, 0);
+  //  XX use wit_u->now (currently unused)
+  //
   now = u3_time_in_tv(&tim_tv);
 
   u3_pier_discover(pir_u, 0, u3nt(now, pax, fav));
@@ -2076,7 +2083,7 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    pir_u->bot_u = _pier_boot_create(pir_u, u3k(pil), u3k(ven));
+    pir_u->bot_u = _pier_boot_create(pir_u, pil, ven);
 
     _pier_boot_set_ship(pir_u, u3k(who), ( c3__fake == u3h(ven) ) ? c3y : c3n);
   }
@@ -2112,31 +2119,45 @@ c3_w
 u3_pier_mark(FILE* fil_u)
 {
   c3_w len_w = u3K.len_w;
-  c3_w tot_w = 0;
+  c3_w tot_w = 0, pir_w = 0;
   u3_pier* pir_u;
 
   while ( 0 < len_w ) {
     pir_u = u3K.tab_u[--len_w];
-    u3l_log("pier: %u\r\n", len_w);
+    pir_w = 0;
+
+    if ( 1 < u3K.len_w ) {
+      fprintf(fil_u, "pier: %u\r\n", len_w);
+    }
 
     if ( 0 != pir_u->bot_u ) {
-      tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
-      tot_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
+      pir_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
+      pir_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
     }
 
     {
-      u3_writ* wit_u = pir_u->ent_u;
-      c3_w wit_w = 0;
+      u3_writ* wit_u = pir_u->ext_u;
+      c3_w len_w = 0, tim_w = 0, job_w = 0, mat_w = 0, act_w =0;
 
       while ( 0 != wit_u ) {
-        wit_w += u3a_mark_noun(wit_u->job);
-        wit_w += u3a_mark_noun(wit_u->now);
-        wit_w += u3a_mark_noun(wit_u->mat);
-        wit_w += u3a_mark_noun(wit_u->act);
+        tim_w += u3a_mark_noun(wit_u->now);
+        job_w += u3a_mark_noun(wit_u->job);
+        mat_w += u3a_mark_noun(wit_u->mat);
+        act_w += u3a_mark_noun(wit_u->act);
+        len_w++;
         wit_u = wit_u->nex_u;
       }
 
-      tot_w += u3a_maid(fil_u, "  writs", wit_w);
+      if ( 0 < len_w ) {
+        fprintf(fil_u, "  marked %u writs\r\n", len_w);
+      }
+
+      pir_w += u3a_maid(fil_u, "  timestamps", tim_w);
+      pir_w += u3a_maid(fil_u, "  events", job_w);
+      pir_w += u3a_maid(fil_u, "  encoded events", mat_w);
+      pir_w += u3a_maid(fil_u, "  pending effects", act_w);
+
+      tot_w += u3a_maid(fil_u, "total pier stuff", pir_w);
     }
   }
 

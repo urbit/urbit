@@ -18,6 +18,7 @@ defmacro () {
 defmacro URBIT_VERSION "\"$URBIT_VERSION\""
 
 [ -n "$MEMORY_DEBUG" ]     && defmacro U3_MEMORY_DEBUG 1
+[ -n "$MEMORY_LOG" ]       && defmacro U3_MEMORY_LOG 1
 [ -n "$CPU_DEBUG" ]        && defmacro U3_CPU_DEBUG 1
 [ -n "$EVENT_TIME_DEBUG" ] && defmacro U3_EVENT_TIME_DEBUG 1
 

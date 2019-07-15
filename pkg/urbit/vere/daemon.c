@@ -161,7 +161,7 @@ _daemon_defy_fate()
 void
 _daemon_fate(void *vod_p, u3_noun mat)
 {
-  u3_noun fate = u3ke_cue(u3k(mat));
+  u3_noun fate = u3ke_cue(mat);
   u3_noun load;
   void (*next)(u3_noun);
 
@@ -466,6 +466,7 @@ _daemon_get_atom(c3_c* url_c)
     exit(1);
   }
 
+  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _daemon_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -840,6 +841,7 @@ void
 _daemon_loop_exit()
 {
   unlink(u3K.soc_c);
+  unlink(u3K.certs_c);
 }
 
 /* u3_daemon_commence(): start the daemon
@@ -916,25 +918,60 @@ u3_daemon_bail(void)
   exit(1);
 }
 
-/* u3_daemon_grab(): gc the daemon area
+/* u3_daemon_grab(): gc the daemon
 */
 void
 u3_daemon_grab(void* vod_p)
 {
-  //  XX fix leaks and enable
-  //
-#if 0
-  c3_w man_w = 0, pir_w = 0;
-  FILE* fil_u = stderr;
+  c3_w tot_w = 0;
+  FILE* fil_u;
 
   c3_assert( u3R == &(u3H->rod_u) );
 
-  fprintf(fil_u, "measuring daemon:\r\n");
+#ifdef U3_MEMORY_LOG
+  {
+    //  XX date will not match up with that of the worker
+    //
+    u3_noun wen = u3dc("scot", c3__da, u3k(u3A->now));
+    c3_c* wen_c = u3r_string(wen);
 
-  man_w = u3m_mark(fil_u);
-  pir_w = u3_pier_mark(fil_u);
+    c3_c nam_c[2048];
+    snprintf(nam_c, 2048, "%s/.urb/put/mass", u3_pier_stub()->pax_c);
 
-  u3a_print_memory(fil_u, "total marked", man_w + pir_w);
+    struct stat st;
+    if ( -1 == stat(nam_c, &st) ) {
+      mkdir(nam_c, 0700);
+    }
+
+    c3_c man_c[2048];
+    snprintf(man_c, 2048, "%s/%s-daemon.txt", nam_c, wen_c);
+
+    fil_u = fopen(man_c, "w");
+    fprintf(fil_u, "%s\r\n", wen_c);
+
+    free(wen_c);
+    u3z(wen);
+  }
+#else
+  {
+    fil_u = u3_term_io_hija();
+    fprintf(fil_u, "measuring daemon:\r\n");
+  }
+#endif
+
+  tot_w += u3m_mark(fil_u);
+  tot_w += u3_pier_mark(fil_u);
+
+  u3a_print_memory(fil_u, "total marked", tot_w);
   u3a_print_memory(fil_u, "sweep", u3a_sweep());
+
+#ifdef U3_MEMORY_LOG
+  {
+    fclose(fil_u);
+  }
+#else
+  {
+    u3_term_io_loja(0);
+  }
 #endif
 }

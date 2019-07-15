@@ -366,7 +366,7 @@
 ::
 ++  auto
   |=  kiln-sync
-  =+  (fall (~(get by syn) syd her sud) [let=*@ud ust=ost])
+  =+  (~(gut by syn) [syd her sud] [let=*@ud ust=ost])
   |%
   ++  abet
     ..auto(syn (~(put by syn) [syd her sud] let ust))
@@ -470,7 +470,7 @@
 ++  work                                              ::  state machine
   |=  syd/desk
   =+  ^-  per-desk
-      %+  fall  (~(get by rem) syd)
+      %+  ~(gut by rem)  syd
       =+  *per-desk
       %_(- cas [%da now])
   |%

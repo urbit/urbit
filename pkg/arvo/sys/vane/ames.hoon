@@ -309,7 +309,7 @@
         |=  her=ship
         ^+  lax
         =/  fod=dore
-          (fall (~(get by hoc.ton) her) (gur her))
+          (~(gut by hoc.ton) her (gur her))
         ~(. lax [her fod])
       ::
       ++  nux                                           ::  install dore
@@ -608,8 +608,9 @@
     ::  +turf-scry: for network domains
     ::
     ++  turf-scry
-      ~/  %turf
-      ;;  (list turf)
+      =<  $
+      ~%  %turf  +  ~
+      |.  ;;  (list turf)
       %-  need  %-  need
       %-  (sloy-light ski)
       [[151 %noun] %j our %turf da+now ~]
@@ -1018,7 +1019,7 @@
           ++  deer                                      ::    deer:la:ho:um:am
             |=  [cha=path num=@ud dut=(unit)]           ::  interpret message
             ^+  +>
-            =+  rum=(fall (~(get by raz.bah) cha) *race)
+            =+  rum=(~(gut by raz.bah) cha *race)
             ::  ~&  [%rx kay cha num [dod.rum did.rum] ?=(~ dut)]
             =*  bad  (~(has in bad.fox) her)
             =.  kay  ?.((~(has in bad.fox) her) kay ~&(%blocked %dead))
@@ -1030,8 +1031,7 @@
                 ::  or negative ack if this ship is blocked
                 ::
                 =*  cop  ^-  coop
-                  %+  fall
-                    (~(get by bum.rum) num)
+                  %+  ~(gut by bum.rum)  num
                   ?:(bad ~ ``[%blocked ~])
                 con:(cook (~(get by bum.rum) num) cha `[ryn dam])
               ::
@@ -1177,7 +1177,7 @@
         ++  wool                                        ::    wool:ho:um:am
           |=  [hen=duct cha=path val=*]                 ::  send a statement
           ^+  +>
-          =/  rol=rill  (fall (~(get by ryl.bah) cha) *rill)
+          =/  rol=rill  (~(gut by ryl.bah) cha *rill)
           =/  sex=@ud  sed.rol
           ::  ~&  [%tx [our her] cha sex]
           ::  if we don't have a public key for :her,

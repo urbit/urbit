@@ -1,6 +1,6 @@
 { env_name, env, deps }:
 
-{ ent, ge-additions, name ? "urbit", debug ? false }:
+{ ent, ge-additions, cacert, xxd, name ? "urbit", debug ? false }:
 
 let
 
@@ -21,10 +21,12 @@ env.make_derivation {
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;
   NCURSES          = env.ncurses;
+  SSL_CERT_FILE    = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
-  name          = "${name}-${env_name}";
-  exename       = name;
-  src           = ../../../pkg/urbit;
-  cross_inputs  = crossdeps ++ vendor ++ [ ent ];
-  builder       = ./release.sh;
+  name              = "${name}-${env_name}";
+  exename           = name;
+  src               = ../../../pkg/urbit;
+  native_inputs     = [ xxd ];
+  cross_inputs      = crossdeps ++ vendor ++ [ ent ];
+  builder           = ./release.sh;
 }

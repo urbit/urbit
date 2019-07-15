@@ -147,7 +147,7 @@
 ::  +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire =binding:eyre app=term]
+  $%  [%serve wire =binding:eyre =generator:eyre]
       [%http-response =http-event:http]
       [%poke wire dock poke]
       [%request wire request:http outbound-config:iris]
@@ -328,10 +328,13 @@
       rod=(unit order)
       ::  next-order: queued domains for validation
       ::
-      next-order=(unit (map turf [idx=@ud valid=?]))
+      next-order=(unit [try=@ud dom=(map turf [idx=@ud valid=?])])
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
+      ::  challenges: domain-validation challenge tokens
+      ::
+      challenges=(set @t)
   ==
 --
 ::
@@ -522,7 +525,7 @@
     ~|  %validate-domain-effect-fail
     ?.  ?=(^ next-order)  ~|(%no-next-order !!)
     =/  pending
-      (skip ~(tap by u.next-order) |=([turf @ud valid=?] valid))
+      (skip ~(tap by dom.u.next-order) |=([turf @ud valid=?] valid))
     ?:  =(~ pending)
       new-order:effect
     =/  next=[=turf idx=@ud valid=?]
@@ -582,7 +585,7 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ liv)      ~|(%no-live-config !!)
     =<  new-order:effect
-    (queue-next-order & dom.u.liv)
+    (queue-next-order 1 & dom.u.liv)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
@@ -595,7 +598,7 @@
         :-  %identifiers
         :-  %a
         %+  turn
-          ~(tap in ~(key by `(map turf *)`u.next-order))
+          ~(tap in ~(key by `(map turf *)`dom.u.next-order))
         |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
       ==
     =/  wire-params  [try %new-order /(scot %da now.bow)]
@@ -605,20 +608,19 @@
   ++  cancel-order
     ^+  this
     ~|  %cancel-order-effect-fail
-    :: ?>  ?=(^ rod)
-    ::  XX get failure reason
-    ::
-    =/  try=@ud  ?~(rod 1 try.u.rod)
+    =*  order  ?>(?=(^ rod) u.rod)  ::  XX TMI
     ::  backoff faster than usual
     ::
-    =/  lul=@dr  (min ~h1 (backoff (add 4 try)))
+    =/  lul=@dr  (min ~h1 (backoff (add 5 try.order)))
+    ::  XX get failure reason
+    ::
     =/  msg=cord
       (cat 3 'retrying certificate request in ' (scot %dr lul))
     =.  ..this  (emit (notify msg ~))
     =.  ..this  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
-    =.  ..this  (queue-next-order & ?>(?=(^ rod) dom.u.rod))
+    =.  ..this  (queue-next-order +(try.order) & dom.order)
     cancel-current-order
   ::  +finalize-order: finalize completed order
   ::
@@ -753,13 +755,13 @@
     =/  idx  (slav %ud i.t.wire)
     =/  valid  |(=(200 p.rep) =(307 p.rep))
     =/  item=(list [=turf idx=@ud valid=?])
-      (skim ~(tap by u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
+      (skim ~(tap by dom.u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
     ?.  ?&  ?=([^ ~] item)
             !valid.i.item
         ==
       this
-    =.  u.next-order
-      (~(put by u.next-order) turf.i.item [idx valid])
+    =.  dom.u.next-order
+      (~(put by dom.u.next-order) turf.i.item [idx valid])
     ?.  valid
       ?:  (lth try 10)
         =/  lul=@dr  (min ~h1 (backoff try))
@@ -773,7 +775,7 @@
             ' via http at '  (en-turf:html turf.i.item)  ':80'
         ==
       (emit(next-order ~) (notify msg [(sell !>(rep)) ~]))
-    ?:  ?=(~ (skip ~(val by u.next-order) |=([@ud valid=?] valid)))
+    ?:  ?=(~ (skip ~(val by dom.u.next-order) |=([@ud valid=?] valid)))
       new-order:effect
     (validate-domain:effect +(idx))
   ::  +directory: accept ACME service directory, trigger registration
@@ -860,12 +862,21 @@
     ::
     =/  bod=order:body
       (order:grab (need (de-json:html q:(need r.rep))))
-    =/  dom=(set turf)  ~(key by u.next-order)
+    =/  dom=(set turf)  ~(key by dom.u.next-order)
     ::  XX maybe generate key here?
     ::
     =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom))
     =/  dor=order
-      [dom try=1 sas=%wake exp.bod ego (need fin.bod) cey csr [aut.bod ~ ~]]
+      :*  dom
+          try.u.next-order
+          sas=%wake
+          exp.bod
+          ego
+          (need fin.bod)
+          cey
+          csr
+          [aut.bod ~ ~]
+      ==
     get-authz:effect(rod `dor, next-order ~)
   ::  +finalize-order: order finalized, poll for certificate
   ::
@@ -1016,6 +1027,9 @@
         pending  t.pending.aut.u.rod
         active   `[idx tau]
       ==
+    ::  XX space leak, should be pruned on order completion or timeout
+    ::
+    =.  challenges  (~(put in challenges) tok.cal)
     test-trial:effect(aut.u.rod rod-aut)
   ::  XX check/finalize-authz ??
   ::
@@ -1188,49 +1202,21 @@
     ::  XX delete-trial?
     ::
   ==
-::  +poke-handle-http-request: receive incoming http request
+::  +peek: read from app state
 ::
-::    Used to serve the domain validation challenge
-::
-++  poke-handle-http-request
-  |=  =inbound-request:eyre
-  ^-  (quip move _this)
-  ~&  [%handle-http +<]
-  =/  url=(unit (pair pork:eyre quay:eyre))
-    %+  rush
-      url.request.inbound-request
-    ;~(plug ;~(pose apat:de-purl:html (easy *pork:eyre)) yque:de-purl:html)
-  ::
-  ?.  ?=(^ url)
-    ~|  [%invalid-url url.request.inbound-request]  !!
-  ?.  ?=([%'.well-known' %acme-challenge @ ~] q.p.u.url)
-    ~|  [%unknown-url url.request.inbound-request]  !!
-  ::
-  ::  XX these crashes should be restored
-  ::  but %eyre doesn't get an error notification from %gall
-  ::
-  :: ?.  ?=(^ reg.act)  ~|(%no-account !!)
-  :: ?.  ?=(^ rod)      ~|(%no-active-order !!)
-  :: ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
-  ?.  ?&  ?=(^ reg.act)
-          ?=(^ rod)
-          ?=(^ active.aut.u.rod)
-      ==
-    =/  =move  [ost.bow %http-response %start [%500 ~] ~ %.y]
-    [[move ~] this]
-  ::
-  =/  challenge  i.t.t.q.p.u.url
-  =*  aut  u.active.aut.u.rod
-  ?.  =(tok.cal.aut challenge)
-    =/  =move  [ost.bow %http-response %start [%404 ~] ~ %.y]
-    [[move ~] this]
-  =/  =move
-    =/  hed  ['content-type' '/text/plain']~
-    =/  bod
-      %-  some  %-  as-octs:mimes:html
-      (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
-    [ost.bow %http-response %start [%200 hed] bod %.y]
-  [[move ~] this]
+++  peek
+    |=  =path
+    ^-  (unit (unit [%noun (unit @t)]))
+    ?+  path
+      ~
+    ::
+        [%x %domain-validation @t ~]
+      =*  token  i.t.t.path
+      :^  ~  ~  %noun
+      ?.  (~(has in challenges) token)
+        ~
+      (some (rap 3 [token '.' (pass:thumb:jwk key.act) ~]))
+    ==
 ::  +wake: timer wakeup event
 ::
 ++  wake
@@ -1308,11 +1294,15 @@
   |=  old=(unit acme)
   ^-  (quip move _this)
   ?~  old
+    =/  =binding:eyre
+      [~ /'.well-known'/acme-challenge]
+    =/  =generator:eyre
+      [q.byk.bow /gen/acme/domain-validation/hoon ~]
     =/  =move
-      [ost.bow %connect /acme [~ /'.well-known'/acme-challenge] %acme]
+      [ost.bow %serve /acme binding generator]
     [[move ~] this]
   [~ this(+<+ u.old)]
-::  +bound: response to %connect binding request
+::  +bound: response to %serve binding request
 ::
 ++  bound
   |=  [=wire accepted=? =binding:eyre]
@@ -1351,10 +1341,11 @@
 ::  +queue-next-order: enqueue domains for validation
 ::
 ++  queue-next-order
-  |=  [valid=? dom=(set turf)]
+  |=  [try=@ud valid=? dom=(set turf)]
   ^+  this
   %=  this  next-order
-    :-  ~
+    :+  ~
+      try
     %+  roll
       ~(tap in dom)
     |=  [=turf state=(map turf [idx=@ud valid=?])]
@@ -1382,7 +1373,7 @@
     ~|(%acme-empty-certificate-order !!)
   ?:  ?=(?(%earl %pawn) (clan:title our.bow))
     this
-  =.  ..this  (queue-next-order | dom)
+  =.  ..this  (queue-next-order 1 | dom)
   =.  ..this  cancel-current-order
   ::  notify :hall
   ::

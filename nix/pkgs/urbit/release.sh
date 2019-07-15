@@ -14,9 +14,9 @@ PKG_CONFIG=pkg-config-cross \
 HOST=$host                  \
 bash ./configure
 
-make urbit urbit-worker -j8
+make build/urbit build/urbit-worker -j8
 
 mkdir -p $out/bin
 cp -r $NCURSES/share/terminfo $out/bin/$exename-terminfo
-cp urbit                      $out/bin/$exename
-cp urbit-worker               $out/bin/$exename-worker
+cp ./build/urbit              $out/bin/$exename
+cp ./build/urbit-worker       $out/bin/$exename-worker
