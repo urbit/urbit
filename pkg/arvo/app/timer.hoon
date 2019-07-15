@@ -77,7 +77,7 @@
     [~ this]
   =/  str/@t  +.jon
   ?:  =(str 'start')
-    =/  data/@da  (add now.bol ~s10)
+    =/  data/@da  (add now.bol ~m20)
     :_  this(tim data)
     [[ost.bol %wait /timer data] (send-tile-diff [%s (scot %da data)])]
   ?:  =(str 'stop')
