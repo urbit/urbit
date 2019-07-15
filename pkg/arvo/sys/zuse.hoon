@@ -413,7 +413,7 @@
           [%send =lane =blob]
           [%done error=(unit error)]
       ::
-          [%mass mass]
+          [%mass p=mass]
           [%turf turfs=(list turf)]
       ==
     --  ::able

@@ -14,9 +14,9 @@
     :~  ::  sys/zuse: standard library
         ::
         [%$ /zuse]
-        ::  sys/vane/ames: network
+        ::  sys/vane/alef: network
         ::
-        [%a /vane/ames]
+        [%a /vane/alef]
         ::  sys/vane/behn: timer
         ::
         [%b /vane/behn]
@@ -38,9 +38,9 @@
         ::  sys/vane/iris: http client
         ::
         [%i /vane/iris]
-        ::  sys/vane/jael: security
+        ::  sys/vane/kale: security
         ::
-        [%j /vane/jael]
+        [%k /vane/kale]
     ==
   |=  [=term =path]
   =/  pax  (weld sys path)

@@ -2670,7 +2670,7 @@
     %-  (sloy-light ski)
     =/  pur=spur
       /(scot %p who)
-    [[151 %noun] %j our %rift da+now pur]
+    [[151 %noun] %k our %rift da+now pur]
   ::
   ::  Handle `%sing` requests
   ::
@@ -4623,5 +4623,5 @@
   %-  (sloy-light ski)
   =/  pur=spur
     /(scot %p who)
-  [[151 %noun] %j our %rift da+now pur]
+  [[151 %noun] %k our %rift da+now pur]
 --

@@ -1237,19 +1237,19 @@
         %info  `%c
         %keep  `%f
         %kill  `%f
-        %look  `%j
+        %look  `%k
         %merg  `%c
-        %mint  `%j
+        %mint  `%k
         %mont  `%c
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %snap  `%j
+        %snap  `%k
         %wait  `%b
         %want  `%a
         %warp  `%c
-        %wind  `%j
+        %wind  `%k
         %wipe  `%f
       ::
         %request         `%i
