@@ -73,11 +73,7 @@ export default class ChatTile extends Component {
     return (
       <div className="w-100 h-100 relative" style={{ background: '#1a1a1a' }}>
         <a className="w-100 h-100 db pa2 no-underline" href="/~chat">
-          <p className="gray" style={{
-            fontWeight: 'bold',
-            fontSize: 14,
-            lineHeight: '24px'
-          }}>Chat</p>
+          <p className="gray label-regular b absolute" style={{left: 8, top: 4}}>Chat</p>
            <img
              className="absolute"
              style={{ left: 68, top: 65 }}
