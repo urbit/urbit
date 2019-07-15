@@ -1240,7 +1240,7 @@
       /* u3_pier_tank(): dump single tank.
       */
         void
-        u3_pier_tank(c3_l tab_l, u3_noun tac);
+        u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac);
 
       /* u3_pier_punt(): dump tank list.
       */

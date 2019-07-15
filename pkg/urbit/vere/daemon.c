@@ -334,7 +334,7 @@ _daemon_come(u3_noun star, u3_noun pill, u3_noun path)
 static void
 _daemon_slog(u3_noun hod)
 {
-  u3_pier_tank(0, u3k(u3t(hod)));
+  u3_pier_tank(0, 0, u3k(u3t(hod)));
   u3z(hod);
 }
 
