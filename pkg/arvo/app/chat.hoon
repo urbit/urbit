@@ -58,14 +58,48 @@
     =/  inboxwir  /circle/[(scot %p our.bol)]/inbox/config/group
     =/  inboxi/poke 
       :-  %hall-action
-          [%source %inbox %.y (silt [[our.bol %i] ~]~)]
-    :_  this
+      [%source %inbox %.y (silt [[our.bol %i] ~]~)]
+    =/  fakeannounce=poke
+      :-  %hall-action
+      [%create %hall-internal-announcements '' %village]
+    =/  announce=poke
+      :-  %hall-action
+      [%create %announcements 'Announcements from Tlon' %journal]
+    =/  help=poke
+      :-  %hall-action
+        [%create %urbit-help 'Get help about Urbit' %channel]
+    =/  dev=poke
+      :-  %hall-action
+      [%create %urbit-dev 'Chat about developing on Urbit' %channel]
+    =/  sourcefakeannounce/poke 
+      :-  %hall-action
+      [%source %inbox %.y (silt [[our.bol %hall-internal-announcements] ~]~)]
+    =/  sourceannounce/poke 
+      :-  %hall-action
+      [%source %inbox %.y (silt [[~marzod %announcements] ~]~)]
+    =/  hallactions=(list move)
+      ?:  =((clan:title our.bol) %czar)
+        ~
+      ?:  =(our.bol ~marzod)
+        ~&  %marzod-chat
+        :-  [ost.bol %poke /announce [our.bol %hall] announce]
+        [ost.bol %poke /announce [our.bol %hall] sourceannounce]~
+      ?:  =(our.bol ~dopzod)
+        ~&  %dopzod-chat
+        :-  [ost.bol %poke /announce [our.bol %hall] dev]
+        [ost.bol %poke /announce [our.bol %hall] help]~
+      :-  [ost.bol %poke /announce [our.bol %hall] fakeannounce]
+      :-  [ost.bol %poke /announce [our.bol %hall] sourcefakeannounce]
+      [ost.bol %poke /announce [our.bol %hall] sourceannounce]~
+    =/  moves=(list move)
     :~  [ost.bol %peer inboxwir [our.bol %hall] inboxpat]
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
         [ost.bol %poke /chat [our.bol %launch] launcha]
     ==
+    :_  this
+    %+  weld  moves  hallactions  
   :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
   this(sta u.old)
 ::
