@@ -2078,7 +2078,7 @@
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
-          $>(%west vane-task)                           ::  remote request
+          $>(%memo vane-task)                           ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::
@@ -2331,6 +2331,7 @@
     ++  oath  @                                         ::  signature
     --  ::  pki
   --  ::  kale
+--
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::

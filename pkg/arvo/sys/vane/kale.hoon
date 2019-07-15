@@ -482,7 +482,7 @@
         [%a %memo *]
       =.  moz  [[hen %give %done ~] moz]
       =+  ;;  =message-response  message.hin
-      (call hen %vent-update vent-result.message)
+      (call hen %vent-update vent-result.message-response)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -897,8 +897,7 @@
       =/  cub  (nol:nu:crub:crypto sec)
       =/  sig  (sign:as:cub (shaf %self (sham [u.who 1 pub:ex:cub])))
       :^  ~  ~  %noun
-      !>  ^-  deed:ames
-      [1 pub:ex:cub `sig]
+      !>  [1 pub:ex:cub `sig]
     ::
     ?:  ?=(%earl rac)
       ?.  =(u.who p.why)
@@ -910,8 +909,7 @@
       =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
       =/  cub  (nol:nu:crub:crypto sec)
       :^  ~  ~  %noun
-      !>  ^-  deed:ames
-      [u.lyf pub:ex:cub sig.own.pki.lex]
+      !>  [u.lyf pub:ex:cub sig.own.pki.lex]
     ::
     =/  pub  (~(get by pos.zim.pki.lex) u.who)
     ?~  pub
@@ -922,7 +920,7 @@
     ?~  pas
       ~
     :^  ~  ~  %noun
-    !>  `deed:ames`[u.lyf pass.u.pas ~]
+    !>  [u.lyf pass.u.pas ~]
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]
