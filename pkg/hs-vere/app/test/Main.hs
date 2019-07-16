@@ -27,7 +27,7 @@ main = do
     pPrint seq
 
     serf <- startSerfProcess "/home/benjamin/r/urbit/zod/"
-    bootFromSeq serf ident (muckBootSeq seq) >>= pPrint
+    bootFromSeq serf seq >>= pPrint
 
     -- (s,l,e,m) <- Pier.resume "/home/benjamin/r/urbit/zod/"
     -- putStrLn "Resumed!"

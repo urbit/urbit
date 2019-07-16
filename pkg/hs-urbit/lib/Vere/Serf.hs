@@ -176,41 +176,27 @@ sendAndRecv w eventId order =
 sendOrder :: Serf -> Order -> IO ()
 sendOrder w o = sendAtom w $ jam $ toNoun o
 
-muckBootSeq :: BootSeq -> [EventId -> Mug -> Time.Wen -> Order]
-muckBootSeq (BootSeq _ nocks ovums) =
-    (muckNock <$> nocks) <> (muckOvum <$> ovums)
-  where
-    muckNock nok eId mug _   = OWork eId $ jam $ toNoun (mug, nok)
-    muckOvum ov  eId mug wen = OWork eId $ jam $ toNoun (mug, wen, ov)
-
-{-
-    Waits for initial plea, and then sends boot IPC if necessary.
--}
-handshake :: Serf -> LogIdentity -> IO (EventId, Mug)
-handshake serf ident = do
-    (eventId, mug) <- recvPlea serf >>= \case
-      Play Nothing          -> pure (1, Mug 0)
-      Play (Just (e, m, _)) -> pure (e, m)
-      x                     -> throwIO (InvalidInitialPlea x)
-
-    traceM ("handshake: got plea! " <> show eventId <> " " <> show mug)
-
-    when (eventId == 1) $ do
-        sendOrder serf (OBoot ident)
-        traceM ("handshake: Sent %boot IPC")
-
-    pure (eventId, mug)
-
-bootFromSeq :: Serf -> LogIdentity -> [EventId -> Mug -> Time.Wen -> Order]
-            -> IO [Order]
-bootFromSeq serf ident seq = do
+bootFromSeq :: Serf -> BootSeq -> IO [Order]
+bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         (1, Mug 0) -> pure ()
         _          -> error "ship already booted"
 
-    loop [] 1 (Mug 0) seq
+    res <- loop [] 1 (Mug 0) seq
+
+    OWork lastEv _ : _ <- evaluate (reverse res)
+
+    traceM "Requesting snapshot"
+    sendOrder serf (OSave lastEv)
+
+    traceM "Requesting shutdown"
+    sendOrder serf (OExit 0)
+
+    pure res
 
   where
+    loop :: [Order] -> EventId -> Mug -> [EventId -> Mug -> Time.Wen -> Order]
+         -> IO [Order]
     loop acc eId lastMug []     = pure $ reverse acc
     loop acc eId lastMug (x:xs) = do
         wen <- Time.now
@@ -219,6 +205,12 @@ bootFromSeq serf ident seq = do
             Left badEv          -> throwIO (ReplacedEventDuringBoot eId badEv)
             Right (id, mug, []) -> loop (order : acc) (eId+1) mug xs
             Right (id, mug, fx) -> throwIO (EffectsDuringBoot eId fx)
+
+    seq :: [EventId -> Mug -> Time.Wen -> Order]
+    seq = fmap muckNock nocks <> fmap muckOvum ovums
+      where
+        muckNock nok eId mug _   = OWork eId $ jam $ toNoun (mug, nok)
+        muckOvum ov  eId mug wen = OWork eId $ jam $ toNoun (mug, wen, ov)
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
@@ -276,6 +268,24 @@ bootSerf w ident pill =
     pure undefined
 
 type GetEvents = EventId -> Word64 -> IO (Vector (EventId, Atom))
+
+{-
+    Waits for initial plea, and then sends boot IPC if necessary.
+-}
+handshake :: Serf -> LogIdentity -> IO (EventId, Mug)
+handshake serf ident = do
+    (eventId, mug) <- recvPlea serf >>= \case
+      Play Nothing          -> pure (1, Mug 0)
+      Play (Just (e, m, _)) -> pure (e, m)
+      x                     -> throwIO (InvalidInitialPlea x)
+
+    traceM ("handshake: got plea! " <> show eventId <> " " <> show mug)
+
+    when (eventId == 1) $ do
+        sendOrder serf (OBoot ident)
+        traceM ("handshake: Sent %boot IPC")
+
+    pure (eventId, mug)
 
 replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO (EventId, Mug)
 replay w ident lastEv getEvents = do
