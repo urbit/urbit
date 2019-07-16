@@ -603,7 +603,7 @@
       =/  m  (async:stdio (unit bound))
       ^-  form:m
       ?:  &(?=(^ existing) =(target cur.u.existing))
-        ~|  %bind-duplicate-wat-do  !!
+        (pure:m existing)
       ::
       =/  pre=(unit [@ta ^target])
         ?~(existing ~ (some [id cur]:u.existing))
@@ -723,7 +723,7 @@
     =*  nam  u.nem.state
     =*  who  ship.in-poke-data
     =*  tar  target.in-poke-data
-    ?.  ?=(%indirect -.tar)
+    ?:  ?=(%indirect -.tar)
       ~|  %indirect-unsupported  !!
     ::  defer %indirect where target isn't yet bound
     ::
