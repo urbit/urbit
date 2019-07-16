@@ -1,3 +1,0 @@
-[submodule "pkg/arvo"]
-	path = pkg/arvo
-	url = https://github.com/urbit/arvo.git
