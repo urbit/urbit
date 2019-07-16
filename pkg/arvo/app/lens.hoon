@@ -67,7 +67,7 @@
   ?:  ?=(%export -.source.com)
     ::  todo: send export commands
     ~&  [%export app.source.com]
-    [ost.bow %peer /sole [our.bow app.source.com] /export]~
+    [ost.bow %peer /export [our.bow app.source.com] /export]~
   [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
 ::
 ++  diff-lens-json
@@ -87,15 +87,12 @@
   ?>  ?=(^ job.state)
   ::  TOOD: the following isn't really good enough.
   ::
-  ::    To have herb write a file to the cwd, you need to have an --output-pill
-  ::    blah.txt which gets turned into '/blah/txt' here. So we need to have
+  ::    herb will do whatever we tell it to, so by convention have it write to
+  ::    an app name based on the file name.
   ::
-  ::    Thankfully, --output-pill is already so fragile it barely works on any
-  ::    paths that aren't referencing a file in the CWD.
-  ::
-  ?>  ?=(%output-pill -.sink.com.u.job.state)
-  =/  output=@t  '/myfile/txt' ::  pax.sink.com.u.job.state
-  ::(need (de-beam:format pax.sink.com.u.job.state))
+  ?>  ?=(%export -.source.com.u.job.state)
+  =/  app-name=tape  (trip app.source.com.u.job.state)
+  =/  output=@t  (crip "/{app-name}/jam")
   ::
   =/  jon=json
     =/  =atom  (jam data)
@@ -103,11 +100,8 @@
     =/  enc  (en:base64 octs)
     (pairs:enjs:format file+s+output data+s+enc ~)
   ::
-  ~&  [%jon jon]
-  ::
   :_  this(job.state ~)
   [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
-
 ::
 ++  quit
   |=  =wire
@@ -119,6 +113,9 @@
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
   ~&  [%reap wire]
+  ?:  =([%export ~] wire)
+    [~ this]
+  ::
   ?^  saw
     [((slog u.saw) ~) this]
   ?>  ?=(^ job.state)
