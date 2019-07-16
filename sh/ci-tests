@@ -9,13 +9,6 @@ then
 
 else
 
-    nix-build nix/ops       \
-              -A test       \
-              -A brass      \
-              --max-jobs 2  \
-              --no-out-link
-
     sh/test --arg debug true
-    sh/update-brass-pill
 
 fi

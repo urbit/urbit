@@ -49,7 +49,7 @@
 ++  poke-noun
   |=  [what=?(%save %load) =name]
   ^-  (quip move _+>)
-  =+  eye=(fall (~(get by eyes) name) *eye)
+  =+  eye=(~(gut by eyes) name *eye)
   ?-  what
       %save
     =/  pax=path

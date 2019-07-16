@@ -15,13 +15,13 @@
 :: +card: output effect payload
 ::
 +$  poke
-  $%  [%noun [@tas path @t]]
+  $%  [%launch-action [@tas path @t]]
   ==
 ::
 +$  card
   $%  [%poke wire dock poke]
       [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%diff %json json]
   ==
 ::
@@ -32,18 +32,19 @@
 ++  this  .
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
 ++  prep
   |=  old=(unit ~)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%clock /tile '/~clock/js/tile.js']]
+  =/  launcha
+    [%launch-action [%clock /tile '/~clock/js/tile.js']]
   :_  this
   :~
     [ost.bol %connect / [~ /'~clock'] %clock]
-    [ost.bol %poke /clock [our.bol %launch] launchnoun]
+    [ost.bol %poke /clock [our.bol %launch] launcha]
   ==
 ::
 ++  peer-tile
@@ -60,7 +61,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   =/  request-line  (parse-request-line url.request.inbound-request)
   =/  back-path  (flop site.request-line)

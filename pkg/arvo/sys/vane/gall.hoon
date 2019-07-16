@@ -264,7 +264,7 @@
   ++  mo-bale                                           ::  assign outbone
     |=  him/ship
     ^-  {@ud _+>}
-    =+  sad=(fall (~(get by sap.mas) him) `scad`[1 ~ ~])
+    =+  sad=(~(gut by sap.mas) him `scad`[1 ~ ~])
     =+  nom=(~(get by q.sad) hen)
     ?^  nom  [u.nom +>.$]
     :-  p.sad
@@ -504,7 +504,7 @@
     ?:  |(!(~(has by bum.mas) dap) (~(has by wub.mas) dap))
       ~&  >>  [%mo-not-running dap -.cub]
       ::  ~&  [%mo-club-qeu dap cub]
-      =+  syf=(fall (~(get by wub.mas) dap) *sofa)
+      =+  syf=(~(gut by wub.mas) dap *sofa)
       +>.$(wub.mas (~(put by wub.mas) dap syf(kys (~(put to kys.syf) [hen pry cub]))))
     (mo-clip dap pry cub)
   ::
@@ -604,7 +604,7 @@
         ?.  ?=($diff -.p.q.cov)
           [%give %unto p.q.cov]
         =+  cay=`cage`p.p.q.cov
-        =+  mar=(fall (~(get by pyl) p.cov) p.cay)
+        =+  mar=(~(gut by pyl) p.cov p.cay)
         ?:  =(mar p.cay)  [%give %unto p.q.cov]
         :+  %pass
           [%sys %pel dap ~]
@@ -616,7 +616,7 @@
 ::          $hiss  `note-arvo`[%e %hiss +.q.q.cov]
           $send  `note-arvo`[%g %deal [our p.q.q.cov] q.q.q.cov]
           $meta  `note-arvo`[`@tas`p.q.q.cov %meta `vase`q.q.q.cov]
-::          $response  `note-arvo`[%l %response raw-http-response.q.q.cov]
+::          $response  `note-arvo`[%i %response raw-http-response.q.q.cov]
         ==
         ::
         :: I'm sort of stumped on how to get a %give out of the above; it's
@@ -741,7 +741,7 @@
     ::
     ++  ap-fill                                         ::  add to queue
       ^-  {? _.}
-      =+  suy=(fall (~(get by qel.ged) ost) 0)
+      =+  suy=(~(gut by qel.ged) ost 0)
       =/  subscriber=(unit (pair ship path))
         (~(get by sup.ged) ost)
       ?:  ?&  =(20 suy)
@@ -1342,12 +1342,12 @@
         %wind  `%j
         %wipe  `%f
       ::
-        %request         `%l
-        %cancel-request  `%l
-        %serve       `%r
-        %connect     `%r
-        %disconnect  `%r
-        %rule        `%r
+        %request         `%i
+        %cancel-request  `%i
+        %serve       `%e
+        %connect     `%e
+        %disconnect  `%e
+        %rule        `%e
       ==
     --
   --

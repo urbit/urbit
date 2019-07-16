@@ -770,7 +770,7 @@
     ^+  builds
     %+  ~(put by builds)  schematic.build
     ::
-    =/  dates  (fall (~(get by builds) schematic.build) ~)
+    =/  dates  (~(gut by builds) schematic.build ~)
     |-
     ^+  dates
     ?~  dates
@@ -809,7 +809,7 @@
     |=  =build
     ^-  (unit ^build)
     ::
-    =/  dates=(list @da)  (fall (~(get by builds) schematic.build) ~)
+    =/  dates=(list @da)  (~(gut by builds) schematic.build ~)
     ::
     |-  ^-  (unit ^build)
     ?~  dates  ~
@@ -823,7 +823,7 @@
     |=  =build
     ^-  (unit ^build)
     ::
-    =/  dates=(list @da)  (flop (fall (~(get by builds) schematic.build) ~))
+    =/  dates=(list @da)  (flop (~(gut by builds) schematic.build ~))
     ::
     |-  ^-  (unit ^build)
     ?~  dates  ~

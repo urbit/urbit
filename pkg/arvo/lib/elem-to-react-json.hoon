@@ -45,7 +45,7 @@
     |=  {a/mane b/tape}  ^-  {cord json}
     :_  (tape:enjs b)
     ?^  a  (mane-to-cord a)
-    (fall (~(get by react-attrs) a) a)
+    (~(gut by react-attrs) a a)
   ==
 ::
 ++  mane-to-cord                                        ::  namespaced xml names

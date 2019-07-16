@@ -10,7 +10,7 @@
 :: +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire binding:http-server term]
+  $%  [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%peel wire dock mark path]
       [%poke wire dock poke]
@@ -41,13 +41,13 @@
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bow move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ?^  job.state
     :_  this
@@ -101,7 +101,7 @@
 ::  +poke-handle-http-cancel: received when a connection was killed
 ::
 ++  poke-handle-http-cancel
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::  the only long lived connections we keep state about are the stream ones.
   ::

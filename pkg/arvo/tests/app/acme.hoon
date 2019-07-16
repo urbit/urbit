@@ -9,8 +9,8 @@
 ++  test-prep
   =^  moves  app  (~(prep app *bowl:gall *acme:app) ~)
   %+  expect-eq
-      !>  [[ost.bow.app %connect /acme [~ /'.well-known'/acme-challenge] %acme] ~]
-      !>  moves
+      !>  &
+      !>  ?=([[bone %serve *] ~] moves)
 ::  tests that acme inits on first order
 ::
 ++  test-first-order
@@ -28,7 +28,7 @@
   ::
     %+  expect-eq
         !>  [~ dom]
-        !>  (some ~(key by (fall next-order.app ~)))
+        !>  ?~(next-order.app ~ (some ~(key by dom.u.next-order.app)))
   ::
     %+  expect-eq
         !>  &
@@ -47,7 +47,7 @@
                   %request
                   /acme/try/2/directory
                   [%'GET' (crip (en-purl:html directory-base:app)) ~ ~]
-                  *outbound-config:http-client
+                  *outbound-config:iris
           ==  ==
       !>  moves
 --

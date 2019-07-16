@@ -69,7 +69,7 @@
   =/  m  (async ,~)
   ^-  form:m
   =/  =card
-    [%request / request *outbound-config:http-client]
+    [%request / request *outbound-config:iris]
   ;<  ~  bind:m  (send-raw-card card)
   (set-raw-contract & %request ~)
 ::
@@ -82,7 +82,7 @@
 ::  Wait until we get an HTTP response or cancelation
 ::
 ++  take-response-raw
-  =/  m  (async (unit client-response:http-client))
+  =/  m  (async (unit client-response:iris))
   ^-  form:m
   |=  =async-input
   :^  ~  ~  ~
@@ -108,9 +108,9 @@
 ::  Wait until we get an HTTP response or cancelation and unset contract
 ::
 ++  take-maybe-response
-  =/  m  (async (unit client-response:http-client))
+  =/  m  (async (unit client-response:iris))
   ^-  form:m
-  ;<  rep=(unit client-response:http-client)  bind:m
+  ;<  rep=(unit client-response:iris)  bind:m
     take-response-raw
   ;<  ~  bind:m  (set-raw-contract | %request ~)
   (pure:m rep)
@@ -118,9 +118,9 @@
 ::  Wait until we get an HTTP response and unset contract
 ::
 ++  take-response
-  =/  m  (async (unit client-response:http-client))
+  =/  m  (async (unit client-response:iris))
   ^-  form:m
-  ;<  rep=(unit client-response:http-client)  bind:m
+  ;<  rep=(unit client-response:iris)  bind:m
     take-maybe-response
   ?^  rep
     (pure:m rep)
@@ -132,7 +132,7 @@
 ++  take-maybe-sigh
   =/  m  (async (unit httr:eyre))
   ^-  form:m
-  ;<  rep=(unit client-response:http-client)  bind:m
+  ;<  rep=(unit client-response:iris)  bind:m
     take-maybe-response
   ?~  rep
     (pure:m ~)
@@ -140,7 +140,7 @@
   ::
   ?.  ?=(%finished -.u.rep)
     (pure:m ~)
-  (pure:m (some (to-httr:http-client +.u.rep)))
+  (pure:m (some (to-httr:iris +.u.rep)))
 ::
 ::  Wait until we get an HTTP response and unset contract
 ::
@@ -198,7 +198,7 @@
 ::  Incoming HTTP requests
 ::
 ++  bind-route-raw
-  |=  [=binding:http-server =term]
+  |=  [=binding:eyre =term]
   =/  m  (async ,~)
   ^-  form:m
   (send-raw-card [%connect / binding term])
@@ -216,7 +216,7 @@
   [%done success.sign]
 ::
 ++  bind-route
-  |=  [=binding:http-server =term]
+  |=  [=binding:eyre =term]
   =/  m  (async ?)
   ^-  form:m
   ;<  ~  bind:m  (bind-route-raw binding term)

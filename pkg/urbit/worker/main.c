@@ -264,8 +264,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     }
   }
   else {
-    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, roe_w = 0, vir_w = 0;
-
+    c3_w tot_w = 0;
     FILE* fil_u;
 
 #ifdef U3_MEMORY_LOG
@@ -282,7 +281,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
       }
 
       c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      snprintf(man_c, 2048, "%s/%s-worker.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
@@ -297,27 +296,16 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 #endif
 
     c3_assert( u3R == &(u3H->rod_u) );
-
     fprintf(fil_u, "\r\n");
-    usr_w = _worker_prof(fil_u, 0, sac);
-    u3a_print_memory(fil_u, "total userspace", usr_w);
 
-    man_w = u3m_mark(fil_u);
+    tot_w += u3a_maid(fil_u, "total userspace", _worker_prof(fil_u, 0, sac));
+    tot_w += u3m_mark(fil_u);
+    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
+    tot_w += u3a_maid(fil_u, "event", u3a_mark_noun(ovo));
+    tot_w += u3a_maid(fil_u, "lifecycle events", u3a_mark_noun(u3V.roe));
+    tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
-    sac_w = u3a_mark_noun(sac);
-    u3a_print_memory(fil_u, "space profile", sac_w);
-
-    ova_w = u3a_mark_noun(ovo);
-    u3a_print_memory(fil_u, "event", ova_w);
-
-    roe_w = u3a_mark_noun(u3V.roe);
-    u3a_print_memory(fil_u, "lifecycle events", roe_w);
-
-    vir_w = u3a_mark_noun(vir);
-    u3a_print_memory(fil_u, "effects", vir_w);
-
-    u3a_print_memory(fil_u, "total marked", usr_w + man_w + sac_w + ova_w + vir_w);
-
+    u3a_print_memory(fil_u, "total marked", tot_w);
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
 #ifdef U3_MEMORY_LOG

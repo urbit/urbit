@@ -30,7 +30,7 @@
             [hen %slip %c %init ~nul]
             [hen %slip %g %init ~nul]
             [hen %slip %d %init ~nul]
-            [hen %slip %r %init ~nul]
+            [hen %slip %e %init ~nul]
             [hen %give %init ~nul]
             [hen %pass /~nul/init %b %wait +(~1234.5.6)]
     ==  ==
@@ -70,7 +70,7 @@
       ^=  comparator
         |=  moves=(list move:jael-gate)
         ?>  ?=(^ moves)
-        ?>  ?=([* %pass * %l %request *] i.moves)
+        ?>  ?=([* %pass * %i %request *] i.moves)
         ;:  weld
           %+  expect-eq
             !>  1

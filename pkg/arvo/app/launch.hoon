@@ -1,5 +1,4 @@
-
-/+  *server, collections
+/+  *server, launch
 /=  index
   /^  $-(marl manx)
   /:  /===/app/launch/index  /!noun/
@@ -21,23 +20,7 @@
   /^  (map knot @)
   /:  /===/app/launch/img  /_  /png/
 ::
-|%
-::
-+$  move  [bone card]
-::
-+$  card
-  $%  [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
-      [%peer wire dock path]
-      [%diff %json json]
-  ==
-+$  tile  [name=@tas subscribe=path]
-+$  tile-data  (map @tas [jon=json url=@t])
-+$  state
-  $%  [%0 tiles=(set tile) data=tile-data path-to-tile=(map path @tas)]
-  ==
-::
---
+=,  launch
 ::
 |_  [bol=bowl:gall sta=state]
 ::
@@ -46,31 +29,36 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  ~&  'launch prep'
   ?~  old
     :_  this
     [ost.bol %connect / [~ /] %launch]~
   [~ this(sta u.old)]
 ::
-++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+++  poke-launch-action
+  |=  act=action:launch
   ^-  (quip move _this)
-  [~ this]
-::
-++  poke-noun
-  |=  [name=@tas subscribe=path url=@t]
-  ^-  (quip move _this)
-  =/  beforedata  (~(get by data.sta) name)
+  =/  beforedata  (~(get by data.sta) name.act)
   =/  newdata
     ?~  beforedata
-      (~(put by data.sta) name [*json url])
-    (~(put by data.sta) name [jon.u.beforedata url])
-  :-  [ost.bol %peer subscribe [our.bol name] subscribe]~
+      (~(put by data.sta) name.act [*json url.act])
+    (~(put by data.sta) name.act [jon.u.beforedata url.act])
+  :-  [ost.bol %peer subscribe.act [our.bol name.act] subscribe.act]~
   %=  this
-    tiles.sta  (~(put in tiles.sta) [name subscribe])
+    tiles.sta  (~(put in tiles.sta) [name.act subscribe.act])
     data.sta  newdata
-    path-to-tile.sta  (~(put by path-to-tile.sta) subscribe name)
+    path-to-tile.sta  (~(put by path-to-tile.sta) subscribe.act name.act)
   ==
+::
+++  peer-main
+  |=  [pax=path]
+  ^-  (quip move _this)
+  =/  data/json
+    %-  pairs:enjs:format
+    %+  turn  ~(tap by data.sta)
+    |=  [key=@tas [jon=json url=@t]]
+    [key jon]
+  :_  this
+  [ost.bol %diff %json data]~
 ::
 ++  diff-json
   |=  [pax=path jon=json]
@@ -89,17 +77,6 @@
     data.sta  (~(put by data.sta) name [jon url.u.data])
   ==
 ::
-++  peer-main
-  |=  [pax=path]
-  ^-  (quip move _this)
-  =/  data/json
-    %-  pairs:enjs:format
-    %+  turn  ~(tap by data.sta)
-    |=  [key=@tas [jon=json url=@t]]
-    [key jon]
-  :_  this
-  [ost.bol %diff %json data]~
-::
 ++  generate-script-marl
   |=  data=tile-data
   ^-  marl
@@ -110,12 +87,12 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
-  =+  request-line=(parse-request-line url.request.inbound-request)
+  =/  request-line  (parse-request-line url.request.inbound-request)
   =/  name=@t
-    =+  back-path=(flop site.request-line)
+    =/  back-path  (flop site.request-line)
     ?~  back-path
       ''
     i.back-path
@@ -147,5 +124,10 @@
     :_  this
     [ost.bol %http-response (png-response:app img)]~
   ==
+::
+++  bound
+  |=  [wir=wire success=? binding=binding:eyre]
+  ^-  (quip move _this)
+  [~ this]
 ::
 --

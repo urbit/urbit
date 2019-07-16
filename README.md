@@ -50,8 +50,17 @@ The test suite can similarly be run via a simple:
 make test
 ```
 
+Note that some of the Makefile targets need access to pills tracked via [git
+LFS][git-lfs], so you'll also need to have those available locally:
+
+```
+git lfs install
+git lfs pull
+```
+
 [trav]: https://github.com/urbit/urbit.git
 [nix]: https://nixos.org/nix/
+[git-lfs]: https://git-lfs.github.com
 
 ## Contributing
 

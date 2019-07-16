@@ -50,7 +50,8 @@
 ++  prep
   |=  old=(unit state)
   ^-  (quip move _this)
-  =/  launchnoun  [%noun [%chat /chattile '/~chat/js/tile.js']]
+  =/  launcha/poke
+    [%launch-action [%chat /chattile '/~chat/js/tile.js']]
   ?~  old
     =/  inboxpat  /circle/inbox/config/group
     =/  circlespat  /circles/[(scot %p our.bol)]
@@ -63,12 +64,10 @@
         [ost.bol %peer circlespat [our.bol %hall] circlespat]
         [ost.bol %connect / [~ /'~chat'] %chat]
         [ost.bol %poke /chat [our.bol %hall] inboxi]
-        [ost.bol %poke /chat [our.bol %launch] launchnoun]
+        [ost.bol %poke /chat [our.bol %launch] launcha]
     ==
-  :-  [ost.bol %poke /chat [our.bol %launch] launchnoun]~
+  :-  [ost.bol %poke /chat [our.bol %launch] launcha]~
   this(sta u.old)
-::
-::
 ::
 ++  construct-tile-json
   |=  str=streams
@@ -100,7 +99,6 @@
 ++  peer-primary
   |=  wir=wire
   ^-  (quip move _this)
-  ~&  (lent (prey:pubsub:userlib /primary bol))
   =*  messages  messages.str.sta
   =/  lismov/(list move)
     %+  murn  ~(tap by messages)
@@ -151,10 +149,11 @@
     |=  [=bone *]
     [bone %diff %chat-update upd]
   ::
+  =/  jon/json  (construct-tile-json str)
   =/  tile-updates/(list move)
     %+  turn  (prey:pubsub:userlib /chattile bol)
     |=  [=bone *]
-    [bone %diff %json (construct-tile-json str)]
+    [bone %diff %json jon]
   ::
   %+  weld
     updates
@@ -262,7 +261,6 @@
           |=  [shp=@p stat=status:hall]
           shp
         (~(put by acc) cir newset)
-      ~&  nes.piz
       =/  str
         %=  str.sta
           messages  (~(put by messages) circle nes.piz)
@@ -451,7 +449,6 @@
             (send-chat-update [[%delete affectedcir] str])
         ::  if we get a delete from another ship, delete our fake circle copy
         ::
-        ~&  %deletefake
         =/  deletefake/poke
           :-  %hall-action
               [%delete nom.fakecir ~]
@@ -463,6 +460,18 @@
           %+  weld
             (send-chat-update [[%inbox newinbox] str])
             (send-chat-update [[%delete affectedcir] str])
+      ::
+      ::  %remove: remove a circle
+      ::
+          %remove
+        =/  str
+          %=  str.sta
+            configs   (~(del by configs.str.sta) circ)
+            messages  (~(del by messages.str.sta) circ)
+            peers     (~(del by peers.str.sta) circ)
+          ==
+        :-  (send-chat-update [[%delete circ] str])
+        this(str.sta str)
         ::
       ==
       ::  end of branching on dif.sto type
@@ -477,7 +486,7 @@
 ::  +bound: lient tells us we successfully bound our server to the ~chat url
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -485,7 +494,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =+  request-line=(parse-request-line url.request.inbound-request)

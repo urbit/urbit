@@ -72,7 +72,7 @@
 ::
 ++  pe
   |=  who=ship
-  =+  (fall (~(get by piers) who) *pier)
+  =+  (~(gut by piers) who *pier)
   =*  pier-data  -
   |%
   ::

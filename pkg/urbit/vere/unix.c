@@ -1201,19 +1201,6 @@ u3_unix_ef_hill(u3_pier *pir_u, u3_noun hil)
   u3z(hil);
 }
 
-/* u3_unix_io_init(): initialize unix sync.
-*/
-void
-u3_unix_io_init(u3_pier *pir_u)
-{
-  u3_unix* unx_u = pir_u->unx_u;
-
-  unx_u->mon_u = NULL;
-
-  unx_u->alm = c3n;
-  unx_u->dyr = c3n;
-}
-
 /* u3_unix_acquire(): acquire a lockfile, killing anything that holds it.
 */
 static void
@@ -1316,12 +1303,24 @@ u3_unix_ef_look(u3_pier *pir_u, u3_noun all)
   }
 }
 
+/* u3_unix_io_init(): initialize unix sync.
+*/
+void
+u3_unix_io_init(u3_pier *pir_u)
+{
+  u3_unix* unx_u = pir_u->unx_u;
+  unx_u->mon_u = NULL;
+  unx_u->alm = c3n;
+  unx_u->dyr = c3n;
+
+  u3_unix_acquire(pir_u->pax_c);
+}
+
 /* u3_unix_io_talk(): start listening for fs events.
 */
 void
 u3_unix_io_talk(u3_pier *pir_u)
 {
-  u3_unix_acquire(pir_u->pax_c);
 }
 
 /* u3_unix_io_exit(): terminate unix I/O.
