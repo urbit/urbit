@@ -23,5 +23,5 @@ pills:
 	sh/update-brass-pill
 
 clean:
-	rm -rf ./cross ./release
+	rm -rf ./out ./work
 	rm -f result result-*

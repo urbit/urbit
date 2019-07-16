@@ -19,7 +19,7 @@ import qualified Vere.Pier    as Pier
 
 main :: IO ()
 main = do
-    let pillPath = "/home/benjamin/r/urbit/bin/ivory.pill"
+    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = 0 -- zod
 
