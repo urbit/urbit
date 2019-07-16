@@ -57,14 +57,11 @@ boot pillPath top ship = do
 
   Log.writeIdent log ident
 
-  serf   <- Serf.startSerfProcess top
-  events <- Serf.bootFromSeq serf seq
+  serf             <- Serf.startSerfProcess top
+  (events, serfSt) <- Serf.bootFromSeq serf seq
 
-  -- traceM "Requesting snapshot"
-  -- Serf.sendOrder serf (OSave lastEv)
-
-  -- traceM "Requesting shutdown"
-  -- Serf.sendOrder serf (OExit 0)
+  Serf.requestSnapshot serf serfSt
+  Serf.shutdownAndKill serf 0
 
   Persist.writeEvents log events
 
@@ -72,9 +69,6 @@ boot pillPath top ship = do
   Just (mug, _::Noun) <- evaluate (atom ^? atomBytes . _Cue >>= fromNoun)
 
   pure (serf, log, eId, mug)
-
--- snapshot :: Serf -> IO ()
--- snapshot serf = Serf.sendOrder serf (OSave lastEv)
 
 {-
     What we really want to do is write the log identity and then do
@@ -93,38 +87,6 @@ resume top = do
 
 
 -- Run Pier --------------------------------------------------------------------
-
-{-
-/* _pier_work_save(): tell worker to save checkpoint.
-*/
-static void
-_pier_work_save(u3_pier* pir_u)
-{
-  u3_controller* god_u = pir_u->god_u;
-  u3_disk* log_u = pir_u->log_u;
-  u3_save* sav_u = pir_u->sav_u;
-
-  c3_assert( god_u->dun_d == sav_u->req_d );
-  c3_assert( log_u->com_d >= god_u->dun_d );
-
-  {
-    u3_noun mat = u3ke_jam(u3nc(c3__save, u3i_chubs(1, &god_u->dun_d)));
-    u3_newt_write(&god_u->inn_u, mat, 0);
-
-    //  XX wait on some report of success before updating?
-    //
-    sav_u->dun_d = sav_u->req_d;
-  }
-
-  //  if we're gracefully shutting down, do so now
-  //
-  if ( u3_psat_done == pir_u->sat_e ) {
-    _pier_exit_done(pir_u);
-  }
-}
--}
-
-
 
 {-
 performCommonPierStartup :: Serf.Serf
