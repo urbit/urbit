@@ -15,7 +15,7 @@
     "cssnano": "^4.1.10",
     "gulp": "^4.0.0",
     "gulp-better-rollup": "^4.0.1",
-    "gulp-cssimport": "^6.0.0",
+    "gulp-cssimport": "^7.0.0",
     "gulp-minify": "^3.1.0",
     "gulp-postcss": "^8.0.0",
     "rollup": "^1.6.0",
