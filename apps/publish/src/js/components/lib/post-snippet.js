@@ -16,7 +16,7 @@ export class PostSnippet extends Component {
       :  elem.c[0];
 
     return (
-      <p className="body-regular-400 body-preview"
+      <p className="body-regular-400 five-lines"
         style={{WebkitBoxOrient: "vertical"}}>
         {string}
       </p>

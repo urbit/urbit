@@ -71,7 +71,7 @@ export class PathControl extends Component {
 
       path.push(
         <Link to={seg.url} key={key++}
-          className="fl gray-30 label-regular" style={style}>
+          className="fl gray-30 label-regular one-line mw-336" style={style}>
           {seg.text}
         </Link>
       );

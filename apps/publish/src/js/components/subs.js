@@ -108,9 +108,11 @@ export class Subs extends Component {
       if (data.type === 'regular') {
         return (
           <div className={cls} key={i}>
-            <div className="fl body-regular-400" style={{flexBasis: 336}}>
+            <div className="fl mw-336" style={{flexBasis: 336}}>
               <Link to={data.url}>
-                 {data.title}
+                <p className="body-regular-400 one-line pr3">
+                   {data.title}
+                </p>
               </Link>
             </div>
             <p className="fl body-regular-400" style={{flexBasis:336}}>
@@ -131,9 +133,13 @@ export class Subs extends Component {
           <div className={cls} key={i}>
             <div className="fl body-regular-400" style={{flexBasis: 336}}>
               <Link to={data.url}>
-                <span className="body-large green-medium"> • </span>
-                <span className="body-regular-400">Invite to</span>
-                <span className="body-regular">{data.title}</span>
+                <div className="mw-336 one-line pr3">
+                  <span className="body-large green-medium"> • </span>
+                  <span className="body-regular-400">Invite to</span>
+                  <span className="body-regular">
+                    {data.title}
+                  </span>
+                </div>
               </Link>
             </div>
             <p className="fl body-regular-400" style={{flexBasis:336}}>

@@ -58,9 +58,11 @@ export class Pubs extends Component {
       let cls = "w-100 flex " + bg;
       return (
         <div className={cls} key={i}>
-          <div className="fl body-regular-400" style={{flexBasis: 336}}>
+          <div className="fl body-regular-400 mw-336 w-336 pr3">
             <Link to={data.url}>
-               {data.title}
+              <p className="one-line mw-336">
+                {data.title}
+              </p>
             </Link>
           </div>
           <p className="fl body-regular-400" style={{flexBasis:336}}>

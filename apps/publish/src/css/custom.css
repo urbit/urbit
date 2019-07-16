@@ -130,6 +130,10 @@ h4 {
   width: 688px;
 }
 
+.mw-336 {
+  max-width: 336px;
+}
+
 .mw-688 {
   max-width: 688px;
 }
@@ -228,7 +232,7 @@ h4 {
   background-color: #B1B2B3;
 }
 
-.title-preview {
+.two-lines {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   word-wrap: break-word;
@@ -236,10 +240,17 @@ h4 {
   overflow: hidden;
 }
 
-.body-preview {
+.five-lines {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   word-wrap: break-word;
   -webkit-line-clamp: 5;
   overflow: hidden;
+}
+
+.one-line {
+  word-wrap: break-word;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

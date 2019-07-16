@@ -299,7 +299,9 @@ export class Blog extends Component {
           <div className="absolute w-100"
             style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
             <div className="flex-col">
-              <h2>{data.blogTitle}</h2>
+              <h2 style={{wordBreak: "break-word", marginRight:32}}>
+                {data.blogTitle}
+              </h2>
               <div className="flex" style={{marginTop: 22}}>
                 <div className="flex-col" style={{flexBasis: 160, marginRight:16}}>
                   <p className="gray-50 label-small-2 b">Host</p>
