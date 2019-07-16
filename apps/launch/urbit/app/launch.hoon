@@ -88,7 +88,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bol move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   ::
   =/  request-line  (parse-request-line url.request.inbound-request)
@@ -127,7 +127,7 @@
   ==
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::

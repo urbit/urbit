@@ -5,7 +5,7 @@
 ::
 +$  card
   $%  [%http-response =http-event:http]
-      [%connect wire binding:http-server term]
+      [%connect wire binding:eyre term]
       [%peer wire dock path]
       [%diff %json json]
   ==
