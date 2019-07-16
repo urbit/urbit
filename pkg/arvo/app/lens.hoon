@@ -20,6 +20,7 @@
 ::
 +$  poke
   $%  [%lens-command command:lens]
+      [%import *]
   ==
 ::
 +$  state
@@ -62,12 +63,23 @@
     (need (de-json:html q:(need body.request.inbound-request)))
   =/  com=command:lens
     (json:grab:lens-mark jon)
-  :_  this(job.state (some [ost.bow com]))
   ::
   ?:  ?=(%export -.source.com)
-    ::  todo: send export commands
     ~&  [%export app.source.com]
+    :_  this(job.state (some [ost.bow com]))
     [ost.bow %peer /export [our.bow app.source.com] /export]~
+  ::
+  ?:  ?=(%import -.source.com)
+    ?~  enc=(de:base64 base64-jam.source.com)
+      :_  this
+      [ost.bow %http-response %start [%500 ~] ~ %.y]~
+    ::
+    =/  c=*  (cue q.u.enc)
+    ::
+    :_  this(job.state (some [ost.bow com]))
+    [ost.bow %poke /import [our.bow app.source.com] %import c]~
+  ::
+  :_  this(job.state (some [ost.bow com]))
   [ost.bow %peel /sole [our.bow %dojo] %lens-json /sole]~
 ::
 ++  diff-lens-json
@@ -128,6 +140,19 @@
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
   ~&  [%coup wire]
+  ::
+  ?:  =([%import ~] wire)
+    ?>  ?=(^ job.state)
+    :_  this(job.state ~)
+    :_  ~
+    :*  bone.u.job.state
+        %http-response
+        %start
+        [%200 ~]
+        [~ (as-octt:mimes:html "\"Imported data\"")]
+        %.y
+    ==
+  ::
   ?^  saw
     [((slog u.saw) ~) this]
   [~ this]

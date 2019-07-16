@@ -3021,7 +3021,6 @@
   ^-  (quip move _+>)
   ?:  ?=([%sole *] pax)  ~&(%hall-no-sole !!)
   ?:  ?=([%export *] pax)
-    ~&  %hall-peer-export
     :_  +>.$
     [ost.bol %diff %export grams:(~(got by stories) ~.inbox)]~
   ::
@@ -3203,6 +3202,18 @@
   ^-  (quip move _+>)
   :-  ~
   +>.$(log (~(del by log) nom))
+::
+++  poke-import
+  |=  i=*
+  ^-  (quip move _+>)
+  =/  grams=(list telegram)  ;;((list telegram) i)
+  ::
+  ~&  [%importing-telegrams count=(lent grams)]
+  ::
+  %-  pre-bake
+  %+  turn  grams
+  |=  t/telegram
+  [%story ~.inbox %gram [our.bol ~.inbox] t]
 ::
 ++  log-all-to-file
   ::    update stories logs

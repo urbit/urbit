@@ -16,6 +16,7 @@
       {$tuple next/(list source)}         ::  don't bunt well
       {$listen-api api/term event/term}
       {$export app/@t}
+      {$import app/@t base64-jam/@t}
   ==
 ++  sink
   $%  {$stdout ~}

@@ -113,6 +113,33 @@ class sourceAction(argparse.Action):
         else:
            return {self.which: new_value}
 
+class importFileAction(argparse.Action):
+    """Handles the import statement.
+
+    The --import statement reads in a jammed noun file from the current working
+    directory and stuffs it the base64 encoded version which gets passed into
+    your Urbit.
+
+    """
+    def __call__(self, parser, res, new_value, option_string):
+        logging.debug('%r %r' % (new_value, option_string))
+        logging.debug('source %s' % res.source)
+        logging.debug('level %s' % res.level)
+
+        # We check to see if there's a "{new_value}.jam" file in the current
+        # working directory. If there isn't, we error
+        data = ""
+        filename = new_value + ".jam"
+        with open(filename, 'rb') as f:
+            data = f.read()
+
+        if data == "":
+            raise ValueError('Failed to read jamfile')
+
+        base_data = base64.b64encode(data)
+
+        res.source = {"import": {"app": new_value, "base64-jam": base_data}}
+
 class transformerAction(argparse.Action):
     """Handle transformer flag.
 
@@ -314,6 +341,10 @@ parser.add_argument('-e', '--export', which='export',
                     metavar='app-name',
                     help='exports the application state',
                     action=sourceAction)
+parser.add_argument('-i', '--import',
+                    metavar='appname',
+                    help='imports the application state',
+                    action=importFileAction)
 parser.add_argument('-m', '--mark', which='as',
                     metavar='mark',
                     help='transform a source to another mark',
