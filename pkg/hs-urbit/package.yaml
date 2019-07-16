@@ -19,6 +19,7 @@ dependencies:
   - classy-prelude
   - containers
   - data-fix
+  - directory
   - entropy
   - extra
   - fixed-vector

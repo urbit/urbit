@@ -7,7 +7,9 @@ import Vere.Pier.Types
 import Vere.Pier
 import Vere.Serf
 
-import Text.Show.Pretty (pPrint)
+import Control.Concurrent (threadDelay)
+import System.Directory   (removeFile)
+import Text.Show.Pretty   (pPrint)
 
 import qualified Vere.Log     as Log
 import qualified Vere.Persist as Persist
@@ -23,14 +25,25 @@ main = do
 
     pPrint p
 
-    seq@(BootSeq ident _ _) <- generateBootSeq 0 p
-    pPrint seq
+    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
+        shipPath = "/home/benjamin/r/urbit/zod/"
+        ship     = 0 -- zod
 
-    serf <- startSerfProcess "/home/benjamin/r/urbit/zod/"
-    bootFromSeq serf seq >>= pPrint
+    removeFile (shipPath <> ".urb/chk/north.bin")
+    removeFile (shipPath <> ".urb/chk/south.bin")
 
-    -- (s,l,e,m) <- Pier.resume "/home/benjamin/r/urbit/zod/"
-    -- putStrLn "Resumed!"
+    (s,l,e,m) <- Pier.boot pillPath shipPath ship
+    print (e,m)
+    threadDelay 500000
+    kill s
+    putStrLn "Booted!"
+
+    removeFile (shipPath <> ".urb/chk/north.bin")
+    removeFile (shipPath <> ".urb/chk/south.bin")
+
+    (s,l,e,m) <- Pier.resume shipPath
+    print (e,m)
+    putStrLn "Resumed!"
 
     pure ()
 

@@ -4,11 +4,12 @@
       the thread should close the database when it is killed.
 -}
 
-module Vere.Persist (start, stop) where
+module Vere.Persist (start, stop, writeEvents) where
 
 import ClassyPrelude hiding (init)
 
 import Database.LMDB.Raw
+import Noun
 import Vere.Log
 import Vere.Pier.Types
 
@@ -60,6 +61,18 @@ persistThread (EventLog env) inputQueue onPersist =
         putJam flags txn db (eventId w) (event w)
 
       mdb_txn_commit txn
+
+writeEvents :: EventLog -> [(Word64, Atom)] -> IO ()
+writeEvents (EventLog env) writs = do
+  txn <- mdb_txn_begin env Nothing False
+  db  <- mdb_dbi_open txn (Just "EVENTS") [MDB_CREATE, MDB_INTEGERKEY]
+
+  let flags = compileWriteFlags [MDB_NOOVERWRITE]
+
+  for_ writs $ \(id,at) -> do
+    putJam flags txn db id (Jam at)
+
+  mdb_txn_commit txn
 
 
 -- Get eventhing from the input queue. -----------------------------------------

@@ -45,6 +45,7 @@ dependencies:
   - classy-prelude
   - containers
   - data-fix
+  - directory
   - extra
   - flat
   - ghc-prim

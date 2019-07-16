@@ -8,6 +8,7 @@ import Vere.Pier.Types
 
 import qualified System.Entropy as Ent
 import qualified Vere.Log       as Log
+import qualified Vere.Persist   as Persist
 import qualified Vere.Serf      as Serf
 
 import Vere.Serf (EventId, Serf)
@@ -40,20 +41,40 @@ generateBootSeq ship Pill{..} = do
 
 -- This is called to make a freshly booted pier. It assigns an identity to an
 -- event log and takes a chill pill.
-boot :: ByteString -> FilePath -> LogIdentity
-     -> IO (Serf, EventLog, EventId, Mug)
-boot pill top id = do
-  let logPath = top <> "/log"
+boot :: FilePath -> FilePath -> Ship -> IO (Serf, EventLog, EventId, Mug)
+boot pillPath top ship = do
+  let logPath = top <> "/.urb/log"
 
+  pill <- loadFile @Pill pillPath >>= \case
+            Left l  -> error (show l)
+            Right p -> pure p
+
+
+  seq@(BootSeq ident _ _) <- generateBootSeq ship pill
+
+  Log.wipeEvents logPath
   log <- Log.open logPath
 
-  Log.writeIdent log id
+  Log.writeIdent log ident
 
   serf   <- Serf.startSerfProcess top
-  (e, m) <- Serf.bootSerf serf id pill
+  events <- Serf.bootFromSeq serf seq
 
-  pure (serf, log, e, m)
+  -- traceM "Requesting snapshot"
+  -- Serf.sendOrder serf (OSave lastEv)
 
+  -- traceM "Requesting shutdown"
+  -- Serf.sendOrder serf (OExit 0)
+
+  Persist.writeEvents log events
+
+  (eId, atom) : _     <- evaluate (reverse events)
+  Just (mug, _::Noun) <- evaluate (atom ^? atomBytes . _Cue >>= fromNoun)
+
+  pure (serf, log, eId, mug)
+
+-- snapshot :: Serf -> IO ()
+-- snapshot serf = Serf.sendOrder serf (OSave lastEv)
 
 {-
     What we really want to do is write the log identity and then do

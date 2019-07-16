@@ -10,6 +10,7 @@ module Vere.Log ( open
                 , readIdent
                 , writeIdent
                 , putJam
+                , wipeEvents
                 , deleteEventAndEverythingAfterIt
                 ) where
 
@@ -198,6 +199,9 @@ putJam flags txn db id (Jam atom) = do
 
 
 -- Event Pruning ---------------------------------------------------------------
+
+wipeEvents :: FilePath -> IO ()
+wipeEvents pax = deleteEventAndEverythingAfterIt pax 1
 
 deleteEventAndEverythingAfterIt :: FilePath -> Word64 -> IO ()
 deleteEventAndEverythingAfterIt dir first =

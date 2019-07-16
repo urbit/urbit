@@ -173,44 +173,32 @@ sendAndRecv w eventId order =
       Stdr _ cord  -> putStrLn (pack ("[SERF] " <> cordString cord)) >> loop
       Slog _ pri t -> printTank pri t >> loop
 
-sendOrder :: Serf -> Order -> IO ()
-sendOrder w o = sendAtom w $ jam $ toNoun o
-
-bootFromSeq :: Serf -> BootSeq -> IO [Order]
+bootFromSeq :: Serf -> BootSeq -> IO [(EventId, Atom)]
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         (1, Mug 0) -> pure ()
         _          -> error "ship already booted"
 
-    res <- loop [] 1 (Mug 0) seq
-
-    OWork lastEv _ : _ <- evaluate (reverse res)
-
-    traceM "Requesting snapshot"
-    sendOrder serf (OSave lastEv)
-
-    traceM "Requesting shutdown"
-    sendOrder serf (OExit 0)
-
-    pure res
+    loop [] 1 (Mug 0) seq
 
   where
-    loop :: [Order] -> EventId -> Mug -> [EventId -> Mug -> Time.Wen -> Order]
-         -> IO [Order]
+    loop :: [(EventId, Atom)] -> EventId -> Mug -> [Mug -> Time.Wen -> Atom]
+         -> IO [(EventId, Atom)]
     loop acc eId lastMug []     = pure $ reverse acc
     loop acc eId lastMug (x:xs) = do
         wen <- Time.now
-        let order = x eId lastMug wen
+        let atom  = x lastMug wen
+        let order = OWork eId atom
         sendAndRecv serf eId order >>= \case
+            Right (id, mug, []) -> loop ((eId, atom) : acc) (eId+1) mug xs
             Left badEv          -> throwIO (ReplacedEventDuringBoot eId badEv)
-            Right (id, mug, []) -> loop (order : acc) (eId+1) mug xs
             Right (id, mug, fx) -> throwIO (EffectsDuringBoot eId fx)
 
-    seq :: [EventId -> Mug -> Time.Wen -> Order]
+    seq :: [Mug -> Time.Wen -> Atom]
     seq = fmap muckNock nocks <> fmap muckOvum ovums
       where
-        muckNock nok eId mug _   = OWork eId $ jam $ toNoun (mug, nok)
-        muckOvum ov  eId mug wen = OWork eId $ jam $ toNoun (mug, wen, ov)
+        muckNock nok mug _   = jam $ toNoun (mug, nok)
+        muckOvum ov  mug wen = jam $ toNoun (mug, wen, ov)
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
@@ -222,8 +210,6 @@ replayEvents :: Serf
              -> IO (EventId, Mug)
 replayEvents w (wid, wmug) ident lastCommitedId getEvents = do
   traceM ("replayEvents: " <> show wid <> " " <> show wmug)
-
-  when (wid == 1) (sendOrder w $ OBoot ident)
 
   vLast <- newIORef (wid, wmug)
   loop vLast wid
@@ -251,22 +237,6 @@ replayEvents w (wid, wmug) ident lastCommitedId getEvents = do
 
         loop vLast (curEvent + toRead)
 
-
-bootSerf :: Serf -> LogIdentity -> ByteString -> IO (EventId, Mug)
-bootSerf w ident pill =
-  do
-    recvPlea w >>= \case
-      Play Nothing -> pure ()
-      x@(Play _)   -> throwIO (UnexpectedPleaOnNewShip x)
-      x            -> throwIO (InvalidInitialPlea x)
-
-    -- TODO: actually boot the pill
-    undefined
-
-    -- Maybe return the current event id ? But we'll have to figure that out
-    -- later.
-    pure undefined
-
 type GetEvents = EventId -> Word64 -> IO (Vector (EventId, Atom))
 
 {-
@@ -288,15 +258,9 @@ handshake serf ident = do
     pure (eventId, mug)
 
 replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO (EventId, Mug)
-replay w ident lastEv getEvents = do
-    ws@(eventId, mug) <- recvPlea w >>= \case
-      Play Nothing          -> pure (1, Mug 0)
-      Play (Just (e, m, _)) -> pure (e, m)
-      x                     -> throwIO (InvalidInitialPlea x)
-
-    traceM ("got plea! " <> show eventId <> " " <> show mug)
-
-    replayEvents w ws ident lastEv getEvents
+replay serf ident lastEv getEvents = do
+    ws <- handshake serf ident
+    replayEvents serf ws ident lastEv getEvents
 
 workerThread :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
 workerThread w getEvent (evendId, mug) = async $ forever $ do
@@ -354,6 +318,9 @@ sendLen s i = do
   w <- evaluate (fromIntegral i :: Word64)
   withWord64AsByteString (fromIntegral i) (hPut (sendHandle s))
   traceM "sendLen.done"
+
+sendOrder :: Serf -> Order -> IO ()
+sendOrder w o = sendAtom w $ jam $ toNoun o
 
 sendAtom :: Serf -> Atom -> IO ()
 sendAtom s a = do
