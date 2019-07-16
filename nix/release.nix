@@ -16,16 +16,21 @@ let
   ent = env:
     import ./pkgs/ent/cross.nix env;
 
+  ge-additions = env:
+    import ./pkgs/ge-additions/cross.nix env;
+
   urbit = env:
     import ./pkgs/urbit/release.nix env
-      { ent = ent env; debug = false; name = "urbit"; };
+      { ent = ent env; ge-additions = ge-additions env; cacert = nixpkgs.cacert;
+        xxd = nixpkgs.xxd; debug = false; name = "urbit"; };
 
   builds-for-platform = plat:
     plat.deps // {
       inherit (plat.env) curl libgmp libsigsegv ncurses openssl zlib lmdb;
       inherit (plat.env) cmake_toolchain;
-      ent         = ent         plat;
-      urbit       = urbit       plat;
+      ent          = ent          plat;
+      ge-additions = ge-additions plat;
+      urbit        = urbit        plat;
     };
 
   darwin_extra = {

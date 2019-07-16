@@ -96,7 +96,6 @@
     u3_noun u3wdi_gas(u3_noun);
     u3_noun u3wdi_has(u3_noun);
     u3_noun u3wdi_int(u3_noun);
-    u3_noun u3wdi_mer(u3_noun);
     u3_noun u3wdi_put(u3_noun);
     u3_noun u3wdi_tap(u3_noun);
     u3_noun u3wdi_uni(u3_noun);
@@ -156,6 +155,11 @@
     u3_noun u3wee_sign(u3_noun);
     u3_noun u3wee_veri(u3_noun);
     u3_noun u3wee_shar(u3_noun);
+    u3_noun u3wee_point_add(u3_noun);
+    u3_noun u3wee_scalarmult(u3_noun);
+    u3_noun u3wee_scalarmult_base(u3_noun);
+    u3_noun u3wee_add_scalarmult_scalarmult_base(u3_noun);
+    u3_noun u3wee_add_double_scalarmult(u3_noun);
 
     u3_noun u3we_hmac(u3_noun);
 

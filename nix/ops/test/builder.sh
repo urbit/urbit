@@ -20,6 +20,8 @@ shutdown () {
 
 trap shutdown EXIT
 
+herb ./ship -p hood -d '+hood/mass'
+
 # Start the test app
 herb ./ship -p hood -d '+hood/start %test'
 
@@ -27,6 +29,8 @@ herb ./ship -p hood -d '+hood/start %test'
 herb ./ship -d '~&  ~  ~&  %start-test-cores  ~'
 herb ./ship -p test -d ':-  %cores  /'
 herb ./ship -d '~&  %finish-test-cores  ~'
+
+herb ./ship -p hood -d '+hood/mass'
 
 # Run the %renders tests
 herb ./ship -d '~&  ~  ~&  %start-test-renders  ~'
@@ -36,6 +40,8 @@ herb ./ship -d '~&  %finish-test-renders  ~'
 # Run the test generator
 herb ./ship -d '+test, =seed `@uvI`(shaz %reproducible)' |
   tee test-generator-output
+
+herb ./ship -p hood -d '+hood/mass'
 
 shutdown
 

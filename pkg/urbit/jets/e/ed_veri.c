@@ -23,14 +23,14 @@
     memset(sig_y, 0, 64);
     memset(pub_y, 0, 32);
 
-    mes_y = c3_malloc(mesm_w);
+    mes_y = u3a_malloc(mesm_w);
 
     u3r_bytes(0, 64, sig_y, s);
     u3r_bytes(0, 32, pub_y, pk);
     u3r_bytes(0, mesm_w, mes_y, m);
 
     ret = ed25519_verify(sig_y, mes_y, mesm_w, pub_y) == 1 ? c3y : c3n;
-    free(mes_y);
+    u3a_free(mes_y);
     return ret;
   }
 

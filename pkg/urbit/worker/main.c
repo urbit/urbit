@@ -264,8 +264,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
     }
   }
   else {
-    c3_w usr_w = 0, man_w = 0, sac_w = 0, ova_w = 0, roe_w = 0, vir_w = 0;
-
+    c3_w tot_w = 0;
     FILE* fil_u;
 
 #ifdef U3_MEMORY_LOG
@@ -282,7 +281,7 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
       }
 
       c3_c man_c[2048];
-      snprintf(man_c, 2048, "%s/%s.txt", nam_c, wen_c);
+      snprintf(man_c, 2048, "%s/%s-worker.txt", nam_c, wen_c);
 
       fil_u = fopen(man_c, "w");
       fprintf(fil_u, "%s\r\n", wen_c);
@@ -297,27 +296,16 @@ _worker_grab(u3_noun sac, u3_noun ovo, u3_noun vir)
 #endif
 
     c3_assert( u3R == &(u3H->rod_u) );
-
     fprintf(fil_u, "\r\n");
-    usr_w = _worker_prof(fil_u, 0, sac);
-    u3a_print_memory(fil_u, "total userspace", usr_w);
 
-    man_w = u3m_mark(fil_u);
+    tot_w += u3a_maid(fil_u, "total userspace", _worker_prof(fil_u, 0, sac));
+    tot_w += u3m_mark(fil_u);
+    tot_w += u3a_maid(fil_u, "space profile", u3a_mark_noun(sac));
+    tot_w += u3a_maid(fil_u, "event", u3a_mark_noun(ovo));
+    tot_w += u3a_maid(fil_u, "lifecycle events", u3a_mark_noun(u3V.roe));
+    tot_w += u3a_maid(fil_u, "effects", u3a_mark_noun(vir));
 
-    sac_w = u3a_mark_noun(sac);
-    u3a_print_memory(fil_u, "space profile", sac_w);
-
-    ova_w = u3a_mark_noun(ovo);
-    u3a_print_memory(fil_u, "event", ova_w);
-
-    roe_w = u3a_mark_noun(u3V.roe);
-    u3a_print_memory(fil_u, "lifecycle events", roe_w);
-
-    vir_w = u3a_mark_noun(vir);
-    u3a_print_memory(fil_u, "effects", vir_w);
-
-    u3a_print_memory(fil_u, "total marked", usr_w + man_w + sac_w + ova_w + vir_w);
-
+    u3a_print_memory(fil_u, "total marked", tot_w);
     u3a_print_memory(fil_u, "sweep", u3a_sweep());
 
 #ifdef U3_MEMORY_LOG
@@ -342,7 +330,6 @@ _worker_fail(void* vod_p, const c3_c* wut_c)
 static void
 _worker_send(u3_noun job)
 {
-  fprintf(stderr, "[SERF] _worker_send\n");
   u3_newt_write(&u3V.out_u, u3ke_jam(job), 0);
 }
 
@@ -729,17 +716,12 @@ _worker_poke_boot(u3_noun who, u3_noun fak, c3_w len_w)
 void
 _worker_poke(void* vod_p, u3_noun mat)
 {
-  fprintf(stderr, "[SERF] _worker_poke\n");
-
   u3_noun jar = u3ke_cue(mat);
-
-  fprintf(stderr, "[SERF] _worker_poke.cued\n");
 
   if ( c3y != u3du(jar) ) {
     goto error;
   }
   else {
-    fprintf(stderr, "%lu", (unsigned long) u3h(jar));
     switch ( u3h(jar) ) {
       default: {
         goto error;
@@ -868,7 +850,6 @@ u3_worker_boot(void)
 
   u3l_log("work: play %" PRIu64 "\r\n", nex_d);
 
-  fprintf(stderr, "[SERF] Sending play event\n");
   _worker_send(u3nc(c3__play, dat));
 }
 
@@ -877,8 +858,6 @@ u3_worker_boot(void)
 c3_i
 main(c3_i argc, c3_c* argv[])
 {
-  fprintf(stderr, "SERF STARTED\n");
-
   uv_loop_t* lup_u = uv_default_loop();
   c3_c*      dir_c = argv[1];
   c3_c*      key_c = argv[2];
@@ -943,9 +922,7 @@ main(c3_i argc, c3_c* argv[])
   u3V.inn_u.pok_f = _worker_poke;
   u3V.inn_u.bal_f = _worker_fail;
 
-  fprintf(stderr, "[SERF] main.u3_newt_read\n");
   u3_newt_read(&u3V.inn_u);
-  fprintf(stderr, "[SERF] main.u3_newt_read.done\n");
 
   /* send start request
   */

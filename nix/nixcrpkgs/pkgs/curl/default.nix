@@ -12,6 +12,7 @@ crossenv.make_derivation rec {
     "--disable-shared"
     "--disable-manual"
     "--disable-ldap"
+    "--with-ssl=${openssl}"
   ];
 
   src = crossenv.nixpkgs.fetchurl {

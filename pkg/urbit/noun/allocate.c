@@ -370,15 +370,18 @@ u3a_reflux(void)
 void
 u3a_reclaim(void)
 {
+  //  XX u3l_log avoid here, as it can
+  //  cause problems when handling errors
+
   if ( (0 == u3R->cax.har_p) ||
        (0 == u3to(u3h_root, u3R->cax.har_p)->use_w) )
   {
-    u3l_log("allocate: reclaim: memo cache: empty\r\n");
+    fprintf(stderr, "allocate: reclaim: memo cache: empty\r\n");
     u3m_bail(c3__meme);
   }
 
 #if 1
-  u3l_log("allocate: reclaim: half of %d entries\r\n",
+  fprintf(stderr, "allocate: reclaim: half of %d entries\r\n",
           u3to(u3h_root, u3R->cax.har_p)->use_w);
 
   u3h_trim_to(u3R->cax.har_p, u3to(u3h_root, u3R->cax.har_p)->use_w / 2);
@@ -1709,9 +1712,9 @@ _ca_print_box(u3a_box* box_u)
       {
         int i;
         for ( i = 0; i < box_u->siz_w; i++ ) {
-          u3l_log("%08x ", (unsigned int)(((c3_w*)box_u)[i]));
+          fprintf(stderr, "%08x ", (unsigned int)(((c3_w*)box_u)[i]));
         }
-        u3l_log("\r\n");
+        fprintf(stderr, "\r\n");
       }
 #endif
       return 0;
@@ -1733,22 +1736,24 @@ _ca_print_box(u3a_box* box_u)
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 {
-  u3l_log("%s: %p mug=%x (marked=%u swept=%u)\r\n",
-          cap_c,
-          box_u,
-          ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
-          eus_w,
-          use_w);
+  fprintf(stderr, "%s: %p mug=%x (marked=%u swept=%u)\r\n",
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  eus_w,
+                  use_w);
 
   if ( box_u->cod_w ) {
-    u3m_p("    code", box_u->cod_w);
+    c3_c* cod_c = u3m_pretty(box_u->cod_w);
+    fprintf(stderr, "code: %s\r\n", cod_c);
+    free(cod_c);
   }
 
   u3a_print_memory(stderr, "    size", box_u->siz_w);
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
-    u3l_log("    data: %s\r\n", dat_c);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
     free(dat_c);
   }
 }
@@ -1758,17 +1763,17 @@ _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_w eus_w, c3_w use_w)
 static void
 _ca_print_leak(c3_c* cap_c, u3a_box* box_u, c3_ws use_ws)
 {
-  u3l_log("%s: %p mug=%x swept=%d\r\n",
-          cap_c,
-          box_u,
-          ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
-          use_ws);
+  fprintf(stderr, "%s: %p mug=%x swept=%d\r\n",
+                  cap_c,
+                  box_u,
+                  ((u3a_noun *)(u3a_boxto(box_u)))->mug_w,
+                  use_ws);
 
   u3a_print_memory(stderr, "    size", box_u->siz_w);
 
   {
     c3_c* dat_c = _ca_print_box(box_u);
-    u3l_log("    data: %s\r\n", dat_c);
+    fprintf(stderr, "    data: %s\r\n", dat_c);
     free(dat_c);
   }
 }

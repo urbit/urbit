@@ -193,6 +193,9 @@ _pier_db_read_header(u3_pier* pir_u)
   u3z(life);
 }
 
+/* _pier_db_on_commit_loaded(): lmdb read callback
+**  RETAIN mat
+*/
 static c3_o
 _pier_db_on_commit_loaded(u3_pier* pir_u,
                           c3_d id,
@@ -702,18 +705,17 @@ _pier_work_replace(u3_writ* wit_u,
     u3_pier_bail();
   }
 
-  /* move backward in work processing
-  */
+  //  move backward in work processing
+  //
   {
     u3z(wit_u->job);
+    u3z(wit_u->mat);
+    wit_u->mat = 0;
     wit_u->job = job;
 
-    u3z(wit_u->mat);
-    wit_u->mat = u3ke_jam(u3nc(wit_u->mug_l,
-                               u3k(wit_u->job)));
+    _pier_work_build(wit_u);
 
     wit_u->rep_d += 1ULL;
-
     god_u->sen_d -= 1ULL;
   }
 
@@ -822,13 +824,7 @@ _pier_work_slog(u3_writ* wit_u, c3_w pri_w, u3_noun tan)
   }
 #endif
 
-  switch ( pri_w ) {
-    case 3: fprintf(stderr, ">>> "); break;
-    case 2: fprintf(stderr, ">> "); break;
-    case 1: fprintf(stderr, "> "); break;
-  }
-
-  u3_pier_tank(0, tan);
+  u3_pier_tank(0, pri_w, tan);
 }
 
 /* _pier_work_exit(): handle subprocess exit.
@@ -922,11 +918,13 @@ _pier_work_poke(void*   vod_p,
              (c3n == u3r_cell(entry, &mug, &job)) ||
              (c3n == u3ud(mug)) ||
              (1 < u3r_met(5, mug)) ) {
+          u3z(entry);
           goto error;
         }
 
         c3_l     mug_l = u3r_word(0, mug);
         if ( !wit_u || (mug_l && (mug_l != wit_u->mug_l)) ) {
+          u3z(entry);
           goto error;
         }
 #ifdef VERBOSE_EVENTS
@@ -934,6 +932,7 @@ _pier_work_poke(void*   vod_p,
 #endif
 
         _pier_work_replace(wit_u, u3k(job));
+        u3z(entry);
       }
       break;
     }
@@ -1047,10 +1046,10 @@ _pier_work_create(u3_pier* pir_u)
 
     sprintf(wag_c, "%u", pir_u->wag_w);
 
-    arg_c[0] = bin_c;  //  executable
-    arg_c[1] = pax_c;  //  path to checkpoint directory (might be the pier, might be $pier/chk)
-    arg_c[2] = key_c;  //  disk key (ignored)
-    arg_c[3] = wag_c;  //  runtime config
+    arg_c[0] = bin_c;                   //  executable
+    arg_c[1] = pax_c;                   //  path to checkpoint directory
+    arg_c[2] = key_c;                   //  disk key
+    arg_c[3] = wag_c;                   //  runtime config
     arg_c[4] = 0;
 
     uv_pipe_init(u3L, &god_u->inn_u.pyp_u, 0);
@@ -1391,7 +1390,7 @@ _pier_boot_vent(u3_boot* bot_u)
           if ( c3__into == u3h(u3t(ovo)) ) {
             c3_assert( 0 == len_w );
             len_w++;
-            ovo = u3k(u3t(pil_q));
+            ovo = u3t(pil_q);
           }
 
           new = u3nc(u3k(ovo), new);
@@ -1870,6 +1869,8 @@ u3_pier_work(u3_pier* pir_u, u3_noun pax, u3_noun fav)
   struct timeval tim_tv;
 
   gettimeofday(&tim_tv, 0);
+  //  XX use wit_u->now (currently unused)
+  //
   now = u3_time_in_tv(&tim_tv);
 
   u3_pier_discover(pir_u, 0, u3nt(now, pax, fav));
@@ -1921,29 +1922,28 @@ _pier_tape(FILE* fil_u, u3_noun tep)
   while ( c3y == u3du(tap) ) {
     c3_c car_c;
 
-    if ( u3h(tap) >= 127 ) {
-      car_c = '?';
-    } else car_c = u3h(tap);
+    //  XX this utf-8 caution is unwarranted
+    //
+    //    we already write() utf8 directly to streams in term.c
+    //
+    // if ( u3h(tap) >= 127 ) {
+    //   car_c = '?';
+    // } else
+    car_c = u3h(tap);
 
     putc(car_c, fil_u);
     tap = u3t(tap);
   }
+
   u3z(tep);
 }
 
 /* _pier_wall(): dump a wall, old style.  Don't do this.
 */
 static void
-_pier_wall(u3_noun wol)
+_pier_wall(FILE* fil_u, u3_noun wol)
 {
-  FILE* fil_u = u3_term_io_hija();
   u3_noun wal = wol;
-
-  //  XX temporary, for urb.py test runner
-  //
-  if ( c3y == u3_Host.ops_u.dem ) {
-    fil_u = stderr;
-  }
 
   while ( u3_nul != wal ) {
     _pier_tape(fil_u, u3k(u3h(wal)));
@@ -1953,16 +1953,52 @@ _pier_wall(u3_noun wol)
 
     wal = u3t(wal);
   }
-  u3_term_io_loja(0);
+
   u3z(wol);
 }
 
 /* u3_pier_tank(): dump single tank.
 */
 void
-u3_pier_tank(c3_l tab_l, u3_noun tac)
+u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
 {
-  u3_pier_punt(tab_l, u3nc(tac, u3_nul));
+  u3_noun blu = u3_term_get_blew(0);
+  c3_l  col_l = u3h(blu);
+  FILE* fil_u = u3_term_io_hija();
+
+  //  XX temporary, for urb.py test runner
+  //
+  if ( c3y == u3_Host.ops_u.dem ) {
+    fil_u = stderr;
+  }
+
+  switch ( pri_w ) {
+    case 3: fprintf(fil_u, ">>> "); break;
+    case 2: fprintf(fil_u, ">> "); break;
+    case 1: fprintf(fil_u, "> "); break;
+  }
+
+  //  if we have no arvo kernel and can't evaluate nock
+  //  only print %leaf tanks
+  //
+  if ( 0 == u3A->roc ) {
+    if ( c3__leaf == u3h(tac) ) {
+      _pier_tape(fil_u, u3k(u3t(tac)));
+      putc(13, fil_u);
+      putc(10, fil_u);
+    }
+  }
+  //  We are calling nock here, but hopefully need no protection.
+  //
+  else {
+    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(tac));
+
+    _pier_wall(fil_u, wol);
+  }
+
+  u3_term_io_loja(0);
+  u3z(blu);
+  u3z(tac);
 }
 
 /* u3_pier_punt(): dump tank list.
@@ -1970,41 +2006,14 @@ u3_pier_tank(c3_l tab_l, u3_noun tac)
 void
 u3_pier_punt(c3_l tab_l, u3_noun tac)
 {
-  u3_noun blu   = u3_term_get_blew(0);
-  c3_l    col_l = u3h(blu);
-  u3_noun cat   = tac;
+  u3_noun cat = tac;
 
-  //  We are calling nock here, but hopefully need no protection.
-  //
   while ( c3y == u3r_du(cat) ) {
-    if ( 0 == u3A->roc ) {
-      u3_noun act = u3h(cat);
-
-      if ( c3__leaf == u3h(act) ) {
-        FILE* fil_u = u3_term_io_hija();
-
-        //  XX temporary, for urb.py test runner
-        //
-        if ( c3y == u3_Host.ops_u.dem ) {
-          fil_u = stderr;
-        }
-
-        _pier_tape(fil_u, u3k(u3t(act)));
-        putc(13, fil_u);
-        putc(10, fil_u);
-
-        u3_term_io_loja(0);
-      }
-    }
-    else {
-      u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
-
-      _pier_wall(wol);
-    }
+    u3_pier_tank(tab_l, 0, u3k(u3h(cat)));
     cat = u3t(cat);
   }
+
   u3z(tac);
-  u3z(blu);
 }
 
 /* u3_pier_sway(): print trace.
@@ -2076,7 +2085,7 @@ u3_pier_boot(c3_w  wag_w,                   //  config flags
   //  set boot params
   //
   {
-    pir_u->bot_u = _pier_boot_create(pir_u, u3k(pil), u3k(ven));
+    pir_u->bot_u = _pier_boot_create(pir_u, pil, ven);
 
     _pier_boot_set_ship(pir_u, u3k(who), ( c3__fake == u3h(ven) ) ? c3y : c3n);
   }
@@ -2112,31 +2121,45 @@ c3_w
 u3_pier_mark(FILE* fil_u)
 {
   c3_w len_w = u3K.len_w;
-  c3_w tot_w = 0;
+  c3_w tot_w = 0, pir_w = 0;
   u3_pier* pir_u;
 
   while ( 0 < len_w ) {
     pir_u = u3K.tab_u[--len_w];
-    u3l_log("pier: %u\r\n", len_w);
+    pir_w = 0;
+
+    if ( 1 < u3K.len_w ) {
+      fprintf(fil_u, "pier: %u\r\n", len_w);
+    }
 
     if ( 0 != pir_u->bot_u ) {
-      tot_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
-      tot_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
+      pir_w += u3a_maid(fil_u, "  boot event", u3a_mark_noun(pir_u->bot_u->ven));
+      pir_w += u3a_maid(fil_u, "  pill", u3a_mark_noun(pir_u->bot_u->pil));
     }
 
     {
-      u3_writ* wit_u = pir_u->ent_u;
-      c3_w wit_w = 0;
+      u3_writ* wit_u = pir_u->ext_u;
+      c3_w len_w = 0, tim_w = 0, job_w = 0, mat_w = 0, act_w =0;
 
       while ( 0 != wit_u ) {
-        wit_w += u3a_mark_noun(wit_u->job);
-        wit_w += u3a_mark_noun(wit_u->now);
-        wit_w += u3a_mark_noun(wit_u->mat);
-        wit_w += u3a_mark_noun(wit_u->act);
+        tim_w += u3a_mark_noun(wit_u->now);
+        job_w += u3a_mark_noun(wit_u->job);
+        mat_w += u3a_mark_noun(wit_u->mat);
+        act_w += u3a_mark_noun(wit_u->act);
+        len_w++;
         wit_u = wit_u->nex_u;
       }
 
-      tot_w += u3a_maid(fil_u, "  writs", wit_w);
+      if ( 0 < len_w ) {
+        fprintf(fil_u, "  marked %u writs\r\n", len_w);
+      }
+
+      pir_w += u3a_maid(fil_u, "  timestamps", tim_w);
+      pir_w += u3a_maid(fil_u, "  events", job_w);
+      pir_w += u3a_maid(fil_u, "  encoded events", mat_w);
+      pir_w += u3a_maid(fil_u, "  pending effects", act_w);
+
+      tot_w += u3a_maid(fil_u, "total pier stuff", pir_w);
     }
   }
 

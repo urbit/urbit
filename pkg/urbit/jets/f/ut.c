@@ -3,9 +3,10 @@
 */
 #include "all.h"
 
+#if 0
   extern void
-  u3_pier_tank(c3_l tab_l, u3_noun tac);
-
+  u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac);
+#endif
 
   //  duck: create a duck core for mean.
   //
@@ -67,7 +68,7 @@
     sprintf(ugh_c, "%s: %s: 0x%8x:",
             paz_c, pfix_c, u3r_mug(typ));
 #if 0
-    u3_pier_tank(0, u3n_kick_on(u3qfu_dunq(van, ugh_c, typ)));
+    u3_pier_tank(0, 0, u3n_kick_on(u3qfu_dunq(van, ugh_c, typ)));
 #endif
   }
 

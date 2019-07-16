@@ -10,6 +10,13 @@ let
   bootbrass = ../../bin/brass.pill;
   bootsolid = ../../bin/solid.pill;
 
+  rawzod = import ./fakeship {
+    inherit pkgs tlon deps debug;
+    pill = bootsolid;
+    ship = "zod";
+    arvo = null;
+  };
+
   zod = import ./fakeship {
     inherit pkgs tlon deps arvo debug;
     pill = bootsolid;
@@ -33,7 +40,7 @@ rec {
 
   solid = import ./solid {
     inherit arvo pkgs tlon deps debug;
-    pier = zod;
+    pier = rawzod;
   };
 
   brass = import ./brass {

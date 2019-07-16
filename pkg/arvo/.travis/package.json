@@ -1,0 +1,14 @@
+{
+  "name": "arvo-tests",
+  "version": "1.0.0",
+  "description": "Test harness for Urbit arvo distribution",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "private": true,
+  "author": "~fyr",
+  "license": "MIT",
+  "dependencies": {
+    "urbit-runner": "github:urbit/runner-js#ee24550"
+  }
+}
