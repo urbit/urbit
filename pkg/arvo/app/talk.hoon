@@ -1189,9 +1189,9 @@
         ::
         |=  {pos/(map circle range) gyf/(unit char)}
         ^+  ..sh-work
-        =?  ..sh-work  ?=(^ gyf)
-          (bind u.gyf `~(key by pos))
         =+  pas=~(key by pos)
+        =?  ..sh-work  ?=(^ gyf)
+          (bind u.gyf `pas)
         =.  ..sh-work
           sh-prod(active.she pas)
         ::  default to a day of backlog
