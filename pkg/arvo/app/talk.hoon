@@ -838,15 +838,14 @@
         ::
           ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
-          ;~((glue ace) (perk %join ~) sorz (punt glyph))
+          ;~((glue ace) (perk %join ~) ;~(plug sorz (punt ;~(pfix ace glyph))))
         ::
           ;~((glue ace) (perk %leave ~) cirs)
         ::
           ;~  (glue ace)  (perk %create ~)
             pore
             cire
-            qut
-            (punt glyph)
+            ;~(plug qut (punt ;~(pfix ace glyph)))
           ==
         ::
           ;~  plug  (perk %delete ~)
