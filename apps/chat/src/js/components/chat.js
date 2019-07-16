@@ -95,7 +95,7 @@ export class ChatScreen extends Component {
       }
     }
   }
-  
+
   askForMessages() {
     const { props, state } = this;
     let messages = props.messages;
@@ -168,16 +168,16 @@ export class ChatScreen extends Component {
     let chatMessages = messages.reverse().map((msg) => {
       return (
         <Message
-          key={msg.gam.uid + Math.random()} 
+          key={msg.gam.uid + Math.random()}
           msg={msg.gam} />
       );
     });
     let peers = props.peers[state.station] || [window.ship];
 
     return (
-      <div key={state.station} 
+      <div key={state.station}
         className="h-100 w-100 overflow-hidden flex flex-column">
-        <div className='pl2 pt2 bb'>
+        <div className='pl3 pt2 bb'>
           <h2>{state.circle}</h2>
           <ChatTabBar {...props}
             station={state.station}
@@ -190,7 +190,7 @@ export class ChatScreen extends Component {
           <div ref={ el => { this.scrollElement = el; }}></div>
           {chatMessages}
         </div>
-        <ChatInput 
+        <ChatInput
           api={props.api}
           numMsgs={lastMsgNum}
           station={state.station}
@@ -201,4 +201,3 @@ export class ChatScreen extends Component {
     )
   }
 }
-

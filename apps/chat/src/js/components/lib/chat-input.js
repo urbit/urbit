@@ -147,11 +147,11 @@ export class ChatInput extends Component {
 
     if (props.security && props.security.sec !== 'channel' &&
       !props.security.sis.includes(window.ship)) {
-      return this.readOnlyRender();    
+      return this.readOnlyRender();
     }
 
     return (
-      <div className="mt2 pa3 cf flex black bt">
+      <div className="mt2 pa3 cf flex black bt b--black-30">
         <div className="fl" style={{ flexBasis: 35, height: 40 }}>
           <Sigil ship={window.ship} size={32} />
         </div>
