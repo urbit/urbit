@@ -50900,9 +50900,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 10}})
 	        , react.createElement('div', { className: "cf w-100 absolute flex"   ,
 	          style: {
-	            height: 'calc(100% - 48px)' 
+	            height: 'calc(100% - 48px)'
 	          }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 11}}
-	          , react.createElement('div', { className: "fl h-100 br overflow-x-hidden"   , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
+	          , react.createElement('div', { className: "fl h-100 br b--black-30 overflow-x-hidden"    , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
 	            , this.props.sidebar
 	          )
 	          , react.createElement('div', { className: "h-100 fr" , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 18}}
@@ -55662,9 +55662,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        let content = lodash.get(msg, 'gam.sep.lin.msg', 'No messages yet');
 	        let aut = !!msg ? msg.gam.aut : '';
 	        let wen = !!msg ? msg.gam.wen : 0;
-	        let datetime = 
-	          !!msg ? 
-	            moment.unix(wen / 1000).from(moment.utc()) 
+	        let datetime =
+	          !!msg ?
+	            moment.unix(wen / 1000).from(moment.utc())
 	          : '';
 	        return {
 	          msg,
@@ -55711,13 +55711,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    return (
 	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 147}}
-	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 148}}
-	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}, "Chat")
+	        , react.createElement('div', { className: "pl3 pr3 pt2 pb3 cf bb b--black-30"      , style: {height: '88px'}, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 148}}
+	          , react.createElement('h2', { className: "dib w-50 gray"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}, "Chat")
 	          , react.createElement('a', {
 	            className: "dib tr w-50 pointer plus-font"    ,
 	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 150}}, "+")
 	        )
-	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 154}}
+	        , react.createElement('div', { style: {
+	          height:'calc(100vh - 60px - 48px)',
+	          overflowY: 'scroll'
+	        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 154}}
 	          , inviteItems
 	          , sidebarItems
 	        )
