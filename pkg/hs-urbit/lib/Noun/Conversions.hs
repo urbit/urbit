@@ -1,5 +1,6 @@
 module Noun.Conversions
   ( Cord(..), Knot(..), Term(..), Tank(..), Tang, Plum(..), Nullable
+  , Mug(..), Path(..), Word512
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -11,6 +12,7 @@ import Noun.Atom
 import Noun.Convert
 import Noun.Core
 import Noun.TH
+import Data.LargeWord (Word128, Word256, LargeKey)
 
 import GHC.Natural (Natural)
 import RIO         (decodeUtf8Lenient)
@@ -25,20 +27,21 @@ instance Show Noun where
                Cell x y -> fmtCell (show <$> (x : toTuple y))
     where
       fmtCell :: [String] -> String
-      fmtCell xs = "[" <> intercalate " " xs <> "]"
+      fmtCell xs = "(" <> intercalate ", " xs <> ")"
 
       toTuple :: Noun -> [Noun]
       toTuple (Cell x xs) = x : toTuple xs
       toTuple atom        = [atom]
 
       showAtom :: Atom -> String
-      showAtom 0 = "0"
+      showAtom 0               = "()"
+      showAtom a | a >= 2^1024 = "\"...\""
       showAtom a =
           let mTerm = do
                 t <- fromNoun (Atom a)
                 let ok = \x -> (x=='-' || C.isAlphaNum x)
                 guard (all ok (t :: Text))
-                pure ("%" <> unpack t)
+                pure ("\"" <> unpack t <> "\"")
 
           in case mTerm of
                Nothing -> show a
@@ -70,6 +73,8 @@ newtype Tour = Tour [Char]
 
 
 -- Atom or Cell ----------------------------------------------------------------
+
+type Word512 = LargeKey Word256 Word256
 
 data AtomCell a c
     = ACAtom a
@@ -134,10 +139,9 @@ newtype Tape = Tape [Char]
 
 type Tang = [Tank]
 
-type Tank = AtomCell Tape TankTree
-
-data TankTree
-    = Plum Plum
+data Tank
+    = Leaf Tape
+    | Plum Plum
     | Palm (Tape, Tape, Tape, Tape) [Tank]
     | Rose (Tape, Tape, Tape) [Tank]
   deriving (Eq, Ord, Show)
@@ -162,7 +166,7 @@ data PlumTree
 deriveNoun ''WideFmt
 deriveNoun ''TallFmt
 deriveNoun ''PlumFmt
-deriveNoun ''TankTree
+deriveNoun ''Tank
 deriveNoun ''PlumTree
 
 
@@ -215,7 +219,7 @@ instance FromNoun Term where -- XX TODO
 -- Knot ------------------------------------------------------------------------
 
 newtype Knot = MkKnot Text
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
 instance ToNoun Knot where -- XX TODO
   toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
@@ -224,6 +228,21 @@ instance FromNoun Knot where -- XX TODO
   parseNoun n = do
     Cord c <- parseNoun n
     pure (MkKnot (decodeUtf8Lenient c))
+
+
+-- Path ------------------------------------------------------------------------
+
+newtype Path = Path [Knot]
+  deriving newtype (Eq, Ord, Semigroup, Monoid, ToNoun, FromNoun)
+
+instance Show Path where
+  show (Path ks) = show $ intercalate "/" ("" : ks)
+
+
+-- Mug -------------------------------------------------------------------------
+
+newtype Mug = Mug Word32
+  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 
 -- Bool ------------------------------------------------------------------------
@@ -267,12 +286,18 @@ instance ToNoun Word8   where toNoun = wordToNoun
 instance ToNoun Word16  where toNoun = wordToNoun
 instance ToNoun Word32  where toNoun = wordToNoun
 instance ToNoun Word64  where toNoun = wordToNoun
+instance ToNoun Word128 where toNoun = wordToNoun
+instance ToNoun Word256 where toNoun = wordToNoun
+instance ToNoun Word512 where toNoun = wordToNoun
 
 instance FromNoun Word    where parseNoun = nounToWord
 instance FromNoun Word8   where parseNoun = nounToWord
 instance FromNoun Word16  where parseNoun = nounToWord
 instance FromNoun Word32  where parseNoun = nounToWord
 instance FromNoun Word64  where parseNoun = nounToWord
+instance FromNoun Word128 where parseNoun = nounToWord
+instance FromNoun Word256 where parseNoun = nounToWord
+instance FromNoun Word512 where parseNoun = nounToWord
 
 
 -- Maybe is `unit` -------------------------------------------------------------

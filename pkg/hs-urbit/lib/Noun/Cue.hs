@@ -1,4 +1,4 @@
-module Noun.Cue (cue, cueBS) where
+module Noun.Cue (cue, cueBS, DecodeErr) where
 
 import ClassyPrelude
 
@@ -21,10 +21,10 @@ import qualified Data.Vector.Primitive  as VP
 
 --------------------------------------------------------------------------------
 
-cueBS :: ByteString -> Either DecodeExn Noun
+cueBS :: ByteString -> Either DecodeErr Noun
 cueBS = doGet dNoun
 
-cue :: Atom -> Either DecodeExn Noun
+cue :: Atom -> Either DecodeErr Noun
 cue = cueBS . view atomBytes
 
 
@@ -57,7 +57,7 @@ data S = S
 
 type Env = (Ptr Word, S)
 
-data DecodeExn
+data DecodeErr
     = NotEnoughSpace Env
     | TooMuchSpace Env
     | BadEncoding Env String
@@ -73,7 +73,7 @@ newtype Get a = Get
            -> IO (GetResult a)
   }
 
-doGet :: Get a -> ByteString -> Either DecodeExn a
+doGet :: Get a -> ByteString -> Either DecodeErr a
 doGet m bs =
   unsafePerformIO $ try $ BS.unsafeUseAsCStringLen bs $ \(ptr, len) -> do
     let endPtr = ptr `plusPtr` len
@@ -86,7 +86,7 @@ doGet m bs =
 
 --------------------------------------------------------------------------------
 
-instance Exception DecodeExn
+instance Exception DecodeErr
 
 instance Functor Get where
     fmap f g = Get $ \end tbl s -> do

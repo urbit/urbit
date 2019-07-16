@@ -1,11 +1,14 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 module Vere.Pier where
 
-import ClassyPrelude
+import UrbitPrelude
 
 import Vere.Pier.Types
 
-import qualified Vere.Log  as Log
-import qualified Vere.Serf as Serf
+import qualified System.Entropy as Ent
+import qualified Vere.Log       as Log
+import qualified Vere.Serf      as Serf
 
 import Vere.Serf (EventId, Serf)
 
@@ -13,6 +16,24 @@ import Vere.Serf (EventId, Serf)
 --------------------------------------------------------------------------------
 
 ioDrivers = [] :: [IODriver]
+
+
+--------------------------------------------------------------------------------
+
+genEntropy :: IO Word512
+genEntropy = fromIntegral . view (from atomBytes) <$> Ent.getEntropy 64
+
+generateBootSeq :: Ship -> Pill -> IO BootSeq
+generateBootSeq ship Pill{..} = do
+    ent <- genEntropy
+    let ovums = preKern ent <> pKernelOvums <> pUserspaceOvums
+    pure $ BootSeq ident pBootFormulas ovums
+  where
+    ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
+    preKern ent = [ Ovum (Path ["", "term", "1"]) (Boot $ Fake $ who ident)
+                  , Ovum (Path ["", "arvo"])      (Whom ship)
+                  , Ovum (Path ["", "arvo"])      (Wack ent)
+                  ]
 
 
 --------------------------------------------------------------------------------

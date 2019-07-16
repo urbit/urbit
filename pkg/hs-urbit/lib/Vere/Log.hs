@@ -48,22 +48,22 @@ close (EventLog env) = mdb_env_close env
 
 readIdent :: EventLog -> IO LogIdentity
 readIdent (EventLog env) = do
-  txn     <- mdb_txn_begin env Nothing True
-  db      <- mdb_dbi_open txn (Just "META") []
-  who     <- get txn db "who"
-  is_fake <- get txn db "is-fake"
-  life    <- get txn db "life"
+  txn  <- mdb_txn_begin env Nothing True
+  db   <- mdb_dbi_open txn (Just "META") []
+  who  <- get txn db "who"
+  fake <- get txn db "is-fake"
+  life <- get txn db "life"
   mdb_txn_abort txn
-  pure (LogIdentity who is_fake life)
+  fromNounExn $ toNoun (who, fake, life)
 
 writeIdent :: EventLog -> LogIdentity -> IO ()
 writeIdent (EventLog env) LogIdentity{..} = do
   txn <- mdb_txn_begin env Nothing False
   db  <- mdb_dbi_open txn (Just "META") [MDB_CREATE]
   let flags = compileWriteFlags []
-  putNoun flags txn db "who" who
-  putNoun flags txn db "is-fake" is_fake
-  putNoun flags txn db "life" life
+  putNoun flags txn db "who"     $ toNoun who
+  putNoun flags txn db "is-fake" $ toNoun isFake
+  putNoun flags txn db "life"    $ toNoun lifecycleLen
   mdb_txn_commit txn
   pure ()
 

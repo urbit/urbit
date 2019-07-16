@@ -19,11 +19,11 @@ dependencies:
   - classy-prelude
   - containers
   - data-fix
+  - entropy
   - extra
   - fixed-vector
   - flat
   - ghc-prim
-  - hashable
   - hashable
   - hashtables
   - http-client

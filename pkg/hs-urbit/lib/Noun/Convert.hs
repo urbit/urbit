@@ -1,6 +1,6 @@
 module Noun.Convert
   ( ToNoun(toNoun)
-  , FromNoun(parseNoun), fromNoun, fromNounErr
+  , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
   , Parser(..)
   , CellIdx, NounPath
   , Cord(..)
@@ -163,6 +163,17 @@ fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
   where
     onFail p m  = Left (pack m)
     onSuccess x = Right x
+
+data BadNoun = BadNoun String
+  deriving (Eq, Ord, Show)
+
+instance Exception BadNoun where
+
+fromNounExn :: FromNoun a => Noun -> IO a
+fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
+  where
+    onFail p m  = throwIO (BadNoun m)
+    onSuccess x = pure x
 
 
 -- Cord Conversions ------------------------------------------------------------

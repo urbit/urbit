@@ -1,22 +1,38 @@
 module Main where
 
 import ClassyPrelude
+
+import Noun
 import Vere.Pier.Types
+import Vere.Pier
+import Vere.Serf
+
+import Text.Show.Pretty (pPrint)
 
 import qualified Vere.Log     as Log
 import qualified Vere.Persist as Persist
 import qualified Vere.Pier    as Pier
 
-
 --------------------------------------------------------------------------------
 
 main :: IO ()
 main = do
-  (s,l,e,m) <- Pier.resume "/home/benjamin/r/urbit/zod/"
+    p <- loadFile @Pill "/home/benjamin/r/urbit/bin/brass.pill" >>= \case
+        Left l  -> error (show l)
+        Right p -> pure p
 
-  putStrLn "Resumed!"
+    pPrint p
 
-  pure ()
+    seq@(BootSeq ident _ _) <- generateBootSeq 0 p
+    pPrint seq
+
+    serf <- startSerfProcess "/home/benjamin/r/urbit/zod/"
+    bootFromSeq serf ident (muckBootSeq seq) >>= pPrint
+
+    -- (s,l,e,m) <- Pier.resume "/home/benjamin/r/urbit/zod/"
+    -- putStrLn "Resumed!"
+
+    pure ()
 
 --------------------------------------------------------------------------------
 

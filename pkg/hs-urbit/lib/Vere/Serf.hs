@@ -73,13 +73,21 @@ newtype Job = Job Void
 
 type EventId = Word64
 
-newtype Ship = Ship Word64 -- @p
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
-newtype ShipId = ShipId (Ship, Bool)
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
 --------------------------------------------------------------------------------
+
+data Order
+    = OBoot LogIdentity
+    | OExit Word8
+    | OSave EventId
+    | OWork EventId Atom
+  deriving (Eq, Ord, Show)
+
+-- XX TODO Support prefixes in deriveNoun
+instance ToNoun Order where
+  toNoun (OBoot id)  = toNoun (Cord "boot", id)
+  toNoun (OExit cod) = toNoun (Cord "exit", cod)
+  toNoun (OSave id)  = toNoun (Cord "save", id)
+  toNoun (OWork w a) = toNoun (Cord "work", w, a)
 
 type Play = Maybe (EventId, Mug, ShipId)
 
@@ -91,34 +99,16 @@ data Plea
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
 
-instance ToNoun Plea where
-  toNoun = \case
-    Play p     -> toNoun (Cord "play", p)
-    Work i m j -> toNoun (Cord "work", i, m, j)
-    Done i m o -> toNoun (Cord "done", i, m, o)
-    Stdr i msg -> toNoun (Cord "stdr", i, msg)
-    Slog i p t -> toNoun (Cord "slog", i, p, t)
-
-instance FromNoun Plea where
-  parseNoun n =
-    parseNoun n >>= \case
-      (Cord "play", p) -> parseNoun p <&> \p         -> Play p
-      (Cord "work", w) -> parseNoun w <&> \(i, m, j) -> Work i m j
-      (Cord "done", d) -> parseNoun d <&> \(i, m, o) -> Done i m o
-      (Cord "stdr", r) -> parseNoun r <&> \(i, msg)  -> Stdr i msg
-      (Cord "slog", s) -> parseNoun s <&> \(i, p, t) -> Slog i p t
-      (Cord tag   , s) -> fail ("Invalid plea tag: " <> unpack (decodeUtf8 tag))
+deriveNoun ''Plea
 
 --------------------------------------------------------------------------------
 
 type CompletedEventId = Word64
-type NextEventId = Word64
-
-type SerfState = (EventId, Mug)
-
-type ReplacementEv = (EventId, Mug, Job)
-type WorkResult  = (EventId, Mug, [(Path, Eff)])
-type SerfResp    = (Either ReplacementEv WorkResult)
+type NextEventId      = Word64
+type SerfState        = (EventId, Mug)
+type ReplacementEv    = (EventId, Mug, Job)
+type WorkResult       = (EventId, Mug, [(Path, Eff)])
+type SerfResp         = (Either ReplacementEv WorkResult)
 
 -- Exceptions ------------------------------------------------------------------
 
@@ -129,6 +119,8 @@ data SerfExn
     | BadPleaAtom Atom
     | BadPleaNoun Noun Text
     | ReplacedEventDuringReplay EventId ReplacementEv
+    | ReplacedEventDuringBoot   EventId ReplacementEv
+    | EffectsDuringBoot         EventId [(Path, Eff)]
     | SerfConnectionClosed
     | UnexpectedPleaOnNewShip Plea
     | InvalidInitialPlea Plea
@@ -158,16 +150,7 @@ sendAndRecv :: Serf -> EventId -> Atom -> IO SerfResp
 sendAndRecv w eventId event =
   do
     traceM ("sendAndRecv: " <> show eventId)
-
-    -- traceM ("<cue>")
-    -- traceM (maybe "bad cue" showNoun $ cue event)
-    -- traceM ("</cue>")
-
-    traceM ("<jam>")
-    wEv <- evaluate $ force $ work eventId (Jam event)
-    traceM ("</jam>")
-
-    sendAtom w wEv
+    sendOrder w (OWork eventId event)
     res <- loop
     traceM ("sendAndRecv.done " <> show res)
     pure res
@@ -190,10 +173,67 @@ sendAndRecv w eventId event =
       Stdr _ cord  -> putStrLn (pack ("[SERF] " <> cordString cord)) >> loop
       Slog _ pri t -> printTank pri t >> loop
 
-sendBootEvent :: LogIdentity -> Serf -> IO ()
-sendBootEvent id w = do
-  sendAtom w $ jam $ toNoun (Cord "boot", id)
+sendAndRecvOrder :: Serf -> EventId -> Order -> IO SerfResp
+sendAndRecvOrder w eventId order =
+  do
+    traceM ("sendAndRecvOrder: " <> show eventId)
 
+    sendOrder w order
+    res <- loop
+    traceM ("sendAndRecvOrder.done " <> show res)
+    pure res
+  where
+    produce :: WorkResult -> IO SerfResp
+    produce (i, m, o) = do
+      guardExn (i == eventId) (BadComputeId eventId (i, m, o))
+      pure $ Right (i, m, o)
+
+    replace :: ReplacementEv -> IO SerfResp
+    replace (i, m, j) = do
+      guardExn (i == eventId) (BadReplacementId eventId (i, m, j))
+      pure (Left (i, m, j))
+
+    loop :: IO SerfResp
+    loop = recvPlea w >>= \case
+      Play p       -> throwIO (UnexpectedPlay eventId p)
+      Done i m o   -> produce (i, m, o)
+      Work i m j   -> replace (i, m, j)
+      Stdr _ cord  -> putStrLn (pack ("[SERF] " <> cordString cord)) >> loop
+      Slog _ pri t -> printTank pri t >> loop
+
+sendOrder :: Serf -> Order -> IO ()
+sendOrder w o = sendAtom w $ jam $ toNoun o
+
+muckBootSeq :: BootSeq -> [EventId -> Mug -> Time.Wen -> Order]
+muckBootSeq (BootSeq _ nocks ovums) =
+    (muckNock <$> nocks) <> (muckOvum <$> ovums)
+  where
+    muckNock nok eId mug _   = OWork eId $ jam $ toNoun (mug, nok)
+    muckOvum ov  eId mug wen = OWork eId $ jam $ toNoun (mug, wen, ov)
+
+bootFromSeq :: Serf -> LogIdentity -> [EventId -> Mug -> Time.Wen -> Order]
+            -> IO [Order]
+bootFromSeq w ident seq = do
+    ws@(eventId, mug) <- recvPlea w >>= \case
+      Play Nothing          -> pure (1, Mug 0)
+      Play (Just (e, m, _)) -> error "ship already booted"
+      x                     -> throwIO (InvalidInitialPlea x)
+
+    traceM ("got plea! " <> show eventId <> " " <> show mug)
+
+    sendOrder w (OBoot ident)
+    loop [] 1 (Mug 0) seq
+
+  where
+    loop acc eId lastMug []     = pure $ reverse acc
+    loop acc eId lastMug (x:xs) = do
+      wen <- Time.now
+      let order = x eId lastMug wen
+      sendAndRecvOrder w eId order >>= \case
+        Left badEv               -> throwIO (ReplacedEventDuringBoot eId badEv)
+        Right (id, newMug, f:fs) -> throwIO (EffectsDuringBoot eId (f:fs))
+        Right (id, newMug, [])   -> do
+          loop (order : acc) (eId+1) newMug xs
 
 -- the ship is booted, but it is behind. shove events to the worker until it is
 -- caught up.
@@ -203,10 +243,10 @@ replayEvents :: Serf
              -> EventId
              -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
              -> IO (EventId, Mug)
-replayEvents w (wid, wmug) identity lastCommitedId getEvents = do
+replayEvents w (wid, wmug) ident lastCommitedId getEvents = do
   traceM ("replayEvents: " <> show wid <> " " <> show wmug)
 
-  when (wid == 1) (sendBootEvent identity w)
+  when (wid == 1) (sendOrder w $ OBoot ident)
 
   vLast <- newIORef (wid, wmug)
   loop vLast wid
@@ -229,7 +269,7 @@ replayEvents w (wid, wmug) identity lastCommitedId getEvents = do
 
         for_ events $ \(eventId, event) -> do
           sendAndRecv w eventId event >>= \case
-            Left ev -> throwIO (ReplacedEventDuringReplay eventId ev)
+            Left ev            -> throwIO (ReplacedEventDuringReplay eventId ev)
             Right (id, mug, _) -> writeIORef vLast (id, mug)
 
         loop vLast (curEvent + toRead)
