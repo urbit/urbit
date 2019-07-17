@@ -58,6 +58,8 @@
     $%  [%init community-name=@t host-ship=@p initial-members=(set @p)]
         [%add-member ship=@p]
         [%remove-member ship=@p]
+    ::
+        [%create name=@t type=@t]
     ==
   ::
   +$  private-event
@@ -66,11 +68,19 @@
   +$  private-state
     ::  todo: don't leave all mods as a having the same power this is how
     ::  communities get destroyed
-    $:  mods=(set @p)
+    $:  initialized=_|
     ==
   ::
   +$  snapshot
-    $:  invited=(set @p)
+    $:  ::  community-name: unique name for this host-ship
+        ::
+        community-name=@t
+        ::  host-ship: the ship hosting this community
+        ::
+        host-ship=@p
+        ::  invited: the set of ships which can post to this
+        ::
+        invited=(set @p)
     ==
   ::
   +$  child-returned
@@ -84,7 +94,8 @@
     ==
   ::
   +$  on-process-response
-    $:  [%log =private-event =return-event]
+    $%  [%log =private-event =return-event]
+        [%create @t @t =child-event]
     ==
   ::  +on-route: everything routes through the toplevel node. this is what does 
   ::
@@ -101,7 +112,49 @@
     ^-  [on-process-response _private-state]
     ::  todo: since we're the toplevel node, we also need to perform auth here.
     ::
-    !!
+    ?-    -.user-event
+        %init
+      ::  we can only call the init function when we aren't initialized
+      ::
+      ?>  ?=(%.n initialized.private-state)
+      [[%log ~ [%accept ~]] private-state(initialized %.y)]
+    ::
+        %add-member
+      [[%log ~ [%accept ~]] private-state]
+    ::
+        %remove-member
+      [[%log ~ [%accept ~]] private-state]
+    ::
+        %create
+      ~&  [%inside-create user-event]
+      [[%create name.user-event type.user-event parent-event] private-state]
+    ==
+  ::
+  ++  apply-event-to-snapshot
+    |=  [=user-event =private-event =snapshot]
+    ^-  _snapshot
+    ?-    -.user-event
+        %init
+      %_    snapshot
+        community-name  community-name.user-event
+        host-ship       host-ship.user-event
+        invited         initial-members.user-event
+      ==
+    ::
+        %add-member
+      snapshot(invited (~(put in invited.snapshot) ship.user-event))
+    ::
+        %remove-member
+      snapshot(invited (~(del in invited.snapshot) ship.user-event))
+    ::
+        %create
+      !!
+    ==
+  ::
+  ++  on-child-return
+    |=  [=child-returned =private-state]
+    ^-  [return-event _private-state]
+    [child-returned private-state]
   --
 ::  the board node: toplevel auth owns nodes
 ::
@@ -116,7 +169,8 @@
   ::  the user-event of the board is a new post request
   ::
   +$  user-event
-    $%  [%new-post =post]
+    $%  [%create name=@t type=@t]
+        [%new-post =post]
 ::        [%delete-post =post]
     ==
   ::
@@ -143,7 +197,8 @@
     ==
   ::
   +$  on-process-response
-    $:  [%create id=@t type=@t =child-event]
+    $%  [%create id=@t type=@t =child-event]
+        [%return =return-event]
     ==
   ::  +on-route: called when we must route a message to our children
   ::
@@ -170,10 +225,12 @@
     ::
     ?-    -.user-event
         %new-post
-      =^  id  private-state
-        [next-postid.private-state private-state(next-postid +(next-postid.private-state))]
+      =/  id  next-postid.private-state
       ::
-      [[%create (scot %ud id) %thread id] private-state]
+      [[%create (scot %ud id) %thread next-postid.private-state] private-state]
+    ::
+        %create
+      [[%return [%accept ~]] private-state]
     ==
   ::  +apply-event-to-snapshot: called to replay the event log
   ::
@@ -195,9 +252,10 @@
   ++  on-child-return
     |=  [=child-returned =private-state]
     ^-  [return-event _private-state]
+    ~&  %board-on-child-return
     ?-    -.child-returned
         %accepted
-      ~&  %accepted
+      ~&  [%accepted id.child-returned next-postid.private-state]
       ?>  =(id.child-returned next-postid.private-state)
       [[%accept ~] private-state(next-postid +(next-postid.private-state))]
     ::
@@ -288,7 +346,7 @@
 ::
 ++  app-map
   ^-  (map @t vase)
-  (my [[%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
+  (my [[%auth !>(node-type-auth)] [%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
 ::  currently a hack. to make this work really generically, we'll need to make
 ::  things sorta vase based where we connect types pulled out of the vases
 ::  instead of an each of the two types.
@@ -333,6 +391,40 @@
   ^-  vase
   (slap v [%kttr [%like [[%& 1] ~] ~]])
 ::
+++  instantiate-node
+  |=  type=term
+  ^-  node-state
+  ::
+  =/  new-item-vase=vase       (~(got by app-map) type)
+  ::
+  =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
+  =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
+  ::
+  :*  type
+      1
+      ~
+      (bunt-a-vase snapshot-type)
+      (bunt-a-vase private-state-type)
+      ~
+  ==
+::
+::
+++  process-child-returned
+  |=  [app-vase=vase child-returned=vase state=node-state]
+  ^-  [vase _state]
+  ::
+  =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
+  =/  args=vase  :(slop child-returned private-state.state)
+  ::
+  ::  ~&  [%on-child-return-args app-type.state route args]
+  ::  ~&  [%desperation p.on-child-return]
+  =/  raw-result  (slam on-child-return args)
+  ::
+  =/  return-event=vase  (slot 2 raw-result)
+  =.  private-state.state  (slot 3 raw-result)
+  ::
+  ~&  [%ret return-event]
+  [return-event state]
 ::  +node-executor: applies a message to a node in a route
 ::
 ::    Returns a list of return messages (ignored at the toplevel) and the
@@ -394,19 +486,9 @@
     =^  return-value  u.sub-node
       (node-executor child-event t.route full-path message u.sub-node)
     ::
-    ::  what we want is to mandate a single return value instead of an
-    ::  arbitrary list. this really requires that the types above line up
-    ::  differently.
+    =.  children.state  (~(put by children.state) i.route u.sub-node)
     ::
-    =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
-    =.  args  :(slop return-value private-state.state)
-    =/  raw-result  (slam on-child-return args)
-    ::
-    =/  return-event=vase  (slot 2 raw-result)
-    =.  private-state.state  (slot 3 raw-result)
-    ::
-    ~&  [%ret return-event]
-    [return-event state]
+    (process-child-returned app-vase return-value state)
   ::  we've reached the node we're trying to talk to.
   ::
   =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
@@ -435,32 +517,19 @@
     [return-event.response state]
   ::
       %create
-    ::  w
     ::
-    =/  new-item-vase=vase       (~(got by app-map) type.response)
+    =/  created=node-state  (instantiate-node type.response)
     ::
-    =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
-    =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
+    =^  return  created
+      (node-executor child-event.response / (weld full-path [sub-id.response ~]) message created)
     ::
-    =/  thread=node-state
-      :*  type.response
-          1
-          ~
-          (bunt-a-vase snapshot-type)
-          (bunt-a-vase private-state-type)
-          ~
-      ==
-    ::
-    =^  return  thread
-      (node-executor child-event.response / (weld full-path [sub-id.response ~]) message thread)
-    ::
-    ~&  [%created sub-id=sub-id.response return=return]
-    =.  children.state  (~(put by children.state) sub-id.response thread)
+    ~&  [%created type=type.response sub-id=sub-id.response return=return]
+    =.  children.state  (~(put by children.state) sub-id.response created)
     =.  event-log.state
-      [[next-event-id.state [%create sub-id.response app-type.state]] event-log.state]
+      [[next-event-id.state [%create sub-id.response type.response]] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
     ::
-    [return state]
+    (process-child-returned app-vase return state)
   ::
       %return
     ::  when we receive a %return value, we pass the value up to the callers
@@ -492,13 +561,37 @@
 ::  This works for the thread (sorta) but where does spawning behaviour come in?
 ::
 
-=/  board=node-state
-  [%board 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
-~&  %start---post--a
-=^  returns  board  (node-executor !>(0) / / !>([%new-post [0 'subject' 'text']]) board)
-~&  %start---post--b
+::  toplevel container node
 ::
-=^  ret2  board  (node-executor !>(0) /1 /1 !>([%new-post [0 'reply' 'text reply']]) board)
+=/  toplevel  (instantiate-node %auth)
+::  initializes the 'our town' community
 ::
-~&  [%board-private-state private-state.board]
+~&  %phase---------1
+=^  ret1  toplevel
+  (node-executor !>(0) / / !>([%init 'our town' ~zod (sy [~littel-ponnys ~])]) toplevel)
+~&  [%ret ret1]
+::  'our town' should have a 'shitposting' board
+::
+~&  %phase---------2
+=^  ret2  toplevel
+  (node-executor !>(0) / / !>([%create 'shitposting' %board]) toplevel)
+~&  [%ret2 ret2]
+~&  [%toplevel toplevel]
+::  time to start shitposting!
+::
+~&  %phase---------3
+=^  ret3  toplevel
+  (node-executor !>(0) /shitposting /shitposting !>([%new-post [0 'subject' 'text']]) toplevel)
+~&  [%ret3 ret3]
+::  continue shitposting in the current thread!
+::
+~&  %phase---------4
+=^  ret4  toplevel
+  (node-executor !>(0) /shitposting/1 /shitposting/1 !>([%new-post [0 'reply' 'text reply']]) toplevel)
+~&  [%ret4 ret4]
+::
+~&  [%final-sate toplevel]
+
+::  zero
+::
 0
