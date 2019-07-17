@@ -43,6 +43,67 @@
       ::
       [%return return-event=vase]
   ==
+::  the authenticating toplevel node
+::
+++  node-type-auth
+  |%
+  ++  parent-event
+    ring-sig
+  ::
+  +$  child-event
+    ring-sig
+  ::  user events which target the toplevel node are all about doing membership checks
+  ::
+  +$  user-event
+    $%  [%init community-name=@t host-ship=@p initial-members=(set @p)]
+        [%add-member ship=@p]
+        [%remove-member ship=@p]
+    ==
+  ::
+  +$  private-event
+    ~
+  ::
+  +$  private-state
+    ::  todo: don't leave all mods as a having the same power this is how
+    ::  communities get destroyed
+    $:  mods=(set @p)
+    ==
+  ::
+  +$  snapshot
+    $:  invited=(set @p)
+    ==
+  ::
+  +$  child-returned
+    $%  [%accept ~]
+        [%reject ~]
+    ==
+  ::
+  +$  return-event
+    $%  [%accept ~]
+        [%reject ~]
+    ==
+  ::
+  +$  on-process-response
+    $:  [%log =private-event =return-event]
+    ==
+  ::  +on-route: everything routes through the toplevel node. this is what does 
+  ::
+  ++  on-route
+    |=  [=path =parent-event =private-state]
+    ^-  (unit child-event)
+    ::
+    ~&  [%todo-add-auth-check-for parent-event]
+    ::
+    `parent-event
+  ::
+  ++  on-process-event
+    |=  [=parent-event =user-event =private-state]
+    ^-  [on-process-response _private-state]
+    ::  todo: since we're the toplevel node, we also need to perform auth here.
+    ::
+    !!
+  --
+::  the board node: toplevel auth owns nodes
 ::
 ++  node-type-board
   |%
@@ -293,7 +354,7 @@
 ::    TODO: vase to (unit vase)? Right now !>(~) lets me make progress but
 ::    is wrong in the error handling case
 ::
-::    TODO: Create events and archive events need to go in the log.
+::    TODO: Archive events need to go in the log.
 ::
 ::
 ++  node-executor
@@ -369,6 +430,8 @@
       [[next-event-id.state [%log message private-event.response]] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
     ::
+    ~&  [%new-snapshot full-path snapshot.state]
+    ::
     [return-event.response state]
   ::
       %create
@@ -429,8 +492,8 @@
 ::  This works for the thread (sorta) but where does spawning behaviour come in?
 ::
 
-=/  board=node-state  [%board 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
-
+=/  board=node-state
+  [%board 0 ~ !>(*snapshot:node-type-board) !>(*private-state:node-type-board) ~]
 ~&  %start---post--a
 =^  returns  board  (node-executor !>(0) / / !>([%new-post [0 'subject' 'text']]) board)
 ~&  %start---post--b
