@@ -19,7 +19,8 @@ export class MemberElement extends Component {
           Host
         </p>
       );
-    } else if (window.ship === props.ship || window.ship !== props.host) {
+    } else if (window.ship !== props.ship &&
+      `~${window.ship}` === props.host) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
            className="w-40 dib underline black btn-font">

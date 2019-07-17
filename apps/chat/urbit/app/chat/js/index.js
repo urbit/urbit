@@ -57673,25 +57673,26 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	        )
 	      );
-	    } else if (window.ship === props.ship || window.ship !== props.host) {
+	    } else if (window.ship !== props.ship &&
+	      `~${window.ship}` === props.host) {
 	      actionElem = (
 	        react.createElement('a', { onClick: this.onRemove.bind(this),
-	           className: "w-40 dib underline black btn-font"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 24}}, "Remove"
+	           className: "w-40 dib underline black btn-font"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 25}}, "Remove"
 
 	        )
 	      );
 	    } else {
 	      actionElem = (
-	        react.createElement('span', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 31}})
+	        react.createElement('span', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 32}})
 	      );
 	    }
 
 	    return (
-	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 36}}
+	      react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$e, lineNumber: 37}}
 	        , react.createElement('p', {
 	          className: 
 	            "w-60 dib black pr3 mb2 label-small-mono label-regular"
-	          , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 37}}
+	          , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 38}}
 	          , props.ship
 	        )
 	        , actionElem
