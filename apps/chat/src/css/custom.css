@@ -65,7 +65,7 @@ h2 {
 .btn-font {
   font-size: 14px;
   line-height: 16px;
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .fw-normal {
@@ -81,7 +81,7 @@ h2 {
 }
 
 .nice-green {
-  color: #2AA779;
+  color: #2AA779 !important;
 }
 
 .bg-nice-green {
@@ -89,7 +89,7 @@ h2 {
 }
 
 .nice-red {
-  color: #EE5432;
+  color: #EE5432 !important;
 }
 
 .inter {

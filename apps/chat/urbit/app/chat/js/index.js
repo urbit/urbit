@@ -17,10 +17,6 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
-	function getCjsExportFromNamespace (n) {
-		return n && n['default'] || n;
-	}
-
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -46779,8 +46775,6 @@
 		isBuffer: isBuffer
 	});
 
-	var require$$0 = getCjsExportFromNamespace(bufferEs6);
-
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -46833,7 +46827,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = require$$0.Buffer;
+	    Buffer = bufferEs6.Buffer;
 	  } catch (e) {
 	  }
 
@@ -55924,9 +55918,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	            className: "dib tr w-50 pointer plus-font"    ,
 	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 150}}, "+")
 	        )
-	        , react.createElement('div', { style: {
-	          height:'calc(100vh - 60px - 48px)',
-	          overflowY: 'scroll'
+	        , react.createElement('div', { className: "overflow-y-auto", style: {
+	          height: 'calc(100vh - 60px - 48px)'
 	        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 154}}
 	          , inviteItems
 	          , sidebarItems
@@ -57559,10 +57552,6 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  onScroll(e) {
-	    console.log('scrollHeight', e.target.scrollHeight);
-	    console.log('scrollTop', Math.round(e.target.scrollTop));
-	    console.log('clientHeight', e.target.clientHeight);
-
 	    if (navigator.userAgent.includes('Safari') &&
 	      navigator.userAgent.includes('Chrome')) {
 	      // Google Chrome
@@ -57632,25 +57621,25 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return (
 	        react.createElement(Message, {
 	          key: msg.gam.uid + Math.random(),
-	          msg: msg.gam, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 200}} )
+	          msg: msg.gam, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 196}} )
 	      );
 	    });
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
 	      react.createElement('div', { key: state.station,
-	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 208}}
-	        , react.createElement('div', { className: "pl3 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 210}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 211}}, state.circle)
+	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 204}}
+	        , react.createElement('div', { className: "pl3 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 206}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 207}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 212}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 208}} )
 	        )
 	        , react.createElement('div', {
 	          className: "overflow-y-scroll pt3 flex flex-column-reverse"   ,
 	          style: { height: 'calc(100% - 157px)' },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 216}}
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 220}})
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 212}}
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 216}})
 	          , chatMessages
 	        )
 	        , react.createElement(ChatInput, {
@@ -57659,7 +57648,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          station: state.station,
 	          circle: state.circle,
 	          security: config.con,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 223}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 219}} )
 	      )
 	    )
 	  }
@@ -57684,7 +57673,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	        )
 	      );
-	    } else if (window.ship !== props.ship && props.host !== `~${props.ship}`) {
+	    } else if (window.ship === props.ship || window.ship !== props.host) {
 	      actionElem = (
 	        react.createElement('a', { onClick: this.onRemove.bind(this),
 	           className: "w-40 dib underline black btn-font"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 24}}, "Remove"
@@ -57789,7 +57778,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    );
 
 
-	    let inviteButtonClasses = "label-regular underline gray btn-font pointer";
+	    let inviteButtonClasses = "label-regular underline black btn-font pointer";
 	    if (!this.state.error) {
 	      inviteButtonClasses = inviteButtonClasses + ' black';
 	    }

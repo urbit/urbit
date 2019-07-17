@@ -126,10 +126,6 @@ export class ChatScreen extends Component {
   }
 
   onScroll(e) {
-    console.log('scrollHeight', e.target.scrollHeight);
-    console.log('scrollTop', Math.round(e.target.scrollTop));
-    console.log('clientHeight', e.target.clientHeight);
-
     if (navigator.userAgent.includes('Safari') &&
       navigator.userAgent.includes('Chrome')) {
       // Google Chrome

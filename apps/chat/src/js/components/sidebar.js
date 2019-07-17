@@ -151,9 +151,8 @@ export class Sidebar extends Component {
             className="dib tr w-50 pointer plus-font"
             onClick={this.onClickNew.bind(this)}>+</a>
         </div>
-        <div style={{
-          height:'calc(100vh - 60px - 48px)',
-          overflowY: 'scroll'
+        <div className="overflow-y-auto" style={{
+          height: 'calc(100vh - 60px - 48px)'
         }}>
           {inviteItems}
           {sidebarItems}

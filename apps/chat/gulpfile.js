@@ -1,9 +1,6 @@
 var gulp = require('gulp');
 var cssimport = require('gulp-cssimport');
 var rollup = require('gulp-better-rollup');
-var cssnano = require('cssnano');
-var autoprefixer = require('autoprefixer');
-var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var exec = require('child_process').exec;
@@ -27,14 +24,9 @@ var urbitrc = require('./.urbitrc');
 ***/
 
 gulp.task('css-bundle', function() {
-  let plugins = [
-    autoprefixer({ browsers: ['last 1 version'] }),
-    cssnano()
-  ];
   return gulp
     .src('src/index.css')
     .pipe(cssimport())
-    .pipe(postcss(plugins))
     .pipe(gulp.dest('./urbit/app/chat/css'));
 });
 
