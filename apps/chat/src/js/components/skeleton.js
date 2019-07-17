@@ -15,7 +15,10 @@ export class Skeleton extends Component {
           <div className="fl h-100 br overflow-x-hidden" style={{ flexBasis: 320 }}>
             {this.props.sidebar}
           </div>
-          <div className="h-100 fr" style={{ flexGrow: 1 }}>
+          <div className="h-100 fr" style={{
+            flexGrow: 1,
+            width: 'calc(100% - 320px)'
+          }}>
             {this.props.children}
           </div>
         </div>

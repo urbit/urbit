@@ -99,6 +99,11 @@ export class ChatScreen extends Component {
   askForMessages() {
     const { props, state } = this;
     let messages = props.messages;
+    
+    console.log('askForMessages');
+
+    console.log('if1: ' + state.numPages * 50 < props.messages.length - 200);
+    console.log('if2: ' + this.hasAskedForMessages);
 
     if (state.numPages * 50 < props.messages.length - 200 ||
         this.hasAskedForMessages) {
@@ -112,6 +117,8 @@ export class ChatScreen extends Component {
 
         this.hasAskedForMessages = true;
 
+        console.log('fetching new messages');
+
         props.subscription.fetchMessages(state.station, start, end - 1);
       }
     }
@@ -124,6 +131,10 @@ export class ChatScreen extends Component {
   }
 
   onScroll(e) {
+    console.log('scrollHeight', e.target.scrollHeight);
+    console.log('scrollTop', Math.round(e.target.scrollTop));
+    console.log('clientHeight', e.target.clientHeight);
+
     if (e.target.scrollTop === 0) {
       this.setState({
         numPages: 1,
@@ -133,7 +144,7 @@ export class ChatScreen extends Component {
         (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
         e.target.clientHeight
     ) {
-       this.setState({
+      this.setState({
         numPages: this.state.numPages + 1,
         scrollLocked: true
       }, () => {

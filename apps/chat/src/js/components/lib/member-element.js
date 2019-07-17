@@ -13,13 +13,13 @@ export class MemberElement extends Component {
     const { props } = this;
 
     let actionElem;
-    if (props.isHost) {
+    if (`~${props.ship}` === props.host) {
       actionElem = (
         <p className="dib w-40 underline black label-small-mono label-regular">
           Host
         </p>
       );
-    } else if (window.ship !== props.ship) {
+    } else if (window.ship !== props.ship && props.host !== `~${props.ship}`) {
       actionElem = (
         <a onClick={this.onRemove.bind(this)}
            className="w-40 dib underline black btn-font">

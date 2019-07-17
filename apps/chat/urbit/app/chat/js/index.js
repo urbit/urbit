@@ -17,6 +17,10 @@
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
 
+	function getCjsExportFromNamespace (n) {
+		return n && n.default || n;
+	}
+
 	/*
 	object-assign
 	(c) Sindre Sorhus
@@ -46715,6 +46719,8 @@
 		isBuffer: isBuffer
 	});
 
+	var require$$0 = getCjsExportFromNamespace(bufferEs6);
+
 	var bn = createCommonjsModule(function (module) {
 	(function (module, exports) {
 
@@ -46767,7 +46773,7 @@
 
 	  var Buffer;
 	  try {
-	    Buffer = bufferEs6.Buffer;
+	    Buffer = require$$0.Buffer;
 	  } catch (e) {
 	  }
 
@@ -50899,7 +50905,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          , react.createElement('div', { className: "fl h-100 br overflow-x-hidden"   , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
 	            , this.props.sidebar
 	          )
-	          , react.createElement('div', { className: "h-100 fr" , style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 18}}
+	          , react.createElement('div', { className: "h-100 fr" , style: {
+	            flexGrow: 1,
+	            width: 'calc(100% - 320px)'
+	          }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 18}}
 	            , this.props.children
 	          )
 	        )
@@ -55865,34 +55874,33 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    );
 
 	    try {
-	     let url = new URL(content);
-	     let imgMatch = 
-	        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|webp|WEBP)$/.exec(
-	          url.pathname
-	        );
-	     if (imgMatch) {
-	       return (
-	         react.createElement('img', {
-	           src: content,
-	           style: {
-	             width:"50%",
-	             maxWidth: '250px'
-	           }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
-	         )
-	       )
-	     } else {
-	       let url = this.urlTransmogrifier(content);
-	       
-	       return (
-	         react.createElement('a', { className: "body-regular",
-	           href: url,
-	           target: "_blank", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 47}}, url)
-	       )
-	     }
-	   } catch(e) {
-	     console.log(e);
-	     return this.renderMessage(content);
-	   }
+	      let url = new URL(content);
+	      let imgMatch = 
+	         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|webp|WEBP)$/.exec(
+	           url.pathname
+	         );
+	      if (imgMatch) {
+	        return (
+	          react.createElement('img', {
+	            src: content,
+	            style: {
+	              width:"50%",
+	              maxWidth: '250px'
+	            }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 35}}
+	          )
+	        )
+	      } else {
+	        let url = this.urlTransmogrifier(content);
+	        
+	        return (
+	          react.createElement('a', { className: "body-regular",
+	            href: url,
+	            target: "_blank", __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 47}}, url)
+	        )
+	      }
+	    } catch(e) {
+	      return this.renderMessage(content);
+	    }
 	  }
 
 	  urlTransmogrifier(url) {
@@ -55913,16 +55921,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      react.createElement('div', { className: "w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending,
 	        style: {
 	          minHeight: 'min-content'
-	        }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 73}}
-	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 77}}
-	          , react.createElement(Sigil, { ship: props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 78}} )
+	        }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 72}}
+	        , react.createElement('div', { className: "fl mr2" , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 76}}
+	          , react.createElement(Sigil, { ship: props.msg.aut, size: 32, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 77}} )
 	        )
-	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 80}}
-	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 81}}
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 82}}, "~"
+	        , react.createElement('div', { className: "fr", style: { flexGrow: 1, marginTop: -4 }, __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 79}}
+	          , react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$9, lineNumber: 80}}
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib mr3"    , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 81}}, "~"
 	              , props.msg.aut
 	            )
-	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 85}}, timestamp)
+	            , react.createElement('p', { className: "v-top label-small-mono gray dib"   , __self: this, __source: {fileName: _jsxFileName$9, lineNumber: 84}}, timestamp)
 	          )
 	          , this.renderContent()
 	        )
@@ -57303,6 +57311,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  askForMessages() {
 	    const { props, state } = this;
 	    let messages = props.messages;
+	    
+	    console.log('askForMessages');
+
+	    console.log('if1: ' + state.numPages * 50 < props.messages.length - 200);
+	    console.log('if2: ' + this.hasAskedForMessages);
 
 	    if (state.numPages * 50 < props.messages.length - 200 ||
 	        this.hasAskedForMessages) {
@@ -57316,6 +57329,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	        this.hasAskedForMessages = true;
 
+	        console.log('fetching new messages');
+
 	        props.subscription.fetchMessages(state.station, start, end - 1);
 	      }
 	    }
@@ -57328,6 +57343,10 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  }
 
 	  onScroll(e) {
+	    console.log('scrollHeight', e.target.scrollHeight);
+	    console.log('scrollTop', Math.round(e.target.scrollTop));
+	    console.log('clientHeight', e.target.clientHeight);
+
 	    if (e.target.scrollTop === 0) {
 	      this.setState({
 	        numPages: 1,
@@ -57337,7 +57356,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
 	        e.target.clientHeight
 	    ) {
-	       this.setState({
+	      this.setState({
 	        numPages: this.state.numPages + 1,
 	        scrollLocked: true
 	      }, () => {
@@ -57373,25 +57392,25 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return (
 	        react.createElement(Message, {
 	          key: msg.gam.uid + Math.random(), 
-	          msg: msg.gam, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 170}} )
+	          msg: msg.gam, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 181}} )
 	      );
 	    });
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
 	      react.createElement('div', { key: state.station, 
-	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 178}}
-	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 180}}
-	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 181}}, state.circle)
+	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 189}}
+	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 191}}
+	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 192}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
-	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 182}} )
+	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 193}} )
 	        )
 	        , react.createElement('div', {
 	          className: "overflow-y-scroll pt3 flex flex-column-reverse"   ,
 	          style: { height: 'calc(100% - 157px)' },
-	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 186}}
-	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 190}})
+	          onScroll: this.onScroll, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 197}}
+	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 201}})
 	          , chatMessages
 	        )
 	        , react.createElement(ChatInput, { 
@@ -57400,7 +57419,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          station: state.station,
 	          circle: state.circle,
 	          security: config.con,
-	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 193}} )
+	          placeholder: "Message...", __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 204}} )
 	      )
 	    )
 	  }
@@ -57419,13 +57438,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    const { props } = this;
 
 	    let actionElem;
-	    if (props.isHost) {
+	    if (`~${props.ship}` === props.host) {
 	      actionElem = (
 	        react.createElement('p', { className: "dib w-40 underline black label-small-mono label-regular"     , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 18}}, "Host"
 
 	        )
 	      );
-	    } else if (window.ship !== props.ship) {
+	    } else if (window.ship !== props.ship && props.host !== `~${props.ship}`) {
 	      actionElem = (
 	        react.createElement('a', { onClick: this.onRemove.bind(this),
 	           className: "w-40 dib underline black btn-font"    , __self: this, __source: {fileName: _jsxFileName$e, lineNumber: 24}}, "Remove"
@@ -57510,7 +57529,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      return (
 	        react.createElement(MemberElement, { 
 	          key: mem, 
-	          isHost:  `~${mem}` === state.host ,
+	          host: state.host,
 	          ship: mem,
 	          circle: state.circle,
 	          api: props.api, __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 64}} )
@@ -57546,8 +57565,8 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        )
 	        , react.createElement('div', { className: "w-100 cf" , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 100}}
 	          , react.createElement('div', { className: "w-50 fl pa2"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 101}}
-	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 102}}, "Members")
-	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 103}}, "Everyone subscribed to this chat."
+	            , react.createElement('p', { className: "body-regular", __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 102}}, "Permitted Members" )
+	            , react.createElement('p', { className: "label-regular gray mb3"  , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 103}}, "Everyone with permission to see this chat."
 
 	            )
 	            , listMembers

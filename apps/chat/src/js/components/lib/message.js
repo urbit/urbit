@@ -25,34 +25,33 @@ export class Message extends Component {
     );
 
     try {
-     let url = new URL(content);
-     let imgMatch = 
-        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|webp|WEBP)$/.exec(
-          url.pathname
-        );
-     if (imgMatch) {
-       return (
-         <img
-           src={content}
-           style={{
-             width:"50%",
-             maxWidth: '250px'
-           }}
-         ></img>
-       )
-     } else {
-       let url = this.urlTransmogrifier(content);
-       
-       return (
-         <a className="body-regular"
-           href={url}
-           target="_blank">{url}</a>
-       )
-     }
-   } catch(e) {
-     console.log(e);
-     return this.renderMessage(content);
-   }
+      let url = new URL(content);
+      let imgMatch = 
+         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|webp|WEBP)$/.exec(
+           url.pathname
+         );
+      if (imgMatch) {
+        return (
+          <img
+            src={content}
+            style={{
+              width:"50%",
+              maxWidth: '250px'
+            }}
+          ></img>
+        )
+      } else {
+        let url = this.urlTransmogrifier(content);
+        
+        return (
+          <a className="body-regular"
+            href={url}
+            target="_blank">{url}</a>
+        )
+      }
+    } catch(e) {
+      return this.renderMessage(content);
+    }
   }
 
   urlTransmogrifier(url) {

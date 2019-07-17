@@ -63,7 +63,7 @@ export class MemberScreen extends Component {
       return (
         <MemberElement 
           key={mem} 
-          isHost={ `~${mem}` === state.host }
+          host={state.host}
           ship={mem}
           circle={state.circle}
           api={props.api} />
@@ -99,9 +99,9 @@ export class MemberScreen extends Component {
         </div>
         <div className="w-100 cf">
           <div className="w-50 fl pa2">
-            <p className="body-regular">Members</p>
+            <p className="body-regular">Permitted Members</p>
             <p className="label-regular gray mb3">
-              Everyone subscribed to this chat.
+              Everyone with permission to see this chat.
             </p>
             {listMembers}
           </div>
