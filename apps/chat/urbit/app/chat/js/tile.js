@@ -8,167 +8,8 @@
                         typeof self !== "undefined" ? self :
                         typeof window !== "undefined" ? window : {});
 
-            // shim for using process in browser
-            // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
-
-            function defaultSetTimout() {
-                throw new Error('setTimeout has not been defined');
-            }
-            function defaultClearTimeout () {
-                throw new Error('clearTimeout has not been defined');
-            }
-            var cachedSetTimeout = defaultSetTimout;
-            var cachedClearTimeout = defaultClearTimeout;
-            if (typeof global$1.setTimeout === 'function') {
-                cachedSetTimeout = setTimeout;
-            }
-            if (typeof global$1.clearTimeout === 'function') {
-                cachedClearTimeout = clearTimeout;
-            }
-
-            function runTimeout(fun) {
-                if (cachedSetTimeout === setTimeout) {
-                    //normal enviroments in sane situations
-                    return setTimeout(fun, 0);
-                }
-                // if setTimeout wasn't available but was latter defined
-                if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-                    cachedSetTimeout = setTimeout;
-                    return setTimeout(fun, 0);
-                }
-                try {
-                    // when when somebody has screwed with setTimeout but no I.E. maddness
-                    return cachedSetTimeout(fun, 0);
-                } catch(e){
-                    try {
-                        // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-                        return cachedSetTimeout.call(null, fun, 0);
-                    } catch(e){
-                        // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-                        return cachedSetTimeout.call(this, fun, 0);
-                    }
-                }
-
-
-            }
-            function runClearTimeout(marker) {
-                if (cachedClearTimeout === clearTimeout) {
-                    //normal enviroments in sane situations
-                    return clearTimeout(marker);
-                }
-                // if clearTimeout wasn't available but was latter defined
-                if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-                    cachedClearTimeout = clearTimeout;
-                    return clearTimeout(marker);
-                }
-                try {
-                    // when when somebody has screwed with setTimeout but no I.E. maddness
-                    return cachedClearTimeout(marker);
-                } catch (e){
-                    try {
-                        // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-                        return cachedClearTimeout.call(null, marker);
-                    } catch (e){
-                        // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-                        // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-                        return cachedClearTimeout.call(this, marker);
-                    }
-                }
-
-
-
-            }
-            var queue = [];
-            var draining = false;
-            var currentQueue;
-            var queueIndex = -1;
-
-            function cleanUpNextTick() {
-                if (!draining || !currentQueue) {
-                    return;
-                }
-                draining = false;
-                if (currentQueue.length) {
-                    queue = currentQueue.concat(queue);
-                } else {
-                    queueIndex = -1;
-                }
-                if (queue.length) {
-                    drainQueue();
-                }
-            }
-
-            function drainQueue() {
-                if (draining) {
-                    return;
-                }
-                var timeout = runTimeout(cleanUpNextTick);
-                draining = true;
-
-                var len = queue.length;
-                while(len) {
-                    currentQueue = queue;
-                    queue = [];
-                    while (++queueIndex < len) {
-                        if (currentQueue) {
-                            currentQueue[queueIndex].run();
-                        }
-                    }
-                    queueIndex = -1;
-                    len = queue.length;
-                }
-                currentQueue = null;
-                draining = false;
-                runClearTimeout(timeout);
-            }
-            function nextTick(fun) {
-                var args = new Array(arguments.length - 1);
-                if (arguments.length > 1) {
-                    for (var i = 1; i < arguments.length; i++) {
-                        args[i - 1] = arguments[i];
-                    }
-                }
-                queue.push(new Item(fun, args));
-                if (queue.length === 1 && !draining) {
-                    runTimeout(drainQueue);
-                }
-            }
-            // v8 likes predictible objects
-            function Item(fun, array) {
-                this.fun = fun;
-                this.array = array;
-            }
-            Item.prototype.run = function () {
-                this.fun.apply(null, this.array);
-            };
-            var title = 'browser';
-            var platform = 'browser';
-            var browser = true;
-            var env = {};
-            var argv = [];
-            var version = ''; // empty string to avoid regexp issues
-            var versions = {};
-            var release = {};
-            var config = {};
-
-            function noop() {}
-
-            var on = noop;
-            var addListener = noop;
-            var once = noop;
-            var off = noop;
-            var removeListener = noop;
-            var removeAllListeners = noop;
-            var emit = noop;
-
-            function binding(name) {
-                throw new Error('process.binding is not supported');
-            }
-
-            function cwd () { return '/' }
-            function chdir (dir) {
-                throw new Error('process.chdir is not supported');
-            }function umask() { return 0; }
+            if (typeof global$1.setTimeout === 'function') ;
+            if (typeof global$1.clearTimeout === 'function') ;
 
             // from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
             var performance = global$1.performance || {};
@@ -180,57 +21,7 @@
               performance.webkitNow  ||
               function(){ return (new Date()).getTime() };
 
-            // generate timestamp or delta
-            // see http://nodejs.org/api/process.html#process_process_hrtime
-            function hrtime(previousTimestamp){
-              var clocktime = performanceNow.call(performance)*1e-3;
-              var seconds = Math.floor(clocktime);
-              var nanoseconds = Math.floor((clocktime%1)*1e9);
-              if (previousTimestamp) {
-                seconds = seconds - previousTimestamp[0];
-                nanoseconds = nanoseconds - previousTimestamp[1];
-                if (nanoseconds<0) {
-                  seconds--;
-                  nanoseconds += 1e9;
-                }
-              }
-              return [seconds,nanoseconds]
-            }
-
-            var startTime = new Date();
-            function uptime() {
-              var currentTime = new Date();
-              var dif = currentTime - startTime;
-              return dif / 1000;
-            }
-
-            var process = {
-              nextTick: nextTick,
-              title: title,
-              browser: browser,
-              env: env,
-              argv: argv,
-              version: version,
-              versions: versions,
-              on: on,
-              addListener: addListener,
-              once: once,
-              off: off,
-              removeListener: removeListener,
-              removeAllListeners: removeAllListeners,
-              emit: emit,
-              binding: binding,
-              cwd: cwd,
-              chdir: chdir,
-              umask: umask,
-              hrtime: hrtime,
-              platform: platform,
-              release: release,
-              config: config,
-              uptime: uptime
-            };
-
-            var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+            var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
             function createCommonjsModule(fn, module) {
             	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -325,21 +116,10 @@
             	return to;
             };
 
-            var n="function"===typeof Symbol&&Symbol.for,p=n?Symbol.for("react.element"):60103,q=n?Symbol.for("react.portal"):60106,r=n?Symbol.for("react.fragment"):60107,t=n?Symbol.for("react.strict_mode"):60108,u=n?Symbol.for("react.profiler"):60114,v=n?Symbol.for("react.provider"):60109,w=n?Symbol.for("react.context"):60110,x=n?Symbol.for("react.concurrent_mode"):60111,y=n?Symbol.for("react.forward_ref"):60112,z=n?Symbol.for("react.suspense"):60113,A=n?Symbol.for("react.memo"):
-            60115,B=n?Symbol.for("react.lazy"):60116,C="function"===typeof Symbol&&Symbol.iterator;function aa(a,b,e,c,d,g,h,f){if(!a){a=void 0;if(void 0===b)a=Error("Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.");else{var l=[e,c,d,g,h,f],m=0;a=Error(b.replace(/%s/g,function(){return l[m++]}));a.name="Invariant Violation";}a.framesToPop=1;throw a;}}
-            function D(a){for(var b=arguments.length-1,e="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=0;c<b;c++)e+="&args[]="+encodeURIComponent(arguments[c+1]);aa(!1,"Minified React error #"+a+"; visit %s for the full message or use the non-minified dev environment for full errors and additional helpful warnings. ",e);}var E={isMounted:function(){return !1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}},F={};
-            function G(a,b,e){this.props=a;this.context=b;this.refs=F;this.updater=e||E;}G.prototype.isReactComponent={};G.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?D("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState");};G.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate");};function H(){}H.prototype=G.prototype;function I(a,b,e){this.props=a;this.context=b;this.refs=F;this.updater=e||E;}var J=I.prototype=new H;
-            J.constructor=I;objectAssign(J,G.prototype);J.isPureReactComponent=!0;var K={current:null,currentDispatcher:null},L=Object.prototype.hasOwnProperty,M={key:!0,ref:!0,__self:!0,__source:!0};
-            function N(a,b,e){var c=void 0,d={},g=null,h=null;if(null!=b)for(c in void 0!==b.ref&&(h=b.ref),void 0!==b.key&&(g=""+b.key),b)L.call(b,c)&&!M.hasOwnProperty(c)&&(d[c]=b[c]);var f=arguments.length-2;if(1===f)d.children=e;else if(1<f){for(var l=Array(f),m=0;m<f;m++)l[m]=arguments[m+2];d.children=l;}if(a&&a.defaultProps)for(c in f=a.defaultProps,f)void 0===d[c]&&(d[c]=f[c]);return {$$typeof:p,type:a,key:g,ref:h,props:d,_owner:K.current}}
-            function ba(a,b){return {$$typeof:p,type:a.type,key:b,ref:a.ref,props:a.props,_owner:a._owner}}function O(a){return "object"===typeof a&&null!==a&&a.$$typeof===p}function escape(a){var b={"=":"=0",":":"=2"};return "$"+(""+a).replace(/[=:]/g,function(a){return b[a]})}var P=/\/+/g,Q=[];function R(a,b,e,c){if(Q.length){var d=Q.pop();d.result=a;d.keyPrefix=b;d.func=e;d.context=c;d.count=0;return d}return {result:a,keyPrefix:b,func:e,context:c,count:0}}
-            function S(a){a.result=null;a.keyPrefix=null;a.func=null;a.context=null;a.count=0;10>Q.length&&Q.push(a);}
-            function T(a,b,e,c){var d=typeof a;if("undefined"===d||"boolean"===d)a=null;var g=!1;if(null===a)g=!0;else switch(d){case "string":case "number":g=!0;break;case "object":switch(a.$$typeof){case p:case q:g=!0;}}if(g)return e(c,a,""===b?"."+U(a,0):b),1;g=0;b=""===b?".":b+":";if(Array.isArray(a))for(var h=0;h<a.length;h++){d=a[h];var f=b+U(d,h);g+=T(d,f,e,c);}else if(null===a||"object"!==typeof a?f=null:(f=C&&a[C]||a["@@iterator"],f="function"===typeof f?f:null),"function"===typeof f)for(a=f.call(a),h=
-            0;!(d=a.next()).done;)d=d.value,f=b+U(d,h++),g+=T(d,f,e,c);else"object"===d&&(e=""+a,D("31","[object Object]"===e?"object with keys {"+Object.keys(a).join(", ")+"}":e,""));return g}function V(a,b,e){return null==a?0:T(a,"",b,e)}function U(a,b){return "object"===typeof a&&null!==a&&null!=a.key?escape(a.key):b.toString(36)}function ca(a,b){a.func.call(a.context,b,a.count++);}
-            function da(a,b,e){var c=a.result,d=a.keyPrefix;a=a.func.call(a.context,b,a.count++);Array.isArray(a)?W(a,c,e,function(a){return a}):null!=a&&(O(a)&&(a=ba(a,d+(!a.key||b&&b.key===a.key?"":(""+a.key).replace(P,"$&/")+"/")+e)),c.push(a));}function W(a,b,e,c,d){var g="";null!=e&&(g=(""+e).replace(P,"$&/")+"/");b=R(b,g,c,d);V(a,da,b);S(b);}
-            var X={Children:{map:function(a,b,e){if(null==a)return a;var c=[];W(a,c,null,b,e);return c},forEach:function(a,b,e){if(null==a)return a;b=R(null,null,b,e);V(a,ca,b);S(b);},count:function(a){return V(a,function(){return null},null)},toArray:function(a){var b=[];W(a,b,null,function(a){return a});return b},only:function(a){O(a)?void 0:D("143");return a}},createRef:function(){return {current:null}},Component:G,PureComponent:I,createContext:function(a,b){void 0===b&&(b=null);a={$$typeof:w,_calculateChangedBits:b,
-            _currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.Provider={$$typeof:v,_context:a};return a.Consumer=a},forwardRef:function(a){return {$$typeof:y,render:a}},lazy:function(a){return {$$typeof:B,_ctor:a,_status:-1,_result:null}},memo:function(a,b){return {$$typeof:A,type:a,compare:void 0===b?null:b}},Fragment:r,StrictMode:t,Suspense:z,createElement:N,cloneElement:function(a,b,e){null===a||void 0===a?D("267",a):void 0;var c=void 0,d=objectAssign({},a.props),g=a.key,h=a.ref,f=a._owner;
-            if(null!=b){void 0!==b.ref&&(h=b.ref,f=K.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)L.call(b,c)&&!M.hasOwnProperty(c)&&(d[c]=void 0===b[c]&&void 0!==l?l[c]:b[c]);}c=arguments.length-2;if(1===c)d.children=e;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];d.children=l;}return {$$typeof:p,type:a.type,key:g,ref:h,props:d,_owner:f}},createFactory:function(a){var b=N.bind(null,a);b.type=a;return b},isValidElement:O,version:"16.6.3",
-            __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:K,assign:objectAssign}};X.unstable_ConcurrentMode=x;X.unstable_Profiler=u;var Y={default:X},Z=Y&&X||Y;var react_production_min=Z.default||Z;
+            function ca(a,b,d,c,e,g,h,f){if(!a){a=void 0;if(void 0===b)a=Error("Minified exception occurred; use the non-minified dev environment for the full error message and additional helpful warnings.");else{var l=[d,c,e,g,h,f],m=0;a=Error(b.replace(/%s/g,function(){return l[m++]}));a.name="Invariant Violation";}a.framesToPop=1;throw a;}}
+            function B(a){for(var b=arguments.length-1,d="https://reactjs.org/docs/error-decoder.html?invariant="+a,c=0;c<b;c++)d+="&args[]="+encodeURIComponent(arguments[c+1]);ca(!1,"Minified React error #"+a+"; visit %s for the full message or use the non-minified dev environment for full errors and additional helpful warnings. ",d);}var C={isMounted:function(){return !1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}},D={};
+            function E(a,b,d){this.props=a;this.context=b;this.refs=D;this.updater=d||C;}E.prototype.isReactComponent={};E.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?B("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState");};E.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate");};function F(){}F.prototype=E.prototype;function G(a,b,d){this.props=a;this.context=b;this.refs=D;this.updater=d||C;}var H=G.prototype=new F;
+            H.constructor=G;objectAssign(H,E.prototype);H.isPureReactComponent=!0;
 
             /**
              * Copyright (c) 2013-present, Facebook, Inc.
@@ -357,6 +137,7 @@
             {
               var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
               var loggedTypeFailures = {};
+              var has = Function.call.bind(Object.prototype.hasOwnProperty);
 
               printWarning = function(text) {
                 var message = 'Warning: ' + text;
@@ -386,7 +167,7 @@
             function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
               {
                 for (var typeSpecName in typeSpecs) {
-                  if (typeSpecs.hasOwnProperty(typeSpecName)) {
+                  if (has(typeSpecs, typeSpecName)) {
                     var error;
                     // Prop type validation may throw. In case they do, we don't want to
                     // fail the render phase where it didn't fail before. So we log it.
@@ -415,7 +196,6 @@
                         'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' +
                         'shape all require an argument).'
                       );
-
                     }
                     if (error instanceof Error && !(error.message in loggedTypeFailures)) {
                       // Only monitor this failure once because there tends to be a lot of the
@@ -433,13 +213,24 @@
               }
             }
 
+            /**
+             * Resets warning cache when testing.
+             *
+             * @private
+             */
+            checkPropTypes.resetWarningCache = function() {
+              {
+                loggedTypeFailures = {};
+              }
+            };
+
             var checkPropTypes_1 = checkPropTypes;
 
             var react_development = createCommonjsModule(function (module) {
 
 
 
-            if (process.env.NODE_ENV !== "production") {
+            {
               (function() {
 
             var _assign = objectAssign;
@@ -447,7 +238,7 @@
 
             // TODO: this is special because it gets imported during build.
 
-            var ReactVersion = '16.6.3';
+            var ReactVersion = '16.8.6';
 
             // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
             // nor polyfill, then a plain number is used for performance.
@@ -837,6 +628,17 @@
             }
 
             /**
+             * Keeps track of the current dispatcher.
+             */
+            var ReactCurrentDispatcher = {
+              /**
+               * @internal
+               * @type {ReactComponent}
+               */
+              current: null
+            };
+
+            /**
              * Keeps track of the current owner.
              *
              * The current owner is the component who should own any components that are
@@ -847,8 +649,7 @@
                * @internal
                * @type {ReactComponent}
                */
-              current: null,
-              currentDispatcher: null
+              current: null
             };
 
             var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
@@ -979,6 +780,7 @@
             }
 
             var ReactSharedInternals = {
+              ReactCurrentDispatcher: ReactCurrentDispatcher,
               ReactCurrentOwner: ReactCurrentOwner,
               // Used by renderers to avoid bundling object-assign twice in UMD bundles:
               assign: _assign
@@ -1758,13 +1560,51 @@
             }
 
             function lazy(ctor) {
-              return {
+              var lazyType = {
                 $$typeof: REACT_LAZY_TYPE,
                 _ctor: ctor,
                 // React uses these fields to store the result.
                 _status: -1,
                 _result: null
               };
+
+              {
+                // In production, this would just set it on the object.
+                var defaultProps = void 0;
+                var propTypes = void 0;
+                Object.defineProperties(lazyType, {
+                  defaultProps: {
+                    configurable: true,
+                    get: function () {
+                      return defaultProps;
+                    },
+                    set: function (newDefaultProps) {
+                      warning$1(false, 'React.lazy(...): It is not supported to assign `defaultProps` to ' + 'a lazy component import. Either specify them where the component ' + 'is defined, or create a wrapping component around it.');
+                      defaultProps = newDefaultProps;
+                      // Match production behavior more closely:
+                      Object.defineProperty(lazyType, 'defaultProps', {
+                        enumerable: true
+                      });
+                    }
+                  },
+                  propTypes: {
+                    configurable: true,
+                    get: function () {
+                      return propTypes;
+                    },
+                    set: function (newPropTypes) {
+                      warning$1(false, 'React.lazy(...): It is not supported to assign `propTypes` to ' + 'a lazy component import. Either specify them where the component ' + 'is defined, or create a wrapping component around it.');
+                      propTypes = newPropTypes;
+                      // Match production behavior more closely:
+                      Object.defineProperty(lazyType, 'propTypes', {
+                        enumerable: true
+                      });
+                    }
+                  }
+                });
+              }
+
+              return lazyType;
             }
 
             function forwardRef(render) {
@@ -1807,6 +1647,79 @@
                 type: type,
                 compare: compare === undefined ? null : compare
               };
+            }
+
+            function resolveDispatcher() {
+              var dispatcher = ReactCurrentDispatcher.current;
+              !(dispatcher !== null) ? invariant(false, 'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.') : void 0;
+              return dispatcher;
+            }
+
+            function useContext(Context, unstable_observedBits) {
+              var dispatcher = resolveDispatcher();
+              {
+                !(unstable_observedBits === undefined) ? warning$1(false, 'useContext() second argument is reserved for future ' + 'use in React. Passing it is not supported. ' + 'You passed: %s.%s', unstable_observedBits, typeof unstable_observedBits === 'number' && Array.isArray(arguments[2]) ? '\n\nDid you call array.map(useContext)? ' + 'Calling Hooks inside a loop is not supported. ' + 'Learn more at https://fb.me/rules-of-hooks' : '') : void 0;
+
+                // TODO: add a more generic warning for invalid values.
+                if (Context._context !== undefined) {
+                  var realContext = Context._context;
+                  // Don't deduplicate because this legitimately causes bugs
+                  // and nobody should be using this in existing code.
+                  if (realContext.Consumer === Context) {
+                    warning$1(false, 'Calling useContext(Context.Consumer) is not supported, may cause bugs, and will be ' + 'removed in a future major release. Did you mean to call useContext(Context) instead?');
+                  } else if (realContext.Provider === Context) {
+                    warning$1(false, 'Calling useContext(Context.Provider) is not supported. ' + 'Did you mean to call useContext(Context) instead?');
+                  }
+                }
+              }
+              return dispatcher.useContext(Context, unstable_observedBits);
+            }
+
+            function useState(initialState) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useState(initialState);
+            }
+
+            function useReducer(reducer, initialArg, init) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useReducer(reducer, initialArg, init);
+            }
+
+            function useRef(initialValue) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useRef(initialValue);
+            }
+
+            function useEffect(create, inputs) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useEffect(create, inputs);
+            }
+
+            function useLayoutEffect(create, inputs) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useLayoutEffect(create, inputs);
+            }
+
+            function useCallback(callback, inputs) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useCallback(callback, inputs);
+            }
+
+            function useMemo(create, inputs) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useMemo(create, inputs);
+            }
+
+            function useImperativeHandle(ref, create, inputs) {
+              var dispatcher = resolveDispatcher();
+              return dispatcher.useImperativeHandle(ref, create, inputs);
+            }
+
+            function useDebugValue(value, formatterFn) {
+              {
+                var dispatcher = resolveDispatcher();
+                return dispatcher.useDebugValue(value, formatterFn);
+              }
             }
 
             /**
@@ -1895,7 +1808,7 @@
 
               setCurrentlyValidatingElement(element);
               {
-                warning$1(false, 'Each child in an array or iterator should have a unique "key" prop.' + '%s%s See https://fb.me/react-warning-keys for more information.', currentComponentErrorInfo, childOwner);
+                warning$1(false, 'Each child in a list should have a unique "key" prop.' + '%s%s See https://fb.me/react-warning-keys for more information.', currentComponentErrorInfo, childOwner);
               }
               setCurrentlyValidatingElement(null);
             }
@@ -1951,16 +1864,17 @@
              */
             function validatePropTypes(element) {
               var type = element.type;
-              var name = void 0,
-                  propTypes = void 0;
+              if (type === null || type === undefined || typeof type === 'string') {
+                return;
+              }
+              var name = getComponentName(type);
+              var propTypes = void 0;
               if (typeof type === 'function') {
-                // Class or function component
-                name = type.displayName || type.name;
                 propTypes = type.propTypes;
-              } else if (typeof type === 'object' && type !== null && type.$$typeof === REACT_FORWARD_REF_TYPE) {
-                // ForwardRef
-                var functionName = type.render.displayName || type.render.name || '';
-                name = type.displayName || (functionName !== '' ? 'ForwardRef(' + functionName + ')' : 'ForwardRef');
+              } else if (typeof type === 'object' && (type.$$typeof === REACT_FORWARD_REF_TYPE ||
+              // Note: Memo only checks outer props here.
+              // Inner props are checked in the reconciler.
+              type.$$typeof === REACT_MEMO_TYPE)) {
                 propTypes = type.propTypes;
               } else {
                 return;
@@ -2109,6 +2023,17 @@
               lazy: lazy,
               memo: memo,
 
+              useCallback: useCallback,
+              useContext: useContext,
+              useEffect: useEffect,
+              useImperativeHandle: useImperativeHandle,
+              useDebugValue: useDebugValue,
+              useLayoutEffect: useLayoutEffect,
+              useMemo: useMemo,
+              useReducer: useReducer,
+              useRef: useRef,
+              useState: useState,
+
               Fragment: REACT_FRAGMENT_TYPE,
               StrictMode: REACT_STRICT_MODE_TYPE,
               Suspense: REACT_SUSPENSE_TYPE,
@@ -2120,13 +2045,11 @@
 
               version: ReactVersion,
 
+              unstable_ConcurrentMode: REACT_CONCURRENT_MODE_TYPE,
+              unstable_Profiler: REACT_PROFILER_TYPE,
+
               __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: ReactSharedInternals
             };
-
-            {
-              React.unstable_ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-              React.unstable_Profiler = REACT_PROFILER_TYPE;
-            }
 
 
 
@@ -2147,9 +2070,7 @@
 
             var react = createCommonjsModule(function (module) {
 
-            if (process.env.NODE_ENV === 'production') {
-              module.exports = react_production_min;
-            } else {
+            {
               module.exports = react_development;
             }
             });
@@ -2195,7 +2116,7 @@
             		return classes.join(' ');
             	}
 
-            	if (module.exports) {
+            	if ( module.exports) {
             		classNames.default = classNames;
             		module.exports = classNames;
             	} else {
@@ -2211,7 +2132,7 @@
               var undefined$1;
 
               /** Used as the semantic version number. */
-              var VERSION = '4.17.11';
+              var VERSION = '4.17.14';
 
               /** Used as the size to enable large array optimizations. */
               var LARGE_ARRAY_SIZE = 200;
@@ -2621,7 +2542,7 @@
               var root = freeGlobal || freeSelf || Function('return this')();
 
               /** Detect free variable `exports`. */
-              var freeExports = exports && !exports.nodeType && exports;
+              var freeExports =  exports && !exports.nodeType && exports;
 
               /** Detect free variable `module`. */
               var freeModule = freeExports && 'object' == 'object' && module && !module.nodeType && module;
@@ -4870,16 +4791,10 @@
                     value.forEach(function(subValue) {
                       result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
                     });
-
-                    return result;
-                  }
-
-                  if (isMap(value)) {
+                  } else if (isMap(value)) {
                     value.forEach(function(subValue, key) {
                       result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
                     });
-
-                    return result;
                   }
 
                   var keysFunc = isFull
@@ -5803,8 +5718,8 @@
                     return;
                   }
                   baseFor(source, function(srcValue, key) {
+                    stack || (stack = new Stack);
                     if (isObject(srcValue)) {
-                      stack || (stack = new Stack);
                       baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
                     }
                     else {
@@ -7621,7 +7536,7 @@
                   return function(number, precision) {
                     number = toNumber(number);
                     precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
-                    if (precision) {
+                    if (precision && nativeIsFinite(number)) {
                       // Shift with exponential notation to avoid floating-point issues.
                       // See [MDN](https://mdn.io/round#Examples) for more details.
                       var pair = (toString(number) + 'e').split('e'),
@@ -8804,7 +8719,7 @@
                 }
 
                 /**
-                 * Gets the value at `key`, unless `key` is "__proto__".
+                 * Gets the value at `key`, unless `key` is "__proto__" or "constructor".
                  *
                  * @private
                  * @param {Object} object The object to query.
@@ -8812,6 +8727,10 @@
                  * @returns {*} Returns the property value.
                  */
                 function safeGet(object, key) {
+                  if (key === 'constructor' && typeof object[key] === 'function') {
+                    return;
+                  }
+
                   if (key == '__proto__') {
                     return;
                   }
@@ -12612,6 +12531,7 @@
                       }
                       if (maxing) {
                         // Handle invocations in a tight loop.
+                        clearTimeout(timerId);
                         timerId = setTimeout(timerExpired, wait);
                         return invokeFunc(lastCallTime);
                       }
@@ -16998,9 +16918,12 @@
                   , 'g');
 
                   // Use a sourceURL for easier debugging.
+                  // The sourceURL gets injected into the source that's eval-ed, so be careful
+                  // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
+                  // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
                   var sourceURL = '//# sourceURL=' +
-                    ('sourceURL' in options
-                      ? options.sourceURL
+                    (hasOwnProperty.call(options, 'sourceURL')
+                      ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
                       : ('lodash.templateSources[' + (++templateCounter) + ']')
                     ) + '\n';
 
@@ -17033,7 +16956,9 @@
 
                   // If `variable` is not specified wrap a with-statement around the generated
                   // code to add the data object to the top of the scope chain.
-                  var variable = options.variable;
+                  // Like with sourceURL, we take care to not check the option's prototype,
+                  // as this configuration is a code injection vector.
+                  var variable = hasOwnProperty.call(options, 'variable') && options.variable;
                   if (!variable) {
                     source = 'with (obj) {\n' + source + '\n}\n';
                   }
@@ -19238,10 +19163,11 @@
                 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
                   var lodashFunc = lodash[methodName];
                   if (lodashFunc) {
-                    var key = (lodashFunc.name + ''),
-                        names = realNames[key] || (realNames[key] = []);
-
-                    names.push({ 'name': methodName, 'func': lodashFunc });
+                    var key = lodashFunc.name + '';
+                    if (!hasOwnProperty.call(realNames, key)) {
+                      realNames[key] = [];
+                    }
+                    realNames[key].push({ 'name': methodName, 'func': lodashFunc });
                   }
                 });
 
@@ -19292,7 +19218,7 @@
             }.call(commonjsGlobal));
             });
 
-            const _jsxFileName = "/Users/gavinatkinson/Tlon/interface/apps/chat/tile/tile.js";
+            const _jsxFileName = "/Users/logan/Dev/interface/apps/chat/tile/tile.js";
 
             class ChatTile extends react_1 {
 

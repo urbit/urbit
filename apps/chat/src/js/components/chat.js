@@ -100,11 +100,6 @@ export class ChatScreen extends Component {
     const { props, state } = this;
     let messages = props.messages;
     
-    console.log('askForMessages');
-
-    console.log('if1: ' + state.numPages * 50 < props.messages.length - 200);
-    console.log('if2: ' + this.hasAskedForMessages);
-
     if (state.numPages * 50 < props.messages.length - 200 ||
         this.hasAskedForMessages) {
       return;
@@ -135,21 +130,45 @@ export class ChatScreen extends Component {
     console.log('scrollTop', Math.round(e.target.scrollTop));
     console.log('clientHeight', e.target.clientHeight);
 
-    if (e.target.scrollTop === 0) {
-      this.setState({
-        numPages: 1,
-        scrollLocked: false
-      });
-    } else if (
-        (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
-        e.target.clientHeight
-    ) {
-      this.setState({
-        numPages: this.state.numPages + 1,
-        scrollLocked: true
-      }, () => {
-        this.askForMessages();
-      });
+    if (navigator.userAgent.includes('Safari') &&
+      navigator.userAgent.includes('Chrome')) {
+      // Google Chrome
+      if (e.target.scrollTop === 0) {
+        this.setState({
+          numPages: this.state.numPages + 1,
+          scrollLocked: true
+        }, () => {
+          this.askForMessages();
+        });
+      } else if (
+          (e.target.scrollHeight - Math.round(e.target.scrollTop)) ===
+          e.target.clientHeight
+      ) {
+        this.setState({
+          numPages: 1,
+          scrollLocked: false
+        });
+      }
+    } else if (navigator.userAgent.includes('Safari')) {
+      // Safari
+      if (e.target.scrollTop === 0) {
+        this.setState({
+          numPages: 1,
+          scrollLocked: false
+        });
+      } else if (
+          (e.target.scrollHeight + Math.round(e.target.scrollTop)) ===
+          e.target.clientHeight
+      ) {
+        this.setState({
+          numPages: this.state.numPages + 1,
+          scrollLocked: true
+        }, () => {
+          this.askForMessages();
+        });
+      }
+    } else {
+      console.log('Your browser is not supported.');
     }
   }
 
