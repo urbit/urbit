@@ -6,12 +6,13 @@ import UrbitPrelude
 
 import Vere.Pier.Types
 
+import qualified Data.Vector    as V
 import qualified System.Entropy as Ent
 import qualified Vere.Log       as Log
 import qualified Vere.Persist   as Persist
 import qualified Vere.Serf      as Serf
 
-import Vere.Serf (EventId, Serf)
+import Vere.Serf (Serf, SerfState(..))
 
 
 --------------------------------------------------------------------------------
@@ -39,9 +40,11 @@ generateBootSeq ship Pill{..} = do
 
 --------------------------------------------------------------------------------
 
--- This is called to make a freshly booted pier. It assigns an identity to an
--- event log and takes a chill pill.
-boot :: FilePath -> FilePath -> Ship -> IO (Serf, EventLog, EventId, Mug)
+{-
+    This is called to make a freshly booted pier. It assigns an identity
+    to an event log and takes a chill pill.
+-}
+boot :: FilePath -> FilePath -> Ship -> IO (Serf, EventLog, SerfState)
 boot pillPath top ship = do
   let logPath = top <> "/.urb/log"
 
@@ -52,7 +55,7 @@ boot pillPath top ship = do
 
   seq@(BootSeq ident _ _) <- generateBootSeq ship pill
 
-  Log.wipeEvents logPath
+  Log.wipeEvents logPath -- TODO XX
   log <- Log.open logPath
 
   Log.writeIdent log ident
@@ -61,30 +64,45 @@ boot pillPath top ship = do
   (events, serfSt) <- Serf.bootFromSeq serf seq
 
   Serf.requestSnapshot serf serfSt
-  Serf.shutdownAndKill serf 0
 
-  Persist.writeEvents log events
+  writeJobs log events
 
-  (eId, atom) : _     <- evaluate (reverse events)
-  Just (mug, _::Noun) <- evaluate (atom ^? atomBytes . _Cue >>= fromNoun)
-
-  pure (serf, log, eId, mug)
+  pure (serf, log, serfSt)
 
 {-
     What we really want to do is write the log identity and then do
     normal startup, but writeIdent requires a full log state
     including input/output queues.
 -}
-resume :: FilePath -> IO (Serf, EventLog, EventId, Mug)
+resume :: FilePath -> IO (Serf, EventLog, SerfState)
 resume top = do
   log    <- Log.open (top <> "/.urb/log")
   ident  <- Log.readIdent log
   lastEv <- Log.latestEventNumber log
   serf   <- Serf.startSerfProcess top
-  (e, m) <- Serf.replay serf ident lastEv (Log.readEvents log)
+  serfSt <- Serf.replay serf ident lastEv (readJobs log)
 
-  pure (serf, log, e, m)
+  Serf.requestSnapshot serf serfSt
 
+  pure (serf, log, serfSt)
+
+writeJobs :: EventLog -> [Job] -> IO ()
+writeJobs log jobs = Persist.writeEvents log (fromJob <$> jobs)
+  where
+    fromJob :: Job -> (Word64, Atom)
+    fromJob (Job eventId mug payload) =
+      (fromIntegral eventId, jam (toNoun (mug, payload)))
+
+readJobs :: EventLog -> EventId -> Word64 -> IO (V.Vector Job)
+readJobs log fst len = do
+    events <- Log.readEvents log fst len
+    traverse toJob events
+  where
+    toJob :: (Word64, Atom) -> IO Job
+    toJob (eventId, atom) = do
+      noun           <- cueExn atom
+      (mug, payload) <- fromNounExn noun
+      pure $ Job (fromIntegral eventId) mug payload
 
 -- Run Pier --------------------------------------------------------------------
 

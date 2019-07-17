@@ -58,6 +58,23 @@ data LogIdentity = LogIdentity
 data Mime = Mime Path FileOcts
   deriving (Eq, Ord, Show)
 
+type EventId = Word64
+
+data JobPayload
+    = LifeCycle Nock
+    | DateOvum Wen Ovum
+  deriving (Eq, Ord, Show)
+
+data Job = Job EventId Mug JobPayload
+  deriving (Eq, Ord, Show)
+
+data Order
+    = OBoot LogIdentity
+    | OExit Word8
+    | OSave EventId
+    | OWork Job
+  deriving (Eq, Ord, Show)
+
 data Event
     = Veer Cord Path BigTape
     | Into Desk Bool [(Path, Maybe Mime)]
@@ -152,6 +169,35 @@ newtype EventLog = EventLog MDB_env
 
 
 -- Instances -------------------------------------------------------------------
+
+instance ToNoun JobPayload where
+  toNoun (LifeCycle nok) = toNoun nok
+  toNoun (DateOvum d o)   = toNoun (d, o)
+
+-- XX TODO HACK Try to parse a date+ovum, then fall back to nock
+instance FromNoun JobPayload where
+  parseNoun n = do
+      parseDateOvum n <|> parseLifeCycle n
+    where
+      parseLifeCycle n = LifeCycle <$> parseNoun n
+      parseDateOvum n  = do (wen@(Wen w), ov::Ovum) <- parseNoun n
+                            if w <= 12 then fail "this is nock"
+                                       else pure (DateOvum wen ov)
+
+instance ToNoun Job where
+  toNoun (Job e m p) = toNoun (e, Jammed (m, p))
+
+instance FromNoun Job where
+  parseNoun n = do
+      (e, Jammed (m, p)) <- parseNoun n
+      pure (Job e m p)
+
+-- XX TODO Support prefixes in deriveNoun
+instance ToNoun Order where
+  toNoun (OBoot id)  = toNoun (Cord "boot", id)
+  toNoun (OExit cod) = toNoun (Cord "exit", cod)
+  toNoun (OSave id)  = toNoun (Cord "save", id)
+  toNoun (OWork j)   = toNoun (Cord "work", j)
 
 instance Show FileOcts where
   show (FileOcts bs) = show (take 32 bs <> "...")

@@ -38,42 +38,35 @@ import qualified Urbit.Time             as Time
 
 -- Types -----------------------------------------------------------------------
 
+data SerfState = SerfState
+    { ssNextEv  :: EventId
+    , ssLastMug :: Mug
+    }
+  deriving (Eq, Ord, Show)
+
 data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
   , process    :: ProcessHandle
+  , sState     :: MVar SerfState
   }
-
-newtype Job = Job Void
-  deriving newtype (Eq, Show, ToNoun, FromNoun)
-
-type EventId = Word64
-
-data Order
-    = OBoot LogIdentity
-    | OExit Word8
-    | OSave EventId
-    | OWork EventId Atom
-  deriving (Eq, Ord)
 
 type Play = Maybe (EventId, Mug, ShipId)
 
 data Plea
     = Play Play
-    | Work EventId Mug Job
+    | Work Job
     | Done EventId Mug [(Path, Eff)]
     | Stdr EventId Cord
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
 
-type GetEvents = EventId -> Word64 -> IO (Vector (EventId, Atom))
+type GetEvents = EventId -> Word64 -> IO (Vector Job)
 
-type CompletedEventId = Word64
-type NextEventId      = Word64
-type SerfState        = (EventId, Mug)
-type ReplacementEv    = (EventId, Mug, Job)
-type WorkResult       = (EventId, Mug, [(Path, Eff)])
-type SerfResp         = (Either ReplacementEv WorkResult)
+type ReplacementEv = Job
+type Fx            = [(Path, Eff)]
+type WorkResult    = (SerfState, Fx)
+type SerfResp      = Either ReplacementEv WorkResult
 
 data SerfExn
     = BadComputeId EventId WorkResult
@@ -94,23 +87,15 @@ data SerfExn
 
 instance Exception SerfExn
 
--- XX TODO Support prefixes in deriveNoun
-instance ToNoun Order where
-  toNoun (OBoot id)  = toNoun (Cord "boot", id)
-  toNoun (OExit cod) = toNoun (Cord "exit", cod)
-  toNoun (OSave id)  = toNoun (Cord "save", id)
-  toNoun (OWork w a) = toNoun (Cord "work", w, a)
-
-instance Show Order where
-  show = show . toNoun
-
 deriveNoun ''Plea
 
 
 -- Utils -----------------------------------------------------------------------
 
 printTank :: Word32 -> Tank -> IO ()
-printTank pri t = print "[SERF] tank"
+printTank pri = \case
+  Leaf (Tape s) -> traceM ("[SERF]\t" <> s)
+  t             -> traceM ("[SERF]\t" <> show (pri, t))
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
@@ -135,7 +120,8 @@ startSerfProcess :: FilePath -> IO Serf
 startSerfProcess pier =
   do
     (Just i, Just o, _, p) <- createProcess pSpec
-    pure (Serf i o p)
+    ss <- newEmptyMVar
+    pure (Serf i o p ss)
   where
     chkDir  = traceShowId pier
     diskKey = ""
@@ -208,7 +194,7 @@ cordString (Cord bs) = unpack $ T.strip $ decodeUtf8 bs
 --------------------------------------------------------------------------------
 
 requestSnapshot :: Serf -> SerfState -> IO ()
-requestSnapshot serf (lastEv, _) = sendOrder serf (OSave lastEv)
+requestSnapshot serf SerfState{..} = sendOrder serf (OSave $ ssNextEv - 1)
 
 requestShutdown :: Serf -> Word8 -> IO ()
 requestShutdown serf code = sendOrder serf (OExit code)
@@ -224,84 +210,98 @@ shutdownAndKill serf code = do
 -}
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
-  -- traceM ("[DEBUG] Serf.recvPlea: Waiting")
-
   a <- recvAtom w
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (BadPleaNoun $ traceShowId n)
 
-  case p of Stdr e msg -> do traceM ("[SERF]\t" <> (cordString msg))
-                             recvPlea w
-            _          -> do traceM ("[DEBUG] Serf.recvPlea: Got " <> show p)
-                             pure p
+  case p of Stdr e msg   -> do traceM ("[SERF]\t" <> (cordString msg))
+                               recvPlea w
+            Slog _ pri t -> do printTank pri t
+                               recvPlea w
+            _            -> do traceM ("[DEBUG] Serf.recvPlea: Got " <> show p)
+                               pure p
 
 {-
     Waits for initial plea, and then sends boot IPC if necessary.
 -}
-handshake :: Serf -> LogIdentity -> IO (EventId, Mug)
+handshake :: Serf -> LogIdentity -> IO SerfState
 handshake serf ident = do
-    (eventId, mug) <- recvPlea serf >>= \case
-      Play Nothing          -> pure (1, Mug 0)
-      Play (Just (e, m, _)) -> pure (e, m)
+    ss@SerfState{..} <- recvPlea serf >>= \case
+      Play Nothing          -> pure $ SerfState 1 (Mug 0)
+      Play (Just (e, m, _)) -> pure $ SerfState e m
       x                     -> throwIO (InvalidInitialPlea x)
 
-    when (eventId == 1) $ do
+    when (ssNextEv == 1) $ do
         sendOrder serf (OBoot ident)
 
-    pure (eventId, mug)
+    pure ss
 
-sendAndRecv :: Serf -> EventId -> Order -> IO SerfResp
-sendAndRecv w eventId order =
+sendWork :: Serf -> Job -> IO SerfResp
+sendWork w job@(Job jobId _ _) =
   do
-    sendOrder w order
+    sendOrder w (OWork job)
     res <- loop
     pure res
   where
     produce :: WorkResult -> IO SerfResp
-    produce (i, m, o) = do
-      guardExn (i == eventId) (BadComputeId eventId (i, m, o))
-      pure $ Right (i, m, o)
+    produce (ss@SerfState{..}, o) = do
+      guardExn (ssNextEv == (1+jobId)) (BadComputeId jobId (ss, o))
+      pure $ Right (ss, o)
 
     replace :: ReplacementEv -> IO SerfResp
-    replace (i, m, j) = do
-      guardExn (i == eventId) (BadReplacementId eventId (i, m, j))
-      pure (Left (i, m, j))
+    replace job@(Job i _ _) = do
+      guardExn (i == jobId) (BadReplacementId jobId job)
+      pure (Left job)
 
     loop :: IO SerfResp
     loop = recvPlea w >>= \case
-      Play p       -> throwIO (UnexpectedPlay eventId p)
-      Done i m o   -> produce (i, m, o)
-      Work i m j   -> replace (i, m, j)
-      Stdr _ cord  -> do traceM ("[SERF]\t" <> cordString cord)
-                         loop
+      Play p       -> throwIO (UnexpectedPlay jobId p)
+      Done i m o   -> produce (SerfState (i+1) m, o)
+      Work job     -> replace job
+      Stdr _ cord  -> traceM ("[SERF]\t" <> cordString cord) >> loop
       Slog _ pri t -> printTank pri t >> loop
 
-bootFromSeq :: Serf -> BootSeq -> IO ([(EventId, Atom)], SerfState)
+doJob :: Serf -> Job -> IO (Job, SerfState, Fx)
+doJob serf job@(Job eId _ _) = do
+    sendWork serf job >>= \case
+        Left replaced  -> doJob serf replaced
+        Right (ss, fx) -> pure (job, ss, fx)
+
+bootJob :: Serf -> Job -> IO (Job, SerfState)
+bootJob serf job@(Job eId _ _) = do
+    doJob serf job >>= \case
+        (job, ss, []) -> pure (job, ss)
+        (job, ss, fx) -> throwIO (EffectsDuringBoot eId fx)
+
+replayJob :: Serf -> Job -> IO SerfState
+replayJob serf job@(Job eId _ _) = do
+    sendWork serf job >>= \case
+        Left replaced -> throwIO (ReplacedEventDuringReplay eId replaced)
+        Right (ss, _) -> pure ss
+
+type BootSeqFn = EventId -> Mug -> Time.Wen -> Job
+
+bootFromSeq :: Serf -> BootSeq -> IO ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
-        (1, Mug 0) -> pure ()
-        _          -> error "ship already booted"
-
-    loop [] 1 (Mug 0) seq
+        ss@(SerfState 1 (Mug 0)) -> loop [] ss bootSeqFns
+        _                        -> error "ship already booted"
 
   where
-    loop :: [(EventId, Atom)] -> EventId -> Mug -> [Mug -> Time.Wen -> Atom]
-         -> IO ([(EventId, Atom)], SerfState)
-    loop acc eId lastMug []     = pure (reverse acc, (eId, lastMug))
-    loop acc eId lastMug (x:xs) = do
-        wen <- Time.now
-        let atom  = x lastMug wen
-        let order = OWork eId atom
-        sendAndRecv serf eId order >>= \case
-            Right (id, mug, []) -> loop ((eId, atom) : acc) (eId+1) mug xs
-            Left badEv          -> throwIO (ReplacedEventDuringBoot eId badEv)
-            Right (id, mug, fx) -> throwIO (EffectsDuringBoot eId fx)
+    loop :: [Job] -> SerfState -> [BootSeqFn] -> IO ([Job], SerfState)
+    loop acc ss = \case
+        []   -> pure (reverse acc, ss)
+        x:xs -> do wen       <- Time.now
+                   job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
+                   (job, ss) <- bootJob serf job
+                   loop (job:acc) ss xs
 
-    seq :: [Mug -> Time.Wen -> Atom]
-    seq = fmap muckNock nocks <> fmap muckOvum ovums
+
+    bootSeqFns :: [BootSeqFn]
+    bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
       where
-        muckNock nok mug _   = jam $ toNoun (mug, nok)
-        muckOvum ov  mug wen = jam $ toNoun (mug, wen, ov)
+        muckNock nok eId mug _   = Job eId mug (LifeCycle nok)
+        muckOvum ov  eId mug wen = Job eId mug (DateOvum wen ov)
 
 {-
     The ship is booted, but it is behind. shove events to the worker
@@ -309,32 +309,26 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
 
     This will pull events from the event log in batches of 1000.
 -}
-replayEvents :: Serf
-             -> SerfState
-             -> LogIdentity
-             -> EventId
-             -> (EventId -> Word64 -> IO (Vector (EventId, Atom)))
-             -> IO (EventId, Mug)
-replayEvents w (wid, wmug) ident lastCommitedId getEvents = do
-    vLast <- newIORef (wid, wmug)
-    loop vLast wid
-    readIORef vLast
+replayEvents :: Serf -> SerfState -> LogIdentity -> EventId -> GetEvents
+             -> IO SerfState
+replayEvents serf ss@SerfState{..} ident lastCommitedId getEvents = do
+    vState <- newIORef ss
+    loop vState ssNextEv
+    readIORef vState
   where
     loop :: IORef SerfState -> EventId -> IO ()
-    loop vLast curEvent = do
-      let toRead = min 1000 (1 + lastCommitedId - curEvent)
-      when (toRead > 0) $ do
-        events <- getEvents curEvent toRead
-        for_ events $ \(eventId, event) -> do
-          sendAndRecv w eventId (OWork eventId event) >>= \case
-            Left ev            -> throwIO (ReplacedEventDuringReplay eventId ev)
-            Right (id, mug, _) -> writeIORef vLast (id, mug)
-        loop vLast (curEvent + toRead)
+    loop vState curEvent = do
+        let toRead = min 1000 (1 + lastCommitedId - curEvent)
+        when (toRead > 0) $ do
+            events <- getEvents curEvent toRead
+            for_ events $ \job -> do
+                replayJob serf job >>= writeIORef vState
+            loop vState (curEvent + toRead)
 
-replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO (EventId, Mug)
+replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO SerfState
 replay serf ident lastEv getEvents = do
-    ws <- handshake serf ident
-    replayEvents serf ws ident lastEv getEvents
+    ss <- handshake serf ident
+    replayEvents serf ss ident lastEv getEvents
 
 
 -- Compute Thread --------------------------------------------------------------

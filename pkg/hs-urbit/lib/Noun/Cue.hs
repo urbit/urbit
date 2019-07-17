@@ -1,11 +1,11 @@
-module Noun.Cue (cue, cueBS, DecodeErr) where
+module Noun.Cue (cue, cueExn, cueBS, DecodeErr) where
 
 import ClassyPrelude
 
 import Noun.Atom
 import Noun.Core
 
-import Control.Lens     (from, view)
+import Control.Lens     (from, view, (&), (^.))
 import Data.Bits        (shiftL, shiftR, (.&.), (.|.))
 import Foreign.Ptr      (Ptr, castPtr, plusPtr, ptrToWordPtr)
 import Foreign.Storable (peek)
@@ -26,6 +26,12 @@ cueBS = doGet dNoun
 
 cue :: Atom -> Either DecodeErr Noun
 cue = cueBS . view atomBytes
+
+cueExn :: Atom -> IO Noun
+cueExn atm =
+  cueBS (atm ^. atomBytes) & \case
+    Left e  -> throwIO e
+    Right x -> pure x
 
 
 -- Debugging -------------------------------------------------------------------

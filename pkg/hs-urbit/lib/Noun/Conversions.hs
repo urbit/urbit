@@ -1,6 +1,9 @@
 module Noun.Conversions
-  ( Cord(..), Knot(..), Term(..), Tank(..), Tang, Plum(..), Nullable
-  , Mug(..), Path(..), Word512
+  ( Nullable(..), Jammed(..), AtomCell(..)
+  , Word128, Word256, Word512
+  , Cord(..), Knot(..), Term(..), Tape(..)
+  , Tank(..), Tang, Plum(..)
+  , Mug(..), Path(..)
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -12,10 +15,12 @@ import Noun.Atom
 import Noun.Convert
 import Noun.Core
 import Noun.TH
-import Data.LargeWord (Word128, Word256, LargeKey)
 
-import GHC.Natural (Natural)
-import RIO         (decodeUtf8Lenient)
+import Data.LargeWord (LargeKey, Word128, Word256)
+import GHC.Natural    (Natural)
+import Noun.Cue       (cue)
+import Noun.Jam       (jam)
+import RIO            (decodeUtf8Lenient)
 
 import qualified Data.Char as C
 
@@ -70,6 +75,23 @@ instance FromNoun Void where
 
 newtype Tour = Tour [Char]
   deriving (Eq, Ord, Show)
+
+
+-- Double Jammed ---------------------------------------------------------------
+
+newtype Jammed a = Jammed a
+  deriving (Eq, Ord, Show)
+
+instance ToNoun a => ToNoun (Jammed a) where
+  toNoun (Jammed a) = Atom $ jam $ toNoun a
+
+instance FromNoun a => FromNoun (Jammed a) where
+  parseNoun n = do
+    a <- parseNoun n
+    cue a & \case
+      Left err  -> fail (show err)
+      Right res -> do
+        Jammed <$> parseNoun res
 
 
 -- Atom or Cell ----------------------------------------------------------------

@@ -17,27 +17,47 @@ import qualified Vere.Pier    as Pier
 
 --------------------------------------------------------------------------------
 
-main :: IO ()
-main = do
-    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
-        shipPath = "/home/benjamin/r/urbit/zod/"
-        ship     = 0 -- zod
-
+wipeSnapshot :: FilePath -> IO ()
+wipeSnapshot shipPath = do
     removeFile (shipPath <> ".urb/chk/north.bin")
     removeFile (shipPath <> ".urb/chk/south.bin")
 
-    (s,l,e,m) <- Pier.boot pillPath shipPath ship
-    print (e,m)
+tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
+tryBootFromPill pillPath shipPath ship = do
+    wipeSnapshot shipPath
+    (s,l,ss) <- Pier.boot pillPath shipPath ship
+    print ss
     threadDelay 500000
     kill s
     putStrLn "Booted!"
 
-    removeFile (shipPath <> ".urb/chk/north.bin")
-    removeFile (shipPath <> ".urb/chk/south.bin")
-
-    (s,l,e,m) <- Pier.resume shipPath
-    print (e,m)
+tryResume :: FilePath -> IO ()
+tryResume shipPath = do
+    (s,l,ss) <- Pier.resume shipPath
+    print ss
+    threadDelay 500000
+    kill s
     putStrLn "Resumed!"
+
+tryFullReplay :: FilePath -> IO ()
+tryFullReplay shipPath = do
+    wipeSnapshot shipPath
+    tryResume shipPath
+
+zod :: Ship
+zod = 0
+
+main :: IO ()
+main = do
+    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
+        shipPath = "/home/benjamin/r/urbit/zod/"
+        ship     = zod
+
+    tryBootFromPill pillPath shipPath ship
+
+    tryResume shipPath
+
+    tryFullReplay shipPath
 
     pure ()
 
