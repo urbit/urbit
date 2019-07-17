@@ -10727,11 +10727,11 @@
       {$rock *}  |-  ^-  type
                  ?@  q.gen  [%atom p.gen `q.gen]
                  [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
-      {$sand *}  |-  ^-  type
-                 ?@  q.gen
-                   ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen ~ q.gen])
-                   ?:(=(%f p.gen) ?>((lte q.gen 1) bool) [%atom p.gen ~])
-                 [%cell $(q.gen -.q.gen) $(q.gen +.q.gen)]
+      {$sand *}  ?@  q.gen
+                   ?:  =(%n p.gen)  ?>(=(0 q.gen) [%atom p.gen `q.gen])
+                   ?:  =(%f p.gen)  ?>((lte q.gen 1) bool)
+                   [%atom p.gen ~]
+                 $(-.gen %rock)
       {$tune *}  (face p.gen sut)
       {$dttr *}  %noun
       {$dtts *}  bool
@@ -10746,6 +10746,7 @@
       {$sgzp *}  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
       {$sgbn *}  $(gen q.gen)
       {$tsbn *}  $(gen q.gen, sut $(gen p.gen))
+      {$tscm *}  $(gen q.gen, sut (busk p.gen))
       {$wtcl *}  =+  [fex=(gain p.gen) wux=(lose p.gen)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
@@ -10754,7 +10755,7 @@
       {$fits *}  bool
       {$wthx *}  bool
       {$dbug *}  ~_((show %o p.gen) $(gen q.gen))
-      {$zpcm *}  (play p.gen)
+      {$zpcm *}  $(gen p.gen)
       {$lost *}  %void
       {$zpmc *}  (cell $(gen p.gen) $(gen q.gen))
       {$zpts *}  %noun
