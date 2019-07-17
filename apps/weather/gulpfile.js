@@ -1,15 +1,18 @@
 var gulp = require('gulp');
 var cssimport = require('gulp-cssimport');
-var cssnano = require('gulp-cssnano');
 var rollup = require('gulp-better-rollup');
+var cssnano = require('cssnano');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
+var exec = require('child_process').exec;
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
 var replace = require('rollup-plugin-replace');
 var json = require('rollup-plugin-json');
-var builtins = require('rollup-plugin-node-builtins');
+var builtins = require('@joseph184/rollup-plugin-node-builtins');
 var rootImport = require('rollup-plugin-root-import');
 var globals = require('rollup-plugin-node-globals');
 
@@ -40,14 +43,14 @@ gulp.task('tile-jsx-transform', function(cb) {
 });
 
 
-gulp.task('js-imports', function(cb) {
+gulp.task('js-imports', function (cb) {
   return gulp.src('dist/index.js')
     .pipe(rollup({
       plugins: [
         commonjs({
           namedExports: {
-            'node_modules/react/index.js': [ 'Component' ],
-            'node_modules/react-is/index.js': [ 'isValidElementType' ],
+            'node_modules/react/index.js': ['Component'],
+            'node_modules/react-is/index.js': ['isValidElementType'],
           }
         }),
         rootImport({
@@ -61,7 +64,7 @@ gulp.task('js-imports', function(cb) {
         resolve()
       ]
     }, 'umd'))
-    .on('error', function(e){
+    .on('error', function (e) {
       console.log(e);
       cb();
     })
@@ -127,7 +130,7 @@ gulp.task('tile-js-bundle-prod',
 gulp.task('bundle-prod', gulp.series('tile-js-bundle-prod', 'urbit-copy'));
 
 gulp.task('default', gulp.series('tile-js-bundle-dev', 'urbit-copy'));
-gulp.task('watch', gulp.series('default', function() {
+gulp.task('watch', gulp.series('default', function () {
   gulp.watch('tile/**/*.js', gulp.parallel('tile-js-bundle-dev'));
   gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
 }));
