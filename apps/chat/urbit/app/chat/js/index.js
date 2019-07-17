@@ -50900,9 +50900,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        , react.createElement(HeaderBar, { spinner: this.props.spinner, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 10}})
 	        , react.createElement('div', { className: "cf w-100 absolute flex"   ,
 	          style: {
-	            height: 'calc(100% - 48px)' 
+	            height: 'calc(100% - 48px)'
 	          }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 11}}
-	          , react.createElement('div', { className: "fl h-100 br overflow-x-hidden"   , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
+	          , react.createElement('div', { className: "fl h-100 br b--black-30 overflow-x-hidden"    , style: { flexBasis: 320 }, __self: this, __source: {fileName: _jsxFileName$3, lineNumber: 15}}
 	            , this.props.sidebar
 	          )
 	          , react.createElement('div', { className: "h-100 fr" , style: {
@@ -55446,13 +55446,13 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      react.createElement('div', { className: 'pa3 ' + selectedCss, onClick: this.onClick.bind(this), __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 25}}
 	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 26}}
 	          , unreadElem
-	          , react.createElement('p', { className: "dib body-regular" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 28}}, props.title)
+	          , react.createElement('p', { className: "dib body-regular lh-16"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 28}}, props.title)
 	        )
 	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 30}}
-	          , react.createElement('p', { className: "dib gray label-small-mono mr3"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 31}}, props.ship)
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 32}}, props.datetime)
+	          , react.createElement('p', { className: "dib gray label-small-mono mr3 lh-16"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 31}}, props.ship)
+	          , react.createElement('p', { className: "dib gray label-small-mono lh-16"   , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 32}}, props.datetime)
 	        )
-	        , react.createElement('p', { className: "body-regular-400 gray" , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 34}}, props.description)
+	        , react.createElement('p', { className: "label-small gray clamp-3 lh-16 pt1"    , __self: this, __source: {fileName: _jsxFileName$4, lineNumber: 34}}, props.description)
 	      )
 	    )
 	  }
@@ -55665,9 +55665,9 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	        let content = lodash.get(msg, 'gam.sep.lin.msg', 'No messages yet');
 	        let aut = !!msg ? msg.gam.aut : '';
 	        let wen = !!msg ? msg.gam.wen : 0;
-	        let datetime = 
-	          !!msg ? 
-	            moment.unix(wen / 1000).from(moment.utc()) 
+	        let datetime =
+	          !!msg ?
+	            moment.unix(wen / 1000).from(moment.utc())
 	          : '';
 	        return {
 	          msg,
@@ -55714,13 +55714,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    return (
 	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 147}}
-	        , react.createElement('div', { className: "pl3 pr3 pt3 pb3 cf"    , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 148}}
-	          , react.createElement('p', { className: "dib w-50 fw-bold body-large"   , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}, "Chat")
+	        , react.createElement('div', { className: "pl3 pr3 pt2 pb3 cf bb b--black-30"      , style: {height: '88px'}, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 148}}
+	          , react.createElement('h2', { className: "dib w-50 gray"  , __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 149}}, "Chat")
 	          , react.createElement('a', {
 	            className: "dib tr w-50 pointer plus-font"    ,
 	            onClick: this.onClickNew.bind(this), __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 150}}, "+")
 	        )
-	        , react.createElement('div', { style: { flexGrow: 1 }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 154}}
+	        , react.createElement('div', { style: {
+	          height:'calc(100vh - 60px - 48px)',
+	          overflowY: 'scroll'
+	        }, __self: this, __source: {fileName: _jsxFileName$6, lineNumber: 154}}
 	          , inviteItems
 	          , sidebarItems
 	        )
@@ -55971,22 +55974,22 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      setColor = 'gray';
 	    }
 
-	    let membersText = this.props.numPeers === 1 
+	    let membersText = this.props.numPeers === 1
 	      ? '1 Member' : `${this.props.numPeers} Members`;
 
 	    return (
 	      react.createElement('div', { className: "w-100", style: { height:28 }, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 40}}
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbStream, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 41}}
-	          , react.createElement(Link, { 
+	        , react.createElement('div', { className: "dib h-100" + bbStream, style: {width:'160px'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 41}}
+	          , react.createElement(Link, {
 	            className: 'no-underline label-regular v-mid ' + strColor,
 	            to: toBaseLink, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 42}}, "Stream")
 	        )
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbMembers, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 46}}
+	        , react.createElement('div', { className: "dib h-100" + bbMembers, style: {width:'160px'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 46}}
 	          , react.createElement(Link, {
 	            className: 'no-underline label-regular v-mid ' + memColor,
 	            to: toBaseLink + '/members', __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 47}}, membersText)
 	        )
-	        , react.createElement('div', { className: "dib w-20 h-100" + bbSettings, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 51}}
+	        , react.createElement('div', { className: "dib h-100" + bbSettings, style: {width:'160px'}, __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 51}}
 	          , react.createElement(Link, {
 	            className: 'no-underline label-regular v-mid ' + setColor,
 	            to: toBaseLink + '/settings', __self: this, __source: {fileName: _jsxFileName$a, lineNumber: 52}}, "Settings")
@@ -57191,11 +57194,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    if (props.security && props.security.sec !== 'channel' &&
 	      !props.security.sis.includes(window.ship)) {
-	      return this.readOnlyRender();    
+	      return this.readOnlyRender();
 	    }
 
 	    return (
-	      react.createElement('div', { className: "mt2 pa3 cf flex black bt"     , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 154}}
+	      react.createElement('div', { className: "mt2 pa3 cf flex black bt b--black-30"      , __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 154}}
 	        , react.createElement('div', { className: "fl", style: { flexBasis: 35, height: 40 }, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 155}}
 	          , react.createElement(Sigil, { ship: window.ship, size: 32, __self: this, __source: {fileName: _jsxFileName$c, lineNumber: 156}} )
 	        )
@@ -57307,7 +57310,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      }
 	    }
 	  }
-	  
+
 	  askForMessages() {
 	    const { props, state } = this;
 	    let messages = props.messages;
@@ -57391,16 +57394,16 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    let chatMessages = messages.reverse().map((msg) => {
 	      return (
 	        react.createElement(Message, {
-	          key: msg.gam.uid + Math.random(), 
+	          key: msg.gam.uid + Math.random(),
 	          msg: msg.gam, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 181}} )
 	      );
 	    });
 	    let peers = props.peers[state.station] || [window.ship];
 
 	    return (
-	      react.createElement('div', { key: state.station, 
+	      react.createElement('div', { key: state.station,
 	        className: "h-100 w-100 overflow-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 189}}
-	        , react.createElement('div', { className: "pl2 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 191}}
+	        , react.createElement('div', { className: "pl3 pt2 bb"  , __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 191}}
 	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$d, lineNumber: 192}}, state.circle)
 	          , react.createElement(ChatTabBar, { ...props,
 	            station: state.station,
@@ -57413,7 +57416,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	          , react.createElement('div', { ref:  el => { this.scrollElement = el; }, __self: this, __source: {fileName: _jsxFileName$d, lineNumber: 201}})
 	          , chatMessages
 	        )
-	        , react.createElement(ChatInput, { 
+	        , react.createElement(ChatInput, {
 	          api: props.api,
 	          numMsgs: lastMsgNum,
 	          station: state.station,
@@ -57523,7 +57526,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	  render() {
 	    const { props, state } = this;
-	    
+
 	    let peers = props.peers[state.station] || [window.ship];
 	    let listMembers = peers.map((mem) => {
 	      return (
@@ -57556,7 +57559,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    return (
 	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 92}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 93}}
+	        , react.createElement('div', { className: "pl3 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$f, lineNumber: 93}}
 	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$f, lineNumber: 94}}, state.circle)
 	          , react.createElement(ChatTabBar, {
 	            ...props,
@@ -57580,7 +57583,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	              , react.createElement('textarea', {
 	                ref:  e => { this.textarea = e; } ,
 	                className: "w-80 db ba overflow-y-hidden gray mb2"     ,
-	                style: { 
+	                style: {
 	                  resize: 'none',
 	                  height: 150
 	                },
@@ -57662,11 +57665,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	    if (!!state.isLoading) {
 	      return (
 	        react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 66}}
-	          , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 67}}
+	          , react.createElement('div', { className: "pl3 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 67}}
 	            , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 68}}, state.circle)
-	            , react.createElement(ChatTabBar, { 
+	            , react.createElement(ChatTabBar, {
 	              ...props,
-	              station: state.station, 
+	              station: state.station,
 	              numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 69}} )
 	          )
 	          , react.createElement('div', { className: "w-100 cf pa3"  , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 74}}
@@ -57678,11 +57681,11 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    return (
 	      react.createElement('div', { className: "h-100 w-100 overflow-x-hidden flex flex-column"    , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 82}}
-	        , react.createElement('div', { className: "pl2 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 83}}
+	        , react.createElement('div', { className: "pl3 pt2 bb mb3"   , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 83}}
 	          , react.createElement('h2', {__self: this, __source: {fileName: _jsxFileName$g, lineNumber: 84}}, state.circle)
-	          , react.createElement(ChatTabBar, { 
+	          , react.createElement(ChatTabBar, {
 	            ...props,
-	            station: state.station, 
+	            station: state.station,
 	            numPeers: peers.length, __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 85}} )
 	        )
 	        , react.createElement('div', { className: "w-100 cf pa3"  , __self: this, __source: {fileName: _jsxFileName$g, lineNumber: 90}}

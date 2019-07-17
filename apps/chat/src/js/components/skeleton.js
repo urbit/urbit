@@ -10,9 +10,9 @@ export class Skeleton extends Component {
         <HeaderBar spinner={this.props.spinner}/>
         <div className="cf w-100 absolute flex"
           style={{
-            height: 'calc(100% - 48px)' 
+            height: 'calc(100% - 48px)'
           }}>
-          <div className="fl h-100 br overflow-x-hidden" style={{ flexBasis: 320 }}>
+          <div className="fl h-100 br b--black-30 overflow-x-hidden" style={{ flexBasis: 320 }}>
             {this.props.sidebar}
           </div>
           <div className="h-100 fr" style={{
@@ -26,4 +26,3 @@ export class Skeleton extends Component {
     );
   }
 }
-

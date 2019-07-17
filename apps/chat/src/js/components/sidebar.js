@@ -96,9 +96,9 @@ export class Sidebar extends Component {
         let content = _.get(msg, 'gam.sep.lin.msg', 'No messages yet');
         let aut = !!msg ? msg.gam.aut : '';
         let wen = !!msg ? msg.gam.wen : 0;
-        let datetime = 
-          !!msg ? 
-            moment.unix(wen / 1000).from(moment.utc()) 
+        let datetime =
+          !!msg ?
+            moment.unix(wen / 1000).from(moment.utc())
           : '';
         return {
           msg,
@@ -145,13 +145,16 @@ export class Sidebar extends Component {
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-        <div className="pl3 pr3 pt3 pb3 cf">
-          <p className="dib w-50 fw-bold body-large">Chat</p>
+        <div className="pl3 pr3 pt2 pb3 cf bb b--black-30" style={{height: '88px'}}>
+          <h2 className="dib w-50 gray">Chat</h2>
           <a
             className="dib tr w-50 pointer plus-font"
             onClick={this.onClickNew.bind(this)}>+</a>
         </div>
-        <div style={{ flexGrow: 1 }}>
+        <div style={{
+          height:'calc(100vh - 60px - 48px)',
+          overflowY: 'scroll'
+        }}>
           {inviteItems}
           {sidebarItems}
         </div>
@@ -159,4 +162,3 @@ export class Sidebar extends Component {
     )
   }
 }
-

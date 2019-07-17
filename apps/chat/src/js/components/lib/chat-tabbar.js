@@ -33,22 +33,22 @@ export class ChatTabBar extends Component {
       setColor = 'gray';
     }
 
-    let membersText = this.props.numPeers === 1 
+    let membersText = this.props.numPeers === 1
       ? '1 Member' : `${this.props.numPeers} Members`;
 
     return (
       <div className="w-100" style={{ height:28 }}>
-        <div className={"dib w-20 h-100" + bbStream}>
-          <Link 
+        <div className={"dib h-100" + bbStream} style={{width:'160px'}}>
+          <Link
             className={'no-underline label-regular v-mid ' + strColor}
             to={toBaseLink}>Stream</Link>
         </div>
-        <div className={"dib w-20 h-100" + bbMembers}>
+        <div className={"dib h-100" + bbMembers} style={{width:'160px'}}>
           <Link
             className={'no-underline label-regular v-mid ' + memColor}
             to={toBaseLink + '/members'}>{membersText}</Link>
         </div>
-        <div className={"dib w-20 h-100" + bbSettings}>
+        <div className={"dib h-100" + bbSettings} style={{width:'160px'}}>
           <Link
             className={'no-underline label-regular v-mid ' + setColor}
             to={toBaseLink + '/settings'}>Settings</Link>

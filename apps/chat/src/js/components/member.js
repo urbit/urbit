@@ -57,7 +57,7 @@ export class MemberScreen extends Component {
 
   render() {
     const { props, state } = this;
-    
+
     let peers = props.peers[state.station] || [window.ship];
     let listMembers = peers.map((mem) => {
       return (
@@ -90,7 +90,7 @@ export class MemberScreen extends Component {
 
     return (
       <div className="h-100 w-100 overflow-x-hidden flex flex-column">
-        <div className='pl2 pt2 bb mb3'>
+        <div className='pl3 pt2 bb mb3'>
           <h2>{state.circle}</h2>
           <ChatTabBar
             {...props}
@@ -114,7 +114,7 @@ export class MemberScreen extends Component {
               <textarea
                 ref={ e => { this.textarea = e; } }
                 className="w-80 db ba overflow-y-hidden gray mb2"
-                style={{ 
+                style={{
                   resize: 'none',
                   height: 150
                 }}
@@ -133,4 +133,3 @@ export class MemberScreen extends Component {
     )
   }
 }
-

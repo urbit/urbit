@@ -6,8 +6,8 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
-textarea, select, input, button { 
-  outline: none; 
+textarea, select, input, button {
+  outline: none;
   -webkit-appearance: none;
   border: none;
   background-color: #fff;
@@ -40,6 +40,11 @@ h2 {
   line-height: 24px;
 }
 
+.label-small {
+  font-size: 14px;
+  line-height: 24px;
+}
+
 .label-small-mono {
   font-size: 12px;
   line-height: 24px;
@@ -53,7 +58,7 @@ h2 {
 }
 
 .plus-font {
-  font-size: 48px;
+  font-size: 32px;
   line-height: 24px;
 }
 
@@ -91,3 +96,14 @@ h2 {
   font-family: Inter, sans-serif;
 }
 
+.clamp-3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.lh-16 {
+  line-height: 16px;
+}

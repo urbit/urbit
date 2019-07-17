@@ -6,8 +6,8 @@
 :: +card: output effect payload
 ::
 +$  card
-  $%  [%connect wire binding:http-server term]
-      [%disconnect wire binding:http-server]
+  $%  [%connect wire binding:eyre term]
+      [%disconnect wire binding:eyre]
       [%http-response =http-event:http]
   ==
 ::
@@ -28,7 +28,7 @@
 ::  alerts us that we were bound. we need this because the vane calls back.
 ::
 ++  bound
-  |=  [wir=wire success=? binding=binding:http-server]
+  |=  [wir=wire success=? binding=binding:eyre]
   ^-  (quip move _this)
   [~ this]
 ::
@@ -44,7 +44,7 @@
 ::
 ++  poke-handle-http-request
   %-  (require-authorization:app ost.bow move this)
-  |=  =inbound-request:http-server
+  |=  =inbound-request:eyre
   ^-  (quip move _this)
   [[ost.bow %http-response (js-response:app session-js)]~ this]
 ::

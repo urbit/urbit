@@ -19292,7 +19292,7 @@
             }.call(commonjsGlobal));
             });
 
-            const _jsxFileName = "/Users/logan/Dev/interface/apps/chat/tile/tile.js";
+            const _jsxFileName = "/Users/gavinatkinson/Tlon/interface/apps/chat/tile/tile.js";
 
             class ChatTile extends react_1 {
 

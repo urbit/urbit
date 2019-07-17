@@ -25,15 +25,14 @@ export class SidebarItem extends Component {
       <div className={'pa3 ' + selectedCss} onClick={this.onClick.bind(this)}>
         <div className='w-100 v-mid'>
           {unreadElem}
-          <p className="dib body-regular">{props.title}</p>
+          <p className="dib body-regular lh-16">{props.title}</p>
         </div>
         <div className="w-100">
-          <p className='dib gray label-small-mono mr3'>{props.ship}</p>
-          <p className='dib gray label-small-mono'>{props.datetime}</p>
+          <p className='dib gray label-small-mono mr3 lh-16'>{props.ship}</p>
+          <p className='dib gray label-small-mono lh-16'>{props.datetime}</p>
         </div>
-        <p className='body-regular-400 gray'>{props.description}</p>
+        <p className='label-small gray clamp-3 lh-16 pt1'>{props.description}</p>
       </div>
     )
   }
 }
-
