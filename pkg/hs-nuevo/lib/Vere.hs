@@ -4,25 +4,56 @@ import ClassyPrelude
 
 import qualified Data.Map as M
 import           Nuevo
+import           Program
 import           Types
 
+initialVereEnv :: NuevoProgram -> VereEnv
+initialVereEnv np = VereEnv { instances = M.singleton TopConnection firstInstance }
+  where
+    firstInstance = InstanceThread
+      { itEventQueue =
+        [ NEvInit
+          TopConnection
+          (Path [])
+          np
+          (IoSocket 0 "base")
+          "datum"
+        ]
+      , itNuevoState = emptyNuevoState
+      , itEventLog = []
+      }
 
 -- TODO: This isn't the way to handle this long term, but for now, we run over
 -- each instance
--- vereStep :: VereEnv -> IO VereEnv
--- vereStep ve = do
---   M.mapAccum runThread (instances ve)
---   pure ()
+vereStep :: VereEnv -> IO VereEnv
+vereStep ve = do
+  let (effects, newEnv) = M.mapAccumWithKey accumExec [] (instances ve)
+
+  print ("env: " ++ (show newEnv))
+  print ("effects: " ++ (show effects))
+
+  let x =  (handleNuevoEffect (ProcessConnection (Path []) 0))
+  pure (foldl' x (VereEnv newEnv) effects)
 
 
+-- | For every instance of nuevo, run one event and accumulate the effects.
+accumExec :: [NuevoEffect]
+          -> Connection
+          -> InstanceThread
+          -> ([NuevoEffect], InstanceThread)
+accumExec previousEffects connection it@(InstanceThread [] _ _)
+  = (previousEffects, it)
 
-runInstanceStep :: NuevoState -> NuevoEvent -> IO ()
-runInstanceStep ns ne = do
-  let (newState, effects) = runNuevoFunction ns ne
-  pure ()
-
-  -- We now have a list of NuevoEffects, which are IO requests.
-
+accumExec previousEffects connection InstanceThread{..}
+  = (previousEffects ++ newEffects, newInst)
+  where
+    (event : restEvents) = itEventQueue
+    (newState, newEffects) = runNuevoFunction itNuevoState event
+    newInst = InstanceThread
+      { itEventQueue = restEvents
+      , itNuevoState = newState
+      , itEventLog = (0, event):itEventLog
+      }
 
 
 -- Nuevo has given us an effect and we must react to it.
@@ -43,20 +74,16 @@ handleNuevoEffect self@(ProcessConnection (Path path) seq) env = \case
       -- TODO: Allocate the socket representation here and return to the caller
       -- in case %init passes.
       newConnection = ProcessConnection newName 0
-      newInstance =
-        InstanceThread
-        [NEvInit newConnection newName neForkProgram newProcessSocket neForkMessage]
-        (itNuevoState oldState)
-        []
+      -- TODO: Actually copy the old state
+      newInstance = InstanceThread
+        { itEventQueue =
+          [NEvInit newConnection newName neForkProgram newProcessSocket neForkMessage]
+        , itNuevoState = emptyNuevoState
+        , itEventLog = []
+        }
       newName = Path (path ++ [neForkName])
       -- TODO: Make a valid socket instead of a dummy value
       newProcessSocket = PipeSocket 5 self self
-      (Just oldState) = M.lookup self (instances env)
-
-
-
-    -- we add a new entry o
-
 
 
 enqueueEvent :: VereEnv -> Connection -> NuevoEvent -> VereEnv

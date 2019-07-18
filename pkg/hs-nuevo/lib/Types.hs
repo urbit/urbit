@@ -30,6 +30,7 @@ data VereEnv = VereEnv
   { instances :: M.Map Connection InstanceThread
 
   }
+  deriving (Show)
 
 
 data InstanceThread = InstanceThread
@@ -37,8 +38,10 @@ data InstanceThread = InstanceThread
   -- threads. Right now, it is a list queue.
   { itEventQueue :: [NuevoEvent]
   , itNuevoState :: NuevoState
+  -- TODO: keep track of latest event number
   , itEventLog   :: [(Int,NuevoEvent)]
   }
+  deriving (Show)
 
 -------------------------------------------------------------------------------
 
@@ -83,6 +86,7 @@ data NuevoEvent
   { nevRecvSentOver :: Socket
   , nevRecvMessage  :: Message
   }
+  deriving (Show)
 
 data NuevoEffect
   = NEfFork
@@ -106,6 +110,7 @@ data NuevoState = NuevoState
   , nsNextBone     :: Int
   , nsSocketToBone :: B.Bimap Socket Int
   }
+  deriving (Show)
 
 emptyNuevoState :: NuevoState
 emptyNuevoState = NuevoState
