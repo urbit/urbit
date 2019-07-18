@@ -101,16 +101,34 @@ export class RumorReducer {
 
   reduceCollection(json, state) {
     if (json.who === window.ship) {
-      state.pubs[json.coll] = {
-        info: json.data,
-        order: { pin: [], unpin: [] },
-        posts: {},
+      if (state.pubs[json.coll]) {
+        state.pubs[json.coll].info = json.data;
+      } else {
+        state.pubs[json.coll] = {
+          info: json.data,
+          order: { pin: [], unpin: [] },
+          posts: {},
+        }
       }
     } else {
-      state.subs[json.who][json.coll] = {
-        info: json.data,
-        order: { pin: [], unpin: [] },
-        posts: {},
+      if (state.subs[json.who]) {
+        if (state.subs[json.who][json.coll]) {
+          state.subs[json.who][json.coll].info = json.data;
+        } else {
+          state.subs[json.who][json.coll] = {
+            info: json.data,
+            order: { pin: [], unpin: [] },
+            posts: {},
+          }
+        }
+      } else {
+        state.subs[json.who] = {
+          [json.coll]: {
+            info: json.data,
+            order: { pin: [], unpin: [] },
+            posts: {},
+          }
+        }
       }
     }
   }
