@@ -73,7 +73,10 @@
           content+so:dejs
       ==
     ::
-    ++  delete-collection  (of:dejs coll+(su:dejs sym) ~)
+    ++  delete-collection
+      %-  ot:dejs
+      :~  coll+(su:dejs sym)
+      ==
     ::
     ++  delete-post
       %-  ot:dejs
@@ -92,9 +95,6 @@
       %-  ot:dejs
       :~  name+(su:dejs sym)
           title+so:dejs
-          comments+comment-config
-          allow-edit+edit-config
-          perm+perm-config
       ==
     ::
     ++  edit-post
