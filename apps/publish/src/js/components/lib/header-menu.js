@@ -8,6 +8,20 @@ const PC = withRouter(PublishCreate);
 
 export class HeaderMenu extends Component {
   render () {
+    let recentText = (this.props.unread)
+      ? <p className="label-regular">
+          <span className="green-medium body-large"> • </span>
+          <span>Recent</span>
+        </p>
+      : <p className="label-regular">Recent</p>;
+
+    let subsText = (this.props.invites)
+      ? <p className="label-regular">
+          <span className="green-medium body-large"> • </span>
+          <span>Subscriptions</span>
+        </p>
+      : <p className="label-regular">Subscriptions</p>;
+
     return (
       <div className="fixed w-100 bg-white cf h-publish-header z-4"
         style={{top:48}}>
@@ -38,7 +52,7 @@ export class HeaderMenu extends Component {
               borderColor: "black",
             }}
             style={{flexBasis:148}}>
-            Subscriptions
+            {subsText}
           </NavLink>
 
           <div className="fl bb b-gray-30 w-16" >
