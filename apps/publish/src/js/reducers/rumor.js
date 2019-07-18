@@ -23,6 +23,7 @@ export class RumorReducer {
         this.removePost(json, state);
         delete state.pubs[json.coll].posts[json.post]; 
       } else {
+
         let postIds = Object.keys(state.pubs[json.coll].posts);
         postIds.forEach((postId) => {
           this.removePost({
@@ -32,6 +33,7 @@ export class RumorReducer {
           }, state);
         });
         delete state.pubs[json.coll];
+
       }
     } else {
       if (json.post) {

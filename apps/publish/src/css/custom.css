@@ -4,6 +4,15 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
+button {
+  background: none;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+  outline: inherit;
+  padding: 0;
+}
+
 a {
   color: inherit;
   text-decoration: inherit;
