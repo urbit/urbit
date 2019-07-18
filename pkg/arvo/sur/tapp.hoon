@@ -15,6 +15,7 @@
       [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%rule wire %turf %put turf]
+      [%source whos=(set ship) src=source:kale]
   ==
 ::
 ::  Possible async responses

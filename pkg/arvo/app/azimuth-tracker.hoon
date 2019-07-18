@@ -6,12 +6,18 @@
       $:  url=@ta
           from-number=number:block
       ==
-    +$  app-state  ~
+    +$  app-state
+      $:  =number:block
+          =pending-udiffs
+          =blocks
+      ==
     +$  peek-data  ~
     +$  in-poke-data
-      $%  [%watch =config]
-          [%clear ~]
-          [%noun *]
+      $:  %azimuth-tracker-poke
+          $%  [%init ~]
+              [%look whos=(set ship) =source:kale]
+              [%watch =config]
+          ==
       ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
@@ -224,24 +230,63 @@
       =*  loop  $
       ?~  udiffs
         (pure:m ~)
-      ~&  >  [%update block i.udiffs]
-      ::  ;<  ~  bind:m  (send-effect [%vent-update i.udiffs])
+      ;<  ~  bind:m  (send-effect %new-event i.udiffs)
       loop(udiffs t.udiffs)
     --
 ::
 ::  Main loop
 ::
 =>  |%
-    ++  watch
-      |=  =config
-      =/  m  (async:stdio ,~)
+    ::
+    ::  Subscribe to %sources from kale
+    ::
+    ++  init
+      |=  state=app-state
+      =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =/  =number:block  from-number.config
-      =|  =pending-udiffs
-      =|  blocks=(list block)
-      |-  ^-  form:m
-      =*  poll-loop  $
-      ~&  [%poll-loop number]
+      ;<  ~  bind:m  (send-effect %sources ~)
+      (pure:m state)
+    ::
+    ::  Send %look to kale
+    ::
+    ++  look
+      |=  [state=app-state whos=(set ship) =source:kale]
+      =/  m  (async:stdio ,app-state)
+      ^-  form:m
+      ;<  ~  bind:m  (send-effect %look whos source)
+      (pure:m state)
+    ::
+    ::  Take %source from kale
+    ::
+    ++  take-source
+      |=  [state=app-state whos=(set ship) =source:kale]
+      =/  m  (async:stdio ,app-state)
+      ^-  form:m
+      ?:  ?=(%& -.source)
+        (pure:m state)
+      =/  =a=purl:eyre  node.p.state
+      =/  url=@ta  (crip (en-purl:html a-purl))
+      (watch state url launch:contracts:azimuth)
+    ::
+    ::  Start watching a node
+    ::
+    ++  watch
+      |=  [state=app-state =config]
+      =/  m  (async:stdio ,app-state)
+      ^-  form:m
+      =:  number.state          from-number.config
+          pending-udiffs.state  *pending-udiffs
+          blocks.state          *blocks
+        ==
+      (get-updates state)
+    ::
+    ::  Get updates since last checked
+    ::
+    ++  get-updates
+      |=  app-state
+      =/  m  (async:stdio ,app-state)
+      ^-  form:m
+      ~&  [%get-updates number]
       ;<  =latest=block  bind:m  (get-latest-block url.config)
       |-  ^-  form:m
       =*  walk-loop  $
@@ -249,7 +294,7 @@
       ?:  (gth number number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
         ;<  ~        bind:m  (wait:stdio (add now ~s10))
-        poll-loop
+        (pure:m number pending-udiffs blocks)
       ;<  =block  bind:m  (get-block-by-number url.config number)
       ;<  [=new=^pending-udiffs new-blocks=(lest ^block)]  bind:m
         (take-block url.config pending-udiffs block blocks)
@@ -258,6 +303,8 @@
           number          +(number.id.i.new-blocks)
         ==
       walk-loop
+    ::
+    ::  Process a block, detecting and handling reorgs
     ::
     ++  take-block
       |=  [url=@ta =a=pending-udiffs =block blocks=(list block)]
@@ -274,6 +321,8 @@
       =.  b-pending-udiffs  (~(put by b-pending-udiffs) number.id.block new-udiffs)
       (pure:m b-pending-udiffs block blocks)
     ::
+    ::  Release events if they're more than 30 blocks ago
+    ::
     ++  release-old-events
       |=  [=pending-udiffs =number:block]
       =/  m  (async:stdio ,^pending-udiffs)
@@ -282,6 +331,8 @@
       =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
       ;<  ~  bind:m  (jael-update udiffs)
       (pure:m (~(del by pending-udiffs) rel-number))
+    ::
+    ::  Reorg detected, so rewind until we're back in sync
     ::
     ++  rewind
       |=  [url=@ta =pending-udiffs =block blocks=(list block)]
@@ -300,6 +351,8 @@
       =.  pending-udiffs  (~(del by pending-udiffs) number.id.block)
       loop(block next-block, blocks t.blocks)
     ::
+    ::  Tell subscribers there was a deep reorg
+    ::
     ++  disavow
       |=  =block
       =/  m  (async:stdio ,~)
@@ -311,22 +364,26 @@
 ::
 =*  default-tapp  default-tapp:tapp
 %-  create-tapp-poke-peer-take:tapp
-|_  [=bowl:gall state=app-state]
+|_  [=bowl:gall =app-state]
+|%
 ++  handle-poke
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
-  ?-  -.in-poke-data
-    %noun       (watch (config +.in-poke-data))
-    %watch      (watch +.in-poke-data)
-    %clear      !!
+  ?-  +<.in-poke-data
+    %init   (init app-state)
+    %look   (look app-state +>.in-poke-data)
+    %watch  (watch app-state +>.in-poke-data)
   ==
 ::
 ++  handle-take
   |=  =sign:tapp
-  !!
-  ::  ?>  ?=(%sources -.sign)
-  ::  (handle-poke %watch +.sign)
+  =/  m  tapp-async
+  ^-  form:m
+  ?-  -.sign
+    %sources  (handle-poke %watch +.sign)
+    %wake     (get-updates app-state)
+  ==
 ::
 ++  handle-peer  ~(handle-peer default-tapp bowl state)
 --
