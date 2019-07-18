@@ -1,4 +1,5 @@
 /-  ring
+/+  ring
 ::
 ::  To post to /board/1234, you must post:
 ::
@@ -21,12 +22,31 @@
 ::  then 
 
 |%
-::  TODO: REAL TYPES
+::  The toplevel signature is what comes in on the auth app.
 ::
-++  ring-sig  @
+++  full-signature
+  $%  [%ship ship=@p sig=@]
+      [%ring =ring-signature:ring]
+  ==
+::  A processed signature is an attestation by a parent node to a child node
+::  that a valid signature was made.
+::
+++  processed-signature
+  $%  [%ship ship=@]
+      [%ring tag=(unit @udpoint)]
+  ==
+::
+++  process-signature
+  |=  =full-signature
+  ^-  processed-signature
+  ::
+  ?-  -.full-signature
+    %ship  [%ship ship.full-signature]
+    %ring  [%ring y.raw.ring-signature.full-signature]
+  ==
 ::
 +$  post
-  $:  =ring-sig
+  $:  sig=full-signature
   ::
       subject=@t
       text=@t
@@ -48,10 +68,10 @@
 ++  node-type-auth
   |%
   ++  parent-event
-    ring-sig
+    full-signature
   ::
   +$  child-event
-    ring-sig
+    processed-signature
   ::  user events which target the toplevel node are all about doing membership checks
   ::
   +$  user-event
@@ -105,7 +125,7 @@
     ::
     ~&  [%todo-add-auth-check-for parent-event]
     ::
-    `parent-event
+    `(process-signature parent-event)
   ::
   ++  on-process-event
     |=  [=parent-event =user-event =private-state]
@@ -127,7 +147,7 @@
     ::
         %create
       ~&  [%inside-create user-event]
-      [[%create name.user-event type.user-event parent-event] private-state]
+      [[%create name.user-event type.user-event (process-signature parent-event)] private-state]
     ==
   ::
   ++  apply-event-to-snapshot
@@ -161,11 +181,11 @@
 ++  node-type-board
   |%
   ++  parent-event
-    ring-sig
+    processed-signature
   ::  the board passes the newly allocated id to the thread
   ::
   +$  child-event
-    id=@ud
+    [id=@ud =processed-signature]
   ::  the user-event of the board is a new post request
   ::
   +$  user-event
@@ -211,7 +231,7 @@
     ^-  (unit child-event)
     ::  we could block the route if we wanted here!
     ::
-    `next-postid.private-state
+    `[next-postid.private-state parent-event]
   ::  +on-process-event: called when we give the passed in user-event to its
   ::  target node.
   ::
@@ -227,7 +247,7 @@
         %new-post
       =/  id  next-postid.private-state
       ::
-      [[%create (scot %ud id) %thread next-postid.private-state] private-state]
+      [[%create (scot %ud id) %thread [next-postid.private-state parent-event]] private-state]
     ::
         %create
       [[%return [%accept ~]] private-state]
@@ -252,15 +272,12 @@
   ++  on-child-return
     |=  [=child-returned =private-state]
     ^-  [return-event _private-state]
-    ~&  %board-on-child-return
     ?-    -.child-returned
         %accepted
-      ~&  [%accepted id.child-returned next-postid.private-state]
       ?>  =(id.child-returned next-postid.private-state)
       [[%accept ~] private-state(next-postid +(next-postid.private-state))]
     ::
         %ignored
-      ~&  %ignored
       [[%accept ~] private-state]
     ==
   --
@@ -416,14 +433,11 @@
   =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
   =/  args=vase  :(slop child-returned private-state.state)
   ::
-  ::  ~&  [%on-child-return-args app-type.state route args]
-  ::  ~&  [%desperation p.on-child-return]
   =/  raw-result  (slam on-child-return args)
   ::
   =/  return-event=vase  (slot 2 raw-result)
   =.  private-state.state  (slot 3 raw-result)
   ::
-  ~&  [%ret return-event]
   [return-event state]
 ::  +node-executor: applies a message to a node in a route
 ::
@@ -568,26 +582,26 @@
 ::
 ~&  %phase---------1
 =^  ret1  toplevel
-  (node-executor !>(0) / / !>([%init 'our town' ~zod (sy [~littel-ponnys ~])]) toplevel)
+  (node-executor !>([%ship ~zod 5]) / / !>([%init 'our town' ~zod (sy [~littel-ponnys ~])]) toplevel)
 ~&  [%ret ret1]
 ::  'our town' should have a 'shitposting' board
 ::
 ~&  %phase---------2
 =^  ret2  toplevel
-  (node-executor !>(0) / / !>([%create 'shitposting' %board]) toplevel)
+  (node-executor !>([%ship ~zod 5]) / / !>([%create 'shitposting' %board]) toplevel)
 ~&  [%ret2 ret2]
 ~&  [%toplevel toplevel]
 ::  time to start shitposting!
 ::
 ~&  %phase---------3
 =^  ret3  toplevel
-  (node-executor !>(0) /shitposting /shitposting !>([%new-post [0 'subject' 'text']]) toplevel)
+  (node-executor !>([%ship ~zod 5]) /shitposting /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
 ~&  [%ret3 ret3]
 ::  continue shitposting in the current thread!
 ::
 ~&  %phase---------4
 =^  ret4  toplevel
-  (node-executor !>(0) /shitposting/1 /shitposting/1 !>([%new-post [0 'reply' 'text reply']]) toplevel)
+  (node-executor !>([%ship ~zod 5]) /shitposting/1 /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
 ~&  [%ret4 ret4]
 ::
 ~&  [%final-sate toplevel]
