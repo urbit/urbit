@@ -14,6 +14,8 @@ export class SettingsScreen extends Component {
       host: props.match.params.ship,
       isLoading: false
     };
+
+    this.renderDelete = this.renderDelete.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -57,11 +59,39 @@ export class SettingsScreen extends Component {
     });
   }
 
+  renderDelete() {
+    const { props, state } = this;
+    let titleText = "Delete Chat";
+    let descriptionText = "Permanently delete this chat.";
+    let buttonText = "-> Delete";
+
+    if (state.host !== `~${window.ship}`) {
+      titleText = "Leave Chat"
+      descriptionText = "Leave this chat."
+      buttonText = "-> Leave";
+    }
+
+    return (
+      <div className="w-50 fl pl2 mt3">
+        <p className="body-regular">{titleText}</p>
+        <p className="label-regular gray mb3">{descriptionText}</p>
+        <a onClick={this.deleteChat.bind(this)}
+          className="pointer btn-font underline nice-red">{buttonText}</a>
+      </div>
+    );
+  }
+
+
   render() {
     const { props, state } = this;
     let peers = props.peers[state.station] || [window.ship];
 
     if (!!state.isLoading) {
+      let text = "Deleting...";
+      if (state.host === `~${window.ship}`) {
+        text = "Leaving...";
+      }
+
       return (
         <div className="h-100 w-100 overflow-x-hidden flex flex-column">
           <div className='pl3 pt2 bb mb3'>
@@ -72,7 +102,7 @@ export class SettingsScreen extends Component {
               numPeers={peers.length} />
           </div>
           <div className="w-100 cf pa3">
-            <h2>Deleting...</h2>
+            <h2>{text}</h2>
           </div>
         </div>
       );
@@ -89,17 +119,7 @@ export class SettingsScreen extends Component {
         </div>
         <div className="w-100 cf pa3">
           <h2>Settings</h2>
-          <div className="w-50 fl pl2 mt3">
-            <p className="body-regular">Delete Chat</p>
-            <p className="label-regular gray mb3">
-              Permanently delete this chat.
-            </p>
-            <a onClick={this.deleteChat.bind(this)}
-              className="pointer btn-font underline nice-red">-> Delete</a>
-          </div>
-          <div className="w-50 fr pr2 mt3">
-          </div>
-
+          {this.renderDelete()}
         </div>
       </div>
     )

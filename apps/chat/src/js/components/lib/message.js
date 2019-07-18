@@ -5,7 +5,6 @@ import moment from 'moment';
 import _ from 'lodash';
 
 export class Message extends Component {
-
   
   renderMessage(content) {
     return (
@@ -27,7 +26,8 @@ export class Message extends Component {
     try {
       let url = new URL(content);
       let imgMatch = 
-         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|webp|WEBP)$/.exec(
+        /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
+        .exec(
            url.pathname
          );
       if (imgMatch) {
@@ -67,6 +67,7 @@ export class Message extends Component {
     const { props } = this;
     let pending = !!props.msg.pending ? ' o-80' : '';
     let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
+    let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
     
     return (
       <div className={"w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending}
@@ -77,16 +78,20 @@ export class Message extends Component {
           <Sigil ship={props.msg.aut} size={32} />
         </div>
         <div className="fr" style={{ flexGrow: 1, marginTop: -4 }}>
-          <div>
+          <div className="hide-child">
             <p className="v-top label-small-mono gray dib mr3">
               ~{props.msg.aut}
             </p>
             <p className="v-top label-small-mono gray dib">{timestamp}</p>
+            <p className="v-top label-small-mono mr2 gray dib child">
+              {datestamp}
+            </p>
           </div>
           {this.renderContent()}
         </div>
       </div>
     );
   }
+
 }
 

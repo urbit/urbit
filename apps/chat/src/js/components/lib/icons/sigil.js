@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
-import { sealDict } from '/components/lib/seal-dict';
+import { sigil, reactRenderer } from 'urbit-sigil-js';
 
-
+    
 export class Sigil extends Component {
   render() {
-    let prefix = this.props.prefix ? JSON.parse(this.props.prefix) : false;
+    const { props } = this;
 
     return (
       <div 
         className="bg-black" 
-        style={{ flexBasis: 35, padding: 4, paddingBottom: 0 }}>
+        style={{ flexBasis: 32 }}>
       {
-        sealDict.getSeal(this.props.ship, this.props.size, prefix)
+        sigil({
+          patp: props.ship,
+          renderer: reactRenderer,
+          size: props.size,
+          colors: ['black', 'white'],
+        })
       }
       </div>
     );

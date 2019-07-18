@@ -152,7 +152,11 @@ export class ChatInput extends Component {
 
     return (
       <div className="mt2 pa3 cf flex black bt b--black-30">
-        <div className="fl" style={{ flexBasis: 35, height: 40 }}>
+        <div className="fl" style={{
+          marginTop: 4,
+          flexBasis: 32,
+          height: 36
+        }}>
           <Sigil ship={window.ship} size={32} />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 40 }}>

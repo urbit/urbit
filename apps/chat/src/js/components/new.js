@@ -95,7 +95,7 @@ export class NewScreen extends Component {
 
   render() {
     let nameErrorElem = this.state.showNameError ? (
-      <p className="nice-red label-regular">Chat names may contain alphabetical characters, numbers, dots, or dashes.</p>
+      <p className="nice-red label-regular mb2">Chat names may contain lowercase alphabetical characters, numbers, dots, or dashes.</p>
     ) : (
       <div></div>
     );
@@ -117,10 +117,9 @@ export class NewScreen extends Component {
           { nameErrorElem }
           <p className="label-regular fw-bold">Invites</p>
           <input 
-            className="body-large bn pa2 pl0 mb2 w-50"
+            className="body-large bn pa2 pl0 mb4 w-50"
             placeholder="~zod, ~bus"
             onChange={this.invChange} />
-          <br />
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

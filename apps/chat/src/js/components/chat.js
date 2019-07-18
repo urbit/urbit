@@ -194,7 +194,7 @@ export class ChatScreen extends Component {
     let chatMessages = messages.reverse().map((msg) => {
       return (
         <Message
-          key={msg.gam.uid + Math.random()}
+          key={msg.gam.uid}
           msg={msg.gam} />
       );
     });
