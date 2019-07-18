@@ -4,6 +4,25 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   font-family: Inter, sans-serif;
 }
 
+button {
+  background: none;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+  outline: inherit;
+  padding: 0;
+}
+
+p {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+pre {
+  padding: 8px;
+  background-color: #f9f9f9;
+}
+
 a {
   color: inherit;
   text-decoration: inherit;
@@ -130,6 +149,10 @@ h4 {
   width: 688px;
 }
 
+.mw-336 {
+  max-width: 336px;
+}
+
 .mw-688 {
   max-width: 688px;
 }
@@ -228,7 +251,7 @@ h4 {
   background-color: #B1B2B3;
 }
 
-.title-preview {
+.two-lines {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   word-wrap: break-word;
@@ -236,10 +259,17 @@ h4 {
   overflow: hidden;
 }
 
-.body-preview {
+.five-lines {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   word-wrap: break-word;
   -webkit-line-clamp: 5;
   overflow: hidden;
+}
+
+.one-line {
+  word-wrap: break-word;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

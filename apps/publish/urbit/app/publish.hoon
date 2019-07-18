@@ -348,7 +348,9 @@
             [~ da-this]
           =.  subs.sat  (~(del by subs.sat) who.del col.del)
           :-  ~(tap in ~(key by pos.u.old))
-          (da-emit [ost.bol %pull /collection/[col.del] [who.del %publish] ~])
+          %-  da-emil 
+          :-  [ost.bol %pull /collection/[col.del] [who.del %publish] ~]
+          (affection-primary del)
         ::  iterate through post ids collected before, removing each from
         ::  secondary indices in state
         ::
@@ -382,7 +384,8 @@
         =.  da-this  (da-remove who.del col.del u.pos.del)
         (da-emil (affection del))
       =.  subs.sat  (~(put by subs.sat) [who.del col.del] new)
-      (da-remove who.del col.del u.pos.del)
+      =.  da-this  (da-remove who.del col.del u.pos.del)
+      (da-emil (affection-primary del))
     ::
     ==
   ::
@@ -527,6 +530,15 @@
   |=  del=delta
   ^-  (quip move _this)
   da-done:(da-change:da del)
+::  +affection: rumors to primary
+::
+++  affection-primary
+  |=  del=delta
+  ^-  (list move)
+  %+  turn  (prey:pubsub:userlib /primary bol)
+  |=  [b=bone *]
+  ^-  move
+  [b %diff %publish-rumor del]
 ::  +affection: rumors to interested
 ::
 ++  affection
@@ -1023,7 +1035,15 @@
       %edit-collection
     ?.  =(src.bol our.bol)
       [~ this]
-    [~ this]
+    =/  pax=path  /web/publish/[name.act]/publish-info
+    =/  col=(unit collection)  (~(get by pubs.sat) name.act)
+    ?~  col
+      [~ this]
+    ?:  ?=(%.n -.dat.col.u.col)
+      [~ this]
+    =/  out=collection-info  p.dat.col.u.col(title title.act)
+    :_  this
+    [(write-file pax %publish-info !>(out))]~
   ::
       %edit-post
     ?.  =(who.act our.bol)

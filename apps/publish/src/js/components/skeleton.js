@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-
-import { Header } from '/components/lib/header';
 import { HeaderBar } from '/components/lib/header-bar';
 
 

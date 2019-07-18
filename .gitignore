@@ -74,8 +74,8 @@ apps/*/dist/
 *.swn
 
 # built js and css files
-apps/publish/urbit/app/write/js/*
-apps/publish/urbit/app/write/css/*
+apps/publish/urbit/app/publish/js/*
+apps/publish/urbit/app/publish/css/*
 apps/chat/urbit/app/chat/js/*
 apps/chat/urbit/app/chat/css/*
 apps/clock/urbit/app/clock/js/*

@@ -28,7 +28,7 @@ export class PublishCreate extends Component {
         <div className="w-100">
           <p className="publish">Publish</p>
           <Link to={link}>
-            <p className="create">+New Blog</p>
+            <p className="create">+New Notebook</p>
           </Link>
         </div>
       );
@@ -45,7 +45,7 @@ export class PublishCreate extends Component {
         <div className="w-100">
           <p className="publish">Publish</p>
           <Link to={link}>
-            <p className="create">+New Post</p>
+            <p className="create">+New Note</p>
           </Link>
         </div>
       );
