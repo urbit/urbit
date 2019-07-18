@@ -111,6 +111,8 @@
   +$  return-event
     $%  [%accept ~]
         [%reject ~]
+        [%add-member ship=@p]
+        [%remove-member ship=@p]
     ==
   ::
   +$  on-process-response
@@ -168,7 +170,7 @@
       snapshot(invited (~(del in invited.snapshot) ship.user-event))
     ::
         %create
-      !!
+      snapshot
     ==
   ::
   ++  on-child-return
@@ -351,6 +353,17 @@
     ^-  _snapshot
     ::
     snapshot(posts [[user-event private] posts.snapshot])
+  ::  +send: called by users to build up 
+  ::
+  ::  ++  sign-user-message
+  ::    |=  =user-event
+  ::    ^-  signature-request
+  ::    !!
+  ::  ::
+  ::  ++  sign-toplevel
+  ::    |=  msg=*
+  ::    ^-  signature-request
+  ::    !!
   --
 ::
 ++  event-log-item
@@ -606,6 +619,71 @@
 ::
 ~&  [%final-sate toplevel]
 
+
 ::  zero
 ::
 0
+
+:: So we now need to have a way to make messages to send to the 
+::
+=/  message-package
+  (message-builder /shitposting/1 !>([%new-post 'reply' 'text reply']) local-toplevel)
+
+::  how messages are signed has to be part of the node at build time. 
+::
+::  [%create id=5 type=%board sig-type=[%ring ?(%anon %parent %self)]]
+::
+::  then we can take the 
+::
+
+::  if the membership pool is inside the applets, we have to trust the applets
+::  to maintain it. This implies:
+::
+::  - Our system state is [invited=(set @p) root-node], where the invited sit outside
+::
+::  - To initialize this, we'll need a separate toplevel.
+
+
+
+
+
+::  ::
+::  ::  go to the top and then [path user-event] -> signature-request
+
+::  ::
+::  ::  in this whole prototype, i've put the signature inside user-event under the
+::  ::  idea that letting this be configurable is correct. but we don't want to let
+::  ::  the applets touch a users' key material; all signatures should be of the
+::  ::  form of a signature request.
+::  ::
+::  ::  we need to produce two signatures: the toplevel one that the host sees and
+::  ::  the user-event one which goes into the event log. for the toplevel one, we
+::  ::  need to work on the
+::  ::
+::  ::  if we give the toplevel node the ability to maintain the member list, what
+::  ::  mischief could a malicious applet get up to? For now, we're going to just
+::  ::  let that be app state, but that should seriously be put into the event log
+::  ::  management in v2.
+::  ::
+::  ++  user-signature-request
+::    $%  [%make-ring tag=(unit path)]
+::    ==
+::  ::
+::  ++  toplevel-signature-request
+::    $%  [%make-ring ships=(set @p) tag=(unit path)]
+::        [%make-id ship=@p]
+::    ==
+::  ::
+::  ++  produce-signature
+::    |=  [=user-signature-request =snapshot]
+::    ^-  toplevel-signature-request
+::    ::
+::    ?-  user-signature-request
+::      %make-ring  [%make-ring ships.snapshot tag.user-signature-request]
+::      %make-id    [%make-id ship.snapshot]
+::    ==
+
+::  ::  Maybe I'm overthinking this. Should 
+
+::  ++  sign-user-event
+::    |=  [=user-event =path]
