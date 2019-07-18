@@ -52,7 +52,7 @@ export class HeaderMenu extends Component {
               borderColor: "black",
             }}
             style={{flexBasis:148}}>
-            My Blogs
+            Notebooks
           </NavLink>
 
           <div className="fl bb b-gray-30 w-16" style={{flexGrow:1}}>

@@ -11,9 +11,9 @@ class FormLink extends Component {
   render(props){
     if (this.props.enabled) {
       return (
-        <p className="body-large b z-2 pointer" onClick={this.props.action}>
+        <button className="body-large b z-2 pointer" onClick={this.props.action}>
           {this.props.body}
-        </p>
+        </button>
       );
     }
     return (
@@ -184,16 +184,16 @@ export class NewBlog extends Component {
 
                 <FormLink
                   enabled={(this.state.title !== '')}
-                  action={this.firstPost}
-                  body={"-> Create a first post"}
+                  action={this.addInvites}
+                  body={"-> Send Invites"}
                 />
 
                 <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
 
                 <FormLink
                   enabled={(this.state.title !== '')}
-                  action={this.addInvites}
-                  body={"-> Send Invites"}
+                  action={this.firstPost}
+                  body={"-> Create a first note"}
                 />
 
                 <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>
@@ -228,7 +228,7 @@ export class NewBlog extends Component {
                 />
 
                 <p className="body-regular-400" style={{marginTop:25, marginBottom:27}}>
-                  Who is invited to read this blog?
+                  Who is invited to read this notebook?
                 </p>
 
                 <input className={invitesStyle}
@@ -244,7 +244,7 @@ export class NewBlog extends Component {
                 <FormLink
                   enabled={enableButtons}
                   action={this.firstPost}
-                  body={"-> Save and create a first post"}
+                  body={"-> Save and create a first note"}
                 />
 
                 <hr className="gray-30" style={{marginTop:32, marginBottom: 32}}/>

@@ -104,7 +104,7 @@ export class BlogSettings extends Component {
           <div className="flex-col w-100">
             <p className="body-regular-400">Rename</p> 
             <p className="gray-50 label-small-2" style={{marginTop:12, marginBottom:23}}>
-              Change the name of this blog
+              Change the name of this notebook
             </p>
             <p className="label-small-2">Notebook Name</p>
             <input className="body-regular-400 w-100"

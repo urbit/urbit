@@ -9,7 +9,7 @@ export class PostBody extends Component {
     super(props)
   }
 
-  renderA(what, node, attr) {
+  renderA(what, node, attr, parentNode) {
     let aStyle = {
       textDecorationLine: "underline",
       wordWrap: "break-word"
@@ -19,7 +19,7 @@ export class PostBody extends Component {
         return item;
       } else {
         let newAttr = Object.assign({style: aStyle, key: key}, item.ga);
-        return this.parseContent(item.c, item.gn, newAttr);
+        return this.parseContent(item.c, item.gn, newAttr, node);
       }
     });
     const element =
@@ -28,26 +28,30 @@ export class PostBody extends Component {
   }
 
 
-  renderIMG(what, node, attr) {
+  renderIMG(what, node, attr, parentNode) {
     let imgStyle = {
       width: "100%",
-      height: "auto"
+      height: "auto",
+      marginBottom: 12,
     };
     let newAttr = Object.assign({style: imgStyle}, attr);
     const element = React.createElement(node, newAttr);
     return element;
   }
 
-  renderDefault(what, node, attr) {
+  renderP(what, node, attr, parentNode) {
     let dStyle = {
-      wordWrap: "break-word"
+      wordWrap: "break-word",
     };
+    if (parentNode !== 'li') {
+      dStyle.marginBottom = 12;
+    }
     let children = what.map((item, key) => {
       if (typeof(item) === 'string') {
         return item;
       } else {
         let newAttr = Object.assign({key: key}, item.ga);
-        return this.parseContent(item.c, item.gn, newAttr);
+        return this.parseContent(item.c, item.gn, newAttr, node);
       }
     });
     const element =
@@ -55,20 +59,42 @@ export class PostBody extends Component {
     return element;
   }
 
-  parseContent(what, node, attr) {
+  renderDefault(what, node, attr, parentNode) {
+    let dStyle = {
+      wordWrap: "break-word",
+    };
+    let children = what.map((item, key) => {
+      if (typeof(item) === 'string') {
+        return item;
+      } else {
+        let newAttr = Object.assign({key: key}, item.ga);
+        return this.parseContent(item.c, item.gn, newAttr, node);
+      }
+    });
+    const element =
+      React.createElement(node, Object.assign({style: dStyle}, attr), children);
+    return element;
+  }
+
+  parseContent(what, node, attr, parentNode) {
     switch (node) {
       case "a":
-        return this.renderA(what, node, attr);
+        return this.renderA(what, node, attr, parentNode);
       case "img":
-        return this.renderIMG(what, node, attr);
+        return this.renderIMG(what, node, attr, parentNode);
+      case "p":
+        return this.renderP(what, node, attr, parentNode);
       default:
-        return this.renderDefault(what, node, attr);
+        return this.renderDefault(what, node, attr, parentNode);
     }
   }
 
 
   render() {
-    let page = this.parseContent(this.props.body.c, this.props.body.gn, this.props.body.ga); 
+    let page = this.parseContent(this.props.body.c,
+      this.props.body.gn,
+      this.props.body.ga,
+      null); 
     return page;
   }
 }

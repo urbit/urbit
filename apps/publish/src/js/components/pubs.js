@@ -84,7 +84,7 @@ export class Pubs extends Component {
             <div className="w-100">
               <h2 className="gray-50"
                 style={{marginLeft: 16, marginTop:32, marginBottom: 16}}>
-                My Blogs
+                Notebooks
               </h2>
             </div>
             <div className="w-100 flex">

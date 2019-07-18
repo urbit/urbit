@@ -39,7 +39,7 @@ export class PathControl extends Component {
 
     if (this.props.location.pathname === '/~publish/new-blog') {
       path.push(
-        { text: 'New Blog', url: finalUrl }
+        { text: 'New Notebook', url: finalUrl }
       );
     } else if (this.props.location.pathname === '/~publish/new-post') {
       if (blog) {
@@ -49,7 +49,7 @@ export class PathControl extends Component {
         });
       }
       path.push(
-        { text: 'New Post', url: finalUrl }
+        { text: 'New Note', url: finalUrl }
       );
     }
     return path;
