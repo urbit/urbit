@@ -1042,7 +1042,7 @@
         %.n
       ::  is this a session that we know about?
       ::
-      ?~  session=(~(get by sessions.authentication-state.state) u.session-id)
+      ?~  session=(~(get by sessions.authentication-state.state) `@uv`u.session-id)
         %.n
       ::  is this session still valid?
       ::

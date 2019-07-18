@@ -3293,7 +3293,7 @@
       |=  {t/telegram c/@ud k/(map serial @ud) s/(map circle (list @ud))}
       :+  +(c)  (~(put by k) uid.t c)
       =/  src/circle
-        ?:  (~(has by aud.t) [our.bol nom])  [our.bol nom]
+        ?:  (~(has in aud.t) [our.bol nom])  [our.bol nom]
         ?~  aud.t  ~&(%strange-aud [our.bol %inbox])
         n.aud.t
       %+  ~(put by s)  src

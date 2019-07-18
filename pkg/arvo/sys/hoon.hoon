@@ -1479,13 +1479,13 @@
   ::
   ++  get                                               ::  grab value by key
     ~/  %get
-    |=  b/*
-    ^-  {$@(~ {~ u/_?>(?=(^ a) q.n.a)})}
-    =+  42
+    |*  b=*
+    =>  .(b `_?>(?=(^ a) p.n.a)`b)
+    |-  ^-  (unit _?>(?=(^ a) q.n.a))
     ?~  a
       ~
     ?:  =(b p.n.a)
-      [~ u=q.n.a]
+      (some q.n.a)
     ?:  (gor b p.n.a)
       $(a l.a)
     $(a r.a)
