@@ -45,8 +45,9 @@ export class Comment extends Component {
         </div>
         <div className="flex-col fl">
           <div className="label-small-mono gray-50">
-            <p className="fl" style={{width: 107}}>{this.props.ship}</p>
-            <p className="fl">{date}</p>
+            <p className="fl label-small-mono"
+              style={{width: 107}}>{this.props.ship}</p>
+            <p className="fl label-small-mono">{date}</p>
           </div>
           <div className="cb body-regular-400">
             {body}
