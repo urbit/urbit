@@ -424,7 +424,7 @@
     ;body
       ;div#main
         ;div#inner
-          ;h1#topborder:"Modulo"
+          ;h1#topborder:"Welcome"
           ;h1:"{(scow %p our)}"
           ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
             ;input(type "password", name "password", placeholder "passcode", autofocus "true");

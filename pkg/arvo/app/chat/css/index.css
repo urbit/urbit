@@ -141,6 +141,12 @@ h2 {
   line-height: 24px;
 }
 
+.body-small {
+  font-size: 12px;
+  line-height: 16px;
+  color: #f7f7f7;
+}
+
 .label-regular {
   font-size: 14px;
   line-height: 24px;
