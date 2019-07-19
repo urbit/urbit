@@ -82,10 +82,11 @@ deriveFromNoun tyName = do
                                        Enu cons -> enumFromAtom cons
                                        Sum cons -> sumFromNoun cons
 
+    let tag = LitE $ StringL $ nameStr tyName
 
     [d|
         instance FromNoun $(conT tyName) where
-            parseNoun = $(pure body)
+            parseNoun = named $(pure tag) . $(pure body)
       |]
 
 enumFromAtom :: [Name] -> Exp
@@ -151,9 +152,9 @@ sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
 
 tagString :: Name -> String
 tagString = hsToHoon . nameStr
-  where
-    nameStr :: Name -> String
-    nameStr (Name (OccName n) _) = n
+
+nameStr :: Name -> String
+nameStr (Name (OccName n) _) = n
 
 tagLit :: Name -> Lit
 tagLit = StringL . tagString

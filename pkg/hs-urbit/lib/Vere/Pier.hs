@@ -67,16 +67,10 @@ boot pillPath top ship act = do
 
   seq@(BootSeq ident x y) <- generateBootSeq ship pill
 
-  -- _ <- checkedJam ident
-  -- _ <- checkedJam pill
-  -- _ <- checkedJam x
-  -- _ <- checkedJam y
-
   with (Log.new logPath ident) $ \log -> do
       serf             <- Serf.startSerfProcess top
       (events, serfSt) <- Serf.bootFromSeq serf seq
       Serf.requestSnapshot serf serfSt
-      traverse_ checkedJam events
       traceM "writeJobs"
       writeJobs log (fromList events)
       act serf log serfSt
@@ -110,26 +104,7 @@ writeJobs log !jobs = do
     fromJob (expectedId, Job eventId mug payload) = do
         guard (expectedId == eventId)
         traceM "fromJob.toNoun"
-        n <- print (mug, payload)
-        n <- evaluate $ toNoun (mug, payload)
-        traceM "fromJob.jam"
-        res <- checkedJam n
-        traceM "fromJob.done"
-        pure res
-
-checkedJam :: (Show a, FromNoun a, ToNoun a) => a -> IO Atom
-checkedJam x = do
-    traceM ("[DEBUG]\tcheckedJam.toNoun:")
-    inn <- evaluate $ toNoun x
-    traceM ("[DEBUG]\tcheckedJam.job:")
-    atm <- evaluate $ jam inn
-    traceM ("[DEBUG]\tcheckedJam.cue:")
-    non <- cueExn atm
-    traceM ("[DEBUG]\tcheckedJam.fromNoun")
-    res <- fromNounExn non
-    traceM ("[DEBUG]\tcheckedJam.equals")
-    guard (non == res)
-    pure atm
+        pure $ jam $ toNoun (mug, payload)
 
 
 -- Run Pier --------------------------------------------------------------------

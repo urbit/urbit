@@ -2,8 +2,9 @@ module Noun.Convert
   ( ToNoun(toNoun)
   , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
   , Parser(..)
-  , CellIdx, NounPath
+  , ParseStack
   , Cord(..)
+  , named
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -16,15 +17,12 @@ import qualified Control.Monad.Fail as Fail
 
 -- Types -----------------------------------------------------------------------
 
-data CellIdx = L | R
-  deriving (Eq, Ord, Show)
-
-type NounPath = [CellIdx]
+type ParseStack = [Text]
 
 
 -- IResult ---------------------------------------------------------------------
 
-data IResult a = IError NounPath String | ISuccess a
+data IResult a = IError ParseStack String | ISuccess a
   deriving (Eq, Show, Typeable, Functor, Foldable, Traversable)
 
 instance Applicative IResult where
@@ -96,12 +94,16 @@ instance Monoid (Result a) where
 
 -- "Parser" --------------------------------------------------------------------
 
-type Failure f r   = NounPath -> String -> f r
+type Failure f r   = ParseStack -> String -> f r
 type Success a f r = a -> f r
 
 newtype Parser a = Parser {
-  runParser :: forall f r.  NounPath -> Failure f r -> Success a f r -> f r
+  runParser :: forall f r.  ParseStack -> Failure f r -> Success a f r -> f r
 }
+
+named :: Text -> Parser a -> Parser a
+named nm (Parser cb) =
+    Parser $ \path kf ks -> cb (nm:path) kf ks
 
 instance Monad Parser where
     m >>= g = Parser $ \path kf ks -> let ks' a = runParser (g a) path kf ks
@@ -164,15 +166,24 @@ fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
     onFail p m  = Left (pack m)
     onSuccess x = Right x
 
-data BadNoun = BadNoun String
-  deriving (Eq, Ord, Show)
+data BadNoun = BadNoun [Text] String
+  deriving (Eq, Ord)
+
+instance Show BadNoun where
+  show (BadNoun pax msg) =
+    mconcat [ "(BadNoun "
+            , show (intercalate "." pax)
+            , " "
+            , show msg
+            , ")"
+            ]
 
 instance Exception BadNoun where
 
 fromNounExn :: FromNoun a => Noun -> IO a
 fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
   where
-    onFail p m  = throwIO (BadNoun m)
+    onFail p m  = throwIO (BadNoun p m)
     onSuccess x = pure x
 
 
@@ -185,7 +196,7 @@ instance ToNoun Cord where
   toNoun (Cord bs) = Atom (bs ^. from atomBytes)
 
 instance FromNoun Cord where
-  parseNoun n = do
+  parseNoun n = named "Cord" $ do
     atom <- parseNoun n
     pure $ Cord (atom ^. atomBytes)
 
@@ -195,6 +206,6 @@ instance ToNoun Atom where
   toNoun = Atom
 
 instance FromNoun Atom where
-  parseNoun = \case
+  parseNoun = named "Atom" . \case
     Atom a   -> pure a
     Cell _ _ -> fail "Expecting an atom, but got a cell"

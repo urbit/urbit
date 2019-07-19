@@ -59,7 +59,7 @@ instance ToNoun Noun where
   toNoun = id
 
 instance FromNoun Noun where
-  parseNoun = pure
+  parseNoun = named "Noun" . pure
 
 
 -- Void ------------------------------------------------------------------------
@@ -68,7 +68,7 @@ instance ToNoun Void where
   toNoun = absurd
 
 instance FromNoun Void where
-  parseNoun = fail "Can't produce void"
+  parseNoun = named "Void" . fail "Can't produce void"
 
 
 -- Tour ------------------------------------------------------------------------
@@ -86,7 +86,7 @@ instance ToNoun a => ToNoun (Jammed a) where
   toNoun (Jammed a) = Atom $ jam $ toNoun a
 
 instance FromNoun a => FromNoun (Jammed a) where
-  parseNoun n = do
+  parseNoun n = named "Jammed" $ do
     a <- parseNoun n
     cue a & \case
       Left err  -> fail (show err)
@@ -108,9 +108,9 @@ instance (ToNoun a, ToNoun c) => ToNoun (AtomCell a c) where
   toNoun (ACCell c) = toNoun c
 
 instance (FromNoun a, FromNoun c) => FromNoun (AtomCell a c) where
-  parseNoun n = case n of
-    Atom _   -> ACAtom <$> parseNoun n
-    Cell _ _ -> ACCell <$> parseNoun n
+  parseNoun n = named "(,)" $ case n of
+                                Atom _   -> ACAtom <$> parseNoun n
+                                Cell _ _ -> ACCell <$> parseNoun n
 
 
 -- Nullable --------------------------------------------------------------------
@@ -130,7 +130,7 @@ instance ToNoun Char where
   toNoun = toNoun . (fromIntegral :: Int -> Word32) . C.ord
 
 instance FromNoun Char where
-  parseNoun n = do
+  parseNoun n = named "Char" $ do
     w :: Word32 <- parseNoun n
     pure $ C.chr $ fromIntegral w
 
@@ -145,9 +145,10 @@ instance ToNoun a => ToNoun [a] where
       nounFromList (x:xs) = Cell x (nounFromList xs)
 
 instance FromNoun a => FromNoun [a] where
-  parseNoun (Atom 0)   = pure []
-  parseNoun (Atom _)   = fail "list terminated with non-null atom"
-  parseNoun (Cell l r) = (:) <$> parseNoun l <*> parseNoun r
+  parseNoun = named "[]" . \case
+      Atom 0   -> pure []
+      Atom _   -> fail "list terminated with non-null atom"
+      Cell l r -> (:) <$> parseNoun l <*> parseNoun r
 
 
 -- Tape ------------------------------------------------------------------------
@@ -201,7 +202,7 @@ instance ToNoun ByteString where
       int2Word = fromIntegral
 
 instance FromNoun ByteString where
-    parseNoun x = do
+    parseNoun x = named "ByteString" $ do
         (word2Int -> len, atom) <- parseNoun x
         let bs = atom ^. atomBytes
         pure $ case compare (length bs) len of
@@ -219,7 +220,7 @@ instance ToNoun Text where -- XX TODO
   toNoun t = toNoun (Cord (encodeUtf8 t))
 
 instance FromNoun Text where -- XX TODO
-  parseNoun n = do
+  parseNoun n = named "Text" $ do
     Cord c <- parseNoun n
     pure (decodeUtf8Lenient c)
 
@@ -233,7 +234,7 @@ instance ToNoun Term where -- XX TODO
   toNoun (MkTerm t) = toNoun (Cord (encodeUtf8 t))
 
 instance FromNoun Term where -- XX TODO
-  parseNoun n = do
+  parseNoun n = named "Term" $ do
     Cord c <- parseNoun n
     pure (MkTerm (decodeUtf8Lenient c))
 
@@ -247,7 +248,7 @@ instance ToNoun Knot where -- XX TODO
   toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
 
 instance FromNoun Knot where -- XX TODO
-  parseNoun n = do
+  parseNoun n = named "Knot" $ do
     Cord c <- parseNoun n
     pure (MkKnot (decodeUtf8Lenient c))
 
@@ -280,10 +281,13 @@ instance ToNoun Bool where
   toNoun False = Atom 1
 
 instance FromNoun Bool where
-  parseNoun (Atom 0)   = pure True
-  parseNoun (Atom 1)   = pure False
-  parseNoun (Cell _ _) = fail "expecting a bool, but got a cell"
-  parseNoun (Atom a)   = fail ("expecting a bool, but got " <> show a)
+  parseNoun = named "Bool" . parse
+    where
+      parse n =
+        parseNoun n >>= \case
+          (0::Atom) -> pure False
+          1         -> pure True
+          _         -> fail "Atom is not a valid loobean"
 
 
 -- Integer ---------------------------------------------------------------------
@@ -292,7 +296,10 @@ instance ToNoun Integer where
     toNoun = toNoun . (fromIntegral :: Integer -> Natural)
 
 instance FromNoun Integer where
-    parseNoun = fmap (fromIntegral :: Natural -> Integer) . parseNoun
+    parseNoun = named "Integer" . fmap natInt . parseNoun
+      where
+        natInt :: Natural -> Integer
+        natInt = fromIntegral
 
 
 -- Words -----------------------------------------------------------------------
@@ -318,14 +325,14 @@ instance ToNoun Word128 where toNoun = wordToNoun
 instance ToNoun Word256 where toNoun = wordToNoun
 instance ToNoun Word512 where toNoun = wordToNoun
 
-instance FromNoun Word    where parseNoun = nounToWord
-instance FromNoun Word8   where parseNoun = nounToWord
-instance FromNoun Word16  where parseNoun = nounToWord
-instance FromNoun Word32  where parseNoun = nounToWord
-instance FromNoun Word64  where parseNoun = nounToWord
-instance FromNoun Word128 where parseNoun = nounToWord
-instance FromNoun Word256 where parseNoun = nounToWord
-instance FromNoun Word512 where parseNoun = nounToWord
+instance FromNoun Word    where parseNoun = named "Word"    . nounToWord
+instance FromNoun Word8   where parseNoun = named "Word8"   . nounToWord
+instance FromNoun Word16  where parseNoun = named "Word16"  . nounToWord
+instance FromNoun Word32  where parseNoun = named "Word32"  . nounToWord
+instance FromNoun Word64  where parseNoun = named "Word64"  . nounToWord
+instance FromNoun Word128 where parseNoun = named "Word128" . nounToWord
+instance FromNoun Word256 where parseNoun = named "Word256" . nounToWord
+instance FromNoun Word512 where parseNoun = named "Word512" . nounToWord
 
 
 -- Maybe is `unit` -------------------------------------------------------------
@@ -336,7 +343,7 @@ instance ToNoun a => ToNoun (Maybe a) where
   toNoun (Just x) = Cell (Atom 0) (toNoun x)
 
 instance FromNoun a => FromNoun (Maybe a) where
-  parseNoun = \case
+  parseNoun = named "Maybe" . \case
       Atom          0   -> pure Nothing
       Atom          n   -> unexpected ("atom " <> show n)
       Cell (Atom 0) t   -> Just <$> parseNoun t
@@ -351,22 +358,24 @@ instance ToNoun () where
   toNoun () = Atom 0
 
 instance FromNoun () where
-  parseNoun (Atom 0) = pure ()
-  parseNoun x        = fail ("expecting `~`, but got " <> show x)
+  parseNoun = named "()" . \case
+    Atom 0 -> pure ()
+    x      -> fail ("expecting `~`, but got " <> show x)
 
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
   toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
 instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
-  parseNoun (Atom n)   = fail ("expected a cell, but got an atom: " <> show n)
-  parseNoun (Cell l r) = (,) <$> parseNoun l <*> parseNoun r
+  parseNoun = named ("(,)") . \case
+    Atom n   -> fail ("expected a cell, but got an atom: " <> show n)
+    Cell l r -> (,) <$> parseNoun l <*> parseNoun r
 
 
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
   toNoun (x, y, z) = toNoun (x, (y, z))
 
 instance (FromNoun a, FromNoun b, FromNoun c) => FromNoun (a, b, c) where
-  parseNoun n = do
+  parseNoun n = named "(,,)" $ do
     (x, t) <- parseNoun n
     (y, z) <- parseNoun t
     pure (x, y, z)
@@ -377,7 +386,7 @@ instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d) => ToNoun (a, b, c, d) where
 instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d)
       => FromNoun (a, b, c, d)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,)" $ do
     (p, tail) <- parseNoun n
     (q, r, s) <- parseNoun tail
     pure (p, q, r, s)
@@ -389,7 +398,7 @@ instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e)
 instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e)
       => FromNoun (a, b, c, d, e)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,)"$ do
     (p, tail)    <- parseNoun n
     (q, r, s, t) <- parseNoun tail
     pure (p, q, r, s, t)
@@ -403,7 +412,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          )
       => FromNoun (a, b, c, d, e, f)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,,)" $ do
     (p, tail)       <- parseNoun n
     (q, r, s, t, u) <- parseNoun tail
     pure (p, q, r, s, t, u)
@@ -413,7 +422,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          )
       => FromNoun (a, b, c, d, e, f, g)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,,,)" $ do
     (p, tail)          <- parseNoun n
     (q, r, s, t, u, v) <- parseNoun tail
     pure (p, q, r, s, t, u, v)
@@ -423,7 +432,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          )
       => FromNoun (a, b, c, d, e, f, g, h)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,,,,)" $ do
     (p, tail)             <- parseNoun n
     (q, r, s, t, u, v, w) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w)
@@ -433,7 +442,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          )
       => FromNoun (a, b, c, d, e, f, g, h, i)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,,,,,)" $ do
     (p, tail)                <- parseNoun n
     (q, r, s, t, u, v, w, x) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w, x)
@@ -443,7 +452,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          )
       => FromNoun (a, b, c, d, e, f, g, h, i, j)
       where
-  parseNoun n = do
+  parseNoun n = named "(,,,,,,,,,)" $ do
     (p, tail)                   <- parseNoun n
     (q, r, s, t, u, v, w, x, y) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w, x, y)

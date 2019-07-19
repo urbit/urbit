@@ -59,7 +59,7 @@ zod = 0
 
 main :: IO ()
 main = do
-    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
+    let pillPath = "/home/benjamin/r/urbit/bin/ivory.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 

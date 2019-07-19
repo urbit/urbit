@@ -305,22 +305,7 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
         x:xs -> do wen       <- Time.now
                    job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
                    (job, ss) <- bootJob serf job
-                   traceM "ok?"
-                   _ <- checkedJam job
-                   traceM "ok"
                    loop (job:acc) ss xs
-
-    checkedJam :: (Show a, FromNoun a, ToNoun a) => a -> IO Atom
-    checkedJam x = do
-        traceM ("[DEBUG]\tcheckedJam.toNoun: " <> show x)
-        atm <- evaluate $ jam $ toNoun x
-        traceM ("[DEBUG]\tcheckedJam.cue: " <> show x)
-        non <- cueExn atm
-        traceM ("[DEBUG]\tcheckedJam.fromNoun")
-        res <- fromNounExn non
-        traceM ("[DEBUG]\tcheckedJam.equals")
-        guard (non == res)
-        pure atm
 
     bootSeqFns :: [BootSeqFn]
     bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
@@ -361,9 +346,6 @@ toJobs eId =
         (mug, payload) <- fromNounExn noun
         traceM ("[DEBUG] Pier.toJob.done")
         pure (Job eId mug payload)
-
-
--- Run Pier --------------------------------------------------------------------
 
 
 -- Compute Thread --------------------------------------------------------------
