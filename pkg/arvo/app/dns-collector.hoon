@@ -8,10 +8,14 @@
           requested=(map ship address:dns)
           completed=(map ship binding:dns)
       ==
-    +$  peek-data  [%noun (list (pair ship address:dns))]
+    +$  peek-data
+      $%  [%requested (list (pair ship address:dns))]
+          [%completed (list (pair ship binding:dns))]
+      ==
     +$  in-poke-data
       $%  [%dns-address =address:dns]
           [%dns-complete =ship =binding:dns]
+          [%noun noun=*]
       ==
     +$  out-poke-data
       $%  [%drum-unlink =dock]
@@ -78,6 +82,15 @@
   ^-  (quip move _this)
   =<  abet
   ?-  -.in-poke-data
+      %noun
+    ?:  ?=(%debug noun.in-poke-data)
+      ~&  bowl
+      ~&  state
+      this
+    ::
+    ~&  %poke-unknown
+    this
+  ::
       %dns-address
     =*  who  src.bowl
     =*  adr  address.in-poke-data
@@ -124,10 +137,12 @@
 ++  peek
   |=  =path
   ^-  (unit (unit peek-data))
-  ~&  path
   ?+  path  [~ ~]
       [%x %requested ~]
-    [~ ~ %noun ~(tap by requested.state)]
+    [~ ~ %requested ~(tap by requested.state)]
+  ::
+      [%x %completed ~]
+    [~ ~ %completed ~(tap by completed.state)]
   ==
 ::
 ++  peer
