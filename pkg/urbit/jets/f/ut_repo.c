@@ -3,58 +3,20 @@
 */
 #include "all.h"
 
+  static u3_noun
+  _cqfu_repo(u3_noun van,
+             u3_noun sut)
+  {
+    u3_noun von = u3i_molt(u3k(van), u3x_sam, u3k(sut), 0);
 
-/* logic
-*/
+    return u3j_hook(von, "repo");
+  }
+
   u3_noun
   u3qfu_repo(u3_noun van,
              u3_noun sut)
   {
-    u3_noun p_sut, q_sut;
-
-    if ( c3n == u3du(sut) ) switch ( sut ) {
-      default: return u3k(sut);
-
-      case c3__noun: {
-        return u3kf_fork(u3nt(u3nt(c3__atom, u3_blip, u3_nul),
-                              u3nt(c3__cell, c3__noun, c3__noun),
-                              u3_nul));
-      }
-    }
-    else switch ( u3h(sut) ) {
-      default: {
-        u3m_p("head", u3h(sut));
-        return u3m_error("repo-flat");
-      }
-
-      case c3__core: {
-        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut) ) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3nt(c3__cell, c3__noun, u3k(p_sut));
-        }
-      }
-      case c3__hint:
-      case c3__face: {
-        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
-          return u3m_bail(c3__fail);
-        } else {
-          return u3k(q_sut);
-        }
-      }
-      case c3__hold: {
-        if ( c3n == u3r_cell(u3t(sut), &p_sut, &q_sut)) {
-          return u3m_bail(c3__fail);
-        } else {
-          u3_noun old = u3nc(u3nc(u3k(p_sut), u3k(q_sut)), u3_nul);
-          u3_noun ret;
-
-          ret = u3qfu_rest(van, sut, old);
-          u3z(old);
-          return ret;
-        }
-      }
-    }
+    return _cqfu_repo(van, sut);
   }
 
   u3_noun

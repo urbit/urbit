@@ -502,10 +502,7 @@ static u3j_core _141_pen__ut_d[] =
     { "wrap", 7, _141_pen__ut_wrap_a, 0, _141_pen__ut_wrap_ha },
     {}
   };
-static u3j_harm _141_pen__ut_a[] =
-  { {"repo", u3wfu_repo},
-    {}
-  };
+static u3j_harm _141_pen__ut_a[] = {{}};
 
 static c3_c* _141_pen__ut_ha[] = {
   "479d0051e5fabe291e4cded603a071fce0f10734503638fd7d30e9c6d799969c",
