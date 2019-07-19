@@ -149,10 +149,10 @@
     =.  ..this  (give-result path %dns-request i.requests)
     loop(requests t.requests)
   ::
-  =/  who  (slaw %p i.path)
+  =/  who=(unit @p)  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
-  ?~  dun=(~(get by completed.state) who)
+  ?~  dun=(~(get by completed.state) u.who)
     this
   (give-result path %dns-binding u.dun)
 --

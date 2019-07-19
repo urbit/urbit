@@ -2271,7 +2271,7 @@
       ::
       u.existing
     ::
-    =/  already-heard=?  (~(has by fragments.partial-rcv-message) seq)
+    =/  already-heard=?  (~(has by fragments.partial-rcv-message) `^fragment-num``@`seq)
     ::  ack dupes except for the last fragment, in which case drop
     ::
     ?:  already-heard
