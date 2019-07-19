@@ -190,39 +190,61 @@
         ==
       =/  event-logs=(list event-log:rpc:ethereum)
         (parse-event-logs:rpc:ethereum json)
-      =/  =udiffs:point
-        %+  murn  event-logs
-        |=  =event-log:rpc:ethereum
-        ^-  (unit [=ship =udiff:point])
-        ?~  mined.event-log
-          ~
-        ?:  removed.u.mined.event-log
-          ~&  [%removed-log event-log]
-          ~
-        =/  =id:block  [block-hash block-number]:u.mined.event-log
-        =,  azimuth-events:azimuth
-        =,  abi:ethereum
-        ?:  =(broke-continuity i.topics.event-log)
-          =/  who=@  (decode-topics t.topics.event-log ~[%uint])
-          =/  num=@  (decode-results data.event-log ~[%uint])
-          `[who id %rift num]
-        ?:  =(changed-keys i.topics.event-log)
-          =/  who=@  (decode-topics t.topics.event-log ~[%uint])
-          =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
-              %+  decode-results  data.event-log
-              ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
-          `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
-        ?:  =(lost-sponsor i.topics.event-log)
-          =+  ^-  [who=@ pos=@]
-              (decode-topics t.topics.event-log ~[%uint %uint])
-          `[who id %spon ~]
-        ?:  =(escape-accepted i.topics.event-log)
-          =+  ^-  [who=@ wer=@]
-              (decode-topics t.topics.event-log ~[%uint %uint])
-          `[who id %spon `wer]
-        ~&  [%bad-topic event-log]
-        ~
+      =/  =udiffs:point  (event-logs-to-udiffs event-logs)
       (pure:m udiffs)
+    ::
+    ++  get-logs-by-range
+      |=  [url=@ta =from=number:block =to=number:block]
+      =/  m  (async:stdio udiffs:point)
+      ^-  form:m
+      ;<  =json  bind:m
+        %+  request-rpc  url
+        :*  `'logs by range'
+            %eth-get-logs
+            `number+from-number
+            `number+to-number
+            ~[azimuth:contracts:azimuth]
+            topics
+        ==
+      =/  event-logs=(list event-log:rpc:ethereum)
+        (parse-event-logs:rpc:ethereum json)
+      =/  =udiffs:point  (event-logs-to-udiffs event-logs)
+      (pure:m udiffs)
+    ::
+    ++  event-logs-to-udiffs
+      |=  event-logs=(list =event-log:rpc:ethereum)
+      ^-  =udiffs:point
+      %+  murn  event-logs
+      |=  =event-log:rpc:ethereum
+      ^-  (unit [=ship =udiff:point])
+      ?~  mined.event-log
+        ~
+      ?:  removed.u.mined.event-log
+        ~&  [%removed-log event-log]
+        ~
+      =/  =id:block  [block-hash block-number]:u.mined.event-log
+      =,  azimuth-events:azimuth
+      =,  abi:ethereum
+      ?:  =(broke-continuity i.topics.event-log)
+        =/  who=@  (decode-topics t.topics.event-log ~[%uint])
+        =/  num=@  (decode-results data.event-log ~[%uint])
+        `[who id %rift num]
+      ?:  =(changed-keys i.topics.event-log)
+        =/  who=@  (decode-topics t.topics.event-log ~[%uint])
+        =+  ^-  [enc=octs aut=octs sut=@ud rev=@ud]
+            %+  decode-results  data.event-log
+            ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+        `[who id %keys rev sut (pass-from-eth:azimuth enc aut sut)]
+      ?:  =(lost-sponsor i.topics.event-log)
+        =+  ^-  [who=@ pos=@]
+            (decode-topics t.topics.event-log ~[%uint %uint])
+        `[who id %spon ~]
+      ?:  =(escape-accepted i.topics.event-log)
+        =+  ^-  [who=@ wer=@]
+            (decode-topics t.topics.event-log ~[%uint %uint])
+        `[who id %spon `wer]
+      ~&  [%bad-topic event-log]
+      ~
     ::
     ++  jael-update
       |=  =udiffs:point
@@ -268,7 +290,7 @@
         (pure:m state)
       =/  a-purl=purl:eyre  node.p.source
       =.  url.state  (crip (en-purl:html a-purl))
-      (watch state url.state 8.169.650)  ::  launch:contracts:azimuth)
+      (watch state url.state launch:contracts:azimuth)  ::  8.069.650)
     ::
     ::  Start watching a node
     ::
@@ -286,24 +308,26 @@
     ::  Get updates since last checked
     ::
     ++  get-updates
-      |=  app-state
+      |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ~&  [%get-updates number]
-      ;<  =latest=block  bind:m  (get-latest-block url)
+      ~&  [%get-updates number.state]
+      ;<  =latest=block      bind:m  (get-latest-block url.state)
+      ;<  =new=number:block  bind:m  (zoom state number.id.latest-block)
+      =.  number.state  new-number
       |-  ^-  form:m
       =*  walk-loop  $
-      ~&  [%walk-loop number]
-      ?:  (gth number number.id.latest-block)
+      ~&  [%walk-loop number.state]
+      ?:  (gth number.state number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
         ;<  ~        bind:m  (wait-effect:stdio (add now ~s10))
-        (pure:m url number pending-udiffs blocks)
-      ;<  =block  bind:m  (get-block-by-number url number)
-      ;<  [=new=^pending-udiffs new-blocks=(lest ^block)]  bind:m
-        (take-block url pending-udiffs block blocks)
-      =:  pending-udiffs  new-pending-udiffs
-          blocks          new-blocks
-          number          +(number.id.i.new-blocks)
+        (pure:m state)
+      ;<  =block  bind:m  (get-block-by-number url.state number.state)
+      ;<  [=new=pending-udiffs new-blocks=(lest ^block)]  bind:m
+        (take-block url.state pending-udiffs.state block blocks.state)
+      =:  pending-udiffs.state  new-pending-udiffs
+          blocks.state          new-blocks
+          number.state          +(number.id.i.new-blocks)
         ==
       walk-loop
     ::
@@ -361,6 +385,24 @@
       =/  m  (async:stdio ,~)
       ^-  form:m
       (jael-update [*ship id.block %disavow ~]~)
+    ::
+    ::  Zoom forward to near a given block number.
+    ::
+    ::    Zooming doesn't go forward one block at a time.  As a
+    ::    consequence, it cannot detect and handle reorgs.  Only use it
+    ::    at a safe distance -- 500 blocks ago is probably sufficient.
+    ::
+    ++  zoom
+      |=  [state=app-state =latest=number:block]
+      =/  m  (async:stdio ,number:block)
+      ^-  form:m
+      ?:  (lth latest-number (add number.state 500))
+        (pure:m latest-number)
+      =/  to-number=number:block  (sub latest-number 500)
+      ;<  =udiffs:point  bind:m
+        (get-logs-by-range url.state number.state to-number)
+      ;<  ~  bind:m  (jael-update udiffs)
+      (pure:m to-number)
     --
 ::
 ::  Main
