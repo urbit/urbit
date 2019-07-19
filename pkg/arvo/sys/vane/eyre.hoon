@@ -424,7 +424,7 @@
     ;body
       ;div#main
         ;div#inner
-          ;h1#topborder:"Modulo"
+          ;h1#topborder:"Welcome"
           ;h1:"{(scow %p our)}"
           ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
             ;input(type "password", name "password", placeholder "passcode", autofocus "true");
@@ -1382,8 +1382,10 @@
         =/  channel-wire=path
           /channel/subscription/[channel-id]/(scot %ud subscription-id.i.requests)
         ::
-        =/  subscriptions
-          subscriptions:(~(got by session.channel-state.state) channel-id)
+        =/  usession  (~(get by session.channel-state.state) channel-id)
+        ?~  usession
+          $(requests t.requests)
+        =/  subscriptions  subscriptions:u.usession
         ::
         ?~  maybe-subscription=(~(get by subscriptions) channel-wire)
           ::  the client sent us a weird request referring to a subscription
@@ -1567,8 +1569,11 @@
       |=  channel-id=@t
       ^-  [(list move) server-state]
       ::
-      =/  session
-        (~(got by session.channel-state.state) channel-id)
+      =/  usession=(unit channel)
+        (~(get by session.channel-state.state) channel-id)
+      ?~  usession
+        [~ state]
+      =/  session=channel  u.usession
       ::
       :_  %_    state
               session.channel-state
