@@ -17,8 +17,8 @@ export default class PublishTile extends Component {
         :  "Invites"
       info.push(
         <p key={1}>
-          <span className="green-medium">{this.props.data.invites} </span>
-          {text}
+          <span className="green-medium">{this.props.data.invites} </span>
+          <span>{text}</span>
         </p>
       );
     }
@@ -28,8 +28,8 @@ export default class PublishTile extends Component {
         :  "New Posts"
       info.push(
         <p key={2}>
-          <span className="green-medium">{this.props.data.new} </span>
-          {text}
+          <span className="green-medium">{this.props.data.new} </span>
+          <span>{text}</span>
         </p>
       );
     }

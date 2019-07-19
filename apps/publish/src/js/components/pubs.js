@@ -61,7 +61,7 @@ export class Pubs extends Component {
           <div className="fl body-regular-400 mw-336 w-336 pr3">
             <Link to={data.url}>
               <p className="one-line mw-336">
-                {data.title}
+                <span className="ml3">{data.title}</span>
               </p>
             </Link>
           </div>
@@ -91,7 +91,7 @@ export class Pubs extends Component {
             </div>
             <div className="w-100 flex">
               <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-                 Title
+                <span className="ml3">Title</span>
               </p>
               <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
                 Host

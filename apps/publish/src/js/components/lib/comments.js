@@ -72,9 +72,9 @@ export class Comments extends Component {
       return (
         <div className="cb mt3 mb4">
           <p className="gray-50 body-large b">
-            {this.props.comments.length}
+            <span>{this.props.comments.length} </span>
             <span className="black">
-              Comments
+              Comments
             </span>
           </p>
           <p className="cl body-regular pointer" onClick={this.toggleDisplay}>
@@ -97,9 +97,9 @@ export class Comments extends Component {
       return (
         <div className="cb mt3 mb4">
           <p className="gray-50 body-large b">
-            {this.props.comments.length}
+            <span>{this.props.comments.length} </span>
             <span className="black">
-              Comments
+              Comments
             </span>
           </p>
           <p className="cl body-regular pointer" onClick={this.toggleDisplay}>

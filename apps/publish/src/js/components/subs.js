@@ -111,7 +111,7 @@ export class Subs extends Component {
             <div className="fl mw-336" style={{flexBasis: 336}}>
               <Link to={data.url}>
                 <p className="body-regular-400 one-line pr3">
-                   {data.title}
+                  <span className="ml3">{data.title}</span>
                 </p>
               </Link>
             </div>
@@ -135,7 +135,7 @@ export class Subs extends Component {
               <Link to={data.url}>
                 <div className="mw-336 one-line pr3">
                   <span className="body-large green-medium"> • </span>
-                  <span className="body-regular-400">Invite to</span>
+                  <span className="body-regular-400">Invite to </span>
                   <span className="body-regular">
                     {data.title}
                   </span>
@@ -179,7 +179,7 @@ export class Subs extends Component {
             </div>
             <div className="w-100 flex">
               <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
-                 Title
+                <span className="ml3">Title</span>
               </p>
               <p className="fl gray-50 body-regular-400" style={{flexBasis:336}}>
                 Host
