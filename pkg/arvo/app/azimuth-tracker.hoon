@@ -7,15 +7,16 @@
           from-number=number:block
       ==
     +$  app-state
-      $:  =number:block
+      $:  url=@ta
+          =number:block
           =pending-udiffs
-          =blocks
+          blocks=(list block)
       ==
     +$  peek-data  ~
     +$  in-poke-data
       $:  %azimuth-tracker-poke
           $%  [%init ~]
-              [%look whos=(set ship) =source:kale]
+              [%listen whos=(set ship) =source:kale]
               [%watch =config]
           ==
       ==
@@ -230,7 +231,8 @@
       =*  loop  $
       ?~  udiffs
         (pure:m ~)
-      ;<  ~  bind:m  (send-effect %new-event i.udiffs)
+      ~&  [%sending-event i.udiffs]
+      ;<  ~  bind:m  (send-effect:stdio %new-event /ne i.udiffs)
       loop(udiffs t.udiffs)
     --
 ::
@@ -244,16 +246,16 @@
       |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ;<  ~  bind:m  (send-effect %sources ~)
+      ;<  ~  bind:m  (send-effect:stdio %sources /se ~)
       (pure:m state)
     ::
-    ::  Send %look to kale
+    ::  Send %listen to kale
     ::
-    ++  look
+    ++  listen
       |=  [state=app-state whos=(set ship) =source:kale]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ;<  ~  bind:m  (send-effect %look whos source)
+      ;<  ~  bind:m  (send-effect:stdio %listen /lo whos source)
       (pure:m state)
     ::
     ::  Take %source from kale
@@ -264,9 +266,9 @@
       ^-  form:m
       ?:  ?=(%& -.source)
         (pure:m state)
-      =/  =a=purl:eyre  node.p.state
-      =/  url=@ta  (crip (en-purl:html a-purl))
-      (watch state url launch:contracts:azimuth)
+      =/  a-purl=purl:eyre  node.p.source
+      =.  url.state  (crip (en-purl:html a-purl))
+      (watch state url.state 8.169.650)  ::  launch:contracts:azimuth)
     ::
     ::  Start watching a node
     ::
@@ -274,9 +276,10 @@
       |=  [state=app-state =config]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =:  number.state          from-number.config
+      =:  url.state             url.config
+          number.state          from-number.config
           pending-udiffs.state  *pending-udiffs
-          blocks.state          *blocks
+          blocks.state          *(list block)
         ==
       (get-updates state)
     ::
@@ -287,17 +290,17 @@
       =/  m  (async:stdio ,app-state)
       ^-  form:m
       ~&  [%get-updates number]
-      ;<  =latest=block  bind:m  (get-latest-block url.config)
+      ;<  =latest=block  bind:m  (get-latest-block url)
       |-  ^-  form:m
       =*  walk-loop  $
       ~&  [%walk-loop number]
       ?:  (gth number number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
-        ;<  ~        bind:m  (wait:stdio (add now ~s10))
-        (pure:m number pending-udiffs blocks)
-      ;<  =block  bind:m  (get-block-by-number url.config number)
+        ;<  ~        bind:m  (wait-effect:stdio (add now ~s10))
+        (pure:m url number pending-udiffs blocks)
+      ;<  =block  bind:m  (get-block-by-number url number)
       ;<  [=new=^pending-udiffs new-blocks=(lest ^block)]  bind:m
-        (take-block url.config pending-udiffs block blocks)
+        (take-block url pending-udiffs block blocks)
       =:  pending-udiffs  new-pending-udiffs
           blocks          new-blocks
           number          +(number.id.i.new-blocks)
@@ -364,25 +367,24 @@
 ::
 =*  default-tapp  default-tapp:tapp
 %-  create-tapp-poke-peer-take:tapp
-|_  [=bowl:gall =app-state]
-|%
+|_  [=bowl:gall state=app-state]
 ++  handle-poke
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
   ?-  +<.in-poke-data
-    %init   (init app-state)
-    %look   (look app-state +>.in-poke-data)
-    %watch  (watch app-state +>.in-poke-data)
+    %init   (init state)
+    %listen   (listen state +>.in-poke-data)
+    %watch  (watch state +>.in-poke-data)
   ==
 ::
 ++  handle-take
   |=  =sign:tapp
   =/  m  tapp-async
   ^-  form:m
-  ?-  -.sign
-    %sources  (handle-poke %watch +.sign)
-    %wake     (get-updates app-state)
+  ?+  -.sign  ~|([%strange-sign -.sign] !!)
+    %source  (take-source state +.sign)
+    %wake    (get-updates state)
   ==
 ::
 ++  handle-peer  ~(handle-peer default-tapp bowl state)

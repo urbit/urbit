@@ -83,7 +83,7 @@
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
       $:  %k                                            ::    to self
-          $>(%look task)                                ::  set ethereum source
+          $>(%listen task)                                ::  set ethereum source
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -332,9 +332,10 @@
       +>.$
     ::
     ::  set ethereum source
-    ::    [%look p=(each ship purl)]
+    ::    [%listen whos=(set ship) =source]
     ::
-        %look
+        %listen
+      ~&  [%kale-listen whos source]:tac
       %-  curd  =<  abet
       (sources:~(feel su hen our pki etn sap) [whos source]:tac)
     ::
@@ -387,6 +388,7 @@
     ::    [%sources ~]
     ::
         %sources
+      ~&  [%kale-sources]
       (curd abet:~(sources ~(feed su hen our pki etn sap) hen))
     ::
     ::  XX should be a subscription
@@ -405,6 +407,7 @@
     ::    [%new-event =ship =udiff:point]
     ::
         %new-event
+      ~&  [%kale-new-event ship udiff]:tac
       %-  curd  =<  abet
       (~(new-event su hen our pki etn sap) ship.tac udiff.tac)
     ::

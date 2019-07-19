@@ -1334,6 +1334,7 @@
         %keep  `%f
         %kill  `%f
         %look  `%j
+        %listen  `%k
         %merg  `%c
         %mint  `%j
         %mont  `%c

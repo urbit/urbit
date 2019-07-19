@@ -15,7 +15,10 @@
       [%connect wire binding:eyre term]
       [%http-response =http-event:http]
       [%rule wire %turf %put turf]
-      [%source whos=(set ship) src=source:kale]
+      [%source wire whos=(set ship) src=source:kale]
+      [%sources wire ~]
+      [%new-event wire =ship =udiff:point:able:kale]
+      [%listen wire whos=(set ship) =source:kale]
   ==
 ::
 ::  Possible async responses
@@ -27,6 +30,7 @@
       [%reap =dock =path error=(unit tang)]
       [%bound success=? =binding:eyre]
       [%http-response response=client-response:iris]
+      [%source whos=(set ship) =source:kale]
   ==
 ::
 ::  Outstanding contracts

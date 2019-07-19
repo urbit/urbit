@@ -2385,7 +2385,7 @@
             %spon     [%spon sponsor.a-point sponsor.a-udiff]
             %keys
           :+  %keys
-            [life.a-point (~(got by keys.a-point) life.a-point)]
+            [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
         ==
       ::
@@ -2462,7 +2462,7 @@
               snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
-          [%look whos=(set ship) =source]               ::  set ethereum source
+          [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
           [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
@@ -7728,6 +7728,7 @@
       {$g gift:able:gall}
       [%i gift:able:iris]
       {$j gift:able:jael}
+      {$k gift:able:kale}
   ==
 ::
 +$  unix-task                                           ::  input from unix
