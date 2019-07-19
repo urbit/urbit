@@ -15,8 +15,9 @@
 
 module Vere.Serf where
 
-import UrbitPrelude
+import UrbitPrelude hiding (fail)
 import Data.Conduit
+import Control.Monad.Fail (fail)
 
 import Data.Void
 import Noun
@@ -74,7 +75,7 @@ data SerfExn
     | BadReplacementId EventId ReplacementEv
     | UnexpectedPlay EventId Play
     | BadPleaAtom Atom
-    | BadPleaNoun Noun Text
+    | BadPleaNoun Noun [Text] Text
     | ReplacedEventDuringReplay EventId ReplacementEv
     | ReplacedEventDuringBoot   EventId ReplacementEv
     | EffectsDuringBoot         EventId [(Path, Eff)]
@@ -217,7 +218,7 @@ recvPlea :: Serf -> IO Plea
 recvPlea w = do
   a <- recvAtom w
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
-  p <- fromRightExn (fromNounErr n) (BadPleaNoun $ traceShowId n)
+  p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
   case p of Stdr e msg   -> do -- traceM ("[SERF]\t" <> (cordString msg))
                                recvPlea w

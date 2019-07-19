@@ -160,10 +160,10 @@ fromNoun n = runParser (parseNoun n) [] onFail onSuccess
     onFail p m  = Nothing
     onSuccess x = Just x
 
-fromNounErr :: FromNoun a => Noun -> Either Text a
+fromNounErr :: FromNoun a => Noun -> Either ([Text], Text) a
 fromNounErr n = runParser (parseNoun n) [] onFail onSuccess
   where
-    onFail p m  = Left (pack m)
+    onFail p m  = Left (p, pack m)
     onSuccess x = Right x
 
 data BadNoun = BadNoun [Text] String

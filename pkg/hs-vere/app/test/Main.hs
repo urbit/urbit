@@ -9,6 +9,7 @@ import Vere.Serf
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List
+import Control.Exception hiding (evaluate)
 
 import Control.Concurrent (threadDelay)
 import System.Directory   (removeFile, doesFileExist)
@@ -57,17 +58,52 @@ tryFullReplay shipPath = do
 zod :: Ship
 zod = 0
 
+catchAny :: IO a -> (SomeException -> IO a) -> IO a
+catchAny = Control.Exception.catch
+
+tryParseEvents :: FilePath -> EventId -> IO ()
+tryParseEvents dir first = do
+    vPax <- newIORef []
+    with (Log.existing dir) $ \log -> do
+        let ident = Log.identity log
+        print ident
+        runConduit $ Log.streamEvents log first
+                  .| showEvents vPax first (fromIntegral $ lifecycleLen ident)
+    paths <- sort . ordNub <$> readIORef vPax
+    for_ paths print
+  where
+    showEvents :: IORef [Path] -> EventId -> EventId -> ConduitT Atom Void IO ()
+    showEvents vPax eId cycle = await >>= \case
+      Nothing -> print "Done!"
+      Just at -> do
+          -- print ("got event", eId)
+          n <- liftIO $ cueExn at
+          -- print ("done cue", eId)
+          when (eId > cycle) $ do
+              case fromNounErr n of
+                Left err -> print err
+                Right (mug, date, ovum) -> do
+                  evaluate $ Job eId mug $ DateOvum date ovum
+                  pure ()
+                  paths <- readIORef vPax
+                  let pax = case ovum of Ovum pax _ -> pax
+                  writeIORef vPax (pax:paths)
+                  -- print ("done from noun", eId)
+                  -- print (Job eId mug $ DateOvum date ovum)
+          unless (eId - first > 100000000) $
+              showEvents vPax (succ eId) cycle
+
 main :: IO ()
 main = do
-    let pillPath = "/home/benjamin/r/urbit/bin/ivory.pill"
+    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 
-    tryBootFromPill pillPath shipPath ship
+    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
-    tryResume shipPath
-
-    tryFullReplay shipPath
+    -- tryBootFromPill pillPath shipPath ship
+    -- tryResume shipPath
+    -- tryFullReplay shipPath
 
     pure ()
 

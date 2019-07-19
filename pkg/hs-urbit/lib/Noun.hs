@@ -30,7 +30,7 @@ _Cue = prism' jamBS (eitherToMaybe . cueBS)
     eitherToMaybe (Right x) = Just x
 
 data LoadErr = CueErr DecodeErr
-             | ParseErr Text
+             | ParseErr [Text] Text
   deriving (Eq, Ord, Show)
 
 loadFile :: ∀a. FromNoun a => FilePath -> IO (Either LoadErr a)
@@ -39,5 +39,5 @@ loadFile pax = do
     case cueBS bs of
       Left e  -> pure $ Left (CueErr e)
       Right n -> case fromNounErr n of
-                   Left e  -> pure $ Left (ParseErr e)
-                   Right x -> pure $ Right x
+                   Left (p,e) -> pure $ Left (ParseErr p e)
+                   Right x    -> pure $ Right x

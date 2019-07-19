@@ -1,7 +1,7 @@
 module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
-  , Cord(..), Knot(..), Term(..), Tape(..)
+  , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), Ship(..)
   ) where
@@ -68,13 +68,13 @@ instance ToNoun Void where
   toNoun = absurd
 
 instance FromNoun Void where
-  parseNoun = named "Void" . fail "Can't produce void"
+  parseNoun _ = named "Void" $ fail "Can't produce void"
 
 
 -- Tour ------------------------------------------------------------------------
 
 newtype Tour = Tour [Char]
-  deriving (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 
 -- Double Jammed ---------------------------------------------------------------
