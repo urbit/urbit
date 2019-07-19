@@ -51,7 +51,7 @@
   %-  (require-authorization:app ost.bow move this)
   |=  =inbound-request:eyre
   ^-  (quip move _this)
-  ~&  %poke-handle-http-request-lens
+  ::
   ?^  job.state
     :_  this
     [ost.bow %http-response %start [%500 ~] ~ %.y]~
@@ -87,7 +87,6 @@
   ^-  (quip move _this)
   ?~  jon
     [~ this]
-  ~&  [%json jon]
   ?>  ?=(^ job.state)
   :_  this(job.state ~)
   [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
@@ -97,10 +96,8 @@
   ^-  (quip move _this)
   ::
   ?>  ?=(^ job.state)
-  ::  TOOD: the following isn't really good enough.
-  ::
-  ::    herb will do whatever we tell it to, so by convention have it write to
-  ::    an app name based on the file name.
+  ::  herb will do whatever we tell it to, so by convention have it write to an
+  ::  app name based on the file name.
   ::
   ?>  ?=(%export -.source.com.u.job.state)
   =/  app-name=tape  (trip app.source.com.u.job.state)

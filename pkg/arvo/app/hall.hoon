@@ -92,7 +92,7 @@
     ++  lime                                            ::  diff fruit
       $%  {$hall-prize prize}                           ::
           {$hall-rumor rumor}                           ::
-          {$export (list telegram)}
+          {$export [%hall-v0 (list telegram)]}          ::  sent to lens
       ==                                                ::
     ++  pear                                            ::  poke fruit
       $%  {$hall-command command}                       ::
@@ -3022,7 +3022,7 @@
   ?:  ?=([%sole *] pax)  ~&(%hall-no-sole !!)
   ?:  ?=([%export *] pax)
     :_  +>.$
-    [ost.bol %diff %export grams:(~(got by stories) ~.inbox)]~
+    [ost.bol %diff %export [%hall-v0 grams:(~(got by stories) ~.inbox)]]~
   ::
   =+  qer=(path-to-query pax)
   ?.  (leak src.bol qer)  ~&(%peer-invisible !!)
@@ -3206,7 +3206,9 @@
 ++  poke-import
   |=  i=*
   ^-  (quip move _+>)
-  =/  grams=(list telegram)  ;;((list telegram) i)
+  ::
+  ?>  ?=([%hall-v0 *] i)
+  =/  grams=(list telegram)  ;;((list telegram) +.i)
   ::
   ~&  [%importing-telegrams count=(lent grams)]
   ::
