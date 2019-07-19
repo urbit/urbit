@@ -44,6 +44,29 @@
     %ship  [%ship ship.full-signature]
     %ring  [%ring y.raw.ring-signature.full-signature]
   ==
+::  what sort of signature this node wants
+::
+::    We don't want to give applets the ability to build arbitrary signatures,
+::    since they could leak information that way. Instead, we make the sort of
+::    signature a node wants
+::
++$  signature-type
+  $?  ::  sign publicly with your ship identity
+      ::
+      %ship
+      ::  sign with an ulinked ring-signature.
+      ::
+      %unlinked
+      ::  sign with a linked ring-signature with scope of the community.
+      ::
+      %community
+      ::  sign with a linked ring-signature with scope of the current path.
+      ::
+      %self
+      ::  walk upwards recursively to find a strategy
+      ::
+      %inherit
+  ==
 ::
 +$  post
   $:  sig=full-signature
@@ -58,7 +81,7 @@
       [%log private-event=vase return-event=vase]
       ::  creates a new node and re-dispatch the event to it
       ::
-      [%create sub-id=@t type=@t child-event=vase]
+      [%create sub-id=@t type=@t =signature-type child-event=vase]
       ::  returns a value upwards
       ::
       [%return return-event=vase]
@@ -79,7 +102,7 @@
         [%add-member ship=@p]
         [%remove-member ship=@p]
     ::
-        [%create name=@t type=@t]
+        [%create name=@t type=@t =signature-type]
     ==
   ::
   +$  private-event
@@ -117,7 +140,7 @@
   ::
   +$  on-process-response
     $%  [%log =private-event =return-event]
-        [%create @t @t =child-event]
+        [%create @t @t =signature-type =child-event]
     ==
   ::  +on-route: everything routes through the toplevel node. this is what does 
   ::
@@ -149,7 +172,13 @@
     ::
         %create
       ~&  [%inside-create user-event]
-      [[%create name.user-event type.user-event (process-signature parent-event)] private-state]
+      :_  private-state
+      :*  %create
+          name.user-event
+          type.user-event
+          %unlinked
+          (process-signature parent-event)
+      ==
     ==
   ::
   ++  apply-event-to-snapshot
@@ -191,7 +220,7 @@
   ::  the user-event of the board is a new post request
   ::
   +$  user-event
-    $%  [%create name=@t type=@t]
+    $%  [%create name=@t type=@t =signature-type]
         [%new-post =post]
 ::        [%delete-post =post]
     ==
@@ -219,7 +248,7 @@
     ==
   ::
   +$  on-process-response
-    $%  [%create id=@t type=@t =child-event]
+    $%  [%create id=@t type=@t =signature-type =child-event]
         [%return =return-event]
     ==
   ::  +on-route: called when we must route a message to our children
@@ -248,8 +277,15 @@
     ?-    -.user-event
         %new-post
       =/  id  next-postid.private-state
+      ::  new threads inherit the board configuration
       ::
-      [[%create (scot %ud id) %thread [next-postid.private-state parent-event]] private-state]
+      :_  private-state
+      :*  %create
+          (scot %ud id)
+          %thread
+          %inherit
+          [next-postid.private-state parent-event]
+      ==
     ::
         %create
       [[%return [%accept ~]] private-state]
@@ -353,43 +389,94 @@
     ^-  _snapshot
     ::
     snapshot(posts [[user-event private] posts.snapshot])
-  ::  +send: called by users to build up 
-  ::
-  ::  ++  sign-user-message
-  ::    |=  =user-event
-  ::    ^-  signature-request
-  ::    !!
-  ::  ::
-  ::  ++  sign-toplevel
-  ::    |=  msg=*
-  ::    ^-  signature-request
-  ::    !!
   --
 ::
 ++  event-log-item
-  $%  ::  when sending across the wire, just send the value in the vase, not
+  $%  ::  a special init which must be the first item in the / node.
+      ::
+      [%toplevel-init initial-invited=(set @p) community-name=@t]
+      ::  invites a person into the community. only valid on the / node.
+      ::
+      [%toplevel-invite ship=@p]
+  ::
+      ::
+      ::  the first item in any normal event log; sets signature information,
+      ::  but calls no node code
+      [%init type=@t =signature-type]
+      ::
+      ::  when sending across the wire, just send the value in the vase, not
       ::  the type. the other side knows what app its for and at least for now,
       ::  the remote will call the mold.
       [%log user-event=vase private-event=vase]
-      [%create sub-id=@t type=@t]
+      ::
+      ::  creates a new child node under this
+      [%create sub-id=@t type=@t =signature-type]
   ==
 ::
 ++  app-map
   ^-  (map @t vase)
   (my [[%auth !>(node-type-auth)] [%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
-::  currently a hack. to make this work really generically, we'll need to make
-::  things sorta vase based where we connect types pulled out of the vases
-::  instead of an each of the two types.
+::  the server state
 ::
-++  node-state
-  $~  [%board 1 ~ *vase *vase ~]
-  $:  app-type=@t
-      next-event-id=@ud
-      event-log=(list [id=@ud =event-log-item])
-      snapshot=vase
-      private-state=vase
-      children=(map @t node-state)
-  ==
+++  server
+  =<  community
+  |%
+  ++  community
+    $:  invited=(set @p)
+        root=node
+    ==
+  ::
+  ++  node
+    $~  [%auth 1 ~ *vase *vase ~]
+    $:  app-type=@t
+        next-event-id=@ud
+        event-log=(list [id=@ud =event-log-item])
+        snapshot=vase
+        private-state=vase
+        children=(map @t node)
+    ==
+  --
+
+::  the client state
+::
+::  ++  client
+::    =<  community
+::    |%
+::    ++  community
+::      $:  invited=(set @p)
+::          root=node
+::      ==
+::    ::  the theoretical "top" node which sits outside the system. This data is
+::    ::  only snaps
+::    ::
+::    ++  directory
+::      $:  invited=(set @p)
+::          root=node
+::      ==
+::    ::
+::    ++  node
+::      $~  [%board ~ *vase ~]
+::      $:  app-type=@t
+::          partial-event-log=(list [id=@ud item=event-item])
+::          top-snapshot=(unit top-state)
+::          snapshot=vase
+::          children=(map @t node)
+::      ==
+::    ::  state created from event log items that
+::    ::
+::    ++  top-state
+::      $:  invited=(set @p)
+::          community-name=@t
+::      ==
+::    ::  on the client, we may only have events 1,2,3 and then a snapshot of 10
+::    ::  and then events 11,12,13.
+::    ::
+::    ++  event-item
+::      $:  [%snapshot =vase]
+::          [%event =event-log-item]
+::      ==
+::    --
+
 ::  +sump: like arvo sump, translates vases into cards between applets
 ::
 ++  sump
@@ -406,9 +493,10 @@
   ::
       %create
     =/  id  (slot 6 wec)
-    =/  type  (slot 14 wec)
-    =/  child-event  (slot 15 wec)
-    [%create ;;(@t q.id) ;;(@t q.type) child-event]
+    =/  node-type  (slot 14 wec)
+    =/  sig-type  (slot 30 wec)
+    =/  child-event  (slot 31 wec)
+    [%create ;;(@t q.id) ;;(@t q.node-type) ;;(signature-type q.sig-type) child-event]
   ::
       %return
     =/  event  (slot 3 wec)
@@ -423,7 +511,7 @@
 ::
 ++  instantiate-node
   |=  type=term
-  ^-  node-state
+  ^-  node:server
   ::
   =/  new-item-vase=vase       (~(got by app-map) type)
   ::
@@ -440,7 +528,7 @@
 ::
 ::
 ++  process-child-returned
-  |=  [app-vase=vase child-returned=vase state=node-state]
+  |=  [app-vase=vase child-returned=vase state=node:server]
   ^-  [vase _state]
   ::
   =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
@@ -481,7 +569,7 @@
           route=path
           full-path=path
           message=vase
-          state=node-state
+          state=node:server
       ==
   ^-  [vase _state]
   ::
@@ -545,7 +633,12 @@
   ::
       %create
     ::
-    =/  created=node-state  (instantiate-node type.response)
+    =/  created=node:server  (instantiate-node type.response)
+    ::  write the creation information into the event log so that when
+    ::  replayed, we get the configuration.
+    ::
+    =.  event-log.created
+      [[0 [%init type.response signature-type.response]] ~]
     ::
     =^  return  created
       (node-executor child-event.response / (weld full-path [sub-id.response ~]) message created)
@@ -553,7 +646,8 @@
     ~&  [%created type=type.response sub-id=sub-id.response return=return]
     =.  children.state  (~(put by children.state) sub-id.response created)
     =.  event-log.state
-      [[next-event-id.state [%create sub-id.response type.response]] event-log.state]
+      :_  event-log.state
+      [next-event-id.state [%create sub-id.response type.response signature-type.response]]
     =.  next-event-id.state  +(next-event-id.state)
     ::
     (process-child-returned app-vase return state)
@@ -588,6 +682,16 @@
 ::  This works for the thread (sorta) but where does spawning behaviour come in?
 ::
 
+::  =/  community-server
+::    %-  instantiate-community  :*
+::      name='our twon'
+::      host=~zod
+::      members=(sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])
+::      toplevel=%auth
+::    ==
+
+
+
 ::  toplevel container node
 ::
 =/  toplevel  (instantiate-node %auth)
@@ -601,7 +705,7 @@
 ::
 ~&  %phase---------2
 =^  ret2  toplevel
-  (node-executor !>([%ship ~zod 5]) / / !>([%create 'shitposting' %board]) toplevel)
+  (node-executor !>([%ship ~zod 5]) / / !>([%create 'shitposting' %board %unlinked]) toplevel)
 ~&  [%ret2 ret2]
 ~&  [%toplevel toplevel]
 ::  time to start shitposting!
@@ -626,8 +730,8 @@
 
 :: So we now need to have a way to make messages to send to the 
 ::
-=/  message-package
-  (message-builder /shitposting/1 !>([%new-post 'reply' 'text reply']) local-toplevel)
+::  =/  message-package
+::    (message-builder /shitposting/1 !>([%new-post 'reply' 'text reply']) local-toplevel)
 
 ::  how messages are signed has to be part of the node at build time. 
 ::
@@ -687,3 +791,12 @@
 
 ::  ++  sign-user-event
 ::    |=  [=user-event =path]
+
+
+:: The system verifies that the signatures are valid before dispatch, but the
+:: signatures are made available so that the system can perform its own
+:: additional checks.
+
+
+
+:: Do I need an init on each node? How else do they learn the pieces of state?
