@@ -3,7 +3,7 @@ module Noun.Conversions
   , Word128, Word256, Word512
   , Cord(..), Knot(..), Term(..), Tape(..)
   , Tank(..), Tang, Plum(..)
-  , Mug(..), Path(..)
+  , Mug(..), Path(..), Ship(..)
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -250,6 +250,12 @@ instance FromNoun Knot where -- XX TODO
   parseNoun n = do
     Cord c <- parseNoun n
     pure (MkKnot (decodeUtf8Lenient c))
+
+
+-- Ship ------------------------------------------------------------------------
+
+newtype Ship = Ship Word128 -- @p
+  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 
 -- Path ------------------------------------------------------------------------

@@ -11,12 +11,21 @@ library:
     - -Werror
     - -O2
 
+tests:
+  tests:
+    source-dirs: test
+    main: Main.hs
+    dependencies: urbit
+    ghc-options:
+      - -threaded
+
 dependencies:
   - async
   - base
   - bytestring
   - case-insensitive
   - classy-prelude
+  - conduit
   - containers
   - data-fix
   - directory
@@ -43,6 +52,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - resourcet
   - rio
   - sdl2
   - sdl2-image

@@ -4,13 +4,13 @@
       the thread should close the database when it is killed.
 -}
 
-module Vere.Persist (start, stop, writeEvents) where
+module Vere.Persist (start, stop) where
 
-import ClassyPrelude hiding (init)
+import UrbitPrelude hiding (init)
 
-import Database.LMDB.Raw
-import Noun
-import Vere.Log
+import Vere.Log (EventLog)
+
+import qualified Vere.Log as Log
 import Vere.Pier.Types
 
 
@@ -34,7 +34,6 @@ stop :: Persist -> IO ()
 stop (Persist log tid) = do
     void (cancel tid)
     void (waitCatch tid)
-    close log
 
 
 -- Persist Thread --------------------------------------------------------------
@@ -45,34 +44,21 @@ persistThread :: EventLog
               -> TQueue (Writ [Eff])
               -> (Writ [Eff] -> STM ())
               -> IO ()
-persistThread (EventLog env) inputQueue onPersist =
-  forever $ do
-    writs <- atomically $ readQueue inputQueue
-    writeEvents writs
-    atomically $ traverse_ onPersist writs
+persistThread log inputQueue onPersist =
+    forever $ do
+        writs  <- atomically $ fmap toNullable $ readQueue inputQueue
+        events <- validateWrits writs
+        Log.appendEvents log events
+        atomically $ traverse_ onPersist writs
   where
-    writeEvents writs = do
-      txn <- mdb_txn_begin env Nothing False
-      db  <- mdb_dbi_open txn (Just "EVENTS") [MDB_CREATE, MDB_INTEGERKEY]
-
-      let flags = compileWriteFlags [MDB_NOOVERWRITE]
-
-      for_ writs $ \w -> do
-        putJam flags txn db (eventId w) (event w)
-
-      mdb_txn_commit txn
-
-writeEvents :: EventLog -> [(Word64, Atom)] -> IO ()
-writeEvents (EventLog env) writs = do
-  txn <- mdb_txn_begin env Nothing False
-  db  <- mdb_dbi_open txn (Just "EVENTS") [MDB_CREATE, MDB_INTEGERKEY]
-
-  let flags = compileWriteFlags [MDB_NOOVERWRITE]
-
-  for_ writs $ \(id,at) -> do
-    putJam flags txn db id (Jam at)
-
-  mdb_txn_commit txn
+    validateWrits :: [Writ [Eff]] -> IO (Vector Atom)
+    validateWrits writs = do
+        expect <- Log.nextEv log
+        fmap fromList
+            $ for (zip [expect..] writs)
+            $ \(expectedId, Writ{..}) -> do
+                guard (expectedId == eventId)
+                pure (unJam event)
 
 
 -- Get eventhing from the input queue. -----------------------------------------

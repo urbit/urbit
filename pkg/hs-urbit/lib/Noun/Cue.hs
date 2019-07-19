@@ -64,8 +64,7 @@ data S = S
 type Env = (Ptr Word, S)
 
 data DecodeErr
-    = NotEnoughSpace Env
-    | TooMuchSpace Env
+    = InfiniteCue Env
     | BadEncoding Env String
   deriving (Show, Eq, Ord)
 
@@ -131,28 +130,37 @@ instance Monad Get where
       badEncoding end s msg
     {-# INLINE fail #-}
 
+instance MonadIO Get where
+  liftIO io = Get $ \end tbl s -> GetResult s <$> io
+  {-# INLINE liftIO #-}
+
 --------------------------------------------------------------------------------
 
+{-# INLINE badEncoding #-}
 badEncoding :: Ptr Word -> S -> String -> IO a
 badEncoding !endPtr s msg = throwIO $ BadEncoding (endPtr,s) msg
 
 --------------------------------------------------------------------------------
 
+{-# INLINE getPos #-}
 getPos :: Get Word
 getPos = Get $ \_ _ s ->
   pure (GetResult s (pos s))
 
+{-# INLINE insRef #-}
 insRef :: Word -> Noun -> Get ()
 insRef !pos !now = Get $ \_ tbl s -> do
   H.insert tbl pos now
   pure $ GetResult s ()
 
+{-# INLINE getRef #-}
 getRef :: Word -> Get Noun
 getRef !ref = Get $ \x tbl s -> do
   H.lookup tbl ref >>= \case
     Nothing -> runGet (fail ("Invalid Reference: " <> show ref)) x tbl s
     Just no -> pure (GetResult s no)
 
+{-# INLINE advance #-}
 advance :: Word -> Get ()
 advance 0 = debugM "advance: 0" >> pure ()
 advance !n = Get $ \_ _ s -> do
@@ -168,23 +176,34 @@ advance !n = Get $ \_ _ s -> do
 
 --------------------------------------------------------------------------------
 
+{-# INLINE guardInfinite #-}
+guardInfinite :: Ptr Word -> Ptr Word -> S -> IO ()
+guardInfinite end cur s =
+    when (cur >= (end `plusPtr` 16)) $ do
+        throwIO (InfiniteCue (end, s))
+
 -- TODO Should this be (>= end) or (> end)?
+{-# INLINE peekCurWord #-}
 peekCurWord :: Get Word
 peekCurWord = Get $ \end _ s -> do
  debugMId "peekCurWord" $ do
+  guardInfinite end (currPtr s) s
   if ptrToWordPtr (currPtr s) >= ptrToWordPtr end
   then pure (GetResult s 0)
   else GetResult s <$> peek (currPtr s)
 
 -- TODO Same question as above.
+{-# INLINE peekNextWord #-}
 peekNextWord :: Get Word
 peekNextWord = Get $ \end _ s -> do
  debugMId "peekNextWord" $ do
   let pTarget = currPtr s `plusPtr` 8
+  guardInfinite end pTarget s
   if ptrToWordPtr pTarget >= ptrToWordPtr end
   then pure (GetResult s 0)
   else GetResult s <$> peek pTarget
 
+{-# INLINE peekUsedBits #-}
 peekUsedBits :: Get Word
 peekUsedBits =
  debugMId "peekUsedBits" $ do
@@ -197,6 +216,7 @@ peekUsedBits =
     - Right-shift by the bit-offset.
     - Mask the high bits.
 -}
+{-# INLINE dBit #-}
 dBit :: Get Bool
 dBit = do
   debugMId "dBit" $ do
@@ -205,6 +225,7 @@ dBit = do
     advance 1
     pure (0 /= shiftR wor use .&. 1)
 
+{-# INLINE dWord #-}
 dWord :: Get Word
 dWord = do
   debugMId "dWord" $ do
@@ -221,6 +242,7 @@ dWord = do
     - Calculate the length (equal to n)
     - Construct a bit-vector using the buffer*length*offset.
 -}
+{-# INLINE dAtomBits #-}
 dAtomBits :: Word -> Get Atom
 dAtomBits !(fromIntegral -> bits) = do
     debugMId ("dAtomBits(" <> show bits <> ")") $ do
@@ -251,6 +273,7 @@ dAtomBits !(fromIntegral -> bits) = do
       - Left-shift the next word by the bit-offset.
       - Binary or the resulting two words.
 -}
+{-# INLINE peekWord #-}
 peekWord :: Get Word
 peekWord = do
  debugMId "peekWord" $ do
@@ -261,10 +284,12 @@ peekWord = do
   debugM ("\t" <> (take 10 $ reverse $ printf "%b" (fromIntegral res :: Integer)) <> "..")
   pure res
 
+{-# INLINE swiz #-}
 swiz :: Word -> (Word, Word) -> Word
 swiz !(fromIntegral -> off) (!low, !hig) =
   (.|.) (shiftR low off) (shiftL hig (64-off))
 
+{-# INLINE takeLowBits #-}
 takeLowBits :: Word -> Word -> Word
 takeLowBits 64   !wor = wor
 takeLowBits !wid !wor = (2^wid - 1) .&. wor
@@ -277,6 +302,7 @@ takeLowBits !wid !wor = (2^wid - 1) .&. wor
   - Advance by that number of bits.
   - Return the word.
 -}
+{-# INLINE dWordBits #-}
 dWordBits :: Word -> Get Word
 dWordBits !n = do
  debugMId ("dWordBits(" <> show n <> ")") $ do
@@ -297,6 +323,7 @@ dWordBits !n = do
     - Advance by that number of bits.
     - Return the number of bits
 -}
+{-# INLINE dExp #-}
 dExp :: Get Word
 dExp = do
  debugMId "dExp" $ do
@@ -305,6 +332,7 @@ dExp = do
   advance (res+1)
   pure res
 
+{-# INLINE dAtomLen #-}
 dAtomLen :: Get Word
 dAtomLen = do
  debugMId "dAtomLen" $ do
@@ -313,9 +341,11 @@ dAtomLen = do
     e -> do p <- dWordBits (e-1)
             pure (2^(e-1) .|. p)
 
+{-# INLINE dRef #-}
 dRef :: Get Word
 dRef = debugMId "dRef" (dAtomLen >>= dWordBits)
 
+{-# INLINE dAtom #-}
 dAtom :: Get Atom
 dAtom = do
  debugMId "dAtom" $ do
@@ -323,6 +353,7 @@ dAtom = do
     0 -> pure 0
     n -> dAtomBits n
 
+{-# INLINE dCell #-}
 dCell :: Get Noun
 dCell = Cell <$> dNoun <*> dNoun
 

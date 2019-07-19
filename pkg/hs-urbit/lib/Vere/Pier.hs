@@ -2,22 +2,33 @@
 
 module Vere.Pier where
 
+import Data.Acquire
 import UrbitPrelude
-
 import Vere.Pier.Types
+import Data.Conduit
 
-import qualified Data.Vector    as V
+import Vere.Log  (EventLog)
+import Vere.Serf (Serf, SerfState(..))
+
 import qualified System.Entropy as Ent
 import qualified Vere.Log       as Log
-import qualified Vere.Persist   as Persist
 import qualified Vere.Serf      as Serf
-
-import Vere.Serf (Serf, SerfState(..))
 
 
 --------------------------------------------------------------------------------
 
 ioDrivers = [] :: [IODriver]
+
+{-
+data Pier = Pier
+  { computeQueue  :: TQueue Ovum
+  , persistQueue  :: TQueue (Writ [Eff])
+  , releaseQueue  :: TQueue (Writ [Eff])
+  , log           :: EventLog
+  , driverThreads :: [(Async (), Perform)]
+  , portingThread :: Async ()
+  }
+-}
 
 
 --------------------------------------------------------------------------------
@@ -44,65 +55,82 @@ generateBootSeq ship Pill{..} = do
     This is called to make a freshly booted pier. It assigns an identity
     to an event log and takes a chill pill.
 -}
-boot :: FilePath -> FilePath -> Ship -> IO (Serf, EventLog, SerfState)
-boot pillPath top ship = do
+boot :: FilePath -> FilePath -> Ship
+     -> (Serf -> EventLog -> SerfState -> IO a)
+     -> IO a
+boot pillPath top ship act = do
   let logPath = top <> "/.urb/log"
 
   pill <- loadFile @Pill pillPath >>= \case
             Left l  -> error (show l)
             Right p -> pure p
 
+  seq@(BootSeq ident x y) <- generateBootSeq ship pill
 
-  seq@(BootSeq ident _ _) <- generateBootSeq ship pill
+  -- _ <- checkedJam ident
+  -- _ <- checkedJam pill
+  -- _ <- checkedJam x
+  -- _ <- checkedJam y
 
-  Log.wipeEvents logPath -- TODO XX
-  log <- Log.open logPath
-
-  Log.writeIdent log ident
-
-  serf             <- Serf.startSerfProcess top
-  (events, serfSt) <- Serf.bootFromSeq serf seq
-
-  Serf.requestSnapshot serf serfSt
-
-  writeJobs log events
-
-  pure (serf, log, serfSt)
+  with (Log.new logPath ident) $ \log -> do
+      serf             <- Serf.startSerfProcess top
+      (events, serfSt) <- Serf.bootFromSeq serf seq
+      Serf.requestSnapshot serf serfSt
+      traverse_ checkedJam events
+      traceM "writeJobs"
+      writeJobs log (fromList events)
+      act serf log serfSt
 
 {-
     What we really want to do is write the log identity and then do
     normal startup, but writeIdent requires a full log state
     including input/output queues.
 -}
-resume :: FilePath -> IO (Serf, EventLog, SerfState)
-resume top = do
-  log    <- Log.open (top <> "/.urb/log")
-  ident  <- Log.readIdent log
-  lastEv <- Log.latestEventNumber log
-  serf   <- Serf.startSerfProcess top
-  serfSt <- Serf.replay serf ident lastEv (readJobs log)
+resume :: FilePath -> (Serf -> EventLog -> SerfState -> IO a) -> IO a
+resume top act = do
+  with (Log.existing (top <> "/.urb/log")) $ \log -> do
+    traceM "But why?"
+    serf   <- Serf.startSerfProcess top
+    traceM "What"
+    serfSt <- Serf.replay serf log
+    traceM "is"
 
-  Serf.requestSnapshot serf serfSt
+    Serf.requestSnapshot serf serfSt
+    traceM "happening"
 
-  pure (serf, log, serfSt)
+    act serf log serfSt
 
-writeJobs :: EventLog -> [Job] -> IO ()
-writeJobs log jobs = Persist.writeEvents log (fromJob <$> jobs)
+writeJobs :: EventLog -> Vector Job -> IO ()
+writeJobs log !jobs = do
+    expect <- Log.nextEv log
+    events <- fmap fromList $ traverse fromJob (zip [expect..] $ toList jobs)
+    Log.appendEvents log events
   where
-    fromJob :: Job -> (Word64, Atom)
-    fromJob (Job eventId mug payload) =
-      (fromIntegral eventId, jam (toNoun (mug, payload)))
+    fromJob :: (EventId, Job) -> IO Atom
+    fromJob (expectedId, Job eventId mug payload) = do
+        guard (expectedId == eventId)
+        traceM "fromJob.toNoun"
+        n <- print (mug, payload)
+        n <- evaluate $ toNoun (mug, payload)
+        traceM "fromJob.jam"
+        res <- checkedJam n
+        traceM "fromJob.done"
+        pure res
 
-readJobs :: EventLog -> EventId -> Word64 -> IO (V.Vector Job)
-readJobs log fst len = do
-    events <- Log.readEvents log fst len
-    traverse toJob events
-  where
-    toJob :: (Word64, Atom) -> IO Job
-    toJob (eventId, atom) = do
-      noun           <- cueExn atom
-      (mug, payload) <- fromNounExn noun
-      pure $ Job (fromIntegral eventId) mug payload
+checkedJam :: (Show a, FromNoun a, ToNoun a) => a -> IO Atom
+checkedJam x = do
+    traceM ("[DEBUG]\tcheckedJam.toNoun:")
+    inn <- evaluate $ toNoun x
+    traceM ("[DEBUG]\tcheckedJam.job:")
+    atm <- evaluate $ jam inn
+    traceM ("[DEBUG]\tcheckedJam.cue:")
+    non <- cueExn atm
+    traceM ("[DEBUG]\tcheckedJam.fromNoun")
+    res <- fromNounExn non
+    traceM ("[DEBUG]\tcheckedJam.equals")
+    guard (non == res)
+    pure atm
+
 
 -- Run Pier --------------------------------------------------------------------
 

@@ -15,8 +15,8 @@
 
 module Vere.Serf where
 
-import ClassyPrelude
-import Control.Lens
+import UrbitPrelude
+import Data.Conduit
 
 import Data.Void
 import Noun
@@ -34,6 +34,7 @@ import System.Exit            (ExitCode)
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Text              as T
 import qualified Urbit.Time             as Time
+import qualified Vere.Log               as Log
 
 
 -- Types -----------------------------------------------------------------------
@@ -61,7 +62,7 @@ data Plea
     | Slog EventId Word32 Tank
   deriving (Eq, Show)
 
-type GetEvents = EventId -> Word64 -> IO (Vector Job)
+type GetJobs = EventId -> Word64 -> IO (Vector Job)
 
 type ReplacementEv = Job
 type Fx            = [(Path, Eff)]
@@ -94,8 +95,8 @@ deriveNoun ''Plea
 
 printTank :: Word32 -> Tank -> IO ()
 printTank pri = \case
-  Leaf (Tape s) -> traceM ("[SERF]\t" <> s)
-  t             -> traceM ("[SERF]\t" <> show (pri, t))
+  Leaf (Tape s) -> pure () -- traceM ("[SERF]\t" <> s)
+  t             -> pure () -- traceM ("[SERF]\t" <> show (pri, t))
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
@@ -132,10 +133,11 @@ startSerfProcess pier =
                 , std_out = CreatePipe
                 }
 
+waitForExit :: Serf -> IO ExitCode
+waitForExit serf = waitForProcess (process serf)
+
 kill :: Serf -> IO ExitCode
-kill serf = do
-  terminateProcess (process serf)
-  waitForProcess (process serf)
+kill serf = terminateProcess (process serf) >> waitForExit serf
 
 
 -- Basic Send and Receive Operations -------------------------------------------
@@ -154,8 +156,12 @@ sendLen s i = do
 
 sendOrder :: Serf -> Order -> IO ()
 sendOrder w o = do
-  traceM ("[DEBUG] Serf.sendOrder: " <> show o)
-  sendAtom w $ jam $ toNoun o
+  traceM ("[DEBUG] Serf.sendOrder.toNoun: " <> show o)
+  n <- evaluate (toNoun o)
+  traceM ("[DEBUG] Serf.sendOrder.jam")
+  j <- evaluate (jam n)
+  traceM ("[DEBUG] Serf.sendOrder.send")
+  sendAtom w j
 
 sendAtom :: Serf -> Atom -> IO ()
 sendAtom s a = do
@@ -199,11 +205,10 @@ requestSnapshot serf SerfState{..} = sendOrder serf (OSave $ ssNextEv - 1)
 requestShutdown :: Serf -> Word8 -> IO ()
 requestShutdown serf code = sendOrder serf (OExit code)
 
-shutdownAndKill :: Serf -> Word8 -> IO ExitCode
-shutdownAndKill serf code = do
+shutdownAndWait :: Serf -> Word8 -> IO ExitCode
+shutdownAndWait serf code = do
   requestShutdown serf code
-  threadDelay 50000 -- TODO XX Hack ("how to tell when this is done?")
-  kill serf
+  waitForExit serf
 
 {-
     TODO Find a cleaner way to handle `Stdr` Pleas.
@@ -214,7 +219,7 @@ recvPlea w = do
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (BadPleaNoun $ traceShowId n)
 
-  case p of Stdr e msg   -> do traceM ("[SERF]\t" <> (cordString msg))
+  case p of Stdr e msg   -> do -- traceM ("[SERF]\t" <> (cordString msg))
                                recvPlea w
             Slog _ pri t -> do printTank pri t
                                recvPlea w
@@ -258,8 +263,11 @@ sendWork w job@(Job jobId _ _) =
       Play p       -> throwIO (UnexpectedPlay jobId p)
       Done i m o   -> produce (SerfState (i+1) m, o)
       Work job     -> replace job
-      Stdr _ cord  -> traceM ("[SERF]\t" <> cordString cord) >> loop
+      Stdr _ cord  -> loop -- traceM ("[SERF]\t" <> cordString cord) >> loop
       Slog _ pri t -> printTank pri t >> loop
+
+
+--------------------------------------------------------------------------------
 
 doJob :: Serf -> Job -> IO (Job, SerfState, Fx)
 doJob serf job@(Job eId _ _) = do
@@ -279,6 +287,9 @@ replayJob serf job@(Job eId _ _) = do
         Left replaced -> throwIO (ReplacedEventDuringReplay eId replaced)
         Right (ss, _) -> pure ss
 
+
+--------------------------------------------------------------------------------
+
 type BootSeqFn = EventId -> Mug -> Time.Wen -> Job
 
 bootFromSeq :: Serf -> BootSeq -> IO ([Job], SerfState)
@@ -294,8 +305,22 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
         x:xs -> do wen       <- Time.now
                    job       <- pure $ x (ssNextEv ss) (ssLastMug ss) wen
                    (job, ss) <- bootJob serf job
+                   traceM "ok?"
+                   _ <- checkedJam job
+                   traceM "ok"
                    loop (job:acc) ss xs
 
+    checkedJam :: (Show a, FromNoun a, ToNoun a) => a -> IO Atom
+    checkedJam x = do
+        traceM ("[DEBUG]\tcheckedJam.toNoun: " <> show x)
+        atm <- evaluate $ jam $ toNoun x
+        traceM ("[DEBUG]\tcheckedJam.cue: " <> show x)
+        non <- cueExn atm
+        traceM ("[DEBUG]\tcheckedJam.fromNoun")
+        res <- fromNounExn non
+        traceM ("[DEBUG]\tcheckedJam.equals")
+        guard (non == res)
+        pure atm
 
     bootSeqFns :: [BootSeqFn]
     bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
@@ -306,29 +331,39 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
 {-
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
-
-    This will pull events from the event log in batches of 1000.
 -}
-replayEvents :: Serf -> SerfState -> LogIdentity -> EventId -> GetEvents
-             -> IO SerfState
-replayEvents serf ss@SerfState{..} ident lastCommitedId getEvents = do
-    vState <- newIORef ss
-    loop vState ssNextEv
-    readIORef vState
+replayJobs :: Serf -> SerfState -> ConduitT Job Void IO SerfState
+replayJobs serf = go
   where
-    loop :: IORef SerfState -> EventId -> IO ()
-    loop vState curEvent = do
-        let toRead = min 1000 (1 + lastCommitedId - curEvent)
-        when (toRead > 0) $ do
-            events <- getEvents curEvent toRead
-            for_ events $ \job -> do
-                replayJob serf job >>= writeIORef vState
-            loop vState (curEvent + toRead)
+    go ss = await >>= maybe (pure ss) (liftIO . replayJob serf >=> go)
 
-replay :: Serf -> LogIdentity -> EventId -> GetEvents -> IO SerfState
-replay serf ident lastEv getEvents = do
-    ss <- handshake serf ident
-    replayEvents serf ss ident lastEv getEvents
+replay :: Serf -> Log.EventLog -> IO SerfState
+replay serf log = do
+    ss <- handshake serf (Log.identity log)
+
+    runConduit $  Log.streamEvents log (ssNextEv ss)
+               .| toJobs (ssNextEv ss)
+               .| replayJobs serf ss
+
+toJobs :: EventId -> ConduitT Atom Job IO ()
+toJobs eId =
+    await >>= \case
+        Nothing -> traceM "no more jobs" >> pure ()
+        Just at -> do yield =<< liftIO (fromAtom eId at)
+                      traceM (show eId)
+                      toJobs (eId+1)
+  where
+    fromAtom eId at = do
+        traceM ("[DEBUG] Pier.toJob: " <> show (length $ at ^. atomBytes))
+        traceM ("[DEBUG] Pier.toJob.cue: " <> show eId)
+        noun           <- cueExn at
+        traceM ("[DEBUG] Pier.toJob.fromNoun")
+        (mug, payload) <- fromNounExn noun
+        traceM ("[DEBUG] Pier.toJob.done")
+        pure (Job eId mug payload)
+
+
+-- Run Pier --------------------------------------------------------------------
 
 
 -- Compute Thread --------------------------------------------------------------

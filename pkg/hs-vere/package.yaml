@@ -38,11 +38,11 @@ executables:
 
 dependencies:
   - async
-  - urbit
   - base
   - bytestring
   - case-insensitive
   - classy-prelude
+  - conduit
   - containers
   - data-fix
   - directory
@@ -64,6 +64,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - resourcet
   - sdl2
   - sdl2-image
   - semigroups
@@ -78,6 +79,7 @@ dependencies:
   - time
   - transformers
   - unordered-containers
+  - urbit
   - vector
   - wai
   - warp

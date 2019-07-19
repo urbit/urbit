@@ -3,21 +3,15 @@
 module Vere.Pier.Types where
 
 import UrbitPrelude
-
-import Database.LMDB.Raw
 import Urbit.Time
 
-import Data.LargeWord (Word128)
-import Data.Void      (Void)
+import Data.Void (Void)
 
 import qualified Vere.Ames        as Ames
 import qualified Vere.Http.Client as Client
 import qualified Vere.Http.Server as Server
 
 --------------------------------------------------------------------------------
-
-newtype Ship = Ship Word128 -- @p
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 newtype ShipId = ShipId (Ship, Bool)
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
@@ -43,17 +37,17 @@ data Pill = Pill
     }
   deriving (Eq, Ord)
 
-data BootSeq = BootSeq LogIdentity [Nock] [Ovum]
-  deriving (Eq, Ord, Show)
-
-newtype Desk = Desk Text
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
 data LogIdentity = LogIdentity
     { who          :: Ship
     , isFake       :: Bool
     , lifecycleLen :: Atom
     } deriving (Eq, Ord, Show)
+
+data BootSeq = BootSeq LogIdentity [Nock] [Ovum]
+  deriving (Eq, Ord, Show)
+
+newtype Desk = Desk Text
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Mime = Mime Path FileOcts
   deriving (Eq, Ord, Show)
@@ -142,7 +136,8 @@ type Perform = Eff -> IO ()
 data Ovum = Ovum Path Event
   deriving (Eq, Ord, Show)
 
-newtype Jam = Jam Atom
+newtype Jam = Jam { unJam :: Atom }
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data IODriver = IODriver
   { bornEvent   :: IO Ovum
@@ -155,17 +150,6 @@ data Writ a = Writ
   , event   :: Jam -- mat
   , payload :: a
   }
-
-data Pier = Pier
-  { computeQueue  :: TQueue Ovum
-  , persistQueue  :: TQueue (Writ [Eff])
-  , releaseQueue  :: TQueue (Writ [Eff])
-  , log           :: EventLog
-  , driverThreads :: [(Async (), Perform)]
-  , portingThread :: Async ()
-  }
-
-newtype EventLog = EventLog MDB_env
 
 
 -- Instances -------------------------------------------------------------------
@@ -211,14 +195,14 @@ instance Show Nock where
 instance Show Pill where
   show (Pill x y z) = show (length x, length y, length z)
 
-deriveNoun ''Mime
-deriveNoun ''Pill
-deriveNoun ''LegacyBootEvent
 deriveNoun ''Blit
 deriveNoun ''Eff
 deriveNoun ''Event
+deriveNoun ''LegacyBootEvent
+deriveNoun ''LogIdentity
+deriveNoun ''Mime
 deriveNoun ''NewtEx
 deriveNoun ''Ovum
+deriveNoun ''Pill
 deriveNoun ''PutDel
 deriveNoun ''RecEx
-deriveNoun ''LogIdentity
