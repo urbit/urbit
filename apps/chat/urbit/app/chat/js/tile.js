@@ -19260,6 +19260,11 @@
                   } 
                 }
 
+                let invSuffix = (inviteNum === 1) ? (
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 47}}, "invite")
+                ) : (
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}, "invites")
+                );
                 let numInvElem = (inviteNum > 0) ? (
                   react.createElement('p', { className: "absolute white" ,
                      style: {
@@ -19267,11 +19272,20 @@
                        fontWeight: 600,
                        fontSize: 16,
                        lineHeight: '20px'
-                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 47}}
-                    , react.createElement('span', { className: "nice-green", __self: this, __source: {fileName: _jsxFileName, lineNumber: 54}}, inviteNum, " " ), "invites"
+                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 52}}
+                     , react.createElement('span', { style: {
+                      color: '#2AA779'
+                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 59}}, inviteNum, " " )
+                     , invSuffix
                   )
                 ) : (
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 57}} )
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 65}} )
+                );
+
+                let msgSuffix = (msgNum === 1) ? (
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 69}}, "new message" )
+                ) : (
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}, "new messages" )
                 );
                 let numMsgElem = (msgNum > 0) ? (
                   react.createElement('p', { className: "absolute white" ,
@@ -19280,23 +19294,26 @@
                        fontWeight: 600,
                        fontSize: 16,
                        lineHeight: '20px'
-                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 60}}
-                    , react.createElement('span', { className: "nice-green", __self: this, __source: {fileName: _jsxFileName, lineNumber: 67}}, msgNum, " " ), "new messages"
+                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 74}}
+                     , react.createElement('span', { style: {
+                      color: '#2AA779'
+                     }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 81}}, msgNum, " " )
+                     , msgSuffix
                   )
                 ) : (
-                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 70}} )
+                  react.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 87}} )
                 );
 
                 return (
-                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 74}}
-                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 75}}
-                      , react.createElement('p', { className: "gray label-regular b absolute"   , style: {left: 8, top: 4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 76}}, "Chat")
+                  react.createElement('div', { className: "w-100 h-100 relative"  , style: { background: '#1a1a1a' }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 91}}
+                    , react.createElement('a', { className: "w-100 h-100 db pa2 no-underline"    , href: "/~chat", __self: this, __source: {fileName: _jsxFileName, lineNumber: 92}}
+                      , react.createElement('p', { className: "gray label-regular b absolute"   , style: {left: 8, top: 4}, __self: this, __source: {fileName: _jsxFileName, lineNumber: 93}}, "Chat")
                        , react.createElement('img', {
                          className: "absolute",
                          style: { left: 68, top: 65 },
                          src: "/~chat/img/Tile.png",
                          width: 106,
-                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 77}} )
+                         height: 98, __self: this, __source: {fileName: _jsxFileName, lineNumber: 94}} )
                        , numInvElem
                        , numMsgElem
                     )

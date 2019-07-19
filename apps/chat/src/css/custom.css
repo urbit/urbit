@@ -35,6 +35,17 @@ h2 {
   line-height: 24px;
 }
 
+.body-medium {
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.body-small {
+  font-size: 12px;
+  line-height: 16px;
+  color: #7f7f7f;
+}
+
 .label-regular {
   font-size: 14px;
   line-height: 24px;

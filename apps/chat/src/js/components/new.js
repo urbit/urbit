@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { uuid, isPatTa } from '/lib/util';
+import { uuid, isPatTa, deSig } from '/lib/util';
+import urbitOb from 'urbit-ob';
 
 
 export class NewScreen extends Component {
@@ -11,7 +12,8 @@ export class NewScreen extends Component {
     this.state = {
       idName: '',
       invites: '',
-      showNameError: false
+      idError: false,
+      inviteError: false
     };
 
     this.idChange = this.idChange.bind(this);
@@ -31,8 +33,7 @@ export class NewScreen extends Component {
 
   idChange(event) {
     this.setState({
-      idName: event.target.value,
-      showNameError: !isPatTa(event.target.value)
+      idName: event.target.value
     });
   }
 
@@ -42,7 +43,13 @@ export class NewScreen extends Component {
 
   onClickCreate() {
     const { props, state } = this;
-    if (!state.idName || !!state.showNameError) { return; }
+    if (!state.idName) {
+      this.setState({
+        idError: true,
+        inviteError: false
+      });
+      return;
+    }
 
     let station = `~${window.ship}/${state.idName}`;
     let actions = [
@@ -62,64 +69,130 @@ export class NewScreen extends Component {
       }
     ];
 
-    if (state.invites.length > 0) {
-      let aud = state.invites
-        .trim()
-        .split(",")
-        .map(t => t.trim().substr(1));
 
-      actions.push({
-        permit: {
-          nom: state.idName,
-          sis: aud,
-          inv: true
+    if (state.invites.length > 0) {
+
+      let aud = state.invites.split(',')
+        .map((mem) => mem.trim())
+        .map(deSig);
+
+      let isValid = true;
+      aud.forEach((mem) => {
+        if (!urbitOb.isValidPatp(`~${mem}`)) {
+          isValid = false;
         }
       });
 
-      actions.push({
-        phrase: {
-          aud: aud.map((aud) => `~${aud}/i`),
-          ses: [{
-            inv: {
-              inv: true,
-              cir: station
-            }
-          }]
+      if (isValid) {
+        actions.push({
+          permit: {
+            nom: state.idName,
+            sis: aud,
+            inv: true
+          }
+        });
+
+        actions.push({
+          phrase: {
+            aud: aud.map((aud) => `~${aud}/i`),
+            ses: [{
+              inv: {
+                inv: true,
+                cir: station
+              }
+            }]
+          }
+        });
+
+        if (this.textarea) {
+          this.textarea.value = '';
         }
+
+        this.setState({
+          inviteError: false,
+          idError: false,
+          success: true,
+          invites: ''
+        }, () => {
+          props.setSpinner(true);
+          props.api.chat(actions);
+        });
+
+      } else {
+        this.setState({
+          inviteError: true,
+          idError: false,
+          success: false
+        });
+      }
+    } else {
+      this.setState({
+        error: false,
+        success: true,
+        invites: ''
+      }, () => {
+        props.setSpinner(true);
+        props.api.chat(actions);
       });
     }
 
-    props.setSpinner(true);
-    props.api.chat(actions);
   }
 
   render() {
-    let nameErrorElem = this.state.showNameError ? (
-      <p className="nice-red label-regular mb2">Chat names may contain lowercase alphabetical characters, numbers, dots, or dashes.</p>
-    ) : (
-      <div></div>
-    );
-
-    let createClasses = "label-regular btn-font pointer underline bn";
-    if (!this.state.idName || !!this.state.showNameError) {
+    let createClasses = "db label-regular mt4 btn-font pointer underline bn";
+    if (!this.state.idName) {
       createClasses = createClasses + ' gray';
+    }
+
+    let idErrElem = (<span />);
+    if (this.state.idError) {
+      idErrElem = (
+        <span className="body-small inter nice-red db">
+          Chat must have a valid name.
+        </span>
+      );
+    }
+
+    let invErrElem = (<span />);
+    if (this.state.inviteError) {
+      invErrElem = (
+        <span className="body-small inter nice-red db">
+          Invites must be validly formatted ship names.
+        </span>
+      );
     }
 
     return (
       <div className="h-100 w-100 pa3 pt2 overflow-x-hidden flex flex-column">
-        <h2 className="mb3">Create a New Chat</h2>
-        <div>
-          <p className="label-regular fw-bold">Name</p>
-          <input 
-            className="body-large bn pa2 pl0 mb2 w-50"
+        <h2 className="mb3">Create</h2>
+        <div className="w-50">
+          <p className="body-medium db">Chat Name</p>
+          <p className="body-small db mt2 mb3">
+            Name this chat. Names must be lowercase and only contain letters, numbers, and dashes.
+          </p>
+          <textarea 
+            className="body-regular fw-normal ba pa2 db w-100"
             placeholder="secret-chat"
+            rows={1}
+            style={{
+              resize: 'none',
+            }}
             onChange={this.idChange} />
-          { nameErrorElem }
-          <p className="label-regular fw-bold">Invites</p>
-          <input 
-            className="body-large bn pa2 pl0 mb4 w-50"
+          {idErrElem}
+          <p className="body-medium mt3 db">Invites</p>
+          <p className="body-small db mt2 mb3">
+            Invite new participants to this chat.
+          </p>
+          <textarea
+            ref={ e => { this.textarea = e; } }
+            className="body-regular fw-normal ba pa2 mb2 db w-100"
             placeholder="~zod, ~bus"
+            style={{
+              resize: 'none',
+              height: 150
+            }}
             onChange={this.invChange} />
+          {invErrElem}
           <button
             onClick={this.onClickCreate.bind(this)}
             className={createClasses}

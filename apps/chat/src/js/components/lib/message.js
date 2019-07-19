@@ -70,20 +70,20 @@ export class Message extends Component {
     let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
     
     return (
-      <div className={"w-100 pl3 pr3 pt2 pb2 mb2 cf flex" + pending}
+      <div className={"w-100 pl3 pr3 pt2 pb2 cf flex" + pending}
         style={{
           minHeight: 'min-content'
         }}>
         <div className="fl mr2">
-          <Sigil ship={props.msg.aut} size={32} />
+          <Sigil ship={props.msg.aut} size={36} />
         </div>
-        <div className="fr" style={{ flexGrow: 1, marginTop: -4 }}>
+        <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
           <div className="hide-child">
             <p className="v-top label-small-mono gray dib mr3">
               ~{props.msg.aut}
             </p>
             <p className="v-top label-small-mono gray dib">{timestamp}</p>
-            <p className="v-top label-small-mono mr2 gray dib child">
+            <p className="v-top label-small-mono ml2 gray dib child">
               {datestamp}
             </p>
           </div>

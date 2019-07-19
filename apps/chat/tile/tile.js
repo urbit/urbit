@@ -43,6 +43,11 @@ export default class ChatTile extends Component {
       } 
     }
 
+    let invSuffix = (inviteNum === 1) ? (
+      <span>invite</span>
+    ) : (
+      <span>invites</span>
+    );
     let numInvElem = (inviteNum > 0) ? (
       <p className="absolute white"
          style={{
@@ -51,10 +56,19 @@ export default class ChatTile extends Component {
            fontSize: 16,
            lineHeight: '20px'
          }}>
-        <span className="nice-green">{inviteNum} </span>invites
+         <span style={{
+          color: '#2AA779'
+         }}>{inviteNum} </span>
+         {invSuffix}
       </p>
     ) : (
       <div />
+    );
+
+    let msgSuffix = (msgNum === 1) ? (
+      <span>new message</span>
+    ) : (
+      <span>new messages</span>
     );
     let numMsgElem = (msgNum > 0) ? (
       <p className="absolute white"
@@ -64,7 +78,10 @@ export default class ChatTile extends Component {
            fontSize: 16,
            lineHeight: '20px'
          }}>
-        <span className="nice-green">{msgNum} </span>new messages
+         <span style={{
+          color: '#2AA779'
+         }}>{msgNum} </span>
+         {msgSuffix}
       </p>
     ) : (
       <div />
