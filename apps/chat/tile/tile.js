@@ -44,9 +44,9 @@ export default class ChatTile extends Component {
     }
 
     let invSuffix = (inviteNum === 1) ? (
-      <span>invite</span>
+      <span>Invite</span>
     ) : (
-      <span>invites</span>
+      <span>Invites</span>
     );
     let numInvElem = (inviteNum > 0) ? (
       <p className="absolute white"
@@ -66,9 +66,9 @@ export default class ChatTile extends Component {
     );
 
     let msgSuffix = (msgNum === 1) ? (
-      <span>new message</span>
+      <span>New Message</span>
     ) : (
-      <span>new messages</span>
+      <span>New Messages</span>
     );
     let numMsgElem = (msgNum > 0) ? (
       <p className="absolute white"

@@ -19261,9 +19261,9 @@
                 }
 
                 let invSuffix = (inviteNum === 1) ? (
-                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 47}}, "invite")
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 47}}, "Invite")
                 ) : (
-                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}, "invites")
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 49}}, "Invites")
                 );
                 let numInvElem = (inviteNum > 0) ? (
                   react.createElement('p', { className: "absolute white" ,
@@ -19283,9 +19283,9 @@
                 );
 
                 let msgSuffix = (msgNum === 1) ? (
-                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 69}}, "new message" )
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 69}}, "New Message" )
                 ) : (
-                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}, "new messages" )
+                  react.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 71}}, "New Messages" )
                 );
                 let numMsgElem = (msgNum > 0) ? (
                   react.createElement('p', { className: "absolute white" ,
