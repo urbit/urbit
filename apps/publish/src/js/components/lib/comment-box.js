@@ -23,14 +23,28 @@ class PostButton extends Component {
 export class CommentBox extends Component {
   constructor(props){
     super(props);
+
+    this.commentChange = this.commentChange.bind(this);
+    this.commentHeight = 54;
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.enabled && this.props.enabled) {
-      if (this.textarea) {
-        this.textarea.value = '';
+      if (this.commentInput) {
+        this.commentInput.value = '';
+        this.commentInput.style.height = 54;
       }
     }
+  }
+
+  commentChange(evt) {
+    this.commentInput.style.height = 'auto';
+    let newHeight = (this.commentInput.scrollHeight < 54)
+      ? 54 : this.commentInput.scrollHeight+2;
+    this.commentInput.style.height = newHeight+'px';
+    this.commentHeight = this.commentInput.style.height;
+
+    this.props.action(evt);
   }
 
   render() {
@@ -45,12 +59,12 @@ export class CommentBox extends Component {
         </div>
         <div className="flex-col w-100">
           <textarea className={textClass}
-            ref={(el) => {this.textarea = el}}
-            style={{resize: "none"}}
+            ref={(el) => {this.commentInput = el}}
+            style={{resize: "none", height: this.commentHeight}}
             type="text"
             name="commentBody"
             defaultValue=''
-            onChange={this.props.action}
+            onChange={this.commentChange}
             disabled={(!this.props.enabled)}>
           </textarea>
           <PostButton 

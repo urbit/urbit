@@ -23,7 +23,7 @@ class SideTab extends Component {
             -> Post
           </p>
           <p className="pointer" onClick={this.props.discardPost}>
-            Discard post
+            Discard note
           </p>
         </div>
       );

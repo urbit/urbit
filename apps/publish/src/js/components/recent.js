@@ -154,9 +154,12 @@ export class Recent extends Component {
       );
     });
 
+    let invites = (this.props.invites.length > 0);
+    let unread = (this.props.unread.length > 0);
+
     return (
       <div>
-        <HM/>
+        <HM invites={invites} unread={unread}/>
         <div className="absolute w-100"
           style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
           <div className="flex-col">

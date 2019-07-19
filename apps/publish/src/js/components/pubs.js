@@ -58,9 +58,11 @@ export class Pubs extends Component {
       let cls = "w-100 flex " + bg;
       return (
         <div className={cls} key={i}>
-          <div className="fl body-regular-400" style={{flexBasis: 336}}>
+          <div className="fl body-regular-400 mw-336 w-336 pr3">
             <Link to={data.url}>
-               {data.title}
+              <p className="one-line mw-336">
+                {data.title}
+              </p>
             </Link>
           </div>
           <p className="fl body-regular-400" style={{flexBasis:336}}>
@@ -73,16 +75,18 @@ export class Pubs extends Component {
       );
     });
 
-
+    let invites = (this.props.invites.length > 0);
+    let unread = (this.props.unread.length > 0);
+    
     return (
       <div>
-        <HM/>
+        <HM invites={invites} unread={unread}/>
         <div className="absolute w-100" style={{top:124}}>
           <div className="flex-col">
             <div className="w-100">
               <h2 className="gray-50"
                 style={{marginLeft: 16, marginTop:32, marginBottom: 16}}>
-                My Blogs
+                Notebooks
               </h2>
             </div>
             <div className="w-100 flex">

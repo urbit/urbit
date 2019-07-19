@@ -3,44 +3,26 @@ import classnames from 'classnames';
 import { PostPreview } from '/components/lib/post-preview';
 import _ from 'lodash';
 import { PathControl } from '/components/lib/path-control';
+import { BlogData } from '/components/lib/blog-data';
+import { BlogNotes } from '/components/lib/blog-notes';
+import { BlogSubs } from '/components/lib/blog-subs';
+import { BlogSettings } from '/components/lib/blog-settings';
 import { withRouter } from 'react-router';
 import { NotFound } from '/components/not-found';
 import { Link } from 'react-router-dom';
 
 const PC = withRouter(PathControl);
 const NF = withRouter(NotFound);
+const BN = withRouter(BlogNotes);
+const BS = withRouter(BlogSettings)
 
-class Subscribe extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    if (this.props.actionType === 'subscribe') {
-      return (
-        <p className="label-small-2 b pointer"
-          onClick={this.props.subscribe}>
-          Subscribe
-        </p>
-      );
-    } else if (this.props.actionType === 'unsubscribe') {
-      return (
-        <p className="label-small-2 b pointer"
-          onClick={this.props.unsubscribe}>
-          Unsubscribe
-        </p>
-      );
-    } else {
-      return null;
-    }
-  }
-}
 
 export class Blog extends Component {
   constructor(props){
     super(props);
 
     this.state = {
+      view: 'notes',
       awaiting: false,
       postProps: [],
       blogTitle: '',
@@ -54,11 +36,17 @@ export class Blog extends Component {
 
     this.subscribe = this.subscribe.bind(this);
     this.unsubscribe = this.unsubscribe.bind(this);
+    this.viewSubs = this.viewSubs.bind(this);
+    this.viewSettings = this.viewSettings.bind(this);
+    this.viewNotes = this.viewNotes.bind(this);
+
+    this.blog = null;
   }
 
   handleEvent(diff) {
     if (diff.data.total) {
       let blog = diff.data.total.data;
+      this.blog = blog;
       this.setState({
         postProps: this.buildPosts(blog),
         blog: blog,
@@ -74,8 +62,11 @@ export class Blog extends Component {
 
       this.props.setSpinner(false);
     } else if (diff.data.remove) {
-      // XX TODO
-
+      if (diff.data.remove.post) {
+       // XX TODO 
+      } else {
+        this.props.history.push("/~publish/recent");
+      }
     }
   }
 
@@ -94,10 +85,16 @@ export class Blog extends Component {
       ?  _.get(this.props, `pubs[${blogId}]`, false)
       :  _.get(this.props, `subs[${ship}][${blogId}]`, false);
 
+
     if (!(blog) && (ship === window.ship)) {
       this.setState({notFound: true});
       return;
-    };
+    } else if (this.blog && !blog) {
+      this.props.history.push("/~publish/recent");
+      return;
+    }
+
+    this.blog = blog;
 
     if (this.state.awaitingSubscribe && blog) {
       this.setState({
@@ -138,6 +135,8 @@ export class Blog extends Component {
       this.props.api.bind(`/collection/${blogId}`, "PUT", ship, "publish",
         this.handleEvent.bind(this),
         this.handleError.bind(this));
+    } else {
+      this.blog = blog;
     }
   }
 
@@ -228,6 +227,21 @@ export class Blog extends Component {
     this.props.history.push("/~publish/recent");
   }
 
+  viewSubs() {
+    console.log("view subs");
+    this.setState({view: 'subs'});
+  }
+
+  viewSettings() {
+    console.log("view settings");
+    this.setState({view: 'settings'});
+  }
+
+  viewNotes() {
+    console.log("view notes");
+    this.setState({view: 'notes'});
+  }
+
   render() {
 
     if (this.state.notFound) {
@@ -239,49 +253,10 @@ export class Blog extends Component {
     } else {
       let data = this.buildData();
 
-      let posts = data.postProps.map((post, key) => {
-        return (
-          <PostPreview
-            post={post}
-            key={key}
-          />
-        );
-      });
-
-      if ((posts.length === 0) && (this.props.ship === window.ship)) {
-        let link = {
-          pathname: "/~publish/new-post",
-          state: {
-            lastPath: this.props.location.pathname,
-            lastMatch: this.props.match.path,
-            lastParams: this.props.match.params,
-          }
-        }
-        posts.push(
-          <div key={0} className="w-336 relative">
-            <hr className="gray-10" style={{marginBottom:18}}/>
-            <Link to={link}>
-              <p className="body-large b">
-                -> Create First Post
-              </p>
-            </Link>
-          </div>
-        );
-      }
-
       let contributors = `~${this.props.ship}`;
       let create = (this.props.ship === window.ship);
 
-      let subscribers = 'None';
       let subNum = _.get(data.blog, 'subscribers.length', 0);
-
-      if (subNum === 1) {
-        subscribers = `~${data.blog.subscribers[0]}`;
-      } else if (subNum === 2) {
-        subscribers = `~${data.blog.subscribers[0]} and 1 other`;
-      } else if (subNum > 2) {
-        subscribers = `~${data.blog.subscribers[0]} and ${subNum-1} others`;
-      }
 
       let foreign = _.get(this.props,
         `subs[${this.props.ship}][${this.props.blogId}]`, false);
@@ -293,38 +268,101 @@ export class Blog extends Component {
         actionType = 'unsubscribe';
       }
 
-      return (
-        <div>
-          <PC pathData={data.pathData} create={create}/>
-          <div className="absolute w-100"
-            style={{top:124, marginLeft: 16, marginRight: 16, marginTop: 32}}>
-            <div className="flex-col">
-              <h2>{data.blogTitle}</h2>
-              <div className="flex" style={{marginTop: 22}}>
-                <div className="flex-col" style={{flexBasis: 160, marginRight:16}}>
-                  <p className="gray-50 label-small-2 b">Host</p>
-                  <p className="label-small-2">{data.blogHost}</p>
-                </div>
-                <div style={{flexBasis: 160, marginRight:16}}>
-                  <p className="gray-50 label-small-2 b">Contributors</p>
-                  <p className="label-small-2">{contributors}</p>
-                </div>
-                <div style={{flexBasis: 160, marginRight: 16}}>
-                  <p className="gray-50 label-small-2 b">Subscribers</p>
-                  <p className="label-small-2">{subscribers}</p>
-                  <Subscribe actionType={actionType}
+      let viewSubs = (this.props.ship === window.ship)
+        ? this.viewSubs
+        : null;
+
+      let viewSettings = (this.props.ship === window.ship)
+        ? this.viewSettings
+        : null;
+      
+      if (this.state.view === 'notes') {
+        return (
+          <div>
+            <PC pathData={data.pathData} create={create}/>
+            <div className="absolute w-100"
+              style={{top:124, paddingLeft: 16, paddingRight: 16, paddingTop: 32}}>
+              <div className="flex-col">
+                <h2 style={{wordBreak: "break-word"}}>
+                  {data.blogTitle}
+                </h2>
+                <div className="flex" style={{marginTop: 22}}>
+                  <BlogData
+                    host={this.props.ship}
+                    viewSubs={viewSubs}
+                    subNum={subNum}
+                    viewSettings={viewSettings}
+                    subscribeAction={actionType}
                     subscribe={this.subscribe}
                     unsubscribe={this.unsubscribe}
                   />
                 </div>
-              </div>
-              <div className="flex flex-wrap" style={{marginTop: 48}}>
-                {posts}
+                <BN ship={this.props.ship} posts={data.postProps} />
               </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      } else if (this.state.view === 'subs') {
+        let subscribers = _.get(data, 'blog.subscribers', []);
+        return (
+          <div>
+            <PC pathData={data.pathData} create={create}/>
+            <div className="absolute w-100"
+              style={{top:124, paddingLeft: 16, paddingRight: 16, paddingTop: 32}}>
+              <div className="flex-col">
+                <h2 style={{wordBreak: "break-word"}}>
+                  {data.blogTitle}
+                </h2>
+                <div className="flex" style={{marginTop: 22}}>
+                  <BlogData
+                    host={this.props.ship}
+                    viewSubs={viewSubs}
+                    subNum={subNum}
+                    viewSettings={viewSettings}
+                    subscribeAction={actionType}
+                    subscribe={this.subscribe}
+                    unsubscribe={this.unsubscribe}
+                  />
+                </div>
+                <BlogSubs back={this.viewNotes}
+                  subs={subscribers}
+                  blogId={this.props.blogId}
+                  title={data.blogTitle}
+                  api={this.props.api}/>
+              </div>
+            </div>
+          </div>
+        );
+      } else if (this.state.view === 'settings') {
+        return (
+          <div>
+            <PC pathData={data.pathData} create={create}/>
+            <div className="absolute w-100"
+              style={{top:124, paddingLeft: 16, paddingRight: 16, paddingTop: 32}}>
+              <div className="flex-col">
+                <h2 style={{wordBreak: "break-word"}}>
+                  {data.blogTitle}
+                </h2>
+                <div className="flex" style={{marginTop: 22}}>
+                  <BlogData
+                    host={this.props.ship}
+                    viewSubs={viewSubs}
+                    subNum={subNum}
+                    viewSettings={viewSettings}
+                    subscribeAction={actionType}
+                    subscribe={this.subscribe}
+                    unsubscribe={this.unsubscribe}
+                  />
+                </div>
+                <BS back={this.viewNotes}
+                  blogId={this.props.blogId}
+                  title={data.blogTitle}
+                  api={this.props.api}/>
+              </div>
+            </div>
+          </div>
+        );
+      }
     }
   }
 }

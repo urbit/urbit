@@ -410,7 +410,7 @@ export class Post extends Component {
           <div className="absolute w-100" style={{top:124}}>
             <div className="mw-688 center mt4 flex-col" style={{flexBasis: 688}}>
               <Link to={blogLink}>
-                <p className="body-regular">
+                <p className="body-regular one-line mw-688">
                   {blogLinkText}
                 </p>
               </Link>

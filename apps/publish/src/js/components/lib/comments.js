@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Comment } from '/components/lib/comment';
 import { CommentBox } from '/components/lib/comment-box';
-import { Sigil } from '/components/lib/icons/sigil';
 
 export class Comments extends Component {
   constructor(props){

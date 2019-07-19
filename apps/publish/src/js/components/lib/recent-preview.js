@@ -57,7 +57,8 @@ export class RecentPreview extends Component {
             {comments}
           </p>
           <Link to={collLink}>
-            <p className="body-regular gray-50">
+            <p className="body-regular gray-50 one-line mw-336"
+              style={{WebkitBoxOrient: "vertical"}}>
               {this.props.post.collectionTitle}
             </p>
           </Link>
