@@ -10,9 +10,11 @@ import Test.Tasty.TH
 import Control.Concurrent
 
 import qualified LogTests
+import qualified DeriveNounTests
 
 main :: IO ()
 main =
   defaultMain $ testGroup "Urbit"
     [ LogTests.tests
+    , DeriveNounTests.tests
     ]

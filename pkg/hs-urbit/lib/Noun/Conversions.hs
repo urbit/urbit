@@ -285,8 +285,8 @@ instance FromNoun Bool where
     where
       parse n =
         parseNoun n >>= \case
-          (0::Atom) -> pure False
-          1         -> pure True
+          (0::Atom) -> pure True
+          1         -> pure False
           _         -> fail "Atom is not a valid loobean"
 
 

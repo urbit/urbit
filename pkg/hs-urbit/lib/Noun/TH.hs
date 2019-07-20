@@ -19,9 +19,10 @@ import qualified Data.Char as C
 type ConInfo = (Name, [Type])
 
 data Shape
-    = Tup ConInfo
-    | Enu [Name]
-    | Sum [ConInfo]
+    = Vod
+    | Tup ConInfo
+    | Enu [(String, Name)]
+    | Sum [(String, ConInfo)]
   deriving (Eq, Ord, Show)
 
 typeShape :: Name -> Q Shape
@@ -35,17 +36,35 @@ typeShape tyName = do
        _                               -> fail "not type"
 
     let allEmpty = all (null . snd) cs
+        prefix   = getPrefix (nameStr . fst <$> cs)
 
     if allEmpty
-    then pure $ Enu $ fst <$> cs
+    then pure $ Enu $ tagName prefix . fst <$> cs
     else
       case cs of
-        []  -> pure $ Enu []
+        []  -> pure $ Vod
         [c] -> pure $ Tup c
-        cs  -> pure $ Sum cs
+        cs  -> pure $ Sum (tagConInfo prefix <$> cs)
 
   where
     badSynonym = "deriveFunctor: tyCon may not be a type synonym."
+
+    tagConInfo :: Int -> ConInfo -> (String, ConInfo)
+    tagConInfo pre ci@(nm, _) = (tagString pre nm, ci)
+
+    tagName :: Int -> Name -> (String, Name)
+    tagName pre n = (tagString pre n, n)
+
+    tyStr   = nameStr tyName
+    tyAbbrv = filter C.isUpper tyStr
+
+    typePrefixed  = (tyStr `isPrefixOf`)
+    abbrvPrefixed = (tyAbbrv `isPrefixOf`)
+
+    getPrefix :: [String] -> Int
+    getPrefix cs | all typePrefixed cs  = length tyStr
+    getPrefix cs | all abbrvPrefixed cs = length tyAbbrv
+    getPrefix _                         = 0
 
     unpackCon :: Con -> ConInfo
     unpackCon = \case
@@ -65,7 +84,8 @@ deriveNoun n = (<>) <$> deriveToNoun n <*> deriveFromNoun n
 
 deriveToNoun :: Name -> Q [Dec]
 deriveToNoun tyName = do
-    body <- typeShape tyName <&> \case Tup con  -> tupToNoun con
+    body <- typeShape tyName <&> \case Vod      -> vodToNoun
+                                       Tup con  -> tupToNoun con
                                        Enu cons -> enumToAtom cons
                                        Sum cons -> sumToNoun cons
 
@@ -78,35 +98,43 @@ deriveToNoun tyName = do
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
-    body <- typeShape tyName <&> \case Tup con  -> tupFromNoun con
+    body <- typeShape tyName <&> \case Vod      -> vodFromNoun
+                                       Tup con  -> tupFromNoun con
                                        Enu cons -> enumFromAtom cons
                                        Sum cons -> sumFromNoun cons
 
-    let tag = LitE $ StringL $ nameStr tyName
+    let errTag = LitE $ StringL $ nameStr tyName
 
     [d|
         instance FromNoun $(conT tyName) where
-            parseNoun = named $(pure tag) . $(pure body)
+            parseNoun = named $(pure errTag) . $(pure body)
       |]
 
-enumFromAtom :: [Name] -> Exp
-enumFromAtom nms = LamE [VarP x] body
+enumFromAtom :: [(String, Name)] -> Exp
+enumFromAtom cons = LamE [VarP x] body
   where
     (x, c)    = (mkName "x", mkName "c")
     getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE x)
     examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
-    matches   = mkMatch <$> nms
+    matches   = mkMatch <$> cons
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
     body      = DoE [getCord, examine]
     matchFail = LitE $ StringL ("Expected one of: " <> possible)
-    possible  = intercalate " " (('%':) . tagString <$> nms)
-    mkMatch n = Match (ConP 'Cord [LitP (tagLit n)])
-                  (NormalB $ AppE (VarE 'pure) (ConE n))
-                  []
+    possible  = intercalate " " (('%':) . fst <$> cons)
+    mkMatch   = \(tag, nm) ->
+      Match (ConP 'Cord [LitP $ StringL tag])
+            (NormalB $ AppE (VarE 'pure) (ConE nm))
+            []
 
 applyE :: Exp -> [Exp] -> Exp
 applyE e []     = e
 applyE e (a:as) = applyE (AppE e a) as
+
+vodFromNoun :: Exp
+vodFromNoun = LamE [WildP] body
+  where
+    body = AppE (VarE 'fail)
+         $ LitE $ StringL "Can't FromNoun on uninhabited data type"
 
 tupFromNoun :: ConInfo -> Exp
 tupFromNoun (n, tys) = LamE [VarP x] body
@@ -117,14 +145,14 @@ tupFromNoun (n, tys) = LamE [VarP x] body
     convert = NoBindS $ AppE (VarE 'pure) $ applyE (ConE n) (VarE <$> vars)
     getTup  = BindS (TupP $ VarP <$> vars) $ AppE (VarE 'parseNoun) (VarE x)
 
-unexpectedTag :: [Name] -> Exp -> Exp
+unexpectedTag :: [String] -> Exp -> Exp
 unexpectedTag expected got =
     applyE (VarE 'mappend) [LitE (StringL prefix), got]
   where
-    possible  = intercalate " " (('%':) . tagString <$> expected)
+    possible  = intercalate " " (('%':) <$> expected)
     prefix    = "Expected one of: " <> possible <> " but got %"
 
-sumFromNoun :: [ConInfo] -> Exp
+sumFromNoun :: [(String, ConInfo)] -> Exp
 sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
   where
     (x, h, t, c) = (mkName "x", mkName "h", mkName "t", mkName "c")
@@ -139,8 +167,9 @@ sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
             $ CaseE (VarE c) (matches ++ [fallback])
 
     matches = mkMatch <$> cons
-    mkMatch = \(n, tys) -> let body = AppE (tupFromNoun (n, tys)) (VarE t)
-                           in Match (LitP $ tagLit n) (NormalB body) []
+    mkMatch = \(tag, (n, tys)) ->
+                let body = AppE (tupFromNoun (n, tys)) (VarE t)
+                in Match (LitP $ StringL tag) (NormalB body) []
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
     matchFail = unexpectedTag (fst <$> cons)
@@ -150,15 +179,13 @@ sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
 
 --------------------------------------------------------------------------------
 
-tagString :: Name -> String
-tagString = hsToHoon . nameStr
+tagString :: Int -> Name -> String
+tagString prefix = hsToHoon . drop prefix . nameStr
 
 nameStr :: Name -> String
 nameStr (Name (OccName n) _) = n
 
-tagLit :: Name -> Lit
-tagLit = StringL . tagString
-
+{-
 tagNoun :: Name -> Exp
 tagNoun = AppE (VarE 'toNoun)
         . AppE (ConE 'Cord)
@@ -169,19 +196,29 @@ tagNoun = AppE (VarE 'toNoun)
   where
     nameStr :: Name -> String
     nameStr (Name (OccName n) _) = n
+-}
 
-tagTup :: Name -> [Name] -> Exp
-tagTup c args = AppE (VarE 'toNoun) $ TupE (tagNoun c : fmap VarE args)
+tagNoun' :: String -> Exp
+tagNoun' = AppE (VarE 'toNoun)
+         . AppE (ConE 'Cord)
+         . LitE
+         . StringL
+
+tagTup :: String -> [Name] -> Exp
+tagTup tag args = AppE (VarE 'toNoun) $ TupE (tagNoun' tag : fmap VarE args)
 
 tup :: [Name] -> Exp
 tup = AppE (VarE 'toNoun) . TupE . fmap VarE
 
 --------------------------------------------------------------------------------
 
-enumToAtom :: [Name] -> Exp
+vodToNoun :: Exp
+vodToNoun = enumToAtom []
+
+enumToAtom :: [(String, Name)] -> Exp
 enumToAtom cons =
-    LamCaseE $ cons <&> \nm ->
-                 Match (ConP nm []) (NormalB $ tagNoun nm) []
+    LamCaseE $ cons <&> \(tag, nm) ->
+                 Match (ConP nm []) (NormalB $ tagNoun' tag) []
 
 tupToNoun :: ConInfo -> Exp
 tupToNoun cons = LamCaseE [mkMatch cons]
@@ -192,14 +229,15 @@ tupToNoun cons = LamCaseE [mkMatch cons]
             params = VarP <$> vars
             body   = tup vars
 
-sumToNoun :: [ConInfo] -> Exp
+sumToNoun :: [(String, ConInfo)] -> Exp
 sumToNoun cons = LamCaseE (cons <&> mkMatch)
   where
-    mkMatch :: ConInfo -> Match
-    mkMatch (nm, tys) = Match (ConP nm params) (NormalB body) []
+    mkMatch :: (String, ConInfo) -> Match
+    mkMatch (tag, (nm, tys)) =
+        Match (ConP nm params) (NormalB body) []
       where vars   = (zip tys ['a'..]) <&> (mkName . singleton . snd)
             params = VarP <$> vars
-            body   = tagTup nm vars
+            body   = tagTup tag vars
 
 --------------------------------------------------------------------------------
 

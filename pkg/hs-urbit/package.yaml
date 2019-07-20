@@ -12,7 +12,7 @@ library:
     - -O2
 
 tests:
-  tests:
+  urbit-tests:
     source-dirs: test
     main: Main.hs
     dependencies: urbit
@@ -99,6 +99,7 @@ default-extensions:
   - NoImplicitPrelude
   - NumericUnderscores
   - OverloadedStrings
+  - PackageImports
   - PartialTypeSignatures
   - PatternSynonyms
   - QuasiQuotes
