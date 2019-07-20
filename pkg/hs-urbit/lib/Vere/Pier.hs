@@ -124,7 +124,7 @@ performCommonPierStartup serf computeQ persistQ releaseQ logState = do
   driverThreads <- for ioDrivers $ \x -> do
     startDriver x (writeTQueue computeQ)
 
-  -- TODO: Don't do a bunch of extra work; we send all events to all drivers
+  -- TODO: Don't do a bunch of extra work; we send all effects to all drivers
   portingThread <- async $ do
     forever $ do
       r <- atomically (readTQueue releaseQ)
@@ -136,3 +136,52 @@ performCommonPierStartup serf computeQ persistQ releaseQ logState = do
 
   pure (Pier{..})
 -}
+
+
+-- Persist Thread --------------------------------------------------------------
+
+data PersistExn = BadEventId EventId EventId
+  deriving Show
+
+instance Exception PersistExn where
+  displayException (BadEventId expected got) =
+    unlines [ "Out-of-order event id send to persist thread."
+            , "\tExpected " <> show expected <> " but got " <> show got
+            ]
+
+runPersist :: EventLog
+           -> TQueue (Writ [Eff])
+           -> (Writ [Eff] -> STM ())
+           -> Acquire ()
+runPersist log inpQ out = do
+    mkAcquire runThread cancelWait
+    pure ()
+  where
+    cancelWait :: Async () -> IO ()
+    cancelWait tid = cancel tid >> wait tid
+
+    runThread :: IO (Async ())
+    runThread = asyncBound $ forever $ do
+        writs  <- atomically (toNullable <$> getBatchFromQueue)
+        events <- validateWritsAndGetAtom writs
+        Log.appendEvents log events
+        atomically $ traverse_ out writs
+
+    validateWritsAndGetAtom :: [Writ [Eff]] -> IO (Vector Atom)
+    validateWritsAndGetAtom writs = do
+        expect <- Log.nextEv log
+        fmap fromList
+            $ for (zip [expect..] writs)
+            $ \(expectedId, Writ{..}) -> do
+                unless (expectedId == eventId) $
+                    throwIO (BadEventId expectedId eventId)
+                pure (unJam event)
+
+    getBatchFromQueue :: STM (NonNull [Writ [Eff]])
+    getBatchFromQueue =
+        readTQueue inpQ >>= go . singleton
+      where
+        go acc =
+          tryReadTQueue inpQ >>= \case
+            Nothing   -> pure (reverse acc)
+            Just item -> go (item <| acc)

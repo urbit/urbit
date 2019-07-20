@@ -15,9 +15,8 @@ import Control.Concurrent (threadDelay)
 import System.Directory   (removeFile, doesFileExist)
 import Text.Show.Pretty   (pPrint)
 
-import qualified Vere.Log     as Log
-import qualified Vere.Persist as Persist
-import qualified Vere.Pier    as Pier
+import qualified Vere.Log  as Log
+import qualified Vere.Pier as Pier
 
 --------------------------------------------------------------------------------
 
@@ -114,25 +113,30 @@ tryCopyLog = do
   let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"
       falselogPath = "/Users/erg/src/urbit/zod/.urb/falselog2/"
 
+  persistQ <- newTQueueIO
+  releaseQ <- newTQueueIO
   (ident, nextEv, events) <-
-      with (Log.existing logPath) $ \log -> do
-          persistQ <- newTQueueIO
-          releaseQ <- newTQueueIO
-          persist  <- Persist.start log persistQ (writeTQueue releaseQ)
-          ident    <- pure $ Log.identity log
-          events   <- runConduit (Log.streamEvents log 1 .| consume)
-          nextEv   <- Log.nextEv log
+      with (do { log <- Log.existing logPath
+               ; Pier.runPersist log persistQ (writeTQueue releaseQ)
+               ; pure log
+               })
+        \log -> do
+          ident  <- pure $ Log.identity log
+          events <- runConduit (Log.streamEvents log 1 .| consume)
+          nextEv <- Log.nextEv log
           pure (ident, nextEv, events)
 
   print ident
   print nextEv
   print (length events)
 
-  with (Log.new falselogPath ident) $ \log2 -> do
-      persistQ2 <- newTQueueIO
-      releaseQ2 <- newTQueueIO
-      persist2  <- Persist.start log2 persistQ2 (writeTQueue releaseQ2)
-
+  persistQ2 <- newTQueueIO
+  releaseQ2 <- newTQueueIO
+  with (do { log <- Log.new falselogPath ident
+           ; Pier.runPersist log persistQ2 (writeTQueue releaseQ2)
+           ; pure log
+           })
+    $ \log2 -> do
       let writs = zip [1..] events <&> \(id, a) ->
                       Writ id Nothing (Jam a) []
 

@@ -14,6 +14,9 @@ import qualified Vere.Http.Server as Server
 newtype ShipId = ShipId (Ship, Bool)
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
+newtype Octs = Octs ByteString
+  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
+
 newtype FileOcts = FileOcts ByteString
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
@@ -91,9 +94,6 @@ data Order
     | OSave EventId
     | OWork Job
   deriving (Eq, Ord, Show)
-
-newtype Octs = Octs ByteString
-  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
 
 data ResponseHeader = ResponseHeader
     { rhStatus  :: Word
