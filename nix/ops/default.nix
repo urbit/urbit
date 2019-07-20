@@ -48,4 +48,9 @@ rec {
     pier = zod;
   };
 
+  ivory = import ./ivory {
+    inherit arvo pkgs tlon deps debug;
+    pier = zod;
+  };
+
 }
