@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
@@ -123,10 +125,18 @@ data Lenient a
 
 instance FromNoun a => FromNoun (Lenient a) where
   parseNoun n =
-    (GoodParse <$> parseNoun n) <|> pure (FailParse n)
+      (GoodParse <$> parseNoun n) <|> fallback
+    where
+      fallback =
+        fromNounErr n & \case
+          Right x  -> pure (GoodParse x)
+          Left err -> do
+            traceM ("LENIENT.FromNoun: " <> show err)
+            pure (FailParse n)
 
 instance ToNoun a => ToNoun (Lenient a) where
-  toNoun (FailParse n) = n
+  toNoun (FailParse n) = trace ("LENIENT.ToNoun: " <> show n)
+                           n
   toNoun (GoodParse x) = toNoun x
 
 

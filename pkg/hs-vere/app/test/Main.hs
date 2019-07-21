@@ -50,7 +50,7 @@ wipeSnapshot shipPath = do
 tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
 tryBootFromPill pillPath shipPath ship = do
     wipeSnapshot shipPath
-    with (Pier.booted pillPath shipPath allSerfFlags ship) $ \(serf, log, ss) -> do
+    with (Pier.booted pillPath shipPath serfFlags ship) $ \(serf, log, ss) -> do
         print "lul"
         print ss
         threadDelay 500000
@@ -59,7 +59,7 @@ tryBootFromPill pillPath shipPath ship = do
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
-    with (Pier.resumed shipPath allSerfFlags) $ \(serf, log, ss) -> do
+    with (Pier.resumed shipPath serfFlags) $ \(serf, log, ss) -> do
         print ss
         threadDelay 500000
         shutdown serf 0 >>= print
@@ -118,13 +118,23 @@ tryParseEvents dir first = do
 
 --------------------------------------------------------------------------------
 
-allSerfFlags :: Serf.Flags
-allSerfFlags = [minBound .. maxBound]
+serfFlags :: Serf.Flags
+serfFlags = [Serf.Hashless, Serf.DryRun] -- [Serf.Verbose, Serf.Trace]
+
+    -- = DebugRam
+    -- | DebugCpu
+    -- | CheckCorrupt
+    -- | CheckFatal
+    -- | Verbose
+    -- | DryRun
+    -- | Quiet
+    -- | Hashless
+    -- | Trace
 
 collectedFX :: FilePath -> Acquire ()
 collectedFX top = do
     log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run (Serf.Config top allSerfFlags)
+    serf   <- Serf.run (Serf.Config top serfFlags)
     liftIO (Serf.collectFX serf log)
 
 collectAllFx :: FilePath -> IO ()
@@ -137,11 +147,11 @@ collectAllFx top = do
 
 main :: IO ()
 main = do
-    let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
+    let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 
-    collectAllFx "/home/benjamin/r/urbit/testnet-zod"
+    collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
 
     -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
     -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1

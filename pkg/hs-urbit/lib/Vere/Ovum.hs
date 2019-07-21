@@ -358,7 +358,7 @@ deriveNoun ''ZuseOvum
     And then proceed with parsing as usual.
 -}
 data Ovum
-    = OvumBlip Blip
+    = OvumBlip (Lenient Blip)
     | OvumVane Vane
   deriving (Eq, Ord, Show)
 

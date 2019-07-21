@@ -60,6 +60,11 @@ compileFlags :: [Flag] -> Word
 compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
 
 data Config = Config FilePath [Flag]
+  deriving (Show)
+
+debug msg = putStrLn ("[DEBUG]\t" <> msg)
+
+serf msg = putStrLn ("[SERF]\t" <> msg)
 
 
 -- Types -----------------------------------------------------------------------
@@ -124,8 +129,8 @@ deriveNoun ''Plea
 
 printTank :: Word32 -> Tank -> IO ()
 printTank pri = \case
-  Leaf (Tape s) -> traceM ("[SERF]\t[tank] " <> s)
-  t             -> traceM ("[SERF]\t[tank] " <> show (pri, t))
+  Leaf (Tape s) -> serf ("[tank] " <> pack s)
+  t             -> serf ("[tank] " <> tshow (pri, t))
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
@@ -145,7 +150,9 @@ run :: Config -> Acquire Serf
 run config = mkAcquire (startUp config) tearDown
 
 startUp :: Config -> IO Serf
-startUp (Config pierPath flags) = do
+startUp conf@(Config pierPath flags) = do
+    debug "STARTING SERF"
+    debug (tshow conf)
     (Just i, Just o, Just e, p) <- createProcess pSpec
     ss <- newEmptyMVar
     et <- async (readStdErr e)
@@ -154,7 +161,7 @@ startUp (Config pierPath flags) = do
     diskKey = ""
     config  = show (compileFlags flags)
     args    = [pierPath, diskKey, config]
-    pSpec   = (proc "urbit-worker" args)
+    pSpec   = (proc "urbit-debug-worker" args)
                 { std_in = CreatePipe
                 , std_out = CreatePipe
                 , std_err = CreatePipe
@@ -164,16 +171,16 @@ readStdErr :: Handle -> IO ()
 readStdErr h =
     untilEOFExn $ do
         ln <- IO.hGetLine h
-        putStrLn ("[SERF]\t[stderr] " <> T.strip (pack ln))
+        serf ("[stderr] " <> T.strip (pack ln))
   where
-    eofMsg = "[DEBUG]\t[Serf.readStdErr] serf stderr closed"
+    eofMsg = "[Serf.readStdErr] serf stderr closed"
 
     untilEOFExn :: IO () -> IO ()
     untilEOFExn act = loop
       where
         loop = do
           IO.tryIOError act >>= \case
-            Left exn | IO.isEOFError exn -> do putStrLn eofMsg
+            Left exn | IO.isEOFError exn -> do debug eofMsg
                                                pure ()
             Left exn                     -> IO.ioError exn
             Right ()                     -> loop
@@ -183,11 +190,11 @@ tearDown serf = do
     race_ waitThenKill (shutdownAndWait serf 0)
   where
     killedMsg =
-      "[DEBUG] [Serf.tearDown]: Serf didn't die when asked, killing it"
+      "[Serf.tearDown]: Serf didn't die when asked, killing it"
 
     waitThenKill = do
         threadDelay 1000000
-        putStrLn killedMsg
+        debug killedMsg
         terminateProcess (process serf)
 
 waitForExit :: Serf -> IO ExitCode
@@ -218,7 +225,7 @@ sendLen s i = do
 
 sendOrder :: Serf -> Order -> IO ()
 sendOrder w o = do
-  traceM ("[DEBUG]\t[Serf.sendOrder.toNoun] " <> show o)
+  debug ("[Serf.sendOrder.toNoun] " <> tshow o)
   n <- evaluate (toNoun o)
 
   case o of
@@ -227,21 +234,27 @@ sendOrder w o = do
     _  -> do
       pure ()
 
-  traceM ("[DEBUG] [Serf.sendOrder.jam]")
-  j <- evaluate (jam n)
-  traceM ("[DEBUG] [Serf.sendOrder.send]")
-  sendAtom w j
-  traceM ("[DEBUG] [Serf.sendOrder.sent]")
+  debug ("[Serf.sendOrder.jam]")
+  bs <- evaluate (jamBS n)
+  debug ("[Serf.sendOrder.send]: " <> tshow (length bs))
+  sendBytes w bs
+  debug ("[Serf.sendOrder.sent]")
 
-sendAtom :: Serf -> Atom -> IO ()
-sendAtom s a = do
-    let bs = unpackAtom a
+sendBytes :: Serf -> ByteString -> IO ()
+sendBytes s bs = do
+    debug "sendLen"
     sendLen s (length bs)
-    hPut (sendHandle s) bs
+    debug "hFlush"
     hFlush (sendHandle s)
-  where
-    unpackAtom :: Atom -> ByteString
-    unpackAtom = view atomBytes
+    debug "Flushed"
+
+    threadDelay 1 -- TODO WHY DOES THIS MATTER?????
+
+    debug "hPut"
+    hPut (sendHandle s) bs
+    debug "hFlush"
+    hFlush (sendHandle s)
+    debug "Flushed"
 
 recvLen :: Serf -> IO Word64
 recvLen w = do
@@ -264,7 +277,10 @@ recvAtom w = do
     packAtom = view (from atomBytes)
 
 cordString :: Cord -> String
-cordString (Cord bs) = unpack $ T.strip $ decodeUtf8 bs
+cordString = unpack . cordText
+
+cordText :: Cord -> Text
+cordText = T.strip . decodeUtf8 . unCord
 
 
 --------------------------------------------------------------------------------
@@ -280,17 +296,17 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
-  traceM ("[DEBUG]\t[Vere.Serf.recvPlea] waiting")
+  debug ("[Vere.Serf.recvPlea] waiting")
   a <- recvAtom w
-  traceM ("[DEBUG]\t[Vere.Serf.recvPlea] got atom")
+  debug ("[Vere.Serf.recvPlea] got atom")
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
-  case p of PStdr e msg   -> do traceM ("[SERF]\t[stdr-plea] " <> cordString msg)
+  case p of PStdr e msg   -> do serf ("[stdr-plea] " <> cordText msg)
                                 recvPlea w
             PSlog _ pri t -> do printTank pri t
                                 recvPlea w
-            _             -> do traceM ("[DEBUG] [Serf.recvPlea] Got " <> show p)
+            _             -> do debug ("[Serf.recvPlea] Got " <> tshow p)
                                 pure p
 
 {-
@@ -313,7 +329,7 @@ sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
-    traceM ("[DEBUG]\t[Vere.Serf.sendWork] Got response")
+    debug ("[Vere.Serf.sendWork] Got response")
     pure res
   where
     eId = jobId job
@@ -333,7 +349,7 @@ sendWork w job =
       PPlay p       -> throwIO (UnexpectedPlay eId p)
       PDone i m o   -> produce (SerfState (i+1) m, o)
       PWork work    -> replace (DoWork work)
-      PStdr _ cord  -> traceM ("[SERF]\t[stdr-plea] " <> cordString cord) >> loop
+      PStdr _ cord  -> serf ("[stdr-plea] " <> cordText cord) >> loop
       PSlog _ pri t -> printTank pri t >> loop
 
 
@@ -406,9 +422,9 @@ replay serf log = do
 toJobs :: LogIdentity -> EventId -> ConduitT ByteString Job IO ()
 toJobs ident eId =
     await >>= \case
-        Nothing -> traceM "[toJobs] no more jobs" >> pure ()
+        Nothing -> putStrLn "[toJobs] no more jobs" >> pure ()
         Just at -> do yield =<< liftIO (fromAtom at)
-                      traceM ("[toJobs] " <> (show eId))
+                      putStrLn ("[toJobs] " <> tshow eId)
                       toJobs ident (eId+1)
   where
     isNock = trace ("[toJobs] " <> show (eId, lifecycleLen ident))

@@ -42,7 +42,7 @@ data Eff
     | ESync Noun
     | ETerm Noun
     | EThou Noun
-    | ETurf (Maybe (PutDel, [Text])) -- TODO Unsure
+    | ETurf (Nullable (PutDel, [Text])) -- TODO Unsure
     | EVega Noun
     | EWest Noun
     | EWoot Noun
