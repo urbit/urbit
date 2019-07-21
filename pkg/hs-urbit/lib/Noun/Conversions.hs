@@ -121,7 +121,18 @@ instance (FromNoun a, FromNoun c) => FromNoun (AtomCell a c) where
     This is distinct from `unit`, since there is no tag on the non-atom
     case, therefore `a` must always be cell type.
 -}
-type Nullable a = AtomCell () a
+data Nullable a = None | Some a
+  deriving (Eq, Ord, Show)
+
+instance ToNoun a => ToNoun (Nullable a) where
+  toNoun = toNoun . \case None   -> ACAtom ()
+                          Some x -> ACCell x
+
+instance FromNoun a => FromNoun (Nullable a) where
+  parseNoun n = named "Nullable" $ do
+    parseNoun n >>= \case
+      (ACAtom ()) -> pure None
+      (ACCell x)  -> pure (Some x)
 
 
 -- Char ------------------------------------------------------------------------
@@ -262,7 +273,7 @@ newtype Ship = Ship Word128 -- @p
 -- Path ------------------------------------------------------------------------
 
 newtype Path = Path [Knot]
-  deriving newtype (Eq, Ord, Semigroup, Monoid, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Semigroup, Monoid)
 
 instance Show Path where
   show (Path ks) = show $ intercalate "/" ("" : ks)
@@ -350,6 +361,21 @@ instance FromNoun a => FromNoun (Maybe a) where
       Cell n        _   -> unexpected ("cell with head-atom " <> show n)
     where
       unexpected s = fail ("Expected unit value, but got " <> s)
+
+
+-- Either is `each` ------------------------------------------------------------
+
+instance (ToNoun a, ToNoun b) => ToNoun (Either a b) where
+  toNoun (Left x)  = Cell (Atom 0) (toNoun x)
+  toNoun (Right x) = Cell (Atom 1) (toNoun x)
+
+instance (FromNoun a, FromNoun b) => FromNoun (Either a b) where
+  parseNoun n = named "Either" $ do
+      (Atom tag, v) <- parseNoun n
+      case tag of
+        0 -> named "%|" (Left <$> parseNoun v)
+        1 -> named "%&" (Right <$> parseNoun v)
+        n -> fail ("Each has invalid head-atom: " <> show n)
 
 
 -- Tuple Conversions -----------------------------------------------------------
@@ -456,3 +482,8 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     (p, tail)                   <- parseNoun n
     (q, r, s, t, u, v, w, x, y) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w, x, y)
+
+
+-- Derived Instances -----------------------------------------------------------
+
+deriveNoun ''Path

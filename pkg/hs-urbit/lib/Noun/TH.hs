@@ -101,11 +101,11 @@ deriveToNoun tyName = do
 
 --------------------------------------------------------------------------------
 
-addErrTag :: Name -> Exp -> Exp
-addErrTag nm exp =
+addErrTag :: String -> Exp -> Exp
+addErrTag tag exp =
     InfixE (Just $ AppE (VarE 'named) str) (VarE (mkName ".")) (Just exp)
   where
-    str = LitE $ StringL $ nameStr nm
+    str = LitE $ StringL tag
 
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
@@ -121,7 +121,7 @@ deriveFromNoun tyName = do
     let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
 
     let overlap = Nothing
-        body    = NormalB (addErrTag tyName exp)
+        body    = NormalB (addErrTag (nameStr tyName) exp)
         ctx     = params <&> \t -> AppT (ConT ''FromNoun) (VarT t)
         inst    = AppT (ConT ''FromNoun) ty
 
@@ -170,12 +170,12 @@ unexpectedTag expected got =
     prefix    = "Expected one of: " <> possible <> " but got %"
 
 sumFromNoun :: [(String, ConInfo)] -> Exp
-sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
+sumFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
   where
-    (x, h, t, c) = (mkName "x", mkName "h", mkName "t", mkName "c")
+    (n, h, t, c) = (mkName "noun", mkName "hed", mkName "tel", mkName "cordTxt")
 
     getHead = BindS (TupP [VarP h, VarP t])
-            $ AppE (VarE 'parseNoun) (VarE x)
+            $ AppE (VarE 'parseNoun) (VarE n)
 
     getTag = BindS (ConP 'Cord [VarP c])
            $ AppE (VarE 'parseNoun) (VarE h)
@@ -185,7 +185,8 @@ sumFromNoun cons = LamE [VarP x] (DoE [getHead, getTag, examine])
 
     matches = mkMatch <$> cons
     mkMatch = \(tag, (n, tys)) ->
-                let body = AppE (tupFromNoun (n, tys)) (VarE t)
+                let body = AppE (addErrTag ('%':tag) (tupFromNoun (n, tys)))
+                                (VarE t)
                 in Match (LitP $ StringL tag) (NormalB body) []
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []

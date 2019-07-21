@@ -12,10 +12,12 @@ import Data.Conduit.List
 import Control.Exception hiding (evaluate)
 
 import Control.Concurrent (threadDelay)
-import System.Directory   (removeFile, doesFileExist)
+import System.Directory   (doesFileExist, removeFile)
 import Text.Show.Pretty   (pPrint)
+import Urbit.Time         (Wen)
 
 import qualified Vere.Log  as Log
+import qualified Vere.Ovum as Ovum
 import qualified Vere.Pier as Pier
 
 --------------------------------------------------------------------------------
@@ -78,19 +80,30 @@ tryParseEvents dir first = do
           -- print ("got event", eId)
           n <- liftIO $ cueExn at
           -- print ("done cue", eId)
-          when (eId > cycle) $ do
-              case fromNounErr n of
-                Left err -> print err
-                Right (mug, date, ovum) -> do
-                  evaluate $ Job eId mug $ DateOvum date ovum
-                  pure ()
-                  paths <- readIORef vPax
-                  let pax = case ovum of Ovum pax _ -> pax
-                  writeIORef vPax (pax:paths)
-                  -- print ("done from noun", eId)
-                  -- print (Job eId mug $ DateOvum date ovum)
-          unless (eId - first > 100000000) $
-              showEvents vPax (succ eId) cycle
+          when (eId <= cycle) $ do
+              putStrLn ("lifecycle nock: " <> tshow eId)
+          when (eId > cycle) $ liftIO $ do
+              (mug, wen, ovumNoun) <- unpackJob n
+              case fromNounErr ovumNoun of
+                  Left err -> liftIO $ do
+                      -- pPrint err
+                      -- pPrint ovumNoun
+                      pure ()
+                  Right (ovum :: Ovum.Ovum) -> do
+                      -- pPrint ovum
+                      -- _ <- getLine
+                      pure ()
+                      -- pPrint ovum
+                      -- paths <- readIORef vPax
+                      -- let pax = case ovum of Ovum pax _ -> pax
+                      -- writeIORef vPax (pax:paths)
+                      -- print ("done from noun", eId)
+                      -- print (Job eId mug $ DateOvum date ovum)
+          -- unless (eId - first > 1000) $
+          showEvents vPax (succ eId) cycle
+
+    unpackJob :: Noun -> IO (Mug, Wen, Noun)
+    unpackJob n = fromNounExn n
 
 main :: IO ()
 main = do
@@ -98,6 +111,7 @@ main = do
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 
+    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
     tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
     -- tryBootFromPill pillPath shipPath ship

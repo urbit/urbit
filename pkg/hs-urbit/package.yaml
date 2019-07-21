@@ -89,6 +89,7 @@ default-extensions:
   - DerivingStrategies
   - EmptyCase
   - EmptyDataDecls
+  - EmptyDataDeriving
   - FlexibleContexts
   - FlexibleInstances
   - FunctionalDependencies

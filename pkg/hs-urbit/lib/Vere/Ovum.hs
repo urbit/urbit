@@ -1,13 +1,9 @@
-{-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Ovum (Ovum(..), Event) where
+module Vere.Ovum (Ovum, muckOvum, Todo(..)) where
 
-import UrbitPrelude
+import UrbitPrelude hiding (Term)
 import Urbit.Time
-
-import qualified Vere.Ames        as Ames
-import qualified Vere.Http.Client as Client
-import qualified Vere.Http.Server as Server
 
 
 -- Misc Types ------------------------------------------------------------------
@@ -22,10 +18,18 @@ newtype BigTape = BigTape Text
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
 newtype Todo a = Todo a
-  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, ToNoun)
 
 instance Show (Todo a) where
   show (Todo _) = "TODO"
+
+instance FromNoun a => FromNoun (Todo a) where
+  parseNoun n = do
+      fromNounErr n & \case
+        Right x -> pure (Todo x)
+        Left er -> do
+          traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
+          fail (show er)
 
 instance Show FileOcts where
   show (FileOcts bs) = show (take 32 bs <> "...")
@@ -43,17 +47,15 @@ data NounTreeNode a = HTN
     }
   deriving (Eq, Ord, Show)
 
-type NounTree a = Maybe (NounTreeNode a)
+type NounTree a = Nullable (NounTreeNode a)
 
-deriveNoun ''NounTreeNode
-
-newtype (NounMap k v) = NounMap (NounTree (k, v))
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+newtype NounMap k v = NounMap (NounTree (k, v))
+  deriving newtype (Eq, Ord, Show)
 
 
 -- Json ------------------------------------------------------------------------
 
-type Json = Maybe JsonNode
+type Json = Nullable JsonNode
 
 data JsonNode
     = JNA [Json]
@@ -61,19 +63,36 @@ data JsonNode
     | JNO (NounMap Text Json)
     | JNN Text -- TODO @ta
     | JNS Text
+  deriving (Eq, Ord, Show)
 
-deriveNoun ''JsonNode
 
+
+-- Parsed Urls -----------------------------------------------------------------
+
+type AtomIf = Atom
+type Ascii = Text -- TODO @ta
+
+type Host = Either Turf AtomIf
+type Hart = (Bool, Maybe Atom, Host)
+type Pork = (Maybe Ascii, [Text])
+type Quay = [(Text, Text)]
+
+data PUrl = Prul Hart Pork Quay
+  deriving (Eq, Ord, Show)
 
 --------------------------------------------------------------------------------
 
-type Life = Noun
-type Pass = Noun
-type Turf = Noun
-type PUrl = Todo Noun
-type Seed = Todo Noun
+type Ring = Atom -- Private Key
+type Oath = Atom -- Signature
+type Pass = Atom -- Public Key
+
+type Life = Word
+type Turf = Atom
 type Czar = NounMap Ship (Life, Pass)
 type Bloq = Atom
+
+data Seed = Seed Ship Life Ring (Maybe Oath)
+  deriving (Eq, Ord, Show)
 
 data Dawn = MkDawn
     { dSeed :: Seed
@@ -81,7 +100,7 @@ data Dawn = MkDawn
     , dCzar :: Czar
     , dTurf :: [Turf]
     , dBloq :: Bloq
-    , dNode :: PUrl
+    , dNode :: Todo PUrl
     }
   deriving (Eq, Ord, Show)
 
@@ -106,8 +125,8 @@ data ResponseHeader = ResponseHeader
   deriving (Eq, Ord, Show)
 
 data HttpEvent
-    = Start ResponseHeader (Maybe Octs) Bool
-    | Continue (Maybe Octs) Bool
+    = Start ResponseHeader (Maybe FileOcts) Bool
+    | Continue (Maybe FileOcts) Bool
     | Cancel
   deriving (Eq, Ord, Show)
 
@@ -126,20 +145,6 @@ data Address
     | AAmes Atom -- @p
   deriving (Eq, Ord, Show)
 
-instance ToNoun Address where
-  toNoun = \case
-    AIpv4 x -> toNoun (Cord "ipv4", x)
-    AIpv6 x -> toNoun (Cord "ipv6", x)
-    AAmes x -> toNoun (Cord "ames", x)
-
-instance FromNoun Address where
-  parseNoun n = do
-    parseNoun n >>= \case
-      (Cord "ipv4", at) -> pure (AIpv4 at)
-      (Cord "ipv6", at) -> pure (AIpv6 at)
-      (Cord "ames", at) -> pure (AAmes at)
-      _                 -> fail "Address must be either %ipv4, %ipv6, or %ames"
-
 data Belt
     = Aro ArrowKey
     | Bac
@@ -152,39 +157,37 @@ data Belt
 
 type ServerId = Atom
 
-type JSON = Todo Noun
-
 data RequestParams
-    = List [JSON]
-    | Object [(Text, JSON)]
+    = List [Json]
+    | Object [(Text, Json)]
   deriving (Eq, Ord, Show)
 
 data HttpRequest = HttpRequest
-    { reqId       :: Text
-    , reqUrl      :: Text
-    , reqHeaders  :: [(Text, Text)]
-    , reqFinished :: Maybe Octs
+    { reqId   :: Text
+    , reqUrl  :: Text
+    , reqHead :: [(Text, Text)]
+    , reqBody :: Maybe FileOcts
     }
   deriving (Eq, Ord, Show)
 
 data Event
-    = Veer Cord Path BigTape
-    | Into Desk Bool [(Path, Maybe Mime)]
-    | Whom Ship
-    | Boot LegacyBootEvent
-    | Wack Word512
-    | Boat
-    | Barn
-    | Born
-    | Blew Word Word
-    | Hail
-    | Wake
-    | Receive ServerId HttpEvent
-    | Request ServerId Address HttpRequest
-    | Live Text Bool Word
-    | Hear Lane Atom
-    | Belt Belt
-    | Crud Text [Tank]
+    = Veer Path Cord Path BigTape
+    | Into Path Desk Bool [(Path, Maybe Mime)]
+    | Whom Path Ship
+    | Boot Path LegacyBootEvent
+    | Wack Path Word512
+    | Boat Path ()
+    | Barn Path ()
+    | Born Path ()
+    | Blew Path Word Word
+    | Hail Path ()
+    | Wake Path ()
+    | Receive Path ServerId HttpEvent
+    | Request Path ServerId Address HttpRequest
+    | Live Path Text Bool Word
+    | Hear Path Lane Atom
+    | Belt Path Belt
+    | Crud Path Text [Tank]
   deriving (Eq, Ord, Show)
 
 data PutDel = PDPut | PDDel
@@ -207,38 +210,6 @@ data RecEx = RE Word Word
 data NewtEx = NE Word
   deriving (Eq, Ord, Show)
 
-data Eff
-    = EHttpServer Server.Eff
-    | EHttpClient Client.Eff
-    | EAmes Ames.Eff
-    | EBbye Noun
-    | EBehn Noun
-    | EBlit [Blit]
-    | EBoat Noun
-    | EClay Noun
-    | ECrud Noun
-    | EDirk Noun
-    | EDoze (Maybe Wen)
-    | EErgo Noun
-    | EExit Noun
-    | EFlog Noun
-    | EForm Noun
-    | EHill [Term]
-    | EInit
-    | ELogo Noun
-    | EMass Noun
-    | ENewt Noun
-    | EOgre Noun
-    | ESend [Blit]
-    | ESync Noun
-    | ETerm Noun
-    | EThou Noun
-    | ETurf (Maybe (PutDel, [Text])) -- TODO Unsure
-    | EVega Noun
-    | EWest Noun
-    | EWoot Noun
-  deriving (Eq, Ord, Show)
-
 data Blit
     = Bel
     | Clr
@@ -250,10 +221,11 @@ data Blit
     | Url Text
   deriving (Eq, Ord, Show)
 
---------------------------------------------------------------------------------
+
+-- Ovums -----------------------------------------------------------------------
 
 {-
-    This parses an ovum in a slightly complicated way.
+    This parses an ovum in a somewhat complicated way.
 
     The Ovum structure is not setup to be easily parsed into typed data,
     since the type of the event depends on the head of the path, and
@@ -277,18 +249,26 @@ data Blit
     And then proceed with parsing as usual.
 -}
 data Ovum
-  = OBlip BlipOvum
-  | OVane VaneOvum
+    = OvumBlip Blip
+    | OvumVane Vane
+  deriving (Eq, Ord, Show)
 
 instance FromNoun Ovum where
     parseNoun n = named "Ovum" $ do
       (path::Path, tag::Cord, v::Noun) <- parseNoun n
       case path of
-        Path (""     : m : p) -> OBlip <$> parseNoun (toNoun (m, tag, p, v))
-        Path ("vane" : m : p) -> OVane <$> parseNoun (toNoun (m, tag, p, v))
+        Path (""     : m : p) -> OvumBlip <$> parseNoun (toNoun (m, tag, p, v))
+        Path ("vane" : m : p) -> OvumVane <$> parseNoun (toNoun (m, tag, p, v))
         Path (_:_:_)          -> fail "path must start with %$ or %vane"
         Path (_:_)            -> fail "path too short"
         Path _                -> fail "empty path"
+
+muckOvum :: Noun -> Maybe Noun
+muckOvum n = do
+    (Path(t:m:p), tag::Cord, v::Noun) <- fromNoun n
+    pure $ toNoun $ case t of
+                      "" -> ("blip", m, tag, Path p, v)
+                      _  -> (t     , m, tag, Path p, v)
 
 instance ToNoun Ovum where
   toNoun o =
@@ -298,53 +278,127 @@ instance ToNoun Ovum where
           toNoun (Path (pathHead:pathSnd:path), (tag, val))
     where
       (pathHead, noun) =
-        case o of OBlip bo -> ("",     toNoun bo)
-                  OVane vo -> ("vane", toNoun vo)
+        case o of OvumBlip bo -> ("",     toNoun bo)
+                  OvumVane vo -> ("vane", toNoun vo)
 
 --------------------------------------------------------------------------------
 
 
-type AmesOvum = Void
-type ArvoOvum = Void
-type BehnOvum = Void
-type BoatOvum = Void
-type HttpClientOvum = Void
-type HttpServerOvum = Void
-type NewtOvum = Void
-type SyncOvum = Void
-type TermOvum = Void
+data Ames
+    = AmesHear ()   Lane Atom
+    | AmesWake ()   ()
+    | AmesCrud Path Cord Tang
+  deriving (Eq, Ord, Show)
 
-data BlipOvum
-    = BOAmes       AmesOvum
-    | BOArvo       ArvoOvum
-    | BOBehn       BehnOvum
-    | BOBoat       BoatOvum
-    | BOHttpClient HttpClientOvum
-    | BOHttpServer HttpServerOvum
-    | BONewt       NewtOvum
-    | BOSync       SyncOvum
-    | BOTerm       TermOvum
+data Arvo
+    = ArvoWhom () Ship
+    | ArvoWack () Word512
+  deriving (Eq, Ord, Show)
 
-data KernelModule
+data Behn
+    = BehnWake ()        ()
+    | BehnBorn (Wen, ()) ()
+  deriving (Eq, Ord, Show)
+
+data Boat
+    = BoatBoat () ()
+    | BoatOvum Void
+  deriving (Eq, Ord, Show)
+
+data HttpClient
+    = HttpClientReceive (Atom, ()) ServerId HttpEvent
+    | HttpClientBorn    (Atom, ()) ()
+    | HttpClientCrud    Path       Cord Tang
+  deriving (Eq, Ord, Show)
+
+data HttpServer
+    = HttpServerRequest (Atom, Word, Word, ()) ServerId Address HttpRequest
+    | HttpServerLive    (Atom, ())             Text (Maybe Word)
+    | HttpServerBorn    (Atom, ())             ()
+  deriving (Eq, Ord, Show)
+
+data Newt
+    = NewtBarn (Atom, ()) ()
+    | NewtBorn Void
+  deriving (Eq, Ord, Show)
+
+data Sync
+    = SyncInto (Nullable (Atom, ())) Desk Bool [(Path, Maybe Mime)]
+    | SyncCrud Path                  Cord Tang
+  deriving (Eq, Ord, Show)
+
+data Term
+    = TermBelt (Atom, ()) Belt
+    | TermBlew (Atom, ()) Word Word
+    | TermBoot (Atom, ()) LegacyBootEvent
+    | TermHail (Atom, ()) ()
+    | TermBorn Void
+  deriving (Eq, Ord, Show)
+
+--------------------------------------------------------------------------------
+
+data Vane
+    = VaneVane VaneOvum
+    | VaneZuse ZuseOvum
+  deriving (Eq, Ord, Show)
+
+data Blip
+    = BlipAmes       Ames
+    | BlipArvo       Arvo
+    | BlipBehn       Behn
+    | BlipBoat       Boat
+    | BlipHttpClient HttpClient
+    | BlipHttpServer HttpServer
+    | BlipNewt       Newt
+    | BlipSync       Sync
+    | BlipTerm       Term
+  deriving (Eq, Ord, Show)
+
+--------------------------------------------------------------------------------
+
+data VaneName
     = Ames | Behn | Clay | Dill | Eyre | Ford | Gall | Iris | Jael
+  deriving (Eq, Ord, Show)
+
+data ZuseOvum
+    = ZOVeer () Cord Path BigTape
+    | ZOVoid Void
+  deriving (Eq, Ord, Show)
 
 data VaneOvum
-    = VOVane (KernelModule, ()) Void
-    | VOZuse ()                 Void
+    = VOVeer (VaneName, ()) Cord Path BigTape
+    | VOVoid Void
+  deriving (Eq, Ord, Show)
 
 
 -- Instances -------------------------------------------------------------------
 
+deriveNoun ''Seed
+deriveNoun ''PUrl
+deriveNoun ''Vane
+deriveNoun ''VaneOvum
+deriveNoun ''ZuseOvum
+deriveNoun ''NounTreeNode
+deriveNoun ''NounMap
+deriveNoun ''JsonNode
+deriveNoun ''Ames
+deriveNoun ''Arvo
+deriveNoun ''Behn
+deriveNoun ''Boat
+deriveNoun ''HttpClient
+deriveNoun ''HttpServer
+deriveNoun ''Newt
+deriveNoun ''Sync
+deriveNoun ''Term
+deriveNoun ''Address
 deriveNoun ''ArrowKey
 deriveNoun ''Belt
-deriveNoun ''BlipOvum
+deriveNoun ''Blip
 deriveNoun ''Blit
 deriveNoun ''Dawn
-deriveNoun ''Eff
 deriveNoun ''Event
 deriveNoun ''HttpEvent
 deriveNoun ''HttpRequest
-deriveNoun ''KernelModule
 deriveNoun ''Lane
 deriveNoun ''LegacyBootEvent
 deriveNoun ''Mime
@@ -352,4 +406,4 @@ deriveNoun ''NewtEx
 deriveNoun ''RecEx
 deriveNoun ''RequestParams
 deriveNoun ''ResponseHeader
-deriveNoun ''VaneOvum
+deriveNoun ''VaneName
