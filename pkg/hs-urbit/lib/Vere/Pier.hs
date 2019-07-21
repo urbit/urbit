@@ -69,8 +69,9 @@ writeJobs log !jobs = do
 
 -- Boot a new ship. ------------------------------------------------------------
 
-booted :: FilePath -> FilePath -> Ship -> Acquire (Serf, EventLog, SerfState)
-booted pillPath top ship = do
+booted :: FilePath -> FilePath -> Serf.Flags -> Ship
+       -> Acquire (Serf, EventLog, SerfState)
+booted pillPath top flags ship = do
   pill <- liftIO $ loadFile @Pill pillPath >>= \case
             Left l  -> error (show l)
             Right p -> pure p
@@ -78,7 +79,7 @@ booted pillPath top ship = do
   seq@(BootSeq ident x y) <- liftIO $ generateBootSeq ship pill
 
   log  <- Log.new (top <> "/.urb/log") ident
-  serf <- Serf.run top
+  serf <- Serf.run (Serf.Config top flags)
 
   liftIO $ do
       (events, serfSt) <- Serf.bootFromSeq serf seq
@@ -89,10 +90,10 @@ booted pillPath top ship = do
 
 -- Resume an existing ship. ----------------------------------------------------
 
-resumed :: FilePath -> Acquire (Serf, EventLog, SerfState)
-resumed top = do
+resumed :: FilePath -> Serf.Flags -> Acquire (Serf, EventLog, SerfState)
+resumed top flags = do
     log    <- Log.existing (top <> "/.urb/log")
-    serf   <- Serf.run top
+    serf   <- Serf.run (Serf.Config top flags)
     serfSt <- liftIO (Serf.replay serf log)
 
     liftIO (Serf.snapshot serf serfSt)

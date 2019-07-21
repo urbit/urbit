@@ -40,6 +40,7 @@ instance Show Noun where
       toTuple atom        = [atom]
 
       showAtom :: Atom -> String
+      showAtom 0 = "0"
       showAtom a | a >= 2^1024 = "\"...\""
       showAtom a =
           let mTerm = do

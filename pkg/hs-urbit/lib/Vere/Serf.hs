@@ -8,6 +8,7 @@ module Vere.Serf ( Serf, SerfState
                  , run, shutdown, kill
                  , replay, bootFromSeq, snapshot
                  , collectFX
+                 , Config(..), Flags, Flag(..)
                  ) where
 
 import UrbitPrelude hiding (fail)
@@ -21,6 +22,7 @@ import Vere.Pier.Types
 import Vere.Ovum
 import Vere.FX
 
+import Data.Bits              (setBit)
 import Control.Concurrent     (threadDelay)
 import Data.ByteString        (hGet)
 import Data.ByteString.Unsafe (unsafeUseAsCString)
@@ -36,6 +38,28 @@ import qualified System.IO.Error        as IO
 import qualified System.IO              as IO
 import qualified Urbit.Time             as Time
 import qualified Vere.Log               as Log
+
+
+-- Serf Config -----------------------------------------------------------------
+
+type Flags = [Flag]
+
+data Flag
+    = DebugRam
+    | DebugCpu
+    | CheckCorrupt
+    | CheckFatal
+    | Verbose
+    | DryRun
+    | Quiet
+    | Hashless
+    | Trace
+  deriving (Eq, Ord, Show, Enum, Bounded)
+
+compileFlags :: [Flag] -> Word
+compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
+
+data Config = Config FilePath [Flag]
 
 
 -- Types -----------------------------------------------------------------------
@@ -117,21 +141,18 @@ fromRightExn (Right x) _   = pure x
 
 -- Process Management ----------------------------------------------------------
 
-{-
-    TODO `config` is a stub, fill it in.
--}
-run :: FilePath -> Acquire Serf
-run pierPath = mkAcquire (startUp pierPath) tearDown
+run :: Config -> Acquire Serf
+run config = mkAcquire (startUp config) tearDown
 
-startUp :: FilePath -> IO Serf
-startUp pierPath = do
+startUp :: Config -> IO Serf
+startUp (Config pierPath flags) = do
     (Just i, Just o, Just e, p) <- createProcess pSpec
     ss <- newEmptyMVar
     et <- async (readStdErr e)
     pure (Serf i o et p ss)
   where
     diskKey = ""
-    config  = "0"
+    config  = show (compileFlags flags)
     args    = [pierPath, diskKey, config]
     pSpec   = (proc "urbit-worker" args)
                 { std_in = CreatePipe
@@ -145,19 +166,29 @@ readStdErr h =
         ln <- IO.hGetLine h
         putStrLn ("[SERF]\t[stderr] " <> T.strip (pack ln))
   where
+    eofMsg = "[DEBUG]\t[Serf.readStdErr] serf stderr closed"
+
     untilEOFExn :: IO () -> IO ()
     untilEOFExn act = loop
       where
         loop = do
           IO.tryIOError act >>= \case
-            Left exn | IO.isEOFError exn -> pure ()
+            Left exn | IO.isEOFError exn -> do putStrLn eofMsg
+                                               pure ()
             Left exn                     -> IO.ioError exn
             Right ()                     -> loop
 
 tearDown :: Serf -> IO ()
 tearDown serf = do
-  race_ (threadDelay 1000000 >> terminateProcess (process serf))
-        (shutdownAndWait serf 0)
+    race_ waitThenKill (shutdownAndWait serf 0)
+  where
+    killedMsg =
+      "[DEBUG] [Serf.tearDown]: Serf didn't die when asked, killing it"
+
+    waitThenKill = do
+        threadDelay 1000000
+        putStrLn killedMsg
+        terminateProcess (process serf)
 
 waitForExit :: Serf -> IO ExitCode
 waitForExit serf = waitForProcess (process serf)
