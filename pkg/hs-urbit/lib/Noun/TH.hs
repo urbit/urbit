@@ -25,26 +25,23 @@ data Shape
     | Sum [(String, ConInfo)]
   deriving (Eq, Ord, Show)
 
-typeShape :: Name -> Q Shape
+typeShape :: Name -> Q ([TyVarBndr], Shape)
 typeShape tyName = do
-    cs <- reify tyName >>= \case
-       TyConI (DataD _ nm [] _ cs _)   -> pure $ unpackCon <$> cs
-       TyConI (NewtypeD _ nm [] _ c _) -> pure $ [unpackCon c]
-       TyConI (DataD _ nm _ _ cs _)    -> fail "Type variables are unsupported"
-       TyConI (NewtypeD _ nm _ _ c _)  -> fail "Type variables are unsupported"
-       TyConI _                        -> fail badSynonym
-       _                               -> fail "not type"
+    (vars, cs) <-
+        reify tyName >>= \case
+            TyConI (DataD _ nm vars _ cs _)   -> pure (vars, unpackCon <$> cs)
+            TyConI (NewtypeD _ nm vars _ c _) -> pure (vars, [unpackCon c])
+            TyConI _                          -> fail badSynonym
+            _                                 -> fail "not type"
 
     let allEmpty = all (null . snd) cs
         prefix   = getPrefix (nameStr . fst <$> cs)
 
-    if allEmpty
-    then pure $ Enu $ tagName prefix . fst <$> cs
-    else
-      case cs of
-        []  -> pure $ Vod
-        [c] -> pure $ Tup c
-        cs  -> pure $ Sum (tagConInfo prefix <$> cs)
+    pure $ (vars,) $ case cs of
+        []            -> Vod
+        cs | allEmpty -> Enu (tagName prefix . fst <$> cs)
+        [c]           -> Tup c
+        cs            -> Sum (tagConInfo prefix <$> cs)
 
   where
     badSynonym = "deriveFunctor: tyCon may not be a type synonym."
@@ -84,31 +81,51 @@ deriveNoun n = (<>) <$> deriveToNoun n <*> deriveFromNoun n
 
 deriveToNoun :: Name -> Q [Dec]
 deriveToNoun tyName = do
-    body <- typeShape tyName <&> \case Vod      -> vodToNoun
-                                       Tup con  -> tupToNoun con
-                                       Enu cons -> enumToAtom cons
-                                       Sum cons -> sumToNoun cons
+    (params, shape) <- typeShape tyName
 
-    [d|
-        instance ToNoun $(conT tyName) where
-            toNoun = $(pure body)
-      |]
+    let exp = case shape of Vod      -> vodToNoun
+                            Tup con  -> tupToNoun con
+                            Enu cons -> enumToAtom cons
+                            Sum cons -> sumToNoun cons
+
+    params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
+
+    let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
+
+    let overlap = Nothing
+        body    = NormalB exp
+        ctx     = params <&> \t -> AppT (ConT ''ToNoun) (VarT t)
+        inst    = AppT (ConT ''ToNoun) ty
+
+    pure [InstanceD overlap ctx inst [ValD (VarP 'toNoun) body []]]
 
 --------------------------------------------------------------------------------
 
+addErrTag :: Name -> Exp -> Exp
+addErrTag nm exp =
+    InfixE (Just $ AppE (VarE 'named) str) (VarE (mkName ".")) (Just exp)
+  where
+    str = LitE $ StringL $ nameStr nm
+
 deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
-    body <- typeShape tyName <&> \case Vod      -> vodFromNoun
-                                       Tup con  -> tupFromNoun con
-                                       Enu cons -> enumFromAtom cons
-                                       Sum cons -> sumFromNoun cons
+    (params, shape) <- typeShape tyName
 
-    let errTag = LitE $ StringL $ nameStr tyName
+    let exp = case shape of Vod      -> vodFromNoun
+                            Tup con  -> tupFromNoun con
+                            Enu cons -> enumFromAtom cons
+                            Sum cons -> sumFromNoun cons
 
-    [d|
-        instance FromNoun $(conT tyName) where
-            parseNoun = named $(pure errTag) . $(pure body)
-      |]
+    params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
+
+    let ty = foldl' (\acc v -> AppT acc (VarT v)) (ConT tyName) params
+
+    let overlap = Nothing
+        body    = NormalB (addErrTag tyName exp)
+        ctx     = params <&> \t -> AppT (ConT ''FromNoun) (VarT t)
+        inst    = AppT (ConT ''FromNoun) ty
+
+    pure [InstanceD overlap ctx inst [ValD (VarP 'parseNoun) body []]]
 
 enumFromAtom :: [(String, Name)] -> Exp
 enumFromAtom cons = LamE [VarP x] body
@@ -185,27 +202,14 @@ tagString prefix = hsToHoon . drop prefix . nameStr
 nameStr :: Name -> String
 nameStr (Name (OccName n) _) = n
 
-{-
-tagNoun :: Name -> Exp
+tagNoun :: String -> Exp
 tagNoun = AppE (VarE 'toNoun)
         . AppE (ConE 'Cord)
         . LitE
         . StringL
-        . hsToHoon
-        . nameStr
-  where
-    nameStr :: Name -> String
-    nameStr (Name (OccName n) _) = n
--}
-
-tagNoun' :: String -> Exp
-tagNoun' = AppE (VarE 'toNoun)
-         . AppE (ConE 'Cord)
-         . LitE
-         . StringL
 
 tagTup :: String -> [Name] -> Exp
-tagTup tag args = AppE (VarE 'toNoun) $ TupE (tagNoun' tag : fmap VarE args)
+tagTup tag args = AppE (VarE 'toNoun) $ TupE (tagNoun tag : fmap VarE args)
 
 tup :: [Name] -> Exp
 tup = AppE (VarE 'toNoun) . TupE . fmap VarE
@@ -213,12 +217,12 @@ tup = AppE (VarE 'toNoun) . TupE . fmap VarE
 --------------------------------------------------------------------------------
 
 vodToNoun :: Exp
-vodToNoun = enumToAtom []
+vodToNoun = enumToAtom [] -- LamE [WildP]
 
 enumToAtom :: [(String, Name)] -> Exp
 enumToAtom cons =
     LamCaseE $ cons <&> \(tag, nm) ->
-                 Match (ConP nm []) (NormalB $ tagNoun' tag) []
+                 Match (ConP nm []) (NormalB $ tagNoun tag) []
 
 tupToNoun :: ConInfo -> Exp
 tupToNoun cons = LamCaseE [mkMatch cons]

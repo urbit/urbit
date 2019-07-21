@@ -38,11 +38,19 @@ data ZazBaz = QueenAlice Word Word
             | Bob Word
   deriving (Eq, Show)
 
+data Empty
+
+data Poly a b = PLeft a
+              | PRite b
+  deriving (Eq, Show)
+
 deriveNoun ''Nums
 deriveNoun ''ThreeWords
 deriveNoun ''FooBar
 deriveNoun ''BarZaz
 deriveNoun ''ZazBaz
+deriveNoun ''Empty
+deriveNoun ''Poly
 
 instance Arbitrary ThreeWords where
   arbitrary = ThreeWords <$> arbitrary <*> arbitrary <*> arbitrary
@@ -61,6 +69,11 @@ instance Arbitrary BarZaz where
 instance Arbitrary ZazBaz where
   arbitrary = oneof [ QueenAlice <$> arbitrary <*> arbitrary
                     , Bob        <$> arbitrary ]
+
+instance (Arbitrary a, Arbitrary b) => Arbitrary (Poly a b) where
+  arbitrary = oneof [ PLeft <$> arbitrary
+                    , PRite <$> arbitrary
+                    ]
 
 
 -- Utils -----------------------------------------------------------------------
@@ -139,6 +152,7 @@ tests =
     , testProperty "Record Sanity"               $ recSanity
     , testProperty "Type-Prefix Sanity"          $ abbrPrefixSanity
     , testProperty "Abbrv-Prefix Sanity"         $ typePrefixSanity
+    , testProperty "Round Trip Rec (Poly)"       $ roundTrip @(Poly Bool Bool)
     , testProperty "Round Trip Rec (ThreeWords)" $ roundTrip @ThreeWords
     , testProperty "Round Trip Enum (Nums)"      $ roundTrip @Nums
     , testProperty "Round Trip Sum (FooBar)"     $ roundTrip @FooBar
