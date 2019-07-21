@@ -1,19 +1,14 @@
+{-# OPTIONS_GHC -Wwarn #-}
+
 {-
-    - TODO: `Serf` type should have something like:
-
-      ```
-      getInput   :: STM (Writ ())
-      onComputed :: Writ [Effect] -> STM ()
-      onExit     :: Serf -> IO ()
-      task       :: Async ()
-      ```
-
     - TODO: `recvLen` is not big-endian safe.
 -}
 
-{-# OPTIONS_GHC -Wwarn #-}
-
-module Vere.Serf where
+module Vere.Serf ( Serf, SerfState
+                 , run, shutdown, kill
+                 , replay, bootFromSeq, snapshot
+                 , collectFX
+                 ) where
 
 import UrbitPrelude hiding (fail)
 import Data.Conduit
@@ -23,6 +18,8 @@ import Data.Void
 import Noun
 import System.Process
 import Vere.Pier.Types
+import Vere.Ovum
+import Vere.FX
 
 import Control.Concurrent     (threadDelay)
 import Data.ByteString        (hGet)
@@ -30,6 +27,7 @@ import Data.ByteString.Unsafe (unsafeUseAsCString)
 import Foreign.Marshal.Alloc  (alloca)
 import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek, poke)
+import System.Directory       (createDirectoryIfMissing)
 import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
@@ -53,12 +51,15 @@ data Serf = Serf
   , sState     :: MVar SerfState
   }
 
+data ShipId = ShipId Ship Bool
+  deriving (Eq, Ord, Show)
+
 type Play = Maybe (EventId, Mug, ShipId)
 
 data Plea
     = PPlay Play
     | PWork Work
-    | PDone EventId Mug [(Path, Eff)]
+    | PDone EventId Mug FX
     | PStdr EventId Cord
     | PSlog EventId Word32 Tank
   deriving (Eq, Show)
@@ -66,8 +67,7 @@ data Plea
 type GetJobs = EventId -> Word64 -> IO (Vector Job)
 
 type ReplacementEv = Job
-type Fx            = [(Path, Eff)]
-type WorkResult    = (SerfState, Fx)
+type WorkResult    = (SerfState, FX)
 type SerfResp      = Either ReplacementEv WorkResult
 
 data SerfExn
@@ -78,7 +78,7 @@ data SerfExn
     | BadPleaNoun Noun [Text] Text
     | ReplacedEventDuringReplay EventId ReplacementEv
     | ReplacedEventDuringBoot   EventId ReplacementEv
-    | EffectsDuringBoot         EventId [(Path, Eff)]
+    | EffectsDuringBoot         EventId FX
     | SerfConnectionClosed
     | UnexpectedPleaOnNewShip Plea
     | InvalidInitialPlea Plea
@@ -89,6 +89,7 @@ data SerfExn
 
 instance Exception SerfExn
 
+deriveNoun ''ShipId
 deriveNoun ''Plea
 
 
@@ -114,18 +115,18 @@ fromRightExn (Right x) _   = pure x
 -- Process Management ----------------------------------------------------------
 
 {-
-    TODO Think about how to handle process exit
-    TODO Tear down subprocess on exit? (terminiteProcess)
     TODO `config` is a stub, fill it in.
 -}
-startSerfProcess :: FilePath -> IO Serf
-startSerfProcess pier =
-  do
+run :: FilePath -> Acquire Serf
+run pierPath = mkAcquire (startUp pierPath) tearDown
+
+startUp :: FilePath -> IO Serf
+startUp pierPath = do
     (Just i, Just o, _, p) <- createProcess pSpec
     ss <- newEmptyMVar
     pure (Serf i o p ss)
   where
-    chkDir  = traceShowId pier
+    chkDir  = traceShowId pierPath
     diskKey = ""
     config  = "0"
     args    = [chkDir, diskKey, config]
@@ -134,11 +135,21 @@ startSerfProcess pier =
                 , std_out = CreatePipe
                 }
 
+tearDown :: Serf -> IO ()
+tearDown serf = do
+  race_ (threadDelay 1000000 >> terminateProcess (process serf))
+        (shutdownAndWait serf 0)
+
 waitForExit :: Serf -> IO ExitCode
 waitForExit serf = waitForProcess (process serf)
 
 kill :: Serf -> IO ExitCode
 kill serf = terminateProcess (process serf) >> waitForExit serf
+
+shutdownAndWait :: Serf -> Word8 -> IO ExitCode
+shutdownAndWait serf code = do
+  shutdown serf code
+  waitForExit serf
 
 
 -- Basic Send and Receive Operations -------------------------------------------
@@ -200,16 +211,11 @@ cordString (Cord bs) = unpack $ T.strip $ decodeUtf8 bs
 
 --------------------------------------------------------------------------------
 
-requestSnapshot :: Serf -> SerfState -> IO ()
-requestSnapshot serf SerfState{..} = sendOrder serf (OSave $ ssNextEv - 1)
+snapshot :: Serf -> SerfState -> IO ()
+snapshot serf SerfState{..} = sendOrder serf (OSave $ ssNextEv - 1)
 
-requestShutdown :: Serf -> Word8 -> IO ()
-requestShutdown serf code = sendOrder serf (OExit code)
-
-shutdownAndWait :: Serf -> Word8 -> IO ExitCode
-shutdownAndWait serf code = do
-  requestShutdown serf code
-  waitForExit serf
+shutdown :: Serf -> Word8 -> IO ()
+shutdown serf code = sendOrder serf (OExit code)
 
 {-
     TODO Find a cleaner way to handle `PStdr` Pleas.
@@ -272,7 +278,7 @@ sendWork w job =
 
 --------------------------------------------------------------------------------
 
-doJob :: Serf -> Job -> IO (Job, SerfState, Fx)
+doJob :: Serf -> Job -> IO (Job, SerfState, FX)
 doJob serf job = do
     sendWork serf job >>= \case
         Left replaced  -> doJob serf replaced
@@ -287,7 +293,7 @@ bootJob serf job = do
 replayJob :: Serf -> Job -> IO SerfState
 replayJob serf job = do
     sendWork serf job >>= \case
-        Left replace -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
+        Left replace  -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
         Right (ss, _) -> pure ss
 
 
@@ -319,7 +325,6 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
       where
         muckNock nok eId mug _   = RunNok $ LifeCyc eId mug nok
         muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
-
 {-
     The ship is booted, but it is behind. shove events to the worker
     until it is caught up.
@@ -337,7 +342,7 @@ replay serf log = do
                .| toJobs (Log.identity log) (ssNextEv ss)
                .| replayJobs serf ss
 
-toJobs :: LogIdentity -> EventId -> ConduitT Atom Job IO ()
+toJobs :: LogIdentity -> EventId -> ConduitT ByteString Job IO ()
 toJobs ident eId =
     await >>= \case
         Nothing -> traceM "no more jobs" >> pure ()
@@ -345,27 +350,51 @@ toJobs ident eId =
                       traceM (show eId)
                       toJobs ident (eId+1)
   where
-    isNock = eId > fromIntegral (lifecycleLen ident)
+    isNock = trace (show (eId, lifecycleLen ident))
+           $ eId <= fromIntegral (lifecycleLen ident)
 
-    fromAtom :: Atom -> IO Job
-    fromAtom at | isNock = do
-        noun       <- cueExn at
+    fromAtom :: ByteString -> IO Job
+    fromAtom bs | isNock = do
+        noun       <- cueBSExn bs
         (mug, nok) <- fromNounExn noun
         pure $ RunNok (LifeCyc eId mug nok)
-    fromAtom at | isNock = do
-        noun            <- cueExn at
+    fromAtom bs = do
+        noun            <- cueBSExn bs
         (mug, wen, ovm) <- fromNounExn noun
         pure $ DoWork (Work eId mug wen ovm)
 
 
--- Compute Thread --------------------------------------------------------------
+-- Collect Effects for Parsing -------------------------------------------------
 
-startComputeThread :: Serf -> STM RawOvum -> (EventId, Mug) -> IO (Async ())
-startComputeThread w getEvent (evendId, mug) = async $ forever $ do
-  ovum <- atomically $ getEvent
+collectFX :: Serf -> Log.EventLog -> IO ()
+collectFX serf log = do
+    ss <- handshake serf (Log.identity log)
 
-  currentDate <- Time.now
+    let pax = "/home/benjamin/testnet-zod-fx"
 
-  let _mat = jam (undefined (mug, currentDate, ovum))
+    createDirectoryIfMissing True pax
 
-  undefined
+    runConduit $  Log.streamEvents log (ssNextEv ss)
+               .| toJobs (Log.identity log) (ssNextEv ss)
+               .| doCollectFX serf ss
+               .| persistFX pax
+
+persistFX :: FilePath -> ConduitT (EventId, FX) Void IO ()
+persistFX pax = await >>= \case
+    Nothing        -> pure ()
+    Just (eId, fx) -> do
+        writeFile (pax <> "/" <> show eId) (jamBS $ toNoun fx)
+        persistFX pax
+
+doCollectFX :: Serf -> SerfState -> ConduitT Job (EventId, FX) IO ()
+doCollectFX serf = go
+  where
+    go :: SerfState -> ConduitT Job (EventId, FX) IO ()
+    go ss = await >>= \case
+        Nothing -> pure ()
+        Just jb -> do
+            (_, ss, fx) <- liftIO (doJob serf jb)
+            liftIO $ print (jobId jb)
+            yield (jobId jb, fx)
+            go ss
+

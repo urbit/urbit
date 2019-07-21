@@ -1,4 +1,4 @@
-module Noun.Cue (cue, cueExn, cueBS, DecodeErr) where
+module Noun.Cue (cue, cueExn, cueBS, cueBSExn, DecodeErr) where
 
 import ClassyPrelude
 
@@ -24,14 +24,17 @@ import qualified Data.Vector.Primitive  as VP
 cueBS :: ByteString -> Either DecodeErr Noun
 cueBS = doGet dNoun
 
+cueBSExn :: ByteString -> IO Noun
+cueBSExn bs =
+  cueBS bs & \case
+    Left e  -> throwIO e
+    Right x -> pure x
+
 cue :: Atom -> Either DecodeErr Noun
 cue = cueBS . view atomBytes
 
 cueExn :: Atom -> IO Noun
-cueExn atm =
-  cueBS (atm ^. atomBytes) & \case
-    Left e  -> throwIO e
-    Right x -> pure x
+cueExn atm = cueBSExn (atm ^. atomBytes)
 
 
 -- Debugging -------------------------------------------------------------------

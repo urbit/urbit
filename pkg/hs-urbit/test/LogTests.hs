@@ -36,10 +36,10 @@ assertEqual x y = do
 
 -- Database Operations ---------------------------------------------------------
 
-data Db = Db LogIdentity [Atom]
+data Db = Db LogIdentity [ByteString]
   deriving (Eq, Ord, Show)
 
-addEvents :: Db -> [Atom] -> Db
+addEvents :: Db -> [ByteString] -> Db
 addEvents (Db id evs) new = Db id (evs <> new)
 
 readDb :: EventLog -> IO Db
@@ -89,7 +89,7 @@ tryReadDatabase = forAll arbitrary (ioProperty . runTest)
 tryAppend :: Property
 tryAppend = forAll arbitrary (ioProperty . runTest)
   where
-    runTest :: ([Atom], Db) -> IO Bool
+    runTest :: ([ByteString], Db) -> IO Bool
     runTest (extra, db) = do
         runInBoundThread $
             withTestDir $ \dir -> do
@@ -102,16 +102,13 @@ tryAppend = forAll arbitrary (ioProperty . runTest)
                     readDb log >>= assertEqual db'
         pure True
 
-readAtom :: FilePath -> IO Atom
-readAtom path = view (from atomBytes) <$> readFile path
-
 tryAppendHuge :: Property
 tryAppendHuge = forAll arbitrary (ioProperty . runTest)
   where
-    runTest :: ([Atom], Db) -> IO Bool
+    runTest :: ([ByteString], Db) -> IO Bool
     runTest (extra, db) = do
         runInBoundThread $ do
-            extra <- do b <- readAtom "/home/benjamin/r/urbit/bin/brass.pill"
+            extra <- do b <- readFile "/home/benjamin/r/urbit/bin/brass.pill"
                         pure (extra <> [b] <> extra)
             withTestDir $ \dir -> do
                 db' <- pure (addEvents db extra)
@@ -147,8 +144,8 @@ tests =
 arb :: Arbitrary a => Gen a
 arb = arbitrary
 
-instance Arbitrary Natural where
-  arbitrary = fromInteger . abs <$> arbitrary
+instance Arbitrary ByteString where
+  arbitrary = pack <$> arbitrary
 
 instance (Arbitrary a, Arbitrary b) => Arbitrary (LargeKey a b) where
   arbitrary = LargeKey <$> arb <*> arb

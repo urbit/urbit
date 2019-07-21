@@ -15,9 +15,6 @@ newtype FileOcts = FileOcts ByteString
 newtype BigTape = BigTape Text
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
-newtype Nock = Nock Noun
-  deriving newtype (Eq, Ord, FromNoun, ToNoun)
-
 newtype Desk = Desk Text
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
@@ -125,12 +122,25 @@ deriveNoun ''Dawn
 
 -- HTTP ------------------------------------------------------------------------
 
+newtype PEM = PEM Cord
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
 type ServerId = Atom
+type Key      = PEM
+type Cert     = PEM
 
 data Address
     = AIpv4 Atom -- @if
     | AIpv6 Atom -- @is
     | AAmes Atom -- @p
+  deriving (Eq, Ord, Show)
+
+data ServerConfig = ServerConfig
+    { secure   :: Maybe (Key, Cert)
+    , proxy    :: Bool
+    , log      :: Bool
+    , redirect :: Bool
+    }
   deriving (Eq, Ord, Show)
 
 data ResponseHeader = ResponseHeader
@@ -160,11 +170,13 @@ data HttpClient
   deriving (Eq, Ord, Show)
 
 data HttpServer
-    = HttpServerRequest (Atom, Word, Word, ()) ServerId Address HttpRequest
-    | HttpServerLive    (Atom, ())             Text (Maybe Word)
-    | HttpServerBorn    (Atom, ())             ()
+    = HttpServerRequest   (Atom, Word, Word, ()) ServerId Address HttpRequest
+    | HttpServerLive      (Atom, ())             Text (Maybe Word)
+    | HttpServerBorn      (Atom, ())             ()
+    | HttpServerSetConfig (Atom, ())             ServerConfig
   deriving (Eq, Ord, Show)
 
+deriveNoun ''ServerConfig
 deriveNoun ''HttpRequest
 deriveNoun ''Address
 deriveNoun ''ResponseHeader
@@ -261,17 +273,6 @@ data Belt
     | Txt Tour
   deriving (Eq, Ord, Show)
 
-data Blit
-    = Bel
-    | Clr
-    | Hop Word64
-    | Lin [Char]
-    | Mor
-    | Sag Path Noun
-    | Sav Path Atom
-    | Url Text
-  deriving (Eq, Ord, Show)
-
 data Term
     = TermBelt (Atom, ()) Belt
     | TermBlew (Atom, ()) Word Word
@@ -283,7 +284,6 @@ data Term
 deriveNoun ''LegacyBootEvent
 deriveNoun ''ArrowKey
 deriveNoun ''Belt
-deriveNoun ''Blit
 deriveNoun ''Term
 
 

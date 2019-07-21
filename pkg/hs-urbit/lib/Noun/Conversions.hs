@@ -4,6 +4,7 @@ module Noun.Conversions
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), Ship(..)
+  , Lenient(..)
   ) where
 
 import ClassyPrelude hiding (hash)
@@ -111,6 +112,22 @@ instance (FromNoun a, FromNoun c) => FromNoun (AtomCell a c) where
   parseNoun n = named "(,)" $ case n of
                                 Atom _   -> ACAtom <$> parseNoun n
                                 Cell _ _ -> ACCell <$> parseNoun n
+
+
+-- Lenient ---------------------------------------------------------------------
+
+data Lenient a
+    = FailParse Noun
+    | GoodParse a
+  deriving (Eq, Ord, Show)
+
+instance FromNoun a => FromNoun (Lenient a) where
+  parseNoun n =
+    (GoodParse <$> parseNoun n) <|> pure (FailParse n)
+
+instance ToNoun a => ToNoun (Lenient a) where
+  toNoun (FailParse n) = n
+  toNoun (GoodParse x) = toNoun x
 
 
 -- Nullable --------------------------------------------------------------------

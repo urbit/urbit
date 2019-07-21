@@ -48,7 +48,7 @@ lastEv = readIORef . numEvents
 data EventLogExn
     = NoLogIdentity
     | MissingEvent EventId
-    | BadNounInLogIdentity Atom
+    | BadNounInLogIdentity ByteString DecodeErr ByteString
     | BadKeyInEventLog
     | BadWriteLogIdentity LogIdentity
     | BadWriteEvent EventId
@@ -196,7 +196,7 @@ clearEvents env eventsTbl =
                             loop
         loop
 
-appendEvents :: EventLog -> Vector Atom -> IO ()
+appendEvents :: EventLog -> Vector ByteString -> IO ()
 appendEvents log !events = do
     numEvs <- readIORef (numEvents log)
     next   <- nextEv log
@@ -209,15 +209,12 @@ appendEvents log !events = do
         for_ kvs $ \(k,v) -> do
             putEvent flags txn (eventsTbl log) k v >>= \case
                 True  -> pure ()
-                False -> do traceM "event write failed, trying to cue"
-                            n <- cueExn v
-                            traceM "finished cue"
-                            throwIO (BadWriteEvent k)
+                False -> throwIO (BadWriteEvent k)
 
 
 -- Read Events -----------------------------------------------------------------
 
-streamEvents :: EventLog -> Word64 -> ConduitT () Atom IO ()
+streamEvents :: EventLog -> Word64 -> ConduitT () ByteString IO ()
 streamEvents log first = do
     last <- liftIO $ lastEv log
     traceM ("streamEvents: " <> show (first, last))
@@ -226,7 +223,7 @@ streamEvents log first = do
         for_ batch yield
         streamEvents log (first + word (length batch))
 
-readBatch :: EventLog -> Word64 -> IO (V.Vector Atom)
+readBatch :: EventLog -> Word64 -> IO (V.Vector ByteString)
 readBatch log first = start
   where
     start = do
@@ -250,7 +247,7 @@ readBatch log first = start
     fetchRows count cur pKey pVal = do
         V.generateM count $ \i -> do
             key <- peek pKey >>= mdbValToWord64
-            val <- peek pVal >>= mdbValToAtom
+            val <- peek pVal >>= mdbValToBytes
             idx <- pure (first + word i)
             unless (key == idx) $ throwIO $ MissingEvent idx
             when (count /= succ i) $ do
@@ -270,8 +267,8 @@ assertExn :: Exception e => Bool -> e -> IO ()
 assertExn True  _ = pure ()
 assertExn False e = throwIO e
 
-maybeExn :: Exception e => Maybe a -> e -> IO a
-maybeExn mb exn = maybe (throwIO exn) pure mb
+eitherExn :: Exception e => Either a b -> (a -> e) -> IO b
+eitherExn eat exn = either (throwIO . exn) pure eat
 
 byteStringAsMdbVal :: ByteString -> (MDB_val -> IO a) -> IO a
 byteStringAsMdbVal bs k =
@@ -298,18 +295,17 @@ withWordPtr w cb = do
 getMb :: Txn -> Dbi -> ByteString -> IO (Maybe Noun)
 getMb txn db key =
   byteStringAsMdbVal key $ \mKey ->
-  mdb_get txn db mKey >>= traverse mdbValToNoun
+  mdb_get txn db mKey >>= traverse (mdbValToNoun key)
 
-mdbValToAtom :: MDB_val -> IO Atom
-mdbValToAtom (MDB_val sz ptr) = do
-  bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  pure (bs ^. from atomBytes)
+mdbValToBytes :: MDB_val -> IO ByteString
+mdbValToBytes (MDB_val sz ptr) = do
+  BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
 
-mdbValToNoun :: MDB_val -> IO Noun
-mdbValToNoun (MDB_val sz ptr) = do
+mdbValToNoun :: ByteString -> MDB_val -> IO Noun
+mdbValToNoun key (MDB_val sz ptr) = do
   bs <- BU.unsafePackCStringLen (castPtr ptr, fromIntegral sz)
-  let res = bs ^? _Cue
-  maybeExn res (BadNounInLogIdentity (bs ^. from atomBytes))
+  let res = cueBS bs
+  eitherExn res (\err -> BadNounInLogIdentity key err bs)
 
 putNoun :: MDB_WriteFlags -> Txn -> Dbi -> ByteString -> Noun -> IO Bool
 putNoun flags txn db key val =
@@ -317,10 +313,9 @@ putNoun flags txn db key val =
   byteStringAsMdbVal (jamBS val) $ \mVal ->
   mdb_put flags txn db mKey mVal
 
-putEvent :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> Atom -> IO Bool
-putEvent flags txn db id atom = do
+putEvent :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
+putEvent flags txn db id bs = do
   withWord64AsMDBval id $ \idVal -> do
-    let !bs = atom ^. atomBytes
     traceM ("putEvent: " <> show (id, length bs))
     byteStringAsMdbVal bs $ \mVal -> do
       mdb_put flags txn db idVal mVal

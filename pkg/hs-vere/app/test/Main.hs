@@ -19,6 +19,13 @@ import Urbit.Time         (Wen)
 import qualified Vere.Log  as Log
 import qualified Vere.Ovum as Ovum
 import qualified Vere.Pier as Pier
+import qualified Vere.Serf as Serf
+
+
+--------------------------------------------------------------------------------
+
+zod :: Ship
+zod = 0
 
 --------------------------------------------------------------------------------
 
@@ -28,27 +35,34 @@ removeFileIfExists pax = do
   when exists $ do
       removeFile pax
 
+catchAny :: IO a -> (SomeException -> IO a) -> IO a
+catchAny = Control.Exception.catch
+
+--------------------------------------------------------------------------------
+
 wipeSnapshot :: FilePath -> IO ()
 wipeSnapshot shipPath = do
-    removeFileIfExists (shipPath <> ".urb/chk/north.bin")
-    removeFileIfExists (shipPath <> ".urb/chk/south.bin")
+    removeFileIfExists (shipPath <> "/.urb/chk/north.bin")
+    removeFileIfExists (shipPath <> "/.urb/chk/south.bin")
+    print (shipPath <> "/.urb/chk/north.bin")
+    print (shipPath <> "/.urb/chk/south.bin")
 
 tryBootFromPill :: FilePath -> FilePath -> Ship -> IO ()
 tryBootFromPill pillPath shipPath ship = do
     wipeSnapshot shipPath
-    Pier.boot pillPath shipPath ship $ \s l ss -> do
+    with (Pier.booted pillPath shipPath ship) $ \(serf, log, ss) -> do
         print "lul"
         print ss
         threadDelay 500000
-        shutdownAndWait s 0 >>= print
+        shutdown serf 0 >>= print
         putStrLn "Booted!"
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
-    Pier.resume shipPath $ \s l ss -> do
+    with (Pier.resumed shipPath) $ \(serf, log, ss) -> do
         print ss
         threadDelay 500000
-        shutdownAndWait s 0 >>= print
+        shutdown serf 0 >>= print
         putStrLn "Resumed!"
 
 tryFullReplay :: FilePath -> IO ()
@@ -56,11 +70,7 @@ tryFullReplay shipPath = do
     wipeSnapshot shipPath
     tryResume shipPath
 
-zod :: Ship
-zod = 0
-
-catchAny :: IO a -> (SomeException -> IO a) -> IO a
-catchAny = Control.Exception.catch
+--------------------------------------------------------------------------------
 
 tryParseEvents :: FilePath -> EventId -> IO ()
 tryParseEvents dir first = do
@@ -73,12 +83,13 @@ tryParseEvents dir first = do
     paths <- sort . ordNub <$> readIORef vPax
     for_ paths print
   where
-    showEvents :: IORef [Path] -> EventId -> EventId -> ConduitT Atom Void IO ()
+    showEvents :: IORef [Path] -> EventId -> EventId
+               -> ConduitT ByteString Void IO ()
     showEvents vPax eId cycle = await >>= \case
       Nothing -> print "Done!"
-      Just at -> do
+      Just bs -> do
           -- print ("got event", eId)
-          n <- liftIO $ cueExn at
+          n <- liftIO $ cueBSExn bs
           -- print ("done cue", eId)
           when (eId <= cycle) $ do
               putStrLn ("lifecycle nock: " <> tshow eId)
@@ -105,14 +116,32 @@ tryParseEvents dir first = do
     unpackJob :: Noun -> IO (Mug, Wen, Noun)
     unpackJob n = fromNounExn n
 
+--------------------------------------------------------------------------------
+
+collectedFX :: FilePath -> Acquire ()
+collectedFX top = do
+    log    <- Log.existing (top <> "/.urb/log")
+    serf   <- Serf.run top
+    liftIO (Serf.collectFX serf log)
+
+collectAllFx :: FilePath -> IO ()
+collectAllFx top = do
+    wipeSnapshot top
+    with (collectedFX top) $ \() ->
+        putStrLn "Done collecting effects!"
+
+--------------------------------------------------------------------------------
+
 main :: IO ()
 main = do
     let pillPath = "/home/benjamin/r/urbit/bin/brass.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 
-    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    collectAllFx "/home/benjamin/r/urbit/testnet-zod"
+
+    -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
@@ -152,7 +181,7 @@ tryCopyLog = do
            })
     $ \log2 -> do
       let writs = zip [1..] events <&> \(id, a) ->
-                      Writ id Nothing (Jam a) []
+                      (Writ id Nothing a, [])
 
       print "About to write"
 

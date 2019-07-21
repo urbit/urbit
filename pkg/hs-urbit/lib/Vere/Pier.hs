@@ -1,11 +1,12 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Pier where
+module Vere.Pier (booted, resumed, runPersist, runCompute) where
 
 import Data.Acquire
 import UrbitPrelude
+import Vere.Ovum
+import Vere.FX
 import Vere.Pier.Types
-import Data.Conduit
 
 import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
@@ -13,34 +14,24 @@ import Vere.Log           (EventLog)
 import Vere.Serf          (Serf, SerfState(..))
 
 import qualified System.Entropy as Ent
+import qualified Urbit.Time     as Time
 import qualified Vere.Log       as Log
 import qualified Vere.Serf      as Serf
 
 
 --------------------------------------------------------------------------------
 
-ioDrivers = [] :: [IODriver]
+_ioDrivers = [] :: [IODriver]
 
-setupPierDirectory :: FilePath -> IO ()
-setupPierDirectory shipPath = do
+_setupPierDirectory :: FilePath -> IO ()
+_setupPierDirectory shipPath = do
    for_ ["put", "get", "log", "chk"] $ \seg -> do
      let pax = shipPath <> "/.urb/" <> seg
      createDirectoryIfMissing True pax
      setFileMode pax ownerModes
 
-{-
-data Pier = Pier
-  { computeQueue  :: TQueue Ovum
-  , persistQueue  :: TQueue (Writ [Eff])
-  , releaseQueue  :: TQueue (Writ [Eff])
-  , log           :: EventLog
-  , driverThreads :: [(Async (), Perform)]
-  , portingThread :: Async ()
-  }
--}
 
-
---------------------------------------------------------------------------------
+-- Load pill into boot sequence. -----------------------------------------------
 
 genEntropy :: IO Word512
 genEntropy = fromIntegral . view (from atomBytes) <$> Ent.getEntropy 64
@@ -52,56 +43,13 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    preKern ent = [ Ovum (Path ["", "term", "1"]) (Boot $ Fake $ who ident)
-                  , Ovum (Path ["", "arvo"])      (Whom ship)
-                  , Ovum (Path ["", "arvo"])      (Wack ent)
+    preKern ent = [ OvumBlip $ BlipTerm $ TermBoot (1,()) (Fake (who ident))
+                  , OvumBlip $ BlipArvo $ ArvoWhom ()     ship
+                  , OvumBlip $ BlipArvo $ ArvoWack ()     ent
                   ]
 
 
---------------------------------------------------------------------------------
-
-{-
-    This is called to make a freshly booted pier. It assigns an identity
-    to an event log and takes a chill pill.
--}
-boot :: FilePath -> FilePath -> Ship
-     -> (Serf -> EventLog -> SerfState -> IO a)
-     -> IO a
-boot pillPath top ship act = do
-  let logPath = top <> "/.urb/log"
-
-  pill <- loadFile @Pill pillPath >>= \case
-            Left l  -> error (show l)
-            Right p -> pure p
-
-  seq@(BootSeq ident x y) <- generateBootSeq ship pill
-
-  with (Log.new logPath ident) $ \log -> do
-      serf             <- Serf.startSerfProcess top
-      (events, serfSt) <- Serf.bootFromSeq serf seq
-      Serf.requestSnapshot serf serfSt
-      traceM "writeJobs"
-      writeJobs log (fromList events)
-      act serf log serfSt
-
-{-
-    What we really want to do is write the log identity and then do
-    normal startup, but writeIdent requires a full log state
-    including input/output queues.
--}
-resume :: FilePath -> (Serf -> EventLog -> SerfState -> IO a) -> IO a
-resume top act = do
-  with (Log.existing (top <> "/.urb/log")) $ \log -> do
-    traceM "But why?"
-    serf   <- Serf.startSerfProcess top
-    traceM "What"
-    serfSt <- Serf.replay serf log
-    traceM "is"
-
-    Serf.requestSnapshot serf serfSt
-    traceM "happening"
-
-    act serf log serfSt
+-- Write a batch of jobs into the event log ------------------------------------
 
 writeJobs :: EventLog -> Vector Job -> IO ()
 writeJobs log !jobs = do
@@ -109,14 +57,47 @@ writeJobs log !jobs = do
     events <- fmap fromList $ traverse fromJob (zip [expect..] $ toList jobs)
     Log.appendEvents log events
   where
-    fromJob :: (EventId, Job) -> IO Atom
+    fromJob :: (EventId, Job) -> IO ByteString
     fromJob (expectedId, job) = do
         guard (expectedId == jobId job)
-        pure $ jam $ jobPayload job
+        pure $ jamBS $ jobPayload job
 
     jobPayload :: Job -> Noun
     jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
     jobPayload (DoWork (Work _ m d o))  = toNoun (m, d, o)
+
+
+-- Boot a new ship. ------------------------------------------------------------
+
+booted :: FilePath -> FilePath -> Ship -> Acquire (Serf, EventLog, SerfState)
+booted pillPath top ship = do
+  pill <- liftIO $ loadFile @Pill pillPath >>= \case
+            Left l  -> error (show l)
+            Right p -> pure p
+
+  seq@(BootSeq ident x y) <- liftIO $ generateBootSeq ship pill
+
+  log  <- Log.new (top <> "/.urb/log") ident
+  serf <- Serf.run top
+
+  liftIO $ do
+      (events, serfSt) <- Serf.bootFromSeq serf seq
+      Serf.snapshot serf serfSt
+      writeJobs log (fromList events)
+      pure (serf, log, serfSt)
+
+
+-- Resume an existing ship. ----------------------------------------------------
+
+resumed :: FilePath -> Acquire (Serf, EventLog, SerfState)
+resumed top = do
+    log    <- Log.existing (top <> "/.urb/log")
+    serf   <- Serf.run top
+    serfSt <- liftIO (Serf.replay serf log)
+
+    liftIO (Serf.snapshot serf serfSt)
+
+    pure (serf, log, serfSt)
 
 
 -- Run Pier --------------------------------------------------------------------
@@ -124,8 +105,8 @@ writeJobs log !jobs = do
 {-
 performCommonPierStartup :: Serf.Serf
                          -> TQueue Ovum
-                         -> TQueue (Writ [Eff])
-                         -> TQueue (Writ [Eff])
+                         -> TQueue (Writ, FX)
+                         -> TQueue (Writ, FX)
                          -> LogState
                          -> IO Pier
 performCommonPierStartup serf computeQ persistQ releaseQ logState = do
@@ -150,6 +131,19 @@ performCommonPierStartup serf computeQ persistQ releaseQ logState = do
 -}
 
 
+-- Compute Thread --------------------------------------------------------------
+
+runCompute :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
+runCompute w getEvent (evendId, mug) = async $ forever $ do
+  ovum <- atomically $ getEvent
+
+  currentDate <- Time.now
+
+  let _mat = jam (undefined (mug, currentDate, ovum))
+
+  undefined
+
+
 -- Persist Thread --------------------------------------------------------------
 
 data PersistExn = BadEventId EventId EventId
@@ -162,8 +156,8 @@ instance Exception PersistExn where
             ]
 
 runPersist :: EventLog
-           -> TQueue (Writ [Eff])
-           -> (Writ [Eff] -> STM ())
+           -> TQueue (Writ, FX)
+           -> ((Writ, FX) -> STM ())
            -> Acquire ()
 runPersist log inpQ out = do
     mkAcquire runThread cancelWait
@@ -174,22 +168,22 @@ runPersist log inpQ out = do
 
     runThread :: IO (Async ())
     runThread = asyncBound $ forever $ do
-        writs  <- atomically (toNullable <$> getBatchFromQueue)
-        events <- validateWritsAndGetAtom writs
+        writs  <- atomically getBatchFromQueue
+        events <- validateWritsAndGetBytes (toNullable writs)
         Log.appendEvents log events
         atomically $ traverse_ out writs
 
-    validateWritsAndGetAtom :: [Writ [Eff]] -> IO (Vector Atom)
-    validateWritsAndGetAtom writs = do
+    validateWritsAndGetBytes :: [(Writ, FX)] -> IO (Vector ByteString)
+    validateWritsAndGetBytes writs = do
         expect <- Log.nextEv log
         fmap fromList
             $ for (zip [expect..] writs)
-            $ \(expectedId, Writ{..}) -> do
-                unless (expectedId == eventId) $
-                    throwIO (BadEventId expectedId eventId)
-                pure (unJam event)
+            $ \(expectedId, (w, fx)) -> do
+                unless (expectedId == writId w) $
+                    throwIO (BadEventId expectedId (writId w))
+                pure (writEv w)
 
-    getBatchFromQueue :: STM (NonNull [Writ [Eff]])
+    getBatchFromQueue :: STM (NonNull [(Writ, FX)])
     getBatchFromQueue =
         readTQueue inpQ >>= go . singleton
       where
