@@ -56,11 +56,11 @@ data Serf = Serf
 type Play = Maybe (EventId, Mug, ShipId)
 
 data Plea
-    = Play Play
-    | Work Job
-    | Done EventId Mug [(Path, Eff)]
-    | Stdr EventId Cord
-    | Slog EventId Word32 Tank
+    = PPlay Play
+    | PWork Work
+    | PDone EventId Mug [(Path, Eff)]
+    | PStdr EventId Cord
+    | PSlog EventId Word32 Tank
   deriving (Eq, Show)
 
 type GetJobs = EventId -> Word64 -> IO (Vector Job)
@@ -212,7 +212,7 @@ shutdownAndWait serf code = do
   waitForExit serf
 
 {-
-    TODO Find a cleaner way to handle `Stdr` Pleas.
+    TODO Find a cleaner way to handle `PStdr` Pleas.
 -}
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
@@ -220,12 +220,12 @@ recvPlea w = do
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
-  case p of Stdr e msg   -> do -- traceM ("[SERF]\t" <> (cordString msg))
-                               recvPlea w
-            Slog _ pri t -> do printTank pri t
-                               recvPlea w
-            _            -> do traceM ("[DEBUG] Serf.recvPlea: Got " <> show p)
-                               pure p
+  case p of PStdr e msg   -> do -- traceM ("[SERF]\t" <> (cordString msg))
+                                recvPlea w
+            PSlog _ pri t -> do printTank pri t
+                                recvPlea w
+            _             -> do traceM ("[DEBUG] Serf.recvPlea: Got " <> show p)
+                                pure p
 
 {-
     Waits for initial plea, and then sends boot IPC if necessary.
@@ -233,9 +233,9 @@ recvPlea w = do
 handshake :: Serf -> LogIdentity -> IO SerfState
 handshake serf ident = do
     ss@SerfState{..} <- recvPlea serf >>= \case
-      Play Nothing          -> pure $ SerfState 1 (Mug 0)
-      Play (Just (e, m, _)) -> pure $ SerfState e m
-      x                     -> throwIO (InvalidInitialPlea x)
+      PPlay Nothing          -> pure $ SerfState 1 (Mug 0)
+      PPlay (Just (e, m, _)) -> pure $ SerfState e m
+      x                      -> throwIO (InvalidInitialPlea x)
 
     when (ssNextEv == 1) $ do
         sendOrder serf (OBoot ident)
@@ -243,49 +243,51 @@ handshake serf ident = do
     pure ss
 
 sendWork :: Serf -> Job -> IO SerfResp
-sendWork w job@(Job jobId _ _) =
+sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
     pure res
   where
+    eId = jobId job
+
     produce :: WorkResult -> IO SerfResp
     produce (ss@SerfState{..}, o) = do
-      guardExn (ssNextEv == (1+jobId)) (BadComputeId jobId (ss, o))
+      guardExn (ssNextEv == (1+eId)) (BadComputeId eId (ss, o))
       pure $ Right (ss, o)
 
     replace :: ReplacementEv -> IO SerfResp
-    replace job@(Job i _ _) = do
-      guardExn (i == jobId) (BadReplacementId jobId job)
+    replace job = do
+      guardExn (jobId job == eId) (BadReplacementId eId job)
       pure (Left job)
 
     loop :: IO SerfResp
     loop = recvPlea w >>= \case
-      Play p       -> throwIO (UnexpectedPlay jobId p)
-      Done i m o   -> produce (SerfState (i+1) m, o)
-      Work job     -> replace job
-      Stdr _ cord  -> loop -- traceM ("[SERF]\t" <> cordString cord) >> loop
-      Slog _ pri t -> printTank pri t >> loop
+      PPlay p       -> throwIO (UnexpectedPlay eId p)
+      PDone i m o   -> produce (SerfState (i+1) m, o)
+      PWork work    -> replace (DoWork work)
+      PStdr _ cord  -> loop -- traceM ("[SERF]\t" <> cordString cord) >> loop
+      PSlog _ pri t -> printTank pri t >> loop
 
 
 --------------------------------------------------------------------------------
 
 doJob :: Serf -> Job -> IO (Job, SerfState, Fx)
-doJob serf job@(Job eId _ _) = do
+doJob serf job = do
     sendWork serf job >>= \case
         Left replaced  -> doJob serf replaced
         Right (ss, fx) -> pure (job, ss, fx)
 
 bootJob :: Serf -> Job -> IO (Job, SerfState)
-bootJob serf job@(Job eId _ _) = do
+bootJob serf job = do
     doJob serf job >>= \case
         (job, ss, []) -> pure (job, ss)
-        (job, ss, fx) -> throwIO (EffectsDuringBoot eId fx)
+        (job, ss, fx) -> throwIO (EffectsDuringBoot (jobId job) fx)
 
 replayJob :: Serf -> Job -> IO SerfState
-replayJob serf job@(Job eId _ _) = do
+replayJob serf job = do
     sendWork serf job >>= \case
-        Left replaced -> throwIO (ReplacedEventDuringReplay eId replaced)
+        Left replace -> throwIO (ReplacedEventDuringReplay (jobId job) replace)
         Right (ss, _) -> pure ss
 
 
@@ -293,11 +295,15 @@ replayJob serf job@(Job eId _ _) = do
 
 type BootSeqFn = EventId -> Mug -> Time.Wen -> Job
 
+data BootExn = ShipAlreadyBooted
+  deriving stock    (Eq, Ord, Show)
+  deriving anyclass (Exception)
+
 bootFromSeq :: Serf -> BootSeq -> IO ([Job], SerfState)
 bootFromSeq serf (BootSeq ident nocks ovums) = do
     handshake serf ident >>= \case
         ss@(SerfState 1 (Mug 0)) -> loop [] ss bootSeqFns
-        _                        -> error "ship already booted"
+        _                        -> throwIO ShipAlreadyBooted
 
   where
     loop :: [Job] -> SerfState -> [BootSeqFn] -> IO ([Job], SerfState)
@@ -311,8 +317,8 @@ bootFromSeq serf (BootSeq ident nocks ovums) = do
     bootSeqFns :: [BootSeqFn]
     bootSeqFns = fmap muckNock nocks <> fmap muckOvum ovums
       where
-        muckNock nok eId mug _   = Job eId mug (LifeCycle nok)
-        muckOvum ov  eId mug wen = Job eId mug (DateOvum wen ov)
+        muckNock nok eId mug _   = RunNok $ LifeCyc eId mug nok
+        muckOvum ov  eId mug wen = DoWork $ Work eId mug wen ov
 
 {-
     The ship is booted, but it is behind. shove events to the worker
@@ -328,30 +334,33 @@ replay serf log = do
     ss <- handshake serf (Log.identity log)
 
     runConduit $  Log.streamEvents log (ssNextEv ss)
-               .| toJobs (ssNextEv ss)
+               .| toJobs (Log.identity log) (ssNextEv ss)
                .| replayJobs serf ss
 
-toJobs :: EventId -> ConduitT Atom Job IO ()
-toJobs eId =
+toJobs :: LogIdentity -> EventId -> ConduitT Atom Job IO ()
+toJobs ident eId =
     await >>= \case
         Nothing -> traceM "no more jobs" >> pure ()
-        Just at -> do yield =<< liftIO (fromAtom eId at)
+        Just at -> do yield =<< liftIO (fromAtom at)
                       traceM (show eId)
-                      toJobs (eId+1)
+                      toJobs ident (eId+1)
   where
-    fromAtom eId at = do
-        traceM ("[DEBUG] Pier.toJob: " <> show (length $ at ^. atomBytes))
-        traceM ("[DEBUG] Pier.toJob.cue: " <> show eId)
-        noun           <- cueExn at
-        traceM ("[DEBUG] Pier.toJob.fromNoun")
-        (mug, payload) <- fromNounExn noun
-        traceM ("[DEBUG] Pier.toJob.done")
-        pure (Job eId mug payload)
+    isNock = eId > fromIntegral (lifecycleLen ident)
+
+    fromAtom :: Atom -> IO Job
+    fromAtom at | isNock = do
+        noun       <- cueExn at
+        (mug, nok) <- fromNounExn noun
+        pure $ RunNok (LifeCyc eId mug nok)
+    fromAtom at | isNock = do
+        noun            <- cueExn at
+        (mug, wen, ovm) <- fromNounExn noun
+        pure $ DoWork (Work eId mug wen ovm)
 
 
 -- Compute Thread --------------------------------------------------------------
 
-startComputeThread :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
+startComputeThread :: Serf -> STM RawOvum -> (EventId, Mug) -> IO (Async ())
 startComputeThread w getEvent (evendId, mug) = async $ forever $ do
   ovum <- atomically $ getEvent
 

@@ -7,8 +7,10 @@ import UrbitPrelude
 import Vere.Pier.Types
 import Data.Conduit
 
-import Vere.Log  (EventLog)
-import Vere.Serf (Serf, SerfState(..))
+import System.Directory   (createDirectoryIfMissing)
+import System.Posix.Files (ownerModes, setFileMode)
+import Vere.Log           (EventLog)
+import Vere.Serf          (Serf, SerfState(..))
 
 import qualified System.Entropy as Ent
 import qualified Vere.Log       as Log
@@ -18,6 +20,13 @@ import qualified Vere.Serf      as Serf
 --------------------------------------------------------------------------------
 
 ioDrivers = [] :: [IODriver]
+
+setupPierDirectory :: FilePath -> IO ()
+setupPierDirectory shipPath = do
+   for_ ["put", "get", "log", "chk"] $ \seg -> do
+     let pax = shipPath <> "/.urb/" <> seg
+     createDirectoryIfMissing True pax
+     setFileMode pax ownerModes
 
 {-
 data Pier = Pier
@@ -101,10 +110,13 @@ writeJobs log !jobs = do
     Log.appendEvents log events
   where
     fromJob :: (EventId, Job) -> IO Atom
-    fromJob (expectedId, Job eventId mug payload) = do
-        guard (expectedId == eventId)
-        traceM "fromJob.toNoun"
-        pure $ jam $ toNoun (mug, payload)
+    fromJob (expectedId, job) = do
+        guard (expectedId == jobId job)
+        pure $ jam $ jobPayload job
+
+    jobPayload :: Job -> Noun
+    jobPayload (RunNok (LifeCyc _ m n)) = toNoun (m, n)
+    jobPayload (DoWork (Work _ m d o))  = toNoun (m, d, o)
 
 
 -- Run Pier --------------------------------------------------------------------

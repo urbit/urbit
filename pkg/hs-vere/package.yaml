@@ -89,12 +89,15 @@ default-extensions:
   - ApplicativeDo
   - BangPatterns
   - BlockArguments
+  - DataKinds
+  - DefaultSignatures
   - DeriveAnyClass
   - DeriveDataTypeable
   - DeriveFoldable
   - DeriveGeneric
   - DeriveTraversable
   - DerivingStrategies
+  - EmptyCase
   - EmptyDataDecls
   - FlexibleContexts
   - FlexibleInstances
@@ -102,21 +105,25 @@ default-extensions:
   - GADTs
   - GeneralizedNewtypeDeriving
   - LambdaCase
+  - MagicHash
   - MultiParamTypeClasses
   - NamedFieldPuns
   - NoImplicitPrelude
   - NumericUnderscores
   - OverloadedStrings
   - PartialTypeSignatures
+  - PatternSynonyms
   - QuasiQuotes
   - Rank2Types
   - RankNTypes
   - RecordWildCards
-  - StandaloneDeriving
   - ScopedTypeVariables
+  - StandaloneDeriving
   - TemplateHaskell
   - TupleSections
   - TypeApplications
   - TypeFamilies
+  - TypeOperators
+  - UnboxedTuples
   - UnicodeSyntax
   - ViewPatterns

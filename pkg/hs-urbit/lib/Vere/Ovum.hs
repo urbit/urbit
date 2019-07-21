@@ -1,6 +1,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 
-module Vere.Pier.Types where
+module Vere.Ovum (Ovum(..), Event) where
 
 import UrbitPrelude
 import Urbit.Time
@@ -9,10 +9,8 @@ import qualified Vere.Ames        as Ames
 import qualified Vere.Http.Client as Client
 import qualified Vere.Http.Server as Server
 
---------------------------------------------------------------------------------
 
-newtype ShipId = ShipId (Ship, Bool)
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+-- Misc Types ------------------------------------------------------------------
 
 newtype Octs = Octs ByteString
   deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
@@ -23,19 +21,59 @@ newtype FileOcts = FileOcts ByteString
 newtype BigTape = BigTape Text
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
-type Life = Noun
-type Pass = Noun
-type Turf = Noun
-type PUrl = Todo Noun
-type Seed = Todo Noun
-type Czar = Todo Noun -- Map Ship (Life, Pass)
-type Bloq = Todo Atom -- @ud
-
 newtype Todo a = Todo a
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
 instance Show (Todo a) where
   show (Todo _) = "TODO"
+
+instance Show FileOcts where
+  show (FileOcts bs) = show (take 32 bs <> "...")
+
+instance Show BigTape where
+  show (BigTape t) = show (take 32 t <> "...")
+
+
+-- Maps and Sets ---------------------------------------------------------------
+
+data NounTreeNode a = HTN
+    { ntnNode :: a
+    , ntnLeft :: NounTree a
+    , ntnRite :: NounTree a
+    }
+  deriving (Eq, Ord, Show)
+
+type NounTree a = Maybe (NounTreeNode a)
+
+deriveNoun ''NounTreeNode
+
+newtype (NounMap k v) = NounMap (NounTree (k, v))
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+
+-- Json ------------------------------------------------------------------------
+
+type Json = Maybe JsonNode
+
+data JsonNode
+    = JNA [Json]
+    | JNB Bool
+    | JNO (NounMap Text Json)
+    | JNN Text -- TODO @ta
+    | JNS Text
+
+deriveNoun ''JsonNode
+
+
+--------------------------------------------------------------------------------
+
+type Life = Noun
+type Pass = Noun
+type Turf = Noun
+type PUrl = Todo Noun
+type Seed = Todo Noun
+type Czar = NounMap Ship (Life, Pass)
+type Bloq = Atom
 
 data Dawn = MkDawn
     { dSeed :: Seed
@@ -55,60 +93,10 @@ data LegacyBootEvent
 newtype Nock = Nock Noun
   deriving newtype (Eq, Ord, FromNoun, ToNoun)
 
-data Pill = Pill
-    { pBootFormulas   :: [Nock]
-    , pKernelOvums    :: [RawOvum]
-    , pUserspaceOvums :: [RawOvum]
-    }
-  deriving (Eq, Ord)
-
-data LogIdentity = LogIdentity
-    { who          :: Ship
-    , isFake       :: Bool
-    , lifecycleLen :: Word
-    } deriving (Eq, Ord, Show)
-
-data BootSeq = BootSeq LogIdentity [Nock] [RawOvum]
-  deriving (Eq, Ord, Show)
-
 newtype Desk = Desk Text
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Mime = Mime Path FileOcts
-  deriving (Eq, Ord, Show)
-
-type EventId = Word64
-
-
--- Jobs ------------------------------------------------------------------------
-
-data Work = Work EventId Mug Wen RawOvum
-  deriving (Eq, Ord, Show)
-
-data LifeCyc = LifeCyc EventId Mug Nock
-  deriving (Eq, Ord, Show)
-
-data Job
-    = DoWork Work
-    | RunNok LifeCyc
-  deriving (Eq, Ord, Show)
-
-jobId :: Job -> EventId
-jobId (RunNok (LifeCyc eId _ _)) = eId
-jobId (DoWork (Work eId _ _ _))  = eId
-
-jobMug :: Job -> Mug
-jobMug (RunNok (LifeCyc _ mug _)) = mug
-jobMug (DoWork (Work _ mug _ _))  = mug
-
-
---------------------------------------------------------------------------------
-
-data Order
-    = OBoot LogIdentity
-    | OExit Word8
-    | OSave EventId
-    | OWork Job
   deriving (Eq, Ord, Show)
 
 data ResponseHeader = ResponseHeader
@@ -262,13 +250,6 @@ data Blit
     | Url Text
   deriving (Eq, Ord, Show)
 
-data Varience = Gold | Iron | Lead
-
-type Perform = Eff -> IO ()
-
-data RawOvum = Ovum Path Event
-  deriving (Eq, Ord, Show)
-
 --------------------------------------------------------------------------------
 
 {-
@@ -295,30 +276,30 @@ data RawOvum = Ovum Path Event
 
     And then proceed with parsing as usual.
 -}
-data OvalOvum
-  = OOBlip BlipOvum
-  | OOVane VaneOvum
+data Ovum
+  = OBlip BlipOvum
+  | OVane VaneOvum
 
-instance FromNoun OvalOvum where
+instance FromNoun Ovum where
     parseNoun n = named "Ovum" $ do
       (path::Path, tag::Cord, v::Noun) <- parseNoun n
       case path of
-        Path (""     : m : p) -> OOBlip <$> parseNoun (toNoun (m, tag, p, v))
-        Path ("vane" : m : p) -> OOVane <$> parseNoun (toNoun (m, tag, p, v))
+        Path (""     : m : p) -> OBlip <$> parseNoun (toNoun (m, tag, p, v))
+        Path ("vane" : m : p) -> OVane <$> parseNoun (toNoun (m, tag, p, v))
         Path (_:_:_)          -> fail "path must start with %$ or %vane"
         Path (_:_)            -> fail "path too short"
         Path _                -> fail "empty path"
 
-instance ToNoun OvalOvum where
-  toNoun oo =
+instance ToNoun Ovum where
+  toNoun o =
       fromNounErr noun & \case
         Left err -> error (show err)
         Right (pathSnd::Knot, tag::Cord, Path path, val::Noun) ->
           toNoun (Path (pathHead:pathSnd:path), (tag, val))
     where
       (pathHead, noun) =
-        case oo of OOBlip bo -> ("",     toNoun bo)
-                   OOVane vo -> ("vane", toNoun vo)
+        case o of OBlip bo -> ("",     toNoun bo)
+                  OVane vo -> ("vane", toNoun vo)
 
 --------------------------------------------------------------------------------
 
@@ -351,60 +332,8 @@ data VaneOvum
     = VOVane (KernelModule, ()) Void
     | VOZuse ()                 Void
 
---------------------------------------------------------------------------------
-
-newtype Jam = Jam { unJam :: Atom }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
-data IODriver = IODriver
-  { bornEvent   :: IO RawOvum
-  , startDriver :: (RawOvum -> STM ()) -> IO (Async (), Perform)
-  }
-
-data Writ a = Writ
-  { eventId :: Word64
-  , timeout :: Maybe Word
-  , event   :: Jam -- mat
-  , payload :: a
-  }
-
 
 -- Instances -------------------------------------------------------------------
-
-instance ToNoun Work where
-  toNoun (Work eid m d o) = toNoun (eid, Jammed (m, d, o))
-
-instance FromNoun Work where
-    parseNoun n = named "Work" $ do
-        (eid, Jammed (m, d, o)) <- parseNoun n
-        pure (Work eid m d o)
-
-instance ToNoun LifeCyc where
-  toNoun (LifeCyc eid m n) = toNoun (eid, Jammed (m, n))
-
-instance FromNoun LifeCyc where
-  parseNoun n = named "LifeCyc" $ do
-      (eid, Jammed (m, n)) <- parseNoun n
-      pure (LifeCyc eid m n)
-
--- No FromNoun instance, because it depends on context (lifecycle length)
-instance ToNoun Job where
-  toNoun (DoWork w) = toNoun w
-  toNoun (RunNok l) = toNoun l
-
-instance Show FileOcts where
-  show (FileOcts bs) = show (take 32 bs <> "...")
-
-instance Show BigTape where
-  show (BigTape t) = show (take 32 t <> "...")
-
-instance Show Nock where
-  show _ = "Nock"
-
-instance Show Pill where
-  show (Pill x y z) = show (length x, length y, length z)
-
-deriveToNoun ''Order
 
 deriveNoun ''ArrowKey
 deriveNoun ''Belt
@@ -418,11 +347,8 @@ deriveNoun ''HttpRequest
 deriveNoun ''KernelModule
 deriveNoun ''Lane
 deriveNoun ''LegacyBootEvent
-deriveNoun ''LogIdentity
 deriveNoun ''Mime
 deriveNoun ''NewtEx
-deriveNoun ''Pill
-deriveNoun ''RawOvum
 deriveNoun ''RecEx
 deriveNoun ''RequestParams
 deriveNoun ''ResponseHeader

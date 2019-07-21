@@ -2,7 +2,7 @@
     Generate FromNoun and ToNoun instances.
 -}
 
-module Noun.TH (deriveNoun) where
+module Noun.TH (deriveNoun, deriveToNoun, deriveFromNoun) where
 
 import ClassyPrelude              hiding (fromList)
 import Language.Haskell.TH
