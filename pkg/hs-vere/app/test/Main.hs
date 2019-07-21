@@ -55,7 +55,7 @@ tryBootFromPill pillPath shipPath ship = do
         print ss
         threadDelay 500000
         shutdown serf 0 >>= print
-        putStrLn "Booted!"
+        putStrLn "[tryBootFromPill] Booted!"
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
@@ -63,7 +63,7 @@ tryResume shipPath = do
         print ss
         threadDelay 500000
         shutdown serf 0 >>= print
-        putStrLn "Resumed!"
+        putStrLn "[tryResume] Resumed!"
 
 tryFullReplay :: FilePath -> IO ()
 tryFullReplay shipPath = do
@@ -92,7 +92,7 @@ tryParseEvents dir first = do
           n <- liftIO $ cueBSExn bs
           -- print ("done cue", eId)
           when (eId <= cycle) $ do
-              putStrLn ("lifecycle nock: " <> tshow eId)
+              putStrLn ("[tryParseEvents] lifecycle nock: " <> tshow eId)
           when (eId > cycle) $ liftIO $ do
               (mug, wen, ovumNoun) <- unpackJob n
               case fromNounErr ovumNoun of
@@ -128,7 +128,7 @@ collectAllFx :: FilePath -> IO ()
 collectAllFx top = do
     wipeSnapshot top
     with (collectedFX top) $ \() ->
-        putStrLn "Done collecting effects!"
+        putStrLn "[collectAllFx] Done collecting effects!"
 
 --------------------------------------------------------------------------------
 

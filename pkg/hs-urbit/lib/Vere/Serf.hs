@@ -32,6 +32,8 @@ import System.Exit            (ExitCode)
 
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Text              as T
+import qualified System.IO.Error        as IO
+import qualified System.IO              as IO
 import qualified Urbit.Time             as Time
 import qualified Vere.Log               as Log
 
@@ -47,6 +49,7 @@ data SerfState = SerfState
 data Serf = Serf
   { sendHandle :: Handle
   , recvHandle :: Handle
+  , errThread  :: Async ()
   , process    :: ProcessHandle
   , sState     :: MVar SerfState
   }
@@ -97,8 +100,8 @@ deriveNoun ''Plea
 
 printTank :: Word32 -> Tank -> IO ()
 printTank pri = \case
-  Leaf (Tape s) -> pure () -- traceM ("[SERF]\t" <> s)
-  t             -> pure () -- traceM ("[SERF]\t" <> show (pri, t))
+  Leaf (Tape s) -> traceM ("[SERF]\t[tank] " <> s)
+  t             -> traceM ("[SERF]\t[tank] " <> show (pri, t))
 
 guardExn :: Exception e => Bool -> e -> IO ()
 guardExn ok = unless ok . throwIO
@@ -122,18 +125,34 @@ run pierPath = mkAcquire (startUp pierPath) tearDown
 
 startUp :: FilePath -> IO Serf
 startUp pierPath = do
-    (Just i, Just o, _, p) <- createProcess pSpec
+    (Just i, Just o, Just e, p) <- createProcess pSpec
     ss <- newEmptyMVar
-    pure (Serf i o p ss)
+    et <- async (readStdErr e)
+    pure (Serf i o et p ss)
   where
-    chkDir  = traceShowId pierPath
     diskKey = ""
     config  = "0"
-    args    = [chkDir, diskKey, config]
+    args    = [pierPath, diskKey, config]
     pSpec   = (proc "urbit-worker" args)
                 { std_in = CreatePipe
                 , std_out = CreatePipe
+                , std_err = CreatePipe
                 }
+
+readStdErr :: Handle -> IO ()
+readStdErr h =
+    untilEOFExn $ do
+        ln <- IO.hGetLine h
+        putStrLn ("[SERF]\t[stderr] " <> T.strip (pack ln))
+  where
+    untilEOFExn :: IO () -> IO ()
+    untilEOFExn act = loop
+      where
+        loop = do
+          IO.tryIOError act >>= \case
+            Left exn | IO.isEOFError exn -> pure ()
+            Left exn                     -> IO.ioError exn
+            Right ()                     -> loop
 
 tearDown :: Serf -> IO ()
 tearDown serf = do
@@ -168,12 +187,20 @@ sendLen s i = do
 
 sendOrder :: Serf -> Order -> IO ()
 sendOrder w o = do
-  traceM ("[DEBUG] Serf.sendOrder.toNoun: " <> show o)
+  traceM ("[DEBUG]\t[Serf.sendOrder.toNoun] " <> show o)
   n <- evaluate (toNoun o)
-  traceM ("[DEBUG] Serf.sendOrder.jam")
+
+  case o of
+    OWork (DoWork (Work _ _ _ o)) -> do
+      print (toNoun (o :: Ovum))
+    _  -> do
+      pure ()
+
+  traceM ("[DEBUG] [Serf.sendOrder.jam]")
   j <- evaluate (jam n)
-  traceM ("[DEBUG] Serf.sendOrder.send")
+  traceM ("[DEBUG] [Serf.sendOrder.send]")
   sendAtom w j
+  traceM ("[DEBUG] [Serf.sendOrder.sent]")
 
 sendAtom :: Serf -> Atom -> IO ()
 sendAtom s a = do
@@ -222,15 +249,17 @@ shutdown serf code = sendOrder serf (OExit code)
 -}
 recvPlea :: Serf -> IO Plea
 recvPlea w = do
+  traceM ("[DEBUG]\t[Vere.Serf.recvPlea] waiting")
   a <- recvAtom w
+  traceM ("[DEBUG]\t[Vere.Serf.recvPlea] got atom")
   n <- fromRightExn (cue a) (const $ BadPleaAtom a)
   p <- fromRightExn (fromNounErr n) (\(p,m) -> BadPleaNoun (traceShowId n) p m)
 
-  case p of PStdr e msg   -> do -- traceM ("[SERF]\t" <> (cordString msg))
+  case p of PStdr e msg   -> do traceM ("[SERF]\t[stdr-plea] " <> cordString msg)
                                 recvPlea w
             PSlog _ pri t -> do printTank pri t
                                 recvPlea w
-            _             -> do traceM ("[DEBUG] Serf.recvPlea: Got " <> show p)
+            _             -> do traceM ("[DEBUG] [Serf.recvPlea] Got " <> show p)
                                 pure p
 
 {-
@@ -253,6 +282,7 @@ sendWork w job =
   do
     sendOrder w (OWork job)
     res <- loop
+    traceM ("[DEBUG]\t[Vere.Serf.sendWork] Got response")
     pure res
   where
     eId = jobId job
@@ -272,7 +302,7 @@ sendWork w job =
       PPlay p       -> throwIO (UnexpectedPlay eId p)
       PDone i m o   -> produce (SerfState (i+1) m, o)
       PWork work    -> replace (DoWork work)
-      PStdr _ cord  -> loop -- traceM ("[SERF]\t" <> cordString cord) >> loop
+      PStdr _ cord  -> traceM ("[SERF]\t[stdr-plea] " <> cordString cord) >> loop
       PSlog _ pri t -> printTank pri t >> loop
 
 
@@ -345,12 +375,12 @@ replay serf log = do
 toJobs :: LogIdentity -> EventId -> ConduitT ByteString Job IO ()
 toJobs ident eId =
     await >>= \case
-        Nothing -> traceM "no more jobs" >> pure ()
+        Nothing -> traceM "[toJobs] no more jobs" >> pure ()
         Just at -> do yield =<< liftIO (fromAtom at)
-                      traceM (show eId)
+                      traceM ("[toJobs] " <> (show eId))
                       toJobs ident (eId+1)
   where
-    isNock = trace (show (eId, lifecycleLen ident))
+    isNock = trace ("[toJobs] " <> show (eId, lifecycleLen ident))
            $ eId <= fromIntegral (lifecycleLen ident)
 
     fromAtom :: ByteString -> IO Job
@@ -397,4 +427,3 @@ doCollectFX serf = go
             liftIO $ print (jobId jb)
             yield (jobId jb, fx)
             go ss
-
