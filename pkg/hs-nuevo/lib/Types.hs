@@ -28,6 +28,7 @@ type Message = String
 -- which sends messages to each
 data VereEnv = VereEnv
   { instances :: M.Map NodeId InstanceThread
+  , drivers   :: M.Map String IoDriver
 
   }
   deriving (Show)
@@ -124,6 +125,10 @@ emptyNuevoState = NuevoState
 --  Processes a single Nuevo event
 type NuevoFunction = NuevoState -> NuevoEvent -> (NuevoState, [NuevoEffect])
 
+type IoDriver = NuevoEffect -> IO [NuevoEffect]
+
+instance Show IoDriver where
+  show _ = "<io driver>"
 
 -------------------------------------------------------------------------------
 
