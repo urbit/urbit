@@ -86,22 +86,48 @@
       ::
       [%return return-event=vase]
   ==
+::  Your community can do whatever it wants, as long as it obeys this toplevel interface
+::
+++  toplevel-interface
+  |%
+  ::  the input to your node; this is your parent-event
+  ::
+  ++  input
+    full-signature
+  ::  the output of your node; this is your return-event
+  ::
+  ++  output
+    $%  ::  accepts the message and release all the effects and state changes
+        ::  it produced.
+        ::
+        [%accept ~]
+        ::  rejects this message and ignores all the effects and reverts all
+        ::  state changes.
+        ::
+        [%reject ~]
+        ::  a special output that can only occur on the toplevel node; this
+        ::  accepts the incoming 
+        ::
+        [%accept-and-invite-member ship=@p]
+        ::
+        ::  TODO: Should there be an uninvite here? If there should be, how do
+        ::  you avoid abusive @p posting? If not, how do you fix threats to
+        ::  eject yourself in response to blackmail?
+    ==
+  --
 ::  the authenticating toplevel node
 ::
 ++  node-type-auth
   |%
   ++  parent-event
-    full-signature
+    input:toplevel-interface
   ::
   +$  child-event
     processed-signature
   ::  user events which target the toplevel node are all about doing membership checks
   ::
   +$  user-event
-    $%  [%init community-name=@t host-ship=@p initial-members=(set @p)]
-        [%add-member ship=@p]
-        [%remove-member ship=@p]
-    ::
+    $%  [%invite ship=@p]
         [%create name=@t type=@t =signature-type]
     ==
   ::
@@ -109,21 +135,12 @@
     ~
   ::
   +$  private-state
-    ::  todo: don't leave all mods as a having the same power this is how
-    ::  communities get destroyed
-    $:  initialized=_|
-    ==
+    ~
   ::
   +$  snapshot
-    $:  ::  community-name: unique name for this host-ship
+    $:  ::  this node keeps track of the
         ::
-        community-name=@t
-        ::  host-ship: the ship hosting this community
-        ::
-        host-ship=@p
-        ::  invited: the set of ships which can post to this
-        ::
-        invited=(set @p)
+        banned-tags=(map @udpoint @da)
     ==
   ::
   +$  child-returned
@@ -132,22 +149,21 @@
     ==
   ::
   +$  return-event
-    $%  [%accept ~]
-        [%reject ~]
-        [%add-member ship=@p]
-        [%remove-member ship=@p]
-    ==
+    output:toplevel-interface
   ::
   +$  on-process-response
     $%  [%log =private-event =return-event]
         [%create @t @t =signature-type =child-event]
+        [%return =return-event]
     ==
   ::  +on-route: everything routes through the toplevel node. this is what does 
+  ::
+  ::    TODO: child-event or return-event, to force routing to be able to act
+  ::    and terminate processing?
   ::
   ++  on-route
     |=  [=path =parent-event =private-state]
     ^-  (unit child-event)
-    ::
     ~&  [%todo-add-auth-check-for parent-event]
     ::
     `(process-signature parent-event)
@@ -158,17 +174,8 @@
     ::  todo: since we're the toplevel node, we also need to perform auth here.
     ::
     ?-    -.user-event
-        %init
-      ::  we can only call the init function when we aren't initialized
-      ::
-      ?>  ?=(%.n initialized.private-state)
-      [[%log ~ [%accept ~]] private-state(initialized %.y)]
-    ::
-        %add-member
-      [[%log ~ [%accept ~]] private-state]
-    ::
-        %remove-member
-      [[%log ~ [%accept ~]] private-state]
+        %invite
+      [[%return [%accept-and-invite-member ship.user-event]] private-state]
     ::
         %create
       ~&  [%inside-create user-event]
@@ -185,18 +192,9 @@
     |=  [=user-event =private-event =snapshot]
     ^-  _snapshot
     ?-    -.user-event
-        %init
-      %_    snapshot
-        community-name  community-name.user-event
-        host-ship       host-ship.user-event
-        invited         initial-members.user-event
-      ==
     ::
-        %add-member
-      snapshot(invited (~(put in invited.snapshot) ship.user-event))
-    ::
-        %remove-member
-      snapshot(invited (~(del in invited.snapshot) ship.user-event))
+        %invite
+      snapshot
     ::
         %create
       snapshot
@@ -390,7 +388,7 @@
     ::
     snapshot(posts [[user-event private] posts.snapshot])
   --
-::  the full, shared event log 
+::  all events that could exist in an event log
 ::
 ++  event-log-item
   $%  ::  a special init which must be the first item in the / node.
@@ -640,123 +638,178 @@
   =.  private-state.state  (slot 3 raw-result)
   ::
   [return-event state]
-::  +node-executor: applies a message to a node in a route
+::  +change-broadcast: a 
 ::
-::    Returns a list of return messages (ignored at the toplevel) and the
-::    modified node state. The flow of the node-executor is to dispatch to
-::    hierarchical set of nodes. Let's say we have the following node tree:
-::
-::      /
-::      /board
-::      /board/123
-::      /board/456
-::
-::    The way to think of a message is as a series of function calls. We call
-::    +on-route in /, which generates the parent event for +on-route in /board,
-::    which generates the parent event in /board/123. You then call /board/123
-::    with the user's request. You then route the return value from /board/123
-::    to /board, from /board to /, and then use the assumed [%accept
-::    ~]/[%reject ~] return call from the toplevel node.
-::
-::    TODO: vase to (unit vase)? Right now !>(~) lets me make progress but
-::    is wrong in the error handling case
-::
-::    TODO: Archive events need to go in the log.
-::
-::
-++  node-executor
-  |=  $:  parent-event=vase
-          route=path
-          full-path=path
-          message=vase
-          state=node:server
-      ==
-  ^-  [vase _state]
-  ::
-  ~&  [%full-path full-path]
-  ::
-  =/  app-vase=vase  (~(got by app-map) app-type.snapshot.state)
-  ::  If we still have remaining path elements, dispatch on them.
-  ::
-  ?^  route
-    ::
-    ~&  [%keys (turn ~(tap by children.state) head)]
-    ::
-    ?~  sub-node=(~(get by children.state) i.route)
-      ~&  [%four-oh-four i.route]
-      [!>(~) state]
-    ::
-    =/  on-route=vase  (slap app-vase [%limb %on-route])
-    =/  args  :(slop !>(route) parent-event private-state.state)
-    =/  raw-result  (slam on-route args)
-    ::  raw-result is a (unit *), where we abort processing if we get a sig
-    ::  back
-    ::
-    ?:  =(~ q.raw-result)
-      ~&  [%node-canceled-event ~]
-      [!>(~) state]
-    ::
-    =/  child-event=vase  (slot 3 raw-result)
-    ::
-    =^  return-value  u.sub-node
-      (node-executor child-event t.route full-path message u.sub-node)
-    ::
-    =.  children.state  (~(put by children.state) i.route u.sub-node)
-    ::
-    (process-child-returned app-vase return-value state)
-  ::  we've reached the node we're trying to talk to.
-  ::
-  =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
-  =/  args  :(slop parent-event message private-state.state)
-  =/  raw-result  (slam on-process-event args)
-  ::
-  =/  response=on-process-response  (sump (slot 2 raw-result))
-  =.  private-state.state  (slot 3 raw-result)
-  ::
-  ?-    -.response
-      %log
-    ::  when we receive a %log event, we commit this to the event log
-    ::
-    =/  apply-event-to-snapshot=vase
-      (slap app-vase [%limb %apply-event-to-snapshot])
-    =/  args  :(slop message private-event.response snapshot.snapshot.state)
-    =.  snapshot.snapshot.state  (slam apply-event-to-snapshot args)
-    ::
-    ~&  [%log user-event=message private-event=private-event.response]
-    =.  event-log.state
-      [[next-event-id.state [%log message private-event.response]] event-log.state]
-    =.  next-event-id.state  +(next-event-id.state)
-    ::
-    ~&  [%new-snapshot full-path snapshot.snapshot.state]
-    ::
-    [return-event.response state]
-  ::
-      %create
-    ::
-    =/  created=node:server  (instantiate-node [type signature-type ~]:response)
-    ::  write the creation information into the event log so that when
-    ::  replayed, we get the configuration.
-    ::
-    =.  event-log.created
-      [[0 [%init type.response signature-type.response]] ~]
-    ::
-    =^  return  created
-      (node-executor child-event.response / (weld full-path [sub-id.response ~]) message created)
-    ::
-    ~&  [%created type=type.response sub-id=sub-id.response return=return]
-    =.  children.state  (~(put by children.state) sub-id.response created)
-    =.  event-log.state
-      :_  event-log.state
-      [next-event-id.state [%create sub-id.response type.response signature-type.response]]
-    =.  next-event-id.state  +(next-event-id.state)
-    ::
-    (process-child-returned app-vase return state)
-  ::
-      %return
-    ::  when we receive a %return value, we pass the value up to the callers
-    ::
-    [return-event.response state]
++$  change-broadcast
+  $:  app=@t
+      =path
   ==
+
+::  +apply: applies a message to the event logs
+::
+::    TODO:
+::
+++  apply
+  |=  $:  =full-signature
+          route=path
+          message=vase
+          original-state=node:server
+      ==
+  ^-  [(list change-broadcast) _original-state]
+  ::  Before we pass the data to the applets, we perform the verification
+  ::  management ourselves.
+
+  ::  there are two things which cause broadcast changes: events sent as part
+  ::  of the [%log ...] message from +on-process-event and the toplevel
+  ::  [%accept-and-invite-member @p] return value. TODO: Actually do it.
+  ::
+  |^  =/  ret=[=vase state=_original-state]
+        %-  recurse  :*
+          !>(full-signature)
+          route
+          route
+          message
+          original-state
+        ==
+      ::  the output of calling recurse is a vase which must be a
+      ::  +output:toplevel-interface
+      ::
+      =/  ret-val=output:toplevel-interface
+        ;;(output:toplevel-interface q.vase.ret)
+      ::
+      ::  todo: deal with changes and toplevel state change
+      ::
+      ?-    -.ret-val
+          %accept
+        ~&  %accepting-event
+        [~ state:ret]
+      ::
+          %reject
+        ~&  %rejecting-event
+        [~ original-state]
+      ::
+          %accept-and-invite-member
+        ~&  [%todo-accept-and-invite-member ship.ret-val]
+        [~ state:ret]
+      ==
+  ::  +recurse: applies a message to a node in a route
+  ::
+  ::    Returns a list of return messages (ignored at the toplevel) and the
+  ::    modified node state. The flow of the apply is to dispatch to
+  ::    hierarchical set of nodes. Let's say we have the following node tree:
+  ::
+  ::      /
+  ::      /board
+  ::      /board/123
+  ::      /board/456
+  ::
+  ::    The way to think of a message is as a series of function calls. We call
+  ::    +on-route in /, which generates the parent event for +on-route in /board,
+  ::    which generates the parent event in /board/123. You then call /board/123
+  ::    with the user's request. You then route the return value from /board/123
+  ::    to /board, from /board to /, and then use the assumed [%accept
+  ::    ~]/[%reject ~] return call from the toplevel node.
+  ::
+  ::    TODO: vase to (unit vase)? Right now !>(~) lets me make progress but
+  ::    is wrong in the error handling case
+  ::
+  ::    TODO: Archive events need to go in the log.
+  ::
+  ++  recurse
+    |=  $:  parent-event=vase
+            route=path
+            full-path=path
+            message=vase
+            state=node:server
+        ==
+    ^-  [vase _state]
+    ::
+    ~&  [%full-path full-path]
+    ::
+    =/  app-vase=vase  (~(got by app-map) app-type.snapshot.state)
+    ::  If we still have remaining path elements, dispatch on them.
+    ::
+    ?^  route
+      ::
+      ~&  [%keys (turn ~(tap by children.state) head)]
+      ::
+      ?~  sub-node=(~(get by children.state) i.route)
+        ~&  [%four-oh-four i.route]
+        [!>(~) state]
+      ::
+      =/  on-route=vase  (slap app-vase [%limb %on-route])
+      =/  args  :(slop !>(route) parent-event private-state.state)
+      =/  raw-result  (slam on-route args)
+      ::  raw-result is a (unit *), where we abort processing if we get a sig
+      ::  back
+      ::
+      ?:  =(~ q.raw-result)
+        ~&  [%node-canceled-event ~]
+        [!>(~) state]
+      ::
+      =/  child-event=vase  (slot 3 raw-result)
+      ::
+      =^  return-value  u.sub-node
+        (recurse child-event t.route full-path message u.sub-node)
+      ::
+      =.  children.state  (~(put by children.state) i.route u.sub-node)
+      ::
+      (process-child-returned app-vase return-value state)
+    ::  we've reached the node we're trying to talk to.
+    ::
+    =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
+    =/  args  :(slop parent-event message private-state.state)
+    =/  raw-result  (slam on-process-event args)
+    ::
+    =/  response=on-process-response  (sump (slot 2 raw-result))
+    =.  private-state.state  (slot 3 raw-result)
+    ::
+    ?-    -.response
+        %log
+      ::  when we receive a %log event, we commit this to the event log
+      ::
+      =/  apply-event-to-snapshot=vase
+        (slap app-vase [%limb %apply-event-to-snapshot])
+      =/  args  :(slop message private-event.response snapshot.snapshot.state)
+      =.  snapshot.snapshot.state  (slam apply-event-to-snapshot args)
+      ::
+      ~&  [%log user-event=message private-event=private-event.response]
+      =.  event-log.state
+        [[next-event-id.state [%log message private-event.response]] event-log.state]
+      =.  next-event-id.state  +(next-event-id.state)
+      ::
+      ~&  [%new-snapshot full-path snapshot.snapshot.state]
+      ::
+      [return-event.response state]
+    ::
+        %create
+      ::
+      =/  created=node:server  (instantiate-node [type signature-type ~]:response)
+      ::  write the creation information into the event log so that when
+      ::  replayed, we get the configuration.
+      ::
+      =.  event-log.created
+        [[0 [%init type.response signature-type.response]] ~]
+      ::
+      =^  return  created
+        (recurse child-event.response / (weld full-path [sub-id.response ~]) message created)
+      ::
+      ~&  [%created type=type.response sub-id=sub-id.response return=return]
+      =.  children.state  (~(put by children.state) sub-id.response created)
+      =.  children.snapshot.state  (~(put in children.snapshot.state) sub-id.response)
+      =.  event-log.state
+        :_  event-log.state
+        [next-event-id.state [%create sub-id.response type.response signature-type.response]]
+      =.  next-event-id.state  +(next-event-id.state)
+      ::
+      (process-child-returned app-vase return state)
+    ::
+        %return
+      ::  when we receive a %return value, we pass the value up to the callers
+      ::
+      [return-event.response state]
+    ==
+  --
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -782,14 +835,6 @@
 ::  This works for the thread (sorta) but where does spawning behaviour come in?
 ::
 
-::  =/  community-server
-::    %-  instantiate-community  :*
-::      name='our twon'
-::      host=~zod
-::      members=(sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])
-::      toplevel=%auth
-::    ==
-
 
 ::  toplevel container node
 ::
@@ -807,27 +852,23 @@
 ::
 ~&  %phase---------1
 =^  ret1  toplevel
-  (node-executor !>([%ship ~zod 5]) / / !>([%init 'our town' ~zod (sy [~littel-ponnys ~])]) toplevel)
-~&  [%ret ret1]
+  (apply [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
 ::  'our town' should have a 'shitposting' board
 ::
 ~&  %phase---------2
 =^  ret2  toplevel
-  (node-executor !>([%ship ~zod 5]) / / !>([%create 'shitposting' %board %unlinked]) toplevel)
-~&  [%ret2 ret2]
+  (apply [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
 ~&  [%toplevel toplevel]
 ::  time to start shitposting!
 ::
 ~&  %phase---------3
 =^  ret3  toplevel
-  (node-executor !>([%ship ~zod 5]) /shitposting /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
-~&  [%ret3 ret3]
+  (apply [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
 ::  continue shitposting in the current thread!
 ::
 ~&  %phase---------4
 =^  ret4  toplevel
-  (node-executor !>([%ship ~zod 5]) /shitposting/1 /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
-~&  [%ret4 ret4]
+  (apply [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
 ::
 ~&  [%final-sate toplevel]
 
@@ -907,4 +948,6 @@
 
 
 
-:: Do I need an init on each node? How else do they learn the pieces of state?
+:: NEXT: Hook up %accept, %reject, %accept-and-invite-member so that they're
+:: actually acted on. This is important since %accept-and-invite-member needs
+:: to be hooked up for event log purposes.
