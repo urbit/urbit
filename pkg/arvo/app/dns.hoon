@@ -211,6 +211,9 @@
       ~|  [%dns-collector-reserved-address if.adr]  !!
     ;<  requested=?  bind:m  (request-by-ip if.adr)
     ::  XX save failure?
+    ::
+    ~?  =(requested.state (some address.in-poke-data))
+      %re-requesting
     =?  requested.state   requested
       (some address.in-poke-data)
     (pure:m state)

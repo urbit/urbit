@@ -290,7 +290,7 @@
         (pure:m state)
       =/  a-purl=purl:eyre  node.p.source
       =.  url.state  (crip (en-purl:html a-purl))
-      (watch state url.state launch:contracts:azimuth)  ::  8.069.650)
+      (watch state url.state launch:contracts:azimuth)
     ::
     ::  Start watching a node
     ::

@@ -2264,7 +2264,7 @@
     ::  These convert between aeon (version number), tako (commit hash), yaki
     ::  (commit data structure), lobe (content hash), and blob (content).
     ++  aeon-to-tako  ~(got by hit.dom)
-    ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
+    ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
     ++  lobe-to-mark
@@ -3670,8 +3670,11 @@
     |%
     ::  These convert between aeon (version number), tako (commit hash), yaki
     ::  (commit data structure), lobe (content hash), and blob (content).
+    ::
+    ::    XX the following are duplicated from the +state core
+    ::
     ++  aeon-to-tako  ~(got by hit.dom)
-    ++  aeon-to-yaki  (cork aeon-to-tako tako-to-yaki)
+    ++  aeon-to-yaki  |=(=aeon (tako-to-yaki (aeon-to-tako aeon)))
     ++  lobe-to-blob  ~(got by lat.ran)
     ++  tako-to-yaki  ~(got by hut.ran)
     ++  page-to-lobe  page-to-lobe:util

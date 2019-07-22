@@ -8,10 +8,8 @@ before_install:
   - git lfs pull
 
 script:
-  - cachix authtoken "$CACHIX_AUTH_TOKEN" >/dev/null
   - cachix use urbit2
-
-  - ./sh/cachix
+  - ./sh/cachix || true
 
   - make
   - make release

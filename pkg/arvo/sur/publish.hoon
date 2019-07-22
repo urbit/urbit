@@ -25,13 +25,7 @@
       [%delete-post coll=@tas post=@tas]
       [%delete-comment coll=@tas post=@tas comment=@tas]
   ::
-      $:  %edit-collection
-          name=@tas
-          title=@t
-          com=comment-config
-          edit=edit-config
-          perm=perm-config
-      ==
+      [%edit-collection name=@tas title=@t]
   ::
       $:  %edit-post
           who=@p

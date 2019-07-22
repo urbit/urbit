@@ -2338,7 +2338,7 @@
     ::  underlying arrows with +skim filtering on the head of each diff.
     ::
     ::  The identity element is ~.  Clearly, composing this with any
-    ::  +diff gives the original +diff.  Since this is a category, ::
+    ::  +diff gives the original +diff.  Since this is a category,
     ::  +compose must be associative (true, because concatenation is
     ::  associative).  This is a groupoid, so we must further have that
     ::  every +point-diff has an inverse.  These are given by the
@@ -2397,9 +2397,9 @@
         |=  =diff
         ^-  ^diff
         ?-  -.diff
-          %rift  [%rift +.diff]
-          %keys  [%keys +.diff]
-          %spon  [%spon +.diff]
+          %rift  [%rift to from]:diff
+          %keys  [%keys to from]:diff
+          %spon  [%spon to from]:diff
         ==
       ::
       ++  compose
