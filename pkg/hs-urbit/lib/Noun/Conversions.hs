@@ -3,7 +3,7 @@
 module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
-  , Octs(..)
+  , Bytes(..), Octs(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), Ship(..)
@@ -23,7 +23,10 @@ import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
 
 import Data.LargeWord   (LargeKey, Word128, Word256)
+import GHC.Exts         (chr#, isTrue#, leWord#, word2Int#)
 import GHC.Natural      (Natural)
+import GHC.Types        (Char(C#))
+import GHC.Word         (Word32(W32#))
 import Noun.Cue         (cue)
 import Noun.Jam         (jam)
 import RIO              (decodeUtf8Lenient)
@@ -77,21 +80,19 @@ instance FromNoun Cord where
 
 -- Char ------------------------------------------------------------------------
 
-decodeUtf32LE' :: ByteString -> Either T.UnicodeException Text
-decodeUtf32LE' =
-  unsafePerformIO . try . evaluate . T.decodeUtf32LEWith T.strictDecode
-
 instance ToNoun Char where
-  toNoun = Atom . view (from atomBytes) . T.encodeUtf32LE . pack . singleton
+  toNoun = Atom . fromIntegral . C.ord
 
+{-
+    Hack: pulled this logic from Data.Char impl.
+-}
 instance FromNoun Char where
   parseNoun n = named "Char" $ do
-    a :: Atom <- parseNoun n
-    fmap unpack (decodeUtf32LE' (a ^. atomBytes)) & \case
-      Left err  -> fail (show err)
-      Right []  -> pure '\0'
-      Right [c] -> pure c
-      Right cs  -> fail ("Expecting a character, but got string: " <> cs)
+    W32# w :: Word32 <- parseNoun n
+    if isTrue# (w `leWord#` 0x10FFFF##)
+      then pure (C# (chr# (word2Int# w)))
+      else fail "Word is not a valid character."
+
 
 -- Tour ------------------------------------------------------------------------
 
@@ -252,7 +253,19 @@ deriveNoun ''Tank
 deriveNoun ''PlumTree
 
 
--- ByteString ------------------------------------------------------------------
+-- Bytes -----------------------------------------------------------------------
+
+newtype Bytes = MkBytes { unBytes :: ByteString }
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Bytes where
+    toNoun = Atom . view (from atomBytes) . unBytes
+
+instance FromNoun Bytes where
+    parseNoun = named "Bytes" . fmap (MkBytes . view atomBytes) . parseNoun
+
+
+-- Octs ------------------------------------------------------------------------
 
 newtype Octs = Octs { unOcts :: ByteString }
   deriving newtype (Eq, Ord, Show)
@@ -447,20 +460,32 @@ instance FromNoun () where
 instance (ToNoun a, ToNoun b) => ToNoun (a, b) where
   toNoun (x, y) = Cell (toNoun x) (toNoun y)
 
-instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
-  parseNoun = named ("(,)") . \case
-    Atom n   -> fail ("expected a cell, but got an atom: " <> show n)
-    Cell l r -> (,) <$> parseNoun l <*> parseNoun r
 
+shortRec :: Word -> Parser a
+shortRec 0 = fail "expected a record, but got an atom"
+shortRec 1 = fail ("record too short, only one cell")
+shortRec n = fail ("record too short, only " <> show n <> " cells")
+
+instance (FromNoun a, FromNoun b) => FromNoun (a, b) where
+  parseNoun n = named ("(,)") $ do
+    case n of
+      A _   -> shortRec 0
+      C x y -> do
+        (,) <$> named "1" (parseNoun x)
+            <*> named "2" (parseNoun y)
 
 instance (ToNoun a, ToNoun b, ToNoun c) => ToNoun (a, b, c) where
   toNoun (x, y, z) = toNoun (x, (y, z))
 
 instance (FromNoun a, FromNoun b, FromNoun c) => FromNoun (a, b, c) where
   parseNoun n = named "(,,)" $ do
-    (x, t) <- parseNoun n
-    (y, z) <- parseNoun t
-    pure (x, y, z)
+    case n of
+      A _         -> shortRec 0
+      C x (A _)   -> shortRec 1
+      C x (C y z) ->
+        (,,) <$> named "1" (parseNoun x)
+             <*> named "2" (parseNoun y)
+             <*> named "3" (parseNoun z)
 
 instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d) => ToNoun (a, b, c, d) where
   toNoun (p, q, r, s) = toNoun (p, (q, r, s))
@@ -469,9 +494,15 @@ instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d)
       => FromNoun (a, b, c, d)
       where
   parseNoun n = named "(,,,)" $ do
-    (p, tail) <- parseNoun n
-    (q, r, s) <- parseNoun tail
-    pure (p, q, r, s)
+    case n of
+      A _               -> shortRec 0
+      C _ (A _)         -> shortRec 1
+      C _ (C _ (A _))   -> shortRec 2
+      C p (C q (C r s)) ->
+        (,,,) <$> named "1" (parseNoun p)
+              <*> named "2" (parseNoun q)
+              <*> named "3" (parseNoun r)
+              <*> named "4" (parseNoun s)
 
 instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e)
       => ToNoun (a, b, c, d, e) where
@@ -480,10 +511,18 @@ instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e)
 instance (FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e)
       => FromNoun (a, b, c, d, e)
       where
-  parseNoun n = named "(,,,,)"$ do
-    (p, tail)    <- parseNoun n
-    (q, r, s, t) <- parseNoun tail
-    pure (p, q, r, s, t)
+  parseNoun n = named "(,,,,)" $ do
+    case n of
+      A _                     -> shortRec 0
+      C _ (A _)               -> shortRec 1
+      C _ (C _ (A _))         -> shortRec 2
+      C _ (C _ (C _ (A _)))   -> shortRec 3
+      C p (C q (C r (C s t))) ->
+        (,,,,) <$> named "1" (parseNoun p)
+               <*> named "2" (parseNoun q)
+               <*> named "3" (parseNoun r)
+               <*> named "4" (parseNoun s)
+               <*> named "5" (parseNoun t)
 
 instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f)
       => ToNoun (a, b, c, d, e, f) where
@@ -499,6 +538,10 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     (q, r, s, t, u) <- parseNoun tail
     pure (p, q, r, s, t, u)
 
+instance (ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f, ToNoun g)
+      => ToNoun (a, b, c, d, e, f, g) where
+  toNoun (p, q, r, s, t, u, v) = toNoun (p, (q, r, s, t, u, v))
+
 instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          , FromNoun f, FromNoun g
          )
@@ -508,6 +551,12 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     (p, tail)          <- parseNoun n
     (q, r, s, t, u, v) <- parseNoun tail
     pure (p, q, r, s, t, u, v)
+
+instance ( ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f, ToNoun g
+         , ToNoun h
+         )
+      => ToNoun (a, b, c, d, e, f, g, h) where
+  toNoun (p, q, r, s, t, u, v, w) = toNoun (p, (q, r, s, t, u, v, w))
 
 instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          , FromNoun f, FromNoun g, FromNoun h
@@ -519,6 +568,12 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     (q, r, s, t, u, v, w) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w)
 
+instance ( ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f, ToNoun g
+         , ToNoun h, ToNoun i
+         )
+      => ToNoun (a, b, c, d, e, f, g, h, i) where
+  toNoun (p, q, r, s, t, u, v, w, x) = toNoun (p, (q, r, s, t, u, v, w, x))
+
 instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          , FromNoun f, FromNoun g, FromNoun h, FromNoun i
          )
@@ -528,6 +583,13 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     (p, tail)                <- parseNoun n
     (q, r, s, t, u, v, w, x) <- parseNoun tail
     pure (p, q, r, s, t, u, v, w, x)
+
+instance ( ToNoun a, ToNoun b, ToNoun c, ToNoun d, ToNoun e, ToNoun f, ToNoun g
+         , ToNoun h, ToNoun i, ToNoun j
+         )
+      => ToNoun (a, b, c, d, e, f, g, h, i, j) where
+  toNoun (p, q, r, s, t, u, v, w, x, y) =
+    toNoun (p, (q, r, s, t, u, v, w, x, y))
 
 instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
          , FromNoun f, FromNoun g, FromNoun h, FromNoun i, FromNoun j

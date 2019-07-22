@@ -18,6 +18,7 @@ import Urbit.Time         (Wen)
 
 import qualified Vere.Log  as Log
 import qualified Vere.Ovum as Ovum
+import qualified Vere.FX   as FX
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
 
@@ -151,10 +152,14 @@ main = runInBoundThread $ do
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod
 
-    collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
+    -- collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
 
-    -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
+    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+
+    unless True $ do
+        tryParseFX "/home/benjamin/testnet-zod-fx" 1
+        tryParseFX "/home/benjamin/zod-fx" 1
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
@@ -163,6 +168,12 @@ main = runInBoundThread $ do
     pure ()
 
 --------------------------------------------------------------------------------
+
+tryParseFX :: FilePath -> Word -> IO ()
+tryParseFX = undefined
+
+streamFX :: FilePath -> Word -> ConduitT Void FX.FX IO ()
+streamFX = undefined
 
 tryCopyLog :: IO ()
 tryCopyLog = do

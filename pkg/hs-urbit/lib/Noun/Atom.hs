@@ -166,7 +166,7 @@ bsToWords bs =
     TODO This still has a (small) risk of segfaulting. The right thing to
          do is to manually copy the data to the C heap, setup the
          finalizers, and then manually construct a bytestring from
-         that pointer.  -- finalizers, and make a bytestring from that.
+         that pointer.
 -}
 bytesBS :: Iso' (VP.Vector Word8) ByteString
 bytesBS = iso to from

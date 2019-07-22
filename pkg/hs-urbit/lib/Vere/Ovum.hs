@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wwarn=deprecations #-}
+
 module Vere.Ovum where
 
 import UrbitPrelude hiding (Term)
@@ -40,7 +42,7 @@ instance FromNoun a => FromNoun (Todo a) where
       fromNounErr n & \case
         Right x -> pure (Todo x)
         Left er -> do
-          -- traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
+          traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
           fail (show er)
 
 
@@ -55,11 +57,10 @@ data NounTreeNode a = HTN
 
 type NounTree a = Nullable (NounTreeNode a)
 
-newtype NounMap k v = NounMap (NounTree (k, v))
-  deriving newtype (Eq, Ord, Show)
+type NounMap k v = NounTree (k, v)
+type NounSet a   = NounTree a
 
 deriveNoun ''NounTreeNode
-deriveNoun ''NounMap
 
 
 -- Json ------------------------------------------------------------------------
@@ -86,7 +87,7 @@ type Oath = Atom -- Signature
 type Pass = Atom -- Public Key
 
 type Life = Word
-type Turf = Atom
+type Turf = Path
 type Czar = NounMap Ship (Life, Pass)
 type Bloq = Atom
 
@@ -95,10 +96,42 @@ type Hart = (Bool, Maybe Atom, Host)
 type Pork = (Maybe Knot, [Cord])
 type Quay = [(Cord, Cord)]
 
-data PUrl = Prul Hart Pork Quay
+data PUrl = PUrl Hart Pork Quay
   deriving (Eq, Ord, Show)
 
 data Seed = Seed Ship Life Ring (Maybe Oath)
+  deriving (Eq, Ord, Show)
+
+type Public = (Life, NounMap Life Pass)
+
+data Dnses = Dnses { dPri::Cord, dSec::Cord, dTer::Cord }
+  deriving (Eq, Ord, Show)
+
+type EthAddr = Bytes -- 20 bytes
+type ContNum = Word
+
+data EthPoint = EthPoint
+    { epOwn :: (EthAddr, EthAddr, EthAddr, EthAddr)
+    , epNet :: Maybe (Life, Pass, ContNum, (Bool, Ship), Maybe Ship)
+    , epKid :: Maybe (EthAddr, NounSet Ship)
+    }
+  deriving (Eq, Ord, Show)
+
+data EthEventId = EthEventId
+    { eeiBlock :: Atom
+    , eeiLog   :: Atom
+    }
+  deriving (Eq, Ord, Show)
+
+data EthBookmark = EthBookmark
+    { ebHeard       :: NounSet EthEventId
+    , ebLatestBlock :: Atom
+    }
+  deriving (Eq, Ord, Show)
+
+data Snap = Snap (NounMap Ship Public)
+                 (Dnses, NounMap Ship EthPoint)
+                 EthBookmark
   deriving (Eq, Ord, Show)
 
 data Dawn = MkDawn
@@ -107,10 +140,16 @@ data Dawn = MkDawn
     , dCzar :: Czar
     , dTurf :: [Turf]
     , dBloq :: Bloq
-    , dNode :: Todo PUrl
+    , dNode :: (Maybe PUrl)
+    , dSnap :: (Maybe Snap)
     }
   deriving (Eq, Ord, Show)
 
+deriveNoun ''EthEventId
+deriveNoun ''EthBookmark
+deriveNoun ''Dnses
+deriveNoun ''EthPoint
+deriveNoun ''Snap
 deriveNoun ''PUrl
 deriveNoun ''Seed
 deriveNoun ''Dawn
@@ -154,7 +193,7 @@ data HttpEvent
 data HttpRequest = HttpRequest
     { reqId   :: Cord
     , reqUrl  :: Cord
-    , reqHead :: [(Cord, Cord)]
+    , reqHead :: [(Bytes, Bytes)]
     , reqBody :: Maybe FileOcts
     }
   deriving (Eq, Ord, Show)
@@ -262,9 +301,9 @@ data ArrowKey = D | L | R | U
 data Belt
     = Aro ArrowKey
     | Bac
-    | Ctl Char
+    | Ctl Cord
     | Del
-    | Met Char
+    | Met Cord
     | Ret
     | Txt Tour
   deriving (Eq, Ord, Show)

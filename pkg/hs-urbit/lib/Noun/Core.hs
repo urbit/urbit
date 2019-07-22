@@ -3,7 +3,9 @@
 {-# LANGUAGE StrictData #-}
 
 module Noun.Core
-  ( Noun, pattern Cell, pattern Atom, nounSize
+  ( Noun, nounSize
+  , pattern Cell, pattern Atom
+  , pattern C, pattern A
   , textToUtf8Atom, utf8AtomToText
   ) where
 
@@ -33,6 +35,11 @@ pattern Cell x y <- NCell _ _ x y where Cell = mkCell
 pattern Atom a   <- NAtom _ a     where Atom = mkAtom
 
 {-# COMPLETE Cell, Atom #-}
+
+pattern C x y <- NCell _ _ x y where C = mkCell
+pattern A a   <- NAtom _ a     where A = mkAtom
+
+{-# COMPLETE C, A #-}
 
 
 --------------------------------------------------------------------------------

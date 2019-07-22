@@ -12,29 +12,29 @@ executables:
       - -rtsopts
       - "-with-rtsopts=-N"
       - -fwarn-incomplete-patterns
-      - -O2
+      - -O0
 
-  uterm:
-    main: Main.hs
-    source-dirs: app/uterm
-    dependencies: ["urbit"]
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - "-with-rtsopts=-N"
-      - -fwarn-incomplete-patterns
-      - -O2
+  # uterm:
+  #   main: Main.hs
+  #   source-dirs: app/uterm
+  #   dependencies: ["urbit"]
+  #   ghc-options:
+  #     - -threaded
+  #     - -rtsopts
+  #     - "-with-rtsopts=-N"
+  #     - -fwarn-incomplete-patterns
+  #     - -O2
 
-  vere:
-    main: Main.hs
-    source-dirs: app/vere
-    dependencies: ["urbit"]
-    ghc-options:
-      - -threaded
-      - -rtsopts
-      - "-with-rtsopts=-N"
-      - -fwarn-incomplete-patterns
-      - -O2
+  # vere:
+  #   main: Main.hs
+  #   source-dirs: app/vere
+  #   dependencies: ["urbit"]
+  #   ghc-options:
+  #     - -threaded
+  #     - -rtsopts
+  #     - "-with-rtsopts=-N"
+  #     - -fwarn-incomplete-patterns
+  #     - -O2
 
 dependencies:
   - async
