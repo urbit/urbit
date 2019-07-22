@@ -11,7 +11,8 @@ import Data.Conduit
 import Data.Conduit.List
 import Control.Exception hiding (evaluate)
 
-import Control.Concurrent (threadDelay, runInBoundThread)
+import Control.Concurrent (runInBoundThread, threadDelay)
+import Control.Lens       ((&))
 import System.Directory   (doesFileExist, removeFile)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Time         (Wen)
@@ -154,12 +155,11 @@ main = runInBoundThread $ do
 
     -- collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
 
-    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
-    unless True $ do
-        tryParseFX "/home/benjamin/testnet-zod-fx" 1
-        tryParseFX "/home/benjamin/zod-fx" 1
+    tryParseFX "/home/benjamin/testnet-zod-fx" 1 10
+    tryParseFX "/home/benjamin/zod-fx" 1 10
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
@@ -169,11 +169,32 @@ main = runInBoundThread $ do
 
 --------------------------------------------------------------------------------
 
-tryParseFX :: FilePath -> Word -> IO ()
-tryParseFX = undefined
+tryParseFX :: FilePath -> Word -> Word -> IO ()
+tryParseFX pax first last =
+  runConduit $ streamFX pax first last
+            .| tryParseFXStream
 
-streamFX :: FilePath -> Word -> ConduitT Void FX.FX IO ()
-streamFX = undefined
+streamFX :: FilePath -> Word -> Word -> ConduitT () ByteString IO ()
+streamFX dir first last = loop first
+  where
+    loop n = do
+      let fil = dir <> "/" <> show n
+      exists <- liftIO (doesFileExist fil)
+      when (exists && n <= last) $ do
+          liftIO (readFile fil) >>= yield
+          loop (n+1)
+
+tryParseFXStream :: ConduitT ByteString Void IO ()
+tryParseFXStream =
+  await >>= \case
+    Nothing -> pure ()
+    Just bs -> do
+      n <- liftIO (cueBSExn bs)
+      fromNounErr n & \case
+        Left err            -> print err
+        Right []            -> pure ()
+        Right (fx :: FX.FX) -> print fx
+      tryParseFXStream
 
 tryCopyLog :: IO ()
 tryCopyLog = do

@@ -14,46 +14,54 @@ import qualified Vere.Http.Server as Server
 data PutDel = PDPut | PDDel
   deriving (Eq, Ord, Show)
 
-type FX = [(Path, Lenient Eff)]
+type FX = [(Path, Todo Eff)]
 
-data Eff
-    = EHttpServer Server.Eff
-    | EHttpClient Client.Eff
-    | EAmes Ames.Eff
-    | EBbye Noun
-    | EBehn Noun
-    | EBlit [Blit]
-    | EBoat Noun
-    | EClay Noun
-    | ECrud Noun
-    | EDirk Noun
-    | EDoze (Maybe Wen)
-    | EErgo Noun
-    | EExit Noun
-    | EFlog Noun
-    | EForm Noun
-    | EHill [Term]
-    | EInit
-    | ELogo Noun
-    | EMass Noun
-    | ENewt Noun
-    | EOgre Noun
-    | ESend [Blit]
-    | ESync Noun
-    | ETerm Noun
-    | EThou Noun
-    | ETurf (Nullable (PutDel, [Cord])) -- TODO Unsure
-    | EVega Noun
-    | EWest Noun
-    | EWoot Noun
+type Eff = AtomCell EffAtom EffCell
+
+data EffAtom = EAInit | EAVoid
   deriving (Eq, Ord, Show)
 
-data Blit
-    = Bel
-    | Clr
-    | Hop Word64
+data EffCell
+    = ECHttpServer Server.Eff
+    | ECHttpClient Client.Eff
+    | ECAmes Ames.Eff
+    | ECBbye Noun
+    | ECBehn Noun
+    | ECBlit [Blit]
+    | ECBoat Noun
+    | ECClay Noun
+    | ECCrud Noun
+    | ECDirk Noun
+    | ECDoze (Maybe Wen)
+    | ECErgo Noun
+    | ECExit Noun
+    | ECFlog Noun
+    | ECForm Noun
+    | ECHill [Term]
+    | ECInit
+    | ECLogo Noun
+    | ECMass Noun
+    | ECNewt Noun
+    | ECOgre Noun
+    | ECSend [Blit]
+    | ECSync Noun
+    | ECTerm Noun
+    | ECThou Noun
+    | ECTurf (Nullable (PutDel, [Cord])) -- TODO Unsure
+    | ECVega Noun
+    | ECWest Noun
+    | ECWoot Noun
+    | ECSetConfig Noun
+  deriving (Eq, Ord, Show)
+
+type Blit = AtomCell BlitAtom BlitCell
+
+data BlitAtom = Bel | Clr | Mor
+  deriving (Eq, Ord, Show)
+
+data BlitCell
+    = Hop Word64
     | Lin [Char]
-    | Mor
     | Sag Path Noun
     | Sav Path Atom
     | Url Cord
@@ -61,7 +69,9 @@ data Blit
 
 data Varience = Gold | Iron | Lead
 
-deriveNoun ''Blit
-deriveNoun ''Eff
+deriveNoun ''BlitAtom
+deriveNoun ''BlitCell
+deriveNoun ''EffAtom
+deriveNoun ''EffCell
 deriveNoun ''PutDel
 deriveNoun ''Varience
