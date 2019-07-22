@@ -47,7 +47,7 @@
             sig=(unit oath)                             ::  for a moon
             tuf=(list turf)                             ::  domains
             boq=@ud                                     ::  boot block
-            nod=(unit purl:eyre)                        ::  eth gateway
+            nod=purl:eyre                               ::  eth gateway
             fak=_|                                      ::  fake keys
             lyf=life                                    ::  version
             jaw=(map life ring)                         ::  private keys
@@ -219,7 +219,9 @@
       =.  boq.own.pki  bloq.tac
       ::  save our ethereum gateway (required for galaxies)
       ::
-      =.  nod.own.pki  node.tac
+      =.  nod.own.pki 
+        %+  fall  node.tac
+        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
       ::
       =.  sig.own.pki  sig.seed.tac
@@ -261,6 +263,15 @@
           %-  public-keys:~(feel su hen our pki etn sap)
           [%diff ship diff]:i.diffs
         $(diffs t.diffs)
+      ::
+      ::
+      =.  +>.$
+        %-  curd  =<  abet
+        %+  sources:~(feel su hen our pki etn sap)
+          ?:  =(%czar (clan:title our))
+            ~
+          (silt spon.tac ~)
+        [%| nod.own.pki *@ud *@da]
       ::
       =.  moz
         %+  weld  moz
