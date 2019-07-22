@@ -11,7 +11,7 @@ import Data.Conduit
 import Data.Conduit.List
 import Control.Exception hiding (evaluate)
 
-import Control.Concurrent (threadDelay)
+import Control.Concurrent (threadDelay, runInBoundThread)
 import System.Directory   (doesFileExist, removeFile)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Time         (Wen)
@@ -146,7 +146,7 @@ collectAllFx top = do
 --------------------------------------------------------------------------------
 
 main :: IO ()
-main = do
+main = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
         shipPath = "/home/benjamin/r/urbit/zod/"
         ship     = zod

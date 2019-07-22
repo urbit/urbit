@@ -17,11 +17,9 @@ tests:
     main: Main.hs
     dependencies: urbit
     ghc-options:
-      - -O2
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
-      - -with-rtsopts=-H4096m
 
 dependencies:
   - async

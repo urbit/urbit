@@ -161,7 +161,7 @@ startUp conf@(Config pierPath flags) = do
     diskKey = ""
     config  = show (compileFlags flags)
     args    = [pierPath, diskKey, config]
-    pSpec   = (proc "urbit-debug-worker" args)
+    pSpec   = (proc "urbit-worker" args)
                 { std_in = CreatePipe
                 , std_out = CreatePipe
                 , std_err = CreatePipe
@@ -248,13 +248,15 @@ sendBytes s bs = do
     hFlush (sendHandle s)
     debug "Flushed"
 
-    threadDelay 1 -- TODO WHY DOES THIS MATTER?????
+    threadDelay 10000 -- TODO WHY DOES THIS MATTER?????
 
     debug "hPut"
     hPut (sendHandle s) bs
     debug "hFlush"
     hFlush (sendHandle s)
     debug "Flushed"
+
+    threadDelay 10000 -- TODO WHY DOES THIS MATTER?????
 
 recvLen :: Serf -> IO Word64
 recvLen w = do
@@ -470,7 +472,14 @@ doCollectFX serf = go
     go ss = await >>= \case
         Nothing -> pure ()
         Just jb -> do
+            jb <- pure $ replaceMug jb (ssLastMug ss)
             (_, ss, fx) <- liftIO (doJob serf jb)
             liftIO $ print (jobId jb)
             yield (jobId jb, fx)
             go ss
+
+replaceMug :: Job -> Mug -> Job
+replaceMug jb mug =
+  case jb of
+    DoWork (Work eId _ w o)  -> DoWork (Work eId mug w o)
+    RunNok (LifeCyc eId _ n) -> RunNok (LifeCyc eId mug n)
