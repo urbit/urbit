@@ -24,7 +24,7 @@ runNuevoFunction oldState NEvInit{..} =
   runNuevoFunction newState (NEvRecv nevInitSentOver nevInitMessage)
   where
     newState = oldState
-      { nsParent  = nevInitConnection
+      { nsParent  = nevInitId
       , nsName    = nevInitName
       , nsProgram = nevInitProgram
       , nsProgramState = M.empty

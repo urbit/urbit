@@ -27,7 +27,7 @@ type Message = String
 -- This is not part of Nuevo proper, but is meant to be the Vere equivalent
 -- which sends messages to each
 data VereEnv = VereEnv
-  { instances :: M.Map Connection InstanceThread
+  { instances :: M.Map NodeId InstanceThread
 
   }
   deriving (Show)
@@ -47,21 +47,19 @@ data InstanceThread = InstanceThread
 
 -- | Represents a node in the Nuevo DAG
 --
--- Nuevo instances form a DAG.
+-- Nuevo instances and Vere itself form a DAG.
 --
--- TODO: Connection is a terrible name since it is the identity of a node and
--- "Connection" implies that it is an edge instead of a vertex.
-data Connection
-  = TopConnection
-  | ProcessConnection Path Int
+data NodeId
+  = TopNodeId
+  | ProcessNodeId Path Int
   deriving (Show, Eq, Ord)
 
 -- | Was: "Handle"
 data Socket
   = PipeSocket
   { pipeId           :: Int
-  , pipeCreator      :: Connection
-  , pipeCounterparty :: Connection
+  , pipeCreator      :: NodeId
+  , pipeCounterparty :: NodeId
   }
 
   | IoSocket
@@ -75,11 +73,11 @@ data Socket
 
 data NuevoEvent
   = NEvInit
-  { nevInitConnection :: Connection
-  , nevInitName       :: Path
-  , nevInitProgram    :: NuevoProgram
-  , nevInitSentOver   :: Socket
-  , nevInitMessage    :: Message
+  { nevInitId       :: NodeId
+  , nevInitName     :: Path
+  , nevInitProgram  :: NuevoProgram
+  , nevInitSentOver :: Socket
+  , nevInitMessage  :: Message
   }
 
   | NEvRecv
@@ -102,7 +100,7 @@ data NuevoEffect
 
 -- | Each instance of a Nuevo kernel.
 data NuevoState = NuevoState
-  { nsParent       :: Connection
+  { nsParent       :: NodeId
   , nsName         :: Path
 --  , nsChildren :: M.Map String
   , nsProgram      :: NuevoProgram
@@ -114,7 +112,7 @@ data NuevoState = NuevoState
 
 emptyNuevoState :: NuevoState
 emptyNuevoState = NuevoState
-  { nsParent = TopConnection
+  { nsParent = TopNodeId
   , nsName = Path []
   , nsProgram = emptyProgram
   , nsProgramState = M.empty

@@ -8,12 +8,12 @@ import           Program
 import           Types
 
 initialVereEnv :: NuevoProgram -> VereEnv
-initialVereEnv np = VereEnv { instances = M.singleton TopConnection firstInstance }
+initialVereEnv np = VereEnv { instances = M.singleton TopNodeId firstInstance }
   where
     firstInstance = InstanceThread
       { itEventQueue =
         [ NEvInit
-          TopConnection
+          TopNodeId
           (Path [])
           np
           (IoSocket 0 "base")
@@ -32,19 +32,19 @@ vereStep ve = do
   print ("env: " ++ (show newEnv))
   print ("effects: " ++ (show effects))
 
-  let x =  (handleNuevoEffect (ProcessConnection (Path []) 0))
+  let x =  (handleNuevoEffect (ProcessNodeId (Path []) 0))
   pure (foldl' x (VereEnv newEnv) effects)
 
 
 -- | For every instance of nuevo, run one event and accumulate the effects.
 accumExec :: [NuevoEffect]
-          -> Connection
+          -> NodeId
           -> InstanceThread
           -> ([NuevoEffect], InstanceThread)
-accumExec previousEffects connection it@(InstanceThread [] _ _)
+accumExec previousEffects id it@(InstanceThread [] _ _)
   = (previousEffects, it)
 
-accumExec previousEffects connection InstanceThread{..}
+accumExec previousEffects id InstanceThread{..}
   = (previousEffects ++ newEffects, newInst)
   where
     (event : restEvents) = itEventQueue
@@ -57,8 +57,8 @@ accumExec previousEffects connection InstanceThread{..}
 
 
 -- Nuevo has given us an effect and we must react to it.
-handleNuevoEffect :: Connection -> VereEnv -> NuevoEffect -> VereEnv
-handleNuevoEffect self@(ProcessConnection (Path path) seq) env = \case
+handleNuevoEffect :: NodeId -> VereEnv -> NuevoEffect -> VereEnv
+handleNuevoEffect self@(ProcessNodeId (Path path) seq) env = \case
   NEfSend p@(PipeSocket _ _ target) msg ->
     -- This puts a corresponding recv in the mailbox of the counterparty
     enqueueEvent env target (NEvRecv (flipSocket self p) msg)
@@ -68,16 +68,16 @@ handleNuevoEffect self@(ProcessConnection (Path path) seq) env = \case
 
   -- Forking a new process
   NEfFork{..} -> env
-    { instances = M.insert newConnection newInstance (instances env)
+    { instances = M.insert newNodeId newInstance (instances env)
     }
     where
       -- TODO: Allocate the socket representation here and return to the caller
       -- in case %init passes.
-      newConnection = ProcessConnection newName 0
+      newNodeId = ProcessNodeId newName 0
       -- TODO: Actually copy the old state
       newInstance = InstanceThread
         { itEventQueue =
-          [NEvInit newConnection newName neForkProgram newProcessSocket neForkMessage]
+          [NEvInit newNodeId newName neForkProgram newProcessSocket neForkMessage]
         , itNuevoState = emptyNuevoState
         , itEventLog = []
         }
@@ -86,7 +86,7 @@ handleNuevoEffect self@(ProcessConnection (Path path) seq) env = \case
       newProcessSocket = PipeSocket 5 self self
 
 
-enqueueEvent :: VereEnv -> Connection -> NuevoEvent -> VereEnv
+enqueueEvent :: VereEnv -> NodeId -> NuevoEvent -> VereEnv
 enqueueEvent env con event =
   env{instances=newInstances}
   where
@@ -95,6 +95,6 @@ enqueueEvent env con event =
       i{itEventQueue = itEventQueue ++ [event]}
 
 
-flipSocket :: Connection -> Socket -> Socket
+flipSocket :: NodeId -> Socket -> Socket
 flipSocket self p@PipeSocket{..} = p{pipeCounterparty = self}
 flipSocket _    i@IoSocket{..}   = i
