@@ -23,6 +23,7 @@ dependencies:
   - classy-prelude
   - containers
   - stm
+  - time
 
 default-extensions:
   - ApplicativeDo

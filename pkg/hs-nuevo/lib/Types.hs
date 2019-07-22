@@ -2,6 +2,8 @@ module Types where
 
 import ClassyPrelude
 
+import Data.Time.Clock.System
+
 import qualified Data.Bimap as B
 import qualified Data.Map   as M
 
@@ -15,7 +17,7 @@ data Path = Path [String]
   deriving (Show, Eq, Ord)
 
 -- The typed message data that goes on a handle. Currently unimplemented
-data HandleType = HandleType
+data SocketType = SocketType
   deriving (Show)
 
 type Message = String
@@ -46,39 +48,43 @@ data InstanceThread = InstanceThread
 
 -------------------------------------------------------------------------------
 
--- | Represents a node in the Nuevo DAG
---
--- Nuevo instances and Vere itself form a DAG.
+-- | Represents all things which can send or receive messages
 --
 data NodeId
+  -- | TopNode represents the part of Vere that owns the other side of the root
+  -- pipe.
   = TopNodeId
+  -- | ProcessNodeId represents a unique instance of nuevo. Instances of Nuevo
+  -- form a DAG by Path and have an instance number which increments on process
+  -- termination.
   | ProcessNodeId Path Int
+  -- | IoDrivers are modules of Vere which actually perform IO effects.
+  | IoDriver String
   deriving (Show, Eq, Ord)
 
--- | Was: "Handle"
+-- | A typed socket which data is sent over.
+--
+-- Was: "Handle"
 data Socket
-  = PipeSocket
-  { pipeId           :: Int
-  , pipeCreator      :: NodeId
-  , pipeCounterparty :: NodeId
+  = Socket
+  { socketId           :: Int
+  , socketCreator      :: NodeId
+  , socketCounterparty :: NodeId
   }
-
-  | IoSocket
-  { ioId     :: Int
-  , ioDriver :: String
-  }
-
   deriving (Show, Eq, Ord)
-
 
 
 data NuevoEvent
+  -- | Initializes a new process
   = NEvInit
-  { nevInitId       :: NodeId
-  , nevInitName     :: Path
-  , nevInitProgram  :: NuevoProgram
-  , nevInitSentOver :: Socket
-  , nevInitMessage  :: Message
+  { nevInitParent     :: NodeId
+  , nevInitName       :: Path  -- ^ The path name of this process
+  , nevInitInstance   :: Int   -- ^ Unique sequence number ; life of the process
+  -- todo: logged
+  , nevInitProgram    :: NuevoProgram
+  , nevInitSentOver   :: Socket
+  , nevInitSocketType :: SocketType
+  , nevInitMessage    :: Message
   }
 
   | NEvRecv
@@ -87,27 +93,17 @@ data NuevoEvent
   }
   deriving (Show)
 
-data NuevoEffect
-  = NEfFork
-  { neForkName    :: String
-  , neForkLogged  :: Bool
-  , neForkProgram :: NuevoProgram
-  , neForkHandle  :: HandleType
-  , neForkMessage :: Message
-  }
---  | NEfTerminate
-  | NEfSend Socket Message
-  deriving (Show)
-
 -- | Each instance of a Nuevo kernel.
 data NuevoState = NuevoState
   { nsParent       :: NodeId
   , nsName         :: Path
---  , nsChildren :: M.Map String
+  , nsInstanceNum  :: Int
+  , nsChildren     :: M.Map String Socket
   , nsProgram      :: NuevoProgram
   , nsProgramState :: ProgramState
   , nsNextBone     :: Int
   , nsSocketToBone :: B.Bimap Socket Int
+  , nsSocketToType :: M.Map Socket SocketType
   }
   deriving (Show)
 
@@ -123,12 +119,24 @@ emptyNuevoState = NuevoState
 
 
 --  Processes a single Nuevo event
-type NuevoFunction = NuevoState -> NuevoEvent -> (NuevoState, [NuevoEffect])
+type NuevoFunction =  NuevoState
+                   -> OvEvent
+                   -> (NuevoState, [OvEffect])
 
-type IoDriver = NuevoEffect -> IO [NuevoEffect]
+type IoDriver = NuevoEvent -> IO [OvEffect]
 
 instance Show IoDriver where
   show _ = "<io driver>"
+
+--  TODO: Unify NuevoEffect/Event
+data OvEvent  = OvEvent
+  { eventNow    :: SystemTime
+  , eventTarget :: NodeId
+  , eventEvent  :: NuevoEvent }
+
+data OvEffect = OvEffect
+  { effectTarget :: NodeId,
+    outputEvent  :: NuevoEvent }
 
 -------------------------------------------------------------------------------
 
@@ -150,7 +158,7 @@ data ProgramEffect
   { peForkName    :: String
   , peForkLogged  :: Bool
   , peForkProgram :: NuevoProgram
-  , peForkHandle  :: HandleType
+  , peForkHandle  :: SocketType
   , peForkMessage :: Message
   }
   deriving (Show)

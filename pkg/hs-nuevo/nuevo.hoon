@@ -967,7 +967,7 @@
 ::    { now :: Time
 ::    , target :: NodeId
 ::    , event :: NuevoEvent
-::    } 
+::    }
 ::
 ::  data OvEffect = OvEffect
 ::    { target :: NodeId
@@ -975,3 +975,8 @@
 ::    }
 ::
 ::  ---- /Maybe Wrong -----
+
+:: Fork and Init are the same. Send and Recv are the same. Closed and
+:: Closed. Terminated and Terminated. The Effect from one side is the Event
+:: from another.
+

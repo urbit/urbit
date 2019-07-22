@@ -20,21 +20,24 @@ import qualified Data.Map   as M
 runNuevoFunction :: NuevoFunction
 
 -- The NEvInit function just changes the program identity and then
-runNuevoFunction oldState NEvInit{..} =
-  runNuevoFunction newState (NEvRecv nevInitSentOver nevInitMessage)
+runNuevoFunction oldState (OvEvent a b NEvInit{..}) =
+  runNuevoFunction newState (OvEvent a b (NEvRecv nevInitSentOver nevInitMessage))
   where
     newState = oldState
-      { nsParent  = nevInitId
+      { nsParent  = nevInitParent
       , nsName    = nevInitName
+      , nsInstanceNum = nevInitInstance
+      , nsChildren = M.empty
       , nsProgram = nevInitProgram
       , nsProgramState = M.empty
       -- TODO: Use random numbers for unguessability in the real implementation
       , nsNextBone = 2
       , nsSocketToBone = B.singleton nevInitSentOver 1
+      , nsSocketToType = M.singleton nevInitSentOver nevInitSocketType
       }
 
 -- A recv takes a message and gives it to the program to make a list of effects
-runNuevoFunction oldNuevoState@NuevoState{..} NEvRecv{..} =
+runNuevoFunction oldNuevoState@NuevoState{..} (OvEvent _ _ NEvRecv{..}) =
   (newNuevoState, nuevoEffects)
   where
     -- TODO: Check for invalid incoming sockets.
@@ -53,7 +56,31 @@ runNuevoFunction oldNuevoState@NuevoState{..} NEvRecv{..} =
 
 
 -- TODO: This is probably stateful to NuevoState?
-programEffectsToNuevoEffect :: NuevoState -> ProgramEffect -> NuevoEffect
-programEffectsToNuevoEffect NuevoState{..} = \case
-  PEfSend bone msg -> NEfSend (nsSocketToBone B.!> bone) msg
-  PEfFork n l p h m -> NEfFork n l p h m
+-- TODO: Yes, PEfFork needs to increment next socket.
+programEffectsToNuevoEffect :: NuevoState -> ProgramEffect -> OvEffect
+programEffectsToNuevoEffect ns@NuevoState{..} = \case
+  PEfSend bone msg -> OvEffect (socketCounterparty target) (NEvRecv target msg)
+    where target = (nsSocketToBone B.!> bone)
+
+  PEfFork{..} ->
+    OvEffect
+    TopNodeId
+    NEvInit
+    { nevInitParent = (nuevoToId ns)
+    , nevInitName = pathAppend nsName peForkName
+    -- TODO: Calculate the right instance number when we get to crashing.
+    , nevInitInstance = 0
+    , nevInitProgram = peForkProgram
+    -- TODO: Allocate a real socket number here.
+    , nevInitSentOver = Socket 0 (nuevoToId ns) (nuevoToId ns)
+    , nevInitSocketType = peForkHandle
+    , nevInitMessage = peForkMessage
+    }
+
+
+--
+nuevoToId :: NuevoState -> NodeId
+nuevoToId ns = ProcessNodeId (nsName ns) (nsInstanceNum ns)
+
+pathAppend :: Path -> String -> Path
+pathAppend (Path a) b = Path (a ++ [b])
