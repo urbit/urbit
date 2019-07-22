@@ -110,7 +110,9 @@
     (pairs:enjs:format file+s+output data+s+enc ~)
   ::
   :_  this(job.state ~)
-  [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]~
+  :~  [bone.u.job.state %http-response (json-response:app (json-to-octs jon))]
+      [ost.bow %pull /export [our.bow app.source.com.u.job.state] ~]
+  ==
 ::
 ++  quit
   |=  =wire

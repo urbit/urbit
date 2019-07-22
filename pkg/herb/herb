@@ -342,7 +342,7 @@ parser.add_argument('-e', '--export', which='export',
                     help='exports the application state',
                     action=sourceAction)
 parser.add_argument('-i', '--import',
-                    metavar='appname',
+                    metavar='app-name',
                     help='imports the application state',
                     action=importFileAction)
 parser.add_argument('-m', '--mark', which='as',
