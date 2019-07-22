@@ -3,6 +3,7 @@
 module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
+  , Octs(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), Ship(..)
@@ -11,49 +12,26 @@ module Noun.Conversions
 
 import ClassyPrelude hiding (hash)
 
-import Control.Lens
+import Control.Lens hiding (Index)
 import Data.Void
 import Data.Word
 import Noun.Atom
 import Noun.Convert
 import Noun.Core
 import Noun.TH
+import Text.Regex.TDFA
+import Text.Regex.TDFA.Text ()
 
-import Data.LargeWord (LargeKey, Word128, Word256)
-import GHC.Natural    (Natural)
-import Noun.Cue       (cue)
-import Noun.Jam       (jam)
-import RIO            (decodeUtf8Lenient)
+import Data.LargeWord   (LargeKey, Word128, Word256)
+import GHC.Natural      (Natural)
+import Noun.Cue         (cue)
+import Noun.Jam         (jam)
+import RIO              (decodeUtf8Lenient)
+import System.IO.Unsafe (unsafePerformIO)
 
-import qualified Data.Char as C
-
-
--- TODO XX Hack! ---------------------------------------------------------------
-
-instance Show Noun where
-  show = \case Atom a   -> showAtom a
-               Cell x y -> fmtCell (show <$> (x : toTuple y))
-    where
-      fmtCell :: [String] -> String
-      fmtCell xs = "(" <> intercalate ", " xs <> ")"
-
-      toTuple :: Noun -> [Noun]
-      toTuple (Cell x xs) = x : toTuple xs
-      toTuple atom        = [atom]
-
-      showAtom :: Atom -> String
-      showAtom 0 = "0"
-      showAtom a | a >= 2^1024 = "\"...\""
-      showAtom a =
-          let mTerm = do
-                t <- fromNoun (Atom a)
-                let ok = \x -> (x=='-' || C.isAlphaNum x)
-                guard (all ok (t :: Text))
-                pure ("\"" <> unpack t <> "\"")
-
-          in case mTerm of
-               Nothing -> show a
-               Just st -> st
+import qualified Data.Char                as C
+import qualified Data.Text.Encoding       as T
+import qualified Data.Text.Encoding.Error as T
 
 
 -- Noun ------------------------------------------------------------------------
@@ -62,7 +40,18 @@ instance ToNoun Noun where
   toNoun = id
 
 instance FromNoun Noun where
-  parseNoun = named "Noun" . pure
+  parseNoun = pure
+
+
+--- Atom -----------------------------------------------------------------------
+
+instance ToNoun Atom where
+  toNoun = Atom
+
+instance FromNoun Atom where
+  parseNoun = named "Atom" . \case
+    Atom a   -> pure a
+    Cell _ _ -> fail "Expecting an atom, but got a cell"
 
 
 -- Void ------------------------------------------------------------------------
@@ -73,6 +62,36 @@ instance ToNoun Void where
 instance FromNoun Void where
   parseNoun _ = named "Void" $ fail "Can't produce void"
 
+
+-- Cord ------------------------------------------------------------------------
+
+newtype Cord = Cord { unCord :: Text }
+  deriving newtype (Eq, Ord, Show, IsString, NFData)
+
+instance ToNoun Cord where
+  toNoun = textToUtf8Atom . unCord
+
+instance FromNoun Cord where
+  parseNoun = named "Cord" . fmap Cord . parseNounUtf8Atom
+
+
+-- Char ------------------------------------------------------------------------
+
+decodeUtf32LE' :: ByteString -> Either T.UnicodeException Text
+decodeUtf32LE' =
+  unsafePerformIO . try . evaluate . T.decodeUtf32LEWith T.strictDecode
+
+instance ToNoun Char where
+  toNoun = Atom . view (from atomBytes) . T.encodeUtf32LE . pack . singleton
+
+instance FromNoun Char where
+  parseNoun n = named "Char" $ do
+    a :: Atom <- parseNoun n
+    fmap unpack (decodeUtf32LE' (a ^. atomBytes)) & \case
+      Left err  -> fail (show err)
+      Right []  -> pure '\0'
+      Right [c] -> pure c
+      Right cs  -> fail ("Expecting a character, but got string: " <> cs)
 
 -- Tour ------------------------------------------------------------------------
 
@@ -162,17 +181,6 @@ instance FromNoun a => FromNoun (Nullable a) where
       (ACCell x)  -> pure (Some x)
 
 
--- Char ------------------------------------------------------------------------
-
-instance ToNoun Char where
-  toNoun = toNoun . (fromIntegral :: Int -> Word32) . C.ord
-
-instance FromNoun Char where
-  parseNoun n = named "Char" $ do
-    w :: Word32 <- parseNoun n
-    pure $ C.chr $ fromIntegral w
-
-
 -- List ------------------------------------------------------------------------
 
 instance ToNoun a => ToNoun [a] where
@@ -191,9 +199,22 @@ instance FromNoun a => FromNoun [a] where
 
 -- Tape ------------------------------------------------------------------------
 
--- TODO XX are these instances correct?
-newtype Tape = Tape [Char]
-  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
+{-
+    A `tape` is a list of utf8 bytes.
+-}
+newtype Tape = Tape { unTape :: Text }
+  deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
+
+instance ToNoun Tape where
+  toNoun = toNoun . (unpack :: ByteString -> [Word8]) . encodeUtf8 . unTape
+
+instance FromNoun Tape where
+  parseNoun n = named "Tape" $ do
+    as :: [Word8] <- parseNoun n
+    T.decodeUtf8' (pack as) & \case
+        Left err -> fail (show err)
+        Right tx -> pure (Tape tx)
+
 
 
 -- Pretty Printing -------------------------------------------------------------
@@ -233,17 +254,21 @@ deriveNoun ''PlumTree
 
 -- ByteString ------------------------------------------------------------------
 
-instance ToNoun ByteString where
-  toNoun bs = toNoun (int2Word (length bs), bs ^. from atomBytes)
+newtype Octs = Octs { unOcts :: ByteString }
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Octs where
+  toNoun (Octs bs) =
+      toNoun (int2Word (length bs), bs ^. from atomBytes)
     where
       int2Word :: Int -> Word
       int2Word = fromIntegral
 
-instance FromNoun ByteString where
-    parseNoun x = named "ByteString" $ do
+instance FromNoun Octs where
+    parseNoun x = named "Octs" $ do
         (word2Int -> len, atom) <- parseNoun x
         let bs = atom ^. atomBytes
-        pure $ case compare (length bs) len of
+        pure $ Octs $ case compare (length bs) len of
           EQ -> bs
           LT -> bs <> replicate (len - length bs) 0
           GT -> take len bs
@@ -252,43 +277,47 @@ instance FromNoun ByteString where
         word2Int = fromIntegral
 
 
--- Text ------------------------------------------------------------------------
+-- Knot ------------------------------------------------------------------------
 
-instance ToNoun Text where -- XX TODO
-  toNoun t = toNoun (Cord (encodeUtf8 t))
+{-
+    Knot (@ta) is an array of Word8 encoding an ASCII string.
+-}
+newtype Knot = MkKnot { unKnot :: Text }
+  deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
-instance FromNoun Text where -- XX TODO
-  parseNoun n = named "Text" $ do
-    Cord c <- parseNoun n
-    pure (decodeUtf8Lenient c)
+instance ToNoun Knot where
+  toNoun = textToUtf8Atom . unKnot
+
+instance FromNoun Knot where
+  parseNoun n = named "Knot" $ do
+    txt <- parseNounUtf8Atom n
+    if all C.isAscii txt
+      then pure (MkKnot txt)
+      else fail ("Non-ASCII chars in knot: " <> unpack txt)
 
 
 -- Term ------------------------------------------------------------------------
 
-newtype Term = MkTerm Text
-  deriving newtype (Eq, Ord, Show)
+{-
+    A Term (@tas) is a Knot satisfying the regular expression:
+
+        ([a-z][a-z0-9]*(-[a-z0-9]+)*)?
+-}
+newtype Term = MkTerm { unTerm :: Text }
+  deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
 
 instance ToNoun Term where -- XX TODO
-  toNoun (MkTerm t) = toNoun (Cord (encodeUtf8 t))
+  toNoun = textToUtf8Atom . unTerm
+
+knotRegex :: Text
+knotRegex = "([a-z][a-z0-9]*(-[a-z0-9]+)*)?"
 
 instance FromNoun Term where -- XX TODO
   parseNoun n = named "Term" $ do
-    Cord c <- parseNoun n
-    pure (MkTerm (decodeUtf8Lenient c))
-
-
--- Knot ------------------------------------------------------------------------
-
-newtype Knot = MkKnot Text
-  deriving newtype (Eq, Ord, Show, Semigroup, Monoid, IsString)
-
-instance ToNoun Knot where -- XX TODO
-  toNoun (MkKnot t) = toNoun (Cord (encodeUtf8 t))
-
-instance FromNoun Knot where -- XX TODO
-  parseNoun n = named "Knot" $ do
-    Cord c <- parseNoun n
-    pure (MkKnot (decodeUtf8Lenient c))
+    MkKnot t <- parseNoun n
+    if t =~ knotRegex
+      then pure (MkTerm t)
+      else fail ("Term not valid symbol: " <> unpack t)
 
 
 -- Ship ------------------------------------------------------------------------

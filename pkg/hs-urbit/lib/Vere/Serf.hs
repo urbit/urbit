@@ -129,7 +129,7 @@ deriveNoun ''Plea
 
 printTank :: Word32 -> Tank -> IO ()
 printTank pri = \case
-  Leaf (Tape s) -> serf ("[tank] " <> pack s)
+  Leaf (Tape s) -> serf ("[tank] " <> s)
   t             -> serf ("[tank] " <> tshow (pri, t))
 
 guardExn :: Exception e => Bool -> e -> IO ()
@@ -282,7 +282,7 @@ cordString :: Cord -> String
 cordString = unpack . cordText
 
 cordText :: Cord -> Text
-cordText = T.strip . decodeUtf8 . unCord
+cordText = T.strip . unCord
 
 
 --------------------------------------------------------------------------------

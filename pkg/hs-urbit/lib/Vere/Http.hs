@@ -11,16 +11,16 @@ import qualified Network.HTTP.Types.Method as H
 
 --------------------------------------------------------------------------------
 
-data Header = Header Text Text
+data Header = Header Cord Cord
   deriving (Eq, Ord, Show)
 
 type Method = H.StdMethod
 
 data Request = Request
     { method     :: Method
-    , url        :: Text
+    , url        :: Cord
     , headerList :: [Header]
-    , body       :: Maybe ByteString
+    , body       :: Maybe Octs
     }
   deriving (Eq, Ord, Show)
 
@@ -33,21 +33,21 @@ data ResponseHeader = ResponseHeader
 
 data Event
     = Started ResponseHeader -- [%start hdr (unit octs) ?]
-    | Received ByteString    -- [%continue [~ octs] %.n]
+    | Received Octs          -- [%continue [~ octs] %.n]
     | Done                   -- [%continue ~ %.y]
     | Canceled               -- %cancel
-    | Failed Text            -- %cancel
+    | Failed Cord            -- %cancel
   deriving (Eq, Ord, Show)
 
 --------------------------------------------------------------------------------
 
 instance ToNoun H.StdMethod where
-  toNoun = toNoun . Cord . H.renderStdMethod
+  toNoun = toNoun . Cord . decodeUtf8 . H.renderStdMethod
 
 instance FromNoun H.StdMethod where
-  parseNoun n = do
+  parseNoun n = named "StdMethod" $ do
     Cord m <- parseNoun n
-    case H.parseMethod m of
+    case H.parseMethod (encodeUtf8 m) of
       Left bs -> fail ("Unexpected method: " <> unpack (decodeUtf8 bs))
       Right m -> pure m
 
@@ -61,4 +61,5 @@ deriveNoun ''Request
 convertHeaders :: [HT.Header] -> [Header]
 convertHeaders = fmap f
   where
-    f (k, v) = Header (decodeUtf8 (CI.original k)) (decodeUtf8 v)
+    f (k, v) = Header (Cord $ decodeUtf8 $ CI.original k)
+                      (Cord $ decodeUtf8 v)

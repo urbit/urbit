@@ -54,6 +54,8 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - regex-tdfa
+  - regex-tdfa-text
   - resourcet
   - rio
   - sdl2

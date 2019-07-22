@@ -42,15 +42,15 @@ deriveNoun ''Eff
 
 cvtReq :: Request -> Maybe H.Request
 cvtReq r =
-  H.parseRequest (unpack (url r)) <&> \init -> init
+  H.parseRequest (unpack (unCord $ url r)) <&> \init -> init
     { H.method = encodeUtf8 $ tshow (method r),
       H.requestHeaders =
-        headerList r <&> \(Header k v) -> (CI.mk (encodeUtf8 k),
-                                           encodeUtf8 v),
+        headerList r <&> \(Header k v) -> (CI.mk (encodeUtf8 $ unCord k),
+                                           encodeUtf8 $ unCord v),
       H.requestBody =
         H.RequestBodyBS $ case body r of
-                            Nothing -> ""
-                            Just b  -> b
+                            Nothing        -> ""
+                            Just (Octs bs) -> bs
     }
 
 cvtRespHeaders :: H.Response a -> ResponseHeader
@@ -110,7 +110,8 @@ runReq st id req = async $
       let headers  = cvtRespHeaders resp
           getChunk = recv (H.responseBody resp)
           loop     = getChunk >>= \case
-                       Just bs -> emit st (Receive id $ Received bs) >> loop
                        Nothing -> emit st (Receive id Done)
+                       Just bs -> do emit st (Receive id $ Received $ Octs bs)
+                                     loop
       emit st (Receive id $ Started headers)
       loop

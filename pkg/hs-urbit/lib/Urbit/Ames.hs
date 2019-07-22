@@ -32,11 +32,10 @@ init = Ames { live = False
             }
 
 turf :: Ames -> [VA.Turf] -> IO Ames
-turf ames []   = undefined
-turf ames (VA.MkTurf turf:_) = do
-  let t = mconcat (intersperse "." turf)
-
-  pure ames{globalDomain = Just t}
+turf ames []       = undefined
+turf ames (turf:_) = do
+  let t = (mconcat . intersperse "." . fmap unCord . VA.unTurf) turf
+  pure (ames {globalDomain = Just t})
 
 
 data NetworkMode

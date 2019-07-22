@@ -4,18 +4,23 @@
 
 module Noun.Core
   ( Noun, pattern Cell, pattern Atom, nounSize
+  , textToUtf8Atom, utf8AtomToText
   ) where
 
 import ClassyPrelude hiding (hash)
 
 import Noun.Atom
 
+import Control.Lens              (view, from, (&), (^.))
 import Data.Bits                 (xor)
 import Data.Hashable             (hash)
 import GHC.Natural               (Natural)
 import GHC.Prim                  (reallyUnsafePtrEquality#)
 import Test.QuickCheck.Arbitrary (Arbitrary(arbitrary))
 import Test.QuickCheck.Gen       (Gen, getSize, resize, scale)
+
+import qualified Data.Char          as C
+import qualified Data.Text.Encoding as T
 
 
 -- Types -----------------------------------------------------------------------
@@ -38,6 +43,42 @@ instance Hashable Noun where
   {-# INLINE hash #-}
   hashWithSalt = defaultHashWithSalt
   {-# INLINE hashWithSalt #-}
+
+textToUtf8Atom :: Text -> Noun
+textToUtf8Atom = Atom . view (from atomBytes) . encodeUtf8
+
+utf8AtomToText :: Noun -> Either Text Text
+utf8AtomToText = \case
+    Cell _ _ -> Left "Expected @t, but got ^"
+    Atom atm -> T.decodeUtf8' (atm ^. atomBytes) & \case
+        Left err -> Left (tshow err)
+        Right tx -> pure tx
+
+instance Show Noun where
+  show = \case Atom a   -> showAtom a
+               Cell x y -> fmtCell (show <$> (x : toTuple y))
+    where
+      fmtCell :: [String] -> String
+      fmtCell xs = "(" <> intercalate ", " xs <> ")"
+
+      toTuple :: Noun -> [Noun]
+      toTuple (Cell x xs) = x : toTuple xs
+      toTuple atom        = [atom]
+
+      showAtom :: Atom -> String
+      showAtom 0 = "0"
+      showAtom a | a >= 2^1024 = "\"...\""
+      showAtom a =
+          let mTerm = do
+                t <- utf8AtomToText (Atom a)
+                let ok = \x -> (x=='-' || C.isAlphaNum x)
+                if (all ok (t :: Text))
+                    then pure ("\"" <> unpack t <> "\"")
+                    else Left "Don't show as text."
+
+          in case mTerm of
+               Left _   -> show a
+               Right st -> st
 
 instance Eq Noun where
   (==) x y =

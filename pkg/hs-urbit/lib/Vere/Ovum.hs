@@ -6,26 +6,23 @@ import Urbit.Time
 
 -- Misc Types ------------------------------------------------------------------
 
-newtype Octs = Octs ByteString
-  deriving newtype (Eq, Ord, Show, FromNoun, ToNoun)
-
-newtype FileOcts = FileOcts ByteString
+newtype FileOcts = FileOcts Octs
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
-newtype BigTape = BigTape Text
+newtype BigTape = BigTape Tape
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
-newtype Desk = Desk Text
+newtype Desk = Desk Cord
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 data Mime = Mime Path FileOcts
   deriving (Eq, Ord, Show)
 
 instance Show BigTape where
-  show (BigTape t) = show (take 32 t <> "...")
+  show (BigTape (Tape t)) = show (take 32 t <> "...")
 
 instance Show FileOcts where
-  show (FileOcts bs) = show (take 32 bs <> "...")
+  show (FileOcts (Octs bs)) = show (take 32 bs <> "...")
 
 deriveNoun ''Mime
 
@@ -72,9 +69,9 @@ type Json = Nullable JsonNode
 data JsonNode
     = JNA [Json]
     | JNB Bool
-    | JNO (NounMap Text Json)
-    | JNN Text -- TODO @ta
-    | JNS Text
+    | JNO (NounMap Cord Json)
+    | JNN Knot
+    | JNS Cord
   deriving (Eq, Ord, Show)
 
 deriveNoun ''JsonNode
@@ -83,7 +80,6 @@ deriveNoun ''JsonNode
 -- Dawn Records ----------------------------------------------------------------
 
 type AtomIf = Atom
-type Ascii = Text -- TODO @ta
 
 type Ring = Atom -- Private Key
 type Oath = Atom -- Signature
@@ -96,8 +92,8 @@ type Bloq = Atom
 
 type Host = Either Turf AtomIf
 type Hart = (Bool, Maybe Atom, Host)
-type Pork = (Maybe Ascii, [Text])
-type Quay = [(Text, Text)]
+type Pork = (Maybe Knot, [Cord])
+type Quay = [(Cord, Cord)]
 
 data PUrl = Prul Hart Pork Quay
   deriving (Eq, Ord, Show)
@@ -145,7 +141,7 @@ data ServerConfig = ServerConfig
 
 data ResponseHeader = ResponseHeader
     { rhStatus  :: Word
-    , rhHeaders :: [(Text, Text)]
+    , rhHeaders :: [(Cord, Cord)]
     }
   deriving (Eq, Ord, Show)
 
@@ -156,9 +152,9 @@ data HttpEvent
   deriving (Eq, Ord, Show)
 
 data HttpRequest = HttpRequest
-    { reqId   :: Text
-    , reqUrl  :: Text
-    , reqHead :: [(Text, Text)]
+    { reqId   :: Cord
+    , reqUrl  :: Cord
+    , reqHead :: [(Cord, Cord)]
     , reqBody :: Maybe FileOcts
     }
   deriving (Eq, Ord, Show)
@@ -171,7 +167,7 @@ data HttpClient
 
 data HttpServer
     = HttpServerRequest   (Atom, Word, Word, ()) ServerId Address HttpRequest
-    | HttpServerLive      (Atom, ())             Text (Maybe Word)
+    | HttpServerLive      (Atom, ())             Cord (Maybe Word)
     | HttpServerBorn      (Atom, ())             ()
     | HttpServerSetConfig (Atom, ())             ServerConfig
   deriving (Eq, Ord, Show)

@@ -9,7 +9,7 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
 import Noun.Convert
 
-import RIO (decodeUtf8Lenient)
+import Noun.Core (textToUtf8Atom)
 
 import qualified Data.Char as C
 
@@ -131,15 +131,15 @@ enumFromAtom :: [(String, Name)] -> Exp
 enumFromAtom cons = LamE [VarP x] body
   where
     (x, c)    = (mkName "x", mkName "c")
-    getCord   = BindS (VarP c) $ AppE (VarE 'parseNoun) (VarE x)
+    getTag    = BindS (VarP c) $ AppE (VarE 'parseNounUtf8Atom) (VarE x)
     examine   = NoBindS $ CaseE (VarE c) (matches ++ [fallback])
     matches   = mkMatch <$> cons
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
-    body      = DoE [getCord, examine]
+    body      = DoE [getTag, examine]
     matchFail = LitE $ StringL ("Expected one of: " <> possible)
     possible  = intercalate " " (('%':) . fst <$> cons)
     mkMatch   = \(tag, nm) ->
-      Match (ConP 'Cord [LitP $ StringL tag])
+      Match (SigP (LitP $ StringL tag) (ConT ''Text))
             (NormalB $ AppE (VarE 'pure) (ConE nm))
             []
 
@@ -164,7 +164,7 @@ tupFromNoun (n, tys) = LamE [VarP x] body
 
 unexpectedTag :: [String] -> Exp -> Exp
 unexpectedTag expected got =
-    applyE (VarE 'mappend) [LitE (StringL prefix), got]
+    applyE (VarE 'mappend) [LitE (StringL prefix), AppE (VarE 'unpack) got]
   where
     possible  = intercalate " " (('%':) <$> expected)
     prefix    = "Expected one of: " <> possible <> " but got %"
@@ -172,13 +172,13 @@ unexpectedTag expected got =
 sumFromNoun :: [(String, ConInfo)] -> Exp
 sumFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
   where
-    (n, h, t, c) = (mkName "noun", mkName "hed", mkName "tel", mkName "cordTxt")
+    (n, h, t, c) = (mkName "noun", mkName "hed", mkName "tel", mkName "tag")
 
     getHead = BindS (TupP [VarP h, VarP t])
             $ AppE (VarE 'parseNoun) (VarE n)
 
-    getTag = BindS (ConP 'Cord [VarP c])
-           $ AppE (VarE 'parseNoun) (VarE h)
+    getTag = BindS (SigP (VarP c) (ConT ''Text))
+           $ AppE (VarE 'parseNounUtf8Atom) (VarE h)
 
     examine = NoBindS
             $ CaseE (VarE c) (matches ++ [fallback])
@@ -190,10 +190,7 @@ sumFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
                 in Match (LitP $ StringL tag) (NormalB body) []
 
     fallback  = Match WildP (NormalB $ AppE (VarE 'fail) matchFail) []
-    matchFail = unexpectedTag (fst <$> cons)
-              $ AppE (VarE 'unpack)
-              $ AppE (VarE 'decodeUtf8Lenient)
-              $ VarE c
+    matchFail = unexpectedTag (fst <$> cons) (VarE c)
 
 --------------------------------------------------------------------------------
 
@@ -204,8 +201,7 @@ nameStr :: Name -> String
 nameStr (Name (OccName n) _) = n
 
 tagNoun :: String -> Exp
-tagNoun = AppE (VarE 'toNoun)
-        . AppE (ConE 'Cord)
+tagNoun = AppE (VarE 'textToUtf8Atom)
         . LitE
         . StringL
 

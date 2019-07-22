@@ -42,7 +42,7 @@ data Eff
     | ESync Noun
     | ETerm Noun
     | EThou Noun
-    | ETurf (Nullable (PutDel, [Text])) -- TODO Unsure
+    | ETurf (Nullable (PutDel, [Cord])) -- TODO Unsure
     | EVega Noun
     | EWest Noun
     | EWoot Noun
@@ -56,7 +56,7 @@ data Blit
     | Mor
     | Sag Path Noun
     | Sav Path Atom
-    | Url Text
+    | Url Cord
   deriving (Eq, Ord, Show)
 
 data Varience = Gold | Iron | Lead

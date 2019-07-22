@@ -3,13 +3,11 @@ module Noun.Convert
   , FromNoun(parseNoun), fromNoun, fromNounErr, fromNounExn
   , Parser(..)
   , ParseStack
-  , Cord(..)
+  , parseNounUtf8Atom
   , named
   ) where
 
 import ClassyPrelude hiding (hash)
-import Control.Lens
-import Noun.Atom
 import Noun.Core
 
 import qualified Control.Monad.Fail as Fail
@@ -189,23 +187,9 @@ fromNounExn n = runParser (parseNoun n) [] onFail onSuccess
 
 -- Cord Conversions ------------------------------------------------------------
 
-newtype Cord = Cord { unCord :: ByteString }
-  deriving newtype (Eq, Ord, Show, IsString, NFData)
-
-instance ToNoun Cord where
-  toNoun (Cord bs) = Atom (bs ^. from atomBytes)
-
-instance FromNoun Cord where
-  parseNoun n = named "Cord" $ do
-    atom <- parseNoun n
-    pure $ Cord (atom ^. atomBytes)
-
---- Atom Conversion ------------------------------------------------------------
-
-instance ToNoun Atom where
-  toNoun = Atom
-
-instance FromNoun Atom where
-  parseNoun = named "Atom" . \case
-    Atom a   -> pure a
-    Cell _ _ -> fail "Expecting an atom, but got a cell"
+parseNounUtf8Atom :: Noun -> Parser Text
+parseNounUtf8Atom n =
+    named "utf8-atom" $ do
+      case utf8AtomToText n of
+        Left err -> fail (unpack err)
+        Right tx -> pure tx

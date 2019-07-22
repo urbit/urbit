@@ -7,7 +7,7 @@ import Noun
 
 import qualified Urbit.Time as Time
 
-type Packet = ByteString
+type Packet = Octs
 
 type Port = Word
 
@@ -21,8 +21,8 @@ data Eff
   | Turf [Turf]
   deriving (Eq, Ord, Show)
 
-newtype Turf = MkTurf [Text]
-  deriving (Eq, Ord, Show)
+newtype Turf = MkTurf { unTurf :: [Cord] }
+  deriving newtype (Eq, Ord, Show)
 
 data Lane
   = Ip4f Time.Wen Port IPv4      -- [%if @da @ud @if]
