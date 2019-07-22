@@ -55679,6 +55679,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	  updateInvite(uid, cir, resp) {
 	    let tagstring = resp ? "Accept" : "Reject";
 
+	    let hostName = cir.split('/')[0];
 	    let circleName = cir.split('/')[1];
 
 	    let actions = [
@@ -55700,7 +55701,7 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 	      }
 	    ];
 
-	    if (resp) {
+	    if (resp && hostName !== `~${window.ship}`) {
 	      actions = actions.concat([
 	        {
 	          create: {
@@ -55737,31 +55738,31 @@ lyrtesmudnytbyrsenwegfyrmurtelreptegpecnelnevfes\
 
 	    if (!aut || !cir || !props.config) {
 	      return (
-	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 90}})
+	        react.createElement('div', {__self: this, __source: {fileName: _jsxFileName$5, lineNumber: 91}})
 	      );
 	    }
 
 	    cir = cir.split('/')[1];
 
 	    return (
-	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 97}}
-	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 98}}
+	      react.createElement('div', { className: "pa3", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 98}}
+	        , react.createElement('div', { className: "w-100 v-mid" , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 99}}
 	          , react.createElement('div', { className: "dib mr2 bg-nice-green"  , style: {
 	            borderRadius: 12,
 	            width: 12,
 	            height: 12
-	          }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 99}})
-	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 104}}, "Invite to "
-	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 105}}
+	          }, __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 100}})
+	          , react.createElement('p', { className: "dib body-regular fw-normal"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 105}}, "Invite to "
+	            , react.createElement('span', { className: "fw-bold", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 106}}
 	              , cir
 	            )
 	          )
 	        )
-	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 110}}
-	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 111}}, "Hosted by "  , aut)
+	        , react.createElement('div', { className: "w-100", __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 111}}
+	          , react.createElement('p', { className: "dib gray label-small-mono"  , __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 112}}, "Hosted by "  , aut)
 	        )
-	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 113}}, "Accept")
-	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 114}}, "Reject")
+	        , react.createElement('a', { className: "dib w-50 pointer btn-font nice-green underline"     , onClick: this.onAccept.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 114}}, "Accept")
+	        , react.createElement('a', { className: "dib w-50 tr pointer btn-font nice-red underline"      , onClick: this.onReject.bind(this), __self: this, __source: {fileName: _jsxFileName$5, lineNumber: 115}}, "Reject")
 	      )
 	    )
 	  }

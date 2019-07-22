@@ -29,6 +29,7 @@ export class SidebarInvite extends Component {
   updateInvite(uid, cir, resp) {
     let tagstring = resp ? "Accept" : "Reject";
 
+    let hostName = cir.split('/')[0];
     let circleName = cir.split('/')[1];
 
     let actions = [
@@ -50,7 +51,7 @@ export class SidebarInvite extends Component {
       }
     ];
 
-    if (resp) {
+    if (resp && hostName !== `~${window.ship}`) {
       actions = actions.concat([
         {
           create: {
