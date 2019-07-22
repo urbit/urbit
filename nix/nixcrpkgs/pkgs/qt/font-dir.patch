@@ -1,0 +1,11 @@
+--- qt-5.8.0-orig/src/gui/text/qplatformfontdatabase.cpp
++++ qt-5.8.0/src/gui/text/qplatformfontdatabase.cpp
+@@ -396,7 +396,7 @@
+ {
+     QString fontpath = QString::fromLocal8Bit(qgetenv("QT_QPA_FONTDIR"));
+     if (fontpath.isEmpty())
+-        fontpath = QLibraryInfo::location(QLibraryInfo::LibrariesPath) + QLatin1String("/fonts");
++        fontpath = QCoreApplication::applicationDirPath();
+ 
+     return fontpath;
+ }

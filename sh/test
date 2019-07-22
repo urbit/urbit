@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+pkg=$(nix-build nix/ops -A test --no-out-link "$@")
+
+hdr () {
+  echo =====$(sed 's/./=/g' <<< "$1")=====
+  echo ==== $1 ====
+  echo =====$(sed 's/./=/g' <<< "$1")=====
+}
+
+for f in $(find $pkg/ -type f)
+do
+  hdr $(basename $f)
+  cat $f
+done
+
+fail=0
+
+for f in $(find "$pkg/" -type f)
+do
+  if egrep "(ford|warn): " $f >/dev/null
+  then
+    if [[ $fail -eq 0 ]]
+    then
+      hdr "Test Failures"
+    fi
+
+    echo "ERROR Test failure in $(basename $f)"
+    ((fail++))
+  fi
+done
+
+if [[ $fail -eq 0 ]]
+then
+  hdr "Success"
+fi
+
+exit "$fail"

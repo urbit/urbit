@@ -1,0 +1,11 @@
+diff -ur cctools-port-c1cc758/cctools/include/stuff/bytesex.h cctools-port-bytesex/cctools/include/stuff/bytesex.h
+--- cctools-port-c1cc758/cctools/include/stuff/bytesex.h	2017-10-01 13:47:04.000000000 -0700
++++ cctools-port-bytesex/cctools/include/stuff/bytesex.h	2017-11-10 19:07:26.338161875 -0800
+@@ -48,6 +48,7 @@
+ #include <mach/m88k/thread_status.h>
+ #include <mach/i860/thread_status.h>
+ #include <mach/i386/thread_status.h>
++#include <mach/i386/_structs.h>
+ #include <mach/hppa/thread_status.h>
+ #include <mach/sparc/thread_status.h>
+ /* cctools-port: need to undef these to avoid warnings */

@@ -1,0 +1,38 @@
+From 339371eafd2fb2bcbf8b0a08e5328fc7c16b892f Mon Sep 17 00:00:00 2001
+From: David Grayson <davidegrayson@gmail.com>
+Date: Thu, 4 May 2017 06:41:28 -0700
+Subject: [PATCH] guiddef.h: Use __declspec(selectany) on GUID declarations.
+
+If __declspec(selectany) is not used on the prototype but later used
+on a definition, GCC 6+ seems to ignore it, and you can get
+multiple-definition errors at link time.
+
+That situation can arise in code like Microsoft's usbview utility that
+has multiple translation units including the following headers in this
+order:  windows.h, initguid.h, winioctl.h.
+
+However, this patch cannot be upstreamed to mingw-w64 because it
+breaks older versions of GCC, and MSDN says that putting selectany on
+a declaration is "incorrect".  Once GCC is fixed, we can remove this
+patch.
+---
+ mingw-w64-headers/include/guiddef.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/mingw-w64-headers/include/guiddef.h b/mingw-w64-headers/include/guiddef.h
+index 9ecea3e2..6c9444cf 100644
+--- a/mingw-w64-headers/include/guiddef.h
++++ b/mingw-w64-headers/include/guiddef.h
+@@ -58,8 +58,7 @@ __extension__ template<typename T> const GUID &__mingw_uuidof();
+ #define DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
+ #endif
+ #else
+-/* __declspec(selectany) must be applied to initialized objects on GCC 5 hence must not be used here. */
+-#define DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) EXTERN_C const GUID name
++#define DEFINE_GUID(name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) EXTERN_C const GUID DECLSPEC_SELECTANY name
+ #endif
+ 
+ #define DEFINE_OLEGUID(name, l, w1, w2) DEFINE_GUID (name, l, w1, w2, 0xc0, 0, 0, 0, 0, 0, 0, 0x46)
+-- 
+2.12.1
+

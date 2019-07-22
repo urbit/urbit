@@ -1,0 +1,58 @@
+define all = win32,win64,linux32,linux64,linux-rpi,mac
+define windows = win32,win64
+define linux = linux32,linux64,linux-rpi
+
+# Cross-compiler toolchains
+{$windows,$linux}.gcc slow=1
+mac.toolchain slow=1
+
+# Packages
+{$windows}.angle{,.examples} slow=1
+{$windows}.angle.examples
+omni.at-spi2-headers
+{$all}.avrdude
+omni.dejavu-fonts
+{$windows}.devcon
+{$all}.expat
+omni.fixesproto
+{$windows}.gdb
+{$all}.hello
+{$all}.hello_cpp
+omni.inputproto
+{$all}.ion
+omni.kbproto
+{$linux}.libudev
+{$all}.libusb
+{$all}.libusbp{,.examples}
+{$linux}.libx11
+{$linux}.libxall
+{$all}.libxau
+{$all}.libxcb{,.examples}
+{$linux}.libxext
+{$linux}.libxfixes
+{$linux}.libxi
+{$all}.openocd
+{$all}.pavr2
+{$windows}.pdcurses{,.examples}
+{$all}.p-load
+{$all}.qt slow=1
+{$all}.qt.examples
+{$windows}.readline
+{$all}.tic
+{$windows}.usbview
+omni.xcb-proto
+{$all}.xcb-util
+{$all}.xcb-util-image
+{$all}.xcb-util-keysyms
+{$all}.xcb-util-renderutil
+{$all}.xcb-util-wm
+omni.xextproto
+omni.xorg-macros
+{$all}.xproto
+omni.xtrans
+{$all}.zlib
+
+# Derivations we care about at Pololu
+{win32,linux32,linux-rpi,mac}.{p-load,pavr2,tic} priority=1
+
+# TODO: Test building the license_sets somehow too.

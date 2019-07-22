@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -ex
+
+if [ "$TRAVIS_PULL_REQUEST" = false ]
+then
+
+    sh/test --arg debug false
+
+else
+
+    sh/test --arg debug true
+
+fi

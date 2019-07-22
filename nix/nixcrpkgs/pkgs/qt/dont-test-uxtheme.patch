@@ -1,0 +1,24 @@
+diff -ur qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json qtbase-opensource-src-5.9.2/src/widgets/configure.json
+--- qtbase-opensource-src-5.9.2-orig/src/widgets/configure.json	2017-10-25 13:52:49.173421900 -0700
++++ qtbase-opensource-src-5.9.2/src/widgets/configure.json	2017-10-25 13:53:42.891341214 -0700
+@@ -28,11 +28,6 @@
+     },
+ 
+     "tests": {
+-        "uxtheme": {
+-            "label": "uxtheme.h",
+-            "type": "files",
+-            "files": [ "uxtheme.h" ]
+-        }
+     },
+ 
+     "features": {
+@@ -57,7 +52,7 @@
+         },
+         "style-windowsxp": {
+             "label": "WindowsXP",
+-            "condition": "features.style-windows && config.win32 && !config.winrt && tests.uxtheme",
++            "condition": "features.style-windows && config.win32 && !config.winrt",
+             "output": [ "privateFeature", "styles" ]
+         },
+         "style-windowsvista": {

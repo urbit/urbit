@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -n "${TRAVIS_TAG-}" ]
+then
+  ver="$TRAVIS_TAG"
+elif [ -n "${TRAVIS_COMMIT-}" ]
+then
+  ver="$TRAVIS_COMMIT"
+else
+  ver="$(git rev-parse HEAD)"
+fi
+
+mkdir -p release
+
+for plat in linux64 darwin
+do
+  sh/cross urbit "$plat"
+
+  echo "packaging release/urbit-$plat-$ver.tgz"
+  (cd cross/$plat; tar cz .) > release/urbit-$plat-$ver.tgz
+done
