@@ -33,16 +33,16 @@
 ::
 ++  processed-signature
   $%  [%ship ship=@]
-      [%ring tag=(unit @udpoint)]
+      [%ring =path tag=(unit @udpoint)]
   ==
 ::
 ++  process-signature
-  |=  =full-signature
+  |=  [=path =full-signature]
   ^-  processed-signature
   ::
   ?-  -.full-signature
     %ship  [%ship ship.full-signature]
-    %ring  [%ring y.raw.ring-signature.full-signature]
+    %ring  [%ring path y.raw.ring-signature.full-signature]
   ==
 ::  what sort of signature this node wants
 ::
@@ -106,7 +106,7 @@
         ::
         [%reject ~]
         ::  a special output that can only occur on the toplevel node; this
-        ::  accepts the incoming 
+        ::  accepts the incoming new invitiees.
         ::
         [%accept-and-invite-member ship=@p]
         ::
@@ -164,9 +164,28 @@
   ++  on-route
     |=  [=path =parent-event =private-state]
     ^-  (unit child-event)
-    ~&  [%todo-add-auth-check-for parent-event]
     ::
-    `(process-signature parent-event)
+    ?-    -.parent-event
+        %ship
+      ~&  [%todo-verify-signature-for-ship ship.parent-event]
+      `[%ship ship.parent-event]
+    ::
+        %ring
+      ::  we are the toplevel, the only path we accept is /
+      ::
+      ?.  =(/ path)
+        ~
+      ::
+      =/  ships=(set @p)
+        %-  sy
+        %+  turn
+          ~(tap by participants.ring-signature.parent-event)
+        head
+      ::
+      ~&  [%todo-verify-ring-signature-for ships]
+      ::
+      `[%ring / y.raw.ring-signature.parent-event]
+    ==
   ::
   ++  on-process-event
     |=  [=parent-event =user-event =private-state]
@@ -184,7 +203,9 @@
           name.user-event
           type.user-event
           %unlinked
-          (process-signature parent-event)
+          :: TODO: We must get our current node name and weld our new name to the end.
+          ::
+          (process-signature / parent-event)
       ==
     ==
   ::
@@ -604,7 +625,7 @@
   :*  [[0 first-event] ~]
       1
       :*  type
-          ~
+          top-state
           signature-type
           (bunt-a-vase snapshot-type)
           ~
@@ -612,39 +633,13 @@
       (bunt-a-vase private-state-type)
       ~
   ==
-::
-::  ++  instantiate-community
-::    |=  $:  name=@t
-::            host=@p
-::            initial-invited=(set @p)
-::            top-node=@t
-::        ==
-::    ^-  community:server
-::    ::
-::    =/  
-
-::
-::
-++  process-child-returned
-  |=  [app-vase=vase child-returned=vase state=node:server]
-  ^-  [vase _state]
-  ::
-  =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
-  =/  args=vase  :(slop child-returned private-state.state)
-  ::
-  =/  raw-result  (slam on-child-return args)
-  ::
-  =/  return-event=vase  (slot 2 raw-result)
-  =.  private-state.state  (slot 3 raw-result)
-  ::
-  [return-event state]
 ::  +change-broadcast: a 
 ::
 +$  change-broadcast
-  $:  app=@t
-      =path
+  $:  =path
+      app=@t
+      =event-log-item
   ==
-
 ::  +apply: applies a message to the event logs
 ::
 ::    TODO:
@@ -661,15 +656,15 @@
 
   ::  there are two things which cause broadcast changes: events sent as part
   ::  of the [%log ...] message from +on-process-event and the toplevel
-  ::  [%accept-and-invite-member @p] return value. TODO: Actually do it.
+  ::  [%accept-and-invite-member @p] return value.
   ::
-  |^  =/  ret=[=vase state=_original-state]
+  |^  =/  ret=[=vase changes=(list change-broadcast) state=_original-state]
         %-  recurse  :*
           !>(full-signature)
           route
           route
           message
-          original-state
+          [~ original-state]
         ==
       ::  the output of calling recurse is a vase which must be a
       ::  +output:toplevel-interface
@@ -677,21 +672,29 @@
       =/  ret-val=output:toplevel-interface
         ;;(output:toplevel-interface q.vase.ret)
       ::
-      ::  todo: deal with changes and toplevel state change
-      ::
       ?-    -.ret-val
           %accept
         ~&  %accepting-event
-        [~ state:ret]
+        [changes:ret state:ret]
       ::
           %reject
         ~&  %rejecting-event
         [~ original-state]
       ::
           %accept-and-invite-member
-        ~&  [%todo-accept-and-invite-member ship.ret-val]
-        [~ state:ret]
+        ~&  [%accepting-event-and-inviting ship.ret-val]
+        ?>  ?=(^ top-state.snapshot.state.ret)
+        =.  invited.u.top-state.snapshot.state.ret
+          (~(put in invited.u.top-state.snapshot.state.ret) ship.ret-val)
+        ::
+        %^  record-change  changes.ret  [state.ret /]
+        [%toplevel-invite ship.ret-val]
       ==
+  ::
+  +$  changes-and-state
+    $:  changes=(list change-broadcast)
+        state=node:server
+    ==
   ::  +recurse: applies a message to a node in a route
   ::
   ::    Returns a list of return messages (ignored at the toplevel) and the
@@ -720,9 +723,9 @@
             route=path
             full-path=path
             message=vase
-            state=node:server
+            changes-and-state
         ==
-    ^-  [vase _state]
+    ^-  [vase changes-and-state]
     ::
     ~&  [%full-path full-path]
     ::
@@ -731,11 +734,9 @@
     ::
     ?^  route
       ::
-      ~&  [%keys (turn ~(tap by children.state) head)]
-      ::
       ?~  sub-node=(~(get by children.state) i.route)
         ~&  [%four-oh-four i.route]
-        [!>(~) state]
+        [!>(~) changes state]
       ::
       =/  on-route=vase  (slap app-vase [%limb %on-route])
       =/  args  :(slop !>(route) parent-event private-state.state)
@@ -745,16 +746,19 @@
       ::
       ?:  =(~ q.raw-result)
         ~&  [%node-canceled-event ~]
-        [!>(~) state]
+        [!>(~) changes state]
       ::
       =/  child-event=vase  (slot 3 raw-result)
       ::
-      =^  return-value  u.sub-node
-        (recurse child-event t.route full-path message u.sub-node)
+      =/  n=[return-value=vase changes-and-state]
+        (recurse child-event t.route full-path message changes u.sub-node)
+      =/  return-value  return-value.n
+      =.  changes  changes.n
+      =.  u.sub-node    state.n
       ::
       =.  children.state  (~(put by children.state) i.route u.sub-node)
       ::
-      (process-child-returned app-vase return-value state)
+      (process-child-returned app-vase return-value changes state)
     ::  we've reached the node we're trying to talk to.
     ::
     =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
@@ -773,14 +777,13 @@
       =/  args  :(slop message private-event.response snapshot.snapshot.state)
       =.  snapshot.snapshot.state  (slam apply-event-to-snapshot args)
       ::
-      ~&  [%log user-event=message private-event=private-event.response]
-      =.  event-log.state
-        [[next-event-id.state [%log message private-event.response]] event-log.state]
-      =.  next-event-id.state  +(next-event-id.state)
+      =/  nu=changes-and-state
+        %^  record-change  changes  [state full-path]
+        [%log message private-event.response]
       ::
-      ~&  [%new-snapshot full-path snapshot.snapshot.state]
+      ~&  [%new-snapshot full-path snapshot.snapshot.state.nu]
       ::
-      [return-event.response state]
+      [return-event.response changes.nu state.nu]
     ::
         %create
       ::
@@ -791,24 +794,57 @@
       =.  event-log.created
         [[0 [%init type.response signature-type.response]] ~]
       ::
-      =^  return  created
-        (recurse child-event.response / (weld full-path [sub-id.response ~]) message created)
+      ::
+      =/  n=[return-value=vase changes-and-state]
+        (recurse child-event.response / (weld full-path [sub-id.response ~]) message changes created)
+      =/  return  return-value.n
+      =.  changes  changes.n
+      =.  created    state.n
       ::
       ~&  [%created type=type.response sub-id=sub-id.response return=return]
       =.  children.state  (~(put by children.state) sub-id.response created)
       =.  children.snapshot.state  (~(put in children.snapshot.state) sub-id.response)
-      =.  event-log.state
-        :_  event-log.state
-        [next-event-id.state [%create sub-id.response type.response signature-type.response]]
-      =.  next-event-id.state  +(next-event-id.state)
       ::
-      (process-child-returned app-vase return state)
+      =/  nu=changes-and-state
+        %^  record-change  changes  [state full-path]
+        [%create sub-id.response type.response signature-type.response]
+      ::
+      (process-child-returned app-vase return changes.nu state.nu)
     ::
         %return
       ::  when we receive a %return value, we pass the value up to the callers
       ::
-      [return-event.response state]
+      [return-event.response changes state]
     ==
+  ::  +record-change: applies a :log-entry to the event log and the outbound changes.
+  ::
+  ++  record-change
+    |=  $:  changes=(list change-broadcast)
+            [state=node:server full-path=path]
+            log-entry=event-log-item
+        ==
+    ^+  [changes state]
+    ::
+    =.  changes  [[full-path app-type.snapshot.state log-entry] changes]
+    =.  event-log.state
+      [[next-event-id.state log-entry] event-log.state]
+    =.  next-event-id.state  +(next-event-id.state)
+    ::
+    [changes state]
+  ::
+  ++  process-child-returned
+    |=  [app-vase=vase child-returned=vase changes=(list change-broadcast) state=node:server]
+    ^-  [vase (list change-broadcast) node:server]
+    ::
+    =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
+    =/  args=vase  :(slop child-returned private-state.state)
+    ::
+    =/  raw-result  (slam on-child-return args)
+    ::
+    =/  return-event=vase  (slot 2 raw-result)
+    =.  private-state.state  (slot 3 raw-result)
+    ::
+    [return-event changes state]
   --
 --
 :-  %say
@@ -853,22 +889,25 @@
 ~&  %phase---------1
 =^  ret1  toplevel
   (apply [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
+~&  [%changes ret1]
 ::  'our town' should have a 'shitposting' board
 ::
 ~&  %phase---------2
 =^  ret2  toplevel
   (apply [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
-~&  [%toplevel toplevel]
+~&  [%changes ret2]
 ::  time to start shitposting!
 ::
 ~&  %phase---------3
 =^  ret3  toplevel
   (apply [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
+~&  [%changes ret3]
 ::  continue shitposting in the current thread!
 ::
 ~&  %phase---------4
 =^  ret4  toplevel
   (apply [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
+~&  [%changes ret4]
 ::
 ~&  [%final-sate toplevel]
 
@@ -898,56 +937,6 @@
 
 
 
-
-
-::  ::
-::  ::  go to the top and then [path user-event] -> signature-request
-
-::  ::
-::  ::  in this whole prototype, i've put the signature inside user-event under the
-::  ::  idea that letting this be configurable is correct. but we don't want to let
-::  ::  the applets touch a users' key material; all signatures should be of the
-::  ::  form of a signature request.
-::  ::
-::  ::  we need to produce two signatures: the toplevel one that the host sees and
-::  ::  the user-event one which goes into the event log. for the toplevel one, we
-::  ::  need to work on the
-::  ::
-::  ::  if we give the toplevel node the ability to maintain the member list, what
-::  ::  mischief could a malicious applet get up to? For now, we're going to just
-::  ::  let that be app state, but that should seriously be put into the event log
-::  ::  management in v2.
-::  ::
-::  ++  user-signature-request
-::    $%  [%make-ring tag=(unit path)]
-::    ==
-::  ::
-::  ++  toplevel-signature-request
-::    $%  [%make-ring ships=(set @p) tag=(unit path)]
-::        [%make-id ship=@p]
-::    ==
-::  ::
-::  ++  produce-signature
-::    |=  [=user-signature-request =snapshot]
-::    ^-  toplevel-signature-request
-::    ::
-::    ?-  user-signature-request
-::      %make-ring  [%make-ring ships.snapshot tag.user-signature-request]
-::      %make-id    [%make-id ship.snapshot]
-::    ==
-
-::  ::  Maybe I'm overthinking this. Should 
-
-::  ++  sign-user-event
-::    |=  [=user-event =path]
-
-
 :: The system verifies that the signatures are valid before dispatch, but the
 :: signatures are made available so that the system can perform its own
 :: additional checks.
-
-
-
-:: NEXT: Hook up %accept, %reject, %accept-and-invite-member so that they're
-:: actually acted on. This is important since %accept-and-invite-member needs
-:: to be hooked up for event log purposes.
