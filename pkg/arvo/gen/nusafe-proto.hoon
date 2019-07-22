@@ -390,11 +390,18 @@
     ::
     snapshot(posts [[user-event private] posts.snapshot])
   --
+::  the full, shared event log 
 ::
 ++  event-log-item
   $%  ::  a special init which must be the first item in the / node.
       ::
-      [%toplevel-init initial-invited=(set @p) community-name=@t]
+      $:  %toplevel-init
+          initial-invited=(set @p)
+          community-name=@t
+          original-host=@p
+          type=@t
+          =signature-type
+      ==
       ::  invites a person into the community. only valid on the / node.
       ::
       [%toplevel-invite ship=@p]
@@ -416,66 +423,132 @@
 ++  app-map
   ^-  (map @t vase)
   (my [[%auth !>(node-type-auth)] [%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
+::  common data structures between the server and the client
+::
+++  common
+  |%
+  ::  every root node keeps metadata about the entire server, which is used for signatures
+  ::
+  ++  top-state
+    $:  invited=(set @p)
+        community-name=@t
+        original-host=@p
+    ==
+  ::  snapshot
+  ::
+  ++  snapshot
+    $~  [%auth ~ %community *vase ~]
+    $:  ::  which of the built-in app types we represent
+        ::
+        app-type=@t
+        ::  the top-state; community identification information only on /
+        ::
+        top-state=(unit top-state)
+        ::  what sort of signature should be sent to this node
+        ::
+        =signature-type
+        ::  the public per-applet snapshot data
+        ::
+        snapshot=vase
+        ::  the live iterable children are tracked as a set inside the snapshot
+        ::
+        children=(set @t)
+    ==
+  --
 ::  the server state
 ::
 ++  server
-  =<  community
+  =<  node
   |%
-  ++  community
-    $:  invited=(set @p)
-        root=node
-    ==
+  ::  the server state is a hierarchy of node objects, referred to by path
   ::
   ++  node
-    $~  [%auth 1 ~ *vase *vase ~]
-    $:  app-type=@t
-        next-event-id=@ud
+    $~  [~ 1 *snapshot:common *vase ~]
+    $:  ::  the relevant parts of the server state should always be rebuildable
+        ::  from the event log itself.
+        ::
         event-log=(list [id=@ud =event-log-item])
-        snapshot=vase
+        ::  the next event id from the
+        ::
+        next-event-id=@ud
+        ::  the public snapshot; all state that can be 
+        ::
+        =snapshot:common
+        ::  private applet state never shared with clients
+        ::
         private-state=vase
+        ::  the state of all child nodes
+        ::
         children=(map @t node)
     ==
   --
-
-::  the client state
-::
+::  ::  the client state
+::  ::
 ::  ++  client
-::    =<  community
+::    =<  node
 ::    |%
-::    ++  community
-::      $:  invited=(set @p)
-::          root=node
-::      ==
-::    ::  the theoretical "top" node which sits outside the system. This data is
-::    ::  only snaps
-::    ::
-::    ++  directory
-::      $:  invited=(set @p)
-::          root=node
-::      ==
 ::    ::
 ::    ++  node
-::      $~  [%board ~ *vase ~]
-::      $:  app-type=@t
-::          partial-event-log=(list [id=@ud item=event-item])
-::          top-snapshot=(unit top-state)
-::          snapshot=vase
-::          children=(map @t node)
+::      $~  [~ *node-snapshot ~ ~]
+::      $:  partial-event-log=(list [id=@ud item=event-item])
+::          ::  the current state of the node
+::          ::
+::          ::    The :partial-event-log may have %snapshots in them, but the head
+::          ::    may not be a snapshot so always have the current head rendered as
+::          ::    a snapshot.
+::          ::
+::          =node-snapshot
+::          ::  live children state we know about
+::          ::
+::          ::    When we see a %create event, we place a ~ in this node until we
+::          ::    follow it.
+::          ::
+::          children=(map @t (unit node))
+::          ::  archived children state
+::          ::
+::          ::    In the event log, when a %remove event occurs, that data gets
+::          ::    wiped on the server. On the client, removed nodes go to the
+::          ::    archive where they are no longer modifyable.
+::          ::
+::          ::    In the case that we never learned anything about the thread other
+::          ::    than its existence, we don't add anything here.
+::          ::
+::          archived=(map @t node)
 ::      ==
 ::    ::  state created from event log items that
 ::    ::
 ::    ++  top-state
 ::      $:  invited=(set @p)
 ::          community-name=@t
+::          original-host=@p
 ::      ==
 ::    ::  on the client, we may only have events 1,2,3 and then a snapshot of 10
 ::    ::  and then events 11,12,13.
 ::    ::
 ::    ++  event-item
-::      $:  [%snapshot =vase]
+::      $:  [%snapshot =node-snapshot]
 ::          [%event =event-log-item]
 ::      ==
+::    ::
+::    ++  node-snapshot
+::      $:  app-type=@t
+::          ::  the top-state of the 
+::          ::
+::          top-state=(unit top-state)
+::          =signature-type
+::          snapshot=vase
+::          children=(set @t)
+::      ==
 ::    --
+
+::  Imagine that I'm the client connecting for the first time. What gets sent?
+::  I ask for (peer /). What gets returned? An event log or more likely a
+::  snapshot which would theoretically be reconstructed from an event log. I
+::  should get the set of 
+::
+::  Then I just get the events.
+
+
 
 ::  +sump: like arvo sump, translates vases into cards between applets
 ::
@@ -510,7 +583,7 @@
   (slap v [%kttr [%like [[%& 1] ~] ~]])
 ::
 ++  instantiate-node
-  |=  type=term
+  |=  [type=term =signature-type top-state=(unit top-state:common)]
   ^-  node:server
   ::
   =/  new-item-vase=vase       (~(got by app-map) type)
@@ -518,13 +591,40 @@
   =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
   =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
   ::
-  :*  type
+  =/  first-event=event-log-item
+    ?~  top-state
+      [%init type signature-type]
+    ::
+    :*  %toplevel-init
+        invited.u.top-state
+        community-name.u.top-state
+        original-host.u.top-state
+        type
+        signature-type
+    ==
+  ::
+  :*  [[0 first-event] ~]
       1
-      ~
-      (bunt-a-vase snapshot-type)
+      :*  type
+          ~
+          signature-type
+          (bunt-a-vase snapshot-type)
+          ~
+      ==
       (bunt-a-vase private-state-type)
       ~
   ==
+::
+::  ++  instantiate-community
+::    |=  $:  name=@t
+::            host=@p
+::            initial-invited=(set @p)
+::            top-node=@t
+::        ==
+::    ^-  community:server
+::    ::
+::    =/  
+
 ::
 ::
 ++  process-child-returned
@@ -575,7 +675,7 @@
   ::
   ~&  [%full-path full-path]
   ::
-  =/  app-vase=vase  (~(got by app-map) app-type.state)
+  =/  app-vase=vase  (~(got by app-map) app-type.snapshot.state)
   ::  If we still have remaining path elements, dispatch on them.
   ::
   ?^  route
@@ -619,21 +719,21 @@
     ::
     =/  apply-event-to-snapshot=vase
       (slap app-vase [%limb %apply-event-to-snapshot])
-    =/  args  :(slop message private-event.response snapshot.state)
-    =.  snapshot.state  (slam apply-event-to-snapshot args)
+    =/  args  :(slop message private-event.response snapshot.snapshot.state)
+    =.  snapshot.snapshot.state  (slam apply-event-to-snapshot args)
     ::
     ~&  [%log user-event=message private-event=private-event.response]
     =.  event-log.state
       [[next-event-id.state [%log message private-event.response]] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
     ::
-    ~&  [%new-snapshot full-path snapshot.state]
+    ~&  [%new-snapshot full-path snapshot.snapshot.state]
     ::
     [return-event.response state]
   ::
       %create
     ::
-    =/  created=node:server  (instantiate-node type.response)
+    =/  created=node:server  (instantiate-node [type signature-type ~]:response)
     ::  write the creation information into the event log so that when
     ::  replayed, we get the configuration.
     ::
@@ -691,10 +791,18 @@
 ::    ==
 
 
-
 ::  toplevel container node
 ::
-=/  toplevel  (instantiate-node %auth)
+=/  toplevel
+  %-  instantiate-node
+    :*  %auth
+        %community
+        :*  ~
+            (sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])
+            'our town'
+            ~zod
+    ==  ==
+
 ::  initializes the 'our town' community
 ::
 ~&  %phase---------1
