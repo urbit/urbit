@@ -947,35 +947,6 @@
 :: We have to trust nuevo because if we want the system to be an event 
 
 
-
-
-::  ---- Maybe Wrong -----
-::
-:: In the current Urbit system, you have an arvo kernel which takes events on
-:: paths/ducts and returns effects on paths/ducts. Does this imply that Socket
-:: or NodeId should be pulled out of Event proper? Say:
-::
-:: data Event = Event{ now :: Time, target :: NodeId, ne :: NuevoEvent}
-::
-:: ie, there is no Send effect which is turned into a Recv event.
-::
-:: But then how do lifecycle events work? If I am a terminating process, how do
-:: I tell the interpreter that I'm over? How do I fork?
-::
-::
-::  data Ovum = Ovum
-::    { now :: Time
-::    , target :: NodeId
-::    , event :: NuevoEvent
-::    }
-::
-::  data OvEffect = OvEffect
-::    { target :: NodeId
-::    , event  :: NuevoEvent
-::    }
-::
-::  ---- /Maybe Wrong -----
-
 :: Fork and Init are the same. Send and Recv are the same. Closed and
 :: Closed. Terminated and Terminated. The Effect from one side is the Event
 :: from another.

@@ -13,5 +13,5 @@ spawnsAnUnsafeMessagePrintingProgram :: NuevoProgram
 spawnsAnUnsafeMessagePrintingProgram (state, event) =
   trace ("Spawn prog trace: bone=" ++ (show (peRecvBone event)) ++ ", msg=" ++ (peRecvMessage event))
   (state,
-   [PEfSend (peRecvBone event) "to terminal"
-   , PEfFork "child" False unsafeMessagePrintingProgram SocketType "forking"])
+   [PEfSend (peRecvBone event) "to terminal"])
+--   , PEfFork "child" False unsafeMessagePrintingProgram SocketType "forking"])

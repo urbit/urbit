@@ -2,6 +2,8 @@ module Vere where
 
 import ClassyPrelude
 
+import Data.Time.Clock.System
+
 import qualified Data.Map as M
 import           Nuevo
 import           Program
@@ -32,39 +34,74 @@ initialVereEnv np =
 
 -- TODO: This isn't the way to handle this long term, but for now, we run over
 -- each instance
--- vereStep :: VereEnv -> IO VereEnv
--- vereStep ve = do
---   let (effects, newInstances) = M.mapAccumWithKey accumExec [] (instances ve)
+vereStep :: VereEnv -> IO VereEnv
+vereStep ve = do
+  now <- getSystemTime
 
---   print ("instances: " ++ (show newInstances))
---   print ("effects: " ++ (show effects))
+  let (effects, newInstances) =
+        M.mapAccumWithKey (accumExec now) [] (instances ve)
 
---   pure ()
+  print ("instances: " ++ (show newInstances))
+  print ("effects: " ++ (show effects))
 
-  -- foldlM
-  --   (handleNuevoEffect (ProcessNodeId (Path []) 0))
-  --   ve{instances=newInstances}
-  --   effects
+  foldlM
+    handleOvEffect
+    ve{instances=newInstances}
+    effects
 
 
--- -- | For every instance of nuevo, run one event and accumulate the effects.
--- accumExec :: [NuevoEffect]
---           -> NodeId
---           -> InstanceThread
---           -> ([NuevoEffect], InstanceThread)
--- accumExec previousEffects id it@(InstanceThread [] _ _)
---   = (previousEffects, it)
+-- | For every instance of nuevo, run one event and accumulate the effects.
+accumExec :: SystemTime
+          -> [OvEffect]
+          -> NodeId
+          -> InstanceThread
+          -> ([OvEffect], InstanceThread)
+accumExec now previousEffects id it@(InstanceThread [] _ _)
+  = (previousEffects, it)
 
--- accumExec previousEffects id InstanceThread{..}
---   = (previousEffects ++ newEffects, newInst)
---   where
---     (event : restEvents) = itEventQueue
---     (newState, newEffects) = runNuevoFunction itNuevoState event
---     newInst = InstanceThread
---       { itEventQueue = restEvents
---       , itNuevoState = newState
---       , itEventLog = (0, event):itEventLog
---       }
+accumExec now previousEffects id InstanceThread{..}
+  = (previousEffects ++ newEffects, newInst)
+  where
+    (event : restEvents) = itEventQueue
+    (newState, newEffects) =
+      runNuevoFunction itNuevoState (OvEvent now id event)
+    newInst = InstanceThread
+      { itEventQueue = restEvents
+      , itNuevoState = newState
+      , itEventLog = (0, event):itEventLog
+      }
+
+-- | Handles an OvEffect. In IO because of the handling of IoDriver and
+-- TopNodeId.
+handleOvEffect :: VereEnv -> OvEffect -> IO VereEnv
+
+-- TODO: This should be distinct from IoDriver, but until I have passing
+-- sockets over sockets working, do this.
+handleOvEffect env (OvEffect TopNodeId msg)                 =  do
+  let (Just fun) = M.lookup "base" (drivers env)
+  effects <- (fun msg)
+  pure (env)
+
+-- TODO: Must handle the Init specially, so that it creates an entry
+handleOvEffect env (OvEffect (ProcessNodeId path id) NEvInit{..})
+  = undefined
+
+-- TODO: Must figure out how to integrate the terminated here.
+
+handleOvEffect env (OvEffect (ProcessNodeId path id) msg) = do
+  -- There are two things that need special handling: fork and
+  -- terminate. Everything else is just enqueued to the right process, erroring
+  -- if it doesn't exist.
+  print ("msg: " ++ (show msg))
+  pure (env)
+
+handleOvEffect env (OvEffect (IoDriver driver) msg)       = do
+  let (Just fun) = M.lookup driver (drivers env)
+  effects <- (fun msg)
+  -- TODO: Take the effects from the driver and then run them immediately,
+  -- since they're almost assuredly the things we send back to the program.
+  pure (env)
+
 
 -- -- Nuevo has given us an effect and we must react to it.
 -- handleNuevoEffect :: NodeId -> VereEnv -> NuevoEffect -> IO VereEnv

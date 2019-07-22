@@ -137,6 +137,7 @@ data OvEvent  = OvEvent
 data OvEffect = OvEffect
   { effectTarget :: NodeId,
     outputEvent  :: NuevoEvent }
+              deriving (Show)
 
 -------------------------------------------------------------------------------
 

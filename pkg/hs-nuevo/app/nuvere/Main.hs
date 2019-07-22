@@ -11,9 +11,7 @@ main :: IO ()
 main = do
   let initialState = initialVereEnv spawnsAnUnsafeMessagePrintingProgram
 
-  -- ns <- vereStep initialState
+  ns <- vereStep initialState
   -- ns2 <- vereStep ns
-
-  print "Everything disabled"
 
   pure()
