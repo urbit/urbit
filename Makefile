@@ -21,6 +21,7 @@ test:
 pills:
 	sh/update-solid-pill
 	sh/update-brass-pill
+	sh/update-ivory-pill
 
 clean:
 	rm -rf ./out ./work

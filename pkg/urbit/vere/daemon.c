@@ -334,7 +334,7 @@ _daemon_come(u3_noun star, u3_noun pill, u3_noun path)
 static void
 _daemon_slog(u3_noun hod)
 {
-  u3_pier_tank(0, u3k(u3t(hod)));
+  u3_pier_tank(0, 0, u3k(u3t(hod)));
   u3z(hod);
 }
 
@@ -466,6 +466,7 @@ _daemon_get_atom(c3_c* url_c)
     exit(1);
   }
 
+  curl_easy_setopt(curl, CURLOPT_CAINFO, u3K.certs_c);
   curl_easy_setopt(curl, CURLOPT_URL, url_c);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, _daemon_curl_alloc);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&buf_u);
@@ -840,6 +841,7 @@ void
 _daemon_loop_exit()
 {
   unlink(u3K.soc_c);
+  unlink(u3K.certs_c);
 }
 
 /* u3_daemon_commence(): start the daemon

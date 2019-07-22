@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -ex
+
+pkg=$(nix-build nix/ops -A ivory --no-out-link)
+cp $pkg bin/ivory.pill

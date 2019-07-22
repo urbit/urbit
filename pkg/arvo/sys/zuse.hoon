@@ -2224,21 +2224,112 @@
     ::
     ::  %kale only talks to %ames and itself.
     ::
+    ++  block
+      =<  block
+      |%
+      +$  hash    @uxblockhash
+      +$  number  @udblocknumber
+      +$  id      [=hash =number]
+      +$  block   [=id =parent=hash]
+      --
+    ::
+    ::  Azimuth points form a groupoid, where the objects are all the
+    ::  possible values of +point and the arrows are the possible values
+    ::  of (list point-diff).  Composition of arrows is concatenation,
+    ::  and you can apply the diffs to a +point with +apply.
+    ::
+    ::  It's simplest to consider +point as the product of three
+    ::  groupoids, Rift, Keys, and Sponsor.  The objects of the product
+    ::  are the product of the objects of the underlying groupoids.  The
+    ::  arrows are a list of a sum of the diff types of the underlying
+    ::  groupoids.  Given an arrow=(list diff), you can project to the
+    ::  underlying arrows with +skim filtering on the head of each
+    ::  diff.
+    ::
+    ::  The identity element is ~.  Clearly, composing this with any +diff
+    ::  gives the original +diff.  Since this is a category, +compose must
+    ::  be associative (true, because concatenation is associative).  This
+    ::  is a groupoid, so we must further have that every +point-diff has an
+    ::  inverse.  These are given by the +inverse operation.
+    ::
     ++  point
-      $:  =rift
-          =life
-          keys=(map life [crypto-suite=@ud =pass])
-          sponsor=(unit @p)
-      ==
-    +$  point-diff
-      $%  [%changed-continuity =rift]
-          [%changed-keys =life crypto-suite=@ud =pass]
-          [%new-sponsor sponsor=(unit @p)]
-      ==
+      =<  point
+      |%
+      +$  point
+        $:  =rift
+            =life
+            keys=(map life [crypto-suite=@ud =pass])
+            sponsor=(unit @p)
+        ==
+      ::
+      +$  key-update  [=life crypto-suite=@ud =pass]
+      ::
+      ::  Invertible diffs
+      ::
+      +$  diffs  (list diff)
+      +$  diff
+        $%  [%rift from=rift to=rift]
+            [%keys from=key-update to=key-update]
+            [%spon from=(unit @p) to=(unit @p)]
+        ==
+      ::
+      ::  Non-invertible diffs
+      ::
+      +$  udiffs  (list [=ship =udiff])
+      +$  udiff
+        $:  =id:block
+        $%  [%rift =rift]
+            [%keys key-update]
+            [%spon sponsor=(unit @p)]
+            [%disavow ~]
+        ==  ==
+      ::
+      ++  inverse
+        |=  diffs=(list diff)
+        ^-  (list diff)
+        %-  flop
+        %+  turn  diffs
+        |=  =diff
+        ^-  ^diff
+        ?-  -.diff
+          %rift  [%rift &2 |2]:diff
+          %keys  [%keys &2 |2]:diff
+          %spon  [%spon &2 |2]:diff
+        ==
+      ::
+      ++  compose
+        (bake weld ,[(list diff) (list diff)])
+      ::
+      ++  apply
+        |=  [diffs=(list diff) =point]
+        (roll diffs (apply-diff point))
+      ::
+      ++  apply-diff
+        |=  =point
+        |:  [*=diff point]
+        ^-  ^point
+        ?-    -.diff
+            %rift
+          ?>  =(rift.point from.diff)
+          point(rift to.diff)
+        ::
+            %keys
+          ?>  =(life.point life.from.diff)
+          ?>  =((~(get by keys.point) life.point) `+.from.diff)
+          %_  point
+            life  life.to.diff
+            keys  (~(put by keys.point) life.to.diff +.to.diff)
+          ==
+        ::
+            %spon
+          ?>  =(sponsor.point from.diff)
+          point(sponsor to.diff)
+        ==
+      --
     ::
     +$  vent-result
       $%  [%full points=(map ship point)]
-          [%diff who=ship =point-diff]
+          [%diff who=ship =udiff:point]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -8341,6 +8432,11 @@
                   adr=(list address)
                   top=(list ?(@ux (list @ux)))
               ==
+              $:  %eth-get-logs-by-hash
+                  has=@
+                  adr=(list address)
+                  top=(list ?(@ux (list @ux)))
+              ==
               [%eth-get-filter-changes fid=@ud]
               [%eth-get-transaction-count adr=address]
               [%eth-get-transaction-receipt txh=@ux]
@@ -8353,6 +8449,7 @@
               [%eth-new-filter fid=@ud]
               [%eth-get-filter-logs los=(list event-log)]
               [%eth-get-logs los=(list event-log)]
+              [%eth-get-logs-by-hash los=(list event-log)]
               [%eth-got-filter-changes los=(list event-log)]
               [%eth-transaction-hash haz=@ux]
           ==
@@ -8528,7 +8625,25 @@
             ?~  tob.req  ~
             `['toBlock' (block-to-json u.tob.req)]
           ::
-            ::TODO  fucking tmi
+            ?:  =(0 (lent adr.req))  ~
+            :+  ~  'address'
+            ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+            :-  %a
+            (turn adr.req (cork address-to-hex tape))
+          ::
+            ?~  top.req  ~
+            :+  ~  'topics'
+            (topics-to-json top.req)
+        ==
+      ::
+          %eth-get-logs-by-hash
+        :-  'eth_getLogs'
+        :_  ~  :-  %o
+        %-  ~(gas by *(map @t json))
+        =-  (murn - same)
+        ^-  (list (unit (pair @t json)))
+        :~  `['blockHash' (tape (transaction-to-hex has.req))]
+          ::
             ?:  =(0 (lent adr.req))  ~
             :+  ~  'address'
             ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))

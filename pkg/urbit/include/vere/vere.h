@@ -706,6 +706,7 @@
       */
         typedef struct _u3_daemon {
           c3_c*     soc_c;                      //  socket name
+          c3_c*     certs_c;                    //  ssl certificate dump
           c3_w      len_w;                      //  number used
           c3_w      all_w;                      //  number allocated
           u3_pier** tab_u;                      //  pier table
@@ -1255,7 +1256,7 @@
       /* u3_pier_tank(): dump single tank.
       */
         void
-        u3_pier_tank(c3_l tab_l, u3_noun tac);
+        u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac);
 
       /* u3_pier_punt(): dump tank list.
       */

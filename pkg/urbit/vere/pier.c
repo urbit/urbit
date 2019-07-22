@@ -824,13 +824,7 @@ _pier_work_slog(u3_writ* wit_u, c3_w pri_w, u3_noun tan)
   }
 #endif
 
-  switch ( pri_w ) {
-    case 3: fprintf(stderr, ">>> "); break;
-    case 2: fprintf(stderr, ">> "); break;
-    case 1: fprintf(stderr, "> "); break;
-  }
-
-  u3_pier_tank(0, tan);
+  u3_pier_tank(0, pri_w, tan);
 }
 
 /* _pier_work_exit(): handle subprocess exit.
@@ -924,11 +918,13 @@ _pier_work_poke(void*   vod_p,
              (c3n == u3r_cell(entry, &mug, &job)) ||
              (c3n == u3ud(mug)) ||
              (1 < u3r_met(5, mug)) ) {
+          u3z(entry);
           goto error;
         }
 
         c3_l     mug_l = u3r_word(0, mug);
         if ( !wit_u || (mug_l && (mug_l != wit_u->mug_l)) ) {
+          u3z(entry);
           goto error;
         }
 #ifdef VERBOSE_EVENTS
@@ -936,6 +932,7 @@ _pier_work_poke(void*   vod_p,
 #endif
 
         _pier_work_replace(wit_u, u3k(job));
+        u3z(entry);
       }
       break;
     }
@@ -1925,29 +1922,28 @@ _pier_tape(FILE* fil_u, u3_noun tep)
   while ( c3y == u3du(tap) ) {
     c3_c car_c;
 
-    if ( u3h(tap) >= 127 ) {
-      car_c = '?';
-    } else car_c = u3h(tap);
+    //  XX this utf-8 caution is unwarranted
+    //
+    //    we already write() utf8 directly to streams in term.c
+    //
+    // if ( u3h(tap) >= 127 ) {
+    //   car_c = '?';
+    // } else
+    car_c = u3h(tap);
 
     putc(car_c, fil_u);
     tap = u3t(tap);
   }
+
   u3z(tep);
 }
 
 /* _pier_wall(): dump a wall, old style.  Don't do this.
 */
 static void
-_pier_wall(u3_noun wol)
+_pier_wall(FILE* fil_u, u3_noun wol)
 {
-  FILE* fil_u = u3_term_io_hija();
   u3_noun wal = wol;
-
-  //  XX temporary, for urb.py test runner
-  //
-  if ( c3y == u3_Host.ops_u.dem ) {
-    fil_u = stderr;
-  }
 
   while ( u3_nul != wal ) {
     _pier_tape(fil_u, u3k(u3h(wal)));
@@ -1957,16 +1953,52 @@ _pier_wall(u3_noun wol)
 
     wal = u3t(wal);
   }
-  u3_term_io_loja(0);
+
   u3z(wol);
 }
 
 /* u3_pier_tank(): dump single tank.
 */
 void
-u3_pier_tank(c3_l tab_l, u3_noun tac)
+u3_pier_tank(c3_l tab_l, c3_w pri_w, u3_noun tac)
 {
-  u3_pier_punt(tab_l, u3nc(tac, u3_nul));
+  u3_noun blu = u3_term_get_blew(0);
+  c3_l  col_l = u3h(blu);
+  FILE* fil_u = u3_term_io_hija();
+
+  //  XX temporary, for urb.py test runner
+  //
+  if ( c3y == u3_Host.ops_u.dem ) {
+    fil_u = stderr;
+  }
+
+  switch ( pri_w ) {
+    case 3: fprintf(fil_u, ">>> "); break;
+    case 2: fprintf(fil_u, ">> "); break;
+    case 1: fprintf(fil_u, "> "); break;
+  }
+
+  //  if we have no arvo kernel and can't evaluate nock
+  //  only print %leaf tanks
+  //
+  if ( 0 == u3A->roc ) {
+    if ( c3__leaf == u3h(tac) ) {
+      _pier_tape(fil_u, u3k(u3t(tac)));
+      putc(13, fil_u);
+      putc(10, fil_u);
+    }
+  }
+  //  We are calling nock here, but hopefully need no protection.
+  //
+  else {
+    u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(tac));
+
+    _pier_wall(fil_u, wol);
+  }
+
+  u3_term_io_loja(0);
+  u3z(blu);
+  u3z(tac);
 }
 
 /* u3_pier_punt(): dump tank list.
@@ -1974,41 +2006,14 @@ u3_pier_tank(c3_l tab_l, u3_noun tac)
 void
 u3_pier_punt(c3_l tab_l, u3_noun tac)
 {
-  u3_noun blu   = u3_term_get_blew(0);
-  c3_l    col_l = u3h(blu);
-  u3_noun cat   = tac;
+  u3_noun cat = tac;
 
-  //  We are calling nock here, but hopefully need no protection.
-  //
   while ( c3y == u3r_du(cat) ) {
-    if ( 0 == u3A->roc ) {
-      u3_noun act = u3h(cat);
-
-      if ( c3__leaf == u3h(act) ) {
-        FILE* fil_u = u3_term_io_hija();
-
-        //  XX temporary, for urb.py test runner
-        //
-        if ( c3y == u3_Host.ops_u.dem ) {
-          fil_u = stderr;
-        }
-
-        _pier_tape(fil_u, u3k(u3t(act)));
-        putc(13, fil_u);
-        putc(10, fil_u);
-
-        u3_term_io_loja(0);
-      }
-    }
-    else {
-      u3_noun wol = u3dc("wash", u3nc(tab_l, col_l), u3k(u3h(cat)));
-
-      _pier_wall(wol);
-    }
+    u3_pier_tank(tab_l, 0, u3k(u3h(cat)));
     cat = u3t(cat);
   }
+
   u3z(tac);
-  u3z(blu);
 }
 
 /* u3_pier_sway(): print trace.

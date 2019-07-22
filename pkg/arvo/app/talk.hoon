@@ -1391,13 +1391,15 @@
         ::
         ::  prints binding details. goes both ways.
         ::
+        ::    XX this type is a misjunction, audience can be ~
+        ::
         |=  qur/(unit $@(char audience))
         ^+  ..sh-work
         ?^  qur
           ?^  u.qur
             =+  cha=(~(get by bound) u.qur)
             (sh-fact %txt ?~(cha "none" [u.cha]~))
-          =+  pan=~(tap in (~(get ju binds) u.qur))
+          =+  pan=~(tap in (~(get ju binds) `@t`u.qur))
           ?:  =(~ pan)  (sh-fact %txt "~")
           =<  (sh-fact %mor (turn pan .))
           |=(a/audience [%txt ~(ar-phat ar a)])

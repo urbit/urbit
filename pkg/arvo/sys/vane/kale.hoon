@@ -249,19 +249,19 @@
       =.  tuf.own.pki  turf.tac
       ::  our initial galaxy table as a +map from +life to +public
       ::
-      =/  point-diffs=(list [who=ship =point-diff])
+      =/  =udiffs:point
         %~  tap  by
         %-  ~(run by czar.tac)
-        |=([=life =pass] `point-diff`[%changed-keys life 1 pass])
+        |=([=life =pass] `udiff:point`[*[@ @] %keys life 1 pass])
       =.  +>.$
         |-  ^+  +>.^$
-        ?~  point-diffs
+        ?~  udiffs
           +>.^$
         =.  +>.^$
           %-  curd  =<  abet
           %-  public-keys:~(feel su hen our pki etn sap)
-          [%diff who point-diff]:i.point-diffs
-        $(point-diffs t.point-diffs)
+          [%diff ship udiff]:i.udiffs
+        $(udiffs t.udiffs)
       ::
       =.  moz
         %+  weld  moz
@@ -674,7 +674,7 @@
           ..feel
         =.  ..feel
           %-  public-keys:feel
-          [%diff who.i.passes %changed-keys 1 1 pass.i.passes]
+          [%diff who.i.passes *[@ @] %keys 1 1 pass.i.passes]
         $(passes t.passes)
       --
     --
@@ -696,32 +696,36 @@
           (~(get ju ney.zim) who.i.pointl)
         [%full (my i.pointl ~)]
       =*  who  who.vent-result
-      =*  point-diff  point-diff.vent-result
+      =*  udiff  udiff.vent-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
+      ::  XX  don't do max etc, just do the thing
       =.  point
-        ?-  -.point-diff
-            %new-sponsor
-          point(sponsor sponsor.point-diff)
+        ?-  +<.udiff
+            %spon
+          point(sponsor sponsor.udiff)
         ::
-            %changed-continuity
-          point(rift (max rift.point-diff rift.point))
+            %rift
+          point(rift (max rift.udiff rift.point))
         ::
-            %changed-keys
+            %keys
           %_  point
-              life  (max life.point-diff life.point)
+              life  (max life.udiff life.point)
               keys
             %+  ~(put by keys.point)
-              life.point-diff
-            [crypto-suite pass]:point-diff
+              life.udiff
+            [crypto-suite pass]:udiff
           ==
+        ::
+            %disavow
+          ~|  %not-implemented  !!
         ==
       =.  pos.zim  (~(put by pos.zim) who point)
       %+  vent-give
         (~(get ju ney.zim) who)
       ?~  maybe-point
         [%full (my [who point]~)]
-      [%diff who point-diff]
+      [%diff who udiff]
     ::                                                  ::  ++vein:feel:su
     ++  private-keys                                    ::  kick private keys
       |=  [=life =ring]

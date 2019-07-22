@@ -92,16 +92,17 @@ source files that are denoted by comments and are actually indented one
 level.
 
 Hoon will be a less familiar language to many contributors. More details are
-forthcoming; for now, the `%ford` vane (in [`sys/vane/ford.hoon`][ford]) is
-some of the highest quality code in the kernel.
+forthcoming; for now, the `%ford` vane (in
+[`pkg/arvo/sys/vane/ford.hoon`][ford]) is some of the highest quality code in
+the kernel.
 
-[ford]: https://github.com/urbit/arvo/blob/master/sys/vane/ford.hoon
+[ford]: https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/vane/ford.hoon
 
 ## Kernel development
 
 Working on either C or non-kernel Hoon should not bring any surprises, but the
-Hoon kernel (anything under `sys/` in [urbit/arvo][arvo]) is bootstrapped from
-a so-called *pill*, and must be recompiled if any changes are made. This should
+Hoon kernel (anything under [`pkg/arvo/sys/`][sys]) is bootstrapped from a
+so-called *pill*, and must be recompiled if any changes are made. This should
 happen automatically when you make changes, but if it doesn't, the command to
 manually recompile and install the new kernel is `|reset` in `dojo`.  This
 rebuilds from the `sys` directory in the `home` desk in `%clay`.
@@ -110,14 +111,15 @@ Currently, `|reset` does not reload apps like `dojo` itself, which will still
 reference the old kernel. To force them to reload, make a trivial edit to their
 main source file (under the `app` directory) in `%clay`.
 
-[arvo]: https://github.com/urbit/arvo
+[arvo]: https://github.com/urbit/urbit/tree/master/pkg/arvo
+[sys]: https://github.com/urbit/urbit/tree/master/pkg/arvo/sys
 
 ## The kernel and pills
 
 Urbit bootstraps itself using a binary blob called a pill (you can see it being
 fetched from `bootstrap.urbit.org` on boot).  This is the compiled version of
-the kernel (which you can find in the `sys` directory of [urbit/arvo][arvo]),
-along with a complete copy of the `urbit/arvo` repository as source.
+the kernel (which you can find in the `sys` directory of [Arvo][arvo]), along
+with a complete copy of the Arvo source.
 
 The procedure for creating a pill is often called "soliding." It is somewhat
 similar to `|reset`, but instead of replacing your running kernel, it writes
@@ -136,20 +138,30 @@ You can boot a new ship from your local pill with `-B`:
 $ urbit -F zod -B path/to/urbit.pill my-fake-zod
 ```
 
-Ordinarily, `https://bootstrap.urbit.org/latest.pill` will be updated
-to match whatever's on the HEAD of `master` in the `urbit/arvo` repository.
-Older pills are indexed by the first 10 characters of the `git` SHA1 of the
-relevant commit, i.e. as `git-[sha1].pill`.  The continuous integration build
-of the `urbit/arvo` repository uploads these pills for any successful build of
-a commit or pull request that affects the `sys/` directory.
+Pills are cached at `https://bootstrap.urbit.org` and are indexed by the first
+10 characters of the `git` SHA1 of the relevant commit, i.e. as
+`git-[sha1].pill`.  The continuous integration build uploads these pills for
+any successful build of a commit or pull request that affects the
+`pkg/arvo/sys/` directory.
 
 You can boot from one of these pills by passing the path to an Arvo working
 copy with `-A` (and `-s` for *search*):
 
 ```
-$ git clone https://github.com/urbit/arvo
-$ urbit -F zod -A path/to/arvo -s my-fake-zod
+$ git clone https://github.com/urbit/urbit
+$ urbit -F zod -sA urbit/pkg/arvo -s my-fake-zod
 ```
+
+Pills are also cached in version control via [git LFS][git-lfs].  You can find
+the latest solid pill (as well as the latest so-called *brass* and *ivory*
+pills) in the `bin/` directory at the repository root:
+
+```
+$ git lfs init
+$ git lfs pull
+```
+
+[git-lfs]: https://git-lfs.github.com
 
 ## What to work on
 

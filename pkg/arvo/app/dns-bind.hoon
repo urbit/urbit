@@ -16,6 +16,7 @@
       $%  [%dns-authority =authority]
           [%dns-bind =ship =target]
           [%handle-http-request =inbound-request:eyre]
+          [%noun noun=*]
       ==
     +$  out-poke-data
       $%  [%dns-bind =ship =target]
@@ -603,7 +604,7 @@
       =/  m  (async:stdio (unit bound))
       ^-  form:m
       ?:  &(?=(^ existing) =(target cur.u.existing))
-        ~|  %bind-duplicate-wat-do  !!
+        (pure:m existing)
       ::
       =/  pre=(unit [@ta ^target])
         ?~(existing ~ (some [id cur]:u.existing))
@@ -612,6 +613,14 @@
       ::  XX retryable?
       ::
       ?.  &(?=(^ rep) =(200 p.u.rep))
+        ?:  &(?=(^ rep) =(401 p.u.rep))
+          ::  XX automate
+          ::
+          ~&  %authentication-failure
+          ~&  (skim q.u.rep |=((pair @t @t) ?=(%www-authenticate p)))
+          (pure:m ~)
+        ::
+        ~&  [%create-bind-failed rep]
         (pure:m ~)
       ::
       =*  httr  u.rep
@@ -699,6 +708,23 @@
   ?.  (team:title [our src]:bowl)
     ~|  %bind-yoself  !!
   ?-  -.in-poke-data
+      %noun
+    ?:  ?=(%debug noun.in-poke-data)
+      ~&  bowl
+      ::  XX redact secrets
+      ::
+      ~&  state
+      (pure:m state)
+    ::
+    ::  XX heavy-handed, will duplicate subscriptions
+    ::  should track bones
+    ::
+    ?:  ?=(%resubscribe noun.in-poke-data)
+      ;<  ~  bind:m  (peer-app:stdio collector-app /requests)
+      (pure:m state)
+    ::
+    ~&  %poke-unknown
+    (pure:m state)
   ::
       %dns-authority
     ?.  =(~ nem.state)
@@ -723,7 +749,7 @@
     =*  nam  u.nem.state
     =*  who  ship.in-poke-data
     =*  tar  target.in-poke-data
-    ?.  ?=(%indirect -.tar)
+    ?:  ?=(%indirect -.tar)
       ~|  %indirect-unsupported  !!
     ::  defer %indirect where target isn't yet bound
     ::

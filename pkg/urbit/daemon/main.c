@@ -24,6 +24,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include "ca-bundle.h"
+
 /* Require unsigned char
  */
 STATIC_ASSERT(( 0 == CHAR_MIN && UCHAR_MAX == CHAR_MAX ),
@@ -362,6 +364,29 @@ _main_getopt(c3_i argc, c3_c** argv)
   return c3y;
 }
 
+/* _setup_cert_store: writes our embedded certificate database to a temp file
+ */
+static void
+_setup_cert_store(char* tmp_cert_file_name)
+{
+  errno = 0;
+  int fd = mkstemp(tmp_cert_file_name);
+  if (fd < 1) {
+    printf("boot: failed to write local ssl temporary certificate store: %s\n",
+           strerror(errno));
+    exit(1);
+  }
+
+  if (-1 == write(fd, include_ca_bundle_crt, include_ca_bundle_crt_len)) {
+    printf("boot: failed to write local ssl temporary certificate store: %s\n",
+           strerror(errno));
+    exit(1);
+  }
+
+  setenv("SSL_CERT_FILE", tmp_cert_file_name, 1);
+}
+
+
 /* u3_ve_usage(): print usage and exit.
 */
 static void
@@ -447,7 +472,6 @@ static void
 report(void)
 {
   printf("urbit %s\n", URBIT_VERSION);
-  printf("---------\nLibraries\n---------\n");
   printf("gmp: %s\n", gmp_version);
   printf("sigsegv: %d.%d\n",
          (libsigsegv_version >> 8) & 0xff,
@@ -677,6 +701,9 @@ main(c3_i   argc,
   }
   // printf("vere: hostname is %s\n", u3_Host.ops_u.nam_c);
 
+  u3K.certs_c = strdup("/tmp/urbit-ca-cert-XXXXXX");
+  _setup_cert_store(u3K.certs_c);
+
   if ( c3y == u3_Host.ops_u.dem && c3n == u3_Host.ops_u.bat ) {
     printf("boot: running as daemon\n");
   }
@@ -752,5 +779,6 @@ main(c3_i   argc,
 
     u3_daemon_commence();
   }
+
   return 0;
 }
