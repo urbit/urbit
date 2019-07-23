@@ -14886,7 +14886,7 @@
       ^=  gen  ^-  hoon
       [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
-  [p.gun .*([q.gat q.sam] q.gun)]
+  [p.gun (slum q.gat q.sam)]
 ::
 ++  slab                                                ::  test if contains
   |=  {cog/@tas typ/type}
@@ -17268,36 +17268,49 @@
       ~>  %slog.[0 foo]
       [| +>+<.$]
     [& +>+<.$(nes (~(put in nes) [sut ref]))]
+  ::  +play: +play:ut, cached
   ::
-  ++  play                                              ::  play:ut
+  ++  play
     |=  {sut/type gen/hoon}
     ^-  {type worm}
     =+  old=(~(get by pay) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(play ut sut) gen)
     [new +>+<.$(pay (~(put by pay) [sut gen] new))]
+  ::  +mint: +mint:ut to noun, cached
   ::
-  ++  mint                                              ::  mint:ut to noun
+  ++  mint
     |=  {sut/type gen/hoon}
     ^-  {(pair type nock) worm}
     =+  old=(~(get by mit) [sut gen])
     ?^  old  [u.old +>+<.$]
     =+  new=(~(mint ut sut) %noun gen)
     [new +>+<.$(mit (~(put by mit) [sut gen] new))]
+  ::  +slam: +slam:ut, cached
   ::
-  ++  slap                                              ::  ++slap, cached
+  ++  slam
+    |=  [gat=vase sam=vase]
+    =/  sut=type  [%cell p.gat p.sam]
+    =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+    =^  new=type  +>+<.$  (play sut gen)
+    [[new (slum q.gat q.sam)] +>+<.$]
+  ::  +slap: +slap:ut, cached
+  ::
+  ++  slap
     |=  {vax/vase gen/hoon}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax gen)
     [[p.gun .*(q.vax q.gun)] +>+<.$]
+  ::  +slot: +slot:ut, cached
   ::
-  ++  slot                                              ::  ++slot, cached
+  ++  slot
     |=  {axe/@ vax/vase}
     ^-  {vase worm}
     =^  gun  +>+<  (mint p.vax [%$ axe])
     [[p.gun .*(q.vax [0 axe])] +>+<.$]
+  ::  +slym: +slym:ut, cached
   ::
-  ++  slym                                              ::  ++slym, cached
+  ++  slym
     |=  {gat/vase sam/*}
     ^-  [vase worm]
     (slap gat(+<.q sam) [%limb %$])

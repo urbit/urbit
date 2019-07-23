@@ -467,7 +467,7 @@
     ==
   ::
   ++  hurl                                              ::  start loop
-    |=  {lac/? ovo/ovum}
+    |=  {lac/_| ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo now]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
@@ -755,6 +755,7 @@
   ::  In either case, they fall through here to be handled
   ::  after the fact in +feck.
   ::
+  ~&  %arvo-poke^-.q.ovo^p.ovo
   ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
   ::
