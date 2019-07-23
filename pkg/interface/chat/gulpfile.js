@@ -17,7 +17,7 @@ var globals = require('rollup-plugin-node-globals');
   Main config options
 ***/
 
-var urbitrc = require('./.urbitrc');
+var urbitrc = require('../urbitrc');
 
 /***
   End main config options
@@ -27,7 +27,7 @@ gulp.task('css-bundle', function() {
   return gulp
     .src('src/index.css')
     .pipe(cssimport())
-    .pipe(gulp.dest('./urbit/app/chat/css'));
+    .pipe(gulp.dest('../../arvo/app/chat/css'));
 });
 
 gulp.task('jsx-transform', function(cb) {
@@ -74,7 +74,7 @@ gulp.task('js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/chat/js/'))
+    .pipe(gulp.dest('../../arvo/app/chat/js/'))
     .on('end', cb);
 });
 
@@ -102,21 +102,21 @@ gulp.task('tile-js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/chat/js/'))
+    .pipe(gulp.dest('../../arvo/app/chat/js/'))
     .on('end', cb);
 });
 
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit/app/chat/js/index.js')
+  return gulp.src('../../arvo/app/chat/js/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/chat/js/'));
+    .pipe(gulp.dest('../../arvo/app/chat/js/'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('./urbit/app/chat/js/tile.js')
+  return gulp.src('../../arvo/app/chat/js/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/chat/js/'));
+    .pipe(gulp.dest('../../arvo/app/chat/js/'));
 });
 
 gulp.task('js-cachebust', function(cb) {
@@ -126,13 +126,13 @@ gulp.task('js-cachebust', function(cb) {
       let commitHash = firstLine.split(' ')[1].substr(0, 10);
       let newFilename = "index-" + commitHash + "-min.js";
 
-      exec('mv ./urbit/app/chat/js/index-min.js ./urbit/app/chat/js/' + newFilename);
+      exec('mv ../../arvo/app/chat/js/index-min.js ../../arvo/app/chat/js/' + newFilename);
     })
   );
 })
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit/**/*');
+  let ret = gulp.src('../../arvo/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function(pier) {
     ret = ret.pipe(gulp.dest(pier));
@@ -177,5 +177,5 @@ gulp.task('watch', gulp.series('default', function() {
   gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
   gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
 
-  gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
+  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
 }));

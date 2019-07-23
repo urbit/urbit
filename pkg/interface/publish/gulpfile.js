@@ -20,7 +20,7 @@ var globals = require('rollup-plugin-node-globals');
   Main config options
 ***/
 
-var urbitrc = require('./.urbitrc');
+var urbitrc = require('../urbitrc');
 
 /***
   End main config options
@@ -35,7 +35,7 @@ gulp.task('css-bundle', function() {
     .src('src/index.css')
     .pipe(cssimport())
     .pipe(postcss(plugins))
-    .pipe(gulp.dest('./urbit/app/publish/css'));
+    .pipe(gulp.dest('../../arvo/app/publish/css'));
 });
 
 gulp.task('jsx-transform', function(cb) {
@@ -82,7 +82,7 @@ gulp.task('js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/publish/js/'))
+    .pipe(gulp.dest('../../arvo/app/publish/js/'))
     .on('end', cb);
 });
 
@@ -110,21 +110,21 @@ gulp.task('tile-js-imports', function(cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/publish/js/'))
+    .pipe(gulp.dest('../../arvo/app/publish/js/'))
     .on('end', cb);
 });
 
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit/app/publish/js/index.js')
+  return gulp.src('../../arvo/app/publish/js/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/publish/js/'));
+    .pipe(gulp.dest('../../arvo/app/publish/js/'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('./urbit/app/publish/js/tile.js')
+  return gulp.src('../../arvo/app/publish/js/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/publish/js/'));
+    .pipe(gulp.dest('../../arvo/app/publish/js/'));
 });
 
 gulp.task('js-cachebust', function(cb) {
@@ -134,13 +134,13 @@ gulp.task('js-cachebust', function(cb) {
       let commitHash = firstLine.split(' ')[1].substr(0, 10);
       let newFilename = "index-" + commitHash + "-min.js";
 
-      exec('mv ./urbit/app/publish/js/index-min.js ./urbit/app/publish/js/' + newFilename);
+      exec('mv ../../arvo/app/publish/js/index-min.js ../../arvo/app/publish/js/' + newFilename);
     })
   );
 })
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit/**/*');
+  let ret = gulp.src('../../arvo/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function(pier) {
     ret = ret.pipe(gulp.dest(pier));
@@ -185,5 +185,5 @@ gulp.task('watch', gulp.series('default', function() {
   gulp.watch('src/**/*.js', gulp.parallel('js-bundle-dev'));
   gulp.watch('src/**/*.css', gulp.parallel('css-bundle'));
 
-  gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
+  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
 }));

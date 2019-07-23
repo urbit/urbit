@@ -20,7 +20,7 @@ var globals = require('rollup-plugin-node-globals');
   Main config options
 ***/
 
-var urbitrc = require('./.urbitrc');
+var urbitrc = require('../urbitrc');
 
 /***
   End main config options
@@ -35,7 +35,7 @@ gulp.task('css-bundle', function () {
     .src('src/index.css')
     .pipe(cssimport())
     .pipe(postcss(plugins))
-    .pipe(gulp.dest('./urbit/app/chat/css'));
+    .pipe(gulp.dest('../../arvo/app/chat/css'));
 });
 gulp.task('tile-jsx-transform', function (cb) {
   return gulp.src('tile/**/*.js')
@@ -71,7 +71,7 @@ gulp.task('js-imports', function (cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/timer/js/'))
+    .pipe(gulp.dest('../../arvo/app/timer/js/'))
     .on('end', cb);
 });
 
@@ -99,25 +99,25 @@ gulp.task('tile-js-imports', function (cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/timer/js/'))
+    .pipe(gulp.dest('../../arvo/app/timer/js/'))
     .on('end', cb);
 });
 
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit/app/timer/js/index.js')
+  return gulp.src('../../arvo/app/timer/js/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/timer/js/'));
+    .pipe(gulp.dest('../../arvo/app/timer/js/'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('./urbit/app/timer/js/tile.js')
+  return gulp.src('../../arvo/app/timer/js/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/timer/js/'));
+    .pipe(gulp.dest('../../arvo/app/timer/js/'));
 });
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit/**/*');
+  let ret = gulp.src('../../arvo/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function (pier) {
     ret = ret.pipe(gulp.dest(pier));
@@ -137,5 +137,5 @@ gulp.task('watch', gulp.series('default', function () {
   gulp.watch('tile/**/*.js', gulp.parallel('tile-js-bundle-dev'));
   gulp.watch('tile/**/*.css', gulp.parallel('css-bundle'));
 
-  gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
+  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
 }));

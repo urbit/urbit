@@ -20,7 +20,7 @@ var globals = require('rollup-plugin-node-globals');
   Main config options
 ***/
 
-var urbitrc = require('./.urbitrc');
+var urbitrc = require('../urbitrc');
 
 /***
   End main config options
@@ -68,7 +68,7 @@ gulp.task('js-imports', function (cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/clock/js/'))
+    .pipe(gulp.dest('../../arvo/app/clock/js/'))
     .on('end', cb);
 });
 
@@ -96,25 +96,25 @@ gulp.task('tile-js-imports', function (cb) {
       console.log(e);
       cb();
     })
-    .pipe(gulp.dest('./urbit/app/clock/js/'))
+    .pipe(gulp.dest('../../arvo/app/clock/js/'))
     .on('end', cb);
 });
 
 
 gulp.task('js-minify', function () {
-  return gulp.src('./urbit/app/clock/js/index.js')
+  return gulp.src('../../arvo/app/clock/js/index.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/clock/js/'));
+    .pipe(gulp.dest('../../arvo/app/clock/js/'));
 });
 
 gulp.task('tile-js-minify', function () {
-  return gulp.src('./urbit/app/clock/js/tile.js')
+  return gulp.src('../../arvo/app/clock/js/tile.js')
     .pipe(minify())
-    .pipe(gulp.dest('./urbit/app/clock/js/'));
+    .pipe(gulp.dest('../../arvo/app/clock/js/'));
 });
 
 gulp.task('urbit-copy', function () {
-  let ret = gulp.src('urbit/**/*');
+  let ret = gulp.src('../../arvo/**/*');
 
   urbitrc.URBIT_PIERS.forEach(function (pier) {
     ret = ret.pipe(gulp.dest(pier));
@@ -132,5 +132,5 @@ gulp.task('bundle-prod', gulp.series('tile-js-bundle-prod', 'urbit-copy'));
 gulp.task('default', gulp.series('tile-js-bundle-dev', 'urbit-copy'));
 gulp.task('watch', gulp.series('default', function () {
   gulp.watch('tile/**/*.js', gulp.parallel('tile-js-bundle-dev'));
-  gulp.watch('urbit/**/*', gulp.parallel('urbit-copy'));
+  gulp.watch('../../arvo/**/*', gulp.parallel('urbit-copy'));
 }));
