@@ -426,7 +426,7 @@ url = "http://localhost:%s" % PORT
 r = requests.post(url, data=json.dumps(payload))
 
 if r.text[0] == '"':
-    print r.text[1:-1].decode('string_escape')
+    print r.text[1:-1].encode('utf-8').decode('string_escape')
 elif r.text[0] == '{':
     # print r.text
     json_data = json.loads(r.text)

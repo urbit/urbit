@@ -1,6 +1,12 @@
 { env_name, env, deps }:
 
-{ ent, ge-additions, cacert, xxd, name ? "urbit", debug ? false }:
+{
+  ent,
+  name ? "urbit",
+  debug ? false,
+  ivory ? ../../../bin/ivory.pill,
+  ge-additions, cacert, xxd
+}:
 
 let
 
@@ -22,6 +28,7 @@ env.make_derivation {
   EVENT_TIME_DEBUG = false;
   NCURSES          = env.ncurses;
   SSL_CERT_FILE    = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  IVORY            = ivory;
 
   name              = "${name}-${env_name}";
   exename           = name;

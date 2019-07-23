@@ -70,11 +70,9 @@ right, and there is no issue about it yet, feel free to open one.
 If you're looking to get involved, there are a few things you can do:
 
 - Join the [urbit-dev][list] mailing list.
-- [Ask us about Hoon School][mail], a course we run to teach the Hoon
+- [Apply to Hoon School][mail], a course we run to teach the Hoon
   programming language and Urbit application development.
 - Check out [good contributor issues][good].
-- Reach out to [support@urbit.org][mail] to say hi and ask any questions you
-  might have.
 
 Once you've got your bearings, have a look at [CONTRIBUTING.md][cont] for some
 pointers on setting up your development environment.

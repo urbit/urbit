@@ -123,6 +123,7 @@
 ++  reap
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
+  ::
   ~&  [%reap wire]
   ?:  =([%export ~] wire)
     [~ this]
@@ -138,6 +139,7 @@
 ++  coup
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
+  ::
   ~&  [%coup wire]
   ::
   ?:  =([%import ~] wire)
