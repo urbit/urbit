@@ -1084,9 +1084,11 @@
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
+      ~&  %alef-on-memo-enqueue-alien
       %+  enqueue-alien-todo  ship
       |=  todos=pending-requests
       todos(snd-messages [[duct message] snd-messages.todos])
+    ~&  %alef-on-memo-known
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
@@ -1115,8 +1117,8 @@
     |=  our=ship
     ^+  event-core
     ::
-    =~  (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
-        (emit duct %pass /private-keys %k %private-keys ~)
+    =~  (emit duct %pass /private-keys %k %private-keys ~)
+        (emit duct %pass /public-keys %k %public-keys [n=our ~ ~])
         (emit duct %pass /turf %k %turf ~)
     ==
   ::  +on-priv: set our private key to jael's response
@@ -1248,6 +1250,7 @@
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
+        ~&  %alef-meet-alien^ship
         ::
         =/  =public-key  pass:(~(got by keys.point) life.point)
         =.  event-core
@@ -1407,26 +1410,34 @@
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
+      ~&  %alef-send-blob-alien
       %+  enqueue-alien-todo  ship
       |=  todos=pending-requests
       todos(snd-packets (~(put in snd-packets.todos) blob))
+    ~&  %alef-send-blob-known
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
     =*  try-next-sponsor
       ?:  =(ship her-sponsor.channel)
+        ~&  %alef-send-blob-ship-eq-her-sponsor
         event-core
+      ~&  %alef-send-blob-try-next-recurse
       $(ship her-sponsor.channel)
     ::
     ?~  route=route.peer-state
+      ~&  %alef-send-blob-no-route
       try-next-sponsor
     ::
+    ~&  %alef-send-blob-emit-to^ship
     =.  event-core
       (emit unix-duct.ames-state %give %send lane.u.route blob)
     ::
     ?:  direct.u.route
+      ~&  %alef-send-blob-direct-done
       event-core
+    ~&  %alef-send-blob-indirect-try-next
     try-next-sponsor
   ::  +got-peer-state: lookup .her state or crash
   ::
@@ -1486,7 +1497,9 @@
       ::    transport address has changed and this lane is no longer
       ::    valid.
       ::
-      =.  route.peer-state  `[direct=%.n lane:(need route.peer-state)]
+      =?    route.peer-state
+          &(?=(^ route.peer-state) direct.u.route.peer-state)
+        route.peer-state(direct.u %.n)
       ::
       (run-message-pump bone %wake ~)
     ::  +run-message-pump: process $message-pump-task and its effects
@@ -1510,6 +1523,7 @@
       |^  ^+  peer-core
           ?~  pump-gifts  peer-core
           =*  gift  i.pump-gifts
+          ~&  %alef-on-pump-gift^-.gift
           =.  peer-core
             ?-  -.gift
               %done  (on-pump-done [message-num ok]:gift)
@@ -1552,7 +1566,7 @@
         =.  nax.peer-state  (~(put in nax.peer-state) nax-key)
         ::
         peer-core
-      ::  +on-pump-send: emit ack packet requested by |message-pump
+      ::  +on-pump-send: emit message fragment requested by |message-pump
       ::
       ++  on-pump-send
         |=  =static-fragment
@@ -1975,9 +1989,11 @@
   ++  feed
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts state]
+    ~&  %alef-feed^(lent fragments)
     ::  return unsent back to caller and reverse effects to finalize
     ::
-    =-  [unsent (flop gifts) state]
+    =-  ~&  %alef-feed-unsent^(lent unsent)
+        [unsent (flop gifts) state]
     ::
     ^+  [unsent=fragments packet-pump]
     ::  resend lost packets first, possibly adjusting congestion control
@@ -2461,6 +2477,8 @@
 ++  derive-symmetric-key
   |=  [=public-key =private-key]
   ^-  symmetric-key
+  ::
+  ~|  [public-key=public-key private-key=private-key]
   ::
   ?>  =('b' (end 3 1 public-key))
   =.  public-key  (rsh 8 1 (rsh 3 1 public-key))
