@@ -409,35 +409,6 @@
     ::
     snapshot(posts [[user-event private] posts.snapshot])
   --
-::  all events that could exist in an event log
-::
-++  event-log-item
-  $%  ::  a special init which must be the first item in the / node.
-      ::
-      $:  %toplevel-init
-          initial-invited=(set @p)
-          community-name=@t
-          original-host=@p
-          type=@t
-          =signature-type
-      ==
-      ::  invites a person into the community. only valid on the / node.
-      ::
-      [%toplevel-invite ship=@p]
-  ::
-      ::
-      ::  the first item in any normal event log; sets signature information,
-      ::  but calls no node code
-      [%init type=@t =signature-type]
-      ::
-      ::  when sending across the wire, just send the value in the vase, not
-      ::  the type. the other side knows what app its for and at least for now,
-      ::  the remote will call the mold.
-      [%log user-event=vase private-event=vase]
-      ::
-      ::  creates a new child node under this
-      [%create sub-id=@t type=@t =signature-type]
-  ==
 ::
 ++  app-map
   ^-  (map @t vase)
@@ -453,7 +424,7 @@
         community-name=@t
         original-host=@p
     ==
-  ::  snapshot
+  ::  +snapshot representation for being on a ship
   ::
   ++  snapshot
     $~  [%auth ~ %community *vase ~]
@@ -473,6 +444,95 @@
         ::
         children=(set @t)
     ==
+  ::  all events that could exist in an event log
+  ::
+  ++  event-log-item
+    $%  ::  a special init which must be the first item in the / node.
+        ::
+        $:  %toplevel-init
+            initial-invited=(set @p)
+            community-name=@t
+            original-host=@p
+            type=@t
+            =signature-type
+        ==
+        ::  invites a person into the community. only valid on the / node.
+        ::
+        [%toplevel-invite ship=@p]
+    ::
+        ::
+        ::  the first item in any normal event log; sets signature information,
+        ::  but calls no node code
+        [%init route=path type=@t =signature-type]
+        ::
+        ::  when sending across the wire, just send the value in the vase, not
+        ::  the type. the other side knows what app its for and at least for now,
+        ::  the remote will call the mold.
+        ::
+        $:  %log
+            ::  msg-signature=full-signature
+            ::  route=path
+            user-event=vase
+            private-event=vase
+        ==
+        ::
+        ::  creates a new child node under this
+        [%create sub-id=@t type=@t =signature-type]
+    ==
+  ::  representation of a snapshot on the wire; contains no vases
+  ::
+  ++  transport-snapshot
+    $:  ::  which of the built-in app types we represent
+        ::
+        app-type=@t
+        ::  the top-state; community identification information only on /
+        ::
+        top-state=(unit top-state)
+        ::  what sort of signature should be sent to this node
+        ::
+        =signature-type
+        ::  a snapshot reconstitutable with app-type into a real vase
+        ::
+        raw-snapshot=*
+        ::  the live iterable children are tracked as a set inside the snapshot
+        ::
+        children=(set @t)
+    ==
+  ::  representation of an event-log-item on the wire; contains no vases
+  ::
+  ++  transport-event-log-item
+    $%  ::  a special init which must be the first item in the / node.
+        ::
+        $:  %toplevel-init
+            initial-invited=(set @p)
+            community-name=@t
+            original-host=@p
+            type=@t
+            =signature-type
+        ==
+        ::  invites a person into the community. only valid on the / node.
+        ::
+        [%toplevel-invite ship=@p]
+    ::
+        ::
+        ::  the first item in any normal event log; sets signature information,
+        ::  but calls no node code
+        [%init route=path type=@t =signature-type]
+        ::
+        ::  when sending across the wire, just send the value in the vase, not
+        ::  the type. the other side knows what app its for and at least for now,
+        ::  the remote will call the mold.
+        ::
+        $:  %log
+            ::  msg-signature=full-signature
+            ::  route=path
+            user-event=*
+            private-event=*
+        ==
+        ::
+        ::  creates a new child node under this
+        [%create sub-id=@t type=@t =signature-type]
+    ==
   --
 ::  the server state
 ::
@@ -486,7 +546,7 @@
     $:  ::  the relevant parts of the server state should always be rebuildable
         ::  from the event log itself.
         ::
-        event-log=(list [id=@ud =event-log-item])
+        event-log=(list [id=@ud =event-log-item:common])
         ::  the next event id from the
         ::
         next-event-id=@ud
@@ -501,65 +561,68 @@
         children=(map @t node)
     ==
   --
-::  ::  the client state
-::  ::
-::  ++  client
-::    =<  node
-::    |%
-::    ::
-::    ++  node
-::      $~  [~ *node-snapshot ~ ~]
-::      $:  partial-event-log=(list [id=@ud item=event-item])
-::          ::  the current state of the node
-::          ::
-::          ::    The :partial-event-log may have %snapshots in them, but the head
-::          ::    may not be a snapshot so always have the current head rendered as
-::          ::    a snapshot.
-::          ::
-::          =node-snapshot
-::          ::  live children state we know about
-::          ::
-::          ::    When we see a %create event, we place a ~ in this node until we
-::          ::    follow it.
-::          ::
-::          children=(map @t (unit node))
-::          ::  archived children state
-::          ::
-::          ::    In the event log, when a %remove event occurs, that data gets
-::          ::    wiped on the server. On the client, removed nodes go to the
-::          ::    archive where they are no longer modifyable.
-::          ::
-::          ::    In the case that we never learned anything about the thread other
-::          ::    than its existence, we don't add anything here.
-::          ::
-::          archived=(map @t node)
-::      ==
-::    ::  state created from event log items that
-::    ::
-::    ++  top-state
-::      $:  invited=(set @p)
-::          community-name=@t
-::          original-host=@p
-::      ==
-::    ::  on the client, we may only have events 1,2,3 and then a snapshot of 10
-::    ::  and then events 11,12,13.
-::    ::
-::    ++  event-item
-::      $:  [%snapshot =node-snapshot]
-::          [%event =event-log-item]
-::      ==
-::    ::
-::    ++  node-snapshot
-::      $:  app-type=@t
-::          ::  the top-state of the 
-::          ::
-::          top-state=(unit top-state)
-::          =signature-type
-::          snapshot=vase
-::          children=(set @t)
-::      ==
-::    --
-
+::  the client state
+::
+++  client
+  =<  node
+  |%
+  ::
+  ++  node
+    $~  [~ *snapshot:common ~ ~]
+    $:  ::  if we allow partial event items, 
+        ::
+        partial-event-log=(list [id=@ud item=event-item])
+        ::  the current state of the node
+        ::
+        ::    The :partial-event-log may have %snapshots in them, but the head
+        ::    may not be a snapshot so always have the current head rendered as
+        ::    a snapshot.
+        ::
+        =snapshot:common
+        ::  live children state we know about
+        ::
+        ::    When we see a %create event, we place a ~ in this node until we
+        ::    follow it.
+        ::
+        children=(map @t (unit node))
+        ::  archived children state
+        ::
+        ::    In the event log, when a %remove event occurs, that data gets
+        ::    wiped on the server. On the client, removed nodes go to the
+        ::    archive where they are no longer modifiable.
+        ::
+        ::    In the case that we never learned anything about the thread other
+        ::    than its existence, we don't add anything here.
+        ::
+        archived=(map @t node)
+    ==
+  ::  state created from event log items that
+  ::
+  ++  top-state
+    $:  invited=(set @p)
+        community-name=@t
+        original-host=@p
+    ==
+  ::  on the client, we may only have events 1,2,3 and then a snapshot of 10
+  ::  and then events 11,12,13.
+  ::
+  ++  event-item
+    $:  [%snapshot =snapshot:common]
+        [%event =event-log-item:common]
+    ==
+  --
+::  a diff to be sent over the wire for transport; this contains no vases.
+::
+++  peer-diff
+  $:  ::  id: the id of this event
+      ::
+      id=@u
+      ::  either a diff from the previous state, or the current snapshot.
+      ::
+      $=  diff
+      $%  [%snapshot snapshot=transport-snapshot:common]
+          [%event event=transport-event-log-item:common]
+  ==  ==
 ::  Imagine that I'm the client connecting for the first time. What gets sent?
 ::  I ask for (peer /). What gets returned? An event log or more likely a
 ::  snapshot which would theoretically be reconstructed from an event log. I
@@ -602,7 +665,7 @@
   (slap v [%kttr [%like [[%& 1] ~] ~]])
 ::
 ++  instantiate-node
-  |=  [type=term =signature-type top-state=(unit top-state:common)]
+  |=  [route=path type=term =signature-type top-state=(unit top-state:common)]
   ^-  node:server
   ::
   =/  new-item-vase=vase       (~(got by app-map) type)
@@ -610,9 +673,9 @@
   =/  snapshot-type=vase       (slap new-item-vase [%limb %snapshot])
   =/  private-state-type=vase  (slap new-item-vase [%limb %private-state])
   ::
-  =/  first-event=event-log-item
+  =/  first-event=event-log-item:common
     ?~  top-state
-      [%init type signature-type]
+      [%init route type signature-type]
     ::
     :*  %toplevel-init
         invited.u.top-state
@@ -638,29 +701,104 @@
 +$  change-broadcast
   $:  =path
       app=@t
-      =event-log-item
+      =event-log-item:common
   ==
+::
+++  verify-signature
+  |=  $:  =signature-type
+          route=path
+          =full-signature
+          noun=*
+      ==
+  ^-  ?
+  ::  %inherit isn't a real signature type, but a directive to use the parent's
+  ::  type. there should be no instances of it.
+  ::
+  ?>  !=(%inherit signature-type)
+  ::  TODO: We don't want to go full signature verification until we have the
+  ::  parts of the inter-ship replication system going, since we'll have to
+  ::  write the code which 
+  ::
+  %.y
+  ::  ::  if the signature-type is ship, you must have a ship signature
+  ::  ::
+  ::  ?:  =(%ship signature-type)
+  ::    ?.  ?=([%ship *] full-signature)
+  ::      %.n
+  ::    ::
+  ::    ~&  %todo-verify-ship-signature
+  ::    %.y
+  ::  ::  all other signatures are variants on ring signatures
+  ::  ::
+  ::  ?.  ?=([%ring *] full-signature)
+  ::    %.n
+  ::  ::  todo: this rest here.
+  ::  ::
+  ::  %.y
+  
 ::  +apply: applies a message to the event logs
 ::
-::    TODO:
+::    TODO: we need to thread the signatures through the system
+::    now. :top-signature is the signature of [message-signature route
+::    message] and message-signature is the signature of [route message].
+::
+::    We need the full path identity to be in the node and the signature and
+::    checked to prevent weird replay attacks?
 ::
 ++  apply
-  |=  $:  =full-signature
+  |=  $:  top-signature=full-signature
+          message-signature=full-signature
           route=path
           message=vase
           original-state=node:server
       ==
   ^-  [(list change-broadcast) _original-state]
-  ::  Before we pass the data to the applets, we perform the verification
-  ::  management ourselves.
-
-  ::  there are two things which cause broadcast changes: events sent as part
-  ::  of the [%log ...] message from +on-process-event and the toplevel
-  ::  [%accept-and-invite-member @p] return value.
   ::
-  |^  =/  ret=[=vase changes=(list change-broadcast) state=_original-state]
+  =/  toplevel-sig-type=signature-type  signature-type.snapshot.original-state
+
+  ::  TODO: Before we pass the data to the applets, we perform the verification
+  ::  management ourselves, and error if we have incorrect signatures.
+  ::
+  ?.  %-  verify-signature  :*
+        toplevel-sig-type
+        /
+        top-signature
+        [message-signature route q.message]
+      ==
+    ~&  %invalid-toplevel-signature
+    [~ original-state]
+  ::
+  |^  ::  OK, when the server receives a users message, we check the message with
+      ::  the destination node's signature type. At this phase, we don't care if
+      ::  the message is going to be forwarded by a %create command. (This is why
+      ::  the event log records the route on a per-item basis; when you replay the
+      ::  log, you need that information since the route of an individual message
+      ::  may not match the final receiving node.
+      ::
+      =/  message-sig-type=(unit signature-type)
+        (get-signature-type route original-state)
+      ::
+      ?~  message-sig-type
+        ~&  %invalid-target-path
+        [~ original-state]
+      ::
+      ~&  [%dest message-sig-type]
+      ::
+      ?.  %-  verify-signature  :*
+            u.message-sig-type
+            route
+            message-signature
+            [route q.message]
+          ==
+        ~&  %invalid-message-signature
+        [~ original-state]
+      ::  there are two things which cause broadcast changes: events sent as part
+      ::  of the [%log ...] message from +on-process-event and the toplevel
+      ::  [%accept-and-invite-member @p] return value.
+      ::
+      =/  ret=[=vase changes=(list change-broadcast) state=_original-state]
         %-  recurse  :*
-          !>(full-signature)
+          !>(top-signature)
           route
           route
           message
@@ -787,16 +925,13 @@
     ::
         %create
       ::
-      =/  created=node:server  (instantiate-node [type signature-type ~]:response)
-      ::  write the creation information into the event log so that when
-      ::  replayed, we get the configuration.
+      =/  new-route=path  (weld full-path [sub-id.response ~])
       ::
-      =.  event-log.created
-        [[0 [%init type.response signature-type.response]] ~]
-      ::
+      =/  created=node:server
+        (instantiate-node [new-route [type signature-type ~]:response])
       ::
       =/  n=[return-value=vase changes-and-state]
-        (recurse child-event.response / (weld full-path [sub-id.response ~]) message changes created)
+        (recurse child-event.response / new-route message changes created)
       =/  return  return-value.n
       =.  changes  changes.n
       =.  created    state.n
@@ -821,7 +956,7 @@
   ++  record-change
     |=  $:  changes=(list change-broadcast)
             [state=node:server full-path=path]
-            log-entry=event-log-item
+            log-entry=event-log-item:common
         ==
     ^+  [changes state]
     ::
@@ -845,7 +980,54 @@
     =.  private-state.state  (slot 3 raw-result)
     ::
     [return-event changes state]
+  ::  +get-signature-type: returns the requested signature-type for a node
+  ::
+  ++  get-signature-type
+    |=  [route=path state=node:server]
+    ^-  (unit signature-type)
+    ::
+    ?~  route
+      `signature-type.snapshot.state
+    ::
+    ?~  child-node=(~(get by children.state) i.route)
+      ~
+    ::
+    =/  candidate  $(route t.route, state u.child-node)
+    ?:  =(`%inherit candidate)
+      `signature-type.snapshot.state
+    ::
+    candidate
   --
+::  Situation: someone has opened a new +peer on a path, so 
+::
+++  get-peer-diff-snapshot
+  |=  [route=path top-state=node:server]
+  ^-  (unit peer-diff)
+  ::
+  |^  ?~  maybe-state=(get-node-for route top-state)
+        ~
+      ::
+      =/  event-id  (sub next-event-id.u.maybe-state 1)
+      [~ event-id %snapshot (make-snapshot u.maybe-state)]
+  ::
+  ++  get-node-for
+    |=  [route=path state=node:server]
+    ^-  (unit node:server)
+    ::
+    ?~  route
+      `state
+    ::
+    ?~  child-node=(~(get by children.state) i.route)
+      ~
+    ::
+    $(route t.route, state u.child-node)
+  ::
+  ++  make-snapshot
+    |=  state=node:server
+    ^-  transport-snapshot:common
+    [app-type top-state signature-type q.snapshot children]:snapshot.state
+  --
+
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -876,37 +1058,47 @@
 ::
 =/  toplevel
   %-  instantiate-node
-    :*  %auth
+    :*  /
+        %auth
         %community
         :*  ~
             (sy [~littel-ponnys ~rovnys-ricfer ~palfun-foslup ~rapfyr-diglyt ~])
             'our town'
             ~zod
     ==  ==
+::
 
+
+::
 ::  initializes the 'our town' community
 ::
 ~&  %phase---------1
 =^  ret1  toplevel
-  (apply [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
 ~&  [%changes ret1]
 ::  'our town' should have a 'shitposting' board
 ::
 ~&  %phase---------2
 =^  ret2  toplevel
-  (apply [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
 ~&  [%changes ret2]
 ::  time to start shitposting!
 ::
 ~&  %phase---------3
 =^  ret3  toplevel
-  (apply [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
 ~&  [%changes ret3]
+
+
+
+=/  diff=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
+
+
 ::  continue shitposting in the current thread!
 ::
 ~&  %phase---------4
 =^  ret4  toplevel
-  (apply [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
 ~&  [%changes ret4]
 ::
 ~&  [%final-sate toplevel]
