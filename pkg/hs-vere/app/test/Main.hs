@@ -158,8 +158,11 @@ main = runInBoundThread $ do
     -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
     -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
-    tryParseFX "/home/benjamin/testnet-zod-fx" 1 10
-    tryParseFX "/home/benjamin/zod-fx" 1 10
+    tryParseFX "/home/benjamin/zod-fx" 1 1000
+
+    let good = 1400000
+
+    tryParseFX "/home/benjamin/testnet-zod-fx" good (good + 1000000)
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
@@ -178,6 +181,8 @@ streamFX :: FilePath -> Word -> Word -> ConduitT () ByteString IO ()
 streamFX dir first last = loop first
   where
     loop n = do
+      when (n `mod` 1000 == 0) $ do
+        print n
       let fil = dir <> "/" <> show n
       exists <- liftIO (doesFileExist fil)
       when (exists && n <= last) $ do
@@ -185,16 +190,18 @@ streamFX dir first last = loop first
           loop (n+1)
 
 tryParseFXStream :: ConduitT ByteString Void IO ()
-tryParseFXStream =
-  await >>= \case
-    Nothing -> pure ()
-    Just bs -> do
-      n <- liftIO (cueBSExn bs)
-      fromNounErr n & \case
-        Left err            -> print err
-        Right []            -> pure ()
-        Right (fx :: FX.FX) -> print fx
-      tryParseFXStream
+tryParseFXStream = loop 0
+  where
+    loop 5 = pure ()
+    loop errors =
+      await >>= \case
+        Nothing -> pure ()
+        Just bs -> do
+          n <- liftIO (cueBSExn bs)
+          fromNounErr n & \case
+            Left err            -> print err >> loop (errors + 1)
+            Right []            -> loop errors
+            Right (fx :: FX.FX) -> loop errors
 
 tryCopyLog :: IO ()
 tryCopyLog = do

@@ -6,7 +6,7 @@ module Noun.Conversions
   , Bytes(..), Octs(..)
   , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
   , Tank(..), Tang, Plum(..)
-  , Mug(..), Path(..), Ship(..)
+  , Mug(..), Path(..), EvilPath, Ship(..)
   , Lenient(..)
   ) where
 
@@ -341,11 +341,17 @@ newtype Ship = Ship Word128 -- @p
 
 -- Path ------------------------------------------------------------------------
 
-newtype Path = Path [Knot]
+newtype Path = Path { unPath :: [Knot] }
   deriving newtype (Eq, Ord, Semigroup, Monoid)
 
 instance Show Path where
-  show (Path ks) = show $ intercalate "/" ("" : ks)
+  show = show . intercalate "/" . ("":) . unPath
+
+newtype EvilPath = EvilPath { unEvilPath :: [Atom] }
+  deriving newtype (Eq, Ord, Semigroup, Monoid)
+
+instance Show EvilPath where
+  show = show . unEvilPath
 
 
 -- Mug -------------------------------------------------------------------------
@@ -602,6 +608,7 @@ instance ( FromNoun a, FromNoun b, FromNoun c, FromNoun d, FromNoun e
     pure (p, q, r, s, t, u, v, w, x, y)
 
 
--- Derived Instances -----------------------------------------------------------
+-- Ugg -------------------------------------------------------------------------
 
 deriveNoun ''Path
+deriveNoun ''EvilPath

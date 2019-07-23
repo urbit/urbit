@@ -46,7 +46,7 @@ cvtReq r =
     { H.method = encodeUtf8 $ tshow (method r),
       H.requestHeaders =
         headerList r <&> \(Header k v) -> (CI.mk (encodeUtf8 $ unCord k),
-                                           encodeUtf8 $ unCord v),
+                                           unBytes v),
       H.requestBody =
         H.RequestBodyBS $ case body r of
                             Nothing        -> ""

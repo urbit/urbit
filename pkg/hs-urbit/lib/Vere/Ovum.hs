@@ -81,6 +81,7 @@ deriveNoun ''JsonNode
 -- Dawn Records ----------------------------------------------------------------
 
 type AtomIf = Atom
+type AtomIs = Atom
 
 type Ring = Atom -- Private Key
 type Oath = Atom -- Signature
@@ -88,7 +89,6 @@ type Pass = Atom -- Public Key
 
 type Life = Word
 type Turf = Path
-type Czar = NounMap Ship (Life, Pass)
 type Bloq = Atom
 
 type Host = Either Turf AtomIf
@@ -137,7 +137,7 @@ data Snap = Snap (NounMap Ship Public)
 data Dawn = MkDawn
     { dSeed :: Seed
     , dShip :: Ship
-    , dCzar :: Czar
+    , dCzar :: NounMap Ship (Life, Pass)
     , dTurf :: [Turf]
     , dBloq :: Bloq
     , dNode :: (Maybe PUrl)
@@ -204,33 +204,43 @@ data HttpClient
     | HttpClientCrud    Path       Cord Tang
   deriving (Eq, Ord, Show)
 
-data HttpServer
-    = HttpServerRequest   (Atom, Word, Word, ()) ServerId Address HttpRequest
-    | HttpServerLive      (Atom, ())             Cord (Maybe Word)
-    | HttpServerBorn      (Atom, ())             ()
-    | HttpServerSetConfig (Atom, ())             ServerConfig
+data HttpServerReq = HttpServerReq
+    { hsrSecure  :: Bool
+    , hsrAddress :: Address
+    , hsrRequest :: HttpRequest
+    }
   deriving (Eq, Ord, Show)
 
-deriveNoun ''ServerConfig
-deriveNoun ''HttpRequest
+data HttpServer
+    = HttpServerRequest      (Atom, Word, Word, ()) HttpServerReq
+    | HttpServerRequestLocal Path                   HttpServerReq
+    | HttpServerLive         (Atom, ())             Atom (Maybe Word)
+    | HttpServerBorn         (Atom, ())             ()
+    | HttpServerSetConfig    (Atom, ())             ServerConfig
+  deriving (Eq, Ord, Show)
+
 deriveNoun ''Address
-deriveNoun ''ResponseHeader
-deriveNoun ''HttpEvent
 deriveNoun ''HttpClient
+deriveNoun ''HttpEvent
+deriveNoun ''HttpRequest
 deriveNoun ''HttpServer
+deriveNoun ''HttpServerReq
+deriveNoun ''ResponseHeader
+deriveNoun ''ServerConfig
 
 
 -- Ames ------------------------------------------------------------------------
 
 data Lane
-    = If Wen Atom Atom           --  {$if p/@da q/@ud r/@if}
-    | Is Atom (Maybe Lane) Atom  --  {$is p/@ud q/(unit lane) r/@is}
-    | Ix Wen Atom Atom           --  {$ix p/@da q/@ud r/@if}
+    = If Wen Atom AtomIf
+    | Is Atom (Maybe Lane) AtomIs
+    | Ix Wen Atom AtomIf
   deriving (Eq, Ord, Show)
 
 data Ames
     = AmesHear ()   Lane Atom
     | AmesWake ()   ()
+    | AmesWant Path Ship Path Noun
     | AmesCrud Path Cord Tang
   deriving (Eq, Ord, Show)
 

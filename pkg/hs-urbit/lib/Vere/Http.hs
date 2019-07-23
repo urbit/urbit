@@ -11,7 +11,7 @@ import qualified Network.HTTP.Types.Method as H
 
 --------------------------------------------------------------------------------
 
-data Header = Header Cord Cord
+data Header = Header Cord Bytes
   deriving (Eq, Ord, Show)
 
 type Method = H.StdMethod
@@ -30,6 +30,11 @@ data ResponseHeader = ResponseHeader
      }
   deriving (Eq, Ord, Show)
 
+data RawEvent
+    = Start ResponseHeader (Maybe Octs) Bool
+    | Continue (Maybe Octs) Bool
+    | Cancel
+  deriving (Eq, Ord, Show)
 
 data Event
     = Started ResponseHeader -- [%start hdr (unit octs) ?]
@@ -54,6 +59,7 @@ instance FromNoun H.StdMethod where
 deriveNoun ''Header
 deriveNoun ''ResponseHeader
 deriveNoun ''Event
+deriveNoun ''RawEvent
 deriveNoun ''Request
 
 --------------------------------------------------------------------------------
@@ -62,4 +68,4 @@ convertHeaders :: [HT.Header] -> [Header]
 convertHeaders = fmap f
   where
     f (k, v) = Header (Cord $ decodeUtf8 $ CI.original k)
-                      (Cord $ decodeUtf8 v)
+                      (MkBytes v)
