@@ -467,7 +467,7 @@
     ==
   ::
   ++  hurl                                              ::  start loop
-    |=  {lac/_| ovo/ovum}
+    |=  {lac/? ovo/ovum}
     ~?  &(!lac !=(%belt -.q.ovo))  ["" %unix -.q.ovo p.ovo now]
     ::  ^-  {p/(list ovum) q/(pair worm (list {p/@tas q/vase}))}
     ^-  {p/(list ovum) q=(list [label=@tas =vane])}
@@ -650,7 +650,7 @@
 ::
 =/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
-=|  $:  lac=_&                                          ::  laconic bit
+=|  $:  lac=_|                                          ::  laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
         bud=vase                                        ::  %zuse

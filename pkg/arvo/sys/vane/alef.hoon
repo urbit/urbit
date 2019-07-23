@@ -841,11 +841,11 @@
     =<  abet
     ?-  -.task
       %born  on-born:event-core
-      %crud  ~|  %ames-crud^p.task
+      %crud  ~&  %ames-crud^p.task
              %-  (slog q.task)
              event-core
       %hear  (on-hear:event-core [lane blob]:task)
-      %hole  ~|  %ames-hole
+      %hole  ~&  %ames-hole
              event-core
       %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
