@@ -20,7 +20,18 @@ type ServerId     = Word
 type ConnectionId = Word
 type RequestId    = Word
 
-data Foo = A | B | C
+-- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
+-- from Wain
+type Key = PEM
+type Cert = PEM
+newtype Wain = Wain [Cord]
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+newtype PEM = PEM Cord
+  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+
+--------------------------------------------------------------------------------
 
 data Eff = Eff ServerId ConnectionId RequestId ServerRequest
   deriving (Eq, Ord, Show)
@@ -39,24 +50,12 @@ data Config = Config
     }
   deriving (Eq, Ord, Show)
 
--- Note: We need to parse PEM-encoded RSA private keys and cert or cert chain
--- from Wain
-type Key = PEM
-type Cert = PEM
-newtype Wain = Wain [Cord]
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
-newtype PEM = PEM Cord
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
-
-deriveNoun ''ServerRequest
 deriveNoun ''Config
-deriveNoun ''Eff
 
 data ClientResponse
   = Progress ResponseHeader Int (Maybe Int) (Maybe ByteString)
   | Finished ResponseHeader (Maybe MimeData)
-  | Cancel
+  | Cancel ()
 
 data MimeData = MimeData Text ByteString
 

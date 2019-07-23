@@ -187,7 +187,7 @@ data ResponseHeader = ResponseHeader
 data HttpEvent
     = Start ResponseHeader (Maybe FileOcts) Bool
     | Continue (Maybe FileOcts) Bool
-    | Cancel
+    | Cancel ()
   deriving (Eq, Ord, Show)
 
 data HttpRequest = HttpRequest
@@ -231,10 +231,12 @@ deriveNoun ''ServerConfig
 
 -- Ames ------------------------------------------------------------------------
 
+type Port = Word
+
 data Lane
-    = If Wen Atom AtomIf
+    = If Wen Port AtomIf
     | Is Atom (Maybe Lane) AtomIs
-    | Ix Wen Atom AtomIf
+    | Ix Wen Port AtomIf
   deriving (Eq, Ord, Show)
 
 data Ames
@@ -310,11 +312,11 @@ data ArrowKey = D | L | R | U
 
 data Belt
     = Aro ArrowKey
-    | Bac
+    | Bac ()
     | Ctl Cord
-    | Del
+    | Del ()
     | Met Cord
-    | Ret
+    | Ret ()
     | Txt Tour
   deriving (Eq, Ord, Show)
 

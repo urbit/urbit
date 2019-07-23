@@ -28,14 +28,17 @@ data ThreeWords = ThreeWords Word Word Word
 
 data FooBar = FooBarQueenAlice Word Word
             | FooBarBob Word
+            | FooBarCharlie
   deriving (Eq, Show)
 
 data BarZaz = BZQueenAlice Word Word
             | BZBob Word
+            | BZCharlie
   deriving (Eq, Show)
 
 data ZazBaz = QueenAlice Word Word
             | Bob Word
+            | Charlie
   deriving (Eq, Show)
 
 data Empty
@@ -60,15 +63,21 @@ instance Arbitrary Nums where
 
 instance Arbitrary FooBar where
   arbitrary = oneof [ FooBarQueenAlice <$> arbitrary <*> arbitrary
-                    , FooBarBob        <$> arbitrary ]
+                    , FooBarBob        <$> arbitrary
+                    , pure FooBarCharlie
+                    ]
 
 instance Arbitrary BarZaz where
   arbitrary = oneof [ BZQueenAlice <$> arbitrary <*> arbitrary
-                    , BZBob        <$> arbitrary ]
+                    , BZBob        <$> arbitrary
+                    , pure BZCharlie
+                    ]
 
 instance Arbitrary ZazBaz where
   arbitrary = oneof [ QueenAlice <$> arbitrary <*> arbitrary
-                    , Bob        <$> arbitrary ]
+                    , Bob        <$> arbitrary
+                    , pure Charlie
+                    ]
 
 instance (Arbitrary a, Arbitrary b) => Arbitrary (Poly a b) where
   arbitrary = oneof [ PLeft <$> arbitrary
@@ -115,6 +124,7 @@ sumSanity x = toNoun x == byHand x
     byHand = \case
       QueenAlice x y       -> toNoun (Cord "queen-alice", x, y)
       Bob x                -> toNoun (Cord "bob", x)
+      Charlie              -> toNoun (Cord "charlie")
 
 abbrPrefixSanity :: BarZaz -> Bool
 abbrPrefixSanity x = toNoun x == byHand x
@@ -122,6 +132,7 @@ abbrPrefixSanity x = toNoun x == byHand x
     byHand = \case
       BZQueenAlice x y -> toNoun (Cord "queen-alice", x, y)
       BZBob x          -> toNoun (Cord "bob", x)
+      BZCharlie        -> toNoun (Cord "charlie")
 
 typePrefixSanity :: FooBar -> Bool
 typePrefixSanity x = toNoun x == byHand x
@@ -129,6 +140,7 @@ typePrefixSanity x = toNoun x == byHand x
     byHand = \case
       FooBarQueenAlice x y -> toNoun (Cord "queen-alice", x, y)
       FooBarBob x          -> toNoun (Cord "bob", x)
+      FooBarCharlie        -> toNoun (Cord "charlie")
 
 
 -- Strip Sum Prefixes ----------------------------------------------------------
@@ -136,10 +148,12 @@ typePrefixSanity x = toNoun x == byHand x
 barZazBaz :: BarZaz -> Bool
 barZazBaz = nounEquiv $ \case BZQueenAlice x y -> QueenAlice x y
                               BZBob x          -> Bob x
+                              BZCharlie        -> Charlie
 
 fooBarBaz :: FooBar -> Bool
 fooBarBaz = nounEquiv $ \case FooBarQueenAlice x y -> QueenAlice x y
                               FooBarBob x          -> Bob x
+                              FooBarCharlie        -> Charlie
 
 
 --------------------------------------------------------------------------------

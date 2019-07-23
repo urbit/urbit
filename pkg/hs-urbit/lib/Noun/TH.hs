@@ -21,8 +21,7 @@ type ConInfo = (Name, [Type])
 data Shape
     = Vod
     | Tup ConInfo
-    | Enu [(String, Name)]
-    | Sum [(String, ConInfo)]
+    | Sum [(String, Name)] [(String, ConInfo)]
   deriving (Eq, Ord, Show)
 
 typeShape :: Name -> Q ([TyVarBndr], Shape)
@@ -34,14 +33,17 @@ typeShape tyName = do
             TyConI _                          -> fail badSynonym
             _                                 -> fail "not type"
 
-    let allEmpty = all (null . snd) cs
-        prefix   = getPrefix (nameStr . fst <$> cs)
+    let prefix = getPrefix (nameStr . fst <$> cs)
+        splits = splitFn ([], []) cs
+        splitFn (l, r) = \case
+          []          -> (l, r)
+          (n,[]) : cs -> splitFn (tagName prefix n:l, r) cs
+          conInf : cs -> splitFn (l, tagConInfo prefix conInf:r) cs
 
     pure $ (vars,) $ case cs of
         []            -> Vod
-        cs | allEmpty -> Enu (tagName prefix . fst <$> cs)
         [c]           -> Tup c
-        cs            -> Sum (tagConInfo prefix <$> cs)
+        cs            -> uncurry Sum splits
 
   where
     badSynonym = "deriveFunctor: tyCon may not be a type synonym."
@@ -83,10 +85,10 @@ deriveToNoun :: Name -> Q [Dec]
 deriveToNoun tyName = do
     (params, shape) <- typeShape tyName
 
-    let exp = case shape of Vod      -> vodToNoun
-                            Tup con  -> tupToNoun con
-                            Enu cons -> enumToAtom cons
-                            Sum cons -> sumToNoun cons
+    let exp = case shape of Vod             -> vodToNoun
+                            Tup con         -> tupToNoun con
+                         -- Enu cons        -> enumToAtom cons
+                            Sum atoms cells -> sumToNoun atoms cells
 
     params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
 
@@ -111,10 +113,10 @@ deriveFromNoun :: Name -> Q [Dec]
 deriveFromNoun tyName = do
     (params, shape) <- typeShape tyName
 
-    let exp = case shape of Vod      -> vodFromNoun
-                            Tup con  -> tupFromNoun con
-                            Enu cons -> enumFromAtom cons
-                            Sum cons -> sumFromNoun cons
+    let exp = case shape of Vod             -> vodFromNoun
+                            Tup con         -> tupFromNoun con
+                         -- Enu cons        -> enumFromAtom cons
+                            Sum atoms cells -> sumFromNoun atoms cells
 
     params <- pure $ zip ['a' ..] params <&> \(n,_) -> mkName (singleton n)
 
@@ -126,6 +128,20 @@ deriveFromNoun tyName = do
         inst    = AppT (ConT ''FromNoun) ty
 
     pure [InstanceD overlap ctx inst [ValD (VarP 'parseNoun) body []]]
+
+sumFromNoun :: [(String, Name)] -> [(String, ConInfo)] -> Exp
+sumFromNoun [] cl = taggedFromNoun cl
+sumFromNoun at [] = enumFromAtom at
+sumFromNoun at cl = eitherParser (taggedFromNoun cl) (enumFromAtom at)
+  where
+    eitherParser :: Exp -> Exp -> Exp
+    eitherParser x y =
+        LamE [VarP n] $
+          InfixE (Just xCase) (VarE (mkName "<|>")) (Just yCase)
+      where
+        xCase = AppE x (VarE n)
+        yCase = AppE y (VarE n)
+        n = mkName "atomOrCell"
 
 enumFromAtom :: [(String, Name)] -> Exp
 enumFromAtom cons = LamE [VarP x] body
@@ -169,8 +185,8 @@ unexpectedTag expected got =
     possible  = intercalate " " (('%':) <$> expected)
     prefix    = "Expected one of: " <> possible <> " but got %"
 
-sumFromNoun :: [(String, ConInfo)] -> Exp
-sumFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
+taggedFromNoun :: [(String, ConInfo)] -> Exp
+taggedFromNoun cons = LamE [VarP n] (DoE [getHead, getTag, examine])
   where
     (n, h, t, c) = (mkName "noun", mkName "hed", mkName "tel", mkName "tag")
 
@@ -214,12 +230,7 @@ tup = AppE (VarE 'toNoun) . TupE . fmap VarE
 --------------------------------------------------------------------------------
 
 vodToNoun :: Exp
-vodToNoun = enumToAtom [] -- LamE [WildP]
-
-enumToAtom :: [(String, Name)] -> Exp
-enumToAtom cons =
-    LamCaseE $ cons <&> \(tag, nm) ->
-                 Match (ConP nm []) (NormalB $ tagNoun tag) []
+vodToNoun = LamCaseE []
 
 tupToNoun :: ConInfo -> Exp
 tupToNoun cons = LamCaseE [mkMatch cons]
@@ -230,15 +241,21 @@ tupToNoun cons = LamCaseE [mkMatch cons]
             params = VarP <$> vars
             body   = tup vars
 
-sumToNoun :: [(String, ConInfo)] -> Exp
-sumToNoun cons = LamCaseE (cons <&> mkMatch)
+sumToNoun :: [(String, Name)] -> [(String, ConInfo)] -> Exp
+sumToNoun a c =
+    LamCaseE (mixed <&> uncurry mkMatch)
   where
-    mkMatch :: (String, ConInfo) -> Match
-    mkMatch (tag, (nm, tys)) =
-        Match (ConP nm params) (NormalB body) []
-      where vars   = (zip tys ['a'..]) <&> (mkName . singleton . snd)
-            params = VarP <$> vars
-            body   = tagTup tag vars
+    mixed = mconcat [ a <&> \(x,y) -> (x, Left y)
+                    , c <&> \(x,y) -> (x, Right y)
+                    ]
+
+    mkMatch :: String -> Either Name ConInfo -> Match
+    mkMatch tag = \case
+      Left nm         -> Match (ConP nm []) (NormalB $ tagNoun tag) []
+      Right (nm, tys) -> Match (ConP nm params) (NormalB body) []
+        where vars   = (zip tys ['a'..]) <&> (mkName . singleton . snd)
+              params = VarP <$> vars
+              body   = tagTup tag vars
 
 --------------------------------------------------------------------------------
 

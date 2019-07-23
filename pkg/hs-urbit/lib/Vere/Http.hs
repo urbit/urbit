@@ -36,6 +36,14 @@ data RawEvent
     | Cancel
   deriving (Eq, Ord, Show)
 
+deriveNoun ''Request
+deriveNoun ''Header
+deriveNoun ''ResponseHeader
+deriveNoun ''RawEvent
+
+
+--------------------------------------------------------------------------------
+
 data Event
     = Started ResponseHeader -- [%start hdr (unit octs) ?]
     | Received Octs          -- [%continue [~ octs] %.n]
@@ -43,6 +51,7 @@ data Event
     | Canceled               -- %cancel
     | Failed Cord            -- %cancel
   deriving (Eq, Ord, Show)
+
 
 --------------------------------------------------------------------------------
 
@@ -56,11 +65,6 @@ instance FromNoun H.StdMethod where
       Left bs -> fail ("Unexpected method: " <> unpack (decodeUtf8 bs))
       Right m -> pure m
 
-deriveNoun ''Header
-deriveNoun ''ResponseHeader
-deriveNoun ''Event
-deriveNoun ''RawEvent
-deriveNoun ''Request
 
 --------------------------------------------------------------------------------
 

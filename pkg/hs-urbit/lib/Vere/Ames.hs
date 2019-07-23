@@ -7,19 +7,7 @@ import Noun
 
 import qualified Urbit.Time as Time
 
-type Packet = Octs
-
 type Port = Word
-
-data Ev
-  = EvBarn                  -- [%barn ~]
-  | EvHear Lane Packet      -- [%hear lane @]
-  deriving (Eq, Ord, Show)
-
-data Eff
-  = Send Lane Packet
-  | Turf [Turf]
-  deriving (Eq, Ord, Show)
 
 newtype Turf = MkTurf { unTurf :: [Cord] }
   deriving newtype (Eq, Ord, Show)
@@ -32,9 +20,6 @@ data Lane
 
 -- todo: manual instance needed?
 deriveNoun ''IPv4
-
-deriveNoun ''Ev
-deriveNoun ''Eff
 deriveNoun ''Turf
 deriveNoun ''Lane
 
