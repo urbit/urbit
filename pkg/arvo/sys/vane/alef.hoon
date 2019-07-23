@@ -57,6 +57,8 @@
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
 =,  able
+=*  point        point:able:kale
+=*  vent-result  vent-result:able:kale
 ::
 =>
 |%
@@ -314,35 +316,6 @@
 +$  rank  ?(%0 %1 %2 %3)
 ::
 +|  %kinetics
-::
-::  $point: TODO move to jael
-::
-+$  point
-  $:  =rift
-      =life
-      crypto-suite=@ud
-      encryption-key=pass
-      authentication-key=pass
-      sponsor=(unit @p)
-  ==
-::  $diff-point: TODO move to jael
-::
-+$  diff-point
-  $%  [%changed-continuity rift=@ud]
-      $:  %changed-keys
-          =life
-          crypto-suite=@ud
-          continuity-number=@ud
-          encryption-key=@ud
-      ==
-      [%new-sponsor sponsor=(unit @p)]
-  ==
-::  $vent-result: TODO move to jael
-::
-+$  vent-result
-  $%  [%full points=(map ship point)]
-      [%diff =ship diff-point]
-  ==
 ::  $channel: combined sender and receiver identifying data
 ::
 +$  channel
@@ -674,7 +647,7 @@
       $%  [%wake error=(unit tang)]
       ==  ==
       $:  %k
-      $%  [%private-keys =life =private-key]
+      $%  [%private-keys =life vein=(map life ring)]
           [%public-keys =vent-result]
           [%turf turfs=(list turf)]
       ==  ==
@@ -760,7 +733,7 @@
 =<  =*  adult-gate  .
     =|  queued-events=(qeu queued-event)
     ::
-    |=  [our=ship eny=@ now=@da scry-gate=sley]
+    |=  [our=ship now=@da eny=@ scry-gate=sley]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     |%
@@ -768,23 +741,31 @@
     ::
     ++  call
       |=  [=duct type=* wrapped-task=(hobo task)]
+      ::
+      =/  =task
+        ?.  ?=(%soft -.wrapped-task)
+          wrapped-task
+        ;;(task p.wrapped-task)
       ::  %born: set .unix-duct and start draining .queued-events
       ::
-      ?:  ?=(%born -.wrapped-task)
+      ?:  ?=(%born -.task)
         ::  process %born using wrapped adult ames
         ::
-        =^  moves  adult-gate  (call:adult-core duct type wrapped-task)
+        =^  moves  adult-gate  (call:adult-core duct type task)
         ::  if no events were queued up, metamorphose
         ::
         ?~  queued-events
+          ~&  %alef-larva-metamorphose
           [moves adult-gate]
+        ~&  %alef-larva-kick
         ::  kick off a timer to process the first of .queued-events
         ::
         =.  moves  :_(moves [duct %pass /larva %b %wait now])
         [moves larval-gate]
+      ~&  %alef-larva-call
       ::  any other event: enqueue it until we have a .unix-duct
       ::
-      =.  queued-events  (~(put to queued-events) %call duct type wrapped-task)
+      =.  queued-events  (~(put to queued-events) %call duct type task)
       [~ larval-gate]
     ::  +take: handle response $sign
     ::
@@ -793,11 +774,15 @@
       ::  enqueue event if not a larval drainage timer
       ::
       ?.  =(/larva wire)
+        ~&  %alef-larva-take
         =.  queued-events  (~(put to queued-events) %take wire duct type sign)
         [~ larval-gate]
       ::  larval event drainage timer; pop and process a queued event
       ::
-      ?>  ?=(%wake -.sign)
+      ?.  ?=([%b %wake *] sign)
+        ~&  %alef-larva-wtf^sign
+        [~ larval-gate]
+      ~&  %alef-larva-wake
       =^  first-event  queued-events  ~(get to queued-events)
       =^  moves  adult-gate
         ?-  -.first-event
@@ -807,18 +792,24 @@
       ::  .queued-events has been cleared; metamorphose
       ::
       ?~  queued-events
+        ~&  %alef-metamorphosis
         [moves adult-gate]
+      ~&  %alef-larva-drain
       ::  set timer to drain next event
       ::
       =.  moves  :_(moves [duct %pass /larva %b %wait now])
       [moves larval-gate]
     ::  lifecycle arms; mostly pass-throughs to the contained adult ames
     ::
+    ::  TODO: don't coerce the old state
+    ::
     ++  scry  scry:adult-core
-    ++  stay  [queued-events stay:adult-core]
+    ++  stay  ~&  %alef-larva-stay  [queued-events ames-state.adult-gate]
     ++  load
-      |=  old=_[queued-events stay:adult-core]
+      |=  old=*
       ^+  larval-gate
+      ~&  %alef-larva-load
+      =>  .(old ;;(_[queued-events ames-state.adult-gate] old))
       ::
       =.  queued-events  -.old
       =.  adult-gate     (load:adult-core +.old)
@@ -828,10 +819,12 @@
 ::
 =<
 =|  =ames-state
-|=  [our=ship eny=@ now=@da scry-gate=sley]
+|=  [our=ship now=@da eny=@ scry-gate=sley]
 =*  ames-gate  .
 |%
 ::  +call: handle request $task
+::
+::    TODO: better %crud and %hole handling
 ::
 ++  call
   |=  [=duct type=* wrapped-task=(hobo task)]
@@ -842,15 +835,18 @@
       wrapped-task
     ;;(task p.wrapped-task)
   ::
-  =/  event-core  (per-event [our eny now scry-gate] duct ames-state)
+  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
     ?-  -.task
       %born  on-born:event-core
-      %crud  !!
+      %crud  ~|  %ames-crud^p.task
+             %-  (slog q.task)
+             event-core
       %hear  (on-hear:event-core [lane blob]:task)
-      %hole  !!
+      %hole  ~|  %ames-hole
+             event-core
       %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
@@ -864,7 +860,7 @@
   |=  [=wire =duct type=* =sign]
   ^-  [(list move) _ames-gate]
   ::
-  =/  event-core  (per-event [our eny now scry-gate] duct ames-state)
+  =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
   ::
   =^  moves  ames-state
     =<  abet
@@ -874,7 +870,7 @@
     ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%k %private-keys *]  (on-priv:event-core [life private-key]:sign)
+      [%k %private-keys *]  (on-priv:event-core [life vein]:sign)
       [%k %public-keys *]   (on-publ:event-core wire vent-result.sign)
       [%k %turf *]          (on-take-turf:event-core turfs.sign)
     ==
@@ -901,7 +897,7 @@
 |%
 ++  per-event
   =|  moves=(list move)
-  |=  [[our=ship eny=@ now=@da scry-gate=sley] =duct =ames-state]
+  |=  [[our=ship now=@da eny=@ scry-gate=sley] =duct =ames-state]
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
@@ -1126,9 +1122,10 @@
   ::  +on-priv: set our private key to jael's response
   ::
   ++  on-priv
-    |=  [=life =private-key]
+    |=  [=life vein=(map life private-key)]
     ^+  event-core
     ::
+    =/  =private-key            (~(got by vein) life)
     =.  life.ames-state         life
     =.  crypto-core.ames-state  (nol:nu:crub:crypto private-key)
     ::  recalculate each peer's symmetric key
@@ -1157,14 +1154,17 @@
     ::
     |^  ^+  event-core
         ?-    vent-result
-            [%diff @ %changed-continuity *]
-          (on-publ-breach [ship rift]:vent-result)
+            [%diff @ * %rift *]
+          (on-publ-breach [who rift.udiff]:vent-result)
         ::
-            [%diff @ %changed-keys *]
-          (on-publ-rekey [ship +>+]:vent-result)
+            [%diff @ * %keys *]
+          (on-publ-rekey [who +>.udiff]:vent-result)
         ::
-            [%diff @ %new-sponsor *]
-          (on-publ-sponsor [ship sponsor]:vent-result)
+            [%diff @ * %spon *]
+          (on-publ-sponsor [who sponsor.udiff]:vent-result)
+        ::
+            [%diff @ * %disavow ~]
+          (on-publ-sponsor [who ~]:vent-result)
         ::
             [%full *]  (on-publ-full points.vent-result)
         ==
@@ -1190,12 +1190,11 @@
       |=  $:  =ship
               =life
               crypto-suite=@ud
-              continuity-number=@ud
-              encryption-key=@ud
+              =public-key
           ==
       ^+  event-core
       ::
-      (insert-peer-state ship (got-peer-state ship) life `@`encryption-key)
+      (insert-peer-state ship (got-peer-state ship) life public-key)
     ::  +on-publ-sponsor: handle new or lost sponsor for self or peer
     ::
     ::    TODO: handle sponsor loss
@@ -1243,14 +1242,16 @@
         |=  [=ship =point]
         ^+  event-core
         ::
-        (insert-peer-state ship *peer-state [life `@`encryption-key]:point)
+        =/  =public-key  pass:(~(got by keys.point) life.point)
+        (insert-peer-state ship *peer-state life.point public-key)
       ::
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
         ::
+        =/  =public-key  pass:(~(got by keys.point) life.point)
         =.  event-core
-          (insert-peer-state ship *peer-state [life `@`encryption-key]:point)
+          (insert-peer-state ship *peer-state life.point public-key)
         ::  apply incoming packets
         ::
         =.  event-core
@@ -1310,7 +1311,8 @@
         |=  [=ship =point =peer-state]
         ^+  event-core
         ::
-        (insert-peer-state ship peer-state [life `@`encryption-key]:point)
+        =/  =public-key  pass:(~(got by keys.point) life.point)
+        (insert-peer-state ship peer-state life.point public-key)
       --
     ::
     ++  insert-peer-state
