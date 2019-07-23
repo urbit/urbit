@@ -124,9 +124,10 @@
     =/  req=(unit address:dns)  (~(get by requested.state) who)
     ::  ignore established bindings that don't match requested
     ::
-    ?:  ?&  ?=(^ req)
+    ?:  ?|  ?=(~ req)
             !=(adr u.req)
         ==
+      ~&  %unknown-complete
       this
     =:  requested.state  (~(del by requested.state) who)
         completed.state  (~(put by completed.state) who [adr tuf])
