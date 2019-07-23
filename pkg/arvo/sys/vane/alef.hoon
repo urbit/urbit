@@ -804,16 +804,26 @@
     ::  TODO: don't coerce the old state
     ::
     ++  scry  scry:adult-core
-    ++  stay  ~&  %alef-larva-stay  [queued-events ames-state.adult-gate]
+    ++  stay  ~&  %alef-larva-stay  [%larva queued-events ames-state.adult-gate]
     ++  load
-      |=  old=*
-      ^+  larval-gate
+      |=  old-raw=*
       ~&  %alef-larva-load
-      =>  .(old ;;(_[queued-events ames-state.adult-gate] old))
       ::
-      =.  queued-events  -.old
-      =.  adult-gate     (load:adult-core +.old)
-      larval-gate
+      =/  old
+        ;;  $%  [%larva events=_queued-events state=_ames-state.adult-gate]
+                [%adult state=_ames-state.adult-gate]
+            ==
+          old-raw
+      ::
+      ?-    -.old
+          %adult
+        (load:adult-core state.old)
+      ::
+          %larva
+        =.  queued-events  events.old
+        =.  adult-gate     (load:adult-core state.old)
+        larval-gate
+      ==
     --
 ::  adult ames, after metamorphosis from larva
 ::
@@ -833,6 +843,7 @@
   =/  =task
     ?.  ?=(%soft -.wrapped-task)
       wrapped-task
+    ~|  %alef-bad-task^p.wrapped-task
     ;;(task p.wrapped-task)
   ::
   =/  event-core  (per-event [our now eny scry-gate] duct ames-state)
@@ -878,12 +889,12 @@
   [moves ames-gate]
 ::  +stay: extract state before reload
 ::
-++  stay  ames-state
+++  stay  [%adult ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
-  |=  old=^ames-state
-  ames-gate(ames-state old)
+  |=  old-state=_ames-state
+  ames-gate(ames-state old-state)
 ::  +scry: dereference namespace
 ::
 ++  scry
@@ -1328,6 +1339,10 @@
       =.  life.peer-state           life
       =.  public-key.peer-state     public-key
       =.  symmetric-key.peer-state  symmetric-key
+      ::  automatically set galaxy route, since unix handles lookup
+      ::
+      =?  route.peer-state  ?=(%czar (clan:title ship))
+        `[direct=%.y lane=[%& ship]]
       ::
       =.  peers.ames-state
         (~(put by peers.ames-state) ship %known peer-state)
@@ -1498,7 +1513,10 @@
       ::    valid.
       ::
       =?    route.peer-state
-          &(?=(^ route.peer-state) direct.u.route.peer-state)
+          ?&  ?=(^ route.peer-state)
+              direct.u.route.peer-state
+              !=(%czar (clan:title her.channel))
+          ==
         route.peer-state(direct.u %.n)
       ::
       (run-message-pump bone %wake ~)
