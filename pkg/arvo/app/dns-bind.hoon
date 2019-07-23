@@ -16,6 +16,7 @@
       $%  [%dns-authority =authority]
           [%dns-bind =ship =target]
           [%handle-http-request =inbound-request:eyre]
+          [%handle-http-cancel =inbound-request:eyre]
           [%noun noun=*]
       ==
     +$  out-poke-data
@@ -779,7 +780,9 @@
     ;<  ~  bind:m  (poke-app:stdio [our dap]:bowl [%dns-bind ship target]:i.dep)
     loop(dep t.dep)
   ::
-  ::  XX need to %handle-http-cancel as well
+      %handle-http-cancel
+    ~&  %tapp-http-cant-cancel
+    (pure:m state)
   ::
       %handle-http-request
     ::  always stash request bone for giving response
