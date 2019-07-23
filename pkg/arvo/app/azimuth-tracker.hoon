@@ -7,7 +7,7 @@
           from-number=number:block
       ==
     +$  app-state
-      $:  %1
+      $:  %2
           url=@ta
           =number:block
           =pending-udiffs

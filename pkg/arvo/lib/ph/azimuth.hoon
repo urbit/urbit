@@ -42,10 +42,26 @@
       :-  |  :_  [%wait ~]
       %+  answer-request  req
       s+(crip (num-to-hex:ethereum latest-block))
+    ?:  =(method 'eth_getBlockByNumber')
+      :-  |  :_  [%wait ~]
+      %+  answer-request  req
+      :-  %o
+      =/  hash         (get-block-hash req)
+      =/  number       (hash-to-number (hex-to-num:ethereum hash))
+      =/  parent-hash  (number-to-hash ?~(number number (dec number)))
+      %-  malt
+      ^-  (list (pair term json))
+      :~  hash+s+hash
+          number+s+(crip (num-to-hex:ethereum number))
+          'parentHash'^s+(crip (num-to-hex:ethereum parent-hash))
+      ==
     ?:  =(method 'eth_getLogs')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
-      %+  logs-to-json
+      ?~  (get-param-obj-maybe req 'blockHash')
+        %-  logs-by-hash
+        (get-param-obj req 'blockHash')
+      %+  logs-by-range
         (get-param-obj req 'fromBlock')
       (get-param-obj req 'toBlock')
     ?:  =(method 'eth_newFilter')
@@ -67,7 +83,7 @@
       :+  |
         %+  answer-request  req
         ~|  [eth-filters latest-block]
-        (logs-to-json from-block.u.fil latest-block)
+        (logs-by-range from-block.u.fil latest-block)
       =.  last-block.u.fil  latest-block
       [%cont ..stay]
     ?:  =(method 'eth_getFilterChanges')
@@ -77,7 +93,7 @@
         ~|(%no-filter-not-implemented !!)
       :+  |
         %+  answer-request  req
-        (logs-to-json last-block.u.fil latest-block)
+        (logs-by-range last-block.u.fil latest-block)
       =.  all.eth-filters
         %+  ~(put by all.eth-filters)
           fil-id
@@ -110,6 +126,20 @@
       ?>  ?=([* ~] array)
       i.array
     ::
+    ++  get-param-obj-maybe
+      |=  [req=@t param=@t]
+      ^-  (unit @ud)
+      =,  dejs-soft:format
+      =/  array
+        %.  (need (de-json:html req))
+        (ot params+(ar (ot param^so ~)) ~)
+      ?~  array
+        ~
+      :-  ~
+      ?>  ?=([* ~] u.array)
+      %-  hex-to-num:ethereum
+      i.u.array
+    ::
     ++  get-filter-id
       |=  req=@t
       =,  dejs:format
@@ -118,6 +148,15 @@
         %.  (need (de-json:html req))
         (ot params+(ar so) ~)
       ?>  ?=([* ~] id)
+      i.id
+    ::
+    ++  get-block-hash
+      |=  req=@t
+      =,  dejs:format
+      =/  id
+        %.  (need (de-json:html req))
+        (ot params+(ar so) ~)
+      ?>  ?=([* * ~] id)
       i.id
     ::
     ++  answer-request
@@ -140,15 +179,30 @@
           [%start [200 ~] `(as-octs:mimes:html resp) &]
       ==
     ::
-    ++  logs-to-json
+    ++  number-to-hash
+      |=  =number:block:able:kale
+      `@`(cat 3 0x5363 number)
+    ::
+    ++  hash-to-number
+      |=  =hash:block:able:kale
+      (div hash 0x1.0000)
+    ::
+    ++  logs-by-range
       |=  [from-block=@ud to-block=@ud]
+      %+  logs-to-json  from-block
+      %+  swag
+        [(sub from-block launch:contracts:azimuth) (sub to-block from-block)]
+      logs
+    ::
+    ++  logs-by-hash
+      |=  =hash:block:able:kale
+      =/  =number:block:able:kale  (hash-to-number hash)
+      (logs-by-range number +(number))
+    ::
+    ++  logs-to-json
+      |=  [count=@ud selected-logs=(list az-log)]
       ^-  json
       :-  %a
-      =/  selected-logs
-        %+  swag
-          [(sub from-block launch:contracts:azimuth) (sub to-block from-block)]
-        logs
-      =/  count  from-block
       |-  ^-  (list json)
       ?~  selected-logs
         ~
@@ -160,7 +214,8 @@
           (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5362)))
         ::
           :+  'blockHash'  %s
-          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 `@`0x5363)))
+          =/  hash  (number-to-hash count)
+          (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
         ::
           :+  'blockNumber'  %s
           (crip (num-to-hex:ethereum count))

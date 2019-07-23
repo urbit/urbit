@@ -435,8 +435,9 @@
             [%fake who.ae]
           [%dawn u.keys.ae]
           -.userspace-ova.pil
-          [//http/0v1n.2m9vh %born ~]
-          [//http/0v1n.2m9vh %live 8.080 `8.445]
+          [//http-client/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
       ==
     =.  this  abet-pe:initted
     (pe who.ae)

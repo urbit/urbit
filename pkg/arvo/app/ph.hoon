@@ -113,6 +113,19 @@
         (raw-ship ~bud `(dawn:eth-node ~bud))
       (pure:m ~)
     ::
+      :+  %hi-az
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  %dev-done
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  %bud-done
+        (send-hi ~bud ~dev)
+      (pure:m ~)
+    ::
       :+  %breach-hi
         ~[~bud ~dev]
       =.  eth-node  (spawn:eth-node ~dev)

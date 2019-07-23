@@ -79,15 +79,15 @@
       $:  %i                                            ::
           $>(%wegh task:able:iris)                      ::
       ==                                                ::
-      $:  %j                                            ::
+      $:  %k                                            ::
           $>  $?  %dawn                                 ::
                   %fake                                 ::
                   %wegh                                 ::
               ==                                        ::
-          task:able:jael                                ::
+          task:able:kale                                ::
   ==  ==                                                ::
 ++  sign                                                ::  in result $<-
-  $~  [%j %init *@p]                                    ::
+  $~  [%k %init *@p]                                    ::
   $%  $:  %a                                            ::
           $%  [%nice ~]                                 ::  XX obsolete
               $>  $?  %mass                             ::
@@ -127,11 +127,11 @@
       $:  %i                                            ::
           $>(%mass gift:able:iris)                      ::
       ==                                                ::
-      $:  %j                                            ::
+      $:  %k                                            ::
           $>  $?  %init                                 ::
                   %mass                                 ::
               ==                                        ::
-          gift:able:jael                                ::
+          gift:able:kale                                ::
   ==  ==                                                ::
 ::::::::                                                ::  dill tiles
 --
@@ -283,7 +283,7 @@
               [hen %pass /heft/ford %f %wegh ~]
               [hen %pass /heft/gall %g %wegh ~]
               [hen %pass /heft/iris %i %wegh ~]
-              [hen %pass /heft/jael %j %wegh ~]
+              [hen %pass /heft/jael %k %wegh ~]
               moz
           ==
         ==
@@ -294,7 +294,7 @@
         ;;  ship
         %-  need  %-  need
         %-  (sloy-light ski)
-        [[151 %noun] %j our %sein da+now /(scot %p who)]
+        [[151 %noun] %k our %sein da+now /(scot %p who)]
       ::
       ++  init                                          ::  initialize
         ~&  [%dill-init our ram]
@@ -302,6 +302,18 @@
         =.  moz
           :_  moz
           [hen %pass /merg/home %c %merg %home our %base da+now %init]
+        =.  moz
+          :_  moz
+          :*  hen
+              %pass
+              ~
+              %g
+              %deal
+              [our our]
+              %azimuth-tracker
+              %poke
+              [%azimuth-tracker-poke -:!>([%init ~]) [%init ~]]
+          ==
         .
       ::
       ++  mere                                          ::  continue init
@@ -385,14 +397,14 @@
         |=  sih/sign
         ^+  +>
         ?-    sih
-            {?($a $b $c $e $f $g $i $j) $mass *}
+            {?($a $b $c $e $f $g $i $j %k) $mass *}
           (wegh -.sih p.sih)
         ::
             {$a $nice *}
           ::  ~&  [%take-nice-ames sih]
           +>
         ::
-            [%j %init *]
+            [%k %init *]
           ::  pass thru to unix
           ::
           +>(moz :_(moz [hen %give +.sih]))
@@ -440,7 +452,7 @@
       ::  +wegh: receive a memory report from a vane and maybe emit full report
       ::
       ++  wegh
-        |=  [lal=?(%a %b %c %e %f %g %i %j) mas=mass]
+        |=  [lal=?(%a %b %c %e %f %g %i %k) mas=mass]
         ^+  +>
         ::  update our listing of vane responses with this new one
         ::
@@ -453,7 +465,7 @@
             %f  ~?(?=(^ f.hef.all) %double-mass-f hef.all(f `mas))
             %g  ~?(?=(^ g.hef.all) %double-mass-g hef.all(g `mas))
             %i  ~?(?=(^ i.hef.all) %double-mass-i hef.all(i `mas))
-            %j  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
+            %k  ~?(?=(^ j.hef.all) %double-mass-j hef.all(j `mas))
           ==
         ::  if not all vanes have responded yet, no-op
         ::
@@ -512,10 +524,10 @@
     ?>  =(~ hey.all)
     =.  hey.all  `hen
     =/  boot
-      ((soft $>($?(%dawn %fake) task:able:jael)) p.task)
+      ((soft $>($?(%dawn %fake) task:able:kale)) p.task)
     ?~  boot
       ~|  invalid-boot-event+hen  !!
-    :_(..^$ [hen %pass / %j u.boot]~)
+    :_(..^$ [hen %pass / %k u.boot]~)
   ::  we are subsequently initialized. single-home
   ::
   ?:  ?=(%init -.task)
