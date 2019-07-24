@@ -954,13 +954,20 @@
     |=  [=lane =packet]
     ^+  event-core
     ::
+    ?:  =(our sndr.packet)
+      ~&  %alef-self
+      event-core
+    ::
     %.  [lane packet]
     ::
     ?.  =(our rcvr.packet)
+      ~&  %alef-on-hear-forward
       on-hear-forward
     ::
     ?:  encrypted.packet
+      ~&  %alef-on-hear-shut
       on-hear-shut
+    ~&  %alef-on-hear-open
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
@@ -1425,34 +1432,26 @@
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
-      ~&  %alef-send-blob-alien
       %+  enqueue-alien-todo  ship
       |=  todos=pending-requests
       todos(snd-packets (~(put in snd-packets.todos) blob))
-    ~&  %alef-send-blob-known
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
     =*  try-next-sponsor
       ?:  =(ship her-sponsor.channel)
-        ~&  %alef-send-blob-ship-eq-her-sponsor
         event-core
-      ~&  %alef-send-blob-try-next-recurse
       $(ship her-sponsor.channel)
     ::
     ?~  route=route.peer-state
-      ~&  %alef-send-blob-no-route
       try-next-sponsor
     ::
-    ~&  %alef-send-blob-emit-to^ship
     =.  event-core
       (emit unix-duct.ames-state %give %send lane.u.route blob)
     ::
     ?:  direct.u.route
-      ~&  %alef-send-blob-direct-done
       event-core
-    ~&  %alef-send-blob-indirect-try-next
     try-next-sponsor
   ::  +got-peer-state: lookup .her state or crash
   ::
