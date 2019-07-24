@@ -1378,9 +1378,12 @@
         dot+&+ames-state
     ==
   ::  +on-born: handle unix process restart
-  ::  +on-vega: handle kernel reload
+  ::
+  ::    TODO: scry into jael and emit turf on %born
   ::
   ++  on-born  event-core(unix-duct.ames-state duct)
+  ::  +on-vega: handle kernel reload
+  ::
   ++  on-vega  event-core
   ::  +enqueue-alien-todo: helper to enqueue a pending request
   ::
