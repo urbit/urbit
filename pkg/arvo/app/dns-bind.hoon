@@ -632,12 +632,7 @@
           (json-octs u.r.httr parse-record:(provider authority))
         ?~(dat ~. id.u.dat)
       ::
-      =/  =address:dns
-        ?>(?=(%direct -.target) +.target)
-      =/  =turf
-        (weld dom.authority /(crip +:(scow %p ship)))
-      ;<  ~           bind:m  (poke-app:stdio collector-app [%dns-complete ship address turf])
-      ;<  now=@da     bind:m  get-time:stdio
+      ;<  now=@da  bind:m  get-time:stdio
       =/  =bound
         [now id target ?~(existing ~ [[wen cur] hit]:u.existing)]
       (pure:m (some bound))
@@ -764,6 +759,10 @@
     ?~  new
       ~&  [%bind-failed in-poke-data]
       (pure:m state)
+    =/  =turf
+      (weld dom.aut.nam /(crip +:(scow %p who)))
+    ;<  ~  bind:m
+      (poke-app:stdio collector-app [%dns-complete who +.tar turf])
     =.  bon.nam  (~(put by bon.nam) who u.new)
     =.  nem.state  (some nam)
     ::

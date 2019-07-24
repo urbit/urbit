@@ -8,6 +8,8 @@
 #include "all.h"
 #include "vere/vere.h"
 
+#include "ivory.h"
+
 //  stash config flags for worker
 //
 static c3_w sag_w;
@@ -873,10 +875,7 @@ u3_daemon_commence()
       lit = u3m_file(u3_Host.ops_u.lit_c);
     }
     else {
-      extern c3_w u3_Ivory_length_w;
-      extern c3_y u3_Ivory_pill_y[];
-
-      lit = u3i_bytes(u3_Ivory_length_w, u3_Ivory_pill_y);
+      lit = u3i_bytes(u3_Ivory_pill_len, u3_Ivory_pill);
     }
 
     if ( c3n == u3v_boot_lite(lit)) {
