@@ -44,8 +44,6 @@
   %+  pair  wire
   $%  [%wack p=@]
       [%whom p=ship]
-      [%live p=@ud q=(unit @ud)]
-      [%barn ~]
       [%boot $%([%fake p=ship] [%dawn p=dawn-event])]
       unix-task
   ==
@@ -60,6 +58,7 @@
       [%sleep ~]
       [%restore ~]
       [%init ~]
+      [%request id=@ud request=request:http]
   ==
 +$  pill
   [boot-ova=* kernel-ova=(list unix-event) userspace-ova=(list unix-event)]

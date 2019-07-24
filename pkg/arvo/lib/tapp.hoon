@@ -254,10 +254,10 @@
       ::  XX use only for development may break contracts!
       ::  XX if active clam contracts only to abort transaction?
       ::
-      ::  ~&  [%tapp-reset dap.bowl]
-      :: `this-tapp
-      ~|  [%tapp-load-incompatible dap.bowl]
-      !!
+      ~&  [%tapp-reset dap.bowl]
+      `this-tapp
+      ::  ~|  [%tapp-load-incompatible dap.bowl]
+      ::  !!
     ::
     ::  because the clam replaces the active continuation with
     ::  the bunt of its mold, we must fail the transaction

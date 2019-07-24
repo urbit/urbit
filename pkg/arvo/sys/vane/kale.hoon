@@ -83,7 +83,7 @@
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
       $:  %k                                            ::    to self
-          $>(%listen task)                                ::  set ethereum source
+          $>(%listen task)                              ::  set ethereum source
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -411,6 +411,7 @@
       ::  ships with real keys must have domains,
       ::  those with fake keys must not
       ::
+      ~|  [fak.own.pki tuf.own.pki]
       ?<  =(fak.own.pki ?=(^ tuf.own.pki))
       +>.$(moz [[hen %give %turf tuf.own.pki] moz])
     ::
@@ -676,7 +677,10 @@
           yen.etn  (~(put in yen.etn) hen)
           moz
         %-  welp  :_  moz
+        ~&  [%kale-sources-feed etn=etn]
         %+  turn
+          ^-  (list (pair source-id (set ship)))
+          :-  [default-source.etn ~]
           ~(tap by ship-sources-reverse.etn)
         |=  [=source-id whos=(set ship)]
         [hen %give %source whos (~(got by sources.etn) source-id)]
@@ -782,8 +786,8 @@
           ?~  whol
             ship-sources.etn
           (~(put by $(whol t.whol)) i.whol source-id)
-        =.  ship-sources-reverse
-          %-  ~(gas ju ship-sources-reverse)
+        =.  ship-sources-reverse.etn
+          %-  ~(gas ju ship-sources-reverse.etn)
           (turn whol |=(=ship [source-id ship]))
         ..feed
       (exec yen.etn [%give %source whos source])
@@ -841,7 +845,7 @@
           ::  old/state
       ==
   ^+  ..^$
-  ..^$(fak.own.pki.lex &)
+  ..^$
   ::  ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect

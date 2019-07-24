@@ -152,6 +152,7 @@
       =/  m  (async:stdio ,block)
       ^-  form:m
       ;<  =json  bind:m  (request-rpc url `'block number' %eth-block-number ~)
+      ~&  [%block-number json (parse-eth-block-number:rpc:ethereum json)]
       (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
     ::
     ++  get-block-by-number
@@ -296,7 +297,7 @@
       =/  a-purl=purl:eyre  node.p.source
       =.  url.state  (crip (en-purl:html a-purl))
       =.  whos.state  whos
-      (watch state url.state launch:contracts:azimuth)
+      (watch state url.state 0) :: launch:contracts:azimuth)
     ::
     ::  Start watching a node
     ::
@@ -317,9 +318,11 @@
       |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ~&  [%get-updates number.state]
+      ~&  [%get-updatessss number.state]
       ;<  =latest=block      bind:m  (get-latest-block url.state)
+      ~&  [%latest-block number.state]
       ;<  =new=number:block  bind:m  (zoom state number.id.latest-block)
+      ~&  [%zoomed-to number.state]
       =.  number.state  new-number
       |-  ^-  form:m
       =*  walk-loop  $
@@ -403,7 +406,7 @@
       |=  [state=app-state =latest=number:block]
       =/  m  (async:stdio ,number:block)
       ^-  form:m
-      =/  zoom-margin=number:block  30
+      =/  zoom-margin=number:block  3
       ?:  (lth latest-number (add number.state zoom-margin))
         (pure:m number.state)
       =/  to-number=number:block  (sub latest-number zoom-margin)

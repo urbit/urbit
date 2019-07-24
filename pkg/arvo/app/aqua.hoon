@@ -169,7 +169,7 @@
     =.  ..abet-pe
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
-        ~?  aqua-debug=|  [who=who %unknown-effect i.effects]
+        ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
         ..abet-pe
       (publish-effect u.sof)
     $(effects t.effects)
@@ -366,7 +366,8 @@
           %e  %eyre
           %f  %ford
           %g  %gall
-          %j  %ford
+          %j  %jael
+          %k  %kale
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]

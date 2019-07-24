@@ -2402,7 +2402,6 @@
     ::    Must uni the old-lat into the new-lat so that if we recreate
     ::    the same blob hash, we use the old blob not the new one.  Else
     ::    you get mutually recurring %delta blobs.
-    ::
     ++  add-blobs
       |=  [new-blobs=(map path blob) old-lat=(map lobe blob)]
       ^-  (map lobe blob)
@@ -4107,7 +4106,7 @@
       %boat
     :_  ..^$
     [hen %give %hill (turn ~(tap by mon.ruf) head)]~
-  ::.
+  ::
       %cred
     =.  cez.ruf
       ?~  cew.req  (~(del by cez.ruf) nom.req)

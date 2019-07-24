@@ -30,14 +30,15 @@
     |=  pin=ph-input
     ^-  output:n
     =,  enjs:format
-    =/  thus  (extract-thus-to uf.pin 'http://localhost:8545')
-    ?~  thus
+    =/  ask  (extract-request uf.pin 'http://localhost:8545/')
+    ?~  ask
       [& ~ %wait ~]
-    ?~  r.mot.u.thus
+    ?~  body.request.u.ask
       [& ~ %wait ~]
-    =/  req  q.u.r.mot.u.thus
+    =/  req  q.u.body.request.u.ask
     |^  ^-  output:n
     =/  method  (get-method req)
+    ::  =;  a  ~&  [%give-azimuth-response a]  -
     ?:  =(method 'eth_blockNumber')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
@@ -46,19 +47,22 @@
       :-  |  :_  [%wait ~]
       %+  answer-request  req
       :-  %o
-      =/  hash         (get-block-hash req)
-      =/  number       (hash-to-number (hex-to-num:ethereum hash))
+      =/  number       (hex-to-num:ethereum (get-block-hash req))
+      ~&  number=number
+      =/  hash         (number-to-hash number)
+      ~&  hash=hash
       =/  parent-hash  (number-to-hash ?~(number number (dec number)))
+      ~&  parent-hash=parent-hash
       %-  malt
       ^-  (list (pair term json))
-      :~  hash+s+hash
+      :~  hash+s+(crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
           number+s+(crip (num-to-hex:ethereum number))
           'parentHash'^s+(crip (num-to-hex:ethereum parent-hash))
       ==
     ?:  =(method 'eth_getLogs')
       :-  |  :_  [%wait ~]
       %+  answer-request  req
-      ?~  (get-param-obj-maybe req 'blockHash')
+      ?^  (get-param-obj-maybe req 'blockHash')
         %-  logs-by-hash
         (get-param-obj req 'blockHash')
       %+  logs-by-range
@@ -155,9 +159,8 @@
       =,  dejs:format
       =/  id
         %.  (need (de-json:html req))
-        (ot params+(ar so) ~)
-      ?>  ?=([* * ~] id)
-      i.id
+        (ot params+(at so bo ~) ~)
+      -.id
     ::
     ++  answer-request
       |=  [req=@t result=json]
@@ -175,23 +178,31 @@
           who.pin
           //http-client/0v1n.2m9vh
           %receive
-          num.u.thus
+          num.u.ask
           [%start [200 ~] `(as-octs:mimes:html resp) &]
       ==
     ::
     ++  number-to-hash
       |=  =number:block:able:kale
-      `@`(cat 3 0x5363 number)
+      ^-  @
+      ?:  (lth number launch:contracts:azimuth)
+        (cat 3 0x5364 (sub launch:contracts:azimuth number))
+      (cat 3 0x5363 (sub number launch:contracts:azimuth))
     ::
     ++  hash-to-number
       |=  =hash:block:able:kale
-      (div hash 0x1.0000)
+      (add launch:contracts:azimuth (div hash 0x1.0000))
     ::
     ++  logs-by-range
       |=  [from-block=@ud to-block=@ud]
       %+  logs-to-json  from-block
+      ?:  (lth to-block launch:contracts:azimuth)
+        ~
       %+  swag
-        [(sub from-block launch:contracts:azimuth) (sub to-block from-block)]
+        ?:  (lth from-block launch:contracts:azimuth)
+           [0 (sub to-block launch:contracts:azimuth)]
+        :-  (sub from-block launch:contracts:azimuth)
+        (sub to-block from-block)
       logs
     ::
     ++  logs-by-hash

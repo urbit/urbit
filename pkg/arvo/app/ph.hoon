@@ -133,16 +133,23 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  'DEV DONE'
         (send-hi ~bud ~dev)
+      ~&  >  'HI DONE'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ~&  >  'BREACH DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
+        ~&  >  'HI NOT RESPONDING DONE'
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  'REBOOT DEV DONE'
         (wait-for-dojo ~bud "hi ~dev successful")
+      ~&  >  'DONE'
       (pure:m ~)
     ::
       :+  %breach-hi-cousin
