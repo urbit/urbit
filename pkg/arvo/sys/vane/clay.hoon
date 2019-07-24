@@ -2396,15 +2396,20 @@
     ::
     ::  Update the object store with new blobs.
     ::
+    ::    Must uni the old-lat into the new-lat so that if we recreate
+    ::    the same blob hash, we use the old blob not the new one.  Else
+    ::    you get mutually recurring %delta blobs.
+    ::
     ++  add-blobs
       |=  [new-blobs=(map path blob) old-lat=(map lobe blob)]
       ^-  (map lobe blob)
-      %-  ~(uni by old-lat)
-      %-  malt
-      %+  turn
-        ~(tap by new-blobs)
-      |=  [=path =blob]
-      [p.blob blob]
+      =/  new-lat=(map lobe blob)
+        %-  malt
+        %+  turn
+          ~(tap by new-blobs)
+        |=  [=path =blob]
+        [p.blob blob]
+      (~(uni by new-lat) old-lat)
     ::
     ::  Apply a change list, creating the commit and applying it to
     ::  the current state.
@@ -4143,10 +4148,17 @@
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
-      abet:drop-me:den
-    [mos ..^$]
+      ?:  =(~ act.ruf)
+        ~&  %clay-idle
+        [~ ..^$]
+      ~&  :-  %clay-cancelling
+          ?>  ?=(^ act.ruf)
+          [hen -.req -.eval-data]:u.act.ruf
+      =.  act.ruf  ~
+      ?~  cue.ruf
+        [~ ..^$]
+      =/  =duct  duct:(need ~(top to cue.ruf))
+      [[duct %pass /queued-request %b %wait now]~ ..^$]
   ::
       %info
     ?:  =(%$ des.req)
