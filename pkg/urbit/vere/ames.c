@@ -88,7 +88,6 @@ _ames_send(u3_pact* pac_u)
   add_u.sin_port = htons(pac_u->por_s);
 
   uv_buf_t buf_u = uv_buf_init((c3_c*)pac_u->hun_y, pac_u->len_w);
-
   c3_i sas_i;
 
   if ( 0 != (sas_i = uv_udp_send(&pac_u->snd_u,
@@ -197,6 +196,8 @@ u3_ames_decode_lane(u3_atom lan) {
 
   u3_lane lan_u;
   lan_u.pip_w = u3r_word(0, pip);
+  c3_assert( _(u3a_is_cat(por)) );
+  c3_assert( por < 65536 );
   lan_u.por_s = por;
 
   u3z(pip); u3z(por);
@@ -308,6 +309,8 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
   pac_u->len_w   = u3r_met(3, pac);
   pac_u->hun_y   = c3_malloc(pac_u->len_w);
 
+  u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
+
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
   c3_assert( (c3y == tag) || (c3n == tag) );
@@ -317,7 +320,8 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
   if ( c3y == tag ) {
     c3_assert( c3y == u3a_is_cat(val) );
     c3_assert( val < 256 );
-    
+
+    pac_u->imp_y = val;
     _ames_czar(pac_u, sam_u->dns_c);
   }
   //  non-galaxy lane
@@ -372,10 +376,9 @@ _ames_recv_cb(uv_udp_t*        wax_u,
       lan_u.por_s = ntohs(add_u->sin_port);
       lan_u.pip_w = ntohl(add_u->sin_addr.s_addr);
       u3_noun lan = u3_ames_encode_lane(lan_u);
+      u3_noun mov = u3nt(c3__hear, u3nc(c3n, lan), msg);
 
-      u3_pier_plan
-        (u3nt(u3_blip, c3__ames, u3_nul),
-         u3nt(c3__hear, u3nc(c3n, lan), msg));
+      u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul), mov);
 #endif
     }
     _ames_free(buf_u->base);
@@ -563,6 +566,7 @@ u3_ames_io_init(u3_pier* pir_u)
 void
 u3_ames_io_talk(u3_pier* pir_u)
 {
+  _ames_io_start(pir_u);
 }
 
 /* u3_ames_io_exit(): terminate ames I/O.
