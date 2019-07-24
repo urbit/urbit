@@ -375,7 +375,7 @@ _ames_recv_cb(uv_udp_t*        wax_u,
 
       u3_pier_plan
         (u3nt(u3_blip, c3__ames, u3_nul),
-         u3nt(c3__hear, lan, msg));
+         u3nt(c3__hear, u3nc(c3n, lan), msg));
 #endif
     }
     _ames_free(buf_u->base);
