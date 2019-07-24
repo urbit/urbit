@@ -4,7 +4,7 @@ import Urbit.Time
 import UrbitPrelude
 
 import Arvo.Common (Header, HttpEvent, HttpServerConf, Lane, Method, Mime, Turf)
-import Arvo.Common (Routed(..), disorg, reorg)
+import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 
 -- Newt Effects -- Todo What are these? ----------------------------------------
@@ -153,40 +153,39 @@ deriveNoun ''TermEf
 -- IO-Driver Routing -----------------------------------------------------------
 
 data VaneEf
-    = EfNewt       NewtEf
-    | EfHttpClient HttpClientEf
-    | EfHttpServer HttpServerEf
-    | EfBehn       BehnEf
-    | EfAmes       AmesEf
-    | EfTerm       TermEf
-    | EfClay       SyncEf
-    | EfSync       SyncEf
-    | EfBoat       SyncEf
+    = VENewt       NewtEf
+    | VEHttpClient HttpClientEf
+    | VEHttpServer HttpServerEf
+    | VEBehn       BehnEf
+    | VEAmes       AmesEf
+    | VETerm       TermEf
+    | VEClay       SyncEf
+    | VESync       SyncEf
+    | VEBoat       SyncEf
   deriving (Eq, Ord, Show)
 
 deriveNoun ''VaneEf
 
 
--- Top-Level Effect Type -------------------------------------------------------
+-- Top-Level Ef Type -----------------------------------------------------------
 
-data Effect
-    = VaneEf VaneEf
-    | VegaEf (Cord, Cord, EvilPath)
-    | ExitEf (Cord, Cord, EvilPath)
+data Ef
+    = EfVane VaneEf
+    | EfVega Cord EvilPath -- second path component, rest of path
+    | EfExit Cord EvilPath -- second path component, rest of path
   deriving (Eq, Ord, Show)
 
-instance ToNoun Effect where
+instance ToNoun Ef where
   toNoun = \case
-    VaneEf v -> disorg (toNoun v)
-    ExitEf p -> toNoun (p, (Cord "exit", ()))
-    VegaEf p -> toNoun (p, (Cord "vega", ()))
+    EfVane v   -> toNoun $ reorgThroughNoun ("", v)
+    EfExit s p -> toNoun $ ReOrg "" s "exit" p (A 0)
+    EfVega s p -> toNoun $ ReOrg "" s "vega" p (A 0)
 
-instance FromNoun Effect where
-  parseNoun n = do
-    routed@(Routed (f, s, p) tv) <- parseNoun n
-    case tv of
-      ( "exit", A 0 ) -> pure (ExitEf (f, s, p))
-      ( "exit", _   ) -> fail "Exit effect expects nil value"
-      ( "vega", A 0 ) -> pure (VegaEf (f, s, p))
-      ( "vega", _   ) -> fail "Vega effect expects nil value"
-      ( _,      _   ) -> VaneEf <$> parseNoun (reorg routed)
+instance FromNoun Ef where
+  parseNoun = parseNoun >=> \case
+    ReOrg "" s "exit" p (A 0) -> pure (EfExit s p)
+    ReOrg "" s "exit" p _     -> fail "%exit effect expects nil value"
+    ReOrg "" s "vega" p (A 0) -> pure (EfVega s p)
+    ReOrg "" s "vega" p _     -> fail "%vega effect expects nil value"
+    ReOrg "" s tag    p val   -> EfVane <$> parseNoun (toNoun (s, tag, p, val))
+    ReOrg _  _ _      _ _     -> fail "Non-empty first path-element"

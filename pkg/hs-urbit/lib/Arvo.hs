@@ -9,4 +9,4 @@ import Arvo.Common
 import Arvo.Effect
 import Arvo.Event
 
-type FX = [Effect]
+type FX = [Ef]

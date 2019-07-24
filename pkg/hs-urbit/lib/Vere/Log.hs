@@ -217,7 +217,7 @@ appendEvents log !events = do
 streamEvents :: EventLog -> Word64 -> ConduitT () ByteString IO ()
 streamEvents log first = do
     last <- liftIO $ lastEv log
-    traceM ("streamEvents: " <> show (first, last))
+    -- traceM ("streamEvents: " <> show (first, last))
     batch <- liftIO (readBatch log first)
     unless (null batch) $ do
         for_ batch yield
@@ -316,6 +316,6 @@ putNoun flags txn db key val =
 putEvent :: MDB_WriteFlags -> Txn -> Dbi -> Word64 -> ByteString -> IO Bool
 putEvent flags txn db id bs = do
   withWord64AsMDBval id $ \idVal -> do
-    traceM ("putEvent: " <> show (id, length bs))
+    -- traceM ("putEvent: " <> show (id, length bs))
     byteStringAsMdbVal bs $ \mVal -> do
       mdb_put flags txn db idVal mVal

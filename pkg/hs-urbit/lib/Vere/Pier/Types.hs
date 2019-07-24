@@ -78,7 +78,7 @@ deriveToNoun ''Order
 
 --------------------------------------------------------------------------------
 
-type Perform = Effect -> IO ()
+type Perform = Ef -> IO ()
 
 data IODriver = IODriver
   { bornEvent   :: IO Ev

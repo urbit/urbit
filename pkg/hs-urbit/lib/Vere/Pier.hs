@@ -43,7 +43,7 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    blip        = EvBlip . GoodParse
+    blip        = EvBlip
     preKern ent = [ blip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
                   , blip $ BlipEvArvo $ ArvoEvWhom ()     ship
                   , blip $ BlipEvArvo $ ArvoEvWack ()     ent

@@ -4,10 +4,10 @@ module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
   , Bytes(..), Octs(..), File(..)
-  , Cord(..), Knot(..), Term(..), Tape(..), BigTape, Tour(..)
+  , Cord(..), Knot(..), Term(..), Tape(..), BigTape(..), Tour(..)
   , Decimal(..)
   , Tank(..), Tang, Plum(..)
-  , Mug(..), Path(..), EvilPath, Ship(..)
+  , Mug(..), Path(..), EvilPath(..), Ship(..)
   , Lenient(..)
   ) where
 
@@ -170,6 +170,7 @@ instance FromNoun a => FromNoun (Lenient a) where
           Right x  -> pure (GoodParse x)
           Left err -> do
             traceM ("LENIENT.FromNoun: " <> show err)
+            traceM (ppShow n)
             pure (FailParse n)
 
 instance ToNoun a => ToNoun (Lenient a) where
@@ -255,7 +256,7 @@ instance FromNoun Tape where
 -- Big Tape -- Don't Print -----------------------------------------------------
 
 newtype BigTape = BigTape Tape
-  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, ToNoun, FromNoun, IsString)
 
 instance Show BigTape where
   show (BigTape (Tape t)) = show (take 32 t <> "...")

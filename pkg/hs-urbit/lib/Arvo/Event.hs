@@ -6,6 +6,7 @@ import Urbit.Time
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (AtomIf, AtomIs, Desk, Lane, Mime, Turf)
 import Arvo.Common (HttpEvent, HttpServerConf)
+import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 
 -- Misc Types ------------------------------------------------------------------
@@ -255,16 +256,16 @@ data Vane
 
 data VaneName
     = Ames | Behn | Clay | Dill | Eyre | Ford | Gall | Iris | Jael
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Ord, Show, Enum, Bounded)
 
 data ZuseEv
-    = ZOVeer () Cord Path BigTape
-    | ZOVoid Void
+    = ZEVeer () Cord Path BigTape
+    | ZEVoid Void
   deriving (Eq, Ord, Show)
 
 data VaneEv
-    = VOVeer (VaneName, ()) Cord Path BigTape
-    | VOVoid Void
+    = VEVeer (VaneName, ()) Cord Path BigTape
+    | VEVoid Void
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Vane
@@ -275,52 +276,18 @@ deriveNoun ''ZuseEv
 
 -- The Main Event Type ---------------------------------------------------------
 
-{-
-    This parses an ovum in a somewhat complicated way.
-
-    The event structure is not setup to be easily parsed into typed data,
-    since the type of the event depends on the head of the path, and
-    the shape of the rest of the path depends on the shape of the event.
-
-    To make parsing easier (indeed, to allow use to use `deriveEvent` to
-    generate parsers for this) we first re-arrange the data in the ovum.
-
-    And ovum is `[path event]`, but the first two fields of the path
-    are used for routing, the event is always a head-tagged structure,
-    and the rest of the path is basically data that's a part of the event.
-
-    So, we take something with this struture:
-
-        [[fst snd rest] [tag val]]
-
-    Then restructure it into *this* shape:
-
-        [fst [snd [tag rest val]]]
-
-    And then proceed with parsing as usual.
--}
 data Ev
-    = EvBlip (Lenient BlipEv)
+    = EvBlip BlipEv
     | EvVane Vane
   deriving (Eq, Ord, Show)
 
-instance FromNoun Ev where
-    parseNoun n = named "Ev" $ do
-      (path::Path, tag::Cord, v::Noun) <- parseNoun n
-      case path of
-        Path (""     : m : p) -> EvBlip <$> parseNoun (toNoun (m, tag, p, v))
-        Path ("vane" : m : p) -> EvVane <$> parseNoun (toNoun (m, tag, p, v))
-        Path (_:_:_)          -> fail "path must start with %$ or %vane"
-        Path (_:_)            -> fail "path too short"
-        Path _                -> fail "empty path"
-
 instance ToNoun Ev where
-  toNoun o =
-      fromNounErr noun & \case
-        Left err -> error (show err)
-        Right (pathSnd::Knot, tag::Cord, Path path, val::Noun) ->
-          toNoun (Path (pathHead:pathSnd:path), (tag, val))
-    where
-      (pathHead, noun) =
-        case o of EvBlip bo -> ("",     toNoun bo)
-                  EvVane vo -> ("vane", toNoun vo)
+  toNoun = \case
+    EvBlip v -> toNoun $ reorgThroughNoun (Cord "",     v)
+    EvVane v -> toNoun $ reorgThroughNoun (Cord "vane", v)
+
+instance FromNoun Ev where
+  parseNoun = parseNoun >=> \case
+    ReOrg ""     s t p v -> fmap EvBlip $ parseNoun $ toNoun (s,t,p,v)
+    ReOrg "vane" s t p v -> fmap EvVane $ parseNoun $ toNoun (s,t,p,v)
+    ReOrg _      _ _ _ _ -> fail "First path-elem must be ?($ %vane)"

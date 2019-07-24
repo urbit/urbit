@@ -100,10 +100,9 @@ tryParseEvents dir first = do
                   Left err -> liftIO $ do
                       -- pPrint err
                       -- pPrint evNoun
-                      pure ()
+                      print err
                   Right (ev :: Ev) -> do
-                      -- pPrint ev
-                      -- _ <- getLine
+                      -- print ev
                       pure ()
                       -- pPrint ev
                       -- paths <- readIORef vPax
@@ -154,14 +153,11 @@ main = runInBoundThread $ do
 
     -- collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
 
-    -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
+    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
-    tryParseFX "/home/benjamin/zod-fx" 1 1000
-
-    let good = 1
-
-    tryParseFX "/home/benjamin/testnet-zod-fx" good (good + 100000000)
+    tryParseFX "/home/benjamin/zod-fx"         1 100000000
+    tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
