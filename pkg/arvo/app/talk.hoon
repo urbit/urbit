@@ -716,7 +716,6 @@
       ++  circ                                          ::  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag self urs:ab))
           ;~(pfix net (stag (^sein:title self) urs:ab))
         ::
           %+  cook
