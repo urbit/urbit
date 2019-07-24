@@ -2,14 +2,15 @@ module Main where
 
 import ClassyPrelude
 
-import Noun
-import Vere.Pier.Types
-import Vere.Pier
-import Vere.Serf
+import Arvo
+import Control.Exception hiding (evaluate)
 import Data.Acquire
 import Data.Conduit
 import Data.Conduit.List
-import Control.Exception hiding (evaluate)
+import Noun
+import Vere.Pier
+import Vere.Pier.Types
+import Vere.Serf
 
 import Control.Concurrent (runInBoundThread, threadDelay)
 import Control.Lens       ((&))
@@ -17,12 +18,10 @@ import System.Directory   (doesFileExist, removeFile)
 import Text.Show.Pretty   (pPrint)
 import Urbit.Time         (Wen)
 
+import qualified Data.Set  as Set
 import qualified Vere.Log  as Log
-import qualified Vere.Ovum as Ovum
-import qualified Vere.FX   as FX
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
-
 
 --------------------------------------------------------------------------------
 
@@ -96,22 +95,22 @@ tryParseEvents dir first = do
           when (eId <= cycle) $ do
               putStrLn ("[tryParseEvents] lifecycle nock: " <> tshow eId)
           when (eId > cycle) $ liftIO $ do
-              (mug, wen, ovumNoun) <- unpackJob n
-              case fromNounErr ovumNoun of
+              (mug, wen, evNoun) <- unpackJob n
+              case fromNounErr evNoun of
                   Left err -> liftIO $ do
                       -- pPrint err
-                      -- pPrint ovumNoun
+                      -- pPrint evNoun
                       pure ()
-                  Right (ovum :: Ovum.Ovum) -> do
-                      -- pPrint ovum
+                  Right (ev :: Ev) -> do
+                      -- pPrint ev
                       -- _ <- getLine
                       pure ()
-                      -- pPrint ovum
+                      -- pPrint ev
                       -- paths <- readIORef vPax
-                      -- let pax = case ovum of Ovum pax _ -> pax
+                      -- let pax = case ev of Ovum pax _ -> pax
                       -- writeIORef vPax (pax:paths)
                       -- print ("done from noun", eId)
-                      -- print (Job eId mug $ DateOvum date ovum)
+                      -- print (Job eId mug $ DateOvum date ev)
           -- unless (eId - first > 1000) $
           showEvents vPax (succ eId) cycle
 
@@ -155,8 +154,8 @@ main = runInBoundThread $ do
 
     -- collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
 
-    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
 
     tryParseFX "/home/benjamin/zod-fx" 1 1000
 
@@ -181,8 +180,8 @@ streamFX :: FilePath -> Word -> Word -> ConduitT () ByteString IO ()
 streamFX dir first last = loop first
   where
     loop n = do
-      when (n `mod` 1000 == 0) $ do
-        print n
+      -- when (n `mod` 1000 == 0) $ do
+        -- print n
       let fil = dir <> "/" <> show n
       exists <- liftIO (doesFileExist fil)
       when (exists && n <= last) $ do
@@ -190,18 +189,30 @@ streamFX dir first last = loop first
           loop (n+1)
 
 tryParseFXStream :: ConduitT ByteString Void IO ()
-tryParseFXStream = loop 0
+tryParseFXStream = loop 0 (mempty :: Set (Text, Noun))
   where
-    loop 1 = pure ()
-    loop errors =
+    loop 1 pax = for_ (setToList pax) print
+    loop errors pax =
       await >>= \case
-        Nothing -> pure ()
+        Nothing -> for_ (setToList pax) $ \(t,n) ->
+                     putStrLn (t <> ": " <> tshow n)
         Just bs -> do
           n <- liftIO (cueBSExn bs)
           fromNounErr n & \case
-            Left err            -> print err >> loop (errors + 1)
-            Right []            -> loop errors
-            Right (fx :: FX.FX) -> loop errors
+            Left err            -> print err >> loop (errors + 1) pax
+            Right []            -> loop errors pax
+            Right (fx :: FX) -> do
+              -- pax <- pure $ Set.union pax
+                          -- $ setFromList
+                          -- $ fx <&> \(Effect p v) -> (getTag v, toNoun p)
+              loop errors pax
+
+-- getTag :: Effect -> Text
+-- getTag fx =
+  -- let n = toNoun fx
+  -- in case n of
+       -- A _   -> maybe "ERR" unCord (fromNoun n)
+       -- C h _ -> maybe "ERR" unCord (fromNoun h)
 
 tryCopyLog :: IO ()
 tryCopyLog = do

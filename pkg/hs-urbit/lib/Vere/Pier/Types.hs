@@ -1,9 +1,9 @@
 module Vere.Pier.Types where
 
 import UrbitPrelude hiding (Term)
+
+import Arvo
 import Urbit.Time
-import Vere.Ovum
-import Vere.FX
 
 
 -- Don't show Nock values. -----------------------------------------------------
@@ -21,8 +21,8 @@ type EventId = Word64
 
 data Pill = Pill
     { pBootFormulas   :: [Nock]
-    , pKernelOvums    :: [Ovum]
-    , pUserspaceOvums :: [Ovum]
+    , pKernelOvums    :: [Ev]
+    , pUserspaceOvums :: [Ev]
     }
   deriving (Eq, Ord)
 
@@ -32,7 +32,7 @@ data LogIdentity = LogIdentity
     , lifecycleLen :: Word
     } deriving (Eq, Ord, Show)
 
-data BootSeq = BootSeq LogIdentity [Nock] [Ovum]
+data BootSeq = BootSeq LogIdentity [Nock] [Ev]
   deriving (Eq, Ord, Show)
 
 newtype Desk = Desk Cord
@@ -44,7 +44,7 @@ deriveNoun ''Pill
 
 -- Jobs ------------------------------------------------------------------------
 
-data Work = Work EventId Mug Wen Ovum
+data Work = Work EventId Mug Wen Ev
   deriving (Eq, Ord, Show)
 
 data LifeCyc = LifeCyc EventId Mug Nock
@@ -78,11 +78,11 @@ deriveToNoun ''Order
 
 --------------------------------------------------------------------------------
 
-type Perform = Eff -> IO ()
+type Perform = Effect -> IO ()
 
 data IODriver = IODriver
-  { bornEvent   :: IO Ovum
-  , startDriver :: (Ovum -> STM ()) -> IO (Async (), Perform)
+  { bornEvent   :: IO Ev
+  , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
   }
 
 data Writ = Writ

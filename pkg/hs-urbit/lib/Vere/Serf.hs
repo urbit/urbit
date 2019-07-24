@@ -12,15 +12,14 @@ module Vere.Serf ( Serf, SerfState
                  ) where
 
 import UrbitPrelude hiding (fail)
-import Data.Conduit
-import Control.Monad.Fail (fail)
 
+import Arvo
+import Control.Monad.Fail (fail)
+import Data.Conduit
 import Data.Void
 import Noun
 import System.Process
 import Vere.Pier.Types
-import Vere.Ovum
-import Vere.FX
 
 import Data.Bits              (setBit)
 import Control.Concurrent     (threadDelay)
@@ -229,8 +228,8 @@ sendOrder w o = do
   n <- evaluate (toNoun o)
 
   case o of
-    OWork (DoWork (Work _ _ _ o)) -> do
-      print (toNoun (o :: Ovum))
+    OWork (DoWork (Work _ _ _ e)) -> do
+      print (toNoun (e :: Ev))
     _  -> do
       pure ()
 

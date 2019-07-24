@@ -3,8 +3,9 @@
 module Noun.Conversions
   ( Nullable(..), Jammed(..), AtomCell(..)
   , Word128, Word256, Word512
-  , Bytes(..), Octs(..)
-  , Cord(..), Knot(..), Term(..), Tape(..), Tour(..)
+  , Bytes(..), Octs(..), File(..)
+  , Cord(..), Knot(..), Term(..), Tape(..), BigTape, Tour(..)
+  , Decimal(..)
   , Tank(..), Tang, Plum(..)
   , Mug(..), Path(..), EvilPath, Ship(..)
   , Lenient(..)
@@ -31,6 +32,7 @@ import Noun.Cue         (cue)
 import Noun.Jam         (jam)
 import RIO              (decodeUtf8Lenient)
 import System.IO.Unsafe (unsafePerformIO)
+import Text.Show.Pretty (ppShow)
 
 import qualified Data.Char                as C
 import qualified Data.Text.Encoding       as T
@@ -76,6 +78,22 @@ instance ToNoun Cord where
 
 instance FromNoun Cord where
   parseNoun = named "Cord" . fmap Cord . parseNounUtf8Atom
+
+
+-- Decimal Cords ---------------------------------------------------------------
+
+newtype Decimal = Decimal { unDecimal :: Word }
+  deriving newtype (Eq, Ord, Show)
+
+instance ToNoun Decimal where
+  toNoun = toNoun . Cord . tshow . unDecimal
+
+instance FromNoun Decimal where
+  parseNoun n = named "Decimal" do
+    Cord t <- parseNoun n
+    readMay t & \case
+      Nothing -> fail ("invalid decimal atom: " <> unpack t)
+      Just vl -> pure (Decimal vl)
 
 
 -- Char ------------------------------------------------------------------------
@@ -160,6 +178,23 @@ instance ToNoun a => ToNoun (Lenient a) where
   toNoun (GoodParse x) = toNoun x
 
 
+-- Todo -- Debugging Hack ------------------------------------------------------
+
+newtype Todo a = Todo a
+  deriving newtype (Eq, Ord, ToNoun)
+
+instance Show (Todo a) where
+  show (Todo _) = "TODO"
+
+instance FromNoun a => FromNoun (Todo a) where
+  parseNoun n = do
+      fromNounErr n & \case
+        Right x -> pure (Todo x)
+        Left er -> do
+          traceM ("[TODO]: " <> show er <> "\n" <> ppShow n <> "\n")
+          fail (show er)
+
+
 -- Nullable --------------------------------------------------------------------
 
 {-|
@@ -216,6 +251,14 @@ instance FromNoun Tape where
         Left err -> fail (show err)
         Right tx -> pure (Tape tx)
 
+
+-- Big Tape -- Don't Print -----------------------------------------------------
+
+newtype BigTape = BigTape Tape
+  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+
+instance Show BigTape where
+  show (BigTape (Tape t)) = show (take 32 t <> "...")
 
 
 -- Pretty Printing -------------------------------------------------------------
@@ -288,6 +331,15 @@ instance FromNoun Octs where
       where
         word2Int :: Word -> Int
         word2Int = fromIntegral
+
+
+-- File Contents -- Don't Print ------------------------------------------------
+
+newtype File = File Octs
+  deriving newtype (Eq, Ord, ToNoun, FromNoun)
+
+instance Show File where
+  show (File (Octs bs)) = show (take 32 bs <> "...")
 
 
 -- Knot ------------------------------------------------------------------------

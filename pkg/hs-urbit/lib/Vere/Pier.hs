@@ -2,10 +2,10 @@
 
 module Vere.Pier (booted, resumed, runPersist, runCompute) where
 
-import Data.Acquire
 import UrbitPrelude
-import Vere.Ovum
-import Vere.FX
+
+import Arvo
+import Data.Acquire
 import Vere.Pier.Types
 
 import System.Directory   (createDirectoryIfMissing)
@@ -43,9 +43,10 @@ generateBootSeq ship Pill{..} = do
     pure $ BootSeq ident pBootFormulas ovums
   where
     ident       = LogIdentity ship True (fromIntegral $ length pBootFormulas)
-    preKern ent = [ OvumBlip $ GoodParse $ BlipTerm $ TermBoot (1,()) (Fake (who ident))
-                  , OvumBlip $ GoodParse $ BlipArvo $ ArvoWhom ()     ship
-                  , OvumBlip $ GoodParse $ BlipArvo $ ArvoWack ()     ent
+    blip        = EvBlip . GoodParse
+    preKern ent = [ blip $ BlipEvTerm $ TermEvBoot (1,()) (Fake (who ident))
+                  , blip $ BlipEvArvo $ ArvoEvWhom ()     ship
+                  , blip $ BlipEvArvo $ ArvoEvWack ()     ent
                   ]
 
 
@@ -105,7 +106,7 @@ resumed top flags = do
 
 {-
 performCommonPierStartup :: Serf.Serf
-                         -> TQueue Ovum
+                         -> TQueue Ev
                          -> TQueue (Writ, FX)
                          -> TQueue (Writ, FX)
                          -> LogState
@@ -134,7 +135,7 @@ performCommonPierStartup serf computeQ persistQ releaseQ logState = do
 
 -- Compute Thread --------------------------------------------------------------
 
-runCompute :: Serf -> STM Ovum -> (EventId, Mug) -> IO (Async ())
+runCompute :: Serf -> STM Ev -> (EventId, Mug) -> IO (Async ())
 runCompute w getEvent (evendId, mug) = async $ forever $ do
   ovum <- atomically $ getEvent
 
