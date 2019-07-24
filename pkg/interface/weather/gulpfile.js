@@ -7,6 +7,7 @@ var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var exec = require('child_process').exec;
+var rename = require('gulp-rename');
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
@@ -113,6 +114,18 @@ gulp.task('tile-js-minify', function () {
     .pipe(gulp.dest('../../arvo/app/weather/js/'));
 });
 
+gulp.task('rename-index-min', function() {
+  return gulp.src('../../arvo/app/weather/js/index-min.js')
+    .pipe(rename('index.js'))
+    .pipe(gulp.dest('../../arvo/weather/chat/js/'));
+});
+
+gulp.task('rename-tile-min', function() {
+  return gulp.src('../../arvo/app/weather/js/tile-min.js')
+    .pipe(rename('tile.js'))
+    .pipe(gulp.dest('../../arvo/app/weather/js/'));
+});
+
 gulp.task('urbit-copy', function () {
   let ret = gulp.src('../../arvo/**/*');
 
@@ -127,7 +140,8 @@ gulp.task('tile-js-bundle-dev', gulp.series('tile-jsx-transform', 'tile-js-impor
 gulp.task('tile-js-bundle-prod',
   gulp.series('tile-jsx-transform', 'tile-js-imports', 'tile-js-minify'));
 
-gulp.task('bundle-prod', gulp.series('tile-js-bundle-prod', 'urbit-copy'));
+gulp.task('bundle-prod', 
+  gulp.series('tile-js-bundle-prod', 'rename-tile-min', 'urbit-copy'));
 
 gulp.task('default', gulp.series('tile-js-bundle-dev', 'urbit-copy'));
 gulp.task('watch', gulp.series('default', function () {

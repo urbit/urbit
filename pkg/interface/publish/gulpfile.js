@@ -7,6 +7,7 @@ var postcss = require('gulp-postcss')
 var sucrase = require('@sucrase/gulp-plugin');
 var minify = require('gulp-minify');
 var exec = require('child_process').exec;
+var rename = require('gulp-rename');
 
 var resolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
@@ -127,6 +128,18 @@ gulp.task('tile-js-minify', function () {
     .pipe(gulp.dest('../../arvo/app/publish/js/'));
 });
 
+gulp.task('rename-index-min', function() {
+  return gulp.src('../../arvo/app/publish/js/index-min.js')
+    .pipe(rename('index.js'))
+    .pipe(gulp.dest('../../arvo/app/publish/js/'));
+});
+
+gulp.task('rename-tile-min', function() {
+  return gulp.src('../../arvo/app/publish/js/tile-min.js')
+    .pipe(rename('tile.js'))
+    .pipe(gulp.dest('../../arvo/app/publish/js/'));
+});
+
 gulp.task('js-cachebust', function(cb) {
   return Promise.resolve(
     exec('git log', function (err, stdout, stderr) {
@@ -173,7 +186,9 @@ gulp.task('bundle-prod',
       'js-bundle-prod',
       'tile-js-bundle-prod',
     ),
-    'urbit-copy'
+    'rename-index-min',
+    'rename-tile-min',
+    'urbit-copy',
   )
 );
 

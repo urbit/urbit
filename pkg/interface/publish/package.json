@@ -18,6 +18,7 @@
     "gulp-cssimport": "^7.0.0",
     "gulp-minify": "^3.1.0",
     "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
     "rollup": "^1.6.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^2.3.0",
