@@ -580,8 +580,8 @@
     [~ ~ %wait ~]
   ?:  ?=(%writ +<.sign)
     =/  uni-rang=rang
-      :-  (~(uni by hut.ran) hut.new-rang)
-      (~(uni by lat.ran) lat.new-rang)
+      :-  (~(uni by hut.new-rang) hut.ran)
+      (~(uni by lat.new-rang) lat.ran)
     [~ ~ %done p.sign uni-rang]
   ~|  [%expected-writ got=+<.sign]
   !!
@@ -1611,7 +1611,10 @@
                 (page-to-lobe:sutil [p q.q]:(~(got by both-patched) pax))
               [(lobe-to-mark:sutil u.-) u.-]
             [p q.q]:cay
-        [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
+        :-  (~(put by hat) pax p.bol)
+        ?:  (~(has by lat) p.bol)
+          lat
+        (~(put by lat) p.bol bol)
       ::  ~&  old=(~(run by old) mug)
       ::  ~&  newdal=(~(run by new.dal) mug)
       ::  ~&  newdob=(~(run by new.dob) mug)
@@ -2054,7 +2057,7 @@
       (turn ~(tap in bar.nako) |=(=blob [p.blob blob]))
     ::  lat: updated blobs by hash
     ::
-    =/  lat  (~(gas by lat.ran) nat)
+    =/  lat  (~(uni by (malt nat)) lat.ran)
     ::  traverse updated state and sanity check
     ::
     =+  ~|  :*  %bad-foreign-update
@@ -3075,8 +3078,8 @@
     ^+  +>
     =.  +>.$  (emit [hen %give %mere %& conflicts])
     =:  dom      dome
-        hut.ran  (~(uni by hut.ran) hut.rang)
-        lat.ran  (~(uni by lat.ran) lat.rang)
+        hut.ran  (~(uni by hut.rang) hut.ran)
+        lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =.  +>.$  wake
     finish-write
