@@ -7,11 +7,11 @@ import Arvo.Common (Header, HttpEvent, HttpServerConf, Lane, Method, Mime, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 
--- Newt Effects -- Todo What are these? ----------------------------------------
+-- Newt Effects ----------------------------------------------------------------
 
 {-
-    %turf -- TODO
-    %send -- TODO
+    %turf -- Set which domain names we've bound.
+    %send -- Send a UDP packet.
 -}
 data NewtEf
     = NewtEfTurf (Atom, ()) [Turf]
@@ -79,9 +79,9 @@ deriveNoun ''SyncEf
 -- UDP Effects -----------------------------------------------------------------
 
 {-
-    %init -- TODO
-    %west -- TODO
-    %woot -- TODO
+    %init -- "I don't think that's something that can happen"
+    %west -- "Those also shouldn't happen"
+    %woot -- "Those also shouldn't happen"
 -}
 data AmesEf
     = AmesEfInit Path ()
@@ -135,7 +135,7 @@ data Blit
     %init -- TODO
     %logo -- Shutdown
     %mass -- Measure memory usage (unused)
-    %send -- TODO
+    %send -- Send a UDP packet (duplicate of ames %send)
 -}
 data TermEf
     = TermEfBbye Path ()

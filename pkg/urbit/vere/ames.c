@@ -154,6 +154,10 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
       break;
     }
 
+    // If valid result.
+    //     parse info from result and set address and last time.
+    //     If failed,
+    //        set address to 255.255.255.255 to indicate lookup failure.
     if ( (AF_INET == rai_u->ai_family) ) {
       struct sockaddr_in* add_u = (struct sockaddr_in *)rai_u->ai_addr;
       c3_w old_w = sam_u->imp_w[pac_u->imp_y];
@@ -162,6 +166,8 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
       sam_u->imp_t[pac_u->imp_y] = now;
 
 #if 1
+      // If the address lookup gives a new result, or if the last lookup failed:
+      //   Log the change (even if the new lookup failed too?)
       if ( sam_u->imp_w[pac_u->imp_y] != old_w
         && sam_u->imp_w[pac_u->imp_y] != 0xffffffff ) {
         u3_noun wad = u3i_words(1, &sam_u->imp_w[pac_u->imp_y]);
@@ -186,7 +192,7 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
 }
 
 
-/* _ames_czar(): galaxy address resolution.
+/* _ames_czar(): Sent a packet to a galaxy (using DNS address resolution).
 */
 static void
 _ames_czar(u3_pact* pac_u, c3_c* bos_c)
@@ -195,8 +201,10 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
   u3_pier* pir_u = u3_pier_stub();
   u3_ames* sam_u = pir_u->sam_u;
 
+  // Determine port based on galaxy port.
   pac_u->por_s = _ames_czar_port(pac_u->imp_y);
 
+  // If fake, send to localhost.
   if ( c3n == u3_Host.ops_u.net ) {
     pac_u->pip_w = 0x7f000001;
     _ames_send(pac_u);
@@ -204,6 +212,8 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
   }
 
   //  if we don't have a galaxy domain, no-op
+  //
+  //  If DNS stuff not set, then we can't resolve galaxy addresses.
   //
   if ( 0 == bos_c ) {
     u3_noun nam = u3dc("scot", 'p', pac_u->imp_y);
@@ -218,12 +228,16 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
   time_t now = time(0);
 
   // backoff
+  // if lookup failed recently, drop the packet.
   if ( (0xffffffff == sam_u->imp_w[pac_u->imp_y]) &&
        (now - sam_u->imp_t[pac_u->imp_y]) < 300 ) {
     _ames_pact_free(pac_u);
     return;
   }
 
+  // If we don't already know the galaxy IP.
+  //     Construct the string $galaxyname.urbit.org
+  //     Do a dns lookup
   if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
        (now - sam_u->imp_t[pac_u->imp_y]) > 300 ) { /* 5 minute TTL */
     u3_noun  nam = u3dc("scot", 'p', pac_u->imp_y);
@@ -246,12 +260,16 @@ _ames_czar(u3_pact* pac_u, c3_c* bos_c)
       if ( 0 != (sas_i = uv_getaddrinfo(u3L, adr_u,
                                         _ames_czar_cb,
                                         pac_u->dns_c, 0, 0)) ) {
+        // TODO Not sure what this condition is:
+        //     libuv was unable to attempt to do a DNS lookup.
         u3l_log("ames: %s\n", uv_strerror(sas_i));
         _ames_czar_gone(pac_u, now);
         return;
       }
     }
   }
+
+  // Otherwise send to known address.
   else {
     pac_u->pip_w = sam_u->imp_w[pac_u->imp_y];
     _ames_send(pac_u);
@@ -271,12 +289,16 @@ _ames_lane_ip(u3_noun lan, c3_s* por_s, c3_w* pip_w)
 
       return c3y;
     } break;
+
+    // Never use IPv6, always use fallback and fail if no fallback.
     case c3__is: {
       u3_noun pq_lan = u3h(u3t(u3t(lan)));
 
       if ( u3_nul == pq_lan ) return c3n;
       else return _ames_lane_ip(u3t(pq_lan), por_s, pip_w);
     } break;
+
+    // same behavior as c3__if.
     case c3__ix: {
       *por_s = (c3_s) u3h(u3t(u3t(lan)));
       *pip_w = u3r_word(0, u3t(u3t(u3t(lan))));
@@ -311,22 +333,31 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
 
   u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
 
+  // Parse ipv4 address and port from lane.
+  // We don't support ipv6, we always use the fallback
+  //    We fail if it doesn't exist.
   if ( c3y == _ames_lane_ip(lan, &pac_u->por_s, &pac_u->pip_w) ) {
     pac_u->len_w = u3r_met(3, pac);
     pac_u->hun_y = c3_malloc(pac_u->len_w);
 
+    // Read bytestring from packet atom (length, and byte ptr)
     u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
-    if ( 0 == pac_u->pip_w ) {
-      pac_u->pip_w = 0x7f000001;
-      pac_u->por_s = pir_u->por_s;
+    if ( 0 == pac_u->pip_w ) {     // if ip address is 0, this is to ourselves.
+      pac_u->pip_w = 0x7f000001;   // set to 127.0.0.1
+      pac_u->por_s = pir_u->por_s; // set port to our own port?
     }
 
+    // if ip address is 0.0.1.$x
+    //   Then $x is the galaxy ship number.
+    //   Call ames_czar instead of _ames_send.
     if ( (0 == (pac_u->pip_w >> 16)) && (1 == (pac_u->pip_w >> 8)) ) {
       pac_u->imp_y = (pac_u->pip_w & 0xff);
 
       _ames_czar(pac_u, sam_u->dns_c);
     }
+
+    // Otherwise if real OR address is localhost, then send.
     else if ( (c3y == u3_Host.ops_u.net) || (0x7f000001 == pac_u->pip_w) ) {
       _ames_send(pac_u);
     }
@@ -395,7 +426,20 @@ _ames_io_start(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
   c3_s por_s     = pir_u->por_s;
+
+  //  Get the ship name.
   u3_noun who    = u3i_chubs(2, pir_u->who_d);
+
+  // To determinte the port that we will run in:
+  //
+  // If galaxy
+  //   If fake: 31337 + ship (also, bind on localhost only)
+  //   If real: 13337 + ship
+  //
+  // If not galaxy
+  //   Then use por_s from pier structure.
+  //     This will be zero if -p was not set.
+
   u3_noun rac    = u3do("clan:title", u3k(who));
 
   if ( c3__czar == rac ) {
@@ -535,6 +579,7 @@ u3_ames_ef_turf(u3_pier* pir_u, u3_noun tuf)
 
     u3z(tuf);
   }
+
   else if ( (c3n == pir_u->fak_o) && (0 == sam_u->dns_c) ) {
     u3l_log("ames: turf: no domains\n");
   }
@@ -552,6 +597,7 @@ u3_ames_io_init(u3_pier* pir_u)
   u3_ames* sam_u = pir_u->sam_u;
   sam_u->liv = c3n;
 
+  // Set %wake timer.
   uv_timer_init(u3L, &sam_u->tim_u);
 }
 

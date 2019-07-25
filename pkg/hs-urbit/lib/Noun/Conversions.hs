@@ -389,7 +389,7 @@ instance FromNoun Term where -- XX TODO
 -- Ship ------------------------------------------------------------------------
 
 newtype Ship = Ship Word128 -- @p
-  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
 
 -- Path ------------------------------------------------------------------------

@@ -6,6 +6,7 @@ module Noun
     , module Noun.Jam
     , module Noun.Cue
     , module Noun.TH
+    , module Data.Word
     , _Cue
     , loadFile
     ) where
@@ -20,6 +21,7 @@ import Noun.Core
 import Noun.Cue
 import Noun.Jam
 import Noun.TH
+import Data.Word
 
 --------------------------------------------------------------------------------
 

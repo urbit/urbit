@@ -137,7 +137,7 @@ deriveNoun ''HttpServerReq
 -- Ames ------------------------------------------------------------------------
 
 data AmesEv
-    = AmesEvHear ()   Lane Atom
+    = AmesEvHear ()   Lane Bytes
     | AmesEvWake ()   ()
     | AmesEvWant Path Ship Path Noun
     | AmesEvCrud Path Cord Tang

@@ -15,8 +15,8 @@ import qualified Network.HTTP.Types.Method as H
 
 -- Misc Types ------------------------------------------------------------------
 
-type AtomIf = Atom -- @if (TODO: What does this mean?)
-type AtomIs = Atom -- @is (TODO: What does this mean?)
+type AtomIf = Word32  -- Ipv4 Address (@if)
+type AtomIs = Word128 -- Ipv6 Address (@is)
 
 -- Domain Name
 newtype Turf = Turf { unTurf :: [Cord] }
@@ -129,13 +129,17 @@ deriveNoun ''JsonNode
 -- Lanes -----------------------------------------------------------------------
 
 -- Network Port
-newtype Port = Port { unPort :: Word }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+newtype Port = Port { unPort :: Word16 }
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
+{-
+    The `Wen` field is (probably) the last time that we were sure that
+    this DNS lookup worked.  This is set when we receive a %hear event.
+-}
 data Lane
-    = If Wen Port AtomIf
-    | Is Atom (Maybe Lane) AtomIs
-    | Ix Wen Port AtomIf
+    = If Wen Port AtomIf              -- Ipv4
+    | Is Atom (Maybe Lane) AtomIs     -- Ipv6 with fallback
+    | Ix Wen Port AtomIf              -- Not used (Same behavior as `If`)
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Lane
@@ -179,6 +183,8 @@ deriveNoun ''Lane
         Which rewrites the %init example to:
 
             [//term/1 [%init ~]]
+
+        TODO The reverse translation is not done yet.
 
 -}
 data ReOrg = ReOrg Cord Cord Cord EvilPath Noun

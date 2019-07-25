@@ -135,6 +135,7 @@ instance Arbitrary VaneEv where
 instance Arbitrary ZuseEv where
   arbitrary = ZEVeer () <$> arb <*> arb <*> arb
 
+
 -- Generate Arbitrary Values ---------------------------------------------------
 
 arb :: Arbitrary a => Gen a
