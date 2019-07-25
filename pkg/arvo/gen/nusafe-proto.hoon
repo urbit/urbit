@@ -568,8 +568,8 @@
   |%
   ::
   ++  node
-    $~  [~ *snapshot:common ~ ~]
-    $:  ::  if we allow partial event items, 
+    $~  [~ ~ ~ ~]
+    $:  ::  an event log with snapshots in it.
         ::
         partial-event-log=(list [id=@ud item=event-item])
         ::  the current state of the node
@@ -578,7 +578,10 @@
         ::    may not be a snapshot so always have the current head rendered as
         ::    a snapshot.
         ::
-        =snapshot:common
+        ::    However, we may not have any information about this node, only
+        ::    understand that its exists in the graph.
+        ::
+        snapshot=(unit snapshot:common)
         ::  live children state we know about
         ::
         ::    When we see a %create event, we place a ~ in this node until we
@@ -607,7 +610,7 @@
   ::  and then events 11,12,13.
   ::
   ++  event-item
-    $:  [%snapshot =snapshot:common]
+    $%  [%snapshot =snapshot:common]
         [%event =event-log-item:common]
     ==
   --
@@ -623,6 +626,11 @@
       e
     ::
     [%log q.user-event.e q.private-event.e]
+  ::
+  ++  snapshot
+    |=  s=snapshot:common
+    ^-  transport-snapshot:common
+    [app-type top-state signature-type q.snapshot children]:s
   --
 ::
 ++  from-transport
@@ -643,6 +651,17 @@
     =/  private-event=vase  (slam private-event-mold %noun private-event.e)
     ::
     `[%log user-event private-event]
+  ::
+  ++  snapshot
+    |=  s=transport-snapshot:common
+    ^-  snapshot:common
+    ::
+    =/  node-vase=vase           (~(got by app-map) app-type.s)
+    ::
+    =/  snapshot-mold=vase  (slap node-vase [%limb %snapshot])
+    =/  snapshot-vase=vase  (slam snapshot-mold %noun raw-snapshot.s)
+    ::
+    [app-type.s top-state.s signature-type.s snapshot-vase children.s]
   --
 ::  a diff to be sent over the wire for transport; this contains no vases.
 ::
@@ -650,6 +669,10 @@
   $%  [%snapshot id=@u snapshot=transport-snapshot:common]
       [%event id=@u event=transport-event-log-item:common]
   ==
+
+
+
+
 ::  Imagine that I'm the client connecting for the first time. What gets sent?
 ::  I ask for (peer /). What gets returned? An event log or more likely a
 ::  snapshot which would theoretically be reconstructed from an event log. I
@@ -1031,7 +1054,9 @@
     ::
     candidate
   --
-::  Situation: someone has opened a new +peer on a path, so 
+::  Situation: someone has opened a new +peer on a path; the first thing we
+::  need to do is to send a complete snapshot of the current state to the
+::  client.
 ::
 ++  get-peer-diff-snapshot
   |=  [route=path top-state=node:server]
@@ -1042,7 +1067,7 @@
         ~
       ::
       =/  event-id  (sub next-event-id.u.maybe-state 1)
-      [~ %snapshot event-id (make-snapshot u.maybe-state)]
+      [~ %snapshot event-id (snapshot:to-transport snapshot.u.maybe-state)]
   ::
   ++  get-node-for
     |=  [route=path state=node:server]
@@ -1055,12 +1080,53 @@
       ~
     ::
     $(route t.route, state u.child-node)
-  ::
-  ++  make-snapshot
-    |=  state=node:server
-    ^-  transport-snapshot:common
-    [app-type top-state signature-type q.snapshot children]:snapshot.state
   --
+::  +applies a diff to a client's state
+::
+++  apply-peer-diff
+  |=  [route=path =peer-diff client-state=node:client]
+  ^-  node:client
+  ::
+  ?^  route
+    =/  child-state=node:client
+      %_    $
+          route  t.route
+      ::
+          client-state
+        ?~  child-state=(~(get by children.client-state) i.route)
+          ::  this is the first time we've even heard of this node
+          *node:client
+        ?~  u.child-state
+          ::  we've heard about this node before, but know nothing about it
+          *node:client
+        u.u.child-state
+      ==
+    ::
+    client-state(children (~(put by children.client-state) i.route `child-state))
+  ::  apply this peer-diff to the client-state
+  ::
+  ?-    -.peer-diff
+      ::  we have a completely new snapshot which we append to history
+      ::
+      %snapshot
+    =/  snapshot=snapshot:common
+      (snapshot:from-transport snapshot.peer-diff)
+    ::
+    %_    client-state
+        partial-event-log
+      :_  partial-event-log.client-state
+      [id.peer-diff %snapshot snapshot]
+    ::
+        snapshot
+      [~ snapshot]
+    ==
+  ::
+      %event
+    ::  todo: we have an event item, we need to apply it against the state.
+    ::
+    ~&  [%todo-apply-event peer-diff]
+    client-state
+  ==
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -1124,8 +1190,13 @@
 
 ~&  %client---------1
 ::
-=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
+=|  client-state=node:client
+::
+=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting/1 toplevel)
+::
+=.  client-state  (apply-peer-diff /shitposting/1 (need snapshot-state) client-state)
 
+~&  [%client-state client-state]
 
 ::  continue shitposting in the current thread!
 ::
@@ -1134,7 +1205,11 @@
   (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
 ~&  [%changes ret4]
 
-
+?>  ?=(^ ret4)
+::  TODO: Actually apply diffs that come over the peer! This requires patches to work!
+::
+::  =.  client-state  (apply-peer-diff /shitposting/1 .i.ret4 client-state)
+::  ~&  [%final-client-state client-state]
 
 ::  zero
 ::
