@@ -191,6 +191,7 @@ u3_ames_decode_lane(u3_atom lan) {
   u3_noun cud, tag, pip, por;
 
   c3_assert( _(u3a_is_atom(lan)) );
+  u3l_log("refcount %d\n", u3a_use(lan));
   u3m_p("to-cue", lan);
   cud = u3ke_cue(lan);
   u3x_trel(cud, &tag, &pip, &por);
@@ -198,6 +199,7 @@ u3_ames_decode_lane(u3_atom lan) {
 
   u3_lane lan_u;
   lan_u.pip_w = u3r_word(0, pip);
+  u3l_log("pip_w %ull\n", lan_u.pip_w);
   u3z(pip);
 
   c3_assert( _(u3a_is_cat(por)) );
@@ -315,6 +317,7 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
   u3m_p("lan", lan);
+  u3l_log("lan-ref %d\n", u3a_use(lan));
 
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
@@ -332,7 +335,8 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
   //  non-galaxy lane
   //
   else {
-    u3_lane lan_u = u3_ames_decode_lane(val);
+    u3l_log("val-ref %d\n", u3a_use(val));
+    u3_lane lan_u = u3_ames_decode_lane(u3k(val));
     //  convert incoming localhost to outgoing localhost
     //
     lan_u.pip_w = ( 0 == lan_u.pip_w )? 0x7f000001 : lan_u.pip_w;

@@ -856,8 +856,7 @@
              %-  (slog q.task)
              event-core
       %hear  (on-hear:event-core [lane blob]:task)
-      %hole  ~&  %ames-hole
-             event-core
+      %hole  (on-hole:event-core [lane blob]:task)
       %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
@@ -912,7 +911,12 @@
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
-  ++  emit  |=(=move event-core(moves [move moves]))
+  ::  TODO reenable after debug
+  ::++  emit  |=(=move event-core(moves [move moves]))
+  ++  emit
+    |=  =move
+    ~&  %alef-emit^move
+    event-core(moves [move moves])
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
@@ -948,6 +952,16 @@
     ^+  event-core
     ::
     (on-hear-packet lane (decode-packet blob))
+  ::  +on-hole: handle packet crash notification
+  ::
+  ::    TODO: retry processing and nack if possible
+  ::
+  ++  on-hole
+    |=  [=lane =blob]
+    ^+  event-core
+    ::
+    ~&  %ames-hole
+    event-core
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
@@ -1077,6 +1091,9 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  set .lane as new route to peer since packet is valid
     ::
+    ::  TODO: enable (only disabled for testing)
+    ::=?  route.peer-state  !=(%czar (clan:title her.channel))
+    ::  `[direct=%.y lane]
     =.  route.peer-state  `[direct=%.y lane]
     ::
     =/  peer-core  (make-peer-core peer-state channel)
@@ -1659,8 +1676,10 @@
       ++  on-still-memo
         |=  [=message-num =message]
         ^+  peer-core
+        ::  pop first element off .path.message as .target-vane
         ::
-        ?>  ?=([?(%a %c %g %k) *] path.message)
+        =^  target-vane  path.message
+          ?>(?=([?(%a %c %g %k) *] path.message) path.message)
         ::  odd .bone; "request" message to pass to vane before acking
         ::
         ?:  =(1 (end 0 1 bone))
@@ -1673,7 +1692,7 @@
           =^  client-duct  ossuary.peer-state
             (get-duct ossuary.peer-state bone duct)
           ::
-          ?-  i.path.message
+          ?-  target-vane
             %a  ~|  %bad-ames-message^path.message^her.channel  !!
             %c  (emit client-duct %pass wire %c %memo her.channel message)
             %g  (emit client-duct %pass wire %g %memo her.channel message)

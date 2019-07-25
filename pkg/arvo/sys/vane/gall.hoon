@@ -484,8 +484,9 @@
   ::
   ++  mo-gawk                                           ::  ames forward
     |=  {him/@p dap/dude num/@ud rok/rook}
-    =.  +>  ?.(?=($u -.rok) +> (mo-give %done ~))
+    =?  +>  ?=(%u -.rok)  (mo-give %done ~)
     %+  mo-pass
+      =-  ~&  %gall-pass^-  -
       [%sys %req (scot %p him) dap (scot %ud num) ~]
     ^-  note-arvo
     ?-  -.rok
@@ -1290,11 +1291,13 @@
     [~ ..^$(sys.mast.all hen)]
   ::
       %memo
+    ~&  %gall-memo-path^path.message.q.hic
     ?>  ?=([%ge @ ~] path.message.q.hic)
     =/  him=ship  ship.q.hic
     =*  dap  i.t.path.message.q.hic
     ::
     =+  mes=;;([@ud rook] payload.message.q.hic)
+    ~&  %gall-memo-coerced
     =<  mo-abet
     (mo-gawk:(mo-abed:mo hen) him dap mes)
   ::

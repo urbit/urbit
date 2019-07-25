@@ -200,6 +200,9 @@ _reck_kick_newt(u3_pier* pir_u, u3_noun pox, u3_noun fav)
     default: break;
 
     case c3__send: {
+      u3m_p("fav", fav);
+      u3l_log("fav-ref %d\n", u3a_use(fav));
+
       u3_noun lan = u3k(u3h(u3t(fav)));
       u3_noun pac = u3k(u3t(u3t(fav)));
 
