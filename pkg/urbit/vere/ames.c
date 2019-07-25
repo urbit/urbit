@@ -190,17 +190,20 @@ u3_lane
 u3_ames_decode_lane(u3_atom lan) {
   u3_noun cud, tag, pip, por;
 
+  c3_assert( _(u3a_is_atom(lan)) );
+  u3m_p("to-cue", lan);
   cud = u3ke_cue(lan);
   u3x_trel(cud, &tag, &pip, &por);
   c3_assert( c3__ipv4 == tag );
 
   u3_lane lan_u;
   lan_u.pip_w = u3r_word(0, pip);
+  u3z(pip);
+
   c3_assert( _(u3a_is_cat(por)) );
   c3_assert( por < 65536 );
   lan_u.por_s = por;
 
-  u3z(pip); u3z(por);
   return lan_u;
 }
 
@@ -311,6 +314,8 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
 
   u3r_bytes(0, pac_u->len_w, pac_u->hun_y, pac);
 
+  u3m_p("lan", lan);
+
   u3_noun tag, val;
   u3x_cell(lan, &tag, &val);
   c3_assert( (c3y == tag) || (c3n == tag) );
@@ -327,7 +332,7 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
   //  non-galaxy lane
   //
   else {
-    u3_lane lan_u = u3_ames_decode_lane(lan);
+    u3_lane lan_u = u3_ames_decode_lane(val);
     //  convert incoming localhost to outgoing localhost
     //
     lan_u.pip_w = ( 0 == lan_u.pip_w )? 0x7f000001 : lan_u.pip_w;
@@ -345,7 +350,6 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
       _ames_send(pac_u);
     }
   }
-  u3z(tag); u3z(val);
 }
 
 /* _ames_recv_cb(): receive callback.
@@ -383,15 +387,6 @@ _ames_recv_cb(uv_udp_t*        wax_u,
     }
     _ames_free(buf_u->base);
   }
-}
-
-/* _ames_timer_cb(): wake up ames
-*/
-static void
-_ames_timer_cb(uv_timer_t* tim_u)
-{
-  u3_pier_plan(u3nt(u3_blip, c3__ames, u3_nul),
-               u3nc(c3__wake, u3_nul));
 }
 
 /* _ames_io_start(): initialize ames I/O.
@@ -463,8 +458,6 @@ _ames_io_start(u3_pier* pir_u)
   sam_u->liv = c3y;
   u3z(rac);
   u3z(who);
-
-  uv_timer_start(&sam_u->tim_u, _ames_timer_cb, 300 * 1000, 300 * 1000);
 }
 
 /* _cttp_mcut_char(): measure/cut character.
@@ -557,8 +550,6 @@ u3_ames_io_init(u3_pier* pir_u)
 {
   u3_ames* sam_u = pir_u->sam_u;
   sam_u->liv = c3n;
-
-  uv_timer_init(u3L, &sam_u->tim_u);
 }
 
 /* u3_ames_io_talk(): start receiving ames traffic.
@@ -580,6 +571,4 @@ u3_ames_io_exit(u3_pier* pir_u)
     // XX remove had_u/wax_u union, cast and close wax_u
     uv_close(&sam_u->had_u, 0);
   }
-
-  uv_close((uv_handle_t*)&sam_u->tim_u, 0);
 }

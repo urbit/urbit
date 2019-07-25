@@ -337,7 +337,6 @@
           uv_udp_t    wax_u;
           uv_handle_t had_u;
         };
-        uv_timer_t    tim_u;                //  XX temporary timer
         c3_o          liv;                  //  listener on
         c3_o          alm;                  //  alarm on
         c3_s          por_s;                //  public IPv4 port
