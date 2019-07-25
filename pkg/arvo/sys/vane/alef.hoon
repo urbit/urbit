@@ -911,12 +911,7 @@
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
-  ::  TODO reenable after debug
-  ::++  emit  |=(=move event-core(moves [move moves]))
-  ++  emit
-    |=  =move
-    ~&  %alef-emit^move
-    event-core(moves [move moves])
+  ++  emit  |=(=move event-core(moves [move moves]))
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
@@ -1091,10 +1086,8 @@
     ?>  =(rcvr-life.shut-packet our-life.channel)
     ::  set .lane as new route to peer since packet is valid
     ::
-    ::  TODO: enable (only disabled for testing)
-    ::=?  route.peer-state  !=(%czar (clan:title her.channel))
-    ::  `[direct=%.y lane]
-    =.  route.peer-state  `[direct=%.y lane]
+    =?  route.peer-state  !=(%czar (clan:title her.channel))
+      `[direct=%.y lane]
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet)
@@ -1522,7 +1515,8 @@
       ::  TODO: handle error
       ::
       ?^  error
-        !!
+         ~|  %ames-wake-error
+         (mean u.error)
       ::  expire direct route
       ::
       ::    Since a packet's timer expired, mark the .lane.route as

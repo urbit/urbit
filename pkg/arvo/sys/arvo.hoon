@@ -650,7 +650,7 @@
 ::
 =/  pit=vase  !>(..is)                                  ::
 =/  vil=vile  (viol p.pit)                              ::  cached reflexives
-=|  $:  lac=_|                                          ::  laconic bit
+=|  $:  lac=_&                                          ::  laconic bit
         eny=@                                           ::  entropy
         our=ship                                        ::  identity
         bud=vase                                        ::  %zuse
@@ -755,7 +755,6 @@
   ::  In either case, they fall through here to be handled
   ::  after the fact in +feck.
   ::
-  ~&  %arvo-poke^-.q.ovo^p.ovo
   ?:  ?=(?(%veer %verb %wack %warn) -.q.ovo)
     [[ovo ~] +>.$]
   ::
