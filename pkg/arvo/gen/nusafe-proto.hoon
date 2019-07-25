@@ -611,18 +611,45 @@
         [%event =event-log-item:common]
     ==
   --
+::
+++  to-transport
+  |%
+  ++  event-log-item
+    |=  e=event-log-item:common
+    ^-  transport-event-log-item:common
+    ::  the only thing we need to special case is %log
+    ::
+    ?.  ?=(%log -.e)
+      e
+    ::
+    [%log q.user-event.e q.private-event.e]
+  --
+::
+++  from-transport
+  |%
+  ++  event-log-item
+    |=  [app=term e=transport-event-log-item:common]
+    ^-  (unit event-log-item:common)
+    ::
+    ?.  ?=(%log -.e)
+      `e
+    ::
+    =/  node-vase=vase           (~(got by app-map) app)
+    ::
+    =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
+    =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
+    ::
+    =/  user-event=vase  (slam user-event-mold %noun user-event.e)
+    =/  private-event=vase  (slam private-event-mold %noun private-event.e)
+    ::
+    `[%log user-event private-event]
+  --
 ::  a diff to be sent over the wire for transport; this contains no vases.
 ::
 ++  peer-diff
-  $:  ::  id: the id of this event
-      ::
-      id=@u
-      ::  either a diff from the previous state, or the current snapshot.
-      ::
-      $=  diff
-      $%  [%snapshot snapshot=transport-snapshot:common]
-          [%event event=transport-event-log-item:common]
-  ==  ==
+  $%  [%snapshot id=@u snapshot=transport-snapshot:common]
+      [%event id=@u event=transport-event-log-item:common]
+  ==
 ::  Imagine that I'm the client connecting for the first time. What gets sent?
 ::  I ask for (peer /). What gets returned? An event log or more likely a
 ::  snapshot which would theoretically be reconstructed from an event log. I
@@ -696,12 +723,11 @@
       (bunt-a-vase private-state-type)
       ~
   ==
-::  +change-broadcast: a 
+::  +change-broadcast:
 ::
 +$  change-broadcast
   $:  =path
-      app=@t
-      =event-log-item:common
+      =peer-diff
   ==
 ::
 ++  verify-signature
@@ -960,7 +986,14 @@
         ==
     ^+  [changes state]
     ::
-    =.  changes  [[full-path app-type.snapshot.state log-entry] changes]
+    =.  changes
+      :_  changes
+      :*  full-path
+          %event
+          next-event-id.state
+          (event-log-item:to-transport log-entry)
+      ==
+    ::
     =.  event-log.state
       [[next-event-id.state log-entry] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
@@ -1004,11 +1037,12 @@
   |=  [route=path top-state=node:server]
   ^-  (unit peer-diff)
   ::
-  |^  ?~  maybe-state=(get-node-for route top-state)
+  |^  ^-  (unit peer-diff)
+      ?~  maybe-state=(get-node-for route top-state)
         ~
       ::
       =/  event-id  (sub next-event-id.u.maybe-state 1)
-      [~ event-id %snapshot (make-snapshot u.maybe-state)]
+      [~ %snapshot event-id (make-snapshot u.maybe-state)]
   ::
   ++  get-node-for
     |=  [route=path state=node:server]
@@ -1027,7 +1061,6 @@
     ^-  transport-snapshot:common
     [app-type top-state signature-type q.snapshot children]:snapshot.state
   --
-
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -1072,36 +1105,35 @@
 ::
 ::  initializes the 'our town' community
 ::
-~&  %phase---------1
+~&  %server---------1
 =^  ret1  toplevel
   (apply [%ship ~zod 5] [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
 ~&  [%changes ret1]
 ::  'our town' should have a 'shitposting' board
 ::
-~&  %phase---------2
+~&  %server---------2
 =^  ret2  toplevel
   (apply [%ship ~zod 5] [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
 ~&  [%changes ret2]
 ::  time to start shitposting!
 ::
-~&  %phase---------3
+~&  %server---------3
 =^  ret3  toplevel
   (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
 ~&  [%changes ret3]
 
-
-
-=/  diff=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
+~&  %client---------1
+::
+=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
 
 
 ::  continue shitposting in the current thread!
 ::
-~&  %phase---------4
+~&  %server---------4
 =^  ret4  toplevel
   (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
 ~&  [%changes ret4]
-::
-~&  [%final-sate toplevel]
+
 
 
 ::  zero
