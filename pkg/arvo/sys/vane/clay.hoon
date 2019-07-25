@@ -2050,7 +2050,7 @@
       (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
     ::  hut: updated commits by hash
     ::
-    =/  hut  (~(gas by hut.ran) nut)
+    =/  hut  (~(uni by (malt nut)) hut.ran)
     ::  nat: new blob-hash/blob pairs
     ::
     =/  nat
@@ -3037,8 +3037,8 @@
     |=  [=dome =rang]
     ^+  +>
     =:  dom      dome
-        hut.ran  (~(uni by hut.ran) hut.rang)
-        lat.ran  (~(uni by lat.ran) lat.rang)
+        hut.ran  (~(uni by hut.rang) hut.ran)
+        lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =.  +>.$  wake
     finish-write
