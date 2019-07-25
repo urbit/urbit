@@ -60,6 +60,14 @@ include/ca-bundle.h:
 
 include/ivory.h:
 	@echo XXD -i $(IVORY)
+	@#  heuristics to confirm the ivory pill is valid
+	@#
+	@#    greater than 10KB
+	@#    first 7 bytes != "version" (start of an lfs pointer)
+	@#    XX move these to a nix build that produces the ivory pill
+	@#
+	@test "`du -k $(IVORY) | cut -f1`" -gt 10
+	@test "`cat $(IVORY) | head -c 7`" != "version"
 	@cat $(IVORY) > u3_Ivory.pill
 	@xxd -i u3_Ivory.pill > include/ivory.h
 	@rm u3_Ivory.pill
