@@ -122,11 +122,19 @@ _ames_czar_gone(u3_pact* pac_u, time_t now)
   u3_pier* pir_u = u3_pier_stub();
   u3_ames* sam_u = pir_u->sam_u;
 
-  u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
+  if ( c3y == sam_u->imp_o[pac_u->imp_y] ) {
+    u3l_log("ames: czar at %s: not found (b)\n", pac_u->dns_c);
+    sam_u->imp_o[pac_u->imp_y] = c3n;
+  }
+
   if ( (0 == sam_u->imp_w[pac_u->imp_y]) ||
-       (0xffffffff == sam_u->imp_w[pac_u->imp_y]) ) {
+       (0xffffffff == sam_u->imp_w[pac_u->imp_y]) )
+  {
     sam_u->imp_w[pac_u->imp_y] = 0xffffffff;
-  } /* else keep existing ip for 5 more minutes */
+  }
+
+  //  keep existing ip for 5 more minutes
+  //
   sam_u->imp_t[pac_u->imp_y] = now;
 
   _ames_pact_free(pac_u);
@@ -136,8 +144,8 @@ _ames_czar_gone(u3_pact* pac_u, time_t now)
 */
 static void
 _ames_czar_cb(uv_getaddrinfo_t* adr_u,
-                    c3_i              sas_i,
-                    struct addrinfo*  aif_u)
+              c3_i              sas_i,
+              struct addrinfo*  aif_u)
 {
   // XX revisit
   u3_pier* pir_u = u3_pier_stub();
@@ -160,6 +168,7 @@ _ames_czar_cb(uv_getaddrinfo_t* adr_u,
 
       sam_u->imp_w[pac_u->imp_y] = ntohl(add_u->sin_addr.s_addr);
       sam_u->imp_t[pac_u->imp_y] = now;
+      sam_u->imp_o[pac_u->imp_y] = c3y;
 
 #if 1
       if ( sam_u->imp_w[pac_u->imp_y] != old_w
