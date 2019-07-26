@@ -309,6 +309,12 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
     return;
   }
 
+  if ( c3n == sam_u->liv ) {
+    u3l_log("ames: not yet live, dropping outbound\r\n");
+    u3z(lan); u3z(pac);
+    return;
+  }
+
   u3_pact* pac_u = c3_calloc(sizeof(*pac_u));
 
   if ( c3y == _ames_lane_ip(lan, &pac_u->por_s, &pac_u->pip_w) ) {
