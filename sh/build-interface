@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -ex
+
+cd pkg/interface/chat
+gulp bundle-prod &
+cd ../launch
+gulp bundle-prod &
+cd ../clock
+gulp bundle-prod &
+cd ../publish
+gulp bundle-prod &
+cd ../weather
+gulp bundle-prod &
+cd ../../../
+
+set +x

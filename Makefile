@@ -23,6 +23,9 @@ pills:
 	sh/update-brass-pill
 	sh/update-ivory-pill
 
+interface:
+	sh/build-interface
+
 clean:
 	rm -rf ./out ./work
 	rm -f result result-*

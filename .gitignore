@@ -9,3 +9,10 @@ tags
 TAGS
 cross/
 release/
+**/.DS_Store
+**/dist
+**/node_modules
+**/urbitrc
+**/*.swp
+**/*.swo
+**/*-min.js
