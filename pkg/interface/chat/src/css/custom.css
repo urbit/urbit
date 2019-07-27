@@ -88,6 +88,10 @@ h2 {
   font-weight: bold;
 }
 
+.fs-italic {
+  font-style: italic;
+}
+
 .bg-v-light-gray {
   background-color: #f9f9f9;
 }
