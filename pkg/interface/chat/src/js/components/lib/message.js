@@ -5,56 +5,85 @@ import moment from 'moment';
 import _ from 'lodash';
 
 export class Message extends Component {
-  
-  renderMessage(content) {
+
+  renderSpeech(speech) {
+    if (_.has(speech, 'lin')) {
+      return this.renderLin(speech.lin.msg, speech.lin.pat);
+    } else if (_.has(speech, 'url')) {
+      return this.renderUrl(speech.url);
+    } else {
+      return this.renderUnknown();
+    }
+  }
+
+  renderUnknown() {
+    return this.renderLin('<unknown message type>')
+  }
+
+  renderLin(content, action = false) {
     return (
-      <p className="body-regular-400 v-top">
+      <p className={`body-regular-400 v-top ${action ? 'fs-italic' : ''}`}>
         {content}
       </p>
     );
   }
 
-  renderContent() {
-    const { props } = this;
-    
-    let content = _.get(
-      props.msg,
-      'sep.lin.msg',
-      '<unknown message type>'
-    );
-
+  renderUrl(url) {
     try {
-      let url = new URL(content);
-      let imgMatch = 
+      let urlObject = new URL(url);
+      let imgMatch =
         /(jpg|img|png|gif|tiff|jpeg|JPG|IMG|PNG|TIFF|GIF|webp|WEBP|webm|WEBM)$/
         .exec(
-           url.pathname
+           urlObject.pathname
          );
       if (imgMatch) {
-        return (
-          <img
-            src={content}
-            style={{
-              width:"50%",
-              maxWidth: '250px'
-            }}
-          ></img>
-        )
+        return this.renderImageUrl(url);
       } else {
-        let url = this.urlTransmogrifier(content);
-        
-        return (
-          <a className="body-regular"
-            href={url}
-            target="_blank">{url}</a>
-        )
+        let localUrl = this.localizeUrl(url);
+        return this.renderAnchor(localUrl, url);
       }
     } catch(e) {
-      return this.renderMessage(content);
+      console.error('url render error', e);
+      return this.renderAnchor(url);
     }
   }
 
-  urlTransmogrifier(url) {
+  renderImageUrl(url) {
+    return this.renderAnchor(url, (
+      <img
+        src={url}
+        style={{
+          width:"50%",
+          maxWidth: '250px'
+        }}
+      ></img>
+    ));
+  }
+
+  renderAnchor(href, content) {
+    content = content || href;
+    return (
+      <a className="body-regular"
+        href={href}
+        target="_blank">{content}</a>
+    );
+  }
+
+  renderContent() {
+    const { props } = this;
+
+    try {
+      if (!_.has(props.msg, 'sep')) {
+        return this.renderUnknown();
+      }
+      return this.renderSpeech(props.msg.sep);
+    } catch (e) {
+      console.error('speech rendering error', e);
+      return this.renderUnknown();
+    }
+  }
+
+  localizeUrl(url) {
     if (typeof url !== 'string') { throw 'Only transmogrify strings!'; }
     const ship = window.ship;
     if (url.indexOf('arvo://') === 0) {
@@ -68,7 +97,7 @@ export class Message extends Component {
     let pending = !!props.msg.pending ? ' o-80' : '';
     let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
     let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
-    
+
     return (
       <div className={"w-100 pl3 pr3 pt2 pb2 cf flex" + pending}
         style={{
