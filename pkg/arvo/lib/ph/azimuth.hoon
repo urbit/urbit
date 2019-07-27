@@ -48,6 +48,7 @@
       %+  answer-request  req
       :-  %o
       =/  number       (hex-to-num:ethereum (get-block-hash req))
+      ~&  who=who.pin
       ~&  number=number
       =/  hash         (number-to-hash number)
       ~&  hash=hash
@@ -107,7 +108,7 @@
     [& ~ %wait ~]
     ::
     ++  latest-block
-      (add launch:contracts:azimuth (lent logs))
+      (add launch:contracts:azimuth (dec (lent logs)))
     ::
     ++  get-id
       |=  req=@t
@@ -200,10 +201,11 @@
       ?:  (lth to-block launch:contracts:azimuth)
         ~
       %+  swag
+        ~&  [%logs-by-range from-block to-block launch:contracts:azimuth]
         ?:  (lth from-block launch:contracts:azimuth)
-           [0 (sub to-block launch:contracts:azimuth)]
+           [0 +((sub to-block launch:contracts:azimuth))]
         :-  (sub from-block launch:contracts:azimuth)
-        (sub to-block from-block)
+        +((sub to-block from-block))
       logs
     ::
     ++  logs-by-hash
@@ -230,7 +232,7 @@
           (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
         ::
           :+  'blockNumber'  %s
-          (crip (num-to-hex:ethereum count))
+          (crip (num-to-hex:ethereum (add launch:contracts:azimuth count)))
         ::
           :+  'address'  %s
           (crip (address-to-hex:ethereum azimuth:contracts:azimuth))
@@ -347,7 +349,7 @@
 ++  breach-and-hear
   |=  [our=@p who=@p her=@p]
   =.  this-az  (breach who)
-  =.  this-az  (spawn ~fes)
+  =.  this-az  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
   =/  new-rut  rut:(~(got by lives) who)
   =/  m  (ph ,_this-az)
   ;<  [this-az=_this-az ~]  bind:m

@@ -1471,22 +1471,25 @@
       =/  her=ship  (slav %p i.t.tea)
       =/  gus  (~(us go ton.fox) our)
       =/  diz  (myx:gus her)
-      =/  ded=deed
+      =/  ded=(unit deed)
         ?:  ?=(%full -.public-keys-result.sih)
           ~|  [her=her public-keys-result=public-keys-result.sih]
           =/  a-point=(unit point:able:kale)
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
             ~&  [%no-keys her]
-            [*life *pass ~]
+            ~
           =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
-          [life.u.a-point a-pass oath=~]
+          `[life.u.a-point a-pass oath=~]
         ?>  ?=(%keys -.diff.public-keys-result.sih)
         ?>  =(her who.public-keys-result.sih)
         =/  a-key-update=key-update:point:able:kale
           to.diff.public-keys-result.sih
-        [life.a-key-update pass.a-key-update oath=~]
-      =.  lew.wod.dur.diz  `ded
+        `[life.a-key-update pass.a-key-update oath=~]
+      ?~  ded
+        [~ +>.$]
+      ~&  [%installing-deed her u.ded]
+      =.  lew.wod.dur.diz  `u.ded
       =.  ton.fox  (~(su go ton.fox) (nux:gus diz))
       [~ +>.$]
     ::

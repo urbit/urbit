@@ -318,12 +318,8 @@
       |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ~&  [%get-updatessss number.state]
-      ;<  =latest=block      bind:m  (get-latest-block url.state)
-      ~&  [%latest-block number.state]
-      ;<  =new=number:block  bind:m  (zoom state number.id.latest-block)
-      ~&  [%zoomed-to number.state]
-      =.  number.state  new-number
+      ;<  =latest=block    bind:m  (get-latest-block url.state)
+      ;<  state=app-state  bind:m  (zoom state number.id.latest-block)
       |-  ^-  form:m
       =*  walk-loop  $
       ~&  [%walk-loop number.state]
@@ -404,16 +400,18 @@
     ::
     ++  zoom
       |=  [state=app-state =latest=number:block]
-      =/  m  (async:stdio ,number:block)
+      =/  m  (async:stdio ,app-state)
       ^-  form:m
       =/  zoom-margin=number:block  3
       ?:  (lth latest-number (add number.state zoom-margin))
-        (pure:m number.state)
+        (pure:m state)
       =/  to-number=number:block  (sub latest-number zoom-margin)
       ;<  =udiffs:point  bind:m
         (get-logs-by-range url.state whos.state number.state to-number)
       ;<  ~  bind:m  (jael-update udiffs)
-      (pure:m to-number)
+      =.  number.state  +(to-number)
+      =.  blocks.state  ~
+      (pure:m state)
     --
 ::
 ::  Main
@@ -425,6 +423,7 @@
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
+  ~&  [%azimuth-tracker our.bowl number.state in-poke-data]
   ?-  +<.in-poke-data
     %init    (init state)
     %listen  (listen state +>.in-poke-data)

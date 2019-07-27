@@ -497,6 +497,9 @@
                   %wipe                                 ::
               ==                                        ::
           task:able:ford                                ::
+      ==                                                ::
+      $:  %k                                            ::  by %kale
+          $>(%public-keys task:able:kale)               ::
   ==  ==                                                ::
 ++  riot  (unit rant)                                   ::  response+complete
 ++  sign                                                ::  in result $<-
@@ -2634,22 +2637,25 @@
   ::
   =*  ruf  |4.+6.^$
   ::
-  =+  ^-  [hun=(unit duct) rede]
+  =+  ^-  [mow=(list move) hun=(unit duct) rede]
       ?.  =(our her)
         ::  no duct, foreign +rede or default
         ::
-        :-  ~
+
+        :+  ?:  (~(has by hoy.ruf) her)
+              ~
+            [hun.rom.ruf %pass /sinks %k %public-keys (silt her ~)]~
+          ~
         =/  rus  rus:(~(gut by hoy.ruf) her *rung)
         %+  ~(gut by rus)  syd
         [lim=~2000.1.1 ref=`*rind qyx=~ dom=*dome per=~ pew=~]
       ::  administrative duct, domestic +rede
       ::
-      :-  `hun.rom.ruf
+      :+  ~  `hun.rom.ruf
       =/  jod  (~(gut by dos.rom.ruf) syd *dojo)
       [lim=now ref=~ [qyx dom per pew]:jod]
   ::
-  =*  red=rede  ->
-  =|  mow/(list move)
+  =*  red=rede  ->+
   |%
   ++  abet                                              ::  resolve
     ^-  [(list move) raft]
@@ -4464,8 +4470,10 @@
   ?:  ?=([%sinks ~] tea)
     ?>  ?=(%public-keys +<.q.hin)
     ~&  'XXX'
+    ~&  our=our
     ?:  ?=(%full -.public-keys-result.q.hin)
-      !!
+      ~&  %clay-sinks-full
+      [~ ..^$]
     ?.  ?=(%rift -.diff.public-keys-result.q.hin)
       [~ ..^$]
     ~&  rift=public-keys-result.q.hin

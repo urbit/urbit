@@ -478,6 +478,7 @@
           %public-keys-result
         =.  moz  [[hen %give %mack ~] moz]
         %-  curd  =<  abet
+        ~&  [%kale-new-from-kale public-keys-result.mes]
         (public-keys:~(feel su hen our pki etn sap) public-keys-result.mes)
       ==
     ::
