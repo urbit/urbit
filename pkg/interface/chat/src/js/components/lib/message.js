@@ -21,6 +21,10 @@ export class Message extends Component {
   }
 
   renderLin(content, action = false) {
+    //TODO remove once arvo:// urls are supported in url speeches
+    if (content.indexOf('arvo://') === 0) {
+      return this.renderUrl(content);
+    }
     return (
       <p className={`body-regular-400 v-top ${action ? 'fs-italic' : ''}`}>
         {content}
@@ -83,13 +87,20 @@ export class Message extends Component {
     }
   }
 
+  //NOTE see also lib/chat-input's globalizeUrl
   localizeUrl(url) {
-    if (typeof url !== 'string') { throw 'Only transmogrify strings!'; }
-    const ship = window.ship;
-    if (url.indexOf('arvo://') === 0) {
-      return `http://${ship}.arvo.network` + url.split('arvo://')[1];
+    if (typeof url !== 'string') { throw 'Only localize strings!'; }
+    const arvo = 'arvo://';
+    if (url.indexOf(arvo) === 0) {
+      // this application is being served by an urbit also, so /path will
+      // point to the arvo url as hosted by this same urbit.
+      let path = url.slice(arvo.length);
+      // ensure single leading /
+      if (path[0] !== '/') path = '/' + path;
+      return path;
+    } else {
+      return url;
     }
-    return url;
   }
 
   render() {

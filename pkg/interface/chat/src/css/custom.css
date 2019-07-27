@@ -91,6 +91,10 @@ h2 {
   font-style: italic;
 }
 
+.td-underline {
+  text-decoration: underline;
+}
+
 .bg-v-light-gray {
   background-color: #f9f9f9;
 }
