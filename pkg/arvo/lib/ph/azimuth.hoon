@@ -103,6 +103,7 @@
           fil-id
         u.fil(last-block latest-block)
       [%cont ..stay]
+    ~&  [%ph-azimuth-miss req]
     [& ~ %wait ~]
     ::
     ++  latest-block
@@ -346,6 +347,7 @@
 ++  breach-and-hear
   |=  [our=@p who=@p her=@p]
   =.  this-az  (breach who)
+  =.  this-az  (spawn ~fes)
   =/  new-rut  rut:(~(got by lives) who)
   =/  m  (ph ,_this-az)
   ;<  [this-az=_this-az ~]  bind:m
@@ -356,7 +358,7 @@
     :+  &  ~
     =/  aqua-pax
       :-  %i
-      /(scot %p her)/j/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
+      /(scot %p her)/k/(scot %p her)/rift/(scot %da now.pin)/(scot %p who)/noun
     =/  rut  (scry-aqua noun our now.pin aqua-pax)
     ?:  =([~ new-rut] rut)
       [%done ~]

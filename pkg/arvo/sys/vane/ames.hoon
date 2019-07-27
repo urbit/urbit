@@ -1424,17 +1424,20 @@
       :_  fox  [hen [%pass wire %k %private-keys ~]]~
     ::
         %wine
-      :_  fox
-      =+  fom=~(rend co %$ %p p.bon)
-      :~  :-  hen
-          :+  %slip  %d
-          :+  %flog  %text
-          ;:  weld
-            "; "
-            fom
-            q.bon
-          ==
-      ==
+      [[(print hen p.bon q.bon) ~] fox]
+    ==
+  ::
+  ++  print
+    |=  [hen=duct who=ship =tape]
+    ^-  move
+    =+  fom=~(rend co %$ %p who)
+    :-  hen
+    :+  %slip  %d
+    :+  %flog  %text
+    ;:  weld
+      "; "
+      fom
+      tape
     ==
   ::
   ++  knap
@@ -1457,6 +1460,10 @@
       ?.  ?=([%pubs @ ~] tea)
         ~&  [%strange-pubs tea]
         [~ +>.$]
+      ?:  ?&  ?=(%diff -.public-keys-result.sih)
+              ?=(%rift -.diff.public-keys-result.sih)
+          ==
+        (sink hen [who [from to]:diff]:public-keys-result.sih)
       ?:  ?&  ?=(%diff -.public-keys-result.sih)
               !?=(%keys -.diff.public-keys-result.sih)
           ==
@@ -1530,6 +1537,17 @@
       $(p.fuy t.p.fuy, out (weld (flop toe) out))
     ==
   ::
+  ++  sink
+    |=  [hen=duct who=ship from=rift to=rift]
+    ^-  [(list move) _+>]
+    ?:  =(our who)
+      [[(print hen who ", you have sunk") ~] +>.$]
+    ::
+    =:  hoc.ton.fox  (~(del by hoc.ton.fox) who)
+        wab.zac.fox  (~(del by wab.zac.fox) who)
+      ==
+    [[(print hen who " has sunk") ~] +>.$]
+  ::
   ++  knob
     ~/  %knob
     |=  [hen=duct kyz=task:able]
@@ -1594,25 +1612,6 @@
             fox(bad (~(del in bad.fox) p.kyz))
           ~&  [%block p.kyz]
           fox(bad (~(put in bad.fox) p.kyz))
-        ::
-            %sunk
-          =*  who  p.kyz
-          =*  lyf  q.kyz
-          ?:  =(our who)
-            ?:  (lth lyf p:(head val.ton.fox))
-              ::  replaying our old sinkage, ignore
-              ::  XX review
-              ::
-              [~ fox]
-            ::  XX include some helpful instructions here
-            ::
-            :_  fox
-            [%wine who ", you have sunk"]~
-          ::
-          =:  hoc.ton.fox  (~(del by hoc.ton.fox) who)
-              wab.zac.fox  (~(del by wab.zac.fox) who)
-            ==
-          [[%wine who " has sunk"]~ fox]
         ::
             %vega
           ::  re-initialize our cryptosuite B cores

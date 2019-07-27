@@ -1382,8 +1382,6 @@
       $init
     [~ ..^$(sys.mast.all hen)]
   ::
-      $sunk  [~ ..^$]
-  ::
       $vega  [~ ..^$]
   ::
       $west

@@ -203,9 +203,6 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
-      ::  peer discontinuity
-      ::
-      [%sunk p=ship q=rift]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -393,7 +390,6 @@
           $>(%init vane-task)                           ::  report install
           {$kick p/@da}                                 ::  wake up
           {$nuke p/@p}                                  ::  toggle auto-block
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           {$wake ~}                                     ::  timer activate
           $>(%wegh vane-task)                           ::  report memory
@@ -628,7 +624,6 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -795,7 +790,6 @@
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
-          $>(%sunk vane-task)                           ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1182,9 +1176,6 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
-          ::  %sunk: receive a report that a foreign ship has lost continuity
-          ::
-          $>(%sunk vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1879,7 +1870,6 @@
       $%  {$conf p/dock q/culm}                         ::  configure app
           $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           $>(%west vane-task)                           ::  network request
           $>(%wegh vane-task)                           ::  report memory
