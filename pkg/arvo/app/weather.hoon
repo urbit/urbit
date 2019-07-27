@@ -158,12 +158,11 @@
   ?~  err
     =/  req/request:http  (request-darksky location)
     =/  out  *outbound-config:iris
-    =/  lismov/(list move)
-      [ost.bol %request /[(scot %da now.bol)] req out]~
-    ?~  timer
-      :-  [[ost.bol %wait /timer (add now.bol ~h3)] lismov]
-      this(timer `(add now.bol ~h3))
-    [lismov this]
+    :_  this(timer `(add now.bol ~h3))
+    :~
+      [ost.bol %request /[(scot %da now.bol)] req out]
+      [ost.bol %wait /timer (add now.bol ~h3)]
+    ==
   ~&  err
   [~ this]
 ::
