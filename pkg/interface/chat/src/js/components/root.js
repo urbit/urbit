@@ -61,7 +61,7 @@ export class Root extends Component {
           let internalStation = host + '/hall-internal-' + circle;
 
           if (internalStation in state.configs) {
-            unreads[cir] = 
+            unreads[cir] =
               state.configs[internalStation].red <=
               messages[cir][messages[cir].length - 1].num;
           } else {
@@ -87,6 +87,18 @@ export class Root extends Component {
       inviteConfig = configs[`~${window.ship}/i`];
     }
 
+    const renderChannelsSidebar = (props) => (
+      <Sidebar
+        circles={circles}
+        messagePreviews={messagePreviews}
+        invites={invites}
+        unreads={unreads}
+        api={api}
+        inviteConfig={inviteConfig}
+        {...props}
+      />
+    );
+
     return (
       <BrowserRouter>
         <div>
@@ -94,17 +106,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                sidebar={
-                  <Sidebar 
-                    circles={circles}
-                    messagePreviews={messagePreviews}
-                    invites={invites}
-                    unreads={unreads}
-                    api={api}
-                    inviteConfig={inviteConfig}
-                    {...props}
-                  />
-                }>
+                sidebar={renderChannelsSidebar(props)}>
                 <div className="w-100 h-100 fr" style={{ flexGrow: 1 }}>
                   <div className="dt w-100 h-100">
                     <div className="dtc center v-mid w-100 h-100 bg-white">
@@ -119,18 +121,8 @@ export class Root extends Component {
             return (
               <Skeleton
                 spinner={this.state.spinner}
-                sidebar={
-                  <Sidebar 
-                    circles={circles}
-                    messagePreviews={messagePreviews}
-                    invites={invites}
-                    unreads={unreads}
-                    api={api}
-                    inviteConfig={inviteConfig}
-                    {...props}
-                  />
-                }>
-                <NewScreen 
+                sidebar={renderChannelsSidebar(props)}>
+                <NewScreen
                   setSpinner={this.setSpinner}
                   api={api}
                   circles={circles}
@@ -143,17 +135,7 @@ export class Root extends Component {
           render={ (props) => {
             return (
               <Skeleton
-                sidebar={
-                 <Sidebar 
-                   circles={circles}
-                   messagePreviews={messagePreviews}
-                   invites={invites}
-                   unreads={unreads}
-                   api={api}
-                   inviteConfig={inviteConfig}
-                   {...props}
-                 />
-                }>
+                sidebar={renderDefaultSidebar(props)}>
                 <LandingScreen
                   api={api}
                   configs={configs}
@@ -164,24 +146,14 @@ export class Root extends Component {
            }} />
          <Route exact path="/~chat/:ship/:station"
            render={ (props) => {
-             let station = 
+             let station =
                props.match.params.ship
                + "/" +
                props.match.params.station;
              let messages = state.messages[station] || [];
              return (
                <Skeleton
-                 sidebar={
-                  <Sidebar 
-                    circles={circles}
-                    messagePreviews={messagePreviews}
-                    invites={invites}
-                    unreads={unreads}
-                    api={api}
-                    inviteConfig={inviteConfig}
-                    {...props}
-                  />
-                 }>
+                 sidebar={renderChannelsSidebar(props) }>
                  <ChatScreen
                    api={api}
                    configs={configs}
@@ -197,19 +169,9 @@ export class Root extends Component {
            render={ (props) => {
              return (
                <Skeleton
-                 sidebar={
-                  <Sidebar 
-                    circles={circles}
-                    messagePreviews={messagePreviews}
-                    invites={invites}
-                    unreads={unreads}
-                    api={api}
-                    inviteConfig={inviteConfig}
-                    {...props}
-                  />
-                 }>
+                 sidebar={renderChannelsSidebar(props) }>
                  <MemberScreen
-                   {...props} 
+                   {...props}
                    api={api}
                    peers={state.peers}
                  />
@@ -221,18 +183,8 @@ export class Root extends Component {
              return (
                <Skeleton
                  spinner={this.state.spinner}
-                 sidebar={
-                  <Sidebar 
-                    circles={circles}
-                    messagePreviews={messagePreviews}
-                    invites={invites}
-                    unreads={unreads}
-                    api={api}
-                    inviteConfig={inviteConfig}
-                    {...props}
-                  />
-                 }>
-                 <SettingsScreen 
+                 sidebar={renderChannelsSidebar(props) }>
+                 <SettingsScreen
                    {...props}
                    setSpinner={this.setSpinner}
                    api={api}
