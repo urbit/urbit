@@ -11,6 +11,8 @@ export class Message extends Component {
       return this.renderLin(speech.lin.msg, speech.lin.pat);
     } else if (_.has(speech, 'url')) {
       return this.renderUrl(speech.url);
+    } else if (_.has(speech, 'app')) {
+      return this.renderSpeech(speech.app.sep);
     } else {
       return this.renderUnknown();
     }
@@ -87,6 +89,16 @@ export class Message extends Component {
     }
   }
 
+  renderAuthor() {
+    const msg = this.props.msg;
+    const ship = '~' + msg.aut;
+    if (_.has(msg, 'sep.app.app')) {
+      return `:${msg.sep.app.app} (${ship})`;
+    } else {
+      return ship;
+    }
+  }
+
   //NOTE see also lib/chat-input's globalizeUrl
   localizeUrl(url) {
     if (typeof url !== 'string') { throw 'Only localize strings!'; }
@@ -135,18 +147,15 @@ export class Message extends Component {
             {this.renderContent()}
           </div>
         </div>
-      );
-    } else {
-      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
-
-      return (
-        <div className={"w-100 pr3 pb1 cf hide-child flex" + pending}
-             style={{
-               minHeight: 'min-content'
-             }}>
-          <p className="child pl3 pr2 label-small-mono gray dib">{timestamp}</p>
-          <div className="fr" style={{ flexGrow: 1 }}>
-            {this.renderContent()}
+        <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
+          <div className="hide-child">
+            <p className="v-top label-small-mono gray dib mr3">
+              {this.renderAuthor()}
+            </p>
+            <p className="v-top label-small-mono gray dib">{timestamp}</p>
+            <p className="v-top label-small-mono ml2 gray dib child">
+              {datestamp}
+            </p>
           </div>
         </div>
       )
