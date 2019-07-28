@@ -301,6 +301,7 @@
 +$  bone           @udbone
 +$  fragment       @uwfragment
 +$  fragment-num   @udfragmentnum
++$  message-blob   @udmessageblob
 +$  message-num    @udmessagenum
 +$  private-key    @uwprivatekey
 +$  public-key     @uwpublickey
@@ -410,11 +411,12 @@
 ::  $pending-requests: what to do when we learn a peer's life and keys
 ::
 ::    rcv-packets: packets we've received from unix
-::    snd-messages: messages local vanes have asked us to send
+::    snd-messages: pleas local vanes have asked us to send
+::    snd-packets: packets we've tried to send
 ::
 +$  pending-requests
   $:  rcv-packets=(list [=lane =packet])
-      snd-messages=(list [=duct =message])
+      snd-messages=(list [=duct =plea])
       snd-packets=(set =blob)
   ==
 ::  $peer-state: state for a peer with known life and keys
@@ -511,7 +513,7 @@
 +$  message-pump-state
   $:  current=_`message-num`1
       next=_`message-num`1
-      unsent-messages=(qeu message)
+      unsent-messages=(qeu message-blob)
       unsent-fragments=(list static-fragment)
       queued-message-acks=(map message-num ok=?)
       =packet-pump-state
@@ -572,7 +574,7 @@
 +$  message-still-state
   $:  last-acked=message-num
       last-heard=message-num
-      pending-vane-ack=(qeu [=message-num =message])
+      pending-vane-ack=(qeu [=message-num message=*])
       live-messages=(map message-num partial-rcv-message)
       nax=(set message-num)
   ==
@@ -603,11 +605,11 @@
 ::
 ::    TODO: specialize gall interface for subscription management
 ::
-::    Ames passes a %memo note to another vane when it receives a
+::    Ames passes a %plea note to another vane when it receives a
 ::    message on a "forward flow" from a peer, originally passed from
 ::    one of the peer's vanes to the peer's Ames.
 ::
-::    Ames passes a %memo to itself to trigger a heartbeat message to
+::    Ames passes a %plea to itself to trigger a heartbeat message to
 ::    our sponsor.
 ::
 ::    Ames passes a %private-keys to Jael to request our private keys.
@@ -626,11 +628,11 @@
           [%turf ~]
       ==  ==
       $:  @tas
-      $%  [%memo =ship =message]
+      $%  [%plea =ship =plea]
   ==  ==  ==
 ::  $sign: response from other vane
 ::
-::    A vane gives a %memo sign to Ames on a duct on which it had
+::    A vane gives a %boon sign to Ames on a duct on which it had
 ::    previously received a message on a "forward flow".  Ames will
 ::    transmit the message to the peer that had originally sent the
 ::    message on the forward flow.  The peer's Ames will then give the
@@ -653,7 +655,7 @@
       ==  ==
       $:  @tas
       $%  [%done error=(unit error)]
-          [%memo =message]
+          [%boon payload=*]
   ==  ==  ==
 ::  $message-pump-task: job for |message-pump
 ::
@@ -662,7 +664,7 @@
 ::    %wake: handle timer firing
 ::
 +$  message-pump-task
-  $%  [%memo =message]
+  $%  [%memo =message-blob]
       [%hear =message-num =ack-meat]
       [%wake ~]
   ==
@@ -716,12 +718,11 @@
   ==
 ::  $message-still-gift: effect from |message-still
 ::
-::    %memo: $message assembled from received packets,
-::           to be sent to a local vane for processing
+::    %memo: assembled from received packets
 ::    %send: emit an ack packet
 ::
 +$  message-still-gift
-  $%  [%memo =message-num =message]
+  $%  [%memo =message-num message=*]
       [%send =message-num =ack-meat]
   ==
 --
@@ -860,7 +861,7 @@
       %init  (on-init:event-core ship=p.task)
       %vega  on-vega:event-core
       %wegh  on-wegh:event-core
-      %memo  (on-memo:event-core [ship message]:task)
+      %plea  (on-plea:event-core [ship plea]:task)
     ==
   ::
   [moves ames-gate]
@@ -876,7 +877,7 @@
     =<  abet
     ?-  sign
       [@ %done *]   (on-take-done:event-core wire error.sign)
-      [@ %memo *]   (on-take-memo:event-core wire message.sign)
+      [@ %boon *]   (on-take-boon:event-core wire payload.sign)
     ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
@@ -925,21 +926,24 @@
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now +>.ames-state -.peer-state]
-    =/  peer-core    (make-peer-core peer-state channel)
-    =/  ok=?         ?=(~ error)
-    ::  send message (n)ack packet
+    ::  if processing succeded, send positive ack packet and exit
     ::
-    =.  event-core  abet:(run-message-still:peer-core bone %done ok)
-    ::  if positive ack, we're done
+    ?~  error
+      =/  peer-core  (make-peer-core peer-state channel)
+      abet:(run-message-still:peer-core bone %done ok=%.y)
+    ::  failed; send message nack packet
     ::
-    ?:  ok
-      event-core
-    ::  send nack-trace message on designated bone
+    =.  event-core  abet:(run-message-still:peer-core bone %done ok=%.n)
+    ::  construct nack-trace message, referencing .failed $message-num
     ::
+    =/  failed=message-num  last-acked:(~(got by rcv.peer-state) bone)
+    =/  =message-blob       (jam [failed u.error])
+    ::  send nack-trace message on associated .nack-trace-bone
+    ::
+    =/  peer-core              (make-peer-core peer-state channel)
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
-    =.  peer-core              (make-peer-core peer-state channel)
     ::
-    abet:(run-message-pump:peer-core nack-trace-bone %memo /a/nax error)
+    abet:(run-message-pump:peer-core nack-trace-bone %boon message-blob)
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
@@ -967,7 +971,7 @@
       ~&  %alef-self
       event-core
     ::
-    %.  [lane packet]
+    %.  +<
     ::
     ?.  =(our rcvr.packet)
       ~&  %alef-on-hear-forward
@@ -1091,10 +1095,10 @@
     ::
     =/  peer-core  (make-peer-core peer-state channel)
     abet:(on-hear-shut-packet:peer-core lane shut-packet)
-  ::  +on-take-memo: receive request to give message to peer
+  ::  +on-take-boon: receive request to give message to peer
   ::
-  ++  on-take-memo
-    |=  [=wire =message]
+  ++  on-take-boon
+    |=  [=wire payload=*]
     ^+  event-core
     ::
     =+  ^-  [her=ship =bone]  (parse-bone-wire wire)
@@ -1102,28 +1106,26 @@
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now +>.ames-state -.peer-state]
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone message)
-  ::  +on-memo: handle request to send message
+    abet:(on-memo:(make-peer-core peer-state channel) bone payload)
+  ::  +on-plea: handle request to send message
   ::
-  ++  on-memo
-    |=  [=ship =message]
+  ++  on-plea
+    |=  [=ship =plea]
     ^+  event-core
     ::
     =/  ship-state  (~(get by peers.ames-state) ship)
     ::
     ?.  ?=([~ %known *] ship-state)
-      ~&  %alef-on-memo-enqueue-alien
       %+  enqueue-alien-todo  ship
       |=  todos=pending-requests
-      todos(snd-messages [[duct message] snd-messages.todos])
-    ~&  %alef-on-memo-known
+      todos(snd-messages [[duct plea] snd-messages.todos])
     ::
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
     =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
     ::
-    abet:(on-memo:(make-peer-core peer-state channel) bone message)
+    abet:(on-memo:(make-peer-core peer-state channel) bone plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
   ::
   ++  on-take-wake
@@ -1431,7 +1433,7 @@
   ++  ping-sponsor
     ^+  event-core
     ::
-    (emit duct %pass /ping %a %memo sponsor.ames-state /a/ping ~)
+    (emit duct %pass /ping %a %plea sponsor.ames-state /ping ~)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane.
@@ -1503,10 +1505,11 @@
     ::  +on-memo: handle request to send message
     ::
     ++  on-memo
-      |=  [=bone =message]
+      |=  [=bone payload=*]
       ^+  peer-core
       ::
-      (run-message-pump bone %memo message)
+      =/  =message-blob  (jam payload)
+      (run-message-pump bone %memo message-blob)
     ::  +on-wake: handle timer expiration
     ::
     ++  on-wake
@@ -1533,6 +1536,21 @@
         route.peer-state(direct.u %.n)
       ::
       (run-message-pump bone %wake ~)
+    ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
+    ::
+    ++  send-shut-packet
+      |=  =shut-packet
+      ^+  peer-core
+      ::  swizzle bone just before sending; TODO document
+      ::
+      =.  bone.shut-packet  (mix 1 bone.shut-packet)
+      ::
+      =/  content  (encrypt symmetric-key.channel shut-packet)
+      =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
+      =/  =blob    (encode-packet packet)
+      ::
+      =.  event-core  (send-blob her.channel blob)
+      peer-core
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
@@ -1648,8 +1666,8 @@
           =*  gift  i.still-gifts
           =.  peer-core
             ?-  -.gift
-              %send  (on-still-send [message-num ack-meat]:gift)
               %memo  (on-still-memo [message-num message]:gift)
+              %send  (on-still-send [message-num ack-meat]:gift)
             ==
           $(still-gifts t.still-gifts)
       ::  +on-still-send: emit ack packet as requested by |message-still
@@ -1665,55 +1683,57 @@
           message-num
           %|  ack-meat
         ==
-      ::  +on-still-memo: handle message received by |message-still
+      ::  +on-still-memo: dispatch message received by |message-still
+      ::
+      ::    odd bone:                %plea request message
+      ::    even bone, 0 second bit: %boon response message
+      ::    even bone, 1 second bit: nack-trace %boon message
       ::
       ++  on-still-memo
-        |=  [=message-num =message]
-        ^+  peer-core
-        ::  pop first element off .path.message as .target-vane
-        ::
-        =^  target-vane  path.message
-          ?>(?=([?(%a %c %g %k) *] path.message) path.message)
-        ::  odd .bone; "request" message to pass to vane before acking
-        ::
         ?:  =(1 (end 0 1 bone))
-          =/  =wire  (make-bone-wire her.channel bone)
-          ::  /a/ping means sponsor ping timer; no-op
-          ::
-          ?:  =(`path`/a/ping path.message)
-            peer-core
-          ::
-          =^  client-duct  ossuary.peer-state
-            (get-duct ossuary.peer-state bone duct)
-          ::
-          ?-  target-vane
-            %a  ~|  %bad-ames-message^path.message^her.channel  !!
-            %c  (emit client-duct %pass wire %c %memo her.channel message)
-            %g  (emit client-duct %pass wire %g %memo her.channel message)
-            %k  (emit client-duct %pass wire %k %memo her.channel message)
-          ==
-        ::  even bone means backward flow; ack automatically
-        ::
-        ::    Only messages from forward flows can be nacked.
-        ::    Note: reentrant.
+          on-still-plea
+        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
+          on-still-boon
+        on-still-nack-trace
+      ::  +on-still-boon: handle response message received by |message-still
+      ::
+      ++  on-still-boon
+        |=  [=message-num message=*]
+        ^+  peer-core
+        ::  send message ack packet unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
-        ::  is .bone a nack-trace flow? check the second bit
+        ::  if no .client-duct, bone is invalid; don't send to vane
         ::
-        ?:  =(0 (end 0 1 (rsh 0 1 bone)))
-          ::  not a nack-trace; give message to local "subscriber" vane
-          ::
-          =/  client-duct  (~(got by by-bone.ossuary.peer-state) bone)
-          ::
-          (emit client-duct %give %memo message)
-        ::  .bone is a nack-trace; validate message
+        ::    Future Ames should emit a security alert to local
+        ::    subscribers if it can't find the duct for a %boon message.
         ::
-        ?>  =(/a/nax `path`path.message)
-        =+  ;;  [=target=^message-num =error]  payload.message
+        ?~  client-duct=(~(get by by-bone.ossuary.peer-state) bone)
+          ~&  %ames-bogus-boon-target^her.channel
+          peer-core
+        ::  valid bone; give message to vane
+        ::
+        (emit u.client-duct %give %boon message)
+      ::  +on-still-nack-trace: handle nack-trace received by |message-still
+      ::
+      ++  on-still-nack-trace
+        |=  [=message-num message=*]
+        ^+  peer-core
+        ::
+        =+  ;;  [=failed=message-num =error]  message
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
-        =/  nax-key            [target-bone target-message-num]
+        ::  if no .target-duct, malformed message; don't ack
+        ::
+        ?~  target-duct=(~(get by by-bone.ossuary.peer-state) target-bone)
+          ~&  %ames-bogus-nack-trace-target^her.channel
+          peer-core
+        ::  valid .target-duct; ack
+        ::
+        =.  peer-core  (run-message-still bone %done ok=%.y)
+        ::
+        =/  nax-key  [target-bone failed-message-num]
         ::  if we haven't heard a message nack, pretend we have
         ::
         ::    The nack-trace message counts as a valid message nack on
@@ -1726,29 +1746,46 @@
         ::
         =?  peer-core  !(~(has in nax.peer-state) nax-key)
           %-  run-message-pump
-          [target-bone %hear target-message-num %| ok=%.n lag=`@dr`0]
+          [target-bone %hear failed-message-num %| ok=%.n lag=`@dr`0]
         ::  clear the nack from our state and relay to vane
         ::
         =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
-        =/  target-duct     (~(got by by-bone.ossuary.peer-state) target-bone)
         ::
-        (emit target-duct %give %done `error)
+        (emit u.target-duct %give %done `error)
+      ::  +on-still-plea: handle request message received by |message-still
+      ::
+      ++  on-still-plea
+        |=  [=message-num message=*]
+        ^+  peer-core
+        ::  don't accept requests for arbitrary vanes
+        ::
+        =+  ;;  [vane=?(%a %c %g %k) =plea]  message
+        ::  %a /ping means sponsor ping timer; send ack
+        ::
+        ?:  ?=(%a vane)
+          ::  validate ping message and send ack
+          ::
+          ::    TODO: treat ames as client vane and go through arvo?
+          ::          removes reentrancy and could nack more easily
+          ::
+          =/  error=(unit error)
+            ?:  =([/ping ~] plea)  ~
+            `[%ping [%leaf "ames: invalid ping"]~]
+          ::
+          (run-message-still bone %done ok=%.y)
+        ::  not a sponsor ping; relay .plea to .vane
+        ::
+        =/  =wire  (make-bone-wire her.channel bone)
+        ::
+        =^  client-duct  ossuary.peer-state
+          (get-duct ossuary.peer-state bone duct)
+        ::
+        ?-  vane
+          %c  (emit client-duct %pass wire %c %plea her.channel plea)
+          %g  (emit client-duct %pass wire %g %plea her.channel plea)
+          %k  (emit client-duct %pass wire %k %plea her.channel plea)
+        ==
       --
-    ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
-    ::
-    ++  send-shut-packet
-      |=  =shut-packet
-      ^+  peer-core
-      ::  swizzle bone just before sending; TODO document
-      ::
-      =.  bone.shut-packet  (mix 1 bone.shut-packet)
-      ::
-      =/  content  (encrypt symmetric-key.channel shut-packet)
-      =/  =packet  [[our her.channel] encrypted=%.y origin=~ content]
-      =/  =blob    (encode-packet packet)
-      ::
-      =.  event-core  (send-blob her.channel blob)
-      peer-core
     --
   --
 ::  +make-message-pump: constructor for |message-pump
@@ -1779,7 +1816,7 @@
     ^+  message-pump
     ::
     ?-  -.task
-      %memo  (on-memo message.task)
+      %memo  (on-memo message-blob.task)
       %wake  (run-packet-pump task)
       %hear
         ?-  -.ack-meat.task
@@ -1789,10 +1826,10 @@
   ::  +on-memo: handle request to send a message
   ::
   ++  on-memo
-    |=  =message
+    |=  =message-blob
     ^+  message-pump
     ::
-    =.  unsent-messages.state  (~(put to unsent-messages.state) message)
+    =.  unsent-messages.state  (~(put to unsent-messages.state) message-blob)
     message-pump
   ::  +on-hear: handle packet acknowledgment
   ::
@@ -1899,10 +1936,10 @@
       message-pump
     ::  .unsent-messages is nonempty; pop a message off and feed it
     ::
-    =^  message  unsent-messages.state  ~(get to unsent-messages.state)
+    =^  =message-blob  unsent-messages.state  ~(get to unsent-messages.state)
     ::  break .message into .chunks and set as .unsent-fragments
     ::
-    =.  unsent-fragments.state  (split-message next.state message)
+    =.  unsent-fragments.state  (split-message next.state message-blob)
     ::  try to feed packets from the next message
     ::
     =.  next.state  +(next.state)
@@ -2320,7 +2357,8 @@
       ::
       u.existing
     ::
-    =/  already-heard=?  (~(has by fragments.partial-rcv-message) `^fragment-num``@`seq)
+    =/  already-heard=?
+      (~(has by fragments.partial-rcv-message) `^fragment-num``@`seq)
     ::  ack dupes except for the last fragment, in which case drop
     ::
     ?:  already-heard
@@ -2361,14 +2399,14 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    =/  =message  (assemble-fragments [num-fragments fragments]:u.live)
+    =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
     $(seq +(seq))
   ::  +enqueue-to-vane: enqueue message to be sent to local vane
   ::
   ++  enqueue-to-vane
-    |=  [seq=message-num =message]
+    |=  [seq=message-num message=*]
     ^+  message-still
     ::
     =/  empty=?  =(~ pending-vane-ack.state)
@@ -2402,10 +2440,10 @@
 ::  +split-message: split message into kilobyte-sized fragments
 ::
 ++  split-message
-  |=  [=message-num =message]
+  |=  [=message-num =message-blob]
   ^-  (list static-fragment)
   ::
-  =/  fragments=(list fragment)   (rip 13 (jam message))
+  =/  fragments=(list fragment)   (rip 13 message-blob)
   =/  num-fragments=fragment-num  (lent fragments)
   =|  counter=@
   ::

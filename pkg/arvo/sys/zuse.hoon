@@ -216,7 +216,7 @@
       [%wegh ~]
       ::  receive message via %ames
       ::
-      [%memo =ship =message:ames]
+      [%plea =ship =plea:ames]
   ==
 ::                                                      ::::
 ::::                      ++http                        ::  
@@ -395,23 +395,23 @@
           $>(%born vane-task)
           $>(%crud vane-task)
           $>(%init vane-task)
-          $>(%memo vane-task)
+          $>(%plea vane-task)
           $>(%vega vane-task)
           $>(%wegh vane-task)
       ==
     ::  $gift: effect from ames
     ::
-    ::    %memo: message to vane from peer
-    ::    %send: packet to unix
+    ::    %boon: response message from remote ship
     ::    %done: notify vane that peer (n)acked our message
+    ::    %send: packet to unix
     ::
     ::    %mass: memory usage report
     ::    %turf: domain report, relayed from kale
     ::
     +$  gift
-      $%  [%memo =message]
-          [%send =lane =blob]
+      $%  [%boon payload=*]
           [%done error=(unit error)]
+          [%send =lane =blob]
       ::
           [%mass p=mass]
           [%turf turfs=(list turf)]
@@ -458,12 +458,13 @@
   ::    know their transport addresses.
   ::
   +$  lane  (each @pC address)
-  ::  $message: application-level message
+  ::  $plea: application-level message, as a %pass
   ::
+  ::    vane: destination vane on remote ship
   ::    path: internal route on the receiving ship
   ::    payload: semantic message contents
   ::
-  +$  message  [=path payload=*]
+  +$  plea  [vane=@tas =path payload=*]
   --  ::ames
 ::                                                      ::::
 ::::                    ++behn                            ::  (1b) timekeeping
@@ -505,13 +506,13 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  out result <-$
-      $%  {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
+      $%  [%boon payload=*]                             ::  ames response
+          {$croz rus/(map desk {r/regs w/regs})}        ::  rules for group
           {$cruz cez/(map @ta crew)}                    ::  permission groups
           {$dirk p/@tas}                                ::  mark mount dirty
           {$ergo p/@tas q/mode}                         ::  version update
           {$hill p/(list @tas)}                         ::  mount points
-          [%done error=(unit error:ames)]               ::  message (n)ack
-          [%memo =message:ames]                         ::  send ames message
+          [%done error=(unit error:ames)]               ::  ames message (n)ack
           {$mass p/mass}                                ::  memory usage
           {$mere p/(each (set path) (pair term tang))}  ::  merge result
           {$note p/@tD q/tank}                          ::  debug message
@@ -545,7 +546,7 @@
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
           $>(%wegh vane-task)                           ::  report memory
-          $>(%memo vane-task)                           ::  network request
+          $>(%plea vane-task)                           ::  ames request
       ==                                                ::
     --  ::able
   ::
@@ -1780,20 +1781,20 @@
   ++  able  ^?
     |%
     ++  gift                                            ::  outgoing result
-      $%  {$mass p/mass}                                ::  memory usage
+      $%  [%boon payload=*]                             ::  ames response
+          [%done error=(unit error:ames)]               ::  ames message (n)ack
+          {$mass p/mass}                                ::  memory usage
           {$onto p/(each suss tang)}                    ::  about agent
           {$unto p/cuft}                                ::
-          [%done error=(unit error:ames)]               ::  message (n)ack
-          [%memo =message:ames]                         ::  send ames message
       ==                                                ::
     ++  task                                            ::  incoming request
       $~  [%vega ~]                                     ::
       $%  {$conf p/dock q/culm}                         ::  configure app
-          $>(%init vane-task)                           ::  set owner
           {$deal p/sock q/cush}                         ::  full transmission
+          $>(%init vane-task)                           ::  set owner
+          $>(%plea vane-task)                           ::  ames request
           $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
-          $>(%memo vane-task)                           ::  network request
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
     --  ::able
@@ -2078,7 +2079,6 @@
           [%vest ~]                                     ::  view public balance
           [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
-          $>(%memo vane-task)                           ::  remote request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::
@@ -2335,8 +2335,8 @@
     ++  gift                                            ::  out result <-$
       $%  [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
-          [%done error=(unit error:ames)]               ::  message (n)ack
-          [%memo =message:ames]                         ::  send ames message
+          [%done error=(unit error:ames)]               ::  ames message (n)ack
+          [%boon payload=*]                             ::  ames response
           [%source whos=(set ship) src=source]          ::
           [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
@@ -2370,7 +2370,7 @@
           [%vent-update =vent-result]                   ::  update from app
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
-          $>(%memo vane-task)                           ::  remote request
+          $>(%plea vane-task)                           ::  ames request
           [%wind p=@ud]                                 ::  rewind before block
       ==                                                ::
     --                                                  ::
