@@ -124,6 +124,11 @@ h2 {
   -webkit-box-orient: vertical;
 }
 
+.clamp-attachment {
+  overflow: scroll;
+  max-height: 10em;
+}
+
 .lh-16 {
   line-height: 16px;
 }

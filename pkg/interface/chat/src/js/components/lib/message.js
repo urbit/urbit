@@ -17,6 +17,8 @@ export class Message extends Component {
       return this.renderSpeech(speech.ire.sep);
     } else if (_.has(speech, 'app')) {
       return this.renderSpeech(speech.app.sep);
+    } else if (_.has(speech, 'fat')) {
+      return this.renderFat(speech.fat.sep, speech.fat.tac);
     } else {
       return this.renderUnknown();
     }
@@ -83,6 +85,29 @@ export class Message extends Component {
     return (<>
       <p><code># {expression}</code></p>
       <p><code>{result[0]}</code></p>
+    </>);
+  }
+
+  renderFat(speech, attachment) {
+    return (<>
+      {this.renderSpeech(speech)}
+      {this.renderAttachment(attachment)}
+    </>);
+  }
+
+  renderAttachment(content, title = '') {
+    if (_.has(content, 'name')) {
+      return this.renderAttachment(content.name.tac, content.name.nom);
+    }
+
+    return (<details open>
+      <summary class="inter fs-italic">{'Attached: ' + title}</summary>
+      { _.has(content, 'text')
+        ? <pre class="clamp-attachment">{content.text}</pre>
+        : _.has(content, 'tank')
+        ? content.tank.map(l => <p>{l}</p>)
+        : null
+      }
     </>);
   }
 
