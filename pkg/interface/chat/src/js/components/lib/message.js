@@ -11,6 +11,8 @@ export class Message extends Component {
       return this.renderLin(speech.lin.msg, speech.lin.pat);
     } else if (_.has(speech, 'url')) {
       return this.renderUrl(speech.url);
+    } else if (_.has(speech, 'ire')) {
+      return this.renderSpeech(speech.ire.sep);
     } else if (_.has(speech, 'app')) {
       return this.renderSpeech(speech.app.sep);
     } else {
