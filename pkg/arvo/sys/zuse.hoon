@@ -2285,7 +2285,50 @@
   ++  able  ^?
     =,  pki
     |%
+    +$  public-keys-result
+      $%  [%full points=(map ship point)]
+          [%diff who=ship =diff:point]
+      ==
+    ::                                                  ::
+    ++  gift                                            ::  out result <-$
+      $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
+          [%mack p=(unit tang)]                         ::  message n/ack
+          [%turf turf=(list turf)]                      ::  domains
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys =public-keys-result]            ::  ethereum changes
+      ==                                                ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
+    +=  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
+      $%  $:  %dawn                                     ::  boot from keys
+              =seed:able:kale                           ::    identity params
+              spon=ship                                 ::    sponsor
+              czar=(map ship [=life =pass])             ::    galaxy table
+              turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
+          ==                                            ::
+          [%fake =ship]                                 ::  fake boot
+          [%listen whos=(set ship) =source]             ::  set ethereum source
+          ::TODO  %next for generating/putting new private key
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
+          [%turf ~]                                     ::  view domains
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%wegh vane-task)                           ::  memory usage request
+          $>(%west vane-task)                           ::  remote request
+          [%wind p=@ud]                                 ::  rewind before block
+      ==                                                ::
     ::  %kale has two general kinds of task: changes
+    ::
     ::  and change subscriptions.
     ::
     ::  change tasks are designed to match high-level
@@ -2421,71 +2464,18 @@
           a-point(sponsor to.diff)
         ==
       --
-    ::
-    +$  public-keys-result
-      $%  [%full points=(map ship point)]
-          [%diff who=ship =diff:point]
-      ==
-    ::                                                  ::
-    ++  gift                                            ::  out result <-$
-      $%  [%init p=ship]                                ::  report install unix
-          [%mass p=mass]                                ::  memory usage report
-          [%mack p=(unit tang)]                         ::  message n/ack
-          [%source whos=(set ship) src=source]          ::
-          [%turf turf=(list turf)]                      ::  domains
-          [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys =public-keys-result]            ::  ethereum changes
-      ==                                                ::
-    ::  +seed: private boot parameters
-    ::
-    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
-    ::
-    +=  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:kale                           ::    identity params
-              spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-              snap=(unit snapshot)                      ::    head start
-          ==                                            ::
-          [%fake =ship]                                 ::  fake boot
-          [%listen whos=(set ship) =source]             ::  set ethereum source
-          ::TODO  %next for generating/putting new private key
-          [%nuke whos=(set ship)]                       ::  cancel tracker from
-          [%private-keys ~]                             ::  sub to privates
-          [%public-keys ships=(set ship)]               ::  sub to publics
-          [%sources ~]
-          [%meet =ship =life =pass]                     ::  met after breach
-          [%snap snap=snapshot kick=?]                  ::  load snapshot
-          [%turf ~]                                     ::  view domains
-          [%new-event =ship =udiff:point]               ::  update from app
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  memory usage request
-          $>(%west vane-task)                           ::  remote request
-          [%wind p=@ud]                                 ::  rewind before block
-      ==                                                ::
     --                                                  ::
   ::                                                    ::
   ::::                                                  ::
     ::                                                  ::
-  +$  node-src                                          ::  ethereum node comms
-    $:  node=purl:eyre                                  ::  node url
-        filter-id=@ud                                   ::  current filter
-        poll-timer=@da                                  ::  next filter poll
-    ==                                                  ::
-  ::
-  +$  source  (each ship node-src)
+  +$  source  (each ship term)
   +$  source-id  @udsourceid
   +$  snapshot  ~
   ::
   ::  +state-eth-node: state of a connection to an ethereum node
   ::
   +$  state-eth-node                                    ::  node config + meta
-    $:  yen=(set duct)
-        top-source-id=source-id
+    $:  top-source-id=source-id
         sources=(map source-id source)
         sources-reverse=(map source source-id)
         default-source=source-id

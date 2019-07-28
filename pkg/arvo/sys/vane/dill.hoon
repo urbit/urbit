@@ -301,18 +301,6 @@
         =.  moz
           :_  moz
           [hen %pass /merg/home %c %merg %home our %base da+now %init]
-        =.  moz
-          :_  moz
-          :*  hen
-              %pass
-              ~
-              %g
-              %deal
-              [our our]
-              %azimuth-tracker
-              %poke
-              [%azimuth-tracker-poke -:!>([%init ~]) [%init ~]]
-          ==
         .
       ::
       ++  mere                                          ::  continue init

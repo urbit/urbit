@@ -2,10 +2,6 @@
 =,  able:kale
 =>  |%
     +$  pending-udiffs  (map number:block udiffs:point)
-    +$  config
-      $:  url=@ta
-          from-number=number:block
-      ==
     +$  app-state
       $:  %2
           url=@ta
@@ -17,14 +13,14 @@
     +$  peek-data  ~
     +$  in-poke-data
       $:  %azimuth-tracker-poke
-          $%  [%init ~]
-              [%listen whos=(list ship) =source:kale]
-              [%watch =config]
+          $%  [%listen whos=(list ship) =source:kale]
+              [%watch url=@ta]
           ==
       ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
-    +$  out-peer-data  ~
+    +$  out-peer-data
+      [%azimuth-udiff =ship =udiff:point]
     ++  tapp
       %:  ^tapp
         app-state
@@ -260,22 +256,15 @@
       ?~  udiffs
         (pure:m ~)
       ~&  [%sending-event i.udiffs]
-      ;<  ~  bind:m  (send-effect:stdio %new-event /ne i.udiffs)
+      =/  =path  /(scot %p ship.i.udiffs)
+      ;<  ~  bind:m  (give-result:stdio / %azimuth-udiff i.udiffs)
+      ;<  ~  bind:m  (give-result:stdio path %azimuth-udiff i.udiffs)
       loop(udiffs t.udiffs)
     --
 ::
 ::  Main loop
 ::
 =>  |%
-    ::
-    ::  Subscribe to %sources from kale
-    ::
-    ++  init
-      |=  state=app-state
-      =/  m  (async:stdio ,app-state)
-      ^-  form:m
-      ;<  ~  bind:m  (send-effect:stdio %sources /se ~)
-      (pure:m state)
     ::
     ::  Send %listen to kale
     ::
@@ -286,27 +275,13 @@
       ;<  ~  bind:m  (send-effect:stdio %listen /lo (silt whos) source)
       (pure:m state)
     ::
-    ::  Take %source from kale
-    ::
-    ++  take-source
-      |=  [state=app-state whos=(set ship) =source:kale]
-      =/  m  (async:stdio ,app-state)
-      ^-  form:m
-      ?:  ?=(%& -.source)
-        (pure:m state)
-      =/  a-purl=purl:eyre  node.p.source
-      =.  url.state  (crip (en-purl:html a-purl))
-      =.  whos.state  whos
-      (watch state url.state 0) :: launch:contracts:azimuth)
-    ::
     ::  Start watching a node
     ::
-    ++  watch
-      |=  [state=app-state =config]
+    ++  start
+      |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =:  url.state             url.config
-          number.state          from-number.config
+      =:  number.state          0
           pending-udiffs.state  *pending-udiffs
           blocks.state          *(list block)
         ==
@@ -425,9 +400,8 @@
   ^-  form:m
   ~&  [%azimuth-tracker our.bowl number.state in-poke-data]
   ?-  +<.in-poke-data
-    %init    (init state)
     %listen  (listen state +>.in-poke-data)
-    %watch   (watch state +>.in-poke-data)
+    %watch   (pure:m state(url url.in-poke-data))
   ==
 ::
 ++  handle-take
@@ -435,9 +409,17 @@
   =/  m  tapp-async
   ^-  form:m
   ?+  -.sign  ~|([%strange-sign -.sign] !!)
-    %source  (take-source state +.sign)
     %wake    (get-updates state)
   ==
 ::
-++  handle-peer  ~(handle-peer default-tapp bowl state)
+++  handle-peer
+  |=  =path
+  =/  m  tapp-async
+  ^-  form:m
+  =/  who=(unit ship)  ?~(path ~ `(slav %p i.path))
+  =.  whos.state
+    ?~  who
+      ~
+    (~(put in whos.state) u.who)
+  (start state)
 --

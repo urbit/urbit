@@ -37,7 +37,7 @@
 =>  |%
 +$  state                                               ::  all vane state
   $:  ver=$0                                            ::  vane version
-      pki=state-pki                                     ::  
+      pki=state-pki                                     ::
       etn=state-eth-node                                ::  eth connection state
       sap=state-snapshots                               ::  state snapshots
   ==                                                    ::
@@ -82,6 +82,9 @@
   $%  $:  %a                                            ::    to %ames
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
+      $:  %g                                            ::    to self
+          $>(%deal task:able:gall)                              ::  set ethereum source
+      ==                                                ::
       $:  %k                                            ::    to self
           $>(%listen task)                              ::  set ethereum source
       ==                                                ::
@@ -89,9 +92,17 @@
   $%  $>(%init vane-task)                               ::  report install
   ==  ==  ==                                            ::
 ::                                                      ::
++$  peer-sign  [=ship =udiff:point]                     ::
+::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %woot *ship ~]                                ::
   $%  [%a $>(%woot gift:able:ames)]                     ::  message result
+      $:  %g                                            ::
+          $>  $?  %onto                                 ::
+                  %unto                                 ::
+              ==                                        ::
+          gift:able:gall                                ::
+      ==
   ==                                                    ::
 --  ::
 ::                                                      ::::
@@ -172,6 +183,25 @@
   ++  abet                                              ::  resolve
     [(flop moz) lex]
   ::                                                    ::  ++sein:of
+  ++  emit
+    |=  =move
+    +>.$(moz [move moz])
+  ::
+  ++  poke-watch
+    |=  [hen=duct app=term =purl:eyre]
+    %-  emit
+    :*  hen
+        %pass
+        /[app]/poke
+        %g
+        %deal
+        [our our]
+        app
+        %poke
+        %azimuth-tracker-poke
+        !>([%watch (crip (en-purl:html purl))])
+    ==
+  ::
   ++  sein                                              ::  sponsor
     |=  who=ship
     ^-  ship
@@ -219,7 +249,7 @@
       =.  boq.own.pki  bloq.tac
       ::  save our ethereum gateway (required for galaxies)
       ::
-      =.  nod.own.pki 
+      =.  nod.own.pki
         %+  fall  node.tac
         (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
       ::  save our parent signature (only for moons)
@@ -264,14 +294,22 @@
           [%diff ship diff]:i.diffs
         $(diffs t.diffs)
       ::
+      ::  start subscriptions
       ::
+      =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
         %-  curd  =<  abet
         %+  sources:~(feel su hen our pki etn sap)
           ?:  =(%czar (clan:title our))
             ~
           (silt spon.tac ~)
-        [%| nod.own.pki *@ud *@da]
+        [%| %azimuth-tracker]
+      ::
+      =?  +>.$  !=(%czar (clan:title our))
+        %-  curd  =<  abet
+        %+  sources:~(feel su hen our pki etn sap)
+            ~
+        [%& spon.tac]
       ::
       =.  moz
         %+  weld  moz
@@ -372,7 +410,6 @@
         +>.$
       %_  +>.$
         yen.own.pki  (~(del in yen.own.pki) hen)
-        yen.etn      (~(del in yen.etn) hen)
       ==
     ::
     ::  watch public keys
@@ -395,13 +432,6 @@
         %snap
       (restore-snap hen snap.tac kick.tac)
     ::
-    ::  sources subscription
-    ::    [%sources ~]
-    ::
-        %sources
-      ~&  [%kale-sources]
-      (curd abet:~(sources ~(feed su hen our pki etn sap) hen))
-    ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
     ::  request domains
@@ -414,14 +444,6 @@
       ~|  [fak.own.pki tuf.own.pki]
       ?<  =(fak.own.pki ?=(^ tuf.own.pki))
       +>.$(moz [[hen %give %turf tuf.own.pki] moz])
-    ::
-    ::  Update from app
-    ::    [%new-event =ship =udiff:point]
-    ::
-        %new-event
-      ~&  [%kale-new-event ship udiff]:tac
-      %-  curd  =<  abet
-      (~(new-event su hen our pki etn sap) ship.tac udiff.tac)
     ::
     ::  learn of kernel upgrade
     ::    [%vega ~]
@@ -492,8 +514,6 @@
   ++  take
     |=  [tea=wire hen=duct hin=sign]
     ^+  +>
-    ?>  ?=([@ *] tea)
-    =*  wir  t.tea
     ?-  hin
         [%a %woot *]
       ?~  q.hin  +>.$
@@ -502,6 +522,36 @@
       ~_  q.u.u.q.hin
       ::TODO  fail:et
       +>.$
+    ::
+        [%g %onto *]
+      ~&  [%kale-onto tea hin]
+      +>.$
+    ::
+        [%g %unto *]
+      ?-  +>-.hin
+          $quit           ~|([%kale-unexpected-quit tea hin] !!)
+          $http-response  ~|([%kale-unexpected-http-response tea hin] !!)
+          $coup
+        ?~  p.p.+>.hin
+          +>.$
+        %-  (slog leaf+"kale-bad-coup" u.p.p.+>.hin)
+        +>.$
+      ::
+          $reap
+        ?~  p.p.+>.hin
+          +>.$
+        %-  (slog u.p.p.+>.hin)
+        ~|([%kale-unexpected-reap tea hin] +>.$)
+      ::
+          $diff
+        ?>  ?=([@ *] tea)
+        =*  app  i.tea
+        =/  =peer-sign  ;;(peer-sign q.q.p.p.+>.hin)
+        %.  [hen tea app]
+        =<  pump
+        %-  curd  =<  abet
+        (~(new-event su hen our pki etn sap) peer-sign)
+      ==
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -512,6 +562,10 @@
         ==
     +>(pki pki, etn etn, sap sap, moz (weld (flop moz) ^moz))
   ::                                                    ::  ++wind:of
+  ++  pump
+    |=  [hen=duct =wire app=term]
+    (emit [hen %pass wire %g %deal [our our] app %pump ~])
+  ::
   ++  wind                                              ::  rewind to snap
     |=  [hen=duct block=@ud]
     ^+  +>
@@ -574,6 +628,30 @@
     |-  ^+  this-su
     ?~  noy  this-su
     $(noy t.noy, moz [[i.noy cad] moz])
+  ::
+  ++  emit-peer
+    |=  [app=term =path]
+    %-  emit
+    :*  hen
+        %pass
+        [app path]
+        %g
+        %deal
+        [our our]
+        app
+        %peer
+        path
+    ==
+  ::
+  ++  peer
+    |=  [app=term whos=(set ship)]
+    ?:  =(~ whos)
+      (emit-peer app /)
+    =/  whol=(list ship)  ~(tap in whos)
+    |-  ^+  this-su
+    ?~  whol  this-su
+    =.  this-su  (emit-peer app /(scot %p i.whol))
+    $(whol t.whol)
   ::
   ++  public-keys-give
     |=  [yen=(set duct) =public-keys-result]
@@ -673,20 +751,6 @@
         yen.own  (~(put in yen.own) hen)
       ==
     ::
-    ++  sources
-      %_  ..feed
-          yen.etn  (~(put in yen.etn) hen)
-          moz
-        %-  welp  :_  moz
-        ~&  [%kale-sources-feed etn=etn]
-        %+  turn
-          ^-  (list (pair source-id (set ship)))
-          :-  [default-source.etn ~]
-          ~(tap by ship-sources-reverse.etn)
-        |=  [=source-id whos=(set ship)]
-        [hen %give %source whos (~(got by sources.etn) source-id)]
-      ==
-    ::                                                  ::  ++fake:feed:su
     ++  fake                                            ::  fake subs and state
       ?>  fak.own.pki
       |%
@@ -736,12 +800,8 @@
       =/  =point  (fall maybe-point *point)
       =.  point
         ?-  -.a-diff
-            %spon
-          point(sponsor to.a-diff)
-        ::
-            %rift
-          point(rift to.a-diff)
-        ::
+            %spon  point(sponsor to.a-diff)
+            %rift  point(rift to.a-diff)
             %keys
           %_  point
               life  life.to.a-diff
@@ -774,8 +834,6 @@
         =/  send-message
           |=  =message
           [hen %pass /public-keys %a %want p.source /k/public-keys message]
-        =.  ..feel
-          (emit (send-message %nuke whos))
         (emit (send-message %public-keys whos))
       =^  =source-id  this-su  (get-source-id source)
       =.  ..feed
@@ -791,7 +849,7 @@
           %-  ~(gas ju ship-sources-reverse.etn)
           (turn whol |=(=ship [source-id ship]))
         ..feed
-      (exec yen.etn [%give %source whos source])
+      (peer p.source whos)
     --
   ::                                                    ::  ++meet:su
   ++  meet                                              ::  seen after breach
