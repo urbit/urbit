@@ -29,6 +29,9 @@ export class Message extends Component {
   }
 
   renderLin(content, action = false) {
+    if (content === '') {
+      return null;
+    }
     //TODO remove once arvo:// urls are supported in url speeches
     if (content.indexOf('arvo://') === 0) {
       return this.renderUrl(content);

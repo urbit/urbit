@@ -194,6 +194,10 @@ export class ChatInput extends Component {
   messageSubmit() {
     const { props, state } = this;
 
+    if (state.message === '') {
+      return;
+    }
+
     let message = {
       uid: uuid(),
       aut: window.ship,
