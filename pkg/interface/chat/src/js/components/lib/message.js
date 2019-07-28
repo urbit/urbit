@@ -11,6 +11,8 @@ export class Message extends Component {
       return this.renderLin(speech.lin.msg, speech.lin.pat);
     } else if (_.has(speech, 'url')) {
       return this.renderUrl(speech.url);
+    } else if (_.has(speech, 'exp')) {
+      return this.renderExp(speech.exp.exp, speech.exp.res);
     } else if (_.has(speech, 'ire')) {
       return this.renderSpeech(speech.ire.sep);
     } else if (_.has(speech, 'app')) {
@@ -75,6 +77,13 @@ export class Message extends Component {
         href={href}
         target="_blank">{content}</a>
     );
+  }
+
+  renderExp(expression, result) {
+    return (<>
+      <p><code># {expression}</code></p>
+      <p><code>{result[0]}</code></p>
+    </>);
   }
 
   renderContent() {
