@@ -11,6 +11,8 @@ export class Message extends Component {
       return this.renderLin(speech.lin.msg, speech.lin.pat);
     } else if (_.has(speech, 'url')) {
       return this.renderUrl(speech.url);
+    } else if (_.has(speech, 'app')) {
+      return this.renderSpeech(speech.app.sep);
     } else {
       return this.renderUnknown();
     }
@@ -87,6 +89,16 @@ export class Message extends Component {
     }
   }
 
+  renderAuthor() {
+    const msg = this.props.msg;
+    const ship = '~' + msg.aut;
+    if (_.has(msg, 'sep.app.app')) {
+      return `:${msg.sep.app.app} (${ship})`;
+    } else {
+      return ship;
+    }
+  }
+
   //NOTE see also lib/chat-input's globalizeUrl
   localizeUrl(url) {
     if (typeof url !== 'string') { throw 'Only localize strings!'; }
@@ -120,7 +132,7 @@ export class Message extends Component {
         <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
           <div className="hide-child">
             <p className="v-top label-small-mono gray dib mr3">
-              ~{props.msg.aut}
+              {this.renderAuthor()}
             </p>
             <p className="v-top label-small-mono gray dib">{timestamp}</p>
             <p className="v-top label-small-mono ml2 gray dib child">
