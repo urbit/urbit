@@ -173,7 +173,7 @@ export class ChatInput extends Component {
       //TODO send proper url speeches once hall starts using a url type that
       //     supports non-http protocols.
       return { lin: {
-        msg: 'arvo://' + url.slice(urlObject.origin.length+1),
+        msg: 'arvo://' + url.slice(urlObject.origin.length),
         pat: false
       } };
     } else {

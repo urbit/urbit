@@ -147,10 +147,7 @@ export class Message extends Component {
     if (url.indexOf(arvo) === 0) {
       // this application is being served by an urbit also, so /path will
       // point to the arvo url as hosted by this same urbit.
-      let path = url.slice(arvo.length);
-      // ensure single leading /
-      if (path[0] !== '/') path = '/' + path;
-      return path;
+      return url.slice(arvo.length);
     } else {
       return url;
     }
