@@ -108,7 +108,7 @@
           task:able:behn                                ::
       ==                                                ::
       $:  %a                                            ::    to %ames
-          $>(%want task:able:ames)                      ::  send message
+          $>(%plea task:able:ames)                      ::  send request message
       ==                                                ::
       $:  %i                                            ::    to %iris
           $>(%request task:able:iris)                   ::  http request
@@ -125,7 +125,7 @@
   $~  [%b %wake ~]                                      ::
   $%  [%b $>(%wake gift:able:behn)]                     ::  wakeup
       [%j $>(%vent gift)]                               ::  ethereum changes
-      [%a $>(%woot gift:able:ames)]                     ::  message result
+      [%a $>(%done gift:able:ames)]                     ::  message result
       [%i $>(%http-response gift:able:iris)]            ::  http response
   ==                                                    ::
 --  ::
@@ -555,7 +555,7 @@
       |=((map @ta @) (~(run by +<) |=(@ (shax +<))))
     ::
         $urban
-      [%urban (~(run by p.rys) |=({@da code:ames} [+<- (shax +<+)]))]
+      [%urban (~(run by p.rys) |=({@da @} [+<- (shax +<+)]))]
     ==
   ::                                                    ::  ++remove:up
   ++  remove                                            ::  pig minus gob
@@ -911,7 +911,7 @@
     ::    [%vent ~]
     ::
         %vent
-      =.  moz  [[hen %give %mack ~] moz]
+      =.  moz  [[hen %give %done ~] moz]
       (curd abet:~(vent ~(feed su hen our urb sub etn sap) hen))
     ::
     ::  monitor assets
@@ -946,9 +946,9 @@
     ::  authenticated remote request
     ::    {$west p/ship q/path r/*}
     ::
-        $west
-      =*  her  p.tac
-      =/  mes  (message r.tac)
+        %plea
+      =*  her  ship.tac
+      =/  mes  ;;(message payload.plea.tac)
       ?-    -.mes
       ::
       ::  reset remote rights
@@ -975,7 +975,7 @@
         ::  ignore if not from currently configured source.
         ?.  &(-.source.etn =(her p.source.etn))
           +>.$
-        =.  moz  [[hen %give %mack ~] moz]
+        =.  moz  [[hen %give %done ~] moz]
         %+  cute  hen  =<  abet
         (~(hear-vent et hen our now urb.lex sub.lex etn.lex sap.lex) p.mes)
       ==
@@ -993,11 +993,10 @@
     ?>  ?=([@ *] tea)
     =*  wir  t.tea
     ?-  hin
-        [%a %woot *]
-      ?~  q.hin  +>.$
-      ?~  u.q.hin  ~&(%ares-fine +>.$)
-      ~&  [%woot-bad p.u.u.q.hin]
-      ~_  q.u.u.q.hin
+        [%a %done *]
+      ?~  error.hin  ~&(%ares-fine +>.$)
+      ~&  [%done-bad tag.u.error.hin]
+      %-  (slog tang.u.error.hin)
       ::TODO  fail:et
       +>.$
     ::
@@ -1162,7 +1161,7 @@
       :+  %pass
         /(scot %p our)/vent-result
       ^-  note
-      [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+      [%a %plea who %j /(scot %p our)/vent-result %vent-result res]
     $(yez t.yez)
   ::
   ++  extract-snap                                    ::  extract rewind point
@@ -1275,9 +1274,8 @@
           moz
         :_  moz
         :^  *duct  %pass  /vest/(scot %p p.hug)
-        :+  %a  %want
-        :+  p.hug  /j
-        ^-  message
+        :+  %a  %plea
+        :^  p.hug  %j  /
         [%hail |+pig]
       ==
     ::
@@ -1771,7 +1769,7 @@
     |=  [our=ship who=ship]
     %-  put-move(source &+who)
     %+  wrap-note  /vent/(scot %p who)
-    [%a %want who /j/(scot %p our)/vent `*`[%vent ~]]
+    [%a %plea who %j /(scot %p our)/vent `*`[%vent ~]]
   ::
   ::  +unsubscribe-from-source: stop listening to current source ship
   ::
@@ -1782,7 +1780,7 @@
     %+  wrap-note  /vent/(scot %p p.source)
     ::TODO  should we maybe have a %nuke-vent,
     ::      or do we have a unique duct here?
-    [%a %want p.source /j/(scot %p our)/vent `*`[%nuke ~]]
+    [%a %plea p.source %j /(scot %p our)/vent `*`[%nuke ~]]
   ::
   ::  +listen-to-node: start syncing from a node
   ::
@@ -2270,7 +2268,7 @@
     :+  %pass
       /(scot %p our)/vent-result
     ^-  note
-    [%a %want who /j/(scot %p our)/vent-result %vent-result res]
+    [%a %plea who %j /(scot %p our)/vent-result %vent-result res]
   ::                                                    ::  ++feed:su
   --
 --
@@ -2410,8 +2408,7 @@
       =/  cub  (nol:nu:crub:crypto sec)
       =/  sig  (sign:as:cub (shaf %self (sham [u.who 1 pub:ex:cub])))
       :^  ~  ~  %noun
-      !>  ^-  deed:ames
-      [1 pub:ex:cub `sig]
+      !>  [1 pub:ex:cub `sig]
     ::
     ?:  ?=(%earl rac)
       ?.  =(u.who p.why)
@@ -2423,8 +2420,7 @@
       =/  sec  (~(got by jaw.own.sub.lex) u.lyf)
       =/  cub  (nol:nu:crub:crypto sec)
       :^  ~  ~  %noun
-      !>  ^-  deed:ames
-      [u.lyf pub:ex:cub sig.own.sub.lex]
+      !>  [u.lyf pub:ex:cub sig.own.sub.lex]
     ::
     =/  pub  (~(get by kyz.puk.sub.lex) u.who)
     ?~  pub
@@ -2435,7 +2431,7 @@
     ?~  pas
       ~
     :^  ~  ~  %noun
-    !>  `deed:ames`[u.lyf u.pas ~]
+    !>  [u.lyf u.pas ~]
   ::
       %earl
     ?.  ?=([@ @ @ ~] tyl)  [~ ~]

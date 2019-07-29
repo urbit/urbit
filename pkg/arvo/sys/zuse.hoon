@@ -2024,7 +2024,8 @@
               del/bump                                  ::  change
       ==  ==                                            ::
     ++  gift                                            ::  out result <-$
-      $%  [%init p=ship]                                ::  report install unix
+      $%  [%done error=(unit error:ames)]               ::  ames (n) ack
+          [%init p=ship]                                ::  report install unix
           [%mass p=mass]                                ::  memory usage report
           [%mack p=(unit tang)]                         ::  message n/ack
           [%pubs public]                                ::  public keys
@@ -2080,6 +2081,7 @@
           [%vine ~]                                     ::  view secret history
           $>(%wegh vane-task)                           ::  memory usage request
           [%wind p=@ud]                                 ::  rewind before block
+          $>(%plea vane-task)                           ::  ames request message
       ==                                                ::
     --                                                  ::
   ::                                                    ::
@@ -9089,53 +9091,52 @@
   ::
   ++  snap
     !:
-    !!
-::  |%
-::  ::  +bloq:snap:dawn: extract block number
-::  ::
-::  ++  bloq
-::    |=  snap=snapshot:kale
-::    ^-  (unit @ud)
-::    =-  ?:(?=(%| -.out) ~ (some p.out))
-::    ^=  out  %-  mule  |.
-::    latest-block.snap
-::  ::  +czar:snap:dawn: extract galaxy table
-::  ::
-::  ++  czar
-::    |=  snap=snapshot:kale
-::    ^-  (unit (map ship [=life =pass]))
-::    =-  ?:(?=(%| -.out) ~ (some p.out))
-::    ^=  out  %-  mule  |.
-::    %-  ~(gas by *(map ship [=life =pass]))
-::    %+  turn  (gulf 0 255)
-::    |=  gal=@
-::    ^-  [ship [life pass]]
-::    :-  gal
-::    ~|  czar-gal=gal
-::    [life pass]:(need net:(~(got by pos.eth.snap) gal))
-::  ::  +point:snap:dawn: extract ship's contract state
-::  ::
-::  ++  point
-::    |=  [who=ship snap=snapshot:kale]
-::    ^-  (unit point:azimuth)
-::    (~(get by pos.eth.snap) who)
-::  ::  +turf:snap:dawn: extract network domains
-::  ::
-::  ++  turf
-::    |=  snap=snapshot:kale
-::    ^-  (unit (list ^turf))
-::    =-  ?:(?=(%| -.out) ~ (some p.out))
-::    ^=  out  %-  mule  |.
-::    %+  murn
-::      ^-  (list host:eyre)
-::      %+  murn
-::        ^-  (list @t)
-::        ~[pri sec ter]:dns.eth.snap
-::      |=  dom=@t
-::      ^-  (unit host:eyre)
-::      (rush dom thos:de-purl:html)
-::    |=(a=host:eyre ?:(?=(%| -.a) ~ (some p.a)))
-::  --
+    |%
+    ::  +bloq:snap:dawn: extract block number
+    ::
+    ++  bloq
+      |=  snap=snapshot:jael
+      ^-  (unit @ud)
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
+      latest-block.snap
+    ::  +czar:snap:dawn: extract galaxy table
+    ::
+    ++  czar
+      |=  snap=snapshot:jael
+      ^-  (unit (map ship [=life =pass]))
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
+      %-  ~(gas by *(map ship [=life =pass]))
+      %+  turn  (gulf 0 255)
+      |=  gal=@
+      ^-  [ship [life pass]]
+      :-  gal
+      ~|  czar-gal=gal
+      [life pass]:(need net:(~(got by pos.eth.snap) gal))
+    ::  +point:snap:dawn: extract ship's contract state
+    ::
+    ++  point
+      |=  [who=ship snap=snapshot:jael]
+      ^-  (unit point:azimuth)
+      (~(get by pos.eth.snap) who)
+    ::  +turf:snap:dawn: extract network domains
+    ::
+    ++  turf
+      |=  snap=snapshot:jael
+      ^-  (unit (list ^turf))
+      =-  ?:(?=(%| -.out) ~ (some p.out))
+      ^=  out  %-  mule  |.
+      %+  murn
+        ^-  (list host:eyre)
+        %+  murn
+          ^-  (list @t)
+          ~[pri sec ter]:dns.eth.snap
+        |=  dom=@t
+        ^-  (unit host:eyre)
+        (rush dom thos:de-purl:html)
+      |=(a=host:eyre ?:(?=(%| -.a) ~ (some p.a)))
+    --
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri

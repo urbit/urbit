@@ -2366,7 +2366,7 @@
     ?:  already-heard
       ?:  is-last-fragment
         message-still
-      ~&  %send-dupe-ack-fragment
+      ~&  %send-dupe-ack-fragment^fragment
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::

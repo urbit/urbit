@@ -121,14 +121,14 @@
   ::
   =/  lane-foo=lane:alef  [%| `@ux``@`%lane-foo]
   ::
-  =/  =message:alef  [/g/talk [%first %post]]
+  =/  =plea:ames  [%g /talk [%first %post]]
   ::
   =/  =shut-packet:alef
     :*  sndr-life=4
         rcvr-life=3
         bone=1
         message-num=1
-        [%& num-fragments=1 fragment-num=0 (jam message)]
+        [%& num-fragments=1 fragment-num=0 (jam plea)]
     ==
   ::
   =/  =packet:alef
@@ -144,36 +144,34 @@
     =/  =point:alef
       :*  rift=1
           life=4
-          crypto-suite=1
-          encryption-key=`@`alice-pub
-          authentication-key=`@`0
+          keys=[[life=4 [crypto-suite=1 `@`alice-pub]] ~ ~]
           sponsor=`~bus
       ==
     %-  take
-    :^  bob  /alien  ~[//unix]
+    :^  bob  /public-keys  ~[//unix]
     ^-  sign:alef
-    [%j %public-keys %full [n=[~bus point] ~ ~]]
+    [%k %public-keys %full [n=[~bus point] ~ ~]]
   ::
   ;:  weld
     %+  expect-eq
-      !>  [~[//unix] %pass /alien %j %public-keys ~bus]~
+      !>  [~[//unix] %pass /public-keys %k %public-keys [~bus ~ ~]]~
       !>  moves1
   ::
     %+  expect-eq
-      !>  [~[//unix] %pass /bone/~bus/1 %g %memo ~bus /g/talk [%first %post]]~
+      !>  [~[//unix] %pass /bone/~bus/1 %g %plea ~bus %g /talk [%first %post]]~
       !>  moves2
   ==
 ::
 ++  test-message-flow  ^-  tang
   ::
   =^  moves1  alice
-    (call alice ~[/alice] %memo ~doznec-doznec /g/talk [%get %post])
+    (call alice ~[/alice] %plea ~doznec-doznec %g /talk [%get %post])
   ::
   =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
   =^  moves3  bob    (take bob /bone/~nec/1 ~[/bob] %g %done ~)
   =^  moves4  alice  (call alice ~[/alice] %hear (snag-packet 0 moves3))
   =^  moves5  bob
-    (take bob /bone/~nec/1 ~[/bob] %g %memo /g/talk [%post 'first1!!'])
+    (take bob /bone/~nec/1 ~[/bob] %g %boon [%post 'first1!!'])
   ::
   =^  moves6  alice  (call alice ~[/alice] %hear (snag-packet 0 moves5))
   =^  moves7  bob    (call bob ~[/bob] %hear (snag-packet 0 moves6))
@@ -187,13 +185,13 @@
       !>  moves4
   ::
     %+  expect-eq
-      !>  [~[/alice] %give %memo /g/talk %post 'first1!!']
+      !>  [~[/alice] %give %boon [%post 'first1!!']]
       !>  (snag 1 `(list move:alef)`moves6)
   ==
 ::
 ++  test-nack  ^-  tang
   =^  moves1  alice
-    (call alice ~[/alice] %memo ~doznec-doznec /g/talk [%get %post])
+    (call alice ~[/alice] %plea ~doznec-doznec %g /talk [%get %post])
   ::
   =^  moves2  bob    (call bob ~[/bob] %hear (snag-packet 0 moves1))
   =/  =error:alef    [%flub [%leaf "sinusoidal repleneration"]~]
