@@ -196,12 +196,12 @@ u3_ames_decode_lane(u3_atom lan) {
 
   u3_lane lan_u;
   lan_u.pip_w = u3r_word(0, pip);
-  u3z(pip);
 
   c3_assert( _(u3a_is_cat(por)) );
   c3_assert( por < 65536 );
   lan_u.por_s = por;
 
+  u3z(cud);
   return lan_u;
 }
 
@@ -346,6 +346,7 @@ u3_ames_ef_send(u3_pier* pir_u, u3_noun lan, u3_noun pac)
       _ames_send(pac_u);
     }
   }
+  u3z(lan); u3z(pac);
 }
 
 /* _ames_recv_cb(): receive callback.
