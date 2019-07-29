@@ -2135,7 +2135,7 @@
           $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
               spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
+              czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
@@ -2307,7 +2307,7 @@
       $%  $:  %dawn                                     ::  boot from keys
               =seed:able:kale                           ::    identity params
               spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
+              czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
@@ -2411,13 +2411,18 @@
       ::
       ++  udiff-to-diff
         |=  [=a=udiff =a=point]
-        ^-  diff
+        ^-  (unit diff)
         ?-    +<.a-udiff
             %disavow  ~|(%udiff-to-diff-disavow !!)
-            %rift     [%rift rift.a-point rift.a-udiff]
-            %spon     [%spon sponsor.a-point sponsor.a-udiff]
+            %spon     `[%spon sponsor.a-point sponsor.a-udiff]
+            %rift
+          ?:  =(rift.a-udiff +(rift.a-point))
+            `[%rift rift.a-point rift.a-udiff]
+          ~&  [%ignoring-udiff a-udiff a-point]
+          ~
+        ::
             %keys
-          :+  %keys
+          :^  ~  %keys
             [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
         ==

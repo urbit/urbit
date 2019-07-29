@@ -47,10 +47,10 @@
       :-  |  :_  [%wait ~]
       %+  answer-request  req
       :-  %o
-      =/  number       (hex-to-num:ethereum (get-block-hash req))
+      =/  number  (hex-to-num:ethereum (get-first-param req))
+      =/  hash  (number-to-hash number)
       ~&  who=who.pin
       ~&  number=number
-      =/  hash         (number-to-hash number)
       ~&  hash=hash
       =/  parent-hash  (number-to-hash ?~(number number (dec number)))
       ~&  parent-hash=parent-hash
@@ -156,7 +156,7 @@
       ?>  ?=([* ~] id)
       i.id
     ::
-    ++  get-block-hash
+    ++  get-first-param
       |=  req=@t
       =,  dejs:format
       =/  id
@@ -197,7 +197,7 @@
     ::
     ++  logs-by-range
       |=  [from-block=@ud to-block=@ud]
-      %+  logs-to-json  from-block
+      %+  logs-to-json  (max launch:contracts:azimuth from-block)
       ?:  (lth to-block launch:contracts:azimuth)
         ~
       %+  swag
@@ -232,7 +232,7 @@
           (crip (prefix-hex:ethereum (render-hex-bytes:ethereum 32 hash)))
         ::
           :+  'blockNumber'  %s
-          (crip (num-to-hex:ethereum (add launch:contracts:azimuth count)))
+          (crip (num-to-hex:ethereum count))
         ::
           :+  'address'  %s
           (crip (address-to-hex:ethereum azimuth:contracts:azimuth))
@@ -268,7 +268,7 @@
 ::  Should only do galaxies
 ::
 ++  get-czars
-  ^-  (map ship [life pass])
+  ^-  (map ship [rift life pass])
   %-  malt
   %+  murn
     ~(tap by lives)
@@ -276,7 +276,7 @@
   ?.  =(%czar (clan:title who))
     ~
   %-  some
-  :+  who  lyfe
+  :^  who  rut  lyfe
   %^    pass-from-eth:azimuth
       (as-octs:mimes:html (get-public who lyfe %crypt))
     (as-octs:mimes:html (get-public who lyfe %auth))

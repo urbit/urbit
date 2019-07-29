@@ -2641,7 +2641,6 @@
       ?.  =(our her)
         ::  no duct, foreign +rede or default
         ::
-
         :+  ?:  (~(has by hoy.ruf) her)
               ~
             [hun.rom.ruf %pass /sinks %k %public-keys (silt her ~)]~

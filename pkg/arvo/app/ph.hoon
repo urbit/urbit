@@ -216,24 +216,34 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH DONE'
         (check-file-touched ~marbud %home file)
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ~&  >  'BREACH-1 DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         (raw-ship ~bud `(dawn:eth-node ~bud))
+      ~&  >  'BUD RE DONE'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~marbud ~bud)
+      ~&  >  'BREACH-2 DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD RE DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-1 DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-2 DONE'
         (check-file-touched ~marbud %home file)
+      ~&  >  'DONE DONE'
       (pure:m ~)
   ==
 ::

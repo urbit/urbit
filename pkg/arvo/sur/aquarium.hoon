@@ -66,7 +66,7 @@
 +$  dawn-event
   $:  =seed:able:jael
       spon=ship
-      czar=(map ship [=life =pass])
+      czar=(map ship [=rift =life =pass])
       turf=(list turf)
       bloq=@ud
       node=(unit purl:eyre)

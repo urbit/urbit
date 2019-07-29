@@ -278,21 +278,14 @@
       =.  tuf.own.pki  turf.tac
       ::  our initial galaxy table as a +map from +life to +public
       ::
-      =/  diffs=(list [=ship =diff:point])
-        %~  tap  by
+      =/  points=(map =ship =point)
         %-  ~(run by czar.tac)
-        |=  [=a=life =a=pass]
-        ^-  diff:point
-        [%keys [*life 0 *pass] [a-life 1 a-pass]]
+        |=  [=a=rift =a=life =a=pass]
+        ^-  point
+        [a-rift a-life (malt [a-life 1 a-pass] ~) ~]
       =.  +>.$
-        |-  ^+  +>.^$
-        ?~  diffs
-          +>.^$
-        =.  +>.^$
-          %-  curd  =<  abet
-          %-  public-keys:~(feel su hen our pki etn sap)
-          [%diff ship diff]:i.diffs
-        $(diffs t.diffs)
+        %-  curd  =<  abet
+        (public-keys:~(feel su hen our pki etn sap) %full points)
       ::
       ::  start subscriptions
       ::
@@ -700,9 +693,11 @@
   ++  new-event
     |=  [=a=ship =a=udiff:point]
     ^+  this-su
-    =/  a-point=point      (~(gut by pos.zim.pki) a-ship *point)
-    =/  a-diff=diff:point  (udiff-to-diff:point a-udiff a-point)
-    (public-keys:feel %diff a-ship a-diff)
+    =/  a-point=point  (~(gut by pos.zim.pki) a-ship *point)
+    =/  a-diff=(unit diff:point)  (udiff-to-diff:point a-udiff a-point)
+    ?~  a-diff
+      this-su
+    (public-keys:feel %diff a-ship u.a-diff)
   ::
   ++  extract-snap                                      ::  extract rewind point
     ^-  snapshot
