@@ -4517,6 +4517,15 @@
     ==  ==
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
+    ?:  ?=(%done +<.q.hin)
+      ?~  error.q.hin
+        [~ ..^$]
+      ::  TODO better error handling
+      ::
+      ~&  %clay-take-warp-index-error^tag.u.error.q.hin
+      %-  (slog tang.u.error.q.hin)
+      [~ ..^$]
+    ::
     ?>  ?=(%boon +<.q.hin)
     ::
     =+  ;;  res=(unit rand)  payload.q.hin

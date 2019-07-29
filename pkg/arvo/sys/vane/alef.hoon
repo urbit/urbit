@@ -57,8 +57,8 @@
 =/  protocol-version=?(%0 %1 %2 %3 %4 %5 %6 %7)  %0
 =,  ames
 =,  able
-=*  point        point:able:kale
-=*  vent-result  vent-result:able:kale
+=*  point               point:able:kale
+=*  public-keys-result  public-keys-result:able:kale
 ::
 =>
 |%
@@ -650,7 +650,7 @@
       ==  ==
       $:  %k
       $%  [%private-keys =life vein=(map life ring)]
-          [%public-keys =vent-result]
+          [%public-keys =public-keys-result]
           [%turf turfs=(list turf)]
       ==  ==
       $:  @tas
@@ -881,9 +881,9 @@
     ::
       [%b %wake *]  (on-take-wake:event-core wire error.sign)
     ::
-      [%k %private-keys *]  (on-priv:event-core [life vein]:sign)
-      [%k %public-keys *]   (on-publ:event-core wire vent-result.sign)
       [%k %turf *]          (on-take-turf:event-core turfs.sign)
+      [%k %private-keys *]  (on-priv:event-core [life vein]:sign)
+      [%k %public-keys *]   (on-publ:event-core wire public-keys-result.sign)
     ==
   ::
   [moves ames-gate]
@@ -974,13 +974,10 @@
     %.  +<
     ::
     ?.  =(our rcvr.packet)
-      ~&  %alef-on-hear-forward
       on-hear-forward
     ::
     ?:  encrypted.packet
-      ~&  %alef-on-hear-shut
       on-hear-shut
-    ~&  %alef-on-hear-open
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
@@ -1181,24 +1178,22 @@
   ::  +on-publ: update pki data for peer or self
   ::
   ++  on-publ
-    |=  [=wire =vent-result]
+    |=  [=wire =public-keys-result]
     ^+  event-core
     ::
     |^  ^+  event-core
-        ?-    vent-result
-            [%diff @ * %rift *]
-          (on-publ-breach [who rift.udiff]:vent-result)
         ::
-            [%diff @ * %keys *]
-          (on-publ-rekey [who +>.udiff]:vent-result)
+        ?-    public-keys-result
+            [%diff @ %rift *]
+          (on-publ-breach [who to.diff]:public-keys-result)
         ::
-            [%diff @ * %spon *]
-          (on-publ-sponsor [who sponsor.udiff]:vent-result)
+            [%diff @ %keys *]
+          (on-publ-rekey [who to.diff]:public-keys-result)
         ::
-            [%diff @ * %disavow ~]
-          (on-publ-sponsor [who ~]:vent-result)
+            [%diff @ %spon *]
+          (on-publ-sponsor [who to.diff]:public-keys-result)
         ::
-            [%full *]  (on-publ-full points.vent-result)
+            [%full *]  (on-publ-full points.public-keys-result)
         ==
     ::  +on-publ-breach: handle continuity breach of .ship; wipe its state
     ::
@@ -1572,7 +1567,6 @@
       |^  ^+  peer-core
           ?~  pump-gifts  peer-core
           =*  gift  i.pump-gifts
-          ~&  %alef-on-pump-gift^-.gift
           =.  peer-core
             ?-  -.gift
               %done  (on-pump-done [message-num ok]:gift)
@@ -1700,6 +1694,7 @@
       ++  on-still-boon
         |=  [=message-num message=*]
         ^+  peer-core
+        ~&  %ames-still-boon
         ::  send message ack packet unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
@@ -1719,6 +1714,7 @@
       ++  on-still-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
+        ~&  %ames-still-nack-trace
         ::
         =+  ;;  [=failed=^message-num =error]  message
         ::  flip .bone's second bit to find referenced flow
@@ -1757,6 +1753,7 @@
       ++  on-still-plea
         |=  [=message-num message=*]
         ^+  peer-core
+        ~&  %ames-still-plea
         ::  don't accept requests for arbitrary vanes
         ::
         =+  ;;  =plea  message
@@ -2060,10 +2057,9 @@
   ++  feed
     |=  fragments=(list static-fragment)
     ^+  [fragments gifts state]
-    ~&  %alef-feed^(lent fragments)
     ::  return unsent back to caller and reverse effects to finalize
     ::
-    =-  ~&  %alef-feed-unsent^(lent unsent)
+    =-  ~&  %alef-feed^(lent fragments)^%unsent^(lent unsent)
         [unsent (flop gifts) state]
     ::
     ^+  [unsent=fragments packet-pump]
@@ -2331,10 +2327,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
+        ~&  %send-dupe-ack^fragment-num
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
+      ~&  %send-dupe-ack-whole-message
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2345,6 +2343,7 @@
         message-still
       ::  ack all other packets
       ::
+      ~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2361,12 +2360,13 @@
       u.existing
     ::
     =/  already-heard=?
-      (~(has by fragments.partial-rcv-message) `^fragment-num``@`seq)
+      (~(has by fragments.partial-rcv-message) fragment-num)
     ::  ack dupes except for the last fragment, in which case drop
     ::
     ?:  already-heard
       ?:  is-last-fragment
         message-still
+      ~&  %send-dupe-ack-fragment
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2381,6 +2381,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
+      ~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
