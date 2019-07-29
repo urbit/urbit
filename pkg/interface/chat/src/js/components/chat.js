@@ -210,8 +210,8 @@ export class ChatScreen extends Component {
             numPeers={peers.length} />
         </div>
         <div
-          className="overflow-y-scroll pt3 flex flex-column-reverse"
-          style={{ height: 'calc(100% - 157px)' }}
+          className="overflow-y-scroll pt3 pb2 flex flex-column-reverse"
+          style={{ height: 'calc(100% - 157px)', resize: 'vertical' }}
           onScroll={this.onScroll}>
           <div ref={ el => { this.scrollElement = el; }}></div>
           {chatMessages}

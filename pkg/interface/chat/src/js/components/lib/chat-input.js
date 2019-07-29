@@ -281,7 +281,7 @@ export class ChatInput extends Component {
     }
 
     return (
-      <div className="mt2 pa3 cf flex black bt b--black-30">
+      <div className="pa3 cf flex black bt b--black-30" style={{ flexGrow: 1 }}>
         <div className="fl" style={{
           marginTop: 4,
           flexBasis: 32,
@@ -289,12 +289,12 @@ export class ChatInput extends Component {
         }}>
           <Sigil ship={window.ship} size={32} />
         </div>
-        <div className="fr h-100 flex" style={{ flexGrow: 1, height: 40 }}>
+        <div className="fr h-100 flex" style={{ flexGrow: 1 }}>
           <textarea
             className={'ml2 mt2 mr2 bn ' +
               this.getSpeechStyle(state.messageType, state.clipboard)
             }
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, resize: 'none' }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
             value={state.message}
