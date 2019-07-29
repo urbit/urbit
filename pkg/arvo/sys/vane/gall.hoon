@@ -225,7 +225,7 @@
         ==
     %+  mo-pass
       [%sys %way (scot %p him) p.caz -.q.caz ~]
-    `note-arvo`[%a %memo him [%g %ge p.caz ~] [num roc]]
+    `note-arvo`[%a %plea him %g [%ge p.caz ~] [num roc]]
   ::
   ++  mo-baba                                           ::  error convert b
     |=  error=(unit error:ames)
@@ -360,8 +360,8 @@
       ?-    -.cuf
         %coup  (mo-give %done ?~(p.cuf ~ `[%gall-coup u.p.cuf]))
         %reap  (mo-give %done ?~(p.cuf ~ `[%gall-reap u.p.cuf]))
-        %diff  (mo-give %memo /remove-me num %d p.p.cuf q.q.p.cuf)
-        %quit  (mo-give %memo /remove-me num %x ~)
+        %diff  (mo-give %boon num %d p.p.cuf q.q.p.cuf)
+        %quit  (mo-give %boon num %x ~)
         ::  we send http-responses, we don't receive them.
         ::
         $http-response  !!
@@ -393,8 +393,8 @@
       ?:  ?=([%a %done *] sih)
         (mo-awed him cub error.sih)
       ::
-      ?>  ?=([%a %memo *] sih)
-      =+  mes=;;([@ud roon] payload.message.sih)
+      ?>  ?=([%a %boon *] sih)
+      =+  mes=;;([@ud roon] payload.sih)
       (mo-gawd:(mo-abed:mo hen) him dap mes)
     ==
   ::
@@ -1290,14 +1290,14 @@
       $init
     [~ ..^$(sys.mast.all hen)]
   ::
-      %memo
-    ~&  %gall-memo-path^path.message.q.hic
-    ?>  ?=([%ge @ ~] path.message.q.hic)
+      %plea
+    ~&  %gall-plea-path^path.plea.q.hic
+    ?>  ?=([%ge @ ~] path.plea.q.hic)
     =/  him=ship  ship.q.hic
-    =*  dap  i.t.path.message.q.hic
+    =*  dap  i.t.path.plea.q.hic
     ::
-    =+  mes=;;([@ud rook] payload.message.q.hic)
-    ~&  %gall-memo-coerced
+    =+  mes=;;([@ud rook] payload.plea.q.hic)
+    ~&  %gall-plea-coerced
     =<  mo-abet
     (mo-gawk:(mo-abed:mo hen) him dap mes)
   ::

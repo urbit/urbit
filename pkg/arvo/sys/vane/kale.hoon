@@ -80,9 +80,9 @@
   [p=duct q=card]                                       ::
 ::                                                      ::
 +$  note                                                ::  out request $->
-  $~  [%a %memo *ship *message:ames]                    ::
+  $~  [%a %plea *ship *plea:ames]                       ::
   $%  $:  %a                                            ::    to %ames
-          $>(%memo task:able:ames)                      ::  send message
+          $>(%plea task:able:ames)                      ::  send request message
       ==                                                ::
       $:  %k                                            ::    to self
           $>(%look task)                                ::  set ethereum source
@@ -93,7 +93,7 @@
 ::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
-  $%  [%a $>(%memo gift:able:ames)]                     ::  message result
+  $%  [%a $>(%boon gift:able:ames)]                     ::  message response
       [%a $>(%done gift:able:ames)]                     ::  message (n)ack
   ==                                                    ::
 --  ::
@@ -437,11 +437,11 @@
       ==
     ::
     ::  authenticated remote request
-    ::    [%memo =ship =message:ames]
+    ::    [%plea =ship =plea:ames]
     ::
-        %memo
+        %plea
       =*  her  ship.tac
-      =/  mes  (message message.tac)
+      =/  mes  (message payload.plea.tac)
       ?-    -.mes
       ::
       ::  cancel trackers
@@ -479,9 +479,9 @@
       ::TODO  fail:et
       +>.$
     ::
-        [%a %memo *]
+        [%a %boon *]
       =.  moz  [[hen %give %done ~] moz]
-      =+  ;;  =message-response  message.hin
+      =+  ;;  =message-response  payload.hin
       (call hen %vent-update vent-result.message-response)
     ==
   ::                                                    ::  ++curd:of
@@ -567,7 +567,7 @@
       ::
       ?.  ?=([[%a *] *] d)
         (emit d %give %public-keys vent-result)
-      (emit d %give %memo /k/remove-me %public-keys-result vent-result)
+      (emit d %give %boon %public-keys-result vent-result)
     $(yez t.yez)
   ::
   ++  get-source
@@ -742,7 +742,7 @@
       ?:  ?=(%& -.source)
         =/  send-message
           |=  =message
-          [hen %pass /public-keys %a %memo p.source /k/public-keys message]
+          [hen %pass /public-keys %a %plea p.source %k /public-keys message]
         =.  ..feel
           (emit (send-message %nuke whos))
         (emit (send-message %public-keys whos))

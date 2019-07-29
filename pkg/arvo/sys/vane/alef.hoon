@@ -926,10 +926,10 @@
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    =/  peer-core    (make-peer-core peer-state channel)
     ::  if processing succeded, send positive ack packet and exit
     ::
     ?~  error
-      =/  peer-core  (make-peer-core peer-state channel)
       abet:(run-message-still:peer-core bone %done ok=%.y)
     ::  failed; send message nack packet
     ::
@@ -940,10 +940,10 @@
     =/  =message-blob       (jam [failed u.error])
     ::  send nack-trace message on associated .nack-trace-bone
     ::
-    =/  peer-core              (make-peer-core peer-state channel)
+    =.  peer-core              (make-peer-core peer-state channel)
     =/  nack-trace-bone=^bone  (mix 0b10 bone)
     ::
-    abet:(run-message-pump:peer-core nack-trace-bone %boon message-blob)
+    abet:(run-message-pump:peer-core nack-trace-bone %memo message-blob)
   ::  +on-hear: handle raw packet receipt
   ::
   ++  on-hear
@@ -1304,8 +1304,8 @@
           ?~  snd-messages.todos  event-core
           ::
           =.  event-core
-            %-  on-memo(duct duct.i.snd-messages.todos)
-            [ship message.i.snd-messages.todos]
+            %-  on-plea(duct duct.i.snd-messages.todos)
+            [ship plea.i.snd-messages.todos]
           ::
           $(snd-messages.todos t.snd-messages.todos)
         ::  apply outgoing packet blobs
@@ -1433,7 +1433,7 @@
   ++  ping-sponsor
     ^+  event-core
     ::
-    (emit duct %pass /ping %a %plea sponsor.ames-state /ping ~)
+    (emit duct %pass /ping %a %plea sponsor.ames-state %a /ping ~)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
   ::    Send to .ship and sponsors until we find a direct lane.
@@ -1720,7 +1720,7 @@
         |=  [=message-num message=*]
         ^+  peer-core
         ::
-        =+  ;;  [=failed=message-num =error]  message
+        =+  ;;  [=failed=^message-num =error]  message
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
@@ -1759,17 +1759,18 @@
         ^+  peer-core
         ::  don't accept requests for arbitrary vanes
         ::
-        =+  ;;  [vane=?(%a %c %g %k) =plea]  message
+        =+  ;;  =plea  message
         ::  %a /ping means sponsor ping timer; send ack
         ::
-        ?:  ?=(%a vane)
+        ?:  ?=(%a vane.plea)
           ::  validate ping message and send ack
           ::
           ::    TODO: treat ames as client vane and go through arvo?
           ::          removes reentrancy and could nack more easily
           ::
           =/  error=(unit error)
-            ?:  =([/ping ~] plea)  ~
+            ?:  =([/ping ~] +.plea)
+              ~
             `[%ping [%leaf "ames: invalid ping"]~]
           ::
           (run-message-still bone %done ok=%.y)
@@ -1780,7 +1781,7 @@
         =^  client-duct  ossuary.peer-state
           (get-duct ossuary.peer-state bone duct)
         ::
-        ?-  vane
+        ?+  vane.plea  ~|  %ames-evil-vane^vane.plea  !!
           %c  (emit client-duct %pass wire %c %plea her.channel plea)
           %g  (emit client-duct %pass wire %g %plea her.channel plea)
           %k  (emit client-duct %pass wire %k %plea her.channel plea)
@@ -2121,7 +2122,9 @@
     =-  ::  if no sent packet matches the ack, don't apply mutations or effects
         ::
         ?.  found.-
+          ~&  %alef-hear-noop
           packet-pump
+        ~&  %alef-hear-ack^message-num^fragment-num
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
@@ -2457,7 +2460,7 @@
 ::
 ++  assemble-fragments
   |=  [num-fragments=fragment-num fragments=(map fragment-num fragment)]
-  ^-  message
+  ^-  *
   ::
   =|  sorted=(list fragment)
   =.  sorted
@@ -2467,7 +2470,6 @@
       sorted
     $(index +(index), sorted [(~(got by fragments) index) sorted])
   ::
-  ;;  message
   %-  cue
   %+  can   13
   %+  turn  (flop sorted)

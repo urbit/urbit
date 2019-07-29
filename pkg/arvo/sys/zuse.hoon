@@ -7579,8 +7579,9 @@
       {$j gift:able:jael}
       {$k gift:able:kale}
   ==
+::  $unix-task: input from unix
 ::
-+$  unix-task                                           ::  input from unix
++$  unix-task
   $~  [%wake ~]
   $%  ::  %dill: keyboard input
       ::
@@ -7627,9 +7628,6 @@
       ::  %behn: wakeup
       ::
       $>(%wake task:able:behn)
-      ::  %ames: send message
-      ::
-      $>(%memo task:able:ames)
   ==
 ::                                                      ::
 ::::                      ++azimuth                     ::  (2az) azimuth

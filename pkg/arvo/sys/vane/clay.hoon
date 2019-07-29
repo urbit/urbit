@@ -471,7 +471,7 @@
 ++  note                                                ::  out request $->
   $~  [%b %wait *@da]                                   ::
   $%  $:  %a                                            ::  to %ames
-          $>(%memo task:able:ames)                      ::
+          $>(%plea task:able:ames)                      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -505,7 +505,7 @@
           $%  [%init-clad ~]                            ::
       ==  ==                                            ::
       $:  %a                                            ::  by %ames
-          $>  $?  %memo                                 ::
+          $>  $?  %boon                                 ::
                   %done                                 ::
               ==                                        ::
           gift:able:ames                                ::
@@ -2795,8 +2795,8 @@
     ::
     =/  =desk  p.riff
     =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
-    =/  =path  [%c %question desk (scot %ud index) ~]
-    (emit duct %pass wire %a %memo ship path riff)
+    =/  =path  [%question desk (scot %ud index) ~]
+    (emit duct %pass wire %a %plea ship %c path riff)
   ::
   ::  Create a request that cannot be filled immediately.
   ::
@@ -4369,10 +4369,10 @@
       (start-request:den for u.q.rif)
     [mos ..^$]
   ::
-      %memo
+      %plea
     =*  her  ship.req
-    =*  pax  path.message.req
-    =*  res  payload.message.req
+    =*  pax  path.plea.req
+    =*  res  payload.plea.req
     ::
     ?>  ?=({%question *} pax)
     =+  ryf=;;(riff res)
@@ -4466,7 +4466,7 @@
   ?:  ?=([%foreign-warp *] tea)
     ?>  ?=(%writ +<.q.hin)
     :_  ..^$
-    [hen %give %memo /remove-me (bind `riot`p.q.hin rant-to-rand)]~
+    [hen %give %boon (bind `riot`p.q.hin rant-to-rand)]~
   ::
   ?:  ?=({%foreign-request @ @ @ *} tea)
     =/  her  (slav %p i.t.tea)
@@ -4502,10 +4502,9 @@
     ==  ==
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
-    ?>  ?=(%memo +<.q.hin)
-    ?>  ?=([%remove-me ~] path.message.q.hin)
+    ?>  ?=(%boon +<.q.hin)
     ::
-    =+  ;;  res=(unit rand)  payload.message.q.hin
+    =+  ;;  res=(unit rand)  payload.q.hin
     ::
     =/  her=ship   (slav %p i.t.tea)
     =/  =desk      (slav %tas i.t.t.tea)
@@ -4568,7 +4567,7 @@
   ::
       ::  handled in the wire dispatcher
       ::
-      %memo  !!
+      %boon  !!
       %writ  !!
   ::
       %done
