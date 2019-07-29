@@ -47,7 +47,7 @@
   ++  js-response
     |=  oct-js=octs
     ^-  http-event:http
-    [%start [200 ['content-type' 'application/js']~] [~ oct-js] %.y]
+    [%start [200 ['content-type' 'text/javascript']~] [~ oct-js] %.y]
   ::
   ++  json-response
     |=  oct-js=octs
@@ -103,7 +103,7 @@
   ++  js-response
     |=  =octs
     ^-  simple-payload:http
-    [[200 ['content-type' 'application/js']~] `octs]
+    [[200 ['content-type' 'text/javascript']~] `octs]
   ::
   ++  json-response
     |=  =octs

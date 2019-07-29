@@ -473,7 +473,13 @@
     |=  dap/dude
     =-  ?.(=(p our) - -(r [%da now])) ::  soft dependencies
     ^-  beak
-    byk:(~(got by bum.mas) dap)
+    ?~  app-data=(~(get by bum.mas) dap)
+      ::
+      ::  XX this fallback is necessary, as .dap could be either the source
+      ::  or the destination app. ie, it might not exist locally ...
+      ::
+      [our %home %da now]
+    byk.u.app-data
   ::
   ++  mo-peek
     ~/  %mo-peek
@@ -1328,14 +1334,17 @@
         %keep  `%f
         %kill  `%f
         %look  `%j
+        %listen  `%k
         %merg  `%c
         %mint  `%j
         %mont  `%c
+        %new-event  `%k
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
         %snap  `%j
+        %sources  `%k
         %wait  `%b
         %want  `%a
         %warp  `%c

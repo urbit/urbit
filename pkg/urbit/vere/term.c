@@ -784,11 +784,15 @@ _term_read_cb(uv_stream_t* tcp_u,
 */
 static void
 _term_try_write_str(u3_utty*    uty_u,
-                    const c3_c* hun_y)
+                    const c3_c* str_c)
 {
   // c3_i fid_i = uv_fileno(&uty_u->pop_u);
   c3_i fid_i = uty_u->pop_u.io_watcher.fd;  //  XX old libuv
-  _write(fid_i, hun_y, strlen(hun_y));
+  c3_w len_w = strlen(str_c);
+
+  if (  len_w != write(fid_i, str_c, len_w) ) {
+    // ignore, we just tryin
+  }
 }
 
 /* _term_try_move_left(): move the cursor left (off-thread).

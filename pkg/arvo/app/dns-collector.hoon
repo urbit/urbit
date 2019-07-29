@@ -8,10 +8,14 @@
           requested=(map ship address:dns)
           completed=(map ship binding:dns)
       ==
-    +$  peek-data  [%noun (list (pair ship address:dns))]
+    +$  peek-data
+      $%  [%requested (list (pair ship address:dns))]
+          [%completed (list (pair ship binding:dns))]
+      ==
     +$  in-poke-data
       $%  [%dns-address =address:dns]
           [%dns-complete =ship =binding:dns]
+          [%noun noun=*]
       ==
     +$  out-poke-data
       $%  [%drum-unlink =dock]
@@ -78,6 +82,15 @@
   ^-  (quip move _this)
   =<  abet
   ?-  -.in-poke-data
+      %noun
+    ?:  ?=(%debug noun.in-poke-data)
+      ~&  bowl
+      ~&  state
+      this
+    ::
+    ~&  %poke-unknown
+    this
+  ::
       %dns-address
     =*  who  src.bowl
     =*  adr  address.in-poke-data
@@ -111,9 +124,10 @@
     =/  req=(unit address:dns)  (~(get by requested.state) who)
     ::  ignore established bindings that don't match requested
     ::
-    ?:  ?&  ?=(^ req)
+    ?:  ?|  ?=(~ req)
             !=(adr u.req)
         ==
+      ~&  %unknown-complete
       this
     =:  requested.state  (~(del by requested.state) who)
         completed.state  (~(put by completed.state) who [adr tuf])
@@ -124,10 +138,12 @@
 ++  peek
   |=  =path
   ^-  (unit (unit peek-data))
-  ~&  path
   ?+  path  [~ ~]
       [%x %requested ~]
-    [~ ~ %noun ~(tap by requested.state)]
+    [~ ~ %requested ~(tap by requested.state)]
+  ::
+      [%x %completed ~]
+    [~ ~ %completed ~(tap by completed.state)]
   ==
 ::
 ++  peer
@@ -149,10 +165,10 @@
     =.  ..this  (give-result path %dns-request i.requests)
     loop(requests t.requests)
   ::
-  =/  who  (slaw %p i.path)
+  =/  who=(unit @p)  (slaw %p i.path)
   ?~  who
     ~|  %invalid-path  !!
-  ?~  dun=(~(get by completed.state) who)
+  ?~  dun=(~(get by completed.state) u.who)
     this
   (give-result path %dns-binding u.dun)
 --

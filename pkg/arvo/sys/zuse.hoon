@@ -2313,21 +2313,128 @@
     ::
     ::  %kale only talks to %ames and itself.
     ::
-    ++  point
-      $:  =rift
-          =life
-          keys=(map life [crypto-suite=@ud =pass])
-          sponsor=(unit @p)
-      ==
-    +$  point-diff
-      $%  [%changed-continuity =rift]
-          [%changed-keys =life crypto-suite=@ud =pass]
-          [%new-sponsor sponsor=(unit @p)]
-      ==
+    ++  block
+      =<  block
+      |%
+      +$  hash    @uxblockhash
+      +$  number  @udblocknumber
+      +$  id      [=hash =number]
+      +$  block   [=id =parent=hash]
+      --
     ::
-    +$  vent-result
+    ::  Azimuth points form a groupoid, where the objects are all the
+    ::  possible values of +point and the arrows are the possible values
+    ::  of (list point-diff).  Composition of arrows is concatenation,
+    ::  and you can apply the diffs to a +point with +apply.
+    ::
+    ::  It's simplest to consider +point as the coproduct of three
+    ::  groupoids, Rift, Keys, and Sponsor.  Recall that the coproduct
+    ::  of monoids is the free monoid (Kleene star) of the coproduct of
+    ::  the underlying sets of the monoids.  The construction for
+    ::  groupoids is similar.  Thus, the objects of the coproduct are
+    ::  the product of the objects of the underlying groupoids.  The
+    ::  arrows are a list of a sum of the diff types of the underlying
+    ::  groupoids.  Given an arrow=(list diff), you can project to the
+    ::  underlying arrows with +skim filtering on the head of each diff.
+    ::
+    ::  The identity element is ~.  Clearly, composing this with any
+    ::  +diff gives the original +diff.  Since this is a category,
+    ::  +compose must be associative (true, because concatenation is
+    ::  associative).  This is a groupoid, so we must further have that
+    ::  every +point-diff has an inverse.  These are given by the
+    ::  +inverse operation.
+    ::
+    ++  point
+      =<  point
+      |%
+      +$  point
+        $:  =rift
+            =life
+            keys=(map life [crypto-suite=@ud =pass])
+            sponsor=(unit @p)
+        ==
+      ::
+      +$  key-update  [=life crypto-suite=@ud =pass]
+      ::
+      ::  Invertible diffs
+      ::
+      +$  diffs  (list diff)
+      +$  diff
+        $%  [%rift from=rift to=rift]
+            [%keys from=key-update to=key-update]
+            [%spon from=(unit @p) to=(unit @p)]
+        ==
+      ::
+      ::  Non-invertible diffs
+      ::
+      +$  udiffs  (list [=ship =udiff])
+      +$  udiff
+        $:  =id:block
+        $%  [%rift =rift]
+            [%keys key-update]
+            [%spon sponsor=(unit @p)]
+            [%disavow ~]
+        ==  ==
+      ::
+      ++  udiff-to-diff
+        |=  [=a=udiff =a=point]
+        ^-  diff
+        ?-    +<.a-udiff
+            %disavow  ~|(%udiff-to-diff-disavow !!)
+            %rift     [%rift rift.a-point rift.a-udiff]
+            %spon     [%spon sponsor.a-point sponsor.a-udiff]
+            %keys
+          :+  %keys
+            [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
+          [life crypto-suite pass]:a-udiff
+        ==
+      ::
+      ++  inverse
+        |=  diffs=(list diff)
+        ^-  (list diff)
+        %-  flop
+        %+  turn  diffs
+        |=  =diff
+        ^-  ^diff
+        ?-  -.diff
+          %rift  [%rift to from]:diff
+          %keys  [%keys to from]:diff
+          %spon  [%spon to from]:diff
+        ==
+      ::
+      ++  compose
+        (bake weld ,[(list diff) (list diff)])
+      ::
+      ++  apply
+        |=  [diffs=(list diff) =a=point]
+        (roll diffs (apply-diff a-point))
+      ::
+      ++  apply-diff
+        |=  a=point
+        |:  [*=diff a-point=a]
+        ^-  point
+        ?-    -.diff
+            %rift
+          ?>  =(rift.a-point from.diff)
+          a-point(rift to.diff)
+        ::
+            %keys
+          ?>  =(life.a-point life.from.diff)
+          ?>  =((~(get by keys.a-point) life.a-point) `+.from.diff)
+          %_  a-point
+            life  life.to.diff
+            keys  (~(put by keys.a-point) life.to.diff +.to.diff)
+          ==
+        ::
+            %spon
+          ?>  =(sponsor.a-point from.diff)
+          a-point(sponsor to.diff)
+        ==
+      --
+    ::
+    +$  public-keys-result
       $%  [%full points=(map ship point)]
-          [%diff who=ship =point-diff]
+          [%diff who=ship =diff:point]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -2337,7 +2444,7 @@
           [%source whos=(set ship) src=source]          ::
           [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys p=vent-result]                  ::  ethereum changes
+          [%public-keys =public-keys-result]            ::  ethereum changes
       ==                                                ::
     ::  +seed: private boot parameters
     ::
@@ -2355,7 +2462,7 @@
               snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
-          [%look whos=(set ship) =source]               ::  set ethereum source
+          [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
           [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
@@ -2364,7 +2471,7 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
-          [%vent-update =vent-result]                   ::  update from app
+          [%new-event =ship =udiff:point]               ::  update from app
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%west vane-task)                           ::  remote request
@@ -7621,6 +7728,7 @@
       {$g gift:able:gall}
       [%i gift:able:iris]
       {$j gift:able:jael}
+      {$k gift:able:kale}
   ==
 ::
 +$  unix-task                                           ::  input from unix
@@ -8478,6 +8586,11 @@
                   adr=(list address)
                   top=(list ?(@ux (list @ux)))
               ==
+              $:  %eth-get-logs-by-hash
+                  has=@
+                  adr=(list address)
+                  top=(list ?(@ux (list @ux)))
+              ==
               [%eth-get-filter-changes fid=@ud]
               [%eth-get-transaction-count adr=address]
               [%eth-get-transaction-receipt txh=@ux]
@@ -8490,6 +8603,7 @@
               [%eth-new-filter fid=@ud]
               [%eth-get-filter-logs los=(list event-log)]
               [%eth-get-logs los=(list event-log)]
+              [%eth-get-logs-by-hash los=(list event-log)]
               [%eth-got-filter-changes los=(list event-log)]
               [%eth-transaction-hash haz=@ux]
           ==
@@ -8665,7 +8779,25 @@
             ?~  tob.req  ~
             `['toBlock' (block-to-json u.tob.req)]
           ::
-            ::TODO  fucking tmi
+            ?:  =(0 (lent adr.req))  ~
+            :+  ~  'address'
+            ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))
+            :-  %a
+            (turn adr.req (cork address-to-hex tape))
+          ::
+            ?~  top.req  ~
+            :+  ~  'topics'
+            (topics-to-json top.req)
+        ==
+      ::
+          %eth-get-logs-by-hash
+        :-  'eth_getLogs'
+        :_  ~  :-  %o
+        %-  ~(gas by *(map @t json))
+        =-  (murn - same)
+        ^-  (list (unit (pair @t json)))
+        :~  `['blockHash' (tape (transaction-to-hex has.req))]
+          ::
             ?:  =(0 (lent adr.req))  ~
             :+  ~  'address'
             ?:  =(1 (lent adr.req))  (tape (address-to-hex (snag 0 adr.req)))

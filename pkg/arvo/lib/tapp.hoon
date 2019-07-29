@@ -251,11 +251,13 @@
     ::
     =/  old   ((soft tapp-state) u.old-state)
     ?~  old
-      ~&  [%tapp-reset dap.bowl]
-      ::  XX may break contracts!
+      ::  XX use only for development may break contracts!
       ::  XX if active clam contracts only to abort transaction?
       ::
-      `this-tapp
+      ::  ~&  [%tapp-reset dap.bowl]
+      :: `this-tapp
+      ~|  [%tapp-load-incompatible dap.bowl]
+      !!
     ::
     ::  because the clam replaces the active continuation with
     ::  the bunt of its mold, we must fail the transaction
@@ -409,6 +411,16 @@
     |=  [=wire success=? =binding:eyre]
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
+  ::
+  ::  Receive source update from kale
+  ::
+  ++  source
+    |=  [=wire whos=(set ship) =source:kale]
+    ^-  (quip move _this-tapp)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %source whos source])
+    ?^  active
+      `this-tapp
+    start-async
   ::
   ::  Continue computing async
   ::

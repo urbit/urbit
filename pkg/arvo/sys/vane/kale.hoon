@@ -52,7 +52,7 @@
             lyf=life                                    ::  version
             jaw=(map life ring)                         ::  private keys
         ==                                              ::
-      $=  zim                                           ::  ethereum (vent)
+      $=  zim                                           ::  public
         $:  yen=(jug duct ship)                         ::  trackers
             ney=(jug ship duct)                         ::  reverse trackers
             dns=dnses                                   ::  on-chain dns state
@@ -69,7 +69,7 @@
 +$  message                                             ::  message to her kale
   $%  [%nuke whos=(set ship)]                           ::  cancel trackers
       [%public-keys whos=(set ship)]                    ::  view ethereum events
-      [%public-keys-result who=ship =vent-result]       ::  tmp workaround
+      [%public-keys-result =public-keys-result]         ::  tmp workaround
   ==                                                    ::
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
@@ -83,7 +83,7 @@
           $>(%want task:able:ames)                      ::  send message
       ==                                                ::
       $:  %k                                            ::    to self
-          $>(%look task)                                ::  set ethereum source
+          $>(%listen task)                                ::  set ethereum source
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
@@ -246,19 +246,21 @@
       =.  tuf.own.pki  turf.tac
       ::  our initial galaxy table as a +map from +life to +public
       ::
-      =/  point-diffs=(list [who=ship =point-diff])
+      =/  diffs=(list [=ship =diff:point])
         %~  tap  by
         %-  ~(run by czar.tac)
-        |=([=life =pass] `point-diff`[%changed-keys life 1 pass])
+        |=  [=a=life =a=pass]
+        ^-  diff:point
+        [%keys [*life 0 *pass] [a-life 1 a-pass]]
       =.  +>.$
         |-  ^+  +>.^$
-        ?~  point-diffs
+        ?~  diffs
           +>.^$
         =.  +>.^$
           %-  curd  =<  abet
           %-  public-keys:~(feel su hen our pki etn sap)
-          [%diff who point-diff]:i.point-diffs
-        $(point-diffs t.point-diffs)
+          [%diff ship diff]:i.diffs
+        $(diffs t.diffs)
       ::
       =.  moz
         %+  weld  moz
@@ -330,9 +332,10 @@
       +>.$
     ::
     ::  set ethereum source
-    ::    [%look p=(each ship purl)]
+    ::    [%listen whos=(set ship) =source]
     ::
-        %look
+        %listen
+      ~&  [%kale-listen whos source]:tac
       %-  curd  =<  abet
       (sources:~(feel su hen our pki etn sap) [whos source]:tac)
     ::
@@ -385,6 +388,7 @@
     ::    [%sources ~]
     ::
         %sources
+      ~&  [%kale-sources]
       (curd abet:~(sources ~(feed su hen our pki etn sap) hen))
     ::
     ::  XX should be a subscription
@@ -400,11 +404,12 @@
       +>.$(moz [[hen %give %turf tuf.own.pki] moz])
     ::
     ::  Update from app
-    ::    [%vent-update =vent-result]
+    ::    [%new-event =ship =udiff:point]
     ::
-        %vent-update
+        %new-event
+      ~&  [%kale-new-event ship udiff]:tac
       %-  curd  =<  abet
-      (public-keys:~(feel su hen our pki etn sap) vent-result.tac)
+      (~(new-event su hen our pki etn sap) ship.tac udiff.tac)
     ::
     ::  learn of kernel upgrade
     ::    [%vega ~]
@@ -456,11 +461,12 @@
         $(tac mes)
       ::
       ::  receive keys result
-      ::    [%public-keys-result =vent-result]
+      ::    [%public-keys-result =public-keys-result]
       ::
           %public-keys-result
         =.  moz  [[hen %give %mack ~] moz]
-        $(tac [%vent-update vent-result.mes])
+        %-  curd  =<  abet
+        (public-keys:~(feel su hen our pki etn sap) public-keys-result.mes)
       ==
     ::
     ::  rewind to snapshot
@@ -527,8 +533,8 @@
       ::  any subscribers.
       ::
   =|  moz=(list move)
-  =|  $:  hen/duct
-          our/ship
+  =|  $:  hen=duct
+          our=ship
           state-pki
           state-eth-node
           state-snapshots
@@ -556,8 +562,8 @@
     ?~  noy  this-su
     $(noy t.noy, moz [[i.noy cad] moz])
   ::
-  ++  vent-give
-    |=  [yen=(set duct) =vent-result]
+  ++  public-keys-give
+    |=  [yen=(set duct) =public-keys-result]
     =+  yez=~(tap in yen)
     |-  ^+  this-su
     ?~  yez  this-su
@@ -565,10 +571,10 @@
     =.  this-su
       ?.  ?=([[%a @ @ *] *] d)
         %-  emit
-        [d %give %public-keys vent-result]
+        [d %give %public-keys public-keys-result]
       =/  our  (slav %p i.t.i.d)
       =/  who  (slav %p i.t.t.i.d)
-      =/  =message  [%public-keys-result who vent-result]
+      =/  =message  [%public-keys-result public-keys-result]
       %-  emit
       :^    d
           %pass
@@ -600,7 +606,14 @@
       sources-reverse.etn  (~(put by sources-reverse) source top-source-id.etn)
     ==
   ::
-  ++  extract-snap                                    ::  extract rewind point
+  ++  new-event
+    |=  [=a=ship =a=udiff:point]
+    ^+  this-su
+    =/  a-point=point      (~(gut by pos.zim.pki) a-ship *point)
+    =/  a-diff=diff:point  (udiff-to-diff:point a-udiff a-point)
+    (public-keys:feel %diff a-ship a-diff)
+  ::
+  ++  extract-snap                                      ::  extract rewind point
     ^-  snapshot
     ~
   ::                                                    ::  ++feed:su
@@ -619,7 +632,7 @@
         ?~  whol
           ney.zim
         (~(put ju $(whol t.whol)) i.whol hen)
-      =/  =vent-result
+      =/  =public-keys-result
         :-  %full
         ?:  =(~ whos)
           pos.zim
@@ -637,7 +650,7 @@
         %+  turn  ~(tap in whos)
         |=  who=ship
         [hen who]
-      =.  ..feed  (vent-give (sy hen ~) vent-result)
+      =.  ..feed  (public-keys-give (sy hen ~) public-keys-result)
       ..feed
     ::
     ++  private-keys                                            ::  private keys
@@ -676,13 +689,7 @@
           ^-  [who=ship =point]
           [who [rift=1 life=1 (my [1 1 pass] ~) `(^sein:title who)]]
         =.  moz  [[hen %give %public-keys %full (my points)] moz]
-        |-  ^+  ..feel
-        ?~  passes
-          ..feel
-        =.  ..feel
-          %-  public-keys:feel
-          [%diff who.i.passes %changed-keys 1 1 pass.i.passes]
-        $(passes t.passes)
+        ..feel
       --
     --
   ::                                                    ::  ++feel:su
@@ -690,45 +697,45 @@
     |%
     ::                                                  ::  ++pubs:feel:su
     ++  public-keys
-      |=  =vent-result
+      |=  =public-keys-result
       ^+  ..feel
-      ?:  ?=(%full -.vent-result)
-        =.  pos.zim  (~(uni by pos.zim) points.vent-result)
+      ?:  ?=(%full -.public-keys-result)
+        =.  pos.zim  (~(uni by pos.zim) points.public-keys-result)
         =/  pointl=(list [who=ship =point])
-          ~(tap by points.vent-result)
+          ~(tap by points.public-keys-result)
         |-  ^+  ..feel
         ?~  pointl
           ..feel
-        %+  vent-give
+        %+  public-keys-give
           (~(get ju ney.zim) who.i.pointl)
         [%full (my i.pointl ~)]
-      =*  who  who.vent-result
-      =*  point-diff  point-diff.vent-result
+      =*  who  who.public-keys-result
+      =/  a-diff=diff:point  diff.public-keys-result
       =/  maybe-point  (~(get by pos.zim) who)
       =/  =point  (fall maybe-point *point)
       =.  point
-        ?-  -.point-diff
-            %new-sponsor
-          point(sponsor sponsor.point-diff)
+        ?-  -.a-diff
+            %spon
+          point(sponsor to.a-diff)
         ::
-            %changed-continuity
-          point(rift (max rift.point-diff rift.point))
+            %rift
+          point(rift to.a-diff)
         ::
-            %changed-keys
+            %keys
           %_  point
-              life  (max life.point-diff life.point)
+              life  life.to.a-diff
               keys
             %+  ~(put by keys.point)
-              life.point-diff
-            [crypto-suite pass]:point-diff
+              life.to.a-diff
+            [crypto-suite pass]:to.a-diff
           ==
         ==
       =.  pos.zim  (~(put by pos.zim) who point)
-      %+  vent-give
+      %+  public-keys-give
         (~(get ju ney.zim) who)
       ?~  maybe-point
         [%full (my [who point]~)]
-      [%diff who point-diff]
+      [%diff who a-diff]
     ::                                                  ::  ++vein:feel:su
     ++  private-keys                                    ::  kick private keys
       |=  [=life =ring]

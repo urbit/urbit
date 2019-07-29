@@ -81,7 +81,6 @@
 ++  reap
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
-  ~&  [%reap wire]
   ?^  saw
     [((slog u.saw) ~) this]
   ?>  ?=(^ job.state)
@@ -93,7 +92,6 @@
 ++  coup
   |=  [=wire saw=(unit tang)]
   ^-  (quip move _this)
-  ~&  [%coup wire]
   ?^  saw
     [((slog u.saw) ~) this]
   [~ this]
