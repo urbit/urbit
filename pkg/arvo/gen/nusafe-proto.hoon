@@ -81,7 +81,7 @@
       [%log private-event=vase return-event=vase]
       ::  creates a new node and re-dispatch the event to it
       ::
-      [%create sub-id=@t type=@t =signature-type child-event=vase]
+      [%create sub-id=@t app-type=@t =signature-type child-event=vase]
       ::  returns a value upwards
       ::
       [%return return-event=vase]
@@ -128,7 +128,7 @@
   ::
   +$  user-event
     $%  [%invite ship=@p]
-        [%create name=@t type=@t =signature-type]
+        [%create name=@t app-type=@t =signature-type]
     ==
   ::
   +$  private-event
@@ -201,7 +201,7 @@
       :_  private-state
       :*  %create
           name.user-event
-          type.user-event
+          app-type.user-event
           %unlinked
           :: TODO: We must get our current node name and weld our new name to the end.
           ::
@@ -453,7 +453,7 @@
             initial-invited=(set @p)
             community-name=@t
             original-host=@p
-            type=@t
+            app-type=@t
             =signature-type
         ==
         ::  invites a person into the community. only valid on the / node.
@@ -463,7 +463,7 @@
         ::
         ::  the first item in any normal event log; sets signature information,
         ::  but calls no node code
-        [%init route=path type=@t =signature-type]
+        [%init route=path app-type=@t =signature-type]
         ::
         ::  when sending across the wire, just send the value in the vase, not
         ::  the type. the other side knows what app its for and at least for now,
@@ -477,7 +477,7 @@
         ==
         ::
         ::  creates a new child node under this
-        [%create sub-id=@t type=@t =signature-type]
+        [%create sub-id=@t app-type=@t =signature-type]
     ==
   ::  representation of a snapshot on the wire; contains no vases
   ::
@@ -870,9 +870,6 @@
       ::
           %accept-and-invite-member
         ~&  [%accepting-event-and-inviting ship.ret-val]
-        ?>  ?=(^ top-state.snapshot.state.ret)
-        =.  invited.u.top-state.snapshot.state.ret
-          (~(put in invited.u.top-state.snapshot.state.ret) ship.ret-val)
         ::
         %^  record-change  changes.ret  [state.ret /]
         [%toplevel-invite ship.ret-val]
@@ -957,12 +954,6 @@
     ::
     ?-    -.response
         %log
-      ::  when we receive a %log event, we commit this to the event log
-      ::
-      =/  apply-event-to-snapshot=vase
-        (slap app-vase [%limb %apply-event-to-snapshot])
-      =/  args  :(slop message private-event.response snapshot.snapshot.state)
-      =.  snapshot.snapshot.state  (slam apply-event-to-snapshot args)
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
@@ -977,7 +968,7 @@
       =/  new-route=path  (weld full-path [sub-id.response ~])
       ::
       =/  created=node:server
-        (instantiate-node [new-route [type signature-type ~]:response])
+        (instantiate-node [new-route [app-type signature-type ~]:response])
       ::
       =/  n=[return-value=vase changes-and-state]
         (recurse child-event.response / new-route message changes created)
@@ -985,13 +976,12 @@
       =.  changes  changes.n
       =.  created    state.n
       ::
-      ~&  [%created type=type.response sub-id=sub-id.response return=return]
+      ~&  [%created type=app-type.response sub-id=sub-id.response return=return]
       =.  children.state  (~(put by children.state) sub-id.response created)
-      =.  children.snapshot.state  (~(put in children.snapshot.state) sub-id.response)
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%create sub-id.response type.response signature-type.response]
+        [%create sub-id.response app-type.response signature-type.response]
       ::
       (process-child-returned app-vase return changes.nu state.nu)
     ::
@@ -1020,6 +1010,9 @@
     =.  event-log.state
       [[next-event-id.state log-entry] event-log.state]
     =.  next-event-id.state  +(next-event-id.state)
+    ::
+    =.  snapshot.state
+      (apply-event-log-item-to-state log-entry snapshot.state)
     ::
     [changes state]
   ::
@@ -1109,6 +1102,7 @@
       ::  we have a completely new snapshot which we append to history
       ::
       %snapshot
+    ::
     =/  snapshot=snapshot:common
       (snapshot:from-transport snapshot.peer-diff)
     ::
@@ -1122,10 +1116,76 @@
     ==
   ::
       %event
-    ::  todo: we have an event item, we need to apply it against the state.
     ::
-    ~&  [%todo-apply-event peer-diff]
-    client-state
+    =/  event-item=event-log-item:common
+      %-  need
+      %+  event-log-item:from-transport
+        app-type:(need snapshot.client-state)
+      event.peer-diff
+    ::
+    %_    client-state
+        partial-event-log
+      :_  partial-event-log.client-state
+      [id.peer-diff %event event-item]
+    ::
+        snapshot
+      `(apply-event-log-item-to-state event-item (need snapshot.client-state))
+    ==
+  ==
+::  +apply-event-log-item-to-state: applies the event
+::
+++  apply-event-log-item-to-state
+  |=  [item=event-log-item:common =snapshot:common]
+  ^-  snapshot:common
+  ::
+  ?-    -.item
+  ::
+      %toplevel-init
+    ::
+    =/  app-vase=vase       (~(got by app-map) app-type.item)
+    =/  snapshot-type=vase       (slap app-vase [%limb %snapshot])
+    ::
+    %_    snapshot
+        app-type    app-type.item
+        top-state   `[initial-invited community-name original-host]:item
+        signature-type  signature-type.item
+        snapshot    (bunt-a-vase snapshot-type)
+        children    ~
+    ==
+  ::
+      %toplevel-invite
+    ?>  ?=(^ top-state.snapshot)
+    %_  snapshot
+      invited.u.top-state  (~(put in invited.u.top-state.snapshot) ship.item)
+    ==
+  ::
+      %init
+    ::
+    =/  app-vase=vase       (~(got by app-map) app-type.item)
+    =/  snapshot-type=vase       (slap app-vase [%limb %snapshot])
+    ::
+    %_    snapshot
+        app-type  app-type.item
+        top-state  ~
+    ::  todo: remove route from init item? Add route to snapshot instead?
+        signature-type  signature-type.item
+        snapshot  (bunt-a-vase snapshot-type)
+        children    ~
+    ==
+  ::
+      %log
+    ::  when we receive a %log event, we commit this to the event log
+    ::
+    =/  app-vase=vase       (~(got by app-map) app-type.snapshot)
+    =/  apply-event-to-snapshot=vase
+      (slap app-vase [%limb %apply-event-to-snapshot])
+    =/  args  :(slop user-event.item private-event.item snapshot.snapshot)
+    =.  snapshot.snapshot  (slam apply-event-to-snapshot args)
+    ::
+    snapshot
+  ::
+      %create
+    snapshot(children (~(put in children.snapshot) sub-id.item))
   ==
 --
 :-  %say
@@ -1206,10 +1266,15 @@
 ~&  [%changes ret4]
 
 ?>  ?=(^ ret4)
-::  TODO: Actually apply diffs that come over the peer! This requires patches to work!
-::
-::  =.  client-state  (apply-peer-diff /shitposting/1 .i.ret4 client-state)
-::  ~&  [%final-client-state client-state]
+=.  client-state  (apply-peer-diff /shitposting/1 peer-diff.i.ret4 client-state)
+
+~&  [%final-client-state client-state]
+
+
+:: TODO2: Then build the client-state to signed message generator.
+::(build-
+
+
 
 ::  zero
 ::
