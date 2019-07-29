@@ -103,12 +103,14 @@ export class Message extends Component {
       return this.renderAttachment(content.name.tac, content.name.nom);
     }
 
-    return (<details open>
-      <summary class="inter fs-italic">{'Attached: ' + title}</summary>
+    return (<details>
+      <summary className="inter fs-italic">{'Attached: ' + title}</summary>
       { _.has(content, 'text')
-        ? <pre class="clamp-attachment">{content.text}</pre>
+        ? <pre className="clamp-attachment">{content.text}</pre>
         : _.has(content, 'tank')
-        ? content.tank.map(l => <p>{l}</p>)
+        ? <div className="clamp-attachment">
+            {content.tank.map(l => <p className="mt2">{l}</p>)}
+          </div>
         : null
       }
     </>);
@@ -186,7 +188,7 @@ export class Message extends Component {
             {this.renderContent()}
           </div>
         </div>
-        <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
+        <div className="fr clamp-message" style={{ flexGrow: 1, marginTop: -8 }}>
           <div className="hide-child">
             <p className="v-top label-small-mono gray dib mr3">
               {this.renderAuthor()}

@@ -124,9 +124,14 @@ h2 {
   -webkit-box-orient: vertical;
 }
 
+.clamp-message {
+  max-width: calc(100% - 32px - .5em);
+}
+
 .clamp-attachment {
   overflow: scroll;
   max-height: 10em;
+  max-width: 100%;
 }
 
 .lh-16 {
