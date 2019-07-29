@@ -55,7 +55,8 @@ export class ChatInput extends Component {
 
     this.state = {
       message: '',
-      messageType: 'lin'
+      messageType: 'lin',
+      clipboard: null
     };
 
     this.textareaRef = React.createRef();
@@ -101,15 +102,24 @@ export class ChatInput extends Component {
   }
 
   messageChange(event) {
-    this.setState({
-      message: event.target.value,
-      messageType: this.getSpeechType(event.target.value)
-    });
+    const input = event.target.value;
+    const previous = this.state.message;
+    //NOTE dumb hack to work around paste event flow oddities
+    const pasted = (previous.length === 0 && input.length > 1);
+    if (input !== this.state.clipboard) {
+      this.setState({
+        message: input,
+        messageType: this.getSpeechType(input),
+        clipboard: (pasted ? input : null)
+      });
+    }
   }
 
   getSpeechType(input) {
-    if (input[0] === '@') {
-      return 'lin@'
+    if (input.indexOf('\n') >= 0) {
+      return 'fat';
+    } else if (input[0] === '@') {
+      return 'lin@';
     } else if (this.isUrl(input)) {
       return 'url';
     } else {
@@ -117,12 +127,14 @@ export class ChatInput extends Component {
     }
   }
 
-  getSpeechStyle(type) {
+  getSpeechStyle(type, clipboard) {
     switch (type) {
       case 'lin@':
         return 'fs-italic';
       case 'url':
         return 'td-underline';
+      case 'fat':
+        if (clipboard) return 'code';
       default:
         return '';
     }
@@ -169,7 +181,7 @@ export class ChatInput extends Component {
     }
   }
 
-  speechFromInput(content, type = 'lin') {
+  speechFromInput(content, type, clipboard) {
     switch (type) {
       case 'lin':
         return { lin: {
@@ -185,6 +197,31 @@ export class ChatInput extends Component {
       //
       case 'url':
         return this.globalizeUrl(content);
+      //
+      case 'fat':
+        // clipboard contents
+        if (clipboard !== null) {
+          return { fat: {
+            sep: { lin: { msg: '', pat: false } },
+            tac: { name: {
+              nom: 'clipboard',
+              tac: { text: content }
+            } }
+          } };
+        // long-form message
+        } else {
+          const lines = content.split('\n');
+          return { fat: {
+            sep: { lin: {
+              msg: lines[0],
+              pat: false
+            } },
+            tac: { name: {
+              nom: 'long-form',
+              tac: { tank: lines.slice(1).map(l => { return {leaf: l }; }) }
+            } },
+          } };
+        }
       //
       default:
         throw new Error('Unimplemented speech type', type);
@@ -203,7 +240,11 @@ export class ChatInput extends Component {
       aut: window.ship,
       wen: Date.now(),
       aud: [props.station],
-      sep: this.speechFromInput(state.message, state.messageType)
+      sep: this.speechFromInput(
+        state.message,
+        state.messageType,
+        state.clipboard
+      )
     };
 
     props.api.hall(
@@ -249,7 +290,10 @@ export class ChatInput extends Component {
           <Sigil ship={window.ship} size={32} />
         </div>
         <div className="fr h-100 flex" style={{ flexGrow: 1, height: 40 }}>
-          <input className={`ml2 bn ${this.getSpeechStyle(state.messageType)}`}
+          <textarea
+            className={'ml2 mt2 mr2 bn ' +
+              this.getSpeechStyle(state.messageType, state.clipboard)
+            }
             style={{ flexGrow: 1 }}
             ref={this.textareaRef}
             placeholder={props.placeholder}
