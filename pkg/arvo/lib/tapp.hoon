@@ -412,6 +412,16 @@
     ^-  (quip move _this-tapp)
     (take-async bowl `[wire %bound success binding])
   ::
+  ::  Receive source update from kale
+  ::
+  ++  source
+    |=  [=wire whos=(set ship) =source:kale]
+    ^-  (quip move _this-tapp)
+    =.  waiting  (~(put to waiting) ost.bowl [%take %source whos source])
+    ?^  active
+      `this-tapp
+    start-async
+  ::
   ::  Continue computing async
   ::
   ++  take-async

@@ -1244,15 +1244,18 @@
         %info  `%c
         %keep  `%f
         %kill  `%f
-        %look  `%k
+        %look  `%j
+        %listen  `%k
         %merg  `%c
         %mint  `%k
         %mont  `%c
+        %new-event  `%k
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
-        %snap  `%k
+        %snap  `%j
+        %sources  `%k
         %wait  `%b
         %want  `%a
         %warp  `%c

@@ -2238,19 +2238,22 @@
     ::  of (list point-diff).  Composition of arrows is concatenation,
     ::  and you can apply the diffs to a +point with +apply.
     ::
-    ::  It's simplest to consider +point as the product of three
-    ::  groupoids, Rift, Keys, and Sponsor.  The objects of the product
-    ::  are the product of the objects of the underlying groupoids.  The
+    ::  It's simplest to consider +point as the coproduct of three
+    ::  groupoids, Rift, Keys, and Sponsor.  Recall that the coproduct
+    ::  of monoids is the free monoid (Kleene star) of the coproduct of
+    ::  the underlying sets of the monoids.  The construction for
+    ::  groupoids is similar.  Thus, the objects of the coproduct are
+    ::  the product of the objects of the underlying groupoids.  The
     ::  arrows are a list of a sum of the diff types of the underlying
     ::  groupoids.  Given an arrow=(list diff), you can project to the
-    ::  underlying arrows with +skim filtering on the head of each
-    ::  diff.
+    ::  underlying arrows with +skim filtering on the head of each diff.
     ::
-    ::  The identity element is ~.  Clearly, composing this with any +diff
-    ::  gives the original +diff.  Since this is a category, +compose must
-    ::  be associative (true, because concatenation is associative).  This
-    ::  is a groupoid, so we must further have that every +point-diff has an
-    ::  inverse.  These are given by the +inverse operation.
+    ::  The identity element is ~.  Clearly, composing this with any
+    ::  +diff gives the original +diff.  Since this is a category,
+    ::  +compose must be associative (true, because concatenation is
+    ::  associative).  This is a groupoid, so we must further have that
+    ::  every +point-diff has an inverse.  These are given by the
+    ::  +inverse operation.
     ::
     ++  point
       =<  point
@@ -2284,6 +2287,19 @@
             [%disavow ~]
         ==  ==
       ::
+      ++  udiff-to-diff
+        |=  [=a=udiff =a=point]
+        ^-  diff
+        ?-    +<.a-udiff
+            %disavow  ~|(%udiff-to-diff-disavow !!)
+            %rift     [%rift rift.a-point rift.a-udiff]
+            %spon     [%spon sponsor.a-point sponsor.a-udiff]
+            %keys
+          :+  %keys
+            [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
+          [life crypto-suite pass]:a-udiff
+        ==
+      ::
       ++  inverse
         |=  diffs=(list diff)
         ^-  (list diff)
@@ -2292,44 +2308,44 @@
         |=  =diff
         ^-  ^diff
         ?-  -.diff
-          %rift  [%rift &2 |2]:diff
-          %keys  [%keys &2 |2]:diff
-          %spon  [%spon &2 |2]:diff
+          %rift  [%rift to from]:diff
+          %keys  [%keys to from]:diff
+          %spon  [%spon to from]:diff
         ==
       ::
       ++  compose
         (bake weld ,[(list diff) (list diff)])
       ::
       ++  apply
-        |=  [diffs=(list diff) =point]
-        (roll diffs (apply-diff point))
+        |=  [diffs=(list diff) =a=point]
+        (roll diffs (apply-diff a-point))
       ::
       ++  apply-diff
-        |=  =point
-        |:  [*=diff point]
-        ^-  ^point
+        |=  a=point
+        |:  [*=diff a-point=a]
+        ^-  point
         ?-    -.diff
             %rift
-          ?>  =(rift.point from.diff)
-          point(rift to.diff)
+          ?>  =(rift.a-point from.diff)
+          a-point(rift to.diff)
         ::
             %keys
-          ?>  =(life.point life.from.diff)
-          ?>  =((~(get by keys.point) life.point) `+.from.diff)
-          %_  point
+          ?>  =(life.a-point life.from.diff)
+          ?>  =((~(get by keys.a-point) life.a-point) `+.from.diff)
+          %_  a-point
             life  life.to.diff
-            keys  (~(put by keys.point) life.to.diff +.to.diff)
+            keys  (~(put by keys.a-point) life.to.diff +.to.diff)
           ==
         ::
             %spon
-          ?>  =(sponsor.point from.diff)
-          point(sponsor to.diff)
+          ?>  =(sponsor.a-point from.diff)
+          a-point(sponsor to.diff)
         ==
       --
     ::
-    +$  vent-result
+    +$  public-keys-result
       $%  [%full points=(map ship point)]
-          [%diff who=ship =udiff:point]
+          [%diff who=ship =diff:point]
       ==
     ::                                                  ::
     ++  gift                                            ::  out result <-$
@@ -2340,7 +2356,7 @@
           [%source whos=(set ship) src=source]          ::
           [%turf turf=(list turf)]                      ::  domains
           [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys p=vent-result]                  ::  ethereum changes
+          [%public-keys =public-keys-result]            ::  ethereum changes
       ==                                                ::
     ::  +seed: private boot parameters
     ::
@@ -2358,7 +2374,7 @@
               snap=(unit snapshot)                      ::    head start
           ==                                            ::
           [%fake =ship]                                 ::  fake boot
-          [%look whos=(set ship) =source]               ::  set ethereum source
+          [%listen whos=(set ship) =source]             ::  set ethereum source
           ::TODO  %next for generating/putting new private key
           [%nuke whos=(set ship)]                       ::  cancel tracker from
           [%private-keys ~]                             ::  sub to privates
@@ -2367,7 +2383,7 @@
           [%meet =ship =life =pass]                     ::  met after breach
           [%snap snap=snapshot kick=?]                  ::  load snapshot
           [%turf ~]                                     ::  view domains
-          [%vent-update =vent-result]                   ::  update from app
+          [%new-event =ship =udiff:point]               ::  update from app
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  memory usage request
           $>(%plea vane-task)                           ::  ames request

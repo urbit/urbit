@@ -580,8 +580,8 @@
     [~ ~ %wait ~]
   ?:  ?=(%writ +<.sign)
     =/  uni-rang=rang
-      :-  (~(uni by hut.ran) hut.new-rang)
-      (~(uni by lat.ran) lat.new-rang)
+      :-  (~(uni by hut.new-rang) hut.ran)
+      (~(uni by lat.new-rang) lat.ran)
     [~ ~ %done p.sign uni-rang]
   ~|  [%expected-writ got=+<.sign]
   !!
@@ -1611,7 +1611,10 @@
                 (page-to-lobe:sutil [p q.q]:(~(got by both-patched) pax))
               [(lobe-to-mark:sutil u.-) u.-]
             [p q.q]:cay
-        [(~(put by hat) pax p.bol) (~(put by lat) p.bol bol)]
+        :-  (~(put by hat) pax p.bol)
+        ?:  (~(has by lat) p.bol)
+          lat
+        (~(put by lat) p.bol bol)
       ::  ~&  old=(~(run by old) mug)
       ::  ~&  newdal=(~(run by new.dal) mug)
       ::  ~&  newdob=(~(run by new.dob) mug)
@@ -2047,14 +2050,14 @@
       (turn ~(tap in lar.nako) |=(=yaki [r.yaki yaki]))
     ::  hut: updated commits by hash
     ::
-    =/  hut  (~(gas by hut.ran) nut)
+    =/  hut  (~(uni by (malt nut)) hut.ran)
     ::  nat: new blob-hash/blob pairs
     ::
     =/  nat
       (turn ~(tap in bar.nako) |=(=blob [p.blob blob]))
     ::  lat: updated blobs by hash
     ::
-    =/  lat  (~(gas by lat.ran) nat)
+    =/  lat  (~(uni by (malt nat)) lat.ran)
     ::  traverse updated state and sanity check
     ::
     =+  ~|  :*  %bad-foreign-update
@@ -2396,15 +2399,20 @@
     ::
     ::  Update the object store with new blobs.
     ::
+    ::    Must uni the old-lat into the new-lat so that if we recreate
+    ::    the same blob hash, we use the old blob not the new one.  Else
+    ::    you get mutually recurring %delta blobs.
+    ::
     ++  add-blobs
       |=  [new-blobs=(map path blob) old-lat=(map lobe blob)]
       ^-  (map lobe blob)
-      %-  ~(uni by old-lat)
-      %-  malt
-      %+  turn
-        ~(tap by new-blobs)
-      |=  [=path =blob]
-      [p.blob blob]
+      =/  new-lat=(map lobe blob)
+        %-  malt
+        %+  turn
+          ~(tap by new-blobs)
+        |=  [=path =blob]
+        [p.blob blob]
+      (~(uni by new-lat) old-lat)
     ::
     ::  Apply a change list, creating the commit and applying it to
     ::  the current state.
@@ -3043,8 +3051,8 @@
     |=  [=dome =rang]
     ^+  +>
     =:  dom      dome
-        hut.ran  (~(uni by hut.ran) hut.rang)
-        lat.ran  (~(uni by lat.ran) lat.rang)
+        hut.ran  (~(uni by hut.rang) hut.ran)
+        lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =.  +>.$  wake
     finish-write
@@ -3084,8 +3092,8 @@
     ^+  +>
     =.  +>.$  (emit [hen %give %mere %& conflicts])
     =:  dom      dome
-        hut.ran  (~(uni by hut.ran) hut.rang)
-        lat.ran  (~(uni by lat.ran) lat.rang)
+        hut.ran  (~(uni by hut.rang) hut.ran)
+        lat.ran  (~(uni by lat.rang) lat.ran)
       ==
     =.  +>.$  wake
     finish-write
@@ -4157,10 +4165,17 @@
     [[[hen %slip %d %flog req] ~] ..^$]
   ::
       %drop
-    =^  mos  ruf
-      =/  den  ((de our now ski hen ruf) our des.req)
-      abet:drop-me:den
-    [mos ..^$]
+      ?:  =(~ act.ruf)
+        ~&  %clay-idle
+        [~ ..^$]
+      ~&  :-  %clay-cancelling
+          ?>  ?=(^ act.ruf)
+          [hen -.req -.eval-data]:u.act.ruf
+      =.  act.ruf  ~
+      ?~  cue.ruf
+        [~ ..^$]
+      =/  =duct  duct:(need ~(top to cue.ruf))
+      [[duct %pass /queued-request %b %wait now]~ ..^$]
   ::
       %info
     ?:  =(%$ des.req)

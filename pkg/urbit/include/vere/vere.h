@@ -562,6 +562,7 @@
         c3_c*   gen_c;                      //  -G, czar generator
         c3_o    gab;                        //  -g, test garbage collection
         c3_c*   dns_c;                      //  -H, ames bootstrap domain
+        c3_c*   jin_c;                      //  -I, inject raw event
         c3_c*   lit_c;                      //  -J, ivory (fastboot) kernel
         c3_o    tra;                        //  -j, json trace
         c3_w    kno_w;                      //  -K, kernel version

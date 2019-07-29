@@ -10401,6 +10401,11 @@
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
     ::
+        {$tscm *}
+      =/  boc  (busk p.gen)
+      =/  nuf  (busk(sut dox) p.gen)
+      $(gen q.gen, sut boc, dox nuf)
+    ::
         {$wtcl *}
       =+  nor=$(gen p.gen, gol bool)
       =+  ^=  hiq  ^-  {p/type q/type}
