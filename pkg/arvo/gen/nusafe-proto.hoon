@@ -67,11 +67,19 @@
       ::
       %inherit
   ==
+::  when we go to actually request a signature, we change the abstract
+::  :signature-type into a fully realized signature-request.
+::
++$  signature-request
+  $%  [%ship ship=@p]
+      [%unlinked invited=(set @p)]
+      $:  %linked
+          scope=[community-name=@t original-host=@p route=path]
+          invited=(set @p)
+  ==  ==
 ::
 +$  post
-  $:  sig=full-signature
-  ::
-      subject=@t
+  $:  subject=@t
       text=@t
   ==
 ::
@@ -669,19 +677,6 @@
   $%  [%snapshot id=@u snapshot=transport-snapshot:common]
       [%event id=@u event=transport-event-log-item:common]
   ==
-
-
-
-
-::  Imagine that I'm the client connecting for the first time. What gets sent?
-::  I ask for (peer /). What gets returned? An event log or more likely a
-::  snapshot which would theoretically be reconstructed from an event log. I
-::  should get the set of 
-::
-::  Then I just get the events.
-
-
-
 ::  +sump: like arvo sump, translates vases into cards between applets
 ::
 ++  sump
@@ -1187,6 +1182,137 @@
       %create
     snapshot(children (~(put in children.snapshot) sub-id.item))
   ==
+::  +message-sign: signs an outbound message
+::
+::    Applets are able to request how signatures are performed and thus our
+::    signing function needs to deal with all the concretized ways we can sign
+::    something.
+::
+++  message-sign
+  |=  [our=@p now=@da eny=@uvJ =signature-request data=*]
+  ^-  full-signature
+  ?-    -.signature-request
+      %ship
+    ::  if the signature type is just %ship, we sign data with our
+    ::  authentication key.
+    ::
+    [%ship ~zod 5]
+  ::
+      %unlinked
+    ::  if the signature is unlinked, we don't actually have to use
+    ::  :requested-route in our calculation.
+    ::
+    ::  TODO: Real ring signatures don't work on fakezods!?
+    [%ring *ring-signature:ring]
+    ::  [%ring (sign:ring our now eny data ~ invited.signature-request)]
+  ::
+      %linked
+    ::  if the signature is linked, we link on the requested scope.
+    ::
+    ::  TODO: Real ring signatures don't work on fakezods!?
+    [%ring *ring-signature:ring]
+    ::  :-  %ring
+    ::  (sign:ring our now eny data `scope.signature-request invited.signature-request)
+  ==
+::  +signature-request-for: changes an abstract signature-type into a
+::  signature-request for route.
+::
+++  signature-request-for
+  |=  [our=@p route=path client-state=node:client]
+  ^-  signature-request
+  ::
+  =/  root-state  client-state
+  %-  need
+  ::  we recursively walk through the client-state, returning ~ for %inherit,
+  ::  otherwise returning the real
+  ::
+  |-
+  ^-  (unit signature-request)
+  ::
+  |^  =|  built-route=path
+      |-
+      ?^  route
+        =/  ret-val=(unit signature-request)
+          %_  $
+            built-route   (weld built-route [i.route ~])
+            route         t.route
+            client-state  (need (~(got by children.client-state) i.route))
+          ==
+        ::
+        ?~  ret-val
+          (get-for-node built-route client-state)
+        ret-val
+      ::
+      (get-for-node built-route client-state)
+  ::
+  ++  get-for-node
+    |=  [built-route=path client-state=node:client]
+    ^-  (unit signature-request)
+    ::
+    =/  =top-state:common  (need top-state:(need snapshot.root-state))
+    ::
+    =/  =snapshot:common   (need snapshot.client-state)
+    ?-    signature-type.snapshot
+        %ship
+      `[%ship our]
+    ::
+        %unlinked
+      `[%unlinked invited.top-state]
+    ::
+        %community
+      :*  ~
+          %linked
+          [community-name.top-state original-host.top-state /]
+          invited.top-state
+      ==
+    ::
+        %self
+      :*  ~
+          %linked
+          [community-name.top-state original-host.top-state built-route]
+          invited.top-state
+      ==
+    ::
+        %inherit
+      ~
+    ==
+  --
+
+::  +sign-user-message: verify that user-message is the right shape and make
+::  the appropriate signatures
+::
+++  sign-user-event
+  |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node:client]
+  ^-  [full-signature full-signature path *]
+  ::
+  =/  root-request=signature-request  (signature-request-for ~zod / client-state)
+  =/  path-request=signature-request  (signature-request-for ~zod route client-state)
+  ::
+  =/  app-type=@t
+    |-
+    ?^  route
+      $(route t.route, client-state (need (~(got by children.client-state) i.route)))
+    app-type:(need snapshot.client-state)
+  ::  validate the user-message against the +user-event mold for this applet
+  ::
+  ::    what we sign and send is not the exact user-event, but the one passed
+  ::    through the applet's user-event mold for validation, since this data
+  ::    will be explicitly validated on the server.
+  ::
+  =/  node-vase=vase        (~(got by app-map) app-type)
+  =/  user-event-mold=vase  (slap node-vase [%limb %user-event])
+  =/  user-event=vase       (slam user-event-mold %noun user-event)
+  ::  build the two signatures
+  ::
+  ::    the inner-signature is passed to the target node. the outer-signature
+  ::    is passed to the root node. the outer-signature signs the inner-signature.
+  ::
+  =/  inner-signature=full-signature
+    (message-sign our now eny path-request [route user-event])
+  =/  outer-signature=full-signature
+    (message-sign our now eny root-request [inner-signature route q.user-event])
+  ::
+  [outer-signature inner-signature route q.user-event]
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -1245,60 +1371,47 @@
 ::
 ~&  %server---------3
 =^  ret3  toplevel
-  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting !>([%new-post [[%ship ~zod 5] 'subject' 'text']]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting !>([%new-post 'subject' 'text']) toplevel)
 ~&  [%changes ret3]
 
 ~&  %client---------1
+::  The client wants to post to /shitposting/1, and to do so, it needs the
+::  information about /, /shitposting, and /shitposting/1.
 ::
 =|  client-state=node:client
 ::
-=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting/1 toplevel)
+=/  root-state=(unit peer-diff)  (get-peer-diff-snapshot / toplevel)
+=.  client-state  (apply-peer-diff / (need root-state) client-state)
 ::
+=/  board-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
+=.  client-state  (apply-peer-diff /shitposting (need board-state) client-state)
+::
+=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting/1 toplevel)
 =.  client-state  (apply-peer-diff /shitposting/1 (need snapshot-state) client-state)
 
+~&  [%server-state toplevel]
 ~&  [%client-state client-state]
 
 ::  continue shitposting in the current thread!
 ::
 ~&  %server---------4
 =^  ret4  toplevel
-  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post [[%ship ~zod 5] 'reply' 'text reply']]) toplevel)
+  (apply [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post 'reply' 'text reply']) toplevel)
 ~&  [%changes ret4]
 
 ?>  ?=(^ ret4)
 =.  client-state  (apply-peer-diff /shitposting/1 peer-diff.i.ret4 client-state)
 
-~&  [%final-client-state client-state]
 
+~&  %client---------2
 
-:: TODO2: Then build the client-state to signed message generator.
-::(build-
-
-
+::  Here's a signed request from the client to be sent into the server.
+::
+~&  [%signed-request (sign-user-event ~zod now eny /shitposting/1 [%new-post 'another' 'more'] client-state)]
 
 ::  zero
 ::
 0
-
-:: So we now need to have a way to make messages to send to the 
-::
-::  =/  message-package
-::    (message-builder /shitposting/1 !>([%new-post 'reply' 'text reply']) local-toplevel)
-
-::  how messages are signed has to be part of the node at build time. 
-::
-::  [%create id=5 type=%board sig-type=[%ring ?(%anon %parent %self)]]
-::
-::  then we can take the 
-::
-
-::  if the membership pool is inside the applets, we have to trust the applets
-::  to maintain it. This implies:
-::
-::  - Our system state is [invited=(set @p) root-node], where the invited sit outside
-::
-::  - To initialize this, we'll need a separate toplevel.
-
 
 
 :: The system verifies that the signatures are valid before dispatch, but the
