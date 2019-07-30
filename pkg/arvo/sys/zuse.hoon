@@ -9056,7 +9056,7 @@
         `(cat 3 'gal-' (scot %ud gal))
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'getKeys(uint32)' [%uint gal]~)
+        (encode-call 'points(uint32)' [%uint gal]~)
       [%number boq]
     ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
@@ -9117,7 +9117,7 @@
     ::
     ++  czar
       |=  rep=octs
-      ^-  (unit (map ship [=life =pass]))
+      ^-  (unit (map ship [=rift =life =pass]))
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
@@ -9125,27 +9125,31 @@
         ((ar (ot id+so result+so ~)) u.jon)
       ?~  res
         ~&([%czar-take-dawn %invalid-response rep] ~)
-      =/  dat=(unit (list [who=ship enc=octs aut=octs sut=@ud rev=@ud]))
+      =/  dat=(unit (list [who=@p point:azimuth-types]))
         =-  ?:(?=(%| -.out) ~ (some p.out))
         ^=  out  %-  mule  |.
         %+  turn  u.res
         |=  [id=@t result=@t]
-        ^-  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-        :-  `@p`(slav %ud (rsh 3 4 id))
+        ^-  [who=ship point:azimuth-types]
+        =/  who  `@p`(slav %ud (rsh 3 4 id))
+        :-  who
+        %+  point-from-eth
+          who
+        :_  *deed:eth-noun
         %+  decode-results
           result
-        ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+        point:eth-type
       ?~  dat
         ~&([%bloq-take-dawn %invalid-galaxy-table] ~)
       :-  ~
       %+  roll  u.dat
-      |=  $:  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-              kyz=(map ship [=life =pass])
+      |=  $:  [who=ship =point:azimuth-types]
+              kyz=(map ship [=rift =life =pass])
           ==
       ^+  kyz
-      =/  pub=pass
-        (pass-from-eth enc aut sut)
-      (~(put by kyz) who [rev pub])
+      ?~  net.point
+        kyz
+      (~(put by kyz) who [continuity-number life pass]:u.net.point)
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point
