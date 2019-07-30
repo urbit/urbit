@@ -298,21 +298,12 @@
           %-  curd  =<  abet
           (sources:~(feel su hen our pki etn sap) ~ [%| %azimuth-tracker])
         ::
-            %king
-          =.  +>.$
-            %-  curd  =<  abet
-            %+  sources:~(feel su hen our pki etn sap)
-              (silt ship.spon.tac ~)
-            [%| %azimuth-tracker]
-          %-  curd  =<  abet
-          (sources:~(feel su hen our pki etn sap) ~ [%& ship.spon.tac])
-        ::
             *
           =.  +>.$
             %-  curd  =<  abet
             %+  sources:~(feel su hen our pki etn sap)
               (silt ship.spon.tac ~)
-            [%& spon.spon.tac]
+            [%| %azimuth-tracker]
           %-  curd  =<  abet
           (sources:~(feel su hen our pki etn sap) ~ [%& ship.spon.tac])
         ==
