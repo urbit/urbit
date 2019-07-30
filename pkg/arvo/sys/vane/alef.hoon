@@ -2078,7 +2078,7 @@
     ^+  [fragments gifts state]
     ::  return unsent back to caller and reverse effects to finalize
     ::
-    =-  ~&  %alef-feed^(lent fragments)^%unsent^(lent unsent)
+    =-  ::~&  %alef-feed^(lent fragments)^%unsent^(lent unsent)
         [unsent (flop gifts) state]
     ::
     ^+  [unsent=fragments packet-pump]
@@ -2139,7 +2139,7 @@
         ?.  found.-
           ~&  %alef-hear-noop
           packet-pump
-        ~&  %alef-hear-ack^message-num^fragment-num
+        ::~&  %alef-hear-ack^message-num^fragment-num
         ::
         =.  metrics.state  metrics.-
         =.  live.state     live.-
@@ -2362,7 +2362,7 @@
         message-still
       ::  ack all other packets
       ::
-      ~&  %send-ack^fragment-num
+      ::~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2400,7 +2400,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ~&  %send-ack^fragment-num
+      ::~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
@@ -2422,6 +2422,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
+    ~&  %ames-still-rcv-kb^num-fragments.u.live
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
