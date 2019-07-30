@@ -1,4 +1,4 @@
-/-  ring
+/-  ring, *safe-applet, common=safe-common
 /+  ring
 ::
 ::  To post to /board/1234, you must post:
@@ -22,12 +22,6 @@
 ::  then 
 
 |%
-::  The toplevel signature is what comes in on the auth app.
-::
-++  full-signature
-  $%  [%ship ship=@p sig=@]
-      [%ring =ring-signature:ring]
-  ==
 ::  A processed signature is an attestation by a parent node to a child node
 ::  that a valid signature was made.
 ::
@@ -44,29 +38,6 @@
     %ship  [%ship ship.full-signature]
     %ring  [%ring path y.raw.ring-signature.full-signature]
   ==
-::  what sort of signature this node wants
-::
-::    We don't want to give applets the ability to build arbitrary signatures,
-::    since they could leak information that way. Instead, we make the sort of
-::    signature a node wants
-::
-+$  signature-type
-  $?  ::  sign publicly with your ship identity
-      ::
-      %ship
-      ::  sign with an ulinked ring-signature.
-      ::
-      %unlinked
-      ::  sign with a linked ring-signature with scope of the community.
-      ::
-      %community
-      ::  sign with a linked ring-signature with scope of the current path.
-      ::
-      %self
-      ::  walk upwards recursively to find a strategy
-      ::
-      %inherit
-  ==
 ::  when we go to actually request a signature, we change the abstract
 ::  :signature-type into a fully realized signature-request.
 ::
@@ -82,47 +53,6 @@
   $:  subject=@t
       text=@t
   ==
-::
-+$  on-process-response
-  $%  ::  emits an event to this node's event log with a corresponding piece of data
-      ::
-      [%log private-event=vase return-event=vase]
-      ::  creates a new node and re-dispatch the event to it
-      ::
-      [%create sub-id=@t app-type=@t =signature-type child-event=vase]
-      ::  returns a value upwards
-      ::
-      [%return return-event=vase]
-  ==
-::  Your community can do whatever it wants, as long as it obeys this toplevel interface
-::
-++  toplevel-interface
-  |%
-  ::  the input to your node; this is your parent-event
-  ::
-  ++  input
-    full-signature
-  ::  the output of your node; this is your return-event
-  ::
-  ++  output
-    $%  ::  accepts the message and release all the effects and state changes
-        ::  it produced.
-        ::
-        [%accept ~]
-        ::  rejects this message and ignores all the effects and reverts all
-        ::  state changes.
-        ::
-        [%reject ~]
-        ::  a special output that can only occur on the toplevel node; this
-        ::  accepts the incoming new invitiees.
-        ::
-        [%accept-and-invite-member ship=@p]
-        ::
-        ::  TODO: Should there be an uninvite here? If there should be, how do
-        ::  you avoid abusive @p posting? If not, how do you fix threats to
-        ::  eject yourself in response to blackmail?
-    ==
-  --
 ::  the authenticating toplevel node
 ::
 ++  node-type-auth
@@ -421,127 +351,6 @@
 ++  app-map
   ^-  (map @t vase)
   (my [[%auth !>(node-type-auth)] [%board !>(node-type-board)] [%thread !>(node-type-thread)] ~])
-::  common data structures between the server and the client
-::
-++  common
-  |%
-  ::  every root node keeps metadata about the entire server, which is used for signatures
-  ::
-  ++  top-state
-    $:  invited=(set @p)
-        community-name=@t
-        original-host=@p
-    ==
-  ::  +snapshot representation for being on a ship
-  ::
-  ++  snapshot
-    $~  [%auth ~ %community *vase ~]
-    $:  ::  which of the built-in app types we represent
-        ::
-        app-type=@t
-        ::  the top-state; community identification information only on /
-        ::
-        top-state=(unit top-state)
-        ::  what sort of signature should be sent to this node
-        ::
-        =signature-type
-        ::  the public per-applet snapshot data
-        ::
-        snapshot=vase
-        ::  the live iterable children are tracked as a set inside the snapshot
-        ::
-        children=(set @t)
-    ==
-  ::  all events that could exist in an event log
-  ::
-  ++  event-log-item
-    $%  ::  a special init which must be the first item in the / node.
-        ::
-        $:  %toplevel-init
-            initial-invited=(set @p)
-            community-name=@t
-            original-host=@p
-            app-type=@t
-            =signature-type
-        ==
-        ::  invites a person into the community. only valid on the / node.
-        ::
-        [%toplevel-invite ship=@p]
-    ::
-        ::
-        ::  the first item in any normal event log; sets signature information,
-        ::  but calls no node code
-        [%init route=path app-type=@t =signature-type]
-        ::
-        ::  when sending across the wire, just send the value in the vase, not
-        ::  the type. the other side knows what app its for and at least for now,
-        ::  the remote will call the mold.
-        ::
-        $:  %log
-            ::  msg-signature=full-signature
-            ::  route=path
-            user-event=vase
-            private-event=vase
-        ==
-        ::
-        ::  creates a new child node under this
-        [%create sub-id=@t app-type=@t =signature-type]
-    ==
-  ::  representation of a snapshot on the wire; contains no vases
-  ::
-  ++  transport-snapshot
-    $:  ::  which of the built-in app types we represent
-        ::
-        app-type=@t
-        ::  the top-state; community identification information only on /
-        ::
-        top-state=(unit top-state)
-        ::  what sort of signature should be sent to this node
-        ::
-        =signature-type
-        ::  a snapshot reconstitutable with app-type into a real vase
-        ::
-        raw-snapshot=*
-        ::  the live iterable children are tracked as a set inside the snapshot
-        ::
-        children=(set @t)
-    ==
-  ::  representation of an event-log-item on the wire; contains no vases
-  ::
-  ++  transport-event-log-item
-    $%  ::  a special init which must be the first item in the / node.
-        ::
-        $:  %toplevel-init
-            initial-invited=(set @p)
-            community-name=@t
-            original-host=@p
-            type=@t
-            =signature-type
-        ==
-        ::  invites a person into the community. only valid on the / node.
-        ::
-        [%toplevel-invite ship=@p]
-    ::
-        ::
-        ::  the first item in any normal event log; sets signature information,
-        ::  but calls no node code
-        [%init route=path type=@t =signature-type]
-        ::
-        ::  when sending across the wire, just send the value in the vase, not
-        ::  the type. the other side knows what app its for and at least for now,
-        ::  the remote will call the mold.
-        ::
-        $:  %log
-            ::  msg-signature=full-signature
-            ::  route=path
-            user-event=*
-            private-event=*
-        ==
-        ::
-        ::  creates a new child node under this
-        [%create sub-id=@t type=@t =signature-type]
-    ==
-  --
 ::  the server state
 ::
 ++  server
