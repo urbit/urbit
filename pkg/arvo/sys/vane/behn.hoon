@@ -103,8 +103,11 @@
   ++  wake
     |=  error=(unit tang)
     ^+  [moves state]
+    ::  no-op on spurious but innocuous unix wakeups
     ::
-    ?~  timers.state  ~|  %behn-wake-no-timer^error  !!
+    ?~  timers.state
+      ~?  ?=(^ error)  %behn-wake-no-timer^u.error
+      [moves state]
     ::  if we errored, pop the timer and notify the client vane of the error
     ::
     ?^  error
@@ -113,7 +116,6 @@
     ::  if unix woke us too early, retry by resetting the unix wakeup timer
     ::
     ?:  (gth date.i.timers.state now)
-      ~?  debug=%.n  [%behn-wake-too-soon `@dr`(sub date.i.timers.state now)]
       set-unix-wake(next-wake.state ~)
     ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
     ::
@@ -199,7 +201,6 @@
     ::  ignore duplicates
     ::
     ?:  =(t i.timers)
-      ~?  debug=%.n  [%behn-set-duplicate t]
       timers
     ::  timers at the same date form a fifo queue
     ::
@@ -216,7 +217,6 @@
     ::  if we don't have this timer, no-op
     ::
     ?~  timers
-      ~?  debug=%.n  [%behn-unset-missing t]
       ~
     ?:  =(i.timers t)
       t.timers
@@ -266,7 +266,7 @@
   ^+  behn-gate
   ::
   ~|  %behn-load-fail
-  behn-gate(state (behn-state old))
+  behn-gate(state ;;(behn-state old))
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
