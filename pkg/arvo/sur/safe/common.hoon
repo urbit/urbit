@@ -59,8 +59,8 @@
           ::  TODO: Next action isn't splitting up the files, but making sure
           ::  local signatures appear in the %log!
           ::
-          ::  msg-signature=full-signature
-          ::  route=path
+          msg-signature=full-signature
+          route=path
           user-event=vase
           private-event=vase
       ==
@@ -113,8 +113,8 @@
       ::  the remote will call the mold.
       ::
       $:  %log
-          ::  msg-signature=full-signature
-          ::  route=path
+          msg-signature=full-signature
+          route=path
           user-event=*
           private-event=*
       ==

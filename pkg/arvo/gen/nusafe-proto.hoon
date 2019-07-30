@@ -442,7 +442,7 @@
     ?.  ?=(%log -.e)
       e
     ::
-    [%log q.user-event.e q.private-event.e]
+    [%log msg-signature.e route.e q.user-event.e q.private-event.e]
   ::
   ++  snapshot
     |=  s=snapshot:common
@@ -467,7 +467,10 @@
     =/  user-event=vase  (slam user-event-mold %noun user-event.e)
     =/  private-event=vase  (slam private-event-mold %noun private-event.e)
     ::
-    `[%log user-event private-event]
+    ::  TODO: The point at which we reconstitute an event from transport is
+    ::  probably the correct time to perform the signature verification.
+    ::
+    `[%log msg-signature.e route.e user-event private-event]
   ::
   ++  snapshot
     |=  s=transport-snapshot:common
@@ -654,6 +657,8 @@
           !>(top-signature)
           route
           route
+          message-signature
+          route
           message
           [~ original-state]
         ==
@@ -710,6 +715,8 @@
     |=  $:  parent-event=vase
             route=path
             full-path=path
+            message-signature=full-signature
+            original-path=path
             message=vase
             changes-and-state
         ==
@@ -739,7 +746,7 @@
       =/  child-event=vase  (slot 3 raw-result)
       ::
       =/  n=[return-value=vase changes-and-state]
-        (recurse child-event t.route full-path message changes u.sub-node)
+        (recurse child-event t.route full-path message-signature original-path message changes u.sub-node)
       =/  return-value  return-value.n
       =.  changes  changes.n
       =.  u.sub-node    state.n
@@ -761,7 +768,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%log message private-event.response]
+        [%log message-signature original-path message private-event.response]
       ::
       ~&  [%new-snapshot full-path snapshot.snapshot.state.nu]
       ::
@@ -775,7 +782,7 @@
         (instantiate-node [new-route [app-type signature-type ~]:response])
       ::
       =/  n=[return-value=vase changes-and-state]
-        (recurse child-event.response / new-route message changes created)
+        (recurse child-event.response / new-route message-signature original-path message changes created)
       =/  return  return-value.n
       =.  changes  changes.n
       =.  created    state.n
