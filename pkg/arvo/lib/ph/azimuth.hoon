@@ -361,7 +361,6 @@
 ++  breach-and-hear
   |=  [our=@p who=@p her=@p]
   =.  this-az  (breach who)
-  =.  this-az  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
   =/  new-rut  rut:(~(got by lives) who)
   =/  m  (ph ,_this-az)
   ;<  [this-az=_this-az ~]  bind:m
@@ -385,9 +384,11 @@
   =/  prev  (~(got by lives) who)
   =/  rut  +(rut.prev)
   =.  lives  (~(put by lives) who [lyfe.prev rut])
-  %-  add-logs
-  :_  ~
-  (broke-continuity:lo who rut)
+  =.  this-az
+    %-  add-logs
+    :_  ~
+    (broke-continuity:lo who rut)
+  ?:((~(has by lives) ~fes) (cycle-keys ~fes) (spawn ~fes))
 ::
 ++  get-keys
   |=  [who=@p lyfe=life]

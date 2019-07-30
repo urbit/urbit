@@ -335,7 +335,7 @@
       |=  [=pending-udiffs =number:block]
       =/  m  (async:stdio ,^pending-udiffs)
       ^-  form:m
-      =/  rel-number  (sub number 30)
+      =/  rel-number  (sub number 1)
       =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
       ;<  ~  bind:m  (jael-update udiffs)
       (pure:m (~(del by pending-udiffs) rel-number))
