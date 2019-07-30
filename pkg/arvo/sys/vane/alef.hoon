@@ -1314,26 +1314,6 @@
           $(blobs t.blobs)
         ::
         event-core
-      ::  +attestation-packet: generate signed self-attestation for .her
-      ::
-      ++  attestation-packet
-        |=  [her=ship =her=life]
-        ^-  blob
-        ::
-        =/  signed=_+:*open-packet
-          :*  ^=  public-key  pub:ex:crypto-core.ames-state
-              ^=        sndr  our
-              ^=   sndr-life  life.ames-state
-              ^=        rcvr  her
-              ^=   rcvr-life  her-life
-          ==
-        ::
-        =/  =private-key  sec:ex:crypto-core.ames-state
-        =/  =signature    (sign-open-packet private-key signed)
-        =/  =open-packet  [signature signed]
-        =/  =packet       [[our her] encrypted=%.n origin=~ open-packet]
-        ::
-        (encode-packet packet)
       ::
       ++  update-known
         |=  [=ship =point =peer-state]
@@ -1463,6 +1443,28 @@
     ?:  direct.u.route
       event-core
     try-next-sponsor
+  ::  +attestation-packet: generate signed self-attestation for .her
+  ::
+  ::    Sent by a comet on first contact with a peer.  Not acked.
+  ::
+  ++  attestation-packet
+    |=  [her=ship =her=life]
+    ^-  blob
+    ::
+    =/  signed=_+:*open-packet
+      :*  ^=  public-key  pub:ex:crypto-core.ames-state
+          ^=        sndr  our
+          ^=   sndr-life  life.ames-state
+          ^=        rcvr  her
+          ^=   rcvr-life  her-life
+      ==
+    ::
+    =/  =private-key  sec:ex:crypto-core.ames-state
+    =/  =signature    (sign-open-packet private-key signed)
+    =/  =open-packet  [signature signed]
+    =/  =packet       [[our her] encrypted=%.n origin=~ open-packet]
+    ::
+    (encode-packet packet)
   ::  +got-peer-state: lookup .her state or crash
   ::
   ++  got-peer-state
@@ -1523,12 +1525,29 @@
       ::    transport address has changed and this lane is no longer
       ::    valid.
       ::
+      ::    If .her is a galaxy, the lane will always remain direct.
+      ::
       =?    route.peer-state
           ?&  ?=(^ route.peer-state)
               direct.u.route.peer-state
               !=(%czar (clan:title her.channel))
           ==
         route.peer-state(direct.u %.n)
+      ::  resend comet attestation packet if first message times out
+      ::
+      ::    The attestation packet doesn't get acked, so if we tried to
+      ::    send a packet but it timed out, maybe they didn't get our
+      ::    attestation.
+      ::
+      ::    Only resend on timeout of packets in the first message we
+      ::    send them, since they should remember forever.
+      ::
+      =?    event-core
+          ?&  ?=(%pawn (clan:title our))
+              =(1 current:(~(got by snd.peer-state) bone))
+          ==
+        (send-blob her.channel (attestation-packet [her her-life]:channel))
+      ::  maybe resend some timed out packets
       ::
       (run-message-pump bone %wake ~)
     ::  +send-shut-packet: fire encrypted packet at rcvr and maybe sponsors
