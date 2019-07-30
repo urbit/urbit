@@ -2135,7 +2135,7 @@
           $:  %dawn                                     ::  boot from keys
               =seed:able:jael                           ::    identity params
               spon=ship                                 ::    sponsor
-              czar=(map ship [=rift =life =pass])       ::    galaxy table
+              czar=(map ship [=life =pass])             ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number
               node=(unit purl:eyre)                     ::    gateway url
@@ -2306,7 +2306,7 @@
       $~  [%vega ~]                                     ::
       $%  $:  %dawn                                     ::  boot from keys
               =seed:able:kale                           ::    identity params
-              spon=ship                                 ::    sponsor
+              spon=[=ship =rift =life =pass spon=ship]  ::    sponsor
               czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number

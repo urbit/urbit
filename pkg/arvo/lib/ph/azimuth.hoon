@@ -255,9 +255,21 @@
 ++  dawn
   |=  who=ship
   ^-  dawn-event
-  =/  lyfe  lyfe:(~(got by lives) who)
-  :*  [who lyfe sec:ex:(get-keys who lyfe) ~]
-      (^sein:title who)
+  =/  spon
+    =/  =ship  (^sein:title who)
+    =/  life-rift  (~(got by lives) ship)
+    =/  =life  lyfe.life-rift
+    =/  =rift  rut.life-rift
+    =/  =pass
+      %^    pass-from-eth:azimuth
+          (as-octs:mimes:html (get-public ship life %crypt))
+        (as-octs:mimes:html (get-public ship life %auth))
+      1
+    [ship rift life pass (^sein:title ship)]
+  =/  life-rift  (~(got by lives) who)
+  =/  =life  lyfe.life-rift
+  :*  [who life sec:ex:(get-keys who life) ~]
+      spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0

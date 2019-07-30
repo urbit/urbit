@@ -234,7 +234,7 @@
     ::    $:  $dawn
     ::        =seed
     ::        spon=ship
-    ::        czar=(map ship [=life =pass])
+    ::        czar=(map ship [=rift =life =pass])
     ::        turf=(list turf)}
     ::        bloq=@ud
     ::        node=purl
@@ -266,7 +266,7 @@
         =/  cub  (nol:nu:crub:crypto key.seed.tac)
         %+  ~(put by pos.zim.pki)
           our
-        [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) `spon.tac]
+        [1 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) `ship.spon.tac]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.seed.tac
@@ -283,6 +283,8 @@
         |=  [=a=rift =a=life =a=pass]
         ^-  point
         [a-rift a-life (malt [a-life 1 a-pass] ~) ~]
+      =.  points
+        (~(put by points) [ship rift life [[life 1 pass] ~ ~] `spon]:spon.tac)
       =.  +>.$
         %-  curd  =<  abet
         (public-keys:~(feel su hen our pki etn sap) %full points)
@@ -291,18 +293,29 @@
       ::
       =.  +>.$  (poke-watch hen %azimuth-tracker nod.own.pki)
       =.  +>.$
-        %-  curd  =<  abet
-        %+  sources:~(feel su hen our pki etn sap)
-          ?:  =(%czar (clan:title our))
-            ~
-          (silt spon.tac ~)
-        [%| %azimuth-tracker]
-      ::
-      =?  +>.$  !=(%czar (clan:title our))
-        %-  curd  =<  abet
-        %+  sources:~(feel su hen our pki etn sap)
-            ~
-        [%& spon.tac]
+        ?-    (clan:title our)
+            %czar
+          %-  curd  =<  abet
+          (sources:~(feel su hen our pki etn sap) ~ [%| %azimuth-tracker])
+        ::
+            %king
+          =.  +>.$
+            %-  curd  =<  abet
+            %+  sources:~(feel su hen our pki etn sap)
+              (silt ship.spon.tac ~)
+            [%| %azimuth-tracker]
+          %-  curd  =<  abet
+          (sources:~(feel su hen our pki etn sap) ~ [%& ship.spon.tac])
+        ::
+            *
+          =.  +>.$
+            %-  curd  =<  abet
+            %+  sources:~(feel su hen our pki etn sap)
+              (silt ship.spon.tac ~)
+            [%& spon.spon.tac]
+          %-  curd  =<  abet
+          (sources:~(feel su hen our pki etn sap) ~ [%& ship.spon.tac])
+        ==
       ::
       =.  moz
         %+  weld  moz
