@@ -1,5 +1,5 @@
-/-  ring, *safe-applet, common=safe-common
-/+  ring
+/-  ring, *safe-applet, common=safe-common, client=safe-client
+/+  ring, *safe-signatures, *safe-client, *safe-common
 ::
 ::  To post to /board/1234, you must post:
 ::
@@ -38,16 +38,6 @@
     %ship  [%ship ship.full-signature]
     %ring  [%ring path y.raw.ring-signature.full-signature]
   ==
-::  when we go to actually request a signature, we change the abstract
-::  :signature-type into a fully realized signature-request.
-::
-+$  signature-request
-  $%  [%ship ship=@p]
-      [%unlinked invited=(set @p)]
-      $:  %linked
-          scope=[community-name=@t original-host=@p route=path]
-          invited=(set @p)
-  ==  ==
 ::
 +$  post
   $:  subject=@t
@@ -378,59 +368,6 @@
         children=(map @t node)
     ==
   --
-::  the client state
-::
-++  client
-  =<  node
-  |%
-  ::
-  ++  node
-    $~  [~ ~ ~ ~]
-    $:  ::  an event log with snapshots in it.
-        ::
-        partial-event-log=(list [id=@ud item=event-item])
-        ::  the current state of the node
-        ::
-        ::    The :partial-event-log may have %snapshots in them, but the head
-        ::    may not be a snapshot so always have the current head rendered as
-        ::    a snapshot.
-        ::
-        ::    However, we may not have any information about this node, only
-        ::    understand that its exists in the graph.
-        ::
-        snapshot=(unit snapshot:common)
-        ::  live children state we know about
-        ::
-        ::    When we see a %create event, we place a ~ in this node until we
-        ::    follow it.
-        ::
-        children=(map @t (unit node))
-        ::  archived children state
-        ::
-        ::    In the event log, when a %remove event occurs, that data gets
-        ::    wiped on the server. On the client, removed nodes go to the
-        ::    archive where they are no longer modifiable.
-        ::
-        ::    In the case that we never learned anything about the thread other
-        ::    than its existence, we don't add anything here.
-        ::
-        archived=(map @t node)
-    ==
-  ::  state created from event log items that
-  ::
-  ++  top-state
-    $:  invited=(set @p)
-        community-name=@t
-        original-host=@p
-    ==
-  ::  on the client, we may only have events 1,2,3 and then a snapshot of 10
-  ::  and then events 11,12,13.
-  ::
-  ++  event-item
-    $%  [%snapshot =snapshot:common]
-        [%event =event-log-item:common]
-    ==
-  --
 ::
 ++  to-transport
   |%
@@ -449,46 +386,6 @@
     ^-  transport-snapshot:common
     [app-type top-state signature-type q.snapshot children]:s
   --
-::
-++  from-transport
-  |%
-  ++  event-log-item
-    |=  [app=term e=transport-event-log-item:common]
-    ^-  (unit event-log-item:common)
-    ::
-    ?.  ?=(%log -.e)
-      `e
-    ::
-    =/  node-vase=vase           (~(got by app-map) app)
-    ::
-    =/  user-event-mold=vase     (slap node-vase [%limb %user-event])
-    =/  private-event-mold=vase  (slap node-vase [%limb %private-event])
-    ::
-    =/  user-event=vase  (slam user-event-mold %noun user-event.e)
-    =/  private-event=vase  (slam private-event-mold %noun private-event.e)
-    ::
-    ::  TODO: The point at which we reconstitute an event from transport is
-    ::  probably the correct time to perform the signature verification.
-    ::
-    `[%log msg-signature.e route.e user-event private-event]
-  ::
-  ++  snapshot
-    |=  s=transport-snapshot:common
-    ^-  snapshot:common
-    ::
-    =/  node-vase=vase           (~(got by app-map) app-type.s)
-    ::
-    =/  snapshot-mold=vase  (slap node-vase [%limb %snapshot])
-    =/  snapshot-vase=vase  (slam snapshot-mold %noun raw-snapshot.s)
-    ::
-    [app-type.s top-state.s signature-type.s snapshot-vase children.s]
-  --
-::  a diff to be sent over the wire for transport; this contains no vases.
-::
-++  peer-diff
-  $%  [%snapshot id=@u snapshot=transport-snapshot:common]
-      [%event id=@u event=transport-event-log-item:common]
-  ==
 ::  +sump: like arvo sump, translates vases into cards between applets
 ::
 ++  sump
@@ -514,12 +411,6 @@
     =/  event  (slot 3 wec)
     [%return event]
   ==
-::  all hail joe for this
-::
-++  bunt-a-vase
-  |=  v=vase
-  ^-  vase
-  (slap v [%kttr [%like [[%& 1] ~] ~]])
 ::
 ++  instantiate-node
   |=  [route=path type=term =signature-type top-state=(unit top-state:common)]
@@ -557,40 +448,9 @@
 ::
 +$  change-broadcast
   $:  =path
-      =peer-diff
+      =peer-diff:common
   ==
 ::
-++  verify-signature
-  |=  $:  =signature-type
-          route=path
-          =full-signature
-          noun=*
-      ==
-  ^-  ?
-  ::  %inherit isn't a real signature type, but a directive to use the parent's
-  ::  type. there should be no instances of it.
-  ::
-  ?>  !=(%inherit signature-type)
-  ::  TODO: We don't want to go full signature verification until we have the
-  ::  parts of the inter-ship replication system going, since we'll have to
-  ::  write the code which 
-  ::
-  %.y
-  ::  ::  if the signature-type is ship, you must have a ship signature
-  ::  ::
-  ::  ?:  =(%ship signature-type)
-  ::    ?.  ?=([%ship *] full-signature)
-  ::      %.n
-  ::    ::
-  ::    ~&  %todo-verify-ship-signature
-  ::    %.y
-  ::  ::  all other signatures are variants on ring signatures
-  ::  ::
-  ::  ?.  ?=([%ring *] full-signature)
-  ::    %.n
-  ::  ::  todo: this rest here.
-  ::  ::
-  ::  %.y
   
 ::  +apply: applies a message to the event logs
 ::
@@ -823,7 +683,7 @@
     =.  next-event-id.state  +(next-event-id.state)
     ::
     =.  snapshot.state
-      (apply-event-log-item-to-state log-entry snapshot.state)
+      (apply-event-log-item-to-state app-map log-entry snapshot.state)
     ::
     [changes state]
   ::
@@ -864,9 +724,9 @@
 ::
 ++  get-peer-diff-snapshot
   |=  [route=path top-state=node:server]
-  ^-  (unit peer-diff)
+  ^-  (unit peer-diff:common)
   ::
-  |^  ^-  (unit peer-diff)
+  |^  ^-  (unit peer-diff:common)
       ?~  maybe-state=(get-node-for route top-state)
         ~
       ::
@@ -885,250 +745,6 @@
     ::
     $(route t.route, state u.child-node)
   --
-::  +applies a diff to a client's state
-::
-++  apply-peer-diff
-  |=  [route=path =peer-diff client-state=node:client]
-  ^-  node:client
-  ::
-  ?^  route
-    =/  child-state=node:client
-      %_    $
-          route  t.route
-      ::
-          client-state
-        ?~  child-state=(~(get by children.client-state) i.route)
-          ::  this is the first time we've even heard of this node
-          *node:client
-        ?~  u.child-state
-          ::  we've heard about this node before, but know nothing about it
-          *node:client
-        u.u.child-state
-      ==
-    ::
-    client-state(children (~(put by children.client-state) i.route `child-state))
-  ::  apply this peer-diff to the client-state
-  ::
-  ?-    -.peer-diff
-      ::  we have a completely new snapshot which we append to history
-      ::
-      %snapshot
-    ::
-    =/  snapshot=snapshot:common
-      (snapshot:from-transport snapshot.peer-diff)
-    ::
-    %_    client-state
-        partial-event-log
-      :_  partial-event-log.client-state
-      [id.peer-diff %snapshot snapshot]
-    ::
-        snapshot
-      [~ snapshot]
-    ==
-  ::
-      %event
-    ::
-    =/  event-item=event-log-item:common
-      %-  need
-      %+  event-log-item:from-transport
-        app-type:(need snapshot.client-state)
-      event.peer-diff
-    ::
-    %_    client-state
-        partial-event-log
-      :_  partial-event-log.client-state
-      [id.peer-diff %event event-item]
-    ::
-        snapshot
-      `(apply-event-log-item-to-state event-item (need snapshot.client-state))
-    ==
-  ==
-::  +apply-event-log-item-to-state: applies the event
-::
-++  apply-event-log-item-to-state
-  |=  [item=event-log-item:common =snapshot:common]
-  ^-  snapshot:common
-  ::
-  ?-    -.item
-  ::
-      %toplevel-init
-    ::
-    =/  app-vase=vase       (~(got by app-map) app-type.item)
-    =/  snapshot-type=vase       (slap app-vase [%limb %snapshot])
-    ::
-    %_    snapshot
-        app-type    app-type.item
-        top-state   `[initial-invited community-name original-host]:item
-        signature-type  signature-type.item
-        snapshot    (bunt-a-vase snapshot-type)
-        children    ~
-    ==
-  ::
-      %toplevel-invite
-    ?>  ?=(^ top-state.snapshot)
-    %_  snapshot
-      invited.u.top-state  (~(put in invited.u.top-state.snapshot) ship.item)
-    ==
-  ::
-      %init
-    ::
-    =/  app-vase=vase       (~(got by app-map) app-type.item)
-    =/  snapshot-type=vase       (slap app-vase [%limb %snapshot])
-    ::
-    %_    snapshot
-        app-type  app-type.item
-        top-state  ~
-    ::  todo: remove route from init item? Add route to snapshot instead?
-        signature-type  signature-type.item
-        snapshot  (bunt-a-vase snapshot-type)
-        children    ~
-    ==
-  ::
-      %log
-    ::  when we receive a %log event, we commit this to the event log
-    ::
-    =/  app-vase=vase       (~(got by app-map) app-type.snapshot)
-    =/  apply-event-to-snapshot=vase
-      (slap app-vase [%limb %apply-event-to-snapshot])
-    =/  args  :(slop user-event.item private-event.item snapshot.snapshot)
-    =.  snapshot.snapshot  (slam apply-event-to-snapshot args)
-    ::
-    snapshot
-  ::
-      %create
-    snapshot(children (~(put in children.snapshot) sub-id.item))
-  ==
-::  +message-sign: signs an outbound message
-::
-::    Applets are able to request how signatures are performed and thus our
-::    signing function needs to deal with all the concretized ways we can sign
-::    something.
-::
-++  message-sign
-  |=  [our=@p now=@da eny=@uvJ =signature-request data=*]
-  ^-  full-signature
-  ?-    -.signature-request
-      %ship
-    ::  if the signature type is just %ship, we sign data with our
-    ::  authentication key.
-    ::
-    [%ship ~zod 5]
-  ::
-      %unlinked
-    ::  if the signature is unlinked, we don't actually have to use
-    ::  :requested-route in our calculation.
-    ::
-    ::  TODO: Real ring signatures don't work on fakezods!?
-    [%ring *ring-signature:ring]
-    ::  [%ring (sign:ring our now eny data ~ invited.signature-request)]
-  ::
-      %linked
-    ::  if the signature is linked, we link on the requested scope.
-    ::
-    ::  TODO: Real ring signatures don't work on fakezods!?
-    [%ring *ring-signature:ring]
-    ::  :-  %ring
-    ::  (sign:ring our now eny data `scope.signature-request invited.signature-request)
-  ==
-::  +signature-request-for: changes an abstract signature-type into a
-::  signature-request for route.
-::
-++  signature-request-for
-  |=  [our=@p route=path client-state=node:client]
-  ^-  signature-request
-  ::
-  =/  root-state  client-state
-  %-  need
-  ::  we recursively walk through the client-state, returning ~ for %inherit,
-  ::  otherwise returning the real
-  ::
-  |-
-  ^-  (unit signature-request)
-  ::
-  |^  =|  built-route=path
-      |-
-      ?^  route
-        =/  ret-val=(unit signature-request)
-          %_  $
-            built-route   (weld built-route [i.route ~])
-            route         t.route
-            client-state  (need (~(got by children.client-state) i.route))
-          ==
-        ::
-        ?~  ret-val
-          (get-for-node built-route client-state)
-        ret-val
-      ::
-      (get-for-node built-route client-state)
-  ::
-  ++  get-for-node
-    |=  [built-route=path client-state=node:client]
-    ^-  (unit signature-request)
-    ::
-    =/  =top-state:common  (need top-state:(need snapshot.root-state))
-    ::
-    =/  =snapshot:common   (need snapshot.client-state)
-    ?-    signature-type.snapshot
-        %ship
-      `[%ship our]
-    ::
-        %unlinked
-      `[%unlinked invited.top-state]
-    ::
-        %community
-      :*  ~
-          %linked
-          [community-name.top-state original-host.top-state /]
-          invited.top-state
-      ==
-    ::
-        %self
-      :*  ~
-          %linked
-          [community-name.top-state original-host.top-state built-route]
-          invited.top-state
-      ==
-    ::
-        %inherit
-      ~
-    ==
-  --
-
-::  +sign-user-message: verify that user-message is the right shape and make
-::  the appropriate signatures
-::
-++  sign-user-event
-  |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node:client]
-  ^-  [full-signature full-signature path *]
-  ::
-  =/  root-request=signature-request  (signature-request-for ~zod / client-state)
-  =/  path-request=signature-request  (signature-request-for ~zod route client-state)
-  ::
-  =/  app-type=@t
-    |-
-    ?^  route
-      $(route t.route, client-state (need (~(got by children.client-state) i.route)))
-    app-type:(need snapshot.client-state)
-  ::  validate the user-message against the +user-event mold for this applet
-  ::
-  ::    what we sign and send is not the exact user-event, but the one passed
-  ::    through the applet's user-event mold for validation, since this data
-  ::    will be explicitly validated on the server.
-  ::
-  =/  node-vase=vase        (~(got by app-map) app-type)
-  =/  user-event-mold=vase  (slap node-vase [%limb %user-event])
-  =/  user-event=vase       (slam user-event-mold %noun user-event)
-  ::  build the two signatures
-  ::
-  ::    the inner-signature is passed to the target node. the outer-signature
-  ::    is passed to the root node. the outer-signature signs the inner-signature.
-  ::
-  =/  inner-signature=full-signature
-    (message-sign our now eny path-request [route user-event])
-  =/  outer-signature=full-signature
-    (message-sign our now eny root-request [inner-signature route q.user-event])
-  ::
-  [outer-signature inner-signature route q.user-event]
 --
 :-  %say
 |=  $:  {now/@da eny/@uvJ bec/beak}
@@ -1196,14 +812,14 @@
 ::
 =|  client-state=node:client
 ::
-=/  root-state=(unit peer-diff)  (get-peer-diff-snapshot / toplevel)
-=.  client-state  (apply-peer-diff / (need root-state) client-state)
+=/  root-state=(unit peer-diff:common)  (get-peer-diff-snapshot / toplevel)
+=.  client-state  (apply-peer-diff app-map / (need root-state) client-state)
 ::
-=/  board-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting toplevel)
-=.  client-state  (apply-peer-diff /shitposting (need board-state) client-state)
+=/  board-state=(unit peer-diff:common)  (get-peer-diff-snapshot /shitposting toplevel)
+=.  client-state  (apply-peer-diff app-map /shitposting (need board-state) client-state)
 ::
-=/  snapshot-state=(unit peer-diff)  (get-peer-diff-snapshot /shitposting/1 toplevel)
-=.  client-state  (apply-peer-diff /shitposting/1 (need snapshot-state) client-state)
+=/  snapshot-state=(unit peer-diff:common)  (get-peer-diff-snapshot /shitposting/1 toplevel)
+=.  client-state  (apply-peer-diff app-map /shitposting/1 (need snapshot-state) client-state)
 
 ~&  [%server-state toplevel]
 ~&  [%client-state client-state]
@@ -1216,14 +832,14 @@
 ~&  [%changes ret4]
 
 ?>  ?=(^ ret4)
-=.  client-state  (apply-peer-diff /shitposting/1 peer-diff.i.ret4 client-state)
+=.  client-state  (apply-peer-diff app-map /shitposting/1 peer-diff.i.ret4 client-state)
 
 
 ~&  %client---------2
 
 ::  Here's a signed request from the client to be sent into the server.
 ::
-~&  [%signed-request (sign-user-event ~zod now eny /shitposting/1 [%new-post 'another' 'more'] client-state)]
+~&  [%signed-request (sign-user-event ~zod now eny /shitposting/1 [%new-post 'another' 'more'] client-state app-map)]
 
 ::  zero
 ::

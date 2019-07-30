@@ -122,4 +122,23 @@
       ::  creates a new child node under this
       [%create sub-id=@t type=@t =signature-type]
   ==
+::  when we go to actually request a signature, we change the abstract
+::  :signature-type from the applet layer into a fully realized
+::  :signature-request which goes into the signing library.
+::
++$  signature-request
+  $%  [%ship ~]
+      [%unlinked invited=(set @p)]
+      $:  %linked
+          scope=[community-name=@t original-host=@p route=path]
+          invited=(set @p)
+  ==  ==
+::  +peer-diff: produced by the server, consumed by the client.
+::
+::    A diff to be sent over the wire for transport; this contains no vases.
+::
++$  peer-diff
+  $%  [%snapshot id=@u snapshot=transport-snapshot]
+      [%event id=@u event=transport-event-log-item]
+  ==
 --
