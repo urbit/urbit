@@ -197,7 +197,7 @@
   =/  user-event-mold=vase  (slap node-vase [%limb %user-event])
   =/  user-event=vase       (slam user-event-mold %noun user-event)
   ::
-  %-  sign-user-event:signatures  :*
+  %-  sign-raw-user-event:signatures  :*
     our
     now
     eny

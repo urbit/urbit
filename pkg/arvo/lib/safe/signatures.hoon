@@ -69,7 +69,7 @@
   ==
 ::  +sign-user-event: performs the low level signing on 
 ::
-++  sign-user-event
+++  sign-raw-user-event
   |=  $:  our=@p
           now=@da
           eny=@uvJ
