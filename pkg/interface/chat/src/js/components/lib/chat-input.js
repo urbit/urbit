@@ -116,7 +116,9 @@ export class ChatInput extends Component {
   }
 
   getSpeechType(input) {
-    if (input.indexOf('\n') >= 0) {
+    if (input[0] === '#') {
+      return 'exp';
+    } else if (input.indexOf('\n') >= 0) {
       return 'fat';
     } else if (input[0] === '@') {
       return 'lin@';
@@ -133,6 +135,8 @@ export class ChatInput extends Component {
         return 'fs-italic';
       case 'url':
         return 'td-underline';
+      case 'exp':
+        return 'code';
       case 'fat':
         if (clipboard) return 'code';
       default:
@@ -197,6 +201,18 @@ export class ChatInput extends Component {
       //
       case 'url':
         return this.globalizeUrl(content);
+      //
+      case 'exp':
+        // remove leading #
+        content = content.slice(1);
+        // remove insignificant leading whitespace.
+        // aces might be relevant to style.
+        while (content[0] === '\n') {
+          content = content.slice(1);
+        }
+        return { exp: {
+          exp: content
+        } };
       //
       case 'fat':
         // clipboard contents
