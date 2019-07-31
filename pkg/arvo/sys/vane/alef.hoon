@@ -807,13 +807,10 @@
     ++  scry  scry:adult-core
     ++  stay  ~&  %alef-larva-stay  [%larva queued-events ames-state.adult-gate]
     ++  load
-      |=  old-raw=*
-      ::
-      =/  old
-        ;;  $%  [%larva events=_queued-events state=_ames-state.adult-gate]
-                [%adult state=_ames-state.adult-gate]
-            ==
-          old-raw
+      |=  $=  old
+          $%  [%larva events=_queued-events state=_ames-state.adult-gate]
+              [%adult state=_ames-state.adult-gate]
+          ==
       ::
       ?-    -.old
           %adult
