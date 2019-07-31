@@ -577,7 +577,7 @@
     :+  ~  u.exp
     =+  res=((ot res+(ar dank) ~) a)
     ?^  res  u.res
-    p:(mule |.([(sell (slap !>(..zuse) (ream u.exp)))]~))  ::TODO  oldz
+    p:(mule |.([(sell (slap !>(..^zuse) (ream u.exp)))]~))  ::TODO  oldz
   ::
   ++  atta                                              :::  attache
     ^-  $-(json (unit attache))
