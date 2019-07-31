@@ -2,16 +2,10 @@
 /+  *safe-common, *safe-signatures
 ::
 |%
-::  +change-broadcast: internal type of apply.
-::
-+$  change-broadcast
-  $:  =path
-      =peer-diff:common
-  ==
 ::  +changes-and-state: internal type of +apply.
 ::
 +$  changes-and-state
-  $:  changes=(list change-broadcast)
+  $:  changes=(list server-to-client:common)
       state=node:server
   ==
 --
@@ -62,7 +56,12 @@
   ==
 ::
 ++  instantiate-node
-  |=  [app-map=(map @t vase) route=path type=term =signature-type top-state=(unit top-state:common)]
+  |=  $:  app-map=(map @t vase)
+          route=path
+          type=term
+          =signature-type
+          top-state=(unit top-state:common)
+      ==
   ^-  node:server
   ::
   =/  new-item-vase=vase       (~(got by app-map) type)
@@ -121,37 +120,31 @@
     ::
     $(route t.route, state u.child-node)
   --
-
-::  +apply: applies a message to the event logs
+::  +apply-to-server: applies a message to the event logs
 ::
 ::    We need the full path identity to be in the node and the signature and
 ::    checked to prevent weird replay attacks?
 ::
-++  apply
+++  apply-to-server
   |=  $:  app-map=(map @t vase)
-          top-signature=full-signature
-          message-signature=full-signature
-          route=path
-          message=vase
+          signed-message=client-to-server:common
           original-state=node:server
       ==
-  ^-  [(list change-broadcast) _original-state]
+  ^-  [(list server-to-client:common) _original-state]
   ::
   =/  toplevel-sig-type=signature-type  signature-type.snapshot.original-state
-
-  ::  TODO: Before we pass the data to the applets, we perform the verification
-  ::  management ourselves, and error if we have incorrect signatures.
   ::
-  ?.  %-  verify-signature  :*
-        toplevel-sig-type
-        /
-        top-signature
-        [message-signature route q.message]
-      ==
-    ~&  %invalid-toplevel-signature
-    [~ original-state]
-  ::
-  |^  ::  OK, when the server receives a users message, we check the message with
+  |^  ::  Check the toplevel message before checking anything else
+      ::
+      ?.  %-  verify-signature  :*
+              toplevel-sig-type
+              /
+              top-signature.signed-message
+              [message-signature route message]:signed-message
+            ==
+        ~&  %invalid-toplevel-signature
+        [~ original-state]
+      ::  OK, when the server receives a users message, we check the message with
       ::  the destination node's signature type. At this phase, we don't care if
       ::  the message is going to be forwarded by a %create command. (This is why
       ::  the event log records the route on a per-item basis; when you replay the
@@ -159,7 +152,7 @@
       ::  may not match the final receiving node.
       ::
       =/  message-sig-type=(unit signature-type)
-        (get-signature-type route original-state)
+        (get-signature-type route.signed-message original-state)
       ::
       ?~  message-sig-type
         ~&  %invalid-target-path
@@ -169,9 +162,9 @@
       ::
       ?.  %-  verify-signature  :*
             u.message-sig-type
-            route
-            message-signature
-            [route q.message]
+            route.signed-message
+            message-signature.signed-message
+            [route message]:signed-message
           ==
         ~&  %invalid-message-signature
         [~ original-state]
@@ -179,14 +172,14 @@
       ::  of the [%log ...] message from +on-process-event and the toplevel
       ::  [%accept-and-invite-member @p] return value.
       ::
-      =/  ret=[=vase changes=(list change-broadcast) state=_original-state]
+      =/  ret=[=vase changes=(list server-to-client:common) state=_original-state]
         %-  recurse  :*
-          !>(top-signature)
-          route
-          route
-          message-signature
-          route
-          message
+          !>(top-signature.signed-message)
+          route.signed-message
+          route.signed-message
+          message-signature.signed-message
+          route.signed-message
+          message.signed-message
           [~ original-state]
         ==
       ::  the output of calling recurse is a vase which must be a
@@ -239,7 +232,7 @@
             full-path=path
             message-signature=full-signature
             original-path=path
-            message=vase
+            message=*
             changes-and-state
         ==
     ^-  [vase changes-and-state]
@@ -278,8 +271,14 @@
       (process-child-returned app-vase return-value changes state)
     ::  we've reached the node we're trying to talk to.
     ::
+    ::  validate the incoming message as a user event.
+    ::
+    =/  user-event-mold=vase     (slap app-vase [%limb %user-event])
+    =/  user-event=vase  (slam user-event-mold %noun message)
+    ::  now process the event
+    ::
     =/  on-process-event=vase  (slap app-vase [%limb %on-process-event])
-    =/  args  :(slop parent-event message private-state.state)
+    =/  args  :(slop parent-event user-event private-state.state)
     =/  raw-result  (slam on-process-event args)
     ::
     =/  response=on-process-response  (sump (slot 2 raw-result))
@@ -290,7 +289,7 @@
       ::
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
-        [%log message-signature original-path message private-event.response]
+        [%log message-signature original-path user-event private-event.response]
       ::
       ~&  [%new-snapshot full-path snapshot.snapshot.state.nu]
       ::
@@ -326,7 +325,7 @@
   ::  +record-change: applies a :log-entry to the event log and the outbound changes.
   ::
   ++  record-change
-    |=  $:  changes=(list change-broadcast)
+    |=  $:  changes=(list server-to-client:common)
             [state=node:server full-path=path]
             log-entry=event-log-item:common
         ==
@@ -350,8 +349,12 @@
     [changes state]
   ::
   ++  process-child-returned
-    |=  [app-vase=vase child-returned=vase changes=(list change-broadcast) state=node:server]
-    ^-  [vase (list change-broadcast) node:server]
+    |=  $:  app-vase=vase
+            child-returned=vase
+            changes=(list server-to-client:common)
+            state=node:server
+        ==
+    ^-  [vase (list server-to-client:common) node:server]
     ::
     =/  on-child-return=vase  (slap app-vase [%limb %on-child-return])
     =/  args=vase  :(slop child-returned private-state.state)

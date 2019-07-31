@@ -393,19 +393,19 @@
 ::
 ~&  %server---------1
 =^  ret1  toplevel
-  (apply app-map [%ship ~zod 5] [%ship ~zod 5] / !>([%invite ~ponnys-podfer]) toplevel)
+  (apply-to-server app-map [[%ship ~zod 5] [%ship ~zod 5] / [%invite ~ponnys-podfer]] toplevel)
 ~&  [%changes ret1]
 ::  'our town' should have a 'shitposting' board
 ::
 ~&  %server---------2
 =^  ret2  toplevel
-  (apply app-map [%ship ~zod 5] [%ship ~zod 5] / !>([%create 'shitposting' %board %unlinked]) toplevel)
+  (apply-to-server app-map [[%ship ~zod 5] [%ship ~zod 5] / [%create 'shitposting' %board %unlinked]] toplevel)
 ~&  [%changes ret2]
 ::  time to start shitposting!
 ::
 ~&  %server---------3
 =^  ret3  toplevel
-  (apply app-map [%ship ~zod 5] [%ship ~zod 5] /shitposting !>([%new-post 'subject' 'text']) toplevel)
+  (apply-to-server app-map [[%ship ~zod 5] [%ship ~zod 5] /shitposting [%new-post 'subject' 'text']] toplevel)
 ~&  [%changes ret3]
 
 ~&  %client---------1
@@ -415,13 +415,13 @@
 =|  client-state=node:client
 ::
 =/  root-state=(unit peer-diff:common)  (get-snapshot-as-peer-diff / toplevel)
-=.  client-state  (apply-peer-diff app-map / (need root-state) client-state)
+=.  client-state  (apply-to-client app-map [/ (need root-state)] client-state)
 ::
 =/  board-state=(unit peer-diff:common)  (get-snapshot-as-peer-diff /shitposting toplevel)
-=.  client-state  (apply-peer-diff app-map /shitposting (need board-state) client-state)
+=.  client-state  (apply-to-client app-map [/shitposting (need board-state)] client-state)
 ::
 =/  snapshot-state=(unit peer-diff:common)  (get-snapshot-as-peer-diff /shitposting/1 toplevel)
-=.  client-state  (apply-peer-diff app-map /shitposting/1 (need snapshot-state) client-state)
+=.  client-state  (apply-to-client app-map [/shitposting/1 (need snapshot-state)] client-state)
 
 ~&  [%server-state toplevel]
 ~&  [%client-state client-state]
@@ -430,11 +430,11 @@
 ::
 ~&  %server---------4
 =^  ret4  toplevel
-  (apply app-map [%ship ~zod 5] [%ship ~zod 5] /shitposting/1 !>([%new-post 'reply' 'text reply']) toplevel)
+  (apply-to-server app-map [[%ship ~zod 5] [%ship ~zod 5] /shitposting/1 [%new-post 'reply' 'text reply']] toplevel)
 ~&  [%changes ret4]
 
 ?>  ?=(^ ret4)
-=.  client-state  (apply-peer-diff app-map /shitposting/1 peer-diff.i.ret4 client-state)
+=.  client-state  (apply-to-client app-map [/shitposting/1 peer-diff.i.ret4] client-state)
 
 
 ~&  %client---------2

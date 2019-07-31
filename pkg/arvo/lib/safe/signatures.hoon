@@ -78,7 +78,7 @@
           route=path
           user-event=*
       ==
-  ^-  [full-signature:safe-applet full-signature:safe-applet path *]
+  ^-  client-to-server:common
   ::  build the two signatures
   ::
   ::    the inner-signature is passed to the target node. the outer-signature

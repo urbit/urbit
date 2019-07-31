@@ -46,17 +46,17 @@
   --
 ::  +applies a diff to a client's state
 ::
-++  apply-peer-diff
-  |=  [app-map=(map @t vase) route=path =peer-diff:common client-state=node]
+++  apply-to-client
+  |=  [app-map=(map @t vase) msg=server-to-client:common client-state=node]
   ^-  node
   ::
-  ?^  route
+  ?^  path.msg
     =/  child-state=node
       %_    $
-          route  t.route
+          path.msg  t.path.msg
       ::
           client-state
-        ?~  child-state=(~(get by children.client-state) i.route)
+        ?~  child-state=(~(get by children.client-state) i.path.msg)
           ::  this is the first time we've even heard of this node
           *node
         ?~  u.child-state
@@ -65,21 +65,21 @@
         u.u.child-state
       ==
     ::
-    client-state(children (~(put by children.client-state) i.route `child-state))
+    client-state(children (~(put by children.client-state) i.path.msg `child-state))
   ::  apply this peer-diff to the client-state
   ::
-  ?-    -.peer-diff
+  ?-    -.peer-diff.msg
       ::  we have a completely new snapshot which we append to history
       ::
       %snapshot
     ::
     =/  snapshot=snapshot:common
-      (snapshot:from-transport app-map snapshot.peer-diff)
+      (snapshot:from-transport app-map snapshot.peer-diff.msg)
     ::
     %_    client-state
         partial-event-log
       :_  partial-event-log.client-state
-      [id.peer-diff %snapshot snapshot]
+      [id.peer-diff.msg %snapshot snapshot]
     ::
         snapshot
       [~ snapshot]
@@ -91,12 +91,12 @@
       %-  need
       %^  event-log-item:from-transport  app-map
         app-type:(need snapshot.client-state)
-      event.peer-diff
+      event.peer-diff.msg
     ::
     %_    client-state
         partial-event-log
       :_  partial-event-log.client-state
-      [id.peer-diff %event event-item]
+      [id.peer-diff.msg %event event-item]
     ::
         snapshot
       `(apply-event-log-item-to-state app-map event-item (need snapshot.client-state))
@@ -177,7 +177,7 @@
 ::
 ++  sign-user-event
   |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
-  ^-  [full-signature:safe-applet full-signature:safe-applet path *]
+  ^-  client-to-server:common
   ::
   =/  root-request  (signature-request-for / client-state)
   =/  path-request  (signature-request-for route client-state)

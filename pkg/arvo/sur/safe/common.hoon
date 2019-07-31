@@ -141,4 +141,18 @@
   $%  [%snapshot id=@u snapshot=transport-snapshot]
       [%event id=@u event=transport-event-log-item]
   ==
+::  +server-to-client: a message applied to the client state
+::
++$  server-to-client
+  $:  =path
+      =peer-diff
+  ==
+::  +client-to-server: a message applied to the server state
+::
++$  client-to-server
+  $:  top-signature=full-signature
+      message-signature=full-signature
+      route=path
+      message=*
+  ==
 --
