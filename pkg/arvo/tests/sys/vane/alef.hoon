@@ -8,13 +8,15 @@
 =/  alice  vane
 =/  bob    vane
 ::
-=.  our.alice  ~nec
-=.  now.alice  ~1111.1.1
-=.  eny.alice  0xdead.beef
+=.  our.alice        ~nec
+=.  now.alice        ~1111.1.1
+=.  eny.alice        0xdead.beef
+=.  scry-gate.alice  |=(* ``[%noun !>(*(list turf))])
 ::
-=.  our.bob    ~doznec-doznec
-=.  now.bob    ~1111.1.1
-=.  eny.bob    0xbeef.dead
+=.  our.bob          ~doznec-doznec
+=.  now.bob          ~1111.1.1
+=.  eny.bob          0xbeef.dead
+=.  scry-gate.bob    |=(* ``[%noun !>(*(list turf))])
 ::
 =.  crypto-core.ames-state.alice  (pit:nu:crub:crypto 512 (shaz 'alice'))
 =.  crypto-core.ames-state.bob    (pit:nu:crub:crypto 512 (shaz 'bob'))
