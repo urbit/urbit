@@ -86,8 +86,8 @@ export class Message extends Component {
 
   renderExp(expression, result) {
     return (<>
-      <p><code># {expression}</code></p>
-      <p><code>{result[0]}</code></p>
+      <p><pre className="clamp-attachment">{expression}</pre></p>
+      <p><pre className="clamp-attachment">{result[0].join('\n')}</pre></p>
     </>);
   }
 
