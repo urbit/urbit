@@ -344,7 +344,7 @@
 ::
 =/  directory-base=purl
   =-  (need (de-purl:html -))
-  'https://acme-v02.api.letsencrypt.org/directory'
+  'https://acme-staging-v02.api.letsencrypt.org/directory'
 ::  mov: list of outgoing moves for the current transaction
 ::
 =|  mov=(list move)
