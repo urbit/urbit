@@ -2541,6 +2541,7 @@
   |=  =wire
   ^-  [her=ship =bone]
   ::
+  ~|  %ames-wire-bone^wire
   ?>  ?=([%bone @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
 ::  +make-pump-timer-wire: construct wire for |packet-pump timer
@@ -2555,6 +2556,7 @@
   |=  =wire
   ^-  [her=ship =bone]
   ::
+  ~|  %ames-wire-timer^wire
   ?>  ?=([%pump @ @ ~] wire)
   [`@p`(slav %p i.t.wire) `@ud`(slav %ud i.t.t.wire)]
 ::  +sign-open-packet: sign the contents of an $open-packet
@@ -2658,14 +2660,18 @@
   =/  rcvr-size  (decode-ship-size (cut 0 [25 2] header))
   =/  encrypted  ?+((cut 0 [27 5] header) !! %0 %.y, %1 %.n)
   ::
-  ?>  =(protocol-version version)
-  ?>  =(checksum (end 0 20 (mug body)))
-  ::
   =/  =dyad
     :-  sndr=(end 3 sndr-size body)
     rcvr=(cut 3 [sndr-size rcvr-size] body)
   ::
-  =+  ;;  [origin=(unit lane) content=*]
+  ?.  =(protocol-version version)
+    ~|  %ames-protocol^version^dyad  !!
+  ?.  =(checksum (end 0 20 (mug body)))
+    ~|  %ames-checksum^dyad  !!
+  ::
+  =+  ~|  %ames-invalid-packet
+      ;;  [origin=(unit lane) content=*]
+      ~|  %ames-invalid-noun
       %-  cue
       (rsh 3 (add rcvr-size sndr-size) body)
   ::
