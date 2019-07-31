@@ -706,23 +706,65 @@
   ++  extract-snap                                      ::  extract rewind point
     ^-  snapshot
     ~
-  ::                                                    ::  ++feed:su
-  ++  feed                                              ::  subscribe to view
+  ::
+  ++  feed
     |_  ::  hen: subscription source
         ::
         hen/duct
     ::
+    ::  Handle subscription to public-keys
+    ::
     ++  public-keys
       |=  whos=(set ship)
-      ~&  [%public-keys-fake fak.own.pki whos]
       ?:  fak.own.pki
         (public-keys:fake whos)
+      ::  Subscribe to parent of moons
+      ::
+      =.  ..feed
+        =/  moons=(jug ship ship)
+          %-  ~(gas ju *(jug spon=ship who=ship))
+          %+  murn  ~(tap in whos)
+          |=  who=ship
+          ^-  (unit [spon=ship child=ship])
+          ?.  =(%earl (clan:title who))
+            ~
+          `[(^sein:title who) who]
+        =/  moonl=(list [spon=ship ships=(set ship)])
+          ~(tap by moons)
+        |-  ^+  ..feed
+        ?~  moonl
+          ..feed
+        ?.  =(our spon.i.moonl)
+          =.  ..feed  (sources:feel ships.i.moonl [%& spon.i.moonl])
+          $(moonl t.moonl)
+        =/  sec  (~(got by jaw.own.pki) lyf.own.pki)
+        =/  points=(map ship point)
+          =/  our-moonl  ~(tap in ships.i.moonl)
+          %-  malt
+          |-  ^-  (list [ship point])
+          ?~  our-moonl
+            ~
+          =/  moon-sec  (shaf %earl (sham our lyf.own.pki i.our-moonl))
+          =/  cub  (nol:nu:crub:crypto moon-sec)
+          =/  =pass  pub:ex:cub
+          :-  [i.our-moonl 1 1 (malt [1 1 pass] ~) `our]
+          $(our-moonl t.our-moonl)
+        (public-keys-give (sy hen ~) [%full points])
+      ::  Add to subscriber list
+      ::
       =.  ney.zim
         =/  whol=(list ship)  ~(tap in whos)
         |-  ^-  (jug ship duct)
         ?~  whol
           ney.zim
         (~(put ju $(whol t.whol)) i.whol hen)
+      =.  yen.zim
+        %-  ~(gas ju yen.zim)
+        %+  turn  ~(tap in whos)
+        |=  who=ship
+        [hen who]
+      ::  Give initial result
+      ::
       =/  =public-keys-result
         :-  %full
         ?:  =(~ whos)
@@ -736,21 +778,18 @@
         ?~  pub  ~
         ?:  =(0 life.u.pub)  ~
         `[who u.pub]
-      =.  yen.zim
-        %-  ~(gas ju yen.zim)
-        %+  turn  ~(tap in whos)
-        |=  who=ship
-        [hen who]
       =.  ..feed  (public-keys-give (sy hen ~) public-keys-result)
       ..feed
     ::
-    ++  private-keys                                            ::  private keys
+    ::  Handle subscription to private-keys
+    ::
+    ++  private-keys
       %_  ..feed
         moz      [[hen %give %private-keys [lyf jaw]:own] moz]
         yen.own  (~(put in yen.own) hen)
       ==
     ::
-    ++  fake                                            ::  fake subs and state
+    ++  fake
       ?>  fak.own.pki
       |%
       ++  public-keys
@@ -776,10 +815,12 @@
         ..feel
       --
     --
-  ::                                                    ::  ++feel:su
-  ++  feel                                              ::  update tracker
+  ::
+  ++  feel
     |%
-    ::                                                  ::  ++pubs:feel:su
+    ::
+    ::  Update public-keys
+    ::
     ++  public-keys
       |=  =public-keys-result
       ^+  ..feel
@@ -816,8 +857,10 @@
       ?~  maybe-point
         [%full (my [who point]~)]
       [%diff who a-diff]
-    ::                                                  ::  ++vein:feel:su
-    ++  private-keys                                    ::  kick private keys
+    ::
+    ::  Update private-keys
+    ::
+    ++  private-keys
       |=  [=life =ring]
       ^+  ..feel
       ?:  &(=(lyf.own life) =((~(get by jaw.own) life) `ring))
@@ -850,12 +893,12 @@
         ..feed
       (peer p.source whos)
     --
-  ::                                                    ::  ++meet:su
-  ++  meet                                              ::  seen after breach
+  ::
+  ::  No-op
+  ::
+  ++  meet
     |=  [who=ship =life =pass]
-    ::  XX rethink meet
     ^+  +>
-    ~&  [%kale-meet-should-do-something-about-moons who life pass]
     +>.$
   --
 --
