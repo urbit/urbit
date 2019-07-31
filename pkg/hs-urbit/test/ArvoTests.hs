@@ -12,7 +12,9 @@ import Data.Conduit
 import Data.Conduit.List
 import Arvo
 import Urbit.Time
+import Data.Ord.Unicode
 
+import Network.Socket     (tupleToHostAddress)
 import Control.Concurrent (threadDelay, runInBoundThread)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
@@ -47,8 +49,9 @@ instance Arbitrary EvExample where
 tests :: TestTree
 tests =
   testGroup "Arvo Events and Effects"
-    [ testProperty "Round Trip Effect"  (roundTrip @Ef)
-    , testProperty "Round Trip Event"   (roundTrip @Ev)
+    [ testProperty "Round Trip Effect"   (roundTrip @Ef)
+    , testProperty "Round Trip Event"    (roundTrip @Ev)
+    , testProperty "Round Trip AmesDest" (roundTrip @AmesDest)
     , testProperty "Basic Event Sanity" eventSanity
     ]
 
@@ -87,15 +90,18 @@ instance Arbitrary Galaxy   where arbitrary = Galaxy <$> arb
 instance Arbitrary Port     where arbitrary = Port <$> arb
 instance Arbitrary Ship     where arbitrary = Ship <$> arb
 instance Arbitrary Address  where arbitrary = AAmes <$> arb
-instance Arbitrary Ipv4     where arbitrary = Ipv4 <$> arb
+
+genIpv4 :: Gen Ipv4
+genIpv4 = do
+  x <- arbitrary
+  if (x == 0 || (x≥256 && x≤512))
+    then genIpv4
+    else pure (Ipv4 x)
 
 instance Arbitrary AmesDest where
   arbitrary = oneof [ ADGala <$> arb <*> arb
-                    , ADIpv4 <$> arb <*> arb <*> arb
+                    , ADIpv4 <$> arb <*> arb <*> genIpv4
                     ]
-
-instance Arbitrary Lane where
-  arbitrary = If <$> arb <*> arb <*> arb
 
 instance Arbitrary Ef where
   arbitrary = oneof [ EfVega <$> arb <*> arb

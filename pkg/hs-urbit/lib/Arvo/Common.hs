@@ -10,6 +10,7 @@ module Arvo.Common
 
 import Urbit.Time
 import UrbitPrelude hiding (Term)
+import Data.Ord.Unicode
 
 import qualified Network.HTTP.Types.Method as H
 
@@ -173,7 +174,7 @@ instance FromNoun AmesDest where
     parseLane :: Lane -> Parser AmesDest
     parseLane = \case
       If w _ 0                  -> fail "Sending to 0.0.0.0 is not supported"
-      If w _ a | a>255 && a<512 -> pure $ ADGala w $ fromIntegral $ a `mod` 256
+      If w _ a | a≥256 && a≤512 -> pure $ ADGala w $ fromIntegral $ a `mod` 256
       If w p a                  -> pure $ ADIpv4 w p a
       Ix w p a                  -> parseLane (If w p a)
       Is _ (Just fb) _          -> parseLane fb
