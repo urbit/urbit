@@ -12,11 +12,13 @@ import Control.Concurrent
 import qualified LogTests
 import qualified DeriveNounTests
 import qualified ArvoTests
+import qualified AmesTests
 
 main :: IO ()
 main =
   defaultMain $ testGroup "Urbit"
-    [ LogTests.tests
-    , DeriveNounTests.tests
-    , ArvoTests.tests
+    [ -- LogTests.tests
+--  , DeriveNounTests.tests
+--  , ArvoTests.tests
+      AmesTests.tests
     ]

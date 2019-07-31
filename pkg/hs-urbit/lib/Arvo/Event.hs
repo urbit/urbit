@@ -4,7 +4,8 @@ import UrbitPrelude hiding (Term)
 import Urbit.Time
 
 import Arvo.Common (NounMap, NounSet)
-import Arvo.Common (AtomIf, AtomIs, Desk, Lane, Mime, Turf)
+import Arvo.Common (Desk, Mime)
+import Arvo.Common (Ipv4, Ipv6, AmesDest, Turf)
 import Arvo.Common (HttpEvent, HttpServerConf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
@@ -20,7 +21,7 @@ type Oath = Atom -- Signature
 
 -- Parsed URLs -----------------------------------------------------------------
 
-type Host = Either Turf AtomIf
+type Host = Either Turf Ipv4
 type Hart = (Bool, Maybe Atom, Host)
 type Pork = (Maybe Knot, [Cord])
 type Quay = [(Cord, Cord)]
@@ -93,8 +94,8 @@ deriveNoun ''Dawn
 type ServerId = Atom
 
 data Address
-    = AIpv4 AtomIf
-    | AIpv6 AtomIs
+    = AIpv4 Ipv4
+    | AIpv6 Ipv6
     | AAmes Ship
   deriving (Eq, Ord, Show)
 
@@ -137,7 +138,7 @@ deriveNoun ''HttpServerReq
 -- Ames ------------------------------------------------------------------------
 
 data AmesEv
-    = AmesEvHear ()   Lane Bytes
+    = AmesEvHear ()   AmesDest Bytes
     | AmesEvWake ()   ()
     | AmesEvWant Path Ship Path Noun
     | AmesEvCrud Path Cord Tang

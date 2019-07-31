@@ -2,9 +2,10 @@ module Arvo.Common
   ( NounTree(..), NounMap, NounSet
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
-  , AtomIf, AtomIs, Lane(..), Port(..), Turf(..)
+  , Lane(..), Port(..), Turf(..)
   , HttpServerConf(..), HttpEvent(..), PEM, Method, Header
   , ReOrg(..), reorgThroughNoun
+  , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..)
   ) where
 
 import Urbit.Time
@@ -15,10 +16,11 @@ import qualified Network.HTTP.Types.Method as H
 
 -- Misc Types ------------------------------------------------------------------
 
-type AtomIf = Word32  -- Ipv4 Address (@if)
-type AtomIs = Word128 -- Ipv6 Address (@is)
+{-
+    Domain Name in TLD order:
 
--- Domain Name
+        ["org", "urbit", "dns"] -> dns.urbit.org
+-}
 newtype Turf = Turf { unTurf :: [Cord] }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
@@ -126,23 +128,56 @@ data JsonNode
 deriveNoun ''JsonNode
 
 
--- Lanes -----------------------------------------------------------------------
+-- Lanes and Ames Destinations -------------------------------------------------
 
 -- Network Port
 newtype Port = Port { unPort :: Word16 }
   deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
 
+-- @if
+newtype Ipv4 = Ipv4 { unIpv4 :: Word32 }
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+-- @is
+newtype Ipv6 = Ipv6 { unIpv6 :: Word128 }
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
+newtype Galaxy = Galaxy { unGalaxy :: Word8 }
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num, ToNoun, FromNoun)
+
 {-
-    The `Wen` field is (probably) the last time that we were sure that
-    this DNS lookup worked.  This is set when we receive a %hear event.
+    The `Wen` field is (IIUC) the last time that we were sure that this
+    DNS lookup worked.  This is set when we receive a %hear event.
 -}
 data Lane
-    = If Wen Port AtomIf              -- Ipv4
-    | Is Atom (Maybe Lane) AtomIs     -- Ipv6 with fallback
-    | Ix Wen Port AtomIf              -- Not used (Same behavior as `If`)
+    = If Wen Port Ipv4           -- Ipv4
+    | Is Port (Maybe Lane) Ipv6  -- Ipv6 with fallback
+    | Ix Wen Port Ipv4           -- Not used (Same behavior as `If`)
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Lane
+
+data AmesDest
+    = ADGala Wen Galaxy
+    | ADIpv4 Wen Port Ipv4
+  deriving (Eq, Ord, Show)
+
+instance ToNoun AmesDest where
+  toNoun = toNoun . \case
+    ADGala w g   -> If w 0 (256 + fromIntegral g)
+    ADIpv4 w p a -> If w p a
+
+instance FromNoun AmesDest where
+  parseNoun = named "AmesDest" . (parseNoun >=> parseLane)
+    where
+    parseLane :: Lane -> Parser AmesDest
+    parseLane = \case
+      If w _ 0                  -> fail "Sending to 0.0.0.0 is not supported"
+      If w _ a | a>255 && a<512 -> pure $ ADGala w $ fromIntegral $ a `mod` 256
+      If w p a                  -> pure $ ADIpv4 w p a
+      Ix w p a                  -> parseLane (If w p a)
+      Is _ (Just fb) _          -> parseLane fb
+      Is _ Nothing   _          -> fail "ipv6 is not supported"
 
 
 -- Path+Tagged Restructuring ---------------------------------------------------

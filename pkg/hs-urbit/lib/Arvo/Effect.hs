@@ -3,7 +3,8 @@ module Arvo.Effect where
 import Urbit.Time
 import UrbitPrelude
 
-import Arvo.Common (Header, HttpEvent, HttpServerConf, Lane, Method, Mime, Turf)
+import Arvo.Common (Header, HttpEvent, HttpServerConf, Method, Mime)
+import Arvo.Common (AmesDest, Turf)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 
@@ -15,7 +16,7 @@ import Arvo.Common (ReOrg(..), reorgThroughNoun)
 -}
 data NewtEf
     = NewtEfTurf (Atom, ()) [Turf]
-    | NewtEfSend (Atom, ()) Lane Bytes
+    | NewtEfSend (Atom, ()) AmesDest Bytes
   deriving (Eq, Ord, Show)
 
 deriveNoun ''NewtEf
@@ -143,7 +144,7 @@ data TermEf
     | TermEfInit (Decimal, ()) ()
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant
-    | TermEfSend Path Lane Bytes
+    | TermEfSend Path AmesDest Bytes
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Blit

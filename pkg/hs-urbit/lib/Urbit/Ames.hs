@@ -13,36 +13,9 @@ import Control.Lens       ((&))
 
 import qualified Urbit.Time as Time
 
---------------------------------------------------------------------------------
 
-{-
-  On startup (u3_ames_ef_bake):
-    *_ef_bake means "send any initial events"
-    Send event: [//newt/u3A->sen [%barn ~]]
+-- Lane Destinations -----------------------------------------------------------
 
-  On driver init (u3_ames_io_init):
-    Basically just allocation.
-    Set %wake timer.
-    Record that the UDP listener is not running.
-
-  u3_ames_ef_turf: Called on turf effect.
-    If we're not live then start the listener.
-    For now, just use the first turf in the list.
-    Turf is TLD-first domain name
-      /org/urbit/dns -> dns.urbit.org
-
-    TODO If we're not live, we should always drop packet sends.
-
-  On u3_ames_io_talk?
-    *_io_talk is called after everything is up.
-    Does nothing.
-    (Normally, this would be where you bring up the UDP listener)
-    TODO If we're not live, we should always drop packet sends.
-
-  On driver shutdown:
-      Kill the timer (TODO what is the timer for?)
-      uv_close(&sam_u->had_u, 0);
--}
 
 -- TODO Move these to a common module ------------------------------------------
 
@@ -53,13 +26,40 @@ type EffCb a = a -> IO ()
 newtype KingInstance = KingInst Atom
   deriving newtype (Eq, Ord, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
---------------------------------------------------------------------------------
+
+-- Utils -----------------------------------------------------------------------
 
 data AmesDrv = AmesDrv
   { aIsLive    :: IORef Bool
+  , aSocket    :: Socket
   , aWakeTimer :: Async ()
   , aListener  :: Async ()
   }
+
+galaxyPort :: Galaxy -> PortNumber
+galaxyPort (Galaxy g) = fromIntegral g + 31337
+
+listenPort :: Ship -> PortNumber
+listenPort s | s < 256 = galaxyPort (fromIntegral s)
+listenPort _           = 0
+
+localhost :: HostAddress
+localhost = tupleToHostAddress (127,0,0,1)
+
+okayFakeAddr :: AmesDest -> Bool
+okayFakeAddr = \case
+    ADGala _ _          -> True
+    ADIpv4 _ p (Ipv4 a) -> a == localhost
+
+destSockAddr :: AmesDest -> SockAddr
+destSockAddr = \case
+    ADGala _ g   -> SockAddrInet (galaxyPort g) localhost
+    ADIpv4 _ p a -> SockAddrInet (fromIntegral p) (unIpv4 a)
+
+ipv4Addr :: SockAddr -> Maybe (PortNumber, HostAddress)
+ipv4Addr = \case
+    SockAddrInet p a -> Just (p, a)
+    _                -> Nothing
 
 --------------------------------------------------------------------------------
 
@@ -84,27 +84,39 @@ data AmesDrv = AmesDrv
 ames :: KingInstance -> Ship -> Maybe Port -> QueueEv
      -> ([Ev], Acquire (EffCb NewtEf))
 ames inst who mPort enqueueEv =
-    ([barnEv], callback . aIsLive <$> mkAcquire start stop)
+    (initialEvents, runAmes)
   where
+    initialEvents :: [Ev]
+    initialEvents = [barnEv]
+
+    runAmes :: Acquire (EffCb NewtEf)
+    runAmes = do
+        drv <- mkAcquire start stop
+        pure (handleEffect drv)
+
     start :: IO AmesDrv
     start = do
         vLiv <- newIORef False
         time <- async runTimer
-        hear <- async waitPacket
-        pure $ AmesDrv vLiv time hear
+        sock <- bindSock
+        hear <- async (waitPacket sock)
+        pure $ AmesDrv vLiv sock time hear
 
     stop :: AmesDrv -> IO ()
     stop (AmesDrv{..}) = do
         cancel aWakeTimer
         cancel aListener
+        close' aSocket
 
-    barnEv, wakeEv :: Ev
+    barnEv :: Ev
     barnEv = EvBlip $ BlipEvNewt $ NewtEvBarn (fromIntegral inst, ()) ()
+
+    wakeEv :: Ev
     wakeEv = EvBlip $ BlipEvAmes $ AmesEvWake () ()
 
     hearEv :: Time.Wen -> PortNumber -> HostAddress -> ByteString -> Ev
-    hearEv w p a bs = EvBlip $ BlipEvAmes $ AmesEvHear () lane (MkBytes bs)
-      where lane = If w (fromIntegral p) a
+    hearEv w p a bs = EvBlip $ BlipEvAmes $ AmesEvHear () dest (MkBytes bs)
+      where dest = ADIpv4 w (fromIntegral p) (Ipv4 a)
 
     runTimer :: IO ()
     runTimer = forever $ do
@@ -112,50 +124,33 @@ ames inst who mPort enqueueEv =
         atomically (enqueueEv wakeEv)
 
     ourPort :: PortNumber
-    ourPort = mPort & \case Nothing -> shipPort who
+    ourPort = mPort & \case Nothing -> listenPort who
                             Just p  -> fromIntegral p
 
-    waitPacket :: IO ()
-    waitPacket = do
+    bindSock :: IO Socket
+    bindSock = do
         s  <- socket AF_INET Datagram defaultProtocol
         () <- bind s (SockAddrInet ourPort localhost)
-        forever $ do
-            (bs, addr) <- recvFrom s 4096
-            wen        <- Time.now
-            case addr of
-              SockAddrInet p a -> atomically $ enqueueEv $ hearEv wen p a bs
-              _                -> pure ()
+        pure s
 
-    callback :: IORef Bool -> NewtEf -> IO ()
-    callback vLive = \case
-      NewtEfTurf (_id, ()) turfs ->
-          writeIORef vLive True
+    waitPacket :: Socket -> IO ()
+    waitPacket s = forever $ do
+        (bs, addr) <- recvFrom s 4096
+        wen        <- Time.now
+        case addr of
+            SockAddrInet p a -> atomically (enqueueEv $ hearEv wen p a bs)
+            _                -> pure ()
 
-      NewtEfSend (_id, ()) lane (MkBytes bs) -> do
-          live <- readIORef vLive
+    handleEffect :: AmesDrv -> NewtEf -> IO ()
+    handleEffect AmesDrv{..} = \case
+      NewtEfTurf (_id, ()) turfs -> do
+          writeIORef aIsLive True
+
+      NewtEfSend (_id, ()) dest (MkBytes bs) -> do
+          live <- readIORef aIsLive
           when live $ do
-              s  <- socket AF_INET Datagram defaultProtocol
-              laneSockAddr lane & \case
-                  Nothing -> pure ()
-                  Just sa -> void (sendTo s bs sa)
-
-localhost :: HostAddress
-localhost = tupleToHostAddress (127,0,0,1)
-
-laneSockAddr :: Lane -> Maybe SockAddr
-laneSockAddr = \case
-  If _ p     a -> pure (SockAddrInet (fromIntegral p) a)
-  Ix _ p     a -> pure (SockAddrInet (fromIntegral p) a)
-  Is _ mLane _ -> mLane >>= laneSockAddr
-
-ipv4Addr :: SockAddr -> Maybe (PortNumber, HostAddress)
-ipv4Addr = \case
-    SockAddrInet p a -> Just (p, a)
-    _                -> Nothing
-
-shipPort :: Ship -> PortNumber
-shipPort s | s < 256 = fromIntegral (31337 + s)
-shipPort _           = 0
+              when (okayFakeAddr dest) $ do
+                  void $ sendTo aSocket bs $ destSockAddr dest
 
 {-
 data GalaxyInfo = GalaxyInfo { ip :: IPv4, age :: Time.Unix }
