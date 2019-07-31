@@ -58,7 +58,7 @@ export class Message extends Component {
     if (typeof url !== 'string') { throw 'Only transmogrify strings!'; }
     const ship = window.ship;
     if (url.indexOf('arvo://') === 0) {
-      return `http://${ship}.arvo.network` + url.split('arvo://')[1];
+      return url.split('arvo://')[1];
     }
     return url;
   }
@@ -66,13 +66,14 @@ export class Message extends Component {
   render() {
     const { props } = this;
     let pending = !!props.msg.pending ? ' o-80' : '';
-    let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm a');
     let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
 
-    let paddingTop = props.paddingTop ? 'pt2' : '';
+    let paddingTop = props.paddingTop ? 'pt3' : '';
     let paddingBot = props.paddingBot ? 'pb2' : 'pb1';
 
     if (props.renderSigil) {
+      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm a');
+
       return (
         <div className={"w-100 pl3 pr3 cf flex " + paddingTop + " " + paddingBot + pending}
              style={{
@@ -96,6 +97,8 @@ export class Message extends Component {
         </div>
       );
     } else {
+      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
+
       return (
         <div className={"w-100 pr3 pb1 cf hide-child flex" + pending}
              style={{
