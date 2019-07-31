@@ -808,7 +808,6 @@
     ++  stay  ~&  %alef-larva-stay  [%larva queued-events ames-state.adult-gate]
     ++  load
       |=  old-raw=*
-      ~&  %alef-larva-load
       ::
       =/  old
         ;;  $%  [%larva events=_queued-events state=_ames-state.adult-gate]
@@ -818,9 +817,11 @@
       ::
       ?-    -.old
           %adult
+        ~&  %alef-load
         (load:adult-core state.old)
       ::
           %larva
+        ~&  %alef-load-larva
         =.  queued-events  events.old
         =.  adult-gate     (load:adult-core state.old)
         larval-gate
@@ -894,6 +895,7 @@
 ::
 ++  load
   |=  old-state=_ames-state
+  ^+  ames-gate
   ames-gate(ames-state old-state)
 ::  +scry: dereference namespace
 ::
@@ -1366,9 +1368,17 @@
     ==
   ::  +on-born: handle unix process restart
   ::
-  ::    TODO: scry into jael and emit turf on %born
-  ::
-  ++  on-born  event-core(unix-duct.ames-state duct)
+  ++  on-born
+    ^+  event-core
+    ::
+    =.  unix-duct.ames-state  duct
+    ::
+    =/  turfs
+      ;;  (list turf)
+      =<  q.q  %-  need  %-  need
+      (scry-gate [%141 %noun] ~ %k `beam`[[our %turf %da now] /])
+    ::
+    (emit unix-duct.ames-state %give %turf turfs)
   ::  +on-vega: handle kernel reload
   ::
   ++  on-vega  event-core
