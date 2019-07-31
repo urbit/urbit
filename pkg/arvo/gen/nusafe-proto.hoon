@@ -1,6 +1,17 @@
 /-  ring, *safe-applet, common=safe-common, client=safe-client, server=safe-server
 /+  ring, *safe-signatures, *safe-client, *safe-common, *safe-server, safe-applets
 ::
+::  Safe TODO list:
+::
+::  - Have the server prune old state. The server doesn't need a full event
+::  log; it only needs to stream out events as they come in.
+::
+::  - The client side state needs to track whether it is currently subscribed
+::  to updates.
+::
+
+
+
 ::  To post to /board/1234, you must post:
 ::
 ::  [outer-sig [/board/1234 [signature %post blah]]]
