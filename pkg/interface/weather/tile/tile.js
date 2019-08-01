@@ -78,11 +78,10 @@ export default class WeatherTile extends Component {
 
     return this.renderWrapper((
       <div>
-          <p className="gray" style={{
-            fontWeight: 'bold',
-            fontSize: 14,
-            lineHeight: '24px'
-          }}>Weather</p>
+          <p className="gray label-regular b absolute"
+            style={{left: 8, top: 4}}>
+            Weather
+          </p>
         <div className="w-100 mb2 mt2">
           <img 
             src={'/~weather/img/' + c.icon + '.png'} 
