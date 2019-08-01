@@ -43,7 +43,7 @@
   ==                                                    ::
 +$  state-pki                                           ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
-        $:  yen=(set duct)                              ::  trackers
+        $:  yen=(set tracker)                           ::  trackers
             sig=(unit oath)                             ::  for a moon
             tuf=(list turf)                             ::  domains
             boq=@ud                                     ::  boot block
@@ -53,8 +53,8 @@
             jaw=(map life ring)                         ::  private keys
         ==                                              ::
       $=  zim                                           ::  public
-        $:  yen=(jug duct ship)                         ::  trackers
-            ney=(jug ship duct)                         ::  reverse trackers
+        $:  yen=(jug tracker ship)                      ::  trackers
+            ney=(jug ship tracker)                      ::  reverse trackers
             dns=dnses                                   ::  on-chain dns state
             pos=(map ship point)                        ::  on-chain ship state
         ==                                              ::
@@ -73,6 +73,9 @@
 +$  message-response                                    ::  response from her kale
   $%  [%public-keys-result =public-keys-result]         ::  %public-keys response
   ==
+::  $tracker: client; either domestic (here=%.y) or foreign
+::
++$  tracker  [here=? =duct]
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
 ::                                                      ::
@@ -93,9 +96,10 @@
 ::                                                      ::
 +$  sign                                                ::  in result $<-
   $~  [%a %done ~]                                      ::
-  $%  [%a $>(%boon gift:able:ames)]                     ::  message response
-      [%a $>(%done gift:able:ames)]                     ::  message (n)ack
-  ==                                                    ::
+  $%  $:  %a
+          $%  $>(%boon gift:able:ames)                  ::  message response
+              $>(%done gift:able:ames)                  ::  message (n)ack
+  ==  ==  ==
 --  ::
 ::                                                      ::::
 ::::                    # light                         ::  light cores
@@ -194,9 +198,11 @@
     [who ?:(=(who dad) ~ $(who dad))]
   ::                                                    ::  ++call:of
   ++  call                                              ::  invoke
-    |=  $:  ::  hen: event cause
+    |=  $:  ::  hyr: domestic? or foreign
+            ::  hen: event cause
             ::  tac: event data
             ::
+            hyr=?
             hen/duct
             tac/task
         ==
@@ -261,7 +267,7 @@
           +>.^$
         =.  +>.^$
           %-  curd  =<  abet
-          %-  public-keys:~(feel su hen our pki etn sap)
+          %-  public-keys:~(feel su hyr hen our pki etn sap)
           [%diff ship diff]:i.diffs
         $(diffs t.diffs)
       ::
@@ -340,39 +346,17 @@
         %listen
       ~&  [%kale-listen whos source]:tac
       %-  curd  =<  abet
-      (sources:~(feel su hen our pki etn sap) [whos source]:tac)
+      (sources:~(feel su hyr hen our pki etn sap) [whos source]:tac)
     ::
     ::  cancel all trackers from duct
     ::    {$nuke whos=(set ship)}
     ::
-        $nuke
-      =/  ships=(list ship)
-        %~  tap  in
-        %-  ~(int in whos.tac)
-        (~(get ju yen.zim.pki) hen)
-      =.  ney.zim.pki
-        |-  ^-  (jug ship duct)
-        ?~  ships
-          ney.zim.pki
-        (~(del ju $(ships t.ships)) i.ships hen)
-      =.  yen.zim.pki
-        |-  ^-  (jug duct ship)
-        ?~  ships
-          yen.zim.pki
-        (~(del ju $(ships t.ships)) hen i.ships)
-      ?^  whos.tac
-        +>.$
-      %_  +>.$
-        yen.own.pki  (~(del in yen.own.pki) hen)
-        yen.etn      (~(del in yen.etn) hen)
-      ==
+        $nuke  (on-nuke [hyr hen] whos.tac)
     ::
     ::  watch public keys
     ::    [%public-keys ships=(set ship)]
     ::
-        %public-keys
-      %-  curd  =<  abet
-      (~(public-keys ~(feed su hen our pki etn sap) hen) ships.tac)
+        %public-keys  (on-public-keys [hyr hen] ships.tac)
     ::
     ::  seen after breach
     ::    [%meet our=ship who=ship]
@@ -392,7 +376,7 @@
     ::
         %sources
       ~&  [%kale-sources]
-      (curd abet:~(sources ~(feed su hen our pki etn sap) hen))
+      (curd abet:~(sources ~(feed su hyr hen our pki etn sap) hyr hen))
     ::
     ::  XX should be a subscription
     ::  XX reconcile with .dns.eth
@@ -412,7 +396,7 @@
         %new-event
       ~&  [%kale-new-event ship udiff]:tac
       %-  curd  =<  abet
-      (~(new-event su hen our pki etn sap) ship.tac udiff.tac)
+      (~(new-event su hyr hen our pki etn sap) ship.tac udiff.tac)
     ::
     ::  learn of kernel upgrade
     ::    [%vega ~]
@@ -424,7 +408,7 @@
     ::    {$private-keys $~}
     ::
         %private-keys
-      (curd abet:~(private-keys ~(feed su hen our pki etn sap) hen))
+      (curd abet:~(private-keys ~(feed su hyr hen our pki etn sap) hyr hen))
     ::
         %wegh
       %_    +>
@@ -445,23 +429,15 @@
     ::    [%plea =ship =plea:ames]
     ::
         %plea
-      =*  her  ship.tac
-      =/  mes  (message payload.plea.tac)
-      ?-    -.mes
+      ::  send ack immediately
       ::
-      ::  cancel trackers
-      ::    [%nuke whos=(set ship)]
+      =.  moz  [[hen %give %done ~] moz]
+      ::  coerce and handle message
       ::
-          %nuke
-        =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
-      ::
-      ::  view ethereum events
-      ::    [%public-keys whos=(set ship)]
-      ::
-          %public-keys
-        =.  moz  [[hen %give %done ~] moz]
-        $(tac mes)
+      =/  mes  ;;(message payload.plea.tac)
+      ?-  -.mes
+        %nuke         (on-nuke [hyr hen] whos.mes)
+        %public-keys  (on-public-keys [hyr hen] whos.mes)
       ==
     ::
     ::  rewind to snapshot
@@ -470,10 +446,46 @@
         %wind
       (wind hen p.tac)
     ==
+  ::  +on-nuke: cancel trackers
+  ::
+  ++  on-nuke
+    |=  [=tracker whos=(set ship)]
+    ^+  +>
+    ::
+    =/  ships=(list ship)
+      %~  tap  in
+      %-  ~(int in whos)
+      (~(get ju yen.zim.pki) tracker)
+    =.  ney.zim.pki
+      |-  ^-  (jug ship ^tracker)
+      ?~  ships
+        ney.zim.pki
+      (~(del ju $(ships t.ships)) i.ships tracker)
+    =.  yen.zim.pki
+      |-  ^-  (jug ^tracker ship)
+      ?~  ships
+        yen.zim.pki
+      (~(del ju $(ships t.ships)) tracker i.ships)
+    ?^  whos
+      +>.$
+    %_  +>.$
+      yen.own.pki  (~(del in yen.own.pki) tracker)
+      yen.etn      (~(del in yen.etn) tracker)
+    ==
+  ::
+  ++  on-public-keys
+    |=  [=tracker whos=(set ship)]
+    ^+  +>
+    ::
+    =/  feeder  ~(feed su here.tracker duct.tracker our pki etn sap)
+    (curd abet:(~(public-keys feeder tracker) whos))
   ::
   ++  take
-    |=  [tea=wire hen=duct hin=sign]
+    |=  [tea=wire hyr=? hen=duct hin=sign]
     ^+  +>
+    ::  at the moment, we only get a +sign from ames
+    ::
+    ?>  hyr
     ?>  ?=([@ *] tea)
     =*  wir  t.tea
     ?-    hin
@@ -490,7 +502,7 @@
       ?>  ?=(%public-keys-result -.res)
       ::
       %-  curd  =<  abet
-      (public-keys:~(feel su hen our pki etn sap) public-keys-result.res)
+      (public-keys:~(feel su hyr hen our pki etn sap) public-keys-result.res)
     ==
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
@@ -535,7 +547,8 @@
       ::  any subscribers.
       ::
   =|  moz=(list move)
-  =|  $:  hen=duct
+  =|  $:  hyr=?
+          hen=duct
           our=ship
           state-pki
           state-eth-node
@@ -544,9 +557,9 @@
   ::  moz: moves in reverse order
   ::  pki: relative urbit state
   ::
-  =*  pki  ->+<
-  =*  etn  ->+>-
-  =*  sap  ->+>+
+  =*  pki  &4.-
+  =*  etn  &5.-
+  =*  sap  |5.-
   |%
   ++  this-su  .
   ::                                                    ::  ++abet:su
@@ -565,17 +578,15 @@
     $(noy t.noy, moz [[i.noy cad] moz])
   ::
   ++  public-keys-give
-    |=  [yen=(set duct) =public-keys-result]
+    |=  [yen=(set tracker) =public-keys-result]
     =+  yez=~(tap in yen)
     |-  ^+  this-su
     ?~  yez  this-su
-    =*  d  i.yez
+    =*  t  i.yez
     =.  this-su
-      ::  TODO: stop looking at the duct
-      ::
-      ?.  ?=([[%a *] *] d)
-        (emit d %give %public-keys public-keys-result)
-      (emit d %give %boon %public-keys-result public-keys-result)
+      ?:  here.t
+        (emit duct.t %give %public-keys public-keys-result)
+      (emit duct.t %give %boon %public-keys-result public-keys-result)
     $(yez t.yez)
   ::
   ++  get-source
@@ -613,20 +624,24 @@
     ~
   ::                                                    ::  ++feed:su
   ++  feed                                              ::  subscribe to view
-    |_  ::  hen: subscription source
+    |_  ::  hyr: domestic? or foreign
+        ::  hen: subscription source
         ::
-        hen/duct
+        $:  hyr=?
+            hen=duct
+        ==
     ::
     ++  public-keys
       |=  whos=(set ship)
+      ^+  ..feed
       ?:  fak.own.pki
         (public-keys:fake whos)
       =.  ney.zim
         =/  whol=(list ship)  ~(tap in whos)
-        |-  ^-  (jug ship duct)
+        |-  ^-  (jug ship tracker)
         ?~  whol
           ney.zim
-        (~(put ju $(whol t.whol)) i.whol hen)
+        (~(put ju $(whol t.whol)) i.whol [hyr hen])
       =/  =public-keys-result
         :-  %full
         ?:  =(~ whos)
@@ -644,14 +659,14 @@
         %-  ~(gas ju yen.zim)
         %+  turn  ~(tap in whos)
         |=  who=ship
-        [hen who]
-      =.  ..feed  (public-keys-give (sy hen ~) public-keys-result)
+        [[hyr hen] who]
+      =.  ..feed  (public-keys-give (sy [hyr hen] ~) public-keys-result)
       ..feed
     ::
     ++  private-keys                                            ::  private keys
       %_  ..feed
         moz      [[hen %give %private-keys [lyf jaw]:own] moz]
-        yen.own  (~(put in yen.own) hen)
+        yen.own  (~(put in yen.own) hyr hen)
       ==
     ::
     ++  sources
@@ -693,14 +708,14 @@
     ::                                                  ::  ++pubs:feel:su
     ++  public-keys
       |=  =public-keys-result
-      ^+  ..feel
+      ^+  this-su
       ?:  ?=(%full -.public-keys-result)
         =.  pos.zim  (~(uni by pos.zim) points.public-keys-result)
         =/  pointl=(list [who=ship =point])
           ~(tap by points.public-keys-result)
-        |-  ^+  ..feel
+        |-  ^+  this-su
         ?~  pointl
-          ..feel
+          this-su
         %+  public-keys-give
           (~(get ju ney.zim) who.i.pointl)
         [%full (my i.pointl ~)]
@@ -734,27 +749,30 @@
     ::                                                  ::  ++vein:feel:su
     ++  private-keys                                    ::  kick private keys
       |=  [=life =ring]
-      ^+  ..feel
+      ^+  this-su
       ?:  &(=(lyf.own life) =((~(get by jaw.own) life) `ring))
-        ..feel
+        this-su
       =.  lyf.own  life
       =.  jaw.own  (~(put by jaw.own) life ring)
-      (exec yen.own [%give %private-keys lyf.own jaw.own])
+      =/  yen  (~(run in yen.own) tail)
+      (exec yen [%give %private-keys lyf.own jaw.own])
     ::
     ++  sources
       |=  [whos=(set ship) =source]
-      ^+  ..feel
+      ^+  this-su
       ?:  ?=(%& -.source)
         =/  send-message
           |=  =message
           [hen %pass /public-keys %a %plea p.source %k /public-keys message]
-        =.  ..feel
+        =.  this-su
           (emit (send-message %nuke whos))
         (emit (send-message %public-keys whos))
       =^  =source-id  this-su  (get-source-id source)
-      =.  ..feed
+      =.  this-su
         ?~  whos
-          ..feed(default-source.etn source-id)
+          ::
+          =.  default-source.etn  source-id
+          this-su
         =/  whol=(list ship)  ~(tap in `(set ship)`whos)
         =.  ship-sources.etn
           |-  ^-  (map ship ^source-id)
@@ -764,7 +782,7 @@
         =.  ship-sources-reverse
           %-  ~(gas ju ship-sources-reverse)
           (turn whol |=(=ship [source-id ship]))
-        ..feed
+        this-su
       (exec yen.etn [%give %source whos source])
     --
   ::                                                    ::  ++meet:su
@@ -808,8 +826,9 @@
     ?.  ?=($soft -.q.hic)
       q.hic
     (task:able p.q.hic)
+  =/  here=?  !=(%plea -.task)
   =^  did  lex
-    abet:(~(call of [our now eny] lex) hen task)
+    abet:(~(call of [our now eny] lex) here hen task)
   [did ..^$]
 ::                                                      ::  ++load
 ++  load                                                ::  upgrade
@@ -1007,6 +1026,10 @@
           hin/(hypo sign)
       ==
   ^-  [(list move) _..^$]
-  =^  did  lex  abet:(~(take of [our now eny] lex) tea hen q.hin)
+  =/  =sign  q.hin
+  ?>  ?=(%a -.sign)
+  ?>  ?=(?(%boon %done) +<.sign)
+  =/  here=?  %.y
+  =^  did  lex  abet:(~(take of [our now eny] lex) tea here hen sign)
   [did ..^$]
 --
