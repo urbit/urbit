@@ -866,6 +866,14 @@ u3_daemon_commence()
   u3C.sign_hold_f = _daemon_sign_hold;
   u3C.sign_move_f = _daemon_sign_move;
 
+  //  Ignore SIGPIPE signals.
+  {
+    struct sigaction sig_s = {{0}};
+    sigemptyset(&(sig_s.sa_mask));
+    sig_s.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sig_s, 0);
+  }
+
   //  boot the ivory pill
   //
   {
