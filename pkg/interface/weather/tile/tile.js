@@ -65,7 +65,7 @@ export default class WeatherTile extends Component {
             style={{left: 8, top: 4}}>
             Weather
           </p>
-        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>Set location</p>
+        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
       </div>
     ));
   }
