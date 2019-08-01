@@ -13,13 +13,15 @@ import qualified LogTests
 import qualified DeriveNounTests
 import qualified ArvoTests
 import qualified AmesTests
+import qualified BehnTests
 
 main :: IO ()
 main = do
   setEnv "TASTY_NUM_THREADS" "1"
   defaultMain $ testGroup "Urbit"
-    [ LogTests.tests
-    , DeriveNounTests.tests
+    [ DeriveNounTests.tests
     , ArvoTests.tests
     , AmesTests.tests
+    , LogTests.tests
+    , BehnTests.tests
     ]

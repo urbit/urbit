@@ -1,7 +1,6 @@
 module Arvo.Event where
 
 import UrbitPrelude hiding (Term)
-import Urbit.Time
 
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
@@ -171,7 +170,7 @@ deriveNoun ''BoatEv
 
 data BehnEv
     = BehnEvWake ()        ()
-    | BehnEvBorn (Wen, ()) ()
+    | BehnEvBorn (Atom, ()) ()
   deriving (Eq, Ord, Show)
 
 deriveNoun ''BehnEv

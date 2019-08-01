@@ -33,7 +33,8 @@ start timer@(Timer vSt man) time cb = do
   stop timer
   now <- Sys.getSystemTime
   let sleep = sysTimeGapMicroSecs now time
-  if (sleep <= 0) then fire else do
+  print (now, time, "->", sleep)
+  if (sleep <= 0) then (print "ug" >> fire) else do
     key <- Ev.registerTimeout man sleep fire
     atomicWriteIORef vSt $! Just key
 

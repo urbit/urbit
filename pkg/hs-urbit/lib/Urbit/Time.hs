@@ -22,7 +22,7 @@ newtype Unix = Unix { _sinceUnixEpoch :: Gap }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 newtype Wen = Wen { _sinceUrbitEpoch :: Gap }
-  deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+  deriving newtype (Eq, Ord, Show, Num, ToNoun, FromNoun)
 
 
 -- Lenses ----------------------------------------------------------------------

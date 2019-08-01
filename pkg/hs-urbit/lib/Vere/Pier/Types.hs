@@ -75,8 +75,12 @@ data Order
 
 deriveToNoun ''Order
 
+type QueueEv = Ev -> STM ()
 
---------------------------------------------------------------------------------
+type EffCb a = a -> IO ()
+
+newtype KingInstance = KingInst { unKingInst :: Atom }
+  deriving newtype (Eq, Ord, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
 type Perform = Ef -> IO ()
 

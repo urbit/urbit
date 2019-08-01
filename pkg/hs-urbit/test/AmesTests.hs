@@ -1,27 +1,27 @@
 module AmesTests (tests) where
 
+import Arvo
 import Data.Acquire
+import Data.Conduit
+import Data.Conduit.List     hiding (take)
+import Data.Ord.Unicode
+import Noun
 import Test.QuickCheck       hiding ((.&.))
 import Test.Tasty
 import Test.Tasty.QuickCheck
 import Test.Tasty.TH
+import Urbit.Time
 import UrbitPrelude
+import Vere.Ames
 import Vere.Log
 import Vere.Pier.Types
-import Data.Conduit
-import Data.Conduit.List hiding (take)
-import Urbit.Ames
-import Arvo
-import Noun
-import Data.Ord.Unicode
 
-import Network.Socket     (tupleToHostAddress)
-import Control.Concurrent (threadDelay, runInBoundThread)
+import Control.Concurrent (runInBoundThread, threadDelay)
 import Data.LargeWord     (LargeKey(..))
 import GHC.Natural        (Natural)
+import Network.Socket     (tupleToHostAddress)
 
-import Urbit.Time
-import qualified Vere.Log   as Log
+import qualified Vere.Log as Log
 
 
 -- Utils -----------------------------------------------------------------------
