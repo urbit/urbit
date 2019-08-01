@@ -967,19 +967,16 @@
     ^+  event-core
     ::
     ?:  =(our sndr.packet)
-      ~&  %alef-self
+      ::~&  %alef-self
       event-core
     ::
     %.  +<
     ::
     ?.  =(our rcvr.packet)
-      ~&  %on-hear-forward
       on-hear-forward
     ::
     ?:  encrypted.packet
-      ~&  %on-hear-shut
       on-hear-shut
-    ~&  %on-hear-open
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
@@ -2379,7 +2376,7 @@
         message-still
       ::  ack all other packets
       ::
-      ~&  %send-ack^seq^fragment-num
+      ::~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2418,7 +2415,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ~&  %send-ack^seq^fragment-num
+      ::~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
