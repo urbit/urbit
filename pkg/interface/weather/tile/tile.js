@@ -48,7 +48,7 @@ export default class WeatherTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2" style={{
+      <div className="pa2 relative" style={{
         width: 234,
         height: 234,
         background: '#1a1a1a'
@@ -60,9 +60,12 @@ export default class WeatherTile extends Component {
 
   renderNoData() {
     return this.renderWrapper((
-      <div>
-        <p className="white sans-serif">Weather</p>
-        <button onClick={this.locationSubmit.bind(this)}>Set location</button>
+      <div onClick={this.locationSubmit.bind(this)}>
+          <p className="gray label-regular b absolute"
+            style={{left: 8, top: 4}}>
+            Weather
+          </p>
+        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8}}>Set location</p>
       </div>
     ));
   }
