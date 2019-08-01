@@ -455,6 +455,19 @@ static c3_c* _141_pen_loot_ha[] = {
     0
   };
   static u3j_harm _141_pen__ut_nest_a[] = {{".2", u3wfu_nest}, {}};
+      static u3j_harm _141_pen__ut_nest_dext_a[] = {{".2", u3wfu_nest_dext}, {}};
+    static u3j_core _141_pen__ut_nest_in_d[] =
+      {
+        // TODO: compute hash
+        { "nest-dext", 3, _141_pen__ut_nest_dext_a, 0, 0 },
+        {}
+      };
+  static u3j_core _141_pen__ut_nest_d[] =
+    {
+      // TODO: Compute hash for nest-in.
+      { "nest-in", 7, 0, _141_pen__ut_nest_in_d, 0 },
+      {}
+    };
   static c3_c* _141_pen__ut_nest_ha[] = {
     "a55b695cdba00e7fa8f2c74a332880c877701555b2909b5b3028aea5839d62cd",
     0
@@ -494,7 +507,7 @@ static u3j_core _141_pen__ut_d[] =
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
     { "mull", 7, _141_pen__ut_mull_a, 0, _141_pen__ut_mull_ha },
-    { "nest", 7, _141_pen__ut_nest_a, 0, _141_pen__ut_nest_ha },
+    { "nest", 7, _141_pen__ut_nest_a, _141_pen__ut_nest_d, _141_pen__ut_nest_ha },
     { "peek", 7, _141_pen__ut_peek_a, 0, _141_pen__ut_peek_ha },
     { "play", 7, _141_pen__ut_play_a, 0, _141_pen__ut_play_ha },
     { "rest", 7, _141_pen__ut_rest_a, 0, _141_pen__ut_rest_ha },
