@@ -973,10 +973,13 @@
     %.  +<
     ::
     ?.  =(our rcvr.packet)
+      ~&  %on-hear-forward
       on-hear-forward
     ::
     ?:  encrypted.packet
+      ~&  %on-hear-shut
       on-hear-shut
+    ~&  %on-hear-open
     on-hear-open
   ::  +on-hear-forward: maybe forward a packet to someone else
   ::
@@ -1504,7 +1507,9 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
+        ~&  %run-message-still
         (run-message-still bone %hear lane shut-packet)
+      ~&  %run-message-pump
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -2344,6 +2349,7 @@
     ::  ignore messages from far future; limit to 10 in progress
     ::
     ?:  (gte seq (add 10 last-acked.state))
+      ~&  %ignoring-message-from-future^seq^last-acked.state
       message-still
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -2366,10 +2372,11 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
+        ~&  %repeat-last-unprocessed^seq^last-heard.state
         message-still
       ::  ack all other packets
       ::
-      ::~&  %send-ack^fragment-num
+      ~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2385,12 +2392,13 @@
       ::
       u.existing
     ::
-    =/  already-heard=?
+    =/  already-heard-fragment=?
       (~(has by fragments.partial-rcv-message) fragment-num)
     ::  ack dupes except for the last fragment, in which case drop
     ::
-    ?:  already-heard
+    ?:  already-heard-fragment
       ?:  is-last-fragment
+        ~&  %already-heard-last-fragment
         message-still
       ~&  %send-dupe-ack-fragment^fragment
       (give %send seq %& fragment-num)
@@ -2407,7 +2415,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ::~&  %send-ack^fragment-num
+      ~&  %send-ack^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
