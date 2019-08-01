@@ -337,6 +337,7 @@
         c3_c*         dns_c;                //  domain XX multiple/fallback
         c3_w          imp_w[256];           //  imperial IPs
         time_t        imp_t[256];           //  imperial IP timestamps
+        c3_o          imp_o[256];           //  imperial print status
       } u3_ames;
 
     /* u3_save: checkpoint control.

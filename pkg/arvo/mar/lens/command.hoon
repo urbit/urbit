@@ -35,6 +35,8 @@
             ;~(pfix col (more net (cook crip (star ;~(less net prn)))))
         ==
         listen-api+(su ;~(plug sym ;~(pfix col sym)))
+        export+so
+        import+(ot app+so base64-jam+so ~)
         as+(ot mark+(su sym) next+source ~)
         hoon+(ot code+so next+source ~)
       ==
