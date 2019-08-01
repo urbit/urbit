@@ -6,8 +6,6 @@ export class Sigil extends Component {
   render() {
     const { props } = this;
 
-    console.log("sigil ship", props.ship);
-
     if (props.ship.length > 14) {
       return (
         <div className="bg-black" style={{width: 36, height: 36}}>

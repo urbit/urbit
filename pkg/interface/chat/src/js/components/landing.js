@@ -49,12 +49,12 @@ export class LandingScreen extends Component {
           source: {
             nom: "inbox",
             sub: true,
-            srs: [`~${window.ship}/hall-internal-${circleName}`]
+            srs: [`~${window.ship}/hall-internal-${props.match.params.station}`]
           }
         }
     ];
 
-    this.props.chat(actions);
+    this.props.api.chat(actions);
     this.props.history.push('/~chat');
   }
 
