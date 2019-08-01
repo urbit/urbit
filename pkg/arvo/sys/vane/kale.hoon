@@ -278,13 +278,23 @@
       =.  tuf.own.pki  turf.tac
       ::  our initial galaxy table as a +map from +life to +public
       ::
+      =/  spon-point=point
+        ~|  [%sponsor-point point]
+        ?>  ?=(^ net.spon.tac)
+        :*  continuity-number.u.net.spon.tac
+            life.u.net.spon.tac
+            (malt [life.u.net.spon.tac 1 pass.u.net.spon.tac] ~)
+            ?.  has.sponsor.u.net.spon.tac
+              ~
+            `who.sponsor.u.net.spon.tac
+        ==
       =/  points=(map =ship =point)
         %-  ~(run by czar.tac)
         |=  [=a=rift =a=life =a=pass]
         ^-  point
         [a-rift a-life (malt [a-life 1 a-pass] ~) ~]
       =.  points
-        (~(put by points) [ship rift life [[life 1 pass] ~ ~] `spon]:spon.tac)
+        (~(put by points) ship.spon.tac spon-point)
       =.  +>.$
         %-  curd  =<  abet
         (public-keys:~(feel su hen our pki etn sap) %full points)

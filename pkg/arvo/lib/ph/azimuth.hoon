@@ -257,6 +257,10 @@
   ^-  dawn-event
   =/  spon
     =/  =ship  (^sein:title who)
+    =/  spon-spon
+      ?:  ?=(%czar (clan:title ship))
+        [| ~zod]
+      [& (^sein:title ship)]
     =/  life-rift  (~(got by lives) ship)
     =/  =life  lyfe.life-rift
     =/  =rift  rut.life-rift
@@ -265,7 +269,10 @@
           (as-octs:mimes:html (get-public ship life %crypt))
         (as-octs:mimes:html (get-public ship life %auth))
       1
-    [ship rift life pass (^sein:title ship)]
+    :^    ship
+        *[address address address address]:azimuth
+      `[life pass rift spon-spon ~]
+    ~
   =/  life-rift  (~(got by lives) who)
   =/  =life  lyfe.life-rift
   :*  [who life sec:ex:(get-keys who life) ~]

@@ -2306,7 +2306,7 @@
       $~  [%vega ~]                                     ::
       $%  $:  %dawn                                     ::  boot from keys
               =seed:able:kale                           ::    identity params
-              spon=[=ship =rift =life =pass spon=ship]  ::    sponsor
+              spon=[=ship point:azimuth-types]          ::    sponsor
               czar=(map ship [=rift =life =pass])       ::    galaxy table
               turf=(list turf)                          ::    domains
               bloq=@ud                                  ::    block number

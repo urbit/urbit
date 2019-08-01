@@ -65,7 +65,7 @@
 ::
 +$  dawn-event
   $:  =seed:able:jael
-      spon=[=ship =rift =life =pass spon=ship]
+      spon=[=ship point:azimuth]
       czar=(map ship [=rift =life =pass])
       turf=(list turf)
       bloq=@ud
