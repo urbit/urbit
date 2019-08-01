@@ -1209,6 +1209,7 @@
       |=  [=ship =rift]
       ^+  event-core
       ::
+      ~&  %alef-breach^ship^rift
       =.  peers.ames-state  (~(del by peers.ames-state) ship)
       event-core
     ::  +on-publ-rekey: handle new key for peer
@@ -1223,6 +1224,7 @@
           ==
       ^+  event-core
       ::
+      ~&  %alef-rekey^ship^life^public-key
       (insert-peer-state ship (got-peer-state ship) life public-key)
     ::  +on-publ-sponsor: handle new or lost sponsor for self or peer
     ::
@@ -1250,6 +1252,7 @@
     ++  on-publ-full
       |=  points=(map ship point)
       ^+  event-core
+      ~&  %alef-on-publ-full
       ::
       =>  .(points ~(tap by points))
       |^  ^+  event-core
