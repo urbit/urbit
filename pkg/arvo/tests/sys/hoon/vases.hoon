@@ -5,8 +5,16 @@
   %+  expect-eq
     !>(7)
     -:(~(slam wa *worm) !>(add) !>([3 4]))
+::  +test-slam-wa-wet: does +slam:wa perform correct wet type inference?
+::
+::    Also test that the cache doesn't gain any new entries when given a
+::    sample of a previously seen type.
 ::
 ++  test-slam-wa-wet  ^-  tang
+  ::  use the same .list-type for both calls
+  ::
+  ::    Types defined on different lines won't be noun-equal, and so
+  ::    won't test that the cache kicked in on the second entry.
   ::
   =/  list-type=type  -:!>(*(list @))
   =|  worm0=worm
