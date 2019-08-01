@@ -429,7 +429,7 @@
       ^-  (list unix-event)
       :~  [/ %wack 0]  ::  eny
           [/ %whom who.ae]  ::  eny
-          [//newt/0v1n.2m9vh %barn ~]
+          [//newt/0v1n.2m9vh %born ~]
           [//behn/0v1n.2m9vh %born ~]
           :+  //term/1  %boot
           ?~  keys.ae

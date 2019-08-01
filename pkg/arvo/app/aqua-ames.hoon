@@ -68,7 +68,7 @@
 ++  handle-restore
   |=  who=@p
   %-  emit-aqua-events
-  [%event who [//newt/0v1n.2m9vh %barn ~]]~
+  [%event who [//newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
   |=  [way=wire %send lan=lane:ames pac=@]

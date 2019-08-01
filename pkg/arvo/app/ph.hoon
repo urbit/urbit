@@ -126,6 +126,19 @@
         (send-hi ~bud ~dev)
       (pure:m ~)
     ::
+      :+  %hi-marbud-az
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD-DONE'
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD-DONE'
+        (send-hi ~bud ~marbud)
+      (pure:m ~)
+    ::
       :+  %breach-hi
         ~[~bud ~dev]
       =.  eth-node  (spawn:eth-node ~dev)
