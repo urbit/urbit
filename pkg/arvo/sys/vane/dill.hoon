@@ -512,7 +512,10 @@
     =/  boot
       ((soft $>($?(%dawn %fake) task:able:kale)) p.task)
     ?~  boot
+      ~&  %dill-no-boot
+      ~&  p.task
       ~|  invalid-boot-event+hen  !!
+    ~&  %dill-boot
     :_(..^$ [hen %pass / %k u.boot]~)
   ::  we are subsequently initialized. single-home
   ::

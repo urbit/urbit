@@ -491,6 +491,8 @@ u3_dawn_vent(u3_noun seed)
 
     pon = _dawn_need_unit(u3dc("point:take:dawn", u3k(pos), u3k(luh)),
                           "boot: failed to retrieve sponsor keys");
+    pon = u3nc(pos, pon);
+    u3m_p("pon",pon);
     u3z(oct); u3z(luh);
   }
 
