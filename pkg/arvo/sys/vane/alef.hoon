@@ -1259,10 +1259,13 @@
           ::
           =.  event-core
             ?~  ship-state=(~(get by peers.ames-state) ship)
+              ~&  %alef-fresh-peer^ship^point
               (fresh-peer ship point)
             ::
             ?:  ?=([~ %alien *] ship-state)
+              ~&  %alef-meet-alien^ship^point
               (meet-alien ship point +.u.ship-state)
+            ~&  %alef-update-known^ship^point
             (update-known ship point +.u.ship-state)
           ::
           $(points t.points)
@@ -1277,7 +1280,6 @@
       ++  meet-alien
         |=  [=ship =point todos=pending-requests]
         ^+  event-core
-        ~&  %alef-meet-alien^ship
         ::
         =/  =public-key  pass:(~(got by keys.point) life.point)
         =.  event-core
@@ -1507,9 +1509,7 @@
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        ~&  %run-message-still
         (run-message-still bone %hear lane shut-packet)
-      ~&  %run-message-pump
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -2349,7 +2349,7 @@
     ::  ignore messages from far future; limit to 10 in progress
     ::
     ?:  (gte seq (add 10 last-acked.state))
-      ~&  %ignoring-message-from-future^seq^last-acked.state
+      ~&  %ignoring-packet-from-future^seq^last-acked.state
       message-still
     ::
     =/  is-last-fragment=?  =(+(fragment-num) num-fragments)
@@ -2359,12 +2359,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ~&  %send-dupe-ack^fragment-num
+        ~&  %send-dupe-ack^seq^fragment-num
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
-      ~&  %send-dupe-ack-whole-message
+      ~&  %send-dupe-ack-whole-message^seq
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2376,7 +2376,7 @@
         message-still
       ::  ack all other packets
       ::
-      ~&  %send-ack^fragment-num
+      ~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  last-heard<seq<10+last-heard; this is a packet in a live message
     ::
@@ -2398,9 +2398,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ~&  %already-heard-last-fragment
+        ~&  %already-heard-last-fragment^seq^fragment-num
         message-still
-      ~&  %send-dupe-ack-fragment^fragment
+      ~&  %send-dupe-ack-fragment^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2415,7 +2415,7 @@
     ::  ack any packet other than the last one, and continue either way
     ::
     =?  message-still  !is-last-fragment
-      ~&  %send-ack^fragment-num
+      ~&  %send-ack^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  enqueue all completed messages starting at +(last-heard.state)
     ::
@@ -2437,7 +2437,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~&  %ames-still-rcv-kb^num-fragments.u.live
+    ~&  %ames-still-rcv-kb^seq^num-fragments.u.live
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
