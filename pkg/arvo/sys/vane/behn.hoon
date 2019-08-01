@@ -260,11 +260,10 @@
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |=  old=*
+  |=  old=behn-state
   ^+  behn-gate
   ::
-  ~|  %behn-load-fail
-  behn-gate(state ;;(behn-state old))
+  behn-gate(state old)
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
