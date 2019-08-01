@@ -522,11 +522,11 @@
     (curd abet:(~(public-keys feeder tracker) whos))
   ::
   ++  take
-    |=  [tea=wire hyr=? hen=duct hin=sign]
+    |=  [tea=wire hen=duct hin=sign]
     ^+  +>
     ::  at the moment, we only get a +sign from ames
     ::
-    ?>  hyr
+    =/  hyr=?  %.y
     ?>  ?=([@ *] tea)
     =*  wir  t.tea
     ?-    hin
@@ -1153,9 +1153,6 @@
       ==
   ^-  [(list move) _..^$]
   =/  =sign  q.hin
-  ?>  ?=(%a -.sign)
-  ?>  ?=(?(%boon %done) +<.sign)
-  =/  here=?  %.y
-  =^  did  lex  abet:(~(take of [our now eny] lex) tea here hen sign)
+  =^  did  lex  abet:(~(take of [our now eny] lex) tea hen sign)
   [did ..^$]
 --
