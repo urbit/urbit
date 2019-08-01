@@ -55,6 +55,7 @@ dependencies:
   - primitive
   - process
   - QuickCheck
+  - random
   - regex-tdfa
   - regex-tdfa-text
   - resourcet

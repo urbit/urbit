@@ -7,6 +7,7 @@ import UrbitPrelude
 import Arvo
 import Data.Acquire
 import Vere.Pier.Types
+import System.Random
 
 import System.Directory   (createDirectoryIfMissing)
 import System.Posix.Files (ownerModes, setFileMode)
@@ -114,8 +115,9 @@ pier mPort (serf, log, ss) = do
     persistQ <- newTQueueIO :: Acquire (TQueue (Job, FX))
     executeQ <- newTQueueIO :: Acquire (TQueue FX)
 
-    let inst = KingInst 0
-        ship = who (Log.identity log)
+    inst <- liftIO (KingInst <$> randomIO)
+
+    let ship = who (Log.identity log)
 
     let (bootEvents, startDrivers) =
           drivers inst ship mPort (writeTQueue computeQ)

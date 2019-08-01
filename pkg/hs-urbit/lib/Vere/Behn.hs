@@ -36,7 +36,7 @@ behn inst enqueueEv =
     handleEf b = \case
         BehnEfVoid v            -> absurd v
         BehnEfDoze (i, ()) mWen -> do
-            when (i == unKingInst inst) (doze b mWen)
+            when (i == fromIntegral inst) (doze b mWen)
 
     doze :: Timer -> Maybe Wen -> IO ()
     doze tim = \case

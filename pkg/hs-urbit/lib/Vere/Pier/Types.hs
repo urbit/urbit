@@ -79,7 +79,7 @@ type QueueEv = Ev -> STM ()
 
 type EffCb a = a -> IO ()
 
-newtype KingInstance = KingInst { unKingInst :: Atom }
+newtype KingInstance = KingInst { unKingInst :: Word32 }
   deriving newtype (Eq, Ord, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
 type Perform = Ef -> IO ()
