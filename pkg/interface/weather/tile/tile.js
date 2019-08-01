@@ -82,7 +82,8 @@ export default class WeatherTile extends Component {
             style={{left: 8, top: 4}}>
             Weather
           </p>
-        <div className="w-100 mb2 mt2">
+        <div className="w-100 mb2 mt2 absolute"
+            style={{left: 18, top: 28}}>
           <img 
             src={'/~weather/img/' + c.icon + '.png'} 
             width={64} 
@@ -97,7 +98,8 @@ export default class WeatherTile extends Component {
             }}>
             {Math.round(c.temperature)}°</h2>
         </div>
-        <div className="w-100 cf">
+        <div className="w-100 cf absolute"
+        style={{ left: 18, top: 118 }}>
           <div className="fl w-50">
             <IconWithData 
               icon='winddirection'
