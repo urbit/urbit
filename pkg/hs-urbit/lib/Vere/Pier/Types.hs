@@ -89,12 +89,6 @@ data IODriver = IODriver
   , startDriver :: (Ev -> STM ()) -> IO (Async (), Perform)
   }
 
-data Writ = Writ
-  { writId      :: Word64
-  , writTimeout :: Maybe Word
-  , writEv      :: ByteString -- Jammed atomJam
-  }
-
 
 -- Instances -------------------------------------------------------------------
 

@@ -41,5 +41,4 @@ behn inst enqueueEv =
     doze :: Timer -> Maybe Wen -> IO ()
     doze tim = \case
         Nothing -> Timer.stop tim
-        Just t  -> Timer.start tim (sysTime t)
-                 $ atomically (enqueueEv wakeEv)
+        Just t  -> Timer.start tim (sysTime t) $ atomically (enqueueEv wakeEv)

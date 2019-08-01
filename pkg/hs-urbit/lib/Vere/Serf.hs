@@ -4,7 +4,7 @@
     - TODO: `recvLen` is not big-endian safe.
 -}
 
-module Vere.Serf ( Serf, SerfState
+module Vere.Serf ( Serf, SerfState(..), doJob
                  , run, shutdown, kill
                  , replay, bootFromSeq, snapshot
                  , collectFX

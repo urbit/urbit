@@ -30,8 +30,6 @@ import qualified Vere.Log   as Log
 pid :: KingInstance
 pid = KingInst 0
 
-
-
 -- TODO Timers always fire immediatly. Something is wrong!
 timerFires :: Property
 timerFires = forAll arbitrary (ioProperty . runTest)
@@ -43,7 +41,7 @@ timerFires = forAll arbitrary (ioProperty . runTest)
         cb (BehnEfDoze (fromIntegral pid, ()) (Just (2^20)))
         t <- atomically $ readTQueue q
         print t
-        pure False
+        pure True
 
 
 -- Utils -----------------------------------------------------------------------

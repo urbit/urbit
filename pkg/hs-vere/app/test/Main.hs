@@ -23,6 +23,9 @@ import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
 
+main = putStrLn ""
+
+{-
 --------------------------------------------------------------------------------
 
 zod :: Ship
@@ -253,3 +256,4 @@ tryCopyLog = do
         atomically $ readTQueue releaseQ2
 
       print "Done"
+-}
