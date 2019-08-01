@@ -8,8 +8,6 @@ export default class PublishTile extends Component {
   }
 
   render(){
-    console.log("tile", this.props);
-
     let info = [];
     if (this.props.data.invites > 0) {
       let text = (this.props.data.invites == 1)
