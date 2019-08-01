@@ -1,6 +1,7 @@
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::::::  ::::::    Postface                              ::::::
 ::::::  ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 ~>  %slog.[0 leaf+"%arvo-assembly"]
 =-  ~>  %slog.[0 leaf+"%arvo-assembled"]
     -
@@ -59,6 +60,7 @@
   [fur=(unit (set monk)) ren=@tas why=shop syd=desk lot=coin tyl=path]
 +$  vane-sample
   [our=ship now=@da eny=@uvJ ski=slyd]
+++  vane-sample-type  -:!>(*vane-sample)
 ++  ship  @p                                            ::  network identity
 ++  sink  (trel bone ship path)                         ::  subscription
 ++  sley  $-  {* (unit (set monk)) term beam}           ::  namespace function
@@ -156,12 +158,11 @@
     ^=  res  %-  mule  |.
     ::  XX should use real entropy and the real date
     ::
-    =/  arg=vane-sample
-      [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
-    =+  rig=(slym vase.vane arg)
+    =/  arg=vane-sample  [who ~2000.1.1 *@uvJ =>(~ |~(* ~))]
+    =+  rig=(slam vase.vane [vane-sample-type arg])
     =+  gen=(rain pax txt)
-    =+  rev=(slym (slap bud gen) bud)
-    =+  syg=(slym rev arg)
+    =+  rev=(slam (slap bud gen) !>(bud))
+    =+  syg=(slam rev [vane-sample-type arg])
     ::  update the vane itself
     ::
     ::    We don't cache the n+slap/+slam types because they're only used once
@@ -188,7 +189,7 @@
       ::  reset cache and add in vane activation entry
       ::
       =^  rig  worm.vane
-        (~(slym wa *worm) vase.vane *vane-sample)
+        (~(slam wa *worm) vase.vane [vane-sample-type *vane-sample])
       ::  cache the access of the %scry arm
       ::
       +:(~(slap wa worm.vane) rig [%limb %scry])
@@ -196,9 +197,12 @@
   ::
   ++  wink                                              ::  deploy
     |=  {now/@da eny/@ ski/slyd}
+    ::  activate vane
+    ::
     =^  rig  worm.vane
       ~|  [%failed-vane-activation-for lal]
-      (~(slym wa worm.vane) vase.vane `vane-sample`[who +<])  ::  activate vane
+      (~(slam wa worm.vane) vase.vane !>(`vane-sample`[who +<]))
+    ::
     ~%  %wink  +>+>  ~
     |%
     ++  slid
@@ -219,7 +223,7 @@
     ++  slur                                            ::  call gate on
       |=  {gat/vase hil/mill}
       ^-  (unit (pair vase worm))
-      =^  sam  worm.vane
+      =^  sam=vase  worm.vane
         ~|  [%failed-slot-in lal]
         (~(slot wa worm.vane) 6 gat)
       =^  hig  worm.vane
@@ -422,7 +426,7 @@
   ~|  [%failed-vint lal]
   =+  gen=(rain pax txt)
   ~&  [%vane-parsed `@p`(mug gen)]
-  =+  pro=(vent who lal vil bud [(slym (slap bud gen) bud) *worm])
+  =+  pro=(vent who lal vil bud [(slam (slap bud gen) !>(bud)) *worm])
   ~&  [%vane-compiled `@p`(mug pro)]
   prime:pro
 ::
