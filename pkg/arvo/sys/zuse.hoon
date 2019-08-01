@@ -205,9 +205,6 @@
       ::  boot completed (XX legacy)
       ::
       [%init p=ship]
-      ::  peer discontinuity
-      ::
-      [%sunk p=ship q=rift]
       ::  kernel upgraded
       ::
       [%vega ~]
@@ -541,7 +538,6 @@
           {$dirk des/desk}                              ::  mark mount dirty
           {$ogre pot/$@(desk beam)}                     ::  delete mount point
           {$perm des/desk pax/path rit/rite}            ::  change permissions
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           {$warp wer/ship rif/riff}                     ::  internal file req
           {$werp who/ship wer/ship rif/riff}            ::  external file req
@@ -708,7 +704,6 @@
           $>(%init vane-task)                           ::  after gall ready
           {$lyra p/@t q/@t}                             ::  upgrade kernel
           {$noop ~}                                     ::  no operation
-          $>(%sunk vane-task)                           ::  report death
           {$talk p/tank}                                ::
           {$text p/tape}                                ::
           {$veer p/@ta q/path r/@t}                     ::  install vane
@@ -1095,9 +1090,6 @@
           ::  %kill: stop a build; send on same duct as original %build request
           ::
           [%kill ~]
-          ::  %sunk: receive a report that a foreign ship has lost continuity
-          ::
-          $>(%sunk vane-task)
           ::  %vega: report kernel upgrade
           ::
           $>(%vega vane-task)
@@ -1793,7 +1785,6 @@
           {$deal p/sock q/cush}                         ::  full transmission
           $>(%init vane-task)                           ::  set owner
           $>(%plea vane-task)                           ::  ames request
-          $>(%sunk vane-task)                           ::  report death
           $>(%vega vane-task)                           ::  report upgrade
           $>(%wegh vane-task)                           ::  report memory
       ==                                                ::
@@ -2208,7 +2199,51 @@
   ++  able  ^?
     =,  pki
     |%
+    +$  public-keys-result
+      $%  [%full points=(map ship point)]
+          [%diff who=ship =diff:point]
+      ==
+    ::                                                  ::
+    ++  gift                                            ::  out result <-$
+      $%  [%init p=ship]                                ::  report install unix
+          [%mass p=mass]                                ::  memory usage report
+          [%done error=(unit error:ames)]               ::  ames message (n)ack
+          [%boon payload=*]                             ::  ames response
+          [%turf turf=(list turf)]                      ::  domains
+          [%private-keys =life vein=(map life ring)]    ::  private keys
+          [%public-keys =public-keys-result]            ::  ethereum changes
+      ==                                                ::
+    ::  +seed: private boot parameters
+    ::
+    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
+    ::
+    +=  task                                            ::  in request ->$
+      $~  [%vega ~]                                     ::
+      $%  $:  %dawn                                     ::  boot from keys
+              =seed:able:kale                           ::    identity params
+              spon=[=ship point:azimuth-types]          ::    sponsor
+              czar=(map ship [=rift =life =pass])       ::    galaxy table
+              turf=(list turf)                          ::    domains
+              bloq=@ud                                  ::    block number
+              node=(unit purl:eyre)                     ::    gateway url
+              snap=(unit snapshot)                      ::    head start
+          ==                                            ::
+          [%fake =ship]                                 ::  fake boot
+          [%listen whos=(set ship) =source]             ::  set ethereum source
+          ::TODO  %next for generating/putting new private key
+          [%nuke whos=(set ship)]                       ::  cancel tracker from
+          [%private-keys ~]                             ::  sub to privates
+          [%public-keys ships=(set ship)]               ::  sub to publics
+          [%meet =ship =life =pass]                     ::  met after breach
+          [%snap snap=snapshot kick=?]                  ::  load snapshot
+          [%turf ~]                                     ::  view domains
+          $>(%vega vane-task)                           ::  report upgrade
+          $>(%wegh vane-task)                           ::  memory usage request
+          $>(%plea vane-task)                           ::  ames request
+          [%wind p=@ud]                                 ::  rewind before block
+      ==                                                ::
     ::  %kale has two general kinds of task: changes
+    ::
     ::  and change subscriptions.
     ::
     ::  change tasks are designed to match high-level
@@ -2291,13 +2326,18 @@
       ::
       ++  udiff-to-diff
         |=  [=a=udiff =a=point]
-        ^-  diff
+        ^-  (unit diff)
         ?-    +<.a-udiff
             %disavow  ~|(%udiff-to-diff-disavow !!)
-            %rift     [%rift rift.a-point rift.a-udiff]
-            %spon     [%spon sponsor.a-point sponsor.a-udiff]
+            %spon     `[%spon sponsor.a-point sponsor.a-udiff]
+            %rift
+          ?:  =(rift.a-udiff +(rift.a-point))
+            `[%rift rift.a-point rift.a-udiff]
+          ~&  [%ignoring-udiff a-udiff a-point]
+          ~
+        ::
             %keys
-          :+  %keys
+          :^  ~  %keys
             [life.a-point (~(gut by keys.a-point) life.a-point *[@ud pass])]
           [life crypto-suite pass]:a-udiff
         ==
@@ -2344,72 +2384,18 @@
           a-point(sponsor to.diff)
         ==
       --
-    ::
-    +$  public-keys-result
-      $%  [%full points=(map ship point)]
-          [%diff who=ship =diff:point]
-      ==
-    ::                                                  ::
-    ++  gift                                            ::  out result <-$
-      $%  [%init p=ship]                                ::  report install unix
-          [%mass p=mass]                                ::  memory usage report
-          [%done error=(unit error:ames)]               ::  ames message (n)ack
-          [%boon payload=*]                             ::  ames response
-          [%source whos=(set ship) src=source]          ::
-          [%turf turf=(list turf)]                      ::  domains
-          [%private-keys =life vein=(map life ring)]    ::  private keys
-          [%public-keys =public-keys-result]            ::  ethereum changes
-      ==                                                ::
-    ::  +seed: private boot parameters
-    ::
-    +$  seed  [who=ship lyf=life key=ring sig=(unit oath:pki)]
-    ::
-    +=  task                                            ::  in request ->$
-      $~  [%vega ~]                                     ::
-      $%  $:  %dawn                                     ::  boot from keys
-              =seed:able:kale                           ::    identity params
-              spon=ship                                 ::    sponsor
-              czar=(map ship [=life =pass])             ::    galaxy table
-              turf=(list turf)                          ::    domains
-              bloq=@ud                                  ::    block number
-              node=(unit purl:eyre)                     ::    gateway url
-              snap=(unit snapshot)                      ::    head start
-          ==                                            ::
-          [%fake =ship]                                 ::  fake boot
-          [%listen whos=(set ship) =source]             ::  set ethereum source
-          ::TODO  %next for generating/putting new private key
-          [%nuke whos=(set ship)]                       ::  cancel tracker from
-          [%private-keys ~]                             ::  sub to privates
-          [%public-keys ships=(set ship)]               ::  sub to publics
-          [%sources ~]
-          [%meet =ship =life =pass]                     ::  met after breach
-          [%snap snap=snapshot kick=?]                  ::  load snapshot
-          [%turf ~]                                     ::  view domains
-          [%new-event =ship =udiff:point]               ::  update from app
-          $>(%vega vane-task)                           ::  report upgrade
-          $>(%wegh vane-task)                           ::  memory usage request
-          $>(%plea vane-task)                           ::  ames request
-          [%wind p=@ud]                                 ::  rewind before block
-      ==                                                ::
     --                                                  ::
   ::                                                    ::
   ::::                                                  ::
     ::                                                  ::
-  +$  node-src                                          ::  ethereum node comms
-    $:  node=purl:eyre                                  ::  node url
-        filter-id=@ud                                   ::  current filter
-        poll-timer=@da                                  ::  next filter poll
-    ==                                                  ::
-  ::
-  +$  source  (each ship node-src)
+  +$  source  (each ship term)
   +$  source-id  @udsourceid
   +$  snapshot  ~
   ::
   ::  +state-eth-node: state of a connection to an ethereum node
   ::
   +$  state-eth-node                                    ::  node config + meta
-    $:  yen=(set duct)
-        top-source-id=source-id
+    $:  top-source-id=source-id
         sources=(map source-id source)
         sources-reverse=(map source source-id)
         default-source=source-id
@@ -8934,7 +8920,7 @@
         `(cat 3 'gal-' (scot %ud gal))
       :+  %eth-call
         =-  [from=~ to=tract gas=~ price=~ value=~ data=-]
-        (encode-call 'getKeys(uint32)' [%uint gal]~)
+        (encode-call 'points(uint32)' [%uint gal]~)
       [%number boq]
     ::  +point:give:dawn: Eth RPC for ship's contract state
     ::
@@ -8995,7 +8981,7 @@
     ::
     ++  czar
       |=  rep=octs
-      ^-  (unit (map ship [=life =pass]))
+      ^-  (unit (map ship [=rift =life =pass]))
       =/  jon=(unit json)  (de-json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
@@ -9003,27 +8989,31 @@
         ((ar (ot id+so result+so ~)) u.jon)
       ?~  res
         ~&([%czar-take-dawn %invalid-response rep] ~)
-      =/  dat=(unit (list [who=ship enc=octs aut=octs sut=@ud rev=@ud]))
+      =/  dat=(unit (list [who=@p point:azimuth-types]))
         =-  ?:(?=(%| -.out) ~ (some p.out))
         ^=  out  %-  mule  |.
         %+  turn  u.res
         |=  [id=@t result=@t]
-        ^-  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-        :-  `@p`(slav %ud (rsh 3 4 id))
+        ^-  [who=ship point:azimuth-types]
+        =/  who  `@p`(slav %ud (rsh 3 4 id))
+        :-  who
+        %+  point-from-eth
+          who
+        :_  *deed:eth-noun
         %+  decode-results
           result
-        ~[[%bytes-n 32] [%bytes-n 32] %uint %uint]
+        point:eth-type
       ?~  dat
         ~&([%bloq-take-dawn %invalid-galaxy-table] ~)
       :-  ~
       %+  roll  u.dat
-      |=  $:  [who=ship enc=octs aut=octs sut=@ud rev=@ud]
-              kyz=(map ship [=life =pass])
+      |=  $:  [who=ship =point:azimuth-types]
+              kyz=(map ship [=rift =life =pass])
           ==
       ^+  kyz
-      =/  pub=pass
-        (pass-from-eth enc aut sut)
-      (~(put by kyz) who [rev pub])
+      ?~  net.point
+        kyz
+      (~(put by kyz) who [continuity-number life pass]:u.net.point)
     ::  +point:take:dawn: parse ship's contract state
     ::
     ++  point

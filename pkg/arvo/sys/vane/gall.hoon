@@ -1249,13 +1249,11 @@
         %merg  `%c
         %mint  `%k
         %mont  `%c
-        %new-event  `%k
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
         %snap  `%j
-        %sources  `%k
         %wait  `%b
         %want  `%a
         %warp  `%c
@@ -1304,7 +1302,6 @@
     =<  mo-abet
     (mo-gawk:(mo-abed:mo hen) him dap mes)
   ::
-      $sunk  [~ ..^$]
       $vega  [~ ..^$]
   ::
       $wegh

@@ -118,7 +118,6 @@
       ==                                                ::
       $:  @tas                                          ::
   $%  $>(%init vane-task)                               ::  report install
-      $>(%sunk vane-task)                               ::  report death
   ==  ==  ==                                            ::
 ::                                                      ::
 +$  sign                                                ::  in result $<-
@@ -1482,12 +1481,13 @@
                %+  weld
                  ::  %-  flop
                  ^-  (list move)
-                 :~  [hen %slip %a %sunk who rit]
-                     [hen %slip %c %sunk who rit]
-                     [hen %slip %d %sunk who rit]
-                     [hen %slip %f %sunk who rit]
-                     [hen %slip %g %sunk who rit]
-                 ==
+                 ~
+                 ::  :~  [hen %slip %a %sunk who rit]
+                 ::      [hen %slip %c %sunk who rit]
+                 ::      [hen %slip %d %sunk who rit]
+                 ::      [hen %slip %f %sunk who rit]
+                 ::      [hen %slip %g %sunk who rit]
+                 ::  ==
                moz
         ==
       ::  pon: updated point

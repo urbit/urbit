@@ -5,7 +5,7 @@
       ==
     --
 :-  %say
-|=  [* [whos=(set ship) =src] ~]
+|=  [* [whos=(list ship) =src] ~]
 =/  =source:kale
   ?-  -.src
     %ship  [%& ship.src]

@@ -169,7 +169,7 @@
     =.  ..abet-pe
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
-        ~?  aqua-debug=|  [who=who %unknown-effect i.effects]
+        ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
         ..abet-pe
       (publish-effect u.sof)
     $(effects t.effects)
@@ -366,7 +366,8 @@
           %e  %eyre
           %f  %ford
           %g  %gall
-          %j  %ford
+          %j  %jael
+          %k  %kale
         ==
       =/  pax
         /(scot %p our.hid)/home/(scot %da now.hid)/sys/vane/[vane]
@@ -435,8 +436,9 @@
             [%fake who.ae]
           [%dawn u.keys.ae]
           -.userspace-ova.pil
-          [//http/0v1n.2m9vh %born ~]
-          [//http/0v1n.2m9vh %live 8.080 `8.445]
+          [//http-client/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %born ~]
+          [//http-server/0v1n.2m9vh %live 8.080 `8.445]
       ==
     =.  this  abet-pe:initted
     (pe who.ae)

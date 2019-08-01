@@ -113,6 +113,19 @@
         (raw-ship ~bud `(dawn:eth-node ~bud))
       (pure:m ~)
     ::
+      :+  %hi-az
+        ~[~bud ~dev]
+      =.  eth-node  (spawn:eth-node ~dev)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  %dev-done
+        ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  %bud-done
+        (send-hi ~bud ~dev)
+      (pure:m ~)
+    ::
       :+  %breach-hi
         ~[~bud ~dev]
       =.  eth-node  (spawn:eth-node ~dev)
@@ -120,16 +133,23 @@
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  'DEV DONE'
         (send-hi ~bud ~dev)
+      ~&  >  'HI DONE'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~dev ~bud)
+      ~&  >  'BREACH DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
+        ~&  >  'HI NOT RESPONDING DONE'
         ;<  ~  bind:m  (raw-ship ~dev `(dawn:eth-node ~dev))
+        ~&  >  'REBOOT DEV DONE'
         (wait-for-dojo ~bud "hi ~dev successful")
+      ~&  >  'DONE'
       (pure:m ~)
     ::
       :+  %breach-hi-cousin
@@ -158,52 +178,104 @@
       :+  %breach-sync
         ~[~bud ~marbud]
       =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~fipfes)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
-        ~&  %checking-file-touched
+        ~&  >  'TOUCH FILE DONE'
         (check-file-touched ~marbud %home file)
-      ~&  %checked-file-touched
+      ~&  >  'TOUCH FILE CHECK DONE'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ~&  >  'BREACH DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD RE DONE'
         ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ~&  >  'THIS MERGE STARTED DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-1 DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-2 DONE'
         (check-file-touched ~marbud %home file)
+      ~&  >  'DONE DONE'
       (pure:m ~)
     ::
       :+  %breach-multiple
         ~[~bud ~marbud]
       =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~fipfes)
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH DONE'
         (check-file-touched ~marbud %home file)
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~bud ~marbud)
+      ~&  >  'BREACH-1 DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         (raw-ship ~bud `(dawn:eth-node ~bud))
+      ~&  >  'BUD RE DONE'
       ;<  eth-node=_eth-node  bind:m
         (breach-and-hear:eth-node our.hid ~marbud ~bud)
+      ~&  >  'BREACH-2 DONE'
       ;<  [eth-node=_eth-node ~]  bind:m
         %+  (wrap-philter ,_eth-node ,~)
           router:eth-node
         ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD RE DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-1 DONE'
         ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-2 DONE'
         (check-file-touched ~marbud %home file)
+      ~&  >  'DONE DONE'
+      (pure:m ~)
+    ::
+      :+  %breach-sudden
+        ~[~bud ~marbud]
+      =.  eth-node  (spawn:eth-node ~marbud)
+      =.  eth-node  (spawn:eth-node ~fipfes)
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD DONE'
+        ;<  ~        bind:m  (raw-ship ~marbud `(dawn:eth-node ~marbud))
+        ~&  >  'MARBUD DONE'
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH FILE DONE'
+        (check-file-touched ~marbud %home file)
+      ~&  >  'TOUCH FILE CHECK DONE'
+      =.  eth-node  (breach:eth-node ~bud)
+      ~&  >  'BREACH EXECUTED'
+      ;<  [eth-node=_eth-node ~]  bind:m
+        %+  (wrap-philter ,_eth-node ,~)
+          router:eth-node
+        ;<  ~        bind:m  (raw-ship ~bud `(dawn:eth-node ~bud))
+        ~&  >  'BUD RE DONE'
+        ;<  ~        bind:m  (just-events (dojo ~bud "|merge %base ~marbud %kids, =gem %this"))
+        ~&  >  'THIS MERGE STARTED DONE'
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-1 DONE'
+        ;<  file=@t  bind:m  (touch-file ~bud %base)
+        ~&  >  'TOUCH-2 DONE'
+        (check-file-touched ~marbud %home file)
+      ~&  >  'DONE DONE'
       (pure:m ~)
   ==
 ::

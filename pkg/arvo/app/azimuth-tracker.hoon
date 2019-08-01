@@ -2,27 +2,25 @@
 =,  able:kale
 =>  |%
     +$  pending-udiffs  (map number:block udiffs:point)
-    +$  config
-      $:  url=@ta
-          from-number=number:block
-      ==
     +$  app-state
-      $:  url=@ta
+      $:  %2
+          url=@ta
           =number:block
           =pending-udiffs
           blocks=(list block)
+          whos=(set ship)
       ==
     +$  peek-data  ~
     +$  in-poke-data
       $:  %azimuth-tracker-poke
-          $%  [%init ~]
-              [%listen whos=(set ship) =source:kale]
-              [%watch =config]
+          $%  [%listen whos=(list ship) =source:kale]
+              [%watch url=@ta]
           ==
       ==
     +$  out-poke-data  ~
     +$  in-peer-data   ~
-    +$  out-peer-data  ~
+    +$  out-peer-data
+      [%azimuth-udiff =ship =udiff:point]
     ++  tapp
       %:  ^tapp
         app-state
@@ -40,13 +38,16 @@
 ::
 =>  |%
     ++  topics
-      =>  azimuth-events:azimuth
-      :_  ~
-      :~  broke-continuity
-          changed-keys
-          lost-sponsor
-          escape-accepted
-      ==
+      |=  ships=(set ship)
+      :-  =>  azimuth-events:azimuth
+          :~  broke-continuity
+              changed-keys
+              lost-sponsor
+              escape-accepted
+          ==
+      ?:  =(~ ships)
+        ~
+      [(turn ~(tap in ships) ,@) ~]
     ::
     ++  request-rpc
       |=  [url=@ta id=(unit @t) req=request:rpc:ethereum]
@@ -147,6 +148,7 @@
       =/  m  (async:stdio ,block)
       ^-  form:m
       ;<  =json  bind:m  (request-rpc url `'block number' %eth-block-number ~)
+      ~&  [%block-number json (parse-eth-block-number:rpc:ethereum json)]
       (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
     ::
     ++  get-block-by-number
@@ -177,7 +179,7 @@
       --
     ::
     ++  get-logs-by-hash
-      |=  [url=@ta =hash:block]
+      |=  [url=@ta whos=(set ship) =hash:block]
       =/  m  (async:stdio udiffs:point)
       ^-  form:m
       ;<  =json  bind:m
@@ -186,7 +188,7 @@
             %eth-get-logs-by-hash
             hash
             ~[azimuth:contracts:azimuth]
-            topics
+            (topics whos)
         ==
       =/  event-logs=(list event-log:rpc:ethereum)
         (parse-event-logs:rpc:ethereum json)
@@ -194,7 +196,7 @@
       (pure:m udiffs)
     ::
     ++  get-logs-by-range
-      |=  [url=@ta =from=number:block =to=number:block]
+      |=  [url=@ta whos=(set ship) =from=number:block =to=number:block]
       =/  m  (async:stdio udiffs:point)
       ^-  form:m
       ;<  =json  bind:m
@@ -204,7 +206,7 @@
             `number+from-number
             `number+to-number
             ~[azimuth:contracts:azimuth]
-            topics
+            (topics whos)
         ==
       =/  event-logs=(list event-log:rpc:ethereum)
         (parse-event-logs:rpc:ethereum json)
@@ -254,7 +256,9 @@
       ?~  udiffs
         (pure:m ~)
       ~&  [%sending-event i.udiffs]
-      ;<  ~  bind:m  (send-effect:stdio %new-event /ne i.udiffs)
+      =/  =path  /(scot %p ship.i.udiffs)
+      ;<  ~  bind:m  (give-result:stdio / %azimuth-udiff i.udiffs)
+      ;<  ~  bind:m  (give-result:stdio path %azimuth-udiff i.udiffs)
       loop(udiffs t.udiffs)
     --
 ::
@@ -262,44 +266,22 @@
 ::
 =>  |%
     ::
-    ::  Subscribe to %sources from kale
-    ::
-    ++  init
-      |=  state=app-state
-      =/  m  (async:stdio ,app-state)
-      ^-  form:m
-      ;<  ~  bind:m  (send-effect:stdio %sources /se ~)
-      (pure:m state)
-    ::
     ::  Send %listen to kale
     ::
     ++  listen
-      |=  [state=app-state whos=(set ship) =source:kale]
+      |=  [state=app-state whos=(list ship) =source:kale]
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ;<  ~  bind:m  (send-effect:stdio %listen /lo whos source)
+      ;<  ~  bind:m  (send-effect:stdio %listen /lo (silt whos) source)
       (pure:m state)
-    ::
-    ::  Take %source from kale
-    ::
-    ++  take-source
-      |=  [state=app-state whos=(set ship) =source:kale]
-      =/  m  (async:stdio ,app-state)
-      ^-  form:m
-      ?:  ?=(%& -.source)
-        (pure:m state)
-      =/  a-purl=purl:eyre  node.p.source
-      =.  url.state  (crip (en-purl:html a-purl))
-      (watch state url.state launch:contracts:azimuth)
     ::
     ::  Start watching a node
     ::
-    ++  watch
-      |=  [state=app-state =config]
+    ++  start
+      |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      =:  url.state             url.config
-          number.state          from-number.config
+      =:  number.state          0
           pending-udiffs.state  *pending-udiffs
           blocks.state          *(list block)
         ==
@@ -311,10 +293,8 @@
       |=  state=app-state
       =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ~&  [%get-updates number.state]
-      ;<  =latest=block      bind:m  (get-latest-block url.state)
-      ;<  =new=number:block  bind:m  (zoom state number.id.latest-block)
-      =.  number.state  new-number
+      ;<  =latest=block    bind:m  (get-latest-block url.state)
+      ;<  state=app-state  bind:m  (zoom state number.id.latest-block)
       |-  ^-  form:m
       =*  walk-loop  $
       ~&  [%walk-loop number.state]
@@ -324,7 +304,8 @@
         (pure:m state)
       ;<  =block  bind:m  (get-block-by-number url.state number.state)
       ;<  [=new=pending-udiffs new-blocks=(lest ^block)]  bind:m
-        (take-block url.state pending-udiffs.state block blocks.state)
+        %-  take-block
+        [url.state whos.state pending-udiffs.state block blocks.state]
       =:  pending-udiffs.state  new-pending-udiffs
           blocks.state          new-blocks
           number.state          +(number.id.i.new-blocks)
@@ -334,7 +315,7 @@
     ::  Process a block, detecting and handling reorgs
     ::
     ++  take-block
-      |=  [url=@ta =a=pending-udiffs =block blocks=(list block)]
+      |=  [url=@ta whos=(set ship) =a=pending-udiffs =block blocks=(list block)]
       =/  m  (async:stdio ,[pending-udiffs (lest ^block)])
       ^-  form:m
       ~&  [%taking id.block]
@@ -343,7 +324,7 @@
         (rewind url a-pending-udiffs block blocks)
       ;<  =b=pending-udiffs  bind:m
         (release-old-events a-pending-udiffs number.id.block)
-      ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url hash.id.block)
+      ;<  =new=udiffs:point  bind:m  (get-logs-by-hash url whos hash.id.block)
       ~?  !=(~ new-udiffs)  [%adding-diffs new-udiffs]
       =.  b-pending-udiffs  (~(put by b-pending-udiffs) number.id.block new-udiffs)
       (pure:m b-pending-udiffs block blocks)
@@ -354,7 +335,7 @@
       |=  [=pending-udiffs =number:block]
       =/  m  (async:stdio ,^pending-udiffs)
       ^-  form:m
-      =/  rel-number  (sub number 30)
+      =/  rel-number  (sub number 1)
       =/  =udiffs:point  (~(get ja pending-udiffs) rel-number)
       ;<  ~  bind:m  (jael-update udiffs)
       (pure:m (~(del by pending-udiffs) rel-number))
@@ -394,15 +375,18 @@
     ::
     ++  zoom
       |=  [state=app-state =latest=number:block]
-      =/  m  (async:stdio ,number:block)
+      =/  m  (async:stdio ,app-state)
       ^-  form:m
-      ?:  (lth latest-number (add number.state 500))
-        (pure:m latest-number)
-      =/  to-number=number:block  (sub latest-number 500)
+      =/  zoom-margin=number:block  3
+      ?:  (lth latest-number (add number.state zoom-margin))
+        (pure:m state)
+      =/  to-number=number:block  (sub latest-number zoom-margin)
       ;<  =udiffs:point  bind:m
-        (get-logs-by-range url.state number.state to-number)
+        (get-logs-by-range url.state whos.state number.state to-number)
       ;<  ~  bind:m  (jael-update udiffs)
-      (pure:m to-number)
+      =.  number.state  +(to-number)
+      =.  blocks.state  ~
+      (pure:m state)
     --
 ::
 ::  Main
@@ -414,10 +398,10 @@
   |=  =in-poke-data
   =/  m  tapp-async
   ^-  form:m
+  ~&  [%azimuth-tracker our.bowl number.state in-poke-data]
   ?-  +<.in-poke-data
-    %init   (init state)
-    %listen   (listen state +>.in-poke-data)
-    %watch  (watch state +>.in-poke-data)
+    %listen  (listen state +>.in-poke-data)
+    %watch   (pure:m state(url url.in-poke-data))
   ==
 ::
 ++  handle-take
@@ -425,9 +409,17 @@
   =/  m  tapp-async
   ^-  form:m
   ?+  -.sign  ~|([%strange-sign -.sign] !!)
-    %source  (take-source state +.sign)
     %wake    (get-updates state)
   ==
 ::
-++  handle-peer  ~(handle-peer default-tapp bowl state)
+++  handle-peer
+  |=  =path
+  =/  m  tapp-async
+  ^-  form:m
+  =/  who=(unit ship)  ?~(path ~ `(slav %p i.path))
+  =.  whos.state
+    ?~  who
+      ~
+    (~(put in whos.state) u.who)
+  (start state)
 --

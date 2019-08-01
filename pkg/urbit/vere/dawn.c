@@ -300,7 +300,7 @@ _dawn_turf(c3_c* dns_c)
 u3_noun
 u3_dawn_vent(u3_noun seed)
 {
-  u3_noun url, bok, pon, zar, tuf, sap;
+  u3_noun url, bok, pos, pon, zar, tuf, sap;
 
   u3_noun ship = u3h(seed);
   u3_noun rank = u3do("clan:title", u3k(ship));
@@ -428,7 +428,7 @@ u3_dawn_vent(u3_noun seed)
     //  produced by +veri:dawn to avoid coupling to +point structure
     //  XX reconsider
     //
-    pon = u3k(u3t(sas));
+    pos = u3k(u3t(sas));
 
     u3z(pot); u3z(liv); u3z(sas);
   }
@@ -475,6 +475,27 @@ u3_dawn_vent(u3_noun seed)
                           "boot: failed to retrieve network domains");
     u3z(oct); u3z(fut);
   }
+
+  if ( c3y == u3_Host.ops_u.etn ) {
+    u3l_log("boot: extracting sponsor keys from snapshot\r\n");
+
+    pon = _dawn_need_unit(u3do("point:snap:dawn", u3k(u3t(sap))),
+                          "boot: failed to extract "
+                          "sponsor keys from snapshot");
+  }
+  else {
+    u3l_log("boot: retrieving sponsor keys\r\n");
+
+    u3_noun oct = u3dc("point:give:dawn", u3k(bok), u3k(pos));
+    u3_noun luh = _dawn_eth_rpc(url_c, u3k(oct));
+
+    pon = _dawn_need_unit(u3dc("point:take:dawn", u3k(pos), u3k(luh)),
+                          "boot: failed to retrieve sponsor keys");
+    pon = u3nc(pos, pon);
+    u3m_p("pon",pon);
+    u3z(oct); u3z(luh);
+  }
+
 
   u3z(rank);
 

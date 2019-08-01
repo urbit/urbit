@@ -454,7 +454,7 @@
   ::
   ++  dint                                              ::  input routing
     |=  hap/path  ^-  @tas
-    ?+  hap  !!
+    ?+  hap  ~|([%bad-dint hap] !!)
       {@ $ames *}  %a
       {@ $boat *}  %c
       {@ $newt *}  %a
