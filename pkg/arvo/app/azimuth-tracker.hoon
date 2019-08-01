@@ -148,7 +148,6 @@
       =/  m  (async:stdio ,block)
       ^-  form:m
       ;<  =json  bind:m  (request-rpc url `'block number' %eth-block-number ~)
-      ~&  [%block-number json (parse-eth-block-number:rpc:ethereum json)]
       (get-block-by-number url (parse-eth-block-number:rpc:ethereum json))
     ::
     ++  get-block-by-number
@@ -297,7 +296,6 @@
       ;<  state=app-state  bind:m  (zoom state number.id.latest-block)
       |-  ^-  form:m
       =*  walk-loop  $
-      ~&  [%walk-loop number.state]
       ?:  (gth number.state number.id.latest-block)
         ;<  now=@da  bind:m  get-time:stdio
         ;<  ~        bind:m  (wait-effect:stdio (add now ~s10))
@@ -318,7 +316,6 @@
       |=  [url=@ta whos=(set ship) =a=pending-udiffs =block blocks=(list block)]
       =/  m  (async:stdio ,[pending-udiffs (lest ^block)])
       ^-  form:m
-      ~&  [%taking id.block]
       ?:  &(?=(^ blocks) !=(parent-hash.block hash.id.i.blocks))
         ~&  %rewinding
         (rewind url a-pending-udiffs block blocks)
