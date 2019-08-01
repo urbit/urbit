@@ -69,6 +69,7 @@ static void _pier_boot_complete(u3_pier* pir_u);
 static void _pier_boot_ready(u3_pier* pir_u);
 static void _pier_boot_set_ship(u3_pier* pir_u, u3_noun who, u3_noun fak);
 static void _pier_exit_done(u3_pier* pir_u);
+static void _pier_inject(u3_pier* pir_u, c3_c* pax_c);
 static void _pier_loop_resume(u3_pier* pir_u);
 
 /* _pier_db_bail(): bail from disk i/o.
@@ -1531,6 +1532,12 @@ _pier_boot_complete(u3_pier* pir_u)
       u3_term_ef_verb();
     }
   }
+
+  {
+    if ( 0 != u3_Host.ops_u.jin_c ) {
+      _pier_inject(pir_u, u3_Host.ops_u.jin_c);
+    }
+  }
 }
 
 /* _pier_boot_ready():
@@ -1770,6 +1777,17 @@ _pier_create(c3_w wag_w, c3_c* pax_c)
   u3K.tab_u[u3K.len_w++] = pir_u;
 
   return pir_u;
+}
+
+/* _pier_inject(): inject raw event at filename
+*/
+static void
+_pier_inject(u3_pier* pir_u, c3_c* pax_c)
+{
+  u3_noun ovo = u3ke_cue(u3m_file(pax_c));
+  u3m_p("injecting event", u3h(ovo));
+  u3_pier_work(pir_u, u3k(u3h(ovo)), u3k(u3t(ovo)));
+  u3z(ovo);
 }
 
 /* u3_pier_interrupt(): interrupt running process.

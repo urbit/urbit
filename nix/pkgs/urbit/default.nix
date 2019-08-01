@@ -1,6 +1,7 @@
 {
   pkgs,
   debug,
+  ivory ? ../../../bin/ivory.pill,
   argon2, ed25519, ent, ge-additions, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv
 }:
 
@@ -30,6 +31,7 @@ pkgs.stdenv.mkDerivation {
   hardeningDisable = if debug then [ "all" ] else [];
 
   CFLAGS           = if debug then "-O3 -g -Werror" else "-O3 -Werror";
+  IVORY            = ivory;
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;

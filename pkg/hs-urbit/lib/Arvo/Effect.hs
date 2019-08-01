@@ -120,11 +120,11 @@ deriveNoun ''BehnEf
     %url -- TODO
 -}
 data Blit
-    = Bel
-    | Clr
+    = Bel ()
+    | Clr ()
     | Hop Word64
     | Lin [Char]
-    | Mor
+    | Mor ()
     | Sag Path Noun
     | Sav Path Atom
     | Url Cord
@@ -140,7 +140,7 @@ data Blit
 -}
 data TermEf
     = TermEfBbye Path ()
-    | TermEfBlit Path [Blit]
+    | TermEfBlit (Decimal, ()) [Blit]
     | TermEfInit (Decimal, ()) ()
     | TermEfLogo Path ()
     | TermEfMass Path Noun -- Irrelevant

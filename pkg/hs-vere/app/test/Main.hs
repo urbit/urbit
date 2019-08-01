@@ -23,9 +23,6 @@ import qualified Vere.Log  as Log
 import qualified Vere.Pier as Pier
 import qualified Vere.Serf as Serf
 
-main = putStrLn ""
-
-{-
 --------------------------------------------------------------------------------
 
 zod :: Ship
@@ -60,6 +57,14 @@ tryBootFromPill pillPath shipPath ship = do
         threadDelay 500000
         shutdown serf 0 >>= print
         putStrLn "[tryBootFromPill] Booted!"
+
+runAcquire act = with act pure
+
+tryPlayShip :: FilePath -> IO ()
+tryPlayShip shipPath = do
+    runAcquire $ do
+        sls <- Pier.resumed shipPath serfFlags
+        Pier.pier Nothing sls
 
 tryResume :: FilePath -> IO ()
 tryResume shipPath = do
@@ -151,19 +156,20 @@ collectAllFx top = do
 main :: IO ()
 main = runInBoundThread $ do
     let pillPath = "/home/benjamin/r/urbit/bin/solid.pill"
-        shipPath = "/home/benjamin/r/urbit/zod/"
+        shipPath = "/home/benjamin/r/urbit/s/zod/"
         ship     = zod
 
-    -- collectAllFx "/home/benjamin/r/urbit/testnet-zod/"
+    -- collectAllFx "/home/benjamin/r/urbit/s/testnet-zod/"
 
-    tryParseEvents "/home/benjamin/r/urbit/zod/.urb/log" 1
-    tryParseEvents "/home/benjamin/r/urbit/testnet-zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/s/zod/.urb/log" 1
+    -- tryParseEvents "/home/benjamin/r/urbit/s/testnet-zod/.urb/log" 1
 
-    tryParseFX "/home/benjamin/zod-fx"         1 100000000
-    tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
+    -- tryParseFX "/home/benjamin/zod-fx"         1 100000000
+    -- tryParseFX "/home/benjamin/testnet-zod-fx" 1 100000000
 
     -- tryBootFromPill pillPath shipPath ship
     -- tryResume shipPath
+    tryPlayShip shipPath
     -- tryFullReplay shipPath
 
     pure ()
@@ -213,6 +219,8 @@ tryParseFXStream = loop 0 (mempty :: Set (Text, Noun))
        -- A _   -> maybe "ERR" unCord (fromNoun n)
        -- C h _ -> maybe "ERR" unCord (fromNoun h)
 
+
+{-
 tryCopyLog :: IO ()
 tryCopyLog = do
   let logPath      = "/Users/erg/src/urbit/zod/.urb/falselog/"

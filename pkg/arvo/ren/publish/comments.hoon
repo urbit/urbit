@@ -8,7 +8,7 @@
   %+  sort  ~(val by comments)
   |=  [a=comment:publish b=comment:publish]
   ^-  ?
-  (lte date-created.info.a date-created.info.b)
+  (gte date-created.info.a date-created.info.b)
 ::
   /_  /publish-comment/
 result

@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wwarn #-}
 
-module Vere.Pier (booted, resumed, runPersist, runCompute) where
+module Vere.Pier (booted, resumed, pier, runPersist, runCompute) where
 
 import UrbitPrelude
 
@@ -108,7 +108,7 @@ resumed top flags = do
 
 pier :: Maybe Port
      -> (Serf, EventLog, SerfState)
-     -> Acquire Int
+     -> Acquire ()
 pier mPort (serf, log, ss) = do
     computeQ <- newTQueueIO :: Acquire (TQueue Ev)
     persistQ <- newTQueueIO :: Acquire (TQueue (Job, FX))
@@ -122,12 +122,26 @@ pier mPort (serf, log, ss) = do
 
     liftIO $ atomically $ for_ bootEvents (writeTQueue computeQ)
 
-    dExe  <- startDrivers >>= router (readTQueue executeQ)
+    tExe  <- startDrivers >>= router (readTQueue executeQ)
     tDisk <- runPersist log persistQ (writeTQueue executeQ)
     tCpu  <- runCompute serf ss (readTQueue computeQ) (writeTQueue persistQ)
 
-    undefined [dExe, tDisk, tCpu]
+    -- Wait for something to die.
 
+    let ded = asum [ death "effect thread" tExe
+                   , death "persist thread" tDisk
+                   , death "compute thread" tCpu
+                   ]
+
+    atomically ded >>= \case
+      Left (txt, exn) -> print ("Somthing died", txt, exn)
+      Right tag       -> print ("something simply exited", tag)
+
+death :: Text -> Async () -> STM (Either (Text, SomeException) Text)
+death tag tid = do
+  waitCatchSTM tid <&> \case
+    Left exn -> Left (tag, exn)
+    Right () -> Right tag
 
 -- Start All Drivers -----------------------------------------------------------
 
@@ -155,11 +169,11 @@ drivers inst who mPort plan =
     runDrivers          = do
         dNewt       <- runAmes
         dBehn       <- runBehn
-        dAmes       <- pure undefined
-        dHttpClient <- pure undefined
-        dHttpServer <- pure undefined
-        dSync       <- pure undefined
-        dTerm       <- pure undefined
+        dAmes       <- pure $ const $ pure ()
+        dHttpClient <- pure $ const $ pure ()
+        dHttpServer <- pure $ const $ pure ()
+        dSync       <- pure $ const $ pure ()
+        dTerm       <- pure $ const $ pure ()
         pure (Drivers{..})
 
 
@@ -170,18 +184,21 @@ router waitFx Drivers{..} = mkAcquire start cancel
   where
     start = async $ forever $ do
         fx <- atomically waitFx
-        for_ fx $ \case
-            EfVega _ _               -> error "TODO"
-            EfExit _ _               -> error "TODO"
-            EfVane (VEAmes ef)       -> dAmes ef
-            EfVane (VEBehn ef)       -> dBehn ef
-            EfVane (VEBoat ef)       -> dSync ef
-            EfVane (VEClay ef)       -> dSync ef
-            EfVane (VEHttpClient ef) -> dHttpClient ef
-            EfVane (VEHttpServer ef) -> dHttpServer ef
-            EfVane (VENewt ef)       -> dNewt ef
-            EfVane (VESync ef)       -> dSync ef
-            EfVane (VETerm ef)       -> dTerm ef
+        for_ fx $ \ef -> do
+            putStrLn ("[EFFECT]\n" <> pack (ppShow ef) <> "\n\n")
+            case ef of
+              GoodParse (EfVega _ _)               -> error "TODO"
+              GoodParse (EfExit _ _)               -> error "TODO"
+              GoodParse (EfVane (VEAmes ef))       -> dAmes ef
+              GoodParse (EfVane (VEBehn ef))       -> dBehn ef
+              GoodParse (EfVane (VEBoat ef))       -> dSync ef
+              GoodParse (EfVane (VEClay ef))       -> dSync ef
+              GoodParse (EfVane (VEHttpClient ef)) -> dHttpClient ef
+              GoodParse (EfVane (VEHttpServer ef)) -> dHttpServer ef
+              GoodParse (EfVane (VENewt ef))       -> dNewt ef
+              GoodParse (EfVane (VESync ef))       -> dSync ef
+              GoodParse (EfVane (VETerm ef))       -> dTerm ef
+              FailParse n                          -> pPrint n
 
 
 -- Compute Thread --------------------------------------------------------------
@@ -194,6 +211,7 @@ runCompute serf ss getEvent putResult =
     go :: SerfState -> IO ()
     go ss = do
         ev  <- atomically getEvent
+        putStrLn ("[EVENT]\n" <> pack (ppShow ev) <> "\n\n")
         wen <- Time.now
         eId <- pure (ssNextEv ss)
         mug <- pure (ssLastMug ss)

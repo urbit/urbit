@@ -38,7 +38,6 @@
 static void
 _newt_consume(u3_moat* mot_u)
 {
-  fprintf(stderr, "\n_newt_consume\n");
   /*  process stray bytes, trying to create a new message
   **  or add a block to an existing one.
   */
@@ -190,8 +189,6 @@ _newt_consume(u3_moat* mot_u)
       */
       {
         u3_noun mat = u3i_bytes((c3_w) len_d, buf_y);
-
-        fprintf(stderr, "\n_newt_consume: poking\n");
 
         mot_u->pok_f(mot_u->vod_p, mat);
       }

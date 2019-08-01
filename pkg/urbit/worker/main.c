@@ -363,7 +363,6 @@ _worker_send_complete(u3_noun vir)
 static void
 _worker_send_stdr(c3_c* str_c)
 {
-  fprintf(stderr, "_worker_send_stdr: %s\n", str_c);
   _worker_send(u3nt(c3__stdr, u3i_chubs(1, &u3V.sen_d), u3i_string(str_c)));
 }
 
@@ -682,7 +681,6 @@ _worker_poke_work(c3_d    evt_d,              //  event number
              u3m_pretty_path(wir), u3m_pretty(cad));
 
     u3t_event_trace(lab_c, 'B');
-    _worker_send_stdr("WORK SO GOOD. thank for work");
     _worker_work_live(evt_d, job);
     u3t_event_trace(lab_c, 'E');
   }
@@ -757,8 +755,6 @@ _worker_poke(void* vod_p, u3_noun mat)
         c3_d evt_d;
         c3_l mug_l;
 
-        _worker_send_stdr("GOT WORK\n");
-
         if ( (c3n == u3r_trel(jar, 0, &evt, &jammed_entry)) ||
              (c3n == u3ud(evt)) ||
              (1 != u3r_met(6, evt)) )
@@ -779,8 +775,6 @@ _worker_poke(void* vod_p, u3_noun mat)
         u3k(job);
         u3z(entry);
         u3z(jar);
-
-        _worker_send_stdr("WORK GOOD\n");
 
         return _worker_poke_work(evt_d, mug_l, job);
       }

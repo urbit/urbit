@@ -11,3 +11,4 @@ cross/
 release/
 .stack-work
 \#*\#
+s/*

@@ -1334,14 +1334,17 @@
         %keep  `%f
         %kill  `%f
         %look  `%j
+        %listen  `%k
         %merg  `%c
         %mint  `%j
         %mont  `%c
+        %new-event  `%k
         %nuke  `%a
         %ogre  `%c
         %perm  `%c
         %rest  `%b
         %snap  `%j
+        %sources  `%k
         %wait  `%b
         %want  `%a
         %warp  `%c

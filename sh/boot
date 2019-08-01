@@ -3,8 +3,8 @@
 set -e
 
 case $# in
-  0) ship=zod; target=./zod;;
-  1) ship=$1; target=./$1;;
+  0) ship=zod; target=./s/zod;;
+  1) ship=$1; target=./s/$1;;
   2) ship=$1; target=$2;;
   *) echo "Usage: $0 [ship] [target-dir]" >&2
      exit 1;;

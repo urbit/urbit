@@ -61,9 +61,9 @@ compileFlags = foldl' (\acc flag -> setBit acc (fromEnum flag)) 0
 data Config = Config FilePath [Flag]
   deriving (Show)
 
-debug msg = putStrLn ("[DEBUG]\t" <> msg)
+debug _msg = pure () -- putStrLn ("[DEBUG]\t" <> msg)
 
-serf msg = putStrLn ("[SERF]\t" <> msg)
+serf _msg = pure () -- putStrLn ("[SERF]\t" <> msg)
 
 
 -- Types -----------------------------------------------------------------------
