@@ -802,7 +802,7 @@
     ::
     :_  state
     :_  ~
-    :^  duct  %pass  /run-app/[app.act]
+    :^  duct  %pass  /run-app-request/[app.act]
     ^-  note
     :^  %g  %deal  [our our]
     ::
@@ -847,7 +847,7 @@
         %app
       :_  state
       :_  ~
-      :^  duct  %pass  /run-app/[app.action]
+      :^  duct  %pass  /run-app-request/[app.action]
       ^-  note
       :^  %g  %deal  [our our]
       ::  todo: i don't entirely understand gall; there's a way to make a gall
@@ -892,12 +892,9 @@
         %app
       :_  state
       :_  ~
-      :^  duct  %pass  /run-app/[app.action.u.connection]
+      :^  duct  %pass  /run-app-cancel/[app.action.u.connection]
       ^-  note
       :^  %g  %deal  [our our]
-      ::  todo: i don't entirely understand gall; there's a way to make a gall
-      ::  use a %handle arm instead of a sub-%poke with the
-      ::  %handle-http-request type.
       ::
       ^-  cush:gall
       :*  app.action.u.connection
@@ -2029,13 +2026,14 @@
       ?+     i.wire
            ~|([%bad-take-wire wire] !!)
       ::
-         %run-app    run-app
-         %run-build  run-build
-         %channel    channel
-         %acme       acme-ack
+         %run-app-request  run-app-request
+         %run-app-cancel   run-app-cancel
+         %run-build        run-build
+         %channel          channel
+         %acme             acme-ack
       ==
   ::
-  ++  run-app
+  ++  run-app-request
     ::
     ?>  ?=([%g %unto *] sign)
     ::
@@ -2059,6 +2057,18 @@
     =/  handle-response  handle-response:(per-server-event event-args)
     =^  moves  server-state.ax  (handle-response http-event.p.sign)
     [moves http-server-gate]
+  ::
+  ++  run-app-cancel
+    ::
+    ?>  ?=([%g %unto *] sign)
+    ::
+    ::  we explicitly don't care about the return value of a
+    ::  %handle-http-cancel. It is purely a notification and we don't care if
+    ::  it succeeds or not. The user might not have implemented
+    ::  +poke-handle-http-cancel or it might have crashed, but since it's a
+    ::  notification, we don't don't care about its return value.
+    ::
+    [~ http-server-gate]
   ::
   ++  run-build
     ::
