@@ -66,9 +66,9 @@
       ==                                                ::
     ++  work                                            ::  interface action
       $%  ::  circle management                         ::
-          {$join (map circle range)}                    ::  subscribe to
+          {$join (map circle range) (unit char)}        ::  subscribe to
           {$leave audience}                             ::  unsubscribe from
-          {$create security name cord}                  ::  create circle
+          {$create security name cord (unit char)}      ::  create circle
           {$delete name (unit cord)}                    ::  delete circle
           {$depict name cord}                           ::  change description
           {$filter name ? ?}                            ::  change message rules
@@ -838,14 +838,14 @@
         ::
           ;~((glue ace) (perk %read ~) cire dem:ag)
         ::
-          ;~((glue ace) (perk %join ~) sorz)
+          ;~((glue ace) (perk %join ~) ;~(plug sorz (punt ;~(pfix ace glyph))))
         ::
           ;~((glue ace) (perk %leave ~) cirs)
         ::
           ;~  (glue ace)  (perk %create ~)
             pore
             cire
-            qut
+            ;~(plug qut (punt ;~(pfix ace glyph)))
           ==
         ::
           ;~  plug  (perk %delete ~)
@@ -1186,9 +1186,11 @@
         ::  change local mailbox config to include
         ::  subscriptions to {pas}.
         ::
-        |=  pos/(map circle range)
+        |=  {pos/(map circle range) gyf/(unit char)}
         ^+  ..sh-work
         =+  pas=~(key by pos)
+        =?  ..sh-work  ?=(^ gyf)
+          (bind u.gyf `pas)
         =.  ..sh-work
           sh-prod(active.she pas)
         ::  default to a day of backlog
@@ -1226,11 +1228,11 @@
         ::
         ::  creates circle {nom} with specified config.
         ::
-        |=  {sec/security nom/name txt/cord}
+        |=  {sec/security nom/name txt/cord gyf/(unit char)}
         ^+  ..sh-work
         =.  ..sh-work
           (sh-act %create nom txt sec)
-        (join [[[self nom] ~] ~ ~])
+        (join [[[self nom] ~] ~ ~] gyf)
       ::
       ++  delete
         ::    %delete
