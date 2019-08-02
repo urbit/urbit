@@ -4,6 +4,7 @@ p, h1, h2, h3, h4, h5, h6, a, input, textarea, button {
   -webkit-margin-before: unset;
   -webkit-margin-after: unset;
   font-family: Inter, sans-serif;
+  padding: 0;
 }
 
 textarea, select, input, button {
@@ -117,4 +118,12 @@ h2 {
 
 .lh-16 {
   line-height: 16px;
+}
+
+.mono {
+  font-family: "Source Code Pro", monospace;
+}
+
+.label-small-mono.list-ship {
+  line-height: 29px;
 }
