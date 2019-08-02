@@ -10604,7 +10604,8 @@
           ?.  tel  |
           ::  ~_  (dunk %need)
           ::  ~_  (dunk(sut ref) %have)
-          ~>(%mean.[%leaf "nest-fail"] !!)
+          ~_  [%leaf "nest-fail"]
+          !!
       ?:  =(sut ref)  &
       ?-  sut
         $void      sint
