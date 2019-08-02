@@ -4,7 +4,8 @@ module Arvo.Common
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Lane(..), Port(..), Turf(..)
-  , HttpServerConf(..), HttpEvent(..), PEM(..), Key, Cert, Method, Header
+  , HttpServerConf(..), PEM(..), Key, Cert
+  , HttpEvent(..), Method, Header(..)
   , ReOrg(..), reorgThroughNoun
   , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..)
   ) where
@@ -32,7 +33,7 @@ newtype KingId = KingId { unKingId :: Word32}
 
 -- Http Common -----------------------------------------------------------------
 
-data Header = Header Cord Bytes
+data Header = Header Bytes Bytes
   deriving (Eq, Ord, Show)
 
 data ResponseHeader = ResponseHeader
@@ -60,13 +61,13 @@ type Method = H.StdMethod
 -- our types instead.
 
 instance ToNoun H.StdMethod where
-  toNoun = toNoun . Cord . decodeUtf8 . H.renderStdMethod
+  toNoun = toNoun . MkBytes . H.renderStdMethod
 
 instance FromNoun H.StdMethod where
   parseNoun n = named "StdMethod" $ do
-    Cord m <- parseNoun n
-    case H.parseMethod (encodeUtf8 m) of
-      Left bs -> fail ("Unexpected method: " <> unpack (decodeUtf8 bs))
+    MkBytes bs <- parseNoun n
+    case H.parseMethod bs of
+      Left md -> fail ("Unexpected method: " <> unpack (decodeUtf8 md))
       Right m -> pure m
 
 
@@ -80,10 +81,10 @@ type Key  = PEM
 type Cert = PEM
 
 data HttpServerConf = HttpServerConf
-    { secure   :: Maybe (Key, Cert)
-    , proxy    :: Bool
-    , log      :: Bool
-    , redirect :: Bool
+    { hscSecure   :: Maybe (Key, Cert)
+    , hscProxy    :: Bool
+    , hscLog      :: Bool
+    , hscRedirect :: Bool
     }
   deriving (Eq, Ord, Show)
 

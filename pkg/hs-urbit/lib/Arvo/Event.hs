@@ -5,8 +5,11 @@ import UrbitPrelude hiding (Term)
 import Arvo.Common (KingId(..))
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
-import Arvo.Common (Ipv4, Ipv6, Port, Turf, AmesDest, HttpEvent)
+import Arvo.Common (HttpEvent, Header(..))
+import Arvo.Common (Ipv4, Ipv6, Port, Turf, AmesDest)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
+
+import qualified Network.HTTP.Types.Method as H
 
 
 -- Misc Types ------------------------------------------------------------------
@@ -99,9 +102,9 @@ data Address
   deriving (Eq, Ord, Show)
 
 data HttpRequest = HttpRequest
-    { reqId   :: Cord
+    { reqMeth :: H.StdMethod
     , reqUrl  :: Cord
-    , reqHead :: [(Bytes, Bytes)]
+    , reqHead :: [Header]
     , reqBody :: Maybe File
     }
   deriving (Eq, Ord, Show)

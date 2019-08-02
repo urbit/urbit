@@ -2,7 +2,7 @@
 
 module Vere.Http.Server where
 
-import Arvo            hiding (ServerId, secure)
+import Arvo            hiding (ServerId, secure, reqUrl)
 import Noun
 import UrbitPrelude
 import Vere.Http       hiding (Method)
@@ -15,18 +15,52 @@ import qualified Network.Wai                 as W
 import qualified Network.Wai.Handler.Warp    as W
 import qualified Network.Wai.Handler.WarpTLS as W
 
+import qualified Data.CaseInsensitive      as CI
+import qualified Network.HTTP.Types        as HT
+import qualified Network.HTTP.Types.Method as H
 
--- Types -----------------------------------------------------------------------
+
+-- Live Requests ---------------------------------------------------------------
 
 type ReqId = Word
 type SeqId = Word
+
+data LiveReqs = LiveReqs
+    { nextReqId  :: ReqId
+    , activeReqs :: Map ReqId (TMVar (SeqId, HttpEvent))
+    }
+
+emptyLiveReqs :: LiveReqs
+emptyLiveReqs = LiveReqs 1 mempty
+
+respondToLiveReq :: TVar LiveReqs -> ReqId -> SeqId -> HttpEvent -> STM ()
+respondToLiveReq var req seq ev = do
+    mVar <- lookup req . activeReqs <$> readTVar var
+    case mVar of
+        Nothing -> pure ()
+        Just tv -> putTMVar tv (seq, ev)
+
+newLiveReq :: TVar LiveReqs -> STM (ReqId, TMVar (SeqId, HttpEvent))
+newLiveReq var = do
+    liv <- readTVar var
+    tmv <- newEmptyTMVar
+
+    let (nex, act) = (nextReqId liv, activeReqs liv)
+
+    writeTVar var (LiveReqs (nex+1) (insertMap nex tmv act))
+
+    pure (nex, tmv)
+
+
+-- Servers ---------------------------------------------------------------------
+
 
 newtype Drv = Drv { unDrv :: MVar (Maybe Serv) }
 
 data Serv = Serv
     { sConfig   :: HttpServerConf
     , sThread   :: Async ()
-    , sLiveReqs :: TVar (Map ReqId (TMVar (SeqId, HttpEvent)))
+    , sLiveReqs :: TVar LiveReqs
     }
 
 
@@ -76,16 +110,29 @@ stopService vServ kkill = do
                       pure (Nothing, res)
 
 
--- Utilities -------------------------------------------------------------------
+-- Random Helpers --------------------------------------------------------------
+
+cordBytes :: Cord -> ByteString
+cordBytes = encodeUtf8 . unCord
+
+
+-- Utilities for Constructing Events -------------------------------------------
 
 servEv :: HttpServerEv -> Ev
 servEv = EvBlip . BlipEvHttpServer
 
 bornEv :: KingId -> Ev
-bornEv inst = servEv $ HttpServerEvBorn (fromIntegral inst, ()) ()
+bornEv king =
+    servEv $ HttpServerEvBorn (fromIntegral king, ()) ()
 
 liveEv :: KingId -> Port -> Maybe Port -> Ev
-liveEv inst non sec = servEv $ HttpServerEvLive (inst, ()) non sec
+liveEv king non sec =
+    servEv $ HttpServerEvLive (king, ()) non sec
+
+reqEv :: KingId -> ReqId -> SeqId -> Bool -> Address -> HttpRequest -> Ev
+reqEv king reqId seqId secure addr req =
+    servEv $ HttpServerEvRequest (king, reqId, seqId, ())
+           $ HttpServerReq secure addr req
 
 
 --------------------------------------------------------------------------------
@@ -93,7 +140,7 @@ liveEv inst non sec = servEv $ HttpServerEvLive (inst, ()) non sec
 startServ :: HttpServerConf -> IO (Serv, (Port, Maybe Port))
 startServ conf = do
     (insecurePort, securePort) <- undefined
-    serv <- Serv conf <$> async undefined <*> newTVarIO mempty
+    serv <- Serv conf <$> async undefined <*> newTVarIO emptyLiveReqs
     pure (insecurePort, securePort)
 
 killServ :: Serv -> IO ()
@@ -110,11 +157,7 @@ respond :: Drv -> ReqId -> SeqId -> HttpEvent -> IO ()
 respond (Drv v) req seq ev = do
     readMVar v >>= \case
         Nothing -> pure ()
-        Just sv -> atomically $ do
-            liveReqs <- readTVar (sLiveReqs sv)
-            lookup req liveReqs & \case
-                Nothing -> pure ()
-                Just tm -> putTMVar tm (seq, ev)
+        Just sv -> atomically (respondToLiveReq (sLiveReqs sv) req seq ev)
 
 
 -- Top-Level Driver Interface --------------------------------------------------
@@ -122,11 +165,11 @@ respond (Drv v) req seq ev = do
 serv :: KingId
      -> QueueEv
      -> ([Ev], Acquire (EffCb HttpServerEf))
-serv inst plan =
+serv king plan =
     (initialEvents, runHttpServer)
   where
     initialEvents :: [Ev]
-    initialEvents = [ bornEv inst ]
+    initialEvents = [bornEv king]
 
     runHttpServer :: Acquire (EffCb HttpServerEf)
     runHttpServer = handleEf <$> mkAcquire (Drv <$> newMVar Nothing) kill
@@ -134,15 +177,80 @@ serv inst plan =
     handleEf :: Drv -> HttpServerEf -> IO ()
     handleEf drv = \case
         HSESetConfig (i, ()) conf ->
-            when (i == fromIntegral inst) $ do
+            when (i == fromIntegral king) $ do
                 (i, s) <- restart drv conf
-                atomically (plan (liveEv inst i s))
+                atomically (plan (liveEv king i s))
         HSEResponse (i, req, sec, ()) ev ->
-            when (i == fromIntegral inst) $
+            when (i == fromIntegral king) $
                 respond drv (fromIntegral req) (fromIntegral sec) ev
 
 
 --------------------------------------------------------------------------------
+
+{-
+    TODO Need to find an open port.
+-}
+startServer :: KingId -> HttpServerConf -> (Ev -> STM ())
+            -> IO (Serv, (Port, Maybe Port))
+startServer king conf plan = do
+  tls <- case (hscSecure conf) of
+      Nothing -> error "HACK: Implement support for missing PEMs"
+      Just (PEM key, PEM cert) ->
+        pure (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
+
+  liv <- newTVarIO emptyLiveReqs
+  tid <- async $ W.runTLS tls W.defaultSettings (app king liv plan True)
+
+  pure (Serv conf tid liv, (Port 80, Just $ Port 443))
+
+app :: KingId -> TVar LiveReqs -> (Ev -> STM ()) -> Bool -> W.Application
+app king liv plan secure =
+
+    \req respond ->
+
+        bracket_ onStart onStop $ do
+            bodyLbs <- W.strictRequestBody req
+
+            let body = if length bodyLbs == 0
+                           then Nothing
+                           else Just $ File $ Octs (toStrict bodyLbs)
+
+            let seqId     = 1
+                addr      = reqAddr req
+                Just meth = cookMeth req
+                hdrs      = convertHeaders $ W.requestHeaders req
+                evReq     = HttpRequest meth (reqUrl req) hdrs body
+
+            respVar <- atomically $ do
+                (reqId, var) <- newLiveReq liv
+                sendReqEvent reqId seqId addr evReq
+                pure var
+
+            respond (W.responseLBS H.status200 [] "Hello World")
+
+  where
+
+    sendReqEvent :: ReqId -> SeqId -> Address -> HttpRequest -> STM ()
+    sendReqEvent reqId seqId x y =
+        plan (reqEv king reqId seqId secure x y)
+
+    onStart = pure ()
+    onStop  = pure ()
+
+cookMeth :: W.Request -> Maybe Method
+cookMeth re =
+  case H.parseMethod (W.requestMethod re) of
+    Left _  -> Nothing
+    Right m -> Just m
+
+reqIdCord :: ReqId -> Cord
+reqIdCord = Cord . tshow
+
+reqAddr :: W.Request -> Address
+reqAddr = undefined . W.remoteHost
+
+reqUrl :: W.Request -> Cord
+reqUrl = Cord . decodeUtf8 . W.rawPathInfo
 
 {-
 data ClientResponse
@@ -151,50 +259,6 @@ data ClientResponse
     | Cancel ()
 
 data MimeData = MimeData Text ByteString
--}
-
-{-
-  Alright, so the flow here is:
-
-    · Once we receive a request, send a %request or %request-local event.
-    · The request thread should stick an MVar into a map, and wait on
-      it for a response.
--}
-
-{-
-data HttpServerEv
-    = HttpServerEvRequest       (KingId, Word, Word, ())  HttpServerReq
-    | HttpServerEvRequestLocal  Path                      HttpServerReq
-    | HttpServerEvLive          (KingId, ())              Port (Maybe Port)
--}
-
-{-
-cordBytes :: Cord -> ByteString
-cordBytes = encodeUtf8 . unCord
-
-startServer :: ServDrv -> Config -> IO ()
-startServer s c = do
-  tls <- case (secure c) of
-    Nothing -> error "no wai"
-    Just (PEM key, PEM cert) ->
-      pure (W.tlsSettingsMemory (cordBytes cert) (cordBytes key))
-
-  -- we need to do the dance where we do the socket checking dance. or shove a
-  -- socket into it.
-  tid <- forkIO $ W.runTLS tls W.defaultSettings (app s)
-  putMVar (sdThread s) (Just (c, tid))
-
-app :: ServDrv -> W.Application
-app s req respond = bracket_
-    (pure ())
-    (pure ())
-    (respond $ W.responseLBS H.status200 [] "Hello World")
-
-cookMeth :: W.Request -> Maybe Method
-cookMeth re =
-  case H.parseMethod (W.requestMethod re) of
-    Left _  -> Nothing
-    Right m -> Just m
 
 readEvents :: W.Request -> IO Request
 readEvents req = do
@@ -204,8 +268,6 @@ readEvents req = do
   bodyLbs <- W.strictRequestBody req
   let body = if length bodyLbs == 0 then Nothing
         else Just $ Octs (toStrict bodyLbs)
-
-  -- TODO: Check if wai just deletes the 'host': header like h2o does?
 
   pure (Request meth url headers body)
 -}

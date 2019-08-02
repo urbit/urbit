@@ -9,6 +9,7 @@ import ClassyPrelude
 
 import Noun
 import Vere.Http
+import Arvo (Header(..))
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Client  as H
@@ -40,8 +41,7 @@ cvtReq r =
   H.parseRequest (unpack (unCord $ url r)) <&> \init -> init
     { H.method = encodeUtf8 $ tshow (method r),
       H.requestHeaders =
-        headerList r <&> \(Header k v) -> (CI.mk (encodeUtf8 $ unCord k),
-                                           unBytes v),
+        headerList r <&> \(Header k v) -> (CI.mk (unBytes k), unBytes v),
       H.requestBody =
         H.RequestBodyBS $ case body r of
                             Nothing        -> ""

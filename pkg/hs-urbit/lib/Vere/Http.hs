@@ -4,17 +4,12 @@ module Vere.Http where
 
 import ClassyPrelude
 import Noun
+import Arvo
 
-import qualified Data.CaseInsensitive      as CI
-import qualified Network.HTTP.Types        as HT
-import qualified Network.HTTP.Types.Method as H
+import qualified Data.CaseInsensitive as CI
+import qualified Network.HTTP.Types   as HT
 
 --------------------------------------------------------------------------------
-
-data Header = Header Cord Bytes
-  deriving (Eq, Ord, Show)
-
-type Method = H.StdMethod
 
 data Request = Request
     { method     :: Method
@@ -37,10 +32,8 @@ data RawEvent
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Request
-deriveNoun ''Header
 deriveNoun ''ResponseHeader
 deriveNoun ''RawEvent
-
 
 --------------------------------------------------------------------------------
 
@@ -55,21 +48,8 @@ data Event
 
 --------------------------------------------------------------------------------
 
-instance ToNoun H.StdMethod where
-  toNoun = toNoun . Cord . decodeUtf8 . H.renderStdMethod
-
-instance FromNoun H.StdMethod where
-  parseNoun n = named "StdMethod" $ do
-    Cord m <- parseNoun n
-    case H.parseMethod (encodeUtf8 m) of
-      Left bs -> fail ("Unexpected method: " <> unpack (decodeUtf8 bs))
-      Right m -> pure m
-
-
---------------------------------------------------------------------------------
-
 convertHeaders :: [HT.Header] -> [Header]
 convertHeaders = fmap f
   where
-    f (k, v) = Header (Cord $ decodeUtf8 $ CI.original k)
+    f (k, v) = Header (MkBytes $ CI.original k)
                       (MkBytes v)
