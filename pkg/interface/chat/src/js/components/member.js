@@ -83,7 +83,7 @@ export class MemberScreen extends Component {
     );
 
 
-    let inviteButtonClasses = "label-regular underline black btn-font pointer";
+    let inviteButtonClasses = "label-regular black btn-font pointer";
     if (!this.state.error) {
       inviteButtonClasses = inviteButtonClasses + ' black';
     }
@@ -113,7 +113,7 @@ export class MemberScreen extends Component {
               </p>
               <textarea
                 ref={ e => { this.textarea = e; } }
-                className="w-80 db ba overflow-y-hidden gray mb2"
+                className="w-80 db ba overflow-y-hidden mono gray mb2"
                 style={{
                   resize: 'none',
                   height: 150
@@ -122,7 +122,7 @@ export class MemberScreen extends Component {
               <button
                 onClick={this.inviteMembers.bind(this)}
                 className={inviteButtonClasses}>
-                Invite
+                -> Invite
               </button>
               {errorElem}
               {successElem}
