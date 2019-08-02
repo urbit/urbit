@@ -58,7 +58,7 @@ export class Message extends Component {
     if (typeof url !== 'string') { throw 'Only transmogrify strings!'; }
     const ship = window.ship;
     if (url.indexOf('arvo://') === 0) {
-      return `http://${ship}.arvo.network` + url.split('arvo://')[1];
+      return url.split('arvo://')[1];
     }
     return url;
   }
@@ -66,32 +66,51 @@ export class Message extends Component {
   render() {
     const { props } = this;
     let pending = !!props.msg.pending ? ' o-80' : '';
-    let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
     let datestamp = moment.unix(props.msg.wen / 1000).format('LL');
-    
-    return (
-      <div className={"w-100 pl3 pr3 pt2 pb2 cf flex" + pending}
-        style={{
-          minHeight: 'min-content'
-        }}>
-        <div className="fl mr2">
-          <Sigil ship={props.msg.aut} size={36} />
-        </div>
-        <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
-          <div className="hide-child">
-            <p className="v-top label-small-mono gray dib mr3">
-              ~{props.msg.aut}
-            </p>
-            <p className="v-top label-small-mono gray dib">{timestamp}</p>
-            <p className="v-top label-small-mono ml2 gray dib child">
-              {datestamp}
-            </p>
+
+    let paddingTop = props.paddingTop ? 'pt3' : '';
+    let paddingBot = props.paddingBot ? 'pb2' : 'pb1';
+
+    if (props.renderSigil) {
+      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm a');
+
+      return (
+        <div className={"w-100 pl3 pr3 cf flex " + paddingTop + " " + paddingBot + pending}
+             style={{
+               minHeight: 'min-content'
+             }}>
+          <div className="fl mr2">
+            <Sigil ship={props.msg.aut} size={36} />
           </div>
-          {this.renderContent()}
+          <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
+            <div className="hide-child">
+              <p className="v-top label-small-mono gray dib mr3">
+                ~{props.msg.aut}
+              </p>
+              <p className="v-top label-small-mono gray dib">{timestamp}</p>
+              <p className="v-top label-small-mono ml2 gray dib child">
+                {datestamp}
+              </p>
+            </div>
+            {this.renderContent()}
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      let timestamp = moment.unix(props.msg.wen / 1000).format('hh:mm');
+
+      return (
+        <div className={"w-100 pr3 pb1 cf hide-child flex" + pending}
+             style={{
+               minHeight: 'min-content'
+             }}>
+          <p className="child pl3 pr2 label-small-mono gray dib">{timestamp}</p>
+          <div className="fr" style={{ flexGrow: 1 }}>
+            {this.renderContent()}
+          </div>
+        </div>
+      )
+    }
   }
 
 }
-

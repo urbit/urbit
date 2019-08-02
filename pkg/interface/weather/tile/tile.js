@@ -48,7 +48,7 @@ export default class WeatherTile extends Component {
 
   renderWrapper(child) {
     return (
-      <div className="pa2" style={{
+      <div className="pa2 relative" style={{
         width: 234,
         height: 234,
         background: '#1a1a1a'
@@ -60,9 +60,12 @@ export default class WeatherTile extends Component {
 
   renderNoData() {
     return this.renderWrapper((
-      <div>
-        <p className="white sans-serif">Weather</p>
-        <button onClick={this.locationSubmit.bind(this)}>Set location</button>
+      <div onClick={this.locationSubmit.bind(this)}>
+          <p className="gray label-regular b absolute"
+            style={{left: 8, top: 4}}>
+            Weather
+          </p>
+        <p className="absolute w-100 flex-col body-regular white" style={{verticalAlign: "bottom", bottom: 8, left: 8, cursor: "pointer"}}>-> Set location</p>
       </div>
     ));
   }
@@ -75,12 +78,12 @@ export default class WeatherTile extends Component {
 
     return this.renderWrapper((
       <div>
-          <p className="gray" style={{
-            fontWeight: 'bold',
-            fontSize: 14,
-            lineHeight: '24px'
-          }}>Weather</p>
-        <div className="w-100 mb2 mt2">
+          <p className="gray label-regular b absolute"
+            style={{left: 8, top: 4}}>
+            Weather
+          </p>
+        <div className="w-100 mb2 mt2 absolute"
+            style={{left: 18, top: 28}}>
           <img 
             src={'/~weather/img/' + c.icon + '.png'} 
             width={64} 
@@ -95,7 +98,8 @@ export default class WeatherTile extends Component {
             }}>
             {Math.round(c.temperature)}°</h2>
         </div>
-        <div className="w-100 cf">
+        <div className="w-100 cf absolute"
+        style={{ left: 18, top: 118 }}>
           <div className="fl w-50">
             <IconWithData 
               icon='winddirection'
