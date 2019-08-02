@@ -125,7 +125,7 @@ h2 {
 }
 
 .clamp-message {
-  max-width: calc(100% - 32px - .5em);
+  max-width: calc(100% - 36px - 1.5rem);
 }
 
 .clamp-attachment {
