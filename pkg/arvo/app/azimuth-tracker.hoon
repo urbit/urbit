@@ -78,7 +78,9 @@
         =/  m  (async:stdio ,(unit json))
         ^-  form:m
         ?>  ?=(%finished -.client-response)
-        =/  body=@t  q.data:(need full-file.client-response)
+        ?~  full-file.client-response
+          (pure:m ~)
+        =/  body=@t  q.data.u.full-file.client-response
         =/  jon=(unit json)  (de-json:html body)
         ?~  jon
           (pure:m ~)
