@@ -11,4 +11,5 @@ rec {
   secp256k1    = import ./deps/secp256k1/cross.nix    { inherit crossenv; };
   h2o          = import ./deps/h2o/cross.nix          { inherit crossenv uv; };
   ivory-header = import ./deps/ivory-header/cross.nix { inherit crossenv; };
+  ca-header    = import ./deps/ca-header/cross.nix    { inherit crossenv; };
 }

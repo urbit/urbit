@@ -11,4 +11,5 @@ rec {
   secp256k1    = import ./secp256k1    { inherit pkgs; };
   h2o          = import ./h2o          { inherit pkgs uv; };
   ivory-header = import ./ivory-header { inherit pkgs; };
+  ca-header    = import ./ca-header    { inherit pkgs; };
 }

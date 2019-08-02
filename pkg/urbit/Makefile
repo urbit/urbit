@@ -7,7 +7,7 @@ daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 
 common  = $(jets) $(noun) $(vere)
-headers = $(shell find include -type f) include/ca-bundle.h
+headers = $(shell find include -type f)
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
 daemon_objs = $(shell echo $(daemon) | sed 's/\.c/.o/g')
@@ -22,10 +22,6 @@ all_exes = ./build/mug_tests ./build/jam_tests ./build/hashtable_tests \
 # -Werror promotes all warnings that are enabled into errors (this is on)
 # -Wall issues all types of errors.  This is off (for now)
 CFLAGS := $(CFLAGS)
-
-ifeq ($(SSL_CERT_FILE),)
-  $(error SSL_CERT_FILE is undefined)
-endif
 
 ################################################################################
 
@@ -44,15 +40,9 @@ clean:
 	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
-	rm -f config.mk include/config.h include/ca-bundle.h
+	rm -f config.mk include/config.h
 
 ################################################################################
-
-include/ca-bundle.h:
-	@echo XXD -i $(SSL_CERT_FILE)
-	@cat $(SSL_CERT_FILE) > include/ca-bundle.crt
-	@xxd -i include/ca-bundle.crt > include/ca-bundle.h
-	@rm include/ca-bundle.crt
 
 build/hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@

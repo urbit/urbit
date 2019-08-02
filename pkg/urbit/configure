@@ -9,8 +9,8 @@ deps="                                                                    \
   softfloat3 ncurses ssl crypto z lmdb ge-additions                       \
 "
 
-headers="  \
-  ivory.h  \
+headers="             \
+  ivory.h ca-bundle.h \
 "
 
 echo '#pragma once' >include/config.h
