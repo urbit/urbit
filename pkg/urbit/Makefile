@@ -7,7 +7,7 @@ daemon = $(wildcard daemon/*.c)
 worker = $(wildcard worker/*.c)
 
 common  = $(jets) $(noun) $(vere)
-headers = $(shell find include -type f) include/ca-bundle.h include/ivory.h
+headers = $(shell find include -type f) include/ca-bundle.h
 
 common_objs = $(shell echo $(common) | sed 's/\.c/.o/g')
 daemon_objs = $(shell echo $(daemon) | sed 's/\.c/.o/g')
@@ -27,10 +27,6 @@ ifeq ($(SSL_CERT_FILE),)
   $(error SSL_CERT_FILE is undefined)
 endif
 
-ifeq ($(IVORY),)
-  $(error IVORY is undefined)
-endif
-
 ################################################################################
 
 .PHONY: all test clean mkproper
@@ -48,7 +44,7 @@ clean:
 	rm -f ./tags $(all_objs) $(all_exes)
 
 mrproper: clean
-	rm -f config.mk include/config.h include/ca-bundle.h include/ivory.h
+	rm -f config.mk include/config.h include/ca-bundle.h
 
 ################################################################################
 
@@ -57,20 +53,6 @@ include/ca-bundle.h:
 	@cat $(SSL_CERT_FILE) > include/ca-bundle.crt
 	@xxd -i include/ca-bundle.crt > include/ca-bundle.h
 	@rm include/ca-bundle.crt
-
-include/ivory.h:
-	@echo XXD -i $(IVORY)
-	@#  heuristics to confirm the ivory pill is valid
-	@#
-	@#    greater than 10KB
-	@#    first 7 bytes != "version" (start of an lfs pointer)
-	@#    XX move these to a nix build that produces the ivory pill
-	@#
-	@test "`du -k $(IVORY) | cut -f1`" -gt 10
-	@test "`cat $(IVORY) | head -c 7`" != "version"
-	@cat $(IVORY) > u3_Ivory.pill
-	@xxd -i u3_Ivory.pill > include/ivory.h
-	@rm u3_Ivory.pill
 
 build/hashtable_tests: $(common_objs) tests/hashtable_tests.o
 	@echo CC -o $@

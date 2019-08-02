@@ -1,8 +1,7 @@
 {
   pkgs,
   debug,
-  ivory ? ../../../bin/ivory.pill,
-  argon2, ed25519, ent, ge-additions, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv
+  argon2, ed25519, ent, ge-additions, h2o, murmur3, scrypt, secp256k1, sni, softfloat3, uv, ivory-header
 }:
 
 let
@@ -15,7 +14,7 @@ let
     [ curl gmp libsigsegv ncurses openssl zlib lmdb cacert xxd ];
 
   vendor =
-    [ argon2 softfloat3 ed25519 ent ge-additions h2o scrypt uv murmur3 secp256k1 sni ];
+    [ argon2 softfloat3 ed25519 ent ge-additions h2o scrypt uv murmur3 secp256k1 sni ivory-header ];
 
 in
 
@@ -31,7 +30,6 @@ pkgs.stdenv.mkDerivation {
   hardeningDisable = if debug then [ "all" ] else [];
 
   CFLAGS           = if debug then "-O3 -g -Werror" else "-O3 -Werror";
-  IVORY            = ivory;
   MEMORY_DEBUG     = debug;
   CPU_DEBUG        = debug;
   EVENT_TIME_DEBUG = false;

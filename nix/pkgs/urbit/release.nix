@@ -4,7 +4,6 @@
   ent,
   name ? "urbit",
   debug ? false,
-  ivory ? ../../../bin/ivory.pill,
   ge-additions, cacert, xxd
 }:
 
@@ -16,7 +15,7 @@ let
 
   vendor =
     with deps;
-    [ argon2 softfloat3 ed25519 ge-additions h2o scrypt uv murmur3 secp256k1 sni ];
+    [ argon2 softfloat3 ed25519 ge-additions h2o scrypt uv murmur3 secp256k1 sni ivory-header ];
 
 in
 
@@ -28,7 +27,6 @@ env.make_derivation {
   EVENT_TIME_DEBUG = false;
   NCURSES          = env.ncurses;
   SSL_CERT_FILE    = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-  IVORY            = ivory;
 
   name              = "${name}-${env_name}";
   exename           = name;
