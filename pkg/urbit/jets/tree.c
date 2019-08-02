@@ -425,10 +425,6 @@ static c3_c* _141_pen_loot_ha[] = {
     "d83e5e47f712870aba815d79943d287cbefdc00640409464b30bf755115d4a1a",
     0
   };
-  //  XX no longer hinted in +ut
-  //
-  static u3j_harm _141_pen__ut_fire_a[] = {{".2", u3wfu_fire}, {}};
-  static c3_c* _141_pen__ut_fire_ha[] = {0};
   static u3j_harm _141_pen__ut_fond_a[] = {{".2", u3wfu_fond}, {}};
   static c3_c* _141_pen__ut_fond_ha[] = {
     "0da0cc79c938eb06515a5cc24a17b82cd60a50c0f1a02e2c68e5d1cf71c96054",
@@ -487,22 +483,11 @@ static c3_c* _141_pen_loot_ha[] = {
     "2e2d15f3efca0a4bf8ce08cca48c54d1d5a7204e2b0525137f59c3e7b037d2fd",
     0
   };
-  static u3j_harm _141_pen__ut_toss_a[] = {{".2", u3wfu_toss}, {}};
-  static c3_c* _141_pen__ut_toss_ha[] = {
-    "2a77e7e2693231d3f6b4bbc2a4c961691702da1fdddaa8f15f06e9ad437c9416",
-    0
-  };
-  static u3j_harm _141_pen__ut_wrap_a[] = {{".2", u3wfu_wrap}, {}};
-  static c3_c* _141_pen__ut_wrap_ha[] = {
-    "128f42e2e3a299c2890f0b68e0301885620bae8491dd0a36cde7a94023eb4226",
-    0
-  };
 
 static u3j_core _141_pen__ut_d[] =
   {
     { "crop", 7, _141_pen__ut_crop_a, 0, _141_pen__ut_crop_ha },
     { "fond", 7, _141_pen__ut_fond_a, 0, _141_pen__ut_fond_ha },
-    { "fire", 7, _141_pen__ut_fire_a, 0, _141_pen__ut_fire_ha },
     { "fish", 7, _141_pen__ut_fish_a, 0, _141_pen__ut_fish_ha },
     { "fuse", 7, _141_pen__ut_fuse_a, 0, _141_pen__ut_fuse_ha },
     { "mint", 7, _141_pen__ut_mint_a, 0, _141_pen__ut_mint_ha },
@@ -511,11 +496,8 @@ static u3j_core _141_pen__ut_d[] =
     { "peek", 7, _141_pen__ut_peek_a, 0, _141_pen__ut_peek_ha },
     { "play", 7, _141_pen__ut_play_a, 0, _141_pen__ut_play_ha },
     { "rest", 7, _141_pen__ut_rest_a, 0, _141_pen__ut_rest_ha },
-    { "toss", 7, _141_pen__ut_toss_a, 0, _141_pen__ut_toss_ha },
-    { "wrap", 7, _141_pen__ut_wrap_a, 0, _141_pen__ut_wrap_ha },
     {}
   };
-static u3j_harm _141_pen__ut_a[] = {{}};
 
 static c3_c* _141_pen__ut_ha[] = {
   "479d0051e5fabe291e4cded603a071fce0f10734503638fd7d30e9c6d799969c",
@@ -607,7 +589,7 @@ static u3j_core _141_pen_d[] =
 
   // { "ap", 7, _141_pen__ap_a, 0, _141_pen__ap_ha },
   // { "al", 7, _141_pen__al_a, 0, _141_pen__al_ha },
-  { "ut", 15, _141_pen__ut_a, _141_pen__ut_d, _141_pen__ut_ha, _141_pen__ut_ho },
+  { "ut", 15, 0, _141_pen__ut_d, _141_pen__ut_ha, _141_pen__ut_ho },
   {}
 };
 static c3_c* _141_pen_ha[] = {

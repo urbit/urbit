@@ -19,20 +19,6 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_play(u3_noun cor)
-  {
-    u3_noun sut, gen, van;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam, &gen, u3x_con, &van, 0)) ||
-         (u3_none == (sut = u3r_at(u3x_sam, van))) )
-    {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3qfu_play(van, sut, gen);
-    }
-  }
-
-  u3_noun
   u3qfu_play(u3_noun van,
              u3_noun sut,
              u3_noun gen)
@@ -53,4 +39,18 @@
 #else
     return _cqfu_play(van, sut, gen);
 #endif
+  }
+
+  u3_noun
+  u3wfu_play(u3_noun cor)
+  {
+    u3_noun sut, gen, van;
+
+    if ( (c3n == u3r_mean(cor, u3x_sam, &gen, u3x_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
+    {
+      return u3m_bail(c3__fail);
+    } else {
+      return u3qfu_play(van, sut, gen);
+    }
   }

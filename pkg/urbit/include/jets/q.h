@@ -247,43 +247,4 @@
 #   define u3qfu_van_vet  118
 #   define u3qfu_van_fab  119
 
-    u3_noun u3qfu_burn(u3_noun, u3_noun);
-    u3_noun u3qfu_busk(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_buss(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_bust(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_crop(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_cull(u3_noun, u3_noun, u3_noun, u3_atom, u3_noun);
-    u3_noun u3qfu_duck(u3_noun, u3_noun);
-    u3_noun u3qfu_dung(u3_noun, u3_noun cap, u3_noun);
-    u3_noun u3qfu_dunq(u3_noun, const c3_c*, u3_noun);
-    void    u3qfu_dump(u3_noun, const c3_c*, u3_noun);
-    u3_noun u3qfu_fond(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_find(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_finc(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_fink(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_fire(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_firm(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_fish(u3_noun, u3_noun, u3_atom);
-    u3_noun u3qfu_fuse(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_gain(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_heal(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_lose(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_mint(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_mull(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_nest(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_nost(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_orth(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_peek(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_peel(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_play(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_repo(u3_noun, u3_noun);
-    u3_noun u3qfu_rest(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_shep(u3_noun, const c3_c*, u3_noun, u3_noun);
-    u3_noun u3qfu_shew(u3_noun, u3_noun);
-    u3_noun u3qfu_sift(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_snub(u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_tack(u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_toss(u3_noun, u3_noun, u3_noun, u3_noun, u3_noun);
-    u3_noun u3qfu_wrap(u3_noun, u3_noun, u3_noun);
-
     void u3qf_test(const c3_c*, u3_noun);

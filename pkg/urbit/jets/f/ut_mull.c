@@ -24,24 +24,6 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_mull(u3_noun cor)
-  {
-    u3_noun sut, gol, dox, gen, van;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam_2, &gol,
-                               u3x_sam_6, &dox,
-                               u3x_sam_7, &gen,
-                               u3x_con, &van,
-                               0)) ||
-         (u3_none == (sut = u3r_at(u3x_sam, van))) )
-    {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3qfu_mull(van, sut, gol, dox, gen);
-    }
-  }
-
-  u3_noun
   u3qfu_mull(u3_noun van,
              u3_noun sut,
              u3_noun gol,
@@ -61,3 +43,20 @@
     }
   }
 
+  u3_noun
+  u3wfu_mull(u3_noun cor)
+  {
+    u3_noun sut, gol, dox, gen, van;
+
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &gol,
+                               u3x_sam_6, &dox,
+                               u3x_sam_7, &gen,
+                               u3x_con, &van,
+                               0)) ||
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
+    {
+      return u3m_bail(c3__fail);
+    } else {
+      return u3qfu_mull(van, sut, gol, dox, gen);
+    }
+  }

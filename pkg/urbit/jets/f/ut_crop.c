@@ -15,22 +15,6 @@
     return u3n_nock_on(gat, u3k(u3x_at(u3x_bat, gat)));
   }
 
-/* boilerplate
-*/
-  u3_noun
-  u3wfu_crop(u3_noun cor)
-  {
-    u3_noun sut, ref, van;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam, &ref, u3x_con, &van, 0)) ||
-         (u3_none == (sut = u3r_at(u3x_sam, van))) )
-    {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3qfu_crop(van, sut, ref);
-    }
-  }
-
   u3_noun
   u3qfu_crop(u3_noun van,
              u3_noun sut,
@@ -46,5 +30,21 @@
       pro = _cqfu_crop(van, sut, ref);
 
       return u3z_save_2(fun_m, sut, ref, pro);
+    }
+  }
+
+/* boilerplate
+*/
+  u3_noun
+  u3wfu_crop(u3_noun cor)
+  {
+    u3_noun sut, ref, van;
+
+    if ( (c3n == u3r_mean(cor, u3x_sam, &ref, u3x_con, &van, 0)) ||
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
+    {
+      return u3m_bail(c3__fail);
+    } else {
+      return u3qfu_crop(van, sut, ref);
     }
   }

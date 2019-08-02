@@ -4,40 +4,6 @@
 #include "all.h"
 
 
-  /*static u3_noun
-  _nest_dext(u3_noun van,
-             u3_noun sut,
-             u3_noun tel,
-             u3_noun ref,
-             u3_noun seg,
-             u3_noun reg,
-             u3_noun gil)
-  {
-
-    if ( (c3y == u3r_sing(sut, ref)) ) {
-      return c3y;
-    }
-
-    {
-      c3_m    fun_m = 141 + c3__nest + ((!!u3r_at(u3qfu_van_vet, van)) << 8);
-      u3_noun pro   = u3z_find_2(fun_m, sut, ref);
-
-      if ( u3_none != pro ) {
-        return pro;
-      }
-      else {
-        pro = _nest_dext_to(van, sut, tel, ref, seg, reg, gil);
-
-        if ( ((c3y == pro) && (u3_nul == reg)) ||
-             ((c3n == pro) && (u3_nul == seg)) )
-        {
-          return u3z_save_2(fun_m, sut, ref, pro);
-        }
-        else return pro;
-      }
-    }
-  }*/
-
   u3_noun
   u3wfu_nest_dext(u3_noun dext_core)
   {
@@ -96,24 +62,6 @@
 /* boilerplate
 */
   u3_noun
-  u3wfu_nest(u3_noun cor)
-  {
-    u3_noun sut, tel, ref, van;
-
-    if ( (c3n == u3r_mean(cor, u3x_sam_2, &tel,
-                               u3x_sam_3, &ref,
-                               u3x_con, &van,
-                               0)) ||
-         (c3n == u3ud(tel)) || (tel > 1) ||
-         (u3_none == (sut = u3r_at(u3x_sam, van))) )
-    {
-      return u3m_bail(c3__fail);
-    } else {
-      return u3qfu_nest(van, sut, tel, ref);
-    }
-  }
-
-  u3_noun
   u3qfu_nest(u3_noun van,
              u3_noun sut,
              u3_noun tel,
@@ -139,3 +87,20 @@
 #endif
   }
 
+  u3_noun
+  u3wfu_nest(u3_noun cor)
+  {
+    u3_noun sut, tel, ref, van;
+
+    if ( (c3n == u3r_mean(cor, u3x_sam_2, &tel,
+                               u3x_sam_3, &ref,
+                               u3x_con, &van,
+                               0)) ||
+         (c3n == u3ud(tel)) || (tel > 1) ||
+         (u3_none == (sut = u3r_at(u3x_sam, van))) )
+    {
+      return u3m_bail(c3__fail);
+    } else {
+      return u3qfu_nest(van, sut, tel, ref);
+    }
+  }
