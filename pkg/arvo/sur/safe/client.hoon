@@ -2,10 +2,24 @@
 ::  Representation of a client state tree
 ::
 |%
++$  subscribed
+  $?  :: we aren't subscribed at all
+      ::
+      %unsubscribed
+      ::  we are waiting for the first return for our +peer
+      ::
+      %pending
+      ::  we have received at least our first +peer, but no %quit.
+      ::
+      %subscribed
+  ==
 ::
-++  node
-  $~  [~ ~ ~ ~]
-  $:  ::  an event log with snapshots in it.
++$  node
+  $~  [%unsubscribed ~ ~ ~ ~]
+  $:  ::  whether this node is currently subscribed to the server for updates
+      ::
+      =subscribed
+      ::  an event log with snapshots in it.
       ::
       partial-event-log=(list [id=@ud item=event-item])
       ::  the current state of the node

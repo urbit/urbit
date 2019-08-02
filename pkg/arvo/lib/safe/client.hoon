@@ -44,19 +44,21 @@
     ::
     [app-type.s top-state.s signature-type.s snapshot-vase children.s]
   --
-::  +applies a diff to a client's state
+::  +apply-to-client-node: given a path, modify the node at that path
 ::
-++  apply-to-client
-  |=  [app-map=(map @t vase) msg=server-to-client:common client-state=node]
+::    We have actions which walk through the
+::
+++  apply-to-client-node
+  |=  [route=path client-state=node action=$-(node node)]
   ^-  node
   ::
-  ?^  path.msg
+  ?^  route
     =/  child-state=node
       %_    $
-          path.msg  t.path.msg
+          route  t.route
       ::
           client-state
-        ?~  child-state=(~(get by children.client-state) i.path.msg)
+        ?~  child-state=(~(get by children.client-state) i.route)
           ::  this is the first time we've even heard of this node
           *node
         ?~  u.child-state
@@ -65,21 +67,26 @@
         u.u.child-state
       ==
     ::
-    client-state(children (~(put by children.client-state) i.path.msg `child-state))
-  ::  apply this peer-diff to the client-state
+    client-state(children (~(put by children.client-state) i.route `child-state))
   ::
-  ?-    -.peer-diff.msg
+  (action client-state)
+::
+++  apply-peer-diff-to-node
+  |=  [app-map=(map @t vase) =peer-diff:common =node]
+  ^+  node
+  ::
+  ?-    -.peer-diff
       ::  we have a completely new snapshot which we append to history
       ::
       %snapshot
     ::
     =/  snapshot=snapshot:common
-      (snapshot:from-transport app-map snapshot.peer-diff.msg)
+      (snapshot:from-transport app-map snapshot.peer-diff)
     ::
-    %_    client-state
+    %_    node
         partial-event-log
-      :_  partial-event-log.client-state
-      [id.peer-diff.msg %snapshot snapshot]
+      :_  partial-event-log.node
+      [id.peer-diff %snapshot snapshot]
     ::
         snapshot
       [~ snapshot]
@@ -90,18 +97,28 @@
     =/  event-item=event-log-item:common
       %-  need
       %^  event-log-item:from-transport  app-map
-        app-type:(need snapshot.client-state)
-      event.peer-diff.msg
+        app-type:(need snapshot.node)
+      event.peer-diff
     ::
-    %_    client-state
+    %_    node
         partial-event-log
-      :_  partial-event-log.client-state
-      [id.peer-diff.msg %event event-item]
+      :_  partial-event-log.node
+      [id.peer-diff %event event-item]
     ::
         snapshot
-      `(apply-event-log-item-to-state app-map event-item (need snapshot.client-state))
+      `(apply-event-log-item-to-state app-map event-item (need snapshot.node))
     ==
   ==
+::  +applies a diff to a client's state
+::
+++  apply-to-client
+  |=  [app-map=(map @t vase) msg=server-to-client:common client-state=node]
+  ^-  node
+  ::
+  %^  apply-to-client-node  path.msg  client-state
+  ::
+  |=  =node
+  (apply-peer-diff-to-node app-map peer-diff.msg node)
 ::  +signature-request-for: changes an abstract signature-type into a
 ::  signature-request for route.
 ::
@@ -168,12 +185,16 @@
 ::  +sign-user-message: verify that user-message is the right shape and make
 ::  the appropriate signatures
 ::
-::    TODO: Split this into the node:client parts, and the signing parts to go
-::    in /+ signatures.
+::    TODO: +signature-request-for does a +need, but we should really break out
+::    if :subscribed is false on any of the nodes.
 ::
 ::    TODO: It feels like a smell that app-map isn't part of a client-state,
 ::    which isn't reflected in the server-state. If we're going to let people
 ::    customize this thing, think about the source code being in the node?
+::
+::    TODO: What happens to old logs when the application vases change? This
+::    was a large part of why I wanted the source code to the manipulation in
+::    the nodes, even if it made upgrading harder.
 ::
 ++  sign-user-event
   |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
