@@ -2,10 +2,10 @@ module Arvo.Event where
 
 import UrbitPrelude hiding (Term)
 
+import Arvo.Common (KingId(..))
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
-import Arvo.Common (Ipv4, Ipv6, AmesDest, Turf)
-import Arvo.Common (HttpEvent, HttpServerConf)
+import Arvo.Common (Ipv4, Ipv6, Port, Turf, AmesDest, HttpEvent)
 import Arvo.Common (ReOrg(..), reorgThroughNoun)
 
 
@@ -114,17 +114,16 @@ data HttpServerReq = HttpServerReq
   deriving (Eq, Ord, Show)
 
 data HttpClientEv
-    = HttpClientEvReceive (Atom, ()) ServerId HttpEvent
-    | HttpClientEvBorn    (Atom, ()) ()
+    = HttpClientEvReceive (KingId, ()) ServerId HttpEvent
+    | HttpClientEvBorn    (KingId, ()) ()
     | HttpClientEvCrud    Path       Cord Tang
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
-    = HttpServerEvRequest      (Atom, Word, Word, ()) HttpServerReq
-    | HttpServerEvRequestLocal Path                   HttpServerReq
-    | HttpServerEvLive         (Atom, ())             Atom (Maybe Word)
-    | HttpServerEvBorn         (Atom, ())             ()
-    | HttpServerEvSetConfig    (Atom, ())             HttpServerConf
+    = HttpServerEvRequest      (KingId, Word, Word, ()) HttpServerReq
+    | HttpServerEvRequestLocal (KingId, Path)           HttpServerReq
+    | HttpServerEvLive         (KingId, ())             Port (Maybe Port)
+    | HttpServerEvBorn         (KingId, ())             ()
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Address

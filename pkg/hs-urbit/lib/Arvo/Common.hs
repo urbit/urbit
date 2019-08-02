@@ -1,9 +1,10 @@
 module Arvo.Common
-  ( NounTree(..), NounMap, NounSet
+  ( KingId(..)
+  , NounTree(..), NounMap, NounSet
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Lane(..), Port(..), Turf(..)
-  , HttpServerConf(..), HttpEvent(..), PEM, Method, Header
+  , HttpServerConf(..), HttpEvent(..), PEM(..), Key, Cert, Method, Header
   , ReOrg(..), reorgThroughNoun
   , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..)
   ) where
@@ -24,6 +25,9 @@ import qualified Network.HTTP.Types.Method as H
 -}
 newtype Turf = Turf { unTurf :: [Cord] }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
+
+newtype KingId = KingId { unKingId :: Word32}
+  deriving newtype (Eq, Ord, Show, Num, Real, Enum, Integral, FromNoun, ToNoun)
 
 
 -- Http Common -----------------------------------------------------------------
@@ -69,7 +73,7 @@ instance FromNoun H.StdMethod where
 
 -- Http Server Configuration ---------------------------------------------------
 
-newtype PEM = PEM Cord
+newtype PEM = PEM { unPEM :: Cord }
   deriving newtype (Eq, Ord, Show, ToNoun, FromNoun)
 
 type Key  = PEM

@@ -83,7 +83,7 @@ instance FromNoun Cord where
 -- Decimal Cords ---------------------------------------------------------------
 
 newtype Decimal = Decimal { unDecimal :: Word }
-  deriving newtype (Eq, Ord, Show)
+  deriving newtype (Eq, Ord, Show, Enum, Real, Integral, Num)
 
 instance ToNoun Decimal where
   toNoun = toNoun . Cord . tshow . unDecimal
