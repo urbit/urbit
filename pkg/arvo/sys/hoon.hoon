@@ -17290,6 +17290,14 @@
     =+  new=(~(mint ut sut) %noun gen)
     [new +>+<.$(mit (~(put by mit) [sut gen] new))]
   ::
+  ++  slam                                              ::  ++slam, cached
+    |=  [gat=vase sam=vase]
+    ^-  [vase worm]
+    =/  sut=type  [%cell p.gat p.sam]
+    =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+    =^  new=type  +>+<.$  (play sut gen)
+    [[new (slum q.gat q.sam)] +>+<.$]
+  ::
   ++  slap                                              ::  ++slap, cached
     |=  {vax/vase gen/hoon}
     ^-  {vase worm}

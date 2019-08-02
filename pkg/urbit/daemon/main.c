@@ -509,10 +509,10 @@ _stop_exit(c3_i int_i)
   u3_daemon_bail();
 }
 
-/* _stop_trace(): print trace on SIGABRT.
+/* _stop_signal(): handle termination signal.
 */
 static void
-_stop_trace(c3_i int_i)
+_stop_signal(c3_i int_i)
 {
   //  if we have a pier, unmap the event log before dumping core
   //
@@ -673,7 +673,7 @@ main(c3_i   argc,
 
   //  Cleanup on SIGABRT.
   //
-  signal(SIGABRT, _stop_trace);
+  signal(SIGABRT, _stop_signal);
 
   printf("~\n");
   //  printf("welcome.\n");
