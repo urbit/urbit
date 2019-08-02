@@ -242,28 +242,28 @@
   ::    Otherwise, upgrade, cancel and restart if active.
   ::
   ++  prep
-    |=  old-state=(unit)
+    |=  old-state=(unit tapp-state)
     ^-  (quip move _this-tapp)
     ?~  old-state
       ~&  [%tapp-init dap.bowl]
       =.  waiting  (~(put to waiting) ost.bowl [%init ~])
       start-async
-    ::
-    =/  old   ((soft tapp-state) u.old-state)
-    ?~  old
-      ::  XX use only for development may break contracts!
-      ::  XX if active clam contracts only to abort transaction?
-      ::
-      ~&  [%tapp-reset dap.bowl]
-      `this-tapp
-      ::  ~|  [%tapp-load-incompatible dap.bowl]
-      ::  !!
+    ::  ::
+    ::  =/  old   ((soft tapp-state) u.old-state)
+    ::  ?~  old
+    ::    ::  XX use only for development may break contracts!
+    ::    ::  XX if active clam contracts only to abort transaction?
+    ::    ::
+    ::    ~&  [%tapp-reset dap.bowl]
+    ::    `this-tapp
+    ::    ::  ~|  [%tapp-load-incompatible dap.bowl]
+    ::    ::  !!
     ::
     ::  because the clam replaces the active continuation with
     ::  the bunt of its mold, we must fail the transaction
     ::
     ~&  [%tapp-loaded dap.bowl]
-    =.  +<+.this-tapp  u.old
+    =.  +<+.this-tapp  u.old-state
     ?^  active
       =.  waiting  (~(put to waiting) (need ~(top to waiting)))
       (oob-fail-async %reset-restart ~)
