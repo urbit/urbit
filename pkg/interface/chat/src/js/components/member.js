@@ -118,6 +118,7 @@ export class MemberScreen extends Component {
                   resize: 'none',
                   height: 150
                 }}
+                spellCheck="false"
                 onChange={this.inviteMembersChange.bind(this)}></textarea>
               <button
                 onClick={this.inviteMembers.bind(this)}
