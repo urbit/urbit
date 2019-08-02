@@ -1,9 +1,10 @@
 ::  Mock Azimuth
 ::
-/+  ph, ph-util, ph-philter
+/+  ph, ph-util, ph-philter, ph-tests
 =,  ph
 =,  ph-util
 =,  ph-philter
+|=  our=ship
 =>  |%
     +$  az-log  [topics=(lest @) data=@t]
     --
@@ -252,8 +253,17 @@
     --
   --
 ::
-++  dawn
+++  raw-real-ship
   |=  who=ship
+  =/  m  (ph ,~)
+  ^-  form:m
+  ;<  now=@da  bind:m
+    |=  pin=ph-input
+    [& ~ %done now.pin]
+  (raw-ship:(ph-tests our) who `(dawn who now))
+::
+++  dawn
+  |=  [who=ship now=@da]
   ^-  dawn-event
   =/  spon
     =/  =ship  (^sein:title who)
@@ -261,7 +271,7 @@
       ?:  ?=(%czar (clan:title ship))
         [| ~zod]
       [& (^sein:title ship)]
-    =/  life-rift  (~(got by lives) ship)
+    =/  life-rift  ~|([ship lives] (~(got by lives) ship))
     =/  =life  lyfe.life-rift
     =/  =rift  rut.life-rift
     =/  =pass
@@ -269,13 +279,23 @@
           (as-octs:mimes:html (get-public ship life %crypt))
         (as-octs:mimes:html (get-public ship life %auth))
       1
-    :^    ship
+    :^    ship=ship
         *[address address address address]:azimuth
-      `[life pass rift spon-spon ~]
+      `[life=life pass rift spon-spon ~]
     ~
-  =/  life-rift  (~(got by lives) who)
-  =/  =life  lyfe.life-rift
-  :*  [who life sec:ex:(get-keys who life) ~]
+  =/  =seed:able:kale
+    ?:  =(%earl (clan:title who))
+      =/  pax
+        ;:  weld
+          /i/(scot %p ship.spon)/k/(scot %p ship.spon)/earl/(scot %da now)
+          /(scot %p who)/(scot %ud life.spon)
+          /noun
+        ==
+      (need (scry-aqua (unit seed:able:kale) our now pax))
+    =/  life-rift  (~(got by lives) who)
+    =/  =life  lyfe.life-rift
+    [who life sec:ex:(get-keys who life) ~]
+  :*  seed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
@@ -338,7 +358,7 @@
     :+  &  ~
     =/  aqua-pax
       :-  %i
-      /(scot %p her)/j/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
+      /(scot %p her)/k/(scot %p her)/life/(scot %da now.pin)/(scot %p who)/noun
     =/  lyfe  (scry-aqua noun our now.pin aqua-pax)
     ~&  [new-lyfe=[0 new-lyfe] lyfe=lyfe]
     ?:  =([~ new-lyfe] lyfe)

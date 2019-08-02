@@ -243,6 +243,7 @@
         %dawn
       ::  single-homed
       ::
+      ~|  [our who.seed.tac]
       ?>  =(our who.seed.tac)
       ::  save our boot block
       ::
@@ -738,6 +739,8 @@
           ^-  (unit [spon=ship child=ship])
           ?.  =(%earl (clan:title who))
             ~
+          ?:  (~(has by ship-sources) who)
+            ~
           `[(^sein:title who) who]
         =/  moonl=(list [spon=ship ships=(set ship)])
           ~(tap by moons)
@@ -757,7 +760,7 @@
           ?~  our-moonl
             ~
           =/  moon-sec  (shaf %earl (sham our lyf.own.pki sec i.our-moonl))
-          =/  cub  (nol:nu:crub:crypto moon-sec)
+          =/  cub  (pit:nu:crub:crypto 128 moon-sec)
           =/  =pass  pub:ex:cub
           :-  [i.our-moonl 1 1 (malt [1 1 pass] ~) `our]
           $(our-moonl t.our-moonl)

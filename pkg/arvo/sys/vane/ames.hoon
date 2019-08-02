@@ -270,7 +270,7 @@
             ::
             =/  bil=(unit deed)
               =/  rac  (clan:title our)
-              ?.  ?|  ?=(?(%earl %pawn) rac)
+              ?.  ?|  ?=(%pawn rac)
                       &(!?=(%czar rac) =(our seg))
                   ==
                 ~
@@ -832,20 +832,6 @@
           =*  wed  u.law
           ?>  ^-  ?
               ?-    (clan:title her)
-                  %earl
-                ::  signed by parent
-                ::
-                =/  seg  (^sein:title her)
-                =/  yig
-                  ?:  =(our seg)
-                    sen:gus
-                  cluy:(myx:gus seg)
-                ?&  =(lyf.yig life.wed)
-                    ?=(^ oath.wed)
-                    .=  (need (sure:as:cub.yig u.oath.wed))
-                    (shaf %earl (sham [her life.wed pass.wed]))
-                ==
-              ::
                   %pawn
                 ::  self-signed, life 1, address is fingerprint
                 ::
@@ -919,10 +905,7 @@
               ::  if :her is a comet, or a moon of a known ship, proceed
               ::
               =/  =rank:title  (clan:title her)
-              ?:  ?|  ?=(%pawn rank)
-                      ?&  ?=(%earl rank)
-                          !=(~ lew.wod.dur:(myx:gus (sein-scry her)))
-                  ==  ==
+              ?:  ?=(%pawn rank)
                 apse
               ::  otherwise, drop the packet
               ::
@@ -1477,7 +1460,7 @@
           =/  a-point=(unit point:able:kale)
             (~(get by points.public-keys-result.sih) her)
           ?~  a-point
-            ~&  [%no-keys her]
+            ~&  [%no-keys our=our her=her]
             ~
           =/  a-pass=pass  pass:(~(got by keys.u.a-point) life.u.a-point)
           `[life.u.a-point a-pass oath=~]
