@@ -87,10 +87,10 @@ export class Message extends Component {
   renderExp(expression, result) {
     return (<>
       <p>
-        <pre className="clamp-attachment pa1 mt0 bg-light-gray">
+        <pre className="clamp-attachment pa1 mt0 mb0 bg-light-gray">
           {expression}
         </pre>
-        <pre className="clamp-attachment pa1 mb0">
+        <pre className="clamp-attachment pa1 mt0 mb0">
           {result[0].join('\n')}
         </pre>
       </p>
