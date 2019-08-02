@@ -99,7 +99,7 @@
     |=  =path
     ^-  form:m
     ?:  ?=([%sole *] path)
-      (pure:m state)
+      ~|  %default-tapp-no-sole  !!
     (async-fail:async-lib %no-peer-handler >path< ~)
   ::
   ++  handle-diff

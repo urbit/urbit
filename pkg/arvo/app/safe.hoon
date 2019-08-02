@@ -26,7 +26,10 @@
     $%  [%create-community name=@t initial-invitees=(set @p)]
         [%send-message host=@p name=@t =path data=*]
     ==
-  +$  out-poke-data  [%noun =cord]
+  +$  out-poke-data
+    $%  [%noun =cord]
+        [%drum-unlink =dock]
+    ==
   +$  out-peer-data  ~
   +$  in-peer-data
     $%  [%comments comments=(list tape)]
@@ -98,9 +101,24 @@
 =,  async=async:tapp
 =,  tapp-async=tapp-async:tapp
 =,  stdio
-%-  create-tapp-poke-diff:tapp
-^-  tapp-core-poke-diff:tapp
+=*  default-tapp  default-tapp:tapp
+%-  create-tapp-all:tapp
+^-  tapp-core-all:tapp
 |_  [=bowl:gall =app-state]
+::
+++  handle-peek  handle-peek:default-tapp
+++  handle-peer  handle-peer:default-tapp
+++  handle-take  handle-take:default-tapp
+::
+++  handle-init
+  =/  m  tapp-async
+  ^-  form:m
+  ::  ;<  success=?  bind:m  (bind-route:stdio [~ /dns/oauth] dap.bowl)
+  ::  ~|  %dns-unable-to-bind-route
+  ::  ?>  success
+  ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
+  (pure:m app-state)
+
 ++  handle-poke
   |=  =in-poke-data
   =/  m  tapp-async
@@ -177,8 +195,8 @@
   |=  [[her=ship app=term] =path data=in-peer-data]
   =/  m  tapp-async
   ^-  form:m
-  ?>  ?=(%comments -.data)
-  ~&  subscriber-got-data=(lent comments.data)
+  ::  ?>  ?=(%comments -.data)
+  ::  ~&  subscriber-got-data=(lent comments.data)
   (pure:m app-state)
 --
 
