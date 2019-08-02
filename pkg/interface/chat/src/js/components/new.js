@@ -187,6 +187,7 @@ export class NewScreen extends Component {
             ref={ e => { this.textarea = e; } }
             className="body-regular mono fw-normal ba pa2 mb2 db w-100"
             placeholder="~zod, ~bus"
+            spellCheck="false"
             style={{
               resize: 'none',
               height: 150
