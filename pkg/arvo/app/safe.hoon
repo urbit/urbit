@@ -80,6 +80,19 @@
       client-state
     --
   ==
+::  +send-message: sends a message to a node, validating the msg.
+::
+++  send-message
+  |=  [=bowl:gall host=@p name=@t =path msg=* =app-state]
+  ^+  app-state
+  ::  Using our client copy of the state, perform verification.
+  ::
+  =/  community  (~(got by client-communities.app-state) [host name])
+  ::
+  =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
+  ::
+  ~&  [%outbound-message e]
+  app-state
 --
 ::
 =,  async=async:tapp
@@ -136,6 +149,15 @@
   ::
       %send-message
     ::
+    =.  app-state
+      %-  send-message  :*
+        bowl
+        host.in-poke-data
+        name.in-poke-data
+        path.in-poke-data
+        data.in-poke-data
+        app-state
+      ==
     ~&  [%todo-impl-send-message [host name]:in-poke-data]
     (pure:m app-state)
   ==
