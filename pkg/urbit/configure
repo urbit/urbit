@@ -9,6 +9,10 @@ deps="                                                                    \
   softfloat3 ncurses ssl crypto z lmdb ge-additions                       \
 "
 
+headers="             \
+  ivory.h ca-bundle.h \
+"
+
 echo '#pragma once' >include/config.h
 
 defmacro () {
@@ -75,6 +79,10 @@ esac
 for dep in ${osdeps-} $deps
 do LDFLAGS="${LDFLAGS-} -l$dep"
    ${PKG_CONFIG-pkg-config} --cflags --libs $dep 2>/dev/null || true
+done
+
+for header in $headers
+do LDFLAGS="${LDFLAGS-} -I$header"
 done
 
 cat >config.mk <<EOF

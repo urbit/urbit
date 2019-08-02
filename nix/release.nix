@@ -21,8 +21,7 @@ let
 
   urbit = env:
     import ./pkgs/urbit/release.nix env
-      { ent = ent env; ge-additions = ge-additions env; cacert = nixpkgs.cacert;
-        xxd = nixpkgs.xxd; debug = false; name = "urbit"; };
+      { ent = ent env; ge-additions = ge-additions env; debug = false; name = "urbit"; };
 
   builds-for-platform = plat:
     plat.deps // {
