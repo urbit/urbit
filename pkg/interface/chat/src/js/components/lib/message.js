@@ -178,7 +178,7 @@ export class Message extends Component {
           <div className="fl mr2">
             <Sigil ship={props.msg.aut} size={36} />
           </div>
-          <div className="fr" style={{ flexGrow: 1, marginTop: -8 }}>
+          <div className="fr clamp-message" style={{ flexGrow: 1, marginTop: -8 }}>
             <div className="hide-child">
               <p className="v-top label-small-mono gray dib mr3">
                 {this.renderAuthor()}
@@ -201,7 +201,7 @@ export class Message extends Component {
                minHeight: 'min-content'
              }}>
           <p className="child pl3 pr2 label-small-mono gray dib">{timestamp}</p>
-          <div className="fr" style={{ flexGrow: 1 }}>
+          <div className="fr clamp-message" style={{ flexGrow: 1 }}>
             {this.renderContent()}
           </div>
         </div>
