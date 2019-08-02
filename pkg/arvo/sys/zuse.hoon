@@ -7097,7 +7097,7 @@
   ++  sein                                              ::  autoboss
     |=  [our=ship now=@da who=ship]
     .^  ship
-        %j
+        %k
         /(scot %p our)/sein/(scot %da now)/(scot %p who)
     ==
   ::                                                    ::  ++team:title
