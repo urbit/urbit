@@ -234,7 +234,7 @@ export class ChatInput extends Component {
             } },
             tac: { name: {
               nom: 'long-form',
-              tac: { tank: lines.slice(1).map(l => { return {leaf: l }; }) }
+              tac: { text: lines.slice(1).join('\n') }
             } },
           } };
         }
