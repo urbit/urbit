@@ -112,14 +112,24 @@ export class Message extends Component {
     return (<details>
       <summary className="inter fs-italic">{'Attached: ' + title}</summary>
       { _.has(content, 'text')
-        ? <pre className="clamp-attachment">{content.text}</pre>
+        ? (title === 'long-form')
+          ? this.renderParagraphs(content.text.split('\n'))
+          : this.renderPlaintext(content.text)
         : _.has(content, 'tank')
-        ? <div className="clamp-attachment">
-            {content.tank.map(l => <p className="mt2">{l}</p>)}
-          </div>
-        : null
+          ? this.renderPlaintext(content.tank.join('\n'))
+          : null
       }
-    </>);
+    </details>);
+  }
+
+  renderParagraphs(paragraphs) {
+    return (<div className="clamp-attachment">
+      {paragraphs.map(p => (<p className="mt2">{p}</p>))}
+    </div>);
+  }
+
+  renderPlaintext(text) {
+    return (<pre className="clamp-attachment">{text}</pre>);
   }
 
   renderContent() {
