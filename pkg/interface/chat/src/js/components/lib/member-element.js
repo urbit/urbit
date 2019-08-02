@@ -37,7 +37,7 @@ export class MemberElement extends Component {
       <div>
         <p
           className={
-            "w-60 dib black pr3 mb2 label-small-mono label-regular"
+            "w-60 dib black pr3 mb2 nowrap label-small-mono label-regular"
           }>
           {props.ship}
         </p>
