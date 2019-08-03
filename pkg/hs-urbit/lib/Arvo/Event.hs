@@ -2,7 +2,7 @@ module Arvo.Event where
 
 import UrbitPrelude hiding (Term)
 
-import Arvo.Common (KingId(..))
+import Arvo.Common (KingId(..), ServId(..))
 import Arvo.Common (NounMap, NounSet)
 import Arvo.Common (Desk, Mime)
 import Arvo.Common (HttpEvent, Header(..))
@@ -123,9 +123,9 @@ data HttpClientEv
   deriving (Eq, Ord, Show)
 
 data HttpServerEv
-    = HttpServerEvRequest      (KingId, Word, Word, ()) HttpServerReq
-    | HttpServerEvRequestLocal (KingId, Path)           HttpServerReq
-    | HttpServerEvLive         (KingId, ())             Port (Maybe Port)
+    = HttpServerEvRequest      (ServId, Word, Word, ()) HttpServerReq
+    | HttpServerEvRequestLocal (ServId, Path)           HttpServerReq
+    | HttpServerEvLive         (ServId, ())             Port (Maybe Port)
     | HttpServerEvBorn         (KingId, ())             ()
   deriving (Eq, Ord, Show)
 

@@ -9,7 +9,7 @@ import ClassyPrelude
 
 import Noun
 import Vere.Http
-import Arvo (Header(..))
+import Arvo (Header(..), ResponseHeader(..))
 
 import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Client  as H

@@ -336,7 +336,7 @@ instance FromNoun Octs where
 
 -- File Contents -- Don't Print ------------------------------------------------
 
-newtype File = File Octs
+newtype File = File { unFile :: Octs }
   deriving newtype (Eq, Ord, ToNoun, FromNoun)
 
 instance Show File where

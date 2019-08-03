@@ -19,12 +19,6 @@ data Request = Request
     }
   deriving (Eq, Ord, Show)
 
-data ResponseHeader = ResponseHeader
-     { statusCode :: Word
-     , headers    :: [Header]
-     }
-  deriving (Eq, Ord, Show)
-
 data RawEvent
     = Start ResponseHeader (Maybe Octs) Bool
     | Continue (Maybe Octs) Bool
@@ -32,7 +26,6 @@ data RawEvent
   deriving (Eq, Ord, Show)
 
 deriveNoun ''Request
-deriveNoun ''ResponseHeader
 deriveNoun ''RawEvent
 
 --------------------------------------------------------------------------------
@@ -53,3 +46,8 @@ convertHeaders = fmap f
   where
     f (k, v) = Header (MkBytes $ CI.original k)
                       (MkBytes v)
+
+unconvertHeaders :: [Header] -> [HT.Header]
+unconvertHeaders = fmap f
+  where
+    f (Header (MkBytes k) (MkBytes v)) = (CI.mk k, v)

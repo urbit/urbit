@@ -1,11 +1,11 @@
 module Arvo.Common
-  ( KingId(..)
+  ( KingId(..), ServId(..)
   , NounTree(..), NounMap, NounSet
   , Json, JsonNode(..)
   , Desk(..), Mime(..)
   , Lane(..), Port(..), Turf(..)
   , HttpServerConf(..), PEM(..), Key, Cert
-  , HttpEvent(..), Method, Header(..)
+  , HttpEvent(..), Method, Header(..), ResponseHeader(..)
   , ReOrg(..), reorgThroughNoun
   , AmesDest(..), Ipv4(..), Ipv6(..), Galaxy(..)
   ) where
@@ -29,6 +29,9 @@ newtype Turf = Turf { unTurf :: [Cord] }
 
 newtype KingId = KingId { unKingId :: Word32}
   deriving newtype (Eq, Ord, Show, Num, Real, Enum, Integral, FromNoun, ToNoun)
+
+newtype ServId = ServId { unServId :: Word32 }
+  deriving newtype (Eq, Ord, Show, Num, Enum, Integral, Real, FromNoun, ToNoun)
 
 
 -- Http Common -----------------------------------------------------------------

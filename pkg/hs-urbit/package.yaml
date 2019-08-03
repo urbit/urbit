@@ -25,6 +25,7 @@ dependencies:
   - async
   - base
   - base-unicode-symbols
+  - binary
   - bytestring
   - case-insensitive
   - classy-prelude
