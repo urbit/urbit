@@ -79,6 +79,7 @@ dependencies:
   - unordered-containers
   - vector
   - wai
+  - wai-conduit
   - warp
   - warp-tls
 
