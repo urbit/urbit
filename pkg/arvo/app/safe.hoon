@@ -23,8 +23,15 @@
     ==
   +$  peek-data  _!!
   +$  in-poke-data
-    $%  [%create-community name=@t initial-invitees=(set @p)]
+    $%  ::  a local action which can only be done by :our
+        ::
+        [%create-community name=@t initial-invitees=(set @p)]
+        ::  a local action which can only be done by :our
+        ::
         [%send-message host=@p name=@t =path data=*]
+        ::  a poke which anyone can do.
+        ::
+::        [%receive-message ]
     ==
   +$  out-poke-data
     $%  [%noun =cord]
@@ -37,6 +44,11 @@
   ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
   --
+::
+=,  async=async:tapp
+=,  tapp-async=tapp-async:tapp
+=,  stdio
+=*  default-tapp  default-tapp:tapp
 ::
 |%
 ::  +local-subscribe: subscribes locally to a not
@@ -57,6 +69,8 @@
   ::
   =/  full-server-state=(unit peer-diff:common)
     (get-snapshot-as-peer-diff / server)
+  ::
+  ~&  %blah
   ::
   %_      app-state
       client-communities
@@ -87,21 +101,48 @@
 ::
 ++  send-message
   |=  [=bowl:gall host=@p name=@t =path msg=* =app-state]
-  ^+  app-state
+  =/  m  tapp-async
+  ^-  form:m
   ::  Using our client copy of the state, perform verification.
   ::
   =/  community  (~(got by client-communities.app-state) [host name])
   ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
   ::
-  ~&  [%outbound-message e]
-  app-state
+  ?:  =(host our.bowl)
+    ::  we do the special case where we synchronously call ourselves for
+    ::  messages to ourselves.
+    ::
+    ~&  %sending-to-self
+    (receive-message name e app-state)
+  ::
+  ~&  %todo-send-message-outbound
+  (pure:m app-state)
+::
+::
+++  receive-message
+  |=  [name=@t =client-to-server:common =app-state]
+  =/  m  tapp-async
+  ^-  form:m
+  ::
+  ?~  community=(~(get by server-communities.app-state) name)
+    ~&  [%no-such-colmmunity name]
+    (pure:m app-state)
+  ::
+  =^  changes  u.community
+    %-  apply-to-server  :*
+      safe-applets
+      client-to-server
+      u.community
+    ==
+  ::
+  ~&  [%todo-emit-changes changes]
+  ::
+  ~&  [%nu-community u.community]
+::  ~&  [%todo-receiving-message client-to-server]
+  (pure:m app-state)
 --
 ::
-=,  async=async:tapp
-=,  tapp-async=tapp-async:tapp
-=,  stdio
-=*  default-tapp  default-tapp:tapp
 %-  create-tapp-all:tapp
 ^-  tapp-core-all:tapp
 |_  [=bowl:gall =app-state]
@@ -167,17 +208,14 @@
   ::
       %send-message
     ::
-    =.  app-state
-      %-  send-message  :*
-        bowl
-        host.in-poke-data
-        name.in-poke-data
-        path.in-poke-data
-        data.in-poke-data
-        app-state
-      ==
-    ~&  [%todo-impl-send-message [host name]:in-poke-data]
-    (pure:m app-state)
+    %-  send-message  :*
+      bowl
+      host.in-poke-data
+      name.in-poke-data
+      path.in-poke-data
+      data.in-poke-data
+      app-state
+    ==
   ==
 
   ::  ?:  =(cord.in-poke-data 'pull')
