@@ -5,7 +5,6 @@ module Vere.Pier (booted, resumed, pier, runPersist, runCompute) where
 import UrbitPrelude
 
 import Arvo
-import Data.Acquire
 import Vere.Pier.Types
 import System.Random
 

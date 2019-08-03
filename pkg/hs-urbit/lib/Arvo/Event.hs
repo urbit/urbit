@@ -124,7 +124,7 @@ data HttpClientEv
 
 data HttpServerEv
     = HttpServerEvRequest      (ServId, Word, Word, ()) HttpServerReq
-    | HttpServerEvRequestLocal (ServId, Path)           HttpServerReq
+    | HttpServerEvRequestLocal (ServId, Word, Word, ()) HttpServerReq
     | HttpServerEvLive         (ServId, ())             Port (Maybe Port)
     | HttpServerEvBorn         (KingId, ())             ()
   deriving (Eq, Ord, Show)

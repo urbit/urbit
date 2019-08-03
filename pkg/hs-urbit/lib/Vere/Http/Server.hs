@@ -1,3 +1,28 @@
+{-
+    TODO Implement ports file.
+
+    TODO What is this abount?
+
+        //  if we don't explicitly set this field, h2o will send with
+        //  transfer-encoding: chunked
+        //
+        if ( 1 == has_len_i ) {
+          rec_u->res.content_length = ( 0 == gen_u->bod_u ) ?
+                                      0 : gen_u->bod_u->len_w;
+        }
+
+    TODO Does this matter, is is using WAI's default behavior ok.
+
+        rec_u->res.reason = (status < 200) ? "weird" :
+                            (status < 300) ? "ok" :
+                            (status < 400) ? "moved" :
+                            (status < 500) ? "missing" :
+                            "hosed";
+
+
+
+-}
+
 module Vere.Http.Server where
 
 import Arvo            hiding (ServerId, reqBody, reqUrl, secure)
@@ -137,6 +162,9 @@ newLiveReq var = do
 cordBytes :: Cord -> ByteString
 cordBytes = encodeUtf8 . unCord
 
+pass :: Monad m => m ()
+pass = pure ()
+
 whenJust :: Monad m => Maybe a -> (a -> m ()) -> m ()
 whenJust Nothing  act = pure ()
 whenJust (Just a) act = act a
@@ -176,6 +204,9 @@ reqUrl = Cord . decodeUtf8 . W.rawPathInfo
 
 -- Utilities for Constructing Events -------------------------------------------
 
+data WhichServer = Secure | Insecure | Loopback
+  deriving (Eq)
+
 servEv :: HttpServerEv -> Ev
 servEv = EvBlip . BlipEvHttpServer
 
@@ -187,10 +218,15 @@ liveEv :: ServId -> Port -> Maybe Port -> Ev
 liveEv sId non sec =
     servEv $ HttpServerEvLive (sId, ()) non sec
 
-reqEv :: ServId -> ReqId -> Bool -> Address -> HttpRequest -> Ev
-reqEv sId reqId secure addr req =
-    servEv $ HttpServerEvRequest (sId, reqId, 1, ())
-           $ HttpServerReq secure addr req
+reqEv :: ServId -> ReqId -> WhichServer -> Address -> HttpRequest -> Ev
+reqEv sId reqId which addr req =
+    case which of
+        Loopback ->
+            servEv $ HttpServerEvRequestLocal (sId, reqId, 1, ())
+                   $ HttpServerReq False addr req
+        _        ->
+            servEv $ HttpServerEvRequest (sId, reqId, 1, ())
+                   $ HttpServerReq (which == Secure) addr req
 
 
 
@@ -244,24 +280,24 @@ sendResponse cb tmv = do
     hdrStatus :: ResponseHeader -> H.Status
     hdrStatus = toEnum . fromIntegral . statusCode
 
-app :: ServId -> TVar LiveReqs -> (Ev -> STM ()) -> Bool -> W.Application
-app sId liv plan secure req respond = do
-    body <- reqBody req
-    meth <- maybe (error "bad method") pure (cookMeth req)
-
-    let addr  = reqAddr req
-        hdrs  = convertHeaders $ W.requestHeaders req
-        evReq = HttpRequest meth (reqUrl req) hdrs body
+app :: ServId -> TVar LiveReqs -> (Ev -> STM ()) -> WhichServer -> W.Application
+app sId liv plan which req respond = do
 
     (reqId, respVar) <- atomically (newLiveReq liv)
 
-    atomically $ plan (reqEv sId reqId secure addr evReq)
+    let clearLiveReq = atomically (rmLiveReq liv reqId)
 
-    done <- sendResponse respond respVar
+    bracket_ pass clearLiveReq $ do
+        body <- reqBody req
+        meth <- maybe (error "bad method") pure (cookMeth req)
 
-    atomically (rmLiveReq liv reqId)
+        let addr  = reqAddr req
+            hdrs  = convertHeaders $ W.requestHeaders req
+            evReq = HttpRequest meth (reqUrl req) hdrs body
 
-    pure done
+        atomically $ plan (reqEv sId reqId which addr evReq)
+
+        sendResponse respond respVar
 
 
 -- Top-Level Driver Interface --------------------------------------------------
@@ -271,6 +307,7 @@ newtype Drv = Drv { unDrv :: MVar (Maybe Serv) }
 data Serv = Serv
     { sServId   :: ServId
     , sConfig   :: HttpServerConf
+    , sLoopTid  :: Async ()
     , sHttpTid  :: Async ()
     , sHttpsTid :: Async ()
     , sLiveReqs :: TVar LiveReqs
@@ -290,19 +327,31 @@ startServ conf plan = do
   sId <- ServId <$> randomIO
   liv <- newTVarIO emptyLiveReqs
 
-  httpsTid <- async $ W.runTLS tls W.defaultSettings (app sId liv plan True)
+  let httpPort  = 8080  -- 80 if real ship
+      httpsPort = 8443  -- 443 if real ship
+      loopPort  = 12321 -- 443 if real ship
 
-  httpTid <- async $ W.run 80 (app sId liv plan False)
+      loopOpts  = W.defaultSettings & W.setPort (fromIntegral loopPort)
+                                    & W.setHost "127.0.0.1"
+                                    & W.setTimeout (5 * 60)
+      httpOpts  = W.defaultSettings & W.setPort (fromIntegral httpPort)
+      httpsOpts = W.defaultSettings & W.setPort (fromIntegral httpsPort)
 
-  let res = (sId, Port 80, Just $ Port 443)
+  loopTid  <- async $ W.runSettings loopOpts $ app sId liv plan Loopback
+  httpTid  <- async $ W.runSettings httpOpts $ app sId liv plan Insecure
+  httpsTid <- async $ W.runTLS tls httpsOpts $ app sId liv plan Secure
 
-  pure (Serv sId conf httpTid httpsTid liv, res)
+  let res = (sId, Port httpPort, Just $ Port httpsPort)
+
+  pure (Serv sId conf loopTid httpTid httpsTid liv, res)
 
 
 killServ :: Serv -> IO ()
-killServ Serv{sHttpsTid, sHttpTid} = do
+killServ Serv{sLoopTid, sHttpTid, sHttpsTid} = do
+    cancel sLoopTid
     cancel sHttpTid
     cancel sHttpsTid
+    wait sLoopTid
     wait sHttpTid
     wait sHttpsTid
 
