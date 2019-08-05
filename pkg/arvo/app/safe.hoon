@@ -68,7 +68,7 @@
     (~(put in local-subscriptions.app-state) [name full-route])
   ::
   =/  full-server-state=(unit peer-diff:common)
-    (get-snapshot-as-peer-diff / server)
+    (get-snapshot-as-peer-diff full-route server)
   ::
   %_      app-state
       client-communities
@@ -82,6 +82,8 @@
         ::  otherwise, we modify the current one in place
         ::
         %+  ~(jab by client-communities.app-state)  [our name]
+        |=  =node:safe-client
+        %^  apply-to-client-node  full-route  node
         set-local-subscription
     ::
     ++  set-local-subscription
@@ -106,21 +108,28 @@
   |=  [=bowl:gall host=@p name=@t =path msg=* =app-state]
   =/  m  tapp-async
   ^-  form:m
+  ::
+  |-
   ::  Using our client copy of the state, perform verification.
   ::
   =/  community  (~(got by client-communities.app-state) [host name])
   ::
-  ::  TODO: we're now failing in +signature-request-for because we don't have
-  ::  the prerequisite nodes locally. 
-  ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
+  ::
+  ?:  ?=([%& *] e)
+    ?:  =(our.bowl host)
+      =.  app-state  (local-subscribe our.bowl name p.e app-state)
+      $
+    ::
+    ~&  [%todo-must-remote-subscribe host name p.e]
+    (pure:m app-state)
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
     ::  messages to ourselves.
     ::
     ~&  %sending-to-self
-    (receive-message host name e app-state)
+    (receive-message host name p.e app-state)
   ::
   ~&  %todo-send-message-outbound
   (pure:m app-state)
@@ -242,6 +251,8 @@
     (pure:m app-state)
   ::
       %send-message
+    ::
+    ~&  [%full-community client-communities.app-state]
     ::
     %-  send-message  :*
       bowl

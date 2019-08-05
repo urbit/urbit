@@ -57,10 +57,6 @@
     `[%ship ship.parent-event]
   ::
       %ring
-    ::  we are the toplevel, the only path we accept is /
-    ::
-    ?.  =(/ path)
-      ~
     ::
     =/  ships=(set @p)
       %-  sy

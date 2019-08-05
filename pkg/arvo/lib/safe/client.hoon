@@ -44,6 +44,16 @@
     ::
     [app-type.s top-state.s signature-type.s snapshot-vase children.s]
   --
+::
+++  apply-evnet-log-item-to-children-state
+  |=  [=event-log-item:common children=(map @t (unit node))]
+  ^-  (map @t (unit node))
+  ::
+  ?+      -.event-log-item
+        children
+      %create
+    (~(put by children) sub-id.event-log-item ~)
+  ==
 ::  +apply-to-client-node: given a path, modify the node at that path
 ::
 ::    We have actions which walk through the
@@ -83,6 +93,11 @@
     =/  snapshot=snapshot:common
       (snapshot:from-transport app-map snapshot.peer-diff)
     ::
+    ::  TODO: When we get a snapshot, we need to reconstruct the :children and
+    ::  :archived state here from the embedded snapshot, archiving all nodes
+    ::  that we have data about which are missing from the snapshot, and adding
+    ::  information about
+    ::
     %_    node
         partial-event-log
       :_  partial-event-log.node
@@ -107,6 +122,11 @@
     ::
         snapshot
       `(apply-event-log-item-to-state app-map event-item (need snapshot.node))
+    ::
+        children
+      (apply-evnet-log-item-to-children-state event-item children.node)
+    ::
+    ::  TODO: Also modify the archive state once I have archiving working.
     ==
   ==
 ::  +applies a diff to a client's state
@@ -122,33 +142,57 @@
 ::  +signature-request-for: changes an abstract signature-type into a
 ::  signature-request for route.
 ::
+::    This operation requires us to know information about the final 
+::
 ++  signature-request-for
   |=  [route=path client-state=node]
-  ^-  signature-request:common
+  ^-  (each path signature-request:common)
   ::
   =/  root-state  client-state
-  %-  need
-  ::  we recursively walk through the client-state, returning ~ for %inherit,
-  ::  otherwise returning the real
   ::
-  |-
-  ^-  (unit signature-request:common)
-  ::
-  |^  =|  built-route=path
-      |-
-      ?^  route
-        =/  ret-val=(unit signature-request:common)
-          %_  $
-            built-route   (weld built-route [i.route ~])
-            route         t.route
-            client-state  (need (~(got by children.client-state) i.route))
-          ==
-        ::
-        ?~  ret-val
-          (get-for-node built-route client-state)
-        ret-val
+  |^  ^-  (each path signature-request:common)
+      =/  result  (search route client-state)
       ::
-      (get-for-node built-route client-state)
+      ?-  -.result
+        %|  [%| (need p.result)]
+        %&  [%& p.result]
+      ==
+  ::  +search: attempts to find the node to operate on.
+  ::
+  ++  search
+    |=  [route=path client-state=node]
+    ^-  (each path (unit signature-request:common))
+    ::
+    =|  built-route=path
+    |-
+    ::
+    ?^  route
+      ::  if we don't know anything about children.client-state, then
+      ::  subscribe to the parent because we must first learn if it exists.
+      ?~  children-state=(~(get by children.client-state) i.route)
+        [%& built-route]
+      ::  update the built-route so we're looking at the 
+      ::
+      =.  built-route  (weld built-route [i.route ~])
+      ::  if we do know that children.client-state exists, but know nothing
+      ::  about it, also block while we look it up.
+      ::
+      ?~  u.children-state
+        [%& built-route]
+      ::
+      =/  ret-val=(each path (unit signature-request:common))
+        %_  $
+          route         t.route
+          client-state  u.u.children-state
+        ==
+      ?:  ?=([%& *] ret-val)
+        [%& p.ret-val]
+      ::
+      ?~  p.ret-val
+        [%| (get-for-node built-route client-state)]
+      [%| p.ret-val]
+    ::
+    [%| (get-for-node built-route client-state)]
   ::
   ++  get-for-node
     |=  [built-route=path client-state=node]
@@ -204,11 +248,15 @@
 ::
 ++  sign-user-event
   |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
-  ^-  client-to-server:common
-  ::  TODO: ^-  (each path client-to-server:common)
+  ^-  (each path client-to-server:common)
   ::
   =/  root-request  (signature-request-for / client-state)
+  ?:  ?=([%& *] root-request)
+    [%& p.root-request]
+  ::
   =/  path-request  (signature-request-for route client-state)
+  ?:  ?=([%& *] path-request)
+    [%& p.path-request]
   ::
   =/  app-type=@t
     |-
@@ -225,12 +273,13 @@
   =/  user-event-mold=vase  (slap node-vase [%limb %user-event])
   =/  user-event=vase       (slam user-event-mold %noun user-event)
   ::
+  :-  %|
   %-  sign-raw-user-event:signatures  :*
     our
     now
     eny
-    root-request
-    path-request
+    p.root-request
+    p.path-request
     route
     q.user-event
   ==

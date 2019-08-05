@@ -255,7 +255,8 @@
       ::  back
       ::
       ?:  =(~ q.raw-result)
-        ~&  [%node-canceled-event ~]
+        ~&  [%node-canceled-event route parent-event private-state.state]
+        ~&  [%state-at-cancel state]
         [!>(~) changes state]
       ::
       =/  child-event=vase  (slot 3 raw-result)
@@ -290,8 +291,6 @@
       =/  nu=changes-and-state
         %^  record-change  changes  [state full-path]
         [%log message-signature original-path user-event private-event.response]
-      ::
-      ~&  [%new-snapshot full-path snapshot.snapshot.state.nu]
       ::
       [return-event.response changes.nu state.nu]
     ::
