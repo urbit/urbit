@@ -2513,10 +2513,8 @@
   ^+  [next-bone.ossuary ossuary]
   ::
   ?^  existing=(~(get by by-duct.ossuary) duct)
-    ~&  %ames-existing-bone^u.existing
     [u.existing ossuary]
   ::
-  ~&  %ames-next-bone^next-bone.ossuary
   :-  next-bone.ossuary
   :+  (add 4 next-bone.ossuary)
     (~(put by by-duct.ossuary) duct next-bone.ossuary)
