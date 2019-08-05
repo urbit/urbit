@@ -359,7 +359,7 @@
       %^  slum  installed.boot-ova.pil  now.hid
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
-          %a  %ames
+          %a  %alef
           %b  %behn
           %c  %clay
           %d  %dill
