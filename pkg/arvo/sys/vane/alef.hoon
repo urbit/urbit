@@ -747,6 +747,7 @@
         ?.  ?=(%soft -.wrapped-task)
           wrapped-task
         ;;(task p.wrapped-task)
+      ~&  %ames-call^our^-.task
       ::  %born: set .unix-duct and start draining .queued-events
       ::
       ?:  ?=(%born -.task)
@@ -772,6 +773,7 @@
     ::
     ++  take
       |=  [=wire =duct type=* =sign]
+      ~&  %ames-take^our^-.sign
       ::  enqueue event if not a larval drainage timer
       ::
       ?.  =(/larva wire)
@@ -781,7 +783,7 @@
       ::  larval event drainage timer; pop and process a queued event
       ::
       ?.  ?=([%b %wake *] sign)
-        ~&  %alef-larva-wtf^sign
+        ~&  %alef-larva-wtf
         [~ larval-gate]
       ~&  %alef-larva-wake
       =^  first-event  queued-events  ~(get to queued-events)
@@ -851,7 +853,7 @@
     =<  abet
     ?-  -.task
       %born  on-born:event-core
-      %crud  ~&  %ames-crud^p.task
+      %crud  ~&  %ames-crud^our^p.task
              %-  (slog q.task)
              event-core
       %hear  (on-hear:event-core [lane blob]:task)
@@ -911,7 +913,9 @@
   |%
   ++  event-core  .
   ++  abet  [(flop moves) ames-state]
-  ++  emit  |=(=move event-core(moves [move moves]))
+  ++  emit
+    |=  =move
+    event-core(moves [move moves])
   ::  +on-take-done: handle notice from vane that it processed a message
   ::
   ++  on-take-done
@@ -1101,6 +1105,7 @@
     ::
     =/  =peer-state  (got-peer-state her)
     =/  =channel     [[our her] now +>.ames-state -.peer-state]
+    ~&  %ames-take-boon^our^her^bone=bone
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone payload)
   ::  +on-plea: handle request to send message
@@ -1119,7 +1124,8 @@
     =/  =peer-state  +.u.ship-state
     =/  =channel     [[our ship] now +>.ames-state -.peer-state]
     ::
-    =^  =bone  ossuary.peer-state  (get-bone ossuary.peer-state duct)
+    =^  =bone  ossuary.peer-state  (bind-duct ossuary.peer-state duct)
+    ~&  %ames-plea^our^ship^[bone=bone]^vane.plea^path.plea
     ::
     abet:(on-memo:(make-peer-core peer-state channel) bone plea)
   ::  +on-take-wake: receive wakeup or error notification from behn
@@ -1206,7 +1212,7 @@
       |=  [=ship =rift]
       ^+  event-core
       ::
-      ~&  %alef-breach^ship^rift
+      ~&  %alef-breach^our^ship^rift
       =.  peers.ames-state  (~(del by peers.ames-state) ship)
       event-core
     ::  +on-publ-rekey: handle new key for peer
@@ -1221,7 +1227,7 @@
           ==
       ^+  event-core
       ::
-      ~&  %alef-rekey^ship^life^public-key
+      ~&  %alef-rekey^our^ship^life^public-key
       (insert-peer-state ship (got-peer-state ship) life public-key)
     ::  +on-publ-sponsor: handle new or lost sponsor for self or peer
     ::
@@ -1238,7 +1244,7 @@
       =/  =peer-state  (got-peer-state ship)
       ::
       ?~  sponsor
-        ~|  %lost-sponsor^ship  !!
+        ~|  %lost-sponsor^our^ship  !!
       ::
       =.  sponsor.peer-state  u.sponsor
       ::
@@ -1249,7 +1255,7 @@
     ++  on-publ-full
       |=  points=(map ship point)
       ^+  event-core
-      ~&  %alef-on-publ-full
+      ~&  %alef-on-publ-full^our
       ::
       =>  .(points ~(tap by points))
       |^  ^+  event-core
@@ -1577,6 +1583,13 @@
       ::
       =.  event-core  (send-blob her.channel blob)
       peer-core
+    ::  +got-duct: look up $duct by .bone, asserting already bound
+    ::
+    ++  got-duct
+      |=  =bone
+      ^-  ^duct
+      ~|  %dangling-bone^her.channel^bone
+      (~(got by by-bone.ossuary.peer-state) bone)
     ::  +run-message-pump: process $message-pump-task and its effects
     ::
     ++  run-message-pump
@@ -1586,9 +1599,6 @@
       ::
       =/  =message-pump-state
         (~(gut by snd.peer-state) bone *message-pump-state)
-      ::
-      =^  client-duct  ossuary.peer-state
-        (get-duct ossuary.peer-state bone duct)
       ::
       =/  message-pump    (make-message-pump message-pump-state channel)
       =^  pump-gifts      message-pump-state  (work:message-pump task)
@@ -1626,16 +1636,14 @@
         ::  not a nack-trace bone; positive ack gets emitted trivially
         ::
         ?:  ok
-          (emit client-duct %give %done error=~)
+          (emit (got-duct bone) %give %done error=~)
         ::  nack; enqueue, pending nack-trace message
         ::
+        ::    The pump must never emit duplicate acks.  If we heard the
+        ::    nack-trace message already, the pump should not generate a
+        ::    duplicate %done event when we hear a message nack packet.
+        ::
         =/  nax-key  [bone message-num]
-        ::  sanity check
-        ::
-        ::    The pump must never emit duplicate acks, and if we've
-        ::    heard the nack-trace, that should have cleared this
-        ::    message from the pump.
-        ::
         ?<  (~(has in nax.peer-state) nax-key)
         =.  nax.peer-state  (~(put in nax.peer-state) nax-key)
         ::
@@ -1661,7 +1669,7 @@
         ^+  peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
-        (emit client-duct %pass wire %b %wait date)
+        (emit duct %pass wire %b %wait date)
       ::  +on-pump-rest: relay |message-pump's unset-timer request
       ::
       ++  on-pump-rest
@@ -1669,7 +1677,7 @@
         ^+  peer-core
         ::
         =/  =wire  (make-pump-timer-wire her.channel bone)
-        (emit client-duct %pass wire %b %rest date)
+        (emit duct %pass wire %b %rest date)
       --
     ::  +run-message-still: process $message-still-task and its effects
     ::
@@ -1722,45 +1730,36 @@
         on-still-nack-trace
       ::  +on-still-boon: handle response message received by |message-still
       ::
+      ::    .bone must be mapped in .ossuary.peer-state, or we crash.
+      ::    This means a malformed message will kill a channel.  We
+      ::    could change this to a no-op if we had some sort of security
+      ::    reporting.
+      ::
       ++  on-still-boon
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-boon
-        ::  send message ack packet unconditionally
+        ~&  %ames-still-boon^our^bone=bone
+        ::  send ack unconditionally
         ::
         =.  peer-core  (run-message-still bone %done ok=%.y)
-        ::  if no .client-duct, bone is invalid; don't send to vane
+        ::  give message to client vane
         ::
-        ::    Future Ames should emit a security alert to local
-        ::    subscribers if it can't find the duct for a %boon message.
-        ::
-        ?~  client-duct=(~(get by by-bone.ossuary.peer-state) bone)
-          ~&  %ames-bogus-boon-target^her.channel
-          peer-core
-        ::  valid bone; give message to vane
-        ::
-        (emit u.client-duct %give %boon message)
+        (emit (got-duct bone) %give %boon message)
       ::  +on-still-nack-trace: handle nack-trace received by |message-still
       ::
       ++  on-still-nack-trace
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-nack-trace
+        ~&  %ames-still-nack-trace^our^bone=bone
         ::
         =+  ;;  [=failed=^message-num =error]  message
+        ::  ack nack-trace message (only applied if we don't later crash)
+        ::
+        =.  peer-core  (run-message-still bone %done ok=%.y)
         ::  flip .bone's second bit to find referenced flow
         ::
         =/  target-bone=^bone  (mix 0b10 bone)
-        ::  if no .target-duct, malformed message; don't ack
-        ::
-        ?~  target-duct=(~(get by by-bone.ossuary.peer-state) target-bone)
-          ~&  %ames-bogus-nack-trace-target^her.channel
-          peer-core
-        ::  valid .target-duct; ack
-        ::
-        =.  peer-core  (run-message-still bone %done ok=%.y)
-        ::
-        =/  nax-key  [target-bone failed-message-num]
+        =/  nax-key            [target-bone failed-message-num]
         ::  if we haven't heard a message nack, pretend we have
         ::
         ::    The nack-trace message counts as a valid message nack on
@@ -1778,13 +1777,13 @@
         ::
         =.  nax.peer-state  (~(del in nax.peer-state) nax-key)
         ::
-        (emit u.target-duct %give %done `error)
+        (emit (got-duct target-bone) %give %done `error)
       ::  +on-still-plea: handle request message received by |message-still
       ::
       ++  on-still-plea
         |=  [=message-num message=*]
         ^+  peer-core
-        ~&  %ames-still-plea
+        ~&  %ames-still-plea^our^bone=bone
         ::  don't accept requests for arbitrary vanes
         ::
         =+  ;;  =plea  message
@@ -1806,13 +1805,10 @@
         ::
         =/  =wire  (make-bone-wire her.channel bone)
         ::
-        =^  client-duct  ossuary.peer-state
-          (get-duct ossuary.peer-state bone duct)
-        ::
         ?+  vane.plea  ~|  %ames-evil-vane^vane.plea  !!
-          %c  (emit client-duct %pass wire %c %plea her.channel plea)
-          %g  (emit client-duct %pass wire %g %plea her.channel plea)
-          %k  (emit client-duct %pass wire %k %plea her.channel plea)
+          %c  (emit duct %pass wire %c %plea her.channel plea)
+          %g  (emit duct %pass wire %g %plea her.channel plea)
+          %k  (emit duct %pass wire %k %plea her.channel plea)
         ==
       --
     --
@@ -2359,12 +2355,12 @@
       ?.  is-last-fragment
         ::  single packet ack
         ::
-        ~&  %send-dupe-ack^seq^fragment-num
+        ~&  %send-dupe-ack^our.channel^seq^fragment-num
         (give %send seq %& fragment-num)
       ::  whole message (n)ack
       ::
       =/  ok=?  (~(has in nax.state) seq)
-      ~&  %send-dupe-ack-whole-message^seq
+      ~&  %send-dupe-ack-whole-message^our.channel^seq
       (give %send seq %| ok lag=`@dr`0)
     ::  last-acked<seq<=last-heard; heard message, unprocessed
     ::
@@ -2372,7 +2368,7 @@
       ?:  is-last-fragment
         ::  drop last packet since we don't know whether to ack or nack
         ::
-        ~&  %repeat-last-unprocessed^seq^last-heard.state
+        ~&  %repeat-last-unprocessed^our.channel^seq^last-heard.state
         message-still
       ::  ack all other packets
       ::
@@ -2398,9 +2394,9 @@
     ::
     ?:  already-heard-fragment
       ?:  is-last-fragment
-        ~&  %already-heard-last-fragment^seq^fragment-num
+        ~&  %already-heard-last-fragment^our.channel^seq^fragment-num
         message-still
-      ~&  %send-dupe-ack-fragment^seq^fragment-num
+      ~&  %send-dupe-ack-fragment^our.channel^seq^fragment-num
       (give %send seq %& fragment-num)
     ::  new fragment; store in state and check if message is done
     ::
@@ -2437,7 +2433,7 @@
     =.  last-heard.state     +(last-heard.state)
     =.  live-messages.state  (~(del by live-messages.state) seq)
     ::
-    ~&  %ames-still-rcv-kb^seq^num-fragments.u.live
+    ~&  %ames-still-rcv-kb-on^our.channel^%from^her.channel^seq^num-fragments.u.live
     =/  message=*  (assemble-fragments [num-fragments fragments]:u.live)
     =.  message-still  (enqueue-to-vane seq message)
     ::
@@ -2510,28 +2506,17 @@
   %+  can   13
   %+  turn  (flop sorted)
   |=(a=@ [1 a])
-::  +get-duct: find or make new duct for .bone in .ossuary
+::  +bind-duct: find or make new $bone for .duct in .ossuary
 ::
-++  get-duct
-  |=  [=ossuary =bone =default=duct]
-  ^+  [default-duct ossuary]
-  ::
-  ?^  existing=(~(get by by-bone.ossuary) bone)
-    [u.existing ossuary]
-  ::
-  :-  default-duct
-  :+  next-bone.ossuary
-    (~(put by by-duct.ossuary) default-duct bone)
-  (~(put by by-bone.ossuary) bone default-duct)
-::  +get-bone: find or make new bone for .duct in .ossuary
-::
-++  get-bone
+++  bind-duct
   |=  [=ossuary =duct]
   ^+  [next-bone.ossuary ossuary]
   ::
   ?^  existing=(~(get by by-duct.ossuary) duct)
+    ~&  %ames-existing-bone^u.existing
     [u.existing ossuary]
   ::
+  ~&  %ames-next-bone^next-bone.ossuary
   :-  next-bone.ossuary
   :+  (add 4 next-bone.ossuary)
     (~(put by by-duct.ossuary) duct next-bone.ossuary)

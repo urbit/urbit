@@ -2811,6 +2811,14 @@
     =/  =desk  p.riff
     =/  =wire  /warp-index/(scot %p ship)/(scot %tas desk)/(scot %ud index)
     =/  =path  [%question desk (scot %ud index) ~]
+    ~&  :*  %clay-send-plea
+            our=our
+            ship=ship
+            wire=wire
+            duct=duct
+            path=path
+            riff=-.riff
+        ==
     (emit duct %pass wire %a %plea ship %c path riff)
   ::
   ::  Create a request that cannot be filled immediately.
@@ -2826,6 +2834,7 @@
     =.  wov  (dedupe wov)
     =.  qyx  (~(put ju qyx) wov hen)
     ?~  ref
+      ~&  %clay-duce-future
       (run-if-future rove.wov |=(@da (bait hen +<)))
     |-  ^+  +>+.$
     =/  =rave  (rove-to-rave rove.wov)
@@ -2835,6 +2844,7 @@
     =+  inx=nix.u.ref
     =.  +>+.$
       =<  ?>(?=(^ ref) .)
+      ~&  %clay-duce-plea
       (send-over-ames hen her inx syd `rave)
     %=  +>+.$
       nix.u.ref  +(nix.u.ref)
@@ -2987,6 +2997,7 @@
       |=  {{a/wove b/(set duct)} c/(list wove)}
       ?.((~(has in b) hen) c [a c])
     ?~  ref
+      ~&  %clay-cancel-future
       =>  .(ref `(unit rind)`ref)     ::  XX TMI
       ?:  =(~ wos)  +                                   ::  XX handle?
       |-  ^+  +>
@@ -2998,6 +3009,7 @@
     =:  fod.u.ref  (~(del by fod.u.ref) hen)
         bom.u.ref  (~(del by bom.u.ref) u.nux)
       ==
+    ~&  %clay-cancel-plea
     (send-over-ames hen her u.nux syd ~)
   ::
   ::  Handles a request.
@@ -4442,9 +4454,10 @@
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)
+    ~&  %clay-take-foreign-warp^our^tea
     ?>  ?=(%writ +<.q.hin)
     :_  ..^$
-    [hen %give %boon (bind `riot`p.q.hin rant-to-rand)]~
+    [hen %give %boon `(unit rand)`(bind `riot`p.q.hin rant-to-rand)]~
   ::
   ?:  ?=([%foreign-request @ @ @ *] tea)
     =/  her  (slav %p i.t.tea)
@@ -4456,6 +4469,7 @@
     [mos ..^$]
   ::
   ?:  ?=([%foreign-update @ @ *] tea)
+    ~&  %clay-take-foreign-update^tea
     =/  her  (slav %p i.t.tea)
     =/  syd  (slav %tas i.t.t.tea)
     =^  mos  ruf
@@ -4482,16 +4496,23 @@
   ?:  ?=([%warp-index @ @ @ ~] tea)
     ?:  ?=(%done +<.q.hin)
       ?~  error.q.hin
+        ~&  %clay-take-warp-index-ok^our^tea
         [~ ..^$]
       ::  TODO better error handling
       ::
-      ~&  %clay-take-warp-index-error^tag.u.error.q.hin
+      ~&  %clay-take-warp-index-error^our^tea^tag.u.error.q.hin
       %-  (slog tang.u.error.q.hin)
       [~ ..^$]
     ::
     ?>  ?=(%boon +<.q.hin)
     ::
-    =+  ;;  res=(unit rand)  payload.q.hin
+    =/  res=(unit rand)
+      ?^  v=((soft ,(unit rand)) payload.q.hin)
+        ~&  %clay-take-boon^our^tea
+        u.v
+      ~|  %clay-take-boon-fail^our^payload.q.hin
+      !!
+    ::=+  ;;  res=(unit rand)  payload.q.hin
     ::
     =/  her=ship   (slav %p i.t.tea)
     =/  =desk      (slav %tas i.t.t.tea)
