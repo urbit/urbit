@@ -147,9 +147,9 @@ Create a development ship, then once your ship is running, mount to Unix with `|
 
 ### Landscape
 
-If you'd like to contribute to the core set of Landscape applications in this repository, start by creating an `urbitrc` file in [pkg/interface](https://github.com/urbit/urbit/tree/master/pkg/interface). You can find an `urbitrc-sample` for reference. Then `cd` into the application's folder and `npm install` the dependencies, and `gulp watch` to watch for changes.
+If you'd like to contribute to the core set of Landscape applications in this repository, clone this repository and start by creating an `urbitrc` file in the [pkg/interface](https://github.com/urbit/urbit/tree/master/pkg/interface) folder. You can find an `urbitrc-sample` there for reference. Then `cd` into the application's folder and `npm install` the dependencies, and `gulp watch` to watch for changes.
 
-Ensure you `|commit %home` to confirm your changes. When you're done and ready to make a pull request, `gulp bundle-prod` will make the production files and deposit them in [pkg/arvo](https://github.com/urbit/urbit/tree/master/pkg/arvo). Create a pull request with both the production files, and the source code you were working on in the interface directory.
+On your development ship, ensure you `|commit %home` to confirm your changes. Once you're done and ready to make a pull request, running `gulp bundle-prod` will make the production files and deposit them in [pkg/arvo](https://github.com/urbit/urbit/tree/master/pkg/arvo). Create a pull request with both the production files, and the source code you were working on in the interface directory.
 
 #### Creating your own applications
 
