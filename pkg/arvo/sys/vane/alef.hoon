@@ -710,11 +710,12 @@
 ::    %done: receive confirmation from vane of processing or failure
 ::    %drop: clear .message-num from .nax.state
 ::    %hear: handle receiving a message fragment packet
+::      .ok: %.y unless previous failed attempt
 ::
 +$  message-still-task
   $%  [%done ok=?]
       [%drop =message-num]
-      [%hear =lane =shut-packet]
+      [%hear =lane =shut-packet ok=?]
   ==
 ::  $message-still-gift: effect from |message-still
 ::
@@ -953,21 +954,19 @@
     |=  [=lane =blob]
     ^+  event-core
     ::
-    (on-hear-packet lane (decode-packet blob))
+    (on-hear-packet lane (decode-packet blob) ok=%.y)
   ::  +on-hole: handle packet crash notification
-  ::
-  ::    TODO: retry processing and nack if possible
   ::
   ++  on-hole
     |=  [=lane =blob]
     ^+  event-core
     ::
     ~&  %ames-hole
-    event-core
+    (on-hear-packet lane (decode-packet blob) ok=%.n)
   ::  +on-hear-packet: handle mildly processed packet receipt
   ::
   ++  on-hear-packet
-    |=  [=lane =packet]
+    |=  [=lane =packet ok=?]
     ^+  event-core
     ::
     ?:  =(our sndr.packet)
@@ -987,7 +986,7 @@
   ::    TODO: filter for transitive closure of sponsors/sponsees.
   ::
   ++  on-hear-forward
-    |=  [=lane =packet]
+    |=  [=lane =packet ok=?]
     ^+  event-core
     ::
     =/  ship-state  (~(get by peers.ames-state) rcvr.packet)
@@ -1007,7 +1006,7 @@
   ::  +on-hear-open: handle receipt of plaintext comet self-attestation
   ::
   ++  on-hear-open
-    |=  [=lane =packet]
+    |=  [=lane =packet ok=?]
     ^+  event-core
     ::  if we already know .sndr, ignore duplicate attestation
     ::
@@ -1059,7 +1058,7 @@
   ::  +on-hear-shut: handle receipt of encrypted packet
   ::
   ++  on-hear-shut
-    |=  [=lane =packet]
+    |=  [=lane =packet ok=?]
     ^+  event-core
     ::  encrypted packet content must be an encrypted atom
     ::
@@ -1094,7 +1093,7 @@
       `[direct=%.y lane]
     ::
     =/  peer-core  (make-peer-core peer-state channel)
-    abet:(on-hear-shut-packet:peer-core lane shut-packet)
+    abet:(on-hear-shut-packet:peer-core lane shut-packet ok)
   ::  +on-take-boon: receive request to give message to peer
   ::
   ++  on-take-boon
@@ -1296,7 +1295,9 @@
           |-  ^+  event-core
           ?~  rcv-packets.todos  event-core
           ::
-          =.  event-core  (on-hear-packet i.rcv-packets.todos)
+          =.  event-core
+            (on-hear-packet [lane packet ok=%.y]:i.rcv-packets.todos)
+          ::
           $(rcv-packets.todos t.rcv-packets.todos)
         ::  we're a comet; send self-attestation packet first
         ::
@@ -1420,12 +1421,14 @@
   ++  set-sponsor-heartbeat-timer
     ^+  event-core
     ::
+    ~&  %ames-set-sponsor-timer^now
     (emit duct %pass /ping %b %wait `@da`(add now ~m1))
   ::  +ping-sponsor: message our sponsor so they know our lane
   ::
   ++  ping-sponsor
     ^+  event-core
     ::
+    ~&  %ames-ping-sponsor^now
     (emit duct %pass /ping %a %plea sponsor.ames-state %a /ping ~)
   ::  +send-blob: fire packet at .ship and maybe sponsors
   ::
@@ -1509,13 +1512,15 @@
     ::  +on-hear-shut-packet: handle receipt of ack or message fragment
     ::
     ++  on-hear-shut-packet
-      |=  [=lane =shut-packet]
+      |=  [=lane =shut-packet ok=?]
       ^+  peer-core
       ::
       =/  =bone  bone.shut-packet
       ::
       ?:  ?=(%& -.meat.shut-packet)
-        (run-message-still bone %hear lane shut-packet)
+        (run-message-still bone %hear lane shut-packet ok)
+      ::  ignore .ok for |message-pump; just try again on error
+      ::
       (run-message-pump bone %hear [message-num +.meat]:shut-packet)
     ::  +on-memo: handle request to send message
     ::
@@ -1530,11 +1535,11 @@
     ++  on-wake
       |=  [=bone error=(unit tang)]
       ^+  peer-core
-      ::  TODO: handle error
+      ::  if we previously errored out, print and try again
       ::
-      ?^  error
-         ~|  %ames-wake-error
-         (mean u.error)
+      %-  ?~  error
+            same
+          (slog >%ames-wake-fail< u.error)
       ::  expire direct route
       ::
       ::    Since a packet's timer expired, mark the .lane.route as
@@ -1795,21 +1800,33 @@
           ::    TODO: treat ames as client vane and go through arvo?
           ::          removes reentrancy and could nack more easily
           ::
-          =/  error=(unit error)
-            ?:  =([/ping ~] +.plea)
-              ~
-            `[%ping [%leaf "ames: invalid ping"]~]
+          ~&  ?:  =([/ping ~] +.plea)
+                %ames-ping
+              %ames-ping-lame
           ::
           (run-message-still bone %done ok=%.y)
         ::  not a sponsor ping; relay .plea to .vane
         ::
         =/  =wire  (make-bone-wire her.channel bone)
+        ::  is this the first time we're trying to process this message?
         ::
-        ?+  vane.plea  ~|  %ames-evil-vane^vane.plea  !!
-          %c  (emit duct %pass wire %c %plea her.channel plea)
-          %g  (emit duct %pass wire %g %plea her.channel plea)
-          %k  (emit duct %pass wire %k %plea her.channel plea)
-        ==
+        ?.  ?=([%hear * * ok=%.n] task)
+          ::  fresh plea; pass to client vane
+          ::
+          ?+  vane.plea  ~|  %ames-evil-vane^vane.plea  !!
+            %c  (emit duct %pass wire %c %plea her.channel plea)
+            %g  (emit duct %pass wire %g %plea her.channel plea)
+            %k  (emit duct %pass wire %k %plea her.channel plea)
+          ==
+        ::  we previously crashed on this message; send nack
+        ::
+        =.  peer-core  (run-message-still bone %done ok=%.n)
+        ::  also send nack-trace
+        ::
+        =/  nack-trace-bone=^bone  (mix 0b10 bone)
+        =/  =message-blob          (jam [message-num ~])
+        ::
+        (run-message-pump nack-trace-bone %memo message-blob)
       --
     --
   --
@@ -2311,7 +2328,7 @@
     ^-  pump-metrics
     metrics
   --
-::
+::  +make-message-still: construct |message-still message receiver core
 ::
 ++  make-message-still
   |=  [state=message-still-state =channel]
@@ -2328,12 +2345,12 @@
     ?-  -.task
       %done  (on-done ok.task)
       %drop  (on-drop message-num.task)
-      %hear  (on-hear [lane shut-packet]:task)
+      %hear  (on-hear [lane shut-packet ok]:task)
     ==
   ::  +on-hear: receive message fragment, possibly completing message
   ::
   ++  on-hear
-    |=  [=lane =shut-packet]
+    |=  [=lane =shut-packet ok=?]
     ^+  message-still
     ::  we know this is a fragment, not an ack; expose into namespace
     ::
