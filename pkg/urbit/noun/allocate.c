@@ -586,8 +586,13 @@ u3a_push(c3_w len_w)
     top -= len_w;
     cur = top;
     u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p < u3R->mat_p);
-    c3_assert(cap_p > u3R->hat_p);
+
+    if( !( cap_p < u3R->mat_p &&
+           cap_p > u3R->hat_p ) )
+    {
+      u3m_bail(c3__meme);
+    }
+
     return cur;
   }
   else {
@@ -595,8 +600,13 @@ u3a_push(c3_w len_w)
     top += len_w;
     u3R->cap_p = u3of(void, top);
     u3p(void) cap_p = u3R->cap_p = u3of(void, top);
-    c3_assert(cap_p > u3R->mat_p);
-    c3_assert(cap_p < u3R->hat_p);
+
+    if( !( cap_p > u3R->mat_p &&
+           cap_p < u3R->hat_p ) )
+    {
+      u3m_bail(c3__meme);
+    }
+
     return cur;
   }
 }
