@@ -138,8 +138,25 @@ _jam_buf_atom(_jam_buf* buf_u, u3_noun a)
         else {
           _jam_buf_chop(&buf_u, 2, 1);
           *top         = u3t(a);
-
           u3R->cap_p  += mov;
+
+          //  XX disabled for performance
+          //  may be unnecessary, u3h_put calls u3r_mug,
+          //  which uses and checks the stack
+          //
+#if 0
+          if ( 0 == off ) {
+            if( !(u3R->cap_p > u3R->hat_p) ) {
+              u3m_bail(c3__meme);
+            }
+          }
+          else {
+            if( !(u3R->cap_p < u3R->hat_p) ) {
+              u3m_bail(c3__meme);
+            }
+          }
+#endif
+
           top          = u3to(u3_noun, u3R->cap_p + off);
           *top         = u3h(a);
         }
