@@ -70,8 +70,6 @@
   =/  full-server-state=(unit peer-diff:common)
     (get-snapshot-as-peer-diff / server)
   ::
-  ~&  %blah
-  ::
   %_      app-state
       client-communities
     ::
@@ -97,7 +95,12 @@
       client-state
     --
   ==
-::  +send-message: sends a message to a node, validating the msg.
+::  +send-message: sends a message to a node, validating the message.
+::
+::    To know how to construct the requested signature, +send-message will
+::    first ensure that you're subscribed to the root node, the target node,
+::    and any parent nodes above the target mode recursively on the %inherit
+::    signature type.
 ::
 ++  send-message
   |=  [=bowl:gall host=@p name=@t =path msg=* =app-state]
@@ -107,6 +110,9 @@
   ::
   =/  community  (~(got by client-communities.app-state) [host name])
   ::
+  ::  TODO: we're now failing in +signature-request-for because we don't have
+  ::  the prerequisite nodes locally. 
+  ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
   ::
   ?:  =(host our.bowl)
@@ -114,14 +120,17 @@
     ::  messages to ourselves.
     ::
     ~&  %sending-to-self
-    (receive-message name e app-state)
+    (receive-message host name e app-state)
   ::
   ~&  %todo-send-message-outbound
   (pure:m app-state)
+::  +receive-message: receives a message to apply to our server state
 ::
+::    This first applies a message to our server state, which may then produce
+::    changes that need to be synced to clients who are subscribed.
 ::
 ++  receive-message
-  |=  [name=@t =client-to-server:common =app-state]
+  |=  [host=@p name=@t =client-to-server:common =app-state]
   =/  m  tapp-async
   ^-  form:m
   ::
@@ -136,10 +145,36 @@
       u.community
     ==
   ::
-  ~&  [%todo-emit-changes changes]
+  =.  server-communities.app-state
+    (~(put by server-communities.app-state) name u.community)
+  ::  we need to emit the changes to all the local subscriptions, so filter
+  ::  changes just to the set we're locally subscribed to
   ::
-  ~&  [%nu-community u.community]
-::  ~&  [%todo-receiving-message client-to-server]
+  =/  locally-subscribed-changes=(list server-to-client:common)
+    %+  skim  changes
+    |=  [=path =peer-diff:common]
+    ^-  ?
+    (~(has in local-subscriptions.app-state) [name path])
+  ::  apply each of the changes per above to the community
+  ::
+  =.  client-communities.app-state
+    %+  ~(jab by client-communities.app-state)  [host name]
+    |=  =node:safe-client
+    ^+  node
+    ::
+    ?~  locally-subscribed-changes
+      node
+    ::
+    %_    $
+        locally-subscribed-changes
+      t.locally-subscribed-changes
+    ::
+        node
+      ~&  [%applying-change i.locally-subscribed-changes]
+      (apply-to-client safe-applets i.locally-subscribed-changes node)
+    ==
+  ::  todo: we need to emit the changes to all foreign subscribers
+  ::
   (pure:m app-state)
 --
 ::

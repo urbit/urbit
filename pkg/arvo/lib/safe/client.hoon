@@ -182,8 +182,14 @@
       ~
     ==
   --
-::  +sign-user-message: verify that user-message is the right shape and make
-::  the appropriate signatures
+::  +sign-user-event: signs a user event for sending to the server
+::
+::    +sign-user-event returns either a path that we aren't subscribed to or a
+::    completed signature. Since +sign-user-event requires information from the
+::    server--mainly the node type and the signature type--we must abort trying
+::    to perform a signature when we lack that information. Our caller must
+::    instead perform the subscription and retry once it has the requisite
+::    data.
 ::
 ::    TODO: +signature-request-for does a +need, but we should really break out
 ::    if :subscribed is false on any of the nodes.
@@ -199,6 +205,7 @@
 ++  sign-user-event
   |=  [our=@p now=@da eny=@uvJ route=path user-event=* client-state=node app-map=(map @t vase)]
   ^-  client-to-server:common
+  ::  TODO: ^-  (each path client-to-server:common)
   ::
   =/  root-request  (signature-request-for / client-state)
   =/  path-request  (signature-request-for route client-state)
