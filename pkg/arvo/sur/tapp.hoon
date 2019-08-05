@@ -9,6 +9,7 @@
       [%poke wire dock poke-data]
       [%peer wire dock path]
       [%pull wire dock ~]
+      [%quit wire dock ~]
       [%diff out-peer-data]
       [%request wire request:http outbound-config:iris]
       [%cancel-request wire ~]

@@ -31,15 +31,29 @@
         [%send-message host=@p name=@t =path data=*]
         ::  a poke which anyone can do.
         ::
-::        [%receive-message ]
+        [%receive-message name=@t =client-to-server:common]
     ==
   +$  out-poke-data
-    $%  [%noun =cord]
+    $%  ::  receive message to be sent to a foreign :safe server.
+        ::
+        [%receive-message name=@t =client-to-server:common]
+        ::  unlink ourselves as soon as we start.
+        ::
         [%drum-unlink =dock]
     ==
-  +$  out-peer-data  ~
+  +$  out-peer-data
+    in-peer-data
   +$  in-peer-data
-    $%  [%comments comments=(list tape)]
+    $%  ::  from +peer-diff:common
+        ::
+        [%snapshot id=@u snapshot=transport-snapshot:common]
+        ::  from +peer-diff:common
+        ::
+        [%event id=@u event=transport-event-log-item:common]
+        ::  sent when the host community either doesn't exist or the requester
+        ::  isn't allowed to access it.
+        ::
+        [%community-not-found ~]
     ==
   ++  tapp   (^tapp app-state peek-data in-poke-data out-poke-data in-peer-data out-peer-data)
   ++  stdio  (^stdio out-poke-data out-peer-data)
@@ -51,6 +65,45 @@
 =*  default-tapp  default-tapp:tapp
 ::
 |%
+::  +set-subscription-state-on-client: modifies a client node's subscription
+::
+++  set-subscription-state-on-client
+  |=  new-state=subscribed:safe-client
+  |=  client-state=node:safe-client
+  ^+  client-state
+  client-state(subscribed new-state)
+::  +apply-peer-diff-to-client: applies a peer diff
+::
+++  apply-peer-diff-to-client
+  |=  =peer-diff:common
+  |=  client-state=node:safe-client
+  ^+  client-state
+  ::
+  =.  subscribed.client-state  %subscribed
+  =.  client-state
+    (apply-peer-diff-to-node safe-applets peer-diff client-state)
+  ::
+  client-state
+::  +update-client-communities: ensure :full-route exists and run :fun on it.
+::
+++  update-client-communities
+  |=  [host=@p name=@t full-route=path =app-state fun=$-(node:safe-client node:safe-client)]
+  ^+  app-state
+  ::
+  %_      app-state
+      client-communities
+    ::  if we don't have any entries yet, we have to make the entire entry
+    ::
+    ?.  (~(has by client-communities.app-state) [host name])
+      %+  ~(put by client-communities.app-state)  [host name]
+      (apply-to-client-node full-route *node:safe-client fun)
+    ::  otherwise, we modify the current one in place
+    ::
+    %+  ~(jab by client-communities.app-state)  [host name]
+    |=  =node:safe-client
+    (apply-to-client-node full-route node fun)
+  ==
+
 ::  +local-subscribe: subscribes locally to a not
 ::
 ++  local-subscribe
@@ -70,32 +123,12 @@
   =/  full-server-state=(unit peer-diff:common)
     (get-snapshot-as-peer-diff full-route server)
   ::
-  %_      app-state
-      client-communities
-    ::
-    |^  ::  if we don't have any entries yet, we have to make the entire entry
-        ::
-        ?.  (~(has by client-communities.app-state) [our name])
-          %+  ~(put by client-communities.app-state)  [our name]
-          %^  apply-to-client-node  full-route  *node:safe-client
-          set-local-subscription
-        ::  otherwise, we modify the current one in place
-        ::
-        %+  ~(jab by client-communities.app-state)  [our name]
-        |=  =node:safe-client
-        %^  apply-to-client-node  full-route  node
-        set-local-subscription
-    ::
-    ++  set-local-subscription
-      |=  client-state=node:safe-client
-      ^+  client-state
-      ::
-      =.  subscribed.client-state  %subscribed
-      =.  client-state
-        (apply-peer-diff-to-node safe-applets (need full-server-state) client-state)
-      ::
-      client-state
-    --
+  %-  update-client-communities  :*
+    our
+    name
+    full-route
+    app-state
+    (apply-peer-diff-to-client (need full-server-state))
   ==
 ::  +send-message: sends a message to a node, validating the message.
 ::
@@ -110,19 +143,43 @@
   ^-  form:m
   ::
   |-
+  =*  loop  $
   ::  Using our client copy of the state, perform verification.
   ::
   =/  community  (~(got by client-communities.app-state) [host name])
   ::
   =/  e  (sign-user-event our.bowl now.bowl eny.bowl path msg community safe-applets)
+  ::  check if we made the signature. when we can't make the signature because
+  ::  we're lacking information, we make a subscription and then try again.
   ::
   ?:  ?=([%& *] e)
+    ::  if the missing information is on our own local server state, then we
+    ::  can just go and fetch it synchronously.
+    ::
     ?:  =(our.bowl host)
       =.  app-state  (local-subscribe our.bowl name p.e app-state)
-      $
+      loop
+    ::    TODO: This still isn't exactly correct? we need to not just
+    ::    +peer-app, but wait for the first response from the peer-app.
     ::
-    ~&  [%todo-must-remote-subscribe host name p.e]
-    (pure:m app-state)
+    ::    Instead of "loop"-ing, we'll have to add this to some sort of queue,
+    ::    where we then retry the +send-message when we get our first %diff
+    ::    back.
+    ::
+    ::    TODO: The whole %subscribed/%pending thing in client-state needs a
+    ::    way to remove %pending nodes which turn out to not actually exist.
+    =.  app-state
+      %-  update-client-communities  :*
+        host
+        name
+        path
+        app-state
+        (set-subscription-state-on-client %pending)
+      ==
+    ::
+    ;<  ~  bind:m  (peer-app [host %safe] (weld [name ~] path))
+    ::
+    loop
   ::
   ?:  =(host our.bowl)
     ::  we do the special case where we synchronously call ourselves for
@@ -130,8 +187,10 @@
     ::
     ~&  %sending-to-self
     (receive-message host name p.e app-state)
+  ::  sends to a remote server.
   ::
-  ~&  %todo-send-message-outbound
+  ~&  %sending-remotely
+  ;<  ~  bind:m  (poke-app [host %safe] %receive-message name p.e)
   (pure:m app-state)
 ::  +receive-message: receives a message to apply to our server state
 ::
@@ -182,9 +241,18 @@
       ~&  [%applying-change i.locally-subscribed-changes]
       (apply-to-client safe-applets i.locally-subscribed-changes node)
     ==
-  ::  todo: we need to emit the changes to all foreign subscribers
+  ::  broadcast each of the changes to all listeners.
   ::
-  (pure:m app-state)
+  |-
+  ^-  form:m
+  =*  loop  $
+  ::
+  ?~  changes
+    (pure:m app-state)
+  ::
+  ;<  ~  bind:m  (give-result (weld [name ~] path.i.changes) peer-diff.i.changes)
+  ::
+  loop(changes t.changes)
 --
 ::
 %-  create-tapp-all:tapp
@@ -192,15 +260,12 @@
 |_  [=bowl:gall =app-state]
 ::
 ++  handle-peek  handle-peek:default-tapp
-++  handle-peer  handle-peer:default-tapp
 ++  handle-take  handle-take:default-tapp
 ::
 ++  handle-init
   =/  m  tapp-async
   ^-  form:m
-  ::  ;<  success=?  bind:m  (bind-route:stdio [~ /dns/oauth] dap.bowl)
-  ::  ~|  %dns-unable-to-bind-route
-  ::  ?>  success
+  ::
   ;<  ~  bind:m  (poke-app:stdio [[our %hood] [%drum-unlink our dap]]:bowl)
   (pure:m app-state)
 
@@ -210,6 +275,10 @@
   ^-  form:m
   ?-    -.in-poke-data
       %create-community
+    ::
+    ?.  =(our.bowl src.bowl)
+      ~&  [%remote-cant-create-community src.bowl name.in-poke-data]
+      (pure:m app-state)
     ::  if the community already exists
     ::
     ?:  (~(has by server-communities.app-state) name.in-poke-data)
@@ -251,6 +320,11 @@
     (pure:m app-state)
   ::
       %send-message
+    ::  only we can send a message as ourselves
+    ::
+    ?.  =(our.bowl src.bowl)
+      ~&  [%remote-cant-send-message src.bowl]
+      (pure:m app-state)
     ::
     ~&  [%full-community client-communities.app-state]
     ::
@@ -262,23 +336,53 @@
       data.in-poke-data
       app-state
     ==
+  ::
+      %receive-message
+    ::  note: anyone can call our receive-message message
+    ::
+    %-  receive-message  :*
+      our.bowl
+      name.in-poke-data
+      client-to-server.in-poke-data
+      app-state
+    ==
   ==
-
-  ::  ?:  =(cord.in-poke-data 'pull')
-  ::    ?~  subscription
-  ::      (async-fail %no-subscription ~)
-  ::    ;<  ~  bind:m  (pull-app [target path]:u.subscription)
-  ::    (pure:m ~)
-  ::  =/  target  [our.bowl %example-tapp-fetch]
-  ::  ;<  ~  bind:m  (poke-app target %noun 'print')
-  ::  ;<  ~  bind:m  (peer-app target /comments)
-  ::  =.  subscription  `[target /comments]
-  ::  ;<  ~  bind:m  (wait (add now.bowl ~s3))
+::
+++  handle-peer
+  |=  =path
+  =/  m  tapp-async
+  ^-  form:m
+  ::
+  ?>  ?=(^ path)
+  ::
+  =/  community-name=@t  i.path
+  =/  route=^path        t.path
+  ::  ensure the community exists
+  ::
+  ?~  community=(~(get by server-communities.app-state) community-name)
+    ;<  ~  bind:m  (give-result path [%community-not-found ~])
+    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
+    (pure:m app-state)
+  ::  ensure the requester has access
+  ::
+  ?.  (~(has in invited:(need top-state:(need snapshot.u.community))) src.bowl)
+    ;<  ~  bind:m  (give-result path [%community-not-found ~])
+    ;<  ~  bind:m  (quit-app [src.bowl %safe] path)
+    (pure:m app-state)
+  ::  TODO: send a current snapshot of the requested path back to the sender as
+  ::  the first thing in the peer.
+  ::
+  ~&  [%safe-take-peer path]
+  (pure:m app-state)
 ::
 ++  handle-diff
   |=  [[her=ship app=term] =path data=in-peer-data]
   =/  m  tapp-async
   ^-  form:m
+  ::
+  ?>  ?=(^ path)
+  ::
+
   ::  ?>  ?=(%comments -.data)
   ::  ~&  subscriber-got-data=(lent comments.data)
   (pure:m app-state)

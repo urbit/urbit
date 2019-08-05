@@ -348,6 +348,13 @@
   =/  =wire  (weld /(scot %p her)/[app] path)
   (send-effect %pull wire [her app] ~)
 ::
+++  quit-app
+  |=  [[her=ship app=term] =path]
+  =/  m  (async ,~)
+  ^-  form:m
+  =/  =wire  (weld /(scot %p her)/[app] path)
+  (send-effect %quit wire [her app] ~)
+::
 ::    ----
 ::
 ::  Handle subscriptions
