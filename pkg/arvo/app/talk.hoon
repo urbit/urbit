@@ -716,8 +716,12 @@
       ++  circ                                          ::  circle
         ;~  pose
           (cold incir col)
-          ;~(pfix cen (stag self urs:ab))
           ;~(pfix net (stag (^sein:title self) urs:ab))
+          ;~  pfix  cen
+            %+  stag  self
+            %+  sear  |=(circ=name ?:(=('' circ) ~ (some circ)))
+            urs:ab
+          ==
         ::
           %+  cook
             |=  {a/@p b/(unit term)}
